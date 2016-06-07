@@ -128,21 +128,21 @@ uint32_t StatelessWriter::send_any_unsent_changes()
    // Shallow copy the list
    auto changes_to_send = m_unsent_changes; 
 
-   // Clear through local filters
-   for (auto& filter : m_filters)
-       (*filter)(changes_to_send);
+   // Clear through local controllers
+   for (auto& controller : m_controllers)
+       (*controller)(changes_to_send);
 
-   // Clear through parent filters
-   for (auto& filter : mp_RTPSParticipant->getFlowFilters())
-       (*filter)(changes_to_send); 
+   // Clear through parent controllers
+   for (auto& controller : mp_RTPSParticipant->getFlowControllers())
+       (*controller)(changes_to_send); 
 
    // Remove the messages selected for sending from the original list,
    // and update those that were fragmented with the new sent index
    update_unsent_changes(changes_to_send);
 
-   // Notify the filters
+   // Notify the controllers
    for (const auto& change : changes_to_send)
-       FlowFilter::NotifyFiltersChangeSent(&change);
+       FlowController::NotifyControllersChangeSent(&change);
 
    if(!changes_to_send.empty())
    {
@@ -360,9 +360,9 @@ bool StatelessWriter::clean_history(unsigned int max)
     return at_least_one;
 }
 
-void StatelessWriter::add_flow_filter(std::unique_ptr<FlowFilter> filter)
+void StatelessWriter::add_flow_controller(std::unique_ptr<FlowController> controller)
 {
-   m_filters.push_back(std::move(filter));
+   m_controllers.push_back(std::move(controller));
 }
 
 

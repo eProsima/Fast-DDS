@@ -15,46 +15,46 @@ namespace fastrtps{
 namespace rtps{
 
 /**
-* Flow Filters take a vector of cache changes (by reference) and return a filtered
+* Flow Controllers take a vector of cache changes (by reference) and return a filtered
 * vector, with a collection of changes this filter considers valid for sending, 
 * ordered by its subjective priority.
 * */
-class FlowFilter 
+class FlowController 
 {
 public:
    //! Called when a change is finally dispatched.
-   static void NotifyFiltersChangeSent(const CacheChangeForGroup_t*);
+   static void NotifyControllersChangeSent(const CacheChangeForGroup_t*);
 
-   //! Filter operator
+   //! Controller operator
    virtual void operator()(std::vector<CacheChangeForGroup_t>& changes) = 0;
 
-   virtual ~FlowFilter();
-   FlowFilter();
+   virtual ~FlowController();
+   FlowController();
 
 private:
    virtual void NotifyChangeSent(const CacheChangeForGroup_t*){};
-   void RegisterAsListeningFilter();
-   void DeRegisterAsListeningFilter();
+   void RegisterAsListeningController();
+   void DeRegisterAsListeningController();
 
-   static std::vector<FlowFilter*> ListeningFilters;
-   static std::unique_ptr<boost::thread> FilterThread;
-   static void StartFilterService();
-   static void StopFilterService();
+   static std::vector<FlowController*> ListeningControllers;
+   static std::unique_ptr<boost::thread> ControllerThread;
+   static void StartControllerService();
+   static void StopControllerService();
 
-   // No copy, assignment or move! Filters are accessed by reference
+   // No copy, assignment or move! Controllers are accessed by reference
    // from several places.
    // Ownership to be transferred via unique_ptr move semantics only.
-   const FlowFilter& operator=(const FlowFilter&) = delete;
-   FlowFilter(const FlowFilter&) = delete;
-   FlowFilter(FlowFilter&&) = delete;
+   const FlowController& operator=(const FlowController&) = delete;
+   FlowController(const FlowController&) = delete;
+   FlowController(FlowController&&) = delete;
 
 protected:
-   static std::recursive_mutex FlowFilterMutex;
-	static std::unique_ptr<boost::asio::io_service> FilterService;
+   static std::recursive_mutex FlowControllerMutex;
+	static std::unique_ptr<boost::asio::io_service> ControllerService;
 
 public:
    // To be used by derived filters to schedule asynchronous operations.
-   static bool IsListening(FlowFilter*);
+   static bool IsListening(FlowController*);
 };
 
 } // namespace rtps

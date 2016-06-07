@@ -176,7 +176,7 @@ public:
 	*/
     inline RTPSParticipant* getUserRTPSParticipant(){return mp_userParticipant;}
 
-    std::vector<std::unique_ptr<FlowFilter>>& getFlowFilters() { return m_filters;}
+    std::vector<std::unique_ptr<FlowController>>& getFlowControllers() { return m_controllers;}
 
     std::vector<RTPSWriter*> getAllWriters() const;
 
@@ -274,9 +274,9 @@ private:
 	//!ListenThreadId
 	uint32_t m_threadID;
    /*
-    * Flow filters for this participant.
+    * Flow controllers for this participant.
     */
-   std::vector<std::unique_ptr<FlowFilter> > m_filters; 
+   std::vector<std::unique_ptr<FlowController> > m_controllers; 
 public:
 	/**
 	 * Create a Writer in this RTPSParticipant.

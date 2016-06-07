@@ -113,10 +113,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	mp_event_thr = new ResourceEvent();
 	mp_event_thr->init_thread(this);
 
-   for (const auto& descriptor : PParam.sizeFilters)
+   for (const auto& descriptor : PParam.throughputControllers)
    {
-      std::unique_ptr<FlowFilter> filter(new SizeFilter(descriptor, this));
-      m_filters.push_back(std::move(filter));
+      std::unique_ptr<FlowController> controller(new ThroughputController(descriptor, this));
+      m_controllers.push_back(std::move(controller));
    }
 
 	bool hasLocatorsDefined = true;
@@ -343,10 +343,10 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		m_userWriterList.push_back(SWriter);
 	*WriterOut = SWriter;
 
-   for (const auto& descriptor : param.sizeFilters)
+   for (const auto& descriptor : param.throughputControllers)
    {
-      std::unique_ptr<FlowFilter> filter(new SizeFilter(descriptor, SWriter));
-      SWriter->add_flow_filter(std::move(filter));
+      std::unique_ptr<FlowController> controller(new ThroughputController(descriptor, SWriter));
+      SWriter->add_flow_controller(std::move(controller));
    }
 	return true;
 }

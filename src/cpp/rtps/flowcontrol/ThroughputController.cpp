@@ -1,4 +1,4 @@
-#include <fastrtps/rtps/filters/SizeFilter.h>
+#include <fastrtps/rtps/flowcontrol/ThroughputController.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include <boost/asio.hpp>
 
@@ -9,7 +9,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-SizeFilter::SizeFilter(const SizeFilterDescriptor& descriptor, const RTPSWriter* associatedWriter):
+ThroughputController::ThroughputController(const ThroughputControllerDescriptor& descriptor, const RTPSWriter* associatedWriter):
    mSizeToClear(descriptor.sizeToClear),
    mAccumulatedPayloadSize(0),
    mRefreshTimeMS(descriptor.refreshTimeMS),
@@ -18,7 +18,7 @@ SizeFilter::SizeFilter(const SizeFilterDescriptor& descriptor, const RTPSWriter*
 {
 }
 
-SizeFilter::SizeFilter(const SizeFilterDescriptor& descriptor, const RTPSParticipantImpl* associatedParticipant):
+ThroughputController::ThroughputController(const ThroughputControllerDescriptor& descriptor, const RTPSParticipantImpl* associatedParticipant):
    mSizeToClear(descriptor.sizeToClear),
    mAccumulatedPayloadSize(0),
    mRefreshTimeMS(descriptor.refreshTimeMS),
@@ -27,11 +27,11 @@ SizeFilter::SizeFilter(const SizeFilterDescriptor& descriptor, const RTPSPartici
 {
 }
 
-void SizeFilter::operator()(vector<CacheChangeForGroup_t>& changes)
+void ThroughputController::operator()(vector<CacheChangeForGroup_t>& changes)
 {
-   std::unique_lock<std::recursive_mutex> scopedLock(mSizeFilterMutex);
+   std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
 
-   uint32_t accumulatedPayloadSizeBeforeFiltering = mAccumulatedPayloadSize;
+   uint32_t accumulatedPayloadSizeBeforeControllering = mAccumulatedPayloadSize;
    unsigned int clearedChanges = 0;
    while (clearedChanges < changes.size())
    {
@@ -70,21 +70,21 @@ void SizeFilter::operator()(vector<CacheChangeForGroup_t>& changes)
    }
 
 
-   if (mAccumulatedPayloadSize != accumulatedPayloadSizeBeforeFiltering)
-      ScheduleRefresh(mAccumulatedPayloadSize - accumulatedPayloadSizeBeforeFiltering);
+   if (mAccumulatedPayloadSize != accumulatedPayloadSizeBeforeControllering)
+      ScheduleRefresh(mAccumulatedPayloadSize - accumulatedPayloadSizeBeforeControllering);
    changes.erase(changes.begin() + clearedChanges, changes.end());
 }
 
-void SizeFilter::ScheduleRefresh(uint32_t sizeToRestore)
+void ThroughputController::ScheduleRefresh(uint32_t sizeToRestore)
 {
-   shared_ptr<deadline_timer> throwawayTimer(make_shared<deadline_timer>(*FlowFilter::FilterService));
+   shared_ptr<deadline_timer> throwawayTimer(make_shared<deadline_timer>(*FlowController::ControllerService));
    auto refresh = [throwawayTimer, this, sizeToRestore]
                    (const boost::system::error_code& error)
    {
       if ((error != boost::asio::error::operation_aborted) &&
-          FlowFilter::IsListening(this))
+          FlowController::IsListening(this))
       {
-         std::unique_lock<std::recursive_mutex> scopedLock(mSizeFilterMutex);
+         std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
          throwawayTimer->cancel();
          mAccumulatedPayloadSize = sizeToRestore > mAccumulatedPayloadSize ? 0 : mAccumulatedPayloadSize - sizeToRestore;
          

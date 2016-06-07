@@ -15,7 +15,7 @@
 #define PARTICIPANT_H_
 
 #include "../rtps/common/Guid.h"
-#include "../rtps/filters/FlowFilter.h"
+#include "../rtps/flowcontrol/FlowController.h"
 
 #include "../rtps/attributes/RTPSParticipantAttributes.h"
 

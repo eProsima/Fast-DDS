@@ -224,13 +224,13 @@ uint32_t StatefulWriter::send_any_unsent_changes()
             }
         }
 
-        // Clear all relevant changes through the local filters first
-        for (auto& filter : m_filters)
-           (*filter)(relevant_changes);
+        // Clear all relevant changes through the local controllers first
+        for (auto& controller : m_controllers)
+           (*controller)(relevant_changes);
 
-        // Clear all relevant changes through the parent filters
-        for (auto& filter : mp_RTPSParticipant->getFlowFilters())
-           (*filter)(relevant_changes); 
+        // Clear all relevant changes through the parent controllers
+        for (auto& controller : mp_RTPSParticipant->getFlowControllers())
+           (*controller)(relevant_changes); 
        
         // Those that remain are set to UNDERWAY or their unsent sets updated
         for (auto& change : relevant_changes)
@@ -241,9 +241,9 @@ uint32_t StatefulWriter::send_any_unsent_changes()
               (*m_reader_iterator)->set_change_to_status(change.getChange(), UNDERWAY);
         }
 
-        // And filters are notified about the changes being sent
+        // And controllers are notified about the changes being sent
         for (const auto& change : relevant_changes)
-           FlowFilter::NotifyFiltersChangeSent(&change);
+           FlowController::NotifyControllersChangeSent(&change);
 
 		if(m_pushMode)
         {
@@ -592,7 +592,7 @@ void StatefulWriter::updateTimes(WriterTimes& times)
     m_times = times;
 }
 
-void StatefulWriter::add_flow_filter(std::unique_ptr<FlowFilter> filter)
+void StatefulWriter::add_flow_controller(std::unique_ptr<FlowController> controller)
 {
-   m_filters.push_back(std::move(filter));
+   m_controllers.push_back(std::move(controller));
 }

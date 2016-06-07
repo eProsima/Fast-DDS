@@ -16,7 +16,7 @@
 
 #include <cstdlib>
 #include <memory>
-#include "../filters/FlowFilter.h"
+#include "../flowcontrol/FlowController.h"
 #include "../../fastrtps_dll.h"
 #include "../common/Guid.h"
 
@@ -114,7 +114,7 @@ public:
 	 */
 	bool updateReader(RTPSReader* Reader,ReaderQos& rqos);
 
-   void add_flow_filter(std::unique_ptr<FlowFilter> filter);
+   void add_flow_filter(std::unique_ptr<FlowController> filter);
 
 private:
 	//!Pointer to the implementation.

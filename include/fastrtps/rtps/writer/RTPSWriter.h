@@ -16,7 +16,7 @@
 #include "../Endpoint.h"
 #include "../messages/RTPSMessageGroup.h"
 #include "../attributes/WriterAttributes.h"
-#include "../filters/FlowFilter.h"
+#include "../flowcontrol/FlowController.h"
 #include <vector>
 #include <memory>
 
@@ -89,9 +89,9 @@ public:
 
 	/**
 	 * This method triggers the send operation for unsent changes,
-    * provided they are cleared by the given filters.
+    * provided they are cleared by the given controllers.
 	 */
-	//RTPS_DllAPI virtual void send_any_unsent_changes(const std::vector<FlowFilter*>* parentFilters) = 0;
+	//RTPS_DllAPI virtual void send_any_unsent_changes(const std::vector<FlowController*>* parentControllers) = 0;
 	
 	/**
 	* Get Min Seq Num in History.
@@ -138,9 +138,9 @@ public:
    virtual bool clean_history(unsigned int max = 0) = 0;
    
    /*
-    * Adds a flow filter that will apply to this writer exclusively.
+    * Adds a flow controller that will apply to this writer exclusively.
     */
-   virtual void add_flow_filter(std::unique_ptr<FlowFilter> filter) = 0;
+   virtual void add_flow_controller(std::unique_ptr<FlowController> controller) = 0;
 
 protected:
 

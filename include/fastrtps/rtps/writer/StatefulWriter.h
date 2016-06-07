@@ -175,10 +175,10 @@ namespace eprosima
                  */
                 void updateTimes(WriterTimes& times);
 
-                void add_flow_filter(std::unique_ptr<FlowFilter> filter);
+                void add_flow_controller(std::unique_ptr<FlowController> controller);
 
                 private:
-                std::vector<std::unique_ptr<FlowFilter> > m_filters;
+                std::vector<std::unique_ptr<FlowController> > m_controllers;
 
                 StatefulWriter& operator=(const StatefulWriter&) NON_COPYABLE_CXX11;
             };

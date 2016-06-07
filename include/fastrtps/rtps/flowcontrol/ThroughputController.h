@@ -1,14 +1,14 @@
 #ifndef SIZE_FILTER_H
 #define SIZE_FILTER_H
 
-#include <fastrtps/rtps/filters/FlowFilter.h>
+#include <fastrtps/rtps/flowcontrol/FlowController.h>
 #include <thread>
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-struct SizeFilterDescriptor {
+struct ThroughputControllerDescriptor {
    uint32_t sizeToClear;
    uint32_t refreshTimeMS;
 };
@@ -22,18 +22,18 @@ class RTPSParticipantImpl;
  * 500kb at t=0 and 800 kb at t=10, it will refresh 500kb at t = 0 + period, and
  * then fully refresh at t = 10 + period).
  */
-class SizeFilter : public FlowFilter
+class ThroughputController : public FlowController
 {
 public:
-   SizeFilter(const SizeFilterDescriptor&, const RTPSWriter* associatedWriter);
-   SizeFilter(const SizeFilterDescriptor&, const RTPSParticipantImpl* associatedParticipant);
+   ThroughputController(const ThroughputControllerDescriptor&, const RTPSWriter* associatedWriter);
+   ThroughputController(const ThroughputControllerDescriptor&, const RTPSParticipantImpl* associatedParticipant);
    virtual void operator()(std::vector<CacheChangeForGroup_t>& changes);
 
 private:
    uint32_t mSizeToClear;
    uint32_t mAccumulatedPayloadSize;
    uint32_t mRefreshTimeMS;
-   std::recursive_mutex mSizeFilterMutex;
+   std::recursive_mutex mThroughputControllerMutex;
 
    const RTPSParticipantImpl* mAssociatedParticipant;
    const RTPSWriter* mAssociatedWriter;

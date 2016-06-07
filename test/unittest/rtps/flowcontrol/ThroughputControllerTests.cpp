@@ -1,23 +1,23 @@
 
-#include <fastrtps/rtps/filters/SizeFilter.h>
+#include <fastrtps/rtps/flowcontrol/ThroughputController.h>
 #include <gtest/gtest.h>
 
 using namespace std;
 using namespace eprosima::fastrtps::rtps;
 
 static const unsigned int testPayloadSize = 1000;
-static const unsigned int filterSize = 5500;
+static const unsigned int controllerSize = 5500;
 static const unsigned int refreshTimeMS = 100;
 static const unsigned int numberOfTestChanges = 10;
 
-static const SizeFilterDescriptor testDescriptor = {filterSize, refreshTimeMS};
+static const ThroughputControllerDescriptor testDescriptor = {controllerSize, refreshTimeMS};
 
-class SizeFilterTests: public ::testing::Test 
+class ThroughputControllerTests: public ::testing::Test 
 {
    public:
 
-   SizeFilterTests():
-      sFilter(testDescriptor, (const RTPSWriter*)nullptr)
+   ThroughputControllerTests():
+      sController(testDescriptor, (const RTPSWriter*)nullptr)
    {
       for (unsigned int i = 0; i < numberOfTestChanges; i++)
       {
@@ -31,25 +31,25 @@ class SizeFilterTests: public ::testing::Test
       }
    }
 
-   SizeFilter sFilter;
+   ThroughputController sController;
    std::vector<std::unique_ptr<CacheChange_t>> testChanges;
    std::vector<std::unique_ptr<CacheChange_t>> otherChanges;
    std::vector<CacheChangeForGroup_t> testChangesForGroup;
    std::vector<CacheChangeForGroup_t> otherChangesForGroup;
 };
 
-TEST_F(SizeFilterTests, size_filter_lets_only_some_elements_through)
+TEST_F(ThroughputControllerTests, throughput_controller_lets_only_some_elements_through)
 {
    // When
-   sFilter(testChangesForGroup);
+   sController(testChangesForGroup);
 
    // Then
-   ASSERT_EQ(filterSize/testPayloadSize, testChangesForGroup.size());
+   ASSERT_EQ(controllerSize/testPayloadSize, testChangesForGroup.size());
 
    std::this_thread::sleep_for(std::chrono::milliseconds(refreshTimeMS + 20));
 }
 
-TEST_F(SizeFilterTests, if_changes_are_fragmented_size_filter_provides_granularity)
+TEST_F(ThroughputControllerTests, if_changes_are_fragmented_throughput_controller_provides_granularity)
 {
    // Given fragmented changes
    testChangesForGroup.clear();
@@ -60,7 +60,7 @@ TEST_F(SizeFilterTests, if_changes_are_fragmented_size_filter_provides_granulari
    }
 
    // When
-   sFilter(testChangesForGroup);
+   sController(testChangesForGroup);
 
    // Then
    ASSERT_EQ(6, testChangesForGroup.size());
@@ -76,34 +76,34 @@ TEST_F(SizeFilterTests, if_changes_are_fragmented_size_filter_provides_granulari
    std::this_thread::sleep_for(std::chrono::milliseconds(refreshTimeMS + 20));
 }
 
-TEST_F(SizeFilterTests, size_filter_carries_over_multiple_attempts)
+TEST_F(ThroughputControllerTests, throughput_controller_carries_over_multiple_attempts)
 {
    // Given
-   sFilter(testChangesForGroup);
+   sController(testChangesForGroup);
 
    // when
-   sFilter(otherChangesForGroup);
+   sController(otherChangesForGroup);
 
    // Then
    ASSERT_EQ(0, otherChangesForGroup.size());
    std::this_thread::sleep_for(std::chrono::milliseconds(refreshTimeMS + 20));
 }
 
-TEST_F(SizeFilterTests, size_filter_resets_completely_after_its_refresh_period)
+TEST_F(ThroughputControllerTests, throughput_controller_resets_completely_after_its_refresh_period)
 {
    // Given
-   sFilter(testChangesForGroup);
+   sController(testChangesForGroup);
    ASSERT_EQ(5, testChangesForGroup.size());
 
-   // The filter is now fully closed, so filtering anything will throw all changes away.
-   sFilter(testChangesForGroup);
+   // The controller is now fully closed, so controllering anything will throw all changes away.
+   sController(testChangesForGroup);
    ASSERT_EQ(0, testChangesForGroup.size());
 
    // When
    std::this_thread::sleep_for(std::chrono::milliseconds(refreshTimeMS + 20));
    
-   // The filter should be open now
-   sFilter(otherChangesForGroup);
+   // The controller should be open now
+   sController(otherChangesForGroup);
    EXPECT_EQ(5, otherChangesForGroup.size());
    std::this_thread::sleep_for(std::chrono::milliseconds(refreshTimeMS + 20));
 }

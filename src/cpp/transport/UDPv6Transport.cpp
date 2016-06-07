@@ -145,7 +145,7 @@ bool UDPv6Transport::CloseInputChannel(const Locator_t& locator)
 static void GetIP6s(vector<IPFinder::info_IP>& locNames)
 {
    IPFinder::getIPs(&locNames);
-   // Filter out IP4
+   // Controller out IP4
    auto newEnd = remove_if(locNames.begin(), 
                            locNames.end(),
                            [](IPFinder::info_IP ip){return ip.type != IPFinder::IP6;});

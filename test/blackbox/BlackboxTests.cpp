@@ -16,7 +16,7 @@
 #include "PubSubWriter.hpp"
 
 #include <fastrtps/rtps/RTPSDomain.h>
-#include <fastrtps/rtps/filters/SizeFilter.h>
+#include <fastrtps/rtps/flowcontrol/ThroughputController.h>
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/transport/test_UDPv4Transport.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
@@ -207,7 +207,7 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
 
     uint32_t sizeToClear = 440; // Roughly ten times the size of the payload being sent
     uint32_t refreshTimeMS = 300;
-    writer.addSizeFilterDescriptorToWriterAttributes(sizeToClear, refreshTimeMS);
+    writer.addThroughputControllerDescriptorToWriterAttributes(sizeToClear, refreshTimeMS);
     writer.init(ip, port, true);
 
     ASSERT_TRUE(writer.isInitialized());
@@ -676,7 +676,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
 
     uint32_t sizeToClear = 68000;
     uint32_t periodInMs = 500;
-    writer.add_size_filter_descriptor_to_pparams(sizeToClear, periodInMs);
+    writer.add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs);
 
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
@@ -716,7 +716,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTra
 
     uint32_t sizeToClear = 300000;
     uint32_t periodInMs = 500;
-    writer.add_size_filter_descriptor_to_pparams(sizeToClear, periodInMs);
+    writer.add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs);
 
     auto testTransport = std::make_shared<UDPv4Transport::TransportDescriptor>();
     testTransport->granularMode = true;
@@ -781,7 +781,7 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
       // flow control not to overrun the receive buffer.
       uint32_t sizeToClear = 300000;
       uint32_t periodInMs = 200;
-      writer.add_size_filter_descriptor_to_pparams(sizeToClear, periodInMs);
+      writer.add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs);
 
     writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
@@ -825,7 +825,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kb)
 	// flow control not to overrun the receive buffer.
 	uint32_t sizeToClear = 300000;
 	uint32_t periodInMs = 200;
-	writer.add_size_filter_descriptor_to_pparams(sizeToClear, periodInMs);
+	writer.add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs);
 
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
@@ -867,7 +867,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
 	// flow control not to overrun the receive buffer.
 	uint32_t sizeToClear = 300000;
 	uint32_t periodInMs = 200;
-	writer.add_size_filter_descriptor_to_pparams(sizeToClear, periodInMs);
+	writer.add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs);
 
    // To simulate lossy conditions, we are going to remove the default
    // bultin transport, and instead use a lossy shim layer variant.

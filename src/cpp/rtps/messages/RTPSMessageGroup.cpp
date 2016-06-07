@@ -13,7 +13,7 @@
 
 #include <fastrtps/rtps/messages/RTPSMessageGroup.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
-#include <fastrtps/rtps/filters/FlowFilter.h>
+#include <fastrtps/rtps/flowcontrol/FlowController.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include "../participant/RTPSParticipantImpl.h"
 

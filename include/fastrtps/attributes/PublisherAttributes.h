@@ -17,7 +17,7 @@
 #include "../rtps/common/Locator.h"
 #include "../rtps/common/Time_t.h"
 #include "../rtps/attributes/WriterAttributes.h"
-#include <fastrtps/rtps/filters/SizeFilter.h>
+#include <fastrtps/rtps/flowcontrol/ThroughputController.h>
 #include "TopicAttributes.h"
 #include "../qos/WriterQos.h"
 
@@ -50,7 +50,7 @@ public:
 	//!Multicast locator list
 	LocatorList_t multicastLocatorList;
    //!Size filter descriptors for this publisher's writer
-   std::vector<SizeFilterDescriptor> sizeFilters;
+   std::vector<ThroughputControllerDescriptor> throughputControllers;
 
 	/**
 	 * Get the user defined ID

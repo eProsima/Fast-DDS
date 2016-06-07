@@ -18,7 +18,7 @@
 #include <cstdio>
 #include "../rtps/common/Guid.h"
 #include "../rtps/common/Time_t.h"
-#include "../rtps/filters/FlowFilter.h"
+#include "../rtps/flowcontrol/FlowController.h"
 
 namespace eprosima {
 namespace fastrtps {

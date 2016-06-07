@@ -110,13 +110,13 @@ public:
 
     bool clean_history(unsigned int max = 0);
 
-   void add_flow_filter(std::unique_ptr<FlowFilter> filter);
+   void add_flow_controller(std::unique_ptr<FlowController> controller);
 
 private:
 	//Duration_t resendDataPeriod; //FIXME: Not used yet.
 	std::vector<ReaderLocator> reader_locator;
 	std::vector<RemoteReaderAttributes> m_matched_readers;
-   std::vector<std::unique_ptr<FlowFilter> > m_filters;
+   std::vector<std::unique_ptr<FlowController> > m_controllers;
 
 	/**
     * Vector containing pointers to the unsent changes from this writer.
