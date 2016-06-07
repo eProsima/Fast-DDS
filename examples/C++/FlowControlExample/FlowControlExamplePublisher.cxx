@@ -17,7 +17,7 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/rtps/filters/SizeFilter.h>
+#include <fastrtps/rtps/flowcontrol/ThroughputController.h>
 
 #include <fastrtps/Domain.h>
 
@@ -43,10 +43,6 @@ bool FlowControlExamplePublisher::init()
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
 	PParam.rtps.setName("Participant_publisher");  //You can put here the name you want
 
-   // This participant won't allow more than 65kb per fifth of a second.
-   SizeFilterDescriptor participantSizeFilter{800000, 1000};
-   PParam.rtps.sizeFilters.push_back(participantSizeFilter);
-
 	mp_participant = Domain::createParticipant(PParam);
 	if(mp_participant == nullptr)
 		return false;
@@ -55,7 +51,7 @@ bool FlowControlExamplePublisher::init()
 	
 	Domain::registerType(mp_participant,(TopicDataType*) &myType);
 	
-	// Create fast publisher, which has no filter of its own (only the parent participant filter)
+	// Create fast publisher, which has no controller of its own.
 	PublisherAttributes WparamFast;
 	WparamFast.topic.topicKind = NO_KEY;
 	WparamFast.topic.topicDataType = myType.getName();  //This type MUST be registered
@@ -67,16 +63,16 @@ bool FlowControlExamplePublisher::init()
 		return false;
 	cout << "Fast publisher created, waiting for Subscribers." << endl;
 
-	// Create slow publisher, with its own filter
+	// Create slow publisher, with its own controller
 	PublisherAttributes WparamSlow;
 	WparamSlow.topic.topicKind = NO_KEY;
 	WparamSlow.topic.topicDataType = myType.getName();  //This type MUST be registered
 	WparamSlow.topic.topicName = "FlowControlExamplePubSubTopic";
    WparamSlow.qos.m_publishMode.kind = ASYNCHRONOUS_PUBLISH_MODE;
 
-   // This filter is five times as strict as the previous (64kb per second)
-   SizeFilterDescriptor slowPublisherSizeFilter{65536, 1000};
-   WparamSlow.sizeFilters.push_back(slowPublisherSizeFilter);
+   // This controller allows 300kb per second.
+   ThroughputControllerDescriptor slowPublisherThroughputController{300000, 1000};
+   WparamSlow.terminalThroughputController = slowPublisherThroughputController;
 
 	mp_slow_publisher = Domain::createPublisher(mp_participant,WparamSlow,(PublisherListener*)&m_listener);
 	if(mp_slow_publisher == nullptr)
@@ -116,8 +112,8 @@ void FlowControlExamplePublisher::run()
 	int msgsent_slow = 0;
 	char ch;
 	cout << "Flow Control example." << std::endl;
-   cout << "Press \"f\" to send a sample through the fast writer, which is limited by the participant's FlowFilter" << std::endl;
-   cout << "Press \"s\" to send a sample through the slow writer, which is also limited by its own FlowFilter" << std::endl;
+   cout << "Press \"f\" to send a sample through the fast writer, which has unlimited bandwidth" << std::endl;
+   cout << "Press \"s\" to send a sample through the slow writer, which is also limited by its own Flow Controller" << std::endl;
    cout << "Press \"q\" quit" << std::endl;
 	while(std::cin >> ch)
 	{

@@ -154,7 +154,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	pubimpl->mp_rtpsParticipant = this->mp_rtpsParticipant;
 
 	WriterAttributes watt;
-   watt.throughputControllers = att.throughputControllers;
+   watt.terminalThroughputController = att.terminalThroughputController;
 	watt.endpoint.durabilityKind = att.qos.m_durability.kind == VOLATILE_DURABILITY_QOS ? VOLATILE : TRANSIENT_LOCAL;
 	watt.endpoint.endpointKind = WRITER;
 	watt.endpoint.multicastLocatorList = att.multicastLocatorList;

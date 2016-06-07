@@ -1,5 +1,5 @@
-#ifndef FLOW_FILTER_H
-#define FLOW_FILTER_H
+#ifndef FLOW_CONTROLLER_H
+#define FLOW_CONTROLLER_H
 
 #include <vector>
 #include <mutex>

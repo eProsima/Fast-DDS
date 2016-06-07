@@ -1,5 +1,5 @@
-#ifndef SIZE_FILTER_H
-#define SIZE_FILTER_H
+#ifndef THROUGHPUT_CONTROLLER_H
+#define THROUGHPUT_CONTROLLER_H
 
 #include <fastrtps/rtps/flowcontrol/FlowController.h>
 #include <thread>
@@ -11,6 +11,8 @@ namespace rtps{
 struct ThroughputControllerDescriptor {
    uint32_t sizeToClear;
    uint32_t refreshTimeMS;
+   ThroughputControllerDescriptor();
+   ThroughputControllerDescriptor(uint32_t size, uint32_t time);
 };
 
 class RTPSWriter;

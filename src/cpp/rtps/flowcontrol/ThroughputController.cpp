@@ -27,6 +27,14 @@ ThroughputController::ThroughputController(const ThroughputControllerDescriptor&
 {
 }
 
+ThroughputControllerDescriptor::ThroughputControllerDescriptor(): sizeToClear(UINT32_MAX), refreshTimeMS(0)
+{
+}
+
+ThroughputControllerDescriptor::ThroughputControllerDescriptor(uint32_t size, uint32_t time): sizeToClear(size), refreshTimeMS(time)
+{
+}
+
 void ThroughputController::operator()(vector<CacheChangeForGroup_t>& changes)
 {
    std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);

@@ -49,8 +49,8 @@ public:
 	LocatorList_t unicastLocatorList;
 	//!Multicast locator list
 	LocatorList_t multicastLocatorList;
-   //!Size filter descriptors for this publisher's writer
-   std::vector<ThroughputControllerDescriptor> throughputControllers;
+   //!Terminal throughput controller
+   ThroughputControllerDescriptor terminalThroughputController;
 
 	/**
 	 * Get the user defined ID

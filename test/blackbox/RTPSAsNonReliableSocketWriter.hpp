@@ -23,7 +23,7 @@ class RTPSAsNonReliableSocketWriter : public RTPSAsSocketWriter
         void configWriter(WriterAttributes &wattr)
         {
             wattr.endpoint.reliabilityKind = BEST_EFFORT;
-            wattr.throughputControllers = throughputControllersForWriter;
+            wattr.terminalThroughputController = terminalThroughputController;
         }
 
         void configRemoteReader(RemoteReaderAttributes &/*rattr*/, GUID_t &/*ĝuid*/)
@@ -37,11 +37,11 @@ class RTPSAsNonReliableSocketWriter : public RTPSAsSocketWriter
 
         void addThroughputControllerDescriptorToWriterAttributes(uint32_t sizeToClear, uint32_t refreshTimeMS)
         {
-            ThroughputControllerDescriptor descriptor {sizeToClear, refreshTimeMS};
-            throughputControllersForWriter.push_back(descriptor);
+            terminalThroughputController.sizeToClear = sizeToClear;
+            terminalThroughputController.refreshTimeMS = refreshTimeMS;
         }
 
-        std::vector<ThroughputControllerDescriptor> throughputControllersForWriter;
+        ThroughputControllerDescriptor terminalThroughputController;
 };
 
 #endif // _TEST_BLACKBOX_RTPSASNONRELIABLESOCKETWRITER_HPP_
