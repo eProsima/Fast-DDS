@@ -57,6 +57,11 @@ namespace eprosima
                 Count_t m_heartbeatCount;
                 //!WriterTimes
                 WriterTimes m_times;
+
+                std::vector<ReaderProxy*>::iterator m_reader_iterator;
+                uint32_t m_readers_to_walk;
+                bool wrap_around_readers();
+
                 //! Vector containin all the associated ReaderProxies.
                 std::vector<ReaderProxy*> matched_readers;
                 //!EntityId used to send the HB.(only for builtin types performance)
