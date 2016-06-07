@@ -185,16 +185,12 @@ void ReaderHistory::waitSemaphore() //TODO CAMBIAR NOMBRE PARA que el usuario se
 bool ReaderHistory::thereIsRecordOf(GUID_t& guid, SequenceNumber_t& seq)
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-   m_cachedGUID = GUID_t();
-   m_cachedRecordLocation = nullptr;
 	return m_historyRecord.find(guid) != m_historyRecord.end() && m_historyRecord[guid].find(seq) != m_historyRecord[guid].end();
 }
 
 bool ReaderHistory::thereIsUpperRecordOf(GUID_t& guid, SequenceNumber_t& seq)
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-   m_cachedGUID = GUID_t();
-   m_cachedRecordLocation = nullptr;
    return m_historyRecord.find(guid) != m_historyRecord.end() && m_historyRecord[guid].upper_bound(seq) != m_historyRecord[guid].end();
 }
 
