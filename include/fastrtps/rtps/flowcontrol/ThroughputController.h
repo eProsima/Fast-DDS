@@ -11,8 +11,8 @@ namespace rtps{
 struct ThroughputControllerDescriptor {
    uint32_t sizeToClear;
    uint32_t refreshTimeMS;
-   ThroughputControllerDescriptor();
-   ThroughputControllerDescriptor(uint32_t size, uint32_t time);
+   RTPS_DllAPI ThroughputControllerDescriptor();
+   RTPS_DllAPI ThroughputControllerDescriptor(uint32_t size, uint32_t time);
 };
 
 class RTPSWriter;
