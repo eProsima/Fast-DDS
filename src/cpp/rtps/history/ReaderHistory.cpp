@@ -97,6 +97,8 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
    if (a_change->writerGUID != m_cachedGUID || !m_cachedRecordLocation)
    {
       m_cachedRecordLocation = &m_historyRecord[a_change->writerGUID];
+      if (m_cachedRecordLocation->empty())
+         m_cachedRecordLocation->insert(SequenceNumber_t());
       m_cachedGUID = a_change->writerGUID;
    }
 
