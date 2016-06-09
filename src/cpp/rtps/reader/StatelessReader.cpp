@@ -185,7 +185,7 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
             return false;
         }
 
-        //lock.unlock(); // Next function has its own lock.
+        lock.unlock(); // Next function has its own lock.
         if(!change_received(change_to_add))
         {
             logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "
