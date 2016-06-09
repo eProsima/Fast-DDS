@@ -42,7 +42,7 @@ int main(int argc, char** argv){
 	}
 	else
 	{
-		cout << "Usage: \"Example Writer\" or \"Example Reader\""<<endl;
+		cout << "Usage: \"RTPSLevelExample Writer\" or \"RTPSLevelExample Reader\""<<endl;
 		return 1;
 	}
 

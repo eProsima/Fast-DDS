@@ -7,7 +7,8 @@
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
-
+#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/qos/WriterQos.h>
 
 #include <string>
 #include <list>
@@ -31,7 +32,7 @@ class RTPSExampleWriter
 {
 	private:
 
-	my_WriterListener m_listener;
+	my_WriterListener *my_listener;
 	void waitformatching();   	
 	
 	public:
@@ -49,7 +50,10 @@ class RTPSExampleWriter
         WriterAttributes wattr;
 	RTPSWriter *my_writer;
 	HistoryAttributes hattr;
-	WriterHistory my_history;
+	WriterHistory *my_history;
+	TopicAttributes tattr;
+	WriterQos wqos;
+	bool initialized_;
 };
 
 
