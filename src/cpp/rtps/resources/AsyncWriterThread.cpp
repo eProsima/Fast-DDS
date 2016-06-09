@@ -99,6 +99,9 @@ void AsyncWriterThread::run()
           for(auto writer : async_writers)
              if (interestedWriters.count(writer))
                writer->send_any_unsent_changes();
+
+          guard.unlock(); // Allow for writer removal.
+          guard.lock();
        }
 
        cv_.wait(guard);
