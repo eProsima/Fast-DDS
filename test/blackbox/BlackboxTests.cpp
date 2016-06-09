@@ -1133,6 +1133,5 @@ int main(int argc, char **argv)
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new BlackboxEnvironment);
     eprosima::Log::setVerbosity(eprosima::LOG_VERBOSITY_LVL::VERB_ERROR);
-    while(true) RUN_ALL_TESTS();
     return RUN_ALL_TESTS();
 }
