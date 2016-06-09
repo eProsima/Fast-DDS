@@ -103,7 +103,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
       uint32_t receiveBufferSize;
 
       Locator_t remoteLocatorToReceive;
-      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, receiveBufferCapacity, receiveBufferSize, multicastLocator, remoteLocatorToReceive));
+      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, ReceiveBufferCapacity, receiveBufferSize, multicastLocator, remoteLocatorToReceive));
       EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
    };
 
@@ -144,7 +144,7 @@ TEST_F(UDPv4Tests, send_to_loopback)
       uint32_t receiveBufferSize;
 
       Locator_t remoteLocatorToReceive;
-      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, receiveBufferCapacity, receiveBufferSize, multicastLocator, remoteLocatorToReceive));
+      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, ReceiveBufferCapacity, receiveBufferSize, multicastLocator, remoteLocatorToReceive));
       EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
    };
 
@@ -182,10 +182,10 @@ TEST_F(UDPv4Tests, Receive_is_rejected_if_buffer_size_is_smaller_than_size_speci
    transportUnderTest.OpenInputChannel(genericInputChannelLocator);
 
    Locator_t originLocator;
-
+   octet* emptyBuffer;
+   uint32_t size;
    // Then
-   vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize - 1);
-   ASSERT_FALSE(transportUnderTest.Receive(receiveBufferWrongSize, genericInputChannelLocator, originLocator));
+   ASSERT_FALSE(transportUnderTest.Receive(emptyBuffer,0, size, genericInputChannelLocator, originLocator));
 }
 
 TEST_F(UDPv4Tests, opening_any_output_address_opens_port_for_all_IP_addresses)

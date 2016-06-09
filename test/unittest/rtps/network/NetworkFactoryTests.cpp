@@ -283,12 +283,14 @@ TEST_F(NetworkTests, A_Receiver_Resource_will_always_receive_through_its_origina
    lastRegisteredTransport->mockMessagesToReceive.push_back(message);
 
    // When
-   vector<octet> receivedData;
+   octet receivedData[65536];
+   uint32_t receivedDataSize;
+
    Locator_t receivedLocator;
-   receiverResource.Receive(receivedData, receivedLocator);
+   receiverResource.Receive(receivedData, 65536, receivedDataSize, receivedLocator);
 
    // Then
-   ASSERT_EQ(receivedData, testData);
+   ASSERT_EQ(memcmp(receivedData, testData.data(), 3), 0);
    ASSERT_EQ(receivedLocator, originLocator);
 }
 
