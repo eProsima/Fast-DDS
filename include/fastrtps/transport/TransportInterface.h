@@ -82,7 +82,8 @@ public:
     * address that gets written to remoteLocator. Must be threadsafe between channels, but not necessarily
     * within the same channel.
     */
-   virtual bool Receive(std::vector<octet>& receiveBuffer, const Locator_t& localLocator, Locator_t& remoteLocator) = 0;
+   virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
+                        const Locator_t& localLocator, Locator_t& remoteLocator) = 0;
 };
 
 /**

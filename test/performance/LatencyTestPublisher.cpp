@@ -13,6 +13,7 @@
 
 #include "LatencyTestPublisher.h"
 #include "fastrtps/utils/RTPSLog.h"
+#include <valgrind/callgrind.h>
 #include <numeric>
 #include <cmath>
 
@@ -503,13 +504,13 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 	//cout << endl;
 	//BEGIN THE TEST:
     
+     CALLGRIND_START_INSTRUMENTATION;
     for(unsigned int count = 1; count <= n_samples; ++count)
     {
         mp_latency_in->seqnum = 0;
         mp_latency_out->seqnum = count;
         
         t_start_ = std::chrono::steady_clock::now();
-
         mp_datapub->write((void*)mp_latency_out);
 
         lock.lock();
@@ -520,6 +521,8 @@ bool LatencyTestPublisher::test(uint32_t datasize)
             --data_count_;
         lock.unlock();
     }
+     CALLGRIND_STOP_INSTRUMENTATION;
+     CALLGRIND_DUMP_STATS;
 
 	command.m_command = STOP;
 	mp_commandpub->write(&command);

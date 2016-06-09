@@ -187,7 +187,7 @@ private:
 * const char* METHOD_NAME and const char* CLASS_NAME MUST be defined.
 * @code logError(LOG_CATEGORY,auxInt << " I print the error message " << otherVariable, C_RED); @endcode
 */
-#define logError(cat,...) logSelectGenerator_(__VA_ARGS__)(eprosima::T_ERROR, cat, __VA_ARGS__)
+#define logError(cat,...) //logSelectGenerator_(__VA_ARGS__)(eprosima::T_ERROR, cat, __VA_ARGS__)
 /**
 * @def logWarning
 * Log a Warning into a category. The warning will only show if the verbosity of a specific category is greater that the VERB_WARNING level.
@@ -195,7 +195,7 @@ private:
 * @code logWarning(LOG_CATEGORY,auxInt << " I print the info message " << otherVariable, C_RED);
 * logWarning(LOG_CATEGORY,auxInt << " Whathever stream i want " << otherVariable);   @endcode
 */
-#define logWarning(cat,...) logSelectGenerator_(__VA_ARGS__)(eprosima::T_WARNING, cat, __VA_ARGS__)
+#define logWarning(cat,...) //logSelectGenerator_(__VA_ARGS__)(eprosima::T_WARNING, cat, __VA_ARGS__)
 
 #if defined(__DEBUG) || defined(_DEBUG)
 /**
@@ -205,9 +205,9 @@ private:
 *  @code logInfo(LOG_CATEGORY,auxInt << " I print the info message " << otherVariable, C_RED);
 * logInfo(LOG_CATEGORY,auxInt << " Whathever stream i want " << otherVariable);   @endcode
 */
-#define logInfo(cat,...) logSelectGenerator_(__VA_ARGS__)(eprosima::T_INFO, cat, __VA_ARGS__)
+#define logInfo(cat,...) //logSelectGenerator_(__VA_ARGS__)(eprosima::T_INFO, cat, __VA_ARGS__)
 #else
-#define logInfo(cat,...){(void)CLASS_NAME; (void)METHOD_NAME;}
+#define logInfo(cat,...) //{(void)CLASS_NAME; (void)METHOD_NAME;}
 #endif
 
 /**

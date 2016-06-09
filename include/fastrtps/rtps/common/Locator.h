@@ -19,6 +19,7 @@
 #include <cstdint>
 #include <cstring>
 #include <iomanip>
+#include <algorithm>
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -280,6 +281,11 @@ public:
 	RTPS_DllAPI bool empty(){
 		return m_locators.empty();
 	}
+
+   RTPS_DllAPI void erase(const Locator_t& loc)
+   {
+      m_locators.erase(std::remove(m_locators.begin(), m_locators.end(), loc), m_locators.end());
+   }
 
 	RTPS_DllAPI bool contains(const Locator_t& loc)
 	{

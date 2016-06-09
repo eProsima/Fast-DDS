@@ -329,29 +329,29 @@ static Locator_t EndpointToLocator(ip::udp::endpoint& endpoint)
    return locator;
 }
 
-bool UDPv6Transport::Receive(std::vector<octet>& receiveBuffer, const Locator_t& localLocator, Locator_t& remoteLocator)
+bool UDPv6Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
+                             const Locator_t& localLocator, Locator_t& remoteLocator)
 {
 	const char* const METHOD_NAME = "Receive";
 
    if (!IsInputChannelOpen(localLocator) ||
-       receiveBuffer.capacity() < mReceiveBufferSize)
+       receiveBufferCapacity < mReceiveBufferSize)
       return false;
 
-   receiveBuffer.resize(mReceiveBufferSize);
    interprocess_semaphore receiveSemaphore(0);
    bool success = false;
 
-   auto handler = [&receiveBuffer, &success, METHOD_NAME, &receiveSemaphore](const boost::system::error_code& error, std::size_t bytes_transferred)
+   auto handler = [&receiveBuffer, &receiveBufferSize,  &success, METHOD_NAME, &receiveSemaphore](const boost::system::error_code& error, std::size_t bytes_transferred)
    {
 	   if(error != boost::system::errc::success)
       {
 		   logInfo(RTPS_MSG_IN, "Error while listening to socket...",C_BLUE);
-         receiveBuffer.resize(0);
+         receiveBufferSize = 0;
       }
       else 
       {
 		   logInfo(RTPS_MSG_IN,"Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ",C_BLUE);
-         receiveBuffer.resize(bytes_transferred);
+         receiveBufferSize = bytes_transferred;
          success = true;
       }
       
@@ -364,7 +364,7 @@ bool UDPv6Transport::Receive(std::vector<octet>& receiveBuffer, const Locator_t&
       boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
 
       auto& socket = mInputSockets.at(localLocator.port);
-      socket.async_receive_from(boost::asio::buffer(receiveBuffer),
+      socket.async_receive_from(boost::asio::buffer(receiveBuffer, receiveBufferCapacity),
                                 senderEndpoint,
                                 handler);
    }
