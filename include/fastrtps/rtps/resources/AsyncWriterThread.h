@@ -74,14 +74,15 @@ private:
     static void run();
 
     static std::thread* thread_;
-    static std::mutex mutex_;
+    static std::mutex data_structure_mutex_;
+    static std::mutex condition_variable_mutex_;
     
     //! List of asynchronous writers.
     static std::list<RTPSWriter*> async_writers;
     static AsyncInterestTree interestTree;
 
-    static std::atomic<bool> running_;
-    static std::atomic<bool> run_scheduled_;
+    static bool running_;
+    static bool run_scheduled_;
     static std::condition_variable cv_;
 };
 
