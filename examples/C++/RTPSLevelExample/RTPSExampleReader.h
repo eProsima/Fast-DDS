@@ -34,6 +34,7 @@ class RTPSExampleReader
         ~RTPSExampleReader();
         void init();
         bool isInitialized();
+	bool read();
     private:
         RTPSParticipantAttributes pattr;
 	RTPSParticipant *my_participant;

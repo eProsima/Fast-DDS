@@ -42,15 +42,20 @@
 	    my_participant = RTPSDomain::createParticipant(pattr);
 	    
 	    //Creation of the Reader 
-            my_history = new ReaderHistory(hattr); 
+            my_listener = new my_ReaderListener();
+	    my_history = new ReaderHistory(hattr); 
             my_reader= RTPSDomain::createRTPSReader(my_participant, rattr, my_history, my_listener);
 
 	    // Register type
 	    tattr.topicKind = NO_KEY;
 	    tattr.topicDataType = "string";
-	    tattr.topicName = "Example Topic";
+	    tattr.topicName = "ExampleTopic";
 	    my_participant->registerReader(my_reader,tattr, rqos);            
             initialized_ = true;
         }
+	bool RTPSExampleReader::read(){
+	    while(my_listener->n_received < 9){}
+	    return true;
 
+	}
         bool RTPSExampleReader::isInitialized() { return initialized_; }

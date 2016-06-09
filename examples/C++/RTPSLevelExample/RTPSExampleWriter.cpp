@@ -2,8 +2,10 @@
 #include <memory>
 #include <fastrtps/transport/UDPv4Transport.h>
 
+
 	my_WriterListener::my_WriterListener():n_matched(0){};
 	my_WriterListener::~my_WriterListener(){};
+
 	void my_WriterListener::onWriterMatched(RTPSWriter* writer, MatchingInfo& info)
 	{
 		if(info.status == MATCHED_MATCHING)
@@ -47,7 +49,7 @@
 	    // Register type
 	    tattr.topicKind = NO_KEY;
 	    tattr.topicDataType = "string";
-	    tattr.topicName = "Example Topic";
+	    tattr.topicName = "ExampleTopic";
 	    my_participant->registerWriter(my_writer,tattr, wqos);
             initialized_ = true;
         }

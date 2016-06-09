@@ -38,6 +38,7 @@ int main(int argc, char** argv){
 				std::cout << "Unable to start a Reader" << std::endl;
 				return 1;
 			}
+			my_reader.read();
 		}
 	}
 	else
