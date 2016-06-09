@@ -76,11 +76,15 @@ bool MockTransport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const
    return true;
 }
 
-bool MockTransport::Receive(std::vector<octet>& receiveBuffer, const Locator_t& localChannel, Locator_t& remoteAddress)
+bool MockTransport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
+                            const Locator_t& localLocator, Locator_t& remoteLocator)
 {
-   (void)localChannel;
-   receiveBuffer = mockMessagesToReceive.back().data;
-   remoteAddress = mockMessagesToReceive.back().origin;
+   (void)localLocator;
+
+   memcpy(receiveBuffer, mockMessagesToReceive.back().data.data(), 
+          std::min(receiveBufferCapacity, (uint32_t)mockMessagesToReceive.back().data.size()));
+   receiveBufferSize = mockMessagesToReceive.back().data.size();
+   remoteLocator = mockMessagesToReceive.back().origin;
    mockMessagesToReceive.pop_back();
    return true;
 }

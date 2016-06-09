@@ -233,8 +233,15 @@ std::vector<RTPSWriter*> RTPSParticipantImpl::getAllWriters() const
 RTPSParticipantImpl::~RTPSParticipantImpl()
 {
 	//const char* const METHOD_NAME = "~RTPSParticipantImpl";
-	//logInfo(RTPS_PARTICIPANT,"removing "<<this->getGuid());
 
+   // Safely abort threads.
+   for (auto& block : m_receiverResourcelist)
+   {
+      block.resourceAlive = false;
+      block.Receiver.Abort();
+      block.m_thread->join();
+      delete block.m_thread;
+   }
 
 	while(m_userReaderList.size()>0)
 		RTPSDomain::removeRTPSReader(*m_userReaderList.begin());
@@ -242,15 +249,9 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 	while(m_userWriterList.size()>0)
 		RTPSDomain::removeRTPSWriter(*m_userWriterList.begin());
 
-	//Destruct ReceiverResources
+	// Destruct message receivers
    for (auto& block : m_receiverResourcelist)
-   {
-      block.resourceAlive = false;
-      block.Receiver.Abort();
-      block.m_thread->join();
-      delete block.m_thread;
       delete block.mp_receiver;
-   }
 
    m_receiverResourcelist.clear();
 	delete(this->mp_builtinProtocols);
@@ -559,11 +560,9 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver,
    while(receiver->resourceAlive)
    {	
       // Blocking receive.
-      if(!receiver->Receiver.Receive(receiver->m_receiveBuffer, input_locator))
+      auto& msg = receiver->mp_receiver->m_rec_msg;
+      if(!receiver->Receiver.Receive(msg.buffer, msg.max_size, msg.length, input_locator))
          continue;
-
-      // Wraps a CDRMessage around the underlying vector array.
-      CDRMessage::wrapVector(&(receiver->mp_receiver->m_rec_msg), receiver->m_receiveBuffer);
 
       // Processes the data through the CDR Message interface.
       receiver->mp_receiver->processCDRMsg(getGuid().guidPrefix, &input_locator, &receiver->mp_receiver->m_rec_msg);
@@ -644,11 +643,9 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 			//Push the new items into the ReceiverResource buffer
 			m_receiverResourcelist.push_back(ReceiverControlBlock(std::move(*it_buffer)));
 			//Create and init the MessageReceiver
-			m_receiverResourcelist.back().mp_receiver = new MessageReceiver();
+			m_receiverResourcelist.back().mp_receiver = new MessageReceiver(m_att.listenSocketBufferSize);
       			m_receiverResourcelist.back().mp_receiver->init(m_att.listenSocketBufferSize);
 
-         //Reserve the receive buffer
-         m_receiverResourcelist.back().m_receiveBuffer.reserve(m_att.listenSocketBufferSize);
 			//Init the thread
 			m_receiverResourcelist.back().m_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation,this, &(m_receiverResourcelist.back()),(*it_loc));
 		}

@@ -97,6 +97,8 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
    if (a_change->writerGUID != m_cachedGUID || !m_cachedRecordLocation)
    {
       m_cachedRecordLocation = &m_historyRecord[a_change->writerGUID];
+      if (m_cachedRecordLocation->empty())
+         m_cachedRecordLocation->insert(SequenceNumber_t());
       m_cachedGUID = a_change->writerGUID;
    }
 
@@ -185,12 +187,18 @@ void ReaderHistory::waitSemaphore() //TODO CAMBIAR NOMBRE PARA que el usuario se
 bool ReaderHistory::thereIsRecordOf(GUID_t& guid, SequenceNumber_t& seq)
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+   if (guid == m_cachedGUID)
+      return m_cachedRecordLocation->find(seq) != m_cachedRecordLocation->end();
+      
 	return m_historyRecord.find(guid) != m_historyRecord.end() && m_historyRecord[guid].find(seq) != m_historyRecord[guid].end();
 }
 
 bool ReaderHistory::thereIsUpperRecordOf(GUID_t& guid, SequenceNumber_t& seq)
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+   if (guid == m_cachedGUID)
+      return m_cachedRecordLocation->upper_bound(seq) != m_cachedRecordLocation->end();
+
    return m_historyRecord.find(guid) != m_historyRecord.end() && m_historyRecord[guid].upper_bound(seq) != m_historyRecord[guid].end();
 }
 

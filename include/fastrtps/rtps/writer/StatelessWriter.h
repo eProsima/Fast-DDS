@@ -115,6 +115,8 @@ public:
 private:
 	//Duration_t resendDataPeriod; //FIXME: Not used yet.
 	std::vector<ReaderLocator> reader_locator;
+   LocatorList_t m_loc_list_1_for_sync_send;
+   LocatorList_t m_loc_list_2_for_sync_send;
 	std::vector<RemoteReaderAttributes> m_matched_readers;
    std::vector<std::unique_ptr<FlowController> > m_controllers;
 

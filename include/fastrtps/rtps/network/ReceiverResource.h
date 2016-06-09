@@ -16,7 +16,8 @@ friend class NetworkFactory;
 public:
    // Performs a blocking receive through the channel managed by this resource,
    // notifying about the origin locator.
-   bool Receive(std::vector<octet>& data, Locator_t& originLocator);
+   bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
+                Locator_t& originLocator);
 
    // Reports whether this resource supports the given local locator (i.e., said locator
    // maps to the transport channel managed by this resource).
@@ -37,7 +38,7 @@ private:
 
    ReceiverResource(TransportInterface&, const Locator_t&);
    std::function<void()> Cleanup;
-   std::function<bool(std::vector<octet>&, Locator_t&)> ReceiveFromAssociatedChannel;
+   std::function<bool(octet*, uint32_t, uint32_t&, Locator_t&)> ReceiveFromAssociatedChannel;
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
    bool mValid; // Post-construction validity check for the NetworkFactory
 };

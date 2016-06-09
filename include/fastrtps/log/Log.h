@@ -207,7 +207,7 @@ private:
 */
 #define logInfo(cat,...) logSelectGenerator_(__VA_ARGS__)(eprosima::T_INFO, cat, __VA_ARGS__)
 #else
-#define logInfo(cat,...){(void)CLASS_NAME; (void)METHOD_NAME;}
+#define logInfo(cat,...) {(void)CLASS_NAME; (void)METHOD_NAME;}
 #endif
 
 /**

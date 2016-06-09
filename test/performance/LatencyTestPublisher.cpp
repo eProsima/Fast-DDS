@@ -509,7 +509,6 @@ bool LatencyTestPublisher::test(uint32_t datasize)
         mp_latency_out->seqnum = count;
         
         t_start_ = std::chrono::steady_clock::now();
-
         mp_datapub->write((void*)mp_latency_out);
 
         lock.lock();

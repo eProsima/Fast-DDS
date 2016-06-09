@@ -9,6 +9,8 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace boost::interprocess;
 
+const uint32_t ReceiveBufferCapacity = 65536;
+
 class UDPv4Tests: public ::testing::Test 
 {
    public:
@@ -88,19 +90,21 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
    outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
    ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator));
-   vector<octet> message = { 'H','e','l','l','o' };
+   octet message[5] = { 'H','e','l','l','o' };
 
    auto sendThreadFunction = [&]()
    {
-      EXPECT_TRUE(transportUnderTest.Send(message.data(), message.size(), outputChannelLocator, multicastLocator));
+      EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
    };
 
    auto receiveThreadFunction = [&]() 
    {
-      vector<octet> receiveBuffer(descriptor.receiveBufferSize);
+      octet receiveBuffer[ReceiveBufferCapacity];
+      uint32_t receiveBufferSize;
+
       Locator_t remoteLocatorToReceive;
-      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, multicastLocator, remoteLocatorToReceive));
-      EXPECT_EQ(message, receiveBuffer);
+      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, ReceiveBufferCapacity, receiveBufferSize, multicastLocator, remoteLocatorToReceive));
+      EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
    };
 
    receiverThread.reset(new boost::thread(receiveThreadFunction));      
@@ -124,22 +128,24 @@ TEST_F(UDPv4Tests, send_to_loopback)
    outputChannelLocator.set_IP4_address(127,0,0,1); // Loopback
    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
    ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator));
-   vector<octet> message = { 'H','e','l','l','o' };
+   octet message[5] = { 'H','e','l','l','o' };
 
    auto sendThreadFunction = [&]()
    {
       Locator_t destinationLocator;
       destinationLocator.port = 7410;
       destinationLocator.kind = LOCATOR_KIND_UDPv4;
-      EXPECT_TRUE(transportUnderTest.Send(message.data(), message.size(), outputChannelLocator, multicastLocator));
+      EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
    };
 
    auto receiveThreadFunction = [&]() 
    {
-      vector<octet> receiveBuffer(descriptor.receiveBufferSize);
+      octet receiveBuffer[ReceiveBufferCapacity];
+      uint32_t receiveBufferSize;
+
       Locator_t remoteLocatorToReceive;
-      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, multicastLocator, remoteLocatorToReceive));
-      EXPECT_EQ(message, receiveBuffer);
+      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, ReceiveBufferCapacity, receiveBufferSize, multicastLocator, remoteLocatorToReceive));
+      EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
    };
 
    receiverThread.reset(new boost::thread(receiveThreadFunction));      
@@ -176,10 +182,10 @@ TEST_F(UDPv4Tests, Receive_is_rejected_if_buffer_size_is_smaller_than_size_speci
    transportUnderTest.OpenInputChannel(genericInputChannelLocator);
 
    Locator_t originLocator;
-
+   octet* emptyBuffer;
+   uint32_t size;
    // Then
-   vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize - 1);
-   ASSERT_FALSE(transportUnderTest.Receive(receiveBufferWrongSize, genericInputChannelLocator, originLocator));
+   ASSERT_FALSE(transportUnderTest.Receive(emptyBuffer,0, size, genericInputChannelLocator, originLocator));
 }
 
 TEST_F(UDPv4Tests, opening_any_output_address_opens_port_for_all_IP_addresses)

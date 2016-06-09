@@ -52,21 +52,15 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
     {
         std::vector<CacheChangeForGroup_t> changes_to_send;
         changes_to_send.push_back(CacheChangeForGroup_t(cptr));
-        LocatorList_t locList;
-        LocatorList_t locList2;
         this->setLivelinessAsserted(true);
 
         if(!reader_locator.empty()) //TODO change to m_reader_locator.
         {
-            for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
-            {
-                locList.push_back(rit->locator);
-            }
 
             uint32_t bytesSent = RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
                     changes_to_send, c_GuidPrefix_Unknown,
                     this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER ? c_EntityId_SPDPReader : c_EntityId_Unknown,
-                    locList, locList2, false);
+                    m_loc_list_1_for_sync_send, m_loc_list_2_for_sync_send, false);
 
             // Check send
             if(bytesSent == 0 || changes_to_send.size() > 0)
@@ -150,18 +144,13 @@ uint32_t StatelessWriter::send_any_unsent_changes()
       if(m_pushMode)
       {
          uint32_t bytesSent = 0;
-         LocatorList_t locList;
-         LocatorList_t locList2;
-
-         for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
-             locList.push_back(rit->locator);
 
          do
          {
              bytesSent = RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
                          changes_to_send, c_GuidPrefix_Unknown,
                          this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER ? c_EntityId_SPDPReader : c_EntityId_Unknown,
-                         locList, locList2, false);
+                         m_loc_list_1_for_sync_send, m_loc_list_2_for_sync_send, false);
          } while(bytesSent > 0 && changes_to_send.size() > 0);
       }
    }
@@ -231,6 +220,7 @@ bool StatelessWriter::add_locator(RemoteReaderAttributes& rdata,Locator_t& loc)
 		rl.expectsInlineQos = rdata.expectsInlineQos;
 		rl.locator = loc;
 		reader_locator.push_back(rl);
+      m_loc_list_1_for_sync_send.push_back(loc);
 		rit = reader_locator.end()-1;
 	}
 
@@ -318,6 +308,7 @@ bool StatelessWriter::remove_locator(Locator_t& loc)
 			if(rit->n_used == 0)
 			{
 				reader_locator.erase(rit);
+            m_loc_list_1_for_sync_send.erase(loc);
 			}
 			break;
 		}

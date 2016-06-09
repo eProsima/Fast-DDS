@@ -142,16 +142,10 @@ namespace eprosima {
                         CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_fullmsg);
                     }
                     std::vector<Locator_t>::iterator lit;
-                    bool sentMulticast = false;
                     for(lit = multicast->begin();lit!=multicast->end();++lit)
-                    {
-                        sentMulticast = true;
 				            W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),(*lit));
-                    }
-
-                    if (!sentMulticast)
-                       for(lit = unicast->begin();lit!=unicast->end();++lit)
-                           W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),(*lit));
+                    for(lit = unicast->begin();lit!=unicast->end();++lit)
+                        W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),(*lit));
 
                 }while(gap_n < Sequences.size()); //There is still a message to add
                 return true;
@@ -281,16 +275,11 @@ namespace eprosima {
 
                 if(dataInserted)
                 {
-                    bool sentMulticast = false;
                     for(auto lit = multicast.begin();lit!=multicast.end();++lit)
-                    {
-                        sentMulticast = true;
-				            W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),(*lit));
-                    }
+				        W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),(*lit));
 
-                    if (!sentMulticast)
-                       for(auto lit = unicast.begin();lit!=unicast.end();++lit)
-                           W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),(*lit));
+                    for(auto lit = unicast.begin();lit!=unicast.end();++lit)
+                        W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),(*lit));
 
                     return cdrmsg_fullmsg->length;
                 }
