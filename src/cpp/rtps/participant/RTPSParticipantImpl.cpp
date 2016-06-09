@@ -233,8 +233,15 @@ std::vector<RTPSWriter*> RTPSParticipantImpl::getAllWriters() const
 RTPSParticipantImpl::~RTPSParticipantImpl()
 {
 	//const char* const METHOD_NAME = "~RTPSParticipantImpl";
-	//logInfo(RTPS_PARTICIPANT,"removing "<<this->getGuid());
 
+   // Safely abort threads.
+   for (auto& block : m_receiverResourcelist)
+   {
+      block.resourceAlive = false;
+      block.Receiver.Abort();
+      block.m_thread->join();
+      delete block.m_thread;
+   }
 
 	while(m_userReaderList.size()>0)
 		RTPSDomain::removeRTPSReader(*m_userReaderList.begin());
@@ -242,15 +249,9 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 	while(m_userWriterList.size()>0)
 		RTPSDomain::removeRTPSWriter(*m_userWriterList.begin());
 
-	//Destruct ReceiverResources
+	// Destruct message receivers
    for (auto& block : m_receiverResourcelist)
-   {
-      block.resourceAlive = false;
-      block.Receiver.Abort();
-      block.m_thread->join();
-      delete block.m_thread;
       delete block.mp_receiver;
-   }
 
    m_receiverResourcelist.clear();
 	delete(this->mp_builtinProtocols);
