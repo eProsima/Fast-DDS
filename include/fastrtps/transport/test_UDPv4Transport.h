@@ -35,6 +35,7 @@ public:
 
       uint32_t dropLogLength; // logs dropped packets.
 
+      RTPS_DllAPI TransportDescriptor();
       virtual ~TransportDescriptor(){}
    } TransportDescriptor;
 

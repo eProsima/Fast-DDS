@@ -7,6 +7,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+static const uint32_t maximumUDPSocketSize = 65536;
 vector<vector<octet> > test_UDPv4Transport::DropLog;
 uint32_t test_UDPv4Transport::DropLogLength = 0;
 
@@ -24,6 +25,20 @@ test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4Transport::TransportDes
    DropLog.clear();
    DropLogLength = descriptor.dropLogLength;
    srand(time(NULL));
+}
+
+RTPS_DllAPI test_UDPv4Transport::TransportDescriptor::TransportDescriptor():
+   sendBufferSize(maximumUDPSocketSize),
+   receiveBufferSize(maximumUDPSocketSize),
+   granularMode(false),
+   dropDataMessagesPercentage(0),
+   dropDataFragMessagesPercentage(0),
+   dropHeartbeatMessagesPercentage(0),
+   dropAckNackMessagesPercentage(0),
+   percentageOfMessagesToDrop(0),
+   sequenceNumberDataMessagesToDrop(),
+   dropLogLength(0)
+{
 }
 
 bool test_UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
