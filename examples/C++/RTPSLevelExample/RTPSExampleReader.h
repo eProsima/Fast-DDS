@@ -13,7 +13,6 @@
 #include <string>
 #include <list>
 #include <condition_variable>
-#include <boost/asio.hpp>
 
 class my_ReaderListener: public ReaderListener 
 {
