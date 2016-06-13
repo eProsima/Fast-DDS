@@ -217,7 +217,19 @@ class PubSubReader
             subscriber_attr_.topic.resourceLimitsQos.max_samples = max;
             return *this;
         }
+	
+	PubSubReader& allocated_samples(const int32_t max)
+	{
+	    subscriber_attr_.topic.resourceLimitsQos.allocated_samples = max;
+	    return *this;
+	}
 
+	PubSubReader& heartbeatPeriod(const int32_t secs, const int32_t frac)
+	{
+	    subscriber_attr_.times.heartbeatResponseDelay.seconds = secs;
+	    subscriber_attr_.times.heartbeatResponseDelay.fraction = frac;
+	    return *this;
+	}
     private:
 
         void receive_one(eprosima::fastrtps::Subscriber* subscriber, bool& returnedValue)

@@ -228,6 +228,12 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& allocated_samples(const uint32_t max)
+    {
+	publisher_attr_.topic.resourceLimitsQos.allocated_samples = max;
+	return *this;
+    }
+
     private:
 
     void matched()
