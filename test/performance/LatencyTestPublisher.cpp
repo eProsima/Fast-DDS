@@ -358,12 +358,12 @@ void LatencyTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber*
     mp_up->disc_cond_.notify_one();
 }
 
-void LatencyTestPublisher::CommandSubListener::onNewDataMessage(Subscriber* /*sub*/)
+void LatencyTestPublisher::CommandSubListener::onNewDataMessage(Subscriber* subscriber)
 {
 	TestCommandType command;
 	SampleInfo_t info;
 	//	cout << "COMMAND RECEIVED"<<endl;
-	if(mp_up->mp_commandsub->takeNextData((void*)&command,&info))
+	if(subscriber->takeNextData((void*)&command,&info))
 	{
 		if(info.sampleKind == ALIVE)
 		{
@@ -382,9 +382,9 @@ void LatencyTestPublisher::CommandSubListener::onNewDataMessage(Subscriber* /*su
 		cout<< "Problem reading"<<endl;
 }
 
-void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* /*sub*/)
+void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* subscriber)
 {
-	mp_up->mp_datasub->takeNextData((void*)mp_up->mp_latency_in,&mp_up->m_sampleinfo);
+	subscriber->takeNextData((void*)mp_up->mp_latency_in,&mp_up->m_sampleinfo);
 
 	if(mp_up->mp_latency_in->seqnum == mp_up->mp_latency_out->seqnum)
 	{

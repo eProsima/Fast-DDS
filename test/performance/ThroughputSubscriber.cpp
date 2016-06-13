@@ -69,10 +69,10 @@ void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*
     lock.unlock();
     m_up.disc_cond_.notify_one();
 }
-void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* /*sub*/)
+void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscriber)
 {
 	//	cout << "NEW DATA MSG: "<< throughputin->seqnum << endl;
-	while(m_up.mp_datasub->takeNextData((void*)throughputin, &info))
+	while(subscriber->takeNextData((void*)throughputin, &info))
 	{
 		//myfile << throughputin.seqnum << ",";
 		if(info.sampleKind == ALIVE)
@@ -121,10 +121,10 @@ void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber*
     lock.unlock();
     m_up.disc_cond_.notify_one();
 }
-void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* /*sub*/)
+void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subscriber)
 {
 	//cout << "Command Received: ";
-	if(m_up.mp_commandsub->takeNextData((void*)&m_commandin,&info))
+	if(subscriber->takeNextData((void*)&m_commandin,&info))
 	{
 		//cout << "RECEIVED COMMAND: "<< m_commandin.m_command << endl;
 		switch(m_commandin.m_command)
@@ -277,6 +277,21 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
 	Sparam.unicastLocatorList.push_back(loc);
 	mp_datasub = Domain::createSubscriber(mp_par,Sparam,(SubscriberListener*)&this->m_DataSubListener);
 	//COMMAND
+	PublisherAttributes Wparam;
+	//Wparam.historyMaxSize = 20;
+	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Wparam.topic.historyQos.depth = 50;
+	Wparam.topic.resourceLimitsQos.max_samples = 50;
+	Wparam.topic.topicDataType = "ThroughputCommand";
+	Wparam.topic.topicKind = NO_KEY;
+    std::ostringstream pct;
+    pct << "ThroughputTest_Command_";
+    if(hostname)
+        pct << boost::asio::ip::host_name() << "_";
+    pct << pid << "_SUB2PUB";
+    Wparam.topic.topicName = pct.str();
+	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	mp_commandpubli = Domain::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_CommandPubListener);
 	SubscriberAttributes Rparam;
 	Rparam.topic.topicDataType = "ThroughputCommand";
 	Rparam.topic.topicKind = NO_KEY;
@@ -294,21 +309,6 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
 	loc.port = 7556;
 	Rparam.unicastLocatorList.push_back(loc);
 	mp_commandsub = Domain::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
-	PublisherAttributes Wparam;
-	//Wparam.historyMaxSize = 20;
-	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	Wparam.topic.historyQos.depth = 50;
-	Wparam.topic.resourceLimitsQos.max_samples = 50;
-	Wparam.topic.topicDataType = "ThroughputCommand";
-	Wparam.topic.topicKind = NO_KEY;
-    std::ostringstream pct;
-    pct << "ThroughputTest_Command_";
-    if(hostname)
-        pct << boost::asio::ip::host_name() << "_";
-    pct << pid << "_SUB2PUB";
-    Wparam.topic.topicName = pct.str();
-	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	mp_commandpubli = Domain::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_CommandPubListener);
 
 	if(mp_datasub == nullptr || mp_commandsub == nullptr || mp_commandpubli == nullptr)
 		ready = false;
