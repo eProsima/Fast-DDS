@@ -85,7 +85,7 @@ public:
 	 * This method triggers the send operation for unsent changes.
     * @return number of messages sent
 	 */
-	RTPS_DllAPI virtual uint32_t send_any_unsent_changes() = 0;
+	RTPS_DllAPI virtual size_t send_any_unsent_changes() = 0;
 
 	/**
 	 * This method triggers the send operation for unsent changes,

@@ -37,7 +37,7 @@ namespace rtps{
  *       opened in a strict sense).
  * @ingroup TRANSPORT_MODULE
  */
-RTPS_DllAPI class UDPv4Transport : public TransportInterface
+class UDPv4Transport : public TransportInterface
 {
 public:
    /**
@@ -139,7 +139,7 @@ protected:
    mutable boost::recursive_mutex mInputMapMutex;
 
    //! For non-granular UDPv4, the notion of output channel corresponds to a port.
-   std::map<uint16_t, std::vector<boost::asio::ip::udp::socket> > mOutputSockets; 
+   std::map<uint32_t, std::vector<boost::asio::ip::udp::socket> > mOutputSockets; 
 
    struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
@@ -147,14 +147,14 @@ protected:
    std::map<Locator_t, boost::asio::ip::udp::socket, LocatorCompare> mGranularOutputSockets;
 
    //! For both modes, an input channel corresponds to a port.
-   std::map<uint16_t, boost::asio::ip::udp::socket> mInputSockets; 
+   std::map<uint32_t, boost::asio::ip::udp::socket> mInputSockets; 
 
    bool IsInterfaceAllowed(const boost::asio::ip::address_v4& ip);
    std::vector<boost::asio::ip::address_v4> mInterfaceWhiteList;
 
-   bool OpenAndBindOutputSockets(uint16_t port);
+   bool OpenAndBindOutputSockets(uint32_t port);
    bool OpenAndBindGranularOutputSocket(const Locator_t& locator);
-   bool OpenAndBindInputSockets(uint16_t port);
+   bool OpenAndBindInputSockets(uint32_t port);
 
    boost::asio::ip::udp::socket OpenAndBindUnicastOutputSocket(const boost::asio::ip::address_v4&, uint32_t port);
    boost::asio::ip::udp::socket OpenAndBindInputSocket(uint32_t port);

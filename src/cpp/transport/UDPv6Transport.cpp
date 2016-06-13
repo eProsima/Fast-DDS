@@ -164,7 +164,7 @@ bool UDPv6Transport::IsInterfaceAllowed(const ip::address_v6& ip)
 }
 
 
-bool UDPv6Transport::OpenAndBindOutputSockets(uint16_t port)
+bool UDPv6Transport::OpenAndBindOutputSockets(uint32_t port)
 {
 	const char* const METHOD_NAME = "OpenAndBindOutputSockets";
 
@@ -223,7 +223,7 @@ bool UDPv6Transport::OpenAndBindGranularOutputSocket(const Locator_t& locator)
    return true;
 }
 
-bool UDPv6Transport::OpenAndBindInputSockets(uint16_t port)
+bool UDPv6Transport::OpenAndBindInputSockets(uint32_t port)
 {
 	const char* const METHOD_NAME = "OpenAndBindInputSockets";
    
@@ -249,7 +249,7 @@ boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindUnicastOutputSocket(cons
    socket.open(ip::udp::v6());
    socket.set_option(socket_base::send_buffer_size(mSendBufferSize));
 
-   ip::udp::endpoint endpoint(ipAddress, port);
+   ip::udp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
    socket.bind(endpoint);
 
    return socket;
@@ -264,7 +264,7 @@ boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindInputSocket(uint32_t por
 	socket.set_option(ip::multicast::enable_loopback( true ) );
    auto anyIP = ip::address_v6::any();
 
-   ip::udp::endpoint endpoint(anyIP, port);
+   ip::udp::endpoint endpoint(anyIP, static_cast<uint16_t>(port));
    socket.bind(endpoint);
 
    return socket;
@@ -345,14 +345,14 @@ bool UDPv6Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
    {
 	   if(error != boost::system::errc::success)
       {
-		   logInfo(RTPS_MSG_IN, "Error while listening to socket...",C_BLUE);
-         receiveBufferSize = 0;
+          logInfo(RTPS_MSG_IN, "Error while listening to socket...",C_BLUE);
+          receiveBufferSize = 0;
       }
       else 
       {
-		   logInfo(RTPS_MSG_IN,"Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ",C_BLUE);
-         receiveBufferSize = bytes_transferred;
-         success = true;
+          logInfo(RTPS_MSG_IN,"Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ",C_BLUE);
+          receiveBufferSize = static_cast<uint32_t>(bytes_transferred);
+          success = true;
       }
       
       receiveSemaphore.post();
@@ -386,7 +386,7 @@ bool UDPv6Transport::SendThroughSocket(const octet* sendBuffer,
 	boost::asio::ip::address_v6::bytes_type remoteAddress;
    memcpy(&remoteAddress, &remoteLocator.address[0], sizeof(remoteAddress));
    auto destinationEndpoint = ip::udp::endpoint(boost::asio::ip::address_v6(remoteAddress), static_cast<uint16_t>(remoteLocator.port));
-   unsigned int bytesSent = 0;
+   size_t bytesSent = 0;
    logInfo(RTPS_MSG_OUT,"UDPv6: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
          << " FROM " << socket.local_endpoint(), C_YELLOW);
 

@@ -45,8 +45,8 @@ inline bool CDRMessage::wrapVector(CDRMessage_t* msg, std::vector<octet>& vector
 
    msg->wraps = true;
    msg->buffer = vectorToWrap.data();
-   msg->length = vectorToWrap.size();
-   msg->max_size = vectorToWrap.capacity();
+   msg->length = (uint32_t)vectorToWrap.size();
+   msg->max_size = (uint32_t)vectorToWrap.capacity();
    #if EPROSIMA_BIG_ENDIAN
        msg->msg_endian = BIGEND;
    #else

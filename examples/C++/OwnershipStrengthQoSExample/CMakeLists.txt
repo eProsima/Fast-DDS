@@ -22,7 +22,7 @@ message(STATUS "Configuring OwnershipStrengthQoS example...")
 file(GLOB OWNERSHIPSTRENGTH_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(OwnershipStrengthQoSExample ${OWNERSHIPSTRENGTH_EXAMPLE_SOURCES})
-target_include_directories(OwnershipStrengthQoSExample PRIVATE)
+target_include_directories(OwnershipStrengthQoSExample PRIVATE ${Boost_INCLUDE_DIR})
 target_link_libraries(OwnershipStrengthQoSExample fastrtps fastcdr ${Boost_LIBRARIES})
 install(TARGETS OwnershipStrengthQoSExample
     RUNTIME DESTINATION examples/C++/OwnershipStrengthQoSExample/${BIN_INSTALL_DIR}

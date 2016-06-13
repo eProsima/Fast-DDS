@@ -59,7 +59,7 @@ namespace eprosima
                 WriterTimes m_times;
 
                 std::vector<ReaderProxy*>::iterator m_reader_iterator;
-                uint32_t m_readers_to_walk;
+                size_t m_readers_to_walk;
                 bool wrap_around_readers();
 
                 //! Vector containin all the associated ReaderProxies.
@@ -87,7 +87,7 @@ namespace eprosima
                 /**
                  * Method to indicate that there are changes not sent in some of all ReaderProxy.
                  */
-                uint32_t send_any_unsent_changes();
+                size_t send_any_unsent_changes();
 
                 //!Increment the HB count.
                 inline void incrementHBCount(){ ++m_heartbeatCount; };

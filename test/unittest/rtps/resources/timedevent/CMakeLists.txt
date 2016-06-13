@@ -13,7 +13,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
 
         if(WIN32)
-            add_definitions(-D_WIN32_WINNT=0x0501)
+            add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
         add_executable(TimedEventTests ${TIMEDEVENTTESTS_SOURCE})

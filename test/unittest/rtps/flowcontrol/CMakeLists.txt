@@ -3,6 +3,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     check_gtest()
 
     if(GTEST_FOUND)
+        if(WIN32)
+            add_definitions(-D_WIN32_WINNT=0x0601)
+        endif()
+
         include_directories(mock/)
 
         set(THROUGHPUTCONTROLLERTESTS_SOURCE 

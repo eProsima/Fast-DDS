@@ -83,7 +83,7 @@ bool MockTransport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity
 
    memcpy(receiveBuffer, mockMessagesToReceive.back().data.data(), 
           std::min(receiveBufferCapacity, (uint32_t)mockMessagesToReceive.back().data.size()));
-   receiveBufferSize = mockMessagesToReceive.back().data.size();
+   receiveBufferSize = (uint32_t)mockMessagesToReceive.back().data.size();
    remoteLocator = mockMessagesToReceive.back().origin;
    mockMessagesToReceive.pop_back();
    return true;
