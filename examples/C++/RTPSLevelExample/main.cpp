@@ -20,7 +20,6 @@ using namespace std;
 
 int main(int argc, char** argv){
 
-	int type;
 	if(argc > 1)
 	{
 		if(strcmp(argv[1],"Writer")==0){

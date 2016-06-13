@@ -5,6 +5,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     if(GTEST_FOUND)
         find_package(Threads REQUIRED)
 
+        if(WIN32)
+            add_definitions(-D_WIN32_WINNT=0x0601)
+        endif()
+
         set(NETWORKFACTORYTESTS_SOURCE 
             NetworkFactoryTests.cpp 
             mock/MockTransport.cpp

@@ -14,7 +14,7 @@ namespace rtps{
 /* This transport acts as a shim over UDPv4, allowing
  * packets to be dropped under certain criteria. */
 
-RTPS_DllAPI class test_UDPv4Transport : public UDPv4Transport
+class test_UDPv4Transport : public UDPv4Transport
 {
 public:
    typedef struct TransportDescriptor : public TransportDescriptorInterface{

@@ -171,7 +171,7 @@ bool UDPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip)
    return  find(mInterfaceWhiteList.begin(), mInterfaceWhiteList.end(), ip) != mInterfaceWhiteList.end();
 }
 
-bool UDPv4Transport::OpenAndBindOutputSockets(uint16_t port)
+bool UDPv4Transport::OpenAndBindOutputSockets(uint32_t port)
 {
 	const char* const METHOD_NAME = "OpenAndBindOutputSockets";
 
@@ -230,7 +230,7 @@ bool UDPv4Transport::OpenAndBindGranularOutputSocket(const Locator_t& locator)
    return true;
 }
 
-bool UDPv4Transport::OpenAndBindInputSockets(uint16_t port)
+bool UDPv4Transport::OpenAndBindInputSockets(uint32_t port)
 {
 	const char* const METHOD_NAME = "OpenAndBindInputSockets";
    
@@ -256,7 +256,7 @@ boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindUnicastOutputSocket(cons
    socket.open(ip::udp::v4());
    socket.set_option(socket_base::send_buffer_size(mSendBufferSize));
 
-   ip::udp::endpoint endpoint(ipAddress, port);
+   ip::udp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
    socket.bind(endpoint);
 
    return socket;
@@ -271,7 +271,7 @@ boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindInputSocket(uint32_t por
 	socket.set_option(ip::multicast::enable_loopback( true ) );
    auto anyIP = ip::address_v4::any();
 
-   ip::udp::endpoint endpoint(anyIP, port);
+   ip::udp::endpoint endpoint(anyIP, static_cast<uint16_t>(port));
    socket.bind(endpoint);
 
    return socket;
@@ -346,14 +346,14 @@ bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
    {
 	   if(error != boost::system::errc::success)
       {
-		   logInfo(RTPS_MSG_IN, "Error while listening to socket...",C_BLUE);
-         receiveBufferSize = 0;
+          logInfo(RTPS_MSG_IN, "Error while listening to socket...",C_BLUE);
+          receiveBufferSize = 0;
       }
       else 
       {
-		   logInfo(RTPS_MSG_IN,"Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ",C_BLUE);
-         receiveBufferSize = bytes_transferred;
-         success = true;
+          logInfo(RTPS_MSG_IN,"Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ",C_BLUE);
+          receiveBufferSize = static_cast<uint32_t>(bytes_transferred);
+          success = true;
       }
       
       receiveSemaphore.post();
@@ -389,7 +389,7 @@ bool UDPv4Transport::SendThroughSocket(const octet* sendBuffer,
 	boost::asio::ip::address_v4::bytes_type remoteAddress;
    memcpy(&remoteAddress, &remoteLocator.address[12], sizeof(remoteAddress));
    auto destinationEndpoint = ip::udp::endpoint(boost::asio::ip::address_v4(remoteAddress), static_cast<uint16_t>(remoteLocator.port));
-   unsigned int bytesSent = 0;
+   size_t bytesSent = 0;
    logInfo(RTPS_MSG_OUT,"UDPv4: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
          << " FROM " << socket.local_endpoint(), C_YELLOW);
 

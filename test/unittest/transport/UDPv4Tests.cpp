@@ -182,7 +182,7 @@ TEST_F(UDPv4Tests, Receive_is_rejected_if_buffer_size_is_smaller_than_size_speci
    transportUnderTest.OpenInputChannel(genericInputChannelLocator);
 
    Locator_t originLocator;
-   octet* emptyBuffer;
+   octet* emptyBuffer = nullptr;
    uint32_t size;
    // Then
    ASSERT_FALSE(transportUnderTest.Receive(emptyBuffer,0, size, genericInputChannelLocator, originLocator));
