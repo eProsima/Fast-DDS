@@ -132,6 +132,16 @@ if(EPROSIMA_INSTALLER)
     set(EPROSIMA_BUILD ON)
 endif()
 
+
+###############################################################################
+# Internal debug messages
+###############################################################################
+
+option(INTERNAL_DEBUG "Activate developer debug messages" OFF)
+if(EPROSIMA_BUILD)
+	set(INTERNAL_DEBUG ON)
+endif()
+
 ###############################################################################
 # Performance tests
 ###############################################################################

@@ -101,7 +101,10 @@ add_definitions(-D${PROJECT_NAME_UPPER}_SOURCE)
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0501)
 endif()
-
+# If INTERNAL_DEBUG = ON, define symbol for extensive debug messages
+if(INTERNAL_DEBUG)
+	add_definitions(-D__INTERNALDEBUG)
+endif()
 # Include Boost header files.
 include_directories(${Boost_INCLUDE_DIR})
 
@@ -152,9 +155,8 @@ if(MSVC OR MSVC_IDE)
     endif()
 else()
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        add_definitions(-D__DEBUG)
+	    add_definitions(-D__DEBUG)
     endif()
-
     #Create library
     add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
 

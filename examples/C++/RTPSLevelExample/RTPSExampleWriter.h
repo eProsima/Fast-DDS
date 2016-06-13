@@ -12,8 +12,6 @@
 
 #include <string>
 #include <list>
-#include <condition_variable>
-#include <gtest/gtest.h>
 #include <stdio.h>
 
 class my_WriterListener: public WriterListener
