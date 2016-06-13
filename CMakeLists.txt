@@ -89,12 +89,6 @@ else()
 endif()
 
 ###############################################################################
-# Internal debug messages
-###############################################################################
-
-option(INTERNAL_DEBUG "Activate developer debug messages" OFF)
-
-###############################################################################
 # Test system configuration
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/dev/check_configuration.cmake)
@@ -136,6 +130,16 @@ option(MINION "Tells if it is a subproject of a superproject" OFF)
 
 if(EPROSIMA_INSTALLER)
     set(EPROSIMA_BUILD ON)
+endif()
+
+
+###############################################################################
+# Internal debug messages
+###############################################################################
+
+option(INTERNAL_DEBUG "Activate developer debug messages" OFF)
+if(EPROSIMA_BUILD)
+	set(INTERNAL_DEBUG ON)
 endif()
 
 ###############################################################################

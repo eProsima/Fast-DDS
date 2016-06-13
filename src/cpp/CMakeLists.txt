@@ -154,7 +154,9 @@ if(MSVC OR MSVC_IDE)
             )
     endif()
 else()
-
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	    add_definitions(-D__DEBUG)
+    endif()
     #Create library
     add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
 
