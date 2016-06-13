@@ -54,22 +54,6 @@ MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
 												m_rec_msg(rec_buffer_size),
 												mp_change(nullptr)
 {
-	//const char* const METHOD_NAME = "MessageReceiver";
-	destVersion = c_ProtocolVersion;
-	sourceVersion = c_ProtocolVersion;
-	set_VendorId_Unknown(sourceVendorId);
-	sourceGuidPrefix = c_GuidPrefix_Unknown;
-	destGuidPrefix = c_GuidPrefix_Unknown;
-	haveTimestamp = false;
-	timestamp = c_TimeInvalid;
-
-	defUniLoc.kind = LOCATOR_KIND_UDPv4;
-	LOCATOR_ADDRESS_INVALID(defUniLoc.address);
-	defUniLoc.port = LOCATOR_PORT_INVALID;
-	//logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<<m_rec_msg.max_size,C_BLUE);
-	uint16_t max_payload = ((uint32_t)std::numeric_limits<uint16_t>::max() < rec_buffer_size) ? std::numeric_limits<uint16_t>::max() : (uint16_t)rec_buffer_size;
-	mp_change = new CacheChange_t(max_payload, true);
-	//cout << "MESSAGE RECEIVER CREATED WITH MAX SIZE: " << mp_change->serializedPayload.max_size << endl;
 }
 
 void MessageReceiver::init(uint32_t rec_buffer_size){
