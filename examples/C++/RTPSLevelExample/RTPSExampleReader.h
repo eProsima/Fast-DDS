@@ -12,7 +12,6 @@
 
 #include <string>
 #include <list>
-#include <condition_variable>
 
 class my_ReaderListener: public ReaderListener 
 {
