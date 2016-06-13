@@ -940,7 +940,63 @@ TEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
     print_non_received_messages(data, default_helloworld_print);
     ASSERT_EQ(data.size(), 0);
 }
+//Test created to deal with Issue 39 on Github
+TEST(BlackBox, PubSubsAsNonRealiableGithubRequest39)
+{
+	PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+	PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
+	//Reader Config
+	reader.reliability(BEST_EFFORT_RELIABILITY_QOS);
+	reader.history_kind(KEEP_LAST_HISTORY_QOS);
+	reader.history_depth(1);
+	reader.resource_limits_max_samples(1);
+	reader.allocated_samples(5);
+	reader.heartbeatPeriod(0,4294967 * 50);
+
+	ASSERT_TRUE(reader.isInitialized());
+
+	writer.heartbeat_period_seconds(0).heartbeat_period_fraction(4294967*100);
+	writer.resource_limits_max_samples(1);
+	writer.history_kind(KEEP_LAST_HISTORY_QOS);
+	writer.history_depth(1);
+	writer.reliability(BEST_EFFORT_RELIABILITY_QOS);
+	writer.allocated_samples(50);	
+	ASSERT_TRUE(writer.isInitialized());
+
+
+	// Because its volatile the durability
+	// Wait for discovery.
+	writer.waitDiscovery();
+	reader.waitDiscovery();
+
+	auto data = default_helloword_data_generator(10);
+    
+	reader.expected_data(data);
+
+	unsigned int tries = 0;
+	for(; tries < 6 && !data.empty(); ++tries)
+	{
+        	// Store previous data vector size.
+        	size_t previous_size = data.size();
+        	// Send data
+        	writer.send(data);
+        	// In this test all data should be sent.
+        	ASSERT_TRUE(data.empty());
+        	std::this_thread::sleep_for(std::chrono::seconds(2));
+        	reader.startReception();
+        	// Block reader until reception finished or timeout.
+        	data = reader.block(std::chrono::seconds(1));
+        	reader.stopReception();
+        	// Should be received only two samples.
+        	ASSERT_EQ(previous_size - data.size(), 2);
+    	}
+    	// To send 10 samples needs at least five tries.
+    	ASSERT_GE(tries, 5);
+
+    	print_non_received_messages(data, default_helloworld_print);
+    	ASSERT_EQ(data.size(), 0);
+}
 // Test created to check bug #1555 (Github #31)
 TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
 {
