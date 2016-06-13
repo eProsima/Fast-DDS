@@ -115,10 +115,9 @@ void RTPSAsSocketReader::Listener::onNewCacheChangeAdded(RTPSReader* reader, con
     ASSERT_NE(reader, nullptr);
     ASSERT_NE(change, nullptr);
 
-	ReaderHistory *history = reader->getHistory();
-    ASSERT_NE(history, nullptr);
-
-    history->remove_change((CacheChange_t*)change);
+    // Check order of changes.
+    ASSERT_LT(reader_.last_seq, change->sequenceNumber);
+    reader_.last_seq = change->sequenceNumber;
 
     uint16_t number;
     std::istringstream input((char*)change->serializedPayload.data);
@@ -130,4 +129,9 @@ void RTPSAsSocketReader::Listener::onNewCacheChangeAdded(RTPSReader* reader, con
         input >> number;
         reader_.newNumber(number);
     }
+
+	ReaderHistory *history = reader->getHistory();
+    ASSERT_NE(history, nullptr);
+
+    history->remove_change((CacheChange_t*)change);
 }

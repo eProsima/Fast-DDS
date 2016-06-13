@@ -142,25 +142,12 @@ TEST(BlackBox, RTPSAsNonReliableSocket)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    for(unsigned int tries = 0; tries < 20; ++tries)
-    {
-        std::list<uint16_t> msgs = reader.getNonReceivedMessages();
-        if(msgs.empty())
-            break;
-
-        writer.send(msgs);
-        reader.block(*msgs.rbegin(), std::chrono::seconds(1));
-    }
+    std::list<uint16_t> nonReceivedMessages = reader.getNonReceivedMessages();
+    writer.send(nonReceivedMessages);
+    reader.block(*nonReceivedMessages.rbegin(), std::chrono::seconds(3));
 
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
-    if(msgs.size() != 0)
-    {
-        std::cout << "Samples not received:";
-        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
-            std::cout << " " << *it << " ";
-        std::cout << std::endl;
-    }
-    ASSERT_EQ(msgs.size(), 0);
+    ASSERT_NE(msgs.size(), nmsgs);
 }
 
 TEST(BlackBox, AsyncRTPSAsNonReliableSocket)
@@ -178,19 +165,13 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocket)
     writer.init(ip, port, true);
 
     ASSERT_TRUE(writer.isInitialized());
+
     std::list<uint16_t> nonReceivedMessages = reader.getNonReceivedMessages();
     writer.send(nonReceivedMessages);
-    reader.block(*nonReceivedMessages.rbegin(), std::chrono::seconds(20));
+    reader.block(*nonReceivedMessages.rbegin(), std::chrono::seconds(3));
 
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
-    if(msgs.size() != 0)
-    {
-        std::cout << "Samples not received:";
-        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
-            std::cout << " " << *it << " ";
-        std::cout << std::endl;
-    }
-    ASSERT_EQ(msgs.size(), 0);
+    ASSERT_NE(msgs.size(), nmsgs);
 }
 
 TEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
@@ -954,7 +935,7 @@ TEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
         ASSERT_EQ(previous_size - data.size(), 2);
     }
     // To send 10 samples needs at least five tries.
-    ASSERT_GE(tries, 5);
+    ASSERT_GE(tries, 5u);
 
     print_non_received_messages(data, default_helloworld_print);
     ASSERT_EQ(data.size(), 0);
