@@ -89,6 +89,12 @@ else()
 endif()
 
 ###############################################################################
+# Internal debug messages
+###############################################################################
+
+option(INTERNAL_DEBUG "Activate developer debug messages" OFF)
+
+###############################################################################
 # Test system configuration
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/dev/check_configuration.cmake)
