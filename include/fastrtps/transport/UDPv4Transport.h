@@ -37,7 +37,7 @@ namespace rtps{
  *       opened in a strict sense).
  * @ingroup TRANSPORT_MODULE
  */
-RTPS_DllAPI class UDPv4Transport : public TransportInterface
+class UDPv4Transport : public TransportInterface
 {
 public:
    /**

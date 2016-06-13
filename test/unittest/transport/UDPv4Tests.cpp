@@ -169,7 +169,7 @@ TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
 
    // Then
    vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
-   ASSERT_FALSE(transportUnderTest.Send(receiveBufferWrongSize.data(), receiveBufferWrongSize.size(), genericOutputChannelLocator, destinationLocator));
+   ASSERT_FALSE(transportUnderTest.Send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(), genericOutputChannelLocator, destinationLocator));
 }
 
 TEST_F(UDPv4Tests, Receive_is_rejected_if_buffer_size_is_smaller_than_size_specified_in_descriptor)
@@ -298,7 +298,7 @@ TEST_F(UDPv4Tests, granular_send_to_wrong_interface)
    //Sending through a different IP will NOT work in granular mode, except 0.0.0.0
    outputChannelLocator.set_IP4_address(111,111,111,111);
    vector<octet> message = { 'H','e','l','l','o' };
-   ASSERT_FALSE(transportUnderTest.Send(message.data(), message.size(), outputChannelLocator, Locator_t()));
+   ASSERT_FALSE(transportUnderTest.Send(message.data(), (uint32_t)message.size(), outputChannelLocator, Locator_t()));
 }
 
 void UDPv4Tests::HELPER_SetDescriptorDefaults()

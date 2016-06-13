@@ -191,11 +191,11 @@ bool StatefulWriter::wrap_around_readers()
    return true;
 }
 
-uint32_t StatefulWriter::send_any_unsent_changes()
+size_t StatefulWriter::send_any_unsent_changes()
 {
     const char* const METHOD_NAME = "send_any_unsent_changes";
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-    uint32_t number_of_changes_sent = 0;
+    size_t number_of_changes_sent = 0;
 
     m_readers_to_walk = matched_readers.size();
     // The reader proxy vector is walked in a different order each time 

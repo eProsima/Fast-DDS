@@ -113,11 +113,11 @@ void StatelessWriter::update_unsent_changes(const std::vector<CacheChangeForGrou
    }
 }
 
-uint32_t StatelessWriter::send_any_unsent_changes()
+size_t StatelessWriter::send_any_unsent_changes()
 {
 	const char* const METHOD_NAME = "send_any_unsent_changes";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-   uint32_t number_of_changes_sent= 0;
+    size_t number_of_changes_sent= 0;
 
    // Shallow copy the list
    auto changes_to_send = m_unsent_changes; 
