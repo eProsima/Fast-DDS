@@ -25,7 +25,7 @@ public:
    //! Called when a change is finally dispatched.
    static void NotifyControllersChangeSent(const CacheChangeForGroup_t*);
 
-   //! Controller operator
+   //! Controller operator. Transforms the vector of changes in place.
    virtual void operator()(std::vector<CacheChangeForGroup_t>& changes) = 0;
 
    virtual ~FlowController();

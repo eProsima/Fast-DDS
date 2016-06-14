@@ -8,6 +8,13 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+/**
+ * Descriptor for a Throughput Controller, containing all constructor information
+ * for it. 
+ *  -> sizeToClear: Packet size in bytes that this controller will allow in a given
+ *     period.
+ *  -> refreshTimeMS: Refresh period.
+ */
 struct ThroughputControllerDescriptor {
    uint32_t sizeToClear;
    uint32_t refreshTimeMS;
@@ -18,7 +25,7 @@ struct ThroughputControllerDescriptor {
 class RTPSWriter;
 class RTPSParticipantImpl;
 
-/*
+/**
  * Simple filter that only clears changes up to a certain accumulated payload size.
  * It refreshes after a given time in MS, in a staggered way (e.g. if it clears
  * 500kb at t=0 and 800 kb at t=10, it will refresh 500kb at t = 0 + period, and
