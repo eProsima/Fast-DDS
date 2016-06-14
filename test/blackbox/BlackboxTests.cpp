@@ -154,7 +154,7 @@ TEST(BlackBox, RTPSAsNonReliableSocket)
             std::cout << " " << *it << " ";
         std::cout << std::endl;
     }
-    ASSERT_LE(msgs.size(), nmsgs - 2);
+    ASSERT_LE(msgs.size(), static_cast<size_t>(nmsgs - 2));
 }
 
 TEST(BlackBox, AsyncRTPSAsNonReliableSocket)
@@ -185,7 +185,7 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocket)
             std::cout << " " << *it << " ";
         std::cout << std::endl;
     }
-    ASSERT_LE(msgs.size(), nmsgs - 2);
+    ASSERT_LE(msgs.size(), static_cast<size_t>(nmsgs - 2));
 }
 
 TEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
@@ -219,7 +219,7 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
             std::cout << " " << *it << " ";
         std::cout << std::endl;
     }
-    ASSERT_LE(msgs.size(), nmsgs - 2);
+    ASSERT_LE(msgs.size(), static_cast<size_t>(nmsgs - 2));
 }
 
 TEST(BlackBox, RTPSAsReliableSocket)
@@ -313,7 +313,7 @@ TEST(BlackBox, RTPSAsNonReliableWithRegistration)
             std::cout << " " << *it << " ";
         std::cout << std::endl;
     }
-    ASSERT_LE(msgs.size(), nmsgs - 2);
+    ASSERT_LE(msgs.size(), static_cast<size_t>(nmsgs - 2));
 }
 
 TEST(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
@@ -343,7 +343,7 @@ TEST(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
             std::cout << " " << *it << " ";
         std::cout << std::endl;
     }
-    ASSERT_LE(msgs.size(), nmsgs - 2);
+    ASSERT_LE(msgs.size(), static_cast<size_t>(nmsgs - 2));
 }
 
 TEST(BlackBox, RTPSAsReliableWithRegistration)
