@@ -689,7 +689,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTra
     uint32_t periodInMs = 500;
     writer.add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs);
 
-    auto testTransport = std::make_shared<UDPv4Transport::TransportDescriptor>();
+    auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
     testTransport->granularMode = true;
     writer.disable_builtin_transport();
     writer.add_user_transport_to_pparams(testTransport);
@@ -839,7 +839,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
 
    // To simulate lossy conditions, we are going to remove the default
    // bultin transport, and instead use a lossy shim layer variant.
-    auto testTransport = std::make_shared<test_UDPv4Transport::TransportDescriptor>();
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport->sendBufferSize = 65536;
     testTransport->receiveBufferSize = 65536;
     testTransport->granularMode = false;

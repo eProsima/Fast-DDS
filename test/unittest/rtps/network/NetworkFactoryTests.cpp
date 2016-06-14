@@ -165,10 +165,10 @@ TEST_F(NetworkTests, destroying_a_receive_resource_will_close_all_channels_mappe
 TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_no_registered_transport_is_kind_compatible)
 {
    // Given
-   MockTransport::TransportDescriptor mockTransportDescriptor;
+   MockTransportDescriptor mockTransportDescriptor;
    mockTransportDescriptor.supportedKind = 1;
    mockTransportDescriptor.maximumChannels = 10;
-   networkFactoryUnderTest.RegisterTransport<MockTransport>(mockTransportDescriptor);
+   networkFactoryUnderTest.RegisterTransport<MockTransport, MockTransportDescriptor>(mockTransportDescriptor);
 
    Locator_t locatorOfDifferentKind;
    locatorOfDifferentKind.kind = 2;
@@ -296,7 +296,7 @@ TEST_F(NetworkTests, A_Receiver_Resource_will_always_receive_through_its_origina
 
 void NetworkTests::HELPER_RegisterTransportWithKindAndChannels(int kind, unsigned int channels)
 {
-   MockTransport::TransportDescriptor mockTransportDescriptor;
+   MockTransportDescriptor mockTransportDescriptor;
    mockTransportDescriptor.supportedKind = kind;
    mockTransportDescriptor.maximumChannels = channels;
    networkFactoryUnderTest.RegisterTransport<MockTransport>(mockTransportDescriptor);

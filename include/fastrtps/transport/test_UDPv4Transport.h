@@ -7,6 +7,8 @@
 #include <boost/thread.hpp>
 #include <vector>
 
+#include "test_UDPv4TransportDescriptor.h"
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -17,29 +19,7 @@ namespace rtps{
 class test_UDPv4Transport : public UDPv4Transport
 {
 public:
-   typedef struct TransportDescriptor : public TransportDescriptorInterface{
-      // UDPv4 layer parameters
-      uint32_t sendBufferSize;
-      uint32_t receiveBufferSize;
-      bool granularMode;
-
-      // Test shim parameters
-      uint8_t dropDataMessagesPercentage;
-      uint8_t dropDataFragMessagesPercentage;
-      uint8_t dropHeartbeatMessagesPercentage;
-      uint8_t dropAckNackMessagesPercentage;
-
-      // General drop percentage (indescriminate)
-      uint8_t percentageOfMessagesToDrop;
-      std::vector<SequenceNumber_t> sequenceNumberDataMessagesToDrop;
-
-      uint32_t dropLogLength; // logs dropped packets.
-
-      RTPS_DllAPI TransportDescriptor();
-      virtual ~TransportDescriptor(){}
-   } TransportDescriptor;
-
-   RTPS_DllAPI test_UDPv4Transport(const test_UDPv4Transport::TransportDescriptor& descriptor);
+   RTPS_DllAPI test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor);
 
    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator);
   

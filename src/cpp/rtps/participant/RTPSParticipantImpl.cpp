@@ -93,11 +93,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
    // Builtin transport by default
    if (PParam.useBuiltinTransports)
    {
-      UDPv4Transport::TransportDescriptor descriptor; 
+      UDPv4TransportDescriptor descriptor; 
       descriptor.sendBufferSize = m_att.sendSocketBufferSize;
       descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
       descriptor.granularMode = true;
-      m_network_Factory.RegisterTransport<UDPv4Transport>(descriptor);
+      m_network_Factory.RegisterTransport(&descriptor);
    }
 
    // User defined transports

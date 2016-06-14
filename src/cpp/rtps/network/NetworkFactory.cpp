@@ -63,12 +63,12 @@ vector<ReceiverResource> NetworkFactory::BuildReceiverResources(const Locator_t&
 
 void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descriptor)
 {
-   if (auto concrete = dynamic_cast<const UDPv4Transport::TransportDescriptor*> (descriptor))
-      RegisterTransport<UDPv4Transport> (*concrete);
-   if (auto concrete = dynamic_cast<const UDPv6Transport::TransportDescriptor*> (descriptor))
-      RegisterTransport<UDPv6Transport> (*concrete);
-   if (auto concrete = dynamic_cast<const test_UDPv4Transport::TransportDescriptor*> (descriptor))
-      RegisterTransport<test_UDPv4Transport> (*concrete);
+   if (auto concrete = dynamic_cast<const UDPv4TransportDescriptor*> (descriptor))
+      mRegisteredTransports.emplace_back(new UDPv4Transport(*concrete));
+   if (auto concrete = dynamic_cast<const UDPv6TransportDescriptor*> (descriptor))
+      mRegisteredTransports.emplace_back(new UDPv6Transport(*concrete));
+   if (auto concrete = dynamic_cast<const test_UDPv4TransportDescriptor*> (descriptor))
+      mRegisteredTransports.emplace_back(new test_UDPv4Transport(*concrete));
 }
 
 } // namespace rtps

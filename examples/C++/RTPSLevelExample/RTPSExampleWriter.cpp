@@ -32,7 +32,7 @@
         {
 	    //Creation of the participant
 
-	    auto customTransport = std::make_shared<UDPv4Transport::TransportDescriptor>();
+	    auto customTransport = std::make_shared<UDPv4TransportDescriptor>();
     	    customTransport->sendBufferSize = 65536;
     	    customTransport->receiveBufferSize = 65536;
     	    customTransport->granularMode = false;

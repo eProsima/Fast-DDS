@@ -13,7 +13,7 @@ namespace rtps{
 
 std::vector<MockTransport*> MockTransport::mockTransportInstances;
 
-MockTransport::MockTransport(const TransportDescriptor& descriptor):
+MockTransport::MockTransport(const MockTransportDescriptor& descriptor):
    mockSupportedKind(descriptor.supportedKind),
    mockMaximumChannels(descriptor.maximumChannels)
 {

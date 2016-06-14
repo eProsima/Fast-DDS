@@ -1,6 +1,6 @@
 #include "RTPSExampleReader.h"
 #include <memory>
-#include <fastrtps/transport/UDPv4Transport.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 
 	
         my_ReaderListener::my_ReaderListener() :n_received(0) {};
@@ -32,7 +32,7 @@
         void RTPSExampleReader::init()
         {
 	    //Creation of the participant
-	    auto customTransport = std::make_shared<UDPv4Transport::TransportDescriptor>();
+	    auto customTransport = std::make_shared<UDPv4TransportDescriptor>();
     	    customTransport->sendBufferSize = 65536;
     	    customTransport->receiveBufferSize = 65536;
     	    customTransport->granularMode = false;

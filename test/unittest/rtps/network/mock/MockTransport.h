@@ -9,16 +9,16 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+typedef struct  
+{
+   int maximumChannels;
+   int supportedKind;
+} MockTransportDescriptor;
+
 class MockTransport: public TransportInterface
 {
-   public:
-   typedef struct  
-   {
-      int maximumChannels;
-      int supportedKind;
-   } TransportDescriptor;
-
-   MockTransport(const TransportDescriptor& descriptor);
+public:
+   MockTransport(const MockTransportDescriptor& descriptor);
    MockTransport();
   ~MockTransport();
 

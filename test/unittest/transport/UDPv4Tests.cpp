@@ -21,7 +21,7 @@ class UDPv4Tests: public ::testing::Test
 
    void HELPER_SetDescriptorDefaults();
 
-   UDPv4Transport::TransportDescriptor descriptor;
+   UDPv4TransportDescriptor descriptor;
    unique_ptr<boost::thread> senderThread;
    unique_ptr<boost::thread> receiverThread;
 };
