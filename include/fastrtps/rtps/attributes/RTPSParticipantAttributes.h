@@ -228,7 +228,7 @@ public:
 	//!Set the name of the participant.
 	inline void setName(const char* nam){name = nam;}
 	//!Get the name of the participant.
-	inline const char* getName(){return name.c_str();}
+	inline const char* getName() const {return name.c_str();}
    //!Terminal throughput controller parameters. Leave default for uncontrolled flow.
    ThroughputControllerDescriptor terminalThroughputController; 
    //!User defined transports to use alongside or in place of builtins.
