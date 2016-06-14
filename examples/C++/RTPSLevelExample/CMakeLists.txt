@@ -22,7 +22,6 @@ message(STATUS "Configuring RTPSLevelExample...")
 file(GLOB RTPSLEVELEXAMPLE_SOURCES_HXX "*.cpp")
 
 add_executable(RTPSLevelExample ${RTPSLEVELEXAMPLE_SOURCES_HXX})
-target_include_directories(RTPSLevelExample PRIVATE)
 target_link_libraries(RTPSLevelExample fastrtps fastcdr ${Boost_LIBRARIES})
 install(TARGETS RTPSLevelExample
 	RUNTIME DESTINATION examples/C++/RTPSLevelExample/${BIN_INSTALL_DIR})
