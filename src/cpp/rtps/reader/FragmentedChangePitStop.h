@@ -53,7 +53,7 @@ namespace eprosima
                          */
                         ChangeInPit(const SequenceNumber_t &sequence_number) : sequence_number_(sequence_number), change_(nullptr) {};
 
-                        ChangeInPit(const ChangeInPit& cip) : sequence_number_(cip.change_->sequenceNumber), change_(cip.change_) {};
+                        ChangeInPit(const ChangeInPit& cip) : sequence_number_(cip.sequence_number_), change_(cip.change_) {};
 
                         CacheChange_t* getChange() const { return change_; }
 
@@ -63,6 +63,8 @@ namespace eprosima
                         }
 
                     private:
+
+                        ChangeInPit& operator=(const ChangeInPit& cip) NON_COPYABLE_CXX11;
 
                         const SequenceNumber_t sequence_number_;
                         CacheChange_t* change_;

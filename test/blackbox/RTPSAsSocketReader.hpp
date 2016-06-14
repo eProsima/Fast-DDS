@@ -17,6 +17,7 @@
 #include <fastrtps/rtps/rtps_fwd.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
+#include <fastrtps/rtps/common/SequenceNumber.h>
 
 #include <list>
 #include <condition_variable>
@@ -67,6 +68,7 @@ class RTPSAsSocketReader
         uint32_t domainId_;
         std::string hostname_;
         std::string word_;
+        SequenceNumber_t last_seq;
 };
 
 #endif // _TEST_BLACKBOX_RTPSASSOCKETREADER_HPP_
