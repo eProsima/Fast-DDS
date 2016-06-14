@@ -75,6 +75,7 @@ class RTPSWithRegistrationReader
         std::mutex mutexDiscovery_;
         std::condition_variable cvDiscovery_;
         unsigned int matched_;
+        SequenceNumber_t last_seq;
 };
 
 #endif // _TEST_BLACKBOX_RTPSWITHREGISTRATIONREADER_HPP_
