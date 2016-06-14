@@ -12,6 +12,7 @@
 #ifndef _RTPS_READER_FRAGMENTEDCHANGEPITSTOP_H_
 #define _RTPS_READER_FRAGMENTEDCHANGEPITSTOP_H_
 
+#include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/rtps/common/CacheChange.h>
 
 #include <unordered_set>
@@ -113,7 +114,9 @@ namespace eprosima
 
                 RTPSReader* parent_;
 
-                FragmentedChangePitStop(const FragmentedChangePitStop&) = delete;
+                FragmentedChangePitStop(const FragmentedChangePitStop&) NON_COPYABLE_CXX11;
+
+                FragmentedChangePitStop& operator=(const FragmentedChangePitStop&) NON_COPYABLE_CXX11;
             };
         }
     } // namespace fastrtps
