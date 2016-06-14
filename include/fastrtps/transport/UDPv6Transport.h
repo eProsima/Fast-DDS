@@ -8,6 +8,7 @@
 #include <boost/thread.hpp>
 
 #include "TransportInterface.h"
+#include "UDPv6TransportDescriptor.h"
 #include <vector>
 #include <memory>
 #include <map>
@@ -41,29 +42,7 @@ namespace rtps{
 class UDPv6Transport : public TransportInterface
 {
 public:
-   /**
-    * Transport configuration
-    *
-    * - bufferSize:    length of the buffers used for transmission. Passing
-    *                  a buffer of different size will cause transmission to
-    *                  fail.
-    *
-    * - granularMode:  False: Outbound channel maps to port
-    *                  True:  Outbound channel maps to port + address    
-    *
-    * - interfaceWhiteList: Lists the allowed interfaces.
-    */
-   typedef struct TransportDescriptor: public TransportDescriptorInterface{
-      uint32_t sendBufferSize;
-      uint32_t receiveBufferSize;
-      bool granularMode;
-      std::vector<boost::asio::ip::address_v6> interfaceWhiteList;
-
-      virtual ~TransportDescriptor(){}
-      RTPS_DllAPI TransportDescriptor();
-   } TransportDescriptor;
-
-   RTPS_DllAPI UDPv6Transport(const TransportDescriptor&);
+   RTPS_DllAPI UDPv6Transport(const UDPv6TransportDescriptor&);
    ~UDPv6Transport();
 
    //! Checks whether there are open and bound sockets for the given port.

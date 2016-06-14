@@ -11,7 +11,7 @@ static const uint32_t maximumUDPSocketSize = 65536;
 vector<vector<octet> > test_UDPv4Transport::DropLog;
 uint32_t test_UDPv4Transport::DropLogLength = 0;
 
-test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4Transport::TransportDescriptor& descriptor):
+test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor):
    mDropDataMessagesPercentage(descriptor.dropDataMessagesPercentage),
    mDropDataFragMessagesPercentage(descriptor.dropDataFragMessagesPercentage),
    mDropHeartbeatMessagesPercentage(descriptor.dropHeartbeatMessagesPercentage),
@@ -27,7 +27,7 @@ test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4Transport::TransportDes
    srand(static_cast<unsigned>(time(NULL)));
 }
 
-RTPS_DllAPI test_UDPv4Transport::TransportDescriptor::TransportDescriptor():
+RTPS_DllAPI test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor():
    sendBufferSize(maximumUDPSocketSize),
    receiveBufferSize(maximumUDPSocketSize),
    granularMode(false),

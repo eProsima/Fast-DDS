@@ -26,7 +26,7 @@ class test_UDPv4Tests: public ::testing::Test
    void HELPER_FillAckNackMessage(CDRMessage_t& message);
    void HELPER_FillHeartbeatMessage(CDRMessage_t& message);
 
-   test_UDPv4Transport::TransportDescriptor descriptor;
+   test_UDPv4TransportDescriptor descriptor;
    unique_ptr<boost::thread> senderThread;
    unique_ptr<boost::thread> receiverThread;
 };

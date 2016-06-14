@@ -19,7 +19,7 @@ class UDPv6Tests: public ::testing::Test
 
    void HELPER_SetDescriptorDefaults();
 
-   UDPv6Transport::TransportDescriptor descriptor;
+   UDPv6TransportDescriptor descriptor;
    unique_ptr<boost::thread> senderThread;
    unique_ptr<boost::thread> receiverThread;
 };

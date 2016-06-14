@@ -20,14 +20,10 @@ namespace rtps{
 class NetworkFactory
 {
 public:
-   /**
-    * Allows registration of a transport known at compile time. This method is preferable
-    * for user-defined transports.
-    * @param descriptor Structure that defines all initial configuration for a given transport.
-    */
-   template<typename TransportType> void RegisterTransport(const typename TransportType::TransportDescriptor& descriptor)
+   template<class T, class D>
+   void RegisterTransport(const D& descriptor)
    {
-      mRegisteredTransports.emplace_back(new TransportType(descriptor));
+      mRegisteredTransports.emplace_back(new T(descriptor));
    }
 
    /**

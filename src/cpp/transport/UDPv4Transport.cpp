@@ -16,11 +16,10 @@ namespace rtps{
 static const uint32_t maximumUDPSocketSize = 65536;
 static const char* const CLASS_NAME = "UDPv4Transport";
 
-UDPv4Transport::UDPv4Transport(const TransportDescriptor& descriptor):
+UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
     mSendBufferSize(descriptor.sendBufferSize),
     mReceiveBufferSize(descriptor.receiveBufferSize),
-    mGranularMode(descriptor.granularMode),
-    mInterfaceWhiteList(descriptor.interfaceWhiteList)
+    mGranularMode(descriptor.granularMode)
     {
         auto ioServiceFunction = [&]()
         {
@@ -28,9 +27,12 @@ UDPv4Transport::UDPv4Transport(const TransportDescriptor& descriptor):
             mService.run();
         };
         ioServiceThread.reset(new boost::thread(ioServiceFunction));
+
+        for (const auto& interface : descriptor.interfaceWhiteList)
+           mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
     }
 
-UDPv4Transport::TransportDescriptor::TransportDescriptor():
+UDPv4TransportDescriptor::UDPv4TransportDescriptor():
     sendBufferSize(maximumUDPSocketSize),
     receiveBufferSize(maximumUDPSocketSize),
     granularMode(false)

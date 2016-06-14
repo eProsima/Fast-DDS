@@ -17,11 +17,10 @@ namespace rtps{
 static const uint32_t maximumUDPSocketSize = 65536;
 static const char* const CLASS_NAME = "UDPv6Transport";
 
-UDPv6Transport::UDPv6Transport(const TransportDescriptor& descriptor):
+UDPv6Transport::UDPv6Transport(const UDPv6TransportDescriptor& descriptor):
     mSendBufferSize(descriptor.sendBufferSize),
     mReceiveBufferSize(descriptor.receiveBufferSize),
-    mGranularMode(descriptor.granularMode),
-    mInterfaceWhiteList(descriptor.interfaceWhiteList)
+    mGranularMode(descriptor.granularMode)
     {
         auto ioServiceFunction = [&]()
         {
@@ -29,9 +28,12 @@ UDPv6Transport::UDPv6Transport(const TransportDescriptor& descriptor):
             mService.run();
         };
         ioServiceThread.reset(new boost::thread(ioServiceFunction));
+
+        for (const auto& interface : descriptor.interfaceWhiteList)
+           mInterfaceWhiteList.emplace_back(ip::address_v6::from_string(interface));
     }
 
-UDPv6Transport::TransportDescriptor::TransportDescriptor():
+UDPv6TransportDescriptor::UDPv6TransportDescriptor():
     sendBufferSize(maximumUDPSocketSize),
     receiveBufferSize(maximumUDPSocketSize),
     granularMode(false)
