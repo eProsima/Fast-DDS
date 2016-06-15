@@ -1,4 +1,4 @@
-#include "RTPSExampleReader.h"
+#include "UserDefinedTransportExampleReader.h"
 #include <memory>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 
@@ -19,17 +19,17 @@
     	}
 
 
-	RTPSExampleReader::RTPSExampleReader() : my_participant(nullptr), my_reader(nullptr), initialized_(false)
+	UserDefinedTransportExampleReader::UserDefinedTransportExampleReader() : my_participant(nullptr), my_reader(nullptr), initialized_(false)
         {
         }
 
-        RTPSExampleReader::~RTPSExampleReader()
+        UserDefinedTransportExampleReader::~UserDefinedTransportExampleReader()
         {
                 if(my_participant != nullptr)
 			RTPSDomain::removeRTPSParticipant(my_participant);
         }
 
-        void RTPSExampleReader::init()
+        void UserDefinedTransportExampleReader::init()
         {
 	    //Creation of the participant
 	    auto customTransport = std::make_shared<UDPv4TransportDescriptor>();
@@ -53,9 +53,9 @@
 	    my_participant->registerReader(my_reader,tattr, rqos);            
             initialized_ = true;
         }
-	bool RTPSExampleReader::read(){
+	bool UserDefinedTransportExampleReader::read(){
 	    while(my_listener->n_received < 9){}
 	    return true;
 
 	}
-        bool RTPSExampleReader::isInitialized() { return initialized_; }
+        bool UserDefinedTransportExampleReader::isInitialized() { return initialized_; }

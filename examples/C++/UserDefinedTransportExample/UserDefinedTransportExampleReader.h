@@ -23,13 +23,13 @@ class my_ReaderListener: public ReaderListener
             void onReaderMatched(RTPSReader* reader,MatchingInfo& info);
 };
 
-class RTPSExampleReader
+class UserDefinedTransportExampleReader
 {
     private:
     	my_ReaderListener *my_listener;
     public:
-        RTPSExampleReader();
-        ~RTPSExampleReader();
+        UserDefinedTransportExampleReader();
+        ~UserDefinedTransportExampleReader();
         void init();
         bool isInitialized();
 	bool read();

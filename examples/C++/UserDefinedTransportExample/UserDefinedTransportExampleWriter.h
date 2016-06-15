@@ -24,7 +24,7 @@ class my_WriterListener: public WriterListener
 };
 
 
-class RTPSExampleWriter
+class UserDefinedTransportExampleWriter
 {
 	private:
 
@@ -33,8 +33,8 @@ class RTPSExampleWriter
 	
 	public:
 
-        RTPSExampleWriter();
-        ~RTPSExampleWriter();
+        UserDefinedTransportExampleWriter();
+        ~UserDefinedTransportExampleWriter();
         	
         void init();
         bool isInitialized();

@@ -1,4 +1,4 @@
-#include "RTPSExampleWriter.h"
+#include "UserDefinedTransportExampleWriter.h"
 #include <memory>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 
@@ -12,23 +12,23 @@
 			++n_matched;
 	}
 
-	void RTPSExampleWriter::waitformatching(){
+	void UserDefinedTransportExampleWriter::waitformatching(){
 	   while(my_listener->n_matched == 0){}
 		return;
 	}
    	
 
-	RTPSExampleWriter::RTPSExampleWriter() : my_participant(nullptr), my_writer(nullptr),
+	UserDefinedTransportExampleWriter::UserDefinedTransportExampleWriter() : my_participant(nullptr), my_writer(nullptr),
         initialized_(false)
         {
         }
 
-	RTPSExampleWriter::~RTPSExampleWriter(){
+	UserDefinedTransportExampleWriter::~UserDefinedTransportExampleWriter(){
             if(my_participant != nullptr)
                 RTPSDomain::removeRTPSParticipant(my_participant);
         }
 	
-        void RTPSExampleWriter::init()
+        void UserDefinedTransportExampleWriter::init()
         {
 	    //Creation of the participant
 
@@ -54,10 +54,10 @@
             initialized_ = true;
         }
 
-        bool RTPSExampleWriter::isInitialized() { return initialized_; }
+        bool UserDefinedTransportExampleWriter::isInitialized() { return initialized_; }
 	
 	
-	void RTPSExampleWriter::sendData(){
+	void UserDefinedTransportExampleWriter::sendData(){
 		waitformatching();
 		for(int i=0;i<10;i++){
 			CacheChange_t * ch = my_writer->new_change(ALIVE);

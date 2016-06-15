@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
-project("RTPSLevelExample")
+project("UserDefinedTransportExample")
 
 # Find requirements
 find_package(REQUIRED COMPONENTS thread system chrono regex)
@@ -18,10 +18,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
     endif()
 endif()
 
-message(STATUS "Configuring RTPSLevelExample...")
-file(GLOB RTPSLEVELEXAMPLE_SOURCES_HXX "*.cpp")
+message(STATUS "Configuring UserDefinedTransportExample...")
+file(GLOB USERDEFINEDTRANSPORTEXAMPLE_SOURCES_HXX "*.cpp")
 
-add_executable(RTPSLevelExample ${RTPSLEVELEXAMPLE_SOURCES_HXX})
-target_link_libraries(RTPSLevelExample fastrtps fastcdr)
-install(TARGETS RTPSLevelExample
-	RUNTIME DESTINATION examples/C++/RTPSLevelExample/${BIN_INSTALL_DIR})
+add_executable(UserDefinedTransportExample ${USERDEFINEDTRANSPORTEXAMPLE_SOURCES_HXX})
+target_link_libraries(UserDefinedTransportExample fastrtps fastcdr)
+install(TARGETS UserDefinedTransportExample
+	RUNTIME DESTINATION examples/C++/UserDefinedTransportExample/${BIN_INSTALL_DIR})
