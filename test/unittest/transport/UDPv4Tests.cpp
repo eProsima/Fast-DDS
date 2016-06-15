@@ -238,7 +238,7 @@ TEST_F(UDPv4Tests, in_granular_mode_locators_match_if_port_AND_address_matches)
    IPFinder::getIP4Address(&ips);
 
    // We need enough valid IPs for the test
-   ASSERT_GE(ips.size(), 2);
+   ASSERT_GE(ips.size(), 2u);
    auto it = ips.begin();
    Locator_t locatorAlpha = *(it++);
    Locator_t locatorBeta = locatorAlpha;
@@ -263,7 +263,7 @@ TEST_F(UDPv4Tests, granular_mode_opening_and_closing_output_channel)
    IPFinder::getIP4Address(&ips);
 
    // We need enough valid IPs for the test
-   ASSERT_GE(ips.size(), 2);
+   ASSERT_GE(ips.size(), 2u);
    auto it = ips.begin();
 
    Locator_t outputChannelLocator = *(it++);
