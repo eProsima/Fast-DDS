@@ -3,6 +3,7 @@ find_package(PythonInterp 3 REQUIRED)
 add_test(NAME memory_profiling
     COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/profiling.py)
 
+set_property(TEST memory_profiling PROPERTY LABELS "NoMemoryCheck")
 if(WIN32)
     set_property(TEST memory_profiling PROPERTY ENVIRONMENT
         "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
