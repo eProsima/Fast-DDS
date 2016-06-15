@@ -1,3 +1,17 @@
+# Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 ###############################################################################
 # Set common CPACK variables.
 ###############################################################################
@@ -16,7 +30,7 @@ set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_MINOR_VERSION})
 set(CPACK_PACKAGE_VERSION_PATH ${PROJECT_MICRO_VERSION})
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 
-set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/${PROJECT_NAME_UPPER}_LIBRARY_LICENSE.txt")
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
 
 ###############################################################################
 # Create CMake package config file
