@@ -536,17 +536,15 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
 	std::vector<ReceiverResource> newItemsBuffer;					//Store intermediate results
 	//Iterate through the list of unicast and multicast locators the endpoint has... unless its empty
 	//In that case, just use the standard
-	if (pend->getAttributes()->unicastLocatorList.empty()){
+	if (pend->getAttributes()->unicastLocatorList.empty() && pend->getAttributes()->multicastLocatorList.empty()){
 		//Default unicast
 		pend->getAttributes()->unicastLocatorList = m_att.defaultUnicastLocatorList;
-	}
-	createReceiverResources(pend->getAttributes()->unicastLocatorList, false);
-		
-	if (pend->getAttributes()->multicastLocatorList.empty()){
-		//Default Multicast
+      //Default multicast
 		pend->getAttributes()->multicastLocatorList = m_att.defaultMulticastLocatorList;
 	}
+	createReceiverResources(pend->getAttributes()->unicastLocatorList, false);
 	createReceiverResources(pend->getAttributes()->multicastLocatorList, false);
+
 	// Associate the Endpoint with ReceiverResources inside ReceiverControlBlocks
 	assignEndpointListenResources(pend); 
 	return true;
