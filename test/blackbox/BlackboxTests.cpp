@@ -696,6 +696,9 @@ TEST(BlackBox, PubSubAsReliableData300kb)
     ASSERT_FALSE(writer.isInitialized());
 }
 
+// This test times out / fails on OSX in Debug
+// https://github.com/eProsima/Fast-RTPS/issues/44
+#ifndef __APPLE__
 TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
@@ -733,6 +736,7 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
     print_non_received_messages(data, default_data300kb_print);
     ASSERT_EQ(data.size(), 0);
 }
+#endif
 
 TEST(BlackBox, AsyncPubSubAsReliableData300kb)
 {
