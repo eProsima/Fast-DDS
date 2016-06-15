@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 project("RTPSLevelExample")
 
 # Find requirements
-find_package(Boost REQUIRED COMPONENTS thread system chrono regex)
+find_package(REQUIRED COMPONENTS thread system chrono regex)
 find_package(fastcdr REQUIRED)
 find_package(fastrtps REQUIRED)
 
@@ -22,6 +22,6 @@ message(STATUS "Configuring RTPSLevelExample...")
 file(GLOB RTPSLEVELEXAMPLE_SOURCES_HXX "*.cpp")
 
 add_executable(RTPSLevelExample ${RTPSLEVELEXAMPLE_SOURCES_HXX})
-target_link_libraries(RTPSLevelExample fastrtps fastcdr ${Boost_LIBRARIES})
+target_link_libraries(RTPSLevelExample fastrtps fastcdr)
 install(TARGETS RTPSLevelExample
 	RUNTIME DESTINATION examples/C++/RTPSLevelExample/${BIN_INSTALL_DIR})
