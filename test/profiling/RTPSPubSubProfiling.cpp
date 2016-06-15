@@ -1,6 +1,7 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 #include <fastrtps/rtps/RTPSDomain.h>
+#include <fastrtps/utils/RTPSLog.h>
 #include "types/HelloWorldType.h"
 
 #include <string>
@@ -19,6 +20,7 @@ std::list<HelloWorld> default_helloworld_data_generator();
 
 int main(void)
 {
+   eprosima::Log::setVerbosity(eprosima::LOG_VERBOSITY_LVL::VERB_ERROR);
    const std::string topic_name("Profiling");
    PubSubReader<HelloWorldType> reader(topic_name);
    PubSubWriter<HelloWorldType> writer(topic_name);
