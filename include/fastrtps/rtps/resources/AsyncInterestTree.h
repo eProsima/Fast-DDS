@@ -14,19 +14,19 @@ class AsyncInterestTree
 public:
 
    AsyncInterestTree();
-   /* *
+   /**
     * Registers a writer in a hidden set.
     * Threadsafe thanks to set swap.
     */
    void RegisterInterest(const RTPSWriter*);
 
-   /* *
+   /**
     * Registers all writers from  participant in a hidden set.
     * Threadsafe thanks to set swap.
     */
    void RegisterInterest(const RTPSParticipantImpl*);
 
-   /* *
+   /**
     * Clears the visible set and swaps
     * with the hidden set.
     */

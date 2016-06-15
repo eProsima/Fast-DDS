@@ -20,6 +20,10 @@ namespace rtps{
 class NetworkFactory
 {
 public:
+   /**
+    * Allows registration of a transport statically, by specifying the transport type and
+    * its associated descriptor type. This is particularly useful for user-defined transports.
+    */
    template<class T, class D>
    void RegisterTransport(const D& descriptor)
    {
@@ -51,8 +55,6 @@ public:
     * @param local Locator from which to listen.
     */
    std::vector<ReceiverResource> BuildReceiverResources               (const Locator_t& local);
-
-  
 
 private:
    std::vector<std::unique_ptr<TransportInterface> > mRegisteredTransports;

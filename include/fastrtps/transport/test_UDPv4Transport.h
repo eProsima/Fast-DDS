@@ -13,9 +13,10 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-/* This transport acts as a shim over UDPv4, allowing
- * packets to be dropped under certain criteria. */
-
+/*
+ * This transport acts as a shim over UDPv4, allowing
+ * packets to be dropped under certain criteria.
+ */ 
 class test_UDPv4Transport : public UDPv4Transport
 {
 public:

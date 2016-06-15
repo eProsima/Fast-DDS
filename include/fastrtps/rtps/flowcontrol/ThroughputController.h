@@ -14,6 +14,7 @@ namespace rtps{
  *  -> sizeToClear: Packet size in bytes that this controller will allow in a given
  *     period.
  *  -> refreshTimeMS: Refresh period.
+ * @ingroup NETWORK_MODULE
  */
 struct ThroughputControllerDescriptor {
    uint32_t sizeToClear;

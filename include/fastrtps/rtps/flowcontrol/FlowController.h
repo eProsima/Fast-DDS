@@ -15,10 +15,11 @@ namespace fastrtps{
 namespace rtps{
 
 /**
-* Flow Controllers take a vector of cache changes (by reference) and return a filtered
-* vector, with a collection of changes this filter considers valid for sending, 
-* ordered by its subjective priority.
-* */
+ * Flow Controllers take a vector of cache changes (by reference) and return a filtered
+ * vector, with a collection of changes this filter considers valid for sending, 
+ * ordered by its subjective priority.
+ * @ingroup NETWORK_MODULE.
+ * */
 class FlowController 
 {
 public:

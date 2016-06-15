@@ -21,23 +21,21 @@
 
 #include <fastrtps/rtps/resources/AsyncInterestTree.h>
 
-namespace eprosima
-{
-namespace fastrtps
-{
-namespace rtps
-{
+namespace eprosima{
+namespace fastrtps{
+namespace rtps{
 class RTPSWriter;
 
-/*!
+/**
  * @brief This static class owns a thread that manages asynchronous writes.
  * Asynchronous writes happen directly (when using an async writer) and
  * indirectly (when responding to a NACK).
+ * @ingroup COMMON_MODULE
  */
 class AsyncWriterThread
 {
 public:
-    /*!
+    /**
      * @brief Adds a writer to be managed by this thread.
      * Only asynchronous writers are permitted.
      * @param writer Asynchronous writer to be added. 
@@ -45,20 +43,20 @@ public:
      */
     static bool addWriter(RTPSWriter& writer);
 
-    /*!
+    /**
      * @brief Removes a writer.
      * @param writer Asynchronous writer to be removed.
      * @return Result of the operation.
      */
     static bool removeWriter(RTPSWriter& writer);
 
-    /*
+    /**
      * Wakes the thread up.
      * @param interestedParticipant The participant interested in an async write.
      */
     static void wakeUp(const RTPSParticipantImpl* interestedParticipant);
 
-    /*
+    /**
      * Wakes the thread up.
      * @param interestedParticipant The writer interested in an async write.
      */
