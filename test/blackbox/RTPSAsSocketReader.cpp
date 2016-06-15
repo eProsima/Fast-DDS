@@ -28,7 +28,14 @@
 #include <fastrtps/rtps/history/ReaderHistory.h>
 
 #include <boost/interprocess/detail/os_thread_functions.hpp>
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable:4005)
+#endif  // _MSC_VER
 #include <boost/asio.hpp>
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif  // _MSC_VER
 #include <gtest/gtest.h>
 
 RTPSAsSocketReader::RTPSAsSocketReader(): listener_(*this), lastvalue_(std::numeric_limits<uint16_t>::max()),

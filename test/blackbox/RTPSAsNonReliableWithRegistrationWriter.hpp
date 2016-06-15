@@ -21,7 +21,14 @@
 #define _TEST_BLACKBOX_RTPSASNONRELIABLEWITHREGISTRATIONWRITER_HPP_
 
 #include "RTPSWithRegistrationWriter.hpp" 
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable:4005)
+#endif  // _MSC_VER
 #include <boost/asio.hpp>
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif  // _MSC_VER
 #include <boost/interprocess/detail/os_thread_functions.hpp>
 
 class RTPSAsNonReliableWithRegistrationWriter : public RTPSWithRegistrationWriter

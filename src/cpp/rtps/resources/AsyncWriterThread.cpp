@@ -15,7 +15,14 @@
 #include "AsyncWriterThread.h"
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable:4100)
+#endif  // _MSC_VER
 #include <boost/thread.hpp>
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif  // _MSC_VER
 #include <boost/thread/lock_guard.hpp>
 
 #include <algorithm>
@@ -93,7 +100,7 @@ bool AsyncWriterThread::removeWriter(RTPSWriter* writer)
 
 void AsyncWriterThread::run()
 {
-    do
+    for(; ; )
     {
         try
         {
@@ -117,5 +124,5 @@ void AsyncWriterThread::run()
         {
             return;
         }
-    } while(1);
+    }
 }

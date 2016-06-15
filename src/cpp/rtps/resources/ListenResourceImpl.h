@@ -25,10 +25,24 @@
 #include <fastrtps/rtps/common/Locator.h>
 
 
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable:4005)
+#endif  // _MSC_VER
 #include <boost/asio.hpp>
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif  // _MSC_VER
 #include <boost/asio/ip/udp.hpp>
 
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable:4100)
+#endif  // _MSC_VER
 #include <boost/thread.hpp>
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif  // _MSC_VER
 
 namespace eprosima {
 namespace fastrtps{
