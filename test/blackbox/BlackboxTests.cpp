@@ -1059,7 +1059,7 @@ TEST(BlackBox, PubSubKeepAll)
         // Store number samples sent.
         size_t sent_size = previous_size - data.size();
         // In this test the history has 20 max_samples.
-        ASSERT_LE(sent_size, 20);
+        ASSERT_LE(sent_size, 20u);
         std::this_thread::sleep_for(std::chrono::seconds(2));
         reader.startReception(sent_size);
         // Block reader until reception finished or timeout.
@@ -1118,7 +1118,7 @@ TEST(BlackBox, PubSubKeepAllTransient)
         // Store number samples sent.
         size_t sent_size = previous_size - data.size();
         // In this test the history has 20 max_samples.
-        ASSERT_LE(sent_size, 20);
+        ASSERT_LE(sent_size, 20u);
         std::this_thread::sleep_for(std::chrono::seconds(2));
         reader.startReception(sent_size);
         // Block reader until reception finished or timeout.
