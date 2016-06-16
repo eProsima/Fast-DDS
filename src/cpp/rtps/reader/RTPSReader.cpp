@@ -76,8 +76,8 @@ bool RTPSReader::setListener(ReaderListener *target){
 	//Check if the Reader has an infectable ReaderListener
 	//Add target as slave in case it has
 	//Free the old one and replace it with target if not
-	InfectableReaderListener* readerlistener_cast= nullptr;
-	readerlistener_cast= dynamic_cast<InfectableReaderListener*>(target);
+	CompoundReaderListener* readerlistener_cast= nullptr;
+	readerlistener_cast= dynamic_cast<CompoundReaderListener*>(target);
 	//Host is not Infectable, replace and move on
 	if(readerlistener_cast == nullptr){
 		delete mp_listener;

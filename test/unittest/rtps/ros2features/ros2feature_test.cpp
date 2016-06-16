@@ -92,7 +92,7 @@ TEST(ros2features, EDPSlaveReaderAttachment)
 	ASSERT_NE(my_publisher, nullptr);
 
 	std::pair<StatefulReader*,StatefulReader*> EDP_Readers = my_participant->getEDPReaders();
-	InfectableReaderListener* target = dynamic_cast<InfectableReaderListener*>(EDP_Readers.first->getListener());
+	CompoundReaderListener* target = dynamic_cast<CompoundReaderListener*>(EDP_Readers.first->getListener());
 	result = target->hasReaderAttached();
 	ASSERT_EQ(result,false);
 
@@ -171,7 +171,7 @@ TEST(ros2features, SlaveListenerCallback){
 	ASSERT_NE(my_publisher, nullptr);
 
 	std::pair<StatefulReader*,StatefulReader*> EDP_Readers = my_participant->getEDPReaders();
-	InfectableReaderListener* target = dynamic_cast<InfectableReaderListener*>(EDP_Readers.second->getListener());
+	CompoundReaderListener* target = dynamic_cast<CompoundReaderListener*>(EDP_Readers.second->getListener());
 	target->attachListener(slave_listener);
 	result = target->hasReaderAttached();
 	ASSERT_EQ(result,true);

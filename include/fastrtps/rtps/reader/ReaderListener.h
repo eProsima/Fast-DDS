@@ -51,11 +51,11 @@ public:
 	virtual void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change){(void)reader; (void)change;};
 };
 
-class RTPS_DllAPI InfectableReaderListener: public ReaderListener
+class RTPS_DllAPI CompoundReaderListener: public ReaderListener
 {
 public:
-	InfectableReaderListener():attached_listener(nullptr){};
-	virtual ~InfectableReaderListener(){};
+	CompoundReaderListener():attached_listener(nullptr){};
+	virtual ~CompoundReaderListener(){};
 
 	virtual void onReaderMatched(RTPSReader* /*reader*/, MatchingInfo& /*info*/){};
 	virtual void onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const /*change*/){};

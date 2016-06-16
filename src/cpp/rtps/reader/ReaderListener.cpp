@@ -11,25 +11,25 @@ namespace fastrtps{
 namespace rtps{
 
 
-void InfectableReaderListener::attachListener(ReaderListener *secondary_listener){
+void CompoundReaderListener::attachListener(ReaderListener *secondary_listener){
 	attached_listener_mutex.lock();
 	attached_listener = secondary_listener;
 	attached_listener_mutex.unlock();
 
 }
 
-void InfectableReaderListener::detachListener(){
+void CompoundReaderListener::detachListener(){
 	attached_listener_mutex.lock();
 	attached_listener = nullptr;
 	attached_listener_mutex.unlock();
 }
 
-bool InfectableReaderListener::hasReaderAttached(){
+bool CompoundReaderListener::hasReaderAttached(){
 	if(attached_listener != nullptr)
 		return true;
 	return false;
 }
-ReaderListener* InfectableReaderListener::getAttachedListener(){
+ReaderListener* CompoundReaderListener::getAttachedListener(){
 	if(attached_listener != nullptr)
 		return attached_listener;
 	return nullptr;
