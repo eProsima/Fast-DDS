@@ -92,14 +92,9 @@ TEST(ros2features, EDPSlaveReaderAttachment)
 	ASSERT_NE(my_publisher, nullptr);
 
 	std::pair<StatefulReader*,StatefulReader*> EDP_Readers = my_participant->getEDPReaders();
-	CompoundReaderListener* target = dynamic_cast<CompoundReaderListener*>(EDP_Readers.first->getListener());
-	result = target->hasReaderAttached();
-	ASSERT_EQ(result,false);
-
-	target->attachListener(slave_listener);
-	result = target->hasReaderAttached();
+	//target->attachListener(slave_listener);
+	result = EDP_Readers.first->setListener(slave_listener);
 	ASSERT_EQ(result, true);
-
 
 }
 
@@ -171,15 +166,13 @@ TEST(ros2features, SlaveListenerCallback){
 	ASSERT_NE(my_publisher, nullptr);
 
 	std::pair<StatefulReader*,StatefulReader*> EDP_Readers = my_participant->getEDPReaders();
-	CompoundReaderListener* target = dynamic_cast<CompoundReaderListener*>(EDP_Readers.second->getListener());
-	target->attachListener(slave_listener);
-	result = target->hasReaderAttached();
+	//target->attachListener(slave_listener);
+	result = EDP_Readers.second->setListener(slave_listener);
 	ASSERT_EQ(result,true);
-	slave_target =  dynamic_cast<gettopicnamesandtypesReaderListener*>(target->getAttachedListener());
 
-	slave_target->mapmutex.lock();
-	ASSERT_EQ(slave_target->topicNtypes.size(),0);
-	slave_target->mapmutex.unlock();
+	slave_listener->mapmutex.lock();
+	ASSERT_EQ(slave_listener->topicNtypes.size(),0);
+	slave_listener->mapmutex.unlock();
 
 	Participant *my_participant2;
 	Publisher *my_publisher2;
@@ -198,11 +191,11 @@ TEST(ros2features, SlaveListenerCallback){
 	my_publisher2 = Domain::createPublisher(my_participant2, pub_attr2, &my_dummy_listener2);
 	ASSERT_NE(my_publisher2, nullptr);
 	
-	std::this_thread::sleep_for(std::chrono::seconds(1));
+	std::this_thread::sleep_for(std::chrono::seconds(2));
 	
-	slave_target->mapmutex.lock();
-	ASSERT_EQ(slave_target->topicNtypes.size(),1);
-	slave_target->mapmutex.unlock();
+	slave_listener->mapmutex.lock();
+	ASSERT_EQ(slave_listener->topicNtypes.size(),1);
+	slave_listener->mapmutex.unlock();
 	
 }
 
