@@ -121,8 +121,11 @@ namespace eprosima
                 RTPS_DllAPI ReaderListener* getListener(){ return mp_listener; }
 		/**
 	 	* Switch the ReaderListener kind for the Reader.
-	 	* It is conscious of InfectableReaderListener and attaches
-	 	* the new listener to it in case the Reader has one
+	 	* If the RTPSReader does not belong to the built-in protocols it switches out the old one.
+		* If it belongs to the built-in protocols, it sets the new ReaderListener callbacks to be called after the 
+		* built-in ReaderListener ones.
+	 	* @param target Pointed to RgaderLister to attach
+		* @return True is correctly set.
 	 	* */
 		RTPS_DllAPI bool setListener(ReaderListener* target);
                 /**

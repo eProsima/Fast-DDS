@@ -133,12 +133,15 @@ public:
 	*/
     inline RTPSParticipantListener* getListener(){return mp_participantListener;}
 	
-    //!Get pointers to the StatefulReaders that make the EDP
-std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
-	/**
-	* Get the participant
-	* @return participant
-	*/
+    /**
+     * Get a a pair of pointer to the RTPSReaders used by SimpleEDP for discovery of Publisher and Subscribers
+     * @return std::pair of pointers to StatefulReaders where the first on points to the SubReader and the second to PubReader.
+     */
+    std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
+    /**
+     * Get the participant
+     * @return participant
+     */
     inline RTPSParticipant* getUserRTPSParticipant(){return mp_userParticipant;};
 
     bool assignLocatorForBuiltin_unsafe(LocatorList_t& list, bool isMulti, bool isFixed);
