@@ -715,7 +715,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTra
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(30));
+    data = reader.block(std::chrono::seconds(50));
 
     print_non_received_messages(data, default_data64kb_print);
     ASSERT_EQ(data.size(), 0);
