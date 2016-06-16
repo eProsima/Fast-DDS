@@ -968,7 +968,7 @@ TEST(BlackBox, CacheChangeReleaseTest)
     data = reader.block(std::chrono::seconds(10));
 
     print_non_received_messages(data, default_helloworld_print);
-    ASSERT_LE(data.size(), static_cast<size_t>(50));
+    ASSERT_LE(data.size(), static_cast<size_t>(9));
 }
 // Test created to check bug #1555 (Github #31)
 TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
