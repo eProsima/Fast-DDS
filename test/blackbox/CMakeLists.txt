@@ -18,8 +18,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             types/Data64kbType.cpp
             types/Data1mb.cpp
             types/Data1mbType.cpp
-            RTPSAsSocketReader.cpp
-            RTPSAsSocketWriter.cpp
             RTPSWithRegistrationReader.cpp
             RTPSWithRegistrationWriter.cpp
             ReqRepHelloWorldRequester.cpp

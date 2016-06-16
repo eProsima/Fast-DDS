@@ -93,7 +93,7 @@ public:
 		address[15] = o4;
 		return true;
 	}
-	bool set_IP4_address(std::string& in_address)
+	bool set_IP4_address(const std::string& in_address)
 	{
 		std::stringstream ss(in_address);
 		int a,b,c,d; //to store the 4 ints
