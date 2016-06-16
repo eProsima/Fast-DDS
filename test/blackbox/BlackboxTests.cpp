@@ -774,7 +774,7 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(15));
+    data = reader.block(std::chrono::seconds(20));
 
     print_non_received_messages(data, default_data300kb_print);
     ASSERT_LE(data.size(), data_length - 2);
@@ -816,7 +816,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kb)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(15));
+    data = reader.block(std::chrono::seconds(30));
 
     print_non_received_messages(data, default_data300kb_print);
     ASSERT_EQ(data.size(), 0);
