@@ -25,11 +25,19 @@
 
 #define TEST_TOPIC_NAME std::string(test_info_->test_case_name() + std::string("_") + test_info_->name())
 
+uint32_t global_port = 0;
+
 class BlackboxEnvironment : public ::testing::Environment
 {
     public:
 
-        void SetUp() {}
+        void SetUp()
+        {
+            global_port = boost::interprocess::ipcdetail::get_current_process_id();
+
+            if(global_port + 7400 > global_port)
+                global_port += 7400;
+        }
 
         void TearDown()
         {
@@ -130,14 +138,13 @@ TEST(BlackBox, RTPSAsNonReliableSocket)
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
-    const uint32_t port = 22222;
     
-    reader.add_to_multicast_locator_list(ip, port).init();
+    reader.add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
-        add_to_multicast_locator_list(ip, port).init();
+        add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -164,14 +171,13 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocket)
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
-    const uint32_t port = 22222;
    
-    reader.add_to_multicast_locator_list(ip, port).init();
+    reader.add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
-        add_to_multicast_locator_list(ip, port).
+        add_to_multicast_locator_list(ip, global_port).
         asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -199,16 +205,15 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
-    const uint32_t port = 22222;
     
-    reader.add_to_multicast_locator_list(ip, port).init();
+    reader.add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     uint32_t sizeToClear = 440; // Roughly ten times the size of the payload being sent
     uint32_t refreshTimeMS = 300;
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
-        add_to_multicast_locator_list(ip, port).
+        add_to_multicast_locator_list(ip, global_port).
         asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).
         add_throughput_controller_descriptor_to_pparams(sizeToClear, refreshTimeMS).init();
 
@@ -237,15 +242,14 @@ TEST(BlackBox, RTPSAsReliableSocket)
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
-    const uint32_t port = 7400;
     
     reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
-        add_to_multicast_locator_list(ip, port).init();
+        add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
-        add_to_multicast_locator_list(ip, port).init();
+        add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -273,15 +277,14 @@ TEST(BlackBox, AsyncRTPSAsReliableSocket)
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
-    const uint32_t port = 7400;
     
     reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
-        add_to_multicast_locator_list(ip, port).init();
+        add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
-        add_to_multicast_locator_list(ip, port).
+        add_to_multicast_locator_list(ip, global_port).
         asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -309,10 +312,9 @@ TEST(BlackBox, RTPSAsNonReliableWithRegistration)
 {
     RTPSAsNonReliableWithRegistrationReader reader;
     RTPSAsNonReliableWithRegistrationWriter writer;
-    const uint32_t port = 22222;
     const uint16_t nmsgs = 100;
     
-    reader.init(port, nmsgs);
+    reader.init(global_port, nmsgs);
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -339,10 +341,9 @@ TEST(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
 {
     RTPSAsNonReliableWithRegistrationReader reader;
     RTPSAsNonReliableWithRegistrationWriter writer;
-    const uint32_t port = 22222;
     const uint16_t nmsgs = 100;
     
-    reader.init(port, nmsgs);
+    reader.init(global_port, nmsgs);
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -369,10 +370,9 @@ TEST(BlackBox, RTPSAsReliableWithRegistration)
 {
     RTPSAsReliableWithRegistrationReader reader;
     RTPSAsReliableWithRegistrationWriter writer;
-    const uint32_t port = 7400;
     const uint16_t nmsgs = 100;
     
-    reader.init(port, nmsgs);
+    reader.init(global_port, nmsgs);
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -403,10 +403,9 @@ TEST(BlackBox, AsyncRTPSAsReliableWithRegistration)
 {
     RTPSAsReliableWithRegistrationReader reader;
     RTPSAsReliableWithRegistrationWriter writer;
-    const uint32_t port = 7400;
     const uint16_t nmsgs = 100;
     
-    reader.init(port, nmsgs);
+    reader.init(global_port, nmsgs);
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -773,6 +772,8 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
     uint32_t periodInMs = 50;
 
     writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+        heartbeat_period_seconds(0).
+        heartbeat_period_fraction(4294967 * 500).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs).init();
 

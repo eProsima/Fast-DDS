@@ -96,7 +96,7 @@ class RTPSAsSocketWriter
                 cdr << magicword_;
                 cdr << *it;
 
-                ch->serializedPayload.length = cdr.getSerializedDataLength();
+                ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
 
                 history_->add_change(ch);
                 it = msgs.erase(it);
