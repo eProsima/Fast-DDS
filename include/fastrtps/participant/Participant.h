@@ -15,6 +15,7 @@
 #define PARTICIPANT_H_
 
 #include "../rtps/common/Guid.h"
+#include "../rtps/flowcontrol/FlowController.h"
 
 #include "../rtps/attributes/RTPSParticipantAttributes.h"
 
@@ -56,6 +57,7 @@ public:
 	* @return ParticipantAttributes.
 	*/
 	const ParticipantAttributes& getAttributes();
+
 	/**
 	* Called when using a StaticEndpointDiscovery mechanism different that the one
 	* included in FastRTPS, for example when communicating with other implementations.
@@ -68,6 +70,7 @@ public:
 	*/
 	bool newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t userId,
 		EndpointKind_t kind);
+
 	/**
 	 * This method returns a pointer to the Endpoint Discovery Protocol Readers (when not in Static mode)
 	 * SimpleEDP creates two readers, one for Publisher and one for Subscribers, and they are both returned

@@ -63,7 +63,6 @@ public:
 	std::vector<RTPSWriter*> m_assocWriters;
 	//!List of associated readers
 	std::vector<RTPSReader*> m_assocReaders;
-	
 	/**
 	* Check if the instance has associated endpoints
 	* @return true if the instance has associated endpoints

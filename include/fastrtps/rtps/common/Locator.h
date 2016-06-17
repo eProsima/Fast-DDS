@@ -17,6 +17,9 @@
 #include <sstream>
 #include <vector>
 #include <cstdint>
+#include <cstring>
+#include <iomanip>
+#include <algorithm>
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -48,8 +51,8 @@ public:
 
 	//!Default constructor
 	Locator_t():kind(1),port(0)
-    {
-		LOCATOR_ADDRESS_INVALID(address);
+   {
+      LOCATOR_ADDRESS_INVALID(address);
 	}
 
 	Locator_t(Locator_t&& loc):
@@ -90,7 +93,7 @@ public:
 		address[15] = o4;
 		return true;
 	}
-	bool set_IP4_address(std::string& in_address)
+	bool set_IP4_address(const std::string& in_address)
 	{
 		std::stringstream ss(in_address);
 		int a,b,c,d; //to store the 4 ints
@@ -103,7 +106,7 @@ public:
 		address[15] = (octet)d;
 		return true;
 	}
-	std::string to_IP4_string(){
+	std::string to_IP4_string() const {
 		std::stringstream ss;
 		ss << (int)address[12] << "." << (int)address[13] << "." << (int)address[14]<< "." << (int)address[15];
 		return ss.str();
@@ -121,6 +124,41 @@ public:
 #endif
 
 		return addr;
+	}
+
+	bool set_IP6_address(uint16_t group0, uint16_t group1, uint16_t group2, uint16_t group3, 
+                        uint16_t group4, uint16_t group5, uint16_t group6, uint16_t group7)
+   {
+      address[0]  = (octet) (group0 >> 8);
+      address[1]  = (octet) group0;
+      address[2]  = (octet) (group1 >> 8);
+      address[3]  = (octet) group1;
+      address[4]  = (octet) (group2 >> 8);
+      address[5]  = (octet) group2;
+      address[6]  = (octet) (group3 >> 8);
+      address[7]  = (octet) group3;
+      address[8]  = (octet) (group4 >> 8);
+      address[9]  = (octet) group4;
+      address[10] = (octet) (group5 >> 8);
+      address[11] = (octet) group5;
+      address[12] = (octet) (group6 >> 8);
+      address[13] = (octet) group6;
+      address[14] = (octet) (group7 >> 8);
+      address[15] = (octet) group7;
+		return true;
+	}
+
+	std::string to_IP6_string() const{
+		std::stringstream ss;
+		ss << std::hex;
+      for (int i = 0; i != 14; i+= 2) 
+      {
+         auto field = (address[i] << 8) + address[i+1];
+         ss << field << ":";
+      }
+      auto field = address[14] + (address[15] << 8);
+      ss << field;
+      return ss.str();
 	}
 };
 
@@ -156,7 +194,8 @@ inline bool IsLocatorValid(const Locator_t&loc)
 
 }
 
-inline bool operator==(const Locator_t&loc1,const Locator_t& loc2){
+inline bool operator==(const Locator_t&loc1,const Locator_t& loc2)
+{
 	if(loc1.kind!=loc2.kind)
 		return false;
 	if(loc1.port !=loc2.port)
@@ -242,6 +281,11 @@ public:
 	RTPS_DllAPI bool empty(){
 		return m_locators.empty();
 	}
+
+   RTPS_DllAPI void erase(const Locator_t& loc)
+   {
+      m_locators.erase(std::remove(m_locators.begin(), m_locators.end(), loc), m_locators.end());
+   }
 
 	RTPS_DllAPI bool contains(const Locator_t& loc)
 	{

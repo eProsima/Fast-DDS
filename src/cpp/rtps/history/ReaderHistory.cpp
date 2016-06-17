@@ -39,7 +39,9 @@ inline bool sort_ReaderHistoryCache(CacheChange_t*c1, CacheChange_t*c2)
 ReaderHistory::ReaderHistory(const HistoryAttributes& att):
 						History(att),
 						mp_reader(nullptr),
-						mp_semaphore(new boost::interprocess::interprocess_semaphore(0))
+						mp_semaphore(new boost::interprocess::interprocess_semaphore(0)),
+                  m_cachedRecordLocation(nullptr),
+                  m_cachedGUID()
 
 {
 
@@ -54,6 +56,20 @@ ReaderHistory::~ReaderHistory()
 bool ReaderHistory::received_change(CacheChange_t* change, size_t)
 {
 	return add_change(change);
+}
+
+static void CleanSequentials(std::set<SequenceNumber_t>& set)
+{
+  auto end = set.end();
+  auto set_it = set.begin();
+  if (set_it == end)
+   return;
+
+  while ( next(set_it) != end &&
+         *next(set_it) == (*set_it + 1))
+      set_it++;
+
+   set.erase(set.begin(), set_it);
 }
 
 bool ReaderHistory::add_change(CacheChange_t* a_change)
@@ -76,16 +92,29 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 	{
 		logError(RTPS_HISTORY,"The Writer GUID_t must be defined");
 	}
-	m_historyRecord.insert(std::make_pair(a_change->writerGUID,std::set<SequenceNumber_t>()));
-	if ((m_historyRecord[a_change->writerGUID].insert(a_change->sequenceNumber)).second)
+
+   
+   if (a_change->writerGUID != m_cachedGUID || !m_cachedRecordLocation)
+   {
+      m_cachedRecordLocation = &m_historyRecord[a_change->writerGUID];
+      if (m_cachedRecordLocation->empty())
+         m_cachedRecordLocation->insert(SequenceNumber_t());
+      m_cachedGUID = a_change->writerGUID;
+   }
+
+	if(*m_cachedRecordLocation->begin() < a_change->sequenceNumber && m_cachedRecordLocation->insert(a_change->sequenceNumber).second)
 	{
 		m_changes.push_back(a_change);
         sortCacheChanges();
 		updateMaxMinSeqNum();
 		logInfo(RTPS_HISTORY, "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
+
+      CleanSequentials(*m_cachedRecordLocation);
+
 		return true;
 	}
-	logInfo(RTPS_HISTORY, "Change "<<  a_change->sequenceNumber << " from "<< a_change->writerGUID << " not added.");
+
+    logInfo(RTPS_HISTORY, "Change "<<  a_change->sequenceNumber << " from "<< a_change->writerGUID << " not added.");
 	return false;
 }
 
@@ -157,12 +186,20 @@ void ReaderHistory::waitSemaphore() //TODO CAMBIAR NOMBRE PARA que el usuario se
 
 bool ReaderHistory::thereIsRecordOf(GUID_t& guid, SequenceNumber_t& seq)
 {
-    return m_historyRecord[guid].find(seq) != m_historyRecord[guid].end();
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+   if (guid == m_cachedGUID)
+      return m_cachedRecordLocation->find(seq) != m_cachedRecordLocation->end();
+      
+	return m_historyRecord.find(guid) != m_historyRecord.end() && m_historyRecord[guid].find(seq) != m_historyRecord[guid].end();
 }
 
 bool ReaderHistory::thereIsUpperRecordOf(GUID_t& guid, SequenceNumber_t& seq)
 {
-    return m_historyRecord[guid].upper_bound(seq) != m_historyRecord[guid].end();
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+   if (guid == m_cachedGUID)
+      return m_cachedRecordLocation->upper_bound(seq) != m_cachedRecordLocation->end();
+
+   return m_historyRecord.find(guid) != m_historyRecord.end() && m_historyRecord[guid].upper_bound(seq) != m_historyRecord[guid].end();
 }
 
 }

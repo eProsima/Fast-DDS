@@ -24,6 +24,7 @@
 #include <fastrtps/publisher/PublisherHistory.h>
 
 #include <fastrtps/rtps/writer/WriterListener.h>
+#include <fastrtps/rtps/flowcontrol/FlowController.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -34,8 +35,6 @@ class RTPSParticipant;
 }
 
 using namespace rtps;
-
-
 
 class TopicDataType;
 class PublisherListener;
@@ -120,9 +119,9 @@ public:
 	*/
 	TopicDataType* getType() {return mp_type;};
 
-    bool clean_history(unsigned int max = 0);
+   bool clean_history(unsigned int max = 0);
 
-    bool wait_for_all_acked(const Time_t& max_wait);
+   bool wait_for_all_acked(const Time_t& max_wait);
 
 private:
 	ParticipantImpl* mp_participant;
@@ -149,7 +148,6 @@ private:
 	Publisher* mp_userPublisher;
 
 	RTPSParticipant* mp_rtpsParticipant;
-
 };
 
 

@@ -99,9 +99,12 @@ protected:
 	//!Pointer to the semaphore, used to halt execution until new message arrives.
 	boost::interprocess::interprocess_semaphore* mp_semaphore;
 	//!Information about changes already in History
+private:
 	std::map<GUID_t, std::set<SequenceNumber_t>> m_historyRecord;//TODO sustituir por una clase que sea más efectiva,
 																//que no guarde todos los numeros de secuencia rebidiso sino los que falten
-
+                                                //
+	std::set<SequenceNumber_t>* m_cachedRecordLocation;
+   GUID_t m_cachedGUID;
 };
 
 }

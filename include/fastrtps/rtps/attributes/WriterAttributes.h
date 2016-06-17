@@ -15,6 +15,7 @@
 
 #include "../common/Time_t.h"
 #include "../common/Guid.h"
+#include "../flowcontrol/ThroughputController.h"
 #include "EndpointAttributes.h"
 
 namespace eprosima{
@@ -70,6 +71,9 @@ public:
 	WriterTimes times;
 	//!Indicates if the Writer is synchronous or asynchronous
 	RTPSWriterPublishMode mode;
+   // Size Controllers to be used exclusively by this writer
+   // Terminal throughput controller, always the last one to apply 
+   ThroughputControllerDescriptor terminalThroughputController;
 };
 
 /**

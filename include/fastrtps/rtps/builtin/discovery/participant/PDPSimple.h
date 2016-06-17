@@ -125,7 +125,7 @@ public:
 	 * @param pdata Pointer to pointer of the ParticipantProxyData object.
 	 * @return True if found.
 	 */
-	bool lookupParticipantProxyData(const GUID_t& pguid,ParticipantProxyData** pdata);
+    bool lookupParticipantProxyData(const GUID_t& pguid,ParticipantProxyData** pdata);
 	/**
 	 * This method removes and deletes a ReaderProxyData object from its corresponding RTPSParticipant.
 	 * @param rdata Pointer to the ReaderProxyData object.

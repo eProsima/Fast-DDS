@@ -17,12 +17,8 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-
-
-
-bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg, GuidPrefix_t& guidprefix,
-        const CacheChange_t* change, TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, ParameterList_t* inlineQos)
-{
+bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
+		GuidPrefix_t& guidprefix, const CacheChange_t* change,TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos){
 	const char* const METHOD_NAME = "addMessageData";
 	try{
 

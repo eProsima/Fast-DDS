@@ -23,7 +23,6 @@
 
 #include <boost/interprocess/detail/os_thread_functions.hpp>
 #include <boost/asio.hpp>
-#include <gtest/gtest.h>
 
 RTPSAsSocketReader::RTPSAsSocketReader(): listener_(*this), lastvalue_(std::numeric_limits<uint16_t>::max()),
     participant_(nullptr), reader_(nullptr), history_(nullptr), initialized_(false) 
@@ -47,13 +46,11 @@ void RTPSAsSocketReader::init(std::string &ip, uint32_t port, uint16_t nmsgs)
     pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
     pattr.participantID = 1;
 	participant_ = RTPSDomain::createParticipant(pattr);
-    ASSERT_NE(participant_, nullptr);
 
 	//Create readerhistory
 	HistoryAttributes hattr;
 	hattr.payloadMaxSize = 255;
 	history_ = new ReaderHistory(hattr);
-    ASSERT_NE(history_, nullptr);
 
 	//Create reader
 	ReaderAttributes rattr;
@@ -63,7 +60,6 @@ void RTPSAsSocketReader::init(std::string &ip, uint32_t port, uint16_t nmsgs)
 	rattr.endpoint.multicastLocatorList.push_back(loc);
     configReader(rattr);
 	reader_ = RTPSDomain::createRTPSReader(participant_, rattr, history_, &listener_);
-    ASSERT_NE(reader_, nullptr);
 
 	//Add remote writer (in this case a reader in the same machine)
     GUID_t guid = participant_->getGuid();
@@ -90,7 +86,6 @@ void RTPSAsSocketReader::newNumber(uint16_t number)
 {
     std::unique_lock<std::mutex> lock(mutex_);
     std::list<uint16_t>::iterator it = std::find(msgs_.begin(), msgs_.end(), number);
-    ASSERT_NE(it, msgs_.end());
     if(lastvalue_ == *it)
         cv_.notify_one();
     msgs_.erase(it);
@@ -112,11 +107,8 @@ void RTPSAsSocketReader::block(uint16_t lastvalue, const std::chrono::seconds &s
 
 void RTPSAsSocketReader::Listener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change)
 {
-    ASSERT_NE(reader, nullptr);
-    ASSERT_NE(change, nullptr);
 
 	ReaderHistory *history = reader->getHistory();
-    ASSERT_NE(history, nullptr);
 
     history->remove_change((CacheChange_t*)change);
 

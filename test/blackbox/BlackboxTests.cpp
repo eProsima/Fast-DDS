@@ -2,10 +2,8 @@
 #include "types/Data64kbType.h"
 #include "types/Data1mbType.h"
 
-#include "RTPSAsNonReliableSocketReader.hpp"
-#include "RTPSAsNonReliableSocketWriter.hpp"
-#include "RTPSAsReliableSocketReader.hpp"
-#include "RTPSAsReliableSocketWriter.hpp"
+#include "RTPSAsSocketReader.hpp"
+#include "RTPSAsSocketWriter.hpp"
 #include "RTPSAsNonReliableWithRegistrationReader.hpp"
 #include "RTPSAsNonReliableWithRegistrationWriter.hpp"
 #include "RTPSAsReliableWithRegistrationReader.hpp"
@@ -16,17 +14,30 @@
 #include "PubSubWriter.hpp"
 
 #include <fastrtps/rtps/RTPSDomain.h>
+#include <fastrtps/rtps/flowcontrol/ThroughputController.h>
+#include <fastrtps/transport/UDPv4Transport.h>
+#include <fastrtps/transport/test_UDPv4Transport.h>
+#include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #include <thread>
+#include <memory>
 #include <gtest/gtest.h>
 
 #define TEST_TOPIC_NAME std::string(test_info_->test_case_name() + std::string("_") + test_info_->name())
+
+uint32_t global_port = 0;
 
 class BlackboxEnvironment : public ::testing::Environment
 {
     public:
 
-        void SetUp() {}
+        void SetUp()
+        {
+            global_port = boost::interprocess::ipcdetail::get_current_process_id();
+
+            if(global_port + 7400 > global_port)
+                global_port += 7400;
+        }
 
         void TearDown()
         {
@@ -124,150 +135,186 @@ void print_non_received_messages(const std::list<T>& data, const std::function<v
 
 TEST(BlackBox, RTPSAsNonReliableSocket)
 {
-    RTPSAsNonReliableSocketReader reader;
-    RTPSAsNonReliableSocketWriter writer;
+    RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
-    const uint32_t port = 22222;
-    const uint16_t nmsgs = 100;
     
-    reader.init(ip, port, nmsgs);
+    reader.add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.init(ip, port);
+    writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
+        add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
-    for(unsigned int tries = 0; tries < 20; ++tries)
-    {
-        std::list<uint16_t> msgs = reader.getNonReceivedMessages();
-        if(msgs.empty())
-            break;
+    writer.register_reader();
 
-        writer.send(msgs);
-        reader.block(*msgs.rbegin(), std::chrono::seconds(1));
-    }
+    auto data = default_helloword_data_generator();
+    size_t data_length = data.size();
 
-    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
-    if(msgs.size() != 0)
-    {
-        std::cout << "Samples not received:";
-        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
-            std::cout << " " << *it << " ";
-        std::cout << std::endl;
-    }
-    ASSERT_EQ(msgs.size(), 0);
+    reader.expected_data(data);
+    reader.startReception();
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(3));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_LE(data.size(), data_length - 2);
 }
 
 TEST(BlackBox, AsyncRTPSAsNonReliableSocket)
 {
-    RTPSAsNonReliableSocketReader reader;
-    RTPSAsNonReliableSocketWriter writer;
+    RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
-    const uint32_t port = 22222;
-    const uint16_t nmsgs = 100;
-    
-    reader.init(ip, port, nmsgs);
+   
+    reader.add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.init(ip, port, true);
+    writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
+        add_to_multicast_locator_list(ip, global_port).
+        asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
-    for(unsigned int tries = 0; tries < 20; ++tries)
-    {
-        std::list<uint16_t> msgs = reader.getNonReceivedMessages();
-        if(msgs.empty())
-            break;
+    writer.register_reader();
 
-        writer.send(msgs);
-        reader.block(*msgs.rbegin(), std::chrono::seconds(2));
-    }
+    auto data = default_helloword_data_generator();
+    size_t data_length = data.size();
 
-    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
-    if(msgs.size() != 0)
-    {
-        std::cout << "Samples not received:";
-        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
-            std::cout << " " << *it << " ";
-        std::cout << std::endl;
-    }
-    ASSERT_EQ(msgs.size(), 0);
+    reader.expected_data(data);
+    reader.startReception();
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(3));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_LE(data.size(), data_length - 2);
+}
+
+TEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
+{
+    RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string ip("239.255.1.4");
+    
+    reader.add_to_multicast_locator_list(ip, global_port).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    uint32_t sizeToClear = 440; // Roughly ten times the size of the payload being sent
+    uint32_t refreshTimeMS = 300;
+    writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
+        add_to_multicast_locator_list(ip, global_port).
+        asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).
+        add_throughput_controller_descriptor_to_pparams(sizeToClear, refreshTimeMS).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    writer.register_reader();
+
+    auto data = default_helloword_data_generator();
+    size_t data_length = data.size();
+
+    reader.expected_data(data);
+    reader.startReception();
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(20));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_LE(data.size(), data_length - 2);
 }
 
 TEST(BlackBox, RTPSAsReliableSocket)
 {
-    RTPSAsReliableSocketReader reader;
-    RTPSAsReliableSocketWriter writer;
+    RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
-    const uint32_t port = 7400;
-    const uint16_t nmsgs = 100;
     
-    reader.init(ip, port, nmsgs);
+    reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
+        add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.init(ip, port);
+    writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
+        add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
-    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+    reader.register_writer();
+    writer.register_reader();
 
-    writer.send(msgs);
-    reader.block(*msgs.rbegin(), std::chrono::seconds(5));
+    auto data = default_helloword_data_generator();
+    
+    reader.expected_data(data);
+    reader.startReception();
 
-    msgs = reader.getNonReceivedMessages();
-    if(msgs.size() != 0)
-    {
-        std::cout << "Samples not received:";
-        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
-            std::cout << " " << *it << " ";
-        std::cout << std::endl;
-    }
-    ASSERT_EQ(msgs.size(), 0);
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(5));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_EQ(data.size(), 0);
 }
 
 TEST(BlackBox, AsyncRTPSAsReliableSocket)
 {
-    RTPSAsReliableSocketReader reader;
-    RTPSAsReliableSocketWriter writer;
+    RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
-    const uint32_t port = 7400;
-    const uint16_t nmsgs = 100;
     
-    reader.init(ip, port, nmsgs);
+    reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
+        add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.init(ip, port, true);
+    writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
+        add_to_multicast_locator_list(ip, global_port).
+        asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
-    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+    reader.register_writer();
+    writer.register_reader();
 
-    writer.send(msgs);
-    reader.block(*msgs.rbegin(), std::chrono::seconds(5));
+    auto data = default_helloword_data_generator();
+    
+    reader.expected_data(data);
+    reader.startReception();
 
-    msgs = reader.getNonReceivedMessages();
-    if(msgs.size() != 0)
-    {
-        std::cout << "Samples not received:";
-        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
-            std::cout << " " << *it << " ";
-        std::cout << std::endl;
-    }
-    ASSERT_EQ(msgs.size(), 0);
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(5));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_EQ(data.size(), 0);
 }
 
 TEST(BlackBox, RTPSAsNonReliableWithRegistration)
 {
     RTPSAsNonReliableWithRegistrationReader reader;
     RTPSAsNonReliableWithRegistrationWriter writer;
-    const uint32_t port = 22222;
     const uint16_t nmsgs = 100;
     
-    reader.init(port, nmsgs);
+    reader.init(global_port, nmsgs);
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -275,15 +322,9 @@ TEST(BlackBox, RTPSAsNonReliableWithRegistration)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    for(unsigned int tries = 0; tries < 20; ++tries)
-    {
-        std::list<uint16_t> msgs = reader.getNonReceivedMessages();
-        if(msgs.empty())
-            break;
-
-        writer.send(msgs);
-        reader.block(*msgs.rbegin(), std::chrono::seconds(1));
-    }
+    std::list<uint16_t> nonReceivedMessages = reader.getNonReceivedMessages();
+    writer.send(nonReceivedMessages);
+    reader.block(*nonReceivedMessages.rbegin(), std::chrono::seconds(3));
 
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
     if(msgs.size() != 0)
@@ -293,17 +334,16 @@ TEST(BlackBox, RTPSAsNonReliableWithRegistration)
             std::cout << " " << *it << " ";
         std::cout << std::endl;
     }
-    ASSERT_EQ(msgs.size(), 0);
+    ASSERT_LE(msgs.size(), static_cast<size_t>(nmsgs - 2));
 }
 
 TEST(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
 {
     RTPSAsNonReliableWithRegistrationReader reader;
     RTPSAsNonReliableWithRegistrationWriter writer;
-    const uint32_t port = 22222;
     const uint16_t nmsgs = 100;
     
-    reader.init(port, nmsgs);
+    reader.init(global_port, nmsgs);
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -311,15 +351,9 @@ TEST(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    for(unsigned int tries = 0; tries < 20; ++tries)
-    {
-        std::list<uint16_t> msgs = reader.getNonReceivedMessages();
-        if(msgs.empty())
-            break;
-
-        writer.send(msgs);
-        reader.block(*msgs.rbegin(), std::chrono::seconds(2));
-    }
+    std::list<uint16_t> nonReceivedMessages = reader.getNonReceivedMessages();
+    writer.send(nonReceivedMessages);
+    reader.block(*nonReceivedMessages.rbegin(), std::chrono::seconds(3));
 
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
     if(msgs.size() != 0)
@@ -329,17 +363,16 @@ TEST(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
             std::cout << " " << *it << " ";
         std::cout << std::endl;
     }
-    ASSERT_EQ(msgs.size(), 0);
+    ASSERT_LE(msgs.size(), static_cast<size_t>(nmsgs - 2));
 }
 
 TEST(BlackBox, RTPSAsReliableWithRegistration)
 {
     RTPSAsReliableWithRegistrationReader reader;
     RTPSAsReliableWithRegistrationWriter writer;
-    const uint32_t port = 7400;
     const uint16_t nmsgs = 100;
     
-    reader.init(port, nmsgs);
+    reader.init(global_port, nmsgs);
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -370,10 +403,9 @@ TEST(BlackBox, AsyncRTPSAsReliableWithRegistration)
 {
     RTPSAsReliableWithRegistrationReader reader;
     RTPSAsReliableWithRegistrationWriter writer;
-    const uint32_t port = 7400;
     const uint16_t nmsgs = 100;
     
-    reader.init(port, nmsgs);
+    reader.init(global_port, nmsgs);
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -418,22 +450,19 @@ TEST(BlackBox, PubSubAsNonReliableHelloworld)
     reader.waitDiscovery();
 
     auto data = default_helloword_data_generator();
+    size_t data_length = data.size();
     
     reader.expected_data(data);
     reader.startReception();
-
-    for(unsigned int tries = 0; tries < 3 && !data.empty(); ++tries)
-    {
-        // Send data
-        writer.send(data);
-        // In this test all data should be sent.
-        ASSERT_TRUE(data.empty());
-        // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(1));
-    }
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(3));
 
     print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    ASSERT_LE(data.size(), data_length - 2);
 }
 
 TEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
@@ -455,22 +484,19 @@ TEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
     reader.waitDiscovery();
 
     auto data = default_helloword_data_generator();
+    size_t data_length = data.size();
     
     reader.expected_data(data);
     reader.startReception();
-
-    for(unsigned int tries = 0; tries < 3 && !data.empty(); ++tries)
-    {
-        // Send data
-        writer.send(data);
-        // In this test all data should be sent.
-        ASSERT_TRUE(data.empty());
-        // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(20));
-    }
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(3));
 
     print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    ASSERT_LE(data.size(), data_length - 2);
 }
 
 TEST(BlackBox, PubSubAsReliableHelloworld)
@@ -535,7 +561,7 @@ TEST(BlackBox, AsyncPubSubAsReliableHelloworld)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(20));
+    data = reader.block(std::chrono::seconds(30));
 
     print_non_received_messages(data, default_helloworld_print);
     ASSERT_EQ(data.size(), 0);
@@ -622,13 +648,13 @@ TEST(BlackBox, PubSubAsReliableData64kb)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(20));
+    data = reader.block(std::chrono::seconds(30));
 
     print_non_received_messages(data, default_data64kb_print);
     ASSERT_EQ(data.size(), 0);
 }
 
-TEST(BlackBox, AsyncPubSubAsReliableData64kb)
+TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
 {
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
@@ -636,6 +662,10 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kb)
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
+
+    uint32_t sizeToClear = 68000;
+    uint32_t periodInMs = 500;
+    writer.add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs);
 
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
@@ -658,7 +688,52 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kb)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(20));
+    data = reader.block(std::chrono::seconds(30));
+
+    print_non_received_messages(data, default_data64kb_print);
+    ASSERT_EQ(data.size(), 0);
+}
+
+TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTransport)
+{
+    PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
+    
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    uint32_t sizeToClear = 300000;
+    uint32_t periodInMs = 500;
+    writer.add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs);
+
+    auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
+    testTransport->granularMode = true;
+    writer.disable_builtin_transport();
+    writer.add_user_transport_to_pparams(testTransport);
+
+    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        heartbeat_period_seconds(0).
+        heartbeat_period_fraction(4294967 * 500).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_data64kb_data_generator(30);
+    
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(50));
 
     print_non_received_messages(data, default_data64kb_print);
     ASSERT_EQ(data.size(), 0);
@@ -690,9 +765,59 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
     reader.init();
 
     ASSERT_TRUE(reader.isInitialized());
+	
+    // When doing fragmentation, it is necessary to have some degree of
+    // flow control not to overrun the receive buffer.
+    uint32_t sizeToClear = 65536;
+    uint32_t periodInMs = 50;
 
     writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+        heartbeat_period_seconds(0).
+        heartbeat_period_fraction(4294967 * 500).
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_data300kb_data_generator(30);
+    size_t data_length = data.size();
+    
+    reader.expected_data(data);
+    reader.startReception();
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(20));
+
+    print_non_received_messages(data, default_data300kb_print);
+    ASSERT_LE(data.size(), data_length - 2);
+}
+
+TEST(BlackBox, AsyncPubSubAsReliableData300kb)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+    
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+	// When doing fragmentation, it is necessary to have some degree of
+	// flow control not to overrun the receive buffer.
+	uint32_t sizeToClear = 65536;
+	uint32_t periodInMs = 50;
+
+    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        heartbeat_period_seconds(0).
+        heartbeat_period_fraction(4294967 * 500).
+        add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -706,21 +831,18 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
     reader.expected_data(data);
     reader.startReception();
 
-    for(unsigned int tries = 0; tries < 10 && !data.empty(); ++tries)
-    {
-        // Send data
-        writer.send(data);
-        // In this test all data should be sent.
-        ASSERT_TRUE(data.empty());
-        // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(40));
-    }
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(30));
 
     print_non_received_messages(data, default_data300kb_print);
     ASSERT_EQ(data.size(), 0);
 }
 
-TEST(BlackBox, AsyncPubSubAsReliableData300kb)
+TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -728,6 +850,24 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kb)
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
+
+	// When doing fragmentation, it is necessary to have some degree of
+	// flow control not to overrun the receive buffer.
+	uint32_t sizeToClear = 300000;
+	uint32_t periodInMs = 200;
+	writer.add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs);
+
+   // To simulate lossy conditions, we are going to remove the default
+   // bultin transport, and instead use a lossy shim layer variant.
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->sendBufferSize = 65536;
+    testTransport->receiveBufferSize = 65536;
+    testTransport->granularMode = false;
+    // We drop 20% of all data frags
+    testTransport->dropDataFragMessagesPercentage = 20;
+    testTransport->dropLogLength = 10;
+    writer.disable_builtin_transport();
+    writer.add_user_transport_to_pparams(testTransport);
 
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
@@ -750,10 +890,13 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kb)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(20));
+    data = reader.block(std::chrono::seconds(30));
 
     print_non_received_messages(data, default_data300kb_print);
     ASSERT_EQ(data.size(), 0);
+
+    // Sanity check. Make sure we have dropped a few packets
+    ASSERT_EQ(test_UDPv4Transport::DropLog.size(), testTransport->dropLogLength);
 }
 
 // Test created to check bug #1568 (Github #34)
@@ -799,12 +942,54 @@ TEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
         ASSERT_EQ(previous_size - data.size(), 2);
     }
     // To send 10 samples needs at least five tries.
-    ASSERT_GE(tries, 5);
+    ASSERT_GE(tries, 5u);
 
     print_non_received_messages(data, default_helloworld_print);
     ASSERT_EQ(data.size(), 0);
 }
+//Test created to deal with Issue 39 on Github
+TEST(BlackBox, CacheChangeReleaseTest)
+{
+	PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+	PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
+	//Reader Config
+	reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS);
+	reader.history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS);
+	reader.history_depth(1);
+	reader.resource_limits_max_samples(1);
+	reader.allocated_samples(5);
+	reader.heartbeatPeriod(0,4294967 * 50);
+	reader.init();
+	ASSERT_TRUE(reader.isInitialized());
+
+	writer.heartbeat_period_seconds(0).heartbeat_period_fraction(4294967*100);
+	writer.resource_limits_max_samples(1);
+	writer.history_kind(KEEP_LAST_HISTORY_QOS);
+	writer.history_depth(1);
+	writer.reliability(BEST_EFFORT_RELIABILITY_QOS);
+	writer.allocated_samples(50);	
+	writer.init();
+	ASSERT_TRUE(writer.isInitialized());
+
+
+	// Because its volatile the durability
+	// Wait for discovery.
+	writer.waitDiscovery();
+	reader.waitDiscovery();
+
+	auto data = default_helloword_data_generator(60);
+    
+	reader.expected_data(data);
+	reader.startReception();
+
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+    data = reader.block(std::chrono::seconds(10));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_LE(data.size(), static_cast<size_t>(9));
+}
 // Test created to check bug #1555 (Github #31)
 TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
 {
@@ -894,7 +1079,7 @@ TEST(BlackBox, PubSubKeepAll)
         // Store number samples sent.
         size_t sent_size = previous_size - data.size();
         // In this test the history has 20 max_samples.
-        ASSERT_LE(sent_size, 20);
+        ASSERT_LE(sent_size, 20u);
         std::this_thread::sleep_for(std::chrono::seconds(2));
         reader.startReception(sent_size);
         // Block reader until reception finished or timeout.
@@ -953,7 +1138,7 @@ TEST(BlackBox, PubSubKeepAllTransient)
         // Store number samples sent.
         size_t sent_size = previous_size - data.size();
         // In this test the history has 20 max_samples.
-        ASSERT_LE(sent_size, 20);
+        ASSERT_LE(sent_size, 20u);
         std::this_thread::sleep_for(std::chrono::seconds(2));
         reader.startReception(sent_size);
         // Block reader until reception finished or timeout.

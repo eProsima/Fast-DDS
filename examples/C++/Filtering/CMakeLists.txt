@@ -21,7 +21,7 @@ message(STATUS "Configuring Filtering example...")
 file(GLOB DEADLINEQOS_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(FilteringExample ${DEADLINEQOS_EXAMPLE_SOURCES})
-target_include_directories(FilteringExample PRIVATE ${Boost_INCLUDE_DIR})
+target_include_directories(FilteringExample PRIVATE)
 target_link_libraries(FilteringExample fastrtps fastcdr ${Boost_LIBRARIES})
 install(TARGETS FilteringExample
     RUNTIME DESTINATION examples/C++/FilteringExample/${BIN_INSTALL_DIR}

@@ -15,6 +15,8 @@
 #define RTPSParticipant_H_
 
 #include <cstdlib>
+#include <memory>
+#include "../flowcontrol/FlowController.h"
 #include "../../fastrtps_dll.h"
 #include "../common/Guid.h"
 #include <fastrtps/rtps/reader/StatefulReader.h>
@@ -114,6 +116,9 @@ public:
 	bool updateReader(RTPSReader* Reader,ReaderQos& rqos);
 
 	std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
+
+    void add_flow_filter(std::unique_ptr<FlowController> filter);
+
 private:
 	//!Pointer to the implementation.
 	RTPSParticipantImpl* mp_impl;

@@ -17,13 +17,19 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "../common/all_common.h"
 #include "../../qos/ParameterList.h"
+#include <fastrtps/rtps/writer/StatelessWriter.h>
+#include <fastrtps/rtps/writer/StatefulWriter.h>
+
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/thread.hpp>
 
 using namespace eprosima::fastrtps;
-
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
+class RTPSWriter;
+class RTPSReader;
 class ListenResource;
 struct SubmessageHeader_t;
 
@@ -37,9 +43,17 @@ public:
 	* @param rec_buffer_size
 	*/
 	MessageReceiver(uint32_t rec_buffer_size);
+	MessageReceiver();
 	virtual ~MessageReceiver();
 	//!Reset the MessageReceiver to process a new message.
 	void reset();
+	/** Init MessageReceiver. Does what the constructor used to do.
+	    This is now on an independent function since MessageReceiver now stands inside
+	    a struct.
+	    @param rec_buffer_size
+         **/
+	void init(uint32_t rec_buffer_size);
+
 	/**
 	 * Process a new CDR message.
 	 * @param[in] RTPSParticipantguidprefix RTPSParticipant Guid Prefix
@@ -49,15 +63,20 @@ public:
 	void processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,Locator_t* loc, CDRMessage_t*msg);
 
 	//!Pointer to the Listen Resource that contains this MessageReceiver.
-	ListenResource* mp_threadListen;
+
 	//!Received message
 	CDRMessage_t m_rec_msg;
 	//!PArameter list
 	ParameterList_t m_ParamList;
-
-
+	// Functions to associate/remove associatedendpoints
+	void associateEndpoint(Endpoint *to_add);
+	void removeEndpoint(Endpoint *to_remove);
 
 private:
+	std::vector<RTPSWriter *> AssociatedWriters;
+	std::vector<RTPSReader *> AssociatedReaders;
+	boost::mutex mtx;
+	//ReceiverControlBlock* receiver_resources;
 	CacheChange_t* mp_change;
 	//!Protocol version of the message
 	ProtocolVersion_t sourceVersion;
