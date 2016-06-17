@@ -74,8 +74,13 @@ void RTPSReader::releaseCache(CacheChange_t* change)
 
 bool RTPSReader::setListener(ReaderListener *target){
 	CompoundReaderListener* readerlistener_cast = dynamic_cast<CompoundReaderListener*>(mp_listener);
-	//Host is not Infectable, replace and move on
+	//Host is not of compound type, replace and move on
 	if(readerlistener_cast == nullptr){
+		//Not a valid cast, replace base listener
+		if(mp_listener == nullptr){
+			mp_listener = target;
+			return true;
+		}	
 		return false;
 	}else{
 		//If we arrive here it means mp_listener is Infectable
