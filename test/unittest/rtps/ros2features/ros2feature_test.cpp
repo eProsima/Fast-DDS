@@ -54,6 +54,7 @@ class gettopicnamesandtypesReaderListener:public ReaderListener
 	std::mutex mapmutex;
 	std::map<std::string,std::set<std::string>> topicNtypes;
 	void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in){
+      (void)reader;
 		CacheChange_t* change = (CacheChange_t*) change_in;
 		if(change->kind == ALIVE){
 			WriterProxyData proxyData;
