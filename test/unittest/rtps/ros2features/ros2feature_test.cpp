@@ -68,6 +68,7 @@ class gettopicnamesandtypesReaderListener:public ReaderListener
 	std::mutex mapmutex;
 	std::map<std::string,std::set<std::string>> topicNtypes;
 	void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in){
+      (void)reader;
 		CacheChange_t* change = (CacheChange_t*) change_in;
 		if(change->kind == ALIVE){
 			WriterProxyData proxyData;
@@ -92,7 +93,7 @@ TEST(ros2features, EDPSlaveReaderAttachment)
 	PublisherAttributes pub_attr;
 	HelloWorldType my_type;
 	pub_dummy_listener my_dummy_listener;
-	ReaderListener *slave_listener = new(ReaderListener);
+	ReaderListener slave_listener;
 	bool result;	
 	p_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
 	my_participant = Domain::createParticipant(p_attr);
@@ -107,9 +108,10 @@ TEST(ros2features, EDPSlaveReaderAttachment)
 
 	std::pair<StatefulReader*,StatefulReader*> EDP_Readers = my_participant->getEDPReaders();
 	//target->attachListener(slave_listener);
-	result = EDP_Readers.first->setListener(slave_listener);
+	result = EDP_Readers.first->setListener(&slave_listener);
 	ASSERT_EQ(result, true);
-
+	EDP_Readers.first->setListener(nullptr);
+	eprosima::fastrtps::Domain::removeParticipant(my_participant);
 }
 
 TEST(ros2features, PubSubPoll)
@@ -156,7 +158,7 @@ TEST(ros2features, PubSubPoll)
 		//Poll no.Subs
 		ASSERT_EQ(my_participant->get_no_subscribers(cstr),i+1);
 	}
-
+	eprosima::fastrtps::Domain::removeParticipant(my_participant);
 }
 TEST(ros2features, SlaveListenerCallback){
 	Participant *my_participant;
@@ -165,8 +167,7 @@ TEST(ros2features, SlaveListenerCallback){
 	PublisherAttributes pub_attr;
 	HelloWorldType my_type;
 	pub_dummy_listener my_dummy_listener;
-	gettopicnamesandtypesReaderListener* slave_listener = new(gettopicnamesandtypesReaderListener);
-	gettopicnamesandtypesReaderListener* slave_target;
+	gettopicnamesandtypesReaderListener slave_listener;
 	bool result;	
 	p_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230 + 35;
 	my_participant = Domain::createParticipant(p_attr);
@@ -180,13 +181,12 @@ TEST(ros2features, SlaveListenerCallback){
 	ASSERT_NE(my_publisher, nullptr);
 
 	std::pair<StatefulReader*,StatefulReader*> EDP_Readers = my_participant->getEDPReaders();
-	//target->attachListener(slave_listener);
-	result = EDP_Readers.second->setListener(slave_listener);
+	result = EDP_Readers.second->setListener(&slave_listener);
 	ASSERT_EQ(result,true);
 
-	slave_listener->mapmutex.lock();
-	ASSERT_EQ(slave_listener->topicNtypes.size(),0);
-	slave_listener->mapmutex.unlock();
+	slave_listener.mapmutex.lock();
+	ASSERT_EQ(slave_listener.topicNtypes.size(),0);
+	slave_listener.mapmutex.unlock();
 
 	Participant *my_participant2;
 	Publisher *my_publisher2;
@@ -207,14 +207,18 @@ TEST(ros2features, SlaveListenerCallback){
 	
 	std::this_thread::sleep_for(std::chrono::seconds(2));
 	
-	slave_listener->mapmutex.lock();
-	ASSERT_EQ(slave_listener->topicNtypes.size(),1);
-	slave_listener->mapmutex.unlock();
-	
+	slave_listener.mapmutex.lock();
+	ASSERT_EQ(slave_listener.topicNtypes.size(),1);
+	slave_listener.mapmutex.unlock();
+	EDP_Readers.second->setListener(nullptr);
+
+	eprosima::fastrtps::Domain::removeParticipant(my_participant);
+	eprosima::fastrtps::Domain::removeParticipant(my_participant2);
 }
 
 int main(int argc, char **argv)
 {
 	testing::InitGoogleTest(&argc, argv);
+	eprosima::Log::setVerbosity(eprosima::LOG_VERBOSITY_LVL::VERB_ERROR);
 	return RUN_ALL_TESTS();
 }

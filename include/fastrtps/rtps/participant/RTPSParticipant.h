@@ -123,8 +123,6 @@ public:
 
 	std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 
-    void add_flow_filter(std::unique_ptr<FlowController> filter);
-
 private:
 	//!Pointer to the implementation.
 	RTPSParticipantImpl* mp_impl;

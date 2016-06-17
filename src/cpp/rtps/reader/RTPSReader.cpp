@@ -80,12 +80,7 @@ void RTPSReader::releaseCache(CacheChange_t* change)
 }
 
 ReaderListener* RTPSReader::getListener(){
-	CompoundReaderListener* readerlistener_cast = dynamic_cast<CompoundReaderListener*>(mp_listener);
-	if(readerlistener_cast == nullptr){
-		return mp_listener;
-	}else{
-		return readerlistener_cast->getAttachedListener();
-	}
+	return mp_listener;
 }
 
 bool RTPSReader::setListener(ReaderListener *target){
