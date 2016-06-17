@@ -119,6 +119,7 @@ namespace eprosima
                  * @return Pointer to the associated reader listener.
                  */
                 RTPS_DllAPI ReaderListener* getListener();
+		RTPS_DllAPI ReaderListener* getListener_compound();		
 		/**
 	 	* Switch the ReaderListener kind for the Reader.
 	 	* If the RTPSReader does not belong to the built-in protocols it switches out the old one.
