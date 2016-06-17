@@ -12,7 +12,7 @@
  */
 
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
+#include "EDPSimpleListeners.h"
 
 
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>

@@ -115,10 +115,10 @@ namespace eprosima
                 RTPS_DllAPI virtual bool change_removed_by_history(CacheChange_t* change, WriterProxy* prox = nullptr) = 0;
 
                 /**
-                 * Get the associated listener.
+                 * Get the associated listener, secondary attached Listener in case it is of coumpound type
                  * @return Pointer to the associated reader listener.
                  */
-                RTPS_DllAPI ReaderListener* getListener(){ return mp_listener; }
+                RTPS_DllAPI ReaderListener* getListener();
 		/**
 	 	* Switch the ReaderListener kind for the Reader.
 	 	* If the RTPSReader does not belong to the built-in protocols it switches out the old one.

@@ -11,7 +11,7 @@
  *
  */
 
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
+#include "EDPSimpleListeners.h"
 
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>

@@ -4,7 +4,7 @@ Implementation of functions for InfectableReaderListener
 
 *********/
 
-#include <fastrtps/rtps/reader/ReaderListener.h>
+#include "CompoundReaderListener.h"
 
 namespace eprosima{
 namespace fastrtps{

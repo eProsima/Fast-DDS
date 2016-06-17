@@ -14,10 +14,12 @@
 #ifndef EDPSIMPLELISTENER_H_
 #define EDPSIMPLELISTENER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "../../../reader/ReaderListener.h"
+
+#include <fastrtps/rtps/reader/ReaderListener.h>
+#include "../../../reader/CompoundReaderListener.h"
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class EDPSimple;
