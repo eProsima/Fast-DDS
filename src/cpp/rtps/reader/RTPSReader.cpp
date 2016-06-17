@@ -77,16 +77,6 @@ ReaderListener* RTPSReader::getListener(){
 	return mp_listener;
 }
 
-ReaderListener* RTPSReader::getListener_compound(){
-	CompoundReaderListener* readerlistener_cast = dynamic_cast<CompoundReaderListener*>(mp_listener);
-	if(readerlistener_cast == nullptr){
-		return mp_listener;
-	}else{
-		if(readerlistener_cast->getAttachedListener() == nullptr)
-			return mp_listener;
-		return readerlistener_cast->getAttachedListener();
-	}
-}
 bool RTPSReader::setListener(ReaderListener *target){
 	CompoundReaderListener* readerlistener_cast = dynamic_cast<CompoundReaderListener*>(mp_listener);
 	//Host is not of compound type, replace and move on
