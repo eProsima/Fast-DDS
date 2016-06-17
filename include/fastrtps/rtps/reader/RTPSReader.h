@@ -124,7 +124,7 @@ namespace eprosima
 	 	* If the RTPSReader does not belong to the built-in protocols it switches out the old one.
 		* If it belongs to the built-in protocols, it sets the new ReaderListener callbacks to be called after the 
 		* built-in ReaderListener ones.
-	 	* @param target Pointed to RgaderLister to attach
+	 	* @param target Pointed to ReaderLister to attach
 		* @return True is correctly set.
 	 	* */
 		RTPS_DllAPI bool setListener(ReaderListener* target);
