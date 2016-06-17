@@ -3,6 +3,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     check_gtest()
 	
     if(GTEST_FOUND)
+        if(WIN32)
+            add_definitions(-D_WIN32_WINNT=0x0601)
+        endif()
+
         set(UDPV4TESTS_SOURCE 
             UDPv4Tests.cpp 
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
@@ -41,7 +45,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 				${Boost_LIBRARIES} iphlpapi Shlwapi
 				)
 		endif()
-		
+
         add_executable(UDPv6Tests ${UDPV6TESTS_SOURCE})
         add_gtest(UDPv6Tests ${UDPV6TESTS_SOURCE})
         target_compile_definitions(UDPv6Tests PRIVATE FASTRTPS_NO_LIB BOOST_ALL_DYN_LINK)

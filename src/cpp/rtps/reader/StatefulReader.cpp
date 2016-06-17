@@ -420,7 +420,12 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
                                 lock.lock();
                             }
                         }
-                        notifySeqNum++;
+                        ++notifySeqNum;
+
+                        writerProxyLock.lock();
+                        maxSeqNumAvailable = prox->available_changes_max();
+                        GUID_t proxGUID = prox->m_att.guid;
+                        writerProxyLock.unlock();
                     }
                 }
                 else

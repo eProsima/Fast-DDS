@@ -16,6 +16,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
+#include <fastrtps/rtps/flowcontrol/FlowController.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 
 namespace eprosima{

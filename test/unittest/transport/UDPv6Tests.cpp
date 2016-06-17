@@ -7,6 +7,8 @@ using namespace std;
 using namespace eprosima::fastrtps::rtps;
 using namespace boost::interprocess;
 
+const uint32_t ReceiveBufferCapacity = 65536;
+
 class UDPv6Tests: public ::testing::Test 
 {
    public:
@@ -17,7 +19,7 @@ class UDPv6Tests: public ::testing::Test
 
    void HELPER_SetDescriptorDefaults();
 
-   UDPv6Transport::TransportDescriptor descriptor;
+   UDPv6TransportDescriptor descriptor;
    unique_ptr<boost::thread> senderThread;
    unique_ptr<boost::thread> receiverThread;
 };
@@ -114,22 +116,23 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
    outputChannelLocator.kind = LOCATOR_KIND_UDPv6;
    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
    ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator));
-   vector<octet> message = { 'H','e','l','l','o' };
+   octet message[5] = { 'H','e','l','l','o' };
 
    auto sendThreadFunction = [&]()
    {
       Locator_t destinationLocator;
       destinationLocator.port = 7410;
       destinationLocator.kind = LOCATOR_KIND_UDPv6;
-      EXPECT_TRUE(transportUnderTest.Send(message.data(), message.size(), outputChannelLocator, multicastLocator));
+      EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
    };
 
    auto receiveThreadFunction = [&]() 
    {
-      vector<octet> receiveBuffer(descriptor.receiveBufferSize);
+      octet receiveBuffer[ReceiveBufferCapacity];
+      uint32_t receiveBufferSize;
       Locator_t remoteLocatorToReceive;
-      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, multicastLocator, remoteLocatorToReceive));
-      EXPECT_EQ(message, receiveBuffer);
+      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, ReceiveBufferCapacity, receiveBufferSize, multicastLocator, remoteLocatorToReceive));
+      EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
    };
 
    receiverThread.reset(new boost::thread(receiveThreadFunction));      
@@ -153,22 +156,24 @@ TEST_F(UDPv6Tests, send_to_loopback)
    outputChannelLocator.set_IP6_address(0,0,0,0,0,0,0,1); // Loopback
    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
    ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator));
-   vector<octet> message = { 'H','e','l','l','o' };
+   octet message[5] = { 'H','e','l','l','o' };
 
    auto sendThreadFunction = [&]()
    {
       Locator_t destinationLocator;
       destinationLocator.port = 7410;
       destinationLocator.kind = LOCATOR_KIND_UDPv6;
-      EXPECT_TRUE(transportUnderTest.Send(message.data(), message.size(), outputChannelLocator, multicastLocator));
+      EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
    };
 
    auto receiveThreadFunction = [&]()
    {
-      vector<octet> receiveBuffer(descriptor.receiveBufferSize);
+      octet receiveBuffer[ReceiveBufferCapacity];
+      uint32_t receiveBufferSize;
+
       Locator_t remoteLocatorToReceive;
-      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, multicastLocator, remoteLocatorToReceive));
-      EXPECT_EQ(message, receiveBuffer);
+      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, ReceiveBufferCapacity, receiveBufferSize, multicastLocator, remoteLocatorToReceive));
+      EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
    };
 
    receiverThread.reset(new boost::thread(receiveThreadFunction));

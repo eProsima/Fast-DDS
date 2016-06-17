@@ -85,7 +85,7 @@ public:
 	* Get topic data type name
 	* @return Topic data type name
 	*/
-	RTPS_DllAPI inline const char* getName(){ return m_topicDataTypeName.c_str(); }
+	RTPS_DllAPI inline const char* getName() const { return m_topicDataTypeName.c_str(); }
 	
 	//! Maximum Type size in bytes. (If the type includes a string the user MUST ensure that the maximum
 	//! size of the string respect the maximum defined size.).

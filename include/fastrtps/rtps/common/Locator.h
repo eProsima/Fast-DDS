@@ -17,7 +17,9 @@
 #include <sstream>
 #include <vector>
 #include <cstdint>
+#include <cstring>
 #include <iomanip>
+#include <algorithm>
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -50,7 +52,7 @@ public:
 	//!Default constructor
 	Locator_t():kind(1),port(0)
    {
-		LOCATOR_ADDRESS_INVALID(address);
+      LOCATOR_ADDRESS_INVALID(address);
 	}
 
 	Locator_t(Locator_t&& loc):
@@ -91,7 +93,7 @@ public:
 		address[15] = o4;
 		return true;
 	}
-	bool set_IP4_address(std::string& in_address)
+	bool set_IP4_address(const std::string& in_address)
 	{
 		std::stringstream ss(in_address);
 		int a,b,c,d; //to store the 4 ints
@@ -192,7 +194,8 @@ inline bool IsLocatorValid(const Locator_t&loc)
 
 }
 
-inline bool operator==(const Locator_t&loc1,const Locator_t& loc2){
+inline bool operator==(const Locator_t&loc1,const Locator_t& loc2)
+{
 	if(loc1.kind!=loc2.kind)
 		return false;
 	if(loc1.port !=loc2.port)
@@ -278,6 +281,11 @@ public:
 	RTPS_DllAPI bool empty(){
 		return m_locators.empty();
 	}
+
+   RTPS_DllAPI void erase(const Locator_t& loc)
+   {
+      m_locators.erase(std::remove(m_locators.begin(), m_locators.end(), loc), m_locators.end());
+   }
 
 	RTPS_DllAPI bool contains(const Locator_t& loc)
 	{

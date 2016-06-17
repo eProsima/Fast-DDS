@@ -85,7 +85,6 @@ typedef struct ReceiverControlBlock{
 	MessageReceiver* mp_receiver;		//Associated Readers/Writers inside of MessageReceiver
 	boost::mutex mtx; //Fix declaration
 	boost::thread* m_thread;
-   std::vector<octet> m_receiveBuffer;
    bool resourceAlive;
 	ReceiverControlBlock(ReceiverResource&& rec):Receiver(std::move(rec)), mp_receiver(nullptr), m_thread(nullptr), resourceAlive(true)
 	{
@@ -174,10 +173,11 @@ public:
 	* Get the participant
 	* @return participant
 	*/
-    inline RTPSParticipant* getUserRTPSParticipant(){return mp_userParticipant;};
+    inline RTPSParticipant* getUserRTPSParticipant(){return mp_userParticipant;}
 
-    /* Not needed anymore, stays for reference pursposes
-	bool assignLocatorForBuiltin_unsafe(LocatorList_t& list, bool isMulti, bool isFixed);*/
+    std::vector<std::unique_ptr<FlowController>>& getFlowControllers() { return m_controllers;}
+
+    std::vector<RTPSWriter*> getAllWriters() const;
 
 private:
 	//!Attributes of the RTPSParticipant
@@ -188,8 +188,6 @@ private:
 	// ResourceSend* mp_send_thr;
 	//! Event Resource
 	ResourceEvent* mp_event_thr;
-    //! Asynchronous writers manager.
-   AsyncWriterThread *async_writers_thread_;
 	//! BuiltinProtocols of this RTPSParticipant
 	BuiltinProtocols* mp_builtinProtocols;
 	//!Semaphore to wait for the listen thread creation.
@@ -274,6 +272,10 @@ private:
 	boost::recursive_mutex* mp_mutex;
 	//!ListenThreadId
 	uint32_t m_threadID;
+   /*
+    * Flow controllers for this participant.
+    */
+   std::vector<std::unique_ptr<FlowController> > m_controllers; 
 public:
 	/**
 	 * Create a Writer in this RTPSParticipant.

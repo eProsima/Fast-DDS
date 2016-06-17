@@ -137,10 +137,9 @@ void RTPSWithRegistrationReader::Listener::onNewCacheChangeAdded(RTPSReader* rea
     ASSERT_NE(reader, nullptr);
     ASSERT_NE(change, nullptr);
 
-	ReaderHistory *history = reader->getHistory();
-    ASSERT_NE(history, nullptr);
-
-    history->remove_change((CacheChange_t*)change);
+    // Check order of changes.
+    ASSERT_LT(reader_.last_seq, change->sequenceNumber);
+    reader_.last_seq = change->sequenceNumber;
 
     uint16_t number;
 #ifdef WIN32
@@ -149,4 +148,9 @@ void RTPSWithRegistrationReader::Listener::onNewCacheChangeAdded(RTPSReader* rea
     ASSERT_EQ(sscanf((char*)change->serializedPayload.data, "My example string %hu", &number), 1);
 #endif
     reader_.newNumber(number);
+
+	ReaderHistory *history = reader->getHistory();
+    ASSERT_NE(history, nullptr);
+
+    history->remove_change((CacheChange_t*)change);
 }

@@ -90,7 +90,7 @@ public:
 	 * Get the Attributes of the Subscriber.
 	 * @return Attributes of the Subscriber.
 	 */
-	SubscriberAttributes getAttributes(){return m_att;}
+	const SubscriberAttributes& getAttributes() const {return m_att;}
 
 	/**
 	* Get topic data type

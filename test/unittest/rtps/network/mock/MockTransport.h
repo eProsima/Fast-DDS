@@ -9,16 +9,16 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+typedef struct  
+{
+   int maximumChannels;
+   int supportedKind;
+} MockTransportDescriptor;
+
 class MockTransport: public TransportInterface
 {
-   public:
-   typedef struct  
-   {
-      int maximumChannels;
-      int supportedKind;
-   } TransportDescriptor;
-
-   MockTransport(const TransportDescriptor& descriptor);
+public:
+   MockTransport(const MockTransportDescriptor& descriptor);
    MockTransport();
   ~MockTransport();
 
@@ -38,7 +38,8 @@ class MockTransport: public TransportInterface
    virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const;
 
    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator);
-   virtual bool Receive(std::vector<octet>& receiveBuffer, const Locator_t& localChannel, Locator_t& remoteAddress);
+   virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
+                        const Locator_t& localLocator, Locator_t& remoteLocator);
 
    //Helpers and message record
    typedef struct
@@ -53,7 +54,7 @@ class MockTransport: public TransportInterface
 
    // For the mock, port + direction tuples will have a 1:1 relatonship with channels
    
-   typedef uint16_t Port;
+   typedef uint32_t Port;
    std::vector<Port> mockOpenOutputChannels;
    std::vector<Port> mockOpenInputChannels;
 

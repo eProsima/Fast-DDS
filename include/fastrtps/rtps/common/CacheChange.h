@@ -18,6 +18,7 @@
 #include "SerializedPayload.h"
 #include "Time_t.h"
 #include "InstanceHandle.h"
+#include <fastrtps/rtps/common/FragmentNumber.h>
 
 #include <vector>
 
@@ -84,6 +85,9 @@ namespace eprosima
                     fragment_size_(0)
                 {
                 }
+
+                CacheChange_t(const CacheChange_t&) = delete;
+                const CacheChange_t& operator=(const CacheChange_t&) = delete;
 
                 /**
                  * Constructor with payload size
@@ -218,13 +222,17 @@ namespace eprosima
                 }
 
                 ChangeForReader_t(const ChangeForReader_t& ch) : status_(ch.status_),
-                is_relevant_(ch.is_relevant_), seq_num_(ch.seq_num_), change_(ch.change_)
+                is_relevant_(ch.is_relevant_), seq_num_(ch.seq_num_), change_(ch.change_),
+                unsent_fragments_(ch.unsent_fragments_)
                 {
                 }
 
                 ChangeForReader_t(const CacheChange_t* change) : status_(UNSENT),
                 is_relevant_(true), seq_num_(change->sequenceNumber), change_(change)
                 {
+                   if (change->getFragmentSize() != 0)
+                    for (uint32_t i = 1; i != change->getFragmentCount() + 1; i++)
+                       unsent_fragments_.add(i); // Indexed on 1
                 }
 
                 ChangeForReader_t(const SequenceNumber_t& seq_num) : status_(UNSENT),
@@ -240,6 +248,7 @@ namespace eprosima
                     is_relevant_ = ch.is_relevant_;
                     seq_num_ = ch.seq_num_;
                     change_ = ch.change_;
+                    unsent_fragments_ = ch.unsent_fragments_;
                     return *this;
                 }
 
@@ -290,6 +299,28 @@ namespace eprosima
                     return change_ != nullptr;
                 }
 
+                FragmentNumberSet_t getUnsentFragments() const
+                {
+                    return unsent_fragments_;
+                }
+
+                void markAllFragmentsAsUnsent()
+                {
+                   if (change_->getFragmentSize() != 0)
+                    for (uint32_t i = 1; i != change_->getFragmentCount() + 1; i++)
+                       unsent_fragments_.add(i); // Indexed on 1
+                }
+
+                void markFragmentsAsSent(const FragmentNumberSet_t& sentFragments)
+                {
+                    unsent_fragments_ -= sentFragments;
+                }
+
+                void markFragmentsAsUnsent(const FragmentNumberSet_t& unsentFragments)
+                {
+                    unsent_fragments_ += unsentFragments;
+                }
+
                 private:
 
                 //!Status
@@ -302,6 +333,8 @@ namespace eprosima
                 SequenceNumber_t seq_num_;
 
                 const CacheChange_t* change_;
+
+                FragmentNumberSet_t unsent_fragments_;
             };
 
             struct ChangeForReaderCmp

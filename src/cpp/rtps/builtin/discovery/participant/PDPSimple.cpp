@@ -25,6 +25,8 @@
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h>
 
+#include <fastrtps/rtps/resources/AsyncWriterThread.h>
+
 #include <fastrtps/rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h>
 
 
@@ -75,6 +77,7 @@ PDPSimple::~PDPSimple()
 	mp_mutex->lock();
 	if(mp_EDP!=nullptr)
 		delete(mp_EDP);
+
 	delete(mp_SPDPWriter);
 	delete(mp_SPDPReader);
 	delete(mp_SPDPWriterHistory);

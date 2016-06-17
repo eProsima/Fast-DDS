@@ -14,35 +14,182 @@
 #ifndef _TEST_BLACKBOX_RTPSASSOCKETWRITER_HPP_
 #define _TEST_BLACKBOX_RTPSASSOCKETWRITER_HPP_
 
+#include <fastrtps/rtps/RTPSDomain.h>
+#include <fastrtps/rtps/participant/RTPSParticipant.h>
+#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <fastrtps/rtps/attributes/HistoryAttributes.h>
+#include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/rtps_fwd.h>
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
 
+#include <fastcdr/FastBuffer.h>
+#include <fastcdr/Cdr.h>
+
 #include <string>
 #include <list>
+#include <boost/interprocess/detail/os_thread_functions.hpp>
+#include <boost/asio.hpp>
+#include <gtest/gtest.h>
 
-using namespace eprosima::fastrtps::rtps;
 
+template<class TypeSupport>
 class RTPSAsSocketWriter 
 {
     public:
-        RTPSAsSocketWriter();
-        virtual ~RTPSAsSocketWriter();
-        void init(std::string ip, uint32_t port, bool async = false);
+
+        typedef TypeSupport type_support;
+        typedef typename type_support::type type;
+
+        RTPSAsSocketWriter(const std::string& magicword) : participant_(nullptr),
+        writer_(nullptr), history_(nullptr), initialized_(false), port_(0)
+        {
+            std::ostringstream mw;
+            mw << magicword << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+            magicword_ = mw.str();
+        }
+
+        virtual ~RTPSAsSocketWriter()
+        {
+            if(participant_ != nullptr)
+                RTPSDomain::removeRTPSParticipant(participant_);
+            if(history_ != nullptr)
+                delete(history_);
+        }
+
+        void init()
+        {
+            //Create participant
+            eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
+            pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = false;
+            pattr.builtin.use_WriterLivelinessProtocol = false;
+            pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+            pattr.participantID = 2;
+            participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(pattr);
+            ASSERT_NE(participant_, nullptr);
+
+            //Create writerhistory
+            eprosima::fastrtps::rtps::HistoryAttributes hattr;
+            hattr.payloadMaxSize = 255 + type_.m_typeSize;
+            history_ = new eprosima::fastrtps::rtps::WriterHistory(hattr);
+
+            //Create writer
+            writer_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(participant_, writer_attr_, history_);
+            ASSERT_NE(writer_, nullptr);
+
+            initialized_ = true;
+        }
+
         bool isInitialized() const { return initialized_; }
-        void send(const std::list<uint16_t> &msgs);
-        virtual void configWriter(WriterAttributes &wattr) = 0;
-        virtual void configRemoteReader(RemoteReaderAttributes &rattr, GUID_t &guid) = 0;
-        virtual std::string getText() = 0;
+
+        void send(std::list<type>& msgs)
+        {
+            auto it = msgs.begin();
+
+            while(it != msgs.end())
+            {
+                CacheChange_t * ch = writer_->new_change(ALIVE);
+
+                eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
+                eprosima::fastcdr::Cdr cdr(buffer);
+
+                cdr << magicword_;
+                cdr << *it;
+
+                ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
+
+                history_->add_change(ch);
+                it = msgs.erase(it);
+            }
+        }
+
+        /*** Function to change QoS ***/
+        RTPSAsSocketWriter& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
+        {
+            writer_attr_.endpoint.reliabilityKind = kind;
+
+            if(kind == eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE)
+                writer_attr_.endpoint.setEntityID(2);
+            return *this;
+        }
+
+        RTPSAsSocketWriter& add_to_multicast_locator_list(const std::string& ip, uint32_t port)
+        {
+            ip_ = ip;
+            port_ = port;
+
+            Locator_t loc;
+            loc.set_IP4_address(ip);
+            loc.port = port;
+            writer_attr_.endpoint.multicastLocatorList.push_back(loc);
+
+            return *this;
+        }
+
+        void register_reader()
+        {
+            if(port_ == 0)
+                std::cout << "ERROR: locator has to be registered previous to call this" << std::endl;
+
+            //Add remote reader (in this case a reader in the same machine)
+            GUID_t guid = participant_->getGuid();
+
+            eprosima::fastrtps::rtps::RemoteReaderAttributes rattr;
+            Locator_t loc;
+            loc.set_IP4_address(ip_);
+            loc.port = port_;
+            rattr.endpoint.multicastLocatorList.push_back(loc);
+
+            if(writer_attr_.endpoint.reliabilityKind == RELIABLE)
+            {
+                rattr.endpoint.reliabilityKind = RELIABLE;
+                rattr.guid.guidPrefix.value[0] = guid.guidPrefix.value[0];
+                rattr.guid.guidPrefix.value[1] = guid.guidPrefix.value[1];
+                rattr.guid.guidPrefix.value[2] = guid.guidPrefix.value[2];
+                rattr.guid.guidPrefix.value[3] = guid.guidPrefix.value[3];
+                rattr.guid.guidPrefix.value[4] = guid.guidPrefix.value[4];
+                rattr.guid.guidPrefix.value[5] = guid.guidPrefix.value[5];
+                rattr.guid.guidPrefix.value[6] = guid.guidPrefix.value[6];
+                rattr.guid.guidPrefix.value[7] = guid.guidPrefix.value[7];
+                rattr.guid.guidPrefix.value[8] = 1;
+                rattr.guid.guidPrefix.value[9] = 0;
+                rattr.guid.guidPrefix.value[10] = 0;
+                rattr.guid.guidPrefix.value[11] = 0;
+                rattr.guid.entityId.value[0] = 0;
+                rattr.guid.entityId.value[1] = 0;
+                rattr.guid.entityId.value[2] = 1;
+                rattr.guid.entityId.value[3] = 4;
+            }
+
+            writer_->matched_reader_add(rattr);
+        }
+
+        RTPSAsSocketWriter& asynchronously(const eprosima::fastrtps::rtps::RTPSWriterPublishMode mode)
+        {
+            writer_attr_.mode = mode;
+
+            return *this;
+        }
+
+        RTPSAsSocketWriter& add_throughput_controller_descriptor_to_pparams(uint32_t sizeToClear, uint32_t periodInMs)
+        {
+            ThroughputControllerDescriptor descriptor {sizeToClear, periodInMs};
+            writer_attr_.terminalThroughputController = descriptor;
+
+            return *this;
+        }
 
     private:
 
-        RTPSParticipant *participant_;
-        RTPSWriter *writer_;
-        WriterHistory *history_;
+        eprosima::fastrtps::rtps::RTPSParticipant *participant_;
+        eprosima::fastrtps::rtps::RTPSWriter *writer_;
+        eprosima::fastrtps::rtps::WriterAttributes writer_attr_;
+        eprosima::fastrtps::rtps::WriterHistory *history_;
         bool initialized_;
-        std::string text_;
-        uint32_t domainId_;
-        std::string hostname_;
+        std::string magicword_;
+        type_support type_;
+        std::string ip_;
+        uint32_t port_;
 };
 
 #endif // _TEST_BLACKBOX_RTPSASSOCKETWRITER_HPP_

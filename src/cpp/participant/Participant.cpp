@@ -44,6 +44,5 @@ bool Participant::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t e
 	return mp_impl->newRemoteEndpointDiscovered(partguid, endpointId, kind);
 }
 
-
 } /* namespace pubsub */
 } /* namespace eprosima */

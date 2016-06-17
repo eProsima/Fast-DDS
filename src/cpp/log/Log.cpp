@@ -32,7 +32,7 @@ static const int MAXWIDTH = 43;
 
 Log::Log(): mp_logFile(NULL),
 		m_logFileDefined(false),
-#if defined(__DEBUG) || defined(_DEBUG)
+#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG) )
 		m_defaultVerbosityLevel(VERB_INFO),
 #else
 		m_defaultVerbosityLevel(VERB_ERROR),
