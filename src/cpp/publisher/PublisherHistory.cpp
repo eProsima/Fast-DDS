@@ -71,6 +71,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
             }
             else
             {
+		//KEEP_LAST_HISTORY_QoS
                 if((int32_t)m_changes.size()==m_historyQos.depth)
                     m_isHistoryFull = true;
             }
@@ -254,13 +255,13 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::
 		for(auto chit = vit->second.begin();
 				chit!= vit->second.end();++chit)
 		{
-			if((*chit)->sequenceNumber == change->sequenceNumber
-					&& (*chit)->writerGUID == change->writerGUID)
+			if( ((*chit)->sequenceNumber == change->sequenceNumber)
+				&& ((*chit)->writerGUID == change->writerGUID) )
 			{
 				if(remove_change(change))
 				{
 					vit->second.erase(chit);
-                    m_isHistoryFull = false;
+                                        m_isHistoryFull = false;
 					return true;
 				}
 			}

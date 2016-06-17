@@ -12,6 +12,7 @@ set_sources(
     rtps/resources/TimedEvent.cpp 
     rtps/resources/TimedEventImpl.cpp 
     rtps/resources/AsyncWriterThread.cpp
+    rtps/resources/AsyncInterestTree.cpp
     rtps/Endpoint.cpp 
     rtps/writer/RTPSWriter.cpp 
     rtps/writer/StatefulWriter.cpp 
@@ -21,13 +22,13 @@ set_sources(
     rtps/writer/timedevent/PeriodicHeartbeat.cpp 
     rtps/writer/timedevent/NackResponseDelay.cpp 
     rtps/writer/timedevent/NackSupressionDuration.cpp 
-    rtps/writer/timedevent/UnsentChangesNotEmptyEvent.cpp 
     rtps/history/CacheChangePool.cpp 
     rtps/history/History.cpp 
     rtps/history/WriterHistory.cpp 
     rtps/history/ReaderHistory.cpp 
     rtps/reader/timedevent/HeartbeatResponseDelay.cpp 
     rtps/reader/timedevent/WriterProxyLiveliness.cpp 
+    rtps/reader/ReaderListener.cpp
     rtps/reader/WriterProxy.cpp 
     rtps/reader/StatefulReader.cpp 
     rtps/reader/StatelessReader.cpp 
@@ -57,6 +58,7 @@ set_sources(
     subscriber/SubscriberImpl.cpp 
     subscriber/SubscriberHistory.cpp 
     transport/UDPv4Transport.cpp 
+    transport/UDPv6Transport.cpp 
     transport/test_UDPv4Transport.cpp 
     qos/ParameterList.cpp 
     qos/ParameterTypes.cpp 
@@ -80,6 +82,8 @@ set_sources(
     rtps/builtin/data/ParticipantProxyData.cpp 
     rtps/builtin/data/WriterProxyData.cpp 
     rtps/builtin/data/ReaderProxyData.cpp 
+    rtps/flowcontrol/ThroughputController.cpp 
+    rtps/flowcontrol/FlowController.cpp 
     fastrtps.rc
     )
 
@@ -96,9 +100,12 @@ configure_file(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/config.h.in
 # If Windows, set define for export dll functions
 add_definitions(-D${PROJECT_NAME_UPPER}_SOURCE)
 if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0501)
+    add_definitions(-D_WIN32_WINNT=0x0601)
 endif()
-
+# If INTERNAL_DEBUG = ON, define symbol for extensive debug messages
+if(INTERNAL_DEBUG)
+	add_definitions(-D__INTERNALDEBUG)
+endif()
 # Include Boost header files.
 include_directories(${Boost_INCLUDE_DIR})
 
@@ -149,9 +156,8 @@ if(MSVC OR MSVC_IDE)
     endif()
 else()
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        add_definitions(-D__DEBUG)
+	    add_definitions(-D__DEBUG)
     endif()
-
     #Create library
     add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
 

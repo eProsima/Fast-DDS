@@ -7,21 +7,38 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+static const uint32_t maximumUDPSocketSize = 65536;
 vector<vector<octet> > test_UDPv4Transport::DropLog;
 uint32_t test_UDPv4Transport::DropLogLength = 0;
 
-test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4Transport::TransportDescriptor& descriptor):
-   mDropDataMessages(descriptor.dropDataMessages),
-   mDropHeartbeatMessages(descriptor.dropHeartbeatMessages),
-   mDropAckNackMessages(descriptor.dropAckNackMessages),
+test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor):
+   mDropDataMessagesPercentage(descriptor.dropDataMessagesPercentage),
+   mDropDataFragMessagesPercentage(descriptor.dropDataFragMessagesPercentage),
+   mDropHeartbeatMessagesPercentage(descriptor.dropHeartbeatMessagesPercentage),
+   mDropAckNackMessagesPercentage(descriptor.dropAckNackMessagesPercentage),
    mSequenceNumberDataMessagesToDrop(descriptor.sequenceNumberDataMessagesToDrop),
    mPercentageOfMessagesToDrop(descriptor.percentageOfMessagesToDrop)
 {
    UDPv4Transport::mSendBufferSize = descriptor.sendBufferSize;
    UDPv4Transport::mReceiveBufferSize = descriptor.receiveBufferSize;
+   UDPv4Transport::mGranularMode = descriptor.granularMode;
    DropLog.clear();
    DropLogLength = descriptor.dropLogLength;
-   srand(time(NULL));
+   srand(static_cast<unsigned>(time(NULL)));
+}
+
+RTPS_DllAPI test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor():
+   sendBufferSize(maximumUDPSocketSize),
+   receiveBufferSize(maximumUDPSocketSize),
+   granularMode(false),
+   dropDataMessagesPercentage(0),
+   dropDataFragMessagesPercentage(0),
+   dropHeartbeatMessagesPercentage(0),
+   dropAckNackMessagesPercentage(0),
+   percentageOfMessagesToDrop(0),
+   sequenceNumberDataMessagesToDrop(),
+   dropLogLength(0)
+{
 }
 
 bool test_UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
@@ -55,10 +72,11 @@ bool test_UDPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sen
    memcpy(cdrMessage.buffer, sendBuffer, sendBufferSize);
    cdrMessage.length = sendBufferSize;
 
-   return ( (mDropDataMessages      && ContainsSubmessageOfID(cdrMessage, DATA))      ||
-            (mDropAckNackMessages   && ContainsSubmessageOfID(cdrMessage, ACKNACK))   ||
-            (mDropHeartbeatMessages && ContainsSubmessageOfID(cdrMessage, HEARTBEAT)) || 
-             ContainsSequenceNumberToDrop(cdrMessage)                                 ||
+   return ( (mDropDataMessagesPercentage      > (rand()%100) && ContainsSubmessageOfID(cdrMessage, DATA))       ||
+            (mDropAckNackMessagesPercentage   > (rand()%100) && ContainsSubmessageOfID(cdrMessage, ACKNACK))    ||
+            (mDropHeartbeatMessagesPercentage > (rand()%100) && ContainsSubmessageOfID(cdrMessage, HEARTBEAT))  || 
+            (mDropDataFragMessagesPercentage  > (rand()%100) && ContainsSubmessageOfID(cdrMessage, DATA_FRAG))  || 
+             ContainsSequenceNumberToDrop(cdrMessage)                                                           ||
              RandomChanceDrop());
 }
 

@@ -154,6 +154,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	pubimpl->mp_rtpsParticipant = this->mp_rtpsParticipant;
 
 	WriterAttributes watt;
+   watt.terminalThroughputController = att.terminalThroughputController;
 	watt.endpoint.durabilityKind = att.qos.m_durability.kind == VOLATILE_DURABILITY_QOS ? VOLATILE : TRANSIENT_LOCAL;
 	watt.endpoint.endpointKind = WRITER;
 	watt.endpoint.multicastLocatorList = att.multicastLocatorList;
@@ -190,6 +191,39 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	return pub;
 }
 
+
+std::pair<StatefulReader*,StatefulReader*> ParticipantImpl::getEDPReaders(){
+
+	return mp_rtpsParticipant->getEDPReaders();
+}
+
+int ParticipantImpl::get_no_publishers(char *target_topic){
+	int count = 0;
+	std::string target_string(target_topic);
+	//Calculate the number of publishers that match the target topic
+	
+	for(auto it=m_publishers.begin(); it!=m_publishers.end(); ++it){
+		if(target_string.compare( (*it).second->getAttributes().topic.topicName) == 0){
+			//Strings are equal
+			count++;
+		}	
+
+	}
+	return count;	
+}
+
+int ParticipantImpl::get_no_subscribers(char *target_topic){
+	int count = 0;
+	std::string target_string(target_topic);
+
+	for(auto it=m_subscribers.begin(); it!=m_subscribers.end(); ++it){
+		if(target_string.compare( (*it).second->getAttributes().topic.topicName) == 0){
+			count++;
+		}
+	}
+	return count;
+
+}
 Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 		SubscriberListener* listen)
 {

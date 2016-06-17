@@ -16,16 +16,17 @@ ReceiverResource::ReceiverResource(TransportInterface& transport, const Locator_
 
    // Implementation functions are bound to the right transport parameters
    Cleanup = [&transport,locator](){ transport.CloseInputChannel(locator); };
-   ReceiveFromAssociatedChannel = [&transport, locator](vector<octet>& data, Locator_t& origin)-> bool
-                                  { return transport.Receive(data, locator, origin); };
+   ReceiveFromAssociatedChannel = [&transport, locator](octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize, Locator_t& origin)-> bool
+                                  { return transport.Receive(receiveBuffer, receiveBufferCapacity, receiveBufferSize, locator, origin); };
    LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
                                  { return transport.DoLocatorsMatch(locator, locatorToCheck); };
 }
 
-bool ReceiverResource::Receive(std::vector<octet>& data, Locator_t& originLocator)
+bool ReceiverResource::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
+             Locator_t& originLocator)
 {
    if (ReceiveFromAssociatedChannel)
-      return ReceiveFromAssociatedChannel(data, originLocator);
+      return ReceiveFromAssociatedChannel(receiveBuffer, receiveBufferCapacity, receiveBufferSize, originLocator);
    return false;
 }
 

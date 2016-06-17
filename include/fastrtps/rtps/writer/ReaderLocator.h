@@ -49,8 +49,6 @@ public:
 	bool expectsInlineQos;
 	//!Vector containing pointers to the requested changes by this reader.
 	std::vector<const CacheChange_t*> requested_changes;
-	//!Vector containing pointers to the unsent changes to this reader.
-	std::vector<CacheChangeForGroup_t> unsent_changes;
 	//!Number of times this locator has been used (in case different readers use the same locator).
 	uint32_t n_used;
 
@@ -59,15 +57,7 @@ public:
 	 * @param cpoin Pointer to change.
 	 * @return True if correct
 	 */
-	bool remove_requested_change(CacheChange_t* cpoin);
-
-	/**
-	 * Remove change from unsent list.
-	 * @param cpoin Pointer to pointer
-	 * @return True if correct.
-	 */
-	bool remove_unsent_change(CacheChange_t* cpoin);
-
+	bool remove_requested_change(const CacheChange_t* cpoin);
 };
 }
 } /* namespace rtps */

@@ -81,11 +81,11 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader,TopicAttributes& att, Reade
 		delete(rpd);
 		return false;
 	}
-	//DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
-	processLocalReaderProxyData(rpd);
 	//PAIRING
     pairingReaderProxy(pdata, rpd);
 	pairingReader(reader);
+	//DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
+	processLocalReaderProxyData(rpd);
 	return true;
 }
 
@@ -113,11 +113,11 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer,TopicAttributes& att, Write
 		delete(wpd);
 		return false;
 	}
-	//DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
-	processLocalWriterProxyData(wpd);
 	//PAIRING
     pairingWriterProxy(pdata, wpd);
 	pairingWriter(writer);
+	//DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
+	processLocalWriterProxyData(wpd);
 	return true;
 }
 

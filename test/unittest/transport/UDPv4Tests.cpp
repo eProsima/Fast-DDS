@@ -1,11 +1,15 @@
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <gtest/gtest.h>
 #include <boost/thread.hpp>
+#include <fastrtps/utils/IPFinder.h>
 #include <memory>
 
 using namespace std;
+using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace boost::interprocess;
+
+const uint32_t ReceiveBufferCapacity = 65536;
 
 class UDPv4Tests: public ::testing::Test 
 {
@@ -17,7 +21,7 @@ class UDPv4Tests: public ::testing::Test
 
    void HELPER_SetDescriptorDefaults();
 
-   UDPv4Transport::TransportDescriptor descriptor;
+   UDPv4TransportDescriptor descriptor;
    unique_ptr<boost::thread> senderThread;
    unique_ptr<boost::thread> receiverThread;
 };
@@ -86,22 +90,21 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
    outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
    ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator));
-   vector<octet> message = { 'H','e','l','l','o' };
+   octet message[5] = { 'H','e','l','l','o' };
 
    auto sendThreadFunction = [&]()
    {
-      Locator_t destinationLocator;
-      destinationLocator.port = 7410;
-      destinationLocator.kind = LOCATOR_KIND_UDPv4;
-      EXPECT_TRUE(transportUnderTest.Send(message.data(), message.size(), outputChannelLocator, multicastLocator));
+      EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
    };
 
    auto receiveThreadFunction = [&]() 
    {
-      vector<octet> receiveBuffer(descriptor.receiveBufferSize);
+      octet receiveBuffer[ReceiveBufferCapacity];
+      uint32_t receiveBufferSize;
+
       Locator_t remoteLocatorToReceive;
-      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, multicastLocator, remoteLocatorToReceive));
-      EXPECT_EQ(message, receiveBuffer);
+      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, ReceiveBufferCapacity, receiveBufferSize, multicastLocator, remoteLocatorToReceive));
+      EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
    };
 
    receiverThread.reset(new boost::thread(receiveThreadFunction));      
@@ -125,22 +128,24 @@ TEST_F(UDPv4Tests, send_to_loopback)
    outputChannelLocator.set_IP4_address(127,0,0,1); // Loopback
    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
    ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator));
-   vector<octet> message = { 'H','e','l','l','o' };
+   octet message[5] = { 'H','e','l','l','o' };
 
    auto sendThreadFunction = [&]()
    {
       Locator_t destinationLocator;
       destinationLocator.port = 7410;
       destinationLocator.kind = LOCATOR_KIND_UDPv4;
-      EXPECT_TRUE(transportUnderTest.Send(message.data(), message.size(), outputChannelLocator, multicastLocator));
+      EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
    };
 
    auto receiveThreadFunction = [&]() 
    {
-      vector<octet> receiveBuffer(descriptor.receiveBufferSize);
+      octet receiveBuffer[ReceiveBufferCapacity];
+      uint32_t receiveBufferSize;
+
       Locator_t remoteLocatorToReceive;
-      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, multicastLocator, remoteLocatorToReceive));
-      EXPECT_EQ(message, receiveBuffer);
+      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, ReceiveBufferCapacity, receiveBufferSize, multicastLocator, remoteLocatorToReceive));
+      EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
    };
 
    receiverThread.reset(new boost::thread(receiveThreadFunction));      
@@ -149,7 +154,7 @@ TEST_F(UDPv4Tests, send_to_loopback)
    receiverThread->join();
 }
 
-TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_isnt_equal_to_size_specified_in_descriptor)
+TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_in_descriptor)
 {
    // Given
    UDPv4Transport transportUnderTest(descriptor);
@@ -164,10 +169,10 @@ TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_isnt_equal_to_size_specified_
 
    // Then
    vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
-   ASSERT_FALSE(transportUnderTest.Send(receiveBufferWrongSize.data(), receiveBufferWrongSize.size(), genericOutputChannelLocator, destinationLocator));
+   ASSERT_FALSE(transportUnderTest.Send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(), genericOutputChannelLocator, destinationLocator));
 }
 
-TEST_F(UDPv4Tests, Receive_is_rejected_if_buffer_size_isnt_equal_to_size_specified_in_descriptor)
+TEST_F(UDPv4Tests, Receive_is_rejected_if_buffer_size_is_smaller_than_size_specified_in_descriptor)
 {
    // Given
    UDPv4Transport transportUnderTest(descriptor);
@@ -177,10 +182,10 @@ TEST_F(UDPv4Tests, Receive_is_rejected_if_buffer_size_isnt_equal_to_size_specifi
    transportUnderTest.OpenInputChannel(genericInputChannelLocator);
 
    Locator_t originLocator;
-
+   octet* emptyBuffer = nullptr;
+   uint32_t size;
    // Then
-   vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
-   ASSERT_FALSE(transportUnderTest.Receive(receiveBufferWrongSize, genericInputChannelLocator, originLocator));
+   ASSERT_FALSE(transportUnderTest.Receive(emptyBuffer,0, size, genericInputChannelLocator, originLocator));
 }
 
 TEST_F(UDPv4Tests, opening_any_output_address_opens_port_for_all_IP_addresses)
@@ -224,10 +229,83 @@ TEST_F(UDPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
    ASSERT_EQ(mainLocalLocator.to_IP4_string(), "0.0.0.0");
 }
 
+TEST_F(UDPv4Tests, in_granular_mode_locators_match_if_port_AND_address_matches)
+{
+   // Given
+   descriptor.granularMode = true;
+   UDPv4Transport transportUnderTest(descriptor);
+   LocatorList_t ips;
+   IPFinder::getIP4Address(&ips);
+
+   // We need enough valid IPs for the test
+   ASSERT_GE(ips.size(), 2u);
+   auto it = ips.begin();
+   Locator_t locatorAlpha = *(it++);
+   Locator_t locatorBeta = locatorAlpha;
+
+   // Then
+   ASSERT_TRUE(transportUnderTest.DoLocatorsMatch(locatorAlpha, locatorBeta));
+
+   locatorBeta = *(it++);
+   locatorAlpha.port = 5000;
+   locatorBeta.port = 5000;
+
+   // Then
+   ASSERT_FALSE(transportUnderTest.DoLocatorsMatch(locatorAlpha, locatorBeta));
+}
+
+TEST_F(UDPv4Tests, granular_mode_opening_and_closing_output_channel)
+{
+   // Given
+   descriptor.granularMode = true;
+   UDPv4Transport transportUnderTest(descriptor);
+   LocatorList_t ips;
+   IPFinder::getIP4Address(&ips);
+
+   // We need enough valid IPs for the test
+   ASSERT_GE(ips.size(), 2u);
+   auto it = ips.begin();
+
+   Locator_t outputChannelLocator = *(it++);
+   outputChannelLocator.port = 7400;
+   Locator_t otherLocatorSamePort = *(it++);
+   otherLocatorSamePort.port = 7400;
+
+   // Then
+   ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(outputChannelLocator));
+   ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(outputChannelLocator));
+   ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(outputChannelLocator));
+
+   // Granularity allows for this distinction to be made.
+   ASSERT_FALSE  (transportUnderTest.IsOutputChannelOpen(otherLocatorSamePort));
+
+   ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(outputChannelLocator));
+   ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(outputChannelLocator));
+   ASSERT_FALSE (transportUnderTest.CloseOutputChannel(outputChannelLocator));
+}
+
+TEST_F(UDPv4Tests, granular_send_to_wrong_interface)
+{
+   descriptor.granularMode = true;
+   UDPv4Transport transportUnderTest(descriptor);
+
+   Locator_t outputChannelLocator;
+   outputChannelLocator.port = 7400;
+   outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
+   outputChannelLocator.set_IP4_address(127,0,0,1); // Loopback
+   ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
+
+   //Sending through a different IP will NOT work in granular mode, except 0.0.0.0
+   outputChannelLocator.set_IP4_address(111,111,111,111);
+   vector<octet> message = { 'H','e','l','l','o' };
+   ASSERT_FALSE(transportUnderTest.Send(message.data(), (uint32_t)message.size(), outputChannelLocator, Locator_t()));
+}
+
 void UDPv4Tests::HELPER_SetDescriptorDefaults()
 {
    descriptor.sendBufferSize = 5;
    descriptor.receiveBufferSize = 5;
+   descriptor.granularMode = false;
 }
 
 int main(int argc, char **argv)
