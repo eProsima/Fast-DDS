@@ -87,8 +87,7 @@ bool RTPSParticipant::updateReader(RTPSReader* Reader,ReaderQos& rqos)
 	return mp_impl->updateLocalReader(Reader, rqos);
 }
 
-std::pair<StatefulReader*,StatefulReader*> RTPSParticipant::getEDPReaders(){
-	
+std::pair<StatefulReader*,StatefulReader*> RTPSParticipant::getEDPReaders(){	
 	return mp_impl->getEDPReaders();
 }
 
