@@ -106,43 +106,40 @@ TEST(ros2features, PubSubPoll)
 	Participant *my_participant;
 	Publisher* pub_array[max_elements];
 	Subscriber* sub_array[max_elements];
-	ParticipantAttributes p_attr;
 	HelloWorldType my_type;
+	ParticipantAttributes part_attr;
+	PublisherAttributes p_attr[max_elements];
+	SubscriberAttributes s_attr[max_elements];
 	pub_dummy_listener p_listener_array[max_elements];
 	sub_dummy_listener s_listener_array[max_elements];
 
 	std::string str("HelloWorldType");
-	char *cstr = new  char[str.length()+1];
-	std::strcpy(cstr,str.c_str());
 
-	p_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230 + 2;
-	my_participant = Domain::createParticipant(p_attr);
+	part_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230 + 2;
+	my_participant = Domain::createParticipant(part_attr);
 	//Register type
 	
 	ASSERT_NE(my_participant, nullptr);
 	ASSERT_EQ(Domain::registerType(my_participant, &my_type), true);
-
 	for(int i=0; i<max_elements;i++){
 		//Create Publisher
-		PublisherAttributes p_attr;
-		p_attr.topic.topicKind = NO_KEY;
-		p_attr.topic.topicDataType = "HelloWorldType";
-		p_attr.topic.topicName = "HelloWorldType";
+		p_attr[i].topic.topicKind = NO_KEY;
+		p_attr[i].topic.topicDataType = "HelloWorldType";
+		p_attr[i].topic.topicName = "HelloWorldType";
 		//configPublisher(p_attr);
-		pub_array[i] = Domain::createPublisher(my_participant,p_attr, &p_listener_array[i]);
+		pub_array[i] = Domain::createPublisher(my_participant,p_attr[i], &p_listener_array[i]);
 		ASSERT_NE(pub_array[i],nullptr);
 		//Poll no.Pubs
-		ASSERT_EQ(my_participant->get_no_publishers(cstr),i+1);
+		ASSERT_EQ(my_participant->get_no_publishers( const_cast<char*>( str.c_str() ) ),i+1);
 		//Create Subscriber
-		SubscriberAttributes s_attr;
-		s_attr.topic.topicKind = NO_KEY;
-		s_attr.topic.topicDataType = "HelloWorldType";		
-		s_attr.topic.topicName = "HelloWorldType";
+		s_attr[i].topic.topicKind = NO_KEY;
+		s_attr[i].topic.topicDataType = "HelloWorldType";		
+		s_attr[i].topic.topicName = "HelloWorldType";
 		//configSubscriber(s_attr);
-	 	sub_array[i] =Domain::createSubscriber(my_participant,s_attr, &s_listener_array[i]);	
+	 	sub_array[i] =Domain::createSubscriber(my_participant,s_attr[i], &s_listener_array[i]);	
 		ASSERT_NE(sub_array[i],nullptr);		
 		//Poll no.Subs
-		ASSERT_EQ(my_participant->get_no_subscribers(cstr),i+1);
+		ASSERT_EQ(my_participant->get_no_subscribers( const_cast<char*>( str.c_str() ) ),i+1);
 	}
 	eprosima::fastrtps::Domain::removeParticipant(my_participant);
 }
