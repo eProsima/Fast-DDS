@@ -105,16 +105,16 @@ static bool IsMulticastAddress(const Locator_t& locator)
 
 bool UDPv4Transport::OpenInputChannel(const Locator_t& locator)
 {
+    boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
     if (!IsLocatorSupported(locator))
         return false;   
 
-    boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
     bool success = false;
 
     if (!IsInputChannelOpen(locator))
         success = OpenAndBindInputSockets(locator.port);
 
-    if (IsMulticastAddress(locator))
+    if (IsMulticastAddress(locator) && IsInputChannelOpen(locator))
     {
         // The multicast group will be joined silently, because we do not
         // want to return another resource.
@@ -127,10 +127,10 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator)
 
 bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
 {
+    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
     if (!IsOutputChannelOpen(locator))
         return false;   
 
-    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
     if (mGranularMode)
     {
         auto& socket = mGranularOutputSockets.at(locator);
@@ -155,10 +155,10 @@ bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
 
 bool UDPv4Transport::CloseInputChannel(const Locator_t& locator)
 {
+    boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
     if (!IsInputChannelOpen(locator))
         return false;   
 
-    boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
 
     auto& socket = mInputSockets.at(locator.port);
     socket.cancel();
@@ -185,14 +185,13 @@ bool UDPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip)
     if (ip == ip::address_v4::any())
         return true;
 
-    return  find(mInterfaceWhiteList.begin(), mInterfaceWhiteList.end(), ip) != mInterfaceWhiteList.end();
+    return find(mInterfaceWhiteList.begin(), mInterfaceWhiteList.end(), ip) != mInterfaceWhiteList.end();
 }
 
 bool UDPv4Transport::OpenAndBindOutputSockets(uint32_t port)
 {
-    const char* const METHOD_NAME = "OpenAndBindOutputSockets";
-
     boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
+    const char* const METHOD_NAME = "OpenAndBindOutputSockets";
 
     try 
     {
@@ -226,12 +225,12 @@ bool UDPv4Transport::OpenAndBindOutputSockets(uint32_t port)
 
 bool UDPv4Transport::OpenAndBindGranularOutputSocket(const Locator_t& locator)
 {
+    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
     const char* const METHOD_NAME = "OpenAndBindGranularOutputSocket";
     auto ip = boost::asio::ip::address_v4::from_string(locator.to_IP4_string());
     if (!IsInterfaceAllowed(ip))
         return false;
 
-    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
 
     try 
     {
@@ -251,9 +250,8 @@ bool UDPv4Transport::OpenAndBindGranularOutputSocket(const Locator_t& locator)
 
 bool UDPv4Transport::OpenAndBindInputSockets(uint32_t port)
 {
-    const char* const METHOD_NAME = "OpenAndBindInputSockets";
-
     boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
+    const char* const METHOD_NAME = "OpenAndBindInputSockets";
 
     try 
     {
@@ -322,11 +320,11 @@ Locator_t UDPv4Transport::RemoteToMainLocal(const Locator_t& remote) const
 
 bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
 {
+    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
     if (!IsOutputChannelOpen(localLocator) ||
             sendBufferSize > mSendBufferSize)
         return false;
 
-    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
     bool success = false;
 
     if (mGranularMode)
