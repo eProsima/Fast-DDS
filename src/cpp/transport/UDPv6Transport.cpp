@@ -98,6 +98,7 @@ bool UDPv6Transport::OpenInputChannel(const Locator_t& locator)
     if (!IsLocatorSupported(locator))
         return false;   
 
+    boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
     bool success = false;
 
     if (!IsInputChannelOpen(locator))
