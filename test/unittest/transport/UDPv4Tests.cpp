@@ -248,54 +248,17 @@ TEST_F(UDPv4Tests, in_granular_mode_locators_match_if_port_AND_address_matches)
    // Given
    descriptor.granularMode = true;
    UDPv4Transport transportUnderTest(descriptor);
-   LocatorList_t ips;
-   IPFinder::getIP4Address(&ips);
-
-   // We need enough valid IPs for the test
-   ASSERT_GE(ips.size(), 2u);
-   auto it = ips.begin();
-   Locator_t locatorAlpha = *(it++);
+   Locator_t locatorAlpha;
+   locatorAlpha.port = 50000;
+   locatorAlpha.set_IP4_address(239, 255, 0, 1);
    Locator_t locatorBeta = locatorAlpha;
 
    // Then
    ASSERT_TRUE(transportUnderTest.DoLocatorsMatch(locatorAlpha, locatorBeta));
 
-   locatorBeta = *(it++);
-   locatorAlpha.port = 5000;
-   locatorBeta.port = 5000;
-
+   locatorBeta.set_IP4_address(100, 100, 100, 100);
    // Then
    ASSERT_FALSE(transportUnderTest.DoLocatorsMatch(locatorAlpha, locatorBeta));
-}
-
-TEST_F(UDPv4Tests, granular_mode_opening_and_closing_output_channel)
-{
-   // Given
-   descriptor.granularMode = true;
-   UDPv4Transport transportUnderTest(descriptor);
-   LocatorList_t ips;
-   IPFinder::getIP4Address(&ips);
-
-   // We need enough valid IPs for the test
-   ASSERT_GE(ips.size(), 2u);
-   auto it = ips.begin();
-
-   Locator_t outputChannelLocator = *(it++);
-   outputChannelLocator.port = 7400;
-   Locator_t otherLocatorSamePort = *(it++);
-   otherLocatorSamePort.port = 7400;
-
-   // Then
-   ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(outputChannelLocator));
-   ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(outputChannelLocator));
-   ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(outputChannelLocator));
-
-   // Granularity allows for this distinction to be made.
-   ASSERT_FALSE  (transportUnderTest.IsOutputChannelOpen(otherLocatorSamePort));
-
-   ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(outputChannelLocator));
-   ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(outputChannelLocator));
-   ASSERT_FALSE (transportUnderTest.CloseOutputChannel(outputChannelLocator));
 }
 
 TEST_F(UDPv4Tests, granular_send_to_wrong_interface)
