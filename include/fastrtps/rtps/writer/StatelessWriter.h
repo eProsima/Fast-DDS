@@ -75,7 +75,7 @@ public:
 	/**
 	 * Method to indicate that there are changes not sent in some of all ReaderProxy.
 	 */
-	void unsent_changes_not_empty();
+	size_t send_any_unsent_changes();
 
 	/**
 	 * Update the Attributes of the Writer.
@@ -94,6 +94,8 @@ public:
 	* @return True on success.
 	*/
 	bool add_locator(RemoteReaderAttributes& rdata,Locator_t& loc);
+
+   void update_unsent_changes(const std::vector<CacheChangeForGroup_t>& changes);
 
 	/**
 	* Remove a remote locator from the writer.
@@ -114,10 +116,22 @@ public:
 
     bool clean_history(unsigned int max = 0);
 
+   void add_flow_controller(std::unique_ptr<FlowController> controller);
+
 private:
 	//Duration_t resendDataPeriod; //FIXME: Not used yet.
 	std::vector<ReaderLocator> reader_locator;
+   LocatorList_t m_loc_list_1_for_sync_send;
+   LocatorList_t m_loc_list_2_for_sync_send;
 	std::vector<RemoteReaderAttributes> m_matched_readers;
+   std::vector<std::unique_ptr<FlowController> > m_controllers;
+
+	/**
+    * Vector containing pointers to the unsent changes from this writer.
+    * it's crucial to notify the async writer
+    * thread when anything is pushed into it.
+    */	
+   std::vector<CacheChangeForGroup_t> m_unsent_changes;
 };
 }
 } /* namespace rtps */

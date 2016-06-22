@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
+#include "EDPSimpleListeners.h"
 
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
@@ -62,8 +62,8 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 		memcpy(tempMsg.buffer,change->serializedPayload.data,tempMsg.length);
 		if(writerProxyData.readFromCDRMessage(&tempMsg))
 		{
-			change->instanceHandle = writerProxyData.m_key;
-			if(writerProxyData.m_guid.guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
+			change->instanceHandle = writerProxyData.key();
+			if(writerProxyData.guid().guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
 			{
 				logInfo(RTPS_EDP,"Message from own RTPSParticipant, ignoring",C_CYAN);
 				mp_SEDP->mp_PubReader.second->remove_change(change);
@@ -76,12 +76,12 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 			{
 				//CHECK the locators:
                 pdata->mp_mutex->lock();
-				if(wdata->m_unicastLocatorList.empty() && wdata->m_multicastLocatorList.empty())
+				if(wdata->unicastLocatorList().empty() && wdata->multicastLocatorList().empty())
 				{
-					wdata->m_unicastLocatorList = pdata->m_defaultUnicastLocatorList;
-					wdata->m_multicastLocatorList = pdata->m_defaultMulticastLocatorList;
+					wdata->unicastLocatorList(pdata->m_defaultUnicastLocatorList);
+					wdata->multicastLocatorList(pdata->m_defaultMulticastLocatorList);
 				}
-				wdata->m_isAlive = true;
+				wdata->isAlive(true);
                 pdata->mp_mutex->unlock();
 				mp_SEDP->pairingWriterProxy(pdata, wdata);
 			}
@@ -97,6 +97,12 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 				mp_SEDP->pairingWriterProxy(pdata, wdata);
 			}
 		}
+		//Call the slave, if it exists
+		if(attached_listener != nullptr){
+			attached_listener_mutex.lock();
+			attached_listener->onNewCacheChangeAdded(nullptr,change_in);
+			attached_listener_mutex.unlock();
+		}
 	}
 	else
 	{
@@ -105,7 +111,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 		GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
 		this->mp_SEDP->removeWriterProxy(auxGUID);
 	}
-
+	
     //Removing change from history
     this->mp_SEDP->mp_PubReader.second->remove_change(change);
 
@@ -222,6 +228,10 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 				mp_SEDP->pairingReaderProxy(pdata, rdata);
 			}
 		}
+		//Call the slave, if it exists
+		if(attached_listener != nullptr)
+			attached_listener->onNewCacheChangeAdded(nullptr,change);
+
 	}
 	else
 	{

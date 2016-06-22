@@ -66,6 +66,10 @@ namespace eprosima
 
                 void destroy_timers();
 
+                void addChange(const ChangeForReader_t&);
+
+                size_t countChangesForReader() const;
+                
                 /**
                  * Get the ChangeForReader struct associated with a determined change
                  * @param[in] change Pointer to the change.
@@ -98,22 +102,31 @@ namespace eprosima
                 bool requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet);
 
                 /*!
-                 * @brief Sets the REQUESTED changes to UNDERWAY and returns a STL vector with the modified ChangeForReader_t.
-                 * The content of the STL vector has to be used in the same synchronized code than the call of this function.
-                 * @return STL vector with the modified ChangeForReader_t.
+                 * @brief Lists all unsent changes.
+                 * @return STL vector with the unsent change list.
                  */
-                std::vector<const ChangeForReader_t*> requested_changes_to_underway();
+                std::vector<const ChangeForReader_t*> get_unsent_changes() const;
+                /*!
+                 * @brief Lists all requested changes.
+                 * @return STL vector with the requested change list.
+                 */
+                std::vector<const ChangeForReader_t*> get_requested_changes() const;
 
                 /*!
-                 * @brief Sets the UNSENT changes to UNDERWAY and returns a STL vector with the modified ChangeForReader_t.
-                 * The content of the STL vector has to be used in the same synchronized code than the call of this function.
-                 * @return STL vector with the modified ChangeForReader_t.
+                 * @brief Sets a change to a particular status (if present in the ReaderProxy)
+                 * @param change change to search and set.
+                 * @param status Status to apply.
                  */
-                std::vector<const ChangeForReader_t*> unsent_changes_to_underway();
+                void set_change_to_status(const CacheChange_t* change, ChangeForReaderStatus_t status);
 
-                void underway_changes_to_unacknowledged();
-
-                void underway_changes_to_acknowledged();
+                void mark_fragments_as_sent_for_change(const CacheChange_t* change, FragmentNumberSet_t fragments);
+               
+                /*
+                 * Converts all changes with a given status to a different status.
+                 * @param previous Status to change.
+                 * @param next Status to adopt.
+                 */
+                void convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next);
 
                 void setNotValid(const CacheChange_t* change);
 
@@ -143,14 +156,6 @@ namespace eprosima
                 bool m_isRequestedChangesEmpty;
 
                 /**
-                 * Returns a list of CacheChange_t that have the passes status.
-                 * @param Changes Pointer to a vector of CacheChange_t pointers.
-                 * @param status Status to be used.
-                 * @return True if correctly obtained.
-                 */
-                bool changesList(std::vector<const ChangeForReader_t*>* Changes, const ChangeForReaderStatus_t status);
-
-                /**
                  * Return the minimum change in a vector of CacheChange_t.
                  * @param Changes Pointer to a vector of CacheChange_t.
                  * @param changeForReader Pointer to the CacheChange_t.
@@ -163,14 +168,8 @@ namespace eprosima
                  * @param[in] frag_set set containing the requested fragments to be sent.
                  * @param[in] sequence_number Sequence number to be paired with the requested fragments.
                  * @return True if there is at least one requested fragment. False in other case.
-                 * @remarks It is not thread-safe.
                  */
-                bool requested_fragment_set(const SequenceNumber_t& sequence_number, const FragmentNumberSet_t& frag_set);
-
-                const std::unordered_map<SequenceNumber_t, std::set<FragmentNumber_t>, SequenceNumberHash>&
-                    getRequestedFragments() const { return requested_fragments_; }
-
-                void clearRequestedFragments() { requested_fragments_.clear(); }
+                bool requested_fragment_set(SequenceNumber_t sequence_number, const FragmentNumberSet_t& frag_set);
 
                 /*!
                  * @brief Returns the last NACKFRAG count.
@@ -201,15 +200,12 @@ namespace eprosima
                 //!Mutex
                 boost::recursive_mutex* mp_mutex;
 
-                //!Set of the changes and its state.
                 std::set<ChangeForReader_t, ChangeForReaderCmp> m_changesForReader;
 
+                //!Set of the changes and its state.
                 private:
                 //! Last  NACKFRAG count.
                 uint32_t lastNackfragCount_;
-                //TODO Temporal
-                //! Contains requested fragments per CacheChange_t.
-                std::unordered_map<SequenceNumber_t, std::set<FragmentNumber_t>, SequenceNumberHash> requested_fragments_;
             };
         }
     } /* namespace rtps */

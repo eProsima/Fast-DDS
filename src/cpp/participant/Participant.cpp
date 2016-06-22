@@ -50,6 +50,19 @@ bool Participant::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t e
 	return mp_impl->newRemoteEndpointDiscovered(partguid, endpointId, kind);
 }
 
+std::pair<StatefulReader*,StatefulReader*> Participant::getEDPReaders(){
+	std::pair<StatefulReader *,StatefulReader*> buffer;
+
+	return mp_impl->getEDPReaders();
+}
+
+int Participant::get_no_publishers(char *target_topic){
+	return mp_impl->get_no_publishers(target_topic);
+}
+
+int Participant::get_no_subscribers(char *target_topic){
+	return mp_impl->get_no_subscribers(target_topic);
+}
 
 } /* namespace pubsub */
 } /* namespace eprosima */

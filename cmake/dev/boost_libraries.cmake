@@ -84,7 +84,7 @@ macro(install_boost FILETYPE)
                     install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}/
                         DESTINATION ${BIN_INSTALL_DIR}${DIR_EXTENSION}
                         COMPONENT libraries_${MSVC_ARCH}
-                        CONFIGURATIONS Release
+                        CONFIGURATIONS Release RelWithDebInfo
                         FILES_MATCHING
                         PATTERN "boost_${arg_}-${BOOST_ARCH}-mt*.dll"
                         PATTERN "boost_${arg_}-${BOOST_ARCH}-mt-gd*.dll" EXCLUDE
@@ -104,7 +104,7 @@ macro(install_boost FILETYPE)
                     install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}/
                         DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}
                         COMPONENT libraries_${MSVC_ARCH}
-                        CONFIGURATIONS Release
+                        CONFIGURATIONS Release RelWithDebInfo
                         FILES_MATCHING
                         PATTERN "boost_${arg_}-${BOOST_ARCH}-mt*.lib"
                         PATTERN "boost_${arg_}-${BOOST_ARCH}-mt-gd*.lib" EXCLUDE

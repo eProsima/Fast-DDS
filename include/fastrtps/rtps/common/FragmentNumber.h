@@ -21,7 +21,7 @@
 #include "../../fastrtps_dll.h"
 #include "Types.h"
 
-#include <vector>
+#include <set>
 #include <cmath>
 #include <algorithm>
 #include <sstream>
@@ -49,6 +49,18 @@ public:
 		return *this;
 	}
 
+   FragmentNumberSet_t(): base(0), set()
+   {
+   }
+
+   FragmentNumberSet_t(const std::set<FragmentNumber_t>& set2): base(0)
+   {
+      set = set2;
+      auto min = set.begin();
+      if (min != set.end())
+         base = *min;
+   }
+
 	/**
 	* Compares object with other FragmentNumberSet_t.
 	* @param other FragmentNumberSet_t to compare
@@ -58,44 +70,29 @@ public:
 
 		if (base != other.base)
 			return false;
-		if (set.size() != other.set.size())
-			return false;
+      return other.set == set;	
+   }
 
-		for (size_t i = 0; i < set.size(); ++i)
-			if (set.at(i) != other.set.at(i))
-				return false;
-
-		return true;
-	}
 
 	/**
 	* Add a fragment number to the set
 	* @param in FragmentNumberSet_t to add
 	* @return True on success
 	*/
-	bool add(FragmentNumber_t& in)
+	bool add(FragmentNumber_t in)
 	{
 		if (in >= base && in <= base + 255)
-			set.push_back(in);
+			set.insert(in);
 		else
 			return false;
 		return true;
 	}
 
 	/**
-	* Get the maximum fragment number in the set
-	* @return maximum fragment number in the set
-	*/
-	FragmentNumber_t get_maxFragNum()
-	{
-		return *std::max_element(set.begin(), set.end());
-	}
-
-	/**
 	* Check if the set is empty
 	* @return True if the set is empty
 	*/
-	bool isSetEmpty()
+	bool isSetEmpty() const
 	{
 		return set.empty();
 	}
@@ -104,7 +101,7 @@ public:
 	* Get the begin of the set
 	* @return Vector iterator pointing to the begin of the set
 	*/
-	std::vector<FragmentNumber_t>::const_iterator get_begin() const
+	std::set<FragmentNumber_t>::const_iterator get_begin() const
 	{
 		return set.begin();
 	}
@@ -113,7 +110,7 @@ public:
 	* Get the end of the set
 	* @return Vector iterator pointing to the end of the set
 	*/
-	std::vector<FragmentNumber_t>::const_iterator get_end() const
+	std::set<FragmentNumber_t>::const_iterator get_end() const
 	{
 		return set.end();
 	}
@@ -128,15 +125,6 @@ public:
 	}
 
 	/**
-	* Get the set of SequenceNumbers
-	* @return Set of SequenceNumbers
-	*/
-	std::vector<FragmentNumber_t> get_set()
-	{
-		return set;
-	}
-
-	/**
 	* Get a string representation of the set
 	* @return string representation of the set
 	*/
@@ -144,13 +132,26 @@ public:
 	{
 		std::stringstream ss;
 		ss << base << ":";
-		for (std::vector<FragmentNumber_t>::iterator it = set.begin(); it != set.end(); ++it)
+		for (auto it = set.begin(); it != set.end(); ++it)
 			ss << *it << "-";
 		return ss.str();
 	}
 
-private:
-	std::vector<FragmentNumber_t> set;
+   FragmentNumberSet_t& operator-=(const FragmentNumberSet_t& rhs)
+   {
+      for ( auto element : rhs.set)
+         set.erase(element);
+      return *this;
+   }
+
+   FragmentNumberSet_t& operator+=(const FragmentNumberSet_t& rhs)
+   {
+      for ( auto element : rhs.set )
+         add(element);
+      return *this;
+   }
+
+	std::set<FragmentNumber_t> set;
 };
 
 /**
@@ -161,6 +162,20 @@ private:
 */
 inline std::ostream& operator<<(std::ostream& output, FragmentNumberSet_t& sns){
 	return output << sns.print();
+}
+
+inline FragmentNumberSet_t operator-(FragmentNumberSet_t lhs, const FragmentNumberSet_t& rhs)
+{
+   for ( auto element : rhs.set)
+      lhs.set.erase(element);
+   return lhs;
+}
+
+inline FragmentNumberSet_t operator+(FragmentNumberSet_t lhs, const FragmentNumberSet_t& rhs)
+{
+   for ( auto element : rhs.set)
+      lhs.add(element);
+   return lhs;
 }
 
 }

@@ -18,7 +18,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 	
     if(GTEST_FOUND)
         if(WIN32)
-            add_definitions(-D_WIN32_WINNT=0x0501)
+            add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
 
@@ -32,10 +32,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             types/Data64kbType.cpp
             types/Data1mb.cpp
             types/Data1mbType.cpp
-            RTPSAsSocketReader.cpp
-            RTPSAsSocketWriter.cpp
-            RTPSWithRegistrationReader.cpp
-            RTPSWithRegistrationWriter.cpp
             ReqRepHelloWorldRequester.cpp
             ReqRepHelloWorldReplier.cpp
             )

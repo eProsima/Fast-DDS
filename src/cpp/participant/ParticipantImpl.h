@@ -22,7 +22,9 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
+#include <fastrtps/rtps/flowcontrol/FlowController.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -117,6 +119,10 @@ public:
 	*/
 	inline const ParticipantAttributes& getAttributes() const {return m_att;};
 
+	std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
+
+	int get_no_publishers(char *target_topic);
+	int get_no_subscribers(char *target_topic);
 	/**
 	* This method can be used when using a StaticEndpointDiscovery mechanism differnet that the one
 	* included in FastRTPS, for example when communicating with other implementations.

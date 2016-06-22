@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "AsyncWriterThread.h"
+#include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 
 #include <boost/thread.hpp>
@@ -20,40 +20,34 @@
 
 #include <algorithm>
 #include <cassert>
+#include <stdexcept>
 
 using namespace eprosima::fastrtps::rtps;
 
-AsyncWriterThread::AsyncWriterThread() : thread_(nullptr)
-{
-}
+std::thread* AsyncWriterThread::thread_;
+std::mutex AsyncWriterThread::data_structure_mutex_;
+std::mutex AsyncWriterThread::condition_variable_mutex_;
+std::list<RTPSWriter*> AsyncWriterThread::async_writers;
+bool AsyncWriterThread::running_;
+bool AsyncWriterThread::run_scheduled_;
+std::condition_variable AsyncWriterThread::cv_;
+AsyncInterestTree AsyncWriterThread::interestTree;
 
-AsyncWriterThread::~AsyncWriterThread()
-{
-    if(thread_ != nullptr)
-    {
-        thread_->interrupt();
-        thread_->join();
-        delete thread_;
-    }
-}
-
-bool AsyncWriterThread::addWriter(RTPSWriter* writer)
+bool AsyncWriterThread::addWriter(RTPSWriter& writer)
 {
     bool returnedValue = false;
 
-    assert(writer != nullptr);
+    std::unique_lock<std::mutex> data_guard(data_structure_mutex_);
+    async_writers.push_back(&writer);
+    returnedValue = true;
 
-    if(writer->isAsync())
+    // If thread not running, start it.
+    if(thread_ == nullptr)
     {
-        boost::lock_guard<boost::mutex> guard(mutex_);
-        async_writers.push_back(writer);
-        returnedValue = true;
-
-        // If thread not running, start it.
-        if(thread_ == nullptr)
-        {
-            thread_ = new boost::thread(&AsyncWriterThread::run, this);
-        }
+        std::unique_lock<std::mutex> cond_guard(condition_variable_mutex_);
+        running_ = true;
+        run_scheduled_ = true;
+        thread_ = new std::thread(AsyncWriterThread::run);
     }
 
     return returnedValue;
@@ -64,14 +58,12 @@ bool AsyncWriterThread::addWriter(RTPSWriter* writer)
  * @param writer Asynchronous writer to be removed.
  * @return Result of the operation.
  */
-bool AsyncWriterThread::removeWriter(RTPSWriter* writer)
+bool AsyncWriterThread::removeWriter(RTPSWriter& writer)
 {
     bool returnedValue = false;
 
-    assert(writer != nullptr);
-
-    boost::lock_guard<boost::mutex> guard(mutex_);
-    auto it = std::find(async_writers.begin(), async_writers.end(), writer);
+    std::unique_lock<std::mutex> data_guard(data_structure_mutex_);
+    auto it = std::find(async_writers.begin(), async_writers.end(), &writer);
 
     if(it != async_writers.end())
     {
@@ -81,8 +73,13 @@ bool AsyncWriterThread::removeWriter(RTPSWriter* writer)
         // If there is not more asynchronous writers, stop the thread.
         if(async_writers.empty())
         {
-            thread_->interrupt();
+            std::unique_lock<std::mutex> cond_guard(condition_variable_mutex_);
+            running_ = false;
+            run_scheduled_ = false;
+            cond_guard.unlock();
+            cv_.notify_all();
             thread_->join();
+            cond_guard.lock();
             delete thread_;
             thread_ = nullptr;
         }
@@ -91,31 +88,46 @@ bool AsyncWriterThread::removeWriter(RTPSWriter* writer)
     return returnedValue;
 }
 
+void AsyncWriterThread::wakeUp(const RTPSParticipantImpl* interestedParticipant)
+{
+   interestTree.RegisterInterest(interestedParticipant);
+   { // Lock scope
+      std::unique_lock<std::mutex> cond_guard(condition_variable_mutex_);
+      run_scheduled_ = true;
+   }
+   cv_.notify_all();
+}
+
+void AsyncWriterThread::wakeUp(const RTPSWriter* interestedWriter)
+{
+   interestTree.RegisterInterest(interestedWriter);
+   { // Lock scope
+      std::unique_lock<std::mutex> cond_guard(condition_variable_mutex_);
+      run_scheduled_ = true;
+   }
+   cv_.notify_all();
+}
+
 void AsyncWriterThread::run()
 {
-    do
+    while(running_)
     {
-        try
-        {
-            // While the thread is in execution, it cannot be interrupted.
-            {
-                boost::this_thread::disable_interruption di;
+       std::unique_lock<std::mutex> cond_guard(condition_variable_mutex_);
+       while(run_scheduled_ && running_)
+       {
+          run_scheduled_ = false;
+          cond_guard.unlock();
+          interestTree.Swap();
+          auto interestedWriters = interestTree.GetInterestedWriters();
+          
+          std::unique_lock<std::mutex> data_guard(data_structure_mutex_);
+          for(auto writer : async_writers)
+             if (interestedWriters.count(writer))
+               writer->send_any_unsent_changes();
 
-                boost::lock_guard<boost::mutex> guard(mutex_);
+          cond_guard.lock();
+       }
 
-                for(auto it = async_writers.begin(); it != async_writers.end(); ++it)
-                {
-                    (*it)->unsent_changes_not_empty();
-                }
-
-            }
-
-            //TODO Make configurable the time.
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
-        }
-        catch(boost::thread_interrupted /*e*/)
-        {
-            return;
-        }
-    } while(1);
+       cv_.wait(cond_guard);
+    }
 }

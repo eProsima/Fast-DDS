@@ -246,10 +246,10 @@ void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber
     mp_up->disc_cond_.notify_one();
 }
 
-void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* /*sub*/)
+void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subscriber)
 {
 	TestCommandType command;
-	if(mp_up->mp_commandsub->takeNextData(&command,&mp_up->m_sampleinfo))
+	if(subscriber->takeNextData(&command,&mp_up->m_sampleinfo))
 	{
 		cout << "RCOMMAND: "<< command.m_command << endl;
 		if(command.m_command == READY)
@@ -283,9 +283,9 @@ void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* /*s
 	//cout << "SAMPLE INFO: "<< mp_up->m_sampleinfo.writerGUID << mp_up->m_sampleinfo.sampleKind << endl;
 }
 
-void LatencyTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* /*sub*/)
+void LatencyTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscriber)
 {
-	mp_up->mp_datasub->takeNextData((void*)mp_up->mp_latency,&mp_up->m_sampleinfo);
+	subscriber->takeNextData((void*)mp_up->mp_latency,&mp_up->m_sampleinfo);
 	//	cout << "R: "<< mp_up->mp_latency->seqnum << "|"<<mp_up->m_echo<<std::flush;
 //	//	eClock::my_sleep(50);
 //		cout << "NSAMPLES: " << (uint32_t)mp_up->n_samples<< endl;

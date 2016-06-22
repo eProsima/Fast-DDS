@@ -86,9 +86,8 @@ class PubSubWriter
     void init()
     {
         //Create participant
-        eprosima::fastrtps::ParticipantAttributes pattr;
-        pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
-        participant_ = eprosima::fastrtps::Domain::createParticipant(pattr);
+        participant_attr_.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+        participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr_);
 
         if(participant_ != nullptr)
         {
@@ -109,6 +108,11 @@ class PubSubWriter
     }
 
     bool isInitialized() const { return initialized_; }
+
+    eprosima::fastrtps::Participant* getParticipant()
+    {
+        return participant_;
+    }
 
     void destroy()
     {
@@ -168,6 +172,14 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& add_throughput_controller_descriptor_to_pparams(uint32_t sizeToClear, uint32_t periodInMs)
+    {
+        ThroughputControllerDescriptor descriptor {sizeToClear, periodInMs};
+        participant_attr_.rtps.terminalThroughputController = descriptor;
+
+        return *this;
+    }
+
     PubSubWriter& asynchronously(const eprosima::fastrtps::PublishModeQosPolicyKind kind)
     {
         publisher_attr_.qos.m_publishMode.kind = kind;
@@ -183,6 +195,18 @@ class PubSubWriter
     PubSubWriter& history_depth(const int32_t depth)
     {
         publisher_attr_.topic.historyQos.depth = depth;
+        return *this;
+    }
+
+    PubSubWriter& disable_builtin_transport()
+    {
+        participant_attr_.rtps.useBuiltinTransports = false;
+        return *this;
+    }
+
+    PubSubWriter& add_user_transport_to_pparams(std::shared_ptr<TransportDescriptorInterface> userTransportDescriptor)
+    {
+        participant_attr_.rtps.userTransports.push_back(userTransportDescriptor);
         return *this;
     }
 
@@ -210,6 +234,12 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& allocated_samples(const uint32_t max)
+    {
+	publisher_attr_.topic.resourceLimitsQos.allocated_samples = max;
+	return *this;
+    }
+
     private:
 
     void matched()
@@ -230,6 +260,7 @@ class PubSubWriter
 
     eprosima::fastrtps::Participant *participant_;
     eprosima::fastrtps::PublisherAttributes publisher_attr_;
+    eprosima::fastrtps::ParticipantAttributes participant_attr_;
     eprosima::fastrtps::Publisher *publisher_;
     std::string topic_name_;
     bool initialized_;

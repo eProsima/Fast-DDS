@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file WriterAttributes.h
+ * @file ReaderAttributes.h
  *
  */
 
@@ -21,6 +21,7 @@
 #define READERATTRIBUTES_H_
 
 #include "../common/Time_t.h"
+#include "../common/Guid.h"
 #include "EndpointAttributes.h"
 namespace eprosima{
 namespace fastrtps{

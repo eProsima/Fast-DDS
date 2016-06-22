@@ -93,7 +93,7 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
 						firstSeq,lastSeq,mp_SFW->getHeartbeatCount(),false,false);
 				logInfo(RTPS_WRITER,mp_SFW->getGuid().entityId << " Sending Heartbeat ("<<firstSeq<< " - " << lastSeq<<")" );
 				for (std::vector<Locator_t>::iterator lit = locList.begin(); lit != locList.end(); ++lit)
-					mp_SFW->getRTPSParticipant()->sendSync(&m_periodic_hb_msg, (*lit));
+					mp_SFW->getRTPSParticipant()->sendSync(&m_periodic_hb_msg,(Endpoint *)mp_SFW , (*lit));
 			}
 			//Reset TIMER
 			this->restart_timer();

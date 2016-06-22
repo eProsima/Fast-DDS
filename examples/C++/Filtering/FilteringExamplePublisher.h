@@ -31,8 +31,8 @@ public:
 	void run();
 private:
 	Participant *mp_participant;
-	Publisher *mp_slow_publisher;
 	Publisher *mp_fast_publisher;
+	Publisher *mp_slow_publisher;
 
 	class PubListener : public PublisherListener
 	{

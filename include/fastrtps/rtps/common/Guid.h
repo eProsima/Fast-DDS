@@ -35,7 +35,7 @@ namespace rtps{
 //!@ingroup COMMON_MODULE
 struct RTPS_DllAPI GuidPrefix_t
 {
-    static CONSTEXPR unsigned int size = 12;
+    static const unsigned int size = 12;
 	octet value[size];
 
 	//!Default constructor. Set the Guid prefix to 0.
@@ -148,7 +148,7 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 //!@brief Structure EntityId_t, entity id part of GUID_t.
 //!@ingroup COMMON_MODULE
  struct RTPS_DllAPI EntityId_t{
-    static CONSTEXPR unsigned int size = 4;
+    static const unsigned int size = 4;
 	octet value[size];
 	//! Default constructor. Uknown entity.
 	EntityId_t(){

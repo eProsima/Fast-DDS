@@ -63,6 +63,11 @@ namespace eprosima
                 Count_t m_heartbeatCount;
                 //!WriterTimes
                 WriterTimes m_times;
+
+                std::vector<ReaderProxy*>::iterator m_reader_iterator;
+                size_t m_readers_to_walk;
+                bool wrap_around_readers();
+
                 //! Vector containin all the associated ReaderProxies.
                 std::vector<ReaderProxy*> matched_readers;
                 //!EntityId used to send the HB.(only for builtin types performance)
@@ -88,7 +93,8 @@ namespace eprosima
                 /**
                  * Method to indicate that there are changes not sent in some of all ReaderProxy.
                  */
-                void unsent_changes_not_empty();
+                size_t send_any_unsent_changes();
+
                 //!Increment the HB count.
                 inline void incrementHBCount(){ ++m_heartbeatCount; };
                 /**
@@ -175,7 +181,10 @@ namespace eprosima
                  */
                 void updateTimes(WriterTimes& times);
 
+                void add_flow_controller(std::unique_ptr<FlowController> controller);
+
                 private:
+                std::vector<std::unique_ptr<FlowController> > m_controllers;
 
                 StatefulWriter& operator=(const StatefulWriter&) NON_COPYABLE_CXX11;
             };

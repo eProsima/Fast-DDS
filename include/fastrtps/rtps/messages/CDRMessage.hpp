@@ -21,6 +21,7 @@
 
 #include <cassert>
 #include <algorithm>
+#include <vector>
 
 namespace eprosima {
 namespace fastrtps{
@@ -40,6 +41,23 @@ inline bool CDRMessage::initCDRMsg(CDRMessage_t*msg,uint32_t payload_size)
 #else
     msg->msg_endian = LITTLEEND;
 #endif
+	return true;
+}
+
+inline bool CDRMessage::wrapVector(CDRMessage_t* msg, std::vector<octet>& vectorToWrap)
+{
+   if (msg->buffer && !msg->wraps)
+      free(msg->buffer);
+
+   msg->wraps = true;
+   msg->buffer = vectorToWrap.data();
+   msg->length = (uint32_t)vectorToWrap.size();
+   msg->max_size = (uint32_t)vectorToWrap.capacity();
+   #if EPROSIMA_BIG_ENDIAN
+       msg->msg_endian = BIGEND;
+   #else
+       msg->msg_endian = LITTLEEND;
+   #endif
 	return true;
 }
 
@@ -528,7 +546,7 @@ inline bool CDRMessage::addFragmentNumberSet(CDRMessage_t* msg,
 		return true;
 	}
 
-	FragmentNumber_t maxfragNum = fns->get_maxFragNum();
+	FragmentNumber_t maxfragNum = *(std::prev(fns->set.end()));
 
 	uint32_t numBits = (uint32_t)(maxfragNum - fns->base + 1);
 

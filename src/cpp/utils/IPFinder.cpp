@@ -126,6 +126,9 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name )
 
 	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
 	{
+      if (ifa->ifa_addr == NULL)
+         continue;
+
 		family = ifa->ifa_addr->sa_family;
 
 		if (family == AF_INET)
@@ -142,7 +145,9 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name )
 			info.name = std::string(host);
 			if(!parseIP4(info.name,&info.locator))
 				info.type = IP4_LOCAL;
-			vec_name->push_back(info);
+
+         if (info.type != IP4_LOCAL)
+			   vec_name->push_back(info);
 			//printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
 
 		}
@@ -162,7 +167,9 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name )
 			if(!parseIP6(info.name,&info.locator))
 				info.type = IP6_LOCAL;
 			info.scope_id = so->sin6_scope_id;
-			vec_name->push_back(info);
+
+         if (info.type != IP6_LOCAL)
+			   vec_name->push_back(info);
 			//printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
 		}
 	}
@@ -242,8 +249,8 @@ RTPS_DllAPI bool IPFinder::parseIP4(std::string& str,Locator_t*loc)
 	char ch;
 	ss >> a >> ch >> b >> ch >> c >> ch >> d;
     //TODO Property to activate or deactivate the loopback interface.
-	//if (a == 127 && b == 0 && c == 0 && d == 1)
-		//return false;
+	if (a == 127 && b == 0 && c == 0 && d == 1)
+		return false;
 	//		if(a==169 && b==254)
 	//			continue;
 	loc->kind = 1;

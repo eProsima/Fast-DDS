@@ -19,7 +19,6 @@
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include <fastrtps/utils/RTPSLog.h>
 #include "../participant/RTPSParticipantImpl.h"
@@ -34,7 +33,6 @@ RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl,GUID_t& guid,WriterAttributes& 
     //TODO 65536 put in constant or macro. It is max size of udp packet.
     m_cdrmessages(impl->getAttributes().sendSocketBufferSize > 65504 ? 65504 : impl->getAttributes().sendSocketBufferSize),
     m_livelinessAsserted(false),
-    mp_unsetChangesNotEmpty(nullptr),
     mp_history(hist),
     mp_listener(listen),
     is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)

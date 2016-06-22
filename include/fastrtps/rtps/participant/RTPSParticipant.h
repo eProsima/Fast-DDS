@@ -21,8 +21,11 @@
 #define RTPSParticipant_H_
 
 #include <cstdlib>
+#include <memory>
+#include "../flowcontrol/FlowController.h"
 #include "../../fastrtps_dll.h"
 #include "../common/Guid.h"
+#include <fastrtps/rtps/reader/StatefulReader.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -117,6 +120,12 @@ public:
 	 * @return true on success
 	 */
 	bool updateReader(RTPSReader* Reader,ReaderQos& rqos);
+
+	/**
+	 * Get a pointer to the built-in to the RTPSReaders of the Endpoint Discovery Protocol.
+	 * @return std::pair of pointers to StatefulReader. First is for Subscribers  and Second is for Publishers.
+	 */
+	std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 
 private:
 	//!Pointer to the implementation.

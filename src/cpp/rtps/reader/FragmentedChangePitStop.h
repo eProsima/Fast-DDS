@@ -18,6 +18,7 @@
 #ifndef _RTPS_READER_FRAGMENTEDCHANGEPITSTOP_H_
 #define _RTPS_READER_FRAGMENTEDCHANGEPITSTOP_H_
 
+#include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/rtps/common/CacheChange.h>
 
 #include <unordered_set>
@@ -58,7 +59,7 @@ namespace eprosima
                          */
                         ChangeInPit(const SequenceNumber_t &sequence_number) : sequence_number_(sequence_number), change_(nullptr) {};
 
-                        ChangeInPit(const ChangeInPit& cip) : sequence_number_(cip.change_->sequenceNumber), change_(cip.change_) {};
+                        ChangeInPit(const ChangeInPit& cip) : sequence_number_(cip.sequence_number_), change_(cip.change_) {};
 
                         CacheChange_t* getChange() const { return change_; }
 
@@ -68,6 +69,8 @@ namespace eprosima
                         }
 
                     private:
+
+                        ChangeInPit& operator=(const ChangeInPit& cip) NON_COPYABLE_CXX11;
 
                         const SequenceNumber_t sequence_number_;
                         CacheChange_t* change_;
@@ -119,7 +122,9 @@ namespace eprosima
 
                 RTPSReader* parent_;
 
-                FragmentedChangePitStop(const FragmentedChangePitStop&) = delete;
+                FragmentedChangePitStop(const FragmentedChangePitStop&) NON_COPYABLE_CXX11;
+
+                FragmentedChangePitStop& operator=(const FragmentedChangePitStop&) NON_COPYABLE_CXX11;
             };
         }
     } // namespace fastrtps

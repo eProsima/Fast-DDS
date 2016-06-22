@@ -59,6 +59,17 @@
  * Common structures used by multiple elements.
  */
 
+/** @defgroup NETWORK_MODULE Network Module
+ * @ingroup RTPS_MODULE
+ * Includes the elements necessary to interface between the 
+ * transport layer and the FastRTPS library.
+ */
+
+/** @defgroup TRANSPORT_MODULE Transport Module.
+ * @ingroup COMMON_MODULE
+ * Built in and user defined transport layer implementations.
+ */
+
 /** @defgroup WRITER_MODULE Writer Module
  * @ingroup RTPS_MODULE
  * This module contains all classes and methods associated with RTPSWriter and its specifications, as well as other necessary classes.

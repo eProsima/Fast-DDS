@@ -44,11 +44,6 @@ void RTPSParticipant::announceRTPSParticipantState()
 	return mp_impl->announceRTPSParticipantState();
 }
 
-//void RTPSParticipant::loose_next_change()
-//{
-//	return mp_impl->loose_next_change();
-//};
-
 void RTPSParticipant::stopRTPSParticipantAnnouncement()
 {
 	return mp_impl->stopRTPSParticipantAnnouncement();
@@ -92,6 +87,9 @@ bool RTPSParticipant::updateReader(RTPSReader* Reader,ReaderQos& rqos)
 	return mp_impl->updateLocalReader(Reader, rqos);
 }
 
+std::pair<StatefulReader*,StatefulReader*> RTPSParticipant::getEDPReaders(){	
+	return mp_impl->getEDPReaders();
+}
 
 }
 } /* namespace rtps */

@@ -16,21 +16,20 @@
  * @file RTPSWriter.h
  */
 
-
 #ifndef RTPSWRITER_H_
 #define RTPSWRITER_H_
 
 #include "../Endpoint.h"
 #include "../messages/RTPSMessageGroup.h"
 #include "../attributes/WriterAttributes.h"
-
-
+#include "../flowcontrol/FlowController.h"
+#include <vector>
+#include <memory>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-class UnsentChangesNotEmptyEvent;
 class WriterListener;
 class WriterHistory;
 struct CacheChange_t;
@@ -43,7 +42,6 @@ struct CacheChange_t;
 class RTPSWriter : public Endpoint
 {
 	friend class WriterHistory;
-	friend class UnsentChangesNotEmptyEvent;
 	friend class RTPSParticipantImpl;
 	friend class RTPSMessageGroup;
 protected:
@@ -90,9 +88,16 @@ public:
 	 */
 	RTPS_DllAPI virtual void updateAttributes(WriterAttributes& att) = 0;
 	/**
-	 * This methods trigger the send operation for unsent changes.
+	 * This method triggers the send operation for unsent changes.
+    * @return number of messages sent
 	 */
-	RTPS_DllAPI virtual void unsent_changes_not_empty() = 0;
+	RTPS_DllAPI virtual size_t send_any_unsent_changes() = 0;
+
+	/**
+	 * This method triggers the send operation for unsent changes,
+    * provided they are cleared by the given controllers.
+	 */
+	//RTPS_DllAPI virtual void send_any_unsent_changes(const std::vector<FlowController*>* parentControllers) = 0;
 	
 	/**
 	* Get Min Seq Num in History.
@@ -136,7 +141,12 @@ public:
 	*/
 	RTPS_DllAPI inline bool isAsync(){ return is_async_; };
 
-    virtual bool clean_history(unsigned int max = 0) = 0;
+   virtual bool clean_history(unsigned int max = 0) = 0;
+   
+   /*
+    * Adds a flow controller that will apply to this writer exclusively.
+    */
+   virtual void add_flow_controller(std::unique_ptr<FlowController> controller) = 0;
 
 protected:
 
@@ -146,8 +156,6 @@ protected:
 	RTPSMessageGroup_t m_cdrmessages;
 	//!INdicates if the liveliness has been asserted
 	bool m_livelinessAsserted;
-	//!Event that manages unsent changes
-	UnsentChangesNotEmptyEvent* mp_unsetChangesNotEmpty;
 	//!WriterHistory
 	WriterHistory* mp_history;
 	//!Listener

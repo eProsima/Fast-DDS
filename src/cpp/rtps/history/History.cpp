@@ -78,10 +78,10 @@ namespace eprosima {
                 boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
                 if(!m_changes.empty())
                 {
-                    for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();it!=m_changes.end();++it)
-                    {
-                        this->remove_change(*it);
-                    }
+                    while(!m_changes.empty())
+		    {
+		        remove_change(m_changes.front());
+		    }
                     m_changes.clear();
                     m_isHistoryFull = false;
                     updateMaxMinSeqNum();

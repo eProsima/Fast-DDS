@@ -23,6 +23,7 @@
 
 #include "../common/CDRMessage_t.h"
 #include "../../qos/ParameterList.h"
+#include <fastrtps/rtps/common/FragmentNumber.h>
 
 #include <vector>
 #include <cassert>
@@ -33,49 +34,60 @@ namespace eprosima {
 
             class CacheChangeForGroup_t
             {
-                public:
+            public:
 
-                    CacheChangeForGroup_t(const CacheChange_t* change) : change_(change),
-                    last_fragment_number_(0)
+                CacheChangeForGroup_t(const CacheChange_t* change) : 
+                   change_(change)
+                {
+                    fragments_cleared_for_sending_.base = 0;
+                    for (uint32_t i = 1; i != change->getFragmentCount() + 1; i++)
+                       fragments_cleared_for_sending_.add(i); // Indexed on 1
+
+                }
+
+                CacheChangeForGroup_t(const CacheChangeForGroup_t& c) : 
+                   change_(c.change_),
+                   fragments_cleared_for_sending_(c.fragments_cleared_for_sending_)
                 {
                 }
 
-                    CacheChangeForGroup_t(const CacheChangeForGroup_t& c) : change_(c.change_),
-                    last_fragment_number_(c.last_fragment_number_)
+                 CacheChangeForGroup_t(const ChangeForReader_t& c) : 
+                    change_(c.getChange()),
+                    fragments_cleared_for_sending_(c.getUnsentFragments())
                 {
                 }
 
-                    const CacheChange_t* getChange() const
-                    {
-                        return change_;
-                    }
+                const CacheChangeForGroup_t& operator=(const CacheChangeForGroup_t& c)
+                { 
+                    change_ = c.change_;
+                    fragments_cleared_for_sending_ = c.fragments_cleared_for_sending_;
+                    return *this;
+                }
 
-                    bool isFragmented() const
-                    {
-                        return change_->getFragmentSize() != 0;
-                    }
+                const CacheChange_t* getChange() const
+                {
+                    return change_;
+                }
 
-                    uint32_t getLastFragmentNumber() const
-                    {
-                        return last_fragment_number_;
-                    }
+                bool isFragmented() const
+                {
+                    return change_->getFragmentSize() != 0;
+                }
 
-                    void setLastFragmentNumber(uint32_t fragment_number)
-                    {
-                        last_fragment_number_ = fragment_number;
-                    }
+                const FragmentNumberSet_t& getFragmentsClearedForSending() const
+                {
+                    return fragments_cleared_for_sending_;
+                }
 
-                    uint32_t increaseLastFragmentNumber()
-                    {
-                        assert(isFragmented());
-                        return ++last_fragment_number_;
-                    }
-
+                void setFragmentsClearedForSending(FragmentNumberSet_t fragments)
+                {
+                    fragments_cleared_for_sending_ = fragments;
+                }
 
                 private:
-
                     const CacheChange_t* change_;
-                    uint32_t last_fragment_number_;
+
+                    FragmentNumberSet_t fragments_cleared_for_sending_;
             };
 
             /**
@@ -146,25 +158,6 @@ namespace eprosima {
                         LocatorList_t& unicast,
                         LocatorList_t& multicast,
                         bool expectsInlineQos);
-
-                /**
-                 * @param msg_group
-                 * @param W
-                 * @param changes
-                 * @param remoteGuidPrefix
-                 * @param loc
-                 * @param expectsInlineQos
-                 * @param ReaderId
-                 * @return 
-                 */
-                static uint32_t send_Changes_AsData(RTPSMessageGroup_t* msg_group,
-                        RTPSWriter* W,
-                        std::vector<CacheChangeForGroup_t>& changes,
-                        const GuidPrefix_t& remoteGuidPrefix,
-                        const EntityId_t& ReaderId,
-                        const Locator_t& loc,
-                        bool expectsInlineQos);
-
                 /**
                  * @param W
                  * @param submsg

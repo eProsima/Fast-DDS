@@ -38,7 +38,7 @@ static const char* const CLASS_NAME = "ListenResourceImpl";
 typedef std::vector<RTPSWriter*>::iterator Wit;
 typedef std::vector<RTPSReader*>::iterator Rit;
 
-ListenResourceImpl::ListenResourceImpl(ListenResource* LR):
+ListenResourceImpl::MessageReceiver(ListenResource* LR):
 																								mp_RTPSParticipantImpl(nullptr),
 																								mp_listenResource(LR),
 																								mp_thread(nullptr),
@@ -370,5 +370,5 @@ void ListenResourceImpl::run_io_service()
 	}
 }
 }
-} /* namespace rtps */
-} /* namespace eprosima */
+}
+}

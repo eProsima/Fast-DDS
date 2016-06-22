@@ -75,6 +75,12 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 	m_SPDP_WELL_KNOWN_UNICAST_PORT =
 			mp_participantImpl->getAttributes().port.getUnicastPort(m_att.domainId,mp_participantImpl->getAttributes().participantID);
 
+	/* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
+	   Else -> Take them */
+
+	/* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
+
+	//UDPv4
 	this->m_mandatoryMulticastLocator.kind = LOCATOR_KIND_UDPv4;
 	m_mandatoryMulticastLocator.port = m_SPDP_WELL_KNOWN_MULTICAST_PORT;
 	m_mandatoryMulticastLocator.set_IP4_address(239,255,0,1);
@@ -84,6 +90,7 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 	}
 	else
 	{
+		//Copy metatrafficMulticastLocatorList from the BuiltinAttributs
 		m_useMandatory = false;
 		for(std::vector<Locator_t>::iterator it = m_att.metatrafficMulticastLocatorList.begin();
 				it!=m_att.metatrafficMulticastLocatorList.end();++it)
@@ -91,11 +98,13 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 			m_metatrafficMulticastLocatorList.push_back(*it);
 		}
 	}
-
-    p_part->assignLocatorForBuiltin_unsafe(m_metatrafficMulticastLocatorList, true, false);
+	//Create ReceiverResources now and update the list with the REAL used ones
+	p_part->createReceiverResources(m_metatrafficMulticastLocatorList, true);
+	/* INSERT DEFAULT UNICAST LOCATORS HERE */
 
 	if(m_att.metatrafficUnicastLocatorList.empty())
 	{
+		//Add default metatrafficUnicastLocators
 		LocatorList_t locators;
 		IPFinder::getIP4Address(&locators);
         for(std::vector<Locator_t>::iterator it=locators.begin();it!=locators.end();++it)
@@ -106,14 +115,20 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 	}
 	else
 	{
+		//If locators existed, just import them to the class
 		for(std::vector<Locator_t>::iterator it = m_att.metatrafficUnicastLocatorList.begin();
 				it!=m_att.metatrafficUnicastLocatorList.end();++it)
 		{
 			m_metatrafficUnicastLocatorList.push_back(*it);
 		}
 	}
+	//Create ReceiverResources now and update the list with the REAL used ones
+	p_part->createReceiverResources(m_metatrafficUnicastLocatorList, true);
 
-    p_part->assignLocatorForBuiltin_unsafe(m_metatrafficUnicastLocatorList, false, false);
+	/* 
+	In principle there is no need to create Senders now.  When a builtin Writer/Reader is created,
+	it will be applied to the DefaultOutLocatorList (already created).
+	*/
 
 	if(m_att.use_SIMPLE_RTPSParticipantDiscoveryProtocol)
 	{

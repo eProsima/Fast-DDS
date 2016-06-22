@@ -44,9 +44,9 @@ namespace rtps{
  * @brief Structure CDRMessage_t, contains a serialized message.
  * @ingroup COMMON_MODULE
  */
-struct CDRMessage_t{
+struct RTPS_DllAPI CDRMessage_t{
 	//! Default constructor
-	CDRMessage_t(){
+	CDRMessage_t():wraps(false){
 		pos = 0;
 		length = 0;
 		buffer = (octet*) malloc(RTPSMESSAGE_DEFAULT_SIZE);
@@ -61,7 +61,7 @@ struct CDRMessage_t{
 
 	~CDRMessage_t()
 	{
-		if(buffer != nullptr)
+		if(buffer != nullptr && !wraps)
 			free(buffer);
 	}
 
@@ -71,6 +71,7 @@ struct CDRMessage_t{
 	 */
 	CDRMessage_t(uint32_t size)
 	{
+      wraps = false;
 		pos = 0;
 		length = 0;
 
@@ -98,6 +99,8 @@ struct CDRMessage_t{
 	uint32_t length;
 	//!Endianness of the message.
 	Endianness_t msg_endian;
+   //Whether this message is wrapping a buffer managed elsewhere.
+   bool wraps;
 };
 }
 }

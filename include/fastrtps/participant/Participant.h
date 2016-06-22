@@ -21,8 +21,12 @@
 #define PARTICIPANT_H_
 
 #include "../rtps/common/Guid.h"
+#include "../rtps/flowcontrol/FlowController.h"
 
 #include "../rtps/attributes/RTPSParticipantAttributes.h"
+
+#include "../rtps/reader/StatefulReader.h"
+#include <utility>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -59,6 +63,7 @@ public:
 	* @return ParticipantAttributes.
 	*/
 	const ParticipantAttributes& getAttributes();
+
 	/**
 	* Called when using a StaticEndpointDiscovery mechanism different that the one
 	* included in FastRTPS, for example when communicating with other implementations.
@@ -72,6 +77,33 @@ public:
 	bool newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t userId,
 		EndpointKind_t kind);
 
+	/**
+	 * This method returns a pointer to the Endpoint Discovery Protocol Readers (when not in Static mode)
+	 * SimpleEDP creates two readers, one for Publisher and one for Subscribers, and they are both returned
+	 * as a std::pair of pointers. These readers in particular have modified listeners that allow a slave 
+	 * listener to attach its callbach to the original one, allowing for the addition of logging elements.
+	 * 
+	 * @return std::pair of pointers to the EDP Readers
+	 * */	
+	std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
+
+	/**
+	 * This method returns the number of Publishers that currently belong to the Participant that have 
+	 * a given topic name
+	 *
+	 * @param target_topic char* to the target topic name to match
+	 * @return Number of Publishers in the Participant with that topic name
+	 */
+	int get_no_publishers(char *target_topic);
+
+	/**
+	 * This method return the number of Subscribers that currently belong to the Participant that have
+	 * a given topic name
+	 *
+	 * @param target_topic char* to the target topic name to match
+	 * @return Number of Subscribers in the Participant with that topic name
+	 * */
+	int get_no_subscribers(char *target_topic);
 };
 
 }

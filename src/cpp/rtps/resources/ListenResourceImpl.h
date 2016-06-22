@@ -68,7 +68,7 @@ public:
 	bool isListeningTo(const Locator_t& loc);
 
 	//!
-	void putToListen();
+	void putToListen(uint32_t *buffer);
 
 	/**
 	* Get the mutex
