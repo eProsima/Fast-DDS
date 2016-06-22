@@ -1180,17 +1180,13 @@ TEST(BlackBox, PubSubOutLocatorSelection){
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     
-    LocatorList_t ReaderOutLocators, WriterOutLocators;
+    LocatorList_t WriterOutLocators;
     Locator_t LocatorBuffer;
     
     LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
     LocatorBuffer.port = 31337;
 
     WriterOutLocators.push_back(LocatorBuffer);
-
-    LocatorBuffer.port = 31334;
-
-    ReaderOutLocators.push_back(LocatorBuffer);
 
 	
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
