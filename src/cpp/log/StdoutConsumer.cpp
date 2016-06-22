@@ -18,13 +18,13 @@ void StdoutConsumer::PrintHeader(const Log::Entry& entry) const
    switch (entry.kind) 
    {
    case Log::Kind::Error:
-      std::cout << C_B_RED << "[" << entry.context.category << " - Error] ";
+      std::cout << C_B_RED << "[" << C_B_WHITE << entry.context.category << C_B_RED << " Error] ";
       break;
    case Log::Kind::Warning:
-      std::cout << C_B_YELLOW << "[" << entry.context.category << " - Warning] ";
+      std::cout << C_B_YELLOW << "[" << C_B_WHITE << entry.context.category << C_B_YELLOW << " Warning] ";
       break;
    case Log::Kind::Info:
-      std::cout << C_B_GREEN << "[" << entry.context.category << " - Info] ";
+      std::cout << C_B_GREEN << "[" << C_B_WHITE << entry.context.category << C_B_GREEN << " Info] ";
       break;
    }
 }

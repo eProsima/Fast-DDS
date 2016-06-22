@@ -39,7 +39,6 @@ class LogTests: public ::testing::Test
 
    ~LogTests()
    {
-      Log::StopLogging();
       Log::Reset();
    }
 
@@ -94,6 +93,34 @@ TEST_F(LogTests, multithreaded_logging)
 
    auto consumedEntries = HELPER_WaitForEntries(5);
    ASSERT_EQ(5, consumedEntries.size());
+}
+
+TEST_F(LogTests, regex_category_filtering)
+{
+   Log::SetRegexFilter(std::regex("(Good)"));
+   logError(GoodCategory, "This should be logged");
+   logError(BadCategory, "If you're seeing this, something went wrong");
+   logWarning(EvenMoreGoodCategory, "This should be logged too!");
+   auto consumedEntries = HELPER_WaitForEntries(3);
+   ASSERT_EQ(2, consumedEntries.size());
+}
+
+TEST_F(LogTests, logging_resilient_to_bad_uses)
+{
+   Log::StopLogging();
+   logError(SampleCategory, "This shouldn't be logged");
+   logWarning(SampleCategory, "This shouldn't be logged");
+
+   Log::StopLogging();
+   Log::StopLogging();
+   Log::StartLogging();
+   Log::StopLogging();
+   Log::StartLogging();
+   logError(SampleCategory, "This should be logged");
+
+   auto consumedEntries = HELPER_WaitForEntries(3);
+   ASSERT_EQ(1, consumedEntries.size());
+
 }
 
 std::vector<Log::Entry> LogTests::HELPER_WaitForEntries(uint32_t amount)

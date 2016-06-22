@@ -24,7 +24,7 @@
 #define logWarning(cat, msg) { Log::QueueLog(msg, Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning); }
    
 #if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG) )
-   #define logInfo(msg) { QueueLog(msg, {__FILE__, __LINE__, __func__}, Log::Kind::Info) }
+   #define logInfo(msg) { Log::QueueLog(msg, {__FILE__, __LINE__, __func__, &cat}, Log::Kind::Info) }
 #else
    #define logInfo(msg) {(void)msg;}
 #endif

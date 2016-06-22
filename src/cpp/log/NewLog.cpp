@@ -28,12 +28,17 @@ void Log::RegisterConsumer(std::unique_ptr<LogConsumer> consumer)
 void Log::Reset()
 {
    StopLogging();
-   std::unique_lock<std::mutex> guard(mCvMutex);
+   ClearRegexFilter();
+   ReportFilenames(false);
+   ReportFunctions(true);
+
    std::unique_lock<std::mutex> configGuard(mConfigMutex);
    mConsumers.clear();
-   mLogs.Clear();
+
+   std::unique_lock<std::mutex> guard(mCvMutex);
    mWork = false;
    mLogging = false;
+   mLogs.Clear();
 }
 
 void Log::Run() 
@@ -82,6 +87,8 @@ bool Log::Preprocess(Log::Entry& entry)
       entry.context.filename = nullptr;
    if (!mFunctions)
       entry.context.function = nullptr;
+   if (!regex_search(entry.context.category, mRegexFilter))
+      return false;
 
    return true;
 }
@@ -102,9 +109,9 @@ void Log::StopLogging()
       std::unique_lock<std::mutex> guard(mCvMutex);
       mLogging = false;
    }
-   mCv.notify_all();
    if (mLoggingThread) 
    {
+      mCv.notify_all();
       mLoggingThread->join();
       mLoggingThread.reset();
    }
@@ -134,7 +141,7 @@ void Log::SetRegexFilter(const std::regex& filter)
 void Log::ClearRegexFilter()
 {
    std::unique_lock<std::mutex> configGuard(mConfigMutex);
-   mRegexFilter = "*";
+   mRegexFilter = "(.*?)";
 }
 
 } //namespace fastrtps 
