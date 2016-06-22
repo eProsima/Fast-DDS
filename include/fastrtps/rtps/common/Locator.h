@@ -33,7 +33,7 @@ namespace rtps{
 #define LOCATOR_INVALID(loc)  {loc.kind=LOCATOR_KIND_INVALID;loc.port= LOCATOR_PORT_INVALID;LOCATOR_ADDRESS_INVALID(loc.address);}
 #define LOCATOR_KIND_INVALID -1
 
-#define LOCATOR_ADDRESS_INVALID(a) {for(uint8_t i=0;i<16;i++) a[i]=0x0;}
+#define LOCATOR_ADDRESS_INVALID(a) {std::memset(a,0x00,16*sizeof(octet))}
 #define LOCATOR_PORT_INVALID 0
 #define LOCATOR_KIND_RESERVED 0
 #define LOCATOR_KIND_UDPv4 1
@@ -65,16 +65,14 @@ public:
 		kind(loc.kind),
 		port(loc.port)
 	{
-		for(uint8_t i = 0;i<16;++i)
-			address[i] = loc.address[i];
+		std::memcpy(address,loc.address,16*sizeof(octet));
 	}
 
 	Locator_t(const Locator_t& loc) :
 		kind(loc.kind),
 		port(loc.port)
 	{
-		for(uint8_t i = 0;i<16;++i)
-			address[i] = loc.address[i];
+		std::memcpy(address,loc.address,16*sizeof(octet));
 	}
 
 	Locator_t(uint32_t portin):kind(1),port(portin)
@@ -86,8 +84,7 @@ public:
 	{
 		kind = loc.kind;
 		port = loc.port;
-		for(uint8_t i=0;i<16;i++)
-			address[i] = loc.address[i];
+		std::memcpy(address,loc.address,16*sizeof(octet));
 		return *this;
 	}
 
