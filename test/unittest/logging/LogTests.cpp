@@ -16,11 +16,14 @@
 #include "mock/MockConsumer.h"
 #include <gtest/gtest.h>
 #include <memory>
+#include <thread>
+#include <chrono>
 
 //using namespace std;
 //using namespace eprosima::fastrtps::rtps;
 
 using namespace eprosima::fastrtps;
+using namespace std;
 
 class LogTests: public ::testing::Test 
 {
@@ -29,15 +32,34 @@ class LogTests: public ::testing::Test
    {
       std::unique_ptr<MockConsumer> consumer(new MockConsumer);
       mockConsumer = consumer.get();
-      logUnderTest.RegisterConsumer(std::move(consumer));
+      Log::RegisterConsumer(std::move(consumer));
+      Log::StartLogging();
    }
 
-   Log logUnderTest;
+   ~LogTests()
+   {
+      Log::StopLogging();
+   }
+
    MockConsumer* mockConsumer;
+
+   const uint32_t AsyncTries = 5;
+   const uint32_t AsyncWaitMs = 50;
 };
 
-TEST_F(LogTests, compiles)
+TEST_F(LogTests, asynchronous_logging)
 {
+   logError("I'm logging this, asynchronously");
+
+   bool logged = false;
+   for (uint32_t i = 0; i != AsyncTries; i++)
+   {
+      logged |= !mockConsumer->ConsumedEntries().empty();
+      if (logged) break;
+      this_thread::sleep_for(chrono::milliseconds(AsyncWaitMs));
+   }
+
+   ASSERT_TRUE(logged);
 }
 
 

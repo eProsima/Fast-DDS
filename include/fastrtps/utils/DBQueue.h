@@ -31,8 +31,8 @@ class DBQueue {
 
 public:
    DBQueue():
-      mForegroundQueue(mQueueAlpha),
-      mBackgroundQueue(mQueueBeta)
+      mForegroundQueue(&mQueueAlpha),
+      mBackgroundQueue(&mQueueBeta)
    {}
       
    //! Clears foreground queue and swaps queues.
@@ -42,9 +42,9 @@ public:
       std::unique_lock<std::mutex> bgGuard(mBackgroundMutex);
 
       // Clear the foreground queue.
-      std::queue<T>().swap(mForegroundQueue);
+      std::queue<T>().swap(*mForegroundQueue);
 
-      auto* swap = mBackgroundQueue;  
+      auto* swap       = mBackgroundQueue;  
       mBackgroundQueue = mForegroundQueue;
       mForegroundQueue = swap;
    }
@@ -53,7 +53,7 @@ public:
    void Push(const T& item) 
    {
       std::unique_lock<std::mutex> guard(mBackgroundMutex);
-      mBackgroundQueue.push(item);
+      mBackgroundQueue->push(item);
    }
 
    //! Returns a reference to the front element
@@ -61,34 +61,34 @@ public:
    T& Front()
    {
       std::unique_lock<std::mutex> guard(mForegroundMutex);
-      return mForegroundQueue.front();
+      return mForegroundQueue->front();
    }
 
    const T& Front() const
    {
       std::unique_lock<std::mutex> guard(mForegroundMutex);
-      return mForegroundQueue.front();
+      return mForegroundQueue->front();
    }
 
    //! Pops from the foreground queue.
    void Pop() 
    {
       std::unique_lock<std::mutex> guard(mForegroundMutex);
-      mForegroundQueue.pop();
+      mForegroundQueue->pop();
    }
 
    //! Reports whether the foreground queue is empty.
    bool Empty() const
    {
       std::unique_lock<std::mutex> guard(mForegroundMutex);
-      return mForegroundQueue.empty();
+      return mForegroundQueue->empty();
    }
 
    //! Reports the size of the foreground queue.
    size_t Size() const
    {
       std::unique_lock<std::mutex> guard(mForegroundMutex);
-      return mForegroundQueue.size();
+      return mForegroundQueue->size();
    }
 
 private:
@@ -97,8 +97,8 @@ private:
    std::queue<T> mQueueBeta;
 
    // Front and background queue references (double buffering)
-   std::queue<T>& mForegroundQueue;
-   std::queue<T>& mBackgroundQueue;
+   std::queue<T>* mForegroundQueue;
+   std::queue<T>* mBackgroundQueue;
 
    mutable std::mutex mForegroundMutex;
    mutable std::mutex mBackgroundMutex;

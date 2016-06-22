@@ -19,11 +19,18 @@
 #include <fastrtps/utils/DBQueue.h>
 #include <thread>
 
+#define logError(msg) { Log::QueueLog(msg, Log::Context{__FILE__, __LINE__, __func__}, Log::Kind::Error); }
+   
+#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG) )
+   #define logInfo(msg) { QueueLog(msg, {__FILE__, __LINE__, __func__}, Log::Kind::Info) }
+#else
+   #define logInfo(msg) {(void)msg;}
+#endif
+
 namespace eprosima {
 namespace fastrtps {
 
 class LogConsumer;
-
 class Log 
 {
 public:
@@ -35,26 +42,35 @@ public:
 
    struct Context {
       const char* filename;
-      const char* line;
+      int line;
       const char* function;
    };
 
-   static void QueueLog(std::string message, Log::Context, Log::Kind);
+   static void QueueLog(const std::string& message, const Log::Context&, Log::Kind);
    static void RegisterConsumer(std::unique_ptr<LogConsumer>);
 
    struct Entry 
    {
       std::string message;
       Log::Context context;
+      Log::Kind kind;
    };
+   
+   static void StartLogging();
+   static void StopLogging();
 
    static void Run();
+
 private:
    static DBQueue<Entry> mLogs;
    static std::vector<std::unique_ptr<LogConsumer> > mConsumers;
 
    static std::unique_ptr<std::thread> mLoggingThread;
+
+   // Condition variable segment.
    static std::condition_variable mCv;
+   static bool mLogging;
+   static bool mWork;
    static std::mutex mMutex;
 };
 
