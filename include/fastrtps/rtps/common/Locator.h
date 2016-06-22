@@ -33,7 +33,7 @@ namespace rtps{
 #define LOCATOR_INVALID(loc)  {loc.kind=LOCATOR_KIND_INVALID;loc.port= LOCATOR_PORT_INVALID;LOCATOR_ADDRESS_INVALID(loc.address);}
 #define LOCATOR_KIND_INVALID -1
 
-#define LOCATOR_ADDRESS_INVALID(a) {std::memset(a,0x00,16*sizeof(octet))}
+#define LOCATOR_ADDRESS_INVALID(a) {std::memset(a,0x00,16*sizeof(octet));}
 #define LOCATOR_PORT_INVALID 0
 #define LOCATOR_KIND_RESERVED 0
 #define LOCATOR_KIND_UDPv4 1
@@ -118,13 +118,15 @@ public:
 	{
 		uint32_t addr;
 		octet* oaddr = (octet*)&addr;
-#if __BIG_ENDIAN__
-        oaddr[0] = address[12];oaddr[1] = address[13];
-        oaddr[2] = address[14];oaddr[3] = address[15];
-#else
-		oaddr[0] = address[15];oaddr[1] = address[14];
-		oaddr[2] = address[13];oaddr[3] = address[12];
-#endif
+		#if __BIG_ENDIAN__
+		std::memcpy(oaddr,address+12,4*sizeof(octet));
+		#else
+		// TODO (Santi) - Are we sure we want to flip this?
+		oaddr[0] = address[15];
+		oaddr[1] = address[14];
+		oaddr[2] = address[13];
+		oaddr[3] = address[12];
+		#endif
 
 		return addr;
 	}

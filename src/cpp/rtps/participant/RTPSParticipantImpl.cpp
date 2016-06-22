@@ -321,6 +321,12 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		logError(RTPS_PARTICIPANT,"Multicast Locator List for Writer contains invalid Locator");
 		return false;
 	}
+	if(!param.endpoint.outLocatorList.isValid())
+	{
+		logError(RTPS_PARTICIPANT,"Output Locator List for Writer contains invalid Locator");
+		return false;
+	}
+
 	RTPSWriter* SWriter = nullptr;
 	GUID_t guid(m_guid.guidPrefix,entId);
 	if(param.endpoint.reliabilityKind == BEST_EFFORT)
@@ -405,6 +411,11 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 	if(!param.endpoint.multicastLocatorList.isValid())
 	{
 		logError(RTPS_PARTICIPANT,"Multicast Locator List for Reader contains invalid Locator");
+		return false;
+	}
+	if(!param.endpoint.outLocatorList.isValid())
+	{
+		logError(RTPS_PARTICIPANT,"Output Locator List for Reader contains invalid Locator");
 		return false;
 	}
 	RTPSReader* SReader = nullptr;
