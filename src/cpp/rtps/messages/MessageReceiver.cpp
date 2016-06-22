@@ -43,7 +43,7 @@
 #include <cassert>
 
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #define IDSTRING "(ID:" << boost::this_thread::get_id() <<") "<< 
 
@@ -53,7 +53,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "MessageReceiver";
 
 MessageReceiver::MessageReceiver(){}
 MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
@@ -63,7 +62,6 @@ MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
 }
 
 void MessageReceiver::init(uint32_t rec_buffer_size){
-	const char* const METHOD_NAME = "init";
 	destVersion = c_ProtocolVersion;
 	sourceVersion = c_ProtocolVersion;
 	set_VendorId_Unknown(sourceVendorId);
@@ -82,7 +80,6 @@ void MessageReceiver::init(uint32_t rec_buffer_size){
 
 MessageReceiver::~MessageReceiver()
 {
-	const char* const METHOD_NAME = "~MessageReceiver";
 	this->m_ParamList.deleteParams();
 	delete(mp_change);
 	logInfo(RTPS_MSG_IN,"",C_BLUE);
@@ -169,7 +166,6 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 		Locator_t* loc, CDRMessage_t*msg)
 {
 
-	const char* const METHOD_NAME = "processCDRMsg";
 
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)
 	{
@@ -366,7 +362,6 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 
 bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg) //check and proccess the RTPS Header
 {
-	const char* const METHOD_NAME = "checkRTPSHeader";
 
 	if(msg->buffer[0] != 'R' ||  msg->buffer[1] != 'T' ||
 			msg->buffer[2] != 'P' ||  msg->buffer[3] != 'S')
@@ -402,7 +397,6 @@ bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg) //check and proccess the
 
 bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t* smh)
 {
-	const char* const METHOD_NAME = "readSubmessageHeader";
 	if(msg->length - msg->pos < 4)
 	{
 		logWarning(RTPS_MSG_IN,IDSTRING"SubmessageHeader too short");
@@ -421,7 +415,6 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t
 
 bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
-	const char* const METHOD_NAME = "proc_Submsg_Data";
     boost::lock_guard<boost::mutex> guard(mtx);
 
     // Reset param list
@@ -596,7 +589,6 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t* smh, bool* last)
 {
-	const char* const METHOD_NAME = "proc_Submsg_DataFrag";
    boost::lock_guard<boost::mutex> guard(mtx);
 
 	// Reset param list
@@ -798,7 +790,6 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
 bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
-	const char* const METHOD_NAME = "proc_Submsg_Heartbeat";
 	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
 	bool finalFlag = smh->flags & BIT(1) ? true : false;
 	bool livelinessFlag = smh->flags & BIT(2) ? true : false;
@@ -843,7 +834,6 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 
 bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
-	const char* const METHOD_NAME = "proc_Submsg_Acknack";
 	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
 	bool finalFlag = smh->flags & BIT(1) ? true: false;
 	//Assign message endianness
@@ -992,7 +982,6 @@ bool MessageReceiver::proc_Submsg_InfoTS(CDRMessage_t* msg,SubmessageHeader_t* s
 
 bool MessageReceiver::proc_Submsg_InfoDST(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
-	const char* const METHOD_NAME = "proc_Submsg_InfoDST";
 	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
 	//bool timeFlag = smh->flags & BIT(1) ? true : false;
 	//Assign message endianness
@@ -1015,7 +1004,6 @@ bool MessageReceiver::proc_Submsg_InfoDST(CDRMessage_t* msg,SubmessageHeader_t* 
 
 bool MessageReceiver::proc_Submsg_InfoSRC(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
-	const char* const METHOD_NAME = "proc_Submsg_InfoSRC";
 	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
 	//bool timeFlag = smh->flags & BIT(1) ? true : false;
 	//Assign message endianness
@@ -1042,7 +1030,6 @@ bool MessageReceiver::proc_Submsg_InfoSRC(CDRMessage_t* msg,SubmessageHeader_t* 
 
 bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t* smh, bool*last) {
 	
-	const char* const METHOD_NAME = "proc_Submsg_NackFrag";
 
 	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
 	//Assign message endianness

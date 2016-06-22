@@ -19,7 +19,7 @@
 
 #include <fastrtps/rtps/history/CacheChangePool.h>
 #include <fastrtps/rtps/common/CacheChange.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -28,11 +28,9 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "CacheChangePool";
 
 CacheChangePool::~CacheChangePool()
 {
-	const char* const METHOD_NAME = "~CacheChangePool";
 	logInfo(RTPS_UTILS,"ChangePool destructor");
 	for(std::vector<CacheChange_t*>::iterator it = m_allCaches.begin();
 			it!=m_allCaches.end();++it)
@@ -45,7 +43,6 @@ CacheChangePool::~CacheChangePool()
 CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size) : mp_mutex(new boost::mutex())
 {
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
-	const char* const METHOD_NAME = "CacheChangePool";
 	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with payload of size: " << payload_size);
 	m_payload_size = payload_size;
 	m_pool_size = 0;
@@ -98,7 +95,6 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
 
 bool CacheChangePool::allocateGroup(uint32_t group_size)
 {
-	const char* const METHOD_NAME = "allocateGroup";
 	logInfo(RTPS_UTILS,"Allocating group of cache changes of size: "<< group_size);
 	bool added = false;
 	uint32_t reserved = 0;

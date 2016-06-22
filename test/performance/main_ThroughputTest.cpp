@@ -23,7 +23,7 @@
 #include <bitset>
 #include <cstdint>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/Domain.h>
 
 #if defined(_MSC_VER)

@@ -34,7 +34,7 @@
 #include "fastrtps/dds/Subscriber.h"
 #include "fastrtps/common/colors.h"
 #include "fastrtps/qos/ParameterList.h"
-#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/log/Log.h"
 
 
 #include "boost/date_time/posix_time/posix_time.hpp"

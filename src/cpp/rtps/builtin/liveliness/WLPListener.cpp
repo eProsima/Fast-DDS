@@ -27,7 +27,7 @@
 
 #include <fastrtps/rtps/reader/StatefulReader.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -38,7 +38,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "WLPListener";
 
 WLPListener::WLPListener(WLP* plwp):
 																		mp_WLP(plwp)
@@ -56,7 +55,6 @@ typedef std::vector<WriterProxy*>::iterator WPIT;
 
 void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const changeIN)
 {
-	const char* const METHOD_NAME = "onNewCacheChangeAdded";
 	boost::lock_guard<boost::recursive_mutex> guard(*reader->getMutex());
 	boost::lock_guard<boost::recursive_mutex> guard2(*mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
 	logInfo(RTPS_LIVELINESS,"",C_MAGENTA);
@@ -110,7 +108,6 @@ void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* 
 
 //bool WLPListener::processParameterList(ParameterList_t* param,GuidPrefix_t* guidP,LivelinessQosPolicyKind* liveliness)
 //{
-//	const char* const METHOD_NAME = "processParameterList";
 //	for(std::vector<Parameter_t*>::iterator it=param->m_parameters.begin();
 //			it!=param->m_parameters.end();++it)
 //	{

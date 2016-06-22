@@ -18,12 +18,11 @@
  */
 
 #include <fastrtps/qos/WriterQos.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps {
 
-static const char* const CLASS_NAME = "WriterQos";
 
 WriterQos::WriterQos()
 {
@@ -136,7 +135,6 @@ void WriterQos::setQos( WriterQos& qos, bool first_time)
 
 bool WriterQos::checkQos()
 {
-	const char* const METHOD_NAME = "checkQos";
 	if(m_durability.kind == TRANSIENT_DURABILITY_QOS)
 	{
 		logError(RTPS_QOS_CHECK,"TRANSIENT Durability not supported");
@@ -171,7 +169,6 @@ bool WriterQos::checkQos()
 
 bool WriterQos::canQosBeUpdated(WriterQos& qos)
 {
-	const char* const METHOD_NAME = "canQosBeUpdated";
 	bool updatable = true;
 	if(	m_durability.kind != qos.m_durability.kind)
 	{

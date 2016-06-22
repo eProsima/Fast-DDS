@@ -19,7 +19,7 @@
 
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include "FragmentedChangePitStop.h"
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
@@ -30,7 +30,6 @@
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
-static const char* const CLASS_NAME = "RTPSReader";
 
 RTPSReader::RTPSReader(RTPSParticipantImpl*pimpl,GUID_t& guid,
 		ReaderAttributes& att,ReaderHistory* hist,ReaderListener* rlisten):
@@ -46,13 +45,11 @@ RTPSReader::RTPSReader(RTPSParticipantImpl*pimpl,GUID_t& guid,
 	mp_history->mp_reader = this;
     mp_history->mp_mutex = mp_mutex;
     fragmentedChangePitStop_ = new FragmentedChangePitStop(this);
-	const char* const METHOD_NAME = "RTPSReader";
 	logInfo(RTPS_READER,"RTPSReader created correctly");
 }
 
 RTPSReader::~RTPSReader()
 {
-	const char* const METHOD_NAME = "~RTPSReader";
 	logInfo(RTPS_READER,"Removing reader "<<this->getGuid().entityId;);
     delete fragmentedChangePitStop_;
     mp_history->mp_reader = nullptr;

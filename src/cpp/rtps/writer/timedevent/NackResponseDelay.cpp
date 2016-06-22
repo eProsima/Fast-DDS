@@ -27,7 +27,7 @@
 #include <fastrtps/rtps/writer/ReaderProxy.h>
 #include "../../participant/RTPSParticipantImpl.h"
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 
@@ -37,7 +37,6 @@
 using namespace eprosima::fastrtps::rtps;
 
 
-static const char* const CLASS_NAME = "NackResponseDelay";
 
 NackResponseDelay::~NackResponseDelay()
 {
@@ -57,7 +56,6 @@ NackResponseDelay::NackResponseDelay(ReaderProxy* p_RP,double millisec):
 
 void NackResponseDelay::event(EventCode code, const char* msg)
 {
-    const char* const METHOD_NAME = "event";
 
     // Unused in release mode.
     (void)msg;

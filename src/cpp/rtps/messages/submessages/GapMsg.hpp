@@ -28,7 +28,6 @@ bool RTPSMessageCreator::addMessageGap(CDRMessage_t* msg, const GuidPrefix_t& gu
 		SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,
 		const EntityId_t& readerId,const EntityId_t& writerId)
 {
-	const char* const METHOD_NAME = "addSubmessageData";
 	try
 	{
 		RTPSMessageCreator::addHeader(msg, guidprefix);
@@ -46,7 +45,6 @@ bool RTPSMessageCreator::addMessageGap(CDRMessage_t* msg, const GuidPrefix_t& gu
 
 bool RTPSMessageCreator::addSubmessageGap(CDRMessage_t* msg,SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,const EntityId_t& readerId,const EntityId_t& writerId)
 {
-	const char* const METHOD_NAME = "addSubmessageData";
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg();
 		CDRMessage::initCDRMsg(&submsgElem);
 	octet flags = 0x0;

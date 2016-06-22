@@ -16,7 +16,7 @@
 #include "RTPSAsNonReliableSocketReader.hpp"
 
 #include <fastrtps/rtps/RTPSDomain.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <thread>
 #include <chrono>

@@ -38,18 +38,16 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "PDPSimpleListener";
 
 
 void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in)
 {
-    const char* const METHOD_NAME = "onNewCacheChangeAdded";
     CacheChange_t* change = (CacheChange_t*)(change_in);
     boost::lock_guard<boost::recursive_mutex> rguard(*reader->getMutex());
     logInfo(RTPS_PDP,"SPDP Message received",C_CYAN);

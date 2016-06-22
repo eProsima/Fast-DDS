@@ -19,7 +19,7 @@
 
 #include "ResourceSendImpl.h"
 #include <fastrtps/rtps/common/CDRMessage_t.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <fastrtps/utils/IPFinder.h>
 
@@ -29,7 +29,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "SendResource";
 
 static const int MAX_BIND_TRIES = 100;
 
@@ -47,7 +46,6 @@ ResourceSendImpl::ResourceSendImpl() :
 
 bool ResourceSendImpl::initSend(RTPSParticipantImpl* /*pimpl*/, const Locator_t& loc, uint32_t sendsockBuffer, bool useIP4, bool useIP6)
 {
-	const char* const METHOD_NAME = "initSend";
 	m_useIP4 = useIP4;
 	m_useIP6 = useIP6;
 
@@ -160,7 +158,6 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* /*pimpl*/, const Locator_t&
 
 ResourceSendImpl::~ResourceSendImpl()
 {
-	const char* const METHOD_NAME = "~SendResource";
 	logInfo(RTPS_MSG_OUT,"",C_YELLOW);
 	for (auto it = mv_send_socket_v4.begin(); it != mv_send_socket_v4.end(); ++it)
 		(*it)->close();
@@ -176,7 +173,6 @@ ResourceSendImpl::~ResourceSendImpl()
 
 void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 {
-	const char* const METHOD_NAME = "sendSync";
 	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
 	if(loc.port == 0)
 		return;

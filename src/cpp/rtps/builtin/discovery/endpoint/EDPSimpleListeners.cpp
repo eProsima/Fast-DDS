@@ -35,7 +35,7 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -43,8 +43,6 @@ namespace rtps {
 
 void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const change_in)
 {
-	const char* const CLASS_NAME = "EDPSimplePUBListener";
-	const char* const METHOD_NAME = "onNewCacheChangeAdded";
 	CacheChange_t* change = (CacheChange_t*)change_in;
 	//boost::lock_guard<boost::recursive_mutex> guard(*this->mp_SEDP->mp_PubReader.first->getMutex());
 	logInfo(RTPS_EDP,"");
@@ -174,8 +172,6 @@ bool EDPSimpleSUBListener::computeKey(CacheChange_t* change)
 
 void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const change_in)
 {
-	const char* const CLASS_NAME = "EDPSimpleSUBListener";
-	const char* const METHOD_NAME = "onNewCacheChangeAdded";
 	CacheChange_t* change = (CacheChange_t*)change_in;
 	//boost::lock_guard<boost::recursive_mutex> guard(*this->mp_SEDP->mp_SubReader.first->getMutex());
 	logInfo(RTPS_EDP,"");

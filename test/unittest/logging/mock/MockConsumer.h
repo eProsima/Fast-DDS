@@ -15,7 +15,7 @@
 #ifndef MOCK_LOG_CONSUMER_H
 #define MOCK_LOG_CONSUMER_H
 
-#include <fastrtps/log/NewLog.h>
+#include <fastrtps/log/Log.h>
 #include <thread>
 #include <mutex>
 #include <vector>

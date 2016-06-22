@@ -23,7 +23,7 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
 #include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #include <boost/thread/recursive_mutex.hpp>
@@ -33,14 +33,12 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-static const char* const CLASS_NAME = "ReaderProxy";
 
 ReaderProxy::ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW) :
 				m_att(rdata), mp_SFW(SW), m_isRequestedChangesEmpty(true),
 				mp_nackResponse(nullptr), mp_nackSupression(nullptr), m_lastAcknackCount(0),
 				mp_mutex(new boost::recursive_mutex()), lastNackfragCount_(0)
 {
-	const char* const METHOD_NAME = "ReaderProxy";
 	mp_nackResponse = new NackResponseDelay(this,TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
 	mp_nackSupression = new NackSupressionDuration(this,TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
 	logInfo(RTPS_WRITER,"Reader Proxy created");
@@ -79,7 +77,6 @@ size_t ReaderProxy::countChangesForReader() const
 bool ReaderProxy::getChangeForReader(const CacheChange_t* change,
 		ChangeForReader_t* changeForReader)
 {
-	const char* const METHOD_NAME = "getChangeForReader";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     auto chit = m_changesForReader.find(ChangeForReader_t(change));
 
@@ -95,7 +92,6 @@ bool ReaderProxy::getChangeForReader(const CacheChange_t* change,
 
 bool ReaderProxy::getChangeForReader(const SequenceNumber_t& seqNum, ChangeForReader_t* changeForReader)
 {
-	const char* const METHOD_NAME = "getChangeForReader";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     auto chit = m_changesForReader.find(ChangeForReader_t(seqNum));
 
@@ -126,7 +122,6 @@ bool ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
 
 bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet)
 {
-	const char* const METHOD_NAME = "requested_changes_set";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
 	for(std::vector<SequenceNumber_t>::iterator sit=seqNumSet.begin();sit!=seqNumSet.end();++sit)

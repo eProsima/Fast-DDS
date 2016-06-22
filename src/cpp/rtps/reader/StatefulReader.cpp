@@ -22,7 +22,7 @@
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include "../participant/RTPSParticipantImpl.h"
 #include "FragmentedChangePitStop.h"
 
@@ -37,11 +37,9 @@
 using namespace eprosima::fastrtps::rtps;
 
 
-static const char* const CLASS_NAME = "StatefulReader";
 
 StatefulReader::~StatefulReader()
 {
-    const char* const METHOD_NAME = "~StatefulReader";
     logInfo(RTPS_READER,"StatefulReader destructor.";);
     for(std::vector<WriterProxy*>::iterator it = matched_writers.begin();
             it!=matched_writers.end();++it)
@@ -63,7 +61,6 @@ StatefulReader::StatefulReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
 
 bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
 {
-    const char* const METHOD_NAME = "matched_writer_add";
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
             it!=matched_writers.end();++it)
@@ -82,7 +79,6 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
 
 bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata)
 {
-    const char* const METHOD_NAME = "matched_writer_remove";
     WriterProxy *wproxy = nullptr;
     boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
 
@@ -111,7 +107,6 @@ bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata)
 
 bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata,bool deleteWP)
 {
-    const char* const METHOD_NAME = "matched_writer_remove";
     WriterProxy *wproxy = nullptr;
     boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
 
@@ -154,7 +149,6 @@ bool StatefulReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
 
 bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID, WriterProxy** WP)
 {
-    const char* const METHOD_NAME = "matched_writer_lookup";
     assert(WP);
 
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
@@ -174,7 +168,6 @@ bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID, WriterProxy** WP)
 
 bool StatefulReader::processDataMsg(CacheChange_t *change)
 {
-    const char* const METHOD_NAME = "processDataMsg";
     WriterProxy *pWP = nullptr;
 
     assert(change);
@@ -225,7 +218,6 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
 bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t sampleSize, uint32_t fragmentStartingNum)
 {
-    const char* const METHOD_NAME = "processDataFragMsg";
     WriterProxy *pWP = nullptr;
 
     assert(incomingChange);
@@ -353,7 +345,6 @@ bool StatefulReader::acceptMsgFrom(GUID_t &writerId, WriterProxy **wp, bool chec
 
 bool StatefulReader::change_removed_by_history(CacheChange_t* a_change, WriterProxy* wp)
 {
-    const char* const METHOD_NAME = "change_removed_by_history";
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
     if(wp != nullptr || matched_writer_lookup(a_change->writerGUID,&wp))
@@ -370,7 +361,6 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change, WriterPr
 
 bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox, boost::unique_lock<boost::recursive_mutex> &lock)
 {
-    const char* const METHOD_NAME = "change_received";
 
     //First look for WriterProxy in case is not provided
     if(prox == nullptr)
@@ -455,7 +445,6 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
 
 bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout)
 {
-    const char* const METHOD_NAME = "nextUntakenCache";
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     std::vector<CacheChange_t*> toremove;
     bool takeok = false;
@@ -513,7 +502,6 @@ bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout
 // TODO Porque elimina aqui y no cuando hay unpairing
 bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
 {
-    const char* const METHOD_NAME = "nextUnreadCache";
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     std::vector<CacheChange_t*> toremove;
     bool readok = false;

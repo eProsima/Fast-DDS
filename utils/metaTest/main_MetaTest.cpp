@@ -22,7 +22,7 @@
 #include <cstdint>
 #include <sstream>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/log/Log.h"
 
 #include "MetaTestPublisher.h"
 #include "MetaTestSubscriber.h"

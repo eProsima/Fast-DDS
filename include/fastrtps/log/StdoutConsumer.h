@@ -15,7 +15,7 @@
 #ifndef STDOUT_CONSUMER_H
 #define STDOUT_CONSUMER_H
 
-#include <fastrtps/log/NewLog.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps {

@@ -37,7 +37,7 @@
 #include <fastrtps/rtps/common/MatchingInfo.h>
 
 #include <fastrtps/utils/StringMatching.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -48,7 +48,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "EDP";
 
 EDP::EDP(PDPSimple* p,RTPSParticipantImpl* part):	mp_PDP(p),
 		mp_RTPSParticipant(part)
@@ -64,7 +63,6 @@ EDP::~EDP()
 
 bool EDP::newLocalReaderProxyData(RTPSReader* reader,TopicAttributes& att, ReaderQos& rqos)
 {
-	const char* const METHOD_NAME = "newLocalReaderProxyData";
 	logInfo(RTPS_EDP,"Adding " << reader->getGuid().entityId << " in topic "<<att.topicName,C_CYAN);
 	ReaderProxyData* rpd = new ReaderProxyData();
 	rpd->m_isAlive = true;
@@ -97,7 +95,6 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader,TopicAttributes& att, Reade
 
 bool EDP::newLocalWriterProxyData(RTPSWriter* writer,TopicAttributes& att, WriterQos& wqos)
 {
-	const char* const METHOD_NAME = "newLocalWriterProxyData";
 	logInfo(RTPS_EDP,"Adding " << writer->getGuid().entityId << " in topic "<<att.topicName,C_CYAN);
 	WriterProxyData* wpd = new WriterProxyData();
 	wpd->m_isAlive = true;
@@ -163,7 +160,6 @@ bool EDP::updatedLocalWriter(RTPSWriter* W,WriterQos& wqos)
 
 bool EDP::removeWriterProxy(const GUID_t& writer)
 {
-	const char* const METHOD_NAME = "removeWriterProxy";
 	logInfo(RTPS_EDP,writer,C_CYAN);
     ParticipantProxyData* pdata = nullptr;
 	WriterProxyData* wdata = nullptr;
@@ -181,7 +177,6 @@ bool EDP::removeWriterProxy(const GUID_t& writer)
 
 bool EDP::removeReaderProxy(const GUID_t& reader)
 {
-	const char* const METHOD_NAME = "removeReaderProxy";
 	logInfo(RTPS_EDP,reader,C_CYAN);
     ParticipantProxyData* pdata = nullptr;
 	ReaderProxyData* rdata = nullptr;
@@ -199,7 +194,6 @@ bool EDP::removeReaderProxy(const GUID_t& reader)
 
 bool EDP::unpairWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata)
 {
-	const char* const METHOD_NAME = "unpairWriterProxy";
 	logInfo(RTPS_EDP,wdata->m_guid << " in topic: "<< wdata->m_topicName,C_CYAN);
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
 	for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
@@ -225,7 +219,6 @@ bool EDP::unpairWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata)
 
 bool EDP::unpairReaderProxy(ParticipantProxyData *pdata, ReaderProxyData* rdata)
 {
-	const char* const METHOD_NAME = "unpairReaderProxy";
 	logInfo(RTPS_EDP,rdata->m_guid << " in topic: "<< rdata->m_topicName,C_CYAN);
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
 	for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
@@ -252,7 +245,6 @@ bool EDP::unpairReaderProxy(ParticipantProxyData *pdata, ReaderProxyData* rdata)
 
 bool EDP::validMatching(WriterProxyData* wdata,ReaderProxyData* rdata)
 {
-	const char* const METHOD_NAME = "validMatching(W2RP)";
 
 	if(wdata->m_topicName != rdata->m_topicName)
 		return false;
@@ -344,7 +336,6 @@ bool EDP::validMatching(WriterProxyData* wdata,ReaderProxyData* rdata)
 }
 bool EDP::validMatching(ReaderProxyData* rdata,WriterProxyData* wdata)
 {
-	const char* const METHOD_NAME = "validMatching(R2WP)";
 
 	if(rdata->m_topicName != wdata->m_topicName)
 		return false;
@@ -436,7 +427,6 @@ bool EDP::validMatching(ReaderProxyData* rdata,WriterProxyData* wdata)
 
 bool EDP::pairingReader(RTPSReader* R)
 {
-    const char* const METHOD_NAME = "pairingReader";
     ParticipantProxyData* pdata = nullptr;
 	ReaderProxyData* rdata = nullptr;
 	if(this->mp_PDP->lookupReaderProxyData(R->getGuid(),&rdata, &pdata))
@@ -495,7 +485,6 @@ bool EDP::pairingReader(RTPSReader* R)
 //TODO Añadir WriterProxyData como argumento con nullptr como valor por defecto.
 bool EDP::pairingWriter(RTPSWriter* W)
 {
-	const char* const METHOD_NAME = "pairingWriter";
     ParticipantProxyData* pdata = nullptr;
 	WriterProxyData* wdata = nullptr;
 	if(this->mp_PDP->lookupWriterProxyData(W->getGuid(),&wdata, &pdata))
@@ -554,7 +543,6 @@ bool EDP::pairingWriter(RTPSWriter* W)
 
 bool EDP::pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata)
 {
-	const char* const METHOD_NAME = "pairingReaderProxy";
 	logInfo(RTPS_EDP,rdata->m_guid<<" in topic: \"" << rdata->m_topicName <<"\"",C_CYAN);
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
 	for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
@@ -611,7 +599,6 @@ bool EDP::pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata
 
 bool EDP::pairingWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata)
 {
-	const char* const METHOD_NAME = "pairingWriterProxy";
 	logInfo(RTPS_EDP,wdata->m_guid<<" in topic: \"" << wdata->m_topicName <<"\"",C_CYAN);
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
 	for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();

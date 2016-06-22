@@ -25,7 +25,7 @@
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/utils/eClock.h>
 
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
@@ -39,7 +39,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "WLivelinessPeriodicAssertion";
 
 WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQosPolicyKind kind):
 TimedEvent(pwlp->getRTPSParticipant()->getEventResource().getIOService(),
@@ -61,7 +60,6 @@ WLivelinessPeriodicAssertion::~WLivelinessPeriodicAssertion()
 
 void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
 {
-	const char* const METHOD_NAME = "event";
 
     // Unused in release mode.
     (void)msg;

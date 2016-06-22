@@ -25,13 +25,12 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "StatelessWriter";
 
 StatelessWriter::StatelessWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
 		WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
@@ -41,7 +40,6 @@ StatelessWriter::StatelessWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
 StatelessWriter::~StatelessWriter()
 {
    AsyncWriterThread::removeWriter(*this);
-	const char* const METHOD_NAME = "~StatelessWriter";
 	logInfo(RTPS_WRITER,"StatelessWriter destructor";);
 }
 
@@ -51,7 +49,6 @@ StatelessWriter::~StatelessWriter()
 
 void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 {
-	const char* const METHOD_NAME = "unsent_change_added_to_history";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
     if(!isAsync())
@@ -121,7 +118,6 @@ void StatelessWriter::update_unsent_changes(const std::vector<CacheChangeForGrou
 
 size_t StatelessWriter::send_any_unsent_changes()
 {
-	const char* const METHOD_NAME = "send_any_unsent_changes";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     size_t number_of_changes_sent= 0;
 
@@ -171,7 +167,6 @@ size_t StatelessWriter::send_any_unsent_changes()
 
 bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 {
-	const char* const METHOD_NAME = "matched_reader_add";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(rdata.guid != c_Guid_Unknown)
 	{
@@ -204,7 +199,6 @@ bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 
 bool StatelessWriter::add_locator(RemoteReaderAttributes& rdata,Locator_t& loc)
 {
-	const char* const METHOD_NAME = "add_locator";
 	logInfo(RTPS_WRITER, "Adding Locator: " << loc << " to StatelessWriter";);
 	std::vector<ReaderLocator>::iterator rit;
 
@@ -254,7 +248,6 @@ bool StatelessWriter::add_locator(RemoteReaderAttributes& rdata,Locator_t& loc)
 
 bool StatelessWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 {
-	const char* const METHOD_NAME = "matched_reader_remove";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	bool found = false;
 	if(rdata.guid == c_Guid_Unknown)
@@ -339,7 +332,6 @@ void StatelessWriter::unsent_changes_reset()
 
 bool StatelessWriter::clean_history(unsigned int max)
 {
-    const char* const METHOD_NAME = "clean_history";
     logInfo(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     bool limit = (max != 0);

@@ -20,7 +20,7 @@
 #include <cstdint>
 #include <sstream>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/log/Log.h"
 #include "fastrtps/rtps/RTPSDomain.h"
 
 #include "TestWriterSocket.h"

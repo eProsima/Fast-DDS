@@ -36,14 +36,13 @@
 
 #include <fastrtps/rtps/RTPSDomain.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps::rtps;
 
 namespace eprosima {
 namespace fastrtps {
 
-static const char* const CLASS_NAME = "ParticipantImpl";
 
 ParticipantImpl::ParticipantImpl(ParticipantAttributes& patt,Participant* pspart,ParticipantListener* listen):
 												m_att(patt),
@@ -107,7 +106,6 @@ const GUID_t& ParticipantImpl::getGuid() const
 Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 		PublisherListener* listen)
 {
-	const char* const METHOD_NAME = "createPublisher";
 	logInfo(PARTICIPANT,"CREATING PUBLISHER IN TOPIC: "<<att.topic.getTopicName(),C_B_YELLOW)
 	//Look for the correct type registration
 
@@ -233,7 +231,6 @@ int ParticipantImpl::get_no_subscribers(char *target_topic){
 Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 		SubscriberListener* listen)
 {
-	const char* const METHOD_NAME = "createSubscriber";
 	logInfo(PARTICIPANT,"CREATING SUBSCRIBER IN TOPIC: "<<att.topic.getTopicName(),C_B_YELLOW)
 	//Look for the correct type registration
 
@@ -329,7 +326,6 @@ bool ParticipantImpl::getRegisteredType(const char* typeName, TopicDataType** ty
 
 bool ParticipantImpl::registerType(TopicDataType* type)
 {
-	const char* const METHOD_NAME = "registerType";
 	if (type->m_typeSize <= 0)
 	{
 		logError(PARTICIPANT, "Registered Type must have maximum byte size > 0");

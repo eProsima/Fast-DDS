@@ -18,12 +18,11 @@
  */
 
 #include <fastrtps/qos/ReaderQos.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps {
 
-static const char* const CLASS_NAME = "ReaderQos";
 
 void ReaderQos::setQos( ReaderQos& qos, bool first_time)
 {
@@ -120,7 +119,6 @@ void ReaderQos::setQos( ReaderQos& qos, bool first_time)
 
 bool ReaderQos::checkQos()
 {
-	const char* const METHOD_NAME = "checkQos";
 	if(m_durability.kind == TRANSIENT_DURABILITY_QOS)
 	{
 		logError(RTPS_QOS_CHECK,"TRANSIENT Durability not supported");
@@ -146,7 +144,6 @@ bool ReaderQos::checkQos()
 
 bool ReaderQos::canQosBeUpdated(ReaderQos& qos)
 {
-	const char* const METHOD_NAME = "canQosBeUpdated";
 	bool updatable = true;
 	if(	m_durability.kind != qos.m_durability.kind)
 	{

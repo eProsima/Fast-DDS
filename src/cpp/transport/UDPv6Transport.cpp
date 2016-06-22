@@ -17,7 +17,7 @@
 #include <cstring>
 #include <algorithm>
 #include <fastrtps/utils/IPFinder.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 using namespace std;
 using namespace boost::asio;
@@ -28,7 +28,6 @@ namespace fastrtps{
 namespace rtps{
 
 static const uint32_t maximumUDPSocketSize = 65536;
-static const char* const CLASS_NAME = "UDPv6Transport";
 
 UDPv6Transport::UDPv6Transport(const UDPv6TransportDescriptor& descriptor):
     mSendBufferSize(descriptor.sendBufferSize),
@@ -183,7 +182,6 @@ bool UDPv6Transport::IsInterfaceAllowed(const ip::address_v6& ip)
 bool UDPv6Transport::OpenAndBindOutputSockets(uint32_t port)
 {
     boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
-    const char* const METHOD_NAME = "OpenAndBindOutputSockets";
 
     try 
     {
@@ -207,7 +205,7 @@ bool UDPv6Transport::OpenAndBindOutputSockets(uint32_t port)
     catch (boost::system::system_error const& e)
     {
         (void)e;
-        logInfo(RTPS_MSG_OUT, "UDPv6 Error binding at port: (" << port << ")" << " with boost msg: "<<e.what() , C_YELLOW);
+        logInfo(RTPS_MSG_OUT, "UDPv6 Error binding at port: (" << port << ")" << " with boost msg: "<<e.what());
         mOutputSockets.erase(port);
         return false;
     }
@@ -218,7 +216,6 @@ bool UDPv6Transport::OpenAndBindOutputSockets(uint32_t port)
 bool UDPv6Transport::OpenAndBindGranularOutputSocket(const Locator_t& locator)
 {
     boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
-    const char* const METHOD_NAME = "OpenAndBindGranularOutputSocket";
     auto ip = boost::asio::ip::address_v6::from_string(locator.to_IP6_string());
     if (!IsInterfaceAllowed(ip))
         return false;
@@ -231,7 +228,7 @@ bool UDPv6Transport::OpenAndBindGranularOutputSocket(const Locator_t& locator)
     catch (boost::system::system_error const& e)
     {
         (void)e;
-        logInfo(RTPS_MSG_OUT, "UDPv6 Error binding at port: (" << locator.port << ")" << " with boost msg: "<<e.what() , C_YELLOW);
+        logInfo(RTPS_MSG_OUT, "UDPv6 Error binding at port: (" << locator.port << ")" << " with boost msg: "<<e.what());
         mGranularOutputSockets.erase(locator);
         return false;
     }
@@ -242,7 +239,6 @@ bool UDPv6Transport::OpenAndBindGranularOutputSocket(const Locator_t& locator)
 bool UDPv6Transport::OpenAndBindInputSockets(uint32_t port)
 {
     boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
-    const char* const METHOD_NAME = "OpenAndBindInputSockets";
 
     try 
     {
@@ -251,7 +247,7 @@ bool UDPv6Transport::OpenAndBindInputSockets(uint32_t port)
     catch (boost::system::system_error const& e)
     {
         (void)e;
-        logInfo(RTPS_MSG_OUT, "UDPv6 Error binding at port: (" << port << ")" << " with boost msg: "<<e.what() , C_YELLOW);
+        logInfo(RTPS_MSG_OUT, "UDPv6 Error binding at port: (" << port << ")" << " with boost msg: "<<e.what() );
         mInputSockets.erase(port);
         return false;
     }
@@ -348,7 +344,6 @@ static Locator_t EndpointToLocator(ip::udp::endpoint& endpoint)
 bool UDPv6Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
         const Locator_t& localLocator, Locator_t& remoteLocator)
 {
-    const char* const METHOD_NAME = "Receive";
 
     if (!IsInputChannelOpen(localLocator) ||
             receiveBufferCapacity < mReceiveBufferSize)
@@ -357,16 +352,15 @@ bool UDPv6Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
     interprocess_semaphore receiveSemaphore(0);
     bool success = false;
 
-    auto handler = [&receiveBuffer, &receiveBufferSize,  &success, METHOD_NAME, &receiveSemaphore](const boost::system::error_code& error, std::size_t bytes_transferred)
     {
         if(error != boost::system::errc::success)
         {
-            logInfo(RTPS_MSG_IN, "Error while listening to socket...",C_BLUE);
+            logInfo(RTPS_MSG_IN, "Error while listening to socket...");
             receiveBufferSize = 0;
         }
         else 
         {
-            logInfo(RTPS_MSG_IN,"Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ",C_BLUE);
+            logInfo(RTPS_MSG_IN,"Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ");
             receiveBufferSize = static_cast<uint32_t>(bytes_transferred);
             success = true;
         }
@@ -397,7 +391,6 @@ bool UDPv6Transport::SendThroughSocket(const octet* sendBuffer,
         const Locator_t& remoteLocator,
         boost::asio::ip::udp::socket& socket)
 {
-    const char* const METHOD_NAME = "SendThroughSocket";
 
     boost::asio::ip::address_v6::bytes_type remoteAddress;
     memcpy(&remoteAddress, &remoteLocator.address[0], sizeof(remoteAddress));
@@ -417,7 +410,7 @@ bool UDPv6Transport::SendThroughSocket(const octet* sendBuffer,
     }
 
     (void) bytesSent;
-    logInfo (RTPS_MSG_OUT,"SENT " << bytesSent,C_YELLOW);
+    logInfo (RTPS_MSG_OUT,"SENT " << bytesSent);
     return true;
 }
 

@@ -19,7 +19,7 @@
 
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPStaticXML.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
@@ -30,7 +30,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "EDPStaticXML";
 
 EDPStaticXML::EDPStaticXML() {
 	// TODO Auto-generated constructor stub
@@ -58,7 +57,6 @@ EDPStaticXML::~EDPStaticXML()
 
 bool EDPStaticXML::loadXMLFile(std::string& filename)
 {
-	const char* const METHOD_NAME = "loadXMLFile";
 	logInfo(RTPS_EDP,"File: "<<filename,C_CYAN);
 	// Create an empty property tree object
 	ptree pt;
@@ -87,7 +85,6 @@ bool EDPStaticXML::loadXMLFile(std::string& filename)
 
 void EDPStaticXML::loadXMLParticipantEndpoint(ptree::value_type& xml_endpoint, StaticRTPSParticipantInfo* pdata)
 {
-	const char* const METHOD_NAME = "loadXMLParticipantEndpoint";
     BOOST_FOREACH(ptree::value_type& xml_RTPSParticipant_child, xml_endpoint.second)
     {
         if(xml_RTPSParticipant_child.first == "name")
@@ -119,7 +116,6 @@ void EDPStaticXML::loadXMLParticipantEndpoint(ptree::value_type& xml_endpoint, S
 
 bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticRTPSParticipantInfo* pdata)
 {
-	const char* const METHOD_NAME = "loadXMLReaderEndpoint";
 	ReaderProxyData* rdata = new ReaderProxyData();
 	BOOST_FOREACH(ptree::value_type& xml_endpoint_child,xml_endpoint.second)
 	{
@@ -334,7 +330,6 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticR
 
 bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticRTPSParticipantInfo* pdata)
 {
-	const char* const METHOD_NAME = "loadXMLWriterEndpoint";
 	WriterProxyData* wdata = new WriterProxyData();
 	BOOST_FOREACH(ptree::value_type& xml_endpoint_child,xml_endpoint.second)
 	{

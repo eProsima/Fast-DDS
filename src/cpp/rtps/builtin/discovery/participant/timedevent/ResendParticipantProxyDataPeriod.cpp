@@ -23,14 +23,13 @@
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include "../../../../participant/RTPSParticipantImpl.h"
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "ResendParticipantProxyDataPeriod";
 
 ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(PDPSimple* p_SPDP,
 		double interval):
@@ -49,7 +48,6 @@ ResendParticipantProxyDataPeriod::~ResendParticipantProxyDataPeriod()
 
 void ResendParticipantProxyDataPeriod::event(EventCode code, const char* msg)
 {
-	const char* const METHOD_NAME = "event";
 
     // Unused in release mode.
     (void)msg;

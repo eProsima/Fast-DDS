@@ -42,7 +42,7 @@
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -51,7 +51,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "EDPSimple";
 
 EDPSimple::EDPSimple(PDPSimple* p,RTPSParticipantImpl* part):
 												EDP(p,part),
@@ -94,7 +93,6 @@ EDPSimple::~EDPSimple()
 
 bool EDPSimple::initEDP(BuiltinAttributes& attributes)
 {
-	const char* const METHOD_NAME = "initEDP";
 	logInfo(RTPS_EDP,"Beginning Simple Endpoint Discovery Protocol",C_B_CYAN);
 	m_discovery = attributes;
 
@@ -109,7 +107,6 @@ bool EDPSimple::initEDP(BuiltinAttributes& attributes)
 
 bool EDPSimple::createSEDPEndpoints()
 {
-	const char* const METHOD_NAME = "createSEDPEndpoints";
 	logInfo(RTPS_EDP,"Beginning",C_CYAN);
 	WriterAttributes watt;
 	ReaderAttributes ratt;
@@ -224,7 +221,6 @@ bool EDPSimple::createSEDPEndpoints()
 
 bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
 {
-	const char* const METHOD_NAME = "processLocalReaderProxyData";
 	logInfo(RTPS_EDP,rdata->m_guid.entityId,C_CYAN);
 	if(mp_SubWriter.first !=nullptr)
 	{
@@ -260,7 +256,6 @@ bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
 }
 bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 {
-	const char* const METHOD_NAME = "processLocalWriterProxyData";
 	logInfo(RTPS_EDP,wdata->m_guid.entityId,C_CYAN);
 	if(mp_PubWriter.first !=nullptr)
 	{
@@ -297,7 +292,6 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 
 bool EDPSimple::removeLocalWriter(RTPSWriter* W)
 {
-	const char* const METHOD_NAME = "removeLocalWriter";
 	logInfo(RTPS_EDP,W->getGuid().entityId,C_CYAN);
 	if(mp_PubWriter.first!=nullptr)
 	{
@@ -323,7 +317,6 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
 
 bool EDPSimple::removeLocalReader(RTPSReader* R)
 {
-	const char* const METHOD_NAME = "removeLocalReader";
 	logInfo(RTPS_EDP,R->getGuid().entityId,C_CYAN);
 	if(mp_SubWriter.first!=nullptr)
 	{
@@ -351,7 +344,6 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
 
 void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
-	const char* const METHOD_NAME = "assignRemoteEndpoints";
 	logInfo(RTPS_EDP,"New DPD received, adding remote endpoints to our SimpleEDP endpoints",C_CYAN);
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t auxendp = endp;
@@ -430,7 +422,6 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
-	const char* const METHOD_NAME = "removeRemoteEndpoints";
 	logInfo(RTPS_EDP,"For RTPSParticipant: "<<pdata->m_guid,C_CYAN);
 	boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
 	for (auto it = pdata->m_builtinReaders.begin(); it != pdata->m_builtinReaders.end();++it)

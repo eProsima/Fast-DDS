@@ -18,7 +18,7 @@
  */
 
 #include "LatencyTestSubscriber.h"
-#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/log/Log.h"
 
 using namespace eprosima;
 using namespace eprosima::fastrtps;

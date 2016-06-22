@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/log/NewLog.h>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/log/StdoutConsumer.h>
 #include "mock/MockConsumer.h"
 #include <gtest/gtest.h>
@@ -81,9 +81,7 @@ TEST_F(LogTests, multithreaded_logging)
    for (int i = 0; i != 5; i++)
    {
       threads.emplace_back(new thread([i]{
-         std::stringstream ss;
-         ss << "I'm thread " << i << "!";
-         logWarning(Multithread, ss.str());
+         logWarning(Multithread, "I'm thread " << i);
       }));
    }
 

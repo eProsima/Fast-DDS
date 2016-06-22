@@ -21,13 +21,12 @@
 
 #include <fastrtps/rtps/common/CDRMessage_t.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "WriterProxyData";
 
 WriterProxyData::WriterProxyData():
 										m_userDefinedId(0),
@@ -40,14 +39,12 @@ WriterProxyData::WriterProxyData():
 
 WriterProxyData::~WriterProxyData() {
 	// TODO Auto-generated destructor stub
-	const char* const METHOD_NAME = "~WriterProxyData";
 	m_parameterList.deleteParams();
 	logInfo(RTPS_PROXY_DATA,this->m_guid);
 }
 
 bool WriterProxyData::toParameterList()
 {
-	const char* const METHOD_NAME = "toParameterList";
 	m_parameterList.deleteParams();
 	for(LocatorListIterator lit = m_unicastLocatorList.begin();
 			lit!=m_unicastLocatorList.end();++lit)
@@ -195,7 +192,6 @@ bool WriterProxyData::toParameterList()
 
 RTPS_DllAPI bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 {
-	//const char* const METHOD_NAME = "readFromCDRMessage";
 	if(ParameterList::readParameterListfromCDRMsg(msg, &m_parameterList, NULL)>0)
 	{
 		for(std::vector<Parameter_t*>::iterator it = m_parameterList.m_parameters.begin();

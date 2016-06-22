@@ -23,13 +23,12 @@
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 #include "../participant/RTPSParticipantImpl.h"
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "ResourceEvent";
 
 ResourceEvent::ResourceEvent():
 		mp_b_thread(nullptr),
@@ -42,8 +41,7 @@ ResourceEvent::ResourceEvent():
 }
 
 ResourceEvent::~ResourceEvent() {
-	const char* const METHOD_NAME = "~ResourceEvent";
-	logInfo(RTPS_PARTICIPANT,"Removing event thread " << mp_b_thread->get_id());
+	logInfo(RTPS_PARTICIPANT,"Removing event thread");
 	mp_io_service->stop();
 	mp_b_thread->join();
 	delete(mp_b_thread);
@@ -67,7 +65,6 @@ void ResourceEvent::init_thread(RTPSParticipantImpl* pimpl)
 
 void ResourceEvent::announce_thread()
 {
-	const char* const METHOD_NAME = "announce_thread";
 	logInfo(RTPS_PARTICIPANT,"Thread: " << boost::this_thread::get_id() << " created and waiting for tasks.");
 	mp_RTPSParticipantImpl->ResourceSemaphorePost();
 

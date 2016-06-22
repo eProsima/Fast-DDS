@@ -29,7 +29,7 @@
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -40,7 +40,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "EDPStatic";
 
 EDPStatic::EDPStatic(PDPSimple* p,RTPSParticipantImpl* part):
 						EDP(p,part),
@@ -58,7 +57,6 @@ EDPStatic::~EDPStatic()
 
 bool EDPStatic::initEDP(BuiltinAttributes& attributes)
 {
-	const char* const METHOD_NAME = "initEDP";
 	logInfo(RTPS_EDP,"Beginning STATIC EndpointDiscoveryProtocol",C_B_CYAN);
 	m_attributes = attributes;
 	mp_edpXML = new EDPStaticXML();
@@ -109,7 +107,6 @@ bool EDPStaticProperty::fromProperty(std::pair<std::string,std::string> prop)
 
 bool EDPStatic::processLocalReaderProxyData(ReaderProxyData* rdata)
 {
-	const char* const METHOD_NAME = "processLocalReaderProxyData";
 	logInfo(RTPS_EDP,rdata->m_guid.entityId<< " in topic: " <<rdata->m_topicName,C_CYAN);
 	//Add the property list entry to our local pdp
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
@@ -122,7 +119,6 @@ bool EDPStatic::processLocalReaderProxyData(ReaderProxyData* rdata)
 
 bool EDPStatic::processLocalWriterProxyData(WriterProxyData* wdata)
 {
-	const char* const METHOD_NAME = "processLocalWriterProxyData";
 		logInfo(RTPS_EDP,wdata->m_guid.entityId<< " in topic: " <<wdata->m_topicName,C_CYAN);
 	//Add the property list entry to our local pdp
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
@@ -176,7 +172,6 @@ bool EDPStatic::removeLocalWriter(RTPSWriter*W)
 
 void EDPStatic::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
-	const char* const METHOD_NAME = "assignRemoteEndpoints";
 	boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
 	for(std::vector<std::pair<std::string,std::string>>::iterator pit = pdata->m_properties.properties.begin();
 			pit!=pdata->m_properties.properties.end();++pit)
@@ -230,7 +225,6 @@ void EDPStatic::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,EntityId_t entId)
 {
-	const char* const METHOD_NAME = "newRemoteReader";
 	ReaderProxyData* rpd = NULL;
 	if(mp_edpXML->lookforReader(pdata->m_participantName,userId,&rpd))
 	{
@@ -270,7 +264,6 @@ bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,Enti
 
 bool EDPStatic::newRemoteWriter(ParticipantProxyData* pdata,uint16_t userId,EntityId_t entId)
 {
-	const char* const METHOD_NAME = "newRemoteWriter";
 	WriterProxyData* wpd = NULL;
 	if(mp_edpXML->lookforWriter(pdata->m_participantName,userId,&wpd))
 	{

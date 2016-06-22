@@ -23,13 +23,12 @@
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include "../participant/RTPSParticipantImpl.h"
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
     namespace fastrtps {
         namespace rtps {
 
-            static const char* const CLASS_NAME = "RTPSMessageGroup";
 
 
             bool sort_changes_group (CacheChange_t* c1,CacheChange_t* c2)
@@ -98,7 +97,6 @@ namespace eprosima {
                     const GuidPrefix_t& remoteGuidPrefix, const EntityId_t& readerId,
                     LocatorList_t* unicast, LocatorList_t* multicast)
             {
-                const char* const METHOD_NAME = "send_Changes_AsGap";
                 std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>> Sequences;
                 RTPSMessageGroup::prepare_SequenceNumberSet(changesSeqNum,&Sequences);
                 std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>>::iterator seqit = Sequences.begin();
@@ -159,7 +157,6 @@ namespace eprosima {
 
             void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W, CDRMessage_t* submsg, bool expectsInlineQos, const CacheChange_t* change, const EntityId_t& ReaderId)
             {
-                const char* const METHOD_NAME = "prepareDataSubM";
                 ParameterList_t* inlineQos = NULL;
                 if(expectsInlineQos)
                 {
@@ -176,7 +173,6 @@ namespace eprosima {
             void RTPSMessageGroup::prepareDataFragSubM(RTPSWriter* W, CDRMessage_t* submsg, bool expectsInlineQos,
                     const CacheChange_t* change, const EntityId_t& ReaderId, uint32_t fragment_number)
             {
-                const char* const METHOD_NAME = "prepareDataFragSubM";
                 ParameterList_t* inlineQos = NULL;
 
                 if(expectsInlineQos)
@@ -218,7 +214,6 @@ namespace eprosima {
                     LocatorList_t& unicast, LocatorList_t& multicast,
                     bool expectsInlineQos)
             {
-                const char* const METHOD_NAME = "send_Changes_AsData";
                 logInfo(RTPS_WRITER,"Sending relevant changes as DATA/DATA_FRAG messages");
                 CDRMessage_t* cdrmsg_submessage = &msg_group->m_rtpsmsg_submessage;
                 CDRMessage_t* cdrmsg_header = &msg_group->m_rtpsmsg_header;

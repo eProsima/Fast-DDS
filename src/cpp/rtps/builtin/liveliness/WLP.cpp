@@ -33,7 +33,7 @@
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
 
 
@@ -44,7 +44,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "WLP";
 
 WLP::WLP(BuiltinProtocols* p):	m_minAutomatic_MilliSec(std::numeric_limits<double>::max()),
 		m_minManRTPSParticipant_MilliSec(std::numeric_limits<double>::max()),
@@ -78,7 +77,6 @@ WLP::~WLP()
 
 bool WLP::initWL(RTPSParticipantImpl* p)
 {
-	const char* const METHOD_NAME = "initWL";
 	logInfo(RTPS_LIVELINESS,"Beginning Liveliness Protocol",C_MAGENTA);
 	mp_participant = p;
 	return createEndpoints();
@@ -86,7 +84,6 @@ bool WLP::initWL(RTPSParticipantImpl* p)
 
 bool WLP::createEndpoints()
 {
-	const char* const METHOD_NAME = "createEndpoints";
 	//CREATE WRITER
 	HistoryAttributes hatt;
 	hatt.initialReservedCaches = 20;
@@ -151,7 +148,6 @@ bool WLP::createEndpoints()
 
 bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
-	const char* const METHOD_NAME = "assignRemoteEndpoints";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 	boost::lock_guard<boost::recursive_mutex> guard2(*pdata->mp_mutex);
 	logInfo(RTPS_LIVELINESS,"For remote RTPSParticipant "<<pdata->m_guid,C_MAGENTA);
@@ -202,7 +198,6 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
-	const char* const METHOD_NAME = "removeRemoteEndpoints";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 	boost::lock_guard<boost::recursive_mutex> guard2(*pdata->mp_mutex);
 	logInfo(RTPS_LIVELINESS,"for RTPSParticipant: "<<pdata->m_guid,C_MAGENTA);
@@ -230,7 +225,6 @@ void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
 
 bool WLP::addLocalWriter(RTPSWriter* W,WriterQos& wqos)
 {
-	const char* const METHOD_NAME = "addLocalWriter";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 	logInfo(RTPS_LIVELINESS,W->getGuid().entityId	<<" to Liveliness Protocol",C_MAGENTA)
 	double wAnnouncementPeriodMilliSec(TimeConv::Time_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
@@ -285,7 +279,6 @@ typedef std::vector<RTPSWriter*>::iterator t_WIT;
 
 bool WLP::removeLocalWriter(RTPSWriter* W)
 {
-	const char* const METHOD_NAME = "removeLocalWriter";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 	logInfo(RTPS_LIVELINESS,W->getGuid().entityId
 			<<" from Liveliness Protocol",C_MAGENTA);
@@ -383,7 +376,6 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
 
 bool WLP::updateLocalWriter(RTPSWriter* W, WriterQos& wqos)
 {
-	const char* const METHOD_NAME = "updateLocalWriter";
 
     // Unused in release mode.
     (void)W;

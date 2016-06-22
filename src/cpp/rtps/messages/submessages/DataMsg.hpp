@@ -25,7 +25,6 @@ namespace rtps{
 
 bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 		GuidPrefix_t& guidprefix, const CacheChange_t* change,TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos){
-	const char* const METHOD_NAME = "addMessageData";
 	try{
 
 		RTPSMessageCreator::addHeader(msg,guidprefix);
@@ -49,7 +48,6 @@ bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 
 bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg, const CacheChange_t* change,
 		TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, ParameterList_t* inlineQos) {
-	const char* const METHOD_NAME = "addSubmessageData";
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg((uint16_t)change->serializedPayload.length);
 	CDRMessage::initCDRMsg(&submsgElem);
 	//Create the two CDR msgs
@@ -215,7 +213,6 @@ bool RTPSMessageCreator::addMessageDataFrag(CDRMessage_t* msg, GuidPrefix_t& gui
         bool expectsInlineQos, ParameterList_t* inlineQos)
 {
 
-	const char* const METHOD_NAME = "addMessageDataFrag";
 	try{
 
 		RTPSMessageCreator::addHeader(msg, guidprefix);
@@ -239,7 +236,6 @@ bool RTPSMessageCreator::addMessageDataFrag(CDRMessage_t* msg, GuidPrefix_t& gui
 bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheChange_t* change, uint32_t fragment_number,
 	TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, ParameterList_t* inlineQos) {
 
-	const char* const METHOD_NAME = "addSubmessageDataFrag";
 
 	// Calculate fragment start
 	uint32_t fragment_start = change->getFragmentSize() * (fragment_number - 1);

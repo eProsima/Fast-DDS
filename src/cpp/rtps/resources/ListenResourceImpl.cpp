@@ -23,7 +23,7 @@
 #include "../participant/RTPSParticipantImpl.h"
 
 #include <fastrtps/utils/IPFinder.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #define IDSTRING "(ID:"<<this->mp_listenResource->m_ID<<") "<<
 
@@ -33,7 +33,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "ListenResourceImpl";
 
 typedef std::vector<RTPSWriter*>::iterator Wit;
 typedef std::vector<RTPSReader*>::iterator Rit;
@@ -51,7 +50,6 @@ ListenResourceImpl::MessageReceiver(ListenResource* LR):
 
 ListenResourceImpl::~ListenResourceImpl()
 {
-	const char* const METHOD_NAME = "~ListenResourceImpl";
 	if(mp_thread !=nullptr)
 	{
         boost::unique_lock<boost::mutex> lock(mutex_);
@@ -95,7 +93,6 @@ bool ListenResourceImpl::isListeningTo(const Locator_t& loc)
 
 void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std::size_t msg_size)
 {
-	const char* const METHOD_NAME = "newCDRMessage";
 
 	if(err == boost::system::errc::success)
 	{
@@ -177,7 +174,6 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 // NOTE This version allways listen in ANY.
 void ListenResourceImpl::getLocatorAddresses(Locator_t& loc, bool isMulti)
 {
-	const char* const METHOD_NAME = "getLocatorAddresses";
 
     logInfo(RTPS_MSG_IN,"Defined Locator IP with 0s (listen to all interfaces), listening to all interfaces",C_BLUE);
     LocatorList_t myIP;
@@ -212,7 +208,6 @@ void ListenResourceImpl::getLocatorAddresses(Locator_t& loc, bool isMulti)
 
 bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, uint32_t listenSocketSize, bool isMulti, bool isFixed)
 {
-	const char* const METHOD_NAME = "init_thread";
 	this->mp_RTPSParticipantImpl = pimpl;
 	if(loc.kind == LOCATOR_KIND_INVALID)
 		return false;
@@ -298,7 +293,6 @@ bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, 
 
 void ListenResourceImpl::joinMulticastGroup(boost::asio::ip::address& addr)
 {
-	const char* const METHOD_NAME = "joinMulticastGroups";
 	logInfo(RTPS_MSG_IN,"Joining group: "<<mv_listenLoc,C_BLUE);
 	try
 	{
@@ -335,7 +329,6 @@ void ListenResourceImpl::joinMulticastGroup(boost::asio::ip::address& addr)
 
 void ListenResourceImpl::putToListen()
 {
-	const char* const METHOD_NAME = "putToListen";
 	CDRMessage::initCDRMsg(&mp_listenResource->mp_receiver->m_rec_msg);
 	try
 	{
@@ -355,7 +348,6 @@ void ListenResourceImpl::putToListen()
 
 void ListenResourceImpl::run_io_service()
 {
-	const char* const METHOD_NAME = "run_io_service";
 	try
 	{
 		logInfo(RTPS_MSG_IN,"Thread: " << boost::this_thread::get_id() << " listening in IP: " << m_listen_socket.local_endpoint(),C_BLUE) ;

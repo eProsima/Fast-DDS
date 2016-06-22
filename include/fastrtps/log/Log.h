@@ -1,3 +1,4 @@
+
 // Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,213 +12,105 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-/**
- * @file Log.h
- *
- */
-
-/** @defgroup LOG_MODULE Log Module
- * Preprocessor definitions to use the Log Module
- * @{
- */
-
-
+//
 #ifndef _FASTRTPS_LOG_LOG_H_
 #define _FASTRTPS_LOG_LOG_H_
 
-#include <iostream>
-#include <fstream>
-#include <ostream>
+#include <fastrtps/utils/DBQueue.h>
+#include <thread>
 #include <sstream>
-#include <cstdint>
-#include <queue>
-#include <map>
+#include <regex>
 
-#include "Colors.h"
-#include "../fastrtps_dll.h"
+#define logError(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); }
+#define logWarning(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning); }
 
-namespace boost
-{
-	class mutex;
-}
-
+#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG) )
+   #define logInfo(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Info); }
+#else
+   #define logInfo(cat, msg) {(void)msg;}
+#endif
 
 namespace eprosima {
-	/**
-	* LOG_CATEGORY enumeration forward declaration. Is defined for each application.
-	*/
-    enum LOG_CATEGORY : uint32_t;
+namespace fastrtps {
 
-/**
-* Verbosity Level.
-*/
-	enum LOG_VERBOSITY_LVL : uint32_t
-	{
-		VERB_QUIET,
-		VERB_ERROR,
-		VERB_WARNING,
-		VERB_INFO
-	};
-
-	enum LOG_TYPE : uint32_t
-	{
-		T_GENERAL,
-		T_ERROR,
-		T_WARNING,
-		T_INFO
-	};
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-
-
-typedef std::map<LOG_CATEGORY,LOG_VERBOSITY_LVL> CategoryVerbosity;
-
-/**
- * Class LogMessage
- */
-class LogMessage
+class LogConsumer;
+class Log 
 {
 public:
-	LogMessage() :m_type(T_GENERAL), m_cat((LOG_CATEGORY)0), m_ready(false){};
-	virtual ~LogMessage(){};
-	std::stringstream m_msg;
-	LOG_TYPE m_type;
-	LOG_CATEGORY m_cat;
-	bool m_ready;
-	std::stringstream m_date;
-	std::stringstream m_color;
-	void reset()
-	{
-		m_msg.str("");
-		m_date.str("");
-		m_color.str("");
-		m_ready = false;
-		m_type = T_GENERAL;
-		m_cat = (LOG_CATEGORY)0;
-	}
-};
-#endif
-/**
- * Class Log used to manage the log entries.
- * @ingroup LOG_MODULE
- */
-class Log {
-public:
+   enum class Kind {
+      Info,
+      Warning,
+      Error,
+   };
 
-	/**
-	 * Set the maximum verbosity level for ALL categories.
-	 * @param level Verbosity level.
-	 */
-	RTPS_DllAPI static void setVerbosity(LOG_VERBOSITY_LVL level);
-	/**
-	 * Set the maximum verbosity level for a specific category.
-	 * @param cat LOG_CATEGORY
-	 * @param level Verbosity level.
-	 */
-	RTPS_DllAPI static void setCategoryVerbosity(LOG_CATEGORY cat, LOG_VERBOSITY_LVL level);
-	/**
-	 * Set the log Filename. If this method is not called no text log will be created.
-	 * @param filename The name of the log file to create
-	 * @param add_date_to_filename If set to true the name of the log file will be date_filename.txt
-	 */
-	RTPS_DllAPI static void logFileName(const char* filename, bool add_date_to_filename = false);
+   struct Context {
+      const char* filename;
+      int line;
+      const char* function;
+      const char* category;
+   };
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-	RTPS_DllAPI static LogMessage* logMessage(LOG_TYPE type, LOG_CATEGORY cat,
-						const char* CLASS_NAME,
-						const char* METHOD_NAME,
-						const char* COLOR = nullptr);
-	RTPS_DllAPI static LogMessage* logMessage(LOG_TYPE type, const char* COLOR = nullptr);
+   struct Entry 
+   {
+      std::string message;
+      Log::Context context;
+      Log::Kind kind;
+   };
 
-	RTPS_DllAPI static void addMessage(LogMessage* lm);
+   static void RegisterConsumer(std::unique_ptr<LogConsumer>);
 
-	CategoryVerbosity::iterator getCategory(LOG_CATEGORY cat);
+   static void StartLogging();
+   static void StopLogging();
 
+   static void ReportFilenames(bool);
+   static void ReportFunctions(bool);
+
+   //! Sets a filter that will match against logging categories.
+   static void SetRegexFilter(const std::regex& filter);
+   static void ClearRegexFilter();
+
+   //! Returns the logging engine to defaults and stops the logging.
+   static void Reset();
 private:
-	Log();
-	virtual ~Log();
 
-	static Log* getInstance();
+   // Applies transformations to the entries compliant with the options selected (such as
+   // erasure of certain context information, or filtering by category. Returns false 
+   // if the log entry is blacklisted.
+   static DBQueue<Entry> mLogs;
+   static std::vector<std::unique_ptr<LogConsumer> > mConsumers;
 
-	static Log m_instance;
+   static std::unique_ptr<std::thread> mLoggingThread;
 
-	std::ofstream* mp_logFile;
-	bool m_logFileDefined;
+   // Condition variable segment.
+   static std::condition_variable mCv;
+   static std::mutex mCvMutex;
+   static bool mLogging;
+   static bool mWork;
 
-	LOG_VERBOSITY_LVL m_defaultVerbosityLevel;
+   // Context configuration.
+   static std::mutex mConfigMutex;
+   static bool mFilenames;
+   static bool mFunctions;
+   static std::regex mRegexFilter;
 
-	CategoryVerbosity m_categories;
 
-	LogMessage* getLogMessage();
-
-	std::stringstream m_stream;
-
-	std::queue<LogMessage*> m_logMessages;
-//	std::queue<LogMessage*> m_readyLogMsg;
-//	std::queue<LogMessage*> m_toPrint;
-
-	boost::mutex* mp_logMesgMutex;
-	boost::mutex* mp_printMutex;
-
-	void printLogMessage(LogMessage* lm);
-	void printMessageString(LogMessage* lm);
-
-	//void printLogMsg(LogMessage* lm);
-	//void printMsg(LogMessage* lm);
-#endif
+   static bool Preprocess(Entry&);
+   // Public methods for static access, not user consumption.
+public:
+   static void Run();
+   static void QueueLog(const std::string& message, const Log::Context&, Log::Kind);
 };
 
-
-
-
-} /* namespace eprosima */
-
-#define logGenerator_(verbosity,cat,str){eprosima::LogMessage* lm = eprosima::Log::logMessage(verbosity,cat,CLASS_NAME,METHOD_NAME);if(lm){lm->m_msg << str;eprosima::Log::addMessage(lm);}}
-#define logGenerator2_(verbosity,cat,str,color){eprosima::LogMessage* lm = eprosima::Log::logMessage(verbosity,cat,CLASS_NAME,METHOD_NAME,color);if(lm){lm->m_msg << str;eprosima::Log::addMessage(lm);}}
-#define logSelector_(arg1, arg2, function, ...) function
-#define logSelectGenerator_(...) logSelector_(__VA_ARGS__, logGenerator2_, logGenerator_, )
-
-
 /**
-* @def logUser
-* @brief Create a user log entry.
-* @code logUser("My Log User Message " << auxInt << auxString,C_BLUE);   @endcode
-*/
-#define logUser(str,...) {eprosima::LogMessage* lm = eprosima::Log::logMessage(eprosima::T_GENERAL,##__VA_ARGS__);if(lm){lm->m_msg << str;eprosima::Log::addMessage(lm);}}
-
-/**
-* @def logError
-* Log an error into a category.
-* const char* METHOD_NAME and const char* CLASS_NAME MUST be defined.
-* @code logError(LOG_CATEGORY,auxInt << " I print the error message " << otherVariable, C_RED); @endcode
-*/
-#define logError(cat,...) logSelectGenerator_(__VA_ARGS__)(eprosima::T_ERROR, cat, __VA_ARGS__)
-/**
-* @def logWarning
-* Log a Warning into a category. The warning will only show if the verbosity of a specific category is greater that the VERB_WARNING level.
-* const char* METHOD_NAME and const char* CLASS_NAME MUST be defined.
-* @code logWarning(LOG_CATEGORY,auxInt << " I print the info message " << otherVariable, C_RED);
-* logWarning(LOG_CATEGORY,auxInt << " Whathever stream i want " << otherVariable);   @endcode
-*/
-#define logWarning(cat,...) logSelectGenerator_(__VA_ARGS__)(eprosima::T_WARNING, cat, __VA_ARGS__)
-
-#if defined(__DEBUG) || defined(_DEBUG)
-/**
-* @def logInfo
-* Log a Info message into a category. This method only works in DEBUG compilation to ensure that release programs are faster.
-* const char* METHOD_NAME and const char* CLASS_NAME MUST be defined.
-*  @code logInfo(LOG_CATEGORY,auxInt << " I print the info message " << otherVariable, C_RED);
-* logInfo(LOG_CATEGORY,auxInt << " Whathever stream i want " << otherVariable);   @endcode
-*/
-#define logInfo(cat,...) logSelectGenerator_(__VA_ARGS__)(eprosima::T_INFO, cat, __VA_ARGS__)
-#else
-#define logInfo(cat,...) {(void)CLASS_NAME; (void)METHOD_NAME;}
-#endif
-
-/**
- * @}
+ * Consumes a log entry to output it somewhere.
  */
+class LogConsumer {
+public:
+   virtual ~LogConsumer(){};
+   virtual void Consume(const Log::Entry&) = 0;
+};
 
-#endif /* _FASTRTPS_LOG_LOG_H_ */
+} // namespace fastrtps
+} // namespace eprosima
+
+#endif
