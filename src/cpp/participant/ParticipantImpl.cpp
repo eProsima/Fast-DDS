@@ -150,6 +150,11 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 		logError(PARTICIPANT," Multicast Locator List for Publisher contains invalid Locator");
 		return nullptr;
 	}
+	if(!att.outLocatorList.isValid())
+	{
+		logError(PARTICIPANT,"Output Locator List for Publisher contains invalid Locator");
+		return nullptr;
+	}
 	if(!att.qos.checkQos() || !att.topic.checkQos())
 		return nullptr;
 
@@ -167,6 +172,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	watt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
 	watt.endpoint.topicKind = att.topic.topicKind;
 	watt.endpoint.unicastLocatorList = att.unicastLocatorList;
+	watt.endpoint.outLocatorList = att.outLocatorList;
 	watt.mode = att.qos.m_publishMode.kind == eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
 	if(att.getEntityID()>0)
 		watt.endpoint.setEntityID((uint8_t)att.getEntityID());
@@ -267,6 +273,11 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 		logError(PARTICIPANT," Multicast Locator List for Subscriber contains invalid Locator");
 		return nullptr;
 	}
+	if(!att.outLocatorList.isValid())
+	{
+		logError(PARTICIPANT,"Output Locator List for Subscriber contains invalid Locator");
+		return nullptr;
+	}
 	if(!att.qos.checkQos() || !att.topic.checkQos())
 		return nullptr;
 
@@ -282,6 +293,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 	ratt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
 	ratt.endpoint.topicKind = att.topic.topicKind;
 	ratt.endpoint.unicastLocatorList = att.unicastLocatorList;
+	ratt.endpoint.outLocatorList = att.outLocatorList;
 	ratt.expectsInlineQos = att.expectsInlineQos;
 	if(att.getEntityID()>0)
 		ratt.endpoint.setEntityID((uint8_t)att.getEntityID());
