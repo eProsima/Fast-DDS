@@ -123,7 +123,7 @@ public:
 
 	/**
 	 * Get a pointer to the built-in to the RTPSReaders of the Endpoint Discovery Protocol.
-	 * @return std::pair of pointers to StatefulReader. First is for Subs and Second is for Pubs.
+	 * @return std::pair of pointers to StatefulReader. First is for Subscribers  and Second is for Publishers.
 	 */
 	std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 
