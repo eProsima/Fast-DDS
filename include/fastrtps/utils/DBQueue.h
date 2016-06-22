@@ -30,27 +30,66 @@ template<class T>
 class DBQueue {
 
 public:
-   DBQueue();
+   DBQueue():
+      mForegroundQueue(mQueueAlpha),
+      mBackgroundQueue(mQueueBeta)
+   {}
+      
+   //! Clears foreground queue and swaps queues.
+   void Swap() 
+   {
+      std::unique_lock<std::mutex> fgGuard(mForegroundMutex);
+      std::unique_lock<std::mutex> bgGuard(mBackgroundMutex);
 
-   //! Clears front queue and swaps queues.
-   void Swap();
+      // Clear the foreground queue.
+      std::queue<T>().swap(mForegroundQueue);
+
+      auto* swap = mBackgroundQueue;  
+      mBackgroundQueue = mForegroundQueue;
+      mForegroundQueue = swap;
+   }
 
    //! Pushes to the background queue.
-   void Push(const T&);
+   void Push(const T& item) 
+   {
+      std::unique_lock<std::mutex> guard(mBackgroundMutex);
+      mBackgroundQueue.push(item);
+   }
 
    //! Returns a reference to the front element
    //! in the foregrund queue.
-   T& Front(); 
-   const T& Front() const;
+   T& Front()
+   {
+      std::unique_lock<std::mutex> guard(mForegroundMutex);
+      return mForegroundQueue.front();
+   }
+
+   const T& Front() const
+   {
+      std::unique_lock<std::mutex> guard(mForegroundMutex);
+      return mForegroundQueue.front();
+   }
 
    //! Pops from the foreground queue.
-   void Pop();
+   void Pop() 
+   {
+      std::unique_lock<std::mutex> guard(mForegroundMutex);
+      mForegroundQueue.pop();
+   }
 
    //! Reports whether the foreground queue is empty.
-   bool Empty() const;
+   bool Empty() const
+   {
+      std::unique_lock<std::mutex> guard(mForegroundMutex);
+      return mForegroundQueue.empty();
+   }
 
    //! Reports the size of the foreground queue.
-   size_t Size() const;
+   size_t Size() const
+   {
+      std::unique_lock<std::mutex> guard(mForegroundMutex);
+      return mForegroundQueue.size();
+   }
 
 private:
    // Underlying queues

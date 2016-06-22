@@ -18,6 +18,7 @@ include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 # Set source files
 set_sources(
     log/Log.cpp
+    log/NewLog.cpp
     utils/eClock.cpp 
     utils/IPFinder.cpp 
     utils/md5.cpp 

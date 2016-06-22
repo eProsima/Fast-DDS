@@ -22,6 +22,8 @@
 namespace eprosima {
 namespace fastrtps {
 
+class LogConsumer;
+
 class Log 
 {
 public:
@@ -38,18 +40,31 @@ public:
    };
 
    static void QueueLog(std::string message, Log::Context, Log::Kind);
-
-private:
+   static void RegisterConsumer(std::unique_ptr<LogConsumer>);
 
    struct Entry 
    {
       std::string message;
       Log::Context context;
    };
+
+   static void Run();
+private:
+   static DBQueue<Entry> mLogs;
+   static std::vector<std::unique_ptr<LogConsumer> > mConsumers;
+
    static std::unique_ptr<std::thread> mLoggingThread;
-   static std::queue<Entry> mLogs;
-   static std::mutex mQueueMutex;
    static std::condition_variable mCv;
+   static std::mutex mMutex;
+};
+
+/**
+ * Consumes a log entry to output it somewhere.
+ */
+class LogConsumer {
+public:
+   virtual ~LogConsumer(){};
+   virtual void Consume(const Log::Entry&) = 0;
 };
 
 } // namespace fastrtps

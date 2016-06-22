@@ -11,38 +11,39 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
+#ifndef MOCK_LOG_CONSUMER_H
+#define MOCK_LOG_CONSUMER_H
 
 #include <fastrtps/log/NewLog.h>
-#include "mock/MockConsumer.h"
-#include <gtest/gtest.h>
-#include <memory>
+#include <thread>
+#include <mutex>
+#include <vector>
 
-//using namespace std;
-//using namespace eprosima::fastrtps::rtps;
+namespace eprosima {
+namespace fastrtps {
 
-using namespace eprosima::fastrtps;
-
-class LogTests: public ::testing::Test 
-{
-   public:
-   LogTests() 
+class MockConsumer: public LogConsumer {
+public:
+   virtual void Consume(const Log::Entry& entry)
    {
-      std::unique_ptr<MockConsumer> consumer(new MockConsumer);
-      mockConsumer = consumer.get();
-      logUnderTest.RegisterConsumer(std::move(consumer));
+      std::unique_lock<std::mutex> guard(mMutex);
+      mEntriesConsumed.push_back(entry);
    }
 
-   Log logUnderTest;
-   MockConsumer* mockConsumer;
+   const std::vector<Log::Entry> ConsumedEntries() const
+   {
+      std::unique_lock<std::mutex> guard(mMutex);
+      return mEntriesConsumed;
+   }
+
+private:
+   std::vector<Log::Entry> mEntriesConsumed;
+   mutable std::mutex mMutex;
 };
 
-TEST_F(LogTests, compiles)
-{
-}
+} // namespace fastrtps
+} // namespace eprosima
 
+#endif
 
-int main(int argc, char **argv)
-{
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
