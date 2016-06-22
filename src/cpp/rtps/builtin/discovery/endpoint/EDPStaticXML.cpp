@@ -347,7 +347,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticR
 				delete(wdata);
 				return false;
 			}
-			wdata->m_userDefinedId = id;
+			wdata->userDefinedId(id);
 		}
 		else if(xml_endpoint_child.first == "entityId")
 		{
@@ -359,9 +359,9 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticR
 				return false;
 			}
 			octet* c = (octet*)&id;
-		    wdata->m_guid.entityId.value[2] = c[0];
-		    wdata->m_guid.entityId.value[1] = c[1];
-            wdata->m_guid.entityId.value[0] = c[2]; 
+		    wdata->guid().entityId.value[2] = c[0];
+		    wdata->guid().entityId.value[1] = c[1];
+            wdata->guid().entityId.value[0] = c[2]; 
 		}
 		else if(xml_endpoint_child.first == "expectsInlineQos")
 		{
@@ -369,24 +369,24 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticR
 		}
 		else if(xml_endpoint_child.first == "topicName")
 		{
-			wdata->m_topicName = (std::string)xml_endpoint_child.second.data();
+			wdata->topicName((std::string)xml_endpoint_child.second.data());
 		}
 		else if(xml_endpoint_child.first == "topicDataType")
 		{
-			wdata->m_typeName = (std::string)xml_endpoint_child.second.data();
+			wdata->typeName((std::string)xml_endpoint_child.second.data());
 		}
 		else if(xml_endpoint_child.first == "topicKind")
 		{
 			std::string auxString = (std::string)xml_endpoint_child.second.data();
 			if(auxString == "NO_KEY")
 			{
-				wdata->m_topicKind = NO_KEY;
-				wdata->m_guid.entityId.value[3] = 0x03;
+				wdata->topicKind(NO_KEY);
+				wdata->guid().entityId.value[3] = 0x03;
 			}
 			else if (auxString == "WITH_KEY")
 			{
-				wdata->m_topicKind = WITH_KEY;
-				wdata->m_guid.entityId.value[3] = 0x02;
+				wdata->topicKind(WITH_KEY);
+				wdata->guid().entityId.value[3] = 0x02;
 			}
 			else
 			{
@@ -414,7 +414,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticR
 			std::string auxString = xml_endpoint_child.second.get("<xmlattr>.address","");
 			loc.set_IP4_address(auxString);
 			loc.port = xml_endpoint_child.second.get("<xmlattr>.port",0);
-			wdata->m_unicastLocatorList.push_back(loc);
+			wdata->unicastLocatorList().push_back(loc);
 		}
 		else if(xml_endpoint_child.first == "multicastLocator")
 		{
@@ -423,31 +423,31 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticR
 			std::string auxString = xml_endpoint_child.second.get("<xmlattr>.address","");
 			loc.set_IP4_address(auxString);
 			loc.port = xml_endpoint_child.second.get("<xmlattr>.port",0);
-			wdata->m_multicastLocatorList.push_back(loc);
+			wdata->multicastLocatorList().push_back(loc);
 		}
 		else if(xml_endpoint_child.first == "topic")
 		{
-			wdata->m_topicName = xml_endpoint_child.second.get("<xmlattr>.name","EPROSIMA_UNKNOWN_STRING");
-			wdata->m_typeName = xml_endpoint_child.second.get("<xmlattr>.dataType","EPROSIMA_UNKNOWN_STRING");
+			wdata->topicName(xml_endpoint_child.second.get("<xmlattr>.name","EPROSIMA_UNKNOWN_STRING"));
+			wdata->typeName(xml_endpoint_child.second.get("<xmlattr>.dataType","EPROSIMA_UNKNOWN_STRING"));
 			std::string auxString = xml_endpoint_child.second.get("<xmlattr>.kind","EPROSIMA_UNKNOWN_STRING");
 			if(auxString == "NO_KEY")
 			{
-				wdata->m_topicKind = NO_KEY;
-				wdata->m_guid.entityId.value[3] = 0x03;
+				wdata->topicKind(NO_KEY);
+				wdata->guid().entityId.value[3] = 0x03;
 			}
 			else if (auxString == "WITH_KEY")
 			{
-				wdata->m_topicKind = WITH_KEY;
-				wdata->m_guid.entityId.value[3] = 0x02;
+				wdata->topicKind(WITH_KEY);
+				wdata->guid().entityId.value[3] = 0x02;
 			}
 			else
 			{
 				logError(RTPS_EDP,"Bad XML file, topic of kind: " << auxString << " is not valid");
 				delete(wdata);return false;
 			}
-			if(wdata->m_topicName == "EPROSIMA_UNKNOWN_STRING" || wdata->m_typeName == "EPROSIMA_UNKNOWN_STRING")
+			if(wdata->topicName() == "EPROSIMA_UNKNOWN_STRING" || wdata->typeName() == "EPROSIMA_UNKNOWN_STRING")
 			{
-				logError(RTPS_EDP,"Bad XML file, topic: "<<wdata->m_topicName << " or typeName: "<<wdata->m_typeName << " undefined");
+				logError(RTPS_EDP,"Bad XML file, topic: "<<wdata->topicName() << " or typeName: "<<wdata->typeName() << " undefined");
 				delete(wdata);
 				return false;
 			}
@@ -520,7 +520,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticR
 			logWarning(RTPS_EDP,"Unkown Endpoint-XML tag, ignoring "<< xml_endpoint_child.first)
 		}
 	}
-	if(wdata->m_userDefinedId == 0)
+	if(wdata->userDefinedId() == 0)
 	{
 		logError(RTPS_EDP,"Writer XML endpoint with NO ID defined");
 		delete(wdata);
@@ -563,7 +563,7 @@ bool EDPStaticXML::lookforWriter(std::string partname, uint16_t id,
 			for(std::vector<WriterProxyData*>::iterator wit = (*pit)->m_writers.begin();
 					wit!=(*pit)->m_writers.end();++wit)
 			{
-				if((*wit)->m_userDefinedId == id)
+				if((*wit)->userDefinedId() == id)
 				{
 					*wdataptr = *wit;
 					return true;
