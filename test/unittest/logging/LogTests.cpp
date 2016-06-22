@@ -13,14 +13,13 @@
 // limitations under the License.
 
 #include <fastrtps/log/NewLog.h>
+#include <fastrtps/log/StdoutConsumer.h>
 #include "mock/MockConsumer.h"
 #include <gtest/gtest.h>
 #include <memory>
 #include <thread>
 #include <chrono>
-
-//using namespace std;
-//using namespace eprosima::fastrtps::rtps;
+#include <sstream>
 
 using namespace eprosima::fastrtps;
 using namespace std;
@@ -31,37 +30,84 @@ class LogTests: public ::testing::Test
    LogTests() 
    {
       std::unique_ptr<MockConsumer> consumer(new MockConsumer);
+      std::unique_ptr<StdoutConsumer> defaultConsumer(new StdoutConsumer);
       mockConsumer = consumer.get();
       Log::RegisterConsumer(std::move(consumer));
+      Log::RegisterConsumer(std::move(defaultConsumer));
       Log::StartLogging();
    }
 
    ~LogTests()
    {
       Log::StopLogging();
+      Log::Reset();
    }
 
    MockConsumer* mockConsumer;
 
    const uint32_t AsyncTries = 5;
    const uint32_t AsyncWaitMs = 50;
+
+   std::vector<Log::Entry> HELPER_WaitForEntries(uint32_t amount);
 };
 
 TEST_F(LogTests, asynchronous_logging)
 {
-   logError("I'm logging this, asynchronously");
+   logError(SampleCategory, "Sample error message");
+   logWarning(SampleCategory, "Sample warning message");
+   logWarning(DifferentCategory, "Sample warning message in another category");
 
-   bool logged = false;
+   auto consumedEntries = HELPER_WaitForEntries(3);
+   ASSERT_EQ(3, consumedEntries.size());
+}
+
+TEST_F(LogTests, reporting_options)
+{
+   // moving away from the defaults
+   Log::ReportFilenames(true);
+   Log::ReportFunctions(false);
+   
+   logError(Reporting, "Error with different reporting options");
+   auto consumedEntries = HELPER_WaitForEntries(1);
+   ASSERT_EQ(1, consumedEntries.size());
+   
+   auto entry = consumedEntries.back();
+   ASSERT_NE(entry.context.filename, nullptr);
+   ASSERT_EQ(entry.context.function, nullptr);
+}
+
+TEST_F(LogTests, multithreaded_logging)
+{
+   vector<unique_ptr<thread>> threads;
+   for (int i = 0; i != 5; i++)
+   {
+      threads.emplace_back(new thread([i]{
+         std::stringstream ss;
+         ss << "I'm thread " << i << "!";
+         logWarning(Multithread, ss.str());
+      }));
+   }
+
+   for (auto& thread: threads) {
+      thread->join();
+   }
+
+   auto consumedEntries = HELPER_WaitForEntries(5);
+   ASSERT_EQ(5, consumedEntries.size());
+}
+
+std::vector<Log::Entry> LogTests::HELPER_WaitForEntries(uint32_t amount)
+{
+   uint32_t entries = 0;
    for (uint32_t i = 0; i != AsyncTries; i++)
    {
-      logged |= !mockConsumer->ConsumedEntries().empty();
-      if (logged) break;
+      entries |= mockConsumer->ConsumedEntries().size();
+      if (entries == amount) break;
       this_thread::sleep_for(chrono::milliseconds(AsyncWaitMs));
    }
 
-   ASSERT_TRUE(logged);
+   return mockConsumer->ConsumedEntries();
 }
-
 
 int main(int argc, char **argv)
 {

@@ -23,6 +23,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(LOGTESTS_SOURCE 
             ${PROJECT_SOURCE_DIR}/src/cpp/log/NewLog.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             LogTests.cpp)
 
         include_directories(mock/)

@@ -18,8 +18,10 @@
 
 #include <fastrtps/utils/DBQueue.h>
 #include <thread>
+#include <regex>
 
-#define logError(msg) { Log::QueueLog(msg, Log::Context{__FILE__, __LINE__, __func__}, Log::Kind::Error); }
+#define logError(cat, msg) { Log::QueueLog(msg, Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); }
+#define logWarning(cat, msg) { Log::QueueLog(msg, Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning); }
    
 #if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG) )
    #define logInfo(msg) { QueueLog(msg, {__FILE__, __LINE__, __func__}, Log::Kind::Info) }
@@ -44,10 +46,8 @@ public:
       const char* filename;
       int line;
       const char* function;
+      const char* category;
    };
-
-   static void QueueLog(const std::string& message, const Log::Context&, Log::Kind);
-   static void RegisterConsumer(std::unique_ptr<LogConsumer>);
 
    struct Entry 
    {
@@ -55,13 +55,26 @@ public:
       Log::Context context;
       Log::Kind kind;
    };
-   
+
+   static void RegisterConsumer(std::unique_ptr<LogConsumer>);
+
    static void StartLogging();
    static void StopLogging();
 
-   static void Run();
+   static void ReportFilenames(bool);
+   static void ReportFunctions(bool);
 
+   //! Sets a filter that will match against logging categories.
+   static void SetRegexFilter(const std::regex& filter);
+   static void ClearRegexFilter();
+
+   //! Returns the logging engine to defaults and stops the logging.
+   static void Reset();
 private:
+
+   // Applies transformations to the entries compliant with the options selected (such as
+   // erasure of certain context information, or filtering by category. Returns false 
+   // if the log entry is blacklisted.
    static DBQueue<Entry> mLogs;
    static std::vector<std::unique_ptr<LogConsumer> > mConsumers;
 
@@ -69,9 +82,22 @@ private:
 
    // Condition variable segment.
    static std::condition_variable mCv;
+   static std::mutex mCvMutex;
    static bool mLogging;
    static bool mWork;
-   static std::mutex mMutex;
+
+   // Context configuration.
+   static std::mutex mConfigMutex;
+   static bool mFilenames;
+   static bool mFunctions;
+   static std::regex mRegexFilter;
+
+
+   static bool Preprocess(Entry&);
+   // Public methods for static access, not user consumption.
+public:
+   static void Run();
+   static void QueueLog(const std::string& message, const Log::Context&, Log::Kind);
 };
 
 /**

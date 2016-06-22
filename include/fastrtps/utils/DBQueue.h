@@ -91,6 +91,15 @@ public:
       return mForegroundQueue->size();
    }
 
+   //! Clears foreground and background.
+   void Clear()
+   {
+      std::unique_lock<std::mutex> fgGuard(mForegroundMutex);
+      std::unique_lock<std::mutex> bgGuard(mBackgroundMutex);
+      std::queue<T>().swap(*mForegroundQueue);
+      std::queue<T>().swap(*mBackgroundQueue);
+   }
+
 private:
    // Underlying queues
    std::queue<T> mQueueAlpha;
