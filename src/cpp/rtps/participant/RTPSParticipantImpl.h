@@ -285,8 +285,6 @@ private:
 	
 	//!Participant Mutex
 	boost::recursive_mutex* mp_mutex;
-	//!ListenThreadId
-	uint32_t m_threadID;
    /*
     * Flow controllers for this participant.
     */

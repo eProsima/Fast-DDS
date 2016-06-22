@@ -74,10 +74,11 @@ Locator_t RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t loc){
 	switch (loc.kind){
 	case LOCATOR_KIND_UDPv4:
 		//This is a completely made up rule
-		loc.port += 10;
+		loc.port += 2;
 		break;
 	case LOCATOR_KIND_UDPv6:
 		//TODO - Define the rest of rules
+		loc.port += 2;
 		break;
 	}
 	return loc;
@@ -93,8 +94,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 				IdCounter(0),
 				mp_participantListener(plisten),
 				mp_userParticipant(par),
-				mp_mutex(new boost::recursive_mutex()),
-				m_threadID(0)
+				mp_mutex(new boost::recursive_mutex())
 
 {
    // Builtin transport by default
@@ -158,7 +158,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		// FIXME -- We have to  discuss the rules for deafult locator assignment for each transport
 		loc2.port= m_att.port.portBase+
 				m_att.port.domainIDGain*PParam.builtin.domainId+
-				m_att.port.offsetd3+
+				m_att.port.offsetd2+
 				m_att.port.participantIDGain*m_att.participantID;
 		loc2.set_IP4_address(239,255,1,4);
       m_att.defaultMulticastLocatorList.push_back(loc2);
