@@ -30,6 +30,7 @@
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/transport/test_UDPv4Transport.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
+#include <fastrtps/rtps/common/Locator.h>
 
 #include <thread>
 #include <memory>
@@ -1172,6 +1173,59 @@ TEST(BlackBox, PubSubKeepAllTransient)
     print_non_received_messages(data, default_helloworld_print);
     ASSERT_EQ(data.size(), 0);
 }
+
+//Verify that outLocatorList is used to select the desired output channel
+TEST(BlackBox, PubSubOutLocatorSelection){
+   
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    
+    LocatorList_t ReaderOutLocators, WriterOutLocators;
+    Locator_t LocatorBuffer;
+    
+    LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
+    LocatorBuffer.port = 31337;
+
+    WriterOutLocators.push_back(LocatorBuffer);
+
+    LocatorBuffer.port = 31334;
+
+    ReaderOutLocators.push_back(LocatorBuffer);
+
+	
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    resource_limits_max_samples(2).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
+        resource_limits_max_samples(20).
+        heartbeat_period_seconds(0).
+        heartbeat_period_fraction(4294967 * 100).
+	outLocatorList(WriterOutLocators).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    	auto data = default_helloword_data_generator(10);
+    
+	reader.expected_data(data);
+	reader.startReception();
+
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+    data = reader.block(std::chrono::seconds(10));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_EQ(data.size(), static_cast<size_t>(0));
+}
+
 
 int main(int argc, char **argv)
 {

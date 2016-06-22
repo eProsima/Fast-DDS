@@ -236,6 +236,25 @@ class PubSubReader
 	    subscriber_attr_.times.heartbeatResponseDelay.fraction = frac;
 	    return *this;
 	}
+	
+	PubSubReader& unicastLocatorList(LocatorList_t unicastLocators)
+	{
+	    subscriber_attr_.unicastLocatorList = unicastLocators;
+	    return *this;
+	}
+
+	PubSubReader& multicastLocatorList(LocatorList_t multicastLocators)
+	{
+	    subscriber_attr_.multicastLocatorList = multicastLocators;
+	    return *this;
+	}
+
+	PubSubReader& outLocatorList(LocatorList_t outLocators)
+	{
+	    subscriber_attr_.outLocatorList = outLocators;
+	    return *this;
+	}
+
     private:
 
         void receive_one(eprosima::fastrtps::Subscriber* subscriber, bool& returnedValue)
