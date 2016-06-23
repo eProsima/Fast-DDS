@@ -78,7 +78,23 @@ public:
    //! Returns the logging engine to configuration defaults.
    static void Reset();
 
-   struct Entry; struct Context; 
+   struct Context {
+      const char* filename;
+      int line;
+      const char* function;
+      const char* category;
+   };
+
+   struct Entry 
+   {
+      std::string message;
+      Log::Context context;
+      Log::Kind kind;
+   };
+
+   //! Not recommended to call this method directly. Use the macros above.
+   static void QueueLog(const std::string& message, const Log::Context&, Log::Kind);
+
 private:
    struct Resources 
    {
@@ -117,23 +133,6 @@ private:
    static void KillThread();
    static void Run();
 
-   // Public definitions for macro access, not direct user consumption
-public:
-   struct Context {
-      const char* filename;
-      int line;
-      const char* function;
-      const char* category;
-   };
-
-   struct Entry 
-   {
-      std::string message;
-      Log::Context context;
-      Log::Kind kind;
-   };
-
-   static void QueueLog(const std::string& message, const Log::Context&, Log::Kind);
 };
 
 /**
