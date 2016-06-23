@@ -205,10 +205,12 @@ inline bool operator==(const Locator_t&loc1,const Locator_t& loc2)
 		return false;
 	if(loc1.port !=loc2.port)
 		return false;
-	for(uint8_t i =0;i<16;i++){
-		if(loc1.address[i] !=loc2.address[i])
-			return false;
-	}
+	//for(uint8_t i =0;i<16;i++){
+	//	if(loc1.address[i] !=loc2.address[i])
+	//		return false;
+	//}
+	if(!std::equal(loc1.address,loc1.address+16,loc2.address))
+		return false;
 	return true;
 }
 
