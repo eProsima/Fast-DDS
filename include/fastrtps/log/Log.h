@@ -35,14 +35,21 @@
  * Additionally. the lowest level (Info) is disabled by default on release branches.
  */
 
+#if defined __func__
+   #define LOG_FUNC __func__
+#else
+   #define LOG_FUNC nullptr
+#endif
+
+
 #ifndef LOG_NO_ERROR
-   #define logError(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); }
+   #define logError(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, LOG_FUNC, #cat}, Log::Kind::Error); }
 #else
    #define logError(cat, msg) 
 #endif
 
 #ifndef LOG_NO_WARNING
-   #define logWarning(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning); }
+   #define logWarning(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, LOG_FUNC, #cat}, Log::Kind::Warning); }
 #else 
    #define logWarning(cat, msg) 
 #endif
