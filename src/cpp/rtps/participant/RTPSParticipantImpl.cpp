@@ -318,6 +318,11 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		logError(RTPS_PARTICIPANT,"Multicast Locator List for Writer contains invalid Locator");
 		return false;
 	}
+	if(!param.endpoint.outLocatorList.isValid())
+	{
+		logError(RTPS_PARTICIPANT,"Output Locator List for Writer contains invalid Locator");
+		return false;
+	}
 
 	RTPSWriter* SWriter = nullptr;
 	GUID_t guid(m_guid.guidPrefix,entId);
@@ -402,6 +407,11 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 	if(!param.endpoint.multicastLocatorList.isValid())
 	{
 		logError(RTPS_PARTICIPANT,"Multicast Locator List for Reader contains invalid Locator");
+		return false;
+	}
+	if(!param.endpoint.outLocatorList.isValid())
+	{
+		logError(RTPS_PARTICIPANT,"Output Locator List for Reader contains invalid Locator");
 		return false;
 	}
 	RTPSReader* SReader = nullptr;
@@ -616,7 +626,7 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend){
 		//newSenders.insert(newSenders.end(), SendersBuffer.begin(), SendersBuffer.end());
 		SendersBuffer.clear();
 	}
-	for(auto mit = SendersBuffer.begin();mit!=SendersBuffer.end();++mit){
+	for(auto mit = newSenders.begin();mit!=newSenders.end();++mit){
 		m_senderResource.push_back(std::move(*mit));
 	}
 	//m_senderResource.insert(m_senderResource.end(), SendersBuffer.begin(), SendersBuffer.end());
