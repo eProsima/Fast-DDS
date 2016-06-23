@@ -37,7 +37,7 @@
 
 // Logging API:
 
-//! Logs with Info verbosity. Disable it through Log::SetVerbosity, #define LOG_NO_INFO, or being in a release branch.
+//! Logs an info message. Disable it through Log::SetVerbosity, #define LOG_NO_INFO, or being in a release branch
 #define logInfo(cat,msg) logInfo_(cat,msg)
 //! Logs a warning. Disable reporting through Log::SetVerbosity or #define LOG_NO_WARNING
 #define logWarning(cat,msg) logWarning_(cat,msg)
@@ -48,25 +48,49 @@ namespace eprosima {
 namespace fastrtps {
 
 class LogConsumer;
+
+/**
+ * Logging utilities.
+ * Logging is accessed through the three macros above, and configuration on the log output
+ * can be achieved through static methods on the class. Logging at various levels can be 
+ * disabled dynamically (through the Verbosity level) or statically (through the LOG_NO_[VERB]
+ * macros) for maximum performance.
+ * @ingroup COMMON_MODULE
+ */
 class Log 
 {
 public:
+   /**
+    * Types of log entry.
+    * * Error: Maximum priority. Can only be disabled statically through #define LOG_NO_ERROR.
+    * * Warning: Medium priority.  Can be disabled statically and dynamically.
+    * * Info: Low priority. Useful for debugging. Disabled by default on release branches.
+    */
    enum Kind {
       Error,
       Warning,
       Info,
    };
 
+   /**
+    * Registers an user defined consumer to route log output. There is a default
+    * stdout consumer active at all times.
+    */
    RTPS_DllAPI static void RegisterConsumer(std::unique_ptr<LogConsumer>);
+   //! Enables the reporting of filenames in log entries. Disabled by default.
    RTPS_DllAPI static void ReportFilenames(bool);
+   //! Enables the reporting of function names in log entries. Enabled by default when supported.
    RTPS_DllAPI static void ReportFunctions(bool);
+   //! Sets the verbosity level, allowing for messages equal or under that priority to be logged.
    RTPS_DllAPI static void SetVerbosity(Log::Kind);
+   //! Returns the current verbosity level.
    RTPS_DllAPI static Log::Kind GetVerbosity();
-
+   //! Sets a filter that will pattern-match against log categories, dropping any unmatched categories.
    RTPS_DllAPI static void SetCategoryFilter    (const std::regex&);
+   //! Sets a filter that will pattern-match against filenames, dropping any unmatched categories.
    RTPS_DllAPI static void SetFilenameFilter    (const std::regex&);
+   //! Sets a filter that will pattern-match against the provided error string, dropping any unmatched categories.
    RTPS_DllAPI static void SetErrorStringFilter (const std::regex&);
-
    //! Returns the logging engine to configuration defaults.
    RTPS_DllAPI static void Reset();
 
@@ -84,9 +108,8 @@ public:
       Log::Kind kind;
    };
 
-   //! Not recommended to call this method directly. Use the macros above.
    /** 
-    * Do not call this method directly! Use the following macros:
+    * Not recommended to call this method directly! Use the following macros:
     *  * logInfo(cat, msg);
     *  * logWarning(cat, msg);
     *  * logError(cat, msg);
