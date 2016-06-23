@@ -261,10 +261,10 @@ bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
 bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 {
 	const char* const METHOD_NAME = "processLocalWriterProxyData";
-	logInfo(RTPS_EDP,wdata->m_guid.entityId,C_CYAN);
+	logInfo(RTPS_EDP, wdata->guid().entityId, C_CYAN);
 	if(mp_PubWriter.first !=nullptr)
 	{
-		CacheChange_t* change = mp_PubWriter.first->new_change(ALIVE, wdata->m_key);
+		CacheChange_t* change = mp_PubWriter.first->new_change(ALIVE, wdata->key());
 		if(change != nullptr)
 		{
 			wdata->toParameterList();

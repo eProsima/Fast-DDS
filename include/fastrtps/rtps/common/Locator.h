@@ -240,14 +240,33 @@ typedef std::vector<Locator_t>::iterator LocatorListIterator;
  * Class LocatorList_t, a Locator_t vector that doesn't avoid duplicates.
  * @ingroup COMMON_MODULE
  */
-class LocatorList_t{
+class LocatorList_t
+{
 public:
 	RTPS_DllAPI LocatorList_t(){};
+
 	RTPS_DllAPI ~LocatorList_t(){};
-	RTPS_DllAPI LocatorList_t(const LocatorList_t& list)
+
+	RTPS_DllAPI LocatorList_t(const LocatorList_t& list) : m_locators(list.m_locators)
+	{
+	}
+
+	RTPS_DllAPI LocatorList_t(LocatorList_t&& list) : m_locators(std::move(list.m_locators))
+	{
+	}
+
+	RTPS_DllAPI LocatorList_t& operator=(const LocatorList_t& list)
 	{
 		m_locators = list.m_locators;
+        return *this;
 	}
+
+	RTPS_DllAPI LocatorList_t& operator=(LocatorList_t&& list)
+	{
+		m_locators = std::move(list.m_locators);
+        return *this;
+	}
+
 	RTPS_DllAPI LocatorListIterator begin(){
 		return m_locators.begin();
 	}
@@ -258,8 +277,11 @@ public:
 		return m_locators.size();
 	}
 	RTPS_DllAPI void clear(){ return m_locators.clear();}
+
 	RTPS_DllAPI void reserve(size_t num){ return m_locators.reserve(num);}
+
 	RTPS_DllAPI void resize(size_t num) { return m_locators.resize(num);}
+
 	RTPS_DllAPI void push_back(const Locator_t& loc)
 	{
 		bool already = false;
@@ -320,7 +342,9 @@ public:
 		}
 		return true;
 	}
+
 	friend std::ostream& operator <<(std::ostream& output,const LocatorList_t& loc);
+
 private:
 	std::vector<Locator_t> m_locators;
 
@@ -334,7 +358,6 @@ inline std::ostream& operator<<(std::ostream& output,const LocatorList_t& locLis
 	}
 	return output;
 }
-
 
 }
 }

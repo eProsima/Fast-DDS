@@ -38,6 +38,12 @@ struct RTPS_DllAPI InstanceHandle_t{
 		for(uint8_t i=0;i<16;i++)
 			value[i] = 0;
 	}
+
+	InstanceHandle_t(const InstanceHandle_t& ihandle)
+	{
+		for(uint8_t i = 0; i < 16; i++)
+			value[i] = ihandle.value[i];
+	}
 	
 	/**
 	* Assingment operator

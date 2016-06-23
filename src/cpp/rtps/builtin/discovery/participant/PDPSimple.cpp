@@ -239,7 +239,7 @@ bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData** wd
 		for (auto wit = (*pit)->m_writers.begin();
 				wit != (*pit)->m_writers.end(); ++wit)
 		{
-			if((*wit)->m_guid == writer)
+			if((*wit)->guid() == writer)
 			{
 				*wdata = *wit;
                 *pdata = *pit;
@@ -272,13 +272,13 @@ bool PDPSimple::removeReaderProxyData(ParticipantProxyData* pdata, ReaderProxyDa
 bool PDPSimple::removeWriterProxyData(ParticipantProxyData* pdata, WriterProxyData* wdata)
 {
 	const char* const METHOD_NAME = "removeWriterProxyData";
-	logInfo(RTPS_PDP,wdata->m_guid,C_CYAN);
+	logInfo(RTPS_PDP,wdata->guid(), C_CYAN);
 	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
     boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
     for(std::vector<WriterProxyData*>::iterator wit = pdata->m_writers.begin();
         wit != pdata->m_writers.end(); ++wit)
 	{
-		if((*wit)->m_guid == wdata->m_guid)
+		if((*wit)->guid() == wdata->guid())
 		{
             pdata->m_writers.erase(wit);
 			delete(wdata);
@@ -419,19 +419,19 @@ bool PDPSimple::addWriterProxyData(WriterProxyData* wdata,bool copydata,
 		WriterProxyData** returnWriterProxyData,ParticipantProxyData** pdata)
 {
 	const char* const METHOD_NAME = "addWriterProxyData";
-	logInfo(RTPS_PDP,wdata->m_guid,C_CYAN);
+	logInfo(RTPS_PDP,wdata->guid(), C_CYAN);
 	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
 	{
 		boost::lock_guard<boost::recursive_mutex> guard(*(*pit)->mp_mutex);
-		if((*pit)->m_guid.guidPrefix == wdata->m_guid.guidPrefix)
+		if((*pit)->m_guid.guidPrefix == wdata->guid().guidPrefix)
 		{
 			//CHECK THAT IT IS NOT ALREADY THERE:
 			for(std::vector<WriterProxyData*>::iterator wit = (*pit)->m_writers.begin();
 					wit!=(*pit)->m_writers.end();++wit)
 			{
-				if((*wit)->m_guid.entityId == wdata->m_guid.entityId)
+				if((*wit)->guid().entityId == wdata->guid().entityId)
 				{
 					if(copydata)
 						*returnWriterProxyData = *wit;
@@ -624,8 +624,8 @@ void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
 	{
 		if((*wit)->m_qos.m_liveliness.kind == kind)
 		{
-			logInfo(RTPS_LIVELINESS,"Local Writer "<< (*wit)->m_guid.entityId << " marked as ALIVE",C_MAGENTA);
-			(*wit)->m_isAlive = true;
+			logInfo(RTPS_LIVELINESS,"Local Writer "<< (*wit)->guid().entityId << " marked as ALIVE", C_MAGENTA);
+			(*wit)->isAlive(true);
 		}
 	}
 }
@@ -647,7 +647,7 @@ void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosP
 			{
 				if((*wit)->m_qos.m_liveliness.kind == kind)
 				{
-					(*wit)->m_isAlive = true;
+					(*wit)->isAlive(true);
 					boost::lock_guard<boost::recursive_mutex> guardP(*mp_RTPSParticipant->getParticipantMutex());
 					for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
 							rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
@@ -656,7 +656,7 @@ void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosP
 						{
 							StatefulReader* sfr = (StatefulReader*)(*rit);
 							WriterProxy* WP;
-							if(sfr->matched_writer_lookup((*wit)->m_guid,&WP))
+							if(sfr->matched_writer_lookup((*wit)->guid(), &WP))
 							{
 								WP->assertLiveliness();
 								continue;
