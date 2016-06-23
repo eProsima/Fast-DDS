@@ -166,27 +166,25 @@ public:
    virtual void Consume(const Log::Entry&) = 0;
 };
 
-#if defined __func__
-   #define LOG_FUNC __func__
-#else
-   #define LOG_FUNC nullptr
+#if defined ( WIN32 )
+   #define __func__ __FUNCTION__
 #endif
 
 #ifndef LOG_NO_ERROR
-   #define logError_(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, LOG_FUNC, #cat}, Log::Kind::Error); }
+   #define logError_(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); }
 #else
    #define logError_(cat, msg) 
 #endif
 
 #ifndef LOG_NO_WARNING
-   #define logWarning_(cat, msg) { if (Log::GetVerbosity() >= Log::Kind::Warning) { std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, LOG_FUNC, #cat}, Log::Kind::Warning); } } 
+   #define logWarning_(cat, msg) { if (Log::GetVerbosity() >= Log::Kind::Warning) { std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning); } } 
 #else 
    #define logWarning_(cat, msg) 
 #endif
 
 #define COMPOSITE_LOG_NO_INFO (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
 #if COMPOSITE_LOG_NO_INFO 
-   #define logInfo_(cat, msg) { if (Log::GetVerbosity() >= Log::Kind::Info) { std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, LOG_FUNC, #cat}, Log::Kind::Info); } }
+   #define logInfo_(cat, msg) { if (Log::GetVerbosity() >= Log::Kind::Info) { std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Info); } }
 #else
    #define logInfo_(cat, msg)
 #endif
