@@ -27,7 +27,7 @@
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
-
+#include <fastrtps/rtps/common/Locator.h>
 #include <string>
 #include <list>
 #include <condition_variable>
@@ -233,6 +233,24 @@ class PubSubWriter
         publisher_attr_.times.heartbeatPeriod.fraction = frac;
         return *this;
     }
+
+        PubSubWriter& unicastLocatorList(LocatorList_t unicastLocators)
+	{
+	    publisher_attr_.unicastLocatorList = unicastLocators;
+	    return *this;
+	}
+
+	PubSubWriter& multicastLocatorList(LocatorList_t multicastLocators)
+	{
+	    publisher_attr_.multicastLocatorList = multicastLocators;
+	    return *this;
+	}
+
+	PubSubWriter& outLocatorList(LocatorList_t outLocators)
+	{
+	    publisher_attr_.outLocatorList = outLocators;
+	    return *this;
+	}
 
     PubSubWriter& allocated_samples(const uint32_t max)
     {
