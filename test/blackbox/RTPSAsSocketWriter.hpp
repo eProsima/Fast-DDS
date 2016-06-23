@@ -83,6 +83,8 @@ class RTPSAsSocketWriter
             writer_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(participant_, writer_attr_, history_);
             ASSERT_NE(writer_, nullptr);
 
+            register_reader();
+
             initialized_ = true;
         }
 

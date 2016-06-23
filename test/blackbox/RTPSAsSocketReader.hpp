@@ -69,7 +69,7 @@ class RTPSAsSocketReader
 
         private:
 
-            Listener& operator=(const Listener&)NON_COPYABLE_CXX11;
+            Listener& operator=(const Listener&) NON_COPYABLE_CXX11;
 
             RTPSAsSocketReader &reader_;
     } listener_;
@@ -113,6 +113,8 @@ class RTPSAsSocketReader
             //Create reader
             reader_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSReader(participant_, reader_attr_, history_, &listener_);
             ASSERT_NE(reader_, nullptr);
+
+            register_writer();
 
             initialized_ = true;
         }

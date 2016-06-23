@@ -60,8 +60,8 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 		memcpy(tempMsg.buffer,change->serializedPayload.data,tempMsg.length);
 		if(writerProxyData.readFromCDRMessage(&tempMsg))
 		{
-			change->instanceHandle = writerProxyData.m_key;
-			if(writerProxyData.m_guid.guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
+			change->instanceHandle = writerProxyData.key();
+			if(writerProxyData.guid().guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
 			{
 				logInfo(RTPS_EDP,"Message from own RTPSParticipant, ignoring");
 				mp_SEDP->mp_PubReader.second->remove_change(change);
@@ -74,12 +74,12 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 			{
 				//CHECK the locators:
                 pdata->mp_mutex->lock();
-				if(wdata->m_unicastLocatorList.empty() && wdata->m_multicastLocatorList.empty())
+				if(wdata->unicastLocatorList().empty() && wdata->multicastLocatorList().empty())
 				{
-					wdata->m_unicastLocatorList = pdata->m_defaultUnicastLocatorList;
-					wdata->m_multicastLocatorList = pdata->m_defaultMulticastLocatorList;
+					wdata->unicastLocatorList(pdata->m_defaultUnicastLocatorList);
+					wdata->multicastLocatorList(pdata->m_defaultMulticastLocatorList);
 				}
-				wdata->m_isAlive = true;
+				wdata->isAlive(true);
                 pdata->mp_mutex->unlock();
 				mp_SEDP->pairingWriterProxy(pdata, wdata);
 			}

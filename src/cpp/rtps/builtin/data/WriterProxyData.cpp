@@ -190,7 +190,7 @@ bool WriterProxyData::toParameterList()
 	return true;
 }
 
-RTPS_DllAPI bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
+bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 {
 	if(ParameterList::readParameterListfromCDRMsg(msg, &m_parameterList, NULL)>0)
 	{

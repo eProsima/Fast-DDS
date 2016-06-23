@@ -15,10 +15,11 @@
 import os, subprocess, csv, ntpath, glob
 
 binaries = os.environ.get("PROFILING_BINS").split(';')
+valgrind = os.environ.get("VALGRIND_BIN")
 
 for binary in binaries:
     filename = ntpath.basename(binary)
-    proc = subprocess.call(["valgrind", "--tool=exp-bbv","--instr-count-only=yes","--bb-out-file=bbLog_" + filename, binary, "10"])
+    proc = subprocess.call([valgrind, "--tool=exp-bbv","--instr-count-only=yes","--bb-out-file=bbLog_" + filename, binary, "10"])
 
     thread_logs = glob.glob('bbLog_*')
 

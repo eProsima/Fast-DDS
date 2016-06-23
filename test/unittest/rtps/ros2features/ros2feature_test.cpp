@@ -78,7 +78,7 @@ class gettopicnamesandtypesReaderListener:public ReaderListener
 			memcpy(tempMsg.buffer,change->serializedPayload.data,tempMsg.length);
 			if(proxyData.readFromCDRMessage(&tempMsg)){
 				mapmutex.lock();
-				topicNtypes[proxyData.m_topicName].insert(proxyData.m_typeName);		
+				topicNtypes[proxyData.topicName()].insert(proxyData.typeName());		
 				mapmutex.unlock();
 			}
 		}
