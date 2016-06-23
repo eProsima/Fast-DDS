@@ -27,7 +27,7 @@
 
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -36,11 +36,9 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps{
 
-static const char* const CLASS_NAME = "PeriodicHeartbeat";
 
 PeriodicHeartbeat::~PeriodicHeartbeat()
 {
-	const char* const METHOD_NAME = "~PeriodicHeartbeat";
 	logInfo(RTPS_WRITER,"Destroying PeriodicHB");
     destroy();
 }
@@ -54,7 +52,6 @@ p_SFW->getRTPSParticipant()->getEventResource().getThread(), interval), mp_SFW(p
 
 void PeriodicHeartbeat::event(EventCode code, const char* msg)
 {
-	const char* const METHOD_NAME = "event";
 
     // Unused in release mode.
     (void)msg;

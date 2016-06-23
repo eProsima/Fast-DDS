@@ -19,7 +19,7 @@
 
 #include <fastrtps/rtps/history/ReaderHistory.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 
@@ -31,7 +31,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "ReaderHistory";
 
 //typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
 //typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
@@ -80,7 +79,6 @@ static void CleanSequentials(std::set<SequenceNumber_t>& set)
 
 bool ReaderHistory::add_change(CacheChange_t* a_change)
 {
-	const char* const METHOD_NAME = "add_change";
 
 	if(mp_reader == nullptr || mp_mutex == nullptr)
 	{
@@ -126,7 +124,6 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 
 bool ReaderHistory::remove_change(CacheChange_t* a_change)
 {
-	const char* const METHOD_NAME = "remove_change";
 
 	if(mp_reader == nullptr || mp_mutex == nullptr)
 	{

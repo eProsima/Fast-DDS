@@ -17,14 +17,13 @@
 
 
 #include <fastrtps/Domain.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 using namespace eprosima;
 using namespace eprosima::fastrtps;
 
 int main(int argc, char** argv)
 {
-	Log::setVerbosity(VERB_ERROR);
 	cout << "Starting " << endl;
 	int type = 1;
 	int subscriberType = 1;

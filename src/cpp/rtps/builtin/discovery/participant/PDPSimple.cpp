@@ -49,7 +49,7 @@
 
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -60,7 +60,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "PDPSimple";
 
 PDPSimple::PDPSimple(BuiltinProtocols* built):
 					mp_builtin(built),
@@ -102,8 +101,7 @@ PDPSimple::~PDPSimple()
 
 bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 {
-	const char* const METHOD_NAME = "initPDP";
-	logInfo(RTPS_PDP,"Beginning",C_B_CYAN);
+	logInfo(RTPS_PDP,"Beginning");
 	mp_RTPSParticipant = part;
 	m_discovery = mp_RTPSParticipant->getAttributes().builtin;
 	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
@@ -154,8 +152,7 @@ void PDPSimple::resetParticipantAnnouncement()
 
 void PDPSimple::announceParticipantState(bool new_change, bool dispose)
 {
-	const char* const METHOD_NAME = "announceParticipantState";
-	logInfo(RTPS_PDP,"Announcing RTPSParticipant State (new change: "<< new_change <<")",C_CYAN);
+	logInfo(RTPS_PDP,"Announcing RTPSParticipant State (new change: "<< new_change <<")");
 	CacheChange_t* change = nullptr;
 
 	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
@@ -252,8 +249,7 @@ bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData** wd
 
 bool PDPSimple::removeReaderProxyData(ParticipantProxyData* pdata, ReaderProxyData* rdata)
 {
-	const char* const METHOD_NAME = "removeReaderProxyData";
-	logInfo(RTPS_PDP,rdata->m_guid,C_CYAN);
+	logInfo(RTPS_PDP,rdata->m_guid);
 	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
     boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
     for(std::vector<ReaderProxyData*>::iterator rit = pdata->m_readers.begin();
@@ -271,8 +267,7 @@ bool PDPSimple::removeReaderProxyData(ParticipantProxyData* pdata, ReaderProxyDa
 
 bool PDPSimple::removeWriterProxyData(ParticipantProxyData* pdata, WriterProxyData* wdata)
 {
-	const char* const METHOD_NAME = "removeWriterProxyData";
-	logInfo(RTPS_PDP,wdata->guid(), C_CYAN);
+	logInfo(RTPS_PDP, wdata->guid());
 	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
     boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
     for(std::vector<WriterProxyData*>::iterator wit = pdata->m_writers.begin();
@@ -291,8 +286,7 @@ bool PDPSimple::removeWriterProxyData(ParticipantProxyData* pdata, WriterProxyDa
 
 bool PDPSimple::lookupParticipantProxyData(const GUID_t& pguid,ParticipantProxyData** pdata)
 {
-	const char* const METHOD_NAME = "lookupParticipantProxyData";
-	logInfo(RTPS_PDP,pguid,C_CYAN);
+	logInfo(RTPS_PDP,pguid);
 	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
@@ -308,8 +302,7 @@ bool PDPSimple::lookupParticipantProxyData(const GUID_t& pguid,ParticipantProxyD
 
 bool PDPSimple::createSPDPEndpoints()
 {
-	const char* const METHOD_NAME = "createSPDPEndpoints";
-	logInfo(RTPS_PDP,"Beginning",C_CYAN);
+	logInfo(RTPS_PDP,"Beginning");
 	//SPDP BUILTIN RTPSParticipant WRITER
 	HistoryAttributes hatt;
 	hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
@@ -334,7 +327,7 @@ bool PDPSimple::createSPDPEndpoints()
 	}
 	else
 	{
-		logError(RTPS_PDP,"SimplePDP Writer creation failed",C_CYAN);
+		logError(RTPS_PDP,"SimplePDP Writer creation failed");
 		delete(mp_SPDPWriterHistory);
 		mp_SPDPWriterHistory = nullptr;
 		return false;
@@ -357,7 +350,7 @@ bool PDPSimple::createSPDPEndpoints()
 	}
 	else
 	{
-		logError(RTPS_PDP,"SimplePDP Reader creation failed",C_CYAN);
+		logError(RTPS_PDP,"SimplePDP Reader creation failed");
 		delete(mp_SPDPReaderHistory);
 		mp_SPDPReaderHistory = nullptr;
 		delete(mp_listener);
@@ -365,15 +358,14 @@ bool PDPSimple::createSPDPEndpoints()
 		return false;
 	}
 
-	logInfo(RTPS_PDP,"SPDP Endpoints creation finished",C_CYAN);
+	logInfo(RTPS_PDP,"SPDP Endpoints creation finished");
 	return true;
 }
 
 bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata,bool copydata,
 		ReaderProxyData** returnReaderProxyData,ParticipantProxyData** pdata)
 {
-	const char* const METHOD_NAME = "addReaderProxyData";
-	logInfo(RTPS_PDP,rdata->m_guid,C_CYAN);
+	logInfo(RTPS_PDP,rdata->m_guid);
 	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
@@ -418,8 +410,7 @@ bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata,bool copydata,
 bool PDPSimple::addWriterProxyData(WriterProxyData* wdata,bool copydata,
 		WriterProxyData** returnWriterProxyData,ParticipantProxyData** pdata)
 {
-	const char* const METHOD_NAME = "addWriterProxyData";
-	logInfo(RTPS_PDP,wdata->guid(), C_CYAN);
+	logInfo(RTPS_PDP,wdata->guid());
 	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
@@ -463,8 +454,7 @@ bool PDPSimple::addWriterProxyData(WriterProxyData* wdata,bool copydata,
 
 void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
-	const char* const METHOD_NAME = "assignRemoteEndpoints";
-	logInfo(RTPS_PDP,"For RTPSParticipant: "<<pdata->m_guid.guidPrefix,C_CYAN);
+	logInfo(RTPS_PDP,"For RTPSParticipant: "<<pdata->m_guid.guidPrefix);
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t auxendp = endp;
 	auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
@@ -508,8 +498,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 void PDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
-	const char* const METHOD_NAME = "removeRemoteEndpoints";
-	logInfo(RTPS_PDP,"For RTPSParticipant: "<<pdata->m_guid,C_CYAN);
+	logInfo(RTPS_PDP,"For RTPSParticipant: "<<pdata->m_guid);
 	boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
 	for(auto it = pdata->m_builtinReaders.begin();
 			it!=pdata->m_builtinReaders.end();++it)
@@ -527,8 +516,7 @@ void PDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 
 bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 {
-	const char* const METHOD_NAME = "removeRemoteParticipant";
-	logInfo(RTPS_PDP,partGUID,C_CYAN );
+	logInfo(RTPS_PDP,partGUID );
 	boost::unique_lock<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
 	boost::unique_lock<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
 	ParticipantProxyData* pdata = nullptr;
@@ -591,7 +579,6 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 
 void PDPSimple::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
 {
-	const char* const METHOD_NAME = "assertRemoteParticipantLiveliness";
 	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	for(std::vector<ParticipantProxyData*>::iterator it = this->m_participantProxies.begin();
 			it!=this->m_participantProxies.end();++it)
@@ -599,7 +586,7 @@ void PDPSimple::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
 		boost::lock_guard<boost::recursive_mutex> guard(*(*it)->mp_mutex);
 		if((*it)->m_guid.guidPrefix == guidP)
 		{
-			logInfo(RTPS_LIVELINESS,"RTPSParticipant "<< (*it)->m_guid << " is Alive",C_MAGENTA);
+			logInfo(RTPS_LIVELINESS,"RTPSParticipant "<< (*it)->m_guid << " is Alive");
             // TODO Ricardo: Study if isAlive attribute is necessary.
 			(*it)->isAlive = true;
             if((*it)->mp_leaseDurationTimer != nullptr)
@@ -614,9 +601,8 @@ void PDPSimple::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
 
 void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
 {
-	const char* const METHOD_NAME = "assertLocalWritersLiveliness";
 	logInfo(RTPS_LIVELINESS,"of type " << (kind==AUTOMATIC_LIVELINESS_QOS?"AUTOMATIC":"")
-			<<(kind==MANUAL_BY_PARTICIPANT_LIVELINESS_QOS?"MANUAL_BY_PARTICIPANT":""),C_MAGENTA);
+			<<(kind==MANUAL_BY_PARTICIPANT_LIVELINESS_QOS?"MANUAL_BY_PARTICIPANT":""));
 	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
 	boost::lock_guard<boost::recursive_mutex> guard2(*this->m_participantProxies.front()->mp_mutex);
 	for(std::vector<WriterProxyData*>::iterator wit = this->m_participantProxies.front()->m_writers.begin();
@@ -624,7 +610,7 @@ void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
 	{
 		if((*wit)->m_qos.m_liveliness.kind == kind)
 		{
-			logInfo(RTPS_LIVELINESS,"Local Writer "<< (*wit)->guid().entityId << " marked as ALIVE", C_MAGENTA);
+			logInfo(RTPS_LIVELINESS,"Local Writer "<< (*wit)->guid().entityId << " marked as ALIVE");
 			(*wit)->isAlive(true);
 		}
 	}
@@ -633,9 +619,8 @@ void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
 void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind)
 {
 	boost::lock_guard<boost::recursive_mutex> pguard(*this->mp_mutex);
-	const char* const METHOD_NAME = "assertRemoteWritersLiveliness";
 	logInfo(RTPS_LIVELINESS,"of type " << (kind==AUTOMATIC_LIVELINESS_QOS?"AUTOMATIC":"")
-				<<(kind==MANUAL_BY_PARTICIPANT_LIVELINESS_QOS?"MANUAL_BY_PARTICIPANT":""),C_MAGENTA);
+				<<(kind==MANUAL_BY_PARTICIPANT_LIVELINESS_QOS?"MANUAL_BY_PARTICIPANT":""));
 	for(std::vector<ParticipantProxyData*>::iterator pit=this->m_participantProxies.begin();
 			pit!=this->m_participantProxies.end();++pit)
 	{

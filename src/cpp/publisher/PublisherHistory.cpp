@@ -23,12 +23,11 @@
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-static const char* const CLASS_NAME = "PublisherHistory";
 
 namespace eprosima {
 namespace fastrtps {
@@ -51,7 +50,6 @@ PublisherHistory::~PublisherHistory() {
 
 bool PublisherHistory::add_pub_change(CacheChange_t* change)
 {
-	const char* const METHOD_NAME = "add_pub_change";
 
 	if(mp_writer == nullptr || mp_mutex == nullptr)
 	{
@@ -149,7 +147,6 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 
 bool PublisherHistory::find_Key(CacheChange_t* a_change,t_v_Inst_Caches::iterator* vit_out)
 {
-	const char* const METHOD_NAME = "find_Key";
 	t_v_Inst_Caches::iterator vit;
 	bool found = false;
 	for(vit= m_keyedChanges.begin();vit!=m_keyedChanges.end();++vit)
@@ -213,7 +210,6 @@ bool PublisherHistory::removeAllChange(size_t* removed)
 
 bool PublisherHistory::removeMinChange()
 {
-    const char* const METHOD_NAME = "removeMinChange";
 	if(mp_writer == nullptr || mp_mutex == nullptr)
 	{
 		logError(RTPS_HISTORY,"You need to create a Writer with this History before using it");
@@ -228,7 +224,6 @@ bool PublisherHistory::removeMinChange()
 
 bool PublisherHistory::remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit_in)
 {
-    const char* const METHOD_NAME = "remove_change_pub";
 
 	if(mp_writer == nullptr || mp_mutex == nullptr)
 	{

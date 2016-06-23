@@ -23,14 +23,13 @@
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include "../../../../participant/RTPSParticipantImpl.h"
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "ResendParticipantProxyDataPeriod";
 
 ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(PDPSimple* p_SPDP,
 		double interval):
@@ -49,14 +48,13 @@ ResendParticipantProxyDataPeriod::~ResendParticipantProxyDataPeriod()
 
 void ResendParticipantProxyDataPeriod::event(EventCode code, const char* msg)
 {
-	const char* const METHOD_NAME = "event";
 
     // Unused in release mode.
     (void)msg;
 
 	if(code == EVENT_SUCCESS)
 	{
-		logInfo(RTPS_PDP,"ResendDiscoveryData Period",C_CYAN);
+		logInfo(RTPS_PDP,"ResendDiscoveryData Period");
 		//FIXME: Change for liveliness protocol
 		mp_PDP->getLocalParticipantProxyData()->m_manualLivelinessCount++;
 		mp_PDP->announceParticipantState(false);

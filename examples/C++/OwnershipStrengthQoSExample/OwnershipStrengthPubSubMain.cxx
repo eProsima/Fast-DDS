@@ -24,7 +24,7 @@
 
 
 #include <fastrtps/Domain.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include <sstream>
 
 using namespace eprosima;
@@ -32,7 +32,6 @@ using namespace eprosima::fastrtps;
 
 int main(int argc, char** argv)
 {
-	Log::setVerbosity(VERB_ERROR);
 	cout << "Starting " << endl;
 	int type = 1;
 	if (argc > 1)
@@ -88,5 +87,6 @@ int main(int argc, char** argv)
 		}
 	}
 	
+   Log::Reset();
 	return 0;
 }

@@ -20,7 +20,7 @@
 #include <cstdint>
 #include <sstream>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/log/Log.h"
 #include "fastrtps/rtps/RTPSDomain.h"
 
 #include "TestWriterSocket.h"
@@ -35,7 +35,7 @@ using namespace std;
 int main(int argc, char** argv){
 	Log::setVerbosity(VERB_ERROR);
 
-	logUser("Starting");
+	logInfo("Starting");
 	int type;
 	if(argc > 1)
 	{

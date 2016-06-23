@@ -26,7 +26,7 @@
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 using namespace boost::posix_time;
 
@@ -42,15 +42,13 @@ namespace rtps{
 CDRMessagePool g_pool_submsg(100);
 eClock g_clock;
 
-static const char* const CLASS_NAME = "RTPSMessageCreator";
 
 RTPSMessageCreator::RTPSMessageCreator() {
 
 }
 
 RTPSMessageCreator::~RTPSMessageCreator() {
-	const char* const METHOD_NAME = "~RTPSMessageCreator";
-	logInfo(RTPS_CDR_MSG,"RTPSMessageCreator destructor"<<endl;);
+	logInfo(RTPS_CDR_MSG,"RTPSMessageCreator destructor");
 }
 
 

@@ -49,7 +49,7 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 
 
@@ -58,7 +58,6 @@ namespace fastrtps{
 namespace rtps {
 
 
-static const char* const CLASS_NAME = "RTPSParticipantImpl";
 
 static EntityId_t TrustedWriter(const EntityId_t& reader)
 {
@@ -111,7 +110,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
    for (const auto& transportDescriptor : PParam.userTransports)
       m_network_Factory.RegisterTransport(transportDescriptor.get());
    
-	const char* const METHOD_NAME = "RTPSParticipantImpl";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	mp_userParticipant->mp_impl = this;
 	m_att = PParam;
@@ -278,9 +276,8 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		WriterAttributes& param,WriterHistory* hist,WriterListener* listen, const EntityId_t& entityId,bool isBuiltin)
 {
-	const char* const METHOD_NAME = "createWriter";
 	std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
-	logInfo(RTPS_PARTICIPANT," of type " << type,C_B_YELLOW);
+	logInfo(RTPS_PARTICIPANT," of type " << type);
 	EntityId_t entId;
 	if(entityId== c_EntityId_Unknown)
 	{
@@ -365,9 +362,8 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 		ReaderAttributes& param,ReaderHistory* hist,ReaderListener* listen, const EntityId_t& entityId,bool isBuiltin, bool enable)
 {
-	const char* const METHOD_NAME = "createReader";
 	std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
-	logInfo(RTPS_PARTICIPANT," of type " << type,C_B_YELLOW);
+	logInfo(RTPS_PARTICIPANT," of type " << type);
 	EntityId_t entId;
 	if(entityId== c_EntityId_Unknown)
 	{
@@ -771,7 +767,6 @@ void RTPSParticipantImpl::loose_next_change()
 
 bool RTPSParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
 {
-	const char* const METHOD_NAME = "newRemoteEndpointDiscovered";
 	if(m_att.builtin.use_STATIC_EndpointDiscoveryProtocol == false)
 	{
 		logWarning(RTPS_PARTICIPANT,"Remote Endpoints can only be activated with static discovery protocol");

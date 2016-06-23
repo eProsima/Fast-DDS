@@ -28,7 +28,7 @@
 #include "../participant/RTPSParticipantImpl.h"
 
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/utils/IPFinder.h>
 
 
@@ -39,7 +39,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "BuiltinProtocols";
 
 BuiltinProtocols::BuiltinProtocols():
 				mp_participantImpl(nullptr),
@@ -66,7 +65,6 @@ BuiltinProtocols::~BuiltinProtocols() {
 
 bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, BuiltinAttributes& attributes)
 {
-	//const char* const METHOD_NAME = "initBuiltinProtocols";
 	mp_participantImpl = p_part;
 	m_att = attributes;
 
@@ -154,7 +152,6 @@ bool BuiltinProtocols::updateMetatrafficLocators(LocatorList_t& loclist)
 
 bool BuiltinProtocols::addLocalWriter(RTPSWriter* w,fastrtps::TopicAttributes& topicAtt,fastrtps::WriterQos& wqos)
 {
-	const char* const METHOD_NAME = "addLocalWriter";
 	bool ok = false;
 	if(mp_PDP!=nullptr)
 	{
@@ -177,7 +174,6 @@ bool BuiltinProtocols::addLocalWriter(RTPSWriter* w,fastrtps::TopicAttributes& t
 
 bool BuiltinProtocols::addLocalReader(RTPSReader* R,fastrtps::TopicAttributes& topicAtt, fastrtps::ReaderQos& rqos)
 {
-	const char* const METHOD_NAME = "addLocalReader";
 	bool ok = false;
 	if(mp_PDP!=nullptr)
 	{

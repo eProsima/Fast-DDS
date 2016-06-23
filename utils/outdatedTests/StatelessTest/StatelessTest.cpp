@@ -33,7 +33,7 @@
 #include "fastrtps/dds/DomainRTPSParticipant.h"
 
 #include "fastrtps/qos/ParameterList.h"
-#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/log/Log.h"
 #include "fastrtps/dds/DDSTopicDataType.h"
 #include "fastrtps/dds/SubscriberListener.h"
 #include "fastrtps/dds/PublisherListener.h"

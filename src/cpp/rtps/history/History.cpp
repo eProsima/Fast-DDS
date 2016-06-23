@@ -23,7 +23,7 @@
 #include <fastrtps/rtps/common/CacheChange.h>
 
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -32,7 +32,6 @@ namespace eprosima {
     namespace fastrtps{
         namespace rtps {
 
-            static const char* const CLASS_NAME = "History";
 
             typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
             typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
@@ -48,7 +47,6 @@ namespace eprosima {
 
             {
                 m_changes.reserve((uint32_t)abs(att.initialReservedCaches));
-                //const char* const METHOD_NAME = "History";
                 m_changePool.reserve_Cache(&mp_invalidCache);
                 mp_invalidCache->writerGUID = c_Guid_Unknown;
                 mp_invalidCache->sequenceNumber = c_SequenceNumber_Unknown;
@@ -60,14 +58,12 @@ namespace eprosima {
 
             History::~History()
             {
-                const char* const METHOD_NAME = "~History";
                 logInfo(RTPS_HISTORY,"");
             }
 
 
             bool History::remove_all_changes()
             {
-                const char* const METHOD_NAME = "remove_all_changes";
 
                 if(mp_mutex == nullptr)
                 {
@@ -151,7 +147,6 @@ namespace eprosima {
 
             bool History::get_change(SequenceNumber_t& seq, GUID_t& guid,CacheChange_t** change)
             {
-                const char* const METHOD_NAME = "get_change";
 
                 if(mp_mutex == nullptr)
                 {

@@ -53,6 +53,7 @@ class BlackboxEnvironment : public ::testing::Environment
 
         void TearDown()
         {
+            Log::Reset();
             eprosima::fastrtps::rtps::RTPSDomain::stopAll();
         }
 };
@@ -756,6 +757,9 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTra
 
 TEST(BlackBox, PubSubAsNonReliableData300kb)
 {
+    // Mutes an expected error
+    Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
+
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
     
     writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).init();
@@ -765,6 +769,9 @@ TEST(BlackBox, PubSubAsNonReliableData300kb)
 
 TEST(BlackBox, PubSubAsReliableData300kb)
 {
+    // Mutes an expected error
+    Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
+
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
     
     writer.init();
@@ -1177,6 +1184,6 @@ int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new BlackboxEnvironment);
-    eprosima::Log::setVerbosity(eprosima::LOG_VERBOSITY_LVL::VERB_ERROR);
+    //eprosima::Log::setVerbosity(eprosima::LOG_VERBOSITY_LVL::VERB_ERROR);
     return RUN_ALL_TESTS();
 }

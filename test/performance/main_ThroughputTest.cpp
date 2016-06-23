@@ -23,7 +23,7 @@
 #include <bitset>
 #include <cstdint>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/Domain.h>
 
 #if defined(_MSC_VER)
@@ -56,7 +56,6 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 int main(int argc, char** argv)
 {
     const char* const THROUGHPUT_TEST_USAGE = "Usage: ThroughputTest <publisher|subscriber>\n";
-	Log::setVerbosity(VERB_ERROR);
 
     boost::program_options::options_description p_optionals("Publisher options");
     p_optionals.add_options()

@@ -25,12 +25,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             UDPv4Tests.cpp 
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp)
 
         set(UDPV6TESTS_SOURCE 
             UDPv6Tests.cpp 
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv6Transport.cpp)
 
         set(TEST_UDPV4TESTS_SOURCE 
@@ -38,6 +40,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessagePool.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterList.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/QosPolicies.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp

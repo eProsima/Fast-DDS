@@ -31,7 +31,7 @@
 #include "EprosimaClientTest.h"
 
 
-#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/log/Log.h"
 #include "fastrtps/Domain.h"
 
 using namespace eprosima;

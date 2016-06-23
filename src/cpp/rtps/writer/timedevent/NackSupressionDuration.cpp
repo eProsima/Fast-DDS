@@ -26,13 +26,12 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "NackSupressionDuration";
 
 NackSupressionDuration::~NackSupressionDuration()
 {
@@ -49,7 +48,6 @@ mp_RP(p_RP)
 
 void NackSupressionDuration::event(EventCode code, const char* msg)
 {
-	const char* const METHOD_NAME = "event";
 
     // Unused in release mode.
     (void)msg;

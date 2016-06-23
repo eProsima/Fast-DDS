@@ -71,7 +71,7 @@ bool MetaTestSubscriber::init()
 
 	if(mp_par == nullptr ||mp_pub == nullptr || mp_sub == nullptr)
 		return false;
-	logUser("MetaTest Subscriber initialized");
+	logInfo("MetaTest Subscriber initialized");
 	return true;
 }
 
@@ -107,7 +107,7 @@ void MetaTestSubscriber::run()
 
 void MetaTestSubscriber::t_hello_world(MetaTestType& testinfo)
 {
-	logUser("Starting TEST HELLO WORLD");
+	logInfo("Starting TEST HELLO WORLD");
 	HelloWorldSubscriber hwsub;
 	SampleInfo_t sampleinfo;
 	if(hwsub.init())
@@ -119,7 +119,7 @@ void MetaTestSubscriber::t_hello_world(MetaTestType& testinfo)
 		{
 			if(testinfo.status() == T_PUB_FINISH)
 			{
-				logUser("Publisher has finished");
+				logInfo("Publisher has finished");
 				if(hwsub.m_listener.n_samples == (uint16_t)testinfo.samples())
 				{
 					testinfo.status(T_SUB_OK);
@@ -150,7 +150,7 @@ void MetaTestSubscriber::t_hello_world(MetaTestType& testinfo)
 
 void MetaTestSubscriber::t_client_server(MetaTestType& testinfo)
 {
-	logUser("Starting TEST CLIENT SERVER");
+	logInfo("Starting TEST CLIENT SERVER");
 	EprosimaServer server;
 	SampleInfo_t sampleinfo;
 	if(server.init())
@@ -162,7 +162,7 @@ void MetaTestSubscriber::t_client_server(MetaTestType& testinfo)
 		{
 			if(testinfo.status() == T_PUB_FINISH)
 			{
-				logUser("Publisher has finished");
+				logInfo("Publisher has finished");
 				if(server.m_n_served == (uint16_t)testinfo.samples())
 				{
 					testinfo.status(T_SUB_OK);
@@ -186,7 +186,7 @@ void MetaTestSubscriber::t_client_server(MetaTestType& testinfo)
 
 void MetaTestSubscriber::t_rtps_registered(MetaTestType& testinfo)
 {
-	logUser("Starting TEST RTPS REGISTERED");
+	logInfo("Starting TEST RTPS REGISTERED");
 	TestReaderRegistered trreg;
 	SampleInfo_t sampleinfo;
 	if(trreg.init() && trreg.reg())
@@ -202,7 +202,7 @@ void MetaTestSubscriber::t_rtps_registered(MetaTestType& testinfo)
 		{
 			if(testinfo.status() == T_PUB_FINISH)
 			{
-				logUser("Publisher has finished (" << testinfo.samples() << " samples send), I received: "
+				logInfo("Publisher has finished (" << testinfo.samples() << " samples send), I received: "
 						<<trreg.m_listener.n_received);
 				if(trreg.m_listener.n_received == (uint16_t)testinfo.samples())
 				{
@@ -230,7 +230,7 @@ void MetaTestSubscriber::t_rtps_registered(MetaTestType& testinfo)
 
 void MetaTestSubscriber::t_rtps_socket(MetaTestType& testinfo)
 {
-	logUser("Starting TEST RTPS SOCKET");
+	logInfo("Starting TEST RTPS SOCKET");
 	TestReaderSocket tsocket;
 	SampleInfo_t sampleinfo;
 	if(tsocket.init(testinfo.ip_string(),(uint32_t)testinfo.ip_port()))
@@ -242,7 +242,7 @@ void MetaTestSubscriber::t_rtps_socket(MetaTestType& testinfo)
 		{
 			if(testinfo.status() == T_PUB_FINISH)
 			{
-				logUser("Publisher has finished (" << testinfo.samples() << " samples send), I received: "
+				logInfo("Publisher has finished (" << testinfo.samples() << " samples send), I received: "
 						<<tsocket.m_listener.m_received);
 				if(tsocket.m_listener.m_received == (uint16_t)testinfo.samples())
 				{

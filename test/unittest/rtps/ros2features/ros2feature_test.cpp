@@ -216,6 +216,6 @@ TEST(ros2features, SlaveListenerCallback){
 int main(int argc, char **argv)
 {
 	testing::InitGoogleTest(&argc, argv);
-	eprosima::Log::setVerbosity(eprosima::LOG_VERBOSITY_LVL::VERB_ERROR);
-	return RUN_ALL_TESTS();
+   int result = RUN_ALL_TESTS();
+	return result;
 }
