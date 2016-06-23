@@ -26,3 +26,5 @@ set_property(TEST memory_profiling APPEND PROPERTY ENVIRONMENT
     "PROFILING_BINS=$<TARGET_FILE:RTPSCommsProfiling>\\;$<TARGET_FILE:RTPSPubSubProfiling>")
 set_property(TEST memory_profiling APPEND PROPERTY ENVIRONMENT
              "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
+set_property(TEST memory_profiling APPEND PROPERTY ENVIRONMENT
+             "VALGRIND_BIN=${CTEST_MEMORYCHECK_COMMAND}")
