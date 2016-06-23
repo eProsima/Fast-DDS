@@ -756,6 +756,9 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTra
 
 TEST(BlackBox, PubSubAsNonReliableData300kb)
 {
+    // Mutes an expected error
+    Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
+
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
     
     writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).init();
@@ -765,6 +768,9 @@ TEST(BlackBox, PubSubAsNonReliableData300kb)
 
 TEST(BlackBox, PubSubAsReliableData300kb)
 {
+    // Mutes an expected error
+    Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
+
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
     
     writer.init();

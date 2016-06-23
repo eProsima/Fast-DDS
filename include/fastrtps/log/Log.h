@@ -31,7 +31,7 @@
  * * #define LOG_NO_WARNING
  * * #define LOG_NO_INFO
  *
- * Additionally. Info logging will be disable by default on release branches.
+ * Additionally. the lowest level (Info) is disabled by default on release branches.
  */
 
 #ifndef LOG_NO_ERROR

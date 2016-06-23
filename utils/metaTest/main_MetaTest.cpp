@@ -42,7 +42,7 @@ int main(int argc, char** argv){
 
 
 
-	logUser("Starting");
+	logInfo("Starting");
 	int type;
 	if(argc > 1)
 	{

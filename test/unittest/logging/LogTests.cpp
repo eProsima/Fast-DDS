@@ -117,11 +117,11 @@ TEST_F(LogTests, multi_criteria_filtering_with_regex)
    auto consumedEntries = HELPER_WaitForEntries(3);
    ASSERT_EQ(1, consumedEntries.size());
 
-   Log::SetFilenameFilter(std::regex("(what)"));
+   Log::SetFilenameFilter(std::regex("(we shouldn't find this ever)"));
    logError(GoodCategory,  "Despite the word \"Good\" being here, this shouldn't be logged because "\
                            "the filename is all wrong");
 
-   consumedEntries = HELPER_WaitForEntries(1);
+   consumedEntries = HELPER_WaitForEntries(2);
    ASSERT_EQ(1, consumedEntries.size());
 }
 

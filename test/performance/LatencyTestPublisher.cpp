@@ -19,8 +19,10 @@
 
 #include "LatencyTestPublisher.h"
 #include "fastrtps/log/Log.h"
+#include "fastrtps/log/Colors.h"
 #include <numeric>
 #include <cmath>
+#include <fstream>
 
 #define TIME_LIMIT_US 10000
 
