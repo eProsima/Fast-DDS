@@ -61,7 +61,7 @@ class LogConsumer;
 class Log 
 {
 public:
-   RTPS_DllAPI enum Kind {
+   enum Kind {
       Error,
       Warning,
       Info,
@@ -79,14 +79,14 @@ public:
    //! Returns the logging engine to configuration defaults.
    RTPS_DllAPI static void Reset();
 
-   RTPS_DllAPI struct Context {
+   struct Context {
       const char* filename;
       int line;
       const char* function;
       const char* category;
    };
 
-   RTPS_DllAPI struct Entry 
+   struct Entry 
    {
       std::string message;
       Log::Context context;
