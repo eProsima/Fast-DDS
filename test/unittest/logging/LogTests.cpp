@@ -33,7 +33,6 @@ class LogTests: public ::testing::Test
       std::unique_ptr<StdoutConsumer> defaultConsumer(new StdoutConsumer);
       mockConsumer = consumer.get();
       Log::RegisterConsumer(std::move(consumer));
-      Log::RegisterConsumer(std::move(defaultConsumer));
       Log::StartLogging();
    }
 

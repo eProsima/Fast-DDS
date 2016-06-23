@@ -54,7 +54,7 @@ RTPSDomain::~RTPSDomain()
 
 void RTPSDomain::stopAll()
 {
-	logInfo(RTPS_PARTICIPANT,"DELETING ALL ENDPOINTS IN THIS DOMAIN",C_WHITE);
+	logInfo(RTPS_PARTICIPANT,"DELETING ALL ENDPOINTS IN THIS DOMAIN");
 
 	while(m_RTPSParticipants.size()>0)
 	{

@@ -132,10 +132,10 @@ void ListenResource::setMsgRecMsgLength(uint32_t length)
 bool ListenResource::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,
 		uint32_t listenSockSize,bool isMulti,bool isFixed)
 {
-	logInfo(RTPS_MSG_IN,"Creating ListenResource in: "<<loc << " with ID: "<< m_ID,C_BLUE);
+	logInfo(RTPS_MSG_IN,"Creating ListenResource in: "<<loc << " with ID: "<< m_ID);
 	if(!IsAddressDefined(loc) && isMulti)
 	{
-		logWarning(RTPS_MSG_IN,"MulticastAddresses need to have the IP defined, ignoring this address",C_BLUE);
+		logWarning(RTPS_MSG_IN,"MulticastAddresses need to have the IP defined, ignoring this address");
 		return false;
 	}
 	mp_receiver = new MessageReceiver(listenSockSize);

@@ -79,7 +79,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* /*pimpl*/, const Locator_t&
 				#pragma warning(disable:4101)
 				catch (boost::system::system_error const& e)
 				{
-					logInfo(RTPS_MSG_OUT, "UDPv4 Error binding endpoint: (" << send_endpoint << ")" << " with boost msg: "<<e.what() , C_YELLOW);
+					logInfo(RTPS_MSG_OUT, "UDPv4 Error binding endpoint: (" << send_endpoint << ")" << " with boost msg: "<<e.what() );
 					sendLocv4.port++;
 				}
 				++bind_tries;
@@ -88,12 +88,12 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* /*pimpl*/, const Locator_t&
 			{
 				sendSocketv4->get_option(option);
 				logInfo(RTPS_MSG_OUT, "UDPv4: " << sendSocketv4->local_endpoint() << "|| State: " << sendSocketv4->is_open() <<
-						" || buffer size: " << option.value(), C_YELLOW);
+						" || buffer size: " << option.value());
 				initialized = true;
 			}
 			else
 			{
-				logWarning(RTPS_MSG_OUT,"UDPv4: Maxmimum Number of tries while binding in this interface: "<<send_endpoint,C_YELLOW)
+				logWarning(RTPS_MSG_OUT,"UDPv4: Maxmimum Number of tries while binding in this interface: "<<send_endpoint)
 				mv_sendLocator_v4.erase(mv_sendLocator_v4.end()-1);
 				delete(*(mv_send_socket_v4.end()-1));
 				mv_send_socket_v4.erase(mv_send_socket_v4.end()-1);
@@ -129,7 +129,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* /*pimpl*/, const Locator_t&
                 #pragma warning(disable:4101)
 				catch (boost::system::system_error const& e)
 				{
-					logInfo(RTPS_MSG_OUT, "UDPv6 Error binding endpoint: (" << send_endpoint << ")"<< " with boost msg: "<<e.what() , C_YELLOW);
+					logInfo(RTPS_MSG_OUT, "UDPv6 Error binding endpoint: (" << send_endpoint << ")"<< " with boost msg: "<<e.what() );
 					sendLocv6.port++;
 				}
 				++bind_tries;
@@ -138,12 +138,12 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* /*pimpl*/, const Locator_t&
 			{
 				sendSocketv6->get_option(option);
 				logInfo(RTPS_MSG_OUT, "UDPv6: " << sendSocketv6->local_endpoint() << "|| State: " << sendSocketv6->is_open() <<
-						" || buffer size: " << option.value(), C_YELLOW);
+						" || buffer size: " << option.value());
 				initialized = true;
 			}
 			else
 			{
-				logWarning(RTPS_MSG_OUT,"UDPv6: Maxmimum Number of tries while binding in this endpoint: "<<send_endpoint,C_YELLOW);
+				logWarning(RTPS_MSG_OUT,"UDPv6: Maxmimum Number of tries while binding in this endpoint: "<<send_endpoint);
 				mv_sendLocator_v6.erase(mv_sendLocator_v6.end()-1);
 				delete(*(mv_send_socket_v6.end()-1));
 				mv_send_socket_v6.erase(mv_send_socket_v6.end()-1);
@@ -158,7 +158,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* /*pimpl*/, const Locator_t&
 
 ResourceSendImpl::~ResourceSendImpl()
 {
-	logInfo(RTPS_MSG_OUT,"",C_YELLOW);
+	logInfo(RTPS_MSG_OUT,"");
 	for (auto it = mv_send_socket_v4.begin(); it != mv_send_socket_v4.end(); ++it)
 		(*it)->close();
 	for (auto it = mv_send_socket_v6.begin(); it != mv_send_socket_v6.end(); ++it)
@@ -185,7 +185,7 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 		for (auto sockit = mv_send_socket_v4.begin(); sockit != mv_send_socket_v4.end(); ++sockit)
 		{
 			logInfo(RTPS_MSG_OUT,"UDPv4: " << msg->length << " bytes TO endpoint: " << send_endpoint_v4
-					<< " FROM " << (*sockit)->local_endpoint(), C_YELLOW);
+					<< " FROM " << (*sockit)->local_endpoint());
 			if(send_endpoint_v4.port()>0)
 			{
 				m_bytes_sent = 0;
@@ -196,7 +196,7 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 					}
 					catch (const std::exception& error) {
 						// Should print the actual error message
-						logWarning(RTPS_MSG_OUT, "Error: " << error.what(), C_YELLOW);
+						logWarning(RTPS_MSG_OUT, "Error: " << error.what());
 					}
 
 				}
@@ -204,10 +204,10 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 				{
 					m_send_next = true;
 				}
-				logInfo (RTPS_MSG_OUT,"SENT " << m_bytes_sent,C_YELLOW);
+				logInfo (RTPS_MSG_OUT,"SENT " << m_bytes_sent);
 			}
 			else
-				logWarning(RTPS_MSG_OUT,"Port invalid",C_YELLOW);
+				logWarning(RTPS_MSG_OUT,"Port invalid");
 		}
 	}
 	else if(loc.kind == LOCATOR_KIND_UDPv6 && m_useIP6)
@@ -219,7 +219,7 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 		for (auto sockit = mv_send_socket_v6.begin(); sockit != mv_send_socket_v6.end(); ++sockit)
 		{
 			logInfo(RTPS_MSG_OUT, "UDPv6: " << msg->length << " bytes TO endpoint: "
-					<< send_endpoint_v6 << " FROM " << (*sockit)->local_endpoint(), C_YELLOW);
+					<< send_endpoint_v6 << " FROM " << (*sockit)->local_endpoint());
 			if (send_endpoint_v6.port()>0)
 			{
 				m_bytes_sent = 0;
@@ -230,7 +230,7 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 					}
 					catch (const std::exception& error) {
 						// Should print the actual error message
-						logWarning(RTPS_MSG_OUT, "Error: " << error.what(), C_YELLOW);
+						logWarning(RTPS_MSG_OUT, "Error: " << error.what());
 					}
 
 				}
@@ -238,15 +238,15 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 				{
 					m_send_next = true;
 				}
-				logInfo(RTPS_MSG_OUT, "SENT " << m_bytes_sent, C_YELLOW);
+				logInfo(RTPS_MSG_OUT, "SENT " << m_bytes_sent);
 			}
 			else
-				logWarning(RTPS_MSG_OUT, "Port invalid", C_YELLOW);
+				logWarning(RTPS_MSG_OUT, "Port invalid");
 		}
 	}
 	else
 	{
-		logInfo(RTPS_MSG_OUT,"Destination "<< loc << " not valid for this ListenResource",C_YELLOW);
+		logInfo(RTPS_MSG_OUT,"Destination "<< loc << " not valid for this ListenResource");
 	}
 
 }

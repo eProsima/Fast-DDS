@@ -351,7 +351,8 @@ bool UDPv6Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 
     interprocess_semaphore receiveSemaphore(0);
     bool success = false;
-
+    auto handler = [&receiveBuffer, &receiveBufferSize, &success, &receiveSemaphore]
+      (const boost::system::error_code& error, std::size_t bytes_transferred)
     {
         if(error != boost::system::errc::success)
         {
@@ -397,7 +398,7 @@ bool UDPv6Transport::SendThroughSocket(const octet* sendBuffer,
     auto destinationEndpoint = ip::udp::endpoint(boost::asio::ip::address_v6(remoteAddress), static_cast<uint16_t>(remoteLocator.port));
     size_t bytesSent = 0;
     logInfo(RTPS_MSG_OUT,"UDPv6: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
-            << " FROM " << socket.local_endpoint(), C_YELLOW);
+            << " FROM " << socket.local_endpoint());
 
     try 
     {
@@ -405,7 +406,7 @@ bool UDPv6Transport::SendThroughSocket(const octet* sendBuffer,
     }
     catch (const std::exception& error) 
     {
-        logWarning(RTPS_MSG_OUT, "Error: " << error.what(), C_YELLOW);
+        logWarning(RTPS_MSG_OUT, "Error: " << error.what());
         return false;
     }
 

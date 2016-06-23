@@ -176,7 +176,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
     if(acceptMsgFrom(change->writerGUID, &pWP))
     {
-        logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId,C_BLUE);
+        logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
 
         CacheChange_t* change_to_add;
 
@@ -185,14 +185,14 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
             if (!change_to_add->copy(change))
             {
                 logWarning(RTPS_MSG_IN,IDSTRING"Problem copying CacheChange, received data is: " << change->serializedPayload.length
-                        << " bytes and max size in reader " << getGuid().entityId << " is " << change_to_add->serializedPayload.max_size, C_BLUE);
+                        << " bytes and max size in reader " << getGuid().entityId << " is " << change_to_add->serializedPayload.max_size);
                 releaseCache(change_to_add);
                 return false;
             }
         }
         else
         {
-            logError(RTPS_MSG_IN,IDSTRING"Problem reserving CacheChange in reader: " << getGuid().entityId, C_BLUE);
+            logError(RTPS_MSG_IN,IDSTRING"Problem reserving CacheChange in reader: " << getGuid().entityId);
             return false;
         }
 
@@ -203,7 +203,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
         if(!change_received(change_to_add, pWP, lock))
         {
-            logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "<<change_to_add->sequenceNumber, C_BLUE);
+            logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "<<change_to_add->sequenceNumber);
             releaseCache(change_to_add);
 
             if(pWP == nullptr && getGuid().entityId == c_EntityId_SPDPReader)
@@ -229,7 +229,7 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
         // Check if CacheChange was received.
         if(!getHistory()->thereIsRecordOf(incomingChange->writerGUID, incomingChange->sequenceNumber))
         {
-            logInfo(RTPS_MSG_IN, IDSTRING"Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " << getGuid().entityId, C_BLUE);
+            logInfo(RTPS_MSG_IN, IDSTRING"Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " << getGuid().entityId);
 
             // Fragments manager has to process incomming fragments.
             // If CacheChange_t is completed, it will be returned;
@@ -240,7 +240,7 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
             {
                 if (!change_received(change_completed, pWP, lock))
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long(), C_BLUE);
+                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long());
 
                     // Assert liveliness because it is a participant discovery info.
                     if(pWP == nullptr && getGuid().entityId == c_EntityId_SPDPReader)

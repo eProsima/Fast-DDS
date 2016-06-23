@@ -57,7 +57,7 @@ EDPStaticXML::~EDPStaticXML()
 
 bool EDPStaticXML::loadXMLFile(std::string& filename)
 {
-	logInfo(RTPS_EDP,"File: "<<filename,C_CYAN);
+	logInfo(RTPS_EDP,"File: "<<filename);
 	// Create an empty property tree object
 	ptree pt;
 	// Load the XML file into the property tree. If reading fails
@@ -79,7 +79,7 @@ bool EDPStaticXML::loadXMLFile(std::string& filename)
 			m_RTPSParticipants.push_back(pdata);
 		}
 	}
-	logInfo(RTPS_EDP, "Finished parsing, "<< m_RTPSParticipants.size()<< " participants found.",C_CYAN);
+	logInfo(RTPS_EDP, "Finished parsing, "<< m_RTPSParticipants.size()<< " participants found.");
 	return true;
 }
 

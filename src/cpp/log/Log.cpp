@@ -1,4 +1,5 @@
 #include <fastrtps/log/Log.h>
+#include <fastrtps/log/StdoutConsumer.h>
 #include <iostream>
 
 using namespace std;
@@ -7,6 +8,7 @@ namespace fastrtps {
 
 DBQueue<Log::Entry> Log::mLogs;
 vector<unique_ptr<LogConsumer> > Log::mConsumers;
+std::unique_ptr<LogConsumer> Log::mDefaultConsumer(new StdoutConsumer());
 unique_ptr<thread> Log::mLoggingThread;
 condition_variable Log::mCv;
 mutex Log::mCvMutex;
@@ -56,8 +58,12 @@ void Log::Run()
          {
             std::unique_lock<std::mutex> configGuard(mConfigMutex);
             if (Preprocess(mLogs.Front()))
+            {
                for (auto& consumer: mConsumers)
                   consumer->Consume(mLogs.Front());
+
+               mDefaultConsumer->Consume(mLogs.Front());
+            }
 
             mLogs.Pop();
          }

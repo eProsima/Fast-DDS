@@ -63,7 +63,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 			change->instanceHandle = writerProxyData.m_key;
 			if(writerProxyData.m_guid.guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
 			{
-				logInfo(RTPS_EDP,"Message from own RTPSParticipant, ignoring",C_CYAN);
+				logInfo(RTPS_EDP,"Message from own RTPSParticipant, ignoring");
 				mp_SEDP->mp_PubReader.second->remove_change(change);
 				return;
 			}
@@ -105,7 +105,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 	else
 	{
 		//REMOVE WRITER FROM OUR READERS:
-		logInfo(RTPS_EDP,"Disposed Remote Writer, removing...",C_CYAN);
+		logInfo(RTPS_EDP,"Disposed Remote Writer, removing...");
 		GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
 		this->mp_SEDP->removeWriterProxy(auxGUID);
 	}
@@ -192,7 +192,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 			change->instanceHandle = readerProxyData.m_key;
 			if(readerProxyData.m_guid.guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
 			{
-				logInfo(RTPS_EDP,"From own RTPSParticipant, ignoring",C_CYAN);
+				logInfo(RTPS_EDP,"From own RTPSParticipant, ignoring");
 				mp_SEDP->mp_SubReader.second->remove_change(change);
 				return;
 			}
@@ -232,7 +232,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 	else
 	{
 		//REMOVE WRITER FROM OUR READERS:
-		logInfo(RTPS_EDP,"Disposed Remote Reader, removing...",C_CYAN);
+		logInfo(RTPS_EDP,"Disposed Remote Reader, removing...");
 		GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
 		this->mp_SEDP->removeReaderProxy(auxGUID);
 	}

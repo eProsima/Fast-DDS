@@ -355,6 +355,8 @@ bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
     interprocess_semaphore receiveSemaphore(0);
     bool success = false;
 
+    auto handler = [&receiveBuffer, &receiveBufferSize, &success, &receiveSemaphore]
+      (const boost::system::error_code& error, std::size_t bytes_transferred)
     {
         if(error != boost::system::errc::success)
         {

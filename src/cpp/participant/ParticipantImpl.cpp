@@ -106,7 +106,7 @@ const GUID_t& ParticipantImpl::getGuid() const
 Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 		PublisherListener* listen)
 {
-	logInfo(PARTICIPANT,"CREATING PUBLISHER IN TOPIC: "<<att.topic.getTopicName(),C_B_YELLOW)
+	logInfo(PARTICIPANT,"CREATING PUBLISHER IN TOPIC: "<<att.topic.getTopicName())
 	//Look for the correct type registration
 
 	TopicDataType* p_type = nullptr;
@@ -231,7 +231,7 @@ int ParticipantImpl::get_no_subscribers(char *target_topic){
 Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 		SubscriberListener* listen)
 {
-	logInfo(PARTICIPANT,"CREATING SUBSCRIBER IN TOPIC: "<<att.topic.getTopicName(),C_B_YELLOW)
+	logInfo(PARTICIPANT,"CREATING SUBSCRIBER IN TOPIC: "<<att.topic.getTopicName())
 	//Look for the correct type registration
 
 	TopicDataType* p_type = nullptr;

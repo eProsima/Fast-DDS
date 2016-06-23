@@ -19,6 +19,7 @@
 #include <fastrtps/utils/DBQueue.h>
 #include <thread>
 #include <sstream>
+#include <atomic>
 #include <regex>
 
 #define logError(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); }
@@ -27,7 +28,7 @@
 #if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG) )
    #define logInfo(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Info); }
 #else
-   #define logInfo(cat, msg) {(void)msg;}
+   #define logInfo(cat, msg)
 #endif
 
 namespace eprosima {
@@ -37,26 +38,6 @@ class LogConsumer;
 class Log 
 {
 public:
-   enum class Kind {
-      Info,
-      Warning,
-      Error,
-   };
-
-   struct Context {
-      const char* filename;
-      int line;
-      const char* function;
-      const char* category;
-   };
-
-   struct Entry 
-   {
-      std::string message;
-      Log::Context context;
-      Log::Kind kind;
-   };
-
    static void RegisterConsumer(std::unique_ptr<LogConsumer>);
 
    static void StartLogging();
@@ -71,6 +52,7 @@ public:
 
    //! Returns the logging engine to defaults and stops the logging.
    static void Reset();
+
 private:
 
    // Applies transformations to the entries compliant with the options selected (such as
@@ -78,6 +60,7 @@ private:
    // if the log entry is blacklisted.
    static DBQueue<Entry> mLogs;
    static std::vector<std::unique_ptr<LogConsumer> > mConsumers;
+   static std::unique_ptr<LogConsumer> mDefaultConsumer;
 
    static std::unique_ptr<std::thread> mLoggingThread;
 
@@ -93,12 +76,42 @@ private:
    static bool mFunctions;
    static std::regex mRegexFilter;
 
+   // 
+
 
    static bool Preprocess(Entry&);
+
    // Public methods for static access, not user consumption.
 public:
    static void Run();
    static void QueueLog(const std::string& message, const Log::Context&, Log::Kind);
+
+   struct Context {
+      const char* filename;
+      int line;
+      const char* function;
+      const char* category;
+   };
+
+   struct Entry 
+   {
+      std::string message;
+      Log::Context context;
+      Log::Kind kind;
+   };
+
+   enum class Kind {
+      Info,
+      Warning,
+      Error,
+   };
+
+   struct Scope {
+      Scope();
+      ~Scope();
+      Scope(const Scope&);
+      const Scope& operator=(const Scope&);
+   }
 };
 
 /**

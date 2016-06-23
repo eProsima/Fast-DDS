@@ -57,13 +57,13 @@ void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* 
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*reader->getMutex());
 	boost::lock_guard<boost::recursive_mutex> guard2(*mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
-	logInfo(RTPS_LIVELINESS,"",C_MAGENTA);
+	logInfo(RTPS_LIVELINESS,"");
 	GuidPrefix_t guidP;
 	LivelinessQosPolicyKind livelinessKind;
 	CacheChange_t* change = (CacheChange_t*)changeIN;
 	if(!computeKey(change))
 	{
-		logWarning(RTPS_LIVELINESS,"Problem obtaining the Key",C_MAGENTA);
+		logWarning(RTPS_LIVELINESS,"Problem obtaining the Key");
 		return;
 	}
 	//Check the serializedPayload:
@@ -93,10 +93,10 @@ void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* 
 	}
 	logInfo(RTPS_LIVELINESS,"RTPSParticipant "<<guidP<< " assert liveliness of "
 			<<((livelinessKind == 0x00)?"AUTOMATIC":"")
-			<<((livelinessKind==0x01)?"MANUAL_BY_RTPSParticipant":"")<< " writers",C_MAGENTA);
+			<<((livelinessKind==0x01)?"MANUAL_BY_RTPSParticipant":"")<< " writers");
 	if(guidP == reader->getGuid().guidPrefix)
 	{
-		logInfo(RTPS_LIVELINESS,"Message from own RTPSParticipant, ignoring",C_MAGENTA);
+		logInfo(RTPS_LIVELINESS,"Message from own RTPSParticipant, ignoring");
 		this->mp_WLP->mp_builtinReaderHistory->remove_change(change);
 		return;
 	}
@@ -120,7 +120,7 @@ void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* 
 //						}
 //		default:
 //		{
-//			logWarning(RTPS_LIVELINESS,"In this ParameterList should not be anything but the Key",C_MAGENTA);
+//			logWarning(RTPS_LIVELINESS,"In this ParameterList should not be anything but the Key");
 //			break;
 //		}
 //		}

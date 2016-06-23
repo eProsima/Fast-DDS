@@ -50,12 +50,12 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
 {
     CacheChange_t* change = (CacheChange_t*)(change_in);
     boost::lock_guard<boost::recursive_mutex> rguard(*reader->getMutex());
-    logInfo(RTPS_PDP,"SPDP Message received",C_CYAN);
+    logInfo(RTPS_PDP,"SPDP Message received");
     if(change->instanceHandle == c_InstanceHandle_Unknown)
     {
         if(!this->getKey(change))
         {
-            logWarning(RTPS_PDP,"Problem getting the key of the change, removing",C_CYAN);
+            logWarning(RTPS_PDP,"Problem getting the key of the change, removing");
             this->mp_SPDP->mp_SPDPReaderHistory->remove_change(change);
             return;
         }
@@ -75,7 +75,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             change->instanceHandle = m_ParticipantProxyData.m_key;
             if(m_ParticipantProxyData.m_guid == mp_SPDP->getRTPSParticipant()->getGuid())
             {
-                logInfo(RTPS_PDP,"Message from own RTPSParticipant, removing",C_CYAN);
+                logInfo(RTPS_PDP,"Message from own RTPSParticipant, removing");
                 this->mp_SPDP->mp_SPDPReaderHistory->remove_change(change);
                 return;
             }

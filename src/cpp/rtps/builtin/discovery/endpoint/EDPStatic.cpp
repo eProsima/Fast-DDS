@@ -57,7 +57,7 @@ EDPStatic::~EDPStatic()
 
 bool EDPStatic::initEDP(BuiltinAttributes& attributes)
 {
-	logInfo(RTPS_EDP,"Beginning STATIC EndpointDiscoveryProtocol",C_B_CYAN);
+	logInfo(RTPS_EDP,"Beginning STATIC EndpointDiscoveryProtocol");
 	m_attributes = attributes;
 	mp_edpXML = new EDPStaticXML();
 	std::string filename = std::string(m_attributes.getStaticEndpointXMLFilename());
@@ -107,7 +107,7 @@ bool EDPStaticProperty::fromProperty(std::pair<std::string,std::string> prop)
 
 bool EDPStatic::processLocalReaderProxyData(ReaderProxyData* rdata)
 {
-	logInfo(RTPS_EDP,rdata->m_guid.entityId<< " in topic: " <<rdata->m_topicName,C_CYAN);
+	logInfo(RTPS_EDP,rdata->m_guid.entityId<< " in topic: " <<rdata->m_topicName);
 	//Add the property list entry to our local pdp
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
 	boost::lock_guard<boost::recursive_mutex> guard(*localpdata->mp_mutex);
@@ -119,7 +119,7 @@ bool EDPStatic::processLocalReaderProxyData(ReaderProxyData* rdata)
 
 bool EDPStatic::processLocalWriterProxyData(WriterProxyData* wdata)
 {
-		logInfo(RTPS_EDP,wdata->m_guid.entityId<< " in topic: " <<wdata->m_topicName,C_CYAN);
+		logInfo(RTPS_EDP,wdata->m_guid.entityId<< " in topic: " <<wdata->m_topicName);
 	//Add the property list entry to our local pdp
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
 	boost::lock_guard<boost::recursive_mutex> guard(*localpdata->mp_mutex);
@@ -213,7 +213,7 @@ void EDPStatic::assignRemoteEndpoints(ParticipantProxyData* pdata)
 			else
 			{
 				logWarning(RTPS_EDP,"Property with type: "<<staticproperty.m_endpointType
-						<< " and status "<<staticproperty.m_status << " not recognized",C_CYAN);
+						<< " and status "<<staticproperty.m_status << " not recognized");
 			}
 		}
 		else
@@ -228,7 +228,7 @@ bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,Enti
 	ReaderProxyData* rpd = NULL;
 	if(mp_edpXML->lookforReader(pdata->m_participantName,userId,&rpd))
 	{
-		logInfo(RTPS_EDP,"Activating: " << rpd->m_guid.entityId << " in topic " << rpd->m_topicName,C_CYAN);
+		logInfo(RTPS_EDP,"Activating: " << rpd->m_guid.entityId << " in topic " << rpd->m_topicName);
 		ReaderProxyData* newRPD = new ReaderProxyData();
 		newRPD->copy(rpd);
 		newRPD->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
@@ -237,7 +237,7 @@ bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,Enti
 		if(!checkEntityId(newRPD))
 		{
 			logError(RTPS_EDP,"The provided entityId for Reader with ID: "
-					<< newRPD->m_userDefinedId << " does not match the topic Kind",C_CYAN);
+					<< newRPD->m_userDefinedId << " does not match the topic Kind");
 			delete(newRPD);
 			return false;
 		}
@@ -267,7 +267,7 @@ bool EDPStatic::newRemoteWriter(ParticipantProxyData* pdata,uint16_t userId,Enti
 	WriterProxyData* wpd = NULL;
 	if(mp_edpXML->lookforWriter(pdata->m_participantName,userId,&wpd))
 	{
-		logInfo(RTPS_EDP,"Activating: " << wpd->m_guid.entityId << " in topic " << wpd->m_topicName,C_CYAN);
+		logInfo(RTPS_EDP,"Activating: " << wpd->m_guid.entityId << " in topic " << wpd->m_topicName);
 		WriterProxyData* newWPD = new WriterProxyData();
 		newWPD->copy(wpd);
 		newWPD->m_guid.guidPrefix = pdata->m_guid.guidPrefix;

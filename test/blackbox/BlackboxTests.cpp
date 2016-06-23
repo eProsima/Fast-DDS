@@ -47,6 +47,7 @@ class BlackboxEnvironment : public ::testing::Environment
 
         void SetUp()
         {
+            Log::StartLogging();
             global_port = boost::interprocess::ipcdetail::get_current_process_id();
 
             if(global_port + 7400 > global_port)
@@ -55,6 +56,7 @@ class BlackboxEnvironment : public ::testing::Environment
 
         void TearDown()
         {
+            Log::Reset();
             eprosima::fastrtps::rtps::RTPSDomain::stopAll();
         }
 };
@@ -1176,6 +1178,6 @@ int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new BlackboxEnvironment);
-    eprosima::Log::setVerbosity(eprosima::LOG_VERBOSITY_LVL::VERB_ERROR);
+    //eprosima::Log::setVerbosity(eprosima::LOG_VERBOSITY_LVL::VERB_ERROR);
     return RUN_ALL_TESTS();
 }

@@ -187,7 +187,7 @@ bool ReaderProxyData::toParameterList()
 		m_parameterList.m_parameters.push_back((Parameter_t*)p);
 	}
 
-	logInfo(RTPS_PROXY_DATA,"DiscoveredReaderData converted to ParameterList with " << m_parameterList.m_parameters.size()<< " parameters",C_CYAN);
+	logInfo(RTPS_PROXY_DATA,"DiscoveredReaderData converted to ParameterList with " << m_parameterList.m_parameters.size()<< " parameters");
 	return true;
 }
 
@@ -357,7 +357,7 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
 			}
 			default:
 			{
-				//logInfo(RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(*it)->Pid << " NOT CONSIDERED",C_CYAN);
+				//logInfo(RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(*it)->Pid << " NOT CONSIDERED");
 				break;
 			}
 			}

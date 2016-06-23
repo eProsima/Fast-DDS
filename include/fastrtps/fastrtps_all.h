@@ -44,14 +44,14 @@
 #include "TopicDataType.h"
 
 #include "utils/IPFinder.h"
-#include "utils/RTPSLog.h"
+#include "log/Log.h"
 #include "utils/eClock.h"
 #include "utils/TimeConversion.h"
 
 #include "qos/ParameterList.h"
 #include "qos/QosPolicies.h"
 
-#include "utils/RTPSLog.h"
+#include "log/Log.h"
 
 
 #endif /* FASTRTPS_ALL_H_ */
