@@ -35,35 +35,14 @@
  * Additionally. the lowest level (Info) is disabled by default on release branches.
  */
 
-#if defined __func__
-   #define LOG_FUNC __func__
-#else
-   #define LOG_FUNC nullptr
-#endif
+// Logging API:
 
-
-#ifndef LOG_NO_ERROR
-   #define logError(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, LOG_FUNC, #cat}, Log::Kind::Error); }
-#else
-   #define logError(cat, msg) 
-#endif
-
-#ifndef LOG_NO_WARNING
-   #define logWarning(cat, msg)\
-   if (Log::GetVerbosity() >= Log::Kind::Warning)\
-   {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, LOG_FUNC, #cat}, Log::Kind::Warning); }
-#else 
-   #define logWarning(cat, msg) 
-#endif
-
-#define COMPOSITE_LOG_NO_INFO (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
-#if COMPOSITE_LOG_NO_INFO 
-   #define logInfo(cat, msg)\
-   if (Log::GetVerbosity() >= Log::Kind::Info)\
-   {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, LOG_FUNC, #cat}, Log::Kind::Info); }
-#else
-   #define logInfo(cat, msg)
-#endif
+//! Logs with Info verbosity. Disable it through Log::SetVerbosity, #define LOG_NO_INFO, or being in a release branch.
+#define logInfo(cat,msg) logInfo_(cat,msg)
+//! Logs a warning. Disable reporting through Log::SetVerbosity or #define LOG_NO_WARNING
+#define logWarning(cat,msg) logWarning_(cat,msg)
+//! Logs an error. Disable reporting through #define LOG_NO_ERROR
+#define logError(cat,msg) logError_(cat,msg)
 
 namespace eprosima {
 namespace fastrtps {
@@ -106,6 +85,12 @@ public:
    };
 
    //! Not recommended to call this method directly. Use the macros above.
+   /** 
+    * Do not call this method directly! Use the following macros:
+    *  * logInfo(cat, msg);
+    *  * logWarning(cat, msg);
+    *  * logError(cat, msg);
+    */
    RTPS_DllAPI static void QueueLog(const std::string& message, const Log::Context&, Log::Kind);
 
 private:
@@ -157,6 +142,31 @@ public:
    virtual ~LogConsumer(){};
    virtual void Consume(const Log::Entry&) = 0;
 };
+
+#if defined __func__
+   #define LOG_FUNC __func__
+#else
+   #define LOG_FUNC nullptr
+#endif
+
+#ifndef LOG_NO_ERROR
+   #define logError_(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, LOG_FUNC, #cat}, Log::Kind::Error); }
+#else
+   #define logError_(cat, msg) 
+#endif
+
+#ifndef LOG_NO_WARNING
+   #define logWarning_(cat, msg) { if (Log::GetVerbosity() >= Log::Kind::Warning) { std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, LOG_FUNC, #cat}, Log::Kind::Warning); } } 
+#else 
+   #define logWarning_(cat, msg) 
+#endif
+
+#define COMPOSITE_LOG_NO_INFO (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
+#if COMPOSITE_LOG_NO_INFO 
+   #define logInfo_(cat, msg) { if (Log::GetVerbosity() >= Log::Kind::Info) { std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, LOG_FUNC, #cat}, Log::Kind::Info); } }
+#else
+   #define logInfo_(cat, msg)
+#endif
 
 } // namespace fastrtps
 } // namespace eprosima
