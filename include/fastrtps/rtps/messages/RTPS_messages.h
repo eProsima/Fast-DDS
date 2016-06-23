@@ -79,6 +79,13 @@ inline std::ostream& operator<<(std::ostream& output,const Header_t& h){
 	uint16_t submessageLength;
 	uint32_t submsgLengthLarger;
 	SubmessageFlag flags;
+
+   SubmessageHeader_t():
+      submessageId(0),
+      submessageLength(0),
+	   submsgLengthLarger(0),
+      flags(0)
+   {}
 };
 
 using std::cout;
