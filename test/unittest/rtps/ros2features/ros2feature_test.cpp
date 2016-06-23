@@ -129,7 +129,7 @@ TEST(ros2features, PubSubPoll)
 
 	std::string str("HelloWorldType");
 
-	part_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230 + 2;
+	part_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
 	my_participant = Domain::createParticipant(part_attr);
 	//Register type
 	
@@ -166,7 +166,7 @@ TEST(ros2features, SlaveListenerCallback){
 	pub_dummy_listener my_dummy_listener;
 	gettopicnamesandtypesReaderListener slave_listener;
 	bool result;	
-	p_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230 + 35;
+	p_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
 	my_participant = Domain::createParticipant(p_attr);
 
 	ASSERT_NE(my_participant, nullptr);
@@ -190,7 +190,7 @@ TEST(ros2features, SlaveListenerCallback){
 	ParticipantAttributes p_attr2;
 	PublisherAttributes pub_attr2;
 	pub_dummy_listener my_dummy_listener2;
-	p_attr2.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230 + 35;
+	p_attr2.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
 	my_participant2 = Domain::createParticipant(p_attr2);
 
 	ASSERT_NE(my_participant2, nullptr);
