@@ -14,15 +14,19 @@ Log::Resources::Resources():
    mWork(false),
    mFilenames(false),
    mFunctions(true),
-   mRegexFilter("(.*?)"),
    mVerbosity(Log::Error)
 {
-   Log::LaunchThread();
+   // If all levels have been disabled statically, don't even bother launching the thread.
+   #if !(defined(LOG_NO_ERROR) && defined(LOG_NO_WARNING) && defined(COMPOSITE_LOG_NO_INFO))
+      Log::LaunchThread();
+   #endif
 }
 
 Log::Resources::~Resources()
 {
-   Log::KillThread();
+   #if !(defined(LOG_NO_ERROR) && defined(LOG_NO_WARNING) && defined(COMPOSITE_LOG_NO_INFO))
+      Log::KillThread();
+   #endif
 }
 
 void Log::RegisterConsumer(std::unique_ptr<LogConsumer> consumer) 
@@ -34,7 +38,9 @@ void Log::RegisterConsumer(std::unique_ptr<LogConsumer> consumer)
 void Log::Reset()
 {
    std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
-   mResources.mRegexFilter = "(.*?)";
+   mResources.mCategoryFilter.reset();
+   mResources.mFilenameFilter.reset();
+   mResources.mErrorStringFilter.reset();
    mResources.mFilenames = false;
    mResources.mFunctions = true;
    mResources.mVerbosity = Log::Error;
@@ -89,7 +95,11 @@ bool Log::Preprocess(Log::Entry& entry)
 {
    if (mResources.mVerbosity < entry.kind)
       return false;
-   if (!regex_search(entry.context.category, mResources.mRegexFilter))
+   if (mResources.mCategoryFilter && !regex_search(entry.context.category, *mResources.mCategoryFilter))
+      return false;
+   if (mResources.mFilenameFilter && !regex_search(entry.context.filename, *mResources.mFilenameFilter))
+      return false;
+   if (mResources.mErrorStringFilter && !regex_search(entry.message, *mResources.mErrorStringFilter))
       return false;
    if (!mResources.mFilenames)
       entry.context.filename = nullptr;
@@ -144,16 +154,22 @@ void Log::SetVerbosity(Log::Kind kind)
    mResources.mVerbosity = kind;
 }
 
-void Log::SetRegexFilter(const std::regex& filter)
+void Log::SetCategoryFilter(const std::regex& filter)
 {
    std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
-   mResources.mRegexFilter = filter; 
+   mResources.mCategoryFilter.reset(new std::regex(filter));
 }
 
-void Log::ClearRegexFilter()
+void Log::SetFilenameFilter(const std::regex& filter)
 {
    std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
-   mResources.mRegexFilter = "(.*?)";
+   mResources.mFilenameFilter.reset(new std::regex(filter));
+}
+
+void Log::SetErrorStringFilter(const std::regex& filter)
+{
+   std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
+   mResources.mErrorStringFilter.reset(new std::regex(filter));
 }
 
 } //namespace fastrtps 

@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/log/StdoutConsumer.h>
@@ -94,12 +95,34 @@ TEST_F(LogTests, multithreaded_logging)
 
 TEST_F(LogTests, regex_category_filtering)
 {
-   Log::SetRegexFilter(std::regex("(Good)"));
+   Log::SetCategoryFilter(std::regex("(Good)"));
    logError(GoodCategory, "This should be logged because my regex filter allows for it");
    logError(BadCategory, "If you're seeing this, something went wrong");
    logWarning(EvenMoreGoodCategory, "This should be logged too!");
    auto consumedEntries = HELPER_WaitForEntries(3);
    ASSERT_EQ(2, consumedEntries.size());
+}
+
+TEST_F(LogTests, multi_criteria_filtering_with_regex)
+{
+   Log::SetCategoryFilter(std::regex("(Good)"));
+   Log::SetFilenameFilter(std::regex("(LogTests)"));
+   Log::SetErrorStringFilter(std::regex("(Good)"));
+   Log::ReportFilenames(true); // For clarity, not necessary.
+
+   logError(GoodCategory, "This should be logged because it contains the word \"Good\" in the "\
+      "error string and the category, and is in the right filename");
+   logError(BadCategory,  "Despite the word \"Good\" being here, this shouldn't be logged");
+   logError(GoodCategory, "And neither should this.");
+   auto consumedEntries = HELPER_WaitForEntries(3);
+   ASSERT_EQ(1, consumedEntries.size());
+
+   Log::SetFilenameFilter(std::regex("(what)"));
+   logError(GoodCategory,  "Despite the word \"Good\" being here, this shouldn't be logged because "\
+                           "the filename is all wrong");
+
+   consumedEntries = HELPER_WaitForEntries(1);
+   ASSERT_EQ(1, consumedEntries.size());
 }
 
 TEST_F(LogTests, multiple_verbosity_levels)

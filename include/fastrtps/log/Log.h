@@ -22,10 +22,32 @@
 #include <atomic>
 #include <regex>
 
-#define logError(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); }
-#define logWarning(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning); }
+/**
+ * eProsima log layer. Logging categories and verbosities can be specified dynamically at runtime. However, even on a category 
+ * not covered by the current verbosity level, there is some overhead on calling a log macro. For maximum performance, you can 
+ * opt out of logging any particular level by defining the following symbols:
+ *
+ * * #define LOG_NO_ERROR
+ * * #define LOG_NO_WARNING
+ * * #define LOG_NO_INFO
+ *
+ * Additionally. Info logging will be disable by default on release branches.
+ */
 
-#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG) )
+#ifndef LOG_NO_ERROR
+   #define logError(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); }
+#else
+   #define logError(cat, msg) 
+#endif
+
+#ifndef LOG_NO_WARNING
+   #define logWarning(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning); }
+#else 
+   #define logWarning(cat, msg) 
+#endif
+
+#define COMPOSITE_LOG_NO_INFO (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
+#if COMPOSITE_LOG_NO_INFO 
    #define logInfo(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Info); }
 #else
    #define logInfo(cat, msg)
@@ -49,15 +71,14 @@ public:
    static void ReportFunctions(bool);
    static void SetVerbosity(Log::Kind);
 
-   //! Sets a filter that will match against logging categories.
-   static void SetRegexFilter(const std::regex& filter);
-   static void ClearRegexFilter();
+   static void SetCategoryFilter    (const std::regex&);
+   static void SetFilenameFilter    (const std::regex&);
+   static void SetErrorStringFilter (const std::regex&);
 
    //! Returns the logging engine to configuration defaults.
    static void Reset();
 
    struct Entry; struct Context; 
-
 private:
    struct Resources 
    {
@@ -77,7 +98,9 @@ private:
       std::mutex mConfigMutex;
       bool mFilenames;
       bool mFunctions;
-      std::regex mRegexFilter;
+      std::unique_ptr<std::regex> mCategoryFilter;
+      std::unique_ptr<std::regex> mFilenameFilter;
+      std::unique_ptr<std::regex> mErrorStringFilter;
       Log::Kind mVerbosity;
 
       Resources();
