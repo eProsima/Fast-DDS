@@ -1,13 +1,25 @@
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include "types/HelloWorld.h"
 #include "types/Data64kbType.h"
 #include "types/Data1mbType.h"
 
 #include "RTPSAsSocketReader.hpp"
 #include "RTPSAsSocketWriter.hpp"
-#include "RTPSAsNonReliableWithRegistrationReader.hpp"
-#include "RTPSAsNonReliableWithRegistrationWriter.hpp"
-#include "RTPSAsReliableWithRegistrationReader.hpp"
-#include "RTPSAsReliableWithRegistrationWriter.hpp"
+#include "RTPSWithRegistrationReader.hpp"
+#include "RTPSWithRegistrationWriter.hpp"
 #include "ReqRepAsReliableHelloWorldRequester.hpp"
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
 #include "PubSubReader.hpp"
@@ -148,8 +160,6 @@ TEST(BlackBox, RTPSAsNonReliableSocket)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    writer.register_reader();
-
     auto data = default_helloword_data_generator();
     size_t data_length = data.size();
 
@@ -181,8 +191,6 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocket)
         asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
-
-    writer.register_reader();
 
     auto data = default_helloword_data_generator();
     size_t data_length = data.size();
@@ -219,8 +227,6 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    writer.register_reader();
-
     auto data = default_helloword_data_generator();
     size_t data_length = data.size();
 
@@ -252,9 +258,6 @@ TEST(BlackBox, RTPSAsReliableSocket)
         add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(writer.isInitialized());
-
-    reader.register_writer();
-    writer.register_reader();
 
     auto data = default_helloword_data_generator();
     
@@ -289,9 +292,6 @@ TEST(BlackBox, AsyncRTPSAsReliableSocket)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    reader.register_writer();
-    writer.register_reader();
-
     auto data = default_helloword_data_generator();
     
     reader.expected_data(data);
@@ -310,69 +310,81 @@ TEST(BlackBox, AsyncRTPSAsReliableSocket)
 
 TEST(BlackBox, RTPSAsNonReliableWithRegistration)
 {
-    RTPSAsNonReliableWithRegistrationReader reader;
-    RTPSAsNonReliableWithRegistrationWriter writer;
-    const uint16_t nmsgs = 100;
+    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string ip("239.255.1.4");
     
-    reader.init(global_port, nmsgs);
+    reader.add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.init();
+    writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
-    std::list<uint16_t> nonReceivedMessages = reader.getNonReceivedMessages();
-    writer.send(nonReceivedMessages);
-    reader.block(*nonReceivedMessages.rbegin(), std::chrono::seconds(3));
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
 
-    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
-    if(msgs.size() != 0)
-    {
-        std::cout << "Samples not received:";
-        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
-            std::cout << " " << *it << " ";
-        std::cout << std::endl;
-    }
-    ASSERT_LE(msgs.size(), static_cast<size_t>(nmsgs - 2));
+    auto data = default_helloword_data_generator();
+    size_t data_length = data.size();
+
+    reader.expected_data(data);
+    reader.startReception();
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(3));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_LE(data.size(), data_length - 2);
 }
 
 TEST(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
 {
-    RTPSAsNonReliableWithRegistrationReader reader;
-    RTPSAsNonReliableWithRegistrationWriter writer;
-    const uint16_t nmsgs = 100;
+    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string ip("239.255.1.4");
     
-    reader.init(global_port, nmsgs);
+    reader.add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.init(true);
+    writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
+        asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
-    std::list<uint16_t> nonReceivedMessages = reader.getNonReceivedMessages();
-    writer.send(nonReceivedMessages);
-    reader.block(*nonReceivedMessages.rbegin(), std::chrono::seconds(3));
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
 
-    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
-    if(msgs.size() != 0)
-    {
-        std::cout << "Samples not received:";
-        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
-            std::cout << " " << *it << " ";
-        std::cout << std::endl;
-    }
-    ASSERT_LE(msgs.size(), static_cast<size_t>(nmsgs - 2));
+    auto data = default_helloword_data_generator();
+    size_t data_length = data.size();
+
+    reader.expected_data(data);
+    reader.startReception();
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(3));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_LE(data.size(), data_length - 2);
 }
 
 TEST(BlackBox, RTPSAsReliableWithRegistration)
 {
-    RTPSAsReliableWithRegistrationReader reader;
-    RTPSAsReliableWithRegistrationWriter writer;
-    const uint16_t nmsgs = 100;
+    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string ip("239.255.1.4");
     
-    reader.init(global_port, nmsgs);
+    reader.add_to_multicast_locator_list(ip, global_port).
+        reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -380,56 +392,59 @@ TEST(BlackBox, RTPSAsReliableWithRegistration)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
     reader.waitDiscovery();
 
-    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+    auto data = default_helloword_data_generator();
+    
+    reader.expected_data(data);
+    reader.startReception();
 
-    writer.send(msgs);
-    reader.block(*msgs.rbegin(), std::chrono::seconds(5));
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(5));
 
-    msgs = reader.getNonReceivedMessages();
-    if(msgs.size() != 0)
-    {
-        std::cout << "Samples not received:";
-        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
-            std::cout << " " << *it << " ";
-        std::cout << std::endl;
-    }
-    ASSERT_EQ(msgs.size(), 0);
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_EQ(data.size(), 0);
 }
 
 TEST(BlackBox, AsyncRTPSAsReliableWithRegistration)
 {
-    RTPSAsReliableWithRegistrationReader reader;
-    RTPSAsReliableWithRegistrationWriter writer;
-    const uint16_t nmsgs = 100;
+    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string ip("239.255.1.4");
     
-    reader.init(global_port, nmsgs);
+    reader.add_to_multicast_locator_list(ip, global_port).
+        reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.init(true);
+    writer.asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
-    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
     reader.waitDiscovery();
 
-    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+    auto data = default_helloword_data_generator();
+    
+    reader.expected_data(data);
+    reader.startReception();
 
-    writer.send(msgs);
-    reader.block(*msgs.rbegin(), std::chrono::seconds(5));
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(5));
 
-    msgs = reader.getNonReceivedMessages();
-    if(msgs.size() != 0)
-    {
-        std::cout << "Samples not received:";
-        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
-            std::cout << " " << *it << " ";
-        std::cout << std::endl;
-    }
-    ASSERT_EQ(msgs.size(), 0);
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_EQ(data.size(), 0);
 }
 
 TEST(BlackBox, PubSubAsNonReliableHelloworld)

@@ -1,10 +1,16 @@
-/*************************************************************************
- * Copyright (c) 2014 eProsima. All rights reserved.
- *
- * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
- * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
- *
- *************************************************************************/
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 /**
  * @file Participant.h
@@ -73,20 +79,29 @@ public:
 
 	/**
 	 * This method returns a pointer to the Endpoint Discovery Protocol Readers (when not in Static mode)
-	 * SimpleEDP creates two readers, one for Publisher and one for Subscribers, and they are both returned
+	 * SimpleEDP creates two readers, one for Publishers and one for Subscribers, and they are both returned
 	 * as a std::pair of pointers. These readers in particular have modified listeners that allow a slave 
 	 * listener to attach its callbach to the original one, allowing for the addition of logging elements.
 	 * 
 	 * @return std::pair of pointers to the EDP Readers
 	 * */	
 	std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
+
 	/**
-	 *  This method, taking a pointer to a string as an argument, returns the total number of Publishers
-	 *  on that topic that exist on the Participant
+	 * This method returns the number of Publishers that currently belong to the Participant that have 
+	 * a given topic name
+	 *
+	 * @param target_topic Target topic name to match
+	 * @return Number of Publishers in the Participant with that topic name
 	 */
 	int get_no_publishers(char *target_topic);
+
 	/**
-	 * Analog to the previous method, but with subscribers
+	 * This method return the number of Subscribers that currently belong to the Participant that have
+	 * a given topic name
+	 *
+	 * @param target_topic Target topic name to match
+	 * @return Number of Subscribers in the Participant with that topic name
 	 * */
 	int get_no_subscribers(char *target_topic);
 };

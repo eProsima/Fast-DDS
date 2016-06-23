@@ -1,10 +1,16 @@
-/*************************************************************************
- * Copyright (c) 2014 eProsima. All rights reserved.
- *
- * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
- * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
- *
- *************************************************************************/
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 /**
  * @file RTPSParticipant.cpp
@@ -68,10 +74,11 @@ Locator_t RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t loc){
 	switch (loc.kind){
 	case LOCATOR_KIND_UDPv4:
 		//This is a completely made up rule
-		loc.port += 10;
+		loc.port += 2;
 		break;
 	case LOCATOR_KIND_UDPv6:
 		//TODO - Define the rest of rules
+		loc.port += 2;
 		break;
 	}
 	return loc;
@@ -87,8 +94,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 				IdCounter(0),
 				mp_participantListener(plisten),
 				mp_userParticipant(par),
-				mp_mutex(new boost::recursive_mutex()),
-				m_threadID(0)
+				mp_mutex(new boost::recursive_mutex())
 
 {
    // Builtin transport by default
@@ -152,7 +158,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		// FIXME -- We have to  discuss the rules for deafult locator assignment for each transport
 		loc2.port= m_att.port.portBase+
 				m_att.port.domainIDGain*PParam.builtin.domainId+
-				m_att.port.offsetd3+
+				m_att.port.offsetd2+
 				m_att.port.participantIDGain*m_att.participantID;
 		loc2.set_IP4_address(239,255,1,4);
       m_att.defaultMulticastLocatorList.push_back(loc2);

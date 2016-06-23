@@ -1,17 +1,23 @@
-/*************************************************************************
- * Copyright (c) 2014 eProsima. All rights reserved.
- *
- * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
- * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
- *
- *************************************************************************/
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 /**
  * @file EDPSimpleListener.cpp
  *
  */
 
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
+#include "EDPSimpleListeners.h"
 
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
@@ -56,8 +62,8 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 		memcpy(tempMsg.buffer,change->serializedPayload.data,tempMsg.length);
 		if(writerProxyData.readFromCDRMessage(&tempMsg))
 		{
-			change->instanceHandle = writerProxyData.m_key;
-			if(writerProxyData.m_guid.guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
+			change->instanceHandle = writerProxyData.key();
+			if(writerProxyData.guid().guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
 			{
 				logInfo(RTPS_EDP,"Message from own RTPSParticipant, ignoring",C_CYAN);
 				mp_SEDP->mp_PubReader.second->remove_change(change);
@@ -70,12 +76,12 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 			{
 				//CHECK the locators:
                 pdata->mp_mutex->lock();
-				if(wdata->m_unicastLocatorList.empty() && wdata->m_multicastLocatorList.empty())
+				if(wdata->unicastLocatorList().empty() && wdata->multicastLocatorList().empty())
 				{
-					wdata->m_unicastLocatorList = pdata->m_defaultUnicastLocatorList;
-					wdata->m_multicastLocatorList = pdata->m_defaultMulticastLocatorList;
+					wdata->unicastLocatorList(pdata->m_defaultUnicastLocatorList);
+					wdata->multicastLocatorList(pdata->m_defaultMulticastLocatorList);
 				}
-				wdata->m_isAlive = true;
+				wdata->isAlive(true);
                 pdata->mp_mutex->unlock();
 				mp_SEDP->pairingWriterProxy(pdata, wdata);
 			}

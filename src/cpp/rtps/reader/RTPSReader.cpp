@@ -1,10 +1,16 @@
-/*************************************************************************
- * Copyright (c) 2014 eProsima. All rights reserved.
- *
- * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
- * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
- *
- *************************************************************************/
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 /*
  * RTPSReader.cpp
@@ -17,6 +23,7 @@
 #include "FragmentedChangePitStop.h"
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
+#include "CompoundReaderListener.h"
 
 #include <typeinfo>
 
@@ -72,16 +79,17 @@ void RTPSReader::releaseCache(CacheChange_t* change)
 		return mp_history->release_Cache(change);
 }
 
+ReaderListener* RTPSReader::getListener(){
+	return mp_listener;
+}
+
 bool RTPSReader::setListener(ReaderListener *target){
 	CompoundReaderListener* readerlistener_cast = dynamic_cast<CompoundReaderListener*>(mp_listener);
 	//Host is not of compound type, replace and move on
 	if(readerlistener_cast == nullptr){
 		//Not a valid cast, replace base listener
-		if(mp_listener == nullptr){
-			mp_listener = target;
-			return true;
-		}	
-		return false;
+		mp_listener = target;
+		return true;
 	}else{
 		//If we arrive here it means mp_listener is Infectable
 		readerlistener_cast->attachListener(target);

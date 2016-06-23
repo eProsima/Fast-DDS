@@ -1,12 +1,27 @@
+# Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os, subprocess, csv, ntpath
 
 binaries = os.environ.get("PROFILING_BINS").split(';')
+valgrind = os.environ.get("VALGRIND_BIN")
 
 for binary in binaries:
     filename = ntpath.basename(binary)
     print (binary)
     print (filename)
-    proc = subprocess.call(["valgrind", "--tool=massif","--time-unit=ms","--massif-out-file=massifLog_" + filename, binary,"100"])
+    proc = subprocess.call([valgrind, "--tool=massif","--time-unit=ms","--massif-out-file=massifLog_" + filename, binary,"100"])
 
     heap_values = []
     heap_tree_tags = []

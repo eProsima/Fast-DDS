@@ -1,10 +1,16 @@
-/*************************************************************************
- * Copyright (c) 2014 eProsima. All rights reserved.
- *
- * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
- * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
- *
- *************************************************************************/
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 /**
  * @file IPFinder.cpp
@@ -139,7 +145,9 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name )
 			info.name = std::string(host);
 			if(!parseIP4(info.name,&info.locator))
 				info.type = IP4_LOCAL;
-			vec_name->push_back(info);
+
+         if (info.type != IP4_LOCAL)
+			   vec_name->push_back(info);
 			//printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
 
 		}
@@ -159,7 +167,9 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name )
 			if(!parseIP6(info.name,&info.locator))
 				info.type = IP6_LOCAL;
 			info.scope_id = so->sin6_scope_id;
-			vec_name->push_back(info);
+
+         if (info.type != IP6_LOCAL)
+			   vec_name->push_back(info);
 			//printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
 		}
 	}
@@ -239,8 +249,8 @@ RTPS_DllAPI bool IPFinder::parseIP4(std::string& str,Locator_t*loc)
 	char ch;
 	ss >> a >> ch >> b >> ch >> c >> ch >> d;
     //TODO Property to activate or deactivate the loopback interface.
-	//if (a == 127 && b == 0 && c == 0 && d == 1)
-		//return false;
+	if (a == 127 && b == 0 && c == 0 && d == 1)
+		return false;
 	//		if(a==169 && b==254)
 	//			continue;
 	loc->kind = 1;

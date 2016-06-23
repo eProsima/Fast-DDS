@@ -1,10 +1,16 @@
-/*************************************************************************
- * Copyright (c) 2014 eProsima. All rights reserved.
- *
- * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
- * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
- *
- *************************************************************************/
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 /**
  * @file Locator.h	
@@ -235,14 +241,33 @@ typedef std::vector<Locator_t>::iterator LocatorListIterator;
  * Class LocatorList_t, a Locator_t vector that doesn't avoid duplicates.
  * @ingroup COMMON_MODULE
  */
-class LocatorList_t{
+class LocatorList_t
+{
 public:
 	RTPS_DllAPI LocatorList_t(){};
+
 	RTPS_DllAPI ~LocatorList_t(){};
-	RTPS_DllAPI LocatorList_t(const LocatorList_t& list)
+
+	RTPS_DllAPI LocatorList_t(const LocatorList_t& list) : m_locators(list.m_locators)
+	{
+	}
+
+	RTPS_DllAPI LocatorList_t(LocatorList_t&& list) : m_locators(std::move(list.m_locators))
+	{
+	}
+
+	RTPS_DllAPI LocatorList_t& operator=(const LocatorList_t& list)
 	{
 		m_locators = list.m_locators;
+        return *this;
 	}
+
+	RTPS_DllAPI LocatorList_t& operator=(LocatorList_t&& list)
+	{
+		m_locators = std::move(list.m_locators);
+        return *this;
+	}
+
 	RTPS_DllAPI LocatorListIterator begin(){
 		return m_locators.begin();
 	}
@@ -253,8 +278,11 @@ public:
 		return m_locators.size();
 	}
 	RTPS_DllAPI void clear(){ return m_locators.clear();}
+
 	RTPS_DllAPI void reserve(size_t num){ return m_locators.reserve(num);}
+
 	RTPS_DllAPI void resize(size_t num) { return m_locators.resize(num);}
+
 	RTPS_DllAPI void push_back(const Locator_t& loc)
 	{
 		bool already = false;
@@ -315,7 +343,9 @@ public:
 		}
 		return true;
 	}
+
 	friend std::ostream& operator <<(std::ostream& output,const LocatorList_t& loc);
+
 private:
 	std::vector<Locator_t> m_locators;
 
@@ -329,7 +359,6 @@ inline std::ostream& operator<<(std::ostream& output,const LocatorList_t& locLis
 	}
 	return output;
 }
-
 
 }
 }
