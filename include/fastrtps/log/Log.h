@@ -49,14 +49,18 @@
 #endif
 
 #ifndef LOG_NO_WARNING
-   #define logWarning(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, LOG_FUNC, #cat}, Log::Kind::Warning); }
+   #define logWarning(cat, msg)\
+   if (Log::GetVerbosity() >= Log::Kind::Warning)\
+   {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, LOG_FUNC, #cat}, Log::Kind::Warning); }
 #else 
    #define logWarning(cat, msg) 
 #endif
 
 #define COMPOSITE_LOG_NO_INFO (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
 #if COMPOSITE_LOG_NO_INFO 
-   #define logInfo(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Info); }
+   #define logInfo(cat, msg)\
+   if (Log::GetVerbosity() >= Log::Kind::Info)\
+   {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, LOG_FUNC, #cat}, Log::Kind::Info); }
 #else
    #define logInfo(cat, msg)
 #endif
@@ -78,6 +82,7 @@ public:
    RTPS_DllAPI static void ReportFilenames(bool);
    RTPS_DllAPI static void ReportFunctions(bool);
    RTPS_DllAPI static void SetVerbosity(Log::Kind);
+   RTPS_DllAPI static Log::Kind GetVerbosity();
 
    RTPS_DllAPI static void SetCategoryFilter    (const std::regex&);
    RTPS_DllAPI static void SetFilenameFilter    (const std::regex&);
@@ -125,7 +130,8 @@ private:
       std::unique_ptr<std::regex> mCategoryFilter;
       std::unique_ptr<std::regex> mFilenameFilter;
       std::unique_ptr<std::regex> mErrorStringFilter;
-      Log::Kind mVerbosity;
+
+      std::atomic<Log::Kind> mVerbosity;
 
       Resources();
       ~Resources();

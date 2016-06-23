@@ -87,8 +87,6 @@ void Log::ReportFunctions(bool report)
 
 bool Log::Preprocess(Log::Entry& entry)
 {
-   if (mResources.mVerbosity < entry.kind)
-      return false;
    if (mResources.mCategoryFilter && !regex_search(entry.context.category, *mResources.mCategoryFilter))
       return false;
    if (mResources.mFilenameFilter && !regex_search(entry.context.filename, *mResources.mFilenameFilter))
@@ -134,6 +132,11 @@ void Log::QueueLog(const std::string& message, const Log::Context& context, Log:
       mResources.mWork = true;
    }
    mResources.mCv.notify_all();
+}
+
+Log::Kind Log::GetVerbosity()
+{
+   return mResources.mVerbosity;
 }
 
 void Log::SetVerbosity(Log::Kind kind)
