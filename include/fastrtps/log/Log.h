@@ -17,6 +17,7 @@
 #define _FASTRTPS_LOG_LOG_H_
 
 #include <fastrtps/utils/DBQueue.h>
+#include <fastrtps/fastrtps_dll.h>
 #include <thread>
 #include <sstream>
 #include <atomic>
@@ -60,32 +61,32 @@ class LogConsumer;
 class Log 
 {
 public:
-   enum Kind {
+   RTPS_DllAPI enum Kind {
       Error,
       Warning,
       Info,
    };
 
-   static void RegisterConsumer(std::unique_ptr<LogConsumer>);
-   static void ReportFilenames(bool);
-   static void ReportFunctions(bool);
-   static void SetVerbosity(Log::Kind);
+   RTPS_DllAPI static void RegisterConsumer(std::unique_ptr<LogConsumer>);
+   RTPS_DllAPI static void ReportFilenames(bool);
+   RTPS_DllAPI static void ReportFunctions(bool);
+   RTPS_DllAPI static void SetVerbosity(Log::Kind);
 
-   static void SetCategoryFilter    (const std::regex&);
-   static void SetFilenameFilter    (const std::regex&);
-   static void SetErrorStringFilter (const std::regex&);
+   RTPS_DllAPI static void SetCategoryFilter    (const std::regex&);
+   RTPS_DllAPI static void SetFilenameFilter    (const std::regex&);
+   RTPS_DllAPI static void SetErrorStringFilter (const std::regex&);
 
    //! Returns the logging engine to configuration defaults.
-   static void Reset();
+   RTPS_DllAPI static void Reset();
 
-   struct Context {
+   RTPS_DllAPI struct Context {
       const char* filename;
       int line;
       const char* function;
       const char* category;
    };
 
-   struct Entry 
+   RTPS_DllAPI struct Entry 
    {
       std::string message;
       Log::Context context;
@@ -93,7 +94,7 @@ public:
    };
 
    //! Not recommended to call this method directly. Use the macros above.
-   static void QueueLog(const std::string& message, const Log::Context&, Log::Kind);
+   RTPS_DllAPI static void QueueLog(const std::string& message, const Log::Context&, Log::Kind);
 
 private:
    struct Resources 
