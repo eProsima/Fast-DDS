@@ -34,7 +34,6 @@ std::list<HelloWorld> default_helloworld_data_generator();
 
 int main(void)
 {
-   Log::StartLogging();
    const std::string topic_name("Profiling");
    PubSubReader<HelloWorldType> reader(topic_name);
    PubSubWriter<HelloWorldType> writer(topic_name);

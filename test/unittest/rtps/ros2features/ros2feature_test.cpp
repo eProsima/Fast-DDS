@@ -216,7 +216,6 @@ TEST(ros2features, SlaveListenerCallback){
 int main(int argc, char **argv)
 {
 	testing::InitGoogleTest(&argc, argv);
-   Log::StartLogging();
    int result = RUN_ALL_TESTS();
    Log::Reset();
 	return result;

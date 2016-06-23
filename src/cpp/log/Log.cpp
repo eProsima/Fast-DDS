@@ -6,148 +6,154 @@ using namespace std;
 namespace eprosima {
 namespace fastrtps {
 
-DBQueue<Log::Entry> Log::mLogs;
-vector<unique_ptr<LogConsumer> > Log::mConsumers;
-std::unique_ptr<LogConsumer> Log::mDefaultConsumer(new StdoutConsumer());
-unique_ptr<thread> Log::mLoggingThread;
-condition_variable Log::mCv;
-mutex Log::mCvMutex;
-mutex Log::mConfigMutex;
+struct Log::Resources Log::mResources;
 
-bool Log::mLogging = false;
-bool Log::mWork = false;
+Log::Resources::Resources():
+   mDefaultConsumer(new StdoutConsumer),
+   mLogging(false),
+   mWork(false),
+   mFilenames(false),
+   mFunctions(true),
+   mRegexFilter("(.*?)"),
+   mVerbosity(Log::Error)
+{
+   Log::LaunchThread();
+}
 
-bool Log::mFilenames(false);
-bool Log::mFunctions(true);
-regex Log::mRegexFilter("(.*?)");
+Log::Resources::~Resources()
+{
+   Log::KillThread();
+}
 
 void Log::RegisterConsumer(std::unique_ptr<LogConsumer> consumer) 
 {
-   std::unique_lock<std::mutex> guard(mConfigMutex);
-   mConsumers.emplace_back(std::move(consumer));
+   std::unique_lock<std::mutex> guard(mResources.mConfigMutex);
+   mResources.mConsumers.emplace_back(std::move(consumer));
 }
 
 void Log::Reset()
 {
-   StopLogging();
-   ClearRegexFilter();
-   ReportFilenames(false);
-   ReportFunctions(true);
-
-   std::unique_lock<std::mutex> configGuard(mConfigMutex);
-   mConsumers.clear();
-
-   std::unique_lock<std::mutex> guard(mCvMutex);
-   mWork = false;
-   mLogging = false;
-   mLogs.Clear();
+   std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
+   mResources.mRegexFilter = "(.*?)";
+   mResources.mFilenames = false;
+   mResources.mFunctions = true;
+   mResources.mVerbosity = Log::Error;
+   mResources.mConsumers.clear();
 }
 
 void Log::Run() 
 {
-   std::unique_lock<std::mutex> guard(mCvMutex);
-   while (mLogging) 
+   std::unique_lock<std::mutex> guard(mResources.mCvMutex);
+   while (mResources.mLogging) 
    {
-      while (mWork) 
+      while (mResources.mWork) 
       {
-         mWork = false;
+         mResources.mWork = false;
          guard.unlock();
 
-         mLogs.Swap();
-         while (!mLogs.Empty())
+         mResources.mLogs.Swap();
+         while (!mResources.mLogs.Empty())
          {
-            std::unique_lock<std::mutex> configGuard(mConfigMutex);
-            if (Preprocess(mLogs.Front()))
+            std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
+            if (Preprocess(mResources.mLogs.Front()))
             {
-               for (auto& consumer: mConsumers)
-                  consumer->Consume(mLogs.Front());
+               for (auto& consumer: mResources.mConsumers)
+                  consumer->Consume(mResources.mLogs.Front());
 
-               mDefaultConsumer->Consume(mLogs.Front());
+               mResources.mDefaultConsumer->Consume(mResources.mLogs.Front());
             }
 
-            mLogs.Pop();
+            mResources.mLogs.Pop();
          }
 
          guard.lock();
       }
 
-      mCv.wait(guard);
+      mResources.mCv.wait(guard);
    }
 }
 
 void Log::ReportFilenames(bool report)
 {
-   std::unique_lock<std::mutex> configGuard(mConfigMutex);
-   mFilenames = report;
+   std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
+   mResources.mFilenames = report;
 }
 
 void Log::ReportFunctions(bool report)
 {
-   std::unique_lock<std::mutex> configGuard(mConfigMutex);
-   mFunctions = report;
+   std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
+   mResources.mFunctions = report;
 }
 
 bool Log::Preprocess(Log::Entry& entry)
 {
-   if (!mFilenames)
-      entry.context.filename = nullptr;
-   if (!mFunctions)
-      entry.context.function = nullptr;
-   if (!regex_search(entry.context.category, mRegexFilter))
+   if (mResources.mVerbosity < entry.kind)
       return false;
+   if (!regex_search(entry.context.category, mResources.mRegexFilter))
+      return false;
+   if (!mResources.mFilenames)
+      entry.context.filename = nullptr;
+   if (!mResources.mFunctions)
+      entry.context.function = nullptr;
 
    return true;
 }
 
-void Log::StartLogging() 
+void Log::LaunchThread() 
 {
    {
-      std::unique_lock<std::mutex> guard(mCvMutex);
-      mLogging = true;
+      std::unique_lock<std::mutex> guard(mResources.mCvMutex);
+      mResources.mLogging = true;
    }
-   if (!mLoggingThread) 
-      mLoggingThread.reset(new thread(Log::Run));
+   if (!mResources.mLoggingThread) 
+      mResources.mLoggingThread.reset(new thread(Log::Run));
 }
 
-void Log::StopLogging() 
+void Log::KillThread() 
 {
    {
-      std::unique_lock<std::mutex> guard(mCvMutex);
-      mLogging = false;
+      std::unique_lock<std::mutex> guard(mResources.mCvMutex);
+      mResources.mLogging = false;
    }
-   if (mLoggingThread) 
+   if (mResources.mLoggingThread) 
    {
-      mCv.notify_all();
-      mLoggingThread->join();
-      mLoggingThread.reset();
+      mResources.mCv.notify_all();
+      mResources.mLoggingThread->join();
+      mResources.mLoggingThread.reset();
    }
 }
 
-void Log::QueueLog(const std::string& message, const Log::Context& context, Log::Kind kind) 
+void Log::QueueLog(const std::string& message, const Log::Context& context, Log::Kind kind)
 {
    {
-      std::unique_lock<std::mutex> guard(mCvMutex);
-      if (!mLogging) return;
+      std::unique_lock<std::mutex> guard(mResources.mCvMutex);
+      if (!mResources.mLogging) return;
    }
 
-   mLogs.Push(Log::Entry{message, context, kind});
+   mResources.mLogs.Push(Log::Entry{message, context, kind});
    {
-      std::unique_lock<std::mutex> guard(mCvMutex);
-      mWork = true;
+      std::unique_lock<std::mutex> guard(mResources.mCvMutex);
+      mResources.mWork = true;
    }
-   mCv.notify_all();
+   mResources.mCv.notify_all();
+}
+
+void Log::SetVerbosity(Log::Kind kind)
+{
+   std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
+   mResources.mVerbosity = kind;
 }
 
 void Log::SetRegexFilter(const std::regex& filter)
 {
-   std::unique_lock<std::mutex> configGuard(mConfigMutex);
-   mRegexFilter = filter; 
+   std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
+   mResources.mRegexFilter = filter; 
 }
 
 void Log::ClearRegexFilter()
 {
-   std::unique_lock<std::mutex> configGuard(mConfigMutex);
-   mRegexFilter = "(.*?)";
+   std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
+   mResources.mRegexFilter = "(.*?)";
 }
 
 } //namespace fastrtps 

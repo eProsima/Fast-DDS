@@ -33,7 +33,7 @@ class LogTests: public ::testing::Test
       std::unique_ptr<StdoutConsumer> defaultConsumer(new StdoutConsumer);
       mockConsumer = consumer.get();
       Log::RegisterConsumer(std::move(consumer));
-      Log::StartLogging();
+      Log::SetVerbosity(Log::Info);
    }
 
    ~LogTests()
@@ -44,7 +44,7 @@ class LogTests: public ::testing::Test
    MockConsumer* mockConsumer;
 
    const uint32_t AsyncTries = 5;
-   const uint32_t AsyncWaitMs = 50;
+   const uint32_t AsyncWaitMs = 25;
 
    std::vector<Log::Entry> HELPER_WaitForEntries(uint32_t amount);
 };
@@ -95,29 +95,29 @@ TEST_F(LogTests, multithreaded_logging)
 TEST_F(LogTests, regex_category_filtering)
 {
    Log::SetRegexFilter(std::regex("(Good)"));
-   logError(GoodCategory, "This should be logged");
+   logError(GoodCategory, "This should be logged because my regex filter allows for it");
    logError(BadCategory, "If you're seeing this, something went wrong");
    logWarning(EvenMoreGoodCategory, "This should be logged too!");
    auto consumedEntries = HELPER_WaitForEntries(3);
    ASSERT_EQ(2, consumedEntries.size());
 }
 
-TEST_F(LogTests, logging_resilient_to_bad_uses)
+TEST_F(LogTests, multiple_verbosity_levels)
 {
-   Log::StopLogging();
-   logError(SampleCategory, "This shouldn't be logged");
-   logWarning(SampleCategory, "This shouldn't be logged");
-
-   Log::StopLogging();
-   Log::StopLogging();
-   Log::StartLogging();
-   Log::StopLogging();
-   Log::StartLogging();
-   logError(SampleCategory, "This should be logged");
-
+   Log::SetVerbosity(Log::Warning);
+   logError(VerbosityChecks, "This should be logged");
+   logWarning(VerbosityChecks, "This should be logged too!");
+   logInfo(VerbosityChecks, "If you're seeing this, something went wrong");
    auto consumedEntries = HELPER_WaitForEntries(3);
-   ASSERT_EQ(1, consumedEntries.size());
+   ASSERT_EQ(2, consumedEntries.size());
 
+   Log::SetVerbosity(Log::Error);
+   logError(VerbosityChecks, "This should be logged");
+   logWarning(VerbosityChecks, "If you're seeing this, something went wrong");
+   logInfo(VerbosityChecks, "If you're seeing this, something went wrong");
+
+   consumedEntries = HELPER_WaitForEntries(5);
+   ASSERT_EQ(3, consumedEntries.size());
 }
 
 std::vector<Log::Entry> LogTests::HELPER_WaitForEntries(uint32_t amount)

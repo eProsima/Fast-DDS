@@ -32,7 +32,6 @@ using namespace fastrtps;
 using namespace rtps;
 int main(int argc, char** argv)
 {
-   Log::StartLogging();
 	cout << "Starting "<< endl;
 	int type = 1;
 	if(argc > 1)

@@ -38,54 +38,64 @@ class LogConsumer;
 class Log 
 {
 public:
+   enum Kind {
+      Error,
+      Warning,
+      Info,
+   };
+
    static void RegisterConsumer(std::unique_ptr<LogConsumer>);
-
-   static void StartLogging();
-   static void StopLogging();
-
    static void ReportFilenames(bool);
    static void ReportFunctions(bool);
+   static void SetVerbosity(Log::Kind);
 
    //! Sets a filter that will match against logging categories.
    static void SetRegexFilter(const std::regex& filter);
    static void ClearRegexFilter();
 
-   //! Returns the logging engine to defaults and stops the logging.
+   //! Returns the logging engine to configuration defaults.
    static void Reset();
 
+   struct Entry; struct Context; 
+
 private:
+   struct Resources 
+   {
+      DBQueue<Entry> mLogs;
+      std::vector<std::unique_ptr<LogConsumer> > mConsumers;
+      std::unique_ptr<LogConsumer> mDefaultConsumer;
+
+      std::unique_ptr<std::thread> mLoggingThread;
+
+      // Condition variable segment.
+      std::condition_variable mCv;
+      std::mutex mCvMutex;
+      bool mLogging;
+      bool mWork;
+
+      // Context configuration.
+      std::mutex mConfigMutex;
+      bool mFilenames;
+      bool mFunctions;
+      std::regex mRegexFilter;
+      Log::Kind mVerbosity;
+
+      Resources();
+      ~Resources();
+   };
+
+   static struct Resources mResources;
 
    // Applies transformations to the entries compliant with the options selected (such as
    // erasure of certain context information, or filtering by category. Returns false 
    // if the log entry is blacklisted.
-   static DBQueue<Entry> mLogs;
-   static std::vector<std::unique_ptr<LogConsumer> > mConsumers;
-   static std::unique_ptr<LogConsumer> mDefaultConsumer;
-
-   static std::unique_ptr<std::thread> mLoggingThread;
-
-   // Condition variable segment.
-   static std::condition_variable mCv;
-   static std::mutex mCvMutex;
-   static bool mLogging;
-   static bool mWork;
-
-   // Context configuration.
-   static std::mutex mConfigMutex;
-   static bool mFilenames;
-   static bool mFunctions;
-   static std::regex mRegexFilter;
-
-   // 
-
-
    static bool Preprocess(Entry&);
-
-   // Public methods for static access, not user consumption.
-public:
+   static void LaunchThread();
+   static void KillThread();
    static void Run();
-   static void QueueLog(const std::string& message, const Log::Context&, Log::Kind);
 
+   // Public definitions for macro access, not direct user consumption
+public:
    struct Context {
       const char* filename;
       int line;
@@ -100,18 +110,7 @@ public:
       Log::Kind kind;
    };
 
-   enum class Kind {
-      Info,
-      Warning,
-      Error,
-   };
-
-   struct Scope {
-      Scope();
-      ~Scope();
-      Scope(const Scope&);
-      const Scope& operator=(const Scope&);
-   }
+   static void QueueLog(const std::string& message, const Log::Context&, Log::Kind);
 };
 
 /**

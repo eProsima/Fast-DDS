@@ -25,7 +25,6 @@
 
 int main(int argc, char* argv[])
 {
-    Log::StartLogging();
 
     uint16_t nmsgs = 100;
     if (argc == 2)
