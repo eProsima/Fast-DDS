@@ -357,8 +357,8 @@ install(FILES ${PROJECT_SOURCE_DIR}/LICENSE
 set(CPACK_COMPONENT_LICENSES_HIDDEN 1)
 
 # Install examples
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
-    DESTINATION .
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/C++
+    DESTINATION examples/
     COMPONENT examples
     )
 
