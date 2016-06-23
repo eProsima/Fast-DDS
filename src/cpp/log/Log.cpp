@@ -16,17 +16,11 @@ Log::Resources::Resources():
    mFunctions(true),
    mVerbosity(Log::Error)
 {
-   // If all levels have been disabled statically, don't even bother launching the thread.
-   #if !(defined(LOG_NO_ERROR) && defined(LOG_NO_WARNING) && defined(COMPOSITE_LOG_NO_INFO))
-      Log::LaunchThread();
-   #endif
 }
 
 Log::Resources::~Resources()
 {
-   #if !(defined(LOG_NO_ERROR) && defined(LOG_NO_WARNING) && defined(COMPOSITE_LOG_NO_INFO))
-      Log::KillThread();
-   #endif
+   Log::KillThread();
 }
 
 void Log::RegisterConsumer(std::unique_ptr<LogConsumer> consumer) 
@@ -109,16 +103,6 @@ bool Log::Preprocess(Log::Entry& entry)
    return true;
 }
 
-void Log::LaunchThread() 
-{
-   {
-      std::unique_lock<std::mutex> guard(mResources.mCvMutex);
-      mResources.mLogging = true;
-   }
-   if (!mResources.mLoggingThread) 
-      mResources.mLoggingThread.reset(new thread(Log::Run));
-}
-
 void Log::KillThread() 
 {
    {
@@ -137,7 +121,11 @@ void Log::QueueLog(const std::string& message, const Log::Context& context, Log:
 {
    {
       std::unique_lock<std::mutex> guard(mResources.mCvMutex);
-      if (!mResources.mLogging) return;
+      if (!mResources.mLogging && !mResources.mLoggingThread) 
+      {
+         mResources.mLogging = true;
+         mResources.mLoggingThread.reset(new thread(Log::Run));
+      }
    }
 
    mResources.mLogs.Push(Log::Entry{message, context, kind});
