@@ -148,7 +148,7 @@ std::vector<Log::Entry> LogTests::HELPER_WaitForEntries(uint32_t amount)
    uint32_t entries = 0;
    for (uint32_t i = 0; i != AsyncTries; i++)
    {
-      entries |= mockConsumer->ConsumedEntries().size();
+      entries = mockConsumer->ConsumedEntries().size();
       if (entries == amount) break;
       this_thread::sleep_for(chrono::milliseconds(AsyncWaitMs));
    }
