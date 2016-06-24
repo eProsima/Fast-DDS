@@ -34,7 +34,7 @@ using namespace std;
 
 int main(int argc, char** argv){
 
-	logInfo("Starting");
+	cout << "Starting" << endl;
 	int type;
 	if(argc > 1)
 	{

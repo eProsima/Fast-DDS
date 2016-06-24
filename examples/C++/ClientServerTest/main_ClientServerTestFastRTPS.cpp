@@ -32,6 +32,7 @@
 
 
 #include "fastrtps/log/Log.h"
+
 #include "fastrtps/Domain.h"
 
 using namespace eprosima;
