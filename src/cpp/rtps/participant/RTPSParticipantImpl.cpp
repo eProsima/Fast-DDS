@@ -171,9 +171,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	*/
 	createReceiverResources(m_att.defaultUnicastLocatorList, true);
 	
-	if(!hasLocatorsDefined)
+	if(!hasLocatorsDefined){
 		logInfo(RTPS_PARTICIPANT,m_att.getName()<<" Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
-
+	}
 	//Multicast
 	createReceiverResources(m_att.defaultMulticastLocatorList, true);
 	
@@ -217,9 +217,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	//m_senderResource.insert(m_senderResource.end(), newSenders.begin(), newSenders.end());
 	m_att.defaultOutLocatorList = defcopy;
 
-	if (!hasLocatorsDefined)
+	if (!hasLocatorsDefined){
 		logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Send Locator List, adding Locators: " << m_att.defaultOutLocatorList);
-
+	}
 	logInfo(RTPS_PARTICIPANT,"RTPSParticipant \"" <<  m_att.getName() << "\" with guidPrefix: " <<m_guid.guidPrefix);
 	//START BUILTIN PROTOCOLS
 	mp_builtinProtocols = new BuiltinProtocols();

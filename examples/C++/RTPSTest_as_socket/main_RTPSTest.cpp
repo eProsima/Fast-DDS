@@ -33,7 +33,6 @@ using namespace std;
 
 
 int main(int argc, char** argv){
-	Log::setVerbosity(VERB_ERROR);
 
 	logInfo("Starting");
 	int type;
