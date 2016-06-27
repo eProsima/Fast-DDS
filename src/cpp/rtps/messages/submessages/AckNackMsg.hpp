@@ -26,7 +26,6 @@ bool RTPSMessageCreator::addMessageAcknack(CDRMessage_t* msg,const GuidPrefix_t&
         const GuidPrefix_t& remoteGuidPrefix,
 		const EntityId_t& readerId,const EntityId_t& writerId,
 		SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag){
-	const char* const METHOD_NAME = "addMessageAcknack";
 	try
 	{
 		RTPSMessageCreator::addHeader(msg,guidprefix);
@@ -46,7 +45,6 @@ bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 		const EntityId_t& readerId,const EntityId_t& writerId,
 		SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag)
 {
-	const char* const METHOD_NAME = "addSubmessageAcknack";
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg();
 	CDRMessage::initCDRMsg(&submsgElem);
 	octet flags = 0x0;
@@ -88,7 +86,6 @@ bool RTPSMessageCreator::addMessageNackFrag(CDRMessage_t* msg, const GuidPrefix_
 	const GuidPrefix_t& remoteGuidPrefix,
 	const EntityId_t& readerId, const EntityId_t& writerId,
 	SequenceNumber_t& writerSN, FragmentNumberSet_t fnState, int32_t count){
-	const char* const METHOD_NAME = "addMessageNackFrag";
 	try
 	{
 		RTPSMessageCreator::addHeader(msg, guidprefix);
@@ -108,7 +105,6 @@ bool RTPSMessageCreator::addSubmessageNackFrag(CDRMessage_t* msg,
 	const EntityId_t& readerId, const EntityId_t& writerId,
 	SequenceNumber_t& writerSN, FragmentNumberSet_t fnState, int32_t count)
 {
-	const char* const METHOD_NAME = "addSubmessageNackFrag";
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg();
 	CDRMessage::initCDRMsg(&submsgElem);
 	octet flags = 0x0;

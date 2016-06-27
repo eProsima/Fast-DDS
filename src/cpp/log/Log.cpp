@@ -1,329 +1,167 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-/**
- * @file Log.cpp
- *
- */
-
-
-
 #include <fastrtps/log/Log.h>
+#include <fastrtps/log/StdoutConsumer.h>
+#include <iostream>
 
-#define START_N_MESSAGES 2000
-#define MIN_N_MESSAGES 500
-
-#include <boost/thread/mutex.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/posix_time/posix_time_io.hpp>
+using namespace std;
 namespace eprosima {
+namespace fastrtps {
 
-Log Log::m_instance;
+struct Log::Resources Log::mResources;
 
-static const int MAXWIDTH = 43;
-
-
-Log::Log(): mp_logFile(NULL),
-		m_logFileDefined(false),
-#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG) )
-		m_defaultVerbosityLevel(VERB_INFO),
-#else
-		m_defaultVerbosityLevel(VERB_ERROR),
-#endif
-		mp_logMesgMutex(NULL),
-		mp_printMutex(NULL)
-
+Log::Resources::Resources():
+   mDefaultConsumer(new StdoutConsumer),
+   mLogging(false),
+   mWork(false),
+   mFilenames(false),
+   mFunctions(true),
+   mVerbosity(Log::Error)
 {
-
-	mp_logMesgMutex = new boost::mutex();
-	mp_printMutex = new boost::mutex();
-
-
-	for(uint32_t i = 0;i< START_N_MESSAGES;++i)
-	{
-		m_logMessages.push(new LogMessage());
-	}
-
 }
 
-Log::~Log() {
-	// TODO Auto-generated destructor stub
-	if(mp_logFile !=NULL)
-	{
-		mp_logFile->close();
-		delete(mp_logFile);
-	}
-
-	delete(mp_logMesgMutex);
-	delete(mp_printMutex);
-
-	while(m_logMessages.size()>0)
-	{
-		delete(m_logMessages.front());
-		m_logMessages.pop();
-	}
-}
-
-Log* Log::getInstance()
+Log::Resources::~Resources()
 {
-	return &m_instance;
+   Log::KillThread();
 }
 
-void Log::setVerbosity(LOG_VERBOSITY_LVL level)
+void Log::RegisterConsumer(std::unique_ptr<LogConsumer> consumer) 
 {
-	Log* ELOG = Log::getInstance();
-	ELOG->m_defaultVerbosityLevel = level;
-	for(CategoryVerbosity::iterator it = ELOG->m_categories.begin();
-			it!= ELOG->m_categories.end();++it)
-	{
-		it->second = level;
-	}
+   std::unique_lock<std::mutex> guard(mResources.mConfigMutex);
+   mResources.mConsumers.emplace_back(std::move(consumer));
 }
 
-void Log::setCategoryVerbosity(LOG_CATEGORY cat, LOG_VERBOSITY_LVL level)
+void Log::Reset()
 {
-	Log* ELOG = Log::getInstance();
-	ELOG->getCategory(cat)->second = level;
+   std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
+   mResources.mCategoryFilter.reset();
+   mResources.mFilenameFilter.reset();
+   mResources.mErrorStringFilter.reset();
+   mResources.mFilenames = false;
+   mResources.mFunctions = true;
+   mResources.mVerbosity = Log::Error;
+   mResources.mConsumers.clear();
 }
 
-void Log::logFileName(const char* filename,bool add_date_to_name)
+void Log::Run() 
 {
-	Log* ELOG = Log::getInstance();
-	std::stringstream ss;
-	if(add_date_to_name)
-	{
-		boost::posix_time::time_facet* facet = new boost::posix_time::time_facet();
-		facet->format("%Y%m%d_%H%M%S");
-		ss.imbue(std::locale(std::locale::classic(), facet));
-		ss << boost::posix_time::ptime(boost::posix_time::second_clock::local_time())<<"_";
-	}
-	ss << filename;
-	ELOG->mp_logFile = new std::ofstream();
-	ELOG->mp_logFile->open(ss.str().c_str(),std::ios::app);
-	ELOG->m_logFileDefined = true;
-	(*ELOG->mp_logFile) << std::endl;
-	(*ELOG->mp_logFile) << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<std::endl;
-	(*ELOG->mp_logFile) << "+                                EPROSIMA LOG                                  +"<<std::endl;
-	(*ELOG->mp_logFile) << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<std::endl;
-	(*ELOG->mp_logFile) << "+                            "<< boost::posix_time::to_simple_string(boost::posix_time::second_clock::local_time());
-	(*ELOG->mp_logFile) << "                              +"<<std::endl;
-	(*ELOG->mp_logFile) << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<std::endl;
-	(*ELOG->mp_logFile) << std::endl;
+   std::unique_lock<std::mutex> guard(mResources.mCvMutex);
+   while (mResources.mLogging) 
+   {
+      while (mResources.mWork) 
+      {
+         mResources.mWork = false;
+         guard.unlock();
+
+         mResources.mLogs.Swap();
+         while (!mResources.mLogs.Empty())
+         {
+            std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
+            if (Preprocess(mResources.mLogs.Front()))
+            {
+               for (auto& consumer: mResources.mConsumers)
+                  consumer->Consume(mResources.mLogs.Front());
+
+               mResources.mDefaultConsumer->Consume(mResources.mLogs.Front());
+            }
+
+            mResources.mLogs.Pop();
+         }
+
+         guard.lock();
+      }
+
+      mResources.mCv.wait(guard);
+   }
 }
 
-LogMessage* Log::getLogMessage()
+void Log::ReportFilenames(bool report)
 {
-    boost::unique_lock<boost::mutex> lock(*mp_logMesgMutex);
-	if(m_logMessages.size()<MIN_N_MESSAGES)
-	{
-		for(uint32_t i = 0;i<MIN_N_MESSAGES;++i)
-			m_logMessages.push(new LogMessage());
-	}
-	LogMessage* msg = m_logMessages.front();
-	m_logMessages.pop();
-	return msg;
+   std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
+   mResources.mFilenames = report;
 }
 
-CategoryVerbosity::iterator Log::getCategory(LOG_CATEGORY cat)
+void Log::ReportFunctions(bool report)
 {
-    boost::unique_lock<boost::mutex> lock(*mp_logMesgMutex);
-	CategoryVerbosity::iterator it = m_categories.find(cat);
-	if(it != m_categories.end())
-		return it;
-	m_categories[cat] = m_defaultVerbosityLevel;
-	return m_categories.find(cat);
+   std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
+   mResources.mFunctions = report;
 }
 
-
-LogMessage* Log::logMessage(LOG_TYPE type, LOG_CATEGORY cat, const char* CLASS_NAME,
-		const char* METHOD_NAME,const char * COLOR)
+bool Log::Preprocess(Log::Entry& entry)
 {
-	Log* ELOG = Log::getInstance();
+   if (mResources.mCategoryFilter && !regex_search(entry.context.category, *mResources.mCategoryFilter))
+      return false;
+   if (mResources.mFilenameFilter && !regex_search(entry.context.filename, *mResources.mFilenameFilter))
+      return false;
+   if (mResources.mErrorStringFilter && !regex_search(entry.message, *mResources.mErrorStringFilter))
+      return false;
+   if (!mResources.mFilenames)
+      entry.context.filename = nullptr;
+   if (!mResources.mFunctions)
+      entry.context.function = nullptr;
 
-    switch(type)
-    {
-        default:
-        case T_GENERAL:
-            break;
-        case T_ERROR:
-                if(ELOG->getCategory(cat)->second < VERB_ERROR)
-                    return nullptr;
-                break;
-        case T_WARNING:
-                if(ELOG->getCategory(cat)->second < VERB_WARNING)
-                    return nullptr;
-                break;
-        case T_INFO:
-                if(ELOG->getCategory(cat)->second < VERB_INFO)
-                    return nullptr;
-                break;
-    }
-
-	LogMessage* log = ELOG->getLogMessage();
-	log->m_type = type;
-	log->m_cat = cat;
-	log->m_color.str("");
-	if (COLOR != nullptr)
-		log->m_color << COLOR;
-	else
-		log->m_color << C_DEF;
-	log->m_msg.str("");
-	log->m_msg <<  "["<<CLASS_NAME << "::"<<METHOD_NAME;
-    log->m_msg << std::left << std::setw(log->m_msg.str().size() >= MAXWIDTH ? 0 : MAXWIDTH - log->m_msg.str().size()) << "] ";
-	log->m_date.str("");
-	log->m_date << "["<< boost::posix_time::to_iso_string(boost::posix_time::microsec_clock::local_time())<<"]";
-
-	return log;
+   return true;
 }
 
-LogMessage* Log::logMessage(LOG_TYPE type,const char* COLOR)
+void Log::KillThread() 
 {
-	Log* ELOG = Log::getInstance();
-
-    switch(type)
-    {
-        default:
-        case T_GENERAL:
-            break;
-        case T_ERROR:
-                if(ELOG->getCategory((LOG_CATEGORY)0)->second < VERB_ERROR)
-                    return nullptr;
-                break;
-        case T_WARNING:
-                if(ELOG->getCategory((LOG_CATEGORY)0)->second < VERB_WARNING)
-                    return nullptr;
-                break;
-        case T_INFO:
-                if(ELOG->getCategory((LOG_CATEGORY)0)->second < VERB_INFO)
-                    return nullptr;
-                break;
-    }
-
-	LogMessage* log = ELOG->getLogMessage();
-	log->m_type = type;
-	log->m_msg.str("");
-	if (COLOR != nullptr)
-			log->m_color << COLOR;
-		else
-			log->m_color << C_DEF;
-	log->m_date.str("");
-	log->m_date << "["<< boost::posix_time::to_iso_string(boost::posix_time::microsec_clock::local_time())<<"]";
-
-	return log;
+   {
+      std::unique_lock<std::mutex> guard(mResources.mCvMutex);
+      mResources.mLogging = false;
+   }
+   if (mResources.mLoggingThread) 
+   {
+      mResources.mCv.notify_all();
+      mResources.mLoggingThread->join();
+      mResources.mLoggingThread.reset();
+   }
 }
 
-
-void Log::addMessage(LogMessage* lm)
+void Log::QueueLog(const std::string& message, const Log::Context& context, Log::Kind kind)
 {
-	Log* ELOG = Log::getInstance();
-	ELOG->mp_printMutex->lock();
-	ELOG->printLogMessage(lm);
-	ELOG->mp_printMutex->unlock();
-	lm->reset();
-	ELOG->mp_logMesgMutex->lock();
-	ELOG->m_logMessages.push(lm);
-	ELOG->mp_logMesgMutex->unlock();
+   {
+      std::unique_lock<std::mutex> guard(mResources.mCvMutex);
+      if (!mResources.mLogging && !mResources.mLoggingThread) 
+      {
+         mResources.mLogging = true;
+         mResources.mLoggingThread.reset(new thread(Log::Run));
+      }
+   }
+
+   mResources.mLogs.Push(Log::Entry{message, context, kind});
+   {
+      std::unique_lock<std::mutex> guard(mResources.mCvMutex);
+      mResources.mWork = true;
+   }
+   mResources.mCv.notify_all();
 }
 
-
-//void Log::printMessages()
-//{
-//	mp_PrintMutex->lock();
-//	//if(mp_PrintMutex->try_lock())
-//	{
-//		mp_readyLogMsgMutex->lock();
-//		while(!m_readyLogMsg.empty())
-//		{
-//			m_toPrint.push(m_readyLogMsg.front());
-//			m_readyLogMsg.pop();
-//		}
-//		mp_readyLogMsgMutex->unlock();
-//
-//		while(!m_toPrint.empty())
-//		{
-//			LogMessage* lm = m_toPrint.front();
-//			m_toPrint.pop();
-//			printLogMsg(lm);
-//			lm->reset();
-//			m_logMessages.push(lm);
-//		}
-//		mp_PrintMutex->unlock();
-//	}
-//}
-
-void Log::printLogMessage(LogMessage* lm)
+Log::Kind Log::GetVerbosity()
 {
-	switch(lm->m_type)
-	{
-	default:
-	case T_GENERAL:
-	{
-		std::cout << C_BRIGHT<<"[UserLog]"<< C_DEF;
-		if(this->m_logFileDefined)
-			(*this->mp_logFile) <<lm->m_date.str().c_str()<< "[UserLog]";
-		printMessageString(lm);
-		break;
-	}
-	case T_ERROR:
-	{
-		if(getCategory(lm->m_cat)->second >= VERB_ERROR)
-		{
-			std::cout << C_B_RED << "[Error]" << C_DEF;
-			if(this->m_logFileDefined)
-				(*this->mp_logFile) << lm->m_date.str().c_str()<< "[Error]";
-			printMessageString(lm);
-		}
-		break;
-	}
-	case T_WARNING:
-	{
-		if(getCategory(lm->m_cat)->second >= VERB_WARNING)
-		{
-			std::cout << C_B_YELLOW << "[Warning]" << C_DEF;
-			if(this->m_logFileDefined)
-				(*this->mp_logFile) <<lm->m_date.str().c_str()<< "[Warning]";
-			printMessageString(lm);
-		}
-		break;
-	}
-	case T_INFO:
-	{
-		if(getCategory(lm->m_cat)->second >= VERB_INFO)
-		{
-			std::cout << C_B_GREEN << "[Info]" << C_DEF;
-			if(this->m_logFileDefined)
-				(*this->mp_logFile) <<lm->m_date.str().c_str()<< "[Info]";
-			printMessageString(lm);
-		}
-		break;
-	}
-	}
+   return mResources.mVerbosity;
 }
 
-void Log::printMessageString(LogMessage* lm)
+void Log::SetVerbosity(Log::Kind kind)
 {
-	std::cout << lm->m_color.str() << lm->m_msg.str() << C_DEF<< std::endl;
-	if(this->m_logFileDefined)
-	{
-		(*this->mp_logFile) << lm->m_msg.str().c_str() << std::endl;
-
-	}
+   std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
+   mResources.mVerbosity = kind;
 }
 
-} /* namespace eprosima */
+void Log::SetCategoryFilter(const std::regex& filter)
+{
+   std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
+   mResources.mCategoryFilter.reset(new std::regex(filter));
+}
 
+void Log::SetFilenameFilter(const std::regex& filter)
+{
+   std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
+   mResources.mFilenameFilter.reset(new std::regex(filter));
+}
 
-#endif
+void Log::SetErrorStringFilter(const std::regex& filter)
+{
+   std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
+   mResources.mErrorStringFilter.reset(new std::regex(filter));
+}
+
+} //namespace fastrtps 
+} //namespace eprosima 

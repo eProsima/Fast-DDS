@@ -23,7 +23,7 @@
 #include <fastrtps/Domain.h>
 
 #include <fastrtps/utils/eClock.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <fastrtps/rtps/rtps_all.h>
 
@@ -32,7 +32,6 @@ using namespace fastrtps;
 using namespace rtps;
 int main(int argc, char** argv)
 {
-	Log::setVerbosity(VERB_ERROR);
 	cout << "Starting "<< endl;
 	int type = 1;
 	if(argc > 1)
@@ -45,6 +44,7 @@ int main(int argc, char** argv)
 	else
 	{
 		cout << "publisher OR subscriber argument needed"<<endl;
+      Log::Reset();
 		return 0;
 	}
 
@@ -71,5 +71,6 @@ int main(int argc, char** argv)
 	}
 	}
 	Domain::stopAll();
+   Log::Reset();
 	return 0;
 }

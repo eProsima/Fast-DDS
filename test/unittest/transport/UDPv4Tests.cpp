@@ -16,6 +16,7 @@
 #include <gtest/gtest.h>
 #include <boost/thread.hpp>
 #include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/log/Log.h>
 #include <memory>
 
 using namespace std;
@@ -289,6 +290,7 @@ void UDPv4Tests::HELPER_SetDescriptorDefaults()
 
 int main(int argc, char **argv)
 {
+    Log::SetVerbosity(Log::Info);
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

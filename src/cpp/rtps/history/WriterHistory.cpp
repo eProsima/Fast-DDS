@@ -19,7 +19,7 @@
 
 #include <fastrtps/rtps/history/WriterHistory.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 
 #include <boost/thread/recursive_mutex.hpp>
@@ -33,7 +33,6 @@ namespace rtps {
 typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
 typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
 
-static const char* const CLASS_NAME = "WriterHistory";
 
 WriterHistory::WriterHistory(const HistoryAttributes& att):
 				History(att),
@@ -49,7 +48,6 @@ WriterHistory::~WriterHistory()
 
 bool WriterHistory::add_change(CacheChange_t* a_change)
 {
-	const char* const METHOD_NAME = "add_change";
 
 	if(mp_writer == nullptr || mp_mutex == nullptr)
 	{
@@ -81,7 +79,6 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 
 bool WriterHistory::remove_change(CacheChange_t* a_change)
 {
-	const char* const METHOD_NAME = "remove_change";
 
 	if(mp_writer == nullptr || mp_mutex == nullptr)
 	{
@@ -142,7 +139,6 @@ void WriterHistory::updateMaxMinSeqNum()
 
 bool WriterHistory::remove_min_change()
 {
-    const char* const METHOD_NAME = "remove_min_change";
 
 	if(mp_writer == nullptr || mp_mutex == nullptr)
 	{

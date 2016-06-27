@@ -20,7 +20,7 @@
 #include <cstdint>
 #include <sstream>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/log/Log.h"
 #include "fastrtps/rtps/RTPSDomain.h"
 
 #include "TestWriterRegistered.h"
@@ -33,8 +33,6 @@ using namespace std;
 
 
 int main(int argc, char** argv){
-	Log::setVerbosity(VERB_ERROR);
-
 	cout << "Starting RTPS example" << endl;
 	int type;
 	if(argc > 1)

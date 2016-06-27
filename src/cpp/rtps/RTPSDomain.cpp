@@ -22,7 +22,7 @@
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include "participant/RTPSParticipantImpl.h"
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/eClock.h>
@@ -34,7 +34,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "RTPSDomain";
 
 
 uint32_t RTPSDomain::m_maxRTPSParticipantID = 0;
@@ -55,8 +54,7 @@ RTPSDomain::~RTPSDomain()
 
 void RTPSDomain::stopAll()
 {
-	const char* const METHOD_NAME = "~RTPSDomain";
-	logInfo(RTPS_PARTICIPANT,"DELETING ALL ENDPOINTS IN THIS DOMAIN",C_WHITE);
+	logInfo(RTPS_PARTICIPANT,"DELETING ALL ENDPOINTS IN THIS DOMAIN");
 
 	while(m_RTPSParticipants.size()>0)
 	{
@@ -69,7 +67,6 @@ void RTPSDomain::stopAll()
 RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam,
 		RTPSParticipantListener* listen)
 {
-	const char* const METHOD_NAME = "createParticipant";
 	logInfo(RTPS_PARTICIPANT,"");
 
 	if(PParam.builtin.leaseDuration < c_TimeInfinite && PParam.builtin.leaseDuration <= PParam.builtin.leaseDuration_announcementperiod) //TODO CHeckear si puedo ser infinito
@@ -152,7 +149,6 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
 
 bool RTPSDomain::removeRTPSParticipant(RTPSParticipant* p)
 {
-	const char* const METHOD_NAME = "removeRTPSParticipant";
 	if(p!=nullptr)
 	{
 		for(auto it = m_RTPSParticipants.begin();it!= m_RTPSParticipants.end();++it)

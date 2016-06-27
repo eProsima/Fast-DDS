@@ -22,7 +22,7 @@
 #include <cstdint>
 #include <sstream>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/log/Log.h"
 
 #include "MetaTestPublisher.h"
 #include "MetaTestSubscriber.h"
@@ -42,7 +42,7 @@ int main(int argc, char** argv){
 
 
 
-	logUser("Starting");
+	logInfo("Starting");
 	int type;
 	if(argc > 1)
 	{

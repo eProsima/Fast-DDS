@@ -24,7 +24,7 @@
 #include "../rtps/common/Types.h"
 
 #include "../qos/QosPolicies.h"
-#include "../utils/RTPSLog.h"
+#include "../log/Log.h"
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -96,8 +96,6 @@ public:
 	 */
 	bool checkQos()
 	{
-		const char* const CLASS_NAME = "TopicAttributes";
-		const char* const METHOD_NAME = "checkQos";
 		if(resourceLimitsQos.max_samples_per_instance > resourceLimitsQos.max_samples && topicKind == WITH_KEY)
 		{
 

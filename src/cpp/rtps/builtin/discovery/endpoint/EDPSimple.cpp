@@ -42,7 +42,7 @@
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -51,7 +51,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "EDPSimple";
 
 EDPSimple::EDPSimple(PDPSimple* p,RTPSParticipantImpl* part):
 												EDP(p,part),
@@ -94,8 +93,7 @@ EDPSimple::~EDPSimple()
 
 bool EDPSimple::initEDP(BuiltinAttributes& attributes)
 {
-	const char* const METHOD_NAME = "initEDP";
-	logInfo(RTPS_EDP,"Beginning Simple Endpoint Discovery Protocol",C_B_CYAN);
+	logInfo(RTPS_EDP,"Beginning Simple Endpoint Discovery Protocol");
 	m_discovery = attributes;
 
 	if(!createSEDPEndpoints())
@@ -109,8 +107,7 @@ bool EDPSimple::initEDP(BuiltinAttributes& attributes)
 
 bool EDPSimple::createSEDPEndpoints()
 {
-	const char* const METHOD_NAME = "createSEDPEndpoints";
-	logInfo(RTPS_EDP,"Beginning",C_CYAN);
+	logInfo(RTPS_EDP,"Beginning");
 	WriterAttributes watt;
 	ReaderAttributes ratt;
 	HistoryAttributes hatt;
@@ -133,7 +130,7 @@ bool EDPSimple::createSEDPEndpoints()
 		if(created)
 		{
 			mp_PubWriter.first = dynamic_cast<StatefulWriter*>(waux);
-			logInfo(RTPS_EDP,"SEDP Publication Writer created",C_CYAN);
+			logInfo(RTPS_EDP,"SEDP Publication Writer created");
 		}
 		else
 		{
@@ -156,7 +153,7 @@ bool EDPSimple::createSEDPEndpoints()
 		if(created)
 		{
 			mp_SubReader.first = dynamic_cast<StatefulReader*>(raux);
-			logInfo(RTPS_EDP,"SEDP Subscription Reader created",C_CYAN);
+			logInfo(RTPS_EDP,"SEDP Subscription Reader created");
 		}
 		else
 		{
@@ -184,7 +181,7 @@ bool EDPSimple::createSEDPEndpoints()
 		if(created)
 		{
 			mp_PubReader.first = dynamic_cast<StatefulReader*>(raux);
-			logInfo(RTPS_EDP,"SEDP Publication Reader created",C_CYAN);
+			logInfo(RTPS_EDP,"SEDP Publication Reader created");
 
 		}
 		else
@@ -208,7 +205,7 @@ bool EDPSimple::createSEDPEndpoints()
 		if(created)
 		{
 			mp_SubWriter.first = dynamic_cast<StatefulWriter*>(waux);
-			logInfo(RTPS_EDP,"SEDP Subscription Writer created",C_CYAN);
+			logInfo(RTPS_EDP,"SEDP Subscription Writer created");
 
 		}
 		else
@@ -217,15 +214,14 @@ bool EDPSimple::createSEDPEndpoints()
 			mp_SubWriter.second = nullptr;
 		}
 	}
-	logInfo(RTPS_EDP,"Creation finished",C_CYAN);
+	logInfo(RTPS_EDP,"Creation finished");
 	return created;
 }
 
 
 bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
 {
-	const char* const METHOD_NAME = "processLocalReaderProxyData";
-	logInfo(RTPS_EDP,rdata->m_guid.entityId,C_CYAN);
+	logInfo(RTPS_EDP,rdata->m_guid.entityId);
 	if(mp_SubWriter.first !=nullptr)
 	{
 		CacheChange_t* change = mp_SubWriter.first->new_change(ALIVE,rdata->m_key);
@@ -260,8 +256,7 @@ bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
 }
 bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 {
-	const char* const METHOD_NAME = "processLocalWriterProxyData";
-	logInfo(RTPS_EDP, wdata->guid().entityId, C_CYAN);
+	logInfo(RTPS_EDP, wdata->guid().entityId);
 	if(mp_PubWriter.first !=nullptr)
 	{
 		CacheChange_t* change = mp_PubWriter.first->new_change(ALIVE, wdata->key());
@@ -297,8 +292,7 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 
 bool EDPSimple::removeLocalWriter(RTPSWriter* W)
 {
-	const char* const METHOD_NAME = "removeLocalWriter";
-	logInfo(RTPS_EDP,W->getGuid().entityId,C_CYAN);
+	logInfo(RTPS_EDP,W->getGuid().entityId);
 	if(mp_PubWriter.first!=nullptr)
 	{
 		InstanceHandle_t iH;
@@ -323,8 +317,7 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
 
 bool EDPSimple::removeLocalReader(RTPSReader* R)
 {
-	const char* const METHOD_NAME = "removeLocalReader";
-	logInfo(RTPS_EDP,R->getGuid().entityId,C_CYAN);
+	logInfo(RTPS_EDP,R->getGuid().entityId);
 	if(mp_SubWriter.first!=nullptr)
 	{
 		InstanceHandle_t iH;
@@ -351,8 +344,7 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
 
 void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
-	const char* const METHOD_NAME = "assignRemoteEndpoints";
-	logInfo(RTPS_EDP,"New DPD received, adding remote endpoints to our SimpleEDP endpoints",C_CYAN);
+	logInfo(RTPS_EDP,"New DPD received, adding remote endpoints to our SimpleEDP endpoints");
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t auxendp = endp;
 	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
@@ -361,7 +353,7 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
 	if(auxendp!=0 && mp_PubReader.first!=nullptr) //Exist Pub Writer and i have pub reader
 	{
-		logInfo(RTPS_EDP,"Adding SEDP Pub Writer to my Pub Reader",C_CYAN);
+		logInfo(RTPS_EDP,"Adding SEDP Pub Writer to my Pub Reader");
 		RemoteWriterAttributes watt;
 		watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
 		watt.guid.entityId = c_EntityId_SEDPPubWriter;
@@ -378,7 +370,7 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	//auxendp = 1;
 	if(auxendp!=0 && mp_PubWriter.first!=nullptr) //Exist Pub Detector
 	{
-		logInfo(RTPS_EDP,"Adding SEDP Pub Reader to my Pub Writer",C_CYAN);
+		logInfo(RTPS_EDP,"Adding SEDP Pub Reader to my Pub Writer");
 		RemoteReaderAttributes ratt;
 		ratt.expectsInlineQos = false;
 		ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
@@ -396,7 +388,7 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	//auxendp = 1;
 	if(auxendp!=0 && mp_SubReader.first!=nullptr) //Exist Pub Announcer
 	{
-		logInfo(RTPS_EDP,"Adding SEDP Sub Writer to my Sub Reader",C_CYAN);
+		logInfo(RTPS_EDP,"Adding SEDP Sub Writer to my Sub Reader");
 		RemoteWriterAttributes watt;
 		watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
 		watt.guid.entityId = c_EntityId_SEDPSubWriter;
@@ -413,7 +405,7 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	//auxendp = 1;
 	if(auxendp!=0 && mp_SubWriter.first!=nullptr) //Exist Pub Announcer
 	{
-		logInfo(RTPS_EDP,"Adding SEDP Sub Reader to my Sub Writer",C_CYAN);
+		logInfo(RTPS_EDP,"Adding SEDP Sub Reader to my Sub Writer");
 		RemoteReaderAttributes ratt;
 		ratt.expectsInlineQos = false;
 		ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
@@ -430,8 +422,7 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
-	const char* const METHOD_NAME = "removeRemoteEndpoints";
-	logInfo(RTPS_EDP,"For RTPSParticipant: "<<pdata->m_guid,C_CYAN);
+	logInfo(RTPS_EDP,"For RTPSParticipant: "<<pdata->m_guid);
 	boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
 	for (auto it = pdata->m_builtinReaders.begin(); it != pdata->m_builtinReaders.end();++it)
 	{

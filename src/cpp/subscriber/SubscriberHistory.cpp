@@ -24,7 +24,7 @@
 #include <fastrtps/rtps/reader/WriterProxy.h>
 
 #include <fastrtps/TopicDataType.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -32,7 +32,6 @@
 namespace eprosima {
 namespace fastrtps {
 
-static const char* const CLASS_NAME = "SubscriberHistory";
 
 inline bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
 {
@@ -61,7 +60,6 @@ SubscriberHistory::~SubscriberHistory() {
 
 bool SubscriberHistory::received_change(CacheChange_t* a_change, size_t unknown_missing_changes_up_to)
 {
-	const char* const METHOD_NAME = "add_change";
 
 	if(mp_reader == nullptr || mp_mutex == nullptr)
 	{
@@ -269,7 +267,6 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, size_t unknown_
 
 bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
 {
-	const char* const METHOD_NAME = "readNextData";
 
 	if(mp_reader == nullptr || mp_mutex == nullptr)
 	{
@@ -312,7 +309,6 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
 
 bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
 {
-	const char* const METHOD_NAME = "takeNextData";
 
 	if(mp_reader == nullptr || mp_mutex == nullptr)
 	{
@@ -358,7 +354,6 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
 
 bool SubscriberHistory::find_Key(CacheChange_t* a_change, t_v_Inst_Caches::iterator* vit_out)
 {
-	const char* const METHOD_NAME = "find_Key";
 	t_v_Inst_Caches::iterator vit;
 	bool found = false;
 	for (vit = m_keyedChanges.begin(); vit != m_keyedChanges.end(); ++vit)
@@ -403,7 +398,6 @@ bool SubscriberHistory::find_Key(CacheChange_t* a_change, t_v_Inst_Caches::itera
 
 bool SubscriberHistory::remove_change_sub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit_in)
 {
-	const char* const METHOD_NAME = "remove_change_sub";
 
 	if(mp_reader == nullptr || mp_mutex == nullptr)
 	{

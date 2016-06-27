@@ -18,7 +18,8 @@
  */
 
 #include "LatencyTestSubscriber.h"
-#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/log/Log.h"
+#include "fastrtps/log/Colors.h"
 
 using namespace eprosima;
 using namespace eprosima::fastrtps;
@@ -178,7 +179,7 @@ void LatencyTestSubscriber::DataPubListener::onPublicationMatched(Publisher* /*p
 
 	if(info.status == MATCHED_MATCHING)
 	{
-		logUser("Data Pub Matched ",C_MAGENTA);
+		logInfo(LatencyTest,"Data Pub Matched ");
         ++mp_up->disc_count_;
 	}
     else
@@ -196,7 +197,7 @@ void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /
 
 	if(info.status == MATCHED_MATCHING)
 	{
-		logUser("Data Sub Matched ",C_MAGENTA);
+		logInfo(LatencyTest,"Data Sub Matched ");
         ++mp_up->disc_count_;
 	}
     else
@@ -216,7 +217,7 @@ void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* 
 
 	if(info.status == MATCHED_MATCHING)
 	{
-		logUser("Command Pub Matched ",C_MAGENTA);
+		logInfo(LatencyTest, "Command Pub Matched ");
         ++mp_up->disc_count_;
 	}
     else
@@ -234,7 +235,7 @@ void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber
 
 	if(info.status == MATCHED_MATCHING)
 	{
-		logUser("Command Sub Matched ",C_MAGENTA);
+		logInfo(LatencyTest, "Command Sub Matched ");
         ++mp_up->disc_count_;
 	}
     else

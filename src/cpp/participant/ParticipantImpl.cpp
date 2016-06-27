@@ -36,14 +36,13 @@
 
 #include <fastrtps/rtps/RTPSDomain.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps::rtps;
 
 namespace eprosima {
 namespace fastrtps {
 
-static const char* const CLASS_NAME = "ParticipantImpl";
 
 ParticipantImpl::ParticipantImpl(ParticipantAttributes& patt,Participant* pspart,ParticipantListener* listen):
 												m_att(patt),
@@ -107,8 +106,7 @@ const GUID_t& ParticipantImpl::getGuid() const
 Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 		PublisherListener* listen)
 {
-	const char* const METHOD_NAME = "createPublisher";
-	logInfo(PARTICIPANT,"CREATING PUBLISHER IN TOPIC: "<<att.topic.getTopicName(),C_B_YELLOW)
+	logInfo(PARTICIPANT,"CREATING PUBLISHER IN TOPIC: "<<att.topic.getTopicName())
 	//Look for the correct type registration
 
 	TopicDataType* p_type = nullptr;
@@ -150,6 +148,11 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 		logError(PARTICIPANT," Multicast Locator List for Publisher contains invalid Locator");
 		return nullptr;
 	}
+	if(!att.outLocatorList.isValid())
+	{
+		logError(PARTICIPANT,"Output Locator List for Publisher contains invalid Locator");
+		return nullptr;
+	}
 	if(!att.qos.checkQos() || !att.topic.checkQos())
 		return nullptr;
 
@@ -167,6 +170,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	watt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
 	watt.endpoint.topicKind = att.topic.topicKind;
 	watt.endpoint.unicastLocatorList = att.unicastLocatorList;
+	watt.endpoint.outLocatorList = att.outLocatorList;
 	watt.mode = att.qos.m_publishMode.kind == eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
 	if(att.getEntityID()>0)
 		watt.endpoint.setEntityID((uint8_t)att.getEntityID());
@@ -233,8 +237,7 @@ int ParticipantImpl::get_no_subscribers(char *target_topic){
 Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 		SubscriberListener* listen)
 {
-	const char* const METHOD_NAME = "createSubscriber";
-	logInfo(PARTICIPANT,"CREATING SUBSCRIBER IN TOPIC: "<<att.topic.getTopicName(),C_B_YELLOW)
+	logInfo(PARTICIPANT,"CREATING SUBSCRIBER IN TOPIC: "<<att.topic.getTopicName())
 	//Look for the correct type registration
 
 	TopicDataType* p_type = nullptr;
@@ -267,6 +270,11 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 		logError(PARTICIPANT," Multicast Locator List for Subscriber contains invalid Locator");
 		return nullptr;
 	}
+	if(!att.outLocatorList.isValid())
+	{
+		logError(PARTICIPANT,"Output Locator List for Subscriber contains invalid Locator");
+		return nullptr;
+	}
 	if(!att.qos.checkQos() || !att.topic.checkQos())
 		return nullptr;
 
@@ -282,6 +290,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 	ratt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
 	ratt.endpoint.topicKind = att.topic.topicKind;
 	ratt.endpoint.unicastLocatorList = att.unicastLocatorList;
+	ratt.endpoint.outLocatorList = att.outLocatorList;
 	ratt.expectsInlineQos = att.expectsInlineQos;
 	if(att.getEntityID()>0)
 		ratt.endpoint.setEntityID((uint8_t)att.getEntityID());
@@ -329,7 +338,6 @@ bool ParticipantImpl::getRegisteredType(const char* typeName, TopicDataType** ty
 
 bool ParticipantImpl::registerType(TopicDataType* type)
 {
-	const char* const METHOD_NAME = "registerType";
 	if (type->m_typeSize <= 0)
 	{
 		logError(PARTICIPANT, "Registered Type must have maximum byte size > 0");
