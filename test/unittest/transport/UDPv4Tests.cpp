@@ -90,6 +90,7 @@ TEST_F(UDPv4Tests, opening_and_closing_input_channel)
    ASSERT_FALSE (transportUnderTest.CloseInputChannel(multicastFilterLocator));
 }
 
+#ifndef __APPLE__
 TEST_F(UDPv4Tests, send_and_receive_between_ports)
 {
    UDPv4Transport transportUnderTest(descriptor);
@@ -167,6 +168,7 @@ TEST_F(UDPv4Tests, send_to_loopback)
    senderThread->join();
    receiverThread->join();
 }
+#endif
 
 TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_in_descriptor)
 {
