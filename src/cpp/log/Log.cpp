@@ -110,10 +110,11 @@ void Log::KillThread()
    }
    if (mResources.mLoggingThread) 
    {
-      #ifndef _WIN32 // Workaround for MSVC static destruction
+      #if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK) // Workaround for MSVC static destruction
       mResources.mCv.notify_all();
       mResources.mLoggingThread->join();
       #endif
+    
       mResources.mLoggingThread.reset();
    }
 }
