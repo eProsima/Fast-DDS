@@ -68,8 +68,8 @@ void Log::Run()
 
          guard.lock();
       }
-
-      mResources.mCv.wait(guard);
+      if (mResources.mLogging)
+         mResources.mCv.wait(guard);
    }
 }
 
@@ -110,9 +110,8 @@ void Log::KillThread()
    }
    if (mResources.mLoggingThread) 
    {
-      mResources.mCv.notify_all();
-
       #ifndef _WIN32 // Workaround for MSVC static destruction
+      mResources.mCv.notify_all();
       mResources.mLoggingThread->join();
       #endif
       mResources.mLoggingThread.reset();
