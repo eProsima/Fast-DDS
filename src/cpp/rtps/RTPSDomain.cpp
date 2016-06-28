@@ -26,6 +26,7 @@
 
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/eClock.h>
+#include <fastrtps/utils/md5.h>
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
@@ -120,10 +121,16 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
 	IPFinder::getIP4Address(&loc);
 	if(loc.size()>0)
 	{
+		MD5 md5;
+		for(auto& l : loc)
+		{
+			md5.update(l.address, sizeof(l.address));
+		}
+		md5.finalize();
 		guidP.value[0] = c_VendorId_eProsima[0];
 		guidP.value[1] = c_VendorId_eProsima[1];
-		guidP.value[2] = loc.begin()->address[14];
-		guidP.value[3] = loc.begin()->address[15];
+		guidP.value[2] = md5.digest[0];
+		guidP.value[3] = md5.digest[1];
 	}
 	else
 	{
