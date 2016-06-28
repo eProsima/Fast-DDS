@@ -106,11 +106,15 @@ void Log::KillThread()
    {
       std::unique_lock<std::mutex> guard(mResources.mCvMutex);
       mResources.mLogging = false;
+      mResources.mWork = false;
    }
    if (mResources.mLoggingThread) 
    {
       mResources.mCv.notify_all();
+
+      #ifndef _WIN32 // Workaround for MSVC static destruction
       mResources.mLoggingThread->join();
+      #endif
       mResources.mLoggingThread.reset();
    }
 }
