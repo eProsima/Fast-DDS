@@ -33,6 +33,11 @@ class UDPv4Tests: public ::testing::Test
    {
       HELPER_SetDescriptorDefaults();
    }
+   
+   ~UDPv4Tests()
+   {
+      Log::KillThread();
+   }
 
    void HELPER_SetDescriptorDefaults();
 

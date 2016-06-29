@@ -93,6 +93,10 @@ public:
    RTPS_DllAPI static void SetErrorStringFilter (const std::regex&);
    //! Returns the logging engine to configuration defaults.
    RTPS_DllAPI static void Reset();
+   //! Stops the logging thread. It will re-launch on the next call to a successful log macro.
+   RTPS_DllAPI static void KillThread();
+   // Note: In VS2013, if you're linking this class statically, you will have to call KillThread before leaving
+   // main, due to an unsolved MSVC bug.
 
    struct Context {
       const char* filename;
@@ -153,8 +157,6 @@ private:
    static bool Preprocess(Entry&);
    static void LaunchThread();
    static void Run();
-public:
-   static void KillThread();
 };
 
 /**
