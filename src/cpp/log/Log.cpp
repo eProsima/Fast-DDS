@@ -115,7 +115,7 @@ void Log::KillThread()
       // Each VS version deals with post-main deallocation of threads in a very different way.
       #if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK)
       mResources.mCv.notify_all();
-      #if !(defined(_MSC_VER) && _MSC_VER == 1400)
+      #if !(defined(_MSC_VER) && _MSC_VER == 1800)
       mResources.mLoggingThread->join();
       #endif
       #endif
