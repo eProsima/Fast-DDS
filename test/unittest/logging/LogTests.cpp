@@ -40,6 +40,7 @@ class LogTests: public ::testing::Test
    ~LogTests()
    {
       Log::Reset();
+      Log::KillThread();
    }
 
    MockConsumer* mockConsumer;

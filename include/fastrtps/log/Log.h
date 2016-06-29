@@ -152,9 +152,9 @@ private:
    // if the log entry is blacklisted.
    static bool Preprocess(Entry&);
    static void LaunchThread();
-   static void KillThread();
    static void Run();
-
+public:
+   static void KillThread();
 };
 
 /**
