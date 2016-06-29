@@ -146,7 +146,7 @@ TEST_F(LogTests, multiple_verbosity_levels)
 
 std::vector<Log::Entry> LogTests::HELPER_WaitForEntries(uint32_t amount)
 {
-   uint32_t entries = 0;
+   size_t entries = 0;
    for (uint32_t i = 0; i != AsyncTries; i++)
    {
       entries = mockConsumer->ConsumedEntries().size();
