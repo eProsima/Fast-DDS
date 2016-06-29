@@ -1229,6 +1229,32 @@ TEST(BlackBox, PubSubOutLocatorSelection){
     ASSERT_EQ(data.size(), static_cast<size_t>(0));
 }
 
+//Verify that Cachechanges are removed from History when the a Writer unmatches
+TEST(BlackBox, StatefulReaderCacheChangeRelease){
+	PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+	PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+	reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+	ASSERT_TRUE(reader.isInitialized());
+	writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+	ASSERT_TRUE(writer.isInitialized());
+
+	writer.waitDiscovery();
+	reader.waitDiscovery();
+
+	auto data = default_helloword_data_generator(2);
+	reader.expected_data(data);
+
+	writer.send(data);
+	ASSERT_TRUE(data.empty());
+	ASSERT_EQ(data.size(), static_cast<size_t>(0));
+	writer.destroy();
+	reader.startReception();
+	data = reader.block(std::chrono::seconds(2));
+	
+	ASSERT_EQ(data.size(), static_cast<size_t>(2));
+}
+
 
 int main(int argc, char **argv)
 {

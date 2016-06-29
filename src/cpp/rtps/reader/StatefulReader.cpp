@@ -82,6 +82,9 @@ bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata)
     WriterProxy *wproxy = nullptr;
     boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
 
+    //Remove cachechanges belonging to the unmatched writer
+    mp_history->remove_changes_with_guid( &(wdata.guid) );
+
     for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
     {
         if((*it)->m_att.guid == wdata.guid)
@@ -95,6 +98,7 @@ bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata)
 
     lock.unlock();
 
+        
     if(wproxy != nullptr)
     {
         delete wproxy;
@@ -109,6 +113,9 @@ bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata,bool de
 {
     WriterProxy *wproxy = nullptr;
     boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+
+    //Remove cachechanges belonging to the unmatched writer
+    mp_history->remove_changes_with_guid( &(wdata.guid) );
 
     for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
     {
