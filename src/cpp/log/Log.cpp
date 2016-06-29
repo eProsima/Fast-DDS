@@ -117,6 +117,8 @@ void Log::KillThread()
       mResources.mCv.notify_all();
       #if !(defined(_MSC_VER) && _MSC_VER == 1800)
       mResources.mLoggingThread->join();
+      #else 
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
       #endif
       #endif
       mResources.mLoggingThread.reset();
