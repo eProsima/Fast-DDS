@@ -25,14 +25,13 @@ namespace rtps{
 /**
  * Descriptor for a Throughput Controller, containing all constructor information
  * for it. 
- *  -> sizeToClear: Packet size in bytes that this controller will allow in a given
- *     period.
- *  -> refreshTimeMS: Refresh period.
  * @ingroup NETWORK_MODULE
  */
 struct ThroughputControllerDescriptor {
-   uint32_t sizeToClear;
-   uint32_t refreshTimeMS;
+   //! Packet size in bytes that this controller will allow in a given period.
+   uint32_t bytesPerPeriod;
+   //! Window of time in which no more than 'bytesPerPeriod' bytes are allowed.
+   uint32_t periodMillisecs;
    RTPS_DllAPI ThroughputControllerDescriptor();
    RTPS_DllAPI ThroughputControllerDescriptor(uint32_t size, uint32_t time);
 };
@@ -54,9 +53,9 @@ public:
    virtual void operator()(std::vector<CacheChangeForGroup_t>& changes);
 
 private:
-   uint32_t mSizeToClear;
+   uint32_t mBytesPerPeriod;
    uint32_t mAccumulatedPayloadSize;
-   uint32_t mRefreshTimeMS;
+   uint32_t mPeriodMillisecs;
    std::recursive_mutex mThroughputControllerMutex;
 
    const RTPSParticipantImpl* mAssociatedParticipant;
