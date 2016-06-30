@@ -24,28 +24,28 @@ namespace fastrtps{
 namespace rtps{
 
 ThroughputController::ThroughputController(const ThroughputControllerDescriptor& descriptor, const RTPSWriter* associatedWriter):
-   mSizeToClear(descriptor.sizeToClear),
+   mSize(descriptor.size),
    mAccumulatedPayloadSize(0),
-   mRefreshTimeMS(descriptor.refreshTimeMS),
+   mTimeMS(descriptor.timeMS),
    mAssociatedParticipant(nullptr),
    mAssociatedWriter(associatedWriter)
 {
 }
 
 ThroughputController::ThroughputController(const ThroughputControllerDescriptor& descriptor, const RTPSParticipantImpl* associatedParticipant):
-   mSizeToClear(descriptor.sizeToClear),
+   mSize(descriptor.size),
    mAccumulatedPayloadSize(0),
-   mRefreshTimeMS(descriptor.refreshTimeMS),
+   mTimeMS(descriptor.timeMS),
    mAssociatedParticipant(associatedParticipant),
    mAssociatedWriter(nullptr)
 {
 }
 
-ThroughputControllerDescriptor::ThroughputControllerDescriptor(): sizeToClear(UINT32_MAX), refreshTimeMS(0)
+ThroughputControllerDescriptor::ThroughputControllerDescriptor(): size(UINT32_MAX), timeMS(0)
 {
 }
 
-ThroughputControllerDescriptor::ThroughputControllerDescriptor(uint32_t size, uint32_t time): sizeToClear(size), refreshTimeMS(time)
+ThroughputControllerDescriptor::ThroughputControllerDescriptor(uint32_t size, uint32_t time): size(size), timeMS(time)
 {
 }
 
@@ -60,7 +60,7 @@ void ThroughputController::operator()(vector<CacheChangeForGroup_t>& changes)
       auto& change = changes[clearedChanges];
       if (change.isFragmented())
       {
-         unsigned int fittingFragments = min((mSizeToClear - mAccumulatedPayloadSize) / change.getChange()->getFragmentSize(),
+         unsigned int fittingFragments = min((mSize - mAccumulatedPayloadSize) / change.getChange()->getFragmentSize(),
                                               static_cast<uint32_t>(change.getFragmentsClearedForSending().set.size()));
 
          if (fittingFragments)
@@ -79,7 +79,7 @@ void ThroughputController::operator()(vector<CacheChangeForGroup_t>& changes)
       }
       else
       {
-         bool fits = (mAccumulatedPayloadSize + change.getChange()->serializedPayload.length) <= mSizeToClear;
+         bool fits = (mAccumulatedPayloadSize + change.getChange()->serializedPayload.length) <= mSize;
 
          if (fits)
          {
@@ -117,7 +117,7 @@ void ThroughputController::ScheduleRefresh(uint32_t sizeToRestore)
       }
    };
 
-   throwawayTimer->expires_from_now(boost::posix_time::milliseconds(mRefreshTimeMS));
+   throwawayTimer->expires_from_now(boost::posix_time::milliseconds(mTimeMS));
    throwawayTimer->async_wait(refresh);
 }
 

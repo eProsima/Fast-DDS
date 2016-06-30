@@ -172,10 +172,10 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& add_throughput_controller_descriptor_to_pparams(uint32_t sizeToClear, uint32_t periodInMs)
+    PubSubWriter& add_throughput_controller_descriptor_to_pparams(uint32_t size, uint32_t periodInMs)
     {
-        ThroughputControllerDescriptor descriptor {sizeToClear, periodInMs};
-        participant_attr_.rtps.terminalThroughputController = descriptor;
+        ThroughputControllerDescriptor descriptor {size, periodInMs};
+        participant_attr_.rtps.throughputController = descriptor;
 
         return *this;
     }

@@ -58,7 +58,7 @@ public:
 	//!Output locator list
 	LocatorList_t outLocatorList;
    //!Terminal throughput controller
-   ThroughputControllerDescriptor terminalThroughputController;
+   ThroughputControllerDescriptor throughputController;
 
 	/**
 	 * Get the user defined ID
