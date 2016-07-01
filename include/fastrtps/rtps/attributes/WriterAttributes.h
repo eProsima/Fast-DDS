@@ -78,8 +78,8 @@ public:
 	//!Indicates if the Writer is synchronous or asynchronous
 	RTPSWriterPublishMode mode;
    // Size Controllers to be used exclusively by this writer
-   // Terminal throughput controller, always the last one to apply 
-   ThroughputControllerDescriptor terminalThroughputController;
+   // Throughput controller, always the last one to apply 
+   ThroughputControllerDescriptor throughputController;
 };
 
 /**

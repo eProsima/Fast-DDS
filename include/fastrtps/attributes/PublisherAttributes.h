@@ -55,8 +55,8 @@ public:
 	LocatorList_t unicastLocatorList;
 	//!Multicast locator list
 	LocatorList_t multicastLocatorList;
-   //!Terminal throughput controller
-   ThroughputControllerDescriptor terminalThroughputController;
+   //!Throughput controller
+   ThroughputControllerDescriptor throughputController;
 
 	/**
 	 * Get the user defined ID

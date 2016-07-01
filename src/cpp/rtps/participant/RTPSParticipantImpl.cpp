@@ -121,11 +121,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	mp_event_thr->init_thread(this);
 
 
-   // Terminal throughput controller, if the descriptor has valid values
-   if (PParam.terminalThroughputController.bytesPerPeriod != UINT32_MAX &&
-       PParam.terminalThroughputController.periodMillisecs != 0)
+   // Throughput controller, if the descriptor has valid values
+   if (PParam.throughputController.bytesPerPeriod != UINT32_MAX &&
+       PParam.throughputController.periodMillisecs != 0)
    {
-      std::unique_ptr<FlowController> controller(new ThroughputController(PParam.terminalThroughputController, this));
+      std::unique_ptr<FlowController> controller(new ThroughputController(PParam.throughputController, this));
       m_controllers.push_back(std::move(controller));
    }
 
@@ -353,9 +353,9 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 	*WriterOut = SWriter;
 
    // If the terminal throughput controller has proper user defined values, instantiate it
-   if (param.terminalThroughputController.bytesPerPeriod != UINT32_MAX && param.terminalThroughputController.periodMillisecs != 0)
+   if (param.throughputController.bytesPerPeriod != UINT32_MAX && param.throughputController.periodMillisecs != 0)
    {
-      std::unique_ptr<FlowController> controller(new ThroughputController(param.terminalThroughputController, SWriter));
+      std::unique_ptr<FlowController> controller(new ThroughputController(param.throughputController, SWriter));
       SWriter->add_flow_controller(std::move(controller));
    }
 	return true;
