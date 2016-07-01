@@ -235,8 +235,8 @@ public:
 	inline void setName(const char* nam){name = nam;}
 	//!Get the name of the participant.
 	inline const char* getName() const {return name.c_str();}
-   //!Terminal throughput controller parameters. Leave default for uncontrolled flow.
-   ThroughputControllerDescriptor terminalThroughputController; 
+   //!Throughput controller parameters. Leave default for uncontrolled flow.
+   ThroughputControllerDescriptor throughputController; 
    //!User defined transports to use alongside or in place of builtins.
    std::vector<std::shared_ptr<TransportDescriptorInterface> > userTransports;
    //!Set as false to disable the default UDPv4 implementation.

@@ -175,7 +175,7 @@ class PubSubWriter
     PubSubWriter& add_throughput_controller_descriptor_to_pparams(uint32_t bytesPerPeriod, uint32_t periodInMs)
     {
         ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
-        participant_attr_.rtps.terminalThroughputController = descriptor;
+        participant_attr_.rtps.throughputController = descriptor;
 
         return *this;
     }

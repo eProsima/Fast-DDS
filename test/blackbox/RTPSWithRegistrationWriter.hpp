@@ -178,7 +178,7 @@ class RTPSWithRegistrationWriter
     RTPSWithRegistrationWriter& add_throughput_controller_descriptor_to_pparams(uint32_t bytesPerPeriod, uint32_t periodInMs)
     {
         ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
-        writer_attr_.terminalThroughputController = descriptor;
+        writer_attr_.throughputController = descriptor;
 
         return *this;
     }

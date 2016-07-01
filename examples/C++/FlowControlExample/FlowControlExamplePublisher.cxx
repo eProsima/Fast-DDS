@@ -79,7 +79,7 @@ bool FlowControlExamplePublisher::init()
 
    // This controller allows 300kb per second.
    ThroughputControllerDescriptor slowPublisherThroughputController{300000, 1000};
-   WparamSlow.terminalThroughputController = slowPublisherThroughputController;
+   WparamSlow.throughputController = slowPublisherThroughputController;
 
 	mp_slow_publisher = Domain::createPublisher(mp_participant,WparamSlow,(PublisherListener*)&m_listener);
 	if(mp_slow_publisher == nullptr)
