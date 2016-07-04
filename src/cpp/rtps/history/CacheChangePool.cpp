@@ -42,62 +42,80 @@ CacheChangePool::~CacheChangePool()
 	delete(mp_mutex);
 }
 
-CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size) : mp_mutex(new boost::mutex())
+CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size, MemoryManagementPolicy_t policy) : mp_mutex(new boost::mutex()), memoryMode(policy)
 {
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
-	const char* const METHOD_NAME = "CacheChangePool";
-	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with payload of size: " << payload_size);
-	m_payload_size = payload_size;
-	m_pool_size = 0;
-	if(max_pool_size > 0)
+	if(memoryMode==PREALLOCATED_MEMORY_MODE)
 	{
-		if (pool_size > max_pool_size)
+		const char* const METHOD_NAME = "CacheChangePool";
+		logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with payload of size: " << payload_size);
+		m_payload_size = payload_size;
+		m_pool_size = 0;
+		if(max_pool_size > 0)
 		{
-			m_max_pool_size = (uint32_t)abs(pool_size);
+			if (pool_size > max_pool_size)
+			{
+				m_max_pool_size = (uint32_t)abs(pool_size);
+			}
+			else
+				m_max_pool_size = (uint32_t)abs(max_pool_size);
 		}
 		else
-			m_max_pool_size = (uint32_t)abs(max_pool_size);
-	}
-	else
 		m_max_pool_size = 0;
-	//cout << "CREATING CACHECHANGEPOOL WIHT MAX: " << m_max_pool_size << " and pool size: " << pool_size << endl;
-	allocateGroup(pool_size);
+		//cout << "CREATING CACHECHANGEPOOL WIHT MAX: " << m_max_pool_size << " and pool size: " << pool_size << endl;
+		allocateGroup(pool_size);
+	}
 }
 
 bool CacheChangePool::reserve_Cache(CacheChange_t** chan)
 {
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
-	if(m_freeCaches.empty())
+	if(memoryMode == PREALLOCATED_MEMORY_MODE)
 	{
-		if (!allocateGroup((uint16_t)(ceil((float)m_pool_size / 10) + 10)))
+		if(m_freeCaches.empty())
 		{
-			return false;
+		
+			if (!allocateGroup((uint16_t)(ceil((float)m_pool_size / 10) + 10)))
+			{
+				return false;
+			}
 		}
+		*chan = m_freeCaches.back();
+		m_freeCaches.erase(m_freeCaches.end()-1);
+		return true;
 	}
-	*chan = m_freeCaches.back();
-	m_freeCaches.erase(m_freeCaches.end()-1);
-	return true;
+		return false;
 }
 
 void CacheChangePool::release_Cache(CacheChange_t* ch)
 {
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
-	ch->kind = ALIVE;
-	ch->sequenceNumber.high = 0;
-	ch->sequenceNumber.low = 0;
-	ch->writerGUID = c_Guid_Unknown;
-	ch->serializedPayload.length = 0;
-	ch->serializedPayload.pos = 0;
-	for(uint8_t i=0;i<16;++i)
-		ch->instanceHandle.value[i] = 0;
-	ch->isRead = 0;
-	ch->sourceTimestamp.seconds = 0;
-	ch->sourceTimestamp.fraction = 0;
-	m_freeCaches.push_back(ch);
+	if(memoryMode == PREALLOCATED_MEMORY_MODE)
+	{
+		ch->kind = ALIVE;
+		ch->sequenceNumber.high = 0;
+		ch->sequenceNumber.low = 0;
+		ch->writerGUID = c_Guid_Unknown;
+		ch->serializedPayload.length = 0;
+		ch->serializedPayload.pos = 0;
+		for(uint8_t i=0;i<16;++i)
+			ch->instanceHandle.value[i] = 0;
+		ch->isRead = 0;
+		ch->sourceTimestamp.seconds = 0;
+		ch->sourceTimestamp.fraction = 0;
+		m_freeCaches.push_back(ch);
+	}
 }
 
 bool CacheChangePool::allocateGroup(uint32_t group_size)
 {
+	// This method should only called from within PREALLOCATED_MEMORY_MODE
+	if(memoryMode != PREALLOCATED_MEMORY_MODE)
+	{
+		const char* const METHOD_NAME = "allocateGroup";
+		logInfo(RTPS_UTILS,"Illegal call to allocateGroup. CacheChange Pool is not in PREALLOCATED_MEMORY_MODE/");
+		return false;
+	}
 	const char* const METHOD_NAME = "allocateGroup";
 	logInfo(RTPS_UTILS,"Allocating group of cache changes of size: "<< group_size);
 	bool added = false;
