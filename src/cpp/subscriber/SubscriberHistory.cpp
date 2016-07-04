@@ -41,8 +41,8 @@ inline bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
 
 SubscriberHistory::SubscriberHistory(SubscriberImpl* simpl,uint32_t payloadMaxSize,
 		HistoryQosPolicy& history,
-		ResourceLimitsQosPolicy& resource):
-								ReaderHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples)),
+		ResourceLimitsQosPolicy& resource,MemoryManagementPolicy_t mempolicy):
+								ReaderHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples,mempolicy)),
 								m_unreadCacheCount(0),
 								m_historyQos(history),
 								m_resourceLimitsQos(resource),

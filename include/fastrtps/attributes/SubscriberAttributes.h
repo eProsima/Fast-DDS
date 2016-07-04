@@ -19,6 +19,7 @@
 #ifndef SUBSCRIBERATTRIBUTES_H_
 #define SUBSCRIBERATTRIBUTES_H_
 
+#include <fastrtps/rtps/resources/ResourceManagement.h>
 
 #include "../rtps/common/Time_t.h"
 #include "../rtps/common/Locator.h"
@@ -43,6 +44,7 @@ public:
 		m_userDefinedID = -1;
 		m_entityID = -1;
 		expectsInlineQos = false;
+		HistoryMemoryPolicy = PREALLOCATED_MEMORY_MODE;
 };
 	virtual ~SubscriberAttributes(){};
 	//!Topic Attributes
@@ -57,6 +59,8 @@ public:
 	LocatorList_t multicastLocatorList;
 	//!Expects Inline QOS
 	bool expectsInlineQos;
+	//!Underlying History memory policy
+   	MemoryManagementPolicy_t HistoryMemoryPolicy;
 
 	/**
 	 * Get the user defined ID

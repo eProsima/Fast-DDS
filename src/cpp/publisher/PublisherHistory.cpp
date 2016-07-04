@@ -34,8 +34,8 @@ namespace eprosima {
 namespace fastrtps {
 
 PublisherHistory::PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMaxSize,HistoryQosPolicy& history,
-		ResourceLimitsQosPolicy& resource):
-										WriterHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples)),
+		ResourceLimitsQosPolicy& resource,MemoryManagementPolicy_t mempolicy):
+										WriterHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples,mempolicy)),
 										m_historyQos(history),
 										m_resourceLimitsQos(resource),
 										mp_pubImpl(pimpl)

@@ -46,9 +46,9 @@ public:
 	* @param initial Initial reserved caches.
 	* @param maxRes Maximum reserved caches.
 	*/
-	HistoryAttributes(uint32_t payload,int32_t initial,int32_t maxRes):
+	HistoryAttributes(uint32_t payload,int32_t initial,int32_t maxRes,MemoryManagementPolicy_t memoryPolicy):
 		payloadMaxSize(payload),initialReservedCaches(initial),
-		maximumReservedCaches(maxRes), memoryPolicy(PREALLOCATED_MEMORY_MODE){} //TODO(SANTI) - Link with upstream config
+		maximumReservedCaches(maxRes), memoryPolicy(memoryPolicy){} //TODO(SANTI) - Link with upstream config
 	virtual ~HistoryAttributes(){};
 	//!Maximum payload size of the history, default value 500.
 	uint32_t payloadMaxSize;

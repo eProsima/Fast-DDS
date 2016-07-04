@@ -20,6 +20,9 @@
 #ifndef PUBLISHERHISTORY_H_
 #define PUBLISHERHISTORY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+#include <fastrtps/rtps/resources/ResourceManagement.h>
+
 #include "../rtps/history/WriterHistory.h"
 #include "../qos/QosPolicies.h"
 
@@ -48,7 +51,7 @@ public:
 	* @param resource ResourceLimits for the History.
 	*/
 	PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMax,
-			HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource);
+			HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource,MemoryManagementPolicy_t mempolicy);
 			
 	virtual ~PublisherHistory();
 	

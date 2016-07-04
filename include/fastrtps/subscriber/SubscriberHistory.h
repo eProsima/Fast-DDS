@@ -20,6 +20,8 @@
 #ifndef SUBSCRIBERHISTORY_H_
 #define SUBSCRIBERHISTORY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+#include <fastrtps/rtps/resources/ResourceManagement.h>
 #include "../rtps/history/ReaderHistory.h"
 #include "../qos/QosPolicies.h"
 #include "SampleInfo.h"
@@ -53,7 +55,7 @@ public:
 	* @param resource Resource Limit QoS policy for the reader
 	*/
 	SubscriberHistory(SubscriberImpl* pimpl,uint32_t payloadMax,
-			HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource);
+			HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource, MemoryManagementPolicy_t mempolicy);
 	virtual ~SubscriberHistory();
 
 	/**
