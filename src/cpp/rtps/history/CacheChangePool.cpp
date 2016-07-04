@@ -34,76 +34,102 @@ CacheChangePool::~CacheChangePool()
 {
 	const char* const METHOD_NAME = "~CacheChangePool";
 	logInfo(RTPS_UTILS,"ChangePool destructor");
-	for(std::vector<CacheChange_t*>::iterator it = m_allCaches.begin();
-			it!=m_allCaches.end();++it)
+	switch(memoryMode)
 	{
-		delete(*it);
+		case PREALLOCATED_MEMORY_MODE:
+			for(std::vector<CacheChange_t*>::iterator it = m_allCaches.begin();it!=m_allCaches.end();++it)
+			{
+				delete(*it);
+			}
+			break;
+		case DYNAMIC_RESERVE_MEMORY_MODE:	
+			//TODO(Santi) - Implement destructor for dynamic memory reserve
+			break;
 	}
+	
 	delete(mp_mutex);
 }
 
 CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size, MemoryManagementPolicy_t policy) : mp_mutex(new boost::mutex()), memoryMode(policy)
 {
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
-	if(memoryMode==PREALLOCATED_MEMORY_MODE)
+	const char* const METHOD_NAME = "CacheChangePool";
+	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with payload of size: " << payload_size);
+
+	switch(memoryMode)
 	{
-		const char* const METHOD_NAME = "CacheChangePool";
-		logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with payload of size: " << payload_size);
-		m_payload_size = payload_size;
-		m_pool_size = 0;
-		if(max_pool_size > 0)
-		{
-			if (pool_size > max_pool_size)
+		case PREALLOCATED_MEMORY_MODE:
+						m_payload_size = payload_size;
+			m_pool_size = 0;
+			if(max_pool_size > 0)
 			{
-				m_max_pool_size = (uint32_t)abs(pool_size);
+				if (pool_size > max_pool_size)
+				{
+					m_max_pool_size = (uint32_t)abs(pool_size);
+				}
+				else
+					m_max_pool_size = (uint32_t)abs(max_pool_size);
 			}
 			else
-				m_max_pool_size = (uint32_t)abs(max_pool_size);
-		}
-		else
-		m_max_pool_size = 0;
-		//cout << "CREATING CACHECHANGEPOOL WIHT MAX: " << m_max_pool_size << " and pool size: " << pool_size << endl;
-		allocateGroup(pool_size);
+			m_max_pool_size = 0;
+			//cout << "CREATING CACHECHANGEPOOL WIHT MAX: " << m_max_pool_size << " and pool size: " << pool_size << endl;
+			allocateGroup(pool_size);
+			break;
+		case DYNAMIC_RESERVE_MEMORY_MODE:
+			//TODO(Santi) - Implement constructor for dynamic memory reserve
+			break;	
 	}
+
 }
 
 bool CacheChangePool::reserve_Cache(CacheChange_t** chan)
 {
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
-	if(memoryMode == PREALLOCATED_MEMORY_MODE)
+	switch(memoryMode)
 	{
-		if(m_freeCaches.empty())
-		{
-		
-			if (!allocateGroup((uint16_t)(ceil((float)m_pool_size / 10) + 10)))
+		case PREALLOCATED_MEMORY_MODE:
+			if(m_freeCaches.empty())
 			{
-				return false;
+				if (!allocateGroup((uint16_t)(ceil((float)m_pool_size / 10) + 10)))
+				{
+					return false;
+				}
 			}
-		}
-		*chan = m_freeCaches.back();
-		m_freeCaches.erase(m_freeCaches.end()-1);
-		return true;
+			*chan = m_freeCaches.back();
+			m_freeCaches.erase(m_freeCaches.end()-1);
+			break;
+		case DYNAMIC_RESERVE_MEMORY_MODE:
+			//TODO(Santi) - Implement reserve_cache for dynamic memory reserve
+			break;
+
 	}
-		return false;
+	return true;	
 }
 
 void CacheChangePool::release_Cache(CacheChange_t* ch)
 {
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
-	if(memoryMode == PREALLOCATED_MEMORY_MODE)
+
+	switch(memoryMode)
 	{
-		ch->kind = ALIVE;
-		ch->sequenceNumber.high = 0;
-		ch->sequenceNumber.low = 0;
-		ch->writerGUID = c_Guid_Unknown;
-		ch->serializedPayload.length = 0;
-		ch->serializedPayload.pos = 0;
-		for(uint8_t i=0;i<16;++i)
-			ch->instanceHandle.value[i] = 0;
-		ch->isRead = 0;
-		ch->sourceTimestamp.seconds = 0;
-		ch->sourceTimestamp.fraction = 0;
-		m_freeCaches.push_back(ch);
+		case PREALLOCATED_MEMORY_MODE:
+			ch->kind = ALIVE;
+			ch->sequenceNumber.high = 0;
+			ch->sequenceNumber.low = 0;
+			ch->writerGUID = c_Guid_Unknown;
+			ch->serializedPayload.length = 0;
+			ch->serializedPayload.pos = 0;
+			for(uint8_t i=0;i<16;++i)
+				ch->instanceHandle.value[i] = 0;
+			ch->isRead = 0;
+			ch->sourceTimestamp.seconds = 0;
+			ch->sourceTimestamp.fraction = 0;
+			m_freeCaches.push_back(ch);
+			break;
+		case DYNAMIC_RESERVE_MEMORY_MODE:
+
+			break;
+
 	}
 }
 
