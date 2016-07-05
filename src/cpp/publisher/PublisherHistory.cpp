@@ -30,6 +30,8 @@
 
 static const char* const CLASS_NAME = "PublisherHistory";
 
+extern ::rtps::WriteParams WRITE_PARAM_DEFAULT;
+
 namespace eprosima {
 namespace fastrtps {
 
@@ -49,7 +51,7 @@ PublisherHistory::~PublisherHistory() {
 }
 
 
-bool PublisherHistory::add_pub_change(CacheChange_t* change)
+bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparams)
 {
 	const char* const METHOD_NAME = "add_pub_change";
 
@@ -65,6 +67,9 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 		logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<<this->mp_pubImpl->getGuid().entityId);
 		return false;
 	}
+
+    bool returnedValue = false;
+
 	//NO KEY HISTORY
 	if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
 	{
@@ -77,12 +82,12 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
             }
             else
             {
-		//KEEP_LAST_HISTORY_QoS
+                //KEEP_LAST_HISTORY_QoS
                 if((int32_t)m_changes.size()==m_historyQos.depth)
                     m_isHistoryFull = true;
             }
 
-            return true;
+            returnedValue = true;
         }
 	}
 	//HISTORY WITH KEY
@@ -96,14 +101,11 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 			{
 				if((int32_t)vit->second.size() < m_resourceLimitsQos.max_samples_per_instance)
-				{
+                {
 					add = true;
-				}
+                }
 				else
-				{
 					logWarning(RTPS_HISTORY,"Change not added due to maximum number of samples per instance"<<endl;);
-					return false;
-				}
 			}
 			else if (m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
 			{
@@ -119,6 +121,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 					}
 				}
 			}
+
 			if(add)
 			{
 				if(this->add_change(change))
@@ -138,13 +141,22 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 						if((int32_t)m_changes.size()==m_historyQos.depth*m_resourceLimitsQos.max_instances)
 							m_isHistoryFull = true;
 					}
-					return true;
+
+					returnedValue =  true;
 				}
 			}
 		}
 	}
 
-	return false;
+    // Updated sample identity
+    if(returnedValue && &wparams != &WRITE_PARAM_DEFAULT)
+    {
+        wparams.sample_identity().writer_guid(change->writerGUID);
+        wparams.sample_identity().sequence_number(change->sequenceNumber);
+    }
+
+
+    return returnedValue;
 }
 
 bool PublisherHistory::find_Key(CacheChange_t* a_change,t_v_Inst_Caches::iterator* vit_out)
