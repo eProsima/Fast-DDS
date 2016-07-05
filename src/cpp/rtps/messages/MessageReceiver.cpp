@@ -540,13 +540,13 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				CDRMessage::readData(msg,ch->serializedPayload.data,ch->serializedPayload.length);
 				ch->kind = ALIVE;
 			}
-            else
-            {
-                logWarning(RTPS_MSG_IN,IDSTRING"Serialized Payload larger than maximum allowed size "
+            		else
+            		{
+                	logWarning(RTPS_MSG_IN,IDSTRING"Serialized Payload larger than maximum allowed size "
                         "("<<payload_size-2-2<<"/"<<ch->serializedPayload.max_size<<")",C_BLUE);
-                //firstReader->releaseCache(ch);
-                return false;
-            }
+                	//firstReader->releaseCache(ch);
+                	return false;
+            		}
 		}
 		else if(keyFlag)
 		{
@@ -586,7 +586,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	{
 		if((*it)->acceptMsgDirectedTo(readerID))
 		{
-            (*it)->processDataMsg(ch);
+            		(*it)->processDataMsg(ch);
 		}
 	}
 

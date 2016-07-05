@@ -91,7 +91,12 @@ namespace eprosima{
                  */
                 bool copy(SerializedPayload_t* serData, bool with_limit = true)
                 {
-                    length = serData->length;
+		    // If this payload comes initializated but however it is smalled than what is copied 
+		    //if((length < serData->length) & (data != nullptr))
+		    //{
+		//	free(data);
+		//    }
+		    length = serData->length;
 
                     if(serData->length > max_size)
                     {
@@ -107,19 +112,19 @@ namespace eprosima{
                     return true;
                 }
 
-				/*!
-				* Allocate new space for fragmented data
-				* @param[in] serData Pointer to the structure to copy
-				* @return True if correct
-				*/
-				bool reserve_fragmented(SerializedPayload_t* serData)
-				{
-					length = serData->length;
-					max_size = serData->length;
-					encapsulation = serData->encapsulation;
-					data = (octet*)calloc(length, sizeof(octet));
-					return true;
-				}
+		/*!
+		* Allocate new space for fragmented data
+		* @param[in] serData Pointer to the structure to copy
+		* @return True if correct
+		*/
+		bool reserve_fragmented(SerializedPayload_t* serData)
+		{
+			length = serData->length;
+			max_size = serData->length;
+			encapsulation = serData->encapsulation;
+			data = (octet*)calloc(length, sizeof(octet));
+			return true;
+		}
 
                 //! Empty the payload
                 void empty()

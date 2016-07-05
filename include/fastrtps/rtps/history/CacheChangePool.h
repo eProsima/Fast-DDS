@@ -70,6 +70,7 @@ private:
 	std::vector<CacheChange_t*> m_freeCaches;
 	std::vector<CacheChange_t*> m_allCaches;
 	bool allocateGroup(uint32_t pool_size);
+	CacheChange_t* allocateSingle();
 	boost::mutex* mp_mutex;
 	MemoryManagementPolicy_t memoryMode;
 };

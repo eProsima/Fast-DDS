@@ -174,7 +174,6 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
         logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId,C_BLUE);
 
         CacheChange_t* change_to_add;
-
         if(reserveCache(&change_to_add)) //Reserve a new cache from the corresponding cache pool
         { 
             if (!change_to_add->copy(change))

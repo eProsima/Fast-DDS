@@ -24,6 +24,7 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -34,19 +35,11 @@ CacheChangePool::~CacheChangePool()
 {
 	const char* const METHOD_NAME = "~CacheChangePool";
 	logInfo(RTPS_UTILS,"ChangePool destructor");
-	switch(memoryMode)
+	//Deletion process does not depend on the memory management policy
+	for(std::vector<CacheChange_t*>::iterator it = m_allCaches.begin();it!=m_allCaches.end();++it)
 	{
-		case PREALLOCATED_MEMORY_MODE:
-			for(std::vector<CacheChange_t*>::iterator it = m_allCaches.begin();it!=m_allCaches.end();++it)
-			{
-				delete(*it);
-			}
-			break;
-		case DYNAMIC_RESERVE_MEMORY_MODE:	
-			//TODO(Santi) - Implement destructor for dynamic memory reserve
-			break;
+		delete(*it);
 	}
-	
 	delete(mp_mutex);
 }
 
@@ -55,29 +48,32 @@ CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
 	const char* const METHOD_NAME = "CacheChangePool";
 	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with payload of size: " << payload_size);
+	
+	//Common for all modes: Set the payload size (maximum allowed), size and size limit
+	m_payload_size = payload_size;
+	m_pool_size = 0;
+	if(max_pool_size > 0)
+	{
+		if (pool_size > max_pool_size)
+		{
+			m_max_pool_size = (uint32_t)abs(pool_size);
+		}
+		else
+			m_max_pool_size = (uint32_t)abs(max_pool_size);
+	}
+	else
+		m_max_pool_size = 0;
 
 	switch(memoryMode)
 	{
 		case PREALLOCATED_MEMORY_MODE:
-						m_payload_size = payload_size;
-			m_pool_size = 0;
-			if(max_pool_size > 0)
-			{
-				if (pool_size > max_pool_size)
-				{
-					m_max_pool_size = (uint32_t)abs(pool_size);
-				}
-				else
-					m_max_pool_size = (uint32_t)abs(max_pool_size);
-			}
-			else
-			m_max_pool_size = 0;
-			//cout << "CREATING CACHECHANGEPOOL WIHT MAX: " << m_max_pool_size << " and pool size: " << pool_size << endl;
+			logInfo(RTPS_UTILS,"Static Mode is active, preallocating memory for pool_size elements");
 			allocateGroup(pool_size);
 			break;
 		case DYNAMIC_RESERVE_MEMORY_MODE:
-			//TODO(Santi) - Implement constructor for dynamic memory reserve
+			logInfo(RTPS_UTILS,"Dynamic Mode is active, ignoring pool_size as CacheChanges are allocated on request");
 			break;	
+
 	}
 
 }
@@ -99,8 +95,9 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan)
 			m_freeCaches.erase(m_freeCaches.end()-1);
 			break;
 		case DYNAMIC_RESERVE_MEMORY_MODE:
-			//TODO(Santi) - Implement reserve_cache for dynamic memory reserve
+			*chan = allocateSingle(); //Allocates a single, empty CacheChange. Allocated on Copy
 			break;
+
 
 	}
 	return true;	
@@ -108,6 +105,7 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan)
 
 void CacheChangePool::release_Cache(CacheChange_t* ch)
 {
+	const char* const METHOD_NAME = "release_Cache";
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
 
 	switch(memoryMode)
@@ -127,7 +125,17 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
 			m_freeCaches.push_back(ch);
 			break;
 		case DYNAMIC_RESERVE_MEMORY_MODE:
-
+			// Find pointer in CacheChange vector, remove element, then delete it
+			std::vector<CacheChange_t*>::iterator target = m_allCaches.begin();	
+			target = find(m_allCaches.begin(),m_allCaches.end(), ch);
+			if(target != m_allCaches.end())
+			{
+				m_allCaches.erase(target);
+			}else{
+				logInfo(RTPS_UTILS,"Tried to release a CacheChange that is not logged in the Pool");
+				break;
+			}
+			delete(ch);	
 			break;
 
 	}
@@ -135,14 +143,13 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
 
 bool CacheChangePool::allocateGroup(uint32_t group_size)
 {
+	const char* const METHOD_NAME = "allocateGroup";
 	// This method should only called from within PREALLOCATED_MEMORY_MODE
 	if(memoryMode != PREALLOCATED_MEMORY_MODE)
 	{
-		const char* const METHOD_NAME = "allocateGroup";
-		logInfo(RTPS_UTILS,"Illegal call to allocateGroup. CacheChange Pool is not in PREALLOCATED_MEMORY_MODE/");
+		logInfo(RTPS_UTILS,"Illegal call to allocateGroup. CacheChangePool is not in PREALLOCATED_MEMORY_MODE");
 		return false;
 	}
-	const char* const METHOD_NAME = "allocateGroup";
 	logInfo(RTPS_UTILS,"Allocating group of cache changes of size: "<< group_size);
 	bool added = false;
 	uint32_t reserved = 0;
@@ -172,6 +179,47 @@ bool CacheChangePool::allocateGroup(uint32_t group_size)
 	//logInfo(RTPS_UTILS,"Finish allocating CacheChange_t");
 	return added;
 }
+
+CacheChange_t* CacheChangePool::allocateSingle()
+{
+	/*
+	 *   In Dynamic Memory Mode CacheChanges are only allocated when they are needed.
+	 *   This means when the buffer of the message receiver is copied into this struct, the size is allocated.
+	 *   When the change is released and comes back to the pool, it is deallocated correspondingly.
+	 *
+	 *   In Preallocated mode, changes are allocated with a static maximum size and then they are dealt as
+	 *   they are needed. In Dynamic mode, they are only allocated when they are needed. In Dynamic mode only
+	 *   the m_allCaches vector is used, in order to keep track of all the changes that are dealt for destruction
+	 *   purposes.
+	 *
+	 */
+	const char * const METHOD_NAME = "allocateSingle";
+	bool added = false;
+	CacheChange_t*ch = nullptr;
+
+	// This method should only be called from within DYNAMIC_RESERVE_MEMORY_MODE
+	if(memoryMode != DYNAMIC_RESERVE_MEMORY_MODE)
+	{
+		logInfo(RTPS_UTILS, "Illegal call to allocateSingle. ChacheChangePool is not in DYNAMIC_RESERVE_MEMORY_MODE");
+		return false;
+	}
+	if( (m_max_pool_size == 0) | (m_pool_size < m_max_pool_size) ){
+		++m_pool_size;
+		ch = new CacheChange_t(1);
+		//This can be done freely since this is only executed in Dynamic Mode
+		ch->serializedPayload.empty();
+		m_allCaches.push_back(ch);
+		added = true;
+	}
+	if(!added)
+	{
+		logWarning(RTPS_HISTORY, "Maximum number of allowed reserved caches reached");
+		return NULL;
+	}
+		return ch;
+
+}
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */

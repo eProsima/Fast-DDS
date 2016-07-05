@@ -108,7 +108,7 @@ namespace eprosima
                     dataFragments_(new std::vector<uint32_t>()),
                     fragment_size_(0)
                 {
-                }
+		}
 
                 /*!
                  * Copy a different change into this one. All the elements are copied, included the data, allocating new memory.
