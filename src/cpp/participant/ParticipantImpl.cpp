@@ -339,11 +339,6 @@ bool ParticipantImpl::getRegisteredType(const char* typeName, TopicDataType** ty
 bool ParticipantImpl::registerType(TopicDataType* type)
 {
 	const char* const METHOD_NAME = "registerType";
-	if (type->m_typeSize <= 0)
-	{
-		logError(PARTICIPANT, "Registered Type must have maximum byte size > 0");
-		return false;
-	}
 	if (std::string(type->getName()).size() <= 0)
 	{
 		logError(PARTICIPANT, "Registered Type must have a name");
