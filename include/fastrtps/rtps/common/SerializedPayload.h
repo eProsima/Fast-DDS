@@ -21,6 +21,8 @@
 #include "../../fastrtps_dll.h"
 #include "Types.h"
 #include <cstring>
+#include <new>
+#include <stdexcept>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -55,27 +57,24 @@ namespace eprosima{
                 uint32_t max_size;
                 //!Position when reading
                 uint32_t pos;
+                //!If true, the payload is allowed to be resized on demand.
+                bool resizable;
 
                 //!Default constructor
                 SerializedPayload_t()
-                {
-                    length = 0;
-                    data = nullptr;
-                    encapsulation = CDR_BE;
-                    max_size = 0;
-                    pos = 0;
-                }
+                : encapsulation(CDR_BE), length(0), data(nullptr), max_size(0),
+                  pos(0), resizable(false)
+                {}
 
                 /**
                  * @param len Maximum size of the payload
+                 * @param allow_resize If true the payload can be resized dynamically.
                  */
-                SerializedPayload_t(uint32_t len)
+                SerializedPayload_t(uint32_t len, bool allow_resize)
+                : SerializedPayload_t()
                 {
-                    encapsulation = CDR_BE;
-                    length = 0;
-                    data = (octet*)calloc(len, sizeof(octet));
-                    max_size = len;
-                    pos = 0;
+                    resizable = allow_resize;
+                    this->reserve_(len);
                 }
 
                 ~SerializedPayload_t()
@@ -98,12 +97,10 @@ namespace eprosima{
                         if(with_limit)
                             return false;
                         else
-                            length = max_size;
+                            this->reserve_(serData->length);
                     }
                     encapsulation = serData->encapsulation;
-                    if(data == nullptr)
-                        data = (octet*)calloc(length, sizeof(octet));
-                    memcpy(data,serData->data,length);
+                    memcpy(data, serData->data, length);
                     return true;
                 }
 
@@ -118,6 +115,9 @@ namespace eprosima{
 					max_size = serData->length;
 					encapsulation = serData->encapsulation;
 					data = (octet*)calloc(length, sizeof(octet));
+                    if (!data) {
+                        throw std::bad_alloc();
+                    }
 					return true;
 				}
 
@@ -130,6 +130,31 @@ namespace eprosima{
                     if(data!=nullptr)
                         free(data);
                     data = nullptr;
+                }
+
+                void reserve(size_t new_size)
+                {
+                    if (!resizable) {
+                        throw std::length_error("instance of SerializedPayload_t is not resizable");
+                    }
+                    return reserve_(new_size);
+                }
+
+                protected:
+                void reserve_(size_t new_size)
+                {
+                    if (new_size <= this->max_size) {
+                        return;
+                    }
+                    void * old_data = data;
+                    data = (octet*)realloc(data, new_size);
+                    printf("SerializedPayload_t::reserve(new_size): reallocf(%p, %zu) -> %p\n",
+                           old_data, new_size, (void *)data);
+                    if (!data) {
+                        free(old_data);
+                        throw std::bad_alloc();
+                    }
+                    max_size = new_size;
                 }
             };
         }

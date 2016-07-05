@@ -126,12 +126,21 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 		logError(PARTICIPANT,"Keyed Topic needs getKey function");
 		return nullptr;
 	}
-    // Check the maximun size of the type and the asynchronous of the writer.
-    if(p_type->m_typeSize > PAYLOAD_MAX_SIZE && att.qos.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
-    {
-		logError(PARTICIPANT,"Big data has to be sent using an asynchronous publisher");
+	// Check the maximun size of the type and the asynchronous of the writer.
+	if(
+		// If the type is bounded in size and ...
+		p_type->m_typeSize != 0 &&
+		// If the type's maximum size is greater than the max payload size and ...
+		p_type->m_typeSize > PAYLOAD_MAX_SIZE &&
+		// ASYNCHRONOUS_PUBLISH_MODE is not being used, then it is an error case.
+		att.qos.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
+	{
+		logError(PARTICIPANT,
+			"Bounded type '" << p_type->getName() << "' has a maximum serialized size of '" <<
+			p_type->m_typeSize << "' which exceeds the maximum payload size of '" <<
+			PAYLOAD_MAX_SIZE << "' and therefore ASYNCHRONOUS_PUBLISH_MODE must be used.");
 		return nullptr;
-    }
+	}
 	if(m_att.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol)
 	{
 		if(att.getUserDefinedID() <= 0)

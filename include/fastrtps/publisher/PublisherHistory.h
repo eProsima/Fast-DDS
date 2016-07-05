@@ -44,10 +44,11 @@ public:
 	* Constructor of the PublisherHistory.
 	* @param pimpl Pointer to the PublisherImpl.
 	* @param payloadInitialSize Initial payload size.
+	* @param allowPayloadResize If true, payload can be dynamically resized, otherwise not.
 	* @param history QOS of the associated History.
 	* @param resource ResourceLimits for the History.
 	*/
-	PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMax,
+	PublisherHistory(PublisherImpl* pimpl,uint32_t payloadInitialSize,bool allowPayloadResize,
 			HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource);
 			
 	virtual ~PublisherHistory();

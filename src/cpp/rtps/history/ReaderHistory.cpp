@@ -89,7 +89,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 	}
 
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	if(a_change->serializedPayload.length > m_att.payloadMaxSize)
+	if(!m_att.allowPayloadResize && a_change->serializedPayload.length > m_att.payloadInitialSize)
 	{
 		logError(RTPS_HISTORY,
 			"Change payload size of '" << a_change->serializedPayload.length <<

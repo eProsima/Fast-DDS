@@ -41,7 +41,11 @@ namespace eprosima {
                 m_att(att),
                 m_isHistoryFull(false),
                 mp_invalidCache(nullptr),
-                m_changePool(att.initialReservedCaches,att.payloadMaxSize,att.maximumReservedCaches),
+                m_changePool(
+                    att.initialReservedCaches,
+                    att.payloadInitialSize,
+                    att.allowPayloadResize,
+                    att.maximumReservedCaches),
                 mp_minSeqCacheChange(nullptr),
                 mp_maxSeqCacheChange(nullptr),
                 mp_mutex(nullptr)

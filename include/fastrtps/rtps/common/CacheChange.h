@@ -98,11 +98,16 @@ namespace eprosima
                 /**
                  * Constructor with payload size
                  * @param payload_size Serialized payload size
+                 * @param allow_resize If true, the payload may be resized dynamically.
                  */
                 // TODO Check pass uint32_t to serializedPayload that needs int16_t.
-                CacheChange_t(uint32_t payload_size, bool is_untyped = false):
+                CacheChange_t(
+                    uint32_t payload_size,
+                    bool allow_resize = false,
+                    bool is_untyped = false)
+                :
                     kind(ALIVE),
-                    serializedPayload(payload_size),
+                    serializedPayload(payload_size, allow_resize),
                     isRead(false),
                     is_untyped_(is_untyped),
                     dataFragments_(new std::vector<uint32_t>()),

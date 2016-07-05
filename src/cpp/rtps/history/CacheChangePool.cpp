@@ -42,7 +42,12 @@ CacheChangePool::~CacheChangePool()
 	delete(mp_mutex);
 }
 
-CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size) : mp_mutex(new boost::mutex())
+CacheChangePool::CacheChangePool(
+	int32_t pool_size,
+	uint32_t payload_size,
+	bool allow_payload_resize,
+	int32_t max_pool_size)
+: m_allow_payload_resize(allow_payload_resize), mp_mutex(new boost::mutex())
 {
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
 	const char* const METHOD_NAME = "CacheChangePool";
@@ -117,7 +122,7 @@ bool CacheChangePool::allocateGroup(uint32_t group_size)
 	}
 	for(uint32_t i = 0;i<reserved;i++)
 	{
-			CacheChange_t* ch = new CacheChange_t(m_payload_size);
+			CacheChange_t* ch = new CacheChange_t(m_initial_payload_size, m_allow_payload_resize);
 			m_allCaches.push_back(ch);
 			m_freeCaches.push_back(ch);
 			++m_pool_size;

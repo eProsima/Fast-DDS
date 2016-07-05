@@ -40,7 +40,7 @@ namespace fastrtps{
 class PublisherAttributes {
 
 public:
-	PublisherAttributes(){
+	PublisherAttributes() : allowPayloadResize(false) {
 		m_userDefinedID = -1;
 		m_entityID = -1;
 	};
@@ -57,6 +57,8 @@ public:
 	LocatorList_t multicastLocatorList;
 	//!Terminal throughput controller
 	ThroughputControllerDescriptor terminalThroughputController;
+	//!Option to allow resizable serialized payloads in the history caches.
+	bool allowPayloadResize;
 
 	/**
 	 * Get the user defined ID

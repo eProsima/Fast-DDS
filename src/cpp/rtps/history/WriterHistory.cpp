@@ -63,7 +63,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 		logError(RTPS_HISTORY,"Change writerGUID "<< a_change->writerGUID << " different than Writer GUID "<< mp_writer->getGuid());
 		return false;
 	}
-	if(a_change->serializedPayload.length > m_att.payloadMaxSize)
+	if(!m_att.allowPayloadResize && a_change->serializedPayload.length > m_att.payloadInitialSize)
 	{
 		logError(RTPS_HISTORY,
 			"Change payload size of '" << a_change->serializedPayload.length <<

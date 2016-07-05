@@ -33,12 +33,15 @@ static const char* const CLASS_NAME = "PublisherHistory";
 namespace eprosima {
 namespace fastrtps {
 
-PublisherHistory::PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMaxSize,HistoryQosPolicy& history,
-		ResourceLimitsQosPolicy& resource):
-										WriterHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples)),
-										m_historyQos(history),
-										m_resourceLimitsQos(resource),
-										mp_pubImpl(pimpl)
+PublisherHistory::PublisherHistory(
+	PublisherImpl* pimpl, uint32_t payloadInitialSize, bool allowPayloadResize,
+	HistoryQosPolicy& history, ResourceLimitsQosPolicy& resource)
+: WriterHistory(HistoryAttributes(
+		payloadInitialSize, allowPayloadResize,
+		resource.allocated_samples, resource.max_samples)),
+	m_historyQos(history),
+	m_resourceLimitsQos(resource),
+	mp_pubImpl(pimpl)
 {
 	// TODO Auto-generated constructor stub
 

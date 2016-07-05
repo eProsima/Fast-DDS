@@ -39,20 +39,27 @@ class RTPS_DllAPI HistoryAttributes
 public:
 	HistoryAttributes():
 		payloadInitialSize(500),
+		allowPayloadResize(false),
 		initialReservedCaches(500),
 		maximumReservedCaches(0)
 	{}
 	/** Constructor
 	* @param payload Initial payload size.
+	* @param allowResize If true allow the payload to be resized dynamically.
 	* @param initial Initial reserved caches.
 	* @param maxRes Maximum reserved caches.
 	*/
-	HistoryAttributes(uint32_t payload,int32_t initial,int32_t maxRes):
-		payloadMaxSize(payload),initialReservedCaches(initial),
-		maximumReservedCaches(maxRes){}
+	HistoryAttributes(uint32_t payload,bool allowResize,int32_t initial,int32_t maxRes):
+		payloadInitialSize(payload),
+		allowPayloadResize(allowResize),
+		initialReservedCaches(initial),
+		maximumReservedCaches(maxRes)
+	{}
 	virtual ~HistoryAttributes(){}
 	//!Intial payload size of the history, default value 500.
 	uint32_t payloadInitialSize;
+	//!Allow payload to be resized when it is too small, default to false.
+	bool allowPayloadResize;
 	//!Number of the initial Reserved Caches, default value 500.
 	int32_t initialReservedCaches;
 	//!Maximum number of reserved caches. Default value is 0 that indicates to keep reserving until something breaks.
