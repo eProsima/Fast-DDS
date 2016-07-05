@@ -76,7 +76,7 @@ class RTPSAsSocketWriter
 
             //Create writerhistory
             eprosima::fastrtps::rtps::HistoryAttributes hattr;
-            hattr.payloadMaxSize = 255 + type_.m_typeSize;
+            hattr.payloadInitialSize = 255 + type_.m_typeSize;
             history_ = new eprosima::fastrtps::rtps::WriterHistory(hattr);
 
             //Create writer

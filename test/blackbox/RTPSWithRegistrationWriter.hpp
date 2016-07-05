@@ -104,7 +104,7 @@ class RTPSWithRegistrationWriter
 
         //Create writerhistory
         HistoryAttributes hattr;
-        hattr.payloadMaxSize = type_.m_typeSize;
+        hattr.payloadInitialSize = type_.m_typeSize;
         history_ = new WriterHistory(hattr);
 
         //Create writer

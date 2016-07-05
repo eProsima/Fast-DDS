@@ -91,7 +91,7 @@ bool WLP::createEndpoints()
 	HistoryAttributes hatt;
 	hatt.initialReservedCaches = 20;
 	hatt.maximumReservedCaches = 1000;
-	hatt.payloadMaxSize = BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
+	hatt.payloadInitialSize = BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
 	mp_builtinWriterHistory = new WriterHistory(hatt);
 	WriterAttributes watt;
 	watt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
@@ -116,7 +116,7 @@ bool WLP::createEndpoints()
 	}
 	hatt.initialReservedCaches = 100;
 	hatt.maximumReservedCaches = 2000;
-	hatt.payloadMaxSize = BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
+	hatt.payloadInitialSize = BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
 	mp_builtinReaderHistory = new ReaderHistory(hatt);
 	ReaderAttributes ratt;
 	ratt.endpoint.topicKind = WITH_KEY;

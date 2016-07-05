@@ -47,7 +47,7 @@ CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
 	const char* const METHOD_NAME = "CacheChangePool";
 	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with payload of size: " << payload_size);
-	m_payload_size = payload_size;
+	m_initial_payload_size = payload_size;
 	m_pool_size = 0;
 	if(max_pool_size > 0)
 	{

@@ -119,7 +119,7 @@ public:
 	 * Get the maximum serialized payload size
 	 * @return Maximum serialized payload size
 	 */
-	RTPS_DllAPI inline uint32_t getTypeMaxSerialized(){ return m_changePool.getPayloadSize(); }
+	RTPS_DllAPI inline uint32_t getTypeMaxSerialized(){ return m_changePool.getInitialPayloadSize(); }
 
 	/*!
 	 * Get the mutex
