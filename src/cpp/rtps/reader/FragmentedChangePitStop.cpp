@@ -51,6 +51,7 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
 
         // The length of the serialized payload has to be sample size.
         original_change->serializedPayload.length = sampleSize;
+        original_change->serializedPayload.reserve(sampleSize);
         original_change->setFragmentSize(incoming_change->getFragmentSize());
 
         // Insert
