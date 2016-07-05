@@ -40,6 +40,7 @@
 #include <condition_variable>
 #include <boost/asio.hpp>
 #include <boost/interprocess/detail/os_thread_functions.hpp>
+#include <boost/thread/lock_guard.hpp>
 #include <gtest/gtest.h>
 
 template<class TypeSupport>

@@ -65,7 +65,10 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 	}
 	if(a_change->serializedPayload.length > m_att.payloadMaxSize)
 	{
-		logError(RTPS_HISTORY,"The Payload length is larger than the maximum payload size");
+		logError(RTPS_HISTORY,
+			"Change payload size of '" << a_change->serializedPayload.length <<
+			"' bytes is larger than the history payload size of '" << m_att.payloadInitialSize <<
+			"' bytes and cannot be resized.");
 		return false;
 	}
 	++m_lastCacheChangeSeqNum;

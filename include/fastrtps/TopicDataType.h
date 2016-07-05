@@ -41,10 +41,10 @@ namespace fastrtps {
  */
 class  TopicDataType {
 public:
-	RTPS_DllAPI TopicDataType(){
-		this->m_typeSize = 0;
-        this->m_isGetKeyDefined = false;
-	}
+	RTPS_DllAPI TopicDataType()
+	: m_typeSize(0), m_isGetKeyDefined(false)
+	{}
+
 	RTPS_DllAPI virtual ~TopicDataType(){};
 	/**
 	 * Serialize method, it should be implemented by the user, since it is abstract.

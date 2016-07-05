@@ -20,6 +20,10 @@
 #ifndef HISTORYATTRIBUTES_H_
 #define HISTORYATTRIBUTES_H_
 
+#include <cstdint>
+
+#include "../../fastrtps_dll.h"
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -37,7 +41,7 @@ public:
 		payloadMaxSize(500),
 		initialReservedCaches(500),
 		maximumReservedCaches(0)
-	{};
+	{}
 	/** Constructor
 	* @param payload Maximum payload size.
 	* @param initial Initial reserved caches.
@@ -46,9 +50,9 @@ public:
 	HistoryAttributes(uint32_t payload,int32_t initial,int32_t maxRes):
 		payloadMaxSize(payload),initialReservedCaches(initial),
 		maximumReservedCaches(maxRes){}
-	virtual ~HistoryAttributes(){};
 	//!Maximum payload size of the history, default value 500.
 	uint32_t payloadMaxSize;
+	virtual ~HistoryAttributes(){}
 	//!Number of the initial Reserved Caches, default value 500.
 	int32_t initialReservedCaches;
 	//!Maximum number of reserved caches. Default value is 0 that indicates to keep reserving until something breaks.
