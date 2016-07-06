@@ -132,6 +132,10 @@ namespace eprosima
                     return ret;
                 }
 
+		bool set_payload(octet *target_data,uint32_t target_length)
+		{
+			return serializedPayload.set_payload(target_data, target_length);
+		}
                 void copy_not_memcpy(CacheChange_t* ch_ptr)
                 {
                     kind = ch_ptr->kind;

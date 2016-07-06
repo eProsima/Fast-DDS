@@ -112,6 +112,23 @@ namespace eprosima{
                     return true;
                 }
 
+		bool set_payload(octet *target_data,uint32_t target_length)
+		{
+			if(target_length > max_size)
+			{
+				return false;
+			}
+			if(length < target_length){
+				//Data does not fit, resize
+				if(data != nullptr)
+					free(data);
+				data = (octet *)calloc(target_length,sizeof(octet));
+			}
+			length = target_length;
+			memcpy(data, target_data, length);
+			return true;
+		}		
+	
 		/*!
 		* Allocate new space for fragmented data
 		* @param[in] serData Pointer to the structure to copy

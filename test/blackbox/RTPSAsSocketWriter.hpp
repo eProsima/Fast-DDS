@@ -98,13 +98,15 @@ class RTPSAsSocketWriter
             {
                 CacheChange_t * ch = writer_->new_change(ALIVE);
 
-                eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
+		char* data_buffer = (char*)malloc(ch->serializedPayload.max_size*sizeof(char));
+		eprosima::fastcdr::FastBuffer buffer((char*)data_buffer, ch->serializedPayload.max_size);
+                //eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
                 eprosima::fastcdr::Cdr cdr(buffer);
 
                 cdr << magicword_;
                 cdr << *it;
-
-                ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
+		ch->set_payload((octet*)data_buffer,cdr.getSerializedDataLength());
+                //ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
 
                 history_->add_change(ch);
                 it = msgs.erase(it);

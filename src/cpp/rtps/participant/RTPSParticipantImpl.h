@@ -100,7 +100,7 @@ typedef struct ReceiverControlBlock{
 	ReceiverControlBlock(ReceiverControlBlock&& origen):Receiver(std::move(origen.Receiver)), mp_receiver(origen.mp_receiver), m_thread(origen.m_thread), resourceAlive(true)
 	{
 	   origen.m_thread = nullptr;
-      origen.mp_receiver = nullptr;
+      	   origen.mp_receiver = nullptr;
 	}
    
    private:

@@ -39,7 +39,7 @@ public:
 		payloadMaxSize(500),
 		initialReservedCaches(500),
 		maximumReservedCaches(0),
-		memoryPolicy(PREALLOCATED_MEMORY_MODE) //TODO(SANTI) - Switch over to Dynamic mode once it is implemented
+		memoryPolicy(DYNAMIC_RESERVE_MEMORY_MODE) //TODO(SANTI) - Switch over to Dynamic mode once it is implemented
 	{};
 	/** Constructor
 	* @param payload Maximum payload size.
@@ -48,7 +48,7 @@ public:
 	*/
 	HistoryAttributes(uint32_t payload,int32_t initial,int32_t maxRes,MemoryManagementPolicy_t memoryPolicy):
 		payloadMaxSize(payload),initialReservedCaches(initial),
-		maximumReservedCaches(maxRes), memoryPolicy(memoryPolicy){} //TODO(SANTI) - Link with upstream config
+		maximumReservedCaches(maxRes), memoryPolicy(memoryPolicy){} 
 	virtual ~HistoryAttributes(){};
 	//!Maximum payload size of the history, default value 500.
 	uint32_t payloadMaxSize;

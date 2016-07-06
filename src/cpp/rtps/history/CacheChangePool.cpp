@@ -47,7 +47,7 @@ CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32
 {
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
 	const char* const METHOD_NAME = "CacheChangePool";
-	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with payload of size: " << payload_size);
+	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with maximum payload size: " << payload_size);
 	
 	//Common for all modes: Set the payload size (maximum allowed), size and size limit
 	m_payload_size = payload_size;
@@ -71,11 +71,9 @@ CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32
 			allocateGroup(pool_size);
 			break;
 		case DYNAMIC_RESERVE_MEMORY_MODE:
-			logInfo(RTPS_UTILS,"Dynamic Mode is active, ignoring pool_size as CacheChanges are allocated on request");
+			logInfo(RTPS_UTILS,"Dynamic Mode is active, CacheChanges are allocated on request");
 			break;	
-
 	}
-
 }
 
 bool CacheChangePool::reserve_Cache(CacheChange_t** chan)
@@ -97,8 +95,6 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan)
 		case DYNAMIC_RESERVE_MEMORY_MODE:
 			*chan = allocateSingle(); //Allocates a single, empty CacheChange. Allocated on Copy
 			break;
-
-
 	}
 	return true;	
 }
@@ -201,13 +197,14 @@ CacheChange_t* CacheChangePool::allocateSingle()
 	if(memoryMode != DYNAMIC_RESERVE_MEMORY_MODE)
 	{
 		logInfo(RTPS_UTILS, "Illegal call to allocateSingle. ChacheChangePool is not in DYNAMIC_RESERVE_MEMORY_MODE");
-		return false;
+		return NULL;
 	}
 	if( (m_max_pool_size == 0) | (m_pool_size < m_max_pool_size) ){
 		++m_pool_size;
 		ch = new CacheChange_t(1);
 		//This can be done freely since this is only executed in Dynamic Mode
 		ch->serializedPayload.empty();
+		ch->serializedPayload.max_size =m_payload_size; 
 		m_allCaches.push_back(ch);
 		added = true;
 	}

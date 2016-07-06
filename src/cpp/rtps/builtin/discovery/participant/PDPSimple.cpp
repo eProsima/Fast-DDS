@@ -175,9 +175,8 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
 #else
                 change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
 #endif
-                change->serializedPayload.length = (uint16_t)getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
                 //TODO Optimizacion, intentar quitar la copia.
-                memcpy(change->serializedPayload.data,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
+                change->set_payload(getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length);
                 mp_SPDPWriterHistory->add_change(change);
             }
             m_hasChangedLocalPDP = false;
@@ -199,9 +198,8 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
 #else
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
 #endif
-            change->serializedPayload.length = (uint16_t)getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
             //TODO Optimizacion, intentar quitar la copia.
-            memcpy(change->serializedPayload.data,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
+            change->set_payload(getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length);
             mp_SPDPWriterHistory->add_change(change);
         }
     }

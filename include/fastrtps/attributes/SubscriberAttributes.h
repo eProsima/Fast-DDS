@@ -44,7 +44,7 @@ public:
 		m_userDefinedID = -1;
 		m_entityID = -1;
 		expectsInlineQos = false;
-		HistoryMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+		HistoryMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
 };
 	virtual ~SubscriberAttributes(){};
 	//!Topic Attributes

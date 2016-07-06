@@ -44,7 +44,7 @@ public:
 	PublisherAttributes(){
 		m_userDefinedID = -1;
 		m_entityID = -1;
-		HistoryMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+		HistoryMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
 	};
 	virtual ~PublisherAttributes(){};
 	//!Topic Attributes for the Publisher
