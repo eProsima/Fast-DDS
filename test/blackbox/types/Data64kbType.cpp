@@ -39,11 +39,14 @@ Data64kbType::~Data64kbType() {
 
 bool Data64kbType::serialize(void *data, SerializedPayload_t *payload) {
 	Data64kb *p_type = (Data64kb*) data;
-	eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
+	char *data_buffer = (char*)malloc(payload->max_size*sizeof(char));
+	eprosima::fastcdr::FastBuffer fastbuffer(data_buffer, payload->max_size); // Object that manages the raw buffer.
 	eprosima::fastcdr::Cdr ser(fastbuffer); 	// Object that serializes the data.
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 	p_type->serialize(ser); 	// Serialize the object:
-    payload->length = (uint32_t)ser.getSerializedDataLength(); 	//Get the serialized length
+	payload->set_payload((octet*)data_buffer,(uint32_t)ser.getSerializedDataLength());
+        //payload->length = (uint32_t)ser.getSerializedDataLength(); 	//Get the serialized length
+	free(data_buffer);
 	return true;
 }
 

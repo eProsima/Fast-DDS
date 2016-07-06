@@ -124,17 +124,24 @@ class RTPSWithRegistrationWriter
 
         while(it != msgs.end())
         {
-            CacheChange_t * ch = writer_->new_change(ALIVE);
+            
+		
+	    CacheChange_t * ch = writer_->new_change(ALIVE);
 
-            eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
+            char* message_buffer = (char*)malloc(ch->serializedPayload.max_size*sizeof(char));
+
+	    eprosima::fastcdr::FastBuffer buffer((char*)message_buffer, ch->serializedPayload.max_size);
             eprosima::fastcdr::Cdr cdr(buffer);
 
             cdr << *it;
 
-            ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
+            //ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
 
+	    ch->set_payload((octet*)message_buffer,cdr.getSerializedDataLength());
+	   
             history_->add_change(ch);
             it = msgs.erase(it);
+	    free(message_buffer);
         }
     }
 

@@ -132,6 +132,7 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
 				break;
 			}
 			delete(ch);	
+			--m_pool_size;
 			break;
 
 	}

@@ -110,6 +110,7 @@ class RTPSAsSocketWriter
 
                 history_->add_change(ch);
                 it = msgs.erase(it);
+		free(data_buffer);
             }
         }
 

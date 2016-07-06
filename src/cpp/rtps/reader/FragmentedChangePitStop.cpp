@@ -49,9 +49,14 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
 
         original_change->copy_not_memcpy(incoming_change);
 
-        // The length of the serialized payload has to be sample size.
+        
+	// TODO(Santi) - We totally have to change CacheChange_t to make it safer...
+	if(!original_change->serializedPayload.data)
+		original_change->serializedPayload.data = (octet*)calloc(sampleSize,sizeof(octet));
+	// The length of the serialized payload has to be sample size.
         original_change->serializedPayload.length = sampleSize;
-        original_change->setFragmentSize(incoming_change->getFragmentSize());
+        
+	original_change->setFragmentSize(incoming_change->getFragmentSize());
 
         // Insert
         original_change_cit = changes_.insert(ChangeInPit(original_change));

@@ -36,14 +36,20 @@ HelloWorldType::~HelloWorldType() {
 bool HelloWorldType::serialize(void* data, SerializedPayload_t* payload)
 {
 	HelloWorld* hw = (HelloWorld*) data;
+	
+	char *data_buffer = (char*)malloc(payload->max_size*sizeof(char));
 	// Object that manages the raw buffer.
-	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
+	eprosima::fastcdr::FastBuffer fastbuffer(data_buffer, payload->max_size);
 	// Object that serializes the data.
 	eprosima::fastcdr::Cdr ser(fastbuffer);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    	
+
+	payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 	//serialize the object:
 	hw->serialize(ser);
-	payload->length = (uint32_t)ser.getSerializedDataLength();
+	payload->set_payload((octet*)data_buffer,(uint32_t)ser.getSerializedDataLength());
+	//payload->length = (uint32_t)ser.getSerializedDataLength();
+	free(data_buffer);
 	return true;
 }
 
