@@ -166,6 +166,7 @@ bool CacheChangePool::allocateGroup(uint32_t group_size)
 	for(uint32_t i = 0;i<reserved;i++)
 	{
 			CacheChange_t* ch = new CacheChange_t(m_payload_size);
+			ch->serializedPayload.memoryMode = memoryMode;
 			m_allCaches.push_back(ch);
 			m_freeCaches.push_back(ch);
 			++m_pool_size;
@@ -205,6 +206,7 @@ CacheChange_t* CacheChangePool::allocateSingle()
 		ch = new CacheChange_t(1);
 		//This can be done freely since this is only executed in Dynamic Mode
 		ch->serializedPayload.empty();
+		ch->serializedPayload.memoryMode = memoryMode;
 		ch->serializedPayload.max_size =m_payload_size; 
 		m_allCaches.push_back(ch);
 		added = true;

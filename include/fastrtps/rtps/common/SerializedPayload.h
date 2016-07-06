@@ -23,6 +23,7 @@
 #include <cstring>
 #include <stdint.h>
 #include <stdlib.h>
+#include <fastrtps/rtps/resources/ResourceManagement.h>
 
 /*!
  * @brief Maximum payload is maximum of UDP packet size minus 536bytes (RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE)
@@ -45,7 +46,8 @@ namespace eprosima{
             //!@ingroup COMMON_MODULE
             struct RTPS_DllAPI SerializedPayload_t
             {
-                //!Encapsulation of the data as suggested in the RTPS 2.1 specification chapter 10.
+                
+		//!Encapsulation of the data as suggested in the RTPS 2.1 specification chapter 10.
                 uint16_t encapsulation;
                 //!Actual length of the data
                 uint32_t length;
@@ -55,6 +57,8 @@ namespace eprosima{
                 uint32_t max_size;
                 //!Position when reading
                 uint32_t pos;
+		//!Behaviour on memory assignment
+		MemoryManagementPolicy_t memoryMode;
 
                 //!Default constructor
                 SerializedPayload_t()
@@ -94,8 +98,8 @@ namespace eprosima{
 		    // If this payload comes initializated but however it is smalled than what is copied 
 		    //if((length < serData->length) & (data != nullptr))
 		    //{
-		//	free(data);
-		//    }
+		    //	free(data);
+		    //}
 		    length = serData->length;
 
                     if(serData->length > max_size)
@@ -114,15 +118,28 @@ namespace eprosima{
 
 		bool set_payload(octet *target_data,uint32_t target_length)
 		{
-			if(target_length > max_size)
+			if( (memoryMode==PREALLOCATED_MEMORY_MODE) & (target_length > max_size))
 			{
 				return false;
 			}
-			if(length < target_length){
-				//Data does not fit, resize
-				if(data != nullptr)
-					free(data);
-				data = (octet *)calloc(target_length,sizeof(octet));
+			//Possible resize of the buffer only happens in (semi) dynamic mode
+			if( (memoryMode!=PREALLOCATED_MEMORY_MODE) )
+			{
+				if(length < target_length)
+				{
+					//Data does not fit, resize
+					if(data != nullptr)
+					{
+						octet * temp_pointer = (octet*)realloc(data,target_length*sizeof(octet));
+						//Why this? Because if the block needs to be moved elsewhere realloc gives a pointer to the new position
+						if(data!=temp_pointer)
+							data = temp_pointer;
+					}
+					else
+					{
+						data = (octet *)calloc(target_length,sizeof(octet));
+					}
+				}
 			}
 			length = target_length;
 			memcpy(data, target_data, length);
