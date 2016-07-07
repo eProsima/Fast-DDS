@@ -44,7 +44,7 @@ public:
 	bool serialize(void *data, SerializedPayload_t *payload);
 	bool deserialize(SerializedPayload_t *payload, void *data);
 	bool getKey(void *data, InstanceHandle_t *ihandle);
-	std::function<uint32_t()> getCdrSerializedSizeProvider();
+	std::function<uint32_t()> getCdrSerializedSizeProvider(void *data);
 	void* createData();
 	void deleteData(void * data);
 	MD5 m_md5;
