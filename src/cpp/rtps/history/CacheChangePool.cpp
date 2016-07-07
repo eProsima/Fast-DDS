@@ -71,6 +71,10 @@ CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32
 			logInfo(RTPS_UTILS,"Static Mode is active, preallocating memory for pool_size elements");
 			allocateGroup(pool_size);
 			break;
+		case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
+			logInfo(RTPS_UTILS,"Semi-Dynamic Mode is active, preallocating memory for pool_size. Size of the cachechanges can be increased");
+			allocateGroup(pool_size);
+			break;
 		case DYNAMIC_RESERVE_MEMORY_MODE:
 			logInfo(RTPS_UTILS,"Dynamic Mode is active, CacheChanges are allocated on request");
 			break;	
@@ -84,6 +88,17 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan)
 	{
 		case PREALLOCATED_MEMORY_MODE:
 			if(m_freeCaches.empty())
+			{
+				if (!allocateGroup((uint16_t)(ceil((float)m_pool_size / 10) + 10)))
+				{
+					return false;
+				}
+			}
+			*chan = m_freeCaches.back();
+			m_freeCaches.erase(m_freeCaches.end()-1);
+			break;
+		case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
+			if(m_freeCaches.empy())
 			{
 				if (!allocateGroup((uint16_t)(ceil((float)m_pool_size / 10) + 10)))
 				{
@@ -121,6 +136,20 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
 			ch->sourceTimestamp.fraction = 0;
 			m_freeCaches.push_back(ch);
 			break;
+		case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
+			ch->kind = ALIVE;
+			ch->sequenceNumber.high = 0;
+			ch->sequenceNumber.low = 0;
+			ch->writerGUID = c_Guid_Unknown;
+			ch->serializedPayload.length = 0;
+			ch->serializedPayload.pos = 0;
+			for(uint8_t i=0;i<16;++i)
+				ch->instanceHandle.value[i] = 0;
+			ch->isRead = 0;
+			ch->sourceTimestamp.seconds = 0;
+			ch->sourceTimestamp.fraction = 0;
+			m_freeCaches.push_back(ch);
+			break;
 		case DYNAMIC_RESERVE_MEMORY_MODE:
 			// Find pointer in CacheChange vector, remove element, then delete it
 			std::vector<CacheChange_t*>::iterator target = m_allCaches.begin();	
@@ -143,7 +172,7 @@ bool CacheChangePool::allocateGroup(uint32_t group_size)
 {
 	const char* const METHOD_NAME = "allocateGroup";
 	// This method should only called from within PREALLOCATED_MEMORY_MODE
-	if(memoryMode != PREALLOCATED_MEMORY_MODE)
+	if(memoryMode == DYNAMIC_RESERVE_MEMORY_MODE)
 	{
 		logInfo(RTPS_UTILS,"Illegal call to allocateGroup. CacheChangePool is not in PREALLOCATED_MEMORY_MODE");
 		return false;
