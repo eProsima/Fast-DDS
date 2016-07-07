@@ -56,7 +56,7 @@ void RTPSAsSocketWriter::init(std::string ip, uint32_t port)
 
 	//Create writerhistory
 	HistoryAttributes hattr;
-	hattr.payloadInitialSize = 255;
+	hattr.payloadMaxSize = 255;
 	history_ = new WriterHistory(hattr);
 
 	//Create writer
