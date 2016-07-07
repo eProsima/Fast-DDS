@@ -44,7 +44,7 @@ public:
 		m_userDefinedID = -1;
 		m_entityID = -1;
 		expectsInlineQos = false;
-		HistoryMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+		historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
 };
 	virtual ~SubscriberAttributes(){};
 	//!Topic Attributes
@@ -60,7 +60,7 @@ public:
 	//!Expects Inline QOS
 	bool expectsInlineQos;
 	//!Underlying History memory policy
-   	MemoryManagementPolicy_t HistoryMemoryPolicy;
+   	MemoryManagementPolicy_t historyMemoryPolicy;
 
 	/**
 	 * Get the user defined ID
