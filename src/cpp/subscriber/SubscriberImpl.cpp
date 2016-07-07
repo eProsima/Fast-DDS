@@ -46,7 +46,6 @@ SubscriberImpl::SubscriberImpl(ParticipantImpl* p,TopicDataType* ptype,
 #pragma warning (disable : 4355 )
 												m_history(this,ptype->m_typeSize , att.topic.historyQos, att.topic.resourceLimitsQos,att.HistoryMemoryPolicy),
 												mp_listener(listen),
-#pragma warning (disable : 4355 )
 												m_readerListener(this),
 												 mp_userSubscriber(nullptr),
 												mp_rtpsParticipant(nullptr)

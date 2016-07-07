@@ -55,7 +55,7 @@ void RTPSAsSocketReader::init(std::string &ip, uint32_t port, uint16_t nmsgs)
 
 	//Create readerhistory
 	HistoryAttributes hattr;
-	hattr.payloadMaxSize = 255;
+	hattr.payloadInitialSize = 255;
 	history_ = new ReaderHistory(hattr);
 
 	//Create reader

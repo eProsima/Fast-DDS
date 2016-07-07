@@ -41,10 +41,10 @@ namespace fastrtps {
  */
 class  TopicDataType {
 public:
-	RTPS_DllAPI TopicDataType(){
-		this->m_typeSize = 0;
-        this->m_isGetKeyDefined = false;
-	}
+	RTPS_DllAPI TopicDataType()
+	: m_typeSize(0), m_isGetKeyDefined(false)
+	{}
+
 	RTPS_DllAPI virtual ~TopicDataType(){};
 	/**
 	 * Serialize method, it should be implemented by the user, since it is abstract.
@@ -92,9 +92,9 @@ public:
 	* @return Topic data type name
 	*/
 	RTPS_DllAPI inline const char* getName() const { return m_topicDataTypeName.c_str(); }
-	
-	//! Maximum Type size in bytes. (If the type includes a string the user MUST ensure that the maximum
-	//! size of the string respect the maximum defined size.).
+
+	//! Maximum serialized size of the type in bytes.
+	//! If the type has unbounded fields, and therefore cannot have a maximum size, use 0.
 	uint32_t m_typeSize;
 	
 	//! Indicates whether the method to obtain the key has been implemented.

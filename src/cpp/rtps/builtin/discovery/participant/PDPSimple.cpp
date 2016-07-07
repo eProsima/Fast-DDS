@@ -310,7 +310,7 @@ bool PDPSimple::createSPDPEndpoints()
 	logInfo(RTPS_PDP,"Beginning",C_CYAN);
 	//SPDP BUILTIN RTPSParticipant WRITER
 	HistoryAttributes hatt;
-	hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+	hatt.payloadInitialSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
 	hatt.initialReservedCaches = 20;
 	hatt.maximumReservedCaches = 100;
 	mp_SPDPWriterHistory = new WriterHistory(hatt);
@@ -337,7 +337,7 @@ bool PDPSimple::createSPDPEndpoints()
 		mp_SPDPWriterHistory = nullptr;
 		return false;
 	}
-	hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+	hatt.payloadInitialSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
 	hatt.initialReservedCaches = 250;
 	hatt.maximumReservedCaches = 5000;
 	mp_SPDPReaderHistory = new ReaderHistory(hatt);

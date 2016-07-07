@@ -76,7 +76,7 @@ class RTPSAsSocketWriter
 
             //Create writerhistory
             eprosima::fastrtps::rtps::HistoryAttributes hattr;
-            hattr.payloadMaxSize = 255 + type_.m_typeSize;
+            hattr.payloadInitialSize = 255 + type_.m_typeSize;
             history_ = new eprosima::fastrtps::rtps::WriterHistory(hattr);
 
             //Create writer
@@ -98,8 +98,8 @@ class RTPSAsSocketWriter
             {
                 CacheChange_t * ch = writer_->new_change(ALIVE);
 
-		char* data_buffer = (char*)malloc(ch->serializedPayload.max_size*sizeof(char));
-		eprosima::fastcdr::FastBuffer buffer((char*)data_buffer, ch->serializedPayload.max_size);
+		char* data_buffer = (char*)malloc(65500*sizeof(char));
+		eprosima::fastcdr::FastBuffer buffer((char*)data_buffer, 65500);
                 //eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
                 eprosima::fastcdr::Cdr cdr(buffer);
 

@@ -49,7 +49,8 @@ public:
 	/**
 	 * Constructor.
 	* @param pool_size The initial pool size
-	* @param payload_size The payload size associated with the pool.
+	* @param payload_size The initial payload size associated with the pool.
+	* @param allow_payload_resize If true, allow the cache change payload to be resized.
 	* @param max_pool_size Maximum payload size. If set to 0 the pool will keep reserving until something breaks.
 	*/
 	CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size, MemoryManagementPolicy_t policy);
@@ -61,10 +62,12 @@ public:
 	size_t get_allCachesSize(){return m_allCaches.size();}
 	//!Get the number of frre caches.
 	size_t get_freeCachesSize(){return m_freeCaches.size();}
-	//!Get the payload size associated with the Pool.
-	inline uint32_t getPayloadSize(){return m_payload_size;};
+	//!Get the initial payload size associated with the Pool.
+	inline uint32_t getInitialPayloadSize(){return m_initial_payload_size;};
 private:
+	uint32_t m_initial_payload_size;
 	uint32_t m_payload_size;
+	bool m_allow_payload_resize;
 	uint32_t m_pool_size;
 	uint32_t m_max_pool_size;
 	std::vector<CacheChange_t*> m_freeCaches;

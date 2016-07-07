@@ -46,7 +46,8 @@ public:
 	/**
 	* Constructor of the PublisherHistory.
 	* @param pimpl Pointer to the PublisherImpl.
-	* @param payloadMax Maximum payload size.
+	* @param payloadInitialSize Initial payload size.
+	* @param mempolicy Set wether the payloads ccan dynamically resized or not.
 	* @param history QOS of the associated History.
 	* @param resource ResourceLimits for the History.
 	*/

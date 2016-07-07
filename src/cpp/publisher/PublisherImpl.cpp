@@ -109,9 +109,11 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
 				m_history.release_Cache(ch);
 				return false;
 			}
-			else if(ch->serializedPayload.length > mp_type->m_typeSize)
+			else if( (m_att.HistoryMemoryPolicy == PREALLOCATED_MEMORY_MODE) && ch->serializedPayload.length > mp_type->m_typeSize)
 			{
-				logWarning(RTPS_WRITER,"Serialized Payload length larger than maximum type size ("<<ch->serializedPayload.length<<"/"<< mp_type->m_typeSize<<")";);
+				logWarning(RTPS_WRITER,
+					"Serialized Payload length larger than maximum type size (" <<
+					ch->serializedPayload.length << "/" << mp_type->m_typeSize << ")");
 				m_history.release_Cache(ch);
 				return false;
 			}

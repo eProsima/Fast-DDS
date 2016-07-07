@@ -57,10 +57,11 @@ public:
 	LocatorList_t unicastLocatorList;
 	//!Multicast locator list
 	LocatorList_t multicastLocatorList;
-   //!Terminal throughput controller
-   ThroughputControllerDescriptor terminalThroughputController;
+        //!Terminal throughput controller
+        ThroughputControllerDescriptor terminalThroughputController;
 	//!Underlying History memory policy
    	MemoryManagementPolicy_t HistoryMemoryPolicy;
+
 	/**
 	 * Get the user defined ID
 	 * @return User defined ID

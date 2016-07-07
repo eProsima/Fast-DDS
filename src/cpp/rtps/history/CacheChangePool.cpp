@@ -47,10 +47,11 @@ CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32
 {
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
 	const char* const METHOD_NAME = "CacheChangePool";
-	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with maximum payload size: " << payload_size);
+	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with initial payload size: " << payload_size);
 	
 	//Common for all modes: Set the payload size (maximum allowed), size and size limit
-	m_payload_size = payload_size;
+	m_payload_size = payload_size;	//TODO(SANTI) - Normalize the usage or m_payload_size, m_initial_payload_size and max_size among modes
+	m_initial_payload_size = payload_size;
 	m_pool_size = 0;
 	if(max_pool_size > 0)
 	{
@@ -165,8 +166,7 @@ bool CacheChangePool::allocateGroup(uint32_t group_size)
 	}
 	for(uint32_t i = 0;i<reserved;i++)
 	{
-			CacheChange_t* ch = new CacheChange_t(m_payload_size);
-			ch->serializedPayload.memoryMode = memoryMode;
+			CacheChange_t* ch = new CacheChange_t(m_payload_size,memoryMode);
 			m_allCaches.push_back(ch);
 			m_freeCaches.push_back(ch);
 			++m_pool_size;
@@ -203,11 +203,10 @@ CacheChange_t* CacheChangePool::allocateSingle()
 	}
 	if( (m_max_pool_size == 0) | (m_pool_size < m_max_pool_size) ){
 		++m_pool_size;
-		ch = new CacheChange_t(1);
+		ch = new CacheChange_t(0,memoryMode);
 		//This can be done freely since this is only executed in Dynamic Mode
 		ch->serializedPayload.empty();
-		ch->serializedPayload.memoryMode = memoryMode;
-		ch->serializedPayload.max_size =m_payload_size; 
+		ch->serializedPayload.max_size = 0; //Indicates unlimited size 
 		m_allCaches.push_back(ch);
 		added = true;
 	}

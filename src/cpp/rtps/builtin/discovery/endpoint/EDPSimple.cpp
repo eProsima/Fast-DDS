@@ -121,7 +121,7 @@ bool EDPSimple::createSEDPEndpoints()
 	{
 		hatt.initialReservedCaches = 100;
 		hatt.maximumReservedCaches = 5000;
-		hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
+		hatt.payloadInitialSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
 		mp_PubWriter.second = new WriterHistory(hatt);
 		//Wparam.pushMode = true;
 		watt.endpoint.reliabilityKind = RELIABLE;
@@ -142,7 +142,7 @@ bool EDPSimple::createSEDPEndpoints()
 		}
 		hatt.initialReservedCaches = 100;
 		hatt.maximumReservedCaches = 1000000;
-		hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
+		hatt.payloadInitialSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
 		mp_SubReader.second = new ReaderHistory(hatt);
 		//Rparam.historyMaxSize = 100;
 		ratt.expectsInlineQos = false;
@@ -170,7 +170,7 @@ bool EDPSimple::createSEDPEndpoints()
 	{
 		hatt.initialReservedCaches = 100;
 		hatt.maximumReservedCaches = 1000000;
-		hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
+		hatt.payloadInitialSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
 		mp_PubReader.second = new ReaderHistory(hatt);
 		//Rparam.historyMaxSize = 100;
 		ratt.expectsInlineQos = false;
@@ -196,7 +196,7 @@ bool EDPSimple::createSEDPEndpoints()
 		}
 		hatt.initialReservedCaches = 100;
 		hatt.maximumReservedCaches = 5000;
-		hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
+		hatt.payloadInitialSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
 		mp_SubWriter.second = new WriterHistory(hatt);
 		//Wparam.pushMode = true;
 		watt.endpoint.reliabilityKind = RELIABLE;

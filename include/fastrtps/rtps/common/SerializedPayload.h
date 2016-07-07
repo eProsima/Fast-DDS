@@ -21,6 +21,8 @@
 #include "../../fastrtps_dll.h"
 #include "Types.h"
 #include <cstring>
+#include <new>
+#include <stdexcept>
 #include <stdint.h>
 #include <stdlib.h>
 #include <fastrtps/rtps/resources/ResourceManagement.h>
@@ -62,24 +64,19 @@ namespace eprosima{
 
                 //!Default constructor
                 SerializedPayload_t()
-                {
-                    length = 0;
-                    data = nullptr;
-                    encapsulation = CDR_BE;
-                    max_size = 0;
-                    pos = 0;
-                }
+                : encapsulation(CDR_BE), length(0), data(nullptr), max_size(0),
+                  pos(0), memoryMode(DYNAMIC_RESERVE_MEMORY_MODE) 
+                {}
 
                 /**
                  * @param len Maximum size of the payload
+                 * @param allow_resize If true the payload can be resized dynamically.
                  */
-                SerializedPayload_t(uint32_t len)
+                SerializedPayload_t(uint32_t len, MemoryManagementPolicy_t policy)
+                : SerializedPayload_t()
                 {
-                    encapsulation = CDR_BE;
-                    length = 0;
-                    data = (octet*)calloc(len, sizeof(octet));
-                    max_size = len;
-                    pos = 0;
+                    memoryMode = policy;
+                    this->reserve_(len);
                 }
 
                 ~SerializedPayload_t()
@@ -107,12 +104,10 @@ namespace eprosima{
                         if(with_limit)
                             return false;
                         else
-                            length = max_size;
+                            this->reserve_(serData->length);
                     }
                     encapsulation = serData->encapsulation;
-                    if(data == nullptr)
-                        data = (octet*)calloc(length, sizeof(octet));
-                    memcpy(data,serData->data,length);
+                    memcpy(data, serData->data, length);
                     return true;
                 }
 
@@ -169,6 +164,29 @@ namespace eprosima{
                     if(data!=nullptr)
                         free(data);
                     data = nullptr;
+                }
+
+                void reserve(size_t new_size)
+                {
+                    if (memoryMode == PREALLOCATED_MEMORY_MODE) {
+                        throw std::length_error("instance of SerializedPayload_t is not resizable");
+                    }
+                    return reserve_(new_size);
+                }
+
+                protected:
+                void reserve_(size_t new_size)
+                {
+                    if (new_size <= this->max_size) {
+                        return;
+                    }
+                    void * old_data = data;
+                    data = (octet*)realloc(data, new_size);
+                    if (!data) {
+                        free(old_data);
+                        throw std::bad_alloc();
+                    }
+                    max_size = new_size;
                 }
             };
         }

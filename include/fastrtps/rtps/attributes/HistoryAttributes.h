@@ -21,6 +21,9 @@
 #define HISTORYATTRIBUTES_H_
 
 #include <fastrtps/rtps/resources/ResourceManagement.h>
+#include <cstdint>
+
+#include "../../fastrtps_dll.h"
 
 namespace eprosima{
 namespace fastrtps{
@@ -36,13 +39,14 @@ class RTPS_DllAPI HistoryAttributes
 {
 public:
 	HistoryAttributes():
-		payloadMaxSize(500),
+		payloadInitialSize(500),
 		initialReservedCaches(500),
 		maximumReservedCaches(0),
-		memoryPolicy(DYNAMIC_RESERVE_MEMORY_MODE) //TODO(SANTI) - Switch over to Dynamic mode once it is implemented
-	{};
+		memoryPolicy(DYNAMIC_RESERVE_MEMORY_MODE) 
+	{}
 	/** Constructor
-	* @param payload Maximum payload size.
+	* @param payload Initial payload size.
+	* @param memoryPolicy Set wether memory can be dynamically reallocated or not
 	* @param initial Initial reserved caches.
 	* @param maxRes Maximum reserved caches.
 	*/
@@ -52,6 +56,8 @@ public:
 	virtual ~HistoryAttributes(){};
 	//!Maximum payload size of the history, default value 500.
 	uint32_t payloadMaxSize;
+	//!Intial payload size of the history, default value 500.
+	uint32_t payloadInitialSize;
 	//!Number of the initial Reserved Caches, default value 500.
 	int32_t initialReservedCaches;
 	//!Maximum number of reserved caches. Default value is 0 that indicates to keep reserving until something breaks.
