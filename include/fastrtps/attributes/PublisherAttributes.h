@@ -60,7 +60,7 @@ public:
         //!Terminal throughput controller
         ThroughputControllerDescriptor terminalThroughputController;
 	//!Underlying History memory policy
-   	MemoryManagementPolicy_t HistoryMemoryPolicy;
+   	MemoryManagementPolicy_t historyMemoryPolicy;
 
 	/**
 	 * Get the user defined ID
