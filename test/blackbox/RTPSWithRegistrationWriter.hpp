@@ -104,7 +104,7 @@ class RTPSWithRegistrationWriter
 
         //Create writerhistory
         HistoryAttributes hattr;
-        hattr.payloadInitialSize = type_.m_typeSize;
+        hattr.payloadMaxSize = type_.m_typeSize;
         history_ = new WriterHistory(hattr);
 
         //Create writer
@@ -126,18 +126,18 @@ class RTPSWithRegistrationWriter
         {
             
 		
-	    CacheChange_t * ch = writer_->new_change(ALIVE);
+	    CacheChange_t * ch = writer_->new_change(*it,ALIVE);
 
             char* message_buffer = (char*)malloc(ch->serializedPayload.max_size*sizeof(char));
 
-	    eprosima::fastcdr::FastBuffer buffer((char*)message_buffer, ch->serializedPayload.max_size);
+	    eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
             eprosima::fastcdr::Cdr cdr(buffer);
 
             cdr << *it;
 
             //ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
 
-	    ch->set_payload((octet*)message_buffer,cdr.getSerializedDataLength());
+	    //ch->set_payload((octet*)message_buffer,cdr.getSerializedDataLength());
 	   
             history_->add_change(ch);
             it = msgs.erase(it);

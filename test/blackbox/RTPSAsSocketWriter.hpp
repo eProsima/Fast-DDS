@@ -76,7 +76,7 @@ class RTPSAsSocketWriter
 
             //Create writerhistory
             eprosima::fastrtps::rtps::HistoryAttributes hattr;
-            hattr.payloadInitialSize = 255 + type_.m_typeSize;
+            hattr.payloadMaxSize = 255 + type_.m_typeSize;
             history_ = new eprosima::fastrtps::rtps::WriterHistory(hattr);
 
             //Create writer
@@ -96,21 +96,17 @@ class RTPSAsSocketWriter
 
             while(it != msgs.end())
             {
-                CacheChange_t * ch = writer_->new_change(ALIVE);
+                CacheChange_t * ch = writer_->new_change(*it,ALIVE);
 
-		char* data_buffer = (char*)malloc(65500*sizeof(char));
-		eprosima::fastcdr::FastBuffer buffer((char*)data_buffer, 65500);
-                //eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
+                eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
                 eprosima::fastcdr::Cdr cdr(buffer);
 
-                cdr << magicword_;
+                //cdr << magicword_; //NOTE (SANTI)->Out of the scope ot *it, which is what the change has been initialized with
                 cdr << *it;
-		ch->set_payload((octet*)data_buffer,cdr.getSerializedDataLength());
                 //ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
 
                 history_->add_change(ch);
                 it = msgs.erase(it);
-		free(data_buffer);
             }
         }
 

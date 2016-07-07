@@ -106,7 +106,7 @@ class RTPSAsSocketReader
 
             //Create readerhistory
             eprosima::fastrtps::rtps::HistoryAttributes hattr;
-            hattr.payloadInitialSize = 255 + type_.m_typeSize;
+            hattr.payloadMaxSize = 255 + type_.m_typeSize;
             history_ = new eprosima::fastrtps::rtps::ReaderHistory(hattr);
             ASSERT_NE(history_, nullptr);
 
