@@ -46,7 +46,7 @@ PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
 										mp_type(pdatatype),
 										m_att(att),
 #pragma warning (disable : 4355 )
-										m_history(this, pdatatype->m_typeSize, att.topic.historyQos, att.topic.resourceLimitsQos,att.HistoryMemoryPolicy),
+										m_history(this, pdatatype->m_typeSize, att.topic.historyQos, att.topic.resourceLimitsQos,att.historyMemoryPolicy),
 										mp_listener(listen),
 #pragma warning (disable : 4355 )
 										m_writerListener(this),
@@ -109,7 +109,7 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
 				m_history.release_Cache(ch);
 				return false;
 			}
-			else if( (m_att.HistoryMemoryPolicy == PREALLOCATED_MEMORY_MODE) && ch->serializedPayload.length > mp_type->m_typeSize)
+			else if( (m_att.historyMemoryPolicy == PREALLOCATED_MEMORY_MODE) && ch->serializedPayload.length > mp_type->m_typeSize)
 			{
 				logWarning(RTPS_WRITER,
 					"Serialized Payload length larger than maximum type size (" <<

@@ -44,7 +44,7 @@ public:
 	PublisherAttributes(){
 		m_userDefinedID = -1;
 		m_entityID = -1;
-		HistoryMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+		historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
 	};
 	virtual ~PublisherAttributes(){};
 	//!Topic Attributes for the Publisher
@@ -60,7 +60,7 @@ public:
         //!Terminal throughput controller
         ThroughputControllerDescriptor terminalThroughputController;
 	//!Underlying History memory policy
-   	MemoryManagementPolicy_t HistoryMemoryPolicy;
+   	MemoryManagementPolicy_t historyMemoryPolicy;
 
 	/**
 	 * Get the user defined ID
