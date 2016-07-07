@@ -85,6 +85,17 @@ size_t HelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
 
     return current_align;
 }
+
+size_t HelloWorld::getCdrSerializedSize(const HelloWorld& data, size_t current_alignment)
+{
+    size_t current_align = current_alignment;
+            
+    current_align += 2 + eprosima::fastcdr::Cdr::alignment(current_align, 2);
+    current_align += 4 + eprosima::fastcdr::Cdr::alignment(current_align, 4) + data.m_message.size() + 1;
+
+    return current_align;
+}
+
 size_t HelloWorld::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;

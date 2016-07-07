@@ -62,11 +62,11 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 		logError(RTPS_HISTORY,"Change writerGUID "<< a_change->writerGUID << " different than Writer GUID "<< mp_writer->getGuid());
 		return false;
 	}
-	if((m_att.memoryPolicy==PREALLOCATED_MEMORY_MODE) && a_change->serializedPayload.length > m_att.payloadInitialSize)
+	if((m_att.memoryPolicy==PREALLOCATED_MEMORY_MODE) && a_change->serializedPayload.length > m_att.payloadMaxSize)
 	{
 		logError(RTPS_HISTORY,
 			"Change payload size of '" << a_change->serializedPayload.length <<
-			"' bytes is larger than the history payload size of '" << m_att.payloadInitialSize <<
+			"' bytes is larger than the history payload size of '" << m_att.payloadMaxSize <<
 			"' bytes and cannot be resized.");
 		return false;
 	}

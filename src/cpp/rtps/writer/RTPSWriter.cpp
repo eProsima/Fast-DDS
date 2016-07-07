@@ -27,7 +27,7 @@ using namespace eprosima::fastrtps::rtps;
 
 static const char* const CLASS_NAME = "RTPSWriter";
 
-RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
+RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes& att, WriterHistory* hist, WriterListener* listen):
     Endpoint(impl,guid,att.endpoint),
     m_pushMode(true),
     //TODO 65536 put in constant or macro. It is max size of udp packet.
@@ -62,7 +62,8 @@ RTPSWriter::~RTPSWriter()
     mp_history->mp_mutex = nullptr;
 }
 
-CacheChange_t* RTPSWriter::new_change(std::function<uint32_t()> &dataCdrSerializedSize, ChangeKind_t changeKind, InstanceHandle_t handle)
+CacheChange_t* RTPSWriter::new_change(const std::function<uint32_t()>& dataCdrSerializedSize,
+        ChangeKind_t changeKind, InstanceHandle_t handle)
 {
     const char* const METHOD_NAME = "new_change";
     logInfo(RTPS_WRITER,"Creating new change");

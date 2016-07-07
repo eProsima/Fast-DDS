@@ -83,7 +83,7 @@ CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32
 	}
 }
 
-bool CacheChangePool::reserve_Cache(CacheChange_t** chan, std::function<uint32_t()>& calculateSizeFunc)
+bool CacheChangePool::reserve_Cache(CacheChange_t** chan, const std::function<uint32_t()>& calculateSizeFunc)
 {
     uint32_t dataSize = 0;
 
@@ -122,6 +122,7 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
 			*chan = m_freeCaches.back();
 			m_freeCaches.erase(m_freeCaches.end()-1);
 
+            // TODO(Ricardo) Improve reallocation.
             try
             {
                 (*chan)->serializedPayload.reserve(dataSize);

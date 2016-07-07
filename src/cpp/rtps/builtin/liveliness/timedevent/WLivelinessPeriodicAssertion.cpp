@@ -24,6 +24,7 @@
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
 #include <fastrtps/utils/RTPSLog.h>
 #include <fastrtps/utils/eClock.h>
@@ -95,7 +96,7 @@ bool WLivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
 	if(this->mp_WLP->m_livAutomaticWriters.size()>0)
 	{
 		boost::lock_guard<boost::recursive_mutex> wguard(*this->mp_WLP->mp_builtinWriter->getMutex());
-		CacheChange_t* change=this->mp_WLP->mp_builtinWriter->new_change(ALIVE,m_iHandle);
+		CacheChange_t* change=this->mp_WLP->mp_builtinWriter->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE,m_iHandle);
 		if(change!=nullptr)
 		{
 			//change->instanceHandle = m_iHandle;
@@ -143,7 +144,7 @@ bool WLivelinessPeriodicAssertion::ManualByRTPSParticipantLivelinessAssertion()
 	if(livelinessAsserted)
 	{
 		boost::lock_guard<boost::recursive_mutex> wguard(*this->mp_WLP->mp_builtinWriter->getMutex());
-		CacheChange_t* change=this->mp_WLP->mp_builtinWriter->new_change(ALIVE);
+		CacheChange_t* change=this->mp_WLP->mp_builtinWriter->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE);
 		if(change!=nullptr)
 		{
 			change->instanceHandle = m_iHandle;

@@ -24,6 +24,7 @@
 #include "rtps/common/InstanceHandle.h"
 #include "utils/md5.h"
 #include <string>
+#include <functional>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -53,15 +54,18 @@ public:
 	 * @param[out] payload Pointer to the payload
 	 * @return True if correct.
 	 */
-	RTPS_DllAPI virtual bool serialize(void*data, SerializedPayload_t* payload) = 0;
-	
+	RTPS_DllAPI virtual bool serialize(void* data, SerializedPayload_t* payload) = 0;
+
 	/**
 	 * Deserialize method, it should be implemented by the user, since it is abstract.
 	 * @param[in] payload Pointer to the payload
 	 * @param[out] data Pointer to the data
 	 * @return True if correct.
 	 */
-	RTPS_DllAPI virtual bool deserialize(SerializedPayload_t* payload, void * data) = 0;
+	RTPS_DllAPI virtual bool deserialize(SerializedPayload_t* payload, void* data) = 0;
+
+    RTPS_DllAPI virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) = 0;
+
 	/**
 	 * Create a Data Type.
 	 * @return Void pointer to the created object.

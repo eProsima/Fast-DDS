@@ -64,7 +64,7 @@ public:
 	 * PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
 	 * @return True whether the CacheChange could be allocated. In other case returns false.
 	 */
-	bool reserve_Cache(CacheChange_t** chan, std::function<uint32_t()>& calculateSizeFunc);
+	bool reserve_Cache(CacheChange_t** chan, const std::function<uint32_t()>& calculateSizeFunc);
 
 	/*!
 	 * @brief Reserves a CacheChange from the pool.

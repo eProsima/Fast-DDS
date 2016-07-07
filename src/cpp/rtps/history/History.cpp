@@ -49,7 +49,7 @@ namespace eprosima {
             {
                 m_changes.reserve((uint32_t)abs(att.initialReservedCaches));
                 //const char* const METHOD_NAME = "History";
-                m_changePool.reserve_Cache(&mp_invalidCache);
+		mp_invalidCache = new CacheChange_t();
                 mp_invalidCache->writerGUID = c_Guid_Unknown;
                 mp_invalidCache->sequenceNumber = c_SequenceNumber_Unknown;
                 mp_minSeqCacheChange = mp_invalidCache;
@@ -62,6 +62,7 @@ namespace eprosima {
             {
                 const char* const METHOD_NAME = "~History";
                 logInfo(RTPS_HISTORY,"");
+		delete(mp_invalidCache);
             }
 
 

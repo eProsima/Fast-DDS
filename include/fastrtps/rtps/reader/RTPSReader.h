@@ -139,7 +139,7 @@ namespace eprosima
                  * @param change Pointer to pointer to the Cache.
                  * @return True if correctly reserved.
                  */
-                RTPS_DllAPI bool reserveCache(CacheChange_t** change);
+                RTPS_DllAPI bool reserveCache(CacheChange_t** change, uint32_t dataCdrSerializedSize);
 
                 /**
                  * Release a cacheChange.

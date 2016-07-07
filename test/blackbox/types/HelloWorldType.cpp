@@ -65,6 +65,11 @@ bool HelloWorldType::deserialize(SerializedPayload_t* payload, void* data)
 	return true;
 }
 
+std::function<uint32_t()> HelloWorldType::getCdrSerializedSizeProvider(void *data)
+{
+    return []() -> uint32_t { return type::getCdrSerializedSize(*reinterpret_cast<HelloWorld*>(data));
+}
+
 void* HelloWorldType::createData()
 {
 	return (void*)new HelloWorld();

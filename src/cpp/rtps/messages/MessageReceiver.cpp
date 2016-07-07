@@ -77,7 +77,7 @@ void MessageReceiver::init(uint32_t rec_buffer_size){
 	defUniLoc.port = LOCATOR_PORT_INVALID;
 	logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<<m_rec_msg.max_size,C_BLUE);
 	uint16_t max_payload = ((uint32_t)std::numeric_limits<uint16_t>::max() < rec_buffer_size) ? std::numeric_limits<uint16_t>::max() : (uint16_t)rec_buffer_size;
-	mp_change = new CacheChange_t(max_payload,DYNAMIC_RESERVE_MEMORY_MODE,true);
+	mp_change = new CacheChange_t(max_payload, true);
 }
 
 MessageReceiver::~MessageReceiver()
@@ -511,7 +511,6 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		if(inlineQosSize <= 0)
 		{
 			logInfo(RTPS_MSG_IN,IDSTRING"SubMessage Data ERROR, Inline Qos ParameterList error");
-			//firstReader->releaseCache(ch);
 			return false;
 		}
 
@@ -540,13 +539,12 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				CDRMessage::readData(msg,ch->serializedPayload.data,ch->serializedPayload.length);
 				ch->kind = ALIVE;
 			}
-            		else
-            		{
-                	logWarning(RTPS_MSG_IN,IDSTRING"Serialized Payload larger than maximum allowed size "
+            else
+            {
+                logWarning(RTPS_MSG_IN,IDSTRING"Serialized Payload larger than maximum allowed size "
                         "("<<payload_size-2-2<<"/"<<ch->serializedPayload.max_size<<")",C_BLUE);
-                	//firstReader->releaseCache(ch);
-                	return false;
-            		}
+                return false;
+            }
 		}
 		else if(keyFlag)
 		{

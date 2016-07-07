@@ -167,7 +167,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
             this->getLocalParticipantProxyData()->m_manualLivelinessCount++;
             if(mp_SPDPWriterHistory->getHistorySize() > 0)
                 mp_SPDPWriterHistory->remove_min_change();
-            change = mp_SPDPWriter->new_change(ALIVE,getLocalParticipantProxyData()->m_key);
+            change = mp_SPDPWriter->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE,getLocalParticipantProxyData()->m_key);
             if(getLocalParticipantProxyData()->toParameterList())
             {
 #if EPROSIMA_BIG_ENDIAN
@@ -175,8 +175,9 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
 #else
                 change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
 #endif
+                change->serializedPayload.length = (uint16_t)getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
                 //TODO Optimizacion, intentar quitar la copia.
-                change->set_payload(getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length);
+                memcpy(change->serializedPayload.data,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
                 mp_SPDPWriterHistory->add_change(change);
             }
             m_hasChangedLocalPDP = false;
@@ -190,7 +191,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
     {
         if(mp_SPDPWriterHistory->getHistorySize() > 0)
             mp_SPDPWriterHistory->remove_min_change();
-        change = mp_SPDPWriter->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
+        change = mp_SPDPWriter->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;}, NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
         if(getLocalParticipantProxyData()->toParameterList())
         {
 #if EPROSIMA_BIG_ENDIAN
@@ -198,8 +199,9 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
 #else
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
 #endif
+            change->serializedPayload.length = (uint16_t)getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
             //TODO Optimizacion, intentar quitar la copia.
-            change->set_payload(getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length);
+            memcpy(change->serializedPayload.data,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
             mp_SPDPWriterHistory->add_change(change);
         }
     }
@@ -310,7 +312,7 @@ bool PDPSimple::createSPDPEndpoints()
 	logInfo(RTPS_PDP,"Beginning",C_CYAN);
 	//SPDP BUILTIN RTPSParticipant WRITER
 	HistoryAttributes hatt;
-	hatt.payloadInitialSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+	hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
 	hatt.initialReservedCaches = 20;
 	hatt.maximumReservedCaches = 100;
 	mp_SPDPWriterHistory = new WriterHistory(hatt);
@@ -337,7 +339,7 @@ bool PDPSimple::createSPDPEndpoints()
 		mp_SPDPWriterHistory = nullptr;
 		return false;
 	}
-	hatt.payloadInitialSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+	hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
 	hatt.initialReservedCaches = 250;
 	hatt.maximumReservedCaches = 5000;
 	mp_SPDPReaderHistory = new ReaderHistory(hatt);

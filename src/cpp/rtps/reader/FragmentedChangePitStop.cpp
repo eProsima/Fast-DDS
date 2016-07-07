@@ -44,7 +44,7 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
     {
         CacheChange_t* original_change = nullptr;
 
-        if(!parent_->reserveCache(&original_change))
+        if(!parent_->reserveCache(&original_change, sampleSize))
             return nullptr;
 
         original_change->copy_not_memcpy(incoming_change);

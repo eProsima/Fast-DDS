@@ -34,6 +34,7 @@ public:
 	virtual ~HelloWorldType();
 	bool serialize(void*data,SerializedPayload_t* payload);
 	bool deserialize(SerializedPayload_t* payload,void * data);
+    std::function<uint32_t()> getCdrSerializedSizeProvider();
 	bool getKey(void*data,InstanceHandle_t* ihandle);
 	void* createData();
 	void deleteData(void* data);

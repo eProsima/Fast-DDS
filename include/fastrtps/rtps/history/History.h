@@ -59,7 +59,7 @@ public:
 	 * @param[out] change Pointer to pointer to the CacheChange_t to reserve
 	 * @return True is reserved
 	 */
-	RTPS_DllAPI inline bool reserve_Cache(CacheChange_t** change, std::function<uint32_t()>& calculateSizeFunc)
+	RTPS_DllAPI inline bool reserve_Cache(CacheChange_t** change, const std::function<uint32_t()>& calculateSizeFunc)
     {
         return m_changePool.reserve_Cache(change, calculateSizeFunc);
     }
