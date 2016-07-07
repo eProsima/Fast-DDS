@@ -66,6 +66,11 @@ void Data1mbType::deleteData(void* data) {
 	delete((Data1mb*)data);
 }
 
+std::function<uint32_t()> HelloWorldType::getCdrSerializedSizeProvider(void *data)
+{
+    return []() -> uint32_t { return type::getCdrSerializedSize(*reinterpret_cast<Data1mb*>(data));
+}
+
 bool Data1mbType::getKey(void *data, InstanceHandle_t* handle) {
 	if(!m_isGetKeyDefined)
 		return false;

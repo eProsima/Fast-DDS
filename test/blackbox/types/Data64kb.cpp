@@ -84,6 +84,17 @@ size_t Data64kb::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
+size_t Data64kb::getKeyCdrSerializedSize(const Data64kb& data, size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+            
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    current_alignment += (data.m_data.size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+    return current_alignment - initial_alignment;
+
+}
 void Data64kb::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     if(m_data.size() <= 63996)
@@ -104,6 +115,8 @@ size_t Data64kb::getKeyMaxCdrSerializedSize(size_t current_alignment)
 
     return current_align;
 }
+
+
 
 bool Data64kb::isKeyDefined()
 {

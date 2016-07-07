@@ -149,6 +149,9 @@ public:
      */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 
+    eProsima_user_DllExport static size_t getCdrSerializedSize(const Data1mb& data, size_t current_alignment = 0);
+
+
 
     /*!
      * @brief This function serializes an object using CDR serialization.

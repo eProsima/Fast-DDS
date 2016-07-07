@@ -84,6 +84,16 @@ size_t Data1mb::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
+size_t Data1mb::getCdrSerializedSize(const Data1mb& data, size_t current_aligment)
+{
+    size_t initial_alignment = current_alignment;
+            
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    current_alignment += (m_data.size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+    return current_alignment - initial_alignment;
+}
 void Data1mb::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     if(m_data.size() <= 1024000)
