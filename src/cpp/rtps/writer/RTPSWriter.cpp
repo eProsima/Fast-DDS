@@ -62,13 +62,13 @@ RTPSWriter::~RTPSWriter()
     mp_history->mp_mutex = nullptr;
 }
 
-CacheChange_t* RTPSWriter::new_change(ChangeKind_t changeKind,InstanceHandle_t handle)
+CacheChange_t* RTPSWriter::new_change(std::function<uint32_t()> &dataCdrSerializedSize, ChangeKind_t changeKind, InstanceHandle_t handle)
 {
     const char* const METHOD_NAME = "new_change";
     logInfo(RTPS_WRITER,"Creating new change");
     CacheChange_t* ch = nullptr;
 
-    if(!mp_history->reserve_Cache(&ch))
+    if(!mp_history->reserve_Cache(&ch, dataCdrSerializedSize))
     {
         logWarning(RTPS_WRITER,"Problem reserving Cache from the History");
         return nullptr;

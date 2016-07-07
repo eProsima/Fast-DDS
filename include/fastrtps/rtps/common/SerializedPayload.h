@@ -25,7 +25,6 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <stdlib.h>
-#include <fastrtps/rtps/resources/ResourceManagement.h>
 
 /*!
  * @brief Maximum payload is maximum of UDP packet size minus 536bytes (RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE)
@@ -48,8 +47,7 @@ namespace eprosima{
             //!@ingroup COMMON_MODULE
             struct RTPS_DllAPI SerializedPayload_t
             {
-                
-		//!Encapsulation of the data as suggested in the RTPS 2.1 specification chapter 10.
+                //!Encapsulation of the data as suggested in the RTPS 2.1 specification chapter 10.
                 uint16_t encapsulation;
                 //!Actual length of the data
                 uint32_t length;
@@ -59,24 +57,21 @@ namespace eprosima{
                 uint32_t max_size;
                 //!Position when reading
                 uint32_t pos;
-		//!Behaviour on memory assignment
-		MemoryManagementPolicy_t memoryMode;
 
                 //!Default constructor
-                SerializedPayload_t()
-                : encapsulation(CDR_BE), length(0), data(nullptr), max_size(0),
-                  pos(0), memoryMode(DYNAMIC_RESERVE_MEMORY_MODE) 
-                {}
+                SerializedPayload_t() : encapsulation(CDR_BE),
+                length(0), data(nullptr), max_size(0),
+                pos(0)
+                {
+                }
 
                 /**
                  * @param len Maximum size of the payload
-                 * @param allow_resize If true the payload can be resized dynamically.
                  */
-                SerializedPayload_t(uint32_t len, MemoryManagementPolicy_t policy)
+                SerializedPayload_t(uint32_t len)
                 : SerializedPayload_t()
                 {
-                    memoryMode = policy;
-                    this->reserve_(len);
+                    this->reserve(len);
                 }
 
                 ~SerializedPayload_t()
@@ -92,68 +87,34 @@ namespace eprosima{
                  */
                 bool copy(SerializedPayload_t* serData, bool with_limit = true)
                 {
-		    // If this payload comes initializated but however it is smalled than what is copied 
-		    //if((length < serData->length) & (data != nullptr))
-		    //{
-		    //	free(data);
-		    //}
-		    length = serData->length;
+                    length = serData->length;
 
                     if(serData->length > max_size)
                     {
                         if(with_limit)
                             return false;
                         else
-                            this->reserve_(serData->length);
+                            this->reserve(serData->length);
                     }
                     encapsulation = serData->encapsulation;
                     memcpy(data, serData->data, length);
                     return true;
                 }
 
-		bool set_payload(octet *target_data,uint32_t target_length)
-		{
-			if( (memoryMode==PREALLOCATED_MEMORY_MODE) & (target_length > max_size))
-			{
-				return false;
-			}
-			//Possible resize of the buffer only happens in (semi) dynamic mode
-			if( (memoryMode!=PREALLOCATED_MEMORY_MODE) )
-			{
-				if(length < target_length)
-				{
-					//Data does not fit, resize
-					if(data != nullptr)
-					{
-						octet * temp_pointer = (octet*)realloc(data,target_length*sizeof(octet));
-						//Why this? Because if the block needs to be moved elsewhere realloc gives a pointer to the new position
-						if(data!=temp_pointer)
-							data = temp_pointer;
-					}
-					else
-					{
-						data = (octet *)calloc(target_length,sizeof(octet));
-					}
-				}
-			}
-			length = target_length;
-			memcpy(data, target_data, length);
-			return true;
-		}		
 	
-		/*!
-		* Allocate new space for fragmented data
-		* @param[in] serData Pointer to the structure to copy
-		* @return True if correct
-		*/
-		bool reserve_fragmented(SerializedPayload_t* serData)
-		{
-			length = serData->length;
-			max_size = serData->length;
-			encapsulation = serData->encapsulation;
-			data = (octet*)calloc(length, sizeof(octet));
-			return true;
-		}
+                /*!
+                 * Allocate new space for fragmented data
+                 * @param[in] serData Pointer to the structure to copy
+                 * @return True if correct
+                 */
+                bool reserve_fragmented(SerializedPayload_t* serData)
+                {
+                    length = serData->length;
+                    max_size = serData->length;
+                    encapsulation = serData->encapsulation;
+                    data = (octet*)calloc(length, sizeof(octet));
+                    return true;
+                }
 
                 //! Empty the payload
                 void empty()
@@ -166,16 +127,7 @@ namespace eprosima{
                     data = nullptr;
                 }
 
-                void reserve(size_t new_size)
-                {
-                    if (memoryMode == PREALLOCATED_MEMORY_MODE) {
-                        throw std::length_error("instance of SerializedPayload_t is not resizable");
-                    }
-                    return reserve_(new_size);
-                }
-
-                protected:
-                void reserve_(size_t new_size)
+                void reserve(uint32_t new_size)
                 {
                     if (new_size <= this->max_size) {
                         return;

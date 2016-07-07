@@ -26,8 +26,6 @@
 #include "InstanceHandle.h"
 #include <fastrtps/rtps/common/FragmentNumber.h>
 
-#include <fastrtps/rtps/resources/ResourceManagement.h>
-
 #include <vector>
 
 namespace eprosima
@@ -100,21 +98,17 @@ namespace eprosima
                 /**
                  * Constructor with payload size
                  * @param payload_size Serialized payload size
-                 * @param allow_resize If true, the payload may be resized dynamically.
                  */
                 // TODO Check pass uint32_t to serializedPayload that needs int16_t.
-                CacheChange_t(
-                    uint32_t payload_size,
-                    MemoryManagementPolicy_t memmode, 
-                    bool is_untyped = false)
-                :
+                CacheChange_t(uint32_t payload_size, bool is_untyped = false):
                     kind(ALIVE),
-                    serializedPayload(payload_size, memmode),
+                    serializedPayload(payload_size),
                     isRead(false),
                     is_untyped_(is_untyped),
                     dataFragments_(new std::vector<uint32_t>()),
                     fragment_size_(0)
-                {}
+                {
+                }
 
                 /*!
                  * Copy a different change into this one. All the elements are copied, included the data, allocating new memory.
@@ -138,10 +132,6 @@ namespace eprosima
                     return ret;
                 }
 
-		bool set_payload(octet *target_data,uint32_t target_length)
-		{
-			return serializedPayload.set_payload(target_data, target_length);
-		}
                 void copy_not_memcpy(CacheChange_t* ch_ptr)
                 {
                     kind = ch_ptr->kind;

@@ -20,10 +20,10 @@
 #ifndef HISTORYATTRIBUTES_H_
 #define HISTORYATTRIBUTES_H_
 
-#include <fastrtps/rtps/resources/ResourceManagement.h>
-#include <cstdint>
-
+#include "../resources/ResourceManagement.h"
 #include "../../fastrtps_dll.h"
+
+#include <cstdint>
 
 namespace eprosima{
 namespace fastrtps{
@@ -62,6 +62,7 @@ public:
 	int32_t initialReservedCaches;
 	//!Maximum number of reserved caches. Default value is 0 that indicates to keep reserving until something breaks.
 	int32_t maximumReservedCaches;
+	//!Memory management policy.
 	MemoryManagementPolicy_t memoryPolicy;
 };
 

@@ -22,9 +22,10 @@
 #ifndef CACHECHANGEPOOL_H_
 #define CACHECHANGEPOOL_H_
 
-#include <fastrtps/rtps/resources/ResourceManagement.h>
+#include "../resources/ResourceManagement.h"
 
 #include <vector>
+#include <functional>
 #include <cstdint>
 #include <cstddef>
 
@@ -50,12 +51,30 @@ public:
 	 * Constructor.
 	* @param pool_size The initial pool size
 	* @param payload_size The initial payload size associated with the pool.
-	* @param allow_payload_resize If true, allow the cache change payload to be resized.
 	* @param max_pool_size Maximum payload size. If set to 0 the pool will keep reserving until something breaks.
+	* @param memoryPolicy Memory management policy.
 	*/
-	CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size, MemoryManagementPolicy_t policy);
-	//!Reserve a Cache from the pool.
-	bool reserve_Cache(CacheChange_t** chan);
+	CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size, MemoryManagementPolicy_t memoryPolicy);
+
+	/*!
+	 * @brief Reserves a CacheChange from the pool.
+	 * @param chan Returned pointer to the reserved CacheChange.
+	 * @param calculateSizeFunc Function that returns the size of the data which will go into the CacheChange.
+	 * This function is executed depending on the memory management policy (DYNAMIC_RESERVE_MEMORY_MODE and
+	 * PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
+	 * @return True whether the CacheChange could be allocated. In other case returns false.
+	 */
+	bool reserve_Cache(CacheChange_t** chan, std::function<uint32_t()>& calculateSizeFunc);
+
+	/*!
+	 * @brief Reserves a CacheChange from the pool.
+	 * @param chan Returned pointer to the reserved CacheChange.
+	 * @param dataSize Size of the data which will go into the CacheChange if it is necessary (on memory management
+	 * policy DYNAMIC_RESERVE_MEMORY_MODE and PREALLOCATED_WITH_REALLOC_MEMORY_MODE). In other case this variable is not used.
+	 * @return True whether the CacheChange could be allocated. In other case returns false.
+	 */
+	bool reserve_Cache(CacheChange_t** chan, uint32_t dataSize);
+
 	//!Release a Cache back to the pool.
 	void release_Cache(CacheChange_t*);
 	//!Get the size of the cache vector; all of them (reserved and not reserved).
@@ -67,13 +86,12 @@ public:
 private:
 	uint32_t m_initial_payload_size;
 	uint32_t m_payload_size;
-	bool m_allow_payload_resize;
 	uint32_t m_pool_size;
 	uint32_t m_max_pool_size;
 	std::vector<CacheChange_t*> m_freeCaches;
 	std::vector<CacheChange_t*> m_allCaches;
 	bool allocateGroup(uint32_t pool_size);
-	CacheChange_t* allocateSingle();
+	CacheChange_t* allocateSingle(uint32_t dataSize);
 	boost::mutex* mp_mutex;
 	MemoryManagementPolicy_t memoryMode;
 };

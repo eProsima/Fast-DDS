@@ -48,19 +48,28 @@ protected:
 	RTPSWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
 	virtual ~RTPSWriter();
 public:
+
 	/**
 	 * Create a new change based with the provided changeKind.
 	 * @param changeKind The type of change.
 	 * @param handle InstanceHandle to assign.
 	 * @return Pointer to the CacheChange or nullptr if incorrect.
 	 */
-	RTPS_DllAPI CacheChange_t* new_change(ChangeKind_t changeKind, InstanceHandle_t handle = c_InstanceHandle_Unknown);
+    template<typename T>
+	RTPS_DllAPI CacheChange_t* new_change(T &data, ChangeKind_t changeKind, InstanceHandle_t handle = c_InstanceHandle_Unknown)
+    {
+        return new_change([data]() -> uint32_t {return T::getCdrSerializeSize();}, changeKind, handle);
+    }
+
+	RTPS_DllAPI CacheChange_t* new_change(std::function<uint32_t()> &dataCdrSerializedSize, ChangeKind_t changeKind, InstanceHandle_t handle = c_InstanceHandle_Unknown);
+
 	/**
 	 * Add a matched reader.
 	 * @param ratt Pointer to the ReaderProxyData object added.
 	 * @return True if added.
 	 */
 	RTPS_DllAPI virtual bool matched_reader_add(RemoteReaderAttributes& ratt) = 0;
+
 	/**
 	 * Remove a matched reader.
 	 * @param ratt Pointer to the object to remove.

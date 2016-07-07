@@ -22,7 +22,8 @@
 #include "../common/Time_t.h"
 #include "../common/Locator.h"
 #include "../flowcontrol/ThroughputController.h"
-#include <fastrtps/transport/TransportInterface.h>
+#include "../../transport/TransportInterface.h"
+
 #include <memory>
 
 namespace eprosima {

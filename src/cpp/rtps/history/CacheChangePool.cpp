@@ -24,6 +24,8 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
+#include <cassert>
+
 
 namespace eprosima {
 namespace fastrtps{
@@ -43,14 +45,14 @@ CacheChangePool::~CacheChangePool()
 	delete(mp_mutex);
 }
 
-CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size, MemoryManagementPolicy_t policy) : mp_mutex(new boost::mutex()), memoryMode(policy)
+CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size, MemoryManagementPolicy_t memoryPolicy) : mp_mutex(new boost::mutex()), memoryMode(memoryPolicy)
 {
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
 	const char* const METHOD_NAME = "CacheChangePool";
 	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with initial payload size: " << payload_size);
 	
 	//Common for all modes: Set the payload size (maximum allowed), size and size limit
-	m_payload_size = payload_size;	//TODO(SANTI) - Normalize the usage or m_payload_size, m_initial_payload_size and max_size among modes
+	m_payload_size = payload_size;
 	m_initial_payload_size = payload_size;
 	m_pool_size = 0;
 	if(max_pool_size > 0)
@@ -81,9 +83,20 @@ CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32
 	}
 }
 
-bool CacheChangePool::reserve_Cache(CacheChange_t** chan)
+bool CacheChangePool::reserve_Cache(CacheChange_t** chan, std::function<uint32_t()>& calculateSizeFunc)
+{
+    uint32_t dataSize = 0;
+
+    if(memoryMode != PREALLOCATED_MEMORY_MODE)
+        dataSize = calculateSizeFunc();
+
+    return reserve_Cache(chan, dataSize);
+}
+
+bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
 {
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
+
 	switch(memoryMode)
 	{
 		case PREALLOCATED_MEMORY_MODE:
@@ -97,8 +110,9 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan)
 			*chan = m_freeCaches.back();
 			m_freeCaches.erase(m_freeCaches.end()-1);
 			break;
+
 		case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
-			if(m_freeCaches.empy())
+			if(m_freeCaches.empty())
 			{
 				if (!allocateGroup((uint16_t)(ceil((float)m_pool_size / 10) + 10)))
 				{
@@ -107,11 +121,25 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan)
 			}
 			*chan = m_freeCaches.back();
 			m_freeCaches.erase(m_freeCaches.end()-1);
+
+            try
+            {
+                (*chan)->serializedPayload.reserve(dataSize);
+            }
+            catch(std::bad_alloc& ex)
+            {
+                delete(*chan);
+                *chan = nullptr;
+                return false;
+            }
+
 			break;
+
 		case DYNAMIC_RESERVE_MEMORY_MODE:
-			*chan = allocateSingle(); //Allocates a single, empty CacheChange. Allocated on Copy
+			*chan = allocateSingle(dataSize); //Allocates a single, empty CacheChange. Allocated on Copy
 			break;
 	}
+
 	return true;	
 }
 
@@ -172,11 +200,8 @@ bool CacheChangePool::allocateGroup(uint32_t group_size)
 {
 	const char* const METHOD_NAME = "allocateGroup";
 	// This method should only called from within PREALLOCATED_MEMORY_MODE
-	if(memoryMode == DYNAMIC_RESERVE_MEMORY_MODE)
-	{
-		logInfo(RTPS_UTILS,"Illegal call to allocateGroup. CacheChangePool is not in PREALLOCATED_MEMORY_MODE");
-		return false;
-	}
+	assert(memoryMode != DYNAMIC_RESERVE_MEMORY_MODE);
+
 	logInfo(RTPS_UTILS,"Allocating group of cache changes of size: "<< group_size);
 	bool added = false;
 	uint32_t reserved = 0;
@@ -195,7 +220,7 @@ bool CacheChangePool::allocateGroup(uint32_t group_size)
 	}
 	for(uint32_t i = 0;i<reserved;i++)
 	{
-			CacheChange_t* ch = new CacheChange_t(m_payload_size,memoryMode);
+			CacheChange_t* ch = new CacheChange_t(m_payload_size);
 			m_allCaches.push_back(ch);
 			m_freeCaches.push_back(ch);
 			++m_pool_size;
@@ -207,7 +232,7 @@ bool CacheChangePool::allocateGroup(uint32_t group_size)
 	return added;
 }
 
-CacheChange_t* CacheChangePool::allocateSingle()
+CacheChange_t* CacheChangePool::allocateSingle(uint32_t dataSize)
 {
 	/*
 	 *   In Dynamic Memory Mode CacheChanges are only allocated when they are needed.
@@ -225,27 +250,22 @@ CacheChange_t* CacheChangePool::allocateSingle()
 	CacheChange_t*ch = nullptr;
 
 	// This method should only be called from within DYNAMIC_RESERVE_MEMORY_MODE
-	if(memoryMode != DYNAMIC_RESERVE_MEMORY_MODE)
-	{
-		logInfo(RTPS_UTILS, "Illegal call to allocateSingle. ChacheChangePool is not in DYNAMIC_RESERVE_MEMORY_MODE");
-		return NULL;
-	}
+	assert(memoryMode == DYNAMIC_RESERVE_MEMORY_MODE);
+
 	if( (m_max_pool_size == 0) | (m_pool_size < m_max_pool_size) ){
 		++m_pool_size;
-		ch = new CacheChange_t(0,memoryMode);
-		//This can be done freely since this is only executed in Dynamic Mode
-		ch->serializedPayload.empty();
-		ch->serializedPayload.max_size = 0; //Indicates unlimited size 
+		ch = new CacheChange_t(dataSize);
 		m_allCaches.push_back(ch);
 		added = true;
 	}
+
 	if(!added)
 	{
 		logWarning(RTPS_HISTORY, "Maximum number of allowed reserved caches reached");
 		return NULL;
 	}
-		return ch;
 
+    return ch;
 }
 
 }
