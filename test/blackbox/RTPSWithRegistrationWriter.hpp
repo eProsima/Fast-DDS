@@ -155,7 +155,7 @@ class RTPSWithRegistrationWriter
     }
 
     /*** Function to change QoS ***/
-    RTPSWithRegistrationWriter& memoryPolicy(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryPolicy)
+    RTPSWithRegistrationWriter& memoryMode(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryPolicy)
     {
 	hattr_.memoryPolicy = memoryPolicy;
 	return *this;

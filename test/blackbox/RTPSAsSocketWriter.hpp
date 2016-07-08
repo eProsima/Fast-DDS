@@ -97,7 +97,8 @@ class RTPSAsSocketWriter
             {
                 CacheChange_t * ch = writer_->new_change([&]() -> uint32_t
                                 {
-                                   return 4 + magicword_.size() + 1 + type::getCdrSerializedSize(*it);
+                                   size_t current_alignment =  4 + magicword_.size() + 1;
+				   return (uint32_t)(current_alignment + type::getCdrSerializedSize(*it, current_alignment));
                                 }
                                 , ALIVE);
 

@@ -88,6 +88,9 @@ class ReqRepHelloWorldRequester
         virtual void configSubscriber(SubscriberAttributes &sattr, const std::string& suffix) = 0;
         virtual void configPublisher(PublisherAttributes &puattr, const std::string& suffix) = 0;
 
+    protected:
+	PublisherAttributes puattr;
+        SubscriberAttributes sattr;
     private:
 
         ReqRepHelloWorldRequester& operator=(const ReqRepHelloWorldRequester&)NON_COPYABLE_CXX11;
@@ -96,7 +99,7 @@ class ReqRepHelloWorldRequester
         uint16_t number_received_;
         Participant *participant_;
         Subscriber *reply_subscriber_;
-        Publisher *request_publisher_;
+	Publisher *request_publisher_;
         bool initialized_;
         std::mutex mutex_;
         std::condition_variable cv_;

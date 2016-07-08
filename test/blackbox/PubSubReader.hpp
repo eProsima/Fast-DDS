@@ -200,7 +200,12 @@ class PubSubReader
         }
 
         /*** Function to change QoS ***/
-        PubSubReader& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
+        PubSubReader& memoryMode(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryMode)
+	{
+	    subscriber_attr_.historyMemoryPolicy = memoryMode;
+	    return *this;
+	}
+	PubSubReader& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
         {
             subscriber_attr_.qos.m_reliability.kind = kind;
             return *this;
