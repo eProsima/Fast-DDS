@@ -96,14 +96,18 @@ class RTPSAsSocketWriter
 
             while(it != msgs.end())
             {
-                CacheChange_t * ch = writer_->new_change(*it,ALIVE);
+                CacheChange_t * ch = writer_->new_change([&]() -> uint32_t
+                                {
+                                   return 4 + magicword_.size() + 1 + type::getCdrSerializedSize(*it);
+                                }
+                                , ALIVE);
 
                 eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
                 eprosima::fastcdr::Cdr cdr(buffer);
 
-                //cdr << magicword_; //NOTE (SANTI)->Out of the scope ot *it, which is what the change has been initialized with
+                cdr << magicword_;
                 cdr << *it;
-                //ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
+                ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
 
                 history_->add_change(ch);
                 it = msgs.erase(it);
