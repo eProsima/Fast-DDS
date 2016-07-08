@@ -59,9 +59,11 @@ public:
 	/**
 	* Add a change comming from the Publisher.
 	* @param change Pointer to the change
+    * @param wparams Extra write parameters.
+    * @param wparams
 	* @return True if added.
 	*/
-	bool add_pub_change(CacheChange_t* change);
+	bool add_pub_change(CacheChange_t* change, WriteParams &wparams);
 
 	/**
 	* Remove all change from the associated history.
