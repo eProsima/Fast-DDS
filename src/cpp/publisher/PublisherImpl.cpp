@@ -98,7 +98,7 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
 		mp_type->getKey(data,&handle);
 	}
 
-	CacheChange_t* ch = mp_writer->new_change(mp_type->getCdrSerializedSizeProvider(data), changeKind,handle);
+	CacheChange_t* ch = mp_writer->new_change(mp_type->getSerializedSizeProvider(data), changeKind,handle);
 	if(ch != nullptr)
 	{
 		if(changeKind == ALIVE)

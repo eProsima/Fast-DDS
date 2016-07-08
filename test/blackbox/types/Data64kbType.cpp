@@ -55,7 +55,7 @@ bool Data64kbType::deserialize(SerializedPayload_t* payload, void* data) {
 	return true;
 }
 
-std::function<uint32_t()> Data64kbType::getCdrSerializedSizeProvider(void *data)
+std::function<uint32_t()> Data64kbType::getSerializedSizeProvider(void *data)
 {
     return [&]() -> uint32_t { return type::getCdrSerializedSize(*static_cast<Data64kb*>(data));};
 }
