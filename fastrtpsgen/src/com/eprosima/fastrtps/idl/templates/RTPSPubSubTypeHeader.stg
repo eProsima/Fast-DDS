@@ -76,10 +76,13 @@ struct_type(ctx, parent, struct) ::= <<
  */
 class $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType : public TopicDataType {
 public:
+        typedef $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$ type;
+
 	$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType();
 	virtual ~$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType();
 	bool serialize(void *data, SerializedPayload_t *payload);
 	bool deserialize(SerializedPayload_t *payload, void *data);
+        std::function<uint32_t()> getSerializedSizeProvider(void* data);
 	bool getKey(void *data, InstanceHandle_t *ihandle);
 	void* createData();
 	void deleteData(void * data);

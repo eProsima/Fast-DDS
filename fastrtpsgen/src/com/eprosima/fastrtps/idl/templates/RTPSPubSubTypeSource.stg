@@ -93,6 +93,10 @@ bool $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::deser
 	return true;
 }
 
+std::function<uint32_t()> $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::getSerializedSizeProvider(void* data) {
+    return [&]() -> uint32_t { return type::getCdrSerializedSize(*static_cast<$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$*>(data)); };
+}
+
 void* $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::createData() {
 	return (void*)new $if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$();
 }
