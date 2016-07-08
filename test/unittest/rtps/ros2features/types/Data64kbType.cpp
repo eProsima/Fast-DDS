@@ -39,23 +39,26 @@ Data64kbType::~Data64kbType() {
 
 bool Data64kbType::serialize(void *data, SerializedPayload_t *payload) {
 	Data64kb *p_type = (Data64kb*) data;
-	eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
-	eprosima::fastcdr::Cdr ser(fastbuffer,eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS); 	// Object that serializes the data.
-	payload->encapsulation = CDR_LE;  	//Select the correct endianess
+	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size); // Object that manages the raw buffer.
+	eprosima::fastcdr::Cdr ser(fastbuffer); 	// Object that serializes the data.
+        payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 	p_type->serialize(ser); 	// Serialize the object:
-    payload->length = (uint16_t)ser.getSerializedDataLength(); 	//Get the serialized length
+        payload->length = (uint32_t)ser.getSerializedDataLength(); 	//Get the serialized length
 	return true;
 }
 
 bool Data64kbType::deserialize(SerializedPayload_t* payload, void* data) {
 	Data64kb* p_type = (Data64kb*) data; 	//Convert DATA to pointer of your type
 	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); 	// Object that manages the raw buffer.
-	eprosima::fastcdr::Cdr::Endianness endian = payload->encapsulation == CDR_LE ? eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS : eprosima::fastcdr::Cdr::BIG_ENDIANNESS; 	//select the correct endianess
-	eprosima::fastcdr::Cdr deser(fastbuffer,endian); 	// Object that deserializes the data.
+	eprosima::fastcdr::Cdr deser(fastbuffer, payload->encapsulation == CDR_BE ? eprosima::fastcdr::Cdr::BIG_ENDIANNESS : eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS); 	// Object that deserializes the data.
 	p_type->deserialize(deser);	//Deserialize the object:
 	return true;
 }
 
+std::function<uint32_t()> Data64kbType::getSerializedSizeProvider(void *data)
+{
+    return [&]() -> uint32_t { return type::getCdrSerializedSize(*static_cast<Data64kb*>(data));};
+}
 void* Data64kbType::createData() {
 	return (void*)new Data64kb();
 }
