@@ -145,7 +145,7 @@ void print_non_received_messages(const std::list<T>& data, const std::function<v
 }
 /***** End auxiliary lambda function *****/
 
-TEST(BlackBox, RTPSAsNonReliableSocket)
+TEST(BlackBox, RTPSAsNonReliableSocket_Dynamic)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -176,7 +176,7 @@ TEST(BlackBox, RTPSAsNonReliableSocket)
     ASSERT_LE(data.size(), data_length - 2);
 }
 
-TEST(BlackBox, AsyncRTPSAsNonReliableSocket)
+TEST(BlackBox, AsyncRTPSAsNonReliableSocket_Dynamic)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -208,7 +208,7 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocket)
     ASSERT_LE(data.size(), data_length - 2);
 }
 
-TEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
+TEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl_Dynamic)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);

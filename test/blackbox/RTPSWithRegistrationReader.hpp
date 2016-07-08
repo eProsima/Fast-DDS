@@ -111,9 +111,8 @@ class RTPSWithRegistrationReader
             ASSERT_NE(participant_, nullptr);
 
             //Create readerhistory
-            eprosima::fastrtps::rtps::HistoryAttributes hattr;
-            hattr.payloadMaxSize = type_.m_typeSize;
-            history_ = new eprosima::fastrtps::rtps::ReaderHistory(hattr);
+            hattr_.payloadMaxSize = type_.m_typeSize;
+            history_ = new eprosima::fastrtps::rtps::ReaderHistory(hattr_);
             ASSERT_NE(history_, nullptr);
 
             //Create reader
@@ -212,7 +211,13 @@ class RTPSWithRegistrationReader
         }
 
         /*** Function to change QoS ***/
-        RTPSWithRegistrationReader& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
+        RTPSWithRegistrationReader& memoryPolicy(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryPolicy)
+	{
+		hattr_.memoryPolicy=memoryPolicy;
+		return *this;
+	}
+	
+	RTPSWithRegistrationReader& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
         {
             reader_attr_.endpoint.reliabilityKind = kind;
 
@@ -275,6 +280,7 @@ class RTPSWithRegistrationReader
         eprosima::fastrtps::TopicAttributes topic_attr_;
         eprosima::fastrtps::ReaderQos reader_qos_;
         eprosima::fastrtps::rtps::ReaderHistory* history_;
+	eprosima::fastrtps::rtps::HistoryAttributes hattr_;
         bool initialized_;
         std::list<type> total_msgs_;
         std::mutex mutex_;

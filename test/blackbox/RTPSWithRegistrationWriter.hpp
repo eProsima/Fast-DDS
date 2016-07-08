@@ -103,9 +103,8 @@ class RTPSWithRegistrationWriter
         ASSERT_NE(participant_, nullptr);
 
         //Create writerhistory
-        HistoryAttributes hattr;
-        hattr.payloadMaxSize = type_.m_typeSize;
-        history_ = new WriterHistory(hattr);
+        hattr_.payloadMaxSize = type_.m_typeSize;
+        history_ = new WriterHistory(hattr_);
 
         //Create writer
         writer_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(participant_, writer_attr_, history_, &listener_);
@@ -156,6 +155,13 @@ class RTPSWithRegistrationWriter
     }
 
     /*** Function to change QoS ***/
+    RTPSWithRegistrationWriter& memoryPolicy(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryPolicy)
+    {
+	hattr_.memoryPolicy = memoryPolicy;
+	return *this;
+    }
+
+
     RTPSWithRegistrationWriter& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
     {
         writer_attr_.endpoint.reliabilityKind = kind;
@@ -193,6 +199,7 @@ class RTPSWithRegistrationWriter
         eprosima::fastrtps::WriterQos writer_qos_;
         eprosima::fastrtps::TopicAttributes topic_attr_;
         eprosima::fastrtps::rtps::WriterHistory *history_;
+	eprosima::fastrtps::rtps::HistoryAttributes hattr_;
         bool initialized_;
         std::mutex mutex_;
         std::condition_variable cv_;
