@@ -35,12 +35,15 @@ using namespace eprosima::fastrtps;
  */
 class Data64kbType : public TopicDataType {
 public:
+    typedef Data64kb type;
+
 	Data64kbType();
 	virtual ~Data64kbType();
 	bool serialize(void *data, SerializedPayload_t *payload);
 	bool deserialize(SerializedPayload_t *payload, void *data);
 	bool getKey(void *data, InstanceHandle_t *ihandle);
 	void* createData();
+	std::function<uint32_t()> getSerializedSizeProvider(void *data);
 	void deleteData(void * data);
 	MD5 m_md5;
 	unsigned char* m_keyBuffer;
