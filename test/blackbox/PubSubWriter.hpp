@@ -166,6 +166,13 @@ class PubSubWriter
     }
 
     /*** Function to change QoS ***/
+    PubSubWriter& memoryMode(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryMode)
+	{
+	    publisher_attr_.historyMemoryPolicy = memoryMode;
+	    return *this;
+	}
+
+
     PubSubWriter& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
     {
         publisher_attr_.qos.m_reliability.kind = kind;

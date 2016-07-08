@@ -48,6 +48,11 @@ class ReqRepAsReliableHelloWorldReplier : public ReqRepHelloWorldReplier
 
             puattr.topic.topicName = t.str();
         }
+	ReqRepAsReliableHelloWorldReplier& memoryMode(eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryMode){
+	    sattr.historyMemoryPolicy=memoryMode;
+	    puattr.historyMemoryPolicy=memoryMode;
+	    return *this;
+	}
 };
 
 #endif // _TEST_BLACKBOX_REQREPASRELIABLEHELLOWORLDREPLIER_HPP_

@@ -55,7 +55,6 @@ void ReqRepHelloWorldRequester::init()
 	ASSERT_EQ(Domain::registerType(participant_,&type_), true);
 
 	//Create subscriber
-	SubscriberAttributes sattr;
 	sattr.topic.topicKind = NO_KEY;
 	sattr.topic.topicDataType = "HelloWorldType";
     configSubscriber(sattr, "Reply");
@@ -63,7 +62,6 @@ void ReqRepHelloWorldRequester::init()
     ASSERT_NE(reply_subscriber_, nullptr);
 
 	//Create publisher
-	PublisherAttributes puattr;
 	puattr.topic.topicKind = NO_KEY;
 	puattr.topic.topicDataType = "HelloWorldType";
     configPublisher(puattr, "Request");
