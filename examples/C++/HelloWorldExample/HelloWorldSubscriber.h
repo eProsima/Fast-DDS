@@ -20,7 +20,7 @@
 #ifndef HELLOWORLDSUBSCRIBER_H_
 #define HELLOWORLDSUBSCRIBER_H_
 
-#include "HelloWorldType.h"
+#include "HelloWorldPubSubTypes.h"
 
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
@@ -59,7 +59,7 @@ public:
 		uint32_t n_samples;
 	}m_listener;
 private:
-	HelloWorldType m_type;
+	HelloWorldPubSubType m_type;
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */

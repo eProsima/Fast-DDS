@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*************************************************************************
+/*! 
  * @file deadlinepayload.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -78,6 +78,18 @@ size_t HelloMsg::getMaxCdrSerializedSize(size_t current_alignment)
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 256 + 1;
+
+
+    return current_alignment - initial_alignment;
+}
+
+size_t HelloMsg::getCdrSerializedSize(const HelloMsg& data, size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+            
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.payload().size() + 1;
 
 
     return current_alignment - initial_alignment;

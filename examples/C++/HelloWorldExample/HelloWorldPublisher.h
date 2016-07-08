@@ -20,7 +20,7 @@
 #ifndef HELLOWORLDPUBLISHER_H_
 #define HELLOWORLDPUBLISHER_H_
 
-#include "HelloWorldType.h"
+#include "HelloWorldPubSubTypes.h"
 
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
@@ -51,7 +51,7 @@ private:
 		void onPublicationMatched(Publisher* pub,MatchingInfo& info);
 		int n_matched;
 	}m_listener;
-	HelloWorldType m_type;
+	HelloWorldPubSubType m_type;
 };
 
 

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*************************************************************************
+/*! 
  * @file deadlinepayloadPubSubTypes.cpp
  * This header file contains the implementation of the serialization functions.
  *
@@ -43,7 +43,7 @@ bool HelloMsgPubSubType::serialize(void *data, SerializedPayload_t *payload) {
 	eprosima::fastcdr::Cdr ser(fastbuffer); 	// Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 	p_type->serialize(ser); 	// Serialize the object:
-    payload->length = (uint16_t)ser.getSerializedDataLength(); 	//Get the serialized length
+    payload->length = (uint32_t)ser.getSerializedDataLength(); 	//Get the serialized length
 	return true;
 }
 
@@ -53,6 +53,10 @@ bool HelloMsgPubSubType::deserialize(SerializedPayload_t* payload, void* data) {
 	eprosima::fastcdr::Cdr deser(fastbuffer, payload->encapsulation == CDR_BE ? eprosima::fastcdr::Cdr::BIG_ENDIANNESS : eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS); 	// Object that deserializes the data.
 	p_type->deserialize(deser);	//Deserialize the object:
 	return true;
+}
+
+std::function<uint32_t()> HelloMsgPubSubType::getSerializedSizeProvider(void* data) {
+    return [&]() -> uint32_t { return type::getCdrSerializedSize(*static_cast<HelloMsg*>(data)); };
 }
 
 void* HelloMsgPubSubType::createData() {

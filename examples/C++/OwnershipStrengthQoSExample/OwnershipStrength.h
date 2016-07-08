@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*************************************************************************
+/*! 
  * @file OwnershipStrength.h
  * This header file contains the declaration of the described types in the IDL file.
  *
@@ -63,7 +63,7 @@ namespace eprosima
 
 /*!
  * @brief This class represents the structure ExampleMessage defined by the user in the IDL file.
- * @ingroup OWNERSHIPTEST
+ * @ingroup OWNERSHIPSTRENGTH
  */
 class ExampleMessage
 {
@@ -198,6 +198,14 @@ public:
      * @return Maximum serialized size.
      */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+
+    /*!
+     * @brief This function returns the serialized size of a data depending on the buffer alignment.
+     * @param data Data which is calculated its serialized size.
+     * @param current_alignment Buffer alignment.
+     * @return Serialized size.
+     */
+    eProsima_user_DllExport static size_t getCdrSerializedSize(const ExampleMessage& data, size_t current_alignment = 0);
 
 
     /*!
