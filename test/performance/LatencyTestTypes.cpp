@@ -43,6 +43,19 @@ bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
 	return true;
 }
 
+std::function<uint32_t()> LatencyDataType::getSerializedSizeProvider(void* data)
+{
+    return [&]() -> uint32_t
+    {
+        LatencyType *tdata = static_cast<LatencyType*>(data);
+	uint32_t size = 0;
+
+	size = sizeof(uint32_t) + sizeof(uint32_t) + tdata->data.size();
+
+	return size;
+    };
+}
+
 void* LatencyDataType::createData()
 {
 
@@ -70,6 +83,18 @@ bool TestCommandDataType::deserialize(SerializedPayload_t* payload,void * data)
 	 t->m_command = *(TESTCOMMAND*)payload->data;
 //	cout << "COMMAND: "<<t->m_command<< endl;
 	return true;
+}
+
+std::function<uint32_t()> TestCommandDataType::getSerializedSizeProvider(void*)
+{
+    return [&]() -> uint32_t
+    {
+	uint32_t size = 0;
+
+	size = sizeof(uint32_t);
+
+	return size;
+    };
 }
 
 void* TestCommandDataType::createData()
