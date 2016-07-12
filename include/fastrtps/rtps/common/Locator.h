@@ -271,12 +271,15 @@ public:
 	RTPS_DllAPI LocatorListIterator begin(){
 		return m_locators.begin();
 	}
+
 	RTPS_DllAPI LocatorListIterator end(){
 		return m_locators.end();
 	}
+
 	RTPS_DllAPI size_t size(){
 		return m_locators.size();
 	}
+
 	RTPS_DllAPI void clear(){ return m_locators.clear();}
 
 	RTPS_DllAPI void reserve(size_t num){ return m_locators.reserve(num);}
@@ -342,6 +345,12 @@ public:
 				return false;
 		}
 		return true;
+	}
+
+
+	RTPS_DllAPI void swap(LocatorList_t& locatorList)
+	{
+		this->m_locators.swap(locatorList.m_locators);
 	}
 
 	friend std::ostream& operator <<(std::ostream& output,const LocatorList_t& loc);

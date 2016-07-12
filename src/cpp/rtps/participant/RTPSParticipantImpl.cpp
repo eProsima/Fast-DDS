@@ -164,6 +164,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
       m_att.defaultMulticastLocatorList.push_back(loc2);
 		/* INSERT DEFAULT MULTICAST LOCATORS FOR THE PARTICIPANT */
 	}
+	else
+	{
+		// Normalize unicast locators.
+		m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
+	}
 
 	/*	
 		Since nothing guarantees the correct creation of the Resources on the Locators we have specified, and 
@@ -322,6 +327,10 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		return false;
 	}
 
+	// Normalize unicast locators
+	if (!param.endpoint.unicastLocatorList.empty())
+		m_network_Factory.NormalizeLocators(param.endpoint.unicastLocatorList);
+
 	RTPSWriter* SWriter = nullptr;
 	GUID_t guid(m_guid.guidPrefix,entId);
 	if(param.endpoint.reliabilityKind == BEST_EFFORT)
@@ -408,6 +417,11 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 		logError(RTPS_PARTICIPANT,"Multicast Locator List for Reader contains invalid Locator");
 		return false;
 	}
+
+	// Normalize unicast locators
+	if (!param.endpoint.unicastLocatorList.empty())
+		m_network_Factory.NormalizeLocators(param.endpoint.unicastLocatorList);
+
 	RTPSReader* SReader = nullptr;
 	GUID_t guid(m_guid.guidPrefix,entId);
 	if(param.endpoint.reliabilityKind == BEST_EFFORT)
