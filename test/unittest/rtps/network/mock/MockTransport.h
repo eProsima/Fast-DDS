@@ -55,6 +55,8 @@ public:
    virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
                         const Locator_t& localLocator, Locator_t& remoteLocator);
 
+   virtual LocatorList_t NormalizeLocator(const Locator_t& locator);
+
    //Helpers and message record
    typedef struct
    {

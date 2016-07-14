@@ -505,7 +505,9 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 
 	uint32_t numBits = (maxseqNum - sns->base + 1).low;
     assert((maxseqNum - sns->base + 1).high == 0);
-    assert(numBits < 256);
+
+    if(numBits >= 256)
+        numBits = 255;
 
 	addUInt32(msg, numBits);
 	uint8_t n_longs = (uint8_t)((numBits + 31) / 32);
@@ -519,9 +521,11 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 			it != sns->get_end(); ++it)
 	{
 		deltaN = (*it - sns->base).low;
-        assert((*it - sns->base).high == 0);
-        assert(deltaN < 256);
-		bitmap[(uint32_t)(deltaN/32)] = (bitmap[(uint32_t)(deltaN/32)] | (1<<(31-deltaN%32)));
+		assert((*it - sns->base).high == 0);
+		if(deltaN < 256)
+            bitmap[(uint32_t)(deltaN/32)] = (bitmap[(uint32_t)(deltaN/32)] | (1<<(31-deltaN%32)));
+        else
+            break;
 	}
 
 	for(uint32_t i= 0;i<n_longs;i++)

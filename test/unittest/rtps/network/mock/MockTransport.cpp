@@ -128,6 +128,13 @@ bool MockTransport::CloseInputChannel(const Locator_t& locator)
    return true;
 }
 
+LocatorList_t MockTransport::NormalizeLocator(const Locator_t& locator)
+{
+    LocatorList_t list;
+    list.push_back(locator);
+    return list;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

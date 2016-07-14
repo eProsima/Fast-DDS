@@ -229,8 +229,8 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-	PParam.rtps.sendSocketBufferSize = 655360;
-	PParam.rtps.listenSocketBufferSize = 5*655360;
+	PParam.rtps.sendSocketBufferSize = 5242882;
+	PParam.rtps.listenSocketBufferSize = 2097152;
 	PParam.rtps.setName("Participant_subscriber");
 	mp_par = Domain::createParticipant(PParam);
 	if(mp_par == nullptr)
@@ -273,8 +273,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
         Sparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
     }
 
-	Sparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	Sparam.topic.historyQos.depth = 1000;
+	Sparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	Sparam.topic.resourceLimitsQos.max_samples = 10000;
 	Sparam.topic.resourceLimitsQos.allocated_samples = 1100;
 
