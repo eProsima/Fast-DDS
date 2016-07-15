@@ -53,25 +53,7 @@ PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
 										mp_rtpsParticipant(nullptr)
 {
 
-	//Check validity of max_message_size
-	std::vector<uinte32_t> buffer_sizes;
-	if(p->getAttributes().useBuiltinTransports)
-		buffer_sizes.push_back(65000); //TODO(Santi): Change hard-coded value for a ref to the real default socket value)
-	for(auto it = p->getAttributes().userTransports.begin(); it != p->getAttributes.userTransport.end(); ++it)
-	{
-		//Cast through available transports and find the minimum	
-		if (auto concrete = dynamic_cast<UDPv4TransportDescriptor*> (it))
-			buffer_sizes.push_back(concrete->sendBufferSize);
-   		if (auto concrete = dynamic_cast<UDPv6TransportDescriptor*> (it))
-			buffer_sizes.push_back(concrete->sendBufferSize);
-   		if (auto concrete = dynamic_cast<test_UDPv4TransportDescriptor*> (it))
-	   		buffer_sizes.push_back(concrete->sendBufferSize);
-	}
-	//if ok
-	
-	uint32_t min_size = std::min_element(buffer_sizes.begin(), buffer_sizes.end());
-	// If att.maxmessagesize is over min_size or 0, default to min_size. Else, set it as the max.
-	maxmessagesize = ( (min_size < att.maxmessagesize) | (at.maxmessagesize == 0) ) ? min_size : att.maxmessagesize;
+	maxmessagesize = ( (p->getMinSocketBufferSize() < att.maxmessagesize) | (att.maxmessagesize == 0) ) ? p->getMinSocketBufferSize() : att.maxmessagesize;
 		
 }
 
@@ -141,7 +123,7 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
 		}
 
         // If it is big data, frament it.
-        uint32_t high_mark = (mp_participant->getAttributes().rtps.sendSocketBufferSize - RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE) > PAYLOAD_MAX_SIZE ? PAYLOAD_MAX_SIZE : (mp_participant->getAttributes().rtps.sendSocketBufferSize - RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE);
+        uint32_t high_mark = (mp_participant->getAttributes().rtps.sendSocketBufferSize - RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE) > maxmessagesize ? maxmessagesize : (mp_participant->getAttributes().rtps.sendSocketBufferSize - RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE);
 
         if(ch->serializedPayload.length > high_mark)
         {

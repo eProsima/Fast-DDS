@@ -135,7 +135,11 @@ public:
 	*/
 	bool newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t userId,
 		EndpointKind_t kind);
-
+	/** 
+	 * This method is used to get the size in bytes of the smallest active send socket buffer
+	 * @return size in bytes of the minimum size send socket buffer
+	 * */	
+	uint32_t getMinSocketBufferSize();
 private:
 	//!Participant Attributes
 	ParticipantAttributes m_att;
@@ -151,8 +155,12 @@ private:
 	t_v_SubscriberPairs m_subscribers;
 	//!TOpicDatType vector
 	std::vector<TopicDataType*> m_types;
+	//!Minimum socketbuffersize
+	uint32_t min_socket_buffer_size;
 
 	bool getRegisteredType(const char* typeName, TopicDataType** type);
+
+	uint32_t CalculateMinSocketBufferSize();
 
 	class MyRTPSParticipantListener : public RTPSParticipantListener
 	{

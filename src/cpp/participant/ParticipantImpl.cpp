@@ -36,6 +36,10 @@
 
 #include <fastrtps/rtps/RTPSDomain.h>
 
+#include <fastrtps/transport/UDPv4Transport.h>
+#include <fastrtps/transport/UDPv6Transport.h>
+#include <fastrtps/transport/test_UDPv4Transport.h>
+
 #include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps::rtps;
@@ -53,6 +57,7 @@ ParticipantImpl::ParticipantImpl(ParticipantAttributes& patt,Participant* pspart
 												m_rtps_listener(this)
 {
 	mp_participant->mp_impl = this;
+	min_socket_buffer_size = CalculateMinSocketBufferSize();
 }
 
 ParticipantImpl::~ParticipantImpl()
@@ -125,7 +130,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 		return nullptr;
 	}
     // Check the maximun size of the type and the asynchronous of the writer.
-    if(p_type->m_typeSize > PAYLOAD_MAX_SIZE && att.qos.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
+    if(p_type->m_typeSize > min_socket_buffer_size && att.qos.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
     {
 		logError(PARTICIPANT,"Big data has to be sent using an asynchronous publisher");
 		return nullptr;
@@ -403,6 +408,30 @@ bool ParticipantImpl::unregisterType(const char* typeName)
 	return retValue;
 }
 
+
+uint32_t ParticipantImpl::getMinSocketBufferSize()
+{
+	return min_socket_buffer_size;
+}
+
+uint32_t ParticipantImpl::CalculateMinSocketBufferSize()
+{
+	std::vector<uint32_t> buffer_sizes;
+	if(m_att.rtps.useBuiltinTransports)
+		buffer_sizes.push_back(65000); //TODO(Santi): Change hard-coded value for a ref to the real default socket value)
+	for(const auto& it: m_att.rtps.userTransports)
+	{
+		//Cast through available transports and find the minimum	
+		if (auto concrete = dynamic_cast<UDPv4TransportDescriptor*> ( it.get() ))
+			buffer_sizes.push_back(concrete->sendBufferSize - 536);
+   		if (auto concrete = dynamic_cast<UDPv6TransportDescriptor*> ( it.get() ))
+			buffer_sizes.push_back(concrete->sendBufferSize - 536);
+   		if (auto concrete = dynamic_cast<test_UDPv4TransportDescriptor*> (it.get() ))
+	   		buffer_sizes.push_back(concrete->sendBufferSize - 536);
+	}
+	
+	return *std::min_element(buffer_sizes.begin(), buffer_sizes.end());
+}
 
 void ParticipantImpl::MyRTPSParticipantListener::onRTPSParticipantDiscovery(RTPSParticipant* part,RTPSParticipantDiscoveryInfo rtpsinfo)
 {
