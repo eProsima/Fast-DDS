@@ -68,7 +68,10 @@ PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
 	   		buffer_sizes.push_back(concrete->sendBufferSize);
 	}
 	//if ok
-	maxmessagesize = std::min_element(buffer_sizes.begin(), buffer_sizes.end());
+	
+	uint32_t min_size = std::min_element(buffer_sizes.begin(), buffer_sizes.end());
+	// If att.maxmessagesize is over min_size or 0, default to min_size. Else, set it as the max.
+	maxmessagesize = ( (min_size < att.maxmessagesize) | (at.maxmessagesize == 0) ) ? min_size : att.maxmessagesize;
 		
 }
 
