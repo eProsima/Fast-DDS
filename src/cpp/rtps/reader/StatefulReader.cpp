@@ -469,17 +469,12 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
                 }
                 else
                 {
-                    //DO NOTHING; SOME CHANGES ARE MISSING
+                    //TODO NOTHING; SOME CHANGES ARE MISSING
                 }
+
+		mp_history->postSemaphore();
             }
-            //			if(a_change->sequenceNumber <= maxSeqNumAvailable)
-            //			{
-            //				if(getListener()!=nullptr) //TODO while del actual al maximo. y llamar al metodo, solo si no esta leido.
-            //				{
-            //					getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
-            //				}
-            //				mp_history->postSemaphore();
-            //			}
+
             return true;
         }
     }
