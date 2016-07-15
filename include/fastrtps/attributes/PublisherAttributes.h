@@ -43,6 +43,7 @@ public:
 	PublisherAttributes(){
 		m_userDefinedID = -1;
 		m_entityID = -1;
+		maxmessagesize = 0;
 	};
 	virtual ~PublisherAttributes(){};
 	//!Topic Attributes for the Publisher
@@ -57,9 +58,11 @@ public:
 	LocatorList_t multicastLocatorList;
 	//!Output locator list
 	LocatorList_t outLocatorList;
-   //!Terminal throughput controller
-   ThroughputControllerDescriptor throughputController;
+   	//!Terminal throughput controller
+   	ThroughputControllerDescriptor throughputController;
 
+	//!Maximum message size
+	uint32_t maxmessagesize;
 	/**
 	 * Get the user defined ID
 	 * @return User defined ID
