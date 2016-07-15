@@ -296,6 +296,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     pct << pid << "_SUB2PUB";
     Wparam.topic.topicName = pct.str();
 	Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	mp_commandpubli = Domain::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_CommandPubListener);
 	SubscriberAttributes Rparam;
 	Rparam.topic.topicDataType = "ThroughputCommand";
@@ -308,6 +309,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     sct << pid << "_PUB2SUB";
     Rparam.topic.topicName = sct.str();
 	Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 	Rparam.topic.historyQos.depth = 20;
 	Rparam.topic.resourceLimitsQos.max_samples = 20;
