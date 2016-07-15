@@ -204,6 +204,12 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& setFragmentSize(uint32_t size)
+    {
+	publisher_attr_.maxmessagesize = size;
+	return *this;
+    }
+
     PubSubWriter& add_user_transport_to_pparams(std::shared_ptr<TransportDescriptorInterface> userTransportDescriptor)
     {
         participant_attr_.rtps.userTransports.push_back(userTransportDescriptor);
