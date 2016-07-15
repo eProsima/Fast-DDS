@@ -659,6 +659,7 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 			//Push the new items into the ReceiverResource buffer
 			m_receiverResourcelist.push_back(ReceiverControlBlock(std::move(*it_buffer)));
 			//Create and init the MessageReceiver
+            //TODO(Ricardo) listenSocketBufferSize is too much size. Review
 			m_receiverResourcelist.back().mp_receiver = new MessageReceiver(m_att.listenSocketBufferSize);
       			m_receiverResourcelist.back().mp_receiver->init(m_att.listenSocketBufferSize);
 
