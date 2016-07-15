@@ -141,6 +141,8 @@ private:
 	PublisherHistory m_history;
 	//!PublisherListener
 	PublisherListener* mp_listener;
+	//!Maximum message length capture
+	uint32_t maxmessagesize;
 	//!Listener to capture the events of the Writer
 	class PublisherWriterListener: public WriterListener
 	{

@@ -53,6 +53,23 @@ PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
 										mp_rtpsParticipant(nullptr)
 {
 
+	//Check validity of max_message_size
+	std::vector<uinte32_t> buffer_sizes;
+	if(p->getAttributes().useBuiltinTransports)
+		buffer_sizes.push_back(65000); //TODO(Santi): Change hard-coded value for a ref to the real default socket value)
+	for(auto it = p->getAttributes().userTransports.begin(); it != p->getAttributes.userTransport.end(); ++it)
+	{
+		//Cast through available transports and find the minimum	
+		if (auto concrete = dynamic_cast<UDPv4TransportDescriptor*> (it))
+			buffer_sizes.push_back(concrete->sendBufferSize);
+   		if (auto concrete = dynamic_cast<UDPv6TransportDescriptor*> (it))
+			buffer_sizes.push_back(concrete->sendBufferSize);
+   		if (auto concrete = dynamic_cast<test_UDPv4TransportDescriptor*> (it))
+	   		buffer_sizes.push_back(concrete->sendBufferSize);
+	}
+	//if ok
+	maxmessagesize = std::min_element(buffer_sizes.begin(), buffer_sizes.end());
+		
 }
 
 PublisherImpl::~PublisherImpl()
