@@ -179,7 +179,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
         sct << boost::asio::ip::host_name() << "_";
     sct << pid << "_SUB2PUB";
     Rparam.topic.topicName = sct.str();
-	Rparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	mp_commandsub = Domain::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 	PublisherAttributes Wparam2;
 	Wparam2.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
@@ -194,7 +194,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
         pct << boost::asio::ip::host_name() << "_";
     pct << pid << "_PUB2SUB";
     Wparam2.topic.topicName = pct.str();
-	Wparam2.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	Wparam2.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	mp_commandpub = Domain::createPublisher(mp_par,Wparam2,(PublisherListener*)&this->m_CommandPubListener);
 
 	if(mp_datapub == nullptr || mp_commandsub == nullptr || mp_commandpub == nullptr)
