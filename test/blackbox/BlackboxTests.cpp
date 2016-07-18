@@ -1602,6 +1602,67 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kb_StaticMode)
     ASSERT_EQ(data.size(), 0);
 }
 
+TEST(BlackBox, AsyncPubSubWithFlowController64kb_DynamicMode)
+{
+	PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
+	PubSubWriter<Data64kbType> slowWriter(TEST_TOPIC_NAME);
+
+	reader.memoryMode(DYNAMIC_RESERVE_MEMORY_MODE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+	ASSERT_TRUE(reader.isInitialized());
+
+	uint32_t sizeToClear = 75000; //75kb
+	uint32_t periodInMs = 1000; //1sec
+	
+	slowWriter.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        heartbeat_period_seconds(0).
+        heartbeat_period_fraction(4294967 * 500).
+        add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs).
+	memoryMode(DYNAMIC_RESERVE_MEMORY_MODE).init();
+	ASSERT_TRUE(slowWriter.isInitialized());
+
+	slowWriter.waitDiscovery();
+	reader.waitDiscovery();
+
+	auto data = default_data64kb_data_generator(2);
+
+	reader.expected_data(data);
+	reader.startReception();
+	slowWriter.send(data);
+	data=reader.block(std::chrono::seconds(1));  // In 1 second only one of the messages has time to arrive
+	ASSERT_LE(data.size(),1);
+
+}
+
+TEST(BlackBox, AsyncPubSubWithFlowController64kb_StaticMode)
+{
+	PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
+	PubSubWriter<Data64kbType> slowWriter(TEST_TOPIC_NAME);
+
+	reader.memoryMode(PREALLOCATED_MEMORY_MODE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+	ASSERT_TRUE(reader.isInitialized());
+
+	uint32_t sizeToClear = 75000; //75kb
+	uint32_t periodInMs = 1000; //1sec
+	
+	slowWriter.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        heartbeat_period_seconds(0).
+        heartbeat_period_fraction(4294967 * 500).
+        add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs).
+	memoryMode(PREALLOCATED_MEMORY_MODE).init();
+	ASSERT_TRUE(slowWriter.isInitialized());
+
+	slowWriter.waitDiscovery();
+	reader.waitDiscovery();
+
+	auto data = default_data64kb_data_generator(2);
+
+	reader.expected_data(data);
+	reader.startReception();
+	slowWriter.send(data);
+	data=reader.block(std::chrono::seconds(1));  // In 1 second only one of the messages has time to arrive
+	ASSERT_LE(data.size(),1);
+
+}
 
 TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions_DynamicMode)
 {
