@@ -279,7 +279,7 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
 
     if(acceptMsgFrom(writerGUID, &pWP, false))
     {
-        boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*pWP->getMutex());
+        boost::unique_lock<boost::recursive_mutex> wpLock(*pWP->getMutex());
 
         if(pWP->m_lastHeartbeatCount < hbCount)
         {
@@ -303,6 +303,40 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
             if(livelinessFlag )//TODOG && WP->m_att->m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
                 pWP->assertLiveliness();
+            }
+
+            // Maybe now we have to notify user from new CacheChanges.
+            SequenceNumber_t maxSeqNumAvailable;
+            maxSeqNumAvailable = pWP->available_changes_max();
+            GUID_t proxGUID = pWP->m_att.guid;
+            wpLock.unlock();
+
+            CacheChange_t *min_change = nullptr, *ch_to_give = nullptr;
+            mp_history->get_min_change(&min_change);
+
+            if(min_change != nullptr)
+            {
+                SequenceNumber_t notifySeqNum;
+                notifySeqNum = min_change->sequenceNumber;
+                //TODO(Ricardo) Intentar optimizar esto para que no haya que recorrer la lista de cambios cada vez
+                while(notifySeqNum <= maxSeqNumAvailable)
+                {
+                    ch_to_give = nullptr;
+                    if(mp_history->get_change(notifySeqNum, proxGUID, &ch_to_give))
+                    {
+                        if(!ch_to_give->isRead)
+                        {
+                            lock.unlock();
+                            getListener()->onNewCacheChangeAdded((RTPSReader*)this,ch_to_give);
+                            lock.lock();
+                        }
+                    }
+                    ++notifySeqNum;
+
+                    wpLock.lock();
+                    maxSeqNumAvailable = pWP->available_changes_max();
+                    wpLock.unlock();
+                }
             }
         }
     }
@@ -435,17 +469,12 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
                 }
                 else
                 {
-                    //DO NOTHING; SOME CHANGES ARE MISSING
+                    //TODO NOTHING; SOME CHANGES ARE MISSING
                 }
+
+		mp_history->postSemaphore();
             }
-            //			if(a_change->sequenceNumber <= maxSeqNumAvailable)
-            //			{
-            //				if(getListener()!=nullptr) //TODO while del actual al maximo. y llamar al metodo, solo si no esta leido.
-            //				{
-            //					getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
-            //				}
-            //				mp_history->postSemaphore();
-            //			}
+
             return true;
         }
     }

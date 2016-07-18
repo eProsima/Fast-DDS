@@ -283,17 +283,15 @@ size_t StatefulWriter::send_any_unsent_changes()
         }
         else
         {
-            CacheChange_t* first;
-            CacheChange_t* last;
-            mp_history->get_min_change(&first);
-            mp_history->get_max_change(&last);
+            SequenceNumber_t firstSeq = this->get_seq_num_min();
+            SequenceNumber_t lastSeq = this->get_seq_num_max();
 
-            if(first->sequenceNumber > SequenceNumber_t(0,0) && last->sequenceNumber >= first->sequenceNumber)
+            if(firstSeq != c_SequenceNumber_Unknown && lastSeq != c_SequenceNumber_Unknown && lastSeq >= firstSeq)
             {
-                incrementHBCount();
+                this->incrementHBCount();
                 CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
                 RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
-                        c_EntityId_Unknown,m_guid.entityId,first->sequenceNumber,last->sequenceNumber,m_heartbeatCount,true,false);
+                        m_HBReaderEntityId, m_guid.entityId, firstSeq, lastSeq, m_heartbeatCount, true, false);
                 std::vector<Locator_t>::iterator lit;
                 for(lit = (*m_reader_iterator)->m_att.endpoint.unicastLocatorList.begin();lit!=(*m_reader_iterator)->m_att.endpoint.unicastLocatorList.end();++lit)
                     getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(Endpoint *)this,(*lit));
@@ -333,9 +331,6 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 	}
 
 	ReaderProxy* rp = new ReaderProxy(rdata,m_times,this);
-    //TODO Revisar porque se piensa que puede estar a null
-    if(mp_periodicHB==nullptr)
-        mp_periodicHB = new PeriodicHeartbeat(this,TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
 
     for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
             cit != mp_history->changesEnd(); ++cit)
@@ -347,22 +342,52 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
         else
             changeForReader.setRelevance(false);
 
-        if(m_pushMode)
-            changeForReader.setStatus(UNSENT);
-        else
-            changeForReader.setStatus(UNACKNOWLEDGED);
+        changeForReader.setStatus(UNACKNOWLEDGED);
         rp->addChange(changeForReader);
     }
 
-	matched_readers.push_back(rp);
-   // Invalidate persistent iterator
-   m_reader_iterator = matched_readers.begin();
+    // Send a initial heartbeat
+    SequenceNumber_t firstSeq = this->get_seq_num_min();
+    SequenceNumber_t lastSeq = this->get_seq_num_max();
+	bool activatePeriodicHB = false;
+	bool finalFlag = false;
 
-	logInfo(RTPS_WRITER, "Reader Proxy "<< rp->m_att.guid<< " added to " << this->m_guid.entityId << " with "
-			<<rp->m_att.endpoint.unicastLocatorList.size()<<"(u)-"
-			<<rp->m_att.endpoint.multicastLocatorList.size()<<"(m) locators");
+    if(firstSeq != c_SequenceNumber_Unknown && lastSeq != c_SequenceNumber_Unknown)
+    {
+		assert(firstSeq <= lastSeq);
+		activatePeriodicHB = true;
+    }
+	else
+	{
+		firstSeq = mp_history->next_sequence_number();
+		lastSeq = SequenceNumber_t(0, 0);
+		finalFlag = true;
+	}
 
-	return true;
+	this->incrementHBCount();
+	CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
+	RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg, m_guid.guidPrefix, rp->m_att.guid.guidPrefix,
+		rp->m_att.guid.entityId, m_guid.entityId,
+		firstSeq, lastSeq, m_heartbeatCount, finalFlag, false);
+	logInfo(RTPS_WRITER, m_guid.entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq << ")");
+	for (auto lit = rp->m_att.endpoint.multicastLocatorList.begin(); lit != rp->m_att.endpoint.multicastLocatorList.end(); ++lit)
+		getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg, (Endpoint *)this, (*lit));
+	for (auto lit = rp->m_att.endpoint.unicastLocatorList.begin(); lit != rp->m_att.endpoint.unicastLocatorList.end(); ++lit)
+		getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg, (Endpoint *)this, (*lit));
+
+	if(activatePeriodicHB)
+		this->mp_periodicHB->restart_timer();
+
+
+    matched_readers.push_back(rp);
+    // Invalidate persistent iterator
+    m_reader_iterator = matched_readers.begin();
+
+    logInfo(RTPS_WRITER, "Reader Proxy "<< rp->m_att.guid<< " added to " << this->m_guid.entityId << " with "
+            <<rp->m_att.endpoint.unicastLocatorList.size()<<"(u)-"
+            <<rp->m_att.endpoint.multicastLocatorList.size()<<"(m) locators");
+
+    return true;
 }
 
 bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
@@ -600,4 +625,9 @@ void StatefulWriter::updateTimes(WriterTimes& times)
 void StatefulWriter::add_flow_controller(std::unique_ptr<FlowController> controller)
 {
    m_controllers.push_back(std::move(controller));
+}
+
+SequenceNumber_t StatefulWriter::next_sequence_number() const
+{
+	return mp_history->next_sequence_number();
 }

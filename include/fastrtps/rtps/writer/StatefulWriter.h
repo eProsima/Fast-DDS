@@ -22,6 +22,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "RTPSWriter.h"
+#include "timedevent/PeriodicHeartbeat.h"
 
 namespace boost
 {
@@ -36,8 +37,6 @@ namespace eprosima
     {
         namespace rtps
         {
-
-            class PeriodicHeartbeat;
             class ReaderProxy;
 
             /**
@@ -182,6 +181,8 @@ namespace eprosima
                 void updateTimes(WriterTimes& times);
 
                 void add_flow_controller(std::unique_ptr<FlowController> controller);
+
+				SequenceNumber_t next_sequence_number() const;
 
                 private:
                 std::vector<std::unique_ptr<FlowController> > m_controllers;
