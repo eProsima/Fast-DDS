@@ -349,22 +349,35 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     // Send a initial heartbeat
     SequenceNumber_t firstSeq = this->get_seq_num_min();
     SequenceNumber_t lastSeq = this->get_seq_num_max();
+	bool activatePeriodicHB = false;
+	bool finalFlag = false;
 
-    if(firstSeq != c_SequenceNumber_Unknown && lastSeq != c_SequenceNumber_Unknown && lastSeq >= firstSeq)
+    if(firstSeq != c_SequenceNumber_Unknown && lastSeq != c_SequenceNumber_Unknown)
     {
-        this->incrementHBCount();
-        CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
-        RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg, m_guid.guidPrefix, rp->m_att.guid.guidPrefix,
-                rp->m_att.guid.entityId, m_guid.entityId,
-                firstSeq, lastSeq, m_heartbeatCount,false,false);
-        logInfo(RTPS_WRITER, m_guid.entityId << " Sending Heartbeat (" << firstSeq<< " - " << lastSeq <<")" );
-        for(auto lit = rp->m_att.endpoint.multicastLocatorList.begin(); lit != rp->m_att.endpoint.multicastLocatorList.end(); ++lit)
-            getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg, (Endpoint *)this, (*lit));
-        for(auto lit = rp->m_att.endpoint.unicastLocatorList.begin(); lit != rp->m_att.endpoint.unicastLocatorList.end(); ++lit)
-            getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg, (Endpoint *)this, (*lit));
-
-        this->mp_periodicHB->restart_timer();
+		assert(firstSeq <= lastSeq);
+		activatePeriodicHB = true;
     }
+	else
+	{
+		firstSeq = mp_history->next_sequence_number();
+		lastSeq = SequenceNumber_t(0, 0);
+		finalFlag = true;
+	}
+
+	this->incrementHBCount();
+	CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
+	RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg, m_guid.guidPrefix, rp->m_att.guid.guidPrefix,
+		rp->m_att.guid.entityId, m_guid.entityId,
+		firstSeq, lastSeq, m_heartbeatCount, finalFlag, false);
+	logInfo(RTPS_WRITER, m_guid.entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq << ")");
+	for (auto lit = rp->m_att.endpoint.multicastLocatorList.begin(); lit != rp->m_att.endpoint.multicastLocatorList.end(); ++lit)
+		getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg, (Endpoint *)this, (*lit));
+	for (auto lit = rp->m_att.endpoint.unicastLocatorList.begin(); lit != rp->m_att.endpoint.unicastLocatorList.end(); ++lit)
+		getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg, (Endpoint *)this, (*lit));
+
+	if(activatePeriodicHB)
+		this->mp_periodicHB->restart_timer();
+
 
     matched_readers.push_back(rp);
     // Invalidate persistent iterator
@@ -612,4 +625,9 @@ void StatefulWriter::updateTimes(WriterTimes& times)
 void StatefulWriter::add_flow_controller(std::unique_ptr<FlowController> controller)
 {
    m_controllers.push_back(std::move(controller));
+}
+
+SequenceNumber_t StatefulWriter::next_sequence_number() const
+{
+	return mp_history->next_sequence_number();
 }

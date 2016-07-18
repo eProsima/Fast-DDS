@@ -65,6 +65,9 @@ public:
 	 * @return True if correctly removed.
 	 */
 	RTPS_DllAPI bool remove_min_change();
+
+	RTPS_DllAPI SequenceNumber_t next_sequence_number() const { return m_lastCacheChangeSeqNum + 1; }
+
 protected:
 	//!Last CacheChange Sequence Number added to the History.
 	SequenceNumber_t m_lastCacheChangeSeqNum;

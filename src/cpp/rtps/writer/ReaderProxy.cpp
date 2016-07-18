@@ -36,7 +36,7 @@ using namespace eprosima::fastrtps::rtps;
 static const char* const CLASS_NAME = "ReaderProxy";
 
 ReaderProxy::ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW) :
-				m_att(rdata), mp_SFW(SW), m_isRequestedChangesEmpty(true),
+				m_att(rdata), mp_SFW(SW),
 				mp_nackResponse(nullptr), mp_nackSupression(nullptr), m_lastAcknackCount(0),
 				mp_mutex(new boost::recursive_mutex()), lastNackfragCount_(0)
 {
@@ -127,6 +127,7 @@ bool ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
 bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet)
 {
 	const char* const METHOD_NAME = "requested_changes_set";
+	bool isSomeoneWasSetRequested = false;
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
 	for(std::vector<SequenceNumber_t>::iterator sit=seqNumSet.begin();sit!=seqNumSet.end();++sit)
@@ -143,15 +144,16 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
 
             m_changesForReader.insert(hint, newch);
 
-            m_isRequestedChangesEmpty = false;
+			isSomeoneWasSetRequested = true;
         }
 	}
 
-	if(!m_isRequestedChangesEmpty)
+	if(isSomeoneWasSetRequested)
 	{
 		logInfo(RTPS_WRITER,"Requested Changes: " << seqNumSet);
 	}
-	return true;
+
+	return isSomeoneWasSetRequested;
 }
 
 

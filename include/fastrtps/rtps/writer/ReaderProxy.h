@@ -97,7 +97,7 @@ namespace eprosima
                 /**
                  * Mark all changes in the vector as requested.
                  * @param seqNumSet Vector of sequenceNumbers
-                 * @return True if correct.
+                 * @return False if any change was set REQUESTED.
                  */
                 bool requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet);
 
@@ -151,9 +151,6 @@ namespace eprosima
 
                 //!Pointer to the associated StatefulWriter.
                 StatefulWriter* mp_SFW;
-
-                //!Tells whether the requested changes list is empty
-                bool m_isRequestedChangesEmpty;
 
                 /**
                  * Return the minimum change in a vector of CacheChange_t.
