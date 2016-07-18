@@ -87,7 +87,7 @@ Locator_t RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t loc){
 RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam,
 		const GuidPrefix_t& guidP,
 		RTPSParticipant* par,
-		RTPSParticipantListener* plisten):	m_guid(guidP,c_EntityId_RTPSParticipant),
+		RTPSParticipantListener* plisten):	m_att(PParam), m_guid(guidP,c_EntityId_RTPSParticipant),
 				mp_event_thr(nullptr),
 				mp_builtinProtocols(nullptr),
 				mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
@@ -114,7 +114,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	const char* const METHOD_NAME = "RTPSParticipantImpl";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	mp_userParticipant->mp_impl = this;
-	m_att = PParam;
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
 	mp_event_thr = new ResourceEvent();
