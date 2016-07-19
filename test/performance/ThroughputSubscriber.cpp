@@ -160,26 +160,17 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
             case (TEST_ENDS):{
                                  m_up.t_end_ = std::chrono::steady_clock::now();
                                  m_up.m_DataSubListener.saveNumbers();
-                                 cout << "TEST ends, sending results"<<endl;
-                                 ThroughputCommandType comm;
-                                 comm.m_command = TEST_RESULTS;
-                                 comm.m_demand = m_up.m_demand;
-                                 comm.m_size = m_up.m_datasize+4+4;
-                                 comm.m_lastrecsample = m_up.m_DataSubListener.saved_lastseqnum;
-                                 comm.m_lostsamples = m_up.m_DataSubListener.saved_lostsamples;
-                                 comm.m_totaltime = boost::numeric_cast<uint64_t>((std::chrono::duration<double, std::micro>(m_up.t_end_ - m_up.t_start_) - m_up.t_overhead_).count());
-                                 cout << "Last Received Sample: " << comm.m_lastrecsample << endl;
-                                 cout << "Lost Samples: " << comm.m_lostsamples << endl;
-                                 cout << "Test of size "<<comm.m_size << " and demand "<<comm.m_demand << " ends."<<endl; 
-                                 //cout << "SEND COMMAND: "<< comm.m_command << endl;
-                                 //cout << "writecall "<< ++writecalls << endl;
-                                 m_up.mp_commandpubli->write(&comm);
+                                 cout << "TEST ends" << endl;
+                                 std::unique_lock<std::mutex> lock(m_up.mutex_);
+                                 m_up.stop_count_ = 1;
+                                 lock.unlock();
+                                 m_up.stop_cond_.notify_one();
                                  break;
                              }
             case (ALL_STOPS):
                              {
                                  std::unique_lock<std::mutex> lock(m_up.mutex_);
-                                 ++m_up.stop_count_;
+                                 m_up.stop_count_ = 2;
                                  lock.unlock();
                                  m_up.stop_cond_.notify_one();
                              }
@@ -333,8 +324,35 @@ void ThroughputSubscriber::run()
     while(disc_count_ != 3) disc_cond_.wait(lock);
 	cout << "Discovery complete"<<endl;
 	//printLabelsSubscriber();
-    if(stop_count_ == 0)
+    while (stop_count_ != 2)
+    {
         stop_cond_.wait(lock);
+
+        if (stop_count_ == 1)
+        {
+            cout << "Waiting clean state" << endl;
+            while (!mp_datasub->isInCleanState())
+            {
+                eClock::my_sleep(50);
+            }
+            cout << "Sending results" << endl;
+            ThroughputCommandType comm;
+            comm.m_command = TEST_RESULTS;
+            comm.m_demand = m_demand;
+            comm.m_size = m_datasize + 4 + 4;
+            comm.m_lastrecsample = m_DataSubListener.saved_lastseqnum;
+            comm.m_lostsamples = m_DataSubListener.saved_lostsamples;
+            comm.m_totaltime = boost::numeric_cast<uint64_t>((std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count());
+            cout << "Last Received Sample: " << comm.m_lastrecsample << endl;
+            cout << "Lost Samples: " << comm.m_lostsamples << endl;
+            cout << "Test of size " << comm.m_size << " and demand " << comm.m_demand << " ends." << endl;
+            //cout << "SEND COMMAND: "<< comm.m_command << endl;
+            //cout << "writecall "<< ++writecalls << endl;
+            mp_commandpubli->write(&comm);
+
+            stop_count_ = 0;
+        }
+    }
 	return;
 
 }

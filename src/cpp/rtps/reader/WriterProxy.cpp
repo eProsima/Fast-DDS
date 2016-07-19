@@ -445,3 +445,9 @@ size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seqNum
 
     return returnedValue;
 }
+
+size_t WriterProxy::numberOfChangeFromWriter() const
+{
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    return m_changesFromW.size();
+}

@@ -134,7 +134,7 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
 	{
         auto chit = m_changesForReader.find(ChangeForReader_t(*sit));
 
-        if(chit != m_changesForReader.end())
+        if(chit != m_changesForReader.end() && chit->isValid())
         {
             ChangeForReader_t newch(*chit);
             newch.setStatus(REQUESTED);
@@ -266,27 +266,29 @@ void ReaderProxy::setNotValid(const CacheChange_t* change)
 
     if(chit == m_changesForReader.begin())
     {
-        m_changesForReader.erase(chit);
-        cleanup();
+		// if it is the first element, set state to unacknowledge because from now reader has to confirm
+		// it will not be expecting it.
+		ChangeForReader_t newch(*chit);
+		newch.setStatus(UNACKNOWLEDGED);
+		newch.notValid();
+
+		auto hint = m_changesForReader.erase(chit);
+
+		m_changesForReader.insert(hint, newch);
     }
     else
     {
+		// In case its state is not ACKNOWLEDGED, set it to UNACKNOWLEDGE because from now reader has to confirm
+		// it will not be expecting it.
         ChangeForReader_t newch(*chit);
+		if (chit->getStatus() != ACKNOWLEDGED)
+			newch.setStatus(UNACKNOWLEDGED);
         newch.notValid();
 
         auto hint = m_changesForReader.erase(chit);
 
         m_changesForReader.insert(hint, newch);
     }
-}
-
-void ReaderProxy::cleanup()
-{
-    auto chit = m_changesForReader.begin();
-
-    while(chit != m_changesForReader.end() &&
-            (!chit->isValid() || chit->getStatus() == ACKNOWLEDGED))
-            chit = m_changesForReader.erase(chit);
 }
 
 bool ReaderProxy::thereIsUnacknowledged() const

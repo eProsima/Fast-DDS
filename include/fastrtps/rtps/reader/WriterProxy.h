@@ -152,6 +152,12 @@ namespace eprosima
                      */
                     inline boost::recursive_mutex* getMutex(){return mp_mutex;};
 
+                    /*!
+                     * @brief Returns number of ChangeFromWriter_t managed currently by the WriterProxy.
+                     * @return Number of ChangeFromWriter_t managed currently by the WriterProxy.
+                    */
+                    size_t numberOfChangeFromWriter() const;
+
                 private:
 
                     /*!

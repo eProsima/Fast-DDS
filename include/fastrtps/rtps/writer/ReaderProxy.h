@@ -130,9 +130,6 @@ namespace eprosima
 
                 void setNotValid(const CacheChange_t* change);
 
-                // Not thread-safe
-                void cleanup();
-
                 /*!
                  * @brief Returns there is some UNACKNOWLEDGED change.
                  * @return There is some UNACKNOWLEDGED change.
