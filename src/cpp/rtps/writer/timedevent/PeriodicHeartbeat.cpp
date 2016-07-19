@@ -63,7 +63,6 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
 	{
 		SequenceNumber_t firstSeq, lastSeq;
 		Count_t heartbeatCount = 0;
-		bool finalFlag = true;
 		LocatorList_t locList;
 		bool unacked_changes = false;
 		{//BEGIN PROTECTION
@@ -82,34 +81,38 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
 				locList.push_back((*it)->m_att.endpoint.multicastLocatorList);
 			}
 
-			firstSeq = mp_SFW->get_seq_num_min();
-			lastSeq = mp_SFW->get_seq_num_max();
-
-			if (firstSeq != c_SequenceNumber_Unknown && lastSeq != c_SequenceNumber_Unknown)
+			if (unacked_changes)
 			{
-				assert(firstSeq <= lastSeq);
-				finalFlag = false;
-			}
-			else
-			{
-				firstSeq = mp_SFW->next_sequence_number();
-				lastSeq = SequenceNumber_t(0, 0);
-			}
+				firstSeq = mp_SFW->get_seq_num_min();
+				lastSeq = mp_SFW->get_seq_num_max();
 
-			mp_SFW->incrementHBCount();
-			heartbeatCount = mp_SFW->getHeartbeatCount();
+				if (firstSeq == c_SequenceNumber_Unknown || lastSeq == c_SequenceNumber_Unknown)
+				{
+					firstSeq = mp_SFW->next_sequence_number();
+					lastSeq = SequenceNumber_t(0, 0);
+				}
+				else
+				{
+					(void)firstSeq;
+					assert(firstSeq <= lastSeq);
+				}
+
+				mp_SFW->incrementHBCount();
+				heartbeatCount = mp_SFW->getHeartbeatCount();
+			}
 		}
 
-		CDRMessage::initCDRMsg(&m_periodic_hb_msg);
-		RTPSMessageCreator::addMessageHeartbeat(&m_periodic_hb_msg, mp_SFW->getGuid().guidPrefix,
-			mp_SFW->getHBReaderEntityId(), mp_SFW->getGuid().entityId,
-			firstSeq, lastSeq, heartbeatCount, finalFlag, false);
-		logInfo(RTPS_WRITER,mp_SFW->getGuid().entityId << " Sending Heartbeat ("<<firstSeq<< " - " << lastSeq<<")" );
-		for (std::vector<Locator_t>::iterator lit = locList.begin(); lit != locList.end(); ++lit)
-			mp_SFW->getRTPSParticipant()->sendSync(&m_periodic_hb_msg,(Endpoint *)mp_SFW , (*lit));
-
-		if(unacked_changes)
+		if (unacked_changes)
 		{
+			CDRMessage::initCDRMsg(&m_periodic_hb_msg);
+			// FinalFlag is always false because this class is used only by StatefulWriter in Reliable.
+			RTPSMessageCreator::addMessageHeartbeat(&m_periodic_hb_msg, mp_SFW->getGuid().guidPrefix,
+				mp_SFW->getHBReaderEntityId(), mp_SFW->getGuid().entityId,
+				firstSeq, lastSeq, heartbeatCount, false, false);
+			logInfo(RTPS_WRITER,mp_SFW->getGuid().entityId << " Sending Heartbeat ("<<firstSeq<< " - " << lastSeq<<")" );
+			for (std::vector<Locator_t>::iterator lit = locList.begin(); lit != locList.end(); ++lit)
+				mp_SFW->getRTPSParticipant()->sendSync(&m_periodic_hb_msg,(Endpoint *)mp_SFW , (*lit));
+		
 			//Reset TIMER
 			this->restart_timer();
 		}

@@ -638,3 +638,20 @@ bool StatefulReader::updateTimes(ReaderTimes& ti)
     }
     return true;
 }
+
+bool StatefulReader::isInCleanState() const
+{
+    bool cleanState = true;
+    boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+
+    for (WriterProxy* wp : matched_writers)
+    {
+        if (wp->numberOfChangeFromWriter() != 0)
+        {
+            cleanState = false;
+            break;
+        }
+    }
+
+    return cleanState;
+}

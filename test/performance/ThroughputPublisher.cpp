@@ -323,6 +323,8 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
 	//cout << "SEND COMMAND "<< command.m_command << endl;
 	eClock::my_sleep(100);
 	mp_commandpub->write((void*)&command);
+	eClock::my_sleep(100);
+	mp_datapub->removeAllChange();
 	mp_commandsub->waitForUnreadMessage();
 	if(mp_commandsub->takeNextData((void*)&command,&info))
 	{
@@ -359,7 +361,6 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
 
 			printResults(result);
 			mp_commandpub->removeAllChange(&aux);
-			mp_datapub->removeAllChange();
 			return true;
 		}
 		else
