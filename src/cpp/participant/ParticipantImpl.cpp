@@ -129,6 +129,15 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 		logError(PARTICIPANT,"Keyed Topic needs getKey function");
 		return nullptr;
 	}
+    // Check that maximum packet size is below the fragment sizei(s)
+    if( (att.maxmessagesize > m_att.rtps.throughputController.size)  | (att.maxmessagesize > m_att.rtps.throughputController.size))
+    {
+	logError(PARTICIPANT,"The throughput controller size field must be higher than the maximun packet size, otherwise fragments can never be sent");
+	return nullptr;
+
+    }
+
+	
     // Check the maximun size of the type and the asynchronous of the writer.
     if(p_type->m_typeSize > min_socket_buffer_size && att.qos.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
     {

@@ -938,8 +938,6 @@ TEST(BlackBox, FragmentSizeTest)
 	uint32_t periodInMs = 1000;
 	writer.add_throughput_controller_descriptor_to_pparams(size, periodInMs);
 
-   // To simulate lossy conditions, we are going to remove the default
-   // bultin transport, and instead use a lossy shim layer variant.
     auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
     testTransport->sendBufferSize = 65536;
     testTransport->receiveBufferSize = 65536;
@@ -970,12 +968,23 @@ TEST(BlackBox, FragmentSizeTest)
     // Block reader until reception finished or timeout.
     data = reader.block(std::chrono::seconds(6));
 
-    ASSERT_EQ(data.size(), 7);
+    ASSERT_GE(data.size(),5);
+    ASSERT_LE(data.size(),9);
 
 }
 
+TEST(BlackBox, FragmentFailure)
+{
+	PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
+	uint32_t size = 10000;
+	uint32_t periodInMs = 1000;
+	writer.add_throughput_controller_descriptor_to_pparams(size, periodInMs);
+	writer.setFragmentSize(25000); //higher than the thoughput controller size
+	writer.init();
+	ASSERT_FALSE(writer.isInitialized());
 
+}
 // Test created to check bug #1568 (Github #34)
 TEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
 {

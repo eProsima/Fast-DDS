@@ -128,6 +128,7 @@ Participant* Domain::createParticipant(ParticipantAttributes& att,ParticipantLis
 	t_p_Participant pubsubpair;
 	pubsubpair.first = pubsubpar;
 	pubsubpair.second = pspartimpl;
+	
 	m_participants.push_back(pubsubpair);
 	return pubsubpar;
 }
