@@ -116,7 +116,6 @@ Participant* Domain::createParticipant(ParticipantAttributes& att,ParticipantLis
 
 	Participant* pubsubpar = new Participant();
 	ParticipantImpl* pspartimpl = new ParticipantImpl(att,pubsubpar,listen);
-
 	RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps,&pspartimpl->m_rtps_listener);
 
 	if(part == nullptr)
@@ -124,6 +123,7 @@ Participant* Domain::createParticipant(ParticipantAttributes& att,ParticipantLis
 		logError(PARTICIPANT,"Problem creating RTPSParticipant");
 		return nullptr;
 	}
+
 	pspartimpl->mp_rtpsParticipant = part;
 	t_p_Participant pubsubpair;
 	pubsubpair.first = pubsubpar;

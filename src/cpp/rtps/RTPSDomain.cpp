@@ -24,6 +24,10 @@
 
 #include <fastrtps/log/Log.h>
 
+#include <fastrtps/transport/UDPv4Transport.h>
+#include <fastrtps/transport/UDPv6Transport.h>
+#include <fastrtps/transport/test_UDPv4Transport.h>
+
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/eClock.h>
 
@@ -105,6 +109,34 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
 		logError(RTPS_PARTICIPANT,"Default Multicast Locator List contains invalid Locator");
 		return nullptr;
 	}
+
+	//Check compatible configuration
+	std::vector<uint32_t> socket_buffer_sizes;
+	if(PParam.useBuiltinTransports)
+		socket_buffer_sizes.push_back(PParam.sendSocketBufferSize);
+	for(const auto& it : PParam.userTransports)
+	{
+		//Cast through available transports and find the minimum	
+		if (auto concrete = dynamic_cast<UDPv4TransportDescriptor*> ( it.get() ))
+			socket_buffer_sizes.push_back(concrete->sendBufferSize - 536);
+  		if (auto concrete = dynamic_cast<UDPv6TransportDescriptor*> ( it.get() ))
+			socket_buffer_sizes.push_back(concrete->sendBufferSize - 536);
+		if (auto concrete = dynamic_cast<test_UDPv4TransportDescriptor*> (it.get() ))
+   			socket_buffer_sizes.push_back(concrete->sendBufferSize - 536);
+	}
+
+	uint32_t max_safe_message_size = *std::min_element(socket_buffer_sizes.begin(), socket_buffer_sizes.end());
+	if(PParam.maxmessagesize == 0)
+	{
+		PParam.maxmessagesize = max_safe_message_size;
+	}else{
+		if(max_safe_message_size > PParam.maxmessagesize)
+		{
+		logError(RTPS_PARTICIPANT,"Invalid maximum message size. If must be lower than 65kb and smaller than the send_buffer of all used transports");
+		return nullptr;
+		}
+	}
+
 	PParam.participantID = ID;
 	int pid;
 #if defined(_WIN32)

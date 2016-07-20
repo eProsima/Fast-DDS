@@ -225,6 +225,8 @@ private:
 	std::list<ReceiverControlBlock> m_receiverResourcelist;
 	//!SenderResource List
 	std::vector<SenderResource> m_senderResource;
+	//!Maximum message size
+	uint32_t maxmessagesize;
 
 	//!Listen Resource list - DEPRECATED - Stays commented for reference purposes
 	// std::vector<ListenResource*> m_listenResourceList;
@@ -290,7 +292,14 @@ private:
     */
    std::vector<std::unique_ptr<FlowController> > m_controllers; 
 public:
-	/**
+	
+   	/**
+	 * Get a copy of the actual state of the RTPSParticipantAttributes
+	 * @return RTPSParticipantAttributes copy of the parameters
+	 */
+   	RTPSParticipantAttributes getRTPSParticipantAttributes();
+
+	 /**
 	 * Create a Writer in this RTPSParticipant.
 	 * @param Writer Pointer to pointer of the Writer, used as output. Only valid if return==true.
 	 * @param param WriterAttributes to define the Writer.

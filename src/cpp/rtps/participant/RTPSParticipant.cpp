@@ -91,6 +91,10 @@ std::pair<StatefulReader*,StatefulReader*> RTPSParticipant::getEDPReaders(){
 	return mp_impl->getEDPReaders();
 }
 
+RTPSParticipantAttributes RTPSParticipant::getRTPSParticipantAttributes(){
+	return mp_impl->getRTPSParticipantAttributes();
+}
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */

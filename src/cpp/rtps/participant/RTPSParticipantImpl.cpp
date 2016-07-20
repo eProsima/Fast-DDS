@@ -93,9 +93,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 				IdCounter(0),
 				mp_participantListener(plisten),
 				mp_userParticipant(par),
-				mp_mutex(new boost::recursive_mutex())
+				mp_mutex(new boost::recursive_mutex()),
+				maxmessagesize(m_att.maxmessagesize)
 
 {
+   
    // Builtin transport by default
    if (PParam.useBuiltinTransports)
    {
@@ -108,8 +110,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
    // User defined transports
    for (const auto& transportDescriptor : PParam.userTransports)
-      m_network_Factory.RegisterTransport(transportDescriptor.get());
-   
+   {
+      	m_network_Factory.RegisterTransport(transportDescriptor.get());
+   }
+
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	mp_userParticipant->mp_impl = this;
 	m_att = PParam;
@@ -805,6 +809,11 @@ void RTPSParticipantImpl::ResourceSemaphoreWait()
 void RTPSParticipantImpl::assertRemoteRTPSParticipantLiveliness(const GuidPrefix_t& guidP)
 {
 	this->mp_builtinProtocols->mp_PDP->assertRemoteParticipantLiveliness(guidP);
+}
+
+RTPSParticipantAttributes RTPSParticipantImpl::getRTPSParticipantAttributes(){
+
+	return this->m_att;
 }
 
 }

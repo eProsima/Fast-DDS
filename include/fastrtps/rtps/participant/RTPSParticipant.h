@@ -27,6 +27,7 @@
 #include "../common/Guid.h"
 #include <fastrtps/rtps/reader/StatefulReader.h>
 
+#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 namespace eprosima {
 namespace fastrtps{
 
@@ -127,6 +128,11 @@ public:
 	 */
 	std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 
+	/**
+	 * Get a copy of the actual state of the RTPSParticipantParameters
+	 * @return RTPSParticipantAttributes copy of the params.
+	 */
+	 RTPSParticipantAttributes getRTPSParticipantAttributes();
 private:
 	//!Pointer to the implementation.
 	RTPSParticipantImpl* mp_impl;

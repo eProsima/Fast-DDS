@@ -190,6 +190,7 @@ public:
 		use_IP4_to_send = true;
 		use_IP6_to_send = false;
 		participantID = -1;
+		maxmessagesize = 0; //Set to zero -> take min socket buffer size
       useBuiltinTransports = true;
 }
 	virtual ~RTPSParticipantAttributes(){};
@@ -242,6 +243,8 @@ public:
    //!Set as false to disable the default UDPv4 implementation.
    bool useBuiltinTransports;
 
+   //!Maximum message size - Defines fragmentation threshold
+   uint32_t maxmessagesize;
 private:
 	//!Name of the participant.
 	std::string name;

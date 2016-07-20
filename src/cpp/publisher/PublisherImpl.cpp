@@ -52,8 +52,6 @@ PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
 										mp_userPublisher(nullptr),
 										mp_rtpsParticipant(nullptr)
 {
-
-	maxmessagesize = ( (p->getMinSocketBufferSize() < att.maxmessagesize) | (att.maxmessagesize == 0) ) ? p->getMinSocketBufferSize() : att.maxmessagesize;
 		
 }
 
@@ -123,7 +121,7 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
 		}
 
         // If it is big data, frament it.
-        uint32_t high_mark = (mp_participant->getAttributes().rtps.sendSocketBufferSize - RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE) > maxmessagesize ? maxmessagesize : (mp_participant->getAttributes().rtps.sendSocketBufferSize - RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE);
+        uint32_t high_mark = (mp_participant->getAttributes().rtps.sendSocketBufferSize - RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE) > m_att.maxmessagesize ? m_att.maxmessagesize : (mp_participant->getAttributes().rtps.sendSocketBufferSize - RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE);
 
         if(ch->serializedPayload.length > high_mark)
         {
