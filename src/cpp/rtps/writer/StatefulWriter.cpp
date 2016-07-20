@@ -350,31 +350,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     }
 
     // Send a initial heartbeat
-    SequenceNumber_t firstSeq = this->get_seq_num_min();
-    SequenceNumber_t lastSeq = this->get_seq_num_max();
-
-    if(firstSeq == c_SequenceNumber_Unknown || lastSeq == c_SequenceNumber_Unknown)
-	{
-		firstSeq = mp_history->next_sequence_number();
-		lastSeq = SequenceNumber_t(0, 0);
-	}
-	else
-    {
-		(void)firstSeq;
-		assert(firstSeq <= lastSeq);
-    }
-
-	this->incrementHBCount();
-	CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
-	// FinalFlag is always false because this is a StatefulWriter in Reliable.
-	RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg, m_guid.guidPrefix, rp->m_att.guid.guidPrefix,
-		rp->m_att.guid.entityId, m_guid.entityId,
-		firstSeq, lastSeq, m_heartbeatCount, false, false);
-	logInfo(RTPS_WRITER, m_guid.entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq << ")");
-	for (auto lit = rp->m_att.endpoint.multicastLocatorList.begin(); lit != rp->m_att.endpoint.multicastLocatorList.end(); ++lit)
-		getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg, (Endpoint *)this, (*lit));
-	for (auto lit = rp->m_att.endpoint.unicastLocatorList.begin(); lit != rp->m_att.endpoint.unicastLocatorList.end(); ++lit)
-		getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg, (Endpoint *)this, (*lit));
+    send_heartbeat_to(*rp);
 
 	// Always activate heartbeat period. We need a confirmation of the reader.
 	// The state has to be updated.
@@ -632,4 +608,34 @@ void StatefulWriter::add_flow_controller(std::unique_ptr<FlowController> control
 SequenceNumber_t StatefulWriter::next_sequence_number() const
 {
 	return mp_history->next_sequence_number();
+}
+
+void StatefulWriter::send_heartbeat_to(ReaderProxy& remoteReaderProxy)
+{
+    const char* const METHOD_NAME = "send_heartbeat_to";
+    SequenceNumber_t firstSeq = this->get_seq_num_min();
+    SequenceNumber_t lastSeq = this->get_seq_num_max();
+
+    if(firstSeq == c_SequenceNumber_Unknown || lastSeq == c_SequenceNumber_Unknown)
+    {
+        firstSeq = mp_history->next_sequence_number();
+        lastSeq = SequenceNumber_t(0, 0);
+    }
+    else
+    {
+        (void)firstSeq;
+        assert(firstSeq <= lastSeq);
+    }
+
+    this->incrementHBCount();
+    CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
+    // FinalFlag is always false because this is a StatefulWriter in Reliable.
+    RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg, m_guid.guidPrefix, remoteReaderProxy.m_att.guid.guidPrefix,
+            remoteReaderProxy.m_att.guid.entityId, m_guid.entityId,
+            firstSeq, lastSeq, m_heartbeatCount, false, false);
+    logInfo(RTPS_WRITER, m_guid.entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq << ")");
+    for (auto lit = remoteReaderProxy.m_att.endpoint.multicastLocatorList.begin(); lit != remoteReaderProxy.m_att.endpoint.multicastLocatorList.end(); ++lit)
+        mp_RTPSParticipant->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg, (Endpoint *)this, (*lit));
+    for (auto lit = remoteReaderProxy.m_att.endpoint.unicastLocatorList.begin(); lit != remoteReaderProxy.m_att.endpoint.unicastLocatorList.end(); ++lit)
+        mp_RTPSParticipant->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg, (Endpoint *)this, (*lit));
 }

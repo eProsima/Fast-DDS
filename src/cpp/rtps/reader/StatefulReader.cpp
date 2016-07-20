@@ -80,7 +80,6 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
     // Send initial NACK.
     SequenceNumberSet_t sns;
     sns.base = SequenceNumber_t(0, 0);
-    sns.base++;
 
     wp->m_acknackCount++;
     logInfo(RTPS_READER,"Sending ACKNACK: "<< sns;);
@@ -94,6 +93,14 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
             sns,
             wp->m_acknackCount,
             false);
+
+    for(auto lit = wp->m_att.endpoint.unicastLocatorList.begin();
+		    lit!=wp->m_att.endpoint.unicastLocatorList.end();++lit)
+	    mp_RTPSParticipant->sendSync(&wp->mp_heartbeatResponse->m_heartbeat_response_msg,static_cast<Endpoint *>(this),(*lit));
+
+    for(auto lit = wp->m_att.endpoint.multicastLocatorList.begin();
+		    lit!=wp->m_att.endpoint.multicastLocatorList.end();++lit)
+	    mp_RTPSParticipant->sendSync(&wp->mp_heartbeatResponse->m_heartbeat_response_msg,static_cast<Endpoint *>(this),(*lit));
 
     matched_writers.push_back(wp);
     logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to " <<m_guid.entityId);

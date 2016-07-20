@@ -489,9 +489,6 @@ inline bool CDRMessage::addSequenceNumber(CDRMessage_t* msg,
 inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 		SequenceNumberSet_t* sns)
 {
-	if(sns->base == SequenceNumber_t(0, 0))
-		return false;
-
 	CDRMessage::addSequenceNumber(msg, &sns->base);
 
 	//Add set
