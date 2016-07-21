@@ -925,6 +925,8 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
 
 TEST(BlackBox, FragmentSizeTest)
 {
+    //Scopes to keep everything under control
+    {
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
     
@@ -970,7 +972,54 @@ TEST(BlackBox, FragmentSizeTest)
 
     ASSERT_GE(data.size(),5);
     ASSERT_LE(data.size(),9);
+    }
+    {
+    PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
+    
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
+    ASSERT_TRUE(reader.isInitialized());
+
+	// When doing fragmentation, it is necessary to have some degree of
+	// flow control not to overrun the receive buffer.
+	uint32_t size = 32536;
+	uint32_t periodInMs = 1000;
+	writer.add_throughput_controller_descriptor_to_pparams(size, periodInMs);
+
+    auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
+    testTransport->sendBufferSize = 65536;
+    testTransport->receiveBufferSize = 65536;
+    testTransport->granularMode = false;
+    writer.disable_builtin_transport();
+    writer.add_user_transport_to_pparams(testTransport);
+    writer.setParticipantFragmentSize(32000);
+    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        heartbeat_period_seconds(0).
+        heartbeat_period_fraction(4294967 * 500).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_data64kb_data_generator(10);
+    
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(6));
+
+    ASSERT_GE(data.size(),5);
+    ASSERT_LE(data.size(),9);
+    }
 }
 
 TEST(BlackBox, FragmentFailure)

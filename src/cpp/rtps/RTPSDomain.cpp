@@ -130,7 +130,7 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
 	{
 		PParam.maxmessagesize = max_safe_message_size;
 	}else{
-		if(max_safe_message_size > PParam.maxmessagesize)
+		if(max_safe_message_size < PParam.maxmessagesize)
 		{
 		logError(RTPS_PARTICIPANT,"Invalid maximum message size. If must be lower than 65kb and smaller than the send_buffer of all used transports");
 		return nullptr;
