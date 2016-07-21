@@ -163,7 +163,15 @@ public:
 	 * Get the number of matched writers
 	 * @return Number of matched writers
 	 */
-	inline size_t getMatchedWritersSize() const {return matched_writers.size();};
+	inline size_t getMatchedWritersSize() const { return matched_writers.size(); }
+
+    /*!
+    * @brief Returns there is a clean state with all Writers.
+    * It occurs when the Reader received all samples sent by Writers. In other words,
+    * its WriterProxies are up to date.
+    * @return There is a clean state with all Writers.
+    */
+    bool isInCleanState() const;
 
 private:
 

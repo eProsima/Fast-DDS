@@ -36,7 +36,7 @@ using namespace ::rtps;
 
 
 
-static ::rtps::WriteParams WRITE_PARAM_DEFAULT;
+::rtps::WriteParams WRITE_PARAM_DEFAULT;
 
 PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
 		PublisherAttributes& att,PublisherListener* listen ):
@@ -136,18 +136,11 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
             ch->write_params = wparams;
         }
 
-		if(!this->m_history.add_pub_change(ch))
+		if(!this->m_history.add_pub_change(ch, wparams))
 		{
 			m_history.release_Cache(ch);
 			return false;
 		}
-
-        // Updated sample identity
-        if(&wparams != &WRITE_PARAM_DEFAULT)
-        {
-            wparams.sample_identity().writer_guid(ch->writerGUID);
-            wparams.sample_identity().sequence_number(ch->sequenceNumber);
-        }
 
 		return true;
 	}

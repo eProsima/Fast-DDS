@@ -124,6 +124,13 @@ public:
 	 */
 	inline size_t getMatchedWritersSize() const {return m_matched_writers.size();};
 
+    /*!
+    * @brief Returns there is a clean state with all Writers.
+    * StatelessReader allways return true;
+    * @return true
+    */
+    bool isInCleanState() const { return true; }
+
 private:
 
 	bool acceptMsgFrom(GUID_t& entityId);

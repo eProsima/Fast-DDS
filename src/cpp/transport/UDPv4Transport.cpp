@@ -421,6 +421,29 @@ bool UDPv4Transport::SendThroughSocket(const octet* sendBuffer,
     return true;
 }
 
+LocatorList_t UDPv4Transport::NormalizeLocator(const Locator_t& locator)
+{
+	LocatorList_t list;
+
+	if (locator.address[12] == 0x0 && locator.address[13] == 0x0 &&
+		locator.address[14] == 0x0 && locator.address[15] == 0x0)
+	{
+		std::vector<IPFinder::info_IP> locNames;
+		GetIP4s(locNames);
+		for (const auto& infoIP : locNames)
+		{
+			Locator_t newloc(locator);
+			newloc.set_IP4_address(infoIP.locator.address[12], infoIP.locator.address[13],
+				infoIP.locator.address[14], infoIP.locator.address[15]);
+			list.push_back(newloc);
+		}
+	}
+	else
+		list.push_back(locator);
+
+	return list;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

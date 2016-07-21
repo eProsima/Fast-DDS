@@ -123,6 +123,7 @@ TEST_F(UDPv6Tests, opening_and_closing_input_channel)
    ASSERT_FALSE (transportUnderTest.CloseInputChannel(multicastFilterLocator));
 }
 
+#ifndef __APPLE__
 TEST_F(UDPv6Tests, send_and_receive_between_ports)
 {
    UDPv6Transport transportUnderTest(descriptor);
@@ -202,6 +203,7 @@ TEST_F(UDPv6Tests, send_to_loopback)
    senderThread->join();
    receiverThread->join();
 }
+#endif
 
 void UDPv6Tests::HELPER_SetDescriptorDefaults()
 {

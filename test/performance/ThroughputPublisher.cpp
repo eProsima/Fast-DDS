@@ -113,8 +113,8 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-	PParam.rtps.sendSocketBufferSize = 2*655360;
-	PParam.rtps.listenSocketBufferSize = 655360;
+	PParam.rtps.sendSocketBufferSize = 5242882;
+	PParam.rtps.listenSocketBufferSize = 2097152;
 	PParam.rtps.setName("Participant_publisher");
 	mp_par = Domain::createParticipant(PParam);
 	if(mp_par == nullptr)
@@ -160,8 +160,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     }
 
 
-    Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    Wparam.topic.historyQos.depth = 1;
+    Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     Wparam.topic.resourceLimitsQos.max_samples = 100000;
     Wparam.topic.resourceLimitsQos.allocated_samples = 1000;
 
@@ -181,7 +180,8 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
         sct << boost::asio::ip::host_name() << "_";
     sct << pid << "_SUB2PUB";
     Rparam.topic.topicName = sct.str();
-	Rparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	mp_commandsub = Domain::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 	PublisherAttributes Wparam2;
 	Wparam2.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
@@ -196,7 +196,8 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
         pct << boost::asio::ip::host_name() << "_";
     pct << pid << "_PUB2SUB";
     Wparam2.topic.topicName = pct.str();
-	Wparam2.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	Wparam2.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	Wparam2.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	mp_commandpub = Domain::createPublisher(mp_par,Wparam2,(PublisherListener*)&this->m_CommandPubListener);
 
 	if(mp_datapub == nullptr || mp_commandsub == nullptr || mp_commandpub == nullptr)
@@ -323,6 +324,8 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
 	//cout << "SEND COMMAND "<< command.m_command << endl;
 	eClock::my_sleep(100);
 	mp_commandpub->write((void*)&command);
+	eClock::my_sleep(100);
+	mp_datapub->removeAllChange();
 	mp_commandsub->waitForUnreadMessage();
 	if(mp_commandsub->takeNextData((void*)&command,&info))
 	{
@@ -359,7 +362,6 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
 
 			printResults(result);
 			mp_commandpub->removeAllChange(&aux);
-			mp_datapub->removeAllChange();
 			return true;
 		}
 		else

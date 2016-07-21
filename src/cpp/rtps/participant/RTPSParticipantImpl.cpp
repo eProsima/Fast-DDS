@@ -86,7 +86,7 @@ Locator_t RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t loc){
 RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam,
 		const GuidPrefix_t& guidP,
 		RTPSParticipant* par,
-		RTPSParticipantListener* plisten):	m_guid(guidP,c_EntityId_RTPSParticipant),
+		RTPSParticipantListener* plisten):	m_att(PParam), m_guid(guidP,c_EntityId_RTPSParticipant),
 				mp_event_thr(nullptr),
 				mp_builtinProtocols(nullptr),
 				mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
@@ -112,7 +112,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
    
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	mp_userParticipant->mp_impl = this;
-	m_att = PParam;
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
 	mp_event_thr = new ResourceEvent();
@@ -161,6 +160,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		loc2.set_IP4_address(239,255,1,4);
       m_att.defaultMulticastLocatorList.push_back(loc2);
 		/* INSERT DEFAULT MULTICAST LOCATORS FOR THE PARTICIPANT */
+	}
+	else
+	{
+		// Normalize unicast locators.
+		m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
 	}
 
 	/*	
@@ -324,6 +328,10 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		return false;
 	}
 
+	// Normalize unicast locators
+	if (!param.endpoint.unicastLocatorList.empty())
+		m_network_Factory.NormalizeLocators(param.endpoint.unicastLocatorList);
+
 	RTPSWriter* SWriter = nullptr;
 	GUID_t guid(m_guid.guidPrefix,entId);
 	if(param.endpoint.reliabilityKind == BEST_EFFORT)
@@ -414,6 +422,11 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 		logError(RTPS_PARTICIPANT,"Output Locator List for Reader contains invalid Locator");
 		return false;
 	}
+
+	// Normalize unicast locators
+	if (!param.endpoint.unicastLocatorList.empty())
+		m_network_Factory.NormalizeLocators(param.endpoint.unicastLocatorList);
+
 	RTPSReader* SReader = nullptr;
 	GUID_t guid(m_guid.guidPrefix,entId);
 	if(param.endpoint.reliabilityKind == BEST_EFFORT)
@@ -651,6 +664,7 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 			//Push the new items into the ReceiverResource buffer
 			m_receiverResourcelist.push_back(ReceiverControlBlock(std::move(*it_buffer)));
 			//Create and init the MessageReceiver
+            //TODO(Ricardo) listenSocketBufferSize is too much size. Review
 			m_receiverResourcelist.back().mp_receiver = new MessageReceiver(m_att.listenSocketBufferSize);
       			m_receiverResourcelist.back().mp_receiver->init(m_att.listenSocketBufferSize);
 

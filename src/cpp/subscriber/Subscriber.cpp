@@ -54,6 +54,11 @@ SubscriberAttributes Subscriber::getAttributes()
 	return mp_impl->getAttributes();
 }
 
+bool Subscriber::isInCleanState() const
+{
+    return mp_impl->isInCleanState();
+}
+
 
 
 

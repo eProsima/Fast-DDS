@@ -190,5 +190,16 @@ void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* /*rea
 	}
 }
 
+/*!
+* @brief Returns there is a clean state with all Publishers.
+* It occurs when the Subscriber received all samples sent by Publishers. In other words,
+* its WriterProxies are up to date.
+* @return There is a clean state with all Publishers.
+*/
+bool SubscriberImpl::isInCleanState() const
+{
+    return mp_reader->isInCleanState();
+}
+
 } /* namespace fastrtps */
 } /* namespace eprosima */

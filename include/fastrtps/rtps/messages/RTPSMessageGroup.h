@@ -101,8 +101,8 @@ namespace eprosima {
                     CDRMessage_t m_rtpsmsg_fullmsg;
                     RTPSMessageGroup_t(uint32_t payload):
                         m_rtpsmsg_header(RTPSMESSAGE_HEADER_SIZE),
-                        m_rtpsmsg_submessage(payload+RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE),
-                        m_rtpsmsg_fullmsg(payload+RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE){};
+                        m_rtpsmsg_submessage(payload),
+                        m_rtpsmsg_fullmsg(payload){};
             };
 
             class RTPSWriter;

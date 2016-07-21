@@ -39,6 +39,25 @@ bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_
 	return true;
 }
 
+bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_t& guidprefix, const GuidPrefix_t& remoteGuidprefix,
+        const EntityId_t& readerId,const EntityId_t& writerId,
+		SequenceNumber_t& firstSN,SequenceNumber_t& lastSN, Count_t count,bool isFinal,bool livelinessFlag)
+{
+	try
+	{
+		RTPSMessageCreator::addHeader(msg,guidprefix);
+		RTPSMessageCreator::addSubmessageInfoDST(msg, remoteGuidprefix);
+		RTPSMessageCreator::addSubmessageHeartbeat(msg,readerId, writerId,firstSN,lastSN,count,isFinal,livelinessFlag);
+													msg->length = msg->pos;
+	}
+	catch(int e)
+	{
+		logError(RTPS_CDR_MSG,"HB message not created"<<e<<endl)
+		return false;
+	}
+	return true;
+}
+
 bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId_t& readerId,
 		const EntityId_t& writerId,SequenceNumber_t& firstSN,SequenceNumber_t& lastSN, Count_t count,bool isFinal,bool livelinessFlag)
 {

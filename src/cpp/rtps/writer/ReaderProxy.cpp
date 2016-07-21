@@ -35,7 +35,7 @@ using namespace eprosima::fastrtps::rtps;
 
 
 ReaderProxy::ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW) :
-				m_att(rdata), mp_SFW(SW), m_isRequestedChangesEmpty(true),
+				m_att(rdata), mp_SFW(SW),
 				mp_nackResponse(nullptr), mp_nackSupression(nullptr), m_lastAcknackCount(0),
 				mp_mutex(new boost::recursive_mutex()), lastNackfragCount_(0)
 {
@@ -122,13 +122,14 @@ bool ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
 
 bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet)
 {
+	bool isSomeoneWasSetRequested = false;
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
 	for(std::vector<SequenceNumber_t>::iterator sit=seqNumSet.begin();sit!=seqNumSet.end();++sit)
 	{
         auto chit = m_changesForReader.find(ChangeForReader_t(*sit));
 
-        if(chit != m_changesForReader.end())
+        if(chit != m_changesForReader.end() && chit->isValid())
         {
             ChangeForReader_t newch(*chit);
             newch.setStatus(REQUESTED);
@@ -138,15 +139,16 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
 
             m_changesForReader.insert(hint, newch);
 
-            m_isRequestedChangesEmpty = false;
+			isSomeoneWasSetRequested = true;
         }
 	}
 
-	if(!m_isRequestedChangesEmpty)
+	if(isSomeoneWasSetRequested)
 	{
 		logInfo(RTPS_WRITER,"Requested Changes: " << seqNumSet);
 	}
-	return true;
+
+	return isSomeoneWasSetRequested;
 }
 
 
@@ -259,27 +261,29 @@ void ReaderProxy::setNotValid(const CacheChange_t* change)
 
     if(chit == m_changesForReader.begin())
     {
-        m_changesForReader.erase(chit);
-        cleanup();
+		// if it is the first element, set state to unacknowledge because from now reader has to confirm
+		// it will not be expecting it.
+		ChangeForReader_t newch(*chit);
+		newch.setStatus(UNACKNOWLEDGED);
+		newch.notValid();
+
+		auto hint = m_changesForReader.erase(chit);
+
+		m_changesForReader.insert(hint, newch);
     }
     else
     {
+		// In case its state is not ACKNOWLEDGED, set it to UNACKNOWLEDGE because from now reader has to confirm
+		// it will not be expecting it.
         ChangeForReader_t newch(*chit);
+		if (chit->getStatus() != ACKNOWLEDGED)
+			newch.setStatus(UNACKNOWLEDGED);
         newch.notValid();
 
         auto hint = m_changesForReader.erase(chit);
 
         m_changesForReader.insert(hint, newch);
     }
-}
-
-void ReaderProxy::cleanup()
-{
-    auto chit = m_changesForReader.begin();
-
-    while(chit != m_changesForReader.end() &&
-            (!chit->isValid() || chit->getStatus() == ACKNOWLEDGED))
-            chit = m_changesForReader.erase(chit);
 }
 
 bool ReaderProxy::thereIsUnacknowledged() const

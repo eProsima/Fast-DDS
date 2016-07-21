@@ -415,6 +415,35 @@ bool UDPv6Transport::SendThroughSocket(const octet* sendBuffer,
     return true;
 }
 
+LocatorList_t UDPv6Transport::NormalizeLocator(const Locator_t& locator)
+{
+	LocatorList_t list;
+
+	if (locator.address[0] == 0x0 && locator.address[1] == 0x0 &&
+		locator.address[2] == 0x0 && locator.address[3] == 0x0 &&
+		locator.address[4] == 0x0 && locator.address[5] == 0x0 &&
+		locator.address[6] == 0x0 && locator.address[7] == 0x0 &&
+		locator.address[8] == 0x0 && locator.address[9] == 0x0 &&
+		locator.address[10] == 0x0 && locator.address[11] == 0x0 &&
+		locator.address[12] == 0x0 && locator.address[13] == 0x0 &&
+		locator.address[14] == 0x0 && locator.address[15] == 0x0)
+	{
+		std::vector<IPFinder::info_IP> locNames;
+		GetIP6s(locNames);
+		for (const auto& infoIP : locNames)
+		{
+			Locator_t newloc(infoIP.locator);
+			newloc.kind = locator.kind;
+			newloc.port = locator.port;
+			list.push_back(newloc);
+		}
+	}
+	else
+		list.push_back(locator);
+
+	return list;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

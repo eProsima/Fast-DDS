@@ -160,26 +160,17 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
             case (TEST_ENDS):{
                                  m_up.t_end_ = std::chrono::steady_clock::now();
                                  m_up.m_DataSubListener.saveNumbers();
-                                 cout << "TEST ends, sending results"<<endl;
-                                 ThroughputCommandType comm;
-                                 comm.m_command = TEST_RESULTS;
-                                 comm.m_demand = m_up.m_demand;
-                                 comm.m_size = m_up.m_datasize+4+4;
-                                 comm.m_lastrecsample = m_up.m_DataSubListener.saved_lastseqnum;
-                                 comm.m_lostsamples = m_up.m_DataSubListener.saved_lostsamples;
-                                 comm.m_totaltime = boost::numeric_cast<uint64_t>((std::chrono::duration<double, std::micro>(m_up.t_end_ - m_up.t_start_) - m_up.t_overhead_).count());
-                                 cout << "Last Received Sample: " << comm.m_lastrecsample << endl;
-                                 cout << "Lost Samples: " << comm.m_lostsamples << endl;
-                                 cout << "Test of size "<<comm.m_size << " and demand "<<comm.m_demand << " ends."<<endl; 
-                                 //cout << "SEND COMMAND: "<< comm.m_command << endl;
-                                 //cout << "writecall "<< ++writecalls << endl;
-                                 m_up.mp_commandpubli->write(&comm);
+                                 cout << "TEST ends" << endl;
+                                 std::unique_lock<std::mutex> lock(m_up.mutex_);
+                                 m_up.stop_count_ = 1;
+                                 lock.unlock();
+                                 m_up.stop_cond_.notify_one();
                                  break;
                              }
             case (ALL_STOPS):
                              {
                                  std::unique_lock<std::mutex> lock(m_up.mutex_);
-                                 ++m_up.stop_count_;
+                                 m_up.stop_count_ = 2;
                                  lock.unlock();
                                  m_up.stop_cond_.notify_one();
                              }
@@ -229,8 +220,8 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-	PParam.rtps.sendSocketBufferSize = 655360;
-	PParam.rtps.listenSocketBufferSize = 5*655360;
+	PParam.rtps.sendSocketBufferSize = 5242882;
+	PParam.rtps.listenSocketBufferSize = 2097152;
 	PParam.rtps.setName("Participant_subscriber");
 	mp_par = Domain::createParticipant(PParam);
 	if(mp_par == nullptr)
@@ -273,8 +264,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
         Sparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
     }
 
-	Sparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	Sparam.topic.historyQos.depth = 1000;
+	Sparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	Sparam.topic.resourceLimitsQos.max_samples = 10000;
 	Sparam.topic.resourceLimitsQos.allocated_samples = 1100;
 
@@ -296,7 +286,8 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
         pct << boost::asio::ip::host_name() << "_";
     pct << pid << "_SUB2PUB";
     Wparam.topic.topicName = pct.str();
-	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	mp_commandpubli = Domain::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_CommandPubListener);
 	SubscriberAttributes Rparam;
 	Rparam.topic.topicDataType = "ThroughputCommand";
@@ -308,6 +299,8 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
         sct << boost::asio::ip::host_name() << "_";
     sct << pid << "_PUB2SUB";
     Rparam.topic.topicName = sct.str();
+	Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 	Rparam.topic.historyQos.depth = 20;
 	Rparam.topic.resourceLimitsQos.max_samples = 20;
@@ -331,8 +324,35 @@ void ThroughputSubscriber::run()
     while(disc_count_ != 3) disc_cond_.wait(lock);
 	cout << "Discovery complete"<<endl;
 	//printLabelsSubscriber();
-    if(stop_count_ == 0)
+    while (stop_count_ != 2)
+    {
         stop_cond_.wait(lock);
+
+        if (stop_count_ == 1)
+        {
+            cout << "Waiting clean state" << endl;
+            while (!mp_datasub->isInCleanState())
+            {
+                eClock::my_sleep(50);
+            }
+            cout << "Sending results" << endl;
+            ThroughputCommandType comm;
+            comm.m_command = TEST_RESULTS;
+            comm.m_demand = m_demand;
+            comm.m_size = m_datasize + 4 + 4;
+            comm.m_lastrecsample = m_DataSubListener.saved_lastseqnum;
+            comm.m_lostsamples = m_DataSubListener.saved_lostsamples;
+            comm.m_totaltime = boost::numeric_cast<uint64_t>((std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count());
+            cout << "Last Received Sample: " << comm.m_lastrecsample << endl;
+            cout << "Lost Samples: " << comm.m_lostsamples << endl;
+            cout << "Test of size " << comm.m_size << " and demand " << comm.m_demand << " ends." << endl;
+            //cout << "SEND COMMAND: "<< comm.m_command << endl;
+            //cout << "writecall "<< ++writecalls << endl;
+            mp_commandpubli->write(&comm);
+
+            stop_count_ = 0;
+        }
+    }
 	return;
 
 }

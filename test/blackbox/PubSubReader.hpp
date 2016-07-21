@@ -255,6 +255,12 @@ class PubSubReader
 	    return *this;
 	}
 
+    PubSubReader& durability_kind(const eprosima::fastrtps::DurabilityQosPolicyKind kind)
+    {
+        subscriber_attr_.qos.m_durability.kind = kind;
+        return *this;
+    }
+
     private:
 
         void receive_one(eprosima::fastrtps::Subscriber* subscriber, bool& returnedValue)

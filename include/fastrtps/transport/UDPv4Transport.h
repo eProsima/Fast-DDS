@@ -118,6 +118,8 @@ public:
    virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
                         const Locator_t& localLocator, Locator_t& remoteLocator);
 
+   virtual LocatorList_t NormalizeLocator(const Locator_t& locator);
+
 protected:
    //! Constructor with no descriptor is necessary for implementations derived from this class.
    UDPv4Transport();
