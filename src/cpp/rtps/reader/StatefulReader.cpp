@@ -23,6 +23,7 @@
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
 #include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include "../participant/RTPSParticipantImpl.h"
 #include "FragmentedChangePitStop.h"
 
@@ -75,6 +76,32 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
         }
     }
     WriterProxy* wp = new WriterProxy(wdata, this);
+
+    // Send initial NACK.
+    SequenceNumberSet_t sns;
+    sns.base = SequenceNumber_t(0, 0);
+
+    wp->m_acknackCount++;
+    logInfo(RTPS_READER,"Sending ACKNACK: "<< sns;);
+
+    CDRMessage::initCDRMsg(&wp->mp_heartbeatResponse->m_heartbeat_response_msg);
+    RTPSMessageCreator::addMessageAcknack(&wp->mp_heartbeatResponse->m_heartbeat_response_msg,
+            m_guid.guidPrefix,
+            wp->m_att.guid.guidPrefix,
+            m_guid.entityId,
+            wp->m_att.guid.entityId,
+            sns,
+            wp->m_acknackCount,
+            false);
+
+    for(auto lit = wp->m_att.endpoint.unicastLocatorList.begin();
+		    lit!=wp->m_att.endpoint.unicastLocatorList.end();++lit)
+	    mp_RTPSParticipant->sendSync(&wp->mp_heartbeatResponse->m_heartbeat_response_msg,static_cast<Endpoint *>(this),(*lit));
+
+    for(auto lit = wp->m_att.endpoint.multicastLocatorList.begin();
+		    lit!=wp->m_att.endpoint.multicastLocatorList.end();++lit)
+	    mp_RTPSParticipant->sendSync(&wp->mp_heartbeatResponse->m_heartbeat_response_msg,static_cast<Endpoint *>(this),(*lit));
+
     matched_writers.push_back(wp);
     logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to " <<m_guid.entityId);
     return true;

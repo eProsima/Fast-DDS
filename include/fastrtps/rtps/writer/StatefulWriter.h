@@ -182,7 +182,13 @@ namespace eprosima
 
                 void add_flow_controller(std::unique_ptr<FlowController> controller);
 
-				SequenceNumber_t next_sequence_number() const;
+                SequenceNumber_t next_sequence_number() const;
+
+                /*!
+                 * @brief Sends a heartbeat to a remote reader.
+                 * @remarks This function is non thread-safe.
+                 */
+                void send_heartbeat_to(ReaderProxy& remoteReaderProxy);
 
                 private:
                 std::vector<std::unique_ptr<FlowController> > m_controllers;
