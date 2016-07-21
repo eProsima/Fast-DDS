@@ -142,6 +142,8 @@ public:
 	RTPS_DllAPI inline bool isAsync(){ return is_async_; };
 
    virtual bool clean_history(unsigned int max = 0) = 0;
+
+   bool remove_older_changes(unsigned int max = 0);
    
    /*
     * Adds a flow controller that will apply to this writer exclusively.
