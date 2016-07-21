@@ -106,7 +106,7 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
 			//First check that we can actually write to the buffer, then write
 			
 			//Static mode implies making sure the buffer size is enough for the maximum posible piece of data
-			if( (m_att.historyMemoryPolicy == PREALLOCATED_MEMORY_MODE) && ch->serializedPayload.length > mp_type->m_typeSize)
+			if( (m_att.historyMemoryPolicy == PREALLOCATED_MEMORY_MODE) && ch->serializedPayload.max_size > mp_type->m_typeSize)
 			{
 				logWarning(RTPS_WRITER,
 					"Serialized Payload length larger than maximum type size (" <<
@@ -115,7 +115,7 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
 				return false;
 			}
 			//In the other modes, the cachechange is expected to at least be initialized at this point
-			if(ch->serializedPayload.length == 0)
+			if(ch->serializedPayload.max_size == 0)
 			{
 				logWarning(RTPS_WRITER,"Serialized Payload length must be set to >0 ";);
 				m_history.release_Cache(ch);

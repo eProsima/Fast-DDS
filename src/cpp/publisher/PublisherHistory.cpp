@@ -77,13 +77,13 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
         {
             if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
             {
-                if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
+                if((int32_t)m_changes.size()>=m_resourceLimitsQos.max_samples)
                     m_isHistoryFull = true;
             }
             else
             {
                 //KEEP_LAST_HISTORY_QoS
-                if((int32_t)m_changes.size()==m_historyQos.depth)
+                if((int32_t)m_changes.size()>=m_historyQos.depth)
                     m_isHistoryFull = true;
             }
 
