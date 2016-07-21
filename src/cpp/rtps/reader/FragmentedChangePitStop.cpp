@@ -47,12 +47,8 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
         if(!parent_->reserveCache(&original_change, sampleSize))
             return nullptr;
 
-        original_change->copy_not_memcpy(incoming_change);
-
-        
-	// TODO(Santi) - We totally have to change CacheChange_t to make it safer...
-	if(!original_change->serializedPayload.data)
-		original_change->serializedPayload.data = (octet*)calloc(sampleSize,sizeof(octet));
+        //Change comes preallocated (size sampleSize)
+	original_change->copy_not_memcpy(incoming_change);
 	// The length of the serialized payload has to be sample size.
         original_change->serializedPayload.length = sampleSize;
         original_change->serializedPayload.reserve(sampleSize);

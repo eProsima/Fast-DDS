@@ -230,6 +230,8 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
             return false;
         }
 
+        // Assertion has to be done before call change_received,
+        // because this function can unlock the StatefulReader mutex.
         if(pWP != nullptr)
         {
             pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
@@ -270,6 +272,12 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
             // If CacheChange_t is completed, it will be returned;
             CacheChange_t* change_completed = fragmentedChangePitStop_->process(incomingChange, sampleSize, fragmentStartingNum);
 
+            // Assertion has to be done before call change_received,
+            // because this function can unlock the StatefulReader mutex.
+            if(pWP != nullptr)
+            {
+                pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
+            }
 
             if(change_completed != nullptr)
             {
@@ -285,11 +293,6 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
 
                     releaseCache(change_completed);
                 }
-            }
-
-            if(pWP != nullptr)
-            {
-                pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
             }
         }
     }
