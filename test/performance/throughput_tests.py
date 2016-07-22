@@ -24,15 +24,15 @@ payload_demands = os.environ.get("CMAKE_CURRENT_SOURCE_DIR") + "/payloads_demand
 command = os.environ.get("THROUGHPUT_TEST_BIN")
 
 # Best effort execution
-subscriber_proc = subprocess.Popen([command, "subscriber"])
-publisher_proc = subprocess.Popen([command, "publisher", "--file", payload_demands, "--export_csv"])
+subscriber_proc = subprocess.Popen([command, "subscriber", "--hostname"])
+publisher_proc = subprocess.Popen([command, "publisher", "--file", payload_demands, "--hostname", "--export_csv"])
 
 subscriber_proc.communicate()
 publisher_proc.communicate()
 
 # Reliable execution
-subscriber_proc = subprocess.Popen([command, "subscriber", "-r", "reliable"])
-publisher_proc = subprocess.Popen([command, "publisher", "-r", "reliable", "--file", payload_demands, "--export_csv"])
+subscriber_proc = subprocess.Popen([command, "subscriber", "-r", "reliable", "--hostname"])
+publisher_proc = subprocess.Popen([command, "publisher", "-r", "reliable", "--file", payload_demands, , "--hostname", "--export_csv"])
 
 subscriber_proc.communicate()
 publisher_proc.communicate()
