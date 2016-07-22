@@ -132,3 +132,52 @@ CacheChange_t* FragmentedChangePitStop::find(const SequenceNumber_t& sequence_nu
 
     return returnedValue;
 }
+
+bool FragmentedChangePitStop::try_to_remove(const SequenceNumber_t& sequence_number, const GUID_t& writer_guid)
+{
+    bool returnedValue = false;
+
+    auto range = changes_.equal_range(ChangeInPit(sequence_number));
+
+    auto cit = range.first;
+
+    // If there is a range, search the CacheChange_t with the same writer GUID_t.
+    if(cit != changes_.end())
+    {
+        for(; cit != range.second; ++cit)
+        {
+            if(cit->getChange()->writerGUID == writer_guid)
+            {
+                // Destroy CacheChange_t.
+                parent_->releaseCache(cit->getChange());
+                changes_.erase(cit);
+                returnedValue = true;
+                break;
+            }
+        }
+    }
+
+    return returnedValue;
+}
+
+bool FragmentedChangePitStop::try_to_remove_until(const SequenceNumber_t& sequence_number, const GUID_t& writer_guid)
+{
+    bool returnedValue = false;
+
+    auto cit = changes_.begin();
+    while(cit != changes_.end())
+    {
+        if(cit->getChange()->sequenceNumber < sequence_number &&
+                cit->getChange()->writerGUID == writer_guid)
+        {
+            // Destroy CacheChange_t.
+            parent_->releaseCache(cit->getChange());
+            cit = changes_.erase(cit);
+            returnedValue = true;
+        }
+        else
+            ++cit;
+    }
+
+    return returnedValue;
+}

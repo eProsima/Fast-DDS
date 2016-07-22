@@ -314,11 +314,12 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
         if(pWP->m_lastHeartbeatCount < hbCount)
         {
             pWP->m_lastHeartbeatCount = hbCount;
-            pWP->lost_changes_update(firstSN);
+            if(pWP->lost_changes_update(firstSN))
+                fragmentedChangePitStop_->try_to_remove_until(firstSN, pWP->m_att.guid);
             pWP->missing_changes_update(lastSN);
             pWP->m_heartbeatFinalFlag = finalFlag;
-            //Analyze wheter a acknack message is needed:
-
+	    
+	    //Analyze wheter a acknack message is needed:
             if(!finalFlag)
             {
                 pWP->mp_heartbeatResponse->restart_timer();
@@ -386,10 +387,16 @@ bool StatefulReader::processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStar
         SequenceNumber_t auxSN;
         SequenceNumber_t finalSN = gapList.base -1;
         for(auxSN = gapStart; auxSN<=finalSN;auxSN++)
-            pWP->irrelevant_change_set(auxSN);
+        {
+            if(pWP->irrelevant_change_set(auxSN))
+                fragmentedChangePitStop_->try_to_remove(auxSN, pWP->m_att.guid);
+        }
 
         for(std::vector<SequenceNumber_t>::iterator it=gapList.get_begin();it!=gapList.get_end();++it)
-            pWP->irrelevant_change_set((*it));
+        {
+            if(pWP->irrelevant_change_set((*it)))
+                fragmentedChangePitStop_->try_to_remove((*it), pWP->m_att.guid);
+        }
     }
 
     return true;

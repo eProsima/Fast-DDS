@@ -2173,6 +2173,49 @@ TEST(BlackBox, PubSubKeepAll_DynamicMode)
     ASSERT_EQ(data.size(), 0);
 }
 
+
+TEST(BlackBox, CacheChangeReleaseTest)
+{
+	PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+	PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+	//Reader Config
+	reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS);
+	reader.history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS);
+	reader.history_depth(1);
+	reader.resource_limits_max_samples(1);
+	reader.allocated_samples(5);
+	reader.heartbeatPeriod(0,4294967 * 50);
+	reader.init();
+	ASSERT_TRUE(reader.isInitialized());
+
+	writer.heartbeat_period_seconds(0).heartbeat_period_fraction(4294967*100);
+	writer.resource_limits_max_samples(1);
+	writer.history_kind(KEEP_LAST_HISTORY_QOS);
+	writer.history_depth(1);
+	writer.reliability(BEST_EFFORT_RELIABILITY_QOS);
+	writer.allocated_samples(50);	
+	writer.init();
+	ASSERT_TRUE(writer.isInitialized());
+
+
+	// Because its volatile the durability
+	// Wait for discovery.
+	writer.waitDiscovery();
+	reader.waitDiscovery();
+
+	auto data = default_helloword_data_generator(60);
+    
+	reader.expected_data(data);
+	reader.startReception();
+
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+    data = reader.block(std::chrono::seconds(10));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_LE(data.size(), static_cast<size_t>(9));
+}
 // Test created to check bug #1558 (Github #33)
 TEST(BlackBox, PubSubKeepAll_StaticMode)
 {

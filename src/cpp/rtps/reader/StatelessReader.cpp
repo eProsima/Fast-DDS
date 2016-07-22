@@ -96,7 +96,7 @@ bool StatelessReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
 	return false;
 }
 
-bool StatelessReader::change_received(CacheChange_t* change)
+bool StatelessReader::change_received(CacheChange_t* change, boost::unique_lock<boost::recursive_mutex> &lock)
 {
     // Only make visible the change if there is not other with bigger sequence number.
     // TODO Revisar si no hay que incluirlo.
@@ -104,8 +104,6 @@ bool StatelessReader::change_received(CacheChange_t* change)
     {
         if(mp_history->received_change(change, 0))
         {
-            boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
-
             if(getListener() != nullptr)
             {
                 lock.unlock();
@@ -190,8 +188,7 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
             return false;
         }
 
-        lock.unlock(); // Next function has its own lock.
-        if(!change_received(change_to_add))
+        if(!change_received(change_to_add, lock))
         {
             logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "
                     <<change_to_add->sequenceNumber, C_BLUE);
@@ -229,9 +226,10 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
             // If the change was completed, process it.
             if(change_completed != nullptr)
             {
-                lock.unlock(); // Next function has its own lock.
+                // Try to remove previous CacheChange_t from PitStop.
+                fragmentedChangePitStop_->try_to_remove_until(change_completed->sequenceNumber, change_completed->writerGUID);
 
-                if (!change_received(change_completed))
+                if (!change_received(change_completed, lock))
                 {
                     logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long(), C_BLUE);
 
