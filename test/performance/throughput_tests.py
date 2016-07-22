@@ -32,7 +32,7 @@ publisher_proc.communicate()
 
 # Reliable execution
 subscriber_proc = subprocess.Popen([command, "subscriber", "-r", "reliable", "--hostname"])
-publisher_proc = subprocess.Popen([command, "publisher", "-r", "reliable", "--file", payload_demands, , "--hostname", "--export_csv"])
+publisher_proc = subprocess.Popen([command, "publisher", "-r", "reliable", "--file", payload_demands, "--hostname", "--export_csv"])
 
 subscriber_proc.communicate()
 publisher_proc.communicate()
