@@ -116,7 +116,6 @@ uint32_t RTPSWriter::getTypeMaxSerialized()
 
 bool RTPSWriter::remove_older_changes(unsigned int max)
 {
-    const char* const METHOD_NAME = "remove_older_changes";
     logInfo(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     bool limit = (max != 0);

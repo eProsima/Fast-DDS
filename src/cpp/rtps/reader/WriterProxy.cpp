@@ -192,7 +192,6 @@ bool WriterProxy::maybe_add_changes_from_writer_up_to(const SequenceNumber_t& se
 
 bool WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
 {
-	const char* const METHOD_NAME = "lost_changes_update";
     bool returnedValue = false;
 	logInfo(RTPS_READER,m_att.guid.entityId<<": up to seqNum: "<<seqNum);
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
