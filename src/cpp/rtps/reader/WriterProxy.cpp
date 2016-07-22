@@ -190,8 +190,10 @@ bool WriterProxy::maybe_add_changes_from_writer_up_to(const SequenceNumber_t& se
     return returnedValue;
 }
 
-void WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
+bool WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
 {
+	const char* const METHOD_NAME = "lost_changes_update";
+    bool returnedValue = false;
 	logInfo(RTPS_READER,m_att.guid.entityId<<": up to seqNum: "<<seqNum);
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
@@ -200,24 +202,10 @@ void WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
     {
         if(m_changesFromW.size() == 0 || m_changesFromW.rbegin()->getSequenceNumber() < seqNum)
         {
-            // Set already values in container.
-            for_each_set_status_from_and_maybe_remove(m_changesFromW.begin(), m_changesFromW.end(),
-                    ChangeFromWriterStatus_t::UNKNOWN, ChangeFromWriterStatus_t::MISSING,
-                    ChangeFromWriterStatus_t::LOST);
-
-            // There is at least one not LOST or RECEIVED.
-            if(m_changesFromW.size() != 0)
-            {
-                // Changes only already inserted values.
-                bool will_be_the_last = maybe_add_changes_from_writer_up_to(seqNum, ChangeFromWriterStatus_t::LOST);
-                (void)will_be_the_last;
-                assert(will_be_the_last);
-            }
+            // Remove all because lost or received.
+            m_changesFromW.clear();
             // Any in container, then not insert new lost.
-            else
-            {
-                changesFromWLowMark_ = seqNum - 1;
-            }
+            changesFromWLowMark_ = seqNum - 1;
         }
         else
         {
@@ -227,10 +215,16 @@ void WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
             for_each_set_status_from_and_maybe_remove(m_changesFromW.begin(), last_it,
                     ChangeFromWriterStatus_t::UNKNOWN, ChangeFromWriterStatus_t::MISSING,
                     ChangeFromWriterStatus_t::LOST);
+            // Next could need to be removed.
+            cleanup();
         }
+
+        returnedValue = true;
     }
 
 	print_changes_fromWriter_test2();
+
+    return returnedValue;
 }
 
 bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum)

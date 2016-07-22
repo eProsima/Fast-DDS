@@ -970,6 +970,7 @@ TEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
     print_non_received_messages(data, default_helloworld_print);
     ASSERT_EQ(data.size(), 0);
 }
+
 //Test created to deal with Issue 39 on Github
 TEST(BlackBox, CacheChangeReleaseTest)
 {
@@ -1013,6 +1014,7 @@ TEST(BlackBox, CacheChangeReleaseTest)
     print_non_received_messages(data, default_helloworld_print);
     ASSERT_LE(data.size(), static_cast<size_t>(9));
 }
+
 // Test created to check bug #1555 (Github #31)
 TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
 {
