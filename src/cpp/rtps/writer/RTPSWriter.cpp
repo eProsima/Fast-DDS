@@ -23,6 +23,8 @@
 #include <fastrtps/log/Log.h>
 #include "../participant/RTPSParticipantImpl.h"
 
+#include <boost/thread/recursive_mutex.hpp>
+
 using namespace eprosima::fastrtps::rtps;
 
 
@@ -109,4 +111,25 @@ SequenceNumber_t RTPSWriter::get_seq_num_max()
 uint32_t RTPSWriter::getTypeMaxSerialized()
 {
     return mp_history->getTypeMaxSerialized();
+}
+
+
+bool RTPSWriter::remove_older_changes(unsigned int max)
+{
+    const char* const METHOD_NAME = "remove_older_changes";
+    logInfo(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    bool limit = (max != 0);
+
+    bool remove_ret = mp_history->remove_min_change();
+    bool at_least_one = remove_ret;
+    unsigned int count = 1;
+
+    while(remove_ret && (!limit || count < max))
+    {
+        remove_ret = mp_history->remove_min_change();
+        ++count;
+    }
+
+    return at_least_one;
 }

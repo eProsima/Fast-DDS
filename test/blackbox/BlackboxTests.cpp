@@ -1064,6 +1064,43 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
     ASSERT_EQ(data.size(), 0);
 }
 
+// Test created to check bug #1738 (Github #54)
+TEST(BlackBox, PubSubAsReliableKeepLastWriterSmallDepth)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    
+    reader.reliability(RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.
+        history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+        history_depth(2).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_helloword_data_generator(10);
+
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(5));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_NE(data.size(), 10);
+}
+
 // Test created to check bug #1558 (Github #33)
 TEST(BlackBox, PubSubKeepAll)
 {

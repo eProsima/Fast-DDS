@@ -256,7 +256,10 @@ void PublisherImpl::PublisherWriterListener::onWriterMatched(RTPSWriter* /*write
 
 bool PublisherImpl::clean_history(unsigned int max)
 {
-    return mp_writer->clean_history(max);
+    if(m_att.topic.historyQos.kind == HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS)
+        return mp_writer->clean_history(max);
+    else
+        return mp_writer->remove_older_changes(max);
 }
 
 bool PublisherImpl::wait_for_all_acked(const Time_t& max_wait)

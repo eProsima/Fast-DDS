@@ -114,9 +114,9 @@ public:
 	*/
 	inline size_t getMatchedReadersSize() const {return m_matched_readers.size();};
 
-    bool clean_history(unsigned int max = 0);
+    bool clean_history(unsigned int max = 0) { return remove_older_changes(max); }
 
-   void add_flow_controller(std::unique_ptr<FlowController> controller);
+    void add_flow_controller(std::unique_ptr<FlowController> controller);
 
 private:
 	//Duration_t resendDataPeriod; //FIXME: Not used yet.
