@@ -129,6 +129,8 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
             }
             catch(std::bad_alloc& ex)
             {
+		const char * const METHOD_NAME = "reserve";
+		logError(RTPS_HISTORY, "Failed to allocate memory for the serializedPayload, exception caught: " << ex.what());
                 delete(*chan);
                 *chan = nullptr;
                 return false;
@@ -253,7 +255,7 @@ CacheChange_t* CacheChangePool::allocateSingle(uint32_t dataSize)
 	// This method should only be called from within DYNAMIC_RESERVE_MEMORY_MODE
 	assert(memoryMode == DYNAMIC_RESERVE_MEMORY_MODE);
 
-	if( (m_max_pool_size == 0) | (m_pool_size < m_max_pool_size) ){
+	if( (m_max_pool_size == 0) | (m_pool_size < m_max_pool_size) ){	  //If no limit or curren changes < max changes
 		++m_pool_size;
 		ch = new CacheChange_t(dataSize);
 		m_allCaches.push_back(ch);
