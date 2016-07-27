@@ -1055,7 +1055,7 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
     }
 
     print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    ASSERT_EQ(data.size(), static_cast<size_t>(0));
 }
 
 // Test created to check bug #1738 (Github #54)
@@ -1092,7 +1092,7 @@ TEST(BlackBox, PubSubAsReliableKeepLastWriterSmallDepth)
     data = reader.block(std::chrono::seconds(5));
 
     print_non_received_messages(data, default_helloworld_print);
-    ASSERT_NE(data.size(), 10);
+    ASSERT_NE(data.size(), static_cast<size_t>(10));
 }
 
 // Test created to check bug #1558 (Github #33)
