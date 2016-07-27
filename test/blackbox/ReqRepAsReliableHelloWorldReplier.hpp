@@ -38,9 +38,9 @@ class ReqRepAsReliableHelloWorldReplier : public ReqRepHelloWorldReplier
             rattr.topic.topicName = t.str();
         };
 
-        void configPublisher(PublisherAttributes &puattr, const std::string& suffix)
+        void configPublisher(PublisherAttributes &pubattr, const std::string& suffix)
         {
-            puattr.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+            pubattr.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
             std::ostringstream t;
 

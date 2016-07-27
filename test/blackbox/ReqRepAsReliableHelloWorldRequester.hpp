@@ -38,15 +38,15 @@ class ReqRepAsReliableHelloWorldRequester : public ReqRepHelloWorldRequester
             rattr.topic.topicName = t.str();
         };
 
-        void configPublisher(PublisherAttributes &puattr, const std::string& suffix)
+        void configPublisher(PublisherAttributes &pubattr, const std::string& suffix)
         {
-            puattr.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+            pubattr.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
             std::ostringstream t;
 
             t << "ReqRepAsReliableHelloworld_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id() << "_" << suffix;
 
-            puattr.topic.topicName = t.str();
+            pubattr.topic.topicName = t.str();
         }
 	ReqRepAsReliableHelloWorldRequester& memoryMode(eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryMode){
 	    sattr.historyMemoryPolicy=memoryMode;

@@ -84,7 +84,7 @@ class ReqRepHelloWorldReplier
         void waitDiscovery();
         void matched();
         virtual void configSubscriber(SubscriberAttributes &sattr, const std::string& suffix) = 0;
-        virtual void configPublisher(PublisherAttributes &puattr, const std::string& suffix) = 0;
+        virtual void configPublisher(PublisherAttributes &pubattr, const std::string& suffix) = 0;
 
     protected:
 	SubscriberAttributes sattr;
