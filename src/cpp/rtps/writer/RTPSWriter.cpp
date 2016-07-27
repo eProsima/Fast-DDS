@@ -46,6 +46,8 @@ RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes
     logInfo(RTPS_WRITER,"RTPSWriter created");
 }
 
+    
+
 void RTPSWriter::init_header()
 {
     CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_header);
