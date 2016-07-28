@@ -91,11 +91,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 				mp_builtinProtocols(nullptr),
 				mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 				IdCounter(0),
+				maxmessagesize(m_att.maxmessagesize),
 				mp_participantListener(plisten),
 				mp_userParticipant(par),
-				mp_mutex(new boost::recursive_mutex()),
-				maxmessagesize(m_att.maxmessagesize)
-
+				mp_mutex(new boost::recursive_mutex())
 {
    
    // Builtin transport by default
