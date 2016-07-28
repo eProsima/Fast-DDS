@@ -207,7 +207,8 @@ bool PublisherHistory::removeAllChange(size_t* removed)
 {
 
 	size_t rem = 0;
-	//while(remove_min_change())
+	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
+
 	while(m_changes.size()>0)
 	{
 		if(remove_change_pub(m_changes.front()))
