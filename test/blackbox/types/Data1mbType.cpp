@@ -63,9 +63,9 @@ void Data1mbType::deleteData(void* data) {
 	delete((Data1mb*)data);
 }
 
-std::function<size_t()> Data1mbType::getSerializedSizeProvider(void *data)
+std::function<uint32_t()> Data1mbType::getSerializedSizeProvider(void *data)
 {
-    return [&]() -> size_t { return type::getCdrSerializedSize(*static_cast<Data1mb*>(data));};
+    return [data]() -> size_t { return type::getCdrSerializedSize(*static_cast<Data1mb*>(data));};
 }
 
 bool Data1mbType::getKey(void *data, InstanceHandle_t* handle) {
