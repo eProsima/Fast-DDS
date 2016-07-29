@@ -18,6 +18,7 @@
 #include <fastrtps/rtps/common/CDRMessage_t.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include <fastrtps/qos/ParameterList.h>
+#include <fastrtps/log/Log.h>
 
 #include <memory>
 #include <string>
@@ -32,6 +33,11 @@ class test_UDPv4Tests: public ::testing::Test
    test_UDPv4Tests()
    {
       HELPER_SetDescriptorDefaults();
+   }
+
+   ~test_UDPv4Tests()
+   {
+      Log::KillThread();
    }
 
    void HELPER_SetDescriptorDefaults();

@@ -29,13 +29,12 @@
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/RTPSDomain.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
 
 
-static const char* const CLASS_NAME = "PublisherImpl";
 
 ::rtps::WriteParams WRITE_PARAM_DEFAULT;
 
@@ -58,7 +57,6 @@ PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
 
 PublisherImpl::~PublisherImpl()
 {
-	const char* const METHOD_NAME = "~PublisherImpl";
 	logInfo(PUBLISHER,this->getGuid().entityId << " in topic: "<<this->m_att.topic.topicName);
 	RTPSDomain::removeRTPSWriter(mp_writer);
 	delete(this->mp_userPublisher);
@@ -73,7 +71,6 @@ bool PublisherImpl::create_new_change(ChangeKind_t changeKind, void* data)
 
 bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void* data, WriteParams &wparams)
 {
-	const char* const METHOD_NAME = "create_new_change";
 
     /// Preconditions
 	if (data == nullptr)
@@ -166,7 +163,6 @@ const GUID_t& PublisherImpl::getGuid()
 //
 bool PublisherImpl::updateAttributes(PublisherAttributes& att)
 {
-	const char* const METHOD_NAME = "updateAttributes";
 	bool updated = true;
 	bool missing = false;
 	if(this->m_att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)

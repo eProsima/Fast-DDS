@@ -33,7 +33,7 @@ namespace rtps{
 #define LOCATOR_INVALID(loc)  {loc.kind=LOCATOR_KIND_INVALID;loc.port= LOCATOR_PORT_INVALID;LOCATOR_ADDRESS_INVALID(loc.address);}
 #define LOCATOR_KIND_INVALID -1
 
-#define LOCATOR_ADDRESS_INVALID(a) {for(uint8_t i=0;i<16;i++) a[i]=0x0;}
+#define LOCATOR_ADDRESS_INVALID(a) {std::memset(a,0x00,16*sizeof(octet));}
 #define LOCATOR_PORT_INVALID 0
 #define LOCATOR_KIND_RESERVED 0
 #define LOCATOR_KIND_UDPv4 1
@@ -65,16 +65,14 @@ public:
 		kind(loc.kind),
 		port(loc.port)
 	{
-		for(uint8_t i = 0;i<16;++i)
-			address[i] = loc.address[i];
+		std::memcpy(address,loc.address,16*sizeof(octet));
 	}
 
 	Locator_t(const Locator_t& loc) :
 		kind(loc.kind),
 		port(loc.port)
 	{
-		for(uint8_t i = 0;i<16;++i)
-			address[i] = loc.address[i];
+		std::memcpy(address,loc.address,16*sizeof(octet));
 	}
 
 	Locator_t(uint32_t portin):kind(1),port(portin)
@@ -86,8 +84,7 @@ public:
 	{
 		kind = loc.kind;
 		port = loc.port;
-		for(uint8_t i=0;i<16;i++)
-			address[i] = loc.address[i];
+		std::memcpy(address,loc.address,16*sizeof(octet));
 		return *this;
 	}
 
@@ -121,13 +118,15 @@ public:
 	{
 		uint32_t addr;
 		octet* oaddr = (octet*)&addr;
-#if __BIG_ENDIAN__
-        oaddr[0] = address[12];oaddr[1] = address[13];
-        oaddr[2] = address[14];oaddr[3] = address[15];
-#else
-		oaddr[0] = address[15];oaddr[1] = address[14];
-		oaddr[2] = address[13];oaddr[3] = address[12];
-#endif
+		#if __BIG_ENDIAN__
+		std::memcpy(oaddr,address+12,4*sizeof(octet));
+		#else
+		// TODO (Santi) - Are we sure we want to flip this?
+		oaddr[0] = address[15];
+		oaddr[1] = address[14];
+		oaddr[2] = address[13];
+		oaddr[3] = address[12];
+		#endif
 
 		return addr;
 	}
@@ -206,10 +205,12 @@ inline bool operator==(const Locator_t&loc1,const Locator_t& loc2)
 		return false;
 	if(loc1.port !=loc2.port)
 		return false;
-	for(uint8_t i =0;i<16;i++){
-		if(loc1.address[i] !=loc2.address[i])
-			return false;
-	}
+	//for(uint8_t i =0;i<16;i++){
+	//	if(loc1.address[i] !=loc2.address[i])
+	//		return false;
+	//}
+	if(!std::equal(loc1.address,loc1.address+16,loc2.address))
+		return false;
 	return true;
 }
 

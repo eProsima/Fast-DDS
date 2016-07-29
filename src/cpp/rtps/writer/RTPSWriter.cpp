@@ -20,14 +20,13 @@
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include "../participant/RTPSParticipantImpl.h"
 
 #include <boost/thread/recursive_mutex.hpp>
 
 using namespace eprosima::fastrtps::rtps;
 
-static const char* const CLASS_NAME = "RTPSWriter";
 
 RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes& att, WriterHistory* hist, WriterListener* listen):
     Endpoint(impl,guid,att.endpoint),
@@ -39,7 +38,6 @@ RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes
     mp_listener(listen),
     is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
 {
-    const char* const METHOD_NAME = "RTPSWriter";
     mp_history->mp_writer = this;
     mp_history->mp_mutex = mp_mutex;
     this->init_header();
@@ -57,7 +55,6 @@ void RTPSWriter::init_header()
 
 RTPSWriter::~RTPSWriter()
 {
-    const char* const METHOD_NAME = "~RTPSWriter";
     logInfo(RTPS_WRITER,"RTPSWriter destructor");
 
     // Deletion of the events has to be made in child destructor.
@@ -69,7 +66,6 @@ RTPSWriter::~RTPSWriter()
 CacheChange_t* RTPSWriter::new_change(const std::function<uint32_t()>& dataCdrSerializedSize,
         ChangeKind_t changeKind, InstanceHandle_t handle)
 {
-    const char* const METHOD_NAME = "new_change";
     logInfo(RTPS_WRITER,"Creating new change");
     CacheChange_t* ch = nullptr;
 
@@ -123,7 +119,6 @@ uint32_t RTPSWriter::getTypeMaxSerialized()
 
 bool RTPSWriter::remove_older_changes(unsigned int max)
 {
-    const char* const METHOD_NAME = "remove_older_changes";
     logInfo(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     bool limit = (max != 0);

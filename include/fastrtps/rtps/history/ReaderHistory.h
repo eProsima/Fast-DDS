@@ -82,6 +82,12 @@ public:
 	RTPS_DllAPI bool remove_change(CacheChange_t* a_change);
 
 	/**
+	 * Remove all changes from the History that have a certain guid.
+	 * @param a_guid Pointer to the target guid to search for.
+	 * @return True if succesful, even if no changes have been removed.
+	 * */
+	RTPS_DllAPI bool remove_changes_with_guid(GUID_t* a_guid);
+	/**
 	 * Sort the CacheChange_t from the History.
 	 */
 	RTPS_DllAPI void sortCacheChanges();

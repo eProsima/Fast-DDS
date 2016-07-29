@@ -78,7 +78,7 @@ public:
 	 * @param WP Pointer to pointer to a WriterProxy.
 	 * @return True if found.
 	 */
-	bool matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP);
+	bool matched_writer_lookup(const GUID_t& writerGUID, WriterProxy** WP);
 
 	/**
 	 * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
@@ -176,6 +176,11 @@ public:
 private:
 
 	bool acceptMsgFrom(GUID_t &entityGUID ,WriterProxy **wp, bool checkTrusted = true);
+
+    /*!
+     * @remarks Nn thread-safe.
+     */
+    bool findWriterProxy(const GUID_t& writerGUID, WriterProxy** WP);
 
 	//!ReaderTimes of the StatefulReader.
 	ReaderTimes m_times;

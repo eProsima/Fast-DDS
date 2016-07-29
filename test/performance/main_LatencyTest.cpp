@@ -56,8 +56,6 @@ int main(int argc, char** argv)
     const char* const LATENCY_TEST_USAGE = "Usage: LatencyTest <publisher|subscriber>\n";
     const char* const LATENCY_TEST_USAGE_SUBSCRIBER = "Usage: LatencyTest subscriber\n";
 
-	Log::setVerbosity(VERB_ERROR);
-
     boost::program_options::options_description p_optionals("Publisher options");
     p_optionals.add_options()
         ("subscribers,n", boost::program_options::value<int>()->default_value(1), "number of subscribers")

@@ -26,7 +26,7 @@
 
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <boost/thread/lock_guard.hpp>
 #include <boost/thread/recursive_mutex.hpp>
@@ -35,7 +35,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "HeartbeatResponseDelay";
 
 HeartbeatResponseDelay::~HeartbeatResponseDelay()
 {
@@ -52,7 +51,6 @@ mp_WP(p_WP)
 
 void HeartbeatResponseDelay::event(EventCode code, const char* msg)
 {
-	const char* const METHOD_NAME = "event";
 
     // Unused in release mode.
     (void)msg;

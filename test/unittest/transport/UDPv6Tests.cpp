@@ -16,9 +16,11 @@
 #include <gtest/gtest.h>
 #include <boost/thread.hpp>
 #include <memory>
+#include <fastrtps/log/Log.h>
 
 using namespace std;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps;
 using namespace boost::interprocess;
 
 const uint32_t ReceiveBufferCapacity = 65536;
@@ -29,6 +31,11 @@ class UDPv6Tests: public ::testing::Test
    UDPv6Tests()
    {
       HELPER_SetDescriptorDefaults();
+   }
+
+   ~UDPv6Tests()
+   {
+      Log::KillThread();
    }
 
    void HELPER_SetDescriptorDefaults();

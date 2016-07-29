@@ -30,6 +30,7 @@
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/transport/test_UDPv4Transport.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
+#include <fastrtps/rtps/common/Locator.h>
 
 #include <thread>
 #include <memory>
@@ -67,6 +68,7 @@ class BlackboxEnvironment : public ::testing::Environment
 
         void TearDown()
         {
+            Log::Reset();
             eprosima::fastrtps::rtps::RTPSDomain::stopAll();
         }
 };
@@ -232,12 +234,12 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl
 
     ASSERT_TRUE(reader.isInitialized());
 
-    uint32_t sizeToClear = 440; // Roughly ten times the size of the payload being sent
-    uint32_t refreshTimeMS = 300;
+    uint32_t size = 440; // Roughly ten times the size of the payload being sent
+    uint32_t timeMS = 300;
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
         add_to_multicast_locator_list(ip, global_port).
         asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).
-        add_throughput_controller_descriptor_to_pparams(sizeToClear, refreshTimeMS).memoryMode(MEMORY_MODE_VALUE).init();
+        add_throughput_controller_descriptor_to_pparams(size, timeMS).memoryMode(MEMORY_MODE_VALUE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -694,9 +696,9 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    uint32_t sizeToClear = 68000;
+    uint32_t size = 68000;
     uint32_t periodInMs = 500;
-    writer.add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs);
+    writer.add_throughput_controller_descriptor_to_pparams(size, periodInMs);
 
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
@@ -735,9 +737,9 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAn
 
     ASSERT_TRUE(reader.isInitialized());
 
-    uint32_t sizeToClear = 300000;
+    uint32_t size = 300000;
     uint32_t periodInMs = 500;
-    writer.add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs);
+    writer.add_throughput_controller_descriptor_to_pparams(size, periodInMs);
 
     auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
     testTransport->granularMode = true;
@@ -774,6 +776,9 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAn
 
 BLACKBOXTEST(BlackBox, PubSubAsNonReliableData300kb)
 {
+    // Mutes an expected error
+    Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
+
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
     
     writer.memoryMode(MEMORY_MODE_VALUE).reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).init();
@@ -789,6 +794,9 @@ BLACKBOXTEST(BlackBox, PubSubAsNonReliableData300kb)
 
 BLACKBOXTEST(BlackBox, PubSubAsReliableData300kb)
 {
+    // Mutes an expected error
+    Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
+
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
     
     writer.memoryMode(MEMORY_MODE_VALUE).init();
@@ -813,15 +821,15 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
 	
     // When doing fragmentation, it is necessary to have some degree of
     // flow control not to overrun the receive buffer.
-    uint32_t sizeToClear = 65536;
+    uint32_t size = 65536;
     uint32_t periodInMs = 50;
 
     writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
         heartbeat_period_seconds(0).
         heartbeat_period_fraction(4294967 * 500).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-        add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs).
-	memoryMode(MEMORY_MODE_VALUE).init();
+        add_throughput_controller_descriptor_to_pparams(size, periodInMs).
+        memoryMode(MEMORY_MODE_VALUE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -857,14 +865,14 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kb)
 
 	// When doing fragmentation, it is necessary to have some degree of
 	// flow control not to overrun the receive buffer.
-	uint32_t sizeToClear = 65536;
+	uint32_t size = 65536;
 	uint32_t periodInMs = 50;
 
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
         heartbeat_period_fraction(4294967 * 500).
-        add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs).
-	memoryMode(MEMORY_MODE_VALUE).init();
+        add_throughput_controller_descriptor_to_pparams(size, periodInMs).
+        memoryMode(MEMORY_MODE_VALUE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -931,9 +939,9 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
 
 	// When doing fragmentation, it is necessary to have some degree of
 	// flow control not to overrun the receive buffer.
-	uint32_t sizeToClear = 300000;
+	uint32_t size = 300000;
 	uint32_t periodInMs = 200;
-	writer.add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs);
+	writer.add_throughput_controller_descriptor_to_pparams(size, periodInMs);
 
    // To simulate lossy conditions, we are going to remove the default
    // bultin transport, and instead use a lossy shim layer variant.
@@ -1122,7 +1130,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
     }
 
     print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    ASSERT_EQ(data.size(), static_cast<size_t>(0));
 }
 
 // Test created to check bug #1738 (Github #54)
@@ -1160,7 +1168,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableKeepLastWriterSmallDepth)
     data = reader.block(std::chrono::seconds(5));
 
     print_non_received_messages(data, default_helloworld_print);
-    ASSERT_NE(data.size(), 10);
+    ASSERT_NE(data.size(), static_cast<size_t>(10));
 }
 
 // Test created to check bug #1558 (Github #33)
@@ -1284,6 +1292,84 @@ BLACKBOXTEST(BlackBox, PubSubKeepAllTransient)
     ASSERT_EQ(data.size(), 0);
 }
 
+//Verify that outLocatorList is used to select the desired output channel
+BLACKBOXTEST(BlackBox, PubSubOutLocatorSelection){
+   
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    
+    LocatorList_t WriterOutLocators;
+    Locator_t LocatorBuffer;
+    
+    LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
+    LocatorBuffer.port = 31337;
+
+    WriterOutLocators.push_back(LocatorBuffer);
+
+	
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    resource_limits_max_samples(2).
+    memoryMode(MEMORY_MODE_VALUE).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
+        resource_limits_max_samples(20).
+        heartbeat_period_seconds(0).
+        heartbeat_period_fraction(4294967 * 100).
+        memoryMode(MEMORY_MODE_VALUE).
+        outLocatorList(WriterOutLocators).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    	auto data = default_helloword_data_generator(10);
+    
+	reader.expected_data(data);
+	reader.startReception();
+
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+    data = reader.block(std::chrono::seconds(10));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_EQ(data.size(), static_cast<size_t>(0));
+}
+
+//Verify that Cachechanges are removed from History when the a Writer unmatches
+BLACKBOXTEST(BlackBox, StatefulReaderCacheChangeRelease){
+	PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+	PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+	reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        memoryMode(MEMORY_MODE_VALUE).init();
+	ASSERT_TRUE(reader.isInitialized());
+	writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        memoryMode(MEMORY_MODE_VALUE).init();
+	ASSERT_TRUE(writer.isInitialized());
+
+	writer.waitDiscovery();
+	reader.waitDiscovery();
+
+	auto data = default_helloword_data_generator(2);
+	reader.expected_data(data);
+
+	writer.send(data);
+	ASSERT_TRUE(data.empty());
+	ASSERT_EQ(data.size(), static_cast<size_t>(0));
+	writer.destroy();
+	reader.startReception();
+	data = reader.block(std::chrono::seconds(2));
+	
+	ASSERT_EQ(data.size(), static_cast<size_t>(2));
+}
+
 BLACKBOXTEST(BlackBox, PubSubMoreThan256Unacknowledged)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -1320,6 +1406,5 @@ int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new BlackboxEnvironment);
-    eprosima::Log::setVerbosity(eprosima::LOG_VERBOSITY_LVL::VERB_ERROR);
     return RUN_ALL_TESTS();
 }

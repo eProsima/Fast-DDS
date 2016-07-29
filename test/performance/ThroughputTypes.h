@@ -21,7 +21,8 @@
 #define THROUGHPUTTYPES_H_
 
 #include <fastrtps/TopicDataType.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
+#include <fastrtps/log/Colors.h>
 
 #include <chrono>
 
@@ -117,7 +118,7 @@ public:
 	ThroughputDataType()
 {
 		setName("ThroughputType");
-		m_typeSize = 25000;
+		m_typeSize = 9004;
 		m_isGetKeyDefined = false;
 };
 	~ThroughputDataType(){};

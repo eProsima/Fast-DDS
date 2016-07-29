@@ -27,7 +27,7 @@
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
-
+#include <fastrtps/rtps/common/Locator.h>
 #include <string>
 #include <list>
 #include <condition_variable>
@@ -179,10 +179,10 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& add_throughput_controller_descriptor_to_pparams(uint32_t sizeToClear, uint32_t periodInMs)
+    PubSubWriter& add_throughput_controller_descriptor_to_pparams(uint32_t size, uint32_t periodInMs)
     {
-        ThroughputControllerDescriptor descriptor {sizeToClear, periodInMs};
-        participant_attr_.rtps.terminalThroughputController = descriptor;
+        ThroughputControllerDescriptor descriptor {size, periodInMs};
+        participant_attr_.rtps.throughputController = descriptor;
 
         return *this;
     }
@@ -240,6 +240,24 @@ class PubSubWriter
         publisher_attr_.times.heartbeatPeriod.fraction = frac;
         return *this;
     }
+
+        PubSubWriter& unicastLocatorList(LocatorList_t unicastLocators)
+	{
+	    publisher_attr_.unicastLocatorList = unicastLocators;
+	    return *this;
+	}
+
+	PubSubWriter& multicastLocatorList(LocatorList_t multicastLocators)
+	{
+	    publisher_attr_.multicastLocatorList = multicastLocators;
+	    return *this;
+	}
+
+	PubSubWriter& outLocatorList(LocatorList_t outLocators)
+	{
+	    publisher_attr_.outLocatorList = outLocators;
+	    return *this;
+	}
 
     PubSubWriter& allocated_samples(const uint32_t max)
     {

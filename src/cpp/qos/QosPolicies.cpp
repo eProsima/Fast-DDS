@@ -20,7 +20,7 @@
 #include <fastrtps/qos/QosPolicies.h>
 
 #include <fastrtps/rtps/messages/CDRMessage.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 namespace eprosima {
 namespace fastrtps {
 

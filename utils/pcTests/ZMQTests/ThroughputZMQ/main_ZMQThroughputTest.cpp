@@ -21,7 +21,7 @@
 #include <bitset>
 #include <cstdint>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/log/Log.h"
 
 
 

@@ -57,6 +57,8 @@ public:
 	LocatorList_t unicastLocatorList;
 	//!Multicast locator list
 	LocatorList_t multicastLocatorList;
+	//!Output locator list
+	LocatorList_t outLocatorList;
 	//!Expects Inline QOS
 	bool expectsInlineQos;
 	//!Underlying History memory policy

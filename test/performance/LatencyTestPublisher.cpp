@@ -18,9 +18,11 @@
  */
 
 #include "LatencyTestPublisher.h"
-#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/log/Log.h"
+#include "fastrtps/log/Colors.h"
 #include <numeric>
 #include <cmath>
+#include <fstream>
 
 #define TIME_LIMIT_US 10000
 
@@ -32,7 +34,6 @@ uint32_t dataspub[] = {12,28,60,124,252,508,1020,2044,4092,8188,16380};
 
 std::vector<uint32_t> data_size_pub (dataspub, dataspub + sizeof(dataspub) / sizeof(uint32_t) );
 
-static const char * const CLASS_NAME = "LatencyTestPublisher";
 
 LatencyTestPublisher::LatencyTestPublisher():
 												mp_participant(nullptr),

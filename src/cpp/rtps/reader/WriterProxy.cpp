@@ -20,7 +20,7 @@
 #include <fastrtps/rtps/reader/WriterProxy.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <boost/thread/lock_guard.hpp>
@@ -92,7 +92,6 @@ void WriterProxy::for_each_set_status_from_and_maybe_remove(decltype(WriterProxy
 
 static const int WRITERPROXY_LIVELINESS_PERIOD_MULTIPLIER = 1;
 
-static const char* const CLASS_NAME = "WriterProxy";
 
 WriterProxy::~WriterProxy()
 {
@@ -118,7 +117,6 @@ WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
 												mp_mutex(new boost::recursive_mutex())
 
 {
-	const char* const METHOD_NAME = "WriterProxy";
 	m_changesFromW.clear();
 	//Create Events
 	mp_writerProxyLiveliness = new WriterProxyLiveliness(this,TimeConv::Time_t2MilliSecondsDouble(m_att.livelinessLeaseDuration)*WRITERPROXY_LIVELINESS_PERIOD_MULTIPLIER);
@@ -130,7 +128,6 @@ WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
 
 void WriterProxy::missing_changes_update(const SequenceNumber_t& seqNum)
 {
-	const char* const METHOD_NAME = "missing_changes_update";
 	logInfo(RTPS_READER,m_att.guid.entityId<<": changes up to seqNum: " << seqNum <<" missing.");
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
@@ -163,7 +160,7 @@ void WriterProxy::missing_changes_update(const SequenceNumber_t& seqNum)
         }
     }
 
-	print_changes_fromWriter_test2();
+	//print_changes_fromWriter_test2();
 }
 
 bool WriterProxy::maybe_add_changes_from_writer_up_to(const SequenceNumber_t& sequence_number,
@@ -195,7 +192,6 @@ bool WriterProxy::maybe_add_changes_from_writer_up_to(const SequenceNumber_t& se
 
 bool WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
 {
-	const char* const METHOD_NAME = "lost_changes_update";
     bool returnedValue = false;
 	logInfo(RTPS_READER,m_att.guid.entityId<<": up to seqNum: "<<seqNum);
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
@@ -225,14 +221,13 @@ bool WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
         returnedValue = true;
     }
 
-	print_changes_fromWriter_test2();
+	//print_changes_fromWriter_test2();
 
     return returnedValue;
 }
 
 bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum)
 {
-	const char* const METHOD_NAME = "received_change_set";
 	logInfo(RTPS_READER, m_att.guid.entityId << ": seqNum: " << seqNum);
     return received_change_set(seqNum, true);
 }
@@ -244,7 +239,6 @@ bool WriterProxy::irrelevant_change_set(const SequenceNumber_t& seqNum)
 
 bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum, bool is_relevance)
 {
-	const char* const METHOD_NAME = "received_change_set";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
     // Check if CacheChange_t was already and it was already removed from changesFromW container.
@@ -301,7 +295,7 @@ bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum, bool is_re
 
     }
 
-    print_changes_fromWriter_test2();
+    //print_changes_fromWriter_test2();
 
 	return true;
 }
@@ -323,7 +317,7 @@ const std::vector<ChangeFromWriter_t> WriterProxy::missing_changes()
     }
 
 
-    print_changes_fromWriter_test2();
+    //print_changes_fromWriter_test2();
 
     return returnedValue;
 }
@@ -338,7 +332,6 @@ const SequenceNumber_t WriterProxy::available_changes_max() const
 
 void WriterProxy::print_changes_fromWriter_test2()
 {
-	const char* const METHOD_NAME = "status";
 	std::stringstream ss;
 	ss << this->m_att.guid.entityId<<": ";
 
@@ -353,7 +346,6 @@ void WriterProxy::print_changes_fromWriter_test2()
 
 void WriterProxy::assertLiveliness()
 {
-	const char* const METHOD_NAME = "assertLiveliness";
 
 	logInfo(RTPS_READER,this->m_att.guid.entityId << " Liveliness asserted");
 

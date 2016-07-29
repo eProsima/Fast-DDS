@@ -35,7 +35,7 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -43,8 +43,6 @@ namespace rtps {
 
 void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const change_in)
 {
-	const char* const CLASS_NAME = "EDPSimplePUBListener";
-	const char* const METHOD_NAME = "onNewCacheChangeAdded";
 	CacheChange_t* change = (CacheChange_t*)change_in;
 	//boost::lock_guard<boost::recursive_mutex> guard(*this->mp_SEDP->mp_PubReader.first->getMutex());
 	logInfo(RTPS_EDP,"");
@@ -65,7 +63,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 			change->instanceHandle = writerProxyData.key();
 			if(writerProxyData.guid().guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
 			{
-				logInfo(RTPS_EDP,"Message from own RTPSParticipant, ignoring",C_CYAN);
+				logInfo(RTPS_EDP,"Message from own RTPSParticipant, ignoring");
 				mp_SEDP->mp_PubReader.second->remove_change(change);
 				return;
 			}
@@ -107,7 +105,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 	else
 	{
 		//REMOVE WRITER FROM OUR READERS:
-		logInfo(RTPS_EDP,"Disposed Remote Writer, removing...",C_CYAN);
+		logInfo(RTPS_EDP,"Disposed Remote Writer, removing...");
 		GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
 		this->mp_SEDP->removeWriterProxy(auxGUID);
 	}
@@ -174,8 +172,6 @@ bool EDPSimpleSUBListener::computeKey(CacheChange_t* change)
 
 void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const change_in)
 {
-	const char* const CLASS_NAME = "EDPSimpleSUBListener";
-	const char* const METHOD_NAME = "onNewCacheChangeAdded";
 	CacheChange_t* change = (CacheChange_t*)change_in;
 	//boost::lock_guard<boost::recursive_mutex> guard(*this->mp_SEDP->mp_SubReader.first->getMutex());
 	logInfo(RTPS_EDP,"");
@@ -196,7 +192,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 			change->instanceHandle = readerProxyData.m_key;
 			if(readerProxyData.m_guid.guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
 			{
-				logInfo(RTPS_EDP,"From own RTPSParticipant, ignoring",C_CYAN);
+				logInfo(RTPS_EDP,"From own RTPSParticipant, ignoring");
 				mp_SEDP->mp_SubReader.second->remove_change(change);
 				return;
 			}
@@ -236,7 +232,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 	else
 	{
 		//REMOVE WRITER FROM OUR READERS:
-		logInfo(RTPS_EDP,"Disposed Remote Reader, removing...",C_CYAN);
+		logInfo(RTPS_EDP,"Disposed Remote Reader, removing...");
 		GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
 		this->mp_SEDP->removeReaderProxy(auxGUID);
 	}

@@ -16,7 +16,7 @@
 #include "RTPSAsNonReliableSocketReader.hpp"
 
 #include <fastrtps/rtps/RTPSDomain.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <thread>
 #include <chrono>
@@ -25,7 +25,7 @@
 
 int main(int argc, char* argv[])
 {
-    eprosima::Log::setVerbosity(eprosima::LOG_VERBOSITY_LVL::VERB_ERROR);
+
     uint16_t nmsgs = 100;
     if (argc == 2)
       nmsgs = std::stoi(argv[1], nullptr, 10);
@@ -52,5 +52,6 @@ int main(int argc, char* argv[])
     while(!reader.getNonReceivedMessages().empty())
        std::this_thread::sleep_for(std::chrono::seconds(1));
 
+    Log::Reset();
     return 0;
 }

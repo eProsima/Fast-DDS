@@ -35,7 +35,7 @@
 
 #include <fastrtps/rtps/history/WriterHistory.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <boost/thread/recursive_mutex.hpp>
@@ -45,7 +45,6 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-static const char* const CLASS_NAME = "StatefulWriter";
 
 StatefulWriter::StatefulWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
         WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
@@ -73,7 +72,6 @@ StatefulWriter::~StatefulWriter()
 {
     AsyncWriterThread::removeWriter(*this);
 
-    const char* const METHOD_NAME = "~StatefulWriter";
     logInfo(RTPS_WRITER,"StatefulWriter destructor");
 
     delete all_acked_cond_;
@@ -97,7 +95,6 @@ StatefulWriter::~StatefulWriter()
 
 void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 {
-	const char* const METHOD_NAME = "unsent_change_added_to_history";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
     //TODO Think about when set liveliness assertion when writer is asynchronous.
@@ -169,7 +166,6 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 
 bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 {
-    const char* const METHOD_NAME = "change_removed_by_history";
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     logInfo(RTPS_WRITER,"Change "<< a_change->sequenceNumber << " to be removed.");
 
@@ -201,7 +197,6 @@ bool StatefulWriter::wrap_around_readers()
 
 size_t StatefulWriter::send_any_unsent_changes()
 {
-    const char* const METHOD_NAME = "send_any_unsent_changes";
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     size_t number_of_changes_sent = 0;
 
@@ -314,7 +309,6 @@ size_t StatefulWriter::send_any_unsent_changes()
  */
 bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 {
-	const char* const METHOD_NAME = "matched_reader_add";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(rdata.guid == c_Guid_Unknown)
 	{
@@ -370,7 +364,6 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 
 bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 {
-    const char* const METHOD_NAME = "matched_reader_remove";
     ReaderProxy *rproxy = nullptr;
     boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
 
@@ -440,7 +433,6 @@ bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
 
 bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 {
-    const char* const METHOD_NAME = "is_acked_by_all";
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
     if(change->writerGUID != this->getGuid())
@@ -523,7 +515,6 @@ void StatefulWriter::check_for_all_acked()
 
 bool StatefulWriter::clean_history(unsigned int max)
 {
-    const char* const METHOD_NAME = "clean_history";
     logInfo(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     std::vector<CacheChange_t*> ackca;
@@ -612,7 +603,6 @@ SequenceNumber_t StatefulWriter::next_sequence_number() const
 
 void StatefulWriter::send_heartbeat_to(ReaderProxy& remoteReaderProxy)
 {
-    const char* const METHOD_NAME = "send_heartbeat_to";
     SequenceNumber_t firstSeq = this->get_seq_num_min();
     SequenceNumber_t lastSeq = this->get_seq_num_max();
 

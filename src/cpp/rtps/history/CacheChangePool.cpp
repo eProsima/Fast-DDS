@@ -19,7 +19,7 @@
 
 #include <fastrtps/rtps/history/CacheChangePool.h>
 #include <fastrtps/rtps/common/CacheChange.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -31,11 +31,9 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "CacheChangePool";
 
 CacheChangePool::~CacheChangePool()
 {
-	const char* const METHOD_NAME = "~CacheChangePool";
 	logInfo(RTPS_UTILS,"ChangePool destructor");
 	//Deletion process does not depend on the memory management policy
 	for(std::vector<CacheChange_t*>::iterator it = m_allCaches.begin();it!=m_allCaches.end();++it)
@@ -48,10 +46,10 @@ CacheChangePool::~CacheChangePool()
 CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size, MemoryManagementPolicy_t memoryPolicy) : mp_mutex(new boost::mutex()), memoryMode(memoryPolicy)
 {
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
-	const char* const METHOD_NAME = "CacheChangePool";
-	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with initial payload size: " << payload_size);
 	
 	//Common for all modes: Set the payload size (maximum allowed), size and size limit
+	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<< pool_size << " with payload of size: " << payload_size);
+
 	m_payload_size = payload_size;
 	m_initial_payload_size = payload_size;
 	m_pool_size = 0;
@@ -95,7 +93,6 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, const std::function<ui
 
 bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
 {
-    const char * const METHOD_NAME = "reserve";
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
 
 	switch(memoryMode)
@@ -148,7 +145,6 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
 
 void CacheChangePool::release_Cache(CacheChange_t* ch)
 {
-	const char* const METHOD_NAME = "release_Cache";
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
 
 	switch(memoryMode)
@@ -201,7 +197,6 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
 
 bool CacheChangePool::allocateGroup(uint32_t group_size)
 {
-	const char* const METHOD_NAME = "allocateGroup";
 	// This method should only called from within PREALLOCATED_MEMORY_MODE
 	assert(memoryMode != DYNAMIC_RESERVE_MEMORY_MODE);
 
@@ -248,7 +243,6 @@ CacheChange_t* CacheChangePool::allocateSingle(uint32_t dataSize)
 	 *   purposes.
 	 *
 	 */
-	const char * const METHOD_NAME = "allocateSingle";
 	bool added = false;
 	CacheChange_t*ch = nullptr;
 

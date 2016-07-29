@@ -49,7 +49,7 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 
 
@@ -58,7 +58,6 @@ namespace fastrtps{
 namespace rtps {
 
 
-static const char* const CLASS_NAME = "RTPSParticipantImpl";
 
 static EntityId_t TrustedWriter(const EntityId_t& reader)
 {
@@ -111,7 +110,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
    for (const auto& transportDescriptor : PParam.userTransports)
       m_network_Factory.RegisterTransport(transportDescriptor.get());
    
-	const char* const METHOD_NAME = "RTPSParticipantImpl";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	mp_userParticipant->mp_impl = this;
 	Locator_t loc;
@@ -121,10 +119,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
 
    // Terminal throughput controller, if the descriptor has valid values
-   if (PParam.terminalThroughputController.sizeToClear != UINT32_MAX &&
-       PParam.terminalThroughputController.refreshTimeMS != 0)
+   if (PParam.throughputController.size != UINT32_MAX &&
+       PParam.throughputController.timeMS != 0)
    {
-      std::unique_ptr<FlowController> controller(new ThroughputController(PParam.terminalThroughputController, this));
+      std::unique_ptr<FlowController> controller(new ThroughputController(PParam.throughputController, this));
       m_controllers.push_back(std::move(controller));
    }
 
@@ -177,9 +175,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	*/
 	createReceiverResources(m_att.defaultUnicastLocatorList, true);
 	
-	if(!hasLocatorsDefined)
+	if(!hasLocatorsDefined){
 		logInfo(RTPS_PARTICIPANT,m_att.getName()<<" Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
-
+	}
 	//Multicast
 	createReceiverResources(m_att.defaultMulticastLocatorList, true);
 	
@@ -223,9 +221,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	//m_senderResource.insert(m_senderResource.end(), newSenders.begin(), newSenders.end());
 	m_att.defaultOutLocatorList = defcopy;
 
-	if (!hasLocatorsDefined)
+	if (!hasLocatorsDefined){
 		logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Send Locator List, adding Locators: " << m_att.defaultOutLocatorList);
-
+	}
 	logInfo(RTPS_PARTICIPANT,"RTPSParticipant \"" <<  m_att.getName() << "\" with guidPrefix: " <<m_guid.guidPrefix);
 	//START BUILTIN PROTOCOLS
 	mp_builtinProtocols = new BuiltinProtocols();
@@ -282,9 +280,8 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		WriterAttributes& param,WriterHistory* hist,WriterListener* listen, const EntityId_t& entityId,bool isBuiltin)
 {
-	const char* const METHOD_NAME = "createWriter";
 	std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
-	logInfo(RTPS_PARTICIPANT," of type " << type,C_B_YELLOW);
+	logInfo(RTPS_PARTICIPANT," of type " << type);
 	EntityId_t entId;
 	if(entityId== c_EntityId_Unknown)
 	{
@@ -325,6 +322,11 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		logError(RTPS_PARTICIPANT,"Multicast Locator List for Writer contains invalid Locator");
 		return false;
 	}
+	if(!param.endpoint.outLocatorList.isValid())
+	{
+		logError(RTPS_PARTICIPANT,"Output Locator List for Writer contains invalid Locator");
+		return false;
+	}
 
 	// Normalize unicast locators
 	if (!param.endpoint.unicastLocatorList.empty())
@@ -361,9 +363,9 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 	*WriterOut = SWriter;
 
    // If the terminal throughput controller has proper user defined values, instantiate it
-   if (param.terminalThroughputController.sizeToClear != UINT32_MAX && param.terminalThroughputController.refreshTimeMS != 0)
+   if (param.throughputController.size != UINT32_MAX && param.throughputController.timeMS != 0)
    {
-      std::unique_ptr<FlowController> controller(new ThroughputController(param.terminalThroughputController, SWriter));
+      std::unique_ptr<FlowController> controller(new ThroughputController(param.throughputController, SWriter));
       SWriter->add_flow_controller(std::move(controller));
    }
 	return true;
@@ -373,9 +375,8 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 		ReaderAttributes& param,ReaderHistory* hist,ReaderListener* listen, const EntityId_t& entityId,bool isBuiltin, bool enable)
 {
-	const char* const METHOD_NAME = "createReader";
 	std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
-	logInfo(RTPS_PARTICIPANT," of type " << type,C_B_YELLOW);
+	logInfo(RTPS_PARTICIPANT," of type " << type);
 	EntityId_t entId;
 	if(entityId== c_EntityId_Unknown)
 	{
@@ -414,6 +415,11 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 	if(!param.endpoint.multicastLocatorList.isValid())
 	{
 		logError(RTPS_PARTICIPANT,"Multicast Locator List for Reader contains invalid Locator");
+		return false;
+	}
+	if(!param.endpoint.outLocatorList.isValid())
+	{
+		logError(RTPS_PARTICIPANT,"Output Locator List for Reader contains invalid Locator");
 		return false;
 	}
 
@@ -633,7 +639,7 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend){
 		//newSenders.insert(newSenders.end(), SendersBuffer.begin(), SendersBuffer.end());
 		SendersBuffer.clear();
 	}
-	for(auto mit = SendersBuffer.begin();mit!=SendersBuffer.end();++mit){
+	for(auto mit = newSenders.begin();mit!=newSenders.end();++mit){
 		m_senderResource.push_back(std::move(*mit));
 	}
 	//m_senderResource.insert(m_senderResource.end(), SendersBuffer.begin(), SendersBuffer.end());
@@ -785,7 +791,6 @@ void RTPSParticipantImpl::loose_next_change()
 
 bool RTPSParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
 {
-	const char* const METHOD_NAME = "newRemoteEndpointDiscovered";
 	if(m_att.builtin.use_STATIC_EndpointDiscoveryProtocol == false)
 	{
 		logWarning(RTPS_PARTICIPANT,"Remote Endpoints can only be activated with static discovery protocol");

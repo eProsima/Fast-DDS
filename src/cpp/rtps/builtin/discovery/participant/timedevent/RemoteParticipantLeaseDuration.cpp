@@ -25,7 +25,7 @@
 
 #include "../../../../participant/RTPSParticipantImpl.h"
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 
@@ -35,7 +35,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "RemoteParticipantLeaseDuration";
 
 RemoteParticipantLeaseDuration::RemoteParticipantLeaseDuration(PDPSimple* p_SPDP,
 		ParticipantProxyData* pdata,
@@ -55,7 +54,6 @@ RemoteParticipantLeaseDuration::~RemoteParticipantLeaseDuration()
 
 void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
 {
-	const char* const METHOD_NAME = "event";
 
     // Unused in release mode.
     (void)msg;
@@ -63,7 +61,7 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
 	if(code == EVENT_SUCCESS)
     {
         logInfo(RTPS_LIVELINESS,"RTPSParticipant no longer ALIVE, trying to remove: "
-                << mp_participantProxyData->m_guid,C_MAGENTA);
+                << mp_participantProxyData->m_guid);
         // Set pointer to null because this call will be delete itself.
         mp_participantProxyData->mp_mutex->lock();
         mp_participantProxyData->mp_leaseDurationTimer = nullptr;
@@ -73,11 +71,11 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
 	else if(code == EVENT_ABORT)
 	{
 		logInfo(RTPS_LIVELINESS," Stopped for "<<mp_participantProxyData->m_participantName
-				<< " with ID: "<< mp_participantProxyData->m_guid.guidPrefix,C_MAGENTA);
+				<< " with ID: "<< mp_participantProxyData->m_guid.guidPrefix);
 	}
 	else
 	{
-		logInfo(RTPS_LIVELINESS,"boost message: " <<msg,C_MAGENTA);
+		logInfo(RTPS_LIVELINESS,"boost message: " <<msg);
 	}
 }
 
