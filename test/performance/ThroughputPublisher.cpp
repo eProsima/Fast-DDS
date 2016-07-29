@@ -275,6 +275,7 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
 	command.m_command = ALL_STOPS;
 	//	cout << "SEND COMMAND "<< command.m_command << endl;
 	mp_commandpub->write((void*)&command);
+	mp_commandpub->wait_for_all_acked(Time_t(20, 0));
 
 	if (m_export_csv) {
 		std::ofstream outFile;

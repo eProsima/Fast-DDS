@@ -181,22 +181,38 @@ bool StatefulReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
 }
 
 
-bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID, WriterProxy** WP)
+bool StatefulReader::matched_writer_lookup(const GUID_t& writerGUID, WriterProxy** WP)
 {
     assert(WP);
 
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
+    bool returnedValue = findWriterProxy(writerGUID, WP);
+
+    if(returnedValue)
+    {
+        logInfo(RTPS_READER,this->getGuid().entityId<<" FINDS writerProxy "<< writerGUID<<" from "<< matched_writers.size());
+    }
+    else
+    {
+        logInfo(RTPS_READER,this->getGuid().entityId<<" NOT FINDS writerProxy "<< writerGUID<<" from "<< matched_writers.size());
+    }
+
+    return returnedValue;
+}
+
+bool StatefulReader::findWriterProxy(const GUID_t& writerGUID, WriterProxy** WP)
+{
+    assert(WP);
 
     for(std::vector<WriterProxy*>::iterator it = matched_writers.begin(); it != matched_writers.end(); ++it)
     {
         if((*it)->m_att.guid == writerGUID)
         {
             *WP = *it;
-            logInfo(RTPS_READER,this->getGuid().entityId<<" FINDS writerProxy "<< writerGUID<<" from "<< matched_writers.size());
             return true;
         }
     }
-    logInfo(RTPS_READER,this->getGuid().entityId<<" NOT FINDS writerProxy "<< writerGUID<<" from "<< matched_writers.size());
     return false;
 }
 
@@ -363,9 +379,15 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
                     }
                     ++notifySeqNum;
 
-                    wpLock.lock();
-                    maxSeqNumAvailable = pWP->available_changes_max();
-                    wpLock.unlock();
+                    // Search again the WriterProxy because could be removed after the unlock.
+                    if(findWriterProxy(proxGUID, &pWP))
+                    {
+                        pWP->getMutex()->lock();
+                        maxSeqNumAvailable = pWP->available_changes_max();
+                        pWP->getMutex()->unlock();
+                    }
+                    else
+                        break;
                 }
             }
         }
@@ -440,10 +462,11 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change, WriterPr
 bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox, boost::unique_lock<boost::recursive_mutex> &lock)
 {
 
+
     //First look for WriterProxy in case is not provided
     if(prox == nullptr)
     {
-        if(!this->matched_writer_lookup(a_change->writerGUID,&prox))
+        if(!findWriterProxy(a_change->writerGUID, &prox))
         {
             logInfo(RTPS_READER, "Writer Proxy " << a_change->writerGUID <<" not matched to this Reader "<< m_guid.entityId);
             return false;
@@ -496,9 +519,15 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
                         }
                         ++notifySeqNum;
 
-                        writerProxyLock.lock();
-                        maxSeqNumAvailable = prox->available_changes_max();
-                        writerProxyLock.unlock();
+                        // Search again the WriterProxy because could be removed after the unlock.
+                        if(findWriterProxy(proxGUID, &prox))
+                        {
+                            prox->getMutex()->lock();
+                            maxSeqNumAvailable = prox->available_changes_max();
+                            prox->getMutex()->unlock();
+                        }
+                        else
+                            break;
                     }
                 }
                 else
@@ -506,7 +535,7 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
                     //TODO NOTHING; SOME CHANGES ARE MISSING
                 }
 
-		mp_history->postSemaphore();
+                mp_history->postSemaphore();
             }
 
             return true;
