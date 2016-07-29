@@ -48,14 +48,14 @@ bool ThroughputDataType::deserialize(SerializedPayload_t* payload,void * data)
 
 std::function<uint32_t()> ThroughputDataType::getSerializedSizeProvider(void* data)
 {
-    return [&]() -> uint32_t
+    return [data]() -> uint32_t
     {
         ThroughputType *tdata = static_cast<ThroughputType*>(data);
-	uint32_t size = 0;
+        uint32_t size = 0;
 
-	size = sizeof(uint32_t) + sizeof(uint32_t) + tdata->data.size();
+        size = (uint32_t)(sizeof(uint32_t) + sizeof(uint32_t) + tdata->data.size());
 
-	return size;
+        return size;
     };
 }
 
@@ -97,14 +97,14 @@ bool ThroughputCommandDataType::deserialize(SerializedPayload_t* p,void * data)
 
 std::function<uint32_t()> ThroughputCommandDataType::getSerializedSizeProvider(void*)
 {
-    return [&]() -> uint32_t
+    return []() -> uint32_t
     {
-	uint32_t size = 0;
+        uint32_t size = 0;
 
-	size = sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t)  + sizeof(uint32_t) +
-	    sizeof(uint64_t) + sizeof(uint64_t);
+        size = (uint32_t)(sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t)  + sizeof(uint32_t) +
+            sizeof(uint64_t) + sizeof(uint64_t));
 
-	return size;
+        return size;
     };
 }
 

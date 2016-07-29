@@ -56,7 +56,7 @@ bool ExampleMessagePubSubType::deserialize(SerializedPayload_t* payload, void* d
 }
 
 std::function<uint32_t()> ExampleMessagePubSubType::getSerializedSizeProvider(void* data) {
-    return [&]() -> uint32_t { return type::getCdrSerializedSize(*static_cast<ExampleMessage*>(data)); };
+    return [data]() -> uint32_t { return (uint32_t)type::getCdrSerializedSize(*static_cast<ExampleMessage*>(data)); };
 }
 
 void* ExampleMessagePubSubType::createData() {

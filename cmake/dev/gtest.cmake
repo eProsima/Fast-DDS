@@ -101,3 +101,31 @@ macro(add_gtest test)
         endif()
     endif()
 endmacro()
+
+macro(add_blackbox_gtest test memorymode)
+    if(GTEST_INDIVIDUAL)
+        foreach(GTEST_SOURCE_FILE ${ARGN})
+            file(STRINGS ${GTEST_SOURCE_FILE} GTEST_NAMES REGEX ^BLACKBOXTEST)
+            foreach(GTEST_NAME ${GTEST_NAMES})
+                string(REGEX REPLACE ["\) \(,"] ";" GTEST_NAME ${GTEST_NAME})
+                list(GET GTEST_NAME 1 GTEST_GROUP_NAME)
+                list(GET GTEST_NAME 3 GTEST_NAME)
+                add_test(NAME ${GTEST_GROUP_NAME}_${memorymode}.${GTEST_NAME}
+                    COMMAND ${test}
+                    --gtest_filter=${GTEST_GROUP_NAME}_${memorymode}.${GTEST_NAME})
+                # Add environment
+                if(WIN32)
+                    set_tests_properties(${GTEST_GROUP_NAME}_${memorymode}.${GTEST_NAME} PROPERTIES ENVIRONMENT
+                        "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
+                endif()
+            endforeach()
+        endforeach()
+    else()
+        add_test(NAME ${test} COMMAND ${test})
+        # Add environment
+        if(WIN32)
+            set_tests_properties(${test} PROPERTIES ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
+        endif()
+    endif()
+endmacro()

@@ -95,6 +95,7 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, const std::function<ui
 
 bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
 {
+    const char * const METHOD_NAME = "reserve";
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
 
 	switch(memoryMode)
@@ -129,8 +130,7 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
             }
             catch(std::bad_alloc& ex)
             {
-		const char * const METHOD_NAME = "reserve";
-		logError(RTPS_HISTORY, "Failed to allocate memory for the serializedPayload, exception caught: " << ex.what());
+                logError(RTPS_HISTORY, "Failed to allocate memory for the serializedPayload, exception caught: " << ex.what());
                 delete(*chan);
                 *chan = nullptr;
                 return false;

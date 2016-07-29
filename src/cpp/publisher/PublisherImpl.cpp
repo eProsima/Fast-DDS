@@ -98,13 +98,13 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
 		mp_type->getKey(data,&handle);
 	}
 
-	CacheChange_t* ch = mp_writer->new_change(mp_type->getSerializedSizeProvider(data), changeKind,handle);
+	CacheChange_t* ch = mp_writer->new_change(mp_type->getSerializedSizeProvider(data), changeKind, handle);
 	if(ch != nullptr)
 	{
 		if(changeKind == ALIVE)
 		{
 			//If these two checks are correct, we asume the cachechange is valid and thwn we can write to it.	
-			if(!mp_type->serialize(data,&ch->serializedPayload))
+			if(!mp_type->serialize(data, &ch->serializedPayload))
 			{
 				logWarning(RTPS_WRITER,"RTPSWriter:Serialization returns false";);
 				m_history.release_Cache(ch);
@@ -117,6 +117,14 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
 
         if(ch->serializedPayload.length > high_mark)
         {
+            // Check ASYNCHRONOUS_PUBLISH_MODE is being used, but it is an error case.
+            if( m_att.qos.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
+            {
+                logError(PUBLISHER, "Data cannot be sent. It's serialized size is " <<
+                        ch->serializedPayload.length << "' which exceeds the maximum payload size of '" <<
+                        high_mark << "' and therefore ASYNCHRONOUS_PUBLISH_MODE must be used.");
+            }
+
             /// Fragment the data.
             // Set the fragment size to the cachechange.
             // Note: high_mark will always be a value that can be casted to uint16_t)
@@ -136,6 +144,7 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
 
 		return true;
 	}
+
 	return false;
 }
 
