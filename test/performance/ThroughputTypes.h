@@ -117,7 +117,7 @@ public:
 	ThroughputDataType()
 {
 		setName("ThroughputType");
-		m_typeSize = 25000;
+		m_typeSize = 9004;
 		m_isGetKeyDefined = false;
 };
 	~ThroughputDataType(){};
