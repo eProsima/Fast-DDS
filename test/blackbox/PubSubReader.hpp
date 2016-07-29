@@ -111,9 +111,8 @@ class PubSubReader
 
         void init()
         {
-            eprosima::fastrtps::ParticipantAttributes pattr;
-            pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
-            participant_ = eprosima::fastrtps::Domain::createParticipant(pattr);
+            participant_attr_.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+            participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr_);
             ASSERT_NE(participant_, nullptr);
 
             // Register type
@@ -276,6 +275,16 @@ class PubSubReader
             return *this;
         }
 
+    PubSubReader& static_discovery(std::string filename)
+    {
+	participant_attr_.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
+	participant_attr_.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
+	participant_attr_.builtin.setStaticEndpointXMLFile(filename);
+	return *this;
+    }
+
+
+
     private:
 
         void receive_one(eprosima::fastrtps::Subscriber* subscriber, bool& returnedValue)
@@ -327,7 +336,8 @@ class PubSubReader
         PubSubReader& operator=(const PubSubReader&)NON_COPYABLE_CXX11;
 
         eprosima::fastrtps::Participant *participant_;
-        eprosima::fastrtps::SubscriberAttributes subscriber_attr_;
+	eprosima::fastrtps::ParticipantAttributes participant_attr_;
+	eprosima::fastrtps::SubscriberAttributes subscriber_attr_;
         eprosima::fastrtps::Subscriber *subscriber_;
         std::string topic_name_;
         bool initialized_;

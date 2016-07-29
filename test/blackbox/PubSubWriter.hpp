@@ -275,6 +275,14 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& static_discovery(std::string filename)
+    {
+	participant_attr_.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
+	participant_attr_.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
+	participant_attr_.builtin.setStaticEndpointXMLFile(filename);
+	return *this;
+    }
+
     private:
 
     void matched()

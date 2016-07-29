@@ -1520,6 +1520,43 @@ BLACKBOXTEST(BlackBox, PubSubMoreThan256Unacknowledged)
     ASSERT_EQ(data.size(), static_cast<size_t>(0));
 }
 
+
+TEST(BlackBox, StaticDiscovery)
+{
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
+    writer.static_discovery(std::string("PubSubWriter.xml").init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    auto data = default_helloword_data_generator(600);
+    auto expected_data(data);
+
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
+    reader.static_discovery("PubSubReader.xml").init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    reader.expected_data(expected_data);
+	reader.startReception();
+    data = reader.block(std::chrono::seconds(10));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_EQ(data.size(), static_cast<size_t>(0));
+
+
+
+
+}
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
