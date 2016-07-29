@@ -163,7 +163,7 @@ void WriterProxy::missing_changes_update(const SequenceNumber_t& seqNum)
         }
     }
 
-	print_changes_fromWriter_test2();
+	//print_changes_fromWriter_test2();
 }
 
 bool WriterProxy::maybe_add_changes_from_writer_up_to(const SequenceNumber_t& sequence_number,
@@ -225,7 +225,7 @@ bool WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
         returnedValue = true;
     }
 
-	print_changes_fromWriter_test2();
+	//print_changes_fromWriter_test2();
 
     return returnedValue;
 }
@@ -301,7 +301,7 @@ bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum, bool is_re
 
     }
 
-    print_changes_fromWriter_test2();
+    //print_changes_fromWriter_test2();
 
 	return true;
 }
@@ -323,7 +323,7 @@ const std::vector<ChangeFromWriter_t> WriterProxy::missing_changes()
     }
 
 
-    print_changes_fromWriter_test2();
+    //print_changes_fromWriter_test2();
 
     return returnedValue;
 }
