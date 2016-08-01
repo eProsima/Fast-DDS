@@ -1,0 +1,22 @@
+<staticdiscovery>
+	<participant>
+		<name>RTPSParticipant</name>
+		<writer>
+			<userId>1</userId>
+			<entityId>2</entityId>
+			<topicName>TEST_TOPIC_NAME</topicName>
+			<topicDataType>HelloWorldType</topicDataType>
+			<topicKind>NO_KEY</topicKind>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<unicastLocator
+				address="127.0.0.1"
+			 	port="31337">	
+			</unicastLocator>
+			<multicastLocator
+				address="127.0.0.1"
+				port="31338">
+			</multicastLocator>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+		</writer>
+	</participant>
+</staticdiscovery>
