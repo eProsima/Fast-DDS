@@ -275,14 +275,26 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& static_discovery(std::string filename)
+    PubSubWriter& static_discovery(char* filename)
     {
-	participant_attr_.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
-	participant_attr_.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
-	participant_attr_.builtin.setStaticEndpointXMLFile(filename);
+	participant_attr_.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
+	participant_attr_.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
+	participant_attr_.rtps.builtin.setStaticEndpointXMLFilename(filename);
 	return *this;
     }
 
+    PubSubWriter& setPublisherIDs(uint8_t UserID, uint8_t EntityID)
+    {
+	publisher_attr_.setUserDefinedID(UserID);
+	publisher_attr_.setEntityID(EntityID);
+	return *this;
+    }
+
+    PubSubWriter& setManualTopicName(std::string topicName)
+    {
+	publisher_attr_.topic.topicName=topicName;
+	return *this;
+    }
     private:
 
     void matched()

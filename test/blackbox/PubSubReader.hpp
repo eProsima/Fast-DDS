@@ -275,15 +275,27 @@ class PubSubReader
             return *this;
         }
 
-    PubSubReader& static_discovery(std::string filename)
+    PubSubReader& static_discovery(char* filename)
     {
-	participant_attr_.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
-	participant_attr_.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
-	participant_attr_.builtin.setStaticEndpointXMLFile(filename);
+	participant_attr_.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
+	participant_attr_.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
+	participant_attr_.rtps.builtin.setStaticEndpointXMLFilename(filename);
 	return *this;
     }
 
+    PubSubReader& setSubscriberIDs(uint8_t UserID, uint8_t EntityID)
+    {
+	subscriber_attr_.setUserDefinedID(UserID);
+	subscriber_attr_.setEntityID(EntityID);
+	return *this;
 
+    }
+
+    PubSubReader& setManualTopicName(std::string topicName)
+    {
+	subscriber_attr_.topic.topicName=topicName;
+	return *this;
+    }
 
     private:
 

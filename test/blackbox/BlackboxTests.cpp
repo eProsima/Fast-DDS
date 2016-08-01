@@ -1525,26 +1525,55 @@ TEST(BlackBox, StaticDiscovery)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
+    LocatorList_t WriterUnicastLocators;
+    Locator_t LocatorBuffer;
+    
+    LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
+    LocatorBuffer.port = 31337;
+    LocatorBuffer.set_IP4_address(127,0,0,1);
+    WriterUnicastLocators.push_back(LocatorBuffer);
+
+    LocatorList_t WriterMulticastLocators;
+    
+    LocatorBuffer.port = 31338;
+    WriterMulticastLocators.push_back(LocatorBuffer);
+
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
         durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
-    writer.static_discovery(std::string("PubSubWriter.xml").init();
+    writer.static_discovery("PubSubWriter.xml").reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+	unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
+	setPublisherIDs(1,2).setManualTopicName(std::string("TEST_TOPIC_NAME")).init();
+
 
     ASSERT_TRUE(writer.isInitialized());
 
-    auto data = default_helloword_data_generator(600);
-    auto expected_data(data);
-
-    writer.send(data);
-    ASSERT_TRUE(data.empty());
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    
+    LocatorList_t ReaderUnicastLocators;
+    
+    LocatorBuffer.port = 31377;
+    ReaderUnicastLocators.push_back(LocatorBuffer);
+
+    LocatorList_t ReaderMulticastLocators;
+    
+    LocatorBuffer.port = 31378;
+    ReaderMulticastLocators.push_back(LocatorBuffer);
+
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
     history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
     durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
-    reader.static_discovery("PubSubReader.xml").init();
+    reader.static_discovery("PubSubReader.xml").
+	    unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
+	    setSubscriberIDs(3,4).setManualTopicName(std::string("TEST_TOPIC_NAME")).init();
 
     ASSERT_TRUE(reader.isInitialized());
+
+    auto data = default_helloword_data_generator(10);
+    auto expected_data(data);
+
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
 
     reader.expected_data(expected_data);
 	reader.startReception();
