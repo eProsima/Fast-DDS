@@ -259,7 +259,6 @@ CacheChange_t* CacheChangePool::allocateSingle(uint32_t dataSize)
 
     if(!added)
     {
-        std::cout << "pool size = " << m_pool_size << ". max = " << m_max_pool_size << std::endl;
         logWarning(RTPS_HISTORY, "Maximum number of allowed reserved caches reached");
         return NULL;
     }
