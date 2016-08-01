@@ -35,6 +35,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             ReqRepHelloWorldRequester.cpp
             ReqRepHelloWorldReplier.cpp
             )
+        # Static discovery xml file for blackbox tests.
+        file(COPY PubSubWriter.xml PubSubReader.xml DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
         add_executable(BlackboxTests_PreallocMem ${BLACKBOXTESTS_SOURCE})
         add_blackbox_gtest(BlackboxTests_PreallocMem PreallocMem ${BLACKBOXTESTS_SOURCE})
         target_compile_definitions(BlackboxTests_PreallocMem PRIVATE
