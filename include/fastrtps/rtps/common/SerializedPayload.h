@@ -36,7 +36,7 @@ namespace eprosima{
     namespace fastrtps{
         namespace rtps{
 
-//Pre define data encapsulation schemes
+            //Pre define data encapsulation schemes
 #define CDR_BE 0x0000
 #define CDR_LE 0x0001
 #define PL_CDR_BE 0x0002
@@ -69,7 +69,7 @@ namespace eprosima{
                  * @param len Maximum size of the payload
                  */
                 SerializedPayload_t(uint32_t len)
-                : SerializedPayload_t()
+                    : SerializedPayload_t()
                 {
                     this->reserve(len);
                 }
@@ -101,7 +101,7 @@ namespace eprosima{
                     return true;
                 }
 
-	
+
                 /*!
                  * Allocate new space for fragmented data
                  * @param[in] serData Pointer to the structure to copy
@@ -133,20 +133,26 @@ namespace eprosima{
                         return;
                     }
                     if(data == nullptr)
-		    {
-			data = (octet*)malloc(new_size*sizeof(octet));
-		    }else{
-		        void * old_data = data;
+                    {
+                        data = (octet*)calloc(new_size, sizeof(octet));
+                        if (!data)
+                        {
+                            throw std::bad_alloc();
+                        }
+                    }
+                    else
+                    {
+                        void * old_data = data;
                         data = (octet*)realloc(data, new_size);
-                        if (!data) {
+                        if (!data)
+                        {
                             free(old_data);
                             throw std::bad_alloc();
                         }
-		    }
+                    }
                     max_size = new_size;
-        	    memset(data, 0x00, max_size);
-		}
-		
+                }
+
             };
         }
     }
