@@ -132,14 +132,21 @@ namespace eprosima{
                     if (new_size <= this->max_size) {
                         return;
                     }
-                    void * old_data = data;
-                    data = (octet*)realloc(data, new_size);
-                    if (!data) {
-                        free(old_data);
-                        throw std::bad_alloc();
-                    }
+                    if(data == nullptr)
+		    {
+			data = (octet*)malloc(new_size*sizeof(octet));
+		    }else{
+		        void * old_data = data;
+                        data = (octet*)realloc(data, new_size);
+                        if (!data) {
+                            free(old_data);
+                            throw std::bad_alloc();
+                        }
+		    }
                     max_size = new_size;
-                }
+        	    memset(data, 0x00, max_size);
+		}
+		
             };
         }
     }
