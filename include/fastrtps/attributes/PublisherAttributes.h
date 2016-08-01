@@ -57,7 +57,7 @@ public:
 	LocatorList_t multicastLocatorList;
 	//!Output locator list
 	LocatorList_t outLocatorList;
-   //!Terminal throughput controller
+   //!Throughput controller
    ThroughputControllerDescriptor throughputController;
 
 	/**

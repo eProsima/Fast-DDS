@@ -20,10 +20,10 @@ using namespace eprosima::fastrtps::rtps;
 
 static const unsigned int testPayloadSize = 1000;
 static const unsigned int controllerSize = 5500;
-static const unsigned int timeMS = 100;
+static const unsigned int periodMillisecs = 100;
 static const unsigned int numberOfTestChanges = 10;
 
-static const ThroughputControllerDescriptor testDescriptor = {controllerSize, timeMS};
+static const ThroughputControllerDescriptor testDescriptor = {controllerSize, periodMillisecs};
 
 class ThroughputControllerTests: public ::testing::Test 
 {
@@ -59,7 +59,7 @@ TEST_F(ThroughputControllerTests, throughput_controller_lets_only_some_elements_
    // Then
    ASSERT_EQ(controllerSize/testPayloadSize, testChangesForGroup.size());
 
-   std::this_thread::sleep_for(std::chrono::milliseconds(timeMS + 50));
+   std::this_thread::sleep_for(std::chrono::milliseconds(periodMillisecs + 50));
 }
 
 TEST_F(ThroughputControllerTests, if_changes_are_fragmented_throughput_controller_provides_granularity)
@@ -86,7 +86,7 @@ TEST_F(ThroughputControllerTests, if_changes_are_fragmented_throughput_controlle
 
    // And the last one is partially cleared
    ASSERT_EQ(testChangesForGroup[5].getFragmentsClearedForSending().set.size(), 5); 
-   std::this_thread::sleep_for(std::chrono::milliseconds(timeMS + 50));
+   std::this_thread::sleep_for(std::chrono::milliseconds(periodMillisecs + 50));
 }
 
 TEST_F(ThroughputControllerTests, throughput_controller_carries_over_multiple_attempts)
@@ -99,7 +99,7 @@ TEST_F(ThroughputControllerTests, throughput_controller_carries_over_multiple_at
 
    // Then
    ASSERT_EQ(0, otherChangesForGroup.size());
-   std::this_thread::sleep_for(std::chrono::milliseconds(timeMS + 50));
+   std::this_thread::sleep_for(std::chrono::milliseconds(periodMillisecs + 50));
 }
 
 TEST_F(ThroughputControllerTests, throughput_controller_resets_completely_after_its_refresh_period)
@@ -113,12 +113,12 @@ TEST_F(ThroughputControllerTests, throughput_controller_resets_completely_after_
    ASSERT_EQ(0, testChangesForGroup.size());
 
    // When
-   std::this_thread::sleep_for(std::chrono::milliseconds(timeMS + 100));
+   std::this_thread::sleep_for(std::chrono::milliseconds(periodMillisecs + 100));
    
    // The controller should be open now
    sController(otherChangesForGroup);
    EXPECT_EQ(5, otherChangesForGroup.size());
-   std::this_thread::sleep_for(std::chrono::milliseconds(timeMS + 50));
+   std::this_thread::sleep_for(std::chrono::milliseconds(periodMillisecs + 50));
 }
 
 int main(int argc, char **argv)

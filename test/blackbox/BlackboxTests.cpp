@@ -220,12 +220,12 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    uint32_t size = 440; // Roughly ten times the size of the payload being sent
-    uint32_t timeMS = 300;
+    uint32_t bytesPerPeriod = 440; // Roughly ten times the size of the payload being sent
+    uint32_t periodMillisecs = 300;
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
         add_to_multicast_locator_list(ip, global_port).
         asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).
-        add_throughput_controller_descriptor_to_pparams(size, timeMS).init();
+        add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodMillisecs).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -680,9 +680,9 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    uint32_t size = 68000;
+    uint32_t bytesPerPeriod = 68000;
     uint32_t periodInMs = 500;
-    writer.add_throughput_controller_descriptor_to_pparams(size, periodInMs);
+    writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
 
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
@@ -720,9 +720,9 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTra
 
     ASSERT_TRUE(reader.isInitialized());
 
-    uint32_t size = 300000;
+    uint32_t bytesPerPeriod = 300000;
     uint32_t periodInMs = 500;
-    writer.add_throughput_controller_descriptor_to_pparams(size, periodInMs);
+    writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
 
     auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
     testTransport->granularMode = true;
@@ -791,14 +791,14 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
 	
     // When doing fragmentation, it is necessary to have some degree of
     // flow control not to overrun the receive buffer.
-    uint32_t size = 65536;
+    uint32_t bytesPerPeriod = 65536;
     uint32_t periodInMs = 50;
 
     writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
         heartbeat_period_seconds(0).
         heartbeat_period_fraction(4294967 * 500).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-        add_throughput_controller_descriptor_to_pparams(size, periodInMs).init();
+        add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -834,13 +834,13 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kb)
 
 	// When doing fragmentation, it is necessary to have some degree of
 	// flow control not to overrun the receive buffer.
-	uint32_t size = 65536;
+	uint32_t bytesPerPeriod = 65536;
 	uint32_t periodInMs = 50;
 
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
         heartbeat_period_fraction(4294967 * 500).
-        add_throughput_controller_descriptor_to_pparams(size, periodInMs).init();
+        add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -876,9 +876,9 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
 
 	// When doing fragmentation, it is necessary to have some degree of
 	// flow control not to overrun the receive buffer.
-	uint32_t size = 300000;
+	uint32_t bytesPerPeriod = 300000;
 	uint32_t periodInMs = 200;
-	writer.add_throughput_controller_descriptor_to_pparams(size, periodInMs);
+	writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
 
    // To simulate lossy conditions, we are going to remove the default
    // bultin transport, and instead use a lossy shim layer variant.
