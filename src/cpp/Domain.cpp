@@ -28,14 +28,13 @@
 
 #include <fastrtps/utils/eClock.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps::rtps;
 
 namespace eprosima {
 namespace fastrtps {
 
-static const char* const CLASS_NAME = "Domain";
 
 std::vector<Domain::t_p_Participant> Domain::m_participants;
 
@@ -58,6 +57,7 @@ void Domain::stopAll()
 		Domain::removeParticipant(m_participants.begin()->first);
 	}
 	eClock::my_sleep(100);
+   Log::KillThread();
 }
 
 bool Domain::removeParticipant(Participant* part)
@@ -113,7 +113,6 @@ bool Domain::removeSubscriber(Subscriber* sub)
 
 Participant* Domain::createParticipant(ParticipantAttributes& att,ParticipantListener* listen)
 {
-	const char* const METHOD_NAME = "createParticipant";
 
 	Participant* pubsubpar = new Participant();
 	ParticipantImpl* pspartimpl = new ParticipantImpl(att,pubsubpar,listen);

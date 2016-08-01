@@ -15,7 +15,7 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 #include <fastrtps/rtps/RTPSDomain.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include "types/HelloWorldType.h"
 
 #include <string>
@@ -34,7 +34,6 @@ std::list<HelloWorld> default_helloworld_data_generator();
 
 int main(void)
 {
-   eprosima::Log::setVerbosity(eprosima::LOG_VERBOSITY_LVL::VERB_ERROR);
    const std::string topic_name("Profiling");
    PubSubReader<HelloWorldType> reader(topic_name);
    PubSubWriter<HelloWorldType> writer(topic_name);
@@ -59,6 +58,7 @@ int main(void)
    data = reader.block(std::chrono::seconds(5));
    std::function<void(const HelloWorld&)> lambda_print = [](const HelloWorld& hello){std::cout << hello.index() << " ";};
    print_non_received_messages(data, lambda_print);
+   Log::Reset();
 }
 
 std::list<HelloWorld> default_helloworld_data_generator()

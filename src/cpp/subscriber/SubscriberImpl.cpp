@@ -27,7 +27,7 @@
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -35,7 +35,6 @@ using namespace eprosima::fastrtps::rtps;
 namespace eprosima {
 namespace fastrtps {
 
-static const char* const CLASS_NAME = "SubscriberImpl";
 
 SubscriberImpl::SubscriberImpl(ParticipantImpl* p,TopicDataType* ptype,
 		SubscriberAttributes& att,SubscriberListener* listen):
@@ -56,7 +55,6 @@ SubscriberImpl::SubscriberImpl(ParticipantImpl* p,TopicDataType* ptype,
 
 SubscriberImpl::~SubscriberImpl()
 {
-	const char* const METHOD_NAME = "~SubscriberImpl";
 	logInfo(SUBSCRIBER,this->getGuid().entityId << " in topic: "<<this->m_att.topic.topicName);
 	RTPSDomain::removeRTPSReader(mp_reader);
 	delete(this->mp_userSubscriber);
@@ -96,7 +94,6 @@ const GUID_t& SubscriberImpl::getGuid(){
 
 bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 {
-	const char* const METHOD_NAME = "updateAttributes";
 	bool updated = true;
 	bool missing = false;
 	if(att.unicastLocatorList.size() != this->m_att.unicastLocatorList.size() ||

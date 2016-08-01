@@ -85,8 +85,8 @@ class ReqRepHelloWorldRequester
         void waitDiscovery();
         void matched();
         void send(const uint16_t number);
-        virtual void configSubscriber(SubscriberAttributes &rattr, const std::string& suffix) = 0;
-        virtual void configPublisher(PublisherAttributes &pubattr, const std::string& suffix) = 0;
+        virtual void configSubscriber(const std::string& suffix) = 0;
+        virtual void configPublisher(const std::string& suffix) = 0;
 
     protected:
 	PublisherAttributes puattr;

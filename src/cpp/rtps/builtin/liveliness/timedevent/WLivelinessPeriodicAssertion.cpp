@@ -26,7 +26,7 @@
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/utils/eClock.h>
 
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
@@ -40,7 +40,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "WLivelinessPeriodicAssertion";
 
 WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQosPolicyKind kind):
 TimedEvent(pwlp->getRTPSParticipant()->getEventResource().getIOService(),
@@ -62,14 +61,13 @@ WLivelinessPeriodicAssertion::~WLivelinessPeriodicAssertion()
 
 void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
 {
-	const char* const METHOD_NAME = "event";
 
     // Unused in release mode.
     (void)msg;
 
 	if(code == EVENT_SUCCESS)
 	{
-		logInfo(RTPS_LIVELINESS,"Period: "<< this->getIntervalMilliSec(),C_MAGENTA);
+		logInfo(RTPS_LIVELINESS,"Period: "<< this->getIntervalMilliSec());
 		if(this->mp_WLP->mp_builtinWriter->getMatchedReadersSize()>0)
 		{
 			if(m_livelinessKind == AUTOMATIC_LIVELINESS_QOS)
@@ -82,11 +80,11 @@ void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
 	}
 	else if(code == EVENT_ABORT)
 	{
-		logInfo(RTPS_LIVELINESS,"Liveliness Periodic Assertion aborted",C_MAGENTA);
+		logInfo(RTPS_LIVELINESS,"Liveliness Periodic Assertion aborted");
 	}
 	else
 	{
-		logInfo(RTPS_LIVELINESS,"Boost message: " <<msg,C_MAGENTA);
+		logInfo(RTPS_LIVELINESS,"Boost message: " <<msg);
 	}
 }
 

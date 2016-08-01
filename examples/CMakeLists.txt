@@ -18,3 +18,6 @@ compile_example(OwnershipStrengthQoSExample C++/OwnershipStrengthQoSExample USE_
 compile_example(HelloWorldExample C++/HelloWorldExample)
 compile_example(FilteringExample C++/Filtering)
 compile_example(UserDefinedTransportExample C++/UserDefinedTransportExample)
+compile_example(ClientServerTest C++/ClientServerTest)
+compile_example(RTPSTest_as_socket C++/RTPSTest_as_socket)
+compile_example(RTPSTest_registered C++/RTPSTest_registered)

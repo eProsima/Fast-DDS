@@ -56,7 +56,8 @@ public:
 	 * @return Pointer to the CacheChange or nullptr if incorrect.
 	 */
     template<typename T>
-	CacheChange_t* new_change(T &data, ChangeKind_t changeKind, InstanceHandle_t handle = c_InstanceHandle_Unknown){
+	CacheChange_t* new_change(T &data, ChangeKind_t changeKind, InstanceHandle_t handle = c_InstanceHandle_Unknown)
+    {
         return new_change([data]() -> uint32_t {return T::getCdrSerializedSize(data);}, changeKind, handle);
     }
 

@@ -52,6 +52,11 @@ bool OperationDataType::deserialize(SerializedPayload_t* payload, void* data)
 	return false;
 }
 
+std::function<uint32_t()> OperationDataType::getSerializedSizeProvider(void* data)
+{
+    return [data]() -> uint32_t { return 16 + 4 + 4 + 4 + 4; };
+}
+
 void* OperationDataType::createData()
 {
 	return (void*)new Operation();
@@ -88,6 +93,11 @@ bool ResultDataType::deserialize(SerializedPayload_t* payload, void* data)
 		return true;
 	}
 	return false;
+}
+
+std::function<uint32_t()> ResultDataType::getSerializedSizeProvider(void* data)
+{
+    return [data]() -> uint32_t { return 16 + 4 + 4 + 4; };
 }
 
 void* ResultDataType::createData()

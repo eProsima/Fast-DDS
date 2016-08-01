@@ -56,7 +56,7 @@ bool HelloMsgPubSubType::deserialize(SerializedPayload_t* payload, void* data) {
 }
 
 std::function<uint32_t()> HelloMsgPubSubType::getSerializedSizeProvider(void* data) {
-    return [&]() -> uint32_t { return type::getCdrSerializedSize(*static_cast<HelloMsg*>(data)); };
+    return [data]() -> uint32_t { return (uint32_t)type::getCdrSerializedSize(*static_cast<HelloMsg*>(data)); };
 }
 
 void* HelloMsgPubSubType::createData() {

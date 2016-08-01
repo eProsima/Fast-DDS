@@ -25,7 +25,6 @@ namespace rtps{
 bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_t& guidprefix,const EntityId_t& readerId,const EntityId_t& writerId,
 		SequenceNumber_t& firstSN,SequenceNumber_t& lastSN, Count_t count,bool isFinal,bool livelinessFlag)
 {
-	const char* const METHOD_NAME = "addMessageHeartbeat";
 	try
 	{
 		RTPSMessageCreator::addHeader(msg,guidprefix);
@@ -44,7 +43,6 @@ bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_
         const EntityId_t& readerId,const EntityId_t& writerId,
 		SequenceNumber_t& firstSN,SequenceNumber_t& lastSN, Count_t count,bool isFinal,bool livelinessFlag)
 {
-	const char* const METHOD_NAME = "addMessageHeartbeat";
 	try
 	{
 		RTPSMessageCreator::addHeader(msg,guidprefix);
@@ -99,7 +97,6 @@ bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId
 bool RTPSMessageCreator::addMessageHeartbeatFrag(CDRMessage_t* msg, const GuidPrefix_t& guidprefix, const EntityId_t& readerId, const EntityId_t& writerId,
 	SequenceNumber_t& firstSN, FragmentNumber_t& lastFN, Count_t count)
 {
-	const char* const METHOD_NAME = "addMessageHeartbeatFrag";
 	try
 	{
 		RTPSMessageCreator::addHeader(msg, guidprefix);

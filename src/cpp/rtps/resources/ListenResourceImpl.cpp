@@ -23,7 +23,7 @@
 #include "../participant/RTPSParticipantImpl.h"
 
 #include <fastrtps/utils/IPFinder.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #define IDSTRING "(ID:"<<this->mp_listenResource->m_ID<<") "<<
 
@@ -33,7 +33,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "ListenResourceImpl";
 
 typedef std::vector<RTPSWriter*>::iterator Wit;
 typedef std::vector<RTPSReader*>::iterator Rit;
@@ -51,7 +50,6 @@ ListenResourceImpl::MessageReceiver(ListenResource* LR):
 
 ListenResourceImpl::~ListenResourceImpl()
 {
-	const char* const METHOD_NAME = "~ListenResourceImpl";
 	if(mp_thread !=nullptr)
 	{
         boost::unique_lock<boost::mutex> lock(mutex_);
@@ -59,7 +57,7 @@ ListenResourceImpl::~ListenResourceImpl()
             cond_.wait(lock);
 
 		logInfo(RTPS_MSG_IN,IDSTRING"Removing listening thread " << mp_thread->get_id() <<" socket: "
-				<<m_listen_socket.local_endpoint() <<  " locators: " << mv_listenLoc,C_BLUE);
+				<<m_listen_socket.local_endpoint() <<  " locators: " << mv_listenLoc);
 
         m_listen_socket.cancel();
 		m_listen_socket.close();
@@ -68,11 +66,11 @@ ListenResourceImpl::~ListenResourceImpl()
         stopped_ = true;
         lock.unlock();
 
-		logInfo(RTPS_MSG_IN,"Joining with thread",C_BLUE);
+		logInfo(RTPS_MSG_IN,"Joining with thread");
 		mp_thread->join();
 
 		delete(mp_thread);
-		logInfo(RTPS_MSG_IN,"Listening thread closed succesfully",C_BLUE);
+		logInfo(RTPS_MSG_IN,"Listening thread closed succesfully");
 	}
 }
 
@@ -95,7 +93,6 @@ bool ListenResourceImpl::isListeningTo(const Locator_t& loc)
 
 void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std::size_t msg_size)
 {
-	const char* const METHOD_NAME = "newCDRMessage";
 
 	if(err == boost::system::errc::success)
 	{
@@ -111,7 +108,7 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 			return;
 		try{
 			logInfo(RTPS_MSG_IN,IDSTRING mp_listenResource->mp_receiver->m_rec_msg.length
-					<< " bytes FROM: " << m_sender_endpoint << " TO: " << m_listen_socket.local_endpoint(),C_BLUE);
+					<< " bytes FROM: " << m_sender_endpoint << " TO: " << m_listen_socket.local_endpoint());
 
 			//Get address into Locator
 			m_senderLocator.port = m_sender_endpoint.port();
@@ -150,11 +147,11 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 		}
 		catch(int e)
 		{
-			logError(RTPS_MSG_IN,IDSTRING"Error processing message: " << e,C_BLUE);
+			logError(RTPS_MSG_IN,IDSTRING"Error processing message: " << e);
 
 		}
 
-		logInfo(RTPS_MSG_IN,IDSTRING " Message of size "<< mp_listenResource->mp_receiver->m_rec_msg.length <<" processed" ,C_BLUE);
+		logInfo(RTPS_MSG_IN,IDSTRING " Message of size "<< mp_listenResource->mp_receiver->m_rec_msg.length <<" processed" );
         lock.lock();
         runningAsync_ = false;
         lock.unlock();
@@ -163,13 +160,13 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 	}
 	else if(err == boost::asio::error::operation_aborted)
 	{
-		logInfo(RTPS_MSG_IN,IDSTRING"Operation in listening socket aborted...",C_BLUE);
+		logInfo(RTPS_MSG_IN,IDSTRING"Operation in listening socket aborted...");
 		return;
 	}
 	else
 	{
 		//CDRMessage_t msg;
-		logInfo(RTPS_MSG_IN,IDSTRING"Msg processed, Socket async receive put again to listen ",C_BLUE);
+		logInfo(RTPS_MSG_IN,IDSTRING"Msg processed, Socket async receive put again to listen ");
 		this->putToListen();
 	}
 }
@@ -177,9 +174,8 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 // NOTE This version allways listen in ANY.
 void ListenResourceImpl::getLocatorAddresses(Locator_t& loc, bool isMulti)
 {
-	const char* const METHOD_NAME = "getLocatorAddresses";
 
-    logInfo(RTPS_MSG_IN,"Defined Locator IP with 0s (listen to all interfaces), listening to all interfaces",C_BLUE);
+    logInfo(RTPS_MSG_IN,"Defined Locator IP with 0s (listen to all interfaces), listening to all interfaces");
     LocatorList_t myIP;
 
     if(loc.kind == LOCATOR_KIND_UDPv4)
@@ -212,13 +208,12 @@ void ListenResourceImpl::getLocatorAddresses(Locator_t& loc, bool isMulti)
 
 bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, uint32_t listenSocketSize, bool isMulti, bool isFixed)
 {
-	const char* const METHOD_NAME = "init_thread";
 	this->mp_RTPSParticipantImpl = pimpl;
 	if(loc.kind == LOCATOR_KIND_INVALID)
 		return false;
 
 	getLocatorAddresses(loc, isMulti);
-	logInfo(RTPS_MSG_IN,"Initializing in : "<<mv_listenLoc,C_BLUE);
+	logInfo(RTPS_MSG_IN,"Initializing in : "<<mv_listenLoc);
 	boost::asio::ip::address multiaddress;
 	//OPEN THE SOCKET:
 	m_listen_socket.open(m_listen_endpoint.protocol());
@@ -249,7 +244,7 @@ bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, 
 		}
 		catch (boost::system::system_error const& e)
 		{
-			logError(RTPS_MSG_IN,"Error: " << e.what() << " : " << m_listen_endpoint,C_BLUE);
+			logError(RTPS_MSG_IN,"Error: " << e.what() << " : " << m_listen_endpoint);
 			return false;
 		}
 	}
@@ -267,13 +262,13 @@ bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, 
 			}
 			catch(boost::system::system_error const& )
 			{
-				logInfo(RTPS_MSG_IN,"Tried port "<< m_listen_endpoint.port() << ", trying next...",C_BLUE);
+				logInfo(RTPS_MSG_IN,"Tried port "<< m_listen_endpoint.port() << ", trying next...");
 			}
 		}
 
 		if(!binded)
 		{
-			logError(RTPS_MSG_IN,"Tried 100 ports and none was working, last tried: "<< m_listen_endpoint,C_BLUE);
+			logError(RTPS_MSG_IN,"Tried 100 ports and none was working, last tried: "<< m_listen_endpoint);
 			return false;
 		}
 		else
@@ -285,7 +280,7 @@ bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, 
 
 	boost::asio::socket_base::receive_buffer_size option;
 	m_listen_socket.get_option(option);
-	logInfo(RTPS_MSG_IN,"Created: " << m_listen_endpoint<< " || Listen buffer size: " << option.value(),C_BLUE);
+	logInfo(RTPS_MSG_IN,"Created: " << m_listen_endpoint<< " || Listen buffer size: " << option.value());
 	if(isMulti)
 	{
 		joinMulticastGroup(multiaddress);
@@ -298,8 +293,7 @@ bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, 
 
 void ListenResourceImpl::joinMulticastGroup(boost::asio::ip::address& addr)
 {
-	const char* const METHOD_NAME = "joinMulticastGroups";
-	logInfo(RTPS_MSG_IN,"Joining group: "<<mv_listenLoc,C_BLUE);
+	logInfo(RTPS_MSG_IN,"Joining group: "<<mv_listenLoc);
 	try
 	{
 		LocatorList_t loclist;
@@ -335,7 +329,6 @@ void ListenResourceImpl::joinMulticastGroup(boost::asio::ip::address& addr)
 
 void ListenResourceImpl::putToListen()
 {
-	const char* const METHOD_NAME = "putToListen";
 	CDRMessage::initCDRMsg(&mp_listenResource->mp_receiver->m_rec_msg);
 	try
 	{
@@ -355,10 +348,9 @@ void ListenResourceImpl::putToListen()
 
 void ListenResourceImpl::run_io_service()
 {
-	const char* const METHOD_NAME = "run_io_service";
 	try
 	{
-		logInfo(RTPS_MSG_IN,"Thread: " << boost::this_thread::get_id() << " listening in IP: " << m_listen_socket.local_endpoint(),C_BLUE) ;
+		logInfo(RTPS_MSG_IN,"Thread: " << boost::this_thread::get_id() << " listening in IP: " << m_listen_socket.local_endpoint()) ;
 
 		mp_RTPSParticipantImpl->ResourceSemaphorePost();
 

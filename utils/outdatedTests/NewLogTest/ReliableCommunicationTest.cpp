@@ -162,12 +162,10 @@ int main(int argc, char** argv)
 {
 	Log::logFileName(std::string("testlog.txt"));
 	Log::setCategoryVerbosity(LOG_CATEGORY::RTPS_GENERAL_CAT,LOG_VERBOSITY_LVL::LOG_INFO);
-	const char* CLASS_NAME = "TEST";
-	const char* METHOD_NAME = "TestMethod";
 	logInfo(LOG_CATEGORY::RTPS_GENERAL_CAT,"testing" << 1 << " hola",EPRO_YELLOW);
 	logError(LOG_CATEGORY::RTPS_GENERAL_CAT,"testing" << 1 << " hola",EPRO_YELLOW);
 	GUID_t guid;
-	logUser("This is another test "<<guid);
+	logInfo("This is another test "<<guid);
 	SequenceNumber_t seq;
 
 	logWarning(LOG_CATEGORY::RTPS_OTHER_CAT, seq << " Test 4");

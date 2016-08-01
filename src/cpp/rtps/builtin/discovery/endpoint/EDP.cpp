@@ -37,7 +37,7 @@
 #include <fastrtps/rtps/common/MatchingInfo.h>
 
 #include <fastrtps/utils/StringMatching.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -48,7 +48,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "EDP";
 
 EDP::EDP(PDPSimple* p,RTPSParticipantImpl* part):	mp_PDP(p),
 		mp_RTPSParticipant(part)
@@ -64,8 +63,7 @@ EDP::~EDP()
 
 bool EDP::newLocalReaderProxyData(RTPSReader* reader,TopicAttributes& att, ReaderQos& rqos)
 {
-	const char* const METHOD_NAME = "newLocalReaderProxyData";
-	logInfo(RTPS_EDP,"Adding " << reader->getGuid().entityId << " in topic "<<att.topicName,C_CYAN);
+	logInfo(RTPS_EDP,"Adding " << reader->getGuid().entityId << " in topic "<<att.topicName);
 	ReaderProxyData* rpd = new ReaderProxyData();
 	rpd->m_isAlive = true;
 	rpd->m_expectsInlineQos = reader->expectsInlineQos();
@@ -97,8 +95,7 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader,TopicAttributes& att, Reade
 
 bool EDP::newLocalWriterProxyData(RTPSWriter* writer,TopicAttributes& att, WriterQos& wqos)
 {
-	const char* const METHOD_NAME = "newLocalWriterProxyData";
-	logInfo(RTPS_EDP,"Adding " << writer->getGuid().entityId << " in topic "<<att.topicName,C_CYAN);
+	logInfo(RTPS_EDP,"Adding " << writer->getGuid().entityId << " in topic "<<att.topicName);
 	WriterProxyData* wpd = new WriterProxyData();
 	wpd->isAlive(true);
 	wpd->guid(writer->getGuid());
@@ -163,15 +160,14 @@ bool EDP::updatedLocalWriter(RTPSWriter* W,WriterQos& wqos)
 
 bool EDP::removeWriterProxy(const GUID_t& writer)
 {
-	const char* const METHOD_NAME = "removeWriterProxy";
-	logInfo(RTPS_EDP,writer,C_CYAN);
+	logInfo(RTPS_EDP,writer);
     ParticipantProxyData* pdata = nullptr;
 	WriterProxyData* wdata = nullptr;
     // Block because other thread can be removing the participant.
     boost::lock_guard<boost::recursive_mutex> pguard(*mp_PDP->getMutex());
 	if(this->mp_PDP->lookupWriterProxyData(writer,&wdata, &pdata))
 	{
-		logInfo(RTPS_EDP," in topic: " << wdata->topicName(), C_CYAN);
+		logInfo(RTPS_EDP," in topic: " << wdata->topicName());
 		unpairWriterProxy(pdata, wdata);
 		this->mp_PDP->removeWriterProxyData(pdata, wdata);
 		return true;
@@ -181,15 +177,14 @@ bool EDP::removeWriterProxy(const GUID_t& writer)
 
 bool EDP::removeReaderProxy(const GUID_t& reader)
 {
-	const char* const METHOD_NAME = "removeReaderProxy";
-	logInfo(RTPS_EDP,reader,C_CYAN);
+	logInfo(RTPS_EDP,reader);
     ParticipantProxyData* pdata = nullptr;
 	ReaderProxyData* rdata = nullptr;
     // Block because other thread can be removing the participant.
     boost::lock_guard<boost::recursive_mutex> pguard(*mp_PDP->getMutex());
 	if(this->mp_PDP->lookupReaderProxyData(reader,&rdata, &pdata))
 	{
-		logInfo(RTPS_EDP," in topic: "<<rdata->m_topicName,C_CYAN);
+		logInfo(RTPS_EDP," in topic: "<<rdata->m_topicName);
 		unpairReaderProxy(pdata, rdata);
 		this->mp_PDP->removeReaderProxyData(pdata, rdata);
 		return true;
@@ -199,8 +194,7 @@ bool EDP::removeReaderProxy(const GUID_t& reader)
 
 bool EDP::unpairWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata)
 {
-	const char* const METHOD_NAME = "unpairWriterProxy";
-	logInfo(RTPS_EDP, wdata->guid() << " in topic: " << wdata->topicName(),C_CYAN);
+	logInfo(RTPS_EDP, wdata->guid() << " in topic: " << wdata->topicName());
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
 	for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
 			rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
@@ -225,8 +219,7 @@ bool EDP::unpairWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata)
 
 bool EDP::unpairReaderProxy(ParticipantProxyData *pdata, ReaderProxyData* rdata)
 {
-	const char* const METHOD_NAME = "unpairReaderProxy";
-	logInfo(RTPS_EDP,rdata->m_guid << " in topic: "<< rdata->m_topicName,C_CYAN);
+	logInfo(RTPS_EDP,rdata->m_guid << " in topic: "<< rdata->m_topicName);
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
 	for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
 			wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
@@ -252,7 +245,6 @@ bool EDP::unpairReaderProxy(ParticipantProxyData *pdata, ReaderProxyData* rdata)
 
 bool EDP::validMatching(WriterProxyData* wdata,ReaderProxyData* rdata)
 {
-	const char* const METHOD_NAME = "validMatching(W2RP)";
 
 	if(wdata->topicName() != rdata->m_topicName)
 		return false;
@@ -262,32 +254,32 @@ bool EDP::validMatching(WriterProxyData* wdata,ReaderProxyData* rdata)
 	{
 		logWarning(RTPS_EDP, "INCOMPATIBLE QOS:Remote Reader " << rdata->m_guid << " is publishing in topic "
 				<< rdata->m_topicName << "(keyed:"<< rdata->m_topicKind <<
-				"), local writer publishes as keyed: "<< wdata->topicKind(), C_CYAN)
+				"), local writer publishes as keyed: "<< wdata->topicKind())
 																																																														return false;
 	}
 	if(!rdata->m_isAlive) //Matching
 	{
-		logWarning(RTPS_EDP,"ReaderProxyData object is NOT alive",C_CYAN);
+		logWarning(RTPS_EDP,"ReaderProxyData object is NOT alive");
 		return false;
 	}
 	if( wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS
 			&& rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS) //Means our writer is BE but the reader wants RE
 	{
 		logWarning(RTPS_EDP,"INCOMPATIBLE QOS (topic: "<< rdata->m_topicName<<"):Remote Reader "
-				<<rdata->m_guid << " is Reliable and local writer is BE ",C_CYAN);
+				<<rdata->m_guid << " is Reliable and local writer is BE ");
 		return false;
 	}
 	if(wdata->m_qos.m_durability.kind == VOLATILE_DURABILITY_QOS
 			&& rdata->m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS)
 	{
 		logWarning(RTPS_EDP,"INCOMPATIBLE QOS (topic: "<< rdata->m_topicName<<"):RemoteReader "
-				<<rdata->m_guid << " has TRANSIENT_LOCAL DURABILITY and we offer VOLATILE",C_CYAN);
+				<<rdata->m_guid << " has TRANSIENT_LOCAL DURABILITY and we offer VOLATILE");
 		return false;
 	}
 	if(wdata->m_qos.m_ownership.kind != rdata->m_qos.m_ownership.kind)
 	{
 		logWarning(RTPS_EDP,"INCOMPATIBLE QOS (topic: "<< rdata->m_topicName<<"):Remote reader "
-				<<rdata->m_guid << " has different Ownership Kind",C_CYAN);
+				<<rdata->m_guid << " has different Ownership Kind");
 		return false;
 	}
 	//Partition check:
@@ -339,12 +331,11 @@ bool EDP::validMatching(WriterProxyData* wdata,ReaderProxyData* rdata)
 		}
 	}
 	if(!matched) //Different partitions
-		logWarning(RTPS_EDP,"INCOMPATIBLE QOS (topic: "<< rdata->m_topicName<<"): Different Partitions",C_CYAN);
+		logWarning(RTPS_EDP,"INCOMPATIBLE QOS (topic: "<< rdata->m_topicName<<"): Different Partitions");
 	return matched;
 }
 bool EDP::validMatching(ReaderProxyData* rdata,WriterProxyData* wdata)
 {
-	const char* const METHOD_NAME = "validMatching(R2WP)";
 
 	if(rdata->m_topicName != wdata->topicName())
 		return false;
@@ -353,12 +344,12 @@ bool EDP::validMatching(ReaderProxyData* rdata,WriterProxyData* wdata)
 	if(rdata->m_topicKind != wdata->topicKind())
 	{
 		logWarning(RTPS_EDP, "INCOMPATIBLE QOS:Remote Writer " << wdata->guid() << " is publishing in topic " << wdata->topicName() << "(keyed:" << wdata->topicKind() <<
-				"), local reader subscribes as keyed: " << rdata->m_topicKind, C_CYAN)
+				"), local reader subscribes as keyed: " << rdata->m_topicKind)
 																																																																	return false;
 	}
 	if(!wdata->isAlive()) //Matching
 	{
-		logWarning(RTPS_EDP, "WriterProxyData " << wdata->guid() << " is NOT alive", C_CYAN);
+		logWarning(RTPS_EDP, "WriterProxyData " << wdata->guid() << " is NOT alive");
 		return false;
 	}
 	if(rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS
@@ -427,7 +418,8 @@ bool EDP::validMatching(ReaderProxyData* rdata,WriterProxyData* wdata)
 		}
 	}
 	if(!matched) //Different partitions
-		logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " <<  wdata->topicName() << "): Different Partitions", C_CYAN);
+		logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " <<  wdata->topicName() << "): Different Partitions");
+
 	return matched;
 
 }
@@ -436,12 +428,11 @@ bool EDP::validMatching(ReaderProxyData* rdata,WriterProxyData* wdata)
 
 bool EDP::pairingReader(RTPSReader* R)
 {
-    const char* const METHOD_NAME = "pairingReader";
     ParticipantProxyData* pdata = nullptr;
 	ReaderProxyData* rdata = nullptr;
 	if(this->mp_PDP->lookupReaderProxyData(R->getGuid(),&rdata, &pdata))
 	{
-		logInfo(RTPS_EDP,R->getGuid()<<" in topic: \"" << rdata->m_topicName<<"\"",C_CYAN);
+		logInfo(RTPS_EDP,R->getGuid()<<" in topic: \"" << rdata->m_topicName<<"\"");
 		boost::lock_guard<boost::recursive_mutex> pguard(*mp_PDP->getMutex());
 		for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
 				pit!=mp_PDP->ParticipantProxiesEnd();++pit)
@@ -456,7 +447,7 @@ bool EDP::pairingReader(RTPSReader* R)
 
 				if(valid)
 				{
-					logInfo(RTPS_EDP, "Valid Matching to writerProxy: " << (*wdatait)->guid(), C_CYAN);
+					logInfo(RTPS_EDP, "Valid Matching to writerProxy: " << (*wdatait)->guid());
 					if(R->matched_writer_add((*wdatait)->toRemoteWriterAttributes()))
 					{
 						//MATCHED AND ADDED CORRECTLY:
@@ -495,12 +486,11 @@ bool EDP::pairingReader(RTPSReader* R)
 //TODO Añadir WriterProxyData como argumento con nullptr como valor por defecto.
 bool EDP::pairingWriter(RTPSWriter* W)
 {
-	const char* const METHOD_NAME = "pairingWriter";
     ParticipantProxyData* pdata = nullptr;
 	WriterProxyData* wdata = nullptr;
 	if(this->mp_PDP->lookupWriterProxyData(W->getGuid(),&wdata, &pdata))
 	{
-		logInfo(RTPS_EDP, W->getGuid() << " in topic: \"" << wdata->topicName() <<"\"",C_CYAN);
+		logInfo(RTPS_EDP, W->getGuid() << " in topic: \"" << wdata->topicName() <<"\"");
 		boost::lock_guard<boost::recursive_mutex> pguard(*mp_PDP->getMutex());
 		for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
 				pit!=mp_PDP->ParticipantProxiesEnd();++pit)
@@ -516,7 +506,7 @@ bool EDP::pairingWriter(RTPSWriter* W)
 				if(valid)
 				{
 					//std::cout << "VALID MATCHING to " <<(*rdatait)->m_guid<< std::endl;
-					logInfo(RTPS_EDP,"Valid Matching to readerProxy: "<<(*rdatait)->m_guid,C_CYAN);
+					logInfo(RTPS_EDP,"Valid Matching to readerProxy: "<<(*rdatait)->m_guid);
 					if(W->matched_reader_add((*rdatait)->toRemoteReaderAttributes()))
 					{
 						//MATCHED AND ADDED CORRECTLY:
@@ -554,8 +544,7 @@ bool EDP::pairingWriter(RTPSWriter* W)
 
 bool EDP::pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata)
 {
-	const char* const METHOD_NAME = "pairingReaderProxy";
-	logInfo(RTPS_EDP,rdata->m_guid<<" in topic: \"" << rdata->m_topicName <<"\"",C_CYAN);
+	logInfo(RTPS_EDP,rdata->m_guid<<" in topic: \"" << rdata->m_topicName <<"\"");
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
 	for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
 			wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
@@ -576,7 +565,7 @@ bool EDP::pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata
 
 			if(valid)
 			{
-                logInfo(RTPS_EDP, "Valid Matching to local writer: " << writerGUID.entityId, C_CYAN);
+                logInfo(RTPS_EDP, "Valid Matching to local writer: " << writerGUID.entityId);
 				if((*wit)->matched_reader_add(rdata->toRemoteReaderAttributes()))
 				{
 					//MATCHED AND ADDED CORRECTLY:
@@ -611,8 +600,7 @@ bool EDP::pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata
 
 bool EDP::pairingWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata)
 {
-	const char* const METHOD_NAME = "pairingWriterProxy";
-	logInfo(RTPS_EDP, wdata->guid() <<" in topic: \"" << wdata->topicName() <<"\"",C_CYAN);
+	logInfo(RTPS_EDP, wdata->guid() <<" in topic: \"" << wdata->topicName() <<"\"");
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
 	for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
 			rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
@@ -633,7 +621,7 @@ bool EDP::pairingWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata
 
 			if(valid)
 			{
-                logInfo(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId, C_CYAN);
+                logInfo(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId);
 				if((*rit)->matched_writer_add(wdata->toRemoteWriterAttributes()))
 				{
 					//MATCHED AND ADDED CORRECTLY:

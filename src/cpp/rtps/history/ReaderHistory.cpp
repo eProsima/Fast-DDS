@@ -19,7 +19,7 @@
 
 #include <fastrtps/rtps/history/ReaderHistory.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 
@@ -31,7 +31,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "ReaderHistory";
 
 //typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
 //typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
@@ -80,7 +79,6 @@ static void CleanSequentials(std::set<SequenceNumber_t>& set)
 
 bool ReaderHistory::add_change(CacheChange_t* a_change)
 {
-	const char* const METHOD_NAME = "add_change";
 
 	if(mp_reader == nullptr || mp_mutex == nullptr)
 	{
@@ -129,7 +127,6 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 
 bool ReaderHistory::remove_change(CacheChange_t* a_change)
 {
-	const char* const METHOD_NAME = "remove_change";
 
 	if(mp_reader == nullptr || mp_mutex == nullptr)
 	{
@@ -162,7 +159,44 @@ bool ReaderHistory::remove_change(CacheChange_t* a_change)
 	return false;
 }
 
+bool ReaderHistory::remove_changes_with_guid(GUID_t* a_guid)
+{
+	std::vector<CacheChange_t*> changes_to_remove;
 
+	if(mp_reader == nullptr || mp_mutex == nullptr)
+	{
+		logError(RTPS_HISTORY,"You need to create a Reader with History before removing any changes");
+		return false;
+	}
+	
+	{//Lock scope
+		boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+		if(a_guid == nullptr)
+		{
+			logError(RTPS_HISTORY, "Target Guid for Cachechange deletion is not valid");
+			return false;
+		}
+		for(std::vector<CacheChange_t*>::iterator chit = m_changes.begin(); chit!=m_changes.end();++chit)
+		{
+			bool matches = true;
+			unsigned int size = a_guid->guidPrefix.size;
+			if( !std::equal( (*chit)->writerGUID.guidPrefix.value , (*chit)->writerGUID.guidPrefix.value + size -1, a_guid->guidPrefix.value ) )
+				matches = false;
+			size = a_guid->entityId.size;
+			if( !std::equal( (*chit)->writerGUID.entityId.value , (*chit)->writerGUID.entityId.value + size -1, a_guid->entityId.value ) )
+			        matches = false;	
+			if(matches)	
+				changes_to_remove.push_back( (*chit) );
+		}
+	}//End lock scope
+
+	for(std::vector<CacheChange_t*>::iterator chit = changes_to_remove.begin(); chit != changes_to_remove.end(); ++chit)
+		if(!remove_change( (*chit) )){
+			logError(RTPS_HISTORY,"One of the cachechanged in the GUID removal bulk could not be removed");
+			return false;
+		}
+	return true;
+}
 
 void ReaderHistory::sortCacheChanges()
 {

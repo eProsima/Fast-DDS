@@ -20,7 +20,7 @@
 #include <fastrtps/rtps/reader/StatelessReader.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/common/CacheChange.h>
 #include "../participant/RTPSParticipantImpl.h"
 #include "FragmentedChangePitStop.h"
@@ -36,11 +36,9 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-static const char* const CLASS_NAME = "StatelessReader";
 
 StatelessReader::~StatelessReader()
 {
-	const char* const METHOD_NAME = "~StatelessReader";
 	logInfo(RTPS_READER,"Removing reader "<<this->getGuid());
 }
 
@@ -55,7 +53,6 @@ StatelessReader::StatelessReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
 
 bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
 {
-	const char* const METHOD_NAME = "matched_writer_add";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
 	{
@@ -69,7 +66,6 @@ bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
 }
 bool StatelessReader::matched_writer_remove(RemoteWriterAttributes& wdata)
 {
-	const char* const METHOD_NAME = "matched_writer_remove";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
 	{
@@ -121,7 +117,6 @@ bool StatelessReader::change_received(CacheChange_t* change, boost::unique_lock<
 
 bool StatelessReader::nextUntakenCache(CacheChange_t** change,WriterProxy** /*wpout*/)
 {
-	//const char* const METHOD_NAME = "nextUntakenCache";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	return mp_history->get_min_change(change);
 }
@@ -129,7 +124,6 @@ bool StatelessReader::nextUntakenCache(CacheChange_t** change,WriterProxy** /*wp
 
 bool StatelessReader::nextUnreadCache(CacheChange_t** change,WriterProxy** /*wpout*/)
 {
-	const char* const METHOD_NAME = "nextUnreadCache";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	//m_reader_cache.sortCacheChangesBySeqNum();
 	bool found = false;
@@ -161,7 +155,6 @@ bool StatelessReader::change_removed_by_history(CacheChange_t* /*ch*/, WriterPro
 
 bool StatelessReader::processDataMsg(CacheChange_t *change)
 {
-    const char* const METHOD_NAME = "processDataMsg";
 
     assert(change);
 
@@ -169,7 +162,7 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
 
     if(acceptMsgFrom(change->writerGUID))
     {
-        logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId,C_BLUE);
+        logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
 
         CacheChange_t* change_to_add;
         if(reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
@@ -177,21 +170,21 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
             if (!change_to_add->copy(change))
             {
                 logWarning(RTPS_MSG_IN,IDSTRING"Problem copying CacheChange, received data is: " << change->serializedPayload.length
-                        << " bytes and max size in reader " << getGuid().entityId << " is " << change_to_add->serializedPayload.max_size, C_BLUE);
+                        << " bytes and max size in reader " << getGuid().entityId << " is " << change_to_add->serializedPayload.max_size);
                 releaseCache(change_to_add);
                 return false;
             }
         }
         else
         {
-            logError(RTPS_MSG_IN,IDSTRING"Problem reserving CacheChange in reader: " << getGuid().entityId, C_BLUE);
+            logError(RTPS_MSG_IN,IDSTRING"Problem reserving CacheChange in reader: " << getGuid().entityId);
             return false;
         }
 
         if(!change_received(change_to_add, lock))
         {
             logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "
-                    <<change_to_add->sequenceNumber, C_BLUE);
+                    <<change_to_add->sequenceNumber);
             releaseCache(change_to_add);
 
             if(getGuid().entityId == c_EntityId_SPDPReader)
@@ -206,7 +199,6 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
 
 bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t sampleSize, uint32_t fragmentStartingNum)
 {
-	const char* const METHOD_NAME = "processDataFragMsg";
 
 	assert(incomingChange);
 
@@ -217,7 +209,7 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
         // Check if CacheChange was received.
         if(!getHistory()->thereIsRecordOf(incomingChange->writerGUID, incomingChange->sequenceNumber))
         {
-            logInfo(RTPS_MSG_IN, IDSTRING"Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " << getGuid().entityId, C_BLUE);
+            logInfo(RTPS_MSG_IN, IDSTRING"Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " << getGuid().entityId);
 
             // Fragments manager has to process incomming fragments.
             // If CacheChange_t is completed, it will be returned;
@@ -231,7 +223,7 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
 
                 if (!change_received(change_completed, lock))
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long(), C_BLUE);
+                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long());
 
                     // Assert liveliness because if it is a participant discovery info.
                     if (getGuid().entityId == c_EntityId_SPDPReader)

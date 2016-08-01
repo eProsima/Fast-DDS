@@ -56,7 +56,7 @@ bool FilteringExamplePubSubType::deserialize(SerializedPayload_t* payload, void*
 }
 
 std::function<uint32_t()> FilteringExamplePubSubType::getSerializedSizeProvider(void* data) {
-    return [&]() -> uint32_t { return type::getCdrSerializedSize(*static_cast<FilteringExample*>(data)); };
+    return [data]() -> uint32_t { return (uint32_t)type::getCdrSerializedSize(*static_cast<FilteringExample*>(data)); };
 }
 
 void* FilteringExamplePubSubType::createData() {

@@ -99,7 +99,7 @@ void TestWriterRegistered::run(uint16_t samples)
 
 	for(int i = 0;i<samples;++i )
 	{
-		CacheChange_t * ch = mp_writer->new_change(ALIVE);
+		CacheChange_t * ch = mp_writer->new_change([]() -> uint32_t { return 255;}, ALIVE);
 #if defined(_WIN32)
 		ch->serializedPayload.length =
 			sprintf_s((char*)ch->serializedPayload.data,255, "My example string %d", i)+1;

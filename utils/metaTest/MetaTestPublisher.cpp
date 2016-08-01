@@ -78,7 +78,7 @@ bool MetaTestPublisher::init()
 
 	if(mp_par == nullptr || mp_pub == nullptr || mp_sub == nullptr)
 		return false;
-	logUser("MetaTest Publisher initialized");
+	logInfo("MetaTest Publisher initialized");
 	return true;
 }
 
@@ -103,7 +103,7 @@ void MetaTestPublisher::run()
 	mp_pub->write(&testinfo);
 
 
-	logUser("TEST SUMMARY"<<endl<<ss.str());
+	logInfo("TEST SUMMARY"<<endl<<ss.str());
 }
 
 void MetaTestPublisher::clean()
@@ -114,7 +114,7 @@ void MetaTestPublisher::clean()
 
 std::string MetaTestPublisher::t_hello_world()
 {
-	logUser("Starting TEST HELLO WORLD");
+	logInfo("Starting TEST HELLO WORLD");
 	int samples = 10;
 	MetaTestType testinfo;
 	SampleInfo_t sampleinfo;
@@ -165,7 +165,7 @@ std::string MetaTestPublisher::t_hello_world()
 
 std::string MetaTestPublisher::t_client_server()
 {
-	logUser("Starting TEST CLIENT SERVER");
+	logInfo("Starting TEST CLIENT SERVER");
 	int samples = 20;
 	MetaTestType testinfo;
 	SampleInfo_t sampleinfo;
@@ -218,7 +218,7 @@ std::string MetaTestPublisher::t_client_server()
 
 std::string MetaTestPublisher::t_rtps_registered()
 {
-	logUser("Starting TEST RTPS REGISTERED");
+	logInfo("Starting TEST RTPS REGISTERED");
 	MetaTestType testinfo;
 	SampleInfo_t sampleinfo;
 	testinfo.kind(T_RTPS_REG);
@@ -262,7 +262,7 @@ std::string MetaTestPublisher::t_rtps_registered()
 
 std::string MetaTestPublisher::t_rtps_socket()
 {
-	logUser("Starting TEST RTPS SOCKET");
+	logInfo("Starting TEST RTPS SOCKET");
 	MetaTestType testinfo;
 	SampleInfo_t sampleinfo;
 	std::string ip_string = "239.255.1.4";

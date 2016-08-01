@@ -21,13 +21,12 @@
 
 #include <fastrtps/rtps/common/CDRMessage_t.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "ReaderProxyData";
 
 ReaderProxyData::ReaderProxyData():
 													m_expectsInlineQos(false),
@@ -40,14 +39,12 @@ ReaderProxyData::ReaderProxyData():
 
 ReaderProxyData::~ReaderProxyData()
 {
-	const char* const METHOD_NAME = "~ReaderProxyData";
 	logInfo(RTPS_PROXY_DATA,"ReaderProxyData destructor: "<< this->m_guid;);
 	m_parameterList.deleteParams();
 }
 
 bool ReaderProxyData::toParameterList()
 {
-	const char* const METHOD_NAME = "toParameterList";
 	m_parameterList.deleteParams();
 	for(LocatorListIterator lit = m_unicastLocatorList.begin();
 			lit!=m_unicastLocatorList.end();++lit)
@@ -190,13 +187,12 @@ bool ReaderProxyData::toParameterList()
 		m_parameterList.m_parameters.push_back((Parameter_t*)p);
 	}
 
-	logInfo(RTPS_PROXY_DATA,"DiscoveredReaderData converted to ParameterList with " << m_parameterList.m_parameters.size()<< " parameters",C_CYAN);
+	logInfo(RTPS_PROXY_DATA,"DiscoveredReaderData converted to ParameterList with " << m_parameterList.m_parameters.size()<< " parameters");
 	return true;
 }
 
 bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
 {
-	//const char* const METHOD_NAME = "readFromCDRMessage";
 	if(ParameterList::readParameterListfromCDRMsg(msg, &m_parameterList, NULL)>0)
 	{
 		for(std::vector<Parameter_t*>::iterator it = m_parameterList.m_parameters.begin();
@@ -361,7 +357,7 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
 			}
 			default:
 			{
-				//logInfo(RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(*it)->Pid << " NOT CONSIDERED",C_CYAN);
+				//logInfo(RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(*it)->Pid << " NOT CONSIDERED");
 				break;
 			}
 			}

@@ -28,7 +28,7 @@
 
 #include "../../participant/RTPSParticipantImpl.h"
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 #include <fastrtps/qos/QosPolicies.h>
 
@@ -42,7 +42,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "ParticipantProxyData";
 
 ParticipantProxyData::ParticipantProxyData():
 			m_expectsInlineQos(false),
@@ -58,7 +57,6 @@ m_manualLivelinessCount(0),
 
 ParticipantProxyData::~ParticipantProxyData()
 {
-	const char* const METHOD_NAME = "~ParticipantProxyData";
 	logInfo(RTPS_PARTICIPANT,this->m_guid);
 	for(std::vector<ReaderProxyData*>::iterator it = this->m_readers.begin();
 			it!=this->m_readers.end();++it)

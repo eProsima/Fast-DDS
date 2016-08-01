@@ -31,7 +31,8 @@
 #include "EprosimaClientTest.h"
 
 
-#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/log/Log.h"
+
 #include "fastrtps/Domain.h"
 
 using namespace eprosima;
@@ -59,7 +60,6 @@ enum E_SIDE
 
 
 int main(int argc, char** argv){
-	Log::setVerbosity(VERB_ERROR);
 	cout << "Starting "<< endl;
 	E_SIDE side;
 	int samples = 10000;

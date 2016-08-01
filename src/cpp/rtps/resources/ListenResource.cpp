@@ -24,13 +24,12 @@
 #include "ListenResourceImpl.h"
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 
-#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "ListenResource";
 
 ListenResource::ListenResource(RTPSParticipantImpl* partimpl,uint32_t ID,bool isDefault):
 				mp_receiver(nullptr),
@@ -84,7 +83,6 @@ bool ListenResource::removeAssociatedEndpoint(Endpoint* endp)
 
 bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 {
-	const char* const METHOD_NAME = "addAssociatedEndpoint";
 	boost::lock_guard<boost::mutex> guard(*mp_impl->getMutex());
 	bool found = false;
 	if(endp->getAttributes()->endpointKind == WRITER)
@@ -134,11 +132,10 @@ void ListenResource::setMsgRecMsgLength(uint32_t length)
 bool ListenResource::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,
 		uint32_t listenSockSize,bool isMulti,bool isFixed)
 {
-	const char* const METHOD_NAME = "init_thread";
-	logInfo(RTPS_MSG_IN,"Creating ListenResource in: "<<loc << " with ID: "<< m_ID,C_BLUE);
+	logInfo(RTPS_MSG_IN,"Creating ListenResource in: "<<loc << " with ID: "<< m_ID);
 	if(!IsAddressDefined(loc) && isMulti)
 	{
-		logWarning(RTPS_MSG_IN,"MulticastAddresses need to have the IP defined, ignoring this address",C_BLUE);
+		logWarning(RTPS_MSG_IN,"MulticastAddresses need to have the IP defined, ignoring this address");
 		return false;
 	}
 	mp_receiver = new MessageReceiver(listenSockSize);
