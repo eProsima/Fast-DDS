@@ -44,8 +44,6 @@ RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes
     logInfo(RTPS_WRITER,"RTPSWriter created");
 }
 
-    
-
 void RTPSWriter::init_header()
 {
     CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_header);
@@ -79,14 +77,14 @@ CacheChange_t* RTPSWriter::new_change(const std::function<uint32_t()>& dataCdrSe
     if(m_att.topicKind == WITH_KEY && !handle.isDefined())
     {
         logWarning(RTPS_WRITER,"Changes in KEYED Writers need a valid instanceHandle");
-        //		if(mp_type->m_isGetKeyDefined)
-        //		{
-        //			mp_type->getKey(data,&ch->instanceHandle);
-        //		}
-        //		else
-        //		{
-        //			logWarning(RTPS_WRITER,"Get key function not defined";);
-        //		}
+        //if(mp_type->m_isGetKeyDefined)
+        //{
+        //    mp_type->getKey(data,&ch->instanceHandle);
+        //}
+        //else
+        //{
+        //    logWarning(RTPS_WRITER,"Get key function not defined";);
+        //}
     }
     ch->instanceHandle = handle;
     ch->writerGUID = m_guid;

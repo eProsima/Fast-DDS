@@ -126,7 +126,7 @@ class PubSubWriter
     void send(std::list<type>& msgs)
     {
         auto it = msgs.begin();
-        
+
         while(it != msgs.end())
         {
             if(publisher_->write((void*)&(*it)))
