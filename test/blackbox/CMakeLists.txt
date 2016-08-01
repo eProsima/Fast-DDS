@@ -36,23 +36,21 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             ReqRepHelloWorldReplier.cpp
             )
         add_executable(BlackboxTests_PreallocMem ${BLACKBOXTESTS_SOURCE})
-        add_blackbox_gtest(BlackboxTests_PreallocMem ${BLACKBOXTESTS_SOURCE}
-            PreallocMem)
+        add_blackbox_gtest(BlackboxTests_PreallocMem PreallocMem ${BLACKBOXTESTS_SOURCE})
         target_compile_definitions(BlackboxTests_PreallocMem PRIVATE
             PREALLOCATED_MEMORY_MODE_TEST)
         target_include_directories(BlackboxTests_PreallocMem PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS})
         target_link_libraries(BlackboxTests_PreallocMem fastrtps fastcdr ${GTEST_LIBRARIES})
 
         add_executable(BlackboxTests_ReallocMem ${BLACKBOXTESTS_SOURCE})
-        add_blackbox_gtest(BlackboxTests_ReallocMem ${BLACKBOXTESTS_SOURCE}
-            ReallocMem)
+        add_blackbox_gtest(BlackboxTests_ReallocMem ReallocMem ${BLACKBOXTESTS_SOURCE})
         target_compile_definitions(BlackboxTests_ReallocMem PRIVATE
             PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
         target_include_directories(BlackboxTests_ReallocMem PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS})
         target_link_libraries(BlackboxTests_ReallocMem fastrtps fastcdr ${GTEST_LIBRARIES})
 
         add_executable(BlackboxTests_DynMem ${BLACKBOXTESTS_SOURCE})
-        add_blackbox_gtest(BlackboxTests_DynMem ${BLACKBOXTESTS_SOURCE} DynMem)
+        add_blackbox_gtest(BlackboxTests_DynMem DynMem ${BLACKBOXTESTS_SOURCE})
         target_compile_definitions(BlackboxTests_DynMem PRIVATE
             DYNAMIC_RESERVE_MEMORY_MODE_TEST)
         target_include_directories(BlackboxTests_DynMem PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS})
