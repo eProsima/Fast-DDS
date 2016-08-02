@@ -28,6 +28,7 @@ namespace fastrtps{
 namespace rtps{
 
 static const uint32_t maximumUDPSocketSize = 65536;
+static const uint32_t maximumMessageSize = 65000;
 
 UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
     mSendBufferSize(descriptor.sendBufferSize),
@@ -42,16 +43,20 @@ UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
         ioServiceThread.reset(new boost::thread(ioServiceFunction));
 
         for (const auto& interface : descriptor.interfaceWhiteList)
-           mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
+            mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
     }
 
 UDPv4TransportDescriptor::UDPv4TransportDescriptor():
+    TransportDescriptorInterface(maximumMessageSize),
     sendBufferSize(maximumUDPSocketSize),
     receiveBufferSize(maximumUDPSocketSize),
     granularMode(false)
     {}
 
-UDPv4Transport::UDPv4Transport()
+UDPv4Transport::UDPv4Transport() :
+    mSendBufferSize(maximumUDPSocketSize),
+    mReceiveBufferSize(maximumUDPSocketSize),
+    mGranularMode(false)
 {
     auto ioServiceFunction = [&]()
     {

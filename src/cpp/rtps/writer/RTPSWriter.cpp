@@ -29,8 +29,13 @@ using namespace eprosima::fastrtps::rtps;
 RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
     Endpoint(impl,guid,att.endpoint),
     m_pushMode(true),
-    //TODO 65536 put in constant or macro. It is max size of udp packet.
-    m_cdrmessages(impl->getAttributes().sendSocketBufferSize > 65504 ? 65504 : impl->getAttributes().sendSocketBufferSize),
+    m_cdrmessages(impl->getMaxMessageSize() > att.throughputController.size ?
+            att.throughputController.size > impl->getRTPSParticipantAttributes().throughputController.size ?
+            impl->getRTPSParticipantAttributes().throughputController.size :
+            att.throughputController.size :
+            impl->getMaxMessageSize() > impl->getRTPSParticipantAttributes().throughputController.size ?
+            impl->getRTPSParticipantAttributes().throughputController.size :
+            impl->getMaxMessageSize()),
     m_livelinessAsserted(false),
     mp_history(hist),
     mp_listener(listen),
@@ -74,14 +79,6 @@ CacheChange_t* RTPSWriter::new_change(ChangeKind_t changeKind,InstanceHandle_t h
     if(m_att.topicKind == WITH_KEY && !handle.isDefined())
     {
         logWarning(RTPS_WRITER,"Changes in KEYED Writers need a valid instanceHandle");
-        //		if(mp_type->m_isGetKeyDefined)
-        //		{
-        //			mp_type->getKey(data,&ch->instanceHandle);
-        //		}
-        //		else
-        //		{
-        //			logWarning(RTPS_WRITER,"Get key function not defined";);
-        //		}
     }
     ch->instanceHandle = handle;
     ch->writerGUID = m_guid;

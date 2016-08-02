@@ -52,110 +52,111 @@ class Publisher;
  * Class PublisherImpl, contains the actual implementation of the behaviour of the Publisher.
  * @ingroup FASTRTPS_MODULE
  */
-class PublisherImpl {
-	friend class ParticipantImpl;
-public:
+class PublisherImpl
+{
+    friend class ParticipantImpl;
+    public:
 
-	/**
-	 * Create a publisher, assigning its pointer to the associated writer.
-	 * Don't use directly, create Publisher using DomainRTPSParticipant static function.
-	 */
-	PublisherImpl(ParticipantImpl* p,TopicDataType* ptype,
-			PublisherAttributes& att,PublisherListener* p_listen = nullptr);
+    /**
+     * Create a publisher, assigning its pointer to the associated writer.
+     * Don't use directly, create Publisher using DomainRTPSParticipant static function.
+     */
+    PublisherImpl(ParticipantImpl* p,TopicDataType* ptype,
+            PublisherAttributes& att,PublisherListener* p_listen = nullptr);
 
-	virtual ~PublisherImpl();
+    virtual ~PublisherImpl();
 
-	/**
-	 * 
-	 * @param kind
-	 * @param  Data
-	 * @return
-	 */
-	bool create_new_change(ChangeKind_t kind, void* Data);
+    /**
+     * 
+     * @param kind
+     * @param  Data
+     * @return
+     */
+    bool create_new_change(ChangeKind_t kind, void* Data);
 
-	/**
-	 * 
-	 * @param kind
-	 * @param  Data
+    /**
+     * 
+     * @param kind
+     * @param  Data
      * @param wparams
-	 * @return
-	 */
-	bool create_new_change_with_params(ChangeKind_t kind, void* Data, WriteParams &wparams);
+     * @return
+     */
+    bool create_new_change_with_params(ChangeKind_t kind, void* Data, WriteParams &wparams);
 
-	/**
-	 * Removes the cache change with the minimum sequence number
-	 * @return True if correct.
-	 */
-	bool removeMinSeqChange();
-	/**
-	 * Removes all changes from the History.
-	 * @param[out] removed Number of removed elements
-	 * @return True if correct.
-	 */
-	bool removeAllChange(size_t* removed);
+    /**
+     * Removes the cache change with the minimum sequence number
+     * @return True if correct.
+     */
+    bool removeMinSeqChange();
+    /**
+     * Removes all changes from the History.
+     * @param[out] removed Number of removed elements
+     * @return True if correct.
+     */
+    bool removeAllChange(size_t* removed);
 
-	/**
-	 * Get the number of elements in the History.
-	 * @return Number of elements in the History.
-	 */
-	size_t getHistoryElementsNumber();
+    /**
+     * Get the number of elements in the History.
+     * @return Number of elements in the History.
+     */
+    size_t getHistoryElementsNumber();
 
-	/**
-	 * 
-	 * @return
-	 */
-	const GUID_t& getGuid();
+    /**
+     * 
+     * @return
+     */
+    const GUID_t& getGuid();
 
-	/**
-	 * Update the Attributes of the publisher;
-	 * @param att Reference to a PublisherAttributes object to update the parameters;
-	 * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
-	 */
-	bool updateAttributes(PublisherAttributes& att);
+    /**
+     * Update the Attributes of the publisher;
+     * @param att Reference to a PublisherAttributes object to update the parameters;
+     * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
+     */
+    bool updateAttributes(PublisherAttributes& att);
 
-	/**
-	 * Get the Attributes of the Subscriber.
-	 * @return Attributes of the Subscriber.
-	 */
-	inline const PublisherAttributes& getAttributes(){ return m_att; };
+    /**
+     * Get the Attributes of the Subscriber.
+     * @return Attributes of the Subscriber.
+     */
+    inline const PublisherAttributes& getAttributes(){ return m_att; };
 
-	/**
-	* Get topic data type
-	* @return Topic data type
-	*/
-	TopicDataType* getType() {return mp_type;};
+    /**
+     * Get topic data type
+     * @return Topic data type
+     */
+    TopicDataType* getType() {return mp_type;};
 
-   bool clean_history(unsigned int max = 0);
+    bool clean_history(unsigned int max = 0);
 
-   bool wait_for_all_acked(const Time_t& max_wait);
+    bool wait_for_all_acked(const Time_t& max_wait);
 
-private:
-	ParticipantImpl* mp_participant;
-	//! Pointer to the associated Data Writer.
-	RTPSWriter* mp_writer;
-	//! Pointer to the TopicDataType object.
-	TopicDataType* mp_type;
-	//!Attributes of the Publisher
-	PublisherAttributes m_att;
-	//!Publisher History
-	PublisherHistory m_history;
-	//!PublisherListener
-	PublisherListener* mp_listener;
-	//!Maximum message length capture
-	uint32_t maxmessagesize;
-	//!Listener to capture the events of the Writer
-	class PublisherWriterListener: public WriterListener
-	{
-	public:
-		PublisherWriterListener(PublisherImpl* p):mp_publisherImpl(p){};
-		virtual ~PublisherWriterListener(){};
-		void onWriterMatched(RTPSWriter* writer,MatchingInfo& info);
-		PublisherImpl* mp_publisherImpl;
-	}m_writerListener;
+    private:
+    ParticipantImpl* mp_participant;
+    //! Pointer to the associated Data Writer.
+    RTPSWriter* mp_writer;
+    //! Pointer to the TopicDataType object.
+    TopicDataType* mp_type;
+    //!Attributes of the Publisher
+    PublisherAttributes m_att;
+    //!Publisher History
+    PublisherHistory m_history;
+    //!PublisherListener
+    PublisherListener* mp_listener;
+    //!Listener to capture the events of the Writer
+    class PublisherWriterListener: public WriterListener
+    {
+        public:
+            PublisherWriterListener(PublisherImpl* p):mp_publisherImpl(p){};
+            virtual ~PublisherWriterListener(){};
+            void onWriterMatched(RTPSWriter* writer,MatchingInfo& info);
+            PublisherImpl* mp_publisherImpl;
+    }m_writerListener;
 
-	Publisher* mp_userPublisher;
+    Publisher* mp_userPublisher;
 
-	RTPSParticipant* mp_rtpsParticipant;
+    RTPSParticipant* mp_rtpsParticipant;
+
+    uint32_t high_mark_for_frag_;
 };
 
 

@@ -36,67 +36,72 @@ RTPSParticipant::~RTPSParticipant()
 
 const GUID_t& RTPSParticipant::getGuid() const
 {
-	return mp_impl->getGuid();
+    return mp_impl->getGuid();
 }
 
 void RTPSParticipant::announceRTPSParticipantState()
 {
-	return mp_impl->announceRTPSParticipantState();
+    return mp_impl->announceRTPSParticipantState();
 }
 
 void RTPSParticipant::stopRTPSParticipantAnnouncement()
 {
-	return mp_impl->stopRTPSParticipantAnnouncement();
+    return mp_impl->stopRTPSParticipantAnnouncement();
 }
 
 void RTPSParticipant::resetRTPSParticipantAnnouncement()
 {
-	return mp_impl->resetRTPSParticipantAnnouncement();
+    return mp_impl->resetRTPSParticipantAnnouncement();
 }
 
 bool RTPSParticipant::newRemoteWriterDiscovered(const GUID_t& pguid, int16_t userDefinedId)
 {
-	return mp_impl->newRemoteEndpointDiscovered(pguid,userDefinedId, WRITER);
+    return mp_impl->newRemoteEndpointDiscovered(pguid,userDefinedId, WRITER);
 }
 bool RTPSParticipant::newRemoteReaderDiscovered(const GUID_t& pguid, int16_t userDefinedId)
 {
-	return mp_impl->newRemoteEndpointDiscovered(pguid,userDefinedId, READER);
+    return mp_impl->newRemoteEndpointDiscovered(pguid,userDefinedId, READER);
 }
 uint32_t RTPSParticipant::getRTPSParticipantID() const
 {
-	return mp_impl->getRTPSParticipantID();
+    return mp_impl->getRTPSParticipantID();
 }
 
 bool RTPSParticipant::registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos)
 {
-	return mp_impl->registerWriter(Writer,topicAtt, wqos);
+    return mp_impl->registerWriter(Writer,topicAtt, wqos);
 }
 
 bool RTPSParticipant::registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& rqos)
 {
-	return mp_impl->registerReader(Reader,topicAtt, rqos);
+    return mp_impl->registerReader(Reader,topicAtt, rqos);
 }
 
 bool RTPSParticipant::updateWriter(RTPSWriter* Writer,WriterQos& wqos)
 {
-	return mp_impl->updateLocalWriter(Writer, wqos);
+    return mp_impl->updateLocalWriter(Writer, wqos);
 }
 
 bool RTPSParticipant::updateReader(RTPSReader* Reader,ReaderQos& rqos)
 {
-	return mp_impl->updateLocalReader(Reader, rqos);
+    return mp_impl->updateLocalReader(Reader, rqos);
 }
 
 std::pair<StatefulReader*,StatefulReader*> RTPSParticipant::getEDPReaders(){	
-	return mp_impl->getEDPReaders();
+    return mp_impl->getEDPReaders();
 }
 
 RTPSParticipantAttributes RTPSParticipant::getRTPSParticipantAttributes(){
-	return mp_impl->getRTPSParticipantAttributes();
+    return mp_impl->getRTPSParticipantAttributes();
 }
 
+uint32_t RTPSParticipant::getMaxMessageSize() const
+{
+    return mp_impl->getMaxMessageSize();
 }
+
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 

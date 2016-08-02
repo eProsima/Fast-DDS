@@ -103,6 +103,15 @@ else()
 endif()
 
 ###############################################################################
+# GCC colors if using CCache
+###############################################################################
+if("${CMAKE_CXX_COMPILER_LAUNCHER}" STREQUAL "ccache" AND
+        CMAKE_COMPILER_IS_GNUCXX AND
+        CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 4,8)
+    add_compile_options(-fdiagnostics-color=always)
+endif()
+
+###############################################################################
 # Test system configuration
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/dev/check_configuration.cmake)

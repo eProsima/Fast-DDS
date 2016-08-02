@@ -104,7 +104,13 @@ public:
  * Virtual base class for the data type used to define transport configuration.
  * @ingroup RTPS_MODULE
  * */
-struct TransportDescriptorInterface {virtual ~TransportDescriptorInterface(){}};
+struct TransportDescriptorInterface
+{
+    TransportDescriptorInterface(uint32_t maximumMessageSize) : maxMessageSize(maximumMessageSize) {}
+    virtual ~TransportDescriptorInterface(){}
+
+    uint32_t maxMessageSize;
+};
 
 } // namespace rtps
 } // namespace fastrtps

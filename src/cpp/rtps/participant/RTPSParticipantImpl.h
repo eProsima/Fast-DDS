@@ -51,10 +51,10 @@ class recursive_mutex;
 namespace eprosima {
 namespace fastrtps{
 
-	class WriterQos;
-	class ReaderQos;
-	class TopicAttributes;
-	class MessageReceiver;
+class WriterQos;
+class ReaderQos;
+class TopicAttributes;
+class MessageReceiver;
 
 namespace rtps {
 
@@ -78,34 +78,35 @@ class ReaderListener;
 class StatefulReader;
 
 /*
-	Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
-	It contains:
-	-A ReceiverResource (as produced by the NetworkFactory Element)
-	-A list of associated wirters and readers
-	-A buffer for message storage
-	-A mutex for the lists
-	The idea is to create the thread that performs blocking calllto ReceiverResource.Receive and processes the message
-	from the Receiver, so the Transport Layer does not need to be aware of the existence of what is using it.
+   Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
+   It contains:
+   -A ReceiverResource (as produced by the NetworkFactory Element)
+   -A list of associated wirters and readers
+   -A buffer for message storage
+   -A mutex for the lists
+   The idea is to create the thread that performs blocking calllto ReceiverResource.Receive and processes the message
+   from the Receiver, so the Transport Layer does not need to be aware of the existence of what is using it.
 
 */
-typedef struct ReceiverControlBlock{
-	ReceiverResource Receiver;
-	MessageReceiver* mp_receiver;		//Associated Readers/Writers inside of MessageReceiver
-	boost::mutex mtx; //Fix declaration
-	boost::thread* m_thread;
-   bool resourceAlive;
-	ReceiverControlBlock(ReceiverResource&& rec):Receiver(std::move(rec)), mp_receiver(nullptr), m_thread(nullptr), resourceAlive(true)
-	{
-	}
-	ReceiverControlBlock(ReceiverControlBlock&& origen):Receiver(std::move(origen.Receiver)), mp_receiver(origen.mp_receiver), m_thread(origen.m_thread), resourceAlive(true)
-	{
-	   origen.m_thread = nullptr;
-      origen.mp_receiver = nullptr;
-	}
-   
-   private:
-   ReceiverControlBlock(const ReceiverControlBlock&) = delete;
-   const ReceiverControlBlock& operator=(const ReceiverControlBlock&) = delete;
+typedef struct ReceiverControlBlock
+{
+    ReceiverResource Receiver;
+    MessageReceiver* mp_receiver;		//Associated Readers/Writers inside of MessageReceiver
+    boost::mutex mtx; //Fix declaration
+    boost::thread* m_thread;
+    bool resourceAlive;
+    ReceiverControlBlock(ReceiverResource&& rec):Receiver(std::move(rec)), mp_receiver(nullptr), m_thread(nullptr), resourceAlive(true)
+    {
+    }
+    ReceiverControlBlock(ReceiverControlBlock&& origen):Receiver(std::move(origen.Receiver)), mp_receiver(origen.mp_receiver), m_thread(origen.m_thread), resourceAlive(true)
+    {
+        origen.m_thread = nullptr;
+        origen.mp_receiver = nullptr;
+    }
+
+    private:
+    ReceiverControlBlock(const ReceiverControlBlock&) = delete;
+    const ReceiverControlBlock& operator=(const ReceiverControlBlock&) = delete;
 
 } ReceiverControlBlock;
 
@@ -116,293 +117,292 @@ typedef struct ReceiverControlBlock{
  */
 class RTPSParticipantImpl
 {
-public:
-	/**
-	* @param param
-	* @param guidP
-	* @param part
-	* @param plisten
-	*/
-	RTPSParticipantImpl(const RTPSParticipantAttributes &param,
-			const GuidPrefix_t& guidP,RTPSParticipant* part,RTPSParticipantListener* plisten= nullptr);
-	virtual ~RTPSParticipantImpl();
+    public:
+        /**
+         * @param param
+         * @param guidP
+         * @param part
+         * @param plisten
+         */
+        RTPSParticipantImpl(const RTPSParticipantAttributes &param,
+                const GuidPrefix_t& guidP,RTPSParticipant* part,RTPSParticipantListener* plisten= nullptr);
+        virtual ~RTPSParticipantImpl();
 
-	/**
-	* Get associated GUID
-	* @return Associated GUID
-	*/
-	inline const GUID_t& getGuid() const {return m_guid;};
+        /**
+         * Get associated GUID
+         * @return Associated GUID
+         */
+        inline const GUID_t& getGuid() const {return m_guid;};
 
-	//! Announce RTPSParticipantState (force the sending of a DPD message.)
-	void announceRTPSParticipantState();
-	//!Stop the RTPSParticipant Announcement (used in tests to avoid multiple packets being send)
-	void stopRTPSParticipantAnnouncement();
-	//!Reset to timer to make periodic RTPSParticipant Announcements.
-	void resetRTPSParticipantAnnouncement();
+        //! Announce RTPSParticipantState (force the sending of a DPD message.)
+        void announceRTPSParticipantState();
+        //!Stop the RTPSParticipant Announcement (used in tests to avoid multiple packets being send)
+        void stopRTPSParticipantAnnouncement();
+        //!Reset to timer to make periodic RTPSParticipant Announcements.
+        void resetRTPSParticipantAnnouncement();
 
-	void loose_next_change();
+        void loose_next_change();
 
-	/**
-	 * Activate a Remote Endpoint defined in the Static Discovery.
-	 * @param pguid GUID_t of the endpoint.
-	 * @param userDefinedId userDeinfed Id of the endpoint.
-	 * @param kind kind of endpoint
-	 * @return True if correct.
-	 */
-	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
+        /**
+         * Activate a Remote Endpoint defined in the Static Discovery.
+         * @param pguid GUID_t of the endpoint.
+         * @param userDefinedId userDeinfed Id of the endpoint.
+         * @param kind kind of endpoint
+         * @return True if correct.
+         */
+        bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
 
-	/**
-	 * Assert the liveliness of a remote participant
-	 * @param guidP GuidPrefix_t of the participant.
-	 */
-	void assertRemoteRTPSParticipantLiveliness(const GuidPrefix_t& guidP);
+        /**
+         * Assert the liveliness of a remote participant
+         * @param guidP GuidPrefix_t of the participant.
+         */
+        void assertRemoteRTPSParticipantLiveliness(const GuidPrefix_t& guidP);
 
-    /**
-	 * Get the RTPSParticipant ID
-	 * @return RTPSParticipant ID
-	 */
-    inline uint32_t getRTPSParticipantID() const { return (uint32_t)m_att.participantID;};
-    //!Post to the resource semaphore
-    void ResourceSemaphorePost();
-    //!Wait for the resource semaphore
-    void ResourceSemaphoreWait();
-    //!Get Pointer to the Event Resource.
-	ResourceEvent& getEventResource();
-    //!Send Method - Deprecated - Stays here for reference purposes
-	void sendSync(CDRMessage_t* msg, Endpoint *pend, const Locator_t& destination_loc);
-    //!Get the participant Mutex
-    boost::recursive_mutex* getParticipantMutex() const {return mp_mutex;};
-	/**
-	* Get the participant listener
-	* @return participant listener
-	*/
-    inline RTPSParticipantListener* getListener(){return mp_participantListener;}
-	
-    /**
-     * Get a a pair of pointer to the RTPSReaders used by SimpleEDP for discovery of Publisher and Subscribers
-     * @return std::pair of pointers to StatefulReaders where the first on points to the SubReader and the second to PubReader.
-     */
-    std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
+        /**
+         * Get the RTPSParticipant ID
+         * @return RTPSParticipant ID
+         */
+        inline uint32_t getRTPSParticipantID() const { return (uint32_t)m_att.participantID;};
+        //!Post to the resource semaphore
+        void ResourceSemaphorePost();
+        //!Wait for the resource semaphore
+        void ResourceSemaphoreWait();
+        //!Get Pointer to the Event Resource.
+        ResourceEvent& getEventResource();
+        //!Send Method - Deprecated - Stays here for reference purposes
+        void sendSync(CDRMessage_t* msg, Endpoint *pend, const Locator_t& destination_loc);
+        //!Get the participant Mutex
+        boost::recursive_mutex* getParticipantMutex() const {return mp_mutex;};
+        /**
+         * Get the participant listener
+         * @return participant listener
+         */
+        inline RTPSParticipantListener* getListener(){return mp_participantListener;}
 
-	/**
-	* Get the participant
-	* @return participant
-	*/
-    inline RTPSParticipant* getUserRTPSParticipant(){return mp_userParticipant;}
+        /**
+         * Get a a pair of pointer to the RTPSReaders used by SimpleEDP for discovery of Publisher and Subscribers
+         * @return std::pair of pointers to StatefulReaders where the first on points to the SubReader and the second to PubReader.
+         */
+        std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 
-    std::vector<std::unique_ptr<FlowController>>& getFlowControllers() { return m_controllers;}
+        /**
+         * Get the participant
+         * @return participant
+         */
+        inline RTPSParticipant* getUserRTPSParticipant(){return mp_userParticipant;}
 
-    std::vector<RTPSWriter*> getAllWriters() const;
+        std::vector<std::unique_ptr<FlowController>>& getFlowControllers() { return m_controllers;}
 
-private:
-	//!Attributes of the RTPSParticipant
-	RTPSParticipantAttributes m_att;
-	//!Guid of the RTPSParticipant.
-	const GUID_t m_guid;
-	//! Sending resources. - DEPRECATED -Stays commented for reference purposes
-	// ResourceSend* mp_send_thr;
-	//! Event Resource
-	ResourceEvent* mp_event_thr;
-	//! BuiltinProtocols of this RTPSParticipant
-	BuiltinProtocols* mp_builtinProtocols;
-	//!Semaphore to wait for the listen thread creation.
-	boost::interprocess::interprocess_semaphore* mp_ResourceSemaphore;
-	//!Id counter to correctly assign the ids to writers and readers.
-	uint32_t IdCounter;
-	//!Writer List.
-	std::vector<RTPSWriter*> m_allWriterList;
-	//!Reader List
-	std::vector<RTPSReader*> m_allReaderList;
-	//!Listen thread list.
-	//!Writer List.
-	std::vector<RTPSWriter*> m_userWriterList;
-	//!Reader List
-	std::vector<RTPSReader*> m_userReaderList;
+        std::vector<RTPSWriter*> getAllWriters() const;
 
-	//!Network Factory
-	NetworkFactory m_network_Factory;
-	//!ReceiverControlBlock list - encapsulates all associated resources on a Receiving element
-	std::list<ReceiverControlBlock> m_receiverResourcelist;
-	//!SenderResource List
-	std::vector<SenderResource> m_senderResource;
-	//!Maximum message size
-	uint32_t maxmessagesize;
+        uint32_t getMaxMessageSize() const;
 
-	//!Listen Resource list - DEPRECATED - Stays commented for reference purposes
-	// std::vector<ListenResource*> m_listenResourceList;
-	//!Participant Listener
-	RTPSParticipantListener* mp_participantListener;
-	//!Pointer to the user participant
-	RTPSParticipant* mp_userParticipant;
+    private:
+        //!Attributes of the RTPSParticipant
+        RTPSParticipantAttributes m_att;
+        //!Guid of the RTPSParticipant.
+        const GUID_t m_guid;
+        //! Sending resources. - DEPRECATED -Stays commented for reference purposes
+        // ResourceSend* mp_send_thr;
+        //! Event Resource
+        ResourceEvent* mp_event_thr;
+        //! BuiltinProtocols of this RTPSParticipant
+        BuiltinProtocols* mp_builtinProtocols;
+        //!Semaphore to wait for the listen thread creation.
+        boost::interprocess::interprocess_semaphore* mp_ResourceSemaphore;
+        //!Id counter to correctly assign the ids to writers and readers.
+        uint32_t IdCounter;
+        //!Writer List.
+        std::vector<RTPSWriter*> m_allWriterList;
+        //!Reader List
+        std::vector<RTPSReader*> m_allReaderList;
+        //!Listen thread list.
+        //!Writer List.
+        std::vector<RTPSWriter*> m_userWriterList;
+        //!Reader List
+        std::vector<RTPSReader*> m_userReaderList;
 
-    RTPSParticipantImpl& operator=(const RTPSParticipantImpl&) NON_COPYABLE_CXX11;
+        //!Network Factory
+        NetworkFactory m_network_Factory;
+        //!ReceiverControlBlock list - encapsulates all associated resources on a Receiving element
+        std::list<ReceiverControlBlock> m_receiverResourcelist;
+        //!SenderResource List
+        std::vector<SenderResource> m_senderResource;
+        //!Maximum message size
+        int32_t maxMessageSize;
 
-	/**
-	 * Method to check if a specific entityId already exists in this RTPSParticipant
-	 * @param ent EnityId to check
-	 * @param kind Endpoint Kind.
-	 * @return True if exists.
-	 */
-	bool existsEntityId(const EntityId_t& ent,EndpointKind_t kind) const;
+        //!Listen Resource list - DEPRECATED - Stays commented for reference purposes
+        // std::vector<ListenResource*> m_listenResourceList;
+        //!Participant Listener
+        RTPSParticipantListener* mp_participantListener;
+        //!Pointer to the user participant
+        RTPSParticipant* mp_userParticipant;
 
-	/**
-	 * Assign an endpoint to the ReceiverResources, based on its LocatorLists.
-	 * @param endp Pointer to the endpoint.
-	 * @return True if correct.
-	 */
-	bool assignEndpointListenResources(Endpoint* endp);
+        RTPSParticipantImpl& operator=(const RTPSParticipantImpl&) NON_COPYABLE_CXX11;
 
-	/** Assign an endpoint to the ReceiverResources as specified specifically on parameter list
-	 * @param pend Pointer to the endpoint.
-	 * @param lit Locator list iterator.
-	 * @param isMulticast Boolean indicating that is multicast.
-	 * @param isFixed Boolean indicating that is a fixed listenresource.
-	 * @return True if assigned.
-	 */
-	bool assignEndpoint2LocatorList(Endpoint* pend,LocatorList_t& list);
+        /**
+         * Method to check if a specific entityId already exists in this RTPSParticipant
+         * @param ent EnityId to check
+         * @param kind Endpoint Kind.
+         * @return True if exists.
+         */
+        bool existsEntityId(const EntityId_t& ent,EndpointKind_t kind) const;
 
-	/** Create the new ReceiverResources needed for a new Locator, contains the calls to assignEndpointListenResources
-		and consequently assignEndpoint2LocatorList
-		@param pend - Pointer to the endpoint which triggered the creation of the Receivers
-	*/
-	bool createAndAssociateReceiverswithEndpoint(Endpoint * pend);
-	
-	/** Function to be called from a new thread, which takes cares of performing a blocking receive 
-		operation on the ReceiveResource
-		@param buffer - Position of the buffer we use to store data
-		@param locator - Locator that triggered the creation of the resource
-	*/
-	void performListenOperation(ReceiverControlBlock *receiver, Locator_t input_locator);
+        /**
+         * Assign an endpoint to the ReceiverResources, based on its LocatorLists.
+         * @param endp Pointer to the endpoint.
+         * @return True if correct.
+         */
+        bool assignEndpointListenResources(Endpoint* endp);
 
-	/** Create non-existent SendResources based on the Locator list of the entity
-		@param pend - Pointer to the endpoint whose SenderResources are to be created
-	*/
-	bool createSendResources(Endpoint *pend);
-	
-	/** When we want to create a new Resource but the physical channel specified by the Locator
-	    can not be opened, we want to mutate the Locator to open a more or less equivalent channel.
-		@param loc -  Locator we want to change
-	*/
-	Locator_t applyLocatorAdaptRule(Locator_t loc);
-	
-	//!Participant Mutex
-	boost::recursive_mutex* mp_mutex;
-   /*
-    * Flow controllers for this participant.
-    */
-   std::vector<std::unique_ptr<FlowController> > m_controllers; 
-public:
-	
-   	/**
-	 * Get a copy of the actual state of the RTPSParticipantAttributes
-	 * @return RTPSParticipantAttributes copy of the parameters
-	 */
-   	RTPSParticipantAttributes getRTPSParticipantAttributes();
+        /** Assign an endpoint to the ReceiverResources as specified specifically on parameter list
+         * @param pend Pointer to the endpoint.
+         * @param lit Locator list iterator.
+         * @param isMulticast Boolean indicating that is multicast.
+         * @param isFixed Boolean indicating that is a fixed listenresource.
+         * @return True if assigned.
+         */
+        bool assignEndpoint2LocatorList(Endpoint* pend,LocatorList_t& list);
 
-	 /**
-	 * Create a Writer in this RTPSParticipant.
-	 * @param Writer Pointer to pointer of the Writer, used as output. Only valid if return==true.
-	 * @param param WriterAttributes to define the Writer.
-	 * @param entityId EntityId assigned to the Writer.
-	 * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
-	 * @return True if the Writer was correctly created.
-	 */
-	bool createWriter(RTPSWriter** Writer, WriterAttributes& param,WriterHistory* hist,WriterListener* listen,
-			const EntityId_t& entityId = c_EntityId_Unknown,bool isBuiltin = false);
+        /** Create the new ReceiverResources needed for a new Locator, contains the calls to assignEndpointListenResources
+          and consequently assignEndpoint2LocatorList
+          @param pend - Pointer to the endpoint which triggered the creation of the Receivers
+          */
+        bool createAndAssociateReceiverswithEndpoint(Endpoint * pend);
 
-	/**
-	 * Create a Reader in this RTPSParticipant.
-	 * @param Reader Pointer to pointer of the Reader, used as output. Only valid if return==true.
-	 * @param param ReaderAttributes to define the Reader.
-	 * @param entityId EntityId assigned to the Reader.
-	 * @param isBuiltin Bool value indicating if the Reader is builtin (Discovery or Liveliness protocol) or is created for the end user.
-	 * @return True if the Reader was correctly created.
-	 */
-	bool createReader(RTPSReader** Reader, ReaderAttributes& param,ReaderHistory* hist,ReaderListener* listen,
-				const EntityId_t& entityId = c_EntityId_Unknown,bool isBuiltin = false, bool enable = true);
+        /** Function to be called from a new thread, which takes cares of performing a blocking receive 
+          operation on the ReceiveResource
+          @param buffer - Position of the buffer we use to store data
+          @param locator - Locator that triggered the creation of the resource
+          */
+        void performListenOperation(ReceiverControlBlock *receiver, Locator_t input_locator);
 
-    bool enableReader(RTPSReader *reader);
+        /** Create non-existent SendResources based on the Locator list of the entity
+          @param pend - Pointer to the endpoint whose SenderResources are to be created
+          */
+        bool createSendResources(Endpoint *pend);
 
-	/**
-	* Register a Writer in the BuiltinProtocols.
-	* @param Writer Pointer to the RTPSWriter.
-	* @param topicAtt TopicAttributes of the Writer.
-	* @param wqos WriterQos.
-	* @return True if correctly registered.
-	*/
-	bool registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos);
+        /** When we want to create a new Resource but the physical channel specified by the Locator
+          can not be opened, we want to mutate the Locator to open a more or less equivalent channel.
+          @param loc -  Locator we want to change
+          */
+        Locator_t applyLocatorAdaptRule(Locator_t loc);
 
-	/**
-	* Register a Reader in the BuiltinProtocols.
-	* @param Reader Pointer to the RTPSReader.
-	* @param topicAtt TopicAttributes of the Reader.
-	* @param rqos ReaderQos.
-	* @return  True if correctly registered.
-	*/
-	bool registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& rqos);
+        //!Participant Mutex
+        boost::recursive_mutex* mp_mutex;
+        /*
+         * Flow controllers for this participant.
+         */
+        std::vector<std::unique_ptr<FlowController> > m_controllers;
 
-	/**
-	* Update local writer QoS
-	* @param Writer Writer to update
-	* @param wqos New QoS for the writer
-	* @return True on success
-	*/
-	bool updateLocalWriter(RTPSWriter* Writer,WriterQos& wqos);
+    public:
 
-	/**
-	* Update local reader QoS
-	* @param Reader Reader to update
-	* @param rqos New QoS for the reader
-	* @return True on success
-	*/
-	bool updateLocalReader(RTPSReader* Reader, ReaderQos& rqos);
+        const RTPSParticipantAttributes& getRTPSParticipantAttributes() const;
 
+        /**
+         * Create a Writer in this RTPSParticipant.
+         * @param Writer Pointer to pointer of the Writer, used as output. Only valid if return==true.
+         * @param param WriterAttributes to define the Writer.
+         * @param entityId EntityId assigned to the Writer.
+         * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
+         * @return True if the Writer was correctly created.
+         */
+        bool createWriter(RTPSWriter** Writer, WriterAttributes& param,WriterHistory* hist,WriterListener* listen,
+                const EntityId_t& entityId = c_EntityId_Unknown,bool isBuiltin = false);
+
+        /**
+         * Create a Reader in this RTPSParticipant.
+         * @param Reader Pointer to pointer of the Reader, used as output. Only valid if return==true.
+         * @param param ReaderAttributes to define the Reader.
+         * @param entityId EntityId assigned to the Reader.
+         * @param isBuiltin Bool value indicating if the Reader is builtin (Discovery or Liveliness protocol) or is created for the end user.
+         * @return True if the Reader was correctly created.
+         */
+        bool createReader(RTPSReader** Reader, ReaderAttributes& param,ReaderHistory* hist,ReaderListener* listen,
+                const EntityId_t& entityId = c_EntityId_Unknown,bool isBuiltin = false, bool enable = true);
+
+        bool enableReader(RTPSReader *reader);
+
+        /**
+         * Register a Writer in the BuiltinProtocols.
+         * @param Writer Pointer to the RTPSWriter.
+         * @param topicAtt TopicAttributes of the Writer.
+         * @param wqos WriterQos.
+         * @return True if correctly registered.
+         */
+        bool registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos);
+
+        /**
+         * Register a Reader in the BuiltinProtocols.
+         * @param Reader Pointer to the RTPSReader.
+         * @param topicAtt TopicAttributes of the Reader.
+         * @param rqos ReaderQos.
+         * @return  True if correctly registered.
+         */
+        bool registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& rqos);
+
+        /**
+         * Update local writer QoS
+         * @param Writer Writer to update
+         * @param wqos New QoS for the writer
+         * @return True on success
+         */
+        bool updateLocalWriter(RTPSWriter* Writer,WriterQos& wqos);
+
+        /**
+         * Update local reader QoS
+         * @param Reader Reader to update
+         * @param rqos New QoS for the reader
+         * @return True on success
+         */
+        bool updateLocalReader(RTPSReader* Reader, ReaderQos& rqos);
 
 
-	/**
-	* Get the participant attributes
-	* @return Participant attributes
-	*/
-	inline RTPSParticipantAttributes& getAttributes() {return m_att;};
 
-	/**
-	* Delete a user endpoint
-	* @param Endpoint to delete
-	* @return True on success
-	*/
-	bool deleteUserEndpoint(Endpoint*);
+        /**
+         * Get the participant attributes
+         * @return Participant attributes
+         */
+        inline RTPSParticipantAttributes& getAttributes() {return m_att;};
 
-	/**
-	* Get the begin of the user reader list
-	* @return Iterator pointing to the begin of the user reader list
-	*/
-	std::vector<RTPSReader*>::iterator userReadersListBegin(){return m_userReaderList.begin();};
+        /**
+         * Delete a user endpoint
+         * @param Endpoint to delete
+         * @return True on success
+         */
+        bool deleteUserEndpoint(Endpoint*);
 
-	/**
-	* Get the end of the user reader list
-	* @return Iterator pointing to the end of the user reader list
-	*/
-	std::vector<RTPSReader*>::iterator userReadersListEnd(){return m_userReaderList.end();};
+        /**
+         * Get the begin of the user reader list
+         * @return Iterator pointing to the begin of the user reader list
+         */
+        std::vector<RTPSReader*>::iterator userReadersListBegin(){return m_userReaderList.begin();};
 
-	/**
-	* Get the begin of the user writer list
-	* @return Iterator pointing to the begin of the user writer list
-	*/
-	std::vector<RTPSWriter*>::iterator userWritersListBegin(){return m_userWriterList.begin();};
+        /**
+         * Get the end of the user reader list
+         * @return Iterator pointing to the end of the user reader list
+         */
+        std::vector<RTPSReader*>::iterator userReadersListEnd(){return m_userReaderList.end();};
 
-	/**
-	* Get the end of the user writer list
-	* @return Iterator pointing to the end of the user writer list
-	*/
-	std::vector<RTPSWriter*>::iterator userWritersListEnd(){return m_userWriterList.end();};
+        /**
+         * Get the begin of the user writer list
+         * @return Iterator pointing to the begin of the user writer list
+         */
+        std::vector<RTPSWriter*>::iterator userWritersListBegin(){return m_userWriterList.begin();};
 
-	/** Helper function that creates ReceiverResources based on a Locator_t List, possibly mutating
-	some and updating the list. DOES NOT associate endpoints with it.
-	@param Locator_list - Locator list to be used to create the ReceiverResources
-	@param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
-	*/
-   static const int MutationTries = 5;
-	void createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
+        /**
+         * Get the end of the user writer list
+         * @return Iterator pointing to the end of the user writer list
+         */
+        std::vector<RTPSWriter*>::iterator userWritersListEnd(){return m_userWriterList.end();};
+
+        /** Helper function that creates ReceiverResources based on a Locator_t List, possibly mutating
+          some and updating the list. DOES NOT associate endpoints with it.
+          @param Locator_list - Locator list to be used to create the ReceiverResources
+          @param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
+          */
+        static const int MutationTries = 5;
+        void createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
 
 };
 

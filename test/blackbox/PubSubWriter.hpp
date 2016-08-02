@@ -70,13 +70,13 @@ class PubSubWriter
     PubSubWriter(const std::string &topic_name) : listener_(*this), participant_(nullptr),
     publisher_(nullptr), topic_name_(topic_name), initialized_(false), matched_(0)
     {
-            publisher_attr_.topic.topicDataType = type_.getName();
-            // Generate topic name
-            std::ostringstream t;
-            t << topic_name_ << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
-            publisher_attr_.topic.topicName = t.str();
+        publisher_attr_.topic.topicDataType = type_.getName();
+        // Generate topic name
+        std::ostringstream t;
+        t << topic_name_ << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+        publisher_attr_.topic.topicName = t.str();
     }
-    
+
     ~PubSubWriter()
     {
         if(participant_ != nullptr)
@@ -126,7 +126,7 @@ class PubSubWriter
     void send(std::list<type>& msgs)
     {
         auto it = msgs.begin();
-        
+
         while(it != msgs.end())
         {
             if(publisher_->write((void*)&(*it)))
@@ -204,18 +204,6 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& setFragmentSize(uint32_t size)
-    {
-	publisher_attr_.maxmessagesize = size;
-	return *this;
-    }
-
-    PubSubWriter& setParticipantFragmentSize(uint32_t size)
-    {
-	participant_attr_.rtps.maxmessagesize = size;
-    	return *this;
-    }
-
     PubSubWriter& add_user_transport_to_pparams(std::shared_ptr<TransportDescriptorInterface> userTransportDescriptor)
     {
         participant_attr_.rtps.userTransports.push_back(userTransportDescriptor);
@@ -246,28 +234,28 @@ class PubSubWriter
         return *this;
     }
 
-        PubSubWriter& unicastLocatorList(LocatorList_t unicastLocators)
-	{
-	    publisher_attr_.unicastLocatorList = unicastLocators;
-	    return *this;
-	}
+    PubSubWriter& unicastLocatorList(LocatorList_t unicastLocators)
+    {
+        publisher_attr_.unicastLocatorList = unicastLocators;
+        return *this;
+    }
 
-	PubSubWriter& multicastLocatorList(LocatorList_t multicastLocators)
-	{
-	    publisher_attr_.multicastLocatorList = multicastLocators;
-	    return *this;
-	}
+    PubSubWriter& multicastLocatorList(LocatorList_t multicastLocators)
+    {
+        publisher_attr_.multicastLocatorList = multicastLocators;
+        return *this;
+    }
 
-	PubSubWriter& outLocatorList(LocatorList_t outLocators)
-	{
-	    publisher_attr_.outLocatorList = outLocators;
-	    return *this;
-	}
+    PubSubWriter& outLocatorList(LocatorList_t outLocators)
+    {
+        publisher_attr_.outLocatorList = outLocators;
+        return *this;
+    }
 
     PubSubWriter& allocated_samples(const uint32_t max)
     {
-	publisher_attr_.topic.resourceLimitsQos.allocated_samples = max;
-	return *this;
+        publisher_attr_.topic.resourceLimitsQos.allocated_samples = max;
+        return *this;
     }
 
     private:

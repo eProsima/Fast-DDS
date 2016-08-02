@@ -49,41 +49,41 @@ class ResourceEvent;
  */
 class Endpoint
 {
-	friend class RTPSParticipantImpl;
-protected:
-	Endpoint(RTPSParticipantImpl* pimpl,GUID_t& guid,EndpointAttributes& att);
-	virtual ~Endpoint();
-public:
+    friend class RTPSParticipantImpl;
+    protected:
+    Endpoint(RTPSParticipantImpl* pimpl,GUID_t& guid,EndpointAttributes& att);
+    virtual ~Endpoint();
+    public:
 
-	/**
-	* Get associated GUID
-	* @return Associated GUID
-	*/
-	RTPS_DllAPI inline const GUID_t& getGuid() const { return m_guid; };
+    /**
+     * Get associated GUID
+     * @return Associated GUID
+     */
+    RTPS_DllAPI inline const GUID_t& getGuid() const { return m_guid; };
 
-	/**
-	* Get mutex
-	* @return Associated Mutex
-	*/
-	RTPS_DllAPI inline boost::recursive_mutex* getMutex() const { return mp_mutex; }
+    /**
+     * Get mutex
+     * @return Associated Mutex
+     */
+    RTPS_DllAPI inline boost::recursive_mutex* getMutex() const { return mp_mutex; }
 
-	/**
-	* Get associated attributes
-	* @return Endpoint attributes
-	*/
-	RTPS_DllAPI inline EndpointAttributes* getAttributes() { return &m_att; }
+    /**
+     * Get associated attributes
+     * @return Endpoint attributes
+     */
+    RTPS_DllAPI inline EndpointAttributes* getAttributes() { return &m_att; }
 
-protected:
-	//!Pointer to the RTPSParticipant containing this endpoint.
-	RTPSParticipantImpl* mp_RTPSParticipant;
-	//!Endpoint GUID
-	const GUID_t m_guid;
-	//!Endpoint Attributes
-	EndpointAttributes m_att;
-	//!Endpoint Mutex
-	boost::recursive_mutex* mp_mutex;
+    protected:
+    //!Pointer to the RTPSParticipant containing this endpoint.
+    RTPSParticipantImpl* mp_RTPSParticipant;
+    //!Endpoint GUID
+    const GUID_t m_guid;
+    //!Endpoint Attributes
+    EndpointAttributes m_att;
+    //!Endpoint Mutex
+    boost::recursive_mutex* mp_mutex;
 
-private:
+    private:
 
     Endpoint& operator=(const Endpoint&)NON_COPYABLE_CXX11;
 

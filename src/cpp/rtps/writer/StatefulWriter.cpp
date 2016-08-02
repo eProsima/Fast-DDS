@@ -78,7 +78,7 @@ StatefulWriter::~StatefulWriter()
     delete all_acked_mutex_;
 
     for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin();
-        it != matched_readers.end(); ++it)
+            it != matched_readers.end(); ++it)
         (*it)->destroy_timers();
 
     if(mp_periodicHB !=nullptr)
@@ -95,13 +95,13 @@ StatefulWriter::~StatefulWriter()
 
 void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
     //TODO Think about when set liveliness assertion when writer is asynchronous.
-	this->setLivelinessAsserted(true);
+    this->setLivelinessAsserted(true);
 
-	if(!matched_readers.empty())
-	{
+    if(!matched_readers.empty())
+    {
         if(!isAsync())
         {
             LocatorList_t unilocList;
@@ -156,11 +156,11 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 (*it)->addChange(changeForReader);
             }
         }
-	}
-	else
-	{
-		logInfo(RTPS_WRITER,"No reader proxy to add change.");
-	}
+    }
+    else
+    {
+        logInfo(RTPS_WRITER,"No reader proxy to add change.");
+    }
 }
 
 
@@ -179,18 +179,18 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 
 bool StatefulWriter::wrap_around_readers()
 {
-   // We loop the reader iterator around until
-   // we reach the wrapping point
-   
-   if (m_readers_to_walk == 0)
-      return false;
-  
-   m_readers_to_walk--;
-   m_reader_iterator++; 
-   if (m_reader_iterator == matched_readers.end())
-      m_reader_iterator = matched_readers.begin();
+    // We loop the reader iterator around until
+    // we reach the wrapping point
 
-   return true;
+    if (m_readers_to_walk == 0)
+        return false;
+
+    m_readers_to_walk--;
+    m_reader_iterator++; 
+    if (m_reader_iterator == matched_readers.end())
+        m_reader_iterator = matched_readers.begin();
+
+    return true;
 }
 
 size_t StatefulWriter::send_any_unsent_changes()
@@ -201,7 +201,7 @@ size_t StatefulWriter::send_any_unsent_changes()
     m_readers_to_walk = matched_readers.size();
     // The reader proxy vector is walked in a different order each time 
     // to prevent persistent prioritization of a single reader
-	 while(wrap_around_readers())
+    while(wrap_around_readers())
     {
         boost::lock_guard<boost::recursive_mutex> rguard(*(*m_reader_iterator)->mp_mutex);
 
@@ -212,7 +212,7 @@ size_t StatefulWriter::send_any_unsent_changes()
 
         for(auto cit = ch_vec.begin(); cit != ch_vec.end(); ++cit)
         {
-                //cout << "EXPECTSINLINE: "<< (*m_reader_iterator)->m_att.expectsInlineQos<< endl;
+            //cout << "EXPECTSINLINE: "<< (*m_reader_iterator)->m_att.expectsInlineQos<< endl;
             if((*cit)->isRelevant() && (*cit)->isValid())
             {
                 relevant_changes.emplace_back(**cit);
@@ -226,26 +226,26 @@ size_t StatefulWriter::send_any_unsent_changes()
 
         // Clear all relevant changes through the local controllers first
         for (auto& controller : m_controllers)
-           (*controller)(relevant_changes);
+            (*controller)(relevant_changes);
 
         // Clear all relevant changes through the parent controllers
         for (auto& controller : mp_RTPSParticipant->getFlowControllers())
-           (*controller)(relevant_changes); 
-       
+            (*controller)(relevant_changes); 
+
         // Those that remain are set to UNDERWAY or their unsent sets updated
         for (auto& change : relevant_changes)
         {
-           if (change.isFragmented() && !change.getFragmentsClearedForSending().isSetEmpty())
-              (*m_reader_iterator)->mark_fragments_as_sent_for_change(change.getChange(), change.getFragmentsClearedForSending());
-           else
-              (*m_reader_iterator)->set_change_to_status(change.getChange(), UNDERWAY);
+            if (change.isFragmented() && !change.getFragmentsClearedForSending().isSetEmpty())
+                (*m_reader_iterator)->mark_fragments_as_sent_for_change(change.getChange(), change.getFragmentsClearedForSending());
+            else
+                (*m_reader_iterator)->set_change_to_status(change.getChange(), UNDERWAY);
         }
 
         // And controllers are notified about the changes being sent
         for (const auto& change : relevant_changes)
-           FlowController::NotifyControllersChangeSent(&change);
+            FlowController::NotifyControllersChangeSent(&change);
 
-		if(m_pushMode)
+        if(m_pushMode)
         {
             if(!relevant_changes.empty())
             {
@@ -298,8 +298,8 @@ size_t StatefulWriter::send_any_unsent_changes()
         }
     }
 
-	logInfo(RTPS_WRITER, "Finish sending unsent changes");
-   return number_of_changes_sent;
+    logInfo(RTPS_WRITER, "Finish sending unsent changes");
+    return number_of_changes_sent;
 }
 
 
@@ -308,25 +308,25 @@ size_t StatefulWriter::send_any_unsent_changes()
  */
 bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	if(rdata.guid == c_Guid_Unknown)
-	{
-		logError(RTPS_WRITER,"Reliable Writer need GUID_t of matched readers");
-		return false;
-	}
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    if(rdata.guid == c_Guid_Unknown)
+    {
+        logError(RTPS_WRITER,"Reliable Writer need GUID_t of matched readers");
+        return false;
+    }
 
     // Check if it is already matched.
-	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
-	{
+    for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
+    {
         boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
-		if((*it)->m_att.guid == rdata.guid)
-		{
-			logInfo(RTPS_WRITER, "Attempting to add existing reader" << endl);
-			return false;
-		}
-	}
+        if((*it)->m_att.guid == rdata.guid)
+        {
+            logInfo(RTPS_WRITER, "Attempting to add existing reader" << endl);
+            return false;
+        }
+    }
 
-	ReaderProxy* rp = new ReaderProxy(rdata,m_times,this);
+    ReaderProxy* rp = new ReaderProxy(rdata,m_times,this);
     //TODO Revisar porque se piensa que puede estar a null
     if(mp_periodicHB==nullptr)
         mp_periodicHB = new PeriodicHeartbeat(this,TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
@@ -348,15 +348,15 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
         rp->addChange(changeForReader);
     }
 
-	matched_readers.push_back(rp);
-   // Invalidate persistent iterator
-   m_reader_iterator = matched_readers.begin();
+    matched_readers.push_back(rp);
+    // Invalidate persistent iterator
+    m_reader_iterator = matched_readers.begin();
 
-	logInfo(RTPS_WRITER, "Reader Proxy "<< rp->m_att.guid<< " added to " << this->m_guid.entityId << " with "
-			<<rp->m_att.endpoint.unicastLocatorList.size()<<"(u)-"
-			<<rp->m_att.endpoint.multicastLocatorList.size()<<"(m) locators");
+    logInfo(RTPS_WRITER, "Reader Proxy "<< rp->m_att.guid<< " added to " << this->m_guid.entityId << " with "
+            <<rp->m_att.endpoint.unicastLocatorList.size()<<"(u)-"
+            <<rp->m_att.endpoint.multicastLocatorList.size()<<"(m) locators");
 
-	return true;
+    return true;
 }
 
 bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
@@ -590,5 +590,5 @@ void StatefulWriter::updateTimes(WriterTimes& times)
 
 void StatefulWriter::add_flow_controller(std::unique_ptr<FlowController> controller)
 {
-   m_controllers.push_back(std::move(controller));
+    m_controllers.push_back(std::move(controller));
 }

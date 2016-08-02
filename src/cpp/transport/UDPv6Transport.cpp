@@ -28,6 +28,7 @@ namespace fastrtps{
 namespace rtps{
 
 static const uint32_t maximumUDPSocketSize = 65536;
+static const uint32_t maximumMessageSize = 65000;
 
 UDPv6Transport::UDPv6Transport(const UDPv6TransportDescriptor& descriptor):
     mSendBufferSize(descriptor.sendBufferSize),
@@ -46,6 +47,7 @@ UDPv6Transport::UDPv6Transport(const UDPv6TransportDescriptor& descriptor):
     }
 
 UDPv6TransportDescriptor::UDPv6TransportDescriptor():
+    TransportDescriptorInterface(maximumMessageSize),
     sendBufferSize(maximumUDPSocketSize),
     receiveBufferSize(maximumUDPSocketSize),
     granularMode(false)
