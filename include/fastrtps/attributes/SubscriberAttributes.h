@@ -38,60 +38,60 @@ namespace fastrtps {
  */
 class SubscriberAttributes {
 
-public:
-	SubscriberAttributes()
-{
-		m_userDefinedID = -1;
-		m_entityID = -1;
-		expectsInlineQos = false;
-		historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
-};
-	virtual ~SubscriberAttributes(){};
-	//!Topic Attributes
-	TopicAttributes topic;
-	//!Reader QOs.
-	ReaderQos qos;
-	//!Times for a RELIABLE Reader
-	ReaderTimes times;
-	//!Unicast locator list
-	LocatorList_t unicastLocatorList;
-	//!Multicast locator list
-	LocatorList_t multicastLocatorList;
-	//!Output locator list
-	LocatorList_t outLocatorList;
-	//!Expects Inline QOS
-	bool expectsInlineQos;
-	//!Underlying History memory policy
-   	MemoryManagementPolicy_t historyMemoryPolicy;
+    public:
+        SubscriberAttributes()
+        {
+            m_userDefinedID = -1;
+            m_entityID = -1;
+            expectsInlineQos = false;
+            historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+        };
+        virtual ~SubscriberAttributes(){};
+        //!Topic Attributes
+        TopicAttributes topic;
+        //!Reader QOs.
+        ReaderQos qos;
+        //!Times for a RELIABLE Reader
+        ReaderTimes times;
+        //!Unicast locator list
+        LocatorList_t unicastLocatorList;
+        //!Multicast locator list
+        LocatorList_t multicastLocatorList;
+        //!Output locator list
+        LocatorList_t outLocatorList;
+        //!Expects Inline QOS
+        bool expectsInlineQos;
+        //!Underlying History memory policy
+        MemoryManagementPolicy_t historyMemoryPolicy;
 
-	/**
-	 * Get the user defined ID
-	 * @return User defined ID
-	 */
-	inline int16_t getUserDefinedID() const {return m_userDefinedID;}
+        /**
+         * Get the user defined ID
+         * @return User defined ID
+         */
+        inline int16_t getUserDefinedID() const {return m_userDefinedID;}
 
-	/**
-	 * Get the entity defined ID
-	 * @return Entity ID
-	 */
-	inline int16_t getEntityID() const {return m_entityID;}
+        /**
+         * Get the entity defined ID
+         * @return Entity ID
+         */
+        inline int16_t getEntityID() const {return m_entityID;}
 
-	/**
-	 * Set the user defined ID
-	 * @param id User defined ID to be set
-	 */
-	inline void setUserDefinedID(uint8_t id){m_userDefinedID = id;	};
+        /**
+         * Set the user defined ID
+         * @param id User defined ID to be set
+         */
+        inline void setUserDefinedID(uint8_t id){m_userDefinedID = id;	};
 
-	/**
-	 * Set the entity ID
-	 * @param id Entity ID to be set
-	 */
-	inline void setEntityID(uint8_t id){m_entityID = id;	};
-private:
-	//!User Defined ID, used for StaticEndpointDiscovery, default value -1.
-	int16_t m_userDefinedID;
-	//!Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
-	int16_t m_entityID;
+        /**
+         * Set the entity ID
+         * @param id Entity ID to be set
+         */
+        inline void setEntityID(uint8_t id){m_entityID = id;	};
+    private:
+        //!User Defined ID, used for StaticEndpointDiscovery, default value -1.
+        int16_t m_userDefinedID;
+        //!Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
+        int16_t m_entityID;
 };
 
 } /* namespace fastrtps */
