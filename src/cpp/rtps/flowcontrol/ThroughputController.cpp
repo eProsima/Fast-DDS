@@ -20,32 +20,32 @@ using namespace std;
 using namespace boost::asio;
 
 namespace eprosima{
-    namespace fastrtps{
-        namespace rtps{
+namespace fastrtps{
+namespace rtps{
 
 ThroughputController::ThroughputController(const ThroughputControllerDescriptor& descriptor, const RTPSWriter* associatedWriter):
-    mSize(descriptor.size),
+    mBytesPerPeriod(descriptor.bytesPerPeriod),
     mAccumulatedPayloadSize(0),
-    mTimeMS(descriptor.timeMS),
+    mPeriodMillisecs(descriptor.periodMillisecs),
     mAssociatedParticipant(nullptr),
     mAssociatedWriter(associatedWriter)
 {
 }
 
 ThroughputController::ThroughputController(const ThroughputControllerDescriptor& descriptor, const RTPSParticipantImpl* associatedParticipant):
-    mSize(descriptor.size),
+    mBytesPerPeriod(descriptor.bytesPerPeriod),
     mAccumulatedPayloadSize(0),
-    mTimeMS(descriptor.timeMS),
+    mPeriodMillisecs(descriptor.periodMillisecs),
     mAssociatedParticipant(associatedParticipant),
     mAssociatedWriter(nullptr)
 {
 }
 
-ThroughputControllerDescriptor::ThroughputControllerDescriptor(): size(UINT32_MAX), timeMS(0)
+ThroughputControllerDescriptor::ThroughputControllerDescriptor(): bytesPerPeriod(UINT32_MAX), periodMillisecs(0)
 {
 }
 
-ThroughputControllerDescriptor::ThroughputControllerDescriptor(uint32_t size, uint32_t time): size(size), timeMS(time)
+ThroughputControllerDescriptor::ThroughputControllerDescriptor(uint32_t size, uint32_t time): bytesPerPeriod(size), periodMillisecs(time)
 {
 }
 
@@ -60,7 +60,7 @@ void ThroughputController::operator()(vector<CacheChangeForGroup_t>& changes)
         auto& change = changes[clearedChanges];
         if (change.isFragmented())
         {
-            unsigned int fittingFragments = min((mSize - mAccumulatedPayloadSize) / change.getChange()->getFragmentSize(),
+            unsigned int fittingFragments = min((mBytesPerPeriod - mAccumulatedPayloadSize) / change.getChange()->getFragmentSize(),
                     static_cast<uint32_t>(change.getFragmentsClearedForSending().set.size()));
 
             if (fittingFragments)
@@ -79,7 +79,7 @@ void ThroughputController::operator()(vector<CacheChangeForGroup_t>& changes)
         }
         else
         {
-            bool fits = (mAccumulatedPayloadSize + change.getChange()->serializedPayload.length) <= mSize;
+            bool fits = (mAccumulatedPayloadSize + change.getChange()->serializedPayload.length) <= mBytesPerPeriod;
 
             if (fits)
             {
@@ -117,10 +117,10 @@ void ThroughputController::ScheduleRefresh(uint32_t sizeToRestore)
             }
         };
 
-    throwawayTimer->expires_from_now(boost::posix_time::milliseconds(mTimeMS));
+    throwawayTimer->expires_from_now(boost::posix_time::milliseconds(mPeriodMillisecs));
     throwawayTimer->async_wait(refresh);
 }
 
-        } // namespace rtps
-    } // namespace fastrtps
+} // namespace rtps
+} // namespace fastrtps
 } // namespace eprosima

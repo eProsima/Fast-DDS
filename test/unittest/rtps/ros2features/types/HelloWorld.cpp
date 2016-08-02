@@ -67,15 +67,35 @@ HelloWorld& HelloWorld::operator=(HelloWorld &&x)
     return *this;
 }
 
+bool HelloWorld::operator==(const HelloWorld &x) const
+{
+    if(m_index == x.m_index &&
+            m_message == x.m_message)
+        return true;
+
+    return false;
+}
+
 size_t HelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
 {
-    size_t current_align = current_alignment;
+    size_t initial_alignment = current_alignment;
             
-    current_align += 2 + eprosima::fastcdr::Cdr::alignment(current_align, 2);
-    current_align += 4 + eprosima::fastcdr::Cdr::alignment(current_align, 4) + 255 + 1;
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
 
-    return current_align;
+    return current_alignment - initial_alignment;
 }
+
+size_t HelloWorld::getCdrSerializedSize(const HelloWorld& data, size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+            
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.m_message.size() + 1;
+
+    return current_alignment - initial_alignment;
+}
+
 size_t HelloWorld::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;

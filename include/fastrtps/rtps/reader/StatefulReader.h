@@ -78,7 +78,7 @@ public:
 	 * @param WP Pointer to pointer to a WriterProxy.
 	 * @return True if found.
 	 */
-	bool matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP);
+	bool matched_writer_lookup(const GUID_t& writerGUID, WriterProxy** WP);
 
 	/**
 	 * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
@@ -163,11 +163,24 @@ public:
 	 * Get the number of matched writers
 	 * @return Number of matched writers
 	 */
-	inline size_t getMatchedWritersSize() const {return matched_writers.size();};
+	inline size_t getMatchedWritersSize() const { return matched_writers.size(); }
+
+    /*!
+    * @brief Returns there is a clean state with all Writers.
+    * It occurs when the Reader received all samples sent by Writers. In other words,
+    * its WriterProxies are up to date.
+    * @return There is a clean state with all Writers.
+    */
+    bool isInCleanState() const;
 
 private:
 
 	bool acceptMsgFrom(GUID_t &entityGUID ,WriterProxy **wp, bool checkTrusted = true);
+
+    /*!
+     * @remarks Nn thread-safe.
+     */
+    bool findWriterProxy(const GUID_t& writerGUID, WriterProxy** WP);
 
 	//!ReaderTimes of the StatefulReader.
 	ReaderTimes m_times;

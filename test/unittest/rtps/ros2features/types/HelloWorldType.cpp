@@ -19,7 +19,7 @@
 
 #include "fastcdr/FastBuffer.h"
 #include "fastcdr/Cdr.h"
-#include "HelloWorld.h"
+
 #include "HelloWorldType.h"
 
 HelloWorldType::HelloWorldType() {
@@ -35,14 +35,15 @@ HelloWorldType::~HelloWorldType() {
 
 bool HelloWorldType::serialize(void* data, SerializedPayload_t* payload)
 {
-	HelloWorld* hw = (HelloWorld*) data;
+	HelloWorld* hw = (HelloWorld*) data;	
 	// Object that manages the raw buffer.
 	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
 	// Object that serializes the data.
 	eprosima::fastcdr::Cdr ser(fastbuffer);
+	payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 	//serialize the object:
 	hw->serialize(ser);
-	payload->length = (uint16_t)ser.getSerializedDataLength();
+	payload->length = (uint32_t)ser.getSerializedDataLength();
 	return true;
 }
 
@@ -52,10 +53,15 @@ bool HelloWorldType::deserialize(SerializedPayload_t* payload, void* data)
 	// Object that manages the raw buffer.
 	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);
 	// Object that serializes the data.
-	eprosima::fastcdr::Cdr deser(fastbuffer);
+	eprosima::fastcdr::Cdr deser(fastbuffer, payload->encapsulation == CDR_BE ? eprosima::fastcdr::Cdr::BIG_ENDIANNESS : eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS); 	// Object that deserializes the data.
 	//serialize the object:
 	hw->deserialize(deser);
 	return true;
+}
+
+std::function<uint32_t()> HelloWorldType::getSerializedSizeProvider(void *data)
+{
+    return [data]() -> uint32_t { return (uint32_t)type::getCdrSerializedSize(*static_cast<HelloWorld*>(data)); };
 }
 
 void* HelloWorldType::createData()

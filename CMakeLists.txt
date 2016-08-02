@@ -329,16 +329,12 @@ if(BUILD_DOCUMENTATION)
         "macro:///eProsima.documentation.changeVersion(${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.odt,${PROJECT_VERSION})"
         COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.pdf" "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.pdf"
         COMMAND "${LIBREOFFICE_EXE}" --headless
-        "macro:///eProsima.documentation.changeVersion(${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.odt,${PROJECT_VERSION})"
-        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.pdf" "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.pdf"
-        COMMAND "${LIBREOFFICE_EXE}" --headless
         "macro:///eProsima.documentation.changeVersion(${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_UPPER}GEN - User Manual.odt,${PROJECT_VERSION})"
         COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_UPPER}GEN - User Manual.pdf" "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_UPPER}GEN - User Manual.pdf"
         COMMAND "${LIBREOFFICE_EXE}" --headless ${LIBREOFFICE_CONVERT_README_MACRO} 
         COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/README.html" "${README_LOCATION}/README.html"
         DEPENDS
         "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.odt"
-        "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.odt"
         "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_UPPER}GEN - User Manual.odt"
         "${PROJECT_SOURCE_DIR}/doc/README.odt"
         COMMENT "Generating documentation with libreoffice" VERBATIM)
@@ -407,7 +403,7 @@ if(BUILD_DOCUMENTATION)
     # Instalation of pdf files
     install(FILES 
         "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.pdf"
-        "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.pdf"
+        "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.pdf"
         "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_UPPER}GEN - User Manual.pdf"
         DESTINATION ${DOC_INSTALL_DIR}/pdf
         COMPONENT documentation

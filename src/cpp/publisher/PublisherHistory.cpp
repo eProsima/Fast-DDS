@@ -29,12 +29,14 @@
 #include <boost/thread/lock_guard.hpp>
 
 
+extern ::rtps::WriteParams WRITE_PARAM_DEFAULT;
+
 namespace eprosima {
 namespace fastrtps {
 
 PublisherHistory::PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMaxSize,HistoryQosPolicy& history,
-		ResourceLimitsQosPolicy& resource):
-										WriterHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples)),
+		ResourceLimitsQosPolicy& resource,MemoryManagementPolicy_t mempolicy):
+										WriterHistory(HistoryAttributes(mempolicy, payloadMaxSize,resource.allocated_samples,resource.max_samples)),
 										m_historyQos(history),
 										m_resourceLimitsQos(resource),
 										mp_pubImpl(pimpl)
@@ -48,7 +50,7 @@ PublisherHistory::~PublisherHistory() {
 }
 
 
-bool PublisherHistory::add_pub_change(CacheChange_t* change)
+bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparams)
 {
 
 	if(mp_writer == nullptr || mp_mutex == nullptr)
@@ -63,6 +65,9 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 		logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<<this->mp_pubImpl->getGuid().entityId);
 		return false;
 	}
+
+    bool returnedValue = false;
+
 	//NO KEY HISTORY
 	if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
 	{
@@ -70,17 +75,17 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
         {
             if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
             {
-                if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
+                if((int32_t)m_changes.size()>=m_resourceLimitsQos.max_samples)
                     m_isHistoryFull = true;
             }
             else
             {
-		//KEEP_LAST_HISTORY_QoS
-                if((int32_t)m_changes.size()==m_historyQos.depth)
+                //KEEP_LAST_HISTORY_QoS
+                if((int32_t)m_changes.size()>=m_historyQos.depth)
                     m_isHistoryFull = true;
             }
 
-            return true;
+            returnedValue = true;
         }
 	}
 	//HISTORY WITH KEY
@@ -94,14 +99,11 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 			{
 				if((int32_t)vit->second.size() < m_resourceLimitsQos.max_samples_per_instance)
-				{
+                {
 					add = true;
-				}
+                }
 				else
-				{
 					logWarning(RTPS_HISTORY,"Change not added due to maximum number of samples per instance"<<endl;);
-					return false;
-				}
 			}
 			else if (m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
 			{
@@ -117,6 +119,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 					}
 				}
 			}
+
 			if(add)
 			{
 				if(this->add_change(change))
@@ -136,13 +139,22 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 						if((int32_t)m_changes.size()==m_historyQos.depth*m_resourceLimitsQos.max_instances)
 							m_isHistoryFull = true;
 					}
-					return true;
+
+					returnedValue =  true;
 				}
 			}
 		}
 	}
 
-	return false;
+    // Updated sample identity
+    if(returnedValue && &wparams != &WRITE_PARAM_DEFAULT)
+    {
+        wparams.sample_identity().writer_guid(change->writerGUID);
+        wparams.sample_identity().sequence_number(change->sequenceNumber);
+    }
+
+
+    return returnedValue;
 }
 
 bool PublisherHistory::find_Key(CacheChange_t* a_change,t_v_Inst_Caches::iterator* vit_out)
@@ -192,7 +204,8 @@ bool PublisherHistory::removeAllChange(size_t* removed)
 {
 
 	size_t rem = 0;
-	//while(remove_min_change())
+	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
+
 	while(m_changes.size()>0)
 	{
 		if(remove_change_pub(m_changes.front()))

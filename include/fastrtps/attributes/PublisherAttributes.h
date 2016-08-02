@@ -19,6 +19,7 @@
 #ifndef PUBLISHERATTRIBUTES_H_
 #define PUBLISHERATTRIBUTES_H_
 
+#include <fastrtps/rtps/resources/ResourceManagement.h>
 
 #include "../rtps/common/Locator.h"
 #include "../rtps/common/Time_t.h"
@@ -43,6 +44,7 @@ class PublisherAttributes {
         PublisherAttributes(){
             m_userDefinedID = -1;
             m_entityID = -1;
+            historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
         };
         virtual ~PublisherAttributes(){};
         //!Topic Attributes for the Publisher
@@ -57,8 +59,10 @@ class PublisherAttributes {
         LocatorList_t multicastLocatorList;
         //!Output locator list
         LocatorList_t outLocatorList;
-        //!Terminal throughput controller
+        //!Throughput controller
         ThroughputControllerDescriptor throughputController;
+        //!Underlying History memory policy
+        MemoryManagementPolicy_t historyMemoryPolicy;
 
         /**
          * Get the user defined ID

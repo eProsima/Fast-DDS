@@ -130,10 +130,10 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
     }
 
     // Check the maximun size of the type and the asynchronous of the writer.
-    uint32_t high_mark = mp_rtpsParticipant->getMaxMessageSize() > att.throughputController.size ? att.throughputController.size :
+    uint32_t high_mark = mp_rtpsParticipant->getMaxMessageSize() > att.throughputController.bytesPerPeriod ? att.throughputController.bytesPerPeriod :
             mp_rtpsParticipant->getMaxMessageSize();
-    if(high_mark > mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.size)
-            high_mark = mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.size;
+    if(high_mark > mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod)
+            high_mark = mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod;
 
     if(p_type->m_typeSize > high_mark && att.qos.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
     {

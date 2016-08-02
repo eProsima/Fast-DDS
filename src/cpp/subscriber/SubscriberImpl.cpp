@@ -43,9 +43,8 @@ SubscriberImpl::SubscriberImpl(ParticipantImpl* p,TopicDataType* ptype,
 												mp_type(ptype),
 												m_att(att),
 #pragma warning (disable : 4355 )
-												m_history(this,ptype->m_typeSize , att.topic.historyQos, att.topic.resourceLimitsQos),
+												m_history(this,ptype->m_typeSize , att.topic.historyQos, att.topic.resourceLimitsQos,att.historyMemoryPolicy),
 												mp_listener(listen),
-#pragma warning (disable : 4355 )
 												m_readerListener(this),
 												 mp_userSubscriber(nullptr),
 												mp_rtpsParticipant(nullptr)
@@ -188,6 +187,17 @@ void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* /*rea
 	{
 		mp_subscriberImpl->mp_listener->onSubscriptionMatched(mp_subscriberImpl->mp_userSubscriber,info);
 	}
+}
+
+/*!
+* @brief Returns there is a clean state with all Publishers.
+* It occurs when the Subscriber received all samples sent by Publishers. In other words,
+* its WriterProxies are up to date.
+* @return There is a clean state with all Publishers.
+*/
+bool SubscriberImpl::isInCleanState() const
+{
+    return mp_reader->isInCleanState();
 }
 
 } /* namespace fastrtps */

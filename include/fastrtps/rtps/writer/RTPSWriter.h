@@ -47,14 +47,25 @@ class RTPSWriter : public Endpoint
     protected:
     RTPSWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
     virtual ~RTPSWriter();
+
     public:
+
     /**
      * Create a new change based with the provided changeKind.
      * @param changeKind The type of change.
      * @param handle InstanceHandle to assign.
      * @return Pointer to the CacheChange or nullptr if incorrect.
      */
-    RTPS_DllAPI CacheChange_t* new_change(ChangeKind_t changeKind, InstanceHandle_t handle = c_InstanceHandle_Unknown);
+    template<typename T>
+    CacheChange_t* new_change(T &data, ChangeKind_t changeKind, InstanceHandle_t handle = c_InstanceHandle_Unknown)
+    {
+        return new_change([data]() -> uint32_t {return (uint32_t)T::getCdrSerializedSize(data);}, changeKind, handle);
+    }
+
+
+    RTPS_DllAPI CacheChange_t* new_change(const std::function<uint32_t()>& dataCdrSerializedSize,
+            ChangeKind_t changeKind, InstanceHandle_t handle = c_InstanceHandle_Unknown);
+
     /**
      * Add a matched reader.
      * @param ratt Pointer to the ReaderProxyData object added.
@@ -142,6 +153,8 @@ class RTPSWriter : public Endpoint
     RTPS_DllAPI inline bool isAsync(){ return is_async_; };
 
     virtual bool clean_history(unsigned int max = 0) = 0;
+
+    bool remove_older_changes(unsigned int max = 0);
 
     /*
      * Adds a flow controller that will apply to this writer exclusively.

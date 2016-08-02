@@ -23,6 +23,11 @@
 
 #include "RTPSReader.h"
 
+namespace boost
+{
+    template<typename T> class unique_lock;
+}
+
 
 namespace eprosima {
 namespace fastrtps{
@@ -101,7 +106,7 @@ public:
 	 * @param a_change Pointer of the change to add.
 	 * @return True if added.
 	 */
-	bool change_received(CacheChange_t* a_change);
+	bool change_received(CacheChange_t* a_change, boost::unique_lock<boost::recursive_mutex> &lock);
 
 	/**
 	 * Read the next unread CacheChange_t from the history
@@ -123,6 +128,13 @@ public:
 	 * @return Number of matched writers
 	 */
 	inline size_t getMatchedWritersSize() const {return m_matched_writers.size();};
+
+    /*!
+    * @brief Returns there is a clean state with all Writers.
+    * StatelessReader allways return true;
+    * @return true
+    */
+    bool isInCleanState() const { return true; }
 
 private:
 

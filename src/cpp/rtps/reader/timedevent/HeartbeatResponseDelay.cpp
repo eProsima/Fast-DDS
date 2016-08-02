@@ -81,9 +81,8 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
                 {
                     if(!sns.add(ch.getSequenceNumber()))
                     {
-                        logWarning(RTPS_READER,"Error adding seqNum " << ch.getSequenceNumber()
-                                << " with SeqNumSet Base: "<< sns.base);
-                        break;
+                        logInfo(RTPS_READER,"Sequence number " << ch.getSequenceNumber()
+                                << " exceeded bitmap limit of AckNack. SeqNumSet Base: " << sns.base);
                     }
                 }
                 else

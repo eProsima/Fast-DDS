@@ -59,7 +59,16 @@ public:
 	 * @param[out] change Pointer to pointer to the CacheChange_t to reserve
 	 * @return True is reserved
 	 */
-	RTPS_DllAPI inline bool reserve_Cache(CacheChange_t** change){ return m_changePool.reserve_Cache(change); }
+	RTPS_DllAPI inline bool reserve_Cache(CacheChange_t** change, const std::function<uint32_t()>& calculateSizeFunc)
+    {
+        return m_changePool.reserve_Cache(change, calculateSizeFunc);
+    }
+
+	RTPS_DllAPI inline bool reserve_Cache(CacheChange_t** change, uint32_t dataSize)
+    {
+        return m_changePool.reserve_Cache(change, dataSize);
+    }
+
 	/**
 	 * release a previously reserved CacheChange_t.
 	 * @param ch Pointer to the CacheChange_t.
@@ -119,7 +128,7 @@ public:
 	 * Get the maximum serialized payload size
 	 * @return Maximum serialized payload size
 	 */
-	RTPS_DllAPI inline uint32_t getTypeMaxSerialized(){ return m_changePool.getPayloadSize(); }
+	RTPS_DllAPI inline uint32_t getTypeMaxSerialized(){ return m_changePool.getInitialPayloadSize(); }
 
 	/*!
 	 * Get the mutex

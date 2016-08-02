@@ -118,12 +118,13 @@ public:
 	ThroughputDataType()
 {
 		setName("ThroughputType");
-		m_typeSize = 25000;
+		m_typeSize = 9004;
 		m_isGetKeyDefined = false;
 };
 	~ThroughputDataType(){};
 	bool serialize(void*data,SerializedPayload_t* payload);
 	bool deserialize(SerializedPayload_t* payload,void * data);
+	std::function<uint32_t()> getSerializedSizeProvider(void* data);
 	void* createData();
 			void deleteData(void* data);
 };
@@ -188,8 +189,9 @@ public:
 	~ThroughputCommandDataType(){};
 	bool serialize(void*data,SerializedPayload_t* payload);
 	bool deserialize(SerializedPayload_t* payload,void * data);
+	std::function<uint32_t()> getSerializedSizeProvider(void* data);
 	void* createData();
-			void deleteData(void* data);
+	void deleteData(void* data);
 };
 
 

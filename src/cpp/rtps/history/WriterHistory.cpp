@@ -1,4 +1,3 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -61,9 +60,12 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 		logError(RTPS_HISTORY,"Change writerGUID "<< a_change->writerGUID << " different than Writer GUID "<< mp_writer->getGuid());
 		return false;
 	}
-	if(a_change->serializedPayload.length > m_att.payloadMaxSize)
+	if((m_att.memoryPolicy==PREALLOCATED_MEMORY_MODE) && a_change->serializedPayload.length > m_att.payloadMaxSize)
 	{
-		logError(RTPS_HISTORY,"The Payload length is larger than the maximum payload size");
+		logError(RTPS_HISTORY,
+			"Change payload size of '" << a_change->serializedPayload.length <<
+			"' bytes is larger than the history payload size of '" << m_att.payloadMaxSize <<
+			"' bytes and cannot be resized.");
 		return false;
 	}
 	++m_lastCacheChangeSeqNum;
@@ -147,7 +149,7 @@ bool WriterHistory::remove_min_change()
 	}
 
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	if(m_changes.size() > 0 && remove_change(mp_minSeqCacheChange))
+	if(m_changes.size() > 0 && remove_change_g(mp_minSeqCacheChange))
 	{
 		updateMaxMinSeqNum();
 		return true;

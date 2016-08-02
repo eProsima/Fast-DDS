@@ -88,7 +88,7 @@ void RTPSAsSocketWriter::send(const std::list<uint16_t> &msgs)
 {
 	for(std::list<uint16_t>::const_iterator it = msgs.begin(); it != msgs.end(); ++it)
 	{
-		CacheChange_t * ch = writer_->new_change(ALIVE);
+		CacheChange_t * ch = writer_->new_change([]() -> uint32_t { return 255; }, ALIVE);
 
 #if defined(_WIN32)
 		ch->serializedPayload.length =

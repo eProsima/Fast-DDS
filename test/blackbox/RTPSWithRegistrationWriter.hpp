@@ -103,9 +103,8 @@ class RTPSWithRegistrationWriter
         ASSERT_NE(participant_, nullptr);
 
         //Create writerhistory
-        HistoryAttributes hattr;
-        hattr.payloadMaxSize = type_.m_typeSize;
-        history_ = new WriterHistory(hattr);
+        hattr_.payloadMaxSize = type_.m_typeSize;
+        history_ = new WriterHistory(hattr_);
 
         //Create writer
         writer_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(participant_, writer_attr_, history_, &listener_);
@@ -124,9 +123,9 @@ class RTPSWithRegistrationWriter
 
         while(it != msgs.end())
         {
-            CacheChange_t * ch = writer_->new_change(ALIVE);
+	    CacheChange_t * ch = writer_->new_change(*it,ALIVE);
 
-            eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
+	    eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
             eprosima::fastcdr::Cdr cdr(buffer);
 
             cdr << *it;
@@ -156,6 +155,13 @@ class RTPSWithRegistrationWriter
     }
 
     /*** Function to change QoS ***/
+    RTPSWithRegistrationWriter& memoryMode(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryPolicy)
+    {
+	hattr_.memoryPolicy = memoryPolicy;
+	return *this;
+    }
+
+
     RTPSWithRegistrationWriter& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
     {
         writer_attr_.endpoint.reliabilityKind = kind;
@@ -175,9 +181,9 @@ class RTPSWithRegistrationWriter
         return *this;
     }
 
-    RTPSWithRegistrationWriter& add_throughput_controller_descriptor_to_pparams(uint32_t size, uint32_t periodInMs)
+    RTPSWithRegistrationWriter& add_throughput_controller_descriptor_to_pparams(uint32_t bytesPerPeriod, uint32_t periodInMs)
     {
-        ThroughputControllerDescriptor descriptor {size, periodInMs};
+        ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
         writer_attr_.throughputController = descriptor;
 
         return *this;
@@ -193,6 +199,7 @@ class RTPSWithRegistrationWriter
         eprosima::fastrtps::WriterQos writer_qos_;
         eprosima::fastrtps::TopicAttributes topic_attr_;
         eprosima::fastrtps::rtps::WriterHistory *history_;
+	eprosima::fastrtps::rtps::HistoryAttributes hattr_;
         bool initialized_;
         std::mutex mutex_;
         std::condition_variable cv_;

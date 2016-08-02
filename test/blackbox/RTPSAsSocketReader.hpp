@@ -105,9 +105,8 @@ class RTPSAsSocketReader
             ASSERT_NE(participant_, nullptr);
 
             //Create readerhistory
-            eprosima::fastrtps::rtps::HistoryAttributes hattr;
-            hattr.payloadMaxSize = 255 + type_.m_typeSize;
-            history_ = new eprosima::fastrtps::rtps::ReaderHistory(hattr);
+            hattr_.payloadMaxSize = 255 + type_.m_typeSize;
+            history_ = new eprosima::fastrtps::rtps::ReaderHistory(hattr_);
             ASSERT_NE(history_, nullptr);
 
             //Create reader
@@ -189,7 +188,13 @@ class RTPSAsSocketReader
         }
 
         /*** Function to change QoS ***/
-        RTPSAsSocketReader& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
+	RTPSAsSocketReader& memoryMode(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryPolicy)
+	{
+		hattr_.memoryPolicy=memoryPolicy;
+		return *this;
+	}
+
+	RTPSAsSocketReader& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
         {
             reader_attr_.endpoint.reliabilityKind = kind;
 
@@ -291,7 +296,8 @@ class RTPSAsSocketReader
         eprosima::fastrtps::rtps::ReaderAttributes reader_attr_;
         eprosima::fastrtps::rtps::RTPSReader *reader_;
         eprosima::fastrtps::rtps::ReaderHistory *history_;
-        bool initialized_;
+	eprosima::fastrtps::rtps::HistoryAttributes hattr_;
+	bool initialized_;
         std::list<type> total_msgs_;
         std::mutex mutex_;
         std::condition_variable cv_;

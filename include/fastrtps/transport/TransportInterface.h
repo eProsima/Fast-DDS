@@ -98,6 +98,8 @@ public:
     */
    virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
                         const Locator_t& localLocator, Locator_t& remoteLocator) = 0;
+
+   virtual LocatorList_t NormalizeLocator(const Locator_t& locator) = 0;
 };
 
 /**

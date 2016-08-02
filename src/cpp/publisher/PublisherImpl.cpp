@@ -36,7 +36,7 @@ using namespace ::rtps;
 
 
 
-static ::rtps::WriteParams WRITE_PARAM_DEFAULT;
+::rtps::WriteParams WRITE_PARAM_DEFAULT;
 
 PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
         PublisherAttributes& att,PublisherListener* listen ):
@@ -45,7 +45,7 @@ PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
     mp_type(pdatatype),
     m_att(att),
 #pragma warning (disable : 4355 )
-    m_history(this, pdatatype->m_typeSize, att.topic.historyQos, att.topic.resourceLimitsQos),
+    m_history(this, pdatatype->m_typeSize, att.topic.historyQos, att.topic.resourceLimitsQos, att.historyMemoryPolicy),
     mp_listener(listen),
 #pragma warning (disable : 4355 )
     m_writerListener(this),
@@ -95,26 +95,15 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
         mp_type->getKey(data,&handle);
     }
 
-    CacheChange_t* ch = mp_writer->new_change(changeKind,handle);
+    CacheChange_t* ch = mp_writer->new_change(mp_type->getSerializedSizeProvider(data), changeKind, handle);
     if(ch != nullptr)
     {
         if(changeKind == ALIVE)
         {
-            if(!mp_type->serialize(data,&ch->serializedPayload))
+            //If these two checks are correct, we asume the cachechange is valid and thwn we can write to it.
+            if(!mp_type->serialize(data, &ch->serializedPayload))
             {
                 logWarning(RTPS_WRITER,"RTPSWriter:Serialization returns false";);
-                m_history.release_Cache(ch);
-                return false;
-            }
-            else if(ch->serializedPayload.length > mp_type->m_typeSize)
-            {
-                logWarning(RTPS_WRITER,"Serialized Payload length larger than maximum type size ("<<ch->serializedPayload.length<<"/"<< mp_type->m_typeSize<<")";);
-                m_history.release_Cache(ch);
-                return false;
-            }
-            else if(ch->serializedPayload.length == 0)
-            {
-                logWarning(RTPS_WRITER,"Serialized Payload length must be set to >0 ";);
                 m_history.release_Cache(ch);
                 return false;
             }
@@ -122,15 +111,25 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
 
         if(high_mark_for_frag_ == 0)
         {
-            high_mark_for_frag_ = mp_rtpsParticipant->getMaxMessageSize() > m_att.throughputController.size ? m_att.throughputController.size :
+            high_mark_for_frag_ = mp_rtpsParticipant->getMaxMessageSize() > m_att.throughputController.bytesPerPeriod ? m_att.throughputController.bytesPerPeriod :
                 mp_rtpsParticipant->getMaxMessageSize();
-            if(high_mark_for_frag_ > mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.size)
-                high_mark_for_frag_ = mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.size;
+            if(high_mark_for_frag_ > mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod)
+                high_mark_for_frag_ = mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod;
         }
 
         // If it is big data, fragment it.
         if(ch->serializedPayload.length > high_mark_for_frag_)
         {
+            // Check ASYNCHRONOUS_PUBLISH_MODE is being used, but it is an error case.
+            if( m_att.qos.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
+            {
+                logError(PUBLISHER, "Data cannot be sent. It's serialized size is " <<
+                        ch->serializedPayload.length << "' which exceeds the maximum payload size of '" <<
+                        high_mark_for_frag_ << "' and therefore ASYNCHRONOUS_PUBLISH_MODE must be used.");
+                m_history.release_Cache(ch);
+                return false;
+            }
+
             /// Fragment the data.
             // Set the fragment size to the cachechange.
             // Note: high_mark will always be a value that can be casted to uint16_t)
@@ -142,21 +141,15 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
             ch->write_params = wparams;
         }
 
-        if(!this->m_history.add_pub_change(ch))
+        if(!this->m_history.add_pub_change(ch, wparams))
         {
             m_history.release_Cache(ch);
             return false;
         }
 
-        // Updated sample identity
-        if(&wparams != &WRITE_PARAM_DEFAULT)
-        {
-            wparams.sample_identity().writer_guid(ch->writerGUID);
-            wparams.sample_identity().sequence_number(ch->sequenceNumber);
-        }
-
         return true;
     }
+
     return false;
 }
 
@@ -269,7 +262,10 @@ void PublisherImpl::PublisherWriterListener::onWriterMatched(RTPSWriter* /*write
 
 bool PublisherImpl::clean_history(unsigned int max)
 {
-    return mp_writer->clean_history(max);
+    if(m_att.topic.historyQos.kind == HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS)
+        return mp_writer->clean_history(max);
+    else
+        return mp_writer->remove_older_changes(max);
 }
 
 bool PublisherImpl::wait_for_all_acked(const Time_t& max_wait)

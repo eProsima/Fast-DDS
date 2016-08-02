@@ -378,7 +378,7 @@ public:
 	*/
 	bool add(const SequenceNumber_t& in)
 	{
-		if(in >= base && in <= base + 255)
+		if(in >= base && in < base + 255)
 			set.push_back(in);
 		else
 			return false;

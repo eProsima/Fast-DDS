@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*************************************************************************
+/*! 
  * @file OwnershipStrengthPubSubTypes.h
  * This header file contains the declaration of the serialization functions.
  *
@@ -20,8 +20,8 @@
  */
 
 
-#ifndef _OWNERSHIPTEST_PUBSUBTYPES_H_
-#define _OWNERSHIPTEST_PUBSUBTYPES_H_
+#ifndef _OWNERSHIPSTRENGTH_PUBSUBTYPES_H_
+#define _OWNERSHIPSTRENGTH_PUBSUBTYPES_H_
 
 #include <fastrtps/TopicDataType.h>
 
@@ -31,14 +31,17 @@ using namespace eprosima::fastrtps;
 
 /*!
  * @brief This class represents the TopicDataType of the type ExampleMessage defined by the user in the IDL file.
- * @ingroup OWNERSHIPTEST
+ * @ingroup OWNERSHIPSTRENGTH
  */
 class ExampleMessagePubSubType : public TopicDataType {
 public:
+        typedef ExampleMessage type;
+
 	ExampleMessagePubSubType();
 	virtual ~ExampleMessagePubSubType();
 	bool serialize(void *data, SerializedPayload_t *payload);
 	bool deserialize(SerializedPayload_t *payload, void *data);
+        std::function<uint32_t()> getSerializedSizeProvider(void* data);
 	bool getKey(void *data, InstanceHandle_t *ihandle);
 	void* createData();
 	void deleteData(void * data);

@@ -23,18 +23,20 @@
 #include <fastrtps/log/Log.h>
 #include "../participant/RTPSParticipantImpl.h"
 
+#include <boost/thread/recursive_mutex.hpp>
+
 using namespace eprosima::fastrtps::rtps;
 
 
-RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
+RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes& att, WriterHistory* hist, WriterListener* listen):
     Endpoint(impl,guid,att.endpoint),
     m_pushMode(true),
-    m_cdrmessages(impl->getMaxMessageSize() > att.throughputController.size ?
-            att.throughputController.size > impl->getRTPSParticipantAttributes().throughputController.size ?
-            impl->getRTPSParticipantAttributes().throughputController.size :
-            att.throughputController.size :
-            impl->getMaxMessageSize() > impl->getRTPSParticipantAttributes().throughputController.size ?
-            impl->getRTPSParticipantAttributes().throughputController.size :
+    m_cdrmessages(impl->getMaxMessageSize() > att.throughputController.bytesPerPeriod ?
+            att.throughputController.bytesPerPeriod > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
+            impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
+            att.throughputController.bytesPerPeriod :
+            impl->getMaxMessageSize() > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
+            impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
             impl->getMaxMessageSize()),
     m_livelinessAsserted(false),
     mp_history(hist),
@@ -64,12 +66,13 @@ RTPSWriter::~RTPSWriter()
     mp_history->mp_mutex = nullptr;
 }
 
-CacheChange_t* RTPSWriter::new_change(ChangeKind_t changeKind,InstanceHandle_t handle)
+CacheChange_t* RTPSWriter::new_change(const std::function<uint32_t()>& dataCdrSerializedSize,
+        ChangeKind_t changeKind, InstanceHandle_t handle)
 {
     logInfo(RTPS_WRITER,"Creating new change");
     CacheChange_t* ch = nullptr;
 
-    if(!mp_history->reserve_Cache(&ch))
+    if(!mp_history->reserve_Cache(&ch, dataCdrSerializedSize))
     {
         logWarning(RTPS_WRITER,"Problem reserving Cache from the History");
         return nullptr;
@@ -106,4 +109,24 @@ SequenceNumber_t RTPSWriter::get_seq_num_max()
 uint32_t RTPSWriter::getTypeMaxSerialized()
 {
     return mp_history->getTypeMaxSerialized();
+}
+
+
+bool RTPSWriter::remove_older_changes(unsigned int max)
+{
+    logInfo(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    bool limit = (max != 0);
+
+    bool remove_ret = mp_history->remove_min_change();
+    bool at_least_one = remove_ret;
+    unsigned int count = 1;
+
+    while(remove_ret && (!limit || count < max))
+    {
+        remove_ret = mp_history->remove_min_change();
+        ++count;
+    }
+
+    return at_least_one;
 }

@@ -85,15 +85,26 @@ void RTPSWithRegistrationWriter::send(const std::list<uint16_t> &msgs)
 
 	for(std::list<uint16_t>::const_iterator it = msgs.begin(); it != msgs.end(); ++it)
 	{
-		CacheChange_t * ch = writer_->new_change(ALIVE);
+		uint32_t myLength;
+		char* my_buffer = (char*)malloc(512*sizeof(char));
+	#if defined(_WIN32)
+        	myLength  =
+            		(uint16_t)sprintf_s(my_buffer, 255, "My example string %hu", *it);
+	#else
+		myLength =
+			sprintf(my_buffer,"My example string %hu", *it);
+	#endif
+		CacheChange_t * ch = writer_->new_change([&]() -> uint32_t{return myLength+1;},ALIVE);
+		memcpy(ch->serializedPayload.data,my_buffer,myLength);
+		free(my_buffer);
 
-#if defined(_WIN32)
-        ch->serializedPayload.length =
-            (uint16_t)sprintf_s((char*)ch->serializedPayload.data, 255, "My example string %hu", *it) + 1;
-#else
-		ch->serializedPayload.length =
-			sprintf((char*)ch->serializedPayload.data,"My example string %hu", *it) + 1;
-#endif
+//#if defined(_WIN32)
+//        ch->serializedPayload.length =
+//            (uint16_t)sprintf_s((char*)ch->serializedPayload.data, 255, "My example string %hu", *it) + 1;
+//#else
+//		ch->serializedPayload.length =
+//			sprintf((char*)ch->serializedPayload.data,"My example string %hu", *it) + 1;
+//#endif
 
 		history_->add_change(ch);
 	}

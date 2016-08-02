@@ -102,6 +102,8 @@ public:
      * @param x Reference to the object Data64kb that will be copied.
      */
     eProsima_user_DllExport Data64kb& operator=(Data64kb &&x);
+
+    eProsima_user_DllExport bool operator==(const Data64kb &x) const;
     
     /*!
      * @brief This function copies the value in member data
@@ -146,6 +148,8 @@ public:
      * @return Maximum serialized size.
      */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+
+    eProsima_user_DllExport static size_t getCdrSerializedSize(const Data64kb& data, size_t current_alignment = 0);
 
 
     /*!

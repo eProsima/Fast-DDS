@@ -23,6 +23,7 @@
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
 #include <fastrtps/log/Log.h>
+#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include "../participant/RTPSParticipantImpl.h"
 #include "FragmentedChangePitStop.h"
 
@@ -72,6 +73,32 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
         }
     }
     WriterProxy* wp = new WriterProxy(wdata, this);
+
+    // Send initial NACK.
+    SequenceNumberSet_t sns;
+    sns.base = SequenceNumber_t(0, 0);
+
+    wp->m_acknackCount++;
+    logInfo(RTPS_READER,"Sending ACKNACK: "<< sns;);
+
+    CDRMessage::initCDRMsg(&wp->mp_heartbeatResponse->m_heartbeat_response_msg);
+    RTPSMessageCreator::addMessageAcknack(&wp->mp_heartbeatResponse->m_heartbeat_response_msg,
+            m_guid.guidPrefix,
+            wp->m_att.guid.guidPrefix,
+            m_guid.entityId,
+            wp->m_att.guid.entityId,
+            sns,
+            wp->m_acknackCount,
+            false);
+
+    for(auto lit = wp->m_att.endpoint.unicastLocatorList.begin();
+		    lit!=wp->m_att.endpoint.unicastLocatorList.end();++lit)
+	    mp_RTPSParticipant->sendSync(&wp->mp_heartbeatResponse->m_heartbeat_response_msg,static_cast<Endpoint *>(this),(*lit));
+
+    for(auto lit = wp->m_att.endpoint.multicastLocatorList.begin();
+		    lit!=wp->m_att.endpoint.multicastLocatorList.end();++lit)
+	    mp_RTPSParticipant->sendSync(&wp->mp_heartbeatResponse->m_heartbeat_response_msg,static_cast<Endpoint *>(this),(*lit));
+
     matched_writers.push_back(wp);
     logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to " <<m_guid.entityId);
     return true;
@@ -154,22 +181,38 @@ bool StatefulReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
 }
 
 
-bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID, WriterProxy** WP)
+bool StatefulReader::matched_writer_lookup(const GUID_t& writerGUID, WriterProxy** WP)
 {
     assert(WP);
 
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
+    bool returnedValue = findWriterProxy(writerGUID, WP);
+
+    if(returnedValue)
+    {
+        logInfo(RTPS_READER,this->getGuid().entityId<<" FINDS writerProxy "<< writerGUID<<" from "<< matched_writers.size());
+    }
+    else
+    {
+        logInfo(RTPS_READER,this->getGuid().entityId<<" NOT FINDS writerProxy "<< writerGUID<<" from "<< matched_writers.size());
+    }
+
+    return returnedValue;
+}
+
+bool StatefulReader::findWriterProxy(const GUID_t& writerGUID, WriterProxy** WP)
+{
+    assert(WP);
 
     for(std::vector<WriterProxy*>::iterator it = matched_writers.begin(); it != matched_writers.end(); ++it)
     {
         if((*it)->m_att.guid == writerGUID)
         {
             *WP = *it;
-            logInfo(RTPS_READER,this->getGuid().entityId<<" FINDS writerProxy "<< writerGUID<<" from "<< matched_writers.size());
             return true;
         }
     }
-    logInfo(RTPS_READER,this->getGuid().entityId<<" NOT FINDS writerProxy "<< writerGUID<<" from "<< matched_writers.size());
     return false;
 }
 
@@ -187,7 +230,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
         CacheChange_t* change_to_add;
 
-        if(reserveCache(&change_to_add)) //Reserve a new cache from the corresponding cache pool
+        if(reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
         { 
             if (!change_to_add->copy(change))
             {
@@ -203,6 +246,8 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
             return false;
         }
 
+        // Assertion has to be done before call change_received,
+        // because this function can unlock the StatefulReader mutex.
         if(pWP != nullptr)
         {
             pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
@@ -242,6 +287,12 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
             // If CacheChange_t is completed, it will be returned;
             CacheChange_t* change_completed = fragmentedChangePitStop_->process(incomingChange, sampleSize, fragmentStartingNum);
 
+            // Assertion has to be done before call change_received,
+            // because this function can unlock the StatefulReader mutex.
+            if(pWP != nullptr)
+            {
+                pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
+            }
 
             if(change_completed != nullptr)
             {
@@ -258,11 +309,6 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
                     releaseCache(change_completed);
                 }
             }
-
-            if(pWP != nullptr)
-            {
-                pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
-            }
         }
     }
 
@@ -278,16 +324,17 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
 
     if(acceptMsgFrom(writerGUID, &pWP, false))
     {
-        boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*pWP->getMutex());
+        boost::unique_lock<boost::recursive_mutex> wpLock(*pWP->getMutex());
 
         if(pWP->m_lastHeartbeatCount < hbCount)
         {
             pWP->m_lastHeartbeatCount = hbCount;
-            pWP->lost_changes_update(firstSN);
+            if(pWP->lost_changes_update(firstSN))
+                fragmentedChangePitStop_->try_to_remove_until(firstSN, pWP->m_att.guid);
             pWP->missing_changes_update(lastSN);
             pWP->m_heartbeatFinalFlag = finalFlag;
-            //Analyze wheter a acknack message is needed:
-
+	    
+	    //Analyze wheter a acknack message is needed:
             if(!finalFlag)
             {
                 pWP->mp_heartbeatResponse->restart_timer();
@@ -302,6 +349,46 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
             if(livelinessFlag )//TODOG && WP->m_att->m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
                 pWP->assertLiveliness();
+            }
+
+            // Maybe now we have to notify user from new CacheChanges.
+            SequenceNumber_t maxSeqNumAvailable;
+            maxSeqNumAvailable = pWP->available_changes_max();
+            GUID_t proxGUID = pWP->m_att.guid;
+            wpLock.unlock();
+
+            CacheChange_t *min_change = nullptr, *ch_to_give = nullptr;
+            mp_history->get_min_change(&min_change);
+
+            if(min_change != nullptr)
+            {
+                SequenceNumber_t notifySeqNum;
+                notifySeqNum = min_change->sequenceNumber;
+                //TODO(Ricardo) Intentar optimizar esto para que no haya que recorrer la lista de cambios cada vez
+                while(notifySeqNum <= maxSeqNumAvailable)
+                {
+                    ch_to_give = nullptr;
+                    if(mp_history->get_change(notifySeqNum, proxGUID, &ch_to_give))
+                    {
+                        if(!ch_to_give->isRead)
+                        {
+                            lock.unlock();
+                            getListener()->onNewCacheChangeAdded((RTPSReader*)this,ch_to_give);
+                            lock.lock();
+                        }
+                    }
+                    ++notifySeqNum;
+
+                    // Search again the WriterProxy because could be removed after the unlock.
+                    if(findWriterProxy(proxGUID, &pWP))
+                    {
+                        pWP->getMutex()->lock();
+                        maxSeqNumAvailable = pWP->available_changes_max();
+                        pWP->getMutex()->unlock();
+                    }
+                    else
+                        break;
+                }
             }
         }
     }
@@ -321,10 +408,16 @@ bool StatefulReader::processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStar
         SequenceNumber_t auxSN;
         SequenceNumber_t finalSN = gapList.base -1;
         for(auxSN = gapStart; auxSN<=finalSN;auxSN++)
-            pWP->irrelevant_change_set(auxSN);
+        {
+            if(pWP->irrelevant_change_set(auxSN))
+                fragmentedChangePitStop_->try_to_remove(auxSN, pWP->m_att.guid);
+        }
 
         for(std::vector<SequenceNumber_t>::iterator it=gapList.get_begin();it!=gapList.get_end();++it)
-            pWP->irrelevant_change_set((*it));
+        {
+            if(pWP->irrelevant_change_set((*it)))
+                fragmentedChangePitStop_->try_to_remove((*it), pWP->m_att.guid);
+        }
     }
 
     return true;
@@ -369,10 +462,11 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change, WriterPr
 bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox, boost::unique_lock<boost::recursive_mutex> &lock)
 {
 
+
     //First look for WriterProxy in case is not provided
     if(prox == nullptr)
     {
-        if(!this->matched_writer_lookup(a_change->writerGUID,&prox))
+        if(!findWriterProxy(a_change->writerGUID, &prox))
         {
             logInfo(RTPS_READER, "Writer Proxy " << a_change->writerGUID <<" not matched to this Reader "<< m_guid.entityId);
             return false;
@@ -425,24 +519,25 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
                         }
                         ++notifySeqNum;
 
-                        writerProxyLock.lock();
-                        maxSeqNumAvailable = prox->available_changes_max();
-                        writerProxyLock.unlock();
+                        // Search again the WriterProxy because could be removed after the unlock.
+                        if(findWriterProxy(proxGUID, &prox))
+                        {
+                            prox->getMutex()->lock();
+                            maxSeqNumAvailable = prox->available_changes_max();
+                            prox->getMutex()->unlock();
+                        }
+                        else
+                            break;
                     }
                 }
                 else
                 {
-                    //DO NOTHING; SOME CHANGES ARE MISSING
+                    //TODO NOTHING; SOME CHANGES ARE MISSING
                 }
+
+                mp_history->postSemaphore();
             }
-            //			if(a_change->sequenceNumber <= maxSeqNumAvailable)
-            //			{
-            //				if(getListener()!=nullptr) //TODO while del actual al maximo. y llamar al metodo, solo si no esta leido.
-            //				{
-            //					getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
-            //				}
-            //				mp_history->postSemaphore();
-            //			}
+
             return true;
         }
     }
@@ -603,4 +698,21 @@ bool StatefulReader::updateTimes(ReaderTimes& ti)
         }
     }
     return true;
+}
+
+bool StatefulReader::isInCleanState() const
+{
+    bool cleanState = true;
+    boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+
+    for (WriterProxy* wp : matched_writers)
+    {
+        if (wp->numberOfChangeFromWriter() != 0)
+        {
+            cleanState = false;
+            break;
+        }
+    }
+
+    return cleanState;
 }

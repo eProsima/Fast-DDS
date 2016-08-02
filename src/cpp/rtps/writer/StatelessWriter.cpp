@@ -330,25 +330,6 @@ void StatelessWriter::unsent_changes_reset()
    AsyncWriterThread::wakeUp(this);
 }
 
-bool StatelessWriter::clean_history(unsigned int max)
-{
-    logInfo(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-    bool limit = (max != 0);
-
-    bool remove_ret = mp_history->remove_min_change();
-    bool at_least_one = remove_ret;
-    unsigned int count = 1;
-
-    while(remove_ret && (!limit || count < max))
-    {
-        remove_ret = mp_history->remove_min_change();
-        ++count;
-    }
-
-    return at_least_one;
-}
-
 void StatelessWriter::add_flow_controller(std::unique_ptr<FlowController> controller)
 {
    m_controllers.push_back(std::move(controller));

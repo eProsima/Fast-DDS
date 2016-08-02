@@ -40,14 +40,14 @@ namespace eprosima {
                 m_att(att),
                 m_isHistoryFull(false),
                 mp_invalidCache(nullptr),
-                m_changePool(att.initialReservedCaches,att.payloadMaxSize,att.maximumReservedCaches),
+                m_changePool(att.initialReservedCaches,att.payloadMaxSize,att.maximumReservedCaches,att.memoryPolicy),
                 mp_minSeqCacheChange(nullptr),
                 mp_maxSeqCacheChange(nullptr),
                 mp_mutex(nullptr)
 
             {
                 m_changes.reserve((uint32_t)abs(att.initialReservedCaches));
-                m_changePool.reserve_Cache(&mp_invalidCache);
+                mp_invalidCache = new CacheChange_t();
                 mp_invalidCache->writerGUID = c_Guid_Unknown;
                 mp_invalidCache->sequenceNumber = c_SequenceNumber_Unknown;
                 mp_minSeqCacheChange = mp_invalidCache;
@@ -59,6 +59,7 @@ namespace eprosima {
             History::~History()
             {
                 logInfo(RTPS_HISTORY,"");
+                delete(mp_invalidCache);
             }
 
 

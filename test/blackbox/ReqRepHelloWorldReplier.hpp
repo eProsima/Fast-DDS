@@ -83,17 +83,20 @@ class ReqRepHelloWorldReplier
         void newNumber(SampleIdentity sample_identity, uint16_t number);
         void waitDiscovery();
         void matched();
-        virtual void configSubscriber(SubscriberAttributes &sattr, const std::string& suffix) = 0;
-        virtual void configPublisher(PublisherAttributes &puattr, const std::string& suffix) = 0;
+        virtual void configSubscriber(const std::string& suffix) = 0;
+        virtual void configPublisher(const std::string& suffix) = 0;
 
+    protected:
+	SubscriberAttributes sattr;
+	PublisherAttributes puattr;
     private:
 
         ReqRepHelloWorldReplier& operator=(const ReqRepHelloWorldReplier&)NON_COPYABLE_CXX11;
 
         Participant *participant_;
         Subscriber *request_subscriber_;
-        Publisher *reply_publisher_;
-        bool initialized_;
+	Publisher *reply_publisher_;
+	bool initialized_;
         std::mutex mutexDiscovery_;
         std::condition_variable cvDiscovery_;
         unsigned int matched_;

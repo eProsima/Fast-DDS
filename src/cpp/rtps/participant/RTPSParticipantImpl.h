@@ -88,8 +88,7 @@ class StatefulReader;
    from the Receiver, so the Transport Layer does not need to be aware of the existence of what is using it.
 
 */
-typedef struct ReceiverControlBlock
-{
+typedef struct ReceiverControlBlock{
     ReceiverResource Receiver;
     MessageReceiver* mp_receiver;		//Associated Readers/Writers inside of MessageReceiver
     boost::mutex mtx; //Fix declaration

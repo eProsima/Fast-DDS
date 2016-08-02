@@ -85,7 +85,7 @@ class gettopicnamesandtypesReaderListener:public ReaderListener
 	}
 };
 
-TEST(ros2features, EDPSlaveReaderAttachment)
+TEST(ros2features, EDPSlaveReaderAttachment_DynamicMode)
 {
 	Participant *my_participant;
 	Publisher *my_publisher;
@@ -103,6 +103,7 @@ TEST(ros2features, EDPSlaveReaderAttachment)
 
 	pub_attr.topic.topicKind = NO_KEY;
 	pub_attr.topic.topicDataType = "HelloWorldType";
+	pub_attr.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
 	my_publisher = Domain::createPublisher(my_participant, pub_attr, &my_dummy_listener);
 	ASSERT_NE(my_publisher, nullptr);
 
@@ -114,7 +115,37 @@ TEST(ros2features, EDPSlaveReaderAttachment)
 	eprosima::fastrtps::Domain::removeParticipant(my_participant);
 }
 
-TEST(ros2features, PubSubPoll)
+TEST(ros2features, EDPSlaveReaderAttachment_StaticMode)
+{
+	Participant *my_participant;
+	Publisher *my_publisher;
+	ParticipantAttributes p_attr;
+	PublisherAttributes pub_attr;
+	HelloWorldType my_type;
+	pub_dummy_listener my_dummy_listener;
+	ReaderListener slave_listener;
+	bool result;	
+	p_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+	my_participant = Domain::createParticipant(p_attr);
+
+	ASSERT_NE(my_participant, nullptr);
+	ASSERT_EQ(Domain::registerType(my_participant, &my_type), true);
+
+	pub_attr.topic.topicKind = NO_KEY;
+	pub_attr.topic.topicDataType = "HelloWorldType";
+	pub_attr.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+	my_publisher = Domain::createPublisher(my_participant, pub_attr, &my_dummy_listener);
+	ASSERT_NE(my_publisher, nullptr);
+
+	std::pair<StatefulReader*,StatefulReader*> EDP_Readers = my_participant->getEDPReaders();
+	//target->attachListener(slave_listener);
+	result = EDP_Readers.first->setListener(&slave_listener);
+	ASSERT_EQ(result, true);
+	EDP_Readers.first->setListener(nullptr);
+	eprosima::fastrtps::Domain::removeParticipant(my_participant);
+}
+
+TEST(ros2features, PubSubPoll_DynamicMode)
 {
 	const uint8_t max_elements = 4;
 	Participant *my_participant;
@@ -140,6 +171,7 @@ TEST(ros2features, PubSubPoll)
 		p_attr[i].topic.topicKind = NO_KEY;
 		p_attr[i].topic.topicDataType = "HelloWorldType";
 		p_attr[i].topic.topicName = "HelloWorldType";
+		p_attr[i].historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
 		//configPublisher(p_attr);
 		pub_array[i] = Domain::createPublisher(my_participant,p_attr[i], &p_listener_array[i]);
 		ASSERT_NE(pub_array[i],nullptr);
@@ -149,6 +181,7 @@ TEST(ros2features, PubSubPoll)
 		s_attr[i].topic.topicKind = NO_KEY;
 		s_attr[i].topic.topicDataType = "HelloWorldType";		
 		s_attr[i].topic.topicName = "HelloWorldType";
+		s_attr[i].historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
 		//configSubscriber(s_attr);
 	 	sub_array[i] =Domain::createSubscriber(my_participant,s_attr[i], &s_listener_array[i]);	
 		ASSERT_NE(sub_array[i],nullptr);		
@@ -157,7 +190,113 @@ TEST(ros2features, PubSubPoll)
 	}
 	eprosima::fastrtps::Domain::removeParticipant(my_participant);
 }
-TEST(ros2features, SlaveListenerCallback){
+
+TEST(ros2features, PubSubPoll_StaticMode)
+{
+	const uint8_t max_elements = 4;
+	Participant *my_participant;
+	Publisher* pub_array[max_elements];
+	Subscriber* sub_array[max_elements];
+	HelloWorldType my_type;
+	ParticipantAttributes part_attr;
+	PublisherAttributes p_attr[max_elements];
+	SubscriberAttributes s_attr[max_elements];
+	pub_dummy_listener p_listener_array[max_elements];
+	sub_dummy_listener s_listener_array[max_elements];
+
+	std::string str("HelloWorldType");
+
+	part_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230 + 2;
+	my_participant = Domain::createParticipant(part_attr);
+	//Register type
+	
+	ASSERT_NE(my_participant, nullptr);
+	ASSERT_EQ(Domain::registerType(my_participant, &my_type), true);
+	for(int i=0; i<max_elements;i++){
+		//Create Publisher
+		p_attr[i].topic.topicKind = NO_KEY;
+		p_attr[i].topic.topicDataType = "HelloWorldType";
+		p_attr[i].topic.topicName = "HelloWorldType";
+		p_attr[i].historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+		//configPublisher(p_attr);
+		pub_array[i] = Domain::createPublisher(my_participant,p_attr[i], &p_listener_array[i]);
+		ASSERT_NE(pub_array[i],nullptr);
+		//Poll no.Pubs
+		ASSERT_EQ(my_participant->get_no_publishers( const_cast<char*>( str.c_str() ) ),i+1);
+		//Create Subscriber
+		s_attr[i].topic.topicKind = NO_KEY;
+		s_attr[i].topic.topicDataType = "HelloWorldType";		
+		s_attr[i].topic.topicName = "HelloWorldType";
+		s_attr[i].historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+		//configSubscriber(s_attr);
+	 	sub_array[i] =Domain::createSubscriber(my_participant,s_attr[i], &s_listener_array[i]);	
+		ASSERT_NE(sub_array[i],nullptr);		
+		//Poll no.Subs
+		ASSERT_EQ(my_participant->get_no_subscribers( const_cast<char*>( str.c_str() ) ),i+1);
+	}
+	eprosima::fastrtps::Domain::removeParticipant(my_participant);
+}
+
+
+TEST(ros2features, SlaveListenerCallback_DynamicMode){
+	Participant *my_participant;
+	Publisher *my_publisher;
+	ParticipantAttributes p_attr;
+	PublisherAttributes pub_attr;
+	HelloWorldType my_type;
+	pub_dummy_listener my_dummy_listener;
+	gettopicnamesandtypesReaderListener slave_listener;
+	bool result;	
+	p_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230 + 35;
+	my_participant = Domain::createParticipant(p_attr);
+
+	ASSERT_NE(my_participant, nullptr);
+	ASSERT_EQ(Domain::registerType(my_participant, &my_type), true);
+
+	pub_attr.topic.topicKind = NO_KEY;
+	pub_attr.topic.topicDataType = "HelloWorldType";
+	pub_attr.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+	my_publisher = Domain::createPublisher(my_participant, pub_attr, &my_dummy_listener);
+	ASSERT_NE(my_publisher, nullptr);
+
+	std::pair<StatefulReader*,StatefulReader*> EDP_Readers = my_participant->getEDPReaders();
+	result = EDP_Readers.second->setListener(&slave_listener);
+	ASSERT_EQ(result,true);
+
+	slave_listener.mapmutex.lock();
+	ASSERT_EQ(slave_listener.topicNtypes.size(),0);
+	slave_listener.mapmutex.unlock();
+
+	Participant *my_participant2;
+	Publisher *my_publisher2;
+	ParticipantAttributes p_attr2;
+	PublisherAttributes pub_attr2;
+	pub_dummy_listener my_dummy_listener2;
+	p_attr2.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230 + 35;
+	my_participant2 = Domain::createParticipant(p_attr2);
+
+	ASSERT_NE(my_participant2, nullptr);
+	ASSERT_EQ(Domain::registerType(my_participant2, &my_type), true);
+
+
+	pub_attr2.topic.topicKind = NO_KEY;
+	pub_attr2.topic.topicDataType = "HelloWorldType";
+	pub_attr2.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+	my_publisher2 = Domain::createPublisher(my_participant2, pub_attr2, &my_dummy_listener2);
+	ASSERT_NE(my_publisher2, nullptr);
+	
+	std::this_thread::sleep_for(std::chrono::seconds(2));
+	
+	slave_listener.mapmutex.lock();
+	ASSERT_EQ(slave_listener.topicNtypes.size(),1);
+	slave_listener.mapmutex.unlock();
+	EDP_Readers.second->setListener(nullptr);
+
+	eprosima::fastrtps::Domain::removeParticipant(my_participant);
+	eprosima::fastrtps::Domain::removeParticipant(my_participant2);
+}
+
+TEST(ros2features, SlaveListenerCallback_StaticMode){
 	Participant *my_participant;
 	Publisher *my_publisher;
 	ParticipantAttributes p_attr;
@@ -174,6 +313,7 @@ TEST(ros2features, SlaveListenerCallback){
 
 	pub_attr.topic.topicKind = NO_KEY;
 	pub_attr.topic.topicDataType = "HelloWorldType";
+	pub_attr.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
 	my_publisher = Domain::createPublisher(my_participant, pub_attr, &my_dummy_listener);
 	ASSERT_NE(my_publisher, nullptr);
 
@@ -199,6 +339,7 @@ TEST(ros2features, SlaveListenerCallback){
 
 	pub_attr2.topic.topicKind = NO_KEY;
 	pub_attr2.topic.topicDataType = "HelloWorldType";
+	pub_attr2.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
 	my_publisher2 = Domain::createPublisher(my_participant2, pub_attr2, &my_dummy_listener2);
 	ASSERT_NE(my_publisher2, nullptr);
 	
@@ -212,6 +353,7 @@ TEST(ros2features, SlaveListenerCallback){
 	eprosima::fastrtps::Domain::removeParticipant(my_participant);
 	eprosima::fastrtps::Domain::removeParticipant(my_participant2);
 }
+
 
 int main(int argc, char **argv)
 {

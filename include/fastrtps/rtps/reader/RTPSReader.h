@@ -139,7 +139,7 @@ namespace eprosima
                  * @param change Pointer to pointer to the Cache.
                  * @return True if correctly reserved.
                  */
-                RTPS_DllAPI bool reserveCache(CacheChange_t** change);
+                RTPS_DllAPI bool reserveCache(CacheChange_t** change, uint32_t dataCdrSerializedSize);
 
                 /**
                  * Release a cacheChange.
@@ -178,6 +178,14 @@ namespace eprosima
                  */
                 CacheChange_t* findCacheInFragmentedCachePitStop(const SequenceNumber_t& sequence_number,
                         const GUID_t& writer_guid);
+
+                /*!
+                 * @brief Returns there is a clean state with all Writers.
+                 * It occurs when the Reader received all samples sent by Writers. In other words,
+                 * its WriterProxies are up to date.
+                 * @return There is a clean state with all Writers.
+                */
+                virtual bool isInCleanState() const = 0;
 
                 protected:
                 void setTrustedWriter(EntityId_t writer)

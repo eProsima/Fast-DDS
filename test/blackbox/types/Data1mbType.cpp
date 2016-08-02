@@ -39,11 +39,11 @@ Data1mbType::~Data1mbType() {
 
 bool Data1mbType::serialize(void *data, SerializedPayload_t *payload) {
 	Data1mb *p_type = (Data1mb*) data;
-	eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
+	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size); // Object that manages the raw buffer.
 	eprosima::fastcdr::Cdr ser(fastbuffer); 	// Object that serializes the data.
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 	p_type->serialize(ser); 	// Serialize the object:
-    payload->length = (uint32_t)ser.getSerializedDataLength(); 	//Get the serialized length
+        payload->length = (uint32_t)ser.getSerializedDataLength(); 	//Get the serialized length
 	return true;
 }
 
@@ -61,6 +61,11 @@ void* Data1mbType::createData() {
 
 void Data1mbType::deleteData(void* data) {
 	delete((Data1mb*)data);
+}
+
+std::function<uint32_t()> Data1mbType::getSerializedSizeProvider(void *data)
+{
+    return [data]() -> size_t { return (uint32_t)type::getCdrSerializedSize(*static_cast<Data1mb*>(data));};
 }
 
 bool Data1mbType::getKey(void *data, InstanceHandle_t* handle) {

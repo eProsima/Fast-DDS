@@ -20,6 +20,11 @@
 #ifndef HISTORYATTRIBUTES_H_
 #define HISTORYATTRIBUTES_H_
 
+#include "../resources/ResourceManagement.h"
+#include "../../fastrtps_dll.h"
+
+#include <cstdint>
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -32,27 +37,39 @@ namespace rtps{
  */
 class RTPS_DllAPI HistoryAttributes
 {
-public:
-	HistoryAttributes():
-		payloadMaxSize(500),
-		initialReservedCaches(500),
-		maximumReservedCaches(0)
-	{};
-	/** Constructor
-	* @param payload Maximum payload size.
-	* @param initial Initial reserved caches.
-	* @param maxRes Maximum reserved caches.
-	*/
-	HistoryAttributes(uint32_t payload,int32_t initial,int32_t maxRes):
-		payloadMaxSize(payload),initialReservedCaches(initial),
-		maximumReservedCaches(maxRes){}
-	virtual ~HistoryAttributes(){};
-	//!Maximum payload size of the history, default value 500.
-	uint32_t payloadMaxSize;
-	//!Number of the initial Reserved Caches, default value 500.
-	int32_t initialReservedCaches;
-	//!Maximum number of reserved caches. Default value is 0 that indicates to keep reserving until something breaks.
-	int32_t maximumReservedCaches;
+    public:
+        HistoryAttributes():
+            memoryPolicy(PREALLOCATED_MEMORY_MODE),
+            payloadMaxSize(500),
+            initialReservedCaches(500),
+            maximumReservedCaches(0)
+    {}
+
+        /** Constructor
+         * @param memoryPolicy Set wether memory can be dynamically reallocated or not
+         * @param payload Maximum payload size. It is used when memory management polycy is
+         * PREALLOCATED_MEMORY_MODE or PREALLOCATED_WITH_REALLOC_MEMORY_MODE.
+         * @param initial Initial reserved caches. It is used when memory management policy is
+         * PREALLOCATED_MEMORY_MODE or PREALLOCATED_WITH_REALLOC_MEMORY_MODE.
+         * @param maxRes Maximum reserved caches.
+         */
+        HistoryAttributes(MemoryManagementPolicy_t memoryPolicy, uint32_t payload, int32_t initial, int32_t maxRes):
+            memoryPolicy(memoryPolicy), payloadMaxSize(payload),initialReservedCaches(initial),
+            maximumReservedCaches(maxRes){}
+
+        virtual ~HistoryAttributes(){}
+
+        //!Memory management policy.
+        MemoryManagementPolicy_t memoryPolicy;
+
+        //!Maximum payload size of the history, default value 500.
+        uint32_t payloadMaxSize;
+
+        //!Number of the initial Reserved Caches, default value 500.
+        int32_t initialReservedCaches;
+
+        //!Maximum number of reserved caches. Default value is 0 that indicates to keep reserving until something breaks.
+        int32_t maximumReservedCaches;
 };
 
 }

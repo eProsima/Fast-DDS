@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*************************************************************************
+/*! 
  * @file HelloWorldPubSubTypes.h
  * This header file contains the declaration of the serialization functions.
  *
@@ -35,10 +35,13 @@ using namespace eprosima::fastrtps;
  */
 class HelloWorldPubSubType : public TopicDataType {
 public:
+        typedef HelloWorld type;
+
 	HelloWorldPubSubType();
 	virtual ~HelloWorldPubSubType();
 	bool serialize(void *data, SerializedPayload_t *payload);
 	bool deserialize(SerializedPayload_t *payload, void *data);
+        std::function<uint32_t()> getSerializedSizeProvider(void* data);
 	bool getKey(void *data, InstanceHandle_t *ihandle);
 	void* createData();
 	void deleteData(void * data);

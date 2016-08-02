@@ -21,6 +21,8 @@
 #include "../../fastrtps_dll.h"
 #include "Types.h"
 #include <cstring>
+#include <new>
+#include <stdexcept>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -33,7 +35,7 @@ namespace eprosima{
     namespace fastrtps{
         namespace rtps{
 
-//Pre define data encapsulation schemes
+            //Pre define data encapsulation schemes
 #define CDR_BE 0x0000
 #define CDR_LE 0x0001
 #define PL_CDR_BE 0x0002
@@ -56,25 +58,19 @@ namespace eprosima{
                 uint32_t pos;
 
                 //!Default constructor
-                SerializedPayload_t()
+                SerializedPayload_t() : encapsulation(CDR_BE),
+                length(0), data(nullptr), max_size(0),
+                pos(0)
                 {
-                    length = 0;
-                    data = nullptr;
-                    encapsulation = CDR_BE;
-                    max_size = 0;
-                    pos = 0;
                 }
 
                 /**
                  * @param len Maximum size of the payload
                  */
                 SerializedPayload_t(uint32_t len)
+                    : SerializedPayload_t()
                 {
-                    encapsulation = CDR_BE;
-                    length = 0;
-                    data = (octet*)calloc(len, sizeof(octet));
-                    max_size = len;
-                    pos = 0;
+                    this->reserve(len);
                 }
 
                 ~SerializedPayload_t()
@@ -97,28 +93,27 @@ namespace eprosima{
                         if(with_limit)
                             return false;
                         else
-                            length = max_size;
+                            this->reserve(serData->length);
                     }
                     encapsulation = serData->encapsulation;
-                    if(data == nullptr)
-                        data = (octet*)calloc(length, sizeof(octet));
-                    memcpy(data,serData->data,length);
+                    memcpy(data, serData->data, length);
                     return true;
                 }
 
-				/*!
-				* Allocate new space for fragmented data
-				* @param[in] serData Pointer to the structure to copy
-				* @return True if correct
-				*/
-				bool reserve_fragmented(SerializedPayload_t* serData)
-				{
-					length = serData->length;
-					max_size = serData->length;
-					encapsulation = serData->encapsulation;
-					data = (octet*)calloc(length, sizeof(octet));
-					return true;
-				}
+
+                /*!
+                 * Allocate new space for fragmented data
+                 * @param[in] serData Pointer to the structure to copy
+                 * @return True if correct
+                 */
+                bool reserve_fragmented(SerializedPayload_t* serData)
+                {
+                    length = serData->length;
+                    max_size = serData->length;
+                    encapsulation = serData->encapsulation;
+                    data = (octet*)calloc(length, sizeof(octet));
+                    return true;
+                }
 
                 //! Empty the payload
                 void empty()
@@ -130,6 +125,33 @@ namespace eprosima{
                         free(data);
                     data = nullptr;
                 }
+
+                void reserve(uint32_t new_size)
+                {
+                    if (new_size <= this->max_size) {
+                        return;
+                    }
+                    if(data == nullptr)
+                    {
+                        data = (octet*)calloc(new_size, sizeof(octet));
+                        if (!data)
+                        {
+                            throw std::bad_alloc();
+                        }
+                    }
+                    else
+                    {
+                        void * old_data = data;
+                        data = (octet*)realloc(data, new_size);
+                        if (!data)
+                        {
+                            free(old_data);
+                            throw std::bad_alloc();
+                        }
+                    }
+                    max_size = new_size;
+                }
+
             };
         }
     }

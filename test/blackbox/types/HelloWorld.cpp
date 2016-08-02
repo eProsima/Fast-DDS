@@ -78,13 +78,24 @@ bool HelloWorld::operator==(const HelloWorld &x) const
 
 size_t HelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
 {
-    size_t current_align = current_alignment;
+    size_t initial_alignment = current_alignment;
             
-    current_align += 2 + eprosima::fastcdr::Cdr::alignment(current_align, 2);
-    current_align += 4 + eprosima::fastcdr::Cdr::alignment(current_align, 4) + 255 + 1;
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
 
-    return current_align;
+    return current_alignment - initial_alignment;
 }
+
+size_t HelloWorld::getCdrSerializedSize(const HelloWorld& data, size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+            
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.m_message.size() + 1;
+
+    return current_alignment - initial_alignment;
+}
+
 size_t HelloWorld::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;
@@ -101,11 +112,7 @@ bool HelloWorld::isKeyDefined()
 void HelloWorld::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_index;
-
-    if(m_message.length() <= 255)
     scdr << m_message;
-    else
-        throw eprosima::fastcdr::exception::BadParamException("message field exceeds the maximum length");
 }
 
 void HelloWorld::deserialize(eprosima::fastcdr::Cdr &dcdr)

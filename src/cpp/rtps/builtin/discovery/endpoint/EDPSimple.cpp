@@ -224,7 +224,8 @@ bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
 	logInfo(RTPS_EDP,rdata->m_guid.entityId);
 	if(mp_SubWriter.first !=nullptr)
 	{
-		CacheChange_t* change = mp_SubWriter.first->new_change(ALIVE,rdata->m_key);
+        // TODO(Ricardo) Write a getCdrSerializedPayload for ReaderProxyData.
+		CacheChange_t* change = mp_SubWriter.first->new_change([]() -> uint32_t {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;}, ALIVE,rdata->m_key);
 		if(change !=nullptr)
 		{
 			rdata->toParameterList();
@@ -259,7 +260,7 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 	logInfo(RTPS_EDP, wdata->guid().entityId);
 	if(mp_PubWriter.first !=nullptr)
 	{
-		CacheChange_t* change = mp_PubWriter.first->new_change(ALIVE, wdata->key());
+		CacheChange_t* change = mp_PubWriter.first->new_change([]() -> uint32_t {return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;}, ALIVE, wdata->key());
 		if(change != nullptr)
 		{
 			wdata->toParameterList();
@@ -297,7 +298,7 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
 	{
 		InstanceHandle_t iH;
 		iH = W->getGuid();
-		CacheChange_t* change = mp_PubWriter.first->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
+		CacheChange_t* change = mp_PubWriter.first->new_change([]() -> uint32_t {return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;}, NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
 		if(change != nullptr)
 		{
 			boost::lock_guard<boost::recursive_mutex> guard(*mp_PubWriter.second->getMutex());
@@ -322,7 +323,7 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
 	{
 		InstanceHandle_t iH;
 		iH = (R->getGuid());
-		CacheChange_t* change = mp_SubWriter.first->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
+		CacheChange_t* change = mp_SubWriter.first->new_change([]() -> uint32_t {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;}, NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
 		if(change != nullptr)
 		{
 			boost::lock_guard<boost::recursive_mutex> guard(*mp_SubWriter.second->getMutex());

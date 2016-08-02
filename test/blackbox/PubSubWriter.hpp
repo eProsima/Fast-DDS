@@ -166,15 +166,22 @@ class PubSubWriter
     }
 
     /*** Function to change QoS ***/
+    PubSubWriter& memoryMode(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryMode)
+	{
+	    publisher_attr_.historyMemoryPolicy = memoryMode;
+	    return *this;
+	}
+
+
     PubSubWriter& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
     {
         publisher_attr_.qos.m_reliability.kind = kind;
         return *this;
     }
 
-    PubSubWriter& add_throughput_controller_descriptor_to_pparams(uint32_t size, uint32_t periodInMs)
+    PubSubWriter& add_throughput_controller_descriptor_to_pparams(uint32_t bytesPerPeriod, uint32_t periodInMs)
     {
-        ThroughputControllerDescriptor descriptor {size, periodInMs};
+        ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
         participant_attr_.rtps.throughputController = descriptor;
 
         return *this;

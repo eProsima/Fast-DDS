@@ -104,6 +104,14 @@ public:
 	*/
 	TopicDataType* getType() {return mp_type;};
 
+    /*!
+    * @brief Returns there is a clean state with all Publishers.
+    * It occurs when the Subscriber received all samples sent by Publishers. In other words,
+    * its WriterProxies are up to date.
+    * @return There is a clean state with all Publishers.
+    */
+    bool isInCleanState() const;
+
 private:
 	//!Participant
 	ParticipantImpl* mp_participant;

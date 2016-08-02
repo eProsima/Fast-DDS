@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*************************************************************************
+/*! 
  * @file OwnershipStrength.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -90,6 +90,20 @@ size_t ExampleMessage::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
+size_t ExampleMessage::getCdrSerializedSize(const ExampleMessage& data, size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+            
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
+
+
+    return current_alignment - initial_alignment;
+}
+
 void ExampleMessage::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_index;
@@ -125,7 +139,7 @@ bool ExampleMessage::isKeyDefined()
     return false;
 }
 
-void ExampleMessage::serializeKey(eprosima::fastcdr::Cdr& /*scdr*/) const
+void ExampleMessage::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	 
 	 

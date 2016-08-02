@@ -27,18 +27,18 @@
 class ReqRepAsReliableHelloWorldReplier : public ReqRepHelloWorldReplier
 {
     public:
-        void configSubscriber(SubscriberAttributes &rattr, const std::string& suffix)
+        void configSubscriber(const std::string& suffix)
         {
-            rattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+            sattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
 
             std::ostringstream t;
 
             t << "ReqRepAsReliableHelloworld_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id() << "_" << suffix;
 
-            rattr.topic.topicName = t.str();
+            sattr.topic.topicName = t.str();
         };
 
-        void configPublisher(PublisherAttributes &puattr, const std::string& suffix)
+        void configPublisher(const std::string& suffix)
         {
             puattr.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
@@ -47,6 +47,12 @@ class ReqRepAsReliableHelloWorldReplier : public ReqRepHelloWorldReplier
             t << "ReqRepAsReliableHelloworld_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id() << "_" << suffix;
 
             puattr.topic.topicName = t.str();
+        }
+
+        ReqRepAsReliableHelloWorldReplier& memoryMode(eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryMode){
+            sattr.historyMemoryPolicy=memoryMode;
+            puattr.historyMemoryPolicy=memoryMode;
+            return *this;
         }
 };
 

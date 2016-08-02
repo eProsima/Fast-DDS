@@ -66,9 +66,9 @@ bool RTPSReader::acceptMsgDirectedTo(EntityId_t& entityId)
 		return false;
 }
 
-bool RTPSReader::reserveCache(CacheChange_t** change)
+bool RTPSReader::reserveCache(CacheChange_t** change, uint32_t dataCdrSerializedSize)
 {
-	return mp_history->reserve_Cache(change);
+	return mp_history->reserve_Cache(change, dataCdrSerializedSize);
 }
 
 void RTPSReader::releaseCache(CacheChange_t* change)

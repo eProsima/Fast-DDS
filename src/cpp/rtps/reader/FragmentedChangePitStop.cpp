@@ -44,13 +44,14 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
     {
         CacheChange_t* original_change = nullptr;
 
-        if(!parent_->reserveCache(&original_change))
+        if(!parent_->reserveCache(&original_change, sampleSize))
             return nullptr;
 
-        original_change->copy_not_memcpy(incoming_change);
-
-        // The length of the serialized payload has to be sample size.
+        //Change comes preallocated (size sampleSize)
+	original_change->copy_not_memcpy(incoming_change);
+	// The length of the serialized payload has to be sample size.
         original_change->serializedPayload.length = sampleSize;
+        original_change->serializedPayload.reserve(sampleSize);
         original_change->setFragmentSize(incoming_change->getFragmentSize());
 
         // Insert
@@ -127,6 +128,55 @@ CacheChange_t* FragmentedChangePitStop::find(const SequenceNumber_t& sequence_nu
                 break;
             }
         }
+    }
+
+    return returnedValue;
+}
+
+bool FragmentedChangePitStop::try_to_remove(const SequenceNumber_t& sequence_number, const GUID_t& writer_guid)
+{
+    bool returnedValue = false;
+
+    auto range = changes_.equal_range(ChangeInPit(sequence_number));
+
+    auto cit = range.first;
+
+    // If there is a range, search the CacheChange_t with the same writer GUID_t.
+    if(cit != changes_.end())
+    {
+        for(; cit != range.second; ++cit)
+        {
+            if(cit->getChange()->writerGUID == writer_guid)
+            {
+                // Destroy CacheChange_t.
+                parent_->releaseCache(cit->getChange());
+                changes_.erase(cit);
+                returnedValue = true;
+                break;
+            }
+        }
+    }
+
+    return returnedValue;
+}
+
+bool FragmentedChangePitStop::try_to_remove_until(const SequenceNumber_t& sequence_number, const GUID_t& writer_guid)
+{
+    bool returnedValue = false;
+
+    auto cit = changes_.begin();
+    while(cit != changes_.end())
+    {
+        if(cit->getChange()->sequenceNumber < sequence_number &&
+                cit->getChange()->writerGUID == writer_guid)
+        {
+            // Destroy CacheChange_t.
+            parent_->releaseCache(cit->getChange());
+            cit = changes_.erase(cit);
+            returnedValue = true;
+        }
+        else
+            ++cit;
     }
 
     return returnedValue;

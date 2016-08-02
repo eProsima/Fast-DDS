@@ -75,9 +75,8 @@ class RTPSAsSocketWriter
             ASSERT_NE(participant_, nullptr);
 
             //Create writerhistory
-            eprosima::fastrtps::rtps::HistoryAttributes hattr;
-            hattr.payloadMaxSize = 255 + type_.m_typeSize;
-            history_ = new eprosima::fastrtps::rtps::WriterHistory(hattr);
+            hattr_.payloadMaxSize = 255 + type_.m_typeSize;
+            history_ = new eprosima::fastrtps::rtps::WriterHistory(hattr_);
 
             //Create writer
             writer_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(participant_, writer_attr_, history_);
@@ -96,14 +95,18 @@ class RTPSAsSocketWriter
 
             while(it != msgs.end())
             {
-                CacheChange_t * ch = writer_->new_change(ALIVE);
+                CacheChange_t * ch = writer_->new_change([&]() -> uint32_t
+                                {
+                                   size_t current_alignment =  4 + magicword_.size() + 1;
+				   return (uint32_t)(current_alignment + type::getCdrSerializedSize(*it, current_alignment));
+                                }
+                                , ALIVE);
 
                 eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
                 eprosima::fastcdr::Cdr cdr(buffer);
 
                 cdr << magicword_;
                 cdr << *it;
-
                 ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
 
                 history_->add_change(ch);
@@ -112,7 +115,12 @@ class RTPSAsSocketWriter
         }
 
         /*** Function to change QoS ***/
-        RTPSAsSocketWriter& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
+	RTPSAsSocketWriter& memoryMode(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryPolicy)
+	{
+		hattr_.memoryPolicy=memoryPolicy;
+		return *this;
+	}
+	RTPSAsSocketWriter& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
         {
             writer_attr_.endpoint.reliabilityKind = kind;
 
@@ -179,9 +187,9 @@ class RTPSAsSocketWriter
             return *this;
         }
 
-        RTPSAsSocketWriter& add_throughput_controller_descriptor_to_pparams(uint32_t size, uint32_t periodInMs)
+        RTPSAsSocketWriter& add_throughput_controller_descriptor_to_pparams(uint32_t bytesPerPeriod, uint32_t periodInMs)
         {
-            ThroughputControllerDescriptor descriptor {size, periodInMs};
+            ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
             writer_attr_.throughputController = descriptor;
 
             return *this;
@@ -193,6 +201,7 @@ class RTPSAsSocketWriter
         eprosima::fastrtps::rtps::RTPSWriter *writer_;
         eprosima::fastrtps::rtps::WriterAttributes writer_attr_;
         eprosima::fastrtps::rtps::WriterHistory *history_;
+	eprosima::fastrtps::rtps::HistoryAttributes hattr_;
         bool initialized_;
         std::string magicword_;
         type_support type_;

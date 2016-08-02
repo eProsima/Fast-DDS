@@ -38,100 +38,100 @@ namespace rtps {
  */
 class StatelessWriter : public RTPSWriter
 {
-	friend class RTPSParticipantImpl;
+    friend class RTPSParticipantImpl;
 
-	StatelessWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
-public:
-	virtual ~StatelessWriter();
-	/**
-	 * Add a specific change to all ReaderLocators.
-	 * @param p Pointer to the change.
-	 */
-	void unsent_change_added_to_history(CacheChange_t* p);
-	/**
-	 * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
-	 * @param a_change Pointer to the change that is going to be removed.
-	 * @return True if removed correctly.
-	 */
-	bool change_removed_by_history(CacheChange_t* a_change);
-	/**
-	 * Add a matched reader.
-	 * @param ratt Attributes of the reader to add.
-	 * @return True if added.
-	 */
-	bool matched_reader_add(RemoteReaderAttributes& ratt);
-	/**
-	 * Remove a matched reader.
-	 * @param ratt Attributes of the reader to remove.
-	 * @return True if removed.
-	 */
-	bool matched_reader_remove(RemoteReaderAttributes& ratt);
-	/**
-	 * Tells us if a specific Reader is matched against this writer
-	 * @param ratt Attributes of the reader to check.
-	 * @return True if it was matched.
-	 */
-	bool matched_reader_is_matched(RemoteReaderAttributes& ratt);
-	/**
-	 * Method to indicate that there are changes not sent in some of all ReaderProxy.
-	 */
-	size_t send_any_unsent_changes();
+    StatelessWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
+    public:
+    virtual ~StatelessWriter();
+    /**
+     * Add a specific change to all ReaderLocators.
+     * @param p Pointer to the change.
+     */
+    void unsent_change_added_to_history(CacheChange_t* p);
+    /**
+     * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
+     * @param a_change Pointer to the change that is going to be removed.
+     * @return True if removed correctly.
+     */
+    bool change_removed_by_history(CacheChange_t* a_change);
+    /**
+     * Add a matched reader.
+     * @param ratt Attributes of the reader to add.
+     * @return True if added.
+     */
+    bool matched_reader_add(RemoteReaderAttributes& ratt);
+    /**
+     * Remove a matched reader.
+     * @param ratt Attributes of the reader to remove.
+     * @return True if removed.
+     */
+    bool matched_reader_remove(RemoteReaderAttributes& ratt);
+    /**
+     * Tells us if a specific Reader is matched against this writer
+     * @param ratt Attributes of the reader to check.
+     * @return True if it was matched.
+     */
+    bool matched_reader_is_matched(RemoteReaderAttributes& ratt);
+    /**
+     * Method to indicate that there are changes not sent in some of all ReaderProxy.
+     */
+    size_t send_any_unsent_changes();
 
-	/**
-	 * Update the Attributes of the Writer.
-	 * @param att New attributes
-	 */
-	void updateAttributes(WriterAttributes& att){
-      (void)att;
-		//FOR NOW THERE IS NOTHING TO UPDATE.
-	};
+    /**
+     * Update the Attributes of the Writer.
+     * @param att New attributes
+     */
+    void updateAttributes(WriterAttributes& att){
+        (void)att;
+        //FOR NOW THERE IS NOTHING TO UPDATE.
+    };
 
-	/**
-	* Add a remote locator.
-	*
-	* @param rdata RemoteReaderAttributes necessary to create a new locator.
-	* @param loc Locator to add.
-	* @return True on success.
-	*/
-	bool add_locator(RemoteReaderAttributes& rdata,Locator_t& loc);
+    /**
+     * Add a remote locator.
+     *
+     * @param rdata RemoteReaderAttributes necessary to create a new locator.
+     * @param loc Locator to add.
+     * @return True on success.
+     */
+    bool add_locator(RemoteReaderAttributes& rdata,Locator_t& loc);
 
-   void update_unsent_changes(const std::vector<CacheChangeForGroup_t>& changes);
+    void update_unsent_changes(const std::vector<CacheChangeForGroup_t>& changes);
 
-	/**
-	* Remove a remote locator from the writer.
-	*
-	* @param loc Locator to remove.
-	* @return True on success.
-	*/
-	bool remove_locator(Locator_t& loc);
+    /**
+     * Remove a remote locator from the writer.
+     *
+     * @param loc Locator to remove.
+     * @return True on success.
+     */
+    bool remove_locator(Locator_t& loc);
 
-	//!Reset the unsent changes.
-	void unsent_changes_reset();
+    //!Reset the unsent changes.
+    void unsent_changes_reset();
 
-	/**
-	* Get the number of matched readers
-	* @return Number of matched readers
-	*/
-	inline size_t getMatchedReadersSize() const {return m_matched_readers.size();};
+    /**
+     * Get the number of matched readers
+     * @return Number of matched readers
+     */
+    inline size_t getMatchedReadersSize() const {return m_matched_readers.size();};
 
-    bool clean_history(unsigned int max = 0);
+    bool clean_history(unsigned int max = 0) { return remove_older_changes(max); }
 
-   void add_flow_controller(std::unique_ptr<FlowController> controller);
+    void add_flow_controller(std::unique_ptr<FlowController> controller);
 
-private:
-	//Duration_t resendDataPeriod; //FIXME: Not used yet.
-	std::vector<ReaderLocator> reader_locator;
-   LocatorList_t m_loc_list_1_for_sync_send;
-   LocatorList_t m_loc_list_2_for_sync_send;
-	std::vector<RemoteReaderAttributes> m_matched_readers;
-   std::vector<std::unique_ptr<FlowController> > m_controllers;
+    private:
+    //Duration_t resendDataPeriod; //FIXME: Not used yet.
+    std::vector<ReaderLocator> reader_locator;
+    LocatorList_t m_loc_list_1_for_sync_send;
+    LocatorList_t m_loc_list_2_for_sync_send;
+    std::vector<RemoteReaderAttributes> m_matched_readers;
+    std::vector<std::unique_ptr<FlowController> > m_controllers;
 
-	/**
-    * Vector containing pointers to the unsent changes from this writer.
-    * it's crucial to notify the async writer
-    * thread when anything is pushed into it.
-    */	
-   std::vector<CacheChangeForGroup_t> m_unsent_changes;
+    /**
+     * Vector containing pointers to the unsent changes from this writer.
+     * it's crucial to notify the async writer
+     * thread when anything is pushed into it.
+     */	
+    std::vector<CacheChangeForGroup_t> m_unsent_changes;
 };
 }
 } /* namespace rtps */

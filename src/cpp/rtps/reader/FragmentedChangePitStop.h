@@ -116,6 +116,26 @@ namespace eprosima
                  */
                 CacheChange_t* find(const SequenceNumber_t& sequence_number, const GUID_t& writer_guid);
 
+		/*!
+		 * @brief Checks if there is a CacheChange_t, giving SequenceNumber_t and writer GUID_t.
+		 * In case there is, it will be removed.
+                 * @param sequence_number SequenceNumber_t of the searched CacheChange_t.
+                 * @param writer_guid writer GUID_t of the searched CacheChange_t.
+		 * @return If a CacheChange_t was found and removed, true value will be returned. In other case
+		 * false value is returned.
+		 */
+		bool try_to_remove(const SequenceNumber_t& sequence_number, const GUID_t& writer_guid);
+
+		/*!
+		 * @brief Checks if there are CacheChange_t, with writer GUID_t and a SequenceNumber_t lower than given SequenceNumber_t.
+		 * In case there are, they will be removed.
+                 * @param sequence_number SequenceNumber_t used as maximum.
+                 * @param writer_guid writer GUID_t of the searched CacheChange_t.
+		 * @return If some CacheChange_t were found and removed, true value will be returned. In other case
+		 * false value is returned.
+		 */
+		bool try_to_remove_until(const SequenceNumber_t& sequence_number, const GUID_t& writer_guid);
+
                 private:
 
                 std::unordered_multiset<ChangeInPit, ChangeInPit::ChangeInPitHash> changes_;

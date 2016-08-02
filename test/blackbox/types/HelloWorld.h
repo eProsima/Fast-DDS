@@ -153,6 +153,8 @@ public:
      */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 
+    eProsima_user_DllExport static size_t getCdrSerializedSize(const HelloWorld& data, size_t current_alignment = 0);
+
     /*!
      * @brief This function returns the maximum serialized size of the Key of an object
      * depending on the buffer alignment.

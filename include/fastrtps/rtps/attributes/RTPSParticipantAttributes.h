@@ -22,7 +22,8 @@
 #include "../common/Time_t.h"
 #include "../common/Locator.h"
 #include "../flowcontrol/ThroughputController.h"
-#include <fastrtps/transport/TransportInterface.h>
+#include "../../transport/TransportInterface.h"
+
 #include <memory>
 
 namespace eprosima {
@@ -194,7 +195,6 @@ class RTPSParticipantAttributes
             use_IP4_to_send = true;
             use_IP6_to_send = false;
             participantID = -1;
-            maxMessageSize = -1; //Set to -1 -> take min socket buffer size
             useBuiltinTransports = true;
         }
 
@@ -244,15 +244,12 @@ class RTPSParticipantAttributes
         inline void setName(const char* nam){name = nam;}
         //!Get the name of the participant.
         inline const char* getName() const {return name.c_str();}
-        //!Terminal throughput controller parameters. Leave default for uncontrolled flow.
+        //!Throughput controller parameters. Leave default for uncontrolled flow.
         ThroughputControllerDescriptor throughputController; 
         //!User defined transports to use alongside or in place of builtins.
         std::vector<std::shared_ptr<TransportDescriptorInterface> > userTransports;
         //!Set as false to disable the default UDPv4 implementation.
         bool useBuiltinTransports;
-
-        //! Maximum message size - Defines fragmentation threshold
-        int32_t maxMessageSize;
 
     private:
         //!Name of the participant.

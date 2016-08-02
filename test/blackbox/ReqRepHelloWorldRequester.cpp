@@ -55,18 +55,16 @@ void ReqRepHelloWorldRequester::init()
 	ASSERT_EQ(Domain::registerType(participant_,&type_), true);
 
 	//Create subscriber
-	SubscriberAttributes sattr;
 	sattr.topic.topicKind = NO_KEY;
 	sattr.topic.topicDataType = "HelloWorldType";
-    configSubscriber(sattr, "Reply");
+    configSubscriber("Reply");
 	reply_subscriber_ = Domain::createSubscriber(participant_, sattr, &reply_listener_);
     ASSERT_NE(reply_subscriber_, nullptr);
 
 	//Create publisher
-	PublisherAttributes puattr;
 	puattr.topic.topicKind = NO_KEY;
 	puattr.topic.topicDataType = "HelloWorldType";
-    configPublisher(puattr, "Request");
+    configPublisher("Request");
 	request_publisher_ = Domain::createPublisher(participant_, puattr, &request_listener_);
     ASSERT_NE(request_publisher_, nullptr);
 

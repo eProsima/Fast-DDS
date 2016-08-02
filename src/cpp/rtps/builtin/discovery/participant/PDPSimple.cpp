@@ -164,7 +164,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
             this->getLocalParticipantProxyData()->m_manualLivelinessCount++;
             if(mp_SPDPWriterHistory->getHistorySize() > 0)
                 mp_SPDPWriterHistory->remove_min_change();
-            change = mp_SPDPWriter->new_change(ALIVE,getLocalParticipantProxyData()->m_key);
+            change = mp_SPDPWriter->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE,getLocalParticipantProxyData()->m_key);
             if(getLocalParticipantProxyData()->toParameterList())
             {
 #if EPROSIMA_BIG_ENDIAN
@@ -188,7 +188,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
     {
         if(mp_SPDPWriterHistory->getHistorySize() > 0)
             mp_SPDPWriterHistory->remove_min_change();
-        change = mp_SPDPWriter->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
+        change = mp_SPDPWriter->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;}, NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
         if(getLocalParticipantProxyData()->toParameterList())
         {
 #if EPROSIMA_BIG_ENDIAN
