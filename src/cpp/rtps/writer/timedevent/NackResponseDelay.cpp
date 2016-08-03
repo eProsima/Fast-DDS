@@ -46,12 +46,8 @@ NackResponseDelay::~NackResponseDelay()
 NackResponseDelay::NackResponseDelay(ReaderProxy* p_RP,double millisec):
     TimedEvent(p_RP->mp_SFW->getRTPSParticipant()->getEventResource().getIOService(),
             p_RP->mp_SFW->getRTPSParticipant()->getEventResource().getThread(), millisec),
-    mp_RP(p_RP),
-    //TODO Put in a macro
-    m_cdrmessages(p_RP->mp_SFW->getRTPSParticipant()->getAttributes().sendSocketBufferSize > 65504 ? 65504 : p_RP->mp_SFW->getRTPSParticipant()->getAttributes().sendSocketBufferSize)
+    mp_RP(p_RP)
 {
-    CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_header);
-    RTPSMessageCreator::addHeader(&m_cdrmessages.m_rtpsmsg_header,mp_RP->mp_SFW->getGuid().guidPrefix);
 }
 
 void NackResponseDelay::event(EventCode code, const char* msg)

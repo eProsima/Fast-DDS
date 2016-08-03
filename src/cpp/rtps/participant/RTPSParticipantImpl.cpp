@@ -203,10 +203,13 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     for (auto it = defcopy.begin(); it != defcopy.end(); ++it){
         /* Try to build resources with that specific Locator*/
         newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
-        while (newSendersBuffer.empty()){
+        uint32_t tries = 100;
+        while(newSendersBuffer.empty() && tries != 0)
+        {
             //No ReceiverResources have been added, therefore we have to change the Locator 
-            (*it) = applyLocatorAdaptRule(*it);			//Mutate the Locator to find a suitable rule. Overwrite the old one as it is useless now.
+            (*it) = applyLocatorAdaptRule(*it); //Mutate the Locator to find a suitable rule. Overwrite the old one as it is useless now.
             newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
+            --tries;
         }
         //Now we DO have resources, and the new locator is already replacing the old one.
         for(auto mit= newSendersBuffer.begin(); mit!= newSendersBuffer.end(); ++mit){
@@ -328,6 +331,14 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
         logError(RTPS_PARTICIPANT,"Output Locator List for Writer contains invalid Locator");
         return false;
     }
+    if (((param.throughputController.bytesPerPeriod != UINT32_MAX && param.throughputController.periodMillisecs != 0) ||
+                (m_att.throughputController.bytesPerPeriod != UINT32_MAX && m_att.throughputController.periodMillisecs != 0)) &&
+            param.mode != ASYNCHRONOUS_WRITER)
+    {
+        logError(RTPS_PARTICIPANT, "Writer has to be configured to publish asynchronously, because a flowcontroller was configured");
+        return false;
+    }
+
 
     // Normalize unicast locators
     if (!param.endpoint.unicastLocatorList.empty())
@@ -369,6 +380,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
         std::unique_ptr<FlowController> controller(new ThroughputController(param.throughputController, SWriter));
         SWriter->add_flow_controller(std::move(controller));
     }
+
     return true;
 }
 
@@ -842,6 +854,11 @@ uint32_t RTPSParticipantImpl::getMaxMessageSize() const
     }
 
     return minMaxMessageSize;
+}
+
+bool RTPSParticipantImpl::networkFactoryHasRegisteredTransports() const
+{
+    return m_network_Factory.numberOfRegisteredTransports() > 0;
 }
 
 } /* namespace rtps */

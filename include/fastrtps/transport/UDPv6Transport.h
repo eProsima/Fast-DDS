@@ -56,8 +56,12 @@ namespace rtps{
 class UDPv6Transport : public TransportInterface
 {
 public:
+
    RTPS_DllAPI UDPv6Transport(const UDPv6TransportDescriptor&);
+
    ~UDPv6Transport();
+
+   bool init();
 
    //! Checks whether there are open and bound sockets for the given port.
    virtual bool IsInputChannelOpen(const Locator_t&) const;
@@ -122,6 +126,7 @@ public:
    virtual LocatorList_t NormalizeLocator(const Locator_t& locator);
 
 private:
+   uint32_t mMaxMessageSize;
    uint32_t mSendBufferSize;
    uint32_t mReceiveBufferSize;
    bool mGranularMode;

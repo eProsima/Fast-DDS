@@ -41,7 +41,9 @@ public:
    template<class T, class D>
    void RegisterTransport(const D& descriptor)
    {
-      mRegisteredTransports.emplace_back(new T(descriptor));
+       std::unique_ptr<T> transport(new T(descriptor));
+       if(transport->init())
+           mRegisteredTransports.emplace_back(std::move(transport));
    }
 
    /**
@@ -71,6 +73,8 @@ public:
    std::vector<ReceiverResource> BuildReceiverResources               (const Locator_t& local);
 
    void NormalizeLocators(LocatorList_t& locators);
+
+   size_t numberOfRegisteredTransports() const;
 
 private:
    std::vector<std::unique_ptr<TransportInterface> > mRegisteredTransports;

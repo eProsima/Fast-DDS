@@ -28,20 +28,13 @@ namespace fastrtps{
 namespace rtps{
 
 static const uint32_t maximumUDPSocketSize = 65536;
-static const uint32_t maximumMessageSize = 65000;
+static const uint32_t maximumMessageSize = 65500;
 
 UDPv6Transport::UDPv6Transport(const UDPv6TransportDescriptor& descriptor):
     mSendBufferSize(descriptor.sendBufferSize),
     mReceiveBufferSize(descriptor.receiveBufferSize),
     mGranularMode(descriptor.granularMode)
     {
-        auto ioServiceFunction = [&]()
-        {
-            io_service::work work(mService);
-            mService.run();
-        };
-        ioServiceThread.reset(new boost::thread(ioServiceFunction));
-
         for (const auto& interface : descriptor.interfaceWhiteList)
            mInterfaceWhiteList.emplace_back(ip::address_v6::from_string(interface));
     }
@@ -56,7 +49,38 @@ UDPv6TransportDescriptor::UDPv6TransportDescriptor():
 UDPv6Transport::~UDPv6Transport()
 {
     mService.stop();
-    ioServiceThread->join();
+    if(ioServiceThread)
+        ioServiceThread->join();
+}
+
+bool UDPv6Transport::init()
+{
+    if(mMaxMessageSize > maximumMessageSize)
+    {
+        logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than 65000");
+        return false;
+    }
+
+    if(mMaxMessageSize > mSendBufferSize)
+    {
+        logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than sendBufferSize");
+        return false;
+    }
+
+    if(mMaxMessageSize > mReceiveBufferSize)
+    {
+        logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than receiveBufferSize");
+        return false;
+    }
+
+    auto ioServiceFunction = [&]()
+    {
+        io_service::work work(mService);
+        mService.run();
+    };
+    ioServiceThread.reset(new boost::thread(ioServiceFunction));
+
+    return true;
 }
 
 bool UDPv6Transport::IsInputChannelOpen(const Locator_t& locator) const

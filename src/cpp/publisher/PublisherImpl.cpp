@@ -115,6 +115,8 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
                 mp_rtpsParticipant->getMaxMessageSize();
             if(high_mark_for_frag_ > mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod)
                 high_mark_for_frag_ = mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod;
+            if(high_mark_for_frag_ > RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE)
+                high_mark_for_frag_ -= RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE;
         }
 
         // If it is big data, fragment it.

@@ -55,8 +55,6 @@ public:
 
 	//!Associated reader proxy
 	ReaderProxy* mp_RP;
-	//!Messages
-	RTPSMessageGroup_t m_cdrmessages;
 };
 }
 }

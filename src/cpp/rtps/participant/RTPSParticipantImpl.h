@@ -403,6 +403,7 @@ class RTPSParticipantImpl
         static const int MutationTries = 5;
         void createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
 
+        bool networkFactoryHasRegisteredTransports() const;
 };
 
 }

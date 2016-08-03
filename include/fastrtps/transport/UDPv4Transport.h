@@ -55,8 +55,12 @@ namespace rtps{
 class UDPv4Transport : public TransportInterface
 {
 public:
+
    RTPS_DllAPI UDPv4Transport(const UDPv4TransportDescriptor&);
+
    ~UDPv4Transport();
+
+   bool init();
 
    //! Checks whether there are open and bound sockets for the given port.
    virtual bool IsInputChannelOpen(const Locator_t&) const;
@@ -123,11 +127,12 @@ public:
 protected:
    //! Constructor with no descriptor is necessary for implementations derived from this class.
    UDPv4Transport();
+   uint32_t mMaxMessageSize;
    uint32_t mSendBufferSize;
    uint32_t mReceiveBufferSize;
    bool mGranularMode;
 
-	boost::asio::io_service mService;
+   boost::asio::io_service mService;
    std::unique_ptr<boost::thread> ioServiceThread;
 
    mutable boost::recursive_mutex mOutputMapMutex;

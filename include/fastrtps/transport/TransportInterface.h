@@ -46,6 +46,8 @@ public:
     */
    virtual ~TransportInterface(){};
 
+   virtual bool init() = 0;
+
    /**
     * Must report whether the output channel associated to this locator is open. Channels must either be 
     * fully closed or fully open, so that "open" and "close" operations are whole and definitive.

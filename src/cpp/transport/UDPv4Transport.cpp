@@ -28,20 +28,14 @@ namespace fastrtps{
 namespace rtps{
 
 static const uint32_t maximumUDPSocketSize = 65536;
-static const uint32_t maximumMessageSize = 65000;
+static const uint32_t maximumMessageSize = 65500;
 
 UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
+    mMaxMessageSize(descriptor.maxMessageSize),
     mSendBufferSize(descriptor.sendBufferSize),
     mReceiveBufferSize(descriptor.receiveBufferSize),
     mGranularMode(descriptor.granularMode)
     {
-        auto ioServiceFunction = [&]()
-        {
-            io_service::work work(mService);
-            mService.run();
-        };
-        ioServiceThread.reset(new boost::thread(ioServiceFunction));
-
         for (const auto& interface : descriptor.interfaceWhiteList)
             mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
     }
@@ -54,22 +48,54 @@ UDPv4TransportDescriptor::UDPv4TransportDescriptor():
     {}
 
 UDPv4Transport::UDPv4Transport() :
+    mMaxMessageSize(maximumMessageSize),
     mSendBufferSize(maximumUDPSocketSize),
     mReceiveBufferSize(maximumUDPSocketSize),
     mGranularMode(false)
+    {
+        auto ioServiceFunction = [&]()
+        {
+            io_service::work work(mService);
+            mService.run();
+        };
+        ioServiceThread.reset(new boost::thread(ioServiceFunction));
+    }
+
+UDPv4Transport::~UDPv4Transport()
 {
+    mService.stop();
+    if(ioServiceThread)
+        ioServiceThread->join();
+}
+
+bool UDPv4Transport::init()
+{
+    if(mMaxMessageSize > maximumMessageSize)
+    {
+        logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than 65000");
+        return false;
+    }
+
+    if(mMaxMessageSize > mSendBufferSize)
+    {
+        logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than sendBufferSize");
+        return false;
+    }
+
+    if(mMaxMessageSize > mReceiveBufferSize)
+    {
+        logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than receiveBufferSize");
+        return false;
+    }
+
     auto ioServiceFunction = [&]()
     {
         io_service::work work(mService);
         mService.run();
     };
     ioServiceThread.reset(new boost::thread(ioServiceFunction));
-}
 
-UDPv4Transport::~UDPv4Transport()
-{
-    mService.stop();
-    ioServiceThread->join();
+    return true;
 }
 
 bool UDPv4Transport::IsInputChannelOpen(const Locator_t& locator) const
@@ -361,22 +387,22 @@ bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
     bool success = false;
 
     auto handler = [&receiveBuffer, &receiveBufferSize, &success, &receiveSemaphore]
-      (const boost::system::error_code& error, std::size_t bytes_transferred)
-    {
-        if(error != boost::system::errc::success)
+        (const boost::system::error_code& error, std::size_t bytes_transferred)
         {
-            logInfo(RTPS_MSG_IN, "Error while listening to socket...");
-            receiveBufferSize = 0;
-        }
-        else 
-        {
-            logInfo(RTPS_MSG_IN,"Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ");
-            receiveBufferSize = static_cast<uint32_t>(bytes_transferred);
-            success = true;
-        }
+            if(error != boost::system::errc::success)
+            {
+                logInfo(RTPS_MSG_IN, "Error while listening to socket...");
+                receiveBufferSize = 0;
+            }
+            else 
+            {
+                logInfo(RTPS_MSG_IN,"Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ");
+                receiveBufferSize = static_cast<uint32_t>(bytes_transferred);
+                success = true;
+            }
 
-        receiveSemaphore.post();
-    };
+            receiveSemaphore.post();
+        };
 
     ip::udp::endpoint senderEndpoint;
 
@@ -411,7 +437,7 @@ bool UDPv4Transport::SendThroughSocket(const octet* sendBuffer,
     logInfo(RTPS_MSG_OUT,"UDPv4: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
             << " FROM " << socket.local_endpoint());
 
-    try 
+    try
     {
         bytesSent = socket.send_to(boost::asio::buffer(sendBuffer, sendBufferSize), destinationEndpoint);
     }
@@ -428,25 +454,25 @@ bool UDPv4Transport::SendThroughSocket(const octet* sendBuffer,
 
 LocatorList_t UDPv4Transport::NormalizeLocator(const Locator_t& locator)
 {
-	LocatorList_t list;
+    LocatorList_t list;
 
-	if (locator.address[12] == 0x0 && locator.address[13] == 0x0 &&
-		locator.address[14] == 0x0 && locator.address[15] == 0x0)
-	{
-		std::vector<IPFinder::info_IP> locNames;
-		GetIP4s(locNames);
-		for (const auto& infoIP : locNames)
-		{
-			Locator_t newloc(locator);
-			newloc.set_IP4_address(infoIP.locator.address[12], infoIP.locator.address[13],
-				infoIP.locator.address[14], infoIP.locator.address[15]);
-			list.push_back(newloc);
-		}
-	}
-	else
-		list.push_back(locator);
+    if (locator.address[12] == 0x0 && locator.address[13] == 0x0 &&
+            locator.address[14] == 0x0 && locator.address[15] == 0x0)
+    {
+        std::vector<IPFinder::info_IP> locNames;
+        GetIP4s(locNames);
+        for (const auto& infoIP : locNames)
+        {
+            Locator_t newloc(locator);
+            newloc.set_IP4_address(infoIP.locator.address[12], infoIP.locator.address[13],
+                    infoIP.locator.address[14], infoIP.locator.address[15]);
+            list.push_back(newloc);
+        }
+    }
+    else
+        list.push_back(locator);
 
-	return list;
+    return list;
 }
 
 } // namespace rtps

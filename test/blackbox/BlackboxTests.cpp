@@ -1092,7 +1092,7 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
     }
 }
 
-BLACKBOXTEST(BlackBox, FragmentFailureIfNotAsync)
+BLACKBOXTEST(BlackBox, FlowControllerIfNotAsync)
 {
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
@@ -1101,8 +1101,50 @@ BLACKBOXTEST(BlackBox, FragmentFailureIfNotAsync)
     writer.add_throughput_controller_descriptor_to_pparams(size, periodInMs).
         memoryMode(MEMORY_MODE_VALUE).init();
     ASSERT_FALSE(writer.isInitialized());
-
 }
+
+BLACKBOXTEST(BlackBox, UDPv4TransportWrongConfig)
+{
+    {
+        PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+        auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
+        testTransport->maxMessageSize = 100000;
+
+        writer.disable_builtin_transport().
+            add_user_transport_to_pparams(testTransport).
+            memoryMode(MEMORY_MODE_VALUE).init();
+
+        ASSERT_FALSE(writer.isInitialized());
+    }
+
+    {
+        PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+        auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
+        testTransport->sendBufferSize = 64000;
+
+        writer.disable_builtin_transport().
+            add_user_transport_to_pparams(testTransport).
+            memoryMode(MEMORY_MODE_VALUE).init();
+
+        ASSERT_FALSE(writer.isInitialized());
+    }
+
+    {
+        PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+        auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
+        testTransport->receiveBufferSize = 64000;
+
+        writer.disable_builtin_transport().
+            add_user_transport_to_pparams(testTransport).
+            memoryMode(MEMORY_MODE_VALUE).init();
+
+        ASSERT_FALSE(writer.isInitialized());
+    }
+}
+
 // Test created to check bug #1568 (Github #34)
 BLACKBOXTEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
 {

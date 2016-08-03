@@ -142,11 +142,17 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
     RTPSParticipant* p = new RTPSParticipant(nullptr);
     RTPSParticipantImpl* pimpl = new RTPSParticipantImpl(PParam,guidP,p,listen);
 
+    // Check there is at least one transport registered.
+    if(!pimpl->networkFactoryHasRegisteredTransports())
+    {
+        logError(RTPS_PARTICIPANT,"Cannot create participant, because there is any transport");
+        delete p;
+        return nullptr;
+    }
+
     m_RTPSParticipants.push_back(t_p_RTPSParticipant(p,pimpl));
     return p;
 }
-
-
 
 bool RTPSDomain::removeRTPSParticipant(RTPSParticipant* p)
 {

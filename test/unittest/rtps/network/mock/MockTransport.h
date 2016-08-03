@@ -25,63 +25,68 @@ namespace rtps{
 
 typedef struct  
 {
-   int maximumChannels;
-   int supportedKind;
+    int maximumChannels;
+    int supportedKind;
 } MockTransportDescriptor;
 
 class MockTransport: public TransportInterface
 {
-public:
-   MockTransport(const MockTransportDescriptor& descriptor);
-   MockTransport();
-  ~MockTransport();
+    public:
 
-   //API implementation
-   virtual bool IsOutputChannelOpen(const Locator_t&) const;
-   virtual bool IsInputChannelOpen(const Locator_t&)  const;
+        MockTransport(const MockTransportDescriptor& descriptor);
 
-   virtual bool OpenOutputChannel(const Locator_t&); 
-   virtual bool OpenInputChannel(const Locator_t&); 
+        MockTransport();
 
-   virtual bool CloseOutputChannel(const Locator_t&);
-   virtual bool CloseInputChannel(const Locator_t&);
+        ~MockTransport();
 
-   virtual Locator_t RemoteToMainLocal(const Locator_t&) const;
+        bool init();
 
-   virtual bool IsLocatorSupported(const Locator_t&)  const;
-   virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const;
+        //API implementation
+        virtual bool IsOutputChannelOpen(const Locator_t&) const;
+        virtual bool IsInputChannelOpen(const Locator_t&)  const;
 
-   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator);
-   virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-                        const Locator_t& localLocator, Locator_t& remoteLocator);
+        virtual bool OpenOutputChannel(const Locator_t&); 
+        virtual bool OpenInputChannel(const Locator_t&); 
 
-   virtual LocatorList_t NormalizeLocator(const Locator_t& locator);
+        virtual bool CloseOutputChannel(const Locator_t&);
+        virtual bool CloseInputChannel(const Locator_t&);
 
-   //Helpers and message record
-   typedef struct
-   {
-      Locator_t destination;
-      Locator_t origin;
-      std::vector<octet> data;
-   } MockMessage;
+        virtual Locator_t RemoteToMainLocal(const Locator_t&) const;
 
-   std::vector<MockMessage> mockMessagesToReceive;
-   std::vector<MockMessage> mockMessagesSent;
+        virtual bool IsLocatorSupported(const Locator_t&)  const;
+        virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const;
 
-   // For the mock, port + direction tuples will have a 1:1 relatonship with channels
-   
-   typedef uint32_t Port;
-   std::vector<Port> mockOpenOutputChannels;
-   std::vector<Port> mockOpenInputChannels;
+        virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator);
+        virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
+                const Locator_t& localLocator, Locator_t& remoteLocator);
 
-   const static int DefaultKind = 1;
-   int mockSupportedKind;
+        virtual LocatorList_t NormalizeLocator(const Locator_t& locator);
 
-   const static int DefaultMaxChannels = 10;
-   int mockMaximumChannels;
+        //Helpers and message record
+        typedef struct
+        {
+            Locator_t destination;
+            Locator_t origin;
+            std::vector<octet> data;
+        } MockMessage;
 
-   //Helper persistent handles
-   static std::vector<MockTransport*> mockTransportInstances;
+        std::vector<MockMessage> mockMessagesToReceive;
+        std::vector<MockMessage> mockMessagesSent;
+
+        // For the mock, port + direction tuples will have a 1:1 relatonship with channels
+
+        typedef uint32_t Port;
+        std::vector<Port> mockOpenOutputChannels;
+        std::vector<Port> mockOpenInputChannels;
+
+        const static int DefaultKind = 1;
+        int mockSupportedKind;
+
+        const static int DefaultMaxChannels = 10;
+        int mockMaximumChannels;
+
+        //Helper persistent handles
+        static std::vector<MockTransport*> mockTransportInstances;
 };
 
 } // namespace rtps

@@ -183,7 +183,10 @@ void RTPSMessageGroup::prepareDataFragSubM(RTPSWriter* W, CDRMessage_t* submsg, 
     CDRMessage::initCDRMsg(submsg);
     bool added= RTPSMessageCreator::addSubmessageDataFrag(submsg, change, fragment_number, W->getAttributes()->topicKind, ReaderId, expectsInlineQos, inlineQos);
     if(!added)
+    {
         logError(RTPS_WRITER,"Problem adding DATA_FRAG submsg to the CDRMessage, buffer too small";);
+        std::cout << "max = " << submsg->max_size << ". change = " << change->getFragmentSize() << std::endl;
+    }
 }
 
 static uint32_t calculate_message_length_from_change(const CacheChangeForGroup_t& change)

@@ -57,7 +57,7 @@ class LogConsumer;
  * macros) for maximum performance.
  * @ingroup COMMON_MODULE
  */
-class Log 
+class Log
 {
 public:
    /**

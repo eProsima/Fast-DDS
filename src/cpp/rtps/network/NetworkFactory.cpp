@@ -25,87 +25,104 @@ namespace rtps{
 
 vector<SenderResource> NetworkFactory::BuildSenderResources(const Locator_t& local)
 {
-   vector<SenderResource> newSenderResources; 
+    vector<SenderResource> newSenderResources;
 
-   for(auto& transport : mRegisteredTransports)
-   {
-      if ( transport->IsLocatorSupported(local) &&
-          !transport->IsOutputChannelOpen(local) )
-      {
-         SenderResource newSenderResource(*transport, local);
-         if (newSenderResource.mValid)
-            newSenderResources.push_back(move(newSenderResource));
-      }
-   }
-   return newSenderResources;
+    for(auto& transport : mRegisteredTransports)
+    {
+        if ( transport->IsLocatorSupported(local) &&
+                !transport->IsOutputChannelOpen(local) )
+        {
+            SenderResource newSenderResource(*transport, local);
+            if (newSenderResource.mValid)
+                newSenderResources.push_back(move(newSenderResource));
+        }
+    }
+    return newSenderResources;
 }
 
 vector<SenderResource> NetworkFactory::BuildSenderResourcesForRemoteLocator(const Locator_t& remote)
 {
-   vector<SenderResource> newSenderResources; 
+    vector<SenderResource> newSenderResources;
 
-   for(auto& transport : mRegisteredTransports)
-   {
-      Locator_t local = transport->RemoteToMainLocal(remote);
-      if ( transport->IsLocatorSupported(local) &&
-          !transport->IsOutputChannelOpen(local) )
-      {
-         SenderResource newSenderResource(*transport, local);
-         if (newSenderResource.mValid)
-            newSenderResources.push_back(move(newSenderResource));
-      }
-   }
-   return newSenderResources;
+    for(auto& transport : mRegisteredTransports)
+    {
+        Locator_t local = transport->RemoteToMainLocal(remote);
+        if ( transport->IsLocatorSupported(local) &&
+                !transport->IsOutputChannelOpen(local) )
+        {
+            SenderResource newSenderResource(*transport, local);
+            if (newSenderResource.mValid)
+                newSenderResources.push_back(move(newSenderResource));
+        }
+    }
+    return newSenderResources;
 }
 
 vector<ReceiverResource> NetworkFactory::BuildReceiverResources(const Locator_t& local)
 {
-   vector<ReceiverResource> newReceiverResources; 
+    vector<ReceiverResource> newReceiverResources;
 
-   for(auto& transport : mRegisteredTransports)
-   {
-      if ( transport->IsLocatorSupported(local) &&
-          !transport->IsInputChannelOpen(local) )
-      {
-         ReceiverResource newReceiverResource(*transport, local);
-         if (newReceiverResource.mValid)
-            newReceiverResources.push_back(move(newReceiverResource));
-      }
-   }
-   return newReceiverResources;
+    for(auto& transport : mRegisteredTransports)
+    {
+        if ( transport->IsLocatorSupported(local) &&
+                !transport->IsInputChannelOpen(local) )
+        {
+            ReceiverResource newReceiverResource(*transport, local);
+            if (newReceiverResource.mValid)
+                newReceiverResources.push_back(move(newReceiverResource));
+        }
+    }
+    return newReceiverResources;
 }
 
 void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descriptor)
 {
-   if (auto concrete = dynamic_cast<const UDPv4TransportDescriptor*> (descriptor))
-      mRegisteredTransports.emplace_back(new UDPv4Transport(*concrete));
-   if (auto concrete = dynamic_cast<const UDPv6TransportDescriptor*> (descriptor))
-      mRegisteredTransports.emplace_back(new UDPv6Transport(*concrete));
-   if (auto concrete = dynamic_cast<const test_UDPv4TransportDescriptor*> (descriptor))
-      mRegisteredTransports.emplace_back(new test_UDPv4Transport(*concrete));
+    if (auto concrete = dynamic_cast<const UDPv4TransportDescriptor*> (descriptor))
+    {
+        std::unique_ptr<UDPv4Transport> transport(new UDPv4Transport(*concrete));
+        if(transport->init())
+            mRegisteredTransports.emplace_back(std::move(transport));
+    }
+    if (auto concrete = dynamic_cast<const UDPv6TransportDescriptor*> (descriptor))
+    {
+        std::unique_ptr<UDPv6Transport> transport(new UDPv6Transport(*concrete));
+        if(transport->init())
+            mRegisteredTransports.emplace_back(std::move(transport));
+    }
+    if (auto concrete = dynamic_cast<const test_UDPv4TransportDescriptor*> (descriptor))
+    {
+        std::unique_ptr<test_UDPv4Transport> transport(new test_UDPv4Transport(*concrete));
+        if(transport->init())
+            mRegisteredTransports.emplace_back(std::move(transport));
+    }
 }
 
 void NetworkFactory::NormalizeLocators(LocatorList_t& locators)
 {
-	LocatorList_t normalizedLocators;
+    LocatorList_t normalizedLocators;
 
-	std::for_each(locators.begin(), locators.end(), [&](Locator_t& loc) {
-		bool normalized = false;
-		for (auto& transport : mRegisteredTransports)
-		{
-			if (transport->IsLocatorSupported(loc))
-			{
-				// First found transport that supports it, this will normalize the locator.
-				normalizedLocators.push_back(transport->NormalizeLocator(loc));
-				normalized = true;
-			}
-		}
+    std::for_each(locators.begin(), locators.end(), [&](Locator_t& loc) {
+            bool normalized = false;
+            for (auto& transport : mRegisteredTransports)
+            {
+            if (transport->IsLocatorSupported(loc))
+            {
+            // First found transport that supports it, this will normalize the locator.
+            normalizedLocators.push_back(transport->NormalizeLocator(loc));
+            normalized = true;
+            }
+            }
 
-		if (!normalized)
-			normalizedLocators.push_back(loc);
-	});
+            if (!normalized)
+            normalizedLocators.push_back(loc);
+            });
 
-	locators.swap(normalizedLocators);
+    locators.swap(normalizedLocators);
+}
+
+size_t NetworkFactory::numberOfRegisteredTransports() const
+{
+    return mRegisteredTransports.size();
 }
 
 } // namespace rtps
