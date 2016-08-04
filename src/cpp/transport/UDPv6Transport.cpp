@@ -31,6 +31,7 @@ static const uint32_t maximumUDPSocketSize = 65536;
 static const uint32_t maximumMessageSize = 65500;
 
 UDPv6Transport::UDPv6Transport(const UDPv6TransportDescriptor& descriptor):
+    mMaxMessageSize(descriptor.maxMessageSize),
     mSendBufferSize(descriptor.sendBufferSize),
     mReceiveBufferSize(descriptor.receiveBufferSize),
     mGranularMode(descriptor.granularMode)
