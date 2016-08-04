@@ -46,8 +46,6 @@ bool HelloWorldPublisher::init()
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	PParam.rtps.builtin.domainId = 80;
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-	PParam.rtps.sendSocketBufferSize = 8712;
-	PParam.rtps.listenSocketBufferSize = 17424;
 	PParam.rtps.setName("Participant_pub");
 	mp_participant = Domain::createParticipant(PParam);
 

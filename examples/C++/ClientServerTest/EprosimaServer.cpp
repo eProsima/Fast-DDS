@@ -72,8 +72,6 @@ bool EprosimaServer::init()
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-	PParam.rtps.sendSocketBufferSize = 8712;
-	PParam.rtps.listenSocketBufferSize = 17424;
 	PParam.rtps.setName("server_RTPSParticipant");
 	mp_participant = Domain::createParticipant(PParam);
 	if(mp_participant == nullptr)
