@@ -63,9 +63,11 @@ UDPv4Transport::UDPv4Transport() :
 
 UDPv4Transport::~UDPv4Transport()
 {
-    mService.stop();
     if(ioServiceThread)
+    {
+        mService.stop();
         ioServiceThread->join();
+    }
 }
 
 bool UDPv4Transport::init()

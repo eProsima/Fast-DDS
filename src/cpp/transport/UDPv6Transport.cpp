@@ -49,9 +49,11 @@ UDPv6TransportDescriptor::UDPv6TransportDescriptor():
 
 UDPv6Transport::~UDPv6Transport()
 {
-    mService.stop();
     if(ioServiceThread)
+    {
+        mService.stop();
         ioServiceThread->join();
+    }
 }
 
 bool UDPv6Transport::init()

@@ -254,10 +254,6 @@ if(BUILD_DOCUMENTATION)
     if(NOT DOXYGEN_FOUND)
         message(FATAL_ERROR "doxygen is needed to build the documentation. Please install it correctly")
     endif()
-    find_package(LATEX)
-    if(NOT LATEX_COMPILER)
-        message(FATAL_ERROR "latex is needed to build the documentation. Please install it correctly")
-    endif()
     if(UNIX)
         find_program(DOXYFILE_MAKE make)
         if(DOXYFILE_MAKE)
@@ -275,11 +271,22 @@ if(BUILD_DOCUMENTATION)
     else()
         message(FATAL_ERROR "libreoffice is needed to build the documentation. Please install it correctly")
     endif()
-    
+    find_program(WGET_EXE wget)
+    if(WGET_EXE)
+        message(STATUS "Found WGet: ${WGET_EXE}")
+    else()
+        message(FATAL_ERROR "wget is needed to build the documentation. Please install it correctly")
+    endif()
+    find_program(UNZIP_EXE unzip)
+    if(UNZIP_EXE)
+        message(STATUS "Found Unzip: ${UNZIP_EXE}")
+    else()
+        message(FATAL_ERROR "unzip is needed to build the documentation. Please install it correctly")
+    endif()
+
     # Target to create documentation directories
     add_custom_target(docdirs
         COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_BINARY_DIR}/doc
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_BINARY_DIR}/doc/pdf
         COMMENT "Creating documentation directory" VERBATIM)
 
     ### Doxygen ########################3
@@ -291,28 +298,10 @@ if(BUILD_DOCUMENTATION)
         COMMAND "${DOXYGEN_EXECUTABLE}" "${PROJECT_BINARY_DIR}/doxyfile"
         SOURCES "${PROJECT_BINARY_DIR}/doxyfile"
         COMMENT "Generating API documentation with doxygen" VERBATIM)
-    # Add custom post_build target to run make and generate latex
-    # documentation.
-    add_custom_command(TARGET doxygen POST_BUILD
-        COMMAND "${DOXYFILE_MAKE}"
-        COMMAND cp refman.pdf "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - C++ API Manual.pdf"
-        WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/doxygen/latex"
-        COMMENT "Running LaTex for doxygen documentation" VERBATIM)
 
     add_dependencies(doxygen docdirs)
 
-    # Instalation of doxygen files
-    install(DIRECTORY ${PROJECT_BINARY_DIR}/doc/html
-        DESTINATION ${DOC_INSTALL_DIR}
-        COMPONENT documentation
-        )
-
-    install(FILES "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - C++ API Manual.pdf"
-        DESTINATION ${DOC_INSTALL_DIR}/pdf
-        COMPONENT documentation
-        )
-
-    ### Libreoffice ########################3
+    ### Libreoffice ########################
 
     if(WIN32)
         set(LIBREOFFICE_CONVERT_README_MACRO "macro:///eProsima.documentation.changeHyperlinksAndVersionToHTML(${PROJECT_SOURCE_DIR}/doc/README.odt,${PROJECT_VERSION},./,/doc/)")
@@ -325,26 +314,30 @@ if(BUILD_DOCUMENTATION)
     endif()
 
     add_custom_target(libreoffice
-        COMMAND "${LIBREOFFICE_EXE}" --headless
-        "macro:///eProsima.documentation.changeVersion(${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.odt,${PROJECT_VERSION})"
-        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.pdf" "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.pdf"
-        COMMAND "${LIBREOFFICE_EXE}" --headless
-        "macro:///eProsima.documentation.changeVersion(${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_UPPER}GEN - User Manual.odt,${PROJECT_VERSION})"
-        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_UPPER}GEN - User Manual.pdf" "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_UPPER}GEN - User Manual.pdf"
         COMMAND "${LIBREOFFICE_EXE}" --headless ${LIBREOFFICE_CONVERT_README_MACRO} 
         COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/README.html" "${README_LOCATION}/README.html"
         DEPENDS
-        "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.odt"
-        "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_UPPER}GEN - User Manual.odt"
         "${PROJECT_SOURCE_DIR}/doc/README.odt"
         COMMENT "Generating documentation with libreoffice" VERBATIM)
 
     add_dependencies(libreoffice docdirs)
 
+    ### ReadTheDocs ########################
+
+    add_custom_target(readthedocs
+        COMMAND "${WGET_EXE}" "https://media.readthedocs.org/htmlzip/eprosima-fast-rtps/latest/eprosima-fast-rtps.zip"
+        COMMAND "${UNZIP_EXE}" "eprosima-fast-rtps.zip" -d "${PROJECT_BINARY_DIR}/doc/"
+        COMMAND ${CMAKE_COMMAND} -E remove_directory "${PROJECT_BINARY_DIR}/doc/manual"
+        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_BINARY_DIR}/doc/eprosima-fast-rtps-latest" "${PROJECT_BINARY_DIR}/doc/manual"
+        COMMAND ${CMAKE_COMMAND} -E remove "eprosima-fast-rtps.zip"
+        )
+
+    add_dependencies(readthedocs docdirs)
+
     add_custom_target(doc ALL
         COMMENT "Generated project documentation" VERBATIM)
 
-    add_dependencies(doc doxygen libreoffice)
+    add_dependencies(doc doxygen libreoffice readthedocs)
 endif()
 
 ###############################################################################
@@ -400,18 +393,21 @@ if(BUILD_JAVA)
 endif()
 
 if(BUILD_DOCUMENTATION)
-    # Instalation of pdf files
-    install(FILES 
-        "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.pdf"
-        "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.pdf"
-        "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_UPPER}GEN - User Manual.pdf"
-        DESTINATION ${DOC_INSTALL_DIR}/pdf
+
+    # Instalation of doxygen files
+    install(DIRECTORY ${PROJECT_BINARY_DIR}/doc/api_reference
+        DESTINATION ${DOC_INSTALL_DIR}
         COMPONENT documentation
         )
 
-    install(FILES 
+    install(FILES
         "${README_LOCATION}/README.html"
         DESTINATION ${README_INSTALL_LOCATION}
+        COMPONENT documentation
+        )
+
+    install(DIRECTORY ${PROJECT_BINARY_DIR}/doc/manual
+        DESTINATION ${DOC_INSTALL_DIR}
         COMPONENT documentation
         )
 
