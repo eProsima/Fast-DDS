@@ -146,7 +146,7 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
     if(!pimpl->networkFactoryHasRegisteredTransports())
     {
         logError(RTPS_PARTICIPANT,"Cannot create participant, because there is any transport");
-        delete p;
+        delete pimpl;
         return nullptr;
     }
 

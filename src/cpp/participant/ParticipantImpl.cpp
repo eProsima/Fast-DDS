@@ -70,7 +70,9 @@ ParticipantImpl::~ParticipantImpl()
     {
         this->removeSubscriber(m_subscribers.begin()->first);
     }
-    RTPSDomain::removeRTPSParticipant(this->mp_rtpsParticipant);
+
+    if(this->mp_rtpsParticipant != nullptr)
+        RTPSDomain::removeRTPSParticipant(this->mp_rtpsParticipant);
 }
 
 
