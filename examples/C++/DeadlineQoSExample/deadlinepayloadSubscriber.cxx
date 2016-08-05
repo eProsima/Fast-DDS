@@ -54,7 +54,8 @@ bool deadlinepayloadSubscriber::init()
 	Rparam.topic.resourceLimitsQos.max_instances=32;
 	Rparam.topic.resourceLimitsQos.max_samples_per_instance=5;
 	Rparam.topic.resourceLimitsQos.max_samples = 32*5;
-	Rparam.topic.historyQos.depth = 5;
+	Rparam.qos.m_reliability.kind= RELIABLE_RELIABILITY_QOS;
+    Rparam.topic.historyQos.depth = 5;
 	mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 	if(mp_subscriber == nullptr)
 		return false;

@@ -38,39 +38,39 @@ LIBS = -lfastcdr -lfastrtps -lboost_system -lboost_thread -lboost_date_time $(SY
 
 DIRECTORIES= output.dir bin.dir
 
-all: $(DIRECTORIES) Filtering
+all: $(DIRECTORIES) ClientServerTest
 
-FILTERINGEXAMPLE_TARGET= bin/Filtering
+CLIENTSERVERTEST_TARGET= bin/ClientServerTest
 
-FILTERINGEXAMPLE_SRC_CXXFILES=
+CLIENTSERVERTEST_SRC_CXXFILES=
 
-FILTERINGEXAMPLE_SRC_CPPFILES= Filtering/FilteringExample.cxx \
-								Filtering/FilteringExamplePubSubTypes.cxx \
-								Filtering/FilteringExamplePublisher.cxx \
-								Filtering/FilteringExampleSubscriber.cxx \
-								Filtering/FilteringExamplePubSubMain.cxx 
+CLIENTSERVERTEST_SRC_CPPFILES= ClientServerTest/EprosimaServer.cpp \
+								ClientServerTest/ClientServerTypes.cpp \
+								ClientServerTest/EprosimaClient.cpp \
+								ClientServerTest/EprosimaClientTest.cpp \
+								ClientServerTest/main_ClientServerTestFastRTPS.cpp 
 
 
 # Project sources are copied to the current directory
-FILTERINGEXAMPLE_SRCS= $(FILTERINGEXAMPLE_SRC_CXXFILES) $(FILTERINGEXAMPLE_SRC_CPPFILES)
+CLIENTSERVERTEST_SRCS= $(CLIENTSERVERTEST_SRC_CXXFILES) $(CLIENTSERVERTEST_SRC_CPPFILES)
 
 # Source directories
-FILTERINGEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(FILTERINGEXAMPLE_SRCS)), $(srcdir))
-FILTERINGEXAMPLE_SOURCES_DIRS= $(shell echo $(FILTERINGEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
+CLIENTSERVERTEST_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(CLIENTSERVERTEST_SRCS)), $(srcdir))
+CLIENTSERVERTEST_SOURCES_DIRS= $(shell echo $(CLIENTSERVERTEST_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
 
-FILTERINGEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(FILTERINGEXAMPLE_SRCS))), output/$(obj))
-FILTERINGEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(FILTERINGEXAMPLE_SRCS))), output/$(dep))
+CLIENTSERVERTEST_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(CLIENTSERVERTEST_SRCS))), output/$(obj))
+CLIENTSERVERTEST_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(CLIENTSERVERTEST_SRCS))), output/$(dep))
 
-OBJS+=  $(FILTERINGEXAMPLE_OBJS)
-DEPS+=  $(FILTERINGEXAMPLE_DEPS)
+OBJS+=  $(CLIENTSERVERTEST_OBJS)
+DEPS+=  $(CLIENTSERVERTEST_DEPS)
 
-Filtering: $(FILTERINGEXAMPLE_TARGET)
+ClientServerTest: $(CLIENTSERVERTEST_TARGET)
 
-$(FILTERINGEXAMPLE_TARGET): $(FILTERINGEXAMPLE_OBJS)
-	$(LN) $(LDFLAGS) -o $(FILTERINGEXAMPLE_TARGET) $(FILTERINGEXAMPLE_OBJS) $(LIBS)
+$(CLIENTSERVERTEST_TARGET): $(CLIENTSERVERTEST_OBJS)
+	$(LN) $(LDFLAGS) -o $(CLIENTSERVERTEST_TARGET) $(CLIENTSERVERTEST_OBJS) $(LIBS)
 
-vpath %.cxx $(FILTERINGEXAMPLE_SOURCES_DIRS)
-vpath %.cpp $(FILTERINGEXAMPLE_SOURCES_DIRS)
+vpath %.cxx $(CLIENTSERVERTEST_SOURCES_DIRS)
+vpath %.cpp $(CLIENTSERVERTEST_SOURCES_DIRS)
 
 output/%.cxx.o:%.cxx
 	@echo Calculating dependencies $<
@@ -84,7 +84,7 @@ output/%.cpp.o:%.cpp
 	@echo Compiling $<
 	@$(CPP) $(CFLAGS) $(INCLUDES) $< -o $@
 
-.PHONY: Filtering
+.PHONY: ClientServerTest
 
 clean:
 	@rm -f $(OBJS)

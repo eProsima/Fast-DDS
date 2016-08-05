@@ -38,39 +38,37 @@ LIBS = -lfastcdr -lfastrtps -lboost_system -lboost_thread -lboost_date_time $(SY
 
 DIRECTORIES= output.dir bin.dir
 
-all: $(DIRECTORIES) Filtering
+all: $(DIRECTORIES) UserDefinedTransportExample
 
-FILTERINGEXAMPLE_TARGET= bin/Filtering
+USERDEFINEDTRANSPORTEXAMPLE_TARGET= bin/UserDefinedTransportExample
 
-FILTERINGEXAMPLE_SRC_CXXFILES=
+USERDEFINEDTRANSPORTEXAMPLE_SRC_CXXFILES=
 
-FILTERINGEXAMPLE_SRC_CPPFILES= Filtering/FilteringExample.cxx \
-								Filtering/FilteringExamplePubSubTypes.cxx \
-								Filtering/FilteringExamplePublisher.cxx \
-								Filtering/FilteringExampleSubscriber.cxx \
-								Filtering/FilteringExamplePubSubMain.cxx 
+USERDEFINEDTRANSPORTEXAMPLE_SRC_CPPFILES= UserDefinedTransportExample/UserDefinedTransportExampleReader.cpp \
+						UserDefinedTransportExample/UserDefinedTransportExampleWriter.cpp \
+						UserDefinedTransportExample/main.cpp 
 
 
 # Project sources are copied to the current directory
-FILTERINGEXAMPLE_SRCS= $(FILTERINGEXAMPLE_SRC_CXXFILES) $(FILTERINGEXAMPLE_SRC_CPPFILES)
+USERDEFINEDTRANSPORTEXAMPLE_SRCS= $(USERDEFINEDTRANSPORTEXAMPLE_SRC_CXXFILES) $(USERDEFINEDTRANSPORTEXAMPLE_SRC_CPPFILES)
 
 # Source directories
-FILTERINGEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(FILTERINGEXAMPLE_SRCS)), $(srcdir))
-FILTERINGEXAMPLE_SOURCES_DIRS= $(shell echo $(FILTERINGEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
+USERDEFINEDTRANSPORTEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(USERDEFINEDTRANSPORTEXAMPLE_SRCS)), $(srcdir))
+USERDEFINEDTRANSPORTEXAMPLE_SOURCES_DIRS= $(shell echo $(USERDEFINEDTRANSPORTEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
 
-FILTERINGEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(FILTERINGEXAMPLE_SRCS))), output/$(obj))
-FILTERINGEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(FILTERINGEXAMPLE_SRCS))), output/$(dep))
+USERDEFINEDTRANSPORTEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(USERDEFINEDTRANSPORTEXAMPLE_SRCS))), output/$(obj))
+USERDEFINEDTRANSPORTEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(USERDEFINEDTRANSPORTEXAMPLE_SRCS))), output/$(dep))
 
-OBJS+=  $(FILTERINGEXAMPLE_OBJS)
-DEPS+=  $(FILTERINGEXAMPLE_DEPS)
+OBJS+=  $(USERDEFINEDTRANSPORTEXAMPLE_OBJS)
+DEPS+=  $(USERDEFINEDTRANSPORTEXAMPLE_DEPS)
 
-Filtering: $(FILTERINGEXAMPLE_TARGET)
+UserDefinedTransportExample: $(USERDEFINEDTRANSPORTEXAMPLE_TARGET)
 
-$(FILTERINGEXAMPLE_TARGET): $(FILTERINGEXAMPLE_OBJS)
-	$(LN) $(LDFLAGS) -o $(FILTERINGEXAMPLE_TARGET) $(FILTERINGEXAMPLE_OBJS) $(LIBS)
+$(USERDEFINEDTRANSPORTEXAMPLE_TARGET): $(USERDEFINEDTRANSPORTEXAMPLE_OBJS)
+	$(LN) $(LDFLAGS) -o $(USERDEFINEDTRANSPORTEXAMPLE_TARGET) $(USERDEFINEDTRANSPORTEXAMPLE_OBJS) $(LIBS)
 
-vpath %.cxx $(FILTERINGEXAMPLE_SOURCES_DIRS)
-vpath %.cpp $(FILTERINGEXAMPLE_SOURCES_DIRS)
+vpath %.cxx $(USERDEFINEDTRANSPORTEXAMPLE_SOURCES_DIRS)
+vpath %.cpp $(USERDEFINEDTRANSPORTEXAMPLE_SOURCES_DIRS)
 
 output/%.cxx.o:%.cxx
 	@echo Calculating dependencies $<
@@ -84,7 +82,7 @@ output/%.cpp.o:%.cpp
 	@echo Compiling $<
 	@$(CPP) $(CFLAGS) $(INCLUDES) $< -o $@
 
-.PHONY: Filtering
+.PHONY: UserDefinedTransportExample
 
 clean:
 	@rm -f $(OBJS)

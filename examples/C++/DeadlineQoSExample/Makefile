@@ -38,39 +38,40 @@ LIBS = -lfastcdr -lfastrtps -lboost_system -lboost_thread -lboost_date_time $(SY
 
 DIRECTORIES= output.dir bin.dir
 
-all: $(DIRECTORIES) Filtering
+all: $(DIRECTORIES) DeadlineQoSExample
 
-FILTERINGEXAMPLE_TARGET= bin/Filtering
+DEADLINEQOSEXAMPLE_TARGET= bin/DeadlineQoSExample
 
-FILTERINGEXAMPLE_SRC_CXXFILES=
+DEADLINEQOSEXAMPLE_SRC_CXXFILES=
 
-FILTERINGEXAMPLE_SRC_CPPFILES= Filtering/FilteringExample.cxx \
-								Filtering/FilteringExamplePubSubTypes.cxx \
-								Filtering/FilteringExamplePublisher.cxx \
-								Filtering/FilteringExampleSubscriber.cxx \
-								Filtering/FilteringExamplePubSubMain.cxx 
+DEADLINEQOSEXAMPLE_SRC_CPPFILES= DeadlineQoSExample/deadlinepayload.cxx \
+								DeadlineQoSExample/deadlinepayloadPubSubTypes.cxx \
+								DeadlineQoSExample/deadlinepayloadPublisher.cxx \
+								DeadlineQoSExample/deadlinepayloadSubscriber.cxx \
+								DeadlineQoSExample/deadlinepayloadPubSubMain.cxx \
+								DeadlineQoSExample/deadlineQoS.cxx 
 
 
 # Project sources are copied to the current directory
-FILTERINGEXAMPLE_SRCS= $(FILTERINGEXAMPLE_SRC_CXXFILES) $(FILTERINGEXAMPLE_SRC_CPPFILES)
+DEADLINEQOSEXAMPLE_SRCS= $(DEADLINEQOSEXAMPLE_SRC_CXXFILES) $(DEADLINEQOSEXAMPLE_SRC_CPPFILES)
 
 # Source directories
-FILTERINGEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(FILTERINGEXAMPLE_SRCS)), $(srcdir))
-FILTERINGEXAMPLE_SOURCES_DIRS= $(shell echo $(FILTERINGEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
+DEADLINEQOSEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(DEADLINEQOSEXAMPLE_SRCS)), $(srcdir))
+DEADLINEQOSEXAMPLE_SOURCES_DIRS= $(shell echo $(DEADLINEQOSEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
 
-FILTERINGEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(FILTERINGEXAMPLE_SRCS))), output/$(obj))
-FILTERINGEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(FILTERINGEXAMPLE_SRCS))), output/$(dep))
+DEADLINEQOSEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(DEADLINEQOSEXAMPLE_SRCS))), output/$(obj))
+DEADLINEQOSEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(DEADLINEQOSEXAMPLE_SRCS))), output/$(dep))
 
-OBJS+=  $(FILTERINGEXAMPLE_OBJS)
-DEPS+=  $(FILTERINGEXAMPLE_DEPS)
+OBJS+=  $(DEADLINEQOSEXAMPLE_OBJS)
+DEPS+=  $(DEADLINEQOSEXAMPLE_DEPS)
 
-Filtering: $(FILTERINGEXAMPLE_TARGET)
+DeadlineQoSExample: $(DEADLINEQOSEXAMPLE_TARGET)
 
-$(FILTERINGEXAMPLE_TARGET): $(FILTERINGEXAMPLE_OBJS)
-	$(LN) $(LDFLAGS) -o $(FILTERINGEXAMPLE_TARGET) $(FILTERINGEXAMPLE_OBJS) $(LIBS)
+$(DEADLINEQOSEXAMPLE_TARGET): $(DEADLINEQOSEXAMPLE_OBJS)
+	$(LN) $(LDFLAGS) -o $(DEADLINEQOSEXAMPLE_TARGET) $(DEADLINEQOSEXAMPLE_OBJS) $(LIBS)
 
-vpath %.cxx $(FILTERINGEXAMPLE_SOURCES_DIRS)
-vpath %.cpp $(FILTERINGEXAMPLE_SOURCES_DIRS)
+vpath %.cxx $(DEADLINEQOSEXAMPLE_SOURCES_DIRS)
+vpath %.cpp $(DEADLINEQOSEXAMPLE_SOURCES_DIRS)
 
 output/%.cxx.o:%.cxx
 	@echo Calculating dependencies $<
@@ -84,7 +85,7 @@ output/%.cpp.o:%.cpp
 	@echo Compiling $<
 	@$(CPP) $(CFLAGS) $(INCLUDES) $< -o $@
 
-.PHONY: Filtering
+.PHONY: DeadlineQoSExample
 
 clean:
 	@rm -f $(OBJS)

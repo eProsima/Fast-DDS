@@ -38,39 +38,37 @@ LIBS = -lfastcdr -lfastrtps -lboost_system -lboost_thread -lboost_date_time $(SY
 
 DIRECTORIES= output.dir bin.dir
 
-all: $(DIRECTORIES) Filtering
+all: $(DIRECTORIES) RTPSTest_registered
 
-FILTERINGEXAMPLE_TARGET= bin/Filtering
+RTPSTESTREGISTERED_TARGET= bin/RTPSTest_registered
 
-FILTERINGEXAMPLE_SRC_CXXFILES=
+RTPSTESTREGISTERED_SRC_CXXFILES=
 
-FILTERINGEXAMPLE_SRC_CPPFILES= Filtering/FilteringExample.cxx \
-								Filtering/FilteringExamplePubSubTypes.cxx \
-								Filtering/FilteringExamplePublisher.cxx \
-								Filtering/FilteringExampleSubscriber.cxx \
-								Filtering/FilteringExamplePubSubMain.cxx 
+RTPSTESTREGISTERED_SRC_CPPFILES= RTPSTest_registered/TestReaderRegistered.cpp \
+								RTPSTest_registered/TestWriterRegistered.cpp \
+								RTPSTest_registered/main_RTPSTest.cpp
 
 
 # Project sources are copied to the current directory
-FILTERINGEXAMPLE_SRCS= $(FILTERINGEXAMPLE_SRC_CXXFILES) $(FILTERINGEXAMPLE_SRC_CPPFILES)
+RTPSTESTREGISTERED_SRCS= $(RTPSTESTREGISTERED_SRC_CXXFILES) $(RTPSTESTREGISTERED_SRC_CPPFILES)
 
 # Source directories
-FILTERINGEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(FILTERINGEXAMPLE_SRCS)), $(srcdir))
-FILTERINGEXAMPLE_SOURCES_DIRS= $(shell echo $(FILTERINGEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
+RTPSTESTREGISTERED_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(RTPSTESTREGISTERED_SRCS)), $(srcdir))
+RTPSTESTREGISTERED_SOURCES_DIRS= $(shell echo $(RTPSTESTREGISTERED_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
 
-FILTERINGEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(FILTERINGEXAMPLE_SRCS))), output/$(obj))
-FILTERINGEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(FILTERINGEXAMPLE_SRCS))), output/$(dep))
+RTPSTESTREGISTERED_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(RTPSTESTREGISTERED_SRCS))), output/$(obj))
+RTPSTESTREGISTERED_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(RTPSTESTREGISTERED_SRCS))), output/$(dep))
 
-OBJS+=  $(FILTERINGEXAMPLE_OBJS)
-DEPS+=  $(FILTERINGEXAMPLE_DEPS)
+OBJS+=  $(RTPSTESTREGISTERED_OBJS)
+DEPS+=  $(RTPSTESTREGISTERED_DEPS)
 
-Filtering: $(FILTERINGEXAMPLE_TARGET)
+RTPSTest_registered: $(RTPSTESTREGISTERED_TARGET)
 
-$(FILTERINGEXAMPLE_TARGET): $(FILTERINGEXAMPLE_OBJS)
-	$(LN) $(LDFLAGS) -o $(FILTERINGEXAMPLE_TARGET) $(FILTERINGEXAMPLE_OBJS) $(LIBS)
+$(RTPSTESTREGISTERED_TARGET): $(RTPSTESTREGISTERED_OBJS)
+	$(LN) $(LDFLAGS) -o $(RTPSTESTREGISTERED_TARGET) $(RTPSTESTREGISTERED_OBJS) $(LIBS)
 
-vpath %.cxx $(FILTERINGEXAMPLE_SOURCES_DIRS)
-vpath %.cpp $(FILTERINGEXAMPLE_SOURCES_DIRS)
+vpath %.cxx $(RTPSTESTREGISTERED_SOURCES_DIRS)
+vpath %.cpp $(RTPSTESTREGISTERED_SOURCES_DIRS)
 
 output/%.cxx.o:%.cxx
 	@echo Calculating dependencies $<
@@ -84,7 +82,7 @@ output/%.cpp.o:%.cpp
 	@echo Compiling $<
 	@$(CPP) $(CFLAGS) $(INCLUDES) $< -o $@
 
-.PHONY: Filtering
+.PHONY: RTPSTest_registered
 
 clean:
 	@rm -f $(OBJS)

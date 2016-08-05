@@ -38,39 +38,39 @@ LIBS = -lfastcdr -lfastrtps -lboost_system -lboost_thread -lboost_date_time $(SY
 
 DIRECTORIES= output.dir bin.dir
 
-all: $(DIRECTORIES) Filtering
+all: $(DIRECTORIES) FlowControlExample
 
-FILTERINGEXAMPLE_TARGET= bin/Filtering
+FLOWCONTROLEXAMPLE_TARGET= bin/FlowControlExample
 
-FILTERINGEXAMPLE_SRC_CXXFILES=
+FLOWCONTROLEXAMPLE_SRC_CXXFILES=
 
-FILTERINGEXAMPLE_SRC_CPPFILES= Filtering/FilteringExample.cxx \
-								Filtering/FilteringExamplePubSubTypes.cxx \
-								Filtering/FilteringExamplePublisher.cxx \
-								Filtering/FilteringExampleSubscriber.cxx \
-								Filtering/FilteringExamplePubSubMain.cxx 
+FLOWCONTROLEXAMPLE_SRC_CPPFILES= FlowControlExample/FlowControlExample.cxx \
+								FlowControlExample/FlowControlExamplePubSubTypes.cxx \
+								FlowControlExample/FlowControlExamplePublisher.cxx \
+								FlowControlExample/FlowControlExampleSubscriber.cxx \
+								FlowControlExample/FlowControlExamplePubSubMain.cxx 
 
 
 # Project sources are copied to the current directory
-FILTERINGEXAMPLE_SRCS= $(FILTERINGEXAMPLE_SRC_CXXFILES) $(FILTERINGEXAMPLE_SRC_CPPFILES)
+FLOWCONTROLEXAMPLE_SRCS= $(FLOWCONTROLEXAMPLE_SRC_CXXFILES) $(FLOWCONTROLEXAMPLE_SRC_CPPFILES)
 
 # Source directories
-FILTERINGEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(FILTERINGEXAMPLE_SRCS)), $(srcdir))
-FILTERINGEXAMPLE_SOURCES_DIRS= $(shell echo $(FILTERINGEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
+FLOWCONTROLEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(FLOWCONTROLEXAMPLE_SRCS)), $(srcdir))
+FLOWCONTROLEXAMPLE_SOURCES_DIRS= $(shell echo $(FLOWCONTROLEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
 
-FILTERINGEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(FILTERINGEXAMPLE_SRCS))), output/$(obj))
-FILTERINGEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(FILTERINGEXAMPLE_SRCS))), output/$(dep))
+FLOWCONTROLEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(FLOWCONTROLEXAMPLE_SRCS))), output/$(obj))
+FLOWCONTROLEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(FLOWCONTROLEXAMPLE_SRCS))), output/$(dep))
 
-OBJS+=  $(FILTERINGEXAMPLE_OBJS)
-DEPS+=  $(FILTERINGEXAMPLE_DEPS)
+OBJS+=  $(FLOWCONTROLEXAMPLE_OBJS)
+DEPS+=  $(FLOWCONTROLEXAMPLE_DEPS)
 
-Filtering: $(FILTERINGEXAMPLE_TARGET)
+FlowControlExample: $(FLOWCONTROLEXAMPLE_TARGET)
 
-$(FILTERINGEXAMPLE_TARGET): $(FILTERINGEXAMPLE_OBJS)
-	$(LN) $(LDFLAGS) -o $(FILTERINGEXAMPLE_TARGET) $(FILTERINGEXAMPLE_OBJS) $(LIBS)
+$(FLOWCONTROLEXAMPLE_TARGET): $(FLOWCONTROLEXAMPLE_OBJS)
+	$(LN) $(LDFLAGS) -o $(FLOWCONTROLEXAMPLE_TARGET) $(FLOWCONTROLEXAMPLE_OBJS) $(LIBS)
 
-vpath %.cxx $(FILTERINGEXAMPLE_SOURCES_DIRS)
-vpath %.cpp $(FILTERINGEXAMPLE_SOURCES_DIRS)
+vpath %.cxx $(FLOWCONTROLEXAMPLE_SOURCES_DIRS)
+vpath %.cpp $(FLOWCONTROLEXAMPLE_SOURCES_DIRS)
 
 output/%.cxx.o:%.cxx
 	@echo Calculating dependencies $<
@@ -84,7 +84,7 @@ output/%.cpp.o:%.cpp
 	@echo Compiling $<
 	@$(CPP) $(CFLAGS) $(INCLUDES) $< -o $@
 
-.PHONY: Filtering
+.PHONY: FlowControlExample
 
 clean:
 	@rm -f $(OBJS)

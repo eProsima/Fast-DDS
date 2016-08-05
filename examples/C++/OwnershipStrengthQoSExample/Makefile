@@ -38,38 +38,39 @@ LIBS = -lfastcdr -lfastrtps -lboost_system -lboost_thread -lboost_date_time $(SY
 
 DIRECTORIES= output.dir bin.dir
 
-all: $(DIRECTORIES) OwnershipStrength
+all: $(DIRECTORIES) OwnershipStrengthQoSExample
 
-OWNERSHIPSTRENGTH_TARGET= bin/OwnershipStrength
+OWNERSHIPSTRENGTHQOSEXAMPLE_TARGET= bin/OwnershipStrengthQoSExample
 
-OWNERSHIPSTRENGTH_SRC_CXXFILES= OwnershipStrength.cxx \
-								OwnershipStrengthPubSubTypes.cxx \
-								OwnershipStrengthPublisher.cxx \
-								OwnershipStrengthSubscriber.cxx \
-								OwnershipStrengthPubSubMain.cxx
+OWNERSHIPSTRENGTHQOSEXAMPLE_SRC_CXXFILES=
 
-OWNERSHIPSTRENGTH_SRC_CPPFILES= 
+OWNERSHIPSTRENGTHQOSEXAMPLE_SRC_CPPFILES= OwnershipStrengthQoSExample/OwnershipStrength.cxx \
+								OwnershipStrengthQoSExample/OwnershipStrengthPubSubTypes.cxx \
+								OwnershipStrengthQoSExample/OwnershipStrengthPublisher.cxx \
+								OwnershipStrengthQoSExample/OwnershipStrengthSubscriber.cxx \
+								OwnershipStrengthQoSExample/OwnershipStrengthPubSubMain.cxx \
+
 
 # Project sources are copied to the current directory
-OWNERSHIPSTRENGTH_SRCS= $(OWNERSHIPSTRENGTH_SRC_CXXFILES) $(OWNERSHIPSTRENGTH_SRC_CPPFILES)
+OWNERSHIPSTRENGTHQOSEXAMPLE_SRCS= $(OWNERSHIPSTRENGTHQOSEXAMPLE_SRC_CXXFILES) $(OWNERSHIPSTRENGTHQOSEXAMPLE_SRC_CPPFILES)
 
 # Source directories
-OWNERSHIPSTRENGTH_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(OWNERSHIPSTRENGTH_SRCS)), $(srcdir))
-OWNERSHIPSTRENGTH_SOURCES_DIRS= $(shell echo $(OWNERSHIPSTRENGTH_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
+OWNERSHIPSTRENGTHQOSEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(OWNERSHIPSTRENGTHQOSEXAMPLE_SRCS)), $(srcdir))
+OWNERSHIPSTRENGTHQOSEXAMPLE_SOURCES_DIRS= $(shell echo $(OWNERSHIPSTRENGTHQOSEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
 
-OWNERSHIPSTRENGTH_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(OWNERSHIPSTRENGTH_SRCS))), output/$(obj))
-OWNERSHIPSTRENGTH_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(OWNERSHIPSTRENGTH_SRCS))), output/$(dep))
+OWNERSHIPSTRENGTHQOSEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(OWNERSHIPSTRENGTHQOSEXAMPLE_SRCS))), output/$(obj))
+OWNERSHIPSTRENGTHQOSEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(OWNERSHIPSTRENGTHQOSEXAMPLE_SRCS))), output/$(dep))
 
-OBJS+=  $(OWNERSHIPSTRENGTH_OBJS)
-DEPS+=  $(OWNERSHIPSTRENGTH_DEPS)
+OBJS+=  $(OWNERSHIPSTRENGTHQOSEXAMPLE_OBJS)
+DEPS+=  $(OWNERSHIPSTRENGTHQOSEXAMPLE_DEPS)
 
-OwnershipStrength: $(OWNERSHIPSTRENGTH_TARGET)
+OwnershipStrengthQoSExample: $(OWNERSHIPSTRENGTHQOSEXAMPLE_TARGET)
 
-$(OWNERSHIPSTRENGTH_TARGET): $(OWNERSHIPSTRENGTH_OBJS)
-	$(LN) $(LDFLAGS) -o $(OWNERSHIPSTRENGTH_TARGET) $(OWNERSHIPSTRENGTH_OBJS) $(LIBS)
+$(OWNERSHIPSTRENGTHQOSEXAMPLE_TARGET): $(OWNERSHIPSTRENGTHQOSEXAMPLE_OBJS)
+	$(LN) $(LDFLAGS) -o $(OWNERSHIPSTRENGTHQOSEXAMPLE_TARGET) $(OWNERSHIPSTRENGTHQOSEXAMPLE_OBJS) $(LIBS)
 
-vpath %.cxx $(OWNERSHIPSTRENGTH_SOURCES_DIRS)
-vpath %.cpp $(OWNERSHIPSTRENGTH_SOURCES_DIRS)
+vpath %.cxx $(OWNERSHIPSTRENGTHQOSEXAMPLE_SOURCES_DIRS)
+vpath %.cpp $(OWNERSHIPSTRENGTHQOSEXAMPLE_SOURCES_DIRS)
 
 output/%.cxx.o:%.cxx
 	@echo Calculating dependencies $<
@@ -83,7 +84,7 @@ output/%.cpp.o:%.cpp
 	@echo Compiling $<
 	@$(CPP) $(CFLAGS) $(INCLUDES) $< -o $@
 
-.PHONY: OwnershipStrength
+.PHONY: OwnershipStrengthQoSExample
 
 clean:
 	@rm -f $(OBJS)
