@@ -52,7 +52,7 @@ bool HelloWorldSubscriber::init()
 	//CREATE THE SUBSCRIBER
 	SubscriberAttributes Rparam;
 	Rparam.topic.topicKind = NO_KEY;
-	Rparam.topic.topicDataType = "HelloWorldType";
+	Rparam.topic.topicDataType = "HelloWorld";
 	Rparam.topic.topicName = "HelloWorldTopic";
 	Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 	Rparam.topic.historyQos.depth = 30;

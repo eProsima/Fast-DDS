@@ -44,8 +44,8 @@ HELLOWORLDEXAMPLE_TARGET= bin/HelloWorldExample
 
 HELLOWORLDEXAMPLE_SRC_CXXFILES=
 
-HELLOWORLDEXAMPLE_SRC_CPPFILES= HelloWorldExample/HelloWorld.cpp \
-								HelloWorldExample/HelloWorldType.cpp \
+HELLOWORLDEXAMPLE_SRC_CPPFILES= HelloWorldExample/HelloWorld.cxx \
+								HelloWorldExample/HelloWorldPubSubTypes.cxx \
 								HelloWorldExample/HelloWorldPublisher.cpp \
 								HelloWorldExample/HelloWorldSubscriber.cpp \
 								HelloWorldExample/HelloWorld_main.cpp 
