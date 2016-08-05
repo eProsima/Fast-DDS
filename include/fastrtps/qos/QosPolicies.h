@@ -462,7 +462,7 @@ public:
 	HistoryQosPolicyKind kind;
 	int32_t depth;
 	HistoryQosPolicy():Parameter_t(PID_HISTORY,PARAMETER_KIND_LENGTH+4),QosPolicy(true),
-			kind(KEEP_LAST_HISTORY_QOS),depth(1000){};
+			kind(KEEP_LAST_HISTORY_QOS),depth(1){};
 	virtual ~HistoryQosPolicy(){};
    /**
     * Appends QoS to the specified CDR message.

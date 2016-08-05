@@ -440,7 +440,8 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsReliableWithRegistration)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).memoryMode(MEMORY_MODE_VALUE).init();
+    writer.asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).
+        memoryMode(MEMORY_MODE_VALUE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -537,11 +538,14 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworld)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-    reader.memoryMode(MEMORY_MODE_VALUE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reader.history_depth(100).
+        memoryMode(MEMORY_MODE_VALUE).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.memoryMode(MEMORY_MODE_VALUE).init();
+    writer.history_depth(100).
+        memoryMode(MEMORY_MODE_VALUE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -571,11 +575,13 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableHelloworld)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-    reader.memoryMode(MEMORY_MODE_VALUE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reader.history_depth(100).
+        memoryMode(MEMORY_MODE_VALUE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.memoryMode(MEMORY_MODE_VALUE).asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+    writer.history_depth(100).
+        memoryMode(MEMORY_MODE_VALUE).asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -657,11 +663,13 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableData64kb)
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
-    reader.memoryMode(MEMORY_MODE_VALUE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reader.history_depth(30).
+        memoryMode(MEMORY_MODE_VALUE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.heartbeat_period_seconds(0).
+    writer.history_depth(30).
+        heartbeat_period_seconds(0).
         heartbeat_period_fraction(4294967 * 500).
         memoryMode(MEMORY_MODE_VALUE).init();
 
@@ -693,7 +701,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
-    reader.memoryMode(MEMORY_MODE_VALUE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reader.history_depth(30).
+        memoryMode(MEMORY_MODE_VALUE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -701,7 +710,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
     uint32_t periodInMs = 500;
     writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
 
-    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+    writer.history_depth(30).
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
         heartbeat_period_fraction(4294967 * 500).
         memoryMode(MEMORY_MODE_VALUE).init();
@@ -734,7 +744,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAn
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
-    reader.memoryMode(MEMORY_MODE_VALUE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reader.history_depth(30).
+        memoryMode(MEMORY_MODE_VALUE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -747,7 +758,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAn
     writer.disable_builtin_transport();
     writer.add_user_transport_to_pparams(testTransport);
 
-    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+    writer.history_depth(30).
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
         heartbeat_period_fraction(4294967 * 500).
         memoryMode(MEMORY_MODE_VALUE).init();
@@ -860,16 +872,18 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kb)
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
-    reader.memoryMode(MEMORY_MODE_VALUE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reader.history_depth(30).
+        memoryMode(MEMORY_MODE_VALUE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-	// When doing fragmentation, it is necessary to have some degree of
-	// flow control not to overrun the receive buffer.
-	uint32_t bytesPerPeriod = 65536;
-	uint32_t periodInMs = 50;
+    // When doing fragmentation, it is necessary to have some degree of
+    // flow control not to overrun the receive buffer.
+    uint32_t bytesPerPeriod = 65536;
+    uint32_t periodInMs = 50;
 
-    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+    writer.history_depth(30).
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
         heartbeat_period_fraction(4294967 * 500).
         add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).
@@ -903,13 +917,15 @@ BLACKBOXTEST(BlackBox, AsyncPubSubWithFlowController64kb)
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> slowWriter(TEST_TOPIC_NAME);
 
-    reader.memoryMode(MEMORY_MODE_VALUE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reader.history_depth(2).
+        memoryMode(MEMORY_MODE_VALUE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(reader.isInitialized());
 
     uint32_t sizeToClear = 75000; //75kb
     uint32_t periodInMs = 1000; //1sec
 
-    slowWriter.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+    slowWriter.history_depth(2).
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
         heartbeat_period_fraction(4294967 * 500).
         add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs).
@@ -934,15 +950,16 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
-    reader.memoryMode(MEMORY_MODE_VALUE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reader.history_depth(30).
+        memoryMode(MEMORY_MODE_VALUE).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-	// When doing fragmentation, it is necessary to have some degree of
-	// flow control not to overrun the receive buffer.
-	uint32_t bytesPerPeriod = 300000;
-	uint32_t periodInMs = 200;
-	writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
+    // When doing fragmentation, it is necessary to have some degree of
+    // flow control not to overrun the receive buffer.
+    uint32_t bytesPerPeriod = 300000;
+    uint32_t periodInMs = 200;
+    writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
 
     // To simulate lossy conditions, we are going to remove the default
     // bultin transport, and instead use a lossy shim layer variant.
@@ -956,7 +973,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
     writer.disable_builtin_transport();
     writer.add_user_transport_to_pparams(testTransport);
 
-    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+    writer.history_depth(30).
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
         heartbeat_period_fraction(4294967 * 500).
         memoryMode(MEMORY_MODE_VALUE).init();
@@ -995,7 +1013,8 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
         PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
         PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
-        reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        reader.history_depth(10).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
             memoryMode(MEMORY_MODE_VALUE).init();
 
         ASSERT_TRUE(reader.isInitialized());
@@ -1013,7 +1032,7 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
         testTransport->granularMode = false;
         writer.disable_builtin_transport();
         writer.add_user_transport_to_pparams(testTransport);
-        writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        writer.history_depth(10).asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
             heartbeat_period_seconds(0).
             heartbeat_period_fraction(4294967 * 500).
             memoryMode(MEMORY_MODE_VALUE).init();
@@ -1045,7 +1064,8 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
         PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
         PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
-        reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        reader.history_depth(10).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
             memoryMode(MEMORY_MODE_VALUE).init();
 
         ASSERT_TRUE(reader.isInitialized());
@@ -1063,7 +1083,8 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
         testTransport->granularMode = false;
         writer.disable_builtin_transport();
         writer.add_user_transport_to_pparams(testTransport);
-        writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        writer.history_depth(10).
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
             heartbeat_period_seconds(0).
             heartbeat_period_fraction(4294967 * 500).
             memoryMode(MEMORY_MODE_VALUE).init();
@@ -1506,10 +1527,12 @@ BLACKBOXTEST(BlackBox, StatefulReaderCacheChangeRelease){
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    reader.history_depth(2).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
         memoryMode(MEMORY_MODE_VALUE).init();
     ASSERT_TRUE(reader.isInitialized());
-    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    writer.history_depth(2).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
         memoryMode(MEMORY_MODE_VALUE).init();
     ASSERT_TRUE(writer.isInitialized());
 
