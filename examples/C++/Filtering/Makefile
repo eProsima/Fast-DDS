@@ -38,17 +38,18 @@ LIBS = -lfastcdr -lfastrtps -lboost_system -lboost_thread -lboost_date_time $(SY
 
 DIRECTORIES= output.dir bin.dir
 
-all: $(DIRECTORIES) FilteringExample
+all: $(DIRECTORIES) Filtering
 
-FILTERINGEXAMPLE_TARGET= bin/FilteringExample
+FILTERINGEXAMPLE_TARGET= bin/Filtering
 
-FILTERINGEXAMPLE_SRC_CXXFILES= FilteringExample.cxx \
-							   	FilteringExamplePublisher.cxx \
-							   	FilteringExamplePubSubMain.cxx \
-							   	FilteringExamplePubSubTypes.cxx \
-							   	FilteringExampleSubscriber.cxx
+FILTERINGEXAMPLE_SRC_CXXFILES=
 
-FILTERINGEXAMPLE_SRC_CPPFILES= 
+FILTERINGEXAMPLE_SRC_CPPFILES= Filtering/FilteringExample.cxx \
+								Filtering/FilteringExamplePubSubTypes.cxx \
+								Filtering/FilteringExamplePublisher.cpp \
+								Filtering/FilteringExampleSubscriber.cpp \
+								Filtering/FilteringExamplePubSubMain.cxx 
+
 
 # Project sources are copied to the current directory
 FILTERINGEXAMPLE_SRCS= $(FILTERINGEXAMPLE_SRC_CXXFILES) $(FILTERINGEXAMPLE_SRC_CPPFILES)
@@ -63,7 +64,7 @@ FILTERINGEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(FILTERINGEXAMPL
 OBJS+=  $(FILTERINGEXAMPLE_OBJS)
 DEPS+=  $(FILTERINGEXAMPLE_DEPS)
 
-FilteringExample: $(FILTERINGEXAMPLE_TARGET)
+Filtering: $(FILTERINGEXAMPLE_TARGET)
 
 $(FILTERINGEXAMPLE_TARGET): $(FILTERINGEXAMPLE_OBJS)
 	$(LN) $(LDFLAGS) -o $(FILTERINGEXAMPLE_TARGET) $(FILTERINGEXAMPLE_OBJS) $(LIBS)
@@ -83,7 +84,7 @@ output/%.cpp.o:%.cpp
 	@echo Compiling $<
 	@$(CPP) $(CFLAGS) $(INCLUDES) $< -o $@
 
-.PHONY: FilteringExample
+.PHONY: Filtering
 
 clean:
 	@rm -f $(OBJS)
