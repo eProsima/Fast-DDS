@@ -38,17 +38,17 @@ LIBS = -lfastcdr -lfastrtps -lboost_system -lboost_thread -lboost_date_time $(SY
 
 DIRECTORIES= output.dir bin.dir
 
-all: $(DIRECTORIES) OwnershipStrengthQosExample
+all: $(DIRECTORIES) OwnershipStrengthQoSExample
 
-OWNERSHIPSTRENGTHQOSEXAMPLE_TARGET= bin/OwnershipStrengthQosExample
+OWNERSHIPSTRENGTHQOSEXAMPLE_TARGET= bin/OwnershipStrengthQoSExample
 
 OWNERSHIPSTRENGTHQOSEXAMPLE_SRC_CXXFILES=
 
-OWNERSHIPSTRENGTHQOSEXAMPLE_SRC_CPPFILES= OwnershipStrengthQosExample/OwnershipStrength.cxx \
-								OwnershipStrengthQosExample/OwnershipStrengthPubSubTypes.cxx \
-								OwnershipStrengthQosExample/OwnershipStrengthPublisher.cpp \
-								OwnershipStrengthQosExample/OwnershipStrengthSubscriber.cpp \
-								OwnershipStrengthQosExample/OwnershipStrengthPubSubMain.cxx \
+OWNERSHIPSTRENGTHQOSEXAMPLE_SRC_CPPFILES= OwnershipStrengthQoSExample/OwnershipStrength.cxx \
+								OwnershipStrengthQoSExample/OwnershipStrengthPubSubTypes.cxx \
+								OwnershipStrengthQoSExample/OwnershipStrengthPublisher.cxx \
+								OwnershipStrengthQoSExample/OwnershipStrengthSubscriber.cxx \
+								OwnershipStrengthQoSExample/OwnershipStrengthPubSubMain.cxx \
 
 
 # Project sources are copied to the current directory
@@ -64,7 +64,7 @@ OWNERSHIPSTRENGTHQOSEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(OWNE
 OBJS+=  $(OWNERSHIPSTRENGTHQOSEXAMPLE_OBJS)
 DEPS+=  $(OWNERSHIPSTRENGTHQOSEXAMPLE_DEPS)
 
-FlowControlExample: $(OWNERSHIPSTRENGTHQOSEXAMPLE_TARGET)
+OwnershipStrengthQoSExample: $(OWNERSHIPSTRENGTHQOSEXAMPLE_TARGET)
 
 $(OWNERSHIPSTRENGTHQOSEXAMPLE_TARGET): $(OWNERSHIPSTRENGTHQOSEXAMPLE_OBJS)
 	$(LN) $(LDFLAGS) -o $(OWNERSHIPSTRENGTHQOSEXAMPLE_TARGET) $(OWNERSHIPSTRENGTHQOSEXAMPLE_OBJS) $(LIBS)
@@ -84,7 +84,7 @@ output/%.cpp.o:%.cpp
 	@echo Compiling $<
 	@$(CPP) $(CFLAGS) $(INCLUDES) $< -o $@
 
-.PHONY: FlowControlExample
+.PHONY: OwnershipStrengthQoSExample
 
 clean:
 	@rm -f $(OBJS)

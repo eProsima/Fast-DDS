@@ -44,8 +44,8 @@ RTPSTESTASSOCKET_TARGET= bin/RTPSTest_as_socket
 
 RTPSTESTASSOCKET_SRC_CXXFILES=
 
-RTPSTESTASSOCKET_SRC_CPPFILES= RTPSTest_as_socket/TestReaderSocket.cxx \
-								RTPSTest_as_socket/TestWriterSocket.cxx \
+RTPSTESTASSOCKET_SRC_CPPFILES= RTPSTest_as_socket/TestReaderSocket.cpp \
+								RTPSTest_as_socket/TestWriterSocket.cpp \
 								RTPSTest_as_socket/main_RTPSTest.cpp
 
 
@@ -62,7 +62,7 @@ RTPSTESTASSOCKET_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(RTPSTESTASSOCKE
 OBJS+=  $(RTPSTESTASSOCKET_OBJS)
 DEPS+=  $(RTPSTESTASSOCKET_DEPS)
 
-FlowControlExample: $(RTPSTESTASSOCKET_TARGET)
+RTPSTest_as_socket: $(RTPSTESTASSOCKET_TARGET)
 
 $(RTPSTESTASSOCKET_TARGET): $(RTPSTESTASSOCKET_OBJS)
 	$(LN) $(LDFLAGS) -o $(RTPSTESTASSOCKET_TARGET) $(RTPSTESTASSOCKET_OBJS) $(LIBS)
@@ -82,7 +82,7 @@ output/%.cpp.o:%.cpp
 	@echo Compiling $<
 	@$(CPP) $(CFLAGS) $(INCLUDES) $< -o $@
 
-.PHONY: FlowControlExample
+.PHONY: RTPSTest_as_socket
 
 clean:
 	@rm -f $(OBJS)

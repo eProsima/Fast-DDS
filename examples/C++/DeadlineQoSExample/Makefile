@@ -38,18 +38,18 @@ LIBS = -lfastcdr -lfastrtps -lboost_system -lboost_thread -lboost_date_time $(SY
 
 DIRECTORIES= output.dir bin.dir
 
-all: $(DIRECTORIES) DeadlineQosExample
+all: $(DIRECTORIES) DeadlineQoSExample
 
-DEADLINEQOSEXAMPLE_TARGET= bin/DeadlineQosExample
+DEADLINEQOSEXAMPLE_TARGET= bin/DeadlineQoSExample
 
 DEADLINEQOSEXAMPLE_SRC_CXXFILES=
 
-DEADLINEQOSEXAMPLE_SRC_CPPFILES= DeadlineQosExample/deadlinepayload.cxx \
-								DeadlineQosExample/deadlinepayloadPubSubTypes.cxx \
-								DeadlineQosExample/deadlinepayloadPublisher.cpp \
-								DeadlineQosExample/deadlinepayloadSubscriber.cpp \
-								DeadlineQosExample/deadlinepayloadPubSubMain.cxx \
-								DeadlineQosExample/deadlineQos.cxx 
+DEADLINEQOSEXAMPLE_SRC_CPPFILES= DeadlineQoSExample/deadlinepayload.cxx \
+								DeadlineQoSExample/deadlinepayloadPubSubTypes.cxx \
+								DeadlineQoSExample/deadlinepayloadPublisher.cxx \
+								DeadlineQoSExample/deadlinepayloadSubscriber.cxx \
+								DeadlineQoSExample/deadlinepayloadPubSubMain.cxx \
+								DeadlineQoSExample/deadlineQoS.cxx 
 
 
 # Project sources are copied to the current directory
@@ -65,7 +65,7 @@ DEADLINEQOSEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(DEADLINEQOSEX
 OBJS+=  $(DEADLINEQOSEXAMPLE_OBJS)
 DEPS+=  $(DEADLINEQOSEXAMPLE_DEPS)
 
-DeadlineQosExample: $(DEADLINEQOSEXAMPLE_TARGET)
+DeadlineQoSExample: $(DEADLINEQOSEXAMPLE_TARGET)
 
 $(DEADLINEQOSEXAMPLE_TARGET): $(DEADLINEQOSEXAMPLE_OBJS)
 	$(LN) $(LDFLAGS) -o $(DEADLINEQOSEXAMPLE_TARGET) $(DEADLINEQOSEXAMPLE_OBJS) $(LIBS)
@@ -85,7 +85,7 @@ output/%.cpp.o:%.cpp
 	@echo Compiling $<
 	@$(CPP) $(CFLAGS) $(INCLUDES) $< -o $@
 
-.PHONY: DeadlineQosExample
+.PHONY: DeadlineQoSExample
 
 clean:
 	@rm -f $(OBJS)

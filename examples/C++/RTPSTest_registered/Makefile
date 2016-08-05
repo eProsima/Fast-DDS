@@ -44,8 +44,8 @@ RTPSTESTREGISTERED_TARGET= bin/RTPSTest_registered
 
 RTPSTESTREGISTERED_SRC_CXXFILES=
 
-RTPSTESTREGISTERED_SRC_CPPFILES= RTPSTest_registered/TestReaderRegistered.cxx \
-								RTPSTest_registered/TestWriterRegistered.cxx \
+RTPSTESTREGISTERED_SRC_CPPFILES= RTPSTest_registered/TestReaderRegistered.cpp \
+								RTPSTest_registered/TestWriterRegistered.cpp \
 								RTPSTest_registered/main_RTPSTest.cpp
 
 
@@ -62,7 +62,7 @@ RTPSTESTREGISTERED_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(RTPSTESTREGIS
 OBJS+=  $(RTPSTESTREGISTERED_OBJS)
 DEPS+=  $(RTPSTESTREGISTERED_DEPS)
 
-FlowControlExample: $(RTPSTESTREGISTERED_TARGET)
+RTPSTest_registered: $(RTPSTESTREGISTERED_TARGET)
 
 $(RTPSTESTREGISTERED_TARGET): $(RTPSTESTREGISTERED_OBJS)
 	$(LN) $(LDFLAGS) -o $(RTPSTESTREGISTERED_TARGET) $(RTPSTESTREGISTERED_OBJS) $(LIBS)
@@ -82,7 +82,7 @@ output/%.cpp.o:%.cpp
 	@echo Compiling $<
 	@$(CPP) $(CFLAGS) $(INCLUDES) $< -o $@
 
-.PHONY: FlowControlExample
+.PHONY: RTPSTest_registered
 
 clean:
 	@rm -f $(OBJS)

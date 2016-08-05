@@ -45,7 +45,7 @@ CLIENTSERVERTEST_TARGET= bin/ClientServerTest
 CLIENTSERVERTEST_SRC_CXXFILES=
 
 CLIENTSERVERTEST_SRC_CPPFILES= ClientServerTest/EprosimaServer.cpp \
-								ClientServerTest/ClientServerTestTypes.cpp \
+								ClientServerTest/ClientServerTypes.cpp \
 								ClientServerTest/EprosimaClient.cpp \
 								ClientServerTest/EprosimaClientTest.cpp \
 								ClientServerTest/main_ClientServerTestFastRTPS.cpp 

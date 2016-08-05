@@ -46,8 +46,8 @@ FLOWCONTROLEXAMPLE_SRC_CXXFILES=
 
 FLOWCONTROLEXAMPLE_SRC_CPPFILES= FlowControlExample/FlowControlExample.cxx \
 								FlowControlExample/FlowControlExamplePubSubTypes.cxx \
-								FlowControlExample/FlowControlExamplePublisher.cpp \
-								FlowControlExample/FlowControlExampleSubscriber.cpp \
+								FlowControlExample/FlowControlExamplePublisher.cxx \
+								FlowControlExample/FlowControlExampleSubscriber.cxx \
 								FlowControlExample/FlowControlExamplePubSubMain.cxx 
 
 

@@ -45,8 +45,8 @@ USERDEFINEDTRANSPORTEXAMPLE_TARGET= bin/UserDefinedTransportExample
 USERDEFINEDTRANSPORTEXAMPLE_SRC_CXXFILES=
 
 USERDEFINEDTRANSPORTEXAMPLE_SRC_CPPFILES= UserDefinedTransportExample/UserDefinedTransportExampleReader.cpp \
-								UserDefinedTransportExample/UserDefinedTransportWriter.cpp \
-								UserDefinedTransportExample/main.cpp 
+						UserDefinedTransportExample/UserDefinedTransportExampleWriter.cpp \
+						UserDefinedTransportExample/main.cpp 
 
 
 # Project sources are copied to the current directory
@@ -62,7 +62,7 @@ USERDEFINEDTRANSPORTEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(USER
 OBJS+=  $(USERDEFINEDTRANSPORTEXAMPLE_OBJS)
 DEPS+=  $(USERDEFINEDTRANSPORTEXAMPLE_DEPS)
 
-Filtering: $(USERDEFINEDTRANSPORTEXAMPLE_TARGET)
+UserDefinedTransportExample: $(USERDEFINEDTRANSPORTEXAMPLE_TARGET)
 
 $(USERDEFINEDTRANSPORTEXAMPLE_TARGET): $(USERDEFINEDTRANSPORTEXAMPLE_OBJS)
 	$(LN) $(LDFLAGS) -o $(USERDEFINEDTRANSPORTEXAMPLE_TARGET) $(USERDEFINEDTRANSPORTEXAMPLE_OBJS) $(LIBS)
@@ -82,7 +82,7 @@ output/%.cpp.o:%.cpp
 	@echo Compiling $<
 	@$(CPP) $(CFLAGS) $(INCLUDES) $< -o $@
 
-.PHONY: Filtering
+.PHONY: UserDefinedTransportExample
 
 clean:
 	@rm -f $(OBJS)
