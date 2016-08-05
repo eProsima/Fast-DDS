@@ -507,7 +507,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    writer.history_depth(100).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         memoryMode(MEMORY_MODE_VALUE).init();
 
@@ -837,7 +838,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
     uint32_t bytesPerPeriod = 65536;
     uint32_t periodInMs = 50;
 
-    writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+    writer.history_depth(30).
+        reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
         heartbeat_period_seconds(0).
         heartbeat_period_fraction(4294967 * 500).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
