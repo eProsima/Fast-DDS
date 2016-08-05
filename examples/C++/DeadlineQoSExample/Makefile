@@ -46,8 +46,8 @@ DEADLINEQOSEXAMPLE_SRC_CXXFILES=
 
 DEADLINEQOSEXAMPLE_SRC_CPPFILES= DeadlineQosExample/deadlinepayload.cxx \
 								DeadlineQosExample/deadlinepayloadPubSubTypes.cxx \
-								DeadlineQosExample/deadlinepayloadPublisher.cpp \
-								DeadlineQosExample/deadlinepayloadSubscriber.cpp \
+								DeadlineQosExample/deadlinepayloadPublisher.cxx \
+								DeadlineQosExample/deadlinepayloadSubscriber.cxx \
 								DeadlineQosExample/deadlinepayloadPubSubMain.cxx \
 								DeadlineQosExample/deadlineQos.cxx 
 

@@ -56,6 +56,7 @@ bool deadlinepayloadPublisher::init()
 	Wparam.topic.resourceLimitsQos.max_samples_per_instance=5;
 	Wparam.topic.resourceLimitsQos.max_samples = 32*5;
 	Wparam.topic.historyQos.depth = 5;
+    Wparam.qos.m_reliability.kind= RELIABLE_RELIABILITY_QOS;
 	mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
 	if(mp_publisher == nullptr)
 		return false;

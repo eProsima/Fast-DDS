@@ -42,11 +42,6 @@ using namespace boost:: asio;
 using namespace eprosima;
 using namespace eprosima::fastrtps;
 
-//typedef struct deadlineQoS_A{
-//	boost::mutex mtx;
-//	bool flag;
-//} deadlineQoS_struct;
-
 class deadlineQoS
 {
 	public:
