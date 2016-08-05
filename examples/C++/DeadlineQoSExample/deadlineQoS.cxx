@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "deadlineQoS.h"
+#include <string>
 
 using namespace boost:: asio;
 using namespace eprosima;
@@ -20,15 +21,6 @@ using namespace eprosima::fastrtps;
 
 void deadlineQoS::callback()
 {
-	//for(int i=0;i<32;i++){
-	//	deadlineQoSlist[i].mtx.lock();
-	//	if(deadlineQoSlist[i].flag == 0){										//Check if flag has been set since last execution
-	//		//Flag inactive -> QoS missed
-	//		std::cout << "Deadline QoS on key index " << i << " missed." << std::endl;	//TODO: Bring is out of the mutex
-	//	}
-	//	deadlineQoSlist[i].flag = 0;											//Always reset flag for the next iteration
-	//	deadlineQoSlist[i].mtx.unlock();
-	//}
 	mapmtx.lock();
 	std::cout << "Map holds " << deadlineQoSmap.size() << " different keys" << std::endl;
 	for(auto it = deadlineQoSmap.begin(); it != deadlineQoSmap.end(); it++){
@@ -36,7 +28,7 @@ void deadlineQoS::callback()
 		if(it->second == false){
 			std::cout << "Deadline QoS on key index ";
 			for(int i=0;i<16;i++){
-				std::cout << (char)it->first.value[i];
+				std::cout << std::to_string( it->first.value[i] );
 			}
 			std::cout << " missed." << std::endl;
 		}
