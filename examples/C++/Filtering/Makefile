@@ -46,8 +46,8 @@ FILTERINGEXAMPLE_SRC_CXXFILES=
 
 FILTERINGEXAMPLE_SRC_CPPFILES= Filtering/FilteringExample.cxx \
 								Filtering/FilteringExamplePubSubTypes.cxx \
-								Filtering/FilteringExamplePublisher.cpp \
-								Filtering/FilteringExampleSubscriber.cpp \
+								Filtering/FilteringExamplePublisher.cxx \
+								Filtering/FilteringExampleSubscriber.cxx \
 								Filtering/FilteringExamplePubSubMain.cxx 
 
 
