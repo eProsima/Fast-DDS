@@ -83,6 +83,14 @@ class RTPSAsSocketReader
             std::ostringstream mw;
             mw << magicword << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
             magicword_ = mw.str();
+
+#if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
+            hattr_.memoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+#elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
+            hattr_.memoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+#else
+            hattr_.memoryPolicy = PREALLOCATED_MEMORY_MODE;
+#endif
         }
 
         virtual ~RTPSAsSocketReader()
@@ -188,13 +196,7 @@ class RTPSAsSocketReader
         }
 
         /*** Function to change QoS ***/
-	RTPSAsSocketReader& memoryMode(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryPolicy)
-	{
-		hattr_.memoryPolicy=memoryPolicy;
-		return *this;
-	}
-
-	RTPSAsSocketReader& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
+        RTPSAsSocketReader& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
         {
             reader_attr_.endpoint.reliabilityKind = kind;
 
@@ -296,8 +298,8 @@ class RTPSAsSocketReader
         eprosima::fastrtps::rtps::ReaderAttributes reader_attr_;
         eprosima::fastrtps::rtps::RTPSReader *reader_;
         eprosima::fastrtps::rtps::ReaderHistory *history_;
-	eprosima::fastrtps::rtps::HistoryAttributes hattr_;
-	bool initialized_;
+        eprosima::fastrtps::rtps::HistoryAttributes hattr_;
+        bool initialized_;
         std::list<type> total_msgs_;
         std::mutex mutex_;
         std::condition_variable cv_;

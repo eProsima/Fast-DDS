@@ -38,23 +38,23 @@ class ReqRepHelloWorldRequester
     public:
 
         class ReplyListener: public SubscriberListener
-        {
-            public:
-                ReplyListener(ReqRepHelloWorldRequester &requester) : requester_(requester) {};
-                ~ReplyListener(){};
-                void onNewDataMessage(Subscriber *sub);
-                void onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& info)
-                {
-                    if (info.status == MATCHED_MATCHING)
-                        requester_.matched();
-                }
+    {
+        public:
+            ReplyListener(ReqRepHelloWorldRequester &requester) : requester_(requester) {};
+            ~ReplyListener(){};
+            void onNewDataMessage(Subscriber *sub);
+            void onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& info)
+            {
+                if (info.status == MATCHED_MATCHING)
+                    requester_.matched();
+            }
 
-            private:
+        private:
 
-                ReplyListener& operator=(const ReplyListener&) NON_COPYABLE_CXX11;
+            ReplyListener& operator=(const ReplyListener&) NON_COPYABLE_CXX11;
 
-                ReqRepHelloWorldRequester &requester_;
-        } reply_listener_;
+            ReqRepHelloWorldRequester &requester_;
+    } reply_listener_;
 
         class RequestListener : public PublisherListener
     {
@@ -89,7 +89,7 @@ class ReqRepHelloWorldRequester
         virtual void configPublisher(const std::string& suffix) = 0;
 
     protected:
-	PublisherAttributes puattr;
+        PublisherAttributes puattr;
         SubscriberAttributes sattr;
     private:
 
@@ -99,7 +99,7 @@ class ReqRepHelloWorldRequester
         uint16_t number_received_;
         Participant *participant_;
         Subscriber *reply_subscriber_;
-	Publisher *request_publisher_;
+        Publisher *request_publisher_;
         bool initialized_;
         std::mutex mutex_;
         std::condition_variable cv_;

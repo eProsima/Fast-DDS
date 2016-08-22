@@ -48,12 +48,6 @@ class ReqRepAsReliableHelloWorldRequester : public ReqRepHelloWorldRequester
 
             puattr.topic.topicName = t.str();
         }
-	ReqRepAsReliableHelloWorldRequester& memoryMode(eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryMode){
-	    sattr.historyMemoryPolicy=memoryMode;
-	    puattr.historyMemoryPolicy=memoryMode;
-	    return *this;
-	}
-
 };
 
 #endif // _TEST_BLACKBOX_REQREPASRELIABLEHELLOWORLDREQUESTER_HPP_

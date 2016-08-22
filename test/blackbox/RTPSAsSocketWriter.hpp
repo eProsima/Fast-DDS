@@ -53,6 +53,14 @@ class RTPSAsSocketWriter
             std::ostringstream mw;
             mw << magicword << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
             magicword_ = mw.str();
+
+#if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
+            hattr_.memoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+#elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
+            hattr_.memoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+#else
+            hattr_.memoryPolicy = PREALLOCATED_MEMORY_MODE;
+#endif
         }
 
         virtual ~RTPSAsSocketWriter()
@@ -115,12 +123,7 @@ class RTPSAsSocketWriter
         }
 
         /*** Function to change QoS ***/
-	RTPSAsSocketWriter& memoryMode(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryPolicy)
-	{
-		hattr_.memoryPolicy=memoryPolicy;
-		return *this;
-	}
-	RTPSAsSocketWriter& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
+        RTPSAsSocketWriter& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
         {
             writer_attr_.endpoint.reliabilityKind = kind;
 
@@ -201,7 +204,7 @@ class RTPSAsSocketWriter
         eprosima::fastrtps::rtps::RTPSWriter *writer_;
         eprosima::fastrtps::rtps::WriterAttributes writer_attr_;
         eprosima::fastrtps::rtps::WriterHistory *history_;
-	eprosima::fastrtps::rtps::HistoryAttributes hattr_;
+        eprosima::fastrtps::rtps::HistoryAttributes hattr_;
         bool initialized_;
         std::string magicword_;
         type_support type_;

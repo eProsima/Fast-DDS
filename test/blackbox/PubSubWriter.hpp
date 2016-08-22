@@ -75,6 +75,14 @@ class PubSubWriter
         std::ostringstream t;
         t << topic_name_ << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
         publisher_attr_.topic.topicName = t.str();
+
+#if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
+            publisher_attr_.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+#elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
+            publisher_attr_.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+#else
+            publisher_attr_.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+#endif
     }
 
     ~PubSubWriter()
@@ -166,13 +174,6 @@ class PubSubWriter
     }
 
     /*** Function to change QoS ***/
-    PubSubWriter& memoryMode(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryMode)
-	{
-	    publisher_attr_.historyMemoryPolicy = memoryMode;
-	    return *this;
-	}
-
-
     PubSubWriter& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
     {
         publisher_attr_.qos.m_reliability.kind = kind;

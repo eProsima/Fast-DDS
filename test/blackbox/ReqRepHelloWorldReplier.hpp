@@ -38,23 +38,23 @@ class ReqRepHelloWorldReplier
     public:
 
         class ReplyListener: public SubscriberListener
-        {
-            public:
-                ReplyListener(ReqRepHelloWorldReplier &replier) : replier_(replier) {};
-                ~ReplyListener(){};
-                void onNewDataMessage(Subscriber *sub);
-                void onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& info)
-                {
-                    if (info.status == MATCHED_MATCHING)
-                        replier_.matched();
-                }
+    {
+        public:
+            ReplyListener(ReqRepHelloWorldReplier &replier) : replier_(replier) {};
+            ~ReplyListener(){};
+            void onNewDataMessage(Subscriber *sub);
+            void onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& info)
+            {
+                if (info.status == MATCHED_MATCHING)
+                    replier_.matched();
+            }
 
-            private:
+        private:
 
-                ReplyListener& operator=(const ReplyListener&) NON_COPYABLE_CXX11;
+            ReplyListener& operator=(const ReplyListener&) NON_COPYABLE_CXX11;
 
-                ReqRepHelloWorldReplier &replier_;
-        } request_listener_;
+            ReqRepHelloWorldReplier &replier_;
+    } request_listener_;
 
         class RequestListener : public PublisherListener
     {
@@ -87,16 +87,16 @@ class ReqRepHelloWorldReplier
         virtual void configPublisher(const std::string& suffix) = 0;
 
     protected:
-	SubscriberAttributes sattr;
-	PublisherAttributes puattr;
+        SubscriberAttributes sattr;
+        PublisherAttributes puattr;
     private:
 
         ReqRepHelloWorldReplier& operator=(const ReqRepHelloWorldReplier&)NON_COPYABLE_CXX11;
 
         Participant *participant_;
         Subscriber *request_subscriber_;
-	Publisher *reply_publisher_;
-	bool initialized_;
+        Publisher *reply_publisher_;
+        bool initialized_;
         std::mutex mutexDiscovery_;
         std::condition_variable cvDiscovery_;
         unsigned int matched_;

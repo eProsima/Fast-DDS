@@ -35,6 +35,16 @@ ReqRepHelloWorldReplier::ReqRepHelloWorldReplier(): request_listener_(*this), re
     participant_(nullptr), request_subscriber_(nullptr), reply_publisher_(nullptr),
     initialized_(false), matched_(0)
 {
+#if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
+            sattr.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+            puattr.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+#elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
+            sattr.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+            puattr.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+#else
+            sattr.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+            puattr.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+#endif
 }
 
 ReqRepHelloWorldReplier::~ReqRepHelloWorldReplier()
@@ -45,27 +55,27 @@ ReqRepHelloWorldReplier::~ReqRepHelloWorldReplier()
 
 void ReqRepHelloWorldReplier::init()
 {
-	ParticipantAttributes pattr;
+    ParticipantAttributes pattr;
     pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
-	participant_ = Domain::createParticipant(pattr);
+    participant_ = Domain::createParticipant(pattr);
     ASSERT_NE(participant_, nullptr);
 
     // Register type
-	ASSERT_EQ(Domain::registerType(participant_,&type_), true);
+    ASSERT_EQ(Domain::registerType(participant_,&type_), true);
 
-	//Create subscriber
-	sattr.topic.topicKind = NO_KEY;
-	sattr.topic.topicDataType = "HelloWorldType";
+    //Create subscriber
+    sattr.topic.topicKind = NO_KEY;
+    sattr.topic.topicDataType = "HelloWorldType";
     configSubscriber("Request");
-	request_subscriber_ = Domain::createSubscriber(participant_, sattr, &request_listener_);
+    request_subscriber_ = Domain::createSubscriber(participant_, sattr, &request_listener_);
     ASSERT_NE(request_subscriber_, nullptr);
 
-	//Create publisher
-	puattr.topic.topicKind = NO_KEY;
-	puattr.topic.topicDataType = "HelloWorldType";
-	puattr.topic.topicName = "HelloWorldTopicReply";
+    //Create publisher
+    puattr.topic.topicKind = NO_KEY;
+    puattr.topic.topicDataType = "HelloWorldType";
+    puattr.topic.topicName = "HelloWorldTopicReply";
     configPublisher("Reply");
-	reply_publisher_ = Domain::createPublisher(participant_, puattr, &reply_listener_);
+    reply_publisher_ = Domain::createPublisher(participant_, puattr, &reply_listener_);
     ASSERT_NE(reply_publisher_, nullptr);
 
     initialized_ = true;
@@ -108,12 +118,12 @@ void ReqRepHelloWorldReplier::ReplyListener::onNewDataMessage(Subscriber *sub)
     HelloWorld hello;
     SampleInfo_t info;
 
-	if(sub->takeNextData((void*)&hello, &info))
-	{
-		if(info.sampleKind == ALIVE)
-		{
+    if(sub->takeNextData((void*)&hello, &info))
+    {
+        if(info.sampleKind == ALIVE)
+        {
             ASSERT_EQ(hello.message().compare("HelloWorld"), 0);
             replier_.newNumber(info.sample_identity, hello.index());
-		}
-	}
+        }
+    }
 }

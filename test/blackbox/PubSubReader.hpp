@@ -37,7 +37,7 @@
 #include <gtest/gtest.h>
 
 template<class TypeSupport>
-class PubSubReader 
+class PubSubReader
 {
     public:
 
@@ -89,6 +89,14 @@ class PubSubReader
             std::ostringstream t;
             t << topic_name_ << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
             subscriber_attr_.topic.topicName = t.str();
+
+#if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
+            subscriber_attr_.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+#elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
+            subscriber_attr_.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+#else
+            subscriber_attr_.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+#endif
         }
 
         ~PubSubReader()
@@ -200,12 +208,7 @@ class PubSubReader
         }
 
         /*** Function to change QoS ***/
-        PubSubReader& memoryMode(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryMode)
-	{
-	    subscriber_attr_.historyMemoryPolicy = memoryMode;
-	    return *this;
-	}
-	PubSubReader& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
+        PubSubReader& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
         {
             subscriber_attr_.qos.m_reliability.kind = kind;
             return *this;
@@ -228,43 +231,43 @@ class PubSubReader
             subscriber_attr_.topic.resourceLimitsQos.max_samples = max;
             return *this;
         }
-	
-	PubSubReader& allocated_samples(const int32_t max)
-	{
-	    subscriber_attr_.topic.resourceLimitsQos.allocated_samples = max;
-	    return *this;
-	}
 
-	PubSubReader& heartbeatPeriod(const int32_t secs, const int32_t frac)
-	{
-	    subscriber_attr_.times.heartbeatResponseDelay.seconds = secs;
-	    subscriber_attr_.times.heartbeatResponseDelay.fraction = frac;
-	    return *this;
-	}
-	
-	PubSubReader& unicastLocatorList(LocatorList_t unicastLocators)
-	{
-	    subscriber_attr_.unicastLocatorList = unicastLocators;
-	    return *this;
-	}
+        PubSubReader& allocated_samples(const int32_t max)
+        {
+            subscriber_attr_.topic.resourceLimitsQos.allocated_samples = max;
+            return *this;
+        }
 
-	PubSubReader& multicastLocatorList(LocatorList_t multicastLocators)
-	{
-	    subscriber_attr_.multicastLocatorList = multicastLocators;
-	    return *this;
-	}
+        PubSubReader& heartbeatPeriod(const int32_t secs, const int32_t frac)
+        {
+            subscriber_attr_.times.heartbeatResponseDelay.seconds = secs;
+            subscriber_attr_.times.heartbeatResponseDelay.fraction = frac;
+            return *this;
+        }
 
-	PubSubReader& outLocatorList(LocatorList_t outLocators)
-	{
-	    subscriber_attr_.outLocatorList = outLocators;
-	    return *this;
-	}
+        PubSubReader& unicastLocatorList(LocatorList_t unicastLocators)
+        {
+            subscriber_attr_.unicastLocatorList = unicastLocators;
+            return *this;
+        }
 
-    PubSubReader& durability_kind(const eprosima::fastrtps::DurabilityQosPolicyKind kind)
-    {
-        subscriber_attr_.qos.m_durability.kind = kind;
-        return *this;
-    }
+        PubSubReader& multicastLocatorList(LocatorList_t multicastLocators)
+        {
+            subscriber_attr_.multicastLocatorList = multicastLocators;
+            return *this;
+        }
+
+        PubSubReader& outLocatorList(LocatorList_t outLocators)
+        {
+            subscriber_attr_.outLocatorList = outLocators;
+            return *this;
+        }
+
+        PubSubReader& durability_kind(const eprosima::fastrtps::DurabilityQosPolicyKind kind)
+        {
+            subscriber_attr_.qos.m_durability.kind = kind;
+            return *this;
+        }
 
     private:
 
