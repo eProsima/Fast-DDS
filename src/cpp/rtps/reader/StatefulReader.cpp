@@ -370,8 +370,10 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
                     ch_to_give = nullptr;
                     if(mp_history->get_change(notifySeqNum, proxGUID, &ch_to_give))
                     {
-                        if(!ch_to_give->isRead)
+                        //TODO(Ricardo) Is need isRead?
+                        if(!ch_to_give->isRead && !ch_to_give->wasNotified)
                         {
+                            ch_to_give->wasNotified = true;
                             lock.unlock();
                             getListener()->onNewCacheChangeAdded((RTPSReader*)this,ch_to_give);
                             lock.lock();
@@ -491,6 +493,7 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
 
                 if(a_change->sequenceNumber == maxSeqNumAvailable)
                 {
+                    a_change->wasNotified = true;
                     lock.unlock();
                     getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
                     lock.lock();
@@ -499,6 +502,7 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
                 {
                     SequenceNumber_t notifySeqNum = a_change->sequenceNumber + 1;
 
+                    a_change->wasNotified = true;
                     lock.unlock();
                     getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
                     lock.lock();
@@ -510,8 +514,9 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
                         ch_to_give = nullptr;
                         if(mp_history->get_change(notifySeqNum, proxGUID, &ch_to_give))
                         {
-                            if(!ch_to_give->isRead)
+                            if(!ch_to_give->isRead && !ch_to_give->wasNotified)
                             {
+                                ch_to_give->wasNotified = true;
                                 lock.unlock();
                                 getListener()->onNewCacheChangeAdded((RTPSReader*)this,ch_to_give);
                                 lock.lock();
