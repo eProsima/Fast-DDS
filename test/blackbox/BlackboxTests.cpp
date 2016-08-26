@@ -929,7 +929,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubWithFlowController64kb)
     reader.startReception();
     slowWriter.send(data);
     data=reader.block(std::chrono::seconds(1));  // In 1 second only one of the messages has time to arrive
-    ASSERT_LE(data.size(),1);
+    ASSERT_LE(data.size(), static_cast<size_t>(1));
 
 }
 
@@ -1041,8 +1041,8 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
         // Block reader until reception finished or timeout.
         data = reader.block(std::chrono::seconds(6));
 
-        ASSERT_GE(data.size(),5);
-        ASSERT_LE(data.size(),9);
+        ASSERT_GE(data.size(), static_cast<size_t>(5));
+        ASSERT_LE(data.size(), static_cast<size_t>(9));
     }
     // ThroghputController size smaller than maxMessageSize.
     {
