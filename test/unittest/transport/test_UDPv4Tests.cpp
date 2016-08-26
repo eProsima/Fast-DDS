@@ -162,22 +162,6 @@ TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
    ASSERT_EQ(0, test_UDPv4Transport::DropLog.size());
 }
 
-TEST_F(test_UDPv4Tests, Send_will_still_fail_on_bad_locators_without_dropping_as_expected)
-{  
-   // Given
-   descriptor.dropDataMessagesPercentage = 100;
-   test_UDPv4Transport transportUnderTest(descriptor);
-   CDRMessage_t testDataMessage;
-   HELPER_FillDataMessage(testDataMessage, SequenceNumber_t());
-   HELPER_WarmUpOutput(transportUnderTest);
-   Locator_t badLocator;
-   badLocator.kind = LOCATOR_KIND_UDPv6; // unsupported
-
-   // Then
-   ASSERT_FALSE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, badLocator, badLocator));
-   ASSERT_EQ(0, test_UDPv4Transport::DropLog.size());
-}
-
 void test_UDPv4Tests::HELPER_SetDescriptorDefaults()
 {
    descriptor.sendBufferSize = 80;
