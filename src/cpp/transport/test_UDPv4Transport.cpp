@@ -59,9 +59,7 @@ RTPS_DllAPI test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor():
 
 bool test_UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
 {
-    if (PacketShouldDrop(sendBuffer, sendBufferSize) &&
-            IsOutputChannelOpen(localLocator) &&
-            sendBufferSize <= mSendBufferSize)
+    if (PacketShouldDrop(sendBuffer, sendBufferSize))
     {
         LogDrop(sendBuffer, sendBufferSize);
         return true;
