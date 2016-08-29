@@ -15,6 +15,9 @@
 #include <fastrtps/rtps/resources/AsyncInterestTree.h>
 #include "../participant/RTPSParticipantImpl.h"
 
+#include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
+
 AsyncInterestTree::AsyncInterestTree():
    mActiveInterest(&mInterestAlpha),
    mHiddenInterest(&mInterestBeta)
@@ -30,6 +33,7 @@ void AsyncInterestTree::RegisterInterest(const RTPSWriter* writer)
 void AsyncInterestTree::RegisterInterest(const RTPSParticipantImpl* participant)
 {
    std::unique_lock<std::mutex> guard(mMutexHidden);
+   boost::lock_guard<boost::recursive_mutex> guard_participant(*participant->getParticipantMutex());
    auto writers = participant->getAllWriters();
 
    for (auto writer : writers)

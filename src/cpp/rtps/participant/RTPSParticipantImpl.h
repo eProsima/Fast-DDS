@@ -192,7 +192,15 @@ class RTPSParticipantImpl
 
         std::vector<std::unique_ptr<FlowController>>& getFlowControllers() { return m_controllers;}
 
-        std::vector<RTPSWriter*> getAllWriters() const;
+        /*!
+         * @remarks Non thread-safe.
+         */ 
+        const std::vector<RTPSWriter*>& getAllWriters() const;
+
+        /*!
+         * @remarks Non thread-safe.
+         */ 
+        const std::vector<RTPSReader*>& getAllReaders() const;
 
         uint32_t getMaxMessageSize() const;
 

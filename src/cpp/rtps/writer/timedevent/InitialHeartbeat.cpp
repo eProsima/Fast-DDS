@@ -63,7 +63,6 @@ void InitialHeartbeat::event(EventCode code, const char* msg)
 	{
 		SequenceNumber_t firstSeq, lastSeq;
 		Count_t heartbeatCount = 0;
-		LocatorList_t locList;
         StatefulWriter* sfw = nullptr;
 
 		{//BEGIN PROTECTION
