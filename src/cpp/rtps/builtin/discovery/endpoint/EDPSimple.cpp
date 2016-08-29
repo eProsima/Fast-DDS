@@ -128,6 +128,8 @@ bool EDPSimple::createSEDPEndpoints()
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.times.nackResponseDelay.seconds = 0;
         watt.times.nackResponseDelay.fraction = 0;
+        watt.times.initialHeartbeatDelay.seconds = 0;
+        watt.times.initialHeartbeatDelay.fraction = 0;
         if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
                 mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
             watt.mode = ASYNCHRONOUS_WRITER;
@@ -155,6 +157,8 @@ bool EDPSimple::createSEDPEndpoints()
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay.seconds = 0;
         ratt.times.heartbeatResponseDelay.fraction = 0;
+        ratt.times.initialAcknackDelay.seconds = 0;
+        ratt.times.initialAcknackDelay.fraction = 0;
         this->mp_subListen = new EDPSimpleSUBListener(this);
         created &=this->mp_RTPSParticipant->createReader(&raux,ratt,mp_SubReader.second,mp_subListen,c_EntityId_SEDPSubReader,true);
         if(created)
@@ -185,6 +189,8 @@ bool EDPSimple::createSEDPEndpoints()
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay.seconds = 0;
         ratt.times.heartbeatResponseDelay.fraction = 0;
+        ratt.times.initialAcknackDelay.seconds = 0;
+        ratt.times.initialAcknackDelay.fraction = 0;
         this->mp_pubListen = new EDPSimplePUBListener(this);
         created &=this->mp_RTPSParticipant->createReader(&raux,ratt,mp_PubReader.second,mp_pubListen,c_EntityId_SEDPPubReader,true);
         if(created)
@@ -212,6 +218,8 @@ bool EDPSimple::createSEDPEndpoints()
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.times.nackResponseDelay.seconds = 0;
         watt.times.nackResponseDelay.fraction = 0;
+        watt.times.initialHeartbeatDelay.seconds = 0;
+        watt.times.initialHeartbeatDelay.fraction = 0;
         if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
                 mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
             watt.mode = ASYNCHRONOUS_WRITER;
