@@ -2,19 +2,21 @@
 - Use Case Demonstrator for eProsima Fast RTPS -
 ------------------------------------------------
 
-This example provides a scenario for users to test the influence different configuration parameters have on the behaviour of eProsima Fast RTPS.
-The application promts the user for his desired parameter combination, executes the scenario and reports back with performance metrics the user can interpret.
-This document provides a description of the sequence of events that make the scenario, the configuration options that can be set by the user and and explanation of how these choices affect the application.
+1 - Application description
+---------------------------
 
-1 - Execution Scenario Description
-----------------------------------
+eProsima Fast RTPS provides users with a wide range of configuration options which can be daunting at first. This example has the objective of providing a testing ground where you can experiment and see the influence different combinations of parameters can have on the behaviours of the Publisher/Subscriber scheme.
 
-The following steps are executed:
+This example consinst of two applications, one to spawn a configurable Publisher and the other a configurable Subscriber. The configuration is selected during program startup, 
 
-1 - A Publisher and a Subscriber are created and matched.
-2 - The Publisher sends 20 pieces of data. The contents of the Subscriber are shown in the screen.
-3 - A second Subscriber is created and matched. The contents of this late-joining Subscriber are shown in the screen.
-4 - The Publisher sends 10 more pieces of data. The contests of both Subscribers are shown in the screen.
+     -With the Publisher, you can choose to send any number of samples at any given moment. Each time you send a batch of samples, they will numbered starting from index '0', so it is easier to view the end of one batch and the start of the next on the Subscriber side.
+     -The subscriber is constantly receiving samples and storing them internally. At any moment you can choose to view the stored samples. 
+     
+     
+You can run any number of Publisher and Subscribers, and use them to send a variable number of sample batches each of different size, reviewing the contents of the Subscriber to observe the effects of your configuration choices on the behaviour of the network.
+
+Due to the current limitations of eProsima Fast RTPS, you can only see each piece of data one time. So each time you print the contents of the Subscriber on the screen you are effectively resetting sample storage.
+
 
 2 - Configuration options
 --------------------------
@@ -53,39 +55,24 @@ Since this application runs the Publisher and Subscriber on the same machine, da
 
     If Keys are selected, the application will use 3 keys. This means, when sending 20 pieces of data it will send 20 pieces of data on each key (totalling 60 samples).
 
+- Depth
 
-For the sake of simplicity and in order to keep execution time of the application  under control, the following parameters are automatically set:
-
-- Depth = 5. 
-    
     The depth is the ammount of past samples that are stored in the history before starting to overwrite. Only takes effect when the History is on "Keep Last" mode.
 
-- Max_Samples = 15.
+- History Size
     
     This accounts for the total number of samples that can be stored in the history, regardless of any other configuration option. 
+
+- Instances
+    
+    Instances are the different data sinks the History is divided and act as receptors of the Keys.
+
+- Instance size
+
+    As it happens with depth, you can define a maximun number of past samples to be stored. If you set one Instance and an instance size more restrictive than the depth, the instance size will be the limiting factor.
 
 3 - Influence of the configuration parameters on the behaviour of the scenario
 ------------------------------------------------------------------------------
 
-The effects of the configuration are split into three blocks based on the three points the application provides feedback in during execution.
-
-If keys are being used, you will notice the effects described below on a "per key" basis. Note that the maximum samples size of the history is the only parameter that affects all keys altogether.
-- Step 2: At this point, 20 pieces of data have been received by the Subscriber.
-
-If communications are set to Best-Effort, it is possible (although unlikely) that some message has become lost during transmission.
-
-If the History was set to keep all, then samples have been stored until the History became full (15 samples) and then older samples started to become overwritten. This means the loss of samples 1 to 5. Now the History holds samples 5 to 20.
-
-- Step 3: A Late-joining subscriber has come online.
-
-If the Durability kind was set to Transient Local, samples from the 1-20 batch are sent to the new Subscriber and the contents will be printed on the screen. Otherwise, it can be seen that this new Subscriber does not hold any data.
-
-
-- Step 4: 10 new pieces of data have been sent and received by both Subscribers.
-
-The first subscriber, regarless of its configuration, will have a full history and will need to have samples overwritten to accomodate the newly received ones. 
-
-The second subscriber may or may not hold samples depending on what happened in step 2. You can see that th
-
-
+    As a user you can execute any nu
 
