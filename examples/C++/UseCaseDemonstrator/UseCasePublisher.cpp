@@ -45,7 +45,7 @@ int main(){
 
     // Step 0 - Prompt user for configuration 
     
-    std::cout << "Welcome to eProsima Fast RTPS Use Case Demonstrator" << std::endl;
+    std::cout << "Welcome to the eProsima Fast RTPS Use Case Publisher" << std::endl;
     std::cout << "---------------------------------------------------" << std::endl;
     std::cout << "Choose your desired reliability type:" << std::endl;
     std::cout << "1 - Best Effort: Messages are sent with no arrival confirmation. If a sample is lost it cannot be recovered" << std::endl;
@@ -145,8 +145,6 @@ int main(){
         }
     }
     std::cout << "---------------------------------------------------" << std::endl;
-    std::cout << "Running the example.." << std::endl;
-    std::cout << "Step 1 - Create a Publisher and a Subscriber" << std::endl;
 
     samplePubSubType sampleType;
 
@@ -193,130 +191,36 @@ int main(){
         return 1;
     }
 
-    ParticipantAttributes PparamSub;
-    PparamSub.rtps.builtin.domainId = 0;
-    PparamSub.rtps.builtin.leaseDuration = c_TimeInfinite;
-    PparamSub.rtps.setName("SubscriberParticipant");
-
-    Participant *SubParticipant = Domain::createParticipant(PparamSub);
-    if(SubParticipant == nullptr){
-        std::cout << " Something went wrong while creating the Subscriber Participant..." << std::endl;
-        return 1;
-    }
-    Domain::registerType(SubParticipant,(TopicDataType*) &sampleType);
-
-    SubscriberAttributes Rparam;
-
-    Rparam.topic.topicDataType = sampleType.getName();
-    Rparam.topic.topicName = "samplePubSubTopic";
-    Rparam.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
-
-    if(user_configuration.keys == With_Key)
-        Rparam.topic.topicKind = WITH_KEY;
-    else
-        Rparam.topic.topicKind = NO_KEY;
-
-    if(user_configuration.historykind == Keep_Last)
-        Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    else
-        Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-
-    if(user_configuration.durability == Transient_Local)
-        Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    else
-        Rparam.qos.m_durability.kind = VOLATILE_DURABILITY_QOS; 
-
-    if(user_configuration.reliability == Reliable)
-        Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    else
-        Rparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-
-    Subscriber *EarlySubscriber = Domain::createSubscriber(SubParticipant, Rparam, nullptr);
-    if(EarlySubscriber == nullptr){
-        std::cout << "Something went wrong while creating the first Subscriber..." << std::endl;
-        return 1;
-    }
-
-    eClock::my_sleep(1000);
-    
-    // Step 2 - Send 20 samples
-    std::cout << "Step 2 - Send 20 samples" << std::endl;
     int no_keys = 1;
     sample my_sample;
     if(user_configuration.keys == With_Key)
         no_keys = 3;
-    for(uint8_t j=0; j < 20; j++){
-        for(uint8_t i=0; i < no_keys; i++){
-            my_sample.index(j+1); 
-            my_sample.key_value(i);
-            myPub->write(&my_sample);
+
+    std::string c;
+    bool condition = true;
+    int no;
+    while(condition){
+        std::cout << "Enter 0~9 to send samples, 'q' to exit" << std::endl;
+        std::cin >> c;
+        if(c == std::string("q")){
+            condition = false;
+        }else{
+            try{
+                no = std::stoi(c);
+            }catch(std::invalid_argument){
+                std::cout << "Please input a valid argument" << std::endl;
+                continue;
+            }
+            for(uint8_t j=0; j < no; j++){
+                for(uint8_t i=0; i < no_keys; i++){
+                    my_sample.index(j+1); 
+                    my_sample.key_value(i);
+                    myPub->write(&my_sample);
+                }
+            }
         }
     }
-    
-    //Safety wait
-    eClock::my_sleep(1000); 
-    
-    // Print the contents of the History of the Subscriber
-    std::cout << "The Subscribers History contains samples: " <<  std::endl;
-    SampleInfo_t m_info;
-    while(EarlySubscriber->readNextData(&my_sample,&m_info)){
-        std::cout << std::to_string(my_sample.index()) << " ";
-    }
-    std::cout << std::endl;
-
-    //Step 3 - Create a Late Joining Subscriber
-    std::cout << "Step 3 - Create a late-joining Subscriber" << std::endl;
-    Subscriber *LateSubscriber = Domain::createSubscriber(SubParticipant, Rparam, nullptr);
-    if(LateSubscriber == nullptr){
-        std::cout << "Something went wrong while creating the second Subscriber..." << std::endl;
-        return 1;
-    }
-    //Safety Wait
-    eClock::my_sleep(1000);
-
-    //Print contents of the new subscriber
-    std::cout << "The Late-joining Subscribers History contains samples: " <<  std::endl;
-
-    while(EarlySubscriber->readNextData(&my_sample,&m_info)){
-        std::cout << std::to_string(my_sample.index()) << " ";
-    }
-    std::cout << std::endl;
-    
-    //Step 4 - Send last 10 samples
-    std::cout << "Step 4 - Send 10 samples" << std::endl;
-    
-    for(uint8_t j=0; j < 10; j++){
-        for(uint8_t i=0; i < no_keys; i++){
-            my_sample.index(j+1); 
-            my_sample.key_value(i);
-            myPub->write(&my_sample);
-        }
-    }
-
-    //Safety wait
-    eClock::my_sleep(1000);
-
-    //Reset read state of the samples of the History?
-
-    //Print contents of both Subscribers
-    std::cout << "The Early-joining Subscribers History contains samples: " <<  std::endl;
-
-    while(EarlySubscriber->readNextData(&my_sample,&m_info)){
-        std::cout << std::to_string(my_sample.index()) << " ";
-    }
-    std::cout << std::endl;
-    
-    std::cout << "The Late-joining Subscribers History contains samples: " <<  std::endl;
-    while(LateSubscriber->readNextData(&my_sample,&m_info)){
-        std::cout << std::to_string(my_sample.index()) << " ";
-    }
-    std::cout << std::endl;
-    
-
-
     
     return 0;
 }
     
-
-
