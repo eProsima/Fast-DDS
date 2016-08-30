@@ -33,9 +33,11 @@ typedef struct{
     Durability_type durability;
     HistoryKind_type historykind;
     Key_type keys;
+    uint16_t history_size;
+    uint8_t depth;
+    uint8_t no_keys;
+    uint16_t max_samples_per_key; 
 } example_configuration;
-
-
 
 int main(){
 
@@ -43,9 +45,8 @@ int main(){
     bool validinput;
     example_configuration user_configuration;
 
-    // Step 0 - Prompt user for configuration 
     
-    std::cout << "Welcome to the eProsima Fast RTPS Use Case Publisher" << std::endl;
+    std::cout << "Welcome to eProsima Fast RTPS Use Case Demonstrator" << std::endl;
     std::cout << "---------------------------------------------------" << std::endl;
     std::cout << "Choose your desired reliability type:" << std::endl;
     std::cout << "1 - Best Effort: Messages are sent with no arrival confirmation. If a sample is lost it cannot be recovered" << std::endl;
@@ -122,6 +123,60 @@ int main(){
         }
     }
     std::cout << "---------------------------------------------------" << std::endl;
+    std::cout << "The 'depth' parameter of the History defines how many past samples are stored before starting to overwrite them with newer ones. This only takes effect in 'Keep Last' mode." << std::endl;
+    std::cout << "Select your desired History depth (enter a number)" << std::endl;
+    validinput =false;
+    while(!validinput){
+        std::cin >> userchoice;
+        int choice;
+        try{
+            choice = std::stoi(userchoice);
+        }catch(std::invalid_argument){
+            std::cout << "Please input a valid argument" << std::endl;
+            continue;
+        }
+        user_configuration.depth = choice;
+        validinput=true;
+    }
+    std::cout << "---------------------------------------------------" << std::endl;
+    std::cout << "You can split your History in 'Instances', which act as separate data sinks that end up mapping to 'Keys' on the Publisher side. If you want to use keys, choose a number bigger than one here." << std::endl;
+    std::cout << "Select your desired maximum number of instances (enter a number)" << std::endl;
+    validinput =false;
+    while(!validinput){
+        std::cin >> userchoice;
+        int choice;
+        try{
+            choice = std::stoi(userchoice);
+        }catch(std::invalid_argument){
+            std::cout << "Please input a valid argument" << std::endl;
+            continue;
+        }
+        if(choice > 0){
+        user_configuration.depth = choice;
+        }else{
+        user_configuration.depth = 1;
+        std::cout << "Defaulting to 1 instance..." << std::endl;
+        }
+        validinput=true;
+    }
+
+    std::cout << "---------------------------------------------------" << std::endl;
+    std::cout << "If using more than one instance in the history, you can define the 'depth' on a 'per instance' level. Otherwise, this parameter does not take effect" << std::endl;
+    std::cout << "Select your desired instance depth (enter a number)" << std::endl;
+    validinput =false;
+    while(!validinput){
+        std::cin >> userchoice;
+        int choice;
+        try{
+            choice = std::stoi(userchoice);
+        }catch(std::invalid_argument){
+            std::cout << "Please input a valid argument" << std::endl;
+            continue;
+        }
+        user_configuration.max_samples_per_key = choice;
+        validinput=true;
+    }
+
     std::cout << "By using Keys you can subdivide your topic so your configuration options are applied individually to each subdivision." << std::endl;
     std::cout << "Do you want to use keys? (1-yes or 2-no):" << std::endl;
     validinput = false;
@@ -145,6 +200,21 @@ int main(){
         }
     }
     std::cout << "---------------------------------------------------" << std::endl;
+    std::cout << "Lastly, you must define a global maximum size of the History. You must choose a size big enough to hold the amount of samples your previous choices indicate." << std::endl;
+    std::cout << "Select your desired history size (enter a number)" << std::endl;
+    validinput =false;
+    while(!validinput){
+        std::cin >> userchoice;
+        int choice;
+        try{
+            choice = std::stoi(userchoice);
+        }catch(std::invalid_argument){
+            std::cout << "Please input a valid argument" << std::endl;
+            continue;
+        }
+        user_configuration.history_size = choice;
+        validinput=true;
+    }
 
     samplePubSubType sampleType;
 
@@ -185,6 +255,12 @@ int main(){
     else
         Pparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 
+    Pparam.topic.historyQos.depth = user_configuration.depth;
+    Pparam.topic.resourceLimitsQos.max_samples = user_configuration.history_size;
+    Pparam.topic.resourceLimitsQos.max_instances = user_configuration.no_keys;
+    Pparam.topic.resourceLimitsQos.max_samples_per_instance = user_configuration.max_samples_per_key;
+
+
     Publisher *myPub= Domain::createPublisher(PubParticipant, Pparam, nullptr);
     if(myPub == nullptr){
         std::cout << "Somthething went wrong while creating the Publisher..." << std::endl;
@@ -200,7 +276,7 @@ int main(){
     bool condition = true;
     int no;
     while(condition){
-        std::cout << "Enter 0~9 to send samples, 'q' to exit" << std::endl;
+        std::cout << "Enter a number to send samples, 'q' to exit" << std::endl;
         std::cin >> c;
         if(c == std::string("q")){
             condition = false;
@@ -218,6 +294,7 @@ int main(){
                     myPub->write(&my_sample);
                 }
             }
+            std::cout << "Sent " << std::to_string(no) << " samples." << std::endl;
         }
     }
     

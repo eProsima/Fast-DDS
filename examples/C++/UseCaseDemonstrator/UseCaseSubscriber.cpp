@@ -33,6 +33,10 @@ typedef struct{
     Durability_type durability;
     HistoryKind_type historykind;
     Key_type keys;
+    uint16_t history_size;
+    uint8_t depth;
+    uint8_t no_keys;
+    uint16_t max_samples_per_key; 
 } example_configuration;
 
 
@@ -121,6 +125,60 @@ int main(){
         }
     }
     std::cout << "---------------------------------------------------" << std::endl;
+    std::cout << "The 'depth' parameter of the History defines how many past samples are stored before starting to overwrite them with newer ones. This only takes effect in 'Keep Last' mode." << std::endl;
+    std::cout << "Select your desired History depth (enter a number)" << std::endl;
+    validinput =false;
+    while(!validinput){
+        std::cin >> userchoice;
+        int choice;
+        try{
+            choice = std::stoi(userchoice);
+        }catch(std::invalid_argument){
+            std::cout << "Please input a valid argument" << std::endl;
+            continue;
+        }
+        user_configuration.depth = choice;
+        validinput=true;
+    }
+    std::cout << "---------------------------------------------------" << std::endl;
+    std::cout << "You can split your History in 'Instances', which act as separate data sinks that end up mapping to 'Keys' on the Publisher side. If you want to use keys, choose a number bigger than one here." << std::endl;
+    std::cout << "Select your desired maximum number of instances (enter a number)" << std::endl;
+    validinput =false;
+    while(!validinput){
+        std::cin >> userchoice;
+        int choice;
+        try{
+            choice = std::stoi(userchoice);
+        }catch(std::invalid_argument){
+            std::cout << "Please input a valid argument" << std::endl;
+            continue;
+        }
+        if(choice > 0){
+        user_configuration.depth = choice;
+        }else{
+        user_configuration.depth = 1;
+        std::cout << "Defaulting to 1 instance..." << std::endl;
+        }
+        validinput=true;
+    }
+
+    std::cout << "---------------------------------------------------" << std::endl;
+    std::cout << "If using more than one instance in the history, you can define the 'depth' on a 'per instance' level. Otherwise, this parameter does not take effect" << std::endl;
+    std::cout << "Select your desired instance depth (enter a number)" << std::endl;
+    validinput =false;
+    while(!validinput){
+        std::cin >> userchoice;
+        int choice;
+        try{
+            choice = std::stoi(userchoice);
+        }catch(std::invalid_argument){
+            std::cout << "Please input a valid argument" << std::endl;
+            continue;
+        }
+        user_configuration.max_samples_per_key = choice;
+        validinput=true;
+    }
+
     std::cout << "By using Keys you can subdivide your topic so your configuration options are applied individually to each subdivision." << std::endl;
     std::cout << "Do you want to use keys? (1-yes or 2-no):" << std::endl;
     validinput = false;
@@ -144,8 +202,21 @@ int main(){
         }
     }
     std::cout << "---------------------------------------------------" << std::endl;
-    std::cout << "Running the example.." << std::endl;
-    std::cout << "Step 1 - Create a Publisher and a Subscriber" << std::endl;
+    std::cout << "Lastly, you must define a global maximum size of the History. You must choose a size big enough to hold the amount of samples your previous choices indicate." << std::endl;
+    std::cout << "Select your desired history size (enter a number)" << std::endl;
+    validinput =false;
+    while(!validinput){
+        std::cin >> userchoice;
+        int choice;
+        try{
+            choice = std::stoi(userchoice);
+        }catch(std::invalid_argument){
+            std::cout << "Please input a valid argument" << std::endl;
+            continue;
+        }
+        user_configuration.history_size = choice;
+        validinput=true;
+    }
 
     samplePubSubType sampleType;
 
@@ -188,17 +259,23 @@ int main(){
     else
         Rparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 
+    Rparam.topic.historyQos.depth = user_configuration.depth;
+    Rparam.topic.resourceLimitsQos.max_samples = user_configuration.history_size;
+    Rparam.topic.resourceLimitsQos.max_instances = user_configuration.no_keys;
+    Rparam.topic.resourceLimitsQos.max_samples_per_instance = user_configuration.max_samples_per_key;
+
     Subscriber *EarlySubscriber = Domain::createSubscriber(SubParticipant, Rparam, nullptr);
     if(EarlySubscriber == nullptr){
         std::cout << "Something went wrong while creating the Subscriber..." << std::endl;
         return 1;
     }
-    std::cout << "Subscriber online, press 'r' to read Messages from the History or 'q' to quit" << std::endl;
+    std::cout << "Subscriber online" << std::endl;
     std::string c;
     bool condition = true;
     sample my_sample;
     SampleInfo_t sample_info;
     while(condition){
+        std::cout << "Press 'r' to read Messages from the History or 'q' to quit" << std::endl;
         std::cin >> c; 
         if( c == std::string("q") ){
             condition = false;
