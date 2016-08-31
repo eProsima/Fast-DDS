@@ -72,15 +72,11 @@ This parameter affects cases of "late-joining" Subscribers: Subscribers that com
 3 - Using the application to verify the configuration 
 -----------------------------------------------------
     
-    One of the main reasons for providing this examples is so that you can verify what happens in particular cases you come up with while designing your application or simply studying eProsima Fast RTPS.
-That being said, we recommend you to try all of the previously mentioned configuration parameters by setting up a Publisher, a Subscriber and then sending several batches of data.
+The main point of this application is to execute the Publisher and Subscriber and analyze the effects of the above mentioned configuration parameters.
 
+You can also try the following suggested experiments to test the reponse of eProsima Fast RTPS on some corner cases not normally considered during application planning:
 
-
-
-You can try the following suggested experiments to test the reponse of eProsima Fast RTPS on some corner cases not normally considered during application behaviour:
-
-- Choose an instance size lower than the actual chosen depth. See how the most restrictive number applies.
+- Choose an instance size lower than the actual chosen depth. See how the most restrictive number always applies.
 - Start a Publisher and a Subscriber with incompatible configuration. See how samples are not received by the Subscriber.
 - Start a Publisher, post data, and then start a Subscriber. Note how only Transient Local allows the Subscriber to receive past samples. Experiment with the depth and History Size parameters to see how they affect the number of past samples the late-joining Subscriber receives.
 - Configure keys to be used and choose Transient Local. Post enough data on each key to go over your chosen depth. Observe how the number of defined instances and their size influence the actual number of stored
