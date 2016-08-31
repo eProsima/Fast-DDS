@@ -270,7 +270,7 @@ int main(){
     int no_keys = 1;
     sample my_sample;
     if(user_configuration.keys == With_Key)
-        no_keys = 3;
+        no_keys = user_configuration.no_keys;
 
     std::string c;
     bool condition = true;

@@ -7,21 +7,17 @@
 
 eProsima Fast RTPS provides users with a wide range of configuration options which can be daunting at first. This example has the objective of providing a testing ground where you can experiment and see the influence different combinations of parameters can have on the behaviours of the Publisher/Subscriber scheme.
 
-This example consinst of two applications, one to spawn a configurable Publisher and the other a configurable Subscriber. The configuration is selected during program startup, 
+This example consist of two applications, one to spawn a configurable Publisher and the other a configurable Subscriber. The configuration is selected during program startup, 
 
-     -With the Publisher, you can choose to send any number of samples at any given moment. Each time you send a batch of samples, they will numbered starting from index '0', so it is easier to view the end of one batch and the start of the next on the Subscriber side.
-     -The subscriber is constantly receiving samples and storing them internally. At any moment you can choose to view the stored samples. 
-     
-     
-You can run any number of Publisher and Subscribers, and use them to send a variable number of sample batches each of different size, reviewing the contents of the Subscriber to observe the effects of your configuration choices on the behaviour of the network.
-
-Due to the current limitations of eProsima Fast RTPS, you can only see each piece of data one time. So each time you print the contents of the Subscriber on the screen you are effectively resetting sample storage.
-
+- With the Publisher, you can choose to send any number of samples at any given moment. Each time you send a batch of samples, they will numbered starting from index '0', so it is easier to view the end of one batch and the start of the next on the Subscriber side.
+- The subscriber passively stores samples. At any moment you can choose to view the stored samples. 
+      
+You can run any number of Publisher and Subscribers and use them to send a variable number of sample batches each of different size, reviewing the contents of the Subscriber to observe the effects of your configuration choices on the behaviour of the network.
 
 2 - Configuration options
 --------------------------
 
-You will be prompted for multiple configuration parameters at application startup:
+You will be prompted for multiple configuration parameters during startup:
 
 - Reliability Kind 
     
@@ -43,8 +39,10 @@ Since this application runs the Publisher and Subscriber on the same machine, da
 
     Defines the storage policy for past samples.
 
-    + Keep Last: The History will save and give aaces to the alst "k" received samples. THis "k" number is called the History Depth and can be manually set too by the user.
+    + Keep Last: The History will save and give access to the alst "k" received samples. This "k" number is called the History Depth and can be manually set too by the user.
     + Keep All: The History will save and give access to all received samples until the maximum samples size of the History is reached.
+
+This parameter affects cases of "late-joining" Subscribers: Subscribers that come online after data transfers on a topic have started.
 
 - Keys
 
@@ -53,11 +51,11 @@ Since this application runs the Publisher and Subscriber on the same machine, da
     + On a topic without keys, all pieces of data go into a single endpoint.
     + On a topic without keys, the key field is used to determine which of the multiple endpoints the data goes into. If, for example, a history is set to transient local with depth=3 (the last three samples are stores) then eProsima FastRTPS will ensure that 3 samples per data endpoint are stored. This means that three samples are stored for each unique key instead of three samples total.
 
-    If Keys are selected, the application will use 3 keys. This means, when sending 20 pieces of data it will send 20 pieces of data on each key (totalling 60 samples).
+    It is important to note that even if you configure a Topic and your History to be able to hold items from multiple keys, this configuration does not take effect unless you explicitly enable Keys.
 
 - Depth
 
-    The depth is the ammount of past samples that are stored in the history before starting to overwrite. Only takes effect when the History is on "Keep Last" mode.
+    The depth is the amount of past samples that are stored in the history before starting to overwrite. Only takes effect when the History is on "Keep Last" mode.
 
 - History Size
     
@@ -71,8 +69,23 @@ Since this application runs the Publisher and Subscriber on the same machine, da
 
     As it happens with depth, you can define a maximun number of past samples to be stored. If you set one Instance and an instance size more restrictive than the depth, the instance size will be the limiting factor.
 
-3 - Influence of the configuration parameters on the behaviour of the scenario
-------------------------------------------------------------------------------
+3 - Using the application to verify the configuration 
+-----------------------------------------------------
+    
+    One of the main reasons for providing this examples is so that you can verify what happens in particular cases you come up with while designing your application or simply studying eProsima Fast RTPS.
+That being said, we recommend you to try all of the previously mentioned configuration parameters by setting up a Publisher, a Subscriber and then sending several batches of data.
 
-    As a user you can execute any nu
 
+
+
+You can try the following suggested experiments to test the reponse of eProsima Fast RTPS on some corner cases not normally considered during application behaviour:
+
+- Choose an instance size lower than the actual chosen depth. See how the most restrictive number applies.
+- Start a Publisher and a Subscriber with incompatible configuration. See how samples are not received by the Subscriber.
+- Start a Publisher, post data, and then start a Subscriber. Note how only Transient Local allows the Subscriber to receive past samples. Experiment with the depth and History Size parameters to see how they affect the number of past samples the late-joining Subscriber receives.
+- Configure keys to be used and choose Transient Local. Post enough data on each key to go over your chosen depth. Observe how the number of defined instances and their size influence the actual number of stored
+
+4 - Limitations
+---------------
+
+Due to the current limitations of eProsima Fast RTPS, samples can be read from the History only once. Unless stored externally by your user application, read samples are lost. This means each time you query the Subscriber for samples you are resetting the status of the History. Future versions of eProsima Fast RTPS are scheduled to provide non-destructive sample acquisition functions.
