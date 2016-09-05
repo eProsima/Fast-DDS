@@ -816,8 +816,8 @@ void triggers(){
     Pparam.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
 
     Pparam.topic.topicKind = NO_KEY;
-    Pparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    Pparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    Pparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+    Pparam.qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
     Pparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Pparam.topic.historyQos.depth =  50;
     Pparam.topic.resourceLimitsQos.max_samples = 100;
@@ -851,8 +851,8 @@ void triggers(){
     Rparam.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
 
     Rparam.topic.topicKind = NO_KEY;
-    Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+    Rparam.qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.topic.historyQos.depth =  50;
     Rparam.topic.resourceLimitsQos.max_samples = 100;
@@ -877,16 +877,10 @@ void triggers(){
     eClock::my_sleep(1500);
 
     //Read the contents of both histories:
-        std::cout << "The Reliable Subscriber holds: " << std::endl;
+        std::cout << "The Subscriber holds: " << std::endl;
     while(mySub1->readNextData(&my_sample, &sample_info)){
         std::cout << std::to_string(my_sample.index()) << " ";
     }
     std::cout << std::endl;
-
-
-
-
-
-
 }
 
