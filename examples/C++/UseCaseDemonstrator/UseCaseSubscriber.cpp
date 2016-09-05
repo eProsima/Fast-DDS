@@ -269,6 +269,7 @@ int main(){
         std::cout << "Something went wrong while creating the Subscriber..." << std::endl;
         return 1;
     }
+
     std::cout << "Subscriber online" << std::endl;
     std::string c;
     bool condition = true;

@@ -69,19 +69,85 @@ This parameter affects cases of "late-joining" Subscribers: Subscribers that com
 
     As it happens with depth, you can define a maximun number of past samples to be stored. If you set one Instance and an instance size more restrictive than the depth, the instance size will be the limiting factor.
 
-3 - Using the application to verify the configuration 
------------------------------------------------------
-    
-The main point of this application is to execute the Publisher and Subscriber and analyze the effects of the above mentioned configuration parameters.
+3. Recommended tests 
+---------------------
 
-You can also try the following suggested experiments to test the reponse of eProsima Fast RTPS on some corner cases not normally considered during application planning:
+The following examples provide sample tests you can perform to see how the influence of configuration parameters affect the behaviour of eProsima Fast RTPS.
 
-- Choose an instance size lower than the actual chosen depth. See how the most restrictive number always applies.
-- Start a Publisher and a Subscriber with incompatible configuration. See how samples are not received by the Subscriber.
-- Start a Publisher, post data, and then start a Subscriber. Note how only Transient Local allows the Subscriber to receive past samples. Experiment with the depth and History Size parameters to see how they affect the number of past samples the late-joining Subscriber receives.
-- Configure keys to be used and choose Transient Local. Post enough data on each key to go over your chosen depth. Observe how the number of defined instances and their size influence the actual number of stored
+- Testing Keep-All, Keep Last and the influence of Depth.
 
-4 - Limitations
+* Select Keep-Last. Choose depth 10. Open a Publisher and write 5 samples. Then write 6 samples. Read the contents of the Subscriber.
+The History will have the 6 samples from the last batch and 4 out of the 5 of the first one. The first sample is lost because it was removed to leave room for new samples.
+* Select Keep-Last. Choose depth 20. Open a Publisher and write 10 samples. Then write another 10 samples. Read the contents of the Subscriber.
+It will hold all 20 samples, because the number of samples written is lower or equal to the depth and not overwrite has happened yet.
+* Repeat the previous tests but select Keep-All. See how the limiting factor now is the total size of the History.
+
+-Testing a late joiner.
+
+A late joiner is a Subscriber that joins a topic after data has been published on it.
+
+* Select Volatile mode. Open a Publisher and post 10 samples. Start a Subscriber. Publish a sample. Read the contents of the Subscriber.
+It will only hold the sample written after its creation.
+* Select Transient Local mode. Open a Subscriber and post 10 samples. Start a Subscriber. Read the contents of the Subscriber.
+It will hold the samples that were written before its creation.
+
+-Testing Keys
+
+*Turn on Keys, choose 3 keys on the Publisher and 3 instances on the Subscriber History. Choose Keep-All. Send 5 samples. Read the contents of the History.
+It will containt 15 samples, 5 per key.
+*Turn on keys, choose 4 keys on the Publisher and 3 instances on the Subscriber History. Choose Keep-All. Send 5 samples. Read the contents of the History.
+It will contain 15 samples belonging to the 3 first unique keys that were received. The fourth key and its data is ignored.
+*You can test other configuration parameters in combination with keys. Run previous test but using keys and see the effects are the same as before but in a per-key manner.
+
+- Testing assymetric configurations
+
+For a Publisher and a Subscriber to be able to talk, it is first necessary that they perform a matching process. For this to happen the configuration of both elements has to be compatible.
+
+Reliability is the most common cause for two elements being unable to match. A Best-Effort mode Publisher cannot communicate with a Reliable Subscriber. If you run A Publisher and a Subscriber with these configurations, you will see that the Subscriber never receives a single sample.
+
+- Combined cases
+
+You can take multiple of the previous cases and combine the test subject configurations into a single execution to see how different parameters interact with each other.
+
+    - Influence of the instance size depth of the Publisher on a Transient Local late-joining Subscriber: The most restrictive depth or instance size always applies, even it is the Publisher one.
+
+4.Application examples
+----------------------
+
+The following list provides examples configurations for real-life scenarios.
+
+- Multimedia feed
+
+
+Audio and Video transmission have a common characteristic: Having a stable, high datarate feed is more important than having a 100% lossless transmission.
+
+	Reliability: Best-Effort. We want to have a fast tranmission. If a sample is lost, it can be recovered via error-correcting algorithms.
+	Durability: Volatile. We do not mind data from the past, we want to stream what is happening in the present.
+	History: Keep-Last with Low Depth. Once displayed or recorded on the receiving application, they are not needed in the History.
+	note: In the case of video, depth can be as low as 1. A missing sample of a 50 frames per second stream represents virtually no information loss. 
+
+- Distributed measurement
+
+Lets say we have a factory with a network of distributed temperature sensors and we want to use eProsima Fast RTPS to send data from said sensors to an automation computer which
+makes decisions based on the temperature distribution. We would group all sensors within one single topic, 
+
+	Reliability: Reliable. We want to make sure samples are not lost. Furthermore, since reliable more ensures data delivery, it allows us to detect hardware problems when a sensor becomes silent
+	Keys: We use a separate key for each sensor. That way new messages from one sensor dont affect the storage of past samples from another sensor.
+	Durability: Transient Local. We dont want to lose samples due a sensor losing connection temporarily.
+	History: Keep-Last with High Depth. We want to have access to past samples in order to be able to compute delta values.
+
+- Event-based transmission
+
+In some cases, you may want to transmit information only under certain circumstances that happen in your system, for example a photo from a surveillance camera when it detects movement.
+In these cases and due to the low  it is important that all datagrams reach their destination
+		
+	Reliability: Reliable. All samples must reach their destination.
+	Durability: Volatile. Since corrective actions are taken as events come, past triggers provide have no use.
+	History: Keep-Last. No past alarm information is necessary for present-time transmissions.
+	Additional Settings: Reduce heartbeat period, which dictates system response velocity when a sample is lost. A lower heartbeat period equals fast response on data delivery.
+
+
+5 - Limitations
 ---------------
 
 Due to the current limitations of eProsima Fast RTPS, samples can be read from the History only once. Unless stored externally by your user application, read samples are lost. This means each time you query the Subscriber for samples you are resetting the status of the History. Future versions of eProsima Fast RTPS are scheduled to provide non-destructive sample acquisition functions.
