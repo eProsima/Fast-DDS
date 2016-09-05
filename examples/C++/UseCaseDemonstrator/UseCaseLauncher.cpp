@@ -73,6 +73,7 @@ int main(){
             continue;
         }
         validinput=true;
+        std::cout << "---------------------------------------------------" << std::endl;
         switch(choice){
             case 1:
                 pastsamples();
@@ -188,7 +189,7 @@ void latejoiners(){
     std::cout << "Creating Transient Local Subscriber..." << std::endl;
     Subscriber *mySub1= Domain::createSubscriber(PubParticipant, Rparam, nullptr);
     if(myPub == nullptr){
-        std::cout << "Somthething went wrong while creating the Transient Local Subscriber..." << std::endl;
+        std::cout << "something went wrong while creating the Transient Local Subscriber..." << std::endl;
         return;
     }
 
@@ -210,7 +211,7 @@ void latejoiners(){
     std::cout << "Creating Volatile Subscriber..." << std::endl;
     Subscriber *mySub2= Domain::createSubscriber(PubParticipant, Rparam2, nullptr);
     if(myPub == nullptr){
-        std::cout << "Somthething went wrong while creating the Volatile Subscriber..." << std::endl;
+        std::cout << "something went wrong while creating the Volatile Subscriber..." << std::endl;
         return;
     }
     
@@ -309,7 +310,7 @@ void pastsamples(){
     std::cout << "Creating Keep All Subscriber..." << std::endl;
     Subscriber *mySub1= Domain::createSubscriber(PubParticipant, Rparam, nullptr);
     if(myPub == nullptr){
-        std::cout << "Somthething went wrong while creating the Transient Local Subscriber..." << std::endl;
+        std::cout << "something went wrong while creating the Transient Local Subscriber..." << std::endl;
         return;
     }
 
@@ -331,7 +332,7 @@ void pastsamples(){
     std::cout << "Creating Keep Last Subscriber with depth 10..." << std::endl;
     Subscriber *mySub2= Domain::createSubscriber(PubParticipant, Rparam2, nullptr);
     if(myPub == nullptr){
-        std::cout << "Somthething went wrong while creating the Volatile Subscriber..." << std::endl;
+        std::cout << "something went wrong while creating the Volatile Subscriber..." << std::endl;
         return;
     }
     
@@ -474,6 +475,125 @@ void keys(){
 
 }
 void incompatible(){
+    
+    samplePubSubType sampleType;
+    sample my_sample;
+    SampleInfo_t sample_info;
+
+    ParticipantAttributes PparamPub;
+    PparamPub.rtps.builtin.domainId = 0;
+    PparamPub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamPub.rtps.setName("PublisherParticipant");
+
+    Participant *PubParticipant = Domain::createParticipant(PparamPub);
+    if(PubParticipant == nullptr){
+        std::cout << " Something went wrong while creating the Publisher Participant..." << std::endl;
+        return; 
+    }
+    Domain::registerType(PubParticipant,(TopicDataType*) &sampleType);
+
+    
+    //Publisher config
+    PublisherAttributes Pparam;
+    Pparam.topic.topicDataType = sampleType.getName();
+    Pparam.topic.topicName = "samplePubSubTopic";
+    Pparam.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+
+    Pparam.topic.topicKind = NO_KEY;
+    Pparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    Pparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    Pparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+    Pparam.topic.historyQos.depth =  50;
+    Pparam.topic.resourceLimitsQos.max_samples = 100;
+    Pparam.topic.resourceLimitsQos.max_instances = 1;
+    Pparam.topic.resourceLimitsQos.max_samples_per_instance = 100;
+
+    std::cout << "Creating Best-Effort Publisher..." << std::endl; 
+    Publisher *myPub= Domain::createPublisher(PubParticipant, Pparam, nullptr);
+    if(myPub == nullptr){
+        std::cout << "Something went wrong while creating the Publisher..." << std::endl;
+        return;
+    }
+  
+
+    ParticipantAttributes PparamSub;
+    PparamSub.rtps.builtin.domainId = 0;
+    PparamSub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamSub.rtps.setName("SubscriberParticipant");
+
+    Participant *SubParticipant = Domain::createParticipant(PparamSub);
+    if(SubParticipant == nullptr){
+        std::cout << " Something went wrong while creating the Subscriber Participant..." << std::endl;
+        return;
+    }
+    Domain::registerType(SubParticipant,(TopicDataType*) &sampleType);
+
+    //Reliable Sub
+    SubscriberAttributes Rparam;
+    Rparam.topic.topicDataType = sampleType.getName();
+    Rparam.topic.topicName = "samplePubSubTopic";
+    Rparam.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+
+    Rparam.topic.topicKind = NO_KEY;
+    Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    Rparam.qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+    Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    Rparam.topic.historyQos.depth =  50;
+    Rparam.topic.resourceLimitsQos.max_samples = 100;
+    Rparam.topic.resourceLimitsQos.max_instances = 1;
+    Rparam.topic.resourceLimitsQos.max_samples_per_instance = 100;
+
+    std::cout << "Creating Reliable Subscriber..." << std::endl;
+    Subscriber *mySub1= Domain::createSubscriber(PubParticipant, Rparam, nullptr);
+    if(myPub == nullptr){
+        std::cout << "something went wrong while creating the Reliable Subscriber..." << std::endl;
+        return;
+    }
+
+    //Best Effort Sub
+    SubscriberAttributes Rparam2;
+    Rparam2.topic.topicDataType = sampleType.getName();
+    Rparam2.topic.topicName = "samplePubSubTopic";
+    Rparam2.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+
+    Rparam2.topic.topicKind = NO_KEY;
+    Rparam2.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+    Rparam2.qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+    Rparam2.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+    Rparam2.topic.historyQos.depth =  10;
+    Rparam2.topic.resourceLimitsQos.max_samples = 100;
+    Rparam2.topic.resourceLimitsQos.max_instances = 1;
+    Rparam2.topic.resourceLimitsQos.max_samples_per_instance = 100;
+
+    std::cout << "Creating Best Effort Subscriber with depth 10..." << std::endl;
+    Subscriber *mySub2= Domain::createSubscriber(PubParticipant, Rparam2, nullptr);
+    if(myPub == nullptr){
+        std::cout << "Something went wrong while creating the Best Effort Subscriber..." << std::endl;
+        return;
+    }
+    
+    //Send 20 samples
+    std::cout << "Publishing 10 samples on the topic..." << std::endl;
+    for(uint8_t j=0; j < 10; j++){
+        my_sample.index(j+1); 
+        my_sample.key_value(1);
+        myPub->write(&my_sample);
+    }
+
+    eClock::my_sleep(1500);
+
+    //Read the contents of both histories:
+        std::cout << "The Reliable Subscriber holds: " << std::endl;
+    while(mySub1->readNextData(&my_sample, &sample_info)){
+        std::cout << std::to_string(my_sample.index()) << " ";
+    }
+    std::cout << std::endl;
+    std::cout << "TheBest Effort Subscriber holds: " << std::endl;
+    while(mySub2->readNextData(&my_sample, &sample_info)){
+        std::cout << std::to_string(my_sample.index()) << " ";
+    }
+    std::cout << std::endl;
+
 
 
 
