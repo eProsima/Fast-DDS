@@ -48,3 +48,10 @@ target_link_libraries(UseCaseSubscriber fastrtps fastcdr ${Boost_LIBRARIES})
 install(TARGETS UseCaseSubscriber
     RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
     )
+
+add_executable(UseCaseLauncher ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} UseCaseLauncher.cpp)
+target_include_directories(UseCaseLauncher PRIVATE ${Boost_INCLUDE_DIR})
+target_link_libraries(UseCaseLauncher fastrtps fastcdr ${Boost_LIBRARIES})
+install(TARGETS UseCaseLauncher
+    RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
+    )
