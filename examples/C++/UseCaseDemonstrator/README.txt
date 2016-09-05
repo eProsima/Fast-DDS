@@ -5,9 +5,9 @@
 1 - Application description
 ---------------------------
 
-eProsima Fast RTPS provides users with a wide range of configuration options which can be daunting at first. This example has the objective of providing a testing ground where you can experiment and see the influence different combinations of parameters can have on the behaviours of the Publisher/Subscriber scheme.
+eProsima Fast RTPS provides users with a wide range of configuration options. This example has the objective of providing a testing ground where you can experiment and see the influence different combinations of parameters can have on the behaviours on the Publisher/Subscriber scheme.
 
-This example consists on two sets of applications: one Use Case Launcher that executed built-in tests to show the most common cases, and a Publisher-Subscriber set for you to run your own tests:
+This example consists on two sets of applications: one Use Case Launcher that executes built-in tests to show the most common cases, and a Publisher-Subscriber set for you to run your own tests:
 
 - With the Publisher, you can choose to send any number of samples at any given moment. Each time you send a batch of samples, they will numbered starting from index '0', so it is easier to view the end of one batch and the start of the next on the Subscriber side.
 - The subscriber passively stores samples. At any moment you can choose to view the stored samples. 
