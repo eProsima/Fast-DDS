@@ -227,8 +227,6 @@ class RTPSParticipantImpl
         std::list<ReceiverControlBlock> m_receiverResourcelist;
         //!SenderResource List
         std::vector<SenderResource> m_senderResource;
-        //!Maximum message size
-        int32_t maxMessageSize;
 
         //!Listen Resource list - DEPRECATED - Stays commented for reference purposes
         // std::vector<ListenResource*> m_listenResourceList;

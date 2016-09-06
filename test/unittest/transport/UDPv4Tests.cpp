@@ -24,7 +24,9 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace boost::interprocess;
 
+#ifndef __APPLE__
 const uint32_t ReceiveBufferCapacity = 65536;
+#endif
 
 class UDPv4Tests: public ::testing::Test 
 {

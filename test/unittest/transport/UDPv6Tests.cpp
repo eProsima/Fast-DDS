@@ -23,7 +23,9 @@ using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps;
 using namespace boost::interprocess;
 
+#ifndef __APPLE__
 const uint32_t ReceiveBufferCapacity = 65536;
+#endif
 
 class UDPv6Tests: public ::testing::Test 
 {
@@ -108,6 +110,7 @@ TEST_F(UDPv6Tests, opening_and_closing_output_channel)
     ASSERT_FALSE (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
 }
 
+#ifndef __APPLE__
 TEST_F(UDPv6Tests, opening_and_closing_input_channel)
 {
     // Given
@@ -128,7 +131,6 @@ TEST_F(UDPv6Tests, opening_and_closing_input_channel)
     ASSERT_FALSE (transportUnderTest.CloseInputChannel(multicastFilterLocator));
 }
 
-#ifndef __APPLE__
 TEST_F(UDPv6Tests, send_and_receive_between_ports)
 {
     UDPv6Transport transportUnderTest(descriptor);
