@@ -58,7 +58,7 @@ public:
 
    RTPS_DllAPI UDPv4Transport(const UDPv4TransportDescriptor&);
 
-   ~UDPv4Transport();
+   virtual ~UDPv4Transport();
 
    bool init();
 
