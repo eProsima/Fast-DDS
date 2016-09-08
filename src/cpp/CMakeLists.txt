@@ -34,6 +34,7 @@ set_sources(
     rtps/writer/ReaderProxy.cpp 
     rtps/writer/StatelessWriter.cpp 
     rtps/writer/ReaderLocator.cpp 
+    rtps/writer/timedevent/InitialHeartbeat.cpp 
     rtps/writer/timedevent/PeriodicHeartbeat.cpp 
     rtps/writer/timedevent/NackResponseDelay.cpp 
     rtps/writer/timedevent/NackSupressionDuration.cpp 
@@ -43,6 +44,7 @@ set_sources(
     rtps/history/ReaderHistory.cpp 
     rtps/reader/timedevent/HeartbeatResponseDelay.cpp 
     rtps/reader/timedevent/WriterProxyLiveliness.cpp 
+    rtps/reader/timedevent/InitialAckNack.cpp 
     rtps/reader/CompoundReaderListener.cpp
     rtps/reader/WriterProxy.cpp 
     rtps/reader/StatefulReader.cpp 

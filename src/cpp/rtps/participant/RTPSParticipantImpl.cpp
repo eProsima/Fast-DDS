@@ -238,9 +238,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     //eClock::my_sleep(300);
 }
 
-std::vector<RTPSWriter*> RTPSParticipantImpl::getAllWriters() const
+const std::vector<RTPSWriter*>& RTPSParticipantImpl::getAllWriters() const
 {
     return m_allWriterList;
+}
+
+const std::vector<RTPSReader*>& RTPSParticipantImpl::getAllReaders() const
+{
+    return m_allReaderList;
 }
 
 RTPSParticipantImpl::~RTPSParticipantImpl()
@@ -710,6 +715,16 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
                     break;
                 }
             }
+            for(auto wit=m_allWriterList.begin();
+                    wit!=m_allWriterList.end();++wit)
+            {
+                if((*wit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+                {
+                    m_allWriterList.erase(wit);
+                    found = true;
+                    break;
+                }
+            }
         }
         else
         {
@@ -720,6 +735,16 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
                 if((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
                 {
                     m_userReaderList.erase(rit);
+                    found = true;
+                    break;
+                }
+            }
+            for(auto rit=m_allReaderList.begin()
+                    ;rit!=m_allReaderList.end();++rit)
+            {
+                if((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+                {
+                    m_allReaderList.erase(rit);
                     found = true;
                     break;
                 }

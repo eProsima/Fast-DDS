@@ -45,10 +45,14 @@ class  WriterTimes
 public:
 	WriterTimes()
 	{
+		initialHeartbeatDelay.fraction = 200*1000*1000;
 		heartbeatPeriod.seconds = 3;
 		nackResponseDelay.fraction = 200*1000*1000;
 	};
 	virtual ~WriterTimes(){};
+
+    //! Initial heartbeat delay. Default value ~45ms.
+    Duration_t initialHeartbeatDelay;
 	//! Periodic HB period, default value 3s.
 	Duration_t heartbeatPeriod;
 	//!Delay to apply to the response of a ACKNACK message, default value ~45ms.

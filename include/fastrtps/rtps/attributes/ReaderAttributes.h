@@ -37,9 +37,12 @@ class ReaderTimes
 public:
 	ReaderTimes()
 	{
+        initialAcknackDelay.fraction = 200*1000*1000;
 		heartbeatResponseDelay.fraction = 500*1000*1000;
 	};
 	virtual ~ReaderTimes(){};
+    //!Initial AckNack delay. Default value ~45ms.
+    Duration_t initialAcknackDelay;
 	//!Delay to be applied when a hearbeat message is received, default value ~116ms.
 	Duration_t heartbeatResponseDelay;
 };
