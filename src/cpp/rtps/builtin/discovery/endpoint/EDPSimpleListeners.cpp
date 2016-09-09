@@ -61,40 +61,40 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 		if(writerProxyData.readFromCDRMessage(&tempMsg))
 		{
 			change->instanceHandle = writerProxyData.key();
-			if(writerProxyData.guid().guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
-			{
-				logInfo(RTPS_EDP,"Message from own RTPSParticipant, ignoring");
-				mp_SEDP->mp_PubReader.second->remove_change(change);
-				return;
-			}
-			//LOOK IF IS AN UPDATED INFORMATION
-			WriterProxyData* wdata = nullptr;
-			ParticipantProxyData* pdata = nullptr;
-			if(this->mp_SEDP->mp_PDP->addWriterProxyData(&writerProxyData,true,&wdata,&pdata)) //ADDED NEW DATA
-			{
-				//CHECK the locators:
-                pdata->mp_mutex->lock();
-				if(wdata->unicastLocatorList().empty() && wdata->multicastLocatorList().empty())
-				{
-					wdata->unicastLocatorList(pdata->m_defaultUnicastLocatorList);
-					wdata->multicastLocatorList(pdata->m_defaultMulticastLocatorList);
-				}
-				wdata->isAlive(true);
-                pdata->mp_mutex->unlock();
-				mp_SEDP->pairingWriterProxy(pdata, wdata);
-			}
-			else if(pdata == nullptr) //RTPSParticipant NOT FOUND
-			{
-				logWarning(RTPS_EDP,"Received message from UNKNOWN RTPSParticipant, removing");
-			}
-			else //NOT ADDED BECAUSE IT WAS ALREADY THERE
-			{
-                pdata->mp_mutex->lock();
-				wdata->update(&writerProxyData);
-                pdata->mp_mutex->unlock();
-				mp_SEDP->pairingWriterProxy(pdata, wdata);
-			}
+			if(writerProxyData.guid().guidPrefix != mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
+            {
+                //LOOK IF IS AN UPDATED INFORMATION
+                WriterProxyData* wdata = nullptr;
+                ParticipantProxyData* pdata = nullptr;
+                if(this->mp_SEDP->mp_PDP->addWriterProxyData(&writerProxyData,true,&wdata,&pdata)) //ADDED NEW DATA
+                {
+                    //CHECK the locators:
+                    pdata->mp_mutex->lock();
+                    if(wdata->unicastLocatorList().empty() && wdata->multicastLocatorList().empty())
+                    {
+                        wdata->unicastLocatorList(pdata->m_defaultUnicastLocatorList);
+                        wdata->multicastLocatorList(pdata->m_defaultMulticastLocatorList);
+                    }
+                    wdata->isAlive(true);
+                    pdata->mp_mutex->unlock();
+                    mp_SEDP->pairingWriterProxy(pdata, wdata);
+                }
+                else if(pdata == nullptr) //RTPSParticipant NOT FOUND
+                {
+                    logWarning(RTPS_EDP,"Received message from UNKNOWN RTPSParticipant, removing");
+                }
+                else //NOT ADDED BECAUSE IT WAS ALREADY THERE
+                {
+                    pdata->mp_mutex->lock();
+                    wdata->update(&writerProxyData);
+                    pdata->mp_mutex->unlock();
+                    mp_SEDP->pairingWriterProxy(pdata, wdata);
+                }
+            }
+            else
+                logInfo(RTPS_EDP,"Message from own RTPSParticipant, ignoring");
 		}
+
 		//Call the slave, if it exists
 		if(attached_listener != nullptr){
 			attached_listener_mutex.lock();
@@ -190,40 +190,40 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 		if(readerProxyData.readFromCDRMessage(&tempMsg))
 		{
 			change->instanceHandle = readerProxyData.m_key;
-			if(readerProxyData.m_guid.guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
-			{
+			if(readerProxyData.m_guid.guidPrefix != mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
+            {
+                //LOOK IF IS AN UPDATED INFORMATION
+                ReaderProxyData* rdata = nullptr;
+                ParticipantProxyData* pdata = nullptr;
+                if(this->mp_SEDP->mp_PDP->addReaderProxyData(&readerProxyData,true,&rdata,&pdata)) //ADDED NEW DATA
+                {
+                    pdata->mp_mutex->lock();
+                    //CHECK the locators:
+                    if(rdata->m_unicastLocatorList.empty() && rdata->m_multicastLocatorList.empty())
+                    {
+                        rdata->m_unicastLocatorList = pdata->m_defaultUnicastLocatorList;
+                        rdata->m_multicastLocatorList = pdata->m_defaultMulticastLocatorList;
+                    }
+                    rdata->m_isAlive = true;
+                    pdata->mp_mutex->unlock();
+                    mp_SEDP->pairingReaderProxy(pdata, rdata);
+                }
+                else if(pdata == nullptr) //RTPSParticipant NOT FOUND
+                {
+                    logWarning(RTPS_EDP,"From UNKNOWN RTPSParticipant, removing");
+                }
+                else //NOT ADDED BECAUSE IT WAS ALREADY THERE
+                {
+                    pdata->mp_mutex->lock();
+                    rdata->update(&readerProxyData);
+                    pdata->mp_mutex->unlock();
+                    mp_SEDP->pairingReaderProxy(pdata, rdata);
+                }
+            }
+            else
 				logInfo(RTPS_EDP,"From own RTPSParticipant, ignoring");
-				mp_SEDP->mp_SubReader.second->remove_change(change);
-				return;
-			}
-			//LOOK IF IS AN UPDATED INFORMATION
-			ReaderProxyData* rdata = nullptr;
-			ParticipantProxyData* pdata = nullptr;
-			if(this->mp_SEDP->mp_PDP->addReaderProxyData(&readerProxyData,true,&rdata,&pdata)) //ADDED NEW DATA
-			{
-                pdata->mp_mutex->lock();
-				//CHECK the locators:
-				if(rdata->m_unicastLocatorList.empty() && rdata->m_multicastLocatorList.empty())
-				{
-					rdata->m_unicastLocatorList = pdata->m_defaultUnicastLocatorList;
-					rdata->m_multicastLocatorList = pdata->m_defaultMulticastLocatorList;
-				}
-				rdata->m_isAlive = true;
-                pdata->mp_mutex->unlock();
-				mp_SEDP->pairingReaderProxy(pdata, rdata);
-			}
-			else if(pdata == nullptr) //RTPSParticipant NOT FOUND
-			{
-				logWarning(RTPS_EDP,"From UNKNOWN RTPSParticipant, removing");
-			}
-			else //NOT ADDED BECAUSE IT WAS ALREADY THERE
-			{
-                pdata->mp_mutex->lock();
-				rdata->update(&readerProxyData);
-                pdata->mp_mutex->unlock();
-				mp_SEDP->pairingReaderProxy(pdata, rdata);
-			}
 		}
+
 		//Call the slave, if it exists
 		if(attached_listener != nullptr)
 			attached_listener->onNewCacheChangeAdded(nullptr,change);
