@@ -249,8 +249,12 @@ TEST(ros2features, SlaveListenerCallback_DynamicMode){
 	bool result;	
 	p_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230 + 35;
 	my_participant = Domain::createParticipant(p_attr);
-
 	ASSERT_NE(my_participant, nullptr);
+
+	std::pair<StatefulReader*,StatefulReader*> EDP_Readers = my_participant->getEDPReaders();
+	result = EDP_Readers.second->setListener(&slave_listener);
+	ASSERT_EQ(result,true);
+
 	ASSERT_EQ(Domain::registerType(my_participant, &my_type), true);
 
 	pub_attr.topic.topicKind = NO_KEY;
@@ -259,12 +263,8 @@ TEST(ros2features, SlaveListenerCallback_DynamicMode){
 	my_publisher = Domain::createPublisher(my_participant, pub_attr, &my_dummy_listener);
 	ASSERT_NE(my_publisher, nullptr);
 
-	std::pair<StatefulReader*,StatefulReader*> EDP_Readers = my_participant->getEDPReaders();
-	result = EDP_Readers.second->setListener(&slave_listener);
-	ASSERT_EQ(result,true);
-
 	slave_listener.mapmutex.lock();
-	ASSERT_EQ(slave_listener.topicNtypes.size(),0);
+	ASSERT_EQ(slave_listener.topicNtypes.size(),1);
 	slave_listener.mapmutex.unlock();
 
 	Participant *my_participant2;
@@ -307,8 +307,12 @@ TEST(ros2features, SlaveListenerCallback_StaticMode){
 	bool result;	
 	p_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
 	my_participant = Domain::createParticipant(p_attr);
-
 	ASSERT_NE(my_participant, nullptr);
+
+	std::pair<StatefulReader*,StatefulReader*> EDP_Readers = my_participant->getEDPReaders();
+	result = EDP_Readers.second->setListener(&slave_listener);
+	ASSERT_EQ(result,true);
+
 	ASSERT_EQ(Domain::registerType(my_participant, &my_type), true);
 
 	pub_attr.topic.topicKind = NO_KEY;
@@ -317,12 +321,8 @@ TEST(ros2features, SlaveListenerCallback_StaticMode){
 	my_publisher = Domain::createPublisher(my_participant, pub_attr, &my_dummy_listener);
 	ASSERT_NE(my_publisher, nullptr);
 
-	std::pair<StatefulReader*,StatefulReader*> EDP_Readers = my_participant->getEDPReaders();
-	result = EDP_Readers.second->setListener(&slave_listener);
-	ASSERT_EQ(result,true);
-
 	slave_listener.mapmutex.lock();
-	ASSERT_EQ(slave_listener.topicNtypes.size(),0);
+	ASSERT_EQ(slave_listener.topicNtypes.size(),1);
 	slave_listener.mapmutex.unlock();
 
 	Participant *my_participant2;
@@ -352,6 +352,53 @@ TEST(ros2features, SlaveListenerCallback_StaticMode){
 
 	eprosima::fastrtps::Domain::removeParticipant(my_participant);
 	eprosima::fastrtps::Domain::removeParticipant(my_participant2);
+}
+
+TEST(ros2features, SlaveListenerCallbackWithOneParticipant_StaticMode){
+	Participant *my_participant;
+	Publisher *my_publisher;
+	ParticipantAttributes p_attr;
+	PublisherAttributes pub_attr;
+	HelloWorldType my_type;
+	gettopicnamesandtypesReaderListener slave_listener;
+	bool result;	
+	p_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+	my_participant = Domain::createParticipant(p_attr);
+	ASSERT_NE(my_participant, nullptr);
+
+	std::pair<StatefulReader*,StatefulReader*> EDP_Readers = my_participant->getEDPReaders();
+	result = EDP_Readers.second->setListener(&slave_listener);
+	ASSERT_EQ(result,true);
+
+	ASSERT_EQ(Domain::registerType(my_participant, &my_type), true);
+
+	pub_attr.topic.topicKind = NO_KEY;
+	pub_attr.topic.topicDataType = "HelloWorldType";
+	pub_attr.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+	my_publisher = Domain::createPublisher(my_participant, pub_attr, nullptr);
+	ASSERT_NE(my_publisher, nullptr);
+
+	slave_listener.mapmutex.lock();
+	ASSERT_EQ(slave_listener.topicNtypes.size(),1);
+	slave_listener.mapmutex.unlock();
+
+	Publisher *my_publisher2;
+	PublisherAttributes pub_attr2;
+
+	pub_attr2.topic.topicKind = NO_KEY;
+	pub_attr2.topic.topicDataType = "HelloWorldType";
+    pub_attr2.topic.topicName = "OtherTopic";
+	pub_attr2.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+	my_publisher2 = Domain::createPublisher(my_participant, pub_attr2, nullptr);
+	ASSERT_NE(my_publisher2, nullptr);
+
+	slave_listener.mapmutex.lock();
+	ASSERT_EQ(slave_listener.topicNtypes.size(), 2);
+	slave_listener.mapmutex.unlock();
+
+	EDP_Readers.second->setListener(nullptr);
+
+	eprosima::fastrtps::Domain::removeParticipant(my_participant);
 }
 
 
