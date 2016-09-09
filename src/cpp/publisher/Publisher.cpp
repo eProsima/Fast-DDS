@@ -83,5 +83,10 @@ const GUID_t& Publisher::getGuid()
 	return mp_impl->getGuid();
 }
 
+PublisherAttributes Publisher::getAttributes()
+{
+	return mp_impl->getAttributes();
+}
+
 } /* namespace pubsub */
 } /* namespace eprosima */

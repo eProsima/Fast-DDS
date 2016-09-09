@@ -25,6 +25,7 @@
 #include "../rtps/common/Guid.h"
 #include "../rtps/common/Time_t.h"
 #include "../rtps/flowcontrol/FlowController.h"
+#include "../attributes/PublisherAttributes.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -101,6 +102,12 @@ public:
 	 * @return GUID_t.
 	 */
 	const GUID_t& getGuid();
+
+	/**
+	 * Get the Attributes of the Publisher.
+	 * @return Attributes of the publisher
+	 */
+	PublisherAttributes getAttributes();
 
 private:
 	PublisherImpl* mp_impl;
