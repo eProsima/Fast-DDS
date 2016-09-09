@@ -21,6 +21,7 @@
 #define SUBSCRIBER_H_
 
 #include "../rtps/common/Guid.h"
+#include "../attributes/SubscriberAttributes.h"
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -29,9 +30,6 @@ namespace fastrtps{
 
 class SubscriberImpl;
 class SampleInfo_t;
-class SubscriberAttributes;
-
-
 
 /**
  * Class Subscriber, contains the public API that allows the user to control the reception of messages.
