@@ -270,6 +270,8 @@ bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
                 }
             }
             lock.unlock();
+            if(this->mp_subListen->getAttachedListener() != nullptr)
+                this->mp_subListen->getAttachedListener()->onNewCacheChangeAdded(mp_SubReader.first, change);
             mp_SubWriter.second->add_change(change);
             return true;
         }
@@ -305,6 +307,8 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
                 }
             }
             lock.unlock();
+            if(this->mp_pubListen->getAttachedListener() != nullptr)
+                this->mp_pubListen->getAttachedListener()->onNewCacheChangeAdded(mp_PubReader.first, change);
             mp_PubWriter.second->add_change(change);
             return true;
         }
