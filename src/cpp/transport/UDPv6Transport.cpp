@@ -30,6 +30,16 @@ namespace rtps{
 static const uint32_t maximumUDPSocketSize = 65536;
 static const uint32_t maximumMessageSize = 65500;
 
+static void GetIP6s(vector<IPFinder::info_IP>& locNames)
+{
+    IPFinder::getIPs(&locNames);
+    // Controller out IP4
+    auto newEnd = remove_if(locNames.begin(), 
+            locNames.end(),
+            [](IPFinder::info_IP ip){return ip.type != IPFinder::IP6;});
+    locNames.erase(newEnd, locNames.end());
+}
+
 UDPv6Transport::UDPv6Transport(const UDPv6TransportDescriptor& descriptor):
     mMaxMessageSize(descriptor.maxMessageSize),
     mSendBufferSize(descriptor.sendBufferSize),
@@ -137,7 +147,14 @@ bool UDPv6Transport::OpenInputChannel(const Locator_t& locator)
         // The multicast group will be joined silently, because we do not
         // want to return another resource.
         auto& socket = mInputSockets.at(locator.port);
-        socket.set_option(ip::multicast::join_group(ip::address_v6::from_string(locator.to_IP6_string())));
+
+        std::vector<IPFinder::info_IP> locNames;
+        GetIP6s(locNames);
+        for (const auto& infoIP : locNames)
+        {
+            auto ip = boost::asio::ip::address_v6::from_string(infoIP.name);
+            socket.set_option(ip::multicast::join_group(ip::address_v6::from_string(locator.to_IP6_string()), ip.scope_id()));
+        }
     }
 
     return success;
@@ -184,16 +201,6 @@ bool UDPv6Transport::CloseInputChannel(const Locator_t& locator)
 
     mInputSockets.erase(locator.port);
     return true;
-}
-
-static void GetIP6s(vector<IPFinder::info_IP>& locNames)
-{
-    IPFinder::getIPs(&locNames);
-    // Controller out IP4
-    auto newEnd = remove_if(locNames.begin(), 
-            locNames.end(),
-            [](IPFinder::info_IP ip){return ip.type != IPFinder::IP6;});
-    locNames.erase(newEnd, locNames.end());
 }
 
 bool UDPv6Transport::IsInterfaceAllowed(const ip::address_v6& ip)

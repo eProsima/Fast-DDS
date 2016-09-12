@@ -30,6 +30,15 @@ namespace rtps{
 static const uint32_t maximumUDPSocketSize = 65536;
 static const uint32_t maximumMessageSize = 65500;
 
+static void GetIP4s(vector<IPFinder::info_IP>& locNames)
+{
+    IPFinder::getIPs(&locNames);
+    auto newEnd = remove_if(locNames.begin(), 
+            locNames.end(),
+            [](IPFinder::info_IP ip){return ip.type != IPFinder::IP4;});
+    locNames.erase(newEnd, locNames.end());
+}
+
 UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
     mMaxMessageSize(descriptor.maxMessageSize),
     mSendBufferSize(descriptor.sendBufferSize),
@@ -151,7 +160,14 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator)
         // The multicast group will be joined silently, because we do not
         // want to return another resource.
         auto& socket = mInputSockets.at(locator.port);
-        socket.set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string())));
+
+        std::vector<IPFinder::info_IP> locNames;
+        GetIP4s(locNames);
+        for (const auto& infoIP : locNames)
+        {
+            auto ip = boost::asio::ip::address_v4::from_string(infoIP.name);
+            socket.set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string()), ip));
+        }
     }
 
     return success;
@@ -198,15 +214,6 @@ bool UDPv4Transport::CloseInputChannel(const Locator_t& locator)
 
     mInputSockets.erase(locator.port);
     return true;
-}
-
-static void GetIP4s(vector<IPFinder::info_IP>& locNames)
-{
-    IPFinder::getIPs(&locNames);
-    auto newEnd = remove_if(locNames.begin(), 
-            locNames.end(),
-            [](IPFinder::info_IP ip){return ip.type != IPFinder::IP4;});
-    locNames.erase(newEnd, locNames.end());
 }
 
 bool UDPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip)
