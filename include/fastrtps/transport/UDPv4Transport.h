@@ -37,10 +37,6 @@ namespace rtps{
  *       This collection of sockets constitute the "outbound channel". In other words, a channel corresponds
  *       to a port + a direction.
  *
- *    - In Granular mode, outbound channels correspond to a fully qualified IP address, so it is possible to
- *       write to a particular network interface. Sending to 0.0.0.0 will still cause a send over every 
- *       interface as expected.
- *
  *    - It is possible to provide a white list at construction, which limits the interfaces the transport 
  *       will ever be able to interact with. If left empty, all interfaces are allowed.
  *
@@ -66,8 +62,7 @@ public:
    virtual bool IsInputChannelOpen(const Locator_t&) const;
 
    /**
-    * Checks whether there are open and bound sockets for the given port,
-    * or in granular mode, for the given address.
+    * Checks whether there are open and bound sockets for the given port.
     */
    virtual bool IsOutputChannelOpen(const Locator_t&) const;
 
@@ -91,8 +86,7 @@ public:
    virtual bool OpenInputChannel(const Locator_t&);
 
    /**
-    * Opens a socket per interface on the given port (as long as they are white listed).
-    * In granular mode, it will only open a socket for the specified interface.
+    * Opens a socket on the given address and port (as long as they are white listed).
     */
    virtual bool OpenOutputChannel(const Locator_t&);
 
@@ -130,7 +124,6 @@ protected:
    uint32_t mMaxMessageSize;
    uint32_t mSendBufferSize;
    uint32_t mReceiveBufferSize;
-   bool mGranularMode;
 
    boost::asio::io_service mService;
    std::unique_ptr<boost::thread> ioServiceThread;
@@ -138,13 +131,11 @@ protected:
    mutable boost::recursive_mutex mOutputMapMutex;
    mutable boost::recursive_mutex mInputMapMutex;
 
-   //! For non-granular UDPv4, the notion of output channel corresponds to a port.
+   //! The notion of output channel corresponds to a port.
    std::map<uint32_t, std::vector<boost::asio::ip::udp::socket> > mOutputSockets; 
 
    struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
-   //! For granular UDPv4, the notion of output channel corresponds to an address.
-   std::map<Locator_t, boost::asio::ip::udp::socket, LocatorCompare> mGranularOutputSockets;
 
    //! For both modes, an input channel corresponds to a port.
    std::map<uint32_t, boost::asio::ip::udp::socket> mInputSockets; 
@@ -153,7 +144,6 @@ protected:
    std::vector<boost::asio::ip::address_v4> mInterfaceWhiteList;
 
    bool OpenAndBindOutputSockets(uint32_t port);
-   bool OpenAndBindGranularOutputSocket(const Locator_t& locator);
    bool OpenAndBindInputSockets(uint32_t port);
 
    boost::asio::ip::udp::socket OpenAndBindUnicastOutputSocket(const boost::asio::ip::address_v4&, uint32_t port);

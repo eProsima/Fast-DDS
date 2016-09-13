@@ -28,9 +28,6 @@ namespace rtps{
  *                  a buffer of different size will cause transmission to
  *                  fail.
  *
- * - granularMode:  False: Outbound channel maps to port
- *                  True:  Outbound channel maps to port + address    
- *
  * - interfaceWhiteList: Lists the allowed interfaces.
  * @ingroup TRANSPORT_MODULE
  */
@@ -39,8 +36,6 @@ typedef struct UDPv6TransportDescriptor: public TransportDescriptorInterface {
    uint32_t sendBufferSize;
    //! Length of the receive buffer.
    uint32_t receiveBufferSize;
-   //! Whether a channel maps to a port (true) or to a port + address (false).
-   bool granularMode;
    //! Allowed interfaces in an IP string format.
    std::vector<std::string> interfaceWhiteList;
 

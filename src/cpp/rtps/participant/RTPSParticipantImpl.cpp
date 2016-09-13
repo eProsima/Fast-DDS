@@ -103,7 +103,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         UDPv4TransportDescriptor descriptor; 
         descriptor.sendBufferSize = m_att.sendSocketBufferSize;
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
-        descriptor.granularMode = true;
         m_network_Factory.RegisterTransport(&descriptor);
     }
 

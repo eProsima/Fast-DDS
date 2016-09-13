@@ -40,6 +40,7 @@ vector<SenderResource> NetworkFactory::BuildSenderResources(const Locator_t& loc
     return newSenderResources;
 }
 
+// TODO(Ricardo) Review if necessary
 vector<SenderResource> NetworkFactory::BuildSenderResourcesForRemoteLocator(const Locator_t& remote)
 {
     vector<SenderResource> newSenderResources;

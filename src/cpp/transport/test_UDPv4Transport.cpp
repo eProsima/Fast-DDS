@@ -36,7 +36,6 @@ test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& de
     {
         UDPv4Transport::mSendBufferSize = descriptor.sendBufferSize;
         UDPv4Transport::mReceiveBufferSize = descriptor.receiveBufferSize;
-        UDPv4Transport::mGranularMode = descriptor.granularMode;
         DropLog.clear();
         DropLogLength = descriptor.dropLogLength;
         srand(static_cast<unsigned>(time(NULL)));
@@ -46,7 +45,6 @@ RTPS_DllAPI test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor():
     TransportDescriptorInterface(maximumMessageSize),
     sendBufferSize(maximumUDPSocketSize),
     receiveBufferSize(maximumUDPSocketSize),
-    granularMode(false),
     dropDataMessagesPercentage(0),
     dropDataFragMessagesPercentage(0),
     dropHeartbeatMessagesPercentage(0),

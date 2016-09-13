@@ -745,7 +745,6 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAn
     writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
 
     auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
-    testTransport->granularMode = true;
     writer.disable_builtin_transport();
     writer.add_user_transport_to_pparams(testTransport);
 
@@ -954,7 +953,6 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport->sendBufferSize = 65536;
     testTransport->receiveBufferSize = 65536;
-    testTransport->granularMode = false;
     // We drop 20% of all data frags
     testTransport->dropDataFragMessagesPercentage = 20;
     testTransport->dropLogLength = 10;
@@ -1015,7 +1013,6 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
         testTransport->maxMessageSize = 32000;
         testTransport->sendBufferSize = 65536;
         testTransport->receiveBufferSize = 65536;
-        testTransport->granularMode = false;
         writer.disable_builtin_transport();
         writer.add_user_transport_to_pparams(testTransport);
         writer.history_depth(10).asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
@@ -1064,7 +1061,6 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
         testTransport->maxMessageSize = 32536;
         testTransport->sendBufferSize = 65536;
         testTransport->receiveBufferSize = 65536;
-        testTransport->granularMode = false;
         writer.disable_builtin_transport();
         writer.add_user_transport_to_pparams(testTransport);
         writer.history_depth(10).

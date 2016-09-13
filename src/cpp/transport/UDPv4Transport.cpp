@@ -42,8 +42,7 @@ static void GetIP4s(vector<IPFinder::info_IP>& locNames)
 UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
     mMaxMessageSize(descriptor.maxMessageSize),
     mSendBufferSize(descriptor.sendBufferSize),
-    mReceiveBufferSize(descriptor.receiveBufferSize),
-    mGranularMode(descriptor.granularMode)
+    mReceiveBufferSize(descriptor.receiveBufferSize)
     {
         for (const auto& interface : descriptor.interfaceWhiteList)
             mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
@@ -52,15 +51,13 @@ UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
 UDPv4TransportDescriptor::UDPv4TransportDescriptor():
     TransportDescriptorInterface(maximumMessageSize),
     sendBufferSize(maximumUDPSocketSize),
-    receiveBufferSize(maximumUDPSocketSize),
-    granularMode(false)
+    receiveBufferSize(maximumUDPSocketSize)
     {}
 
 UDPv4Transport::UDPv4Transport() :
     mMaxMessageSize(maximumMessageSize),
     mSendBufferSize(maximumUDPSocketSize),
-    mReceiveBufferSize(maximumUDPSocketSize),
-    mGranularMode(false)
+    mReceiveBufferSize(maximumUDPSocketSize)
     {
         auto ioServiceFunction = [&]()
         {
@@ -121,10 +118,7 @@ bool UDPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
     if (!IsLocatorSupported(locator))
         return false;
 
-    if (mGranularMode)
-        return mGranularOutputSockets.find(locator) != mGranularOutputSockets.end();
-    else 
-        return mOutputSockets.find(locator.port) != mOutputSockets.end();
+    return mOutputSockets.find(locator.port) != mOutputSockets.end();
 }
 
 bool UDPv4Transport::OpenOutputChannel(const Locator_t& locator)
@@ -133,10 +127,7 @@ bool UDPv4Transport::OpenOutputChannel(const Locator_t& locator)
             !IsLocatorSupported(locator))
         return false;   
 
-    if (mGranularMode)   
-        return OpenAndBindGranularOutputSocket(locator);
-    else
-        return OpenAndBindOutputSockets(locator.port);
+    return OpenAndBindOutputSockets(locator.port);
 }
 
 static bool IsMulticastAddress(const Locator_t& locator)
@@ -179,24 +170,14 @@ bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
     if (!IsOutputChannelOpen(locator))
         return false;   
 
-    if (mGranularMode)
+    auto& sockets = mOutputSockets.at(locator.port);
+    for (auto& socket : sockets)
     {
-        auto& socket = mGranularOutputSockets.at(locator);
         socket.cancel();
         socket.close();
-        mGranularOutputSockets.erase(locator);
     }
-    else
-    {
-        auto& sockets = mOutputSockets.at(locator.port);
-        for (auto& socket : sockets)
-        {
-            socket.cancel();
-            socket.close();
-        }
 
-        mOutputSockets.erase(locator.port);
-    }
+    mOutputSockets.erase(locator.port);
 
     return true;
 }
@@ -261,7 +242,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(uint32_t port)
     return true;
 }
 
-bool UDPv4Transport::OpenAndBindGranularOutputSocket(const Locator_t& locator)
+/*bool UDPv4Transport::OpenAndBindGranularOutputSocket(const Locator_t& locator)
 {
     boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
     auto ip = boost::asio::ip::address_v4::from_string(locator.to_IP4_string());
@@ -283,7 +264,7 @@ bool UDPv4Transport::OpenAndBindGranularOutputSocket(const Locator_t& locator)
     }
 
     return true;
-}
+}*/
 
 bool UDPv4Transport::OpenAndBindInputSockets(uint32_t port)
 {
@@ -333,10 +314,7 @@ boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindInputSocket(uint32_t por
 
 bool UDPv4Transport::DoLocatorsMatch(const Locator_t& left, const Locator_t& right) const
 {
-    if (mGranularMode)
-        return left == right;
-    else
-        return left.port == right.port;
+    return left.port == right.port;
 }
 
 bool UDPv4Transport::IsLocatorSupported(const Locator_t& locator) const
@@ -363,17 +341,9 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
 
     bool success = false;
 
-    if (mGranularMode)
-    {
-        auto& socket = mGranularOutputSockets.at(localLocator);
+    auto& sockets = mOutputSockets.at(localLocator.port);
+    for (auto& socket : sockets)
         success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket);
-    }
-    else
-    {
-        auto& sockets = mOutputSockets.at(localLocator.port);
-        for (auto& socket : sockets)
-            success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket);
-    }
 
     return success;
 }

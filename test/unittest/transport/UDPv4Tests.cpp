@@ -266,10 +266,9 @@ TEST_F(UDPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
     ASSERT_EQ(mainLocalLocator.to_IP4_string(), "0.0.0.0");
 }
 
-TEST_F(UDPv4Tests, in_granular_mode_locators_match_if_port_AND_address_matches)
+TEST_F(UDPv4Tests, match_if_port_AND_address_matches)
 {
     // Given
-    descriptor.granularMode = true;
     UDPv4Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
@@ -286,9 +285,8 @@ TEST_F(UDPv4Tests, in_granular_mode_locators_match_if_port_AND_address_matches)
     ASSERT_FALSE(transportUnderTest.DoLocatorsMatch(locatorAlpha, locatorBeta));
 }
 
-TEST_F(UDPv4Tests, granular_send_to_wrong_interface)
+TEST_F(UDPv4Tests, send_to_wrong_interface)
 {
-    descriptor.granularMode = true;
     UDPv4Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
@@ -298,7 +296,7 @@ TEST_F(UDPv4Tests, granular_send_to_wrong_interface)
     outputChannelLocator.set_IP4_address(127,0,0,1); // Loopback
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
 
-    //Sending through a different IP will NOT work in granular mode, except 0.0.0.0
+    //Sending through a different IP will NOT work, except 0.0.0.0
     outputChannelLocator.set_IP4_address(111,111,111,111);
     vector<octet> message = { 'H','e','l','l','o' };
     ASSERT_FALSE(transportUnderTest.Send(message.data(), (uint32_t)message.size(), outputChannelLocator, Locator_t()));
@@ -309,7 +307,6 @@ void UDPv4Tests::HELPER_SetDescriptorDefaults()
     descriptor.maxMessageSize = 5;
     descriptor.sendBufferSize = 5;
     descriptor.receiveBufferSize = 5;
-    descriptor.granularMode = false;
 }
 
 int main(int argc, char **argv)
