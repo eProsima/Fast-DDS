@@ -1095,7 +1095,7 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
         data = reader.block(std::chrono::seconds(3));
 
         ASSERT_GE(data.size(),7);
-        ASSERT_LE(data.size(),8);
+        ASSERT_LE(data.size(),9);
     }
 }
 
