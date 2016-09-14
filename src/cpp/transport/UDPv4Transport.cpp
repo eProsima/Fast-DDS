@@ -49,8 +49,8 @@ static bool IsAny(const Locator_t& locator)
 
 static boost::asio::ip::address_v4::bytes_type locatorToNative(const Locator_t& locator)
 {
-    return boost::asio::ip::address_v4::bytes_type({locator.address[12],
-        locator.address[13], locator.address[14], locator.address[15]});
+    return {{locator.address[12],
+        locator.address[13], locator.address[14], locator.address[15]}};
 }
 
 UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
