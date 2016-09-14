@@ -71,7 +71,7 @@ private:
    SenderResource(const SenderResource&)            = delete;
    SenderResource& operator=(const SenderResource&) = delete;
 
-   SenderResource(TransportInterface&, const Locator_t&);
+   SenderResource(TransportInterface&, Locator_t&);
    std::function<void()> Cleanup;
    std::function<bool(const octet* data, uint32_t dataLength, const Locator_t&)> SendThroughAssociatedChannel;
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;

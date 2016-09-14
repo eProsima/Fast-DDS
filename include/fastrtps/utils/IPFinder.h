@@ -61,7 +61,7 @@ public:
 	IPFinder();
 	virtual ~IPFinder();
 
-	RTPS_DllAPI static bool getIPs(std::vector<info_IP>* vec_name);
+	RTPS_DllAPI static bool getIPs(std::vector<info_IP>* vec_name, bool return_loopback = false);
 
 	/**
     * Get the IP4Adresses in all interfaces.
@@ -83,8 +83,8 @@ public:
     * @param[in] str IP string to parse.
     * @param[out] loc Locator to populate.
     * */
-	RTPS_DllAPI static bool parseIP4(std::string& str,Locator_t* loc);
-	RTPS_DllAPI static bool parseIP6(std::string& str,Locator_t* loc);
+	RTPS_DllAPI static bool parseIP4(info_IP& info);
+	RTPS_DllAPI static bool parseIP6(info_IP& info);
 };
 }
 } /* namespace eprosima */

@@ -223,29 +223,6 @@ TEST_F(UDPv4Tests, Receive_is_rejected_if_buffer_size_is_smaller_than_size_speci
     ASSERT_FALSE(transportUnderTest.Receive(emptyBuffer,0, size, genericInputChannelLocator, originLocator));
 }
 
-TEST_F(UDPv4Tests, opening_any_output_address_opens_port_for_all_IP_addresses)
-{
-    // Given
-    UDPv4Transport transportUnderTest(descriptor);
-    transportUnderTest.init();
-
-    Locator_t specificOutputChannelLocator;
-    specificOutputChannelLocator.kind = LOCATOR_KIND_UDPv4;
-    specificOutputChannelLocator.port = 7410;
-    specificOutputChannelLocator.set_IP4_address(222,222,222,222);
-
-    Locator_t differentOutputChannelLocator;
-    differentOutputChannelLocator.kind = LOCATOR_KIND_UDPv4;
-    differentOutputChannelLocator.port = 7410;
-    differentOutputChannelLocator.set_IP4_address(111,111,111,111);
-
-    // When
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(specificOutputChannelLocator));
-
-    // Then
-    ASSERT_TRUE(transportUnderTest.IsOutputChannelOpen(differentOutputChannelLocator));
-}
-
 TEST_F(UDPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
 {
     // Given
@@ -282,7 +259,7 @@ TEST_F(UDPv4Tests, match_if_port_AND_address_matches)
 
     locatorBeta.set_IP4_address(100, 100, 100, 100);
     // Then
-    ASSERT_FALSE(transportUnderTest.DoLocatorsMatch(locatorAlpha, locatorBeta));
+    ASSERT_TRUE(transportUnderTest.DoLocatorsMatch(locatorAlpha, locatorBeta));
 }
 
 TEST_F(UDPv4Tests, send_to_wrong_interface)

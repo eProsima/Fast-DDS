@@ -53,7 +53,7 @@ IPFinder::~IPFinder() {
 #if defined(_WIN32)
 
 
-bool IPFinder::getIPs(std::vector<info_IP>* vec_name)
+bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
 {
 	DWORD rv, size;
 	PIP_ADAPTER_ADDRESSES adapter_addresses, aa;
@@ -91,10 +91,10 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name)
 					info_IP info;
 					info.type = family == AF_INET ? IP4 : IP6;
 					info.name = std::string(buf);
-					if (info.type == IP4 && !parseIP4(info.name, &info.locator))
-						info.type = IP4_LOCAL;
-					else if (info.type == IP6 && !parseIP6(info.name, &info.locator))
-						info.type = IP6_LOCAL;
+					if (info.type == IP4)
+                        parseIP4(info);
+					else if (info.type == IP6)
+                        parseIP6(info);
 					if (info.type == IP6)
 					{
 						sockaddr_in6* so = (sockaddr_in6*)ua->Address.lpSockaddr;
@@ -113,7 +113,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name)
 
 #else
 
-bool IPFinder::getIPs(std::vector<info_IP>* vec_name )
+bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
 {
 	struct ifaddrs *ifaddr, *ifa;
 	int family, s;
@@ -143,13 +143,10 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name )
 			info_IP info;
 			info.type = IP4;
 			info.name = std::string(host);
-			if(!parseIP4(info.name,&info.locator))
-				info.type = IP4_LOCAL;
+			parseIP4(info);
 
-         if (info.type != IP4_LOCAL)
-			   vec_name->push_back(info);
-			//printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
-
+            if (return_loopback || info.type != IP4_LOCAL)
+                vec_name->push_back(info);
 		}
 		else if(family == AF_INET6)
 		{
@@ -164,12 +161,13 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name )
 			info_IP info;
 			info.type = IP6;
 			info.name = std::string(host);
-			if(!parseIP6(info.name,&info.locator))
-				info.type = IP6_LOCAL;
-			info.scope_id = so->sin6_scope_id;
+            if(parseIP6(info))
+            {
+                info.scope_id = so->sin6_scope_id;
 
-         if (info.type != IP6_LOCAL)
-			   vec_name->push_back(info);
+                if (return_loopback || info.type != IP6_LOCAL)
+                    vec_name->push_back(info);
+            }
 			//printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
 		}
 	}
@@ -242,28 +240,28 @@ bool IPFinder::getIP6Address(LocatorList_t* locators)
 	return false;
 }
 
-RTPS_DllAPI bool IPFinder::parseIP4(std::string& str,Locator_t*loc)
+RTPS_DllAPI bool IPFinder::parseIP4(info_IP& info)
 {
-	std::stringstream ss(str);
+	std::stringstream ss(info.name);
 	int a, b, c, d;
 	char ch;
 	ss >> a >> ch >> b >> ch >> c >> ch >> d;
     //TODO Property to activate or deactivate the loopback interface.
 	if (a == 127 && b == 0 && c == 0 && d == 1)
-		return false;
+        info.type = IP4_LOCAL;
 	//		if(a==169 && b==254)
 	//			continue;
-	loc->kind = 1;
-	loc->port = 0;
+	info.locator.kind = 1;
+	info.locator.port = 0;
 	for (int8_t i = 0; i < 12; ++i)
-		loc->address[i] = 0;
-	loc->address[12] = (octet)a;
-	loc->address[13] = (octet)b;
-	loc->address[14] = (octet)c;
-	loc->address[15] = (octet)d;
+		info.locator.address[i] = 0;
+	info.locator.address[12] = (octet)a;
+	info.locator.address[13] = (octet)b;
+	info.locator.address[14] = (octet)c;
+	info.locator.address[15] = (octet)d;
 	return true;
 }
-RTPS_DllAPI bool IPFinder::parseIP6(std::string& str,Locator_t* loc)
+RTPS_DllAPI bool IPFinder::parseIP6(info_IP& info)
 {
 	std::vector<std::string> hexdigits;
 
@@ -272,10 +270,10 @@ RTPS_DllAPI bool IPFinder::parseIP6(std::string& str,Locator_t* loc)
 
     while(end != std::string::npos)
 	{
-		end = str.find(':',start);
+		end = info.name.find(':',start);
 		if (end - start > 1)
 		{
-			hexdigits.push_back(str.substr(start, end - start));
+			hexdigits.push_back(info.name.substr(start, end - start));
 		}
 		else
 			hexdigits.push_back(std::string("EMPTY"));
@@ -286,9 +284,9 @@ RTPS_DllAPI bool IPFinder::parseIP6(std::string& str,Locator_t* loc)
 	if ((hexdigits.end() - 1)->find('.') != std::string::npos) //FOUND a . in the last element (MAP TO IP4 address)
 		return false;
 	for (int8_t i = 0; i < 2; ++i)
-		loc->address[i] = 0;
-	loc->kind = LOCATOR_KIND_UDPv6;
-	loc->port = 0;
+		info.locator.address[i] = 0;
+	info.locator.kind = LOCATOR_KIND_UDPv6;
+	info.locator.port = 0;
 	*(hexdigits.end() - 1) = (hexdigits.end() - 1)->substr(0, (hexdigits.end() - 1)->find('%'));
 
 	int auxnumber = 0;
@@ -299,23 +297,23 @@ RTPS_DllAPI bool IPFinder::parseIP6(std::string& str,Locator_t* loc)
 		{
 			if (it->length() <= 2)
 			{
-				loc->address[index - 1] = 0;
+				info.locator.address[index - 1] = 0;
 				std::stringstream ss;
 				ss << std::hex << (*it);
 				ss >> auxnumber;
-				loc->address[index] = (octet)auxnumber;
+				info.locator.address[index] = (octet)auxnumber;
 			}
 			else
 			{
 				std::stringstream ss;
 				ss << std::hex << it->substr(it->length()-2);
 				ss >> auxnumber;
-				loc->address[index] = (octet)auxnumber;
+				info.locator.address[index] = (octet)auxnumber;
 				ss.str("");
 				ss.clear();
 				ss << std::hex << it->substr(0, it->length() - 2);
 				ss >> auxnumber;
-				loc->address[index - 1] = (octet)auxnumber;
+				info.locator.address[index - 1] = (octet)auxnumber;
 			}
 			index -= 2;
 		}
@@ -329,23 +327,23 @@ RTPS_DllAPI bool IPFinder::parseIP6(std::string& str,Locator_t* loc)
 		{
 			if (it->length() <= 2)
 			{
-				loc->address[index] = 0;
+				info.locator.address[index] = 0;
 				std::stringstream ss;
 				ss << std::hex << (*it);
 				ss >> auxnumber;
-				loc->address[index + 1]=(octet)auxnumber;
+				info.locator.address[index + 1]=(octet)auxnumber;
 			}
 			else
 			{
 				std::stringstream ss;
 				ss << std::hex << it->substr(it->length() - 2);
 				ss >> auxnumber;
-				loc->address[index + 1] = (octet)auxnumber;
+				info.locator.address[index + 1] = (octet)auxnumber;
 				ss.str("");
 				ss.clear();
 				ss << std::hex << it->substr(0, it->length() - 2);
 				ss >> auxnumber;
-				loc->address[index] =  (octet)auxnumber;
+				info.locator.address[index] =  (octet)auxnumber;
 			}
 			index += 2;
 		}

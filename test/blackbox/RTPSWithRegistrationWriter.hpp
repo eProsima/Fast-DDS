@@ -189,6 +189,18 @@ class RTPSWithRegistrationWriter
         return *this;
     }
 
+    RTPSWithRegistrationWriter& heartbeat_period_seconds(int32_t sec)
+    {
+        writer_attr_.times.heartbeatPeriod.seconds = sec;
+        return *this;
+    }
+
+    RTPSWithRegistrationWriter& heartbeat_period_fraction(uint32_t frac)
+    {
+        writer_attr_.times.heartbeatPeriod.fraction = frac;
+        return *this;
+    }
+
     private:
 
         RTPSWithRegistrationWriter& operator=(const RTPSWithRegistrationWriter&) NON_COPYABLE_CXX11;
@@ -199,7 +211,7 @@ class RTPSWithRegistrationWriter
         eprosima::fastrtps::WriterQos writer_qos_;
         eprosima::fastrtps::TopicAttributes topic_attr_;
         eprosima::fastrtps::rtps::WriterHistory *history_;
-	eprosima::fastrtps::rtps::HistoryAttributes hattr_;
+        eprosima::fastrtps::rtps::HistoryAttributes hattr_;
         bool initialized_;
         std::mutex mutex_;
         std::condition_variable cv_;

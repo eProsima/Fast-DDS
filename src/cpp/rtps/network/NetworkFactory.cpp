@@ -23,7 +23,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-vector<SenderResource> NetworkFactory::BuildSenderResources(const Locator_t& local)
+vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local)
 {
     vector<SenderResource> newSenderResources;
 

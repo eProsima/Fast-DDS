@@ -68,7 +68,7 @@ public:
 
    //! Must open the channel that maps to/from the given locator. This method must allocate, reserve and mark
    //! any resources that are needed for said channel.
-   virtual bool OpenOutputChannel(const Locator_t&) = 0;
+   virtual bool OpenOutputChannel(Locator_t&) = 0;
    virtual bool OpenInputChannel(const Locator_t&) = 0;
 
    /**

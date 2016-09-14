@@ -238,7 +238,7 @@ class PubSubReader
             return *this;
         }
 
-        PubSubReader& heartbeatPeriod(const int32_t secs, const int32_t frac)
+        PubSubReader& heartbeatResponseDelay(const int32_t secs, const int32_t frac)
         {
             subscriber_attr_.times.heartbeatResponseDelay.seconds = secs;
             subscriber_attr_.times.heartbeatResponseDelay.fraction = frac;

@@ -58,7 +58,7 @@ public:
     * the given locator and returning a vector of Sender Resources associated with it.
     * @param local Locator through which to send.
     */
-   std::vector<SenderResource>   BuildSenderResources                 (const Locator_t& local);
+   std::vector<SenderResource>   BuildSenderResources                 (Locator_t& local);
    /**
     * Walks over the list of transports, opening every possible channel that can send to the 
     * given remote locator and returning a vector of Sender Resources associated with it.

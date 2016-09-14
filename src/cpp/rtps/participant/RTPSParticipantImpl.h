@@ -234,6 +234,7 @@ class RTPSParticipantImpl
         //!ReceiverControlBlock list - encapsulates all associated resources on a Receiving element
         std::list<ReceiverControlBlock> m_receiverResourcelist;
         //!SenderResource List
+        boost::mutex m_send_resources_mutex;
         std::vector<SenderResource> m_senderResource;
 
         //!Listen Resource list - DEPRECATED - Stays commented for reference purposes
@@ -295,6 +296,7 @@ class RTPSParticipantImpl
 
         //!Participant Mutex
         boost::recursive_mutex* mp_mutex;
+
         /*
          * Flow controllers for this participant.
          */

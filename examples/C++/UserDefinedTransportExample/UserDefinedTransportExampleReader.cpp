@@ -49,7 +49,6 @@
 	    auto customTransport = std::make_shared<UDPv4TransportDescriptor>();
     	    customTransport->sendBufferSize = 65536;
     	    customTransport->receiveBufferSize = 65536;
-    	    customTransport->granularMode = false;
 
 	    pattr.userTransports.push_back(customTransport);
 	    pattr.useBuiltinTransports = false;

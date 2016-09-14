@@ -30,13 +30,27 @@ namespace rtps{
 static const uint32_t maximumUDPSocketSize = 65536;
 static const uint32_t maximumMessageSize = 65500;
 
-static void GetIP4s(vector<IPFinder::info_IP>& locNames)
+static void GetIP4s(vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
 {
-    IPFinder::getIPs(&locNames);
+    IPFinder::getIPs(&locNames, return_loopback);
     auto newEnd = remove_if(locNames.begin(), 
             locNames.end(),
-            [](IPFinder::info_IP ip){return ip.type != IPFinder::IP4;});
+            [](IPFinder::info_IP ip){return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL;});
     locNames.erase(newEnd, locNames.end());
+}
+
+static bool IsAny(const Locator_t& locator)
+{
+    return locator.address[12] == 0 &&
+        locator.address[13] == 0 &&
+        locator.address[14] == 0 &&
+        locator.address[15] == 0;
+}
+
+static boost::asio::ip::address_v4::bytes_type locatorToNative(const Locator_t& locator)
+{
+    return boost::asio::ip::address_v4::bytes_type{locator.address[12],
+        locator.address[13], locator.address[14], locator.address[15]};
 }
 
 UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
@@ -121,13 +135,13 @@ bool UDPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
     return mOutputSockets.find(locator.port) != mOutputSockets.end();
 }
 
-bool UDPv4Transport::OpenOutputChannel(const Locator_t& locator)
+bool UDPv4Transport::OpenOutputChannel(Locator_t& locator)
 {
     if (IsOutputChannelOpen(locator) ||
             !IsLocatorSupported(locator))
         return false;   
 
-    return OpenAndBindOutputSockets(locator.port);
+    return OpenAndBindOutputSockets(locator);
 }
 
 static bool IsMulticastAddress(const Locator_t& locator)
@@ -153,7 +167,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator)
         auto& socket = mInputSockets.at(locator.port);
 
         std::vector<IPFinder::info_IP> locNames;
-        GetIP4s(locNames);
+        GetIP4s(locNames, true);
         for (const auto& infoIP : locNames)
         {
             auto ip = boost::asio::ip::address_v4::from_string(infoIP.name);
@@ -173,8 +187,8 @@ bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
     auto& sockets = mOutputSockets.at(locator.port);
     for (auto& socket : sockets)
     {
-        socket.cancel();
-        socket.close();
+        socket.socket_.cancel();
+        socket.socket_.close();
     }
 
     mOutputSockets.erase(locator.port);
@@ -208,63 +222,89 @@ bool UDPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip)
     return find(mInterfaceWhiteList.begin(), mInterfaceWhiteList.end(), ip) != mInterfaceWhiteList.end();
 }
 
-bool UDPv4Transport::OpenAndBindOutputSockets(uint32_t port)
+bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
 {
     boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
 
     try 
     {
-        // If there is no whitelist, we can simply open a generic output socket
-        // and gain efficiency.
-        if (mInterfaceWhiteList.empty())
-            mOutputSockets[port].push_back(OpenAndBindUnicastOutputSocket(ip::address_v4::any(), port));
-        else
+        if(IsAny(locator))
         {
             std::vector<IPFinder::info_IP> locNames;
             GetIP4s(locNames);
-            for (const auto& infoIP : locNames)
+            // If there is no whitelist, we can simply open a generic output socket
+            // and gain efficiency.
+            if(mInterfaceWhiteList.empty())
             {
-                auto ip = boost::asio::ip::address_v4::from_string(infoIP.name);
-                if (IsInterfaceAllowed(ip))
-                    mOutputSockets[port].push_back(OpenAndBindUnicastOutputSocket(ip, port));
+                boost::asio::ip::udp::socket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v4::any(), locator.port);
+                unicastSocket.set_option(ip::multicast::enable_loopback( true ) );
+
+                // If more than one interface, then create sockets for outbounding multicast.
+                if(locNames.size() > 1)
+                {
+                    auto locIt = locNames.begin();
+
+                    // Outbounding first interface with already created socket.
+                    unicastSocket.set_option(ip::multicast::outbound_interface(boost::asio::ip::address_v4::from_string((*locIt).name)));
+                    mOutputSockets[locator.port].push_back(std::move(SocketInfo(unicastSocket)));
+
+                    // Create other socket for outbounding rest of interfaces.
+                    for(++locIt; locIt != locNames.end(); ++locIt)
+                    {
+                        auto ip = boost::asio::ip::address_v4::from_string((*locIt).name);
+                        uint32_t new_port = 0;
+                        boost::asio::ip::udp::socket multicastSocket = OpenAndBindUnicastOutputSocket(ip, new_port);
+                        multicastSocket.set_option(ip::multicast::outbound_interface(ip));
+                        SocketInfo mSocket(multicastSocket);
+                        mSocket.only_multicast_purpose(true);
+                        mOutputSockets[new_port].push_back(std::move(mSocket));
+                    }
+                }
+                else
+                {
+                    // Multicast data will be sent for the only one interface.
+                    mOutputSockets[locator.port].push_back(std::move(SocketInfo(unicastSocket)));
+                }
+            }
+            else
+            {
+                bool firstInterface = false;
+                for (const auto& infoIP : locNames)
+                {
+                    auto ip = boost::asio::ip::address_v4::from_string(infoIP.name);
+                    if (IsInterfaceAllowed(ip))
+                    {
+                        boost::asio::ip::udp::socket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
+                        unicastSocket.set_option(ip::multicast::outbound_interface(ip));
+                        if(firstInterface)
+                        {
+                            unicastSocket.set_option(ip::multicast::enable_loopback( true ) );
+                            firstInterface = true;
+                        }
+                        mOutputSockets[locator.port].push_back(std::move(SocketInfo(unicastSocket)));
+                    }
+                }
             }
         }
-
-    }
-    catch (boost::system::system_error const& e)
-    {
-        (void)e;
-        logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << port << ")" << " with boost msg: "<<e.what());
-        mOutputSockets.erase(port);
-        return false;
-    }
-
-    return true;
-}
-
-/*bool UDPv4Transport::OpenAndBindGranularOutputSocket(const Locator_t& locator)
-{
-    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
-    auto ip = boost::asio::ip::address_v4::from_string(locator.to_IP4_string());
-    if (!IsInterfaceAllowed(ip))
-        return false;
-
-
-    try 
-    {
-        mGranularOutputSockets.insert(std::pair<Locator_t, boost::asio::ip::udp::socket>(locator, 
-                    OpenAndBindUnicastOutputSocket(boost::asio::ip::address_v4::from_string(locator.to_IP4_string()), locator.port)));
+        else
+        {
+            auto ip = boost::asio::ip::address_v4(locatorToNative(locator));
+            boost::asio::ip::udp::socket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
+            unicastSocket.set_option(ip::multicast::outbound_interface(ip));
+            unicastSocket.set_option(ip::multicast::enable_loopback( true ) );
+            mOutputSockets[locator.port].push_back(std::move(SocketInfo(unicastSocket)));
+        }
     }
     catch (boost::system::system_error const& e)
     {
         (void)e;
         logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << locator.port << ")" << " with boost msg: "<<e.what());
-        mGranularOutputSockets.erase(locator);
+        mOutputSockets.erase(locator.port);
         return false;
     }
 
     return true;
-}*/
+}
 
 bool UDPv4Transport::OpenAndBindInputSockets(uint32_t port)
 {
@@ -285,7 +325,7 @@ bool UDPv4Transport::OpenAndBindInputSockets(uint32_t port)
     return true;
 }
 
-boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindUnicastOutputSocket(const ip::address_v4& ipAddress, uint32_t port)
+boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindUnicastOutputSocket(const ip::address_v4& ipAddress, uint32_t& port)
 {
     ip::udp::socket socket(mService);
     socket.open(ip::udp::v4());
@@ -293,6 +333,9 @@ boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindUnicastOutputSocket(cons
 
     ip::udp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
     socket.bind(endpoint);
+
+    if(port == 0)
+        port = socket.local_endpoint().port();
 
     return socket;
 }
@@ -304,9 +347,7 @@ boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindInputSocket(uint32_t por
     socket.set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
     socket.set_option(ip::udp::socket::reuse_address( true ) );
     socket.set_option(ip::multicast::enable_loopback( true ) );
-    auto anyIP = ip::address_v4::any();
-
-    ip::udp::endpoint endpoint(anyIP, static_cast<uint16_t>(port));
+    ip::udp::endpoint endpoint(ip::address_v4::any(), static_cast<uint16_t>(port));
     socket.bind(endpoint);
 
     return socket;
@@ -340,10 +381,14 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         return false;
 
     bool success = false;
+    bool is_multicast_remote_address = IsMulticastAddress(remoteLocator);
 
     auto& sockets = mOutputSockets.at(localLocator.port);
     for (auto& socket : sockets)
-        success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket);
+    {
+        if(is_multicast_remote_address || !socket.only_multicast_purpose())
+            success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket.socket_);
+    }
 
     return success;
 }

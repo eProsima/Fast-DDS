@@ -188,10 +188,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         Locator_t SendLocator;
         /*TODO - Fill with desired default Send Locators for our transports*/
         //Warning - Mock rule being used (and only for IPv4)!
-        SendLocator.port = m_att.port.portBase +
-            m_att.port.domainIDGain*PParam.builtin.domainId +
-            m_att.port.offsetd3 +
-            m_att.port.participantIDGain*m_att.participantID + 50;
         SendLocator.kind = LOCATOR_KIND_UDPv4;
         m_att.defaultOutLocatorList.push_back(SendLocator);
     }
@@ -218,10 +214,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         //newSenders.insert(newSenders.end(), newSendersBuffer.begin(), newSendersBuffer.end());
         newSendersBuffer.clear();
     }
+
+    m_send_resources_mutex.lock();
     for(auto mit=newSenders.begin(); mit!=newSenders.end();++mit){
         m_senderResource.push_back(std::move(*mit));
     }
-    //m_senderResource.insert(m_senderResource.end(), newSenders.begin(), newSenders.end());
+    m_send_resources_mutex.unlock();
     m_att.defaultOutLocatorList = defcopy;
 
     if (!hasLocatorsDefined){
@@ -656,10 +654,11 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend){
         //newSenders.insert(newSenders.end(), SendersBuffer.begin(), SendersBuffer.end());
         SendersBuffer.clear();
     }
+
+    boost::lock_guard<boost::mutex> guard(m_send_resources_mutex);
     for(auto mit = newSenders.begin();mit!=newSenders.end();++mit){
         m_senderResource.push_back(std::move(*mit));
     }
-    //m_senderResource.insert(m_senderResource.end(), SendersBuffer.begin(), SendersBuffer.end());
 
     return true;
 }
@@ -787,6 +786,7 @@ std::pair<StatefulReader*,StatefulReader*> RTPSParticipantImpl::getEDPReaders(){
 
 void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint *pend, const Locator_t& destination_loc)
 {
+    boost::lock_guard<boost::mutex> guard(m_send_resources_mutex);
     for (auto it = m_senderResource.begin(); it != m_senderResource.end(); ++it)
     {
         bool sendThroughResource = false;

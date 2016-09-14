@@ -45,7 +45,7 @@ class MockTransport: public TransportInterface
         virtual bool IsOutputChannelOpen(const Locator_t&) const;
         virtual bool IsInputChannelOpen(const Locator_t&)  const;
 
-        virtual bool OpenOutputChannel(const Locator_t&); 
+        virtual bool OpenOutputChannel(Locator_t&); 
         virtual bool OpenInputChannel(const Locator_t&); 
 
         virtual bool CloseOutputChannel(const Locator_t&);

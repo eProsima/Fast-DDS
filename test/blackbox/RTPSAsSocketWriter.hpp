@@ -198,6 +198,18 @@ class RTPSAsSocketWriter
             return *this;
         }
 
+        RTPSAsSocketWriter& heartbeat_period_seconds(int32_t sec)
+        {
+            writer_attr_.times.heartbeatPeriod.seconds = sec;
+            return *this;
+        }
+
+        RTPSAsSocketWriter& heartbeat_period_fraction(uint32_t frac)
+        {
+            writer_attr_.times.heartbeatPeriod.fraction = frac;
+            return *this;
+        }
+
     private:
 
         eprosima::fastrtps::rtps::RTPSParticipant *participant_;

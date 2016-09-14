@@ -51,6 +51,52 @@ namespace rtps{
 
 class UDPv6Transport : public TransportInterface
 {
+    class SocketInfo
+    {
+        public:
+
+            SocketInfo(boost::asio::ip::udp::socket& socket) :
+                socket_(std::move(socket)), only_multicast_purpose_(false)
+            {
+            }
+
+            SocketInfo(SocketInfo&& socketInfo) :
+                socket_(std::move(socketInfo.socket_)),
+                only_multicast_purpose_(socketInfo.only_multicast_purpose_)
+            {
+            }
+
+            SocketInfo& operator=(SocketInfo&& socketInfo)
+            {
+                socket_ = std::move(socketInfo.socket_);
+                only_multicast_purpose_ = socketInfo.only_multicast_purpose_;
+                return *this;
+            }
+
+            void only_multicast_purpose(const bool value)
+            {
+                only_multicast_purpose_ = value;
+            };
+
+            bool& only_multicast_purpose()
+            {
+                return only_multicast_purpose_;
+            }
+
+            bool only_multicast_purpose() const
+            {
+                return only_multicast_purpose_;
+            }
+
+            boost::asio::ip::udp::socket socket_;
+            bool only_multicast_purpose_;
+
+        private:
+
+            SocketInfo(const SocketInfo&) = delete;
+            SocketInfo& operator=(const SocketInfo&) = delete;
+    };
+
 public:
 
    RTPS_DllAPI UDPv6Transport(const UDPv6TransportDescriptor&);
@@ -89,7 +135,7 @@ public:
    /**
     * Opens a socket on the given address and port (as long as they are white listed).
     */
-   virtual bool OpenOutputChannel(const Locator_t&);
+   virtual bool OpenOutputChannel(Locator_t&);
 
    //! Removes the listening socket for the specified port.
    virtual bool CloseInputChannel(const Locator_t&);
@@ -132,7 +178,7 @@ private:
    mutable boost::recursive_mutex mInputMapMutex;
 
    //! The notion of output channel corresponds to a port.
-   std::map<uint32_t, std::vector<boost::asio::ip::udp::socket> > mOutputSockets; 
+   std::map<uint32_t, std::vector<SocketInfo> > mOutputSockets; 
    //! The notion of output channel corresponds to an address.
    struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
@@ -143,10 +189,10 @@ private:
    std::vector<boost::asio::ip::address_v6> mInterfaceWhiteList;
 
 
-   bool OpenAndBindOutputSockets(uint32_t port);
+   bool OpenAndBindOutputSockets(Locator_t& locator);
    bool OpenAndBindInputSockets(uint32_t port);
 
-   boost::asio::ip::udp::socket OpenAndBindUnicastOutputSocket(const boost::asio::ip::address_v6&, uint32_t port);
+   boost::asio::ip::udp::socket OpenAndBindUnicastOutputSocket(const boost::asio::ip::address_v6&, uint32_t& port);
    boost::asio::ip::udp::socket OpenAndBindInputSocket(uint32_t port);
 
    bool SendThroughSocket(const octet* sendBuffer,
