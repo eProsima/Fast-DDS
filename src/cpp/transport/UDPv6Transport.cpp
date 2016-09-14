@@ -62,12 +62,12 @@ static bool IsAny(const Locator_t& locator)
 
 static boost::asio::ip::address_v6::bytes_type locatorToNative(const Locator_t& locator)
 {
-    return boost::asio::ip::address_v6::bytes_type{locator.address[0],
+    return boost::asio::ip::address_v6::bytes_type({locator.address[0],
         locator.address[1], locator.address[2], locator.address[3],
         locator.address[4], locator.address[5], locator.address[6],
         locator.address[7], locator.address[8], locator.address[9],
         locator.address[10], locator.address[11],locator.address[12],
-        locator.address[13], locator.address[14], locator.address[15]};
+        locator.address[13], locator.address[14], locator.address[15]});
 }
 
 UDPv6Transport::UDPv6Transport(const UDPv6TransportDescriptor& descriptor):
