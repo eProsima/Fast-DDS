@@ -22,11 +22,11 @@
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
+#include <fastrtps/rtps/reader/timedevent/InitialAckNack.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include "../participant/RTPSParticipantImpl.h"
 #include "FragmentedChangePitStop.h"
-#include "timedevent/InitialAckNack.h"
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <boost/thread/lock_guard.hpp>
@@ -76,9 +76,7 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
     }
     WriterProxy* wp = new WriterProxy(wdata, this);
 
-    InitialAckNack* initial_acknack = new InitialAckNack(mp_RTPSParticipant, this, *wp,
-            TimeConv::Time_t2MilliSecondsDouble(m_times.initialAcknackDelay));
-    initial_acknack->restart_timer();
+    wp->mp_initialAcknack->restart_timer();
 
     matched_writers.push_back(wp);
     logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to " <<m_guid.entityId);

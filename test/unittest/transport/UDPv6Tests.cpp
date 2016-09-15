@@ -171,6 +171,7 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
     receiverThread->join();
 }
 
+/*
 TEST_F(UDPv6Tests, send_to_loopback)
 {
     UDPv6Transport transportUnderTest(descriptor);
@@ -212,6 +213,7 @@ TEST_F(UDPv6Tests, send_to_loopback)
     senderThread->join();
     receiverThread->join();
 }
+*/
 #endif
 
 void UDPv6Tests::HELPER_SetDescriptorDefaults()

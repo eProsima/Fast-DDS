@@ -45,6 +45,7 @@ namespace eprosima
             class StatefulWriter;
             class NackResponseDelay;
             class NackSupressionDuration;
+            class InitialHeartbeat;
 
 
             /**
@@ -181,6 +182,8 @@ namespace eprosima
                 NackResponseDelay* mp_nackResponse;
                 //! Timed Event to manage the delay to mark a change as UNACKED after sending it.
                 NackSupressionDuration* mp_nackSupression;
+                //! Timed Event to send initial heartbeat.
+                InitialHeartbeat* mp_initialHeartbeat;
                 //! Last ack/nack count
                 uint32_t m_lastAcknackCount;
 

@@ -28,6 +28,7 @@
 
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
 #include <fastrtps/rtps/reader/timedevent/WriterProxyLiveliness.h>
+#include <fastrtps/rtps/reader/timedevent/InitialAckNack.h>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -95,7 +96,8 @@ static const int WRITERPROXY_LIVELINESS_PERIOD_MULTIPLIER = 1;
 
 WriterProxy::~WriterProxy()
 {
-	//pDebugInfo("WriterProxy destructor"<<endl;);
+    if(mp_initialAcknack != nullptr)
+        delete(mp_initialAcknack);
 	if(mp_writerProxyLiveliness!=nullptr)
 		delete(mp_writerProxyLiveliness);
 
@@ -112,6 +114,7 @@ WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
 												m_lastHeartbeatCount(0),
 												mp_heartbeatResponse(nullptr),
 												mp_writerProxyLiveliness(nullptr),
+                                                mp_initialAcknack(nullptr),
 												m_heartbeatFinalFlag(false),
 												m_isAlive(true),
 												mp_mutex(new boost::recursive_mutex())
@@ -121,6 +124,7 @@ WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
 	//Create Events
 	mp_writerProxyLiveliness = new WriterProxyLiveliness(this,TimeConv::Time_t2MilliSecondsDouble(m_att.livelinessLeaseDuration)*WRITERPROXY_LIVELINESS_PERIOD_MULTIPLIER);
 	mp_heartbeatResponse = new HeartbeatResponseDelay(this,TimeConv::Time_t2MilliSecondsDouble(mp_SFR->getTimes().heartbeatResponseDelay));
+    mp_initialAcknack = new InitialAckNack(this, TimeConv::Time_t2MilliSecondsDouble(mp_SFR->getTimes().initialAcknackDelay));
 	if(m_att.livelinessLeaseDuration < c_TimeInfinite)
 		mp_writerProxyLiveliness->restart_timer();
 	logInfo(RTPS_READER,"Writer Proxy created in reader: "<<mp_SFR->getGuid().entityId);

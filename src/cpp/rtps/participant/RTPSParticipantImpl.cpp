@@ -270,9 +270,10 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     delete(this->mp_builtinProtocols);
     delete(this->mp_ResourceSemaphore);
     delete(this->mp_userParticipant);
-
     m_senderResource.clear();
+
     delete(this->mp_event_thr);
+
     delete(this->mp_mutex);
 }
 

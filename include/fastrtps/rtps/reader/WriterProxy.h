@@ -47,6 +47,7 @@ namespace eprosima
             class StatefulReader;
             class HeartbeatResponseDelay;
             class WriterProxyLiveliness;
+            class InitialAckNack;
 
             /**
              * Class WriterProxy that contains the state of each matched writer for a specific reader.
@@ -128,6 +129,8 @@ namespace eprosima
                     HeartbeatResponseDelay* mp_heartbeatResponse;
                     //!TO check the liveliness Status periodically.
                     WriterProxyLiveliness* mp_writerProxyLiveliness;
+                    //! Timed event to send initial acknack.
+                    InitialAckNack* mp_initialAcknack;
                     //!Indicates if the heartbeat has the final flag set.
                     bool m_heartbeatFinalFlag;
 

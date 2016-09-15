@@ -17,7 +17,7 @@
  *
  */
 
-#include "InitialHeartbeat.h"
+#include <fastrtps/rtps/writer/timedevent/InitialHeartbeat.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
@@ -43,13 +43,10 @@ InitialHeartbeat::~InitialHeartbeat()
     destroy();
 }
 
-InitialHeartbeat::InitialHeartbeat(RTPSParticipantImpl* participant, StatefulWriter* sfw,
-        ReaderProxy& remote_reader, double interval):
-    TimedEvent(participant->getEventResource().getIOService(),
-            participant->getEventResource().getThread(), interval, TimedEvent::ALLWAYS),
-    participant_(participant), sfw_guid_(sfw->getGuid()), remote_reader_guid_(remote_reader.m_att.guid),
-    remote_reader_multicast_locators_(remote_reader.m_att.endpoint.multicastLocatorList),
-    remote_reader_unicast_locators_(remote_reader.m_att.endpoint.unicastLocatorList)
+InitialHeartbeat::InitialHeartbeat(ReaderProxy* rp, double interval) :
+    TimedEvent(rp->mp_SFW->getRTPSParticipant()->getEventResource().getIOService(),
+        rp->mp_SFW->getRTPSParticipant()->getEventResource().getThread(), interval),
+    rp_(rp)
 {
 }
 
@@ -63,55 +60,38 @@ void InitialHeartbeat::event(EventCode code, const char* msg)
 	{
 		SequenceNumber_t firstSeq, lastSeq;
 		Count_t heartbeatCount = 0;
-        StatefulWriter* sfw = nullptr;
 
 		{//BEGIN PROTECTION
-            boost::lock_guard<boost::recursive_mutex> guard_participant(*participant_->getParticipantMutex());
+            boost::lock_guard<boost::recursive_mutex> guard_writer(*rp_->mp_SFW->getMutex());
 
-            for(auto sfwit : participant_->getAllWriters())
+			firstSeq = rp_->mp_SFW->get_seq_num_min();
+			lastSeq = rp_->mp_SFW->get_seq_num_max();
+
+            if(firstSeq == c_SequenceNumber_Unknown || lastSeq == c_SequenceNumber_Unknown)
             {
-                if(sfwit->getGuid() == sfw_guid_)
-                {
-                    sfw = static_cast<StatefulWriter*>(sfwit);
-                    break;
-                }
-            }
-
-            if(sfw != nullptr)
-            {
-                boost::lock_guard<boost::recursive_mutex> guard_writer(*sfw->getMutex());
-
-				firstSeq = sfw->get_seq_num_min();
-				lastSeq = sfw->get_seq_num_max();
-
-                if(firstSeq == c_SequenceNumber_Unknown || lastSeq == c_SequenceNumber_Unknown)
-                {
-					firstSeq = sfw->next_sequence_number();
-                    lastSeq = SequenceNumber_t(0, 0);
-                }
-                else
-                {
-                    (void)firstSeq;
-                    assert(firstSeq <= lastSeq);
-                }
-
-				sfw->incrementHBCount();
-				heartbeatCount = sfw->getHeartbeatCount();
+				firstSeq = rp_->mp_SFW->next_sequence_number();
+                lastSeq = SequenceNumber_t(0, 0);
             }
             else
-                return;
+            {
+                (void)firstSeq;
+                assert(firstSeq <= lastSeq);
+            }
+
+            rp_->mp_SFW->incrementHBCount();
+			heartbeatCount = rp_->mp_SFW->getHeartbeatCount();
 		}
 
         CDRMessage::initCDRMsg(&initial_hb_msg_);
         // FinalFlag is always false because this is a StatefulWriter in Reliable.
-        RTPSMessageCreator::addMessageHeartbeat(&initial_hb_msg_, sfw_guid_.guidPrefix, remote_reader_guid_.guidPrefix,
-                remote_reader_guid_.entityId, sfw_guid_.entityId,
+        RTPSMessageCreator::addMessageHeartbeat(&initial_hb_msg_, rp_->mp_SFW->getGuid().guidPrefix, rp_->m_att.guid.guidPrefix,
+                rp_->m_att.guid.entityId, rp_->mp_SFW->getGuid().entityId,
                 firstSeq, lastSeq, heartbeatCount, false, false);
         logInfo(RTPS_WRITER, sfw_guid_.entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq << ")");
-        for (auto lit = remote_reader_multicast_locators_.begin(); lit != remote_reader_multicast_locators_.end(); ++lit)
-            participant_->sendSync(&initial_hb_msg_, (Endpoint *)sfw, (*lit));
-        for (auto lit = remote_reader_unicast_locators_.begin(); lit != remote_reader_unicast_locators_.end(); ++lit)
-            participant_->sendSync(&initial_hb_msg_, (Endpoint *)sfw, (*lit));
+        for (auto lit = rp_->m_att.endpoint.multicastLocatorList.begin(); lit != rp_->m_att.endpoint.multicastLocatorList.end(); ++lit)
+            rp_->mp_SFW->getRTPSParticipant()->sendSync(&initial_hb_msg_, (Endpoint *)rp_->mp_SFW, (*lit));
+        for (auto lit = rp_->m_att.endpoint.unicastLocatorList.begin(); lit != rp_->m_att.endpoint.unicastLocatorList.end(); ++lit)
+            rp_->mp_SFW->getRTPSParticipant()->sendSync(&initial_hb_msg_, (Endpoint *)rp_->mp_SFW, (*lit));
 	}
 	else if(code == EVENT_ABORT)
 	{

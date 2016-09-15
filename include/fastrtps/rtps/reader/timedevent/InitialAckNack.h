@@ -13,40 +13,39 @@
 // limitations under the License.
 
 /**
- * @file InitialHeartbeat.h
+ * @file InitialAckNack.h
  *
  */
 
-#ifndef INITIALHEARTBEAT_H_
-#define INITIALHEARTBEAT_H_
+#ifndef INITIALACKNACK_H_
+#define INITIALACKNACK_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <fastrtps/rtps/resources/TimedEvent.h>
 #include <fastrtps/rtps/common/CDRMessage_t.h>
 #include <fastrtps/rtps/common/Guid.h>
-#include <fastrtps/rtps/common/Locator.h>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps{
 
 class RTPSParticipantImpl;
-class StatefulWriter;
-class ReaderProxy;
+class StatefulReader;
+class WriterProxy;
 
 
 /**
- * InitialHeartbeat class, controls the initial send operation of HB.
+ * InitialAckNack class, controls the initial send operation of AckNack.
  * @ingroup WRITER_MODULE
  */
-class InitialHeartbeat: public TimedEvent {
+class InitialAckNack: public TimedEvent {
 public:
 	/**
 	*
 	* @param p_RP
 	* @param interval
 	*/
-	InitialHeartbeat(RTPSParticipantImpl* participant, StatefulWriter* sfw, ReaderProxy& remoteReaderProxy, double interval);
-	virtual ~InitialHeartbeat();
+	InitialAckNack(WriterProxy* wp, double interval);
+	virtual ~InitialAckNack();
 	
 	/**
 	* Method invoked when the event occurs
@@ -57,13 +56,9 @@ public:
 	void event(EventCode code, const char* msg= nullptr);
 
 	//!
-	CDRMessage_t initial_hb_msg_;
+	CDRMessage_t initial_acknack_msg_;
 	//!
-    RTPSParticipantImpl* participant_;
-	GUID_t sfw_guid_;
-    GUID_t remote_reader_guid_;
-    LocatorList_t remote_reader_multicast_locators_;
-    LocatorList_t remote_reader_unicast_locators_;
+    WriterProxy* wp_;
 };
 
 
@@ -73,4 +68,4 @@ public:
 }
 } /* namespace eprosima */
 #endif
-#endif /* INITIALHEARTBEAT_H_ */
+#endif /* INITIALACKNACK_H_ */

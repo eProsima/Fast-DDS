@@ -17,7 +17,7 @@
  *
  */
 
-#include "InitialAckNack.h"
+#include <fastrtps/rtps/reader/timedevent/InitialAckNack.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/rtps/reader/StatefulReader.h>
@@ -43,11 +43,10 @@ InitialAckNack::~InitialAckNack()
     destroy();
 }
 
-InitialAckNack::InitialAckNack(RTPSParticipantImpl* participant, StatefulReader* sfr,
-        WriterProxy& remote_writer, double interval):
-    TimedEvent(participant->getEventResource().getIOService(),
-            participant->getEventResource().getThread(), interval, TimedEvent::ALLWAYS),
-    participant_(participant), sfr_guid_(sfr->getGuid()), remote_writer_guid_(remote_writer.m_att.guid)
+InitialAckNack::InitialAckNack(WriterProxy* wp, double interval):
+    TimedEvent(wp->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
+            wp->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval),
+    wp_(wp)
 {
 }
 
@@ -60,37 +59,11 @@ void InitialAckNack::event(EventCode code, const char* msg)
 	if(code == EVENT_SUCCESS)
 	{
 		Count_t acknackCount = 0;
-        StatefulReader* sfr = nullptr;
-        WriterProxy* remote_writer = nullptr;
 
 		{//BEGIN PROTECTION
-            boost::lock_guard<boost::recursive_mutex> guard_participant(*participant_->getParticipantMutex());
-
-            for(auto sfrit : participant_->getAllReaders())
-            {
-                if(sfrit->getGuid() == sfr_guid_)
-                {
-                    sfr = static_cast<StatefulReader*>(sfrit);
-                    break;
-                }
-            }
-
-            if(sfr != nullptr)
-            {
-                boost::lock_guard<boost::recursive_mutex> guard_reader(*sfr->getMutex());
-
-                sfr-> matched_writer_lookup(remote_writer_guid_, &remote_writer);
-
-                if(remote_writer != nullptr)
-                {
-                    remote_writer->m_acknackCount++;
-                    acknackCount = remote_writer->m_acknackCount;
-                }
-                else
-                    return;
-            }
-            else
-                return;
+            boost::lock_guard<boost::recursive_mutex> guard_reader(*wp_->getMutex());
+            wp_->m_acknackCount++;
+            acknackCount = wp_->m_acknackCount;
 		}
 
         // Send initial NACK.
@@ -101,21 +74,21 @@ void InitialAckNack::event(EventCode code, const char* msg)
 
         CDRMessage::initCDRMsg(&initial_acknack_msg_);
         RTPSMessageCreator::addMessageAcknack(&initial_acknack_msg_,
-                sfr_guid_.guidPrefix,
-                remote_writer_guid_.guidPrefix,
-                sfr_guid_.entityId,
-                remote_writer_guid_.entityId,
+                wp_->mp_SFR->getGuid().guidPrefix,
+                wp_->m_att.guid.guidPrefix,
+                wp_->mp_SFR->getGuid().entityId,
+                wp_->m_att.guid.entityId,
                 sns,
                 acknackCount,
                 false);
 
-        for(auto lit = remote_writer->m_att.endpoint.unicastLocatorList.begin();
-                lit != remote_writer->m_att.endpoint.unicastLocatorList.end(); ++lit)
-            participant_->sendSync(&initial_acknack_msg_, static_cast<Endpoint *>(sfr), (*lit));
+        for(auto lit = wp_->m_att.endpoint.unicastLocatorList.begin();
+                lit != wp_->m_att.endpoint.unicastLocatorList.end(); ++lit)
+            wp_->mp_SFR->getRTPSParticipant()->sendSync(&initial_acknack_msg_, static_cast<Endpoint *>(wp_->mp_SFR), (*lit));
 
-        for(auto lit = remote_writer->m_att.endpoint.multicastLocatorList.begin();
-                lit != remote_writer->m_att.endpoint.multicastLocatorList.end(); ++lit)
-            participant_->sendSync(&initial_acknack_msg_, static_cast<Endpoint *>(sfr),(*lit));
+        for(auto lit = wp_->m_att.endpoint.multicastLocatorList.begin();
+                lit != wp_->m_att.endpoint.multicastLocatorList.end(); ++lit)
+            wp_->mp_SFR->getRTPSParticipant()->sendSync(&initial_acknack_msg_, static_cast<Endpoint *>(wp_->mp_SFR),(*lit));
 	}
 	else if(code == EVENT_ABORT)
 	{

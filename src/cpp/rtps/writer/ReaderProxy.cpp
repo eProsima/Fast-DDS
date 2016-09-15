@@ -23,6 +23,7 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
 #include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
+#include <fastrtps/rtps/writer/timedevent/InitialHeartbeat.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
@@ -36,11 +37,12 @@ using namespace eprosima::fastrtps::rtps;
 
 ReaderProxy::ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW) :
 				m_att(rdata), mp_SFW(SW),
-				mp_nackResponse(nullptr), mp_nackSupression(nullptr), m_lastAcknackCount(0),
+				mp_nackResponse(nullptr), mp_nackSupression(nullptr), mp_initialHeartbeat(nullptr), m_lastAcknackCount(0),
 				mp_mutex(new boost::recursive_mutex()), lastNackfragCount_(0)
 {
 	mp_nackResponse = new NackResponseDelay(this,TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
 	mp_nackSupression = new NackSupressionDuration(this,TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
+    mp_initialHeartbeat = new InitialHeartbeat(this, TimeConv::Time_t2MilliSecondsDouble(times.initialHeartbeatDelay));
 	logInfo(RTPS_WRITER,"Reader Proxy created");
 }
 
@@ -51,6 +53,8 @@ ReaderProxy::~ReaderProxy()
 	    delete(mp_nackResponse);
     if(mp_nackSupression != nullptr)
 	    delete(mp_nackSupression);
+    if(mp_initialHeartbeat != nullptr)
+        delete(mp_initialHeartbeat);
 	delete(mp_mutex);
 }
 
@@ -60,6 +64,8 @@ void ReaderProxy::destroy_timers()
     mp_nackResponse = nullptr;
     delete(mp_nackSupression);
     mp_nackSupression = nullptr;
+    delete(mp_initialHeartbeat);
+    mp_initialHeartbeat = nullptr;
 }
 
 void ReaderProxy::addChange(const ChangeForReader_t& change)

@@ -38,6 +38,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/HeartbeatResponseDelay
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyLiveliness
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/InitialAckNack
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
         target_link_libraries(WriterProxyTests ${Boost_LIBRARIES}
             ${GMOCK_LIBRARIES}

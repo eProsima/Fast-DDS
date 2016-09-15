@@ -171,7 +171,7 @@ bool UDPv6Transport::OpenInputChannel(const Locator_t& locator)
         auto& socket = mInputSockets.at(locator.port);
 
         std::vector<IPFinder::info_IP> locNames;
-        GetIP6s(locNames, true);
+        GetIP6s(locNames);
         for (const auto& infoIP : locNames)
         {
             auto ip = boost::asio::ip::address_v6::from_string(infoIP.name);

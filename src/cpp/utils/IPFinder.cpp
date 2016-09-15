@@ -95,12 +95,14 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
                         parseIP4(info);
 					else if (info.type == IP6)
                         parseIP6(info);
-					if (info.type == IP6)
+					if (info.type == IP6 || info.type == IP6_LOCAL)
 					{
 						sockaddr_in6* so = (sockaddr_in6*)ua->Address.lpSockaddr;
 						info.scope_id = so->sin6_scope_id;
 					}
-					vec_name->push_back(info);
+
+                    if(return_loopback || (info.type != IP6_LOCAL && info.type != IP4_LOCAL))
+					    vec_name->push_back(info);
 					//printf("Buffer: %s\n", buf);
 				}
 			}
@@ -279,10 +281,13 @@ RTPS_DllAPI bool IPFinder::parseIP6(info_IP& info)
 			hexdigits.push_back(std::string("EMPTY"));
 		start = end + 1;
 	}
-	if (*hexdigits.begin() == std::string("EMPTY") && *(hexdigits.begin() + 1) == std::string("EMPTY"))
-		return false;
+
 	if ((hexdigits.end() - 1)->find('.') != std::string::npos) //FOUND a . in the last element (MAP TO IP4 address)
 		return false;
+
+    if(*hexdigits.begin() == std::string("EMPTY") && *(hexdigits.begin() + 1) == std::string("EMPTY"))
+        info.type = IP6_LOCAL;
+
 	for (int8_t i = 0; i < 2; ++i)
 		info.locator.address[i] = 0;
 	info.locator.kind = LOCATOR_KIND_UDPv6;

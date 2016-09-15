@@ -29,10 +29,10 @@
 
 #include <fastrtps/utils/TimeConversion.h>
 
-#include "timedevent/InitialHeartbeat.h"
 #include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
 #include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
 #include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
+#include <fastrtps/rtps/writer/timedevent/InitialHeartbeat.h>
 
 #include <fastrtps/rtps/history/WriterHistory.h>
 
@@ -345,9 +345,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     }
 
     // Send a initial heartbeat
-    InitialHeartbeat* initial_heartbeat = new InitialHeartbeat(mp_RTPSParticipant, this, *rp,
-            TimeConv::Time_t2MilliSecondsDouble(m_times.initialHeartbeatDelay));
-    initial_heartbeat->restart_timer();
+    rp->mp_initialHeartbeat->restart_timer();
 
     // Always activate heartbeat period. We need a confirmation of the reader.
     // The state has to be updated.
