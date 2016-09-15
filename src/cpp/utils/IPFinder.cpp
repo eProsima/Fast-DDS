@@ -55,114 +55,114 @@ IPFinder::~IPFinder() {
 
 bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
 {
-	DWORD rv, size;
-	PIP_ADAPTER_ADDRESSES adapter_addresses, aa;
-	PIP_ADAPTER_UNICAST_ADDRESS ua;
+    DWORD rv, size;
+    PIP_ADAPTER_ADDRESSES adapter_addresses, aa;
+    PIP_ADAPTER_UNICAST_ADDRESS ua;
 
-	rv = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, NULL, &size);
+    rv = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, NULL, &size);
 
 
-	if (rv != ERROR_BUFFER_OVERFLOW) {
-		fprintf(stderr, "GetAdaptersAddresses() failed...");
-		return false;
-	}
-	adapter_addresses = (PIP_ADAPTER_ADDRESSES)malloc(size);
+    if (rv != ERROR_BUFFER_OVERFLOW) {
+        fprintf(stderr, "GetAdaptersAddresses() failed...");
+        return false;
+    }
+    adapter_addresses = (PIP_ADAPTER_ADDRESSES)malloc(size);
 
-	rv = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, adapter_addresses, &size);
-	if (rv != ERROR_SUCCESS) {
-		fprintf(stderr, "GetAdaptersAddresses() failed...");
-		free(adapter_addresses);
-		return false;
-	}
-	//cout << "IP INFORMATION " << endl;
-	for (aa = adapter_addresses; aa != NULL; aa = aa->Next) {
-		if (aa->OperStatus == 1) //is ENABLED
-		{
-			for (ua = aa->FirstUnicastAddress; ua != NULL; ua = ua->Next) {
-				char buf[BUFSIZ];
+    rv = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, adapter_addresses, &size);
+    if (rv != ERROR_SUCCESS) {
+        fprintf(stderr, "GetAdaptersAddresses() failed...");
+        free(adapter_addresses);
+        return false;
+    }
+    //cout << "IP INFORMATION " << endl;
+    for (aa = adapter_addresses; aa != NULL; aa = aa->Next) {
+        if (aa->OperStatus == 1) //is ENABLED
+        {
+            for (ua = aa->FirstUnicastAddress; ua != NULL; ua = ua->Next) {
+                char buf[BUFSIZ];
 
-				int family = ua->Address.lpSockaddr->sa_family;
+                int family = ua->Address.lpSockaddr->sa_family;
 
-				if (family == AF_INET || family == AF_INET6) //IP4
-				{
-					//printf("\t%s ",  family == AF_INET ? "IPv4":"IPv6");
-					memset(buf, 0, BUFSIZ);
-					getnameinfo(ua->Address.lpSockaddr, ua->Address.iSockaddrLength, buf, sizeof(buf), NULL, 0, NI_NUMERICHOST);
-					info_IP info;
-					info.type = family == AF_INET ? IP4 : IP6;
-					info.name = std::string(buf);
-					if (info.type == IP4)
+                if (family == AF_INET || family == AF_INET6) //IP4
+                {
+                    //printf("\t%s ",  family == AF_INET ? "IPv4":"IPv6");
+                    memset(buf, 0, BUFSIZ);
+                    getnameinfo(ua->Address.lpSockaddr, ua->Address.iSockaddrLength, buf, sizeof(buf), NULL, 0, NI_NUMERICHOST);
+                    info_IP info;
+                    info.type = family == AF_INET ? IP4 : IP6;
+                    info.name = std::string(buf);
+                    if (info.type == IP4)
                         parseIP4(info);
-					else if (info.type == IP6)
+                    else if (info.type == IP6)
                         parseIP6(info);
-					if (info.type == IP6 || info.type == IP6_LOCAL)
-					{
-						sockaddr_in6* so = (sockaddr_in6*)ua->Address.lpSockaddr;
-						info.scope_id = so->sin6_scope_id;
-					}
+                    if (info.type == IP6 || info.type == IP6_LOCAL)
+                    {
+                        sockaddr_in6* so = (sockaddr_in6*)ua->Address.lpSockaddr;
+                        info.scope_id = so->sin6_scope_id;
+                    }
 
                     if(return_loopback || (info.type != IP6_LOCAL && info.type != IP4_LOCAL))
-					    vec_name->push_back(info);
-					//printf("Buffer: %s\n", buf);
-				}
-			}
-		}
-	}
+                        vec_name->push_back(info);
+                    //printf("Buffer: %s\n", buf);
+                }
+            }
+        }
+    }
 
-	free(adapter_addresses);
-	return true;
+    free(adapter_addresses);
+    return true;
 }
 
 #else
 
 bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
 {
-	struct ifaddrs *ifaddr, *ifa;
-	int family, s;
-	char host[NI_MAXHOST];
+    struct ifaddrs *ifaddr, *ifa;
+    int family, s;
+    char host[NI_MAXHOST];
 
-	if (getifaddrs(&ifaddr) == -1) {
-		perror("getifaddrs");
-		exit(EXIT_FAILURE);
-	}
+    if (getifaddrs(&ifaddr) == -1) {
+        perror("getifaddrs");
+        exit(EXIT_FAILURE);
+    }
 
-	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
-	{
-      if (ifa->ifa_addr == NULL)
-         continue;
+    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
+    {
+        if (ifa->ifa_addr == NULL)
+            continue;
 
-		family = ifa->ifa_addr->sa_family;
+        family = ifa->ifa_addr->sa_family;
 
-		if (family == AF_INET)
-		{
-			s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
-					host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-			if (s != 0) {
-				printf("getnameinfo() failed: %s\n", gai_strerror(s));
+        if (family == AF_INET)
+        {
+            s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
+                    host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+            if (s != 0) {
+                printf("getnameinfo() failed: %s\n", gai_strerror(s));
                 freeifaddrs(ifaddr);
-				exit(EXIT_FAILURE);
-			}
-			info_IP info;
-			info.type = IP4;
-			info.name = std::string(host);
-			parseIP4(info);
+                exit(EXIT_FAILURE);
+            }
+            info_IP info;
+            info.type = IP4;
+            info.name = std::string(host);
+            parseIP4(info);
 
             if (return_loopback || info.type != IP4_LOCAL)
                 vec_name->push_back(info);
-		}
-		else if(family == AF_INET6)
-		{
-			s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in6),
-					host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-			if (s != 0) {
-				printf("getnameinfo() failed: %s\n", gai_strerror(s));
+        }
+        else if(family == AF_INET6)
+        {
+            s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in6),
+                    host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+            if (s != 0) {
+                printf("getnameinfo() failed: %s\n", gai_strerror(s));
                 freeifaddrs(ifaddr);
-				exit(EXIT_FAILURE);
-			}
-			struct sockaddr_in6 * so = (struct sockaddr_in6 *)ifa->ifa_addr;
-			info_IP info;
-			info.type = IP6;
-			info.name = std::string(host);
+                exit(EXIT_FAILURE);
+            }
+            struct sockaddr_in6 * so = (struct sockaddr_in6 *)ifa->ifa_addr;
+            info_IP info;
+            info.type = IP6;
+            info.name = std::string(host);
             if(parseIP6(info))
             {
                 info.scope_id = so->sin6_scope_id;
@@ -170,199 +170,199 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
                 if (return_loopback || info.type != IP6_LOCAL)
                     vec_name->push_back(info);
             }
-			//printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
-		}
-	}
+            //printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
+        }
+    }
 
     freeifaddrs(ifaddr);
-	return true;
+    return true;
 }
 #endif
 
 bool IPFinder::getIP4Address(LocatorList_t* locators)
 {
-	std::vector<info_IP> ip_names;
-	if(IPFinder::getIPs(&ip_names))
-	{
+    std::vector<info_IP> ip_names;
+    if(IPFinder::getIPs(&ip_names))
+    {
 
-		locators->clear();
-		for(auto it=ip_names.begin();
-				it!=ip_names.end();++it)
-		{
-			if (it->type == IP4)
-			{
-				locators->push_back(it->locator);
-			}
-		}
-		return true;
-	}
-	return false;
+        locators->clear();
+        for(auto it=ip_names.begin();
+                it!=ip_names.end();++it)
+        {
+            if (it->type == IP4)
+            {
+                locators->push_back(it->locator);
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 bool IPFinder::getAllIPAddress(LocatorList_t* locators)
 {
-	std::vector<info_IP> ip_names;
-	if (IPFinder::getIPs(&ip_names))
-	{
-		locators->clear();
-		for (auto it = ip_names.begin();
-				it != ip_names.end(); ++it)
-		{
-			if (it->type == IP6)
-			{
-				locators->push_back(it->locator);
-			}
-			else if (it->type == IP4)
-			{
-				locators->push_back(it->locator);
-			}
-		}
-		return true;
-	}
-	return false;
+    std::vector<info_IP> ip_names;
+    if (IPFinder::getIPs(&ip_names))
+    {
+        locators->clear();
+        for (auto it = ip_names.begin();
+                it != ip_names.end(); ++it)
+        {
+            if (it->type == IP6)
+            {
+                locators->push_back(it->locator);
+            }
+            else if (it->type == IP4)
+            {
+                locators->push_back(it->locator);
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 bool IPFinder::getIP6Address(LocatorList_t* locators)
 {
-	std::vector<info_IP> ip_names;
-	if (IPFinder::getIPs(&ip_names))
-	{
+    std::vector<info_IP> ip_names;
+    if (IPFinder::getIPs(&ip_names))
+    {
 
-		locators->clear();
-		for (auto it = ip_names.begin();
-				it != ip_names.end(); ++it)
-		{
-			if (it->type == IP6)
-			{
-				locators->push_back(it->locator);
-			}
-		}
-		return true;
-	}
-	return false;
+        locators->clear();
+        for (auto it = ip_names.begin();
+                it != ip_names.end(); ++it)
+        {
+            if (it->type == IP6)
+            {
+                locators->push_back(it->locator);
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 RTPS_DllAPI bool IPFinder::parseIP4(info_IP& info)
 {
-	std::stringstream ss(info.name);
-	int a, b, c, d;
-	char ch;
-	ss >> a >> ch >> b >> ch >> c >> ch >> d;
+    std::stringstream ss(info.name);
+    int a, b, c, d;
+    char ch;
+    ss >> a >> ch >> b >> ch >> c >> ch >> d;
     //TODO Property to activate or deactivate the loopback interface.
-	if (a == 127 && b == 0 && c == 0 && d == 1)
+    if (a == 127 && b == 0 && c == 0 && d == 1)
         info.type = IP4_LOCAL;
-	//		if(a==169 && b==254)
-	//			continue;
-	info.locator.kind = 1;
-	info.locator.port = 0;
-	for (int8_t i = 0; i < 12; ++i)
-		info.locator.address[i] = 0;
-	info.locator.address[12] = (octet)a;
-	info.locator.address[13] = (octet)b;
-	info.locator.address[14] = (octet)c;
-	info.locator.address[15] = (octet)d;
-	return true;
+    //		if(a==169 && b==254)
+    //			continue;
+    info.locator.kind = 1;
+    info.locator.port = 0;
+    for (int8_t i = 0; i < 12; ++i)
+        info.locator.address[i] = 0;
+    info.locator.address[12] = (octet)a;
+    info.locator.address[13] = (octet)b;
+    info.locator.address[14] = (octet)c;
+    info.locator.address[15] = (octet)d;
+    return true;
 }
 RTPS_DllAPI bool IPFinder::parseIP6(info_IP& info)
 {
-	std::vector<std::string> hexdigits;
+    std::vector<std::string> hexdigits;
 
-	size_t start = 0, end = 0;
-	std::string auxstr;
+    size_t start = 0, end = 0;
+    std::string auxstr;
 
     while(end != std::string::npos)
-	{
-		end = info.name.find(':',start);
-		if (end - start > 1)
-		{
-			hexdigits.push_back(info.name.substr(start, end - start));
-		}
-		else
-			hexdigits.push_back(std::string("EMPTY"));
-		start = end + 1;
-	}
+    {
+        end = info.name.find(':',start);
+        if (end - start > 1)
+        {
+            hexdigits.push_back(info.name.substr(start, end - start));
+        }
+        else
+            hexdigits.push_back(std::string("EMPTY"));
+        start = end + 1;
+    }
 
-	if ((hexdigits.end() - 1)->find('.') != std::string::npos) //FOUND a . in the last element (MAP TO IP4 address)
-		return false;
+    if ((hexdigits.end() - 1)->find('.') != std::string::npos) //FOUND a . in the last element (MAP TO IP4 address)
+        return false;
 
     if(*hexdigits.begin() == std::string("EMPTY") && *(hexdigits.begin() + 1) == std::string("EMPTY"))
         info.type = IP6_LOCAL;
 
-	for (int8_t i = 0; i < 2; ++i)
-		info.locator.address[i] = 0;
-	info.locator.kind = LOCATOR_KIND_UDPv6;
-	info.locator.port = 0;
-	*(hexdigits.end() - 1) = (hexdigits.end() - 1)->substr(0, (hexdigits.end() - 1)->find('%'));
+    for (int8_t i = 0; i < 2; ++i)
+        info.locator.address[i] = 0;
+    info.locator.kind = LOCATOR_KIND_UDPv6;
+    info.locator.port = 0;
+    *(hexdigits.end() - 1) = (hexdigits.end() - 1)->substr(0, (hexdigits.end() - 1)->find('%'));
 
-	int auxnumber = 0;
-	uint8_t index= 15;
-	for (auto it = hexdigits.rbegin(); it != hexdigits.rend(); ++it)
-	{
-		if (*it != std::string("EMPTY"))
-		{
-			if (it->length() <= 2)
-			{
-				info.locator.address[index - 1] = 0;
-				std::stringstream ss;
-				ss << std::hex << (*it);
-				ss >> auxnumber;
-				info.locator.address[index] = (octet)auxnumber;
-			}
-			else
-			{
-				std::stringstream ss;
-				ss << std::hex << it->substr(it->length()-2);
-				ss >> auxnumber;
-				info.locator.address[index] = (octet)auxnumber;
-				ss.str("");
-				ss.clear();
-				ss << std::hex << it->substr(0, it->length() - 2);
-				ss >> auxnumber;
-				info.locator.address[index - 1] = (octet)auxnumber;
-			}
-			index -= 2;
-		}
-		else
-			break;
-	}
-	index = 0;
-	for (auto it = hexdigits.begin(); it != hexdigits.end(); ++it)
-	{
-		if (*it != std::string("EMPTY"))
-		{
-			if (it->length() <= 2)
-			{
-				info.locator.address[index] = 0;
-				std::stringstream ss;
-				ss << std::hex << (*it);
-				ss >> auxnumber;
-				info.locator.address[index + 1]=(octet)auxnumber;
-			}
-			else
-			{
-				std::stringstream ss;
-				ss << std::hex << it->substr(it->length() - 2);
-				ss >> auxnumber;
-				info.locator.address[index + 1] = (octet)auxnumber;
-				ss.str("");
-				ss.clear();
-				ss << std::hex << it->substr(0, it->length() - 2);
-				ss >> auxnumber;
-				info.locator.address[index] =  (octet)auxnumber;
-			}
-			index += 2;
-		}
-		else
-			break;
-	}
-	/*
-	cout << "IPSTRING: ";
-	for (auto it : hexdigits)
-		cout << it << " ";
-	cout << endl;
-	cout << "LOCATOR: " << *loc << endl;
-	 */
-	return true;
+    int auxnumber = 0;
+    uint8_t index= 15;
+    for (auto it = hexdigits.rbegin(); it != hexdigits.rend(); ++it)
+    {
+        if (*it != std::string("EMPTY"))
+        {
+            if (it->length() <= 2)
+            {
+                info.locator.address[index - 1] = 0;
+                std::stringstream ss;
+                ss << std::hex << (*it);
+                ss >> auxnumber;
+                info.locator.address[index] = (octet)auxnumber;
+            }
+            else
+            {
+                std::stringstream ss;
+                ss << std::hex << it->substr(it->length()-2);
+                ss >> auxnumber;
+                info.locator.address[index] = (octet)auxnumber;
+                ss.str("");
+                ss.clear();
+                ss << std::hex << it->substr(0, it->length() - 2);
+                ss >> auxnumber;
+                info.locator.address[index - 1] = (octet)auxnumber;
+            }
+            index -= 2;
+        }
+        else
+            break;
+    }
+    index = 0;
+    for (auto it = hexdigits.begin(); it != hexdigits.end(); ++it)
+    {
+        if (*it != std::string("EMPTY"))
+        {
+            if (it->length() <= 2)
+            {
+                info.locator.address[index] = 0;
+                std::stringstream ss;
+                ss << std::hex << (*it);
+                ss >> auxnumber;
+                info.locator.address[index + 1]=(octet)auxnumber;
+            }
+            else
+            {
+                std::stringstream ss;
+                ss << std::hex << it->substr(it->length() - 2);
+                ss >> auxnumber;
+                info.locator.address[index + 1] = (octet)auxnumber;
+                ss.str("");
+                ss.clear();
+                ss << std::hex << it->substr(0, it->length() - 2);
+                ss >> auxnumber;
+                info.locator.address[index] =  (octet)auxnumber;
+            }
+            index += 2;
+        }
+        else
+            break;
+    }
+    /*
+       cout << "IPSTRING: ";
+       for (auto it : hexdigits)
+       cout << it << " ";
+       cout << endl;
+       cout << "LOCATOR: " << *loc << endl;
+       */
+    return true;
 }
 
 }

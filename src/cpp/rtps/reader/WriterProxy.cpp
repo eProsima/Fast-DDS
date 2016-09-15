@@ -98,42 +98,42 @@ WriterProxy::~WriterProxy()
 {
     if(mp_initialAcknack != nullptr)
         delete(mp_initialAcknack);
-	if(mp_writerProxyLiveliness!=nullptr)
-		delete(mp_writerProxyLiveliness);
+    if(mp_writerProxyLiveliness!=nullptr)
+        delete(mp_writerProxyLiveliness);
 
-	delete(mp_heartbeatResponse);
-	delete(mp_mutex);
+    delete(mp_heartbeatResponse);
+    delete(mp_mutex);
 }
 
 WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
-		StatefulReader* SR) :
-												mp_SFR(SR),
-												m_att(watt),
-												m_acknackCount(0),
-												m_nackfragCount(0),
-												m_lastHeartbeatCount(0),
-												mp_heartbeatResponse(nullptr),
-												mp_writerProxyLiveliness(nullptr),
-                                                mp_initialAcknack(nullptr),
-												m_heartbeatFinalFlag(false),
-												m_isAlive(true),
-												mp_mutex(new boost::recursive_mutex())
+        StatefulReader* SR) :
+    mp_SFR(SR),
+    m_att(watt),
+    m_acknackCount(0),
+    m_nackfragCount(0),
+    m_lastHeartbeatCount(0),
+    mp_heartbeatResponse(nullptr),
+    mp_writerProxyLiveliness(nullptr),
+    mp_initialAcknack(nullptr),
+    m_heartbeatFinalFlag(false),
+    m_isAlive(true),
+    mp_mutex(new boost::recursive_mutex())
 
 {
-	m_changesFromW.clear();
-	//Create Events
-	mp_writerProxyLiveliness = new WriterProxyLiveliness(this,TimeConv::Time_t2MilliSecondsDouble(m_att.livelinessLeaseDuration)*WRITERPROXY_LIVELINESS_PERIOD_MULTIPLIER);
-	mp_heartbeatResponse = new HeartbeatResponseDelay(this,TimeConv::Time_t2MilliSecondsDouble(mp_SFR->getTimes().heartbeatResponseDelay));
+    m_changesFromW.clear();
+    //Create Events
+    mp_writerProxyLiveliness = new WriterProxyLiveliness(this,TimeConv::Time_t2MilliSecondsDouble(m_att.livelinessLeaseDuration)*WRITERPROXY_LIVELINESS_PERIOD_MULTIPLIER);
+    mp_heartbeatResponse = new HeartbeatResponseDelay(this,TimeConv::Time_t2MilliSecondsDouble(mp_SFR->getTimes().heartbeatResponseDelay));
     mp_initialAcknack = new InitialAckNack(this, TimeConv::Time_t2MilliSecondsDouble(mp_SFR->getTimes().initialAcknackDelay));
-	if(m_att.livelinessLeaseDuration < c_TimeInfinite)
-		mp_writerProxyLiveliness->restart_timer();
-	logInfo(RTPS_READER,"Writer Proxy created in reader: "<<mp_SFR->getGuid().entityId);
+    if(m_att.livelinessLeaseDuration < c_TimeInfinite)
+        mp_writerProxyLiveliness->restart_timer();
+    logInfo(RTPS_READER,"Writer Proxy created in reader: "<<mp_SFR->getGuid().entityId);
 }
 
 void WriterProxy::missing_changes_update(const SequenceNumber_t& seqNum)
 {
-	logInfo(RTPS_READER,m_att.guid.entityId<<": changes up to seqNum: " << seqNum <<" missing.");
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    logInfo(RTPS_READER,m_att.guid.entityId<<": changes up to seqNum: " << seqNum <<" missing.");
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
     // Check was not removed from container.
     if(seqNum > changesFromWLowMark_)
@@ -164,7 +164,7 @@ void WriterProxy::missing_changes_update(const SequenceNumber_t& seqNum)
         }
     }
 
-	//print_changes_fromWriter_test2();
+    //print_changes_fromWriter_test2();
 }
 
 bool WriterProxy::maybe_add_changes_from_writer_up_to(const SequenceNumber_t& sequence_number,
@@ -197,8 +197,8 @@ bool WriterProxy::maybe_add_changes_from_writer_up_to(const SequenceNumber_t& se
 bool WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
 {
     bool returnedValue = false;
-	logInfo(RTPS_READER,m_att.guid.entityId<<": up to seqNum: "<<seqNum);
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    logInfo(RTPS_READER,m_att.guid.entityId<<": up to seqNum: "<<seqNum);
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
     // Check was not removed from container.
     if(seqNum > changesFromWLowMark_)
@@ -225,14 +225,14 @@ bool WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
         returnedValue = true;
     }
 
-	//print_changes_fromWriter_test2();
+    //print_changes_fromWriter_test2();
 
     return returnedValue;
 }
 
 bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum)
 {
-	logInfo(RTPS_READER, m_att.guid.entityId << ": seqNum: " << seqNum);
+    logInfo(RTPS_READER, m_att.guid.entityId << ": seqNum: " << seqNum);
     return received_change_set(seqNum, true);
 }
 
@@ -243,7 +243,7 @@ bool WriterProxy::irrelevant_change_set(const SequenceNumber_t& seqNum)
 
 bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum, bool is_relevance)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
     // Check if CacheChange_t was already and it was already removed from changesFromW container.
     if(seqNum <= changesFromWLowMark_)
@@ -301,14 +301,14 @@ bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum, bool is_re
 
     //print_changes_fromWriter_test2();
 
-	return true;
+    return true;
 }
 
 
 const std::vector<ChangeFromWriter_t> WriterProxy::missing_changes()
 {
     std::vector<ChangeFromWriter_t> returnedValue;
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
     for(auto ch : m_changesFromW)
     {
@@ -330,35 +330,35 @@ const std::vector<ChangeFromWriter_t> WriterProxy::missing_changes()
 
 const SequenceNumber_t WriterProxy::available_changes_max() const
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     return changesFromWLowMark_;
 }
 
 void WriterProxy::print_changes_fromWriter_test2()
 {
-	std::stringstream ss;
-	ss << this->m_att.guid.entityId<<": ";
+    std::stringstream ss;
+    ss << this->m_att.guid.entityId<<": ";
 
-	for(auto it = m_changesFromW.begin(); it != m_changesFromW.end(); ++it)
-	{
-		ss << it->getSequenceNumber() <<"("<<it->isRelevant()<<","<<it->getStatus()<<")-";
-	}
+    for(auto it = m_changesFromW.begin(); it != m_changesFromW.end(); ++it)
+    {
+        ss << it->getSequenceNumber() <<"("<<it->isRelevant()<<","<<it->getStatus()<<")-";
+    }
 
-	std::string auxstr = ss.str();
-	logInfo(RTPS_READER,auxstr;);
+    std::string auxstr = ss.str();
+    logInfo(RTPS_READER,auxstr;);
 }
 
 void WriterProxy::assertLiveliness()
 {
 
-	logInfo(RTPS_READER,this->m_att.guid.entityId << " Liveliness asserted");
+    logInfo(RTPS_READER,this->m_att.guid.entityId << " Liveliness asserted");
 
-	//boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    //boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
-	m_isAlive=true;
+    m_isAlive=true;
 
-	this->mp_writerProxyLiveliness->cancel_timer();
-	this->mp_writerProxyLiveliness->restart_timer();
+    this->mp_writerProxyLiveliness->cancel_timer();
+    this->mp_writerProxyLiveliness->restart_timer();
 }
 
 void WriterProxy::setNotValid(const SequenceNumber_t& seqNum)

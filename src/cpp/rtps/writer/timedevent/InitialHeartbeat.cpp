@@ -87,7 +87,7 @@ void InitialHeartbeat::event(EventCode code, const char* msg)
         RTPSMessageCreator::addMessageHeartbeat(&initial_hb_msg_, rp_->mp_SFW->getGuid().guidPrefix, rp_->m_att.guid.guidPrefix,
                 rp_->m_att.guid.entityId, rp_->mp_SFW->getGuid().entityId,
                 firstSeq, lastSeq, heartbeatCount, false, false);
-        logInfo(RTPS_WRITER, sfw_guid_.entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq << ")");
+        logInfo(RTPS_WRITER, rp_->mp_SFW->getGuid().entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq << ")");
         for (auto lit = rp_->m_att.endpoint.multicastLocatorList.begin(); lit != rp_->m_att.endpoint.multicastLocatorList.end(); ++lit)
             rp_->mp_SFW->getRTPSParticipant()->sendSync(&initial_hb_msg_, (Endpoint *)rp_->mp_SFW, (*lit));
         for (auto lit = rp_->m_att.endpoint.unicastLocatorList.begin(); lit != rp_->m_att.endpoint.unicastLocatorList.end(); ++lit)
