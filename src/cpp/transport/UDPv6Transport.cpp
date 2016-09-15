@@ -262,7 +262,7 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator)
                         multicastSocket.set_option(ip::multicast::outbound_interface(ip.scope_id()));
                         SocketInfo mSocket(multicastSocket);
                         mSocket.only_multicast_purpose(true);
-                        mOutputSockets[new_port].push_back(std::move(mSocket));
+                        mOutputSockets[locator.port].push_back(std::move(mSocket));
                     }
                 }
                 else
