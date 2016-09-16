@@ -70,7 +70,7 @@ install(TARGETS keys
     RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
     )
 
-add_executable(samplesconfig_fastest ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} sampleconfig_fastest.cpp)
+add_executable(sampleconfig_fastest ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} sampleconfig_fastest.cpp)
 target_include_directories(sampleconfig_fastest PRIVATE ${Boost_INCLUDE_DIR})
 target_link_libraries(sampleconfig_fastest fastrtps fastcdr ${Boost_LIBRARIES})
 install(TARGETS sampleconfig_fastest
@@ -94,7 +94,7 @@ install(TARGETS incompatibleconfig
 add_executable(sampleconfig_triggers ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} sampleconfig_triggers.cpp)
 target_include_directories(sampleconfig_triggers PRIVATE ${Boost_INCLUDE_DIR})
 target_link_libraries(sampleconfig_triggers fastrtps fastcdr ${Boost_LIBRARIES})
-install(TARGETS sampleconfg_triggers
+install(TARGETS sampleconfig_triggers
     RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
     )
 
