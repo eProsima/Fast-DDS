@@ -50,7 +50,11 @@ bool $ctx.filename$Subscriber::init()
 	// Create Subscriber
 			
 	SubscriberAttributes Rparam;
+	$if(ctx.lastStructure.typeCode.hasKey)$
+	Rparam.topic.topicKind = WITH_KEY;
+    $else$
 	Rparam.topic.topicKind = NO_KEY;
+    $endif$
 	Rparam.topic.topicDataType = myType.getName(); //Must be registered before the creation of the subscriber
 	Rparam.topic.topicName = "$ctx.filename$PubSubTopic";
 	mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);

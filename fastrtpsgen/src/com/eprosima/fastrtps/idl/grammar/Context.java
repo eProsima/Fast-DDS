@@ -246,6 +246,11 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
             return true;
         return false;
     }
+
+    public TypeDeclaration getLastStructure()
+    {
+        return m_lastStructure;
+    }
 	
 	public boolean existsLastStructure()
 	{

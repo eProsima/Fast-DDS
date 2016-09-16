@@ -55,7 +55,11 @@ bool $ctx.filename$Publisher::init()
 	// Create Publisher
 	
 	PublisherAttributes Wparam;
+	$if(ctx.lastStructure.typeCode.hasKey)$
+	Wparam.topic.topicKind = WITH_KEY;
+    $else$
 	Wparam.topic.topicKind = NO_KEY;
+    $endif$
 	Wparam.topic.topicDataType = myType.getName();  //This type MUST be registered
 	Wparam.topic.topicName = "$ctx.filename$PubSubTopic";
 	mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
