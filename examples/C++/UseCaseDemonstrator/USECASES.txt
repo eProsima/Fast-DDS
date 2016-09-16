@@ -1,0 +1,34 @@
+Recommended scenarios and tests
+-------------------------------
+
+
+
+- Testing sample storage limits 
+-------------------------------
+
+Choose Keep Last and Depth 8. Send 10 samples on the and read the contents of the Subscriber. You will see samples 3 to 10. Samples 1 and 2 are lost because they were replaced due to the maximum depth being reached.
+
+Re run the example but choosing Instance Size 4. See that since instance size is lower than the depth, it takes effect before depth is reached.
+
+Now re-run the example but choose Keep All. Now Depth and Instance Size dont take effect and the only limiting factor is the size of the history.
+
+- Testing late-joiner cases
+---------------------------
+
+A late-joining subscriber is a Subscriber that comes online after data has been published in the topic. Choose Volatile mode, create a Publisher and send 5 samples. Then run a Subscriber and read the History, it will be empty. Volatile mode means a Subscriber starts listening to a topic from the moment he joined.
+
+Now repeat the process but in Transient Local. See how past samples are now present on the Subscriber.
+
+- Assymetric configuration
+--------------------------
+
+For a Publisher and a Subscriber to be able to talk, it is first necessary that they perform a matching process. For this to happen the configuration of both elements has to be compatible.
+
+Reliability is the most common cause for two elements being unable to match. A Best-Effort mode Publisher cannot communicate with a Reliable Subscriber. If you run A Publisher and a Subscriber with these configurations, you will see that the Subscriber never receives a single sample.
+
+- Combined cases
+----------------
+
+You can take multiple of the previous cases and combine the test subject configurations into a single execution to see how different parameters interact with each other. We suggest the follwoing combinations:
+
+    - Influence of the instance size depth of the Publisher on a Transient Local late-joining Subscriber: The most restrictive depth or instance size always applies, even it is the Publisher one.

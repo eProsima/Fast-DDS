@@ -49,9 +49,52 @@ install(TARGETS UseCaseSubscriber
     RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
     )
 
-add_executable(UseCaseLauncher ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} UseCaseLauncher.cpp)
-target_include_directories(UseCaseLauncher PRIVATE ${Boost_INCLUDE_DIR})
-target_link_libraries(UseCaseLauncher fastrtps fastcdr ${Boost_LIBRARIES})
-install(TARGETS UseCaseLauncher
+add_executable(pastsamples ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} pastsamples.cpp)
+target_include_directories(pastsamples PRIVATE ${Boost_INCLUDE_DIR})
+target_link_libraries(pastsamples fastrtps fastcdr ${Boost_LIBRARIES})
+install(TARGETS pastsamples
     RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
     )
+
+add_executable(latejoiners ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} latejoiners.cpp)
+target_include_directories(latejoiners PRIVATE ${Boost_INCLUDE_DIR})
+target_link_libraries(latejoiners fastrtps fastcdr ${Boost_LIBRARIES})
+install(TARGETS latejoiners
+    RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
+    )
+
+add_executable(keys ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} keys.cpp)
+target_include_directories(keys PRIVATE ${Boost_INCLUDE_DIR})
+target_link_libraries(keys fastrtps fastcdr ${Boost_LIBRARIES})
+install(TARGETS keys 
+    RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
+    )
+
+add_executable(samplesconfig_fastest ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} sampleconfig_fastest.cpp)
+target_include_directories(sampleconfig_fastest PRIVATE ${Boost_INCLUDE_DIR})
+target_link_libraries(sampleconfig_fastest fastrtps fastcdr ${Boost_LIBRARIES})
+install(TARGETS sampleconfig_fastest
+    RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
+    )
+
+add_executable(sampleconfig_safest ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} sampleconfig_safest.cpp)
+target_include_directories(sampleconfig_safest PRIVATE ${Boost_INCLUDE_DIR})
+target_link_libraries(sampleconfig_safest fastrtps fastcdr ${Boost_LIBRARIES})
+install(TARGETS sampleconfig_safest
+    RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
+    )
+
+add_executable(incompatibleconfig ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} incompatibleconfig.cpp)
+target_include_directories(incompatibleconfig PRIVATE ${Boost_INCLUDE_DIR})
+target_link_libraries(incompatibleconfig fastrtps fastcdr ${Boost_LIBRARIES})
+install(TARGETS incompatibleconfig
+    RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
+    )
+
+add_executable(sampleconfig_triggers ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} sampleconfig_triggers.cpp)
+target_include_directories(sampleconfig_triggers PRIVATE ${Boost_INCLUDE_DIR})
+target_link_libraries(sampleconfig_triggers fastrtps fastcdr ${Boost_LIBRARIES})
+install(TARGETS sampleconfg_triggers
+    RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
+    )
+
