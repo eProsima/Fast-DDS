@@ -1,13 +1,13 @@
-------------------------------------------------
-- Use Case Demonstrator for eProsima Fast RTPS -
-------------------------------------------------
+--------------------------------------------------------
+- Use Case Publisher-Subscriber for eProsima Fast RTPS -
+--------------------------------------------------------
 
 1 - Application description
 ---------------------------
 
 eProsima Fast RTPS provides users with a wide range of configuration options. This example has the objective of providing a testing ground where you can experiment and see the influence different combinations of parameters can have on the behaviours on the Publisher/Subscriber scheme.
 
-This example consists on two sets of applications: a group of use case launchers  that executes built-in tests to show the most common cases, and a Publisher-Subscriber set for you to run your own tests:
+This example consists on two application, a configurable  publisher and a subscriber for you to run your own tests:
 
 - With the Publisher, you can choose to send any number of samples at any given moment. Each time you send a batch of samples, they will numbered starting from index '0', so it is easier to view the end of one batch and the start of the next on the Subscriber side.
 - The subscriber passively stores samples. At any moment you can choose to view the stored samples. 
@@ -69,19 +69,7 @@ This parameter affects cases of "late-joining" Subscribers: Subscribers that com
 
     As it happens with depth, you can define a maximun number of past samples to be stored. If you set one Instance and an instance size more restrictive than the depth, the instance size will be the limiting factor.
 
-3. Built-in tests
------------------
-
-The use case launcher contains the following built-in examples:
-
-* Past samples: Shows how a Keep-All Subscriber stores all samples in its History and a Keep-Last subscriber starts to overwrite when it reacher its depth.
-* Late joiners: Shows how a Transient-Local Subscriber receives past samples while Volatile starts receiving from the moment of its creation.
-* Keys: Provides a working example of how data can be split into multiple endpoints based of keys.
-* Incompatible configuration: Shows how a Best-Effort Publisher and a Reliable Subscriber cannot communicate with each other
-* Fastest, Safest and Triggers: Provides a basic Publish-Subscribe example for the three sample configurations specified in section 5.
-
-
-4. Recommended tests 
+3. Recommended tests 
 ---------------------
 
 The following examples provide sample tests you can perform to see how the influence of configuration parameters affect the behaviour of eProsima Fast RTPS.
@@ -123,10 +111,20 @@ You can take multiple of the previous cases and combine the test subject configu
 
     - Influence of the instance size depth of the Publisher on a Transient Local late-joining Subscriber: The most restrictive depth or instance size always applies, even it is the Publisher one.
 
+4. Built-in tests
+-----------------
+
+In addition to this Publisher and Subscriber, the examples folder of this distribution comes with a number of preset tests to exemplify the most behaviour-changing parameters:
+
+* HistoryKind: Shows how a Keep-All Subscriber stores all samples in its History and a Keep-Last subscriber starts to overwrite when it reacher its depth.
+* LateJoiners: Shows how a Transient-Local Subscriber receives past samples while Volatile starts receiving from the moment of its creation.
+* Keys: Provides a working example of how data can be split into multiple endpoints based of keys.
+* SampleConfig: Provides a basic Publish-Subscribe example for the three sample configurations specified in section 5.
+
 5. Application examples
 ----------------------
 
-The following list provides examples configurations for real-life scenarios.
+The following list provides examples configurations for real-life scenarios, as shown in the SampleConfig examples provided with this distribution.
 
 - Multimedia feed
 
@@ -158,8 +156,3 @@ In these cases and due to the low  it is important that all datagrams reach thei
 	History: Keep-Last. No past alarm information is necessary for present-time transmissions.
 	Additional Settings: Reduce heartbeat period, which dictates system response velocity when a sample is lost. A lower heartbeat period equals fast response on data delivery.
 
-
-6. Limitations
---------------
-
-Due to the current limitations of eProsima Fast RTPS, samples can be read from the History only once. Unless stored externally by your user application, read samples are lost. This means each time you query the Subscriber for samples you are resetting the status of the History. Future versions of eProsima Fast RTPS are scheduled to provide non-destructive sample acquisition functions.
