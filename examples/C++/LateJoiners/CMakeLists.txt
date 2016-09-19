@@ -35,16 +35,9 @@ endif()
 message(STATUS "Configuring UseCaseDemonstrator example...")
 file(GLOB USECASEDEMONSTRATOR_EXAMPLE_SOURCES "*.cxx")
 
-add_executable(UseCasePublisher ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} UseCasePublisher.cpp)
-target_include_directories(UseCasePublisher PRIVATE ${Boost_INCLUDE_DIR})
-target_link_libraries(UseCasePublisher fastrtps fastcdr ${Boost_LIBRARIES})
-install(TARGETS UseCasePublisher
-    RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
-    )
-
-add_executable(UseCaseSubscriber ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} UseCaseSubscriber.cpp)
-target_include_directories(UseCaseSubscriber PRIVATE ${Boost_INCLUDE_DIR})
-target_link_libraries(UseCaseSubscriber fastrtps fastcdr ${Boost_LIBRARIES})
-install(TARGETS UseCaseSubscriber
+add_executable(latejoiners ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} latejoiners.cpp)
+target_include_directories(latejoiners PRIVATE ${Boost_INCLUDE_DIR})
+target_link_libraries(latejoiners fastrtps fastcdr ${Boost_LIBRARIES})
+install(TARGETS latejoiners
     RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
     )
