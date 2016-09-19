@@ -670,7 +670,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableData64kb)
 
     writer.history_depth(10).
         heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 500).init();
+        heartbeat_period_fraction(4294967 * 100).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -712,7 +712,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
     writer.history_depth(3).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 500).init();
+        heartbeat_period_fraction(4294967 * 100).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -758,7 +758,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAn
     writer.history_depth(3).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 500).init();
+        heartbeat_period_fraction(4294967 * 100).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -836,7 +836,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
     writer.history_depth(10).
         reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
         heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 500).
+        heartbeat_period_fraction(4294967 * 100).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
 
@@ -881,7 +881,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kb)
     writer.history_depth(10).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 500).
+        heartbeat_period_fraction(4294967 * 100).
         add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -922,7 +922,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubWithFlowController64kb)
     slowWriter.history_depth(2).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 500).
+        heartbeat_period_fraction(4294967 * 100).
         add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs).init();
     ASSERT_TRUE(slowWriter.isInitialized());
 
@@ -969,7 +969,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
     writer.history_depth(10).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 500).init();
+        heartbeat_period_fraction(4294967 * 100).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -1024,7 +1024,7 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
         writer.add_user_transport_to_pparams(testTransport);
         writer.history_depth(10).asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
             heartbeat_period_seconds(0).
-            heartbeat_period_fraction(4294967 * 500).init();
+            heartbeat_period_fraction(4294967 * 100).init();
 
         ASSERT_TRUE(writer.isInitialized());
 
@@ -1073,7 +1073,7 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
         writer.history_depth(10).
             asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
             heartbeat_period_seconds(0).
-            heartbeat_period_fraction(4294967 * 500).init();
+            heartbeat_period_fraction(4294967 * 100).init();
 
         ASSERT_TRUE(writer.isInitialized());
 
