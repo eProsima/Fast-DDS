@@ -91,6 +91,10 @@ class RTPSAsSocketReader
 #else
             hattr_.memoryPolicy = PREALLOCATED_MEMORY_MODE;
 #endif
+
+            // By default, heartbeat period delay is 100 milliseconds.
+            reader_attr_.times.heartbeatResponseDelay.seconds = 0;
+            reader_attr_.times.heartbeatResponseDelay.fraction = 4294967 * 100;
         }
 
         virtual ~RTPSAsSocketReader()

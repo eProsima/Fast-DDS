@@ -97,6 +97,10 @@ class PubSubReader
 #else
             subscriber_attr_.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
 #endif
+
+            // By default, heartbeat period delay is 100 milliseconds.
+            subscriber_attr_.times.heartbeatResponseDelay.seconds = 0;
+            subscriber_attr_.times.heartbeatResponseDelay.fraction = 4294967 * 100;
         }
 
         ~PubSubReader()
@@ -171,7 +175,10 @@ class PubSubReader
             mutex_.unlock();
         }
 
-        std::list<type> block(const std::chrono::seconds &max_wait)
+        template<class _Rep,
+        class _Period
+        >
+        std::list<type> block(const std::chrono::duration<_Rep, _Period>& max_wait)
         {
             std::unique_lock<std::mutex> lock(mutex_);
             if(current_received_count_ != number_samples_expected_)

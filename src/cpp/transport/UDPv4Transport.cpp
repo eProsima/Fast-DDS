@@ -73,12 +73,6 @@ UDPv4Transport::UDPv4Transport() :
     mSendBufferSize(maximumUDPSocketSize),
     mReceiveBufferSize(maximumUDPSocketSize)
     {
-        auto ioServiceFunction = [&]()
-        {
-            io_service::work work(mService);
-            mService.run();
-        };
-        ioServiceThread.reset(new boost::thread(ioServiceFunction));
     }
 
 UDPv4Transport::~UDPv4Transport()

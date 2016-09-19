@@ -82,6 +82,12 @@ class RTPSWithRegistrationWriter
         std::ostringstream t;
         t << topic_name << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
         topic_attr_.topicName = t.str();
+
+        // By default, heartbeat period and nack response delay are 100 milliseconds.
+        writer_attr_.times.heartbeatPeriod.seconds = 0;
+        writer_attr_.times.heartbeatPeriod.fraction = 4294967 * 100;
+        writer_attr_.times.nackResponseDelay.seconds = 0;
+        writer_attr_.times.nackResponseDelay.fraction = 4294967 * 100;
     }
 
     virtual ~RTPSWithRegistrationWriter()

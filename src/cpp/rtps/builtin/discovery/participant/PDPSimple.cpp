@@ -79,7 +79,9 @@ PDPSimple::PDPSimple(BuiltinProtocols* built):
 
 PDPSimple::~PDPSimple()
 {
-    mp_mutex->lock();
+    if(mp_resendParticipantTimer != nullptr)
+        delete(mp_resendParticipantTimer);
+
     if(mp_EDP!=nullptr)
         delete(mp_EDP);
 
@@ -87,15 +89,14 @@ PDPSimple::~PDPSimple()
     delete(mp_SPDPReader);
     delete(mp_SPDPWriterHistory);
     delete(mp_SPDPReaderHistory);
-    if(mp_resendParticipantTimer!=nullptr)
-        delete(mp_resendParticipantTimer);
+    
     delete(mp_listener);
     for(auto it = this->m_participantProxies.begin();
             it!=this->m_participantProxies.end();++it)
     {
         delete(*it);
     }
-    mp_mutex->unlock();
+
     delete(mp_mutex);
 }
 

@@ -83,6 +83,12 @@ class PubSubWriter
 #else
             publisher_attr_.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
 #endif
+
+        // By default, heartbeat period and nack response delay are 100 milliseconds.
+        publisher_attr_.times.heartbeatPeriod.seconds = 0;
+        publisher_attr_.times.heartbeatPeriod.fraction = 4294967 * 100;
+        publisher_attr_.times.nackResponseDelay.seconds = 0;
+        publisher_attr_.times.nackResponseDelay.fraction = 4294967 * 100;
     }
 
     ~PubSubWriter()

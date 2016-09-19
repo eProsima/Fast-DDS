@@ -61,6 +61,12 @@ class RTPSAsSocketWriter
 #else
             hattr_.memoryPolicy = PREALLOCATED_MEMORY_MODE;
 #endif
+
+            // By default, heartbeat period and nack response delay are 100 milliseconds.
+            writer_attr_.times.heartbeatPeriod.seconds = 0;
+            writer_attr_.times.heartbeatPeriod.fraction = 4294967 * 100;
+            writer_attr_.times.nackResponseDelay.seconds = 0;
+            writer_attr_.times.nackResponseDelay.fraction = 4294967 * 100;
         }
 
         virtual ~RTPSAsSocketWriter()

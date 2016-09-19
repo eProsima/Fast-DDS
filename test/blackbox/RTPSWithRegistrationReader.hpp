@@ -91,6 +91,10 @@ class RTPSWithRegistrationReader
             std::ostringstream t;
             t << topic_name << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
             topic_attr_.topicName = t.str();
+
+            // By default, heartbeat period delay is 100 milliseconds.
+            reader_attr_.times.heartbeatResponseDelay.seconds = 0;
+            reader_attr_.times.heartbeatResponseDelay.fraction = 4294967 * 100;
         }
 
         virtual ~RTPSWithRegistrationReader()

@@ -268,9 +268,7 @@ BLACKBOXTEST(BlackBox, RTPSAsReliableSocket)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
-        add_to_multicast_locator_list(ip, global_port).
-        heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967*100).init();
+        add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -303,9 +301,7 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsReliableSocket)
 
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
         add_to_multicast_locator_list(ip, global_port).
-        asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).
-        heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967*100).init();
+        asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -405,8 +401,7 @@ BLACKBOXTEST(BlackBox, RTPSAsReliableWithRegistration)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967*100).init();
+    writer.init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -441,9 +436,7 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsReliableWithRegistration)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).
-        heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967*100).init();
+    writer.asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -668,9 +661,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableData64kb)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.history_depth(10).
-        heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 100).init();
+    writer.history_depth(10).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -692,6 +683,8 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableData64kb)
     data = reader.block(std::chrono::seconds(5));
 
     print_non_received_messages(data, default_data64kb_print);
+    if(data.size() != 0)
+        printf("JODER");
     ASSERT_EQ(data.size(), 0);
 }
 
@@ -710,9 +703,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
     writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
 
     writer.history_depth(3).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-        heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 100).init();
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -756,9 +747,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAn
     writer.add_user_transport_to_pparams(testTransport);
 
     writer.history_depth(3).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-        heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 100).init();
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -835,8 +824,6 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
 
     writer.history_depth(10).
         reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-        heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 100).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
 
@@ -880,8 +867,6 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kb)
 
     writer.history_depth(10).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-        heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 100).
         add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -921,8 +906,6 @@ BLACKBOXTEST(BlackBox, AsyncPubSubWithFlowController64kb)
 
     slowWriter.history_depth(2).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-        heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 100).
         add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs).init();
     ASSERT_TRUE(slowWriter.isInitialized());
 
@@ -967,9 +950,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
     writer.add_user_transport_to_pparams(testTransport);
 
     writer.history_depth(10).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-        heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 100).init();
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -1022,9 +1003,7 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
         testTransport->receiveBufferSize = 65536;
         writer.disable_builtin_transport();
         writer.add_user_transport_to_pparams(testTransport);
-        writer.history_depth(10).asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-            heartbeat_period_seconds(0).
-            heartbeat_period_fraction(4294967 * 100).init();
+        writer.history_depth(10).asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
         ASSERT_TRUE(writer.isInitialized());
 
@@ -1071,9 +1050,7 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
         writer.disable_builtin_transport();
         writer.add_user_transport_to_pparams(testTransport);
         writer.history_depth(10).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-            heartbeat_period_seconds(0).
-            heartbeat_period_fraction(4294967 * 100).init();
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
         ASSERT_TRUE(writer.isInitialized());
 
@@ -1182,10 +1159,10 @@ BLACKBOXTEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
         writer.send(data);
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
         reader.startReception();
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(1));
+        data = reader.block(std::chrono::milliseconds(500));
         reader.stopReception();
         // Should be received only two samples.
         ASSERT_EQ(previous_size - data.size(), 2);
@@ -1209,11 +1186,9 @@ BLACKBOXTEST(BlackBox, CacheChangeReleaseTest)
     reader.history_depth(1);
     reader.resource_limits_max_samples(1);
     reader.allocated_samples(5);
-    reader.heartbeatResponseDelay(0,4294967 * 50);
     reader.init();
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.heartbeat_period_seconds(0).heartbeat_period_fraction(4294967*100);
     writer.resource_limits_max_samples(1);
     writer.history_kind(KEEP_LAST_HISTORY_QOS);
     writer.history_depth(1);
@@ -1254,8 +1229,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967*100).init();
+    writer.init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -1277,10 +1251,10 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
         writer.send(data);
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
         reader.startReception();
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(1));
+        data = reader.block(std::chrono::milliseconds(500));
         reader.stopReception();
         // Should be received only two samples.
         ASSERT_EQ(previous_size - data.size(), 2);
@@ -1341,9 +1315,7 @@ BLACKBOXTEST(BlackBox, PubSubKeepAll)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        resource_limits_max_samples(2).
-        heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 100).init();
+        resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -1367,10 +1339,10 @@ BLACKBOXTEST(BlackBox, PubSubKeepAll)
         size_t sent_size = previous_size - data.size();
         // In this test the history has 20 max_samples.
         ASSERT_LE(sent_size, 2u);
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
         reader.startReception(sent_size);
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(1));
+        data = reader.block(std::chrono::milliseconds(500));
         reader.stopReception();
         // Should be received the data was sent.
         ASSERT_EQ(previous_size - data.size(), sent_size);
@@ -1400,9 +1372,7 @@ BLACKBOXTEST(BlackBox, PubSubKeepAllTransient)
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
         durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
-        resource_limits_max_samples(2).
-        heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 100).init();
+        resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -1426,10 +1396,10 @@ BLACKBOXTEST(BlackBox, PubSubKeepAllTransient)
         size_t sent_size = previous_size - data.size();
         // In this test the history has 20 max_samples.
         ASSERT_LE(sent_size, 2u);
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
         reader.startReception(sent_size);
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(1));
+        data = reader.block(std::chrono::milliseconds(500));
         reader.stopReception();
         // Should be received the data was sent.
         ASSERT_EQ(previous_size - data.size(), sent_size);
@@ -1469,8 +1439,6 @@ BLACKBOXTEST(BlackBox, PubSubOutLocatorSelection){
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
         durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
         resource_limits_max_samples(20).
-        heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 100).
         outLocatorList(WriterOutLocators).init();
 
     ASSERT_TRUE(writer.isInitialized());
