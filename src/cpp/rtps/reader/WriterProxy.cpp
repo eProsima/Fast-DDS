@@ -440,3 +440,16 @@ size_t WriterProxy::numberOfChangeFromWriter() const
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     return m_changesFromW.size();
 }
+
+SequenceNumber_t WriterProxy::nextCacheChangeToBeNotified()
+{
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
+    if(lastNotified_ < changesFromWLowMark_)
+    {
+        ++lastNotified_;
+        return lastNotified_;
+    }
+
+    return SequenceNumber_t::unknown();
+}

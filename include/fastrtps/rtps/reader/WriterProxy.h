@@ -162,6 +162,13 @@ namespace eprosima
                     */
                     size_t numberOfChangeFromWriter() const;
 
+                    /*!
+                     * @brief Returns next CacheChange_t to be notified.
+                     * @return Next CacheChange_t to be nofified or invalid SequenceNumber_t
+                     * if any CacheChange_t to be notified.
+                     */
+                    SequenceNumber_t nextCacheChangeToBeNotified();
+
                 private:
 
                     /*!
@@ -189,6 +196,9 @@ namespace eprosima
                     //!Vector containing the ChangeFromWriter_t objects.
                     std::set<ChangeFromWriter_t, ChangeFromWriterCmp> m_changesFromW;
                     SequenceNumber_t changesFromWLowMark_;
+
+                    //! Store last ChacheChange_t notified.
+                    SequenceNumber_t lastNotified_;
 
                     void for_each_set_status_from(decltype(m_changesFromW)::iterator first,
                             decltype(m_changesFromW)::iterator last,

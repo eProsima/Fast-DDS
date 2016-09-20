@@ -73,8 +73,6 @@ namespace eprosima
                 SerializedPayload_t serializedPayload;
                 //!Indicates if the cache has been read (only used in READERS)
                 bool isRead;
-                //!Indicates if the cache has been notified (only used in READERS)
-                bool wasNotified;
                 //!Source TimeStamp (only used in Readers)
                 Time_t sourceTimestamp;
 
@@ -88,7 +86,6 @@ namespace eprosima
                 CacheChange_t():
                     kind(ALIVE),
                     isRead(false),
-                    wasNotified(false),
                     is_untyped_(true),
                     dataFragments_(new std::vector<uint32_t>()),
                     fragment_size_(0)
@@ -107,7 +104,6 @@ namespace eprosima
                     kind(ALIVE),
                     serializedPayload(payload_size),
                     isRead(false),
-                    wasNotified(false),
                     is_untyped_(is_untyped),
                     dataFragments_(new std::vector<uint32_t>()),
                     fragment_size_(0)
@@ -134,7 +130,6 @@ namespace eprosima
                     dataFragments_->assign(ch_ptr->dataFragments_->begin(), ch_ptr->dataFragments_->end());
 
                     isRead = ch_ptr->isRead;
-                    wasNotified = ch_ptr->wasNotified;
 
                     return ret;
                 }
@@ -152,7 +147,6 @@ namespace eprosima
                     serializedPayload.encapsulation = ch_ptr->serializedPayload.encapsulation;
 
                     isRead = ch_ptr->isRead;
-                    wasNotified = ch_ptr->wasNotified;
                 }
 
                 ~CacheChange_t()

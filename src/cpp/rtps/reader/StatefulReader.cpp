@@ -312,8 +312,8 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
                 fragmentedChangePitStop_->try_to_remove_until(firstSN, pWP->m_att.guid);
             pWP->missing_changes_update(lastSN);
             pWP->m_heartbeatFinalFlag = finalFlag;
-	    
-	    //Analyze wheter a acknack message is needed:
+
+            //Analyze wheter a acknack message is needed:
             if(!finalFlag)
             {
                 pWP->mp_heartbeatResponse->restart_timer();
@@ -330,46 +330,34 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
                 pWP->assertLiveliness();
             }
 
-            // Maybe now we have to notify user from new CacheChanges.
-            SequenceNumber_t maxSeqNumAvailable;
-            maxSeqNumAvailable = pWP->available_changes_max();
             GUID_t proxGUID = pWP->m_att.guid;
             wpLock.unlock();
 
-            CacheChange_t *min_change = nullptr, *ch_to_give = nullptr;
-            mp_history->get_min_change(&min_change);
-
-            if(min_change != nullptr)
+            // Maybe now we have to notify user from new CacheChanges.
+            SequenceNumber_t nextChangeToNotify = pWP->nextCacheChangeToBeNotified();
+            while(nextChangeToNotify != SequenceNumber_t::unknown())
             {
-                SequenceNumber_t notifySeqNum;
-                notifySeqNum = min_change->sequenceNumber;
-                //TODO(Ricardo) Intentar optimizar esto para que no haya que recorrer la lista de cambios cada vez
-                while(notifySeqNum <= maxSeqNumAvailable)
+                if(getListener()!=nullptr)
                 {
-                    ch_to_give = nullptr;
-                    if(mp_history->get_change(notifySeqNum, proxGUID, &ch_to_give))
+                    CacheChange_t* ch_to_give = nullptr;
+                    if(mp_history->get_change(nextChangeToNotify, proxGUID, &ch_to_give))
                     {
-                        //TODO(Ricardo) Is need isRead?
-                        if(!ch_to_give->isRead && !ch_to_give->wasNotified)
+                        if(!ch_to_give->isRead)
                         {
-                            ch_to_give->wasNotified = true;
                             lock.unlock();
                             getListener()->onNewCacheChangeAdded((RTPSReader*)this,ch_to_give);
                             lock.lock();
                         }
                     }
-                    ++notifySeqNum;
 
                     // Search again the WriterProxy because could be removed after the unlock.
-                    if(findWriterProxy(proxGUID, &pWP))
-                    {
-                        pWP->getMutex()->lock();
-                        maxSeqNumAvailable = pWP->available_changes_max();
-                        pWP->getMutex()->unlock();
-                    }
-                    else
+                    if(!findWriterProxy(proxGUID, &pWP))
                         break;
                 }
+
+                mp_history->postSemaphore();
+
+                nextChangeToNotify = pWP->nextCacheChangeToBeNotified();
             }
         }
     }
@@ -463,63 +451,43 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
     {
         if(prox->received_change_set(a_change->sequenceNumber))
         {
-            if(getListener()!=nullptr)
+            GUID_t proxGUID = prox->m_att.guid;
+            writerProxyLock.unlock();
+
+            SequenceNumber_t nextChangeToNotify = prox->nextCacheChangeToBeNotified();
+            while(nextChangeToNotify != SequenceNumber_t::unknown())
             {
-                SequenceNumber_t maxSeqNumAvailable;
-                maxSeqNumAvailable = prox->available_changes_max();
-                GUID_t proxGUID = prox->m_att.guid;
-                writerProxyLock.unlock();
-
-                if(a_change->sequenceNumber == maxSeqNumAvailable)
+                if(getListener()!=nullptr)
                 {
-                    a_change->wasNotified = true;
-                    lock.unlock();
-                    getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
-                    lock.lock();
-                }
-                else if(a_change->sequenceNumber < maxSeqNumAvailable)
-                {
-                    SequenceNumber_t notifySeqNum = a_change->sequenceNumber + 1;
 
-                    a_change->wasNotified = true;
-                    lock.unlock();
-                    getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
-                    lock.lock();
-
-                    CacheChange_t* ch_to_give = nullptr;
-                    //TODO Intentar optimizar esto para que no haya que recorrer la lista de cambios cada vez
-                    while(notifySeqNum <= maxSeqNumAvailable)
+                    if(a_change->sequenceNumber == nextChangeToNotify)
                     {
-                        ch_to_give = nullptr;
-                        if(mp_history->get_change(notifySeqNum, proxGUID, &ch_to_give))
+                        lock.unlock();
+                        getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
+                        lock.lock();
+                    }
+                    else
+                    {
+                        CacheChange_t* ch_to_give = nullptr;
+                        if(mp_history->get_change(nextChangeToNotify, proxGUID, &ch_to_give))
                         {
-                            if(!ch_to_give->isRead && !ch_to_give->wasNotified)
+                            if(!ch_to_give->isRead)
                             {
-                                ch_to_give->wasNotified = true;
                                 lock.unlock();
                                 getListener()->onNewCacheChangeAdded((RTPSReader*)this,ch_to_give);
                                 lock.lock();
                             }
                         }
-                        ++notifySeqNum;
-
-                        // Search again the WriterProxy because could be removed after the unlock.
-                        if(findWriterProxy(proxGUID, &prox))
-                        {
-                            prox->getMutex()->lock();
-                            maxSeqNumAvailable = prox->available_changes_max();
-                            prox->getMutex()->unlock();
-                        }
-                        else
-                            break;
                     }
-                }
-                else
-                {
-                    //TODO NOTHING; SOME CHANGES ARE MISSING
+
+                    // Search again the WriterProxy because could be removed after the unlock.
+                    if(!findWriterProxy(proxGUID, &prox))
+                        break;
                 }
 
                 mp_history->postSemaphore();
+
+                nextChangeToNotify = prox->nextCacheChangeToBeNotified();
             }
 
             return true;
