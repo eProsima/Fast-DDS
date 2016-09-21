@@ -174,7 +174,10 @@ class PubSubWriter
         ASSERT_EQ(matched_, 0u);
     }
 
-    bool waitForAllAcked(const std::chrono::seconds& max_wait)
+    template<class _Rep,
+        class _Period
+            >
+    bool waitForAllAcked(const std::chrono::duration<_Rep, _Period>& max_wait)
     {
         return publisher_->wait_for_all_acked(Time_t((int32_t)max_wait.count(), 0));
     }

@@ -855,7 +855,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kb)
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
-    reader.history_depth(10).
+    reader.history_depth(5).
         reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -865,7 +865,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kb)
     uint32_t bytesPerPeriod = 65536;
     uint32_t periodInMs = 50;
 
-    writer.history_depth(10).
+    writer.history_depth(5).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
 
@@ -876,7 +876,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kb)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_data300kb_data_generator();
+    auto data = default_data300kb_data_generator(5);
 
     reader.expected_data(data);
     reader.startReception();
@@ -927,7 +927,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
-    reader.history_depth(10).
+    reader.history_depth(5).
         reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -949,7 +949,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
     writer.disable_builtin_transport();
     writer.add_user_transport_to_pparams(testTransport);
 
-    writer.history_depth(10).
+    writer.history_depth(5).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -959,7 +959,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_data300kb_data_generator();
+    auto data = default_data300kb_data_generator(5);
 
     reader.expected_data(data);
     reader.startReception();
@@ -1251,7 +1251,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
         writer.send(data);
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        writer.waitForAllAcked(std::chrono::seconds(3));
         reader.startReception();
         // Block reader until reception finished or timeout.
         data = reader.block(std::chrono::milliseconds(500));
@@ -1339,7 +1339,7 @@ BLACKBOXTEST(BlackBox, PubSubKeepAll)
         size_t sent_size = previous_size - data.size();
         // In this test the history has 20 max_samples.
         ASSERT_LE(sent_size, 2u);
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        writer.waitForAllAcked(std::chrono::seconds(3));
         reader.startReception(sent_size);
         // Block reader until reception finished or timeout.
         data = reader.block(std::chrono::milliseconds(500));
@@ -1396,7 +1396,7 @@ BLACKBOXTEST(BlackBox, PubSubKeepAllTransient)
         size_t sent_size = previous_size - data.size();
         // In this test the history has 20 max_samples.
         ASSERT_LE(sent_size, 2u);
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        writer.waitForAllAcked(std::chrono::seconds(3));
         reader.startReception(sent_size);
         // Block reader until reception finished or timeout.
         data = reader.block(std::chrono::milliseconds(500));
