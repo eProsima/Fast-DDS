@@ -1025,7 +1025,7 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
         data = reader.block(std::chrono::seconds(3));
 
         ASSERT_GE(data.size(), static_cast<size_t>(7));
-        ASSERT_LE(data.size(), static_cast<size_t>(8));
+        ASSERT_LE(data.size(), static_cast<size_t>(9));
     }
     // ThroghputController size smaller than maxMessageSize.
     {
@@ -1069,7 +1069,7 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(3));
+        data = reader.block(std::chrono::seconds(4));
 
         ASSERT_GE(data.size(),7);
         ASSERT_LE(data.size(),9);
