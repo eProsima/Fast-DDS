@@ -51,10 +51,11 @@ void FlowController::RegisterAsListeningController()
 
 void FlowController::DeRegisterAsListeningController()
 {
-   std::unique_lock<std::recursive_mutex> scopedLock(FlowControllerMutex);
-   ListeningControllers.erase(std::remove(ListeningControllers.begin(), ListeningControllers.end(), this), ListeningControllers.end());
-   if (ListeningControllers.empty() && ControllerThread)
-      StopControllerService();
+    FlowControllerMutex.lock();
+    ListeningControllers.erase(std::remove(ListeningControllers.begin(), ListeningControllers.end(), this), ListeningControllers.end());
+    FlowControllerMutex.unlock();
+    if (ListeningControllers.empty() && ControllerThread)
+        StopControllerService();
 }
 
 bool FlowController::IsListening(FlowController* filter) 
