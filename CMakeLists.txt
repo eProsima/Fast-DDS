@@ -233,7 +233,7 @@ endif()
 ###############################################################################
 # Examples 
 ###############################################################################
-option(COMPILE_EXAMPLES "Build example" ON)
+option(COMPILE_EXAMPLES "Build example" OFF)
 if(COMPILE_EXAMPLES)
 	add_subdirectory(examples)
 endif()
