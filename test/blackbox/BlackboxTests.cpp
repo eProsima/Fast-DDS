@@ -1481,7 +1481,7 @@ BLACKBOXTEST(BlackBox, StatefulReaderCacheChangeRelease){
 
     writer.send(data);
     ASSERT_TRUE(data.empty());
-    ASSERT_EQ(data.size(), static_cast<size_t>(0));
+    writer.waitForAllAcked(std::chrono::seconds(3));
     writer.destroy();
     reader.startReception();
     data = reader.block(std::chrono::seconds(2));
