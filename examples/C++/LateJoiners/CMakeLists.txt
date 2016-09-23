@@ -16,7 +16,6 @@ cmake_minimum_required(VERSION 2.8.12)
 project("UseCaseDemonstrator")
 
 # Find requirements
-find_package(Boost REQUIRED COMPONENTS thread system chrono regex)
 find_package(fastcdr REQUIRED)
 find_package(fastrtps REQUIRED)
 
