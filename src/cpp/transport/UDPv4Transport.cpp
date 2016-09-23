@@ -240,7 +240,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
 
                     // Outbounding first interface with already created socket.
                     unicastSocket.set_option(ip::multicast::outbound_interface(boost::asio::ip::address_v4::from_string((*locIt).name)));
-                    mOutputSockets[locator.port].push_back(std::move(SocketInfo(unicastSocket)));
+                    mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
 
                     // Create other socket for outbounding rest of interfaces.
                     for(++locIt; locIt != locNames.end(); ++locIt)
@@ -257,7 +257,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
                 else
                 {
                     // Multicast data will be sent for the only one interface.
-                    mOutputSockets[locator.port].push_back(std::move(SocketInfo(unicastSocket)));
+                    mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
                 }
             }
             else
@@ -275,7 +275,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
                             unicastSocket.set_option(ip::multicast::enable_loopback( true ) );
                             firstInterface = true;
                         }
-                        mOutputSockets[locator.port].push_back(std::move(SocketInfo(unicastSocket)));
+                        mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
                     }
                 }
             }
@@ -286,7 +286,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
             boost::asio::ip::udp::socket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
             unicastSocket.set_option(ip::multicast::outbound_interface(ip));
             unicastSocket.set_option(ip::multicast::enable_loopback( true ) );
-            mOutputSockets[locator.port].push_back(std::move(SocketInfo(unicastSocket)));
+            mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
         }
     }
     catch (boost::system::system_error const& e)
