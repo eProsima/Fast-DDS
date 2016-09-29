@@ -102,6 +102,7 @@ set_sources(
     rtps/flowcontrol/ThroughputController.cpp 
     rtps/flowcontrol/FlowController.cpp 
     fastrtps.rc
+    rtps/security/SecurityManager.cpp
     )
 
 # Set version
