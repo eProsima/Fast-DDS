@@ -29,6 +29,7 @@ namespace rtps{
 
 static const uint32_t maximumUDPSocketSize = 65536;
 static const uint32_t maximumMessageSize = 65500;
+static const uint8_t defaultTTL = 1;
 
 static void GetIP4s(vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
 {
@@ -56,7 +57,8 @@ static boost::asio::ip::address_v4::bytes_type locatorToNative(const Locator_t& 
 UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
     mMaxMessageSize(descriptor.maxMessageSize),
     mSendBufferSize(descriptor.sendBufferSize),
-    mReceiveBufferSize(descriptor.receiveBufferSize)
+    mReceiveBufferSize(descriptor.receiveBufferSize),
+    mTTL(descriptor.TTL)
     {
         for (const auto& interface : descriptor.interfaceWhiteList)
             mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
@@ -65,13 +67,15 @@ UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
 UDPv4TransportDescriptor::UDPv4TransportDescriptor():
     TransportDescriptorInterface(maximumMessageSize),
     sendBufferSize(maximumUDPSocketSize),
-    receiveBufferSize(maximumUDPSocketSize)
+    receiveBufferSize(maximumUDPSocketSize),
+    TTL(defaultTTL)
     {}
 
 UDPv4Transport::UDPv4Transport() :
     mMaxMessageSize(maximumMessageSize),
     mSendBufferSize(maximumUDPSocketSize),
-    mReceiveBufferSize(maximumUDPSocketSize)
+    mReceiveBufferSize(maximumUDPSocketSize),
+    mTTL(defaultTTL)
     {
     }
 
@@ -324,6 +328,7 @@ boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindUnicastOutputSocket(cons
     ip::udp::socket socket(mService);
     socket.open(ip::udp::v4());
     socket.set_option(socket_base::send_buffer_size(mSendBufferSize));
+    socket.set_option(ip::multicast::hops(mTTL));
 
     ip::udp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
     socket.bind(endpoint);
