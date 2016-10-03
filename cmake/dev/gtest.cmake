@@ -118,6 +118,14 @@ macro(add_blackbox_gtest test memorymode)
                     set_tests_properties(${GTEST_GROUP_NAME}_${memorymode}.${GTEST_NAME} PROPERTIES ENVIRONMENT
                         "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
                 endif()
+                set_property(TEST ${GTEST_GROUP_NAME}_${memorymode}.${GTEST_NAME} APPEND PROPERTY ENVIRONMENT
+                    "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}")
+                set_property(TEST ${GTEST_GROUP_NAME}_${memorymode}.${GTEST_NAME} APPEND PROPERTY ENVIRONMENT
+                    "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}")
+                set_property(TEST ${GTEST_GROUP_NAME}_${memorymode}.${GTEST_NAME} APPEND PROPERTY ENVIRONMENT
+                    "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}")
+                set_property(TEST ${GTEST_GROUP_NAME}_${memorymode}.${GTEST_NAME} APPEND PROPERTY ENVIRONMENT
+                    "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}")
             endforeach()
         endforeach()
     else()
@@ -127,5 +135,13 @@ macro(add_blackbox_gtest test memorymode)
             set_tests_properties(${test} PROPERTIES ENVIRONMENT
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
         endif()
+        set_property(TEST ${test} APPEND PROPERTY ENVIRONMENT
+            "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}")
+        set_property(TEST ${test} APPEND PROPERTY ENVIRONMENT
+            "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}")
+        set_property(TEST ${test} APPEND PROPERTY ENVIRONMENT
+            "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}")
+        set_property(TEST ${test} APPEND PROPERTY ENVIRONMENT
+            "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}")
     endif()
 endmacro()
