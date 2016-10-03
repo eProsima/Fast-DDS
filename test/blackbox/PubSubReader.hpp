@@ -275,7 +275,7 @@ class PubSubReader
             return *this;
         }
 
-    PubSubReader& static_discovery(char* filename)
+    PubSubReader& static_discovery(const char* filename)
     {
 	participant_attr_.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
 	participant_attr_.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;

@@ -34,6 +34,8 @@
 
 #include <thread>
 #include <memory>
+#include <cstdlib>
+#include <string>
 #include <gtest/gtest.h>
 
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
@@ -1521,28 +1523,41 @@ BLACKBOXTEST(BlackBox, PubSubMoreThan256Unacknowledged)
 }
 
 
-TEST(BlackBox, StaticDiscovery)
+BLACKBOXTEST(BlackBox, StaticDiscovery)
 {
+    // Get environment variables.
+    std::string TOPIC_RANDOM_NUMBER(std::getenv("TOPIC_RANDOM_NUMBER"));
+    ASSERT_FALSE(TOPIC_RANDOM_NUMBER.empty());
+    std::string W_UNICAST_PORT_RANDOM_NUMBER_STR(std::getenv("W_UNICAST_PORT_RANDOM_NUMBER"));
+    ASSERT_FALSE(W_UNICAST_PORT_RANDOM_NUMBER_STR.empty());
+    int32_t W_UNICAST_PORT_RANDOM_NUMBER = stoi(W_UNICAST_PORT_RANDOM_NUMBER_STR);
+    std::string R_UNICAST_PORT_RANDOM_NUMBER_STR(std::getenv("R_UNICAST_PORT_RANDOM_NUMBER"));
+    ASSERT_FALSE(R_UNICAST_PORT_RANDOM_NUMBER_STR.empty());
+    int32_t R_UNICAST_PORT_RANDOM_NUMBER = stoi(R_UNICAST_PORT_RANDOM_NUMBER_STR);
+    std::string MULTICAST_PORT_RANDOM_NUMBER_STR(std::getenv("MULTICAST_PORT_RANDOM_NUMBER"));
+    ASSERT_FALSE(MULTICAST_PORT_RANDOM_NUMBER_STR.empty());
+    int32_t MULTICAST_PORT_RANDOM_NUMBER = stoi(MULTICAST_PORT_RANDOM_NUMBER_STR);
+
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     LocatorList_t WriterUnicastLocators;
     Locator_t LocatorBuffer;
     
     LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
-    LocatorBuffer.port = 31337;
+    LocatorBuffer.port = W_UNICAST_PORT_RANDOM_NUMBER;
     LocatorBuffer.set_IP4_address(127,0,0,1);
     WriterUnicastLocators.push_back(LocatorBuffer);
 
     LocatorList_t WriterMulticastLocators;
     
-    LocatorBuffer.port = 31338;
+    LocatorBuffer.port = MULTICAST_PORT_RANDOM_NUMBER;
     WriterMulticastLocators.push_back(LocatorBuffer);
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
         durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
     writer.static_discovery("PubSubWriter.xml").reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
 	unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
-	setPublisherIDs(1,2).setManualTopicName(std::string("TEST_TOPIC_NAME")).init();
+	setPublisherIDs(1, 2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
 
     ASSERT_TRUE(writer.isInitialized());
@@ -1551,12 +1566,12 @@ TEST(BlackBox, StaticDiscovery)
     
     LocatorList_t ReaderUnicastLocators;
     
-    LocatorBuffer.port = 31377;
+    LocatorBuffer.port = R_UNICAST_PORT_RANDOM_NUMBER;
     ReaderUnicastLocators.push_back(LocatorBuffer);
 
     LocatorList_t ReaderMulticastLocators;
     
-    LocatorBuffer.port = 31378;
+    LocatorBuffer.port = MULTICAST_PORT_RANDOM_NUMBER;
     ReaderMulticastLocators.push_back(LocatorBuffer);
 
 
@@ -1565,11 +1580,11 @@ TEST(BlackBox, StaticDiscovery)
     durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
     reader.static_discovery("PubSubReader.xml").
 	    unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
-	    setSubscriberIDs(3,4).setManualTopicName(std::string("TEST_TOPIC_NAME")).init();
+	    setSubscriberIDs(3, 4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    auto data = default_helloword_data_generator(10);
+    auto data = default_helloword_data_generator();
     auto expected_data(data);
 
     writer.send(data);
@@ -1577,15 +1592,12 @@ TEST(BlackBox, StaticDiscovery)
 
     reader.expected_data(expected_data);
 	reader.startReception();
-    data = reader.block(std::chrono::seconds(10));
+    data = reader.block(std::chrono::seconds(5));
 
     print_non_received_messages(data, default_helloworld_print);
     ASSERT_EQ(data.size(), static_cast<size_t>(0));
-
-
-
-
 }
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
