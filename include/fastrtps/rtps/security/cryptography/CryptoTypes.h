@@ -28,7 +28,16 @@ namespace security {
 
     typedef std::array<uint8_t,4> CryptoTransformKind;
     typedef std::array<uint8_t,4> CryptoTransformKeyId;
+
     typedef Token CryptoToken;
+    typedef Token ParticipantCryptoToken;
+    typedef Token DatawriterCryptoToken;
+    typedef Token DatareaderCryptoToken;
+
+    typedef std::vector<CryptoToken> CryptoTokenSeq;
+    typedef CryptoTokenSeq ParticipantCryptoTokenSeq;
+    typedef CryptoTokenSeq DatawriterCryptoTokenSeq;
+    typedef CryptoTokenSeq DatareaderCryptoTokenSeq;
 
     struct CryptoTransformIdentifier{
         CryptoTransformKind transformation_kind;
