@@ -18,6 +18,8 @@
 #ifndef _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTYPES_H_
 #define _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTYPES_H_
 
+#include "../../common/Token.h"
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -25,11 +27,13 @@ namespace security {
 
     typedef std::array<uint8_t,4> CryptoTransformKind;
     typedef std::array<uint8_t,4> CryptoTransformKeyId;
+    typedef Token CryptoToken;
 
     struct CryptoTransformIdentifier{
         CryptoTransformKind transformation_kind;
         CryptoTransformKeyId transformation_key_id;
     };
+
 
 } //namespace eprosima
 } //namespace fastrtps
