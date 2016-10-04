@@ -18,6 +18,8 @@
 #ifndef _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTRANSFORM_H_
 #define _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTRANSFORM_H_
 
+#include "CryptoTypes.h"
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {

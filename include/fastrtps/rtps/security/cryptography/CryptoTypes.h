@@ -19,6 +19,7 @@
 #define _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTYPES_H_
 
 #include "../../common/Token.h"
+#include "../common/Handle.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -32,6 +33,13 @@ namespace security {
     struct CryptoTransformIdentifier{
         CryptoTransformKind transformation_kind;
         CryptoTransformKeyId transformation_key_id;
+    };
+
+    enum SecureSubmessageCategory_t: uint8_t
+    {
+        INFO_SUBMESSAGE = 0,
+        DATAWRITER_SUBMESSAGE,
+        DATAREADER_SUBMESSAGE
     };
 
 

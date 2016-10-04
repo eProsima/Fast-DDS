@@ -23,13 +23,6 @@ namespace fastrtps {
 namespace rtps {
 namespace security {
 
-enum SecureSubmessageCategory_t: uint8_t
-{
-    INFO_SUBMESSAGE = 0,
-    DATAWRITER_SUBMESSAGE,
-    DATAREADER_SUBMESSAGE
-};
-
 class Cryptography
 {
 
