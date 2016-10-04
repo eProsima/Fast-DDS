@@ -18,6 +18,13 @@
 #ifndef _RTPS_SECURITY_AUTHENTICATION_AUTHENTICATION_H_
 #define _RTPS_SECURITY_AUTHENTICATION_AUTHENTICATION_H_
 
+#include "../common/Handle.h"
+#include "../../common/Guid.h"
+#include "../../attributes/RTPSParticipantAttributes.h"
+#include "../exceptions/SecurityException.h"
+
+#include <cstdint>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -37,7 +44,23 @@ class Authentication
 {
     public:
 
-        virtual ValidationResult_t validate_local_identity(const IdentityHandle& identity_handle) = 0;
+        /*!
+         * @brief Validates the identity of the local RTPSParticipant.
+         * @param local_identity_handle (out) A handle that can be used to locally refer to the Authenticated
+         * Participant in subsequent interactions with the Authentication plugin.
+         * @param adjusted_participant_key (out) The GUID_t that the implementation shall use to uniquely identify the
+         * RTPSParticipant on the network.
+         * @param domain_id The Domain Id of the RTPSParticipant.
+         * @param participant_attr The RTPSParticipantAttributes of the RTPSParticipant.
+         * @param candidate_participant_key The GUID_t that the DDS implementation would have used to uniquely identify
+         * the RTPSParticipant if the Security plugins were not enabled.
+         */
+        virtual ValidationResult_t validate_local_identity(IdentityHandle** local_identity_handle,
+                GUID_t& adjusted_participant_key,
+                const uint32_t domain_id,
+                const RTPSParticipantAttributes& participant_attr,
+                const GUID_t& candidate_participant_key,
+                SecurityException& exception) = 0;
 };
 
 } //namespace eprosima
