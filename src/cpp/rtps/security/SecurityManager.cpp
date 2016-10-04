@@ -1,4 +1,6 @@
-#include <fastrtps/rtps/security/SecurityManager.h>
+#include "SecurityManager.h"
+
+#include <fastrtps/rtps/security/authentication/Authentication.h>
 
 using namespace eprosima::fastrtps::rtps::security;
 

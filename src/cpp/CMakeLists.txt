@@ -102,6 +102,8 @@ set_sources(
     rtps/flowcontrol/ThroughputController.cpp 
     rtps/flowcontrol/FlowController.cpp 
     fastrtps.rc
+    rtps/exceptions/Exception.cpp
+    rtps/security/exceptions/SecurityException.cpp
     rtps/security/SecurityManager.cpp
     )
 

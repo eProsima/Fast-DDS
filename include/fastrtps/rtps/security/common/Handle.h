@@ -51,7 +51,7 @@ class HandleImpl : public Handle
 
         typedef T type;
 
-        HandleImpl() : Handle(T::class_id_), _impl(new T) {}
+        HandleImpl() : Handle(T::class_id_), impl_(new T) {}
 
         static HandleImpl<T>& narrow(Handle& handle)
         {
@@ -63,19 +63,19 @@ class HandleImpl : public Handle
 
         bool nil() const
         {
-            return _impl ? false : true;
+            return impl_ ? false : true;
         }
 
         T* operator->()
         {
-            return _impl.get();
+            return impl_.get();
         }
 
     private:
 
         explicit HandleImpl(bool) : Handle(T::class_id_) {}
 
-        std::unique_ptr<T> _impl;
+        std::unique_ptr<T> impl_;
 
         static HandleImpl<T> nil_handle;
 };
@@ -84,14 +84,11 @@ HandleImpl<T> HandleImpl<T>::nil_handle(true);
 
 
 // Define common handlers
-template<typename T>
-using IdentityHandle = Handle<T>;
+typedef Handle IdentityHandle;
 
-template<typename T>
-using PermissionsHandle = Handle<T>;
+typedef Handle PermissionsHandle;
 
-template<typename T>
-using SharedSecretHandle = Handle<T>;
+typedef Handle SharedSecretHandle;
 
 } //namespace eprosima
 } //namespace fastrtps
