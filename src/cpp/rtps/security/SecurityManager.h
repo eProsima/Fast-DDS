@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*!
- * @file SecurityManager.h	
+ * @file SecurityManager.h
  */
 #ifndef _RTPS_SECURITY_SECURITYMANAGER_H_
 #define _RTPS_SECURITY_SECURITYMANAGER_H_

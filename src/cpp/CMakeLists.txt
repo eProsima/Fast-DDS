@@ -101,11 +101,16 @@ set_sources(
     rtps/builtin/data/ReaderProxyData.cpp 
     rtps/flowcontrol/ThroughputController.cpp 
     rtps/flowcontrol/FlowController.cpp 
-    fastrtps.rc
     rtps/exceptions/Exception.cpp
-    rtps/security/exceptions/SecurityException.cpp
-    rtps/security/SecurityManager.cpp
+    fastrtps.rc
     )
+
+if(SECURITY)
+    set_sources(
+        rtps/security/exceptions/SecurityException.cpp
+        rtps/security/SecurityManager.cpp
+        )
+endif()
 
 # Set version
 set(${PROJECT_NAME_UPPER}_VERSION_MAJOR ${PROJECT_MAJOR_VERSION})
