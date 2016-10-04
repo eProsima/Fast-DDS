@@ -110,6 +110,11 @@ if(SECURITY)
         rtps/security/exceptions/SecurityException.cpp
         rtps/security/SecurityManager.cpp
         )
+
+    find_package(OpenSSL REQUIRED)
+
+    include_directories(${OPENSSL_INCLUDE_DIR})
+    set(EXTRA_LIBRARIES ${EXTRA_LIBRARIES} ${OPENSSL_LIBRARIES})
 endif()
 
 # Set version
@@ -177,6 +182,7 @@ if(MSVC OR MSVC_IDE)
         # Link library to external win32 libraries and boost.
         target_link_libraries(${PROJECT_NAME} ${PRIVACY}
             ${Boost_LIBRARIES} iphlpapi Shlwapi
+            ${EXTRA_LIBRARIES}
             )
     endif()
 else()
@@ -195,6 +201,7 @@ else()
     # Link library to external libraries.
     target_link_libraries(${PROJECT_NAME}
         ${Boost_LIBRARIES}
+        ${EXTRA_LIBRARIES}
         )
 endif()
 
