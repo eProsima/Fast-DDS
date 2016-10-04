@@ -90,6 +90,10 @@ typedef Handle PermissionsHandle;
 
 typedef Handle SharedSecretHandle;
 
+typedef Handle ParticipantCryptoHandle;
+typedef Handle DatawriterCryptoHandle;
+typedef Handle DatareaderCryptohandle;
+
 } //namespace eprosima
 } //namespace fastrtps
 } //namespace rtps

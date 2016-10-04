@@ -18,6 +18,8 @@
 #ifndef _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOKEYFACTORY_H_
 #define _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOKEYFACTORY_H_
 
+#include "CryptoTypes.h"
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -32,13 +34,13 @@ class CryptoKeyFactory
          * @param participant_identity Made by a prior call to validate_local_identity
          * @param participant_permissions Made by a prior call to validate_local_permissions
          * @param participant_properties Combination of PropertyQoSPolicy and contents of AccessControl
-         * @param exception Security exception
+         * @param exception (out) Security exception
          * @return ParticipantCryptoHandle with generated key material  
          */
         ParticipantCryptoHandle register_local_participant(
-                IdentityHandle &participant_identity, 
-                PermissionsHandle &participant_permissions, 
-                PropertySeq &participant_properties, 
+                const IdentityHandle &participant_identity, 
+                const PermissionsHandle &participant_permissions, 
+                const PropertySeq &participant_properties, 
                 SecurityException &exception);
         
         /**
@@ -48,7 +50,7 @@ class CryptoKeyFactory
          * @param remote_participant_identity Returned by a prior call to validate_remote_identity
          * @param remote_participant_permissions Returned by a prior call to validate_remote_permissions
          * @param shared_secret Returned by a prior call to get_shared_secret (Auth Handshake)
-         * @param exception Security exception
+         * @param exception (out) Security exception
          * @return ParticipantCryptoHandle with generated key material
          */
         ParticipantCryptoHandle register_matched_remote_participant(
@@ -63,12 +65,12 @@ class CryptoKeyFactory
          * Creates cryptomaterial for use with incoming/outgoing messages
          * @param participant_crypto returned by a prior call to register_local_participant
          * @param datawriter_prop Combination of PropertyWosPolicy and contents of AccessControl
-         * @param exception Security exception 
+         * @param exception (out) Security exception 
          * @return CryptoHandle to be used with operations related to the DataWriter
          */
         DataWriterCryptoHandle register_local_datawriter(
-                ParticipantCryptoHandle &participant_crypto,
-                PropertySeq &datawriter_prop,
+                const ParticipantCryptoHandle &participant_crypto,
+                const PropertySeq &datawriter_prop,
                 SecurityException &exception);
 
         /**
@@ -78,14 +80,14 @@ class CryptoKeyFactory
          * @param remote_participant_crypto Returned by a prior call to register_matched_remote_participant.
          * @param shared_secret Obtained as a result of the Authentication Handshake.
          * @param relay_only If FALSE it generates material for both a submessage and serialized payload. Submessages only if TRUE.
-         * @param exception Security exception.
+         * @param exception (out) Security exception.
          * @return Crypto Handle to the generated key material.
          */
         DataReaderCryptoHandle register_matched_remote_datareader(
-                DataWriterCryptoHandle &local_datawriter_crypto_handle,
-                ParticipantCryptoHandle &lremote_participant_crypto,
-                SharedSecretHandle &shared_secret,
-                bool relay_only,
+                const DataWriterCryptoHandle &local_datawriter_crypto_handle,
+                const ParticipantCryptoHandle &lremote_participant_crypto,
+                const SharedSecretHandle &shared_secret,
+                const bool relay_only,
                 SecurityException &exception);
 
         /**
@@ -93,12 +95,12 @@ class CryptoKeyFactory
          * Creates crypto material to encode messages when the encryption is independent of the targeted DataWriter
          * @param participant_crypto Returned by a prior call to register_local_participant
          * @param datareader_properties Combination of PropertyQosPolicy and the contents of AccessControl
-         * @param exception Security exception
+         * @param exception (out) Security exception
          * @return Crypto Handle to the generated key material
          */
         DataReaderCryptoHandle register_local_datareader(
-                ParticipantCryptoHandle &participant_crypto,
-                PropertySeq &datareader_properties,
+                const ParticipantCryptoHandle &participant_crypto,
+                const PropertySeq &datareader_properties,
                 SecurityException &exception);
 
         /**
@@ -107,40 +109,43 @@ class CryptoKeyFactory
          * @param local_datareader_crypto_handle
          * @param remote_participant_crypt
          * @param shared_secret
-         * @param exception Security exception
+         * @param exception (out) Security exception
          * @return Crypto handle to the generated key material
          */
         DataWriterCryptoHandle register_matched_remote_datawriter(
-                DataReaderCryptoHandle &local_datareader_crypto_handle,
-                ParticipantCryptoHandle &remote_participant_crypt,
-                SharedSecretHandle &shared_secret,
+                const DataReaderCryptoHandle &local_datareader_crypto_handle,
+                const ParticipantCryptoHandle &remote_participant_crypt,
+                const SharedSecretHandle &shared_secret,
                 SecurityException &exception);
 
         /**
          * Releases resources associated with a Participant. The Crypto Handle becomes unusable after this 
          * @param participant_crypto_handle Belonging to the Participant that awaits termination
+         * @param exception (out) Security exception
          * @return TRUE is succesful 
          */
         bool unregister_participant(
-                ParticipantCryptoHandle &participant_crypto_handle,
+                const ParticipantCryptoHandle &participant_crypto_handle,
                 SecurityException &exception);
         
         /**
          * Releases resources associated with a DataWriter. The Crypto Handle becomes unusable after this 
          * @param datawriter_crypto_handle Belonging to the DataWriter that awaits termination
+         * @param exception (out) Security exception
          * @return TRUE is succesful 
          */
         bool unregister_datawriter(
-                DataWriterCryptoHandle &datawriter_crypto_handle,
+                const DataWriterCryptoHandle &datawriter_crypto_handle,
                 SecurityException &exception);
         
         /**
          * Releases resources associated with a DataReader. The Crypto Handle becomes unusable after this 
          * @param datareader_crypto_handle Belonging to the DataReader that awaits termination
+         * @param exception (out) Security exception
          * @return TRUE is succesful 
          */
         bool unregister_datareader(
-                DataReaderCryptoHandle &datareader_crypto_handle,
+                const DataReaderCryptoHandle &datareader_crypto_handle,
                 SecurityException &exception);
 
 
