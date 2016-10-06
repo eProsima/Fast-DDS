@@ -186,6 +186,15 @@ endif()
 check_boost(${BOOST_LIBRARIES_DEFAULT})
 
 ###############################################################################
+# Default shared libraries
+###############################################################################
+option(BUILD_SHARED_LIBS
+    "Global flag to cause add_library() to create shared libraries if on. \
+    If set to true, this will cause all libraries to be built shared \
+    unless the library was explicitly added as a static library."
+    ON)
+
+###############################################################################
 # Load external eProsima projects.
 ###############################################################################
 option(THIRDPARTY "Activate the use of internal thirdparties" OFF)

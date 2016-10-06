@@ -176,7 +176,7 @@ else()
 	    add_definitions(-D__DEBUG)
     endif()
     #Create library
-    add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
+    add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
 
     # Define public headers
     target_include_directories(${PROJECT_NAME} PUBLIC
