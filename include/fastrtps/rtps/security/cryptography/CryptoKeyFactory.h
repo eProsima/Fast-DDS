@@ -37,7 +37,7 @@ class CryptoKeyFactory
          * @param exception (out) Security exception
          * @return ParticipantCryptoHandle with generated key material  
          */
-        ParticipantCryptoHandle register_local_participant(
+        ParticipantCryptoHandle * register_local_participant(
                 const IdentityHandle &participant_identity, 
                 const PermissionsHandle &participant_permissions, 
                 const PropertySeq &participant_properties, 
@@ -53,7 +53,7 @@ class CryptoKeyFactory
          * @param exception (out) Security exception
          * @return ParticipantCryptoHandle with generated key material
          */
-        ParticipantCryptoHandle register_matched_remote_participant(
+        ParticipantCryptoHandle * register_matched_remote_participant(
                 ParticipantCryptoHandle &local_participant_crypto_handle, 
                 IdentityHandle &remote_participant_identity, 
                 PermissionsHandle &remote_participant_permissions, 
@@ -68,7 +68,7 @@ class CryptoKeyFactory
          * @param exception (out) Security exception 
          * @return CryptoHandle to be used with operations related to the DataWriter
          */
-        DataWriterCryptoHandle register_local_datawriter(
+        DataWriterCryptoHandle * register_local_datawriter(
                 const ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datawriter_prop,
                 SecurityException &exception);
@@ -83,7 +83,7 @@ class CryptoKeyFactory
          * @param exception (out) Security exception.
          * @return Crypto Handle to the generated key material.
          */
-        DataReaderCryptoHandle register_matched_remote_datareader(
+        DataReaderCryptoHandle * register_matched_remote_datareader(
                 const DataWriterCryptoHandle &local_datawriter_crypto_handle,
                 const ParticipantCryptoHandle &lremote_participant_crypto,
                 const SharedSecretHandle &shared_secret,
@@ -98,7 +98,7 @@ class CryptoKeyFactory
          * @param exception (out) Security exception
          * @return Crypto Handle to the generated key material
          */
-        DataReaderCryptoHandle register_local_datareader(
+        DataReaderCryptoHandle * register_local_datareader(
                 const ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datareader_properties,
                 SecurityException &exception);
@@ -112,7 +112,7 @@ class CryptoKeyFactory
          * @param exception (out) Security exception
          * @return Crypto handle to the generated key material
          */
-        DataWriterCryptoHandle register_matched_remote_datawriter(
+        DataWriterCryptoHandle * register_matched_remote_datawriter(
                 const DataReaderCryptoHandle &local_datareader_crypto_handle,
                 const ParticipantCryptoHandle &remote_participant_crypt,
                 const SharedSecretHandle &shared_secret,

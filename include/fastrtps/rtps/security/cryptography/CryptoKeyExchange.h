@@ -66,9 +66,9 @@ class CryptoKeyExchange
      * @return TRUE if successful
      */
     bool create_local_datawriter_crypto_tokens(
-            DataWriterCryptoTokenSeq &local_datawriter_crypto_tokens,
-            const DataWriterCryptoHandle &local_datawriter_crypto,
-            const DataReaderCryptoHandle &remote_datareader_crypto,
+            DatawriterCryptoTokenSeq &local_datawriter_crypto_tokens,
+            const DatawriterCryptoHandle &local_datawriter_crypto,
+            const DatareaderCryptoHandle &remote_datareader_crypto,
             SecurityException &exception);
 
     /**
@@ -80,9 +80,9 @@ class CryptoKeyExchange
      * @return TRUE if successful
      */
     bool create_local_datareader_crypto_tokens(
-            DataReaderCryptoTokenSeq &local_datareader_crypto_tokens,
-            const DataReaderCryptoHandle &local_datareader_crypto,
-            const DataWriterCryptoHandle &remote_datawriter_crypto,
+            DatareaderCryptoTokenSeq &local_datareader_crypto_tokens,
+            const DatareaderCryptoHandle &local_datareader_crypto,
+            const DatawriterCryptoHandle &remote_datawriter_crypto,
             SecurityException &exception);
 
     /**
@@ -94,9 +94,9 @@ class CryptoKeyExchange
      * @return TRUE if successful
      */
     bool set_remote_datareader_crypto_tokens(
-            const DataWriterCryptoHandle &local_datawriter_crypto,
-            const DataReaderCryptoHandle &remote_datareader_crypto,
-            const DataReaderCryptoTokenSeq &remote_datareader_tokens,
+            const DatawriterCryptoHandle &local_datawriter_crypto,
+            const DatareaderCryptoHandle &remote_datareader_crypto,
+            const DatareaderCryptoTokenSeq &remote_datareader_tokens,
             SecurityException &exception);
 
     /**

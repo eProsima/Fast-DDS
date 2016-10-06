@@ -25,7 +25,7 @@ namespace fastrtps {
 namespace rtps {
 namespace security {
 
-class CryptoKeyFactory
+class CryptoTransform
 {
     public:
 
