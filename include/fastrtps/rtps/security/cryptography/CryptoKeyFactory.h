@@ -29,7 +29,7 @@ class CryptoKeyFactory
 {
     public:
 
-        virtual ~CryptoKeyFactory();
+        virtual ~CryptoKeyFactory(){}
         /**
          * Register a local, already authenticated Participant with the Cryptographic Plugin.
          * Creates Crypto material needed to encrypt messages directed to other Participants

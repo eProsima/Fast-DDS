@@ -29,7 +29,7 @@ class CryptoKeyExchange
 {
     public:
 
-    virtual ~CryptoKeyExchange();
+    virtual ~CryptoKeyExchange(){}
     /**
      * Creates Crypto Tokens containing the info to decrypt text encoded by the local Participant. 
      * To be sent to the remote participant.

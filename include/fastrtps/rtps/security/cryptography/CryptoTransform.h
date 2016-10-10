@@ -29,7 +29,7 @@ class CryptoTransform
 {
     public:
 
-        virtual ~CryptoTransform();
+        virtual ~CryptoTransform(){}
         /**
          * Serializes the payload sent by the user with a Datawriter.
          * @param encoded_buffer (out) Result of the encryption
