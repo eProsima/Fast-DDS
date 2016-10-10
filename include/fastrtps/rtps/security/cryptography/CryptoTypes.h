@@ -20,6 +20,7 @@
 
 #include "../../common/Token.h"
 #include "../common/Handle.h"
+#include "../exceptions/SecurityException.h"
 
 namespace eprosima {
 namespace fastrtps {

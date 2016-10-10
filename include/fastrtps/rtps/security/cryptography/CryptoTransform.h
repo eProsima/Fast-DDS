@@ -38,7 +38,7 @@ class CryptoTransform
          * @param exception (out) Security exception 
          * @return TRUE if successful
          */
-        bool encode_serialized_payload(
+        virtual bool encode_serialized_payload(
                 std::vector<uint8_t> &encoded_buffer,
                 std::vector<uint8_t> &extra_inline_qos,
                 const std::vector<uint8_t> &plain_buffer,
@@ -53,7 +53,7 @@ class CryptoTransform
          * @param exception (out) Security exception
          * @return TRUE is successful
          */
-        bool encode_datawriter_submessage(
+        virtual bool encode_datawriter_submessage(
                 std::vector<uint8_t> &encoded_rtps_submessage,
                 const std::vector<uint8_t> &plain_rtps_submessage,
                 const DataWriterCryptoHandle &sending_datawriter_crypto,
@@ -69,7 +69,7 @@ class CryptoTransform
          * @param exception (out) Security exception
          * @return TRUE if successful
          */
-        bool encode_datareader_submessage(
+        virtual bool encode_datareader_submessage(
                 std::vector<uint8_t> &encoded_rtps_submessage,
                 const td::vector<uint8_t> &plain_rtps_submessage,
                 const DataReaderCryptoHandle &sending_datareader_crypto,
@@ -85,7 +85,7 @@ class CryptoTransform
          * @param exception (out) Security expcetion
          * @return TRUE if successful
          */
-        bool encode_rtps_message(
+        virtual bool encode_rtps_message(
                 std::vector<uint8_t> &encoded_rtps_message,
                 const std::vector<uint8_t> &plain_rtps_message,
                 const ParticipantCryptoHandle &sending_crypto,
@@ -101,7 +101,7 @@ class CryptoTransform
          * @param exception (out) Security exception
          * @return TRUE is successful
          */
-        bool decode_rtps_message(
+        virtual bool decode_rtps_message(
                 std::vector<uint8_t> &plain_buffer,
                 const std::vector<uint8_t> &encoded_buffer,
                 const ParticipantCryptoHandle &receiving_crypto,
@@ -119,7 +119,7 @@ class CryptoTransform
          * @param exception (out) Security exception
          * @return TRUE if successful
          */
-        bool preprocess_secure_submsg(
+        virtual bool preprocess_secure_submsg(
                 DataWriterCryptoHandle &datawriter_crypto,
                 DataReaderCryptoHandle &datareader_crypto,
                 DDS_SecureSubmessageCategory_t &secure_submessage_category,
@@ -137,7 +137,7 @@ class CryptoTransform
          * @param exception (out) Security exception
          * @return TRUE if successful
          */
-        bool decode_datawriter_submessage(
+        virtual bool decode_datawriter_submessage(
                 std::vector<uint8_t> &plain_rtps_submessage,
                 const std::vector<uint8_t> &encoded_rtps_submessage,
                 const DataReaderCryptoHandle &receiving_datareader_crypto,
@@ -153,7 +153,7 @@ class CryptoTransform
          * @param exception (out) Security exception
          * @return TRUE if successful
          */
-        bool decode_datareader_submessage(
+        virtual bool decode_datareader_submessage(
                 std::vector<uint8_t> &plain_rtps_submessage,
                 const std::vector<uint8_t> &encoded_rtps_submessage,
                 const DataWriterCryptoHandle &receiving_datawriter_crypto,
@@ -170,7 +170,7 @@ class CryptoTransform
          * @param exception (out) Security exception
          * @return TRUE if successful
          */
-        bool decode_serialized_playload(
+        virtual bool decode_serialized_payload(
                 std::vector<uint8_t> &plain_buffer,
                 const std::vector<uint8_t> &encoded_buffer,
                 const std::vector<uint8_t> &inline_qos,

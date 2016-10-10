@@ -37,7 +37,7 @@ class CryptoKeyExchange
      * @param exception (out) Security exception
      * @return TRUE is successful.
      */
-    bool create_local_participant_crypto_tokens(
+    virtual bool create_local_participant_crypto_tokens(
             ParticipantCryptoTokenSeq &local_participant_crypto_tokens,
             const ParticipantCryptoHandle &local_participant_crypto,
             const ParticipantCryptoHandle &remote_participant_crypto,
@@ -51,7 +51,7 @@ class CryptoKeyExchange
      * @param exception (out) Security exception 
      * @return TRUE if successful
      */
-    bool set_remote_participant_crypto_tokens(
+    virtual bool set_remote_participant_crypto_tokens(
             const ParticipantCryptoHandle &local_participant_crypto,
             const ParticipantCryptoHandle &remote_participant_crypto,
             const ParticipantCryptoTokenSeq &remote_participant_tokens,
@@ -65,7 +65,7 @@ class CryptoKeyExchange
      * @param exception (out) Security exception
      * @return TRUE if successful
      */
-    bool create_local_datawriter_crypto_tokens(
+    virtual bool create_local_datawriter_crypto_tokens(
             DatawriterCryptoTokenSeq &local_datawriter_crypto_tokens,
             const DatawriterCryptoHandle &local_datawriter_crypto,
             const DatareaderCryptoHandle &remote_datareader_crypto,
@@ -79,7 +79,7 @@ class CryptoKeyExchange
      * @param exception (out) Security exception
      * @return TRUE if successful
      */
-    bool create_local_datareader_crypto_tokens(
+    virtual bool create_local_datareader_crypto_tokens(
             DatareaderCryptoTokenSeq &local_datareader_crypto_tokens,
             const DatareaderCryptoHandle &local_datareader_crypto,
             const DatawriterCryptoHandle &remote_datawriter_crypto,
@@ -93,7 +93,7 @@ class CryptoKeyExchange
      * @param exception (out) Security exception
      * @return TRUE if successful
      */
-    bool set_remote_datareader_crypto_tokens(
+    virtual bool set_remote_datareader_crypto_tokens(
             const DatawriterCryptoHandle &local_datawriter_crypto,
             const DatareaderCryptoHandle &remote_datareader_crypto,
             const DatareaderCryptoTokenSeq &remote_datareader_tokens,
@@ -105,7 +105,7 @@ class CryptoKeyExchange
      * @param exception (out) Security exception
      * @return TRUE if successful
      */
-    bool return_crypto_tokens(
+    virtual bool return_crypto_tokens(
             const CryptoTokenSeq &crypto_tokens,
             SecurityException *exception);
 
