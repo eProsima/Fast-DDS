@@ -15,26 +15,14 @@
 #ifndef THROUGHPUT_CONTROLLER_H
 #define THROUGHPUT_CONTROLLER_H
 
-#include <fastrtps/rtps/flowcontrol/FlowController.h>
+#include "FlowController.h"
+#include "ThroughputControllerDescriptor.h"
+
 #include <thread>
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
-
-/**
- * Descriptor for a Throughput Controller, containing all constructor information
- * for it. 
- * @ingroup NETWORK_MODULE
- */
-struct ThroughputControllerDescriptor {
-   //! Packet size in bytes that this controller will allow in a given period.
-   uint32_t bytesPerPeriod;
-   //! Window of time in which no more than 'bytesPerPeriod' bytes are allowed.
-   uint32_t periodMillisecs;
-   RTPS_DllAPI ThroughputControllerDescriptor();
-   RTPS_DllAPI ThroughputControllerDescriptor(uint32_t size, uint32_t time);
-};
 
 class RTPSWriter;
 class RTPSParticipantImpl;

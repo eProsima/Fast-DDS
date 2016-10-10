@@ -30,77 +30,85 @@ class BinaryProperty
     public:
 
         BinaryProperty(const BinaryProperty& property) :
-            _name(property._name),
-            _value(property._value),
-            _propagate(property._propagate) {}
+            name_(property.name_),
+            value_(property.value_),
+            propagate_(property.propagate_) {}
 
         BinaryProperty(BinaryProperty&& property) :
-            _name(std::move(property._name)),
-            _value(std::move(property._value)),
-            _propagate(property._propagate) {}
+            name_(std::move(property.name_)),
+            value_(std::move(property.value_)),
+            propagate_(property.propagate_) {}
+
+        BinaryProperty(const std::string& name,
+                const std::vector<uint8_t>& value) :
+            name_(name), value_(value) {}
+
+        BinaryProperty(std::string&& name,
+                std::vector<uint8_t>&& value) :
+            name_(std::move(name)), value_(std::move(value)) {}
 
         void name(const std::string& name)
         {
-            _name = name;
+            name_ = name;
         }
 
         void name(std::string&& name)
         {
-            _name = std::move(name);
+            name_ = std::move(name);
         }
 
         const std::string& name() const
         {
-            return _name;
+            return name_;
         }
 
         std::string& name()
         {
-            return _name;
+            return name_;
         }
 
         void value(const std::vector<uint8_t>& value)
         {
-            _value = value;
+            value_ = value;
         }
 
         void value(std::vector<uint8_t>&& value)
         {
-            _value = std::move(value);
+            value_ = std::move(value);
         }
 
         const std::vector<uint8_t>& value() const
         {
-            return _value;
+            return value_;
         }
 
         std::vector<uint8_t>& value()
         {
-            return _value;
+            return value_;
         }
 
         void propagate(bool propagate)
         {
-            _propagate = propagate;
+            propagate_ = propagate;
         }
 
         bool propagate() const
         {
-            return _propagate;
+            return propagate_;
         }
 
         bool& propagate()
         {
-            return _propagate;
+            return propagate_;
         }
 
     private:
 
-        std::string _name;
+        std::string name_;
 
-        std::vector<uint8_t> _value;
+        std::vector<uint8_t> value_;
 
-        bool _propagate;
+        bool propagate_;
 };
 
 typedef std::vector<BinaryProperty> BinaryPropertySeq;

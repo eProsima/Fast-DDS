@@ -19,41 +19,41 @@ include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 set_sources(
     log/Log.cpp
     log/StdoutConsumer.cpp
-    utils/eClock.cpp 
-    utils/IPFinder.cpp 
-    utils/md5.cpp 
-    utils/StringMatching.cpp 
-    rtps/resources/ResourceEvent.cpp 
-    rtps/resources/TimedEvent.cpp 
-    rtps/resources/TimedEventImpl.cpp 
+    utils/eClock.cpp
+    utils/IPFinder.cpp
+    utils/md5.cpp
+    utils/StringMatching.cpp
+    rtps/resources/ResourceEvent.cpp
+    rtps/resources/TimedEvent.cpp
+    rtps/resources/TimedEventImpl.cpp
     rtps/resources/AsyncWriterThread.cpp
     rtps/resources/AsyncInterestTree.cpp
-    rtps/Endpoint.cpp 
-    rtps/writer/RTPSWriter.cpp 
-    rtps/writer/StatefulWriter.cpp 
-    rtps/writer/ReaderProxy.cpp 
-    rtps/writer/StatelessWriter.cpp 
-    rtps/writer/ReaderLocator.cpp 
-    rtps/writer/timedevent/InitialHeartbeat.cpp 
-    rtps/writer/timedevent/PeriodicHeartbeat.cpp 
-    rtps/writer/timedevent/NackResponseDelay.cpp 
-    rtps/writer/timedevent/NackSupressionDuration.cpp 
-    rtps/history/CacheChangePool.cpp 
-    rtps/history/History.cpp 
-    rtps/history/WriterHistory.cpp 
-    rtps/history/ReaderHistory.cpp 
-    rtps/reader/timedevent/HeartbeatResponseDelay.cpp 
-    rtps/reader/timedevent/WriterProxyLiveliness.cpp 
-    rtps/reader/timedevent/InitialAckNack.cpp 
+    rtps/Endpoint.cpp
+    rtps/writer/RTPSWriter.cpp
+    rtps/writer/StatefulWriter.cpp
+    rtps/writer/ReaderProxy.cpp
+    rtps/writer/StatelessWriter.cpp
+    rtps/writer/ReaderLocator.cpp
+    rtps/writer/timedevent/InitialHeartbeat.cpp
+    rtps/writer/timedevent/PeriodicHeartbeat.cpp
+    rtps/writer/timedevent/NackResponseDelay.cpp
+    rtps/writer/timedevent/NackSupressionDuration.cpp
+    rtps/history/CacheChangePool.cpp
+    rtps/history/History.cpp
+    rtps/history/WriterHistory.cpp
+    rtps/history/ReaderHistory.cpp
+    rtps/reader/timedevent/HeartbeatResponseDelay.cpp
+    rtps/reader/timedevent/WriterProxyLiveliness.cpp
+    rtps/reader/timedevent/InitialAckNack.cpp
     rtps/reader/CompoundReaderListener.cpp
-    rtps/reader/WriterProxy.cpp 
-    rtps/reader/StatefulReader.cpp 
-    rtps/reader/StatelessReader.cpp 
-    rtps/reader/RTPSReader.cpp 
+    rtps/reader/WriterProxy.cpp
+    rtps/reader/StatefulReader.cpp
+    rtps/reader/StatelessReader.cpp
+    rtps/reader/RTPSReader.cpp
     rtps/reader/FragmentedChangePitStop.cpp
-    rtps/messages/CDRMessagePool.cpp 
-    rtps/messages/RTPSMessageCreator.cpp 
-    rtps/messages/RTPSMessageGroup.cpp 
+    rtps/messages/CDRMessagePool.cpp
+    rtps/messages/RTPSMessageCreator.cpp
+    rtps/messages/RTPSMessageGroup.cpp
     rtps/messages/MessageReceiver.cpp
     rtps/messages/submessages/AckNackMsg.hpp
     rtps/messages/submessages/DataMsg.hpp
@@ -62,46 +62,47 @@ set_sources(
     rtps/network/NetworkFactory.cpp
     rtps/network/SenderResource.cpp
     rtps/network/ReceiverResource.cpp
-    rtps/participant/RTPSParticipant.cpp 
-    rtps/participant/RTPSParticipantImpl.cpp 
-    rtps/RTPSDomain.cpp 
-    Domain.cpp 
-    participant/Participant.cpp 
-    participant/ParticipantImpl.cpp 
-    publisher/Publisher.cpp 
-    publisher/PublisherImpl.cpp 
-    publisher/PublisherHistory.cpp 
-    subscriber/Subscriber.cpp 
-    subscriber/SubscriberImpl.cpp 
-    subscriber/SubscriberHistory.cpp 
-    transport/UDPv4Transport.cpp 
-    transport/UDPv6Transport.cpp 
-    transport/test_UDPv4Transport.cpp 
-    qos/ParameterList.cpp 
-    qos/ParameterTypes.cpp 
-    qos/QosList.cpp 
-    qos/QosPolicies.cpp 
-    qos/WriterQos.cpp 
-    qos/ReaderQos.cpp 
-    rtps/builtin/BuiltinProtocols.cpp 
-    rtps/builtin/discovery/participant/PDPSimple.cpp 
-    rtps/builtin/discovery/participant/PDPSimpleListener.cpp 
-    rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp 
-    rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp 
-    rtps/builtin/discovery/endpoint/EDP.cpp 
-    rtps/builtin/discovery/endpoint/EDPSimple.cpp 
-    rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp 
-    rtps/builtin/discovery/endpoint/EDPStaticXML.cpp 
-    rtps/builtin/discovery/endpoint/EDPStatic.cpp 
-    rtps/builtin/liveliness/WLP.cpp 
-    rtps/builtin/liveliness/WLPListener.cpp 
-    rtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp 
-    rtps/builtin/data/ParticipantProxyData.cpp 
-    rtps/builtin/data/WriterProxyData.cpp 
-    rtps/builtin/data/ReaderProxyData.cpp 
-    rtps/flowcontrol/ThroughputController.cpp 
-    rtps/flowcontrol/FlowController.cpp 
+    rtps/participant/RTPSParticipant.cpp
+    rtps/participant/RTPSParticipantImpl.cpp
+    rtps/RTPSDomain.cpp
+    Domain.cpp
+    participant/Participant.cpp
+    participant/ParticipantImpl.cpp
+    publisher/Publisher.cpp
+    publisher/PublisherImpl.cpp
+    publisher/PublisherHistory.cpp
+    subscriber/Subscriber.cpp
+    subscriber/SubscriberImpl.cpp
+    subscriber/SubscriberHistory.cpp
+    transport/UDPv4Transport.cpp
+    transport/UDPv6Transport.cpp
+    transport/test_UDPv4Transport.cpp
+    qos/ParameterList.cpp
+    qos/ParameterTypes.cpp
+    qos/QosList.cpp
+    qos/QosPolicies.cpp
+    qos/WriterQos.cpp
+    qos/ReaderQos.cpp
+    rtps/builtin/BuiltinProtocols.cpp
+    rtps/builtin/discovery/participant/PDPSimple.cpp
+    rtps/builtin/discovery/participant/PDPSimpleListener.cpp
+    rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp
+    rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp
+    rtps/builtin/discovery/endpoint/EDP.cpp
+    rtps/builtin/discovery/endpoint/EDPSimple.cpp
+    rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp
+    rtps/builtin/discovery/endpoint/EDPStaticXML.cpp
+    rtps/builtin/discovery/endpoint/EDPStatic.cpp
+    rtps/builtin/liveliness/WLP.cpp
+    rtps/builtin/liveliness/WLPListener.cpp
+    rtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp
+    rtps/builtin/data/ParticipantProxyData.cpp
+    rtps/builtin/data/WriterProxyData.cpp
+    rtps/builtin/data/ReaderProxyData.cpp
+    rtps/flowcontrol/ThroughputController.cpp
+    rtps/flowcontrol/FlowController.cpp
     rtps/exceptions/Exception.cpp
+    rtps/attributes/PropertyPolicy.cpp
     fastrtps.rc
     )
 
@@ -109,6 +110,8 @@ if(SECURITY)
     set_sources(
         rtps/security/exceptions/SecurityException.cpp
         rtps/security/SecurityManager.cpp
+        rtps/security/SecurityPluginFactory.cpp
+        security/authentication/PKIDH.cpp
         )
 
     find_package(OpenSSL REQUIRED)
@@ -187,7 +190,7 @@ if(MSVC OR MSVC_IDE)
     endif()
 else()
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	    add_definitions(-D__DEBUG)
+        add_definitions(-D__DEBUG)
     endif()
     #Create library
     add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})

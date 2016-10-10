@@ -13,22 +13,30 @@
 // limitations under the License.
 
 /*!
- * @file SecurityManager.h
+ * @file SecurityPluginFactory.h
  */
-#ifndef _RTPS_SECURITY_SECURITYMANAGER_H_
-#define _RTPS_SECURITY_SECURITYMANAGER_H_
+#ifndef _RTPS_SECURITY_SECURITYPLUGINFACTORY_H_
+#define _RTPS_SECURITY_SECURITYPLUGINFACTORY_H_
+
+#include <fastrtps/rtps/security/authentication/Authentication.h>
+#include <fastrtps/rtps/attributes/PropertyPolicy.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 namespace security {
 
-
-class SecurityManager
+class SecurityPluginFactory
 {
     public:
 
-        SecurityManager();
+        /*!
+         * @brief Create an Authentication plugin  described in the PropertyPolicy.
+         * @param property_policy PropertyPolicy containing the definition of the Authentication
+         * plugin that has to be created.
+         * @param Pointer to the new Authentication plugin. In case of error nullptr will be returned.
+         */
+        Authentication* create_authentication_plugin(const PropertyPolicy& property_policy);
 };
 
 } //namespace security
@@ -36,4 +44,4 @@ class SecurityManager
 } //namespace fastrtps
 } //namespace eprosima
 
-#endif // _RTPS_SECURITY_SECURITYMANAGER_H_
+#endif // _RTPS_SECURITY_SECURITYPLUGINFACTORY_H_

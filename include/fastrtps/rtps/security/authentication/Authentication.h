@@ -55,6 +55,8 @@ class Authentication
 {
     public:
 
+        virtual ~Authentication() {}
+
         /*!
          * @brief Validates the identity of the local RTPSParticipant.
          * @param local_identity_handle (out) A handle that can be used to locally refer to the Authenticated
@@ -154,7 +156,7 @@ class Authentication
          * @exception (out) A SecurityException object.
          * @return SharedSecretHandle.
          */
-        virtual SharedSecretHandle get_shared_secret(const HandshakeHandle& handshake_handle,
+        virtual SharedSecretHandle* get_shared_secret(const HandshakeHandle& handshake_handle,
                 SecurityException& exception) = 0;
 
         /*!
@@ -206,9 +208,9 @@ class Authentication
 
 };
 
-} //namespace eprosima
-} //namespace fastrtps
-} //namespace rtps
 } //namespace security
+} //namespace rtps
+} //namespace fastrtps
+} //namespace eprosima
 
 #endif //  _RTPS_SECURITY_AUTHENTICATION_AUTHENTICATION_H_

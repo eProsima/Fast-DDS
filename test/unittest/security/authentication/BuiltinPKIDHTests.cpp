@@ -12,28 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*!
- * @file SecurityManager.h
- */
-#ifndef _RTPS_SECURITY_SECURITYMANAGER_H_
-#define _RTPS_SECURITY_SECURITYMANAGER_H_
+#include "AuthenticationPluginTests.hpp"
 
-namespace eprosima {
-namespace fastrtps {
-namespace rtps {
-namespace security {
-
-
-class SecurityManager
+int main(int argc, char **argv)
 {
-    public:
+    testing::InitGoogleTest(&argc, argv);
 
-        SecurityManager();
-};
+    AuthenticationPluginTest::property_policy.properties().
+        emplace_back(Property("dds.sec.auth.builtin.PKI_DH.identity_ca",
+                    ""));
+    return RUN_ALL_TESTS();
+}
 
-} //namespace security
-} //namespace rtps
-} //namespace fastrtps
-} //namespace eprosima
-
-#endif // _RTPS_SECURITY_SECURITYMANAGER_H_
