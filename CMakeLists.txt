@@ -199,6 +199,11 @@ include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)
 find_eprosima_package(fastcdr)
 
 ###############################################################################
+# Options
+###############################################################################
+option(SECURITY "Activate security" OFF)
+
+###############################################################################
 # Java application
 ###############################################################################
 option(BUILD_JAVA "Activate the compilation of the Java application" OFF)

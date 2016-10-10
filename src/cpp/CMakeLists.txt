@@ -101,11 +101,21 @@ set_sources(
     rtps/builtin/data/ReaderProxyData.cpp 
     rtps/flowcontrol/ThroughputController.cpp 
     rtps/flowcontrol/FlowController.cpp 
-    fastrtps.rc
     rtps/exceptions/Exception.cpp
-    rtps/security/exceptions/SecurityException.cpp
-    rtps/security/SecurityManager.cpp
+    fastrtps.rc
     )
+
+if(SECURITY)
+    set_sources(
+        rtps/security/exceptions/SecurityException.cpp
+        rtps/security/SecurityManager.cpp
+        )
+
+    find_package(OpenSSL REQUIRED)
+
+    include_directories(${OPENSSL_INCLUDE_DIR})
+    set(EXTRA_LIBRARIES ${EXTRA_LIBRARIES} ${OPENSSL_LIBRARIES})
+endif()
 
 # Set version
 set(${PROJECT_NAME_UPPER}_VERSION_MAJOR ${PROJECT_MAJOR_VERSION})
@@ -172,6 +182,7 @@ if(MSVC OR MSVC_IDE)
         # Link library to external win32 libraries and boost.
         target_link_libraries(${PROJECT_NAME} ${PRIVACY}
             ${Boost_LIBRARIES} iphlpapi Shlwapi
+            ${EXTRA_LIBRARIES}
             )
     endif()
 else()
@@ -190,6 +201,7 @@ else()
     # Link library to external libraries.
     target_link_libraries(${PROJECT_NAME}
         ${Boost_LIBRARIES}
+        ${EXTRA_LIBRARIES}
         )
 endif()
 

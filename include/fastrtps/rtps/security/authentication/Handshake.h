@@ -13,27 +13,26 @@
 // limitations under the License.
 
 /*!
- * @file SecurityManager.h
+ * @file Handshake.h
  */
-#ifndef _RTPS_SECURITY_SECURITYMANAGER_H_
-#define _RTPS_SECURITY_SECURITYMANAGER_H_
+#ifndef _RTPS_SECURITY_AUTHENTICATION_HANDSHAKE_H_
+#define _RTPS_SECURITY_AUTHENTICATION_HANDSHAKE_H_
+
+#include "../common/Handle.h"
+#include "../../common/Token.h"
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 namespace security {
 
+typedef Handle HandshakeHandle;
 
-class SecurityManager
-{
-    public:
-
-        SecurityManager();
-};
+typedef Token HandshakeMessageToken;
 
 } //namespace eprosima
 } //namespace fastrtps
 } //namespace rtps
 } //namespace security
 
-#endif // _RTPS_SECURITY_SECURITYMANAGER_H_
+#endif // _RTPS_SECURITY_AUTHENTICATION_HANDSHAKE_H_

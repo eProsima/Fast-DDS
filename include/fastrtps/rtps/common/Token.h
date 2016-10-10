@@ -32,53 +32,54 @@ class DataHolder
     public:
 
         DataHolder(const DataHolder& data_holder) :
-            _class_id(data_holder._class_id),
-            _properties(data_holder._properties),
-            _binary_properties(data_holder._binary_properties) {}
+            class_id_(data_holder.class_id_),
+            properties_(data_holder.properties_),
+            binary_properties_(data_holder.binary_properties_) {}
 
         DataHolder(DataHolder&& data_holder) :
-            _class_id(data_holder._class_id),
-            _properties(data_holder._properties),
-            _binary_properties(data_holder._binary_properties) {}
+            class_id_(data_holder.class_id_),
+            properties_(data_holder.properties_),
+            binary_properties_(data_holder.binary_properties_) {}
 
         const std::string& class_id() const
         {
-            return _class_id;
+            return class_id_;
         }
 
         const PropertySeq& properties() const
         {
-            return _properties;
+            return properties_;
         }
 
         PropertySeq& properties()
         {
-            return _properties;
+            return properties_;
         }
 
         const BinaryPropertySeq& binary_properties() const
         {
-            return _binary_properties;
+            return binary_properties_;
         }
 
         BinaryPropertySeq& binary_properties()
         {
-            return _binary_properties;
+            return binary_properties_;
         }
 
     protected:
 
-        std::string _class_id;
+        std::string class_id_;
 
     private:
 
-        PropertySeq _properties;
+        PropertySeq properties_;
 
-        BinaryPropertySeq _binary_properties;
+        BinaryPropertySeq binary_properties_;
 };
 
 typedef std::vector<DataHolder> DataHolderSeq;
 typedef DataHolder Token;
+typedef Token IdentityToken;
 
 } //namespace eprosima
 } //namespace fastrtps
