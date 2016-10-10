@@ -31,8 +31,9 @@ class AESGCMGMAC_KeyExchange : public CryptoKeyExchange
 {
     public:
 
-    AESGCMGMAC_KeyExchange();
 
+    AESGCMGMAC_KeyExchange();
+    ~AESGCMGMAC_KeyExchange();
 
     bool create_local_participant_crypto_tokens(
             ParticipantCryptoTokenSeq &local_participant_crypto_tokens,

@@ -18,7 +18,7 @@
 
 
 
-#include "EASGCMGMAC_KeyFactory.h"
+#include "AESGCMGMAC_KeyFactory.h"
 
 using namespace eprosima::fastrtps::rtps::security;
 

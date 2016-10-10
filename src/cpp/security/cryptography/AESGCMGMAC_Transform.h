@@ -32,6 +32,7 @@ class AESGCMGMAC_Transform : public CryptoTransform
     public:
 
     AESGCMGMAC_Transform();
+    ~AESGCMGMAC_Transform();
 
     bool encode_serialized_payload(
                 std::vector<uint8_t> &encoded_buffer,
@@ -71,7 +72,7 @@ class AESGCMGMAC_Transform : public CryptoTransform
     bool preprocess_secure_submsg(
                 DatawriterCryptoHandle &datawriter_crypto,
                 DatareaderCryptoHandle &datareader_crypto,
-                DDS_SecureSubmessageCategory_t &secure_submessage_category,
+                SecureSubmessageCategory_t &secure_submessage_category,
                 const std::vector<uint8_t> encoded_rtps_submessage,
                 const ParticipantCryptoHandle &receiving_crypto,
                 const ParticipantCryptoHandle &sending_crypto,
