@@ -27,7 +27,9 @@ namespace security {
 
 class CryptoKeyExchange
 {
+    public:
 
+    virtual ~CryptoKeyExchange();
     /**
      * Creates Crypto Tokens containing the info to decrypt text encoded by the local Participant. 
      * To be sent to the remote participant.
@@ -41,7 +43,7 @@ class CryptoKeyExchange
             ParticipantCryptoTokenSeq &local_participant_crypto_tokens,
             const ParticipantCryptoHandle &local_participant_crypto,
             const ParticipantCryptoHandle &remote_participant_crypto,
-            SecurityException &exception);
+            SecurityException &exception) = 0;
 
     /**
      * Configures the Cryptographic Plugin with the material needed to interpret messages coming from the remote crypto.
@@ -55,7 +57,7 @@ class CryptoKeyExchange
             const ParticipantCryptoHandle &local_participant_crypto,
             const ParticipantCryptoHandle &remote_participant_crypto,
             const ParticipantCryptoTokenSeq &remote_participant_tokens,
-            SecurityException &exception);
+            SecurityException &exception) = 0;
 
     /**
      * Creates CryptoTokens containing the info to decrypt text encoded by the local DataWriter.
@@ -69,7 +71,7 @@ class CryptoKeyExchange
             DatawriterCryptoTokenSeq &local_datawriter_crypto_tokens,
             const DatawriterCryptoHandle &local_datawriter_crypto,
             const DatareaderCryptoHandle &remote_datareader_crypto,
-            SecurityException &exception);
+            SecurityException &exception) = 0;
 
     /**
      * Creates CryptoTokens containing the info to decrypt text encoded by the local DataReader.
@@ -83,7 +85,7 @@ class CryptoKeyExchange
             DatareaderCryptoTokenSeq &local_datareader_crypto_tokens,
             const DatareaderCryptoHandle &local_datareader_crypto,
             const DatawriterCryptoHandle &remote_datawriter_crypto,
-            SecurityException &exception);
+            SecurityException &exception) = 0;
 
     /**
      * Configures the Cryptographic Plugin with the material needed to interpret messages coming from the remote DataReader.
@@ -97,7 +99,7 @@ class CryptoKeyExchange
             const DatawriterCryptoHandle &local_datawriter_crypto,
             const DatareaderCryptoHandle &remote_datareader_crypto,
             const DatareaderCryptoTokenSeq &remote_datareader_tokens,
-            SecurityException &exception);
+            SecurityException &exception) = 0;
 
     /**
      * Release resources associated with a CryptoTokenSeq
@@ -107,7 +109,7 @@ class CryptoKeyExchange
      */
     virtual bool return_crypto_tokens(
             const CryptoTokenSeq &crypto_tokens,
-            SecurityException *exception);
+            SecurityException *exception) = 0;
 
 };
 

@@ -29,8 +29,9 @@ class CryptoTransform
 {
     public:
 
+        virtual ~CryptoTransform();
         /**
-         * Serializes the payload sent by the user with a DataWriter.
+         * Serializes the payload sent by the user with a Datawriter.
          * @param encoded_buffer (out) Result of the encryption
          * @param extra_inline_qos (out) Contains additional parameters to be added to the inlineQos of the submessage
          * @param plain_buffer Plain input buffer
@@ -42,8 +43,8 @@ class CryptoTransform
                 std::vector<uint8_t> &encoded_buffer,
                 std::vector<uint8_t> &extra_inline_qos,
                 const std::vector<uint8_t> &plain_buffer,
-                const DataWriterCryptoHandle &sending_datawriter_crypto,
-                SecurityException &exception);
+                const DatawriterCryptoHandle &sending_datawriter_crypto,
+                SecurityException &exception) = 0;
         /**
          * Encodes a Data, DataFrag, Gap, Heartbeat or HeartBeatFrag
          * @param encoded_rtps_submessage (out) Result of the encryption
@@ -56,9 +57,9 @@ class CryptoTransform
         virtual bool encode_datawriter_submessage(
                 std::vector<uint8_t> &encoded_rtps_submessage,
                 const std::vector<uint8_t> &plain_rtps_submessage,
-                const DataWriterCryptoHandle &sending_datawriter_crypto,
-                const std::vector<DataReaderCryptohandle> receiving_datareader_crypto_list,
-                SecurityException &exception);
+                const DatawriterCryptoHandle &sending_datawriter_crypto,
+                const std::vector<DatareaderCryptoHandle> receiving_datareader_crypto_list,
+                SecurityException &exception) = 0;
 
         /**
          * Encodes an AckNack or NackFrag
@@ -71,10 +72,10 @@ class CryptoTransform
          */
         virtual bool encode_datareader_submessage(
                 std::vector<uint8_t> &encoded_rtps_submessage,
-                const td::vector<uint8_t> &plain_rtps_submessage,
-                const DataReaderCryptoHandle &sending_datareader_crypto,
-                const std:vector<DataWriterCryptoHandle> &receiving_datawriter_crypto_list,
-                SecurityException &exception);
+                const std::vector<uint8_t> &plain_rtps_submessage,
+                const DatareaderCryptoHandle &sending_datareader_crypto,
+                const std::vector<DatawriterCryptoHandle> &receiving_datawriter_crypto_list,
+                SecurityException &exception) = 0;
 
         /**
          * Encodes a full rtps message
@@ -90,7 +91,7 @@ class CryptoTransform
                 const std::vector<uint8_t> &plain_rtps_message,
                 const ParticipantCryptoHandle &sending_crypto,
                 const std::vector<ParticipantCryptoHandle> &receiving_crypto_list,
-                SecurityException &exception);
+                SecurityException &exception) = 0;
 
         /**
          * Reverses the transformation performed by encode_rtps_message. Decrypts the contents and veryfies MACs or digital signatures.
@@ -106,7 +107,7 @@ class CryptoTransform
                 const std::vector<uint8_t> &encoded_buffer,
                 const ParticipantCryptoHandle &receiving_crypto,
                 const ParticipantCryptoHandle &sending_crypto,
-                SecurityException &exception);
+                SecurityException &exception) = 0;
         
         /**
          * Determines whether the secure submessage comes from a datawriter or a data reader and extracts the required CryptoHandle to decode it.
@@ -120,13 +121,13 @@ class CryptoTransform
          * @return TRUE if successful
          */
         virtual bool preprocess_secure_submsg(
-                DataWriterCryptoHandle &datawriter_crypto,
-                DataReaderCryptoHandle &datareader_crypto,
+                DatawriterCryptoHandle &datawriter_crypto,
+                DatareaderCryptoHandle &datareader_crypto,
                 DDS_SecureSubmessageCategory_t &secure_submessage_category,
                 const std::vector<uint8_t> encoded_rtps_submessage,
                 const ParticipantCryptoHandle &receiving_crypto,
                 const ParticipantCryptoHandle &sending_crypto,
-                SecurityException &exception);
+                SecurityException &exception) = 0;
 
         /**
          * Called after prprocess_secure_submessage when the submessage category is DATAWRITER_SUBMESSAGE
@@ -140,9 +141,9 @@ class CryptoTransform
         virtual bool decode_datawriter_submessage(
                 std::vector<uint8_t> &plain_rtps_submessage,
                 const std::vector<uint8_t> &encoded_rtps_submessage,
-                const DataReaderCryptoHandle &receiving_datareader_crypto,
-                const DataWriterCryptoHandle &sending_datawriter_cryupto,
-                SecurityException &exception);
+                const DatareaderCryptoHandle &receiving_datareader_crypto,
+                const DatawriterCryptoHandle &sending_datawriter_crypto,
+                SecurityException &exception) = 0;
 
         /**
          * Called after preprocess_secure_submessage when the submessage category is DATAREADER_SUBMESSAGE
@@ -156,12 +157,12 @@ class CryptoTransform
         virtual bool decode_datareader_submessage(
                 std::vector<uint8_t> &plain_rtps_submessage,
                 const std::vector<uint8_t> &encoded_rtps_submessage,
-                const DataWriterCryptoHandle &receiving_datawriter_crypto,
-                const DataReaderCryptoHandle &sending_datareader_crypto,
-                SecurityException &exception);
+                const DatawriterCryptoHandle &receiving_datawriter_crypto,
+                const DatareaderCryptoHandle &sending_datareader_crypto,
+                SecurityException &exception) = 0;
 
         /**
-         * Undoes the decryption transformation made on the Writer side.
+         * Undoes the decryption transformation made on the writer side.
          * @param plain_buffer (out) Result of the decryption
          * @param encoded_buffer Encoded input buffer
          * @param inline_qos Coming from the data message that carries the target payload 
@@ -174,9 +175,9 @@ class CryptoTransform
                 std::vector<uint8_t> &plain_buffer,
                 const std::vector<uint8_t> &encoded_buffer,
                 const std::vector<uint8_t> &inline_qos,
-                const DataReaderCryptoHandle &receiving_datareader_crypto,
-                const DataWriterCryptoHandle &sending_datawriter_crypto,
-                SecurityException &exception);
+                const DatareaderCryptoHandle &receiving_datareader_crypto,
+                const DatawriterCryptoHandle &sending_datawriter_crypto,
+                SecurityException &exception) = 0;
 
 };
 

@@ -112,6 +112,10 @@ if(SECURITY)
         rtps/security/SecurityManager.cpp
         rtps/security/SecurityPluginFactory.cpp
         security/authentication/PKIDH.cpp
+        security/cryptography/AESGCMGMAC.cpp
+        security/cryptography/AESGCMGMAC_KeyExchange.cpp
+        security/cryptography/AESGCMGMAC_KeyFactory.cpp
+        security/cryptography/AESGCMGMAC_Transform.cpp
         )
 
     find_package(OpenSSL REQUIRED)

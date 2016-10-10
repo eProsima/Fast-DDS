@@ -28,6 +28,8 @@ namespace security {
 class CryptoKeyFactory
 {
     public:
+
+        virtual ~CryptoKeyFactory();
         /**
          * Register a local, already authenticated Participant with the Cryptographic Plugin.
          * Creates Crypto material needed to encrypt messages directed to other Participants
@@ -41,7 +43,7 @@ class CryptoKeyFactory
                 const IdentityHandle &participant_identity, 
                 const PermissionsHandle &participant_permissions, 
                 const PropertySeq &participant_properties, 
-                SecurityException &exception);
+                SecurityException &exception) = 0;
         
         /**
          * Register a remote, already authenticated Participant with the Cryptographic Plugin.
@@ -58,7 +60,7 @@ class CryptoKeyFactory
                 IdentityHandle &remote_participant_identity, 
                 PermissionsHandle &remote_participant_permissions, 
                 SharedSecretHandle &shared_secret, 
-                SecurityException &exception);
+                SecurityException &exception) = 0;
 
         /**
          * Register a local DataWriter belonging to an authenticated Pariticipant.
@@ -68,10 +70,10 @@ class CryptoKeyFactory
          * @param exception (out) Security exception 
          * @return CryptoHandle to be used with operations related to the DataWriter
          */
-        virtual DataWriterCryptoHandle * register_local_datawriter(
+        virtual DatawriterCryptoHandle * register_local_datawriter(
                 const ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datawriter_prop,
-                SecurityException &exception);
+                SecurityException &exception) = 0;
 
         /**
          * Register a remote DataReader that has been granted permission to match with the local DataWriter. 
@@ -83,12 +85,12 @@ class CryptoKeyFactory
          * @param exception (out) Security exception.
          * @return Crypto Handle to the generated key material.
          */
-        virtual DataReaderCryptoHandle * register_matched_remote_datareader(
-                const DataWriterCryptoHandle &local_datawriter_crypto_handle,
+        virtual DatareaderCryptoHandle * register_matched_remote_datareader(
+                const DatawriterCryptoHandle &local_datawriter_crypto_handle,
                 const ParticipantCryptoHandle &lremote_participant_crypto,
                 const SharedSecretHandle &shared_secret,
                 const bool relay_only,
-                SecurityException &exception);
+                SecurityException &exception) = 0;
 
         /**
          * Register a local DataReader (belonging to an authenticated and authorized Participant) with the Cryptographic Plugin.
@@ -98,10 +100,10 @@ class CryptoKeyFactory
          * @param exception (out) Security exception
          * @return Crypto Handle to the generated key material
          */
-        virtual DataReaderCryptoHandle * register_local_datareader(
+        virtual DatareaderCryptoHandle * register_local_datareader(
                 const ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datareader_properties,
-                SecurityException &exception);
+                SecurityException &exception) = 0;
 
         /**
          * Register a remote DataWriter that has been granted permission to match with a local DataReader.
@@ -112,11 +114,11 @@ class CryptoKeyFactory
          * @param exception (out) Security exception
          * @return Crypto handle to the generated key material
          */
-        virtual DataWriterCryptoHandle * register_matched_remote_datawriter(
-                const DataReaderCryptoHandle &local_datareader_crypto_handle,
+        virtual DatawriterCryptoHandle * register_matched_remote_datawriter(
+                const DatareaderCryptoHandle &local_datareader_crypto_handle,
                 const ParticipantCryptoHandle &remote_participant_crypt,
                 const SharedSecretHandle &shared_secret,
-                SecurityException &exception);
+                SecurityException &exception) = 0;
 
         /**
          * Releases resources associated with a Participant. The Crypto Handle becomes unusable after this 
@@ -126,7 +128,7 @@ class CryptoKeyFactory
          */
         virtual bool unregister_participant(
                 const ParticipantCryptoHandle &participant_crypto_handle,
-                SecurityException &exception);
+                SecurityException &exception) = 0;
         
         /**
          * Releases resources associated with a DataWriter. The Crypto Handle becomes unusable after this 
@@ -135,8 +137,8 @@ class CryptoKeyFactory
          * @return TRUE is succesful 
          */
         virtual bool unregister_datawriter(
-                const DataWriterCryptoHandle &datawriter_crypto_handle,
-                SecurityException &exception);
+                const DatawriterCryptoHandle &datawriter_crypto_handle,
+                SecurityException &exception) = 0;
         
         /**
          * Releases resources associated with a DataReader. The Crypto Handle becomes unusable after this 
@@ -145,8 +147,8 @@ class CryptoKeyFactory
          * @return TRUE is succesful 
          */
         virtual bool unregister_datareader(
-                const DataReaderCryptoHandle &datareader_crypto_handle,
-                SecurityException &exception);
+                const DatareaderCryptoHandle &datareader_crypto_handle,
+                SecurityException &exception) = 0;
 
 
 };

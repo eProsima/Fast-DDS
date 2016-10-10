@@ -94,7 +94,7 @@ typedef Handle SharedSecretHandle;
 
 typedef Handle ParticipantCryptoHandle;
 typedef Handle DatawriterCryptoHandle;
-typedef Handle DatareaderCryptohandle;
+typedef Handle DatareaderCryptoHandle;
 
 } //namespace eprosima
 } //namespace fastrtps
