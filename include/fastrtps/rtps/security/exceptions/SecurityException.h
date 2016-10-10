@@ -30,6 +30,8 @@ class SecurityException : public Exception
 {
     public:
 
+        RTPS_DllAPI SecurityException() {}
+
         /**
          * @brief Default constructor.
          * @param message An error message. This message is copied.

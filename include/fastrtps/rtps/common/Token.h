@@ -13,15 +13,13 @@
 // limitations under the License.
 
 /*!
- * @file Token.h	
+ * @file Token.h
  */
 #ifndef _RTPS_COMMON_TOKEN_H_
 #define _RTPS_COMMON_TOKEN_H_
 
 #include "Property.h"
 #include "BinaryProperty.h"
-
-#include <string>
 
 namespace eprosima {
 namespace fastrtps {

@@ -35,6 +35,8 @@ class Handle
             return class_id_;
         }
 
+        virtual bool nil() const = 0;
+
     protected:
 
         Handle(const std::string& class_id) : class_id_(class_id) {};

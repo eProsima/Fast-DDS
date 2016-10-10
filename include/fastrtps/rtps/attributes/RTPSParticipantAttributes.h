@@ -21,7 +21,7 @@
 
 #include "../common/Time_t.h"
 #include "../common/Locator.h"
-#include "../flowcontrol/ThroughputController.h"
+#include "../flowcontrol/ThroughputControllerDescriptor.h"
 #include "../../transport/TransportInterface.h"
 
 #include <memory>

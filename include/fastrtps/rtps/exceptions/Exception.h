@@ -32,6 +32,8 @@ class Exception : public std::exception
 {
     public:
 
+        RTPS_DllAPI Exception(){};
+
         /// @brief Default destructor.
         virtual RTPS_DllAPI ~Exception() throw();
 
