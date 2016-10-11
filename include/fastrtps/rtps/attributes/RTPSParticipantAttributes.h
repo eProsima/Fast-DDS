@@ -21,6 +21,7 @@
 
 #include "../common/Time_t.h"
 #include "../common/Locator.h"
+#include "PropertyPolicy.h"
 #include "../flowcontrol/ThroughputControllerDescriptor.h"
 #include "../../transport/TransportInterface.h"
 
@@ -250,6 +251,9 @@ class RTPSParticipantAttributes
         std::vector<std::shared_ptr<TransportDescriptorInterface> > userTransports;
         //!Set as false to disable the default UDPv4 implementation.
         bool useBuiltinTransports;
+
+        //! Property policies
+        PropertyPolicy properties;
 
     private:
         //!Name of the participant.

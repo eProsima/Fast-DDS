@@ -12,15 +12,150 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <iostream>
+
 #include "AuthenticationPluginTests.hpp"
+
+static const char* certs_path = nullptr;
+
+TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok_with_pwd)
+{
+    ASSERT_TRUE(plugin != nullptr);
+
+    IdentityHandle* local_identity_handle = nullptr;
+    GUID_t adjusted_participant_key;
+    uint32_t domain_id = 0;
+    RTPSParticipantAttributes participant_attr;
+    GUID_t candidate_participant_key;
+    SecurityException exception;
+    ValidationResult_t result= ValidationResult_t::VALIDATION_FAILED;
+
+    participant_attr.properties.properties().
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    participant_attr.properties.properties().
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/pwdpubcert.pem"));
+    participant_attr.properties.properties().
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.password",
+                    "file://" + std::string(certs_path) + "testkey"));
+
+    result = plugin->validate_local_identity(&local_identity_handle,
+            adjusted_participant_key,
+            domain_id,
+            participant_attr,
+            candidate_participant_key,
+            exception);
+
+    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK);
+}
+
+TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_identity_ca)
+{
+    ASSERT_TRUE(plugin != nullptr);
+
+    IdentityHandle* local_identity_handle = nullptr;
+    GUID_t adjusted_participant_key;
+    uint32_t domain_id = 0;
+    RTPSParticipantAttributes participant_attr;
+    GUID_t candidate_participant_key;
+    SecurityException exception;
+    ValidationResult_t result= ValidationResult_t::VALIDATION_FAILED;
+
+    participant_attr.properties.properties().
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/wrongcacert.pem"));
+    participant_attr.properties.properties().
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+
+    result = plugin->validate_local_identity(&local_identity_handle,
+            adjusted_participant_key,
+            domain_id,
+            participant_attr,
+            candidate_participant_key,
+            exception);
+
+    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_FAILED);
+}
+
+TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_identity_certificate)
+{
+    ASSERT_TRUE(plugin != nullptr);
+
+    IdentityHandle* local_identity_handle = nullptr;
+    GUID_t adjusted_participant_key;
+    uint32_t domain_id = 0;
+    RTPSParticipantAttributes participant_attr;
+    GUID_t candidate_participant_key;
+    SecurityException exception;
+    ValidationResult_t result= ValidationResult_t::VALIDATION_FAILED;
+
+    participant_attr.properties.properties().
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    participant_attr.properties.properties().
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/wrongpubcert.pem"));
+
+    result = plugin->validate_local_identity(&local_identity_handle,
+            adjusted_participant_key,
+            domain_id,
+            participant_attr,
+            candidate_participant_key,
+            exception);
+
+    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_FAILED);
+}
+
+TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_validation)
+{
+    ASSERT_TRUE(plugin != nullptr);
+
+    IdentityHandle* local_identity_handle = nullptr;
+    GUID_t adjusted_participant_key;
+    uint32_t domain_id = 0;
+    RTPSParticipantAttributes participant_attr;
+    GUID_t candidate_participant_key;
+    SecurityException exception;
+    ValidationResult_t result= ValidationResult_t::VALIDATION_FAILED;
+
+    participant_attr.properties.properties().
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/seccacert.pem"));
+    participant_attr.properties.properties().
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+
+    result = plugin->validate_local_identity(&local_identity_handle,
+            adjusted_participant_key,
+            domain_id,
+            participant_attr,
+            candidate_participant_key,
+            exception);
+
+    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_FAILED);
+}
 
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
 
+    certs_path = std::getenv("CERTS_PATH");
+
+    if(certs_path == nullptr)
+    {
+        std::cout << "Cannot get enviroment variable CERTS_PATH" << std::endl;
+        exit(-1);
+    }
+
     AuthenticationPluginTest::property_policy.properties().
-        emplace_back(Property("dds.sec.auth.builtin.PKI_DH.identity_ca",
-                    ""));
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    AuthenticationPluginTest::property_policy.properties().
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+
     return RUN_ALL_TESTS();
 }
 

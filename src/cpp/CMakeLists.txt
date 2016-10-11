@@ -114,8 +114,6 @@ if(SECURITY)
         security/authentication/PKIDH.cpp
         )
 
-    find_package(OpenSSL REQUIRED)
-
     include_directories(${OPENSSL_INCLUDE_DIR})
     set(EXTRA_LIBRARIES ${EXTRA_LIBRARIES} ${OPENSSL_LIBRARIES})
 endif()

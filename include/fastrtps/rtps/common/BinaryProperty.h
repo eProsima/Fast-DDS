@@ -47,6 +47,20 @@ class BinaryProperty
                 std::vector<uint8_t>&& value) :
             name_(std::move(name)), value_(std::move(value)) {}
 
+        BinaryProperty& operator=(const BinaryProperty& property)
+        {
+            name_ = property.name_;
+            value_ = property.value_;
+            return *this;
+        }
+
+        BinaryProperty& operator=(BinaryProperty&& property)
+        {
+            name_ = std::move(property.name_);
+            value_ = std::move(property.value_);
+            return *this;
+        }
+
         void name(const std::string& name)
         {
             name_ = name;

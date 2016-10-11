@@ -47,6 +47,20 @@ class Property
                 std::string&& value) :
             name_(std::move(name)), value_(std::move(value)) {}
 
+        Property& operator=(const Property& property)
+        {
+            name_ = property.name_;
+            value_ = property.value_;
+            return *this;
+        }
+
+        Property& operator=(Property&& property)
+        {
+            name_ = std::move(property.name_);
+            value_ = std::move(property.value_);
+            return *this;
+        }
+
         void name(const std::string& name)
         {
             name_ = name;

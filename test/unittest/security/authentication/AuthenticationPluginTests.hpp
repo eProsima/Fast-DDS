@@ -60,6 +60,8 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok)
     SecurityException exception;
     ValidationResult_t result= ValidationResult_t::VALIDATION_FAILED;
 
+    participant_attr.properties = property_policy;
+
     result = plugin->validate_local_identity(&local_identity_handle,
             adjusted_participant_key,
             domain_id,
@@ -69,5 +71,6 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok)
 
     ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK);
 }
+
 
 #endif // _UNITTEST_SECURITY_AUTHENTICATION_AUTHENTICATIONPLUGINTESTS_HPP_
