@@ -16,7 +16,9 @@
  * @file AESGCMGMAC_KeyFactory.cpp
  */
 
-
+#include <openssl/conf.h>
+#include <openssl/evp.h>
+#include <openssl/err.h>
 
 #include "AESGCMGMAC_KeyFactory.h"
 
@@ -30,6 +32,18 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_local_participant(
                 const PropertySeq &participant_properties, 
                 SecurityException &exception){
 
+    ParticipantCryptoHandle* return_buffer;
+    KeyMaterial_AES_GCM_GMAC *new_KeyMaterial = create_KeyMaterial();
+    if(new_KeyMaterial == nullptr){
+        exception = SecurityException("Unable to create Crypto material");
+        return nullptr;
+    }else{
+        m_KeyMaterial.push_back(new_KeyMaterial);
+        //Do something with the cryptohandle
+        
+
+        return return_buffer;
+    }
     exception = SecurityException("Not implemented");
     return nullptr;
 }
@@ -108,3 +122,12 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_local_participant(
     exception = SecurityException("Not implemented");
     return false;
 }
+
+
+KeyMaterial_AES_GCM_GMAC * AESGCMGMAC_KeyFactory::create_KeyMaterial(){
+
+
+
+    return nullptr;
+}
+

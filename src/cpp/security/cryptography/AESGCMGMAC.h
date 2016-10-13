@@ -38,7 +38,7 @@ class AESGCMGMAC : public Cryptography
 public:
 
     AESGCMGMAC(const PropertyPolicy& property_policy);
-
+    ~AESGCMGMAC();
 
 
 

@@ -16,13 +16,35 @@
  * @file AESGCMGMAC.cpp
  */
 
+#include <openssl/conf.h>
+#include <openssl/evp.h>
+#include <openssl/err.h>
+
 #include "AESGCMGMAC.h"
 
 using namespace eprosima::fastrtps::rtps::security;
 
 AESGCMGMAC::AESGCMGMAC(const PropertyPolicy& property_policy)
 {
+     
     m_cryptokeyexchange = new AESGCMGMAC_KeyExchange();
     m_cryptokeyfactory = new AESGCMGMAC_KeyFactory();
     m_cryptotransform = new AESGCMGMAC_Transform();
+    
+    //Init OpenSSL libcrypto
+    ERR_load_crypto_strings();
+    OpenSSL_add_all_algorithms();
+    OPENSSL_config(NULL);
+
 }
+
+AESGCMGMAC::~AESGCMGMAC(){
+    
+    //Breakdown OpenSSL libcrypto
+    EVP_cleanup();
+    CRYPTO_cleanup_all_ex_data();
+    ERR_free_strings();
+
+
+}
+

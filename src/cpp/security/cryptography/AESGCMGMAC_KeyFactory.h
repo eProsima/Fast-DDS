@@ -82,6 +82,15 @@ class AESGCMGMAC_KeyFactory : public CryptoKeyFactory
         bool unregister_datareader(
                 const DatareaderCryptoHandle &datareader_crypto_handle,
                 SecurityException &exception);
+    
+    private:
+    /* 
+     * Create KeyMaterial_AES_GCM_GMAC
+     * @return Pointer to KeyMaterial or NULLPTR if unsuccessful
+     */
+    KeyMaterial_AES_GCM_GMAC * create_KeyMaterial();
+
+    std::vector<KeyMaterial_AES_GCM_GMAC*> m_KeyMaterial;
 
 
 };

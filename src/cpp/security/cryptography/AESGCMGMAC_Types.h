@@ -67,9 +67,6 @@ struct SecureDataTag{
     std::vector<ReceiverSpecificMAC> receiver_specific_macs;
 };
 
-
-
-
 } //namespace security
 } //namespace rtps
 } //namespace fastrtps
