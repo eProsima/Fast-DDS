@@ -17,7 +17,6 @@
  */
 
 
-
 #include "AESGCMGMAC_KeyExchange.h"
 
 using namespace eprosima::fastrtps::rtps::security;

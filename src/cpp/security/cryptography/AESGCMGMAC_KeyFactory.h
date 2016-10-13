@@ -22,6 +22,8 @@
 #include <fastrtps/rtps/security/cryptography/CryptoKeyFactory.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
 
+#include "AESGCMGMAC_Types.h"
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {

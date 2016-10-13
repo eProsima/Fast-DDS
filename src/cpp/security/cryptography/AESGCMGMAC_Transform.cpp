@@ -21,7 +21,6 @@
 
 using namespace eprosima::fastrtps::rtps::security;
 
-
 AESGCMGMAC_Transform::AESGCMGMAC_Transform(){}
 AESGCMGMAC_Transform::~AESGCMGMAC_Transform(){}
 
