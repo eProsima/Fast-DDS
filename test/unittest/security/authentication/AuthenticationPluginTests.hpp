@@ -70,6 +70,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok)
             exception);
 
     ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK);
+    ASSERT_TRUE(local_identity_handle != nullptr);
 }
 
 

@@ -41,6 +41,8 @@ class Handle
 
         Handle(const std::string& class_id) : class_id_(class_id) {};
 
+        virtual ~Handle(){}
+
     private:
 
         std::string class_id_;
@@ -96,9 +98,9 @@ typedef Handle ParticipantCryptoHandle;
 typedef Handle DatawriterCryptoHandle;
 typedef Handle DatareaderCryptohandle;
 
-} //namespace eprosima
-} //namespace fastrtps
-} //namespace rtps
 } //namespace security
+} //namespace rtps
+} //namespace fastrtps
+} //namespace eprosima
 
 #endif // _RTPS_SECURITY_COMMON_HANDLE_H_

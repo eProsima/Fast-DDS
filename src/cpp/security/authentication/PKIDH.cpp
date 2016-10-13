@@ -17,9 +17,9 @@
  */
 
 #include "PKIDH.h"
+#include "PKIIdentityHandle.h"
 #include <fastrtps/log/Log.h>
 
-#include <openssl/x509.h>
 #include <openssl/pem.h>
 #include <openssl/err.h>
 
@@ -31,7 +31,7 @@ using namespace ::rtps;
 using namespace ::security;
 
 // Auxiliary functions
-X509_STORE* load_identity_ca(std::string& identity_ca)
+X509_STORE* load_identity_ca(const std::string& identity_ca)
 {
     X509_STORE* store = X509_STORE_new();
 
@@ -105,7 +105,7 @@ X509_STORE* load_identity_ca(std::string& identity_ca)
     return nullptr;
 }
 
-X509* load_certificate(std::string& identity_cert)
+X509* load_certificate(const std::string& identity_cert)
 {
     X509* returnedValue = nullptr;
 
@@ -121,6 +121,32 @@ X509* load_certificate(std::string& identity_cert)
             }
             else
                 logError(AUTHENTICATION, "OpenSSL library cannot read file " << identity_cert.substr(7));
+
+            BIO_free(in);
+        }
+        else
+            logError(AUTHENTICATION, "OpenSSL library cannot allocate file");
+    }
+
+    return returnedValue;
+}
+
+X509_CRL* load_crl(const std::string& identity_crl)
+{
+    X509_CRL* returnedValue = nullptr;
+
+    if(identity_crl.size() >= 7 && identity_crl.compare(0, 7, "file://") == 0)
+    {
+        BIO *in = BIO_new(BIO_s_file());
+
+        if(in != nullptr)
+        {
+            if(BIO_read_filename(in, identity_crl.substr(7).c_str()) > 0)
+            {
+                returnedValue = PEM_read_bio_X509_CRL(in, NULL, NULL, NULL);
+            }
+            else
+                logError(AUTHENTICATION, "OpenSSL library cannot read file " << identity_crl.substr(7));
 
             BIO_free(in);
         }
@@ -165,43 +191,72 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
         return returnedValue;
     }
 
+    std::string* identity_crl = PropertyPolicyHelper::find_property(auth_properties, "identity_crl");
 
-    X509_STORE* store = load_identity_ca(*identity_ca);
+    PKIIdentityHandle* ih = new PKIIdentityHandle();
 
-    if(store != nullptr)
+    (*ih)->store_ = load_identity_ca(*identity_ca);
+
+    if((*ih)->store_ != nullptr)
     {
+        bool configuration_error = false;
+
+        if(identity_crl != nullptr)
+        {
+            X509_CRL* crl = load_crl(*identity_crl);
+
+            if(crl != nullptr)
+            {
+                if(((*ih)->crls_ = sk_X509_CRL_new_null()) == nullptr ||
+                        !sk_X509_CRL_push((*ih)->crls_, crl))
+                {
+                    logError(AUTHENTICATION, "Cannot add CRL to context");
+                    configuration_error = true;
+                }
+            }
+        }
+
         ERR_clear_error();
 
-        X509* cert = load_certificate(*identity_cert);
-
-        if(cert != nullptr)
+        if(!configuration_error)
         {
-            X509_STORE_CTX *ctx = X509_STORE_CTX_new();
+            X509* cert = load_certificate(*identity_cert);
 
-            if(ctx != nullptr)
+            if(cert != nullptr)
             {
-                X509_STORE_CTX_init(ctx, store, cert, NULL);
-                X509_STORE_CTX_set_flags(ctx, X509_V_FLAG_X509_STRICT |
-                        X509_V_FLAG_CHECK_SS_SIGNATURE | X509_V_FLAG_POLICY_CHECK);
+                X509_STORE_CTX *ctx = X509_STORE_CTX_new();
 
-                if(X509_verify_cert(ctx) > 0 && X509_STORE_CTX_get_error(ctx) == X509_V_OK)
+                if(ctx != nullptr)
                 {
-                    returnedValue = ValidationResult_t::VALIDATION_OK;
+                    unsigned long flags = (*ih)->crls_ != nullptr ? X509_V_FLAG_CRL_CHECK : 0;
+                    X509_STORE_CTX_init(ctx, (*ih)->store_, cert, NULL);
+                    X509_STORE_CTX_set_flags(ctx, flags | X509_V_FLAG_X509_STRICT |
+                            X509_V_FLAG_CHECK_SS_SIGNATURE | X509_V_FLAG_POLICY_CHECK);
+                    ctx->crls = (*ih)->crls_;
+
+                    if(X509_verify_cert(ctx) > 0 && X509_STORE_CTX_get_error(ctx) == X509_V_OK)
+                    {
+                        returnedValue = ValidationResult_t::VALIDATION_OK;
+                        *local_identity_handle = ih;
+                    }
+                    else
+                        logError(AUTHENTICATION, "Invalidation error of certificate " << *identity_cert
+                                << " (" << X509_STORE_CTX_get_error(ctx) << ")");
+
+                    X509_STORE_CTX_free(ctx);
                 }
-                else
-                    logError(AUTHENTICATION, "Invalidation error of certificate " << *identity_cert
-                            << " (" << X509_STORE_CTX_get_error(ctx) << ")");
 
-                X509_STORE_CTX_free(ctx);
+                X509_free(cert);
             }
-
-            X509_free(cert);
+            else
+                logError(AUTHENTICATION, "Cannot read file " << *identity_cert);
         }
-        else
-            logError(AUTHENTICATION, "Cannot read file " << *identity_cert);
     }
 
-    X509_STORE_free(store);
+    if(returnedValue != ValidationResult_t::VALIDATION_OK)
+    {
+        delete ih;
+    }
 
     ERR_clear_error();
 
