@@ -30,8 +30,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_local_participant(
                 const PropertySeq &participant_properties, 
                 SecurityException &exception){
 
-
-
+    exception = SecurityException("Not implemented");
     return nullptr;
 }
         
@@ -42,6 +41,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_local_participant(
                 SharedSecretHandle &shared_secret, 
                 SecurityException &exception){
 
+    exception = SecurityException("Not implemented");
     return nullptr;
 }
 
@@ -50,7 +50,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_local_participant(
                 const PropertySeq &datawriter_prop,
                 SecurityException &exception){
 
-
+    exception = SecurityException("Not implemented");
     return nullptr;
 }
 
@@ -61,7 +61,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_local_participant(
                 const bool relay_only,
                 SecurityException &exception){
 
-
+    exception = SecurityException("Not implemented");
     return nullptr;
 }
 
@@ -70,7 +70,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_local_participant(
                 const PropertySeq &datareader_properties,
                 SecurityException &exception){
 
-
+    exception = SecurityException("Not implemented");
     return nullptr;
 }
 
@@ -80,6 +80,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_local_participant(
                 const SharedSecretHandle &shared_secret,
                 SecurityException &exception){
 
+    exception = SecurityException("Not implemented");
     return nullptr;
 }
 
@@ -87,7 +88,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_local_participant(
                 const ParticipantCryptoHandle &participant_crypto_handle,
                 SecurityException &exception){
 
-
+    exception = SecurityException("Not implemented");
     return false;
 }
         
@@ -95,6 +96,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_local_participant(
                 const DatawriterCryptoHandle &datawriter_crypto_handle,
                 SecurityException &exception){
 
+    exception = SecurityException("Not implemented");
     return false;
 }
 
@@ -103,6 +105,6 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_local_participant(
                 const DatareaderCryptoHandle &datareader_crypto_handle,
                 SecurityException &exception){
 
-
+    exception = SecurityException("Not implemented");
     return false;
 }

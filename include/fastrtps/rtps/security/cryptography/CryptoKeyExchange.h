@@ -109,7 +109,7 @@ class CryptoKeyExchange
      */
     virtual bool return_crypto_tokens(
             const CryptoTokenSeq &crypto_tokens,
-            SecurityException *exception) = 0;
+            SecurityException &exception) = 0;
 
 };
 

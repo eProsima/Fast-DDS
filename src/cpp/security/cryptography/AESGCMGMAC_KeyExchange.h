@@ -67,7 +67,7 @@ class AESGCMGMAC_KeyExchange : public CryptoKeyExchange
 
     bool return_crypto_tokens(
             const CryptoTokenSeq &crypto_tokens,
-            SecurityException *exception);
+            SecurityException &exception);
 
 };
 

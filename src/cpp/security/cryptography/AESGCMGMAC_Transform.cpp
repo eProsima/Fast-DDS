@@ -32,6 +32,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
                 const DatawriterCryptoHandle &sending_datawriter_crypto,
                 SecurityException &exception){
 
+    exception = SecurityException("Not implemented");
     return false;
 }
          
@@ -42,6 +43,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
                 const std::vector<DatareaderCryptoHandle> receiving_datareader_crypto_list,
                 SecurityException &exception){
 
+    exception = SecurityException("Not implemented");
     return false;
 }
     
@@ -52,7 +54,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
                 const std::vector<DatawriterCryptoHandle> &receiving_datawriter_crypto_list,
                 SecurityException &exception){
 
-
+    exception = SecurityException("Not implemented");
     return false;
 }
     
@@ -63,7 +65,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
                 const std::vector<ParticipantCryptoHandle> &receiving_crypto_list,
                 SecurityException &exception){
 
-
+    exception = SecurityException("Not implemented");
     return false;
 }
 
@@ -74,7 +76,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
                 const ParticipantCryptoHandle &sending_crypto,
                 SecurityException &exception){
 
-
+    exception = SecurityException("Not implemented");
     return false;
 }
         
@@ -87,6 +89,7 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
                 const ParticipantCryptoHandle &sending_crypto,
                 SecurityException &exception){
 
+    exception = SecurityException("Not implemented");
     return false;
 }
 
@@ -97,7 +100,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
                 const DatawriterCryptoHandle &sending_datawriter_cryupto,
                 SecurityException &exception){
 
-
+    exception = SecurityException("Not implemented");
     return false;
 }
 
@@ -108,7 +111,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
                 const DatareaderCryptoHandle &sending_datareader_crypto,
                 SecurityException &exception){
 
-
+    exception = SecurityException("Not implemented");
     return false;
 }
 
@@ -121,6 +124,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
                 const DatawriterCryptoHandle &sending_datawriter_crypto,
                 SecurityException &exception){
 
+    exception = SecurityException("Not implemented");
     return false;
 }
 

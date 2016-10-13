@@ -31,7 +31,7 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
             const ParticipantCryptoHandle &remote_participant_crypto,
             SecurityException &exception){
 
-
+    exception = SecurityException("Not implemented"); 
     return false;
 }
      
@@ -41,6 +41,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
             const ParticipantCryptoTokenSeq &remote_participant_tokens,
             SecurityException &exception){
 
+    exception = SecurityException("Not implemented"); 
     return false;
 }
 
@@ -50,7 +51,7 @@ bool AESGCMGMAC_KeyExchange::create_local_datawriter_crypto_tokens(
             const DatareaderCryptoHandle &remote_datareader_crypto,
             SecurityException &exception){
 
-
+    exception = SecurityException("Not implemented"); 
     return false;
 }
 
@@ -60,6 +61,7 @@ bool AESGCMGMAC_KeyExchange::create_local_datareader_crypto_tokens(
             const DatawriterCryptoHandle &remote_datawriter_crypto,
             SecurityException &exception){
 
+    exception = SecurityException("Not implemented"); 
     return false;
 }
 
@@ -69,15 +71,15 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
             const DatareaderCryptoTokenSeq &remote_datareader_tokens,
             SecurityException &exception){
 
-
+    exception = SecurityException("Not implemented"); 
     return false;
 }
 
 bool AESGCMGMAC_KeyExchange::return_crypto_tokens(
             const CryptoTokenSeq &crypto_tokens,
-            SecurityException *exception){
+            SecurityException &exception){
 
-
+    exception = SecurityException("Not implemented"); 
     return false;
 }
 
