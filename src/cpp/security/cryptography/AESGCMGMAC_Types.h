@@ -53,8 +53,19 @@ struct KeyMaterial_AES_GCM_GMAC{
     std::array<uint8_t, 32> master_receiver_specific_key;
 };
 
+struct SecureDataBody{
+    std::vector<uint8_t> secure_data;
+};
 
+struct ReceiverSpecificMAC{
+    CryptoTransformKeyId receiver_mac_key_id;
+    std::array<uint8_t, 16> receiver_mac;
+};
 
+struct SecureDataTag{
+    std::array<uint8_t, 16> common_mac;
+    std::vector<ReceiverSpecificMAC> receiver_specific_macs;
+};
 
 
 
