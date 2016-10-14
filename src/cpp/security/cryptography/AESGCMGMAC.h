@@ -22,7 +22,6 @@
 #include <fastrtps/rtps/security/cryptography/Cryptography.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
 
-#include "AESGCMGMAC_Types.h"
 #include "AESGCMGMAC_KeyExchange.h"
 #include "AESGCMGMAC_KeyFactory.h"
 #include "AESGCMGMAC_Transform.h"

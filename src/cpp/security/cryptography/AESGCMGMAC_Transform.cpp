@@ -64,6 +64,32 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
                 const std::vector<ParticipantCryptoHandle> &receiving_crypto_list,
                 SecurityException &exception){
 
+    /*
+    // plain_rts_message -> unsigned char *
+    int plaintext_len = plain_rtps_message.length();
+    // key -> unsigned char *
+    
+    // iv -> unsigned char *
+    
+    EVP_CIPHER_CTX *ctx;
+    
+    if(!(ctx = EVP_CIPHER_CTX_new())){
+        exception = SecurityException("Unagle to generate ctx");
+        return false;
+    }
+    if(!EVP_ENCRYPTInit_ex(ctx, EVP_aes_256_gcm(), NULL, key, iv)){
+        exception = SecurityException("Unable to init encryption");
+        return false;
+    }
+    if(!EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len){
+        exception = SecurityException("Unable to encrypt");
+        return false;
+    }
+    if(!EVP_EncryptFinal_ex(ctx, ciphertext, &len, plaintext, plaintext_len)){
+        exception = SecurityException("Unable to finish encyption");
+        return false;
+    }
+    */
     exception = SecurityException("Not implemented");
     return false;
 }

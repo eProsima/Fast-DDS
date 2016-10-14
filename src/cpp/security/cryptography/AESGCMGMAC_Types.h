@@ -21,6 +21,7 @@
 
 #include <fastrtps/rtps/security/cryptography/CryptoTypes.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
+#include <fastrtps/rtps/security/common/Handle.h>
 
 //No encryption, no authentication tag
 #define CRYPTO_TRANSFORMATION_KIND_NONE             {0, 0, 0, 0}
@@ -67,7 +68,22 @@ struct SecureDataTag{
     std::vector<ReceiverSpecificMAC> receiver_specific_macs;
 };
 
-} //namespace security
+class  ParticipantCrypto
+{
+    public:
+        ParticipantCrypto(){}
+
+        ~ParticipantCrypto(){}
+
+        static const char* const class_id_;
+
+        KeyMaterial_AES_GCM_GMAC KeyMaterial;
+};
+
+
+typedef HandleImpl<ParticipantCrypto> AESGCMGMAC_ParticipantCryptoHandle;
+
+} //namespaces security
 } //namespace rtps
 } //namespace fastrtps
 } //namespace eprosima

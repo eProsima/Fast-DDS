@@ -116,6 +116,7 @@ if(SECURITY)
         security/cryptography/AESGCMGMAC_KeyExchange.cpp
         security/cryptography/AESGCMGMAC_KeyFactory.cpp
         security/cryptography/AESGCMGMAC_Transform.cpp
+        security/cryptography/AESGCMGMAC_Types.cpp
         )
 
     find_package(OpenSSL REQUIRED)
