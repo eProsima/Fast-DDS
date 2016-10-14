@@ -87,6 +87,8 @@ public:
 	 * */	
 	std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 
+	std::vector<std::string> getParticipantNames();
+
 	/**
 	 * This method returns the number of Publishers that currently belong to the Participant that have 
 	 * a given topic name

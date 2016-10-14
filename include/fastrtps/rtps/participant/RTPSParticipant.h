@@ -128,6 +128,8 @@ class RTPS_DllAPI RTPSParticipant
      */
     std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 
+    std::vector<std::string> getParticipantNames();
+
     /**
      * Get a copy of the actual state of the RTPSParticipantParameters
      * @return RTPSParticipantAttributes copy of the params.
