@@ -68,20 +68,19 @@ struct SecureDataTag{
     std::vector<ReceiverSpecificMAC> receiver_specific_macs;
 };
 
-class  ParticipantCrypto
+class  ParticipantKeyMaterial
 {
     public:
-        ParticipantCrypto(){}
+        ParticipantKeyMaterial():KeyMaterial(nullptr){}
 
-        ~ParticipantCrypto(){}
+        ~ParticipantKeyMaterial(){}
 
         static const char* const class_id_;
 
-        KeyMaterial_AES_GCM_GMAC KeyMaterial;
+        KeyMaterial_AES_GCM_GMAC* KeyMaterial;
 };
 
-
-typedef HandleImpl<ParticipantCrypto> AESGCMGMAC_ParticipantCryptoHandle;
+typedef HandleImpl<ParticipantKeyMaterial> AESGCMGMAC_ParticipantCryptoHandle;
 
 } //namespaces security
 } //namespace rtps

@@ -32,23 +32,25 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_local_participant(
                 const PropertySeq &participant_properties, 
                 SecurityException &exception){
 
-    ParticipantCryptoHandle* return_buffer;
-    KeyMaterial_AES_GCM_GMAC *new_KeyMaterial = create_KeyMaterial();
-    if(new_KeyMaterial == nullptr){
+    AESGCMGMAC_ParticipantCryptoHandle* PCrypto;
+    if( (!participant_identity.nil()) | (!participant_permissions.nil()) ){
+        exception = SecurityException("Invalid input parameters");
+        return nullptr;
+    }
+
+    PCrypto = new AESGCMGMAC_ParticipantCryptoHandle();
+    (*PCrypto)->KeyMaterial = create_KeyMaterial();
+    if((*PCrypto)->KeyMaterial == nullptr){
         exception = SecurityException("Unable to create Crypto material");
         return nullptr;
     }else{
-        m_KeyMaterial.push_back(new_KeyMaterial);
-        //Do something with the cryptohandle
-        
-
-        return return_buffer;
+        return PCrypto;
     }
     exception = SecurityException("Not implemented");
     return nullptr;
 }
         
-        ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_participant(
+ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_participant(
                 ParticipantCryptoHandle &local_participant_crypto_handle, 
                 IdentityHandle &remote_participant_identity, 
                 PermissionsHandle &remote_participant_permissions, 
