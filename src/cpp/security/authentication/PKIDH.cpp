@@ -31,7 +31,7 @@ using namespace ::rtps;
 using namespace ::security;
 
 // Auxiliary functions
-X509_STORE* load_identity_ca(const std::string& identity_ca)
+X509_STORE* load_identity_ca(const std::string& identity_ca, bool& there_are_crls)
 {
     X509_STORE* store = X509_STORE_new();
 
@@ -47,46 +47,39 @@ X509_STORE* load_identity_ca(const std::string& identity_ca)
             {
                 if(BIO_read_filename(in, identity_ca.substr(7).c_str()) > 0)
                 {
-                    bool failed = false;
-                    int i, count = 0;
-                    for (;;)
-                    {
-                        X509* pem = PEM_read_bio_X509_AUX(in, NULL, NULL, NULL);
+                    STACK_OF(X509_INFO)* inf = PEM_X509_INFO_read_bio(in, NULL, NULL, NULL);
 
-                        if(pem == nullptr)
+                    if(inf != nullptr)
+                    {
+                        int i, count = 0;
+                        there_are_crls = false;
+
+                        for (i = 0; i < sk_X509_INFO_num(inf); i++)
                         {
-                            if ((ERR_GET_REASON(ERR_peek_last_error()) ==
-                                        PEM_R_NO_START_LINE) && (count > 0)) {
-                                ERR_clear_error();
-                                break;
-                            } else {
-                                failed = true;
-                                logError(AUTHENTICATION, "OpenSSL library cannot read perm in file");
-                                break;
+                            X509_INFO* itmp = sk_X509_INFO_value(inf, i);
+
+                            if (itmp->x509)
+                            {
+                                X509_STORE_add_cert(store, itmp->x509);
+                                count++;
+                            }
+                            if (itmp->crl)
+                            {
+                                X509_STORE_add_crl(store, itmp->crl);
+                                count++;
+                                there_are_crls = true;
                             }
                         }
 
-                        i = X509_STORE_add_cert(store, pem);
-
-                        X509_free(pem);
-                        pem = nullptr;
-
-                        if (!i)
-                        {
-                            failed = true;
-                            logError(AUTHENTICATION, "OpenSSL library cannot store perm");
-                            break;
-                        }
-
-                        count++;
-                    }
-
-                    if(!failed && count > 0)
-                    {
+                        sk_X509_INFO_pop_free(inf, X509_INFO_free);
                         BIO_free(in);
+
                         return store;
                     }
+                    else
+                        logError(AUTHENTICATION, "OpenSSL library cannot read X509 info in file" << identity_ca.substr(7));
 
+                    sk_X509_INFO_pop_free(inf, X509_INFO_free);
                 }
                 else
                     logError(AUTHENTICATION, "OpenSSL library cannot read file " << identity_ca.substr(7));
@@ -194,8 +187,9 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
     std::string* identity_crl = PropertyPolicyHelper::find_property(auth_properties, "identity_crl");
 
     PKIIdentityHandle* ih = new PKIIdentityHandle();
+    bool there_are_crls = false;
 
-    (*ih)->store_ = load_identity_ca(*identity_ca);
+    (*ih)->store_ = load_identity_ca(*identity_ca, there_are_crls);
 
     if((*ih)->store_ != nullptr)
     {
@@ -207,13 +201,11 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
 
             if(crl != nullptr)
             {
-                if(((*ih)->crls_ = sk_X509_CRL_new_null()) == nullptr ||
-                        !sk_X509_CRL_push((*ih)->crls_, crl))
-                {
-                    logError(AUTHENTICATION, "Cannot add CRL to context");
-                    configuration_error = true;
-                }
+                X509_STORE_add_crl((*ih)->store_, crl);
+                there_are_crls = true;
             }
+            else
+                configuration_error = true;
         }
 
         ERR_clear_error();
@@ -228,7 +220,7 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
 
                 if(ctx != nullptr)
                 {
-                    unsigned long flags = (*ih)->crls_ != nullptr ? X509_V_FLAG_CRL_CHECK : 0;
+                    unsigned long flags = there_are_crls ? X509_V_FLAG_CRL_CHECK : 0;
                     X509_STORE_CTX_init(ctx, (*ih)->store_, cert, NULL);
                     X509_STORE_CTX_set_flags(ctx, flags | X509_V_FLAG_X509_STRICT |
                             X509_V_FLAG_CHECK_SS_SIGNATURE | X509_V_FLAG_POLICY_CHECK);
