@@ -19,6 +19,7 @@
 #include <openssl/conf.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
+#include <openssl/rand.h>
 
 #include "AESGCMGMAC_KeyFactory.h"
 
@@ -39,15 +40,19 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_local_participant(
     }
 
     PCrypto = new AESGCMGMAC_ParticipantCryptoHandle();
-    (*PCrypto)->KeyMaterial = create_KeyMaterial(std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM));
-    if((*PCrypto)->KeyMaterial == nullptr){
-        exception = SecurityException("Unable to create Crypto material");
-        return nullptr;
-    }else{
-        return PCrypto;
-    }
-    exception = SecurityException("Not implemented");
-    return nullptr;
+    (*PCrypto)->ParticipantKeyMaterial = new KeyMaterial_AES_GCM_GMAC();
+    //Fill CryptoData
+    (*PCrypto)->ParticipantKeyMaterial->transformation_kind = 
+            std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM);
+    (*PCrypto)->ParticipantKeyMaterial->master_salt.fill(0);
+    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial->master_salt.data(), 128 );  
+    (*PCrypto)->ParticipantKeyMaterial->sender_key_id = make_unique_KeyId();
+    (*PCrypto)->ParticipantKeyMaterial->master_sender_key.fill(0);
+    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial->master_sender_key.data(), 128 );
+    (*PCrypto)->ParticipantKeyMaterial->receiver_specific_key_id = make_unique_KeyId();
+    (*PCrypto)->ParticipantKeyMaterial->master_receiver_specific_key.fill(0); 
+    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial->master_receiver_specific_key.data(), 128 );
+    return PCrypto;
 }
         
 ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_participant(
@@ -57,11 +62,34 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
                 SharedSecretHandle &shared_secret, 
                 SecurityException &exception){
 
-    exception = SecurityException("Not implemented");
-    return nullptr;
+    AESGCMGMAC_ParticipantCryptoHandle& local_participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto_handle);
+    AESGCMGMAC_ParticipantCryptoHandle* RPCrypto = nullptr;
+    if( (!remote_participant_identity.nil()) | (!remote_participant_permissions.nil()) ){
+        exception = SecurityException("Invalid input parameters");
+        return nullptr;
+    }
+    
+    RPCrypto = new AESGCMGMAC_ParticipantCryptoHandle();
+    
+    (*RPCrypto)->Participant2ParticipantKeyMaterial = new KeyMaterial_AES_GCM_GMAC(); 
+    (*RPCrypto)->Participant2ParticipantKxKeyMaterial = new KeyMaterial_AES_GCM_GMAC();
+    //Fill CryptoData - Participant2ParticipantKeyMaterial
+    (*RPCrypto)->Participant2ParticipantKeyMaterial->transformation_kind = local_participant_handle->ParticipantKeyMaterial->transformation_kind;
+    (*RPCrypto)->Participant2ParticipantKeyMaterial->master_salt = local_participant_handle->ParticipantKeyMaterial->master_salt;
+    (*RPCrypto)->Participant2ParticipantKeyMaterial->master_sender_key = local_participant_handle->ParticipantKeyMaterial->master_sender_key;
+    //Fill CryptoData - Participant2ParticipantKxKeymaterial
+    (*RPCrypto)->Participant2ParticipantKxKeyMaterial->transformation_kind = std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC);
+    (*RPCrypto)->Participant2ParticipantKxKeyMaterial->master_salt.fill(0);
+    RAND_bytes( (*RPCrypto)->Participant2ParticipantKxKeyMaterial->master_salt.data(), 128); // To substitute with HMAC_sha
+    (*RPCrypto)->Participant2ParticipantKxKeyMaterial->sender_key_id.fill(0);
+    (*RPCrypto)->Participant2ParticipantKxKeyMaterial->master_sender_key.fill(0);
+    RAND_bytes( (*RPCrypto)->Participant2ParticipantKxKeyMaterial->master_sender_key.data(), 128); // To substitute with HMAC_sha
+    (*RPCrypto)->Participant2ParticipantKxKeyMaterial->receiver_specific_key_id.fill(0);
+    (*RPCrypto)->Participant2ParticipantKxKeyMaterial->master_receiver_specific_key.fill(0);
+    return RPCrypto;
 }
 
-        DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
+DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
                 const ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datawriter_prop,
                 SecurityException &exception){
@@ -70,7 +98,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     return nullptr;
 }
 
-        DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datareader(
+DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datareader(
                 const DatawriterCryptoHandle &local_datawriter_crypto_handle,
                 const ParticipantCryptoHandle &lremote_participant_crypto,
                 const SharedSecretHandle &shared_secret,
@@ -81,7 +109,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     return nullptr;
 }
 
-        DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
+DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
                 const ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datareader_properties,
                 SecurityException &exception){
@@ -90,7 +118,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     return nullptr;
 }
 
-        DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawriter(
+DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawriter(
                 const DatareaderCryptoHandle &local_datareader_crypto_handle,
                 const ParticipantCryptoHandle &remote_participant_crypt,
                 const SharedSecretHandle &shared_secret,
@@ -100,7 +128,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     return nullptr;
 }
 
-        bool AESGCMGMAC_KeyFactory::unregister_participant(
+bool AESGCMGMAC_KeyFactory::unregister_participant(
                 const ParticipantCryptoHandle &participant_crypto_handle,
                 SecurityException &exception){
 
@@ -108,7 +136,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     return false;
 }
         
-        bool AESGCMGMAC_KeyFactory::unregister_datawriter(
+bool AESGCMGMAC_KeyFactory::unregister_datawriter(
                 const DatawriterCryptoHandle &datawriter_crypto_handle,
                 SecurityException &exception){
 
@@ -117,7 +145,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
 }
 
         
-        bool AESGCMGMAC_KeyFactory::unregister_datareader(
+bool AESGCMGMAC_KeyFactory::unregister_datareader(
                 const DatareaderCryptoHandle &datareader_crypto_handle,
                 SecurityException &exception){
 
@@ -125,16 +153,17 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     return false;
 }
 
+CryptoTransformKeyId AESGCMGMAC_KeyFactory::make_unique_KeyId(){
+    CryptoTransformKeyId buffer;
+    bool unique = false;
 
-KeyMaterial_AES_GCM_GMAC * AESGCMGMAC_KeyFactory::create_KeyMaterial(CryptoTransformKind transform){
-    KeyMaterial_AES_GCM_GMAC *buffer;
-    
-    if( (transform == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)) | (transform == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)) ){
-    buffer = new KeyMaterial_AES_GCM_GMAC;
-    buffer->transformation_kind = transform;
-    return buffer;
+    while(!unique){
+        RAND_bytes(buffer.data(),4);
+        unique = true;
+        //Iterate existing KeyIds to see if one is matching
+        for(std::vector<CryptoTransformKeyId>::iterator it=m_CryptoTransformKeyIds.begin(); it!=m_CryptoTransformKeyIds.end();it++){
+            if(*it == buffer)   unique = false;
+        }
     }
-    
-    return nullptr;
+    return buffer;
 }
-

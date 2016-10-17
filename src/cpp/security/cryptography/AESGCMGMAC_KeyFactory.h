@@ -88,11 +88,9 @@ class AESGCMGMAC_KeyFactory : public CryptoKeyFactory
      * Create KeyMaterial_AES_GCM_GMAC
      * @return Pointer to KeyMaterial or NULLPTR if unsuccessful
      */
-    KeyMaterial_AES_GCM_GMAC * create_KeyMaterial(CryptoTransformKind transform);
+    CryptoTransformKeyId make_unique_KeyId();
 
-    std::vector<KeyMaterial_AES_GCM_GMAC*> m_KeyMaterial;
-
-
+    std::vector<CryptoTransformKeyId> m_CryptoTransformKeyIds;
 };
 
 } //namespace security

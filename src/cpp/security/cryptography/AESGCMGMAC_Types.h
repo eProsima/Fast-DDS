@@ -63,28 +63,42 @@ struct ReceiverSpecificMAC{
     std::array<uint8_t, 16> receiver_mac;
 };
 
+struct SecureDataHeader{
+    CryptoTransformIdentifier transform_identifier;
+    std::array<uint8_t, 4> session_id;
+    std::array<uint8_t, 8> initialization_vector_suffix;
+};
+
 struct SecureDataTag{
     std::array<uint8_t, 16> common_mac;
     std::vector<ReceiverSpecificMAC> receiver_specific_macs;
 };
 
-class  ParticipantKeyMaterial
+class  ParticipantKeyHandle
 {
     public:
-        ParticipantKeyMaterial():KeyMaterial(nullptr){}
+        ParticipantKeyHandle():ParticipantKeyMaterial(nullptr),Participant2ParticipantKeyMaterial(nullptr),Participant2ParticipantKxKeyMaterial(nullptr){}
 
-        ~ParticipantKeyMaterial(){
-            if(KeyMaterial != nullptr){
-                delete(KeyMaterial);
+        ~ParticipantKeyHandle(){
+            if(ParticipantKeyMaterial != nullptr){
+                delete(ParticipantKeyMaterial);
+            }
+            if(Participant2ParticipantKeyMaterial != nullptr){
+                delete(Participant2ParticipantKeyMaterial);
+            }
+            if(Participant2ParticipantKxKeyMaterial != nullptr){
+                delete(Participant2ParticipantKxKeyMaterial);
             }
         }
 
         static const char* const class_id_;
 
-        KeyMaterial_AES_GCM_GMAC* KeyMaterial;
+        KeyMaterial_AES_GCM_GMAC* ParticipantKeyMaterial;
+        KeyMaterial_AES_GCM_GMAC* Participant2ParticipantKeyMaterial;
+        KeyMaterial_AES_GCM_GMAC* Participant2ParticipantKxKeyMaterial;
 };
 
-typedef HandleImpl<ParticipantKeyMaterial> AESGCMGMAC_ParticipantCryptoHandle;
+typedef HandleImpl<ParticipantKeyHandle> AESGCMGMAC_ParticipantCryptoHandle;
 
 } //namespaces security
 } //namespace rtps
