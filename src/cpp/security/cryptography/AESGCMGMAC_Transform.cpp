@@ -64,6 +64,11 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
                 const std::vector<ParticipantCryptoHandle> &receiving_crypto_list,
                 SecurityException &exception){
 
+    unsigned char *key;
+    unsigned char *iv;
+
+    //EVP_CIPHER_CTX *ctx =  EVP_CIPHER_CTX_new();
+    //EVP_EncryptInit(ctx, EVP_aes_128_gcm(), key, iv);
     /*
     // plain_rts_message -> unsigned char *
     int plaintext_len = plain_rtps_message.length();

@@ -24,19 +24,19 @@
 #include <fastrtps/rtps/security/common/Handle.h>
 
 //No encryption, no authentication tag
-#define CRYPTO_TRANSFORMATION_KIND_NONE             {0, 0, 0, 0}
+#define CRYPTO_TRANSFORMATION_KIND_NONE             {0,0,0,0}
 
 //No encryption, AES128-GMAC authentication
-#define CRYPTO_TRANSFORMATION_KIND_AES128_GMAC      {0, 0, 0, 1}
+#define CRYPTO_TRANSFORMATION_KIND_AES128_GMAC      {0,0,0,1}
 
 //Authenticated encryption via AES128
-#define CRYPTO_TRANSFORMATION_KIND_AES128_GCM       {0, 0, 0, 2}
+#define CRYPTO_TRANSFORMATION_KIND_AES128_GCM       {0,0,0,2}
 
 //No encryption, AES256-GMAC authentication
-#define CRYPTO_TRANSFORMATION_KIND_AES256_GMAC      {0, 0, 0, 3}
+#define CRYPTO_TRANSFORMATION_KIND_AES256_GMAC      {0,0,0,3}
 
 // Authenticated encryption via AES256-GMC
-#define CRYPTO_TRANSFORMATION_KIND_AES256_GCM       {0, 0, 0, 4}
+#define CRYPTO_TRANSFORMATION_KIND_AES256_GCM       {0,0,0,4}
 
 namespace eprosima {
 namespace fastrtps {
@@ -73,7 +73,11 @@ class  ParticipantKeyMaterial
     public:
         ParticipantKeyMaterial():KeyMaterial(nullptr){}
 
-        ~ParticipantKeyMaterial(){}
+        ~ParticipantKeyMaterial(){
+            if(KeyMaterial != nullptr){
+                delete(KeyMaterial);
+            }
+        }
 
         static const char* const class_id_;
 

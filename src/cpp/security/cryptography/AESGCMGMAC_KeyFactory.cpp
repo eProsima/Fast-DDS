@@ -32,14 +32,14 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_local_participant(
                 const PropertySeq &participant_properties, 
                 SecurityException &exception){
 
-    AESGCMGMAC_ParticipantCryptoHandle* PCrypto;
+    AESGCMGMAC_ParticipantCryptoHandle* PCrypto = nullptr;
     if( (!participant_identity.nil()) | (!participant_permissions.nil()) ){
         exception = SecurityException("Invalid input parameters");
         return nullptr;
     }
 
     PCrypto = new AESGCMGMAC_ParticipantCryptoHandle();
-    (*PCrypto)->KeyMaterial = create_KeyMaterial();
+    (*PCrypto)->KeyMaterial = create_KeyMaterial(std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM));
     if((*PCrypto)->KeyMaterial == nullptr){
         exception = SecurityException("Unable to create Crypto material");
         return nullptr;
@@ -126,10 +126,15 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
 }
 
 
-KeyMaterial_AES_GCM_GMAC * AESGCMGMAC_KeyFactory::create_KeyMaterial(){
-
-
-
+KeyMaterial_AES_GCM_GMAC * AESGCMGMAC_KeyFactory::create_KeyMaterial(CryptoTransformKind transform){
+    KeyMaterial_AES_GCM_GMAC *buffer;
+    
+    if( (transform == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)) | (transform == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)) ){
+    buffer = new KeyMaterial_AES_GCM_GMAC;
+    buffer->transformation_kind = transform;
+    return buffer;
+    }
+    
     return nullptr;
 }
 
