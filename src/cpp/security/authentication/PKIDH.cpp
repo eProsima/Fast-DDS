@@ -291,6 +291,12 @@ bool adjust_participant_key(X509* cert, const GUID_t& candidate_participant_key,
     return true;
 }
 
+bool generate_dh_key_parameters()
+{
+    //EVP_PKEY_CTX_new_id();
+    return false;
+}
+
 ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identity_handle,
         GUID_t& adjusted_participant_key,
         const uint32_t domain_id,
