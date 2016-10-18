@@ -71,6 +71,11 @@ class AESGCMGMAC_KeyExchange : public CryptoKeyExchange
             const CryptoTokenSeq &crypto_tokens,
             SecurityException &exception);
 
+    private:
+
+    std::string KeyMaterialCDRSerialize(KeyMaterial_AES_GCM_GMAC &key);
+    KeyMaterial_AES_GCM_GMAC KeyMaterialCDRDeserialize(std::string &CDR);
+    
 };
 
 } //namespace security
