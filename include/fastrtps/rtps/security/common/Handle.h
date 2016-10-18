@@ -65,12 +65,25 @@ class HandleImpl : public Handle
             return HandleImpl<T>::nil_handle;
         }
 
+        static const HandleImpl<T>& narrow(const Handle& handle)
+        {
+            if(handle.get_class_id().compare(T::class_id_) == 0)
+                return reinterpret_cast<const HandleImpl<T>&>(handle);
+
+            return HandleImpl<T>::nil_handle;
+        }
+
         bool nil() const
         {
             return impl_ ? false : true;
         }
 
         T* operator->()
+        {
+            return impl_.get();
+        }
+
+        const T* operator->() const
         {
             return impl_.get();
         }

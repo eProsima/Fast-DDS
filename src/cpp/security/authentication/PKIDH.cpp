@@ -19,6 +19,7 @@
 #include "PKIDH.h"
 #include "PKIIdentityHandle.h"
 #include <fastrtps/log/Log.h>
+#include <fastrtps/rtps/messages/CDRMessage.h>
 
 #include <openssl/pem.h>
 #include <openssl/err.h>
@@ -41,7 +42,7 @@ X509_STORE* load_identity_ca(const std::string& identity_ca, bool& there_are_crl
 
         if(identity_ca.size() >= 7 && identity_ca.compare(0, 7, "file://") == 0)
         {
-            BIO *in = BIO_new(BIO_s_file());
+            BIO* in = BIO_new(BIO_s_file());
 
             if(in != nullptr)
             {
@@ -104,7 +105,7 @@ X509* load_certificate(const std::string& identity_cert)
 
     if(identity_cert.size() >= 7 && identity_cert.compare(0, 7, "file://") == 0)
     {
-        BIO *in = BIO_new(BIO_s_file());
+        BIO* in = BIO_new(BIO_s_file());
 
         if(in != nullptr)
         {
@@ -123,6 +124,80 @@ X509* load_certificate(const std::string& identity_cert)
 
     return returnedValue;
 }
+
+bool store_certificate_in_buffer(X509* certificate, BUF_MEM** ptr)
+{
+    bool returnedValue = false;
+
+    BIO *out = BIO_new(BIO_s_mem());
+
+    if(out != nullptr)
+    {
+        if(PEM_write_bio_X509(out, certificate) > 0 )
+        {
+            BIO_get_mem_ptr(out, ptr);
+
+            if(*ptr != nullptr)
+            {
+                BIO_set_close(out, BIO_NOCLOSE);
+                returnedValue = true;
+            }
+            else
+                logError(AUTHENTICATION, "OpenSSL library cannot retrieve mem ptr");
+        }
+        else
+            logError(AUTHENTICATION, "OpenSSL library cannot write cert");
+
+        BIO_free(out);
+    }
+    else
+        logError(AUTHENTICATION, "OpenSSL library cannot allocate mem");
+
+    return returnedValue;
+}
+
+bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm)
+{
+    bool returnedValue = false;
+    BUF_MEM* ptr = nullptr;
+    X509_ALGOR* sigalg = nullptr;
+    ASN1_BIT_STRING* sig = nullptr;
+
+    BIO *out = BIO_new(BIO_s_mem());
+
+    if(out != nullptr)
+    {
+        X509_get0_signature(&sig, &sigalg, certificate);
+
+        if(sigalg != nullptr)
+        {
+            if(i2a_ASN1_OBJECT(out, sigalg->algorithm) > 0)
+            {
+                BIO_get_mem_ptr(out, &ptr);
+
+                if(ptr != nullptr)
+                {
+                    if(strncmp(ptr->data, "ecdsa-with-SHA256", ptr->length) == 0)
+                    {
+                        signature_algorithm = "ECDSA-SHA256";
+                        returnedValue = true;
+                    }
+                }
+                else
+                    logError(AUTHENTICATION, "OpenSSL library cannot retrieve mem ptr");
+            }
+        }
+        else
+            logError(AUTHENTICATION, "OpenSSL library cannot write cert");
+
+        BIO_free(out);
+    }
+    else
+        logError(AUTHENTICATION, "OpenSSL library cannot allocate mem");
+
+    return returnedValue;
+}
+
 
 X509_CRL* load_crl(const std::string& identity_crl)
 {
@@ -148,6 +223,72 @@ X509_CRL* load_crl(const std::string& identity_crl)
     }
 
     return returnedValue;
+}
+
+bool adjust_participant_key(X509* cert, const GUID_t& candidate_participant_key,
+        GUID_t& adjusted_participant_key)
+{
+    assert(cert != nullptr);
+
+    X509_NAME* cert_sn = cert->cert_info->subject;
+
+    assert(cert_sn != nullptr);
+
+    unsigned long returnedValue = 0;
+    unsigned char md[SHA256_DIGEST_LENGTH];
+
+    i2d_X509_NAME(cert_sn, NULL);
+    if(!EVP_Digest(cert_sn->canon_enc, cert_sn->canon_enclen, md, NULL, EVP_sha256(), NULL))
+    {
+        logError(AUTHENTICATION, "OpenSSL library cannot hash sha256");
+        return false;
+    }
+
+    adjusted_participant_key.guidPrefix.value[0] = 0x80 | md[0];
+    adjusted_participant_key.guidPrefix.value[1] = md[1];
+    adjusted_participant_key.guidPrefix.value[2] = md[2];
+    adjusted_participant_key.guidPrefix.value[3] = md[3];
+    adjusted_participant_key.guidPrefix.value[4] = md[4];
+    adjusted_participant_key.guidPrefix.value[5] = md[5];
+
+    unsigned char key[16] = {
+        candidate_participant_key.guidPrefix.value[0],
+        candidate_participant_key.guidPrefix.value[1],
+        candidate_participant_key.guidPrefix.value[2],
+        candidate_participant_key.guidPrefix.value[3],
+        candidate_participant_key.guidPrefix.value[4],
+        candidate_participant_key.guidPrefix.value[5],
+        candidate_participant_key.guidPrefix.value[6],
+        candidate_participant_key.guidPrefix.value[7],
+        candidate_participant_key.guidPrefix.value[8],
+        candidate_participant_key.guidPrefix.value[9],
+        candidate_participant_key.guidPrefix.value[10],
+        candidate_participant_key.guidPrefix.value[11],
+        candidate_participant_key.entityId.value[0],
+        candidate_participant_key.entityId.value[1],
+        candidate_participant_key.entityId.value[2],
+        candidate_participant_key.entityId.value[3]
+    };
+
+    if(!EVP_Digest(&key, 16, md, NULL, EVP_sha256(), NULL))
+    {
+        logError(AUTHENTICATION, "OpenSSL library cannot hash sha256");
+        return false;
+    }
+
+    adjusted_participant_key.guidPrefix.value[6] = md[0];
+    adjusted_participant_key.guidPrefix.value[7] = md[1];
+    adjusted_participant_key.guidPrefix.value[8] = md[2];
+    adjusted_participant_key.guidPrefix.value[9] = md[3];
+    adjusted_participant_key.guidPrefix.value[10] = md[4];
+    adjusted_participant_key.guidPrefix.value[11] = md[5];
+
+    adjusted_participant_key.entityId.value[0] = candidate_participant_key.entityId.value[0];
+    adjusted_participant_key.entityId.value[1] = candidate_participant_key.entityId.value[1];
+    adjusted_participant_key.entityId.value[2] = candidate_participant_key.entityId.value[2];
+    adjusted_participant_key.entityId.value[3] = candidate_participant_key.entityId.value[3];
+
+    return true;
 }
 
 ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identity_handle,
@@ -212,24 +353,34 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
 
         if(!configuration_error)
         {
-            X509* cert = load_certificate(*identity_cert);
+            (*ih)->cert_ = load_certificate(*identity_cert);
 
-            if(cert != nullptr)
+            if((*ih)->cert_ != nullptr)
             {
                 X509_STORE_CTX *ctx = X509_STORE_CTX_new();
 
                 if(ctx != nullptr)
                 {
                     unsigned long flags = there_are_crls ? X509_V_FLAG_CRL_CHECK : 0;
-                    X509_STORE_CTX_init(ctx, (*ih)->store_, cert, NULL);
+                    X509_STORE_CTX_init(ctx, (*ih)->store_, (*ih)->cert_, NULL);
                     X509_STORE_CTX_set_flags(ctx, flags | X509_V_FLAG_X509_STRICT |
                             X509_V_FLAG_CHECK_SS_SIGNATURE | X509_V_FLAG_POLICY_CHECK);
-                    ctx->crls = (*ih)->crls_;
 
                     if(X509_verify_cert(ctx) > 0 && X509_STORE_CTX_get_error(ctx) == X509_V_OK)
                     {
-                        returnedValue = ValidationResult_t::VALIDATION_OK;
-                        *local_identity_handle = ih;
+                        if(store_certificate_in_buffer((*ih)->cert_, &(*ih)->cert_content_))
+                        {
+                            if(get_signature_algorithm((*ih)->cert_, (*ih)->sign_alg_))
+                            {
+                                if(adjust_participant_key((*ih)->cert_, candidate_participant_key, adjusted_participant_key))
+                                {
+                                    (*ih)->participant_key_ = adjusted_participant_key;
+                                    *local_identity_handle = ih;
+
+                                    returnedValue = ValidationResult_t::VALIDATION_OK;
+                                }
+                            }
+                        }
                     }
                     else
                         logError(AUTHENTICATION, "Invalidation error of certificate " << *identity_cert
@@ -237,8 +388,6 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
 
                     X509_STORE_CTX_free(ctx);
                 }
-
-                X509_free(cert);
             }
             else
                 logError(AUTHENTICATION, "Cannot read file " << *identity_cert);
@@ -261,7 +410,23 @@ ValidationResult_t PKIDH::validate_remote_identity(IdentityHandle** remote_ident
         const GUID_t remote_participant_key,
         SecurityException& exception)
 {
-    return ValidationResult_t::VALIDATION_FAILED;
+    ValidationResult_t returnedValue = ValidationResult_t::VALIDATION_FAILED;
+
+    const PKIIdentityHandle& lih = PKIIdentityHandle::narrow(local_identity_handle);
+
+    if(!lih.nil())
+    {
+        PKIIdentityHandle* rih = new PKIIdentityHandle();
+
+        (*rih)->participant_key_ = remote_participant_key;
+
+        if(lih->participant_key_ < remote_participant_key )
+            returnedValue = ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST;
+        else
+            returnedValue = ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE;
+    }
+
+    return  returnedValue;
 }
 
 ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_handle,
@@ -270,7 +435,58 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
         const IdentityHandle& replier_identity_handle,
         SecurityException& exception)
 {
-    return ValidationResult_t::VALIDATION_FAILED;
+    ValidationResult_t returnedValue = ValidationResult_t::VALIDATION_FAILED;
+    const PKIIdentityHandle& lih = PKIIdentityHandle::narrow(initiator_identity_handle);
+
+    if(!lih.nil())
+    {
+        unsigned char md[SHA256_DIGEST_LENGTH];
+
+        handshake_message.class_id("DDS:Auth:PKI-DH:1.0+Req");
+
+        BinaryProperty bproperty;
+
+        // c.id
+        bproperty.name("c.id");
+        bproperty.value().assign(lih->cert_content_->data,
+                lih->cert_content_->data + lih->cert_content_->length);
+        bproperty.propagate(true);
+        handshake_message.binary_properties().emplace_back(std::move(bproperty));
+
+        // TODO(Ricardo) c.pdata
+        
+        // c.dsign_algo.
+        bproperty.name("c.dsign_algo");
+        bproperty.value().assign(lih->sign_alg_.begin(),
+                lih->sign_alg_.end());
+        bproperty.propagate(true);
+        handshake_message.binary_properties().emplace_back(std::move(bproperty));
+
+        // TODO(Ricardo) Only support right now DH+MODP-2048-256
+        bproperty.name("c.kagree_algo");
+        bproperty.value().assign(lih->kagree_alg_.begin(),
+                lih->kagree_alg_.end());
+        bproperty.propagate(true);
+        handshake_message.binary_properties().emplace_back(std::move(bproperty));
+
+        CDRMessage_t message(BinaryPropertyHelper::serialized_size(handshake_message.binary_properties()));
+        message.msg_endian = BIGEND;
+        CDRMessage::addBinaryPropertySeq(&message, handshake_message.binary_properties());
+        if(!EVP_Digest(message.buffer, message.length, md, NULL, EVP_sha256(), NULL))
+        {
+            logError(AUTHENTICATION, "OpenSSL library cannot hash sha256");
+            return ValidationResult_t::VALIDATION_FAILED;
+        }
+        bproperty.name("hash_c1");
+        bproperty.value().assign(md, md + SHA256_DIGEST_LENGTH);
+        bproperty.propagate(true);
+        handshake_message.binary_properties().emplace_back(std::move(bproperty));
+
+        
+        returnedValue = ValidationResult_t::VALIDATION_OK;
+    }
+
+    return returnedValue;
 }
 
 ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_handle,

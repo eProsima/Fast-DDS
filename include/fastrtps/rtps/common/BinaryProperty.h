@@ -13,10 +13,10 @@
 // limitations under the License.
 
 /*!
- * @file BinaryPropertyQos.h	
+ * @file BinaryProperty.h	
  */
-#ifndef _RTPS_COMMON_BINARYPROPERTYQOS_H_
-#define  _RTPS_COMMON_BINARYPROPERTYQOS_H_
+#ifndef _RTPS_COMMON_BINARYPROPERTY_H_
+#define  _RTPS_COMMON_BINARYPROPERTY_H_
 
 #include <string>
 #include <vector>
@@ -28,6 +28,8 @@ namespace rtps {
 class BinaryProperty
 {
     public:
+
+        BinaryProperty() : propagate_(false) {}
 
         BinaryProperty(const BinaryProperty& property) :
             name_(property.name_),
@@ -127,8 +129,43 @@ class BinaryProperty
 
 typedef std::vector<BinaryProperty> BinaryPropertySeq;
 
-} //namespace eprosima
-} //namespace fastrtps
-} //namespace rtps
+class BinaryPropertyHelper
+{
+    public:
 
-#endif // _RTPS_COMMON_BINARYPROPERTYQOS_H_
+        static size_t serialized_size(const BinaryProperty& binary_property, size_t current_alignment = 0)
+        {
+            if(binary_property.propagate())
+            {
+                size_t initial_alignment = current_alignment;
+
+                current_alignment += 4 + alignment(current_alignment, 4) + binary_property.name().size() + 1;
+                current_alignment += 4 + alignment(current_alignment, 4) + binary_property.value().size();
+
+                return current_alignment - initial_alignment;
+            }
+            else
+                return 0;
+        }
+
+        static size_t serialized_size(const BinaryPropertySeq& binary_properties, size_t current_alignment = 0)
+        {
+            size_t initial_alignment = current_alignment;
+
+            current_alignment += 4 + alignment(current_alignment, 4);
+            for(auto binary_property = binary_properties.begin(); binary_property != binary_properties.end(); ++binary_property)
+                current_alignment += serialized_size(*binary_property, current_alignment);
+
+            return current_alignment - initial_alignment;
+        }
+
+    private:
+
+        inline static size_t alignment(size_t current_alignment, size_t dataSize) { return (dataSize - (current_alignment % dataSize)) & (dataSize-1);}
+};
+
+} //namespace rtps
+} //namespace fastrtps
+} //namespace eprosima
+
+#endif // _RTPS_COMMON_BINARYPROPERTY_H_

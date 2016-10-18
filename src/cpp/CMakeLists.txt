@@ -103,6 +103,7 @@ set_sources(
     rtps/flowcontrol/FlowController.cpp
     rtps/exceptions/Exception.cpp
     rtps/attributes/PropertyPolicy.cpp
+    rtps/common/Token.cpp
     fastrtps.rc
     )
 
@@ -112,6 +113,7 @@ if(SECURITY)
         rtps/security/SecurityManager.cpp
         rtps/security/SecurityPluginFactory.cpp
         security/authentication/PKIDH.cpp
+        security/authentication/PKIIdentityHandle.cpp
         )
 
     include_directories(${OPENSSL_INCLUDE_DIR})

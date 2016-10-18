@@ -13,13 +13,15 @@
 // limitations under the License.
 
 /*!
- * @file PKIIdentityHandle.h	
+ * @file PKIIdentityHandle.h
  */
 #ifndef _SECURITY_AUTHENTICATION_PKIIDENTITYHANDLE_H_
 #define _SECURITY_AUTHENTICATION_PKIIDENTITYHANDLE_H_
 
 #include <fastrtps/rtps/security/common/Handle.h>
+#include <fastrtps/rtps/common/Guid.h>
 #include <openssl/x509.h>
+#include <string>
 
 namespace eprosima {
 namespace fastrtps {
@@ -31,7 +33,8 @@ class PKIIdentity
     public:
 
         PKIIdentity() : store_(nullptr),
-        crls_(nullptr)
+        cert_(nullptr), cert_content_(nullptr),
+        kagree_alg_("DH+MODP-2048-256")
         {}
 
         ~PKIIdentity()
@@ -39,18 +42,23 @@ class PKIIdentity
             if(store_ != nullptr)
                 X509_STORE_free(store_);
 
-            if(crls_ != nullptr)
-                sk_X509_CRL_pop_free(crls_, X509_CRL_free);
+            if(cert_ != nullptr)
+                X509_free(cert_);
+
+            if(cert_content_ != nullptr)
+                BUF_MEM_free(cert_content_);
         }
 
 
         static const char* const class_id_;
 
         X509_STORE* store_;
-        STACK_OF(X509_CRL)* crls_;
+        X509* cert_;
+        GUID_t participant_key_;
+        BUF_MEM* cert_content_;
+        std::string sign_alg_;
+        std::string kagree_alg_;
 };
-
-const char* const PKIIdentity::class_id_ = "PKIIdentityHandle";
 
 typedef HandleImpl<PKIIdentity> PKIIdentityHandle;
 

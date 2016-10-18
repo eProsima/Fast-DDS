@@ -29,6 +29,8 @@ class Property
 {
     public:
 
+        Property() : propagate_(false) {}
+
         Property(const Property& property) :
             name_(property.name_),
             value_(property.value_),
@@ -126,6 +128,41 @@ class Property
 };
 
 typedef std::vector<Property> PropertySeq;
+
+class PropertyHelper
+{
+    public:
+
+        static size_t serialized_size(const Property& property, size_t current_alignment = 0)
+        {
+            if(property.propagate())
+            {
+                size_t initial_alignment = current_alignment;
+
+                current_alignment += 4 + alignment(current_alignment, 4) + property.name().size() + 1;
+                current_alignment += 4 + alignment(current_alignment, 4) + property.value().size() + 1;
+
+                return current_alignment - initial_alignment;
+            }
+            else
+                return 0;
+        }
+
+        static size_t serialized_size(const PropertySeq& properties, size_t current_alignment = 0)
+        {
+            size_t initial_alignment = current_alignment;
+
+            current_alignment += 4 + alignment(current_alignment, 4);
+            for(auto property = properties.begin(); property != properties.end(); ++property)
+                current_alignment += serialized_size(*property, current_alignment);
+
+            return current_alignment - initial_alignment;
+        }
+
+    private:
+
+        inline static size_t alignment(size_t current_alignment, size_t dataSize) { return (dataSize - (current_alignment % dataSize)) & (dataSize-1);}
+};
 
 } //namespace eprosima
 } //namespace fastrtps

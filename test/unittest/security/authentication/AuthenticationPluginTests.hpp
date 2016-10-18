@@ -48,6 +48,26 @@ class AuthenticationPluginTest : public ::testing::Test
 
 PropertyPolicy AuthenticationPluginTest::property_policy;
 
+void fill_candidate_participant_key(GUID_t& candidate_participant_key)
+{
+    candidate_participant_key.guidPrefix.value[0] = 1;
+    candidate_participant_key.guidPrefix.value[1] = 2;
+    candidate_participant_key.guidPrefix.value[2] = 3;
+    candidate_participant_key.guidPrefix.value[3] = 4;
+    candidate_participant_key.guidPrefix.value[4] = 5;
+    candidate_participant_key.guidPrefix.value[5] = 6;
+    candidate_participant_key.guidPrefix.value[6] = 7;
+    candidate_participant_key.guidPrefix.value[7] = 8;
+    candidate_participant_key.guidPrefix.value[8] = 9;
+    candidate_participant_key.guidPrefix.value[9] = 10;
+    candidate_participant_key.guidPrefix.value[10] = 11;
+    candidate_participant_key.guidPrefix.value[11] = 12;
+    candidate_participant_key.entityId.value[0] = 13;
+    candidate_participant_key.entityId.value[1] = 14;
+    candidate_participant_key.entityId.value[2] = 15;
+    candidate_participant_key.entityId.value[3] = 16;
+}
+
 TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok)
 {
     ASSERT_TRUE(plugin != nullptr);
@@ -60,6 +80,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok)
     SecurityException exception;
     ValidationResult_t result= ValidationResult_t::VALIDATION_FAILED;
 
+    fill_candidate_participant_key(candidate_participant_key);
     participant_attr.properties = property_policy;
 
     result = plugin->validate_local_identity(&local_identity_handle,
@@ -71,6 +92,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok)
 
     ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK);
     ASSERT_TRUE(local_identity_handle != nullptr);
+    ASSERT_TRUE(adjusted_participant_key != GUID_t::unknown());
 }
 
 

@@ -29,6 +29,8 @@ class DataHolder
 {
     public:
 
+        DataHolder() {}
+
         DataHolder(const DataHolder& data_holder) :
             class_id_(data_holder.class_id_),
             properties_(data_holder.properties_),
@@ -38,6 +40,21 @@ class DataHolder
             class_id_(data_holder.class_id_),
             properties_(data_holder.properties_),
             binary_properties_(data_holder.binary_properties_) {}
+
+        void class_id(const std::string& class_id)
+        {
+            class_id_ = class_id;
+        }
+
+        void class_id(std::string&& class_id)
+        {
+            class_id_ = std::move(class_id);
+        }
+
+        std::string& class_id()
+        {
+            return class_id_;
+        }
 
         const std::string& class_id() const
         {
@@ -64,11 +81,9 @@ class DataHolder
             return binary_properties_;
         }
 
-    protected:
+    private:
 
         std::string class_id_;
-
-    private:
 
         PropertySeq properties_;
 
@@ -79,8 +94,16 @@ typedef std::vector<DataHolder> DataHolderSeq;
 typedef DataHolder Token;
 typedef Token IdentityToken;
 
-} //namespace eprosima
-} //namespace fastrtps
+
+class DataHolderHelper
+{
+    public:
+
+        static std::vector<uint8_t>* find_binary_property(DataHolder& data_holder, const std::string& name);
+};
+
 } //namespace rtps
+} //namespace fastrtps
+} //namespace eprosima
 
 #endif // _RTPS_COMMON_TOKEN_H_
