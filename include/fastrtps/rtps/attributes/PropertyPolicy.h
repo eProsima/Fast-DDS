@@ -36,8 +36,22 @@ class PropertyPolicy
             binary_properties_(property_policy.binary_properties_) {}
 
         PropertyPolicy(PropertyPolicy&& property_policy) :
-            properties_(property_policy.properties_),
-            binary_properties_(property_policy.binary_properties_) {}
+            properties_(std::move(property_policy.properties_)),
+            binary_properties_(std::move(property_policy.binary_properties_)) {}
+
+        PropertyPolicy& operator=(const PropertyPolicy& property_policy)
+        {
+            properties_ = property_policy.properties_;
+            binary_properties_ = property_policy.binary_properties_;
+            return *this;
+        }
+
+        PropertyPolicy& operator=(PropertyPolicy&& property_policy)
+        {
+            properties_ = std::move(property_policy.properties_);
+            binary_properties_= std::move(property_policy.binary_properties_);
+            return *this;
+        }
 
         const PropertySeq& properties() const
         {
@@ -81,6 +95,8 @@ class PropertyPolicyHelper
                 const std::string& prefix);
 
         static size_t length(const PropertyPolicy& property_policy);
+
+        static std::string* find_property(PropertyPolicy& property_policy, const std::string& name);
 };
 
 } //namespace rtps

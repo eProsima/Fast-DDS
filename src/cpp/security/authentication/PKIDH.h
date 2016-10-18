@@ -31,8 +31,6 @@ class PKIDH : public Authentication
 {
     public:
 
-        PKIDH(const PropertyPolicy& property_policy);
-
         ValidationResult_t validate_local_identity(IdentityHandle** local_identity_handle,
                 GUID_t& adjusted_participant_key,
                 const uint32_t domain_id,
