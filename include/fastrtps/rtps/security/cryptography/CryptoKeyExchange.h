@@ -41,8 +41,8 @@ class CryptoKeyExchange
      */
     virtual bool create_local_participant_crypto_tokens(
             ParticipantCryptoTokenSeq &local_participant_crypto_tokens,
-            const ParticipantCryptoHandle &local_participant_crypto,
-            const ParticipantCryptoHandle &remote_participant_crypto,
+            ParticipantCryptoHandle &local_participant_crypto,
+            ParticipantCryptoHandle &remote_participant_crypto,
             SecurityException &exception) = 0;
 
     /**

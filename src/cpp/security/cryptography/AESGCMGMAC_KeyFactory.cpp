@@ -70,22 +70,41 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     }
     
     RPCrypto = new AESGCMGMAC_ParticipantCryptoHandle();
-    
-    (*RPCrypto)->Participant2ParticipantKeyMaterial = new KeyMaterial_AES_GCM_GMAC(); 
-    (*RPCrypto)->Participant2ParticipantKxKeyMaterial = new KeyMaterial_AES_GCM_GMAC();
-    //Fill CryptoData - Participant2ParticipantKeyMaterial
-    (*RPCrypto)->Participant2ParticipantKeyMaterial->transformation_kind = local_participant_handle->ParticipantKeyMaterial->transformation_kind;
-    (*RPCrypto)->Participant2ParticipantKeyMaterial->master_salt = local_participant_handle->ParticipantKeyMaterial->master_salt;
-    (*RPCrypto)->Participant2ParticipantKeyMaterial->master_sender_key = local_participant_handle->ParticipantKeyMaterial->master_sender_key;
-    //Fill CryptoData - Participant2ParticipantKxKeymaterial
-    (*RPCrypto)->Participant2ParticipantKxKeyMaterial->transformation_kind = std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC);
-    (*RPCrypto)->Participant2ParticipantKxKeyMaterial->master_salt.fill(0);
-    RAND_bytes( (*RPCrypto)->Participant2ParticipantKxKeyMaterial->master_salt.data(), 128); // To substitute with HMAC_sha
-    (*RPCrypto)->Participant2ParticipantKxKeyMaterial->sender_key_id.fill(0);
-    (*RPCrypto)->Participant2ParticipantKxKeyMaterial->master_sender_key.fill(0);
-    RAND_bytes( (*RPCrypto)->Participant2ParticipantKxKeyMaterial->master_sender_key.data(), 128); // To substitute with HMAC_sha
-    (*RPCrypto)->Participant2ParticipantKxKeyMaterial->receiver_specific_key_id.fill(0);
-    (*RPCrypto)->Participant2ParticipantKxKeyMaterial->master_receiver_specific_key.fill(0);
+   
+    KeyMaterial_AES_GCM_GMAC* buffer = new KeyMaterial_AES_GCM_GMAC();
+    /*Fill values for Participant2ParticipantKey data*/
+
+    //These values must match the ones in ParticipantKeymaterial
+    buffer->transformation_kind = local_participant_handle->ParticipantKeyMaterial->transformation_kind;
+    buffer->master_salt = local_participant_handle->ParticipantKeyMaterial->master_salt;
+    buffer->master_sender_key = local_participant_handle->ParticipantKeyMaterial->master_sender_key;
+    //Generation of remainder values
+    buffer->sender_key_id = make_unique_KeyId();
+    buffer->receiver_specific_key_id = make_unique_KeyId();
+    buffer->master_receiver_specific_key.fill(0);
+    RAND_bytes( buffer->master_receiver_specific_key.data(), 128 );
+
+    //Attach to Keyhandles
+    (*RPCrypto)->Participant2ParticipantKeyMaterial.push_back(buffer);
+    local_participant_handle->Participant2ParticipantKeyMaterial.push_back(buffer);
+
+    /*Fill values for Participant2ParticipantKxKey data*/
+    buffer = new KeyMaterial_AES_GCM_GMAC();
+    //Fill values for Participant2ParticipantKxKey
+
+    buffer->transformation_kind = std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC);
+    buffer->master_salt.fill(0);
+    RAND_bytes( buffer->master_salt.data(), 128); // To substitute with HMAC_sha
+    buffer->sender_key_id.fill(0); //Specified by standard
+    buffer->master_sender_key.fill(0);
+    RAND_bytes( buffer->master_sender_key.data(), 128); // To substitute with HMAC_sha
+    buffer->receiver_specific_key_id.fill(0); //Specified by standard
+    buffer->master_receiver_specific_key.fill(0); //Specified by standard
+
+    //Attack to Keyhandles
+    (*RPCrypto)->Participant2ParticipantKeyMaterial.push_back(buffer);
+    local_participant_handle->Participant2ParticipantKeyMaterial.push_back(buffer);
+
     return RPCrypto;
 }
 
