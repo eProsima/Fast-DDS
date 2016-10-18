@@ -1,0 +1,5 @@
+openssl ecparam -name prime256v1 > ecdsaparam
+
+openssl req -nodes -new -newkey ec:ecdsaparam -config expiredpub.cnf -keyout expiredpubkey.pem -out expiredpubreq.pem
+
+openssl ca -batch -create_serial -config maincaconf.cnf -days 1 -in expiredpubreq.pem -out expiredpubcert.pem

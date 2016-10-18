@@ -45,35 +45,35 @@ namespace rtps{
  * @ingroup COMMON_MODULE
  */
 struct RTPS_DllAPI CDRMessage_t{
-	//! Default constructor
-	CDRMessage_t():wraps(false){
-		pos = 0;
-		length = 0;
-		buffer = (octet*) malloc(RTPSMESSAGE_DEFAULT_SIZE);
-		max_size = RTPSMESSAGE_DEFAULT_SIZE;
+    //! Default constructor
+    CDRMessage_t():wraps(false){
+        pos = 0;
+        length = 0;
+        buffer = (octet*) malloc(RTPSMESSAGE_DEFAULT_SIZE);
+        max_size = RTPSMESSAGE_DEFAULT_SIZE;
 
 #if EPROSIMA_BIG_ENDIAN
-		msg_endian = BIGEND;
+        msg_endian = BIGEND;
 #else
         msg_endian = LITTLEEND;
 #endif
-	}
+    }
 
-	~CDRMessage_t()
-	{
-		if(buffer != nullptr && !wraps)
-			free(buffer);
-	}
+    ~CDRMessage_t()
+    {
+        if(buffer != nullptr && !wraps)
+            free(buffer);
+    }
 
-	/**
-	 * Constructor with maximum size
-	 * @param size Maximum size
-	 */
-	CDRMessage_t(uint32_t size)
-	{
-      wraps = false;
-		pos = 0;
-		length = 0;
+    /**
+     * Constructor with maximum size
+     * @param size Maximum size
+     */
+    CDRMessage_t(uint32_t size)
+    {
+        wraps = false;
+        pos = 0;
+        length = 0;
 
         if(size != 0)
             buffer = (octet*)malloc(size);
@@ -87,21 +87,22 @@ struct RTPS_DllAPI CDRMessage_t{
 #else
         msg_endian = LITTLEEND;
 #endif
-	}
+    }
 
-	//!Pointer to the buffer where the data is stored.
-	octet* buffer;
-	//!Read or write position.
-	uint32_t pos;
-	//!Max size of the message.
-	uint32_t max_size;
-	//!Current length of the message.
-	uint32_t length;
-	//!Endianness of the message.
-	Endianness_t msg_endian;
-   //Whether this message is wrapping a buffer managed elsewhere.
-   bool wraps;
+    //!Pointer to the buffer where the data is stored.
+    octet* buffer;
+    //!Read or write position.
+    uint32_t pos;
+    //!Max size of the message.
+    uint32_t max_size;
+    //!Current length of the message.
+    uint32_t length;
+    //!Endianness of the message.
+    Endianness_t msg_endian;
+    //Whether this message is wrapping a buffer managed elsewhere.
+    bool wraps;
 };
+
 }
 }
 }

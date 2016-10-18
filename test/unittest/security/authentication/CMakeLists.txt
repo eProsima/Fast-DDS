@@ -22,7 +22,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         endif()
 
         set(COMMON_SOURCES_AUTH_PLUGIN_TEST_SOURCE
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Token.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/exceptions/Exception.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/exceptions/SecurityException.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/SecurityPluginFactory.cpp
@@ -30,13 +33,16 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(BuiltinPKIDH ${COMMON_SOURCES_AUTH_PLUGIN_TEST_SOURCE}
             ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIDH.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIIdentityHandle.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp)
         add_gtest(BuiltinPKIDH ${COMMON_SOURCES_AUTH_PLUGIN_TEST_SOURCE}
             ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIDH.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIIdentityHandle.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp
+            ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
         target_include_directories(BuiltinPKIDH PRIVATE
             ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
-        target_link_libraries(BuiltinPKIDH ${GTEST_LIBRARIES})
+        target_link_libraries(BuiltinPKIDH ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES})
     endif()
 endif()

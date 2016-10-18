@@ -34,7 +34,7 @@ Authentication* SecurityPluginFactory::create_authentication_plugin(const Proper
 
         if(PropertyPolicyHelper::length(pki_properties) > 0)
         {
-            plugin = new PKIDH(property_policy);
+            plugin = new PKIDH();
         }
     }
 

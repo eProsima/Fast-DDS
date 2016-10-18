@@ -103,6 +103,7 @@ set_sources(
     rtps/flowcontrol/FlowController.cpp
     rtps/exceptions/Exception.cpp
     rtps/attributes/PropertyPolicy.cpp
+    rtps/common/Token.cpp
     fastrtps.rc
     )
 
@@ -117,9 +118,8 @@ if(SECURITY)
         security/cryptography/AESGCMGMAC_KeyFactory.cpp
         security/cryptography/AESGCMGMAC_Transform.cpp
         security/cryptography/AESGCMGMAC_Types.cpp
+        security/authentication/PKIIdentityHandle.cpp
         )
-
-    find_package(OpenSSL REQUIRED)
 
     include_directories(${OPENSSL_INCLUDE_DIR})
     set(EXTRA_LIBRARIES ${EXTRA_LIBRARIES} ${OPENSSL_LIBRARIES})

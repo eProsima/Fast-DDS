@@ -58,3 +58,19 @@ size_t PropertyPolicyHelper::length(const PropertyPolicy& property_policy)
     return property_policy.properties().size() +
         property_policy.binary_properties().size();
 }
+
+std::string* PropertyPolicyHelper::find_property(PropertyPolicy& property_policy, const std::string& name)
+{
+    std::string* returnedValue = nullptr;
+
+    for(auto property = property_policy.properties().begin(); property != property_policy.properties().end(); ++property)
+    {
+        if(property->name().compare(name) == 0)
+        {
+            returnedValue = &property->value();
+            break;
+        }
+    }
+
+    return returnedValue;
+}

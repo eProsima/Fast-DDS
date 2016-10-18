@@ -433,7 +433,7 @@ inline bool CDRMessage::addInt64(CDRMessage_t* msg, int64_t lolo) {
     return true;
 }
 
-inline bool CDRMessage::addOctetVector(CDRMessage_t*msg,std::vector<octet>* ocvec)
+inline bool CDRMessage::addOctetVector(CDRMessage_t*msg, const std::vector<octet>* ocvec)
 {
     // TODO Calculate without padding
     if(msg->pos+4+ocvec->size()>=msg->max_size)
@@ -630,7 +630,7 @@ inline bool CDRMessage::addParameterSentinel(CDRMessage_t* msg)
     return true;
 }
 
-inline bool CDRMessage::addString(CDRMessage_t*msg,std::string& in_str)
+inline bool CDRMessage::addString(CDRMessage_t*msg, const std::string& in_str)
 {
     uint32_t str_siz = (uint32_t)in_str.size();
     int rest = (str_siz+1) % 4;
@@ -665,12 +665,59 @@ inline bool CDRMessage::addParameterSampleIdentity(CDRMessage_t *msg, const Samp
     return true;
 }
 
+inline bool CDRMessage::addProperty(CDRMessage_t* msg, const Property& property)
+{
+    if(property.propagate())
+    {
+        return CDRMessage::addString(msg, property.name()) &&
+            CDRMessage::addString(msg, property.value());
+    }
 
+    return true;
+}
 
+inline bool CDRMessage::addBinaryProperty(CDRMessage_t* msg, const BinaryProperty& binary_property)
+{
+    if(binary_property.propagate())
+    {
+        return CDRMessage::addString(msg, binary_property.name()) &&
+            CDRMessage::addOctetVector(msg, &binary_property.value());
+    }
 
+    return true;
+}
 
+inline bool CDRMessage::addPropertySeq(CDRMessage_t* msg, const PropertySeq& properties)
+{
+    bool returnedValue = false;
 
+    if(msg->pos + 4 <  msg->max_size)
+    {
+        if(CDRMessage::addUInt32(msg, (uint32_t)properties.size()))
+        {
+            for(auto it = properties.begin(); returnedValue && it != properties.end(); ++it)
+                returnedValue = CDRMessage::addProperty(msg, *it);
+        }
+    }
 
+    return returnedValue;
+}
+
+inline bool CDRMessage::addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties)
+{
+    bool returnedValue = false;
+
+    if(msg->pos + 4 <  msg->max_size)
+    {
+        if(CDRMessage::addUInt32(msg, (uint32_t)binary_properties.size()))
+        {
+            for(auto it = binary_properties.begin(); returnedValue && it != binary_properties.end(); ++it)
+                returnedValue = CDRMessage::addBinaryProperty(msg, *it);
+        }
+    }
+
+    return returnedValue;
+}
 
 }
 } /* namespace rtps */

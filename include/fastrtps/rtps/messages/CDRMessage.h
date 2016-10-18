@@ -23,6 +23,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "../common/CDRMessage_t.h"
 #include "../../qos/ParameterTypes.h"
+#include "../common/Property.h"
+#include "../common/BinaryProperty.h"
 
 using namespace eprosima::fastrtps;
 
@@ -109,11 +111,15 @@ namespace CDRMessage{
 	  inline bool addParameterKey(CDRMessage_t*msg, const InstanceHandle_t* iHandle);
 	  inline bool addParameterSentinel(CDRMessage_t*msg);
 	  inline bool addParameterId(CDRMessage_t*msg,ParameterId_t pid);
-	  inline bool addString(CDRMessage_t*msg,std::string& in_str);
-	  inline bool addOctetVector(CDRMessage_t*msg,std::vector<octet>* ocvec);
+	  inline bool addString(CDRMessage_t*msg, const std::string& in_str);
+	  inline bool addOctetVector(CDRMessage_t*msg, const std::vector<octet>* ocvec);
       inline bool addParameterSampleIdentity(CDRMessage_t *msg, const SampleIdentity &sample_id);
 	///@}
-
+    
+      inline bool addProperty(CDRMessage_t* msg, const Property& property);
+      inline bool addBinaryProperty(CDRMessage_t* msg, const BinaryProperty& binary_property);
+      inline bool addPropertySeq(CDRMessage_t* msg, const PropertySeq& properties);
+      inline bool addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties);
 }
 
 }
