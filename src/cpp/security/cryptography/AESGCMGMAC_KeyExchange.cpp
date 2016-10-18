@@ -17,6 +17,8 @@
  */
 
 #include <sstream>
+#include <fastrtps/rtps/common/Token.h>
+#include <fastrtps/rtps/common/BinaryProperty.h>
 #include "AESGCMGMAC_KeyExchange.h"
 
 using namespace eprosima::fastrtps::rtps::security;
@@ -31,7 +33,19 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
             SecurityException &exception){
 
     AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto);
+    AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
+    
+    //ParticipantKeyMaterial
+    {
+        ParticipantCryptoToken temp;
+        temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
+        BinaryProperty prop;
+        prop.name() = std::string("dds.cryp.keymat");
+        prop.value() = KeyMaterialCDRSerialize(local_participant->ParticipantKeyMaterial);
+        temp.binary_properties().push_back(prop);
 
+        local_participant_crypto_tokens.push_back(temp);
+    }
 
     exception = SecurityException("Not implemented"); 
     return false;
@@ -85,58 +99,58 @@ bool AESGCMGMAC_KeyExchange::return_crypto_tokens(
     return false;
 }
 
-std::string AESGCMGMAC_KeyExchange::KeyMaterialCDRSerialize(KeyMaterial_AES_GCM_GMAC &key){
+std::vector<uint8_t> AESGCMGMAC_KeyExchange::KeyMaterialCDRSerialize(KeyMaterial_AES_GCM_GMAC *key){
 
-std::stringstream buffer;
+std::vector<uint8_t> buffer;
     
-    buffer << "4";
+    buffer.push_back(4);
     for(int i=0;i<4;i++){
-        buffer << key.transformation_kind[i];
+        buffer.push_back(key->transformation_kind[i]);
     }
-    buffer << "32";
+    buffer.push_back(2);
     for(int i=0;i<32;i++){
-        buffer << key.master_salt[i];
+        buffer.push_back(key->master_salt[i]);
     }
-    buffer << "4";
+    buffer.push_back(4);
     for(int i=0;i<4;i++){
-        buffer << key.sender_key_id[i];
+        buffer.push_back(key->sender_key_id[i]);
     }
-    buffer << "32";
+    buffer.push_back(32);
     for(int i=0;i<32;i++){
-        buffer << key.master_sender_key[i];
+        buffer.push_back(key->master_sender_key[i]);
     }
-    buffer << "4";
+    buffer.push_back(4);
     for(int i=0;i<4;i++){
-        buffer << key.receiver_specific_key_id[i];
+        buffer.push_back(key->receiver_specific_key_id[i]);
     }
-    buffer << "32";
+    buffer.push_back(32);
     for(int i=0;i<32;i++){
-        buffer << key.master_receiver_specific_key[i];
+        buffer.push_back(key->master_receiver_specific_key[i]);
     }
 
-    return buffer.str();
+    return buffer;
 }
 
-KeyMaterial_AES_GCM_GMAC AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(std::string &CDR){
+KeyMaterial_AES_GCM_GMAC AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(std::vector<uint8_t> *CDR){
 unsigned short index = 0;
 KeyMaterial_AES_GCM_GMAC buffer;
     for(int i=1; i<5; i++){
-        buffer.transformation_kind[i-1] = CDR.at(i);
+        buffer.transformation_kind[i-1] = CDR->at(i);
     }
     for(int i=6; i<38; i++){
-        buffer.master_salt[i-6] = CDR.at(i);
+        buffer.master_salt[i-6] = CDR->at(i);
     }
     for(int i=39; i<43; i++){
-        buffer.sender_key_id[i-39] = CDR.at(i);
+        buffer.sender_key_id[i-39] = CDR->at(i);
     }
     for(int i=44; i<76; i++){
-        buffer.master_sender_key[i-44] = CDR.at(i);
+        buffer.master_sender_key[i-44] = CDR->at(i);
     }
     for(int i=77; i<81; i++){
-        buffer.receiver_specific_key_id[i-77] = CDR.at(i);
+        buffer.receiver_specific_key_id[i-77] = CDR->at(i);
     }
     for(int i=82; i< 114; i++){
-        buffer.master_receiver_specific_key[i-82] = CDR.at(i);
+        buffer.master_receiver_specific_key[i-82] = CDR->at(i);
     }
     return buffer;
 }

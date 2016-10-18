@@ -73,8 +73,8 @@ class AESGCMGMAC_KeyExchange : public CryptoKeyExchange
 
     private:
 
-    std::string KeyMaterialCDRSerialize(KeyMaterial_AES_GCM_GMAC &key);
-    KeyMaterial_AES_GCM_GMAC KeyMaterialCDRDeserialize(std::string &CDR);
+    std::vector<uint8_t> KeyMaterialCDRSerialize(KeyMaterial_AES_GCM_GMAC *key);
+    KeyMaterial_AES_GCM_GMAC KeyMaterialCDRDeserialize(std::vector<uint8_t> *CDR);
     
 };
 
