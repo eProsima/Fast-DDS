@@ -44,7 +44,8 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
         temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
         BinaryProperty prop;
         prop.name() = std::string("dds.cryp.keymat");
-        prop.value() = KeyMaterialCDRSerialize(remote_participant->Participant2ParticipantKeyMaterial.at(0));
+        std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_participant->Participant2ParticipantKeyMaterial.at(0));
+        prop.value() = aes_128_gcm_encrypt(plaintext, remote_participant->master_sender_key); 
 
         temp.binary_properties().push_back(prop);
         local_participant_crypto_tokens.push_back(temp);
@@ -158,7 +159,7 @@ KeyMaterial_AES_GCM_GMAC buffer;
     return buffer;
 }
 
-std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_encrypt(std::string plaintext, std::string key){
+std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_encrypt(std::vector<uint8_t> plaintext, std::string key){
     
     OpenSSL_add_all_ciphers();
     int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
