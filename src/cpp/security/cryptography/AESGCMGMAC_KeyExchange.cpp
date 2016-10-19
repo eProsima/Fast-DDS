@@ -195,7 +195,7 @@ std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_decrypt(std::vector<uin
     unsigned char tag[AES_BLOCK_SIZE];
     unsigned char iv[AES_BLOCK_SIZE];
     std::copy(crypto.begin(), crypto.begin()+16, tag);
-    std::copy(crypto.begin()+16, crypto.being()+32, iv);
+    std::copy(crypto.begin()+16, crypto.begin()+32, iv);
     std::vector<uint8_t> plaintext;
     plaintext.resize(crypto.size(), '\0');
 
@@ -205,7 +205,7 @@ std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_decrypt(std::vector<uin
     EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char*)key.data(), iv);
     EVP_DecryptUpdate(d_ctx, &plaintext[0], &actual_size, (const unsigned char*)crypto.data()+32, crypto.size()-32);
     EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, tag);
-    EVP_DecryptFinal(d_ctx, &plaintext[actual+size], &final_size);
+    EVP_DecryptFinal(d_ctx, &plaintext[actual_size], &final_size);
     plaintext.resize(actual_size + final_size, '\0');
     EVP_CIPHER_CTX_free(d_ctx);
 
