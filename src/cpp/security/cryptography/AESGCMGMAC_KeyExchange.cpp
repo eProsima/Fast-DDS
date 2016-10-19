@@ -21,6 +21,10 @@
 #include <fastrtps/rtps/common/BinaryProperty.h>
 #include "AESGCMGMAC_KeyExchange.h"
 
+#include <openssl/aes.h>
+#include <openssl/evp.h>
+#include <openssl/rand.h>
+
 using namespace eprosima::fastrtps::rtps::security;
 
 AESGCMGMAC_KeyExchange::AESGCMGMAC_KeyExchange(){}
@@ -31,8 +35,7 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
             ParticipantCryptoHandle &local_participant_crypto,
             ParticipantCryptoHandle &remote_participant_crypto,
             SecurityException &exception){
-
-    AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto);
+    
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
     
     //ParticipantKeyMaterial
@@ -41,9 +44,9 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
         temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
         BinaryProperty prop;
         prop.name() = std::string("dds.cryp.keymat");
-        prop.value() = KeyMaterialCDRSerialize(local_participant->ParticipantKeyMaterial);
-        temp.binary_properties().push_back(prop);
+        prop.value() = KeyMaterialCDRSerialize(remote_participant->Participant2ParticipantKeyMaterial.at(0));
 
+        temp.binary_properties().push_back(prop);
         local_participant_crypto_tokens.push_back(temp);
     }
 
@@ -155,3 +158,30 @@ KeyMaterial_AES_GCM_GMAC buffer;
     return buffer;
 }
 
+std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_encrypt(std::string plaintext, std::string key){
+    
+    OpenSSL_add_all_ciphers();
+    int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
+
+    size_t enc_length = plaintext.length()*3;
+    std::vector<uint8_t> output;
+    output.resize(enc_length,'\0');
+
+    unsigned char tag[AES_BLOCK_SIZE];
+    unsigned char iv[AES_BLOCK_SIZE];
+    RAND_bytes(iv, sizeof(iv));
+    std::copy(iv, iv+16, output.begin()+16);
+    
+    int actual_size=0, final_size=0;
+    EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
+    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)key.c_str(), iv);
+    EVP_EncryptUpdate(e_ctx, &output[32], &actual_size, (const unsigned char*)plaintext.data(), plaintext.length());
+    EVP_EncryptFinal(e_ctx, &output[32+actual_size], &final_size);
+    EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
+    std::copy(iv,iv+16, output.begin());
+    std::copy(iv, iv+16, output.begin()+16);
+    output.resize(32+actual_size+final_size);
+    EVP_CIPHER_CTX_free(e_ctx);
+
+    return output;
+}

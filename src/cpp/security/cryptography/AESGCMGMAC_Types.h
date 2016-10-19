@@ -92,7 +92,11 @@ class  ParticipantKeyHandle
                 for(std::vector<KeyMaterial_AES_GCM_GMAC*>::iterator it = Participant2ParticipantKxKeyMaterial.begin(); it != Participant2ParticipantKxKeyMaterial.end(); it++){
                     if( *it != nullptr )    delete(*it);
                 }            
-        
+            }
+            if(!RemoteParticipant2ParticipantKeyMaterial.empty()){
+                for(std::vector<KeyMaterial_AES_GCM_GMAC*>::iterator it = RemoteParticipant2ParticipantKeyMaterial.begin(); it != RemoteParticipant2ParticipantKeyMaterial.end(); it++){
+                    if( *it != nullptr )    delete(*it);
+                }            
             }
         }    
         static const char* const class_id_;
@@ -100,6 +104,7 @@ class  ParticipantKeyHandle
         KeyMaterial_AES_GCM_GMAC* ParticipantKeyMaterial;
         std::vector<KeyMaterial_AES_GCM_GMAC*> Participant2ParticipantKeyMaterial;
         std::vector<KeyMaterial_AES_GCM_GMAC*> Participant2ParticipantKxKeyMaterial;
+        std::vector<KeyMaterial_AES_GCM_GMAC*> RemoteParticipant2ParticipantKeyMaterial;
 };
 
 typedef HandleImpl<ParticipantKeyHandle> AESGCMGMAC_ParticipantCryptoHandle;
