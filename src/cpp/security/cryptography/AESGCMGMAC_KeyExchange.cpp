@@ -51,15 +51,39 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
         local_participant_crypto_tokens.push_back(temp);
     }
 
-    exception = SecurityException("Not implemented"); 
-    return false;
+    return true;
 }
      
 bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
-            const ParticipantCryptoHandle &local_participant_crypto,
-            const ParticipantCryptoHandle &remote_participant_crypto,
+            ParticipantCryptoHandle &local_participant_crypto,
+            ParticipantCryptoHandle &remote_participant_crypto,
             const ParticipantCryptoTokenSeq &remote_participant_tokens,
             SecurityException &exception){
+
+    AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto);
+    AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
+    //Suposedly remote_participant_tokens holds only one element
+    if(remote_participant_tokens.size() != 1){
+        exception = SecurityException("Incorrect remote CryptoSequence length");
+        return false;
+    }
+    if(remote_participant_tokens.at(0).class_id() != "DDS:Crypto:AES_GCM_GMAC"){
+        exception = SecurityException("Incorrect token type");
+        return false;
+    }
+    if(remote_participant_tokens.at(0).binary_properties().size() !=1 | remote_participant_tokens.at(0).properties().size() != 0 |
+            remote_participant_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat"){
+        exception = SecurityException("Malformed CryptoToken");
+        return false;
+    }
+    //Valid CryptoToken
+    std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_participant_tokens.at(0).binary_properties().at(0).value(),
+            remote_participant->Participant2ParticipantKxKeyMaterial.at(0)->master_sender_key);
+    
+    KeyMaterial_AES_GCM_GMAC *keymat = new KeyMaterial_AES_GCM_GMAC();
+    *keymat = KeyMaterialCDRDeserialize(&plaintext); 
+    local_participant->RemoteParticipant2ParticipantKeyMaterial.push_back(keymat);
+    remote_participant->RemoteParticipant2ParticipantKeyMaterial.push_back(keymat);
 
     exception = SecurityException("Not implemented"); 
     return false;
