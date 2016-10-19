@@ -45,7 +45,7 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
         BinaryProperty prop;
         prop.name() = std::string("dds.cryp.keymat");
         std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_participant->Participant2ParticipantKeyMaterial.at(0));
-        prop.value() = aes_128_gcm_encrypt(plaintext, remote_participant->master_sender_key); 
+        prop.value() = aes_128_gcm_encrypt(plaintext, remote_participant->Participant2ParticipantKxKeyMaterial.at(0)->master_sender_key); 
 
         temp.binary_properties().push_back(prop);
         local_participant_crypto_tokens.push_back(temp);
@@ -159,12 +159,12 @@ KeyMaterial_AES_GCM_GMAC buffer;
     return buffer;
 }
 
-std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_encrypt(std::vector<uint8_t> plaintext, std::string key){
+std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_encrypt(std::vector<uint8_t> plaintext, std::array<uint8_t,32> key){
     
     OpenSSL_add_all_ciphers();
     int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
 
-    size_t enc_length = plaintext.length()*3;
+    size_t enc_length = plaintext.size()*3;
     std::vector<uint8_t> output;
     output.resize(enc_length,'\0');
 
@@ -175,8 +175,8 @@ std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_encrypt(std::vector<uin
     
     int actual_size=0, final_size=0;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)key.c_str(), iv);
-    EVP_EncryptUpdate(e_ctx, &output[32], &actual_size, (const unsigned char*)plaintext.data(), plaintext.length());
+    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)key.data(), iv);
+    EVP_EncryptUpdate(e_ctx, &output[32], &actual_size, (const unsigned char*)plaintext.data(), plaintext.size());
     EVP_EncryptFinal(e_ctx, &output[32+actual_size], &final_size);
     EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
     std::copy(iv,iv+16, output.begin());
