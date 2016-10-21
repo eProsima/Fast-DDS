@@ -44,7 +44,7 @@ SAMPLECONFIG_MULTIMEDIA_TARGET= bin/SampleConfig_Multimedia
 
 SAMPLECONFIG_MULTIMEDIA_SRC_CXXFILES=
 
-SAMPLECONFIG_MULTIMEDIA_SRC_CPPFILES= SampleConfig_Multimedia/sampleconfig_triggers.cpp \
+SAMPLECONFIG_MULTIMEDIA_SRC_CPPFILES= SampleConfig_Multimedia/sampleconfig_fastest.cpp \
 				SampleConfig_Multimedia/sample.cxx \
 				SampleConfig_Multimedia/samplePubSubTypes.cxx
 # Project sources are copied to the current directory
