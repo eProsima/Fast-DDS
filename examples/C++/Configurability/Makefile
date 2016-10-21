@@ -79,6 +79,8 @@ LAUNCHER_SOURCES_DIRS= $(shell echo $(LAUNCHER_SOURCES_DIRS_AUX) | tr " " "\n" |
 LAUNCHER_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(LAUNCHER_SRCS))), output/$(obj))
 LAUNCHER_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(LAUNCHER_SRCS))), output/$(dep))
 
+ALL_SOURCE_DIRS = $(CONFPUB_SOURCES_DIRS) $(CONFSUB_SOURCES_DIRS) $(LAUNCHER_SOURCES_DIRS)
+
 OBJS+=  $(CONFPUB_OBJS)
 DEPS+=  $(CONFPUB_DEPS)
 
@@ -103,8 +105,9 @@ ConfigurabilityLauncher: $(CONFLAUNCHER_TARGET)
 $(CONFLAUNCHER_TARGET): $(LAUNCHER_OBJS)
 	$(LN) $(LDFLAGS) -o $(CONFLAUNCHER_TARGET) $(LAUNCHER_OBJS) $(LIBS)
 
-vpath %.cxx $(CONFPUB_SOURCES_DIRS) $(CONFSUB_SOURCES_DIRS) $(LAUNCHER_SOURCES_DIRS)
-vpath %.cpp $(CONFPUB_SOURCES_DIRS) ${CONFSUB_SOURCES_DIRS) $(LAUNCHER_SOURCES_DIRS)
+
+vpath %.cxx $(ALL_SOURCE_DIRS)
+vpath %.cpp $(ALL_SOURCE_DIRS)
 
 output/%.cxx.o:%.cxx
 	@echo Calculating dependencies $<
