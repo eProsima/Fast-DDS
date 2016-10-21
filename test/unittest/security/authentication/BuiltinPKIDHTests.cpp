@@ -12,15 +12,235 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "AuthenticationPluginTests.hpp"
 
 #include "../../../../src/cpp/security/authentication/PKIIdentityHandle.h"
+#include "../../../../src/cpp/security/authentication/PKIHandshakeHandle.h"
+#include <fastrtps/rtps/messages/CDRMessage.h>
 
 #include <iostream>
 #include <openssl/pem.h>
 
-#include "AuthenticationPluginTests.hpp"
-
 static const char* certs_path = nullptr;
+
+PropertyPolicy AuthenticationPluginTest::get_valid_policy()
+{
+    PropertyPolicy property_policy;
+    
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+
+    return property_policy;
+}
+
+PropertyPolicy AuthenticationPluginTest::get_wrong_policy()
+{
+    PropertyPolicy property_policy;
+
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/seccacert.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+
+    return property_policy;
+}
+
+void AuthenticationPluginTest::check_local_identity_handle(const IdentityHandle& handle)
+{
+    const PKIIdentityHandle& h = PKIIdentityHandle::narrow(handle);
+    ASSERT_TRUE(h.nil() == false);
+}
+
+void AuthenticationPluginTest::check_remote_identity_handle(const IdentityHandle& handle)
+{
+    const PKIIdentityHandle& h = PKIIdentityHandle::narrow(handle);
+    ASSERT_TRUE(h.nil() == false);
+}
+
+void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHandle& handle, const HandshakeMessageToken& message)
+{
+    const PKIHandshakeHandle& handshake_handle = PKIHandshakeHandle::narrow(handle);
+    ASSERT_TRUE(handshake_handle.nil() == false);
+    const std::vector<uint8_t>* cid = DataHolderHelper::find_binary_property_value(message, "c.id");
+    ASSERT_TRUE(cid != nullptr);
+    // Read certificate.
+    BIO* cid_in = BIO_new_mem_buf(cid->data(), cid->size());
+    ASSERT_TRUE(cid_in != nullptr);
+    X509* cid_cert = PEM_read_bio_X509_AUX(cid_in, NULL, NULL, NULL);
+    ASSERT_TRUE(cid_cert != nullptr);
+    ASSERT_TRUE(X509_cmp((*handshake_handle->local_identity_handle_)->cert_, cid_cert) == 0);
+
+
+    const std::vector<uint8_t>* csign_alg = DataHolderHelper::find_binary_property_value(message, "c.dsign_algo");
+    ASSERT_TRUE(csign_alg != nullptr);
+    std::string sign_alg(csign_alg->begin(), csign_alg->end());
+    ASSERT_TRUE(sign_alg.compare("ECDSA-SHA256") == 0 ||
+            sign_alg.compare("RSASSA-PSS-SHA256") == 0);
+
+    const std::vector<uint8_t>* ckagree_alg = DataHolderHelper::find_binary_property_value(message, "c.kagree_algo");
+    ASSERT_TRUE(ckagree_alg != nullptr);
+    std::string kagree_alg(ckagree_alg->begin(), ckagree_alg->end());
+    ASSERT_TRUE(kagree_alg.compare("DH+MODP-2048-256") == 0 ||
+            kagree_alg.compare("ECDH+prime256v1-CEUM") == 0);
+
+    const std::vector<uint8_t>* hash_c1 = DataHolderHelper::find_binary_property_value(message, "hash_c1");
+    ASSERT_TRUE(hash_c1 != nullptr);
+    ASSERT_TRUE(hash_c1->size() == SHA256_DIGEST_LENGTH);
+    // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
+    CDRMessage_t cdrmessage(BinaryPropertyHelper::serialized_size(message.binary_properties())+ 3);
+    cdrmessage.msg_endian = BIGEND;
+    CDRMessage::addBinaryPropertySeq(&cdrmessage, message.binary_properties(), "hash_c1");
+    unsigned char md[SHA256_DIGEST_LENGTH];
+    ASSERT_TRUE(EVP_Digest(cdrmessage.buffer, cdrmessage.length, md, NULL, EVP_sha256(), NULL));
+    ASSERT_TRUE(memcmp(md, hash_c1->data(), SHA256_DIGEST_LENGTH) == 0);
+
+    const std::vector<uint8_t>* dh1 = DataHolderHelper::find_binary_property_value(message, "dh1");
+    ASSERT_TRUE(dh1 != nullptr);
+    uint32_t length = 0;
+    if(DEFAULT_ENDIAN == BIGEND)
+    {
+        ((char*)&length)[0] = dh1->data()[0];
+        ((char*)&length)[1] = dh1->data()[1];
+        ((char*)&length)[2] = dh1->data()[2];
+        ((char*)&length)[3] = dh1->data()[3];
+    }
+    else
+    {
+        ((char*)&length)[0] = dh1->data()[3];
+        ((char*)&length)[1] = dh1->data()[2];
+        ((char*)&length)[2] = dh1->data()[1];
+        ((char*)&length)[3] = dh1->data()[0];
+    }
+    BIGNUM* bn = BN_new();
+    ASSERT_TRUE(BN_bin2bn(dh1->data() + 4, length, bn) !=  nullptr);
+    DH* dh = EVP_PKEY_get1_DH(handshake_handle->dhkeys_);
+    ASSERT_TRUE(dh != nullptr);
+    int check_result;
+    ASSERT_TRUE(DH_check_pub_key(dh, bn, &check_result));
+    ASSERT_TRUE(!check_result);
+    BN_free(bn);
+
+    const std::vector<uint8_t>* challenge1 = DataHolderHelper::find_binary_property_value(message, "challenge1");
+    ASSERT_TRUE(challenge1 != nullptr);
+}
+
+void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHandle& handle, const HandshakeMessageToken& message,
+        const HandshakeMessageToken& request_message)
+{
+    const PKIHandshakeHandle& handshake_handle = PKIHandshakeHandle::narrow(handle);
+    ASSERT_TRUE(handshake_handle.nil() == false);
+    const std::vector<uint8_t>* cid = DataHolderHelper::find_binary_property_value(message, "c.id");
+    ASSERT_TRUE(cid != nullptr);
+    // Read certificate.
+    BIO* cid_in = BIO_new_mem_buf(cid->data(), cid->size());
+    ASSERT_TRUE(cid_in != nullptr);
+    X509* cid_cert = PEM_read_bio_X509_AUX(cid_in, NULL, NULL, NULL);
+    ASSERT_TRUE(cid_cert != nullptr);
+    ASSERT_TRUE(X509_cmp((*handshake_handle->local_identity_handle_)->cert_, cid_cert) == 0);
+
+
+    const std::vector<uint8_t>* csign_alg = DataHolderHelper::find_binary_property_value(message, "c.dsign_algo");
+    ASSERT_TRUE(csign_alg != nullptr);
+    std::string sign_alg(csign_alg->begin(), csign_alg->end());
+    ASSERT_TRUE(sign_alg.compare("ECDSA-SHA256") == 0 ||
+            sign_alg.compare("RSASSA-PSS-SHA256") == 0);
+
+    const std::vector<uint8_t>* ckagree_alg = DataHolderHelper::find_binary_property_value(message, "c.kagree_algo");
+    ASSERT_TRUE(ckagree_alg != nullptr);
+    std::string kagree_alg(ckagree_alg->begin(), ckagree_alg->end());
+    ASSERT_TRUE(kagree_alg.compare("DH+MODP-2048-256") == 0 ||
+            kagree_alg.compare("ECDH+prime256v1-CEUM") == 0);
+
+    const std::vector<uint8_t>* hash_c2 = DataHolderHelper::find_binary_property_value(message, "hash_c2");
+    ASSERT_TRUE(hash_c2 != nullptr);
+    ASSERT_TRUE(hash_c2->size() == SHA256_DIGEST_LENGTH);
+    // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
+    CDRMessage_t cdrmessage(BinaryPropertyHelper::serialized_size(message.binary_properties())+ 3);
+    cdrmessage.msg_endian = BIGEND;
+    CDRMessage::addBinaryPropertySeq(&cdrmessage, message.binary_properties(), "hash_c2");
+    unsigned char md[SHA256_DIGEST_LENGTH];
+    ASSERT_TRUE(EVP_Digest(cdrmessage.buffer, cdrmessage.length, md, NULL, EVP_sha256(), NULL));
+    ASSERT_TRUE(memcmp(md, hash_c2->data(), SHA256_DIGEST_LENGTH) == 0);
+
+    const std::vector<uint8_t>* dh2 = DataHolderHelper::find_binary_property_value(message, "dh2");
+    ASSERT_TRUE(dh2 != nullptr);
+    uint32_t length = 0;
+    if(DEFAULT_ENDIAN == BIGEND)
+    {
+        ((char*)&length)[0] = dh2->data()[0];
+        ((char*)&length)[1] = dh2->data()[1];
+        ((char*)&length)[2] = dh2->data()[2];
+        ((char*)&length)[3] = dh2->data()[3];
+    }
+    else
+    {
+        ((char*)&length)[0] = dh2->data()[3];
+        ((char*)&length)[1] = dh2->data()[2];
+        ((char*)&length)[2] = dh2->data()[1];
+        ((char*)&length)[3] = dh2->data()[0];
+    }
+    BIGNUM* bn = BN_new();
+    ASSERT_TRUE(BN_bin2bn(dh2->data() + 4, length, bn) !=  nullptr);
+    DH* dh = EVP_PKEY_get1_DH(handshake_handle->dhkeys_);
+    ASSERT_TRUE(dh != nullptr);
+    int check_result;
+    ASSERT_TRUE(DH_check_pub_key(dh, bn, &check_result));
+    ASSERT_TRUE(!check_result);
+    BN_free(bn);
+
+    const std::vector<uint8_t>* hash_c1 = DataHolderHelper::find_binary_property_value(message, "hash_c1");
+    ASSERT_TRUE(hash_c1 != nullptr);
+    const std::vector<uint8_t>* request_hash_c1 = DataHolderHelper::find_binary_property_value(request_message, "hash_c1");
+    ASSERT_TRUE(request_hash_c1 != nullptr);
+    ASSERT_TRUE(*hash_c1 == *request_hash_c1);
+
+    const std::vector<uint8_t>* dh1 = DataHolderHelper::find_binary_property_value(message, "dh1");
+    ASSERT_TRUE(dh1 != nullptr);
+    const std::vector<uint8_t>* request_dh1 = DataHolderHelper::find_binary_property_value(request_message, "dh1");
+    ASSERT_TRUE(request_dh1 != nullptr);
+    ASSERT_TRUE(*dh1 == *request_dh1);
+
+    const std::vector<uint8_t>* challenge1 = DataHolderHelper::find_binary_property_value(message, "challenge1");
+    ASSERT_TRUE(challenge1 != nullptr);
+    const std::vector<uint8_t>* request_challenge1 = DataHolderHelper::find_binary_property_value(request_message, "challenge1");
+    ASSERT_TRUE(request_challenge1 != nullptr);
+    ASSERT_TRUE(*challenge1 == *request_challenge1);
+
+    const std::vector<uint8_t>* challenge2 = DataHolderHelper::find_binary_property_value(message, "challenge2");
+    ASSERT_TRUE(challenge2 != nullptr);
+
+    const std::vector<uint8_t>* signature = DataHolderHelper::find_binary_property_value(message, "signature");
+    ASSERT_TRUE(signature != nullptr);
+    // signature
+    CDRMessage_t cdrmessage2(BinaryPropertyHelper::serialized_size(message.binary_properties()));
+    cdrmessage2.msg_endian = BIGEND;
+    // add sequence length
+    CDRMessage::addUInt32(&cdrmessage2, 6);
+    //add hash_c2
+    CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(message, "hash_c2"));
+    //add challenge2
+    CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(message, "challenge2"));
+    //add dh2
+    CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(message, "dh2"));
+    //add challenge1
+    CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(message, "challenge1"));
+    //add dh1
+    CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(message, "dh1"));
+    //add hash_c1
+    CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(message, "hash_c1"));
+    EVP_MD_CTX ctx;
+    EVP_MD_CTX_init(&ctx);
+    ASSERT_TRUE(EVP_DigestVerifyInit(&ctx, NULL, EVP_sha256(), NULL, (*handshake_handle->local_identity_handle_)->pkey_) == 1);
+    ASSERT_TRUE(EVP_DigestVerifyUpdate(&ctx, cdrmessage2.buffer, cdrmessage2.length) == 1);
+    ASSERT_TRUE(EVP_DigestVerifyFinal(&ctx, signature->data(), signature->size()) == 1);
+    EVP_MD_CTX_cleanup(&ctx);
+}
 
 TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok_with_pwd)
 {
@@ -42,8 +262,10 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok_with_pwd)
         emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
                     "file://" + std::string(certs_path) + "/pwdpubcert.pem"));
     participant_attr.properties.properties().
-        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.password",
-                    "file://" + std::string(certs_path) + "testkey"));
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/pwdpubkey.pem"));
+    participant_attr.properties.properties().
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.password", "testkey"));
 
     result = plugin->validate_local_identity(&local_identity_handle,
             adjusted_participant_key,
@@ -76,6 +298,9 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_identity_ca)
     participant_attr.properties.properties().
         emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
                     "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    participant_attr.properties.properties().
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
 
     result = plugin->validate_local_identity(&local_identity_handle,
             adjusted_participant_key,
@@ -108,37 +333,8 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_identity_certific
     participant_attr.properties.properties().
         emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
                     "file://" + std::string(certs_path) + "/wrongpubcert.pem"));
-
-    result = plugin->validate_local_identity(&local_identity_handle,
-            adjusted_participant_key,
-            domain_id,
-            participant_attr,
-            candidate_participant_key,
-            exception);
-
-    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_FAILED);
-    ASSERT_TRUE(local_identity_handle == nullptr);
-    ASSERT_TRUE(adjusted_participant_key == GUID_t::unknown());
-}
-
-TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_validation)
-{
-    ASSERT_TRUE(plugin != nullptr);
-
-    IdentityHandle* local_identity_handle = nullptr;
-    GUID_t adjusted_participant_key;
-    uint32_t domain_id = 0;
-    RTPSParticipantAttributes participant_attr;
-    GUID_t candidate_participant_key;
-    SecurityException exception;
-    ValidationResult_t result= ValidationResult_t::VALIDATION_FAILED;
-
-    fill_candidate_participant_key(candidate_participant_key);
     participant_attr.properties.properties().
-        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-                    "file://" + std::string(certs_path) + "/seccacert.pem"));
-    participant_attr.properties.properties().
-        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
                     "file://" + std::string(certs_path) + "/mainpubcert.pem"));
 
     result = plugin->validate_local_identity(&local_identity_handle,
@@ -172,6 +368,9 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_revoked_certificate)
     participant_attr.properties.properties().
         emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
                     "file://" + std::string(certs_path) + "/revokedpubcert.pem"));
+    participant_attr.properties.properties().
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/revokedpubkey.pem"));
     participant_attr.properties.properties().
         emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_crl",
                     "file://" + std::string(certs_path) + "/maincrl.pem"));
@@ -207,6 +406,9 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_revoked_certificate_wit
     participant_attr.properties.properties().
         emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
                     "file://" + std::string(certs_path) + "/revokedpubcert.pem"));
+    participant_attr.properties.properties().
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/revokedpubkey.pem"));
 
     result = plugin->validate_local_identity(&local_identity_handle,
             adjusted_participant_key,
@@ -239,6 +441,9 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_expired_certificate)
     participant_attr.properties.properties().
         emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
                     "file://" + std::string(certs_path) + "/expiredpubcert.pem"));
+    participant_attr.properties.properties().
+        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/expiredpubkey.pem"));
 
     result = plugin->validate_local_identity(&local_identity_handle,
             adjusted_participant_key,
@@ -252,74 +457,6 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_expired_certificate)
     ASSERT_TRUE(adjusted_participant_key == GUID_t::unknown());
 }
 
-TEST_F(AuthenticationPluginTest, begin_handshake_request_ok)
-{
-    ASSERT_TRUE(plugin != nullptr);
-
-    IdentityHandle* local_identity_handle = nullptr;
-    GUID_t adjusted_participant_key;
-    uint32_t domain_id = 0;
-    RTPSParticipantAttributes participant_attr;
-    GUID_t candidate_participant_key;
-    SecurityException exception;
-    ValidationResult_t result= ValidationResult_t::VALIDATION_FAILED;
-
-    participant_attr.properties.properties().
-        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-                    "file://" + std::string(certs_path) + "/maincacert.pem"));
-    participant_attr.properties.properties().
-        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
-
-    result = plugin->validate_local_identity(&local_identity_handle,
-            adjusted_participant_key,
-            domain_id,
-            participant_attr,
-            candidate_participant_key,
-            exception);
-
-    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK);
-
-    IdentityHandle* remote_identity_handle = nullptr;
-    IdentityToken remote_identity_token;
-    GUID_t remote_participant_key;
-
-    result = plugin->validate_remote_identity(&remote_identity_handle,
-            *local_identity_handle,
-            remote_identity_token,
-            remote_participant_key,
-            exception);
-
-    PKIIdentityHandle& local_identity_handle_handle = PKIIdentityHandle::narrow(*local_identity_handle);
-    ASSERT_TRUE(local_identity_handle_handle.nil() == false);
-
-    HandshakeHandle* handshake_handle = nullptr;
-    HandshakeMessageToken handshake_message;
-
-    result = plugin->begin_handshake_request(&handshake_handle,
-            handshake_message,
-            *local_identity_handle,
-            *remote_identity_handle,
-            exception);
-
-    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK);
-
-    std::vector<uint8_t>* cid = DataHolderHelper::find_binary_property(handshake_message, "c.id");
-    ASSERT_TRUE(cid != nullptr);
-    // Read certificate.
-    BIO* cid_in = BIO_new_mem_buf(cid->data(), cid->size());
-    ASSERT_TRUE(cid_in != nullptr);
-    X509* cid_cert = PEM_read_bio_X509_AUX(cid_in, NULL, NULL, NULL);
-    ASSERT_TRUE(cid_cert != nullptr);
-    ASSERT_TRUE(X509_cmp(local_identity_handle_handle->cert_, cid_cert) == 0);
-
-
-    std::vector<uint8_t>* csign_alg = DataHolderHelper::find_binary_property(handshake_message, "c.dsign_algo");
-    ASSERT_TRUE(csign_alg != nullptr);
-    std::string sign_alg(csign_alg->begin(), csign_alg->end());
-    ASSERT_TRUE(sign_alg.compare("ECDSA-SHA256") == 0);
-}
-
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
@@ -331,13 +468,6 @@ int main(int argc, char **argv)
         std::cout << "Cannot get enviroment variable CERTS_PATH" << std::endl;
         exit(-1);
     }
-
-    AuthenticationPluginTest::property_policy.properties().
-        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-                    "file://" + std::string(certs_path) + "/maincacert.pem"));
-    AuthenticationPluginTest::property_policy.properties().
-        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
 
     return RUN_ALL_TESTS();
 }

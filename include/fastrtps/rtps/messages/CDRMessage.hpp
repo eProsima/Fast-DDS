@@ -679,10 +679,8 @@ inline bool CDRMessage::addProperty(CDRMessage_t* msg, const Property& property)
 inline bool CDRMessage::addBinaryProperty(CDRMessage_t* msg, const BinaryProperty& binary_property)
 {
     if(binary_property.propagate())
-    {
         return CDRMessage::addString(msg, binary_property.name()) &&
             CDRMessage::addOctetVector(msg, &binary_property.value());
-    }
 
     return true;
 }
@@ -709,10 +707,45 @@ inline bool CDRMessage::addBinaryPropertySeq(CDRMessage_t* msg, const BinaryProp
 
     if(msg->pos + 4 <  msg->max_size)
     {
-        if(CDRMessage::addUInt32(msg, (uint32_t)binary_properties.size()))
+        uint32_t number_to_serialize = 0;
+        for(auto it = binary_properties.begin(); it != binary_properties.end(); ++it)
+            if(it->propagate())
+                ++number_to_serialize;
+
+        if(CDRMessage::addUInt32(msg, number_to_serialize))
         {
+            returnedValue = true;
             for(auto it = binary_properties.begin(); returnedValue && it != binary_properties.end(); ++it)
-                returnedValue = CDRMessage::addBinaryProperty(msg, *it);
+                if(it->propagate())
+                    returnedValue = CDRMessage::addBinaryProperty(msg, *it);
+        }
+    }
+
+    return returnedValue;
+}
+
+inline bool CDRMessage::addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties, const std::string& property_limit)
+{
+    bool returnedValue = false;
+
+    if(msg->pos + 4 <  msg->max_size)
+    {
+        uint32_t position = 0;
+        uint32_t number_to_serialize = 0;
+        for(auto it = binary_properties.begin(); it != binary_properties.end() &&
+                it->name().compare(property_limit) != 0; ++it)
+        {
+            if(it->propagate())
+                ++number_to_serialize;
+            ++position;
+        }
+
+        if(CDRMessage::addUInt32(msg, number_to_serialize))
+        {
+            returnedValue = true;
+            for(uint32_t i = 0; returnedValue && i < position; ++i)
+                if(binary_properties.at(i).propagate())
+                    returnedValue = CDRMessage::addBinaryProperty(msg, binary_properties.at(i));
         }
     }
 

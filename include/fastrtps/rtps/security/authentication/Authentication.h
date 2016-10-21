@@ -39,6 +39,7 @@ enum ValidationResult_t : uint32_t
     VALIDATION_PENDING_RETRY,
     VALIDATION_PENDING_HANDSHAKE_REQUEST,
     VALIDATION_PENDING_HANDSHAKE_MESSAGE,
+    VALIDATION_PENDING_CHALLENGE_MESSAGE,
     VALIDATION_OK_FINAL_MESSAGE
 };
 
@@ -107,7 +108,7 @@ class Authentication
          * @result Validation status.
          */
         virtual ValidationResult_t begin_handshake_request(HandshakeHandle** handshake_handle,
-                HandshakeMessageToken& handshake_message,
+                HandshakeMessageToken** handshake_message,
                 const IdentityHandle& initiator_identity_handle,
                 const IdentityHandle& replier_identity_handle,
                 SecurityException& exception) = 0;
@@ -127,9 +128,9 @@ class Authentication
          * @result Validation status.
          */
         virtual ValidationResult_t begin_handshake_reply(HandshakeHandle** handshake_handle,
-                HandshakeMessageToken& handshake_message_out,
+                HandshakeMessageToken** handshake_message_out,
                 const HandshakeMessageToken& handshake_message_in,
-                const IdentityHandle& initiator_identity_handle,
+                IdentityHandle& initiator_identity_handle,
                 const IdentityHandle& replier_identity_handle,
                 SecurityException& exception) = 0;
 

@@ -28,13 +28,21 @@ namespace fastrtps {
 namespace rtps {
 namespace security {
 
+static const char* const RSA_SHA256 = "RSASSA-PSS-SHA256";
+static const char* const ECDSA_SHA256 = "ECDSA-SHA256";
+
+static const char* const DH_2048_256 = "DH+MODP-2048-256";
+static const char* const ECDH_prime256v1 = "ECDH+prime256v1-CEUM";
+
 class PKIIdentity
 {
     public:
 
         PKIIdentity() : store_(nullptr),
-        cert_(nullptr), cert_content_(nullptr),
-        kagree_alg_("DH+MODP-2048-256")
+        cert_(nullptr), pkey_(nullptr),
+        cert_content_(nullptr),
+        kagree_alg_(DH_2048_256),
+        there_are_crls_(false)
         {}
 
         ~PKIIdentity()
@@ -45,6 +53,9 @@ class PKIIdentity
             if(cert_ != nullptr)
                 X509_free(cert_);
 
+            if(pkey_ != nullptr)
+                EVP_PKEY_free(pkey_);
+
             if(cert_content_ != nullptr)
                 BUF_MEM_free(cert_content_);
         }
@@ -54,10 +65,12 @@ class PKIIdentity
 
         X509_STORE* store_;
         X509* cert_;
+        EVP_PKEY* pkey_;
         GUID_t participant_key_;
         BUF_MEM* cert_content_;
         std::string sign_alg_;
         std::string kagree_alg_;
+        bool there_are_crls_;
 };
 
 typedef HandleImpl<PKIIdentity> PKIIdentityHandle;

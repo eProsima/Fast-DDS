@@ -114,6 +114,7 @@ if(SECURITY)
         rtps/security/SecurityPluginFactory.cpp
         security/authentication/PKIDH.cpp
         security/authentication/PKIIdentityHandle.cpp
+        security/authentication/PKIHandshakeHandle.cpp
         )
 
     include_directories(${OPENSSL_INCLUDE_DIR})

@@ -120,6 +120,7 @@ namespace CDRMessage{
       inline bool addBinaryProperty(CDRMessage_t* msg, const BinaryProperty& binary_property);
       inline bool addPropertySeq(CDRMessage_t* msg, const PropertySeq& properties);
       inline bool addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties);
+      inline bool addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties, const std::string& property_limit);
 }
 
 }

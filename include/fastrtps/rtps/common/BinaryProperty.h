@@ -20,6 +20,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 
 namespace eprosima {
 namespace fastrtps {

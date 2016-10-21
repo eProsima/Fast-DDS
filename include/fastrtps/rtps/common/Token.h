@@ -99,7 +99,13 @@ class DataHolderHelper
 {
     public:
 
-        static std::vector<uint8_t>* find_binary_property(DataHolder& data_holder, const std::string& name);
+        static std::vector<uint8_t>* find_binary_property_value(DataHolder& data_holder, const std::string& name);
+
+        static const std::vector<uint8_t>* find_binary_property_value(const DataHolder& data_holder, const std::string& name);
+
+        static BinaryProperty* find_binary_property(DataHolder& data_holder, const std::string& name);
+
+        static const BinaryProperty* find_binary_property(const DataHolder& data_holder, const std::string& name);
 };
 
 } //namespace rtps
