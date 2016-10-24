@@ -93,12 +93,9 @@ class  ParticipantKeyHandle
                     if( *it != nullptr )    delete(*it);
                 }            
             }
-            if(!RemoteParticipant2ParticipantKeyMaterial.empty()){
-                for(std::vector<KeyMaterial_AES_GCM_GMAC*>::iterator it = RemoteParticipant2ParticipantKeyMaterial.begin(); it != RemoteParticipant2ParticipantKeyMaterial.end(); it++){
-                    if( *it != nullptr )    delete(*it);
-                }            
-            }
-        }    
+        }
+
+
         static const char* const class_id_;
 
         KeyMaterial_AES_GCM_GMAC* ParticipantKeyMaterial;

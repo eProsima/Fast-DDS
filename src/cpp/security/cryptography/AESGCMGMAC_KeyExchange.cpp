@@ -36,9 +36,11 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
             ParticipantCryptoHandle &remote_participant_crypto,
             SecurityException &exception){
     
+    
+    AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto);
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
     
-    //ParticipantKeyMaterial
+    //Participant2ParticipantKeyMaterial will be come RemoteParticipant2ParticipantKeyMaterial
     {
         ParticipantCryptoToken temp;
         temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
@@ -50,7 +52,7 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
         temp.binary_properties().push_back(prop);
         local_participant_crypto_tokens.push_back(temp);
     }
-
+    
     return true;
 }
      

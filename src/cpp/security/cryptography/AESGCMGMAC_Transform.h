@@ -22,12 +22,22 @@
 #include <fastrtps/rtps/security/cryptography/CryptoTransform.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
 
+#include <map>
 #include "AESGCMGMAC_Types.h"
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 namespace security {
+
+struct CipherData{
+
+    CryptoTransformKeyId master_key_id;
+    uint32_t session_id;
+    std::array<uint8_t,32> SessionKey;
+    uint64_t session_block_counter;
+    uint64_t max_blocks_per_session;
+};
 
 class AESGCMGMAC_Transform : public CryptoTransform
 {
@@ -60,7 +70,7 @@ class AESGCMGMAC_Transform : public CryptoTransform
     bool encode_rtps_message(
                 std::vector<uint8_t> &encoded_rtps_message,
                 const std::vector<uint8_t> &plain_rtps_message,
-                const ParticipantCryptoHandle &sending_crypto,
+                ParticipantCryptoHandle &sending_crypto,
                 const std::vector<ParticipantCryptoHandle> &receiving_crypto_list,
                 SecurityException &exception);
 
@@ -102,6 +112,9 @@ class AESGCMGMAC_Transform : public CryptoTransform
                 const DatawriterCryptoHandle &sending_datawriter_crypto,
                 SecurityException &exception);
 
+    private:
+
+    std::map<CryptoTransformKeyId, CipherData> status;
 
 };
 

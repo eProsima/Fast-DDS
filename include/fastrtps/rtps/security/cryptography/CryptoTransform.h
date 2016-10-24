@@ -89,7 +89,7 @@ class CryptoTransform
         virtual bool encode_rtps_message(
                 std::vector<uint8_t> &encoded_rtps_message,
                 const std::vector<uint8_t> &plain_rtps_message,
-                const ParticipantCryptoHandle &sending_crypto,
+                ParticipantCryptoHandle &sending_crypto,
                 const std::vector<ParticipantCryptoHandle> &receiving_crypto_list,
                 SecurityException &exception) = 0;
 
