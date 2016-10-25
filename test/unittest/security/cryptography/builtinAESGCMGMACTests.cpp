@@ -58,7 +58,7 @@ bool CryptographyPluginTest::check_localparticipanthandle(PropertySeq &propertie
     if(local_participant->ParticipantKeyMaterial->receiver_specific_key_id
 
     */
-    if( std::all_of(local_participant->ParticipantKeyMaterial->master_receiver_specific_key.begin(),local_participant->ParticipantKeyMaterial->master_receiver_specific_key.end(), [](uint8_t i){return i==0;}) ) {
+    if( std::any_of(local_participant->ParticipantKeyMaterial->master_receiver_specific_key.begin(),local_participant->ParticipantKeyMaterial->master_receiver_specific_key.end(), [](uint8_t i){return i!=0;}) ) {
         std::cout << "ParticipantKeyMaterial as receiver_key set when it shouldnt" << std::endl;
         result = false;
     }

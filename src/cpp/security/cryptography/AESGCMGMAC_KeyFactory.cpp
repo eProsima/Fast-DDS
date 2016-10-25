@@ -34,10 +34,10 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_local_participant(
                 SecurityException &exception){
 //Create ParticipantKeyMaterial and return a handle
     AESGCMGMAC_ParticipantCryptoHandle* PCrypto = nullptr;
-    if( (!participant_identity.nil()) | (!participant_permissions.nil()) ){
-        exception = SecurityException("Invalid input parameters");
-        return nullptr;
-    }
+    //if( (!participant_identity.nil()) | (!participant_permissions.nil()) ){
+    //    exception = SecurityException("Invalid input parameters");
+    //    return nullptr;
+    //}
 
     PCrypto = new AESGCMGMAC_ParticipantCryptoHandle();
     (*PCrypto)->ParticipantKeyMaterial = new KeyMaterial_AES_GCM_GMAC();

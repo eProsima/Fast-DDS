@@ -33,7 +33,7 @@ AESGCMGMAC::AESGCMGMAC(const PropertyPolicy& property_policy)
     
     //Init OpenSSL libcrypto
     ERR_load_crypto_strings();
-    OpenSSL_add_all_algorithms();
+    //OpenSSL_add_all_algorithms();
     OPENSSL_config(NULL);
 
 }
@@ -41,9 +41,9 @@ AESGCMGMAC::AESGCMGMAC(const PropertyPolicy& property_policy)
 AESGCMGMAC::~AESGCMGMAC(){
     
     //Breakdown OpenSSL libcrypto
-    EVP_cleanup();
-    CRYPTO_cleanup_all_ex_data();
-    ERR_free_strings();
+    //EVP_cleanup();
+    //CRYPTO_cleanup_all_ex_data();
+    //ERR_free_strings();
 
 
 }
