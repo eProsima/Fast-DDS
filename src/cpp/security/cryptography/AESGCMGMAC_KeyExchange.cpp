@@ -47,7 +47,7 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
         BinaryProperty prop;
         prop.name() = std::string("dds.cryp.keymat");
         std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_participant->Participant2ParticipantKeyMaterial.at(0));
-        prop.value() = aes_128_gcm_encrypt(plaintext, remote_participant->Participant2ParticipantKxKeyMaterial.at(0)->master_sender_key); 
+        prop.value() = aes_128_gcm_encrypt(plaintext, remote_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key); 
 
         temp.binary_properties().push_back(prop);
         local_participant_crypto_tokens.push_back(temp);
@@ -80,10 +80,10 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
     }
     //Valid CryptoToken
     std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_participant_tokens.at(0).binary_properties().at(0).value(),
-            remote_participant->Participant2ParticipantKxKeyMaterial.at(0)->master_sender_key);
+            remote_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
     
-    KeyMaterial_AES_GCM_GMAC *keymat = new KeyMaterial_AES_GCM_GMAC();
-    *keymat = KeyMaterialCDRDeserialize(&plaintext); 
+    KeyMaterial_AES_GCM_GMAC keymat;
+    keymat = KeyMaterialCDRDeserialize(&plaintext); 
     local_participant->RemoteParticipant2ParticipantKeyMaterial.push_back(keymat);
     remote_participant->RemoteParticipant2ParticipantKeyMaterial.push_back(keymat);
 
@@ -129,33 +129,33 @@ bool AESGCMGMAC_KeyExchange::return_crypto_tokens(
     return false;
 }
 
-std::vector<uint8_t> AESGCMGMAC_KeyExchange::KeyMaterialCDRSerialize(KeyMaterial_AES_GCM_GMAC *key){
+std::vector<uint8_t> AESGCMGMAC_KeyExchange::KeyMaterialCDRSerialize(KeyMaterial_AES_GCM_GMAC &key){
 
 std::vector<uint8_t> buffer;
     
     buffer.push_back(4);
     for(int i=0;i<4;i++){
-        buffer.push_back(key->transformation_kind[i]);
+        buffer.push_back(key.transformation_kind[i]);
     }
     buffer.push_back(2);
     for(int i=0;i<32;i++){
-        buffer.push_back(key->master_salt[i]);
+        buffer.push_back(key.master_salt[i]);
     }
     buffer.push_back(4);
     for(int i=0;i<4;i++){
-        buffer.push_back(key->sender_key_id[i]);
+        buffer.push_back(key.sender_key_id[i]);
     }
     buffer.push_back(32);
     for(int i=0;i<32;i++){
-        buffer.push_back(key->master_sender_key[i]);
+        buffer.push_back(key.master_sender_key[i]);
     }
     buffer.push_back(4);
     for(int i=0;i<4;i++){
-        buffer.push_back(key->receiver_specific_key_id[i]);
+        buffer.push_back(key.receiver_specific_key_id[i]);
     }
     buffer.push_back(32);
     for(int i=0;i<32;i++){
-        buffer.push_back(key->master_receiver_specific_key[i]);
+        buffer.push_back(key.master_receiver_specific_key[i]);
     }
 
     return buffer;

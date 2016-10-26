@@ -119,6 +119,7 @@ if(SECURITY)
         security/cryptography/AESGCMGMAC_Transform.cpp
         security/cryptography/AESGCMGMAC_Types.cpp
         security/authentication/PKIIdentityHandle.cpp
+        security/access/mockAccessHandle.cpp
         )
 
     include_directories(${OPENSSL_INCLUDE_DIR})

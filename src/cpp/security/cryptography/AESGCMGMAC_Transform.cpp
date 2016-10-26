@@ -73,17 +73,17 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     //Step 1 - Find the CriptoData associated to the Participant
     {
 
-        std::map<CryptoTransformKeyId,CipherData>::iterator it= status.find(local_participant->ParticipantKeyMaterial->sender_key_id);
+        std::map<CryptoTransformKeyId,CipherData>::iterator it= status.find(local_participant->ParticipantKeyMaterial.sender_key_id);
         if(it == status.end()){
             //First time the Participant sends data - Init struct
             CipherData new_data;
-            new_data.master_key_id = local_participant->ParticipantKeyMaterial->sender_key_id;
+            new_data.master_key_id = local_participant->ParticipantKeyMaterial.sender_key_id;
             RAND_bytes( (unsigned char *)(&(new_data.session_id)), sizeof(uint16_t));
             
             new_data.max_blocks_per_session= 12000;//TODO (Santi) - This ough to be configurable
             new_data.session_block_counter= new_data.max_blocks_per_session; //Set to maximum so computation of new SessionKey is triggered
-            status[local_participant->ParticipantKeyMaterial->sender_key_id] = new_data;
-            it= status.find(local_participant->ParticipantKeyMaterial->sender_key_id);
+            status[local_participant->ParticipantKeyMaterial.sender_key_id] = new_data;
+            it= status.find(local_participant->ParticipantKeyMaterial.sender_key_id);
             m_cipherdata = &(it->second);
         }else{
             m_cipherdata = &(it->second);
@@ -95,10 +95,10 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
 
         //Computation of SessionKey - Either because it has expired or because its the Participants first message
         unsigned char *source = (unsigned char*)malloc(32 + 10 + 32 + 2);
-        memcpy(source, local_participant->ParticipantKeyMaterial->master_sender_key.data(), 32); 
+        memcpy(source, local_participant->ParticipantKeyMaterial.master_sender_key.data(), 32); 
         char seq[] = "SessionKey";
         memcpy(source+32, seq, 10);
-        memcpy(source+32+10, local_participant->ParticipantKeyMaterial->master_salt.data(),32);
+        memcpy(source+32+10, local_participant->ParticipantKeyMaterial.master_salt.data(),32);
         memcpy(source+32+10+32, &(m_cipherdata->session_id),4);
 
         if(!EVP_Digest(source, 32+10+32+2, (unsigned char*)&(m_cipherdata->SessionKey), NULL, EVP_sha256(), NULL)){
@@ -121,8 +121,8 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     //Step 3 - Build SecureDataHeader
     SecureDataHeader header;
     
-    header.transform_identifier.transformation_kind = local_participant->ParticipantKeyMaterial->transformation_kind;
-    header.transform_identifier.transformation_key_id = local_participant->ParticipantKeyMaterial->sender_key_id;
+    header.transform_identifier.transformation_kind = local_participant->ParticipantKeyMaterial.transformation_kind;
+    header.transform_identifier.transformation_key_id = local_participant->ParticipantKeyMaterial.sender_key_id;
     memcpy( &(header.session_id), &(m_cipherdata->session_id), 4);
     memcpy( &(header.initialization_vector_suffix), &initialization_vector_suffix, 8);
 

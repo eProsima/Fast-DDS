@@ -72,7 +72,7 @@ class AESGCMGMAC_KeyFactory : public CryptoKeyFactory
                 SecurityException &exception);
 
         bool unregister_participant(
-                ParticipantCryptoHandle &participant_crypto_handle,
+                ParticipantCryptoHandle* participant_crypto_handle,
                 SecurityException &exception);
         
         bool unregister_datawriter(

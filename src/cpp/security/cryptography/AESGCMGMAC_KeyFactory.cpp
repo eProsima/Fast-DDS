@@ -27,30 +27,28 @@ using namespace eprosima::fastrtps::rtps::security;
 
 AESGCMGMAC_KeyFactory::AESGCMGMAC_KeyFactory(){}
 
-ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_local_participant(
+ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
                 const IdentityHandle &participant_identity, 
                 const PermissionsHandle &participant_permissions, 
                 const PropertySeq &participant_properties, 
-                SecurityException &exception){
-//Create ParticipantKeyMaterial and return a handle
+                SecurityException &exception)
+{
+
+    //Create ParticipantKeyMaterial and return a handle
     AESGCMGMAC_ParticipantCryptoHandle* PCrypto = nullptr;
-    //if( (!participant_identity.nil()) | (!participant_permissions.nil()) ){
-    //    exception = SecurityException("Invalid input parameters");
-    //    return nullptr;
-    //}
 
     PCrypto = new AESGCMGMAC_ParticipantCryptoHandle();
-    (*PCrypto)->ParticipantKeyMaterial = new KeyMaterial_AES_GCM_GMAC();
+    
     //Fill CryptoData
-    (*PCrypto)->ParticipantKeyMaterial->transformation_kind = 
+    (*PCrypto)->ParticipantKeyMaterial.transformation_kind = 
             std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM); //Configurability should be provided via participant_properties
-    (*PCrypto)->ParticipantKeyMaterial->master_salt.fill(0);
-    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial->master_salt.data(), 128 );  
-    (*PCrypto)->ParticipantKeyMaterial->sender_key_id = make_unique_KeyId();
-    (*PCrypto)->ParticipantKeyMaterial->master_sender_key.fill(0);
-    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial->master_sender_key.data(), 128 );
-    (*PCrypto)->ParticipantKeyMaterial->receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
-    (*PCrypto)->ParticipantKeyMaterial->master_receiver_specific_key.fill(0); 
+    (*PCrypto)->ParticipantKeyMaterial.master_salt.fill(0);
+    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial.master_salt.data(), 128 );  
+    (*PCrypto)->ParticipantKeyMaterial.sender_key_id = make_unique_KeyId();
+    (*PCrypto)->ParticipantKeyMaterial.master_sender_key.fill(0);
+    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial.master_sender_key.data(), 128 );
+    (*PCrypto)->ParticipantKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
+    (*PCrypto)->ParticipantKeyMaterial.master_receiver_specific_key.fill(0); 
     return PCrypto;
 }
         
@@ -71,38 +69,41 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     
     RPCrypto = new AESGCMGMAC_ParticipantCryptoHandle();  //This will be the remote participant crypto handle
    
-    KeyMaterial_AES_GCM_GMAC* buffer = new KeyMaterial_AES_GCM_GMAC();  //Buffer = Participant2ParticipantKeyMaterial
-    /*Fill values for Participant2ParticipantKey data*/
+    { //scope for temp var buffer
+        KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Participant2ParticipantKeyMaterial
+        /*Fill values for Participant2ParticipantKey data*/
 
-    //These values must match the ones in ParticipantKeymaterial
-    buffer->transformation_kind = local_participant_handle->ParticipantKeyMaterial->transformation_kind;
-    buffer->master_salt = local_participant_handle->ParticipantKeyMaterial->master_salt;
-    buffer->master_sender_key = local_participant_handle->ParticipantKeyMaterial->master_sender_key;
-    //Generation of remainder values (Remote specific key)
-    buffer->sender_key_id = make_unique_KeyId();
-    buffer->receiver_specific_key_id = make_unique_KeyId();
-    buffer->master_receiver_specific_key.fill(0);
-    RAND_bytes( buffer->master_receiver_specific_key.data(), 128 );
+        //These values must match the ones in ParticipantKeymaterial
+        buffer.transformation_kind = local_participant_handle->ParticipantKeyMaterial.transformation_kind;
+        buffer.master_salt = local_participant_handle->ParticipantKeyMaterial.master_salt;
+        buffer.master_sender_key = local_participant_handle->ParticipantKeyMaterial.master_sender_key;
+        //Generation of remainder values (Remote specific key)
+        buffer.sender_key_id = make_unique_KeyId();
+        buffer.receiver_specific_key_id = make_unique_KeyId();
+        buffer.master_receiver_specific_key.fill(0);
+        RAND_bytes( buffer.master_receiver_specific_key.data(), 128 );
 
-    //Attach to Keyhandles
-    (*RPCrypto)->Participant2ParticipantKeyMaterial.push_back(buffer);
-    local_participant_handle->Participant2ParticipantKeyMaterial.push_back(buffer);
-
+        //Attach to Keyhandles
+        (*RPCrypto)->Participant2ParticipantKeyMaterial.push_back(buffer);
+        local_participant_handle->Participant2ParticipantKeyMaterial.push_back(buffer);
+    }
     /*Fill values for Participant2ParticipantKxKey data*/
-    buffer = new KeyMaterial_AES_GCM_GMAC();
-    //Fill values for Participant2ParticipantKxKey
-    buffer->transformation_kind = std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC);
-    buffer->master_salt.fill(0);
-    RAND_bytes( buffer->master_salt.data(), 128); // To substitute with HMAC_sha
-    buffer->sender_key_id.fill(0); //Specified by standard
-    buffer->master_sender_key.fill(0);
-    RAND_bytes( buffer->master_sender_key.data(), 128); // To substitute with HMAC_sha
-    buffer->receiver_specific_key_id.fill(0); //Specified by standard
-    buffer->master_receiver_specific_key.fill(0); //Specified by standard
+    { //scope for temp var buffer
+        KeyMaterial_AES_GCM_GMAC buffer;
+        //Fill values for Participant2ParticipantKxKey
+        buffer.transformation_kind = std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC);
+        buffer.master_salt.fill(0);
+        RAND_bytes( buffer.master_salt.data(), 128); // To substitute with HMAC_sha
+        buffer.sender_key_id.fill(0); //Specified by standard
+        buffer.master_sender_key.fill(0);
+        RAND_bytes( buffer.master_sender_key.data(), 128); // To substitute with HMAC_sha
+        buffer.receiver_specific_key_id.fill(0); //Specified by standard
+        buffer.master_receiver_specific_key.fill(0); //Specified by standard
 
-    //Attack to Keyhandles
-    (*RPCrypto)->Participant2ParticipantKeyMaterial.push_back(buffer);
-    local_participant_handle->Participant2ParticipantKeyMaterial.push_back(buffer);
+        //Attack to Keyhandles
+        (*RPCrypto)->Participant2ParticipantKeyMaterial.push_back(buffer);
+        local_participant_handle->Participant2ParticipantKeyMaterial.push_back(buffer);
+    }
 
     return RPCrypto;
 }
@@ -147,35 +148,19 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
 }
 
 bool AESGCMGMAC_KeyFactory::unregister_participant(
-                ParticipantCryptoHandle &participant_crypto_handle,
+                ParticipantCryptoHandle* participant_crypto_handle,
                 SecurityException &exception){
    
     bool return_code = false;
     
     //De-register the IDs
-    AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(participant_crypto_handle);
+    AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(*participant_crypto_handle);
     for(std::vector<CryptoTransformKeyId>::iterator it = m_CryptoTransformKeyIds.begin(); it != m_CryptoTransformKeyIds.end();it++){
-        if( (*it) == local_participant->ParticipantKeyMaterial->sender_key_id ){
+        if( (*it) == local_participant->ParticipantKeyMaterial.sender_key_id ){
             m_CryptoTransformKeyIds.erase(it);
                 return_code = true;
         }
     }
-    //Free space associated wih the handle
-    if(local_participant->ParticipantKeyMaterial != nullptr){
-        delete local_participant->ParticipantKeyMaterial;
-        
-    }
-    if(!local_participant->Participant2ParticipantKeyMaterial.empty()){
-        for(std::vector<KeyMaterial_AES_GCM_GMAC*>::iterator it = local_participant->Participant2ParticipantKeyMaterial.begin(); it != local_participant->Participant2ParticipantKeyMaterial.end(); it++){
-            if( *it != nullptr )    delete(*it);
-        }
-    }
-    if(!local_participant->Participant2ParticipantKxKeyMaterial.empty()){
-        for(std::vector<KeyMaterial_AES_GCM_GMAC*>::iterator it = local_participant->Participant2ParticipantKxKeyMaterial.begin(); it != local_participant->Participant2ParticipantKxKeyMaterial.end(); it++){
-            if( *it != nullptr )    delete(*it);
-        }            
-    }
-    
 
     if(return_code){
         return true;

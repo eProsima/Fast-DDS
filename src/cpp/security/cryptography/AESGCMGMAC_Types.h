@@ -77,31 +77,18 @@ struct SecureDataTag{
 class  ParticipantKeyHandle
 {
     public:
-        ParticipantKeyHandle():ParticipantKeyMaterial(nullptr){}
-
-        ~ParticipantKeyHandle(){
-            if(ParticipantKeyMaterial != nullptr){
-                delete(ParticipantKeyMaterial);
-            }
-            if(!Participant2ParticipantKeyMaterial.empty()){
-                for(std::vector<KeyMaterial_AES_GCM_GMAC*>::iterator it = Participant2ParticipantKeyMaterial.begin(); it != Participant2ParticipantKeyMaterial.end(); it++){
-                    if( *it != nullptr )    delete(*it);
-                }
-            }
-            if(!Participant2ParticipantKxKeyMaterial.empty()){
-                for(std::vector<KeyMaterial_AES_GCM_GMAC*>::iterator it = Participant2ParticipantKxKeyMaterial.begin(); it != Participant2ParticipantKxKeyMaterial.end(); it++){
-                    if( *it != nullptr )    delete(*it);
-                }            
-            }
+        ParticipantKeyHandle(){
         }
 
+        ~ParticipantKeyHandle(){
+        }
 
         static const char* const class_id_;
 
-        KeyMaterial_AES_GCM_GMAC* ParticipantKeyMaterial;
-        std::vector<KeyMaterial_AES_GCM_GMAC*> Participant2ParticipantKeyMaterial;
-        std::vector<KeyMaterial_AES_GCM_GMAC*> Participant2ParticipantKxKeyMaterial;
-        std::vector<KeyMaterial_AES_GCM_GMAC*> RemoteParticipant2ParticipantKeyMaterial;
+        KeyMaterial_AES_GCM_GMAC ParticipantKeyMaterial;
+        std::vector<KeyMaterial_AES_GCM_GMAC> Participant2ParticipantKeyMaterial;
+        std::vector<KeyMaterial_AES_GCM_GMAC> Participant2ParticipantKxKeyMaterial;
+        std::vector<KeyMaterial_AES_GCM_GMAC> RemoteParticipant2ParticipantKeyMaterial;
 };
 
 typedef HandleImpl<ParticipantKeyHandle> AESGCMGMAC_ParticipantCryptoHandle;
