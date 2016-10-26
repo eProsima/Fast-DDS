@@ -23,6 +23,8 @@
 
 static const char* certs_path = nullptr;
 
+static size_t alignment(size_t current_alignment, size_t dataSize) { return (dataSize - (current_alignment % dataSize)) & (dataSize-1);}
+
 PropertyPolicy AuthenticationPluginTest::get_valid_policy()
 {
     PropertyPolicy property_policy;
@@ -102,29 +104,70 @@ void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHa
 
     const std::vector<uint8_t>* dh1 = DataHolderHelper::find_binary_property_value(message, "dh1");
     ASSERT_TRUE(dh1 != nullptr);
+    DH* dh = EVP_PKEY_get1_DH(handshake_handle->dhkeys_);
+    ASSERT_TRUE(dh != nullptr);
+    const unsigned char* pointer = dh1->data();
     uint32_t length = 0;
     if(DEFAULT_ENDIAN == BIGEND)
     {
-        ((char*)&length)[0] = dh1->data()[0];
-        ((char*)&length)[1] = dh1->data()[1];
-        ((char*)&length)[2] = dh1->data()[2];
-        ((char*)&length)[3] = dh1->data()[3];
+        ((char*)&length)[0] = pointer[0];
+        ((char*)&length)[1] = pointer[1];
+        ((char*)&length)[2] = pointer[2];
+        ((char*)&length)[3] = pointer[3];
     }
     else
     {
-        ((char*)&length)[0] = dh1->data()[3];
-        ((char*)&length)[1] = dh1->data()[2];
-        ((char*)&length)[2] = dh1->data()[1];
-        ((char*)&length)[3] = dh1->data()[0];
+        ((char*)&length)[0] = pointer[3];
+        ((char*)&length)[1] = pointer[2];
+        ((char*)&length)[2] = pointer[1];
+        ((char*)&length)[3] = pointer[0];
     }
-    BIGNUM* bn = BN_new();
-    ASSERT_TRUE(BN_bin2bn(dh1->data() + 4, length, bn) !=  nullptr);
-    DH* dh = EVP_PKEY_get1_DH(handshake_handle->dhkeys_);
-    ASSERT_TRUE(dh != nullptr);
+    pointer += 4;
+    BIGNUM bn;
+    BN_init(&bn);
+    ASSERT_TRUE(BN_bin2bn(pointer, length, &bn) !=  nullptr);
+    ASSERT_TRUE(BN_cmp(dh->p, &bn) == 0);
+    pointer += length;
+    pointer += alignment(pointer - dh1->data(), 4);
+    if(DEFAULT_ENDIAN == BIGEND)
+    {
+        ((char*)&length)[0] = pointer[0];
+        ((char*)&length)[1] = pointer[1];
+        ((char*)&length)[2] = pointer[2];
+        ((char*)&length)[3] = pointer[3];
+    }
+    else
+    {
+        ((char*)&length)[0] = pointer[3];
+        ((char*)&length)[1] = pointer[2];
+        ((char*)&length)[2] = pointer[1];
+        ((char*)&length)[3] = pointer[0];
+    }
+    pointer += 4;
+    ASSERT_TRUE(BN_bin2bn(pointer, length, &bn) !=  nullptr);
+    ASSERT_TRUE(BN_cmp(dh->g, &bn) == 0);
+    pointer += length;
+    pointer += alignment(pointer - dh1->data(), 4);
+    if(DEFAULT_ENDIAN == BIGEND)
+    {
+        ((char*)&length)[0] = pointer[0];
+        ((char*)&length)[1] = pointer[1];
+        ((char*)&length)[2] = pointer[2];
+        ((char*)&length)[3] = pointer[3];
+    }
+    else
+    {
+        ((char*)&length)[0] = pointer[3];
+        ((char*)&length)[1] = pointer[2];
+        ((char*)&length)[2] = pointer[1];
+        ((char*)&length)[3] = pointer[0];
+    }
+    pointer += 4;
+    ASSERT_TRUE(BN_bin2bn(pointer, length, &bn) !=  nullptr);
     int check_result;
-    ASSERT_TRUE(DH_check_pub_key(dh, bn, &check_result));
+    ASSERT_TRUE(DH_check_pub_key(dh, &bn, &check_result));
     ASSERT_TRUE(!check_result);
-    BN_free(bn);
+    BN_clear_free(&bn);
 
     const std::vector<uint8_t>* challenge1 = DataHolderHelper::find_binary_property_value(message, "challenge1");
     ASSERT_TRUE(challenge1 != nullptr);
@@ -170,29 +213,70 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
 
     const std::vector<uint8_t>* dh2 = DataHolderHelper::find_binary_property_value(message, "dh2");
     ASSERT_TRUE(dh2 != nullptr);
+    DH* dh = EVP_PKEY_get1_DH(handshake_handle->dhkeys_);
+    ASSERT_TRUE(dh != nullptr);
+    const unsigned char* pointer = dh2->data();
     uint32_t length = 0;
     if(DEFAULT_ENDIAN == BIGEND)
     {
-        ((char*)&length)[0] = dh2->data()[0];
-        ((char*)&length)[1] = dh2->data()[1];
-        ((char*)&length)[2] = dh2->data()[2];
-        ((char*)&length)[3] = dh2->data()[3];
+        ((char*)&length)[0] = pointer[0];
+        ((char*)&length)[1] = pointer[1];
+        ((char*)&length)[2] = pointer[2];
+        ((char*)&length)[3] = pointer[3];
     }
     else
     {
-        ((char*)&length)[0] = dh2->data()[3];
-        ((char*)&length)[1] = dh2->data()[2];
-        ((char*)&length)[2] = dh2->data()[1];
-        ((char*)&length)[3] = dh2->data()[0];
+        ((char*)&length)[0] = pointer[3];
+        ((char*)&length)[1] = pointer[2];
+        ((char*)&length)[2] = pointer[1];
+        ((char*)&length)[3] = pointer[0];
     }
-    BIGNUM* bn = BN_new();
-    ASSERT_TRUE(BN_bin2bn(dh2->data() + 4, length, bn) !=  nullptr);
-    DH* dh = EVP_PKEY_get1_DH(handshake_handle->dhkeys_);
-    ASSERT_TRUE(dh != nullptr);
+    pointer += 4;
+    BIGNUM bn;
+    BN_init(&bn);
+    ASSERT_TRUE(BN_bin2bn(pointer, length, &bn) !=  nullptr);
+    ASSERT_TRUE(BN_cmp(dh->p, &bn) == 0);
+    pointer += length;
+    pointer += alignment(pointer - dh2->data(), 4);
+    if(DEFAULT_ENDIAN == BIGEND)
+    {
+        ((char*)&length)[0] = pointer[0];
+        ((char*)&length)[1] = pointer[1];
+        ((char*)&length)[2] = pointer[2];
+        ((char*)&length)[3] = pointer[3];
+    }
+    else
+    {
+        ((char*)&length)[0] = pointer[3];
+        ((char*)&length)[1] = pointer[2];
+        ((char*)&length)[2] = pointer[1];
+        ((char*)&length)[3] = pointer[0];
+    }
+    pointer += 4;
+    ASSERT_TRUE(BN_bin2bn(pointer, length, &bn) !=  nullptr);
+    ASSERT_TRUE(BN_cmp(dh->g, &bn) == 0);
+    pointer += length;
+    pointer += alignment(pointer - dh2->data(), 4);
+    if(DEFAULT_ENDIAN == BIGEND)
+    {
+        ((char*)&length)[0] = pointer[0];
+        ((char*)&length)[1] = pointer[1];
+        ((char*)&length)[2] = pointer[2];
+        ((char*)&length)[3] = pointer[3];
+    }
+    else
+    {
+        ((char*)&length)[0] = pointer[3];
+        ((char*)&length)[1] = pointer[2];
+        ((char*)&length)[2] = pointer[1];
+        ((char*)&length)[3] = pointer[0];
+    }
+    pointer += 4;
+    ASSERT_TRUE(BN_bin2bn(pointer, length, &bn) !=  nullptr);
     int check_result;
-    ASSERT_TRUE(DH_check_pub_key(dh, bn, &check_result));
+    ASSERT_TRUE(DH_check_pub_key(dh, &bn, &check_result));
     ASSERT_TRUE(!check_result);
-    BN_free(bn);
+    BN_clear_free(&bn);
 
     const std::vector<uint8_t>* hash_c1 = DataHolderHelper::find_binary_property_value(message, "hash_c1");
     ASSERT_TRUE(hash_c1 != nullptr);
@@ -236,10 +320,102 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(message, "hash_c1"));
     EVP_MD_CTX ctx;
     EVP_MD_CTX_init(&ctx);
-    ASSERT_TRUE(EVP_DigestVerifyInit(&ctx, NULL, EVP_sha256(), NULL, (*handshake_handle->local_identity_handle_)->pkey_) == 1);
+    EVP_PKEY* pubkey = X509_get_pubkey((*handshake_handle->local_identity_handle_)->cert_);
+    ASSERT_TRUE(pubkey != nullptr);
+    ASSERT_TRUE(EVP_DigestVerifyInit(&ctx, NULL, EVP_sha256(), NULL, pubkey) == 1);
     ASSERT_TRUE(EVP_DigestVerifyUpdate(&ctx, cdrmessage2.buffer, cdrmessage2.length) == 1);
     ASSERT_TRUE(EVP_DigestVerifyFinal(&ctx, signature->data(), signature->size()) == 1);
     EVP_MD_CTX_cleanup(&ctx);
+}
+
+void AuthenticationPluginTest::check_handshake_final_message(const HandshakeHandle& handle, const HandshakeMessageToken& message,
+        const HandshakeMessageToken& reply_message)
+{
+    const PKIHandshakeHandle& handshake_handle = PKIHandshakeHandle::narrow(handle);
+    ASSERT_TRUE(handshake_handle.nil() == false);
+
+    const std::vector<uint8_t>* hash_c1 = DataHolderHelper::find_binary_property_value(message, "hash_c1");
+    ASSERT_TRUE(hash_c1 != nullptr);
+    const std::vector<uint8_t>* reply_hash_c1 = DataHolderHelper::find_binary_property_value(reply_message, "hash_c1");
+    ASSERT_TRUE(reply_hash_c1 != nullptr);
+    ASSERT_TRUE(*hash_c1 == *reply_hash_c1);
+
+    const std::vector<uint8_t>* hash_c2 = DataHolderHelper::find_binary_property_value(message, "hash_c2");
+    ASSERT_TRUE(hash_c2 != nullptr);
+    const std::vector<uint8_t>* reply_hash_c2 = DataHolderHelper::find_binary_property_value(reply_message, "hash_c2");
+    ASSERT_TRUE(reply_hash_c2 != nullptr);
+    ASSERT_TRUE(*hash_c2 == *reply_hash_c2);
+
+    const std::vector<uint8_t>* dh1 = DataHolderHelper::find_binary_property_value(message, "dh1");
+    ASSERT_TRUE(dh1 != nullptr);
+    const std::vector<uint8_t>* reply_dh1 = DataHolderHelper::find_binary_property_value(reply_message, "dh1");
+    ASSERT_TRUE(reply_dh1 != nullptr);
+    ASSERT_TRUE(*dh1 == *reply_dh1);
+
+    const std::vector<uint8_t>* dh2 = DataHolderHelper::find_binary_property_value(message, "dh2");
+    ASSERT_TRUE(dh2 != nullptr);
+    const std::vector<uint8_t>* reply_dh2 = DataHolderHelper::find_binary_property_value(reply_message, "dh2");
+    ASSERT_TRUE(reply_dh2 != nullptr);
+    ASSERT_TRUE(*dh2 == *reply_dh2);
+
+    const std::vector<uint8_t>* challenge1 = DataHolderHelper::find_binary_property_value(message, "challenge1");
+    ASSERT_TRUE(challenge1 != nullptr);
+    const std::vector<uint8_t>* reply_challenge1 = DataHolderHelper::find_binary_property_value(reply_message, "challenge1");
+    ASSERT_TRUE(reply_challenge1 != nullptr);
+    ASSERT_TRUE(*challenge1 == *reply_challenge1);
+
+    const std::vector<uint8_t>* challenge2 = DataHolderHelper::find_binary_property_value(message, "challenge2");
+    ASSERT_TRUE(challenge2 != nullptr);
+    const std::vector<uint8_t>* reply_challenge2 = DataHolderHelper::find_binary_property_value(reply_message, "challenge2");
+    ASSERT_TRUE(reply_challenge2 != nullptr);
+    ASSERT_TRUE(*challenge2 == *reply_challenge2);
+
+    const std::vector<uint8_t>* signature = DataHolderHelper::find_binary_property_value(message, "signature");
+    ASSERT_TRUE(signature != nullptr);
+    // signature
+    CDRMessage_t cdrmessage(BinaryPropertyHelper::serialized_size(message.binary_properties()));
+    cdrmessage.msg_endian = BIGEND;
+    // add sequence length
+    CDRMessage::addUInt32(&cdrmessage, 6);
+    //add hash_c1
+    CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property(message, "hash_c1"));
+    //add challenge1
+    CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property(message, "challenge1"));
+    //add dh1
+    CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property(message, "dh1"));
+    //add challenge2
+    CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property(message, "challenge2"));
+    //add dh2
+    CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property(message, "dh2"));
+    //add hash_c2
+    CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property(message, "hash_c2"));
+    EVP_MD_CTX ctx;
+    EVP_MD_CTX_init(&ctx);
+    EVP_PKEY* pubkey = X509_get_pubkey((*handshake_handle->local_identity_handle_)->cert_);
+    ASSERT_TRUE(pubkey != nullptr);
+    ASSERT_TRUE(EVP_DigestVerifyInit(&ctx, NULL, EVP_sha256(), NULL, pubkey) == 1);
+    ASSERT_TRUE(EVP_DigestVerifyUpdate(&ctx, cdrmessage.buffer, cdrmessage.length) == 1);
+    ASSERT_TRUE(EVP_DigestVerifyFinal(&ctx, signature->data(), signature->size()) == 1);
+    EVP_MD_CTX_cleanup(&ctx);
+}
+
+void AuthenticationPluginTest::check_shared_secrets(const SharedSecretHandle& sharedsecret1, const SharedSecretHandle& sharedsecret2)
+{
+    const std::vector<uint8_t>* challenge1_1 = SharedSecretHelper::find_data_value(**sharedsecret1, "Challenge1");
+    ASSERT_TRUE(challenge1_1 != nullptr);
+    const std::vector<uint8_t>* challenge1_2 = SharedSecretHelper::find_data_value(**sharedsecret2, "Challenge1");
+    ASSERT_TRUE(challenge1_2 != nullptr);
+    ASSERT_TRUE(*challenge1_1 == *challenge1_2);
+    const std::vector<uint8_t>* challenge2_1 = SharedSecretHelper::find_data_value(**sharedsecret1, "Challenge2");
+    ASSERT_TRUE(challenge2_1 != nullptr);
+    const std::vector<uint8_t>* challenge2_2 = SharedSecretHelper::find_data_value(**sharedsecret2, "Challenge2");
+    ASSERT_TRUE(challenge2_2 != nullptr);
+    ASSERT_TRUE(*challenge2_1 == *challenge2_2);
+    const std::vector<uint8_t>* sharedsecret_1 = SharedSecretHelper::find_data_value(**sharedsecret1, "SharedSecret");
+    ASSERT_TRUE(sharedsecret_1 != nullptr);
+    const std::vector<uint8_t>* sharedsecret_2 = SharedSecretHelper::find_data_value(**sharedsecret2, "SharedSecret");
+    ASSERT_TRUE(sharedsecret_2 != nullptr);
+    ASSERT_TRUE(*sharedsecret_1 == *sharedsecret_2);
 }
 
 TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok_with_pwd)

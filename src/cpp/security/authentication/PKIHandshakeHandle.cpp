@@ -21,4 +21,3 @@
 using namespace eprosima::fastrtps::rtps::security;
 
 const char* const PKIHandshake::class_id_ = "PKIHandshakeHandle";
-

@@ -78,6 +78,16 @@ class HandleImpl : public Handle
             return impl_ ? false : true;
         }
 
+        T* operator*()
+        {
+            return impl_.get();
+        }
+
+        const T* operator*() const
+        {
+            return impl_.get();
+        }
+
         T* operator->()
         {
             return impl_.get();
@@ -104,8 +114,6 @@ HandleImpl<T> HandleImpl<T>::nil_handle(true);
 typedef Handle IdentityHandle;
 
 typedef Handle PermissionsHandle;
-
-typedef Handle SharedSecretHandle;
 
 typedef Handle ParticipantCryptoHandle;
 typedef Handle DatawriterCryptoHandle;

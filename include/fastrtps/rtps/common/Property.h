@@ -53,6 +53,7 @@ class Property
         {
             name_ = property.name_;
             value_ = property.value_;
+            propagate_ = property.propagate_;
             return *this;
         }
 
@@ -60,6 +61,7 @@ class Property
         {
             name_ = std::move(property.name_);
             value_ = std::move(property.value_);
+            propagate_ = property.propagate_;
             return *this;
         }
 

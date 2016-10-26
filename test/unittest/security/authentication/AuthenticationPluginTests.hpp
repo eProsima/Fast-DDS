@@ -47,6 +47,10 @@ class AuthenticationPluginTest : public ::testing::Test
         static void check_handshake_request_message(const HandshakeHandle& handle, const HandshakeMessageToken& message);
         static void check_handshake_reply_message(const HandshakeHandle& handle, const HandshakeMessageToken& message,
                 const HandshakeMessageToken& request_message);
+        static void check_handshake_final_message(const HandshakeHandle& handle, const HandshakeMessageToken& message,
+                const HandshakeMessageToken& reply_message);
+        static void check_shared_secrets(const SharedSecretHandle& sharedsecret1,
+                const SharedSecretHandle& sharedsecret2);
 
         SecurityPluginFactory factory;
         Authentication* plugin;
@@ -180,19 +184,46 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     check_handshake_request_message(*handshake_handle, *handshake_message);
 
     HandshakeHandle* handshake_handle_reply = nullptr;
-    HandshakeMessageToken *handshake_message_reply = nullptr;
+    HandshakeMessageToken* handshake_message_reply = nullptr;
 
     result = plugin->begin_handshake_reply(&handshake_handle_reply,
             &handshake_message_reply,
-            *handshake_message,
+            HandshakeMessageToken(*handshake_message),
             *remote_identity_handle,
             *local_identity_handle,
             exception);
 
-    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_PENDING_CHALLENGE_MESSAGE);
+    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE);
     ASSERT_TRUE(handshake_handle_reply != nullptr);
     ASSERT_TRUE(handshake_message_reply != nullptr);
     check_handshake_reply_message(*handshake_handle_reply, *handshake_message_reply, *handshake_message);
+
+    HandshakeMessageToken* handshake_message_final = nullptr;
+
+    result = plugin->process_handshake(&handshake_message_final,
+            HandshakeMessageToken(*handshake_message_reply),
+            *handshake_handle,
+            exception);
+    
+    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK_WITH_FINAL_MESSAGE);
+    ASSERT_TRUE(handshake_message_final != nullptr);
+    check_handshake_final_message(*handshake_handle, *handshake_message_final, *handshake_message_reply);
+
+    HandshakeMessageToken* handshake_message_aux = nullptr;
+
+    result = plugin->process_handshake(&handshake_message_aux,
+            HandshakeMessageToken(*handshake_message_final),
+            *handshake_handle_reply,
+            exception);
+
+    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK);
+
+    SharedSecretHandle* sharedsecret1 = plugin->get_shared_secret(*handshake_handle, exception);
+    ASSERT_TRUE(sharedsecret1 != nullptr);
+
+    SharedSecretHandle* sharedsecret2 = plugin->get_shared_secret(*handshake_handle_reply, exception);
+    ASSERT_TRUE(sharedsecret2 != nullptr);
+    check_shared_secrets(*sharedsecret1, *sharedsecret2);
 }
 
 #endif // _UNITTEST_SECURITY_AUTHENTICATION_AUTHENTICATIONPLUGINTESTS_HPP_

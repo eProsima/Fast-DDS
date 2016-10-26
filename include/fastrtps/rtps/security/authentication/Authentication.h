@@ -19,6 +19,7 @@
 #define _RTPS_SECURITY_AUTHENTICATION_AUTHENTICATION_H_
 
 #include "../common/Handle.h"
+#include "../common/SharedSecretHandle.h"
 #include "../../common/Guid.h"
 #include "../../attributes/RTPSParticipantAttributes.h"
 #include "../exceptions/SecurityException.h"
@@ -39,8 +40,7 @@ enum ValidationResult_t : uint32_t
     VALIDATION_PENDING_RETRY,
     VALIDATION_PENDING_HANDSHAKE_REQUEST,
     VALIDATION_PENDING_HANDSHAKE_MESSAGE,
-    VALIDATION_PENDING_CHALLENGE_MESSAGE,
-    VALIDATION_OK_FINAL_MESSAGE
+    VALIDATION_OK_WITH_FINAL_MESSAGE
 };
 
 class Authentication;
@@ -110,7 +110,7 @@ class Authentication
         virtual ValidationResult_t begin_handshake_request(HandshakeHandle** handshake_handle,
                 HandshakeMessageToken** handshake_message,
                 const IdentityHandle& initiator_identity_handle,
-                const IdentityHandle& replier_identity_handle,
+                IdentityHandle& replier_identity_handle,
                 SecurityException& exception) = 0;
 
         /*!
@@ -129,7 +129,7 @@ class Authentication
          */
         virtual ValidationResult_t begin_handshake_reply(HandshakeHandle** handshake_handle,
                 HandshakeMessageToken** handshake_message_out,
-                const HandshakeMessageToken& handshake_message_in,
+                HandshakeMessageToken&& handshake_message_in,
                 IdentityHandle& initiator_identity_handle,
                 const IdentityHandle& replier_identity_handle,
                 SecurityException& exception) = 0;
@@ -145,9 +145,9 @@ class Authentication
          * @exception (out) A SecurityException object.
          * @return Validation status.
          */
-        virtual ValidationResult_t process_handshake(HandshakeMessageToken& handshake_message_out,
-                const HandshakeMessageToken& handshake_message_in,
-                const HandshakeHandle& handshake_handle,
+        virtual ValidationResult_t process_handshake(HandshakeMessageToken** handshake_message_out,
+                HandshakeMessageToken&& handshake_message_in,
+                HandshakeHandle& handshake_handle,
                 SecurityException& exception) = 0;
 
         /*!

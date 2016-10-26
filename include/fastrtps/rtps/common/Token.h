@@ -41,6 +41,24 @@ class DataHolder
             properties_(data_holder.properties_),
             binary_properties_(data_holder.binary_properties_) {}
 
+        DataHolder& operator=(const DataHolder& data_holder)
+        {
+            class_id_ = data_holder.class_id_;
+            properties_ = data_holder.properties_;
+            binary_properties_ = data_holder.binary_properties_;
+
+            return *this;
+        }
+
+        DataHolder& operator=(DataHolder&& data_holder)
+        {
+            class_id_ = std::move(data_holder.class_id_);
+            properties_ = std::move(data_holder.properties_);
+            binary_properties_ = std::move(data_holder.binary_properties_);
+            
+            return *this;
+        }
+
         void class_id(const std::string& class_id)
         {
             class_id_ = class_id;

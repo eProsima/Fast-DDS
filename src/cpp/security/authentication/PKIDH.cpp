@@ -18,7 +18,6 @@
 
 #include "PKIDH.h"
 #include "PKIIdentityHandle.h"
-#include "PKIHandshakeHandle.h"
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
 
@@ -32,6 +31,97 @@
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
 using namespace ::security;
+
+static size_t alignment(size_t current_alignment, size_t dataSize) { return (dataSize - (current_alignment % dataSize)) & (dataSize-1);}
+
+size_t BN_serialized_size(const BIGNUM* bn, size_t current_alignment = 0)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + alignment(current_alignment, 4) + BN_num_bytes(bn);
+
+    return current_alignment - initial_alignment;
+}
+
+unsigned char* BN_serialize(const BIGNUM* bn, const unsigned char* orig_pointer, unsigned char* current_pointer)
+{
+    assert(bn);
+    assert(orig_pointer);
+    assert(current_pointer);
+
+    size_t align = alignment(current_pointer - orig_pointer, 4);
+    unsigned char* pointer = current_pointer + align;
+    uint32_t len = (uint32_t)BN_num_bytes(bn);
+
+    if(DEFAULT_ENDIAN == BIGEND)
+    {
+        pointer[0] = ((char*)&len)[0];
+        pointer[1] = ((char*)&len)[1];
+        pointer[2] = ((char*)&len)[2];
+        pointer[3] = ((char*)&len)[3];
+    }
+    else
+    {
+        pointer[0] = ((char*)&len)[3];
+        pointer[1] = ((char*)&len)[2];
+        pointer[2] = ((char*)&len)[1];
+        pointer[3] = ((char*)&len)[0];
+    }
+
+    pointer += 4;
+
+    if(BN_bn2bin(bn, pointer) == len)
+        return pointer + len;
+
+    return nullptr;
+}
+
+const unsigned char* BN_deserialize(BIGNUM** bn, const unsigned char* orig_pointer, const unsigned char* current_pointer)
+{
+    assert(bn);
+    assert(orig_pointer);
+    assert(current_pointer);
+
+    size_t align = alignment(current_pointer - orig_pointer, 4);
+    const unsigned char* pointer = current_pointer + align;
+    uint32_t length = 0;
+
+    if(DEFAULT_ENDIAN == BIGEND)
+    {
+        ((char*)&length)[0] = pointer[0];
+        ((char*)&length)[1] = pointer[1];
+        ((char*)&length)[2] = pointer[2];
+        ((char*)&length)[3] = pointer[3];
+    }
+    else
+    {
+        ((char*)&length)[0] = pointer[3];
+        ((char*)&length)[1] = pointer[2];
+        ((char*)&length)[2] = pointer[1];
+        ((char*)&length)[3] = pointer[0];
+    }
+
+    pointer += 4;
+
+    BIGNUM *bnn = BN_new();
+
+    if(bnn != nullptr)
+    {
+        if(BN_bin2bn(pointer, length, bnn) !=  nullptr)
+        {
+            *bn = bnn;
+            return pointer + length;
+        }
+        else
+            logError(AUTHENTICATION, "Cannot deserialize DH");
+
+        BN_free(bnn);
+    }
+    else
+        logError(AUTHENTICATION, "OpenSSL library cannot create bignum");
+
+    return nullptr;
+}
 
 // Auxiliary functions
 X509_STORE* load_identity_ca(const std::string& identity_ca, bool& there_are_crls)
@@ -286,8 +376,8 @@ bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm
     return returnedValue;
 }
 
-bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, size_t data_length,
-        std::vector<uint8_t>& buffer)
+bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, const size_t data_length,
+        std::vector<uint8_t>& signature)
 {
     assert(private_key);
     assert(data);
@@ -304,22 +394,63 @@ bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, size_t data_l
             if(EVP_DigestSignFinal(&ctx, NULL, &length) == 1 && length > 0)
             {
                 size_t aux_length = length;
-                buffer.resize(length);
+                signature.resize(length);
 
-                std::cout << "len = " << length << std::endl;
-                if(EVP_DigestSignFinal(&ctx, buffer.data(), &length) ==  1 && length == aux_length)
+                if(EVP_DigestSignFinal(&ctx, signature.data(), &length) ==  1)
+                {
+                    signature.resize(length);
                     returnedValue = true; 
+                }
                 else
                     logError(AUTHENTICATION, "Cannot finish signature (" << ERR_get_error() << ")");
-
-                std::cout << "len2 = " << length << std::endl;
             }
+            else
+                logError(AUTHENTICATION, "Cannot retrieve signature length (" << ERR_get_error() << ")");
         }
         else
             logError(AUTHENTICATION, "Cannot sign data (" << ERR_get_error() << ")");
     }
     else
         logError(AUTHENTICATION, "Cannot init signature (" << ERR_get_error() << ")");
+
+    EVP_MD_CTX_cleanup(&ctx);
+
+    return returnedValue;
+}
+
+bool check_sign_sha256(X509* certificate, const unsigned char* data, const size_t data_length,
+        const std::vector<uint8_t>& signature)
+{
+    assert(certificate);
+    assert(data);
+
+    bool returnedValue = false;
+
+    EVP_MD_CTX ctx;
+    EVP_MD_CTX_init(&ctx);
+
+    EVP_PKEY* pubkey = X509_get_pubkey(certificate);
+    
+    if(pubkey != nullptr)
+    {
+        if(EVP_DigestVerifyInit(&ctx, NULL, EVP_sha256(), NULL, pubkey) == 1)
+        {
+            if(EVP_DigestVerifyUpdate(&ctx, data, data_length) == 1)
+            {
+                if(EVP_DigestVerifyFinal(&ctx, signature.data(), signature.size()) == 1)
+                    returnedValue = true;
+                else
+                    logError(AUTHENTICATION, "Cannot finish signature check (" << ERR_get_error() << ")");
+            }
+            else
+                logError(AUTHENTICATION, "Cannot update signature check (" << ERR_get_error() << ")");
+
+        }
+        else
+            logError(AUTHENTICATION, "Cannot init signature check (" << ERR_get_error() << ")");
+    }
+    else
+        logError(AUTHENTICATION, "Cannot get public key from certificate");
 
     EVP_MD_CTX_cleanup(&ctx);
 
@@ -527,35 +658,36 @@ EVP_PKEY* generate_dh_key(int type)
     return keys;
 }
 
-bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& vector)
+bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer)
 {
     DH* dh = EVP_PKEY_get1_DH(dhkey);
 
     if(dh != nullptr)
     {
+        const BIGNUM* p = dh->p;
+        const BIGNUM* g = dh->g;
         const BIGNUM* pub_key = dh->pub_key;
-        int len = BN_num_bytes(pub_key);
-        vector.resize(len + 4);
-
-        if(DEFAULT_ENDIAN == BIGEND)
+        int len = BN_serialized_size(p);
+        len += BN_serialized_size(g);
+        len += BN_serialized_size(pub_key);
+        buffer.resize(len);
+        unsigned char* pointer = buffer.data();
+        if((pointer = BN_serialize(p, buffer.data(), pointer)) != nullptr)
         {
-            vector.at(0) = ((char*)&len)[0];
-            vector.at(1) = ((char*)&len)[1];
-            vector.at(2) = ((char*)&len)[2];
-            vector.at(3) = ((char*)&len)[3];
+            if((pointer = BN_serialize(g, buffer.data(), pointer)) != nullptr)
+            {
+                if((pointer = BN_serialize(pub_key, buffer.data(), pointer)) != nullptr)
+                {
+                    return true;
+                }
+                else
+                    logError(AUTHENTICATION, "Cannot serialize public key");
+            }
+            else
+                logError(AUTHENTICATION, "Cannot serialize g");
         }
         else
-        {
-            vector.at(0) = ((char*)&len)[3];
-            vector.at(1) = ((char*)&len)[2];
-            vector.at(2) = ((char*)&len)[1];
-            vector.at(3) = ((char*)&len)[0];
-        }
-
-        if(BN_bn2bin(pub_key, vector.data() + 4) == len)
-            return true;
-        else
-            logError(AUTHENTICATION, "OpenSSL library cannot store public key");
+            logError(AUTHENTICATION, "Cannot serialize p");
     }
     else
         logError(AUTHENTICATION, "OpenSSL library doesn't retrieve DH");
@@ -563,30 +695,120 @@ bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& vector)
     return false;
 }
 
+EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer)
+{
+    DH* dh = DH_new();
+
+    if(dh != nullptr)
+    {
+        const unsigned char* pointer = buffer.data();
+
+        if((pointer = BN_deserialize(&dh->p, buffer.data(), pointer)) != nullptr)
+        {
+            if((pointer = BN_deserialize(&dh->g, buffer.data(), pointer)) != nullptr)
+            {
+                if((pointer = BN_deserialize(&dh->pub_key, buffer.data(), pointer)) != nullptr)
+                {
+                    EVP_PKEY* key = EVP_PKEY_new();
+
+                    if(key != nullptr)
+                    {
+                        if(EVP_PKEY_assign_DH(key, dh) > 0)
+                        {
+                            return key;
+                        }
+                        else
+                            logError(AUTHENTICATION, "OpenSSL library cannot set dh in pkey");
+
+                        EVP_PKEY_free(key);
+                    }
+                    else
+                        logError(AUTHENTICATION, "OpenSSL library cannot create pkey");
+                }
+                else
+                    logError(AUTHENTICATION, "Cannot deserialize public key");
+            }
+            else
+                logError(AUTHENTICATION, "Cannot deserialize g");
+        }
+        else
+            logError(AUTHENTICATION, "Cannot deserialize p");
+
+        DH_free(dh);
+    }
+    else
+        logError(AUTHENTICATION, "OpenSSL library cannot create dh");
+
+    return nullptr;
+}
+
 bool generate_challenge(std::vector<uint8_t>& vector)
 {
     bool returnedValue = false;
-    BIGNUM* bn = BN_new();
+    BIGNUM bn;
+    BN_init(&bn);
 
-    if(bn != nullptr)
+    if(BN_rand(&bn, 512, 0 /*BN_RAND_TOP_ONE*/, 0 /*BN_RAND_BOTTOM_ANY*/));
     {
-        if(BN_rand(bn, 512, 0 /*BN_RAND_TOP_ONE*/, 0 /*BN_RAND_BOTTOM_ANY*/));
-        {
-            int len = BN_num_bytes(bn);
-            vector.resize(len);
+        int len = BN_num_bytes(&bn);
+        vector.resize(len);
 
-            if(BN_bn2bin(bn, vector.data()) == len)
-                returnedValue = true;
-            else
-                logError(AUTHENTICATION, "OpenSSL library cannot store challenge");
-        }
-
-        BN_free(bn);
+        if(BN_bn2bin(&bn, vector.data()) == len)
+            returnedValue = true;
+        else
+            logError(AUTHENTICATION, "OpenSSL library cannot store challenge");
     }
-    else
-        logError(AUTHENTICATION, "OpenSSL library cannot allocate random number");
+
+    BN_clear_free(&bn);
 
     return returnedValue;
+}
+
+SharedSecretHandle* generate_sharedsecret(EVP_PKEY* private_key, EVP_PKEY* public_key)
+{
+    assert(private_key);
+    assert(public_key);
+
+    EVP_PKEY_CTX* ctx = EVP_PKEY_CTX_new(private_key, NULL);
+
+    if(ctx != nullptr)
+    {
+        if(EVP_PKEY_derive_init(ctx) > 0)
+        {
+            if(EVP_PKEY_derive_set_peer(ctx, public_key) > 0)
+            {
+                size_t length = 0;
+                if(EVP_PKEY_derive(ctx, NULL, &length) > 0)
+                {
+                    SharedSecret::BinaryData data;
+                    data.name("SharedSecret");
+                    data.value().resize(length);
+                    
+                    if(EVP_PKEY_derive(ctx, data.value().data(), &length) > 0)
+                    {
+                        data.value().resize(length);
+                        SharedSecretHandle* handle = new SharedSecretHandle();
+                        (*handle)->data_.emplace_back(std::move(data));
+                        return handle;
+                    }
+                    else
+                        logError(AUTHENTICATION, "OpenSSL library cannot get derive");
+                }
+                else
+                    logError(AUTHENTICATION, "OpenSSL library cannot get length");
+            }
+            else
+                logError(AUTHENTICATION, "OpenSSL library cannot set peer");
+        }
+        else
+            logError(AUTHENTICATION, "OpenSSL library cannot init derive");
+
+        EVP_PKEY_CTX_free(ctx);
+    }
+    else
+        logError(AUTHENTICATION, "OpenSSL library cannot allocate context");
+
+    return nullptr;
 }
 
 ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identity_handle,
@@ -737,7 +959,7 @@ ValidationResult_t PKIDH::validate_remote_identity(IdentityHandle** remote_ident
 ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_handle,
         HandshakeMessageToken** handshake_message,
         const IdentityHandle& initiator_identity_handle,
-        const IdentityHandle& replier_identity_handle,
+        IdentityHandle& replier_identity_handle,
         SecurityException& exception)
 {
     assert(handshake_handle);
@@ -747,7 +969,7 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
 
     ValidationResult_t returnedValue = ValidationResult_t::VALIDATION_FAILED;
     const PKIIdentityHandle& lih = PKIIdentityHandle::narrow(initiator_identity_handle);
-    const PKIIdentityHandle& rih = PKIIdentityHandle::narrow(replier_identity_handle);
+    PKIIdentityHandle& rih = PKIIdentityHandle::narrow(replier_identity_handle);
 
     if(lih.nil() || rih.nil())
     {
@@ -839,7 +1061,7 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
 
 ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_handle,
         HandshakeMessageToken** handshake_message_out,
-        const HandshakeMessageToken& handshake_message_in,
+        HandshakeMessageToken&& handshake_message_in,
         IdentityHandle& initiator_identity_handle,
         const IdentityHandle& replier_identity_handle,
         SecurityException& exception)
@@ -855,6 +1077,13 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     if(lih.nil() || rih.nil())
     {
         logError(AUTHENTICATION, "Bad precondition");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // Check TokenMessage
+    if(handshake_message_in.class_id().compare("DDS:Auth:PKI-DH:1.0+Req") != 0)
+    {
+        logError(AUTHENTICATION, "Bad HandshakeMessageToken (" << handshake_message_in.class_id() << ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -922,7 +1151,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     rih->kagree_alg_ = std::move(s_kagree_algo);
 
     // hash_c1
-    const std::vector<uint8_t>* hash_c1 = DataHolderHelper::find_binary_property_value(handshake_message_in, "hash_c1");
+    std::vector<uint8_t>* hash_c1 = DataHolderHelper::find_binary_property_value(handshake_message_in, "hash_c1");
 
     if(hash_c1 == nullptr)
     {
@@ -955,7 +1184,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     }
 
     // dh1
-    const std::vector<uint8_t>* dh1 = DataHolderHelper::find_binary_property_value(handshake_message_in, "dh1");
+    std::vector<uint8_t>* dh1 = DataHolderHelper::find_binary_property_value(handshake_message_in, "dh1");
 
     if(dh1 == nullptr)
     {
@@ -964,7 +1193,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     }
 
     // challenge1
-    const std::vector<uint8_t>* challenge1 = DataHolderHelper::find_binary_property_value(handshake_message_in, "challenge1");
+    std::vector<uint8_t>* challenge1 = DataHolderHelper::find_binary_property_value(handshake_message_in, "challenge1");
 
     if(challenge1 == nullptr)
     {
@@ -976,6 +1205,13 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     PKIHandshakeHandle* handshake_handle_aux = new PKIHandshakeHandle();
     (*handshake_handle_aux)->kagree_alg_ = rih->kagree_alg_;
     (*handshake_handle_aux)->handshake_message_.class_id("DDS:Auth:PKI-DH:1.0+Reply");
+
+    // Store dh1
+    if(((*handshake_handle_aux)->peerkeys_ = generate_dh_peer_key(*dh1)) == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot store peer key from dh1");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
 
     BinaryProperty bproperty;
 
@@ -1083,9 +1319,9 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
                     (*handshake_handle_aux)->remote_identity_handle_ = &rih;
                     *handshake_handle = handshake_handle_aux;
                     *handshake_message_out = &(*handshake_handle_aux)->handshake_message_;
-                }
 
-                return ValidationResult_t::VALIDATION_PENDING_CHALLENGE_MESSAGE;
+                    return ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE;
+                }
             }
         }
     }
@@ -1097,17 +1333,571 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     return ValidationResult_t::VALIDATION_FAILED;
 }
 
-ValidationResult_t PKIDH::process_handshake(HandshakeMessageToken& handshake_message_out,
-        const HandshakeMessageToken& handshake_message_in,
-        const HandshakeHandle& handshake_handle,
+ValidationResult_t PKIDH::process_handshake(HandshakeMessageToken** handshake_message_out,
+        HandshakeMessageToken&& handshake_message_in,
+        HandshakeHandle& handshake_handle,
         SecurityException& exception)
 {
+    ValidationResult_t returnedValue = ValidationResult_t::VALIDATION_FAILED;
+
+    PKIHandshakeHandle& handshake = PKIHandshakeHandle::narrow(handshake_handle);
+
+    if(!handshake.nil())
+    {
+        if(handshake->handshake_message_.class_id().compare("DDS:Auth:PKI-DH:1.0+Req") == 0)
+        {
+            returnedValue = process_handshake_request(handshake_message_out, std::move(handshake_message_in),
+                    handshake, exception);
+        }
+        else if(handshake->handshake_message_.class_id().compare("DDS:Auth:PKI-DH:1.0+Reply") == 0)
+        {
+            returnedValue = process_handshake_reply(handshake_message_out, std::move(handshake_message_in),
+                    handshake, exception);
+        } 
+        else
+        {
+            logError(AUTHENTICATION, "Handshake message not supported (" << handshake->handshake_message_.class_id() << ")");
+        }
+    }
+
+    return returnedValue;
+}
+
+ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** handshake_message_out,
+        HandshakeMessageToken&& handshake_message_in,
+        PKIHandshakeHandle& handshake_handle,
+        SecurityException& exception)
+{
+    const PKIIdentityHandle& lih = *handshake_handle->local_identity_handle_;
+    PKIIdentityHandle& rih = *handshake_handle->remote_identity_handle_;
+
+    // Check TokenMessage
+    if(handshake_message_in.class_id().compare("DDS:Auth:PKI-DH:1.0+Reply") != 0)
+    {
+        logError(AUTHENTICATION, "Bad HandshakeMessageToken (" << handshake_message_in.class_id() << ")");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // Check incomming handshake.
+    // Check c.id
+    const std::vector<uint8_t>* cid = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.id");
+    if(cid == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property c.id");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    rih->cert_ = load_certificate(*cid);
+
+    if(rih->cert_ == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot load certificate");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    if(!verify_certificate(lih->store_, rih->cert_, lih->there_are_crls_))
+    {
+        logError(AUTHENTICATION, "Error verifying certificate");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // TODO(Ricardo) c.pdata and check participant_builtin_key
+    
+    // c.dsign_algo
+    const std::vector<uint8_t>* dsign_algo = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.dsign_algo");
+
+    if(dsign_algo == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property c.dsign_algo");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // Check signature algorithm
+    std::string s_dsign_algo(dsign_algo->begin(), dsign_algo->end());
+    if(s_dsign_algo.compare(RSA_SHA256) != 0 &&
+            s_dsign_algo.compare(ECDSA_SHA256) != 0)
+    {
+        logError(AUTHENTICATION, "Not supported signature algorithm (" << s_dsign_algo << ")");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+    rih->sign_alg_ = std::move(s_dsign_algo);
+
+    // c.kagree_algo
+    const std::vector<uint8_t>* kagree_algo = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.kagree_algo");
+
+    if(kagree_algo == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property c.kagree_algo");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // Check key agreement algorithm
+    std::string s_kagree_algo(kagree_algo->begin(), kagree_algo->end());
+    if(s_kagree_algo.compare(handshake_handle->kagree_alg_) != 0)
+    {
+        logError(AUTHENTICATION, "Invalid key agreement algorithm. Received " << s_kagree_algo << ", expected " << handshake_handle->kagree_alg_);
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // hash_c2
+    BinaryProperty* hash_c2 = DataHolderHelper::find_binary_property(handshake_message_in, "hash_c2");
+
+    if(hash_c2 == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property hash_c2");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    if(hash_c2->value().size() != SHA256_DIGEST_LENGTH)
+    {
+        logError(AUTHENTICATION, "Wrong size of hash_c2");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
+    CDRMessage_t cdrmessage(BinaryPropertyHelper::serialized_size(handshake_message_in.binary_properties())+ 3);
+    cdrmessage.msg_endian = BIGEND;
+    CDRMessage::addBinaryPropertySeq(&cdrmessage, handshake_message_in.binary_properties(), "hash_c2");
+    unsigned char md[SHA256_DIGEST_LENGTH];
+
+    if(!EVP_Digest(cdrmessage.buffer, cdrmessage.length, md, NULL, EVP_sha256(), NULL))
+    {
+        logError(AUTHENTICATION, "Cannot generate SHA256 of request");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+    
+    if(memcmp(md, hash_c2->value().data(), SHA256_DIGEST_LENGTH) != 0)
+    {
+        logError(AUTHENTICATION, "Wrong hash_c2");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // dh2
+    BinaryProperty* dh2 = DataHolderHelper::find_binary_property(handshake_message_in, "dh2");
+
+    if(dh2 == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property dh2");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    if((handshake_handle->peerkeys_ = generate_dh_peer_key(dh2->value())) == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot store peer key from dh2");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    BinaryProperty* challenge2 = DataHolderHelper::find_binary_property(handshake_message_in, "challenge2");
+
+    if(challenge2 == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property challenge2");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // hash_c1
+    BinaryProperty* hash_c1 = DataHolderHelper::find_binary_property(handshake_message_in, "hash_c1");
+
+    if(hash_c1 == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property hash_c1");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    const std::vector<uint8_t>* hash_c1_request = DataHolderHelper::find_binary_property_value(handshake_handle->handshake_message_, "hash_c1");
+
+    if(hash_c1_request == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property hash_c1 in request message");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    if(hash_c1->value() != *hash_c1_request)
+    {
+        logError(AUTHENTICATION, "Invalid property hash_c1");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // dh1
+    BinaryProperty* dh1 = DataHolderHelper::find_binary_property(handshake_message_in, "dh1");
+
+    if(dh1 == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property dh1");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    const std::vector<uint8_t>* dh1_request = DataHolderHelper::find_binary_property_value(handshake_handle->handshake_message_, "dh1");
+
+    if(dh1_request == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property dh1 in request message");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    if(dh1->value() != *dh1_request)
+    {
+        logError(AUTHENTICATION, "Invalid property dh1");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    BinaryProperty* challenge1 = DataHolderHelper::find_binary_property(handshake_message_in, "challenge1");
+
+    if(challenge1 == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property challenge1");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    const std::vector<uint8_t>* challenge1_request = DataHolderHelper::find_binary_property_value(handshake_handle->handshake_message_, "challenge1");
+
+    if(challenge1_request == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property challenge1 in request message");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    if(challenge1->value() != *challenge1_request)
+    {
+        logError(AUTHENTICATION, "Invalid property challenge1");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    const std::vector<uint8_t>* signature = DataHolderHelper::find_binary_property_value(handshake_message_in, "signature");
+
+    if(signature == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property signature");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // signature
+    CDRMessage_t cdrmessage2(BinaryPropertyHelper::serialized_size(handshake_message_in.binary_properties()));
+    cdrmessage2.msg_endian = BIGEND;
+    // add sequence length
+    CDRMessage::addUInt32(&cdrmessage2, 6);
+    //add hash_c2
+    CDRMessage::addBinaryProperty(&cdrmessage2, *hash_c2);
+    //add challenge2
+    CDRMessage::addBinaryProperty(&cdrmessage2, *challenge2);
+    //add dh2
+    CDRMessage::addBinaryProperty(&cdrmessage2, *dh2);
+    //add challenge1
+    CDRMessage::addBinaryProperty(&cdrmessage2, *challenge1);
+    //add dh1
+    CDRMessage::addBinaryProperty(&cdrmessage2, *dh1);
+    //add hash_c1
+    CDRMessage::addBinaryProperty(&cdrmessage2, *hash_c1);
+
+    if(!check_sign_sha256(lih->cert_, cdrmessage2.buffer, cdrmessage2.length, *signature))
+    {
+        logError(AUTHENTICATION, "Error verifying signature");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // Generate handshake final message token.
+    HandshakeMessageToken final_message;
+    final_message.binary_properties().clear();
+    final_message.class_id("DDS:Auth:PKI-DH:1.0+Final");
+
+    BinaryProperty bproperty;
+
+    // hash_c1
+    bproperty.name("hash_c1");
+    bproperty.value(std::move(hash_c1->value()));
+    bproperty.propagate(true);
+    final_message.binary_properties().emplace_back(std::move(bproperty));
+
+    // hash_c2
+    bproperty.name("hash_c2");
+    bproperty.value(std::move(hash_c2->value()));
+    bproperty.propagate(true);
+    final_message.binary_properties().emplace_back(std::move(bproperty));
+
+    // dh1
+    bproperty.name("dh1");
+    bproperty.value(std::move(dh1->value()));
+    bproperty.propagate(true);
+    final_message.binary_properties().emplace_back(std::move(bproperty));
+
+    // dh2
+    bproperty.name("dh2");
+    bproperty.value(std::move(dh2->value()));
+    bproperty.propagate(true);
+    final_message.binary_properties().emplace_back(std::move(bproperty));
+
+    // challenge1
+    bproperty.name("challenge1");
+    bproperty.value(std::move(challenge1->value()));
+    bproperty.propagate(true);
+    final_message.binary_properties().emplace_back(std::move(bproperty));
+
+    // challenge2
+    bproperty.name("challenge2");
+    bproperty.value(std::move(challenge2->value()));
+    bproperty.propagate(true);
+    final_message.binary_properties().emplace_back(std::move(bproperty));
+
+    // signature
+    cdrmessage2.length = 0;
+    cdrmessage2.pos = 0;
+    // add sequence length
+    CDRMessage::addUInt32(&cdrmessage2, 6);
+    //add hash_c1
+    CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(final_message, "hash_c1"));
+    //add challenge1
+    CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(final_message, "challenge1"));
+    //add dh1
+    CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(final_message, "dh1"));
+    //add challenge2
+    CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(final_message, "challenge2"));
+    //add dh2
+    CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(final_message, "dh2"));
+    //add hash_c2
+    CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(final_message, "hash_c2"));
+
+    bproperty.name("signature");
+    bproperty.propagate("true");
+    if(sign_sha256(lih->pkey_, cdrmessage2.buffer, cdrmessage2.length, bproperty.value()))
+    {
+        final_message.binary_properties().emplace_back(std::move(bproperty));
+
+        handshake_handle->sharedsecret_ = generate_sharedsecret(handshake_handle->dhkeys_, handshake_handle->peerkeys_);
+
+        if(handshake_handle->sharedsecret_ != nullptr)
+        {
+            // Save challenge1 y challenge2 in sharedsecret
+            (*handshake_handle->sharedsecret_)->data_.emplace_back(SharedSecret::BinaryData("Challenge1",
+                        *DataHolderHelper::find_binary_property_value(final_message, "challenge1")));
+            (*handshake_handle->sharedsecret_)->data_.emplace_back(SharedSecret::BinaryData("Challenge2",
+                        *DataHolderHelper::find_binary_property_value(final_message, "challenge2")));
+            
+            handshake_handle->handshake_message_ = std::move(final_message);
+            *handshake_message_out = &handshake_handle->handshake_message_;
+
+            return ValidationResult_t::VALIDATION_OK_WITH_FINAL_MESSAGE;
+        }
+    }
+
+    ERR_clear_error();
+
+    return ValidationResult_t::VALIDATION_FAILED;
+}
+
+ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handshake_message_out,
+        HandshakeMessageToken&& handshake_message_in,
+        PKIHandshakeHandle& handshake_handle,
+        SecurityException& exception)
+{
+    const PKIIdentityHandle& lih = *handshake_handle->local_identity_handle_;
+    PKIIdentityHandle& rih = *handshake_handle->remote_identity_handle_;
+
+    // Check TokenMessage
+    if(handshake_message_in.class_id().compare("DDS:Auth:PKI-DH:1.0+Final") != 0)
+    {
+        logError(AUTHENTICATION, "Bad HandshakeMessageToken (" << handshake_message_in.class_id() << ")");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // Check incomming handshake.
+    // hash_c1
+    BinaryProperty* hash_c1 = DataHolderHelper::find_binary_property(handshake_message_in, "hash_c1");
+
+    if(hash_c1 == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property hash_c1");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    std::vector<uint8_t>* hash_c1_reply = DataHolderHelper::find_binary_property_value(handshake_handle->handshake_message_, "hash_c1");
+
+    if(hash_c1_reply == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property hash_c1 in reply message");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    if(hash_c1->value() != *hash_c1_reply)
+    {
+        logError(AUTHENTICATION, "Invalid hash_c1");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // hash_c2
+    BinaryProperty* hash_c2 = DataHolderHelper::find_binary_property(handshake_message_in, "hash_c2");
+
+    if(hash_c2 == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property hash_c2");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    std::vector<uint8_t>* hash_c2_reply = DataHolderHelper::find_binary_property_value(handshake_handle->handshake_message_, "hash_c2");
+
+    if(hash_c2_reply == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property hash_c2 in reply message");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    if(hash_c2->value() != *hash_c2_reply)
+    {
+        logError(AUTHENTICATION, "Invalid hash_c2");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // dh1
+    BinaryProperty* dh1 = DataHolderHelper::find_binary_property(handshake_message_in, "dh1");
+
+    if(dh1 == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property dh1");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    std::vector<uint8_t>* dh1_reply = DataHolderHelper::find_binary_property_value(handshake_handle->handshake_message_, "dh1");
+
+    if(dh1_reply == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property dh1 in reply message");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    if(dh1->value() != *dh1_reply)
+    {
+        logError(AUTHENTICATION, "Invalid dh1");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // dh2
+    BinaryProperty* dh2 = DataHolderHelper::find_binary_property(handshake_message_in, "dh2");
+
+    if(dh2 == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property dh2");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    std::vector<uint8_t>* dh2_reply = DataHolderHelper::find_binary_property_value(handshake_handle->handshake_message_, "dh2");
+
+    if(dh2_reply == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property dh2 in reply message");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    if(dh2->value() != *dh2_reply)
+    {
+        logError(AUTHENTICATION, "Invalid dh2");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    BinaryProperty* challenge1 = DataHolderHelper::find_binary_property(handshake_message_in, "challenge1");
+
+    if(challenge1 == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property challenge1");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    std::vector<uint8_t>* challenge1_reply = DataHolderHelper::find_binary_property_value(handshake_handle->handshake_message_, "challenge1");
+
+    if(challenge1_reply == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property challenge1 in reply message");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    if(challenge1->value() != *challenge1_reply)
+    {
+        logError(AUTHENTICATION, "Invalid challenge1");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    BinaryProperty* challenge2 = DataHolderHelper::find_binary_property(handshake_message_in, "challenge2");
+
+    if(challenge2 == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property challenge2");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    std::vector<uint8_t>* challenge2_reply = DataHolderHelper::find_binary_property_value(handshake_handle->handshake_message_, "challenge2");
+
+    if(challenge2_reply == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property challenge2 in reply message");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    if(challenge2->value() != *challenge2_reply)
+    {
+        logError(AUTHENTICATION, "Invalid challenge2");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    const std::vector<uint8_t>* signature = DataHolderHelper::find_binary_property_value(handshake_message_in, "signature");
+
+    if(signature == nullptr)
+    {
+        logError(AUTHENTICATION, "Cannot find property signature");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // signature
+    CDRMessage_t cdrmessage(BinaryPropertyHelper::serialized_size(handshake_message_in.binary_properties()));
+    cdrmessage.msg_endian = BIGEND;
+    // add sequence length
+    CDRMessage::addUInt32(&cdrmessage, 6);
+    //add hash_c1
+    CDRMessage::addBinaryProperty(&cdrmessage, *hash_c1);
+    //add challenge1
+    CDRMessage::addBinaryProperty(&cdrmessage, *challenge1);
+    //add dh1
+    CDRMessage::addBinaryProperty(&cdrmessage, *dh1);
+    //add challenge2
+    CDRMessage::addBinaryProperty(&cdrmessage, *challenge2);
+    //add dh2
+    CDRMessage::addBinaryProperty(&cdrmessage, *dh2);
+    //add hash_c2
+    CDRMessage::addBinaryProperty(&cdrmessage, *hash_c2);
+
+    if(!check_sign_sha256(lih->cert_, cdrmessage.buffer, cdrmessage.length, *signature))
+    {
+        logError(AUTHENTICATION, "Error verifying signature");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    handshake_handle->sharedsecret_ = generate_sharedsecret(handshake_handle->dhkeys_, handshake_handle->peerkeys_);
+
+    if(handshake_handle->sharedsecret_ != nullptr)
+    {
+        // Save challenge1 y challenge2 in sharedsecret
+        (*handshake_handle->sharedsecret_)->data_.emplace_back(SharedSecret::BinaryData("Challenge1",
+                    challenge1->value()));
+        (*handshake_handle->sharedsecret_)->data_.emplace_back(SharedSecret::BinaryData("Challenge2",
+                    challenge2->value()));
+
+        return ValidationResult_t::VALIDATION_OK;
+    }
+
+    ERR_clear_error();
+
     return ValidationResult_t::VALIDATION_FAILED;
 }
 
 SharedSecretHandle* PKIDH::get_shared_secret(const HandshakeHandle& handshake_handle,
         SecurityException& exception)
 {
+    const PKIHandshakeHandle& handshake = PKIHandshakeHandle::narrow(handshake_handle);
+
+    if(!handshake.nil())
+    {
+        SharedSecretHandle* sharedsecret = new SharedSecretHandle();
+        (*sharedsecret)->data_ = (*handshake->sharedsecret_)->data_;
+        return sharedsecret;
+    }
+
     return nullptr;
 }
 
