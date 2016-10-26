@@ -39,7 +39,10 @@ AESGCMGMAC::AESGCMGMAC(const PropertyPolicy& property_policy)
 }
 
 AESGCMGMAC::~AESGCMGMAC(){
-    
+
+    delete m_cryptokeyexchange;
+    delete m_cryptokeyfactory;
+    delete m_cryptotransform;
     //Breakdown OpenSSL libcrypto
     //EVP_cleanup();
     //CRYPTO_cleanup_all_ex_data();

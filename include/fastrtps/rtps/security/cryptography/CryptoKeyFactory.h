@@ -127,7 +127,7 @@ class CryptoKeyFactory
          * @return TRUE is succesful 
          */
         virtual bool unregister_participant(
-                const ParticipantCryptoHandle &participant_crypto_handle,
+                ParticipantCryptoHandle &participant_crypto_handle,
                 SecurityException &exception) = 0;
         
         /**

@@ -147,10 +147,41 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
 }
 
 bool AESGCMGMAC_KeyFactory::unregister_participant(
-                const ParticipantCryptoHandle &participant_crypto_handle,
+                ParticipantCryptoHandle &participant_crypto_handle,
                 SecurityException &exception){
+   
+    bool return_code = false;
+    
+    //De-register the IDs
+    AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(participant_crypto_handle);
+    for(std::vector<CryptoTransformKeyId>::iterator it = m_CryptoTransformKeyIds.begin(); it != m_CryptoTransformKeyIds.end();it++){
+        if( (*it) == local_participant->ParticipantKeyMaterial->sender_key_id ){
+            m_CryptoTransformKeyIds.erase(it);
+                return_code = true;
+        }
+    }
+    //Free space associated wih the handle
+    if(local_participant->ParticipantKeyMaterial != nullptr){
+        delete local_participant->ParticipantKeyMaterial;
+        
+    }
+    if(!local_participant->Participant2ParticipantKeyMaterial.empty()){
+        for(std::vector<KeyMaterial_AES_GCM_GMAC*>::iterator it = local_participant->Participant2ParticipantKeyMaterial.begin(); it != local_participant->Participant2ParticipantKeyMaterial.end(); it++){
+            if( *it != nullptr )    delete(*it);
+        }
+    }
+    if(!local_participant->Participant2ParticipantKxKeyMaterial.empty()){
+        for(std::vector<KeyMaterial_AES_GCM_GMAC*>::iterator it = local_participant->Participant2ParticipantKxKeyMaterial.begin(); it != local_participant->Participant2ParticipantKxKeyMaterial.end(); it++){
+            if( *it != nullptr )    delete(*it);
+        }            
+    }
+    
 
-    exception = SecurityException("Not implemented");
+    if(return_code){
+        return true;
+    }else{
+        exception = SecurityException("Tried to unregister a participant not present in the plugin");
+    }
     return false;
 }
         
