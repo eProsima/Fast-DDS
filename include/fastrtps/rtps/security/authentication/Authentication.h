@@ -93,7 +93,7 @@ class Authentication
          */
         virtual ValidationResult_t validate_remote_identity(IdentityHandle** remote_identity_handle,
                 const IdentityHandle& local_identity_handle,
-                const IdentityToken& remote_identity_token,
+                IdentityToken&& remote_identity_token,
                 const GUID_t remote_participant_key,
                 SecurityException& exception) = 0;
 

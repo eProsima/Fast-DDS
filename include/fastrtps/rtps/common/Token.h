@@ -117,6 +117,14 @@ class DataHolderHelper
 {
     public:
 
+        static std::string* find_property_value(DataHolder& data_holder, const std::string& name);
+
+        static const std::string* find_property_value(const DataHolder& data_holder, const std::string& name);
+
+        static Property* find_property(DataHolder& data_holder, const std::string& name);
+
+        static const Property* find_property(const DataHolder& data_holder, const std::string& name);
+
         static std::vector<uint8_t>* find_binary_property_value(DataHolder& data_holder, const std::string& name);
 
         static const std::vector<uint8_t>* find_binary_property_value(const DataHolder& data_holder, const std::string& name);

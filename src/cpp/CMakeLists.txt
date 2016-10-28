@@ -113,6 +113,7 @@ if(SECURITY)
         rtps/security/common/SharedSecretHandle.cpp
         rtps/security/SecurityManager.cpp
         rtps/security/SecurityPluginFactory.cpp
+        security/OpenSSLInit.cpp
         security/authentication/PKIDH.cpp
         security/authentication/PKIIdentityHandle.cpp
         security/authentication/PKIHandshakeHandle.cpp
