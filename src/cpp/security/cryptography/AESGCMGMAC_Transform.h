@@ -71,7 +71,7 @@ class AESGCMGMAC_Transform : public CryptoTransform
                 std::vector<uint8_t> &encoded_rtps_message,
                 const std::vector<uint8_t> &plain_rtps_message,
                 ParticipantCryptoHandle &sending_crypto,
-                const std::vector<ParticipantCryptoHandle> &receiving_crypto_list,
+                const std::vector<ParticipantCryptoHandle*> &receiving_crypto_list,
                 SecurityException &exception);
 
     bool decode_rtps_message(

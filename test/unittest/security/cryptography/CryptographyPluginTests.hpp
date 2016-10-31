@@ -295,6 +295,19 @@ TEST_F(CryptographyPluginTest, transform_MessageExchange)
     
     //Perform sample message exchange
 
+    std::vector<uint8_t> plain_rtps_message;
+    std::vector<uint8_t> encoded_rtps_message;
+    std::vector<uint8_t> decoded_rtps_message;
+
+    std::vector<ParticipantCryptoHandle*> receivers;
+
+    ASSERT_TRUE(
+        CryptoPlugin->cryptotransform()->encode_rtps_message(encoded_rtps_message, plain_rtps_message,*ParticipantA,receivers,exception)
+    );
+
+    ASSERT_TRUE(
+        CryptoPlugin->cryptotransform()->decode_rtps_message(decoded_rtps_message,encoded_rtps_message,*ParticipantB,*ParticipantB_remote,exception)
+    );
 
 }
 

@@ -64,7 +64,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
                 std::vector<uint8_t> &encoded_rtps_message,
                 const std::vector<uint8_t> &plain_rtps_message,
                 ParticipantCryptoHandle &sending_crypto,
-                const std::vector<ParticipantCryptoHandle> &receiving_crypto_list,
+                const std::vector<ParticipantCryptoHandle*> &receiving_crypto_list,
                 SecurityException &exception){
 
     AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(sending_crypto);
