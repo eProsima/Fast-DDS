@@ -168,20 +168,22 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     for(int i=0;i < 8; i++) encoded_rtps_message.push_back( header.initialization_vector_suffix.at(i) );
     
     //Body
-
-    //TODO (Santi) Set length
-    for(int i=0;i < body.secure_data.size();i++) encoded_rtps_message.push_back( body.secure_data.at(i) );
+    long body_length = body.secure_data.size();
+    for(int i=0;i < sizeof(long); i++) encoded_rtps_message.push_back( *( (uint8_t*)&body_length + i) );
+    for(int i=0;i < body_length;i++) encoded_rtps_message.push_back( body.secure_data.at(i) );
 
     //Tag
     for(int i=0;i < 16; i++) encoded_rtps_message.push_back( dataTag.common_mac.at(i) );
+    //TODO (Santi) Deal with receiver_specific MACs
     /*
     for(int j=0; j< no_macs; j++){
         //TODO (Santi) Set length 
-    for(int i=0; 
+    
+        for(int i=0; 
 
     }
     */
-    return false;
+    return true;
 }
 
 bool AESGCMGMAC_Transform::decode_rtps_message(
@@ -190,6 +192,30 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
                 const ParticipantCryptoHandle &receiving_crypto,
                 const ParticipantCryptoHandle &sending_crypto,
                 SecurityException &exception){
+
+    //Fun reverse order process;
+    SecureDataHeader header;
+    SecureDataBody body;
+    SecureDataTag tag;
+
+    //Header
+    for(int i=0;i<4;i++) header.transform_identifier.transformation_kind.at(i) = ( encoded_buffer.at( i ) );
+    for(int i=0;i<4;i++) header.transform_identifier.transformation_key_id.at(i) = ( encoded_buffer.at( i+4 ) );
+    for(int i=0;i<4;i++) header.session_id.at(i) = ( encoded_buffer.at( i+8 ) );
+    for(int i=0;i<8;i++) header.initialization_vector_suffix.at(i) = ( encoded_buffer.at( i+12 ) );
+    //Body
+    long body_length = 0;
+    memcpy(&body_length, encoded_buffer.data()+20, sizeof(long));
+    for(int i=0;i < body_length; i++) body.secure_data.push_back( encoded_buffer.at( i+20+sizeof(long) ) );
+    //Tag
+    for(int i=0;i < 16; i++) tag.common_mac.at(i) = ( encoded_buffer.at( i+20+sizeof(long)+body_length ) );
+    //TODO (Santi) Deal with receiver_specific MACs
+
+    //Auth message
+    
+    //Decode message
+
+
 
     exception = SecurityException("Not implemented");
     return false;
