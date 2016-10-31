@@ -38,6 +38,21 @@ AESGCMGMAC::AESGCMGMAC(const PropertyPolicy& property_policy)
 
 }
 
+AESGCMGMAC_KeyExchange* AESGCMGMAC::keyexchange(){
+
+    return (AESGCMGMAC_KeyExchange*) m_cryptokeyexchange;
+}
+
+AESGCMGMAC_KeyFactory* AESGCMGMAC::keyfactory(){
+
+    return (AESGCMGMAC_KeyFactory*) m_cryptokeyfactory;
+}
+
+AESGCMGMAC_Transform* AESGCMGMAC::cryptotransform(){
+
+    return (AESGCMGMAC_Transform*) m_cryptotransform;
+}
+
 AESGCMGMAC::~AESGCMGMAC(){
 
     delete m_cryptokeyexchange;

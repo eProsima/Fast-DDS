@@ -34,6 +34,10 @@ public:
     Cryptography():m_cryptokeyexchange(nullptr),m_cryptokeyfactory(nullptr),
     m_cryptotransform(nullptr){}
 
+    /* Specializations should add functions to access the private members */
+
+protected:
+
     CryptoKeyExchange *m_cryptokeyexchange;
     CryptoKeyFactory *m_cryptokeyfactory;
     CryptoTransform *m_cryptotransform;

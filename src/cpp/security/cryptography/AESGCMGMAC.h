@@ -39,7 +39,9 @@ public:
     AESGCMGMAC(const PropertyPolicy& property_policy);
     ~AESGCMGMAC();
 
-
+    AESGCMGMAC_KeyExchange* keyexchange();
+    AESGCMGMAC_KeyFactory* keyfactory();
+    AESGCMGMAC_Transform* cryptotransform();
 
 };
 
