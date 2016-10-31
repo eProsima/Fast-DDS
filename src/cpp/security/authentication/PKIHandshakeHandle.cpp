@@ -13,36 +13,11 @@
 // limitations under the License.
 
 /*!
- * @file AESGCMGMAC.cpp
+ * @file PKIHandshakeHandle.cpp
  */
 
-#include <openssl/conf.h>
-#include <openssl/evp.h>
-#include <openssl/err.h>
-
-#include "AESGCMGMAC.h"
+#include "PKIHandshakeHandle.h"
 
 using namespace eprosima::fastrtps::rtps::security;
 
-AESGCMGMAC::AESGCMGMAC(const PropertyPolicy& property_policy)
-{
-     
-    m_cryptokeyexchange = new AESGCMGMAC_KeyExchange();
-    m_cryptokeyfactory = new AESGCMGMAC_KeyFactory();
-    m_cryptotransform = new AESGCMGMAC_Transform();
-    
-    //Init OpenSSL libcrypto
-    ERR_load_crypto_strings();
-    //OpenSSL_add_all_algorithms();
-    OPENSSL_config(NULL);
-
-}
-
-AESGCMGMAC::~AESGCMGMAC(){
-
-    delete m_cryptokeyexchange;
-    delete m_cryptokeyfactory;
-    delete m_cryptotransform;
-
-}
-
+const char* const PKIHandshake::class_id_ = "PKIHandshakeHandle";

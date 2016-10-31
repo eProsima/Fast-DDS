@@ -22,6 +22,7 @@
 #include <fastrtps/rtps/security/cryptography/CryptoTypes.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
 #include <fastrtps/rtps/security/common/Handle.h>
+#include <fastrtps/rtps/security/common/SharedSecretHandle.h>
 
 //No encryption, no authentication tag
 #define CRYPTO_TRANSFORMATION_KIND_NONE             {0,0,0,0}

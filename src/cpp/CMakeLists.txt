@@ -110,6 +110,7 @@ set_sources(
 if(SECURITY)
     set_sources(
         rtps/security/exceptions/SecurityException.cpp
+        rtps/security/common/SharedSecretHandle.cpp
         rtps/security/SecurityManager.cpp
         rtps/security/SecurityPluginFactory.cpp
         security/authentication/PKIDH.cpp
@@ -120,6 +121,7 @@ if(SECURITY)
         security/cryptography/AESGCMGMAC_Types.cpp
         security/authentication/PKIIdentityHandle.cpp
         security/access/mockAccessHandle.cpp
+        security/authentication/PKIHandshakeHandle.cpp
         )
 
     include_directories(${OPENSSL_INCLUDE_DIR})

@@ -21,6 +21,7 @@
 
 #include <fastrtps/rtps/security/authentication/Authentication.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
+#include "PKIHandshakeHandle.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -45,21 +46,21 @@ class PKIDH : public Authentication
                 SecurityException& exception);
 
         ValidationResult_t begin_handshake_request(HandshakeHandle** handshake_handle,
-                HandshakeMessageToken& handshake_message,
+                HandshakeMessageToken** handshake_message,
                 const IdentityHandle& initiator_identity_handle,
-                const IdentityHandle& replier_identity_handle,
+                IdentityHandle& replier_identity_handle,
                 SecurityException& exception);
 
         ValidationResult_t begin_handshake_reply(HandshakeHandle** handshake_handle,
-                HandshakeMessageToken& handshake_message_out,
-                const HandshakeMessageToken& handshake_message_in,
-                const IdentityHandle& initiator_identity_handle,
+                HandshakeMessageToken** handshake_message_out,
+                HandshakeMessageToken&& handshake_message_in,
+                IdentityHandle& initiator_identity_handle,
                 const IdentityHandle& replier_identity_handle,
                 SecurityException& exception);
 
-        ValidationResult_t process_handshake(HandshakeMessageToken& handshake_message_out,
-                const HandshakeMessageToken& handshake_message_in,
-                const HandshakeHandle& handshake_handle,
+        ValidationResult_t process_handshake(HandshakeMessageToken** handshake_message_out,
+                HandshakeMessageToken&& handshake_message_in,
+                HandshakeHandle& handshake_handle,
                 SecurityException& exception);
 
         SharedSecretHandle* get_shared_secret(const HandshakeHandle& handshake_handle,
@@ -83,6 +84,19 @@ class PKIDH : public Authentication
 
         bool return_sharedsecret_handle(SharedSecretHandle* sharedsecret_handle,
                 SecurityException& exception);
+
+    private:
+
+        ValidationResult_t process_handshake_request(HandshakeMessageToken** handshake_message_out,
+                HandshakeMessageToken&& handshake_message_in,
+                PKIHandshakeHandle& handshake_handle,
+                SecurityException& exception);
+
+        ValidationResult_t process_handshake_reply(HandshakeMessageToken** handshake_message_out,
+                HandshakeMessageToken&& handshake_message_in,
+                PKIHandshakeHandle& handshake_handle,
+                SecurityException& exception);
+
 };
 
 } //namespace security

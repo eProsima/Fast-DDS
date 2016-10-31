@@ -21,6 +21,8 @@
 #include <openssl/err.h>
 #include <openssl/rand.h>
 
+#include <string.h>
+
 #include "AESGCMGMAC_KeyFactory.h"
 
 using namespace eprosima::fastrtps::rtps::security;
@@ -43,10 +45,10 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     (*PCrypto)->ParticipantKeyMaterial.transformation_kind = 
             std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM); //Configurability should be provided via participant_properties
     (*PCrypto)->ParticipantKeyMaterial.master_salt.fill(0);
-    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial.master_salt.data(), 128 );  
+    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial.master_salt.data(), 16 );  
     (*PCrypto)->ParticipantKeyMaterial.sender_key_id = make_unique_KeyId();
     (*PCrypto)->ParticipantKeyMaterial.master_sender_key.fill(0);
-    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial.master_sender_key.data(), 128 );
+    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial.master_sender_key.data(), 16 );
     (*PCrypto)->ParticipantKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
     (*PCrypto)->ParticipantKeyMaterial.master_receiver_specific_key.fill(0); 
     return PCrypto;
@@ -58,17 +60,25 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
                 PermissionsHandle &remote_participant_permissions, 
                 SharedSecretHandle &shared_secret, 
                 SecurityException &exception){
-//Create Participant2ParticipantKeyMaterial (Based on local ParticipantKeyMaterial) and ParticipantKxKeyMaterial (based on the SharedSecret)
-//Put both elements in the local and remote ParticipantCryptoHandle
-    AESGCMGMAC_ParticipantCryptoHandle& local_participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto_handle);
-    AESGCMGMAC_ParticipantCryptoHandle* RPCrypto = nullptr;
-    if( (!remote_participant_identity.nil()) | (!remote_participant_permissions.nil()) ){
-        exception = SecurityException("Invalid input parameters");
+
+    const std::vector<uint8_t>* challenge_1 = SharedSecretHelper::find_data_value(**shared_secret,"Challenge1");
+    const std::vector<uint8_t>* shared_secret_ss = SharedSecretHelper::find_data_value(**shared_secret,"SharedSecret");
+    const std::vector<uint8_t>* challenge_2 = SharedSecretHelper::find_data_value(**shared_secret,"Challenge2");
+    if( (challenge_1 == nullptr) | (challenge_2 == nullptr) ){
         return nullptr;
     }
+    //Create Participant2ParticipantKeyMaterial (Based on local ParticipantKeyMaterial) and ParticipantKxKeyMaterial (based on the SharedSecret)
+    //Put both elements in the local and remote ParticipantCryptoHandle
     
-    RPCrypto = new AESGCMGMAC_ParticipantCryptoHandle();  //This will be the remote participant crypto handle
-   
+    AESGCMGMAC_ParticipantCryptoHandle& local_participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto_handle);
+    AESGCMGMAC_ParticipantCryptoHandle* RPCrypto = nullptr;
+    //if( (!remote_participant_identity.nil()) | (!remote_participant_permissions.nil()) ){
+    //    exception = SecurityException("Invalid input parameters");
+    //    return nullptr;
+    //}
+    
+    RPCrypto = new AESGCMGMAC_ParticipantCryptoHandle();  //This will be the remote participant crypto handle to be returned at the end of the function
+    /*Fill values for Participant2ParticipantKeyMaterial*/
     { //scope for temp var buffer
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Participant2ParticipantKeyMaterial
         /*Fill values for Participant2ParticipantKey data*/
@@ -81,28 +91,85 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         buffer.sender_key_id = make_unique_KeyId();
         buffer.receiver_specific_key_id = make_unique_KeyId();
         buffer.master_receiver_specific_key.fill(0);
-        RAND_bytes( buffer.master_receiver_specific_key.data(), 128 );
+        RAND_bytes( buffer.master_receiver_specific_key.data(), 16 );
 
         //Attach to Keyhandles
         (*RPCrypto)->Participant2ParticipantKeyMaterial.push_back(buffer);
         local_participant_handle->Participant2ParticipantKeyMaterial.push_back(buffer);
     }
-    /*Fill values for Participant2ParticipantKxKey data*/
+
+    /*Fill values for Participant2ParticipantKxKeyMaterial */
     { //scope for temp var buffer
         KeyMaterial_AES_GCM_GMAC buffer;
         //Fill values for Participant2ParticipantKxKey
         buffer.transformation_kind = std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC);
         buffer.master_salt.fill(0);
-        RAND_bytes( buffer.master_salt.data(), 128); // To substitute with HMAC_sha
-        buffer.sender_key_id.fill(0); //Specified by standard
+        std::array<uint8_t,32> concatenation;
+        
+        std::string KxKeyCookie("key exchange key");
+        concatenation.fill(0);
+        memcpy(concatenation.data(),challenge_1->data(),challenge_1->size());
+        memcpy(concatenation.data() + challenge_1->size(), KxKeyCookie.data(), 16);
+        memcpy(concatenation.data() + challenge_1->size() + 16, challenge_2->data(), challenge_2->size());
+        //Compute HMAC_sha of concatenation and save into master_salt
+        buffer.master_salt.fill(0);
+        std::array<uint8_t,32> p_master_salt;
+        if(!EVP_Digest(concatenation.data(), challenge_1->size() + 16 + challenge_2->size(), p_master_salt.data(), NULL, EVP_sha256(), NULL)){
+            delete RPCrypto;
+            return nullptr;
+        }
+        //The result of p_master_salt is now the key to perform an HMACsha256 of the shared secret
+        EVP_PKEY *key = EVP_PKEY_new_mac_key(EVP_PKEY_HMAC, NULL, p_master_salt.data(), 32);
+        EVP_MD_CTX ctx;
+        EVP_MD_CTX_init(&ctx);
+
+        EVP_DigestSignInit(&ctx, NULL, EVP_sha256(), NULL, key);
+        EVP_DigestSignUpdate(&ctx, shared_secret_ss->data(), shared_secret_ss->size());
+        size_t length = 0;
+        EVP_DigestSignFinal(&ctx, NULL, &length);
+        if(length > 32){
+            //Something went wrong...
+            delete RPCrypto;
+            return nullptr;
+        }
+        EVP_DigestSignFinal(&ctx, buffer.master_salt.data(), &length);
+        EVP_PKEY_free(key);
+        EVP_MD_CTX_cleanup(&ctx);
+
+        std::string KxSaltCookie("keyexchange salt");
+        concatenation.fill(0);
+        memcpy(concatenation.data(), challenge_2->data(), challenge_2->size());
+        memcpy(concatenation.data() + challenge_2->size(), KxSaltCookie.data(), 16);
+        memcpy(concatenation.data() + challenge_2->size() + 16, challenge_1->data(), challenge_1->size() );
+        //Compute HMAC_sha of concatenation and save into master_sender_key
         buffer.master_sender_key.fill(0);
-        RAND_bytes( buffer.master_sender_key.data(), 128); // To substitute with HMAC_sha
+        if(!EVP_Digest(concatenation.data(), challenge_1->size() + 16 + challenge_2->size(), p_master_salt.data(), NULL, EVP_sha256(), NULL)){
+            delete RPCrypto;
+            return nullptr;
+        }
+        //The result of p_master_salt is not the key to perform an HMACsha256 of the shared secret that will go into master_sender_key
+        key = EVP_PKEY_new_mac_key(EVP_PKEY_HMAC, NULL, p_master_salt.data(), 32);
+        EVP_MD_CTX_init(&ctx);
+
+        EVP_DigestSignInit(&ctx, NULL, EVP_sha256(), NULL, key);
+        EVP_DigestSignUpdate(&ctx, shared_secret_ss->data(), shared_secret_ss->size());
+        length = 0;
+        EVP_DigestSignFinal(&ctx, NULL, &length);
+        if(length > 32){
+            //Something went wrong...
+            delete RPCrypto;
+            return nullptr;
+        }
+        EVP_DigestSignFinal(&ctx, buffer.master_salt.data(), &length);
+        EVP_PKEY_free(key);
+
+        buffer.sender_key_id.fill(0); //Specified by standard
         buffer.receiver_specific_key_id.fill(0); //Specified by standard
         buffer.master_receiver_specific_key.fill(0); //Specified by standard
 
         //Attack to Keyhandles
-        (*RPCrypto)->Participant2ParticipantKeyMaterial.push_back(buffer);
-        local_participant_handle->Participant2ParticipantKeyMaterial.push_back(buffer);
+        (*RPCrypto)->Participant2ParticipantKxKeyMaterial.push_back(buffer);
+        local_participant_handle->Participant2ParticipantKxKeyMaterial.push_back(buffer);
     }
 
     return RPCrypto;

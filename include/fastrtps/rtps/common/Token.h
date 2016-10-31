@@ -41,6 +41,24 @@ class DataHolder
             properties_(data_holder.properties_),
             binary_properties_(data_holder.binary_properties_) {}
 
+        DataHolder& operator=(const DataHolder& data_holder)
+        {
+            class_id_ = data_holder.class_id_;
+            properties_ = data_holder.properties_;
+            binary_properties_ = data_holder.binary_properties_;
+
+            return *this;
+        }
+
+        DataHolder& operator=(DataHolder&& data_holder)
+        {
+            class_id_ = std::move(data_holder.class_id_);
+            properties_ = std::move(data_holder.properties_);
+            binary_properties_ = std::move(data_holder.binary_properties_);
+            
+            return *this;
+        }
+
         void class_id(const std::string& class_id)
         {
             class_id_ = class_id;
@@ -99,7 +117,13 @@ class DataHolderHelper
 {
     public:
 
-        static std::vector<uint8_t>* find_binary_property(DataHolder& data_holder, const std::string& name);
+        static std::vector<uint8_t>* find_binary_property_value(DataHolder& data_holder, const std::string& name);
+
+        static const std::vector<uint8_t>* find_binary_property_value(const DataHolder& data_holder, const std::string& name);
+
+        static BinaryProperty* find_binary_property(DataHolder& data_holder, const std::string& name);
+
+        static const BinaryProperty* find_binary_property(const DataHolder& data_holder, const std::string& name);
 };
 
 } //namespace rtps

@@ -87,8 +87,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
     local_participant->RemoteParticipant2ParticipantKeyMaterial.push_back(keymat);
     remote_participant->RemoteParticipant2ParticipantKeyMaterial.push_back(keymat);
 
-    exception = SecurityException("Not implemented"); 
-    return false;
+    return true;
 }
 
 bool AESGCMGMAC_KeyExchange::create_local_datawriter_crypto_tokens(

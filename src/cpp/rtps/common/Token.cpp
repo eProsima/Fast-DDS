@@ -20,7 +20,7 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-std::vector<uint8_t>* DataHolderHelper::find_binary_property(DataHolder& data_holder, const std::string& name)
+std::vector<uint8_t>* DataHolderHelper::find_binary_property_value(DataHolder& data_holder, const std::string& name)
 {
     std::vector<uint8_t>* returnedValue = nullptr;
 
@@ -29,6 +29,54 @@ std::vector<uint8_t>* DataHolderHelper::find_binary_property(DataHolder& data_ho
         if(property->name().compare(name) == 0)
         {
             returnedValue = &property->value();
+            break;
+        }
+    }
+
+    return returnedValue;
+}
+
+const std::vector<uint8_t>* DataHolderHelper::find_binary_property_value(const DataHolder& data_holder, const std::string& name)
+{
+    const std::vector<uint8_t>* returnedValue = nullptr;
+
+    for(auto property = data_holder.binary_properties().begin(); property != data_holder.binary_properties().end(); ++property)
+    {
+        if(property->name().compare(name) == 0)
+        {
+            returnedValue = &property->value();
+            break;
+        }
+    }
+
+    return returnedValue;
+}
+
+BinaryProperty* DataHolderHelper::find_binary_property(DataHolder& data_holder, const std::string& name)
+{
+    BinaryProperty* returnedValue = nullptr;
+
+    for(auto property = data_holder.binary_properties().begin(); property != data_holder.binary_properties().end(); ++property)
+    {
+        if(property->name().compare(name) == 0)
+        {
+            returnedValue = &(*property);
+            break;
+        }
+    }
+
+    return returnedValue;
+}
+
+const BinaryProperty* DataHolderHelper::find_binary_property(const DataHolder& data_holder, const std::string& name)
+{
+    const BinaryProperty* returnedValue = nullptr;
+
+    for(auto property = data_holder.binary_properties().begin(); property != data_holder.binary_properties().end(); ++property)
+    {
+        if(property->name().compare(name) == 0)
+        {
+            returnedValue = &(*property);
             break;
         }
     }
