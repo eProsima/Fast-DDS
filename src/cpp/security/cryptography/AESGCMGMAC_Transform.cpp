@@ -154,14 +154,33 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     //Step 5 - Build Secure DataTag
     SecureDataTag dataTag;
     memcpy(dataTag.common_mac.data(),tag, 16);
-    //for(...
+    //for(int i=0; i < no_macs; i++)
         //tag.receiver_specific_macs; //Placeholder
 
 
     //Step 5 - Assemble the message
+    encoded_rtps_message.clear();
+    
+    //Header
+    for(int i=0;i < 4; i++) encoded_rtps_message.push_back( header.transform_identifier.transformation_kind.at(i) );
+    for(int i=0;i < 4; i++) encoded_rtps_message.push_back( header.transform_identifier.transformation_key_id.at(i) );
+    for(int i=0;i < 4; i++) encoded_rtps_message.push_back( header.session_id.at(i) );
+    for(int i=0;i < 8; i++) encoded_rtps_message.push_back( header.initialization_vector_suffix.at(i) );
+    
+    //Body
 
+    //TODO (Santi) Set length
+    for(int i=0;i < body.secure_data.size();i++) encoded_rtps_message.push_back( body.secure_data.at(i) );
 
-    exception = SecurityException("Not implemented");
+    //Tag
+    for(int i=0;i < 16; i++) encoded_rtps_message.push_back( dataTag.common_mac.at(i) );
+    /*
+    for(int j=0; j< no_macs; j++){
+        //TODO (Santi) Set length 
+    for(int i=0; 
+
+    }
+    */
     return false;
 }
 
