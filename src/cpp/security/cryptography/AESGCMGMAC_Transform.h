@@ -112,9 +112,13 @@ class AESGCMGMAC_Transform : public CryptoTransform
                 const DatawriterCryptoHandle &sending_datawriter_crypto,
                 SecurityException &exception);
 
+    bool remove_KeyId(CryptoTransformKeyId m_key);
+
     private:
 
     std::map<CryptoTransformKeyId, CipherData> status;
+
+    std::array<uint8_t, 32> compute_sessionkey(std::array<uint8_t, 32> master_sender_key,std::array<uint8_t, 32> master_salt , uint32_t &session_id);
 
 };
 

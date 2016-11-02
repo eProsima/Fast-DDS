@@ -72,7 +72,6 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
 
     //Step 1 - Find the CriptoData associated to the Participant
     {
-
         std::map<CryptoTransformKeyId,CipherData>::iterator it= status.find(local_participant->ParticipantKeyMaterial.sender_key_id);
         if(it == status.end()){
             //First time the Participant sends data - Init struct
@@ -93,20 +92,10 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     if(m_cipherdata->session_block_counter >= m_cipherdata->max_blocks_per_session){
         m_cipherdata->session_id += 1; 
 
-        //Computation of SessionKey - Either because it has expired or because its the Participants first message
-        unsigned char *source = (unsigned char*)malloc(32 + 10 + 32 + 2);
-        memcpy(source, local_participant->ParticipantKeyMaterial.master_sender_key.data(), 32); 
-        char seq[] = "SessionKey";
-        memcpy(source+32, seq, 10);
-        memcpy(source+32+10, local_participant->ParticipantKeyMaterial.master_salt.data(),32);
-        memcpy(source+32+10+32, &(m_cipherdata->session_id),4);
-
-        if(!EVP_Digest(source, 32+10+32+2, (unsigned char*)&(m_cipherdata->SessionKey), NULL, EVP_sha256(), NULL)){
-            //logError(CRYPTOGRAPHY, "Could not compute sha256");
-            delete(source);
-            return false;
-        }
-        delete(source);
+        m_cipherdata->SessionKey = compute_sessionkey(local_participant->ParticipantKeyMaterial.master_sender_key,
+                local_participant->ParticipantKeyMaterial.master_salt,
+                m_cipherdata->session_id);
+        
         //ReceiverSpecific keys shall be computed on site
 
         m_cipherdata->session_block_counter = 0;
@@ -139,7 +128,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     
     int actual_size=0, final_size=0;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)plain_rtps_message.data(), initialization_vector.data());
+    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(m_cipherdata->SessionKey.data()), initialization_vector.data());
     EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_rtps_message.data(), plain_rtps_message.size());
     EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
     EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
@@ -267,5 +256,22 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
 
     exception = SecurityException("Not implemented");
     return false;
+}
+
+std::array<uint8_t, 32> AESGCMGMAC_Transform::compute_sessionkey(std::array<uint8_t,32> master_sender_key,std::array<uint8_t,32> master_salt , uint32_t &session_id)
+{
+
+    std::array<uint8_t,32> session_key;
+    unsigned char *source = (unsigned char*)malloc(32 + 10 + 32 + 2);
+    memcpy(source, master_sender_key.data(), 32); 
+    char seq[] = "SessionKey";
+    memcpy(source+32, seq, 10);
+    memcpy(source+32+10, master_salt.data(),32);
+    memcpy(source+32+10+32, &(session_id),4);
+
+    EVP_Digest(source, 32+10+32+2, (unsigned char*)&(session_key), NULL, EVP_sha256(), NULL);
+    
+    delete(source);
+    return session_key;
 }
 
