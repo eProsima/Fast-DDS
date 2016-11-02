@@ -179,8 +179,10 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
                 std::vector<uint8_t> &plain_buffer,
                 const std::vector<uint8_t> &encoded_buffer,
                 const ParticipantCryptoHandle &receiving_crypto,
-                const ParticipantCryptoHandle &sending_crypto,
+                ParticipantCryptoHandle &sending_crypto,
                 SecurityException &exception){
+
+    AESGCMGMAC_ParticipantCryptoHandle& sending_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(sending_crypto);
 
     //Fun reverse order process;
     SecureDataHeader header;
@@ -199,7 +201,13 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     //Tag
     for(int i=0;i < 16; i++) tag.common_mac.at(i) = ( encoded_buffer.at( i+20+sizeof(long)+body_length ) );
     //TODO (Santi) Deal with receiver_specific MACs
-
+    uint32_t session_id;
+    memcpy(&session_id,header.session_id.data(),4);
+    //Sessionkey
+    std::array<uint8_t,32> session_key = compute_sessionkey(
+            sending_participant->ParticipantKeyMaterial.master_sender_key,
+            sending_participant->ParticipantKeyMaterial.master_salt,
+            session_id);
     //Auth message
     
     //Decode message

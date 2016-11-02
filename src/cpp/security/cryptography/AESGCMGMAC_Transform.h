@@ -78,7 +78,7 @@ class AESGCMGMAC_Transform : public CryptoTransform
                 std::vector<uint8_t> &plain_buffer,
                 const std::vector<uint8_t> &encoded_buffer,
                 const ParticipantCryptoHandle &receiving_crypto,
-                const ParticipantCryptoHandle &sending_crypto,
+                ParticipantCryptoHandle &sending_crypto,
                 SecurityException &exception);
         
     bool preprocess_secure_submsg(
