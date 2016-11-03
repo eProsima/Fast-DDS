@@ -299,6 +299,10 @@ TEST_F(CryptographyPluginTest, transform_MessageExchange)
     std::vector<uint8_t> encoded_rtps_message;
     std::vector<uint8_t> decoded_rtps_message;
 
+    char message[] = "RPTSMessage"; //Length 11
+    plain_rtps_message.resize(11);
+    memcpy(plain_rtps_message.data(), message, 11);
+
     std::vector<ParticipantCryptoHandle*> receivers;
 
     ASSERT_TRUE(
@@ -309,6 +313,17 @@ TEST_F(CryptographyPluginTest, transform_MessageExchange)
         CryptoPlugin->cryptotransform()->decode_rtps_message(decoded_rtps_message,encoded_rtps_message,*ParticipantB,*ParticipantB_remote,exception)
     );
 
+    std::cout << "O: ";
+    for(auto i = plain_rtps_message.begin(); i != plain_rtps_message.end(); ++i)
+        std::cout << *i;
+    std::cout << std::endl << "R: ";
+    for(auto i = decoded_rtps_message.begin(); i != decoded_rtps_message.end(); ++i)
+        std::cout << *i;
+    std::cout << std::endl;
+
+    ASSERT_TRUE( 
+        plain_rtps_message == decoded_rtps_message 
+    );
 }
 
 #endif

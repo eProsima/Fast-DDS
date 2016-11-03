@@ -112,8 +112,8 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     
     header.transform_identifier.transformation_kind = local_participant->ParticipantKeyMaterial.transformation_kind;
     header.transform_identifier.transformation_key_id = local_participant->ParticipantKeyMaterial.sender_key_id;
-    memcpy( &(header.session_id), &(m_cipherdata->session_id), 4);
-    memcpy( &(header.initialization_vector_suffix), &initialization_vector_suffix, 8);
+    memcpy( header.session_id.data(), &(m_cipherdata->session_id), 4);
+    memcpy( header.initialization_vector_suffix.data() , &initialization_vector_suffix, 8);
 
 
     //Step 4 -Cypher the plain rtps message -> SecureDataBody
@@ -122,7 +122,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
 
     size_t enc_length = plain_rtps_message.size()*3;
     std::vector<uint8_t> output;
-    output.resize(enc_length,'\0');
+    output.resize(enc_length,0);
 
     unsigned char tag[AES_BLOCK_SIZE]; //Container for the Authentication Tag 
     
@@ -146,8 +146,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     //for(int i=0; i < no_macs; i++)
         //tag.receiver_specific_macs; //Placeholder
 
-
-    //Step 5 - Assemble the message
+    //Step 6 - Assemble the message
     encoded_rtps_message.clear();
     
     //Header
@@ -205,17 +204,39 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     memcpy(&session_id,header.session_id.data(),4);
     //Sessionkey
     std::array<uint8_t,32> session_key = compute_sessionkey(
-            sending_participant->ParticipantKeyMaterial.master_sender_key,
-            sending_participant->ParticipantKeyMaterial.master_salt,
+            sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).master_sender_key,
+            sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).master_salt,
             session_id);
-    //Auth message
+    //IV
+    std::array<uint8_t,12> initialization_vector;
+    memcpy(initialization_vector.data(), header.session_id.data(), 4);
+    memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
+
+    //Auth message - The point is that we cannot verify the authorship of the message with our receiver_specific_key the message could be crafted
+    bool auth = true;  //(TODO) Implement message verification so unauthenticated messages are rejected
+
+    if(!auth){
+        //Log error
+        return false;
+    }
     
     //Decode message
+    OpenSSL_add_all_ciphers();
+    RAND_load_file("/dev/urandom",32);
 
+    EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
+    plain_buffer.clear();
+    plain_buffer.resize(encoded_buffer.size());
 
+    int actual_size = 0, final_size = 0;
+    EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
+    EVP_DecryptUpdate(d_ctx, plain_buffer.data(), &actual_size, body.secure_data.data(),body.secure_data.size());
+    EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG,16,tag.common_mac.data());
+    EVP_DecryptFinal(d_ctx, plain_buffer.data() + actual_size, &final_size);
+    EVP_CIPHER_CTX_free(d_ctx);
+    plain_buffer.resize(actual_size + final_size);
 
-    exception = SecurityException("Not implemented");
-    return false;
+    return true;
 }
         
 bool AESGCMGMAC_Transform::preprocess_secure_submsg(
