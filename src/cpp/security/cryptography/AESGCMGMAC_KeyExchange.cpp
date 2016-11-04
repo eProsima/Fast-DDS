@@ -37,11 +37,20 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
             SecurityException &exception){
     
     
-    AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto);
+    AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto); 
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
     
-    //Participant2ParticipantKeyMaterial will be come RemoteParticipant2ParticipantKeyMaterial
+    if( local_participant.nil() | remote_participant.nil() ){
+        //TODO (Santi) provide insight
+        return false;
+    }
+
+    //Flush previously present CryptoTokens
+    local_participant_crypto_tokens.clear();
+
+    //Participant2ParticipantKeyMaterial will be come RemoteParticipant2ParticipantKeyMaterial on the other side
     {
+        //Only the KeyMaterial used in conjunction with the remote_participant are tokenized. In this implementation only on Pariticipant2ParticipantKeyMaterial exists per matched Participant
         ParticipantCryptoToken temp;
         temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
         BinaryProperty prop;
@@ -64,21 +73,28 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
 
     AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto);
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
-    //Suposedly remote_participant_tokens holds only one element
+
+    if( local_participant.nil() | remote_participant.nil() ){
+        //TODO (Santi) provide insight
+        return false;
+    }
+    //As only relevant KeyMaterials are tokenized, only one Token is exchanged
     if(remote_participant_tokens.size() != 1){
         exception = SecurityException("Incorrect remote CryptoSequence length");
         return false;
     }
     if(remote_participant_tokens.at(0).class_id() != "DDS:Crypto:AES_GCM_GMAC"){
-        exception = SecurityException("Incorrect token type");
+        exception = SecurityException("Incorrect token type received");
         return false;
     }
+
     if(remote_participant_tokens.at(0).binary_properties().size() !=1 | remote_participant_tokens.at(0).properties().size() != 0 |
             remote_participant_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat"){
         exception = SecurityException("Malformed CryptoToken");
         return false;
     }
-    //Valid CryptoToken
+
+    //Valid CryptoToken, we can decrypt and push the resulting KeyMaterial in as a RemoteParticipant2ParticipantKeyMaterial
     std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_participant_tokens.at(0).binary_properties().at(0).value(),
             remote_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
     

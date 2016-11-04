@@ -305,6 +305,8 @@ TEST_F(CryptographyPluginTest, transform_MessageExchange)
 
     std::vector<ParticipantCryptoHandle*> receivers;
 
+    receivers.push_back(ParticipantA_remote);
+
     ASSERT_TRUE(
         CryptoPlugin->cryptotransform()->encode_rtps_message(encoded_rtps_message, plain_rtps_message,*ParticipantA,receivers,exception)
     );
