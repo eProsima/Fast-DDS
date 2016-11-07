@@ -171,8 +171,8 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
                 new_data.session_id = m_cipherdata->session_id + 2; //Just make it different in order to trigger Key update
                 RAND_bytes( (unsigned char *)(&(new_data.session_id)), sizeof(uint16_t));
             
-                status[local_participant->ParticipantKeyMaterial.sender_key_id] = new_data;
-                it= status.find(local_participant->ParticipantKeyMaterial.sender_key_id);
+                status[remote_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id] = new_data;
+                it= status.find(remote_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id);
                 m_cipherdata_r = &(it->second);
             }else{
                 //Found!
@@ -279,6 +279,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     }
 
     if(!mac_found){
+        std::cout << "No suitable specific MAC id found" << std::endl;
         exception = SecurityException("Message does not contain a suitable specific MAC for the receiving Participant");
         return false;
     }
@@ -311,11 +312,12 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
                     sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).master_receiver_specific_key,
                     sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).master_salt,
                     session_id);
- 
+    
+    //Verify specific MAC
     EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)specific_session_key.data(), initialization_vector.data());
     EVP_DecryptUpdate(d_ctx, NULL, &actual_size, tag.common_mac.data(), 16);
     EVP_CIPHER_CTX_ctrl( d_ctx, EVP_CTRL_GCM_SET_TAG,16, specific_mac.receiver_mac.data() );
-    auth = EVP_DecryptFinal_ex(d_ctx, plain_buffer.data() + actual_size, &final_size);
+    auth = EVP_DecryptFinal_ex(d_ctx, plain_buffer.data() + actual_size, &final_size); 
     EVP_CIPHER_CTX_free(d_ctx);
     plain_buffer.resize(actual_size + final_size);
 
