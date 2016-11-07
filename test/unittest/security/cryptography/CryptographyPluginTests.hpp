@@ -294,7 +294,6 @@ TEST_F(CryptographyPluginTest, transform_MessageExchange)
     CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*ParticipantB,*ParticipantB_remote,ParticipantA_CryptoTokens,exception);
     
     //Perform sample message exchange
-
     std::vector<uint8_t> plain_rtps_message;
     std::vector<uint8_t> encoded_rtps_message;
     std::vector<uint8_t> decoded_rtps_message;
@@ -303,29 +302,25 @@ TEST_F(CryptographyPluginTest, transform_MessageExchange)
     plain_rtps_message.resize(11);
     memcpy(plain_rtps_message.data(), message, 11);
 
+
+    ParticipantCryptoHandle *unintended_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*ParticipantA,*i_handle,*perm_handle,*shared_secret, exception);
     std::vector<ParticipantCryptoHandle*> receivers;
 
+    //Send message to intended participant
     receivers.push_back(ParticipantA_remote);
+    receivers.push_back(unintended_remote);
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_rtps_message(encoded_rtps_message, plain_rtps_message,*ParticipantA,receivers,exception));
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_rtps_message(decoded_rtps_message,encoded_rtps_message,*ParticipantB,*ParticipantB_remote,exception));
+    ASSERT_TRUE(plain_rtps_message == decoded_rtps_message);
+    //Send message to unintended participant
+    
+    encoded_rtps_message.clear();
+    decoded_rtps_message.clear();
+    receivers.clear();
+    receivers.push_back(unintended_remote);
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_rtps_message(encoded_rtps_message, plain_rtps_message,*ParticipantA,receivers,exception));
+    ASSERT_FALSE(CryptoPlugin->cryptotransform()->decode_rtps_message(decoded_rtps_message,encoded_rtps_message,*ParticipantB,*ParticipantB_remote,exception));
 
-    ASSERT_TRUE(
-        CryptoPlugin->cryptotransform()->encode_rtps_message(encoded_rtps_message, plain_rtps_message,*ParticipantA,receivers,exception)
-    );
-
-    ASSERT_TRUE(
-        CryptoPlugin->cryptotransform()->decode_rtps_message(decoded_rtps_message,encoded_rtps_message,*ParticipantB,*ParticipantB_remote,exception)
-    );
-
-    std::cout << "O: ";
-    for(auto i = plain_rtps_message.begin(); i != plain_rtps_message.end(); ++i)
-        std::cout << *i;
-    std::cout << std::endl << "R: ";
-    for(auto i = decoded_rtps_message.begin(); i != decoded_rtps_message.end(); ++i)
-        std::cout << *i;
-    std::cout << std::endl;
-
-    ASSERT_TRUE( 
-        plain_rtps_message == decoded_rtps_message 
-    );
 }
 
 #endif

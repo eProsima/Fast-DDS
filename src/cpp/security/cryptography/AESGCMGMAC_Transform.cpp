@@ -279,7 +279,6 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     }
 
     if(!mac_found){
-        std::cout << "No suitable specific MAC id found" << std::endl;
         exception = SecurityException("Message does not contain a suitable specific MAC for the receiving Participant");
         return false;
     }
@@ -322,7 +321,6 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     plain_buffer.resize(actual_size + final_size);
 
     if(!auth){
-        std::cout << "Error authenticating the specific mac" << std::endl;
         //Log error
         return false;
     }
