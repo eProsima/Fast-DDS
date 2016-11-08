@@ -530,6 +530,16 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
             CryptoPlugin->keyexchange()->set_remote_datawriter_crypto_tokens(*reader, *remote_writer, Writer_CryptoTokens, exception)
     );
 
+    //Check contents 
+    AESGCMGMAC_WriterCryptoHandle& WriterH = AESGCMGMAC_WriterCryptoHandle::narrow(*writer);
+    AESGCMGMAC_ReaderCryptoHandle& ReaderH = AESGCMGMAC_ReaderCryptoHandle::narrow(*reader);
+
+    ASSERT_TRUE(WriterH->Reader2WriterKeyMaterial.size() == 1);
+    ASSERT_TRUE(ReaderH->Writer2ReaderKeyMaterial.size() == 1);
+    ASSERT_TRUE(WriterH->Writer2ReaderKeyMaterial.at(0).master_sender_key == ReaderH->Writer2ReaderKeyMaterial.at(0).master_sender_key);
+    ASSERT_TRUE(ReaderH->Reader2WriterKeyMaterial.at(0).master_sender_key == WriterH->Reader2WriterKeyMaterial.at(0).master_sender_key);
+
+
 
 }
 
