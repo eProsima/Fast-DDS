@@ -524,10 +524,10 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
     //Exchange Datareader and Datawriter Cryptotokens
 
     ASSERT_TRUE(
-            CryptoPlugin->keyexchange()->set_remote_datareader_crypto_tokens(*writer, *remote_reader, Reader_CryptoTokens, exception);
+            CryptoPlugin->keyexchange()->set_remote_datareader_crypto_tokens(*writer, *remote_reader, Reader_CryptoTokens, exception)
     );
     ASSERT_TRUE(
-            CryptoPlugin->keyexchange()->set_remote_datawriter_crypto_tokens(*reader, *remote_writer, Writer_CryptoTokens, exception);
+            CryptoPlugin->keyexchange()->set_remote_datawriter_crypto_tokens(*reader, *remote_writer, Writer_CryptoTokens, exception)
     );
 
 
