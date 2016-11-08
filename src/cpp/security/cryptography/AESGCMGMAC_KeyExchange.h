@@ -84,7 +84,6 @@ class AESGCMGMAC_KeyExchange : public CryptoKeyExchange
 
     std::vector<uint8_t> aes_128_gcm_decrypt(std::vector<uint8_t> crypto, std::array<uint8_t,32> key);
 
-    
 };
 
 } //namespace security
