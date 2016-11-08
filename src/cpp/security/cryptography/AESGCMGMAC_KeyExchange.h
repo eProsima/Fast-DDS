@@ -50,14 +50,14 @@ class AESGCMGMAC_KeyExchange : public CryptoKeyExchange
 
     bool create_local_datawriter_crypto_tokens(
             DatawriterCryptoTokenSeq &local_datawriter_crypto_tokens,
-            const DatawriterCryptoHandle &local_datawriter_crypto,
-            const DatareaderCryptoHandle &remote_datareader_crypto,
+            DatawriterCryptoHandle &local_datawriter_crypto,
+            DatareaderCryptoHandle &remote_datareader_crypto,
             SecurityException &exception);
 
     bool create_local_datareader_crypto_tokens(
             DatareaderCryptoTokenSeq &local_datareader_crypto_tokens,
-            const DatareaderCryptoHandle &local_datareader_crypto,
-            const DatawriterCryptoHandle &remote_datawriter_crypto,
+            DatareaderCryptoHandle &local_datareader_crypto,
+            DatawriterCryptoHandle &remote_datawriter_crypto,
             SecurityException &exception);
 
     bool set_remote_datareader_crypto_tokens(

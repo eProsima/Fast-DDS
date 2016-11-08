@@ -110,6 +110,8 @@ class  WriterKeyHandle
 
         std::vector<KeyMaterial_AES_GCM_GMAC> Writer2ReaderKeyMaterial;
         std::vector<KeyMaterial_AES_GCM_GMAC> Reader2WriterKeyMaterial;
+        KeyMaterial_AES_GCM_GMAC Participant2ParticipantKxKeyMaterial;
+
 };
 
 typedef HandleImpl<WriterKeyHandle> AESGCMGMAC_WriterCryptoHandle;
@@ -130,6 +132,8 @@ class  ReaderKeyHandle
 
         std::vector<KeyMaterial_AES_GCM_GMAC> Reader2WriterKeyMaterial;
         std::vector<KeyMaterial_AES_GCM_GMAC> Writer2ReaderKeyMaterial;
+        KeyMaterial_AES_GCM_GMAC Participant2ParticipantKxKeyMaterial;
+
 };
 
 typedef HandleImpl<ReaderKeyHandle> AESGCMGMAC_ReaderCryptoHandle;

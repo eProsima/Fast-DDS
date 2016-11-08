@@ -249,6 +249,9 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
         (*RRCrypto)->Writer2ReaderKeyMaterial.push_back(buffer);
         local_writer_handle->Writer2ReaderKeyMaterial.push_back(buffer);
     }
+    
+    AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
+    (*RRCrypto)->Participant2ParticipantKxKeyMaterial = remote_participant->Participant2ParticipantKxKeyMaterial.at(0);
 
     return RRCrypto;
 }
@@ -297,8 +300,38 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
                 const SharedSecretHandle &shared_secret,
                 SecurityException &exception){
 
-    exception = SecurityException("Not implemented");
-    return nullptr;
+    //Create Participant2ParticipantKeyMaterial (Based on local ParticipantKeyMaterial) and ParticipantKxKeyMaterial (based on the SharedSecret)
+    //Put both elements in the local and remote ParticipantCryptoHandle
+    
+    AESGCMGMAC_ReaderCryptoHandle& local_reader_handle = AESGCMGMAC_ReaderCryptoHandle::narrow(local_datareader_crypto_handle);
+    AESGCMGMAC_WriterCryptoHandle* RWCrypto = new AESGCMGMAC_WriterCryptoHandle(); // Remote Writer CryptoHandle, to be returned at the end of the function 
+
+    (*RWCrypto)->Participant_master_key_id = local_reader_handle->Participant_master_key_id;
+    /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
+    { //scope for temp var buffer
+        KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
+        
+        //These values must match the ones in ParticipantKeymaterial
+        buffer.transformation_kind = local_reader_handle->ReaderKeyMaterial.transformation_kind;
+        buffer.master_salt = local_reader_handle->ReaderKeyMaterial.master_salt;
+        buffer.master_sender_key = local_reader_handle->ReaderKeyMaterial.master_sender_key;
+        //Generation of remainder values (Remote specific key)
+        buffer.sender_key_id = make_unique_KeyId();
+        buffer.receiver_specific_key_id = make_unique_KeyId();
+        buffer.master_receiver_specific_key.fill(0);
+        RAND_bytes( buffer.master_receiver_specific_key.data(), 16 );
+
+        //Attach to both local and remote CryptoHandles
+        (*RWCrypto)->Reader2WriterKeyMaterial.push_back(buffer);
+        local_reader_handle->Reader2WriterKeyMaterial.push_back(buffer);
+    }
+
+    AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypt);
+    (*RWCrypto)->Participant2ParticipantKxKeyMaterial = remote_participant->Participant2ParticipantKxKeyMaterial.at(0);
+
+
+
+    return RWCrypto;
 }
 
 bool AESGCMGMAC_KeyFactory::unregister_participant(

@@ -107,22 +107,70 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
 
 bool AESGCMGMAC_KeyExchange::create_local_datawriter_crypto_tokens(
             DatawriterCryptoTokenSeq &local_datawriter_crypto_tokens,
-            const DatawriterCryptoHandle &local_datawriter_crypto,
-            const DatareaderCryptoHandle &remote_datareader_crypto,
+            DatawriterCryptoHandle &local_datawriter_crypto,
+            DatareaderCryptoHandle &remote_datareader_crypto,
             SecurityException &exception){
 
-    exception = SecurityException("Not implemented"); 
-    return false;
+    AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(local_datawriter_crypto); 
+    AESGCMGMAC_ReaderCryptoHandle& remote_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(remote_datareader_crypto);
+    
+    if( local_writer.nil() | remote_reader.nil() ){
+        //TODO (Santi) provide insight
+        return false;
+    }
+
+    //Flush previously present CryptoTokens
+    local_datawriter_crypto_tokens.clear();
+
+    //Participant2ParticipantKeyMaterial will be come RemoteParticipant2ParticipantKeyMaterial on the other side
+    {
+        //Only the KeyMaterial used in conjunction with the remote_participant are tokenized. In this implementation only on Pariticipant2ParticipantKeyMaterial exists per matched Participant
+        DatawriterCryptoToken temp;
+        temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
+        BinaryProperty prop;
+        prop.name() = std::string("dds.cryp.keymat");
+        std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_reader->Writer2ReaderKeyMaterial.at(0));
+        prop.value() = aes_128_gcm_encrypt(plaintext, remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key); 
+
+        temp.binary_properties().push_back(prop);
+        local_datawriter_crypto_tokens.push_back(temp);
+    }
+    
+    return true;
 }
 
 bool AESGCMGMAC_KeyExchange::create_local_datareader_crypto_tokens(
             DatareaderCryptoTokenSeq &local_datareader_crypto_tokens,
-            const DatareaderCryptoHandle &local_datareader_crypto,
-            const DatawriterCryptoHandle &remote_datawriter_crypto,
+            DatareaderCryptoHandle &local_datareader_crypto,
+            DatawriterCryptoHandle &remote_datawriter_crypto,
             SecurityException &exception){
 
-    exception = SecurityException("Not implemented"); 
-    return false;
+    AESGCMGMAC_ReaderCryptoHandle& local_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(local_datareader_crypto); 
+    AESGCMGMAC_WriterCryptoHandle& remote_writer = AESGCMGMAC_WriterCryptoHandle::narrow(remote_datawriter_crypto);
+    
+    if( local_reader.nil() | remote_writer.nil() ){
+        //TODO (Santi) provide insight
+        return false;
+    }
+
+    //Flush previously present CryptoTokens
+    local_datareader_crypto_tokens.clear();
+
+    //Participant2ParticipantKeyMaterial will be come RemoteParticipant2ParticipantKeyMaterial on the other side
+    {
+        //Only the KeyMaterial used in conjunction with the remote_participant are tokenized. In this implementation only on Pariticipant2ParticipantKeyMaterial exists per matched Participant
+        DatareaderCryptoToken temp;
+        temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
+        BinaryProperty prop;
+        prop.name() = std::string("dds.cryp.keymat");
+        std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_writer->Reader2WriterKeyMaterial.at(0));
+        prop.value() = aes_128_gcm_encrypt(plaintext, remote_writer->Participant2ParticipantKxKeyMaterial.master_sender_key); 
+
+        temp.binary_properties().push_back(prop);
+        local_datareader_crypto_tokens.push_back(temp);
+    }
+    
+    return true;
 }
 
 bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
