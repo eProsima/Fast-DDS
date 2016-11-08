@@ -179,9 +179,39 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
             const DatareaderCryptoTokenSeq &remote_datareader_tokens,
             SecurityException &exception){
 
-    exception = SecurityException("Not implemented"); 
-    return false;
-}
+    AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(local_datawriter_crypto);
+    AESGCMGMAC_ReaderCryptoHandle& remote_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(remote_datareader_crypto);
+
+    if( local_writer.nil() | remote_reader.nil() ){
+        //TODO (Santi) provide insight
+        return false;
+    }
+    //As only relevant KeyMaterials are tokenized, only one Token is exchanged
+    if(remote_datareader_tokens.size() != 1){
+        exception = SecurityException("Incorrect remote CryptoSequence length");
+        return false;
+    }
+    if(remote_datareader_tokens.at(0).class_id() != "DDS:Crypto:AES_GCM_GMAC"){
+        exception = SecurityException("Incorrect token type received");
+        return false;
+    }
+
+    if(remote_datareader_tokens.at(0).binary_properties().size() !=1 | remote_datareader_tokens.at(0).properties().size() != 0 |
+            remote_datareader_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat"){
+        exception = SecurityException("Malformed CryptoToken");
+        return false;
+    }
+
+    //Valid CryptoToken, we can decrypt and push the resulting KeyMaterial in as a RemoteParticipant2ParticipantKeyMaterial
+    std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_datareader_tokens.at(0).binary_properties().at(0).value(),
+            remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key);
+    
+    KeyMaterial_AES_GCM_GMAC keymat;
+    keymat = KeyMaterialCDRDeserialize(&plaintext); 
+    local_writer->Reader2WriterKeyMaterial.push_back(keymat);
+    remote_reader->Reader2WriterKeyMaterial.push_back(keymat);
+
+ }
 
 bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
              DatareaderCryptoHandle &local_datareader_crypto,
@@ -189,8 +219,38 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
              const DatawriterCryptoTokenSeq &remote_datawriter_tokens,
              SecurityException &exception){
 
-    exception = SecurityException("Not implemented");
-    return false;
+    AESGCMGMAC_ReaderCryptoHandle& local_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(local_datareader_crypto);
+    AESGCMGMAC_WriterCryptoHandle& remote_writer = AESGCMGMAC_WriterCryptoHandle::narrow(remote_datawriter_crypto);
+
+    if( local_reader.nil() | remote_writer.nil() ){
+        //TODO (Santi) provide insight
+        return false;
+    }
+    //As only relevant KeyMaterials are tokenized, only one Token is exchanged
+    if(remote_datawriter_tokens.size() != 1){
+        exception = SecurityException("Incorrect remote CryptoSequence length");
+        return false;
+    }
+    if(remote_datawriter_tokens.at(0).class_id() != "DDS:Crypto:AES_GCM_GMAC"){
+        exception = SecurityException("Incorrect token type received");
+        return false;
+    }
+
+    if(remote_datawriter_tokens.at(0).binary_properties().size() !=1 | remote_datawriter_tokens.at(0).properties().size() != 0 |
+            remote_datawriter_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat"){
+        exception = SecurityException("Malformed CryptoToken");
+        return false;
+    }
+
+    //Valid CryptoToken, we can decrypt and push the resulting KeyMaterial in as a RemoteParticipant2ParticipantKeyMaterial
+    std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_datawriter_tokens.at(0).binary_properties().at(0).value(),
+            remote_writer->Participant2ParticipantKxKeyMaterial.master_sender_key);
+    
+    KeyMaterial_AES_GCM_GMAC keymat;
+    keymat = KeyMaterialCDRDeserialize(&plaintext); 
+    local_reader->Writer2ReaderKeyMaterial.push_back(keymat);
+    remote_writer->Writer2ReaderKeyMaterial.push_back(keymat);
+
 }
 
 bool AESGCMGMAC_KeyExchange::return_crypto_tokens(
