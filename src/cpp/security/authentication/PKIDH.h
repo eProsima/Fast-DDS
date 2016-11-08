@@ -42,7 +42,7 @@ class PKIDH : public Authentication
         ValidationResult_t validate_remote_identity(IdentityHandle** remote_identity_handle,
                 const IdentityHandle& local_identity_handle,
                 IdentityToken&& remote_identity_token,
-                const GUID_t remote_participant_key,
+                const GUID_t& remote_participant_key,
                 SecurityException& exception);
 
         ValidationResult_t begin_handshake_request(HandshakeHandle** handshake_handle,

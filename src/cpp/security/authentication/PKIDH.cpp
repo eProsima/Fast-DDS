@@ -998,7 +998,7 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
 ValidationResult_t PKIDH::validate_remote_identity(IdentityHandle** remote_identity_handle,
         const IdentityHandle& local_identity_handle,
         IdentityToken&& remote_identity_token,
-        const GUID_t remote_participant_key,
+        const GUID_t& remote_participant_key,
         SecurityException& exception)
 {
     assert(remote_identity_handle);

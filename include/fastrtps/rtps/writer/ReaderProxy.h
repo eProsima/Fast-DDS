@@ -28,7 +28,6 @@
 #include "../attributes/WriterAttributes.h"
 
 #include <set>
-#include <unordered_map>
 
 namespace boost
 {
