@@ -23,6 +23,10 @@
 #include "../common/SharedSecretHandle.h"
 #include "../exceptions/SecurityException.h"
 
+#define GMCLASSID_SECURITY_PARTICIPANT_CRYPTO_TOKENS "dds.sec.participant_crypto_tokens"
+#define GMCLASSID_SECURITY_DATAWRITER_CRYPTO_TOKENS "dds.sec.datawriter_crypto_tokens"
+#define GMCLASSID_SECURITY_DATAREADER_CRYPTO_TOKENS "dds.sec.datareader_crypto_tokens"
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {

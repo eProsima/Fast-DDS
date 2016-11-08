@@ -49,25 +49,25 @@ class AESGCMGMAC_KeyFactory : public CryptoKeyFactory
                 SecurityException &exception);
 
         DatawriterCryptoHandle * register_local_datawriter(
-                const ParticipantCryptoHandle &participant_crypto,
+                ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datawriter_prop,
                 SecurityException &exception);
 
         DatareaderCryptoHandle * register_matched_remote_datareader(
-                const DatawriterCryptoHandle &local_datawriter_crypto_handle,
-                const ParticipantCryptoHandle &lremote_participant_crypto,
+                DatawriterCryptoHandle &local_datawriter_crypto_handle,
+                ParticipantCryptoHandle &remote_participant_crypto,
                 const SharedSecretHandle &shared_secret,
                 const bool relay_only,
                 SecurityException &exception);
 
         DatareaderCryptoHandle * register_local_datareader(
-                const ParticipantCryptoHandle &participant_crypto,
+                ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datareader_properties,
                 SecurityException &exception);
 
         DatawriterCryptoHandle * register_matched_remote_datawriter(
-                const DatareaderCryptoHandle &local_datareader_crypto_handle,
-                const ParticipantCryptoHandle &remote_participant_crypt,
+                DatareaderCryptoHandle &local_datareader_crypto_handle,
+                ParticipantCryptoHandle &remote_participant_crypt,
                 const SharedSecretHandle &shared_secret,
                 SecurityException &exception);
 
@@ -76,11 +76,11 @@ class AESGCMGMAC_KeyFactory : public CryptoKeyFactory
                 SecurityException &exception);
         
         bool unregister_datawriter(
-                const DatawriterCryptoHandle &datawriter_crypto_handle,
+                DatawriterCryptoHandle &datawriter_crypto_handle,
                 SecurityException &exception);
         
         bool unregister_datareader(
-                const DatareaderCryptoHandle &datareader_crypto_handle,
+                DatareaderCryptoHandle &datareader_crypto_handle,
                 SecurityException &exception);
     
     private:

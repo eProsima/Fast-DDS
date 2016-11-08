@@ -183,37 +183,117 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
 }
 
 DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
-                const ParticipantCryptoHandle &participant_crypto,
+                ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datawriter_prop,
                 SecurityException &exception){
 
-    exception = SecurityException("Not implemented");
-    return nullptr;
-}
+    AESGCMGMAC_ParticipantCryptoHandle& participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(participant_crypto);
+    if(participant_handle.nil()){
+        //TODO (Santi) Provide insight
+        return nullptr;
+    }
 
+    //Create ParticipantCryptoHandle, fill Participant KeyMaterial and return it
+    AESGCMGMAC_WriterCryptoHandle* WCrypto = nullptr;
+
+    WCrypto = new AESGCMGMAC_WriterCryptoHandle();
+    
+    //Fill WriterKeyMaterial - This will be used to cipher full rpts messages
+
+    (*WCrypto)->Participant_master_key_id = participant_handle->ParticipantKeyMaterial.sender_key_id;
+    (*WCrypto)->WriterKeyMaterial.transformation_kind = 
+            std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM); //TODO (Santi) Define and implement a mechanism to change this via participant_properties
+    (*WCrypto)->WriterKeyMaterial.master_salt.fill(0);
+    RAND_bytes( (*WCrypto)->WriterKeyMaterial.master_salt.data(), 16 );  
+    
+    (*WCrypto)->WriterKeyMaterial.sender_key_id = make_unique_KeyId();
+    
+    (*WCrypto)->WriterKeyMaterial.master_sender_key.fill(0);
+    RAND_bytes( (*WCrypto)->WriterKeyMaterial.master_sender_key.data(), 16 );
+    
+    (*WCrypto)->WriterKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
+    (*WCrypto)->WriterKeyMaterial.master_receiver_specific_key.fill(0); 
+    
+    return WCrypto;
+}
+        
 DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datareader(
-                const DatawriterCryptoHandle &local_datawriter_crypto_handle,
-                const ParticipantCryptoHandle &lremote_participant_crypto,
+                DatawriterCryptoHandle &local_datawriter_crypto_handle,
+                ParticipantCryptoHandle &remote_participant_crypto,
                 const SharedSecretHandle &shared_secret,
                 const bool relay_only,
                 SecurityException &exception){
 
-    exception = SecurityException("Not implemented");
-    return nullptr;
+    //Create Participant2ParticipantKeyMaterial (Based on local ParticipantKeyMaterial) and ParticipantKxKeyMaterial (based on the SharedSecret)
+    //Put both elements in the local and remote ParticipantCryptoHandle
+    
+    AESGCMGMAC_WriterCryptoHandle& local_writer_handle = AESGCMGMAC_WriterCryptoHandle::narrow(local_datawriter_crypto_handle);
+    AESGCMGMAC_ReaderCryptoHandle* RRCrypto = new AESGCMGMAC_ReaderCryptoHandle(); // Remote Reader CryptoHandle, to be returned at the end of the function 
+
+    (*RRCrypto)->Participant_master_key_id = local_writer_handle->Participant_master_key_id;
+    /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
+    { //scope for temp var buffer
+        KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
+        
+        //These values must match the ones in ParticipantKeymaterial
+        buffer.transformation_kind = local_writer_handle->WriterKeyMaterial.transformation_kind;
+        buffer.master_salt = local_writer_handle->WriterKeyMaterial.master_salt;
+        buffer.master_sender_key = local_writer_handle->WriterKeyMaterial.master_sender_key;
+        //Generation of remainder values (Remote specific key)
+        buffer.sender_key_id = make_unique_KeyId();
+        buffer.receiver_specific_key_id = make_unique_KeyId();
+        buffer.master_receiver_specific_key.fill(0);
+        RAND_bytes( buffer.master_receiver_specific_key.data(), 16 );
+
+        //Attach to both local and remote CryptoHandles
+        (*RRCrypto)->Writer2ReaderKeyMaterial.push_back(buffer);
+        local_writer_handle->Writer2ReaderKeyMaterial.push_back(buffer);
+    }
+
+    return RRCrypto;
 }
 
 DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
-                const ParticipantCryptoHandle &participant_crypto,
+                ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datareader_properties,
                 SecurityException &exception){
 
-    exception = SecurityException("Not implemented");
-    return nullptr;
+    AESGCMGMAC_ParticipantCryptoHandle& participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(participant_crypto);
+    if(participant_handle.nil()){
+        //TODO (Santi) Provide insight
+        return nullptr;
+    }
+    
+    //Create ParticipantCryptoHandle, fill Participant KeyMaterial and return it
+    AESGCMGMAC_ReaderCryptoHandle* RCrypto = nullptr;
+
+    RCrypto = new AESGCMGMAC_ReaderCryptoHandle();
+
+
+    (*RCrypto)->Participant_master_key_id = participant_handle->ParticipantKeyMaterial.sender_key_id;
+
+    //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
+
+    (*RCrypto)->ReaderKeyMaterial.transformation_kind = 
+            std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM); //TODO (Santi) Define and implement a mechanism to change this via participant_properties
+    
+    (*RCrypto)->ReaderKeyMaterial.master_salt.fill(0);
+    RAND_bytes( (*RCrypto)->ReaderKeyMaterial.master_salt.data(), 16 );  
+    
+    (*RCrypto)->ReaderKeyMaterial.sender_key_id = make_unique_KeyId();
+    
+    (*RCrypto)->ReaderKeyMaterial.master_sender_key.fill(0);
+    RAND_bytes( (*RCrypto)->ReaderKeyMaterial.master_sender_key.data(), 16 );
+    
+    (*RCrypto)->ReaderKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
+    (*RCrypto)->ReaderKeyMaterial.master_receiver_specific_key.fill(0); 
+    
+    return RCrypto;
 }
 
 DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawriter(
-                const DatareaderCryptoHandle &local_datareader_crypto_handle,
-                const ParticipantCryptoHandle &remote_participant_crypt,
+                DatareaderCryptoHandle &local_datareader_crypto_handle,
+                ParticipantCryptoHandle &remote_participant_crypt,
                 const SharedSecretHandle &shared_secret,
                 SecurityException &exception){
 
@@ -245,7 +325,7 @@ bool AESGCMGMAC_KeyFactory::unregister_participant(
 }
         
 bool AESGCMGMAC_KeyFactory::unregister_datawriter(
-                const DatawriterCryptoHandle &datawriter_crypto_handle,
+                DatawriterCryptoHandle &datawriter_crypto_handle,
                 SecurityException &exception){
 
     exception = SecurityException("Not implemented");
@@ -254,7 +334,7 @@ bool AESGCMGMAC_KeyFactory::unregister_datawriter(
 
         
 bool AESGCMGMAC_KeyFactory::unregister_datareader(
-                const DatareaderCryptoHandle &datareader_crypto_handle,
+                DatareaderCryptoHandle &datareader_crypto_handle,
                 SecurityException &exception){
 
     exception = SecurityException("Not implemented");

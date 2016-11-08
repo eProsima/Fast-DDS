@@ -36,7 +36,6 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
             ParticipantCryptoHandle &remote_participant_crypto,
             SecurityException &exception){
     
-    
     AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto); 
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
     

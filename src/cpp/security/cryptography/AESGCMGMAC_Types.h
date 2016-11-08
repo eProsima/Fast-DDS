@@ -94,6 +94,46 @@ class  ParticipantKeyHandle
 
 typedef HandleImpl<ParticipantKeyHandle> AESGCMGMAC_ParticipantCryptoHandle;
 
+class  WriterKeyHandle
+{
+    public:
+        WriterKeyHandle(){
+        }
+
+        ~WriterKeyHandle(){
+        }
+
+        static const char* const class_id_;
+
+        KeyMaterial_AES_GCM_GMAC WriterKeyMaterial;
+        CryptoTransformKeyId Participant_master_key_id;
+
+        std::vector<KeyMaterial_AES_GCM_GMAC> Writer2ReaderKeyMaterial;
+        std::vector<KeyMaterial_AES_GCM_GMAC> Reader2WriterKeyMaterial;
+};
+
+typedef HandleImpl<WriterKeyHandle> AESGCMGMAC_WriterCryptoHandle;
+
+class  ReaderKeyHandle
+{
+    public:
+        ReaderKeyHandle(){
+        }
+
+        ~ReaderKeyHandle(){
+        }
+
+        static const char* const class_id_;
+
+        KeyMaterial_AES_GCM_GMAC ReaderKeyMaterial;
+        CryptoTransformKeyId Participant_master_key_id;
+
+        std::vector<KeyMaterial_AES_GCM_GMAC> Reader2WriterKeyMaterial;
+        std::vector<KeyMaterial_AES_GCM_GMAC> Writer2ReaderKeyMaterial;
+};
+
+typedef HandleImpl<ReaderKeyHandle> AESGCMGMAC_ReaderCryptoHandle;
+
 } //namespaces security
 } //namespace rtps
 } //namespace fastrtps
