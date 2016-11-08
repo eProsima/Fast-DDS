@@ -96,10 +96,25 @@ class CryptoKeyExchange
      * @return TRUE if successful
      */
     virtual bool set_remote_datareader_crypto_tokens(
-            const DatawriterCryptoHandle &local_datawriter_crypto,
-            const DatareaderCryptoHandle &remote_datareader_crypto,
+            DatawriterCryptoHandle &local_datawriter_crypto,
+            DatareaderCryptoHandle &remote_datareader_crypto,
             const DatareaderCryptoTokenSeq &remote_datareader_tokens,
             SecurityException &exception) = 0;
+
+    /**
+     * Configures the Cryptographic Plugin with the material needed to interpret messages coming from the remote DataWriter.
+     * @param local_datareader_crypto
+     * @param remote_datawriter_crypto
+     * @param remote_datawriter_tokens
+     * @param exception (out) Security exception
+     * @return TRUE if successful
+     */
+
+    virtual bool set_remote_datawriter_crypto_tokens(
+             DatareaderCryptoHandle &local_datareader_crypto,
+             DatawriterCryptoHandle &remote_datawriter_crypto,
+             const DatawriterCryptoTokenSeq &remote_datawriter_tokens,
+             SecurityException &exception) = 0;
 
     /**
      * Release resources associated with a CryptoTokenSeq

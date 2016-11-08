@@ -61,10 +61,16 @@ class AESGCMGMAC_KeyExchange : public CryptoKeyExchange
             SecurityException &exception);
 
     bool set_remote_datareader_crypto_tokens(
-            const DatawriterCryptoHandle &local_datawriter_crypto,
-            const DatareaderCryptoHandle &remote_datareader_crypto,
-            const DatareaderCryptoTokenSeq &remote_datareader_tokens,
-            SecurityException &exception);
+             DatawriterCryptoHandle &local_datawriter_crypto,
+             DatareaderCryptoHandle &remote_datareader_crypto,
+             const DatareaderCryptoTokenSeq &remote_datareader_tokens,
+             SecurityException &exception);
+
+    bool set_remote_datawriter_crypto_tokens(
+             DatareaderCryptoHandle &local_datareader_crypto,
+             DatawriterCryptoHandle &remote_datawriter_crypto,
+             const DatawriterCryptoTokenSeq &remote_datawriter_tokens,
+             SecurityException &exception);
 
     bool return_crypto_tokens(
             const CryptoTokenSeq &crypto_tokens,

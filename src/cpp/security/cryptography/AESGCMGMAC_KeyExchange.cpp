@@ -174,12 +174,22 @@ bool AESGCMGMAC_KeyExchange::create_local_datareader_crypto_tokens(
 }
 
 bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
-            const DatawriterCryptoHandle &local_datawriter_crypto,
-            const DatareaderCryptoHandle &remote_datareader_crypto,
+            DatawriterCryptoHandle &local_datawriter_crypto,
+            DatareaderCryptoHandle &remote_datareader_crypto,
             const DatareaderCryptoTokenSeq &remote_datareader_tokens,
             SecurityException &exception){
 
     exception = SecurityException("Not implemented"); 
+    return false;
+}
+
+bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
+             DatareaderCryptoHandle &local_datareader_crypto,
+             DatawriterCryptoHandle &remote_datawriter_crypto,
+             const DatawriterCryptoTokenSeq &remote_datawriter_tokens,
+             SecurityException &exception){
+
+    exception = SecurityException("Not implemented");
     return false;
 }
 

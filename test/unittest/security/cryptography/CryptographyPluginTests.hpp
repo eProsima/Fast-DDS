@@ -512,7 +512,18 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
     CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*participant_B,*ParticipantB_remote,ParticipantA_CryptoTokens,exception);
     
     //Create CryptoTokens for the DataWriter and DataReader
-    
+    DatawriterCryptoTokenSeq Writer_CryptoTokens, Reader_CryptoTokens;
+
+    ASSERT_TRUE(
+            CryptoPlugin->keyexchange()->create_local_datawriter_crypto_tokens(Writer_CryptoTokens, *writer, *remote_reader, exception)
+    );
+    ASSERT_TRUE(
+            CryptoPlugin->keyexchange()->create_local_datareader_crypto_tokens(Reader_CryptoTokens, *reader, *remote_writer, exception)
+    );
+
+    //Exchange Datareader and Datawriter Cryptotokens
+
+
 
 }
 
