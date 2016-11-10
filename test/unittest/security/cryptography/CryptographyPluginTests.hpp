@@ -627,14 +627,6 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
    ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_serialized_payload(encoded_payload, inline_qos, plain_payload, *writer, exception));
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_serialized_payload(decoded_payload, encoded_payload, inline_qos, *reader, *remote_writer, exception));
     ASSERT_TRUE(plain_payload == decoded_payload);
-    //Send message to unintended participant
-    
-    encoded_rtps_message.clear();
-    decoded_rtps_message.clear();
-    receivers.clear();
-    receivers.push_back(unintended_remote);
-    ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_rtps_message(encoded_rtps_message, plain_rtps_message,*ParticipantA,receivers,exception));
-    ASSERT_FALSE(CryptoPlugin->cryptotransform()->decode_rtps_message(decoded_rtps_message,encoded_rtps_message,*ParticipantB,*ParticipantB_remote,exception));
 
 }
 
