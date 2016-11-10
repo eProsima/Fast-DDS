@@ -73,8 +73,8 @@ class CryptoTransform
         virtual bool encode_datareader_submessage(
                 std::vector<uint8_t> &encoded_rtps_submessage,
                 const std::vector<uint8_t> &plain_rtps_submessage,
-                const DatareaderCryptoHandle &sending_datareader_crypto,
-                const std::vector<DatawriterCryptoHandle*> &receiving_datawriter_crypto_list,
+                DatareaderCryptoHandle &sending_datareader_crypto,
+                std::vector<DatawriterCryptoHandle*> &receiving_datawriter_crypto_list,
                 SecurityException &exception) = 0;
 
         /**

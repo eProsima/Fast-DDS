@@ -312,8 +312,8 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 bool AESGCMGMAC_Transform::encode_datareader_submessage(
                 std::vector<uint8_t> &encoded_rtps_submessage,
                 const std::vector<uint8_t> &plain_rtps_submessage,
-                const DatareaderCryptoHandle &sending_datareader_crypto,
-                const std::vector<DatawriterCryptoHandle*> &receiving_datawriter_crypto_list,
+                DatareaderCryptoHandle &sending_datareader_crypto,
+                std::vector<DatawriterCryptoHandle*> &receiving_datawriter_crypto_list,
                 SecurityException &exception){
 
     AESGCMGMAC_ReaderCryptoHandle& local_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(sending_datareader_crypto);
@@ -366,7 +366,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     SecureDataHeader header;
     
     header.transform_identifier.transformation_kind = local_reader->ReaderKeyMaterial.transformation_kind;
-    header.transform_identifier.transformation_key_id = local_Reader->ReaderKeyMaterial.sender_key_id;
+    header.transform_identifier.transformation_key_id = local_reader->ReaderKeyMaterial.sender_key_id;
     memcpy( header.session_id.data(), &(m_cipherdata->session_id), 4);
     memcpy( header.initialization_vector_suffix.data() , &initialization_vector_suffix, 8);
 
