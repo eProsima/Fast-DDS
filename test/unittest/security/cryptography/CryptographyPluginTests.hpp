@@ -630,6 +630,187 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
 
 }
 
+TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
+{
 
+    // Participant A owns Writer
+    // Participant B owns Reader
+    
+    PKIIdentityHandle* i_handle = new PKIIdentityHandle();
+    mockAccessHandle* perm_handle = new mockAccessHandle();
+    PropertySeq prop_handle;
+    SharedSecretHandle* shared_secret = new SharedSecretHandle();
+
+    SecurityException exception;
+
+    ParticipantCryptoHandle *participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+    ParticipantCryptoHandle *participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+
+    DatareaderCryptoHandle *reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, exception);
+    DatareaderCryptoHandle *writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, exception);
+
+    //Fill shared secret with dummy values
+    std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
+    SharedSecret::BinaryData binary_data;
+    challenge_1.reserve(8);
+    challenge_2.reserve(8);
+
+    RAND_bytes(challenge_1.data(),8);
+    binary_data.name("Challenge1");
+    binary_data.value(challenge_1);
+    (*shared_secret)->data_.push_back(binary_data);
+
+    RAND_bytes(challenge_2.data(),8);
+    binary_data.name("Challenge2");
+    binary_data.value(challenge_2);
+    (*shared_secret)->data_.push_back(binary_data);
+
+    dummy_data.reserve(32);
+    RAND_bytes(dummy_data.data(),32);
+    binary_data.name("SharedSecret");
+    binary_data.value(dummy_data);
+    (*shared_secret)->data_.push_back(binary_data);
+
+    //Register a remote for both Participants
+    ParticipantCryptoHandle *ParticipantA_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_A,*i_handle,*perm_handle,*shared_secret, exception);
+    ParticipantCryptoHandle *ParticipantB_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_B,*i_handle,*perm_handle,*shared_secret, exception);
+
+    //Register DataReader with DataWriter
+    DatareaderCryptoHandle *remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *participant_B, *shared_secret, false, exception);
+
+    //Register DataWriter with DataReader
+    DatawriterCryptoHandle *remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *participant_A, *shared_secret, exception);
+
+    //Create CryptoTokens for both Participants
+    ParticipantCryptoTokenSeq ParticipantA_CryptoTokens, ParticipantB_CryptoTokens;
+
+    CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantA_CryptoTokens, *participant_A, *ParticipantA_remote, exception);
+    CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantB_CryptoTokens, *participant_B, *ParticipantB_remote, exception);
+
+    //Set ParticipantA token into ParticipantB and viceversa
+    CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*participant_A,*ParticipantA_remote,ParticipantB_CryptoTokens,exception);
+    CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*participant_B,*ParticipantB_remote,ParticipantA_CryptoTokens,exception);
+    
+    //Create CryptoTokens for the DataWriter and DataReader
+    DatawriterCryptoTokenSeq Writer_CryptoTokens, Reader_CryptoTokens;
+
+    CryptoPlugin->keyexchange()->create_local_datawriter_crypto_tokens(Writer_CryptoTokens, *writer, *remote_reader, exception);
+    CryptoPlugin->keyexchange()->create_local_datareader_crypto_tokens(Reader_CryptoTokens, *reader, *remote_writer, exception);
+
+    //Exchange Datareader and Datawriter Cryptotokens
+    CryptoPlugin->keyexchange()->set_remote_datareader_crypto_tokens(*writer, *remote_reader, Reader_CryptoTokens, exception);
+    CryptoPlugin->keyexchange()->set_remote_datawriter_crypto_tokens(*reader, *remote_writer, Writer_CryptoTokens, exception);
+
+    //Perform sample message exchange
+    std::vector<uint8_t> plain_payload;
+    std::vector<uint8_t> encoded_payload;
+    std::vector<uint8_t> decoded_payload;
+
+    char message[] = "My goose is cooked"; //Length 18
+    plain_payload.resize(18);
+    memcpy(plain_payload.data(), message, 18);
+
+    std::vector<uint8_t> inline_qos;
+    std::vector<DatareaderCryptoHandle*> receivers;
+    receivers.push_back(remote_reader);
+
+    //Send message to intended participant
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_datawriter_submessage(encoded_payload, plain_payload, *writer, receivers, exception));
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_datawriter_submessage(decoded_payload, encoded_payload, *reader, *remote_writer, exception));
+    ASSERT_TRUE(plain_payload == decoded_payload);
+
+}
+
+
+
+TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
+{
+
+    // Participant A owns Writer
+    // Participant B owns Reader
+    
+    PKIIdentityHandle* i_handle = new PKIIdentityHandle();
+    mockAccessHandle* perm_handle = new mockAccessHandle();
+    PropertySeq prop_handle;
+    SharedSecretHandle* shared_secret = new SharedSecretHandle();
+
+    SecurityException exception;
+
+    ParticipantCryptoHandle *participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+    ParticipantCryptoHandle *participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+
+    DatareaderCryptoHandle *reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, exception);
+    DatareaderCryptoHandle *writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, exception);
+
+    //Fill shared secret with dummy values
+    std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
+    SharedSecret::BinaryData binary_data;
+    challenge_1.reserve(8);
+    challenge_2.reserve(8);
+
+    RAND_bytes(challenge_1.data(),8);
+    binary_data.name("Challenge1");
+    binary_data.value(challenge_1);
+    (*shared_secret)->data_.push_back(binary_data);
+
+    RAND_bytes(challenge_2.data(),8);
+    binary_data.name("Challenge2");
+    binary_data.value(challenge_2);
+    (*shared_secret)->data_.push_back(binary_data);
+
+    dummy_data.reserve(32);
+    RAND_bytes(dummy_data.data(),32);
+    binary_data.name("SharedSecret");
+    binary_data.value(dummy_data);
+    (*shared_secret)->data_.push_back(binary_data);
+
+    //Register a remote for both Participants
+    ParticipantCryptoHandle *ParticipantA_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_A,*i_handle,*perm_handle,*shared_secret, exception);
+    ParticipantCryptoHandle *ParticipantB_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_B,*i_handle,*perm_handle,*shared_secret, exception);
+
+    //Register DataReader with DataWriter
+    DatareaderCryptoHandle *remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *participant_B, *shared_secret, false, exception);
+
+    //Register DataWriter with DataReader
+    DatawriterCryptoHandle *remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *participant_A, *shared_secret, exception);
+
+    //Create CryptoTokens for both Participants
+    ParticipantCryptoTokenSeq ParticipantA_CryptoTokens, ParticipantB_CryptoTokens;
+
+    CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantA_CryptoTokens, *participant_A, *ParticipantA_remote, exception);
+    CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantB_CryptoTokens, *participant_B, *ParticipantB_remote, exception);
+
+    //Set ParticipantA token into ParticipantB and viceversa
+    CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*participant_A,*ParticipantA_remote,ParticipantB_CryptoTokens,exception);
+    CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*participant_B,*ParticipantB_remote,ParticipantA_CryptoTokens,exception);
+    
+    //Create CryptoTokens for the DataWriter and DataReader
+    DatawriterCryptoTokenSeq Writer_CryptoTokens, Reader_CryptoTokens;
+
+    CryptoPlugin->keyexchange()->create_local_datawriter_crypto_tokens(Writer_CryptoTokens, *writer, *remote_reader, exception);
+    CryptoPlugin->keyexchange()->create_local_datareader_crypto_tokens(Reader_CryptoTokens, *reader, *remote_writer, exception);
+
+    //Exchange Datareader and Datawriter Cryptotokens
+    CryptoPlugin->keyexchange()->set_remote_datareader_crypto_tokens(*writer, *remote_reader, Reader_CryptoTokens, exception);
+    CryptoPlugin->keyexchange()->set_remote_datawriter_crypto_tokens(*reader, *remote_writer, Writer_CryptoTokens, exception);
+
+    //Perform sample message exchange
+    std::vector<uint8_t> plain_payload;
+    std::vector<uint8_t> encoded_payload;
+    std::vector<uint8_t> decoded_payload;
+
+    char message[] = "My goose is cooked"; //Length 18
+    plain_payload.resize(18);
+    memcpy(plain_payload.data(), message, 18);
+
+    std::vector<DatawriterCryptoHandle*> receivers;
+    receivers.push_back(remote_writer);
+
+    //Send message to intended participant
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_datareader_submessage(encoded_payload, plain_payload, *reader, receivers, exception));
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_datareader_submessage(decoded_payload, encoded_payload, *writer, *remote_reader, exception));
+    ASSERT_TRUE(plain_payload == decoded_payload);
+
+}
 
 #endif
