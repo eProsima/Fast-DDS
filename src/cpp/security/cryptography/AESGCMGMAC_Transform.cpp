@@ -484,12 +484,68 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
                 std::vector<uint8_t> &plain_buffer,
                 const std::vector<uint8_t> &encoded_buffer,
                 const std::vector<uint8_t> &inline_qos,
-                const DatareaderCryptoHandle &receiving_datareader_crypto,
-                const DatawriterCryptoHandle &sending_datawriter_crypto,
+                DatareaderCryptoHandle &receiving_datareader_crypto,
+                DatawriterCryptoHandle &sending_datawriter_crypto,
                 SecurityException &exception){
 
-    exception = SecurityException("Not implemented");
-    return false;
+    AESGCMGMAC_WriterCryptoHandle& sending_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_crypto);
+
+    //Fun reverse order process;
+    SecureDataHeader header;
+    SecureDataBody body;
+    SecureDataTag tag;
+
+    //Header
+    for(int i=0;i<4;i++) header.transform_identifier.transformation_kind.at(i) = ( encoded_buffer.at( i ) );
+    for(int i=0;i<4;i++) header.transform_identifier.transformation_key_id.at(i) = ( encoded_buffer.at( i+4 ) );
+    for(int i=0;i<4;i++) header.session_id.at(i) = ( encoded_buffer.at( i+8 ) );
+    for(int i=0;i<8;i++) header.initialization_vector_suffix.at(i) = ( encoded_buffer.at( i+12 ) );
+    //Body
+    long body_length = 0;
+    memcpy(&body_length, encoded_buffer.data()+20, sizeof(long));
+    for(int i=0;i < body_length; i++) body.secure_data.push_back( encoded_buffer.at( i+20+sizeof(long) ) );
+    //Tag
+    for(int i=0;i < 16; i++) tag.common_mac.at(i) = ( encoded_buffer.at( i+20+sizeof(long)+body_length ) );
+    
+    uint32_t session_id;
+    memcpy(&session_id,header.session_id.data(),4);
+    
+    //Sessionkey
+    std::array<uint8_t,32> session_key = compute_sessionkey(
+            sending_writer->Writer2ReaderKeyMaterial.at(0).master_sender_key,
+            sending_writer->Writer2ReaderKeyMaterial.at(0).master_salt,
+            session_id);
+    //IV
+    std::array<uint8_t,12> initialization_vector;
+    memcpy(initialization_vector.data(), header.session_id.data(), 4);
+    memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
+
+    
+    OpenSSL_add_all_ciphers();
+    RAND_load_file("/dev/urandom",32);
+
+    EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
+    plain_buffer.clear();
+    plain_buffer.resize(encoded_buffer.size());
+
+    int actual_size = 0, final_size = 0;
+  
+    OpenSSL_add_all_ciphers();
+    RAND_load_file("/dev/urandom",32);
+
+    d_ctx = EVP_CIPHER_CTX_new();
+    plain_buffer.clear();
+    plain_buffer.resize(encoded_buffer.size());
+
+    bool return_value;
+    EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
+    EVP_DecryptUpdate(d_ctx, plain_buffer.data(), &actual_size, body.secure_data.data(),body.secure_data.size());
+    EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG,16,tag.common_mac.data());
+    return_value = EVP_DecryptFinal(d_ctx, plain_buffer.data() + actual_size, &final_size);
+    EVP_CIPHER_CTX_free(d_ctx);
+    plain_buffer.resize(actual_size + final_size);
+
+    return return_value;
 }
 
 std::array<uint8_t, 32> AESGCMGMAC_Transform::compute_sessionkey(std::array<uint8_t,32> master_sender_key,std::array<uint8_t,32> master_salt , uint32_t &session_id)

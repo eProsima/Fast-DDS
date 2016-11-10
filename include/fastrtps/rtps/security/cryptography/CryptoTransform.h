@@ -175,8 +175,8 @@ class CryptoTransform
                 std::vector<uint8_t> &plain_buffer,
                 const std::vector<uint8_t> &encoded_buffer,
                 const std::vector<uint8_t> &inline_qos,
-                const DatareaderCryptoHandle &receiving_datareader_crypto,
-                const DatawriterCryptoHandle &sending_datawriter_crypto,
+                DatareaderCryptoHandle &receiving_datareader_crypto,
+                DatawriterCryptoHandle &sending_datawriter_crypto,
                 SecurityException &exception) = 0;
 
 };
