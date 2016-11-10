@@ -43,7 +43,7 @@ class CryptoTransform
                 std::vector<uint8_t> &encoded_buffer,
                 std::vector<uint8_t> &extra_inline_qos,
                 const std::vector<uint8_t> &plain_buffer,
-                const DatawriterCryptoHandle &sending_datawriter_crypto,
+                DatawriterCryptoHandle &sending_datawriter_crypto,
                 SecurityException &exception) = 0;
         /**
          * Encodes a Data, DataFrag, Gap, Heartbeat or HeartBeatFrag

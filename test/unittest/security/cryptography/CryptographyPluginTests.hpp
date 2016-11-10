@@ -539,8 +539,6 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
     ASSERT_TRUE(WriterH->Writer2ReaderKeyMaterial.at(0).master_sender_key == ReaderH->Writer2ReaderKeyMaterial.at(0).master_sender_key);
     ASSERT_TRUE(ReaderH->Reader2WriterKeyMaterial.at(0).master_sender_key == WriterH->Reader2WriterKeyMaterial.at(0).master_sender_key);
 
-
-
 }
 
 #endif
