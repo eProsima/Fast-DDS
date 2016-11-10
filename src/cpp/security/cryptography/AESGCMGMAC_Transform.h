@@ -93,15 +93,15 @@ class AESGCMGMAC_Transform : public CryptoTransform
     bool decode_datawriter_submessage(
                 std::vector<uint8_t> &plain_rtps_submessage,
                 const std::vector<uint8_t> &encoded_rtps_submessage,
-                const DatareaderCryptoHandle &receiving_datareader_crypto,
-                const DatawriterCryptoHandle &sending_datawriter_cryupto,
+                DatareaderCryptoHandle &receiving_datareader_crypto,
+                DatawriterCryptoHandle &sending_datawriter_cryupto,
                 SecurityException &exception);
 
     bool decode_datareader_submessage(
                 std::vector<uint8_t> &plain_rtps_submessage,
                 const std::vector<uint8_t> &encoded_rtps_submessage,
-                const DatawriterCryptoHandle &receiving_datawriter_crypto,
-                const DatareaderCryptoHandle &sending_datareader_crypto,
+                DatawriterCryptoHandle &receiving_datawriter_crypto,
+                DatareaderCryptoHandle &sending_datareader_crypto,
                 SecurityException &exception);
 
     bool decode_serialized_payload(

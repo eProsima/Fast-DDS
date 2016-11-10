@@ -782,23 +782,230 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
 bool AESGCMGMAC_Transform::decode_datawriter_submessage(
                 std::vector<uint8_t> &plain_rtps_submessage,
                 const std::vector<uint8_t> &encoded_rtps_submessage,
-                const DatareaderCryptoHandle &receiving_datareader_crypto,
-                const DatawriterCryptoHandle &sending_datawriter_cryupto,
+                DatareaderCryptoHandle &receiving_datareader_crypto,
+                DatawriterCryptoHandle &sending_datawriter_cryupto,
                 SecurityException &exception){
 
-    exception = SecurityException("Not implemented");
-    return false;
+    AESGCMGMAC_WriterCryptoHandle& sending_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_cryupto);
+
+    //Fun reverse order process;
+    SecureDataHeader header;
+    SecureDataBody body;
+    SecureDataTag tag;
+
+    //Header
+    for(int i=0;i<4;i++) header.transform_identifier.transformation_kind.at(i) = ( encoded_rtps_submessage.at( i ) );
+    for(int i=0;i<4;i++) header.transform_identifier.transformation_key_id.at(i) = ( encoded_rtps_submessage.at( i+4 ) );
+    for(int i=0;i<4;i++) header.session_id.at(i) = ( encoded_rtps_submessage.at( i+8 ) );
+    for(int i=0;i<8;i++) header.initialization_vector_suffix.at(i) = ( encoded_rtps_submessage.at( i+12 ) );
+    //Body
+    long body_length = 0;
+    memcpy(&body_length, encoded_rtps_submessage.data()+20, sizeof(long));
+    for(int i=0;i < body_length; i++) body.secure_data.push_back( encoded_rtps_submessage.at( i+20+sizeof(long) ) );
+    //Tag
+        //common_mac
+    for(int i=0;i < 16; i++) tag.common_mac.at(i) = ( encoded_rtps_submessage.at( i+20+sizeof(long)+body_length ) );
+        //receiver_specific_mac 
+    long spec_length = 0;
+    memcpy(&spec_length, encoded_rtps_submessage.data()+36+sizeof(long)+body_length, sizeof(long));
+    //Read specific MACs in search for the correct one (verify the authenticity of the message)
+    ReceiverSpecificMAC specific_mac;
+    bool mac_found = false; 
+    for(int j=0; j < spec_length; j++){
+        memcpy( &(specific_mac.receiver_mac_key_id),
+                encoded_rtps_submessage.data() + 36 + sizeof(long) + body_length + sizeof(long) + j*(20),
+                4 );
+        memcpy( specific_mac.receiver_mac.data(),
+                encoded_rtps_submessage.data() + 36 + sizeof(long) + body_length+sizeof(long) + j*(20) + 4,
+                16 );
+        //Check if it matches the key we have
+        if(sending_writer->Writer2ReaderKeyMaterial.at(0).receiver_specific_key_id == specific_mac.receiver_mac_key_id){
+            mac_found = true;
+            break;
+        }
+    }
+
+    if(!mac_found){
+        exception = SecurityException("Message does not contain a suitable specific MAC for the receiving Participant");
+        return false;
+    }
+    uint32_t session_id;
+    memcpy(&session_id,header.session_id.data(),4);
+    //Sessionkey
+    std::array<uint8_t,32> session_key = compute_sessionkey(
+            sending_writer->Writer2ReaderKeyMaterial.at(0).master_sender_key,
+            sending_writer->Writer2ReaderKeyMaterial.at(0).master_salt,
+            session_id);
+    //IV
+    std::array<uint8_t,12> initialization_vector;
+    memcpy(initialization_vector.data(), header.session_id.data(), 4);
+    memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
+
+    //Auth message - The point is that we cannot verify the authorship of the message with our receiver_specific_key the message could be crafted
+    bool auth = false; 
+    
+    OpenSSL_add_all_ciphers();
+    RAND_load_file("/dev/urandom",32);
+
+    EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
+    plain_rtps_submessage.clear();
+    plain_rtps_submessage.resize(encoded_rtps_submessage.size());
+
+    int actual_size = 0, final_size = 0;
+  
+    //Get ReceiverSpecificSessionKey
+    std::array<uint8_t,32> specific_session_key = compute_sessionkey(
+                    sending_writer->Writer2ReaderKeyMaterial.at(0).master_receiver_specific_key,
+                    sending_writer->Writer2ReaderKeyMaterial.at(0).master_salt,
+                    session_id);
+    
+    //Verify specific MAC
+    EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)specific_session_key.data(), initialization_vector.data());
+    EVP_DecryptUpdate(d_ctx, NULL, &actual_size, tag.common_mac.data(), 16);
+    EVP_CIPHER_CTX_ctrl( d_ctx, EVP_CTRL_GCM_SET_TAG,16, specific_mac.receiver_mac.data() );
+    auth = EVP_DecryptFinal_ex(d_ctx, plain_rtps_submessage.data() + actual_size, &final_size); 
+    EVP_CIPHER_CTX_free(d_ctx);
+    plain_rtps_submessage.resize(actual_size + final_size);
+
+    if(!auth){
+        //Log error
+        return false;
+    }
+    
+    //Decode message
+    OpenSSL_add_all_ciphers();
+    RAND_load_file("/dev/urandom",32);
+
+    d_ctx = EVP_CIPHER_CTX_new();
+    plain_rtps_submessage.clear();
+    plain_rtps_submessage.resize(encoded_rtps_submessage.size());
+
+    actual_size = 0; 
+    final_size = 0;
+    EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
+    EVP_DecryptUpdate(d_ctx, plain_rtps_submessage.data(), &actual_size, body.secure_data.data(),body.secure_data.size());
+    EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG,16,tag.common_mac.data());
+    EVP_DecryptFinal(d_ctx, plain_rtps_submessage.data() + actual_size, &final_size);
+    EVP_CIPHER_CTX_free(d_ctx);
+    plain_rtps_submessage.resize(actual_size + final_size);
+
+    return true;
 }
 
 bool AESGCMGMAC_Transform::decode_datareader_submessage(
                 std::vector<uint8_t> &plain_rtps_submessage,
                 const std::vector<uint8_t> &encoded_rtps_submessage,
-                const DatawriterCryptoHandle &receiving_datawriter_crypto,
-                const DatareaderCryptoHandle &sending_datareader_crypto,
+                DatawriterCryptoHandle &receiving_datawriter_crypto,
+                DatareaderCryptoHandle &sending_datareader_crypto,
                 SecurityException &exception){
 
-    exception = SecurityException("Not implemented");
-    return false;
+
+    AESGCMGMAC_ReaderCryptoHandle& sending_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(sending_datareader_crypto);
+
+    //Fun reverse order process;
+    SecureDataHeader header;
+    SecureDataBody body;
+    SecureDataTag tag;
+
+    //Header
+    for(int i=0;i<4;i++) header.transform_identifier.transformation_kind.at(i) = ( encoded_rtps_submessage.at( i ) );
+    for(int i=0;i<4;i++) header.transform_identifier.transformation_key_id.at(i) = ( encoded_rtps_submessage.at( i+4 ) );
+    for(int i=0;i<4;i++) header.session_id.at(i) = ( encoded_rtps_submessage.at( i+8 ) );
+    for(int i=0;i<8;i++) header.initialization_vector_suffix.at(i) = ( encoded_rtps_submessage.at( i+12 ) );
+    //Body
+    long body_length = 0;
+    memcpy(&body_length, encoded_rtps_submessage.data()+20, sizeof(long));
+    for(int i=0;i < body_length; i++) body.secure_data.push_back( encoded_rtps_submessage.at( i+20+sizeof(long) ) );
+    //Tag
+        //common_mac
+    for(int i=0;i < 16; i++) tag.common_mac.at(i) = ( encoded_rtps_submessage.at( i+20+sizeof(long)+body_length ) );
+        //receiver_specific_mac 
+    long spec_length = 0;
+    memcpy(&spec_length, encoded_rtps_submessage.data()+36+sizeof(long)+body_length, sizeof(long));
+    //Read specific MACs in search for the correct one (verify the authenticity of the message)
+    ReceiverSpecificMAC specific_mac;
+    bool mac_found = false; 
+    for(int j=0; j < spec_length; j++){
+        memcpy( &(specific_mac.receiver_mac_key_id),
+                encoded_rtps_submessage.data() + 36 + sizeof(long) + body_length + sizeof(long) + j*(20),
+                4 );
+        memcpy( specific_mac.receiver_mac.data(),
+                encoded_rtps_submessage.data() + 36 + sizeof(long) + body_length+sizeof(long) + j*(20) + 4,
+                16 );
+        //Check if it matches the key we have
+        if(sending_reader->Reader2WriterKeyMaterial.at(0).receiver_specific_key_id == specific_mac.receiver_mac_key_id){
+            mac_found = true;
+            break;
+        }
+    }
+
+    if(!mac_found){
+        exception = SecurityException("Message does not contain a suitable specific MAC for the receiving Participant");
+        return false;
+    }
+    uint32_t session_id;
+    memcpy(&session_id,header.session_id.data(),4);
+    //Sessionkey
+    std::array<uint8_t,32> session_key = compute_sessionkey(
+            sending_reader->Reader2WriterKeyMaterial.at(0).master_sender_key,
+            sending_reader->Reader2WriterKeyMaterial.at(0).master_salt,
+            session_id);
+    //IV
+    std::array<uint8_t,12> initialization_vector;
+    memcpy(initialization_vector.data(), header.session_id.data(), 4);
+    memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
+
+    //Auth message - The point is that we cannot verify the authorship of the message with our receiver_specific_key the message could be crafted
+    bool auth = false; 
+    
+    OpenSSL_add_all_ciphers();
+    RAND_load_file("/dev/urandom",32);
+
+    EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
+    plain_rtps_submessage.clear();
+    plain_rtps_submessage.resize(encoded_rtps_submessage.size());
+
+    int actual_size = 0, final_size = 0;
+  
+    //Get ReceiverSpecificSessionKey
+    std::array<uint8_t,32> specific_session_key = compute_sessionkey(
+                    sending_reader->Reader2WriterKeyMaterial.at(0).master_receiver_specific_key,
+                    sending_reader->Reader2WriterKeyMaterial.at(0).master_salt,
+                    session_id);
+    
+    //Verify specific MAC
+    EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)specific_session_key.data(), initialization_vector.data());
+    EVP_DecryptUpdate(d_ctx, NULL, &actual_size, tag.common_mac.data(), 16);
+    EVP_CIPHER_CTX_ctrl( d_ctx, EVP_CTRL_GCM_SET_TAG,16, specific_mac.receiver_mac.data() );
+    auth = EVP_DecryptFinal_ex(d_ctx, plain_rtps_submessage.data() + actual_size, &final_size); 
+    EVP_CIPHER_CTX_free(d_ctx);
+    plain_rtps_submessage.resize(actual_size + final_size);
+
+    if(!auth){
+        //Log error
+        return false;
+    }
+    
+    //Decode message
+    OpenSSL_add_all_ciphers();
+    RAND_load_file("/dev/urandom",32);
+
+    d_ctx = EVP_CIPHER_CTX_new();
+    plain_rtps_submessage.clear();
+    plain_rtps_submessage.resize(encoded_rtps_submessage.size());
+
+    actual_size = 0; 
+    final_size = 0;
+    EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
+    EVP_DecryptUpdate(d_ctx, plain_rtps_submessage.data(), &actual_size, body.secure_data.data(),body.secure_data.size());
+    EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG,16,tag.common_mac.data());
+    EVP_DecryptFinal(d_ctx, plain_rtps_submessage.data() + actual_size, &final_size);
+    EVP_CIPHER_CTX_free(d_ctx);
+    plain_rtps_submessage.resize(actual_size + final_size);
+
+    return true;
+
+
 }
 
 
