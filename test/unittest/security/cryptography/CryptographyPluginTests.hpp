@@ -624,7 +624,7 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     std::vector<uint8_t> inline_qos;
 
     //Send message to intended participant
-   ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_serialized_payload(encoded_payload, inline_qos, plain_payload, *writer, exception));
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_serialized_payload(encoded_payload, inline_qos, plain_payload, *writer, exception));
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_serialized_payload(decoded_payload, encoded_payload, inline_qos, *reader, *remote_writer, exception));
     ASSERT_TRUE(plain_payload == decoded_payload);
 

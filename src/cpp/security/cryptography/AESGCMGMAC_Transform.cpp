@@ -140,19 +140,180 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
 bool AESGCMGMAC_Transform::encode_datawriter_submessage(
                 std::vector<uint8_t> &encoded_rtps_submessage,
                 const std::vector<uint8_t> &plain_rtps_submessage,
-                const DatawriterCryptoHandle &sending_datawriter_crypto,
-                const std::vector<DatareaderCryptoHandle> receiving_datareader_crypto_list,
+                DatawriterCryptoHandle &sending_datawriter_crypto,
+                std::vector<DatareaderCryptoHandle*> receiving_datareader_crypto_list,
                 SecurityException &exception){
 
-    exception = SecurityException("Not implemented");
-    return false;
+    AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_crypto);
+    if(local_writer.nil()){
+        //TODO (santi) Provide insight
+        return false;
+    }
+    CipherData *m_cipherdata = nullptr;
+
+    //Step 1 - Find the CriptoData associated to the Writer (or create if this is the first time it is used)
+    {
+        std::map<CryptoTransformKeyId,CipherData>::iterator it= status.find(local_writer->WriterKeyMaterial.sender_key_id);
+        if(it == status.end()){
+            //First time the Participant sends data - Init struct
+            CipherData new_data;
+            new_data.master_key_id = local_writer->WriterKeyMaterial.sender_key_id;
+            RAND_bytes( (unsigned char *)(&(new_data.session_id)), sizeof(uint16_t));
+            
+            new_data.max_blocks_per_session= 12000;//TODO (Santi) - This ough to be configurable
+            new_data.session_block_counter= new_data.max_blocks_per_session; //Set to maximum so computation of new SessionKey is triggered
+            status[local_writer->WriterKeyMaterial.sender_key_id] = new_data;
+            it= status.find(local_writer->WriterKeyMaterial.sender_key_id);
+            m_cipherdata = &(it->second);
+        }else{
+            //Found!
+            m_cipherdata = &(it->second);
+        }
+    }
+
+    //Step 2 - If the maximum number of blocks have been processed, generate a new SessionKey
+    if(m_cipherdata->session_block_counter >= m_cipherdata->max_blocks_per_session){
+        m_cipherdata->session_id += 1; 
+
+        m_cipherdata->SessionKey = compute_sessionkey(local_writer->WriterKeyMaterial.master_sender_key,
+                local_writer->WriterKeyMaterial.master_salt,
+                m_cipherdata->session_id);
+        
+        //ReceiverSpecific keys shall be computed specifically when needed
+        m_cipherdata->session_block_counter = 0;
+    }
+
+    //Step 2.5 - Build remaining NONCE elements
+    uint64_t initialization_vector_suffix;  //iv suffix changes with every operation
+    RAND_bytes( (unsigned char*)(&initialization_vector_suffix), sizeof(uint64_t) );
+    std::array<uint8_t,12> initialization_vector; //96 bytes, session_id + suffix
+    memcpy(initialization_vector.data(),&(m_cipherdata->session_id),4);
+    memcpy(initialization_vector.data()+4,&initialization_vector_suffix,8);
+    
+    //Step 3 - Build SecureDataHeader
+    SecureDataHeader header;
+    
+    header.transform_identifier.transformation_kind = local_writer->WriterKeyMaterial.transformation_kind;
+    header.transform_identifier.transformation_key_id = local_writer->WriterKeyMaterial.sender_key_id;
+    memcpy( header.session_id.data(), &(m_cipherdata->session_id), 4);
+    memcpy( header.initialization_vector_suffix.data() , &initialization_vector_suffix, 8);
+
+
+    //Step 4 -Cypher the plain rtps message -> SecureDataBody
+    OpenSSL_add_all_ciphers();
+    int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
+
+    size_t enc_length = plain_rtps_submessage.size()*3;
+    std::vector<uint8_t> output;
+    output.resize(enc_length,0);
+
+    unsigned char tag[AES_BLOCK_SIZE]; //Container for the Authentication Tag (will become common mac)
+    
+    int actual_size=0, final_size=0;
+    EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
+    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(m_cipherdata->SessionKey.data()), initialization_vector.data());
+    EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_rtps_submessage.data(), plain_rtps_submessage.size());
+    EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
+    EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
+    output.resize(actual_size+final_size);
+    EVP_CIPHER_CTX_free(e_ctx);
+
+    //Step 4.5 - Copy the results into SecureDataBody
+    SecureDataBody body;
+    body.secure_data.resize(output.size());
+    memcpy(body.secure_data.data(),output.data(),output.size());
+
+    //Step 5 - Build Secure DataTag
+    SecureDataTag dataTag;
+    memcpy(dataTag.common_mac.data(),tag, 16);
+
+    //Check the list of receivers, search for keys and compute session keys as needed
+    for(auto rec = receiving_datareader_crypto_list.begin(); rec != receiving_datareader_crypto_list.end(); ++rec){
+
+        AESGCMGMAC_ReaderCryptoHandle& remote_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**rec);
+        if(remote_reader.nil()){
+            //TODO (santi) Provide insight
+            return false;
+        }
+
+        //Find or compute ReceiverSpecificKey into m_cipherdata_r   
+        CipherData *m_cipherdata_r = nullptr;
+ 
+        {
+            std::map<CryptoTransformKeyId,CipherData>::iterator it= status.find(remote_reader->Writer2ReaderKeyMaterial.at(0).receiver_specific_key_id);
+            if(it == status.end()){
+                //First time the Participant sends data - Init struct
+                CipherData new_data;
+                new_data.master_key_id = remote_reader->Writer2ReaderKeyMaterial.at(0).receiver_specific_key_id; 
+                new_data.session_id = m_cipherdata->session_id + 2; //Just make it different in order to trigger Key update
+                RAND_bytes( (unsigned char *)(&(new_data.session_id)), sizeof(uint16_t));
+            
+                status[remote_reader->Writer2ReaderKeyMaterial.at(0).receiver_specific_key_id] = new_data;
+                it= status.find(remote_reader->Writer2ReaderKeyMaterial.at(0).receiver_specific_key_id);
+                m_cipherdata_r = &(it->second);
+            }else{
+                //Found!
+                m_cipherdata_r = &(it->second);
+            }
+            //Update the key if needed
+            if(m_cipherdata_r->session_id != m_cipherdata->session_id){
+                //Update triggered!
+                m_cipherdata_r->SessionKey = compute_sessionkey(remote_reader->Writer2ReaderKeyMaterial.at(0).master_receiver_specific_key,
+                    remote_reader->Writer2ReaderKeyMaterial.at(0).master_salt,
+                    m_cipherdata->session_id);
+                m_cipherdata_r->session_id = m_cipherdata->session_id;
+            }
+        }   
+
+        //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
+        int actual_size=0, final_size=0;
+        EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
+        EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(m_cipherdata_r->SessionKey.data()), initialization_vector.data());
+        EVP_EncryptUpdate(e_ctx, NULL, &actual_size, dataTag.common_mac.data(), 16);
+        EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
+        EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
+        output.resize(actual_size+final_size);
+        EVP_CIPHER_CTX_free(e_ctx);
+        
+        ReceiverSpecificMAC buffer;
+        buffer.receiver_mac_key_id = m_cipherdata_r->master_key_id;
+        memcpy(buffer.receiver_mac.data(),tag,16);
+        //Push the MAC into the dataTag
+        dataTag.receiver_specific_macs.push_back(buffer);
+    }
+
+    //Step 6 - Assemble the message
+    encoded_rtps_submessage.clear();
+    
+    //Header
+    for(int i=0;i < 4; i++) encoded_rtps_submessage.push_back( header.transform_identifier.transformation_kind.at(i) );
+    for(int i=0;i < 4; i++) encoded_rtps_submessage.push_back( header.transform_identifier.transformation_key_id.at(i) );
+    for(int i=0;i < 4; i++) encoded_rtps_submessage.push_back( header.session_id.at(i) );
+    for(int i=0;i < 8; i++) encoded_rtps_submessage.push_back( header.initialization_vector_suffix.at(i) );
+    
+    //Body
+    long body_length = body.secure_data.size();
+    for(int i=0;i < sizeof(long); i++) encoded_rtps_submessage.push_back( *( (uint8_t*)&body_length + i) );
+    for(int i=0;i < body_length;i++) encoded_rtps_submessage.push_back( body.secure_data.at(i) );
+
+    //Tag
+        //Common tag
+    for(int i=0;i < 16; i++) encoded_rtps_submessage.push_back( dataTag.common_mac.at(i) );
+        //Receiver specific macs
+    long specific_length = dataTag.receiver_specific_macs.size();
+    for(int i=0;i < sizeof(long); i++) encoded_rtps_submessage.push_back( *( (uint8_t*)&specific_length + i ) );
+    for(int j=0; j< dataTag.receiver_specific_macs.size(); j++){
+        for(int i=0;i < 4; i++) encoded_rtps_submessage.push_back( dataTag.receiver_specific_macs.at(j).receiver_mac_key_id.at(i) );
+        for(int i=0;i < 16; i++) encoded_rtps_submessage.push_back( dataTag.receiver_specific_macs.at(j).receiver_mac.at(i) );
+    }
+    return true;
 }
     
 bool AESGCMGMAC_Transform::encode_datareader_submessage(
                 std::vector<uint8_t> &encoded_rtps_submessage,
                 const std::vector<uint8_t> &plain_rtps_submessage,
                 const DatareaderCryptoHandle &sending_datareader_crypto,
-                const std::vector<DatawriterCryptoHandle> &receiving_datawriter_crypto_list,
+                const std::vector<DatawriterCryptoHandle*> &receiving_datawriter_crypto_list,
                 SecurityException &exception){
 
     exception = SecurityException("Not implemented");

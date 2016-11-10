@@ -56,15 +56,15 @@ class AESGCMGMAC_Transform : public CryptoTransform
     bool encode_datawriter_submessage(
                 std::vector<uint8_t> &encoded_rtps_submessage,
                 const std::vector<uint8_t> &plain_rtps_submessage,
-                const DatawriterCryptoHandle &sending_datawriter_crypto,
-                const std::vector<DatareaderCryptoHandle> receiving_datareader_crypto_list,
+                DatawriterCryptoHandle &sending_datawriter_crypto,
+                std::vector<DatareaderCryptoHandle*> receiving_datareader_crypto_list,
                 SecurityException &exception);
     
     bool encode_datareader_submessage(
                 std::vector<uint8_t> &encoded_rtps_submessage,
                 const std::vector<uint8_t> &plain_rtps_submessage,
                 const DatareaderCryptoHandle &sending_datareader_crypto,
-                const std::vector<DatawriterCryptoHandle> &receiving_datawriter_crypto_list,
+                const std::vector<DatawriterCryptoHandle*> &receiving_datawriter_crypto_list,
                 SecurityException &exception);
     
     bool encode_rtps_message(
