@@ -39,45 +39,26 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
         //TODO (santi) Provide insight
         return false;
     }
-    CipherData *m_cipherdata = nullptr;
 
-    //Step 1 - Find the CriptoData associated to the Writer (or create if this is the first time it is used)
-    {
-        std::map<CryptoTransformKeyId,CipherData>::iterator it= status.find(local_writer->WriterKeyMaterial.sender_key_id);
-        if(it == status.end()){
-            //First time the Participant sends data - Init struct
-            CipherData new_data;
-            new_data.master_key_id = local_writer->WriterKeyMaterial.sender_key_id;
-            RAND_bytes( (unsigned char *)(&(new_data.session_id)), sizeof(uint16_t));
-            
-            new_data.max_blocks_per_session= 12000;//TODO (Santi) - This ough to be configurable
-            new_data.session_block_counter= new_data.max_blocks_per_session; //Set to maximum so computation of new SessionKey is triggered
-            status[local_writer->WriterKeyMaterial.sender_key_id] = new_data;
-            it= status.find(local_writer->WriterKeyMaterial.sender_key_id);
-            m_cipherdata = &(it->second);
-        }else{
-            //Found!
-            m_cipherdata = &(it->second);
-        }
-    }
+    //If the maximum number of blocks have been processed, generate a new SessionKey
+    if(local_writer->session_block_counter >= local_writer->max_blocks_per_session){
+        local_writer->session_id += 1; 
 
-    //Step 2 - If the maximum number of blocks have been processed, generate a new SessionKey
-    if(m_cipherdata->session_block_counter >= m_cipherdata->max_blocks_per_session){
-        m_cipherdata->session_id += 1; 
-
-        m_cipherdata->SessionKey = compute_sessionkey(local_writer->WriterKeyMaterial.master_sender_key,
+        local_writer->SessionKey = compute_sessionkey(local_writer->WriterKeyMaterial.master_sender_key,
                 local_writer->WriterKeyMaterial.master_salt,
-                m_cipherdata->session_id);
+                local_writer->session_id);
         
         //ReceiverSpecific keys shall be computed specifically when needed
-        m_cipherdata->session_block_counter = 0;
+        local_writer->session_block_counter = 0;
     }
+    
+    local_writer->session_block_counter += 1;
 
     //Step 2.5 - Build remaining NONCE elements
     uint64_t initialization_vector_suffix;  //iv suffix changes with every operation
     RAND_bytes( (unsigned char*)(&initialization_vector_suffix), sizeof(uint64_t) );
     std::array<uint8_t,12> initialization_vector; //96 bytes, session_id + suffix
-    memcpy(initialization_vector.data(),&(m_cipherdata->session_id),4);
+    memcpy(initialization_vector.data(),&(local_writer->session_id),4);
     memcpy(initialization_vector.data()+4,&initialization_vector_suffix,8);
     
     //Step 3 - Build SecureDataHeader
@@ -85,9 +66,8 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     
     header.transform_identifier.transformation_kind = local_writer->WriterKeyMaterial.transformation_kind;
     header.transform_identifier.transformation_key_id = local_writer->WriterKeyMaterial.sender_key_id;
-    memcpy( header.session_id.data(), &(m_cipherdata->session_id), 4);
+    memcpy( header.session_id.data(), &(local_writer->session_id), 4);
     memcpy( header.initialization_vector_suffix.data() , &initialization_vector_suffix, 8);
-
 
     //Step 4 -Cypher the plain rtps message -> SecureDataBody
     OpenSSL_add_all_ciphers();
@@ -101,7 +81,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     
     int actual_size=0, final_size=0;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(m_cipherdata->SessionKey.data()), initialization_vector.data());
+    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_writer->SessionKey.data()), initialization_vector.data());
     EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_buffer.data(), plain_buffer.size());
     EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
     EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
@@ -149,45 +129,26 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
         //TODO (santi) Provide insight
         return false;
     }
-    CipherData *m_cipherdata = nullptr;
 
-    //Step 1 - Find the CriptoData associated to the Writer (or create if this is the first time it is used)
-    {
-        std::map<CryptoTransformKeyId,CipherData>::iterator it= status.find(local_writer->WriterKeyMaterial.sender_key_id);
-        if(it == status.end()){
-            //First time the Participant sends data - Init struct
-            CipherData new_data;
-            new_data.master_key_id = local_writer->WriterKeyMaterial.sender_key_id;
-            RAND_bytes( (unsigned char *)(&(new_data.session_id)), sizeof(uint16_t));
-            
-            new_data.max_blocks_per_session= 12000;//TODO (Santi) - This ough to be configurable
-            new_data.session_block_counter= new_data.max_blocks_per_session; //Set to maximum so computation of new SessionKey is triggered
-            status[local_writer->WriterKeyMaterial.sender_key_id] = new_data;
-            it= status.find(local_writer->WriterKeyMaterial.sender_key_id);
-            m_cipherdata = &(it->second);
-        }else{
-            //Found!
-            m_cipherdata = &(it->second);
-        }
-    }
+    //If the maximum number of blocks have been processed, generate a new SessionKey
+    if(local_writer->session_block_counter >= local_writer->max_blocks_per_session){
+        local_writer->session_id += 1; 
 
-    //Step 2 - If the maximum number of blocks have been processed, generate a new SessionKey
-    if(m_cipherdata->session_block_counter >= m_cipherdata->max_blocks_per_session){
-        m_cipherdata->session_id += 1; 
-
-        m_cipherdata->SessionKey = compute_sessionkey(local_writer->WriterKeyMaterial.master_sender_key,
+        local_writer->SessionKey = compute_sessionkey(local_writer->WriterKeyMaterial.master_sender_key,
                 local_writer->WriterKeyMaterial.master_salt,
-                m_cipherdata->session_id);
+                local_writer->session_id);
         
         //ReceiverSpecific keys shall be computed specifically when needed
-        m_cipherdata->session_block_counter = 0;
+        local_writer->session_block_counter = 0;
     }
 
+    local_writer->session_block_counter += 1;
+            
     //Step 2.5 - Build remaining NONCE elements
     uint64_t initialization_vector_suffix;  //iv suffix changes with every operation
     RAND_bytes( (unsigned char*)(&initialization_vector_suffix), sizeof(uint64_t) );
     std::array<uint8_t,12> initialization_vector; //96 bytes, session_id + suffix
-    memcpy(initialization_vector.data(),&(m_cipherdata->session_id),4);
+    memcpy(initialization_vector.data(),&(local_writer->session_id),4);
     memcpy(initialization_vector.data()+4,&initialization_vector_suffix,8);
     
     //Step 3 - Build SecureDataHeader
@@ -195,7 +156,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     
     header.transform_identifier.transformation_kind = local_writer->WriterKeyMaterial.transformation_kind;
     header.transform_identifier.transformation_key_id = local_writer->WriterKeyMaterial.sender_key_id;
-    memcpy( header.session_id.data(), &(m_cipherdata->session_id), 4);
+    memcpy( header.session_id.data(), &(local_writer->session_id), 4);
     memcpy( header.initialization_vector_suffix.data() , &initialization_vector_suffix, 8);
 
 
@@ -211,7 +172,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     
     int actual_size=0, final_size=0;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(m_cipherdata->SessionKey.data()), initialization_vector.data());
+    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_writer->SessionKey.data()), initialization_vector.data());
     EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_rtps_submessage.data(), plain_rtps_submessage.size());
     EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
     EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
@@ -236,39 +197,19 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
             return false;
         }
 
-        //Find or compute ReceiverSpecificKey into m_cipherdata_r   
-        CipherData *m_cipherdata_r = nullptr;
- 
-        {
-            std::map<CryptoTransformKeyId,CipherData>::iterator it= status.find(remote_reader->Writer2ReaderKeyMaterial.at(0).receiver_specific_key_id);
-            if(it == status.end()){
-                //First time the Participant sends data - Init struct
-                CipherData new_data;
-                new_data.master_key_id = remote_reader->Writer2ReaderKeyMaterial.at(0).receiver_specific_key_id; 
-                new_data.session_id = m_cipherdata->session_id + 2; //Just make it different in order to trigger Key update
-                RAND_bytes( (unsigned char *)(&(new_data.session_id)), sizeof(uint16_t));
-            
-                status[remote_reader->Writer2ReaderKeyMaterial.at(0).receiver_specific_key_id] = new_data;
-                it= status.find(remote_reader->Writer2ReaderKeyMaterial.at(0).receiver_specific_key_id);
-                m_cipherdata_r = &(it->second);
-            }else{
-                //Found!
-                m_cipherdata_r = &(it->second);
-            }
-            //Update the key if needed
-            if(m_cipherdata_r->session_id != m_cipherdata->session_id){
-                //Update triggered!
-                m_cipherdata_r->SessionKey = compute_sessionkey(remote_reader->Writer2ReaderKeyMaterial.at(0).master_receiver_specific_key,
-                    remote_reader->Writer2ReaderKeyMaterial.at(0).master_salt,
-                    m_cipherdata->session_id);
-                m_cipherdata_r->session_id = m_cipherdata->session_id;
-            }
-        }   
+        //Update the key if needed
+        if( remote_reader->session_id != local_writer->session_id ){
+            //Update triggered!
+            remote_reader->session_id = local_writer->session_id;
+            remote_reader->SessionKey = compute_sessionkey(remote_reader->Writer2ReaderKeyMaterial.at(0).master_receiver_specific_key,
+                remote_reader->Writer2ReaderKeyMaterial.at(0).master_salt,
+                remote_reader->session_id);
+        }
 
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
         int actual_size=0, final_size=0;
         EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-        EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(m_cipherdata_r->SessionKey.data()), initialization_vector.data());
+        EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_reader->SessionKey.data()), initialization_vector.data());
         EVP_EncryptUpdate(e_ctx, NULL, &actual_size, dataTag.common_mac.data(), 16);
         EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
         EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
@@ -276,7 +217,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
         EVP_CIPHER_CTX_free(e_ctx);
         
         ReceiverSpecificMAC buffer;
-        buffer.receiver_mac_key_id = m_cipherdata_r->master_key_id;
+        buffer.receiver_mac_key_id = remote_reader->Writer2ReaderKeyMaterial.at(0).receiver_specific_key_id;
         memcpy(buffer.receiver_mac.data(),tag,16);
         //Push the MAC into the dataTag
         dataTag.receiver_specific_macs.push_back(buffer);
@@ -321,45 +262,26 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
         //TODO (santi) Provide insight
         return false;
     }
-    CipherData *m_cipherdata = nullptr;
-
-    //Step 1 - Find the CriptoData associated to the Writer (or create if this is the first time it is used)
-    {
-        std::map<CryptoTransformKeyId,CipherData>::iterator it= status.find(local_reader->ReaderKeyMaterial.sender_key_id);
-        if(it == status.end()){
-            //First time the Participant sends data - Init struct
-            CipherData new_data;
-            new_data.master_key_id = local_reader->ReaderKeyMaterial.sender_key_id;
-            RAND_bytes( (unsigned char *)(&(new_data.session_id)), sizeof(uint16_t));
-            
-            new_data.max_blocks_per_session= 12000;//TODO (Santi) - This ough to be configurable
-            new_data.session_block_counter= new_data.max_blocks_per_session; //Set to maximum so computation of new SessionKey is triggered
-            status[local_reader->ReaderKeyMaterial.sender_key_id] = new_data;
-            it= status.find(local_reader->ReaderKeyMaterial.sender_key_id);
-            m_cipherdata = &(it->second);
-        }else{
-            //Found!
-            m_cipherdata = &(it->second);
-        }
-    }
 
     //Step 2 - If the maximum number of blocks have been processed, generate a new SessionKey
-    if(m_cipherdata->session_block_counter >= m_cipherdata->max_blocks_per_session){
-        m_cipherdata->session_id += 1; 
+    if(local_reader->session_block_counter >= local_reader->max_blocks_per_session){
+        local_reader->session_id += 1; 
 
-        m_cipherdata->SessionKey = compute_sessionkey(local_reader->ReaderKeyMaterial.master_sender_key,
+        local_reader->SessionKey = compute_sessionkey(local_reader->ReaderKeyMaterial.master_sender_key,
                 local_reader->ReaderKeyMaterial.master_salt,
-                m_cipherdata->session_id);
+                local_reader->session_id);
         
         //ReceiverSpecific keys shall be computed specifically when needed
-        m_cipherdata->session_block_counter = 0;
+        local_reader->session_block_counter = 0;
     }
+    
+    local_reader->session_block_counter += 1;
 
     //Step 2.5 - Build remaining NONCE elements
     uint64_t initialization_vector_suffix;  //iv suffix changes with every operation
     RAND_bytes( (unsigned char*)(&initialization_vector_suffix), sizeof(uint64_t) );
     std::array<uint8_t,12> initialization_vector; //96 bytes, session_id + suffix
-    memcpy(initialization_vector.data(),&(m_cipherdata->session_id),4);
+    memcpy(initialization_vector.data(),&(local_reader->session_id),4);
     memcpy(initialization_vector.data()+4,&initialization_vector_suffix,8);
     
     //Step 3 - Build SecureDataHeader
@@ -367,7 +289,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     
     header.transform_identifier.transformation_kind = local_reader->ReaderKeyMaterial.transformation_kind;
     header.transform_identifier.transformation_key_id = local_reader->ReaderKeyMaterial.sender_key_id;
-    memcpy( header.session_id.data(), &(m_cipherdata->session_id), 4);
+    memcpy( header.session_id.data(), &(local_reader->session_id), 4);
     memcpy( header.initialization_vector_suffix.data() , &initialization_vector_suffix, 8);
 
 
@@ -383,7 +305,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     
     int actual_size=0, final_size=0;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(m_cipherdata->SessionKey.data()), initialization_vector.data());
+    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_reader->SessionKey.data()), initialization_vector.data());
     EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_rtps_submessage.data(), plain_rtps_submessage.size());
     EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
     EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
@@ -408,39 +330,19 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
             return false;
         }
 
-        //Find or compute ReceiverSpecificKey into m_cipherdata_r   
-        CipherData *m_cipherdata_r = nullptr;
- 
-        {
-            std::map<CryptoTransformKeyId,CipherData>::iterator it= status.find(remote_writer->Reader2WriterKeyMaterial.at(0).receiver_specific_key_id);
-            if(it == status.end()){
-                //First time the Participant sends data - Init struct
-                CipherData new_data;
-                new_data.master_key_id = remote_writer->Reader2WriterKeyMaterial.at(0).receiver_specific_key_id; 
-                new_data.session_id = m_cipherdata->session_id + 2; //Just make it different in order to trigger Key update
-                RAND_bytes( (unsigned char *)(&(new_data.session_id)), sizeof(uint16_t));
-            
-                status[remote_writer->Reader2WriterKeyMaterial.at(0).receiver_specific_key_id] = new_data;
-                it= status.find(remote_writer->Reader2WriterKeyMaterial.at(0).receiver_specific_key_id);
-                m_cipherdata_r = &(it->second);
-            }else{
-                //Found!
-                m_cipherdata_r = &(it->second);
-            }
-            //Update the key if needed
-            if(m_cipherdata_r->session_id != m_cipherdata->session_id){
-                //Update triggered!
-                m_cipherdata_r->SessionKey = compute_sessionkey(remote_writer->Reader2WriterKeyMaterial.at(0).master_receiver_specific_key,
-                    remote_writer->Reader2WriterKeyMaterial.at(0).master_salt,
-                    m_cipherdata->session_id);
-                m_cipherdata_r->session_id = m_cipherdata->session_id;
-            }
-        }   
+        //Update the key if needed
+        if(remote_writer->session_id != local_reader->session_id){
+            //Update triggered!
+            remote_writer->session_id = local_reader->session_id;
+            remote_writer->SessionKey = compute_sessionkey(remote_writer->Reader2WriterKeyMaterial.at(0).master_receiver_specific_key,
+                remote_writer->Reader2WriterKeyMaterial.at(0).master_salt,
+                remote_writer->session_id);
+        }
 
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
         int actual_size=0, final_size=0;
         EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-        EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(m_cipherdata_r->SessionKey.data()), initialization_vector.data());
+        EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_writer->SessionKey.data()), initialization_vector.data());
         EVP_EncryptUpdate(e_ctx, NULL, &actual_size, dataTag.common_mac.data(), 16);
         EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
         EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
@@ -448,7 +350,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
         EVP_CIPHER_CTX_free(e_ctx);
         
         ReceiverSpecificMAC buffer;
-        buffer.receiver_mac_key_id = m_cipherdata_r->master_key_id;
+        buffer.receiver_mac_key_id = remote_writer->Reader2WriterKeyMaterial.at(0).receiver_specific_key_id;
         memcpy(buffer.receiver_mac.data(),tag,16);
         //Push the MAC into the dataTag
         dataTag.receiver_specific_macs.push_back(buffer);
@@ -493,45 +395,26 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         //TODO (santi) Provide insight
         return false;
     }
-    CipherData *m_cipherdata = nullptr;
 
-    //Step 1 - Find the CriptoData associated to the Participant (or create if this is the first time it is used)
-    {
-        std::map<CryptoTransformKeyId,CipherData>::iterator it= status.find(local_participant->ParticipantKeyMaterial.sender_key_id);
-        if(it == status.end()){
-            //First time the Participant sends data - Init struct
-            CipherData new_data;
-            new_data.master_key_id = local_participant->ParticipantKeyMaterial.sender_key_id;
-            RAND_bytes( (unsigned char *)(&(new_data.session_id)), sizeof(uint16_t));
-            
-            new_data.max_blocks_per_session= 12000;//TODO (Santi) - This ough to be configurable
-            new_data.session_block_counter= new_data.max_blocks_per_session; //Set to maximum so computation of new SessionKey is triggered
-            status[local_participant->ParticipantKeyMaterial.sender_key_id] = new_data;
-            it= status.find(local_participant->ParticipantKeyMaterial.sender_key_id);
-            m_cipherdata = &(it->second);
-        }else{
-            //Found!
-            m_cipherdata = &(it->second);
-        }
-    }
+    // If the maximum number of blocks have been processed, generate a new SessionKey
+    if(local_participant->session_block_counter >= local_participant->max_blocks_per_session){
+        local_participant->session_id += 1; 
 
-    //Step 2 - If the maximum number of blocks have been processed, generate a new SessionKey
-    if(m_cipherdata->session_block_counter >= m_cipherdata->max_blocks_per_session){
-        m_cipherdata->session_id += 1; 
-
-        m_cipherdata->SessionKey = compute_sessionkey(local_participant->ParticipantKeyMaterial.master_sender_key,
+        local_participant->SessionKey = compute_sessionkey(local_participant->ParticipantKeyMaterial.master_sender_key,
                 local_participant->ParticipantKeyMaterial.master_salt,
-                m_cipherdata->session_id);
+                local_participant->session_id);
         
         //ReceiverSpecific keys shall be computed specifically when needed
-        m_cipherdata->session_block_counter = 0;
+        local_participant->session_block_counter = 0;
     }
+
+    local_participant->session_block_counter += 1;
 
     //Step 2.5 - Build remaining NONCE elements
     uint64_t initialization_vector_suffix;  //iv suffix changes with every operation
     RAND_bytes( (unsigned char*)(&initialization_vector_suffix), sizeof(uint64_t) );
     std::array<uint8_t,12> initialization_vector; //96 bytes, session_id + suffix
-    memcpy(initialization_vector.data(),&(m_cipherdata->session_id),4);
+    memcpy(initialization_vector.data(),&(local_participant->session_id),4);
     memcpy(initialization_vector.data()+4,&initialization_vector_suffix,8);
     
     //Step 3 - Build SecureDataHeader
@@ -539,7 +422,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     
     header.transform_identifier.transformation_kind = local_participant->ParticipantKeyMaterial.transformation_kind;
     header.transform_identifier.transformation_key_id = local_participant->ParticipantKeyMaterial.sender_key_id;
-    memcpy( header.session_id.data(), &(m_cipherdata->session_id), 4);
+    memcpy( header.session_id.data(), &(local_participant->session_id), 4);
     memcpy( header.initialization_vector_suffix.data() , &initialization_vector_suffix, 8);
 
 
@@ -555,7 +438,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     
     int actual_size=0, final_size=0;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(m_cipherdata->SessionKey.data()), initialization_vector.data());
+    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_participant->SessionKey.data()), initialization_vector.data());
     EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_rtps_message.data(), plain_rtps_message.size());
     EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
     EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
@@ -579,40 +462,20 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
             //TODO (santi) Provide insight
             return false;
         }
-
-        //Find or compute ReceiverSpecificKey into m_cipherdata_r   
-        CipherData *m_cipherdata_r = nullptr;
  
-        {
-            std::map<CryptoTransformKeyId,CipherData>::iterator it= status.find(remote_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id);
-            if(it == status.end()){
-                //First time the Participant sends data - Init struct
-                CipherData new_data;
-                new_data.master_key_id = remote_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id; 
-                new_data.session_id = m_cipherdata->session_id + 2; //Just make it different in order to trigger Key update
-                RAND_bytes( (unsigned char *)(&(new_data.session_id)), sizeof(uint16_t));
-            
-                status[remote_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id] = new_data;
-                it= status.find(remote_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id);
-                m_cipherdata_r = &(it->second);
-            }else{
-                //Found!
-                m_cipherdata_r = &(it->second);
-            }
-            //Update the key if needed
-            if(m_cipherdata_r->session_id != m_cipherdata->session_id){
-                //Update triggered!
-                m_cipherdata_r->SessionKey = compute_sessionkey(remote_participant->Participant2ParticipantKeyMaterial.at(0).master_receiver_specific_key,
-                    remote_participant->Participant2ParticipantKeyMaterial.at(0).master_salt,
-                    m_cipherdata->session_id);
-                m_cipherdata_r->session_id = m_cipherdata->session_id;
-            }
-        }   
+        //Update the key if needed
+        if(remote_participant->session_id != local_participant->session_id){
+            //Update triggered!
+            remote_participant->session_id = local_participant->session_id;
+            remote_participant->SessionKey = compute_sessionkey(remote_participant->Participant2ParticipantKeyMaterial.at(0).master_receiver_specific_key,
+                remote_participant->Participant2ParticipantKeyMaterial.at(0).master_salt,
+                remote_participant->session_id);
+        }
 
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
         int actual_size=0, final_size=0;
         EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-        EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(m_cipherdata_r->SessionKey.data()), initialization_vector.data());
+        EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_participant->SessionKey.data()), initialization_vector.data());
         EVP_EncryptUpdate(e_ctx, NULL, &actual_size, dataTag.common_mac.data(), 16);
         EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
         EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
@@ -620,7 +483,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         EVP_CIPHER_CTX_free(e_ctx);
         
         ReceiverSpecificMAC buffer;
-        buffer.receiver_mac_key_id = m_cipherdata_r->master_key_id;
+        buffer.receiver_mac_key_id = remote_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id;
         memcpy(buffer.receiver_mac.data(),tag,16);
         //Push the MAC into the dataTag
         dataTag.receiver_specific_macs.push_back(buffer);
@@ -742,6 +605,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     plain_buffer.resize(actual_size + final_size);
 
     if(!auth){
+        std::cout << "Unable to auth the message" << std::endl;
         //Log error
         return false;
     }

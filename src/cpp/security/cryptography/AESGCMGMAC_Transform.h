@@ -30,15 +30,6 @@ namespace fastrtps {
 namespace rtps {
 namespace security {
 
-struct CipherData{
-
-    CryptoTransformKeyId master_key_id;
-    uint32_t session_id;
-    std::array<uint8_t,32> SessionKey;
-    uint64_t session_block_counter;
-    uint64_t max_blocks_per_session;
-};
-
 class AESGCMGMAC_Transform : public CryptoTransform
 {
     public:
@@ -115,8 +106,6 @@ class AESGCMGMAC_Transform : public CryptoTransform
     bool remove_KeyId(CryptoTransformKeyId m_key);
 
     private:
-
-    std::map<CryptoTransformKeyId, CipherData> status;
 
     std::array<uint8_t, 32> compute_sessionkey(std::array<uint8_t, 32> master_sender_key,std::array<uint8_t, 32> master_salt , uint32_t &session_id);
 

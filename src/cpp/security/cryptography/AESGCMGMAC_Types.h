@@ -75,25 +75,6 @@ struct SecureDataTag{
     std::vector<ReceiverSpecificMAC> receiver_specific_macs;
 };
 
-class  ParticipantKeyHandle
-{
-    public:
-        ParticipantKeyHandle(){
-        }
-
-        ~ParticipantKeyHandle(){
-        }
-
-        static const char* const class_id_;
-
-        KeyMaterial_AES_GCM_GMAC ParticipantKeyMaterial;
-        std::vector<KeyMaterial_AES_GCM_GMAC> Participant2ParticipantKeyMaterial;
-        std::vector<KeyMaterial_AES_GCM_GMAC> Participant2ParticipantKxKeyMaterial;
-        std::vector<KeyMaterial_AES_GCM_GMAC> RemoteParticipant2ParticipantKeyMaterial;
-};
-
-typedef HandleImpl<ParticipantKeyHandle> AESGCMGMAC_ParticipantCryptoHandle;
-
 class  WriterKeyHandle
 {
     public:
@@ -111,6 +92,12 @@ class  WriterKeyHandle
         std::vector<KeyMaterial_AES_GCM_GMAC> Writer2ReaderKeyMaterial;
         std::vector<KeyMaterial_AES_GCM_GMAC> Reader2WriterKeyMaterial;
         KeyMaterial_AES_GCM_GMAC Participant2ParticipantKxKeyMaterial;
+
+        uint32_t session_id;
+        std::array<uint8_t,32> SessionKey;
+        uint64_t session_block_counter;
+        uint64_t max_blocks_per_session;
+
 
 };
 
@@ -134,9 +121,43 @@ class  ReaderKeyHandle
         std::vector<KeyMaterial_AES_GCM_GMAC> Writer2ReaderKeyMaterial;
         KeyMaterial_AES_GCM_GMAC Participant2ParticipantKxKeyMaterial;
 
+        uint32_t session_id;
+        std::array<uint8_t,32> SessionKey;
+        uint64_t session_block_counter;
+        uint64_t max_blocks_per_session;
+
 };
 
 typedef HandleImpl<ReaderKeyHandle> AESGCMGMAC_ReaderCryptoHandle;
+
+class  ParticipantKeyHandle
+{
+    public:
+        ParticipantKeyHandle(){
+        }
+
+        ~ParticipantKeyHandle(){
+        }
+
+        static const char* const class_id_;
+
+        KeyMaterial_AES_GCM_GMAC ParticipantKeyMaterial;
+        std::vector<KeyMaterial_AES_GCM_GMAC> Participant2ParticipantKeyMaterial;
+        std::vector<KeyMaterial_AES_GCM_GMAC> Participant2ParticipantKxKeyMaterial;
+        std::vector<KeyMaterial_AES_GCM_GMAC> RemoteParticipant2ParticipantKeyMaterial;
+        std::vector<AESGCMGMAC_WriterCryptoHandle *> Writers;
+        std::vector<AESGCMGMAC_ReaderCryptoHandle *> Readers;
+
+        uint32_t session_id;
+        std::array<uint8_t,32> SessionKey;
+        uint64_t session_block_counter;
+        uint64_t max_blocks_per_session;
+
+};
+
+typedef HandleImpl<ParticipantKeyHandle> AESGCMGMAC_ParticipantCryptoHandle;
+
+
 
 } //namespaces security
 } //namespace rtps

@@ -56,7 +56,13 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     
     (*PCrypto)->ParticipantKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
     (*PCrypto)->ParticipantKeyMaterial.master_receiver_specific_key.fill(0); 
-    
+
+    (*PCrypto)->max_blocks_per_session = 32; //TODO (Santi) - This is a testing value. Make it updateable
+    (*PCrypto)->session_block_counter = 40; //Set to update upon first usage
+    RAND_bytes( (unsigned char *)( &( (*PCrypto)->session_id ) ), sizeof(uint16_t));
+
+
+
     return PCrypto;
 }
         
@@ -174,7 +180,11 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         buffer.receiver_specific_key_id.fill(0); //Specified by standard
         buffer.master_receiver_specific_key.fill(0); //Specified by standard
 
-        //Attack to ParitipantCryptoHandles - both local and remote
+        (*RPCrypto)->max_blocks_per_session = 32; //TODO (Santi) - This is a testing value. Make it updateable
+        (*RPCrypto)->session_block_counter = 40; //Set to update upon first usage
+        RAND_bytes( (unsigned char *)( &( (*RPCrypto)->session_id ) ), sizeof(uint16_t));
+
+        //Attack to PartipantCryptoHandles - both local and remote
         (*RPCrypto)->Participant2ParticipantKxKeyMaterial.push_back(buffer);
         local_participant_handle->Participant2ParticipantKxKeyMaterial.push_back(buffer);
     }
@@ -213,7 +223,12 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
     
     (*WCrypto)->WriterKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
     (*WCrypto)->WriterKeyMaterial.master_receiver_specific_key.fill(0); 
-    
+
+    (*WCrypto)->max_blocks_per_session = 32; //TODO (Santi) - This is a testing value. Make it updateable
+    (*WCrypto)->session_block_counter = 40; //Set to update upon first usage
+    RAND_bytes( (unsigned char *)( &( (*WCrypto)->session_id ) ), sizeof(uint16_t));
+
+
     return WCrypto;
 }
         
@@ -253,6 +268,11 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
     (*RRCrypto)->Participant2ParticipantKxKeyMaterial = remote_participant->Participant2ParticipantKxKeyMaterial.at(0);
 
+    (*RRCrypto)->max_blocks_per_session = 32; //TODO (Santi) - This is a testing value. Make it updateable
+    (*RRCrypto)->session_block_counter = 40; //Set to update upon first usage
+    RAND_bytes( (unsigned char *)( &( (*RRCrypto)->session_id ) ), sizeof(uint16_t));
+
+
     return RRCrypto;
 }
 
@@ -290,7 +310,12 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
     
     (*RCrypto)->ReaderKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
     (*RCrypto)->ReaderKeyMaterial.master_receiver_specific_key.fill(0); 
-    
+   
+    (*RCrypto)->max_blocks_per_session = 32; //TODO (Santi) - This is a testing value. Make it updateable
+    (*RCrypto)->session_block_counter = 40; //Set to update upon first usage
+    RAND_bytes( (unsigned char *)( &( (*RCrypto)->session_id ) ), sizeof(uint16_t));
+
+
     return RCrypto;
 }
 
@@ -328,6 +353,10 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
 
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypt);
     (*RWCrypto)->Participant2ParticipantKxKeyMaterial = remote_participant->Participant2ParticipantKxKeyMaterial.at(0);
+
+    (*RWCrypto)->max_blocks_per_session = 32; //TODO (Santi) - This is a testing value. Make it updateable
+    (*RWCrypto)->session_block_counter = 40; //Set to update upon first usage
+    RAND_bytes( (unsigned char *)( &( (*RWCrypto)->session_id ) ), sizeof(uint16_t));
 
 
 
