@@ -636,11 +636,21 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
                 SecureSubmessageCategory_t &secure_submessage_category,
                 const std::vector<uint8_t> encoded_rtps_submessage,
                 const ParticipantCryptoHandle &receiving_crypto,
-                const ParticipantCryptoHandle &sending_crypto,
+                ParticipantCryptoHandle &sending_crypto,
                 SecurityException &exception){
 
-    exception = SecurityException("Not implemented");
-    return false;
+    AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(sending_crypto);
+    if(remote_participant.nil()){
+        exception = SecurityException("Not a valid ParticipantCryptoHandle received");
+        return false;
+    }
+
+
+    
+
+
+
+    return true;
 }
 
 bool AESGCMGMAC_Transform::decode_datawriter_submessage(
@@ -957,4 +967,141 @@ std::array<uint8_t, 32> AESGCMGMAC_Transform::compute_sessionkey(std::array<uint
     delete(source);
     return session_key;
 }
+
+std::vector<uint8_t> AESGCMGMAC_Transform::serialize_SecureDataHeader(SecureDataHeader &input)
+{
+    std::vector<uint8_t> buffer;
+    int i;
+
+    for(i=0;i < 4; i++) buffer.push_back( input.transform_identifier.transformation_kind.at(i) );
+    for(i=0;i < 4; i++) buffer.push_back( input.transform_identifier.transformation_key_id.at(i) );
+    for(i=0;i < 4; i++) buffer.push_back( input.session_id.at(i) );
+    for(i=0;i < 8; i++) buffer.push_back( input.initialization_vector_suffix.at(i) );
+
+    return buffer;
+}
+
+std::vector<uint8_t> AESGCMGMAC_Transform::serialize_SecureDataBody(SecureDataBody &input)
+{
+    std::vector<uint8_t> buffer;
+    int i;
+   
+    long body_length = input.secure_data.size();
+    for(i=0;i < sizeof(long); i++) buffer.push_back( *( (uint8_t*)&body_length + i) );
+    for(i=0;i < body_length; i++) buffer.push_back( input.secure_data.at(i) );
+
+    return buffer;
+}
+
+std::vector<uint8_t> AESGCMGMAC_Transform::serialize_SecureDataTag(SecureDataTag &input)
+{
+    std::vector<uint8_t> buffer;
+    int i,j;
+
+    //Common tag
+    for(i=0;i < 16; i++) buffer.push_back( input.common_mac.at(i) );
+        //Receiver specific macs
+    long specific_length = input.receiver_specific_macs.size();
+    for(i=0;i < sizeof(long); i++) buffer.push_back( *( (uint8_t*)&specific_length + i ) );
+    for(j=0; j< input.receiver_specific_macs.size(); j++){
+        for(i=0;i < 4; i++) buffer.push_back( input.receiver_specific_macs.at(j).receiver_mac_key_id.at(i) );
+        for(i=0;i < 16; i++) buffer.push_back( input.receiver_specific_macs.at(j).receiver_mac.at(i) );
+    }
+
+    return buffer;
+}
+
+std::vector<uint8_t> AESGCMGMAC_Transform::assemble_serialized_payload(std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+{
+    std::vector<uint8_t> buffer;
+
+
+    return buffer;
+}
+
+
+std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+{
+    std::vector<uint8_t> buffer;
+
+
+    return buffer;
+}
+
+std::vector<uint8_t> AESGCMGMAC_Transform::assemble_rtps_message(std::vector<uint8_t> &rtps_header, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+{
+    std::vector<uint8_t> buffer;
+
+
+    return buffer;
+}
+
+SecureDataHeader AESGCMGMAC_Transform::deserialize_SecureDataHeader(std::vector<uint8_t> &input){
+    
+    SecureDataHeader header;
+    int i;
+
+    for(i=0;i<4;i++) header.transform_identifier.transformation_kind.at(i) = ( input.at( i ) );
+    for(i=0;i<4;i++) header.transform_identifier.transformation_key_id.at(i) = ( input.at( i+4 ) );
+    for(i=0;i<4;i++) header.session_id.at(i) = ( input.at( i+8 ) );
+    for(i=0;i<8;i++) header.initialization_vector_suffix.at(i) = ( input.at( i+12 ) );
+    
+    return header;
+}
+
+SecureDataBody AESGCMGMAC_Transform::deserialize_SecureDataBody(std::vector<uint8_t> &input){
+
+    SecureDataBody body;
+
+    long body_length = 0;
+    memcpy(&body_length, input.data(), sizeof(long));
+    for(int i=0;i < body_length; i++) body.secure_data.push_back( input.at( i + sizeof(long) ) );
+    
+    return body;
+}
+
+SecureDataTag AESGCMGMAC_Transform::deserialize_SecureDataTag(std::vector<uint8_t> &input){
+
+    SecureDataTag tag;
+
+    //Tag
+        //common_mac
+    for(int i=0;i < 16; i++) tag.common_mac.at(i) = ( input.at( i ) );
+        //receiver_specific_mac 
+    long spec_length = 0;
+    memcpy(&spec_length, input.data()+16, sizeof(long));
+    //Read specific MACs in search for the correct one (verify the authenticity of the message)
+    ReceiverSpecificMAC specific_mac;
+    for(int j=0; j < spec_length; j++){
+        memcpy( &(specific_mac.receiver_mac_key_id),
+                input.data() + 16 + sizeof(long) + j*(20),
+                4 );
+        memcpy( specific_mac.receiver_mac.data(),
+                input.data() + 16 + sizeof(long) + 4,
+                16 );
+        tag.receiver_specific_macs.push_back(specific_mac);
+    }
+
+    return tag;
+}
+
+bool AESGCMGMAC_Transform::disassemble_serialized_payload(std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+{
+
+
+}
+
+bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+{
+
+
+}
+
+bool AESGCMGMAC_Transform::disassemble_rtps_message(std::vector<uint8_t> &rtps_header, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+{
+
+
+}
+
+
 

@@ -78,7 +78,7 @@ class AESGCMGMAC_Transform : public CryptoTransform
                 SecureSubmessageCategory_t &secure_submessage_category,
                 const std::vector<uint8_t> encoded_rtps_submessage,
                 const ParticipantCryptoHandle &receiving_crypto,
-                const ParticipantCryptoHandle &sending_crypto,
+                ParticipantCryptoHandle &sending_crypto,
                 SecurityException &exception);
 
     bool decode_datawriter_submessage(
@@ -109,7 +109,28 @@ class AESGCMGMAC_Transform : public CryptoTransform
 
     std::array<uint8_t, 32> compute_sessionkey(std::array<uint8_t, 32> master_sender_key,std::array<uint8_t, 32> master_salt , uint32_t &session_id);
 
+    std::vector<uint8_t> serialize_SecureDataHeader(SecureDataHeader &input);
+    std::vector<uint8_t> serialize_SecureDataBody(SecureDataBody &input);
+    std::vector<uint8_t> serialize_SecureDataTag(SecureDataTag &input);
+
+    SecureDataHeader deserialize_SecureDataHeader(std::vector<uint8_t> &input);
+    SecureDataBody deserialize_SecureDataBody(std::vector<uint8_t> &input);
+    SecureDataTag deserialize_SecureDataTag(std::vector<uint8_t> &input);
+
+    std::vector<uint8_t> assemble_serialized_payload(std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags);
+
+     std::vector<uint8_t> assemble_endpoint_submessage(std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags);
+
+   std::vector<uint8_t> assemble_rtps_message(std::vector<uint8_t> &rtps_header, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags);
+
+    bool disassemble_serialized_payload(std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags);
+
+    bool disassemble_endpoint_submessage(std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags);
+
+   bool disassemble_rtps_message(std::vector<uint8_t> &rtps_header, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags);
+
 };
+
 
 } //namespace security
 } //namespace rtps

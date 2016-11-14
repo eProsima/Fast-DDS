@@ -61,8 +61,6 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     (*PCrypto)->session_block_counter = 40; //Set to update upon first usage
     RAND_bytes( (unsigned char *)( &( (*PCrypto)->session_id ) ), sizeof(uint16_t));
 
-
-
     return PCrypto;
 }
         
@@ -272,6 +270,9 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
     (*RRCrypto)->session_block_counter = 40; //Set to update upon first usage
     RAND_bytes( (unsigned char *)( &( (*RRCrypto)->session_id ) ), sizeof(uint16_t));
 
+    //Save this CryptoHandle as part of the remote participant
+    AESGCMGMAC_ParticipantCryptoHandle& PCrypto = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
+    (*PCrypto)->Readers.push_back(RRCrypto);
 
     return RRCrypto;
 }
@@ -358,7 +359,9 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
     (*RWCrypto)->session_block_counter = 40; //Set to update upon first usage
     RAND_bytes( (unsigned char *)( &( (*RWCrypto)->session_id ) ), sizeof(uint16_t));
 
-
+    //Save this CryptoHandle as part of the remote participant
+    AESGCMGMAC_ParticipantCryptoHandle& PCrypto = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypt);
+    (*PCrypto)->Writers.push_back(RWCrypto);
 
     return RWCrypto;
 }
