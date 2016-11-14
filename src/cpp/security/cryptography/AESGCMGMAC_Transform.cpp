@@ -1014,7 +1014,11 @@ std::vector<uint8_t> AESGCMGMAC_Transform::serialize_SecureDataTag(SecureDataTag
 std::vector<uint8_t> AESGCMGMAC_Transform::assemble_serialized_payload(std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
     std::vector<uint8_t> buffer;
+    int i;
 
+    for(i=0; i < serialized_header.size(); i++) buffer.push_back( serialized_header.at(i) );
+    for(i=0; i < serialized_body.size(); i++) buffer.push_back( serialized_body.at(i) );
+    for(i=0; i < serialized_tag.size(); i++) buffer.push_back(serialized_tag.at(i) );
 
     return buffer;
 }
@@ -1031,7 +1035,28 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
 std::vector<uint8_t> AESGCMGMAC_Transform::assemble_rtps_message(std::vector<uint8_t> &rtps_header, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
     std::vector<uint8_t> buffer;
+    int i;
 
+    //Unaltered Header
+    for(i=0; i < rtps_header.size(); i++)   buffer.push_back( rtps_header.at(i) );
+    //SRTPS_PREFIX
+
+    //Flags
+    flags &= 0xFE; //Enforce last bit to be zero
+    //Octects2Nextheader
+
+    //Header
+    for(i=0; i < serialized_header.size(); i++) buffer.push_back( serialized_header.at(i) );
+    //Payload
+    for(i=0; i < serialized_body.size(); i++)   buffer.push_back( serialized_body.at(i) );
+    //SRTPS_POSTFIX
+
+    //Flags
+
+    //Octets2Nextheader
+
+    //Tag
+    for(int i=0; i < serialized_tag.size(); i++)    buffer.push_back( serialized_tag.at(i) );
 
     return buffer;
 }
@@ -1085,22 +1110,36 @@ SecureDataTag AESGCMGMAC_Transform::deserialize_SecureDataTag(std::vector<uint8_
     return tag;
 }
 
-bool AESGCMGMAC_Transform::disassemble_serialized_payload(std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+bool AESGCMGMAC_Transform::disassemble_serialized_payload(std::vector<uint8_t> &input, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
 
+    int i;
 
+    serialized_header.clear();
+    for(i=0; i < 20; i++) serialized_header.push_back( input.at(i) );
+
+    serialized_body.clear();
+    long body_length = 0;
+    memcpy(&body_length, input.data() + 20, sizeof(long));
+    for(i=0; i < ( sizeof(long) + body_length ); i++) serialized_body.push_back( input.at(i + 20) );
+    
+    serialized_tag.clear();
+    for(i=0; i < ( input.size() - 20 - body_length - sizeof(long) ); i++) serialized_tag.push_back(input.at(i + 20 + sizeof(long) + body_length) );
+
+
+    return false;
 }
 
 bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
 
-
+    return false;
 }
 
 bool AESGCMGMAC_Transform::disassemble_rtps_message(std::vector<uint8_t> &rtps_header, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
 
-
+    return false;
 }
 
 
