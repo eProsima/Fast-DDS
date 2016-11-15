@@ -222,26 +222,18 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     encoded_rtps_submessage.clear();
     
     //Header
-    for(int i=0;i < 4; i++) encoded_rtps_submessage.push_back( header.transform_identifier.transformation_kind.at(i) );
-    for(int i=0;i < 4; i++) encoded_rtps_submessage.push_back( header.transform_identifier.transformation_key_id.at(i) );
-    for(int i=0;i < 4; i++) encoded_rtps_submessage.push_back( header.session_id.at(i) );
-    for(int i=0;i < 8; i++) encoded_rtps_submessage.push_back( header.initialization_vector_suffix.at(i) );
-    
+    std::vector<uint8_t> serialized_header = serialize_SecureDataHeader(header);
+
     //Body
-    long body_length = body.secure_data.size();
-    for(int i=0;i < sizeof(long); i++) encoded_rtps_submessage.push_back( *( (uint8_t*)&body_length + i) );
-    for(int i=0;i < body_length;i++) encoded_rtps_submessage.push_back( body.secure_data.at(i) );
+    std::vector<uint8_t> serialized_body = serialize_SecureDataBody(body);
 
     //Tag
-        //Common tag
-    for(int i=0;i < 16; i++) encoded_rtps_submessage.push_back( dataTag.common_mac.at(i) );
-        //Receiver specific macs
-    long specific_length = dataTag.receiver_specific_macs.size();
-    for(int i=0;i < sizeof(long); i++) encoded_rtps_submessage.push_back( *( (uint8_t*)&specific_length + i ) );
-    for(int j=0; j< dataTag.receiver_specific_macs.size(); j++){
-        for(int i=0;i < 4; i++) encoded_rtps_submessage.push_back( dataTag.receiver_specific_macs.at(j).receiver_mac_key_id.at(i) );
-        for(int i=0;i < 16; i++) encoded_rtps_submessage.push_back( dataTag.receiver_specific_macs.at(j).receiver_mac.at(i) );
-    }
+    std::vector<uint8_t> serialized_tag = serialize_SecureDataTag(dataTag);
+    //Flags
+    unsigned char flags = 0x00;
+
+    encoded_rtps_submessage = assemble_endpoint_submessage(serialized_header, serialized_body, serialized_tag, flags);
+
     return true;
 }
     
@@ -662,34 +654,29 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     SecureDataBody body;
     SecureDataTag tag;
 
+    std::vector<uint8_t> serialized_header, serialized_body, serialized_tag;
+    unsigned char flags;
+
+    if( !disassemble_endpoint_submessage(encoded_rtps_submessage, serialized_header, serialized_body, serialized_tag, flags) ){
+        std::cout << "Unable to disassemble endpoint submessage" << std::endl;
+        return false;
+    }
     //Header
-    for(int i=0;i<4;i++) header.transform_identifier.transformation_kind.at(i) = ( encoded_rtps_submessage.at( i ) );
-    for(int i=0;i<4;i++) header.transform_identifier.transformation_key_id.at(i) = ( encoded_rtps_submessage.at( i+4 ) );
-    for(int i=0;i<4;i++) header.session_id.at(i) = ( encoded_rtps_submessage.at( i+8 ) );
-    for(int i=0;i<8;i++) header.initialization_vector_suffix.at(i) = ( encoded_rtps_submessage.at( i+12 ) );
+    header = deserialize_SecureDataHeader(serialized_header);
     //Body
-    long body_length = 0;
-    memcpy(&body_length, encoded_rtps_submessage.data()+20, sizeof(long));
-    for(int i=0;i < body_length; i++) body.secure_data.push_back( encoded_rtps_submessage.at( i+20+sizeof(long) ) );
+    body = deserialize_SecureDataBody(serialized_body);
     //Tag
-        //common_mac
-    for(int i=0;i < 16; i++) tag.common_mac.at(i) = ( encoded_rtps_submessage.at( i+20+sizeof(long)+body_length ) );
-        //receiver_specific_mac 
-    long spec_length = 0;
-    memcpy(&spec_length, encoded_rtps_submessage.data()+36+sizeof(long)+body_length, sizeof(long));
+    tag = deserialize_SecureDataTag(serialized_tag);
+
+
     //Read specific MACs in search for the correct one (verify the authenticity of the message)
     ReceiverSpecificMAC specific_mac;
     bool mac_found = false; 
-    for(int j=0; j < spec_length; j++){
-        memcpy( &(specific_mac.receiver_mac_key_id),
-                encoded_rtps_submessage.data() + 36 + sizeof(long) + body_length + sizeof(long) + j*(20),
-                4 );
-        memcpy( specific_mac.receiver_mac.data(),
-                encoded_rtps_submessage.data() + 36 + sizeof(long) + body_length+sizeof(long) + j*(20) + 4,
-                16 );
+    for(int j=0; j < tag.receiver_specific_macs.size(); j++){
         //Check if it matches the key we have
-        if(sending_writer->Writer2ReaderKeyMaterial.at(0).receiver_specific_key_id == specific_mac.receiver_mac_key_id){
+        if(sending_writer->Writer2ReaderKeyMaterial.at(0).receiver_specific_key_id == tag.receiver_specific_macs.at(j).receiver_mac_key_id){
             mac_found = true;
+            specific_mac =  tag.receiver_specific_macs.at(j);
             break;
         }
     }
@@ -698,6 +685,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
         exception = SecurityException("Message does not contain a suitable specific MAC for the receiving Participant");
         return false;
     }
+
     uint32_t session_id;
     memcpy(&session_id,header.session_id.data(),4);
     //Sessionkey
@@ -1040,9 +1028,12 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
     flags &= 0xFE; //Force LSB to zero 
     buffer.push_back(flags);
     //Octets2NextSubMessageHeader
-    octets = serialized_header.size() + serialized_body.size() + 2 + serialized_tag.size(); 
-    buffer.push_back( (octets & 0xFF00) >> 8);
-    buffer.push_back( (octets & 0x00FF) );
+    octets = serialized_header.size() + serialized_body.size() + 2 + 2 + serialized_tag.size(); 
+    uint8_t octets_c[2] = { 0, 0 };
+    memcpy(octets_c, &octets, 2);
+    buffer.push_back( octets_c[0] );
+    buffer.push_back( octets_c[1] );
+    
     //SecureDataHeader
     for(i=0; i < serialized_header.size(); i++) buffer.push_back( serialized_header.at(i) );
     //Payload
@@ -1053,8 +1044,10 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
     buffer.push_back(flags); 
     //Octets2NextSubMessageHeader
     octets = serialized_tag.size();
-    buffer.push_back( (octets & 0xFF00) >> 8);
-    buffer.push_back( (octets & 0x00FF) );
+    memcpy(octets_c, &octets, 2);
+    buffer.push_back( octets_c[0] );
+    buffer.push_back( octets_c[1] );
+    
     //SecureDataTag
     for(int i=0; i < serialized_tag.size(); i++)    buffer.push_back( serialized_tag.at(i) );
 
@@ -1075,7 +1068,7 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_rtps_message(std::vector<uin
     flags &= 0xFE; //Enforce LSB to zero
     buffer.push_back(flags);
     //Octects2NextSugMsg
-    octets = serialized_header.size() + serialized_body.size() + 2 + serialized_tag.size(); 
+    octets = serialized_header.size() + serialized_body.size() + 2 + 2  + serialized_tag.size(); 
     buffer.push_back( (octets & 0xFF00) >> 8 );
     buffer.push_back( (octets & 0x00FF) );
     //Header
@@ -1171,38 +1164,53 @@ bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(const std::vector<uin
     int i;
 
     //SRTPS_PREFIX
-    if( input.at(offset) != SRTPS_PREFIX ) return false;
+    if( input.at(offset) != SEC_PREFIX ){
+        std::cout << "Not a valid prefix" << std::endl;
+        return false;
+    }
     offset += 1;
     //Flags are ignored for the time being
     offset +=1;
     //Octects2NextSugMsg
-    short octets = input.at(offset) << 8 + input.at(offset+1);
-    offset += 2;
-    if(input.size() != offset + octets) return false;
+    uint8_t octets_c[2] = { 0, 0 };
+    octets_c[0] = input.at(offset);
+    offset += 1;
+    octets_c[1] = input.at(offset);
+    offset += 1;
+    short safecheck;
+    memcpy(&safecheck, octets_c, 2);
+    if( (input.size() - offset) != safecheck){
+        return false;
+    }
     //Header
     serialized_header.clear();
-    for(i=0; i < 20; i++) serialized_header.push_back( input.at(i) );
+    for(i=0; i < 20; i++) serialized_header.push_back( input.at(offset + i) );
     offset += 20;
     //Payload
     serialized_body.clear();
     long body_length = 0;
-    memcpy(&body_length, input.data() + 20, sizeof(long));
-    for(i=0; i < ( sizeof(long) + body_length ); i++) serialized_body.push_back( input.at(i + 20) );
+    memcpy(&body_length, input.data() + offset, sizeof(long));
+    for(i=0; i < ( sizeof(long) + body_length ); i++) serialized_body.push_back( input.at(i + offset) );
     offset += sizeof(long) + body_length; 
     //SRTPS_POSTFIX
-    if( input.at(offset) != SRTPS_POSTFIX ) return false;
+    if( input.at(offset) != SEC_POSTFIX ){
+        return false;
+    }
     offset += 1;
     //Flags
     offset += 1;
     //Octets2Nextheader 
-    octets = input.at(offset) << 8 + input.at(offset+1);
-    offset += 2;
-    if(input.size() != offset + octets) return false;
+    octets_c[0] = input.at(offset);
+    offset += 1;
+    octets_c[1] = input.at(offset);
+    offset += 1;
+    memcpy(&safecheck, octets_c, 2);
+    if( (input.size() - offset) != safecheck)   return false;
     //Tag
     serialized_tag.clear();
     for(i=0; i < ( input.size() - offset ); i++) serialized_tag.push_back(input.at(i + offset) );
 
-    return false;
+    return true;
 }
 
 bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &input, std::vector<uint8_t> &rtps_header, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
