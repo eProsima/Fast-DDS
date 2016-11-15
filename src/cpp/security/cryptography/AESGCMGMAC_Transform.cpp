@@ -101,19 +101,14 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     encoded_buffer.clear();
     
     //Header
-    for(int i=0;i < 4; i++) encoded_buffer.push_back( header.transform_identifier.transformation_kind.at(i) );
-    for(int i=0;i < 4; i++) encoded_buffer.push_back( header.transform_identifier.transformation_key_id.at(i) );
-    for(int i=0;i < 4; i++) encoded_buffer.push_back( header.session_id.at(i) );
-    for(int i=0;i < 8; i++) encoded_buffer.push_back( header.initialization_vector_suffix.at(i) );
-    
+    std::vector<uint8_t> serialized_header = serialize_SecureDataHeader(header); 
     //Body
-    long body_length = body.secure_data.size();
-    for(int i=0;i < sizeof(long); i++) encoded_buffer.push_back( *( (uint8_t*)&body_length + i) );
-    for(int i=0;i < body_length;i++) encoded_buffer.push_back( body.secure_data.at(i) );
-
+    std::vector<uint8_t> serialized_body = serialize_SecureDataBody(body);
     //Tag
-        //Common tag
-    for(int i=0;i < 16; i++) encoded_buffer.push_back( dataTag.common_mac.at(i) );
+    std::vector<uint8_t> serialized_tag = serialize_SecureDataTag(dataTag);
+    unsigned char flags = 0x00;
+    encoded_buffer = assemble_serialized_payload(serialized_header, serialized_body, serialized_tag, flags);
+
     return true;
 }
          
@@ -892,24 +887,33 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
                 SecurityException &exception){
 
     AESGCMGMAC_WriterCryptoHandle& sending_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_crypto);
+    if(sending_writer.nil()){
+        exception = SecurityException("Not a valid sending_writer handle");
+        return false;
+    }
 
-    //Fun reverse order process;
+    //Fun reverse order process
     SecureDataHeader header;
+    std::vector<uint8_t> serialized_header;
     SecureDataBody body;
+    std::vector<uint8_t> serialized_body;
     SecureDataTag tag;
+    std::vector<uint8_t> serialized_tag;
+  
+    unsigned char flags = 0x00;
+
+    if( !disassemble_serialized_payload(encoded_buffer, serialized_header, serialized_body, serialized_tag, flags) ){
+        std::cout << "Disassembly function failure" << std::endl;
+        return false;
+    }
 
     //Header
-    for(int i=0;i<4;i++) header.transform_identifier.transformation_kind.at(i) = ( encoded_buffer.at( i ) );
-    for(int i=0;i<4;i++) header.transform_identifier.transformation_key_id.at(i) = ( encoded_buffer.at( i+4 ) );
-    for(int i=0;i<4;i++) header.session_id.at(i) = ( encoded_buffer.at( i+8 ) );
-    for(int i=0;i<8;i++) header.initialization_vector_suffix.at(i) = ( encoded_buffer.at( i+12 ) );
+    header = deserialize_SecureDataHeader(serialized_header);
     //Body
-    long body_length = 0;
-    memcpy(&body_length, encoded_buffer.data()+20, sizeof(long));
-    for(int i=0;i < body_length; i++) body.secure_data.push_back( encoded_buffer.at( i+20+sizeof(long) ) );
+    body = deserialize_SecureDataBody(serialized_body);
     //Tag
-    for(int i=0;i < 16; i++) tag.common_mac.at(i) = ( encoded_buffer.at( i+20+sizeof(long)+body_length ) );
-    
+    tag = deserialize_SecureDataTag(serialized_tag); 
+
     uint32_t session_id;
     memcpy(&session_id,header.session_id.data(),4);
     
@@ -1141,7 +1145,7 @@ SecureDataTag AESGCMGMAC_Transform::deserialize_SecureDataTag(std::vector<uint8_
     return tag;
 }
 
-bool AESGCMGMAC_Transform::disassemble_serialized_payload(std::vector<uint8_t> &input, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+bool AESGCMGMAC_Transform::disassemble_serialized_payload(const std::vector<uint8_t> &input, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
 
     int i;
@@ -1157,10 +1161,10 @@ bool AESGCMGMAC_Transform::disassemble_serialized_payload(std::vector<uint8_t> &
     serialized_tag.clear();
     for(i=0; i < ( input.size() - 20 - body_length - sizeof(long) ); i++) serialized_tag.push_back(input.at(i + 20 + sizeof(long) + body_length) );
 
-    return false;
+    return true;
 }
 
-bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(std::vector<uint8_t> &input, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(const std::vector<uint8_t> &input, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
 
     short offset = 0;
@@ -1201,7 +1205,7 @@ bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(std::vector<uint8_t> 
     return false;
 }
 
-bool AESGCMGMAC_Transform::disassemble_rtps_message(std::vector<uint8_t> &input, std::vector<uint8_t> &rtps_header, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &input, std::vector<uint8_t> &rtps_header, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
 
     short offset = 0;
@@ -1245,4 +1249,3 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(std::vector<uint8_t> &input,
 
     return false;
 }
-
