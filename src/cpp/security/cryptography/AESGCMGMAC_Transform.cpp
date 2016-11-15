@@ -1027,7 +1027,32 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_serialized_payload(std::vect
 std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
     std::vector<uint8_t> buffer;
+    int i;
+    short octets;
 
+    //SEC_PREFIX
+    buffer.push_back(SEC_PREFIX); 
+    //Flags
+    flags &= 0xFE; //Force LSB to zero 
+    buffer.push_back(flags);
+    //Octets2NextSubMessageHeader
+    octets = serialized_header.size() + serialized_body.size() + 2 + serialized_tag.size(); 
+    buffer.push_back( (octets & 0xFF00) >> 8);
+    buffer.push_back( (octets & 0x00FF) );
+    //SecureDataHeader
+    for(i=0; i < serialized_header.size(); i++) buffer.push_back( serialized_header.at(i) );
+    //Payload
+    for(i=0; i < serialized_body.size(); i++)   buffer.push_back( serialized_body.at(i) );
+    //SEC_POSTFIX
+    buffer.push_back(SEC_POSTFIX); 
+    //Flags
+    buffer.push_back(flags); 
+    //Octets2NextSubMessageHeader
+    octets = serialized_tag.size();
+    buffer.push_back( (octets & 0xFF00) >> 8);
+    buffer.push_back( (octets & 0x00FF) );
+    //SecureDataTag
+    for(int i=0; i < serialized_tag.size(); i++)    buffer.push_back( serialized_tag.at(i) );
 
     return buffer;
 }
@@ -1036,25 +1061,31 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_rtps_message(std::vector<uin
 {
     std::vector<uint8_t> buffer;
     int i;
+    short octets;
 
     //Unaltered Header
     for(i=0; i < rtps_header.size(); i++)   buffer.push_back( rtps_header.at(i) );
     //SRTPS_PREFIX
-
+    buffer.push_back(SRTPS_PREFIX);
     //Flags
-    flags &= 0xFE; //Enforce last bit to be zero
-    //Octects2Nextheader
-
+    flags &= 0xFE; //Enforce LSB to zero
+    buffer.push_back(flags);
+    //Octects2NextSugMsg
+    octets = serialized_header.size() + serialized_body.size() + 2 + serialized_tag.size(); 
+    buffer.push_back( (octets & 0xFF00) >> 8 );
+    buffer.push_back( (octets & 0x00FF) );
     //Header
     for(i=0; i < serialized_header.size(); i++) buffer.push_back( serialized_header.at(i) );
     //Payload
     for(i=0; i < serialized_body.size(); i++)   buffer.push_back( serialized_body.at(i) );
     //SRTPS_POSTFIX
-
+    buffer.push_back(SRTPS_POSTFIX);
     //Flags
-
+    buffer.push_back(flags);
     //Octets2Nextheader
-
+    octets = serialized_tag.size(); 
+    buffer.push_back( (octets & 0xFF00) >> 8 );
+    buffer.push_back( (octets & 0x00FF) );
     //Tag
     for(int i=0; i < serialized_tag.size(); i++)    buffer.push_back( serialized_tag.at(i) );
 
@@ -1126,21 +1157,92 @@ bool AESGCMGMAC_Transform::disassemble_serialized_payload(std::vector<uint8_t> &
     serialized_tag.clear();
     for(i=0; i < ( input.size() - 20 - body_length - sizeof(long) ); i++) serialized_tag.push_back(input.at(i + 20 + sizeof(long) + body_length) );
 
-
     return false;
 }
 
-bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(std::vector<uint8_t> &input, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
 
+    short offset = 0;
+    int i;
+
+    //SRTPS_PREFIX
+    if( input.at(offset) != SRTPS_PREFIX ) return false;
+    offset += 1;
+    //Flags are ignored for the time being
+    offset +=1;
+    //Octects2NextSugMsg
+    short octets = input.at(offset) << 8 + input.at(offset+1);
+    offset += 2;
+    if(input.size() != offset + octets) return false;
+    //Header
+    serialized_header.clear();
+    for(i=0; i < 20; i++) serialized_header.push_back( input.at(i) );
+    offset += 20;
+    //Payload
+    serialized_body.clear();
+    long body_length = 0;
+    memcpy(&body_length, input.data() + 20, sizeof(long));
+    for(i=0; i < ( sizeof(long) + body_length ); i++) serialized_body.push_back( input.at(i + 20) );
+    offset += sizeof(long) + body_length; 
+    //SRTPS_POSTFIX
+    if( input.at(offset) != SRTPS_POSTFIX ) return false;
+    offset += 1;
+    //Flags
+    offset += 1;
+    //Octets2Nextheader 
+    octets = input.at(offset) << 8 + input.at(offset+1);
+    offset += 2;
+    if(input.size() != offset + octets) return false;
+    //Tag
+    serialized_tag.clear();
+    for(i=0; i < ( input.size() - offset ); i++) serialized_tag.push_back(input.at(i + offset) );
+
     return false;
 }
 
-bool AESGCMGMAC_Transform::disassemble_rtps_message(std::vector<uint8_t> &rtps_header, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+bool AESGCMGMAC_Transform::disassemble_rtps_message(std::vector<uint8_t> &input, std::vector<uint8_t> &rtps_header, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
 
+    short offset = 0;
+    int i;
+
+    //Unaltered Header
+    rtps_header.clear();
+    for(i=0; i < 20; i++)   rtps_header.push_back( input.at(i) );
+    offset += 20;
+    //SRTPS_PREFIX
+    if( input.at(offset) != SRTPS_PREFIX ) return false;
+    offset += 1;
+    //Flags are ignored for the time being
+    offset +=1;
+    //Octects2NextSugMsg
+    short octets = input.at(offset) << 8 + input.at(offset+1);
+    offset += 2;
+    if(input.size() != offset + octets) return false;
+    //Header
+    serialized_header.clear();
+    for(i=0; i < 20; i++) serialized_header.push_back( input.at(i) );
+    offset += 20;
+    //Payload
+    serialized_body.clear();
+    long body_length = 0;
+    memcpy(&body_length, input.data() + 20, sizeof(long));
+    for(i=0; i < ( sizeof(long) + body_length ); i++) serialized_body.push_back( input.at(i + 20) );
+    offset += sizeof(long) + body_length; 
+    //SRTPS_POSTFIX
+    if( input.at(offset) != SRTPS_POSTFIX ) return false;
+    offset += 1;
+    //Flags
+    offset += 1;
+    //Octets2Nextheader 
+    octets = input.at(offset) << 8 + input.at(offset+1);
+    offset += 2;
+    if(input.size() != offset + octets) return false;
+    //Tag
+    serialized_tag.clear();
+    for(i=0; i < ( input.size() - offset ); i++) serialized_tag.push_back(input.at(i + offset) );
+
     return false;
 }
-
-
 
