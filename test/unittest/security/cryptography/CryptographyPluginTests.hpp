@@ -299,9 +299,11 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     std::vector<uint8_t> encoded_rtps_message;
     std::vector<uint8_t> decoded_rtps_message;
 
+    char rtps_header[] = "01234567890123456789"; //Length 20
     char message[] = "RPTSMessage"; //Length 11
-    plain_rtps_message.resize(11);
-    memcpy(plain_rtps_message.data(), message, 11);
+    plain_rtps_message.resize(31);
+    memcpy(plain_rtps_message.data(),rtps_header, 20); 
+    memcpy(plain_rtps_message.data() + 20, message, 11);
 
 
     ParticipantCryptoHandle *unintended_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*ParticipantA,*i_handle,*perm_handle,*shared_secret, exception);
