@@ -610,12 +610,31 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
         return false;
     }
 
+    SecureDataHeader header;
+    unsigned char flags;
+    std::vector<uint8_t> serialized_header, serialized_body, serialized_tag;
+    if(!disassemble_endpoint_submessage(encoded_rtps_submessage, serialized_header, serialized_body, serialized_tag, flags)) return false;;
+    header = deserialize_SecureDataHeader(serialized_header); 
+    //KeyId is present in Header->transform_identifier->transformation_key_id and contains the sender_key_id
+    for(auto it = remote_participant->Writers.begin(); it != remote_participant->Writers.end(); ++it){
+        AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(**it);
+        if( writer->WriterKeyMaterial.sender_key_id == header.transform_identifier.transformation_key_id){
+            secure_submessage_category = DATAWRITER_SUBMESSAGE;
+            datawriter_crypto = **it;
+            return true;
+        }
+    }
 
-    
+    for(auto it = remote_participant->Readers.begin(); it != remote_participant->Readers.end(); ++it){
+        AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**it);
+        if( reader->ReaderKeyMaterial.sender_key_id == header.transform_identifier.transformation_key_id){
+            secure_submessage_category = DATAREADER_SUBMESSAGE;
+            datareader_crypto = **it;
+            return true;
+        }
+    }
 
-
-
-    return true;
+    return false;
 }
 
 bool AESGCMGMAC_Transform::decode_datawriter_submessage(
