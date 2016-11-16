@@ -31,6 +31,8 @@ class WriterHistory
 
 
         WriterHistory(const HistoryAttributes& /*att*/){}
+
+        MOCK_METHOD1(add_change, bool(CacheChange_t*));
 };
 
 } // namespace rtps

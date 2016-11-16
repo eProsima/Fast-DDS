@@ -25,7 +25,9 @@ Authentication* SecurityPluginFactory::auth_plugin_ = nullptr;
 
 Authentication* SecurityPluginFactory::create_authentication_plugin(const PropertyPolicy& /*property_policy*/)
 {
-    return auth_plugin_;
+    Authentication* ret =  auth_plugin_;
+    auth_plugin_ = nullptr;
+    return ret;
 }
 
 void SecurityPluginFactory::set_auth_plugin(Authentication* plugin)
@@ -35,5 +37,9 @@ void SecurityPluginFactory::set_auth_plugin(Authentication* plugin)
 
 void SecurityPluginFactory::release_auth_plugin()
 {
-    auth_plugin_ = nullptr;
+    if(auth_plugin_ != nullptr)
+    {
+        delete auth_plugin_;
+        auth_plugin_ = nullptr;
+    }
 }

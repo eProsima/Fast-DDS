@@ -121,6 +121,10 @@ if(SECURITY)
 
     include_directories(${OPENSSL_INCLUDE_DIR})
     set(EXTRA_LIBRARIES ${EXTRA_LIBRARIES} ${OPENSSL_LIBRARIES})
+
+    set(HAVE_SECURITY 1)
+else()
+    set(HAVE_SECURITY 0)
 endif()
 
 # Set version

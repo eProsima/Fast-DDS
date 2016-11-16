@@ -21,6 +21,8 @@
 #include "SecurityPluginFactory.h"
 
 #include <fastrtps/rtps/security/authentication/Handshake.h>
+#include <fastrtps/rtps/security/common/ParticipantGenericMessage.h>
+#include <fastrtps/rtps/reader/ReaderListener.h>
 
 #include <map>
 #include <mutex>
@@ -71,7 +73,8 @@ class SecurityManager
 
                 DiscoveredParticipantInfo(AuthenticationStatus auth_status) :
                     identity_handle_(nullptr), handshake_handle_(nullptr),
-                    auth_status_(auth_status){}
+                    auth_status_(auth_status), last_sequence_number_(1)
+                {}
 
                 bool is_identity_handle_null()
                 {
@@ -129,6 +132,16 @@ class SecurityManager
                     auth_status_ = auth_status;
                 }
 
+                void set_last_sequence_number(int64_t sequence_number)
+                {
+                    last_sequence_number_ = sequence_number;
+                }
+
+                int64_t get_last_sequence_number()
+                {
+                    return last_sequence_number_;
+                }
+
             private:
 
                 DiscoveredParticipantInfo(const DiscoveredParticipantInfo& info) = delete;
@@ -138,11 +151,30 @@ class SecurityManager
                 HandshakeHandle* handshake_handle_;
 
                 AuthenticationStatus auth_status_;
+
+                int64_t last_sequence_number_;
         };
+
+        class ParticipantStatelessMessageListener: public eprosima::fastrtps::rtps::ReaderListener
+        {
+            public:
+                ParticipantStatelessMessageListener(SecurityManager &manager) : manager_(manager) {};
+
+                ~ParticipantStatelessMessageListener(){};
+
+                void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change);
+
+            private:
+
+                ParticipantStatelessMessageListener& operator=(const ParticipantStatelessMessageListener&) NON_COPYABLE_CXX11;
+
+                SecurityManager &manager_;
+        } participant_stateless_message_listener_;
 
         void remove_discovered_participant_info(const GUID_t remote_participant_key);
         void restore_remote_identity_handle(const GUID_t& remote_participant_key,
-                IdentityHandle* remote_identity_handle);
+                IdentityHandle* remote_identity_handle,
+                HandshakeHandle* handshake_handle = nullptr);
 
         bool create_entities();
         void delete_entities();
@@ -153,7 +185,20 @@ class SecurityManager
         bool create_participant_stateless_message_reader();
         void delete_participant_stateless_message_reader();
 
-        bool on_request_not_send(const GUID_t& remote_participant_key, IdentityHandle* remote_identity_handle);
+        void process_participant_stateless_message(const CacheChange_t* const change);
+
+        bool on_process_handshake(const GUID_t& remote_participant_key,
+                AuthenticationStatus pre_auth_status,
+                MessageIdentity&& message_identity,
+                HandshakeMessageToken&& message,
+                IdentityHandle* remote_identity_handle,
+                HandshakeHandle* handshake_handle,
+                int64_t last_sequence_number);
+
+        ParticipantGenericMessage generate_authentication_message(int64_t sequence_number,
+                const MessageIdentity& related_message_identity,
+                const GUID_t& destination_participant_key,
+                HandshakeMessageToken&& handshake_message);
 
         RTPSParticipantImpl* participant_;
         StatelessWriter* participant_stateless_message_writer_;
@@ -167,6 +212,8 @@ class SecurityManager
         IdentityHandle* local_identity_handle_;
 
         std::map<GUID_t, DiscoveredParticipantInfo> discovered_participants_;
+
+        GUID_t auth_source_guid;
 
         std::mutex mutex_;
 };

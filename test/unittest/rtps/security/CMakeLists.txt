@@ -26,10 +26,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityPluginFactory/SecurityPluginFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/SecurityManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Token.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/exceptions/Exception.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/SecurityManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/exceptions/SecurityException.cpp
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityPluginFactory/SecurityPluginFactory.cpp
             )
 
         add_executable(SecurityAuthentication ${SOURCES_SECURITY_TEST_SOURCE}

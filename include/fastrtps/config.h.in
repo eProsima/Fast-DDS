@@ -63,4 +63,9 @@
 #endif
 #endif
 
+// Security
+#ifndef SECURITY
+#define SECURITY @HAVE_SECURITY@
+#endif
+
 #endif // _FASTRTPS_CONFIG_H_

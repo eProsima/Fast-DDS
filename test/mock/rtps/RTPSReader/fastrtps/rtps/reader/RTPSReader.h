@@ -19,6 +19,11 @@
 #ifndef _RTPS_READER_RTPSREADER_H_
 #define _RTPS_READER_RTPSREADER_H_
 
+#include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastrtps/rtps/reader/ReaderListener.h>
+
+#include <gmock/gmock.h>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -30,6 +35,18 @@ class RTPSReader
         virtual bool matched_writer_add(RemoteWriterAttributes& wdata) = 0;
 
         virtual bool matched_writer_remove(RemoteWriterAttributes& wdata) = 0;
+
+        MOCK_METHOD0(getHistory_mock, ReaderHistory*());
+
+        ReaderHistory* getHistory()
+        {
+            getHistory_mock();
+            return history_;
+        }
+
+        ReaderHistory* history_;
+
+        ReaderListener* listener_;
 };
 
 } // namespace rtps

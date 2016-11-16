@@ -147,3 +147,25 @@ const BinaryProperty* DataHolderHelper::find_binary_property(const DataHolder& d
 
     return returnedValue;
 }
+
+size_t DataHolderHelper::serialized_size(const DataHolder& data_holder, size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + alignment(current_alignment, 4) + data_holder.class_id().size() + 1;
+    current_alignment += PropertyHelper::serialized_size(data_holder.properties(), current_alignment);
+    current_alignment += BinaryPropertyHelper::serialized_size(data_holder.binary_properties(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t DataHolderHelper::serialized_size(const DataHolderSeq& data_holders, size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + alignment(current_alignment, 4);
+    for(auto data_holder = data_holders.begin(); data_holder != data_holders.end(); ++data_holder)
+        current_alignment += serialized_size(*data_holder, current_alignment);
+
+    return current_alignment - initial_alignment;
+}

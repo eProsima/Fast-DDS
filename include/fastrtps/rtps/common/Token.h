@@ -132,6 +132,14 @@ class DataHolderHelper
         static BinaryProperty* find_binary_property(DataHolder& data_holder, const std::string& name);
 
         static const BinaryProperty* find_binary_property(const DataHolder& data_holder, const std::string& name);
+
+        static size_t serialized_size(const DataHolder& data_holder, size_t current_alignment = 0);
+
+        static size_t serialized_size(const DataHolderSeq& data_holders, size_t current_alignment = 0);
+
+    private:
+
+        inline static size_t alignment(size_t current_alignment, size_t dataSize) { return (dataSize - (current_alignment % dataSize)) & (dataSize-1);}
 };
 
 } //namespace rtps

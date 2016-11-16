@@ -21,6 +21,8 @@
 
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 
+#include <gmock/gmock.h>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -30,6 +32,8 @@ class ReaderHistory
     public:
 
         ReaderHistory(const HistoryAttributes& /*att*/){}
+
+        MOCK_METHOD1(remove_change, bool(CacheChange_t*));
 };
 
 } // namespace rtps

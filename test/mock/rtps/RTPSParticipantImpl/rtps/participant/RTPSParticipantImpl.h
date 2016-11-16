@@ -21,6 +21,8 @@
 
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
+#include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <fastrtps/rtps/reader/RTPSReader.h>
 
 #include <gmock/gmock.h>
 
@@ -28,8 +30,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class RTPSWriter;
-class RTPSReader;
 class WriterHistory;
 class ReaderHistory;
 class WriterListener;
@@ -44,11 +44,32 @@ class RTPSParticipantImpl
 
         MOCK_CONST_METHOD0(getGuid, const GUID_t&());
 
-        MOCK_METHOD6(createWriter, bool (RTPSWriter** Writer, WriterAttributes& param, WriterHistory* hist,WriterListener* listen,
+        MOCK_METHOD6(createWriter_mock, bool (RTPSWriter** writer, WriterAttributes& param, WriterHistory* hist,WriterListener* listen,
                 const EntityId_t& entityId, bool isBuiltin));
 
-        MOCK_METHOD7(createReader, bool (RTPSReader** Reader, ReaderAttributes& param, ReaderHistory* hist,ReaderListener* listen,
+        MOCK_METHOD7(createReader_mock, bool (RTPSReader** reader, ReaderAttributes& param, ReaderHistory* hist,ReaderListener* listen,
                 const EntityId_t& entityId, bool isBuiltin, bool enable));
+
+        bool createWriter(RTPSWriter** writer, WriterAttributes& param, WriterHistory* hist, WriterListener* listen,
+                const EntityId_t& entityId, bool isBuiltin)
+        {
+            bool ret = createWriter_mock(writer, param , hist, listen, entityId, isBuiltin);
+            if(*writer != nullptr)
+                (*writer)->history_ = hist;
+            return ret;
+        }
+
+        bool createReader(RTPSReader** reader, ReaderAttributes& param, ReaderHistory* hist,ReaderListener* listen,
+                const EntityId_t& entityId, bool isBuiltin, bool enable)
+        {
+            bool ret = createReader_mock(reader, param, hist, listen, entityId, isBuiltin, enable);
+            if(*reader != nullptr)
+            {
+                (*reader)->history_ = hist;
+                (*reader)->listener_ = listen;
+            }
+            return ret;
+        }
 };
 
 } // namespace rtps

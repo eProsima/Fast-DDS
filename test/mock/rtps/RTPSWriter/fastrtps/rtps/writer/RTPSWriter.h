@@ -19,9 +19,13 @@
 #ifndef _RTPS_WRITER_RTPSWRITER_H_
 #define _RTPS_WRITER_RTPSWRITER_H_
 
+#include <gmock/gmock.h>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+class WriterHistory;
 
 class RTPSWriter
 {
@@ -30,6 +34,11 @@ class RTPSWriter
         virtual bool matched_reader_add(RemoteReaderAttributes& ratt) = 0;
 
         virtual bool matched_reader_remove(RemoteReaderAttributes& ratt) = 0;
+
+        MOCK_METHOD3(new_change, CacheChange_t*(const std::function<uint32_t()>&,
+            ChangeKind_t, InstanceHandle_t));
+
+        WriterHistory* history_;
 };
 
 } // namespace rtps
