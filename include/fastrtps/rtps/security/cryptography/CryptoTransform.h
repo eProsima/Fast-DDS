@@ -121,11 +121,11 @@ class CryptoTransform
          * @return TRUE if successful
          */
         virtual bool preprocess_secure_submsg(
-                DatawriterCryptoHandle &datawriter_crypto,
-                DatareaderCryptoHandle &datareader_crypto,
+                DatawriterCryptoHandle **datawriter_crypto,
+                DatareaderCryptoHandle **datareader_crypto,
                 SecureSubmessageCategory_t &secure_submessage_category,
                 const std::vector<uint8_t> encoded_rtps_submessage,
-                const ParticipantCryptoHandle &receiving_crypto,
+                ParticipantCryptoHandle &receiving_crypto,
                 ParticipantCryptoHandle &sending_crypto,
                 SecurityException &exception) = 0;
 

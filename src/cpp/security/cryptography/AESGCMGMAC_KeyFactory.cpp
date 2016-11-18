@@ -252,8 +252,10 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
         buffer.transformation_kind = local_writer_handle->WriterKeyMaterial.transformation_kind;
         buffer.master_salt = local_writer_handle->WriterKeyMaterial.master_salt;
         buffer.master_sender_key = local_writer_handle->WriterKeyMaterial.master_sender_key;
+
+        buffer.sender_key_id = local_writer_handle->WriterKeyMaterial.sender_key_id;
+        //buffer.sender_key_id = make_unique_KeyId();  //Unique identifier within the Participant (used to identity submessage types)
         //Generation of remainder values (Remote specific key)
-        buffer.sender_key_id = make_unique_KeyId();
         buffer.receiver_specific_key_id = make_unique_KeyId();
         buffer.master_receiver_specific_key.fill(0);
         RAND_bytes( buffer.master_receiver_specific_key.data(), 16 );
@@ -342,7 +344,9 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
         buffer.master_salt = local_reader_handle->ReaderKeyMaterial.master_salt;
         buffer.master_sender_key = local_reader_handle->ReaderKeyMaterial.master_sender_key;
         //Generation of remainder values (Remote specific key)
-        buffer.sender_key_id = make_unique_KeyId();
+        
+        buffer.sender_key_id = local_reader_handle->ReaderKeyMaterial.sender_key_id;
+        //buffer.sender_key_id = make_unique_KeyId();
         buffer.receiver_specific_key_id = make_unique_KeyId();
         buffer.master_receiver_specific_key.fill(0);
         RAND_bytes( buffer.master_receiver_specific_key.data(), 16 );

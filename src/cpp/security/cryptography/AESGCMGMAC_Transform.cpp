@@ -596,11 +596,11 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
 }
         
 bool AESGCMGMAC_Transform::preprocess_secure_submsg(
-                DatawriterCryptoHandle &datawriter_crypto,
-                DatareaderCryptoHandle &datareader_crypto,
+                DatawriterCryptoHandle **datawriter_crypto,
+                DatareaderCryptoHandle **datareader_crypto,
                 SecureSubmessageCategory_t &secure_submessage_category,
                 const std::vector<uint8_t> encoded_rtps_submessage,
-                const ParticipantCryptoHandle &receiving_crypto,
+                ParticipantCryptoHandle &receiving_crypto,
                 ParticipantCryptoHandle &sending_crypto,
                 SecurityException &exception){
 
@@ -611,25 +611,34 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
     }
 
     SecureDataHeader header;
-    unsigned char flags;
     std::vector<uint8_t> serialized_header, serialized_body, serialized_tag;
-    if(!disassemble_endpoint_submessage(encoded_rtps_submessage, serialized_header, serialized_body, serialized_tag, flags)) return false;;
+    unsigned char flags;
+    if(!disassemble_endpoint_submessage(encoded_rtps_submessage, serialized_header, serialized_body, serialized_tag, flags)){
+        std::cout << "Could not preprocess message, unable to disassemble" << std::endl;
+        return false;
+    }
+
     header = deserialize_SecureDataHeader(serialized_header); 
     //KeyId is present in Header->transform_identifier->transformation_key_id and contains the sender_key_id
+    
+    std::cout << "Analizing Writers: " << std::to_string(remote_participant->Writers.size()) << std::endl;
+
     for(auto it = remote_participant->Writers.begin(); it != remote_participant->Writers.end(); ++it){
         AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(**it);
-        if( writer->WriterKeyMaterial.sender_key_id == header.transform_identifier.transformation_key_id){
+        if( writer->Writer2ReaderKeyMaterial.at(0).sender_key_id == header.transform_identifier.transformation_key_id){
             secure_submessage_category = DATAWRITER_SUBMESSAGE;
-            datawriter_crypto = **it;
+            *datawriter_crypto = *it;
             return true;
         }
     }
 
-    for(auto it = remote_participant->Readers.begin(); it != remote_participant->Readers.end(); ++it){
+    std::cout << "Analizing Readers: " << std::to_string(remote_participant->Readers.size()) << std::endl;
+
+    for(std::vector<DatareaderCryptoHandle *>::iterator it = remote_participant->Readers.begin(); it != remote_participant->Readers.end(); ++it){
         AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**it);
-        if( reader->ReaderKeyMaterial.sender_key_id == header.transform_identifier.transformation_key_id){
+        if( reader->Reader2WriterKeyMaterial.at(0).sender_key_id == header.transform_identifier.transformation_key_id){
             secure_submessage_category = DATAREADER_SUBMESSAGE;
-            datareader_crypto = **it;
+            *datareader_crypto = *it;
             return true;
         }
     }

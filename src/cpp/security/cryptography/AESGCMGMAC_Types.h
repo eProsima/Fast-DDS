@@ -145,8 +145,8 @@ class  ParticipantKeyHandle
         std::vector<KeyMaterial_AES_GCM_GMAC> Participant2ParticipantKeyMaterial;
         std::vector<KeyMaterial_AES_GCM_GMAC> Participant2ParticipantKxKeyMaterial;
         std::vector<KeyMaterial_AES_GCM_GMAC> RemoteParticipant2ParticipantKeyMaterial;
-        std::vector<AESGCMGMAC_WriterCryptoHandle *> Writers;
-        std::vector<AESGCMGMAC_ReaderCryptoHandle *> Readers;
+        std::vector<DatawriterCryptoHandle *> Writers;
+        std::vector<DatareaderCryptoHandle *> Readers;
 
         uint32_t session_id;
         std::array<uint8_t,32> SessionKey;
