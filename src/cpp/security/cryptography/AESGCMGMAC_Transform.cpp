@@ -609,8 +609,14 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
         exception = SecurityException("Not a valid ParticipantCryptoHandle received");
         return false;
     }
+    AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(receiving_crypto);
+    if(local_participant.nil()){
+        exception = SecurityException("Not a valid ParticipantCryptoHandle received");
+        return false;
+    }
 
     SecureDataHeader header;
+    SecureDataTag tag;
     std::vector<uint8_t> serialized_header, serialized_body, serialized_tag;
     unsigned char flags;
     if(!disassemble_endpoint_submessage(encoded_rtps_submessage, serialized_header, serialized_body, serialized_tag, flags)){
@@ -619,27 +625,44 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
     }
 
     header = deserialize_SecureDataHeader(serialized_header); 
+    tag = deserialize_SecureDataTag(serialized_tag);
     //KeyId is present in Header->transform_identifier->transformation_key_id and contains the sender_key_id
     
-    std::cout << "Analizing Writers: " << std::to_string(remote_participant->Writers.size()) << std::endl;
-
-    for(auto it = remote_participant->Writers.begin(); it != remote_participant->Writers.end(); ++it){
+    for(std::vector<DatawriterCryptoHandle *>::iterator it = remote_participant->Writers.begin(); it != remote_participant->Writers.end(); ++it){
         AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(**it);
         if( writer->Writer2ReaderKeyMaterial.at(0).sender_key_id == header.transform_identifier.transformation_key_id){
             secure_submessage_category = DATAWRITER_SUBMESSAGE;
             *datawriter_crypto = *it;
-            return true;
+            //We have the remote writer, now lets look for the local datareader
+            for(std::vector<DatareaderCryptoHandle *>::iterator itt = local_participant->Readers.begin(); itt != local_participant->Readers.end(); ++itt){
+                AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**itt);
+                for(int i=0; i < reader->Reader2WriterKeyMaterial.size(); i++){
+                    if(reader->Reader2WriterKeyMaterial.at(i).receiver_specific_key_id == writer->Reader2WriterKeyMaterial.at(0).receiver_specific_key_id){
+                        *datareader_crypto = *itt;
+                        return true;
+                    } 
+                }   //For each Reader2WriterKeyMaterial in the local datareader
+            } //For each datareader present in the local participant
+            return false;
         }
     }
-
-    std::cout << "Analizing Readers: " << std::to_string(remote_participant->Readers.size()) << std::endl;
 
     for(std::vector<DatareaderCryptoHandle *>::iterator it = remote_participant->Readers.begin(); it != remote_participant->Readers.end(); ++it){
         AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**it);
         if( reader->Reader2WriterKeyMaterial.at(0).sender_key_id == header.transform_identifier.transformation_key_id){
             secure_submessage_category = DATAREADER_SUBMESSAGE;
             *datareader_crypto = *it;
-            return true;
+            //We have the remote reader, now lets look for the local datawriter
+            for(std::vector<DatawriterCryptoHandle *>::iterator itt = local_participant->Writers.begin(); itt != local_participant->Writers.end(); ++itt){
+                AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(**itt);
+                for(int i=0; i < writer->Writer2ReaderKeyMaterial.size(); i++){
+                    if(writer->Writer2ReaderKeyMaterial.at(i).receiver_specific_key_id == reader->Writer2ReaderKeyMaterial.at(0).receiver_specific_key_id){
+                        *datawriter_crypto = *itt;
+                        return true;
+                    } 
+                }   //For each Writer2ReaderKeyMaterial in the local datawriter
+            } //For each datawriter present in the local participant
+            return false;
         }
     }
 

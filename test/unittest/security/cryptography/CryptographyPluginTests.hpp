@@ -911,16 +911,18 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     CryptoPlugin->cryptotransform()->encode_datawriter_submessage(encoded_datawriter_payload, plain_payload, *writer, receivers, exception);
 
     SecureSubmessageCategory_t message_category;
-    DatareaderCryptoHandle *target_reader;
-    DatawriterCryptoHandle *target_writer;
+    DatareaderCryptoHandle **target_reader = new DatareaderCryptoHandle*;
+    DatawriterCryptoHandle **target_writer = new DatawriterCryptoHandle*;
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->preprocess_secure_submsg(target_writer, target_reader, message_category, encoded_datareader_payload, *participant_A, *ParticipantA_remote, exception));
 
     ASSERT_TRUE(message_category == DATAREADER_SUBMESSAGE);
-    ASSERT_TRUE(target_reader == remote_reader);
+    ASSERT_TRUE(*target_reader == remote_reader);
+    ASSERT_TRUE(*target_writer == writer);
 
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->preprocess_secure_submsg(target_writer, target_reader, message_category, encoded_datawriter_payload, *participant_B, *ParticipantB_remote, exception));
     ASSERT_TRUE(message_category == DATAWRITER_SUBMESSAGE);
-    ASSERT_TRUE(target_writer == remote_writer);
+    ASSERT_TRUE(*target_writer == remote_writer);
+    ASSERT_TRUE(*target_reader == reader);
 
 }
 

@@ -226,6 +226,7 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
     (*WCrypto)->session_block_counter = 40; //Set to update upon first usage
     RAND_bytes( (unsigned char *)( &( (*WCrypto)->session_id ) ), sizeof(uint16_t));
 
+    participant_handle->Writers.push_back(WCrypto);
 
     return WCrypto;
 }
@@ -318,6 +319,7 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
     (*RCrypto)->session_block_counter = 40; //Set to update upon first usage
     RAND_bytes( (unsigned char *)( &( (*RCrypto)->session_id ) ), sizeof(uint16_t));
 
+    participant_handle->Readers.push_back(RCrypto);
 
     return RCrypto;
 }
