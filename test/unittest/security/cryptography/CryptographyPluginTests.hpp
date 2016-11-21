@@ -314,7 +314,10 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     receivers.push_back(unintended_remote);
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_rtps_message(encoded_rtps_message, plain_rtps_message,*ParticipantA,receivers,exception));
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_rtps_message(decoded_rtps_message,encoded_rtps_message,*ParticipantB,*ParticipantB_remote,exception));
-    ASSERT_TRUE(plain_rtps_message == decoded_rtps_message);
+    std::vector<uint8_t> message_v;
+    message_v.resize(11);
+    memcpy(message_v.data(),message, 11); 
+    ASSERT_TRUE(message_v == decoded_rtps_message);
     //Send message to unintended participant
     
     encoded_rtps_message.clear();

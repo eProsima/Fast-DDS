@@ -376,6 +376,12 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         //TODO (santi) Provide insight
         return false;
     }
+    //Extract RTPS Header
+    std::vector<uint8_t> rtps_header;
+    for(int i=0;i<RTPS_HEADER_SIZE;i++) rtps_header.push_back(plain_rtps_message.at(i));
+    //Extract Payload
+    std::vector<uint8_t> payload;
+    for(int i=RTPS_HEADER_SIZE;i<plain_rtps_message.size();i++) payload.push_back(plain_rtps_message.at(i));
 
     // If the maximum number of blocks have been processed, generate a new SessionKey
     if(local_participant->session_block_counter >= local_participant->max_blocks_per_session){
@@ -387,6 +393,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         
         //ReceiverSpecific keys shall be computed specifically when needed
         local_participant->session_block_counter = 0;
+        //Insert outdate session_id values in all RemoteParticipant trackers to trigger a SessionkeyUpdate
     }
 
     local_participant->session_block_counter += 1;
@@ -411,7 +418,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     OpenSSL_add_all_ciphers();
     int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
 
-    size_t enc_length = ( plain_rtps_message.size() - RTPS_HEADER_SIZE ) * 3;
+    size_t enc_length = ( payload.size()) * 3;
     std::vector<uint8_t> output;
     output.resize(enc_length,0);
 
@@ -420,7 +427,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     int actual_size=0, final_size=0;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
     EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_participant->SessionKey.data()), initialization_vector.data());
-    EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_rtps_message.data(), plain_rtps_message.size());
+    EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)payload.data(), payload.size());
     EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
     EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
     output.resize(actual_size+final_size);
@@ -452,27 +459,24 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
                 remote_participant->Participant2ParticipantKeyMaterial.at(0).master_salt,
                 remote_participant->session_id);
         }
-
+        unsigned char specific_tag[AES_BLOCK_SIZE]; //Container for the Authentication Tag (will become common mac)
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
         int actual_size=0, final_size=0;
         EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
         EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_participant->SessionKey.data()), initialization_vector.data());
         EVP_EncryptUpdate(e_ctx, NULL, &actual_size, dataTag.common_mac.data(), 16);
         EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
-        EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
+        EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, specific_tag);
         output.resize(actual_size+final_size);
         EVP_CIPHER_CTX_free(e_ctx);
         
         ReceiverSpecificMAC buffer;
         buffer.receiver_mac_key_id = remote_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id;
-        memcpy(buffer.receiver_mac.data(),tag,16);
+        memcpy(buffer.receiver_mac.data(),specific_tag,16);
         //Push the MAC into the dataTag
         dataTag.receiver_specific_macs.push_back(buffer);
     }
 
-    //Extract RTPS Header
-    std::vector<uint8_t> rtps_header;
-    for(int i=0;i<RTPS_HEADER_SIZE;i++) rtps_header.push_back(plain_rtps_message.at(i));
     //Step 6 - Assemble the message
     encoded_rtps_message.clear();
     
@@ -515,13 +519,13 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     //Tag
     tag = deserialize_SecureDataTag(serialized_tag);
     //Read specific MACs in search for the correct one (verify the authenticity of the message)
-    ReceiverSpecificMAC specific_mac;
+    ReceiverSpecificMAC* specific_mac;
     bool mac_found = false; 
     for(int j=0; j < tag.receiver_specific_macs.size(); j++){
         //Check if it matches the key we have
         if(sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).receiver_specific_key_id == tag.receiver_specific_macs.at(j).receiver_mac_key_id){
             mac_found = true;
-            specific_mac =  tag.receiver_specific_macs.at(j);
+            specific_mac =  &(tag.receiver_specific_macs.at(j));
             break;
         }
     }
@@ -564,7 +568,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     //Verify specific MAC
     EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)specific_session_key.data(), initialization_vector.data());
     EVP_DecryptUpdate(d_ctx, NULL, &actual_size, tag.common_mac.data(), 16);
-    EVP_CIPHER_CTX_ctrl( d_ctx, EVP_CTRL_GCM_SET_TAG,16, specific_mac.receiver_mac.data() );
+    EVP_CIPHER_CTX_ctrl( d_ctx, EVP_CTRL_GCM_SET_TAG,16, specific_mac->receiver_mac.data() );
     auth = EVP_DecryptFinal_ex(d_ctx, plain_buffer.data() + actual_size, &final_size); 
     EVP_CIPHER_CTX_free(d_ctx);
     plain_buffer.resize(actual_size + final_size);
@@ -1206,6 +1210,7 @@ bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(const std::vector<uin
     short safecheck;
     memcpy(&safecheck, octets_c, 2);
     if( (input.size() - offset) != safecheck){
+        std::cout << "Not a valid length" << std::endl;
         return false;
     }
     //Header
@@ -1220,6 +1225,7 @@ bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(const std::vector<uin
     offset += sizeof(long) + body_length; 
     //SRTPS_POSTFIX
     if( input.at(offset) != SEC_POSTFIX ){
+        std::cout << "Not a valid length" << std::endl;
         return false;
     }
     offset += 1;
@@ -1247,7 +1253,7 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &
 
     //Unaltered Header
     rtps_header.clear();
-    for(i=0; i < RTPS_HEADER_SIZE; i++)   rtps_header.push_back( input.at(i) );
+    for(i=0; i < RTPS_HEADER_SIZE; i++)   rtps_header.push_back( input.at(i + offset) );
     offset += RTPS_HEADER_SIZE;
     //SRTPS_PREFIX
     if( input.at(offset) != SRTPS_PREFIX ) return false;
@@ -1267,7 +1273,7 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &
     }    
     //Header
     serialized_header.clear();
-    for(i=0; i < 20; i++) serialized_header.push_back( input.at(i) );
+    for(i=0; i < 20; i++) serialized_header.push_back( input.at(i + offset) );
     offset += 20;
     //Payload
     serialized_body.clear();
@@ -1278,7 +1284,7 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &
     //SRTPS_POSTFIX
     if( input.at(offset) != SRTPS_POSTFIX ) return false;
     offset += 1;
-    //Flags
+    //Flags are ignored for the time being
     offset += 1;
     //Octets2Nextheader 
     octets_c[0] = input.at(offset);
@@ -1291,7 +1297,7 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &
     }    
     //Tag
     serialized_tag.clear();
-    for(i=0; i < ( input.size() - offset ); i++) serialized_tag.push_back(input.at(i + offset) );
+    for(i=0; i < safecheck; i++) serialized_tag.push_back(input.at(i + offset) );
 
     return true;
 }
