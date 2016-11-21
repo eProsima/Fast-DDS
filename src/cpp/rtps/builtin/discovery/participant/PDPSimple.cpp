@@ -100,6 +100,61 @@ PDPSimple::~PDPSimple()
     delete(mp_mutex);
 }
 
+void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant_data)
+{
+	participant_data->m_leaseDuration = mp_RTPSParticipant->getAttributes().builtin.leaseDuration;
+	set_VendorId_eProsima(participant_data->m_VendorId);
+
+	participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+	participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+	if(mp_RTPSParticipant->getAttributes().builtin.use_WriterLivelinessProtocol)
+	{
+		participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
+		participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+	}
+	if(mp_RTPSParticipant->getAttributes().builtin.use_SIMPLE_EndpointDiscoveryProtocol)
+	{
+		if(mp_RTPSParticipant->getAttributes().builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
+		{
+			participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+			participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+		}
+		if(mp_RTPSParticipant->getAttributes().builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+		{
+			participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+			participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+		}
+	}
+    participant_data->m_availableBuiltinEndpoints |= mp_RTPSParticipant->security_manager().builtin_endpoints();
+
+	participant_data->m_defaultUnicastLocatorList = mp_RTPSParticipant->getAttributes().defaultUnicastLocatorList;
+	participant_data->m_defaultMulticastLocatorList = mp_RTPSParticipant->getAttributes().defaultMulticastLocatorList;
+	participant_data->m_expectsInlineQos = false;
+	participant_data->m_guid = mp_RTPSParticipant->getGuid();
+	for(uint8_t i = 0; i<16; ++i)
+	{
+		if(i<12)
+			participant_data->m_key.value[i] = participant_data->m_guid.guidPrefix.value[i];
+        else
+			participant_data->m_key.value[i] = participant_data->m_guid.entityId.value[i - 12];
+	}
+
+
+	participant_data->m_metatrafficMulticastLocatorList = this->mp_builtin->m_metatrafficMulticastLocatorList;
+	participant_data->m_metatrafficUnicastLocatorList = this->mp_builtin->m_metatrafficUnicastLocatorList;
+
+	participant_data->m_participantName = std::string(mp_RTPSParticipant->getAttributes().getName());
+
+	participant_data->m_userData = mp_RTPSParticipant->getAttributes().userData;
+
+    IdentityToken* identity_token = nullptr;
+    if(mp_RTPSParticipant->security_manager().get_identity_token(&identity_token) && identity_token != nullptr)
+    {
+        participant_data->identity_token_ = std::move(*identity_token);
+        mp_RTPSParticipant->security_manager().return_identity_token(identity_token);
+    }
+}
+
 bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 {
     logInfo(RTPS_PDP,"Beginning");
@@ -114,7 +169,7 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     //boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
     //boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
     m_participantProxies.push_back(new ParticipantProxyData());
-    m_participantProxies.front()->initializeData(mp_RTPSParticipant,this);
+    initializeParticipantProxyData(m_participantProxies.front());
 
     //INIT EDP
     if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
@@ -165,6 +220,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
             this->getLocalParticipantProxyData()->m_manualLivelinessCount++;
             if(mp_SPDPWriterHistory->getHistorySize() > 0)
                 mp_SPDPWriterHistory->remove_min_change();
+            // TODO(Ricardo) Change DISCOVERY_PARTICIPANT_DATA_MAX_SIZE with getLocalParticipantProxyData()->size().
             change = mp_SPDPWriter->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE,getLocalParticipantProxyData()->m_key);
             if(getLocalParticipantProxyData()->toParameterList())
             {
@@ -326,8 +382,6 @@ bool PDPSimple::createSPDPEndpoints()
         for(LocatorListIterator lit = mp_builtin->m_metatrafficMulticastLocatorList.begin();
                 lit!=mp_builtin->m_metatrafficMulticastLocatorList.end();++lit)
             mp_SPDPWriter->add_locator(ratt,*lit);
-        if(this->mp_builtin->m_useMandatory)
-            mp_SPDPWriter->add_locator(ratt,mp_builtin->m_mandatoryMulticastLocator);
     }
     else
     {
@@ -491,6 +545,14 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         pdata->m_builtinReaders.push_back(ratt);
         mp_SPDPWriter->matched_reader_add(ratt);
     }
+
+    // Validate remote participant
+    mp_RTPSParticipant->security_manager().discovered_participant(pdata);
+}
+
+void PDPSimple::notifyAboveRemoteEndpoints(ParticipantProxyData* pdata)
+{
+    boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
 
     //Inform EDP of new RTPSParticipant data:
     if(mp_EDP!=nullptr)

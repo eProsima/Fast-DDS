@@ -59,10 +59,15 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 
         if(!reader_locator.empty()) //TODO change to m_reader_locator.
         {
+            EntityId_t readerId;
+
+            if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER)
+                readerId = c_EntityId_SPDPReader;
+            else if(this->m_guid.entityId == ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_WRITER)
+                readerId = participant_stateless_message_reader_entity_id;
 
             uint32_t bytesSent = RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
-                    changes_to_send, c_GuidPrefix_Unknown,
-                    this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER ? c_EntityId_SPDPReader : c_EntityId_Unknown,
+                    changes_to_send, c_GuidPrefix_Unknown, readerId,
                     m_loc_list_1_for_sync_send, m_loc_list_2_for_sync_send, false);
 
             // Check send
@@ -147,11 +152,17 @@ size_t StatelessWriter::send_any_unsent_changes()
       {
          uint32_t bytesSent = 0;
 
+         EntityId_t readerId;
+
+         if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER)
+             readerId = c_EntityId_SPDPReader;
+         else if(this->m_guid.entityId == ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_WRITER)
+             readerId = participant_stateless_message_reader_entity_id;
+
          do
          {
              bytesSent = RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
-                         changes_to_send, c_GuidPrefix_Unknown,
-                         this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER ? c_EntityId_SPDPReader : c_EntityId_Unknown,
+                         changes_to_send, c_GuidPrefix_Unknown, readerId,
                          m_loc_list_1_for_sync_send, m_loc_list_2_for_sync_send, false);
          } while(bytesSent > 0 && changes_to_send.size() > 0);
       }

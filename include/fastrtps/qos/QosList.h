@@ -68,6 +68,7 @@ public:
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,std::string& str1,std::string& str2);
 	static bool addQos(QosList_t* qos, ParameterId_t pid,	std::vector<octet>& ocVec);
 	static bool addQos(QosList_t* qos,ParameterId_t pid, const ParameterPropertyList_t& list);
+	static bool addQos(QosList_t* qos,ParameterId_t pid, const IdentityToken& identity_token);
 	///@}
 };
 

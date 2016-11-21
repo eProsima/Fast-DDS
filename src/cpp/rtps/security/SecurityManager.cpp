@@ -9,20 +9,19 @@
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 
 #include <cassert>
 #include <thread>
 
-#define ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_WRITER  0x000201C2
-#define ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_READER  0x000201C7
+#define BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_READER (1 << 22)
+#define BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_WRITER (1 << 23)
 
 #define AUTHENTICATION_PARTICIPANT_STATELESS_MESSAGE "dds.sec.auth"
 
 // TODO(Ricardo) Add event because stateless messages can be not received.
 // TODO(Ricardo) Add following of sequence in stateless messages.
-
-const EntityId_t participant_stateless_message_writer_entity_id = ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_WRITER;
-const EntityId_t participant_stateless_message_reader_entity_id = ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_READER;
 
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
@@ -102,6 +101,9 @@ bool SecurityManager::init()
         {
             assert(local_identity_handle_ != nullptr);
 
+            // Set participant guid
+            participant_->setGuid(adjusted_participant_key);
+
             // Create RTPS entities
             if(create_entities())
             {
@@ -164,11 +166,15 @@ void SecurityManager::restore_remote_identity_handle(const GUID_t& remote_partic
     }
 }
 
-bool SecurityManager::discovered_participant(IdentityToken&& remote_identity_token,
-        const GUID_t& remote_participant_key)
+bool SecurityManager::discovered_participant(ParticipantProxyData* participant_data)
 {
     if(authentication_plugin_ == nullptr)
+    {
+        participant_->pdpsimple()->notifyAboveRemoteEndpoints(participant_data);
         return true;
+    }
+
+    assert(participant_data);
 
     IdentityHandle* remote_identity_handle = nullptr;
     SecurityException exception;
@@ -176,18 +182,21 @@ bool SecurityManager::discovered_participant(IdentityToken&& remote_identity_tok
 
     // Find information
     mutex_.lock();
-    auto dp_it = discovered_participants_.find(remote_participant_key);
+    auto dp_it = discovered_participants_.find(participant_data->m_guid);
 
     if(dp_it == discovered_participants_.end())
     {
-        discovered_participants_.emplace(remote_participant_key, auth_status);
+        discovered_participants_.emplace(std::piecewise_construct, std::forward_as_tuple(participant_data->m_guid), std::forward_as_tuple(participant_data, auth_status));
 
         mutex_.unlock();
 
+        // Match entities
+        match_builtin_endpoints(participant_data);
+
         // Validate remote participant.
         ValidationResult_t validation_ret = authentication_plugin_->validate_remote_identity(&remote_identity_handle,
-                *local_identity_handle_, std::move(remote_identity_token),
-                remote_participant_key, exception);
+                *local_identity_handle_, IdentityToken(participant_data->identity_token_),
+                participant_data->m_guid, exception);
 
         switch(validation_ret)
         {
@@ -206,13 +215,13 @@ bool SecurityManager::discovered_participant(IdentityToken&& remote_identity_tok
             case VALIDATION_PENDING_RETRY:
                 // TODO(Ricardo) Send event.
             default:
-                remove_discovered_participant_info(remote_participant_key);
+                remove_discovered_participant_info(participant_data->m_guid);
                 return false;
         };
 
         // Store remote handle.
         mutex_.lock();
-        dp_it = discovered_participants_.find(remote_participant_key);
+        dp_it = discovered_participants_.find(participant_data->m_guid);
         if(dp_it != discovered_participants_.end())
         {
             dp_it->second.set_auth_status(auth_status);
@@ -251,7 +260,7 @@ bool SecurityManager::discovered_participant(IdentityToken&& remote_identity_tok
     // Maybe send request.
     if(remote_identity_handle != nullptr)
     {
-        returnedValue = on_process_handshake(remote_participant_key, AUTHENTICATION_REQUEST_NOT_SEND,
+        returnedValue = on_process_handshake(participant_data->m_guid, AUTHENTICATION_REQUEST_NOT_SEND,
                 MessageIdentity(), HandshakeMessageToken(),
                 remote_identity_handle, nullptr, last_sequence_number);
     }
@@ -322,7 +331,7 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
 
         // Create message
         ParticipantGenericMessage message = generate_authentication_message(last_sequence_number,
-                std::move(message_identity), remote_participant_key, std::move(*handshake_message));
+                std::move(message_identity), remote_participant_key, *handshake_message);
 
         CacheChange_t* change = participant_stateless_message_writer_->new_change([&message]() -> uint32_t
                 {
@@ -342,6 +351,8 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
 
             if(CDRMessage::addParticipantGenericMessage(&aux_msg, message))
             {
+                change->serializedPayload.length = aux_msg.length;
+
                 // Send
                 if(participant_stateless_message_writer_history_->add_change(change))
                 {
@@ -372,8 +383,8 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
         switch(ret)
         {
             case VALIDATION_OK:
-            case VALIDATION_PENDING_HANDSHAKE_MESSAGE:
             case VALIDATION_OK_WITH_FINAL_MESSAGE:
+            case VALIDATION_PENDING_HANDSHAKE_MESSAGE:
                 {
                     auth_status = AUTHENTICATION_OK;
                     if(ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE)
@@ -403,6 +414,10 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
                                 ret == VALIDATION_OK_WITH_FINAL_MESSAGE)
                             dp_it->second.set_last_sequence_number(++last_sequence_number);
 
+                        if(ret == VALIDATION_OK ||
+                                ret == VALIDATION_OK_WITH_FINAL_MESSAGE)
+                            participant_->pdpsimple()->notifyAboveRemoteEndpoints(dp_it->second.get_participant_data());
+
                         returnedValue = true;
                     }
                     else
@@ -429,8 +444,6 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
     }
     if(remote_identity_handle != nullptr)
         restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle);
-
-    delete handshake_message;
 
     return returnedValue;
 }
@@ -528,10 +541,12 @@ bool SecurityManager::create_participant_stateless_message_reader()
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = NO_KEY;
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
+    ratt.endpoint.multicastLocatorList = participant_->getRTPSParticipantAttributes().builtin.metatrafficMulticastLocatorList;
+    ratt.endpoint.unicastLocatorList = participant_->getRTPSParticipantAttributes().builtin.metatrafficUnicastLocatorList;
 
     RTPSReader* rout = nullptr;
     if(participant_->createReader(&rout, ratt, participant_stateless_message_reader_history_, &participant_stateless_message_listener_,
-                participant_stateless_message_reader_entity_id, true, false))
+                participant_stateless_message_reader_entity_id, true, true))
     {
         participant_stateless_message_reader_ = dynamic_cast<StatelessReader*>(rout);
 
@@ -562,7 +577,7 @@ void SecurityManager::delete_participant_stateless_message_reader()
 ParticipantGenericMessage SecurityManager::generate_authentication_message(int64_t sequence_number,
         const MessageIdentity& related_message_identity,
         const GUID_t& destination_participant_key,
-        HandshakeMessageToken&& handshake_message)
+        HandshakeMessageToken& handshake_message)
 {
     ParticipantGenericMessage message;
 
@@ -571,7 +586,7 @@ ParticipantGenericMessage SecurityManager::generate_authentication_message(int64
     message.related_message_identity(related_message_identity);
     message.destination_participant_key(destination_participant_key);
     message.message_class_id(AUTHENTICATION_PARTICIPANT_STATELESS_MESSAGE);
-    message.message_data().push_back(std::move(handshake_message));
+    message.message_data().push_back(handshake_message);
 
     return message;
 }
@@ -593,6 +608,16 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
 
     if(message.message_class_id().compare(AUTHENTICATION_PARTICIPANT_STATELESS_MESSAGE) == 0)
     {
+        if(message.message_identity().source_guid() == GUID_t::unknown())
+        {
+            logInfo(SECURITY, "Bad ParticipantGenericMessage. message_identity.source_guid is GUID_t::unknown()");
+            return;
+        }
+        if(message.destination_participant_key() != participant_->getGuid())
+        {
+            logInfo(SECURITY, "Destination of ParticipantGenericMessage is not me");
+            return;
+        }
         if(message.destination_endpoint_key() != GUID_t::unknown())
         {
             logInfo(SECURITY, "Bad ParticipantGenericMessage. destination_endpoint_key is not GUID_t::unknown()");
@@ -604,7 +629,7 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
             return;
         }
 
-        const GUID_t& remote_participant_key = message.destination_participant_key();
+        const GUID_t remote_participant_key(message.message_identity().source_guid().guidPrefix, c_EntityId_RTPSParticipant);
         AuthenticationStatus auth_status;
         IdentityHandle* remote_identity_handle = nullptr;
         HandshakeHandle* handshake_handle = nullptr;
@@ -633,12 +658,6 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
                 assert(!handshake_handle);
 
                 // Preconditions
-                if(message.message_identity().source_guid() == GUID_t::unknown())
-                {
-                    logInfo(SECURITY, "Bad ParticipantGenericMessage. message_identity.source_guid is GUID_t::unknown()");
-                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle);
-                    return;
-                }
                 if(message.related_message_identity().source_guid() != GUID_t::unknown())
                 {
                     logInfo(SECURITY, "Bad ParticipantGenericMessage. related_message_identity.source_guid is not GUID_t::unknown()");
@@ -658,12 +677,6 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
                 assert(handshake_handle);
 
                 // Preconditions
-                if(message.message_identity().source_guid() == GUID_t::unknown())
-                {
-                    logInfo(SECURITY, "Bad ParticipantGenericMessage. message_identity.source_guid is GUID_t::unknown()");
-                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle);
-                    return;
-                }
                 if(message.related_message_identity().source_guid() == GUID_t::unknown())
                 {
                     logInfo(SECURITY, "Bad ParticipantGenericMessage. related_message_identity.source_guid is GUID_t::unknown()");
@@ -683,7 +696,7 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
                 return;
             }
 
-            on_process_handshake(remote_participant_key, auth_status, std::move(message.related_message_identity()),
+            on_process_handshake(remote_participant_key, auth_status, std::move(message.message_identity()),
                     std::move(message.message_data().at(0)), remote_identity_handle,
                     handshake_handle, last_sequence_number);
         }
@@ -702,4 +715,75 @@ void SecurityManager::ParticipantStatelessMessageListener::onNewCacheChangeAdded
     ReaderHistory *history = reader->getHistory();
     assert(history);
     history->remove_change((CacheChange_t*)change);
+}
+
+bool SecurityManager::get_identity_token(IdentityToken** identity_token)
+{
+    assert(identity_token);
+
+    if(authentication_plugin_)
+    {
+        SecurityException exception;
+        return authentication_plugin_->get_identity_token(identity_token,
+                *local_identity_handle_, exception);
+    }
+
+    return false;
+}
+
+bool SecurityManager::return_identity_token(IdentityToken* identity_token)
+{
+    if(identity_token == nullptr)
+        return true;
+
+    if(authentication_plugin_)
+    {
+        SecurityException exception;
+        return authentication_plugin_->return_identity_token(identity_token,
+                exception);
+    }
+
+    return false;
+}
+
+uint32_t SecurityManager::builtin_endpoints()
+{
+    uint32_t be = 0;
+
+    if(participant_stateless_message_reader_ != nullptr)
+        be |= BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_READER;
+    if(participant_stateless_message_writer_ != nullptr)
+        be |= BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_WRITER;
+
+    return be;
+}
+
+void SecurityManager::match_builtin_endpoints(ParticipantProxyData* participant_data)
+{
+    uint32_t builtin_endpoints = participant_data->m_availableBuiltinEndpoints;
+
+    if(participant_stateless_message_reader_ != nullptr &&
+            builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_READER)
+    {
+        RemoteWriterAttributes watt;
+        watt.guid.guidPrefix = participant_data->m_guid.guidPrefix;
+        watt.guid.entityId = participant_stateless_message_writer_entity_id;
+        watt.endpoint.unicastLocatorList = participant_data->m_metatrafficUnicastLocatorList;
+        watt.endpoint.multicastLocatorList = participant_data->m_metatrafficMulticastLocatorList;
+        watt.endpoint.reliabilityKind = BEST_EFFORT;
+        participant_stateless_message_reader_->matched_writer_add(watt);
+    }
+
+    if(participant_stateless_message_writer_ != nullptr &&
+            builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_WRITER)
+    {
+        RemoteReaderAttributes ratt;
+        ratt.expectsInlineQos = false;
+        ratt.guid.guidPrefix = participant_data->m_guid.guidPrefix;
+        ratt.guid.entityId = participant_stateless_message_reader_entity_id;
+        ratt.endpoint.unicastLocatorList = participant_data->m_metatrafficUnicastLocatorList;
+        ratt.endpoint.multicastLocatorList = participant_data->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.reliabilityKind = BEST_EFFORT;
+        participant_stateless_message_writer_->matched_reader_add(ratt);
+    }
 }

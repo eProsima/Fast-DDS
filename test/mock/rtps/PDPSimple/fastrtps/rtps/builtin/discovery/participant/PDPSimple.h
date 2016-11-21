@@ -13,13 +13,11 @@
 // limitations under the License.
 
 /**
- * @file ReaderHistory.h
+ * @file PDPSimple.h
  */
 
-#ifndef _RTPS_HISTORY_READERHISTORY_H_
-#define _RTPS_HISTORY_READERHISTORY_H_
-
-#include <fastrtps/rtps/attributes/HistoryAttributes.h>
+#ifndef RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
+#define RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
 
 #include <gmock/gmock.h>
 
@@ -27,24 +25,19 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class ReaderHistory
+class ParticipantProxyData;
+
+class PDPSimple
 {
     public:
 
-        ReaderHistory(const HistoryAttributes& /*att*/){}
+        MOCK_METHOD1(notifyAboveRemoteEndpoints, void(ParticipantProxyData*));
 
-        MOCK_METHOD1(remove_change_mock, bool(CacheChange_t*));
-
-        bool remove_change(CacheChange_t* change)
-        {
-            bool ret = remove_change_mock(change);
-            delete change;
-            return ret;
-        }
 };
 
-} // namespace rtps
-} // namespace fastrtps
-} // namespace eprosima
+} //namespace rtps
+} //namespace fastrtps
+} //namespace eprosima
 
-#endif // _RTPS_HISTORY_READERHISTORY_H_
+#endif // RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
+

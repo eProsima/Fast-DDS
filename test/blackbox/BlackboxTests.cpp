@@ -51,6 +51,10 @@
 
 uint32_t global_port = 0;
 
+#ifdef SECURITY
+static const char* certs_path = nullptr;
+#endif
+
 class BlackboxEnvironment : public ::testing::Environment
 {
     public:
@@ -61,6 +65,8 @@ class BlackboxEnvironment : public ::testing::Environment
 
             if(global_port + 7400 > global_port)
                 global_port += 7400;
+            Log::SetVerbosity(Log::Info);
+            Log::SetCategoryFilter(std::regex("(SECURITY|AUTHENTICATION)"));
         }
 
         void TearDown()
@@ -1520,9 +1526,68 @@ BLACKBOXTEST(BlackBox, PubSubMoreThan256Unacknowledged)
     ASSERT_EQ(data.size(), static_cast<size_t>(0));
 }
 
+#ifdef SECURITY
+BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy property_policy;
+    
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+
+    reader.history_depth(100).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        property_policy(property_policy).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.history_depth(100).
+        property_policy(property_policy).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_helloword_data_generator();
+
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(2));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_EQ(data.size(), 0);
+}
+#endif // SECURITY
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new BlackboxEnvironment);
+
+#ifdef SECURITY
+    certs_path = std::getenv("CERTS_PATH");
+
+    if(certs_path == nullptr)
+    {
+        std::cout << "Cannot get enviroment variable CERTS_PATH" << std::endl;
+        exit(-1);
+    }
+#endif
+
     return RUN_ALL_TESTS();
 }

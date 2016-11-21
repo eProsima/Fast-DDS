@@ -92,10 +92,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     mp_builtinProtocols(nullptr),
     mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
     IdCounter(0),
+    m_security_manager(this),
     mp_participantListener(plisten),
     mp_userParticipant(par),
     mp_mutex(new boost::recursive_mutex())
-
 {
     // Builtin transport by default
     if (PParam.useBuiltinTransports)
@@ -125,6 +125,62 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         std::unique_ptr<FlowController> controller(new ThroughputController(PParam.throughputController, this));
         m_controllers.push_back(std::move(controller));
     }
+
+    /// Creation of metatraffic locator and receiver resources
+    uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(m_att.builtin.domainId);
+    uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(m_att.builtin.domainId, m_att.participantID);
+
+    /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
+       Else -> Take them */
+
+    /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
+
+    //UDPv4
+    if(m_att.builtin.metatrafficMulticastLocatorList.empty())
+    {
+        Locator_t mandatoryMulticastLocator;
+        mandatoryMulticastLocator.kind = LOCATOR_KIND_UDPv4;
+        mandatoryMulticastLocator.port = metatraffic_multicast_port;
+        mandatoryMulticastLocator.set_IP4_address(239,255,0,1);
+        m_att.builtin.metatrafficMulticastLocatorList.push_back(mandatoryMulticastLocator);
+    }
+    else
+    {
+        //Copy metatrafficMulticastLocatorList from the BuiltinAttributs
+        for(std::vector<Locator_t>::iterator it = m_att.builtin.metatrafficMulticastLocatorList.begin();
+                it!=m_att.builtin.metatrafficMulticastLocatorList.end();++it)
+        {
+            m_att.builtin.metatrafficMulticastLocatorList.push_back(*it);
+        }
+    }
+    //Create ReceiverResources now and update the list with the REAL used ones
+    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
+    /* INSERT DEFAULT UNICAST LOCATORS HERE */
+
+    if(m_att.builtin.metatrafficUnicastLocatorList.empty())
+    {
+        //Add default metatrafficUnicastLocators
+        LocatorList_t locators;
+        IPFinder::getIP4Address(&locators);
+        for(std::vector<Locator_t>::iterator it=locators.begin();it!=locators.end();++it)
+        {
+            it->port = metatraffic_unicast_port;
+            m_att.builtin.metatrafficUnicastLocatorList.push_back(*it);
+        }
+    }
+    else
+    {
+        //If locators existed, just import them to the class
+        for(std::vector<Locator_t>::iterator it = m_att.builtin.metatrafficUnicastLocatorList.begin();
+                it!=m_att.builtin.metatrafficUnicastLocatorList.end();++it)
+        {
+            m_att.builtin.metatrafficUnicastLocatorList.push_back(*it);
+        }
+    }
+    //Create ReceiverResources now and update the list with the REAL used ones
+    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
+
+    /// Creation of user locator and receiver resources
 
     bool hasLocatorsDefined = true;
     //If no default locators are defined we define some.
@@ -225,7 +281,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     if (!hasLocatorsDefined){
         logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Send Locator List, adding Locators: " << m_att.defaultOutLocatorList);
     }
-    logInfo(RTPS_PARTICIPANT,"RTPSParticipant \"" <<  m_att.getName() << "\" with guidPrefix: " <<m_guid.guidPrefix);
+
+#ifdef SECURITY
+    // Start security
+    m_security_manager.init();
+#endif
+
     //START BUILTIN PROTOCOLS
     mp_builtinProtocols = new BuiltinProtocols();
     if(!mp_builtinProtocols->initBuiltinProtocols(this,m_att.builtin))
@@ -233,6 +294,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         logWarning(RTPS_PARTICIPANT, "The builtin protocols were not corecctly initialized");
     }
     //eClock::my_sleep(300);
+
+    logInfo(RTPS_PARTICIPANT,"RTPSParticipant \"" <<  m_att.getName() << "\" with guidPrefix: " <<m_guid.guidPrefix);
 }
 
 const std::vector<RTPSWriter*>& RTPSParticipantImpl::getAllWriters() const
@@ -879,6 +942,11 @@ uint32_t RTPSParticipantImpl::getMaxMessageSize() const
 bool RTPSParticipantImpl::networkFactoryHasRegisteredTransports() const
 {
     return m_network_Factory.numberOfRegisteredTransports() > 0;
+}
+
+PDPSimple* RTPSParticipantImpl::pdpsimple()
+{
+    return mp_builtinProtocols->mp_PDP;
 }
 
 } /* namespace rtps */

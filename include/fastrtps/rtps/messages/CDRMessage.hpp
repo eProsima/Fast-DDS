@@ -736,6 +736,7 @@ inline bool CDRMessage::readBinaryProperty(CDRMessage_t* msg, BinaryProperty& bi
         return false;
     if(!CDRMessage::readOctetVector(msg, &binary_property.value()))
         return false;
+    binary_property.propagate(true);
 
     return true;
 }

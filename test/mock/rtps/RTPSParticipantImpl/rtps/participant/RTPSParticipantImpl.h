@@ -23,6 +23,7 @@
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 
 #include <gmock/gmock.h>
 
@@ -43,6 +44,8 @@ class RTPSParticipantImpl
         MOCK_CONST_METHOD0(getRTPSParticipantAttributes, const RTPSParticipantAttributes&());
 
         MOCK_CONST_METHOD0(getGuid, const GUID_t&());
+
+        MOCK_METHOD1(setGuid, void(GUID_t&));
 
         MOCK_METHOD6(createWriter_mock, bool (RTPSWriter** writer, WriterAttributes& param, WriterHistory* hist,WriterListener* listen,
                 const EntityId_t& entityId, bool isBuiltin));
@@ -70,6 +73,12 @@ class RTPSParticipantImpl
             }
             return ret;
         }
+
+        PDPSimple* pdpsimple() { return &pdpsimple_; }
+
+    private:
+
+        PDPSimple pdpsimple_;
 };
 
 } // namespace rtps

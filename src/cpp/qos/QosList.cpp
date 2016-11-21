@@ -299,6 +299,19 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	std::vector<octet>& ocVe
 	return false;
 }
 
+bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	const IdentityToken& identity_token) {
+	if(pid == PID_IDENTITY_TOKEN)
+	{
+		ParameterToken_t* p = new ParameterToken_t();
+        p->Pid = pid;
+        p->token = identity_token;
+		qos->allQos.m_parameters.push_back((Parameter_t*)p);
+		qos->allQos.m_hasChanged = true;
+		return true;
+	}
+	return false;
+}
+
 //bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	BuiltinEndpointSet_t endpointset)
 //{
 //	if(pid == PID_BUILTIN_ENDPOINT_SET)

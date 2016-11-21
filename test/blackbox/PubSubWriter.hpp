@@ -275,6 +275,12 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& property_policy(const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+    {
+        participant_attr_.rtps.properties = property_policy;
+        return *this;
+    }
+
     private:
 
     void matched()
@@ -294,9 +300,9 @@ class PubSubWriter
     PubSubWriter& operator=(const PubSubWriter&)NON_COPYABLE_CXX11;
 
     eprosima::fastrtps::Participant *participant_;
-    eprosima::fastrtps::PublisherAttributes publisher_attr_;
     eprosima::fastrtps::ParticipantAttributes participant_attr_;
     eprosima::fastrtps::Publisher *publisher_;
+    eprosima::fastrtps::PublisherAttributes publisher_attr_;
     std::string topic_name_;
     bool initialized_;
     std::mutex mutex_;

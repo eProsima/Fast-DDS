@@ -36,6 +36,7 @@ class StatelessWriter;
 class StatelessReader;
 class WriterHistory;
 class ReaderHistory;
+class ParticipantProxyData;
 
 namespace security {
 
@@ -51,8 +52,13 @@ class SecurityManager
 
         bool init();
 
-        bool discovered_participant(IdentityToken&& remote_identity_token,
-                const GUID_t& remote_participant_key);
+        bool discovered_participant(ParticipantProxyData* participant_data);
+
+        bool get_identity_token(IdentityToken** identity_token);
+
+        bool return_identity_token(IdentityToken* identity_token);
+
+        uint32_t builtin_endpoints();
 
     private:
 
@@ -71,9 +77,9 @@ class SecurityManager
         {
             public:
 
-                DiscoveredParticipantInfo(AuthenticationStatus auth_status) :
+                DiscoveredParticipantInfo(ParticipantProxyData* participant_data, AuthenticationStatus auth_status) :
                     identity_handle_(nullptr), handshake_handle_(nullptr),
-                    auth_status_(auth_status), last_sequence_number_(1)
+                    auth_status_(auth_status), last_sequence_number_(1), participant_data_(participant_data)
                 {}
 
                 bool is_identity_handle_null()
@@ -142,6 +148,11 @@ class SecurityManager
                     return last_sequence_number_;
                 }
 
+                ParticipantProxyData* get_participant_data()
+                {
+                    return participant_data_;
+                }
+
             private:
 
                 DiscoveredParticipantInfo(const DiscoveredParticipantInfo& info) = delete;
@@ -153,6 +164,8 @@ class SecurityManager
                 AuthenticationStatus auth_status_;
 
                 int64_t last_sequence_number_;
+
+                ParticipantProxyData* participant_data_;
         };
 
         class ParticipantStatelessMessageListener: public eprosima::fastrtps::rtps::ReaderListener
@@ -185,6 +198,8 @@ class SecurityManager
         bool create_participant_stateless_message_reader();
         void delete_participant_stateless_message_reader();
 
+        void match_builtin_endpoints(ParticipantProxyData* participant_data);
+
         void process_participant_stateless_message(const CacheChange_t* const change);
 
         bool on_process_handshake(const GUID_t& remote_participant_key,
@@ -198,7 +213,7 @@ class SecurityManager
         ParticipantGenericMessage generate_authentication_message(int64_t sequence_number,
                 const MessageIdentity& related_message_identity,
                 const GUID_t& destination_participant_key,
-                HandshakeMessageToken&& handshake_message);
+                HandshakeMessageToken& handshake_message);
 
         RTPSParticipantImpl* participant_;
         StatelessWriter* participant_stateless_message_writer_;
