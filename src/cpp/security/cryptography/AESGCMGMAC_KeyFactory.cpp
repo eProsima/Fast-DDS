@@ -395,6 +395,17 @@ bool AESGCMGMAC_KeyFactory::unregister_participant(
                 return_code = true;
         }
     }
+    //Unregister all writers and readers
+    for(auto it=local_participant->Writers.begin(); it!=local_participant->Writers.end(); ++it){
+        DatawriterCryptoHandle* writer = (DatawriterCryptoHandle*)(*it);
+        unregister_datawriter(writer, exception);
+
+    }
+    for(auto it=local_participant->Readers.begin(); it!=local_participant->Readers.end(); ++it){
+        DatareaderCryptoHandle* reader = (DatareaderCryptoHandle*)(*it);
+        unregister_datareader(reader, exception);
+    }
+
 
     if(return_code){
         return true;
