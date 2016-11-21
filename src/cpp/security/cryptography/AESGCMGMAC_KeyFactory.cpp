@@ -226,6 +226,8 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
     (*WCrypto)->session_block_counter = 40; //Set to update upon first usage
     RAND_bytes( (unsigned char *)( &( (*WCrypto)->session_id ) ), sizeof(uint16_t));
 
+    (*WCrypto)->Parent_participant = &participant_crypto;
+
     participant_handle->Writers.push_back(WCrypto);
 
     return WCrypto;
@@ -273,8 +275,11 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
     (*RRCrypto)->session_block_counter = 40; //Set to update upon first usage
     RAND_bytes( (unsigned char *)( &( (*RRCrypto)->session_id ) ), sizeof(uint16_t));
 
+    (*RRCrypto)->Parent_participant = &remote_participant_crypto;
     //Save this CryptoHandle as part of the remote participant
+    
     AESGCMGMAC_ParticipantCryptoHandle& PCrypto = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
+
     (*PCrypto)->Readers.push_back(RRCrypto);
 
     return RRCrypto;
@@ -318,6 +323,8 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
     (*RCrypto)->max_blocks_per_session = 32; //TODO (Santi) - This is a testing value. Make it updateable
     (*RCrypto)->session_block_counter = 40; //Set to update upon first usage
     RAND_bytes( (unsigned char *)( &( (*RCrypto)->session_id ) ), sizeof(uint16_t));
+
+    (*RCrypto)->Parent_participant = &participant_crypto;
 
     participant_handle->Readers.push_back(RCrypto);
 
@@ -365,6 +372,8 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
     (*RWCrypto)->session_block_counter = 40; //Set to update upon first usage
     RAND_bytes( (unsigned char *)( &( (*RWCrypto)->session_id ) ), sizeof(uint16_t));
 
+    (*RWCrypto)->Parent_participant = &remote_participant_crypt;
+
     //Save this CryptoHandle as part of the remote participant
     AESGCMGMAC_ParticipantCryptoHandle& PCrypto = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypt);
     (*PCrypto)->Writers.push_back(RWCrypto);
@@ -396,19 +405,60 @@ bool AESGCMGMAC_KeyFactory::unregister_participant(
 }
         
 bool AESGCMGMAC_KeyFactory::unregister_datawriter(
-                DatawriterCryptoHandle &datawriter_crypto_handle,
+                DatawriterCryptoHandle *datawriter_crypto_handle,
                 SecurityException &exception){
 
-    exception = SecurityException("Not implemented");
+    AESGCMGMAC_WriterCryptoHandle& datawriter = AESGCMGMAC_WriterCryptoHandle::narrow(*datawriter_crypto_handle);
+    if(datawriter.nil()){
+        exception = SecurityException("Not a valid DataWriterCryptoHandle has been passed as an argument");
+        return false;
+    }
+    AESGCMGMAC_ParticipantCryptoHandle& parent_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow( *(datawriter->Parent_participant) );
+    if(parent_participant.nil()){
+        exception = SecurityException("Malformed AESGCMGMAC_WriterCryptohandle");
+        return false;
+    }
+    //Remove reference in parent participant
+    for(auto it = parent_participant->Writers.begin(); it != parent_participant->Writers.end(); it++){
+        if( *it == datawriter_crypto_handle){
+            parent_participant->Writers.erase(it);
+            AESGCMGMAC_WriterCryptoHandle *parent = (AESGCMGMAC_WriterCryptoHandle *)datawriter_crypto_handle;
+            delete parent;
+            return true;
+        }
+    }
+
     return false;
 }
 
         
 bool AESGCMGMAC_KeyFactory::unregister_datareader(
-                DatareaderCryptoHandle &datareader_crypto_handle,
+                DatareaderCryptoHandle *datareader_crypto_handle,
                 SecurityException &exception){
 
-    exception = SecurityException("Not implemented");
+    AESGCMGMAC_ReaderCryptoHandle& datareader = AESGCMGMAC_ReaderCryptoHandle::narrow(*datareader_crypto_handle);
+    if(datareader.nil()){
+        exception = SecurityException("Not a valid DataReaderCryptoHandle has been passed as an argument");
+        return false;
+    }
+    if (datareader->Parent_participant == nullptr){
+        return false;
+    }
+    AESGCMGMAC_ParticipantCryptoHandle& parent_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow( *(datareader->Parent_participant) );
+    if(parent_participant.nil()){
+        exception = SecurityException("Malformed AESGCMGMAC_WriterCryptohandle");
+        return false;
+    }
+    //Remove reference in parent participant
+    for(auto it = parent_participant->Readers.begin(); it != parent_participant->Readers.end(); it++){
+        if( *it == datareader_crypto_handle){
+            parent_participant->Readers.erase(it);
+            AESGCMGMAC_ReaderCryptoHandle *parent = (AESGCMGMAC_ReaderCryptoHandle *)datareader_crypto_handle;
+            delete parent;
+            return true;
+        }
+    }
+
     return false;
 }
 

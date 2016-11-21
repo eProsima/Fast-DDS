@@ -88,6 +88,7 @@ class  WriterKeyHandle
 
         KeyMaterial_AES_GCM_GMAC WriterKeyMaterial;
         CryptoTransformKeyId Participant_master_key_id;
+        ParticipantCryptoHandle* Parent_participant; 
 
         std::vector<KeyMaterial_AES_GCM_GMAC> Writer2ReaderKeyMaterial;
         std::vector<KeyMaterial_AES_GCM_GMAC> Reader2WriterKeyMaterial;
@@ -116,6 +117,7 @@ class  ReaderKeyHandle
 
         KeyMaterial_AES_GCM_GMAC ReaderKeyMaterial;
         CryptoTransformKeyId Participant_master_key_id;
+        ParticipantCryptoHandle* Parent_participant;
 
         std::vector<KeyMaterial_AES_GCM_GMAC> Reader2WriterKeyMaterial;
         std::vector<KeyMaterial_AES_GCM_GMAC> Writer2ReaderKeyMaterial;

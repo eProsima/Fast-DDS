@@ -76,11 +76,11 @@ class AESGCMGMAC_KeyFactory : public CryptoKeyFactory
                 SecurityException &exception);
         
         bool unregister_datawriter(
-                DatawriterCryptoHandle &datawriter_crypto_handle,
+                DatawriterCryptoHandle *datawriter_crypto_handle,
                 SecurityException &exception);
         
         bool unregister_datareader(
-                DatareaderCryptoHandle &datareader_crypto_handle,
+                DatareaderCryptoHandle *datareader_crypto_handle,
                 SecurityException &exception);
     
     private:

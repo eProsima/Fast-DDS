@@ -362,7 +362,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
 
     //Release resources and check the handle is indeed empty
 
-    CryptoPlugin->keyfactory()->unregister_datawriter(*target,exception);
+    CryptoPlugin->keyfactory()->unregister_datawriter(target,exception);
 }
 
 TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
@@ -398,7 +398,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
 
     //Release resources and check the handle is indeed empty
 
-    CryptoPlugin->keyfactory()->unregister_datareader(*target,exception);
+    CryptoPlugin->keyfactory()->unregister_datareader(target,exception);
 }
 
 TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter){

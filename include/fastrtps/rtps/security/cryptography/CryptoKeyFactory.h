@@ -137,7 +137,7 @@ class CryptoKeyFactory
          * @return TRUE is succesful 
          */
         virtual bool unregister_datawriter(
-                DatawriterCryptoHandle &datawriter_crypto_handle,
+                DatawriterCryptoHandle *datawriter_crypto_handle,
                 SecurityException &exception) = 0;
         
         /**
@@ -147,7 +147,7 @@ class CryptoKeyFactory
          * @return TRUE is succesful 
          */
         virtual bool unregister_datareader(
-                DatareaderCryptoHandle &datareader_crypto_handle,
+                DatareaderCryptoHandle *datareader_crypto_handle,
                 SecurityException &exception) = 0;
 
 
