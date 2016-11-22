@@ -127,11 +127,11 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
         //TODO (santi) Provide insight
         return false;
     }
-
+    bool update_specific_keys = false;
     //If the maximum number of blocks have been processed, generate a new SessionKey
     if(local_writer->session_block_counter >= local_writer->max_blocks_per_session){
         local_writer->session_id += 1; 
-
+        update_specific_keys = true;
         local_writer->SessionKey = compute_sessionkey(local_writer->WriterKeyMaterial.master_sender_key,
                 local_writer->WriterKeyMaterial.master_salt,
                 local_writer->session_id);
@@ -196,7 +196,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
         }
 
         //Update the key if needed
-        if( remote_reader->session_id != local_writer->session_id ){
+        if(update_specific_keys){
             //Update triggered!
             remote_reader->session_id = local_writer->session_id;
             remote_reader->SessionKey = compute_sessionkey(remote_reader->Writer2ReaderKeyMaterial.at(0).master_receiver_specific_key,
@@ -254,9 +254,10 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     }
 
     //Step 2 - If the maximum number of blocks have been processed, generate a new SessionKey
+    bool update_specific_keys = false;
     if(local_reader->session_block_counter >= local_reader->max_blocks_per_session){
         local_reader->session_id += 1; 
-
+        update_specific_keys = true;
         local_reader->SessionKey = compute_sessionkey(local_reader->ReaderKeyMaterial.master_sender_key,
                 local_reader->ReaderKeyMaterial.master_salt,
                 local_reader->session_id);
@@ -321,7 +322,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
         }
 
         //Update the key if needed
-        if(remote_writer->session_id != local_reader->session_id){
+        if(update_specific_keys){
             //Update triggered!
             remote_writer->session_id = local_reader->session_id;
             remote_writer->SessionKey = compute_sessionkey(remote_writer->Reader2WriterKeyMaterial.at(0).master_receiver_specific_key,
@@ -384,9 +385,10 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     for(int i=RTPS_HEADER_SIZE;i<plain_rtps_message.size();i++) payload.push_back(plain_rtps_message.at(i));
 
     // If the maximum number of blocks have been processed, generate a new SessionKey
+    bool update_specific_keys = false;
     if(local_participant->session_block_counter >= local_participant->max_blocks_per_session){
         local_participant->session_id += 1; 
-
+        update_specific_keys = true;
         local_participant->SessionKey = compute_sessionkey(local_participant->ParticipantKeyMaterial.master_sender_key,
                 local_participant->ParticipantKeyMaterial.master_salt,
                 local_participant->session_id);
@@ -452,7 +454,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         }
  
         //Update the key if needed
-        if(remote_participant->session_id != local_participant->session_id){
+        if(update_specific_keys){
             //Update triggered!
             remote_participant->session_id = local_participant->session_id;
             remote_participant->SessionKey = compute_sessionkey(remote_participant->Participant2ParticipantKeyMaterial.at(0).master_receiver_specific_key,
@@ -571,7 +573,6 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     EVP_CIPHER_CTX_ctrl( d_ctx, EVP_CTRL_GCM_SET_TAG,16, specific_mac->receiver_mac.data() );
     auth = EVP_DecryptFinal_ex(d_ctx, plain_buffer.data() + actual_size, &final_size); 
     EVP_CIPHER_CTX_free(d_ctx);
-    plain_buffer.resize(actual_size + final_size);
 
     if(!auth){
         std::cout << "Unable to auth the message" << std::endl;
@@ -755,7 +756,6 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     EVP_CIPHER_CTX_ctrl( d_ctx, EVP_CTRL_GCM_SET_TAG,16, specific_mac.receiver_mac.data() );
     auth = EVP_DecryptFinal_ex(d_ctx, plain_rtps_submessage.data() + actual_size, &final_size); 
     EVP_CIPHER_CTX_free(d_ctx);
-    plain_rtps_submessage.resize(actual_size + final_size);
 
     if(!auth){
         //Log error
@@ -863,7 +863,6 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     EVP_CIPHER_CTX_ctrl( d_ctx, EVP_CTRL_GCM_SET_TAG,16, specific_mac.receiver_mac.data() );
     auth = EVP_DecryptFinal_ex(d_ctx, plain_rtps_submessage.data() + actual_size, &final_size); 
     EVP_CIPHER_CTX_free(d_ctx);
-    plain_rtps_submessage.resize(actual_size + final_size);
 
     if(!auth){
         //Log error
@@ -974,16 +973,16 @@ std::array<uint8_t, 32> AESGCMGMAC_Transform::compute_sessionkey(std::array<uint
 {
 
     std::array<uint8_t,32> session_key;
-    unsigned char *source = (unsigned char*)malloc(32 + 10 + 32 + 2);
+    unsigned char *source = (unsigned char*)malloc(32 + 10 + 32 + 4);
     memcpy(source, master_sender_key.data(), 32); 
     char seq[] = "SessionKey";
     memcpy(source+32, seq, 10);
     memcpy(source+32+10, master_salt.data(),32);
     memcpy(source+32+10+32, &(session_id),4);
 
-    EVP_Digest(source, 32+10+32+2, (unsigned char*)&(session_key), NULL, EVP_sha256(), NULL);
+    EVP_Digest(source, 32+10+32+4, (unsigned char*)&(session_key), NULL, EVP_sha256(), NULL);
     
-    delete(source);
+    free(source);
     return session_key;
 }
 

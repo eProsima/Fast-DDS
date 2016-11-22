@@ -276,6 +276,7 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
     RAND_bytes( (unsigned char *)( &( (*RRCrypto)->session_id ) ), sizeof(uint16_t));
 
     (*RRCrypto)->Parent_participant = &remote_participant_crypto;
+    (*RRCrypto)->session_id = 0;
     //Save this CryptoHandle as part of the remote participant
     
     AESGCMGMAC_ParticipantCryptoHandle& PCrypto = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
@@ -371,6 +372,7 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
     (*RWCrypto)->max_blocks_per_session = 32; //TODO (Santi) - This is a testing value. Make it updateable
     (*RWCrypto)->session_block_counter = 40; //Set to update upon first usage
     RAND_bytes( (unsigned char *)( &( (*RWCrypto)->session_id ) ), sizeof(uint16_t));
+    (*RWCrypto)->session_id = 0;
 
     (*RWCrypto)->Parent_participant = &remote_participant_crypt;
 
@@ -429,7 +431,11 @@ bool AESGCMGMAC_KeyFactory::unregister_datawriter(
         exception = SecurityException("Not a valid DataWriterCryptoHandle has been passed as an argument");
         return false;
     }
-
+    if( (datawriter->Parent_participant) == nullptr){
+        AESGCMGMAC_WriterCryptoHandle *parent = (AESGCMGMAC_WriterCryptoHandle *)datawriter_crypto_handle;
+        delete parent;
+        true;
+    }
     AESGCMGMAC_ParticipantCryptoHandle& parent_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow( *(datawriter->Parent_participant) );
     if(parent_participant.nil()){
         exception = SecurityException("Malformed AESGCMGMAC_WriterCryptohandle");
@@ -462,8 +468,10 @@ bool AESGCMGMAC_KeyFactory::unregister_datareader(
         exception = SecurityException("Not a valid DataReaderCryptoHandle has been passed as an argument");
         return false;
     }
-    if (datareader->Parent_participant == nullptr){
-        return false;
+    if( (datareader->Parent_participant) == nullptr){
+        AESGCMGMAC_ReaderCryptoHandle *parent = (AESGCMGMAC_ReaderCryptoHandle *)datareader_crypto_handle;
+        delete parent;
+        true;
     }
     AESGCMGMAC_ParticipantCryptoHandle& parent_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow( *(datareader->Parent_participant) );
     if(parent_participant.nil()){
