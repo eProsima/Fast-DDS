@@ -71,10 +71,10 @@ void fill_candidate_participant_key(GUID_t& candidate_participant_key)
     candidate_participant_key.guidPrefix.value[9] = 10;
     candidate_participant_key.guidPrefix.value[10] = 11;
     candidate_participant_key.guidPrefix.value[11] = 12;
-    candidate_participant_key.entityId.value[0] = 13;
-    candidate_participant_key.entityId.value[1] = 14;
-    candidate_participant_key.entityId.value[2] = 15;
-    candidate_participant_key.entityId.value[3] = 16;
+    candidate_participant_key.entityId.value[0] = 0x0;
+    candidate_participant_key.entityId.value[1] = 0x0;
+    candidate_participant_key.entityId.value[2] = 0x1;
+    candidate_participant_key.entityId.value[3] = 0xc1;
 }
 
 TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok)

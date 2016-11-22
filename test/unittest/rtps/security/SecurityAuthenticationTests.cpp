@@ -71,10 +71,10 @@ void fill_participant_key(GUID_t& participant_key)
     participant_key.guidPrefix.value[9] = 10;
     participant_key.guidPrefix.value[10] = 11;
     participant_key.guidPrefix.value[11] = 12;
-    participant_key.entityId.value[0] = 13;
-    participant_key.entityId.value[1] = 14;
-    participant_key.entityId.value[2] = 15;
-    participant_key.entityId.value[3] = 16;
+    participant_key.entityId.value[0] = 0x0;
+    participant_key.entityId.value[1] = 0x0;
+    participant_key.entityId.value[2] = 0x1;
+    participant_key.entityId.value[3] = 0xc1;
 }
 
 class SecurityAuthenticationTest : public ::testing::Test
@@ -137,6 +137,7 @@ class SecurityAuthenticationTest : public ::testing::Test
             ASSERT_TRUE(manager_.discovered_participant(&participant_data));
 
             delete change;
+            delete p_handshake_message;
         }
 
         void reply_process_ok()
@@ -186,6 +187,7 @@ class SecurityAuthenticationTest : public ::testing::Test
             stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
             delete change2;
+            delete p_handshake_message;
         }
 
     public:
@@ -373,6 +375,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
@@ -404,6 +407,8 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
     ASSERT_FALSE(manager_.discovered_participant(&participant_data));
+
+    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_identity_add_change_fail)
@@ -436,6 +441,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
     ASSERT_FALSE(manager_.discovered_participant(&participant_data));
 
     delete change;
+    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_identity_pending_handshake_request_pending_message)
@@ -472,12 +478,14 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
     ASSERT_TRUE(manager_.discovered_participant(&participant_data));
 
     delete change;
+    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_ok)
@@ -510,6 +518,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_ok)
     ASSERT_TRUE(manager_.discovered_participant(&participant_data));
 
     delete change;
+    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_validate_remote_fail_and_then_ok)
@@ -547,6 +556,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validate_remote_fail_a
     ASSERT_TRUE(manager_.discovered_participant(&participant_data));
 
     delete change;
+    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_begin_handshake_request_fail_and_then_ok)
@@ -585,6 +595,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_begin_handshake_reques
     ASSERT_TRUE(manager_.discovered_participant(&participant_data));
 
     delete change;
+    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_not_remote_participant_key)
@@ -759,6 +770,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_beg
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 }
@@ -809,6 +821,8 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_new_ch
         WillOnce(Return(true));
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+
+    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_add_change_fail)
@@ -862,6 +876,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_add_ch
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
     delete change2;
+    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_pending_handshake_reply_pending_message)
@@ -921,10 +936,12 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_pendin
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
     delete change2;
+    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_process_handshake_reply)
@@ -993,6 +1010,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_pro
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 }
@@ -1034,6 +1052,8 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
         WillOnce(Return(true));
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+
+    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_process_handshake_reply_add_change_fail)
@@ -1078,6 +1098,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
     delete change2;
+    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_process_handshake_reply_ok_with_final_message)
@@ -1118,10 +1139,12 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
     delete change2;
+    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_process_handshake_final)
@@ -1190,6 +1213,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_pro
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 }
