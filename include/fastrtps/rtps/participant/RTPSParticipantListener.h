@@ -43,7 +43,9 @@ public:
 	* @param part Discovered participant
 	* @param info Discovery information of the participant
 	*/
-	virtual void onRTPSParticipantDiscovery(RTPSParticipant* part, RTPSParticipantDiscoveryInfo info){(void)part; (void)info;};
+	virtual void onRTPSParticipantDiscovery(RTPSParticipant* part, RTPSParticipantDiscoveryInfo info){(void)part; (void)info;}
+
+    virtual void onRTPSParticipantAuthentication(RTPSParticipant* part, const RTPSParticipantAuthenticationInfo& info) {(void)part; (void)info;}
 };
 }
 }

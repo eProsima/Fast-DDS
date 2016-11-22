@@ -36,11 +36,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIDH.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIIdentityHandle.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIHandshakeHandle.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/security/OpenSSLInit.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp)
-        add_gtest(BuiltinPKIDH ${COMMON_SOURCES_AUTH_PLUGIN_TEST_SOURCE}
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIDH.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIIdentityHandle.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIHandshakeHandle.cpp
+        add_gtest(BuiltinPKIDH 
             ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp
             ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
         target_include_directories(BuiltinPKIDH PRIVATE

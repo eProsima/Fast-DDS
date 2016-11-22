@@ -53,10 +53,47 @@ PropertyPolicy AuthenticationPluginTest::get_wrong_policy()
     return property_policy;
 }
 
+IdentityToken AuthenticationPluginTest::generate_remote_identity_token_ok(const IdentityHandle& local_identity_handle)
+{
+    IdentityToken token;
+    const PKIIdentityHandle& h = PKIIdentityHandle::narrow(local_identity_handle);
+
+    Property property;
+
+    // dds.cert.sn
+    property.name("dds.cert.sn");
+    X509_NAME* cert_sn = X509_get_subject_name(h->cert_);
+    char* cert_sn_str = X509_NAME_oneline(cert_sn, 0, 0);
+    property.value() = cert_sn_str;
+    CRYPTO_free(cert_sn_str);
+    token.properties().emplace_back(std::move(property));
+
+    // dds.cert.algo
+    property.name("dds.cert.algo");
+    property.value(h->sign_alg_);
+    token.properties().emplace_back(std::move(property));
+
+    // dds.ca.sn
+    property.name("dds.ca.sn");
+    property.value(h->sn);
+    token.properties().emplace_back(std::move(property));
+
+    // dds.ca.algo
+    property.name("dds.ca.algo");
+    property.value(h->algo);
+    token.properties().emplace_back(std::move(property));
+
+    return token;
+}
+
 void AuthenticationPluginTest::check_local_identity_handle(const IdentityHandle& handle)
 {
     const PKIIdentityHandle& h = PKIIdentityHandle::narrow(handle);
     ASSERT_TRUE(h.nil() == false);
+    ASSERT_TRUE(h->store_ != nullptr);
+    ASSERT_TRUE(h->cert_ != nullptr);
+    ASSERT_TRUE(h->cert_content_ != nullptr);
+    // TODO(Ricardo)
 }
 
 void AuthenticationPluginTest::check_remote_identity_handle(const IdentityHandle& handle)
@@ -77,6 +114,8 @@ void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHa
     X509* cid_cert = PEM_read_bio_X509_AUX(cid_in, NULL, NULL, NULL);
     ASSERT_TRUE(cid_cert != nullptr);
     ASSERT_TRUE(X509_cmp((*handshake_handle->local_identity_handle_)->cert_, cid_cert) == 0);
+    X509_free(cid_cert);
+    BIO_free(cid_in);
 
 
     const std::vector<uint8_t>* csign_alg = DataHolderHelper::find_binary_property_value(message, "c.dsign_algo");
@@ -168,6 +207,7 @@ void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHa
     ASSERT_TRUE(DH_check_pub_key(dh, &bn, &check_result));
     ASSERT_TRUE(!check_result);
     BN_clear_free(&bn);
+    DH_free(dh);
 
     const std::vector<uint8_t>* challenge1 = DataHolderHelper::find_binary_property_value(message, "challenge1");
     ASSERT_TRUE(challenge1 != nullptr);
@@ -186,6 +226,8 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     X509* cid_cert = PEM_read_bio_X509_AUX(cid_in, NULL, NULL, NULL);
     ASSERT_TRUE(cid_cert != nullptr);
     ASSERT_TRUE(X509_cmp((*handshake_handle->local_identity_handle_)->cert_, cid_cert) == 0);
+    X509_free(cid_cert);
+    BIO_free(cid_in);
 
 
     const std::vector<uint8_t>* csign_alg = DataHolderHelper::find_binary_property_value(message, "c.dsign_algo");
@@ -277,6 +319,7 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     ASSERT_TRUE(DH_check_pub_key(dh, &bn, &check_result));
     ASSERT_TRUE(!check_result);
     BN_clear_free(&bn);
+    DH_free(dh);
 
     const std::vector<uint8_t>* hash_c1 = DataHolderHelper::find_binary_property_value(message, "hash_c1");
     ASSERT_TRUE(hash_c1 != nullptr);
@@ -325,6 +368,7 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     ASSERT_TRUE(EVP_DigestVerifyInit(&ctx, NULL, EVP_sha256(), NULL, pubkey) == 1);
     ASSERT_TRUE(EVP_DigestVerifyUpdate(&ctx, cdrmessage2.buffer, cdrmessage2.length) == 1);
     ASSERT_TRUE(EVP_DigestVerifyFinal(&ctx, signature->data(), signature->size()) == 1);
+    EVP_PKEY_free(pubkey);
     EVP_MD_CTX_cleanup(&ctx);
 }
 
@@ -396,6 +440,7 @@ void AuthenticationPluginTest::check_handshake_final_message(const HandshakeHand
     ASSERT_TRUE(EVP_DigestVerifyInit(&ctx, NULL, EVP_sha256(), NULL, pubkey) == 1);
     ASSERT_TRUE(EVP_DigestVerifyUpdate(&ctx, cdrmessage.buffer, cdrmessage.length) == 1);
     ASSERT_TRUE(EVP_DigestVerifyFinal(&ctx, signature->data(), signature->size()) == 1);
+    EVP_PKEY_free(pubkey);
     EVP_MD_CTX_cleanup(&ctx);
 }
 
@@ -453,6 +498,8 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok_with_pwd)
     ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK);
     ASSERT_TRUE(local_identity_handle != nullptr);
     ASSERT_TRUE(adjusted_participant_key != GUID_t::unknown());
+
+    ASSERT_TRUE(plugin->return_identity_handle(local_identity_handle, exception));
 }
 
 TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_identity_ca)
@@ -647,4 +694,3 @@ int main(int argc, char **argv)
 
     return RUN_ALL_TESTS();
 }
-

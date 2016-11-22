@@ -205,6 +205,21 @@ bool ParameterSampleIdentity_t::addToCDRMessage(CDRMessage_t*msg)
 	return valid;
 }
 
+bool ParameterToken_t::addToCDRMessage(CDRMessage_t*msg)
+{
+	bool valid = CDRMessage::addUInt16(msg, this->Pid);
+	uint16_t pos_str = (uint16_t)msg->pos;
+	valid &= CDRMessage::addUInt16(msg, this->length);
+	valid &= CDRMessage::addDataHolder(msg, this->token);
+	uint16_t pos_param_end = (uint16_t)msg->pos;
+	this->length = pos_param_end - pos_str - 2;
+	msg->pos = pos_str;
+	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+	msg->pos = pos_param_end;
+	msg->length -= 2;
+	return valid;
+}
+
 
 } /* namespace pubsub */
 } /* namespace eprosima */

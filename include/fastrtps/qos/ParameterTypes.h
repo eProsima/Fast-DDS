@@ -20,6 +20,7 @@
 #define PARAMETERTYPES_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "../rtps/common/all_common.h"
+#include "../rtps/common/Token.h"
 
 
 #include <string>
@@ -105,6 +106,7 @@ enum ParameterId_t	: uint16_t
 	PID_STATUS_INFO = 0x0071,
 	PID_ENDPOINT_GUID = 0x005a,
     //PID_RELATED_SAMPLE_IDENTITY = 0x0083
+    PID_IDENTITY_TOKEN = 0x1001,
     PID_RELATED_SAMPLE_IDENTITY = 0x800f
 };
 
@@ -492,6 +494,31 @@ public:
 	 * @param in_length Its associated length
 	 */
 	ParameterSampleIdentity_t(ParameterId_t pid, uint16_t in_length) : Parameter_t(pid,in_length), sample_id(SampleIdentity::unknown()) {}
+
+	/**
+	 * Add the parameter to a CDRMessage_t message.
+	 * @param[in,out] msg Pointer to the message where the parameter should be added.
+	 * @return True if the parameter was correctly added.
+	 */
+	bool addToCDRMessage(CDRMessage_t* msg);
+};
+
+/**
+ *
+ */
+class RTPS_DllAPI ParameterToken_t : public Parameter_t
+{
+public:
+    Token token;
+
+	ParameterToken_t() {}
+
+	/**
+	 * Constructor using a parameter PID and the parameter length
+	 * @param pid Pid of the parameter
+	 * @param in_length Its associated length
+	 */
+	ParameterToken_t(ParameterId_t pid, uint16_t in_length) : Parameter_t(pid,in_length) {}
 
 	/**
 	 * Add the parameter to a CDRMessage_t message.

@@ -39,7 +39,9 @@ public:
 	* @param p Pointer to the Participant
 	* @param info DiscoveryInfo.
 	*/
-	virtual void onParticipantDiscovery(Participant* p, ParticipantDiscoveryInfo info){(void)p, (void)info;};
+	virtual void onParticipantDiscovery(Participant* p, ParticipantDiscoveryInfo info){(void)p, (void)info;}
+
+	virtual void onParticipantAuthentication(Participant* p, const ParticipantAuthenticationInfo& info){(void)p, (void)info;}
 };
 
 } /* namespace fastrtps */

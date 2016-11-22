@@ -25,6 +25,7 @@
 
 #include "../../attributes/WriterAttributes.h"
 #include "../../attributes/ReaderAttributes.h"
+#include "../../common/Token.h"
 
 #define DISCOVERY_PARTICIPANT_DATA_MAX_SIZE 5000
 #define DISCOVERY_TOPIC_DATA_MAX_SIZE 500
@@ -96,6 +97,8 @@ public:
 	InstanceHandle_t m_key;
 	//!
 	Duration_t m_leaseDuration;
+    //!
+    IdentityToken identity_token_;
 	//!
 	bool isAlive;
 	//!
@@ -118,13 +121,6 @@ public:
 	std::vector<RemoteWriterAttributes> m_builtinWriters;
 
 	boost::recursive_mutex* mp_mutex;
-	/**
-	 * Initialize the object with the data of the lcoal RTPSParticipant.
-	 * @param part Pointer to the RTPSParticipant.
-	 * @param pdp Pointer to the PDPSimple object.
-	 * @return True if correctly initialized.
-	 */
-	bool initializeData(RTPSParticipantImpl* part, PDPSimple* pdp);
 	/**
 	 * Update the data.
 	 * @param pdata Object to copy the data from

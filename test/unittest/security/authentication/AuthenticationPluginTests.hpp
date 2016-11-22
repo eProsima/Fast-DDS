@@ -42,6 +42,7 @@ class AuthenticationPluginTest : public ::testing::Test
 
         static PropertyPolicy get_valid_policy();
         static PropertyPolicy get_wrong_policy();
+        static IdentityToken generate_remote_identity_token_ok(const IdentityHandle& local_identity_handle);
         static void check_local_identity_handle(const IdentityHandle& handle);
         static void check_remote_identity_handle(const IdentityHandle& handle);
         static void check_handshake_request_message(const HandshakeHandle& handle, const HandshakeMessageToken& message);
@@ -70,10 +71,10 @@ void fill_candidate_participant_key(GUID_t& candidate_participant_key)
     candidate_participant_key.guidPrefix.value[9] = 10;
     candidate_participant_key.guidPrefix.value[10] = 11;
     candidate_participant_key.guidPrefix.value[11] = 12;
-    candidate_participant_key.entityId.value[0] = 13;
-    candidate_participant_key.entityId.value[1] = 14;
-    candidate_participant_key.entityId.value[2] = 15;
-    candidate_participant_key.entityId.value[3] = 16;
+    candidate_participant_key.entityId.value[0] = 0x0;
+    candidate_participant_key.entityId.value[1] = 0x0;
+    candidate_participant_key.entityId.value[2] = 0x1;
+    candidate_participant_key.entityId.value[3] = 0xc1;
 }
 
 TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok)
@@ -102,6 +103,8 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok)
     ASSERT_TRUE(local_identity_handle != nullptr);
     AuthenticationPluginTest::check_local_identity_handle(*local_identity_handle);
     ASSERT_TRUE(adjusted_participant_key != GUID_t::unknown());
+
+    ASSERT_TRUE(plugin->return_identity_handle(local_identity_handle, exception));
 }
 
 TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_validation)
@@ -135,7 +138,7 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
 {
     ASSERT_TRUE(plugin != nullptr);
 
-    IdentityHandle* local_identity_handle = nullptr;
+    IdentityHandle* local_identity_handle1 = nullptr;
     GUID_t adjusted_participant_key;
     uint32_t domain_id = 0;
     RTPSParticipantAttributes participant_attr;
@@ -145,7 +148,7 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
 
     participant_attr.properties = get_valid_policy();
 
-    result = plugin->validate_local_identity(&local_identity_handle,
+    result = plugin->validate_local_identity(&local_identity_handle1,
             adjusted_participant_key,
             domain_id,
             participant_attr,
@@ -153,29 +156,53 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
             exception);
 
     ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK);
-    ASSERT_TRUE(local_identity_handle != nullptr);
-    AuthenticationPluginTest::check_local_identity_handle(*local_identity_handle);
+    ASSERT_TRUE(local_identity_handle1 != nullptr);
+    AuthenticationPluginTest::check_local_identity_handle(*local_identity_handle1);
 
-    IdentityHandle* remote_identity_handle = nullptr;
-    IdentityToken remote_identity_token;
+    IdentityHandle* local_identity_handle2 = nullptr;
+    result = plugin->validate_local_identity(&local_identity_handle2,
+            adjusted_participant_key,
+            domain_id,
+            participant_attr,
+            candidate_participant_key,
+            exception);
+
+    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK);
+    ASSERT_TRUE(local_identity_handle2 != nullptr);
+    AuthenticationPluginTest::check_local_identity_handle(*local_identity_handle2);
+
+    IdentityHandle* remote_identity_handle1 = nullptr;
+    IdentityToken remote_identity_token1 = generate_remote_identity_token_ok(*local_identity_handle1);
     GUID_t remote_participant_key;
 
-    result = plugin->validate_remote_identity(&remote_identity_handle,
-            *local_identity_handle,
-            remote_identity_token,
+    result = plugin->validate_remote_identity(&remote_identity_handle1,
+            *local_identity_handle1,
+            std::move(remote_identity_token1),
             remote_participant_key,
             exception);
 
-    ASSERT_TRUE(remote_identity_handle != nullptr);
-    AuthenticationPluginTest::check_remote_identity_handle(*remote_identity_handle);
+    ASSERT_TRUE(remote_identity_handle1 != nullptr);
+    AuthenticationPluginTest::check_remote_identity_handle(*remote_identity_handle1);
+
+    IdentityHandle* remote_identity_handle2 = nullptr;
+    IdentityToken remote_identity_token2 = generate_remote_identity_token_ok(*local_identity_handle2);
+
+    result = plugin->validate_remote_identity(&remote_identity_handle2,
+            *local_identity_handle2,
+            std::move(remote_identity_token2),
+            remote_participant_key,
+            exception);
+
+    ASSERT_TRUE(remote_identity_handle2 != nullptr);
+    AuthenticationPluginTest::check_remote_identity_handle(*remote_identity_handle2);
 
     HandshakeHandle* handshake_handle = nullptr;
     HandshakeMessageToken *handshake_message = nullptr;
 
     result = plugin->begin_handshake_request(&handshake_handle,
             &handshake_message,
-            *local_identity_handle,
-            *remote_identity_handle,
+            *local_identity_handle1,
+            *remote_identity_handle1,
             exception);
 
     ASSERT_TRUE(result == ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE);
@@ -189,8 +216,8 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     result = plugin->begin_handshake_reply(&handshake_handle_reply,
             &handshake_message_reply,
             HandshakeMessageToken(*handshake_message),
-            *remote_identity_handle,
-            *local_identity_handle,
+            *remote_identity_handle2,
+            *local_identity_handle2,
             exception);
 
     ASSERT_TRUE(result == ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE);
@@ -224,6 +251,15 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     SharedSecretHandle* sharedsecret2 = plugin->get_shared_secret(*handshake_handle_reply, exception);
     ASSERT_TRUE(sharedsecret2 != nullptr);
     check_shared_secrets(*sharedsecret1, *sharedsecret2);
+
+    ASSERT_TRUE(plugin->return_sharedsecret_handle(sharedsecret2, exception));
+    ASSERT_TRUE(plugin->return_sharedsecret_handle(sharedsecret1, exception));
+    ASSERT_TRUE(plugin->return_handshake_handle(handshake_handle_reply, exception));
+    ASSERT_TRUE(plugin->return_handshake_handle(handshake_handle, exception));
+    ASSERT_TRUE(plugin->return_identity_handle(remote_identity_handle2, exception));
+    ASSERT_TRUE(plugin->return_identity_handle(remote_identity_handle1, exception));
+    ASSERT_TRUE(plugin->return_identity_handle(local_identity_handle2, exception));
+    ASSERT_TRUE(plugin->return_identity_handle(local_identity_handle1, exception));
 }
 
 #endif // _UNITTEST_SECURITY_AUTHENTICATION_AUTHENTICATIONPLUGINTESTS_HPP_

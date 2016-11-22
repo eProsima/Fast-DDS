@@ -121,6 +121,27 @@ inline bool CDRMessage::readUInt32(CDRMessage_t* msg,uint32_t* ulo) {
     return true;
 }
 
+inline bool CDRMessage::readInt64(CDRMessage_t* msg, int64_t* lolo)
+{
+    if(msg->pos+8 > msg->length)
+        return false;
+
+    octet* dest = (octet*)lolo;
+    if(msg->msg_endian == DEFAULT_ENDIAN)
+    {
+        for(uint8_t i = 0; i < 8; ++i)
+            dest[i] = msg->buffer[msg->pos+i];
+
+        msg->pos+=8;
+    }
+    else
+    {
+        readDataReversed(msg, dest, 8);
+    }
+
+    return true;
+}
+
 inline bool CDRMessage::readSequenceNumber(CDRMessage_t* msg,SequenceNumber_t* sn) {
     if(msg->pos+8>msg->length)
         return false;
@@ -651,7 +672,7 @@ inline bool CDRMessage::addString(CDRMessage_t*msg, const std::string& in_str)
 
 inline bool CDRMessage::addParameterSampleIdentity(CDRMessage_t *msg, const SampleIdentity &sample_id)
 {
-    if(msg->pos + 28 >= msg->max_size)
+    if(msg->pos + 28 > msg->max_size)
     {
         return false;
     }
@@ -667,45 +688,108 @@ inline bool CDRMessage::addParameterSampleIdentity(CDRMessage_t *msg, const Samp
 
 inline bool CDRMessage::addProperty(CDRMessage_t* msg, const Property& property)
 {
+    assert(msg);
+
     if(property.propagate())
     {
-        return CDRMessage::addString(msg, property.name()) &&
-            CDRMessage::addString(msg, property.value());
+        if(!CDRMessage::addString(msg, property.name()))
+            return false;
+        if(!CDRMessage::addString(msg, property.value()))
+            return false;
     }
+
+    return true;
+}
+
+inline bool CDRMessage::readProperty(CDRMessage_t* msg, Property& property)
+{
+    assert(msg);
+
+    if(!CDRMessage::readString(msg, &property.name()))
+        return false;
+    if(!CDRMessage::readString(msg, &property.value()))
+        return false;
 
     return true;
 }
 
 inline bool CDRMessage::addBinaryProperty(CDRMessage_t* msg, const BinaryProperty& binary_property)
 {
+    assert(msg);
+
     if(binary_property.propagate())
-        return CDRMessage::addString(msg, binary_property.name()) &&
-            CDRMessage::addOctetVector(msg, &binary_property.value());
+    {
+        if(!CDRMessage::addString(msg, binary_property.name()))
+            return false;
+        if(!CDRMessage::addOctetVector(msg, &binary_property.value()))
+            return false;
+    }
+
+    return true;
+}
+
+inline bool CDRMessage::readBinaryProperty(CDRMessage_t* msg, BinaryProperty& binary_property)
+{
+    assert(msg);
+
+    if(!CDRMessage::readString(msg, &binary_property.name()))
+        return false;
+    if(!CDRMessage::readOctetVector(msg, &binary_property.value()))
+        return false;
+    binary_property.propagate(true);
 
     return true;
 }
 
 inline bool CDRMessage::addPropertySeq(CDRMessage_t* msg, const PropertySeq& properties)
 {
+    assert(msg);
+
     bool returnedValue = false;
 
-    if(msg->pos + 4 <  msg->max_size)
+    if(msg->pos + 4 <=  msg->max_size)
     {
-        if(CDRMessage::addUInt32(msg, (uint32_t)properties.size()))
+        uint32_t number_to_serialize = 0;
+        for(auto it = properties.begin(); it != properties.end(); ++it)
+            if(it->propagate())
+                ++number_to_serialize;
+
+        if(CDRMessage::addUInt32(msg, number_to_serialize))
         {
+            returnedValue = true;
             for(auto it = properties.begin(); returnedValue && it != properties.end(); ++it)
-                returnedValue = CDRMessage::addProperty(msg, *it);
+                if(it->propagate())
+                    returnedValue = CDRMessage::addProperty(msg, *it);
         }
     }
 
     return returnedValue;
 }
 
+inline bool CDRMessage::readPropertySeq(CDRMessage_t* msg, PropertySeq& properties)
+{
+    assert(msg);
+
+    uint32_t length = 0;
+    if(!CDRMessage::readUInt32(msg, &length))
+        return false;
+
+    properties.resize(length);
+    bool returnedValue = true;
+    for(uint32_t i = 0; returnedValue && i < length; ++i)
+        returnedValue = CDRMessage::readProperty(msg, properties.at(i));
+
+    return returnedValue;
+
+}
+
 inline bool CDRMessage::addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties)
 {
+    assert(msg);
+
     bool returnedValue = false;
 
-    if(msg->pos + 4 <  msg->max_size)
+    if(msg->pos + 4 <=  msg->max_size)
     {
         uint32_t number_to_serialize = 0;
         for(auto it = binary_properties.begin(); it != binary_properties.end(); ++it)
@@ -726,9 +810,11 @@ inline bool CDRMessage::addBinaryPropertySeq(CDRMessage_t* msg, const BinaryProp
 
 inline bool CDRMessage::addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties, const std::string& property_limit)
 {
+    assert(msg);
+
     bool returnedValue = false;
 
-    if(msg->pos + 4 <  msg->max_size)
+    if(msg->pos + 4 <=  msg->max_size)
     {
         uint32_t position = 0;
         uint32_t number_to_serialize = 0;
@@ -750,6 +836,170 @@ inline bool CDRMessage::addBinaryPropertySeq(CDRMessage_t* msg, const BinaryProp
     }
 
     return returnedValue;
+}
+
+inline bool CDRMessage::readBinaryPropertySeq(CDRMessage_t* msg, BinaryPropertySeq& binary_properties)
+{
+    assert(msg);
+
+    uint32_t length = 0;
+    if(!CDRMessage::readUInt32(msg, &length))
+        return false;
+
+    binary_properties.resize(length);
+    bool returnedValue = true;
+    for(uint32_t i = 0; returnedValue && i < length; ++i)
+        returnedValue = CDRMessage::readBinaryProperty(msg, binary_properties.at(i));
+
+    return returnedValue;
+}
+
+inline bool CDRMessage::addDataHolder(CDRMessage_t* msg, const DataHolder& data_holder)
+{
+    assert(msg);
+
+    if(!CDRMessage::addString(msg, data_holder.class_id()))
+        return false;
+    if(!CDRMessage::addPropertySeq(msg, data_holder.properties()))
+        return false;
+    if(!CDRMessage::addBinaryPropertySeq(msg, data_holder.binary_properties()))
+        return false;
+
+    return true;
+}
+
+inline bool CDRMessage::readDataHolder(CDRMessage_t* msg, DataHolder& data_holder)
+{
+    assert(msg);
+
+    if(!CDRMessage::readString(msg, &data_holder.class_id()))
+        return false;
+    if(!CDRMessage::readPropertySeq(msg, data_holder.properties()))
+        return false;
+    if(!CDRMessage::readBinaryPropertySeq(msg, data_holder.binary_properties()))
+        return false;
+
+    return true;
+
+}
+
+inline bool CDRMessage::addDataHolderSeq(CDRMessage_t* msg, const DataHolderSeq& data_holders)
+{
+    assert(msg);
+
+    bool returnedValue = false;
+
+    if(msg->pos + 4 <=  msg->max_size)
+    {
+        if(CDRMessage::addUInt32(msg, data_holders.size()))
+        {
+            returnedValue = true;
+            for(auto data_holder = data_holders.begin(); returnedValue && data_holder != data_holders.end(); ++data_holder)
+                returnedValue = CDRMessage::addDataHolder(msg, *data_holder);
+        }
+    }
+
+    return returnedValue;
+}
+
+inline bool CDRMessage::readDataHolderSeq(CDRMessage_t* msg, DataHolderSeq& data_holders)
+{
+    assert(msg);
+
+    uint32_t length = 0;
+    if(!CDRMessage::readUInt32(msg, &length))
+        return false;
+
+    data_holders.resize(length);
+    bool returnedValue = true;
+    for(uint32_t i = 0; returnedValue && i < length; ++i)
+        returnedValue = CDRMessage::readDataHolder(msg, data_holders.at(i));
+
+    return returnedValue;
+}
+
+inline bool CDRMessage::addMessageIdentity(CDRMessage_t* msg, const ::security::MessageIdentity& message_identity)
+{
+    assert(msg);
+
+    if(!CDRMessage::addData(msg, message_identity.source_guid().guidPrefix.value, GuidPrefix_t::size))
+        return false;
+    if(!CDRMessage::addData(msg, message_identity.source_guid().entityId.value, EntityId_t::size))
+        return false;
+    if(!CDRMessage::addInt64(msg, message_identity.sequence_number()))
+        return false;
+
+    return true;
+}
+
+inline bool CDRMessage::readMessageIdentity(CDRMessage_t* msg, ::security::MessageIdentity& message_identity)
+{
+    assert(msg);
+
+    if(!CDRMessage::readData(msg, message_identity.source_guid().guidPrefix.value, GuidPrefix_t::size))
+        return false;
+    if(!CDRMessage::readData(msg, message_identity.source_guid().entityId.value, EntityId_t::size))
+        return false;
+    if(!CDRMessage::readInt64(msg, &message_identity.sequence_number()))
+        return false;
+
+    return true;
+}
+
+inline bool CDRMessage::addParticipantGenericMessage(CDRMessage_t* msg, const ::security::ParticipantGenericMessage& message)
+{
+    assert(msg);
+
+    if(!CDRMessage::addMessageIdentity(msg, message.message_identity()))
+        return false;
+    if(!CDRMessage::addMessageIdentity(msg, message.related_message_identity()))
+        return false;
+    if(!CDRMessage::addData(msg, message.destination_participant_key().guidPrefix.value, GuidPrefix_t::size))
+        return false;
+    if(!CDRMessage::addData(msg, message.destination_participant_key().entityId.value, EntityId_t::size))
+        return false;
+    if(!CDRMessage::addData(msg, message.destination_endpoint_key().guidPrefix.value, GuidPrefix_t::size))
+        return false;
+    if(!CDRMessage::addData(msg, message.destination_endpoint_key().entityId.value, EntityId_t::size))
+        return false;
+    if(!CDRMessage::addData(msg, message.source_endpoint_key().guidPrefix.value, GuidPrefix_t::size))
+        return false;
+    if(!CDRMessage::addData(msg, message.source_endpoint_key().entityId.value, EntityId_t::size))
+        return false;
+    if(!CDRMessage::addString(msg, message.message_class_id()))
+        return false;
+    if(!CDRMessage::addDataHolderSeq(msg, message.message_data()))
+        return false;
+
+    return true;
+}
+
+inline bool CDRMessage::readParticipantGenericMessage(CDRMessage_t* msg, ::security::ParticipantGenericMessage& message)
+{
+    assert(msg);
+
+    if(!CDRMessage::readMessageIdentity(msg, message.message_identity()))
+        return false;
+    if(!CDRMessage::readMessageIdentity(msg, message.related_message_identity()))
+        return false;
+    if(!CDRMessage::readData(msg, message.destination_participant_key().guidPrefix.value, GuidPrefix_t::size))
+        return false;
+    if(!CDRMessage::readData(msg, message.destination_participant_key().entityId.value, EntityId_t::size))
+        return false;
+    if(!CDRMessage::readData(msg, message.destination_endpoint_key().guidPrefix.value, GuidPrefix_t::size))
+        return false;
+    if(!CDRMessage::readData(msg, message.destination_endpoint_key().entityId.value, EntityId_t::size))
+        return false;
+    if(!CDRMessage::readData(msg, message.source_endpoint_key().guidPrefix.value, GuidPrefix_t::size))
+        return false;
+    if(!CDRMessage::readData(msg, message.source_endpoint_key().entityId.value, EntityId_t::size))
+        return false;
+    if(!CDRMessage::readString(msg, &message.message_class_id()))
+        return false;
+    if(!CDRMessage::readDataHolderSeq(msg, message.message_data()))
+        return false;
+
+    return true;
 }
 
 }

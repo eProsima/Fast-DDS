@@ -28,6 +28,11 @@
 #include <cassert>
 #include <algorithm>
 
+#define S1(x) #x
+#define S2(x) S1(x)
+#define LOCATION " (" __FILE__ ":" S2(__LINE__) ")"
+#define _SecurityException_(str) SecurityException(std::string(str) + LOCATION)
+
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
 using namespace ::security;
@@ -76,7 +81,8 @@ unsigned char* BN_serialize(const BIGNUM* bn, const unsigned char* orig_pointer,
     return nullptr;
 }
 
-const unsigned char* BN_deserialize(BIGNUM** bn, const unsigned char* orig_pointer, const unsigned char* current_pointer)
+const unsigned char* BN_deserialize(BIGNUM** bn, const unsigned char* orig_pointer, const unsigned char* current_pointer,
+        SecurityException& exception)
 {
     assert(bn);
     assert(orig_pointer);
@@ -113,228 +119,17 @@ const unsigned char* BN_deserialize(BIGNUM** bn, const unsigned char* orig_point
             return pointer + length;
         }
         else
-            logError(AUTHENTICATION, "Cannot deserialize DH");
+            exception = _SecurityException_("Cannot deserialize DH");
 
         BN_free(bnn);
     }
     else
-        logError(AUTHENTICATION, "OpenSSL library cannot create bignum");
+        exception = _SecurityException_("OpenSSL library cannot create bignum");
 
     return nullptr;
 }
 
-// Auxiliary functions
-X509_STORE* load_identity_ca(const std::string& identity_ca, bool& there_are_crls)
-{
-    X509_STORE* store = X509_STORE_new();
-
-    if(store != nullptr)
-    {
-        OpenSSL_add_all_algorithms();
-
-        if(identity_ca.size() >= 7 && identity_ca.compare(0, 7, "file://") == 0)
-        {
-            BIO* in = BIO_new(BIO_s_file());
-
-            if(in != nullptr)
-            {
-                if(BIO_read_filename(in, identity_ca.substr(7).c_str()) > 0)
-                {
-                    STACK_OF(X509_INFO)* inf = PEM_X509_INFO_read_bio(in, NULL, NULL, NULL);
-
-                    if(inf != nullptr)
-                    {
-                        int i, count = 0;
-                        there_are_crls = false;
-
-                        for (i = 0; i < sk_X509_INFO_num(inf); i++)
-                        {
-                            X509_INFO* itmp = sk_X509_INFO_value(inf, i);
-
-                            if (itmp->x509)
-                            {
-                                X509_STORE_add_cert(store, itmp->x509);
-                                count++;
-                            }
-                            if (itmp->crl)
-                            {
-                                X509_STORE_add_crl(store, itmp->crl);
-                                count++;
-                                there_are_crls = true;
-                            }
-                        }
-
-                        sk_X509_INFO_pop_free(inf, X509_INFO_free);
-                        BIO_free(in);
-
-                        return store;
-                    }
-                    else
-                        logError(AUTHENTICATION, "OpenSSL library cannot read X509 info in file" << identity_ca.substr(7));
-
-                    sk_X509_INFO_pop_free(inf, X509_INFO_free);
-                }
-                else
-                    logError(AUTHENTICATION, "OpenSSL library cannot read file " << identity_ca.substr(7));
-
-                BIO_free(in);
-            }
-            else
-                logError(AUTHENTICATION, "OpenSSL library cannot allocate file");
-        }
-
-        X509_STORE_free(store);
-    }
-    else
-        logError(AUTHENTICATION, "Creation of X509 storage");
-
-    return nullptr;
-}
-
-X509* load_certificate(const std::string& identity_cert)
-{
-    X509* returnedValue = nullptr;
-
-    if(identity_cert.size() >= 7 && identity_cert.compare(0, 7, "file://") == 0)
-    {
-        BIO* in = BIO_new(BIO_s_file());
-
-        if(in != nullptr)
-        {
-            if(BIO_read_filename(in, identity_cert.substr(7).c_str()) > 0)
-            {
-                returnedValue = PEM_read_bio_X509_AUX(in, NULL, NULL, NULL);
-            }
-            else
-                logError(AUTHENTICATION, "OpenSSL library cannot read file " << identity_cert.substr(7));
-
-            BIO_free(in);
-        }
-        else
-            logError(AUTHENTICATION, "OpenSSL library cannot allocate file");
-    }
-
-    return returnedValue;
-}
-
-X509* load_certificate(const std::vector<uint8_t>& data)
-{
-    X509* returnedValue = nullptr;
-    BIO* cid = BIO_new_mem_buf(data.data(), data.size());
-
-    if(cid != nullptr)
-    {
-        returnedValue = PEM_read_bio_X509_AUX(cid, NULL, NULL, NULL);
-    }
-
-    return returnedValue;
-}
-
-bool verify_certificate(X509_STORE* store, X509* cert, const bool there_are_crls)
-{
-    assert(store);
-    assert(cert);
-
-    bool returnedValue = false;
-
-    X509_STORE_CTX *ctx = X509_STORE_CTX_new();
-
-    if(ctx != nullptr)
-    {
-        unsigned long flags = there_are_crls ? X509_V_FLAG_CRL_CHECK : 0;
-        X509_STORE_CTX_init(ctx, store, cert, NULL);
-        X509_STORE_CTX_set_flags(ctx, flags | X509_V_FLAG_X509_STRICT |
-                X509_V_FLAG_CHECK_SS_SIGNATURE | X509_V_FLAG_POLICY_CHECK);
-
-        if(X509_verify_cert(ctx) > 0 && X509_STORE_CTX_get_error(ctx) == X509_V_OK)
-            returnedValue = true;
-        else
-            logError(AUTHENTICATION, "Invalidation error of certificate  (" << X509_STORE_CTX_get_error(ctx) << ")");
-
-        X509_STORE_CTX_free(ctx);
-    }
-
-    return returnedValue;
-}
-
-int private_key_password_callback(char* buf, int bufsize, int verify, const char* password)
-{
-    assert(password != nullptr);
-
-    int returnedValue = strlen(password);
-
-    if(returnedValue > bufsize)
-        returnedValue = bufsize;
-
-    memcpy(buf, password, returnedValue);
-    return returnedValue;
-}
-
-EVP_PKEY* load_private_key(X509* certificate, const std::string& file, const std::string& password)
-{
-    EVP_PKEY* returnedValue = nullptr;
-    if(file.size() >= 7 && file.compare(0, 7, "file://") == 0)
-    {
-        BIO* in = BIO_new(BIO_s_file());
-
-        if(in != nullptr)
-        {
-            if(BIO_read_filename(in, file.substr(7).c_str()) > 0)
-            {
-                returnedValue = PEM_read_bio_PrivateKey(in, NULL, (pem_password_cb*)private_key_password_callback, (void*)password.c_str());
-
-                // Verify private key.
-                if(!X509_check_private_key(certificate, returnedValue))
-                {
-                    logError(AUTHENTICATION, "Error verifying private key " << file.substr(7));
-                    EVP_PKEY_free(returnedValue);
-                    returnedValue = nullptr;
-                }
-            }
-            else
-                logError(AUTHENTICATION, "OpenSSL library cannot read file " << file.substr(7));
-
-            BIO_free(in);
-        }
-        else
-            logError(AUTHENTICATION, "OpenSSL library cannot allocate file");
-    }
-
-    return returnedValue;
-}
-
-bool store_certificate_in_buffer(X509* certificate, BUF_MEM** ptr)
-{
-    bool returnedValue = false;
-
-    BIO *out = BIO_new(BIO_s_mem());
-
-    if(out != nullptr)
-    {
-        if(PEM_write_bio_X509(out, certificate) > 0 )
-        {
-            BIO_get_mem_ptr(out, ptr);
-
-            if(*ptr != nullptr)
-            {
-                BIO_set_close(out, BIO_NOCLOSE);
-                returnedValue = true;
-            }
-            else
-                logError(AUTHENTICATION, "OpenSSL library cannot retrieve mem ptr");
-        }
-        else
-            logError(AUTHENTICATION, "OpenSSL library cannot write cert");
-
-        BIO_free(out);
-    }
-    else
-        logError(AUTHENTICATION, "OpenSSL library cannot allocate mem");
-
-    return returnedValue;
-}
-
-bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm)
+bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm, SecurityException& exception)
 {
     bool returnedValue = false;
     BUF_MEM* ptr = nullptr;
@@ -362,22 +157,256 @@ bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm
                     }
                 }
                 else
-                    logError(AUTHENTICATION, "OpenSSL library cannot retrieve mem ptr");
+                    exception = _SecurityException_("OpenSSL library cannot retrieve mem ptr");
             }
         }
         else
-            logError(AUTHENTICATION, "OpenSSL library cannot write cert");
+            exception = _SecurityException_("OpenSSL library cannot write cert");
 
         BIO_free(out);
     }
     else
-        logError(AUTHENTICATION, "OpenSSL library cannot allocate mem");
+        exception = _SecurityException_("OpenSSL library cannot allocate mem");
+
+    return returnedValue;
+}
+
+// Auxiliary functions
+X509_STORE* load_identity_ca(const std::string& identity_ca, bool& there_are_crls,
+        std::string& ca_sn, std::string& ca_algo, SecurityException& exception)
+{
+    X509_STORE* store = X509_STORE_new();
+
+    if(store != nullptr)
+    {
+        if(identity_ca.size() >= 7 && identity_ca.compare(0, 7, "file://") == 0)
+        {
+            BIO* in = BIO_new(BIO_s_file());
+
+            if(in != nullptr)
+            {
+                if(BIO_read_filename(in, identity_ca.substr(7).c_str()) > 0)
+                {
+                    STACK_OF(X509_INFO)* inf = PEM_X509_INFO_read_bio(in, NULL, NULL, NULL);
+
+                    if(inf != nullptr)
+                    {
+                        int i, count = 0;
+                        there_are_crls = false;
+
+                        for (i = 0; i < sk_X509_INFO_num(inf); i++)
+                        {
+                            X509_INFO* itmp = sk_X509_INFO_value(inf, i);
+
+                            if (itmp->x509)
+                            {
+                                // Retrieve subject name for future use.
+                                if(ca_sn.empty())
+                                {
+                                    X509_NAME* ca_subject_name = X509_get_subject_name(itmp->x509);
+                                    assert(ca_subject_name != nullptr);
+                                    char* ca_subject_name_str = X509_NAME_oneline(ca_subject_name, 0, 0);
+                                    assert(ca_subject_name_str != nullptr);
+                                    ca_sn = ca_subject_name_str;
+                                    CRYPTO_free(ca_subject_name_str);
+                                }
+
+                                // Retrieve signature algorithm
+                                if(ca_algo.empty())
+                                {
+                                    if(get_signature_algorithm(itmp->x509, ca_algo, exception))
+                                    {
+                                        X509_STORE_add_cert(store, itmp->x509);
+                                        count++;
+                                    }
+                                }
+                                else
+                                {
+                                    X509_STORE_add_cert(store, itmp->x509);
+                                    count++;
+                                }
+                            }
+                            if (itmp->crl)
+                            {
+                                X509_STORE_add_crl(store, itmp->crl);
+                                there_are_crls = true;
+                            }
+                        }
+
+                        if(count > 0)
+                        {
+                            sk_X509_INFO_pop_free(inf, X509_INFO_free);
+                            BIO_free(in);
+
+                            return store;
+                        }
+                    }
+                    else
+                        exception = _SecurityException_(std::string("OpenSSL library cannot read X509 info in file ") + identity_ca.substr(7));
+
+                    sk_X509_INFO_pop_free(inf, X509_INFO_free);
+                }
+                else
+                    exception = _SecurityException_(std::string("OpenSSL library cannot read file ") + identity_ca.substr(7));
+
+                BIO_free(in);
+            }
+            else
+                exception = _SecurityException_("OpenSSL library cannot allocate file");
+        }
+
+        X509_STORE_free(store);
+    }
+    else
+        exception = _SecurityException_("Creation of X509 storage");
+
+    return nullptr;
+}
+
+X509* load_certificate(const std::string& identity_cert, SecurityException& exception)
+{
+    X509* returnedValue = nullptr;
+
+    if(identity_cert.size() >= 7 && identity_cert.compare(0, 7, "file://") == 0)
+    {
+        BIO* in = BIO_new(BIO_s_file());
+
+        if(in != nullptr)
+        {
+            if(BIO_read_filename(in, identity_cert.substr(7).c_str()) > 0)
+            {
+                returnedValue = PEM_read_bio_X509_AUX(in, NULL, NULL, NULL);
+            }
+            else
+                exception = _SecurityException_(std::string("OpenSSL library cannot read file ") + identity_cert.substr(7));
+
+            BIO_free(in);
+        }
+        else
+            exception = _SecurityException_("OpenSSL library cannot allocate file");
+    }
+
+    return returnedValue;
+}
+
+X509* load_certificate(const std::vector<uint8_t>& data)
+{
+    X509* returnedValue = nullptr;
+    BIO* cid = BIO_new_mem_buf(data.data(), data.size());
+
+    if(cid != nullptr)
+    {
+        returnedValue = PEM_read_bio_X509_AUX(cid, NULL, NULL, NULL);
+        BIO_free(cid);
+    }
+
+    return returnedValue;
+}
+
+bool verify_certificate(X509_STORE* store, X509* cert, const bool there_are_crls)
+{
+    assert(store);
+    assert(cert);
+
+    bool returnedValue = false;
+
+    X509_STORE_CTX ctx;
+
+    unsigned long flags = there_are_crls ? X509_V_FLAG_CRL_CHECK : 0;
+    X509_STORE_CTX_init(&ctx, store, cert, NULL);
+    X509_STORE_CTX_set_flags(&ctx, flags | X509_V_FLAG_X509_STRICT |
+            X509_V_FLAG_CHECK_SS_SIGNATURE | X509_V_FLAG_POLICY_CHECK);
+
+    if(X509_verify_cert(&ctx) > 0 && X509_STORE_CTX_get_error(&ctx) == X509_V_OK)
+        returnedValue = true;
+    else
+        logWarning(SECURITY_AUTHENTICATION, "Invalidation error of certificate  (" << X509_STORE_CTX_get_error(&ctx) << ")");
+
+    X509_STORE_CTX_cleanup(&ctx);
+
+    return returnedValue;
+}
+
+int private_key_password_callback(char* buf, int bufsize, int verify, const char* password)
+{
+    assert(password != nullptr);
+
+    int returnedValue = strlen(password);
+
+    if(returnedValue > bufsize)
+        returnedValue = bufsize;
+
+    memcpy(buf, password, returnedValue);
+    return returnedValue;
+}
+
+EVP_PKEY* load_private_key(X509* certificate, const std::string& file, const std::string& password,
+        SecurityException& exception)
+{
+    EVP_PKEY* returnedValue = nullptr;
+    if(file.size() >= 7 && file.compare(0, 7, "file://") == 0)
+    {
+        BIO* in = BIO_new(BIO_s_file());
+
+        if(in != nullptr)
+        {
+            if(BIO_read_filename(in, file.substr(7).c_str()) > 0)
+            {
+                returnedValue = PEM_read_bio_PrivateKey(in, NULL, (pem_password_cb*)private_key_password_callback, (void*)password.c_str());
+
+                // Verify private key.
+                if(!X509_check_private_key(certificate, returnedValue))
+                {
+                    exception = _SecurityException_(std::string("Error verifying private key ") + file.substr(7));
+                    EVP_PKEY_free(returnedValue);
+                    returnedValue = nullptr;
+                }
+            }
+            else
+                exception = _SecurityException_(std::string("OpenSSL library cannot read file ") + file.substr(7));
+
+            BIO_free(in);
+        }
+        else
+            exception = _SecurityException_("OpenSSL library cannot allocate file");
+    }
+
+    return returnedValue;
+}
+
+bool store_certificate_in_buffer(X509* certificate, BUF_MEM** ptr, SecurityException& exception)
+{
+    bool returnedValue = false;
+
+    BIO *out = BIO_new(BIO_s_mem());
+
+    if(out != nullptr)
+    {
+        if(PEM_write_bio_X509(out, certificate) > 0 )
+        {
+            BIO_get_mem_ptr(out, ptr);
+
+            if(*ptr != nullptr)
+            {
+                BIO_set_close(out, BIO_NOCLOSE);
+                returnedValue = true;
+            }
+            else
+                exception = _SecurityException_("OpenSSL library cannot retrieve mem ptr");
+        }
+        else
+            exception = _SecurityException_("OpenSSL library cannot write cert");
+
+        BIO_free(out);
+    }
+    else
+        exception = _SecurityException_("OpenSSL library cannot allocate mem");
 
     return returnedValue;
 }
 
 bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, const size_t data_length,
-        std::vector<uint8_t>& signature)
+        std::vector<uint8_t>& signature, SecurityException& exception)
 {
     assert(private_key);
     assert(data);
@@ -402,16 +431,16 @@ bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, const size_t 
                     returnedValue = true; 
                 }
                 else
-                    logError(AUTHENTICATION, "Cannot finish signature (" << ERR_get_error() << ")");
+                    exception = _SecurityException_(std::string("Cannot finish signature (") + std::to_string(ERR_get_error()) + std::string(")"));
             }
             else
-                logError(AUTHENTICATION, "Cannot retrieve signature length (" << ERR_get_error() << ")");
+                exception = _SecurityException_(std::string("Cannot retrieve signature length (") + std::to_string(ERR_get_error()) + std::string(")"));
         }
         else
-            logError(AUTHENTICATION, "Cannot sign data (" << ERR_get_error() << ")");
+            exception = _SecurityException_(std::string("Cannot sign data (") + std::to_string(ERR_get_error()) + std::string(")"));
     }
     else
-        logError(AUTHENTICATION, "Cannot init signature (" << ERR_get_error() << ")");
+        exception = _SecurityException_(std::string("Cannot init signature (") + std::to_string(ERR_get_error()) + std::string(")"));
 
     EVP_MD_CTX_cleanup(&ctx);
 
@@ -419,7 +448,7 @@ bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, const size_t 
 }
 
 bool check_sign_sha256(X509* certificate, const unsigned char* data, const size_t data_length,
-        const std::vector<uint8_t>& signature)
+        const std::vector<uint8_t>& signature, SecurityException& exception)
 {
     assert(certificate);
     assert(data);
@@ -440,17 +469,19 @@ bool check_sign_sha256(X509* certificate, const unsigned char* data, const size_
                 if(EVP_DigestVerifyFinal(&ctx, signature.data(), signature.size()) == 1)
                     returnedValue = true;
                 else
-                    logError(AUTHENTICATION, "Cannot finish signature check (" << ERR_get_error() << ")");
+                    logWarning(SECURITY_AUTHENTICATION, "Signature verification error (" << ERR_get_error() << ")");
             }
             else
-                logError(AUTHENTICATION, "Cannot update signature check (" << ERR_get_error() << ")");
+                exception = _SecurityException_(std::string("Cannot update signature check (") + std::to_string(ERR_get_error()) + std::string(")"));
 
         }
         else
-            logError(AUTHENTICATION, "Cannot init signature check (" << ERR_get_error() << ")");
+            exception = _SecurityException_(std::string("Cannot init signature check (") + std::to_string(ERR_get_error()) + std::string(")"));
+
+        EVP_PKEY_free(pubkey);
     }
     else
-        logError(AUTHENTICATION, "Cannot get public key from certificate");
+        exception = _SecurityException_("Cannot get public key from certificate");
 
     EVP_MD_CTX_cleanup(&ctx);
 
@@ -458,7 +489,7 @@ bool check_sign_sha256(X509* certificate, const unsigned char* data, const size_
 }
 
 
-X509_CRL* load_crl(const std::string& identity_crl)
+X509_CRL* load_crl(const std::string& identity_crl, SecurityException& exception)
 {
     X509_CRL* returnedValue = nullptr;
 
@@ -473,33 +504,32 @@ X509_CRL* load_crl(const std::string& identity_crl)
                 returnedValue = PEM_read_bio_X509_CRL(in, NULL, NULL, NULL);
             }
             else
-                logError(AUTHENTICATION, "OpenSSL library cannot read file " << identity_crl.substr(7));
+                exception = _SecurityException_(std::string("OpenSSL library cannot read file ") + identity_crl.substr(7));
 
             BIO_free(in);
         }
         else
-            logError(AUTHENTICATION, "OpenSSL library cannot allocate file");
+            exception = _SecurityException_("OpenSSL library cannot allocate file");
     }
 
     return returnedValue;
 }
 
 bool adjust_participant_key(X509* cert, const GUID_t& candidate_participant_key,
-        GUID_t& adjusted_participant_key)
+        GUID_t& adjusted_participant_key, SecurityException& exception)
 {
     assert(cert != nullptr);
 
-    X509_NAME* cert_sn = cert->cert_info->subject;
-
+    X509_NAME* cert_sn = X509_get_subject_name(cert);
     assert(cert_sn != nullptr);
 
     unsigned long returnedValue = 0;
     unsigned char md[SHA256_DIGEST_LENGTH];
+    unsigned int length = 0;
 
-    i2d_X509_NAME(cert_sn, NULL);
-    if(!EVP_Digest(cert_sn->canon_enc, cert_sn->canon_enclen, md, NULL, EVP_sha256(), NULL))
+    if(!X509_NAME_digest(cert_sn, EVP_sha256(), md, &length) || length != SHA256_DIGEST_LENGTH)
     {
-        logError(AUTHENTICATION, "OpenSSL library cannot hash sha256");
+        exception = _SecurityException_("OpenSSL library cannot hash sha256");
         return false;
     }
 
@@ -531,7 +561,7 @@ bool adjust_participant_key(X509* cert, const GUID_t& candidate_participant_key,
 
     if(!EVP_Digest(&key, 16, md, NULL, EVP_sha256(), NULL))
     {
-        logError(AUTHENTICATION, "OpenSSL library cannot hash sha256");
+        exception = _SecurityException_("OpenSSL library cannot hash sha256");
         return false;
     }
 
@@ -560,7 +590,7 @@ int get_dh_type(const std::string& algorithm)
     return 0;
 }
 
-EVP_PKEY* generate_dh_key(int type)
+EVP_PKEY* generate_dh_key(int type, SecurityException& exception)
 {
     EVP_PKEY* keys = nullptr;
     EVP_PKEY* params = EVP_PKEY_new();
@@ -568,39 +598,46 @@ EVP_PKEY* generate_dh_key(int type)
 
     if(params != nullptr)
     {
-        int ret = 0;
+        DH* dh = nullptr;
 
         switch(type)
         {
             case EVP_PKEY_DH:
-                ret = EVP_PKEY_set1_DH(params, DH_get_2048_256());
+                dh = DH_get_2048_256();
                 break;
         };
 
-        if(ret)
+        if(dh != nullptr)
         {
-            if((context = EVP_PKEY_CTX_new(params, NULL)) != nullptr)
+            int ret = EVP_PKEY_set1_DH(params, dh);
+
+            if(ret)
             {
-                if(EVP_PKEY_keygen_init(context))
+                if((context = EVP_PKEY_CTX_new(params, NULL)) != nullptr)
                 {
-                    if(!EVP_PKEY_keygen(context, &keys))
-                        logError(AUTHENTICATION, "Cannot generate EVP key");
+                    if(EVP_PKEY_keygen_init(context))
+                    {
+                        if(!EVP_PKEY_keygen(context, &keys))
+                            exception = _SecurityException_("Cannot generate EVP key");
+                    }
+                    else
+                        exception = _SecurityException_("Cannot init EVP key");
+
+                    EVP_PKEY_CTX_free(context);
                 }
                 else
-                    logError(AUTHENTICATION, "Cannot init EVP key");
-
-                EVP_PKEY_CTX_free(context);
+                    exception = _SecurityException_("Cannot create EVP context");
             }
             else
-                logError(AUTHENTICATION, "Cannot create EVP context");
+                exception = _SecurityException_("Cannot set default paremeters");
+
+            DH_free(dh);
         }
-        else
-            logError(AUTHENTICATION, "Cannot set default paremeters");
 
         EVP_PKEY_free(params);
     }
     else
-        logError(AUTHENTICATION, "Cannot allcoate EVP parameters");
+        exception = _SecurityException_("Cannot allocate EVP parameters");
 
     /*
     EVP_PKEY_CTX* context = EVP_PKEY_CTX_new_id(type, NULL);
@@ -632,34 +669,36 @@ EVP_PKEY* generate_dh_key(int type)
                     if(EVP_PKEY_keygen_init(context))
                     {
                         if(!EVP_PKEY_keygen(context, &keys))
-                            logError(AUTHENTICATION, "Cannot generate EVP key");
+                            exception = _SecurityException_("Cannot generate EVP key");
                     }
                     else
-                        logError(AUTHENTICATION, "Cannot init EVP key");
+                        exception = _SecurityException_("Cannot init EVP key");
 
                     //EVP_PKEY_free(param);
                 }
                 else
-                    logError(AUTHENTICATION, "Cannot generate EVP parameters");
+                    exception = _SecurityException_("Cannot generate EVP parameters");
             }
             else
-                logError(AUTHENTICATION, "Cannot set EVP parameters");
+                exception = _SecurityException_("Cannot set EVP parameters");
         }
         else
-            logError(AUTHENTICATION, "Cannot init EVP context");
+            exception = _SecurityException_("Cannot init EVP context");
 
         EVP_PKEY_CTX_free(context);
     }
     else
-        logError(AUTHENTICATION, "Cannot generate EVP context");
+        exception = _SecurityException_("Cannot generate EVP context");
     */
 
 
     return keys;
 }
 
-bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer)
+bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer,
+        SecurityException& exception)
 {
+    bool returnedValue = false;
     DH* dh = EVP_PKEY_get1_DH(dhkey);
 
     if(dh != nullptr)
@@ -678,24 +717,26 @@ bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer)
             {
                 if((pointer = BN_serialize(pub_key, buffer.data(), pointer)) != nullptr)
                 {
-                    return true;
+                    returnedValue =  true;
                 }
                 else
-                    logError(AUTHENTICATION, "Cannot serialize public key");
+                    exception = _SecurityException_("Cannot serialize public key");
             }
             else
-                logError(AUTHENTICATION, "Cannot serialize g");
+                exception = _SecurityException_("Cannot serialize g");
         }
         else
-            logError(AUTHENTICATION, "Cannot serialize p");
+            exception = _SecurityException_("Cannot serialize p");
+
+        DH_free(dh);
     }
     else
-        logError(AUTHENTICATION, "OpenSSL library doesn't retrieve DH");
+        exception = _SecurityException_("OpenSSL library doesn't retrieve DH");
 
-    return false;
+    return returnedValue;
 }
 
-EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer)
+EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer, SecurityException& exception)
 {
     DH* dh = DH_new();
 
@@ -703,11 +744,11 @@ EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer)
     {
         const unsigned char* pointer = buffer.data();
 
-        if((pointer = BN_deserialize(&dh->p, buffer.data(), pointer)) != nullptr)
+        if((pointer = BN_deserialize(&dh->p, buffer.data(), pointer, exception)) != nullptr)
         {
-            if((pointer = BN_deserialize(&dh->g, buffer.data(), pointer)) != nullptr)
+            if((pointer = BN_deserialize(&dh->g, buffer.data(), pointer, exception)) != nullptr)
             {
-                if((pointer = BN_deserialize(&dh->pub_key, buffer.data(), pointer)) != nullptr)
+                if((pointer = BN_deserialize(&dh->pub_key, buffer.data(), pointer, exception)) != nullptr)
                 {
                     EVP_PKEY* key = EVP_PKEY_new();
 
@@ -718,31 +759,31 @@ EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer)
                             return key;
                         }
                         else
-                            logError(AUTHENTICATION, "OpenSSL library cannot set dh in pkey");
+                            exception = _SecurityException_("OpenSSL library cannot set dh in pkey");
 
                         EVP_PKEY_free(key);
                     }
                     else
-                        logError(AUTHENTICATION, "OpenSSL library cannot create pkey");
+                        exception = _SecurityException_("OpenSSL library cannot create pkey");
                 }
                 else
-                    logError(AUTHENTICATION, "Cannot deserialize public key");
+                    exception = _SecurityException_("Cannot deserialize public key");
             }
             else
-                logError(AUTHENTICATION, "Cannot deserialize g");
+                exception = _SecurityException_("Cannot deserialize g");
         }
         else
-            logError(AUTHENTICATION, "Cannot deserialize p");
+            exception = _SecurityException_("Cannot deserialize p");
 
         DH_free(dh);
     }
     else
-        logError(AUTHENTICATION, "OpenSSL library cannot create dh");
+        exception = _SecurityException_("OpenSSL library cannot create dh");
 
     return nullptr;
 }
 
-bool generate_challenge(std::vector<uint8_t>& vector)
+bool generate_challenge(std::vector<uint8_t>& vector, SecurityException& exception)
 {
     bool returnedValue = false;
     BIGNUM bn;
@@ -756,7 +797,7 @@ bool generate_challenge(std::vector<uint8_t>& vector)
         if(BN_bn2bin(&bn, vector.data()) == len)
             returnedValue = true;
         else
-            logError(AUTHENTICATION, "OpenSSL library cannot store challenge");
+            exception = _SecurityException_("OpenSSL library cannot store challenge");
     }
 
     BN_clear_free(&bn);
@@ -764,11 +805,13 @@ bool generate_challenge(std::vector<uint8_t>& vector)
     return returnedValue;
 }
 
-SharedSecretHandle* generate_sharedsecret(EVP_PKEY* private_key, EVP_PKEY* public_key)
+SharedSecretHandle* generate_sharedsecret(EVP_PKEY* private_key, EVP_PKEY* public_key,
+        SecurityException& exception)
 {
     assert(private_key);
     assert(public_key);
 
+    SharedSecretHandle* handle = nullptr;
     EVP_PKEY_CTX* ctx = EVP_PKEY_CTX_new(private_key, NULL);
 
     if(ctx != nullptr)
@@ -787,28 +830,63 @@ SharedSecretHandle* generate_sharedsecret(EVP_PKEY* private_key, EVP_PKEY* publi
                     if(EVP_PKEY_derive(ctx, data.value().data(), &length) > 0)
                     {
                         data.value().resize(length);
-                        SharedSecretHandle* handle = new SharedSecretHandle();
+                        handle = new SharedSecretHandle();
                         (*handle)->data_.emplace_back(std::move(data));
-                        return handle;
                     }
                     else
-                        logError(AUTHENTICATION, "OpenSSL library cannot get derive");
+                        exception = _SecurityException_("OpenSSL library cannot get derive");
                 }
                 else
-                    logError(AUTHENTICATION, "OpenSSL library cannot get length");
+                    exception = _SecurityException_("OpenSSL library cannot get length");
             }
             else
-                logError(AUTHENTICATION, "OpenSSL library cannot set peer");
+                exception = _SecurityException_("OpenSSL library cannot set peer");
         }
         else
-            logError(AUTHENTICATION, "OpenSSL library cannot init derive");
+            exception = _SecurityException_("OpenSSL library cannot init derive");
 
         EVP_PKEY_CTX_free(ctx);
     }
     else
-        logError(AUTHENTICATION, "OpenSSL library cannot allocate context");
+        exception = _SecurityException_("OpenSSL library cannot allocate context");
 
-    return nullptr;
+    return handle;
+}
+
+bool generate_identity_token(PKIIdentityHandle& handle)
+{
+    Property property;
+    IdentityToken& token = handle->identity_token_;
+    token.class_id("DDS:Auth:PKI-DH:1.0");
+
+    X509_NAME* cert_sn = X509_get_subject_name(handle->cert_);
+    assert(cert_sn != nullptr);
+    char* cert_sn_str = X509_NAME_oneline(cert_sn, 0, 0);
+    assert(cert_sn_str != nullptr);
+
+    property.name("dds.cert.sn");
+    property.value() = cert_sn_str;
+    property.propagate(true);
+    token.properties().emplace_back(std::move(property));
+
+    property.name("dds.cert.algo");
+    property.value() = handle->sign_alg_;
+    property.propagate(true);
+    token.properties().emplace_back(std::move(property));
+
+    property.name("dds.ca.sn");
+    property.value() = handle->sn;
+    property.propagate(true);
+    token.properties().emplace_back(std::move(property));
+
+    property.name("dds.ca.algo");
+    property.value() = handle->algo;
+    property.propagate(true);
+    token.properties().emplace_back(std::move(property));
+
+    CRYPTO_free(cert_sn_str);
+
+    return true;
 }
 
 ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identity_handle,
@@ -824,7 +902,7 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
 
     if(PropertyPolicyHelper::length(auth_properties) == 0)
     {
-        logError(AUTHENTICATION, "Not found any dds.sec.auth.builtin.PKI-DH property");
+        exception = _SecurityException_("Not found any dds.sec.auth.builtin.PKI-DH property");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -832,7 +910,7 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
 
     if(identity_ca == nullptr)
     {
-        logError(AUTHENTICATION, "Not found dds.sec.auth.builtin.PKI-DH.identity_ca property");
+        exception = _SecurityException_("Not found dds.sec.auth.builtin.PKI-DH.identity_ca property");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -840,7 +918,7 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
 
     if(identity_cert == nullptr)
     {
-        logError(AUTHENTICATION, "Not found dds.sec.auth.builtin.PKI-DH.identity_certificate property");
+        exception = _SecurityException_("Not found dds.sec.auth.builtin.PKI-DH.identity_certificate property");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -850,7 +928,7 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
 
     if(private_key == nullptr)
     {
-        logError(AUTHENTICATION, "Not found dds.sec.auth.builtin.PKI-DH.private_key property");
+        exception = _SecurityException_("Not found dds.sec.auth.builtin.PKI-DH.private_key property");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -862,7 +940,8 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
 
     PKIIdentityHandle* ih = new PKIIdentityHandle();
 
-    (*ih)->store_ = load_identity_ca(*identity_ca, (*ih)->there_are_crls_);
+    (*ih)->store_ = load_identity_ca(*identity_ca, (*ih)->there_are_crls_, (*ih)->sn, (*ih)->algo,
+            exception);
 
     if((*ih)->store_ != nullptr)
     {
@@ -870,11 +949,12 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
 
         if(identity_crl != nullptr)
         {
-            X509_CRL* crl = load_crl(*identity_crl);
+            X509_CRL* crl = load_crl(*identity_crl, exception);
 
             if(crl != nullptr)
             {
                 X509_STORE_add_crl((*ih)->store_, crl);
+                X509_CRL_free(crl);
                 (*ih)->there_are_crls_ = true;
             }
             else
@@ -886,38 +966,36 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
 
         ERR_clear_error();
 
-        (*ih)->cert_ = load_certificate(*identity_cert);
+        (*ih)->cert_ = load_certificate(*identity_cert, exception);
 
         if((*ih)->cert_ != nullptr)
         {
             if(verify_certificate((*ih)->store_, (*ih)->cert_, (*ih)->there_are_crls_))
             {
-                if(store_certificate_in_buffer((*ih)->cert_, &(*ih)->cert_content_))
+                if(store_certificate_in_buffer((*ih)->cert_, &(*ih)->cert_content_, exception))
                 {
-                    if(get_signature_algorithm((*ih)->cert_, (*ih)->sign_alg_))
+                    if(get_signature_algorithm((*ih)->cert_, (*ih)->sign_alg_, exception))
                     {
-                        (*ih)->pkey_ = load_private_key((*ih)->cert_, *private_key, *password);
+                        (*ih)->pkey_ = load_private_key((*ih)->cert_, *private_key, *password, exception);
 
                         if((*ih)->pkey_ != nullptr)
                         {
-                            if(adjust_participant_key((*ih)->cert_, candidate_participant_key, adjusted_participant_key))
+                            if(adjust_participant_key((*ih)->cert_, candidate_participant_key, adjusted_participant_key, exception))
                             {
-                                (*ih)->participant_key_ = adjusted_participant_key;
-                                *local_identity_handle = ih;
+                                // Generate IdentityToken.
+                                if(generate_identity_token(*ih))
+                                {
+                                    (*ih)->participant_key_ = adjusted_participant_key;
+                                    *local_identity_handle = ih;
 
-                                return ValidationResult_t::VALIDATION_OK;
+                                    return ValidationResult_t::VALIDATION_OK;
+                                }
                             }
                         }
-                        else
-                            logError(AUTHENTICATION, "Invalid private key in " << *private_key);
                     }
                 }
             }
-            else
-                logError(AUTHENTICATION, "Verification failed for " << *identity_cert);
         }
-        else
-            logError(AUTHENTICATION, "Error loading file " << *identity_cert);
     }
 
     delete ih;
@@ -929,8 +1007,8 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
 
 ValidationResult_t PKIDH::validate_remote_identity(IdentityHandle** remote_identity_handle,
         const IdentityHandle& local_identity_handle,
-        const IdentityToken& remote_identity_token,
-        const GUID_t remote_participant_key,
+        IdentityToken&& remote_identity_token,
+        const GUID_t& remote_participant_key,
         SecurityException& exception)
 {
     assert(remote_identity_handle);
@@ -942,9 +1020,61 @@ ValidationResult_t PKIDH::validate_remote_identity(IdentityHandle** remote_ident
 
     if(!lih.nil())
     {
+        // dds.ca.sn
+        const std::string* property = DataHolderHelper::find_property_value(remote_identity_token, "dds.ca.sn");
+
+        if(property == nullptr)
+        {
+            logWarning(SECURITY_AUTHENTICATION, "Not found property \"dds.ca.sn\" in remote identity token");
+            return ValidationResult_t::VALIDATION_FAILED;
+        }
+
+        if(*property != lih->sn)
+        {
+            logWarning(SECURITY_AUTHENTICATION, "Invalid CA subject name in remote identity token");
+            return ValidationResult_t::VALIDATION_FAILED;
+        }
+
+        // dds.ca.algo
+        property = DataHolderHelper::find_property_value(remote_identity_token, "dds.ca.algo");
+
+        if(property == nullptr)
+        {
+            logWarning(SECURITY_AUTHENTICATION, "Not found property \"dds.ca.algo\" in remote identity token");
+            return ValidationResult_t::VALIDATION_FAILED;
+        }
+
+        if(*property != lih->algo)
+        {
+            logWarning(SECURITY_AUTHENTICATION, "Invalid CA signature algorithm in remote identity token");
+            return ValidationResult_t::VALIDATION_FAILED;
+        }
+
+        // dds.cert.sn
+        const std::string* cert_sn = DataHolderHelper::find_property_value(remote_identity_token, "dds.cert.sn");
+
+        if(cert_sn == nullptr)
+        {
+            logWarning(SECURITY_AUTHENTICATION, "Not found property \"dds.cert.sn\" in remote identity token");
+            return ValidationResult_t::VALIDATION_FAILED;
+        }
+
+        // dds.cert.algo
+        const std::string* cert_algo = DataHolderHelper::find_property_value(remote_identity_token, "dds.cert.algo");
+
+        if(cert_algo == nullptr)
+        {
+            logWarning(SECURITY_AUTHENTICATION, "Not found property \"dds.cert.algo\" in remote identity token");
+            return ValidationResult_t::VALIDATION_FAILED;
+        }
+
+
         PKIIdentityHandle* rih = new PKIIdentityHandle();
 
+        (*rih)->sn = *cert_sn;
+        (*rih)->algo = *cert_algo;
         (*rih)->participant_key_ = remote_participant_key;
+        (*rih)->identity_token_ = std::move(remote_identity_token);
         *remote_identity_handle = rih;
 
         if(lih->participant_key_ < remote_participant_key )
@@ -973,7 +1103,7 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
 
     if(lih.nil() || rih.nil())
     {
-        logError(AUTHENTICATION, "Bad precondition");
+        exception = _SecurityException_("Bad precondition");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1017,7 +1147,7 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
     CDRMessage::addBinaryPropertySeq(&message, (*handshake_handle_aux)->handshake_message_.binary_properties());
     if(!EVP_Digest(message.buffer, message.length, md, NULL, EVP_sha256(), NULL))
     {
-        logError(AUTHENTICATION, "OpenSSL library cannot hash sha256");
+        exception = _SecurityException_("OpenSSL library cannot hash sha256");
         delete handshake_handle_aux;
         return ValidationResult_t::VALIDATION_FAILED;
     }
@@ -1027,19 +1157,19 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
     (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
 
     // dh1
-    if(((*handshake_handle_aux)->dhkeys_ = generate_dh_key(get_dh_type((*handshake_handle_aux)->kagree_alg_))) != nullptr)
+    if(((*handshake_handle_aux)->dhkeys_ = generate_dh_key(get_dh_type((*handshake_handle_aux)->kagree_alg_), exception)) != nullptr)
     {
         bproperty.name("dh1");
         bproperty.propagate(true);
 
-        if(store_dh_public_key((*handshake_handle_aux)->dhkeys_, bproperty.value()))
+        if(store_dh_public_key((*handshake_handle_aux)->dhkeys_, bproperty.value(), exception))
         {
             (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
 
             // challenge1
             bproperty.name("challenge1");
             bproperty.propagate(true);
-            if(generate_challenge(bproperty.value()))
+            if(generate_challenge(bproperty.value(), exception))
             {
                 (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
 
@@ -1076,14 +1206,14 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
 
     if(lih.nil() || rih.nil())
     {
-        logError(AUTHENTICATION, "Bad precondition");
+        exception = _SecurityException_("Bad precondition");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     // Check TokenMessage
     if(handshake_message_in.class_id().compare("DDS:Auth:PKI-DH:1.0+Req") != 0)
     {
-        logError(AUTHENTICATION, "Bad HandshakeMessageToken (" << handshake_message_in.class_id() << ")");
+        logWarning(SECURITY_AUTHENTICATION, "Bad HandshakeMessageToken (" << handshake_message_in.class_id() << ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1092,7 +1222,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     const std::vector<uint8_t>* cid = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.id");
     if(cid == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property c.id");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.id");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1100,13 +1230,25 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
 
     if(rih->cert_ == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot load certificate");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot load certificate");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
+    X509_NAME* cert_sn = X509_get_subject_name(rih->cert_);
+    assert(cert_sn != nullptr);
+    char* cert_sn_str = X509_NAME_oneline(cert_sn, 0, 0);
+    assert(cert_sn_str != nullptr);
+    if(rih->sn.compare(cert_sn_str) != 0)
+    {
+        CRYPTO_free(cert_sn_str);
+        logWarning(SECURITY_AUTHENTICATION, "Certificated subject name invalid");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+    CRYPTO_free(cert_sn_str);
+
     if(!verify_certificate(lih->store_, rih->cert_, lih->there_are_crls_))
     {
-        logError(AUTHENTICATION, "Error verifying certificate");
+        logWarning(SECURITY_AUTHENTICATION, "Error verifying certificate");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1117,7 +1259,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
 
     if(dsign_algo == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property c.dsign_algo");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.dsign_algo");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1126,7 +1268,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     if(s_dsign_algo.compare(RSA_SHA256) != 0 &&
             s_dsign_algo.compare(ECDSA_SHA256) != 0)
     {
-        logError(AUTHENTICATION, "Not supported signature algorithm (" << s_dsign_algo << ")");
+        logWarning(SECURITY_AUTHENTICATION, "Not supported signature algorithm (" << s_dsign_algo << ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
     rih->sign_alg_ = std::move(s_dsign_algo);
@@ -1136,7 +1278,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
 
     if(kagree_algo == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property c.kagree_algo");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.kagree_algo");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1145,7 +1287,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     if(s_kagree_algo.compare(DH_2048_256) != 0 &&
             s_kagree_algo.compare(ECDH_prime256v1) != 0)
     {
-        logError(AUTHENTICATION, "Not supported key agreement algorithm (" << s_kagree_algo << ")");
+        logWarning(SECURITY_AUTHENTICATION, "Not supported key agreement algorithm (" << s_kagree_algo << ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
     rih->kagree_alg_ = std::move(s_kagree_algo);
@@ -1155,13 +1297,13 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
 
     if(hash_c1 == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property hash_c1");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property hash_c1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if(hash_c1->size() != SHA256_DIGEST_LENGTH)
     {
-        logError(AUTHENTICATION, "Wrong size of hash_c1");
+        logWarning(SECURITY_AUTHENTICATION, "Wrong size of hash_c1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1173,13 +1315,13 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
 
     if(!EVP_Digest(cdrmessage.buffer, cdrmessage.length, md, NULL, EVP_sha256(), NULL))
     {
-        logError(AUTHENTICATION, "Cannot generate SHA256 of request");
+        exception = _SecurityException_("Cannot generate SHA256 of request");
         return ValidationResult_t::VALIDATION_FAILED;
     }
     
     if(memcmp(md, hash_c1->data(), SHA256_DIGEST_LENGTH) != 0)
     {
-        logError(AUTHENTICATION, "Wrong hash_c1");
+        logWarning(SECURITY_AUTHENTICATION, "Wrong hash_c1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1188,7 +1330,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
 
     if(dh1 == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property dh1");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property dh1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1197,7 +1339,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
 
     if(challenge1 == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property challenge1");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property challenge1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1207,9 +1349,9 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     (*handshake_handle_aux)->handshake_message_.class_id("DDS:Auth:PKI-DH:1.0+Reply");
 
     // Store dh1
-    if(((*handshake_handle_aux)->peerkeys_ = generate_dh_peer_key(*dh1)) == nullptr)
+    if(((*handshake_handle_aux)->peerkeys_ = generate_dh_peer_key(*dh1, exception)) == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot store peer key from dh1");
+        exception = _SecurityException_("Cannot store peer key from dh1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1246,7 +1388,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     CDRMessage::addBinaryPropertySeq(&message, (*handshake_handle_aux)->handshake_message_.binary_properties());
     if(!EVP_Digest(message.buffer, message.length, md, NULL, EVP_sha256(), NULL))
     {
-        logError(AUTHENTICATION, "OpenSSL library cannot hash sha256");
+        exception = _SecurityException_("OpenSSL library cannot hash sha256");
         delete handshake_handle_aux;
         return ValidationResult_t::VALIDATION_FAILED;
     }
@@ -1257,12 +1399,12 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     
 
     // dh2
-    if(((*handshake_handle_aux)->dhkeys_ = generate_dh_key(get_dh_type((*handshake_handle_aux)->kagree_alg_))) != nullptr)
+    if(((*handshake_handle_aux)->dhkeys_ = generate_dh_key(get_dh_type((*handshake_handle_aux)->kagree_alg_), exception)) != nullptr)
     {
         bproperty.name("dh2");
         bproperty.propagate(true);
 
-        if(store_dh_public_key((*handshake_handle_aux)->dhkeys_, bproperty.value()))
+        if(store_dh_public_key((*handshake_handle_aux)->dhkeys_, bproperty.value(), exception))
         {
             (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
 
@@ -1287,7 +1429,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
             // challenge2
             bproperty.name("challenge2");
             bproperty.propagate(true);
-            if(generate_challenge(bproperty.value()))
+            if(generate_challenge(bproperty.value(), exception))
             {
                 (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
 
@@ -1311,7 +1453,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
 
                 bproperty.name("signature");
                 bproperty.propagate("true");
-                if(sign_sha256(lih->pkey_, cdrmessage.buffer, cdrmessage.length, bproperty.value()))
+                if(sign_sha256(lih->pkey_, cdrmessage.buffer, cdrmessage.length, bproperty.value(), exception))
                 {
                     (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
 
@@ -1356,7 +1498,7 @@ ValidationResult_t PKIDH::process_handshake(HandshakeMessageToken** handshake_me
         } 
         else
         {
-            logError(AUTHENTICATION, "Handshake message not supported (" << handshake->handshake_message_.class_id() << ")");
+            logWarning(SECURITY_AUTHENTICATION, "Handshake message not supported (" << handshake->handshake_message_.class_id() << ")");
         }
     }
 
@@ -1374,7 +1516,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     // Check TokenMessage
     if(handshake_message_in.class_id().compare("DDS:Auth:PKI-DH:1.0+Reply") != 0)
     {
-        logError(AUTHENTICATION, "Bad HandshakeMessageToken (" << handshake_message_in.class_id() << ")");
+        logWarning(SECURITY_AUTHENTICATION, "Bad HandshakeMessageToken (" << handshake_message_in.class_id() << ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1383,7 +1525,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     const std::vector<uint8_t>* cid = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.id");
     if(cid == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property c.id");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.id");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1391,13 +1533,13 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
 
     if(rih->cert_ == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot load certificate");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot load certificate");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if(!verify_certificate(lih->store_, rih->cert_, lih->there_are_crls_))
     {
-        logError(AUTHENTICATION, "Error verifying certificate");
+        logWarning(SECURITY_AUTHENTICATION, "Error verifying certificate");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1408,7 +1550,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
 
     if(dsign_algo == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property c.dsign_algo");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.dsign_algo");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1417,7 +1559,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     if(s_dsign_algo.compare(RSA_SHA256) != 0 &&
             s_dsign_algo.compare(ECDSA_SHA256) != 0)
     {
-        logError(AUTHENTICATION, "Not supported signature algorithm (" << s_dsign_algo << ")");
+        logWarning(SECURITY_AUTHENTICATION, "Not supported signature algorithm (" << s_dsign_algo << ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
     rih->sign_alg_ = std::move(s_dsign_algo);
@@ -1427,7 +1569,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
 
     if(kagree_algo == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property c.kagree_algo");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.kagree_algo");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1435,7 +1577,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     std::string s_kagree_algo(kagree_algo->begin(), kagree_algo->end());
     if(s_kagree_algo.compare(handshake_handle->kagree_alg_) != 0)
     {
-        logError(AUTHENTICATION, "Invalid key agreement algorithm. Received " << s_kagree_algo << ", expected " << handshake_handle->kagree_alg_);
+        logWarning(SECURITY_AUTHENTICATION, "Invalid key agreement algorithm. Received " << s_kagree_algo << ", expected " << handshake_handle->kagree_alg_);
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1444,13 +1586,13 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
 
     if(hash_c2 == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property hash_c2");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property hash_c2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if(hash_c2->value().size() != SHA256_DIGEST_LENGTH)
     {
-        logError(AUTHENTICATION, "Wrong size of hash_c2");
+        logWarning(SECURITY_AUTHENTICATION, "Wrong size of hash_c2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1462,13 +1604,13 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
 
     if(!EVP_Digest(cdrmessage.buffer, cdrmessage.length, md, NULL, EVP_sha256(), NULL))
     {
-        logError(AUTHENTICATION, "Cannot generate SHA256 of request");
+        exception = _SecurityException_("Cannot generate SHA256 of request");
         return ValidationResult_t::VALIDATION_FAILED;
     }
     
     if(memcmp(md, hash_c2->value().data(), SHA256_DIGEST_LENGTH) != 0)
     {
-        logError(AUTHENTICATION, "Wrong hash_c2");
+        logWarning(SECURITY_AUTHENTICATION, "Wrong hash_c2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1477,13 +1619,13 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
 
     if(dh2 == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property dh2");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property dh2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    if((handshake_handle->peerkeys_ = generate_dh_peer_key(dh2->value())) == nullptr)
+    if((handshake_handle->peerkeys_ = generate_dh_peer_key(dh2->value(), exception)) == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot store peer key from dh2");
+        exception = _SecurityException_("Cannot store peer key from dh2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1491,7 +1633,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
 
     if(challenge2 == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property challenge2");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property challenge2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1500,7 +1642,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
 
     if(hash_c1 == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property hash_c1");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property hash_c1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1508,13 +1650,13 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
 
     if(hash_c1_request == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property hash_c1 in request message");
+        exception = _SecurityException_("Cannot find property hash_c1 in request message");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if(hash_c1->value() != *hash_c1_request)
     {
-        logError(AUTHENTICATION, "Invalid property hash_c1");
+        logWarning(SECURITY_AUTHENTICATION, "Invalid property hash_c1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1523,7 +1665,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
 
     if(dh1 == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property dh1");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property dh1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1531,13 +1673,13 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
 
     if(dh1_request == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property dh1 in request message");
+        exception = _SecurityException_("Cannot find property dh1 in request message");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if(dh1->value() != *dh1_request)
     {
-        logError(AUTHENTICATION, "Invalid property dh1");
+        logWarning(SECURITY_AUTHENTICATION, "Invalid property dh1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1545,7 +1687,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
 
     if(challenge1 == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property challenge1");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property challenge1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1553,13 +1695,13 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
 
     if(challenge1_request == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property challenge1 in request message");
+        exception = _SecurityException_("Cannot find property challenge1 in request message");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if(challenge1->value() != *challenge1_request)
     {
-        logError(AUTHENTICATION, "Invalid property challenge1");
+        logWarning(SECURITY_AUTHENTICATION, "Invalid property challenge1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1567,7 +1709,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
 
     if(signature == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property signature");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property signature");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1589,9 +1731,9 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     //add hash_c1
     CDRMessage::addBinaryProperty(&cdrmessage2, *hash_c1);
 
-    if(!check_sign_sha256(lih->cert_, cdrmessage2.buffer, cdrmessage2.length, *signature))
+    if(!check_sign_sha256(lih->cert_, cdrmessage2.buffer, cdrmessage2.length, *signature, exception))
     {
-        logError(AUTHENTICATION, "Error verifying signature");
+        logWarning(SECURITY_AUTHENTICATION, "Error verifying signature");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1658,11 +1800,12 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
 
     bproperty.name("signature");
     bproperty.propagate("true");
-    if(sign_sha256(lih->pkey_, cdrmessage2.buffer, cdrmessage2.length, bproperty.value()))
+    if(sign_sha256(lih->pkey_, cdrmessage2.buffer, cdrmessage2.length, bproperty.value(), exception))
     {
         final_message.binary_properties().emplace_back(std::move(bproperty));
 
-        handshake_handle->sharedsecret_ = generate_sharedsecret(handshake_handle->dhkeys_, handshake_handle->peerkeys_);
+        handshake_handle->sharedsecret_ = generate_sharedsecret(handshake_handle->dhkeys_, handshake_handle->peerkeys_,
+                exception);
 
         if(handshake_handle->sharedsecret_ != nullptr)
         {
@@ -1695,7 +1838,7 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
     // Check TokenMessage
     if(handshake_message_in.class_id().compare("DDS:Auth:PKI-DH:1.0+Final") != 0)
     {
-        logError(AUTHENTICATION, "Bad HandshakeMessageToken (" << handshake_message_in.class_id() << ")");
+        logWarning(SECURITY_AUTHENTICATION, "Bad HandshakeMessageToken (" << handshake_message_in.class_id() << ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1705,7 +1848,7 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
 
     if(hash_c1 == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property hash_c1");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property hash_c1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1713,13 +1856,13 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
 
     if(hash_c1_reply == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property hash_c1 in reply message");
+        exception = _SecurityException_("Cannot find property hash_c1 in reply message");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if(hash_c1->value() != *hash_c1_reply)
     {
-        logError(AUTHENTICATION, "Invalid hash_c1");
+        logWarning(SECURITY_AUTHENTICATION, "Invalid hash_c1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1728,7 +1871,7 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
 
     if(hash_c2 == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property hash_c2");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property hash_c2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1736,13 +1879,13 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
 
     if(hash_c2_reply == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property hash_c2 in reply message");
+        exception = _SecurityException_("Cannot find property hash_c2 in reply message");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if(hash_c2->value() != *hash_c2_reply)
     {
-        logError(AUTHENTICATION, "Invalid hash_c2");
+        logWarning(SECURITY_AUTHENTICATION, "Invalid hash_c2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1751,7 +1894,7 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
 
     if(dh1 == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property dh1");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property dh1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1759,13 +1902,13 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
 
     if(dh1_reply == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property dh1 in reply message");
+        exception = _SecurityException_("Cannot find property dh1 in reply message");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if(dh1->value() != *dh1_reply)
     {
-        logError(AUTHENTICATION, "Invalid dh1");
+        logWarning(SECURITY_AUTHENTICATION, "Invalid dh1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1774,7 +1917,7 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
 
     if(dh2 == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property dh2");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property dh2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1782,13 +1925,13 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
 
     if(dh2_reply == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property dh2 in reply message");
+        exception = _SecurityException_("Cannot find property dh2 in reply message");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if(dh2->value() != *dh2_reply)
     {
-        logError(AUTHENTICATION, "Invalid dh2");
+        logWarning(SECURITY_AUTHENTICATION, "Invalid dh2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1796,7 +1939,7 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
 
     if(challenge1 == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property challenge1");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property challenge1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1804,13 +1947,13 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
 
     if(challenge1_reply == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property challenge1 in reply message");
+        exception = _SecurityException_("Cannot find property challenge1 in reply message");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if(challenge1->value() != *challenge1_reply)
     {
-        logError(AUTHENTICATION, "Invalid challenge1");
+        logWarning(SECURITY_AUTHENTICATION, "Invalid challenge1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1818,7 +1961,7 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
 
     if(challenge2 == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property challenge2");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property challenge2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1826,13 +1969,13 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
 
     if(challenge2_reply == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property challenge2 in reply message");
+        exception = _SecurityException_("Cannot find property challenge2 in reply message");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if(challenge2->value() != *challenge2_reply)
     {
-        logError(AUTHENTICATION, "Invalid challenge2");
+        logWarning(SECURITY_AUTHENTICATION, "Invalid challenge2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1840,7 +1983,7 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
 
     if(signature == nullptr)
     {
-        logError(AUTHENTICATION, "Cannot find property signature");
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property signature");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1862,13 +2005,14 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
     //add hash_c2
     CDRMessage::addBinaryProperty(&cdrmessage, *hash_c2);
 
-    if(!check_sign_sha256(lih->cert_, cdrmessage.buffer, cdrmessage.length, *signature))
+    if(!check_sign_sha256(lih->cert_, cdrmessage.buffer, cdrmessage.length, *signature, exception))
     {
-        logError(AUTHENTICATION, "Error verifying signature");
+        logWarning(SECURITY_AUTHENTICATION, "Error verifying signature");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    handshake_handle->sharedsecret_ = generate_sharedsecret(handshake_handle->dhkeys_, handshake_handle->peerkeys_);
+    handshake_handle->sharedsecret_ = generate_sharedsecret(handshake_handle->dhkeys_, handshake_handle->peerkeys_,
+            exception);
 
     if(handshake_handle->sharedsecret_ != nullptr)
     {
@@ -1911,29 +2055,55 @@ bool PKIDH::get_identity_token(IdentityToken** identity_token,
         const IdentityHandle& handle,
         SecurityException& exception)
 {
+    const PKIIdentityHandle& ihandle = PKIIdentityHandle::narrow(handle);
+
+    if(!ihandle.nil())
+    {
+        *identity_token = new IdentityToken(ihandle->identity_token_);
+        return true;
+    }
+
     return false;
 }
 
 bool PKIDH::return_identity_token(IdentityToken* token,
         SecurityException& exception)
 {
-    return false;
+    delete token;
+    return true;
 }
 
 bool PKIDH::return_handshake_handle(HandshakeHandle* handshake_handle,
         SecurityException& exception)
 {
+    PKIHandshakeHandle* handle = &PKIHandshakeHandle::narrow(*handshake_handle);
+
+    if(!handle->nil())
+    {
+        delete handle;
+        return true;
+    }
+
     return false;
 }
 
 bool PKIDH::return_identity_handle(IdentityHandle* identity_handle,
         SecurityException& exception)
 {
+    PKIIdentityHandle* handle = &PKIIdentityHandle::narrow(*identity_handle);
+
+    if(!handle->nil())
+    {
+        delete handle;
+        return true;
+    }
+
     return false;
 }
 
 bool PKIDH::return_sharedsecret_handle(SharedSecretHandle* sharedsecret_handle,
         SecurityException& exception)
 {
-    return false;
+    delete sharedsecret_handle;
+    return true;
 }

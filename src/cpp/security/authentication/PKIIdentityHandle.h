@@ -20,6 +20,7 @@
 
 #include <fastrtps/rtps/security/common/Handle.h>
 #include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/rtps/common/Token.h>
 #include <openssl/x509.h>
 #include <string>
 
@@ -68,9 +69,12 @@ class PKIIdentity
         EVP_PKEY* pkey_;
         GUID_t participant_key_;
         BUF_MEM* cert_content_;
+        std::string sn;
+        std::string algo;
         std::string sign_alg_;
         std::string kagree_alg_;
         bool there_are_crls_;
+        IdentityToken identity_token_;
 };
 
 typedef HandleImpl<PKIIdentity> PKIIdentityHandle;

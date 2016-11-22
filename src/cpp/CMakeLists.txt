@@ -113,6 +113,7 @@ if(SECURITY)
         rtps/security/common/SharedSecretHandle.cpp
         rtps/security/SecurityManager.cpp
         rtps/security/SecurityPluginFactory.cpp
+        security/OpenSSLInit.cpp
         security/authentication/PKIDH.cpp
         security/cryptography/AESGCMGMAC.cpp
         security/cryptography/AESGCMGMAC_KeyExchange.cpp
@@ -126,6 +127,10 @@ if(SECURITY)
 
     include_directories(${OPENSSL_INCLUDE_DIR})
     set(EXTRA_LIBRARIES ${EXTRA_LIBRARIES} ${OPENSSL_LIBRARIES})
+
+    set(HAVE_SECURITY 1)
+else()
+    set(HAVE_SECURITY 0)
 endif()
 
 # Set version
@@ -175,12 +180,14 @@ if(MSVC OR MSVC_IDE)
         # Define public headers
         target_include_directories(${PROJECT_NAME} PUBLIC
             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}>
+            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/cpp>
             $<INSTALL_INTERFACE:include>
             )
 
         # Define public headers for static library
         target_include_directories(${PROJECT_NAME}_static PUBLIC
             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}>
+            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/cpp>
             $<INSTALL_INTERFACE:include>
             )
 
@@ -206,6 +213,7 @@ else()
     # Define public headers
     target_include_directories(${PROJECT_NAME} PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}>
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/cpp>
         $<INSTALL_INTERFACE:include>
         )
 

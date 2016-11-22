@@ -23,6 +23,7 @@
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/participant/Participant.h>
+#include <fastrtps/participant/ParticipantListener.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
@@ -46,12 +47,35 @@ class PubSubReader
 
     private:
 
+    class ParticipantListener : public eprosima::fastrtps::ParticipantListener
+    {
+        public:
+
+            ParticipantListener(PubSubReader &reader) : reader_(reader) {}
+
+            ~ParticipantListener() {}
+
+            void onParticipantAuthentication(Participant*, const ParticipantAuthenticationInfo& info)
+            {
+                if(info.rtps.status() == AUTHORIZED_RTPSPARTICIPANT)
+                    reader_.authorized();
+                else if(info.rtps.status() == UNAUTHORIZED_RTPSPARTICIPANT)
+                    reader_.unauthorized();
+            }
+
+        private:
+
+            ParticipantListener& operator=(const ParticipantListener&) NON_COPYABLE_CXX11;
+
+            PubSubReader& reader_;
+    } participant_listener_;
+
     class Listener: public eprosima::fastrtps::SubscriberListener
     {
         public:
-            Listener(PubSubReader &reader) : reader_(reader) {};
+            Listener(PubSubReader &reader) : reader_(reader) {}
 
-            ~Listener(){};
+            ~Listener(){}
 
             void onNewDataMessage(eprosima::fastrtps::Subscriber *sub)
             {
@@ -73,16 +97,16 @@ class PubSubReader
 
             Listener& operator=(const Listener&) NON_COPYABLE_CXX11;
 
-            PubSubReader &reader_;
+            PubSubReader& reader_;
     } listener_;
 
     friend class Listener;
 
     public:
 
-        PubSubReader(const std::string& topic_name) : listener_(*this), participant_(nullptr), subscriber_(nullptr),
+        PubSubReader(const std::string& topic_name) : participant_listener_(*this), listener_(*this), participant_(nullptr), subscriber_(nullptr),
         topic_name_(topic_name), initialized_(false), matched_(0), receiving_(false), current_received_count_(0),
-        number_samples_expected_(0)
+        number_samples_expected_(0), authorized_(0), unauthorized_(0)
         {
             subscriber_attr_.topic.topicDataType = type_.getName();
             // Generate topic name
@@ -111,9 +135,8 @@ class PubSubReader
 
         void init()
         {
-            eprosima::fastrtps::ParticipantAttributes pattr;
-            pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
-            participant_ = eprosima::fastrtps::Domain::createParticipant(pattr);
+            participant_attr_.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+            participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr_, &participant_listener_);
             ASSERT_NE(participant_, nullptr);
 
             // Register type
@@ -189,14 +212,14 @@ class PubSubReader
 
         void waitDiscovery()
         {
-            std::cout << "Reader waiting for discovery..." << std::endl;
+            //std::cout << "Reader waiting for discovery..." << std::endl;
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
             if(matched_ == 0)
                 cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
 
             ASSERT_NE(matched_, 0u);
-            std::cout << "Reader discovery phase finished" << std::endl;
+            //std::cout << "Reader discovery phase finished" << std::endl;
         }
 
         void waitRemoval()
@@ -207,6 +230,26 @@ class PubSubReader
                 cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
 
             ASSERT_EQ(matched_, 0u);
+        }
+
+        void waitAuthorized(unsigned int how_many = 1)
+        {
+            std::unique_lock<std::mutex> lock(mutexAuthentication_);
+
+            if(authorized_ != how_many)
+                cvAuthentication_.wait_for(lock, std::chrono::seconds(10));
+
+            ASSERT_EQ(authorized_, how_many);
+        }
+
+        void waitUnauthorized(unsigned int how_many = 1)
+        {
+            std::unique_lock<std::mutex> lock(mutexAuthentication_);
+
+            if(unauthorized_ != how_many)
+                cvAuthentication_.wait_for(lock, std::chrono::seconds(10));
+
+            ASSERT_EQ(unauthorized_, how_many);
         }
 
         unsigned int getReceivedCount() const
@@ -276,6 +319,12 @@ class PubSubReader
             return *this;
         }
 
+        PubSubReader& property_policy(const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+        {
+            participant_attr_.rtps.properties = property_policy;
+            return *this;
+        }
+
     private:
 
         void receive_one(eprosima::fastrtps::Subscriber* subscriber, bool& returnedValue)
@@ -324,11 +373,26 @@ class PubSubReader
             cvDiscovery_.notify_one();
         }
 
+        void authorized()
+        {
+            std::unique_lock<std::mutex> lock(mutexAuthentication_);
+            ++authorized_;
+            cvAuthentication_.notify_one();
+        }
+
+        void unauthorized()
+        {
+            std::unique_lock<std::mutex> lock(mutexAuthentication_);
+            ++unauthorized_;
+            cvAuthentication_.notify_one();
+        }
+
         PubSubReader& operator=(const PubSubReader&)NON_COPYABLE_CXX11;
 
         eprosima::fastrtps::Participant *participant_;
-        eprosima::fastrtps::SubscriberAttributes subscriber_attr_;
+        eprosima::fastrtps::ParticipantAttributes participant_attr_;
         eprosima::fastrtps::Subscriber *subscriber_;
+        eprosima::fastrtps::SubscriberAttributes subscriber_attr_;
         std::string topic_name_;
         bool initialized_;
         std::list<type> total_msgs_;
@@ -342,6 +406,10 @@ class PubSubReader
         SequenceNumber_t last_seq;
         size_t current_received_count_;
         size_t number_samples_expected_;
+        std::mutex mutexAuthentication_;
+        std::condition_variable cvAuthentication_;
+        unsigned int authorized_;
+        unsigned int unauthorized_;
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBREADER_HPP_

@@ -67,6 +67,9 @@ public:
 	 */
 	PDPSimple(BuiltinProtocols* builtin);
 	virtual ~PDPSimple();
+
+    void initializeParticipantProxyData(ParticipantProxyData* participant_data);
+
 	/**
 	 * Initialize the PDP.
 	 * @param part Pointer to the RTPSParticipant.
@@ -152,6 +155,8 @@ public:
 	 * @param pdata Pointer to the RTPSParticipantProxyData object.
 	 */
 	void assignRemoteEndpoints(ParticipantProxyData* pdata);
+
+    void notifyAboveRemoteEndpoints(ParticipantProxyData* pdata);
 
 	/**
 	 * Remove remote endpoints from the participant discovery protocol

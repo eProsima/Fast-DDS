@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file RTPSParticipant.h
+ * @file RTPSParticipantImpl.h
  */
 
 #ifndef RTPSParticipantIMPL_H_
@@ -38,6 +38,7 @@ namespace asio{class io_service;}
 class recursive_mutex;
 }
 
+#include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
@@ -47,6 +48,7 @@ class recursive_mutex;
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
+#include "../security/SecurityManager.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -76,6 +78,7 @@ class ReaderAttributes;
 class ReaderHistory;
 class ReaderListener;
 class StatefulReader;
+class PDPSimple;
 
 /*
    Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
@@ -131,7 +134,9 @@ class RTPSParticipantImpl
          * Get associated GUID
          * @return Associated GUID
          */
-        inline const GUID_t& getGuid() const {return m_guid;};
+        inline const GUID_t& getGuid() const { return m_guid; }
+
+        void setGuid(GUID_t& guid) { m_guid = guid; }
 
         //! Announce RTPSParticipantState (force the sending of a DPD message.)
         void announceRTPSParticipantState();
@@ -204,11 +209,15 @@ class RTPSParticipantImpl
 
         uint32_t getMaxMessageSize() const;
 
+        ::security::SecurityManager& security_manager() { return m_security_manager; }
+
+        PDPSimple* pdpsimple();
+
     private:
         //!Attributes of the RTPSParticipant
         RTPSParticipantAttributes m_att;
         //!Guid of the RTPSParticipant.
-        const GUID_t m_guid;
+        GUID_t m_guid;
         //! Sending resources. - DEPRECATED -Stays commented for reference purposes
         // ResourceSend* mp_send_thr;
         //! Event Resource
@@ -231,6 +240,10 @@ class RTPSParticipantImpl
 
         //!Network Factory
         NetworkFactory m_network_Factory;
+
+        // Security manager
+        ::security::SecurityManager m_security_manager;
+
         //!ReceiverControlBlock list - encapsulates all associated resources on a Receiving element
         std::list<ReceiverControlBlock> m_receiverResourcelist;
         //!SenderResource List
@@ -304,7 +317,10 @@ class RTPSParticipantImpl
 
     public:
 
-        const RTPSParticipantAttributes& getRTPSParticipantAttributes() const;
+        const RTPSParticipantAttributes& getRTPSParticipantAttributes() const
+        {
+            return this->m_att;
+        }
 
         /**
          * Create a Writer in this RTPSParticipant.
