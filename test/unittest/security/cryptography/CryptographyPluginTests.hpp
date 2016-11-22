@@ -175,6 +175,10 @@ TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize){
     );
 
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantA,exception);
+
+    delete i_handle;
+    delete perm_handle;
+
 }
 
 TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
@@ -348,6 +352,9 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote,exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote,exception);
 
+    delete shared_secret;
+    delete i_handle;
+    delete perm_handle;
 }
 
 TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
@@ -424,7 +431,8 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
     CryptoPlugin->keyfactory()->unregister_participant(participant,exception);
 }
 
-TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter){
+TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter)
+{
 
     PKIIdentityHandle* i_handle = new PKIIdentityHandle();
     mockAccessHandle* perm_handle = new mockAccessHandle();

@@ -202,9 +202,7 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
     }
 
     //Create ParticipantCryptoHandle, fill Participant KeyMaterial and return it
-    AESGCMGMAC_WriterCryptoHandle* WCrypto = nullptr;
-
-    WCrypto = new AESGCMGMAC_WriterCryptoHandle();
+    AESGCMGMAC_WriterCryptoHandle* WCrypto = AESGCMGMAC_WriterCryptoHandle();
     
     //Fill WriterKeyMaterial - This will be used to cipher full rpts messages
 
@@ -387,14 +385,14 @@ bool AESGCMGMAC_KeyFactory::unregister_participant(
                 ParticipantCryptoHandle* participant_crypto_handle,
                 SecurityException &exception){
    
-    bool return_code = false;
-    
+    if(participant_crypto_handle == nullptr){
+        return false;
+    }
     //De-register the IDs
     AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(*participant_crypto_handle);
     for(std::vector<CryptoTransformKeyId>::iterator it = m_CryptoTransformKeyIds.begin(); it != m_CryptoTransformKeyIds.end();it++){
         if( (*it) == local_participant->ParticipantKeyMaterial.sender_key_id ){
             m_CryptoTransformKeyIds.erase(it);
-                return_code = true;
         }
     }
     //Unregister all writers and readers
@@ -408,13 +406,10 @@ bool AESGCMGMAC_KeyFactory::unregister_participant(
         unregister_datareader(reader, exception);
     }
 
-    if(return_code){
-        return true;
-    }else{
-        exception = SecurityException("Tried to unregister a participant not present in the plugin");
-    }
+        AESGCMGMAC_ParticipantCryptoHandle* target = (AESGCMGMAC_ParticipantCryptoHandle *)participant_crypto_handle;
+        delete target;
     
-    return false;
+    return true;;
 
 }
         
@@ -432,8 +427,8 @@ bool AESGCMGMAC_KeyFactory::unregister_datawriter(
         return false;
     }
     if( (datawriter->Parent_participant) == nullptr){
-        AESGCMGMAC_WriterCryptoHandle *parent = (AESGCMGMAC_WriterCryptoHandle *)datawriter_crypto_handle;
-        delete parent;
+        AESGCMGMAC_WriterCryptoHandle *me = (AESGCMGMAC_WriterCryptoHandle *)datawriter_crypto_handle;
+        delete me;
         true;
     }
     AESGCMGMAC_ParticipantCryptoHandle& parent_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow( *(datawriter->Parent_participant) );
@@ -446,8 +441,8 @@ bool AESGCMGMAC_KeyFactory::unregister_datawriter(
     for(auto it = parent_participant->Writers.begin(); it != parent_participant->Writers.end(); it++){
         if( *it == datawriter_crypto_handle){
             parent_participant->Writers.erase(it);
-            AESGCMGMAC_WriterCryptoHandle *parent = (AESGCMGMAC_WriterCryptoHandle *)datawriter_crypto_handle;
-            delete parent;
+            AESGCMGMAC_WriterCryptoHandle *me = (AESGCMGMAC_WriterCryptoHandle *)datawriter_crypto_handle;
+            delete me;
             return true;
         }
     }
@@ -469,8 +464,8 @@ bool AESGCMGMAC_KeyFactory::unregister_datareader(
         return false;
     }
     if( (datareader->Parent_participant) == nullptr){
-        AESGCMGMAC_ReaderCryptoHandle *parent = (AESGCMGMAC_ReaderCryptoHandle *)datareader_crypto_handle;
-        delete parent;
+        AESGCMGMAC_ReaderCryptoHandle *me = (AESGCMGMAC_ReaderCryptoHandle *)datareader_crypto_handle;
+        delete me;
         true;
     }
     AESGCMGMAC_ParticipantCryptoHandle& parent_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow( *(datareader->Parent_participant) );
