@@ -998,6 +998,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_p
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
     message.related_message_identity().source_guid(remote_participant_key);
+    message.related_message_identity().sequence_number(1);
     message.destination_participant_key(remote_participant_key);
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
@@ -1037,6 +1038,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_pro
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
     message.related_message_identity().source_guid(remote_participant_key);
+    message.related_message_identity().sequence_number(1);
     message.destination_participant_key(remote_participant_key);
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
@@ -1078,6 +1080,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
     message.related_message_identity().source_guid(remote_participant_key);
+    message.related_message_identity().sequence_number(1);
     message.destination_participant_key(remote_participant_key);
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
@@ -1119,6 +1122,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
     message.related_message_identity().source_guid(remote_participant_key);
+    message.related_message_identity().sequence_number(1);
     message.destination_participant_key(remote_participant_key);
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
@@ -1164,6 +1168,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
     message.related_message_identity().source_guid(remote_participant_key);
+    message.related_message_identity().sequence_number(1);
     message.destination_participant_key(remote_participant_key);
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
@@ -1215,6 +1220,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_p
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
     message.related_message_identity().source_guid(remote_participant_key);
+    message.related_message_identity().sequence_number(1);
     message.destination_participant_key(remote_participant_key);
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
@@ -1254,6 +1260,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_pro
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
     message.related_message_identity().source_guid(remote_participant_key);
+    message.related_message_identity().sequence_number(1);
     message.destination_participant_key(remote_participant_key);
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;

@@ -26,6 +26,7 @@
 
 #include <map>
 #include <mutex>
+#include <atomic>
 
 namespace eprosima {
 namespace fastrtps {
@@ -79,7 +80,7 @@ class SecurityManager
 
                 DiscoveredParticipantInfo(ParticipantProxyData* participant_data, AuthenticationStatus auth_status) :
                     identity_handle_(nullptr), handshake_handle_(nullptr),
-                    auth_status_(auth_status), last_sequence_number_(1), participant_data_(participant_data)
+                    auth_status_(auth_status), expected_sequence_number_(0), participant_data_(participant_data)
                 {}
 
                 bool is_identity_handle_null()
@@ -138,14 +139,14 @@ class SecurityManager
                     auth_status_ = auth_status;
                 }
 
-                void set_last_sequence_number(int64_t sequence_number)
+                void set_expected_sequence_number(int64_t sequence_number)
                 {
-                    last_sequence_number_ = sequence_number;
+                    expected_sequence_number_ = sequence_number;
                 }
 
-                int64_t get_last_sequence_number()
+                int64_t get_expected_sequence_number()
                 {
-                    return last_sequence_number_;
+                    return expected_sequence_number_;
                 }
 
                 ParticipantProxyData* get_participant_data()
@@ -163,7 +164,7 @@ class SecurityManager
 
                 AuthenticationStatus auth_status_;
 
-                int64_t last_sequence_number_;
+                int64_t expected_sequence_number_;
 
                 ParticipantProxyData* participant_data_;
         };
@@ -207,11 +208,9 @@ class SecurityManager
                 MessageIdentity&& message_identity,
                 HandshakeMessageToken&& message,
                 IdentityHandle* remote_identity_handle,
-                HandshakeHandle* handshake_handle,
-                int64_t last_sequence_number);
+                HandshakeHandle* handshake_handle);
 
-        ParticipantGenericMessage generate_authentication_message(int64_t sequence_number,
-                const MessageIdentity& related_message_identity,
+        ParticipantGenericMessage generate_authentication_message(const MessageIdentity& related_message_identity,
                 const GUID_t& destination_participant_key,
                 HandshakeMessageToken& handshake_message);
 
@@ -231,6 +230,8 @@ class SecurityManager
         GUID_t auth_source_guid;
 
         std::mutex mutex_;
+
+        std::atomic<int64_t> last_sequence_number_;
 };
 
 } //namespace security
