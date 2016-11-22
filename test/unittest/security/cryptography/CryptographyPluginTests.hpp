@@ -141,6 +141,10 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteParticipant)
     ASSERT_TRUE(local_participant->Participant2ParticipantKeyMaterial.at(0).master_receiver_specific_key != local_participant->Participant2ParticipantKeyMaterial.at(1).master_receiver_specific_key);
     ASSERT_TRUE(local_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key == local_participant->Participant2ParticipantKxKeyMaterial.at(1).master_sender_key);
 
+    CryptoPlugin->keyfactory()->unregister_participant(remote_A,exception);
+    CryptoPlugin->keyfactory()->unregister_participant(remote_B,exception);
+    CryptoPlugin->keyfactory()->unregister_participant(local,exception);
+
     delete perm_handle;
     delete i_handle;
     delete shared_secret;
@@ -169,6 +173,8 @@ TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize){
         (base.receiver_specific_key_id == result.receiver_specific_key_id) &
         (base.master_receiver_specific_key == result.master_receiver_specific_key)
     );
+
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA,exception);
 }
 
 TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
@@ -240,6 +246,15 @@ TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
     ASSERT_TRUE(Participant_A->Participant2ParticipantKeyMaterial.at(0).master_sender_key == Participant_B->RemoteParticipant2ParticipantKeyMaterial.at(0).master_sender_key);
     ASSERT_TRUE(Participant_B->Participant2ParticipantKeyMaterial.at(0).master_sender_key == Participant_A->RemoteParticipant2ParticipantKeyMaterial.at(0).master_sender_key);
 
+
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA,exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantB,exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote,exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote,exception);
+
+    delete shared_secret;
+    delete perm_handle;
+    delete i_handle;
 }
 
 TEST_F(CryptographyPluginTest, transform_RTPSMessage)
@@ -327,6 +342,12 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_rtps_message(encoded_rtps_message, plain_rtps_message,*ParticipantA,receivers,exception));
     ASSERT_FALSE(CryptoPlugin->cryptotransform()->decode_rtps_message(decoded_rtps_message,encoded_rtps_message,*ParticipantB,*ParticipantB_remote,exception));
 
+
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA,exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantB,exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote,exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote,exception);
+
 }
 
 TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
@@ -359,10 +380,11 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
 
     delete i_handle;
     delete perm_handle;
-
+    delete shared_secret;
     //Release resources and check the handle is indeed empty
 
     CryptoPlugin->keyfactory()->unregister_datawriter(target,exception);
+    CryptoPlugin->keyfactory()->unregister_participant(participant,exception);
 }
 
 TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
@@ -395,10 +417,11 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
 
     delete i_handle;
     delete perm_handle;
-
+    delete shared_secret;
     //Release resources and check the handle is indeed empty
 
     CryptoPlugin->keyfactory()->unregister_datareader(target,exception);
+    CryptoPlugin->keyfactory()->unregister_participant(participant,exception);
 }
 
 TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter){
@@ -452,7 +475,23 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter){
     DatawriterCryptoHandle *remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *participant_A, *shared_secret, exception);
     ASSERT_TRUE(remote_writer != nullptr);
 
+    delete i_handle;
+    delete perm_handle;
+    delete shared_secret;
 
+    CryptoPlugin->keyfactory()->unregister_datawriter(writer, exception);
+    CryptoPlugin->keyfactory()->unregister_datareader(reader, exception);
+
+    CryptoPlugin->keyfactory()->unregister_datareader(remote_reader, exception);
+    CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer, exception);
+
+
+    CryptoPlugin->keyfactory()->unregister_participant(participant_A, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
+
+    
 }
 
 TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
@@ -544,6 +583,20 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
     ASSERT_TRUE(WriterH->Writer2ReaderKeyMaterial.at(0).master_sender_key == ReaderH->Writer2ReaderKeyMaterial.at(0).master_sender_key);
     ASSERT_TRUE(ReaderH->Reader2WriterKeyMaterial.at(0).master_sender_key == WriterH->Reader2WriterKeyMaterial.at(0).master_sender_key);
 
+    delete i_handle;
+    delete perm_handle;
+    delete shared_secret;
+
+    CryptoPlugin->keyfactory()->unregister_datawriter(writer,exception);    
+    CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer,exception);    
+    CryptoPlugin->keyfactory()->unregister_datareader(reader,exception);    
+    CryptoPlugin->keyfactory()->unregister_datareader(remote_reader,exception);    
+
+    CryptoPlugin->keyfactory()->unregister_participant(participant_A,exception);
+    CryptoPlugin->keyfactory()->unregister_participant(participant_B,exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote,exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote,exception);
+
 }
 
 TEST_F(CryptographyPluginTest, transform_SerializedPayload)
@@ -632,6 +685,21 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_serialized_payload(encoded_payload, inline_qos, plain_payload, *writer, exception));
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_serialized_payload(decoded_payload, encoded_payload, inline_qos, *reader, *remote_writer, exception));
     ASSERT_TRUE(plain_payload == decoded_payload);
+
+    delete i_handle;
+    delete perm_handle;
+    delete shared_secret;
+
+    CryptoPlugin->keyfactory()->unregister_datawriter(writer,exception);
+    CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer,exception);
+
+    CryptoPlugin->keyfactory()->unregister_datareader(reader,exception);
+    CryptoPlugin->keyfactory()->unregister_datareader(remote_reader,exception);
+
+    CryptoPlugin->keyfactory()->unregister_participant(participant_A, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
 
 }
 
@@ -724,6 +792,21 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_datawriter_submessage(decoded_payload, encoded_payload, *reader, *remote_writer, exception));
     ASSERT_TRUE(plain_payload == decoded_payload);
 
+    delete i_handle;
+    delete perm_handle;
+    delete shared_secret;
+
+    CryptoPlugin->keyfactory()->unregister_datawriter(writer,exception);
+    CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer,exception);
+
+    CryptoPlugin->keyfactory()->unregister_datareader(reader,exception);
+    CryptoPlugin->keyfactory()->unregister_datareader(remote_reader,exception);
+
+    CryptoPlugin->keyfactory()->unregister_participant(participant_A, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
+
 }
 
 TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
@@ -813,6 +896,21 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_datareader_submessage(encoded_payload, plain_payload, *reader, receivers, exception));
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_datareader_submessage(decoded_payload, encoded_payload, *writer, *remote_reader, exception));
     ASSERT_TRUE(plain_payload == decoded_payload);
+
+    delete i_handle;
+    delete perm_handle;
+    delete shared_secret;
+
+    CryptoPlugin->keyfactory()->unregister_datawriter(writer,exception);
+    CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer,exception);
+
+    CryptoPlugin->keyfactory()->unregister_datareader(reader,exception);
+    CryptoPlugin->keyfactory()->unregister_datareader(remote_reader,exception);
+
+    CryptoPlugin->keyfactory()->unregister_participant(participant_A, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
 
 }
 
@@ -926,6 +1024,21 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     ASSERT_TRUE(message_category == DATAWRITER_SUBMESSAGE);
     ASSERT_TRUE(*target_writer == remote_writer);
     ASSERT_TRUE(*target_reader == reader);
+
+    delete i_handle;
+    delete perm_handle;
+    delete shared_secret;
+
+    CryptoPlugin->keyfactory()->unregister_datawriter(writer,exception);
+    CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer,exception);
+
+    CryptoPlugin->keyfactory()->unregister_datareader(reader,exception);
+    CryptoPlugin->keyfactory()->unregister_datareader(remote_reader,exception);
+
+    CryptoPlugin->keyfactory()->unregister_participant(participant_A, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
 
 }
 

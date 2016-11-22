@@ -406,29 +406,36 @@ bool AESGCMGMAC_KeyFactory::unregister_participant(
         unregister_datareader(reader, exception);
     }
 
-
     if(return_code){
         return true;
     }else{
         exception = SecurityException("Tried to unregister a participant not present in the plugin");
     }
+    
     return false;
+
 }
         
 bool AESGCMGMAC_KeyFactory::unregister_datawriter(
                 DatawriterCryptoHandle *datawriter_crypto_handle,
                 SecurityException &exception){
 
+    if(datawriter_crypto_handle == nullptr){
+        return false;
+    }
+
     AESGCMGMAC_WriterCryptoHandle& datawriter = AESGCMGMAC_WriterCryptoHandle::narrow(*datawriter_crypto_handle);
     if(datawriter.nil()){
         exception = SecurityException("Not a valid DataWriterCryptoHandle has been passed as an argument");
         return false;
     }
+
     AESGCMGMAC_ParticipantCryptoHandle& parent_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow( *(datawriter->Parent_participant) );
     if(parent_participant.nil()){
         exception = SecurityException("Malformed AESGCMGMAC_WriterCryptohandle");
         return false;
     }
+
     //Remove reference in parent participant
     for(auto it = parent_participant->Writers.begin(); it != parent_participant->Writers.end(); it++){
         if( *it == datawriter_crypto_handle){
@@ -447,6 +454,9 @@ bool AESGCMGMAC_KeyFactory::unregister_datareader(
                 DatareaderCryptoHandle *datareader_crypto_handle,
                 SecurityException &exception){
 
+    if(datareader_crypto_handle == nullptr){
+        return false;
+    }
     AESGCMGMAC_ReaderCryptoHandle& datareader = AESGCMGMAC_ReaderCryptoHandle::narrow(*datareader_crypto_handle);
     if(datareader.nil()){
         exception = SecurityException("Not a valid DataReaderCryptoHandle has been passed as an argument");
@@ -460,6 +470,7 @@ bool AESGCMGMAC_KeyFactory::unregister_datareader(
         exception = SecurityException("Malformed AESGCMGMAC_WriterCryptohandle");
         return false;
     }
+
     //Remove reference in parent participant
     for(auto it = parent_participant->Readers.begin(); it != parent_participant->Readers.end(); it++){
         if( *it == datareader_crypto_handle){
