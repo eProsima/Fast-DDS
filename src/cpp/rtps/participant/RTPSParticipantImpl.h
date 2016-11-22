@@ -48,10 +48,7 @@ class recursive_mutex;
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
-
-#ifdef SECURITY
 #include "../security/SecurityManager.h"
-#endif
 
 namespace eprosima {
 namespace fastrtps{
@@ -244,10 +241,8 @@ class RTPSParticipantImpl
         //!Network Factory
         NetworkFactory m_network_Factory;
 
-#ifdef SECURITY
         // Security manager
         ::security::SecurityManager m_security_manager;
-#endif
 
         //!ReceiverControlBlock list - encapsulates all associated resources on a Receiving element
         std::list<ReceiverControlBlock> m_receiverResourcelist;

@@ -51,7 +51,7 @@
 
 uint32_t global_port = 0;
 
-#ifdef SECURITY
+#ifdef HAVE_SECURITY
 static const char* certs_path = nullptr;
 #endif
 
@@ -65,8 +65,8 @@ class BlackboxEnvironment : public ::testing::Environment
 
             if(global_port + 7400 > global_port)
                 global_port += 7400;
-            Log::SetVerbosity(Log::Info);
-            Log::SetCategoryFilter(std::regex("(SECURITY|AUTHENTICATION)"));
+            //Log::SetVerbosity(Log::Info);
+            //Log::SetCategoryFilter(std::regex("(SECURITY|AUTHENTICATION)"));
         }
 
         void TearDown()
@@ -1526,7 +1526,6 @@ BLACKBOXTEST(BlackBox, PubSubMoreThan256Unacknowledged)
     ASSERT_EQ(data.size(), static_cast<size_t>(0));
 }
 
-#ifdef SECURITY
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
@@ -1552,7 +1551,9 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    // Because its volatile the durability
+    // Wait for authorization
+    reader.waitAuthorized();
+
     // Wait for discovery.
     writer.waitDiscovery();
     reader.waitDiscovery();
@@ -1572,14 +1573,69 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
     print_non_received_messages(data, default_helloworld_print);
     ASSERT_EQ(data.size(), 0);
 }
-#endif // SECURITY
+
+BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_fail)
+{
+    {
+        PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+        PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+        PropertyPolicy property_policy;
+
+        property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+        property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+        property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+
+        reader.history_depth(100).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+        ASSERT_TRUE(reader.isInitialized());
+
+        writer.history_depth(100).
+            property_policy(property_policy).init();
+
+        ASSERT_TRUE(writer.isInitialized());
+
+        // Wait for authorization
+        writer.waitUnauthorized();
+    }
+    {
+        PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+        PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+        PropertyPolicy property_policy;
+
+        property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+        property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+        property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+
+        reader.history_depth(100).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            property_policy(property_policy).init();
+
+        ASSERT_TRUE(reader.isInitialized());
+
+        writer.history_depth(100).init();
+
+        ASSERT_TRUE(writer.isInitialized());
+
+        // Wait for authorization
+        reader.waitUnauthorized();
+    }
+}
 
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new BlackboxEnvironment);
 
-#ifdef SECURITY
+#ifdef HAVE_SECURITY
     certs_path = std::getenv("CERTS_PATH");
 
     if(certs_path == nullptr)

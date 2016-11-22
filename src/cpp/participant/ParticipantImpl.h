@@ -162,8 +162,9 @@ class ParticipantImpl
             MyRTPSParticipantListener(ParticipantImpl* impl): mp_participantimpl(impl){};
             virtual ~MyRTPSParticipantListener(){};
             void onRTPSParticipantDiscovery(RTPSParticipant* part, RTPSParticipantDiscoveryInfo info);
+            void onRTPSParticipantAuthentication(RTPSParticipant* part, const RTPSParticipantAuthenticationInfo& info);
             ParticipantImpl* mp_participantimpl;
-    }m_rtps_listener;
+    } m_rtps_listener;
 
 };
 

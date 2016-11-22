@@ -3,6 +3,7 @@
 #include <fastrtps/rtps/security/authentication/Authentication.h>
 #include <fastrtps/log/Log.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/reader/StatelessReader.h>
@@ -110,6 +111,17 @@ bool SecurityManager::init()
                 return true;
             }
         }
+        else
+        {
+            if(strlen(exception.what()) > 0)
+            {
+                logError(SECURITY_AUTHENTICATION, exception.what());
+            }
+            else
+            {
+                logError(SECURITY, "Error validating the local participant");
+            }
+        }
 
         delete authentication_plugin_;
         authentication_plugin_ = nullptr;
@@ -186,12 +198,10 @@ bool SecurityManager::discovered_participant(ParticipantProxyData* participant_d
 
     if(dp_it == discovered_participants_.end())
     {
-        discovered_participants_.emplace(std::piecewise_construct, std::forward_as_tuple(participant_data->m_guid), std::forward_as_tuple(participant_data, auth_status));
+        discovered_participants_.emplace(std::piecewise_construct, std::forward_as_tuple(participant_data->m_guid),
+                std::forward_as_tuple(participant_data, auth_status));
 
         mutex_.unlock();
-
-        // Match entities
-        match_builtin_endpoints(participant_data);
 
         // Validate remote participant.
         ValidationResult_t validation_ret = authentication_plugin_->validate_remote_identity(&remote_identity_handle,
@@ -215,9 +225,27 @@ bool SecurityManager::discovered_participant(ParticipantProxyData* participant_d
             case VALIDATION_PENDING_RETRY:
                 // TODO(Ricardo) Send event.
             default:
+                if(strlen(exception.what()) > 0)
+                {
+                    logError(SECURITY_AUTHENTICATION, exception.what());
+                }
+
                 remove_discovered_participant_info(participant_data->m_guid);
+
+                // Inform user about authenticated remote participant.
+                if(participant_->getListener() != nullptr)
+                {
+                    RTPSParticipantAuthenticationInfo info;
+                    info.status(UNAUTHORIZED_RTPSPARTICIPANT);
+                    info.guid(participant_data->m_guid);
+                    participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
+                }
+
                 return false;
         };
+
+        // Match entities
+        match_builtin_endpoints(participant_data);
 
         // Store remote handle.
         mutex_.lock();
@@ -312,7 +340,22 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
 
     if(ret == VALIDATION_FAILED)
     {
+        if(strlen(exception.what()) > 0)
+        {
+            logError(SECURITY_AUTHENTICATION, exception.what());
+        }
+
         restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle);
+
+        // Inform user about authenticated remote participant.
+        if(participant_->getListener() != nullptr)
+        {
+            RTPSParticipantAuthenticationInfo info;
+            info.status(UNAUTHORIZED_RTPSPARTICIPANT);
+            info.guid(remote_participant_key);
+            participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
+        }
+
         return false;
     }
 
@@ -416,7 +459,18 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
 
                         if(ret == VALIDATION_OK ||
                                 ret == VALIDATION_OK_WITH_FINAL_MESSAGE)
+                        {
                             participant_->pdpsimple()->notifyAboveRemoteEndpoints(dp_it->second.get_participant_data());
+
+                            // Inform user about authenticated remote participant.
+                            if(participant_->getListener() != nullptr)
+                            {
+                                RTPSParticipantAuthenticationInfo info;
+                                info.status(AUTHORIZED_RTPSPARTICIPANT);
+                                info.guid(remote_participant_key);
+                                participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
+                            }
+                        }
 
                         returnedValue = true;
                     }

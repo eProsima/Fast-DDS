@@ -24,6 +24,7 @@
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 
 #include <gmock/gmock.h>
 
@@ -31,11 +32,21 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class RTPSParticipant;
 class WriterHistory;
 class ReaderHistory;
 class WriterListener;
 class ReaderListener;
 class EntityId_t;
+
+class MockParticipantListener : public RTPSParticipantListener
+{
+    public:
+
+	MOCK_METHOD2(onRTPSParticipantDiscovery, void (RTPSParticipant*, RTPSParticipantDiscoveryInfo));
+
+    MOCK_METHOD2(onRTPSParticipantAuthentication, void (RTPSParticipant*, const RTPSParticipantAuthenticationInfo&));
+};
 
 class RTPSParticipantImpl
 {
@@ -76,9 +87,15 @@ class RTPSParticipantImpl
 
         PDPSimple* pdpsimple() { return &pdpsimple_; }
 
+        MockParticipantListener* getListener() { return &listener_; }
+
+        RTPSParticipant* getUserRTPSParticipant() { return nullptr; }
+
     private:
 
         PDPSimple pdpsimple_;
+
+        MockParticipantListener listener_;
 };
 
 } // namespace rtps

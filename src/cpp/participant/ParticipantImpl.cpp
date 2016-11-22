@@ -417,6 +417,17 @@ void ParticipantImpl::MyRTPSParticipantListener::onRTPSParticipantDiscovery(RTPS
     }
 }
 
+void ParticipantImpl::MyRTPSParticipantListener::onRTPSParticipantAuthentication(RTPSParticipant* part, const RTPSParticipantAuthenticationInfo& rtps_info)
+{
+    if(this->mp_participantimpl->mp_listener != nullptr)
+    {
+        ParticipantAuthenticationInfo info;
+        info.rtps = rtps_info;
+        this->mp_participantimpl->mp_rtpsParticipant = part;
+        this->mp_participantimpl->mp_listener->onParticipantAuthentication(mp_participantimpl->mp_participant, info);
+    }
+}
+
 bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t endpointId,
         EndpointKind_t kind)
 {

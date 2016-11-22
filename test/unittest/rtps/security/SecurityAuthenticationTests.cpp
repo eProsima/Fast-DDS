@@ -301,6 +301,11 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
+    RTPSParticipantAuthenticationInfo info;
+    info.status(UNAUTHORIZED_RTPSPARTICIPANT);
+    info.guid(participant_data.m_guid);
+    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+
     ASSERT_FALSE(manager_.discovered_participant(&participant_data));
 }
 
@@ -354,6 +359,11 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
+    RTPSParticipantAuthenticationInfo info;
+    info.status(UNAUTHORIZED_RTPSPARTICIPANT);
+    info.guid(participant_data.m_guid);
+    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+
     ASSERT_FALSE(manager_.discovered_participant(&participant_data));
 }
 
@@ -379,6 +389,11 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
+    RTPSParticipantAuthenticationInfo info;
+    info.status(AUTHORIZED_RTPSPARTICIPANT);
+    info.guid(participant_data.m_guid);
+    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+
     ASSERT_TRUE(manager_.discovered_participant(&participant_data));
 }
 
@@ -482,6 +497,11 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
+    RTPSParticipantAuthenticationInfo info;
+    info.status(AUTHORIZED_RTPSPARTICIPANT);
+    info.guid(participant_data.m_guid);
+    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+
     ASSERT_TRUE(manager_.discovered_participant(&participant_data));
 
     delete change;
@@ -537,6 +557,11 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validate_remote_fail_a
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
+    RTPSParticipantAuthenticationInfo info;
+    info.status(UNAUTHORIZED_RTPSPARTICIPANT);
+    info.guid(participant_data.m_guid);
+    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+
     ASSERT_FALSE(manager_.discovered_participant(&participant_data));
 
     EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
@@ -577,6 +602,11 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_begin_handshake_reques
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
+    RTPSParticipantAuthenticationInfo info;
+    info.status(UNAUTHORIZED_RTPSPARTICIPANT);
+    info.guid(participant_data.m_guid);
+    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+
     ASSERT_FALSE(manager_.discovered_participant(&participant_data));
 
     EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(0);
@@ -725,6 +755,10 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_b
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
+    RTPSParticipantAuthenticationInfo info;
+    info.status(UNAUTHORIZED_RTPSPARTICIPANT);
+    info.guid(participant_data.m_guid);
+    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 }
@@ -771,6 +805,11 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_beg
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
     EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
+
+    RTPSParticipantAuthenticationInfo info;
+    info.status(AUTHORIZED_RTPSPARTICIPANT);
+    info.guid(participant_data.m_guid);
+    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 }
@@ -938,6 +977,11 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_pendin
         WillOnce(Return(true));
     EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
 
+    RTPSParticipantAuthenticationInfo info;
+    info.status(AUTHORIZED_RTPSPARTICIPANT);
+    info.guid(participant_data.m_guid);
+    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
     delete change2;
@@ -975,6 +1019,10 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_p
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
+    RTPSParticipantAuthenticationInfo info;
+    info.status(UNAUTHORIZED_RTPSPARTICIPANT);
+    info.guid(remote_participant_key);
+    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 }
@@ -1011,6 +1059,11 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_pro
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
     EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
+
+    RTPSParticipantAuthenticationInfo info;
+    info.status(AUTHORIZED_RTPSPARTICIPANT);
+    info.guid(remote_participant_key);
+    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 }
@@ -1141,6 +1194,11 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
         WillOnce(Return(true));
     EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
 
+    RTPSParticipantAuthenticationInfo info;
+    info.status(AUTHORIZED_RTPSPARTICIPANT);
+    info.guid(remote_participant_key);
+    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
     delete change2;
@@ -1178,6 +1236,10 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_p
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
+    RTPSParticipantAuthenticationInfo info;
+    info.status(UNAUTHORIZED_RTPSPARTICIPANT);
+    info.guid(remote_participant_key);
+    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 }
@@ -1214,6 +1276,11 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_pro
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
     EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
+
+    RTPSParticipantAuthenticationInfo info;
+    info.status(AUTHORIZED_RTPSPARTICIPANT);
+    info.guid(remote_participant_key);
+    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 }

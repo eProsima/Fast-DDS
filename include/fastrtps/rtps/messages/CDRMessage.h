@@ -26,9 +26,7 @@
 #include "../common/Property.h"
 #include "../common/BinaryProperty.h"
 
-#ifdef SECURITY
 #include "../security/common/ParticipantGenericMessage.h"
-#endif
 
 using namespace eprosima::fastrtps;
 

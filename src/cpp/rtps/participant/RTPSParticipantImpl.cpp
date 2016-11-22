@@ -282,10 +282,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Send Locator List, adding Locators: " << m_att.defaultOutLocatorList);
     }
 
-#ifdef SECURITY
     // Start security
     m_security_manager.init();
-#endif
 
     //START BUILTIN PROTOCOLS
     mp_builtinProtocols = new BuiltinProtocols();
