@@ -351,7 +351,7 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB,exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote,exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote,exception);
-
+    CryptoPlugin->keyfactory()->unregister_participant(unintended_remote,exception);
     delete shared_secret;
     delete i_handle;
     delete perm_handle;
@@ -1047,6 +1047,9 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote, exception);
     CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
+    
+    delete target_reader;
+    delete target_writer;
 
 }
 

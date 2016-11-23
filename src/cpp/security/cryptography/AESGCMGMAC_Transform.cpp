@@ -73,7 +73,6 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     memcpy( header.initialization_vector_suffix.data() , &initialization_vector_suffix, 8);
 
     //Step 4 -Cypher the plain rtps message -> SecureDataBody
-    OpenSSL_add_all_ciphers();
     int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
 
     size_t enc_length = plain_buffer.size()*3;
@@ -159,7 +158,6 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
 
     //Step 4 -Cypher the plain rtps message -> SecureDataBody
-    OpenSSL_add_all_ciphers();
     int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
 
     size_t enc_length = plain_rtps_submessage.size()*3;
@@ -285,7 +283,6 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
 
 
     //Step 4 -Cypher the plain rtps message -> SecureDataBody
-    OpenSSL_add_all_ciphers();
     int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
 
     size_t enc_length = plain_rtps_submessage.size()*3;
@@ -417,7 +414,6 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
 
 
     //Step 4 -Cypher the plain rtps message -> SecureDataBody
-    OpenSSL_add_all_ciphers();
     int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
 
     size_t enc_length = ( payload.size()) * 3;
@@ -552,7 +548,6 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     //Auth message - The point is that we cannot verify the authorship of the message with our receiver_specific_key the message could be crafted
     bool auth = false; 
     
-    OpenSSL_add_all_ciphers();
     RAND_load_file("/dev/urandom",32);
 
     EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
@@ -581,7 +576,6 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     }
     
     //Decode message
-    OpenSSL_add_all_ciphers();
     RAND_load_file("/dev/urandom",32);
 
     d_ctx = EVP_CIPHER_CTX_new();
@@ -735,7 +729,6 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     //Auth message - The point is that we cannot verify the authorship of the message with our receiver_specific_key the message could be crafted
     bool auth = false; 
     
-    OpenSSL_add_all_ciphers();
     RAND_load_file("/dev/urandom",32);
 
     EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
@@ -763,7 +756,6 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     }
     
     //Decode message
-    OpenSSL_add_all_ciphers();
     RAND_load_file("/dev/urandom",32);
 
     d_ctx = EVP_CIPHER_CTX_new();
@@ -842,7 +834,6 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     //Auth message - The point is that we cannot verify the authorship of the message with our receiver_specific_key the message could be crafted
     bool auth = false; 
     
-    OpenSSL_add_all_ciphers();
     RAND_load_file("/dev/urandom",32);
 
     EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
@@ -870,7 +861,6 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     }
     
     //Decode message
-    OpenSSL_add_all_ciphers();
     RAND_load_file("/dev/urandom",32);
 
     d_ctx = EVP_CIPHER_CTX_new();
@@ -942,7 +932,6 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
 
     
-    OpenSSL_add_all_ciphers();
     RAND_load_file("/dev/urandom",32);
 
     EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
@@ -951,10 +940,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
 
     int actual_size = 0, final_size = 0;
   
-    OpenSSL_add_all_ciphers();
-    RAND_load_file("/dev/urandom",32);
 
-    d_ctx = EVP_CIPHER_CTX_new();
     plain_buffer.clear();
     plain_buffer.resize(encoded_buffer.size());
 

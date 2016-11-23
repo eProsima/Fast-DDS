@@ -173,6 +173,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         }
         EVP_DigestSignFinal(&ctx, buffer.master_sender_key.data(), &length);
         EVP_PKEY_free(key);
+        EVP_MD_CTX_cleanup(&ctx);
 
         buffer.sender_key_id.fill(0); //Specified by standard
         buffer.receiver_specific_key_id.fill(0); //Specified by standard
@@ -202,7 +203,7 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
     }
 
     //Create ParticipantCryptoHandle, fill Participant KeyMaterial and return it
-    AESGCMGMAC_WriterCryptoHandle* WCrypto = AESGCMGMAC_WriterCryptoHandle();
+    AESGCMGMAC_WriterCryptoHandle* WCrypto = new AESGCMGMAC_WriterCryptoHandle();
     
     //Fill WriterKeyMaterial - This will be used to cipher full rpts messages
 
