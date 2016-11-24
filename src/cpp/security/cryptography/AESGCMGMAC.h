@@ -39,6 +39,13 @@ public:
     AESGCMGMAC(const PropertyPolicy& property_policy);
     ~AESGCMGMAC();
 
+    bool create_participant_volatile_message_secure_entities();
+    void delete_participant_volatile_message_secure_entities();
+    bool create_participant_volatile_message_secure_writer();
+    bool create_participant_volatile_message_secure_reader();
+    void delete_participant_volatile_message_secure_writer();
+    void delete_participant_volatile_message_secure_reader();
+
     AESGCMGMAC_KeyExchange* keyexchange();
     AESGCMGMAC_KeyFactory* keyfactory();
     AESGCMGMAC_Transform* cryptotransform();

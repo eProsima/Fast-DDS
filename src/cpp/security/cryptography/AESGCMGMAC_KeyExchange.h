@@ -41,7 +41,7 @@ class AESGCMGMAC_KeyExchange : public CryptoKeyExchange
             ParticipantCryptoHandle &local_participant_crypto,
             ParticipantCryptoHandle &remote_participant_crypto,
             SecurityException &exception);
-     
+
     bool set_remote_participant_crypto_tokens(
             ParticipantCryptoHandle &local_participant_crypto,
             ParticipantCryptoHandle &remote_participant_crypto,
