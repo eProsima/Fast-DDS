@@ -30,9 +30,9 @@ using namespace eprosima::fastrtps::rtps::security;
 AESGCMGMAC_KeyFactory::AESGCMGMAC_KeyFactory(){}
 
 ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
-                const IdentityHandle &participant_identity, 
-                const PermissionsHandle &participant_permissions, 
-                const PropertySeq &participant_properties, 
+                const IdentityHandle &participant_identity,
+                const PermissionsHandle &participant_permissions,
+                const PropertySeq &participant_properties,
                 SecurityException &exception)
 {
 
@@ -40,35 +40,55 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     AESGCMGMAC_ParticipantCryptoHandle* PCrypto = nullptr;
 
     PCrypto = new AESGCMGMAC_ParticipantCryptoHandle();
-    
-    //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
 
-    (*PCrypto)->ParticipantKeyMaterial.transformation_kind = 
-            std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM); //TODO (Santi) Define and implement a mechanism to change this via participant_properties
-    
+    //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
+    std::array<uint8_t, 4> transformationtype(CRYPTO_TRANSFORMATION_KIND_AES128_GCM); //Default to AES128_GCM
+    int maxblockspersession = 32; //Default to key update every 32 usages
+    if(!participant_properties.empty()){
+          for(auto it=participant_properties.begin(); it!=participant_properties.end(); ++it){
+              if( (it)->name() == "dds.sec.crypto.cryptotransformkind"){
+                      if( it->value() == std::string("AES128_GCM") )
+                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM);
+                      if( it->value() == std::string("AES128_GMAC") )
+                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC);
+                      if( it->value() == std::string("AES256_GCM") )
+                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM);
+                      if( it->value() == std::string("AES256_GMAC") )
+                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES256_GMAC);
+              }// endif
+              if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
+                  try{
+                      maxblockspersession = std::stoi( (it)->value() );
+                  }catch(std::invalid_argument){}
+              }
+          }//endfor
+    }//endif
+    (*PCrypto)->ParticipantKeyMaterial.transformation_kind =
+        transformationtype;
+    (*PCrypto)->transformation_kind = transformationtype;
     (*PCrypto)->ParticipantKeyMaterial.master_salt.fill(0);
-    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial.master_salt.data(), 16 );  
-    
+    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial.master_salt.data(), 16 );
+
     (*PCrypto)->ParticipantKeyMaterial.sender_key_id = make_unique_KeyId();
-    
+
     (*PCrypto)->ParticipantKeyMaterial.master_sender_key.fill(0);
     RAND_bytes( (*PCrypto)->ParticipantKeyMaterial.master_sender_key.data(), 16 );
-    
-    (*PCrypto)->ParticipantKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
-    (*PCrypto)->ParticipantKeyMaterial.master_receiver_specific_key.fill(0); 
 
-    (*PCrypto)->max_blocks_per_session = 32; //TODO (Santi) - This is a testing value. Make it updateable
-    (*PCrypto)->session_block_counter = 40; //Set to update upon first usage
+    (*PCrypto)->ParticipantKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
+    (*PCrypto)->ParticipantKeyMaterial.master_receiver_specific_key.fill(0);
+
+    (*PCrypto)->max_blocks_per_session = maxblockspersession;
+    (*PCrypto)->session_block_counter = maxblockspersession+1; //Set to update upon first usage
     RAND_bytes( (unsigned char *)( &( (*PCrypto)->session_id ) ), sizeof(uint16_t));
 
     return PCrypto;
 }
-        
+
 ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_participant(
-                ParticipantCryptoHandle &local_participant_crypto_handle, 
-                IdentityHandle &remote_participant_identity, 
-                PermissionsHandle &remote_participant_permissions, 
-                SharedSecretHandle &shared_secret, 
+                ParticipantCryptoHandle &local_participant_crypto_handle,
+                IdentityHandle &remote_participant_identity,
+                PermissionsHandle &remote_participant_permissions,
+                SharedSecretHandle &shared_secret,
                 SecurityException &exception){
 
     //Extract information from the handshake. It will be needed in order to compute KeyMaterials
@@ -82,14 +102,14 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
 
     //Create Participant2ParticipantKeyMaterial (Based on local ParticipantKeyMaterial) and ParticipantKxKeyMaterial (based on the SharedSecret)
     //Put both elements in the local and remote ParticipantCryptoHandle
-    
+
     AESGCMGMAC_ParticipantCryptoHandle& local_participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto_handle);
-    AESGCMGMAC_ParticipantCryptoHandle* RPCrypto = new AESGCMGMAC_ParticipantCryptoHandle(); // Remote Participant CryptoHandle, to be returned at the end of the function 
+    AESGCMGMAC_ParticipantCryptoHandle* RPCrypto = new AESGCMGMAC_ParticipantCryptoHandle(); // Remote Participant CryptoHandle, to be returned at the end of the function
 
     /*Fill values for Participant2ParticipantKeyMaterial - Used to encrypt outgoing data */
     { //scope for temp var buffer
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Participant2ParticipantKeyMaterial
-        
+
         //These values must match the ones in ParticipantKeymaterial
         buffer.transformation_kind = local_participant_handle->ParticipantKeyMaterial.transformation_kind;
         buffer.master_salt = local_participant_handle->ParticipantKeyMaterial.master_salt;
@@ -112,9 +132,8 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         buffer.transformation_kind = std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC);
         buffer.master_salt.fill(0);
 
-
         std::array<uint8_t,32> concatenation; //Assembly of the source concatenated sequence that is used to generate master_salt
-        
+
         std::string KxKeyCookie("key exchange key");
         concatenation.fill(0);
         memcpy(concatenation.data(),challenge_1->data(),challenge_1->size());
@@ -167,7 +186,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         length = 0;
         EVP_DigestSignFinal(&ctx, NULL, &length);
         if(length > 32){
-            //TODO (Santi) Provide insight 
+            //TODO (Santi) Provide insight
             delete RPCrypto;
             return nullptr;
         }
@@ -179,8 +198,8 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         buffer.receiver_specific_key_id.fill(0); //Specified by standard
         buffer.master_receiver_specific_key.fill(0); //Specified by standard
 
-        (*RPCrypto)->max_blocks_per_session = 32; //TODO (Santi) - This is a testing value. Make it updateable
-        (*RPCrypto)->session_block_counter = 40; //Set to update upon first usage
+        (*RPCrypto)->max_blocks_per_session = local_participant_handle->max_blocks_per_session;
+        (*RPCrypto)->session_block_counter = local_participant_handle->session_block_counter;
         RAND_bytes( (unsigned char *)( &( (*RPCrypto)->session_id ) ), sizeof(uint16_t));
 
         //Attack to PartipantCryptoHandles - both local and remote
@@ -204,25 +223,46 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
 
     //Create ParticipantCryptoHandle, fill Participant KeyMaterial and return it
     AESGCMGMAC_WriterCryptoHandle* WCrypto = new AESGCMGMAC_WriterCryptoHandle();
-    
+
+    std::array<uint8_t, 4> transformationtype(CRYPTO_TRANSFORMATION_KIND_AES128_GCM); //Default to AES128_GCM
+    int maxblockspersession = 32; //Default to key update every 32 usages
+    if(!datawriter_prop.empty()){
+          for(auto it=datawriter_prop.begin(); it!=datawriter_prop.end(); ++it){
+              if( (it)->name() == "dds.sec.crypto.cryptotransformkind"){
+                      if( it->value() == std::string("AES128_GCM") )
+                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM);
+                      if( it->value() == std::string("AES128_GMAC") )
+                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC);
+                      if( it->value() == std::string("AES256_GCM") )
+                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM);
+                      if( it->value() == std::string("AES256_GMAC") )
+                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES256_GMAC);
+              }// endif
+              if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
+                  try{
+                      maxblockspersession = std::stoi( (it)->value() );
+                  }catch(std::invalid_argument){}
+              }
+          }//endfor
+    }//endif
+
     //Fill WriterKeyMaterial - This will be used to cipher full rpts messages
 
     (*WCrypto)->Participant_master_key_id = participant_handle->ParticipantKeyMaterial.sender_key_id;
-    (*WCrypto)->WriterKeyMaterial.transformation_kind = 
-            std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM); //TODO (Santi) Define and implement a mechanism to change this via participant_properties
+    (*WCrypto)->WriterKeyMaterial.transformation_kind = transformationtype;
     (*WCrypto)->WriterKeyMaterial.master_salt.fill(0);
-    RAND_bytes( (*WCrypto)->WriterKeyMaterial.master_salt.data(), 16 );  
-    
+    RAND_bytes( (*WCrypto)->WriterKeyMaterial.master_salt.data(), 16 );
+
     (*WCrypto)->WriterKeyMaterial.sender_key_id = make_unique_KeyId();
-    
+
     (*WCrypto)->WriterKeyMaterial.master_sender_key.fill(0);
     RAND_bytes( (*WCrypto)->WriterKeyMaterial.master_sender_key.data(), 16 );
-    
-    (*WCrypto)->WriterKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
-    (*WCrypto)->WriterKeyMaterial.master_receiver_specific_key.fill(0); 
 
-    (*WCrypto)->max_blocks_per_session = 32; //TODO (Santi) - This is a testing value. Make it updateable
-    (*WCrypto)->session_block_counter = 40; //Set to update upon first usage
+    (*WCrypto)->WriterKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
+    (*WCrypto)->WriterKeyMaterial.master_receiver_specific_key.fill(0);
+
+    (*WCrypto)->max_blocks_per_session = maxblockspersession;
+    (*WCrypto)->session_block_counter = maxblockspersession+1; //Set to update upon first usage
     RAND_bytes( (unsigned char *)( &( (*WCrypto)->session_id ) ), sizeof(uint16_t));
 
     (*WCrypto)->Parent_participant = &participant_crypto;
@@ -231,7 +271,7 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
 
     return WCrypto;
 }
-        
+
 DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datareader(
                 DatawriterCryptoHandle &local_datawriter_crypto_handle,
                 ParticipantCryptoHandle &remote_participant_crypto,
@@ -241,15 +281,15 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
 
     //Create Participant2ParticipantKeyMaterial (Based on local ParticipantKeyMaterial) and ParticipantKxKeyMaterial (based on the SharedSecret)
     //Put both elements in the local and remote ParticipantCryptoHandle
-    
+
     AESGCMGMAC_WriterCryptoHandle& local_writer_handle = AESGCMGMAC_WriterCryptoHandle::narrow(local_datawriter_crypto_handle);
-    AESGCMGMAC_ReaderCryptoHandle* RRCrypto = new AESGCMGMAC_ReaderCryptoHandle(); // Remote Reader CryptoHandle, to be returned at the end of the function 
+    AESGCMGMAC_ReaderCryptoHandle* RRCrypto = new AESGCMGMAC_ReaderCryptoHandle(); // Remote Reader CryptoHandle, to be returned at the end of the function
 
     (*RRCrypto)->Participant_master_key_id = local_writer_handle->Participant_master_key_id;
     /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
     { //scope for temp var buffer
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
-        
+
         //These values must match the ones in ParticipantKeymaterial
         buffer.transformation_kind = local_writer_handle->WriterKeyMaterial.transformation_kind;
         buffer.master_salt = local_writer_handle->WriterKeyMaterial.master_salt;
@@ -266,18 +306,18 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
         (*RRCrypto)->Writer2ReaderKeyMaterial.push_back(buffer);
         local_writer_handle->Writer2ReaderKeyMaterial.push_back(buffer);
     }
-    
+
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
     (*RRCrypto)->Participant2ParticipantKxKeyMaterial = remote_participant->Participant2ParticipantKxKeyMaterial.at(0);
 
-    (*RRCrypto)->max_blocks_per_session = 32; //TODO (Santi) - This is a testing value. Make it updateable
-    (*RRCrypto)->session_block_counter = 40; //Set to update upon first usage
+    (*RRCrypto)->max_blocks_per_session = local_writer_handle->max_blocks_per_session;
+    (*RRCrypto)->session_block_counter = local_writer_handle->session_block_counter;
     RAND_bytes( (unsigned char *)( &( (*RRCrypto)->session_id ) ), sizeof(uint16_t));
 
     (*RRCrypto)->Parent_participant = &remote_participant_crypto;
     (*RRCrypto)->session_id = 0;
     //Save this CryptoHandle as part of the remote participant
-    
+
     AESGCMGMAC_ParticipantCryptoHandle& PCrypto = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
 
     (*PCrypto)->Readers.push_back(RRCrypto);
@@ -295,33 +335,53 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
         //TODO (Santi) Provide insight
         return nullptr;
     }
-    
+
     //Create ParticipantCryptoHandle, fill Participant KeyMaterial and return it
     AESGCMGMAC_ReaderCryptoHandle* RCrypto = nullptr;
 
     RCrypto = new AESGCMGMAC_ReaderCryptoHandle();
 
+    std::array<uint8_t, 4> transformationtype(CRYPTO_TRANSFORMATION_KIND_AES128_GCM); //Default to AES128_GCM
+    int maxblockspersession = 32; //Default to key update every 32 usages
+    if(!datareader_properties.empty()){
+          for(auto it=datareader_properties.begin(); it!=datareader_properties.end(); ++it){
+              if( (it)->name() == "dds.sec.crypto.cryptotransformkind"){
+                      if( it->value() == std::string("AES128_GCM") )
+                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM);
+                      if( it->value() == std::string("AES128_GMAC") )
+                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC);
+                      if( it->value() == std::string("AES256_GCM") )
+                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM);
+                      if( it->value() == std::string("AES256_GMAC") )
+                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES256_GMAC);
+              }// endif
+              if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
+                  try{
+                      maxblockspersession = std::stoi( (it)->value() );
+                  }catch(std::invalid_argument){}
+              }
+          }//endfor
+    }//endif
 
     (*RCrypto)->Participant_master_key_id = participant_handle->ParticipantKeyMaterial.sender_key_id;
 
     //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
 
-    (*RCrypto)->ReaderKeyMaterial.transformation_kind = 
-            std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM); //TODO (Santi) Define and implement a mechanism to change this via participant_properties
-    
+    (*RCrypto)->ReaderKeyMaterial.transformation_kind = transformationtype;
+
     (*RCrypto)->ReaderKeyMaterial.master_salt.fill(0);
-    RAND_bytes( (*RCrypto)->ReaderKeyMaterial.master_salt.data(), 16 );  
-    
+    RAND_bytes( (*RCrypto)->ReaderKeyMaterial.master_salt.data(), 16 );
+
     (*RCrypto)->ReaderKeyMaterial.sender_key_id = make_unique_KeyId();
-    
+
     (*RCrypto)->ReaderKeyMaterial.master_sender_key.fill(0);
     RAND_bytes( (*RCrypto)->ReaderKeyMaterial.master_sender_key.data(), 16 );
-    
+
     (*RCrypto)->ReaderKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
-    (*RCrypto)->ReaderKeyMaterial.master_receiver_specific_key.fill(0); 
-   
-    (*RCrypto)->max_blocks_per_session = 32; //TODO (Santi) - This is a testing value. Make it updateable
-    (*RCrypto)->session_block_counter = 40; //Set to update upon first usage
+    (*RCrypto)->ReaderKeyMaterial.master_receiver_specific_key.fill(0);
+
+    (*RCrypto)->max_blocks_per_session = maxblockspersession;
+    (*RCrypto)->session_block_counter = maxblockspersession+1;
     RAND_bytes( (unsigned char *)( &( (*RCrypto)->session_id ) ), sizeof(uint16_t));
 
     (*RCrypto)->Parent_participant = &participant_crypto;
@@ -339,21 +399,21 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
 
     //Create Participant2ParticipantKeyMaterial (Based on local ParticipantKeyMaterial) and ParticipantKxKeyMaterial (based on the SharedSecret)
     //Put both elements in the local and remote ParticipantCryptoHandle
-    
+
     AESGCMGMAC_ReaderCryptoHandle& local_reader_handle = AESGCMGMAC_ReaderCryptoHandle::narrow(local_datareader_crypto_handle);
-    AESGCMGMAC_WriterCryptoHandle* RWCrypto = new AESGCMGMAC_WriterCryptoHandle(); // Remote Writer CryptoHandle, to be returned at the end of the function 
+    AESGCMGMAC_WriterCryptoHandle* RWCrypto = new AESGCMGMAC_WriterCryptoHandle(); // Remote Writer CryptoHandle, to be returned at the end of the function
 
     (*RWCrypto)->Participant_master_key_id = local_reader_handle->Participant_master_key_id;
     /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
     { //scope for temp var buffer
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
-        
+
         //These values must match the ones in ParticipantKeymaterial
         buffer.transformation_kind = local_reader_handle->ReaderKeyMaterial.transformation_kind;
         buffer.master_salt = local_reader_handle->ReaderKeyMaterial.master_salt;
         buffer.master_sender_key = local_reader_handle->ReaderKeyMaterial.master_sender_key;
         //Generation of remainder values (Remote specific key)
-        
+
         buffer.sender_key_id = local_reader_handle->ReaderKeyMaterial.sender_key_id;
         //buffer.sender_key_id = make_unique_KeyId();
         buffer.receiver_specific_key_id = make_unique_KeyId();
@@ -368,8 +428,8 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypt);
     (*RWCrypto)->Participant2ParticipantKxKeyMaterial = remote_participant->Participant2ParticipantKxKeyMaterial.at(0);
 
-    (*RWCrypto)->max_blocks_per_session = 32; //TODO (Santi) - This is a testing value. Make it updateable
-    (*RWCrypto)->session_block_counter = 40; //Set to update upon first usage
+    (*RWCrypto)->max_blocks_per_session = local_reader_handle->max_blocks_per_session;
+    (*RWCrypto)->session_block_counter = local_reader_handle->session_block_counter;
     RAND_bytes( (unsigned char *)( &( (*RWCrypto)->session_id ) ), sizeof(uint16_t));
     (*RWCrypto)->session_id = 0;
 
@@ -385,7 +445,7 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
 bool AESGCMGMAC_KeyFactory::unregister_participant(
                 ParticipantCryptoHandle* participant_crypto_handle,
                 SecurityException &exception){
-   
+
     if(participant_crypto_handle == nullptr){
         return false;
     }
@@ -409,11 +469,11 @@ bool AESGCMGMAC_KeyFactory::unregister_participant(
 
         AESGCMGMAC_ParticipantCryptoHandle* target = (AESGCMGMAC_ParticipantCryptoHandle *)participant_crypto_handle;
         delete target;
-    
+
     return true;;
 
 }
-        
+
 bool AESGCMGMAC_KeyFactory::unregister_datawriter(
                 DatawriterCryptoHandle *datawriter_crypto_handle,
                 SecurityException &exception){
@@ -451,7 +511,7 @@ bool AESGCMGMAC_KeyFactory::unregister_datawriter(
     return false;
 }
 
-        
+
 bool AESGCMGMAC_KeyFactory::unregister_datareader(
                 DatareaderCryptoHandle *datareader_crypto_handle,
                 SecurityException &exception){

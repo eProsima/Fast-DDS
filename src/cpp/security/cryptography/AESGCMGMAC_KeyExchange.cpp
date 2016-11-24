@@ -56,7 +56,6 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
         prop.name() = std::string("dds.cryp.keymat");
         std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_participant->Participant2ParticipantKeyMaterial.at(0));
         prop.value() = aes_128_gcm_encrypt(plaintext, remote_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
-
         temp.binary_properties().push_back(prop);
         local_participant_crypto_tokens.push_back(temp);
     }
@@ -86,13 +85,11 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
         exception = SecurityException("Incorrect token type received");
         return false;
     }
-
     if(remote_participant_tokens.at(0).binary_properties().size() !=1 | remote_participant_tokens.at(0).properties().size() != 0 |
             remote_participant_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat"){
         exception = SecurityException("Malformed CryptoToken");
         return false;
     }
-
     //Valid CryptoToken, we can decrypt and push the resulting KeyMaterial in as a RemoteParticipant2ParticipantKeyMaterial
     std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_participant_tokens.at(0).binary_properties().at(0).value(),
             remote_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
@@ -118,12 +115,8 @@ bool AESGCMGMAC_KeyExchange::create_local_datawriter_crypto_tokens(
         //TODO (Santi) provide insight
         return false;
     }
-
     //Flush previously present CryptoTokens
     local_datawriter_crypto_tokens.clear();
-
-    //Participant2ParticipantKeyMaterial will be come RemoteParticipant2ParticipantKeyMaterial on the other side
-    {
         //Only the KeyMaterial used in conjunction with the remote_participant are tokenized. In this implementation only on Pariticipant2ParticipantKeyMaterial exists per matched Participant
         DatawriterCryptoToken temp;
         temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
@@ -131,10 +124,8 @@ bool AESGCMGMAC_KeyExchange::create_local_datawriter_crypto_tokens(
         prop.name() = std::string("dds.cryp.keymat");
         std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_reader->Writer2ReaderKeyMaterial.at(0));
         prop.value() = aes_128_gcm_encrypt(plaintext, remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key);
-
         temp.binary_properties().push_back(prop);
         local_datawriter_crypto_tokens.push_back(temp);
-    }
 
     return true;
 }
@@ -152,10 +143,8 @@ bool AESGCMGMAC_KeyExchange::create_local_datareader_crypto_tokens(
         //TODO (Santi) provide insight
         return false;
     }
-
     //Flush previously present CryptoTokens
     local_datareader_crypto_tokens.clear();
-
     //Participant2ParticipantKeyMaterial will be come RemoteParticipant2ParticipantKeyMaterial on the other side
     {
         //Only the KeyMaterial used in conjunction with the remote_participant are tokenized. In this implementation only on Pariticipant2ParticipantKeyMaterial exists per matched Participant
@@ -165,11 +154,9 @@ bool AESGCMGMAC_KeyExchange::create_local_datareader_crypto_tokens(
         prop.name() = std::string("dds.cryp.keymat");
         std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_writer->Reader2WriterKeyMaterial.at(0));
         prop.value() = aes_128_gcm_encrypt(plaintext, remote_writer->Participant2ParticipantKxKeyMaterial.master_sender_key);
-
         temp.binary_properties().push_back(prop);
         local_datareader_crypto_tokens.push_back(temp);
     }
-
     return true;
 }
 
@@ -211,7 +198,6 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
     local_writer->Reader2WriterKeyMaterial.push_back(keymat);
     remote_reader->Reader2WriterKeyMaterial.push_back(keymat);
     return true;
-
  }
 
 bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(

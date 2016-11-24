@@ -88,7 +88,7 @@ class  WriterKeyHandle
 
         KeyMaterial_AES_GCM_GMAC WriterKeyMaterial;
         CryptoTransformKeyId Participant_master_key_id;
-        ParticipantCryptoHandle* Parent_participant; 
+        ParticipantCryptoHandle* Parent_participant;
 
         std::vector<KeyMaterial_AES_GCM_GMAC> Writer2ReaderKeyMaterial;
         std::vector<KeyMaterial_AES_GCM_GMAC> Reader2WriterKeyMaterial;
@@ -99,6 +99,7 @@ class  WriterKeyHandle
         uint64_t session_block_counter;
         uint64_t max_blocks_per_session;
 
+        CryptoTransformKind transformation_kind;
 
 };
 
@@ -128,6 +129,8 @@ class  ReaderKeyHandle
         uint64_t session_block_counter;
         uint64_t max_blocks_per_session;
 
+        CryptoTransformKind transformation_kind;
+
 };
 
 typedef HandleImpl<ReaderKeyHandle> AESGCMGMAC_ReaderCryptoHandle;
@@ -154,6 +157,8 @@ class  ParticipantKeyHandle
         std::array<uint8_t,32> SessionKey;
         uint64_t session_block_counter;
         uint64_t max_blocks_per_session;
+
+        CryptoTransformKind transformation_kind;
 
 };
 
