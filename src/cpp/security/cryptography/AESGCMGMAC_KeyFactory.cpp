@@ -106,6 +106,8 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     AESGCMGMAC_ParticipantCryptoHandle& local_participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto_handle);
     AESGCMGMAC_ParticipantCryptoHandle* RPCrypto = new AESGCMGMAC_ParticipantCryptoHandle(); // Remote Participant CryptoHandle, to be returned at the end of the function
 
+    (*RPCrypto)->transformation_kind = local_participant_handle->transformation_kind;
+
     /*Fill values for Participant2ParticipantKeyMaterial - Used to encrypt outgoing data */
     { //scope for temp var buffer
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Participant2ParticipantKeyMaterial
@@ -245,7 +247,7 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
               }
           }//endfor
     }//endif
-
+    (*WCrypto)->transformation_kind = transformationtype;
     //Fill WriterKeyMaterial - This will be used to cipher full rpts messages
 
     (*WCrypto)->Participant_master_key_id = participant_handle->ParticipantKeyMaterial.sender_key_id;
@@ -284,6 +286,8 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
 
     AESGCMGMAC_WriterCryptoHandle& local_writer_handle = AESGCMGMAC_WriterCryptoHandle::narrow(local_datawriter_crypto_handle);
     AESGCMGMAC_ReaderCryptoHandle* RRCrypto = new AESGCMGMAC_ReaderCryptoHandle(); // Remote Reader CryptoHandle, to be returned at the end of the function
+
+    (*RRCrypto)->transformation_kind = local_writer_handle->transformation_kind;
 
     (*RRCrypto)->Participant_master_key_id = local_writer_handle->Participant_master_key_id;
     /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
@@ -364,7 +368,7 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
     }//endif
 
     (*RCrypto)->Participant_master_key_id = participant_handle->ParticipantKeyMaterial.sender_key_id;
-
+    (*RCrypto)->transformation_kind = transformationtype;
     //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
 
     (*RCrypto)->ReaderKeyMaterial.transformation_kind = transformationtype;
@@ -404,6 +408,7 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
     AESGCMGMAC_WriterCryptoHandle* RWCrypto = new AESGCMGMAC_WriterCryptoHandle(); // Remote Writer CryptoHandle, to be returned at the end of the function
 
     (*RWCrypto)->Participant_master_key_id = local_reader_handle->Participant_master_key_id;
+    (*RWCrypto)->transformation_kind = local_reader_handle->transformation_kind;
     /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
     { //scope for temp var buffer
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
