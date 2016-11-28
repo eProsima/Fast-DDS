@@ -44,6 +44,16 @@ namespace fastrtps {
 namespace rtps {
 namespace security {
 
+/* Key Storage
+ * -----------
+ *  Contains common key and specific key
+ *      -The common key is used to cipher (same for all receivers)
+ *      -The specific key is used to sign (specific for each receiver)
+ *  One KeyMaterial is used to store either:
+ *      -The keys needed to send a message to another element
+ *      -The keys needed to receive a message from another element
+ *  Note: Key_Ids are ensured to be unique within a Cryptogaphic domain (Participant)
+ */
 struct KeyMaterial_AES_GCM_GMAC{
     CryptoTransformKind transformation_kind;
     std::array<uint8_t,32> master_salt;
@@ -55,25 +65,50 @@ struct KeyMaterial_AES_GCM_GMAC{
     std::array<uint8_t, 32> master_receiver_specific_key;
 };
 
-struct SecureDataBody{
-    std::vector<uint8_t> secure_data;
-};
+/* SecureSubMessageElements
+ * ------------------------
+ */
 
-struct ReceiverSpecificMAC{
-    CryptoTransformKeyId receiver_mac_key_id;
-    std::array<uint8_t, 16> receiver_mac;
-};
-
+//Holds information about the type of encryption performed, the id of the key to use
+//and the initialization vector
 struct SecureDataHeader{
     CryptoTransformIdentifier transform_identifier;
     std::array<uint8_t, 4> session_id;
     std::array<uint8_t, 8> initialization_vector_suffix;
 };
-
+//Holds the ciphered data
+struct SecureDataBody{
+    std::vector<uint8_t> secure_data;
+};
+//Holds signatures.
+//common_mac->Signature using the common key that every intended receiver had
+//specific_mac->SignatureS made with the specific keys that only each pair of sender/receiver knows
 struct SecureDataTag{
     std::array<uint8_t, 16> common_mac;
     std::vector<ReceiverSpecificMAC> receiver_specific_macs;
 };
+//Identifies the specific keys used to calculate the specific_mac
+struct ReceiverSpecificMAC{
+    CryptoTransformKeyId receiver_mac_key_id;
+    std::array<uint8_t, 16> receiver_mac;
+};
+
+/* Key Management
+ * --------------
+ * Keys are stored and managed as Cryptohandles
+ * There are CryptoHandles for Participant, DataWriter and DataReader keys
+ * Each CryptoHandle stores different data, but share common traits.
+ *
+ * All CryptoHandle instances hold
+ * -A copy of the common key: the key used to cypher and known by all possible receivers
+ * -A copy of the (direct) specific key: the key used to sign outgoing messages (receiver_specific_macs).
+ * -A copy of the (reverse) specific key: the key used to verify the signature of incoming messages.
+ *
+ * In the case of a LocalCryptoHandle, one instance of the specific keys is stored for each matching element.
+ * In the case of a RemoteCryptoHandle, only the keys pertaining the remote element are stored.
+ *
+ * Note: the common key of the remote cryptohandle is stored along with the specific keys. KeyMaterial->master_sender_key
+ */
 
 class  WriterKeyHandle
 {
@@ -85,25 +120,30 @@ class  WriterKeyHandle
         }
 
         static const char* const class_id_;
-
+        
+        //Storage for the LocalCryptoHandle master_key, not used in RemoteCryptoHandles
         KeyMaterial_AES_GCM_GMAC WriterKeyMaterial;
+        //KeyId of the master_key of the parent Participant and pointer to the relevant CryptoHandle
         CryptoTransformKeyId Participant_master_key_id;
         ParticipantCryptoHandle* Parent_participant;
 
+        //(Direct) ReceiverSpecific Keys - Inherently hold the master_key of the writer
         std::vector<KeyMaterial_AES_GCM_GMAC> Writer2ReaderKeyMaterial;
+        //(Reverse) ReceiverSpecific Keys - Inherently hold the master_key of the remote readers
         std::vector<KeyMaterial_AES_GCM_GMAC> Reader2WriterKeyMaterial;
+        //Copy of the Keymaterial used to Cypher CryptoTokens (inherited from the parent participant)
         KeyMaterial_AES_GCM_GMAC Participant2ParticipantKxKeyMaterial;
 
+        //Data used to store the current session keys and to determine when it has to be updated
         uint32_t session_id;
         std::array<uint8_t,32> SessionKey;
         uint64_t session_block_counter;
         uint64_t max_blocks_per_session;
-
         CryptoTransformKind transformation_kind;
 
 };
-
 typedef HandleImpl<WriterKeyHandle> AESGCMGMAC_WriterCryptoHandle;
+
 
 class  ReaderKeyHandle
 {
@@ -116,24 +156,30 @@ class  ReaderKeyHandle
 
         static const char* const class_id_;
 
+        //Storage for the LocalCryptoHandle master_key, not used in RemoteCryptoHandles
         KeyMaterial_AES_GCM_GMAC ReaderKeyMaterial;
+        //KeyId of the master_key of the parent Participant and pointer to the relevant CryptoHandle
         CryptoTransformKeyId Participant_master_key_id;
         ParticipantCryptoHandle* Parent_participant;
 
+        //(Direct) ReceiverSpecific Keys - Inherently hold the master_key of the writer
         std::vector<KeyMaterial_AES_GCM_GMAC> Reader2WriterKeyMaterial;
+        //(Reverse) ReceiverSpecific Keys - Inherently hold the master_key of the remote readers
         std::vector<KeyMaterial_AES_GCM_GMAC> Writer2ReaderKeyMaterial;
+        //Copy of the Keymaterial used to Cypher CryptoTokens (inherited from the parent participant)
         KeyMaterial_AES_GCM_GMAC Participant2ParticipantKxKeyMaterial;
 
+        //Data used to store the current session keys and to determine when it has to be updated
         uint32_t session_id;
         std::array<uint8_t,32> SessionKey;
         uint64_t session_block_counter;
         uint64_t max_blocks_per_session;
-
         CryptoTransformKind transformation_kind;
 
 };
 
 typedef HandleImpl<ReaderKeyHandle> AESGCMGMAC_ReaderCryptoHandle;
+
 
 class  ParticipantKeyHandle
 {
@@ -146,18 +192,24 @@ class  ParticipantKeyHandle
 
         static const char* const class_id_;
 
+        //Storage for the LocalCryptoHandle master_key, not used in RemoteCryptoHandles
         KeyMaterial_AES_GCM_GMAC ParticipantKeyMaterial;
+        //(Direct) ReceiverSpecific Keys - Inherently hold the master_key of the writer
         std::vector<KeyMaterial_AES_GCM_GMAC> Participant2ParticipantKeyMaterial;
+        //Keymaterial used to Cypher CryptoTokens (inherited from the parent participant)
         std::vector<KeyMaterial_AES_GCM_GMAC> Participant2ParticipantKxKeyMaterial;
+        //(Reverse) ReceiverSpecific Keys - Inherently hold the master_key of the remote readers
         std::vector<KeyMaterial_AES_GCM_GMAC> RemoteParticipant2ParticipantKeyMaterial;
+        //List of Pointers to the CryptoHandles of all matched Writers
         std::vector<DatawriterCryptoHandle *> Writers;
+        //List of Pointers to the CryptoHandles of all matched Readers
         std::vector<DatareaderCryptoHandle *> Readers;
 
+        //Data used to store the current session keys and to determine when it has to be updated
         uint32_t session_id;
         std::array<uint8_t,32> SessionKey;
         uint64_t session_block_counter;
         uint64_t max_blocks_per_session;
-
         CryptoTransformKind transformation_kind;
 
 };

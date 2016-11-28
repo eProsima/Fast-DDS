@@ -69,6 +69,7 @@ public:
  * ParameterList class has static methods to update or read a ParameterList_t
  * @ingroup PARAMETER_MODULE
  */
+
 class ParameterList
 {
 public:
@@ -89,8 +90,6 @@ public:
 	static int32_t readParameterListfromCDRMsg(CDRMessage_t* msg, ParameterList_t* plist, CacheChange_t* change);
 
 };
-
-
 
 } /* namespace  */
 } /* namespace eprosima */

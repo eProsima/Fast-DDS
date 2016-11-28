@@ -42,8 +42,8 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     PCrypto = new AESGCMGMAC_ParticipantCryptoHandle();
 
     //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
-    std::array<uint8_t, 4> transformationtype(CRYPTO_TRANSFORMATION_KIND_AES128_GCM); //Default to AES128_GCM
-    int maxblockspersession = 32; //Default to key update every 32 usages
+    std::array<uint8_t, 4> transformationtype(CRYPTO_TRANSFORMATION_KIND_AES128_GCM); //Default to AES128_GCM if the user does not specify otherwise
+    int maxblockspersession = 32; //Default to key update every 32 usages if the user does not specify otherwise
     if(!participant_properties.empty()){
           for(auto it=participant_properties.begin(); it!=participant_properties.end(); ++it){
               if( (it)->name() == "dds.sec.crypto.cryptotransformkind"){
