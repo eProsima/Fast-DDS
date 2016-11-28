@@ -757,7 +757,7 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     prop2.name("dds.sec.crypto.maxblockspersession");
     prop2.value("16");
     prop_handle.push_back(prop2);
-    
+
     participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
     participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
 
@@ -899,6 +899,66 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_datawriter_submessage(decoded_payload, encoded_payload, *reader, *remote_writer, exception));
     ASSERT_TRUE(plain_payload == decoded_payload);
 
+    CryptoPlugin->keyfactory()->unregister_datawriter(writer,exception);
+    CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer,exception);
+
+    CryptoPlugin->keyfactory()->unregister_datareader(reader,exception);
+    CryptoPlugin->keyfactory()->unregister_datareader(remote_reader,exception);
+
+    CryptoPlugin->keyfactory()->unregister_participant(participant_A, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
+
+    //Test the GCM256 version    
+    Property prop1;
+    prop1.name("dds.sec.crypto.cryptotransformkind");
+    prop1.value("AES256_GCM");
+    prop_handle.push_back(prop1);
+    Property prop2;
+    prop2.name("dds.sec.crypto.maxblockspersession");
+    prop2.value("16");
+    prop_handle.push_back(prop2);
+
+    participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+    participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+
+    reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, exception);
+    writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, exception);
+
+    //Register a remote for both Participants
+    ParticipantA_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_A,*i_handle,*perm_handle,*shared_secret, exception);
+    ParticipantB_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_B,*i_handle,*perm_handle,*shared_secret, exception);
+
+    //Register DataReader with DataWriter
+    remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *participant_B, *shared_secret, false, exception);
+
+    //Register DataWriter with DataReader
+    remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *participant_A, *shared_secret, exception);
+
+    CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantA_CryptoTokens, *participant_A, *ParticipantA_remote, exception);
+    CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantB_CryptoTokens, *participant_B, *ParticipantB_remote, exception);
+
+    //Set ParticipantA token into ParticipantB and viceversa
+    CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*participant_A,*ParticipantA_remote,ParticipantB_CryptoTokens,exception);
+    CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*participant_B,*ParticipantB_remote,ParticipantA_CryptoTokens,exception);
+
+    //Create CryptoTokens for the DataWriter and DataReader
+    CryptoPlugin->keyexchange()->create_local_datawriter_crypto_tokens(Writer_CryptoTokens, *writer, *remote_reader, exception);
+    CryptoPlugin->keyexchange()->create_local_datareader_crypto_tokens(Reader_CryptoTokens, *reader, *remote_writer, exception);
+
+    //Exchange Datareader and Datawriter Cryptotokens
+    CryptoPlugin->keyexchange()->set_remote_datareader_crypto_tokens(*writer, *remote_reader, Reader_CryptoTokens, exception);
+    CryptoPlugin->keyexchange()->set_remote_datawriter_crypto_tokens(*reader, *remote_writer, Writer_CryptoTokens, exception);
+
+    receivers.clear();
+    receivers.push_back(remote_reader);
+
+    //Send message to intended participant
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_datawriter_submessage(encoded_payload, plain_payload, *writer, receivers, exception));
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_datawriter_submessage(decoded_payload, encoded_payload, *reader, *remote_writer, exception));
+    ASSERT_TRUE(plain_payload == decoded_payload);
+
     delete i_handle;
     delete perm_handle;
     delete shared_secret;
@@ -1004,9 +1064,67 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_datareader_submessage(decoded_payload, encoded_payload, *writer, *remote_reader, exception));
     ASSERT_TRUE(plain_payload == decoded_payload);
 
-    delete i_handle;
-    delete perm_handle;
-    delete shared_secret;
+    CryptoPlugin->keyfactory()->unregister_datawriter(writer,exception);
+    CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer,exception);
+
+    CryptoPlugin->keyfactory()->unregister_datareader(reader,exception);
+    CryptoPlugin->keyfactory()->unregister_datareader(remote_reader,exception);
+
+    CryptoPlugin->keyfactory()->unregister_participant(participant_A, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
+
+    //Test the GCM256 version    
+    Property prop1;
+    prop1.name("dds.sec.crypto.cryptotransformkind");
+    prop1.value("AES256_GCM");
+    prop_handle.push_back(prop1);
+    Property prop2;
+    prop2.name("dds.sec.crypto.maxblockspersession");
+    prop2.value("16");
+    prop_handle.push_back(prop2);
+
+    participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+    participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+
+    reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, exception);
+    writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, exception);
+
+    //Register a remote for both Participants
+    ParticipantA_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_A,*i_handle,*perm_handle,*shared_secret, exception);
+    ParticipantB_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_B,*i_handle,*perm_handle,*shared_secret, exception);
+
+    //Register DataReader with DataWriter
+    remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *participant_B, *shared_secret, false, exception);
+
+    //Register DataWriter with DataReader
+    remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *participant_A, *shared_secret, exception);
+
+    //Create CryptoTokens for both Participants
+    CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantA_CryptoTokens, *participant_A, *ParticipantA_remote, exception);
+    CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantB_CryptoTokens, *participant_B, *ParticipantB_remote, exception);
+
+    //Set ParticipantA token into ParticipantB and viceversa
+    CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*participant_A,*ParticipantA_remote,ParticipantB_CryptoTokens,exception);
+    CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*participant_B,*ParticipantB_remote,ParticipantA_CryptoTokens,exception);
+
+    //Create CryptoTokens for the DataWriter and DataReader
+    CryptoPlugin->keyexchange()->create_local_datawriter_crypto_tokens(Writer_CryptoTokens, *writer, *remote_reader, exception);
+    CryptoPlugin->keyexchange()->create_local_datareader_crypto_tokens(Reader_CryptoTokens, *reader, *remote_writer, exception);
+
+    //Exchange Datareader and Datawriter Cryptotokens
+    CryptoPlugin->keyexchange()->set_remote_datareader_crypto_tokens(*writer, *remote_reader, Reader_CryptoTokens, exception);
+    CryptoPlugin->keyexchange()->set_remote_datawriter_crypto_tokens(*reader, *remote_writer, Writer_CryptoTokens, exception);
+
+    //Perform sample message exchange
+    receivers.clear();
+    receivers.push_back(remote_writer);
+
+    //Send message to intended participant
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_datareader_submessage(encoded_payload, plain_payload, *reader, receivers, exception));
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_datareader_submessage(decoded_payload, encoded_payload, *writer, *remote_reader, exception));
+    ASSERT_TRUE(plain_payload == decoded_payload);
 
     CryptoPlugin->keyfactory()->unregister_datawriter(writer,exception);
     CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer,exception);
@@ -1019,6 +1137,9 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
 
+    delete i_handle;
+    delete perm_handle;
+    delete shared_secret;
 }
 
 TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
