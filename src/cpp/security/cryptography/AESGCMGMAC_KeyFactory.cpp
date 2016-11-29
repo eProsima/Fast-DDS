@@ -20,6 +20,7 @@
 #include <openssl/evp.h>
 #include <openssl/err.h>
 #include <openssl/rand.h>
+#include <fastrtps/log/Log.h>
 
 #include <string.h>
 
@@ -100,6 +101,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     const std::vector<uint8_t>* shared_secret_ss = SharedSecretHelper::find_data_value(**shared_secret,"SharedSecret");
     const std::vector<uint8_t>* challenge_2 = SharedSecretHelper::find_data_value(**shared_secret,"Challenge2");
     if( (challenge_1 == nullptr) | (shared_secret_ss == nullptr) | (challenge_2 == nullptr) ){
+        logWarning(SECURITY_CRYPTO,"Malformed SharedSecretHandle");
         exception = SecurityException("Unable to read SharedSecret and Challenges");
         return nullptr;
     }
@@ -150,7 +152,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         buffer.master_salt.fill(0);
         std::array<uint8_t,32> p_master_salt;
         if(!EVP_Digest(concatenation.data(), challenge_1->size() + 16 + challenge_2->size(), p_master_salt.data(), NULL, EVP_sha256(), NULL)){
-            //TODO(Santi) Provide insight
+            logWarning(SECURITY_CRYPTO,"Error generating the keys to perform token transaction");
             delete RPCrypto;
             return nullptr;
         }
@@ -163,6 +165,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         size_t length = 0;
         EVP_DigestSignFinal(&ctx, NULL, &length);
         if(length > 32){
+            logWarning(SECURITY_CRYPTO,"Error generating the keys to perform token transaction");
             exception = SecurityException("Encountered an error while creating KxKeyMaterials");
             delete RPCrypto;
             return nullptr;
@@ -180,6 +183,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         //Compute key to produce master_sender_key
         buffer.master_sender_key.fill(0);
         if(!EVP_Digest(concatenation.data(), challenge_1->size() + 16 + challenge_2->size(), p_master_salt.data(), NULL, EVP_sha256(), NULL)){
+            logWarning(SECURITY_CRYPTO,"Error generating master key material");
             delete RPCrypto;
             return nullptr;
         }
@@ -192,7 +196,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         length = 0;
         EVP_DigestSignFinal(&ctx, NULL, &length);
         if(length > 32){
-            //TODO (Santi) Provide insight
+            logWarning(SECURITY_CRYPTO,"Error generating master key material");
             delete RPCrypto;
             return nullptr;
         }
@@ -223,7 +227,7 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
 
     AESGCMGMAC_ParticipantCryptoHandle& participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(participant_crypto);
     if(participant_handle.nil()){
-        //TODO (Santi) Provide insight
+        logWarning(SECURITY_CRYPTO,"Invalid ParticipantCryptoHandle");
         return nullptr;
     }
 
@@ -289,6 +293,10 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
     //Put both elements in the local and remote ParticipantCryptoHandle
 
     AESGCMGMAC_WriterCryptoHandle& local_writer_handle = AESGCMGMAC_WriterCryptoHandle::narrow(local_datawriter_crypto_handle);
+    if(local_writer_handle.nil()){
+        logWarning(SECURITY_CRYPTO,"Malformed DataWriterCryptoHandle");
+        return false;
+    }
     AESGCMGMAC_ReaderCryptoHandle* RRCrypto = new AESGCMGMAC_ReaderCryptoHandle(); // Remote Reader CryptoHandle, to be returned at the end of the function
 
     (*RRCrypto)->transformation_kind = local_writer_handle->transformation_kind;
@@ -340,7 +348,7 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
 
     AESGCMGMAC_ParticipantCryptoHandle& participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(participant_crypto);
     if(participant_handle.nil()){
-        //TODO (Santi) Provide insight
+        logWarning(SECURITY_CRYPTO,"Invalid ParticipantCryptoHandle");
         return nullptr;
     }
 
@@ -409,6 +417,10 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
     //Put both elements in the local and remote ParticipantCryptoHandle
 
     AESGCMGMAC_ReaderCryptoHandle& local_reader_handle = AESGCMGMAC_ReaderCryptoHandle::narrow(local_datareader_crypto_handle);
+    if(local_reader_handle.nil()){
+        logWarning(SECURITY_CRYPTO,"Invalid DataReaderCryptoHandle");
+        return nullptr;
+    }
     AESGCMGMAC_WriterCryptoHandle* RWCrypto = new AESGCMGMAC_WriterCryptoHandle(); // Remote Writer CryptoHandle, to be returned at the end of the function
 
     (*RWCrypto)->Participant_master_key_id = local_reader_handle->Participant_master_key_id;
@@ -476,10 +488,10 @@ bool AESGCMGMAC_KeyFactory::unregister_participant(
         unregister_datareader(reader, exception);
     }
 
-        AESGCMGMAC_ParticipantCryptoHandle* target = (AESGCMGMAC_ParticipantCryptoHandle *)participant_crypto_handle;
-        delete target;
+    AESGCMGMAC_ParticipantCryptoHandle* target = (AESGCMGMAC_ParticipantCryptoHandle *)participant_crypto_handle;
+    delete target;
 
-    return true;;
+    return true;
 
 }
 
