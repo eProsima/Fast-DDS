@@ -80,6 +80,13 @@ struct SecureDataHeader{
 struct SecureDataBody{
     std::vector<uint8_t> secure_data;
 };
+
+//Identifies the specific keys used to calculate them
+struct ReceiverSpecificMAC{
+    CryptoTransformKeyId receiver_mac_key_id;
+    std::array<uint8_t, 16> receiver_mac;
+};
+
 //Holds signatures.
 //common_mac->Signature using the common key that every intended receiver had
 //specific_mac->SignatureS made with the specific keys that only each pair of sender/receiver knows
@@ -87,12 +94,6 @@ struct SecureDataTag{
     std::array<uint8_t, 16> common_mac;
     std::vector<ReceiverSpecificMAC> receiver_specific_macs;
 };
-//Identifies the specific keys used to calculate the specific_mac
-struct ReceiverSpecificMAC{
-    CryptoTransformKeyId receiver_mac_key_id;
-    std::array<uint8_t, 16> receiver_mac;
-};
-
 /* Key Management
  * --------------
  * Keys are stored and managed as Cryptohandles

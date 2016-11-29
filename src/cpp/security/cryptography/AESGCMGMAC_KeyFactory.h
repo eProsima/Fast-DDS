@@ -85,11 +85,12 @@ class AESGCMGMAC_KeyFactory : public CryptoKeyFactory
     
     private:
     /* 
-     * Create KeyMaterial_AES_GCM_GMAC
-     * @return Pointer to KeyMaterial or NULLPTR if unsuccessful
+     *  make_unique_KeyId();
+     *  Generates an unique, unused CryptoTransformKeyId within the cryptographic domain
+     *  Use this method to generate KeyIds
      */
     CryptoTransformKeyId make_unique_KeyId();
-
+    //Storage for KeyIds in use
     std::vector<CryptoTransformKeyId> m_CryptoTransformKeyIds;
 };
 

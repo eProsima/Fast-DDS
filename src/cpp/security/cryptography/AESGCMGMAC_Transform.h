@@ -103,29 +103,32 @@ class AESGCMGMAC_Transform : public CryptoTransform
                 DatawriterCryptoHandle &sending_datawriter_crypto,
                 SecurityException &exception);
 
+
     bool remove_KeyId(CryptoTransformKeyId m_key);
 
+    //Aux function to compute session key from the master material
     std::array<uint8_t, 32> compute_sessionkey(std::array<uint8_t, 32> master_sender_key,std::array<uint8_t, 32> master_salt , uint32_t &session_id);
 
+    //Serialization and deserialization of message components
     std::vector<uint8_t> serialize_SecureDataHeader(SecureDataHeader &input);
     std::vector<uint8_t> serialize_SecureDataBody(SecureDataBody &input);
     std::vector<uint8_t> serialize_SecureDataTag(SecureDataTag &input);
-
     SecureDataHeader deserialize_SecureDataHeader(std::vector<uint8_t> &input);
     SecureDataBody deserialize_SecureDataBody(std::vector<uint8_t> &input);
     SecureDataTag deserialize_SecureDataTag(std::vector<uint8_t> &input);
 
+    //Wire assembly and disassembly of messages
     std::vector<uint8_t> assemble_serialized_payload(std::vector<uint8_t> &serialized_header,
             std::vector<uint8_t> &serialized_body,
             std::vector<uint8_t> &serialized_tag,
             unsigned char &flags);
-
-     std::vector<uint8_t> assemble_endpoint_submessage(std::vector<uint8_t> &serialized_header,
+     
+    std::vector<uint8_t> assemble_endpoint_submessage(std::vector<uint8_t> &serialized_header,
              std::vector<uint8_t> &serialized_body,
              std::vector<uint8_t> &serialized_tag,
              unsigned char &flags);
-
-   std::vector<uint8_t> assemble_rtps_message(std::vector<uint8_t> &rtps_header,
+   
+     std::vector<uint8_t> assemble_rtps_message(std::vector<uint8_t> &rtps_header,
            std::vector<uint8_t> &serialized_header,
            std::vector<uint8_t> &serialized_body,
            std::vector<uint8_t> &serialized_tag,

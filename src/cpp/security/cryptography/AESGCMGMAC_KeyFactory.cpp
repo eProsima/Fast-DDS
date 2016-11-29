@@ -63,6 +63,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
               }
           }//endfor
     }//endif
+
     (*PCrypto)->ParticipantKeyMaterial.transformation_kind =
         transformationtype;
     (*PCrypto)->transformation_kind = transformationtype;
@@ -74,11 +75,14 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     (*PCrypto)->ParticipantKeyMaterial.master_sender_key.fill(0);
     RAND_bytes( (*PCrypto)->ParticipantKeyMaterial.master_sender_key.data(), 16 );
 
+    //These values are set by the standard
     (*PCrypto)->ParticipantKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
     (*PCrypto)->ParticipantKeyMaterial.master_receiver_specific_key.fill(0);
-
+    
+    //Set values related to key update policy
     (*PCrypto)->max_blocks_per_session = maxblockspersession;
     (*PCrypto)->session_block_counter = maxblockspersession+1; //Set to update upon first usage
+    
     RAND_bytes( (unsigned char *)( &( (*PCrypto)->session_id ) ), sizeof(uint16_t));
 
     return PCrypto;

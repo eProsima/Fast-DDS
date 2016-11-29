@@ -18,6 +18,8 @@
 
 #include "AESGCMGMAC_Transform.h"
 
+#include <fastrtps/log/Log.h>
+
 #include <openssl/aes.h>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
@@ -39,7 +41,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
 
     AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_crypto);
     if(local_writer.nil()){
-        //TODO (santi) Provide insight
+        logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle");
         return false;
     }
 
@@ -54,17 +56,17 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
         //ReceiverSpecific keys shall be computed specifically when needed
         local_writer->session_block_counter = 0;
     }
-
+    //In any case, increment session block counter
     local_writer->session_block_counter += 1;
 
-    //Step 2.5 - Build remaining NONCE elements
+    //Build NONCE elements (Build once, use once)
     uint64_t initialization_vector_suffix;  //iv suffix changes with every operation
     RAND_bytes( (unsigned char*)(&initialization_vector_suffix), sizeof(uint64_t) );
     std::array<uint8_t,12> initialization_vector; //96 bytes, session_id + suffix
     memcpy(initialization_vector.data(),&(local_writer->session_id),4);
     memcpy(initialization_vector.data()+4,&initialization_vector_suffix,8);
 
-    //Step 3 - Build SecureDataHeader
+    //Build SecureDataHeader
     SecureDataHeader header;
 
     header.transform_identifier.transformation_kind = local_writer->WriterKeyMaterial.transformation_kind;
@@ -72,7 +74,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     memcpy( header.session_id.data(), &(local_writer->session_id), 4);
     memcpy( header.initialization_vector_suffix.data() , &initialization_vector_suffix, 8);
 
-    //Step 4 -Cypher the plain rtps message -> SecureDataBody
+    //Cypher the plain rtps message -> SecureDataBody
     int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
 
     size_t enc_length = plain_buffer.size()*3;
@@ -95,16 +97,16 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     output.resize(actual_size+final_size);
     EVP_CIPHER_CTX_free(e_ctx);
 
-    //Step 4.5 - Copy the results into SecureDataBody
+    //Copy the results into SecureDataBody
     SecureDataBody body;
     body.secure_data.resize(output.size());
     memcpy(body.secure_data.data(),output.data(),output.size());
 
-    //Step 5 - Build Secure DataTag
+    //Build Secure DataTag
     SecureDataTag dataTag;
     memcpy(dataTag.common_mac.data(),tag, 16);
 
-    //Step 6 - Assemble the message
+    //Assemble the message
     encoded_buffer.clear();
 
     //Header
@@ -128,7 +130,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
     AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_crypto);
     if(local_writer.nil()){
-        //TODO (santi) Provide insight
+        logWarning(SECURITY_CRYPTO,"Invalid cryptoHandle");
         return false;
     }
     bool update_specific_keys = false;
@@ -146,14 +148,14 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
     local_writer->session_block_counter += 1;
 
-    //Step 2.5 - Build remaining NONCE elements
+    //Build remaining NONCE elements
     uint64_t initialization_vector_suffix;  //iv suffix changes with every operation
     RAND_bytes( (unsigned char*)(&initialization_vector_suffix), sizeof(uint64_t) );
     std::array<uint8_t,12> initialization_vector; //96 bytes, session_id + suffix
     memcpy(initialization_vector.data(),&(local_writer->session_id),4);
     memcpy(initialization_vector.data()+4,&initialization_vector_suffix,8);
 
-    //Step 3 - Build SecureDataHeader
+    //Build SecureDataHeader
     SecureDataHeader header;
 
     header.transform_identifier.transformation_kind = local_writer->WriterKeyMaterial.transformation_kind;
@@ -162,7 +164,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     memcpy( header.initialization_vector_suffix.data() , &initialization_vector_suffix, 8);
 
 
-    //Step 4 -Cypher the plain rtps message -> SecureDataBody
+    //Cypher the plain rtps message -> SecureDataBody
     int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
 
     size_t enc_length = plain_rtps_submessage.size()*3;
@@ -180,12 +182,12 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     output.resize(actual_size+final_size);
     EVP_CIPHER_CTX_free(e_ctx);
 
-    //Step 4.5 - Copy the results into SecureDataBody
+    //Copy the results into SecureDataBody
     SecureDataBody body;
     body.secure_data.resize(output.size());
     memcpy(body.secure_data.data(),output.data(),output.size());
 
-    //Step 5 - Build Secure DataTag
+    //Build Secure DataTag
     SecureDataTag dataTag;
     memcpy(dataTag.common_mac.data(),tag, 16);
 
@@ -194,7 +196,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
         AESGCMGMAC_ReaderCryptoHandle& remote_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**rec);
         if(remote_reader.nil()){
-            //TODO (santi) Provide insight
+            logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle");
             return false;
         }
 
@@ -224,7 +226,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
         dataTag.receiver_specific_macs.push_back(buffer);
     }
 
-    //Step 6 - Assemble the message
+    //Assemble the message
     encoded_rtps_submessage.clear();
 
     //Header
@@ -252,7 +254,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
 
     AESGCMGMAC_ReaderCryptoHandle& local_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(sending_datareader_crypto);
     if(local_reader.nil()){
-        //TODO (santi) Provide insight
+        logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle");
         return false;
     }
 
@@ -271,14 +273,14 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
 
     local_reader->session_block_counter += 1;
 
-    //Step 2.5 - Build remaining NONCE elements
+    //Build remaining NONCE elements
     uint64_t initialization_vector_suffix;  //iv suffix changes with every operation
     RAND_bytes( (unsigned char*)(&initialization_vector_suffix), sizeof(uint64_t) );
     std::array<uint8_t,12> initialization_vector; //96 bytes, session_id + suffix
     memcpy(initialization_vector.data(),&(local_reader->session_id),4);
     memcpy(initialization_vector.data()+4,&initialization_vector_suffix,8);
 
-    //Step 3 - Build SecureDataHeader
+    //Build SecureDataHeader
     SecureDataHeader header;
 
     header.transform_identifier.transformation_kind = local_reader->ReaderKeyMaterial.transformation_kind;
@@ -287,7 +289,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     memcpy( header.initialization_vector_suffix.data() , &initialization_vector_suffix, 8);
 
 
-    //Step 4 -Cypher the plain rtps message -> SecureDataBody
+    //Cypher the plain rtps message -> SecureDataBody
     int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
 
     size_t enc_length = plain_rtps_submessage.size()*3;
@@ -305,12 +307,12 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     output.resize(actual_size+final_size);
     EVP_CIPHER_CTX_free(e_ctx);
 
-    //Step 4.5 - Copy the results into SecureDataBody
+    //Copy the results into SecureDataBody
     SecureDataBody body;
     body.secure_data.resize(output.size());
     memcpy(body.secure_data.data(),output.data(),output.size());
 
-    //Step 5 - Build Secure DataTag
+    //Build Secure DataTag
     SecureDataTag dataTag;
     memcpy(dataTag.common_mac.data(),tag, 16);
 
@@ -349,12 +351,11 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
         dataTag.receiver_specific_macs.push_back(buffer);
     }
 
-    //Step 6 - Assemble the message
+    //Assemble the message
     encoded_rtps_submessage.clear();
 
     //Header
     std::vector<uint8_t> serialized_header = serialize_SecureDataHeader(header);
-
     //Body
     std::vector<uint8_t> serialized_body = serialize_SecureDataBody(body);
     //Tag
@@ -376,7 +377,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
 
     AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(sending_crypto);
     if(local_participant.nil()){
-        //TODO (santi) Provide insight
+        logWarning(SECURITY_CRYPTO,"Invalid CryptoToken");
         return false;
     }
     //Extract RTPS Header
@@ -402,14 +403,14 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
 
     local_participant->session_block_counter += 1;
 
-    //Step 2.5 - Build remaining NONCE elements
+    //Build remaining NONCE elements
     uint64_t initialization_vector_suffix;  //iv suffix changes with every operation
     RAND_bytes( (unsigned char*)(&initialization_vector_suffix), sizeof(uint64_t) );
     std::array<uint8_t,12> initialization_vector; //96 bytes, session_id + suffix
     memcpy(initialization_vector.data(),&(local_participant->session_id),4);
     memcpy(initialization_vector.data()+4,&initialization_vector_suffix,8);
 
-    //Step 3 - Build SecureDataHeader
+    //Build SecureDataHeader
     SecureDataHeader header;
 
     header.transform_identifier.transformation_kind = local_participant->ParticipantKeyMaterial.transformation_kind;
@@ -418,7 +419,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     memcpy( header.initialization_vector_suffix.data() , &initialization_vector_suffix, 8);
 
 
-    //Step 4 -Cypher the plain rtps message -> SecureDataBody
+    //Cypher the plain rtps message -> SecureDataBody
     int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
 
     size_t enc_length = ( payload.size()) * 3;
@@ -441,12 +442,12 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     output.resize(actual_size+final_size);
     EVP_CIPHER_CTX_free(e_ctx);
 
-    //Step 4.5 - Copy the results into SecureDataBody
+    //Copy the results into SecureDataBody
     SecureDataBody body;
     body.secure_data.resize(output.size());
     memcpy(body.secure_data.data(),output.data(),output.size());
 
-    //Step 5 - Build Secure DataTag
+    //Build Secure DataTag
     SecureDataTag dataTag;
     memcpy(dataTag.common_mac.data(),tag, 16);
 
@@ -455,7 +456,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
 
         AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(**rec);
         if(remote_participant.nil()){
-            //TODO (santi) Provide insight
+            logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle");
             return false;
         }
 
@@ -490,7 +491,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         dataTag.receiver_specific_macs.push_back(buffer);
     }
 
-    //Step 6 - Assemble the message
+    //Assemble the message
     encoded_rtps_message.clear();
 
     //Header
@@ -544,6 +545,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     }
 
     if(!mac_found){
+        logWarning(SECURITY_CRYPTO,"Unable to authenticate the message: message does not target this Participant");
         exception = SecurityException("Message does not contain a suitable specific MAC for the receiving Participant");
         return false;
     }
@@ -590,8 +592,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     EVP_CIPHER_CTX_free(d_ctx);
 
     if(!auth){
-        std::cout << "Unable to auth the message" << std::endl;
-        //Log error
+        logWarning(SECURITY_CRYPTO,"Unable to authenticate the message.");
         return false;
     }
 
@@ -631,11 +632,13 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
 
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(sending_crypto);
     if(remote_participant.nil()){
+        logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle");
         exception = SecurityException("Not a valid ParticipantCryptoHandle received");
         return false;
     }
     AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(receiving_crypto);
     if(local_participant.nil()){
+        logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle");
         exception = SecurityException("Not a valid ParticipantCryptoHandle received");
         return false;
     }
@@ -645,7 +648,7 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
     std::vector<uint8_t> serialized_header, serialized_body, serialized_tag;
     unsigned char flags;
     if(!disassemble_endpoint_submessage(encoded_rtps_submessage, serialized_header, serialized_body, serialized_tag, flags)){
-        std::cout << "Could not preprocess message, unable to disassemble" << std::endl;
+        logWarning(SECURITY_CRYPTO,"Could not preprocess message, unable to disassemble it");
         return false;
     }
 
@@ -668,7 +671,6 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
                     }
                 }   //For each Reader2WriterKeyMaterial in the local datareader
             } //For each datareader present in the local participant
-            return false;
         }
     }
 
@@ -687,10 +689,9 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
                     }
                 }   //For each Writer2ReaderKeyMaterial in the local datawriter
             } //For each datawriter present in the local participant
-            return false;
         }
     }
-
+    logWarning(SECURITY_CRYPTO,"Unable to determine the nature of the message");
     return false;
 }
 
@@ -712,7 +713,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     unsigned char flags;
 
     if( !disassemble_endpoint_submessage(encoded_rtps_submessage, serialized_header, serialized_body, serialized_tag, flags) ){
-        std::cout << "Unable to disassemble endpoint submessage" << std::endl;
+        logWarning(SECURITY_CRYPTO,"Unable to disassemble endpoint submessage");
         return false;
     }
     //Header
@@ -721,7 +722,6 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     body = deserialize_SecureDataBody(serialized_body);
     //Tag
     tag = deserialize_SecureDataTag(serialized_tag);
-
 
     //Read specific MACs in search for the correct one (verify the authenticity of the message)
     ReceiverSpecificMAC specific_mac;
@@ -736,6 +736,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     }
 
     if(!mac_found){
+        logWarning(SECURITY_CRYPTO,"Unable to authenticate the message");
         exception = SecurityException("Message does not contain a suitable specific MAC for the receiving Participant");
         return false;
     }
@@ -777,7 +778,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     EVP_CIPHER_CTX_free(d_ctx);
 
     if(!auth){
-        //Log error
+        logWarning(SECURITY_CRYPTO, "Unable to auth message, it could be coming from a rogue sender");
         return false;
     }
 
@@ -819,7 +820,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     unsigned char flags;
 
     if(!disassemble_endpoint_submessage(encoded_rtps_submessage, serialized_header, serialized_body, serialized_tag, flags)){
-        std::cout << "Unable to disassemble endpoint submessage" << std::endl;
+        logWarning(SECURITY_CRYPTO, "Unable to disassemble endpoint submessage");
         return false;
     }
     //Header
@@ -842,6 +843,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     }
 
     if(!mac_found){
+        logWarning(SECURITY_CRYPTO, "Unable to auth the message: it is not directed to the recipient that processes it");
         exception = SecurityException("Message does not contain a suitable specific MAC for the receiving Participant");
         return false;
     }
@@ -882,7 +884,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     EVP_CIPHER_CTX_free(d_ctx);
 
     if(!auth){
-        //Log error
+        logWarning(SECURITY_CRYPTO,"Unable to authenticate the message, it may come from a rogue source");
         return false;
     }
 
@@ -933,6 +935,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     unsigned char flags = 0x00;
 
     if( !disassemble_serialized_payload(encoded_buffer, serialized_header, serialized_body, serialized_tag, flags) ){
+        logWarning(SECURITY_CRYPTO,"Unable to disassemble the message");
         std::cout << "Disassembly function failure" << std::endl;
         return false;
     }

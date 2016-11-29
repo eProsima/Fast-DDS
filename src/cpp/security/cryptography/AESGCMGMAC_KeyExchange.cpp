@@ -20,6 +20,7 @@
 #include <fastrtps/rtps/common/Token.h>
 #include <fastrtps/rtps/common/BinaryProperty.h>
 #include "AESGCMGMAC_KeyExchange.h"
+#include <fastrtps/log/Log.h>
 
 #include <openssl/aes.h>
 #include <openssl/evp.h>
@@ -40,7 +41,7 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
 
     if( local_participant.nil() | remote_participant.nil() ){
-        //TODO (Santi) provide insight
+        logWarning(SECURITY_CRYPTO, "Not a valid ParticipantCryptoHandle received");
         return false;
     }
 
@@ -73,26 +74,29 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
 
     if( local_participant.nil() | remote_participant.nil() ){
-        //TODO (Santi) provide insight
+        logWarning(SECURITY_CRYPTO, "Not a valid ParticipantCryptoHandle received");
         return false;
     }
     //As only relevant KeyMaterials are tokenized, only one Token is exchanged
     if(remote_participant_tokens.size() != 1){
+        logWarning(SECURITY_CRYPTO, "Invalid CryptoTokenSeq length");
         exception = SecurityException("Incorrect remote CryptoSequence length");
         return false;
     }
     if(remote_participant_tokens.at(0).class_id() != "DDS:Crypto:AES_GCM_GMAC"){
+        logWarning(SECURITY_CRYPTO, "MalformedCryptoToken");
         exception = SecurityException("Incorrect token type received");
         return false;
     }
     if(remote_participant_tokens.at(0).binary_properties().size() !=1 | remote_participant_tokens.at(0).properties().size() != 0 |
-            remote_participant_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat"){
+        remote_participant_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat"){
+        logWarning(SECURITY_CRYPTO, "MalformedCryptoToken");
         exception = SecurityException("Malformed CryptoToken");
         return false;
     }
     //Valid CryptoToken, we can decrypt and push the resulting KeyMaterial in as a RemoteParticipant2ParticipantKeyMaterial
     std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_participant_tokens.at(0).binary_properties().at(0).value(),
-            remote_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
+        remote_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
 
     KeyMaterial_AES_GCM_GMAC keymat;
     keymat = KeyMaterialCDRDeserialize(&plaintext);
@@ -112,20 +116,20 @@ bool AESGCMGMAC_KeyExchange::create_local_datawriter_crypto_tokens(
     AESGCMGMAC_ReaderCryptoHandle& remote_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(remote_datareader_crypto);
 
     if( local_writer.nil() | remote_reader.nil() ){
-        //TODO (Santi) provide insight
+        logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle received");        
         return false;
     }
     //Flush previously present CryptoTokens
     local_datawriter_crypto_tokens.clear();
-        //Only the KeyMaterial used in conjunction with the remote_participant are tokenized. In this implementation only on Pariticipant2ParticipantKeyMaterial exists per matched Participant
-        DatawriterCryptoToken temp;
-        temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
-        BinaryProperty prop;
-        prop.name() = std::string("dds.cryp.keymat");
-        std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_reader->Writer2ReaderKeyMaterial.at(0));
-        prop.value() = aes_128_gcm_encrypt(plaintext, remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key);
-        temp.binary_properties().push_back(prop);
-        local_datawriter_crypto_tokens.push_back(temp);
+    //Only the KeyMaterial used in conjunction with the remote_participant are tokenized. In this implementation only on Pariticipant2ParticipantKeyMaterial exists per matched Participant
+    DatawriterCryptoToken temp;
+    temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
+    BinaryProperty prop;
+    prop.name() = std::string("dds.cryp.keymat");
+    std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_reader->Writer2ReaderKeyMaterial.at(0));
+    prop.value() = aes_128_gcm_encrypt(plaintext, remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key);
+    temp.binary_properties().push_back(prop);
+    local_datawriter_crypto_tokens.push_back(temp);
 
     return true;
 }
@@ -140,7 +144,7 @@ bool AESGCMGMAC_KeyExchange::create_local_datareader_crypto_tokens(
     AESGCMGMAC_WriterCryptoHandle& remote_writer = AESGCMGMAC_WriterCryptoHandle::narrow(remote_datawriter_crypto);
 
     if( local_reader.nil() | remote_writer.nil() ){
-        //TODO (Santi) provide insight
+        logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle received");
         return false;
     }
     //Flush previously present CryptoTokens
@@ -170,21 +174,24 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
     AESGCMGMAC_ReaderCryptoHandle& remote_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(remote_datareader_crypto);
 
     if( local_writer.nil() | remote_reader.nil() ){
-        //TODO (Santi) provide insight
+        logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle received");
         return false;
     }
     //As only relevant KeyMaterials are tokenized, only one Token is exchanged
     if(remote_datareader_tokens.size() != 1){
+        logWarning(SECURITY_CRYPTO,"Malformed CryptoTokenSequence");
         exception = SecurityException("Incorrect remote CryptoSequence length");
         return false;
     }
     if(remote_datareader_tokens.at(0).class_id() != "DDS:Crypto:AES_GCM_GMAC"){
+        logWarning(SECURITY_CRYPTO,"Malformed CryptoToken");
         exception = SecurityException("Incorrect token type received");
         return false;
     }
 
     if(remote_datareader_tokens.at(0).binary_properties().size() !=1 | remote_datareader_tokens.at(0).properties().size() != 0 |
             remote_datareader_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat"){
+        logWarning(SECURITY_CRYPTO,"Malformed CryptoToken");
         exception = SecurityException("Malformed CryptoToken");
         return false;
     }
@@ -197,6 +204,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
     keymat = KeyMaterialCDRDeserialize(&plaintext);
     local_writer->Reader2WriterKeyMaterial.push_back(keymat);
     remote_reader->Reader2WriterKeyMaterial.push_back(keymat);
+    
     return true;
  }
 
@@ -210,21 +218,24 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
     AESGCMGMAC_WriterCryptoHandle& remote_writer = AESGCMGMAC_WriterCryptoHandle::narrow(remote_datawriter_crypto);
 
     if( local_reader.nil() | remote_writer.nil() ){
-        //TODO (Santi) provide i
+        logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle"); 
         return false;
     }
     //As only relevant KeyMaterials are tokenized, only one Token is exchanged
     if(remote_datawriter_tokens.size() != 1){
+        logWarning(SECURITY_CRYPTO,"Malformed CryptoTokenSequence");
         exception = SecurityException("Incorrect remote CryptoSequence length");
         return false;
     }
     if(remote_datawriter_tokens.at(0).class_id() != "DDS:Crypto:AES_GCM_GMAC"){
+        logWarning(SECURITY_CRYPTO,"Malformed CryptoToken");
         exception = SecurityException("Incorrect token type received");
         return false;
     }
 
     if(remote_datawriter_tokens.at(0).binary_properties().size() !=1 | remote_datawriter_tokens.at(0).properties().size() != 0 |
             remote_datawriter_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat"){
+        logWarning(SECURITY_CRYPTO,"Malformed CryptoToken");
         exception = SecurityException("Malformed CryptoToken");
         return false;
     }
@@ -238,6 +249,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
     local_reader->Writer2ReaderKeyMaterial.push_back(keymat);
     remote_writer->Writer2ReaderKeyMaterial.push_back(keymat);
 
+    return true;
 }
 
 bool AESGCMGMAC_KeyExchange::return_crypto_tokens(
@@ -343,7 +355,6 @@ std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_decrypt(std::vector<uin
     std::copy(crypto.begin()+16, crypto.begin()+32, iv);
     std::vector<uint8_t> plaintext;
     plaintext.resize(crypto.size(), '\0');
-
 
     int actual_size=0, final_size=0;
     EVP_CIPHER_CTX* d_ctx = EVP_CIPHER_CTX_new();
