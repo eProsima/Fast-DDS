@@ -32,37 +32,44 @@ namespace fastrtps {
  * ParameterList_t class, used to store multiple parameters as a vector of pointers to the base class.
  * @ingroup PARAMETER_MODULE
  */
-class ParameterList_t {
-public:
-	ParameterList_t():m_cdrmsg(RTPSMESSAGE_DEFAULT_SIZE),m_hasChanged(true){};
-	virtual ~ParameterList_t()
-	{
+class ParameterList_t
+{
+    public:
 
-	}
-	/**
-	 * Delete all parameters in the list.
-	 */
-	void deleteParams()
-	{
-		for(std::vector<Parameter_t*>::iterator it = m_parameters.begin();
-				it!=m_parameters.end();++it)
-			delete(*it);
-		resetList();
-	}
-	/**
-	 * Reset the list of parameters (without deleting them, since they can be in use in another list).
-	 */
-	void resetList(){
-		m_parameters.clear();
-		CDRMessage::initCDRMsg(&m_cdrmsg);
-		m_hasChanged = true;
-	}
-	//! Vector of the pointers to the parameters.
-	std::vector<Parameter_t*> m_parameters;
-	//! Associated CDRMessage_t message.
-	CDRMessage_t m_cdrmsg;
-	//! Bool variable to indicate whether a new parameter has been added.
-	bool m_hasChanged;
+        ParameterList_t(): m_cdrmsg(RTPSMESSAGE_DEFAULT_SIZE), m_hasChanged(true) {}
+
+        ParameterList_t(const ParameterList_t& plist)
+        {
+            m_parameters = plist.m_parameters;
+            m_hasChanged = true;
+        }
+
+        virtual ~ParameterList_t() {}
+
+        /**
+         * Delete all parameters in the list.
+         */
+        void deleteParams()
+        {
+            for(std::vector<Parameter_t*>::iterator it = m_parameters.begin();
+                    it!=m_parameters.end();++it)
+                delete(*it);
+            resetList();
+        }
+        /**
+         * Reset the list of parameters (without deleting them, since they can be in use in another list).
+         */
+        void resetList(){
+            m_parameters.clear();
+            CDRMessage::initCDRMsg(&m_cdrmsg);
+            m_hasChanged = true;
+        }
+        //! Vector of the pointers to the parameters.
+        std::vector<Parameter_t*> m_parameters;
+        //! Associated CDRMessage_t message.
+        CDRMessage_t m_cdrmsg;
+        //! Bool variable to indicate whether a new parameter has been added.
+        bool m_hasChanged;
 };
 
 /**

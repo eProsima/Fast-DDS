@@ -46,17 +46,19 @@ class MockAuthenticationPlugin : public Authentication
                 const GUID_t& remote_participant_key,
                 SecurityException& exception));
 
-        MOCK_METHOD5(begin_handshake_request, ValidationResult_t(HandshakeHandle** handshake_handle,
+        MOCK_METHOD6(begin_handshake_request, ValidationResult_t(HandshakeHandle** handshake_handle,
                 HandshakeMessageToken** handshake_message,
                 const IdentityHandle& initiator_identity_handle,
                 IdentityHandle& replier_identity_handle,
+                const CDRMessage_t& cdr_participant_data,
                 SecurityException& exception));
 
-        MOCK_METHOD6(begin_handshake_reply_rvr, ValidationResult_t(HandshakeHandle** handshake_handle,
+        MOCK_METHOD7(begin_handshake_reply_rvr, ValidationResult_t(HandshakeHandle** handshake_handle,
                 HandshakeMessageToken** handshake_message_out,
                 HandshakeMessageToken handshake_message_in,
                 IdentityHandle& initiator_identity_handle,
                 const IdentityHandle& replier_identity_handle,
+                const CDRMessage_t& cdr_participant_data,
                 SecurityException& exception));
 
         MOCK_METHOD4(process_handshake_rvr, ValidationResult_t(HandshakeMessageToken** handshake_message_out,
@@ -101,10 +103,11 @@ class MockAuthenticationPlugin : public Authentication
                 HandshakeMessageToken&& handshake_message_in,
                 IdentityHandle& initiator_identity_handle,
                 const IdentityHandle& replier_identity_handle,
+                const CDRMessage_t& cdr_participant_data,
                 SecurityException& exception)
         {
             return begin_handshake_reply_rvr(handshake_handle, handshake_message_out, handshake_message_in,
-                    initiator_identity_handle, replier_identity_handle, exception);
+                    initiator_identity_handle, replier_identity_handle, cdr_participant_data, exception);
         }
 
         ValidationResult_t process_handshake(HandshakeMessageToken** handshake_message_out,

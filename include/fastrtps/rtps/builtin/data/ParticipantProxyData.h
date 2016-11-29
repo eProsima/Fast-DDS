@@ -58,7 +58,6 @@ namespace rtps {
 struct CDRMessage_t;
 class PDPSimple;
 class RemoteParticipantLeaseDuration;
-class RTPSParticipantImpl;
 class ReaderProxyData;
 class WriterProxyData;
 

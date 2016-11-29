@@ -57,7 +57,8 @@ PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
 
 PublisherImpl::~PublisherImpl()
 {
-    logInfo(PUBLISHER,this->getGuid().entityId << " in topic: "<<this->m_att.topic.topicName);
+    if(mp_writer != nullptr)
+        logInfo(PUBLISHER,this->getGuid().entityId << " in topic: "<<this->m_att.topic.topicName);
     RTPSDomain::removeRTPSWriter(mp_writer);
     delete(this->mp_userPublisher);
 }

@@ -20,6 +20,7 @@
 #include "PKIIdentityHandle.h"
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
 #include <openssl/pem.h>
 #include <openssl/err.h>
@@ -56,7 +57,7 @@ unsigned char* BN_serialize(const BIGNUM* bn, const unsigned char* orig_pointer,
 
     size_t align = alignment(current_pointer - orig_pointer, 4);
     unsigned char* pointer = current_pointer + align;
-    uint32_t len = (uint32_t)BN_num_bytes(bn);
+    int32_t len = (int32_t)BN_num_bytes(bn);
 
     if(DEFAULT_ENDIAN == BIGEND)
     {
@@ -1090,6 +1091,7 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
         HandshakeMessageToken** handshake_message,
         const IdentityHandle& initiator_identity_handle,
         IdentityHandle& replier_identity_handle,
+        const CDRMessage_t& cdr_participant_data,
         SecurityException& exception)
 {
     assert(handshake_handle);
@@ -1123,7 +1125,12 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
     bproperty.propagate(true);
     (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
 
-    // TODO(Ricardo) c.pdata
+    // c.pdata
+    bproperty.name("c.pdata");
+    bproperty.value().assign(cdr_participant_data.buffer,
+            cdr_participant_data.buffer + cdr_participant_data.length);
+    bproperty.propagate(true);
+    (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
 
     // c.dsign_algo.
     bproperty.name("c.dsign_algo");
@@ -1194,6 +1201,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
         HandshakeMessageToken&& handshake_message_in,
         IdentityHandle& initiator_identity_handle,
         const IdentityHandle& replier_identity_handle,
+        const CDRMessage_t& cdr_participant_data,
         SecurityException& exception)
 {
     assert(handshake_handle);
@@ -1252,7 +1260,49 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    // TODO(Ricardo) c.pdata and check participant_builtin_key
+    const std::vector<uint8_t>* pdata = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.pdata");
+
+    if(pdata == nullptr)
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.pdata");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
+    CDRMessage_t cdr_pdata(0);
+    cdr_pdata.wraps = true;
+    cdr_pdata.msg_endian = BIGEND;
+    cdr_pdata.length = (uint32_t)pdata->size();
+    cdr_pdata.max_size = (uint32_t)pdata->size();
+    cdr_pdata.buffer = (octet*)pdata->data();
+    ParticipantProxyData remote_participant_data;
+    if(!remote_participant_data.readFromCDRMessage(&cdr_pdata))
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Cannot deserialize ParticipantProxyData in property c.pdata");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    if((remote_participant_data.m_guid.guidPrefix.value[0] & 0xC0) != 0xC0)
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Bad participant_key's first bit in c.pdata");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    unsigned char md[SHA256_DIGEST_LENGTH];
+    unsigned int length = 0;
+
+    if(!X509_NAME_digest(cert_sn, EVP_sha256(), md, &length) || length != SHA256_DIGEST_LENGTH)
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Cannot generate SHA256 of subject name");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    md[0] |= 0xC0;
+    if(memcmp(md, remote_participant_data.m_guid.guidPrefix.value, 6) != 0)
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Bad participant_key's 47bits in c.pdata");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
         
     // c.dsign_algo
     const std::vector<uint8_t>* dsign_algo = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.dsign_algo");
@@ -1311,7 +1361,6 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     CDRMessage_t cdrmessage(BinaryPropertyHelper::serialized_size(handshake_message_in.binary_properties())+ 3);
     cdrmessage.msg_endian = BIGEND;
     CDRMessage::addBinaryPropertySeq(&cdrmessage, handshake_message_in.binary_properties(), "hash_c1");
-    unsigned char md[SHA256_DIGEST_LENGTH];
 
     if(!EVP_Digest(cdrmessage.buffer, cdrmessage.length, md, NULL, EVP_sha256(), NULL))
     {
@@ -1364,7 +1413,12 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     bproperty.propagate(true);
     (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
 
-    // TODO(Ricardo) c.pdata
+    // c.pdata
+    bproperty.name("c.pdata");
+    bproperty.value().assign(cdr_participant_data.buffer,
+            cdr_participant_data.buffer + cdr_participant_data.length);
+    bproperty.propagate(true);
+    (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
 
     // c.dsign_algo.
     bproperty.name("c.dsign_algo");
@@ -1543,7 +1597,52 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    // TODO(Ricardo) c.pdata and check participant_builtin_key
+    const std::vector<uint8_t>* pdata = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.pdata");
+
+    if(pdata == nullptr)
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.pdata");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
+    CDRMessage_t cdr_pdata(0);
+    cdr_pdata.wraps = true;
+    cdr_pdata.msg_endian = BIGEND;
+    cdr_pdata.length = (uint32_t)pdata->size();
+    cdr_pdata.max_size = (uint32_t)pdata->size();
+    cdr_pdata.buffer = (octet*)pdata->data();
+    ParticipantProxyData remote_participant_data;
+    if(!remote_participant_data.readFromCDRMessage(&cdr_pdata))
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Cannot deserialize ParticipantProxyData in property c.pdata");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    if((remote_participant_data.m_guid.guidPrefix.value[0] & 0xC0) != 0xC0)
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Bad participant_key's first bit in c.pdata");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    X509_NAME* cert_sn = X509_get_subject_name(rih->cert_);
+    assert(cert_sn != nullptr);
+
+    unsigned char md[SHA256_DIGEST_LENGTH];
+    unsigned int length = 0;
+
+    if(!X509_NAME_digest(cert_sn, EVP_sha256(), md, &length) || length != SHA256_DIGEST_LENGTH)
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Cannot generate SHA256 of subject name");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    md[0] |= 0xC0;
+    if(memcmp(md, remote_participant_data.m_guid.guidPrefix.value, 6) != 0)
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Bad participant_key's 47bits in c.pdata");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
     
     // c.dsign_algo
     const std::vector<uint8_t>* dsign_algo = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.dsign_algo");
@@ -1600,7 +1699,6 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     CDRMessage_t cdrmessage(BinaryPropertyHelper::serialized_size(handshake_message_in.binary_properties())+ 3);
     cdrmessage.msg_endian = BIGEND;
     CDRMessage::addBinaryPropertySeq(&cdrmessage, handshake_message_in.binary_properties(), "hash_c2");
-    unsigned char md[SHA256_DIGEST_LENGTH];
 
     if(!EVP_Digest(cdrmessage.buffer, cdrmessage.length, md, NULL, EVP_sha256(), NULL))
     {

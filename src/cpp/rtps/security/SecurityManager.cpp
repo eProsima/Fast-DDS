@@ -313,6 +313,7 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
                 &handshake_message,
                 *local_identity_handle_,
                 *remote_identity_handle,
+                participant_->pdpsimple()->get_participant_proxy_data_serialized(BIGEND),
                 exception);
     }
     else if(pre_auth_status == AUTHENTICATION_WAITING_REQUEST)
@@ -323,6 +324,7 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
                 std::move(message_in),
                 *remote_identity_handle,
                 *local_identity_handle_,
+                participant_->pdpsimple()->get_participant_proxy_data_serialized(BIGEND),
                 exception);
     }
     else if(pre_auth_status == AUTHENTICATION_WAITING_REPLY ||
@@ -731,9 +733,9 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
                 assert(handshake_handle);
 
                 // Preconditions
-                if(message.related_message_identity().source_guid() != participant_->getGuid())
+                if(message.related_message_identity().source_guid() != participant_stateless_message_writer_->getGuid())
                 {
-                    logInfo(SECURITY, "Bad ParticipantGenericMessage. related_message_identity.source_guid is mine");
+                    logInfo(SECURITY, "Bad ParticipantGenericMessage. related_message_identity.source_guid is not mine");
                     restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle);
                     return;
                 }

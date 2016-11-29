@@ -19,6 +19,8 @@
 #ifndef RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
 #define RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
 
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+
 #include <gmock/gmock.h>
 
 namespace eprosima {
@@ -33,6 +35,8 @@ class PDPSimple
 
         MOCK_METHOD1(notifyAboveRemoteEndpoints, void(ParticipantProxyData*));
 
+        MOCK_METHOD1(get_participant_proxy_data_serialized, CDRMessage_t(Endianness_t));
+
 };
 
 } //namespace rtps
@@ -40,4 +44,3 @@ class PDPSimple
 } //namespace eprosima
 
 #endif // RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
-

@@ -65,8 +65,8 @@ class BlackboxEnvironment : public ::testing::Environment
 
             if(global_port + 7400 > global_port)
                 global_port += 7400;
-            //Log::SetVerbosity(Log::Info);
-            //Log::SetCategoryFilter(std::regex("(SECURITY|AUTHENTICATION)"));
+            Log::SetVerbosity(Log::Info);
+            Log::SetCategoryFilter(std::regex("(SECURITY)"));
         }
 
         void TearDown()

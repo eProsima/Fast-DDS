@@ -153,7 +153,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	ProtocolVersion_t& proto
 {
 	if(pid == PID_PROTOCOL_VERSION)
 	{
-			ParameterProtocolVersion_t* p = new ParameterProtocolVersion_t();
+        ParameterProtocolVersion_t* p = new ParameterProtocolVersion_t();
 		p->Pid = pid;
 		p->length = PARAMETER_PROTOCOL_LENGTH;
 		p->protocolVersion = protocol;
@@ -166,18 +166,18 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	ProtocolVersion_t& proto
 
 bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	VendorId_t& vendor)
 {
-	if(pid == PID_VENDORID)
-		{
-			ParameterVendorId_t* p = new ParameterVendorId_t();
-			p->Pid = pid;
-			p->length = PARAMETER_VENDOR_LENGTH;
-			p->vendorId[0] = vendor[0];
-			p->vendorId[1] = vendor[1];
-			qos->allQos.m_parameters.push_back((Parameter_t*)p);
-			qos->allQos.m_hasChanged = true;
-			return true;
-		}
-		return false;
+    if(pid == PID_VENDORID)
+    {
+        ParameterVendorId_t* p = new ParameterVendorId_t();
+        p->Pid = pid;
+        p->length = PARAMETER_VENDOR_LENGTH;
+        p->vendorId[0] = vendor[0];
+        p->vendorId[1] = vendor[1];
+        qos->allQos.m_parameters.push_back((Parameter_t*)p);
+        qos->allQos.m_hasChanged = true;
+        return true;
+    }
+    return false;
 }
 
 bool QosList::addQos(QosList_t* qos, ParameterId_t pid, octet o1,	octet o2, octet o3, octet o4)
