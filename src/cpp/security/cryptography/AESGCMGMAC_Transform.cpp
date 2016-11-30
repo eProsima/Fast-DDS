@@ -430,16 +430,33 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
 
     int actual_size=0, final_size=0;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-    if(local_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)){
-      EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_participant->SessionKey.data()), initialization_vector.data());
+    if( (local_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)) |
+        (local_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC)))
+    {
+        EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_participant->SessionKey.data()), initialization_vector.data());
     }
-    if(local_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)){
+    if( (local_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)) |
+        (local_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GMAC))) 
+    {
       EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(local_participant->SessionKey.data()), initialization_vector.data());
     }
-    EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)payload.data(), payload.size());
-    EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
-    EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
-    output.resize(actual_size+final_size);
+
+    if( (local_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)) |
+        (local_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)))
+    {
+        //We are in GCM mode: We need encryption and signature
+        EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)payload.data(), payload.size());
+        EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
+        EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
+        output.resize(actual_size+final_size);
+    }else{  
+        //We are in GMAC mode: We need a signature but no encryption is needed
+        EVP_EncryptUpdate(e_ctx, NULL, &actual_size, (const unsigned char*)payload.data(), payload.size());
+        EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
+        EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
+        output.resize(payload.size());
+        memcpy(output.data(), payload.data(), payload.size());
+    }
     EVP_CIPHER_CTX_free(e_ctx);
 
     //Copy the results into SecureDataBody
@@ -472,10 +489,14 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
         int actual_size=0, final_size=0;
         EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-        if(remote_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)){
+        if( (remote_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)) |
+            (remote_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC)))
+        {
             EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_participant->SessionKey.data()), initialization_vector.data());
         }
-        if(remote_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)){
+        if( (remote_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)) |
+            (remote_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GMAC)))
+        {
             EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(remote_participant->SessionKey.data()), initialization_vector.data());
         }
         EVP_EncryptUpdate(e_ctx, NULL, &actual_size, dataTag.common_mac.data(), 16);
@@ -580,10 +601,14 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
                     session_id);
 
     //Verify specific MAC
-    if(sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)){
+    if( (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)) |
+        (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC)))
+    {
       EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)specific_session_key.data(), initialization_vector.data());
     }
-    if(sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)){
+    if( (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)) |
+        (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GMAC)))
+    {
       EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), (const unsigned char *)specific_session_key.data(), initialization_vector.data());
     }
     EVP_DecryptUpdate(d_ctx, NULL, &actual_size, tag.common_mac.data(), 16);
@@ -601,23 +626,35 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
 
     d_ctx = EVP_CIPHER_CTX_new();
     plain_buffer.clear();
-    plain_buffer.resize(encoded_buffer.size());
 
     actual_size = 0;
     final_size = 0;
 
-    if(sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)){
-      EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
-    }
-    if(sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)){
+    if( (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)) |
+        (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC)))
+    {
       EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
     }
-    EVP_DecryptUpdate(d_ctx, plain_buffer.data(), &actual_size, body.secure_data.data(),body.secure_data.size());
-    EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG,16,tag.common_mac.data());
-    EVP_DecryptFinal(d_ctx, plain_buffer.data() + actual_size, &final_size);
-    EVP_CIPHER_CTX_free(d_ctx);
-    plain_buffer.resize(actual_size + final_size);
+    if( (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)) |
+        (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GMAC)))
+    {
+      EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
+    }
 
+    if( (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)) |
+        (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)))
+    {
+
+        plain_buffer.resize(encoded_buffer.size());
+        EVP_DecryptUpdate(d_ctx, plain_buffer.data(), &actual_size, body.secure_data.data(),body.secure_data.size());
+        EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG,16,tag.common_mac.data());
+        EVP_DecryptFinal(d_ctx, plain_buffer.data() + actual_size, &final_size);
+        plain_buffer.resize(actual_size + final_size);
+    }else{
+        plain_buffer.resize(body.secure_data.size());
+        memcpy(plain_buffer.data(),body.secure_data.data(),body.secure_data.size());
+    }
+    EVP_CIPHER_CTX_free(d_ctx);
     return true;
 }
 

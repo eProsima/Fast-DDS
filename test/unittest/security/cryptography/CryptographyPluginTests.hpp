@@ -331,12 +331,14 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     //Send message to intended participant
     receivers.push_back(ParticipantA_remote);
     receivers.push_back(unintended_remote);
-    ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_rtps_message(encoded_rtps_message, plain_rtps_message,*ParticipantA,receivers,exception));
-    ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_rtps_message(decoded_rtps_message,encoded_rtps_message,*ParticipantB,*ParticipantB_remote,exception));
-    std::vector<uint8_t> message_v;
+        std::vector<uint8_t> message_v;
     message_v.resize(11);
     memcpy(message_v.data(),message, 11);
-    ASSERT_TRUE(message_v == decoded_rtps_message);
+    for(int i=0;i<50;i++){
+        ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_rtps_message(encoded_rtps_message, plain_rtps_message,*ParticipantA,receivers,exception));
+        ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_rtps_message(decoded_rtps_message,encoded_rtps_message,*ParticipantB,*ParticipantB_remote,exception));
+        ASSERT_TRUE(message_v == decoded_rtps_message);
+    }
     //Send message to unintended participant
 
     encoded_rtps_message.clear();
@@ -358,7 +360,7 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     //Fill prop_handle with info about the new mode we want
     Property prop1;
     prop1.name("dds.sec.crypto.cryptotransformkind");
-    prop1.value("AES256_GCM");
+    prop1.value("AES256_GMAC");
     prop_handle.push_back(prop1);
     Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");

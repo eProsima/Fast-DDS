@@ -103,9 +103,6 @@ class AESGCMGMAC_Transform : public CryptoTransform
                 DatawriterCryptoHandle &sending_datawriter_crypto,
                 SecurityException &exception);
 
-
-    bool remove_KeyId(CryptoTransformKeyId m_key);
-
     //Aux function to compute session key from the master material
     std::array<uint8_t, 32> compute_sessionkey(std::array<uint8_t, 32> master_sender_key,std::array<uint8_t, 32> master_salt , uint32_t &session_id);
 
