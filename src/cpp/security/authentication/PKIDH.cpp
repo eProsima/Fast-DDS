@@ -832,7 +832,7 @@ SharedSecretHandle* generate_sharedsecret(EVP_PKEY* private_key, EVP_PKEY* publi
                     {
                         data.value().resize(length);
                         handle = new SharedSecretHandle();
-                        (*handle)->data_.emplace_back(std::move(data));
+                        (*handle)->data_.push_back(std::move(data));
                     }
                     else
                         exception = _SecurityException_("OpenSSL library cannot get derive");
@@ -868,22 +868,22 @@ bool generate_identity_token(PKIIdentityHandle& handle)
     property.name("dds.cert.sn");
     property.value() = cert_sn_str;
     property.propagate(true);
-    token.properties().emplace_back(std::move(property));
+    token.properties().push_back(std::move(property));
 
     property.name("dds.cert.algo");
     property.value() = handle->sign_alg_;
     property.propagate(true);
-    token.properties().emplace_back(std::move(property));
+    token.properties().push_back(std::move(property));
 
     property.name("dds.ca.sn");
     property.value() = handle->sn;
     property.propagate(true);
-    token.properties().emplace_back(std::move(property));
+    token.properties().push_back(std::move(property));
 
     property.name("dds.ca.algo");
     property.value() = handle->algo;
     property.propagate(true);
-    token.properties().emplace_back(std::move(property));
+    token.properties().push_back(std::move(property));
 
     CRYPTO_free(cert_sn_str);
 
@@ -1123,21 +1123,21 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
     bproperty.value().assign(lih->cert_content_->data,
             lih->cert_content_->data + lih->cert_content_->length);
     bproperty.propagate(true);
-    (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+    (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
     // c.pdata
     bproperty.name("c.pdata");
     bproperty.value().assign(cdr_participant_data.buffer,
             cdr_participant_data.buffer + cdr_participant_data.length);
     bproperty.propagate(true);
-    (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+    (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
     // c.dsign_algo.
     bproperty.name("c.dsign_algo");
     bproperty.value().assign(lih->sign_alg_.begin(),
             lih->sign_alg_.end());
     bproperty.propagate(true);
-    (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+    (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
     // TODO(Ricardo) Only support right now DH+MODP-2048-256
     // c.kagree_algo.
@@ -1145,7 +1145,7 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
     bproperty.value().assign(lih->kagree_alg_.begin(),
             lih->kagree_alg_.end());
     bproperty.propagate(true);
-    (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+    (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
     // hash_c1
     // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
@@ -1161,7 +1161,7 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
     bproperty.name("hash_c1");
     bproperty.value().assign(md, md + SHA256_DIGEST_LENGTH);
     bproperty.propagate(true);
-    (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+    (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
     // dh1
     if(((*handshake_handle_aux)->dhkeys_ = generate_dh_key(get_dh_type((*handshake_handle_aux)->kagree_alg_), exception)) != nullptr)
@@ -1171,14 +1171,14 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
 
         if(store_dh_public_key((*handshake_handle_aux)->dhkeys_, bproperty.value(), exception))
         {
-            (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+            (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
             // challenge1
             bproperty.name("challenge1");
             bproperty.propagate(true);
             if(generate_challenge(bproperty.value(), exception))
             {
-                (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+                (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
                 (*handshake_handle_aux)->local_identity_handle_ = &lih;
                 (*handshake_handle_aux)->remote_identity_handle_ = &rih;
@@ -1411,21 +1411,21 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     bproperty.value().assign(lih->cert_content_->data,
             lih->cert_content_->data + lih->cert_content_->length);
     bproperty.propagate(true);
-    (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+    (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
     // c.pdata
     bproperty.name("c.pdata");
     bproperty.value().assign(cdr_participant_data.buffer,
             cdr_participant_data.buffer + cdr_participant_data.length);
     bproperty.propagate(true);
-    (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+    (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
     // c.dsign_algo.
     bproperty.name("c.dsign_algo");
     bproperty.value().assign(lih->sign_alg_.begin(),
             lih->sign_alg_.end());
     bproperty.propagate(true);
-    (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+    (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
     // TODO(Ricardo) Only support right now DH+MODP-2048-256
     // c.kagree_algo.
@@ -1433,7 +1433,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     bproperty.value().assign((*handshake_handle_aux)->kagree_alg_.begin(),
             (*handshake_handle_aux)->kagree_alg_.end());
     bproperty.propagate(true);
-    (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+    (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
     // hash_c2
     // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
@@ -1449,7 +1449,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     bproperty.name("hash_c2");
     bproperty.value().assign(md, md + SHA256_DIGEST_LENGTH);
     bproperty.propagate(true);
-    (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+    (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
     
 
     // dh2
@@ -1460,32 +1460,32 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
 
         if(store_dh_public_key((*handshake_handle_aux)->dhkeys_, bproperty.value(), exception))
         {
-            (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+            (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
             // hash_c1
             bproperty.name("hash_c1");
             bproperty.value(std::move(*hash_c1));
             bproperty.propagate(true);
-            (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+            (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
             // dh1
             bproperty.name("dh1");
             bproperty.value(std::move(*dh1));
             bproperty.propagate(true);
-            (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+            (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
             // challenge1
             bproperty.name("challenge1");
             bproperty.value(std::move(*challenge1));
             bproperty.propagate(true);
-            (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+            (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
             // challenge2
             bproperty.name("challenge2");
             bproperty.propagate(true);
             if(generate_challenge(bproperty.value(), exception))
             {
-                (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+                (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
                 // signature
                 CDRMessage_t cdrmessage(BinaryPropertyHelper::serialized_size((*handshake_handle_aux)->handshake_message_.binary_properties()));
@@ -1509,7 +1509,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
                 bproperty.propagate("true");
                 if(sign_sha256(lih->pkey_, cdrmessage.buffer, cdrmessage.length, bproperty.value(), exception))
                 {
-                    (*handshake_handle_aux)->handshake_message_.binary_properties().emplace_back(std::move(bproperty));
+                    (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
                     (*handshake_handle_aux)->local_identity_handle_ = &lih;
                     (*handshake_handle_aux)->remote_identity_handle_ = &rih;
@@ -1846,37 +1846,37 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     bproperty.name("hash_c1");
     bproperty.value(std::move(hash_c1->value()));
     bproperty.propagate(true);
-    final_message.binary_properties().emplace_back(std::move(bproperty));
+    final_message.binary_properties().push_back(std::move(bproperty));
 
     // hash_c2
     bproperty.name("hash_c2");
     bproperty.value(std::move(hash_c2->value()));
     bproperty.propagate(true);
-    final_message.binary_properties().emplace_back(std::move(bproperty));
+    final_message.binary_properties().push_back(std::move(bproperty));
 
     // dh1
     bproperty.name("dh1");
     bproperty.value(std::move(dh1->value()));
     bproperty.propagate(true);
-    final_message.binary_properties().emplace_back(std::move(bproperty));
+    final_message.binary_properties().push_back(std::move(bproperty));
 
     // dh2
     bproperty.name("dh2");
     bproperty.value(std::move(dh2->value()));
     bproperty.propagate(true);
-    final_message.binary_properties().emplace_back(std::move(bproperty));
+    final_message.binary_properties().push_back(std::move(bproperty));
 
     // challenge1
     bproperty.name("challenge1");
     bproperty.value(std::move(challenge1->value()));
     bproperty.propagate(true);
-    final_message.binary_properties().emplace_back(std::move(bproperty));
+    final_message.binary_properties().push_back(std::move(bproperty));
 
     // challenge2
     bproperty.name("challenge2");
     bproperty.value(std::move(challenge2->value()));
     bproperty.propagate(true);
-    final_message.binary_properties().emplace_back(std::move(bproperty));
+    final_message.binary_properties().push_back(std::move(bproperty));
 
     // signature
     cdrmessage2.length = 0;
@@ -1900,7 +1900,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     bproperty.propagate("true");
     if(sign_sha256(lih->pkey_, cdrmessage2.buffer, cdrmessage2.length, bproperty.value(), exception))
     {
-        final_message.binary_properties().emplace_back(std::move(bproperty));
+        final_message.binary_properties().push_back(std::move(bproperty));
 
         handshake_handle->sharedsecret_ = generate_sharedsecret(handshake_handle->dhkeys_, handshake_handle->peerkeys_,
                 exception);

@@ -99,7 +99,8 @@ public:
 	 * @param ch Pointer to the CacheChange_t.
 	 * @return True if removed.
 	 */
-	virtual bool remove_change(CacheChange_t* ch)=0;
+	virtual bool remove_change(CacheChange_t* ch) = 0;
+
 	/**
 	 * Get the beginning of the changes history iterator.
 	 * @return Iterator to the beginning of the vector.

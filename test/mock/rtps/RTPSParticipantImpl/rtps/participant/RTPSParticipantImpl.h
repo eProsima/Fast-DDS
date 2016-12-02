@@ -19,12 +19,13 @@
 #ifndef RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
 #define RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
 
-#include <fastrtps/rtps/attributes/WriterAttributes.h>
+#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <gmock/gmock.h>
 
@@ -51,6 +52,11 @@ class MockParticipantListener : public RTPSParticipantListener
 class RTPSParticipantImpl
 {
     public:
+
+        RTPSParticipantImpl()
+        {
+            events_.init_thread(this);
+        }
 
         MOCK_CONST_METHOD0(getRTPSParticipantAttributes, const RTPSParticipantAttributes&());
 
@@ -91,11 +97,18 @@ class RTPSParticipantImpl
 
         RTPSParticipant* getUserRTPSParticipant() { return nullptr; }
 
+        ResourceEvent& getEventResource() { return events_; }
+
+        void ResourceSemaphoreWait() {}
+        void ResourceSemaphorePost() {}
+
     private:
 
         PDPSimple pdpsimple_;
 
         MockParticipantListener listener_;
+
+        ResourceEvent events_;
 };
 
 } // namespace rtps

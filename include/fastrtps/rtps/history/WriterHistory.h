@@ -60,6 +60,11 @@ public:
 	RTPS_DllAPI bool remove_change(CacheChange_t* a_change);
 
     virtual bool remove_change_g(CacheChange_t* a_change);
+
+	RTPS_DllAPI bool remove_change(const SequenceNumber_t& sequence_number);
+
+	RTPS_DllAPI CacheChange_t* remove_change_and_reuse(const SequenceNumber_t& sequence_number);
+
 	/**
 	 * Remove the CacheChange_t with the minimum sequenceNumber.
 	 * @return True if correctly removed.

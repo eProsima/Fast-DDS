@@ -13,39 +13,43 @@
 // limitations under the License.
 
 /**
- * @file RTPSWriter.h
- */
+ * @file HandshakeMessageTokenResent.h
+ *
+*/
 
-#ifndef _RTPS_WRITER_RTPSWRITER_H_
-#define _RTPS_WRITER_RTPSWRITER_H_
+#ifndef _RTPS_SECURITY_TIMEDEVENT_HANDSHAKEMESSAGETOKENRESENT_H_
+#define _RTPS_SECURITY_TIMEDEVENT_HANDSHAKEMESSAGETOKENRESENT_H_
 
-#include <fastrtps/rtps/attributes/WriterAttributes.h>
-
-#include <condition_variable>
-#include <gmock/gmock.h>
+#include <fastrtps/rtps/resources/TimedEvent.h>
+#include <fastrtps/rtps/common/Guid.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+namespace security {
 
-class WriterHistory;
+class SecurityManager;
 
-class RTPSWriter
+class HandshakeMessageTokenResent : public TimedEvent
 {
     public:
 
-        virtual bool matched_reader_add(RemoteReaderAttributes& ratt) = 0;
+        HandshakeMessageTokenResent(SecurityManager& security_manager, const GUID_t& remote_participant_key, double interval);
 
-        virtual bool matched_reader_remove(RemoteReaderAttributes& ratt) = 0;
+        virtual ~HandshakeMessageTokenResent();
 
-        MOCK_METHOD3(new_change, CacheChange_t*(const std::function<uint32_t()>&,
-            ChangeKind_t, InstanceHandle_t));
+        void event(EventCode code, const char* msg = nullptr);
 
-        WriterHistory* history_;
+    private:
+
+        SecurityManager& security_manager_;
+
+        GUID_t remote_participant_key_;
 };
 
+} // namespace security
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // _RTPS_WRITER_RTPSWRITER_H_
+#endif // _RTPS_SECURITY_TIMEDEVENT_HANDSHAKEMESSAGETOKENRESENT_H_

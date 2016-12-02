@@ -552,7 +552,8 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 void PDPSimple::notifyAboveRemoteEndpoints(ParticipantProxyData* pdata)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
+    boost::lock_guard<boost::recursive_mutex> guard_pdpsimple(*mp_mutex);
+    boost::lock_guard<boost::recursive_mutex> guard_pdata(*pdata->mp_mutex);
 
     //Inform EDP of new RTPSParticipant data:
     if(mp_EDP!=nullptr)

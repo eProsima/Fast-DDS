@@ -276,6 +276,9 @@ inline bool CDRMessage::readOctetVector(CDRMessage_t*msg,std::vector<octet>* ocv
     bool valid = CDRMessage::readUInt32(msg,&vecsize);
     ocvec->resize(vecsize);
     valid &= CDRMessage::readData(msg,ocvec->data(),vecsize);
+    int rest = (vecsize) % 4;
+    rest = rest== 0 ? 0 : 4-rest;
+    msg->pos+=rest;
     return valid;
 }
 
@@ -298,7 +301,7 @@ inline bool CDRMessage::readString(CDRMessage_t*msg, std::string* stri)
     {
         msg->pos+=str_size;
     }
-    uint32_t rest = (uint32_t)(str_size-4*floor((float)str_size/4));
+    int rest = (str_size) % 4;
     rest = rest==0 ? 0 : 4-rest;
     msg->pos+=rest;
 

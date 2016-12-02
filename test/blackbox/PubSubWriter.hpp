@@ -344,16 +344,18 @@ class PubSubWriter
 
     void authorized()
     {
-        std::unique_lock<std::mutex> lock(mutexAuthentication_);
+        mutexAuthentication_.lock();
         ++authorized_;
-        cvAuthentication_.notify_one();
+        mutexAuthentication_.unlock();
+        cvAuthentication_.notify_all();
     }
 
     void unauthorized()
     {
-        std::unique_lock<std::mutex> lock(mutexAuthentication_);
+        mutexAuthentication_.lock();
         ++unauthorized_;
-        cvAuthentication_.notify_one();
+        mutexAuthentication_.unlock();
+        cvAuthentication_.notify_all();
     }
 
     PubSubWriter& operator=(const PubSubWriter&)NON_COPYABLE_CXX11;

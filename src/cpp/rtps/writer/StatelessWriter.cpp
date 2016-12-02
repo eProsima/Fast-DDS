@@ -47,6 +47,8 @@ StatelessWriter::~StatelessWriter()
  *	CHANGE-RELATED METHODS
  */
 
+// TODO(Ricardo) This function only can be used by history. Private it and frined History.
+// TODO(Ricardo) Look for other functions
 void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);

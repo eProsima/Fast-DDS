@@ -29,6 +29,9 @@ typedef struct test_UDPv4TransportDescriptor : public TransportDescriptorInterfa
 
    // Test shim parameters
    uint8_t dropDataMessagesPercentage;
+   bool dropParticipantBuiltinTopicData;
+   bool dropPublicationBuiltinTopicData;
+   bool dropSubscriptionBuiltinTopicData;
    uint8_t dropDataFragMessagesPercentage;
    uint8_t dropHeartbeatMessagesPercentage;
    uint8_t dropAckNackMessagesPercentage;

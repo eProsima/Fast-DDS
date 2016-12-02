@@ -25,15 +25,27 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class RTPSParticipantImpl;
+
 class StatelessWriter : public RTPSWriter
 {
     public:
+
+        StatelessWriter(RTPSParticipantImpl* participant) : participant_(participant) {}
 
         MOCK_METHOD1(matched_reader_add, bool(RemoteReaderAttributes&));
 
         MOCK_METHOD1(matched_reader_remove, bool(RemoteReaderAttributes&));
 
         MOCK_METHOD0(getGuid, const GUID_t&());
+
+        MOCK_METHOD1(unsent_change_added_to_history_mock, void(CacheChange_t*));
+
+        RTPSParticipantImpl* getRTPSParticipant() { return participant_; }
+
+    private:
+
+        RTPSParticipantImpl* participant_;
 };
 
 } // namespace rtps
