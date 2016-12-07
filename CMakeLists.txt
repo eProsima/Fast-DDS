@@ -107,6 +107,13 @@ add_definitions(
   -DASIO_STANDALONE
 )
 
+if(ANDROID)
+  add_definitions(
+    -DASIO_DISABLE_MOVE
+    -DASIO_DISABLE_STD_STRING_VIEW
+  )
+endif()
+
 ###############################################################################
 # GCC colors if using CCache
 ###############################################################################

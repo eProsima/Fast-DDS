@@ -53,20 +53,33 @@ class UDPv6Transport : public TransportInterface
     {
         public:
 
+#if defined(ASIO_HAS_MOVE)
             SocketInfo(asio::ip::udp::socket& socket) :
                 socket_(std::move(socket)), only_multicast_purpose_(false)
+#else
+            SocketInfo(std::shared_ptr<asio::ip::udp::socket> socket) :
+                socket_(socket), only_multicast_purpose_(false)
+#endif
             {
             }
 
             SocketInfo(SocketInfo&& socketInfo) :
+#if defined(ASIO_HAS_MOVE)
                 socket_(std::move(socketInfo.socket_)),
+#else
+                socket_(socketInfo.socket_),
+#endif
                 only_multicast_purpose_(socketInfo.only_multicast_purpose_)
             {
             }
 
             SocketInfo& operator=(SocketInfo&& socketInfo)
             {
+#if defined(ASIO_HAS_MOVE)
                 socket_ = std::move(socketInfo.socket_);
+#else
+                socket_ = socketInfo.socket_;
+#endif
                 only_multicast_purpose_ = socketInfo.only_multicast_purpose_;
                 return *this;
             }
@@ -86,7 +99,11 @@ class UDPv6Transport : public TransportInterface
                 return only_multicast_purpose_;
             }
 
+#if defined(ASIO_HAS_MOVE)
             asio::ip::udp::socket socket_;
+#else
+            std::shared_ptr<asio::ip::udp::socket> socket_;
+#endif
             bool only_multicast_purpose_;
 
         private:
@@ -182,7 +199,11 @@ private:
    struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
    //! For both modes, an input channel corresponds to a port.
+#if defined(ASIO_HAS_MOVE)
    std::map<uint32_t, asio::ip::udp::socket> mInputSockets;
+#else
+   std::map<uint32_t, std::shared_ptr<asio::ip::udp::socket>> mInputSockets;
+#endif
 
    bool IsInterfaceAllowed(const asio::ip::address_v6& ip);
    std::vector<asio::ip::address_v6> mInterfaceWhiteList;
@@ -191,6 +212,7 @@ private:
    bool OpenAndBindOutputSockets(Locator_t& locator);
    bool OpenAndBindInputSockets(uint32_t port, bool is_multicast);
 
+#if defined(ASIO_HAS_MOVE)
    asio::ip::udp::socket OpenAndBindUnicastOutputSocket(const asio::ip::address_v6&, uint32_t& port);
    asio::ip::udp::socket OpenAndBindInputSocket(uint32_t port, bool is_multicast);
 
@@ -198,6 +220,15 @@ private:
                           uint32_t sendBufferSize,
                           const Locator_t& remoteLocator,
                           asio::ip::udp::socket& socket);
+#else
+   std::shared_ptr<asio::ip::udp::socket> OpenAndBindUnicastOutputSocket(const asio::ip::address_v6&, uint32_t& port);
+   std::shared_ptr<asio::ip::udp::socket> OpenAndBindInputSocket(uint32_t port, bool is_multicast);
+
+   bool SendThroughSocket(const octet* sendBuffer,
+                          uint32_t sendBufferSize,
+                          const Locator_t& remoteLocator,
+                          std::shared_ptr<asio::ip::udp::socket> socket);
+#endif
 };
 
 } // namespace rtps
