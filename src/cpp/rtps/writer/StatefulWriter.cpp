@@ -329,6 +329,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     }
 
     ReaderProxy* rp = new ReaderProxy(rdata,m_times,this);
+    std::vector<SequenceNumber_t> not_relevant_changes;
 
     for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
             cit != mp_history->changesEnd(); ++cit)
@@ -336,9 +337,16 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
         ChangeForReader_t changeForReader(*cit);
 
         if(rp->m_att.endpoint.durabilityKind >= TRANSIENT_LOCAL && this->getAttributes()->durabilityKind == TRANSIENT_LOCAL)
+        {
             changeForReader.setRelevance(rp->rtps_is_relevant(*cit));
+            if(!rp->rtps_is_relevant(*cit))
+                not_relevant_changes.push_back(changeForReader.getSequenceNumber());
+        }
         else
+        {
             changeForReader.setRelevance(false);
+            not_relevant_changes.push_back(changeForReader.getSequenceNumber());
+        }
 
         changeForReader.setStatus(UNACKNOWLEDGED);
         rp->addChange(changeForReader);
@@ -346,6 +354,15 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 
     // Send a initial heartbeat
     rp->mp_initialHeartbeat->restart_timer();
+
+    // Send Gap
+    if(!not_relevant_changes.empty())
+        RTPSMessageGroup::send_Changes_AsGap(&m_cdrmessages, (RTPSWriter*)this,
+                &not_relevant_changes,
+                rp->m_att.guid.guidPrefix,
+                rp->m_att.guid.entityId,
+                &rp->m_att.endpoint.unicastLocatorList,
+                &rp->m_att.endpoint.multicastLocatorList);
 
     // Always activate heartbeat period. We need a confirmation of the reader.
     // The state has to be updated.
