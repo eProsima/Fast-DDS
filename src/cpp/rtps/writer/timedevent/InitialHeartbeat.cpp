@@ -18,6 +18,8 @@
  */
 
 #include <fastrtps/rtps/writer/timedevent/InitialHeartbeat.h>
+#include <mutex>
+
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
@@ -28,9 +30,6 @@
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 
 #include <fastrtps/log/Log.h>
-
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
 
 namespace eprosima {
 namespace fastrtps{
@@ -62,7 +61,7 @@ void InitialHeartbeat::event(EventCode code, const char* msg)
 		Count_t heartbeatCount = 0;
 
 		{//BEGIN PROTECTION
-            boost::lock_guard<boost::recursive_mutex> guard_writer(*rp_->mp_SFW->getMutex());
+            std::lock_guard<std::recursive_mutex> guard_writer(*rp_->mp_SFW->getMutex());
 
 			firstSeq = rp_->mp_SFW->get_seq_num_min();
 			lastSeq = rp_->mp_SFW->get_seq_num_max();
@@ -99,7 +98,7 @@ void InitialHeartbeat::event(EventCode code, const char* msg)
 	}
 	else
 	{
-		logInfo(RTPS_WRITER,"Boost message: " <<msg);
+		logInfo(RTPS_WRITER,"Message: " <<msg);
 	}
 }
 

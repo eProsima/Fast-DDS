@@ -21,8 +21,7 @@
 #include <fastrtps/rtps/common/CacheChange.h>
 #include <fastrtps/log/Log.h>
 
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 #include <cassert>
 
@@ -43,9 +42,9 @@ CacheChangePool::~CacheChangePool()
     delete(mp_mutex);
 }
 
-CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size, MemoryManagementPolicy_t memoryPolicy) : mp_mutex(new boost::mutex()), memoryMode(memoryPolicy)
+CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size, MemoryManagementPolicy_t memoryPolicy) : mp_mutex(new std::mutex()), memoryMode(memoryPolicy)
 {
-    boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::mutex> guard(*this->mp_mutex);
 
     //Common for all modes: Set the payload size (maximum allowed), size and size limit
     logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<< pool_size << " with payload of size: " << payload_size);
@@ -93,7 +92,7 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, const std::function<ui
 
 bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
 {
-    boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::mutex> guard(*this->mp_mutex);
 
     switch(memoryMode)
     {
@@ -146,7 +145,7 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
 
 void CacheChangePool::release_Cache(CacheChange_t* ch)
 {
-    boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::mutex> guard(*this->mp_mutex);
 
     switch(memoryMode)
     {

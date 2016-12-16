@@ -12,33 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*
- * @file Endpoint.cpp
- *
- */
+#include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 
-#include <fastrtps/rtps/Endpoint.h>
-#include "fastrtps/rtps/attributes/WriterAttributes.h"
-
-#include <mutex>
-
-namespace eprosima {
+namespace eprosima{
 namespace fastrtps{
-namespace rtps {
+namespace rtps{
 
-Endpoint::Endpoint(RTPSParticipantImpl* pimpl,GUID_t& guid,EndpointAttributes& att):
-		mp_RTPSParticipant(pimpl),
-		m_guid(guid),
-		m_att(att),
-		mp_mutex(new std::recursive_mutex())
+ThroughputControllerDescriptor::ThroughputControllerDescriptor(): bytesPerPeriod(UINT32_MAX), periodMillisecs(0)
 {
-	
 }
 
-Endpoint::~Endpoint() {
-	delete(mp_mutex);
+ThroughputControllerDescriptor::ThroughputControllerDescriptor(uint32_t size, uint32_t time): bytesPerPeriod(size), periodMillisecs(time)
+{
 }
 
-} /* namespace rtps */
-} /* namespace eprosima */
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima

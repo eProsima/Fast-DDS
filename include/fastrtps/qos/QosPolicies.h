@@ -47,7 +47,7 @@ public:
     * Whether it should always be sent.
     * @return True if it should always be sent.
     */
-	bool sendAlways(){return m_sendAlways;}
+	virtual bool sendAlways(){return m_sendAlways;}
 protected:
 	bool m_sendAlways;
 
@@ -79,7 +79,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 /**
@@ -97,7 +97,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 /**
@@ -115,7 +115,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 /**
@@ -150,7 +150,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 /**
@@ -180,7 +180,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 
@@ -208,7 +208,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 /**
@@ -237,7 +237,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 
@@ -255,8 +255,8 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
-   
+	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg) override;
+
    /**
     * Returns raw data vector.
     * @return raw data as vector of octets.
@@ -287,7 +287,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 /**
@@ -324,7 +324,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 
@@ -343,7 +343,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
+	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg) override;
    /**
     * Appends a name to the list of partition names.
     * @param name Name to append.
@@ -382,7 +382,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
+	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg) override;
    /**
     * Appends topic data.
     * @param oc Data octet.
@@ -420,7 +420,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
+	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg) override;
    /**
     * Appends group data.
     * @param oc Data octet.
@@ -469,7 +469,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 /**
@@ -493,7 +493,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 
@@ -525,7 +525,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 /**
@@ -543,7 +543,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 /**
@@ -560,7 +560,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 
@@ -580,7 +580,7 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 /**

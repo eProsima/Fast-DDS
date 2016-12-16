@@ -29,20 +29,17 @@
 #include "deadlinepayloadPubSubTypes.h"
 
 #include "deadlineQoS.h"
-#include "boost/thread.hpp"
-#include "boost/bind.hpp"
-#include "boost/asio.hpp"
-#include "boost/date_time/posix_time/posix_time.hpp"
+#include <asio.hpp>
+#include <asio/steady_timer.hpp>
 #include "mapableKey.h"
 
 using namespace eprosima::fastrtps;
-using namespace boost::asio;
 
 
 class deadlinepayloadSubscriber 
 {
 public:
-	deadlinepayloadSubscriber(deadline_timer &timer,io_service &io_service);
+	deadlinepayloadSubscriber(asio::steady_timer &timer,asio::io_service &io_service);
 	virtual ~deadlinepayloadSubscriber();
 	bool init();
 	void run();
@@ -53,7 +50,7 @@ private:
 	class SubListener : public SubscriberListener
 	{
 	public:
-		SubListener(deadline_timer &timer, io_service &ioserv) : n_matched(0),n_msg(0), myDeadline(timer,ioserv){};
+		SubListener(asio::steady_timer &timer, asio::io_service &ioserv) : n_matched(0),n_msg(0), myDeadline(timer,ioserv){};
 		~SubListener(){};
 		void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
 		void onNewDataMessage(Subscriber* sub);

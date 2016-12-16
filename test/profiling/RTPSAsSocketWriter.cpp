@@ -27,9 +27,15 @@
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
 
-#include <boost/interprocess/detail/os_thread_functions.hpp>
-#include <boost/asio.hpp>
+#include <asio.hpp>
 #include <inttypes.h>
+
+
+#if defined(_WIN32)
+#define GET_PID _getpid
+#else
+#define GET_PID getpid
+#endif
 
 RTPSAsSocketWriter::RTPSAsSocketWriter(): participant_(nullptr),
     writer_(nullptr), history_(nullptr), initialized_(false)
@@ -50,7 +56,7 @@ void RTPSAsSocketWriter::init(std::string ip, uint32_t port)
 	RTPSParticipantAttributes pattr;
 	pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = false;
 	pattr.builtin.use_WriterLivelinessProtocol = false;
-    pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+    pattr.builtin.domainId = (uint32_t)GET_PID() % 230;
     pattr.participantID = 2;
 	participant_ = RTPSDomain::createParticipant(pattr);
 
@@ -78,8 +84,8 @@ void RTPSAsSocketWriter::init(std::string ip, uint32_t port)
 	writer_->matched_reader_add(rattr);
 
     text_ = getText();
-    domainId_ = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id();
-    hostname_ = boost::asio::ip::host_name();
+    domainId_ = (uint32_t)GET_PID();
+    hostname_ = asio::ip::host_name();
 
     initialized_ = true;
 }

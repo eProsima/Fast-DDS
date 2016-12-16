@@ -15,17 +15,15 @@
 #ifndef UDPV6_TRANSPORT_H
 #define UDPV6_TRANSPORT_H
 
-#include <boost/asio.hpp>
-#include <boost/asio/ip/address_v6.hpp>
-#include <boost/asio/ip/udp.hpp>
-#include <boost/interprocess/sync/interprocess_semaphore.hpp>
-#include <boost/thread.hpp>
+#include <asio.hpp>
+#include <thread>
 
 #include "TransportInterface.h"
 #include "UDPv6TransportDescriptor.h"
 #include <vector>
 #include <memory>
 #include <map>
+#include <mutex>
 
 namespace eprosima{
 namespace fastrtps{
@@ -55,7 +53,7 @@ class UDPv6Transport : public TransportInterface
     {
         public:
 
-            SocketInfo(boost::asio::ip::udp::socket& socket) :
+            SocketInfo(asio::ip::udp::socket& socket) :
                 socket_(std::move(socket)), only_multicast_purpose_(false)
             {
             }
@@ -88,7 +86,7 @@ class UDPv6Transport : public TransportInterface
                 return only_multicast_purpose_;
             }
 
-            boost::asio::ip::udp::socket socket_;
+            asio::ip::udp::socket socket_;
             bool only_multicast_purpose_;
 
         private:
@@ -172,11 +170,11 @@ private:
    uint8_t mTTL;
 
    // For UDPv6, the notion of channel corresponds to a port + direction tuple.
-	boost::asio::io_service mService;
-   std::unique_ptr<boost::thread> ioServiceThread;
+	asio::io_service mService;
+   std::unique_ptr<std::thread> ioServiceThread;
 
-   mutable boost::recursive_mutex mOutputMapMutex;
-   mutable boost::recursive_mutex mInputMapMutex;
+   mutable std::recursive_mutex mOutputMapMutex;
+   mutable std::recursive_mutex mInputMapMutex;
 
    //! The notion of output channel corresponds to a port.
    std::map<uint32_t, std::vector<SocketInfo> > mOutputSockets; 
@@ -184,22 +182,22 @@ private:
    struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
    //! For both modes, an input channel corresponds to a port.
-   std::map<uint32_t, boost::asio::ip::udp::socket> mInputSockets; 
+   std::map<uint32_t, asio::ip::udp::socket> mInputSockets;
 
-   bool IsInterfaceAllowed(const boost::asio::ip::address_v6& ip);
-   std::vector<boost::asio::ip::address_v6> mInterfaceWhiteList;
+   bool IsInterfaceAllowed(const asio::ip::address_v6& ip);
+   std::vector<asio::ip::address_v6> mInterfaceWhiteList;
 
 
    bool OpenAndBindOutputSockets(Locator_t& locator);
    bool OpenAndBindInputSockets(uint32_t port, bool is_multicast);
 
-   boost::asio::ip::udp::socket OpenAndBindUnicastOutputSocket(const boost::asio::ip::address_v6&, uint32_t& port);
-   boost::asio::ip::udp::socket OpenAndBindInputSocket(uint32_t port, bool is_multicast);
+   asio::ip::udp::socket OpenAndBindUnicastOutputSocket(const asio::ip::address_v6&, uint32_t& port);
+   asio::ip::udp::socket OpenAndBindInputSocket(uint32_t port, bool is_multicast);
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,
                           const Locator_t& remoteLocator,
-                          boost::asio::ip::udp::socket& socket);
+                          asio::ip::udp::socket& socket);
 };
 
 } // namespace rtps

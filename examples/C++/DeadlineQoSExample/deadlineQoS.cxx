@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+
 #include "deadlineQoS.h"
 #include <string>
 
-using namespace boost:: asio;
+using namespace asio;
 using namespace eprosima;
 using namespace eprosima::fastrtps;
 
@@ -24,7 +26,7 @@ void deadlineQoS::callback()
 	mapmtx.lock();
 	std::cout << "Map holds " << deadlineQoSmap.size() << " different keys" << std::endl;
 	for(auto it = deadlineQoSmap.begin(); it != deadlineQoSmap.end(); it++){
-		
+
 		if(it->second == false){
 			std::cout << "Deadline QoS on key index ";
 			for(int i=0;i<16;i++){
@@ -41,8 +43,8 @@ void deadlineQoS::callback()
 
 void deadlineQoS::wait()
 {
-	 t.expires_from_now(boost::posix_time::seconds(1)); //repeat rate here
-     t.async_wait(boost::bind(&deadlineQoS::callback, this));
+	 t.expires_from_now(std::chrono::seconds(1)); //repeat rate here
+     t.async_wait(std::bind(&deadlineQoS::callback, this));
 }
 
 void deadlineQoS::setFlag(mapable_key target)
@@ -76,14 +78,16 @@ void deadlineQoS::init(){
 
 void deadlineQoS::runner(){
 		wait();
+
 		io.run();
 }
 
 void deadlineQoS::run(){
-		boost::thread dlqos(boost::bind(&deadlineQoS::runner,this));
+	dlqos = new std::thread(std::bind(&deadlineQoS::runner,this));
 }
 
 void deadlineQoS::stop(){
 	t.cancel();
 	io.stop();
+	dlqos->join();
 }

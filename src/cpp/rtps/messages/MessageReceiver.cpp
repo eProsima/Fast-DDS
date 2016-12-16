@@ -33,9 +33,7 @@
 
 #include "../participant/RTPSParticipantImpl.h"
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 #include <limits>
 #include <cassert>
@@ -43,7 +41,7 @@
 
 #include <fastrtps/log/Log.h>
 
-#define IDSTRING "(ID:" << boost::this_thread::get_id() <<") "<< 
+#define IDSTRING "(ID:" << std::this_thread::get_id() <<") "<<
 
 using namespace eprosima::fastrtps;
 
@@ -85,7 +83,7 @@ MessageReceiver::~MessageReceiver()
 
 void MessageReceiver::associateEndpoint(Endpoint *to_add){
 	bool found = false;
-	boost::lock_guard<boost::mutex> guard(mtx);
+	std::lock_guard<std::mutex> guard(mtx);
 	if(to_add->getAttributes()->endpointKind == WRITER){
 		for(auto it = AssociatedWriters.begin();it != AssociatedWriters.end(); ++it){
 			if( (*it) == (RTPSWriter*)to_add ){
@@ -107,7 +105,7 @@ void MessageReceiver::associateEndpoint(Endpoint *to_add){
 }
 void MessageReceiver::removeEndpoint(Endpoint *to_remove){
 
-	boost::lock_guard<boost::mutex> guard(mtx);
+	std::lock_guard<std::mutex> guard(mtx);
 	if(to_remove->getAttributes()->endpointKind == WRITER){
 		RTPSWriter* var = (RTPSWriter *)to_remove;
 		for(auto it=AssociatedWriters.begin(); it !=AssociatedWriters.end(); ++it){
@@ -413,7 +411,7 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t
 
 bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
-    boost::lock_guard<boost::mutex> guard(mtx);
+    std::lock_guard<std::mutex> guard(mtx);
 
     // Reset param list
     m_ParamList.deleteParams();
@@ -593,7 +591,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t* smh, bool* last)
 {
-   boost::lock_guard<boost::mutex> guard(mtx);
+   std::lock_guard<std::mutex> guard(mtx);
 
 	// Reset param list
 	m_ParamList.deleteParams();
@@ -826,7 +824,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	uint32_t HBCount;
 	CDRMessage::readUInt32(msg,&HBCount);
 
-    boost::lock_guard<boost::mutex> guard(mtx);
+    std::lock_guard<std::mutex> guard(mtx);
 	//Look for the correct reader and writers:
 	for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
 		it != AssociatedReaders.end(); ++it)
@@ -867,13 +865,13 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	if(smh->submessageLength == 0)
 		*last = true;
 
-    boost::lock_guard<boost::mutex> guard(mtx);
+    std::lock_guard<std::mutex> guard(mtx);
 	//Look for the correct writer to use the acknack
 	for (std::vector<RTPSWriter*>::iterator it = AssociatedWriters.begin();
 		it != AssociatedWriters.end(); ++it)
 	{
         //Look for the readerProxy the acknack is from
-        boost::lock_guard<boost::recursive_mutex> guardW(*(*it)->getMutex());
+        std::lock_guard<std::recursive_mutex> guardW(*(*it)->getMutex());
 
 		if((*it)->getGuid() == writerGUID)
 		{
@@ -883,7 +881,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 
 				for(auto rit = SF->matchedReadersBegin();rit!=SF->matchedReadersEnd();++rit)
 				{
-                    boost::lock_guard<boost::recursive_mutex> guardReaderProxy(*(*rit)->mp_mutex);
+                    std::lock_guard<std::recursive_mutex> guardReaderProxy(*(*rit)->mp_mutex);
 
 					if((*rit)->m_att.guid == readerGUID )
 					{
@@ -961,7 +959,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	if(gapStart <= SequenceNumber_t(0, 0))
 		return false;
 
-    boost::lock_guard<boost::mutex> guard(mtx);
+    std::lock_guard<std::mutex> guard(mtx);
 	for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
 		it != AssociatedReaders.end(); ++it)
 	{
@@ -1073,13 +1071,13 @@ bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t*
 	if (smh->submessageLength == 0)
 		*last = true;
 
-	boost::lock_guard<boost::mutex> guard(mtx);
+	std::lock_guard<std::mutex> guard(mtx);
 	//Look for the correct writer to use the acknack
 	for (std::vector<RTPSWriter*>::iterator it = AssociatedWriters.begin();
 		it != AssociatedWriters.end(); ++it)
 	{
 		//Look for the readerProxy the acknack is from
-		boost::lock_guard<boost::recursive_mutex> guardW(*(*it)->getMutex());
+		std::lock_guard<std::recursive_mutex> guardW(*(*it)->getMutex());
 		if ((*it)->getGuid() == writerGUID)
 		{
 			if ((*it)->getAttributes()->reliabilityKind == RELIABLE)
@@ -1088,7 +1086,7 @@ bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t*
 
 				for (auto rit = SF->matchedReadersBegin(); rit != SF->matchedReadersEnd(); ++rit)
 				{
-					boost::lock_guard<boost::recursive_mutex> guardReaderProxy(*(*rit)->mp_mutex);
+					std::lock_guard<std::recursive_mutex> guardReaderProxy(*(*rit)->mp_mutex);
 
 					if ((*rit)->m_att.guid == readerGUID)
 					{
@@ -1144,7 +1142,7 @@ bool MessageReceiver::proc_Submsg_HeartbeatFrag(CDRMessage_t*msg, SubmessageHead
 
 	// XXX TODO VALIDATE DATA?
 
-	boost::lock_guard<boost::mutex> guard(mtx);
+	std::lock_guard<std::mutex> guard(mtx);
 	//Look for the correct reader and writers:
 	for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
 		it != AssociatedReaders.end(); ++it)

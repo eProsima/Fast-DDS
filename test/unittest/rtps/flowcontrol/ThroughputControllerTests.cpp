@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/rtps/flowcontrol/ThroughputController.h>
+#include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include <gtest/gtest.h>
 
 using namespace std;
@@ -25,7 +26,7 @@ static const unsigned int numberOfTestChanges = 10;
 
 static const ThroughputControllerDescriptor testDescriptor = {controllerSize, periodMillisecs};
 
-class ThroughputControllerTests: public ::testing::Test 
+class ThroughputControllerTests: public ::testing::Test
 {
    public:
 
@@ -85,7 +86,7 @@ TEST_F(ThroughputControllerTests, if_changes_are_fragmented_throughput_controlle
    }
 
    // And the last one is partially cleared
-   ASSERT_EQ(testChangesForGroup[5].getFragmentsClearedForSending().set.size(), 5); 
+   ASSERT_EQ(testChangesForGroup[5].getFragmentsClearedForSending().set.size(), 5);
    std::this_thread::sleep_for(std::chrono::milliseconds(periodMillisecs + 50));
 }
 
@@ -114,7 +115,7 @@ TEST_F(ThroughputControllerTests, throughput_controller_resets_completely_after_
 
    // When
    std::this_thread::sleep_for(std::chrono::milliseconds(periodMillisecs + 100));
-   
+
    // The controller should be open now
    sController(otherChangesForGroup);
    EXPECT_EQ(5, otherChangesForGroup.size());

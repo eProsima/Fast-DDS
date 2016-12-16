@@ -20,7 +20,7 @@
 #ifndef THROUGHPUTSUBSCRIBER_H_
 #define THROUGHPUTSUBSCRIBER_H_
 
-#include <boost/asio.hpp>
+#include <asio.hpp>
 
 #include "ThroughputTypes.h"
 

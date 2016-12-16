@@ -26,9 +26,6 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 
 #include "types/HelloWorldType.h"
-#include <string>
-#include <chrono>
-#include <thread>
 #include <fastrtps/rtps/RTPSDomain.h>
 
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
@@ -38,15 +35,22 @@
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
 
-#include <boost/interprocess/detail/os_thread_functions.hpp>
-
 #include <gtest/gtest.h>
 
+#include <string>
+#include <map>
 #include <mutex>
 #include <chrono>
 #include <thread>
-#include <boost/asio.hpp>
-#include <boost/interprocess/detail/os_thread_functions.hpp>
+#include <asio.hpp>
+
+
+#if defined(_WIN32)
+#include <process.h>
+#define GET_PID _getpid
+#else
+#define GET_PID getpid
+#endif
 
 class pub_dummy_listener:public PublisherListener
 {
@@ -80,7 +84,7 @@ class gettopicnamesandtypesReaderListener:public ReaderListener
                 memcpy(tempMsg.buffer,change->serializedPayload.data,tempMsg.length);
                 if(proxyData.readFromCDRMessage(&tempMsg)){
                     mapmutex.lock();
-                    topicNtypes[proxyData.topicName()].insert(proxyData.typeName());		
+                    topicNtypes[proxyData.topicName()].insert(proxyData.typeName());
                     mapmutex.unlock();
                 }
             }
@@ -97,7 +101,7 @@ TEST(ros2features, EDPSlaveReaderAttachment_DynamicMode)
     pub_dummy_listener my_dummy_listener;
     ReaderListener slave_listener;
     bool result;
-    p_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+    p_attr.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
     my_participant = Domain::createParticipant(p_attr);
 
     ASSERT_NE(my_participant, nullptr);
@@ -107,7 +111,7 @@ TEST(ros2features, EDPSlaveReaderAttachment_DynamicMode)
     pub_attr.topic.topicDataType = "HelloWorldType";
     std::ostringstream t;
     t << std::string(test_info_->test_case_name() + std::string("_") + test_info_->name())
-        << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+        << "_" << asio::ip::host_name() << "_" << GET_PID();
     pub_attr.topic.topicName = t.str();
     pub_attr.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
     my_publisher = Domain::createPublisher(my_participant, pub_attr, &my_dummy_listener);
@@ -131,7 +135,7 @@ TEST(ros2features, EDPSlaveReaderAttachment_StaticMode)
     pub_dummy_listener my_dummy_listener;
     ReaderListener slave_listener;
     bool result;
-    p_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+    p_attr.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
     my_participant = Domain::createParticipant(p_attr);
 
     ASSERT_NE(my_participant, nullptr);
@@ -141,7 +145,7 @@ TEST(ros2features, EDPSlaveReaderAttachment_StaticMode)
     pub_attr.topic.topicDataType = "HelloWorldType";
     std::ostringstream t;
     t << std::string(test_info_->test_case_name() + std::string("_") + test_info_->name())
-        << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+        << "_" << asio::ip::host_name() << "_" << GET_PID();
     pub_attr.topic.topicName = t.str();
     pub_attr.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
     my_publisher = Domain::createPublisher(my_participant, pub_attr, &my_dummy_listener);
@@ -170,10 +174,10 @@ TEST(ros2features, PubSubPoll_DynamicMode)
 
     std::ostringstream t;
     t << std::string(test_info_->test_case_name() + std::string("_") + test_info_->name())
-        << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+        << "_" << asio::ip::host_name() << "_" << GET_PID();
     std::string str = t.str();
 
-    part_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+    part_attr.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
     my_participant = Domain::createParticipant(part_attr);
     //Register type
 
@@ -196,7 +200,7 @@ TEST(ros2features, PubSubPoll_DynamicMode)
         s_attr[i].topic.topicName = str;
         s_attr[i].historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
         //configSubscriber(s_attr);
-        sub_array[i] =Domain::createSubscriber(my_participant,s_attr[i], &s_listener_array[i]);	
+        sub_array[i] =Domain::createSubscriber(my_participant,s_attr[i], &s_listener_array[i]);
         ASSERT_NE(sub_array[i],nullptr);
         //Poll no.Subs
         ASSERT_EQ(my_participant->get_no_subscribers( const_cast<char*>( str.c_str() ) ),i+1);
@@ -219,10 +223,10 @@ TEST(ros2features, PubSubPoll_StaticMode)
 
     std::ostringstream t;
     t << std::string(test_info_->test_case_name() + std::string("_") + test_info_->name())
-        << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+        << "_" << asio::ip::host_name() << "_" << GET_PID();
     std::string str = t.str();
 
-    part_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230 + 2;
+    part_attr.rtps.builtin.domainId = (uint32_t)GET_PID() % 230 + 2;
     my_participant = Domain::createParticipant(part_attr);
     //Register type
 
@@ -245,7 +249,7 @@ TEST(ros2features, PubSubPoll_StaticMode)
         s_attr[i].topic.topicName = str;
         s_attr[i].historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
         //configSubscriber(s_attr);
-        sub_array[i] =Domain::createSubscriber(my_participant,s_attr[i], &s_listener_array[i]);	
+        sub_array[i] =Domain::createSubscriber(my_participant,s_attr[i], &s_listener_array[i]);
         ASSERT_NE(sub_array[i],nullptr);
         //Poll no.Subs
         ASSERT_EQ(my_participant->get_no_subscribers( const_cast<char*>( str.c_str() ) ),i+1);
@@ -263,7 +267,7 @@ TEST(ros2features, SlaveListenerCallback_DynamicMode){
     pub_dummy_listener my_dummy_listener;
     gettopicnamesandtypesReaderListener slave_listener;
     bool result;
-    p_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230 + 35;
+    p_attr.rtps.builtin.domainId = (uint32_t)GET_PID() % 230 + 35;
     my_participant = Domain::createParticipant(p_attr);
 	ASSERT_NE(my_participant, nullptr);
 
@@ -277,7 +281,7 @@ TEST(ros2features, SlaveListenerCallback_DynamicMode){
     pub_attr.topic.topicDataType = "HelloWorldType";
     std::ostringstream t;
     t << std::string(test_info_->test_case_name() + std::string("_") + test_info_->name())
-        << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+        << "_" << asio::ip::host_name() << "_" << GET_PID();
     pub_attr.topic.topicName = t.str();
     pub_attr.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
     my_publisher = Domain::createPublisher(my_participant, pub_attr, &my_dummy_listener);
@@ -292,7 +296,7 @@ TEST(ros2features, SlaveListenerCallback_DynamicMode){
     ParticipantAttributes p_attr2;
     PublisherAttributes pub_attr2;
     pub_dummy_listener my_dummy_listener2;
-    p_attr2.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230 + 35;
+    p_attr2.rtps.builtin.domainId = (uint32_t)GET_PID() % 230 + 35;
     my_participant2 = Domain::createParticipant(p_attr2);
 
     ASSERT_NE(my_participant2, nullptr);
@@ -303,7 +307,7 @@ TEST(ros2features, SlaveListenerCallback_DynamicMode){
     pub_attr2.topic.topicDataType = "HelloWorldType";
     std::ostringstream t2;
     t2 << std::string(test_info_->test_case_name() + std::string("_") + test_info_->name())
-        << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+        << "_" << asio::ip::host_name() << "_" << GET_PID();
     pub_attr2.topic.topicName = t2.str();
     pub_attr2.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
     my_publisher2 = Domain::createPublisher(my_participant2, pub_attr2, &my_dummy_listener2);
@@ -329,7 +333,7 @@ TEST(ros2features, SlaveListenerCallback_StaticMode){
     pub_dummy_listener my_dummy_listener;
     gettopicnamesandtypesReaderListener slave_listener;
     bool result;
-    p_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+    p_attr.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
     my_participant = Domain::createParticipant(p_attr);
 	ASSERT_NE(my_participant, nullptr);
 
@@ -343,7 +347,7 @@ TEST(ros2features, SlaveListenerCallback_StaticMode){
     pub_attr.topic.topicDataType = "HelloWorldType";
     std::ostringstream t;
     t << std::string(test_info_->test_case_name() + std::string("_") + test_info_->name())
-        << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+        << "_" << asio::ip::host_name() << "_" << GET_PID();
     pub_attr.topic.topicName = t.str();
     pub_attr.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
     my_publisher = Domain::createPublisher(my_participant, pub_attr, &my_dummy_listener);
@@ -358,7 +362,7 @@ TEST(ros2features, SlaveListenerCallback_StaticMode){
     ParticipantAttributes p_attr2;
     PublisherAttributes pub_attr2;
     pub_dummy_listener my_dummy_listener2;
-    p_attr2.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+    p_attr2.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
     my_participant2 = Domain::createParticipant(p_attr2);
 
     ASSERT_NE(my_participant2, nullptr);
@@ -369,7 +373,7 @@ TEST(ros2features, SlaveListenerCallback_StaticMode){
     pub_attr2.topic.topicDataType = "HelloWorldType";
     std::ostringstream t2;
     t2 << std::string(test_info_->test_case_name() + std::string("_") + test_info_->name())
-        << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+        << "_" << asio::ip::host_name() << "_" << GET_PID();
     pub_attr2.topic.topicName = t2.str();
     pub_attr2.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
     my_publisher2 = Domain::createPublisher(my_participant2, pub_attr2, &my_dummy_listener2);
@@ -393,8 +397,8 @@ TEST(ros2features, SlaveListenerCallbackWithOneParticipant_StaticMode){
 	PublisherAttributes pub_attr;
 	HelloWorldType my_type;
 	gettopicnamesandtypesReaderListener slave_listener;
-	bool result;	
-	p_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+	bool result;
+	p_attr.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
 	my_participant = Domain::createParticipant(p_attr);
 	ASSERT_NE(my_participant, nullptr);
 

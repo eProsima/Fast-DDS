@@ -15,7 +15,7 @@
 #include "mock/MockEvent.h"
 #include "mock/MockParentEvent.h"
 #include <thread>
-#include <boost/random.hpp>
+#include <random>
 #include <gtest/gtest.h>
 
 class TimedEventEnvironment : public ::testing::Environment
@@ -26,7 +26,7 @@ class TimedEventEnvironment : public ::testing::Environment
 
         void SetUp()
         {
-            thread_ = new boost::thread(&TimedEventEnvironment::run, this);
+            thread_ = new std::thread(&TimedEventEnvironment::run, this);
         }
 
         void TearDown()
@@ -41,11 +41,11 @@ class TimedEventEnvironment : public ::testing::Environment
             service_.run();
         }
 
-        boost::asio::io_service service_;
+        asio::io_service service_;
 
-        boost::asio::io_service::work work_;
+        asio::io_service::work work_;
 
-        boost::thread *thread_;
+        std::thread *thread_;
 };
 
 TimedEventEnvironment* const env = dynamic_cast<TimedEventEnvironment*>(testing::AddGlobalTestEnvironment(new TimedEventEnvironment));
@@ -143,7 +143,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_SuccessEvents)
     MockEvent *event = new MockEvent(env->service_, *env->thread_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
 
     event->restart_timer();
-    
+
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
@@ -185,7 +185,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_CancelEvents)
 
     // Last event will be successful.
     event->restart_timer();
-    
+
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
@@ -227,7 +227,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickCancelEvents)
 
     // Last event will be successful.
     event->restart_timer();
-    
+
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
@@ -240,7 +240,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickCancelEvents)
  * @fn TEST(TimedEvent, EventOnSuccessAutoDestruc_RestartEvents)
  * @brief This test checks the event is not destroyed when it is canceled and restarted.
  * This test restarts several events configure to destroy itself when the event is executed successfully.
- * 
+ *
  */
 TEST(TimedEvent, EventOnSuccessAutoDestruc_RestartEvents)
 {
@@ -266,7 +266,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_RestartEvents)
  * @fn TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickRestartEvents)
  * @brief This test checks the event is not destroyed when it is canceled and restarted.
  * This test restarts several events configure to destroy itself when the event is executed successfully.
- * 
+ *
  */
 TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickRestartEvents)
 {
@@ -300,7 +300,7 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_SuccessEvents)
     MockEvent *event = new MockEvent(env->service_, *env->thread_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ALLWAYS);
 
     event->restart_timer();
-    
+
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
@@ -396,14 +396,14 @@ TEST(TimedEvent, EventNonAutoDestruc_AutoRestartAndDeleteRandomly)
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
 
-    boost::mt19937 rng(static_cast<uint32_t>(std::time(nullptr)));
-    boost::uniform_int<> range(10, 100);
-    boost::variate_generator<boost::mt19937, boost::uniform_int<>> random(rng, range);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(10, 100);
 
     MockEvent* event = new MockEvent(env->service_, *env->thread_, 2, true);
 
     event->restart_timer();
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(random()));
+    std::this_thread::sleep_for(std::chrono::milliseconds(dis(gen)));
 
     delete event;
 
@@ -451,7 +451,7 @@ void restart(MockEvent *event, unsigned int num_loop, unsigned int sleep_time)
         event->restart_timer();
 
         if(sleep_time > 0)
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(sleep_time));
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
     }
 }
 
@@ -469,7 +469,7 @@ void cancel(MockEvent *event, unsigned int num_loop, unsigned int sleep_time)
         event->cancel_timer();
 
         if(sleep_time > 0)
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(sleep_time));
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
     }
 }
 
@@ -481,7 +481,7 @@ void cancel(MockEvent *event, unsigned int num_loop, unsigned int sleep_time)
  */
 TEST(TimedEventMultithread, EventNonAutoDestruc_TwoStartTwoCancel)
 {
-    boost::thread *thr1 = nullptr, *thr2 = nullptr,
+    std::thread *thr1 = nullptr, *thr2 = nullptr,
         *thr3 = nullptr, *thr4 = nullptr;
 
     MockEvent event(env->service_, *env->thread_, 3, false);
@@ -492,10 +492,10 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_TwoStartTwoCancel)
     // Thread 3 -> Restart 80 times waiting 110ms between each one.
     // Thread 4 -> Cancel 80 times waiting 112ms between each one.
 
-    thr1 = new boost::thread(restart, &event, 100, 100); 
-    thr2 = new boost::thread(cancel, &event, 100, 102); 
-    thr3 = new boost::thread(restart, &event, 80, 110); 
-    thr4 = new boost::thread(cancel, &event, 80, 112); 
+    thr1 = new std::thread(restart, &event, 100, 100);
+    thr2 = new std::thread(cancel, &event, 100, 102);
+    thr3 = new std::thread(restart, &event, 80, 110);
+    thr4 = new std::thread(cancel, &event, 80, 112);
 
     thr1->join();
     thr2->join();
@@ -526,7 +526,7 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_TwoStartTwoCancel)
  */
 TEST(TimedEventMultithread, EventNonAutoDestruc_QuickTwoStartTwoCancel)
 {
-    boost::thread *thr1 = nullptr, *thr2 = nullptr,
+    std::thread *thr1 = nullptr, *thr2 = nullptr,
         *thr3 = nullptr, *thr4 = nullptr;
 
     MockEvent event(env->service_, *env->thread_, 3, false);
@@ -537,10 +537,10 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickTwoStartTwoCancel)
     // Thread 3 -> Restart 80 times waiting 3ms between each one.
     // Thread 4 -> Cancel 80 times waiting 3ms between each one.
 
-    thr1 = new boost::thread(restart, &event, 100, 2); 
-    thr2 = new boost::thread(cancel, &event, 100, 2); 
-    thr3 = new boost::thread(restart, &event, 80, 4); 
-    thr4 = new boost::thread(cancel, &event, 80, 4); 
+    thr1 = new std::thread(restart, &event, 100, 2);
+    thr2 = new std::thread(cancel, &event, 100, 2);
+    thr3 = new std::thread(restart, &event, 80, 4);
+    thr4 = new std::thread(cancel, &event, 80, 4);
 
     thr1->join();
     thr2->join();
@@ -571,7 +571,7 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickTwoStartTwoCancel)
  */
 TEST(TimedEventMultithread, EventNonAutoDestruc_QuickestTwoStartTwoCancel)
 {
-    boost::thread *thr1 = nullptr, *thr2 = nullptr,
+    std::thread *thr1 = nullptr, *thr2 = nullptr,
         *thr3 = nullptr, *thr4 = nullptr;
 
     MockEvent event(env->service_, *env->thread_, 2, false);
@@ -582,10 +582,10 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickestTwoStartTwoCancel)
     // Thread 3 -> Restart 80 times waiting 0ms between each one.
     // Thread 4 -> Cancel 80 times waiting 0ms between each one.
 
-    thr1 = new boost::thread(restart, &event, 100, 0); 
-    thr2 = new boost::thread(cancel, &event, 100, 0); 
-    thr3 = new boost::thread(restart, &event, 80, 0); 
-    thr4 = new boost::thread(cancel, &event, 80, 0); 
+    thr1 = new std::thread(restart, &event, 100, 0);
+    thr2 = new std::thread(cancel, &event, 100, 0);
+    thr3 = new std::thread(restart, &event, 80, 0);
+    thr4 = new std::thread(cancel, &event, 80, 0);
 
     thr1->join();
     thr2->join();
@@ -617,7 +617,7 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickestTwoStartTwoCancel)
 TEST(TimedEventMultithread, EventNonAutoDestruc_FourAutoRestart)
 {
     MockEvent::destructed_ = 0;
-    boost::thread *thr1 = nullptr, *thr2 = nullptr,
+    std::thread *thr1 = nullptr, *thr2 = nullptr,
         *thr3 = nullptr, *thr4 = nullptr;
 
     MockEvent *event = new MockEvent(env->service_, *env->thread_, 2, true);
@@ -628,10 +628,10 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_FourAutoRestart)
     // Thread 3 -> AutoRestart 80 times waiting 4ms between each one.
     // Thread 4 -> AutoRestart 80 times waiting 5ms between each one.
 
-    thr1 = new boost::thread(restart, event, 100, 2); 
-    thr2 = new boost::thread(restart, event, 100, 3); 
-    thr3 = new boost::thread(restart, event, 80, 4); 
-    thr4 = new boost::thread(restart, event, 80, 5); 
+    thr1 = new std::thread(restart, event, 100, 2);
+    thr2 = new std::thread(restart, event, 100, 3);
+    thr3 = new std::thread(restart, event, 80, 4);
+    thr4 = new std::thread(restart, event, 80, 5);
 
     thr1->join();
     thr2->join();
@@ -644,7 +644,7 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_FourAutoRestart)
     delete thr4;
 
     // Wait a prudential time before delete the event.
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(200));
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
     delete event;
 
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);

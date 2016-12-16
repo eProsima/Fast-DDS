@@ -159,7 +159,7 @@ public:
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.
 	 * @return True if the parameter was correctly added.
 	 */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 /**
@@ -181,7 +181,7 @@ public:
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.
 	 * @return True if the parameter was correctly added.
 	 */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 #define PARAMETER_LOCATOR_LENGTH 24
 
@@ -204,7 +204,7 @@ public:
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.
 	 * @return True if the parameter was correctly added.
 	 */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 	inline const char* getName()const { return m_string.c_str(); };
 	inline void setName(const char* name){ m_string = std::string(name); };
 private:
@@ -230,7 +230,7 @@ public:
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.
 	 * @return True if the parameter was correctly added.
 	 */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_PORT_LENGTH 4
@@ -264,7 +264,7 @@ public:
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.
 	 * @return True if the parameter was correctly added.
 	 */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_GUID_LENGTH 16
@@ -287,7 +287,7 @@ public:
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.
 	 * @return True if the parameter was correctly added.
 	 */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_PROTOCOL_LENGTH 4
@@ -310,7 +310,7 @@ public:
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.
 	 * @return True if the parameter was correctly added.
 	 */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_VENDOR_LENGTH 4
@@ -333,7 +333,7 @@ public:
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.
 	 * @return True if the parameter was correctly added.
 	 */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 	void setIP4Address(octet o1,octet o2,octet o3,octet o4);
 };
 
@@ -358,7 +358,7 @@ public:
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.
 	 * @return True if the parameter was correctly added.
 	 */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_BOOL_LENGTH 4
@@ -381,7 +381,7 @@ public:
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.
 	 * @return True if the parameter was correctly added.
 	 */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_COUNT_LENGTH 4
@@ -404,7 +404,7 @@ public:
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.
 	 * @return True if the parameter was correctly added.
 	 */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_ENTITYID_LENGTH 4
@@ -427,7 +427,7 @@ public:
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.
 	 * @return True if the parameter was correctly added.
 	 */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_TIME_LENGTH 8
@@ -450,7 +450,7 @@ public:
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.
 	 * @return True if the parameter was correctly added.
 	 */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_BUILTINENDPOINTSET_LENGTH 4
@@ -473,7 +473,7 @@ public:
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.
 	 * @return True if the parameter was correctly added.
 	 */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 /**
@@ -498,7 +498,7 @@ public:
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.
 	 * @return True if the parameter was correctly added.
 	 */
-	bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg) override;
 };
 
 
@@ -512,4 +512,3 @@ public:
 
 #endif
 #endif /* PARAMETERTYPES_H_ */
-

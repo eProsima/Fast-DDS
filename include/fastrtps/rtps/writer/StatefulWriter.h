@@ -23,12 +23,8 @@
 
 #include "RTPSWriter.h"
 #include "timedevent/PeriodicHeartbeat.h"
-
-namespace boost
-{
-    class mutex;
-    class condition_variable;
-}
+#include <condition_variable>
+#include <mutex>
 
 
 namespace eprosima
@@ -72,11 +68,11 @@ namespace eprosima
                 //!EntityId used to send the HB.(only for builtin types performance)
                 EntityId_t m_HBReaderEntityId;
                 // TODO Join this mutex when main mutex would not be recursive.
-                boost::mutex* all_acked_mutex_;
+                std::mutex* all_acked_mutex_;
                 // TODO Also remove when main mutex not recursive.
                 bool all_acked_;
                 //! Conditional variable for detect all acked.
-                boost::condition_variable* all_acked_cond_;
+                std::condition_variable* all_acked_cond_;
                 public:
                 /**
                  * Add a specific change to all ReaderLocators.

@@ -15,13 +15,13 @@
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     include(${PROJECT_SOURCE_DIR}/cmake/dev/gtest.cmake)
     check_gtest()
-	
+
     if(GTEST_FOUND)
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
-        set(LOGTESTS_SOURCE 
+        set(LOGTESTS_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             LogTests.cpp)
@@ -30,13 +30,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(LogTests ${LOGTESTS_SOURCE})
         add_gtest(LogTests ${LOGTESTS_SOURCE})
-        target_compile_definitions(LogTests PRIVATE FASTRTPS_NO_LIB BOOST_ALL_DYN_LINK)
-        target_include_directories(LogTests PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS}
+        target_compile_definitions(LogTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(LogTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
-        target_link_libraries(LogTests ${GTEST_LIBRARIES} ${Boost_LIBRARIES} ${MOCKS} )
+        target_link_libraries(LogTests ${GTEST_LIBRARIES} ${MOCKS} )
 		if(MSVC OR MSVC_IDE)
 			target_link_libraries(LogTests ${PRIVACY}
-				${Boost_LIBRARIES} iphlpapi Shlwapi
+				iphlpapi Shlwapi
 				)
 		endif()
     endif()

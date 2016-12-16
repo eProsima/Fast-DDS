@@ -29,8 +29,7 @@
 
 #include <fastrtps/log/Log.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 
 
@@ -55,8 +54,8 @@ typedef std::vector<WriterProxy*>::iterator WPIT;
 
 void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const changeIN)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*reader->getMutex());
-	boost::lock_guard<boost::recursive_mutex> guard2(*mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
+	std::lock_guard<std::recursive_mutex> guard(*reader->getMutex());
+	std::lock_guard<std::recursive_mutex> guard2(*mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
 	logInfo(RTPS_LIVELINESS,"");
 	GuidPrefix_t guidP;
 	LivelinessQosPolicyKind livelinessKind;

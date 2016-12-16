@@ -28,7 +28,6 @@
 
 #include <fastrtps/publisher/Publisher.h>
 
-#include <boost/interprocess/detail/os_thread_functions.hpp>
 #include <gtest/gtest.h>
 
 ReqRepHelloWorldRequester::ReqRepHelloWorldRequester(): reply_listener_(*this), request_listener_(*this),
@@ -57,7 +56,7 @@ ReqRepHelloWorldRequester::~ReqRepHelloWorldRequester()
 void ReqRepHelloWorldRequester::init()
 {
     ParticipantAttributes pattr;
-    pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+    pattr.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
     participant_ = Domain::createParticipant(pattr);
     ASSERT_NE(participant_, nullptr);
 

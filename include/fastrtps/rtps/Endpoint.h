@@ -20,16 +20,12 @@
 
 #ifndef ENDPOINT_H_
 #define ENDPOINT_H_
+#include <mutex>
 #include "common/Types.h"
 #include "common/Locator.h"
 #include "common/Guid.h"
 
 #include "attributes/EndpointAttributes.h"
-
-namespace boost
-{
-	class recursive_mutex;
-}
 
 namespace eprosima {
 namespace fastrtps{
@@ -64,7 +60,7 @@ class Endpoint
      * Get mutex
      * @return Associated Mutex
      */
-    RTPS_DllAPI inline boost::recursive_mutex* getMutex() const { return mp_mutex; }
+    RTPS_DllAPI inline std::recursive_mutex* getMutex() const { return mp_mutex; }
 
     /**
      * Get associated attributes
@@ -80,7 +76,7 @@ class Endpoint
     //!Endpoint Attributes
     EndpointAttributes m_att;
     //!Endpoint Mutex
-    boost::recursive_mutex* mp_mutex;
+    std::recursive_mutex* mp_mutex;
 
     private:
 

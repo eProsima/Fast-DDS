@@ -18,11 +18,11 @@
 
 #include <fastrtps/Domain.h>
 #include <fastrtps/log/Log.h>
-#include "boost/asio.hpp"
+#include "asio.hpp"
 
 using namespace eprosima;
 using namespace eprosima::fastrtps;
-using namespace boost::asio;
+using namespace asio;
 int main(int argc, char** argv)
 {
 	cout << "Starting " << endl;
@@ -61,7 +61,7 @@ int main(int argc, char** argv)
 		case 2:
 		{
 			io_service io;
-			deadline_timer myTimer(io);
+			steady_timer myTimer(io);
 			deadlinepayloadSubscriber mysub(myTimer,io);
 			if (mysub.init())
 			{

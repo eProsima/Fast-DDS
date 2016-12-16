@@ -28,8 +28,7 @@
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/log/Log.h>
 
-#include <boost/thread/lock_guard.hpp>
-#include <boost/thread/recursive_mutex.hpp>
+#include <mutex>
 
 namespace eprosima {
 namespace fastrtps{
@@ -60,7 +59,7 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
 		logInfo(RTPS_READER,"");
 
         // Protect reader
-        boost::lock_guard<boost::recursive_mutex> guard(*mp_WP->mp_SFR->getMutex());
+        std::lock_guard<std::recursive_mutex> guard(*mp_WP->mp_SFR->getMutex());
 
 		const std::vector<ChangeFromWriter_t> missing_changes = mp_WP->missing_changes();
         // Stores missing changes but there is some fragments received.
@@ -173,7 +172,7 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
 	}
 	else
 	{
-		logInfo(RTPS_READER,"HeartbeatResponseDelay boost message: " <<msg);
+		logInfo(RTPS_READER,"HeartbeatResponseDelay message: " <<msg);
 	}
 }
 

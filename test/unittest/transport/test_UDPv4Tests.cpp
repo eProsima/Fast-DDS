@@ -14,7 +14,7 @@
 
 #include <fastrtps/transport/test_UDPv4Transport.h>
 #include <gtest/gtest.h>
-#include <boost/thread.hpp>
+#include <thread>
 #include <fastrtps/rtps/common/CDRMessage_t.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include <fastrtps/qos/ParameterList.h>
@@ -23,11 +23,9 @@
 #include <memory>
 #include <string>
 
-using namespace std;
 using namespace eprosima::fastrtps::rtps;
-using namespace boost::interprocess;
 
-class test_UDPv4Tests: public ::testing::Test 
+class test_UDPv4Tests: public ::testing::Test
 {
    public:
    test_UDPv4Tests()
@@ -47,12 +45,12 @@ class test_UDPv4Tests: public ::testing::Test
    void HELPER_FillHeartbeatMessage(CDRMessage_t& message);
 
    test_UDPv4TransportDescriptor descriptor;
-   unique_ptr<boost::thread> senderThread;
-   unique_ptr<boost::thread> receiverThread;
+   std::unique_ptr<std::thread> senderThread;
+   std::unique_ptr<std::thread> receiverThread;
 };
 
 TEST_F(test_UDPv4Tests, DATA_messages_dropped)
-{  
+{
    // Given
    descriptor.dropDataMessagesPercentage = 100;
    test_UDPv4Transport transportUnderTest(descriptor);
@@ -69,7 +67,7 @@ TEST_F(test_UDPv4Tests, DATA_messages_dropped)
 }
 
 TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
-{  
+{
    // Given
    descriptor.dropAckNackMessagesPercentage = 100;
    test_UDPv4Transport transportUnderTest(descriptor);
@@ -86,7 +84,7 @@ TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
 }
 
 TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
-{  
+{
    // Given
    descriptor.dropHeartbeatMessagesPercentage = 100;
    test_UDPv4Transport transportUnderTest(descriptor);
@@ -103,7 +101,7 @@ TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
 }
 
 TEST_F(test_UDPv4Tests, Dropping_by_random_chance)
-{  
+{
    // Given
    descriptor.percentageOfMessagesToDrop = 100; // To avoid a non-deterministic test
    test_UDPv4Transport transportUnderTest(descriptor);
@@ -122,7 +120,7 @@ TEST_F(test_UDPv4Tests, Dropping_by_random_chance)
 }
 
 TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
-{  
+{
    // Given
    std::vector<SequenceNumber_t> sequenceNumbersToDrop(1);
    sequenceNumbersToDrop.back().low = 1;
@@ -142,7 +140,7 @@ TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
 }
 
 TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
-{  
+{
    // Given
    descriptor.dropHeartbeatMessagesPercentage = 100;
    descriptor.dropDataMessagesPercentage = 100;

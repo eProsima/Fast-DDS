@@ -20,12 +20,9 @@
 #include <fastrtps/Domain.h>
 
 
-//Boost includes 
 #include "deadlinepayloadSubscriber.h"
 
-using namespace boost::asio;
-
-deadlinepayloadSubscriber::deadlinepayloadSubscriber(deadline_timer &timer,io_service &ioserv) : mp_participant(nullptr), mp_subscriber(nullptr), m_listener(timer,ioserv) {}
+deadlinepayloadSubscriber::deadlinepayloadSubscriber(asio::steady_timer &timer,asio::io_service &ioserv) : mp_participant(nullptr), mp_subscriber(nullptr), m_listener(timer,ioserv) {}
 
 deadlinepayloadSubscriber::~deadlinepayloadSubscriber() {	Domain::removeParticipant(mp_participant);}
 
