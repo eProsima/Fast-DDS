@@ -26,8 +26,6 @@
 #include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 
-#include <rtps/participant/RTPSParticipantImpl.h>
-
 #include <fastrtps/log/Log.h>
 
 #include <fastrtps/qos/QosPolicies.h>
@@ -52,7 +50,7 @@ m_manualLivelinessCount(0),
 		mp_leaseDurationTimer(nullptr),
 		mp_mutex(new boost::recursive_mutex())
 {
-
+	set_VendorId_Unknown(m_VendorId);
 }
 
 ParticipantProxyData::~ParticipantProxyData()
@@ -127,7 +125,7 @@ bool ParticipantProxyData::toParameterList()
 		//			valid&= this->addStaticEDPInfo();
 
 #if EPROSIMA_BIG_ENDIAN
-		valid &=ParameterList::updateCDRMsg(&m_QosList.allQos, BIGEND);
+		valid &= ParameterList::updateCDRMsg(&m_QosList.allQos, BIGEND);
 #else
         valid &= ParameterList::updateCDRMsg(&m_QosList.allQos, LITTLEEND);
 #endif

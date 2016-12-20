@@ -23,6 +23,7 @@
 #include <fastrtps/rtps/security/authentication/Handshake.h>
 #include <fastrtps/rtps/security/common/ParticipantGenericMessage.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastrtps/rtps/common/SequenceNumber.h>
 
 #include <map>
 #include <mutex>
@@ -42,9 +43,12 @@ class ParticipantProxyData;
 namespace security {
 
 class Authentication;
+class HandshakeMessageTokenResent;
 
 class SecurityManager
 {
+    friend class HandshakeMessageTokenResent;
+
     public:
 
         SecurityManager(RTPSParticipantImpl* participant);
@@ -60,6 +64,8 @@ class SecurityManager
         bool return_identity_token(IdentityToken* identity_token);
 
         uint32_t builtin_endpoints();
+
+        RTPSParticipantImpl* participant() { return participant_; }
 
     private:
 
@@ -80,7 +86,8 @@ class SecurityManager
 
                 DiscoveredParticipantInfo(ParticipantProxyData* participant_data, AuthenticationStatus auth_status) :
                     identity_handle_(nullptr), handshake_handle_(nullptr),
-                    auth_status_(auth_status), expected_sequence_number_(0), participant_data_(participant_data)
+                    auth_status_(auth_status), expected_sequence_number_(0), participant_data_(participant_data),
+                    change_sequence_number_(SequenceNumber_t::unknown()), event_(nullptr)
                 {}
 
                 bool is_identity_handle_null()
@@ -154,6 +161,10 @@ class SecurityManager
                     return participant_data_;
                 }
 
+                SequenceNumber_t& get_change_sequence_number() { return change_sequence_number_; }
+
+                HandshakeMessageTokenResent*& get_event() { return event_; }
+
             private:
 
                 DiscoveredParticipantInfo(const DiscoveredParticipantInfo& info) = delete;
@@ -167,6 +178,10 @@ class SecurityManager
                 int64_t expected_sequence_number_;
 
                 ParticipantProxyData* participant_data_;
+
+                SequenceNumber_t change_sequence_number_;
+
+                HandshakeMessageTokenResent* event_;
         };
 
         class ParticipantStatelessMessageListener: public eprosima::fastrtps::rtps::ReaderListener
@@ -188,7 +203,9 @@ class SecurityManager
         void remove_discovered_participant_info(const GUID_t remote_participant_key);
         void restore_remote_identity_handle(const GUID_t& remote_participant_key,
                 IdentityHandle* remote_identity_handle,
-                HandshakeHandle* handshake_handle = nullptr);
+                HandshakeHandle* handshake_handle = nullptr,
+                const SequenceNumber_t& sequence_number = SequenceNumber_t(),
+                HandshakeMessageTokenResent* event = nullptr);
 
         bool create_entities();
         void delete_entities();
@@ -208,7 +225,9 @@ class SecurityManager
                 MessageIdentity&& message_identity,
                 HandshakeMessageToken&& message,
                 IdentityHandle* remote_identity_handle,
-                HandshakeHandle* handshake_handle);
+                HandshakeHandle* handshake_handle,
+                const SequenceNumber_t& previous_change,
+                HandshakeMessageTokenResent* previous_event);
 
         ParticipantGenericMessage generate_authentication_message(const MessageIdentity& related_message_identity,
                 const GUID_t& destination_participant_key,

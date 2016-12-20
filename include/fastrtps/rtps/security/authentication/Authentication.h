@@ -24,6 +24,7 @@
 #include "../../attributes/RTPSParticipantAttributes.h"
 #include "../exceptions/SecurityException.h"
 #include "../../common/Token.h"
+#include "../../common/CDRMessage_t.h"
 #include "Handshake.h"
 
 #include <cstdint>
@@ -111,6 +112,7 @@ class Authentication
                 HandshakeMessageToken** handshake_message,
                 const IdentityHandle& initiator_identity_handle,
                 IdentityHandle& replier_identity_handle,
+                const CDRMessage_t& cdr_participant_data,
                 SecurityException& exception) = 0;
 
         /*!
@@ -132,6 +134,7 @@ class Authentication
                 HandshakeMessageToken&& handshake_message_in,
                 IdentityHandle& initiator_identity_handle,
                 const IdentityHandle& replier_identity_handle,
+                const CDRMessage_t& cdr_participant_data,
                 SecurityException& exception) = 0;
 
         /*!

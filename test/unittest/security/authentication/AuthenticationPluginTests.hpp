@@ -16,6 +16,7 @@
 #define _UNITTEST_SECURITY_AUTHENTICATION_AUTHENTICATIONPLUGINTESTS_HPP_
 
 #include "../../../../src/cpp/rtps/security/SecurityPluginFactory.h"
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
 #include <gtest/gtest.h>
 
@@ -139,20 +140,22 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     ASSERT_TRUE(plugin != nullptr);
 
     IdentityHandle* local_identity_handle1 = nullptr;
-    GUID_t adjusted_participant_key;
+    GUID_t adjusted_participant_key1;
+    GUID_t adjusted_participant_key2;
     uint32_t domain_id = 0;
     RTPSParticipantAttributes participant_attr;
-    GUID_t candidate_participant_key;
+    GUID_t candidate_participant_key1;
+    GUID_t candidate_participant_key2;
     SecurityException exception;
     ValidationResult_t result= ValidationResult_t::VALIDATION_FAILED;
 
     participant_attr.properties = get_valid_policy();
 
     result = plugin->validate_local_identity(&local_identity_handle1,
-            adjusted_participant_key,
+            adjusted_participant_key1,
             domain_id,
             participant_attr,
-            candidate_participant_key,
+            candidate_participant_key1,
             exception);
 
     ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK);
@@ -161,10 +164,10 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
 
     IdentityHandle* local_identity_handle2 = nullptr;
     result = plugin->validate_local_identity(&local_identity_handle2,
-            adjusted_participant_key,
+            adjusted_participant_key2,
             domain_id,
             participant_attr,
-            candidate_participant_key,
+            candidate_participant_key2,
             exception);
 
     ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK);
@@ -198,11 +201,16 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
 
     HandshakeHandle* handshake_handle = nullptr;
     HandshakeMessageToken *handshake_message = nullptr;
+    ParticipantProxyData participant_data1;
+    participant_data1.m_guid = adjusted_participant_key1;
+    participant_data1.toParameterList();
+    ParameterList::updateCDRMsg(&participant_data1.m_QosList.allQos, BIGEND);
 
     result = plugin->begin_handshake_request(&handshake_handle,
             &handshake_message,
             *local_identity_handle1,
             *remote_identity_handle1,
+            participant_data1.m_QosList.allQos.m_cdrmsg,
             exception);
 
     ASSERT_TRUE(result == ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE);
@@ -212,12 +220,17 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
 
     HandshakeHandle* handshake_handle_reply = nullptr;
     HandshakeMessageToken* handshake_message_reply = nullptr;
+    ParticipantProxyData participant_data2;
+    participant_data2.m_guid = adjusted_participant_key2;
+    participant_data2.toParameterList();
+    ASSERT_TRUE(ParameterList::updateCDRMsg(&participant_data2.m_QosList.allQos, BIGEND));
 
     result = plugin->begin_handshake_reply(&handshake_handle_reply,
             &handshake_message_reply,
             HandshakeMessageToken(*handshake_message),
             *remote_identity_handle2,
             *local_identity_handle2,
+            participant_data2.m_QosList.allQos.m_cdrmsg,
             exception);
 
     ASSERT_TRUE(result == ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE);

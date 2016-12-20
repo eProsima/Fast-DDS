@@ -12,9 +12,11 @@
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include "timedevent/HandshakeMessageTokenResent.h"
 
 #include <cassert>
 #include <thread>
+#include <boost/thread/recursive_mutex.hpp>
 
 #define BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_READER (1 << 22)
 #define BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_WRITER (1 << 23)
@@ -22,7 +24,6 @@
 #define AUTHENTICATION_PARTICIPANT_STATELESS_MESSAGE "dds.sec.auth"
 
 // TODO(Ricardo) Add event because stateless messages can be not received.
-// TODO(Ricardo) Add following of sequence in stateless messages.
 
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
@@ -66,6 +67,9 @@ SecurityManager::~SecurityManager()
                 IdentityHandle* handle = dp_it.second.get_identity_handle();
                 authentication_plugin_->return_identity_handle(handle, exception);
             }
+
+            if(dp_it.second.get_event() != nullptr)
+                delete dp_it.second.get_event();
         }
 
         if(local_identity_handle_ != nullptr)
@@ -156,7 +160,9 @@ void SecurityManager::remove_discovered_participant_info(const GUID_t remote_par
 
 void SecurityManager::restore_remote_identity_handle(const GUID_t& remote_participant_key,
         IdentityHandle* remote_identity_handle,
-        HandshakeHandle* handshake_handle)
+        HandshakeHandle* handshake_handle,
+        const SequenceNumber_t& sequence_number,
+        HandshakeMessageTokenResent* event)
 {
     SecurityException exception;
 
@@ -169,6 +175,11 @@ void SecurityManager::restore_remote_identity_handle(const GUID_t& remote_partic
         dp_it->second.set_identity_handle(remote_identity_handle);
         assert(dp_it->second.is_handshake_handle_null());
         dp_it->second.set_handshake_handle(handshake_handle);
+        
+        if(sequence_number != SequenceNumber_t())
+            dp_it->second.get_change_sequence_number() = sequence_number;
+
+        dp_it->second.get_event() = event;
     }
     else
     {
@@ -287,7 +298,7 @@ bool SecurityManager::discovered_participant(ParticipantProxyData* participant_d
     {
         returnedValue = on_process_handshake(participant_data->m_guid, AUTHENTICATION_REQUEST_NOT_SEND,
                 MessageIdentity(), HandshakeMessageToken(),
-                remote_identity_handle, nullptr);
+                remote_identity_handle, nullptr, SequenceNumber_t::unknown(), nullptr);
     }
 
     return returnedValue;
@@ -298,7 +309,9 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
         MessageIdentity&& message_identity,
         HandshakeMessageToken&& message_in,
         IdentityHandle* remote_identity_handle,
-        HandshakeHandle* handshake_handle)
+        HandshakeHandle* handshake_handle,
+        const SequenceNumber_t& previous_change,
+        HandshakeMessageTokenResent* previous_event)
 {
     assert(remote_identity_handle);
 
@@ -313,6 +326,7 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
                 &handshake_message,
                 *local_identity_handle_,
                 *remote_identity_handle,
+                participant_->pdpsimple()->get_participant_proxy_data_serialized(BIGEND),
                 exception);
     }
     else if(pre_auth_status == AUTHENTICATION_WAITING_REQUEST)
@@ -323,6 +337,7 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
                 std::move(message_in),
                 *remote_identity_handle,
                 *local_identity_handle_,
+                participant_->pdpsimple()->get_participant_proxy_data_serialized(BIGEND),
                 exception);
     }
     else if(pre_auth_status == AUTHENTICATION_WAITING_REPLY ||
@@ -342,7 +357,7 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
             logError(SECURITY_AUTHENTICATION, exception.what());
         }
 
-        restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle);
+        restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
 
         // Inform user about authenticated remote participant.
         if(participant_->getListener() != nullptr)
@@ -358,8 +373,15 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
 
     assert(handshake_handle);
 
+    // Remove previous change
+    if(previous_event != nullptr)
+        delete previous_event;
+    if(previous_change != SequenceNumber_t::unknown())
+        participant_stateless_message_writer_history_->remove_change(previous_change);
+
     bool handshake_message_send = true;
     int64_t expected_sequence_number = 0;
+    SequenceNumber_t sequence_number{SequenceNumber_t::unknown()};
 
     if(ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE ||
             ret == VALIDATION_OK_WITH_FINAL_MESSAGE)
@@ -399,6 +421,7 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
                 {
                     handshake_message_send = true;
                     expected_sequence_number = message.message_identity().sequence_number();
+                    sequence_number = change->sequenceNumber;
                 }
                 else
                 {
@@ -407,6 +430,7 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
             }
             else
             {
+                //TODO (Ricardo) Return change.
                 logError(SECURITY, "Cannot serialize ParticipantGenericMessage");
             }
         }
@@ -452,10 +476,13 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
                         assert(dp_it->second.is_handshake_handle_null());
                         dp_it->second.set_handshake_handle(handshake_handle);
                         handshake_handle = nullptr;
+                        dp_it->second.get_change_sequence_number() = sequence_number;
                         if(ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE)
                         {
                             assert(expected_sequence_number != 0);
                             dp_it->second.set_expected_sequence_number(expected_sequence_number);
+                            dp_it->second.get_event() = new HandshakeMessageTokenResent(*this, remote_participant_key, 500); // TODO (Ricardo) Configurable
+                            dp_it->second.get_event()->restart_timer();
                         }
 
                         if(ret == VALIDATION_OK ||
@@ -688,6 +715,8 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
         IdentityHandle* remote_identity_handle = nullptr;
         HandshakeHandle* handshake_handle = nullptr;
         int64_t expected_sequence_number = 0;
+        SequenceNumber_t previous_change{SequenceNumber_t::unknown()};
+        HandshakeMessageTokenResent* previous_event = nullptr;
 
         mutex_.lock();
         auto dp_it = discovered_participants_.find(remote_participant_key);
@@ -698,6 +727,9 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
             remote_identity_handle = dp_it->second.get_identity_handle();
             handshake_handle = dp_it->second.get_handshake_handle();
             expected_sequence_number = dp_it->second.get_expected_sequence_number();
+            previous_change = dp_it->second.get_change_sequence_number();
+            previous_event = dp_it->second.get_event();
+            dp_it->second.get_event() = nullptr;
         }
         else
         {
@@ -715,13 +747,13 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
                 if(message.related_message_identity().source_guid() != GUID_t::unknown())
                 {
                     logInfo(SECURITY, "Bad ParticipantGenericMessage. related_message_identity.source_guid is not GUID_t::unknown()");
-                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle);
+                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
                     return;
                 }
                 if(message.message_data().size() != 1)
                 {
                     logInfo(SECURITY, "Bad ParticipantGenericMessage. message_data size is not 1");
-                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle);
+                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
                     return;
                 }
             }
@@ -730,35 +762,101 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
             {
                 assert(handshake_handle);
 
-                // Preconditions
-                if(message.related_message_identity().source_guid() != participant_->getGuid())
+                if(message.related_message_identity().source_guid() == GUID_t::unknown() &&
+                        auth_status == AUTHENTICATION_WAITING_FINAL)
                 {
-                    logInfo(SECURITY, "Bad ParticipantGenericMessage. related_message_identity.source_guid is mine");
-                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle);
+                    // Maybe the reply was missed. Resent.
+                    if(previous_change != SequenceNumber_t::unknown())
+                    {
+                        // Remove previous change and send a new one.
+                        SequenceNumber_t sequence_number{SequenceNumber_t::unknown()};
+                        CacheChange_t* p_change = participant_stateless_message_writer_history_->remove_change_and_reuse(previous_change);
+
+                        if(p_change != nullptr)
+                        {
+                            if(participant_stateless_message_writer_history_->add_change(p_change))
+                            {
+                                sequence_number = p_change->sequenceNumber;
+                            }
+                            //TODO (Ricardo) What to do if not added?
+                        }
+
+                        restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, sequence_number, previous_event);
+                        return;
+                    }
+                }
+
+                // Preconditions
+                if(message.related_message_identity().source_guid() != participant_stateless_message_writer_->getGuid())
+                {
+                    logInfo(SECURITY, "Bad ParticipantGenericMessage. related_message_identity.source_guid is not mine");
+                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
                     return;
                 }
                 if(message.related_message_identity().sequence_number() != expected_sequence_number)
                 {
                     logInfo(SECURITY, "Bad ParticipantGenericMessage. related_message_identity.sequence_number is not expected");
-                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle);
+                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
                     return;
                 }
                 if(message.message_data().size() != 1)
                 {
                     logInfo(SECURITY, "Bad ParticipantGenericMessage. message_data size is not 1");
-                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle);
+                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
+                    return;
+                }
+            }
+            else if(auth_status == AUTHENTICATION_OK)
+            {
+                // Preconditions
+                if(message.related_message_identity().source_guid() != participant_stateless_message_writer_->getGuid())
+                {
+                    logInfo(SECURITY, "Bad ParticipantGenericMessage. related_message_identity.source_guid is not mine");
+                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
+                    return;
+                }
+                if(message.related_message_identity().sequence_number() != expected_sequence_number)
+                {
+                    logInfo(SECURITY, "Bad ParticipantGenericMessage. related_message_identity.sequence_number is not expected");
+                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
+                    return;
+                }
+                if(message.message_data().size() != 1)
+                {
+                    logInfo(SECURITY, "Bad ParticipantGenericMessage. message_data size is not 1");
+                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
+                    return;
+                }
+
+                // Maybe final message was missed. Resent.
+                if(previous_change != SequenceNumber_t::unknown())
+                {
+                    // Remove previous change and send a new one.
+                    SequenceNumber_t sequence_number{SequenceNumber_t::unknown()};
+                    CacheChange_t* p_change = participant_stateless_message_writer_history_->remove_change_and_reuse(previous_change);
+
+                    if(p_change != nullptr)
+                    {
+                        if(participant_stateless_message_writer_history_->add_change(p_change))
+                        {
+                            sequence_number = p_change->sequenceNumber;
+                        }
+                        //TODO (Ricardo) What to do if not added?
+                    }
+
+                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, sequence_number, previous_event);
                     return;
                 }
             }
             else
             {
-                restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle);
+                restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
                 return;
             }
 
             on_process_handshake(remote_participant_key, auth_status, std::move(message.message_identity()),
                     std::move(message.message_data().at(0)), remote_identity_handle,
-                    handshake_handle);
+                    handshake_handle, previous_change, previous_event);
         }
     }
     else

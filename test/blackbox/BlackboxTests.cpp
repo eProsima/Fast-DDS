@@ -65,8 +65,8 @@ class BlackboxEnvironment : public ::testing::Environment
 
             if(global_port + 7400 > global_port)
                 global_port += 7400;
-            //Log::SetVerbosity(Log::Info);
-            //Log::SetCategoryFilter(std::regex("(SECURITY|AUTHENTICATION)"));
+            Log::SetVerbosity(Log::Info);
+            Log::SetCategoryFilter(std::regex("(SECURITY)"));
         }
 
         void TearDown()
@@ -1540,19 +1540,20 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
     property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
                     "file://" + std::string(certs_path) + "/mainpubkey.pem"));
 
-    reader.history_depth(100).
+    reader.history_depth(10).
         reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
         property_policy(property_policy).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.history_depth(100).
+    writer.history_depth(10).
         property_policy(property_policy).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for authorization
     reader.waitAuthorized();
+    writer.waitAuthorized();
 
     // Wait for discovery.
     writer.waitDiscovery();
@@ -1589,12 +1590,12 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_fail)
         property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
                     "file://" + std::string(certs_path) + "/mainpubkey.pem"));
 
-        reader.history_depth(100).
+        reader.history_depth(10).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
         ASSERT_TRUE(reader.isInitialized());
 
-        writer.history_depth(100).
+        writer.history_depth(10).
             property_policy(property_policy).init();
 
         ASSERT_TRUE(writer.isInitialized());
@@ -1615,19 +1616,62 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_fail)
         property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
                     "file://" + std::string(certs_path) + "/mainpubkey.pem"));
 
-        reader.history_depth(100).
+        reader.history_depth(10).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
             property_policy(property_policy).init();
 
         ASSERT_TRUE(reader.isInitialized());
 
-        writer.history_depth(100).init();
+        writer.history_depth(10).init();
 
         ASSERT_TRUE(writer.isInitialized());
 
         // Wait for authorization
         reader.waitUnauthorized();
     }
+}
+
+BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_lossy_conditions)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy property_policy;
+
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+
+    reader.history_depth(10).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        property_policy(property_policy).init();
+
+    // To simulate lossy conditions, we are going to remove the default
+    // bultin transport, and instead use a lossy shim layer variant.
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->sendBufferSize = 65536;
+    testTransport->receiveBufferSize = 65536;
+    // We drop 20% of all data frags
+    testTransport->dropDataMessagesPercentage = 40;
+    testTransport->dropLogLength = 10;
+    writer.disable_builtin_transport();
+    writer.add_user_transport_to_pparams(testTransport);
+
+    writer.history_depth(10).
+        property_policy(property_policy).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for authorization
+    reader.waitAuthorized();
+    writer.waitAuthorized();
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
 }
 
 int main(int argc, char **argv)

@@ -30,9 +30,61 @@ class WriterHistory
     public:
 
 
-        WriterHistory(const HistoryAttributes& /*att*/){}
+        WriterHistory(const HistoryAttributes& /*att*/) : samples_number_(0) {}
 
-        MOCK_METHOD1(add_change, bool(CacheChange_t*));
+        MOCK_METHOD1(add_change_mock, bool(CacheChange_t*));
+
+        bool add_change(CacheChange_t* change)
+        {
+            bool ret = add_change_mock(change);
+            samples_number_mutex_.lock();
+            ++samples_number_;
+            change->sequenceNumber = ++last_sequence_number_;
+            samples_number_mutex_.unlock();
+            samples_number_cond_.notify_all();
+            return ret;
+        }
+
+        MOCK_METHOD1(remove_change, bool (const SequenceNumber_t&));
+
+        MOCK_METHOD1(remove_change_and_reuse, CacheChange_t* (const SequenceNumber_t&));
+
+        MOCK_METHOD1(remove_change_mock, bool (CacheChange_t*));
+
+        bool remove_change(CacheChange_t* change)
+        {
+            bool ret = remove_change_mock(change);
+            delete change;
+            return ret;
+        }
+
+        void reset_samples_number()
+        { 
+            std::lock_guard<std::mutex> lock(samples_number_mutex_);
+            samples_number_ = 0;
+        }
+
+        bool wait_for_some_sample(std::chrono::milliseconds milliseconds)
+        {
+            bool returnedValue = true;
+
+            std::unique_lock<std::mutex> lock(samples_number_mutex_);
+
+            if(samples_number_ == 0)
+            {
+                if(samples_number_cond_.wait_for(lock, milliseconds) == std::cv_status::timeout)
+                    returnedValue = false;
+            }
+
+            return returnedValue;
+        }
+
+    private:
+
+        std::condition_variable samples_number_cond_;
+        std::mutex samples_number_mutex_;
+        unsigned int samples_number_;
+        SequenceNumber_t last_sequence_number_;
 };
 
 } // namespace rtps

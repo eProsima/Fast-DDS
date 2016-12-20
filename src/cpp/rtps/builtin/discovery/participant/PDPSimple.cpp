@@ -552,7 +552,8 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 void PDPSimple::notifyAboveRemoteEndpoints(ParticipantProxyData* pdata)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
+    boost::lock_guard<boost::recursive_mutex> guard_pdpsimple(*mp_mutex);
+    boost::lock_guard<boost::recursive_mutex> guard_pdata(*pdata->mp_mutex);
 
     //Inform EDP of new RTPSParticipant data:
     if(mp_EDP!=nullptr)
@@ -732,6 +733,19 @@ bool PDPSimple::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16
             dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteReader(pdata,userDefinedId);
     }
     return false;
+}
+
+CDRMessage_t PDPSimple::get_participant_proxy_data_serialized(Endianness_t endian)
+{
+    boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
+    if(getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.msg_endian == endian)
+    {
+        return CDRMessage_t(getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg);
+    }
+
+    ParameterList_t plist(getLocalParticipantProxyData()->m_QosList.allQos);
+    ParameterList::updateCDRMsg(&plist, BIGEND);
+    return CDRMessage_t(std::move(plist.m_cdrmsg));
 }
 
 } /* namespace rtps */

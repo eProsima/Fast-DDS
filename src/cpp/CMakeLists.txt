@@ -123,6 +123,7 @@ if(SECURITY)
         security/authentication/PKIIdentityHandle.cpp
         security/access/mockAccessHandle.cpp
         security/authentication/PKIHandshakeHandle.cpp
+        rtps/security/timedevent/HandshakeMessageTokenResent.cpp
         )
 
     include_directories(${OPENSSL_INCLUDE_DIR})

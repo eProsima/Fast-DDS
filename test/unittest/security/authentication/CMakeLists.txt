@@ -25,6 +25,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/ParticipantProxyData.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/QosList.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterList.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/QosPolicies.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Token.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/exceptions/Exception.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/exceptions/SecurityException.cpp
@@ -44,6 +51,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_include_directories(BuiltinPKIDH PRIVATE
             ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
-        target_link_libraries(BuiltinPKIDH ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES})
+        target_link_libraries(BuiltinPKIDH ${Boost_LIBRARIES} ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES})
     endif()
 endif()

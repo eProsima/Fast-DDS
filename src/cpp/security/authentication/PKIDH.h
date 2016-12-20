@@ -49,6 +49,7 @@ class PKIDH : public Authentication
                 HandshakeMessageToken** handshake_message,
                 const IdentityHandle& initiator_identity_handle,
                 IdentityHandle& replier_identity_handle,
+                const CDRMessage_t& cdr_participant_data,
                 SecurityException& exception);
 
         ValidationResult_t begin_handshake_reply(HandshakeHandle** handshake_handle,
@@ -56,6 +57,7 @@ class PKIDH : public Authentication
                 HandshakeMessageToken&& handshake_message_in,
                 IdentityHandle& initiator_identity_handle,
                 const IdentityHandle& replier_identity_handle,
+                const CDRMessage_t& cdr_participant_data,
                 SecurityException& exception);
 
         ValidationResult_t process_handshake(HandshakeMessageToken** handshake_message_out,

@@ -81,7 +81,6 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 
 bool WriterHistory::remove_change(CacheChange_t* a_change)
 {
-
 	if(mp_writer == nullptr || mp_mutex == nullptr)
 	{
 		logError(RTPS_HISTORY,"You need to create a Writer with this History before removing any changes");
@@ -122,6 +121,60 @@ bool WriterHistory::remove_change(CacheChange_t* a_change)
 bool WriterHistory::remove_change_g(CacheChange_t* a_change)
 {
     return remove_change(a_change);
+}
+
+bool WriterHistory::remove_change(const SequenceNumber_t& sequence_number)
+{
+	if(mp_writer == nullptr || mp_mutex == nullptr)
+	{
+		logError(RTPS_HISTORY,"You need to create a Writer with this History before removing any changes");
+		return false;
+	}
+
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
+	for(std::vector<CacheChange_t*>::iterator chit = m_changes.begin();
+            chit!=m_changes.end();++chit)
+	{
+		if((*chit)->sequenceNumber == sequence_number)
+		{
+			mp_writer->change_removed_by_history(*chit);
+			m_changePool.release_Cache(*chit);
+			m_changes.erase(chit);
+			updateMaxMinSeqNum();
+			return true;
+		}
+	}
+
+	logWarning(RTPS_HISTORY,"SequenceNumber " <<  sequence_number << " not found");
+	return false;
+}
+
+CacheChange_t* WriterHistory::remove_change_and_reuse(const SequenceNumber_t& sequence_number)
+{
+	if(mp_writer == nullptr || mp_mutex == nullptr)
+	{
+		logError(RTPS_HISTORY,"You need to create a Writer with this History before removing any changes");
+		return nullptr;
+	}
+
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
+	for(std::vector<CacheChange_t*>::iterator chit = m_changes.begin();
+            chit!=m_changes.end();++chit)
+	{
+		if((*chit)->sequenceNumber == sequence_number)
+		{
+            CacheChange_t* change = *chit;
+			mp_writer->change_removed_by_history(change);
+			m_changes.erase(chit);
+			updateMaxMinSeqNum();
+			return change;
+		}
+	}
+
+	logWarning(RTPS_HISTORY,"SequenceNumber " <<  sequence_number << " not found");
+	return nullptr;
 }
 
 void WriterHistory::updateMaxMinSeqNum()

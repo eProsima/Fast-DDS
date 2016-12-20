@@ -22,7 +22,7 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
-#include "../participant/RTPSParticipantImpl.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/log/Log.h>
 
 namespace eprosima {

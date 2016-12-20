@@ -21,6 +21,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "Types.h"
 #include <stdlib.h>
+#include <cstring>
 
 namespace eprosima{
 namespace fastrtps{
@@ -87,6 +88,43 @@ struct RTPS_DllAPI CDRMessage_t{
 #else
         msg_endian = LITTLEEND;
 #endif
+    }
+
+    CDRMessage_t(const CDRMessage_t& message)
+    {
+        wraps = false;
+        pos = 0;
+        length = message.length;
+        max_size = message.max_size;
+        msg_endian = message.msg_endian;
+        
+        if(max_size != 0)
+        {
+            buffer =  (octet*)malloc(max_size);
+            memcpy(buffer, message.buffer, length);
+        }
+        else
+            buffer = nullptr;
+    }
+
+    CDRMessage_t(CDRMessage_t&& message)
+    {
+        wraps = message.wraps;
+        message.wraps = false;
+        pos = message.pos;
+        message.pos = 0;
+        length = message.length;
+        message.length = 0;
+        max_size = message.max_size;
+        message.max_size = 0;
+        msg_endian = message.msg_endian;
+#if EPROSIMA_BIG_ENDIAN
+        message.msg_endian = BIGEND;
+#else
+        message.msg_endian = LITTLEEND;
+#endif
+        buffer = message.buffer;
+        message.buffer = nullptr;
     }
 
     //!Pointer to the buffer where the data is stored.

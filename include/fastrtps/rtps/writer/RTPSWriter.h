@@ -161,6 +161,12 @@ class RTPSWriter : public Endpoint
      */
     virtual void add_flow_controller(std::unique_ptr<FlowController> controller) = 0;
 
+    /**
+     * Get RTPS participant
+     * @return RTPS participant
+     */
+    inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
+
     protected:
 
     //!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
@@ -192,12 +198,6 @@ class RTPSWriter : public Endpoint
      * @return True if removed correctly.
      */
     virtual bool change_removed_by_history(CacheChange_t* a_change)=0;
-
-    /**
-     * Get RTPS participant
-     * @return RTPS participant
-     */
-    inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
 
     private:
 

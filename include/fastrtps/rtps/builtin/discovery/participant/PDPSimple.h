@@ -234,6 +234,8 @@ public:
 	 */
 	inline boost::recursive_mutex* getMutex() const {return mp_mutex;}
 
+    CDRMessage_t get_participant_proxy_data_serialized(Endianness_t endian);
+
 private:
 	//!Pointer to the local RTPSParticipant.
 	RTPSParticipantImpl* mp_RTPSParticipant;
