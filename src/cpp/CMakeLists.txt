@@ -105,6 +105,12 @@ set(${PROJECT_NAME}_source_files
     ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2/tinyxml2.cpp
     )
 
+if(ANDROID)
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${PROJECT_SOURCE_DIR}/thirdparty/android-ifaddrs/ifaddrs.c
+    )
+endif()
+
 set_sources(${${PROJECT_NAME}_source_files})
 
 # Set version
@@ -132,7 +138,11 @@ set(${PROJECT_NAME}_include_dirs
     ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2
 )
 
-find_package(Threads REQUIRED)
+if(ANDROID)
+    list(APPEND ${PROJECT_NAME}_include_dirs ${PROJECT_SOURCE_DIR}/thirdparty/android-ifaddrs)
+else()
+    find_package(Threads REQUIRED)
+endif()
 
 include_directories(${${PROJECT_NAME}_include_dirs})
 
