@@ -113,6 +113,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
             {
                 ChangeForReader_t changeForReader(change);
 
+                // TODO(Ricardo) Study next case: Not push mode, writer reiable and reader besteffort.
                 if(m_pushMode)
                     changeForReader.setStatus(UNDERWAY);
                 else
@@ -461,18 +462,10 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 
     for(auto it = matched_readers.begin(); it!=matched_readers.end(); ++it)
     {
-        boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
-        ChangeForReader_t changeForReader;
-        if((*it)->getChangeForReader(change, &changeForReader))
+        if(!(*it)->change_is_acked(change->sequenceNumber))
         {
-            if(changeForReader.isRelevant())
-            {
-                if(changeForReader.getStatus() != ACKNOWLEDGED)
-                {
-                    logInfo(RTPS_WRITER, "Change not acked. Relevant: " << changeForReader.isRelevant() << " status: " << changeForReader.getStatus() << endl);
-                    return false;
-                }
-            }
+            logInfo(RTPS_WRITER, "Change " << change->sequenceNumber << " not acked." << endl);
+            return false;
         }
     }
     return true;
@@ -541,26 +534,18 @@ bool StatefulWriter::clean_history(unsigned int max)
     for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
             cit != mp_history->changesEnd() && (!limit || ackca.size() < max); ++cit)
     {
-        bool acknowledge = true, linked = false;
+        bool acknowledge = true;
 
         for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin(); it != matched_readers.end(); ++it)
         {
-            boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
-            ChangeForReader_t cr; 
-
-            if((*it)->getChangeForReader(*cit, &cr))
+            if(!(*it)->change_is_acked((*cit)->sequenceNumber))
             {
-                linked = true;
-
-                if(cr.getStatus() != ACKNOWLEDGED)
-                {
-                    acknowledge = false;
-                    break;
-                }
+                acknowledge = false;
+                break;
             }
         }
 
-        if(!linked || acknowledge)
+        if(acknowledge)
             ackca.push_back(*cit);
     }
 

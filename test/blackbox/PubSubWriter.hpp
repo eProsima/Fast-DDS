@@ -77,11 +77,11 @@ class PubSubWriter
         publisher_attr_.topic.topicName = t.str();
 
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
-            publisher_attr_.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+        publisher_attr_.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 #elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
-            publisher_attr_.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+        publisher_attr_.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
 #else
-            publisher_attr_.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+        publisher_attr_.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
 #endif
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
@@ -177,10 +177,10 @@ class PubSubWriter
     template<class _Rep,
         class _Period
             >
-    bool waitForAllAcked(const std::chrono::duration<_Rep, _Period>& max_wait)
-    {
-        return publisher_->wait_for_all_acked(Time_t((int32_t)max_wait.count(), 0));
-    }
+            bool waitForAllAcked(const std::chrono::duration<_Rep, _Period>& max_wait)
+            {
+                return publisher_->wait_for_all_acked(Time_t((int32_t)max_wait.count(), 0));
+            }
 
     /*** Function to change QoS ***/
     PubSubWriter& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
@@ -233,6 +233,12 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& resource_limits_allocated_samples(const int32_t initial)
+    {
+        publisher_attr_.topic.resourceLimitsQos.allocated_samples = initial;
+        return *this;
+    }
+
     PubSubWriter& resource_limits_max_samples(const int32_t max)
     {
         publisher_attr_.topic.resourceLimitsQos.max_samples = max;
@@ -269,31 +275,25 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& allocated_samples(const uint32_t max)
-    {
-        publisher_attr_.topic.resourceLimitsQos.allocated_samples = max;
-        return *this;
-    }
-
     PubSubWriter& static_discovery(const char* filename)
     {
-	participant_attr_.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
-	participant_attr_.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
-	participant_attr_.rtps.builtin.setStaticEndpointXMLFilename(filename);
-	return *this;
+        participant_attr_.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
+        participant_attr_.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
+        participant_attr_.rtps.builtin.setStaticEndpointXMLFilename(filename);
+        return *this;
     }
 
     PubSubWriter& setPublisherIDs(uint8_t UserID, uint8_t EntityID)
     {
-	publisher_attr_.setUserDefinedID(UserID);
-	publisher_attr_.setEntityID(EntityID);
-	return *this;
+        publisher_attr_.setUserDefinedID(UserID);
+        publisher_attr_.setEntityID(EntityID);
+        return *this;
     }
 
     PubSubWriter& setManualTopicName(std::string topicName)
     {
-	publisher_attr_.topic.topicName=topicName;
-	return *this;
+        publisher_attr_.topic.topicName=topicName;
+        return *this;
     }
     private:
 

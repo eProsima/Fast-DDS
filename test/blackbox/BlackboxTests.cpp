@@ -1135,6 +1135,7 @@ BLACKBOXTEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
 
     reader.history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
         history_depth(2).
+        resource_limits_allocated_samples(2).
         resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -1186,16 +1187,16 @@ BLACKBOXTEST(BlackBox, CacheChangeReleaseTest)
     reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS);
     reader.history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS);
     reader.history_depth(1);
+    reader.resource_limits_allocated_samples(1);
     reader.resource_limits_max_samples(1);
-    reader.allocated_samples(5);
     reader.init();
     ASSERT_TRUE(reader.isInitialized());
 
+    writer.resource_limits_allocated_samples(1);
     writer.resource_limits_max_samples(1);
     writer.history_kind(KEEP_LAST_HISTORY_QOS);
     writer.history_depth(1);
     writer.reliability(BEST_EFFORT_RELIABILITY_QOS);
-    writer.allocated_samples(10);	
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
@@ -1227,6 +1228,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
     reader.reliability(RELIABLE_RELIABILITY_QOS).
         history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
         history_depth(2).
+        resource_limits_allocated_samples(2).
         resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -1312,11 +1314,13 @@ BLACKBOXTEST(BlackBox, PubSubKeepAll)
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
         history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        resource_limits_allocated_samples(2).
         resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        resource_limits_allocated_samples(2).
         resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -1368,12 +1372,14 @@ BLACKBOXTEST(BlackBox, PubSubKeepAllTransient)
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
         history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        resource_limits_allocated_samples(2).
         resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
         durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
+        resource_limits_allocated_samples(2).
         resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -1417,6 +1423,42 @@ BLACKBOXTEST(BlackBox, PubSubKeepAllTransient)
     ASSERT_EQ(data.size(), 0);
 }
 
+BLACKBOXTEST(BlackBox, PubReliableKeepAllSubNonReliable)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    reader.init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        resource_limits_allocated_samples(1).
+        resource_limits_max_samples(1).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_helloword_data_generator();
+    size_t data_length = data.size();
+
+    reader.expected_data(data);
+    reader.startReception();
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(1));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_LE(data.size(), data_length - 2);
+}
+
 //Verify that outLocatorList is used to select the desired output channel
 BLACKBOXTEST(BlackBox, PubSubOutLocatorSelection){
 
@@ -1434,12 +1476,14 @@ BLACKBOXTEST(BlackBox, PubSubOutLocatorSelection){
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
         history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        resource_limits_allocated_samples(2).
         resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
         durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
+        resource_limits_allocated_samples(20).
         resource_limits_max_samples(20).
         outLocatorList(WriterOutLocators).init();
 
@@ -1542,35 +1586,35 @@ BLACKBOXTEST(BlackBox, StaticDiscovery)
 
     LocatorList_t WriterUnicastLocators;
     Locator_t LocatorBuffer;
-    
+
     LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
     LocatorBuffer.port = W_UNICAST_PORT_RANDOM_NUMBER;
     LocatorBuffer.set_IP4_address(127,0,0,1);
     WriterUnicastLocators.push_back(LocatorBuffer);
 
     LocatorList_t WriterMulticastLocators;
-    
+
     LocatorBuffer.port = MULTICAST_PORT_RANDOM_NUMBER;
     WriterMulticastLocators.push_back(LocatorBuffer);
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
         durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
     writer.static_discovery("PubSubWriter.xml").reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-	unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
-	setPublisherIDs(1, 2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+        unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
+        setPublisherIDs(1, 2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
 
     ASSERT_TRUE(writer.isInitialized());
 
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    
+
     LocatorList_t ReaderUnicastLocators;
-    
+
     LocatorBuffer.port = R_UNICAST_PORT_RANDOM_NUMBER;
     ReaderUnicastLocators.push_back(LocatorBuffer);
 
     LocatorList_t ReaderMulticastLocators;
-    
+
     LocatorBuffer.port = MULTICAST_PORT_RANDOM_NUMBER;
     ReaderMulticastLocators.push_back(LocatorBuffer);
 
@@ -1579,8 +1623,8 @@ BLACKBOXTEST(BlackBox, StaticDiscovery)
     history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
     durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
     reader.static_discovery("PubSubReader.xml").
-	    unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
-	    setSubscriberIDs(3, 4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+        unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
+        setSubscriberIDs(3, 4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -1591,7 +1635,7 @@ BLACKBOXTEST(BlackBox, StaticDiscovery)
     ASSERT_TRUE(data.empty());
 
     reader.expected_data(expected_data);
-	reader.startReception();
+    reader.startReception();
     data = reader.block(std::chrono::seconds(5));
 
     print_non_received_messages(data, default_helloworld_print);
