@@ -581,8 +581,6 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
     if (pend->getAttributes()->unicastLocatorList.empty() && pend->getAttributes()->multicastLocatorList.empty()){
         //Default unicast
         pend->getAttributes()->unicastLocatorList = m_att.defaultUnicastLocatorList;
-        //Default multicast
-        pend->getAttributes()->multicastLocatorList = m_att.defaultMulticastLocatorList;
     }
     createReceiverResources(pend->getAttributes()->unicastLocatorList, false);
     createReceiverResources(pend->getAttributes()->multicastLocatorList, false);
