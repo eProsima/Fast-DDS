@@ -12,20 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-add_subdirectory(blackbox)
-add_subdirectory(communication)
-add_subdirectory(performance)
-if(NOT ((MSVC OR MSVC_IDE)))
-   find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
-   if(CTEST_MEMORYCHECK_COMMAND)
-      add_subdirectory(profiling)
-   endif()
-endif()
-add_subdirectory(unittest/rtps/common)
-add_subdirectory(unittest/rtps/reader)
-add_subdirectory(unittest/rtps/resources/timedevent)
-add_subdirectory(unittest/rtps/ros2features)
-add_subdirectory(unittest/rtps/network)
-add_subdirectory(unittest/rtps/flowcontrol)
-add_subdirectory(unittest/transport)
-add_subdirectory(unittest/logging)
+import sys, os, subprocess
+
+publisher_command = os.environ.get("SIMPLE_COMMUNICATION_PUBLISHER_BIN")
+subscriber_command = os.environ.get("SIMPLE_COMMUNICATION_SUBSCRIBER_BIN")
+
+subscriber_proc = subprocess.Popen([subscriber_command])
+publisher_proc = subprocess.Popen([publisher_command])
+
+subscriber_proc.communicate()
+retvalue = subscriber_proc.returncode
+
+publisher_proc.kill()
+
+sys.exit(retvalue)
