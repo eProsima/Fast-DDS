@@ -13,7 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
-    find_package(PythonInterp 3 REQUIRED)
+    find_package(PythonInterp 3)
 
     ###############################################################################
     # Binaries
@@ -45,7 +45,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
         if(WIN32)
             set_property(TEST SimpleCommunication PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
         endif()
         set_property(TEST SimpleCommunication APPEND PROPERTY ENVIRONMENT
             "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:Publisher>")
