@@ -103,7 +103,8 @@ bool ParticipantProxyData::initializeData(RTPSParticipantImpl* part,PDPSimple* p
 	}
 
 	this->m_defaultUnicastLocatorList = part->getAttributes().defaultUnicastLocatorList;
-	this->m_defaultMulticastLocatorList = part->getAttributes().defaultMulticastLocatorList;
+    // (Ricardo) Removed multicast by default in user endpoints.
+	//this->m_defaultMulticastLocatorList = part->getAttributes().defaultMulticastLocatorList;
 	this->m_expectsInlineQos = false;
 	this->m_guid = part->getGuid();
 	for(uint8_t i = 0; i<16; ++i)
