@@ -1288,7 +1288,6 @@ void SecurityManager::match_builtin_endpoints(ParticipantProxyData* participant_
         watt.guid.guidPrefix = participant_data->m_guid.guidPrefix;
         watt.guid.entityId = participant_stateless_message_writer_entity_id;
         watt.endpoint.unicastLocatorList = participant_data->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = participant_data->m_metatrafficMulticastLocatorList;
         watt.endpoint.reliabilityKind = BEST_EFFORT;
         participant_stateless_message_reader_->matched_writer_add(watt);
     }
@@ -1301,7 +1300,6 @@ void SecurityManager::match_builtin_endpoints(ParticipantProxyData* participant_
         ratt.guid.guidPrefix = participant_data->m_guid.guidPrefix;
         ratt.guid.entityId = participant_stateless_message_reader_entity_id;
         ratt.endpoint.unicastLocatorList = participant_data->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = participant_data->m_metatrafficMulticastLocatorList;
         ratt.endpoint.reliabilityKind = BEST_EFFORT;
         participant_stateless_message_writer_->matched_reader_add(ratt);
     }
@@ -1313,7 +1311,6 @@ void SecurityManager::match_builtin_endpoints(ParticipantProxyData* participant_
         watt.guid.guidPrefix = participant_data->m_guid.guidPrefix;
         watt.guid.entityId = participant_volatile_message_secure_writer_entity_id;
         watt.endpoint.unicastLocatorList = participant_data->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = participant_data->m_metatrafficMulticastLocatorList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = VOLATILE;
         participant_volatile_message_secure_reader_->matched_writer_add(watt);
@@ -1327,7 +1324,6 @@ void SecurityManager::match_builtin_endpoints(ParticipantProxyData* participant_
         ratt.guid.guidPrefix = participant_data->m_guid.guidPrefix;
         ratt.guid.entityId = participant_volatile_message_secure_reader_entity_id;
         ratt.endpoint.unicastLocatorList = participant_data->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = participant_data->m_metatrafficMulticastLocatorList;
         ratt.endpoint.reliabilityKind = RELIABLE;
         ratt.endpoint.durabilityKind = VOLATILE;
         participant_volatile_message_secure_writer_->matched_reader_add(ratt);
