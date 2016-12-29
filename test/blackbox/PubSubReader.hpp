@@ -100,7 +100,7 @@ class PubSubReader
             PubSubReader& reader_;
     } listener_;
 
-    friend class Listener;
+        friend class Listener;
 
     public:
 
@@ -199,16 +199,16 @@ class PubSubReader
         }
 
         template<class _Rep,
-        class _Period
-        >
-        std::list<type> block(const std::chrono::duration<_Rep, _Period>& max_wait)
-        {
-            std::unique_lock<std::mutex> lock(mutex_);
-            if(current_received_count_ != number_samples_expected_)
-                cv_.wait_for(lock, max_wait);
+            class _Period
+                >
+                std::list<type> block(const std::chrono::duration<_Rep, _Period>& max_wait)
+                {
+                    std::unique_lock<std::mutex> lock(mutex_);
+                    if(current_received_count_ != number_samples_expected_)
+                        cv_.wait_for(lock, max_wait);
 
-            return total_msgs_;
-        }
+                    return total_msgs_;
+                }
 
         void waitDiscovery()
         {
@@ -276,15 +276,15 @@ class PubSubReader
             return *this;
         }
 
-        PubSubReader& resource_limits_max_samples(const int32_t max)
+        PubSubReader& resource_limits_allocated_samples(const int32_t initial)
         {
-            subscriber_attr_.topic.resourceLimitsQos.max_samples = max;
+            subscriber_attr_.topic.resourceLimitsQos.allocated_samples = initial;
             return *this;
         }
 
-        PubSubReader& allocated_samples(const int32_t max)
+        PubSubReader& resource_limits_max_samples(const int32_t max)
         {
-            subscriber_attr_.topic.resourceLimitsQos.allocated_samples = max;
+            subscriber_attr_.topic.resourceLimitsQos.max_samples = max;
             return *this;
         }
 
@@ -316,6 +316,28 @@ class PubSubReader
         PubSubReader& durability_kind(const eprosima::fastrtps::DurabilityQosPolicyKind kind)
         {
             subscriber_attr_.qos.m_durability.kind = kind;
+            return *this;
+        }
+
+        PubSubReader& static_discovery(const char* filename)
+        {
+            participant_attr_.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
+            participant_attr_.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
+            participant_attr_.rtps.builtin.setStaticEndpointXMLFilename(filename);
+            return *this;
+        }
+
+        PubSubReader& setSubscriberIDs(uint8_t UserID, uint8_t EntityID)
+        {
+            subscriber_attr_.setUserDefinedID(UserID);
+            subscriber_attr_.setEntityID(EntityID);
+            return *this;
+
+        }
+
+        PubSubReader& setManualTopicName(std::string topicName)
+        {
+            subscriber_attr_.topic.topicName=topicName;
             return *this;
         }
 

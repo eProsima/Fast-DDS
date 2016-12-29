@@ -35,9 +35,30 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             ReqRepHelloWorldRequester.cpp
             ReqRepHelloWorldReplier.cpp
             )
+
+        # Prepare static discovery xml file for blackbox tests.
+        string(RANDOM LENGTH 4 ALPHABET 0123456789 TOPIC_RANDOM_NUMBER)
+        math(EXPR TOPIC_RANDOM_NUMBER "${TOPIC_RANDOM_NUMBER} + 0") # Remove extra leading 0s.
+        string(RANDOM LENGTH 4 ALPHABET 0123456789 W_UNICAST_PORT_RANDOM_NUMBER)
+        math(EXPR W_UNICAST_PORT_RANDOM_NUMBER "${W_UNICAST_PORT_RANDOM_NUMBER} + 0") # Remove extra leading 0s.
+        if(W_UNICAST_PORT_RANDOM_NUMBER LESS 1025)
+            math(EXPR W_UNICAST_PORT_RANDOM_NUMBER "${W_UNICAST_PORT_RANDOM_NUMBER} + 1024") # Remove extra leading 0s.
+        endif()
+        math(EXPR R_UNICAST_PORT_RANDOM_NUMBER "${W_UNICAST_PORT_RANDOM_NUMBER} + 1")
+        math(EXPR MULTICAST_PORT_RANDOM_NUMBER "${R_UNICAST_PORT_RANDOM_NUMBER} + 1")
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubWriter.xml.in
+            ${CMAKE_CURRENT_BINARY_DIR}/PubSubWriter.xml)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubReader.xml.in
+            ${CMAKE_CURRENT_BINARY_DIR}/PubSubReader.xml)
+
         add_executable(BlackboxTests_PreallocMem ${BLACKBOXTESTS_SOURCE})
         add_blackbox_gtest(BlackboxTests_PreallocMem PreallocMem ${BLACKBOXTESTS_SOURCE}
-            ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+            ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+            ENVIRONMENT "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
+            ENVIRONMENT "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
+            ENVIRONMENT "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
+            ENVIRONMENT "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+            )
         target_compile_definitions(BlackboxTests_PreallocMem PRIVATE
             PREALLOCATED_MEMORY_MODE_TEST)
         target_include_directories(BlackboxTests_PreallocMem PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS})
@@ -45,7 +66,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
         add_executable(BlackboxTests_ReallocMem ${BLACKBOXTESTS_SOURCE})
         add_blackbox_gtest(BlackboxTests_ReallocMem ReallocMem ${BLACKBOXTESTS_SOURCE}
-            ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+            ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+            ENVIRONMENT "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
+            ENVIRONMENT "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
+            ENVIRONMENT "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
+            ENVIRONMENT "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+            )
         target_compile_definitions(BlackboxTests_ReallocMem PRIVATE
             PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
         target_include_directories(BlackboxTests_ReallocMem PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS})
@@ -53,7 +79,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
         add_executable(BlackboxTests_DynMem ${BLACKBOXTESTS_SOURCE})
         add_blackbox_gtest(BlackboxTests_DynMem DynMem ${BLACKBOXTESTS_SOURCE}
-            ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+            ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+            ENVIRONMENT "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
+            ENVIRONMENT "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
+            ENVIRONMENT "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
+            ENVIRONMENT "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+            )
         target_compile_definitions(BlackboxTests_DynMem PRIVATE
             DYNAMIC_RESERVE_MEMORY_MODE_TEST)
         target_include_directories(BlackboxTests_DynMem PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS})

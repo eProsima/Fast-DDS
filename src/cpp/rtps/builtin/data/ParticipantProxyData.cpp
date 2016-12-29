@@ -26,6 +26,8 @@
 #include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 
+#include <rtps/participant/RTPSParticipantImpl.h>
+
 #include <fastrtps/log/Log.h>
 
 #include <fastrtps/qos/QosPolicies.h>
@@ -72,6 +74,56 @@ ParticipantProxyData::~ParticipantProxyData()
 		delete(mp_leaseDurationTimer);
 
 	delete(mp_mutex);
+}
+
+bool ParticipantProxyData::initializeData(RTPSParticipantImpl* part,PDPSimple* pdp)
+{
+	this->m_leaseDuration = part->getAttributes().builtin.leaseDuration;
+	set_VendorId_eProsima(this->m_VendorId);
+
+	this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+	this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+	if(part->getAttributes().builtin.use_WriterLivelinessProtocol)
+	{
+		this->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
+		this->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+	}
+	if(part->getAttributes().builtin.use_SIMPLE_EndpointDiscoveryProtocol)
+	{
+		if(part->getAttributes().builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
+		{
+			this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+			this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+		}
+		if(part->getAttributes().builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+		{
+			this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+			this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+		}
+	}
+
+	this->m_defaultUnicastLocatorList = part->getAttributes().defaultUnicastLocatorList;
+    // (Ricardo) Removed multicast by default in user endpoints.
+	//this->m_defaultMulticastLocatorList = part->getAttributes().defaultMulticastLocatorList;
+	this->m_expectsInlineQos = false;
+	this->m_guid = part->getGuid();
+	for(uint8_t i = 0; i<16; ++i)
+	{
+		if(i<12)
+			this->m_key.value[i] = m_guid.guidPrefix.value[i];
+        else
+			this->m_key.value[i] = m_guid.entityId.value[i - 12];
+	}
+
+
+	this->m_metatrafficMulticastLocatorList = pdp->mp_builtin->m_metatrafficMulticastLocatorList;
+	this->m_metatrafficUnicastLocatorList = pdp->mp_builtin->m_metatrafficUnicastLocatorList;
+
+	this->m_participantName = std::string(part->getAttributes().getName());
+
+	this->m_userData = part->getAttributes().userData;
+
+	return true;
 }
 
 bool ParticipantProxyData::toParameterList()

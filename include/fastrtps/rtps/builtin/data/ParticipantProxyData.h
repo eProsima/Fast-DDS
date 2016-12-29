@@ -58,6 +58,7 @@ namespace rtps {
 struct CDRMessage_t;
 class PDPSimple;
 class RemoteParticipantLeaseDuration;
+class RTPSParticipantImpl;
 class ReaderProxyData;
 class WriterProxyData;
 
@@ -120,6 +121,13 @@ public:
 	std::vector<RemoteWriterAttributes> m_builtinWriters;
 
 	boost::recursive_mutex* mp_mutex;
+	/**
+	 * Initialize the object with the data of the lcoal RTPSParticipant.
+	 * @param part Pointer to the RTPSParticipant.
+	 * @param pdp Pointer to the PDPSimple object.
+	 * @return True if correctly initialized.
+	 */
+	bool initializeData(RTPSParticipantImpl* part, PDPSimple* pdp);
 	/**
 	 * Update the data.
 	 * @param pdata Object to copy the data from

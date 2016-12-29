@@ -77,7 +77,7 @@ CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32
             break;
         case DYNAMIC_RESERVE_MEMORY_MODE:
             logInfo(RTPS_UTILS,"Dynamic Mode is active, CacheChanges are allocated on request");
-            break;	
+            break;
     }
 }
 

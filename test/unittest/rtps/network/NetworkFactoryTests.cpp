@@ -68,9 +68,11 @@ TEST_F(NetworkTests, BuildReceiverResource_returns_receive_resource_for_a_kind_c
    kindCompatibleLocator.kind = ArbitraryKind;
 
    // When
-   auto resources = networkFactoryUnderTest.BuildReceiverResources(kindCompatibleLocator);
+   std::vector<ReceiverResource> resources;
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(kindCompatibleLocator, resources);
 
    // Then
+   ASSERT_TRUE(ret);
    ASSERT_EQ(1, resources.size());
 }
 
@@ -85,9 +87,11 @@ TEST_F(NetworkTests, BuildReceiverResource_returns_multiple_resources_if_multipl
    locatorCompatibleWithTwoTransports.kind = 2;
 
    // When
-   auto resources = networkFactoryUnderTest.BuildReceiverResources(locatorCompatibleWithTwoTransports);
+   std::vector<ReceiverResource> resources;
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(locatorCompatibleWithTwoTransports, resources);
 
    // Then
+   ASSERT_TRUE(ret);
    ASSERT_EQ(2, resources.size());
 }
 
@@ -135,7 +139,10 @@ TEST_F(NetworkTests, creating_receive_resource_from_locator_opens_channels_mappe
    locator.kind = ArbitraryKind;
 
    // When
-   auto resources = networkFactoryUnderTest.BuildReceiverResources(locator);
+   std::vector<ReceiverResource> resources;
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources);
+
+   ASSERT_TRUE(ret);
 
    // Then
    const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
@@ -166,7 +173,10 @@ TEST_F(NetworkTests, destroying_a_receive_resource_will_close_all_channels_mappe
    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
    Locator_t locator;
    locator.kind = ArbitraryKind;
-   auto resources = networkFactoryUnderTest.BuildReceiverResources(locator);
+
+   std::vector<ReceiverResource> resources;
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources);
+   ASSERT_TRUE(ret);
 
    // When
    resources.clear();
@@ -219,7 +229,9 @@ TEST_F(NetworkTests, A_receiver_resource_accurately_reports_whether_it_supports_
    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
    Locator_t locator;
    locator.kind = ArbitraryKind;
-   auto resources = networkFactoryUnderTest.BuildReceiverResources(locator);
+   std::vector<ReceiverResource> resources;
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources);
+   ASSERT_TRUE(ret);
    auto& resource = resources.back();
 
    // Then
@@ -285,7 +297,9 @@ TEST_F(NetworkTests, A_Receiver_Resource_will_always_receive_through_its_origina
    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
    Locator_t locator;
    locator.kind = ArbitraryKind;
-   auto resources = networkFactoryUnderTest.BuildReceiverResources(locator);
+   std::vector<ReceiverResource> resources;
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources);
+   ASSERT_TRUE(ret);
    auto& receiverResource = resources.back();
 
    vector<octet> testData { 'a', 'b', 'c' };

@@ -20,6 +20,7 @@
 #define RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
 
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 
 #include <gmock/gmock.h>
 
@@ -36,7 +37,6 @@ class PDPSimple
         MOCK_METHOD1(notifyAboveRemoteEndpoints, void(ParticipantProxyData*));
 
         MOCK_METHOD1(get_participant_proxy_data_serialized, CDRMessage_t(Endianness_t));
-
 };
 
 } //namespace rtps

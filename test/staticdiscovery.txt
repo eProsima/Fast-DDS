@@ -1,0 +1,15 @@
+Using static discovery
+----------------------
+
+When static discovery is active, remote endpoints are passed to the application via an xml file.
+
+To see a code example of this feature, review test "StaticDiscovery" of the Blackbox suite.
+You will need to copy the two xml files present in this folder to the folder you run the tests from.
+
+These sample xml files contain a reader and a writer with a single writers/reader with custon Locators.
+These files can be used as a starting point. The full list of fields and attributes can be taken from
+EDPSimpleXML.cpp
+
+NOTE: Locator fields are read as Attributes, not Sub-Fields. Passing the arguments via Attributes creates
+and invalid Locator.
+

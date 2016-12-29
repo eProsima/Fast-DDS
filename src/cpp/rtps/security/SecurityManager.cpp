@@ -1,3 +1,21 @@
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @file SecurityManager.h
+ */
+
 #include "SecurityManager.h"
 
 #include <fastrtps/rtps/security/authentication/Authentication.h>
@@ -1164,12 +1182,10 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
 
         if(dp_it != discovered_participants_.end())
         {
-            std::cout <<"ALA" << std::endl;
             if(dp_it->second.get_participant_crypto() == nullptr)
                 return;
 
             remote_participant_crypto = dp_it->second.get_participant_crypto();
-            std::cout <<"TOMA" << std::endl;
         }
         else
         {
@@ -1318,6 +1334,7 @@ void SecurityManager::match_builtin_endpoints(ParticipantProxyData* participant_
     }
 }
 
+// TODO (Ricardo) Change participant_data
 ParticipantCryptoHandle* SecurityManager::register_and_match_crypto_endpoint(ParticipantProxyData* participant_data,
         IdentityHandle& remote_participant_identity,
         SharedSecretHandle& shared_secret)

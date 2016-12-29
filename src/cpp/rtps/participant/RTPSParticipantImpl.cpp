@@ -643,8 +643,6 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
     if (pend->getAttributes()->unicastLocatorList.empty() && pend->getAttributes()->multicastLocatorList.empty()){
         //Default unicast
         pend->getAttributes()->unicastLocatorList = m_att.defaultUnicastLocatorList;
-        //Default multicast
-        pend->getAttributes()->multicastLocatorList = m_att.defaultMulticastLocatorList;
     }
     createReceiverResources(pend->getAttributes()->unicastLocatorList, false);
     createReceiverResources(pend->getAttributes()->multicastLocatorList, false);
@@ -726,20 +724,26 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend){
     return true;
 }
 
-void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation){
+void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation)
+{
     std::vector<ReceiverResource> newItemsBuffer;
 
-    for(auto it_loc = Locator_list.begin(); it_loc != Locator_list.end(); ++it_loc){
-        newItemsBuffer = m_network_Factory.BuildReceiverResources((*it_loc));
-        if(ApplyMutation){
+    for(auto it_loc = Locator_list.begin(); it_loc != Locator_list.end(); ++it_loc)
+    {
+        bool ret  = m_network_Factory.BuildReceiverResources((*it_loc), newItemsBuffer);
+
+        if(!ret && ApplyMutation)
+        {
             int tries = 0;
-            while(newItemsBuffer.empty() && (tries < MutationTries)){
+            while(!ret && (tries < MutationTries)){
                 tries++;
                 (*it_loc) = applyLocatorAdaptRule(*it_loc);
-                newItemsBuffer = m_network_Factory.BuildReceiverResources((*it_loc));
+                ret = m_network_Factory.BuildReceiverResources((*it_loc), newItemsBuffer);
             }	
         }
-        for(auto it_buffer = newItemsBuffer.begin(); it_buffer != newItemsBuffer.end(); ++it_buffer){
+
+        for(auto it_buffer = newItemsBuffer.begin(); it_buffer != newItemsBuffer.end(); ++it_buffer)
+        {
             //Push the new items into the ReceiverResource buffer
             m_receiverResourcelist.push_back(ReceiverControlBlock(std::move(*it_buffer)));
             //Create and init the MessageReceiver

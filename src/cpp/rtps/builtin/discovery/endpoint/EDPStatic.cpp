@@ -110,9 +110,10 @@ bool EDPStatic::processLocalReaderProxyData(ReaderProxyData* rdata)
 	logInfo(RTPS_EDP,rdata->m_guid.entityId<< " in topic: " <<rdata->m_topicName);
 	//Add the property list entry to our local pdp
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-	boost::lock_guard<boost::recursive_mutex> guard(*localpdata->mp_mutex);
+	localpdata->mp_mutex->lock();
 	localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Reader","ALIVE",rdata->m_userDefinedId,rdata->m_guid.entityId));
 	localpdata->m_hasChanged = true;
+	localpdata->mp_mutex->unlock();
 	this->mp_PDP->announceParticipantState(true);
 	return true;
 }
@@ -122,10 +123,11 @@ bool EDPStatic::processLocalWriterProxyData(WriterProxyData* wdata)
    logInfo(RTPS_EDP ,wdata->guid().entityId << " in topic: " << wdata->topicName());
 	//Add the property list entry to our local pdp
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-	boost::lock_guard<boost::recursive_mutex> guard(*localpdata->mp_mutex);
+	localpdata->mp_mutex->lock();
 	localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Writer","ALIVE",
 			wdata->userDefinedId(), wdata->guid().entityId));
 	localpdata->m_hasChanged = true;
+	localpdata->mp_mutex->unlock();
 	this->mp_PDP->announceParticipantState(true);
 	return true;
 }
