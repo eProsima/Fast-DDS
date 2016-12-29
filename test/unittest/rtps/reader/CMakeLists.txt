@@ -35,6 +35,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_compile_definitions(WriterProxyTests PRIVATE BOOST_ALL_DYN_LINK FASTRTPS_NO_LIB)
         target_include_directories(WriterProxyTests PRIVATE
             ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/HeartbeatResponseDelay
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyLiveliness

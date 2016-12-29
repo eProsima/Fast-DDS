@@ -33,7 +33,7 @@ class CryptographyPluginTest : public ::testing::Test{
         virtual void SetUp(){
             PropertyPolicy m_propertypolicy;
 
-            CryptoPlugin = new AESGCMGMAC(m_propertypolicy);
+            CryptoPlugin = new AESGCMGMAC();
 
         }
         virtual void TearDown(){
@@ -133,13 +133,15 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteParticipant)
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant_B = AESGCMGMAC_ParticipantCryptoHandle::narrow(*remote_B);
 
     //Check the presence of both remote P2PKeyMaterial and P2PKxKeyMaterial
-    ASSERT_TRUE(local_participant->Participant2ParticipantKeyMaterial.size() == 2);
-    ASSERT_TRUE(local_participant->Participant2ParticipantKxKeyMaterial.size() == 2);
+    ASSERT_TRUE(remote_participant_A->Participant2ParticipantKeyMaterial.size() == 1);
+    ASSERT_TRUE(remote_participant_B->Participant2ParticipantKeyMaterial.size() == 1);
+    ASSERT_TRUE(remote_participant_A->Participant2ParticipantKxKeyMaterial.size() == 1);
+    ASSERT_TRUE(remote_participant_B->Participant2ParticipantKxKeyMaterial.size() == 1);
     //Check that both remoteKeysMaterials have unique IDS (keys are the same since they use the same source material
-    ASSERT_TRUE(local_participant->Participant2ParticipantKeyMaterial.at(0).sender_key_id != local_participant->Participant2ParticipantKeyMaterial.at(1).sender_key_id);
+    ASSERT_TRUE(remote_participant_A->Participant2ParticipantKeyMaterial.at(0).sender_key_id != remote_participant_B->Participant2ParticipantKeyMaterial.at(0).sender_key_id);
     //KxKeys should be the same since they derive from the same Shared Secret although Keys should not
-    ASSERT_TRUE(local_participant->Participant2ParticipantKeyMaterial.at(0).master_receiver_specific_key != local_participant->Participant2ParticipantKeyMaterial.at(1).master_receiver_specific_key);
-    ASSERT_TRUE(local_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key == local_participant->Participant2ParticipantKxKeyMaterial.at(1).master_sender_key);
+    ASSERT_TRUE(remote_participant_A->Participant2ParticipantKeyMaterial.at(0).master_receiver_specific_key != remote_participant_B->Participant2ParticipantKeyMaterial.at(0).master_receiver_specific_key);
+    ASSERT_TRUE(remote_participant_A->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key == remote_participant_B->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
 
     CryptoPlugin->keyfactory()->unregister_participant(remote_A,exception);
     CryptoPlugin->keyfactory()->unregister_participant(remote_B,exception);
@@ -242,13 +244,13 @@ TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
     );
 
     //Check that ParticipantB's KeyMaterial is congruent with ParticipantA and viceversa
-    AESGCMGMAC_ParticipantCryptoHandle& Participant_A = AESGCMGMAC_ParticipantCryptoHandle::narrow(*ParticipantA);
-    AESGCMGMAC_ParticipantCryptoHandle& Participant_B = AESGCMGMAC_ParticipantCryptoHandle::narrow(*ParticipantB);
+    AESGCMGMAC_ParticipantCryptoHandle& Participant_A_remote = AESGCMGMAC_ParticipantCryptoHandle::narrow(*ParticipantA_remote);
+    AESGCMGMAC_ParticipantCryptoHandle& Participant_B_remote = AESGCMGMAC_ParticipantCryptoHandle::narrow(*ParticipantB_remote);
 
-    ASSERT_TRUE(Participant_A->RemoteParticipant2ParticipantKeyMaterial.size() == 1);
-    ASSERT_TRUE(Participant_B->RemoteParticipant2ParticipantKeyMaterial.size() == 1);
-    ASSERT_TRUE(Participant_A->Participant2ParticipantKeyMaterial.at(0).master_sender_key == Participant_B->RemoteParticipant2ParticipantKeyMaterial.at(0).master_sender_key);
-    ASSERT_TRUE(Participant_B->Participant2ParticipantKeyMaterial.at(0).master_sender_key == Participant_A->RemoteParticipant2ParticipantKeyMaterial.at(0).master_sender_key);
+    ASSERT_TRUE(Participant_A_remote->RemoteParticipant2ParticipantKeyMaterial.size() == 1);
+    ASSERT_TRUE(Participant_B_remote->RemoteParticipant2ParticipantKeyMaterial.size() == 1);
+    ASSERT_TRUE(Participant_A_remote->Participant2ParticipantKeyMaterial.at(0).master_sender_key == Participant_B_remote->RemoteParticipant2ParticipantKeyMaterial.at(0).master_sender_key);
+    ASSERT_TRUE(Participant_B_remote->Participant2ParticipantKeyMaterial.at(0).master_sender_key == Participant_A_remote->RemoteParticipant2ParticipantKeyMaterial.at(0).master_sender_key);
 
 
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantA,exception);
@@ -381,6 +383,8 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     //Set ParticipantA token into ParticipantB and viceversa
     CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*ParticipantA,*ParticipantA_remote,ParticipantB_CryptoTokens,exception);
     CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*ParticipantB,*ParticipantB_remote,ParticipantA_CryptoTokens,exception);
+
+    unintended_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*ParticipantA,*i_handle,*perm_handle,*shared_secret, exception);
 
     //Perform sample message exchange
     receivers.clear();
@@ -520,13 +524,13 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter)
     ParticipantCryptoHandle *ParticipantB_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_B,*i_handle,*perm_handle,*shared_secret, exception);
 
     //Register DataReader with DataWriter
-    DatareaderCryptoHandle *remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *participant_B, *shared_secret, false, exception);
+    DatareaderCryptoHandle *remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *ParticipantB_remote, *shared_secret, false, exception);
     ASSERT_TRUE(remote_reader != nullptr);
 
 
     //Register DataWriter with DataReader
 
-    DatawriterCryptoHandle *remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *participant_A, *shared_secret, exception);
+    DatawriterCryptoHandle *remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *ParticipantA_remote, *shared_secret, exception);
     ASSERT_TRUE(remote_writer != nullptr);
 
     delete i_handle;
@@ -594,10 +598,10 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
     ParticipantCryptoHandle *ParticipantB_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_B,*i_handle,*perm_handle,*shared_secret, exception);
 
     //Register DataReader with DataWriter
-    DatareaderCryptoHandle *remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *participant_B, *shared_secret, false, exception);
+    DatareaderCryptoHandle *remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *ParticipantB_remote, *shared_secret, false, exception);
 
     //Register DataWriter with DataReader
-    DatawriterCryptoHandle *remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *participant_A, *shared_secret, exception);
+    DatawriterCryptoHandle *remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *ParticipantA_remote, *shared_secret, exception);
 
     //Create CryptoTokens for both Participants
     ParticipantCryptoTokenSeq ParticipantA_CryptoTokens, ParticipantB_CryptoTokens;
@@ -698,10 +702,10 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     ParticipantCryptoHandle *ParticipantB_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_B,*i_handle,*perm_handle,*shared_secret, exception);
 
     //Register DataReader with DataWriter
-    DatareaderCryptoHandle *remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *participant_B, *shared_secret, false, exception);
+    DatareaderCryptoHandle *remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *ParticipantB_remote, *shared_secret, false, exception);
 
     //Register DataWriter with DataReader
-    DatawriterCryptoHandle *remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *participant_A, *shared_secret, exception);
+    DatawriterCryptoHandle *remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *ParticipantA_remote, *shared_secret, exception);
 
     //Create CryptoTokens for both Participants
     ParticipantCryptoTokenSeq ParticipantA_CryptoTokens, ParticipantB_CryptoTokens;
@@ -770,9 +774,9 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     ParticipantA_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_A,*i_handle,*perm_handle,*shared_secret, exception);
     ParticipantB_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_B,*i_handle,*perm_handle,*shared_secret, exception);
     //Register DataReader with DataWriter
-    remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *participant_B, *shared_secret, false, exception);
+    remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *ParticipantB_remote, *shared_secret, false, exception);
     //Register DataWriter with DataReader
-    remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *participant_A, *shared_secret, exception);
+    remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *ParticipantA_remote, *shared_secret, exception);
 
     CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantA_CryptoTokens, *participant_A, *ParticipantA_remote, exception);
     CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantB_CryptoTokens, *participant_B, *ParticipantB_remote, exception);
@@ -858,10 +862,10 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
     ParticipantCryptoHandle *ParticipantB_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_B,*i_handle,*perm_handle,*shared_secret, exception);
 
     //Register DataReader with DataWriter
-    DatareaderCryptoHandle *remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *participant_B, *shared_secret, false, exception);
+    DatareaderCryptoHandle *remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *ParticipantB_remote, *shared_secret, false, exception);
 
     //Register DataWriter with DataReader
-    DatawriterCryptoHandle *remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *participant_A, *shared_secret, exception);
+    DatawriterCryptoHandle *remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *ParticipantA_remote, *shared_secret, exception);
 
     //Create CryptoTokens for both Participants
     ParticipantCryptoTokenSeq ParticipantA_CryptoTokens, ParticipantB_CryptoTokens;
@@ -933,10 +937,10 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
     ParticipantB_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_B,*i_handle,*perm_handle,*shared_secret, exception);
 
     //Register DataReader with DataWriter
-    remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *participant_B, *shared_secret, false, exception);
+    remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *ParticipantB_remote, *shared_secret, false, exception);
 
     //Register DataWriter with DataReader
-    remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *participant_A, *shared_secret, exception);
+    remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *ParticipantA_remote, *shared_secret, exception);
 
     CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantA_CryptoTokens, *participant_A, *ParticipantA_remote, exception);
     CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantB_CryptoTokens, *participant_B, *ParticipantB_remote, exception);
@@ -1024,10 +1028,10 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     ParticipantCryptoHandle *ParticipantB_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_B,*i_handle,*perm_handle,*shared_secret, exception);
 
     //Register DataReader with DataWriter
-    DatareaderCryptoHandle *remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *participant_B, *shared_secret, false, exception);
+    DatareaderCryptoHandle *remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *ParticipantB_remote, *shared_secret, false, exception);
 
     //Register DataWriter with DataReader
-    DatawriterCryptoHandle *remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *participant_A, *shared_secret, exception);
+    DatawriterCryptoHandle *remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *ParticipantA_remote, *shared_secret, exception);
 
     //Create CryptoTokens for both Participants
     ParticipantCryptoTokenSeq ParticipantA_CryptoTokens, ParticipantB_CryptoTokens;
@@ -1098,10 +1102,10 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     ParticipantB_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_B,*i_handle,*perm_handle,*shared_secret, exception);
 
     //Register DataReader with DataWriter
-    remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *participant_B, *shared_secret, false, exception);
+    remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *ParticipantB_remote, *shared_secret, false, exception);
 
     //Register DataWriter with DataReader
-    remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *participant_A, *shared_secret, exception);
+    remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *ParticipantA_remote, *shared_secret, exception);
 
     //Create CryptoTokens for both Participants
     CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantA_CryptoTokens, *participant_A, *ParticipantA_remote, exception);

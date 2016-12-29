@@ -23,6 +23,8 @@ using namespace ::security;
 
 Authentication* SecurityPluginFactory::auth_plugin_ = nullptr;
 
+Cryptography* SecurityPluginFactory::crypto_plugin_ = nullptr;
+
 Authentication* SecurityPluginFactory::create_authentication_plugin(const PropertyPolicy& /*property_policy*/)
 {
     Authentication* ret =  auth_plugin_;
@@ -41,5 +43,26 @@ void SecurityPluginFactory::release_auth_plugin()
     {
         delete auth_plugin_;
         auth_plugin_ = nullptr;
+    }
+}
+
+Cryptography* SecurityPluginFactory::create_cryptography_plugin(const PropertyPolicy& /*property_policy*/)
+{
+    Cryptography* ret =  crypto_plugin_;
+    crypto_plugin_ = nullptr;
+    return ret;
+}
+
+void SecurityPluginFactory::set_crypto_plugin(Cryptography* plugin)
+{
+    crypto_plugin_ = plugin;
+}
+
+void SecurityPluginFactory::release_crypto_plugin()
+{
+    if(crypto_plugin_ != nullptr)
+    {
+        delete crypto_plugin_;
+        crypto_plugin_ = nullptr;
     }
 }

@@ -329,6 +329,7 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 
     m_receiverResourcelist.clear();
     delete(this->mp_builtinProtocols);
+    m_security_manager.destroy();
     delete(this->mp_ResourceSemaphore);
     delete(this->mp_userParticipant);
     m_senderResource.clear();
@@ -743,7 +744,7 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
             m_receiverResourcelist.push_back(ReceiverControlBlock(std::move(*it_buffer)));
             //Create and init the MessageReceiver
             //TODO(Ricardo) listenSocketBufferSize is too much size. Review
-            m_receiverResourcelist.back().mp_receiver = new MessageReceiver(m_att.listenSocketBufferSize);
+            m_receiverResourcelist.back().mp_receiver = new MessageReceiver(this, m_att.listenSocketBufferSize);
             m_receiverResourcelist.back().mp_receiver->init(m_att.listenSocketBufferSize);
 
             //Init the thread

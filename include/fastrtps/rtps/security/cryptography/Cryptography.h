@@ -13,8 +13,9 @@
 // limitations under the License.
 
 /*!
- * @file Authentication.h	
+ * @file Cryptography.h
  */
+
 #ifndef _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHY_H_
 #define _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHY_H_
 
@@ -31,23 +32,27 @@ namespace security {
 class Cryptography
 {
 public:
-    Cryptography():m_cryptokeyexchange(nullptr),m_cryptokeyfactory(nullptr),
-    m_cryptotransform(nullptr){}
+
+    Cryptography(): m_cryptokeyexchange(nullptr), m_cryptokeyfactory(nullptr),
+    m_cryptotransform(nullptr) {}
 
     /* Specializations should add functions to access the private members */
+    CryptoKeyExchange* cryptkeyexchange() { return m_cryptokeyexchange; }
+
+    CryptoKeyFactory* cryptokeyfactory() { return m_cryptokeyfactory; }
+
+    CryptoTransform* cryptotransform() { return m_cryptotransform; }
 
 protected:
 
     CryptoKeyExchange *m_cryptokeyexchange;
     CryptoKeyFactory *m_cryptokeyfactory;
     CryptoTransform *m_cryptotransform;
-
-
 };
 
-} //namespace eprosima
-} //namespace fastrtps
-} //namespace rtps
 } //namespace security
+} //namespace rtps
+} //namespace fastrtps
+} //namespace eprosima
 
 #endif //_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHY_H_

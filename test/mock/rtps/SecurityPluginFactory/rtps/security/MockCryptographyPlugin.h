@@ -1,5 +1,5 @@
 // Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
-//G
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,36 +13,35 @@
 // limitations under the License.
 
 /*!
- * @file AESGCMGMAC.h
+ * @file MockCryptographyPlugin.h
  */
 
-#ifndef _SECURITY_AUTHENTICATION_AESGCMGMAC_H_
-#define _SECURITY_AUTHENTICATION_AESGCMGMAC_H_
+#ifndef _RTPS_SECURITY_MOCKCRYPTOGRAPHYPLUGIN_H_
+#define _RTPS_SECURITY_MOCKCRYPTOGRAPHYPLUGIN_H_
 
 #include <fastrtps/rtps/security/cryptography/Cryptography.h>
-#include <fastrtps/rtps/attributes/PropertyPolicy.h>
 
-#include "AESGCMGMAC_KeyExchange.h"
-#include "AESGCMGMAC_KeyFactory.h"
-#include "AESGCMGMAC_Transform.h"
-
+#include <rtps/security/MockCryptoKeyFactory.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 namespace security {
 
-class AESGCMGMAC : public Cryptography
+class MockCryptographyPlugin : public Cryptography
 {
 public:
 
-    AESGCMGMAC();
-    ~AESGCMGMAC();
+    MockCryptographyPlugin()
+    {
+        m_cryptokeyfactory = &cryptokeyfactory_;
+        //m_cryptokeyexchange = ;
+        //m_cryptotransform = ;
+    }
 
-    AESGCMGMAC_KeyExchange* keyexchange();
-    AESGCMGMAC_KeyFactory* keyfactory();
-    AESGCMGMAC_Transform* cryptotransform();
-
+    MockCryptoKeyFactory cryptokeyfactory_;
+    //MockCryptoKeyExchange cryptokeyexchange_;
+    //MockCryptoTransform cryptotransform_;
 };
 
 } //namespace security
@@ -50,4 +49,4 @@ public:
 } //namespace fastrtps
 } //namespace eprosima
 
-#endif // _SECURITY_AUTHENTICATION_AESGCMGMAC_H_
+#endif // _RTPS_SECURITY_MOCKCRYPTOGRAPHYPLUGIN_H_

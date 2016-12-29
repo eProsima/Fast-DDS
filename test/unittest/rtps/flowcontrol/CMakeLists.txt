@@ -35,7 +35,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_gtest(ThroughputControllerTests ${THROUGHPUTCONTROLLERTESTS_SOURCE})
         target_compile_definitions(ThroughputControllerTests PRIVATE FASTRTPS_NO_LIB BOOST_ALL_DYN_LINK)
         target_include_directories(ThroughputControllerTests PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            )
         target_link_libraries(ThroughputControllerTests ${Boost_LIBRARIES} ${GTEST_LIBRARIES} ${MOCKS})
         if(MSVC OR MSVC_IDE)
             target_link_libraries(ThroughputControllerTests ${PRIVACY}

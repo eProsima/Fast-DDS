@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*!
- * @file Authentication.h	
+ * @file CryptoKeyFactory.h
  */
 #ifndef _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOKEYFACTORY_H_
 #define _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOKEYFACTORY_H_
@@ -44,7 +44,7 @@ class CryptoKeyFactory
                 const PermissionsHandle &participant_permissions, 
                 const PropertySeq &participant_properties, 
                 SecurityException &exception) = 0;
-        
+
         /**
          * Register a remote, already authenticated Participant with the Cryptographic Plugin.
          * Creates key material to decrypt messages coming from and aimed at it.
@@ -56,10 +56,10 @@ class CryptoKeyFactory
          * @return ParticipantCryptoHandle with generated key material
          */
         virtual ParticipantCryptoHandle * register_matched_remote_participant(
-                ParticipantCryptoHandle &local_participant_crypto_handle, 
-                IdentityHandle &remote_participant_identity, 
-                PermissionsHandle &remote_participant_permissions, 
-                SharedSecretHandle &shared_secret, 
+                const ParticipantCryptoHandle& local_participant_crypto_handle,
+                const IdentityHandle& remote_participant_identity,
+                const PermissionsHandle& remote_participant_permissions,
+                const SharedSecretHandle& shared_secret,
                 SecurityException &exception) = 0;
 
         /**
@@ -129,7 +129,7 @@ class CryptoKeyFactory
         virtual bool unregister_participant(
                 ParticipantCryptoHandle* participant_crypto_handle,
                 SecurityException &exception) = 0;
-        
+
         /**
          * Releases resources associated with a DataWriter. The Crypto Handle becomes unusable after this 
          * @param datawriter_crypto_handle Belonging to the DataWriter that awaits termination
@@ -139,7 +139,7 @@ class CryptoKeyFactory
         virtual bool unregister_datawriter(
                 DatawriterCryptoHandle *datawriter_crypto_handle,
                 SecurityException &exception) = 0;
-        
+
         /**
          * Releases resources associated with a DataReader. The Crypto Handle becomes unusable after this 
          * @param datareader_crypto_handle Belonging to the DataReader that awaits termination
@@ -153,9 +153,9 @@ class CryptoKeyFactory
 
 };
 
-} //namespace eprosima
-} //namespace fastrtps
-} //namespace rtps
 } //namespace security
+} //namespace rtps
+} //namespace fastrtps
+} //namespace eprosima
 
 #endif //_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOKEYFACTORY_H_

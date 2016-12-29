@@ -39,7 +39,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/SecurityManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/exceptions/SecurityException.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/timedevent/HandshakeMessageTokenResent.cpp
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityPluginFactory/SecurityPluginFactory.cpp
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityPluginFactory/rtps/security/SecurityPluginFactory.cpp
             )
 
         add_executable(SecurityAuthentication ${SOURCES_SECURITY_TEST_SOURCE}
@@ -52,13 +52,16 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessWriter
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulWriter
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterHistory
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessReader
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderHistory
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDPSimple
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            )
         target_link_libraries(SecurityAuthentication ${Boost_LIBRARIES} ${GMOCK_LIBRARIES})
     endif()
 endif()

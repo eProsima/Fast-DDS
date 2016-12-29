@@ -24,13 +24,12 @@
 
 using namespace eprosima::fastrtps::rtps::security;
 
-AESGCMGMAC::AESGCMGMAC(const PropertyPolicy& property_policy)
+AESGCMGMAC::AESGCMGMAC()
 {
-     
     m_cryptokeyexchange = new AESGCMGMAC_KeyExchange();
     m_cryptokeyfactory = new AESGCMGMAC_KeyFactory();
     m_cryptotransform = new AESGCMGMAC_Transform();
-    
+
     //Init OpenSSL libcrypto
     ERR_load_crypto_strings();
     //OpenSSL_add_all_algorithms();

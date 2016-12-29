@@ -34,22 +34,18 @@ mp_subscriber(nullptr)
 bool HelloWorldSubscriber::init()
 {
 	ParticipantAttributes PParam;
-	PParam.rtps.defaultSendPort = 10043;
-	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-	PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-	PParam.rtps.builtin.domainId = 80;
-	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-	PParam.rtps.setName("Participant_sub");
 
     PropertyPolicy property_policy;
+    property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                "builtin.PKI-DH"));
     property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-                    "file:///home/ricardo/workspace/desarrollo/proyectos/fastrtps/test/certs/maincacert.pem"));
+                    "file:///home/ricardo/workspace/curro/eProsima/desarrollo/proyectos/fastrtps/test/certs/maincacert.pem"));
     property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-                    "file:///home/ricardo/workspace/desarrollo/proyectos/fastrtps/test/certs/mainpubcert.pem"));
+                    "file:///home/ricardo/workspace/curro/eProsima/desarrollo/proyectos/fastrtps/test/certs/mainpubcert.pem"));
     property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-                    "file:///home/ricardo/workspace/desarrollo/proyectos/fastrtps/test/certs/mainpubkey.pem"));
+                    "file:///home/ricardo/workspace/curro/eProsima/desarrollo/proyectos/fastrtps/test/certs/mainpubkey.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                "builtin.AES-GCM-GMAC"));
     PParam.rtps.properties = property_policy;
 
 	mp_participant = Domain::createParticipant(PParam);

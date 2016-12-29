@@ -44,9 +44,9 @@ class MockParticipantListener : public RTPSParticipantListener
 {
     public:
 
-	MOCK_METHOD2(onRTPSParticipantDiscovery, void (RTPSParticipant*, RTPSParticipantDiscoveryInfo));
+        MOCK_METHOD2(onRTPSParticipantDiscovery, void (RTPSParticipant*, RTPSParticipantDiscoveryInfo));
 
-    MOCK_METHOD2(onRTPSParticipantAuthentication, void (RTPSParticipant*, const RTPSParticipantAuthenticationInfo&));
+        MOCK_METHOD2(onRTPSParticipantAuthentication, void (RTPSParticipant*, const RTPSParticipantAuthenticationInfo&));
 };
 
 class RTPSParticipantImpl

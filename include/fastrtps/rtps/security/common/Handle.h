@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*!
- * @file Handle.h	
+ * @file Handle.h
  */
 #ifndef _RTPS_SECURITY_COMMON_HANDLE_H_
 #define _RTPS_SECURITY_COMMON_HANDLE_H_
@@ -108,6 +108,15 @@ class HandleImpl : public Handle
 };
 template<typename T>
 HandleImpl<T> HandleImpl<T>::nil_handle(true);
+
+class NilHandle : public Handle
+{
+    public:
+
+        NilHandle() : Handle("nil_handle") {}
+
+        bool nil() const { return true; }
+};
 
 
 // Define common handlers

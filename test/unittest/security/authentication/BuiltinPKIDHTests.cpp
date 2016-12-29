@@ -28,7 +28,7 @@ static size_t alignment(size_t current_alignment, size_t dataSize) { return (dat
 PropertyPolicy AuthenticationPluginTest::get_valid_policy()
 {
     PropertyPolicy property_policy;
-    
+
     property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
                     "file://" + std::string(certs_path) + "/maincacert.pem"));
     property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
@@ -465,8 +465,6 @@ void AuthenticationPluginTest::check_shared_secrets(const SharedSecretHandle& sh
 
 TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok_with_pwd)
 {
-    ASSERT_TRUE(plugin != nullptr);
-
     IdentityHandle* local_identity_handle = nullptr;
     GUID_t adjusted_participant_key;
     uint32_t domain_id = 0;
@@ -488,7 +486,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok_with_pwd)
     participant_attr.properties.properties().
         emplace_back(Property("dds.sec.auth.builtin.PKI-DH.password", "testkey"));
 
-    result = plugin->validate_local_identity(&local_identity_handle,
+    result = plugin.validate_local_identity(&local_identity_handle,
             adjusted_participant_key,
             domain_id,
             participant_attr,
@@ -499,13 +497,11 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok_with_pwd)
     ASSERT_TRUE(local_identity_handle != nullptr);
     ASSERT_TRUE(adjusted_participant_key != GUID_t::unknown());
 
-    ASSERT_TRUE(plugin->return_identity_handle(local_identity_handle, exception));
+    ASSERT_TRUE(plugin.return_identity_handle(local_identity_handle, exception));
 }
 
 TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_identity_ca)
 {
-    ASSERT_TRUE(plugin != nullptr);
-
     IdentityHandle* local_identity_handle = nullptr;
     GUID_t adjusted_participant_key;
     uint32_t domain_id = 0;
@@ -525,7 +521,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_identity_ca)
         emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
                     "file://" + std::string(certs_path) + "/mainpubkey.pem"));
 
-    result = plugin->validate_local_identity(&local_identity_handle,
+    result = plugin.validate_local_identity(&local_identity_handle,
             adjusted_participant_key,
             domain_id,
             participant_attr,
@@ -539,8 +535,6 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_identity_ca)
 
 TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_identity_certificate)
 {
-    ASSERT_TRUE(plugin != nullptr);
-
     IdentityHandle* local_identity_handle = nullptr;
     GUID_t adjusted_participant_key;
     uint32_t domain_id = 0;
@@ -560,7 +554,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_identity_certific
         emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
                     "file://" + std::string(certs_path) + "/mainpubcert.pem"));
 
-    result = plugin->validate_local_identity(&local_identity_handle,
+    result = plugin.validate_local_identity(&local_identity_handle,
             adjusted_participant_key,
             domain_id,
             participant_attr,
@@ -574,8 +568,6 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_identity_certific
 
 TEST_F(AuthenticationPluginTest, validate_local_identity_revoked_certificate)
 {
-    ASSERT_TRUE(plugin != nullptr);
-
     IdentityHandle* local_identity_handle = nullptr;
     GUID_t adjusted_participant_key;
     uint32_t domain_id = 0;
@@ -598,7 +590,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_revoked_certificate)
         emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_crl",
                     "file://" + std::string(certs_path) + "/maincrl.pem"));
 
-    result = plugin->validate_local_identity(&local_identity_handle,
+    result = plugin.validate_local_identity(&local_identity_handle,
             adjusted_participant_key,
             domain_id,
             participant_attr,
@@ -612,8 +604,6 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_revoked_certificate)
 
 TEST_F(AuthenticationPluginTest, validate_local_identity_revoked_certificate_with_joined_pem)
 {
-    ASSERT_TRUE(plugin != nullptr);
-
     IdentityHandle* local_identity_handle = nullptr;
     GUID_t adjusted_participant_key;
     uint32_t domain_id = 0;
@@ -633,7 +623,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_revoked_certificate_wit
         emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
                     "file://" + std::string(certs_path) + "/revokedpubkey.pem"));
 
-    result = plugin->validate_local_identity(&local_identity_handle,
+    result = plugin.validate_local_identity(&local_identity_handle,
             adjusted_participant_key,
             domain_id,
             participant_attr,
@@ -647,8 +637,6 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_revoked_certificate_wit
 
 TEST_F(AuthenticationPluginTest, validate_local_identity_expired_certificate)
 {
-    ASSERT_TRUE(plugin != nullptr);
-
     IdentityHandle* local_identity_handle = nullptr;
     GUID_t adjusted_participant_key;
     uint32_t domain_id = 0;
@@ -668,7 +656,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_expired_certificate)
         emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
                     "file://" + std::string(certs_path) + "/expiredpubkey.pem"));
 
-    result = plugin->validate_local_identity(&local_identity_handle,
+    result = plugin.validate_local_identity(&local_identity_handle,
             adjusted_participant_key,
             domain_id,
             participant_attr,

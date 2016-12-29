@@ -90,10 +90,10 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
 }
 
 ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_participant(
-                ParticipantCryptoHandle &local_participant_crypto_handle,
-                IdentityHandle &remote_participant_identity,
-                PermissionsHandle &remote_participant_permissions,
-                SharedSecretHandle &shared_secret,
+                const ParticipantCryptoHandle& local_participant_crypto_handle,
+                const IdentityHandle& /*remote_participant_identity*/,
+                const PermissionsHandle& /*remote_participant_permissions*/,
+                const SharedSecretHandle &shared_secret,
                 SecurityException &exception){
 
     //Extract information from the handshake. It will be needed in order to compute KeyMaterials
@@ -109,7 +109,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     //Create Participant2ParticipantKeyMaterial (Based on local ParticipantKeyMaterial) and ParticipantKxKeyMaterial (based on the SharedSecret)
     //Put both elements in the local and remote ParticipantCryptoHandle
 
-    AESGCMGMAC_ParticipantCryptoHandle& local_participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto_handle);
+    const AESGCMGMAC_ParticipantCryptoHandle& local_participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto_handle);
     AESGCMGMAC_ParticipantCryptoHandle* RPCrypto = new AESGCMGMAC_ParticipantCryptoHandle(); // Remote Participant CryptoHandle, to be returned at the end of the function
 
     (*RPCrypto)->transformation_kind = local_participant_handle->transformation_kind;
@@ -130,21 +130,20 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
 
         //Attach to both local and remote CryptoHandles
         (*RPCrypto)->Participant2ParticipantKeyMaterial.push_back(buffer);
-        local_participant_handle->Participant2ParticipantKeyMaterial.push_back(buffer);
     }
 
     /*Fill values for Participant2ParticipantKxKeyMaterial - Used to encrypt CryptoTokens (exchange of key info) */
     { //scope for temp var buffer
         KeyMaterial_AES_GCM_GMAC buffer; //Buffer = Participant2ParticipantKxKeyMaterial
 
-        buffer.transformation_kind = std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC);
+        buffer.transformation_kind = std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
         buffer.master_salt.fill(0);
 
-        std::array<uint8_t,32> concatenation; //Assembly of the source concatenated sequence that is used to generate master_salt
+        std::vector<uint8_t> concatenation(challenge_1->size() + 16 +
+                challenge_2->size()); //Assembly of the source concatenated sequence that is used to generate master_salt
 
         std::string KxKeyCookie("key exchange key");
-        concatenation.fill(0);
-        memcpy(concatenation.data(),challenge_1->data(),challenge_1->size());
+        memcpy(concatenation.data(), challenge_1->data(), challenge_1->size());
         memcpy(concatenation.data() + challenge_1->size(), KxKeyCookie.data(), 16);
         memcpy(concatenation.data() + challenge_1->size() + 16, challenge_2->data(), challenge_2->size());
 
@@ -176,7 +175,6 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
 
         //Repeat process - concatenation is used to store the sequence to generate master_sender_key
         std::string KxSaltCookie("keyexchange salt");
-        concatenation.fill(0);
         memcpy(concatenation.data(), challenge_2->data(), challenge_2->size());
         memcpy(concatenation.data() + challenge_2->size(), KxSaltCookie.data(), 16);
         memcpy(concatenation.data() + challenge_2->size() + 16, challenge_1->data(), challenge_1->size() );
@@ -214,7 +212,6 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
 
         //Attack to PartipantCryptoHandles - both local and remote
         (*RPCrypto)->Participant2ParticipantKxKeyMaterial.push_back(buffer);
-        local_participant_handle->Participant2ParticipantKxKeyMaterial.push_back(buffer);
     }
 
     return RPCrypto;
@@ -295,7 +292,7 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
     AESGCMGMAC_WriterCryptoHandle& local_writer_handle = AESGCMGMAC_WriterCryptoHandle::narrow(local_datawriter_crypto_handle);
     if(local_writer_handle.nil()){
         logWarning(SECURITY_CRYPTO,"Malformed DataWriterCryptoHandle");
-        return false;
+        return nullptr;
     }
     AESGCMGMAC_ReaderCryptoHandle* RRCrypto = new AESGCMGMAC_ReaderCryptoHandle(); // Remote Reader CryptoHandle, to be returned at the end of the function
 

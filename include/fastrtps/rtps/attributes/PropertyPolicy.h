@@ -97,6 +97,8 @@ class PropertyPolicyHelper
         static size_t length(const PropertyPolicy& property_policy);
 
         static std::string* find_property(PropertyPolicy& property_policy, const std::string& name);
+
+        static const std::string* find_property(const PropertyPolicy& property_policy, const std::string& name);
 };
 
 } //namespace rtps

@@ -19,6 +19,7 @@
 #define _RTPS_SECURITY_SECURITYPLUGINFACTORY_H_
 
 #include <fastrtps/rtps/security/authentication/Authentication.h>
+#include <fastrtps/rtps/security/cryptography/Cryptography.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
 
 namespace eprosima {
@@ -38,13 +39,27 @@ class SecurityPluginFactory
          */
         Authentication* create_authentication_plugin(const PropertyPolicy& property_policy);
 
+        /*!
+         * @brief Create an Cryptography plugin  described in the PropertyPolicy.
+         * @param property_policy PropertyPolicy containing the definition of the Cryptography
+         * plugin that has to be created.
+         * @param Pointer to the new Cryptography plugin. In case of error nullptr will be returned.
+         */
+        Cryptography* create_cryptography_plugin(const PropertyPolicy& property_policy);
+
         static void set_auth_plugin(Authentication* plugin);
 
         static void release_auth_plugin();
 
+        static void set_crypto_plugin(Cryptography* plugin);
+
+        static void release_crypto_plugin();
+
     private:
 
         static Authentication* auth_plugin_;
+
+        static Cryptography* crypto_plugin_;
 };
 
 } //namespace security

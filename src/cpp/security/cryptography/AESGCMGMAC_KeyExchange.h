@@ -37,13 +37,13 @@ class AESGCMGMAC_KeyExchange : public CryptoKeyExchange
     ~AESGCMGMAC_KeyExchange();
 
     bool create_local_participant_crypto_tokens(
-            ParticipantCryptoTokenSeq &local_participant_crypto_tokens,
-            ParticipantCryptoHandle &local_participant_crypto,
-            ParticipantCryptoHandle &remote_participant_crypto,
-            SecurityException &exception);
+            ParticipantCryptoTokenSeq& local_participant_crypto_tokens,
+            const ParticipantCryptoHandle& local_participant_crypto,
+            ParticipantCryptoHandle& remote_participant_crypto,
+            SecurityException& exception);
 
     bool set_remote_participant_crypto_tokens(
-            ParticipantCryptoHandle &local_participant_crypto,
+            const ParticipantCryptoHandle &local_participant_crypto,
             ParticipantCryptoHandle &remote_participant_crypto,
             const ParticipantCryptoTokenSeq &remote_participant_tokens,
             SecurityException &exception);

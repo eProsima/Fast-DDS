@@ -38,23 +38,18 @@ bool HelloWorldPublisher::init()
 	m_Hello.index(0);
 	m_Hello.message("HelloWorld");
 	ParticipantAttributes PParam;
-	PParam.rtps.defaultSendPort = 11511;
-	PParam.rtps.use_IP6_to_send = true;
-	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-	PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-	PParam.rtps.builtin.domainId = 80;
-	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-	PParam.rtps.setName("Participant_pub");
 
     PropertyPolicy property_policy;
+    property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                "builtin.PKI-DH"));
     property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-                    "file:///home/ricardo/workspace/desarrollo/proyectos/fastrtps/test/certs/maincacert.pem"));
+                "file:///home/ricardo/workspace/curro/eProsima/desarrollo/proyectos/fastrtps/test/certs/maincacert.pem"));
     property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-                    "file:///home/ricardo/workspace/desarrollo/proyectos/fastrtps/test/certs/mainpubcert.pem"));
+                "file:///home/ricardo/workspace/curro/eProsima/desarrollo/proyectos/fastrtps/test/certs/mainpubcert.pem"));
     property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-                    "file:///home/ricardo/workspace/desarrollo/proyectos/fastrtps/test/certs/mainpubkey.pem"));
+                "file:///home/ricardo/workspace/curro/eProsima/desarrollo/proyectos/fastrtps/test/certs/mainpubkey.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                "builtin.AES-GCM-GMAC"));
     PParam.rtps.properties = property_policy;
     
 	mp_participant = Domain::createParticipant(PParam);
@@ -115,7 +110,7 @@ void HelloWorldPublisher::run(uint32_t samples)
 		{
 			cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<endl;
 		}
-		eClock::my_sleep(25);
+		eClock::my_sleep(2000);
 	}
 }
 

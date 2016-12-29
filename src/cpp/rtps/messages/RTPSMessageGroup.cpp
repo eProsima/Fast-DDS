@@ -212,6 +212,7 @@ static uint32_t calculate_message_length_from_change(const CacheChangeForGroup_t
 uint32_t RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
         RTPSWriter* W, std::vector<CacheChangeForGroup_t>& changes,
         const GuidPrefix_t& remoteGuidPrefix, const EntityId_t& ReaderId,
+        const std::vector<GuidPrefix_t>& remote_participants,
         LocatorList_t& unicast, LocatorList_t& multicast,
         bool expectsInlineQos)
 {
@@ -277,6 +278,13 @@ uint32_t RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 
     if(dataInserted)
     {
+        // TODO(Ricardo). Temporal
+        if((W->getGuid().entityId.value[3] & 0xc0) == 0x0)
+        {
+            W->getRTPSParticipant()->security_manager().encode_rtps_message(*cdrmsg_fullmsg,
+                    remote_participants);
+        }
+
         for(auto lit = multicast.begin();lit!=multicast.end();++lit)
             W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),(*lit));
 

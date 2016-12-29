@@ -18,6 +18,7 @@
 
 #include "SecurityPluginFactory.h"
 #include "../../security/authentication/PKIDH.h"
+#include "../../security/cryptography/AESGCMGMAC.h"
 
 using namespace eprosima::fastrtps::rtps;
 using namespace ::security;
@@ -25,16 +26,30 @@ using namespace ::security;
 Authentication* SecurityPluginFactory::create_authentication_plugin(const PropertyPolicy& property_policy)
 {
     Authentication* plugin = nullptr;
-    PropertyPolicy auth_properties = PropertyPolicyHelper::get_properties_with_prefix(property_policy, "dds.sec.auth.");
+    const std::string* auth_plugin_property = PropertyPolicyHelper::find_property(property_policy, "dds.sec.auth.plugin");
 
-    if(PropertyPolicyHelper::length(auth_properties) > 0)
+    if(auth_plugin_property != nullptr)
     {
-        // Check it is builtin DDS:Auth:PKI-DH.
-        PropertyPolicy pki_properties = PropertyPolicyHelper::get_properties_with_prefix(auth_properties, "builtin.PKI-DH.");
-
-        if(PropertyPolicyHelper::length(pki_properties) > 0)
+        if(auth_plugin_property->compare("builtin.PKI-DH") == 0)
         {
             plugin = new PKIDH();
+        }
+    }
+
+    return plugin;
+}
+
+Cryptography* SecurityPluginFactory::create_cryptography_plugin(const PropertyPolicy& property_policy)
+{
+    Cryptography* plugin = nullptr;
+    const std::string* crypto_plugin_property = PropertyPolicyHelper::find_property(property_policy, "dds.sec.crypto.plugin");
+
+    if(crypto_plugin_property != nullptr)
+    {
+        // Check it is builtin DDS:Auth:PKI-DH.
+        if(crypto_plugin_property->compare("builtin.AES-GCM-GMAC") == 0)
+        {
+            plugin = new AESGCMGMAC();
         }
     }
 

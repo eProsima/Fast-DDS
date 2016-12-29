@@ -48,6 +48,8 @@ int main(int argc, char** argv)
 		return 0;
 	}
 
+            Log::SetVerbosity(Log::Info);
+            Log::SetCategoryFilter(std::regex("(SECURITY)"));
 
 	switch(type)
 	{
@@ -56,7 +58,7 @@ int main(int argc, char** argv)
 		HelloWorldPublisher mypub;
 		if(mypub.init())
 		{
-			mypub.run(10);
+			mypub.run(1000);
 		}
 		break;
 	}

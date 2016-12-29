@@ -155,6 +155,7 @@ namespace eprosima {
                         std::vector<CacheChangeForGroup_t>& changes,
                         const GuidPrefix_t& remoteGuidPrefix,
                         const EntityId_t& ReaderId,
+                        const std::vector<GuidPrefix_t>& remote_participants,
                         LocatorList_t& unicast,
                         LocatorList_t& multicast,
                         bool expectsInlineQos);

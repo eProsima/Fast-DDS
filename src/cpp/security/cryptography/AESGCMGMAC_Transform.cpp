@@ -376,10 +376,13 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
                 SecurityException &exception){
 
     AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(sending_crypto);
-    if(local_participant.nil()){
-        logWarning(SECURITY_CRYPTO,"Invalid CryptoToken");
+
+    if(local_participant.nil())
+    {
+        logError(SECURITY_CRYPTO,"Invalid CryptoToken");
         return false;
     }
+
     //Extract RTPS Header
     std::vector<uint8_t> rtps_header;
     for(int i=0;i<RTPS_HEADER_SIZE;i++) rtps_header.push_back(plain_rtps_message.at(i));
@@ -469,13 +472,16 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     memcpy(dataTag.common_mac.data(),tag, 16);
 
     //Check the list of receivers, search for keys and compute session keys as needed
-    for(auto rec = receiving_crypto_list.begin(); rec != receiving_crypto_list.end(); ++rec){
-
+    for(auto rec = receiving_crypto_list.begin(); rec != receiving_crypto_list.end(); ++rec)
+    {
         AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(**rec);
-        if(remote_participant.nil()){
+        if(remote_participant.nil())
+        {
             logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle");
-            return false;
+            continue;
         }
+        if(remote_participant->Participant2ParticipantKeyMaterial.size() == 0)
+            continue;
 
         //Update the key if needed
         if(update_specific_keys){
@@ -537,6 +543,15 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
 
     AESGCMGMAC_ParticipantCryptoHandle& sending_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(sending_crypto);
 
+    if(sending_participant.nil())
+    {
+        logError(SECURITY_CRYPTO, "Invalid sending_crypto handle");
+        return false;
+    }
+
+    if(sending_participant->RemoteParticipant2ParticipantKeyMaterial.size() == 0)
+        return false;
+
     //Fun reverse order process;
     SecureDataHeader header;
     SecureDataBody body;
@@ -558,6 +573,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     bool mac_found = false;
     for(int j=0; j < tag.receiver_specific_macs.size(); j++){
         //Check if it matches the key we have
+        //TODO(Ricardo) Check if its necessary to use a vector.
         if(sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).receiver_specific_key_id == tag.receiver_specific_macs.at(j).receiver_mac_key_id){
             mac_found = true;
             specific_mac =  &(tag.receiver_specific_macs.at(j));
@@ -1001,12 +1017,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     RAND_load_file("/dev/urandom",32);
 
     EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
-    plain_buffer.clear();
-    plain_buffer.resize(encoded_buffer.size());
-
     int actual_size = 0, final_size = 0;
-
-
     plain_buffer.clear();
     plain_buffer.resize(encoded_buffer.size());
 
@@ -1103,6 +1114,7 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
 {
     std::vector<uint8_t> buffer;
     int i;
+    //TODO(Ricardo) Review bigendianess
     short octets;
 
     //SEC_PREFIX
@@ -1114,8 +1126,8 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
     octets = serialized_header.size() + serialized_body.size() + 2 + 2 + serialized_tag.size();
     uint8_t octets_c[2] = { 0, 0 };
     memcpy(octets_c, &octets, 2);
-    buffer.push_back( octets_c[0] );
     buffer.push_back( octets_c[1] );
+    buffer.push_back( octets_c[0] );
 
     //SecureDataHeader
     for(i=0; i < serialized_header.size(); i++) buffer.push_back( serialized_header.at(i) );
@@ -1128,8 +1140,8 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
     //Octets2NextSubMessageHeader
     octets = serialized_tag.size();
     memcpy(octets_c, &octets, 2);
-    buffer.push_back( octets_c[0] );
     buffer.push_back( octets_c[1] );
+    buffer.push_back( octets_c[0] );
 
     //SecureDataTag
     for(int i=0; i < serialized_tag.size(); i++)    buffer.push_back( serialized_tag.at(i) );
@@ -1154,8 +1166,8 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_rtps_message(std::vector<uin
     octets = serialized_header.size() + serialized_body.size() + 2 + 2 + serialized_tag.size();
     uint8_t octets_c[2] = { 0, 0 };
     memcpy(octets_c, &octets, 2);
-    buffer.push_back( octets_c[0] );
     buffer.push_back( octets_c[1] );
+    buffer.push_back( octets_c[0] );
     //Header
     for(i=0; i < serialized_header.size(); i++) buffer.push_back( serialized_header.at(i) );
     //Payload
@@ -1167,8 +1179,8 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_rtps_message(std::vector<uin
     //Octets2Nextheader
     octets = serialized_tag.size();
     memcpy(octets_c, &octets, 2);
-    buffer.push_back( octets_c[0] );
     buffer.push_back( octets_c[1] );
+    buffer.push_back( octets_c[0] );
     //Tag
     for(int i=0; i < serialized_tag.size(); i++)    buffer.push_back( serialized_tag.at(i) );
 
@@ -1259,9 +1271,9 @@ bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(const std::vector<uin
     offset +=1;
     //Octects2NextSugMsg
     uint8_t octets_c[2] = { 0, 0 };
-    octets_c[0] = input.at(offset);
-    offset += 1;
     octets_c[1] = input.at(offset);
+    offset += 1;
+    octets_c[0] = input.at(offset);
     offset += 1;
     short safecheck;
     memcpy(&safecheck, octets_c, 2);
@@ -1288,9 +1300,9 @@ bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(const std::vector<uin
     //Flags
     offset += 1;
     //Octets2Nextheader
-    octets_c[0] = input.at(offset);
-    offset += 1;
     octets_c[1] = input.at(offset);
+    offset += 1;
+    octets_c[0] = input.at(offset);
     offset += 1;
     memcpy(&safecheck, octets_c, 2);
     if( (input.size() - offset) != safecheck)   return false;
@@ -1318,9 +1330,9 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &
     offset +=1;
     //Octects2NextSugMsg
     uint8_t octets_c[2] = { 0, 0 };
-    octets_c[0] = input.at(offset);
-    offset += 1;
     octets_c[1] = input.at(offset);
+    offset += 1;
+    octets_c[0] = input.at(offset);
     offset += 1;
     short safecheck;
     memcpy(&safecheck, octets_c, 2);
@@ -1343,9 +1355,9 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &
     //Flags are ignored for the time being
     offset += 1;
     //Octets2Nextheader
-    octets_c[0] = input.at(offset);
-    offset += 1;
     octets_c[1] = input.at(offset);
+    offset += 1;
+    octets_c[0] = input.at(offset);
     offset += 1;
     memcpy(&safecheck, octets_c, 2);
     if( (input.size() - offset) != safecheck){

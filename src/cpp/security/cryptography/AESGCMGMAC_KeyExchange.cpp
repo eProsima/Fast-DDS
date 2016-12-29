@@ -32,12 +32,12 @@ AESGCMGMAC_KeyExchange::AESGCMGMAC_KeyExchange(){}
 AESGCMGMAC_KeyExchange::~AESGCMGMAC_KeyExchange(){}
 
 bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
-            ParticipantCryptoTokenSeq &local_participant_crypto_tokens,
-            ParticipantCryptoHandle &local_participant_crypto,
-            ParticipantCryptoHandle &remote_participant_crypto,
-            SecurityException &exception){
+            ParticipantCryptoTokenSeq& local_participant_crypto_tokens,
+            const ParticipantCryptoHandle& local_participant_crypto,
+            ParticipantCryptoHandle& remote_participant_crypto,
+            SecurityException& exception){
 
-    AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto);
+    const AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto);
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
 
     if( local_participant.nil() | remote_participant.nil() ){
@@ -57,20 +57,21 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
         prop.name() = std::string("dds.cryp.keymat");
         std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_participant->Participant2ParticipantKeyMaterial.at(0));
         prop.value() = aes_128_gcm_encrypt(plaintext, remote_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
-        temp.binary_properties().push_back(prop);
-        local_participant_crypto_tokens.push_back(temp);
+        prop.propagate(true);
+        temp.binary_properties().push_back(std::move(prop));
+        local_participant_crypto_tokens.push_back(std::move(temp));
     }
 
     return true;
 }
 
 bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
-            ParticipantCryptoHandle &local_participant_crypto,
+            const ParticipantCryptoHandle &local_participant_crypto,
             ParticipantCryptoHandle &remote_participant_crypto,
             const ParticipantCryptoTokenSeq &remote_participant_tokens,
             SecurityException &exception){
 
-    AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto);
+    const AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto);
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
 
     if( local_participant.nil() | remote_participant.nil() ){
@@ -100,7 +101,6 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
 
     KeyMaterial_AES_GCM_GMAC keymat;
     keymat = KeyMaterialCDRDeserialize(&plaintext);
-    local_participant->RemoteParticipant2ParticipantKeyMaterial.push_back(keymat);
     remote_participant->RemoteParticipant2ParticipantKeyMaterial.push_back(keymat);
 
     return true;
@@ -128,8 +128,9 @@ bool AESGCMGMAC_KeyExchange::create_local_datawriter_crypto_tokens(
     prop.name() = std::string("dds.cryp.keymat");
     std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_reader->Writer2ReaderKeyMaterial.at(0));
     prop.value() = aes_128_gcm_encrypt(plaintext, remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key);
-    temp.binary_properties().push_back(prop);
-    local_datawriter_crypto_tokens.push_back(temp);
+    prop.propagate(true);
+    temp.binary_properties().push_back(std::move(prop));
+    local_datawriter_crypto_tokens.push_back(std::move(temp));
 
     return true;
 }
@@ -158,8 +159,9 @@ bool AESGCMGMAC_KeyExchange::create_local_datareader_crypto_tokens(
         prop.name() = std::string("dds.cryp.keymat");
         std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_writer->Reader2WriterKeyMaterial.at(0));
         prop.value() = aes_128_gcm_encrypt(plaintext, remote_writer->Participant2ParticipantKxKeyMaterial.master_sender_key);
-        temp.binary_properties().push_back(prop);
-        local_datareader_crypto_tokens.push_back(temp);
+        prop.propagate(true);
+        temp.binary_properties().push_back(std::move(prop));
+        local_datareader_crypto_tokens.push_back(std::move(temp));
     }
     return true;
 }

@@ -40,10 +40,10 @@ class CryptoKeyExchange
      * @return TRUE is successful.
      */
     virtual bool create_local_participant_crypto_tokens(
-            ParticipantCryptoTokenSeq &local_participant_crypto_tokens,
-            ParticipantCryptoHandle &local_participant_crypto,
-            ParticipantCryptoHandle &remote_participant_crypto,
-            SecurityException &exception) = 0;
+            ParticipantCryptoTokenSeq& local_participant_crypto_tokens,
+            const ParticipantCryptoHandle& local_participant_crypto,
+            ParticipantCryptoHandle& remote_participant_crypto,
+            SecurityException& exception) = 0;
 
     /**
      * Configures the Cryptographic Plugin with the material needed to interpret messages coming from the remote crypto.
@@ -54,7 +54,7 @@ class CryptoKeyExchange
      * @return TRUE if successful
      */
     virtual bool set_remote_participant_crypto_tokens(
-            ParticipantCryptoHandle &local_participant_crypto,
+            const ParticipantCryptoHandle &local_participant_crypto,
             ParticipantCryptoHandle &remote_participant_crypto,
             const ParticipantCryptoTokenSeq &remote_participant_tokens,
             SecurityException &exception) = 0;

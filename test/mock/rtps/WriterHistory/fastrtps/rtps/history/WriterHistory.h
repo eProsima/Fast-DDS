@@ -32,6 +32,8 @@ class WriterHistory
 
         WriterHistory(const HistoryAttributes& /*att*/) : samples_number_(0) {}
 
+        MOCK_METHOD1(release_Cache, bool (CacheChange_t* change));
+
         MOCK_METHOD1(add_change_mock, bool(CacheChange_t*));
 
         bool add_change(CacheChange_t* change)

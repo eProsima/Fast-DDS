@@ -105,9 +105,11 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
     {
         if(!isAsync())
         {
+            //TODO(Ricardo) Temporal.
             LocatorList_t unilocList;
             LocatorList_t multilocList;
             bool expectsInlineQos = false;
+            std::vector<GuidPrefix_t> remote_participants;
 
             for(auto it = matched_readers.begin(); it != matched_readers.end(); ++it)
             {
@@ -124,6 +126,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 unilocList.push_back((*it)->m_att.endpoint.unicastLocatorList);
                 multilocList.push_back((*it)->m_att.endpoint.multicastLocatorList);
                 expectsInlineQos |= (*it)->m_att.expectsInlineQos;
+                remote_participants.push_back((*it)->m_att.guid.guidPrefix);
                 (*it)->mp_mutex->unlock();
 
                 (*it)->mp_nackSupression->restart_timer();
@@ -133,8 +136,8 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
             changes_to_send.push_back(CacheChangeForGroup_t(change));
 
             uint32_t bytesSent = RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
-                    changes_to_send, c_GuidPrefix_Unknown, c_EntityId_Unknown, unilocList,
-                    multilocList, expectsInlineQos);
+                    changes_to_send, c_GuidPrefix_Unknown, c_EntityId_Unknown, remote_participants,
+                    unilocList, multilocList, expectsInlineQos);
 
             if(bytesSent == 0 || changes_to_send.size() > 0)
                 logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
@@ -244,6 +247,7 @@ size_t StatefulWriter::send_any_unsent_changes()
                 (*m_reader_iterator)->set_change_to_status(change.getChange(), UNDERWAY);
         }
 
+        // TODO(Ricardo) Flowcontroller has to be notified in not push mode?
         // And controllers are notified about the changes being sent
         for (const auto& change : relevant_changes)
             FlowController::NotifyControllersChangeSent(&change);
@@ -252,6 +256,10 @@ size_t StatefulWriter::send_any_unsent_changes()
         {
             if(!relevant_changes.empty())
             {
+                //TODO (Ricardo) Temporal.
+                std::vector<GuidPrefix_t> remote_participants;
+                remote_participants.push_back((*m_reader_iterator)->m_att.guid.guidPrefix);
+
                 number_of_changes_sent += relevant_changes.size();
                 uint32_t bytesSent = 0;
                 do
@@ -260,6 +268,7 @@ size_t StatefulWriter::send_any_unsent_changes()
                             relevant_changes,
                             (*m_reader_iterator)->m_att.guid.guidPrefix,
                             (*m_reader_iterator)->m_att.guid.entityId,
+                            remote_participants,
                             (*m_reader_iterator)->m_att.endpoint.unicastLocatorList,
                             (*m_reader_iterator)->m_att.endpoint.multicastLocatorList,
                             (*m_reader_iterator)->m_att.expectsInlineQos);
@@ -288,7 +297,7 @@ size_t StatefulWriter::send_any_unsent_changes()
             {
                 this->incrementHBCount();
                 CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
-				// TODO(Ricardo) This is a StatefulWriter in Reliable. Hast the FinalFlag be true? Check.
+                // TODO(Ricardo) This is a StatefulWriter in Reliable. Hast the FinalFlag be true? Check.
                 RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
                         m_HBReaderEntityId, m_guid.entityId, firstSeq, lastSeq, m_heartbeatCount, true, false);
                 std::vector<Locator_t>::iterator lit;

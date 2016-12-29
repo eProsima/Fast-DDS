@@ -40,12 +40,12 @@ class AESGCMGMAC_KeyFactory : public CryptoKeyFactory
                 const PermissionsHandle &participant_permissions, 
                 const PropertySeq &participant_properties, 
                 SecurityException &exception);
-        
+
         ParticipantCryptoHandle * register_matched_remote_participant(
-                ParticipantCryptoHandle &local_participant_crypto_handle, 
-                IdentityHandle &remote_participant_identity, 
-                PermissionsHandle &remote_participant_permissions, 
-                SharedSecretHandle &shared_secret, 
+                const ParticipantCryptoHandle& local_participant_crypto_handle,
+                const IdentityHandle& remote_participant_identity,
+                const PermissionsHandle& remote_participant_permissions,
+                const SharedSecretHandle& shared_secret,
                 SecurityException &exception);
 
         DatawriterCryptoHandle * register_local_datawriter(

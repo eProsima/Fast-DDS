@@ -74,3 +74,19 @@ std::string* PropertyPolicyHelper::find_property(PropertyPolicy& property_policy
 
     return returnedValue;
 }
+
+const std::string* PropertyPolicyHelper::find_property(const PropertyPolicy& property_policy, const std::string& name)
+{
+    const std::string* returnedValue = nullptr;
+
+    for(auto property = property_policy.properties().begin(); property != property_policy.properties().end(); ++property)
+    {
+        if(property->name().compare(name) == 0)
+        {
+            returnedValue = &property->value();
+            break;
+        }
+    }
+
+    return returnedValue;
+}
