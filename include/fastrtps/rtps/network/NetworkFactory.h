@@ -70,7 +70,7 @@ public:
     * from the given locator, and returns a vector of Receiver Resources for this goal.
     * @param local Locator from which to listen.
     */
-   std::vector<ReceiverResource> BuildReceiverResources               (const Locator_t& local);
+   bool BuildReceiverResources (const Locator_t& local, std::vector<ReceiverResource>& returned_resources_list);
 
    void NormalizeLocators(LocatorList_t& locators);
 

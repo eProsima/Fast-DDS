@@ -190,10 +190,10 @@ private:
 
 
    bool OpenAndBindOutputSockets(Locator_t& locator);
-   bool OpenAndBindInputSockets(uint32_t port);
+   bool OpenAndBindInputSockets(uint32_t port, bool is_multicast);
 
    boost::asio::ip::udp::socket OpenAndBindUnicastOutputSocket(const boost::asio::ip::address_v6&, uint32_t& port);
-   boost::asio::ip::udp::socket OpenAndBindInputSocket(uint32_t port);
+   boost::asio::ip::udp::socket OpenAndBindInputSocket(uint32_t port, bool is_multicast);
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,

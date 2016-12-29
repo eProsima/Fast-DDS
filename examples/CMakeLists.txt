@@ -28,4 +28,4 @@ compile_example(LateJoiners C++/LateJoiners)
 compile_example(SampleConfig_Controller C++/SampleConfig_Controller)
 compile_example(SampleConfig_Events C++/SampleConfig_Events)
 compile_example(SampleConfig_Multimedia C++/SampleConfig_Multimedia)
-
+compile_example(Configurability C++/Configurability)

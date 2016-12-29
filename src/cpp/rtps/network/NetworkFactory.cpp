@@ -59,21 +59,29 @@ vector<SenderResource> NetworkFactory::BuildSenderResourcesForRemoteLocator(cons
     return newSenderResources;
 }
 
-vector<ReceiverResource> NetworkFactory::BuildReceiverResources(const Locator_t& local)
+bool NetworkFactory::BuildReceiverResources (const Locator_t& local, std::vector<ReceiverResource>& returned_resources_list)
 {
-    vector<ReceiverResource> newReceiverResources;
+    bool returnedValue = false;
 
     for(auto& transport : mRegisteredTransports)
     {
-        if ( transport->IsLocatorSupported(local) &&
-                !transport->IsInputChannelOpen(local) )
+        if(transport->IsLocatorSupported(local))
         {
-            ReceiverResource newReceiverResource(*transport, local);
-            if (newReceiverResource.mValid)
-                newReceiverResources.push_back(move(newReceiverResource));
+            if(!transport->IsInputChannelOpen(local))
+            {
+                ReceiverResource newReceiverResource(*transport, local);
+                if(newReceiverResource.mValid)
+                {
+                    returned_resources_list.push_back(std::move(newReceiverResource));
+                    returnedValue = true;
+                }
+            }
+            else
+                returnedValue = true;
         }
     }
-    return newReceiverResources;
+
+    return returnedValue;
 }
 
 void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descriptor)

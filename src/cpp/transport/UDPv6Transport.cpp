@@ -162,7 +162,7 @@ bool UDPv6Transport::OpenInputChannel(const Locator_t& locator)
     bool success = false;
 
     if (!IsInputChannelOpen(locator))
-        success = OpenAndBindInputSockets(locator.port);
+        success = OpenAndBindInputSockets(locator.port, IsMulticastAddress(locator));
 
     if (IsMulticastAddress(locator) && IsInputChannelOpen(locator))
     {
@@ -311,13 +311,13 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator)
     return true;
 }
 
-bool UDPv6Transport::OpenAndBindInputSockets(uint32_t port)
+bool UDPv6Transport::OpenAndBindInputSockets(uint32_t port, bool is_multicast)
 {
     boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
 
     try 
     {
-        mInputSockets.emplace(port, OpenAndBindInputSocket(port));
+        mInputSockets.emplace(port, OpenAndBindInputSocket(port, is_multicast));
     }
     catch (boost::system::system_error const& e)
     {
@@ -345,13 +345,13 @@ boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindUnicastOutputSocket(cons
     return socket;
 }
 
-boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindInputSocket(uint32_t port)
+boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindInputSocket(uint32_t port, bool is_multicast)
 {
     ip::udp::socket socket(mService);
     socket.open(ip::udp::v6());
     socket.set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
-    socket.set_option(ip::udp::socket::reuse_address( true ) );
-    socket.set_option(ip::multicast::enable_loopback( true ) );
+    if(is_multicast)
+        socket.set_option(ip::udp::socket::reuse_address( true ) );
     ip::udp::endpoint endpoint(ip::address_v6::any(), static_cast<uint16_t>(port));
     socket.bind(endpoint);
 
