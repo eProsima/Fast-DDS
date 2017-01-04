@@ -56,6 +56,9 @@ const char* const MockHandshake::class_id_ = "MockHandshakeHandle";
 
 typedef HandleImpl<MockHandshake> MockHandshakeHandle;
 
+const char* const SharedSecret::class_id_ = "SharedSecretHandle";
+typedef HandleImpl<SharedSecret> MockSharedSecretHandle;
+
 class MockParticipantCrypto
 {
     public:
@@ -116,15 +119,12 @@ class SecurityAuthenticationTest : public ::testing::Test
             stateless_reader_ = new NiceMock<StatelessReader>();
             volatile_writer_ = new NiceMock<StatefulWriter>(&participant_);
             volatile_reader_ = new NiceMock<StatefulReader>();
-            MockIdentityHandle identity_handle;
-            MockIdentityHandle* p_identity_handle = &identity_handle;
-            MockParticipantCryptoHandle local_participant_crypto_handle;
 
             EXPECT_CALL(*auth_plugin_, validate_local_identity(_,_,_,_,_,_)).Times(1).
-                WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_OK)));
-            EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(_,_,_,_)).Times(1).
-                WillOnce(Return(&local_participant_crypto_handle));
-            EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&local_participant_crypto_handle,_)).Times(1).
+                WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
+            EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_)).Times(1).
+                WillOnce(Return(&local_participant_crypto_handle_));
+            EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&local_participant_crypto_handle_,_)).Times(1).
                 WillOnce(Return(true));
             EXPECT_CALL(participant_, createWriter_mock(_,_,_,_,_,_)).Times(2).
                 WillOnce(DoAll(SetArgPointee<0>(stateless_writer_), Return(true))).
@@ -140,18 +140,15 @@ class SecurityAuthenticationTest : public ::testing::Test
         {
             initialization_ok();
 
-            MockIdentityHandle identity_handle;
-            MockIdentityHandle* p_identity_handle = &identity_handle;
-            MockHandshakeHandle handshake_handle;
-            MockHandshakeHandle* p_handshake_handle = &handshake_handle;
-            HandshakeMessageToken* p_handshake_message = new HandshakeMessageToken();
+            HandshakeMessageToken handshake_message;
             CacheChange_t* change = new CacheChange_t(200);
 
-            EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-                WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
-            EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_,_,_,_,_)).Times(1).
-                WillOnce(DoAll(SetArgPointee<0>(p_handshake_handle), 
-                            SetArgPointee<1>(p_handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+            EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,Ref(local_identity_handle_),_,_,_)).Times(1).
+                WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle_), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
+            EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_, Ref(local_identity_handle_),
+                        Ref(remote_identity_handle_),_,_)).Times(1).
+                WillOnce(DoAll(SetArgPointee<0>(&handshake_handle_), 
+                            SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
             EXPECT_CALL(*stateless_writer_, new_change(_,_,_)).Times(1).
                 WillOnce(Return(change));
             EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change)).Times(1).
@@ -166,18 +163,14 @@ class SecurityAuthenticationTest : public ::testing::Test
                 *request_message_change = change;
             else
                 delete change;
-            delete p_handshake_message;
         }
 
         void reply_process_ok(CacheChange_t** reply_message_change = nullptr)
         {
             initialization_ok();
 
-            MockIdentityHandle identity_handle;
-            MockIdentityHandle* p_identity_handle = &identity_handle;
-
-            EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-                WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+            EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+                WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle_), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
 
             ParticipantProxyData participant_data;
             fill_participant_key(participant_data.m_guid);
@@ -198,14 +191,13 @@ class SecurityAuthenticationTest : public ::testing::Test
             ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
             change->serializedPayload.length = aux_msg.length;
 
-            MockHandshakeHandle handshake_handle;
-            MockHandshakeHandle* p_handshake_handle = &handshake_handle;
-            HandshakeMessageToken* p_handshake_message = new HandshakeMessageToken();
+            HandshakeMessageToken handshake_message;
             CacheChange_t* change2 = new CacheChange_t(200);
 
-            EXPECT_CALL(*auth_plugin_, begin_handshake_reply_rvr(_,_,_,_,_,_,_)).Times(1).
-                WillOnce(DoAll(SetArgPointee<0>(p_handshake_handle), 
-                            SetArgPointee<1>(p_handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+            EXPECT_CALL(*auth_plugin_, begin_handshake_reply_rvr(_,_,_, Ref(remote_identity_handle_),
+                        Ref(local_identity_handle_),_,_)).Times(1).
+                WillOnce(DoAll(SetArgPointee<0>(&handshake_handle_), 
+                            SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
             EXPECT_CALL(*stateless_writer_, new_change(_,_,_)).Times(1).
                 WillOnce(Return(change2));
             EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change2)).Times(1).
@@ -220,7 +212,6 @@ class SecurityAuthenticationTest : public ::testing::Test
                 *reply_message_change = change2;
             else
                 delete change2;
-            delete p_handshake_message;
         }
 
         void final_message_process_ok(CacheChange_t** final_message_change = nullptr)
@@ -250,11 +241,13 @@ class SecurityAuthenticationTest : public ::testing::Test
             ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
             change->serializedPayload.length = aux_msg.length;
 
-            HandshakeMessageToken* p_handshake_message = new HandshakeMessageToken();
+            HandshakeMessageToken handshake_message;
             CacheChange_t* change2 = new CacheChange_t(200);
+            MockSharedSecretHandle shared_secret_handle;
+            MockParticipantCryptoHandle participant_crypto_handle;
 
-            EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_,_,_,_)).Times(1).
-                WillOnce(DoAll(SetArgPointee<0>(p_handshake_message), Return(ValidationResult_t::VALIDATION_OK_WITH_FINAL_MESSAGE)));
+            EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_,_, Ref(handshake_handle_),_)).Times(1).
+                WillOnce(DoAll(SetArgPointee<0>(&handshake_message), Return(ValidationResult_t::VALIDATION_OK_WITH_FINAL_MESSAGE)));
             EXPECT_CALL(*stateless_writer_, new_change(_,_,_)).Times(1).
                 WillOnce(Return(change2));
             EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change2)).Times(1).
@@ -262,6 +255,16 @@ class SecurityAuthenticationTest : public ::testing::Test
             EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
                 WillOnce(Return(true));
             EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
+            EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle_),_)).Times(1).
+                WillOnce(Return(&shared_secret_handle));
+            EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(&shared_secret_handle,_)).Times(1).
+                WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+            EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_matched_remote_participant(Ref(local_participant_crypto_handle_),
+                        Ref(remote_identity_handle_),_,Ref(shared_secret_handle),_)).Times(1).
+                WillOnce(Return(&participant_crypto_handle));
+            EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
+                        Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle),_)).Times(1).
+                WillOnce(Return(true)); 
 
             RTPSParticipantAuthenticationInfo info;
             info.status(AUTHORIZED_RTPSPARTICIPANT);
@@ -274,8 +277,6 @@ class SecurityAuthenticationTest : public ::testing::Test
                 delete change2;
             else
                 *final_message_change = change2;
-
-            delete p_handshake_message;
         }
 
     public:
@@ -298,6 +299,11 @@ class SecurityAuthenticationTest : public ::testing::Test
         NiceMock<StatefulWriter>* volatile_writer_;
         NiceMock<StatefulReader>* volatile_reader_;
         SecurityManager manager_;
+
+        MockIdentityHandle local_identity_handle_;
+        MockIdentityHandle remote_identity_handle_;
+        MockHandshakeHandle handshake_handle_;
+        MockParticipantCryptoHandle local_participant_crypto_handle_;
 };
 
 TEST_F(SecurityAuthenticationTest, initialization_auth_nullptr)
@@ -324,12 +330,10 @@ TEST_F(SecurityAuthenticationTest, initialization_register_local_participant_err
 {
     DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
     DefaultValue<const GUID_t&>::Set(guid);
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
 
     EXPECT_CALL(*auth_plugin_, validate_local_identity(_,_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(_,_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_)).Times(1).
         WillOnce(Return(nullptr));
 
     ASSERT_FALSE(manager_.init());
@@ -339,13 +343,11 @@ TEST_F(SecurityAuthenticationTest, initialization_fail_participant_stateless_mes
 {
     DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
     DefaultValue<const GUID_t&>::Set(guid);
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
     MockParticipantCryptoHandle local_participant_crypto_handle;
 
     EXPECT_CALL(*auth_plugin_, validate_local_identity(_,_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(_,_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_)).Times(1).
         WillOnce(Return(&local_participant_crypto_handle));
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&local_participant_crypto_handle,_)).Times(1).
         WillOnce(Return(true));
@@ -359,14 +361,12 @@ TEST_F(SecurityAuthenticationTest, initialization_fail_participant_stateless_mes
 {
     DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
     DefaultValue<const GUID_t&>::Set(guid);
-    NiceMock<StatelessWriter>* stateless_writer = new NiceMock<StatelessWriter>(&participant_);
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
     MockParticipantCryptoHandle local_participant_crypto_handle;
+    NiceMock<StatelessWriter>* stateless_writer = new NiceMock<StatelessWriter>(&participant_);
 
     EXPECT_CALL(*auth_plugin_, validate_local_identity(_,_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(_,_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_)).Times(1).
         WillOnce(Return(&local_participant_crypto_handle));
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&local_participant_crypto_handle,_)).Times(1).
         WillOnce(Return(true));
@@ -382,15 +382,13 @@ TEST_F(SecurityAuthenticationTest, initialization_fail_participant_volatile_mess
 {
     DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
     DefaultValue<const GUID_t&>::Set(guid);
+    MockParticipantCryptoHandle local_participant_crypto_handle;
     NiceMock<StatelessWriter>* stateless_writer = new NiceMock<StatelessWriter>(&participant_);
     NiceMock<StatelessReader>* stateless_reader = new NiceMock<StatelessReader>();
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
-    MockParticipantCryptoHandle local_participant_crypto_handle;
 
     EXPECT_CALL(*auth_plugin_, validate_local_identity(_,_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(_,_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_)).Times(1).
         WillOnce(Return(&local_participant_crypto_handle));
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&local_participant_crypto_handle,_)).Times(1).
         WillOnce(Return(true));
@@ -407,16 +405,14 @@ TEST_F(SecurityAuthenticationTest, initialization_fail_participant_volatile_mess
 {
     DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
     DefaultValue<const GUID_t&>::Set(guid);
+    MockParticipantCryptoHandle local_participant_crypto_handle;
     NiceMock<StatelessWriter>* stateless_writer = new NiceMock<StatelessWriter>(&participant_);
     NiceMock<StatelessReader>* stateless_reader = new NiceMock<StatelessReader>();
     NiceMock<StatefulWriter>* volatile_writer = new NiceMock<StatefulWriter>(&participant_);
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
-    MockParticipantCryptoHandle local_participant_crypto_handle;
 
     EXPECT_CALL(*auth_plugin_, validate_local_identity(_,_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(_,_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_)).Times(1).
         WillOnce(Return(&local_participant_crypto_handle));
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&local_participant_crypto_handle,_)).Times(1).
         WillOnce(Return(true));
@@ -434,18 +430,16 @@ TEST_F(SecurityAuthenticationTest, initialization_auth_retry)
 {
     DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
     DefaultValue<const GUID_t&>::Set(guid);
+    MockParticipantCryptoHandle local_participant_crypto_handle;
     NiceMock<StatelessWriter>* stateless_writer = new NiceMock<StatelessWriter>(&participant_);
     NiceMock<StatelessReader>* stateless_reader = new NiceMock<StatelessReader>();
     NiceMock<StatefulWriter>* volatile_writer = new NiceMock<StatefulWriter>(&participant_);
     NiceMock<StatefulReader>* volatile_reader = new NiceMock<StatefulReader>();
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
-    MockParticipantCryptoHandle local_participant_crypto_handle;
 
     EXPECT_CALL(*auth_plugin_, validate_local_identity(_,_,_,_,_,_)).Times(2).
         WillOnce(Return(ValidationResult_t::VALIDATION_PENDING_RETRY)).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(_,_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_)).Times(1).
         WillOnce(Return(&local_participant_crypto_handle));
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&local_participant_crypto_handle,_)).Times(1).
         WillOnce(Return(true));
@@ -455,7 +449,7 @@ TEST_F(SecurityAuthenticationTest, initialization_auth_retry)
     EXPECT_CALL(participant_, createReader_mock(_,_,_,_,_,_,_)).Times(2).
         WillOnce(DoAll(SetArgPointee<0>(stateless_reader), Return(true))).
         WillOnce(DoAll(SetArgPointee<0>(volatile_reader), Return(true)));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
 
     ASSERT_TRUE(manager_.init());
@@ -464,7 +458,7 @@ TEST_F(SecurityAuthenticationTest, initialization_auth_retry)
 
 TEST_F(SecurityAuthenticationTest, initialization_ok)
 {
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
 
     initialization_ok();
@@ -474,9 +468,9 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
 {
     initialization_ok();
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_FAILED));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
 
     ParticipantProxyData participant_data;
@@ -493,16 +487,23 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
-        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_OK)));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
+        WillOnce(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
+        WillOnce(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
+    RTPSParticipantAuthenticationInfo info;
+    info.status(AUTHORIZED_RTPSPARTICIPANT);
+    info.guid(participant_data.m_guid);
+    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+
     ASSERT_TRUE(manager_.discovered_participant(&participant_data));
 }
 
@@ -510,13 +511,14 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
-        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
+        WillOnce(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
+        WillOnce(Return(ValidationResult_t::VALIDATION_OK));
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
@@ -527,15 +529,17 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
-    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_,_,_,_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
+    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_, Ref(local_identity_handle_),
+                Ref(remote_identity_handle),_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_FAILED));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
-        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
+        WillOnce(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
+        WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
     ParticipantProxyData participant_data;
@@ -552,22 +556,35 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
     MockHandshakeHandle handshake_handle;
-    MockHandshakeHandle* p_handshake_handle = &handshake_handle;
+    MockSharedSecretHandle shared_secret_handle;
+    MockParticipantCryptoHandle participant_crypto_handle;
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
-    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_handshake_handle), 
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
+    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_, Ref(local_identity_handle_),
+                Ref(remote_identity_handle),_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&handshake_handle), 
                     Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
     EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
+    EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle),_)).Times(1).
+        WillOnce(Return(&shared_secret_handle));
+    EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(&shared_secret_handle,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_matched_remote_participant(Ref(local_participant_crypto_handle_),
+                Ref(remote_identity_handle),_,Ref(shared_secret_handle),_)).Times(1).
+        WillOnce(Return(&participant_crypto_handle));
+    EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
+                Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle),_)).Times(1).
+           WillOnce(Return(true)); 
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
@@ -583,55 +600,55 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
     MockHandshakeHandle handshake_handle;
-    MockHandshakeHandle* p_handshake_handle = &handshake_handle;
-    HandshakeMessageToken* p_handshake_message = new HandshakeMessageToken();
+    HandshakeMessageToken handshake_message;
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
-    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_handshake_handle), 
-                    SetArgPointee<1>(p_handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
+    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_, Ref(local_identity_handle_),
+                Ref(remote_identity_handle),_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&handshake_handle), 
+                    SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
     EXPECT_CALL(*stateless_writer_, new_change(_,_,_)).Times(1).
         WillOnce(Return(nullptr));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
     ASSERT_FALSE(manager_.discovered_participant(&participant_data));
-
-    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_identity_add_change_fail)
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
     MockHandshakeHandle handshake_handle;
-    MockHandshakeHandle* p_handshake_handle = &handshake_handle;
-    HandshakeMessageToken* p_handshake_message = new HandshakeMessageToken();
+    HandshakeMessageToken handshake_message;
     CacheChange_t* change = new CacheChange_t(200);
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
-    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_handshake_handle), 
-                    SetArgPointee<1>(p_handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
+    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_, Ref(local_identity_handle_),
+                Ref(remote_identity_handle),_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&handshake_handle), 
+                    SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
     EXPECT_CALL(*stateless_writer_, new_change(_,_,_)).Times(1).
         WillOnce(Return(change));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change)).Times(1).
         WillOnce(Return(false));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
@@ -640,14 +657,15 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
     ASSERT_FALSE(manager_.discovered_participant(&participant_data));
 
     delete change;
-    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_identity_pending_handshake_request_pending_message)
 {
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
 
     request_process_ok();
@@ -655,9 +673,11 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_identity_pending_handshake_request_pending_message_resent)
 {
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
 
     CacheChange_t* request_message_change = nullptr;
@@ -677,28 +697,41 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
     MockHandshakeHandle handshake_handle;
-    MockHandshakeHandle* p_handshake_handle = &handshake_handle;
-    HandshakeMessageToken* p_handshake_message = new HandshakeMessageToken();
+    HandshakeMessageToken handshake_message;
     CacheChange_t* change = new CacheChange_t(200);
+    MockSharedSecretHandle shared_secret_handle;
+    MockParticipantCryptoHandle participant_crypto_handle;
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
-    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_handshake_handle), 
-                    SetArgPointee<1>(p_handshake_message), Return(ValidationResult_t::VALIDATION_OK_WITH_FINAL_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
+    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_, Ref(local_identity_handle_),
+                Ref(remote_identity_handle),_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&handshake_handle), 
+                    SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_OK_WITH_FINAL_MESSAGE)));
     EXPECT_CALL(*stateless_writer_, new_change(_,_,_)).Times(1).
         WillOnce(Return(change));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
     EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
+    EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle),_)).Times(1).
+        WillOnce(Return(&shared_secret_handle));
+    EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(&shared_secret_handle,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_matched_remote_participant(Ref(local_participant_crypto_handle_),
+                Ref(remote_identity_handle),_,Ref(shared_secret_handle),_)).Times(1).
+        WillOnce(Return(&participant_crypto_handle));
+    EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
+                Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle),_)).Times(1).
+           WillOnce(Return(true)); 
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
@@ -710,32 +743,32 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
     ASSERT_TRUE(manager_.discovered_participant(&participant_data));
 
     delete change;
-    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_ok)
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
     MockHandshakeHandle handshake_handle;
-    MockHandshakeHandle* p_handshake_handle = &handshake_handle;
-    HandshakeMessageToken* p_handshake_message = new HandshakeMessageToken();
+    HandshakeMessageToken handshake_message;
     CacheChange_t* change = new CacheChange_t(200);
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
-    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_handshake_handle), 
-                    SetArgPointee<1>(p_handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
+    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_, Ref(local_identity_handle_),
+                Ref(remote_identity_handle),_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&handshake_handle), 
+                    SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
     EXPECT_CALL(*stateless_writer_, new_change(_,_,_)).Times(1).
         WillOnce(Return(change));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
@@ -744,21 +777,18 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_ok)
     ASSERT_TRUE(manager_.discovered_participant(&participant_data));
 
     delete change;
-    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_validate_remote_fail_and_then_ok)
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
     MockHandshakeHandle handshake_handle;
-    MockHandshakeHandle* p_handshake_handle = &handshake_handle;
-    HandshakeMessageToken* p_handshake_message = new HandshakeMessageToken();
+    HandshakeMessageToken handshake_message;
     CacheChange_t* change = new CacheChange_t(200);
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_FAILED));
 
     ParticipantProxyData participant_data;
@@ -770,41 +800,42 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validate_remote_fail_a
 
     ASSERT_FALSE(manager_.discovered_participant(&participant_data));
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
-    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_handshake_handle), 
-                    SetArgPointee<1>(p_handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
+    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_, Ref(local_identity_handle_),
+                Ref(remote_identity_handle),_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&handshake_handle), 
+                    SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
     EXPECT_CALL(*stateless_writer_, new_change(_,_,_)).Times(1).
         WillOnce(Return(change));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
     ASSERT_TRUE(manager_.discovered_participant(&participant_data));
 
     delete change;
-    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_begin_handshake_request_fail_and_then_ok)
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
     MockHandshakeHandle handshake_handle;
-    MockHandshakeHandle* p_handshake_handle = &handshake_handle;
-    HandshakeMessageToken* p_handshake_message = new HandshakeMessageToken();
+    HandshakeMessageToken handshake_message;
     CacheChange_t* change = new CacheChange_t(200);
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
-    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_,_,_,_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
+    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_, Ref(local_identity_handle_),
+                Ref(remote_identity_handle),_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_FAILED));
 
     ParticipantProxyData participant_data;
@@ -817,24 +848,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_begin_handshake_reques
 
     ASSERT_FALSE(manager_.discovered_participant(&participant_data));
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(0);
-    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_handshake_handle), 
-                    SetArgPointee<1>(p_handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(0);
+    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_, Ref(local_identity_handle_),
+                Ref(remote_identity_handle),_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&handshake_handle), 
+                    SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
     EXPECT_CALL(*stateless_writer_, new_change(_,_,_)).Times(1).
         WillOnce(Return(change));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
     ASSERT_TRUE(manager_.discovered_participant(&participant_data));
 
     delete change;
-    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_not_remote_participant_key)
@@ -852,7 +885,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_not_re
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
@@ -864,11 +897,10 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_bad_me
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
@@ -884,7 +916,9 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_bad_me
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
@@ -896,14 +930,20 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_not_ex
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_OK)));
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_OK)));
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
+
+    RTPSParticipantAuthenticationInfo info;
+    info.status(AUTHORIZED_RTPSPARTICIPANT);
+    info.guid(participant_data.m_guid);
+    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+
     ASSERT_TRUE(manager_.discovered_participant(&participant_data));
 
     ParticipantGenericMessage message;
@@ -921,7 +961,9 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_not_ex
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
@@ -933,11 +975,10 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_b
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
@@ -958,9 +999,12 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_b
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
-    EXPECT_CALL(*auth_plugin_, begin_handshake_reply_rvr(_,_,_,_,_,_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, begin_handshake_reply_rvr(_,_,_, Ref(remote_identity_handle),
+                Ref(local_identity_handle_),_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_FAILED));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
@@ -977,11 +1021,10 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_beg
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
@@ -1003,19 +1046,33 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_beg
     change->serializedPayload.length = aux_msg.length;
 
     MockHandshakeHandle handshake_handle;
-    MockHandshakeHandle* p_handshake_handle = &handshake_handle;
+    MockSharedSecretHandle shared_secret_handle;
+    MockParticipantCryptoHandle participant_crypto_handle;
 
-    EXPECT_CALL(*auth_plugin_, begin_handshake_reply_rvr(_,_,_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_handshake_handle), 
+    EXPECT_CALL(*auth_plugin_, begin_handshake_reply_rvr(_,_,_, Ref(remote_identity_handle),
+                Ref(local_identity_handle_),_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&handshake_handle), 
                     Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
     EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
     EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
+    EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle),_)).Times(1).
+        WillOnce(Return(&shared_secret_handle));
+    EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(&shared_secret_handle,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_matched_remote_participant(Ref(local_participant_crypto_handle_),
+                Ref(remote_identity_handle),_,Ref(shared_secret_handle),_)).Times(1).
+        WillOnce(Return(&participant_crypto_handle));
+    EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
+                Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle),_)).Times(1).
+           WillOnce(Return(true)); 
 
     RTPSParticipantAuthenticationInfo info;
     info.status(AUTHORIZED_RTPSPARTICIPANT);
@@ -1029,11 +1086,10 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_new_ch
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
@@ -1055,36 +1111,35 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_new_ch
     change->serializedPayload.length = aux_msg.length;
 
     MockHandshakeHandle handshake_handle;
-    MockHandshakeHandle* p_handshake_handle = &handshake_handle;
-    HandshakeMessageToken* p_handshake_message = new HandshakeMessageToken();
+    HandshakeMessageToken handshake_message;
 
-    EXPECT_CALL(*auth_plugin_, begin_handshake_reply_rvr(_,_,_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_handshake_handle), 
-                    SetArgPointee<1>(p_handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, begin_handshake_reply_rvr(_,_,_, Ref(remote_identity_handle),
+                Ref(local_identity_handle_),_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&handshake_handle), 
+                    SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_writer_, new_change(_,_,_)).Times(1).
         WillOnce(Return(nullptr));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
     EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
-
-    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_add_change_fail)
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
@@ -1106,20 +1161,22 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_add_ch
     change->serializedPayload.length = aux_msg.length;
 
     MockHandshakeHandle handshake_handle;
-    MockHandshakeHandle* p_handshake_handle = &handshake_handle;
-    HandshakeMessageToken* p_handshake_message = new HandshakeMessageToken();
+    HandshakeMessageToken handshake_message;
     CacheChange_t* change2 = new CacheChange_t(200);
 
-    EXPECT_CALL(*auth_plugin_, begin_handshake_reply_rvr(_,_,_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_handshake_handle), 
-                    SetArgPointee<1>(p_handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, begin_handshake_reply_rvr(_,_,_, Ref(remote_identity_handle),
+                Ref(local_identity_handle_),_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&handshake_handle), 
+                    SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_writer_, new_change(_,_,_)).Times(1).
         WillOnce(Return(change2));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change2)).Times(1).
         WillOnce(Return(false));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
@@ -1128,14 +1185,15 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_add_ch
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
     delete change2;
-    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_pending_handshake_reply_pending_message)
 {
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
 
     reply_process_ok();
@@ -1143,9 +1201,11 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_pendin
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_pending_handshake_reply_pending_message_resent)
 {
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
 
     CacheChange_t* reply_message_change = nullptr;
@@ -1165,11 +1225,10 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_pendin
 {
     initialization_ok();
 
-    MockIdentityHandle identity_handle;
-    MockIdentityHandle* p_identity_handle = &identity_handle;
+    MockIdentityHandle remote_identity_handle;
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
@@ -1191,25 +1250,39 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_pendin
     change->serializedPayload.length = aux_msg.length;
 
     MockHandshakeHandle handshake_handle;
-    MockHandshakeHandle* p_handshake_handle = &handshake_handle;
-    HandshakeMessageToken* p_handshake_message = new HandshakeMessageToken();
+    HandshakeMessageToken handshake_message;
     CacheChange_t* change2 = new CacheChange_t(200);
+    MockSharedSecretHandle shared_secret_handle;
+    MockParticipantCryptoHandle participant_crypto_handle;
 
-    EXPECT_CALL(*auth_plugin_, begin_handshake_reply_rvr(_,_,_,_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_handshake_handle), 
-                    SetArgPointee<1>(p_handshake_message), Return(ValidationResult_t::VALIDATION_OK_WITH_FINAL_MESSAGE)));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, begin_handshake_reply_rvr(_,_,_, Ref(remote_identity_handle),
+                Ref(local_identity_handle_),_,_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&handshake_handle), 
+                    SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_OK_WITH_FINAL_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_writer_, new_change(_,_,_)).Times(1).
         WillOnce(Return(change2));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change2)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
     EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
     EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
+    EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle),_)).Times(1).
+        WillOnce(Return(&shared_secret_handle));
+    EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(&shared_secret_handle,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_matched_remote_participant(Ref(local_participant_crypto_handle_),
+                Ref(remote_identity_handle),_,Ref(shared_secret_handle),_)).Times(1).
+        WillOnce(Return(&participant_crypto_handle));
+    EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
+                Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle),_)).Times(1).
+           WillOnce(Return(true)); 
 
     RTPSParticipantAuthenticationInfo info;
     info.status(AUTHORIZED_RTPSPARTICIPANT);
@@ -1219,7 +1292,6 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_pendin
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
     delete change2;
-    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_process_handshake_reply)
@@ -1246,11 +1318,13 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_p
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
-    EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_,_,_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_,_, Ref(handshake_handle_),_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_FAILED));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
@@ -1289,15 +1363,30 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_pro
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
-    EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_,_,_,_)).Times(1).
+    MockSharedSecretHandle shared_secret_handle;
+    MockParticipantCryptoHandle participant_crypto_handle;
+
+    EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_,_, Ref(handshake_handle_),_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
     EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
+    EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle_),_)).Times(1).
+        WillOnce(Return(&shared_secret_handle));
+    EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(&shared_secret_handle,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_matched_remote_participant(Ref(local_participant_crypto_handle_),
+                Ref(remote_identity_handle_),_,Ref(shared_secret_handle),_)).Times(1).
+        WillOnce(Return(&participant_crypto_handle));
+    EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
+                Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle),_)).Times(1).
+           WillOnce(Return(true)); 
 
     RTPSParticipantAuthenticationInfo info;
     info.status(AUTHORIZED_RTPSPARTICIPANT);
@@ -1334,22 +1423,22 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
-    HandshakeMessageToken* p_handshake_message = new HandshakeMessageToken();
+    HandshakeMessageToken handshake_message;
 
-    EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_,_, Ref(handshake_handle_),_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_writer_, new_change(_,_,_)).Times(1).
         WillOnce(Return(nullptr));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
-
-    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_process_handshake_reply_add_change_fail)
@@ -1379,18 +1468,20 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
-    HandshakeMessageToken* p_handshake_message = new HandshakeMessageToken();
+    HandshakeMessageToken handshake_message;
     CacheChange_t* change2 = new CacheChange_t(200);
 
-    EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_,_,_,_)).Times(1).
-        WillOnce(DoAll(SetArgPointee<0>(p_handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_,_, Ref(handshake_handle_),_)).Times(1).
+        WillOnce(DoAll(SetArgPointee<0>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_writer_, new_change(_,_,_)).Times(1).
         WillOnce(Return(change2));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change2)).Times(1).
         WillOnce(Return(false));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
@@ -1398,14 +1489,15 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
     delete change2;
-    delete p_handshake_message;
 }
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_process_handshake_reply_ok_with_final_message)
 {
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
 
     final_message_process_ok();
@@ -1413,9 +1505,11 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_process_handshake_reply_ok_with_final_message_resent)
 {
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
 
     CacheChange_t* final_message_change = nullptr;
@@ -1478,9 +1572,11 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_bad_re
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
@@ -1512,9 +1608,11 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_bad_re
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
@@ -1546,11 +1644,13 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_p
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
-    EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_,_,_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_,_, Ref(handshake_handle_),_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_FAILED));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
@@ -1589,15 +1689,30 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_pro
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
-    EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_,_,_,_)).Times(1).
+    MockSharedSecretHandle shared_secret_handle;
+    MockParticipantCryptoHandle participant_crypto_handle;
+
+    EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_,_, Ref(handshake_handle_),_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(_,_)).Times(2).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
-    EXPECT_CALL(*auth_plugin_, return_handshake_handle(_,_)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_OK));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
     EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
+    EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle_),_)).Times(1).
+        WillOnce(Return(&shared_secret_handle));
+    EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(&shared_secret_handle,_)).Times(1).
+        WillRepeatedly(Return(ValidationResult_t::VALIDATION_OK));
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_matched_remote_participant(Ref(local_participant_crypto_handle_),
+                Ref(remote_identity_handle_),_,Ref(shared_secret_handle),_)).Times(1).
+        WillOnce(Return(&participant_crypto_handle));
+    EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
+                Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle),_)).Times(1).
+           WillOnce(Return(true)); 
 
     RTPSParticipantAuthenticationInfo info;
     info.status(AUTHORIZED_RTPSPARTICIPANT);

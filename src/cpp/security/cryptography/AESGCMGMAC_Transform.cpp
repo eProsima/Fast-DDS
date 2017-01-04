@@ -125,7 +125,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
                 std::vector<uint8_t> &encoded_rtps_submessage,
                 const std::vector<uint8_t> &plain_rtps_submessage,
                 DatawriterCryptoHandle &sending_datawriter_crypto,
-                std::vector<DatareaderCryptoHandle*> receiving_datareader_crypto_list,
+                std::vector<DatareaderCryptoHandle*>& receiving_datareader_crypto_list,
                 SecurityException &exception){
 
     AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_crypto);

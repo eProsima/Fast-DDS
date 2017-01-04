@@ -15,8 +15,8 @@
 /*!
  * @file MockCryptoKeyFactory.h
  */
-#ifndef _RTPS_SECURITY_MOCKCRYPTOGRAPHY_H_
-#define _RTPS_SECURITY_MOCKCRYPTOGRAPHY_H_
+#ifndef _RTPS_SECURITY_MOCKCRYPTOKEYFACTORY_H_
+#define _RTPS_SECURITY_MOCKCRYPTOKEYFACTORY_H_
 
 #include <fastrtps/rtps/security/cryptography/CryptoKeyFactory.h>
 #include <fastrtps/rtps/security/cryptography/CryptoTypes.h>
@@ -89,4 +89,4 @@ class MockCryptoKeyFactory : public CryptoKeyFactory
 } //namespace fastrtps
 } //namespace eprosima
 
-#endif // _RTPS_SECURITY_MOCKCRYPTOGRAPHY_H_
+#endif // _RTPS_SECURITY_MOCKCRYPTOKEYFACTORY_H_

@@ -32,7 +32,6 @@
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
-#include "timedevent/HandshakeMessageTokenResent.h"
 
 #include <cassert>
 #include <thread>
@@ -193,26 +192,8 @@ void SecurityManager::destroy()
 
         for(auto& dp_it : discovered_participants_)
         {
-            if(!dp_it.second.is_shared_secret_handle_null())
-            {
-                SharedSecretHandle* handle = dp_it.second.get_shared_secret();
-                authentication_plugin_->return_sharedsecret_handle(handle, exception);
-            }
-
-            if(!dp_it.second.is_handshake_handle_null())
-            {
-                HandshakeHandle* handle = dp_it.second.get_handshake_handle();
-                authentication_plugin_->return_handshake_handle(handle, exception);
-            }
-
-            if(!dp_it.second.is_identity_handle_null())
-            {
-                IdentityHandle* handle = dp_it.second.get_identity_handle();
-                authentication_plugin_->return_identity_handle(handle, exception);
-            }
-
-            if(dp_it.second.get_event() != nullptr)
-                delete dp_it.second.get_event();
+            auto auth_ptr = dp_it.second.get_auth();
+            remove_discovered_participant_info(auth_ptr);
         }
 
         discovered_participants_.clear();
@@ -237,60 +218,61 @@ void SecurityManager::destroy()
             crypto_plugin_ = nullptr;
         }
 
-        delete authentication_plugin_;
-        authentication_plugin_ = nullptr;
-    }
-}
-
-void SecurityManager::remove_discovered_participant_info(const GUID_t remote_participant_key)
-{
-    std::unique_lock<std::mutex> lock(mutex_);
-    auto dp_it = discovered_participants_.find(remote_participant_key);
-
-    if(dp_it != discovered_participants_.end())
-    {
-        IdentityHandle* identity_handle = dp_it->second.get_identity_handle();
-
-        if(identity_handle != nullptr)
+        if(authentication_plugin_ != nullptr)
         {
-            SecurityException exception;
-            authentication_plugin_->return_identity_handle(identity_handle, exception);
+            delete authentication_plugin_;
+            authentication_plugin_ = nullptr;
         }
-
-        discovered_participants_.erase(dp_it);
     }
 }
 
-void SecurityManager::restore_remote_identity_handle(const GUID_t& remote_participant_key,
-        IdentityHandle* remote_identity_handle,
-        HandshakeHandle* handshake_handle,
-        const SequenceNumber_t& sequence_number,
-        HandshakeMessageTokenResent* event)
+void SecurityManager::remove_discovered_participant_info(DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr)
 {
     SecurityException exception;
 
+    if(auth_ptr)
+    {
+        if(auth_ptr->shared_secret_handle_ != nullptr)
+        {
+            authentication_plugin_->return_sharedsecret_handle(auth_ptr->shared_secret_handle_, exception);
+            auth_ptr->shared_secret_handle_ = nullptr;
+        }
+
+        if(auth_ptr->event_ != nullptr)
+        {
+            delete auth_ptr->event_;
+            auth_ptr->event_ = nullptr;
+        }
+
+        if(auth_ptr->handshake_handle_ != nullptr)
+        {
+            authentication_plugin_->return_handshake_handle(auth_ptr->handshake_handle_, exception);
+            auth_ptr->handshake_handle_ = nullptr;
+        }
+
+        authentication_plugin_->return_identity_handle(auth_ptr->identity_handle_, exception);
+        auth_ptr->identity_handle_ = nullptr;
+    }
+}
+
+bool SecurityManager::restore_discovered_participant_info(const GUID_t& remote_participant_key,
+        DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr)
+{
+    SecurityException exception;
+    bool returned_value = false;
+
     std::unique_lock<std::mutex> lock(mutex_);
     auto dp_it = discovered_participants_.find(remote_participant_key);
 
     if(dp_it != discovered_participants_.end())
     {
-        assert(dp_it->second.is_identity_handle_null());
-        dp_it->second.set_identity_handle(remote_identity_handle);
-        assert(dp_it->second.is_handshake_handle_null());
-        dp_it->second.set_handshake_handle(handshake_handle);
-
-        if(sequence_number != SequenceNumber_t())
-            dp_it->second.get_change_sequence_number() = sequence_number;
-
-        dp_it->second.get_event() = event;
+        dp_it->second.set_auth(auth_ptr);
+        returned_value = true;
     }
     else
-    {
-        authentication_plugin_->return_identity_handle(remote_identity_handle, exception);
+        remove_discovered_participant_info(auth_ptr);
 
-        if(handshake_handle)
-            authentication_plugin_->return_handshake_handle(handshake_handle, exception);
-    }
+    return returned_value;
 }
 
 bool SecurityManager::discovered_participant(ParticipantProxyData* participant_data)
@@ -303,20 +285,21 @@ bool SecurityManager::discovered_participant(ParticipantProxyData* participant_d
 
     assert(participant_data);
 
-    IdentityHandle* remote_identity_handle = nullptr;
     SecurityException exception;
     AuthenticationStatus auth_status = AUTHENTICATION_INIT;
 
-    // Find information
+    // Create or find information
     mutex_.lock();
-    auto dp_it = discovered_participants_.find(participant_data->m_guid);
+    auto map_ret = discovered_participants_.emplace(std::piecewise_construct, std::forward_as_tuple(participant_data->m_guid),
+            std::forward_as_tuple(participant_data, auth_status));
+    DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = map_ret.first->second.get_auth();
+    mutex_.unlock();
 
-    if(dp_it == discovered_participants_.end())
+    if(map_ret.second)
     {
-        discovered_participants_.emplace(std::piecewise_construct, std::forward_as_tuple(participant_data->m_guid),
-                std::forward_as_tuple(participant_data, auth_status));
+        assert(remote_participant_info);
 
-        mutex_.unlock();
+        IdentityHandle* remote_identity_handle = nullptr;
 
         // Validate remote participant.
         ValidationResult_t validation_ret = authentication_plugin_->validate_remote_identity(&remote_identity_handle,
@@ -345,7 +328,10 @@ bool SecurityManager::discovered_participant(ParticipantProxyData* participant_d
                     logError(SECURITY_AUTHENTICATION, exception.what());
                 }
 
-                remove_discovered_participant_info(participant_data->m_guid);
+                // Remove created element, because authentication failed.
+                mutex_.lock();
+                discovered_participants_.erase(participant_data->m_guid);
+                mutex_.unlock();
 
                 // Inform user about authenticated remote participant.
                 if(participant_->getListener() != nullptr)
@@ -363,120 +349,92 @@ bool SecurityManager::discovered_participant(ParticipantProxyData* participant_d
         // Match entities
         match_builtin_endpoints(participant_data);
 
-        // Store remote handle.
-        mutex_.lock();
-        dp_it = discovered_participants_.find(participant_data->m_guid);
-        if(dp_it != discovered_participants_.end())
-        {
-            dp_it->second.set_auth_status(auth_status);
-            bool ret = dp_it->second.set_identity_handle(remote_identity_handle);
-            (void)ret; assert(ret);
-            remote_identity_handle = nullptr;
+        // Store new remote handle.
+        remote_participant_info->auth_status_ = auth_status;
+        remote_participant_info->identity_handle_ = remote_identity_handle;
 
-            if(auth_status == AUTHENTICATION_OK)
+        // If authentication is successful, inform user about it.
+        if(auth_status == AUTHENTICATION_OK)
+        {
+            participant_->pdpsimple()->notifyAboveRemoteEndpoints(participant_data);
+
+            // Inform user about authenticated remote participant.
+            if(participant_->getListener() != nullptr)
             {
-                participant_->pdpsimple()->notifyAboveRemoteEndpoints(dp_it->second.get_participant_data());
-
-                // Inform user about authenticated remote participant.
-                if(participant_->getListener() != nullptr)
-                {
-                    RTPSParticipantAuthenticationInfo info;
-                    info.status(AUTHORIZED_RTPSPARTICIPANT);
-                    info.guid(participant_data->m_guid);
-                    participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
-                }
+                RTPSParticipantAuthenticationInfo info;
+                info.status(AUTHORIZED_RTPSPARTICIPANT);
+                info.guid(participant_data->m_guid);
+                participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
             }
-        }
-        else
-        {
-            mutex_.unlock();
-            authentication_plugin_->return_identity_handle(remote_identity_handle, exception); // TODO(Ricardo) Check error.
-            return false;
         }
     }
     else
     {
-        auth_status = dp_it->second.get_auth_status();
-
-        if(auth_status == AUTHENTICATION_INIT)
+        // If cannot retrieve the authentication info pointer then return, because
+        // it is used in other thread.
+        if(!remote_participant_info)
             return false;
     }
 
-    if(auth_status == AUTHENTICATION_REQUEST_NOT_SEND)
-    {
-        remote_identity_handle = dp_it->second.get_identity_handle();
-        assert(remote_identity_handle);
-    }
-    mutex_.unlock();
-
     bool returnedValue = true;
 
-    // Maybe send request.
-    if(remote_identity_handle != nullptr)
+    if(remote_participant_info->auth_status_ == AUTHENTICATION_REQUEST_NOT_SEND)
     {
-        returnedValue = on_process_handshake(participant_data->m_guid, AUTHENTICATION_REQUEST_NOT_SEND,
-                MessageIdentity(), HandshakeMessageToken(),
-                remote_identity_handle, nullptr, SequenceNumber_t::unknown(), nullptr);
+        // Maybe send request.
+        returnedValue = on_process_handshake(participant_data->m_guid, remote_participant_info,
+                participant_data, MessageIdentity(), HandshakeMessageToken());
     }
+
+    restore_discovered_participant_info(participant_data->m_guid, remote_participant_info);
 
     return returnedValue;
 }
 
 bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
-        AuthenticationStatus pre_auth_status,
+        DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
+        ParticipantProxyData* participant_data,
         MessageIdentity&& message_identity,
-        HandshakeMessageToken&& message_in,
-        IdentityHandle* remote_identity_handle,
-        HandshakeHandle* handshake_handle,
-        const SequenceNumber_t& previous_change,
-        HandshakeMessageTokenResent* previous_event)
+        HandshakeMessageToken&& message_in)
 {
-    assert(remote_identity_handle);
-
     HandshakeMessageToken* handshake_message = nullptr;
     SecurityException exception;
 
     ValidationResult_t ret = VALIDATION_FAILED;
 
-    if(pre_auth_status == AUTHENTICATION_REQUEST_NOT_SEND)
+    assert(remote_participant_info->identity_handle_ != nullptr);
+
+    if(remote_participant_info->auth_status_ == AUTHENTICATION_REQUEST_NOT_SEND)
     {
-        ret = authentication_plugin_->begin_handshake_request(&handshake_handle,
+        ret = authentication_plugin_->begin_handshake_request(&remote_participant_info->handshake_handle_,
                 &handshake_message,
                 *local_identity_handle_,
-                *remote_identity_handle,
+                *remote_participant_info->identity_handle_,
                 participant_->pdpsimple()->get_participant_proxy_data_serialized(BIGEND),
                 exception);
     }
-    else if(pre_auth_status == AUTHENTICATION_WAITING_REQUEST)
+    else if(remote_participant_info->auth_status_ == AUTHENTICATION_WAITING_REQUEST)
     {
-        assert(!handshake_handle);
-        ret = authentication_plugin_->begin_handshake_reply(&handshake_handle,
+        assert(!remote_participant_info->handshake_handle_);
+        ret = authentication_plugin_->begin_handshake_reply(&remote_participant_info->handshake_handle_,
                 &handshake_message,
                 std::move(message_in),
-                *remote_identity_handle,
+                *remote_participant_info->identity_handle_,
                 *local_identity_handle_,
                 participant_->pdpsimple()->get_participant_proxy_data_serialized(BIGEND),
                 exception);
     }
-    else if(pre_auth_status == AUTHENTICATION_WAITING_REPLY ||
-            pre_auth_status == AUTHENTICATION_WAITING_FINAL)
+    else if(remote_participant_info->auth_status_ == AUTHENTICATION_WAITING_REPLY ||
+            remote_participant_info->auth_status_ == AUTHENTICATION_WAITING_FINAL)
     {
-        assert(handshake_handle);
+        assert(remote_participant_info->handshake_handle_);
         ret = authentication_plugin_->process_handshake(&handshake_message,
                 std::move(message_in),
-                *handshake_handle, 
+                *remote_participant_info->handshake_handle_,
                 exception);
     }
 
     if(ret == VALIDATION_FAILED)
     {
-        if(strlen(exception.what()) > 0)
-        {
-            logError(SECURITY_AUTHENTICATION, exception.what());
-        }
-
-        restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
-
         // Inform user about authenticated remote participant.
         if(participant_->getListener() != nullptr)
         {
@@ -486,19 +444,30 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
             participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
         }
 
+        if(strlen(exception.what()) > 0)
+        {
+            logError(SECURITY_AUTHENTICATION, exception.what());
+        }
+
         return false;
     }
 
-    assert(handshake_handle);
+    assert(remote_participant_info->handshake_handle_ != nullptr);
 
     // Remove previous change
-    if(previous_event != nullptr)
-        delete previous_event;
-    if(previous_change != SequenceNumber_t::unknown())
-        participant_stateless_message_writer_history_->remove_change(previous_change);
+    if(remote_participant_info->event_ != nullptr)
+    {
+        delete remote_participant_info->event_;
+        remote_participant_info->event_ = nullptr;
+    }
+    if(remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
+    {
+        participant_stateless_message_writer_history_->remove_change(remote_participant_info->change_sequence_number_);
+        remote_participant_info->change_sequence_number_ = SequenceNumber_t::unknown();
+    }
+    int64_t expected_sequence_number = 0;
 
     bool handshake_message_send = true;
-    int64_t expected_sequence_number = 0;
     SequenceNumber_t sequence_number{SequenceNumber_t::unknown()};
 
     if(ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE ||
@@ -539,7 +508,7 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
                 {
                     handshake_message_send = true;
                     expected_sequence_number = message.message_identity().sequence_number();
-                    sequence_number = change->sequenceNumber;
+                    remote_participant_info->change_sequence_number_ = change->sequenceNumber;
                 }
                 else
                 {
@@ -559,93 +528,78 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
     }
 
     bool returnedValue = false;
+    AuthenticationStatus pre_auth_status = remote_participant_info->auth_status_;
 
     if(handshake_message_send)
     {
-        AuthenticationStatus auth_status = AUTHENTICATION_FAILED;
-
         switch(ret)
         {
             case VALIDATION_OK:
             case VALIDATION_OK_WITH_FINAL_MESSAGE:
             case VALIDATION_PENDING_HANDSHAKE_MESSAGE:
                 {
-                    auth_status = AUTHENTICATION_OK;
+                    remote_participant_info->auth_status_ = AUTHENTICATION_OK;
                     if(ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE)
                     {
                         if(pre_auth_status == AUTHENTICATION_REQUEST_NOT_SEND)
-                            auth_status = AUTHENTICATION_WAITING_REPLY;
+                            remote_participant_info->auth_status_ = AUTHENTICATION_WAITING_REPLY;
                         else if(pre_auth_status == AUTHENTICATION_WAITING_REQUEST)
-                            auth_status = AUTHENTICATION_WAITING_FINAL;
+                            remote_participant_info->auth_status_ = AUTHENTICATION_WAITING_FINAL;
                     }
 
-                    // Store status
-                    std::unique_lock<std::mutex> lock(mutex_);
-
-                    auto dp_it = discovered_participants_.find(remote_participant_key);
-
-                    if(dp_it != discovered_participants_.end())
+                    // if authentication was finished, starts encryption.
+                    if(remote_participant_info->auth_status_ == AUTHENTICATION_OK)
                     {
-                        if(auth_status == AUTHENTICATION_OK)
+                        assert(remote_participant_info->shared_secret_handle_ == nullptr);
+                        remote_participant_info->shared_secret_handle_ = authentication_plugin_->get_shared_secret(
+                                    *remote_participant_info->handshake_handle_, exception);
+                        participant_->pdpsimple()->notifyAboveRemoteEndpoints(participant_data);
+
+                        // Inform user about authenticated remote participant.
+                        if(participant_->getListener() != nullptr)
                         {
-                            assert(dp_it->second.is_shared_secret_handle_null());
-                            dp_it->second.set_shared_secret_handle(authentication_plugin_->get_shared_secret(
-                                    *handshake_handle, exception));
-                            participant_->pdpsimple()->notifyAboveRemoteEndpoints(dp_it->second.get_participant_data());
+                            RTPSParticipantAuthenticationInfo info;
+                            info.status(AUTHORIZED_RTPSPARTICIPANT);
+                            info.guid(remote_participant_key);
+                            participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
+                        }
+                        
+                        // Starts cryptography mechanism
+                        ParticipantCryptoHandle* participant_crypto_handle = register_and_match_crypto_endpoint(participant_data,
+                                    *remote_participant_info->identity_handle_,
+                                    *remote_participant_info->shared_secret_handle_);
 
-                            // Inform user about authenticated remote participant.
-                            if(participant_->getListener() != nullptr)
+                        // Store cryptograhy info
+                        if(participant_crypto_handle != nullptr && !participant_crypto_handle->nil())
+                        {
+                            mutex_.lock();
+                            auto dp_it = discovered_participants_.find(remote_participant_key);
+
+                            if(dp_it != discovered_participants_.end())
                             {
-                                RTPSParticipantAuthenticationInfo info;
-                                info.status(AUTHORIZED_RTPSPARTICIPANT);
-                                info.guid(remote_participant_key);
-                                participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
-                            }
-
-                            // Starts cryptography mechanism
-                            ParticipantCryptoHandle* remote_participant_crypto =
-                                register_and_match_crypto_endpoint(dp_it->second.get_participant_data(),
-                                        *remote_identity_handle,
-                                        *dp_it->second.get_shared_secret());
-
-                            if(remote_participant_crypto != nullptr && !remote_participant_crypto->nil())
-                            {
-                                dp_it->second.set_participant_crypto(remote_participant_crypto);
+                                dp_it->second.set_participant_crypto(participant_crypto_handle);
                             }
                             else
                             {
-                                logError(SECURITY, "Cannot register remote participant in crypto plugin ("
-                                        << remote_participant_key << ")");
+                                crypto_plugin_->cryptokeyfactory()->unregister_participant(participant_crypto_handle, exception);
                             }
-
+                            mutex_.unlock();
                         }
-
-                        assert(dp_it->second.get_auth_status() == pre_auth_status);
-                        dp_it->second.set_auth_status(auth_status);
-                        assert(dp_it->second.is_identity_handle_null());
-                        dp_it->second.set_identity_handle(remote_identity_handle);
-                        remote_identity_handle = nullptr;
-                        assert(dp_it->second.is_handshake_handle_null());
-                        dp_it->second.set_handshake_handle(handshake_handle);
-                        handshake_handle = nullptr;
-                        dp_it->second.get_change_sequence_number() = sequence_number;
-                        if(ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE)
+                        else
                         {
-                            assert(expected_sequence_number != 0);
-                            dp_it->second.set_expected_sequence_number(expected_sequence_number);
-                            dp_it->second.get_event() = new HandshakeMessageTokenResent(*this, remote_participant_key, 500); // TODO (Ricardo) Configurable
-                            dp_it->second.get_event()->restart_timer();
+                            logError(SECURITY, "Cannot register remote participant in crypto plugin ("
+                                    << remote_participant_key << ")");
                         }
+                    }
 
-                        returnedValue = true;
-                    }
-                    else
+                    if(ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE)
                     {
-                        authentication_plugin_->return_handshake_handle(handshake_handle, exception);
-                        handshake_handle = nullptr;
-                        authentication_plugin_->return_identity_handle(remote_identity_handle, exception);
-                        remote_identity_handle = nullptr;
+                        remote_participant_info->expected_sequence_number_ = expected_sequence_number;
+                        remote_participant_info->event_ = new HandshakeMessageTokenResent(*this, remote_participant_key, 500); // TODO (Ricardo) Configurable
+                        remote_participant_info->event_->restart_timer();
                     }
+
+                    returnedValue = true;
                 }
                 break;
             case VALIDATION_PENDING_RETRY:
@@ -654,15 +608,6 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
                 break;
         };
     }
-
-    if(handshake_handle != nullptr && (pre_auth_status == AUTHENTICATION_REQUEST_NOT_SEND ||
-                pre_auth_status == AUTHENTICATION_WAITING_REQUEST))
-    {
-        authentication_plugin_->return_handshake_handle(handshake_handle, exception);
-        handshake_handle = nullptr;
-    }
-    if(remote_identity_handle != nullptr)
-        restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle);
 
     return returnedValue;
 }
@@ -981,25 +926,17 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
         }
 
         const GUID_t remote_participant_key(message.message_identity().source_guid().guidPrefix, c_EntityId_RTPSParticipant);
-        AuthenticationStatus auth_status;
-        IdentityHandle* remote_identity_handle = nullptr;
-        HandshakeHandle* handshake_handle = nullptr;
-        int64_t expected_sequence_number = 0;
-        SequenceNumber_t previous_change{SequenceNumber_t::unknown()};
-        HandshakeMessageTokenResent* previous_event = nullptr;
+        DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info;
+        ParticipantProxyData* participant_data = nullptr;
 
         mutex_.lock();
         auto dp_it = discovered_participants_.find(remote_participant_key);
 
         if(dp_it != discovered_participants_.end())
         {
-            auth_status = dp_it->second.get_auth_status();
-            remote_identity_handle = dp_it->second.get_identity_handle();
-            handshake_handle = dp_it->second.get_handshake_handle();
-            expected_sequence_number = dp_it->second.get_expected_sequence_number();
-            previous_change = dp_it->second.get_change_sequence_number();
-            previous_event = dp_it->second.get_event();
-            dp_it->second.get_event() = nullptr;
+            remote_participant_info = dp_it->second.get_auth();
+            participant_data = dp_it->second.get_participant_data();
+            assert(participant_data != nullptr);
         }
         else
         {
@@ -1007,51 +944,52 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
         }
         mutex_.unlock();
 
-        if(remote_identity_handle != nullptr)
+        if(remote_participant_info)
         {
-            if(auth_status == AUTHENTICATION_WAITING_REQUEST)
+            if(remote_participant_info->auth_status_ == AUTHENTICATION_WAITING_REQUEST)
             {
-                assert(!handshake_handle);
+                assert(!remote_participant_info->handshake_handle_);
 
                 // Preconditions
                 if(message.related_message_identity().source_guid() != GUID_t::unknown())
                 {
                     logInfo(SECURITY, "Bad ParticipantGenericMessage. related_message_identity.source_guid is not GUID_t::unknown()");
-                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
+                    restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
                 }
                 if(message.message_data().size() != 1)
                 {
                     logInfo(SECURITY, "Bad ParticipantGenericMessage. message_data size is not 1");
-                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
+                    restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
                 }
             }
-            else if(auth_status == AUTHENTICATION_WAITING_REPLY ||
-                    auth_status == AUTHENTICATION_WAITING_FINAL)
+            else if(remote_participant_info->auth_status_ == AUTHENTICATION_WAITING_REPLY ||
+                    remote_participant_info->auth_status_ == AUTHENTICATION_WAITING_FINAL)
             {
-                assert(handshake_handle);
+                assert(remote_participant_info->handshake_handle_);
 
                 if(message.related_message_identity().source_guid() == GUID_t::unknown() &&
-                        auth_status == AUTHENTICATION_WAITING_FINAL)
+                        remote_participant_info->auth_status_ == AUTHENTICATION_WAITING_FINAL)
                 {
                     // Maybe the reply was missed. Resent.
-                    if(previous_change != SequenceNumber_t::unknown())
+                    if(remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
                     {
                         // Remove previous change and send a new one.
-                        SequenceNumber_t sequence_number{SequenceNumber_t::unknown()};
-                        CacheChange_t* p_change = participant_stateless_message_writer_history_->remove_change_and_reuse(previous_change);
+                        CacheChange_t* p_change = participant_stateless_message_writer_history_->remove_change_and_reuse(
+                                remote_participant_info->change_sequence_number_);
+                        remote_participant_info->change_sequence_number_ = SequenceNumber_t::unknown();
 
                         if(p_change != nullptr)
                         {
                             if(participant_stateless_message_writer_history_->add_change(p_change))
                             {
-                                sequence_number = p_change->sequenceNumber;
+                                remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;
                             }
                             //TODO (Ricardo) What to do if not added?
                         }
 
-                        restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, sequence_number, previous_event);
+                        restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                         return;
                     }
                 }
@@ -1060,73 +998,75 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
                 if(message.related_message_identity().source_guid() != participant_stateless_message_writer_->getGuid())
                 {
                     logInfo(SECURITY, "Bad ParticipantGenericMessage. related_message_identity.source_guid is not mine");
-                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
+                    restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
                 }
-                if(message.related_message_identity().sequence_number() != expected_sequence_number)
+                if(message.related_message_identity().sequence_number() != remote_participant_info->expected_sequence_number_)
                 {
                     logInfo(SECURITY, "Bad ParticipantGenericMessage. related_message_identity.sequence_number is not expected");
-                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
+                    restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
                 }
                 if(message.message_data().size() != 1)
                 {
                     logInfo(SECURITY, "Bad ParticipantGenericMessage. message_data size is not 1");
-                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
+                    restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
                 }
             }
-            else if(auth_status == AUTHENTICATION_OK)
+            else if(remote_participant_info->auth_status_ == AUTHENTICATION_OK)
             {
                 // Preconditions
                 if(message.related_message_identity().source_guid() != participant_stateless_message_writer_->getGuid())
                 {
                     logInfo(SECURITY, "Bad ParticipantGenericMessage. related_message_identity.source_guid is not mine");
-                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
+                    restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
                 }
-                if(message.related_message_identity().sequence_number() != expected_sequence_number)
+                if(message.related_message_identity().sequence_number() != remote_participant_info->expected_sequence_number_)
                 {
                     logInfo(SECURITY, "Bad ParticipantGenericMessage. related_message_identity.sequence_number is not expected");
-                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
+                    restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
                 }
                 if(message.message_data().size() != 1)
                 {
                     logInfo(SECURITY, "Bad ParticipantGenericMessage. message_data size is not 1");
-                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
+                    restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
                 }
 
                 // Maybe final message was missed. Resent.
-                if(previous_change != SequenceNumber_t::unknown())
+                if(remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
                 {
                     // Remove previous change and send a new one.
-                    SequenceNumber_t sequence_number{SequenceNumber_t::unknown()};
-                    CacheChange_t* p_change = participant_stateless_message_writer_history_->remove_change_and_reuse(previous_change);
+                    CacheChange_t* p_change = participant_stateless_message_writer_history_->remove_change_and_reuse(
+                            remote_participant_info->change_sequence_number_);
+                    remote_participant_info->change_sequence_number_ = SequenceNumber_t::unknown();
 
                     if(p_change != nullptr)
                     {
                         if(participant_stateless_message_writer_history_->add_change(p_change))
                         {
-                            sequence_number = p_change->sequenceNumber;
+                            remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;
                         }
                         //TODO (Ricardo) What to do if not added?
                     }
 
-                    restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, sequence_number, previous_event);
+                    restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
                 }
             }
             else
             {
-                restore_remote_identity_handle(remote_participant_key, remote_identity_handle, handshake_handle, previous_change, previous_event);
+                restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                 return;
             }
 
-            on_process_handshake(remote_participant_key, auth_status, std::move(message.message_identity()),
-                    std::move(message.message_data().at(0)), remote_identity_handle,
-                    handshake_handle, previous_change, previous_event);
+            on_process_handshake(remote_participant_key, remote_participant_info, participant_data,
+                    std::move(message.message_identity()), std::move(message.message_data().at(0)));
+
+            restore_discovered_participant_info(remote_participant_key, remote_participant_info);
         }
     }
     else

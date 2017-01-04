@@ -24,10 +24,12 @@
 #include <fastrtps/rtps/security/common/ParticipantGenericMessage.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/common/SequenceNumber.h>
+#include "timedevent/HandshakeMessageTokenResent.h"
 
 #include <map>
 #include <mutex>
 #include <atomic>
+#include <memory>
 
 namespace eprosima {
 namespace fastrtps {
@@ -45,7 +47,6 @@ class ParticipantProxyData;
 namespace security {
 
 class Authentication;
-class HandshakeMessageTokenResent;
 class Cryptography;
 
 class SecurityManager
@@ -93,104 +94,78 @@ class SecurityManager
 
         class DiscoveredParticipantInfo
         {
+            struct AuthenticationInfo
+            {
+                public:
+
+                    AuthenticationInfo(AuthenticationStatus auth_status) :
+                        identity_handle_(nullptr), handshake_handle_(nullptr),
+                        auth_status_(auth_status), expected_sequence_number_(0), 
+                        change_sequence_number_(SequenceNumber_t::unknown()),
+                        event_(nullptr), shared_secret_handle_(nullptr) {}
+
+                    AuthenticationInfo(const AuthenticationInfo& auth) :
+                        identity_handle_(auth.identity_handle_),
+                        handshake_handle_(auth.handshake_handle_), 
+                        auth_status_(auth.auth_status_),
+                        expected_sequence_number_(auth.expected_sequence_number_), 
+                        change_sequence_number_(auth.change_sequence_number_),
+                        event_(auth.event_), shared_secret_handle_(auth.shared_secret_handle_) {}
+
+                    AuthenticationInfo(AuthenticationInfo&& auth) :
+                        identity_handle_(std::move(auth.identity_handle_)),
+                        handshake_handle_(std::move(auth.handshake_handle_)), 
+                        auth_status_(auth.auth_status_),
+                        expected_sequence_number_(auth.expected_sequence_number_), 
+                        change_sequence_number_(std::move(auth.change_sequence_number_)),
+                        event_(std::move(auth.event_)), shared_secret_handle_(std::move(auth.shared_secret_handle_)) {}
+
+                    IdentityHandle* identity_handle_;
+
+                    HandshakeHandle* handshake_handle_;
+
+                    AuthenticationStatus auth_status_;
+
+                    int64_t expected_sequence_number_;
+
+                    SequenceNumber_t change_sequence_number_;
+
+                    HandshakeMessageTokenResent* event_;
+
+                    SharedSecretHandle* shared_secret_handle_;
+            };
+
+            struct EmptyDelete
+            {
+                void operator()(AuthenticationInfo*) {};
+            };
+
             public:
 
+                typedef std::unique_ptr<AuthenticationInfo, EmptyDelete> AuthUniquePtr;
+
                 DiscoveredParticipantInfo(ParticipantProxyData* participant_data, AuthenticationStatus auth_status) :
-                    identity_handle_(nullptr), handshake_handle_(nullptr), shared_secret_handle_(nullptr),
-                    auth_status_(auth_status), expected_sequence_number_(0), participant_data_(participant_data),
-                    change_sequence_number_(SequenceNumber_t::unknown()), event_(nullptr),
-                    participant_crypto_(nullptr)
-                {}
+                    auth_(auth_status), auth_ptr_(&auth_),
+                    participant_data_(participant_data),
+                    participant_crypto_(nullptr) {}
 
-                bool is_identity_handle_null()
+                DiscoveredParticipantInfo(DiscoveredParticipantInfo&& info) :
+                    auth_(std::move(info.auth_)),  auth_ptr_(&auth_),
+                    participant_data_(info.participant_data_),
+                    participant_crypto_(info.participant_crypto_) {}
+
+                AuthUniquePtr get_auth() { return std::move(auth_ptr_); }
+
+                void set_auth(AuthUniquePtr& auth)
                 {
-                    return identity_handle_ == nullptr;
-                }
-
-                bool set_identity_handle(IdentityHandle* identity_handle)
-                {
-                    if(identity_handle_ == nullptr)
-                    {
-                        identity_handle_ = identity_handle;
-                        return true;
-                    }
-
-                    return false;
-                }
-
-                IdentityHandle* get_identity_handle()
-                {
-                    IdentityHandle* handle = identity_handle_;
-                    identity_handle_ = nullptr;
-                    return handle;
-                }
-
-                bool is_handshake_handle_null()
-                {
-                    return handshake_handle_ == nullptr;
-                }
-
-                bool set_handshake_handle(HandshakeHandle* handshake_handle)
-                {
-                    if(handshake_handle_ == nullptr)
-                    {
-                        handshake_handle_ = handshake_handle;
-                        return true;
-                    }
-
-                    return false;
-                }
-
-                HandshakeHandle* get_handshake_handle()
-                {
-                    HandshakeHandle* handle = handshake_handle_;
-                    handshake_handle_ = nullptr;
-                    return handle;
-                }
-
-                bool is_shared_secret_handle_null()
-                {
-                    return shared_secret_handle_ == nullptr;
-                }
-
-                void set_shared_secret_handle(SharedSecretHandle* shared_secret_handle)
-                {
-                    shared_secret_handle_ = shared_secret_handle;
-                }
-
-                SharedSecretHandle* get_shared_secret()
-                {
-                    return shared_secret_handle_;
-                }
-
-                AuthenticationStatus get_auth_status()
-                {
-                    return auth_status_;
-                }
-
-                void set_auth_status(AuthenticationStatus auth_status)
-                {
-                    auth_status_ = auth_status;
-                }
-
-                void set_expected_sequence_number(int64_t sequence_number)
-                {
-                    expected_sequence_number_ = sequence_number;
-                }
-
-                int64_t get_expected_sequence_number()
-                {
-                    return expected_sequence_number_;
+                    assert(auth.get() == &auth_);
+                    auth_ptr_ = std::move(auth); 
                 }
 
                 ParticipantProxyData* get_participant_data()
                 {
                     return participant_data_;
                 }
-
-                SequenceNumber_t& get_change_sequence_number() { return change_sequence_number_; }
-
-                HandshakeMessageTokenResent*& get_event() { return event_; }
 
                 void set_participant_crypto(ParticipantCryptoHandle* participant_crypto)
                 {
@@ -206,21 +181,11 @@ class SecurityManager
 
                 DiscoveredParticipantInfo(const DiscoveredParticipantInfo& info) = delete;
 
-                IdentityHandle* identity_handle_;
+                AuthenticationInfo auth_;
 
-                HandshakeHandle* handshake_handle_;
-
-                SharedSecretHandle* shared_secret_handle_;
-
-                AuthenticationStatus auth_status_;
-
-                int64_t expected_sequence_number_;
+                AuthUniquePtr auth_ptr_;
 
                 ParticipantProxyData* participant_data_;
-
-                SequenceNumber_t change_sequence_number_;
-
-                HandshakeMessageTokenResent* event_;
 
                 ParticipantCryptoHandle* participant_crypto_;
 
@@ -258,12 +223,9 @@ class SecurityManager
                 SecurityManager &manager_;
         } participant_volatile_message_secure_listener_;
 
-        void remove_discovered_participant_info(const GUID_t remote_participant_key);
-        void restore_remote_identity_handle(const GUID_t& remote_participant_key,
-                IdentityHandle* remote_identity_handle,
-                HandshakeHandle* handshake_handle = nullptr,
-                const SequenceNumber_t& sequence_number = SequenceNumber_t(),
-                HandshakeMessageTokenResent* event = nullptr);
+        void remove_discovered_participant_info(DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr);
+        bool restore_discovered_participant_info(const GUID_t& remote_participant_key,
+                DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr);
 
         bool create_entities();
         void delete_entities();
@@ -290,13 +252,10 @@ class SecurityManager
         void process_participant_volatile_message_secure(const CacheChange_t* const change);
 
         bool on_process_handshake(const GUID_t& remote_participant_key,
-                AuthenticationStatus pre_auth_status,
+                DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
+                ParticipantProxyData* participant_data,
                 MessageIdentity&& message_identity,
-                HandshakeMessageToken&& message,
-                IdentityHandle* remote_identity_handle,
-                HandshakeHandle* handshake_handle,
-                const SequenceNumber_t& previous_change,
-                HandshakeMessageTokenResent* previous_event);
+                HandshakeMessageToken&& message);
 
         ParticipantGenericMessage generate_authentication_message(const MessageIdentity& related_message_identity,
                 const GUID_t& destination_participant_key,

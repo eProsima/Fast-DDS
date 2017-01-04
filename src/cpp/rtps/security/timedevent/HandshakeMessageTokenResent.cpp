@@ -47,19 +47,25 @@ void HandshakeMessageTokenResent::event(EventCode code, const char* msg)
 
         if(dp_it != security_manager_.discovered_participants_.end())
         {
-            if(!dp_it->second.is_identity_handle_null())
+            SecurityManager::DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = dp_it->second.get_auth();
+
+            if(remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
             {
-                CacheChange_t* p_change = security_manager_.participant_stateless_message_writer_history_->remove_change_and_reuse(dp_it->second.get_change_sequence_number());
+                CacheChange_t* p_change = security_manager_.participant_stateless_message_writer_history_->remove_change_and_reuse(
+                        remote_participant_info->change_sequence_number_);
+                remote_participant_info->change_sequence_number_ = SequenceNumber_t::unknown();
 
                 if(p_change != nullptr)
                 {
                     if(security_manager_.participant_stateless_message_writer_history_->add_change(p_change))
                     {
-                       dp_it->second.get_change_sequence_number() = p_change->sequenceNumber;
+                        remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;
                     }
                     //TODO (Ricardo) What to do if not added?
                 }
             }
+
+            dp_it->second.set_auth(remote_participant_info);
         }
 
         security_manager_.mutex_.unlock();

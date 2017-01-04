@@ -48,7 +48,7 @@ class AESGCMGMAC_Transform : public CryptoTransform
                 std::vector<uint8_t> &encoded_rtps_submessage,
                 const std::vector<uint8_t> &plain_rtps_submessage,
                 DatawriterCryptoHandle &sending_datawriter_crypto,
-                std::vector<DatareaderCryptoHandle*> receiving_datareader_crypto_list,
+                std::vector<DatareaderCryptoHandle*>& receiving_datareader_crypto_list,
                 SecurityException &exception);
 
     bool encode_datareader_submessage(

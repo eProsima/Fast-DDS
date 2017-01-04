@@ -36,6 +36,8 @@ public:
     Cryptography(): m_cryptokeyexchange(nullptr), m_cryptokeyfactory(nullptr),
     m_cryptotransform(nullptr) {}
 
+    virtual ~Cryptography() {}
+
     /* Specializations should add functions to access the private members */
     CryptoKeyExchange* cryptkeyexchange() { return m_cryptokeyexchange; }
 

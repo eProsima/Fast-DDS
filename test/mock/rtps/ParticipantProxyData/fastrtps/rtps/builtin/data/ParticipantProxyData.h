@@ -31,6 +31,8 @@ class ParticipantProxyData
 {
     public:
 
+        ParticipantProxyData() : m_availableBuiltinEndpoints(0) {}
+
         GUID_t m_guid;
         uint32_t m_availableBuiltinEndpoints;
         LocatorList_t m_metatrafficUnicastLocatorList;
