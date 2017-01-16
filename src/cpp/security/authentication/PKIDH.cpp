@@ -534,12 +534,12 @@ bool adjust_participant_key(X509* cert, const GUID_t& candidate_participant_key,
         return false;
     }
 
-    adjusted_participant_key.guidPrefix.value[0] = 0x80 | md[0];
-    adjusted_participant_key.guidPrefix.value[1] = md[1];
-    adjusted_participant_key.guidPrefix.value[2] = md[2];
-    adjusted_participant_key.guidPrefix.value[3] = md[3];
-    adjusted_participant_key.guidPrefix.value[4] = md[4];
-    adjusted_participant_key.guidPrefix.value[5] = md[5];
+    adjusted_participant_key.guidPrefix.value[0] = 0x80 | (md[0] >> 1);
+    adjusted_participant_key.guidPrefix.value[1] = (md[0] << 7) | (md[1] >> 1);
+    adjusted_participant_key.guidPrefix.value[2] = (md[1] << 7) | (md[2] >> 1);
+    adjusted_participant_key.guidPrefix.value[3] = (md[2] << 7) | (md[3] >> 1);
+    adjusted_participant_key.guidPrefix.value[4] = (md[3] << 7) | (md[4] >> 1);
+    adjusted_participant_key.guidPrefix.value[5] = (md[4] << 7) | (md[5] >> 1);
 
     unsigned char key[16] = {
         candidate_participant_key.guidPrefix.value[0],
@@ -1282,7 +1282,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    if((remote_participant_data.m_guid.guidPrefix.value[0] & 0xC0) != 0xC0)
+    if((remote_participant_data.m_guid.guidPrefix.value[0] & 0x80) != 0x80)
     {
         logWarning(SECURITY_AUTHENTICATION, "Bad participant_key's first bit in c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
@@ -1297,8 +1297,17 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    md[0] |= 0xC0;
-    if(memcmp(md, remote_participant_data.m_guid.guidPrefix.value, 6) != 0)
+    md[5] &= 0xFE;
+    unsigned char bytes[6] = {
+        (remote_participant_data.m_guid.guidPrefix.value[0] << 1) | (remote_participant_data.m_guid.guidPrefix.value[1] >> 7),
+        (remote_participant_data.m_guid.guidPrefix.value[1] << 1) | (remote_participant_data.m_guid.guidPrefix.value[2] >> 7),
+        (remote_participant_data.m_guid.guidPrefix.value[2] << 1) | (remote_participant_data.m_guid.guidPrefix.value[3] >> 7),
+        (remote_participant_data.m_guid.guidPrefix.value[3] << 1) | (remote_participant_data.m_guid.guidPrefix.value[4] >> 7),
+        (remote_participant_data.m_guid.guidPrefix.value[4] << 1) | (remote_participant_data.m_guid.guidPrefix.value[5] >> 7),
+        (remote_participant_data.m_guid.guidPrefix.value[5] << 1)
+    };
+
+    if(memcmp(md, bytes, 6) != 0)
     {
         logWarning(SECURITY_AUTHENTICATION, "Bad participant_key's 47bits in c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
@@ -1619,7 +1628,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    if((remote_participant_data.m_guid.guidPrefix.value[0] & 0xC0) != 0xC0)
+    if((remote_participant_data.m_guid.guidPrefix.value[0] & 0x80) != 0x80)
     {
         logWarning(SECURITY_AUTHENTICATION, "Bad participant_key's first bit in c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
@@ -1637,8 +1646,17 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    md[0] |= 0xC0;
-    if(memcmp(md, remote_participant_data.m_guid.guidPrefix.value, 6) != 0)
+    md[5] &= 0xFE;
+    unsigned char bytes[6] = {
+        (remote_participant_data.m_guid.guidPrefix.value[0] << 1) | (remote_participant_data.m_guid.guidPrefix.value[1] >> 7),
+        (remote_participant_data.m_guid.guidPrefix.value[1] << 1) | (remote_participant_data.m_guid.guidPrefix.value[2] >> 7),
+        (remote_participant_data.m_guid.guidPrefix.value[2] << 1) | (remote_participant_data.m_guid.guidPrefix.value[3] >> 7),
+        (remote_participant_data.m_guid.guidPrefix.value[3] << 1) | (remote_participant_data.m_guid.guidPrefix.value[4] >> 7),
+        (remote_participant_data.m_guid.guidPrefix.value[4] << 1) | (remote_participant_data.m_guid.guidPrefix.value[5] >> 7),
+        (remote_participant_data.m_guid.guidPrefix.value[5] << 1)
+    };
+
+    if(memcmp(md, bytes, 6) != 0)
     {
         logWarning(SECURITY_AUTHENTICATION, "Bad participant_key's 47bits in c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
@@ -1829,7 +1847,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     //add hash_c1
     CDRMessage::addBinaryProperty(&cdrmessage2, *hash_c1);
 
-    if(!check_sign_sha256(lih->cert_, cdrmessage2.buffer, cdrmessage2.length, *signature, exception))
+    if(!check_sign_sha256(rih->cert_, cdrmessage2.buffer, cdrmessage2.length, *signature, exception))
     {
         logWarning(SECURITY_AUTHENTICATION, "Error verifying signature");
         return ValidationResult_t::VALIDATION_FAILED;
@@ -2103,7 +2121,7 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
     //add hash_c2
     CDRMessage::addBinaryProperty(&cdrmessage, *hash_c2);
 
-    if(!check_sign_sha256(lih->cert_, cdrmessage.buffer, cdrmessage.length, *signature, exception))
+    if(!check_sign_sha256(rih->cert_, cdrmessage.buffer, cdrmessage.length, *signature, exception))
     {
         logWarning(SECURITY_AUTHENTICATION, "Error verifying signature");
         return ValidationResult_t::VALIDATION_FAILED;

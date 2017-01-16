@@ -39,11 +39,11 @@ bool HelloWorldSubscriber::init()
     property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
                 "builtin.PKI-DH"));
     property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-                    "file:///home/ricardo/workspace/curro/eProsima/desarrollo/proyectos/fastrtps/test/certs/maincacert.pem"));
+                    "file:///home/ricardo/workspace/desarrollo/proyectos/fastrtps/test/certs/maincacert.pem"));
     property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-                    "file:///home/ricardo/workspace/curro/eProsima/desarrollo/proyectos/fastrtps/test/certs/mainpubcert.pem"));
+                    "file:///home/ricardo/workspace/desarrollo/proyectos/fastrtps/test/certs/mainsubcert.pem"));
     property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-                    "file:///home/ricardo/workspace/curro/eProsima/desarrollo/proyectos/fastrtps/test/certs/mainpubkey.pem"));
+                    "file:///home/ricardo/workspace/desarrollo/proyectos/fastrtps/test/certs/mainsubkey.pem"));
     property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC"));
     PParam.rtps.properties = property_policy;
