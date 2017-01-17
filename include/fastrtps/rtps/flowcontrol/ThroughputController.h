@@ -38,7 +38,7 @@ class ThroughputController : public FlowController
 public:
    ThroughputController(const ThroughputControllerDescriptor&, const RTPSWriter* associatedWriter);
    ThroughputController(const ThroughputControllerDescriptor&, const RTPSParticipantImpl* associatedParticipant);
-   virtual void operator()(std::vector<CacheChangeForGroup_t>& changes);
+   virtual void operator()(std::vector<const CacheChange_t*>& changes);
 
 private:
    uint32_t mBytesPerPeriod;

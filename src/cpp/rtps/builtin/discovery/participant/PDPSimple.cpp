@@ -89,7 +89,7 @@ PDPSimple::~PDPSimple()
     delete(mp_SPDPReader);
     delete(mp_SPDPWriterHistory);
     delete(mp_SPDPReaderHistory);
-    
+
     delete(mp_listener);
     for(auto it = this->m_participantProxies.begin();
             it!=this->m_participantProxies.end();++it)
@@ -102,50 +102,53 @@ PDPSimple::~PDPSimple()
 
 void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant_data)
 {
-	participant_data->m_leaseDuration = mp_RTPSParticipant->getAttributes().builtin.leaseDuration;
-	set_VendorId_eProsima(participant_data->m_VendorId);
+    participant_data->m_leaseDuration = mp_RTPSParticipant->getAttributes().builtin.leaseDuration;
+    set_VendorId_eProsima(participant_data->m_VendorId);
 
-	participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
-	participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
-	if(mp_RTPSParticipant->getAttributes().builtin.use_WriterLivelinessProtocol)
-	{
-		participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
-		participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
-	}
-	if(mp_RTPSParticipant->getAttributes().builtin.use_SIMPLE_EndpointDiscoveryProtocol)
-	{
-		if(mp_RTPSParticipant->getAttributes().builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
-		{
-			participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
-			participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
-		}
-		if(mp_RTPSParticipant->getAttributes().builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
-		{
-			participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
-			participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
-		}
-	}
+    participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+    participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+    if(mp_RTPSParticipant->getAttributes().builtin.use_WriterLivelinessProtocol)
+    {
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+    }
+    if(mp_RTPSParticipant->getAttributes().builtin.use_SIMPLE_EndpointDiscoveryProtocol)
+    {
+        if(mp_RTPSParticipant->getAttributes().builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
+        {
+            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+        }
+        if(mp_RTPSParticipant->getAttributes().builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+        {
+            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+        }
+    }
     participant_data->m_availableBuiltinEndpoints |= mp_RTPSParticipant->security_manager().builtin_endpoints();
 
-	participant_data->m_defaultUnicastLocatorList = mp_RTPSParticipant->getAttributes().defaultUnicastLocatorList;
-	participant_data->m_defaultMulticastLocatorList = mp_RTPSParticipant->getAttributes().defaultMulticastLocatorList;
-	participant_data->m_expectsInlineQos = false;
-	participant_data->m_guid = mp_RTPSParticipant->getGuid();
-	for(uint8_t i = 0; i<16; ++i)
-	{
-		if(i<12)
-			participant_data->m_key.value[i] = participant_data->m_guid.guidPrefix.value[i];
+    participant_data->m_defaultUnicastLocatorList = mp_RTPSParticipant->getAttributes().defaultUnicastLocatorList;
+    participant_data->m_defaultMulticastLocatorList = mp_RTPSParticipant->getAttributes().defaultMulticastLocatorList;
+    participant_data->m_expectsInlineQos = false;
+    participant_data->m_guid = mp_RTPSParticipant->getGuid();
+    for(uint8_t i = 0; i<16; ++i)
+    {
+        if(i<12)
+            participant_data->m_key.value[i] = participant_data->m_guid.guidPrefix.value[i];
         else
-			participant_data->m_key.value[i] = participant_data->m_guid.entityId.value[i - 12];
-	}
+            participant_data->m_key.value[i] = participant_data->m_guid.entityId.value[i - 12];
+    }
 
 
-	participant_data->m_metatrafficMulticastLocatorList = this->mp_builtin->m_metatrafficMulticastLocatorList;
-	participant_data->m_metatrafficUnicastLocatorList = this->mp_builtin->m_metatrafficUnicastLocatorList;
+    participant_data->m_metatrafficMulticastLocatorList = this->mp_builtin->m_metatrafficMulticastLocatorList;
+    participant_data->m_metatrafficUnicastLocatorList = this->mp_builtin->m_metatrafficUnicastLocatorList;
 
-	participant_data->m_participantName = std::string(mp_RTPSParticipant->getAttributes().getName());
+    participant_data->m_participantName = std::string(mp_RTPSParticipant->getAttributes().getName());
 
-	participant_data->m_userData = mp_RTPSParticipant->getAttributes().userData;
+    participant_data->m_userData = mp_RTPSParticipant->getAttributes().userData;
+
+    if(mp_RTPSParticipant->is_rtps_protected())
+        participant_data->m_properties.properties.emplace_back("rtps.participant.is_rtps_protected", "true");
 
     IdentityToken* identity_token = nullptr;
     if(mp_RTPSParticipant->security_manager().get_identity_token(&identity_token) && identity_token != nullptr)
@@ -377,6 +380,7 @@ bool PDPSimple::createSPDPEndpoints()
     RTPSWriter* wout;
     if(mp_RTPSParticipant->createWriter(&wout,watt,mp_SPDPWriterHistory,nullptr,c_EntityId_SPDPWriter,true))
     {
+        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
         mp_SPDPWriter = dynamic_cast<StatelessWriter*>(wout);
         RemoteReaderAttributes ratt;
         for(LocatorListIterator lit = mp_builtin->m_metatrafficMulticastLocatorList.begin();
@@ -404,6 +408,7 @@ bool PDPSimple::createSPDPEndpoints()
     RTPSReader* rout;
     if(mp_RTPSParticipant->createReader(&rout,ratt,mp_SPDPReaderHistory,mp_listener,c_EntityId_SPDPReader,true, false))
     {
+        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(rout, false);
         mp_SPDPReader = dynamic_cast<StatelessReader*>(rout);
     }
     else

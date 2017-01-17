@@ -41,7 +41,7 @@ ThroughputController::ThroughputController(const ThroughputControllerDescriptor&
 {
 }
 
-void ThroughputController::operator()(vector<CacheChangeForGroup_t>& changes)
+void ThroughputController::operator()(vector<const CacheChange_t*>& changes)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
 
@@ -49,15 +49,17 @@ void ThroughputController::operator()(vector<CacheChangeForGroup_t>& changes)
     unsigned int clearedChanges = 0;
     while (clearedChanges < changes.size())
     {
-        auto& change = changes[clearedChanges];
-        if (change.isFragmented())
+        const auto* change = changes[clearedChanges];
+        if (change->getFragmentSize() != 0)
         {
-            unsigned int fittingFragments = min((mBytesPerPeriod - mAccumulatedPayloadSize) / change.getChange()->getFragmentSize(),
+            // TODO(Ricardo) Fixit
+            /*
+            unsigned int fittingFragments = min((mBytesPerPeriod - mAccumulatedPayloadSize) / change->getChange()->getFragmentSize(),
                     static_cast<uint32_t>(change.getFragmentsClearedForSending().set.size()));
 
             if (fittingFragments)
             {
-                mAccumulatedPayloadSize += fittingFragments * change.getChange()->getFragmentSize();
+                mAccumulatedPayloadSize += fittingFragments * change->getChange()->getFragmentSize();
 
                 auto limitedFragments = change.getFragmentsClearedForSending();
                 while (limitedFragments.set.size() > fittingFragments)
@@ -68,14 +70,15 @@ void ThroughputController::operator()(vector<CacheChangeForGroup_t>& changes)
             }
             else
                 break;
+                */
         }
         else
         {
-            bool fits = (mAccumulatedPayloadSize + change.getChange()->serializedPayload.length) <= mBytesPerPeriod;
+            bool fits = (mAccumulatedPayloadSize + change->serializedPayload.length) <= mBytesPerPeriod;
 
             if (fits)
             {
-                mAccumulatedPayloadSize += change.getChange()->serializedPayload.length;
+                mAccumulatedPayloadSize += change->serializedPayload.length;
                 clearedChanges++;
             }
             else

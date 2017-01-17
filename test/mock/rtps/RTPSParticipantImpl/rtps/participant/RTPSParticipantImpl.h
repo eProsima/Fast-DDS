@@ -33,6 +33,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class Endpoint;
 class RTPSParticipant;
 class WriterHistory;
 class ReaderHistory;
@@ -98,6 +99,8 @@ class RTPSParticipantImpl
         RTPSParticipant* getUserRTPSParticipant() { return nullptr; }
 
         ResourceEvent& getEventResource() { return events_; }
+
+        void set_endpoint_rtps_protection_supports(Endpoint* /*endpoint*/, bool /*support*/) {}
 
         void ResourceSemaphoreWait() {}
         void ResourceSemaphorePost() {}

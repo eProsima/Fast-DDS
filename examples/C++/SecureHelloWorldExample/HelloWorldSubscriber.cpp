@@ -33,90 +33,91 @@ mp_subscriber(nullptr)
 
 bool HelloWorldSubscriber::init()
 {
-	ParticipantAttributes PParam;
+    ParticipantAttributes PParam;
 
     PropertyPolicy property_policy;
-    property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-                "builtin.PKI-DH"));
-    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-                    "file:///home/ricardo/workspace/desarrollo/proyectos/fastrtps/test/certs/maincacert.pem"));
-    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-                    "file:///home/ricardo/workspace/desarrollo/proyectos/fastrtps/test/certs/mainsubcert.pem"));
-    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-                    "file:///home/ricardo/workspace/desarrollo/proyectos/fastrtps/test/certs/mainsubkey.pem"));
-    property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-                "builtin.AES-GCM-GMAC"));
+    property_policy.properties().emplace_back("dds.sec.auth.plugin",
+                "builtin.PKI-DH");
+    property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file:///home/ricardo/workspace/curro/eProsima/desarrollo/proyectos/fastrtps/test/certs/maincacert.pem");
+    property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file:///home/ricardo/workspace/curro/eProsima/desarrollo/proyectos/fastrtps/test/certs/mainpubcert.pem");
+    property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file:///home/ricardo/workspace/curro/eProsima/desarrollo/proyectos/fastrtps/test/certs/mainpubkey.pem");
+    property_policy.properties().emplace_back("dds.sec.crypto.plugin",
+                "builtin.AES-GCM-GMAC");
+    property_policy.properties().emplace_back("rtps.participant.is_rtps_protected", "true");
     PParam.rtps.properties = property_policy;
 
-	mp_participant = Domain::createParticipant(PParam);
-	if(mp_participant==nullptr)
-		return false;
+    mp_participant = Domain::createParticipant(PParam);
+    if(mp_participant==nullptr)
+        return false;
 
-	//REGISTER THE TYPE
+    //REGISTER THE TYPE
 
-	Domain::registerType(mp_participant,&m_type);
-	//CREATE THE SUBSCRIBER
-	SubscriberAttributes Rparam;
-	Rparam.topic.topicKind = NO_KEY;
-	Rparam.topic.topicDataType = "HelloWorld";
-	Rparam.topic.topicName = "HelloWorldTopic";
-	Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	Rparam.topic.historyQos.depth = 30;
-	Rparam.topic.resourceLimitsQos.max_samples = 50;
-	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
-	Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
+    Domain::registerType(mp_participant,&m_type);
+    //CREATE THE SUBSCRIBER
+    SubscriberAttributes Rparam;
+    Rparam.topic.topicKind = NO_KEY;
+    Rparam.topic.topicDataType = "HelloWorld";
+    Rparam.topic.topicName = "HelloWorldTopic";
+    Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+    Rparam.topic.historyQos.depth = 30;
+    Rparam.topic.resourceLimitsQos.max_samples = 50;
+    Rparam.topic.resourceLimitsQos.allocated_samples = 20;
+    Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 
-	if(mp_subscriber == nullptr)
-		return false;
+    if(mp_subscriber == nullptr)
+        return false;
 
 
-	return true;
+    return true;
 }
 
 HelloWorldSubscriber::~HelloWorldSubscriber() {
-	// TODO Auto-generated destructor stub
-	Domain::removeParticipant(mp_participant);
+    // TODO Auto-generated destructor stub
+    Domain::removeParticipant(mp_participant);
 }
 
 void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
-	if(info.status == MATCHED_MATCHING)
-	{
-		n_matched++;
-		cout << "Subscriber matched"<<endl;
-	}
-	else
-	{
-		n_matched--;
-		cout << "Subscriber unmatched"<<endl;
-	}
+    if(info.status == MATCHED_MATCHING)
+    {
+        n_matched++;
+        cout << "Subscriber matched"<<endl;
+    }
+    else
+    {
+        n_matched--;
+        cout << "Subscriber unmatched"<<endl;
+    }
 }
 
 void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 {
-	if(sub->takeNextData((void*)&m_Hello, &m_info))
-	{
-		if(m_info.sampleKind == ALIVE)
-		{
-			this->n_samples++;
-			// Print your structure data here.
-			cout << "Message "<<m_Hello.message()<< " "<< m_Hello.index()<< " RECEIVED"<<endl;
-		}
-	}
+    if(sub->takeNextData((void*)&m_Hello, &m_info))
+    {
+        if(m_info.sampleKind == ALIVE)
+        {
+            this->n_samples++;
+            // Print your structure data here.
+            cout << "Message "<<m_Hello.message()<< " "<< m_Hello.index()<< " RECEIVED"<<endl;
+        }
+    }
 
 }
 
 
 void HelloWorldSubscriber::run()
 {
-	cout << "Subscriber running. Please press enter to stop the Subscriber" << endl;
-	std::cin.ignore();
+    cout << "Subscriber running. Please press enter to stop the Subscriber" << endl;
+    std::cin.ignore();
 }
 
 void HelloWorldSubscriber::run(uint32_t number)
 {
-	cout << "Subscriber running until "<< number << "samples have been received"<<endl;
-	while(number < this->m_listener.n_samples)
-		eClock::my_sleep(500);
+    cout << "Subscriber running until "<< number << "samples have been received"<<endl;
+    while(number < this->m_listener.n_samples)
+        eClock::my_sleep(500);
 }

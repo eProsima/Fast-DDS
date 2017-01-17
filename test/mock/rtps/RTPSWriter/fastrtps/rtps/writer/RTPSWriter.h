@@ -20,6 +20,7 @@
 #define _RTPS_WRITER_RTPSWRITER_H_
 
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
+#include <fastrtps/rtps/Endpoint.h>
 
 #include <condition_variable>
 #include <gmock/gmock.h>
@@ -30,7 +31,7 @@ namespace rtps {
 
 class WriterHistory;
 
-class RTPSWriter
+class RTPSWriter : public Endpoint
 {
     public:
 

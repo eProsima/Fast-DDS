@@ -16,6 +16,8 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
+using namespace eprosima::fastrtps::rtps;
+
 std::vector<FlowController*> FlowController::ListeningControllers;
 std::recursive_mutex FlowController::FlowControllerMutex;
 std::unique_ptr<boost::thread> FlowController::ControllerThread;
@@ -33,7 +35,7 @@ FlowController::~FlowController()
    DeRegisterAsListeningController();
 }
 
-void FlowController::NotifyControllersChangeSent(const CacheChangeForGroup_t* change)
+void FlowController::NotifyControllersChangeSent(const CacheChange_t* change)
 {
    std::unique_lock<std::recursive_mutex> scopedLock(FlowControllerMutex);
    for (auto filter : ListeningControllers)

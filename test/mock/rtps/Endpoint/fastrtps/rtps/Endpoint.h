@@ -12,34 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*
- * @file Endpoint.cpp
- *
+/**
+ * @file Endpoint.h
  */
 
-#include <fastrtps/rtps/Endpoint.h>
-#include "fastrtps/rtps/attributes/WriterAttributes.h"
-
-#include <boost/thread/recursive_mutex.hpp>
+#ifndef _RTPS_ENDPOINT_H_
+#define _RTPS_ENDPOINT_H_
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
-Endpoint::Endpoint(RTPSParticipantImpl* pimpl,GUID_t& guid,EndpointAttributes& att):
-    mp_RTPSParticipant(pimpl),
-    m_guid(guid),
-    m_att(att),
-    mp_mutex(new boost::recursive_mutex()),
-    supports_rtps_protection_(true)
-    {
-    }
-
-Endpoint::~Endpoint()
+class Endpoint
 {
-    delete(mp_mutex);
-}
+};
 
-} /* namespace rtps */
-} /* namespace eprosima */
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
+
+#endif // _RTPS_ENDPOINT_H_

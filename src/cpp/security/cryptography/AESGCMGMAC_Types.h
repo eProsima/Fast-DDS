@@ -24,6 +24,8 @@
 #include <fastrtps/rtps/security/common/Handle.h>
 #include <fastrtps/rtps/security/common/SharedSecretHandle.h>
 
+#include <mutex>
+
 //No encryption, no authentication tag
 #define CRYPTO_TRANSFORMATION_KIND_NONE             {0,0,0,0}
 
@@ -121,7 +123,7 @@ class  WriterKeyHandle
         }
 
         static const char* const class_id_;
-        
+
         //Storage for the LocalCryptoHandle master_key, not used in RemoteCryptoHandles
         KeyMaterial_AES_GCM_GMAC WriterKeyMaterial;
         //KeyId of the master_key of the parent Participant and pointer to the relevant CryptoHandle
@@ -212,12 +214,10 @@ class  ParticipantKeyHandle
         uint64_t session_block_counter;
         uint64_t max_blocks_per_session;
         CryptoTransformKind transformation_kind;
-
+        std::mutex mutex_;
 };
 
 typedef HandleImpl<ParticipantKeyHandle> AESGCMGMAC_ParticipantCryptoHandle;
-
-
 
 } //namespaces security
 } //namespace rtps

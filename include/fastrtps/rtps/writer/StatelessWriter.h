@@ -76,7 +76,7 @@ class StatelessWriter : public RTPSWriter
     /**
      * Method to indicate that there are changes not sent in some of all ReaderProxy.
      */
-    size_t send_any_unsent_changes();
+    void send_any_unsent_changes();
 
     /**
      * Update the Attributes of the Writer.
@@ -96,7 +96,7 @@ class StatelessWriter : public RTPSWriter
      */
     bool add_locator(RemoteReaderAttributes& rdata,Locator_t& loc);
 
-    void update_unsent_changes(const std::vector<CacheChangeForGroup_t>& changes);
+    void update_unsent_changes(const std::vector<const CacheChange_t*>& changes);
 
     /**
      * Remove a remote locator from the writer.
@@ -132,7 +132,7 @@ class StatelessWriter : public RTPSWriter
      * it's crucial to notify the async writer
      * thread when anything is pushed into it.
      */	
-    std::vector<CacheChangeForGroup_t> m_unsent_changes;
+    std::vector<const CacheChange_t*> m_unsent_changes;
 };
 }
 } /* namespace rtps */

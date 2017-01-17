@@ -106,9 +106,9 @@ class CryptoTransform
                 std::vector<uint8_t> &plain_buffer,
                 const std::vector<uint8_t> &encoded_buffer,
                 const ParticipantCryptoHandle &receiving_crypto,
-                ParticipantCryptoHandle &sending_crypto,
+                const ParticipantCryptoHandle &sending_crypto,
                 SecurityException &exception) = 0;
-        
+
         /**
          * Determines whether the secure submessage comes from a datawriter or a data reader and extracts the required CryptoHandle to decode it.
          * @param datawriter_crypt (out) Crypto of the sending datawriter, if applicable

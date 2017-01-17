@@ -32,6 +32,7 @@
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastrtps/rtps/messages/CDRMessage.h>
 
 #include <cassert>
 #include <thread>
@@ -563,7 +564,7 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
                             info.guid(remote_participant_key);
                             participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
                         }
-                        
+
                         // Starts cryptography mechanism
                         ParticipantCryptoHandle* participant_crypto_handle = register_and_match_crypto_endpoint(participant_data,
                                     *remote_participant_info->identity_handle_,
@@ -673,6 +674,7 @@ bool SecurityManager::create_participant_stateless_message_writer()
     RTPSWriter* wout = nullptr;
     if(participant_->createWriter(&wout, watt, participant_stateless_message_writer_history_, nullptr, participant_stateless_message_writer_entity_id, true))
     {
+        participant_->set_endpoint_rtps_protection_supports(wout, false);
         participant_stateless_message_writer_ = dynamic_cast<StatelessWriter*>(wout);
         auth_source_guid = participant_stateless_message_writer_->getGuid();
 
@@ -718,6 +720,7 @@ bool SecurityManager::create_participant_stateless_message_reader()
     if(participant_->createReader(&rout, ratt, participant_stateless_message_reader_history_, &participant_stateless_message_listener_,
                 participant_stateless_message_reader_entity_id, true, true))
     {
+        participant_->set_endpoint_rtps_protection_supports(rout, false);
         participant_stateless_message_reader_ = dynamic_cast<StatelessReader*>(rout);
 
         return true;
@@ -787,6 +790,7 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     RTPSWriter* wout = nullptr;
     if(participant_->createWriter(&wout, watt, participant_volatile_message_secure_writer_history_, nullptr, participant_volatile_message_secure_writer_entity_id, true))
     {
+        participant_->set_endpoint_rtps_protection_supports(wout, false);
         participant_volatile_message_secure_writer_ = dynamic_cast<StatefulWriter*>(wout);
 
         return true;
@@ -831,6 +835,7 @@ bool SecurityManager::create_participant_volatile_message_secure_reader()
     if(participant_->createReader(&rout, ratt, participant_volatile_message_secure_reader_history_, &participant_volatile_message_secure_listener_,
                 participant_volatile_message_secure_reader_entity_id, true, true))
     {
+        participant_->set_endpoint_rtps_protection_supports(rout, false);
         participant_volatile_message_secure_reader_ = dynamic_cast<StatefulReader*>(rout);
 
         return true;

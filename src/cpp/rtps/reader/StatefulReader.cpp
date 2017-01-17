@@ -382,7 +382,7 @@ bool StatefulReader::processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStar
                 fragmentedChangePitStop_->try_to_remove(auxSN, pWP->m_att.guid);
         }
 
-        for(std::vector<SequenceNumber_t>::iterator it=gapList.get_begin();it!=gapList.get_end();++it)
+        for(auto it = gapList.get_begin(); it != gapList.get_end();++it)
         {
             if(pWP->irrelevant_change_set((*it)))
                 fragmentedChangePitStop_->try_to_remove((*it), pWP->m_att.guid);

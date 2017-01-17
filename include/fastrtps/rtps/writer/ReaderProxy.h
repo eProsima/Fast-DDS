@@ -105,8 +105,8 @@ namespace eprosima
                  */
                 void set_change_to_status(const CacheChange_t* change, ChangeForReaderStatus_t status);
 
-                void mark_fragments_as_sent_for_change(const CacheChange_t* change, FragmentNumberSet_t fragments);
-               
+                void mark_fragment_as_sent_for_change(const CacheChange_t* change, FragmentNumber_t fragment);
+
                 /*
                  * Converts all changes with a given status to a different status.
                  * @param previous Status to change.
