@@ -116,7 +116,7 @@ namespace CDRMessage{
 	  inline bool addInt64(CDRMessage_t*msg,int64_t lo);
 	  inline bool addEntityId(CDRMessage_t*msg,const EntityId_t* id);
 	  inline bool addSequenceNumber(CDRMessage_t*msg, const SequenceNumber_t* sn);
-	  inline bool addSequenceNumberSet(CDRMessage_t*msg, SequenceNumberSet_t* sns);
+	  inline bool addSequenceNumberSet(CDRMessage_t*msg, const SequenceNumberSet_t* sns);
 	  inline bool addFragmentNumberSet(CDRMessage_t*msg, FragmentNumberSet_t* fns);
 	  inline bool addLocator(CDRMessage_t*msg,Locator_t*loc);
 	  inline bool addParameterStatus(CDRMessage_t*msg,octet status);

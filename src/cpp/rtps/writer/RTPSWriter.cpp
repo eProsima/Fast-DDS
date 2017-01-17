@@ -51,8 +51,8 @@ RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes
 
 void RTPSWriter::init_header()
 {
-    CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_header);
-    RTPSMessageCreator::addHeader(&m_cdrmessages.m_rtpsmsg_header,m_guid.guidPrefix);
+    CDRMessage::initCDRMsg(&m_cdrmessages.rtpsmsg_fullmsg_);
+    RTPSMessageCreator::addHeader(&m_cdrmessages.rtpsmsg_fullmsg_, m_guid.guidPrefix);
 }
 
 

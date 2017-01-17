@@ -64,9 +64,9 @@ class MockCryptoTransform : public CryptoTransform
                 std::vector<uint8_t>&,
                 const std::vector<uint8_t>&,
                 const ParticipantCryptoHandle&,
-                ParticipantCryptoHandle&,
+                const ParticipantCryptoHandle&,
                 SecurityException&));
-        
+
         MOCK_METHOD7(preprocess_secure_submsg, bool (
                 DatawriterCryptoHandle**,
                 DatareaderCryptoHandle**,

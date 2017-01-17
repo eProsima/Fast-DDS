@@ -21,6 +21,7 @@
 
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/messages/CDRMessage.h>
 
 #include <gmock/gmock.h>
 

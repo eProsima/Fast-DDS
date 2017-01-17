@@ -213,6 +213,8 @@ class RTPSParticipantImpl
 
         PDPSimple* pdpsimple();
 
+        bool is_rtps_protected() const { return is_rtps_protected_; }
+
     private:
         //!Attributes of the RTPSParticipant
         RTPSParticipantAttributes m_att;
@@ -314,6 +316,8 @@ class RTPSParticipantImpl
          * Flow controllers for this participant.
          */
         std::vector<std::unique_ptr<FlowController> > m_controllers;
+
+        bool is_rtps_protected_;
 
     public:
 
@@ -428,6 +432,11 @@ class RTPSParticipantImpl
         void createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
 
         bool networkFactoryHasRegisteredTransports() const;
+
+        void set_endpoint_rtps_protection_supports(Endpoint* endpoint, bool support)
+        {
+            endpoint->supports_rtps_protection_ = support;
+        }
 };
 
 }

@@ -24,6 +24,7 @@
 #include "../participant/RTPSParticipantImpl.h"
 
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
+#include <fastrtps/rtps/messages/RTPSMessageGroup.h>
 
 #include <fastrtps/rtps/resources/ResourceSend.h>
 
@@ -111,6 +112,9 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
             bool expectsInlineQos = false;
             std::vector<GuidPrefix_t> remote_participants;
 
+            // TODO (Ricardo) Temporal
+            LocatorList_t locators;
+
             for(auto it = matched_readers.begin(); it != matched_readers.end(); ++it)
             {
                 ChangeForReader_t changeForReader(change);
@@ -124,8 +128,8 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 (*it)->mp_mutex->lock();
                 changeForReader.setRelevance((*it)->rtps_is_relevant(change));
                 (*it)->addChange(changeForReader);
-                unilocList.push_back((*it)->m_att.endpoint.unicastLocatorList);
-                multilocList.push_back((*it)->m_att.endpoint.multicastLocatorList);
+                locators.push_back((*it)->m_att.endpoint.unicastLocatorList);
+                locators.push_back((*it)->m_att.endpoint.multicastLocatorList);
                 expectsInlineQos |= (*it)->m_att.expectsInlineQos;
                 remote_participants.push_back((*it)->m_att.guid.guidPrefix);
                 (*it)->mp_mutex->unlock();
@@ -133,15 +137,12 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 (*it)->mp_nackSupression->restart_timer();
             }
 
-            std::vector<CacheChangeForGroup_t> changes_to_send;
-            changes_to_send.push_back(CacheChangeForGroup_t(change));
-
-            uint32_t bytesSent = RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
-                    changes_to_send, c_GuidPrefix_Unknown, c_EntityId_Unknown, remote_participants,
-                    unilocList, multilocList, expectsInlineQos);
-
-            if(bytesSent == 0 || changes_to_send.size() > 0)
+            RTPSMessageGroup group(mp_RTPSParticipant, this,  m_cdrmessages);
+            if(group.add_data(*change, c_GuidPrefix_Unknown, c_EntityId_Unknown,
+                        locators, remote_participants, expectsInlineQos))
+            {
                 logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+            }
 
             this->mp_periodicHB->restart_timer();
         }
@@ -200,11 +201,11 @@ bool StatefulWriter::wrap_around_readers()
     return true;
 }
 
-size_t StatefulWriter::send_any_unsent_changes()
+void StatefulWriter::send_any_unsent_changes()
 {
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-    size_t number_of_changes_sent = 0;
 
+    // TODO(Ricardo) Change this while when implement Collector class.
     m_readers_to_walk = matched_readers.size();
     // The reader proxy vector is walked in a different order each time 
     // to prevent persistent prioritization of a single reader
@@ -214,7 +215,7 @@ size_t StatefulWriter::send_any_unsent_changes()
 
         std::vector<const ChangeForReader_t*> ch_vec = (*m_reader_iterator)->get_unsent_changes();
 
-        std::vector<CacheChangeForGroup_t> relevant_changes;
+        std::vector<const ChangeForReader_t*> relevant_changes;
         std::vector<SequenceNumber_t> not_relevant_changes;
 
         for(auto cit = ch_vec.begin(); cit != ch_vec.end(); ++cit)
@@ -222,7 +223,7 @@ size_t StatefulWriter::send_any_unsent_changes()
             //cout << "EXPECTSINLINE: "<< (*m_reader_iterator)->m_att.expectsInlineQos<< endl;
             if((*cit)->isRelevant() && (*cit)->isValid())
             {
-                relevant_changes.emplace_back(**cit);
+                relevant_changes.push_back(*cit);
             }
             else
             {
@@ -231,57 +232,68 @@ size_t StatefulWriter::send_any_unsent_changes()
             }
         }
 
-        // Clear all relevant changes through the local controllers first
-        for (auto& controller : m_controllers)
-            (*controller)(relevant_changes);
-
-        // Clear all relevant changes through the parent controllers
-        for (auto& controller : mp_RTPSParticipant->getFlowControllers())
-            (*controller)(relevant_changes); 
-
-        // Those that remain are set to UNDERWAY or their unsent sets updated
-        for (auto& change : relevant_changes)
-        {
-            if (change.isFragmented() && !change.getFragmentsClearedForSending().isSetEmpty())
-                (*m_reader_iterator)->mark_fragments_as_sent_for_change(change.getChange(), change.getFragmentsClearedForSending());
-            else
-                (*m_reader_iterator)->set_change_to_status(change.getChange(), UNDERWAY);
-        }
-
-        // TODO(Ricardo) Flowcontroller has to be notified in not push mode?
-        // And controllers are notified about the changes being sent
-        for (const auto& change : relevant_changes)
-            FlowController::NotifyControllersChangeSent(&change);
-
         if(m_pushMode)
         {
+            // TODO(Ricardo) Temporal
+            std::vector<const CacheChange_t*> changes_to_check;
+            for(const auto* change_for_reader : relevant_changes)
+                changes_to_check.push_back(change_for_reader->getChange());
+
+            // Clear all relevant changes through the local controllers first
+            for (auto& controller : m_controllers)
+                (*controller)(changes_to_check);
+
+            // Clear all relevant changes through the parent controllers
+            for (auto& controller : mp_RTPSParticipant->getFlowControllers())
+                (*controller)(changes_to_check);
+
+            // TODO(Ricardo) Temporal
+            relevant_changes.resize(changes_to_check.size());
+
+            // TODO Temporal
+            LocatorList_t locators((*m_reader_iterator)->m_att.endpoint.unicastLocatorList);
+            locators.push_back((*m_reader_iterator)->m_att.endpoint.multicastLocatorList);
+
+            RTPSMessageGroup group(mp_RTPSParticipant, this,  m_cdrmessages);
+
             if(!relevant_changes.empty())
             {
                 //TODO (Ricardo) Temporal.
                 std::vector<GuidPrefix_t> remote_participants;
                 remote_participants.push_back((*m_reader_iterator)->m_att.guid.guidPrefix);
 
-                number_of_changes_sent += relevant_changes.size();
-                uint32_t bytesSent = 0;
-                do
+                for (const auto* change : relevant_changes)
                 {
-                    bytesSent =  RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
-                            relevant_changes,
-                            (*m_reader_iterator)->m_att.guid.guidPrefix,
-                            (*m_reader_iterator)->m_att.guid.entityId,
-                            remote_participants,
-                            (*m_reader_iterator)->m_att.endpoint.unicastLocatorList,
-                            (*m_reader_iterator)->m_att.endpoint.multicastLocatorList,
-                            (*m_reader_iterator)->m_att.expectsInlineQos);
-                } while(bytesSent > 0 && relevant_changes.size() > 0);
+                    // TODO(Ricardo) Flowcontroller has to be used in RTPSMessageGroup.
+                    // And controllers are notified about the changes being sent
+                    FlowController::NotifyControllersChangeSent(change->getChange());
+
+                    if(change->getChange()->getFragmentSize() != 0)
+                    {
+                        FragmentNumberSet_t fragments = change->getUnsentFragments();
+                        for(auto fragment : fragments.set)
+                        {
+                            if(group.add_data_frag(*change->getChange(), fragment, (*m_reader_iterator)->m_att.guid.guidPrefix,
+                                        (*m_reader_iterator)->m_att.guid.entityId,
+                                        locators, remote_participants, (*m_reader_iterator)->m_att.expectsInlineQos))
+                                (*m_reader_iterator)->mark_fragment_as_sent_for_change(change->getChange(), fragment);
+                        }
+                    }
+                    else
+                    {
+                        if(group.add_data(*change->getChange(), (*m_reader_iterator)->m_att.guid.guidPrefix,
+                                (*m_reader_iterator)->m_att.guid.entityId,
+                                locators, remote_participants, (*m_reader_iterator)->m_att.expectsInlineQos))
+                            (*m_reader_iterator)->set_change_to_status(change->getChange(), UNDERWAY);
+                    }
+                }
             }
+
             if(!not_relevant_changes.empty())
-                RTPSMessageGroup::send_Changes_AsGap(&m_cdrmessages,(RTPSWriter*)this,
-                        &not_relevant_changes,
+                group.add_gap(not_relevant_changes,
                         (*m_reader_iterator)->m_att.guid.guidPrefix,
                         (*m_reader_iterator)->m_att.guid.entityId,
-                        &(*m_reader_iterator)->m_att.endpoint.unicastLocatorList,
-                        &(*m_reader_iterator)->m_att.endpoint.multicastLocatorList);
+                        locators);
 
             if((*m_reader_iterator)->m_att.endpoint.reliabilityKind == RELIABLE)
             {
@@ -291,27 +303,30 @@ size_t StatefulWriter::send_any_unsent_changes()
         }
         else
         {
+            // Change status to UNACKNOWLEDGED
+            for(const auto* change : relevant_changes)
+                (*m_reader_iterator)->set_change_to_status(change->getChange(), UNACKNOWLEDGED);
+
             SequenceNumber_t firstSeq = this->get_seq_num_min();
             SequenceNumber_t lastSeq = this->get_seq_num_max();
 
             if(firstSeq != c_SequenceNumber_Unknown && lastSeq != c_SequenceNumber_Unknown && lastSeq >= firstSeq)
             {
                 this->incrementHBCount();
-                CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
+                CDRMessage::initCDRMsg(&m_cdrmessages.rtpsmsg_fullmsg_);
                 // TODO(Ricardo) This is a StatefulWriter in Reliable. Hast the FinalFlag be true? Check.
-                RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
+                RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.rtpsmsg_fullmsg_,m_guid.guidPrefix,
                         m_HBReaderEntityId, m_guid.entityId, firstSeq, lastSeq, m_heartbeatCount, true, false);
                 std::vector<Locator_t>::iterator lit;
                 for(lit = (*m_reader_iterator)->m_att.endpoint.unicastLocatorList.begin();lit!=(*m_reader_iterator)->m_att.endpoint.unicastLocatorList.end();++lit)
-                    getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(Endpoint *)this,(*lit));
+                    getRTPSParticipant()->sendSync(&m_cdrmessages.rtpsmsg_fullmsg_,(Endpoint *)this,(*lit));
                 for(lit = (*m_reader_iterator)->m_att.endpoint.multicastLocatorList.begin();lit!=(*m_reader_iterator)->m_att.endpoint.multicastLocatorList.end();++lit)
-                    getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(Endpoint *)this,(*lit));
+                    getRTPSParticipant()->sendSync(&m_cdrmessages.rtpsmsg_fullmsg_,(Endpoint *)this,(*lit));
             }
         }
     }
 
     logInfo(RTPS_WRITER, "Finish sending unsent changes");
-    return number_of_changes_sent;
 }
 
 
@@ -365,14 +380,20 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     // Send a initial heartbeat
     rp->mp_initialHeartbeat->restart_timer();
 
+    // TODO(Ricardo) In the heartbeat event?
     // Send Gap
     if(!not_relevant_changes.empty())
-        RTPSMessageGroup::send_Changes_AsGap(&m_cdrmessages, (RTPSWriter*)this,
-                &not_relevant_changes,
+    {
+        RTPSMessageGroup group(mp_RTPSParticipant, this,  m_cdrmessages);
+        //TODO (Ricardo) Temporal
+        LocatorList_t locators(rp->m_att.endpoint.unicastLocatorList);
+        locators.push_back(rp->m_att.endpoint.multicastLocatorList);
+
+        group.add_gap(not_relevant_changes,
                 rp->m_att.guid.guidPrefix,
                 rp->m_att.guid.entityId,
-                &rp->m_att.endpoint.unicastLocatorList,
-                &rp->m_att.endpoint.multicastLocatorList);
+                locators);
+    }
 
     // Always activate heartbeat period. We need a confirmation of the reader.
     // The state has to be updated.
@@ -630,14 +651,14 @@ void StatefulWriter::send_heartbeat_to(ReaderProxy& remoteReaderProxy)
     }
 
     this->incrementHBCount();
-    CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
+    CDRMessage::initCDRMsg(&m_cdrmessages.rtpsmsg_fullmsg_);
     // FinalFlag is always false because this is a StatefulWriter in Reliable.
-    RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg, m_guid.guidPrefix, remoteReaderProxy.m_att.guid.guidPrefix,
+    RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.rtpsmsg_fullmsg_, m_guid.guidPrefix, remoteReaderProxy.m_att.guid.guidPrefix,
             remoteReaderProxy.m_att.guid.entityId, m_guid.entityId,
             firstSeq, lastSeq, m_heartbeatCount, false, false);
     logInfo(RTPS_WRITER, m_guid.entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq << ")");
     for (auto lit = remoteReaderProxy.m_att.endpoint.multicastLocatorList.begin(); lit != remoteReaderProxy.m_att.endpoint.multicastLocatorList.end(); ++lit)
-        mp_RTPSParticipant->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg, (Endpoint *)this, (*lit));
+        mp_RTPSParticipant->sendSync(&m_cdrmessages.rtpsmsg_fullmsg_, (Endpoint *)this, (*lit));
     for (auto lit = remoteReaderProxy.m_att.endpoint.unicastLocatorList.begin(); lit != remoteReaderProxy.m_att.endpoint.unicastLocatorList.end(); ++lit)
-        mp_RTPSParticipant->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg, (Endpoint *)this, (*lit));
+        mp_RTPSParticipant->sendSync(&m_cdrmessages.rtpsmsg_fullmsg_, (Endpoint *)this, (*lit));
 }

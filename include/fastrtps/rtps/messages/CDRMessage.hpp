@@ -511,7 +511,7 @@ inline bool CDRMessage::addSequenceNumber(CDRMessage_t* msg,
 }
 
 inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
-        SequenceNumberSet_t* sns)
+        const SequenceNumberSet_t* sns)
 {
     CDRMessage::addSequenceNumber(msg, &sns->base);
 
@@ -538,7 +538,7 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
         bitmap[i] = 0;
 
     uint32_t deltaN = 0;
-    for(std::vector<SequenceNumber_t>::iterator it = sns->get_begin();
+    for(auto it = sns->get_begin();
             it != sns->get_end(); ++it)
     {
         deltaN = (*it - sns->base).low;

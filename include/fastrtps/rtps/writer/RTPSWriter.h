@@ -102,13 +102,7 @@ class RTPSWriter : public Endpoint
      * This method triggers the send operation for unsent changes.
      * @return number of messages sent
      */
-    RTPS_DllAPI virtual size_t send_any_unsent_changes() = 0;
-
-    /**
-     * This method triggers the send operation for unsent changes,
-     * provided they are cleared by the given controllers.
-     */
-    //RTPS_DllAPI virtual void send_any_unsent_changes(const std::vector<FlowController*>* parentControllers) = 0;
+    RTPS_DllAPI virtual void send_any_unsent_changes() = 0;
 
     /**
      * Get Min Seq Num in History.

@@ -383,6 +383,8 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         return false;
     }
 
+    std::unique_lock<std::mutex> lock(local_participant->mutex_);
+
     //Extract RTPS Header
     std::vector<uint8_t> rtps_header;
     for(int i=0;i<RTPS_HEADER_SIZE;i++) rtps_header.push_back(plain_rtps_message.at(i));
@@ -392,7 +394,8 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
 
     // If the maximum number of blocks have been processed, generate a new SessionKey
     bool update_specific_keys = false;
-    if(local_participant->session_block_counter >= local_participant->max_blocks_per_session){
+    if(local_participant->session_block_counter >= local_participant->max_blocks_per_session)
+    {
         local_participant->session_id += 1;
         update_specific_keys = true;
         local_participant->SessionKey = compute_sessionkey(local_participant->ParticipantKeyMaterial.master_sender_key,
@@ -538,10 +541,10 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
                 std::vector<uint8_t> &plain_buffer,
                 const std::vector<uint8_t> &encoded_buffer,
                 const ParticipantCryptoHandle &receiving_crypto,
-                ParticipantCryptoHandle &sending_crypto,
+                const ParticipantCryptoHandle &sending_crypto,
                 SecurityException &exception){
 
-    AESGCMGMAC_ParticipantCryptoHandle& sending_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(sending_crypto);
+    const AESGCMGMAC_ParticipantCryptoHandle& sending_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(sending_crypto);
 
     if(sending_participant.nil())
     {
@@ -1037,7 +1040,8 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     return return_value;
 }
 
-std::array<uint8_t, 32> AESGCMGMAC_Transform::compute_sessionkey(std::array<uint8_t,32> master_sender_key,std::array<uint8_t,32> master_salt , uint32_t &session_id)
+std::array<uint8_t, 32> AESGCMGMAC_Transform::compute_sessionkey(const std::array<uint8_t,32> master_sender_key,
+        const std::array<uint8_t,32> master_salt , const uint32_t &session_id)
 {
 
     std::array<uint8_t,32> session_key;

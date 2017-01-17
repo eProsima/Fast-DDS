@@ -29,150 +29,161 @@
 #include <cassert>
 
 namespace eprosima {
-    namespace fastrtps{
-        namespace rtps {
+namespace fastrtps{
+namespace rtps {
 
-            class CacheChangeForGroup_t
-            {
-            public:
+class RTPSParticipantImpl;
+class Endpoint;
 
-                CacheChangeForGroup_t(const CacheChange_t* change) : 
-                   change_(change)
-                {
-                    fragments_cleared_for_sending_.base = 0;
-                    for (uint32_t i = 1; i != change->getFragmentCount() + 1; i++)
-                       fragments_cleared_for_sending_.add(i); // Indexed on 1
+// TODO(Ricardo) Remove
+class CacheChangeForGroup_t
+{
+    public:
 
-                }
+        CacheChangeForGroup_t(const CacheChange_t* change) : 
+            change_(change)
+    {
+        fragments_cleared_for_sending_.base = 0;
+        for (uint32_t i = 1; i != change->getFragmentCount() + 1; i++)
+            fragments_cleared_for_sending_.add(i); // Indexed on 1
 
-                CacheChangeForGroup_t(const CacheChangeForGroup_t& c) : 
-                   change_(c.change_),
-                   fragments_cleared_for_sending_(c.fragments_cleared_for_sending_)
-                {
-                }
+    }
 
-                 CacheChangeForGroup_t(const ChangeForReader_t& c) : 
-                    change_(c.getChange()),
-                    fragments_cleared_for_sending_(c.getUnsentFragments())
-                {
-                }
+        CacheChangeForGroup_t(const CacheChangeForGroup_t& c) : 
+            change_(c.change_),
+            fragments_cleared_for_sending_(c.fragments_cleared_for_sending_)
+    {
+    }
 
-                const CacheChangeForGroup_t& operator=(const CacheChangeForGroup_t& c)
-                { 
-                    change_ = c.change_;
-                    fragments_cleared_for_sending_ = c.fragments_cleared_for_sending_;
-                    return *this;
-                }
+        CacheChangeForGroup_t(const ChangeForReader_t& c) : 
+            change_(c.getChange()),
+            fragments_cleared_for_sending_(c.getUnsentFragments())
+    {
+    }
 
-                const CacheChange_t* getChange() const
-                {
-                    return change_;
-                }
+        const CacheChangeForGroup_t& operator=(const CacheChangeForGroup_t& c)
+        { 
+            change_ = c.change_;
+            fragments_cleared_for_sending_ = c.fragments_cleared_for_sending_;
+            return *this;
+        }
 
-                bool isFragmented() const
-                {
-                    return change_->getFragmentSize() != 0;
-                }
+        const CacheChange_t* getChange() const
+        {
+            return change_;
+        }
 
-                const FragmentNumberSet_t& getFragmentsClearedForSending() const
-                {
-                    return fragments_cleared_for_sending_;
-                }
+        bool isFragmented() const
+        {
+            return change_->getFragmentSize() != 0;
+        }
 
-                void setFragmentsClearedForSending(FragmentNumberSet_t fragments)
-                {
-                    fragments_cleared_for_sending_ = fragments;
-                }
+        const FragmentNumberSet_t& getFragmentsClearedForSending() const
+        {
+            return fragments_cleared_for_sending_;
+        }
 
-                private:
-                    const CacheChange_t* change_;
+        void setFragmentsClearedForSending(FragmentNumberSet_t fragments)
+        {
+            fragments_cleared_for_sending_ = fragments;
+        }
 
-                    FragmentNumberSet_t fragments_cleared_for_sending_;
-            };
+    private:
+        const CacheChange_t* change_;
 
-            /**
-             * Class RTPSMessageGroup_t that contains the messages used to send multiples changes as one message.
-             * @ingroup WRITER_MODULE
-             */
-            class RTPSMessageGroup_t{
-                public:
-                    CDRMessage_t m_rtpsmsg_header;
-                    CDRMessage_t m_rtpsmsg_submessage;
-                    CDRMessage_t m_rtpsmsg_fullmsg;
-                    RTPSMessageGroup_t(uint32_t payload):
-                        m_rtpsmsg_header(RTPSMESSAGE_HEADER_SIZE),
-                        m_rtpsmsg_submessage(payload),
-                        m_rtpsmsg_fullmsg(payload){};
-            };
+        FragmentNumberSet_t fragments_cleared_for_sending_;
+};
 
-            class RTPSWriter;
+/**
+ * Class RTPSMessageGroup_t that contains the messages used to send multiples changes as one message.
+ * @ingroup WRITER_MODULE
+ */
+class RTPSMessageGroup_t
+{
+    public:
 
-            /**
-             * RTPSMessageGroup class used to send multiple changes as a single CDRMessage.
-             * @ingroup WRITER_MODULE
-             */
-            class RTPSMessageGroup {
-                public:
+        RTPSMessageGroup_t(uint32_t payload):
+            rtpsmsg_submessage_(payload),
+            rtpsmsg_fullmsg_(payload) {}
 
-                    /**
-                     * @param msg_group
-                     * @param W
-                     * @param changesSeqNum
-                     * @param remoteGuidPrefix
-                     * @param readerId
-                     * @param unicast
-                     * @param multicast
-                     * @return 
-                     */
-                static bool send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
-                        RTPSWriter* W,
-                        std::vector<SequenceNumber_t>* changesSeqNum,
-                        const GuidPrefix_t& remoteGuidPrefix,
-                        const EntityId_t& readerId,
-                        LocatorList_t* unicast,
-                        LocatorList_t* multicast);
+        CDRMessage_t rtpsmsg_submessage_;
 
-                /**
-                 * @param changesSeqNum
-                 * @param Sequences
-                 */
-                static void prepare_SequenceNumberSet(std::vector<SequenceNumber_t>* changesSeqNum,
-                        std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>>* Sequences);
+        CDRMessage_t rtpsmsg_fullmsg_;
+};
 
-                /**
-                 * @param msg_group
-                 * @param W
-                 * @param changes
-                 * @param remoteGuidPrefix
-                 * @param unicast
-                 * @param multicast
-                 * @param expectsInlineQos
-                 * @param ReaderId
-                 * @return 
-                 */
-                static uint32_t send_Changes_AsData(RTPSMessageGroup_t* msg_group,
-                        RTPSWriter* W,
-                        std::vector<CacheChangeForGroup_t>& changes,
-                        const GuidPrefix_t& remoteGuidPrefix,
-                        const EntityId_t& ReaderId,
-                        const std::vector<GuidPrefix_t>& remote_participants,
-                        LocatorList_t& unicast,
-                        LocatorList_t& multicast,
-                        bool expectsInlineQos);
-                /**
-                 * @param W
-                 * @param submsg
-                 * @param expectsInlineQos
-                 * @param change
-                 * @param ReaderId
-                 * @return 
-                 */
-                static void prepareDataSubM(RTPSWriter* W, CDRMessage_t* submsg, bool expectsInlineQos, const CacheChange_t* change, const EntityId_t& ReaderId);
+class RTPSWriter;
 
-                static void prepareDataFragSubM(RTPSWriter* W, CDRMessage_t* submsg, bool expectsInlineQos, const CacheChange_t* change, const EntityId_t& ReaderId, uint32_t fragment_number);
-            };
-        } /* namespace rtps */
-    } /* namespace fastrtps */
+/**
+ * RTPSMessageGroup Class used to construct a RTPS message.
+ * @ingroup WRITER_MODULE
+ */
+class RTPSMessageGroup
+{
+    public:
+
+        RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint,
+                RTPSMessageGroup_t& msg_group);
+
+        ~RTPSMessageGroup();
+
+        bool add_data(const CacheChange_t& change, const GuidPrefix_t& remoteGuidPrefix, const EntityId_t& readerId,
+                const LocatorList_t& locators, const std::vector<GuidPrefix_t>& remote_participants,
+                bool expectsInlineQos);
+
+        bool add_data_frag(const CacheChange_t& change, const uint32_t fragment_number,
+                const GuidPrefix_t& remoteGuidPrefix, const EntityId_t& readerId,
+                const LocatorList_t& locators, const std::vector<GuidPrefix_t>& remote_participants,
+                bool expectsInlineQos);
+
+        /**
+         * @param msg_group
+         * @param W
+         * @param changesSeqNum
+         * @param remoteGuidPrefix
+         * @param readerId
+         * @param unicast
+         * @param multicast
+         * @return
+         */
+        bool add_gap(std::vector<SequenceNumber_t>& changesSeqNum,
+                const GuidPrefix_t& remoteGuidPrefix,
+                const EntityId_t& readerId,
+                LocatorList_t& locators);
+
+    private:
+
+        void reset_to_header();
+
+        bool check_preconditions(const GuidPrefix_t& dst, const LocatorList_t& locator_list,
+                const std::vector<GuidPrefix_t>& remote_participants) const;
+
+        void flush_and_reset(const GuidPrefix_t& dst, const LocatorList_t& locator_list,
+                const std::vector<GuidPrefix_t>& remote_participants);
+
+        void flush();
+
+        void send();
+
+        void check_and_maybe_flush(const GuidPrefix_t& dst, const LocatorList_t& locator_list,
+                const std::vector<GuidPrefix_t>& remote_participants);
+
+        RTPSParticipantImpl* participant_;
+
+        Endpoint* endpoint_;
+
+        CDRMessage_t* full_msg_;
+
+        CDRMessage_t* submessage_msg_;
+
+        GuidPrefix_t current_dst_;
+
+        LocatorList_t current_locators_;
+
+        std::vector<GuidPrefix_t> current_remote_participants_;
+};
+
+} /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif

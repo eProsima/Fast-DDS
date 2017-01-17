@@ -87,7 +87,7 @@ Locator_t RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t loc)
 RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam,
         const GuidPrefix_t& guidP,
         RTPSParticipant* par,
-        RTPSParticipantListener* plisten):	m_att(PParam), m_guid(guidP ,c_EntityId_RTPSParticipant),
+        RTPSParticipantListener* plisten): m_att(PParam), m_guid(guidP ,c_EntityId_RTPSParticipant),
     mp_event_thr(nullptr),
     mp_builtinProtocols(nullptr),
     mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
@@ -95,8 +95,15 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     m_security_manager(this),
     mp_participantListener(plisten),
     mp_userParticipant(par),
-    mp_mutex(new boost::recursive_mutex())
+    mp_mutex(new boost::recursive_mutex()),
+    is_rtps_protected_(false)
 {
+    // Read participant properties.
+    const std::string* property_value = PropertyPolicyHelper::find_property(PParam.properties,
+            "rtps.participant.is_rtps_protected");
+    if(property_value->compare("true") == 0)
+        is_rtps_protected_ = true;
+
     // Builtin transport by default
     if (PParam.useBuiltinTransports)
     {

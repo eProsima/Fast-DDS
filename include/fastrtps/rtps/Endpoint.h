@@ -73,6 +73,8 @@ class Endpoint
      */
     RTPS_DllAPI inline EndpointAttributes* getAttributes() { return &m_att; }
 
+    bool supports_rtps_protection() { return supports_rtps_protection_; }
+
     protected:
     //!Pointer to the RTPSParticipant containing this endpoint.
     RTPSParticipantImpl* mp_RTPSParticipant;
@@ -86,6 +88,8 @@ class Endpoint
     private:
 
     Endpoint& operator=(const Endpoint&)NON_COPYABLE_CXX11;
+
+    bool supports_rtps_protection_;
 
 };
 

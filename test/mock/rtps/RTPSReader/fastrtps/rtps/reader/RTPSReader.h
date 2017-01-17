@@ -19,6 +19,7 @@
 #ifndef _RTPS_READER_RTPSREADER_H_
 #define _RTPS_READER_RTPSREADER_H_
 
+#include <fastrtps/rtps/Endpoint.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 
@@ -28,7 +29,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class RTPSReader
+class RTPSReader : public Endpoint
 {
     public:
 
