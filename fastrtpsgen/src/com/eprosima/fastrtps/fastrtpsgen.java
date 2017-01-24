@@ -434,7 +434,7 @@ public class fastrtpsgen {
 				}
 
 				m_tempDir = tempPath;
-			} else if (m_os.contains("Linux")) {
+			} else if (m_os.contains("Linux") || m_os.contains("Mac")) {
 				m_tempDir = "/tmp/";
 			}
 		}
@@ -887,7 +887,7 @@ public class fastrtpsgen {
 		if (ppPath == null) {
 			if (m_os.contains("Windows")) {
 				ppPath = "cl.exe";
-			} else if (m_os.contains("Linux")) {
+			} else if (m_os.contains("Linux") || m_os.contains("Mac")) {
 				ppPath = "cpp";
 			}
 		}
@@ -899,7 +899,7 @@ public class fastrtpsgen {
 		for (int i=0; i < m_includePaths.size(); ++i) {
 			if (m_os.contains("Windows")) {
 				lineCommand.add(((String) m_includePaths.get(i)).replaceFirst("^-I", "/I"));
-			} else if (m_os.contains("Linux")) {
+			} else if (m_os.contains("Linux") || m_os.contains("Mac")) {
 				lineCommand.add(m_includePaths.get(i));
 			}
 		}
@@ -912,7 +912,7 @@ public class fastrtpsgen {
 		// Add input file.
 		lineCommand.add(idlFilename);
 
-		if(m_os.contains("Linux")) {
+		if(m_os.contains("Linux") || m_os.contains("Mac")) {
 			lineCommand.add(outputfile);
 		}
 
@@ -970,7 +970,7 @@ public class fastrtpsgen {
         {
             javac = "javac.exe";
         }
-        else if(m_os.contains("Linux"))
+        else if(m_os.contains("Linux") || m_os.contains("Mac"))
         {
             javac = "javac";
         }
@@ -1023,7 +1023,7 @@ public class fastrtpsgen {
         {
             javah = "javah.exe";
         }
-        else if(m_os.contains("Linux"))
+        else if(m_os.contains("Linux") || m_os.contains("Mac"))
         {
             javah = "javah";
         }
