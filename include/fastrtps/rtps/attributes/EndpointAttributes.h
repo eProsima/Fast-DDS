@@ -21,6 +21,7 @@
 
 #include "../common/Types.h"
 #include "../common/Locator.h"
+#include "PropertyPolicy.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -56,6 +57,7 @@ public:
     //!Multicast locator list
     LocatorList_t multicastLocatorList;
     LocatorList_t outLocatorList;
+    PropertyPolicy properties;
 
     /**
      * Get the user defined ID

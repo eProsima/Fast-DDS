@@ -143,7 +143,7 @@ class  WriterKeyHandle
         uint64_t session_block_counter;
         uint64_t max_blocks_per_session;
         CryptoTransformKind transformation_kind;
-
+        std::mutex mutex_;
 };
 typedef HandleImpl<WriterKeyHandle> AESGCMGMAC_WriterCryptoHandle;
 
@@ -178,7 +178,7 @@ class  ReaderKeyHandle
         uint64_t session_block_counter;
         uint64_t max_blocks_per_session;
         CryptoTransformKind transformation_kind;
-
+        std::mutex mutex_;
 };
 
 typedef HandleImpl<ReaderKeyHandle> AESGCMGMAC_ReaderCryptoHandle;

@@ -73,6 +73,7 @@ class MessageReceiver
 
         //!Received message
         CDRMessage_t m_rec_msg;
+        CDRMessage_t m_crypto_msg;
         //!PArameter list
         ParameterList_t m_ParamList;
         // Functions to associate/remove associatedendpoints
@@ -140,7 +141,6 @@ class MessageReceiver
          * @return
          */
         bool proc_Submsg_Data(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
-        bool proc_Submsg_SecureData(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
         bool proc_Submsg_DataFrag(CDRMessage_t*msg, SubmessageHeader_t* smh, bool*last);
         bool proc_Submsg_Acknack(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
         bool proc_Submsg_Heartbeat(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
@@ -150,6 +150,8 @@ class MessageReceiver
         bool proc_Submsg_InfoSRC(CDRMessage_t*msg,SubmessageHeader_t* smh,bool*last);
         bool proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t* smh, bool*last);
         bool proc_Submsg_HeartbeatFrag(CDRMessage_t*msg, SubmessageHeader_t* smh, bool*last);
+        bool proc_Submsg_SecureMessage(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+        bool proc_Submsg_SecureSubMessage(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 
         RTPSParticipantImpl* participant_;
 };

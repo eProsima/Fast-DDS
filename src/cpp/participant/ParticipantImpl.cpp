@@ -173,6 +173,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
     watt.endpoint.unicastLocatorList = att.unicastLocatorList;
     watt.endpoint.outLocatorList = att.outLocatorList;
     watt.mode = att.qos.m_publishMode.kind == eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
+    watt.endpoint.properties = att.properties;
     if(att.getEntityID()>0)
         watt.endpoint.setEntityID((uint8_t)att.getEntityID());
     if(att.getUserDefinedID()>0)
@@ -293,6 +294,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
     ratt.endpoint.unicastLocatorList = att.unicastLocatorList;
     ratt.endpoint.outLocatorList = att.outLocatorList;
     ratt.expectsInlineQos = att.expectsInlineQos;
+    ratt.endpoint.properties = att.properties;
     if(att.getEntityID()>0)
         ratt.endpoint.setEntityID((uint8_t)att.getEntityID());
     if(att.getUserDefinedID()>0)

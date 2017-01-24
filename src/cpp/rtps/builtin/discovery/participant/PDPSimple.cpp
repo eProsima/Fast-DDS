@@ -147,9 +147,6 @@ void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant
 
     participant_data->m_userData = mp_RTPSParticipant->getAttributes().userData;
 
-    if(mp_RTPSParticipant->is_rtps_protected())
-        participant_data->m_properties.properties.emplace_back("rtps.participant.is_rtps_protected", "true");
-
     IdentityToken* identity_token = nullptr;
     if(mp_RTPSParticipant->security_manager().get_identity_token(&identity_token) && identity_token != nullptr)
     {

@@ -53,6 +53,13 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 {
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
+    // If payload protection, encode payload
+    if(is_payload_protected())
+    {
+        getRTPSParticipant()->security_manager().encode_serialized_payload(cptr->serializedPayload,
+                m_guid);
+    }
+
     if(!isAsync())
     {
         this->setLivelinessAsserted(true);
@@ -70,15 +77,27 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
             LocatorList_t locators(m_loc_list_1_for_sync_send);
             locators.push_back(m_loc_list_2_for_sync_send);
 
-            //TODO(Ricardo) Temporal.
-            std::vector<GuidPrefix_t> remote_participants;
-            remote_participants.push_back(cptr->writerGUID.guidPrefix);
+            //TODO(Ricardo) Temporal. This not works.
+            std::vector<GuidPrefix_t> remote_participants{cptr->writerGUID.guidPrefix};
+            std::vector<GUID_t> remote_readers{cptr->writerGUID};
 
             RTPSMessageGroup group(mp_RTPSParticipant, this,  m_cdrmessages);
-            if(!group.add_data(*cptr, c_GuidPrefix_Unknown, c_EntityId_Unknown,
-                        locators, remote_participants, false))
+
+            if(cptr->getFragmentSize() != 0)
             {
-                logError(RTPS_WRITER, "Error sending change " << cptr->sequenceNumber);
+                for(uint32_t fragment = 1; fragment <= cptr->getFragmentCount(); ++fragment)
+                {
+                    group.add_data_frag(*cptr, fragment, c_GuidPrefix_Unknown, c_EntityId_Unknown,
+                            locators, remote_participants, remote_readers, false);
+                }
+            }
+            else
+            {
+                if(!group.add_data(*cptr, c_GuidPrefix_Unknown, c_EntityId_Unknown,
+                            locators, remote_participants, remote_readers, false))
+                {
+                    logError(RTPS_WRITER, "Error sending change " << cptr->sequenceNumber);
+                }
             }
         }
         else
@@ -160,11 +179,13 @@ void StatelessWriter::send_any_unsent_changes()
         {
             RTPSMessageGroup group(mp_RTPSParticipant, this,  m_cdrmessages);
 
-            //TODO(Ricardo) Temporal.
+            //TODO(Ricardo) Temporal. This not works.
             std::vector<GuidPrefix_t> remote_participants;
+            std::vector<GUID_t> remote_readers;
             for(const auto& change : changes_to_send)
             {
                 remote_participants.push_back(change->writerGUID.guidPrefix);
+                remote_readers.push_back(change->writerGUID);
             }
 
             for (const auto* change : changes_to_send)
@@ -188,13 +209,13 @@ void StatelessWriter::send_any_unsent_changes()
                     for(uint32_t fragment = 1; fragment <= change->getFragmentCount(); ++fragment)
                     {
                         group.add_data_frag(*change, fragment, c_GuidPrefix_Unknown, readerId,
-                                    locators, remote_participants, false);
+                                    locators, remote_participants, remote_readers, false);
                     }
                 }
                 else
                 {
                     group.add_data(*change, c_GuidPrefix_Unknown, readerId,
-                                locators, remote_participants, false);
+                                locators, remote_participants, remote_readers, false);
                 }
             }
         }

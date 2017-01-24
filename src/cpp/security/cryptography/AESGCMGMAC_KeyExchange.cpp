@@ -40,7 +40,7 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
     const AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto);
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
 
-    if( local_participant.nil() | remote_participant.nil() ){
+    if( local_participant.nil() || remote_participant.nil() ){
         logWarning(SECURITY_CRYPTO, "Not a valid ParticipantCryptoHandle received");
         return false;
     }
@@ -74,7 +74,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
     const AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto);
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
 
-    if( local_participant.nil() | remote_participant.nil() ){
+    if( local_participant.nil() || remote_participant.nil() ){
         logWarning(SECURITY_CRYPTO, "Not a valid ParticipantCryptoHandle received");
         return false;
     }
@@ -115,10 +115,13 @@ bool AESGCMGMAC_KeyExchange::create_local_datawriter_crypto_tokens(
     AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(local_datawriter_crypto);
     AESGCMGMAC_ReaderCryptoHandle& remote_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(remote_datareader_crypto);
 
-    if( local_writer.nil() | remote_reader.nil() ){
-        logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle received");        
+    if( local_writer.nil() || remote_reader.nil() ){
+        logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle received");
         return false;
     }
+
+    std::unique_lock<std::mutex> lock(remote_reader->mutex_);
+
     //Flush previously present CryptoTokens
     local_datawriter_crypto_tokens.clear();
     //Only the KeyMaterial used in conjunction with the remote_participant are tokenized. In this implementation only on Pariticipant2ParticipantKeyMaterial exists per matched Participant
@@ -144,11 +147,13 @@ bool AESGCMGMAC_KeyExchange::create_local_datareader_crypto_tokens(
     AESGCMGMAC_ReaderCryptoHandle& local_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(local_datareader_crypto);
     AESGCMGMAC_WriterCryptoHandle& remote_writer = AESGCMGMAC_WriterCryptoHandle::narrow(remote_datawriter_crypto);
 
-    if( local_reader.nil() | remote_writer.nil() ){
+    if( local_reader.nil() || remote_writer.nil() ){
         logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle received");
         return false;
     }
-    //Flush previously present CryptoTokens
+
+    std::unique_lock<std::mutex> lock(remote_writer->mutex_);
+
     local_datareader_crypto_tokens.clear();
     //Participant2ParticipantKeyMaterial will be come RemoteParticipant2ParticipantKeyMaterial on the other side
     {
@@ -175,7 +180,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
     AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(local_datawriter_crypto);
     AESGCMGMAC_ReaderCryptoHandle& remote_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(remote_datareader_crypto);
 
-    if( local_writer.nil() | remote_reader.nil() ){
+    if( local_writer.nil() || remote_reader.nil() ){
         logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle received");
         return false;
     }
@@ -198,15 +203,22 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
         return false;
     }
 
+    std::unique_lock<std::mutex> remote_reader_lock(remote_reader->mutex_);
+
     //Valid CryptoToken, we can decrypt and push the resulting KeyMaterial in as a RemoteParticipant2ParticipantKeyMaterial
     std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_datareader_tokens.at(0).binary_properties().at(0).value(),
             remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key);
 
     KeyMaterial_AES_GCM_GMAC keymat;
     keymat = KeyMaterialCDRDeserialize(&plaintext);
-    local_writer->Reader2WriterKeyMaterial.push_back(keymat);
     remote_reader->Reader2WriterKeyMaterial.push_back(keymat);
-    
+
+    remote_reader_lock.unlock();
+
+    std::unique_lock<std::mutex> local_writer_lock(local_writer->mutex_);
+
+    local_writer->Reader2WriterKeyMaterial.push_back(keymat);
+
     return true;
  }
 
@@ -219,7 +231,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
     AESGCMGMAC_ReaderCryptoHandle& local_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(local_datareader_crypto);
     AESGCMGMAC_WriterCryptoHandle& remote_writer = AESGCMGMAC_WriterCryptoHandle::narrow(remote_datawriter_crypto);
 
-    if( local_reader.nil() | remote_writer.nil() ){
+    if( local_reader.nil() || remote_writer.nil() ){
         logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle"); 
         return false;
     }
@@ -242,14 +254,22 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
         return false;
     }
 
+    std::unique_lock<std::mutex> remote_writer_lock(remote_writer->mutex_);
+
     //Valid CryptoToken, we can decrypt and push the resulting KeyMaterial in as a RemoteParticipant2ParticipantKeyMaterial
     std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_datawriter_tokens.at(0).binary_properties().at(0).value(),
             remote_writer->Participant2ParticipantKxKeyMaterial.master_sender_key);
 
     KeyMaterial_AES_GCM_GMAC keymat;
     keymat = KeyMaterialCDRDeserialize(&plaintext);
-    local_reader->Writer2ReaderKeyMaterial.push_back(keymat);
+
     remote_writer->Writer2ReaderKeyMaterial.push_back(keymat);
+
+    remote_writer_lock.unlock();
+
+    std::unique_lock<std::mutex> local_writer_lock(local_reader->mutex_);
+
+    local_reader->Writer2ReaderKeyMaterial.push_back(keymat);
 
     return true;
 }

@@ -31,7 +31,9 @@ Endpoint::Endpoint(RTPSParticipantImpl* pimpl,GUID_t& guid,EndpointAttributes& a
     m_guid(guid),
     m_att(att),
     mp_mutex(new boost::recursive_mutex()),
-    supports_rtps_protection_(true)
+    supports_rtps_protection_(true),
+    is_submessage_protected_(false),
+    is_payload_protected_(false)
     {
     }
 

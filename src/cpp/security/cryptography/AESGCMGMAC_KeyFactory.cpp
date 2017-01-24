@@ -255,7 +255,6 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
     (*WCrypto)->transformation_kind = transformationtype;
     //Fill WriterKeyMaterial - This will be used to cipher full rpts messages
 
-    (*WCrypto)->Participant_master_key_id = participant_handle->ParticipantKeyMaterial.sender_key_id;
     (*WCrypto)->WriterKeyMaterial.transformation_kind = transformationtype;
     (*WCrypto)->WriterKeyMaterial.master_salt.fill(0);
     RAND_bytes( (*WCrypto)->WriterKeyMaterial.master_salt.data(), 16 );
@@ -271,6 +270,10 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
     (*WCrypto)->max_blocks_per_session = maxblockspersession;
     (*WCrypto)->session_block_counter = maxblockspersession+1; //Set to update upon first usage
     RAND_bytes( (unsigned char *)( &( (*WCrypto)->session_id ) ), sizeof(uint16_t));
+
+    std::unique_lock<std::mutex>(participant_handle->mutex_);
+
+    (*WCrypto)->Participant_master_key_id = participant_handle->ParticipantKeyMaterial.sender_key_id;
 
     (*WCrypto)->Parent_participant = &participant_crypto;
 
@@ -294,6 +297,9 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
         logWarning(SECURITY_CRYPTO,"Malformed DataWriterCryptoHandle");
         return nullptr;
     }
+
+    std::unique_lock<std::mutex> writer_lock(local_writer_handle->mutex_);
+
     AESGCMGMAC_ReaderCryptoHandle* RRCrypto = new AESGCMGMAC_ReaderCryptoHandle(); // Remote Reader CryptoHandle, to be returned at the end of the function
 
     (*RRCrypto)->transformation_kind = local_writer_handle->transformation_kind;
@@ -320,20 +326,23 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
         local_writer_handle->Writer2ReaderKeyMaterial.push_back(buffer);
     }
 
-    AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
-    (*RRCrypto)->Participant2ParticipantKxKeyMaterial = remote_participant->Participant2ParticipantKxKeyMaterial.at(0);
-
     (*RRCrypto)->max_blocks_per_session = local_writer_handle->max_blocks_per_session;
     (*RRCrypto)->session_block_counter = local_writer_handle->session_block_counter;
+
+    writer_lock.unlock();
+
+    AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
+
+    std::unique_lock<std::mutex> remote_participant_lock(remote_participant->mutex_);
+
+    (*RRCrypto)->Participant2ParticipantKxKeyMaterial = remote_participant->Participant2ParticipantKxKeyMaterial.at(0);
     RAND_bytes( (unsigned char *)( &( (*RRCrypto)->session_id ) ), sizeof(uint16_t));
 
     (*RRCrypto)->Parent_participant = &remote_participant_crypto;
     (*RRCrypto)->session_id = 0;
     //Save this CryptoHandle as part of the remote participant
 
-    AESGCMGMAC_ParticipantCryptoHandle& PCrypto = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
-
-    (*PCrypto)->Readers.push_back(RRCrypto);
+    (*remote_participant)->Readers.push_back(RRCrypto);
 
     return RRCrypto;
 }
@@ -376,7 +385,6 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
           }//endfor
     }//endif
 
-    (*RCrypto)->Participant_master_key_id = participant_handle->ParticipantKeyMaterial.sender_key_id;
     (*RCrypto)->transformation_kind = transformationtype;
     //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
 
@@ -396,6 +404,10 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
     (*RCrypto)->max_blocks_per_session = maxblockspersession;
     (*RCrypto)->session_block_counter = maxblockspersession+1;
     RAND_bytes( (unsigned char *)( &( (*RCrypto)->session_id ) ), sizeof(uint16_t));
+
+    std::unique_lock<std::mutex> lock(participant_handle->mutex_);
+
+    (*RCrypto)->Participant_master_key_id = participant_handle->ParticipantKeyMaterial.sender_key_id;
 
     (*RCrypto)->Parent_participant = &participant_crypto;
 
@@ -418,6 +430,9 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
         logWarning(SECURITY_CRYPTO,"Invalid DataReaderCryptoHandle");
         return nullptr;
     }
+
+    std::unique_lock<std::mutex> reader_lock(local_reader_handle->mutex_);
+
     AESGCMGMAC_WriterCryptoHandle* RWCrypto = new AESGCMGMAC_WriterCryptoHandle(); // Remote Writer CryptoHandle, to be returned at the end of the function
 
     (*RWCrypto)->Participant_master_key_id = local_reader_handle->Participant_master_key_id;
@@ -443,19 +458,24 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
         local_reader_handle->Reader2WriterKeyMaterial.push_back(buffer);
     }
 
-    AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypt);
-    (*RWCrypto)->Participant2ParticipantKxKeyMaterial = remote_participant->Participant2ParticipantKxKeyMaterial.at(0);
-
     (*RWCrypto)->max_blocks_per_session = local_reader_handle->max_blocks_per_session;
     (*RWCrypto)->session_block_counter = local_reader_handle->session_block_counter;
+
+    reader_lock.unlock();
+
+    AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypt);
+
+    std::unique_lock<std::mutex> remote_participant_lock(remote_participant->mutex_);
+
+    (*RWCrypto)->Participant2ParticipantKxKeyMaterial = remote_participant->Participant2ParticipantKxKeyMaterial.at(0);
+
     RAND_bytes( (unsigned char *)( &( (*RWCrypto)->session_id ) ), sizeof(uint16_t));
     (*RWCrypto)->session_id = 0;
 
     (*RWCrypto)->Parent_participant = &remote_participant_crypt;
 
     //Save this CryptoHandle as part of the remote participant
-    AESGCMGMAC_ParticipantCryptoHandle& PCrypto = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypt);
-    (*PCrypto)->Writers.push_back(RWCrypto);
+    (*remote_participant)->Writers.push_back(RWCrypto);
 
     return RWCrypto;
 }

@@ -57,7 +57,7 @@ namespace rtps {
 MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant) : mp_change(nullptr),
     participant_(participant) {}
 MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant, uint32_t rec_buffer_size) :
-    m_rec_msg(rec_buffer_size),
+    m_rec_msg(rec_buffer_size), m_crypto_msg(rec_buffer_size),
     mp_change(nullptr),
     participant_(participant)
     {
@@ -97,7 +97,7 @@ void MessageReceiver::associateEndpoint(Endpoint *to_add){
                 break;
             }
         }
-        if(!found)	AssociatedWriters.push_back((RTPSWriter*)to_add);	
+        if(!found) AssociatedWriters.push_back((RTPSWriter*)to_add);
     }else{
         for(auto it = AssociatedReaders.begin();it != AssociatedReaders.end(); ++it){
             if( (*it) == (RTPSReader*)to_add ){
@@ -118,7 +118,7 @@ void MessageReceiver::removeEndpoint(Endpoint *to_remove){
             if ((*it) == var){
                 AssociatedWriters.erase(it);
                 break;
-            }		
+            }
         }
     }else{
         RTPSReader *var = (RTPSReader *)to_remove;
@@ -126,7 +126,7 @@ void MessageReceiver::removeEndpoint(Endpoint *to_remove){
             if ((*it) == var){
                 AssociatedReaders.erase(it);
                 break;
-            }		
+            }
         }
     }
     return;
@@ -199,8 +199,16 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
     //Once everything is set, the reading begins:
     if(!checkRTPSHeader(msg))
         return;
-    // Loop until there are no more submessages
 
+    CDRMessage_t* auxiliary_buffer = &m_crypto_msg;
+
+    if(participant_->security_manager().decode_rtps_message(*msg, *auxiliary_buffer, sourceGuidPrefix))
+    {
+        // Swap
+        std::swap(msg, auxiliary_buffer);
+    }
+
+    // Loop until there are no more submessages
     bool last_submsg = false;
     bool valid;
     int count = 0;
@@ -209,19 +217,24 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 
     while(msg->pos < msg->length)// end of the message
     {
+        CDRMessage_t* submessage = msg;
+
+        if(participant_->security_manager().decode_rtps_submessage(*msg, *auxiliary_buffer, sourceGuidPrefix))
+            submessage = auxiliary_buffer;
+
         //First 4 bytes must contain: ID | flags | octets to next header
-        if(!readSubmessageHeader(msg,&submsgh))
+        if(!readSubmessageHeader(submessage, &submsgh))
             return;
-        //cout << msg->pos << "||"<<submsgh.submessageLength << "||"<<msg->length<<endl;
-        if(msg->pos + submsgh.submessageLength > msg->length)
+
+        if(submessage->pos + submsgh.submessageLength > submessage->length)
         {
             logWarning(RTPS_MSG_IN,IDSTRING"SubMsg of invalid length ("<<submsgh.submessageLength
-                    << ") with current msg position/length ("<<msg->pos << "/"<<msg->length << ")");
+                    << ") with current msg position/length (" << submessage->pos << "/" << submessage->length << ")");
             return;
         }
         if(submsgh.submessageLength == 0) //THIS IS THE LAST SUBMESSAGE
         {
-            submsgh.submsgLengthLarger = msg->length - msg->pos;
+            submsgh.submsgLengthLarger = submessage->length - submessage->pos;
         }
         valid = true;
         count++;
@@ -231,51 +244,39 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
                 {
                     if(this->destGuidPrefix != RTPSParticipantguidprefix)
                     {
-                        msg->pos += submsgh.submessageLength;
+                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN,IDSTRING"Data Submsg ignored, DST is another RTPSParticipant");
                     }
                     else
                     {
                         logInfo(RTPS_MSG_IN,IDSTRING"Data Submsg received, processing.");
-                        valid = proc_Submsg_Data(msg,&submsgh,&last_submsg);
+                        valid = proc_Submsg_Data(submessage, &submsgh, &last_submsg);
                     }
                     break;
                 }
             case DATA_FRAG:
                 if (this->destGuidPrefix != RTPSParticipantguidprefix)
                 {
-                    msg->pos += submsgh.submessageLength;
+                    submessage->pos += submsgh.submessageLength;
                     logInfo(RTPS_MSG_IN, IDSTRING"DataFrag Submsg ignored, DST is another RTPSParticipant");
                 }
                 else
                 {
                     logInfo(RTPS_MSG_IN, IDSTRING"DataFrag Submsg received, processing.");
-                    valid = proc_Submsg_DataFrag(msg, &submsgh, &last_submsg);
-                }
-                break;
-            case SECURE_DATA:
-                if(this->destGuidPrefix != RTPSParticipantguidprefix)
-                {
-                    msg->pos += submsgh.submessageLength;
-                    logInfo(RTPS_MSG_IN,IDSTRING"Data Submsg ignored, DST is another RTPSParticipant");
-                }
-                else
-                {
-                    logInfo(RTPS_MSG_IN,IDSTRING"Data Submsg received, processing.");
-                    valid = proc_Submsg_SecureData(msg,&submsgh,&last_submsg);
+                    valid = proc_Submsg_DataFrag(submessage, &submsgh, &last_submsg);
                 }
                 break;
             case GAP:
                 {
                     if(this->destGuidPrefix != RTPSParticipantguidprefix)
                     {
-                        msg->pos += submsgh.submessageLength;
+                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN,IDSTRING"Gap Submsg ignored, DST is another RTPSParticipant...");
                     }
                     else
                     {
                         logInfo(RTPS_MSG_IN,IDSTRING"Gap Submsg received, processing...");
-                        valid = proc_Submsg_Gap(msg,&submsgh,&last_submsg);
+                        valid = proc_Submsg_Gap(submessage, &submsgh, &last_submsg);
                     }
                     break;
                 }
@@ -283,13 +284,13 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
                 {
                     if(this->destGuidPrefix != RTPSParticipantguidprefix)
                     {
-                        msg->pos += submsgh.submessageLength;
+                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN,IDSTRING"Acknack Submsg ignored, DST is another RTPSParticipant...");
                     }
                     else
                     {
                         logInfo(RTPS_MSG_IN,IDSTRING"Acknack Submsg received, processing...");
-                        valid = proc_Submsg_Acknack(msg,&submsgh,&last_submsg);
+                        valid = proc_Submsg_Acknack(submessage, &submsgh, &last_submsg);
                     }
                     break;
                 }
@@ -297,13 +298,13 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
                 {
                     if (this->destGuidPrefix != RTPSParticipantguidprefix)
                     {
-                        msg->pos += submsgh.submessageLength;
+                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN, IDSTRING"NackFrag Submsg ignored, DST is another RTPSParticipant...");
                     }
                     else
                     {
                         logInfo(RTPS_MSG_IN, IDSTRING"NackFrag Submsg received, processing...");
-                        valid = proc_Submsg_NackFrag(msg, &submsgh, &last_submsg);
+                        valid = proc_Submsg_NackFrag(submessage, &submsgh, &last_submsg);
                     }
                     break;
                 }
@@ -311,13 +312,13 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
                 {
                     if(this->destGuidPrefix != RTPSParticipantguidprefix)
                     {
-                        msg->pos += submsgh.submessageLength;
+                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN,IDSTRING"HB Submsg ignored, DST is another RTPSParticipant...");
                     }
                     else
                     {
                         logInfo(RTPS_MSG_IN,IDSTRING"Heartbeat Submsg received, processing...");
-                        valid = proc_Submsg_Heartbeat(msg,&submsgh,&last_submsg);
+                        valid = proc_Submsg_Heartbeat(submessage, &submsgh, &last_submsg);
                     }
                     break;
                 }
@@ -325,36 +326,32 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
                 {
                     if (this->destGuidPrefix != RTPSParticipantguidprefix)
                     {
-                        msg->pos += submsgh.submessageLength;
+                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN, IDSTRING"HBFrag Submsg ignored, DST is another RTPSParticipant...");
                     }
                     else
                     {
                         logInfo(RTPS_MSG_IN, IDSTRING"HeartbeatFrag Submsg received, processing...");
-                        valid = proc_Submsg_HeartbeatFrag(msg, &submsgh, &last_submsg);
+                        valid = proc_Submsg_HeartbeatFrag(submessage, &submsgh, &last_submsg);
                     }
                     break;
                 }
             case PAD:
                 logWarning(RTPS_MSG_IN,IDSTRING"PAD messages not yet implemented, ignoring");
-                msg->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
+                submessage->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
                 break;
             case INFO_DST:
                 logInfo(RTPS_MSG_IN,IDSTRING"InfoDST message received, processing...");
-                valid = proc_Submsg_InfoDST(msg,&submsgh,&last_submsg);
-                // Warning("Info DST messages not yet implemented"<<endl);
-                // msg->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
+                valid = proc_Submsg_InfoDST(submessage, &submsgh, &last_submsg);
                 break;
             case INFO_SRC:
                 logInfo(RTPS_MSG_IN,IDSTRING"InfoSRC message received, processing...");
-                valid = proc_Submsg_InfoSRC(msg,&submsgh,&last_submsg);
-                // pWarning("Info SRC messages not yet implemented"<<endl);
-                // msg->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
+                valid = proc_Submsg_InfoSRC(submessage, &submsgh, &last_submsg);
                 break;
             case INFO_TS:
                 {
                     logInfo(RTPS_MSG_IN,IDSTRING"InfoTS Submsg received, processing...");
-                    valid = proc_Submsg_InfoTS(msg,&submsgh,&last_submsg);
+                    valid = proc_Submsg_InfoTS(submessage, &submsgh, &last_submsg);
                     break;
                 }
             case INFO_REPLY:
@@ -362,7 +359,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
             case INFO_REPLY_IP4:
                 break;
             default:
-                msg->pos += submsgh.submessageLength; //ID NOT KNOWN. IGNORE AND CONTINUE
+                submessage->pos += submsgh.submessageLength; //ID NOT KNOWN. IGNORE AND CONTINUE
                 break;
         }
 
@@ -407,7 +404,7 @@ bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg) //check and proccess the
 }
 
 
-bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t* smh)
+bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg, SubmessageHeader_t* smh)
 {
     if(msg->length - msg->pos < 4)
     {
@@ -456,7 +453,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
     msg->pos+=2;
 
     int16_t octetsToInlineQos;
-    CDRMessage::readInt16(msg,&octetsToInlineQos); //it should be 16 in this implementation
+    CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
 
     //reader and writer ID
     EntityId_t readerID;
@@ -591,105 +588,6 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
     }
 
     logInfo(RTPS_MSG_IN,IDSTRING"Sub Message DATA processed");
-    return true;
-}
-
-bool MessageReceiver::proc_Submsg_SecureData(CDRMessage_t* msg, SubmessageHeader_t* smh, bool* last)
-{
-    //TODO(Ricado). Temporal
-    if(!participant_->security_manager().decode_rtps_message(
-            *msg, sourceGuidPrefix))
-        return false;
-
-    bool last_submsg = false;
-    bool valid;
-    int count = 0;
-    SubmessageHeader_t submsgh; //Current submessage header
-    //Pointers to different types of messages:
-
-    // TODO Return to submessageheaer (Ricardo) Temporal
-    msg->pos -= 4;
-
-    while(msg->pos < msg->length)// end of the message
-    {
-        //First 4 bytes must contain: ID | flags | octets to next header
-        if(!readSubmessageHeader(msg,&submsgh))
-            return false;
-        //cout << msg->pos << "||"<<submsgh.submessageLength << "||"<<msg->length<<endl;
-        if(msg->pos + submsgh.submessageLength > msg->length)
-        {
-            logWarning(RTPS_MSG_IN,IDSTRING"SubMsg of invalid length ("<<submsgh.submessageLength
-                    << ") with current msg position/length ("<<msg->pos << "/"<<msg->length << ")");
-            return false;
-        }
-        if(submsgh.submessageLength == 0) //THIS IS THE LAST SUBMESSAGE
-        {
-            submsgh.submsgLengthLarger = msg->length - msg->pos;
-        }
-        valid = true;
-        count++;
-        switch(submsgh.submessageId)
-        {
-            case DATA:
-                valid = proc_Submsg_Data(msg,&submsgh,&last_submsg);
-                break;
-            case DATA_FRAG:
-                logInfo(RTPS_MSG_IN, IDSTRING"DataFrag Submsg received, processing.");
-                valid = proc_Submsg_DataFrag(msg, &submsgh, &last_submsg);
-                break;
-            case GAP:
-                logInfo(RTPS_MSG_IN,IDSTRING"Gap Submsg received, processing...");
-                valid = proc_Submsg_Gap(msg,&submsgh,&last_submsg);
-                break;
-            case ACKNACK:
-                logInfo(RTPS_MSG_IN,IDSTRING"Acknack Submsg received, processing...");
-                valid = proc_Submsg_Acknack(msg,&submsgh,&last_submsg);
-                break;
-            case NACK_FRAG:
-                logInfo(RTPS_MSG_IN, IDSTRING"NackFrag Submsg received, processing...");
-                valid = proc_Submsg_NackFrag(msg, &submsgh, &last_submsg);
-                break;
-            case HEARTBEAT:
-                logInfo(RTPS_MSG_IN,IDSTRING"Heartbeat Submsg received, processing...");
-                valid = proc_Submsg_Heartbeat(msg,&submsgh,&last_submsg);
-                break;
-            case HEARTBEAT_FRAG:
-                logInfo(RTPS_MSG_IN, IDSTRING"HeartbeatFrag Submsg received, processing...");
-                valid = proc_Submsg_HeartbeatFrag(msg, &submsgh, &last_submsg);
-                break;
-            case PAD:
-                logWarning(RTPS_MSG_IN,IDSTRING"PAD messages not yet implemented, ignoring");
-                msg->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
-                break;
-            case INFO_DST:
-                logInfo(RTPS_MSG_IN,IDSTRING"InfoDST message received, processing...");
-                valid = proc_Submsg_InfoDST(msg,&submsgh,&last_submsg);
-                // Warning("Info DST messages not yet implemented"<<endl);
-                // msg->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
-                break;
-            case INFO_SRC:
-                logInfo(RTPS_MSG_IN,IDSTRING"InfoSRC message received, processing...");
-                valid = proc_Submsg_InfoSRC(msg,&submsgh,&last_submsg);
-                // pWarning("Info SRC messages not yet implemented"<<endl);
-                // msg->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
-                break;
-            case INFO_TS:
-                logInfo(RTPS_MSG_IN,IDSTRING"InfoTS Submsg received, processing...");
-                valid = proc_Submsg_InfoTS(msg,&submsgh,&last_submsg);
-                break;
-            case INFO_REPLY:
-                break;
-            case INFO_REPLY_IP4:
-                break;
-            default:
-                msg->pos += submsgh.submessageLength; //ID NOT KNOWN. IGNORE AND CONTINUE
-                break;
-        }
-
-        if(!valid || last_submsg)
-            break;
-    }
-
     return true;
 }
 

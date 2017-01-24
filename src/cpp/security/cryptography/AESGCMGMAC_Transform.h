@@ -76,21 +76,21 @@ class AESGCMGMAC_Transform : public CryptoTransform
                 DatawriterCryptoHandle **datawriter_crypto,
                 DatareaderCryptoHandle **datareader_crypto,
                 SecureSubmessageCategory_t &secure_submessage_category,
-                const std::vector<uint8_t> encoded_rtps_submessage,
+                const CDRMessage_t& encoded_rtps_submessage,
                 ParticipantCryptoHandle &receiving_crypto,
                 ParticipantCryptoHandle &sending_crypto,
                 SecurityException &exception);
 
     bool decode_datawriter_submessage(
-                std::vector<uint8_t> &plain_rtps_submessage,
-                const std::vector<uint8_t> &encoded_rtps_submessage,
+                CDRMessage_t& plain_rtps_submessage,
+                CDRMessage_t& encoded_rtps_submessage,
                 DatareaderCryptoHandle &receiving_datareader_crypto,
                 DatawriterCryptoHandle &sending_datawriter_cryupto,
                 SecurityException &exception);
 
     bool decode_datareader_submessage(
-                std::vector<uint8_t> &plain_rtps_submessage,
-                const std::vector<uint8_t> &encoded_rtps_submessage,
+                CDRMessage_t& plain_rtps_submessage,
+                CDRMessage_t& encoded_rtps_submessage,
                 DatawriterCryptoHandle &receiving_datawriter_crypto,
                 DatareaderCryptoHandle &sending_datareader_crypto,
                 SecurityException &exception);
@@ -120,12 +120,12 @@ class AESGCMGMAC_Transform : public CryptoTransform
             std::vector<uint8_t> &serialized_body,
             std::vector<uint8_t> &serialized_tag,
             unsigned char &flags);
-     
+
     std::vector<uint8_t> assemble_endpoint_submessage(std::vector<uint8_t> &serialized_header,
              std::vector<uint8_t> &serialized_body,
              std::vector<uint8_t> &serialized_tag,
              unsigned char &flags);
-   
+
      std::vector<uint8_t> assemble_rtps_message(std::vector<uint8_t> &rtps_header,
            std::vector<uint8_t> &serialized_header,
            std::vector<uint8_t> &serialized_body,
@@ -138,14 +138,13 @@ class AESGCMGMAC_Transform : public CryptoTransform
             std::vector<uint8_t> &serialized_tag,
             unsigned char &flags);
 
-    bool disassemble_endpoint_submessage(const std::vector<uint8_t> &input,
+    bool disassemble_endpoint_submessage(CDRMessage_t& input,
             std::vector<uint8_t> &serialized_header,
             std::vector<uint8_t> &serialized_body,
             std::vector<uint8_t> &serialized_tag,
             unsigned char &flags);
 
    bool disassemble_rtps_message(const std::vector<uint8_t> &input,
-           std::vector<uint8_t> &rtps_header,
            std::vector<uint8_t> &serialized_header,
            std::vector<uint8_t> &serialized_body,
            std::vector<uint8_t> &serialized_tag,

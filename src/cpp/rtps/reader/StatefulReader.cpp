@@ -210,13 +210,27 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
         CacheChange_t* change_to_add;
 
         if(reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
-        { 
-            if (!change_to_add->copy(change))
+        {
+            if(is_payload_protected())
             {
-                logWarning(RTPS_MSG_IN,IDSTRING"Problem copying CacheChange, received data is: " << change->serializedPayload.length
-                        << " bytes and max size in reader " << getGuid().entityId << " is " << change_to_add->serializedPayload.max_size);
-                releaseCache(change_to_add);
-                return false;
+                change_to_add->copy_not_memcpy(change);
+                if(!getRTPSParticipant()->security_manager().decode_serialized_payload(change->serializedPayload,
+                        change_to_add->serializedPayload, m_guid, change->writerGUID))
+                {
+                    releaseCache(change_to_add);
+                    logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
+                    return false;
+                }
+            }
+            else
+            {
+                if (!change_to_add->copy(change))
+                {
+                    logWarning(RTPS_MSG_IN,IDSTRING"Problem copying CacheChange, received data is: " << change->serializedPayload.length
+                            << " bytes and max size in reader " << getGuid().entityId << " is " << change_to_add->serializedPayload.max_size);
+                    releaseCache(change_to_add);
+                    return false;
+                }
             }
         }
         else

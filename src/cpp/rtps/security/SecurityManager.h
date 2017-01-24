@@ -25,6 +25,7 @@
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/common/SequenceNumber.h>
 #include "timedevent/HandshakeMessageTokenResent.h"
+#include <fastrtps/rtps/common/SerializedPayload.h>
 
 #include <map>
 #include <mutex>
@@ -65,6 +66,16 @@ class SecurityManager
 
         bool discovered_participant(ParticipantProxyData* participant_data);
 
+        bool register_local_writer(const GUID_t& writer_guid, const PropertySeq& writer_properties);
+
+        bool register_local_reader(const GUID_t& reader_guid, const PropertySeq& reader_properties);
+
+        bool discovered_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
+                const GUID_t& remote_reader_guid);
+
+        bool discovered_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
+                const GUID_t& remote_writer_guid);
+
         bool get_identity_token(IdentityToken** identity_token);
 
         bool return_identity_token(IdentityToken* identity_token);
@@ -76,8 +87,22 @@ class SecurityManager
         bool encode_rtps_message(CDRMessage_t& message,
                 const std::vector<GuidPrefix_t>& receiving_list);
 
-        bool decode_rtps_message(CDRMessage_t& message,
+        bool decode_rtps_message(CDRMessage_t& message, CDRMessage_t& out_message,
                 const GuidPrefix_t& sending_participant);
+
+        bool encode_writer_submessage(CDRMessage_t& message, const GUID_t& writer_guid,
+                const std::vector<GUID_t>& receiving_list);
+
+        bool encode_reader_submessage(CDRMessage_t& message, const GUID_t& reader_guid,
+                const std::vector<GUID_t>& receiving_list);
+
+        bool decode_rtps_submessage(CDRMessage_t& message, CDRMessage_t& out_message,
+                const GuidPrefix_t& sending_participant);
+
+        bool encode_serialized_payload(SerializedPayload_t& payload, const GUID_t& writer_guid);
+
+        bool decode_serialized_payload(const SerializedPayload_t& secure_payload,
+                SerializedPayload_t& payload, const GUID_t& reader_guid, const GUID_t& writer_guid);
 
     private:
 
@@ -261,7 +286,15 @@ class SecurityManager
                 const GUID_t& destination_participant_key,
                 HandshakeMessageToken& handshake_message);
 
-        ParticipantGenericMessage generate_crypto_token_message(const GUID_t& destination_participant_key,
+        ParticipantGenericMessage generate_participant_crypto_token_message(const GUID_t& destination_participant_key,
+                ParticipantCryptoTokenSeq& crypto_tokens);
+
+        ParticipantGenericMessage generate_writer_crypto_token_message(const GUID_t& destination_participant_key,
+                const GUID_t& destination_endpoint_key, const GUID_t& source_endpoint_key,
+                ParticipantCryptoTokenSeq& crypto_tokens);
+
+        ParticipantGenericMessage generate_reader_crypto_token_message(const GUID_t& destination_participant_key,
+                const GUID_t& destination_endpoint_key, const GUID_t& source_endpoint_key,
                 ParticipantCryptoTokenSeq& crypto_tokens);
 
         RTPSParticipantImpl* participant_;
@@ -292,6 +325,28 @@ class SecurityManager
         std::atomic<int64_t> auth_last_sequence_number_;
 
         std::atomic<int64_t> crypto_last_sequence_number_;
+
+        struct DatawriterAssociations
+        {
+            DatawriterAssociations(DatawriterCryptoHandle* wh) : writer_handle(wh) {}
+
+            DatawriterCryptoHandle* writer_handle;
+
+            std::map<GUID_t, DatareaderCryptoHandle*> associated_readers;
+        };
+
+        struct DatareaderAssociations
+        {
+            DatareaderAssociations(DatareaderCryptoHandle* rh) : reader_handle(rh) {}
+
+            DatareaderCryptoHandle* reader_handle;
+
+            std::map<GUID_t, DatawriterCryptoHandle*> associated_writers;
+        };
+
+        // TODO(Ricardo) Temporal. Store individual in FastRTPS code.
+        std::map<GUID_t, DatawriterAssociations> writer_handles_;
+        std::map<GUID_t, DatareaderAssociations> reader_handles_;
 };
 
 } //namespace security

@@ -19,6 +19,7 @@
 #include "AESGCMGMAC_Transform.h"
 
 #include <fastrtps/log/Log.h>
+#include <fastrtps/rtps/messages/CDRMessage.h>
 
 #include <openssl/aes.h>
 #include <openssl/evp.h>
@@ -561,10 +562,9 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     SecureDataTag tag;
 
     std::vector<uint8_t> serialized_header, serialized_body, serialized_tag;
-    std::vector<uint8_t> rtps_header;
     unsigned char flags;
 
-    if(!disassemble_rtps_message(encoded_buffer, rtps_header, serialized_header, serialized_body, serialized_tag, flags))   return false;
+    if(!disassemble_rtps_message(encoded_buffer, serialized_header, serialized_body, serialized_tag, flags))   return false;
     //Header
     header = deserialize_SecureDataHeader(serialized_header);
     //Body
@@ -681,7 +681,7 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
                 DatawriterCryptoHandle **datawriter_crypto,
                 DatareaderCryptoHandle **datareader_crypto,
                 SecureSubmessageCategory_t &secure_submessage_category,
-                const std::vector<uint8_t> encoded_rtps_submessage,
+                const CDRMessage_t& encoded_rtps_submessage,
                 ParticipantCryptoHandle &receiving_crypto,
                 ParticipantCryptoHandle &sending_crypto,
                 SecurityException &exception){
@@ -692,6 +692,7 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
         exception = SecurityException("Not a valid ParticipantCryptoHandle received");
         return false;
     }
+
     AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(receiving_crypto);
     if(local_participant.nil()){
         logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle");
@@ -699,11 +700,20 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
         return false;
     }
 
+    // Auxiliary pointer to encoded message.
+    CDRMessage_t aux_buffer(0);
+    aux_buffer.wraps = true;
+    aux_buffer.buffer = encoded_rtps_submessage.buffer;
+    aux_buffer.length = encoded_rtps_submessage.length;
+    aux_buffer.pos = encoded_rtps_submessage.pos;
+    aux_buffer.max_size = encoded_rtps_submessage.max_size;
+    aux_buffer.msg_endian = encoded_rtps_submessage.msg_endian;
+
     SecureDataHeader header;
     SecureDataTag tag;
     std::vector<uint8_t> serialized_header, serialized_body, serialized_tag;
     unsigned char flags;
-    if(!disassemble_endpoint_submessage(encoded_rtps_submessage, serialized_header, serialized_body, serialized_tag, flags)){
+    if(!disassemble_endpoint_submessage(aux_buffer, serialized_header, serialized_body, serialized_tag, flags)){
         logWarning(SECURITY_CRYPTO,"Could not preprocess message, unable to disassemble it");
         return false;
     }
@@ -752,13 +762,22 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
 }
 
 bool AESGCMGMAC_Transform::decode_datawriter_submessage(
-                std::vector<uint8_t> &plain_rtps_submessage,
-                const std::vector<uint8_t> &encoded_rtps_submessage,
+                CDRMessage_t& plain_rtps_submessage,
+                CDRMessage_t& encoded_rtps_submessage,
                 DatareaderCryptoHandle &receiving_datareader_crypto,
                 DatawriterCryptoHandle &sending_datawriter_cryupto,
                 SecurityException &exception){
 
     AESGCMGMAC_WriterCryptoHandle& sending_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_cryupto);
+
+    if(sending_writer.nil())
+    {
+        logError(SECURITY_CRYPTO, "Invalid sending_writer handle");
+        return false;
+    }
+
+    // Init output message
+    CDRMessage::initCDRMsg(&plain_rtps_submessage);
 
     //Fun reverse order process;
     SecureDataHeader header;
@@ -815,8 +834,6 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     RAND_load_file("/dev/urandom",32);
 
     EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
-    plain_rtps_submessage.clear();
-    plain_rtps_submessage.resize(encoded_rtps_submessage.size());
 
     int actual_size = 0, final_size = 0;
 
@@ -830,7 +847,8 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)specific_session_key.data(), initialization_vector.data());
     EVP_DecryptUpdate(d_ctx, NULL, &actual_size, tag.common_mac.data(), 16);
     EVP_CIPHER_CTX_ctrl( d_ctx, EVP_CTRL_GCM_SET_TAG,16, specific_mac.receiver_mac.data() );
-    auth = EVP_DecryptFinal_ex(d_ctx, plain_rtps_submessage.data() + actual_size, &final_size);
+    auth = EVP_DecryptFinal_ex(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &final_size);
+    plain_rtps_submessage.pos += final_size;
     EVP_CIPHER_CTX_free(d_ctx);
 
     if(!auth){
@@ -842,30 +860,41 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     RAND_load_file("/dev/urandom",32);
 
     d_ctx = EVP_CIPHER_CTX_new();
-    plain_rtps_submessage.clear();
-    plain_rtps_submessage.resize(encoded_rtps_submessage.size());
 
     actual_size = 0;
     final_size = 0;
     EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
-    EVP_DecryptUpdate(d_ctx, plain_rtps_submessage.data(), &actual_size, body.secure_data.data(),body.secure_data.size());
+    EVP_DecryptUpdate(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &actual_size, body.secure_data.data(),body.secure_data.size());
+    plain_rtps_submessage.pos += actual_size;
     EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG,16,tag.common_mac.data());
-    EVP_DecryptFinal(d_ctx, plain_rtps_submessage.data() + actual_size, &final_size);
+    EVP_DecryptFinal(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &final_size);
+    plain_rtps_submessage.pos += final_size;
     EVP_CIPHER_CTX_free(d_ctx);
-    plain_rtps_submessage.resize(actual_size + final_size);
+
+    plain_rtps_submessage.length = plain_rtps_submessage.pos;
+    plain_rtps_submessage.pos = 0;
 
     return true;
 }
 
 bool AESGCMGMAC_Transform::decode_datareader_submessage(
-                std::vector<uint8_t> &plain_rtps_submessage,
-                const std::vector<uint8_t> &encoded_rtps_submessage,
+                CDRMessage_t& plain_rtps_submessage,
+                CDRMessage_t& encoded_rtps_submessage,
                 DatawriterCryptoHandle &receiving_datawriter_crypto,
                 DatareaderCryptoHandle &sending_datareader_crypto,
                 SecurityException &exception){
 
 
     AESGCMGMAC_ReaderCryptoHandle& sending_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(sending_datareader_crypto);
+
+    if(sending_reader.nil())
+    {
+        logError(SECURITY_CRYPTO, "Invalid sending_reader handle");
+        return false;
+    }
+
+    // Init output message
+    CDRMessage::initCDRMsg(&plain_rtps_submessage);
 
     //Fun reverse order process;
     SecureDataHeader header;
@@ -921,8 +950,6 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     RAND_load_file("/dev/urandom",32);
 
     EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
-    plain_rtps_submessage.clear();
-    plain_rtps_submessage.resize(encoded_rtps_submessage.size());
 
     int actual_size = 0, final_size = 0;
 
@@ -936,7 +963,8 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)specific_session_key.data(), initialization_vector.data());
     EVP_DecryptUpdate(d_ctx, NULL, &actual_size, tag.common_mac.data(), 16);
     EVP_CIPHER_CTX_ctrl( d_ctx, EVP_CTRL_GCM_SET_TAG,16, specific_mac.receiver_mac.data() );
-    auth = EVP_DecryptFinal_ex(d_ctx, plain_rtps_submessage.data() + actual_size, &final_size);
+    auth = EVP_DecryptFinal_ex(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &final_size);
+    plain_rtps_submessage.pos += final_size;
     EVP_CIPHER_CTX_free(d_ctx);
 
     if(!auth){
@@ -948,17 +976,19 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     RAND_load_file("/dev/urandom",32);
 
     d_ctx = EVP_CIPHER_CTX_new();
-    plain_rtps_submessage.clear();
-    plain_rtps_submessage.resize(encoded_rtps_submessage.size());
 
     actual_size = 0;
     final_size = 0;
     EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
-    EVP_DecryptUpdate(d_ctx, plain_rtps_submessage.data(), &actual_size, body.secure_data.data(),body.secure_data.size());
+    EVP_DecryptUpdate(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &actual_size, body.secure_data.data(),body.secure_data.size());
+    plain_rtps_submessage.pos += actual_size;
     EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG,16,tag.common_mac.data());
-    EVP_DecryptFinal(d_ctx, plain_rtps_submessage.data() + actual_size, &final_size);
+    EVP_DecryptFinal(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &final_size);
+    plain_rtps_submessage.pos += final_size;
     EVP_CIPHER_CTX_free(d_ctx);
-    plain_rtps_submessage.resize(actual_size + final_size);
+
+    plain_rtps_submessage.length = plain_rtps_submessage.pos;
+    plain_rtps_submessage.pos = 0;
 
     return true;
 
@@ -1033,11 +1063,12 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     }
     EVP_DecryptUpdate(d_ctx, plain_buffer.data(), &actual_size, body.secure_data.data(),body.secure_data.size());
     EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG,16,tag.common_mac.data());
-    return_value = EVP_DecryptFinal(d_ctx, plain_buffer.data() + actual_size, &final_size);
+    EVP_DecryptFinal(d_ctx, plain_buffer.data() + actual_size, &final_size);
     EVP_CIPHER_CTX_free(d_ctx);
     plain_buffer.resize(actual_size + final_size);
+    //TODO(Ricardo) Check better openssl functions
 
-    return return_value;
+    return true;
 }
 
 std::array<uint8_t, 32> AESGCMGMAC_Transform::compute_sessionkey(const std::array<uint8_t,32> master_sender_key,
@@ -1076,8 +1107,9 @@ std::vector<uint8_t> AESGCMGMAC_Transform::serialize_SecureDataBody(SecureDataBo
     std::vector<uint8_t> buffer;
     int i;
 
-    long body_length = input.secure_data.size();
-    for(i=0;i < sizeof(long); i++) buffer.push_back( *( (uint8_t*)&body_length + i) );
+    int32_t body_length = input.secure_data.size();
+    //for(i=0; i < sizeof(int32_t); i++) buffer.push_back(((uint8_t*)&body_length)[sizeof(int32_t) - i - 1]);
+    for(i=0;i < sizeof(int32_t); i++) buffer.push_back( *( (uint8_t*)&body_length + i) );
     for(i=0;i < body_length; i++) buffer.push_back( input.secure_data.at(i) );
 
     return buffer;
@@ -1091,8 +1123,8 @@ std::vector<uint8_t> AESGCMGMAC_Transform::serialize_SecureDataTag(SecureDataTag
     //Common tag
     for(i=0;i < 16; i++) buffer.push_back( input.common_mac.at(i) );
         //Receiver specific macs
-    long specific_length = input.receiver_specific_macs.size();
-    for(i=0;i < sizeof(long); i++) buffer.push_back( *( (uint8_t*)&specific_length + i ) );
+    int32_t specific_length = input.receiver_specific_macs.size();
+    for(i=0;i < sizeof(int32_t); i++) buffer.push_back( *( (uint8_t*)&specific_length + i ) );
     for(j=0; j< input.receiver_specific_macs.size(); j++){
         for(i=0;i < 4; i++) buffer.push_back( input.receiver_specific_macs.at(j).receiver_mac_key_id.at(i) );
         for(i=0;i < 16; i++) buffer.push_back( input.receiver_specific_macs.at(j).receiver_mac.at(i) );
@@ -1114,6 +1146,8 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_serialized_payload(std::vect
 }
 
 
+// TODO (Ricardo) Bad, not using SEC_SUB_MSG
+// TODO (Ricardo) Bad, not using SEC_SUB_MSG
 std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
     std::vector<uint8_t> buffer;
@@ -1130,8 +1164,8 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
     octets = serialized_header.size() + serialized_body.size() + 2 + 2 + serialized_tag.size();
     uint8_t octets_c[2] = { 0, 0 };
     memcpy(octets_c, &octets, 2);
-    buffer.push_back( octets_c[1] );
     buffer.push_back( octets_c[0] );
+    buffer.push_back( octets_c[1] );
 
     //SecureDataHeader
     for(i=0; i < serialized_header.size(); i++) buffer.push_back( serialized_header.at(i) );
@@ -1144,8 +1178,8 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
     //Octets2NextSubMessageHeader
     octets = serialized_tag.size();
     memcpy(octets_c, &octets, 2);
-    buffer.push_back( octets_c[1] );
     buffer.push_back( octets_c[0] );
+    buffer.push_back( octets_c[1] );
 
     //SecureDataTag
     for(int i=0; i < serialized_tag.size(); i++)    buffer.push_back( serialized_tag.at(i) );
@@ -1204,13 +1238,12 @@ SecureDataHeader AESGCMGMAC_Transform::deserialize_SecureDataHeader(std::vector<
     return header;
 }
 
+//TODO(Ricardo) Remove
 SecureDataBody AESGCMGMAC_Transform::deserialize_SecureDataBody(std::vector<uint8_t> &input){
 
     SecureDataBody body;
 
-    long body_length = 0;
-    memcpy(&body_length, input.data(), sizeof(long));
-    for(int i=0;i < body_length; i++) body.secure_data.push_back( input.at( i + sizeof(long) ) );
+    for(int i=0;i < input.size(); i++) body.secure_data.push_back(input.at(i));
 
     return body;
 }
@@ -1223,16 +1256,16 @@ SecureDataTag AESGCMGMAC_Transform::deserialize_SecureDataTag(std::vector<uint8_
         //common_mac
     for(int i=0;i < 16; i++) tag.common_mac.at(i) = ( input.at( i ) );
         //receiver_specific_mac
-    long spec_length = 0;
-    memcpy(&spec_length, input.data()+16, sizeof(long));
+    int32_t spec_length = 0;
+    memcpy(&spec_length, input.data()+16, sizeof(int32_t));
     //Read specific MACs in search for the correct one (verify the authenticity of the message)
     ReceiverSpecificMAC specific_mac;
     for(int j=0; j < spec_length; j++){
         memcpy( &(specific_mac.receiver_mac_key_id),
-                input.data() + 16 + sizeof(long) + j*(20),
+                input.data() + 16 + sizeof(int32_t) + j*(20),
                 4 );
         memcpy( specific_mac.receiver_mac.data(),
-                input.data() + 16 + sizeof(long) + 4,
+                input.data() + 16 + sizeof(int32_t) + 4,
                 16 );
         tag.receiver_specific_macs.push_back(specific_mac);
     }
@@ -1249,84 +1282,82 @@ bool AESGCMGMAC_Transform::disassemble_serialized_payload(const std::vector<uint
     for(i=0; i < 20; i++) serialized_header.push_back( input.at(i) );
 
     serialized_body.clear();
-    long body_length = 0;
-    memcpy(&body_length, input.data() + 20, sizeof(long));
-    for(i=0; i < ( sizeof(long) + body_length ); i++) serialized_body.push_back( input.at(i + 20) );
+    int32_t body_length = 0;
+    memcpy(&body_length, input.data() + 20, sizeof(int32_t));
+    for(i=0; i < body_length; i++) serialized_body.push_back( input.at(i + 20 + sizeof(int32_t)));
 
     serialized_tag.clear();
-    for(i=0; i < ( input.size() - 20 - body_length - sizeof(long) ); i++) serialized_tag.push_back(input.at(i + 20 + sizeof(long) + body_length) );
+    for(i=0; i < ( input.size() - 20 - body_length - sizeof(int32_t) ); i++) serialized_tag.push_back(input.at(i + 20 + sizeof(int32_t) + body_length) );
 
     return true;
 }
 
-bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(const std::vector<uint8_t> &input, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(CDRMessage_t &input, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
-
-    short offset = 0;
     int i;
+    uint8_t octet;
 
     //SRTPS_PREFIX
-    if( input.at(offset) != SEC_PREFIX ){
+    if(!CDRMessage::readOctet(&input, &octet) || octet != SEC_PREFIX )
+    {
         std::cout << "Not a valid prefix" << std::endl;
         return false;
     }
-    offset += 1;
+
+    // TODO Fix Endianess
     //Flags are ignored for the time being
-    offset +=1;
-    //Octects2NextSugMsg
-    uint8_t octets_c[2] = { 0, 0 };
-    octets_c[1] = input.at(offset);
-    offset += 1;
-    octets_c[0] = input.at(offset);
-    offset += 1;
-    short safecheck;
-    memcpy(&safecheck, octets_c, 2);
-    if( (input.size() - offset) != safecheck){
+    input.pos +=1;
+
+    //OctectsToNextSugMsg
+    int16_t octetsToNextSubMsg;
+    CDRMessage::readInt16(&input, &octetsToNextSubMsg); //it should be 16 in this implementation
+
+    if((input.length - input.pos) < octetsToNextSubMsg)
+    {
         std::cout << "Not a valid length" << std::endl;
         return false;
     }
+
     //Header
     serialized_header.clear();
-    for(i=0; i < 20; i++) serialized_header.push_back( input.at(offset + i) );
-    offset += 20;
+    for(i = 0; i < 20; i++) serialized_header.push_back(input.buffer[input.pos + i]);
+    input.pos += 20;
+
     //Payload
     serialized_body.clear();
-    long body_length = 0;
-    memcpy(&body_length, input.data() + offset, sizeof(long));
-    for(i=0; i < ( sizeof(long) + body_length ); i++) serialized_body.push_back( input.at(i + offset) );
-    offset += sizeof(long) + body_length;
+    int32_t body_length = 0;
+    CDRMessage::readInt32(&input, &body_length); //TODO(Ricardo) Check body_length. Maybe long than buffer
+    for(i=0; i < body_length; i++) serialized_body.push_back( input.buffer[input.pos + i]);
+    input.pos += body_length;
+
     //SRTPS_POSTFIX
-    if( input.at(offset) != SEC_POSTFIX ){
-        std::cout << "Not a valid length" << std::endl;
+    if(!CDRMessage::readOctet(&input, &octet) || octet != SEC_POSTFIX)
+    {
+        std::cout << "Not a valid post prefix" << std::endl;
         return false;
     }
-    offset += 1;
+
     //Flags
-    offset += 1;
+    input.pos += 1;
+
     //Octets2Nextheader
-    octets_c[1] = input.at(offset);
-    offset += 1;
-    octets_c[0] = input.at(offset);
-    offset += 1;
-    memcpy(&safecheck, octets_c, 2);
-    if( (input.size() - offset) != safecheck)   return false;
+    CDRMessage::readInt16(&input, &octetsToNextSubMsg); //it should be 16 in this implementation
+    if((input.length - input.pos) < octetsToNextSubMsg) return false;
+
     //Tag
     serialized_tag.clear();
-    for(i=0; i < ( input.size() - offset ); i++) serialized_tag.push_back(input.at(i + offset) );
+    for(i = 0; i < octetsToNextSubMsg; i++) serialized_tag.push_back(input.buffer[input.pos + i]);
+    input.pos += octetsToNextSubMsg;
 
     return true;
 }
 
-bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &input, std::vector<uint8_t> &rtps_header, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &input, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
 
     short offset = 0;
     int i;
 
-    //Unaltered Header
-    rtps_header.clear();
-    for(i=0; i < RTPS_HEADER_SIZE; i++)   rtps_header.push_back( input.at(i + offset) );
-    offset += RTPS_HEADER_SIZE;
     //SRTPS_PREFIX
     if( input.at(offset) != SRTPS_PREFIX ) return false;
     offset += 1;
@@ -1349,10 +1380,10 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &
     offset += 20;
     //Payload
     serialized_body.clear();
-    long body_length = 0;
-    memcpy(&body_length, input.data() + offset, sizeof(long));
-    for(i=0; i < ( sizeof(long) + body_length ); i++) serialized_body.push_back( input.at(i + offset) );
-    offset += sizeof(long) + body_length;
+    int32_t body_length = 0;
+    memcpy(&body_length, input.data() + offset, sizeof(int32_t));
+    for(i=0; i < body_length; i++) serialized_body.push_back( input.at(i + offset + sizeof(int32_t)) );
+    offset += sizeof(int32_t) + body_length;
     //SRTPS_POSTFIX
     if( input.at(offset) != SRTPS_POSTFIX ) return false;
     offset += 1;

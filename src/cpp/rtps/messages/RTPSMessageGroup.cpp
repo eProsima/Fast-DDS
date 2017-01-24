@@ -193,17 +193,26 @@ void RTPSMessageGroup::check_and_maybe_flush(const GuidPrefix_t& dst, const Loca
         flush_and_reset(dst, locator_list, remote_participants);
 }
 
-bool RTPSMessageGroup::add_data(const CacheChange_t& change, const GuidPrefix_t& remoteGuidPrefix,
-        const EntityId_t& readerId, const LocatorList_t& locators,
-        const std::vector<GuidPrefix_t>& remote_participants, bool expectsInlineQos)
+bool RTPSMessageGroup::insert_submessage()
 {
-    logInfo(RTPS_WRITER,"Sending relevant changes as DATA/DATA_FRAG messages");
+    if(!CDRMessage::appendMsg(full_msg_, submessage_msg_))
+    {
+        // Retry
+        flush();
 
-    // Check preconditions. If fail flush and reset.
-    check_and_maybe_flush(remoteGuidPrefix, locators, remote_participants);
+        if(!CDRMessage::appendMsg(full_msg_, submessage_msg_))
+        {
+            logError(RTPS_WRITER,"Cannot add RTPS submesage to the CDRMessage. Buffer too small");
+            return false;
+        }
+    }
 
-    // Init submessage buffer.
-    CDRMessage::initCDRMsg(submessage_msg_);
+    return true;
+}
+
+bool RTPSMessageGroup::add_info_ts_in_buffer(const std::vector<GUID_t>& remote_readers)
+{
+    logInfo(RTPS_WRITER, "Sending INFO_TS message");
 
     // Insert INFO_TS submessage.
     // TODO (Ricardo) Source timestamp maybe has marked when user call write function.
@@ -213,6 +222,35 @@ bool RTPSMessageGroup::add_data(const CacheChange_t& change, const GuidPrefix_t&
         return false;
     }
 
+    if(endpoint_->is_submessage_protected())
+    {
+        submessage_msg_->pos = 0;
+        if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, endpoint_->getGuid(),
+                    remote_readers))
+        {
+            logError(RTPS_WRITER, "Cannot encrypt DATA submessage for writer " << endpoint_->getGuid());
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool RTPSMessageGroup::add_data(const CacheChange_t& change, const GuidPrefix_t& remoteGuidPrefix,
+        const EntityId_t& readerId, const LocatorList_t& locators,
+        const std::vector<GuidPrefix_t>& remote_participants,
+        const std::vector<GUID_t>& remote_readers, bool expectsInlineQos)
+{
+    logInfo(RTPS_WRITER,"Sending relevant changes as DATA/DATA_FRAG messages");
+
+    // Check preconditions. If fail flush and reset.
+    check_and_maybe_flush(remoteGuidPrefix, locators, remote_participants);
+
+    // Init submessage buffer.
+    CDRMessage::initCDRMsg(submessage_msg_);
+
+    add_info_ts_in_buffer(remote_readers);
+
     ParameterList_t* inlineQos = NULL;
     if(expectsInlineQos)
     {
@@ -220,6 +258,8 @@ bool RTPSMessageGroup::add_data(const CacheChange_t& change, const GuidPrefix_t&
         //if(W->getInlineQos()->m_parameters.size()>0)
         //    inlineQos = W->getInlineQos();
     }
+
+    uint32_t from_buffer_position = submessage_msg_->pos;
 
     if(!RTPSMessageCreator::addSubmessageData(submessage_msg_, &change, endpoint_->getAttributes()->topicKind,
                 readerId, expectsInlineQos, inlineQos))
@@ -228,24 +268,24 @@ bool RTPSMessageGroup::add_data(const CacheChange_t& change, const GuidPrefix_t&
         return false;
     }
 
-    if(!CDRMessage::appendMsg(full_msg_, submessage_msg_))
+    if(endpoint_->is_submessage_protected())
     {
-        // Retry
-        flush();
-
-        if(!CDRMessage::appendMsg(full_msg_, submessage_msg_))
+        submessage_msg_->pos = from_buffer_position;
+        if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, endpoint_->getGuid(),
+                    remote_readers))
         {
-            logError(RTPS_WRITER,"Cannot add RTPS submmesage to the CDRMessage. Buffer too small");
+            logError(RTPS_WRITER, "Cannot encrypt DATA submessage for writer " << endpoint_->getGuid());
             return false;
         }
     }
 
-    return true;
+    return insert_submessage();
 }
 
 bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t fragment_number,
         const GuidPrefix_t& remoteGuidPrefix, const EntityId_t& readerId,
-        const LocatorList_t& locators, const std::vector<GuidPrefix_t>& remote_participants, bool expectsInlineQos)
+        const LocatorList_t& locators, const std::vector<GuidPrefix_t>& remote_participants,
+        const std::vector<GUID_t>& remote_readers, bool expectsInlineQos)
 {
     logInfo(RTPS_WRITER,"Sending relevant changes as DATA/DATA_FRAG messages");
 
@@ -255,13 +295,7 @@ bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t
     // Init submessage buffer.
     CDRMessage::initCDRMsg(submessage_msg_);
 
-    // Insert INFO_TS submessage.
-    // TODO (Ricardo) Source timestamp maybe has marked when user call write function.
-    if(!RTPSMessageCreator::addSubmessageInfoTS_Now(submessage_msg_, false)) //Change here to add a INFO_TS for DATA.
-    {
-        logError(RTPS_WRITER, "Cannot add INFO_TS submsg to the CDRMessage. Buffer too small");
-        return false;
-    }
+    add_info_ts_in_buffer(remote_readers);
 
     ParameterList_t* inlineQos = NULL;
     if(expectsInlineQos)
@@ -271,6 +305,8 @@ bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t
         //    inlineQos = W->getInlineQos();
     }
 
+    uint32_t from_buffer_position = submessage_msg_->pos;
+
     if(RTPSMessageCreator::addSubmessageDataFrag(submessage_msg_, &change, fragment_number,
                 endpoint_->getAttributes()->topicKind, readerId, expectsInlineQos, inlineQos))
     {
@@ -278,19 +314,18 @@ bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t
         return false;
     }
 
-    if(!CDRMessage::appendMsg(full_msg_, submessage_msg_))
+    if(endpoint_->is_submessage_protected())
     {
-        // Retry
-        flush();
-
-        if(!CDRMessage::appendMsg(full_msg_, submessage_msg_))
+        submessage_msg_->pos = from_buffer_position;
+        if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, endpoint_->getGuid(),
+                    remote_readers))
         {
-            logError(RTPS_WRITER,"Cannot add RTPS submmesage to the CDRMessage. Buffer too small");
+            logError(RTPS_WRITER, "Cannot encrypt DATA submessage for writer " << endpoint_->getGuid());
             return false;
         }
     }
 
-    return true;
+    return insert_submessage();
 }
 
 // TODO (Ricardo) Check with standard 8.3.7.4.5
@@ -319,18 +354,19 @@ bool RTPSMessageGroup::add_gap(std::vector<SequenceNumber_t>& changesSeqNum,
             break;
         }
 
-        if(!CDRMessage::appendMsg(full_msg_, submessage_msg_))
+        if(endpoint_->is_submessage_protected())
         {
-            // Retry
-            flush();
-
-            if(!CDRMessage::appendMsg(full_msg_, submessage_msg_))
+            std::vector<GUID_t> remote_reader { {remoteGuidPrefix, readerId} };
+            if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, endpoint_->getGuid(),
+                        remote_reader))
             {
-                logError(RTPS_WRITER,"Cannot add RTPS submmesage to the CDRMessage. Buffer too small");
-                returnedValue = false;
-                break;
+                logError(RTPS_WRITER, "Cannot encrypt DATA submessage for writer " << endpoint_->getGuid());
+                return false;
             }
         }
+
+        if(!insert_submessage())
+            break;
 
         ++gap_n;
         ++seqit;

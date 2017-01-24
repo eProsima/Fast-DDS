@@ -19,6 +19,7 @@
 #define _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTRANSFORM_H_
 
 #include "CryptoTypes.h"
+#include "../../common/CDRMessage_t.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -124,7 +125,7 @@ class CryptoTransform
                 DatawriterCryptoHandle **datawriter_crypto,
                 DatareaderCryptoHandle **datareader_crypto,
                 SecureSubmessageCategory_t &secure_submessage_category,
-                const std::vector<uint8_t> encoded_rtps_submessage,
+                const CDRMessage_t& encoded_rtps_submessage,
                 ParticipantCryptoHandle &receiving_crypto,
                 ParticipantCryptoHandle &sending_crypto,
                 SecurityException &exception) = 0;
@@ -139,8 +140,8 @@ class CryptoTransform
          * @return TRUE if successful
          */
         virtual bool decode_datawriter_submessage(
-                std::vector<uint8_t> &plain_rtps_submessage,
-                const std::vector<uint8_t> &encoded_rtps_submessage,
+                CDRMessage_t& plain_rtps_submessage,
+                CDRMessage_t& encoded_rtps_submessage,
                 DatareaderCryptoHandle &receiving_datareader_crypto,
                 DatawriterCryptoHandle &sending_datawriter_crypto,
                 SecurityException &exception) = 0;
@@ -155,8 +156,8 @@ class CryptoTransform
          * @return TRUE if successful
          */
         virtual bool decode_datareader_submessage(
-                std::vector<uint8_t> &plain_rtps_submessage,
-                const std::vector<uint8_t> &encoded_rtps_submessage,
+                CDRMessage_t& plain_rtps_submessage,
+                CDRMessage_t& encoded_rtps_submessage,
                 DatawriterCryptoHandle &receiving_datawriter_crypto,
                 DatareaderCryptoHandle &sending_datareader_crypto,
                 SecurityException &exception) = 0;

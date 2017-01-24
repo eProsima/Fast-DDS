@@ -71,21 +71,21 @@ class MockCryptoTransform : public CryptoTransform
                 DatawriterCryptoHandle**,
                 DatareaderCryptoHandle**,
                 SecureSubmessageCategory_t&,
-                const std::vector<uint8_t>,
+                const CDRMessage_t&,
                 ParticipantCryptoHandle&,
                 ParticipantCryptoHandle&,
                 SecurityException&));
 
         MOCK_METHOD5(decode_datawriter_submessage, bool (
-                std::vector<uint8_t>&,
-                const std::vector<uint8_t>&,
+                CDRMessage_t&,
+                CDRMessage_t&,
                 DatareaderCryptoHandle&,
                 DatawriterCryptoHandle&,
                 SecurityException&));
 
         MOCK_METHOD5(decode_datareader_submessage, bool (
-                std::vector<uint8_t>&,
-                const std::vector<uint8_t>&,
+                CDRMessage_t&,
+                CDRMessage_t&,
                 DatawriterCryptoHandle&,
                 DatareaderCryptoHandle&,
                 SecurityException&));

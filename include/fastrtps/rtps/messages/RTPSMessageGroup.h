@@ -128,12 +128,12 @@ class RTPSMessageGroup
 
         bool add_data(const CacheChange_t& change, const GuidPrefix_t& remoteGuidPrefix, const EntityId_t& readerId,
                 const LocatorList_t& locators, const std::vector<GuidPrefix_t>& remote_participants,
-                bool expectsInlineQos);
+                const std::vector<GUID_t>& remote_readers, bool expectsInlineQos);
 
         bool add_data_frag(const CacheChange_t& change, const uint32_t fragment_number,
                 const GuidPrefix_t& remoteGuidPrefix, const EntityId_t& readerId,
                 const LocatorList_t& locators, const std::vector<GuidPrefix_t>& remote_participants,
-                bool expectsInlineQos);
+                const std::vector<GUID_t>& remote_readers, bool expectsInlineQos);
 
         /**
          * @param msg_group
@@ -166,6 +166,10 @@ class RTPSMessageGroup
 
         void check_and_maybe_flush(const GuidPrefix_t& dst, const LocatorList_t& locator_list,
                 const std::vector<GuidPrefix_t>& remote_participants);
+
+        bool insert_submessage();
+
+        bool add_info_ts_in_buffer(const std::vector<GUID_t>& remote_readers);
 
         RTPSParticipantImpl* participant_;
 

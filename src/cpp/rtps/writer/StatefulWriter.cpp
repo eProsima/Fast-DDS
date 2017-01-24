@@ -99,6 +99,13 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 {
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
+    // If payload protection, encode payload
+    if(is_payload_protected())
+    {
+        getRTPSParticipant()->security_manager().encode_serialized_payload(change->serializedPayload,
+                m_guid);
+    }
+
     //TODO Think about when set liveliness assertion when writer is asynchronous.
     this->setLivelinessAsserted(true);
 
@@ -111,6 +118,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
             LocatorList_t multilocList;
             bool expectsInlineQos = false;
             std::vector<GuidPrefix_t> remote_participants;
+            std::vector<GUID_t> remote_readers;
 
             // TODO (Ricardo) Temporal
             LocatorList_t locators;
@@ -132,6 +140,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 locators.push_back((*it)->m_att.endpoint.multicastLocatorList);
                 expectsInlineQos |= (*it)->m_att.expectsInlineQos;
                 remote_participants.push_back((*it)->m_att.guid.guidPrefix);
+                remote_readers.push_back((*it)->m_att.guid);
                 (*it)->mp_mutex->unlock();
 
                 (*it)->mp_nackSupression->restart_timer();
@@ -139,7 +148,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 
             RTPSMessageGroup group(mp_RTPSParticipant, this,  m_cdrmessages);
             if(group.add_data(*change, c_GuidPrefix_Unknown, c_EntityId_Unknown,
-                        locators, remote_participants, expectsInlineQos))
+                        locators, remote_participants, remote_readers, expectsInlineQos))
             {
                 logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
             }
@@ -259,8 +268,8 @@ void StatefulWriter::send_any_unsent_changes()
             if(!relevant_changes.empty())
             {
                 //TODO (Ricardo) Temporal.
-                std::vector<GuidPrefix_t> remote_participants;
-                remote_participants.push_back((*m_reader_iterator)->m_att.guid.guidPrefix);
+                std::vector<GuidPrefix_t> remote_participants{(*m_reader_iterator)->m_att.guid.guidPrefix};
+                std::vector<GUID_t> remote_readers{(*m_reader_iterator)->m_att.guid};
 
                 for (const auto* change : relevant_changes)
                 {
@@ -275,7 +284,8 @@ void StatefulWriter::send_any_unsent_changes()
                         {
                             if(group.add_data_frag(*change->getChange(), fragment, (*m_reader_iterator)->m_att.guid.guidPrefix,
                                         (*m_reader_iterator)->m_att.guid.entityId,
-                                        locators, remote_participants, (*m_reader_iterator)->m_att.expectsInlineQos))
+                                        locators, remote_participants, remote_readers,
+                                        (*m_reader_iterator)->m_att.expectsInlineQos))
                                 (*m_reader_iterator)->mark_fragment_as_sent_for_change(change->getChange(), fragment);
                         }
                     }
@@ -283,7 +293,8 @@ void StatefulWriter::send_any_unsent_changes()
                     {
                         if(group.add_data(*change->getChange(), (*m_reader_iterator)->m_att.guid.guidPrefix,
                                 (*m_reader_iterator)->m_att.guid.entityId,
-                                locators, remote_participants, (*m_reader_iterator)->m_att.expectsInlineQos))
+                                locators, remote_participants, remote_readers,
+                                (*m_reader_iterator)->m_att.expectsInlineQos))
                             (*m_reader_iterator)->set_change_to_status(change->getChange(), UNDERWAY);
                     }
                 }

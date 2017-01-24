@@ -75,6 +75,10 @@ class Endpoint
 
     bool supports_rtps_protection() { return supports_rtps_protection_; }
 
+    bool is_submessage_protected() { return is_submessage_protected_; }
+
+    bool is_payload_protected() { return is_payload_protected_; }
+
     protected:
     //!Pointer to the RTPSParticipant containing this endpoint.
     RTPSParticipantImpl* mp_RTPSParticipant;
@@ -91,6 +95,9 @@ class Endpoint
 
     bool supports_rtps_protection_;
 
+    bool is_submessage_protected_;
+
+    bool is_payload_protected_;
 };
 
 

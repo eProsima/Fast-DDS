@@ -42,7 +42,8 @@ namespace rtps{
 #define HEARTBEAT_FRAG 0x13
 #define DATA 0x15
 #define DATA_FRAG 0x16
-#define SECURE_DATA 0x33
+#define SEC_PREFIX 0x31
+#define SRTPS_PREFIX 0x33
 
 //!@brief Structure Header_t, RTPS Message Header Structure.
 //!@ingroup COMMON_MODULE

@@ -30,6 +30,7 @@ macro(compile_example example example_directory)
         # Separate CMAKE_PREFIX_PATH
         string(REPLACE ";" "|" CMAKE_PREFIX_PATH_ "${CMAKE_PREFIX_PATH}")
         set(${example}_CMAKE_ARGS
+            "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}"
             "-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}"
             "-DCMAKE_PREFIX_PATH=${CMAKE_CURRENT_BINARY_DIR}/config|${CMAKE_PREFIX_PATH_}"
             ${USE_BOOST_}
