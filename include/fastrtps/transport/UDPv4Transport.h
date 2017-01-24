@@ -170,6 +170,7 @@ protected:
    uint32_t mMaxMessageSize;
    uint32_t mSendBufferSize;
    uint32_t mReceiveBufferSize;
+   uint8_t mTTL;
 
    boost::asio::io_service mService;
    std::unique_ptr<boost::thread> ioServiceThread;

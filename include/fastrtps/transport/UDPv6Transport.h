@@ -169,6 +169,7 @@ private:
    uint32_t mMaxMessageSize;
    uint32_t mSendBufferSize;
    uint32_t mReceiveBufferSize;
+   uint8_t mTTL;
 
    // For UDPv6, the notion of channel corresponds to a port + direction tuple.
 	boost::asio::io_service mService;
