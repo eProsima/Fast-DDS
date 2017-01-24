@@ -208,6 +208,10 @@ std::pair<StatefulReader*,StatefulReader*> ParticipantImpl::getEDPReaders(){
     return mp_rtpsParticipant->getEDPReaders();
 }
 
+std::vector<std::string> ParticipantImpl::getParticipantNames(){
+    return mp_rtpsParticipant->getParticipantNames();
+}
+
 int ParticipantImpl::get_no_publishers(char *target_topic){
     int count = 0;
     std::string target_string(target_topic);
