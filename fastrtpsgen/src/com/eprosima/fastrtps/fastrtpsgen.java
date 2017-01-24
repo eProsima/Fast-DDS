@@ -69,7 +69,7 @@ public class fastrtpsgen {
 
 	/*
 	 * ----------------------------------------------------------------------------------------
-	 * 
+	 *
 	 * Attributes
 	 */
 
@@ -95,7 +95,7 @@ public class fastrtpsgen {
 	private String m_command = null;
 	private String m_extra_command = null;
 	private ArrayList m_lineCommand = null;
-	private ArrayList m_lineCommandForWorkDirSet = null;	
+	private ArrayList m_lineCommandForWorkDirSet = null;
 	private String m_spTemplate = "main";
 
 	private static VSConfiguration m_vsconfigurations[]={new VSConfiguration("Debug DLL", "Win32", true, true),
@@ -121,7 +121,7 @@ public class fastrtpsgen {
 
 	/*
 	 * ----------------------------------------------------------------------------------------
-	 * 
+	 *
 	 * Constructor
 	 */
 
@@ -224,12 +224,12 @@ public class fastrtpsgen {
 
 	/*
 	 * ----------------------------------------------------------------------------------------
-	 * 
+	 *
 	 * Listener classes
 	 */
 
 	class TemplateErrorListener implements StringTemplateErrorListener
-	{  
+	{
 		public void error(String arg0, Throwable arg1)
 		{
 			System.out.println(ColorMessage.error() + arg0);
@@ -238,13 +238,13 @@ public class fastrtpsgen {
 
 		public void warning(String arg0)
 		{
-			System.out.println(ColorMessage.warning() + arg0);   
-		}   
+			System.out.println(ColorMessage.warning() + arg0);
+		}
 	}
 
 	/*
 	 * ----------------------------------------------------------------------------------------
-	 * 
+	 *
 	 * Main methods
 	 */
 
@@ -261,15 +261,15 @@ public class fastrtpsgen {
 		}
 
 		boolean returnedValue = globalInit();
-		
+
 		if (returnedValue)
         {
             Solution solution = new Solution(m_languageOption, m_exampleOption, getVersion(), m_publishercode, m_subscribercode);
-			
+
 			// Load string templates
 			System.out.println("Loading templates...");
             TemplateManager.setGroupLoaderDirectories("com/eprosima/fastrtps/idl/templates:com/eprosima/fastcdr/idl/templates");
-			
+
 			// In local for all products
 			//solution.addInclude("$(EPROSIMADIR)/code");
 			solution.addInclude("$(" + m_appEnv + ")/include");
@@ -286,12 +286,12 @@ public class fastrtpsgen {
                 if(m_exampleOption != null && m_exampleOption.contains("Linux"))
                     solution.addInclude("$(JAVA_HOME)/include/linux");
             }
-			
+
 			if (m_exampleOption != null && m_exampleOption.contains("Linux")) {
 				solution.addLibrary("boost_system");
 				solution.addLibrary("boost_thread");
 			}
-			
+
 			if(m_exampleOption != null && m_exampleOption.contains("Win"))
 			{
 				solution.addInclude("$(LIB_BOOST_PATH)");
@@ -341,7 +341,7 @@ public class fastrtpsgen {
 
 	/*
 	 * ----------------------------------------------------------------------------------------
-	 * 
+	 *
 	 * Auxiliary methods
 	 */
 
@@ -434,7 +434,7 @@ public class fastrtpsgen {
 				}
 
 				m_tempDir = tempPath;
-			} else if (m_os.contains("Linux")) {
+			} else if (m_os.contains("Linux") || m_os.contains("Mac")) {
 				m_tempDir = "/tmp/";
 			}
 		}
@@ -461,12 +461,12 @@ public class fastrtpsgen {
 			if (!ioe.getMessage().equals("")) {
 				System.out.println(ioe.getMessage());
 			}
-		} 
+		}
 
 		return project;
 
 	}
-	
+
 	private Project parseIDL(String idlFilename) {
 		boolean returnedValue = false;
 		String idlParseFileName = idlFilename;
@@ -480,9 +480,9 @@ public class fastrtpsgen {
 
 		if (idlParseFileName != null) {
 			Context ctx = new Context(onlyFileName, idlFilename, m_includePaths, m_subscribercode, m_publishercode, m_localAppProduct);
-            
+
             if(fusion_) ctx.setActivateFusion(true);
-             
+
             // Create default @Key annotation.
             AnnotationDeclaration keyann = ctx.createAnnotationDeclaration("Key", null);
             keyann.addMember(new AnnotationMember("value", new PrimitiveTypeCode(TypeCode.KIND_BOOLEAN), "true"));
@@ -490,12 +490,12 @@ public class fastrtpsgen {
             // Create default @Topic annotation.
             AnnotationDeclaration topicann = ctx.createAnnotationDeclaration("Topic", null);
             topicann.addMember(new AnnotationMember("value", new PrimitiveTypeCode(TypeCode.KIND_BOOLEAN), "true"));
-			
+
 			// Create template manager
 			TemplateManager tmanager = new TemplateManager("FastCdrCommon:eprosima:Common");
 
             List<TemplateExtension> extensions = new ArrayList<TemplateExtension>();
-			
+
 			// Load common types template
             extensions.add(new TemplateExtension("struct_type", "keyFunctionHeadersStruct"));
             extensions.add(new TemplateExtension("union_type", "keyFunctionHeadersUnion"));
@@ -503,7 +503,7 @@ public class fastrtpsgen {
             extensions.clear();
             extensions.add(new TemplateExtension("struct_type", "keyFunctionSourcesStruct"));
 			tmanager.addGroup("TypesSource", extensions);
-			
+
 			// TODO: Uncomment following lines and create templates
 
 			// Load Types common templates
@@ -546,7 +546,7 @@ public class fastrtpsgen {
 
                 Specification specification = parser.specification(ctx, tmanager, maintemplates).spec;
                 returnedValue = specification != null;
-				
+
 			} catch (FileNotFoundException ex) {
 				System.out.println(ColorMessage.error("FileNotFounException") + "The File " + idlParseFileName + " was not found.");
 			}/* catch (ParseException ex) {
@@ -677,9 +677,9 @@ public class fastrtpsgen {
 				System.out.println("Generating solution for arch " + m_exampleOption + "...");
 
 				if (m_exampleOption.substring(3, 6).equals("Win")) {
-					System.out.println("Generating Windows solution"); 
+					System.out.println("Generating Windows solution");
 
-					if (m_exampleOption.startsWith("i86")) 
+					if (m_exampleOption.startsWith("i86"))
 					{
 						if(m_exampleOption.charAt(m_exampleOption.length()-1) == '3')
 							returnedValue = genVS(solution, null, "12");
@@ -887,7 +887,7 @@ public class fastrtpsgen {
 		if (ppPath == null) {
 			if (m_os.contains("Windows")) {
 				ppPath = "cl.exe";
-			} else if (m_os.contains("Linux")) {
+			} else if (m_os.contains("Linux") || m_os.contains("Mac")) {
 				ppPath = "cpp";
 			}
 		}
@@ -899,7 +899,7 @@ public class fastrtpsgen {
 		for (int i=0; i < m_includePaths.size(); ++i) {
 			if (m_os.contains("Windows")) {
 				lineCommand.add(((String) m_includePaths.get(i)).replaceFirst("^-I", "/I"));
-			} else if (m_os.contains("Linux")) {
+			} else if (m_os.contains("Linux") || m_os.contains("Mac")) {
 				lineCommand.add(m_includePaths.get(i));
 			}
 		}
@@ -912,7 +912,7 @@ public class fastrtpsgen {
 		// Add input file.
 		lineCommand.add(idlFilename);
 
-		if(m_os.contains("Linux")) {
+		if(m_os.contains("Linux") || m_os.contains("Mac")) {
 			lineCommand.add(outputfile);
 		}
 
@@ -970,7 +970,7 @@ public class fastrtpsgen {
         {
             javac = "javac.exe";
         }
-        else if(m_os.contains("Linux"))
+        else if(m_os.contains("Linux") || m_os.contains("Mac"))
         {
             javac = "javac";
         }
@@ -1023,7 +1023,7 @@ public class fastrtpsgen {
         {
             javah = "javah.exe";
         }
-        else if(m_os.contains("Linux"))
+        else if(m_os.contains("Linux") || m_os.contains("Mac"))
         {
             javah = "javah";
         }
@@ -1072,7 +1072,7 @@ public class fastrtpsgen {
 
 	/*
 	 * ----------------------------------------------------------------------------------------
-	 * 
+	 *
 	 * Main entry point
 	 */
 
@@ -1163,7 +1163,7 @@ class ProcessOutput extends Thread
 		}
 		catch (IOException ioe)
 		{
-			ioe.printStackTrace();  
+			ioe.printStackTrace();
 		}
 	}
 
