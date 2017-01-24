@@ -37,11 +37,11 @@ file(GLOB DEADLINEQOS_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(DeadlineQoSExample ${DEADLINEQOS_EXAMPLE_SOURCES})
 target_include_directories(DeadlineQoSExample PRIVATE ${Boost_INCLUDE_DIR})
+target_link_libraries(DeadlineQoSExample fastrtps fastcdr ${Boost_LIBRARIES})
 if(UNIX)
-  target_link_libraries(DeadlineQoSExample fastrtps fastcdr ${Boost_LIBRARIES} pthread)
-else()
-  target_link_libraries(DeadlineQoSExample fastrtps fastcdr ${Boost_LIBRARIES})
+  target_link_libraries(DeadlineQoSExample pthread)
 endif()
+
 install(TARGETS DeadlineQoSExample
     RUNTIME DESTINATION examples/C++/DeadlineQoSExample/${BIN_INSTALL_DIR}
     )
