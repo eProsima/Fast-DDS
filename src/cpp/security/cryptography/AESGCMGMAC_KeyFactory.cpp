@@ -79,11 +79,11 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     //These values are set by the standard
     (*PCrypto)->ParticipantKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
     (*PCrypto)->ParticipantKeyMaterial.master_receiver_specific_key.fill(0);
-    
+
     //Set values related to key update policy
     (*PCrypto)->max_blocks_per_session = maxblockspersession;
     (*PCrypto)->session_block_counter = maxblockspersession+1; //Set to update upon first usage
-    
+
     RAND_bytes( (unsigned char *)( &( (*PCrypto)->session_id ) ), sizeof(uint16_t));
 
     return PCrypto;
@@ -208,7 +208,9 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
 
         (*RPCrypto)->max_blocks_per_session = local_participant_handle->max_blocks_per_session;
         (*RPCrypto)->session_block_counter = local_participant_handle->session_block_counter;
-        RAND_bytes( (unsigned char *)( &( (*RPCrypto)->session_id ) ), sizeof(uint16_t));
+        (*RPCrypto)->session_id = std::numeric_limits<uint32_t>::max();
+        if((*RPCrypto)->session_id == local_participant_handle->session_id)
+            (*RPCrypto)->session_id -= 1;
 
         //Attack to PartipantCryptoHandles - both local and remote
         (*RPCrypto)->Participant2ParticipantKxKeyMaterial.push_back(buffer);
@@ -328,6 +330,9 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
 
     (*RRCrypto)->max_blocks_per_session = local_writer_handle->max_blocks_per_session;
     (*RRCrypto)->session_block_counter = local_writer_handle->session_block_counter;
+    (*RRCrypto)->session_id = std::numeric_limits<uint32_t>::max();
+    if((*RRCrypto)->session_id == local_writer_handle->session_id)
+        (*RRCrypto)->session_id -= 1;
 
     writer_lock.unlock();
 
@@ -336,10 +341,8 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
     std::unique_lock<std::mutex> remote_participant_lock(remote_participant->mutex_);
 
     (*RRCrypto)->Participant2ParticipantKxKeyMaterial = remote_participant->Participant2ParticipantKxKeyMaterial.at(0);
-    RAND_bytes( (unsigned char *)( &( (*RRCrypto)->session_id ) ), sizeof(uint16_t));
 
     (*RRCrypto)->Parent_participant = &remote_participant_crypto;
-    (*RRCrypto)->session_id = 0;
     //Save this CryptoHandle as part of the remote participant
 
     (*remote_participant)->Readers.push_back(RRCrypto);
@@ -460,6 +463,9 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
 
     (*RWCrypto)->max_blocks_per_session = local_reader_handle->max_blocks_per_session;
     (*RWCrypto)->session_block_counter = local_reader_handle->session_block_counter;
+    (*RWCrypto)->session_id = std::numeric_limits<uint32_t>::max();
+    if((*RWCrypto)->session_id == local_reader_handle->session_id)
+        (*RWCrypto)->session_id -= 1;
 
     reader_lock.unlock();
 
@@ -468,9 +474,6 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
     std::unique_lock<std::mutex> remote_participant_lock(remote_participant->mutex_);
 
     (*RWCrypto)->Participant2ParticipantKxKeyMaterial = remote_participant->Participant2ParticipantKxKeyMaterial.at(0);
-
-    RAND_bytes( (unsigned char *)( &( (*RWCrypto)->session_id ) ), sizeof(uint16_t));
-    (*RWCrypto)->session_id = 0;
 
     (*RWCrypto)->Parent_participant = &remote_participant_crypt;
 

@@ -75,8 +75,8 @@ bool HelloWorldPublisher::init()
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
     PropertyPolicy publisher_property_policy;
-    //publisher_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    //publisher_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+    publisher_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+    publisher_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     Wparam.properties = publisher_property_policy;
 

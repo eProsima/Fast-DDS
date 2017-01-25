@@ -68,8 +68,8 @@ bool HelloWorldSubscriber::init()
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
     PropertyPolicy subscriber_property_policy;
-    //subscriber_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    //subscriber_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+    subscriber_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+    subscriber_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     Rparam.properties = subscriber_property_policy;
 

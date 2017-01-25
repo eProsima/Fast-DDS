@@ -1571,7 +1571,7 @@ bool SecurityManager::decode_rtps_message(CDRMessage_t& message, CDRMessage_t& o
     // Init output buffer
     CDRMessage::initCDRMsg(&out_message);
 
-    std::unique_lock<std::mutex>(mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
 
     const GUID_t remote_participant_key(remote_participant, c_EntityId_RTPSParticipant);
     auto dp_it = discovered_participants_.find(remote_participant_key);
@@ -1604,7 +1604,7 @@ bool SecurityManager::decode_rtps_message(CDRMessage_t& message, CDRMessage_t& o
         }
         else
         {
-            logInfo(SECURITY, "Cannot decode rtps message from participoant " << remote_participant_key <<
+            logInfo(SECURITY, "Cannot decode rtps message from participant " << remote_participant_key <<
                     "(" << exception.what() << ")");
         }
     }
@@ -2001,7 +2001,7 @@ bool SecurityManager::decode_rtps_submessage(CDRMessage_t& message, CDRMessage_t
     if(message.buffer[message.pos] != SEC_PREFIX)
         return false;
 
-    std::unique_lock<std::mutex>(mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
 
     const GUID_t remote_participant_key(sending_participant, c_EntityId_RTPSParticipant);
     auto dp_it = discovered_participants_.find(remote_participant_key);
