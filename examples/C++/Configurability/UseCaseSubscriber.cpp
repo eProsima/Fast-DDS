@@ -3,7 +3,7 @@
  * --------------------------------------------
  *
  *  This is an interactive program designed to show the effect of different configuration parameters on the behaviour of eProsima Fast RTPS
- *  
+ *
  ***/
 
 #include <iostream>
@@ -36,7 +36,7 @@ typedef struct{
     uint16_t history_size;
     uint8_t depth;
     uint8_t no_keys;
-    uint16_t max_samples_per_key; 
+    uint16_t max_samples_per_key;
 } example_configuration;
 
 
@@ -45,9 +45,9 @@ int main(){
 
     std::string userchoice;
     bool validinput;
-    example_configuration user_configuration;
+    example_configuration user_configuration = {};
 
-    
+
     std::cout << "Welcome to eProsima Fast RTPS Use Case Demonstrator" << std::endl;
     std::cout << "---------------------------------------------------" << std::endl;
     std::cout << "Choose your desired reliability type:" << std::endl;
@@ -252,7 +252,7 @@ int main(){
     if(user_configuration.durability == Transient_Local)
         Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     else
-        Rparam.qos.m_durability.kind = VOLATILE_DURABILITY_QOS; 
+        Rparam.qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
 
     if(user_configuration.reliability == Reliable)
         Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -277,7 +277,7 @@ int main(){
     SampleInfo_t sample_info;
     while(condition){
         std::cout << "Press 'r' to read Messages from the History or 'q' to quit" << std::endl;
-        std::cin >> c; 
+        std::cin >> c;
         if( c == std::string("q") ){
             condition = false;
         }else if( c == std::string("r") ){
@@ -286,9 +286,6 @@ int main(){
             }
         }
     }
-    
+
     return 0;
 }
-    
-
-

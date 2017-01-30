@@ -55,7 +55,7 @@ int main()
 	if(participant == nullptr)
 		return 1;
 
-    HelloWorldType type; 
+    HelloWorldType type;
 	Domain::registerType(participant,&type);
 
     PubListener listener;
@@ -80,7 +80,8 @@ int main()
     data.index(1);
     data.message("HelloWorld");
 
-    while(1)
+    bool run = true;
+    while(run)
     {
         publisher->write((void*)&data);
 
