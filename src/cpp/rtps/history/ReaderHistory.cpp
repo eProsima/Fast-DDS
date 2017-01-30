@@ -64,7 +64,7 @@ bool ReaderHistory::received_change(CacheChange_t* change, size_t)
 }
 
 // TODO(Javier) Maybe a mechanism to check if a change has to be stored should be outside, using WriterProxy info.
-static void CleanSequentials(std::set<SequenceNumber_t>& set, int32_t maximum)
+static void CleanSequentials(std::set<SequenceNumber_t>& set, size_t maximum)
 {
     auto end = set.end();
     auto set_it = set.begin();
