@@ -23,6 +23,7 @@
 #include <fastrtps/rtps/resources/TimedEvent.h>
 #include <fastrtps/rtps/common/CDRMessage_t.h>
 #include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/rtps/messages/RTPSMessageGroup.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -37,32 +38,30 @@ class WriterProxy;
  * InitialAckNack class, controls the initial send operation of AckNack.
  * @ingroup WRITER_MODULE
  */
-class InitialAckNack: public TimedEvent {
-public:
-	/**
-	*
-	* @param p_RP
-	* @param interval
-	*/
-	InitialAckNack(WriterProxy* wp, double interval);
-	virtual ~InitialAckNack();
-	
-	/**
-	* Method invoked when the event occurs
-	*
-	* @param code Code representing the status of the event
-	* @param msg Message associated to the event
-	*/
-	void event(EventCode code, const char* msg= nullptr);
+class InitialAckNack: public TimedEvent
+{
+    public:
+        /**
+         *
+         * @param p_RP
+         * @param interval
+         */
+        InitialAckNack(WriterProxy* wp, double interval);
+        virtual ~InitialAckNack();
 
-	//!
-	CDRMessage_t initial_acknack_msg_;
-	//!
-    WriterProxy* wp_;
+        /**
+         * Method invoked when the event occurs
+         *
+         * @param code Code representing the status of the event
+         * @param msg Message associated to the event
+         */
+        void event(EventCode code, const char* msg= nullptr);
+
+        //!
+        RTPSMessageGroup_t m_cdrmessages;
+        //!
+        WriterProxy* wp_;
 };
-
-
-
 
 }
 }

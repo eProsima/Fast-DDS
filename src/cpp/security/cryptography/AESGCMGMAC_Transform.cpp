@@ -675,7 +675,6 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
         return false;
     }
 
-    // TODO(Ricardo) Is it necessary plain_buffer?
     if(!EVP_DecryptFinal_ex(d_ctx, NULL, &final_size))
     {
         logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptFinal_ex function returns an error");
@@ -819,8 +818,8 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
         CDRMessage_t& encoded_rtps_submessage,
         DatareaderCryptoHandle &receiving_datareader_crypto,
         DatawriterCryptoHandle &sending_datawriter_cryupto,
-        SecurityException &exception){
-
+        SecurityException &exception)
+{
     AESGCMGMAC_WriterCryptoHandle& sending_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_cryupto);
 
     if(sending_writer.nil())
@@ -882,7 +881,6 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
 
     //Auth message - The point is that we cannot verify the authorship of the message with our receiver_specific_key the message could be crafted
-    bool auth = false;
 
     RAND_load_file("/dev/urandom",32);
 
@@ -897,17 +895,36 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
             session_id);
 
     //Verify specific MAC
-    EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)specific_session_key.data(), initialization_vector.data());
-    EVP_DecryptUpdate(d_ctx, NULL, &actual_size, tag.common_mac.data(), 16);
-    EVP_CIPHER_CTX_ctrl( d_ctx, EVP_CTRL_GCM_SET_TAG,16, specific_mac.receiver_mac.data() );
-    auth = EVP_DecryptFinal_ex(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &final_size);
-    plain_rtps_submessage.pos += final_size;
-    EVP_CIPHER_CTX_free(d_ctx);
-
-    if(!auth){
-        logWarning(SECURITY_CRYPTO, "Unable to auth message, it could be coming from a rogue sender");
+    if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), NULL, NULL))
+    {
+        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptInit function returns an error");
         return false;
     }
+    if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, specific_mac.receiver_mac.data()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_CIPHER_CTX_ctrl function returns an error");
+        return false;
+    }
+
+    if(!EVP_DecryptInit(d_ctx, NULL, (const unsigned char *)specific_session_key.data(),
+                initialization_vector.data()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptInit function returns an error");
+        return false;
+    }
+
+    if(!EVP_DecryptUpdate(d_ctx, NULL, &actual_size, tag.common_mac.data(), 16))
+    {
+        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptUpdate function returns an error");
+        return false;
+    }
+
+    if(!EVP_DecryptFinal_ex(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &final_size))
+    {
+        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptFinal_ex function returns an error");
+        return false;
+    }
+    EVP_CIPHER_CTX_free(d_ctx);
 
     //Decode message
     RAND_load_file("/dev/urandom",32);
@@ -916,11 +933,37 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
 
     actual_size = 0;
     final_size = 0;
-    EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
-    EVP_DecryptUpdate(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &actual_size, body.secure_data.data(),body.secure_data.size());
+    if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), NULL, NULL))
+    {
+        logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_DecryptInit function returns an error");
+        return false;
+    }
+    if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, tag.common_mac.data()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_CIPHER_CTX_ctrl function returns an error");
+        return false;
+    }
+
+    if(!EVP_DecryptInit(d_ctx, NULL, (const unsigned char *)session_key.data(),
+                initialization_vector.data()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_DecryptInit function returns an error");
+        return false;
+    }
+
+    if(!EVP_DecryptUpdate(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &actual_size,
+                body.secure_data.data(), body.secure_data.size()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_DecryptUpdate function returns an error");
+        return false;
+    }
     plain_rtps_submessage.pos += actual_size;
-    EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG,16,tag.common_mac.data());
-    EVP_DecryptFinal(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &final_size);
+
+    if(!EVP_DecryptFinal_ex(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &final_size))
+    {
+        logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_DecryptFinal_ex function returns an error");
+        return false;
+    }
     plain_rtps_submessage.pos += final_size;
     EVP_CIPHER_CTX_free(d_ctx);
 
@@ -998,8 +1041,6 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
 
     //Auth message - The point is that we cannot verify the authorship of the message with our receiver_specific_key the message could be crafted
-    bool auth = false;
-
     RAND_load_file("/dev/urandom",32);
 
     EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
@@ -1013,17 +1054,36 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
             session_id);
 
     //Verify specific MAC
-    EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)specific_session_key.data(), initialization_vector.data());
-    EVP_DecryptUpdate(d_ctx, NULL, &actual_size, tag.common_mac.data(), 16);
-    EVP_CIPHER_CTX_ctrl( d_ctx, EVP_CTRL_GCM_SET_TAG,16, specific_mac.receiver_mac.data() );
-    auth = EVP_DecryptFinal_ex(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &final_size);
-    plain_rtps_submessage.pos += final_size;
-    EVP_CIPHER_CTX_free(d_ctx);
-
-    if(!auth){
-        logWarning(SECURITY_CRYPTO,"Unable to authenticate the message, it may come from a rogue source");
+    if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), NULL, NULL))
+    {
+        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptInit function returns an error");
         return false;
     }
+    if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, specific_mac.receiver_mac.data()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_CIPHER_CTX_ctrl function returns an error");
+        return false;
+    }
+
+    if(!EVP_DecryptInit(d_ctx, NULL, (const unsigned char *)specific_session_key.data(),
+                initialization_vector.data()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptInit function returns an error");
+        return false;
+    }
+
+    if(!EVP_DecryptUpdate(d_ctx, NULL, &actual_size, tag.common_mac.data(), 16))
+    {
+        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptUpdate function returns an error");
+        return false;
+    }
+
+    if(!EVP_DecryptFinal_ex(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &final_size))
+    {
+        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptFinal_ex function returns an error");
+        return false;
+    }
+    EVP_CIPHER_CTX_free(d_ctx);
 
     //Decode message
     RAND_load_file("/dev/urandom",32);
@@ -1032,11 +1092,37 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
 
     actual_size = 0;
     final_size = 0;
-    EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
-    EVP_DecryptUpdate(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &actual_size, body.secure_data.data(),body.secure_data.size());
+    if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), NULL, NULL))
+    {
+        logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_DecryptInit function returns an error");
+        return false;
+    }
+    if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, tag.common_mac.data()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_CIPHER_CTX_ctrl function returns an error");
+        return false;
+    }
+
+    if(!EVP_DecryptInit(d_ctx, NULL, (const unsigned char *)session_key.data(),
+                initialization_vector.data()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_DecryptInit function returns an error");
+        return false;
+    }
+
+    if(!EVP_DecryptUpdate(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &actual_size,
+                body.secure_data.data(),body.secure_data.size()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_DecryptUpdate function returns an error");
+        return false;
+    }
     plain_rtps_submessage.pos += actual_size;
-    EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG,16,tag.common_mac.data());
-    EVP_DecryptFinal(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &final_size);
+
+    if(!EVP_DecryptFinal_ex(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &final_size))
+    {
+        logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_DecryptFinal_ex function returns an error");
+        return false;
+    }
     plain_rtps_submessage.pos += final_size;
     EVP_CIPHER_CTX_free(d_ctx);
 

@@ -39,13 +39,15 @@ namespace rtps{
 
 PeriodicHeartbeat::~PeriodicHeartbeat()
 {
-	logInfo(RTPS_WRITER,"Destroying PeriodicHB");
+    logInfo(RTPS_WRITER,"Destroying PeriodicHB");
     destroy();
 }
 
-PeriodicHeartbeat::PeriodicHeartbeat(StatefulWriter* p_SFW,double interval):
-TimedEvent(p_SFW->getRTPSParticipant()->getEventResource().getIOService(),
-p_SFW->getRTPSParticipant()->getEventResource().getThread(), interval), mp_SFW(p_SFW)
+PeriodicHeartbeat::PeriodicHeartbeat(StatefulWriter* p_SFW, double interval):
+    TimedEvent(p_SFW->getRTPSParticipant()->getEventResource().getIOService(),
+            p_SFW->getRTPSParticipant()->getEventResource().getThread(), interval),
+    m_cdrmessages(p_SFW->getRTPSParticipant()->getMaxMessageSize(),
+            p_SFW->getRTPSParticipant()->getGuid().guidPrefix), mp_SFW(p_SFW)
 {
 
 }
@@ -56,73 +58,74 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
     // Unused in release mode.
     (void)msg;
 
-	if(code == EVENT_SUCCESS)
-	{
-		SequenceNumber_t firstSeq, lastSeq;
-		Count_t heartbeatCount = 0;
-		LocatorList_t locList;
-		bool unacked_changes = false;
-		{//BEGIN PROTECTION
-			boost::lock_guard<boost::recursive_mutex> guardW(*mp_SFW->getMutex());
-			for(std::vector<ReaderProxy*>::iterator it = mp_SFW->matchedReadersBegin();
-					it != mp_SFW->matchedReadersEnd(); ++it)
-			{
-				if(!unacked_changes)
-				{
+    if(code == EVENT_SUCCESS)
+    {
+        SequenceNumber_t firstSeq, lastSeq;
+        Count_t heartbeatCount = 0;
+        LocatorList_t locList;
+        bool unacked_changes = false;
+        std::vector<GUID_t> remote_readers;
+
+        {//BEGIN PROTECTION
+            boost::lock_guard<boost::recursive_mutex> guardW(*mp_SFW->getMutex());
+            for(std::vector<ReaderProxy*>::iterator it = mp_SFW->matchedReadersBegin();
+                    it != mp_SFW->matchedReadersEnd(); ++it)
+            {
+                if(!unacked_changes)
+                {
                     if((*it)->thereIsUnacknowledged())
-					{
-						unacked_changes= true;
-					}
-				}
-				locList.push_back((*it)->m_att.endpoint.unicastLocatorList);
-				locList.push_back((*it)->m_att.endpoint.multicastLocatorList);
-			}
+                    {
+                        unacked_changes= true;
+                    }
+                }
+                locList.push_back((*it)->m_att.endpoint.unicastLocatorList);
+                locList.push_back((*it)->m_att.endpoint.multicastLocatorList);
+                remote_readers.push_back((*it)->m_att.guid);
+            }
 
-			if (unacked_changes)
-			{
-				firstSeq = mp_SFW->get_seq_num_min();
-				lastSeq = mp_SFW->get_seq_num_max();
+            if (unacked_changes)
+            {
+                firstSeq = mp_SFW->get_seq_num_min();
+                lastSeq = mp_SFW->get_seq_num_max();
 
-				if (firstSeq == c_SequenceNumber_Unknown || lastSeq == c_SequenceNumber_Unknown)
-				{
-					firstSeq = mp_SFW->next_sequence_number();
-					lastSeq = SequenceNumber_t(0, 0);
-				}
-				else
-				{
-					(void)firstSeq;
-					assert(firstSeq <= lastSeq);
-				}
+                if (firstSeq == c_SequenceNumber_Unknown || lastSeq == c_SequenceNumber_Unknown)
+                {
+                    firstSeq = mp_SFW->next_sequence_number();
+                    lastSeq = SequenceNumber_t(0, 0);
+                }
+                else
+                {
+                    (void)firstSeq;
+                    assert(firstSeq <= lastSeq);
+                }
 
-				mp_SFW->incrementHBCount();
-				heartbeatCount = mp_SFW->getHeartbeatCount();
-			}
-		}
+                mp_SFW->incrementHBCount();
+                heartbeatCount = mp_SFW->getHeartbeatCount();
+            }
+        }
 
-		if (unacked_changes)
-		{
-			CDRMessage::initCDRMsg(&m_periodic_hb_msg);
-			// FinalFlag is always false because this class is used only by StatefulWriter in Reliable.
-			RTPSMessageCreator::addMessageHeartbeat(&m_periodic_hb_msg, mp_SFW->getGuid().guidPrefix,
-				mp_SFW->getHBReaderEntityId(), mp_SFW->getGuid().entityId,
-				firstSeq, lastSeq, heartbeatCount, false, false);
-			logInfo(RTPS_WRITER,mp_SFW->getGuid().entityId << " Sending Heartbeat ("<<firstSeq<< " - " << lastSeq<<")" );
-			for (std::vector<Locator_t>::iterator lit = locList.begin(); lit != locList.end(); ++lit)
-				mp_SFW->getRTPSParticipant()->sendSync(&m_periodic_hb_msg,(Endpoint *)mp_SFW , (*lit));
-		
-			//Reset TIMER
-			this->restart_timer();
-		}
+        if (unacked_changes)
+        {
+            RTPSMessageGroup group(mp_SFW->getRTPSParticipant(), mp_SFW, RTPSMessageGroup::WRITER, m_cdrmessages);
 
-	}
-	else if(code == EVENT_ABORT)
-	{
-		logInfo(RTPS_WRITER,"Aborted");
-	}
-	else
-	{
-		logInfo(RTPS_WRITER,"Boost message: " <<msg);
-	}
+            // FinalFlag is always false because this class is used only by StatefulWriter in Reliable.
+            group.add_heartbeat(remote_readers,
+                    firstSeq, lastSeq, heartbeatCount, false, false, locList);
+            logInfo(RTPS_WRITER,mp_SFW->getGuid().entityId << " Sending Heartbeat ("<<firstSeq<< " - " << lastSeq<<")" );
+
+            //Reset TIMER
+            this->restart_timer();
+        }
+
+    }
+    else if(code == EVENT_ABORT)
+    {
+        logInfo(RTPS_WRITER,"Aborted");
+    }
+    else
+    {
+        logInfo(RTPS_WRITER,"Boost message: " <<msg);
+    }
 }
 
 }

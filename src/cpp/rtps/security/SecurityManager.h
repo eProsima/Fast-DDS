@@ -297,6 +297,8 @@ class SecurityManager
                 const GUID_t& destination_endpoint_key, const GUID_t& source_endpoint_key,
                 ParticipantCryptoTokenSeq& crypto_tokens);
 
+        void participant_authorized(const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info, ParticipantProxyData* data);
+
         RTPSParticipantImpl* participant_;
         StatelessWriter* participant_stateless_message_writer_;
         WriterHistory* participant_stateless_message_writer_history_;
@@ -347,6 +349,10 @@ class SecurityManager
         // TODO(Ricardo) Temporal. Store individual in FastRTPS code.
         std::map<GUID_t, DatawriterAssociations> writer_handles_;
         std::map<GUID_t, DatareaderAssociations> reader_handles_;
+
+        std::map<GUID_t, DataHolderSeq> remote_participant_pending_messages_;
+        std::map<GUID_t, DataHolderSeq> remote_writer_pending_messages_;
+        std::map<GUID_t, DataHolderSeq> remote_reader_pending_messages_;
 };
 
 } //namespace security

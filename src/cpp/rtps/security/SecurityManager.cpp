@@ -361,16 +361,7 @@ bool SecurityManager::discovered_participant(ParticipantProxyData* participant_d
         // If authentication is successful, inform user about it.
         if(auth_status == AUTHENTICATION_OK)
         {
-            participant_->pdpsimple()->notifyAboveRemoteEndpoints(participant_data);
-
-            // Inform user about authenticated remote participant.
-            if(participant_->getListener() != nullptr)
-            {
-                RTPSParticipantAuthenticationInfo info;
-                info.status(AUTHORIZED_RTPSPARTICIPANT);
-                info.guid(participant_data->m_guid);
-                participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
-            }
+            participant_authorized(remote_participant_info, participant_data);
         }
     }
     else
@@ -473,7 +464,6 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
     int64_t expected_sequence_number = 0;
 
     bool handshake_message_send = true;
-    SequenceNumber_t sequence_number{SequenceNumber_t::unknown()};
 
     if(ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE ||
             ret == VALIDATION_OK_WITH_FINAL_MESSAGE)
@@ -558,43 +548,7 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
                         assert(remote_participant_info->shared_secret_handle_ == nullptr);
                         remote_participant_info->shared_secret_handle_ = authentication_plugin_->get_shared_secret(
                                     *remote_participant_info->handshake_handle_, exception);
-                        participant_->pdpsimple()->notifyAboveRemoteEndpoints(participant_data);
-
-                        // Inform user about authenticated remote participant.
-                        if(participant_->getListener() != nullptr)
-                        {
-                            RTPSParticipantAuthenticationInfo info;
-                            info.status(AUTHORIZED_RTPSPARTICIPANT);
-                            info.guid(remote_participant_key);
-                            participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
-                        }
-
-                        // Starts cryptography mechanism
-                        ParticipantCryptoHandle* participant_crypto_handle = register_and_match_crypto_endpoint(participant_data,
-                                    *remote_participant_info->identity_handle_,
-                                    *remote_participant_info->shared_secret_handle_);
-
-                        // Store cryptograhy info
-                        if(participant_crypto_handle != nullptr && !participant_crypto_handle->nil())
-                        {
-                            mutex_.lock();
-                            auto dp_it = discovered_participants_.find(remote_participant_key);
-
-                            if(dp_it != discovered_participants_.end())
-                            {
-                                dp_it->second.set_participant_crypto(participant_crypto_handle);
-                            }
-                            else
-                            {
-                                crypto_plugin_->cryptokeyfactory()->unregister_participant(participant_crypto_handle, exception);
-                            }
-                            mutex_.unlock();
-                        }
-                        else
-                        {
-                            logError(SECURITY, "Cannot register remote participant in crypto plugin ("
-                                    << remote_participant_key << ")");
-                        }
+                        participant_authorized(remote_participant_info, participant_data);
                     }
 
                     if(ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE)
@@ -1179,7 +1133,6 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
         {
             SecurityException exception;
 
-            std::cout << "Seting crypto tokens for participant " <<remote_participant_key << std::endl;
             if(!crypto_plugin_->cryptkeyexchange()->set_remote_participant_crypto_tokens(*local_participant_crypto_handle_,
                     *remote_participant_crypto,
                     message.message_data(),
@@ -1189,6 +1142,8 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
                         << remote_participant_key << ") - (" << exception.what() << ")");
             }
         }
+        else
+            remote_participant_pending_messages_.emplace(remote_participant_key, std::move(message.message_data()));
     }
     else if(message.message_class_id().compare(GMCLASSID_SECURITY_READER_CRYPTO_TOKENS) == 0)
     {
@@ -1235,10 +1190,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
                 }
             }
             else
-            {
-                logInfo(SECURITY, "Received Reader Cryptography message but not found remote reader " <<
-                        message.source_endpoint_key());
-            }
+                remote_reader_pending_messages_.emplace(message.source_endpoint_key(), std::move(message.message_data()));
         }
         else
         {
@@ -1291,10 +1243,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
                 }
             }
             else
-            {
-                logInfo(SECURITY, "Received Writer Cryptography message but not found remote writer " <<
-                        message.source_endpoint_key());
-            }
+                remote_writer_pending_messages_.emplace(message.source_endpoint_key(), std::move(message.message_data()));
         }
         else
         {
@@ -1478,7 +1427,6 @@ ParticipantCryptoHandle* SecurityManager::register_and_match_crypto_endpoint(Par
                         participant_volatile_message_secure_writer_history_->release_Cache(change);
                         logError(SECURITY, "WriterHistory cannot add the CacheChange_t");
                     }
-                    std::cout << "Enviado crypto token para" << std::endl;
                 }
                 else
                 {
@@ -1530,7 +1478,6 @@ bool SecurityManager::encode_rtps_message(CDRMessage_t& message,
         {
             logInfo(SECURITY, "Cannot encode message for participant " << remote_participant_key);
         }
-        std::cout << "Encoding for participant " << remote_participant_key << std::endl;
     }
 
 
@@ -1744,6 +1691,24 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                 {
                     logError(SECURITY, "Error generating crypto token. (" << exception.what() << ")");
                 }
+
+                // Check pending reader crypto messages.
+                auto pending = remote_reader_pending_messages_.find(remote_reader_guid);
+
+                if(pending != remote_reader_pending_messages_.end())
+                {
+                    if(!crypto_plugin_->cryptkeyexchange()->set_remote_datareader_crypto_tokens(
+                                *local_writer->second.writer_handle,
+                                *remote_reader_handle,
+                                pending->second,
+                                exception))
+                    {
+                        logError(SECURITY, "Cannot set remote reader crypto tokens ("
+                                << remote_reader_guid << ") - (" << exception.what() << ")");
+                    }
+
+                    remote_reader_pending_messages_.erase(pending);
+                }
             }
             else
             {
@@ -1848,6 +1813,24 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
                 else
                 {
                     logError(SECURITY, "Error generating crypto token. (" << exception.what() << ")");
+                }
+
+                // Check pending writer crypto messages.
+                auto pending = remote_writer_pending_messages_.find(remote_writer_guid);
+
+                if(pending != remote_writer_pending_messages_.end())
+                {
+                    if(!crypto_plugin_->cryptkeyexchange()->set_remote_datawriter_crypto_tokens(
+                                *local_reader->second.reader_handle,
+                                *remote_writer_handle,
+                                pending->second,
+                                exception))
+                    {
+                        logError(SECURITY, "Cannot set remote writer crypto tokens ("
+                                << remote_writer_guid << ") - (" << exception.what() << ")");
+                    }
+
+                    remote_writer_pending_messages_.erase(pending);
                 }
             }
             else
@@ -2147,4 +2130,69 @@ bool SecurityManager::decode_serialized_payload(const SerializedPayload_t& secur
     }
 
     return false;
+}
+
+void SecurityManager::participant_authorized(const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
+        ParticipantProxyData* participant_data)
+{
+    logInfo(SECURITY, "Authorized participant " << participant_data->m_guid);
+    participant_->pdpsimple()->notifyAboveRemoteEndpoints(participant_data);
+
+    // Inform user about authenticated remote participant.
+    if(participant_->getListener() != nullptr)
+    {
+        RTPSParticipantAuthenticationInfo info;
+        info.status(AUTHORIZED_RTPSPARTICIPANT);
+        info.guid(participant_data->m_guid);
+        participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
+    }
+
+    if(crypto_plugin_ == nullptr)
+        return;
+
+    SecurityException exception;
+
+    // Starts cryptography mechanism
+    ParticipantCryptoHandle* participant_crypto_handle = register_and_match_crypto_endpoint(participant_data,
+            *remote_participant_info->identity_handle_,
+            *remote_participant_info->shared_secret_handle_);
+
+    // Store cryptography info
+    if(participant_crypto_handle != nullptr && !participant_crypto_handle->nil())
+    {
+        // Check there is a pending crypto message.
+        auto pending = remote_participant_pending_messages_.find(participant_data->m_guid);
+
+        if(pending != remote_participant_pending_messages_.end())
+        {
+            if(!crypto_plugin_->cryptkeyexchange()->set_remote_participant_crypto_tokens(*local_participant_crypto_handle_,
+                        *participant_crypto_handle,
+                        pending->second,
+                        exception))
+            {
+                logError(SECURITY, "Cannot set remote participant crypto tokens ("
+                        << participant_data->m_guid << ") - (" << exception.what() << ")");
+            }
+
+            remote_participant_pending_messages_.erase(pending);
+        }
+
+        mutex_.lock();
+        auto dp_it = discovered_participants_.find(participant_data->m_guid);
+
+        if(dp_it != discovered_participants_.end())
+        {
+            dp_it->second.set_participant_crypto(participant_crypto_handle);
+        }
+        else
+        {
+            crypto_plugin_->cryptokeyfactory()->unregister_participant(participant_crypto_handle, exception);
+        }
+        mutex_.unlock();
+    }
+    else
+    {
+        logError(SECURITY, "Cannot register remote participant in crypto plugin ("
+                << participant_data->m_guid << ")");
+    }
 }

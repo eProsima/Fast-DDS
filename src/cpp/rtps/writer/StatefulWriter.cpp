@@ -146,9 +146,8 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 (*it)->mp_nackSupression->restart_timer();
             }
 
-            RTPSMessageGroup group(mp_RTPSParticipant, this,  m_cdrmessages);
-            if(group.add_data(*change, c_GuidPrefix_Unknown, c_EntityId_Unknown,
-                        locators, remote_participants, remote_readers, expectsInlineQos))
+            RTPSMessageGroup group(mp_RTPSParticipant, this,  RTPSMessageGroup::WRITER, m_cdrmessages);
+            if(group.add_data(*change, remote_readers, locators, expectsInlineQos))
             {
                 logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
             }
@@ -263,7 +262,7 @@ void StatefulWriter::send_any_unsent_changes()
             LocatorList_t locators((*m_reader_iterator)->m_att.endpoint.unicastLocatorList);
             locators.push_back((*m_reader_iterator)->m_att.endpoint.multicastLocatorList);
 
-            RTPSMessageGroup group(mp_RTPSParticipant, this,  m_cdrmessages);
+            RTPSMessageGroup group(mp_RTPSParticipant, this,  RTPSMessageGroup::WRITER, m_cdrmessages);
 
             if(!relevant_changes.empty())
             {
@@ -282,29 +281,22 @@ void StatefulWriter::send_any_unsent_changes()
                         FragmentNumberSet_t fragments = change->getUnsentFragments();
                         for(auto fragment : fragments.set)
                         {
-                            if(group.add_data_frag(*change->getChange(), fragment, (*m_reader_iterator)->m_att.guid.guidPrefix,
-                                        (*m_reader_iterator)->m_att.guid.entityId,
-                                        locators, remote_participants, remote_readers,
-                                        (*m_reader_iterator)->m_att.expectsInlineQos))
+                            if(group.add_data_frag(*change->getChange(), fragment, remote_readers,
+                                        locators, (*m_reader_iterator)->m_att.expectsInlineQos))
                                 (*m_reader_iterator)->mark_fragment_as_sent_for_change(change->getChange(), fragment);
                         }
                     }
                     else
                     {
-                        if(group.add_data(*change->getChange(), (*m_reader_iterator)->m_att.guid.guidPrefix,
-                                (*m_reader_iterator)->m_att.guid.entityId,
-                                locators, remote_participants, remote_readers,
-                                (*m_reader_iterator)->m_att.expectsInlineQos))
+                        if(group.add_data(*change->getChange(), remote_readers,
+                                locators, (*m_reader_iterator)->m_att.expectsInlineQos))
                             (*m_reader_iterator)->set_change_to_status(change->getChange(), UNDERWAY);
                     }
                 }
             }
 
             if(!not_relevant_changes.empty())
-                group.add_gap(not_relevant_changes,
-                        (*m_reader_iterator)->m_att.guid.guidPrefix,
-                        (*m_reader_iterator)->m_att.guid.entityId,
-                        locators);
+                group.add_gap(not_relevant_changes, (*m_reader_iterator)->m_att.guid, locators);
 
             if((*m_reader_iterator)->m_att.endpoint.reliabilityKind == RELIABLE)
             {
@@ -321,18 +313,17 @@ void StatefulWriter::send_any_unsent_changes()
             SequenceNumber_t firstSeq = this->get_seq_num_min();
             SequenceNumber_t lastSeq = this->get_seq_num_max();
 
+            LocatorList_t locators((*m_reader_iterator)->m_att.endpoint.unicastLocatorList);
+            locators.push_back((*m_reader_iterator)->m_att.endpoint.multicastLocatorList);
+
             if(firstSeq != c_SequenceNumber_Unknown && lastSeq != c_SequenceNumber_Unknown && lastSeq >= firstSeq)
             {
+                RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
+
                 this->incrementHBCount();
-                CDRMessage::initCDRMsg(&m_cdrmessages.rtpsmsg_fullmsg_);
                 // TODO(Ricardo) This is a StatefulWriter in Reliable. Hast the FinalFlag be true? Check.
-                RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.rtpsmsg_fullmsg_,m_guid.guidPrefix,
-                        m_HBReaderEntityId, m_guid.entityId, firstSeq, lastSeq, m_heartbeatCount, true, false);
-                std::vector<Locator_t>::iterator lit;
-                for(lit = (*m_reader_iterator)->m_att.endpoint.unicastLocatorList.begin();lit!=(*m_reader_iterator)->m_att.endpoint.unicastLocatorList.end();++lit)
-                    getRTPSParticipant()->sendSync(&m_cdrmessages.rtpsmsg_fullmsg_,(Endpoint *)this,(*lit));
-                for(lit = (*m_reader_iterator)->m_att.endpoint.multicastLocatorList.begin();lit!=(*m_reader_iterator)->m_att.endpoint.multicastLocatorList.end();++lit)
-                    getRTPSParticipant()->sendSync(&m_cdrmessages.rtpsmsg_fullmsg_,(Endpoint *)this,(*lit));
+                group.add_heartbeat(std::vector<GUID_t>{(*m_reader_iterator)->m_att.guid},
+                        firstSeq, lastSeq, m_heartbeatCount, true, false, locators);
             }
         }
     }
@@ -395,21 +386,17 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     // Send Gap
     if(!not_relevant_changes.empty())
     {
-        RTPSMessageGroup group(mp_RTPSParticipant, this,  m_cdrmessages);
+        RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
         //TODO (Ricardo) Temporal
         LocatorList_t locators(rp->m_att.endpoint.unicastLocatorList);
         locators.push_back(rp->m_att.endpoint.multicastLocatorList);
 
-        group.add_gap(not_relevant_changes,
-                rp->m_att.guid.guidPrefix,
-                rp->m_att.guid.entityId,
-                locators);
+        group.add_gap(not_relevant_changes, rp->m_att.guid, locators);
     }
 
     // Always activate heartbeat period. We need a confirmation of the reader.
     // The state has to be updated.
     this->mp_periodicHB->restart_timer();
-
 
     matched_readers.push_back(rp);
     // Invalidate persistent iterator
@@ -623,6 +610,19 @@ void StatefulWriter::updateTimes(WriterTimes& times)
             (*it)->mp_nackResponse->update_interval(times.nackResponseDelay);
         }
     }
+    if(m_times.heartbeatPeriod != times.heartbeatPeriod)
+    {
+        this->mp_periodicHB->update_interval(times.heartbeatPeriod);
+    }
+    if(m_times.nackResponseDelay != times.nackResponseDelay)
+    {
+        for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
+                it!=this->matched_readers.end();++it)
+        {
+            boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
+            (*it)->mp_nackResponse->update_interval(times.nackResponseDelay);
+        }
+    }
     if(m_times.nackSupressionDuration != times.nackSupressionDuration)
     {
         for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
@@ -642,7 +642,7 @@ void StatefulWriter::add_flow_controller(std::unique_ptr<FlowController> control
 
 SequenceNumber_t StatefulWriter::next_sequence_number() const
 {
-	return mp_history->next_sequence_number();
+    return mp_history->next_sequence_number();
 }
 
 void StatefulWriter::send_heartbeat_to(ReaderProxy& remoteReaderProxy)
@@ -661,15 +661,16 @@ void StatefulWriter::send_heartbeat_to(ReaderProxy& remoteReaderProxy)
         assert(firstSeq <= lastSeq);
     }
 
+    RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
+
     this->incrementHBCount();
-    CDRMessage::initCDRMsg(&m_cdrmessages.rtpsmsg_fullmsg_);
+
+    LocatorList_t locators(remoteReaderProxy.m_att.endpoint.unicastLocatorList);
+    locators.push_back(remoteReaderProxy.m_att.endpoint.multicastLocatorList);
+
     // FinalFlag is always false because this is a StatefulWriter in Reliable.
-    RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.rtpsmsg_fullmsg_, m_guid.guidPrefix, remoteReaderProxy.m_att.guid.guidPrefix,
-            remoteReaderProxy.m_att.guid.entityId, m_guid.entityId,
-            firstSeq, lastSeq, m_heartbeatCount, false, false);
+    group.add_heartbeat(std::vector<GUID_t>{remoteReaderProxy.m_att.guid},
+            firstSeq, lastSeq, m_heartbeatCount, true, false, locators);
+
     logInfo(RTPS_WRITER, m_guid.entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq << ")");
-    for (auto lit = remoteReaderProxy.m_att.endpoint.multicastLocatorList.begin(); lit != remoteReaderProxy.m_att.endpoint.multicastLocatorList.end(); ++lit)
-        mp_RTPSParticipant->sendSync(&m_cdrmessages.rtpsmsg_fullmsg_, (Endpoint *)this, (*lit));
-    for (auto lit = remoteReaderProxy.m_att.endpoint.unicastLocatorList.begin(); lit != remoteReaderProxy.m_att.endpoint.unicastLocatorList.end(); ++lit)
-        mp_RTPSParticipant->sendSync(&m_cdrmessages.rtpsmsg_fullmsg_, (Endpoint *)this, (*lit));
 }

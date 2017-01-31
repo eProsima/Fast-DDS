@@ -37,7 +37,7 @@ RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes
             att.throughputController.bytesPerPeriod :
             impl->getMaxMessageSize() > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
             impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
-            impl->getMaxMessageSize()),
+            impl->getMaxMessageSize(), impl->getGuid().guidPrefix),
     m_livelinessAsserted(false),
     mp_history(hist),
     mp_listener(listen),
@@ -45,16 +45,8 @@ RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes
 {
     mp_history->mp_writer = this;
     mp_history->mp_mutex = mp_mutex;
-    this->init_header();
     logInfo(RTPS_WRITER,"RTPSWriter created");
 }
-
-void RTPSWriter::init_header()
-{
-    CDRMessage::initCDRMsg(&m_cdrmessages.rtpsmsg_fullmsg_);
-    RTPSMessageCreator::addHeader(&m_cdrmessages.rtpsmsg_fullmsg_, m_guid.guidPrefix);
-}
-
 
 RTPSWriter::~RTPSWriter()
 {
