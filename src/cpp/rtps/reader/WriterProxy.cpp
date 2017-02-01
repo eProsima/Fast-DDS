@@ -277,8 +277,6 @@ bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum, bool is_re
 
         // Has to be in the container.
         assert(chit != m_changesFromW.end());
-        // Has not be received yet or lost.
-        assert(chit->getStatus() == UNKNOWN || chit->getStatus() == MISSING);
 
         if(chit != m_changesFromW.begin())
         {
