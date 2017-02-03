@@ -214,6 +214,7 @@ void StatefulWriter::send_any_unsent_changes()
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
     // TODO(Ricardo) Change this while when implement Collector class.
+    // Collector needs to know about fragments too.
     m_readers_to_walk = matched_readers.size();
     // The reader proxy vector is walked in a different order each time 
     // to prevent persistent prioritization of a single reader
@@ -221,9 +222,10 @@ void StatefulWriter::send_any_unsent_changes()
     {
         boost::lock_guard<boost::recursive_mutex> rguard(*(*m_reader_iterator)->mp_mutex);
 
-        std::vector<const ChangeForReader_t*> ch_vec = (*m_reader_iterator)->get_unsent_changes();
+        //std::vector<const ChangeForReader_t*> ch_vec = (*m_reader_iterator)->get_unsent_changes();
+        std::vector<ChangeForReader_t*> ch_vec = (*m_reader_iterator)->get_unsent_changes();
 
-        std::vector<const ChangeForReader_t*> relevant_changes;
+        std::vector<CacheChange_t*> relevant_changes;
         std::vector<SequenceNumber_t> not_relevant_changes;
 
         for(auto cit = ch_vec.begin(); cit != ch_vec.end(); ++cit)
@@ -231,7 +233,21 @@ void StatefulWriter::send_any_unsent_changes()
             //cout << "EXPECTSINLINE: "<< (*m_reader_iterator)->m_att.expectsInlineQos<< endl;
             if((*cit)->isRelevant() && (*cit)->isValid())
             {
-                relevant_changes.push_back(*cit);
+                relevant_changes.push_back((*cit)->getChange());
+
+                // TODO(Ricardo) Change in future with collector.
+                if((*cit)->getChange()->getFragmentSize() > 0)
+                {
+                    (*cit)->getChange()->getDataFragments()->assign((*cit)->getChange()->getDataFragments()->size(),
+                            NOT_PRESENT);
+                    FragmentNumberSet_t frag_sns = (*cit)->getUnsentFragments();
+
+                    for(auto sn = frag_sns.get_begin(); sn != frag_sns.get_end(); ++sn)
+                    {
+                        assert(*sn <= (*cit)->getChange()->getDataFragments()->size());
+                        (*cit)->getChange()->getDataFragments()->at(*sn - 1) = PRESENT;
+                    }
+                }
             }
             else
             {
@@ -242,21 +258,13 @@ void StatefulWriter::send_any_unsent_changes()
 
         if(m_pushMode)
         {
-            // TODO(Ricardo) Temporal
-            std::vector<const CacheChange_t*> changes_to_check;
-            for(const auto* change_for_reader : relevant_changes)
-                changes_to_check.push_back(change_for_reader->getChange());
-
             // Clear all relevant changes through the local controllers first
             for (auto& controller : m_controllers)
-                (*controller)(changes_to_check);
+                (*controller)(relevant_changes);
 
             // Clear all relevant changes through the parent controllers
             for (auto& controller : mp_RTPSParticipant->getFlowControllers())
-                (*controller)(changes_to_check);
-
-            // TODO(Ricardo) Temporal
-            relevant_changes.resize(changes_to_check.size());
+                (*controller)(relevant_changes);
 
             // TODO Temporal
             LocatorList_t locators((*m_reader_iterator)->m_att.endpoint.unicastLocatorList);
@@ -270,27 +278,29 @@ void StatefulWriter::send_any_unsent_changes()
                 std::vector<GuidPrefix_t> remote_participants{(*m_reader_iterator)->m_att.guid.guidPrefix};
                 std::vector<GUID_t> remote_readers{(*m_reader_iterator)->m_att.guid};
 
-                for (const auto* change : relevant_changes)
+                for (auto* change : relevant_changes)
                 {
-                    // TODO(Ricardo) Flowcontroller has to be used in RTPSMessageGroup.
+                    // TODO(Ricardo) Flowcontroller has to be used in RTPSMessageGroup. Study.
                     // And controllers are notified about the changes being sent
-                    FlowController::NotifyControllersChangeSent(change->getChange());
+                    FlowController::NotifyControllersChangeSent(change);
 
-                    if(change->getChange()->getFragmentSize() != 0)
+                    if(change->getFragmentSize() != 0)
                     {
-                        FragmentNumberSet_t fragments = change->getUnsentFragments();
-                        for(auto fragment : fragments.set)
+                        for(uint32_t fragment  = 0; fragment < change->getDataFragments()->size(); ++fragment)
                         {
-                            if(group.add_data_frag(*change->getChange(), fragment, remote_readers,
-                                        locators, (*m_reader_iterator)->m_att.expectsInlineQos))
-                                (*m_reader_iterator)->mark_fragment_as_sent_for_change(change->getChange(), fragment);
+                            if(change->getDataFragments()->at(fragment) == PRESENT)
+                            {
+                                if(group.add_data_frag(*change, fragment+1, remote_readers,
+                                            locators, (*m_reader_iterator)->m_att.expectsInlineQos))
+                                    (*m_reader_iterator)->mark_fragment_as_sent_for_change(change, fragment + 1);
+                            }
                         }
                     }
                     else
                     {
-                        if(group.add_data(*change->getChange(), remote_readers,
+                        if(group.add_data(*change, remote_readers,
                                 locators, (*m_reader_iterator)->m_att.expectsInlineQos))
-                            (*m_reader_iterator)->set_change_to_status(change->getChange(), UNDERWAY);
+                            (*m_reader_iterator)->set_change_to_status(change, UNDERWAY);
                     }
                 }
             }
@@ -308,7 +318,7 @@ void StatefulWriter::send_any_unsent_changes()
         {
             // Change status to UNACKNOWLEDGED
             for(const auto* change : relevant_changes)
-                (*m_reader_iterator)->set_change_to_status(change->getChange(), UNACKNOWLEDGED);
+                (*m_reader_iterator)->set_change_to_status(change, UNACKNOWLEDGED);
 
             SequenceNumber_t firstSeq = this->get_seq_num_min();
             SequenceNumber_t lastSeq = this->get_seq_num_max();

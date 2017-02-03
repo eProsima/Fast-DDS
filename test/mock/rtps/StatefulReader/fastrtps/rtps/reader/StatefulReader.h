@@ -27,6 +27,8 @@ class StatefulReader : public RTPSReader
     {
         public:
 
+            virtual ~StatefulReader() {}
+
             MOCK_METHOD1(matched_writer_add, bool(RemoteWriterAttributes&));
 
             MOCK_METHOD1(matched_writer_remove, bool(RemoteWriterAttributes&));

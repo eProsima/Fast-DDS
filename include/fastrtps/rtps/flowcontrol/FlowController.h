@@ -37,16 +37,16 @@ class FlowController
 {
     public:
         //! Called when a change is finally dispatched.
-        static void NotifyControllersChangeSent(const CacheChange_t*);
+        static void NotifyControllersChangeSent(CacheChange_t*);
 
         //! Controller operator. Transforms the vector of changes in place.
-        virtual void operator()(std::vector<const CacheChange_t*>& changes) = 0;
+        virtual void operator()(std::vector<CacheChange_t*>& changes) = 0;
 
         virtual ~FlowController();
         FlowController();
 
     private:
-        virtual void NotifyChangeSent(const CacheChange_t*){};
+        virtual void NotifyChangeSent(CacheChange_t*){};
         void RegisterAsListeningController();
         void DeRegisterAsListeningController();
 

@@ -33,6 +33,8 @@ class StatefulWriter : public RTPSWriter
 
         StatefulWriter(RTPSParticipantImpl* participant) : participant_(participant) {}
 
+        virtual ~StatefulWriter() {}
+
         MOCK_METHOD1(matched_reader_add, bool(RemoteReaderAttributes&));
 
         MOCK_METHOD1(matched_reader_remove, bool(RemoteReaderAttributes&));

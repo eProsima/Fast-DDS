@@ -2147,7 +2147,8 @@ void SecurityManager::participant_authorized(const DiscoveredParticipantInfo::Au
         participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
     }
 
-    if(crypto_plugin_ == nullptr)
+    // TODO(Ricardo) Study cryptography without sharedsecret
+    if(crypto_plugin_ == nullptr || remote_participant_info->shared_secret_handle_ == nullptr)
         return;
 
     SecurityException exception;

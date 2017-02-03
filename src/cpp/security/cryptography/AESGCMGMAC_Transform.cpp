@@ -35,11 +35,11 @@ AESGCMGMAC_Transform::~AESGCMGMAC_Transform(){}
 
 bool AESGCMGMAC_Transform::encode_serialized_payload(
         std::vector<uint8_t> &encoded_buffer,
-        std::vector<uint8_t> &extra_inline_qos,
+        std::vector<uint8_t>& /*extra_inline_qos*/,
         const std::vector<uint8_t> &plain_buffer,
         DatawriterCryptoHandle &sending_datawriter_crypto,
-        SecurityException &exception){
-
+        SecurityException& /*exception*/)
+{
     AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_crypto);
     if(local_writer.nil()){
         logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle");
@@ -78,7 +78,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     memcpy( header.initialization_vector_suffix.data() , &initialization_vector_suffix, 8);
 
     //Cypher the plain rtps message -> SecureDataBody
-    int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
+    (void)RAND_load_file("/dev/urandom", 32); //Init random number gen
 
     size_t enc_length = plain_buffer.size()*3;
     std::vector<uint8_t> output;
@@ -129,7 +129,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
         const std::vector<uint8_t> &plain_rtps_submessage,
         DatawriterCryptoHandle &sending_datawriter_crypto,
         std::vector<DatareaderCryptoHandle*>& receiving_datareader_crypto_list,
-        SecurityException &exception){
+        SecurityException& /*exception*/){
 
     AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_crypto);
     if(local_writer.nil()){
@@ -171,7 +171,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
 
     //Cypher the plain rtps message -> SecureDataBody
-    int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
+    (void)RAND_load_file("/dev/urandom", 32); //Init random number gen
 
     size_t enc_length = plain_rtps_submessage.size()*3;
     std::vector<uint8_t> output;
@@ -257,7 +257,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
         const std::vector<uint8_t> &plain_rtps_submessage,
         DatareaderCryptoHandle &sending_datareader_crypto,
         std::vector<DatawriterCryptoHandle*> &receiving_datawriter_crypto_list,
-        SecurityException &exception){
+        SecurityException& /*exception*/){
 
     AESGCMGMAC_ReaderCryptoHandle& local_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(sending_datareader_crypto);
     if(local_reader.nil()){
@@ -299,7 +299,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
 
 
     //Cypher the plain rtps message -> SecureDataBody
-    int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
+    (void)RAND_load_file("/dev/urandom", 32); //Init random number gen
 
     size_t enc_length = plain_rtps_submessage.size()*3;
     std::vector<uint8_t> output;
@@ -383,8 +383,8 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         const std::vector<uint8_t> &plain_rtps_message,
         ParticipantCryptoHandle &sending_crypto,
         const std::vector<ParticipantCryptoHandle*> &receiving_crypto_list,
-        SecurityException &exception){
-
+        SecurityException& /*exception*/)
+{
     AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(sending_crypto);
 
     if(local_participant.nil())
@@ -400,7 +400,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     for(int i=0;i<RTPS_HEADER_SIZE;i++) rtps_header.push_back(plain_rtps_message.at(i));
     //Extract Payload
     std::vector<uint8_t> payload;
-    for(int i=RTPS_HEADER_SIZE;i<plain_rtps_message.size();i++) payload.push_back(plain_rtps_message.at(i));
+    for(size_t i = RTPS_HEADER_SIZE; i < plain_rtps_message.size(); ++i) payload.push_back(plain_rtps_message.at(i));
 
     // If the maximum number of blocks have been processed, generate a new SessionKey
     bool update_specific_keys = false;
@@ -436,7 +436,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
 
 
     //Cypher the plain rtps message -> SecureDataBody
-    int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
+    (void)RAND_load_file("/dev/urandom", 32); //Init random number gen
 
     size_t enc_length = ( payload.size()) * 3;
     std::vector<uint8_t> output;
@@ -551,7 +551,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
 bool AESGCMGMAC_Transform::decode_rtps_message(
         std::vector<uint8_t> &plain_buffer,
         const std::vector<uint8_t> &encoded_buffer,
-        const ParticipantCryptoHandle &receiving_crypto,
+        const ParticipantCryptoHandle& /*receiving_crypto*/,
         const ParticipantCryptoHandle &sending_crypto,
         SecurityException &exception){
 
@@ -587,7 +587,8 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     ReceiverSpecificMAC* specific_mac;
     // TODO(Ricardo) Review SessionReceiverSpecificKey (248pag)
     bool mac_found = false;
-    for(int j=0; j < tag.receiver_specific_macs.size(); j++){
+    for(size_t j = 0; j < tag.receiver_specific_macs.size(); ++j)
+    {
         //Check if it matches the key we have
         //TODO(Ricardo) Check if its necessary to use a vector.
         if(sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).receiver_specific_key_id == tag.receiver_specific_macs.at(j).receiver_mac_key_id){
@@ -778,7 +779,8 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             //We have the remote writer, now lets look for the local datareader
             for(std::vector<DatareaderCryptoHandle *>::iterator itt = local_participant->Readers.begin(); itt != local_participant->Readers.end(); ++itt){
                 AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**itt);
-                for(int i=0; i < reader->Reader2WriterKeyMaterial.size(); i++){
+                for(size_t i=0; i < reader->Reader2WriterKeyMaterial.size(); ++i)
+                {
                     if(reader->Reader2WriterKeyMaterial.at(i).receiver_specific_key_id == writer->Reader2WriterKeyMaterial.at(0).receiver_specific_key_id){
                         *datareader_crypto = *itt;
                         return true;
@@ -800,7 +802,8 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             //We have the remote reader, now lets look for the local datawriter
             for(std::vector<DatawriterCryptoHandle *>::iterator itt = local_participant->Writers.begin(); itt != local_participant->Writers.end(); ++itt){
                 AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(**itt);
-                for(int i=0; i < writer->Writer2ReaderKeyMaterial.size(); i++){
+                for(size_t i = 0; i < writer->Writer2ReaderKeyMaterial.size(); ++i)
+                {
                     if(writer->Writer2ReaderKeyMaterial.at(i).receiver_specific_key_id == reader->Writer2ReaderKeyMaterial.at(0).receiver_specific_key_id){
                         *datawriter_crypto = *itt;
                         return true;
@@ -816,7 +819,7 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
 bool AESGCMGMAC_Transform::decode_datawriter_submessage(
         CDRMessage_t& plain_rtps_submessage,
         CDRMessage_t& encoded_rtps_submessage,
-        DatareaderCryptoHandle &receiving_datareader_crypto,
+        DatareaderCryptoHandle& /*receiving_datareader_crypto*/,
         DatawriterCryptoHandle &sending_datawriter_cryupto,
         SecurityException &exception)
 {
@@ -853,7 +856,8 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     //Read specific MACs in search for the correct one (verify the authenticity of the message)
     ReceiverSpecificMAC specific_mac;
     bool mac_found = false;
-    for(int j=0; j < tag.receiver_specific_macs.size(); j++){
+    for(size_t j = 0; j < tag.receiver_specific_macs.size(); ++j)
+    {
         //Check if it matches the key we have
         if(sending_writer->Writer2ReaderKeyMaterial.at(0).receiver_specific_key_id == tag.receiver_specific_macs.at(j).receiver_mac_key_id){
             mac_found = true;
@@ -976,7 +980,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
 bool AESGCMGMAC_Transform::decode_datareader_submessage(
         CDRMessage_t& plain_rtps_submessage,
         CDRMessage_t& encoded_rtps_submessage,
-        DatawriterCryptoHandle &receiving_datawriter_crypto,
+        DatawriterCryptoHandle& /*receiving_datawriter_crypto*/,
         DatareaderCryptoHandle &sending_datareader_crypto,
         SecurityException &exception){
 
@@ -1014,7 +1018,8 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     //Read specific MACs in search for the correct one (verify the authenticity of the message)
     ReceiverSpecificMAC specific_mac;
     bool mac_found = false;
-    for(int j=0; j < tag.receiver_specific_macs.size(); j++){
+    for(size_t j = 0; j < tag.receiver_specific_macs.size(); ++j)
+    {
         //Check if it matches the key we have
         if(sending_reader->Reader2WriterKeyMaterial.at(0).receiver_specific_key_id == tag.receiver_specific_macs.at(j).receiver_mac_key_id){
             mac_found = true;
@@ -1138,8 +1143,8 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
 bool AESGCMGMAC_Transform::decode_serialized_payload(
         std::vector<uint8_t> &plain_buffer,
         const std::vector<uint8_t> &encoded_buffer,
-        const std::vector<uint8_t> &inline_qos,
-        DatareaderCryptoHandle &receiving_datareader_crypto,
+        const std::vector<uint8_t>& /*inline_qos*/,
+        DatareaderCryptoHandle& /*receiving_datareader_crypto*/,
         DatawriterCryptoHandle &sending_datawriter_crypto,
         SecurityException &exception){
 
@@ -1193,11 +1198,10 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     plain_buffer.clear();
     plain_buffer.resize(encoded_buffer.size());
 
-    bool return_value;
-    if(sending_writer->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)){
+    if(sending_writer->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}){
         EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
     }
-    if(sending_writer->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)){
+    if(sending_writer->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}){
         EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
     }
     EVP_DecryptUpdate(d_ctx, plain_buffer.data(), &actual_size, body.secure_data.data(),body.secure_data.size());
@@ -1244,12 +1248,11 @@ std::vector<uint8_t> AESGCMGMAC_Transform::serialize_SecureDataHeader(SecureData
 std::vector<uint8_t> AESGCMGMAC_Transform::serialize_SecureDataBody(SecureDataBody &input)
 {
     std::vector<uint8_t> buffer;
-    int i;
 
-    int32_t body_length = input.secure_data.size();
+    int32_t body_length = static_cast<int32_t>(input.secure_data.size());
     //for(i=0; i < sizeof(int32_t); i++) buffer.push_back(((uint8_t*)&body_length)[sizeof(int32_t) - i - 1]);
-    for(i=0;i < sizeof(int32_t); i++) buffer.push_back( *( (uint8_t*)&body_length + i) );
-    for(i=0;i < body_length; i++) buffer.push_back( input.secure_data.at(i) );
+    for(size_t i = 0;i < sizeof(int32_t); ++i) buffer.push_back( *( (uint8_t*)&body_length + i) );
+    for(int32_t i = 0;i < body_length; ++i) buffer.push_back( input.secure_data.at(i) );
 
     return buffer;
 }
@@ -1257,29 +1260,28 @@ std::vector<uint8_t> AESGCMGMAC_Transform::serialize_SecureDataBody(SecureDataBo
 std::vector<uint8_t> AESGCMGMAC_Transform::serialize_SecureDataTag(SecureDataTag &input)
 {
     std::vector<uint8_t> buffer;
-    int i,j;
 
     //Common tag
-    for(i=0;i < 16; i++) buffer.push_back( input.common_mac.at(i) );
+    for(int i = 0;i < 16; ++i) buffer.push_back( input.common_mac.at(i) );
     //Receiver specific macs
     int32_t specific_length = input.receiver_specific_macs.size();
-    for(i=0;i < sizeof(int32_t); i++) buffer.push_back( *( (uint8_t*)&specific_length + i ) );
-    for(j=0; j< input.receiver_specific_macs.size(); j++){
-        for(i=0;i < 4; i++) buffer.push_back( input.receiver_specific_macs.at(j).receiver_mac_key_id.at(i) );
-        for(i=0;i < 16; i++) buffer.push_back( input.receiver_specific_macs.at(j).receiver_mac.at(i) );
+    for(size_t i = 0;i < sizeof(int32_t); ++i) buffer.push_back( *( (uint8_t*)&specific_length + i ) );
+    for(size_t j = 0; j< input.receiver_specific_macs.size(); ++j){
+        for(int i = 0; i < 4; ++i) buffer.push_back( input.receiver_specific_macs.at(j).receiver_mac_key_id.at(i) );
+        for(int i = 0; i < 16; ++i) buffer.push_back( input.receiver_specific_macs.at(j).receiver_mac.at(i) );
     }
 
     return buffer;
 }
 
-std::vector<uint8_t> AESGCMGMAC_Transform::assemble_serialized_payload(std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+std::vector<uint8_t> AESGCMGMAC_Transform::assemble_serialized_payload(std::vector<uint8_t> &serialized_header,
+        std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char& /*flags*/)
 {
     std::vector<uint8_t> buffer;
-    int i;
 
-    for(i=0; i < serialized_header.size(); i++) buffer.push_back( serialized_header.at(i) );
-    for(i=0; i < serialized_body.size(); i++) buffer.push_back( serialized_body.at(i) );
-    for(i=0; i < serialized_tag.size(); i++) buffer.push_back(serialized_tag.at(i) );
+    for(size_t i = 0; i < serialized_header.size(); ++i) buffer.push_back( serialized_header.at(i) );
+    for(size_t i = 0; i < serialized_body.size(); ++i) buffer.push_back( serialized_body.at(i) );
+    for(size_t i = 0; i < serialized_tag.size(); ++i) buffer.push_back(serialized_tag.at(i) );
 
     return buffer;
 }
@@ -1290,7 +1292,6 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_serialized_payload(std::vect
 std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
     std::vector<uint8_t> buffer;
-    int i;
     //TODO(Ricardo) Review bigendianess
     short octets;
 
@@ -1307,9 +1308,9 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
     buffer.push_back( octets_c[1] );
 
     //SecureDataHeader
-    for(i=0; i < serialized_header.size(); i++) buffer.push_back( serialized_header.at(i) );
+    for(size_t i = 0; i < serialized_header.size(); ++i) buffer.push_back( serialized_header.at(i) );
     //Payload
-    for(i=0; i < serialized_body.size(); i++)   buffer.push_back( serialized_body.at(i) );
+    for(size_t i = 0; i < serialized_body.size(); ++i)   buffer.push_back( serialized_body.at(i) );
     //SEC_POSTFIX
     buffer.push_back(SEC_POSTFIX);
     //Flags
@@ -1321,7 +1322,7 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
     buffer.push_back( octets_c[1] );
 
     //SecureDataTag
-    for(int i=0; i < serialized_tag.size(); i++)    buffer.push_back( serialized_tag.at(i) );
+    for(size_t i=0; i < serialized_tag.size(); i++)    buffer.push_back( serialized_tag.at(i) );
 
     return buffer;
 }
@@ -1329,11 +1330,10 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
 std::vector<uint8_t> AESGCMGMAC_Transform::assemble_rtps_message(std::vector<uint8_t> &rtps_header, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
     std::vector<uint8_t> buffer;
-    int i;
     short octets;
 
     //Unaltered Header
-    for(i=0; i < rtps_header.size(); i++)   buffer.push_back( rtps_header.at(i) );
+    for(size_t i = 0; i < rtps_header.size(); ++i)   buffer.push_back( rtps_header.at(i) );
     //SRTPS_PREFIX
     buffer.push_back(SRTPS_PREFIX);
     //Flags
@@ -1346,9 +1346,9 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_rtps_message(std::vector<uin
     buffer.push_back( octets_c[1] );
     buffer.push_back( octets_c[0] );
     //Header
-    for(i=0; i < serialized_header.size(); i++) buffer.push_back( serialized_header.at(i) );
+    for(size_t i = 0; i < serialized_header.size(); ++i) buffer.push_back( serialized_header.at(i) );
     //Payload
-    for(i=0; i < serialized_body.size(); i++)   buffer.push_back( serialized_body.at(i) );
+    for(size_t i = 0; i < serialized_body.size(); ++i)   buffer.push_back( serialized_body.at(i) );
     //SRTPS_POSTFIX
     buffer.push_back(SRTPS_POSTFIX);
     //Flags
@@ -1359,7 +1359,7 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_rtps_message(std::vector<uin
     buffer.push_back( octets_c[1] );
     buffer.push_back( octets_c[0] );
     //Tag
-    for(int i=0; i < serialized_tag.size(); i++)    buffer.push_back( serialized_tag.at(i) );
+    for(size_t i = 0; i < serialized_tag.size(); ++i)    buffer.push_back( serialized_tag.at(i) );
 
     return buffer;
 }
@@ -1382,7 +1382,7 @@ SecureDataBody AESGCMGMAC_Transform::deserialize_SecureDataBody(std::vector<uint
 
     SecureDataBody body;
 
-    for(int i=0;i < input.size(); i++) body.secure_data.push_back(input.at(i));
+    for(size_t i = 0;i < input.size(); ++i) body.secure_data.push_back(input.at(i));
 
     return body;
 }
@@ -1412,26 +1412,27 @@ SecureDataTag AESGCMGMAC_Transform::deserialize_SecureDataTag(std::vector<uint8_
     return tag;
 }
 
-bool AESGCMGMAC_Transform::disassemble_serialized_payload(const std::vector<uint8_t> &input, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+bool AESGCMGMAC_Transform::disassemble_serialized_payload(const std::vector<uint8_t> &input,
+        std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body,
+        std::vector<uint8_t> &serialized_tag, unsigned char& /*flags*/)
 {
-
-    int i;
-
     serialized_header.clear();
-    for(i=0; i < 20; i++) serialized_header.push_back( input.at(i) );
+    for(int i = 0; i < 20; ++i) serialized_header.push_back( input.at(i) );
 
     serialized_body.clear();
     int32_t body_length = 0;
     memcpy(&body_length, input.data() + 20, sizeof(int32_t));
-    for(i=0; i < body_length; i++) serialized_body.push_back( input.at(i + 20 + sizeof(int32_t)));
+    for(int32_t i = 0; i < body_length; ++i) serialized_body.push_back( input.at(i + 20 + sizeof(int32_t)));
 
     serialized_tag.clear();
-    for(i=0; i < ( input.size() - 20 - body_length - sizeof(int32_t) ); i++) serialized_tag.push_back(input.at(i + 20 + sizeof(int32_t) + body_length) );
+    for(size_t i = 0; i < ( input.size() - 20 - body_length - sizeof(int32_t) ); ++i) serialized_tag.push_back(input.at(i + 20 + sizeof(int32_t) + body_length) );
 
     return true;
 }
 
-bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(CDRMessage_t &input, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(CDRMessage_t &input,
+        std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body,
+        std::vector<uint8_t> &serialized_tag, unsigned char& /*flags*/)
 {
     int i;
     uint8_t octet;
@@ -1451,7 +1452,7 @@ bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(CDRMessage_t &input, 
     int16_t octetsToNextSubMsg;
     CDRMessage::readInt16(&input, &octetsToNextSubMsg); //it should be 16 in this implementation
 
-    if((input.length - input.pos) < octetsToNextSubMsg)
+    if((input.length - input.pos) < static_cast<unsigned int>(octetsToNextSubMsg))
     {
         std::cout << "Not a valid length" << std::endl;
         return false;
@@ -1481,7 +1482,7 @@ bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(CDRMessage_t &input, 
 
     //Octets2Nextheader
     CDRMessage::readInt16(&input, &octetsToNextSubMsg); //it should be 16 in this implementation
-    if((input.length - input.pos) < octetsToNextSubMsg) return false;
+    if((input.length - input.pos) < static_cast<unsigned int>(octetsToNextSubMsg)) return false;
 
     //Tag
     serialized_tag.clear();
@@ -1491,7 +1492,9 @@ bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(CDRMessage_t &input, 
     return true;
 }
 
-bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &input, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
+bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &input,
+        std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body,
+        std::vector<uint8_t> &serialized_tag, unsigned char& /*flags*/)
 {
 
     short offset = 0;
@@ -1510,9 +1513,9 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &
     offset += 1;
     short safecheck;
     memcpy(&safecheck, octets_c, 2);
-    if( (input.size() - offset) != safecheck){
+    if( (input.size() - offset) != static_cast<unsigned int>(safecheck))
         return false;
-    }
+
     //Header
     serialized_header.clear();
     for(i=0; i < 20; i++) serialized_header.push_back( input.at(i + offset) );
@@ -1534,12 +1537,12 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &
     octets_c[0] = input.at(offset);
     offset += 1;
     memcpy(&safecheck, octets_c, 2);
-    if( (input.size() - offset) != safecheck){
+    if( (input.size() - offset) != static_cast<unsigned int>(safecheck))
         return false;
-    }
+
     //Tag
     serialized_tag.clear();
-    for(i=0; i < safecheck; i++) serialized_tag.push_back(input.at(i + offset) );
+    for(i = 0; i < safecheck; ++i) serialized_tag.push_back(input.at(i + offset) );
 
     return true;
 }

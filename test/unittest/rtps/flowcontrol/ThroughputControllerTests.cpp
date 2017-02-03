@@ -47,8 +47,8 @@ class ThroughputControllerTests: public ::testing::Test
    ThroughputController sController;
    std::vector<std::unique_ptr<CacheChange_t>> testChanges;
    std::vector<std::unique_ptr<CacheChange_t>> otherChanges;
-   std::vector<const CacheChange_t*> testChangesForUse;
-   std::vector<const CacheChange_t*> otherChangesForUse;
+   std::vector<CacheChange_t*> testChangesForUse;
+   std::vector<CacheChange_t*> otherChangesForUse;
 };
 
 TEST_F(ThroughputControllerTests, throughput_controller_lets_only_some_elements_through)
@@ -64,13 +64,13 @@ TEST_F(ThroughputControllerTests, throughput_controller_lets_only_some_elements_
 
 TEST_F(ThroughputControllerTests, if_changes_are_fragmented_throughput_controller_provides_granularity)
 {
-    // TODO (Ricardo) Fixit
     // Given fragmented changes
-    /*
     testChangesForUse.clear();
     for (auto& change : testChanges)
     {
         change->setFragmentSize(100);
+        //TODO(Ricardo)
+        change->getDataFragments()->assign(change->getDataFragments()->size(), PRESENT);
         testChangesForUse.emplace_back(change.get());
     }
 
@@ -83,13 +83,14 @@ TEST_F(ThroughputControllerTests, if_changes_are_fragmented_throughput_controlle
     // The first 5 are completely cleared
     for (int i = 0; i < 5; i++)
     {
-        ASSERT_EQ(testChangesForUse[i].getFragmentsClearedForSending().set.size(), 10);
+        ASSERT_EQ(std::count(testChangesForUse[i]->getDataFragments()->begin(),
+                    testChangesForUse[i]->getDataFragments()->end(), PRESENT), 10);
     }
 
     // And the last one is partially cleared
-    ASSERT_EQ(testChangesForUse[5].getFragmentsClearedForSending().set.size(), 5); 
+    ASSERT_EQ(std::count(testChangesForUse[5]->getDataFragments()->begin(),
+                testChangesForUse[5]->getDataFragments()->end(), PRESENT), 5);
     std::this_thread::sleep_for(std::chrono::milliseconds(periodMillisecs + 50));
-    */
 }
 
 TEST_F(ThroughputControllerTests, throughput_controller_carries_over_multiple_attempts)
@@ -117,7 +118,7 @@ TEST_F(ThroughputControllerTests, throughput_controller_resets_completely_after_
 
    // When
    std::this_thread::sleep_for(std::chrono::milliseconds(periodMillisecs + 100));
-   
+
    // The controller should be open now
    sController(otherChangesForUse);
    EXPECT_EQ(5, otherChangesForUse.size());

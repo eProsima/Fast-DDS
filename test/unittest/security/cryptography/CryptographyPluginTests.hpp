@@ -99,7 +99,6 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteParticipant)
     ASSERT_TRUE(local != nullptr);
 
     //Dissect results to check correct creation
-    AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(*local);
 
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
@@ -338,6 +337,8 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     memcpy(message_v.data(),message, 11);
     for(int i=0;i<50;i++){
         ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_rtps_message(encoded_rtps_message, plain_rtps_message,*ParticipantA,receivers,exception));
+        // Remove RTPS header. It is not processed by cryptography plugin.
+        encoded_rtps_message.erase(encoded_rtps_message.begin(), encoded_rtps_message.begin() + 20);
         ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_rtps_message(decoded_rtps_message,encoded_rtps_message,*ParticipantB,*ParticipantB_remote,exception));
         ASSERT_TRUE(message_v == decoded_rtps_message);
     }
@@ -393,6 +394,8 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     receivers.push_back(ParticipantA_remote);
     receivers.push_back(unintended_remote);
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_rtps_message(encoded_rtps_message, plain_rtps_message,*ParticipantA,receivers,exception));
+    // Remove RTPS header. It is not processed by cryptography plugin.
+    encoded_rtps_message.erase(encoded_rtps_message.begin(), encoded_rtps_message.begin() + 20);
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_rtps_message(decoded_rtps_message,encoded_rtps_message,*ParticipantB,*ParticipantB_remote,exception));
     ASSERT_TRUE(message_v == decoded_rtps_message);
 

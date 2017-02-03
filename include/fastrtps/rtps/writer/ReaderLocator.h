@@ -55,7 +55,7 @@ public:
     //!Whether the Reader expects inlineQos with its data messages.
     bool expectsInlineQos;
 
-    std::vector<CacheChange_t*> unsent_changes;
+    std::vector<ChangeForReader_t> unsent_changes;
 
     //!Number of times this locator has been used (in case different readers use the same locator).
     uint32_t n_used;

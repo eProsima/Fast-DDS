@@ -237,7 +237,9 @@ namespace eprosima
                 {
                 }
 
-                ChangeForReader_t(const CacheChange_t* change) : status_(UNSENT),
+                //TODO(Ricardo) Temporal
+                //ChangeForReader_t(const CacheChange_t* change) : status_(UNSENT),
+                ChangeForReader_t(CacheChange_t* change) : status_(UNSENT),
                 is_relevant_(true), seq_num_(change->sequenceNumber), change_(change)
                 {
                    if (change->getFragmentSize() != 0)
@@ -266,7 +268,9 @@ namespace eprosima
                  * Get the cache change
                  * @return Cache change
                  */
-                const CacheChange_t* getChange() const
+                // TODO(Ricardo) Temporal
+                //const CacheChange_t* getChange() const
+                CacheChange_t* getChange() const
                 {
                     return change_;
                 }
@@ -342,7 +346,9 @@ namespace eprosima
                 //!Sequence number
                 SequenceNumber_t seq_num_;
 
-                const CacheChange_t* change_;
+                // TODO(Ricardo) Temporal
+                //const CacheChange_t* change_;
+                CacheChange_t* change_;
 
                 FragmentNumberSet_t unsent_fragments_;
             };

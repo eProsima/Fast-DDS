@@ -91,7 +91,9 @@ namespace eprosima
                  * @brief Lists all unsent changes. These changes are also relevants and valid.
                  * @return STL vector with the unsent change list.
                  */
-                std::vector<const ChangeForReader_t*> get_unsent_changes() const;
+                //TODO(Ricardo) Temporal
+                //std::vector<const ChangeForReader_t*> get_unsent_changes() const;
+                std::vector<ChangeForReader_t*> get_unsent_changes();
                 /*!
                  * @brief Lists all requested changes.
                  * @return STL vector with the requested change list.
@@ -114,7 +116,8 @@ namespace eprosima
                  */
                 void convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next);
 
-                void setNotValid(const CacheChange_t* change);
+                //void setNotValid(const CacheChange_t* change);
+                void setNotValid(CacheChange_t* change);
 
                 /*!
                  * @brief Returns there is some UNACKNOWLEDGED change.

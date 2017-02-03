@@ -112,7 +112,7 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
     else
     {
         for(auto& reader_locator : reader_locators)
-            reader_locator.unsent_changes.push_back(cptr);
+            reader_locator.unsent_changes.push_back(ChangeForReader_t(cptr));
         AsyncWriterThread::wakeUp(this);
     }
 }
@@ -125,10 +125,10 @@ bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
         reader_locator.unsent_changes.erase(std::remove_if(
                     reader_locator.unsent_changes.begin(),
                     reader_locator.unsent_changes.end(),
-                    [change](CacheChange_t* cptr)
+                    [change](ChangeForReader_t& cptr)
                     {
-                        return cptr == change ||
-                            cptr->sequenceNumber == change->sequenceNumber;
+                        return cptr.getChange() == change ||
+                            cptr.getChange()->sequenceNumber == change->sequenceNumber;
                     }),
                     reader_locator.unsent_changes.end());
 
@@ -138,22 +138,34 @@ bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
 void StatelessWriter::update_unsent_changes(ReaderLocator& reader_locator,
         const std::vector<CacheChange_t*>& changes)
 {
-    for (const auto* change : changes)
+    //TODO(Ricardo)
+    //for (const auto* change : changes)
+    for (auto* change : changes)
     {
         auto it = std::find_if(reader_locator.unsent_changes.begin(),
                 reader_locator.unsent_changes.end(),
-                [&](const CacheChange_t* unsent_change)
+                [change](const ChangeForReader_t& unsent_change)
                 {
-                    return change == unsent_change;
+                    return change == unsent_change.getChange();
                 });
 
         if (change->getFragmentSize() != 0)
         {
+            FragmentNumberSet_t fragment_sns = it->getUnsentFragments();
             // We remove the ones we are already sending.
-            // TODO (Ricardo) Fixit
-            //it->setFragmentsClearedForSending(it->getFragmentsClearedForSending() - change->getFragmentsClearedForSending());
-            //if (it->getFragmentsClearedForSending().isSetEmpty())
-                //reader_locator.unsent_changes.erase(it);
+            auto frag_sn_it = fragment_sns.set.begin();
+            while(frag_sn_it != fragment_sns.set.end())
+            {
+                if(change->getDataFragments()->at(*frag_sn_it - 1) == PRESENT)
+                {
+                    it->markFragmentsAsSent(*frag_sn_it++);
+                }
+                else
+                    break;
+            }
+
+            if (frag_sn_it == fragment_sns.set.end())
+                reader_locator.unsent_changes.erase(it);
         }
         else
             reader_locator.unsent_changes.erase(it);
@@ -169,16 +181,33 @@ void StatelessWriter::send_any_unsent_changes()
     for(auto& reader_locator : reader_locators)
     {
         // Shallow copy the list
-        auto changes_to_send = reader_locator.unsent_changes;
+        std::vector<CacheChange_t*> changes_to_send;
+
+        for(auto cit = reader_locator.unsent_changes.begin() ; cit != reader_locator.unsent_changes.end(); ++cit)
+        {
+            changes_to_send.push_back(cit->getChange());
+
+            if(cit->getChange()->getFragmentSize() > 0)
+            {
+                cit->getChange()->getDataFragments()->assign(cit->getChange()->getDataFragments()->size(),
+                        NOT_PRESENT);
+                FragmentNumberSet_t frag_sns = cit->getUnsentFragments();
+
+                for(auto sn = frag_sns.get_begin(); sn != frag_sns.get_end(); ++sn)
+                {
+                    assert(*sn <= cit->getChange()->getDataFragments()->size());
+                    cit->getChange()->getDataFragments()->at(*sn - 1) = PRESENT;
+                }
+            }
+        }
 
         // Clear through local controllers
-        // TODO
-        //for (auto& controller : m_controllers)
-            //(*controller)(changes_to_send);
+        for (auto& controller : m_controllers)
+            (*controller)(changes_to_send);
 
         // Clear through parent controllers
-        //for (auto& controller : mp_RTPSParticipant->getFlowControllers())
-            //(*controller)(changes_to_send);
+        for (auto& controller : mp_RTPSParticipant->getFlowControllers())
+            (*controller)(changes_to_send);
 
         // Remove the messages selected for sending from the original list,
         // and update those that were fragmented with the new sent index
@@ -191,7 +220,7 @@ void StatelessWriter::send_any_unsent_changes()
                 RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
 
 
-                for (const auto* change : changes_to_send)
+                for (auto* change : changes_to_send)
                 {
                     // Notify the controllers
                     FlowController::NotifyControllersChangeSent(change);
@@ -202,9 +231,13 @@ void StatelessWriter::send_any_unsent_changes()
 
                     if(change->getFragmentSize() != 0)
                     {
-                        for(uint32_t fragment = 1; fragment <= change->getFragmentCount(); ++fragment)
+                        for(uint32_t fragment  = 0; fragment < change->getDataFragments()->size(); ++fragment)
                         {
-                            group.add_data_frag(*change, fragment, remote_readers, locators, false);
+                            if(change->getDataFragments()->at(fragment) == PRESENT)
+                            {
+                                //TODO(Ricardo) Frag = 0
+                                group.add_data_frag(*change, fragment + 1, remote_readers, locators, false);
+                            }
                         }
                     }
                     else

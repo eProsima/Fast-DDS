@@ -35,7 +35,8 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
             ParticipantCryptoTokenSeq& local_participant_crypto_tokens,
             const ParticipantCryptoHandle& local_participant_crypto,
             ParticipantCryptoHandle& remote_participant_crypto,
-            SecurityException& exception){
+            SecurityException& /*exception*/)
+{
 
     const AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto);
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
@@ -89,8 +90,9 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
         exception = SecurityException("Incorrect token type received");
         return false;
     }
-    if(remote_participant_tokens.at(0).binary_properties().size() !=1 | remote_participant_tokens.at(0).properties().size() != 0 |
-        remote_participant_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat"){
+    if(remote_participant_tokens.at(0).binary_properties().size() !=1 || remote_participant_tokens.at(0).properties().size() != 0 ||
+        remote_participant_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat")
+    {
         logWarning(SECURITY_CRYPTO, "MalformedCryptoToken");
         exception = SecurityException("Malformed CryptoToken");
         return false;
@@ -110,7 +112,7 @@ bool AESGCMGMAC_KeyExchange::create_local_datawriter_crypto_tokens(
             DatawriterCryptoTokenSeq &local_datawriter_crypto_tokens,
             DatawriterCryptoHandle &local_datawriter_crypto,
             DatareaderCryptoHandle &remote_datareader_crypto,
-            SecurityException &exception){
+            SecurityException& /*exception*/){
 
     AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(local_datawriter_crypto);
     AESGCMGMAC_ReaderCryptoHandle& remote_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(remote_datareader_crypto);
@@ -142,7 +144,7 @@ bool AESGCMGMAC_KeyExchange::create_local_datareader_crypto_tokens(
             DatareaderCryptoTokenSeq &local_datareader_crypto_tokens,
             DatareaderCryptoHandle &local_datareader_crypto,
             DatawriterCryptoHandle &remote_datawriter_crypto,
-            SecurityException &exception){
+            SecurityException& /*exception*/){
 
     AESGCMGMAC_ReaderCryptoHandle& local_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(local_datareader_crypto);
     AESGCMGMAC_WriterCryptoHandle& remote_writer = AESGCMGMAC_WriterCryptoHandle::narrow(remote_datawriter_crypto);
@@ -196,8 +198,9 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
         return false;
     }
 
-    if(remote_datareader_tokens.at(0).binary_properties().size() !=1 | remote_datareader_tokens.at(0).properties().size() != 0 |
-            remote_datareader_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat"){
+    if(remote_datareader_tokens.at(0).binary_properties().size() !=1 || remote_datareader_tokens.at(0).properties().size() != 0 ||
+            remote_datareader_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat")
+    {
         logWarning(SECURITY_CRYPTO,"Malformed CryptoToken");
         exception = SecurityException("Malformed CryptoToken");
         return false;
@@ -247,8 +250,9 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
         return false;
     }
 
-    if(remote_datawriter_tokens.at(0).binary_properties().size() !=1 | remote_datawriter_tokens.at(0).properties().size() != 0 |
-            remote_datawriter_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat"){
+    if(remote_datawriter_tokens.at(0).binary_properties().size() !=1 || remote_datawriter_tokens.at(0).properties().size() != 0 ||
+            remote_datawriter_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat")
+    {
         logWarning(SECURITY_CRYPTO,"Malformed CryptoToken");
         exception = SecurityException("Malformed CryptoToken");
         return false;
@@ -275,8 +279,9 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
 }
 
 bool AESGCMGMAC_KeyExchange::return_crypto_tokens(
-            const CryptoTokenSeq &crypto_tokens,
-            SecurityException &exception){
+            const CryptoTokenSeq& /*crypto_tokens*/,
+            SecurityException &exception)
+{
 
     exception = SecurityException("Not implemented");
     return false;
@@ -314,9 +319,9 @@ std::vector<uint8_t> buffer;
     return buffer;
 }
 
-KeyMaterial_AES_GCM_GMAC AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(std::vector<uint8_t> *CDR){
-unsigned short index = 0;
-KeyMaterial_AES_GCM_GMAC buffer;
+KeyMaterial_AES_GCM_GMAC AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(std::vector<uint8_t> *CDR)
+{
+    KeyMaterial_AES_GCM_GMAC buffer;
     for(int i=1; i<5; i++){
         buffer.transformation_kind[i-1] = CDR->at(i);
     }
@@ -338,11 +343,9 @@ KeyMaterial_AES_GCM_GMAC buffer;
     return buffer;
 }
 
-std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_encrypt(std::vector<uint8_t> plaintext, std::array<uint8_t,32> key){
-
-    OpenSSL_add_all_ciphers();
-    int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
-
+std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_encrypt(std::vector<uint8_t> plaintext, std::array<uint8_t,32> key)
+{
+    (void)RAND_load_file("/dev/urandom", 32); //Init random number gen
     size_t enc_length = plaintext.size()*3;
     std::vector<uint8_t> output;
     output.resize(enc_length,'\0');
@@ -366,11 +369,9 @@ std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_encrypt(std::vector<uin
     return output;
 }
 
-std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_decrypt(std::vector<uint8_t> crypto, std::array<uint8_t,32> key){
-
-    OpenSSL_add_all_ciphers();
-    int rv = RAND_load_file("/dev/urandom", 32); //Init random number gen
-
+std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_decrypt(std::vector<uint8_t> crypto, std::array<uint8_t,32> key)
+{
+    (void)RAND_load_file("/dev/urandom", 32); //Init random number gen
     unsigned char tag[AES_BLOCK_SIZE];
     unsigned char iv[AES_BLOCK_SIZE];
     std::copy(crypto.begin(), crypto.begin()+16, tag);

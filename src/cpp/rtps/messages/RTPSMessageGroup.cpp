@@ -382,7 +382,7 @@ bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t
     uint32_t from_buffer_position = submessage_msg_->pos;
     EntityId_t readerId = get_entity_id(remote_readers);
 
-    if(RTPSMessageCreator::addSubmessageDataFrag(submessage_msg_, &change, fragment_number,
+    if(!RTPSMessageCreator::addSubmessageDataFrag(submessage_msg_, &change, fragment_number,
                 endpoint_->getAttributes()->topicKind, readerId, expectsInlineQos, inlineQos))
     {
         logError(RTPS_WRITER, "Cannot add DATA_FRAG submsg to the CDRMessage. Buffer too small");
@@ -449,7 +449,6 @@ bool RTPSMessageGroup::add_gap(std::vector<SequenceNumber_t>& changesSeqNum,
     std::vector<pair_T>::iterator seqit = Sequences.begin();
 
     uint16_t gap_n = 1;
-    bool returnedValue = true;
 
     while(gap_n < Sequences.size()) //There is still a message to add
     {
@@ -462,7 +461,6 @@ bool RTPSMessageGroup::add_gap(std::vector<SequenceNumber_t>& changesSeqNum,
                 remote_reader.entityId, endpoint_->getGuid().entityId))
         {
             logError(RTPS_WRITER, "Cannot add GAP submsg to the CDRMessage. Buffer too small");
-            returnedValue = false;
             break;
         }
 

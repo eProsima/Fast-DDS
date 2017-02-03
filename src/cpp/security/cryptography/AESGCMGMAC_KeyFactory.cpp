@@ -31,10 +31,10 @@ using namespace eprosima::fastrtps::rtps::security;
 AESGCMGMAC_KeyFactory::AESGCMGMAC_KeyFactory(){}
 
 ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
-                const IdentityHandle &participant_identity,
-                const PermissionsHandle &participant_permissions,
+                const IdentityHandle& /*participant_identity*/,
+                const PermissionsHandle& /*participant_permissions*/,
                 const PropertySeq &participant_properties,
-                SecurityException &exception)
+                SecurityException& /*exception*/)
 {
 
     //Create ParticipantCryptoHandle, fill Participant KeyMaterial and return it
@@ -43,7 +43,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     PCrypto = new AESGCMGMAC_ParticipantCryptoHandle();
 
     //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
-    std::array<uint8_t, 4> transformationtype(CRYPTO_TRANSFORMATION_KIND_AES128_GCM); //Default to AES128_GCM if the user does not specify otherwise
+    std::array<uint8_t, 4> transformationtype{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}; //Default to AES128_GCM if the user does not specify otherwise
     int maxblockspersession = 32; //Default to key update every 32 usages if the user does not specify otherwise
     if(!participant_properties.empty()){
           for(auto it=participant_properties.begin(); it!=participant_properties.end(); ++it){
@@ -222,7 +222,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
 DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
                 ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datawriter_prop,
-                SecurityException &exception){
+                SecurityException& /*exception*/){
 
     AESGCMGMAC_ParticipantCryptoHandle& participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(participant_crypto);
     if(participant_handle.nil()){
@@ -287,10 +287,10 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
 DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datareader(
                 DatawriterCryptoHandle &local_datawriter_crypto_handle,
                 ParticipantCryptoHandle &remote_participant_crypto,
-                const SharedSecretHandle &shared_secret,
-                const bool relay_only,
-                SecurityException &exception){
-
+                const SharedSecretHandle& /*shared_secret*/,
+                const bool /*relay_only*/,
+                SecurityException& /*exception*/)
+{
     //Create Participant2ParticipantKeyMaterial (Based on local ParticipantKeyMaterial) and ParticipantKxKeyMaterial (based on the SharedSecret)
     //Put both elements in the local and remote ParticipantCryptoHandle
 
@@ -353,8 +353,8 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
 DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
                 ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datareader_properties,
-                SecurityException &exception){
-
+                SecurityException& /*exception*/)
+{
     AESGCMGMAC_ParticipantCryptoHandle& participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(participant_crypto);
     if(participant_handle.nil()){
         logWarning(SECURITY_CRYPTO,"Invalid ParticipantCryptoHandle");
@@ -366,19 +366,19 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
 
     RCrypto = new AESGCMGMAC_ReaderCryptoHandle();
 
-    std::array<uint8_t, 4> transformationtype(CRYPTO_TRANSFORMATION_KIND_AES128_GCM); //Default to AES128_GCM
+    std::array<uint8_t, 4> transformationtype{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}; //Default to AES128_GCM
     int maxblockspersession = 32; //Default to key update every 32 usages
     if(!datareader_properties.empty()){
           for(auto it=datareader_properties.begin(); it!=datareader_properties.end(); ++it){
               if( (it)->name() == "dds.sec.crypto.cryptotransformkind"){
                       if( it->value() == std::string("AES128_GCM") )
-                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM);
+                            transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM};
                       if( it->value() == std::string("AES128_GMAC") )
-                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC);
+                            transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
                       if( it->value() == std::string("AES256_GCM") )
-                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM);
+                            transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM};
                       if( it->value() == std::string("AES256_GMAC") )
-                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES256_GMAC);
+                            transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC};
               }// endif
               if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
                   try{
@@ -422,8 +422,9 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
 DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawriter(
                 DatareaderCryptoHandle &local_datareader_crypto_handle,
                 ParticipantCryptoHandle &remote_participant_crypt,
-                const SharedSecretHandle &shared_secret,
-                SecurityException &exception){
+                const SharedSecretHandle& /*shared_secret*/,
+                SecurityException& /*exception*/)
+{
 
     //Create Participant2ParticipantKeyMaterial (Based on local ParticipantKeyMaterial) and ParticipantKxKeyMaterial (based on the SharedSecret)
     //Put both elements in the local and remote ParticipantCryptoHandle
@@ -531,7 +532,7 @@ bool AESGCMGMAC_KeyFactory::unregister_datawriter(
     if( (datawriter->Parent_participant) == nullptr){
         AESGCMGMAC_WriterCryptoHandle *me = (AESGCMGMAC_WriterCryptoHandle *)datawriter_crypto_handle;
         delete me;
-        true;
+        return true;
     }
     AESGCMGMAC_ParticipantCryptoHandle& parent_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow( *(datawriter->Parent_participant) );
     if(parent_participant.nil()){
@@ -568,7 +569,7 @@ bool AESGCMGMAC_KeyFactory::unregister_datareader(
     if( (datareader->Parent_participant) == nullptr){
         AESGCMGMAC_ReaderCryptoHandle *me = (AESGCMGMAC_ReaderCryptoHandle *)datareader_crypto_handle;
         delete me;
-        true;
+        return true;
     }
     AESGCMGMAC_ParticipantCryptoHandle& parent_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow( *(datareader->Parent_participant) );
     if(parent_participant.nil()){

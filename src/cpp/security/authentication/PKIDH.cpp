@@ -328,7 +328,7 @@ bool verify_certificate(X509_STORE* store, X509* cert, const bool there_are_crls
     return returnedValue;
 }
 
-int private_key_password_callback(char* buf, int bufsize, int verify, const char* password)
+int private_key_password_callback(char* buf, int bufsize, int /*verify*/, const char* password)
 {
     assert(password != nullptr);
 
@@ -389,7 +389,7 @@ bool store_certificate_in_buffer(X509* certificate, BUF_MEM** ptr, SecurityExcep
 
             if(*ptr != nullptr)
             {
-                BIO_set_close(out, BIO_NOCLOSE);
+                (void)BIO_set_close(out, BIO_NOCLOSE);
                 returnedValue = true;
             }
             else
@@ -423,13 +423,12 @@ bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, const size_t 
             size_t length = 0;
             if(EVP_DigestSignFinal(&ctx, NULL, &length) == 1 && length > 0)
             {
-                size_t aux_length = length;
                 signature.resize(length);
 
                 if(EVP_DigestSignFinal(&ctx, signature.data(), &length) ==  1)
                 {
                     signature.resize(length);
-                    returnedValue = true; 
+                    returnedValue = true;
                 }
                 else
                     exception = _SecurityException_(std::string("Cannot finish signature (") + std::to_string(ERR_get_error()) + std::string(")"));
@@ -524,7 +523,6 @@ bool adjust_participant_key(X509* cert, const GUID_t& candidate_participant_key,
     X509_NAME* cert_sn = X509_get_subject_name(cert);
     assert(cert_sn != nullptr);
 
-    unsigned long returnedValue = 0;
     unsigned char md[SHA256_DIGEST_LENGTH];
     unsigned int length = 0;
 
@@ -790,7 +788,7 @@ bool generate_challenge(std::vector<uint8_t>& vector, SecurityException& excepti
     BIGNUM bn;
     BN_init(&bn);
 
-    if(BN_rand(&bn, 512, 0 /*BN_RAND_TOP_ONE*/, 0 /*BN_RAND_BOTTOM_ANY*/));
+    if(BN_rand(&bn, 512, 0 /*BN_RAND_TOP_ONE*/, 0 /*BN_RAND_BOTTOM_ANY*/))
     {
         int len = BN_num_bytes(&bn);
         vector.resize(len);
@@ -892,7 +890,7 @@ bool generate_identity_token(PKIIdentityHandle& handle)
 
 ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identity_handle,
         GUID_t& adjusted_participant_key,
-        const uint32_t domain_id,
+        const uint32_t /*domain_id*/,
         const RTPSParticipantAttributes& participant_attr,
         const GUID_t& candidate_participant_key,
         SecurityException& exception)
@@ -1010,7 +1008,7 @@ ValidationResult_t PKIDH::validate_remote_identity(IdentityHandle** remote_ident
         const IdentityHandle& local_identity_handle,
         IdentityToken&& remote_identity_token,
         const GUID_t& remote_participant_key,
-        SecurityException& exception)
+        SecurityException& /*exception*/)
 {
     assert(remote_identity_handle);
     assert(local_identity_handle.nil() == false);
@@ -1099,7 +1097,6 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
     assert(initiator_identity_handle.nil() == false);
     assert(replier_identity_handle.nil() == false);
 
-    ValidationResult_t returnedValue = ValidationResult_t::VALIDATION_FAILED;
     const PKIIdentityHandle& lih = PKIIdentityHandle::narrow(initiator_identity_handle);
     PKIIdentityHandle& rih = PKIIdentityHandle::narrow(replier_identity_handle);
 
@@ -1298,13 +1295,13 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     }
 
     md[5] &= 0xFE;
-    unsigned char bytes[6] = {
-        (remote_participant_data.m_guid.guidPrefix.value[0] << 1) | (remote_participant_data.m_guid.guidPrefix.value[1] >> 7),
-        (remote_participant_data.m_guid.guidPrefix.value[1] << 1) | (remote_participant_data.m_guid.guidPrefix.value[2] >> 7),
-        (remote_participant_data.m_guid.guidPrefix.value[2] << 1) | (remote_participant_data.m_guid.guidPrefix.value[3] >> 7),
-        (remote_participant_data.m_guid.guidPrefix.value[3] << 1) | (remote_participant_data.m_guid.guidPrefix.value[4] >> 7),
-        (remote_participant_data.m_guid.guidPrefix.value[4] << 1) | (remote_participant_data.m_guid.guidPrefix.value[5] >> 7),
-        (remote_participant_data.m_guid.guidPrefix.value[5] << 1)
+    unsigned char bytes[6]{
+        static_cast<unsigned char>((remote_participant_data.m_guid.guidPrefix.value[0] << 1) | (remote_participant_data.m_guid.guidPrefix.value[1] >> 7)),
+        static_cast<unsigned char>((remote_participant_data.m_guid.guidPrefix.value[1] << 1) | (remote_participant_data.m_guid.guidPrefix.value[2] >> 7)),
+        static_cast<unsigned char>((remote_participant_data.m_guid.guidPrefix.value[2] << 1) | (remote_participant_data.m_guid.guidPrefix.value[3] >> 7)),
+        static_cast<unsigned char>((remote_participant_data.m_guid.guidPrefix.value[3] << 1) | (remote_participant_data.m_guid.guidPrefix.value[4] >> 7)),
+        static_cast<unsigned char>((remote_participant_data.m_guid.guidPrefix.value[4] << 1) | (remote_participant_data.m_guid.guidPrefix.value[5] >> 7)),
+        static_cast<unsigned char>(remote_participant_data.m_guid.guidPrefix.value[5] << 1)
     };
 
     if(memcmp(md, bytes, 6) != 0)
@@ -1312,7 +1309,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
         logWarning(SECURITY_AUTHENTICATION, "Bad participant_key's 47bits in c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
     }
-        
+
     // c.dsign_algo
     const std::vector<uint8_t>* dsign_algo = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.dsign_algo");
 
@@ -1647,13 +1644,13 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     }
 
     md[5] &= 0xFE;
-    unsigned char bytes[6] = {
-        (remote_participant_data.m_guid.guidPrefix.value[0] << 1) | (remote_participant_data.m_guid.guidPrefix.value[1] >> 7),
-        (remote_participant_data.m_guid.guidPrefix.value[1] << 1) | (remote_participant_data.m_guid.guidPrefix.value[2] >> 7),
-        (remote_participant_data.m_guid.guidPrefix.value[2] << 1) | (remote_participant_data.m_guid.guidPrefix.value[3] >> 7),
-        (remote_participant_data.m_guid.guidPrefix.value[3] << 1) | (remote_participant_data.m_guid.guidPrefix.value[4] >> 7),
-        (remote_participant_data.m_guid.guidPrefix.value[4] << 1) | (remote_participant_data.m_guid.guidPrefix.value[5] >> 7),
-        (remote_participant_data.m_guid.guidPrefix.value[5] << 1)
+    unsigned char bytes[6]{
+        static_cast<unsigned char>((remote_participant_data.m_guid.guidPrefix.value[0] << 1) | (remote_participant_data.m_guid.guidPrefix.value[1] >> 7)),
+        static_cast<unsigned char>((remote_participant_data.m_guid.guidPrefix.value[1] << 1) | (remote_participant_data.m_guid.guidPrefix.value[2] >> 7)),
+        static_cast<unsigned char>((remote_participant_data.m_guid.guidPrefix.value[2] << 1) | (remote_participant_data.m_guid.guidPrefix.value[3] >> 7)),
+        static_cast<unsigned char>((remote_participant_data.m_guid.guidPrefix.value[3] << 1) | (remote_participant_data.m_guid.guidPrefix.value[4] >> 7)),
+        static_cast<unsigned char>((remote_participant_data.m_guid.guidPrefix.value[4] << 1) | (remote_participant_data.m_guid.guidPrefix.value[5] >> 7)),
+        static_cast<unsigned char>(remote_participant_data.m_guid.guidPrefix.value[5] << 1)
     };
 
     if(memcmp(md, bytes, 6) != 0)
@@ -1930,7 +1927,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
                         *DataHolderHelper::find_binary_property_value(final_message, "challenge1")));
             (*handshake_handle->sharedsecret_)->data_.emplace_back(SharedSecret::BinaryData("Challenge2",
                         *DataHolderHelper::find_binary_property_value(final_message, "challenge2")));
-            
+
             handshake_handle->handshake_message_ = std::move(final_message);
             *handshake_message_out = &handshake_handle->handshake_message_;
 
@@ -1943,12 +1940,11 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     return ValidationResult_t::VALIDATION_FAILED;
 }
 
-ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handshake_message_out,
+ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** /*handshake_message_out*/,
         HandshakeMessageToken&& handshake_message_in,
         PKIHandshakeHandle& handshake_handle,
         SecurityException& exception)
 {
-    const PKIIdentityHandle& lih = *handshake_handle->local_identity_handle_;
     PKIIdentityHandle& rih = *handshake_handle->remote_identity_handle_;
 
     // Check TokenMessage
@@ -2147,7 +2143,7 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** handsh
 }
 
 SharedSecretHandle* PKIDH::get_shared_secret(const HandshakeHandle& handshake_handle,
-        SecurityException& exception)
+        SecurityException& /*exception*/)
 {
     const PKIHandshakeHandle& handshake = PKIHandshakeHandle::narrow(handshake_handle);
 
@@ -2161,15 +2157,15 @@ SharedSecretHandle* PKIDH::get_shared_secret(const HandshakeHandle& handshake_ha
     return nullptr;
 }
 
-bool PKIDH::set_listener(AuthenticationListener* listener,
-        SecurityException& exception)
+bool PKIDH::set_listener(AuthenticationListener* /*listener*/,
+        SecurityException& /*exception*/)
 {
     return false;
 }
 
 bool PKIDH::get_identity_token(IdentityToken** identity_token,
         const IdentityHandle& handle,
-        SecurityException& exception)
+        SecurityException& /*exception*/)
 {
     const PKIIdentityHandle& ihandle = PKIIdentityHandle::narrow(handle);
 
@@ -2183,14 +2179,14 @@ bool PKIDH::get_identity_token(IdentityToken** identity_token,
 }
 
 bool PKIDH::return_identity_token(IdentityToken* token,
-        SecurityException& exception)
+        SecurityException& /*exception*/)
 {
     delete token;
     return true;
 }
 
 bool PKIDH::return_handshake_handle(HandshakeHandle* handshake_handle,
-        SecurityException& exception)
+        SecurityException& /*exception*/)
 {
     PKIHandshakeHandle* handle = &PKIHandshakeHandle::narrow(*handshake_handle);
 
@@ -2204,7 +2200,7 @@ bool PKIDH::return_handshake_handle(HandshakeHandle* handshake_handle,
 }
 
 bool PKIDH::return_identity_handle(IdentityHandle* identity_handle,
-        SecurityException& exception)
+        SecurityException& /*exception*/)
 {
     PKIIdentityHandle* handle = &PKIIdentityHandle::narrow(*identity_handle);
 
@@ -2218,7 +2214,7 @@ bool PKIDH::return_identity_handle(IdentityHandle* identity_handle,
 }
 
 bool PKIDH::return_sharedsecret_handle(SharedSecretHandle* sharedsecret_handle,
-        SecurityException& exception)
+        SecurityException& /*exception*/)
 {
     delete sharedsecret_handle;
     return true;

@@ -155,15 +155,17 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
 }
 
 
-std::vector<const ChangeForReader_t*> ReaderProxy::get_unsent_changes() const
+//TODO(Ricardo) Temporal
+//std::vector<const ChangeForReader_t*> ReaderProxy::get_unsent_changes() const
+std::vector<ChangeForReader_t*> ReaderProxy::get_unsent_changes()
 {
-    std::vector<const ChangeForReader_t*> unsent_changes;
+    //std::vector<const ChangeForReader_t*> unsent_changes;
+    std::vector<ChangeForReader_t*> unsent_changes;
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
-    auto it = m_changesForReader.begin();
-    for (; it!= m_changesForReader.end(); ++it)
-        if(it->getStatus() == UNSENT)
-            unsent_changes.push_back(&(*it));
+    for(auto &change_for_reader : m_changesForReader)
+        if(change_for_reader.getStatus() == UNSENT)
+            unsent_changes.push_back(const_cast<ChangeForReader_t*>(&change_for_reader));
 
     return unsent_changes;
 }
@@ -238,7 +240,7 @@ void ReaderProxy::mark_fragment_as_sent_for_change(const CacheChange_t* change, 
 void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next)
 {
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-    bool mustWakeUpAsyncThread = false; 
+    bool mustWakeUpAsyncThread = false;
 
     auto it = m_changesForReader.begin();
     while(it != m_changesForReader.end())
@@ -270,7 +272,9 @@ void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous
         AsyncWriterThread::wakeUp(mp_SFW);
 }
 
-void ReaderProxy::setNotValid(const CacheChange_t* change)
+//TODO(Ricardo)
+//void ReaderProxy::setNotValid(const CacheChange_t* change)
+void ReaderProxy::setNotValid(CacheChange_t* change)
 {
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 

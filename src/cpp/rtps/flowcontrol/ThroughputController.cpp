@@ -41,7 +41,7 @@ ThroughputController::ThroughputController(const ThroughputControllerDescriptor&
 {
 }
 
-void ThroughputController::operator()(vector<const CacheChange_t*>& changes)
+void ThroughputController::operator()(vector<CacheChange_t*>& changes)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
 
@@ -49,28 +49,34 @@ void ThroughputController::operator()(vector<const CacheChange_t*>& changes)
     unsigned int clearedChanges = 0;
     while (clearedChanges < changes.size())
     {
-        const auto* change = changes[clearedChanges];
+        CacheChange_t* change = changes[clearedChanges];
+
         if (change->getFragmentSize() != 0)
         {
-            // TODO(Ricardo) Fixit
-            /*
-            unsigned int fittingFragments = min((mBytesPerPeriod - mAccumulatedPayloadSize) / change->getChange()->getFragmentSize(),
-                    static_cast<uint32_t>(change.getFragmentsClearedForSending().set.size()));
+            unsigned int fragments_to_send = std::count(change->getDataFragments()->begin(),
+                    change->getDataFragments()->end(), PRESENT);
+            unsigned int fittingFragments = min((mBytesPerPeriod - mAccumulatedPayloadSize) / change->getFragmentSize(),
+                    fragments_to_send);
 
             if (fittingFragments)
             {
-                mAccumulatedPayloadSize += fittingFragments * change->getChange()->getFragmentSize();
+                mAccumulatedPayloadSize += fittingFragments * change->getFragmentSize();
 
-                auto limitedFragments = change.getFragmentsClearedForSending();
-                while (limitedFragments.set.size() > fittingFragments)
-                    limitedFragments.set.erase(std::prev(limitedFragments.set.end())); // remove biggest fragment
+                for(auto& aux_c : *change->getDataFragments())
+                {
+                    if(aux_c == PRESENT)
+                    {
+                        if(fittingFragments)
+                            --fittingFragments;
+                        else
+                            aux_c = NOT_PRESENT;
+                    }
+                }
 
-                change.setFragmentsClearedForSending(limitedFragments);
                 clearedChanges++;
             }
             else
                 break;
-                */
         }
         else
         {
