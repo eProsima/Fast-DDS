@@ -180,7 +180,7 @@ class SecurityAuthenticationTest : public ::testing::Test
             message.message_class_id("dds.sec.auth");
             HandshakeMessageToken token;
             message.message_data().push_back(token);
-            CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+            CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))); //TODO(Ricardo) Think casting
             CDRMessage_t aux_msg(0);
             aux_msg.wraps = true;
             aux_msg.buffer = change->serializedPayload.data;
@@ -229,7 +229,7 @@ class SecurityAuthenticationTest : public ::testing::Test
             message.message_class_id("dds.sec.auth");
             HandshakeMessageToken token;
             message.message_data().push_back(token);
-            CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+            CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
             CDRMessage_t aux_msg(0);
             aux_msg.wraps = true;
             aux_msg.buffer = change->serializedPayload.data;
@@ -874,7 +874,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_not_re
 
     ParticipantGenericMessage message;
     message.message_class_id("dds.sec.auth");
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
@@ -905,7 +905,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_bad_me
     ASSERT_TRUE(manager_.discovered_participant(&participant_data));
 
     ParticipantGenericMessage message;
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
@@ -950,7 +950,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_not_ex
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
@@ -988,7 +988,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_b
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
@@ -1034,7 +1034,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_beg
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
@@ -1099,7 +1099,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_new_ch
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
@@ -1149,7 +1149,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_add_ch
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
@@ -1238,7 +1238,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_pendin
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
@@ -1306,7 +1306,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_p
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
@@ -1350,7 +1350,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_pro
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
@@ -1409,7 +1409,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
@@ -1453,7 +1453,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
@@ -1519,7 +1519,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
@@ -1555,7 +1555,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_bad_re
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
@@ -1590,7 +1590,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_bad_re
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
@@ -1625,7 +1625,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_p
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
@@ -1669,7 +1669,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_pro
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(ParticipantGenericMessageHelper::serialized_size(message));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;

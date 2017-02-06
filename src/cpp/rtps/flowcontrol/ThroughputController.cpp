@@ -53,10 +53,10 @@ void ThroughputController::operator()(vector<CacheChange_t*>& changes)
 
         if (change->getFragmentSize() != 0)
         {
-            unsigned int fragments_to_send = std::count(change->getDataFragments()->begin(),
+            ptrdiff_t fragments_to_send = std::count(change->getDataFragments()->begin(),
                     change->getDataFragments()->end(), PRESENT);
-            unsigned int fittingFragments = min((mBytesPerPeriod - mAccumulatedPayloadSize) / change->getFragmentSize(),
-                    fragments_to_send);
+            unsigned int fittingFragments = std::min((mBytesPerPeriod - mAccumulatedPayloadSize) / change->getFragmentSize(),
+                    static_cast<unsigned int>(fragments_to_send));
 
             if (fittingFragments)
             {

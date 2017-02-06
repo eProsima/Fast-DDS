@@ -41,8 +41,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${CMAKE_CURRENT_SOURCE_DIR}/SecurityAuthenticationTests.cpp)
         add_gtest(SecurityAuthentication 
             ${CMAKE_CURRENT_SOURCE_DIR}/SecurityAuthenticationTests.cpp)
+        target_compile_definitions(SecurityAuthentication PRIVATE BOOST_ALL_DYN_LINK FASTRTPS_NO_LIB)
         target_include_directories(SecurityAuthentication PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${Boost_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityPluginFactory
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl

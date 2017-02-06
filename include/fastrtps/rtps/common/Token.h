@@ -18,6 +18,7 @@
 #ifndef _RTPS_COMMON_TOKEN_H_
 #define _RTPS_COMMON_TOKEN_H_
 
+#include "../../fastrtps_dll.h"
 #include "Property.h"
 #include "BinaryProperty.h"
 

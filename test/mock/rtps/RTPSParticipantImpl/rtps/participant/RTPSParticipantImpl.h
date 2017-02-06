@@ -39,7 +39,7 @@ class WriterHistory;
 class ReaderHistory;
 class WriterListener;
 class ReaderListener;
-class EntityId_t;
+struct EntityId_t;
 
 class MockParticipantListener : public RTPSParticipantListener
 {

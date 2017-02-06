@@ -894,7 +894,7 @@ inline bool CDRMessage::addDataHolderSeq(CDRMessage_t* msg, const DataHolderSeq&
 
     if(msg->pos + 4 <=  msg->max_size)
     {
-        if(CDRMessage::addUInt32(msg, data_holders.size()))
+        if(CDRMessage::addUInt32(msg, static_cast<uint32_t>(data_holders.size())))
         {
             returnedValue = true;
             for(auto data_holder = data_holders.begin(); returnedValue && data_holder != data_holders.end(); ++data_holder)

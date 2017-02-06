@@ -480,7 +480,7 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
 
         CacheChange_t* change = participant_stateless_message_writer_->new_change([&message]() -> uint32_t
                 {
-                return ParticipantGenericMessageHelper::serialized_size(message);
+                    return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
                 }
                 , ALIVE, c_InstanceHandle_Unknown);
 
@@ -1403,7 +1403,7 @@ ParticipantCryptoHandle* SecurityManager::register_and_match_crypto_endpoint(Par
 
             CacheChange_t* change = participant_volatile_message_secure_writer_->new_change([&message]() -> uint32_t
                     {
-                    return ParticipantGenericMessageHelper::serialized_size(message);
+                        return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
                     }
                     , ALIVE, c_InstanceHandle_Unknown);
 
@@ -1496,7 +1496,7 @@ bool SecurityManager::encode_rtps_message(CDRMessage_t& message,
     if(encode_cdr_message.size() <= message.max_size)
     {
         memcpy(message.buffer, encode_cdr_message.data(), encode_cdr_message.size());
-        message.length = encode_cdr_message.size();
+        message.length = static_cast<uint32_t>(encode_cdr_message.size());
     }
     else
     {
@@ -1542,7 +1542,7 @@ bool SecurityManager::decode_rtps_message(CDRMessage_t& message, CDRMessage_t& o
             if(cdr_message.size() <= message.max_size)
             {
                 memcpy(out_message.buffer, cdr_message.data(), cdr_message.size());
-                out_message.length = cdr_message.size();
+                out_message.length = static_cast<uint32_t>(cdr_message.size());
             }
             else
             {
@@ -1646,7 +1646,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
 
                     CacheChange_t* change = participant_volatile_message_secure_writer_->new_change([&message]() -> uint32_t
                             {
-                            return ParticipantGenericMessageHelper::serialized_size(message);
+                                return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
                             }
                             , ALIVE, c_InstanceHandle_Unknown);
 
@@ -1769,7 +1769,7 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
 
                     CacheChange_t* change = participant_volatile_message_secure_writer_->new_change([&message]() -> uint32_t
                             {
-                            return ParticipantGenericMessageHelper::serialized_size(message);
+                                return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
                             }
                             , ALIVE, c_InstanceHandle_Unknown);
 
@@ -1896,7 +1896,7 @@ bool SecurityManager::encode_writer_submessage(CDRMessage_t& message, const GUID
                 if(encode_cdr_message.size() <= message.max_size)
                 {
                     memcpy(message.buffer + message.pos, encode_cdr_message.data(), encode_cdr_message.size());
-                    message.length = message.pos + encode_cdr_message.size();
+                    message.length = message.pos + static_cast<uint32_t>(encode_cdr_message.size());
                     message.pos = message.length;
                     return true;
                 }
@@ -1956,7 +1956,7 @@ bool SecurityManager::encode_reader_submessage(CDRMessage_t& message, const GUID
                 if(encode_cdr_message.size() <= message.max_size)
                 {
                     memcpy(message.buffer + message.pos, encode_cdr_message.data(), encode_cdr_message.size());
-                    message.length = message.pos + encode_cdr_message.size();
+                    message.length = message.pos + static_cast<uint32_t>(encode_cdr_message.size());
                     message.pos = message.length;
                     return true;
                 }
@@ -2063,7 +2063,7 @@ bool SecurityManager::encode_serialized_payload(SerializedPayload_t& payload, co
             if(encode_cdr_message.size() <= payload.max_size) // TODO(Ricardo) Look if max_size can be 0.
             {
                 memcpy(payload.data, encode_cdr_message.data(), encode_cdr_message.size());
-                payload.length = encode_cdr_message.size();
+                payload.length = static_cast<uint32_t>(encode_cdr_message.size());
                 return true;
             }
             else
@@ -2106,7 +2106,7 @@ bool SecurityManager::decode_serialized_payload(const SerializedPayload_t& secur
                 if(decode_payload.size() <= payload.max_size) // TODO(Ricardo) Look if max_size can be 0.
                 {
                     memcpy(payload.data, decode_payload.data(), decode_payload.size());
-                    payload.length = decode_payload.size();
+                    payload.length = static_cast<uint32_t>(decode_payload.size());
                     return true;
                 }
                 else

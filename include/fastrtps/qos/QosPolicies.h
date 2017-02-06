@@ -37,7 +37,7 @@ class EDP;
 /**
  * Class QosPolicy, base for all QoS policies defined for Writers and Readers.
  */
-class RTPS_DllAPI QosPolicy{
+class QosPolicy{
 public:
 	QosPolicy():hasChanged(false),m_sendAlways(false){};
 	QosPolicy(bool b_sendAlways):hasChanged(false),m_sendAlways(b_sendAlways){};
@@ -68,12 +68,12 @@ typedef enum DurabilityQosPolicyKind: octet{
  * Class DurabilityQosPolicy, to indicate the durability of the samples.
  * kind: Default value for Subscribers: VOLATILE_DURABILITY_QOS, for Publishers TRANSIENT_LOCAL_DURABILITY_QOS
  */
-class RTPS_DllAPI DurabilityQosPolicy : private Parameter_t, public QosPolicy
+class DurabilityQosPolicy : private Parameter_t, public QosPolicy
 {
 public:
-	DurabilityQosPolicy():Parameter_t(PID_DURABILITY,PARAMETER_KIND_LENGTH),QosPolicy(true),kind(VOLATILE_DURABILITY_QOS){};
-	virtual ~DurabilityQosPolicy(){};
-	DurabilityQosPolicyKind_t kind;
+    RTPS_DllAPI DurabilityQosPolicy():Parameter_t(PID_DURABILITY,PARAMETER_KIND_LENGTH),QosPolicy(true),kind(VOLATILE_DURABILITY_QOS){};
+	virtual RTPS_DllAPI ~DurabilityQosPolicy(){};
+    DurabilityQosPolicyKind_t kind;
    /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
@@ -87,10 +87,10 @@ public:
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * period: Default value c_TimeInifinite.
  */
-class RTPS_DllAPI DeadlineQosPolicy : private Parameter_t, public QosPolicy {
+class DeadlineQosPolicy : private Parameter_t, public QosPolicy {
 public:
-	DeadlineQosPolicy():Parameter_t(PID_DEADLINE,PARAMETER_TIME_LENGTH),QosPolicy(true),period(c_TimeInfinite){	};
-	virtual ~DeadlineQosPolicy(){};
+    RTPS_DllAPI DeadlineQosPolicy():Parameter_t(PID_DEADLINE,PARAMETER_TIME_LENGTH),QosPolicy(true),period(c_TimeInfinite){	};
+    virtual RTPS_DllAPI ~DeadlineQosPolicy(){};
 	Duration_t period;
    /**
     * Appends QoS to the specified CDR message.
@@ -105,10 +105,10 @@ public:
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * period: Default value c_TimeZero.
  */
-class RTPS_DllAPI LatencyBudgetQosPolicy : private Parameter_t, public QosPolicy {
+class LatencyBudgetQosPolicy : private Parameter_t, public QosPolicy {
 public:
-	LatencyBudgetQosPolicy():Parameter_t(PID_LATENCY_BUDGET,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(c_TimeZero){};
-	virtual ~LatencyBudgetQosPolicy(){};
+    RTPS_DllAPI LatencyBudgetQosPolicy():Parameter_t(PID_LATENCY_BUDGET,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(c_TimeZero){};
+	virtual RTPS_DllAPI ~LatencyBudgetQosPolicy(){};
 	Duration_t duration;
    /**
     * Appends QoS to the specified CDR message.
@@ -137,11 +137,11 @@ typedef enum LivelinessQosPolicyKind:octet {
  * lease_duration: Default value c_TimeInfinite.
  * announcement_period: Default value c_TimeInfinite (must be < lease_duration).
  */
-class RTPS_DllAPI LivelinessQosPolicy : private Parameter_t, public QosPolicy {
+class LivelinessQosPolicy : private Parameter_t, public QosPolicy {
 public:
-	LivelinessQosPolicy():Parameter_t(PID_LIVELINESS,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),QosPolicy(true),
-	kind(AUTOMATIC_LIVELINESS_QOS){lease_duration = c_TimeInfinite; announcement_period = c_TimeInfinite;};
-	virtual ~LivelinessQosPolicy(){};
+    RTPS_DllAPI LivelinessQosPolicy():Parameter_t(PID_LIVELINESS,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),QosPolicy(true),
+        kind(AUTOMATIC_LIVELINESS_QOS){lease_duration = c_TimeInfinite; announcement_period = c_TimeInfinite;};
+	virtual RTPS_DllAPI ~LivelinessQosPolicy(){};
 	LivelinessQosPolicyKind kind;
 	Duration_t lease_duration;
 	Duration_t announcement_period;
@@ -166,13 +166,13 @@ typedef enum ReliabilityQosPolicyKind:octet {
  * kind: Default value BEST_EFFORT_RELIABILITY_QOS for ReaderQos and RELIABLE_RELIABILITY_QOS for WriterQos.
  * max_blocking_time: Not Used in this version.
  */
-class RTPS_DllAPI ReliabilityQosPolicy : private Parameter_t, public QosPolicy
+class ReliabilityQosPolicy : private Parameter_t, public QosPolicy
 {
 public:
-	ReliabilityQosPolicy():	Parameter_t(PID_RELIABILITY,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),
-	QosPolicy(true), //indicate send always
-	kind(BEST_EFFORT_RELIABILITY_QOS){};
-	virtual ~ReliabilityQosPolicy(){};
+    RTPS_DllAPI ReliabilityQosPolicy():	Parameter_t(PID_RELIABILITY,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),
+        QosPolicy(true), //indicate send always
+        kind(BEST_EFFORT_RELIABILITY_QOS){};
+	virtual RTPS_DllAPI ~ReliabilityQosPolicy(){};
 	ReliabilityQosPolicyKind kind;
 	Duration_t max_blocking_time;
    /**
@@ -197,11 +197,11 @@ enum OwnershipQosPolicyKind:octet {
  * Class OwnershipQosPolicy, to indicate the ownership kind of the endpoints.
  * kind: Default value SHARED_OWNERSHIP_QOS.
  */
-class RTPS_DllAPI OwnershipQosPolicy : private Parameter_t, public QosPolicy {
+class OwnershipQosPolicy : private Parameter_t, public QosPolicy {
 public:
-	OwnershipQosPolicy():Parameter_t(PID_OWNERSHIP,PARAMETER_KIND_LENGTH),QosPolicy(true),
-	kind(SHARED_OWNERSHIP_QOS){};
-	virtual ~OwnershipQosPolicy(){};
+    RTPS_DllAPI OwnershipQosPolicy():Parameter_t(PID_OWNERSHIP,PARAMETER_KIND_LENGTH),QosPolicy(true),
+        kind(SHARED_OWNERSHIP_QOS){};
+	virtual RTPS_DllAPI ~OwnershipQosPolicy(){};
 	OwnershipQosPolicyKind kind;
    /**
     * Appends QoS to the specified CDR message.
@@ -226,12 +226,12 @@ enum DestinationOrderQosPolicyKind :octet{
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * kind: Default value BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS
  */
-class RTPS_DllAPI DestinationOrderQosPolicy : private Parameter_t, public QosPolicy {
+class DestinationOrderQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	DestinationOrderQosPolicyKind kind;
-	DestinationOrderQosPolicy():Parameter_t(PID_DESTINATION_ORDER,PARAMETER_KIND_LENGTH),QosPolicy(true),
-			kind(BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS){};
-	virtual ~DestinationOrderQosPolicy(){};
+    RTPS_DllAPI DestinationOrderQosPolicy():Parameter_t(PID_DESTINATION_ORDER,PARAMETER_KIND_LENGTH),QosPolicy(true),
+        kind(BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS){};
+	virtual RTPS_DllAPI ~DestinationOrderQosPolicy(){};
    /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
@@ -248,14 +248,14 @@ class UserDataQosPolicy : private Parameter_t, public QosPolicy{
 	friend class ParameterList;
 public:
 	RTPS_DllAPI UserDataQosPolicy() :Parameter_t(PID_USER_DATA, 0), QosPolicy(false){};
-	RTPS_DllAPI virtual ~UserDataQosPolicy(){};
+	virtual RTPS_DllAPI ~UserDataQosPolicy(){};
 
    /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
+	bool addToCDRMessage(CDRMessage_t* msg);
    
    /**
     * Returns raw data vector.
@@ -267,7 +267,9 @@ public:
     * @param vec raw data to set.
     * */
 	RTPS_DllAPI inline void setDataVec(const std::vector<octet>& vec){ dataVec = vec; };
+
 private:
+
 	std::vector<octet> dataVec;
 };
 
@@ -276,11 +278,11 @@ private:
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * minimum_separation: Default value c_TimeZero
  */
-class RTPS_DllAPI TimeBasedFilterQosPolicy : private Parameter_t, public QosPolicy {
+class TimeBasedFilterQosPolicy : private Parameter_t, public QosPolicy {
 public:
 
-	TimeBasedFilterQosPolicy():Parameter_t(PID_TIME_BASED_FILTER,PARAMETER_TIME_LENGTH),QosPolicy(false),minimum_separation(c_TimeZero){};
-	virtual ~TimeBasedFilterQosPolicy(){};
+    RTPS_DllAPI TimeBasedFilterQosPolicy():Parameter_t(PID_TIME_BASED_FILTER,PARAMETER_TIME_LENGTH),QosPolicy(false),minimum_separation(c_TimeZero){};
+	virtual RTPS_DllAPI ~TimeBasedFilterQosPolicy(){};
 	Duration_t minimum_separation;
    /**
     * Appends QoS to the specified CDR message.
@@ -309,16 +311,16 @@ enum PresentationQosPolicyAccessScopeKind:octet
  * coherent_access: Default value false.
  * ordered_access: Default value false.
  */
-class RTPS_DllAPI PresentationQosPolicy : private Parameter_t, public QosPolicy
+class PresentationQosPolicy : private Parameter_t, public QosPolicy
 {
 public:
 	PresentationQosPolicyAccessScopeKind access_scope;
 	bool coherent_access;
 	bool ordered_access;
-	PresentationQosPolicy():Parameter_t(PID_PRESENTATION,PARAMETER_PRESENTATION_LENGTH),QosPolicy(false),
-			access_scope(INSTANCE_PRESENTATION_QOS),
-			coherent_access(false),ordered_access(false){};
-	virtual ~PresentationQosPolicy(){};
+    RTPS_DllAPI PresentationQosPolicy():Parameter_t(PID_PRESENTATION,PARAMETER_PRESENTATION_LENGTH),QosPolicy(false),
+        access_scope(INSTANCE_PRESENTATION_QOS),
+        coherent_access(false),ordered_access(false){};
+	virtual RTPS_DllAPI ~PresentationQosPolicy(){};
  /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
@@ -337,13 +339,13 @@ class  PartitionQosPolicy : private Parameter_t, public QosPolicy
 	friend class rtps::EDP;
 public:
 	RTPS_DllAPI PartitionQosPolicy() :Parameter_t(PID_PARTITION, 0), QosPolicy(false){};
-	RTPS_DllAPI virtual ~PartitionQosPolicy(){};
+	virtual RTPS_DllAPI ~PartitionQosPolicy(){};
    /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
+    bool addToCDRMessage(CDRMessage_t* msg);
    /**
     * Appends a name to the list of partition names.
     * @param name Name to append.
@@ -363,7 +365,9 @@ public:
     * @param nam Vector of partition name strings.
     */
    RTPS_DllAPI inline void setNames(std::vector<std::string>& nam){ names = nam; };
+
 private:
+
 	std::vector<std::string> names;
 };
 
@@ -376,13 +380,13 @@ class  TopicDataQosPolicy : private Parameter_t, public QosPolicy
 	friend class ParameterList;
 public:
 	RTPS_DllAPI TopicDataQosPolicy() :Parameter_t(PID_TOPIC_DATA, 0), QosPolicy(false){};
-	RTPS_DllAPI virtual ~TopicDataQosPolicy(){};
+	virtual RTPS_DllAPI ~TopicDataQosPolicy(){};
    /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
+    bool addToCDRMessage(CDRMessage_t* msg);
    /**
     * Appends topic data.
     * @param oc Data octet.
@@ -402,7 +406,9 @@ public:
     * @return Vector of data octets.
     */
 	RTPS_DllAPI inline std::vector<octet> getValue(){ return value; };
+
 private:
+
 	std::vector<octet> value;
 };
 
@@ -414,13 +420,13 @@ class  GroupDataQosPolicy : private Parameter_t, public QosPolicy
 	friend class ParameterList;
 public:
 	RTPS_DllAPI GroupDataQosPolicy() :Parameter_t(PID_GROUP_DATA, 0), QosPolicy(false){}
-	RTPS_DllAPI virtual ~GroupDataQosPolicy(){};
+	virtual RTPS_DllAPI ~GroupDataQosPolicy(){};
    /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
+    bool addToCDRMessage(CDRMessage_t* msg);
    /**
     * Appends group data.
     * @param oc Data octet.
@@ -440,7 +446,9 @@ public:
     * @return Vector of data octets.
     */
 	RTPS_DllAPI inline std::vector<octet> getValue(){ return value; };
+
 private:
+
 	std::vector<octet> value;
 };
 
@@ -457,13 +465,13 @@ enum HistoryQosPolicyKind:octet {
  * kind: Default value KEEP_LAST_HISTORY_QOS.
  * depth: Default value 1000.
  */
-class RTPS_DllAPI HistoryQosPolicy : private Parameter_t, public QosPolicy {
+class HistoryQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	HistoryQosPolicyKind kind;
 	int32_t depth;
-	HistoryQosPolicy():Parameter_t(PID_HISTORY,PARAMETER_KIND_LENGTH+4),QosPolicy(true),
+    RTPS_DllAPI HistoryQosPolicy():Parameter_t(PID_HISTORY,PARAMETER_KIND_LENGTH+4),QosPolicy(true),
 			kind(KEEP_LAST_HISTORY_QOS),depth(1){};
-	virtual ~HistoryQosPolicy(){};
+	virtual RTPS_DllAPI ~HistoryQosPolicy(){};
    /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
@@ -479,15 +487,15 @@ public:
  * max_samples_per_instance: Default value 400.
  * allocated_samples: Default value 100.
  */
-class RTPS_DllAPI ResourceLimitsQosPolicy : private Parameter_t, public QosPolicy {
+class ResourceLimitsQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	int32_t max_samples;
 	int32_t max_instances;
 	int32_t max_samples_per_instance;
 	int32_t allocated_samples;
-	ResourceLimitsQosPolicy():Parameter_t(PID_RESOURCE_LIMITS,4+4+4),QosPolicy(false),
+    RTPS_DllAPI ResourceLimitsQosPolicy():Parameter_t(PID_RESOURCE_LIMITS,4+4+4),QosPolicy(false),
 			max_samples(5000),max_instances(10),max_samples_per_instance(400),allocated_samples(100){};
-	virtual ~ResourceLimitsQosPolicy(){};
+	virtual RTPS_DllAPI ~ResourceLimitsQosPolicy(){};
    /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
@@ -508,7 +516,7 @@ public:
  * max_instances: Default value -1.
  * max_samples_per_instance: Default value -1.
  */
-class RTPS_DllAPI DurabilityServiceQosPolicy : private Parameter_t, public QosPolicy {
+class DurabilityServiceQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	Duration_t service_cleanup_delay;
 	HistoryQosPolicyKind history_kind;
@@ -516,10 +524,10 @@ public:
 	int32_t max_samples;
 	int32_t max_instances;
 	int32_t max_samples_per_instance;
-	DurabilityServiceQosPolicy():Parameter_t(PID_DURABILITY_SERVICE,PARAMETER_TIME_LENGTH+PARAMETER_KIND_LENGTH+4+4+4+4),QosPolicy(false),
-			history_kind(KEEP_LAST_HISTORY_QOS),
-			history_depth(1),max_samples(-1),max_instances(-1),max_samples_per_instance(-1){};
-	virtual ~DurabilityServiceQosPolicy(){};
+    RTPS_DllAPI DurabilityServiceQosPolicy():Parameter_t(PID_DURABILITY_SERVICE,PARAMETER_TIME_LENGTH+PARAMETER_KIND_LENGTH+4+4+4+4),QosPolicy(false),
+        history_kind(KEEP_LAST_HISTORY_QOS),
+        history_depth(1),max_samples(-1),max_instances(-1),max_samples_per_instance(-1){};
+	virtual RTPS_DllAPI ~DurabilityServiceQosPolicy(){};
    /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
@@ -533,10 +541,10 @@ public:
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * duration: Default value c_TimeInfinite.
  */
-class RTPS_DllAPI LifespanQosPolicy : private Parameter_t, public QosPolicy {
+class LifespanQosPolicy : private Parameter_t, public QosPolicy {
 public:
-	LifespanQosPolicy():Parameter_t(PID_LIFESPAN,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(c_TimeInfinite){};
-	virtual ~LifespanQosPolicy(){};
+    RTPS_DllAPI LifespanQosPolicy():Parameter_t(PID_LIFESPAN,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(c_TimeInfinite){};
+	virtual RTPS_DllAPI ~LifespanQosPolicy(){};
 	Duration_t duration;
    /**
     * Appends QoS to the specified CDR message.
@@ -550,11 +558,11 @@ public:
  * Class OwnershipStrengthQosPolicy, to indicate the strength of the ownership.
  * value: Default value 0.
  */
-class RTPS_DllAPI OwnershipStrengthQosPolicy : private Parameter_t, public QosPolicy {
+class OwnershipStrengthQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	uint32_t value;
-	OwnershipStrengthQosPolicy():Parameter_t(PID_OWNERSHIP_STRENGTH,4),QosPolicy(false),value(0){};
-	virtual ~OwnershipStrengthQosPolicy(){};
+    RTPS_DllAPI OwnershipStrengthQosPolicy():Parameter_t(PID_OWNERSHIP_STRENGTH,4),QosPolicy(false),value(0){};
+	virtual RTPS_DllAPI ~OwnershipStrengthQosPolicy(){};
    /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
@@ -570,11 +578,11 @@ public:
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * value: Default value 0.
  */
-class RTPS_DllAPI TransportPriorityQosPolicy : private Parameter_t , public QosPolicy{
+class TransportPriorityQosPolicy : private Parameter_t , public QosPolicy{
 public:
 	uint32_t value;
-	TransportPriorityQosPolicy():Parameter_t(PID_TRANSPORT_PRIORITY,4),QosPolicy(false),value(0){};
-	virtual ~TransportPriorityQosPolicy(){};
+    RTPS_DllAPI TransportPriorityQosPolicy():Parameter_t(PID_TRANSPORT_PRIORITY,4),QosPolicy(false),value(0){};
+	virtual RTPS_DllAPI ~TransportPriorityQosPolicy(){};
    /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
@@ -595,11 +603,11 @@ typedef enum PublishModeQosPolicyKind : octet{
 * Class PublishModeQosPolicy, defines the publication mode for a specific writer.
 * kind: Default value SYNCHRONOUS_PUBLISH_MODE.
 */
-class RTPS_DllAPI PublishModeQosPolicy : public QosPolicy {
+class PublishModeQosPolicy : public QosPolicy {
 public:
 	PublishModeQosPolicyKind kind;
-	PublishModeQosPolicy() : kind(SYNCHRONOUS_PUBLISH_MODE){};
-	virtual ~PublishModeQosPolicy(){};
+    RTPS_DllAPI PublishModeQosPolicy() : kind(SYNCHRONOUS_PUBLISH_MODE){};
+	virtual RTPS_DllAPI ~PublishModeQosPolicy(){};
 };
 
 

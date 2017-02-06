@@ -19,6 +19,7 @@
 #define _RTPS_SECURITY_COMMON_HANDLE_H_
 
 #include <memory>
+#include <string>
 
 namespace eprosima {
 namespace fastrtps {

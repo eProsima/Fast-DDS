@@ -26,7 +26,13 @@
 
 #include "AESGCMGMAC_KeyFactory.h"
 
-using namespace eprosima::fastrtps::rtps::security;
+// Solve error with Win32 macro
+#ifdef WIN32
+#undef max
+#endif
+
+using namespace eprosima::fastrtps::rtps;
+using namespace ::security;
 
 AESGCMGMAC_KeyFactory::AESGCMGMAC_KeyFactory(){}
 
@@ -49,13 +55,13 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
           for(auto it=participant_properties.begin(); it!=participant_properties.end(); ++it){
               if( (it)->name() == "dds.sec.crypto.cryptotransformkind"){
                       if( it->value() == std::string("AES128_GCM") )
-                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM);
+                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM};
                       if( it->value() == std::string("AES128_GMAC") )
-                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC);
+                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
                       if( it->value() == std::string("AES256_GCM") )
-                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM);
+                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM};
                       if( it->value() == std::string("AES256_GMAC") )
-                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES256_GMAC);
+                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC};
               }// endif
               if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
                   try{
@@ -233,19 +239,19 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
     //Create ParticipantCryptoHandle, fill Participant KeyMaterial and return it
     AESGCMGMAC_WriterCryptoHandle* WCrypto = new AESGCMGMAC_WriterCryptoHandle();
 
-    std::array<uint8_t, 4> transformationtype(CRYPTO_TRANSFORMATION_KIND_AES128_GCM); //Default to AES128_GCM
+    std::array<uint8_t, 4> transformationtype{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}; //Default to AES128_GCM
     int maxblockspersession = 32; //Default to key update every 32 usages
     if(!datawriter_prop.empty()){
           for(auto it=datawriter_prop.begin(); it!=datawriter_prop.end(); ++it){
               if( (it)->name() == "dds.sec.crypto.cryptotransformkind"){
                       if( it->value() == std::string("AES128_GCM") )
-                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM);
+                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM};
                       if( it->value() == std::string("AES128_GMAC") )
-                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC);
+                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
                       if( it->value() == std::string("AES256_GCM") )
-                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM);
-                      if( it->value() == std::string("AES256_GMAC") )
-                            transformationtype = std::array<uint8_t, 4>(CRYPTO_TRANSFORMATION_KIND_AES256_GMAC);
+                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM};
+                          if(it->value() == std::string("AES256_GMAC"))
+                              transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC};
               }// endif
               if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
                   try{
@@ -591,7 +597,7 @@ bool AESGCMGMAC_KeyFactory::unregister_datareader(
 }
 
 CryptoTransformKeyId AESGCMGMAC_KeyFactory::make_unique_KeyId(){
-    CryptoTransformKeyId buffer;
+    CryptoTransformKeyId buffer{0,0,0,0};
     bool unique = false;
 
     while(!unique){
