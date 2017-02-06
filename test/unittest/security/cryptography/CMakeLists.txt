@@ -49,8 +49,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Types.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinAESGCMGMACTests.cpp
             ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+        target_compile_definitions(BuiltinAESGCMGMAC PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(BuiltinAESGCMGMAC PRIVATE
             ${GTEST_INCLUDE_DIRS}
+            ${OPENSSL_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
         target_link_libraries(BuiltinAESGCMGMAC ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES})
     endif()

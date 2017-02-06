@@ -120,20 +120,20 @@ enum ParameterId_t	: uint16_t
 
 //!Base Parameter class with parameter PID and parameter length in bytes.
 //!@ingroup PARAMETER_MODULE
-class RTPS_DllAPI Parameter_t {
+class Parameter_t {
     public:
         //!Parameter ID
         ParameterId_t Pid;
         //!Parameter length
         uint16_t length;
-        Parameter_t();
-        virtual ~Parameter_t();
+        RTPS_DllAPI Parameter_t();
+        virtual RTPS_DllAPI ~Parameter_t();
         /**
          * Constructor using a parameter PID and the parameter length
          * @param pid Pid of the parameter
          * @param length Its associated length
          */
-        Parameter_t(ParameterId_t pid,uint16_t length);
+        RTPS_DllAPI Parameter_t(ParameterId_t pid,uint16_t length);
         /**
          * Virtual method used to add the parameter to a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message where the parameter should be added.
@@ -145,7 +145,7 @@ class RTPS_DllAPI Parameter_t {
 /**
  *@ingroup PARAMETER_MODULE
  */
-class RTPS_DllAPI ParameterKey_t:public Parameter_t{
+class ParameterKey_t:public Parameter_t{
     public:
         InstanceHandle_t key;
         ParameterKey_t(){};
@@ -167,7 +167,7 @@ class RTPS_DllAPI ParameterKey_t:public Parameter_t{
 /**
  *
  */
-class RTPS_DllAPI ParameterLocator_t: public Parameter_t {
+class ParameterLocator_t: public Parameter_t {
     public:
         Locator_t locator;
         ParameterLocator_t(){};
@@ -216,7 +216,7 @@ class ParameterString_t: public Parameter_t {
 /**
  *
  */
-class RTPS_DllAPI ParameterPort_t: public Parameter_t {
+class ParameterPort_t: public Parameter_t {
     public:
         uint32_t port;
         ParameterPort_t():port(0){};
@@ -240,7 +240,7 @@ class RTPS_DllAPI ParameterPort_t: public Parameter_t {
 /**
  *
  */
-class RTPS_DllAPI ParameterGuid_t: public Parameter_t {
+class ParameterGuid_t: public Parameter_t {
     public:
         GUID_t guid;
         ParameterGuid_t(){};
@@ -274,7 +274,7 @@ class RTPS_DllAPI ParameterGuid_t: public Parameter_t {
 /**
  *
  */
-class RTPS_DllAPI ParameterProtocolVersion_t: public Parameter_t {
+class ParameterProtocolVersion_t: public Parameter_t {
     public:
         ProtocolVersion_t protocolVersion;
         ParameterProtocolVersion_t(){protocolVersion = c_ProtocolVersion;};
@@ -297,7 +297,7 @@ class RTPS_DllAPI ParameterProtocolVersion_t: public Parameter_t {
 /**
  *
  */
-class RTPS_DllAPI ParameterVendorId_t:public Parameter_t{
+class ParameterVendorId_t:public Parameter_t{
     public:
         VendorId_t vendorId;
         ParameterVendorId_t(){set_VendorId_eProsima(vendorId);};
@@ -320,7 +320,7 @@ class RTPS_DllAPI ParameterVendorId_t:public Parameter_t{
 /**
  *
  */
-class RTPS_DllAPI ParameterIP4Address_t :public Parameter_t{
+class ParameterIP4Address_t :public Parameter_t{
     public:
         octet address[4];
         ParameterIP4Address_t(){this->setIP4Address(0,0,0,0);};
@@ -344,7 +344,7 @@ class RTPS_DllAPI ParameterIP4Address_t :public Parameter_t{
 /**
  *
  */
-class RTPS_DllAPI ParameterBool_t:public Parameter_t{
+class ParameterBool_t:public Parameter_t{
     public:
         bool value;
         ParameterBool_t():value(false){};
@@ -368,7 +368,7 @@ class RTPS_DllAPI ParameterBool_t:public Parameter_t{
 /**
  *
  */
-class RTPS_DllAPI ParameterCount_t:public Parameter_t{
+class ParameterCount_t:public Parameter_t{
     public:
         Count_t count;
         ParameterCount_t():count(0){};
@@ -391,7 +391,7 @@ class RTPS_DllAPI ParameterCount_t:public Parameter_t{
 /**
  *
  */
-class RTPS_DllAPI ParameterEntityId_t:public Parameter_t{
+class ParameterEntityId_t:public Parameter_t{
     public:
         EntityId_t entityId;
         ParameterEntityId_t():entityId(ENTITYID_UNKNOWN){};
@@ -414,7 +414,7 @@ class RTPS_DllAPI ParameterEntityId_t:public Parameter_t{
 /**
  *
  */
-class RTPS_DllAPI ParameterTime_t:public Parameter_t{
+class ParameterTime_t:public Parameter_t{
     public:
         Time_t time;
         ParameterTime_t(){};
@@ -437,7 +437,7 @@ class RTPS_DllAPI ParameterTime_t:public Parameter_t{
 /**
  *
  */
-class RTPS_DllAPI ParameterBuiltinEndpointSet_t:public Parameter_t{
+class ParameterBuiltinEndpointSet_t:public Parameter_t{
     public:
         BuiltinEndpointSet_t endpointSet;
         ParameterBuiltinEndpointSet_t():endpointSet(0){};
@@ -481,7 +481,7 @@ class ParameterPropertyList_t:public Parameter_t{
 /**
  *
  */
-class RTPS_DllAPI ParameterSampleIdentity_t : public Parameter_t
+class ParameterSampleIdentity_t : public Parameter_t
 {
     public:
         SampleIdentity sample_id;
@@ -506,7 +506,7 @@ class RTPS_DllAPI ParameterSampleIdentity_t : public Parameter_t
 /**
  *
  */
-class RTPS_DllAPI ParameterToken_t : public Parameter_t
+class ParameterToken_t : public Parameter_t
 {
     public:
         Token token;

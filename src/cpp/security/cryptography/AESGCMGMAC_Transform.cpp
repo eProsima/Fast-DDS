@@ -26,6 +26,11 @@
 #include <openssl/rand.h>
 #include <cstring>
 
+ // Solve error with Win32 macro
+#ifdef WIN32
+#undef max
+#endif
+
 #define RTPS_HEADER_SIZE 20
 
 using namespace eprosima::fastrtps::rtps::security;
@@ -43,6 +48,13 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_crypto);
     if(local_writer.nil()){
         logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle");
+        return false;
+    }
+
+    // Precondition to use openssl
+    if(plain_buffer.size() > std::numeric_limits<int>::max())
+    {
+        logError(SECURITY_CRYPTO, "Plain text too large");
         return false;
     }
 
@@ -80,7 +92,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     //Cypher the plain rtps message -> SecureDataBody
     (void)RAND_load_file("/dev/urandom", 32); //Init random number gen
 
-    size_t enc_length = plain_buffer.size()*3;
+    size_t enc_length = plain_buffer.size()*3; //TODO(Ricardo) Review size.
     std::vector<uint8_t> output;
     output.resize(enc_length,0);
 
@@ -88,13 +100,13 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
 
     int actual_size=0, final_size=0;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-    if(local_writer->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)){
+    if(local_writer->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) {
         EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_writer->SessionKey.data()), initialization_vector.data());
     }
-    if(local_writer->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)){
+    if(local_writer->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}) {
         EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(local_writer->SessionKey.data()), initialization_vector.data());
     }
-    EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_buffer.data(), plain_buffer.size());
+    EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_buffer.data(), static_cast<int>(plain_buffer.size()));
     EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
     EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
     output.resize(actual_size+final_size);
@@ -132,8 +144,15 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
         SecurityException& /*exception*/){
 
     AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_crypto);
+
     if(local_writer.nil()){
         logWarning(SECURITY_CRYPTO,"Invalid cryptoHandle");
+        return false;
+    }
+
+    if(plain_rtps_submessage.size() > std::numeric_limits<int>::max())
+    {
+        logError(SECURITY_CRYPTO, "Plain rtps submessage too large");
         return false;
     }
 
@@ -173,7 +192,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     //Cypher the plain rtps message -> SecureDataBody
     (void)RAND_load_file("/dev/urandom", 32); //Init random number gen
 
-    size_t enc_length = plain_rtps_submessage.size()*3;
+    size_t enc_length = plain_rtps_submessage.size()*3; //TODO(Ricardo)Review size.
     std::vector<uint8_t> output;
     output.resize(enc_length,0);
 
@@ -182,7 +201,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     int actual_size=0, final_size=0;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
     EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_writer->SessionKey.data()), initialization_vector.data());
-    EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_rtps_submessage.data(), plain_rtps_submessage.size());
+    EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_rtps_submessage.data(), static_cast<int>(plain_rtps_submessage.size()));
     EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
     EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
     output.resize(actual_size+final_size);
@@ -217,8 +236,8 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
         }
 
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
-        int actual_size=0, final_size=0;
-        EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
+        actual_size = 0; final_size = 0;
+        e_ctx = EVP_CIPHER_CTX_new();
         EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_reader->SessionKey.data()), initialization_vector.data());
         EVP_EncryptUpdate(e_ctx, NULL, &actual_size, dataTag.common_mac.data(), 16);
         EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
@@ -260,8 +279,15 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
         SecurityException& /*exception*/){
 
     AESGCMGMAC_ReaderCryptoHandle& local_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(sending_datareader_crypto);
+
     if(local_reader.nil()){
         logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle");
+        return false;
+    }
+
+    if(plain_rtps_submessage.size() > std::numeric_limits<int>::max())
+    {
+        logError(SECURITY_CRYPTO, "Plain rtps submessage too large");
         return false;
     }
 
@@ -310,7 +336,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     int actual_size=0, final_size=0;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
     EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_reader->SessionKey.data()), initialization_vector.data());
-    EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_rtps_submessage.data(), plain_rtps_submessage.size());
+    EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_rtps_submessage.data(), static_cast<int>(plain_rtps_submessage.size()));
     EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
     EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
     output.resize(actual_size+final_size);
@@ -345,8 +371,8 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
         }
 
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
-        int actual_size=0, final_size=0;
-        EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
+        actual_size = 0; final_size = 0;
+        e_ctx = EVP_CIPHER_CTX_new();
         EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_writer->SessionKey.data()), initialization_vector.data());
         EVP_EncryptUpdate(e_ctx, NULL, &actual_size, dataTag.common_mac.data(), 16);
         EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
@@ -390,6 +416,12 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     if(local_participant.nil())
     {
         logError(SECURITY_CRYPTO,"Invalid CryptoToken");
+        return false;
+    }
+
+    if(plain_rtps_message.size() > std::numeric_limits<int>::max())
+    {
+        logError(SECURITY_CRYPTO, "Plain rtps message too large");
         return false;
     }
 
@@ -446,28 +478,28 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
 
     int actual_size=0, final_size=0;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-    if( (local_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)) |
-            (local_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC)))
+    if((local_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) |
+            (local_participant->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC}))
     {
         EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_participant->SessionKey.data()), initialization_vector.data());
     }
-    if( (local_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)) |
-            (local_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GMAC))) 
+    if( (local_participant->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}) |
+            (local_participant->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}))
     {
         EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(local_participant->SessionKey.data()), initialization_vector.data());
     }
 
-    if( (local_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)) |
-            (local_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)))
+    if( (local_participant->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) |
+            (local_participant->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}))
     {
         //We are in GCM mode: We need encryption and signature
-        EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)payload.data(), payload.size());
+        EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)payload.data(), static_cast<int>(payload.size()));
         EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
         EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
         output.resize(actual_size+final_size);
     }else{  
         //We are in GMAC mode: We need a signature but no encryption is needed
-        EVP_EncryptUpdate(e_ctx, NULL, &actual_size, (const unsigned char*)payload.data(), payload.size());
+        EVP_EncryptUpdate(e_ctx, NULL, &actual_size, (const unsigned char*)payload.data(), static_cast<int>(payload.size()));
         EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
         EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
         output.resize(payload.size());
@@ -507,15 +539,15 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         }
         unsigned char specific_tag[AES_BLOCK_SIZE]; //Container for the Authentication Tag (will become common mac)
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
-        int actual_size=0, final_size=0;
-        EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-        if( (remote_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)) |
-                (remote_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC)))
+        actual_size = 0; final_size = 0;
+        e_ctx = EVP_CIPHER_CTX_new();
+        if((remote_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) |
+            (remote_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC}))
         {
             EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_participant->SessionKey.data()), initialization_vector.data());
         }
-        if( (remote_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)) |
-                (remote_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GMAC)))
+        if((remote_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}) |
+            (remote_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}))
         {
             EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(remote_participant->SessionKey.data()), initialization_vector.data());
         }
@@ -563,6 +595,12 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
         return false;
     }
 
+    if(encoded_buffer.size() > std::numeric_limits<int>::max())
+    {
+        logError(SECURITY_CRYPTO, "Encoded rtps message too large");
+        return false;
+    }
+
     if(sending_participant->RemoteParticipant2ParticipantKeyMaterial.size() == 0)
         return false;
 
@@ -584,7 +622,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     //Tag
     tag = deserialize_SecureDataTag(serialized_tag);
     //Read specific MACs in search for the correct one (verify the authenticity of the message)
-    ReceiverSpecificMAC* specific_mac;
+    ReceiverSpecificMAC* specific_mac = nullptr;
     // TODO(Ricardo) Review SessionReceiverSpecificKey (248pag)
     bool mac_found = false;
     for(size_t j = 0; j < tag.receiver_specific_macs.size(); ++j)
@@ -633,8 +671,8 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
             session_id);
 
     //Verify specific MAC
-    if( (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)) |
-            (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC)))
+    if((sending_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) |
+            (sending_participant->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC}))
     {
         if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(),NULL, NULL))
         {
@@ -642,8 +680,8 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
             return false;
         }
     }
-    else if((sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)) |
-            (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GMAC)))
+    else if((sending_participant->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}) |
+            (sending_participant->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}))
     {
         if(!EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), NULL, NULL))
         {
@@ -694,23 +732,23 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     actual_size = 0;
     final_size = 0;
 
-    if( (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)) |
-            (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GMAC)))
+    if((sending_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) |
+        (sending_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC}))
     {
         EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
     }
-    if( (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)) |
-            (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GMAC)))
+    if((sending_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}) |
+        (sending_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}))
     {
         EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
     }
 
-    if( (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES256_GCM)) |
-            (sending_participant->transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)))
+    if((sending_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}) |
+        (sending_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}))
     {
 
         plain_buffer.resize(encoded_buffer.size());
-        EVP_DecryptUpdate(d_ctx, plain_buffer.data(), &actual_size, body.secure_data.data(),body.secure_data.size());
+        EVP_DecryptUpdate(d_ctx, plain_buffer.data(), &actual_size, body.secure_data.data(), static_cast<int>(body.secure_data.size()));
         EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG,16,tag.common_mac.data());
         EVP_DecryptFinal(d_ctx, plain_buffer.data() + actual_size, &final_size);
         plain_buffer.resize(actual_size + final_size);
@@ -828,6 +866,12 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     if(sending_writer.nil())
     {
         logError(SECURITY_CRYPTO, "Invalid sending_writer handle");
+        return false;
+    }
+
+    if(static_cast<int64_t>(encoded_rtps_submessage.length) > std::numeric_limits<int>::max())
+    {
+        logError(SECURITY_CRYPTO, "Encoded rtps submessage too large");
         return false;
     }
 
@@ -956,7 +1000,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     }
 
     if(!EVP_DecryptUpdate(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &actual_size,
-                body.secure_data.data(), body.secure_data.size()))
+                body.secure_data.data(), static_cast<int>(body.secure_data.size())))
     {
         logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_DecryptUpdate function returns an error");
         return false;
@@ -990,6 +1034,12 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     if(sending_reader.nil())
     {
         logError(SECURITY_CRYPTO, "Invalid sending_reader handle");
+        return false;
+    }
+
+    if(static_cast<int64_t>(encoded_rtps_submessage.length) > std::numeric_limits<int>::max())
+    {
+        logError(SECURITY_CRYPTO, "Encoded rtps submessage too large");
         return false;
     }
 
@@ -1116,7 +1166,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     }
 
     if(!EVP_DecryptUpdate(d_ctx, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], &actual_size,
-                body.secure_data.data(),body.secure_data.size()))
+                body.secure_data.data(), static_cast<int>(body.secure_data.size())))
     {
         logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_DecryptUpdate function returns an error");
         return false;
@@ -1149,8 +1199,15 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
         SecurityException &exception){
 
     AESGCMGMAC_WriterCryptoHandle& sending_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_crypto);
+
     if(sending_writer.nil()){
         exception = SecurityException("Not a valid sending_writer handle");
+        return false;
+    }
+
+    if(encoded_buffer.size() > std::numeric_limits<int>::max())
+    {
+        logError(SECURITY_CRYPTO, "Encoded payload too large");
         return false;
     }
 
@@ -1204,7 +1261,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     if(sending_writer->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}){
         EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
     }
-    EVP_DecryptUpdate(d_ctx, plain_buffer.data(), &actual_size, body.secure_data.data(),body.secure_data.size());
+    EVP_DecryptUpdate(d_ctx, plain_buffer.data(), &actual_size, body.secure_data.data(), static_cast<int>(body.secure_data.size()));
     EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG,16,tag.common_mac.data());
     EVP_DecryptFinal(d_ctx, plain_buffer.data() + actual_size, &final_size);
     EVP_CIPHER_CTX_free(d_ctx);
@@ -1264,7 +1321,7 @@ std::vector<uint8_t> AESGCMGMAC_Transform::serialize_SecureDataTag(SecureDataTag
     //Common tag
     for(int i = 0;i < 16; ++i) buffer.push_back( input.common_mac.at(i) );
     //Receiver specific macs
-    int32_t specific_length = input.receiver_specific_macs.size();
+    int32_t specific_length = static_cast<int32_t>(input.receiver_specific_macs.size());
     for(size_t i = 0;i < sizeof(int32_t); ++i) buffer.push_back( *( (uint8_t*)&specific_length + i ) );
     for(size_t j = 0; j< input.receiver_specific_macs.size(); ++j){
         for(int i = 0; i < 4; ++i) buffer.push_back( input.receiver_specific_macs.at(j).receiver_mac_key_id.at(i) );
@@ -1301,7 +1358,7 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
     flags &= 0xFE; //Force LSB to zero
     buffer.push_back(flags);
     //Octets2NextSubMessageHeader
-    octets = serialized_header.size() + serialized_body.size() + 2 + 2 + serialized_tag.size();
+    octets = static_cast<short>(serialized_header.size() + serialized_body.size() + 2 + 2 + serialized_tag.size());
     uint8_t octets_c[2] = { 0, 0 };
     memcpy(octets_c, &octets, 2);
     buffer.push_back( octets_c[0] );
@@ -1316,7 +1373,7 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
     //Flags
     buffer.push_back(flags);
     //Octets2NextSubMessageHeader
-    octets = serialized_tag.size();
+    octets = static_cast<short>(serialized_tag.size());
     memcpy(octets_c, &octets, 2);
     buffer.push_back( octets_c[0] );
     buffer.push_back( octets_c[1] );
@@ -1340,7 +1397,7 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_rtps_message(std::vector<uin
     flags &= 0xFE; //Enforce LSB to zero
     buffer.push_back(flags);
     //Octects2NextSugMs
-    octets = serialized_header.size() + serialized_body.size() + 2 + 2 + serialized_tag.size();
+    octets = static_cast<short>(serialized_header.size() + serialized_body.size() + 2 + 2 + serialized_tag.size());
     uint8_t octets_c[2] = { 0, 0 };
     memcpy(octets_c, &octets, 2);
     buffer.push_back( octets_c[1] );
@@ -1354,7 +1411,7 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_rtps_message(std::vector<uin
     //Flags
     buffer.push_back(flags);
     //Octets2Nextheader
-    octets = serialized_tag.size();
+    octets = static_cast<short>(serialized_tag.size());
     memcpy(octets_c, &octets, 2);
     buffer.push_back( octets_c[1] );
     buffer.push_back( octets_c[0] );
@@ -1525,7 +1582,7 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &
     int32_t body_length = 0;
     memcpy(&body_length, input.data() + offset, sizeof(int32_t));
     for(i=0; i < body_length; i++) serialized_body.push_back( input.at(i + offset + sizeof(int32_t)) );
-    offset += sizeof(int32_t) + body_length;
+    offset += static_cast<short>(sizeof(int32_t) + body_length);
     //SRTPS_POSTFIX
     if( input.at(offset) != SRTPS_POSTFIX ) return false;
     offset += 1;

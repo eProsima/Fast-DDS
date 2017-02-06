@@ -108,8 +108,9 @@ void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHa
     ASSERT_TRUE(handshake_handle.nil() == false);
     const std::vector<uint8_t>* cid = DataHolderHelper::find_binary_property_value(message, "c.id");
     ASSERT_TRUE(cid != nullptr);
+
     // Read certificate.
-    BIO* cid_in = BIO_new_mem_buf(cid->data(), cid->size());
+    BIO* cid_in = BIO_new_mem_buf(cid->data(), static_cast<int>(cid->size()));
     ASSERT_TRUE(cid_in != nullptr);
     X509* cid_cert = PEM_read_bio_X509_AUX(cid_in, NULL, NULL, NULL);
     ASSERT_TRUE(cid_cert != nullptr);
@@ -134,7 +135,7 @@ void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHa
     ASSERT_TRUE(hash_c1 != nullptr);
     ASSERT_TRUE(hash_c1->size() == SHA256_DIGEST_LENGTH);
     // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
-    CDRMessage_t cdrmessage(BinaryPropertyHelper::serialized_size(message.binary_properties())+ 3);
+    CDRMessage_t cdrmessage(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(message.binary_properties())+ 3));
     cdrmessage.msg_endian = BIGEND;
     CDRMessage::addBinaryPropertySeq(&cdrmessage, message.binary_properties(), "hash_c1");
     unsigned char md[SHA256_DIGEST_LENGTH];
@@ -147,20 +148,17 @@ void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHa
     ASSERT_TRUE(dh != nullptr);
     const unsigned char* pointer = dh1->data();
     uint32_t length = 0;
-    if(DEFAULT_ENDIAN == BIGEND)
-    {
+#if __BIG_ENDIAN__
         ((char*)&length)[0] = pointer[0];
         ((char*)&length)[1] = pointer[1];
         ((char*)&length)[2] = pointer[2];
         ((char*)&length)[3] = pointer[3];
-    }
-    else
-    {
+#else
         ((char*)&length)[0] = pointer[3];
         ((char*)&length)[1] = pointer[2];
         ((char*)&length)[2] = pointer[1];
         ((char*)&length)[3] = pointer[0];
-    }
+#endif
     pointer += 4;
     BIGNUM bn;
     BN_init(&bn);
@@ -168,39 +166,33 @@ void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHa
     ASSERT_TRUE(BN_cmp(dh->p, &bn) == 0);
     pointer += length;
     pointer += alignment(pointer - dh1->data(), 4);
-    if(DEFAULT_ENDIAN == BIGEND)
-    {
+#if __BIG_ENDIAN__
         ((char*)&length)[0] = pointer[0];
         ((char*)&length)[1] = pointer[1];
         ((char*)&length)[2] = pointer[2];
         ((char*)&length)[3] = pointer[3];
-    }
-    else
-    {
+#else
         ((char*)&length)[0] = pointer[3];
         ((char*)&length)[1] = pointer[2];
         ((char*)&length)[2] = pointer[1];
         ((char*)&length)[3] = pointer[0];
-    }
+#endif
     pointer += 4;
     ASSERT_TRUE(BN_bin2bn(pointer, length, &bn) !=  nullptr);
     ASSERT_TRUE(BN_cmp(dh->g, &bn) == 0);
     pointer += length;
     pointer += alignment(pointer - dh1->data(), 4);
-    if(DEFAULT_ENDIAN == BIGEND)
-    {
+#if __BIG_ENDIAN__
         ((char*)&length)[0] = pointer[0];
         ((char*)&length)[1] = pointer[1];
         ((char*)&length)[2] = pointer[2];
         ((char*)&length)[3] = pointer[3];
-    }
-    else
-    {
+#else
         ((char*)&length)[0] = pointer[3];
         ((char*)&length)[1] = pointer[2];
         ((char*)&length)[2] = pointer[1];
         ((char*)&length)[3] = pointer[0];
-    }
+#endif
     pointer += 4;
     ASSERT_TRUE(BN_bin2bn(pointer, length, &bn) !=  nullptr);
     int check_result;
@@ -221,7 +213,7 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     const std::vector<uint8_t>* cid = DataHolderHelper::find_binary_property_value(message, "c.id");
     ASSERT_TRUE(cid != nullptr);
     // Read certificate.
-    BIO* cid_in = BIO_new_mem_buf(cid->data(), cid->size());
+    BIO* cid_in = BIO_new_mem_buf(cid->data(), static_cast<int>(cid->size()));
     ASSERT_TRUE(cid_in != nullptr);
     X509* cid_cert = PEM_read_bio_X509_AUX(cid_in, NULL, NULL, NULL);
     ASSERT_TRUE(cid_cert != nullptr);
@@ -246,7 +238,7 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     ASSERT_TRUE(hash_c2 != nullptr);
     ASSERT_TRUE(hash_c2->size() == SHA256_DIGEST_LENGTH);
     // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
-    CDRMessage_t cdrmessage(BinaryPropertyHelper::serialized_size(message.binary_properties())+ 3);
+    CDRMessage_t cdrmessage(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(message.binary_properties())+ 3));
     cdrmessage.msg_endian = BIGEND;
     CDRMessage::addBinaryPropertySeq(&cdrmessage, message.binary_properties(), "hash_c2");
     unsigned char md[SHA256_DIGEST_LENGTH];
@@ -259,20 +251,17 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     ASSERT_TRUE(dh != nullptr);
     const unsigned char* pointer = dh2->data();
     uint32_t length = 0;
-    if(DEFAULT_ENDIAN == BIGEND)
-    {
+#if __BIG_ENDIAN__
         ((char*)&length)[0] = pointer[0];
         ((char*)&length)[1] = pointer[1];
         ((char*)&length)[2] = pointer[2];
         ((char*)&length)[3] = pointer[3];
-    }
-    else
-    {
+#else
         ((char*)&length)[0] = pointer[3];
         ((char*)&length)[1] = pointer[2];
         ((char*)&length)[2] = pointer[1];
         ((char*)&length)[3] = pointer[0];
-    }
+#endif
     pointer += 4;
     BIGNUM bn;
     BN_init(&bn);
@@ -280,39 +269,33 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     ASSERT_TRUE(BN_cmp(dh->p, &bn) == 0);
     pointer += length;
     pointer += alignment(pointer - dh2->data(), 4);
-    if(DEFAULT_ENDIAN == BIGEND)
-    {
+#if __BIG_ENDIAN__
         ((char*)&length)[0] = pointer[0];
         ((char*)&length)[1] = pointer[1];
         ((char*)&length)[2] = pointer[2];
         ((char*)&length)[3] = pointer[3];
-    }
-    else
-    {
+#else
         ((char*)&length)[0] = pointer[3];
         ((char*)&length)[1] = pointer[2];
         ((char*)&length)[2] = pointer[1];
         ((char*)&length)[3] = pointer[0];
-    }
+#endif
     pointer += 4;
     ASSERT_TRUE(BN_bin2bn(pointer, length, &bn) !=  nullptr);
     ASSERT_TRUE(BN_cmp(dh->g, &bn) == 0);
     pointer += length;
     pointer += alignment(pointer - dh2->data(), 4);
-    if(DEFAULT_ENDIAN == BIGEND)
-    {
+#if __BIG_ENDIAN__
         ((char*)&length)[0] = pointer[0];
         ((char*)&length)[1] = pointer[1];
         ((char*)&length)[2] = pointer[2];
         ((char*)&length)[3] = pointer[3];
-    }
-    else
-    {
+#else
         ((char*)&length)[0] = pointer[3];
         ((char*)&length)[1] = pointer[2];
         ((char*)&length)[2] = pointer[1];
         ((char*)&length)[3] = pointer[0];
-    }
+#endif
     pointer += 4;
     ASSERT_TRUE(BN_bin2bn(pointer, length, &bn) !=  nullptr);
     int check_result;
@@ -345,7 +328,7 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     const std::vector<uint8_t>* signature = DataHolderHelper::find_binary_property_value(message, "signature");
     ASSERT_TRUE(signature != nullptr);
     // signature
-    CDRMessage_t cdrmessage2(BinaryPropertyHelper::serialized_size(message.binary_properties()));
+    CDRMessage_t cdrmessage2(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(message.binary_properties())));
     cdrmessage2.msg_endian = BIGEND;
     // add sequence length
     CDRMessage::addUInt32(&cdrmessage2, 6);
@@ -417,7 +400,7 @@ void AuthenticationPluginTest::check_handshake_final_message(const HandshakeHand
     const std::vector<uint8_t>* signature = DataHolderHelper::find_binary_property_value(message, "signature");
     ASSERT_TRUE(signature != nullptr);
     // signature
-    CDRMessage_t cdrmessage(BinaryPropertyHelper::serialized_size(message.binary_properties()));
+    CDRMessage_t cdrmessage(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(message.binary_properties())));
     cdrmessage.msg_endian = BIGEND;
     // add sequence length
     CDRMessage::addUInt32(&cdrmessage, 6);

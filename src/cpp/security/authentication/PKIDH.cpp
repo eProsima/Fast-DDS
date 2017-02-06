@@ -59,20 +59,17 @@ unsigned char* BN_serialize(const BIGNUM* bn, const unsigned char* orig_pointer,
     unsigned char* pointer = current_pointer + align;
     int32_t len = (int32_t)BN_num_bytes(bn);
 
-    if(DEFAULT_ENDIAN == BIGEND)
-    {
+#if __BIG_ENDIAN__
         pointer[0] = ((char*)&len)[0];
         pointer[1] = ((char*)&len)[1];
         pointer[2] = ((char*)&len)[2];
         pointer[3] = ((char*)&len)[3];
-    }
-    else
-    {
+#else
         pointer[0] = ((char*)&len)[3];
         pointer[1] = ((char*)&len)[2];
         pointer[2] = ((char*)&len)[1];
         pointer[3] = ((char*)&len)[0];
-    }
+#endif
 
     pointer += 4;
 
@@ -93,20 +90,17 @@ const unsigned char* BN_deserialize(BIGNUM** bn, const unsigned char* orig_point
     const unsigned char* pointer = current_pointer + align;
     uint32_t length = 0;
 
-    if(DEFAULT_ENDIAN == BIGEND)
-    {
+#if __BIG_ENDIAN__
         ((char*)&length)[0] = pointer[0];
         ((char*)&length)[1] = pointer[1];
         ((char*)&length)[2] = pointer[2];
         ((char*)&length)[3] = pointer[3];
-    }
-    else
-    {
+#else
         ((char*)&length)[0] = pointer[3];
         ((char*)&length)[1] = pointer[2];
         ((char*)&length)[2] = pointer[1];
         ((char*)&length)[3] = pointer[0];
-    }
+#endif
 
     pointer += 4;
 
@@ -293,12 +287,16 @@ X509* load_certificate(const std::string& identity_cert, SecurityException& exce
 X509* load_certificate(const std::vector<uint8_t>& data)
 {
     X509* returnedValue = nullptr;
-    BIO* cid = BIO_new_mem_buf(data.data(), data.size());
 
-    if(cid != nullptr)
+    if(data.size() <= std::numeric_limits<int>::max())
     {
-        returnedValue = PEM_read_bio_X509_AUX(cid, NULL, NULL, NULL);
-        BIO_free(cid);
+        BIO* cid = BIO_new_mem_buf(data.data(), static_cast<int>(data.size()));
+
+        if(cid != nullptr)
+        {
+            returnedValue = PEM_read_bio_X509_AUX(cid, NULL, NULL, NULL);
+            BIO_free(cid);
+        }
     }
 
     return returnedValue;
@@ -332,7 +330,7 @@ int private_key_password_callback(char* buf, int bufsize, int /*verify*/, const 
 {
     assert(password != nullptr);
 
-    int returnedValue = strlen(password);
+    int returnedValue = static_cast<int>(strlen(password));
 
     if(returnedValue > bufsize)
         returnedValue = bufsize;
@@ -705,7 +703,7 @@ bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer,
         const BIGNUM* p = dh->p;
         const BIGNUM* g = dh->g;
         const BIGNUM* pub_key = dh->pub_key;
-        int len = BN_serialized_size(p);
+        size_t len = BN_serialized_size(p);
         len += BN_serialized_size(g);
         len += BN_serialized_size(pub_key);
         buffer.resize(len);
@@ -1146,7 +1144,7 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
 
     // hash_c1
     // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
-    CDRMessage_t message(BinaryPropertyHelper::serialized_size((*handshake_handle_aux)->handshake_message_.binary_properties()) + 3);
+    CDRMessage_t message(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size((*handshake_handle_aux)->handshake_message_.binary_properties())) + 3);
     message.msg_endian = BIGEND;
     CDRMessage::addBinaryPropertySeq(&message, (*handshake_handle_aux)->handshake_message_.binary_properties());
     if(!EVP_Digest(message.buffer, message.length, md, NULL, EVP_sha256(), NULL))
@@ -1364,7 +1362,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     }
 
     // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
-    CDRMessage_t cdrmessage(BinaryPropertyHelper::serialized_size(handshake_message_in.binary_properties())+ 3);
+    CDRMessage_t cdrmessage(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(handshake_message_in.binary_properties())) + 3);
     cdrmessage.msg_endian = BIGEND;
     CDRMessage::addBinaryPropertySeq(&cdrmessage, handshake_message_in.binary_properties(), "hash_c1");
 
@@ -1443,7 +1441,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
 
     // hash_c2
     // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
-    CDRMessage_t message(BinaryPropertyHelper::serialized_size((*handshake_handle_aux)->handshake_message_.binary_properties()) + 3);
+    CDRMessage_t message(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size((*handshake_handle_aux)->handshake_message_.binary_properties())) + 3);
     message.msg_endian = BIGEND;
     CDRMessage::addBinaryPropertySeq(&message, (*handshake_handle_aux)->handshake_message_.binary_properties());
     if(!EVP_Digest(message.buffer, message.length, md, NULL, EVP_sha256(), NULL))
@@ -1494,26 +1492,26 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
                 (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
                 // signature
-                CDRMessage_t cdrmessage(BinaryPropertyHelper::serialized_size((*handshake_handle_aux)->handshake_message_.binary_properties()));
-                cdrmessage.msg_endian = BIGEND;
+                CDRMessage_t cdrmessage2(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size((*handshake_handle_aux)->handshake_message_.binary_properties())));
+                cdrmessage2.msg_endian = BIGEND;
                 // add sequence length
-                CDRMessage::addUInt32(&cdrmessage, 6);
+                CDRMessage::addUInt32(&cdrmessage2, 6);
                 //add hash_c2
-                CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property((*handshake_handle_aux)->handshake_message_, "hash_c2"));
+                CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property((*handshake_handle_aux)->handshake_message_, "hash_c2"));
                 //add challenge2
-                CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property((*handshake_handle_aux)->handshake_message_, "challenge2"));
+                CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property((*handshake_handle_aux)->handshake_message_, "challenge2"));
                 //add dh2
-                CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property((*handshake_handle_aux)->handshake_message_, "dh2"));
+                CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property((*handshake_handle_aux)->handshake_message_, "dh2"));
                 //add challenge1
-                CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property((*handshake_handle_aux)->handshake_message_, "challenge1"));
+                CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property((*handshake_handle_aux)->handshake_message_, "challenge1"));
                 //add dh1
-                CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property((*handshake_handle_aux)->handshake_message_, "dh1"));
+                CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property((*handshake_handle_aux)->handshake_message_, "dh1"));
                 //add hash_c1
-                CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property((*handshake_handle_aux)->handshake_message_, "hash_c1"));
+                CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property((*handshake_handle_aux)->handshake_message_, "hash_c1"));
 
                 bproperty.name("signature");
                 bproperty.propagate("true");
-                if(sign_sha256(lih->pkey_, cdrmessage.buffer, cdrmessage.length, bproperty.value(), exception))
+                if(sign_sha256(lih->pkey_, cdrmessage2.buffer, cdrmessage2.length, bproperty.value(), exception))
                 {
                     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
@@ -1711,7 +1709,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     }
 
     // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
-    CDRMessage_t cdrmessage(BinaryPropertyHelper::serialized_size(handshake_message_in.binary_properties())+ 3);
+    CDRMessage_t cdrmessage(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(handshake_message_in.binary_properties()))+ 3);
     cdrmessage.msg_endian = BIGEND;
     CDRMessage::addBinaryPropertySeq(&cdrmessage, handshake_message_in.binary_properties(), "hash_c2");
 
@@ -1827,7 +1825,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     }
 
     // signature
-    CDRMessage_t cdrmessage2(BinaryPropertyHelper::serialized_size(handshake_message_in.binary_properties()));
+    CDRMessage_t cdrmessage2(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(handshake_message_in.binary_properties())));
     cdrmessage2.msg_endian = BIGEND;
     // add sequence length
     CDRMessage::addUInt32(&cdrmessage2, 6);
@@ -2100,7 +2098,7 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** /*hand
     }
 
     // signature
-    CDRMessage_t cdrmessage(BinaryPropertyHelper::serialized_size(handshake_message_in.binary_properties()));
+    CDRMessage_t cdrmessage(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(handshake_message_in.binary_properties())));
     cdrmessage.msg_endian = BIGEND;
     // add sequence length
     CDRMessage::addUInt32(&cdrmessage, 6);
