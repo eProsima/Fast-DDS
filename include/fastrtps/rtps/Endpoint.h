@@ -73,11 +73,13 @@ class Endpoint
      */
     RTPS_DllAPI inline EndpointAttributes* getAttributes() { return &m_att; }
 
+#if HAVE_SECURITY
     bool supports_rtps_protection() { return supports_rtps_protection_; }
 
     bool is_submessage_protected() { return is_submessage_protected_; }
 
     bool is_payload_protected() { return is_payload_protected_; }
+#endif
 
     protected:
     //!Pointer to the RTPSParticipant containing this endpoint.
@@ -93,11 +95,13 @@ class Endpoint
 
     Endpoint& operator=(const Endpoint&)NON_COPYABLE_CXX11;
 
+#if HAVE_SECURITY
     bool supports_rtps_protection_;
 
     bool is_submessage_protected_;
 
     bool is_payload_protected_;
+#endif
 };
 
 

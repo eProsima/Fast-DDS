@@ -55,6 +55,7 @@ class PubSubReader
 
             ~ParticipantListener() {}
 
+#if HAVE_SECURITY
             void onParticipantAuthentication(Participant*, const ParticipantAuthenticationInfo& info)
             {
                 if(info.rtps.status() == AUTHORIZED_RTPSPARTICIPANT)
@@ -62,6 +63,7 @@ class PubSubReader
                 else if(info.rtps.status() == UNAUTHORIZED_RTPSPARTICIPANT)
                     reader_.unauthorized();
             }
+#endif
 
         private:
 
@@ -106,7 +108,10 @@ class PubSubReader
 
         PubSubReader(const std::string& topic_name) : participant_listener_(*this), listener_(*this), participant_(nullptr), subscriber_(nullptr),
         topic_name_(topic_name), initialized_(false), matched_(0), receiving_(false), current_received_count_(0),
-        number_samples_expected_(0), authorized_(0), unauthorized_(0)
+        number_samples_expected_(0)
+#if HAVE_SECURITY
+        , authorized_(0), unauthorized_(0)
+#endif
         {
             subscriber_attr_.topic.topicDataType = type_.getName();
             // Generate topic name
@@ -232,6 +237,7 @@ class PubSubReader
             ASSERT_EQ(matched_, 0u);
         }
 
+#if HAVE_SECURITY
         void waitAuthorized(unsigned int how_many = 1)
         {
             std::unique_lock<std::mutex> lock(mutexAuthentication_);
@@ -251,6 +257,7 @@ class PubSubReader
 
             ASSERT_EQ(unauthorized_, how_many);
         }
+#endif
 
         unsigned int getReceivedCount() const
         {
@@ -395,6 +402,7 @@ class PubSubReader
             cvDiscovery_.notify_one();
         }
 
+#if HAVE_SECURITY
         void authorized()
         {
             mutexAuthentication_.lock();
@@ -410,6 +418,7 @@ class PubSubReader
             mutexAuthentication_.unlock();
             cvAuthentication_.notify_all();
         }
+#endif
 
         PubSubReader& operator=(const PubSubReader&)NON_COPYABLE_CXX11;
 
@@ -430,10 +439,12 @@ class PubSubReader
         SequenceNumber_t last_seq;
         size_t current_received_count_;
         size_t number_samples_expected_;
+#if HAVE_SECURITY
         std::mutex mutexAuthentication_;
         std::condition_variable cvAuthentication_;
         unsigned int authorized_;
         unsigned int unauthorized_;
+#endif
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBREADER_HPP_

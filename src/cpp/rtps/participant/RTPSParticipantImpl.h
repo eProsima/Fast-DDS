@@ -43,12 +43,14 @@ class recursive_mutex;
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
 
-//Santi - Adding .h files for the new transport layers
 #include <fastrtps/rtps/network/NetworkFactory.h>
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
+
+#if HAVE_SECURITY
 #include "../security/SecurityManager.h"
+#endif
 
 namespace eprosima {
 namespace fastrtps{
@@ -93,7 +95,7 @@ class PDPSimple;
 */
 typedef struct ReceiverControlBlock{
     ReceiverResource Receiver;
-    MessageReceiver* mp_receiver;		//Associated Readers/Writers inside of MessageReceiver
+    MessageReceiver* mp_receiver; //Associated Readers/Writers inside of MessageReceiver
     boost::mutex mtx; //Fix declaration
     boost::thread* m_thread;
     bool resourceAlive;
@@ -209,7 +211,9 @@ class RTPSParticipantImpl
 
         uint32_t getMaxMessageSize() const;
 
+#if HAVE_SECURITY
         ::security::SecurityManager& security_manager() { return m_security_manager; }
+#endif
 
         PDPSimple* pdpsimple();
 
@@ -243,8 +247,10 @@ class RTPSParticipantImpl
         //!Network Factory
         NetworkFactory m_network_Factory;
 
+#if HAVE_SECURITY
         // Security manager
         ::security::SecurityManager m_security_manager;
+#endif
 
         //!ReceiverControlBlock list - encapsulates all associated resources on a Receiving element
         std::list<ReceiverControlBlock> m_receiverResourcelist;
@@ -433,10 +439,12 @@ class RTPSParticipantImpl
 
         bool networkFactoryHasRegisteredTransports() const;
 
+#if HAVE_SECURITY
         void set_endpoint_rtps_protection_supports(Endpoint* endpoint, bool support)
         {
             endpoint->supports_rtps_protection_ = support;
         }
+#endif
 };
 
 }

@@ -49,7 +49,7 @@ std::vector<GUID_t> StatelessWriter::get_remote_readers()
 
     if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER)
         remote_readers.emplace_back(GuidPrefix_t(), c_EntityId_SPDPReader);
-#ifdef HAVE_SECURITY
+#if HAVE_SECURITY
     else if(this->m_guid.entityId == ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_WRITER)
         remote_readers.emplace_back(GuidPrefix_t(), participant_stateless_message_reader_entity_id);
 #endif
@@ -70,12 +70,14 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 {
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
+#if HAVE_SECURITY
     // If payload protection, encode payload
     if(is_payload_protected())
     {
         getRTPSParticipant()->security_manager().encode_serialized_payload(cptr->serializedPayload,
                 m_guid);
     }
+#endif
 
     if(!isAsync())
     {

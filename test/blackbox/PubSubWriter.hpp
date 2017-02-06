@@ -47,6 +47,7 @@ class PubSubWriter
 
             ~ParticipantListener() {}
 
+#if HAVE_SECURITY
             void onParticipantAuthentication(Participant*, const ParticipantAuthenticationInfo& info)
             {
                 if(info.rtps.status() == AUTHORIZED_RTPSPARTICIPANT)
@@ -54,6 +55,7 @@ class PubSubWriter
                 else if(info.rtps.status() == UNAUTHORIZED_RTPSPARTICIPANT)
                     writer_.unauthorized();
             }
+#endif
 
         private:
 
@@ -92,8 +94,10 @@ class PubSubWriter
     typedef typename type_support::type type;
 
     PubSubWriter(const std::string &topic_name) : participant_listener_(*this), listener_(*this), participant_(nullptr),
-    publisher_(nullptr), topic_name_(topic_name), initialized_(false), matched_(0),
-    authorized_(0), unauthorized_(0)
+    publisher_(nullptr), topic_name_(topic_name), initialized_(false), matched_(0)
+#if HAVE_SECURITY
+    , authorized_(0), unauthorized_(0)
+#endif
     {
         publisher_attr_.topic.topicDataType = type_.getName();
         // Generate topic name
@@ -199,6 +203,7 @@ class PubSubWriter
         ASSERT_EQ(matched_, 0u);
     }
 
+#if HAVE_SECURITY
     void waitAuthorized(unsigned int how_many = 1)
     {
         std::unique_lock<std::mutex> lock(mutexAuthentication_);
@@ -218,6 +223,7 @@ class PubSubWriter
 
         ASSERT_EQ(unauthorized_, how_many);
     }
+#endif
 
     template<class _Rep,
         class _Period
@@ -362,6 +368,7 @@ class PubSubWriter
         cv_.notify_one();
     }
 
+#if HAVE_SECURITY
     void authorized()
     {
         mutexAuthentication_.lock();
@@ -377,6 +384,7 @@ class PubSubWriter
         mutexAuthentication_.unlock();
         cvAuthentication_.notify_all();
     }
+#endif
 
     PubSubWriter& operator=(const PubSubWriter&)NON_COPYABLE_CXX11;
 
@@ -390,10 +398,12 @@ class PubSubWriter
     std::condition_variable cv_;
     unsigned int matched_;
     type_support type_;
+#if HAVE_SECURITY
     std::mutex mutexAuthentication_;
     std::condition_variable cvAuthentication_;
     unsigned int authorized_;
     unsigned int unauthorized_;
+#endif
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBWRITER_HPP_

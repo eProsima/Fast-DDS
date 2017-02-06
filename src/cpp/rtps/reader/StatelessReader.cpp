@@ -39,12 +39,12 @@ using namespace eprosima::fastrtps::rtps;
 
 StatelessReader::~StatelessReader()
 {
-	logInfo(RTPS_READER,"Removing reader "<<this->getGuid());
+    logInfo(RTPS_READER,"Removing reader "<<this->getGuid());
 }
 
 StatelessReader::StatelessReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
-		ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen):
-						RTPSReader(pimpl,guid,att,hist, listen)
+        ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen):
+    RTPSReader(pimpl,guid,att,hist, listen)
 {
 
 }
@@ -53,43 +53,43 @@ StatelessReader::StatelessReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
 
 bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
-	{
-		if((*it).guid == wdata.guid)
-			return false;
-	}
-	logInfo(RTPS_READER,"Writer " << wdata.guid << " added to "<<m_guid.entityId);
-	m_matched_writers.push_back(wdata);
-	m_acceptMessagesFromUnkownWriters = false;
-	return true;
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+    {
+        if((*it).guid == wdata.guid)
+            return false;
+    }
+    logInfo(RTPS_READER,"Writer " << wdata.guid << " added to "<<m_guid.entityId);
+    m_matched_writers.push_back(wdata);
+    m_acceptMessagesFromUnkownWriters = false;
+    return true;
 }
 bool StatelessReader::matched_writer_remove(RemoteWriterAttributes& wdata)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
-	{
-		if((*it).guid == wdata.guid)
-		{
-			logInfo(RTPS_READER,"Writer " <<wdata.guid<< " removed from "<<m_guid.entityId);
-			m_matched_writers.erase(it);
-			return true;
-		}
-	}
-	return false;
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+    {
+        if((*it).guid == wdata.guid)
+        {
+            logInfo(RTPS_READER,"Writer " <<wdata.guid<< " removed from "<<m_guid.entityId);
+            m_matched_writers.erase(it);
+            return true;
+        }
+    }
+    return false;
 }
 
 bool StatelessReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
-	{
-		if((*it).guid == wdata.guid)
-		{
-			return true;
-		}
-	}
-	return false;
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+    {
+        if((*it).guid == wdata.guid)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool StatelessReader::change_received(CacheChange_t* change, boost::unique_lock<boost::recursive_mutex> &lock)
@@ -112,45 +112,45 @@ bool StatelessReader::change_received(CacheChange_t* change, boost::unique_lock<
         }
     }
 
-	return false;
+    return false;
 }
 
 bool StatelessReader::nextUntakenCache(CacheChange_t** change,WriterProxy** /*wpout*/)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	return mp_history->get_min_change(change);
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    return mp_history->get_min_change(change);
 }
 
 
 bool StatelessReader::nextUnreadCache(CacheChange_t** change,WriterProxy** /*wpout*/)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	//m_reader_cache.sortCacheChangesBySeqNum();
-	bool found = false;
-	std::vector<CacheChange_t*>::iterator it;
-	//TODO PROTEGER ACCESO A HISTORIA AQUI??? YO CREO QUE NO, YA ESTA EL READER PROTEGIDO
-	for(it = mp_history->changesBegin();
-			it!=mp_history->changesEnd();++it)
-	{
-		if(!(*it)->isRead)
-		{
-			found = true;
-			break;
-		}
-	}
-	if(found)
-	{
-		*change = *it;
-		return true;
-	}
-	logInfo(RTPS_READER,"No Unread elements left");
-	return false;
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    //m_reader_cache.sortCacheChangesBySeqNum();
+    bool found = false;
+    std::vector<CacheChange_t*>::iterator it;
+    //TODO PROTEGER ACCESO A HISTORIA AQUI??? YO CREO QUE NO, YA ESTA EL READER PROTEGIDO
+    for(it = mp_history->changesBegin();
+            it!=mp_history->changesEnd();++it)
+    {
+        if(!(*it)->isRead)
+        {
+            found = true;
+            break;
+        }
+    }
+    if(found)
+    {
+        *change = *it;
+        return true;
+    }
+    logInfo(RTPS_READER,"No Unread elements left");
+    return false;
 }
 
 
 bool StatelessReader::change_removed_by_history(CacheChange_t* /*ch*/, WriterProxy* /*prox*/)
 {
-	return true;
+    return true;
 }
 
 bool StatelessReader::processDataMsg(CacheChange_t *change)
@@ -158,7 +158,7 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
 
     assert(change);
 
-	boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+    boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
 
     if(acceptMsgFrom(change->writerGUID))
     {
@@ -167,13 +167,31 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
         CacheChange_t* change_to_add;
         if(reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
         { 
-            if (!change_to_add->copy(change))
+#if HAVE_SECURITY
+            if(is_payload_protected())
             {
-                logWarning(RTPS_MSG_IN,IDSTRING"Problem copying CacheChange, received data is: " << change->serializedPayload.length
-                        << " bytes and max size in reader " << getGuid().entityId << " is " << change_to_add->serializedPayload.max_size);
-                releaseCache(change_to_add);
-                return false;
+                change_to_add->copy_not_memcpy(change);
+                if(!getRTPSParticipant()->security_manager().decode_serialized_payload(change->serializedPayload,
+                        change_to_add->serializedPayload, m_guid, change->writerGUID))
+                {
+                    releaseCache(change_to_add);
+                    logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
+                    return false;
+                }
             }
+            else
+            {
+#endif
+                if (!change_to_add->copy(change))
+                {
+                    logWarning(RTPS_MSG_IN,IDSTRING"Problem copying CacheChange, received data is: " << change->serializedPayload.length
+                            << " bytes and max size in reader " << getGuid().entityId << " is " << change_to_add->serializedPayload.max_size);
+                    releaseCache(change_to_add);
+                    return false;
+                }
+#if HAVE_SECURITY
+            }
+#endif
         }
         else
         {
@@ -200,12 +218,12 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
 bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t sampleSize, uint32_t fragmentStartingNum)
 {
 
-	assert(incomingChange);
+    assert(incomingChange);
 
-	boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+    boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
 
-	if (acceptMsgFrom(incomingChange->writerGUID))
-	{
+    if (acceptMsgFrom(incomingChange->writerGUID))
+    {
         // Check if CacheChange was received.
         if(!getHistory()->thereIsRecordOf(incomingChange->writerGUID, incomingChange->sequenceNumber))
         {
@@ -235,10 +253,10 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
                     releaseCache(change_completed);
                 }
             }
-		}
-	}
+        }
+    }
 
-	return true;
+    return true;
 }
 
 bool StatelessReader::processHeartbeatMsg(GUID_t& /*writerGUID*/, uint32_t /*hbCount*/, SequenceNumber_t& /*firstSN*/,
@@ -254,23 +272,23 @@ bool StatelessReader::processGapMsg(GUID_t& /*writerGUID*/, SequenceNumber_t& /*
 
 bool StatelessReader::acceptMsgFrom(GUID_t& writerId)
 {
-	if(this->m_acceptMessagesFromUnkownWriters)
-	{
-		return true;
-	}
-	else
-	{
-		if(writerId.entityId == this->m_trustedWriterEntityId)
-			return true;
+    if(this->m_acceptMessagesFromUnkownWriters)
+    {
+        return true;
+    }
+    else
+    {
+        if(writerId.entityId == this->m_trustedWriterEntityId)
+            return true;
 
-		for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
-		{
-			if((*it).guid == writerId)
-			{
-				return true;
-			}
-		}
-	}
+        for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+        {
+            if((*it).guid == writerId)
+            {
+                return true;
+            }
+        }
+    }
 
-	return false;
+    return false;
 }

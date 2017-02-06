@@ -113,6 +113,7 @@ if(SECURITY)
         rtps/security/common/SharedSecretHandle.cpp
         rtps/security/SecurityManager.cpp
         rtps/security/SecurityPluginFactory.cpp
+        rtps/security/timedevent/HandshakeMessageTokenResent.cpp
         security/OpenSSLInit.cpp
         security/authentication/PKIDH.cpp
         security/cryptography/AESGCMGMAC.cpp
@@ -123,7 +124,6 @@ if(SECURITY)
         security/authentication/PKIIdentityHandle.cpp
         security/access/mockAccessHandle.cpp
         security/authentication/PKIHandshakeHandle.cpp
-        rtps/security/timedevent/HandshakeMessageTokenResent.cpp
         )
 
     include_directories(${OPENSSL_INCLUDE_DIR})
@@ -151,7 +151,7 @@ if(WIN32)
 endif()
 # If INTERNAL_DEBUG = ON, define symbol for extensive debug messages
 if(INTERNAL_DEBUG)
-	add_definitions(-D__INTERNALDEBUG)
+    add_definitions(-D__INTERNALDEBUG)
 endif()
 # Include Boost header files.
 include_directories(${Boost_INCLUDE_DIR})

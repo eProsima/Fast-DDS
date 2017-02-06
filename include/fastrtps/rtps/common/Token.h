@@ -55,7 +55,7 @@ class DataHolder
             class_id_ = std::move(data_holder.class_id_);
             properties_ = std::move(data_holder.properties_);
             binary_properties_ = std::move(data_holder.binary_properties_);
-            
+
             return *this;
         }
 

@@ -159,11 +159,19 @@ class ParticipantImpl
     class MyRTPSParticipantListener : public RTPSParticipantListener
     {
         public:
+
             MyRTPSParticipantListener(ParticipantImpl* impl): mp_participantimpl(impl){};
+
             virtual ~MyRTPSParticipantListener(){};
+
             void onRTPSParticipantDiscovery(RTPSParticipant* part, RTPSParticipantDiscoveryInfo info);
+
+#if HAVE_SECURITY
             void onRTPSParticipantAuthentication(RTPSParticipant* part, const RTPSParticipantAuthenticationInfo& info);
+#endif
+
             ParticipantImpl* mp_participantimpl;
+
     } m_rtps_listener;
 
 };

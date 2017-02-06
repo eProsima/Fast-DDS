@@ -57,7 +57,10 @@ namespace rtps {
 MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant) : mp_change(nullptr),
     participant_(participant) {}
 MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant, uint32_t rec_buffer_size) :
-    m_rec_msg(rec_buffer_size), m_crypto_msg(rec_buffer_size),
+    m_rec_msg(rec_buffer_size),
+#if HAVE_SECURITY
+    m_crypto_msg(rec_buffer_size),
+#endif
     mp_change(nullptr),
     participant_(participant)
     {
@@ -200,6 +203,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
     if(!checkRTPSHeader(msg))
         return;
 
+#if HAVE_SECURITY
     CDRMessage_t* auxiliary_buffer = &m_crypto_msg;
 
     if(participant_->security_manager().decode_rtps_message(*msg, *auxiliary_buffer, sourceGuidPrefix))
@@ -207,6 +211,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
         // Swap
         std::swap(msg, auxiliary_buffer);
     }
+#endif
 
     // Loop until there are no more submessages
     bool last_submsg = false;
@@ -219,8 +224,10 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
     {
         CDRMessage_t* submessage = msg;
 
+#if HAVE_SECURITY
         if(participant_->security_manager().decode_rtps_submessage(*msg, *auxiliary_buffer, sourceGuidPrefix))
             submessage = auxiliary_buffer;
+#endif
 
         //First 4 bytes must contain: ID | flags | octets to next header
         if(!readSubmessageHeader(submessage, &submsgh))

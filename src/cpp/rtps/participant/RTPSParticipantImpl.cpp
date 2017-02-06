@@ -92,7 +92,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     mp_builtinProtocols(nullptr),
     mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
     IdCounter(0),
+#if HAVE_SECURITY
     m_security_manager(this),
+#endif
     mp_participantListener(plisten),
     mp_userParticipant(par),
     mp_mutex(new boost::recursive_mutex()),
@@ -289,8 +291,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Send Locator List, adding Locators: " << m_att.defaultOutLocatorList);
     }
 
+#if HAVE_SECURITY
     // Start security
     m_security_manager.init();
+#endif
 
     //START BUILTIN PROTOCOLS
     mp_builtinProtocols = new BuiltinProtocols();
@@ -336,7 +340,9 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 
     m_receiverResourcelist.clear();
     delete(this->mp_builtinProtocols);
+#if HAVE_SECURITY
     m_security_manager.destroy();
+#endif
     delete(this->mp_ResourceSemaphore);
     delete(this->mp_userParticipant);
     m_senderResource.clear();
@@ -438,6 +444,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
     if(SWriter==nullptr)
         return false;
 
+#if HAVE_SECURITY
     if(submessage_protection || payload_protection)
     {
         if(submessage_protection)
@@ -451,6 +458,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
             return false;
         }
     }
+#endif
 
     createSendResources((Endpoint *)SWriter);
     if(param.endpoint.reliabilityKind == RELIABLE)
@@ -561,6 +569,7 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
     if(SReader==nullptr)
         return false;
 
+#if HAVE_SECURITY
     if(submessage_protection || payload_protection)
     {
         if(submessage_protection)
@@ -574,6 +583,7 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
             return false;
         }
     }
+#endif
 
     //SReader->setListener(inlisten);
     //SReader->setQos(param.qos,true);

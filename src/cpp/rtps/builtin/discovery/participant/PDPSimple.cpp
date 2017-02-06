@@ -125,7 +125,10 @@ void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
         }
     }
+
+#if HAVE_SECURITY
     participant_data->m_availableBuiltinEndpoints |= mp_RTPSParticipant->security_manager().builtin_endpoints();
+#endif
 
     participant_data->m_defaultUnicastLocatorList = mp_RTPSParticipant->getAttributes().defaultUnicastLocatorList;
     participant_data->m_defaultMulticastLocatorList = mp_RTPSParticipant->getAttributes().defaultMulticastLocatorList;
@@ -147,12 +150,14 @@ void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant
 
     participant_data->m_userData = mp_RTPSParticipant->getAttributes().userData;
 
+#if HAVE_SECURITY
     IdentityToken* identity_token = nullptr;
     if(mp_RTPSParticipant->security_manager().get_identity_token(&identity_token) && identity_token != nullptr)
     {
         participant_data->identity_token_ = std::move(*identity_token);
         mp_RTPSParticipant->security_manager().return_identity_token(identity_token);
     }
+#endif
 }
 
 bool PDPSimple::initPDP(RTPSParticipantImpl* part)
@@ -377,7 +382,9 @@ bool PDPSimple::createSPDPEndpoints()
     RTPSWriter* wout;
     if(mp_RTPSParticipant->createWriter(&wout,watt,mp_SPDPWriterHistory,nullptr,c_EntityId_SPDPWriter,true))
     {
+#if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
+#endif
         mp_SPDPWriter = dynamic_cast<StatelessWriter*>(wout);
         RemoteReaderAttributes ratt;
         for(LocatorListIterator lit = mp_builtin->m_metatrafficMulticastLocatorList.begin();
@@ -405,7 +412,9 @@ bool PDPSimple::createSPDPEndpoints()
     RTPSReader* rout;
     if(mp_RTPSParticipant->createReader(&rout,ratt,mp_SPDPReaderHistory,mp_listener,c_EntityId_SPDPReader,true, false))
     {
+#if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(rout, false);
+#endif
         mp_SPDPReader = dynamic_cast<StatelessReader*>(rout);
     }
     else
@@ -548,8 +557,13 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         mp_SPDPWriter->matched_reader_add(ratt);
     }
 
+#if HAVE_SECURITY
     // Validate remote participant
     mp_RTPSParticipant->security_manager().discovered_participant(pdata);
+#else
+    //Inform EDP of new RTPSParticipant data:
+    notifyAboveRemoteEndpoints(pdata);
+#endif
 }
 
 void PDPSimple::notifyAboveRemoteEndpoints(ParticipantProxyData* pdata)

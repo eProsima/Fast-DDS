@@ -211,6 +211,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
         if(reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
         {
+#if HAVE_SECURITY
             if(is_payload_protected())
             {
                 change_to_add->copy_not_memcpy(change);
@@ -224,6 +225,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
             }
             else
             {
+#endif
                 if (!change_to_add->copy(change))
                 {
                     logWarning(RTPS_MSG_IN,IDSTRING"Problem copying CacheChange, received data is: " << change->serializedPayload.length
@@ -231,7 +233,9 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
                     releaseCache(change_to_add);
                     return false;
                 }
+#if HAVE_SECURITY
             }
+#endif
         }
         else
         {

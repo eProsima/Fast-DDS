@@ -53,7 +53,7 @@
 
 uint32_t global_port = 0;
 
-#ifdef HAVE_SECURITY
+#if HAVE_SECURITY
 static const char* certs_path = nullptr;
 #endif
 
@@ -1647,6 +1647,8 @@ BLACKBOXTEST(BlackBox, StaticDiscovery)
     ASSERT_EQ(data.size(), static_cast<size_t>(0));
 }
 
+#if HAVE_SECURITY
+
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
@@ -1885,12 +1887,14 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_ok)
     ASSERT_EQ(data.size(), 0);
 }
 
+#endif
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new BlackboxEnvironment);
 
-#ifdef HAVE_SECURITY
+#if HAVE_SECURITY
     certs_path = std::getenv("CERTS_PATH");
 
     if(certs_path == nullptr)

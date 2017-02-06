@@ -547,8 +547,10 @@ bool EDP::pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata
     {
         boost::unique_lock<boost::recursive_mutex> lock(*(*wit)->getMutex());
         GUID_t writerGUID = (*wit)->getGuid();
+#if HAVE_SECURITY
         bool is_submessage_protected = (*wit)->is_submessage_protected();
         bool is_payload_protected = (*wit)->is_payload_protected();
+#endif
         lock.unlock();
         ParticipantProxyData* wpdata = nullptr;
         WriterProxyData* wdata = nullptr;
@@ -562,10 +564,12 @@ bool EDP::pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata
 
             if(valid)
             {
+#if HAVE_SECURITY
                 if((!is_submessage_protected && !is_payload_protected) ||
                         mp_RTPSParticipant->security_manager().discovered_reader(writerGUID, pdata->m_guid,
                         rdata->m_guid))
                 {
+#endif
                     if((*wit)->matched_reader_add(rdata->toRemoteReaderAttributes()))
                     {
                         logInfo(RTPS_EDP, "Valid Matching to local writer: " << writerGUID.entityId);
@@ -582,12 +586,14 @@ bool EDP::pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata
                     {
                         logError(RTPS_ERROR, "Writer " << writerGUID << " cannot match reader " << rdata->m_guid);
                     }
+#if HAVE_SECURITY
                 }
                 else
                     if(is_submessage_protected || is_payload_protected)
                     {
                         logError(RTPS_EDP, "Security manager returns an error for writer " << writerGUID);
                     }
+#endif
             }
             else
             {
@@ -620,8 +626,10 @@ bool EDP::pairingWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata
         GUID_t readerGUID;
         boost::unique_lock<boost::recursive_mutex> lock(*(*rit)->getMutex());
         readerGUID = (*rit)->getGuid();
+#if HAVE_SECURITY
         bool is_submessage_protected = (*rit)->is_submessage_protected();
         bool is_payload_protected = (*rit)->is_payload_protected();
+#endif
         lock.unlock();
         ParticipantProxyData* rpdata = nullptr;
         ReaderProxyData* rdata = nullptr;
@@ -635,10 +643,12 @@ bool EDP::pairingWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata
 
             if(valid)
             {
+#if HAVE_SECURITY
                 if((!is_submessage_protected && !is_payload_protected) ||
                         mp_RTPSParticipant->security_manager().discovered_writer(readerGUID, pdata->m_guid,
                         wdata->guid()))
                 {
+#endif
                     if((*rit)->matched_writer_add(wdata->toRemoteWriterAttributes()))
                     {
                         logInfo(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId);
@@ -651,12 +661,14 @@ bool EDP::pairingWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata
                             (*rit)->getListener()->onReaderMatched((*rit),info);
                         }
                     }
+#if HAVE_SECURITY
                 }
                 else
                     if(is_submessage_protected || is_payload_protected)
                     {
                         logError(RTPS_EDP, "Security manager returns an error for reader " << readerGUID);
                     }
+#endif
             }
             else
             {

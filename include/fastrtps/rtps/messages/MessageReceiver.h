@@ -73,7 +73,9 @@ class MessageReceiver
 
         //!Received message
         CDRMessage_t m_rec_msg;
+#if HAVE_SECURITY
         CDRMessage_t m_crypto_msg;
+#endif
         //!PArameter list
         ParameterList_t m_ParamList;
         // Functions to associate/remove associatedendpoints

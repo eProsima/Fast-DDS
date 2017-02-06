@@ -34,18 +34,21 @@ class RTPSParticipant;
 */
 class RTPS_DllAPI RTPSParticipantListener
 {
-public:
-	RTPSParticipantListener(){};
-	virtual ~RTPSParticipantListener(){};
-	
-	/**
-	* This method is invoked when a new participant is discovered
-	* @param part Discovered participant
-	* @param info Discovery information of the participant
-	*/
-	virtual void onRTPSParticipantDiscovery(RTPSParticipant* part, RTPSParticipantDiscoveryInfo info){(void)part; (void)info;}
+    public:
 
-    virtual void onRTPSParticipantAuthentication(RTPSParticipant* part, const RTPSParticipantAuthenticationInfo& info) {(void)part; (void)info;}
+        RTPSParticipantListener(){};
+        virtual ~RTPSParticipantListener(){};
+
+        /**
+         * This method is invoked when a new participant is discovered
+         * @param part Discovered participant
+         * @param info Discovery information of the participant
+         */
+        virtual void onRTPSParticipantDiscovery(RTPSParticipant* part, RTPSParticipantDiscoveryInfo info){(void)part; (void)info;}
+
+#if HAVE_SECURITY
+        virtual void onRTPSParticipantAuthentication(RTPSParticipant* part, const RTPSParticipantAuthenticationInfo& info) {(void)part; (void)info;}
+#endif
 };
 }
 }

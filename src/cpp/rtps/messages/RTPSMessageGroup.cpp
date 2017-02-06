@@ -168,7 +168,7 @@ bool RTPSMessageGroup::check_preconditions(const LocatorList_t& locator_list,
     (void)remote_participants;
 
     return locator_list == current_locators_
-#ifdef HAVE_SECURITY
+#if HAVE_SECURITY
         && (!participant_->is_rtps_protected() || !endpoint_->supports_rtps_protection() ||
          compare_remote_participants(remote_participants, current_remote_participants_))
 #endif
@@ -189,7 +189,7 @@ void RTPSMessageGroup::send()
 
     if(full_msg_->length > RTPSMESSAGE_HEADER_SIZE)
     {
-#ifdef HAVE_SECURITY
+#if HAVE_SECURITY
         // TODO(Ricardo) Control message size if it will be encrypted.
         if(participant_->is_rtps_protected() && endpoint_->supports_rtps_protection())
         {
@@ -245,7 +245,7 @@ void RTPSMessageGroup::check_and_maybe_flush(const LocatorList_t& locator_list,
 
     if(added)
     {
-#ifdef HAVE_SECURITY
+#if HAVE_SECURITY
         if(endpoint_->is_submessage_protected())
         {
             submessage_msg_->pos = 0;
@@ -301,7 +301,7 @@ bool RTPSMessageGroup::add_info_ts_in_buffer(const std::vector<GUID_t>& remote_r
         return false;
     }
 
-#ifdef HAVE_SECURITY
+#if HAVE_SECURITY
     if(endpoint_->is_submessage_protected())
     {
         submessage_msg_->pos = from_buffer_position;
@@ -345,7 +345,7 @@ bool RTPSMessageGroup::add_data(const CacheChange_t& change, const std::vector<G
         return false;
     }
 
-#ifdef HAVE_SECURITY
+#if HAVE_SECURITY
     if(endpoint_->is_submessage_protected())
     {
         submessage_msg_->pos = from_buffer_position;
@@ -389,7 +389,7 @@ bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t
         return false;
     }
 
-#ifdef HAVE_SECURITY
+#if HAVE_SECURITY
     if(endpoint_->is_submessage_protected())
     {
         submessage_msg_->pos = from_buffer_position;
@@ -422,7 +422,7 @@ bool RTPSMessageGroup::add_heartbeat(const std::vector<GUID_t>& remote_readers, 
         return false;
     }
 
-#ifdef HAVE_SECURITY
+#if HAVE_SECURITY
     if(endpoint_->is_submessage_protected())
     {
         submessage_msg_->pos = from_buffer_position;
@@ -464,7 +464,7 @@ bool RTPSMessageGroup::add_gap(std::vector<SequenceNumber_t>& changesSeqNum,
             break;
         }
 
-#ifdef HAVE_SECURITY
+#if HAVE_SECURITY
         if(endpoint_->is_submessage_protected())
         {
             submessage_msg_->pos = from_buffer_position;
@@ -501,7 +501,7 @@ bool RTPSMessageGroup::add_acknack(const GUID_t& remote_writer, SequenceNumberSe
         return false;
     }
 
-#ifdef HAVE_SECURITY
+#if HAVE_SECURITY
     if(endpoint_->is_submessage_protected())
     {
         submessage_msg_->pos = from_buffer_position;
@@ -531,7 +531,7 @@ bool RTPSMessageGroup::add_nackfrag(const GUID_t& remote_writer, SequenceNumber_
         return false;
     }
 
-#ifdef HAVE_SECURITY
+#if HAVE_SECURITY
     if(endpoint_->is_submessage_protected())
     {
         submessage_msg_->pos = from_buffer_position;

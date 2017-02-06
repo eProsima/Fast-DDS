@@ -38,9 +38,9 @@ enum RTPS_DllAPI DISCOVERY_STATUS
 enum  DISCOVERY_STATUS
 #endif
 {
-	DISCOVERED_RTPSPARTICIPANT,
-	CHANGED_QOS_RTPSPARTICIPANT,
-	REMOVED_RTPSPARTICIPANT
+    DISCOVERED_RTPSPARTICIPANT,
+    CHANGED_QOS_RTPSPARTICIPANT,
+    REMOVED_RTPSPARTICIPANT
 };
 
 typedef std::vector<std::pair<std::string,std::string>> PropertyList;
@@ -68,6 +68,7 @@ class RTPSParticipantDiscoveryInfo
         std::string m_RTPSParticipantName;
 };
 
+#if HAVE_SECURITY
 enum RTPS_DllAPI AUTHENTICATION_STATUS
 {
     AUTHORIZED_RTPSPARTICIPANT,
@@ -141,6 +142,7 @@ class RTPSParticipantAuthenticationInfo
         //! Associated GUID
         GUID_t guid_;
 };
+#endif
 
 }
 }

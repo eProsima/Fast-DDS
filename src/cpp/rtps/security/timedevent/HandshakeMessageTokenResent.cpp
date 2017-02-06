@@ -40,8 +40,8 @@ void HandshakeMessageTokenResent::event(EventCode code, const char* msg)
     // Unused in release mode.
     (void)msg;
 
-	if(code == EVENT_SUCCESS)
-	{
+    if(code == EVENT_SUCCESS)
+    {
         security_manager_.mutex_.lock();
         auto dp_it = security_manager_.discovered_participants_.find(remote_participant_key_);
 
@@ -72,12 +72,12 @@ void HandshakeMessageTokenResent::event(EventCode code, const char* msg)
 
         this->restart_timer();
     }
-	else if(code == EVENT_ABORT)
-	{
-		logInfo(SECURITY, "HandshakeMessageTokenResent aborted");
-	}
-	else
-	{
-		logInfo(SECURITY, "HandshakeMessageTokenResent boost message: " <<msg);
-	}
+    else if(code == EVENT_ABORT)
+    {
+        logInfo(SECURITY, "HandshakeMessageTokenResent aborted");
+    }
+    else
+    {
+        logInfo(SECURITY, "HandshakeMessageTokenResent boost message: " <<msg);
+    }
 }

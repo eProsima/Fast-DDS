@@ -40,6 +40,7 @@ class ParticipantDiscoveryInfo
         RTPSParticipantDiscoveryInfo rtps;
 };
 
+#if HAVE_SECURITY
 class ParticipantAuthenticationInfo
 {
     public:
@@ -50,6 +51,7 @@ class ParticipantAuthenticationInfo
 
         RTPSParticipantAuthenticationInfo rtps;
 };
+#endif
 
 } /* namespace fastrtps */
 } /* namespace eprosima */
