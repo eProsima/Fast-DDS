@@ -27,6 +27,7 @@ namespace fastrtps {
 WriterQos::WriterQos()
 {
 	this->m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	this->m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 }
 
 WriterQos::~WriterQos()

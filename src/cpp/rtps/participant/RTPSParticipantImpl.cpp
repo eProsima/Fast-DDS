@@ -40,6 +40,7 @@
 
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/eClock.h>
@@ -919,6 +920,18 @@ std::pair<StatefulReader*,StatefulReader*> RTPSParticipantImpl::getEDPReaders(){
     }
     return buffer;
 
+}
+
+std::vector<std::string> RTPSParticipantImpl::getParticipantNames(){
+    std::vector<std::string> participant_names;
+    auto pdp = mp_builtinProtocols->mp_PDP;
+    for (auto it = pdp->ParticipantProxiesBegin();
+        it != pdp->ParticipantProxiesEnd();
+        ++it)
+    {
+      participant_names.emplace_back((*it)->m_participantName);
+    }
+    return participant_names;
 }
 
 void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint *pend, const Locator_t& destination_loc)

@@ -123,6 +123,8 @@ class ParticipantImpl
 
     std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 
+    std::vector<std::string> getParticipantNames();
+
     int get_no_publishers(char *target_topic);
     int get_no_subscribers(char *target_topic);
     /**

@@ -3,7 +3,7 @@
  * --------------------------------------------
  *
  *  This is an interactive program designed to show the effect of different configuration parameters on the behaviour of eProsima Fast RTPS
- *  
+ *
  ***/
 
 #include <iostream>
@@ -36,16 +36,16 @@ typedef struct{
     uint16_t history_size;
     uint8_t depth;
     uint8_t no_keys;
-    uint16_t max_samples_per_key; 
+    uint16_t max_samples_per_key;
 } example_configuration;
 
 int main(){
 
     std::string userchoice;
     bool validinput;
-    example_configuration user_configuration;
+    example_configuration user_configuration = {};
 
-    
+
     std::cout << "Welcome to eProsima Fast RTPS Use Case Demonstrator" << std::endl;
     std::cout << "---------------------------------------------------" << std::endl;
     std::cout << "Choose your desired reliability type:" << std::endl;
@@ -248,7 +248,7 @@ int main(){
     if(user_configuration.durability == Transient_Local)
         Pparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     else
-        Pparam.qos.m_durability.kind = VOLATILE_DURABILITY_QOS; 
+        Pparam.qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
 
     if(user_configuration.reliability == Reliable)
         Pparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -289,7 +289,7 @@ int main(){
             }
             for(uint8_t j=0; j < no; j++){
                 for(uint8_t i=0; i < no_keys; i++){
-                    my_sample.index(j+1); 
+                    my_sample.index(j+1);
                     my_sample.key_value(i);
                     myPub->write(&my_sample);
                 }
@@ -297,7 +297,6 @@ int main(){
             std::cout << "Sent " << std::to_string(no) << " samples." << std::endl;
         }
     }
-    
+
     return 0;
 }
-    

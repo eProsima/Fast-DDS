@@ -47,60 +47,60 @@ class PubSubReader
 
     private:
 
-    class ParticipantListener : public eprosima::fastrtps::ParticipantListener
-    {
-        public:
+        class ParticipantListener : public eprosima::fastrtps::ParticipantListener
+        {
+            public:
 
-            ParticipantListener(PubSubReader &reader) : reader_(reader) {}
+                ParticipantListener(PubSubReader &reader) : reader_(reader) {}
 
-            ~ParticipantListener() {}
+                ~ParticipantListener() {}
 
 #if HAVE_SECURITY
-            void onParticipantAuthentication(Participant*, const ParticipantAuthenticationInfo& info)
-            {
-                if(info.rtps.status() == AUTHORIZED_RTPSPARTICIPANT)
-                    reader_.authorized();
-                else if(info.rtps.status() == UNAUTHORIZED_RTPSPARTICIPANT)
-                    reader_.unauthorized();
-            }
+                void onParticipantAuthentication(Participant*, const ParticipantAuthenticationInfo& info)
+                {
+                    if(info.rtps.status() == AUTHORIZED_RTPSPARTICIPANT)
+                        reader_.authorized();
+                    else if(info.rtps.status() == UNAUTHORIZED_RTPSPARTICIPANT)
+                        reader_.unauthorized();
+                }
 #endif
 
-        private:
+            private:
 
-            ParticipantListener& operator=(const ParticipantListener&) NON_COPYABLE_CXX11;
+                ParticipantListener& operator=(const ParticipantListener&) NON_COPYABLE_CXX11;
 
-            PubSubReader& reader_;
-    } participant_listener_;
+                PubSubReader& reader_;
+        } participant_listener_;
 
-    class Listener: public eprosima::fastrtps::SubscriberListener
-    {
-        public:
-            Listener(PubSubReader &reader) : reader_(reader) {}
+        class Listener: public eprosima::fastrtps::SubscriberListener
+        {
+            public:
+                Listener(PubSubReader &reader) : reader_(reader) {}
 
-            ~Listener(){}
+                ~Listener(){}
 
-            void onNewDataMessage(eprosima::fastrtps::Subscriber *sub)
-            {
-                ASSERT_NE(sub, nullptr);
+                void onNewDataMessage(eprosima::fastrtps::Subscriber *sub)
+                {
+                    ASSERT_NE(sub, nullptr);
 
-                bool ret = false;
-                reader_.receive_one(sub, ret);
-            }
+                    bool ret = false;
+                    reader_.receive_one(sub, ret);
+                }
 
-            void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, MatchingInfo& info)
-            {
-                if (info.status == MATCHED_MATCHING)
-                    reader_.matched();
-                else
-                    reader_.unmatched();
-            }
+                void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, MatchingInfo& info)
+                {
+                    if (info.status == MATCHED_MATCHING)
+                        reader_.matched();
+                    else
+                        reader_.unmatched();
+                }
 
-        private:
+            private:
 
-            Listener& operator=(const Listener&) NON_COPYABLE_CXX11;
+                Listener& operator=(const Listener&) NON_COPYABLE_CXX11;
 
-            PubSubReader& reader_;
-    } listener_;
+                PubSubReader& reader_;
+        } listener_;
 
         friend class Listener;
 

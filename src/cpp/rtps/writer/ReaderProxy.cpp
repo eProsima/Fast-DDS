@@ -106,7 +106,6 @@ bool ReaderProxy::change_is_acked(const SequenceNumber_t& sequence_number)
     assert(chit != m_changesForReader.end());
 
     return !chit->isRelevant() || chit->getStatus() == ACKNOWLEDGED;
-
 }
 
 bool ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
