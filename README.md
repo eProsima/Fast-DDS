@@ -35,6 +35,9 @@ To compile *eprosima Fast RTPS* from source, at least Cmake version 2.8.12 and B
 Clone the project from GitHub:
 
     $ git clone https://github.com/eProsima/Fast-RTPS
+    $ cd Fast-RTPS
+    $ mkdir build
+    $ cd build
 
 If you are on Linux, execute:
 

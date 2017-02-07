@@ -38,6 +38,8 @@ typedef struct UDPv4TransportDescriptor: public TransportDescriptorInterface {
    uint32_t receiveBufferSize;
    //! Allowed interfaces in an IP string format.
    std::vector<std::string> interfaceWhiteList;
+   //! Specified time to live (8bit - 255 max TTL)
+   uint8_t TTL = 1;
 
    virtual ~UDPv4TransportDescriptor(){}
    RTPS_DllAPI UDPv4TransportDescriptor();
