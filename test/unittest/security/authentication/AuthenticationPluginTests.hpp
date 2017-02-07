@@ -235,7 +235,7 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
             HandshakeMessageToken(*handshake_message_reply),
             *handshake_handle,
             exception);
-    
+
     ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK_WITH_FINAL_MESSAGE);
     ASSERT_TRUE(handshake_message_final != nullptr);
     check_handshake_final_message(*handshake_handle, *handshake_message_final, *handshake_message_reply);

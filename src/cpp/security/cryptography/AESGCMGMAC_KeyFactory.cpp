@@ -242,23 +242,25 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
     std::array<uint8_t, 4> transformationtype{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}; //Default to AES128_GCM
     int maxblockspersession = 32; //Default to key update every 32 usages
     if(!datawriter_prop.empty()){
-          for(auto it=datawriter_prop.begin(); it!=datawriter_prop.end(); ++it){
-              if( (it)->name() == "dds.sec.crypto.cryptotransformkind"){
-                      if( it->value() == std::string("AES128_GCM") )
-                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM};
-                      if( it->value() == std::string("AES128_GMAC") )
-                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
-                      if( it->value() == std::string("AES256_GCM") )
-                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM};
-                          if(it->value() == std::string("AES256_GMAC"))
-                              transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC};
-              }// endif
-              if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
-                  try{
-                      maxblockspersession = std::stoi( (it)->value() );
-                  }catch(std::invalid_argument){}
-              }
-          }//endfor
+        for(auto it=datawriter_prop.begin(); it!=datawriter_prop.end(); ++it)
+        {
+            if( (it)->name() == "dds.sec.crypto.cryptotransformkind")
+            {
+                if(it->value() == std::string("AES128_GCM"))
+                    transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM};
+                if(it->value() == std::string("AES128_GMAC"))
+                    transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
+                if(it->value() == std::string("AES256_GCM"))
+                    transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM};
+                if(it->value() == std::string("AES256_GMAC"))
+                    transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC};
+            }// endif
+            if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
+                try{
+                    maxblockspersession = std::stoi( (it)->value() );
+                }catch(std::invalid_argument){}
+            }
+        }//endfor
     }//endif
     (*WCrypto)->transformation_kind = transformationtype;
     //Fill WriterKeyMaterial - This will be used to cipher full rpts messages

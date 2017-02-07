@@ -636,59 +636,6 @@ EVP_PKEY* generate_dh_key(int type, SecurityException& exception)
     else
         exception = _SecurityException_("Cannot allocate EVP parameters");
 
-    /*
-    EVP_PKEY_CTX* context = EVP_PKEY_CTX_new_id(type, NULL);
-
-    if(context != nullptr)
-    {
-        // Generate parameters
-        if(EVP_PKEY_paramgen_init(context))
-        {
-            bool generated_param = false;
-            switch(type)
-            {
-                case EVP_PKEY_EC:
-                    if(EVP_PKEY_CTX_set_ec_paramgen_curve_nid(context, NID_X9_62_prime256v1))
-                        generated_param = true;
-                    break;
-                case EVP_PKEY_DH:
-                    if(EVP_PKEY_CTX_set_dh_paramgen_prime_len(context, 2048))
-                        generated_param = true;
-                    break;
-            }
-
-            if(generated_param)
-            {
-                std::cout << "PARAM" << std::endl;
-                if(EVP_PKEY_paramgen(context, &param))
-                {
-                std::cout << "END PARAM" << std::endl;
-                    if(EVP_PKEY_keygen_init(context))
-                    {
-                        if(!EVP_PKEY_keygen(context, &keys))
-                            exception = _SecurityException_("Cannot generate EVP key");
-                    }
-                    else
-                        exception = _SecurityException_("Cannot init EVP key");
-
-                    //EVP_PKEY_free(param);
-                }
-                else
-                    exception = _SecurityException_("Cannot generate EVP parameters");
-            }
-            else
-                exception = _SecurityException_("Cannot set EVP parameters");
-        }
-        else
-            exception = _SecurityException_("Cannot init EVP context");
-
-        EVP_PKEY_CTX_free(context);
-    }
-    else
-        exception = _SecurityException_("Cannot generate EVP context");
-    */
-
-
     return keys;
 }
 
