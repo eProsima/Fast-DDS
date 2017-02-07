@@ -44,8 +44,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         set_property(TEST SimpleCommunication PROPERTY LABELS "NoMemoryCheck")
 
         if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
             set_property(TEST SimpleCommunication PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${BOOST_LIBRARYDIR}\\;${WIN_PATH}")
         endif()
         set_property(TEST SimpleCommunication APPEND PROPERTY ENVIRONMENT
             "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:Publisher>")

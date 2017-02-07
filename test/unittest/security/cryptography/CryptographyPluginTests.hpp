@@ -385,7 +385,7 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*ParticipantA,*ParticipantA_remote,ParticipantB_CryptoTokens,exception);
     CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*ParticipantB,*ParticipantB_remote,ParticipantA_CryptoTokens,exception);
 
-    unintended_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*ParticipantA,*i_handle,*perm_handle,*shared_secret, exception);
+    unintended_remote = CryptoPlugin->keyfactory()->register_matched_remote_participant(*ParticipantA,*i_handle,*perm_handle,*shared_secret, exception);
 
     //Perform sample message exchange
     receivers.clear();
@@ -400,6 +400,7 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     ASSERT_TRUE(message_v == decoded_rtps_message);
 
 
+    CryptoPlugin->keyfactory()->unregister_participant(unintended_remote,exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantA,exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB,exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote,exception);
@@ -1276,9 +1277,9 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     ASSERT_TRUE(*target_writer == remote_writer);
     ASSERT_TRUE(*target_reader == reader);
 
-    delete i_handle;
-    delete perm_handle;
-    delete shared_secret;
+    delete target_reader;
+    delete target_writer;
+    */
 
     CryptoPlugin->keyfactory()->unregister_datawriter(writer,exception);
     CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer,exception);
@@ -1291,10 +1292,9 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
 
-    delete target_reader;
-    delete target_writer;
-    */
-
+    delete shared_secret;
+    delete perm_handle;
+    delete i_handle;
 }
 
 #endif

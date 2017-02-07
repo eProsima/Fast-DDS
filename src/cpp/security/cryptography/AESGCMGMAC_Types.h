@@ -116,8 +116,8 @@ struct SecureDataTag{
 class  WriterKeyHandle
 {
     public:
-        WriterKeyHandle(){
-        }
+        WriterKeyHandle() : session_id(std::numeric_limits<uint32_t>::max()),
+                session_block_counter(0), max_blocks_per_session(0){}
 
         ~WriterKeyHandle(){
         }
@@ -151,8 +151,8 @@ typedef HandleImpl<WriterKeyHandle> AESGCMGMAC_WriterCryptoHandle;
 class  ReaderKeyHandle
 {
     public:
-        ReaderKeyHandle(){
-        }
+        ReaderKeyHandle() : session_id(std::numeric_limits<uint32_t>::max()),
+                session_block_counter(0), max_blocks_per_session(0){}
 
         ~ReaderKeyHandle(){
         }
@@ -187,11 +187,11 @@ typedef HandleImpl<ReaderKeyHandle> AESGCMGMAC_ReaderCryptoHandle;
 class  ParticipantKeyHandle
 {
     public:
-        ParticipantKeyHandle(){
-        }
 
-        ~ParticipantKeyHandle(){
-        }
+        ParticipantKeyHandle() : session_id(std::numeric_limits<uint32_t>::max()),
+                session_block_counter(0), max_blocks_per_session(0){}
+
+        ~ParticipantKeyHandle(){}
 
         static const char* const class_id_;
 

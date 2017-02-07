@@ -262,6 +262,8 @@ class SecurityAuthenticationTest : public ::testing::Test
             EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
                         Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle),_)).Times(1).
                 WillOnce(Return(true)); 
+            EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&participant_crypto_handle,_)).Times(1).
+                WillOnce(Return(true));
 
             RTPSParticipantAuthenticationInfo info;
             info.status(AUTHORIZED_RTPSPARTICIPANT);
@@ -583,6 +585,8 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
     EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
                 Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle),_)).Times(1).
            WillOnce(Return(true)); 
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&participant_crypto_handle,_)).Times(1).
+        WillOnce(Return(true));
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
@@ -730,6 +734,8 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
     EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
                 Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle),_)).Times(1).
            WillOnce(Return(true)); 
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&participant_crypto_handle,_)).Times(1).
+        WillOnce(Return(true));
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
@@ -1071,6 +1077,8 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_beg
     EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
                 Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle),_)).Times(1).
            WillOnce(Return(true)); 
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&participant_crypto_handle,_)).Times(1).
+        WillOnce(Return(true));
 
     RTPSParticipantAuthenticationInfo info;
     info.status(AUTHORIZED_RTPSPARTICIPANT);
@@ -1281,6 +1289,8 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_pendin
     EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
                 Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle),_)).Times(1).
            WillOnce(Return(true)); 
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&participant_crypto_handle,_)).Times(1).
+        WillOnce(Return(true));
 
     RTPSParticipantAuthenticationInfo info;
     info.status(AUTHORIZED_RTPSPARTICIPANT);
@@ -1383,6 +1393,8 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_pro
     EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
                 Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle),_)).Times(1).
            WillOnce(Return(true)); 
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&participant_crypto_handle,_)).Times(1).
+        WillOnce(Return(true));
 
     RTPSParticipantAuthenticationInfo info;
     info.status(AUTHORIZED_RTPSPARTICIPANT);
@@ -1702,6 +1714,8 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_pro
     EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
                 Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle),_)).Times(1).
            WillOnce(Return(true)); 
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&participant_crypto_handle,_)).Times(1).
+        WillOnce(Return(true));
 
     RTPSParticipantAuthenticationInfo info;
     info.status(AUTHORIZED_RTPSPARTICIPANT);

@@ -198,6 +198,10 @@ void SecurityManager::destroy()
         {
             auto auth_ptr = dp_it.second.get_auth();
             remove_discovered_participant_info(auth_ptr);
+
+            ParticipantCryptoHandle* participant_crypto_handle = dp_it.second.get_participant_crypto();
+            if(participant_crypto_handle != nullptr)
+                    crypto_plugin_->cryptokeyfactory()->unregister_participant(participant_crypto_handle, exception);
         }
 
         discovered_participants_.clear();

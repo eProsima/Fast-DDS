@@ -49,23 +49,26 @@ void HandshakeMessageTokenResent::event(EventCode code, const char* msg)
         {
             SecurityManager::DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = dp_it->second.get_auth();
 
-            if(remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
+            if(remote_participant_info)
             {
-                CacheChange_t* p_change = security_manager_.participant_stateless_message_writer_history_->remove_change_and_reuse(
-                        remote_participant_info->change_sequence_number_);
-                remote_participant_info->change_sequence_number_ = SequenceNumber_t::unknown();
-
-                if(p_change != nullptr)
+                if(remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
                 {
-                    if(security_manager_.participant_stateless_message_writer_history_->add_change(p_change))
-                    {
-                        remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;
-                    }
-                    //TODO (Ricardo) What to do if not added?
-                }
-            }
+                    CacheChange_t* p_change = security_manager_.participant_stateless_message_writer_history_->remove_change_and_reuse(
+                            remote_participant_info->change_sequence_number_);
+                    remote_participant_info->change_sequence_number_ = SequenceNumber_t::unknown();
 
-            dp_it->second.set_auth(remote_participant_info);
+                    if(p_change != nullptr)
+                    {
+                        if(security_manager_.participant_stateless_message_writer_history_->add_change(p_change))
+                        {
+                            remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;
+                        }
+                        //TODO (Ricardo) What to do if not added?
+                    }
+                }
+
+                dp_it->second.set_auth(remote_participant_info);
+            }
         }
 
         security_manager_.mutex_.unlock();
