@@ -25,6 +25,12 @@
 #include <fastrtps/rtps/security/common/SharedSecretHandle.h>
 
 #include <mutex>
+#include <limits>
+
+// Fix compilation error on Windows
+#if defined(WIN32) && defined(max)
+#undef max
+#endif
 
 //No encryption, no authentication tag
 #define CRYPTO_TRANSFORMATION_KIND_NONE             {0,0,0,0}

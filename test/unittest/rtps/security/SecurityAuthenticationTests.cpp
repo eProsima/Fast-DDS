@@ -73,6 +73,7 @@ typedef HandleImpl<MockParticipantCrypto> MockParticipantCryptoHandle;
 // Default Values
 RTPSParticipantAttributes pattr;
 GUID_t guid;
+CDRMessage_t default_cdr_message;
 
 void fill_participant_key(GUID_t& participant_key)
 {
@@ -115,6 +116,7 @@ class SecurityAuthenticationTest : public ::testing::Test
         {
             DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
             DefaultValue<const GUID_t&>::Set(guid);
+            DefaultValue<CDRMessage_t>::Set(default_cdr_message);
             stateless_writer_ = new NiceMock<StatelessWriter>(&participant_);
             stateless_reader_ = new NiceMock<StatelessReader>();
             volatile_writer_ = new NiceMock<StatefulWriter>(&participant_);
