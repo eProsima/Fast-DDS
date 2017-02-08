@@ -115,7 +115,12 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 
                 // TODO(Ricardo) Study next case: Not push mode, writer reiable and reader besteffort.
                 if(m_pushMode)
-                    changeForReader.setStatus(UNDERWAY);
+                {
+                    if((*it)->m_att.endpoint.reliabilityKind == RELIABLE)
+                        changeForReader.setStatus(UNDERWAY);
+                    else
+                        changeForReader.setStatus(ACKNOWLEDGED);
+                }
                 else
                     changeForReader.setStatus(UNACKNOWLEDGED);
 
@@ -127,7 +132,8 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 expectsInlineQos |= (*it)->m_att.expectsInlineQos;
                 (*it)->mp_mutex->unlock();
 
-                (*it)->mp_nackSupression->restart_timer();
+                if((*it)->mp_nackSupression != nullptr) // It is reliable
+                    (*it)->mp_nackSupression->restart_timer();
             }
 
             std::vector<CacheChangeForGroup_t> changes_to_send;
@@ -242,7 +248,12 @@ size_t StatefulWriter::send_any_unsent_changes()
             if (change.isFragmented() && !change.getFragmentsClearedForSending().isSetEmpty())
                 (*m_reader_iterator)->mark_fragments_as_sent_for_change(change.getChange(), change.getFragmentsClearedForSending());
             else
-                (*m_reader_iterator)->set_change_to_status(change.getChange(), UNDERWAY);
+            {
+                if((*m_reader_iterator)->m_att.endpoint.reliabilityKind == RELIABLE)
+                    (*m_reader_iterator)->set_change_to_status(change.getChange(), UNDERWAY);
+                else
+                    (*m_reader_iterator)->set_change_to_status(change.getChange(), ACKNOWLEDGED);
+            }
         }
 
         // And controllers are notified about the changes being sent
@@ -278,7 +289,9 @@ size_t StatefulWriter::send_any_unsent_changes()
             {
                 this->mp_periodicHB->restart_timer();
             }
-            (*m_reader_iterator)->mp_nackSupression->restart_timer();
+
+            if((*m_reader_iterator)->mp_nackSupression != nullptr) // It is reliable
+                (*m_reader_iterator)->mp_nackSupression->restart_timer();
         }
         else
         {
@@ -354,7 +367,8 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     }
 
     // Send a initial heartbeat
-    rp->mp_initialHeartbeat->restart_timer();
+    if(rp->mp_initialHeartbeat != nullptr) // It is reliable
+        rp->mp_initialHeartbeat->restart_timer();
 
     // Send Gap
     if(!not_relevant_changes.empty())
@@ -579,7 +593,9 @@ void StatefulWriter::updateTimes(WriterTimes& times)
                 it!=this->matched_readers.end();++it)
         {
             boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
-            (*it)->mp_nackResponse->update_interval(times.nackResponseDelay);
+
+            if((*it)->mp_nackResponse != nullptr) // It is reliable
+                (*it)->mp_nackResponse->update_interval(times.nackResponseDelay);
         }
     }
     if(m_times.nackSupressionDuration != times.nackSupressionDuration)
@@ -588,7 +604,9 @@ void StatefulWriter::updateTimes(WriterTimes& times)
                 it!=this->matched_readers.end();++it)
         {
             boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
-            (*it)->mp_nackSupression->update_interval(times.nackSupressionDuration);
+
+            if((*it)->mp_nackSupression != nullptr) // It is reliable
+                (*it)->mp_nackSupression->update_interval(times.nackSupressionDuration);
         }
     }
     m_times = times;
