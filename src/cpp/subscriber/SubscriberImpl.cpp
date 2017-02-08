@@ -55,7 +55,11 @@ SubscriberImpl::SubscriberImpl(ParticipantImpl* p,TopicDataType* ptype,
 
 SubscriberImpl::~SubscriberImpl()
 {
-	logInfo(SUBSCRIBER,this->getGuid().entityId << " in topic: "<<this->m_att.topic.topicName);
+    if(mp_reader != nullptr)
+    {
+        logInfo(SUBSCRIBER,this->getGuid().entityId << " in topic: "<<this->m_att.topic.topicName);
+    }
+
 	RTPSDomain::removeRTPSReader(mp_reader);
 	delete(this->mp_userSubscriber);
 }

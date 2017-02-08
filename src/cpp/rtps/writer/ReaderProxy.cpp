@@ -40,32 +40,42 @@ ReaderProxy::ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,
     mp_nackResponse(nullptr), mp_nackSupression(nullptr), mp_initialHeartbeat(nullptr), m_lastAcknackCount(0),
     mp_mutex(new boost::recursive_mutex()), lastNackfragCount_(0)
 {
-    mp_nackResponse = new NackResponseDelay(this,TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
-    mp_nackSupression = new NackSupressionDuration(this,TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
-    mp_initialHeartbeat = new InitialHeartbeat(this, TimeConv::Time_t2MilliSecondsDouble(times.initialHeartbeatDelay));
+    if(rdata.endpoint.reliabilityKind == RELIABLE)
+    {
+        mp_nackResponse = new NackResponseDelay(this,TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
+        mp_nackSupression = new NackSupressionDuration(this,TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
+        mp_initialHeartbeat = new InitialHeartbeat(this, TimeConv::Time_t2MilliSecondsDouble(times.initialHeartbeatDelay));
+    }
+
     logInfo(RTPS_WRITER,"Reader Proxy created");
 }
 
 
 ReaderProxy::~ReaderProxy()
 {
-    if(mp_nackResponse != nullptr)
-        delete(mp_nackResponse);
-    if(mp_nackSupression != nullptr)
-        delete(mp_nackSupression);
-    if(mp_initialHeartbeat != nullptr)
-        delete(mp_initialHeartbeat);
+    destroy_timers();
     delete(mp_mutex);
 }
 
 void ReaderProxy::destroy_timers()
 {
-    delete(mp_nackResponse);
-    mp_nackResponse = nullptr;
-    delete(mp_nackSupression);
-    mp_nackSupression = nullptr;
-    delete(mp_initialHeartbeat);
-    mp_initialHeartbeat = nullptr;
+    if(mp_nackResponse != nullptr)
+    {
+        delete(mp_nackResponse);
+        mp_nackResponse = nullptr;
+    }
+
+    if(mp_nackSupression != nullptr)
+    {
+        delete(mp_nackSupression);
+        mp_nackSupression = nullptr;
+    }
+
+    if(mp_initialHeartbeat != nullptr)
+    {
+        delete(mp_initialHeartbeat);
+        mp_initialHeartbeat = nullptr;
+    }
 }
 
 void ReaderProxy::addChange(const ChangeForReader_t& change)
