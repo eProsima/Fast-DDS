@@ -13,7 +13,7 @@
 # limitations under the License.
 
 ###############################################################################
-# CMake build rules for FastRTPS                                                
+# CMake build rules for FastRTPS
 ###############################################################################
 cmake_minimum_required(VERSION 2.8.12)
 
@@ -203,6 +203,8 @@ endif()
 include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)
 
 find_eprosima_package(fastcdr)
+find_eprosima_thirdparty(asio)
+find_eprosima_thirdparty(tinyxml2)
 
 ###############################################################################
 # Java application
@@ -237,7 +239,7 @@ if(EPROSIMA_BUILD_TESTS AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MI
 endif()
 
 ###############################################################################
-# Examples 
+# Examples
 ###############################################################################
 option(COMPILE_EXAMPLES "Build example" OFF)
 if(COMPILE_EXAMPLES)
@@ -320,7 +322,7 @@ if(BUILD_DOCUMENTATION)
     endif()
 
     add_custom_target(libreoffice
-        COMMAND "${LIBREOFFICE_EXE}" --headless ${LIBREOFFICE_CONVERT_README_MACRO} 
+        COMMAND "${LIBREOFFICE_EXE}" --headless ${LIBREOFFICE_CONVERT_README_MACRO}
         COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/README.html" "${README_LOCATION}/README.html"
         DEPENDS
         "${PROJECT_SOURCE_DIR}/doc/README.odt"
