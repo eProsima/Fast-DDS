@@ -410,7 +410,7 @@ class RTPSParticipantImpl
           @param Locator_list - Locator list to be used to create the ReceiverResources
           @param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
           */
-        static const int MutationTries = 5;
+        static const int MutationTries = 100;
         void createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
 
         bool networkFactoryHasRegisteredTransports() const;
