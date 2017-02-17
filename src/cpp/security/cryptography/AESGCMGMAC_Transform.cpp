@@ -497,7 +497,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
         EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
         output.resize(actual_size+final_size);
-    }else{  
+    }else{
         //We are in GMAC mode: We need a signature but no encryption is needed
         EVP_EncryptUpdate(e_ctx, NULL, &actual_size, (const unsigned char*)payload.data(), static_cast<int>(payload.size()));
         EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
@@ -1350,7 +1350,7 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
 {
     std::vector<uint8_t> buffer;
     //TODO(Ricardo) Review bigendianess
-    short octets;
+    uint16_t octets;
 
     //SEC_PREFIX
     buffer.push_back(SEC_PREFIX);
@@ -1358,7 +1358,7 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
     flags &= 0xFE; //Force LSB to zero
     buffer.push_back(flags);
     //Octets2NextSubMessageHeader
-    octets = static_cast<short>(serialized_header.size() + serialized_body.size() + 2 + 2 + serialized_tag.size());
+    octets = static_cast<uint16_t>(serialized_header.size() + serialized_body.size() + 2 + 2 + serialized_tag.size());
     uint8_t octets_c[2] = { 0, 0 };
     memcpy(octets_c, &octets, 2);
     buffer.push_back( octets_c[0] );
@@ -1373,7 +1373,7 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
     //Flags
     buffer.push_back(flags);
     //Octets2NextSubMessageHeader
-    octets = static_cast<short>(serialized_tag.size());
+    octets = static_cast<uint16_t>(serialized_tag.size());
     memcpy(octets_c, &octets, 2);
     buffer.push_back( octets_c[0] );
     buffer.push_back( octets_c[1] );
@@ -1387,7 +1387,7 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_endpoint_submessage(std::vec
 std::vector<uint8_t> AESGCMGMAC_Transform::assemble_rtps_message(std::vector<uint8_t> &rtps_header, std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body, std::vector<uint8_t> &serialized_tag, unsigned char &flags)
 {
     std::vector<uint8_t> buffer;
-    short octets;
+    uint16_t octets;
 
     //Unaltered Header
     for(size_t i = 0; i < rtps_header.size(); ++i)   buffer.push_back( rtps_header.at(i) );
@@ -1397,7 +1397,7 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_rtps_message(std::vector<uin
     flags &= 0xFE; //Enforce LSB to zero
     buffer.push_back(flags);
     //Octects2NextSugMs
-    octets = static_cast<short>(serialized_header.size() + serialized_body.size() + 2 + 2 + serialized_tag.size());
+    octets = static_cast<uint16_t>(serialized_header.size() + serialized_body.size() + 2 + 2 + serialized_tag.size());
     uint8_t octets_c[2] = { 0, 0 };
     memcpy(octets_c, &octets, 2);
     buffer.push_back( octets_c[1] );
@@ -1411,7 +1411,7 @@ std::vector<uint8_t> AESGCMGMAC_Transform::assemble_rtps_message(std::vector<uin
     //Flags
     buffer.push_back(flags);
     //Octets2Nextheader
-    octets = static_cast<short>(serialized_tag.size());
+    octets = static_cast<uint16_t>(serialized_tag.size());
     memcpy(octets_c, &octets, 2);
     buffer.push_back( octets_c[1] );
     buffer.push_back( octets_c[0] );
@@ -1554,7 +1554,7 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &
         std::vector<uint8_t> &serialized_tag, unsigned char& /*flags*/)
 {
 
-    short offset = 0;
+    uint16_t offset = 0;
     int i;
 
     //SRTPS_PREFIX
@@ -1568,7 +1568,7 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &
     offset += 1;
     octets_c[0] = input.at(offset);
     offset += 1;
-    short safecheck;
+    uint16_t safecheck;
     memcpy(&safecheck, octets_c, 2);
     if( (input.size() - offset) != static_cast<unsigned int>(safecheck))
         return false;
@@ -1582,7 +1582,7 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &
     int32_t body_length = 0;
     memcpy(&body_length, input.data() + offset, sizeof(int32_t));
     for(i=0; i < body_length; i++) serialized_body.push_back( input.at(i + offset + sizeof(int32_t)) );
-    offset += static_cast<short>(sizeof(int32_t) + body_length);
+    offset += static_cast<uint16_t>(sizeof(int32_t) + body_length);
     //SRTPS_POSTFIX
     if( input.at(offset) != SRTPS_POSTFIX ) return false;
     offset += 1;
@@ -1602,4 +1602,26 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &
     for(i = 0; i < safecheck; ++i) serialized_tag.push_back(input.at(i + offset) );
 
     return true;
+}
+
+constexpr uint32_t srtps_prefix_length = 4;
+constexpr uint32_t srtps_prefix_header_length = 20;
+// 4 bytes to serialize length of the body.
+constexpr uint32_t srtps_body_length_attr = 4;
+constexpr uint32_t srtps_postfix_length = 4;
+constexpr uint32_t srtps_postfix_common_tag = 16;
+
+uint32_t AESGCMGMAC_Transform::calculate_extra_size_for_rtps_message(uint32_t number_discovered_participants) const
+{
+    uint32_t calculate = srtps_prefix_length  +
+        srtps_prefix_header_length +
+        srtps_body_length_attr +
+        AES_BLOCK_SIZE + // Padding
+        srtps_postfix_length +
+        srtps_postfix_common_tag; // TODO(Ricardo) Not using receiver_tags
+
+    // Minimum like there is 10 participants.
+    calculate += number_discovered_participants > 10 ? number_discovered_participants * 20 : 200;
+
+    return calculate;
 }

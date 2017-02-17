@@ -213,6 +213,8 @@ class RTPSParticipantImpl
 
         uint32_t getMaxMessageSize() const;
 
+        uint32_t getMaxDataSize();
+
 #if HAVE_SECURITY
         ::security::SecurityManager& security_manager() { return m_security_manager; }
 #endif

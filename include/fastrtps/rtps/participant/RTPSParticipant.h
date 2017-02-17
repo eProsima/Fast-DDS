@@ -138,6 +138,8 @@ class RTPS_DllAPI RTPSParticipant
 
     uint32_t getMaxMessageSize() const;
 
+    uint32_t getMaxDataSize() const;
+
     private:
 
     //!Pointer to the implementation.

@@ -28,6 +28,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         set(BLACKBOXTESTS_SOURCE BlackboxTests.cpp
             types/HelloWorld.cpp
             types/HelloWorldType.cpp
+            types/String.cpp
+            types/StringType.cpp
             types/Data64kb.cpp
             types/Data64kbType.cpp
             types/Data1mb.cpp

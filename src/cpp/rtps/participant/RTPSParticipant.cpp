@@ -104,6 +104,11 @@ uint32_t RTPSParticipant::getMaxMessageSize() const
     return mp_impl->getMaxMessageSize();
 }
 
+uint32_t RTPSParticipant::getMaxDataSize() const
+{
+    return mp_impl->getMaxDataSize();
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

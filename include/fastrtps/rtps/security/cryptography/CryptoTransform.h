@@ -180,6 +180,7 @@ class CryptoTransform
                 DatawriterCryptoHandle &sending_datawriter_crypto,
                 SecurityException &exception) = 0;
 
+        virtual uint32_t calculate_extra_size_for_rtps_message(uint32_t number_discovered_participants) const = 0;
 };
 
 } //namespace eprosima

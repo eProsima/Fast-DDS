@@ -22,7 +22,7 @@ namespace fastrtps{
 namespace rtps{
 
 static const uint32_t maximumUDPSocketSize = 65536;
-static const uint32_t maximumMessageSize = 65000;
+static const uint32_t maximumMessageSize = 65500;
 vector<vector<octet> > test_UDPv4Transport::DropLog;
 uint32_t test_UDPv4Transport::DropLogLength = 0;
 

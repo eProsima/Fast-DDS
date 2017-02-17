@@ -104,6 +104,8 @@ class SecurityManager
         bool decode_serialized_payload(const SerializedPayload_t& secure_payload,
                 SerializedPayload_t& payload, const GUID_t& reader_guid, const GUID_t& writer_guid);
 
+        uint32_t calculate_extra_size_for_rtps_message();
+
     private:
 
         enum AuthenticationStatus : uint32_t

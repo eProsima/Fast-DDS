@@ -30,7 +30,7 @@ namespace rtps{
 
 //!Max size of RTPS message in bytes.
 #define RTPSMESSAGE_DEFAULT_SIZE 10500  //max size of rtps message in bytes
-#define RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE 536 //common payload a rtps message has
+#define RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE 536 //common payload a rtps message has TODO(Ricardo) It is necessary?
 #define RTPSMESSAGE_COMMON_DATA_PAYLOAD_SIZE 10000 //common data size
 #define RTPSMESSAGE_HEADER_SIZE 20  //header size in bytes
 #define RTPSMESSAGE_SUBMESSAGEHEADER_SIZE 4

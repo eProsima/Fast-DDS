@@ -2201,3 +2201,13 @@ void SecurityManager::participant_authorized(const DiscoveredParticipantInfo::Au
                 << participant_data->m_guid << ")");
     }
 }
+
+uint32_t SecurityManager::calculate_extra_size_for_rtps_message()
+{
+    if(crypto_plugin_ == nullptr)
+        return false;
+
+    std::unique_lock<std::mutex> lock(mutex_);
+
+    return crypto_plugin_->cryptotransform()->calculate_extra_size_for_rtps_message(discovered_participants_.size());
+}

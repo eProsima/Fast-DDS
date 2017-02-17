@@ -150,6 +150,7 @@ class AESGCMGMAC_Transform : public CryptoTransform
            std::vector<uint8_t> &serialized_tag,
            unsigned char &flags);
 
+   uint32_t calculate_extra_size_for_rtps_message(uint32_t number_discovered_participants) const;
 };
 
 

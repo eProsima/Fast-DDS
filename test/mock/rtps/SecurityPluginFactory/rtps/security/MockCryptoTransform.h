@@ -98,6 +98,7 @@ class MockCryptoTransform : public CryptoTransform
                 DatawriterCryptoHandle&,
                 SecurityException&));
 
+        uint32_t calculate_extra_size_for_rtps_message(uint32_t number_discovered_participants) const { return 0; };
 };
 
 } //namespace security
