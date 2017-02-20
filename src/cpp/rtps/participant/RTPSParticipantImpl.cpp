@@ -19,10 +19,10 @@
 
 #include "RTPSParticipantImpl.h"
 
-#include <fastrtps/rtps/resources/ResourceSend.h>
+#include <fastrtps/rtps/flowcontrol/ThroughputController.h>
+
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
-#include <fastrtps/rtps/resources/ListenResource.h>
 
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 
@@ -101,7 +101,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     // Builtin transport by default
     if (PParam.useBuiltinTransports)
     {
-        UDPv4TransportDescriptor descriptor; 
+        UDPv4TransportDescriptor descriptor;
         descriptor.sendBufferSize = m_att.sendSocketBufferSize;
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
         m_network_Factory.RegisterTransport(&descriptor);
@@ -168,10 +168,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
     }
 
-    /*	
-        Since nothing guarantees the correct creation of the Resources on the Locators we have specified, and 
+    /*
+        Since nothing guarantees the correct creation of the Resources on the Locators we have specified, and
         in order to maintain synchrony between the defaultLocator list and the actuar ReceiveResources,
-        We create the resources for these Locators now. Furthermore, in case these resources are taken, 
+        We create the resources for these Locators now. Furthermore, in case these resources are taken,
         we create them on another Locator and then update de defaultList.
         */
     createReceiverResources(m_att.defaultUnicastLocatorList, true);
@@ -202,14 +202,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         uint32_t tries = 100;
         while(newSendersBuffer.empty() && tries != 0)
         {
-            //No ReceiverResources have been added, therefore we have to change the Locator 
+            //No ReceiverResources have been added, therefore we have to change the Locator
             (*it) = applyLocatorAdaptRule(*it); //Mutate the Locator to find a suitable rule. Overwrite the old one as it is useless now.
             newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
             --tries;
         }
         //Now we DO have resources, and the new locator is already replacing the old one.
         for(auto mit= newSendersBuffer.begin(); mit!= newSendersBuffer.end(); ++mit){
-            newSenders.push_back(std::move(*mit));	
+            newSenders.push_back(std::move(*mit));
         }
 
         //newSenders.insert(newSenders.end(), newSendersBuffer.begin(), newSendersBuffer.end());
@@ -587,14 +587,14 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
     createReceiverResources(pend->getAttributes()->multicastLocatorList, false);
 
     // Associate the Endpoint with ReceiverResources inside ReceiverControlBlocks
-    assignEndpointListenResources(pend); 
+    assignEndpointListenResources(pend);
     return true;
 }
 
 void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver, Locator_t input_locator)
 {
     while(receiver->resourceAlive)
-    {	
+    {
         // Blocking receive.
         auto& msg = receiver->mp_receiver->m_rec_msg;
         if(!receiver->Receiver.Receive(msg.buffer, msg.max_size, msg.length, input_locator))
@@ -602,7 +602,7 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver,
 
         // Processes the data through the CDR Message interface.
         receiver->mp_receiver->processCDRMsg(getGuid().guidPrefix, &input_locator, &receiver->mp_receiver->m_rec_msg);
-    }	
+    }
 }
 
 
@@ -626,13 +626,13 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
             //boost::lock_guard<boost::mutex> guard((*it).mtx);
             if ((*it).Receiver.SupportsLocator(*lit)){
                 //Supported! Take mutex and update lists - We maintain reader/writer discrimination just in case
-                (*it).mp_receiver->associateEndpoint(endp);	
+                (*it).mp_receiver->associateEndpoint(endp);
                 // end association between reader/writer and the receive resources
             }
 
         }
         //Finished iteratig through all ListenResources for a single Locator (from the parameter list).
-        //Since this function is called after checking with NetFactory we do not have to create any more resource. 
+        //Since this function is called after checking with NetFactory we do not have to create any more resource.
     }
     return true;
 }
@@ -678,7 +678,7 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
                 tries++;
                 (*it_loc) = applyLocatorAdaptRule(*it_loc);
                 ret = m_network_Factory.BuildReceiverResources((*it_loc), newItemsBuffer);
-            }	
+            }
         }
 
         for(auto it_buffer = newItemsBuffer.begin(); it_buffer != newItemsBuffer.end(); ++it_buffer)
@@ -694,7 +694,7 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
             m_receiverResourcelist.back().m_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation,this, &(m_receiverResourcelist.back()),(*it_loc));
         }
         newItemsBuffer.clear();
-    }	
+    }
 }
 
 
@@ -778,7 +778,7 @@ ResourceEvent& RTPSParticipantImpl::getEventResource()
 std::pair<StatefulReader*,StatefulReader*> RTPSParticipantImpl::getEDPReaders(){
     std::pair<StatefulReader*,StatefulReader*> buffer;
     EDPSimple *EDPPointer = dynamic_cast<EDPSimple*>(mp_builtinProtocols->mp_PDP->getEDP());
-    if(EDPPointer != nullptr){	
+    if(EDPPointer != nullptr){
         //Means the EDP attached is actually non static and therefore it has Readers
         buffer.first=EDPPointer->mp_SubReader.first;
         buffer.second=EDPPointer->mp_PubReader.first;
@@ -906,5 +906,3 @@ bool RTPSParticipantImpl::networkFactoryHasRegisteredTransports() const
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
-
-

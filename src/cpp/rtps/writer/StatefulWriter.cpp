@@ -25,8 +25,6 @@
 
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 
-#include <fastrtps/rtps/resources/ResourceSend.h>
-
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
@@ -196,7 +194,7 @@ bool StatefulWriter::wrap_around_readers()
         return false;
 
     m_readers_to_walk--;
-    m_reader_iterator++; 
+    m_reader_iterator++;
     if (m_reader_iterator == matched_readers.end())
         m_reader_iterator = matched_readers.begin();
 
@@ -209,7 +207,7 @@ size_t StatefulWriter::send_any_unsent_changes()
     size_t number_of_changes_sent = 0;
 
     m_readers_to_walk = matched_readers.size();
-    // The reader proxy vector is walked in a different order each time 
+    // The reader proxy vector is walked in a different order each time
     // to prevent persistent prioritization of a single reader
     while(wrap_around_readers())
     {
@@ -240,7 +238,7 @@ size_t StatefulWriter::send_any_unsent_changes()
 
         // Clear all relevant changes through the parent controllers
         for (auto& controller : mp_RTPSParticipant->getFlowControllers())
-            (*controller)(relevant_changes); 
+            (*controller)(relevant_changes);
 
         // Those that remain are set to UNDERWAY or their unsent sets updated
         for (auto& change : relevant_changes)

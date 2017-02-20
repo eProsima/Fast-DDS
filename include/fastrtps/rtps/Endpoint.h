@@ -36,14 +36,13 @@ namespace fastrtps{
 namespace rtps {
 
 class RTPSParticipantImpl;
-class ResourceSend;
 class ResourceEvent;
 
 
 /**
  * Class Endpoint, all entities of the RTPS network derive from this class.
  * Although the RTPSParticipant is also defined as an endpoint in the RTPS specification, in this implementation
- * the RTPSParticipant class **does not** inherit from the endpoint class. Each Endpoint object owns a pointer to the 
+ * the RTPSParticipant class **does not** inherit from the endpoint class. Each Endpoint object owns a pointer to the
  * RTPSParticipant it belongs to.
  * @ingroup COMMON_MODULE
  */

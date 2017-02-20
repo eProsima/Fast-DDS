@@ -36,7 +36,6 @@ namespace rtps {
 
 class RTPSWriter;
 class RTPSReader;
-class ListenResource;
 struct SubmessageHeader_t;
 
 /**
