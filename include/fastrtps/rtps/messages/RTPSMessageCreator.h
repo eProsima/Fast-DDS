@@ -15,8 +15,6 @@
 /**
  * @file RTPSMessageCreator.h
 */
-
-
 #ifndef CDRMESSAGECREATOR_H_
 #define CDRMESSAGECREATOR_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
@@ -26,13 +24,10 @@
 #include "../common/FragmentNumber.h"
 #include "../common/CacheChange.h"
 
-
 namespace eprosima {
 namespace fastrtps{
 
-
 class ParameterList_t;
-
 
 namespace rtps{
 
@@ -102,7 +97,8 @@ class RTPSMessageCreator
         static bool addMessageDataFrag(CDRMessage_t* msg, GuidPrefix_t& guidprefix, const CacheChange_t* change, uint32_t fragment_number,
                 TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, ParameterList_t* inlineQos);
         static bool addSubmessageDataFrag(CDRMessage_t* msg, const CacheChange_t* change, uint32_t fragment_number,
-                TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, ParameterList_t* inlineQos);
+                uint32_t sample_size, TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos,
+                ParameterList_t* inlineQos);
 
         static bool addMessageGap(CDRMessage_t* msg, const GuidPrefix_t& guidprefix, const GuidPrefix_t& remoteGuidPrefix,
                 const SequenceNumber_t& seqNumFirst, const SequenceNumberSet_t& seqNumList,const EntityId_t& readerId,const EntityId_t& writerId);

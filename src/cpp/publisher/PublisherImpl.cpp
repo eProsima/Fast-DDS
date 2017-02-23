@@ -116,8 +116,8 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
         //TODO(Ricardo) This logic in a class. Then a user of rtps layer can use it.
         if(high_mark_for_frag_ == 0)
         {
-            high_mark_for_frag_ = getMaxDataSize() > m_att.throughputController.bytesPerPeriod ?
-                m_att.throughputController.bytesPerPeriod : getMaxDataSize();
+            high_mark_for_frag_ = mp_writer->getMaxDataSize() > m_att.throughputController.bytesPerPeriod ?
+                m_att.throughputController.bytesPerPeriod : mp_writer->getMaxDataSize();
             if(high_mark_for_frag_ > mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod)
                 high_mark_for_frag_ = mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod;
         }
@@ -276,23 +276,4 @@ bool PublisherImpl::clean_history(unsigned int max)
 bool PublisherImpl::wait_for_all_acked(const Time_t& max_wait)
 {
     return mp_writer->wait_for_all_acked(max_wait);
-}
-
-constexpr uint32_t info_dst_message_length = 16;
-constexpr uint32_t info_ts_message_length = 12;
-constexpr uint32_t data_frag_submessage_header_length = 36;
-constexpr uint32_t data_encapsulation_length = 4; // TODO(Ricardo) Should be in cachechange
-
-uint32_t PublisherImpl::getMaxDataSize()
-{
-    uint32_t maxDataSize = mp_rtpsParticipant->getMaxDataSize();
-
-    maxDataSize -= info_dst_message_length +
-        info_ts_message_length +
-        data_frag_submessage_header_length +
-        data_encapsulation_length;
-
-    //TODO(Ricardo) inlineqos in future.
-
-    return maxDataSize;
 }

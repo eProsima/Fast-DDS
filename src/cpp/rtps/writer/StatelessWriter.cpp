@@ -70,15 +70,6 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 {
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
-#if HAVE_SECURITY
-    // If payload protection, encode payload
-    if(is_payload_protected())
-    {
-        getRTPSParticipant()->security_manager().encode_serialized_payload(cptr->serializedPayload,
-                m_guid);
-    }
-#endif
-
     if(!isAsync())
     {
         this->setLivelinessAsserted(true);

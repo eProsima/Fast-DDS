@@ -90,8 +90,6 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     memcpy( header.initialization_vector_suffix.data() , &initialization_vector_suffix, 8);
 
     //Cypher the plain rtps message -> SecureDataBody
-    (void)RAND_load_file("/dev/urandom", 32); //Init random number gen
-
     size_t enc_length = plain_buffer.size()*3; //TODO(Ricardo) Review size.
     std::vector<uint8_t> output;
     output.resize(enc_length,0);
@@ -190,8 +188,6 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
 
     //Cypher the plain rtps message -> SecureDataBody
-    (void)RAND_load_file("/dev/urandom", 32); //Init random number gen
-
     size_t enc_length = plain_rtps_submessage.size()*3; //TODO(Ricardo)Review size.
     std::vector<uint8_t> output;
     output.resize(enc_length,0);
@@ -220,9 +216,17 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     for(auto rec = receiving_datareader_crypto_list.begin(); rec != receiving_datareader_crypto_list.end(); ++rec){
 
         AESGCMGMAC_ReaderCryptoHandle& remote_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**rec);
-        if(remote_reader.nil()){
-            logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle");
-            return false;
+
+        if(remote_reader.nil())
+        {
+            logWarning(SECURITY_CRYPTO, "Invalid CryptoHandle");
+            continue;
+        }
+
+        if(remote_reader->Writer2ReaderKeyMaterial.size() == 0)
+        {
+            logWarning(SECURITY_CRYPTO, "No key material yet");
+            continue;
         }
 
         //Update the key if needed
@@ -325,8 +329,6 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
 
 
     //Cypher the plain rtps message -> SecureDataBody
-    (void)RAND_load_file("/dev/urandom", 32); //Init random number gen
-
     size_t enc_length = plain_rtps_submessage.size()*3;
     std::vector<uint8_t> output;
     output.resize(enc_length,0);
@@ -355,9 +357,16 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     for(auto rec = receiving_datawriter_crypto_list.begin(); rec != receiving_datawriter_crypto_list.end(); ++rec){
 
         AESGCMGMAC_WriterCryptoHandle& remote_writer = AESGCMGMAC_WriterCryptoHandle::narrow(**rec);
-        if(remote_writer.nil()){
-            //TODO (santi) Provide insight
-            return false;
+
+        if(remote_writer.nil())
+        {
+            continue;
+        }
+
+        if(remote_writer->Reader2WriterKeyMaterial.size() == 0)
+        {
+            logWarning(SECURITY_CRYPTO, "No key material yet");
+            continue;
         }
 
         //Update the key if needed
@@ -468,8 +477,6 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
 
 
     //Cypher the plain rtps message -> SecureDataBody
-    (void)RAND_load_file("/dev/urandom", 32); //Init random number gen
-
     size_t enc_length = ( payload.size()) * 3;
     std::vector<uint8_t> output;
     output.resize(enc_length,0);
@@ -655,9 +662,6 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
 
     //Auth message - The point is that we cannot verify the authorship of the message with our receiver_specific_key the message could be crafted
-
-    RAND_load_file("/dev/urandom",32);
-
     EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
     plain_buffer.clear();
     plain_buffer.resize(encoded_buffer.size());
@@ -724,8 +728,6 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     EVP_CIPHER_CTX_free(d_ctx);
 
     //Decode message
-    RAND_load_file("/dev/urandom",32);
-
     d_ctx = EVP_CIPHER_CTX_new();
     plain_buffer.clear();
 
@@ -809,14 +811,28 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             it != remote_participant->Writers.end(); ++it)
     {
         AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(**it);
-        if(writer->Writer2ReaderKeyMaterial.size() > 0 &&
-                writer->Writer2ReaderKeyMaterial.at(0).sender_key_id == header.transform_identifier.transformation_key_id)
+
+        if(writer->Writer2ReaderKeyMaterial.size() == 0)
+        {
+            logWarning(SECURITY_CRYPTO, "No key material yet");
+            continue;
+        }
+
+        if(writer->Writer2ReaderKeyMaterial.at(0).sender_key_id == header.transform_identifier.transformation_key_id)
         {
             secure_submessage_category = DATAWRITER_SUBMESSAGE;
             *datawriter_crypto = *it;
             //We have the remote writer, now lets look for the local datareader
-            for(std::vector<DatareaderCryptoHandle *>::iterator itt = local_participant->Readers.begin(); itt != local_participant->Readers.end(); ++itt){
+            for(std::vector<DatareaderCryptoHandle *>::iterator itt = local_participant->Readers.begin(); itt != local_participant->Readers.end(); ++itt)
+            {
                 AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**itt);
+
+                if(reader->Reader2WriterKeyMaterial.size() == 0)
+                {
+                    logWarning(SECURITY_CRYPTO, "No key material yet");
+                    continue;
+                }
+
                 for(size_t i=0; i < reader->Reader2WriterKeyMaterial.size(); ++i)
                 {
                     if(reader->Reader2WriterKeyMaterial.at(i).receiver_specific_key_id == writer->Reader2WriterKeyMaterial.at(0).receiver_specific_key_id){
@@ -832,13 +848,21 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             it != remote_participant->Readers.end(); ++it)
     {
         AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**it);
-        if(reader->Reader2WriterKeyMaterial.size() > 0 &&
-                reader->Reader2WriterKeyMaterial.at(0).sender_key_id == header.transform_identifier.transformation_key_id)
+
+        if(reader->Reader2WriterKeyMaterial.size() == 0)
+        {
+            logWarning(SECURITY_CRYPTO, "No key material yet");
+            continue;
+        }
+
+        if(reader->Reader2WriterKeyMaterial.at(0).sender_key_id == header.transform_identifier.transformation_key_id)
         {
             secure_submessage_category = DATAREADER_SUBMESSAGE;
             *datareader_crypto = *it;
+
             //We have the remote reader, now lets look for the local datawriter
-            for(std::vector<DatawriterCryptoHandle *>::iterator itt = local_participant->Writers.begin(); itt != local_participant->Writers.end(); ++itt){
+            for(std::vector<DatawriterCryptoHandle *>::iterator itt = local_participant->Writers.begin(); itt != local_participant->Writers.end(); ++itt)
+            {
                 AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(**itt);
                 for(size_t i = 0; i < writer->Writer2ReaderKeyMaterial.size(); ++i)
                 {
@@ -866,6 +890,12 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     if(sending_writer.nil())
     {
         logError(SECURITY_CRYPTO, "Invalid sending_writer handle");
+        return false;
+    }
+
+    if(sending_writer->Writer2ReaderKeyMaterial.size() == 0)
+    {
+        logWarning(SECURITY_CRYPTO, "No key material yet");
         return false;
     }
 
@@ -929,9 +959,6 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
 
     //Auth message - The point is that we cannot verify the authorship of the message with our receiver_specific_key the message could be crafted
-
-    RAND_load_file("/dev/urandom",32);
-
     EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
 
     int actual_size = 0, final_size = 0;
@@ -975,8 +1002,6 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     EVP_CIPHER_CTX_free(d_ctx);
 
     //Decode message
-    RAND_load_file("/dev/urandom",32);
-
     d_ctx = EVP_CIPHER_CTX_new();
 
     actual_size = 0;
@@ -1017,6 +1042,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
 
     plain_rtps_submessage.length = plain_rtps_submessage.pos;
     plain_rtps_submessage.pos = 0;
+    plain_rtps_submessage.msg_endian = encoded_rtps_submessage.msg_endian;
 
     return true;
 }
@@ -1034,6 +1060,12 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     if(sending_reader.nil())
     {
         logError(SECURITY_CRYPTO, "Invalid sending_reader handle");
+        return false;
+    }
+
+    if(sending_reader->Reader2WriterKeyMaterial.size() == 0)
+    {
+        logWarning(SECURITY_CRYPTO, "No key material yet");
         return false;
     }
 
@@ -1096,8 +1128,6 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
 
     //Auth message - The point is that we cannot verify the authorship of the message with our receiver_specific_key the message could be crafted
-    RAND_load_file("/dev/urandom",32);
-
     EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
 
     int actual_size = 0, final_size = 0;
@@ -1141,8 +1171,6 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     EVP_CIPHER_CTX_free(d_ctx);
 
     //Decode message
-    RAND_load_file("/dev/urandom",32);
-
     d_ctx = EVP_CIPHER_CTX_new();
 
     actual_size = 0;
@@ -1183,6 +1211,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
 
     plain_rtps_submessage.length = plain_rtps_submessage.pos;
     plain_rtps_submessage.pos = 0;
+    plain_rtps_submessage.msg_endian = encoded_rtps_submessage.msg_endian;
 
     return true;
 
@@ -1202,6 +1231,12 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
 
     if(sending_writer.nil()){
         exception = SecurityException("Not a valid sending_writer handle");
+        return false;
+    }
+
+    if(sending_writer->Writer2ReaderKeyMaterial.size() == 0)
+    {
+        logWarning(SECURITY_CRYPTO, "No key material yet");
         return false;
     }
 
@@ -1246,9 +1281,6 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     std::array<uint8_t,12> initialization_vector;
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
     memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
-
-
-    RAND_load_file("/dev/urandom",32);
 
     EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
     int actual_size = 0, final_size = 0;
@@ -1506,8 +1538,8 @@ bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(CDRMessage_t &input,
     input.pos +=1;
 
     //OctectsToNextSugMsg
-    int16_t octetsToNextSubMsg;
-    CDRMessage::readInt16(&input, &octetsToNextSubMsg); //it should be 16 in this implementation
+    uint16_t octetsToNextSubMsg;
+    CDRMessage::readUInt16(&input, &octetsToNextSubMsg); //it should be 16 in this implementation
 
     if((input.length - input.pos) < static_cast<unsigned int>(octetsToNextSubMsg))
     {
@@ -1538,7 +1570,7 @@ bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(CDRMessage_t &input,
     input.pos += 1;
 
     //Octets2Nextheader
-    CDRMessage::readInt16(&input, &octetsToNextSubMsg); //it should be 16 in this implementation
+    CDRMessage::readUInt16(&input, &octetsToNextSubMsg); //it should be 16 in this implementation
     if((input.length - input.pos) < static_cast<unsigned int>(octetsToNextSubMsg)) return false;
 
     //Tag
@@ -1605,23 +1637,54 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &
 }
 
 constexpr uint32_t srtps_prefix_length = 4;
-constexpr uint32_t srtps_prefix_header_length = 20;
 // 4 bytes to serialize length of the body.
-constexpr uint32_t srtps_body_length_attr = 4;
 constexpr uint32_t srtps_postfix_length = 4;
-constexpr uint32_t srtps_postfix_common_tag = 16;
+constexpr uint32_t sec_prefix_length = 4;
+// 4 bytes to serialize length of the body.
+constexpr uint32_t sec_postfix_length = 4;
+constexpr uint32_t aesgcmgmac_header_length = 20;
+constexpr uint32_t aesgcmgmac_body_length_attr = 4;
+constexpr uint32_t aesgcmgmac_common_tag = 16;
 
 uint32_t AESGCMGMAC_Transform::calculate_extra_size_for_rtps_message(uint32_t number_discovered_participants) const
 {
     uint32_t calculate = srtps_prefix_length  +
-        srtps_prefix_header_length +
-        srtps_body_length_attr +
+        aesgcmgmac_header_length +
+        aesgcmgmac_body_length_attr +
         AES_BLOCK_SIZE + // Padding
         srtps_postfix_length +
-        srtps_postfix_common_tag; // TODO(Ricardo) Not using receiver_tags
+        aesgcmgmac_common_tag;
 
     // Minimum like there is 10 participants.
     calculate += number_discovered_participants > 10 ? number_discovered_participants * 20 : 200;
+
+    return calculate;
+}
+
+uint32_t AESGCMGMAC_Transform::calculate_extra_size_for_rtps_submessage(uint32_t number_discovered_readers) const
+{
+    uint32_t calculate = sec_prefix_length  +
+        aesgcmgmac_header_length +
+        aesgcmgmac_body_length_attr +
+        AES_BLOCK_SIZE + // Padding
+        sec_postfix_length +
+        aesgcmgmac_common_tag;
+
+    // Minimum like there is 10 participants.
+    calculate += number_discovered_readers > 10 ? number_discovered_readers * 20 : 200;
+
+    return calculate;
+}
+
+uint32_t AESGCMGMAC_Transform::calculate_extra_size_for_encoded_payload(uint32_t number_discovered_readers) const
+{
+    uint32_t calculate = aesgcmgmac_header_length +
+        aesgcmgmac_body_length_attr +
+        AES_BLOCK_SIZE + // Padding
+        aesgcmgmac_common_tag;
+
+    // Minimum like there is 10 participants.
+    calculate += number_discovered_readers > 10 ? number_discovered_readers * 20 : 200;
 
     return calculate;
 }

@@ -99,12 +99,17 @@ class SecurityManager
         bool decode_rtps_submessage(CDRMessage_t& message, CDRMessage_t& out_message,
                 const GuidPrefix_t& sending_participant);
 
-        bool encode_serialized_payload(SerializedPayload_t& payload, const GUID_t& writer_guid);
+        bool encode_serialized_payload(const SerializedPayload_t& payload, CDRMessage_t& output_message,
+                const GUID_t& writer_guid);
 
         bool decode_serialized_payload(const SerializedPayload_t& secure_payload,
                 SerializedPayload_t& payload, const GUID_t& reader_guid, const GUID_t& writer_guid);
 
         uint32_t calculate_extra_size_for_rtps_message();
+
+        uint32_t calculate_extra_size_for_rtps_submessage(const GUID_t& writer_guid);
+
+        uint32_t calculate_extra_size_for_encoded_payload(const GUID_t& writer_guid);
 
     private:
 

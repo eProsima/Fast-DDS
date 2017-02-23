@@ -24,7 +24,7 @@
 
 StringType::StringType() {
     setName("StringType");
-    m_typeSize = (uint32_t)String::getMaxCdrSerializedSize();
+    m_typeSize = (uint32_t)String::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = false;
 
 }
@@ -39,8 +39,11 @@ bool StringType::serialize(void* data, SerializedPayload_t* payload)
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    // Serialize encapsulation
+    ser.serialize_encapsulation();
     //serialize the object:
     hw->serialize(ser);
     payload->length = (uint32_t)ser.getSerializedDataLength();
@@ -53,7 +56,11 @@ bool StringType::deserialize(SerializedPayload_t* payload, void* data)
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr deser(fastbuffer, payload->encapsulation == CDR_BE ? eprosima::fastcdr::Cdr::BIG_ENDIANNESS : eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS); 	// Object that deserializes the data.
+    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
+    // Deserialize encapsulation.
+    deser.read_encapsulation();
+    payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     //serialize the object:
     hw->deserialize(deser);
     return true;
@@ -61,7 +68,9 @@ bool StringType::deserialize(SerializedPayload_t* payload, void* data)
 
 std::function<uint32_t()> StringType::getSerializedSizeProvider(void *data)
 {
-    return [data]() -> uint32_t { return (uint32_t)type::getCdrSerializedSize(*static_cast<String*>(data)); };
+    return [data]() -> uint32_t {
+        return (uint32_t)type::getCdrSerializedSize(*static_cast<String*>(data)) + 4 /*encapsulation*/;
+    };
 }
 
 void* StringType::createData()

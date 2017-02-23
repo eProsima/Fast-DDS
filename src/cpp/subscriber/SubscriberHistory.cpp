@@ -388,7 +388,7 @@ bool SubscriberHistory::find_Key(CacheChange_t* a_change, t_v_Inst_Caches::itera
                     return true;
                 }
             }
-            logWarning(SUBSCRIBER, "History has reached the maximum number of instances" << endl;)
+            logWarning(SUBSCRIBER, "History has reached the maximum number of instances");
         }
 
     }

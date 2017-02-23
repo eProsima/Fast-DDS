@@ -122,3 +122,32 @@ bool RTPSWriter::remove_older_changes(unsigned int max)
 
     return at_least_one;
 }
+
+constexpr uint32_t info_dst_message_length = 16;
+constexpr uint32_t info_ts_message_length = 12;
+constexpr uint32_t data_frag_submessage_header_length = 36;
+
+uint32_t RTPSWriter::getMaxDataSize()
+{
+    uint32_t maxDataSize = mp_RTPSParticipant->getMaxDataSize();
+
+    maxDataSize -= info_dst_message_length +
+        info_ts_message_length +
+        data_frag_submessage_header_length;
+
+    //TODO(Ricardo) inlineqos in future.
+
+#if HAVE_SECURITY
+    if(is_submessage_protected())
+    {
+        maxDataSize -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_rtps_submessage(m_guid);
+    }
+
+    if(is_payload_protected())
+    {
+        maxDataSize -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_encoded_payload(m_guid);
+    }
+#endif
+
+    return maxDataSize;
+}

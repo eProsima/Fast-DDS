@@ -189,8 +189,8 @@ namespace eprosima{
                 {
                     ss << (*it)->sequenceNumber << "-";
                 }
-                ss << endl;
-                cout << ss.str();
+                ss << std::endl;
+                std::cout << ss.str();
             }
 
 

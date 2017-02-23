@@ -99,12 +99,12 @@ void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,M
     if(info.status == MATCHED_MATCHING)
     {
         n_matched++;
-        cout << "Publisher matched"<<endl;
+        std::cout << "Publisher matched"<<std::endl;
     }
     else
     {
         n_matched--;
-        cout << "Publisher unmatched"<<endl;
+        std::cout << "Publisher unmatched"<<std::endl;
     }
 }
 
@@ -116,7 +116,7 @@ void HelloWorldPublisher::run(uint32_t samples)
             --i;
         else
         {
-            cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<endl;
+            std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
         }
         eClock::my_sleep(2000);
     }

@@ -26,67 +26,76 @@
 #include "HelloWorldPubSubTypes.h"
 
 HelloWorldPubSubType::HelloWorldPubSubType() {
-	setName("HelloWorld");
-	m_typeSize = (uint32_t)HelloWorld::getMaxCdrSerializedSize();
-	m_isGetKeyDefined = HelloWorld::isKeyDefined();
-	m_keyBuffer = (unsigned char*)malloc(HelloWorld::getKeyMaxCdrSerializedSize()>16 ? HelloWorld::getKeyMaxCdrSerializedSize() : 16);
+    setName("HelloWorld");
+    m_typeSize = (uint32_t)HelloWorld::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
+    m_isGetKeyDefined = HelloWorld::isKeyDefined();
+    m_keyBuffer = (unsigned char*)malloc(HelloWorld::getKeyMaxCdrSerializedSize()>16 ? HelloWorld::getKeyMaxCdrSerializedSize() : 16);
 }
 
 HelloWorldPubSubType::~HelloWorldPubSubType() {
-	if(m_keyBuffer!=nullptr)
-		free(m_keyBuffer);
+    if(m_keyBuffer!=nullptr)
+        free(m_keyBuffer);
 }
 
 bool HelloWorldPubSubType::serialize(void *data, SerializedPayload_t *payload) {
-	HelloWorld *p_type = (HelloWorld*) data;
-	eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
-	eprosima::fastcdr::Cdr ser(fastbuffer); 	// Object that serializes the data.
+    HelloWorld *p_type = (HelloWorld*) data;
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-	p_type->serialize(ser); 	// Serialize the object:
+    // Serialize encapsulation
+    ser.serialize_encapsulation();
+    p_type->serialize(ser); 	// Serialize the object:
     payload->length = (uint32_t)ser.getSerializedDataLength(); 	//Get the serialized length
-	return true;
+    return true;
 }
 
 bool HelloWorldPubSubType::deserialize(SerializedPayload_t* payload, void* data) {
-	HelloWorld* p_type = (HelloWorld*) data; 	//Convert DATA to pointer of your type
-	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); 	// Object that manages the raw buffer.
-	eprosima::fastcdr::Cdr deser(fastbuffer, payload->encapsulation == CDR_BE ? eprosima::fastcdr::Cdr::BIG_ENDIANNESS : eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS); 	// Object that deserializes the data.
-	p_type->deserialize(deser);	//Deserialize the object:
-	return true;
+    HelloWorld* p_type = (HelloWorld*) data; 	//Convert DATA to pointer of your type
+    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); 	// Object that manages the raw buffer.
+    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
+    // Deserialize encapsulation.
+    deser.read_encapsulation();
+    payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    p_type->deserialize(deser);	//Deserialize the object:
+    return true;
 }
 
 std::function<uint32_t()> HelloWorldPubSubType::getSerializedSizeProvider(void* data) {
-    return [data]() -> uint32_t { return (uint32_t)type::getCdrSerializedSize(*static_cast<HelloWorld*>(data)); };
+    return [data]() -> uint32_t {
+        return (uint32_t)type::getCdrSerializedSize(*static_cast<HelloWorld*>(data)) + 4 /*encapsulation*/;
+    };
 }
 
 void* HelloWorldPubSubType::createData() {
-	return (void*)new HelloWorld();
+    return (void*)new HelloWorld();
 }
 
 void HelloWorldPubSubType::deleteData(void* data) {
-	delete((HelloWorld*)data);
+    delete((HelloWorld*)data);
 }
 
 bool HelloWorldPubSubType::getKey(void *data, InstanceHandle_t* handle) {
-	if(!m_isGetKeyDefined)
-		return false;
-	HelloWorld* p_type = (HelloWorld*) data;
-	eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer,HelloWorld::getKeyMaxCdrSerializedSize()); 	// Object that manages the raw buffer.
-	eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS); 	// Object that serializes the data.
-	p_type->serializeKey(ser);
-	if(HelloWorld::getKeyMaxCdrSerializedSize()>16)	{
-		m_md5.init();
-		m_md5.update(m_keyBuffer,(unsigned int)ser.getSerializedDataLength());
-		m_md5.finalize();
-		for(uint8_t i = 0;i<16;++i)    	{
-        	handle->value[i] = m_md5.digest[i];
-    	}
+    if(!m_isGetKeyDefined)
+        return false;
+    HelloWorld* p_type = (HelloWorld*) data;
+    eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer,HelloWorld::getKeyMaxCdrSerializedSize()); 	// Object that manages the raw buffer.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS); 	// Object that serializes the data.
+    p_type->serializeKey(ser);
+    if(HelloWorld::getKeyMaxCdrSerializedSize()>16)	{
+        m_md5.init();
+        m_md5.update(m_keyBuffer,(unsigned int)ser.getSerializedDataLength());
+        m_md5.finalize();
+        for(uint8_t i = 0;i<16;++i)    	{
+            handle->value[i] = m_md5.digest[i];
+        }
     }
     else    {
-    	for(uint8_t i = 0;i<16;++i)    	{
-        	handle->value[i] = m_keyBuffer[i];
-    	}
+        for(uint8_t i = 0;i<16;++i)    	{
+            handle->value[i] = m_keyBuffer[i];
+        }
     }
-	return true;
+    return true;
 }
 

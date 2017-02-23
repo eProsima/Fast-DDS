@@ -537,25 +537,18 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
         else
             payload_size = smh->submsgLengthLarger;
 
-        msg->pos+=1;
-        octet encapsulation =0;
-        CDRMessage::readOctet(msg,&encapsulation);
-
-        ch->serializedPayload.encapsulation = (uint16_t)encapsulation;
-        msg->pos+=2; //CDR Options, not used in this version
-
         if(dataFlag)
         {
-            if(ch->serializedPayload.max_size >= payload_size-2-2)
+            if(ch->serializedPayload.max_size >= payload_size)
             {
-                ch->serializedPayload.length = payload_size-2-2;
+                ch->serializedPayload.length = payload_size;
                 CDRMessage::readData(msg,ch->serializedPayload.data,ch->serializedPayload.length);
                 ch->kind = ALIVE;
             }
             else
             {
                 logWarning(RTPS_MSG_IN,IDSTRING"Serialized Payload larger than maximum allowed size "
-                        "("<<payload_size-2-2<<"/"<<ch->serializedPayload.max_size<<")");
+                        "(" <<payload_size <<"/"<< ch->serializedPayload.max_size<<")");
                 return false;
             }
         }
@@ -727,18 +720,6 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
         payload_size = smh->submsgLengthLarger;
 
     // Validations??? XXX TODO
-
-    // Only read encapsulation when is the first fragment.
-    // Rest of fragments don't have the encapsulation.
-    if(fragmentStartingNum == 1)
-    {
-        msg->pos += 1;
-        octet encapsulation = 0;
-        CDRMessage::readOctet(msg, &encapsulation);
-
-        ch->serializedPayload.encapsulation = (uint16_t)encapsulation;
-        msg->pos += 2; //CDR Options, not used in this version
-    }
 
     if (!keyFlag)
     {

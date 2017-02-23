@@ -239,9 +239,37 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
                 // Try to remove previous CacheChange_t from PitStop.
                 fragmentedChangePitStop_->try_to_remove_until(change_completed->sequenceNumber, change_completed->writerGUID);
 
-                if (!change_received(change_completed, lock))
+                CacheChange_t* change_to_add = nullptr;
+
+#if HAVE_SECURITY
+                if(is_payload_protected())
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long());
+                    if(reserveCache(&change_to_add, change_completed->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
+                    {
+                        change_to_add->copy_not_memcpy(change_completed);
+                        if(!getRTPSParticipant()->security_manager().decode_serialized_payload(change_completed->serializedPayload,
+                                    change_to_add->serializedPayload, m_guid, change_completed->writerGUID))
+                        {
+                            releaseCache(change_to_add);
+                            releaseCache(change_completed);
+                            logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
+                            return false;
+                        }
+                    }
+
+                    releaseCache(change_completed);
+                }
+                else
+                {
+#endif
+                    change_to_add = change_completed;
+#if HAVE_SECURITY
+                }
+#endif
+
+                if (!change_received(change_to_add, lock))
+                {
+                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_to_add->sequenceNumber.to64long());
 
                     // Assert liveliness because if it is a participant discovery info.
                     if (getGuid().entityId == c_EntityId_SPDPReader)
@@ -250,7 +278,7 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
                     }
 
                     // Release CacheChange_t.
-                    releaseCache(change_completed);
+                    releaseCache(change_to_add);
                 }
             }
         }

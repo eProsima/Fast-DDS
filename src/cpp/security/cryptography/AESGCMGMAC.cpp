@@ -19,6 +19,7 @@
 #include <openssl/conf.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
+#include <openssl/rand.h>
 
 #include "AESGCMGMAC.h"
 
@@ -29,6 +30,9 @@ AESGCMGMAC::AESGCMGMAC()
     m_cryptokeyexchange = new AESGCMGMAC_KeyExchange();
     m_cryptokeyfactory = new AESGCMGMAC_KeyFactory();
     m_cryptotransform = new AESGCMGMAC_Transform();
+
+    // Seed prng
+    RAND_load_file("/dev/urandom", 32);
 }
 
 AESGCMGMAC_KeyExchange* AESGCMGMAC::keyexchange(){

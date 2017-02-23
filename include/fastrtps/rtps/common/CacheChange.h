@@ -115,7 +115,7 @@ namespace eprosima
                  * @param[in] ch_ptr Pointer to the change.
                  * @return True if correct.
                  */
-                bool copy(CacheChange_t* ch_ptr)
+                bool copy(const CacheChange_t* ch_ptr)
                 {
                     kind = ch_ptr->kind;
                     writerGUID = ch_ptr->writerGUID;
@@ -134,7 +134,7 @@ namespace eprosima
                     return ret;
                 }
 
-                void copy_not_memcpy(CacheChange_t* ch_ptr)
+                void copy_not_memcpy(const CacheChange_t* ch_ptr)
                 {
                     kind = ch_ptr->kind;
                     writerGUID = ch_ptr->writerGUID;
@@ -145,6 +145,9 @@ namespace eprosima
 
                     // Copy certain values from serializedPayload
                     serializedPayload.encapsulation = ch_ptr->serializedPayload.encapsulation;
+
+                    setFragmentSize(ch_ptr->fragment_size_);
+                    dataFragments_->assign(ch_ptr->dataFragments_->begin(), ch_ptr->dataFragments_->end());
 
                     isRead = ch_ptr->isRead;
                 }

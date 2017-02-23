@@ -280,9 +280,35 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
         {
             logInfo(RTPS_MSG_IN, IDSTRING"Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " << getGuid().entityId);
 
+#if HAVE_SECURITY
+            CacheChange_t* change_to_add = nullptr;
+
+            if(is_payload_protected())
+            {
+                if(reserveCache(&change_to_add, incomingChange->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
+                {
+                    change_to_add->copy_not_memcpy(incomingChange);
+                    if(!getRTPSParticipant()->security_manager().decode_serialized_payload(incomingChange->serializedPayload,
+                                change_to_add->serializedPayload, m_guid, incomingChange->writerGUID))
+                    {
+                        releaseCache(change_to_add);
+                        logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
+                        return false;
+                    }
+                }
+            }
+            else
+                change_to_add = incomingChange;
+#endif
+
             // Fragments manager has to process incomming fragments.
             // If CacheChange_t is completed, it will be returned;
-            CacheChange_t* change_completed = fragmentedChangePitStop_->process(incomingChange, sampleSize, fragmentStartingNum);
+            CacheChange_t* change_completed = fragmentedChangePitStop_->process(change_to_add, sampleSize, fragmentStartingNum);
+
+#if HAVE_SECURITY
+            if(is_payload_protected())
+                releaseCache(change_to_add);
+#endif
 
             // Assertion has to be done before call change_received,
             // because this function can unlock the StatefulReader mutex.
@@ -293,7 +319,7 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
 
             if(change_completed != nullptr)
             {
-                if (!change_received(change_completed, pWP, lock))
+                if(!change_received(change_completed, pWP, lock))
                 {
                     logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long());
 

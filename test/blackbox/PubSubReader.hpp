@@ -354,6 +354,12 @@ class PubSubReader
             return *this;
         }
 
+        PubSubReader& entity_property_policy(const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+        {
+            subscriber_attr_.properties = property_policy;
+            return *this;
+        }
+
     private:
 
         void receive_one(eprosima::fastrtps::Subscriber* subscriber, bool& returnedValue)

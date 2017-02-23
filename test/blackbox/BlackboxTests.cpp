@@ -1104,8 +1104,8 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
         // Block reader until reception finished or timeout.
         data = reader.block(std::chrono::seconds(4));
 
-        ASSERT_GE(data.size(),7);
-        ASSERT_LE(data.size(),9);
+        ASSERT_GE(data.size(), static_cast<size_t>(7));
+        ASSERT_LE(data.size(), static_cast<size_t>(9));
     }
 }
 
@@ -1848,7 +1848,7 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_lossy_conditions)
     reader.waitDiscovery();
 }
 
-BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_ok)
+BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_rtps_ok)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2026,6 +2026,660 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_rtps_data300kb)
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).
         property_policy(pub_property_policy).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for authorization
+    reader.waitAuthorized();
+    writer.waitAuthorized();
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_data300kb_data_generator(5);
+
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(2));
+
+    print_non_received_messages(data, default_data300kb_print);
+    ASSERT_EQ(data.size(), 0);
+}
+
+BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_submessage_ok)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
+                   pub_property_policy, sub_property_policy;
+
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+
+    reader.history_depth(10).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        property_policy(sub_part_property_policy).
+        entity_property_policy(sub_property_policy).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+
+    writer.history_depth(10).
+        property_policy(pub_part_property_policy).
+        entity_property_policy(pub_property_policy).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for authorization
+    reader.waitAuthorized();
+    writer.waitAuthorized();
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_helloword_data_generator();
+
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(2));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_EQ(data.size(), 0);
+}
+
+BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_submessage_large_string)
+{
+    PubSubReader<StringType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<StringType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
+                   pub_property_policy, sub_property_policy;
+
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+
+    reader.history_depth(10).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        property_policy(sub_part_property_policy).
+        entity_property_policy(sub_property_policy).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+
+    writer.history_depth(10).
+        property_policy(pub_part_property_policy).
+        entity_property_policy(pub_property_policy).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for authorization
+    reader.waitAuthorized();
+    writer.waitAuthorized();
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_large_string_data_generator();
+
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(2));
+
+    print_non_received_messages(data, default_string_print);
+    ASSERT_EQ(data.size(), 0);
+}
+
+BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_submessage_data300kb)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
+                   pub_property_policy, sub_property_policy;
+
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+
+    reader.history_depth(5).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        property_policy(sub_part_property_policy).
+        entity_property_policy(sub_property_policy).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+
+    // When doing fragmentation, it is necessary to have some degree of
+    // flow control not to overrun the receive buffer.
+    uint32_t bytesPerPeriod = 65536;
+    uint32_t periodInMs = 50;
+
+    writer.history_depth(5).
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).
+        property_policy(pub_part_property_policy).
+        entity_property_policy(pub_property_policy).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for authorization
+    reader.waitAuthorized();
+    writer.waitAuthorized();
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_data300kb_data_generator(5);
+
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(2));
+
+    print_non_received_messages(data, default_data300kb_print);
+    ASSERT_EQ(data.size(), 0);
+}
+
+BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_payload_ok)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
+                   pub_property_policy, sub_property_policy;
+
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    reader.history_depth(10).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        property_policy(sub_part_property_policy).
+        entity_property_policy(sub_property_policy).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    writer.history_depth(10).
+        property_policy(pub_part_property_policy).
+        entity_property_policy(pub_property_policy).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for authorization
+    reader.waitAuthorized();
+    writer.waitAuthorized();
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_helloword_data_generator();
+
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(2));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_EQ(data.size(), 0);
+}
+
+BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_payload_large_string)
+{
+    PubSubReader<StringType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<StringType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
+                   pub_property_policy, sub_property_policy;
+
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    reader.history_depth(10).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        property_policy(sub_part_property_policy).
+        entity_property_policy(sub_property_policy).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    writer.history_depth(10).
+        property_policy(pub_part_property_policy).
+        entity_property_policy(pub_property_policy).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for authorization
+    reader.waitAuthorized();
+    writer.waitAuthorized();
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_large_string_data_generator();
+
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(2));
+
+    print_non_received_messages(data, default_string_print);
+    ASSERT_EQ(data.size(), 0);
+}
+
+BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_payload_data300kb)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
+                   pub_property_policy, sub_property_policy;
+
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    reader.history_depth(5).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        property_policy(sub_part_property_policy).
+        entity_property_policy(sub_property_policy).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    // When doing fragmentation, it is necessary to have some degree of
+    // flow control not to overrun the receive buffer.
+    uint32_t bytesPerPeriod = 65536;
+    uint32_t periodInMs = 50;
+
+    writer.history_depth(5).
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).
+        property_policy(pub_part_property_policy).
+        entity_property_policy(pub_property_policy).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for authorization
+    reader.waitAuthorized();
+    writer.waitAuthorized();
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_data300kb_data_generator(5);
+
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(2));
+
+    print_non_received_messages(data, default_data300kb_print);
+    ASSERT_EQ(data.size(), 0);
+}
+
+BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_all_ok)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
+                   pub_property_policy, sub_property_policy;
+
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    reader.history_depth(10).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        property_policy(sub_part_property_policy).
+        entity_property_policy(sub_property_policy).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    writer.history_depth(10).
+        property_policy(pub_part_property_policy).
+        entity_property_policy(pub_property_policy).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for authorization
+    reader.waitAuthorized();
+    writer.waitAuthorized();
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_helloword_data_generator();
+
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(2));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_EQ(data.size(), 0);
+}
+
+BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_all_large_string)
+{
+    PubSubReader<StringType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<StringType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
+                   pub_property_policy, sub_property_policy;
+
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    reader.history_depth(10).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        property_policy(sub_part_property_policy).
+        entity_property_policy(sub_property_policy).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    writer.history_depth(10).
+        property_policy(pub_part_property_policy).
+        entity_property_policy(pub_property_policy).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for authorization
+    reader.waitAuthorized();
+    writer.waitAuthorized();
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_large_string_data_generator();
+
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(2));
+
+    print_non_received_messages(data, default_string_print);
+    ASSERT_EQ(data.size(), 0);
+}
+
+BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_all_data300kb)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
+                   pub_property_policy, sub_property_policy;
+
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    reader.history_depth(5).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        property_policy(sub_part_property_policy).
+        entity_property_policy(sub_property_policy).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    // When doing fragmentation, it is necessary to have some degree of
+    // flow control not to overrun the receive buffer.
+    uint32_t bytesPerPeriod = 65536;
+    uint32_t periodInMs = 50;
+
+    writer.history_depth(5).
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).
+        property_policy(pub_part_property_policy).
+        entity_property_policy(pub_property_policy).init();
 
     ASSERT_TRUE(writer.isInitialized());
 

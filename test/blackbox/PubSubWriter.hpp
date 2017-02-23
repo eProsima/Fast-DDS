@@ -340,6 +340,12 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& entity_property_policy(const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+    {
+        publisher_attr_.properties = property_policy;
+        return *this;
+    }
+
     PubSubWriter& setPublisherIDs(uint8_t UserID, uint8_t EntityID)
     {
         publisher_attr_.setUserDefinedID(UserID);

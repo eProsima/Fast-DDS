@@ -130,8 +130,6 @@ class PublisherImpl
 
     bool wait_for_all_acked(const Time_t& max_wait);
 
-    uint32_t getMaxDataSize();
-
     private:
     ParticipantImpl* mp_participant;
     //! Pointer to the associated Data Writer.

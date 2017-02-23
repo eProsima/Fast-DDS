@@ -84,7 +84,7 @@ namespace eprosima{
                  * @param with_limit if true, the function will fail when providing a payload too big
                  * @return True if correct
                  */
-                bool copy(SerializedPayload_t* serData, bool with_limit = true)
+                bool copy(const SerializedPayload_t* serData, bool with_limit = true)
                 {
                     length = serData->length;
 

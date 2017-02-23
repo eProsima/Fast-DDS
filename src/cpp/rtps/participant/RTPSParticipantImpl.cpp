@@ -726,15 +726,16 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
 void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver, Locator_t input_locator)
 {
     while(receiver->resourceAlive)
-    {	
+    {
         // Blocking receive.
         auto& msg = receiver->mp_receiver->m_rec_msg;
+        CDRMessage::initCDRMsg(&msg);
         if(!receiver->Receiver.Receive(msg.buffer, msg.max_size, msg.length, input_locator))
             continue;
 
         // Processes the data through the CDR Message interface.
         receiver->mp_receiver->processCDRMsg(getGuid().guidPrefix, &input_locator, &receiver->mp_receiver->m_rec_msg);
-    }	
+    }
 }
 
 

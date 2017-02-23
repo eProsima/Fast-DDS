@@ -46,6 +46,9 @@ class RTPSMessageGroup_t
         RTPSMessageGroup_t(uint32_t payload, GuidPrefix_t participant_guid):
             rtpsmsg_submessage_(payload),
             rtpsmsg_fullmsg_(payload)
+#if HAVE_SECURITY
+            , rtpsmsg_encrypt_(payload)
+#endif
         {
             CDRMessage::initCDRMsg(&rtpsmsg_fullmsg_);
             RTPSMessageCreator::addHeader(&rtpsmsg_fullmsg_, participant_guid);
@@ -54,6 +57,10 @@ class RTPSMessageGroup_t
         CDRMessage_t rtpsmsg_submessage_;
 
         CDRMessage_t rtpsmsg_fullmsg_;
+
+#if HAVE_SECURITY
+        CDRMessage_t rtpsmsg_encrypt_;
+#endif
 };
 
 class RTPSWriter;
@@ -127,6 +134,10 @@ class RTPSMessageGroup
         CDRMessage_t* full_msg_;
 
         CDRMessage_t* submessage_msg_;
+
+#if HAVE_SECURITY
+        CDRMessage_t* encrypt_msg_;
+#endif
 
         LocatorList_t current_locators_;
 

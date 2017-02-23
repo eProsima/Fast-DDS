@@ -496,29 +496,40 @@ bool AESGCMGMAC_KeyFactory::unregister_participant(
                 ParticipantCryptoHandle* participant_crypto_handle,
                 SecurityException &exception){
 
-    if(participant_crypto_handle == nullptr){
+    if(participant_crypto_handle == nullptr)
         return false;
-    }
+
     //De-register the IDs
     AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(*participant_crypto_handle);
-    for(std::vector<CryptoTransformKeyId>::iterator it = m_CryptoTransformKeyIds.begin(); it != m_CryptoTransformKeyIds.end();it++){
+
+    if(local_participant.nil())
+        return false;
+
+    for(std::vector<CryptoTransformKeyId>::iterator it = m_CryptoTransformKeyIds.begin(); it != m_CryptoTransformKeyIds.end();it++)
+    {
         if( (*it) == local_participant->ParticipantKeyMaterial.sender_key_id ){
             m_CryptoTransformKeyIds.erase(it);
         }
     }
+
     //Unregister all writers and readers
-    for(auto it=local_participant->Writers.begin(); it!=local_participant->Writers.end(); ++it){
-        DatawriterCryptoHandle* writer = (DatawriterCryptoHandle*)(*it);
+    std::vector<DatawriterCryptoHandle*>::iterator wit = local_participant->Writers.begin();
+    while(wit != local_participant->Writers.end())
+    {
+        DatawriterCryptoHandle* writer = (DatawriterCryptoHandle*)(*wit);
         unregister_datawriter(writer, exception);
-
+        wit = local_participant->Writers.begin();
     }
-    for(auto it=local_participant->Readers.begin(); it!=local_participant->Readers.end(); ++it){
-        DatareaderCryptoHandle* reader = (DatareaderCryptoHandle*)(*it);
+
+    std::vector<DatareaderCryptoHandle*>::iterator rit = local_participant->Readers.begin();
+    while(rit != local_participant->Readers.end())
+    {
+        DatareaderCryptoHandle* reader = (DatareaderCryptoHandle*)(*rit);
         unregister_datareader(reader, exception);
+        rit = local_participant->Readers.begin();
     }
 
-    AESGCMGMAC_ParticipantCryptoHandle* target = (AESGCMGMAC_ParticipantCryptoHandle *)participant_crypto_handle;
-    delete target;
+    delete &local_participant;
 
     return true;
 
@@ -528,11 +539,11 @@ bool AESGCMGMAC_KeyFactory::unregister_datawriter(
                 DatawriterCryptoHandle *datawriter_crypto_handle,
                 SecurityException &exception){
 
-    if(datawriter_crypto_handle == nullptr){
+    if(datawriter_crypto_handle == nullptr)
         return false;
-    }
 
     AESGCMGMAC_WriterCryptoHandle& datawriter = AESGCMGMAC_WriterCryptoHandle::narrow(*datawriter_crypto_handle);
+
     if(datawriter.nil()){
         exception = SecurityException("Not a valid DataWriterCryptoHandle has been passed as an argument");
         return false;
@@ -566,10 +577,11 @@ bool AESGCMGMAC_KeyFactory::unregister_datareader(
                 DatareaderCryptoHandle *datareader_crypto_handle,
                 SecurityException &exception){
 
-    if(datareader_crypto_handle == nullptr){
+    if(datareader_crypto_handle == nullptr)
         return false;
-    }
+
     AESGCMGMAC_ReaderCryptoHandle& datareader = AESGCMGMAC_ReaderCryptoHandle::narrow(*datareader_crypto_handle);
+
     if(datareader.nil()){
         exception = SecurityException("Not a valid DataReaderCryptoHandle has been passed as an argument");
         return false;

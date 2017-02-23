@@ -32,7 +32,7 @@ bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 
         RTPSMessageCreator::addSubmessageInfoTS_Now(msg,false);
 
-        RTPSMessageCreator::addSubmessageData(msg,change,topicKind,readerId,expectsInlineQos,inlineQos);
+        RTPSMessageCreator::addSubmessageData(msg, change,topicKind,readerId,expectsInlineQos,inlineQos);
 
         msg->length = msg->pos;
     }
@@ -160,14 +160,8 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg, const CacheChange_
         }
         //Add Serialized Payload
         if(dataFlag)
-        {
-            added_no_error &= CDRMessage::addOctet(&submsgElem,0); //ENCAPSULATION
-            added_no_error &= CDRMessage::addOctet(&submsgElem,(octet)change->serializedPayload.encapsulation); //ENCAPSULATION
-            added_no_error &= CDRMessage::addUInt16(&submsgElem,0); //OPTIONS
-            //cout << "Adding Data of length: "<<change->serializedPayload.length<<endl;
-            //cout << "Msg size: "<<submsgElem.max_size << " length: "<< submsgElem.length<< " pos "<< submsgElem.pos<<endl;
-            added_no_error &= CDRMessage::addData(&submsgElem,change->serializedPayload.data,change->serializedPayload.length);
-        }
+            added_no_error &= CDRMessage::addData(&submsgElem, change->serializedPayload.data, change->serializedPayload.length);
+
         if(keyFlag)
         {
             added_no_error &= CDRMessage::addOctet(&submsgElem,0); //ENCAPSULATION
@@ -220,7 +214,22 @@ bool RTPSMessageCreator::addMessageDataFrag(CDRMessage_t* msg, GuidPrefix_t& gui
 
         RTPSMessageCreator::addSubmessageInfoTS_Now(msg, false);
 
-        RTPSMessageCreator::addSubmessageDataFrag(msg, change, fragment_number, topicKind, readerId, expectsInlineQos, inlineQos);
+        // Calculate fragment start
+        uint32_t fragment_start = change->getFragmentSize() * (fragment_number - 1);
+        // Calculate fragment size. If last fragment, size may be smaller
+        uint32_t fragment_size = fragment_number < change->getFragmentCount() ? change->getFragmentSize() :
+            change->serializedPayload.length - fragment_start;
+
+        // TODO (Ricardo). Check to create special wrapper.
+        CacheChange_t change_to_add;
+        change_to_add.copy_not_memcpy(change);
+        change_to_add.serializedPayload.data = change->serializedPayload.data + fragment_start;
+        change_to_add.serializedPayload.length = fragment_size;
+
+        RTPSMessageCreator::addSubmessageDataFrag(msg, &change_to_add, fragment_number, change->serializedPayload.length,
+                topicKind, readerId, expectsInlineQos, inlineQos);
+
+        change_to_add.serializedPayload.data = NULL;
 
         msg->length = msg->pos;
     }
@@ -235,16 +244,10 @@ bool RTPSMessageCreator::addMessageDataFrag(CDRMessage_t* msg, GuidPrefix_t& gui
 
 
 bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheChange_t* change, uint32_t fragment_number,
-        TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, ParameterList_t* inlineQos) {
-
-
-    // Calculate fragment start
-    uint32_t fragment_start = change->getFragmentSize() * (fragment_number - 1);
-    uint32_t fragment_size = change->getFragmentSize();
-    if(fragment_number >= change->getFragmentCount()) // If last fragment, size may be smaller
-        fragment_size = change->serializedPayload.length - fragment_start;
-
-    CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg((uint16_t)fragment_size);
+        uint32_t sample_size, TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos,
+        ParameterList_t* inlineQos)
+{
+    CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg((uint16_t)change->serializedPayload.length);
     CDRMessage::initCDRMsg(&submsgElem);
     //Create the two CDR msgs
     //CDRMessage_t submsgElem;
@@ -334,7 +337,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheCha
         added_no_error &= CDRMessage::addUInt16(&submsgElem, change->getFragmentSize());
 
         // Add total sample size
-        added_no_error &= CDRMessage::addUInt32(&submsgElem, change->serializedPayload.length);
+        added_no_error &= CDRMessage::addUInt32(&submsgElem, sample_size); //TODO(Ricardo) Sample size in CacheChange
 
         //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
         if (inlineQosFlag) //inlineQoS
@@ -361,19 +364,11 @@ bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheCha
         //Add Serialized Payload XXX TODO
         if (!keyFlag) // keyflag = 0 means that the serializedPayload SubmessageElement contains the serialized Data 
         {
-            // Encapsulation is added only in the first fragment.
-            if(fragment_number == 1)
-            {
-                added_no_error &= CDRMessage::addOctet(&submsgElem, 0); //ENCAPSULATION
-                added_no_error &= CDRMessage::addOctet(&submsgElem, (octet)change->serializedPayload.encapsulation); //ENCAPSULATION
-                added_no_error &= CDRMessage::addUInt16(&submsgElem, 0); //OPTIONS
-            }
-            added_no_error &= CDRMessage::addData(&submsgElem,
-                    change->serializedPayload.data + fragment_start,
-                    fragment_size);
+            added_no_error &= CDRMessage::addData(&submsgElem, change->serializedPayload.data,
+                    change->serializedPayload.length);
         }
         else
-        {	// keyflag = 1 means that the serializedPayload SubmessageElement contains the serialized Key 
+        {   // keyflag = 1 means that the serializedPayload SubmessageElement contains the serialized Key 
             /*
                added_no_error &= CDRMessage::addOctet(&submsgElem, 0); //ENCAPSULATION
                if (submsgElem.msg_endian == BIGEND)
@@ -389,6 +384,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheCha
             return false;
         }
 
+        // TODO(Ricardo) This should be on cachechange.
         // Align submessage to rtps alignment (4).
         uint32_t align = (4 - submsgElem.pos % 4) & 3;
         for (uint32_t count = 0; count < align; ++count)

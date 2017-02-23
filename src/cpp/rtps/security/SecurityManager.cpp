@@ -1624,6 +1624,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
     auto dp_it = discovered_participants_.find(remote_participant_key);
     bool ret = false;
 
+    // TODO(Ricardo) If no get_participant_crypto, reader is not discovered. Store it until crypto is received.
     if(dp_it != discovered_participants_.end() && dp_it->second.get_participant_crypto() != nullptr)
     {
         auto remote_participant_info = dp_it->second.get_auth();
@@ -2043,7 +2044,8 @@ bool SecurityManager::decode_rtps_submessage(CDRMessage_t& message, CDRMessage_t
     return false;
 }
 
-bool SecurityManager::encode_serialized_payload(SerializedPayload_t& payload, const GUID_t& writer_guid)
+bool SecurityManager::encode_serialized_payload(const SerializedPayload_t& payload,
+        CDRMessage_t& output_message, const GUID_t& writer_guid)
 {
     if(crypto_plugin_ == nullptr)
         return false;
@@ -2064,10 +2066,10 @@ bool SecurityManager::encode_serialized_payload(SerializedPayload_t& payload, co
                     *wr_it->second.writer_handle,
                     exception))
         {
-            if(encode_cdr_message.size() <= payload.max_size) // TODO(Ricardo) Look if max_size can be 0.
+            if(encode_cdr_message.size() <= output_message.max_size) // TODO(Ricardo) Look if max_size can be 0.
             {
-                memcpy(payload.data, encode_cdr_message.data(), encode_cdr_message.size());
-                payload.length = static_cast<uint32_t>(encode_cdr_message.size());
+                memcpy(output_message.buffer, encode_cdr_message.data(), encode_cdr_message.size());
+                output_message.length = static_cast<uint32_t>(encode_cdr_message.size());
                 return true;
             }
             else
@@ -2111,6 +2113,7 @@ bool SecurityManager::decode_serialized_payload(const SerializedPayload_t& secur
                 {
                     memcpy(payload.data, decode_payload.data(), decode_payload.size());
                     payload.length = static_cast<uint32_t>(decode_payload.size());
+                    payload.encapsulation = secure_payload.encapsulation;
                     return true;
                 }
                 else
@@ -2205,9 +2208,51 @@ void SecurityManager::participant_authorized(const DiscoveredParticipantInfo::Au
 uint32_t SecurityManager::calculate_extra_size_for_rtps_message()
 {
     if(crypto_plugin_ == nullptr)
-        return false;
+        return 0;
 
     std::unique_lock<std::mutex> lock(mutex_);
 
     return crypto_plugin_->cryptotransform()->calculate_extra_size_for_rtps_message(discovered_participants_.size());
+}
+
+uint32_t SecurityManager::calculate_extra_size_for_rtps_submessage(const GUID_t& writer_guid)
+{
+    if(crypto_plugin_ == nullptr)
+        return 0;
+
+    std::unique_lock<std::mutex> lock(mutex_);
+
+    auto wr_it = writer_handles_.find(writer_guid);
+
+    if(wr_it != writer_handles_.end())
+    {
+        return crypto_plugin_->cryptotransform()->calculate_extra_size_for_rtps_submessage(wr_it->second.associated_readers.size());
+    }
+    else
+    {
+        logInfo(SECURITY, "Not found local writer " << writer_guid);
+    }
+
+    return 0;
+}
+
+uint32_t SecurityManager::calculate_extra_size_for_encoded_payload(const GUID_t& writer_guid)
+{
+    if(crypto_plugin_ == nullptr)
+        return 0;
+
+    std::unique_lock<std::mutex> lock(mutex_);
+
+    auto wr_it = writer_handles_.find(writer_guid);
+
+    if(wr_it != writer_handles_.end())
+    {
+        return crypto_plugin_->cryptotransform()->calculate_extra_size_for_encoded_payload(wr_it->second.associated_readers.size());
+    }
+    else
+    {
+        logInfo(SECURITY, "Not found local writer " << writer_guid);
+    }
+
+    return 0;
 }

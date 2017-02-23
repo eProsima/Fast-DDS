@@ -354,7 +354,6 @@ std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_encrypt(std::vector<uin
 
     if(plaintext.size() <= std::numeric_limits<int>::max())
     {
-        (void)RAND_load_file("/dev/urandom", 32); //Init random number gen
         size_t enc_length = plaintext.size() * 3; // TODO(Ricardo) Review size.
         output.resize(enc_length, '\0');
 
@@ -384,7 +383,6 @@ std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_decrypt(std::vector<uin
 
     if(crypto.size() - 32 <= std::numeric_limits<int>::max())
     {
-        (void)RAND_load_file("/dev/urandom", 32); //Init random number gen
         unsigned char tag[AES_BLOCK_SIZE];
         unsigned char iv[AES_BLOCK_SIZE];
         std::copy(crypto.begin(), crypto.begin() + 16, tag);

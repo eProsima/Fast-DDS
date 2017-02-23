@@ -28,76 +28,76 @@ FilteringExampleSubscriber::~FilteringExampleSubscriber() {	Domain::removePartic
 
 bool FilteringExampleSubscriber::init(int type)
 {
-	// Create RTPSParticipant
-	
-	ParticipantAttributes PParam;
-	PParam.rtps.builtin.domainId = 0; //MUST BE THE SAME AS IN THE PUBLISHER
-	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-	PParam.rtps.setName("Participant_subscriber"); //You can put the name you want
-	mp_participant = Domain::createParticipant(PParam);
-	if(mp_participant == nullptr)
-			return false;
-	
-	//Register the type
-	
-	Domain::registerType(mp_participant,(TopicDataType*) &myType);		
-			
-	// Create Subscriber
+    // Create RTPSParticipant
 
-	SubscriberAttributes Rparam;
-	Rparam.topic.topicKind = NO_KEY;
-	Rparam.topic.topicDataType = myType.getName(); //Must be registered before the creation of the subscriber
-	Rparam.topic.topicName = "FilteringExamplePubSubTopic";
-	if (type == 1)
-	{
-		Rparam.qos.m_partition.push_back("Fast_Partition");
-	}
-	else //2 = slow
-	{
-		Rparam.qos.m_partition.push_back("Slow_Partition");
-	}
+    ParticipantAttributes PParam;
+    PParam.rtps.builtin.domainId = 0; //MUST BE THE SAME AS IN THE PUBLISHER
+    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PParam.rtps.setName("Participant_subscriber"); //You can put the name you want
+    mp_participant = Domain::createParticipant(PParam);
+    if(mp_participant == nullptr)
+        return false;
 
-	mp_subscriber = Domain::createSubscriber(mp_participant, Rparam, (SubscriberListener*)&m_listener);
-	if (mp_subscriber == nullptr)
-		return false;
-	return true;
+    //Register the type
+
+    Domain::registerType(mp_participant,(TopicDataType*) &myType);		
+
+    // Create Subscriber
+
+    SubscriberAttributes Rparam;
+    Rparam.topic.topicKind = NO_KEY;
+    Rparam.topic.topicDataType = myType.getName(); //Must be registered before the creation of the subscriber
+    Rparam.topic.topicName = "FilteringExamplePubSubTopic";
+    if (type == 1)
+    {
+        Rparam.qos.m_partition.push_back("Fast_Partition");
+    }
+    else //2 = slow
+    {
+        Rparam.qos.m_partition.push_back("Slow_Partition");
+    }
+
+    mp_subscriber = Domain::createSubscriber(mp_participant, Rparam, (SubscriberListener*)&m_listener);
+    if (mp_subscriber == nullptr)
+        return false;
+    return true;
 }
 
 void FilteringExampleSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
 {
-	if (info.status == MATCHED_MATCHING)
-	{
-		n_matched++;
-		cout << "Subscriber matched" << endl;
-	}
-	else
-	{
-		n_matched--;
-		cout << "Subscriber unmatched" << endl;
-	}
+    if (info.status == MATCHED_MATCHING)
+    {
+        n_matched++;
+        std::cout << "Subscriber matched" << std::endl;
+    }
+    else
+    {
+        n_matched--;
+        std::cout << "Subscriber unmatched" << std::endl;
+    }
 }
 
 void FilteringExampleSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 {
-		// Take data
-		FilteringExample st;
-		
-		if(sub->takeNextData(&st, &m_info))
-		{
-			if(m_info.sampleKind == ALIVE)
-			{
-				// Print your structure data here.
-				++n_msg;
-				cout << "Sample received, count=" << n_msg << endl;
-				cout << " sampleNumber=" << st.sampleNumber() << endl;
-			}
-		}
+    // Take data
+    FilteringExample st;
+
+    if(sub->takeNextData(&st, &m_info))
+    {
+        if(m_info.sampleKind == ALIVE)
+        {
+            // Print your structure data here.
+            ++n_msg;
+            std::cout << "Sample received, count=" << n_msg << std::endl;
+            std::cout << " sampleNumber=" << st.sampleNumber() << std::endl;
+        }
+    }
 }
 
 void FilteringExampleSubscriber::run()
 {
-	cout << "Waiting for Data, press Enter to stop the Subscriber. "<<endl;
-	std::cin.ignore();
-	cout << "Shutting down the Subscriber." << endl;
+    std::cout << "Waiting for Data, press Enter to stop the Subscriber. "<<std::endl;
+    std::cin.ignore();
+    std::cout << "Shutting down the Subscriber." << std::endl;
 }
 

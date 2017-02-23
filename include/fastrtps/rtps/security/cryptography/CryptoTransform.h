@@ -181,6 +181,10 @@ class CryptoTransform
                 SecurityException &exception) = 0;
 
         virtual uint32_t calculate_extra_size_for_rtps_message(uint32_t number_discovered_participants) const = 0;
+
+        virtual uint32_t calculate_extra_size_for_rtps_submessage(uint32_t number_discovered_readers) const = 0;
+
+        virtual uint32_t calculate_extra_size_for_encoded_payload(uint32_t number_discovered_readers) const = 0;
 };
 
 } //namespace eprosima

@@ -122,6 +122,8 @@ class RTPSWriter : public Endpoint
      */
     RTPS_DllAPI uint32_t getTypeMaxSerialized();
 
+    uint32_t getMaxDataSize();
+
     /**
      * Get listener
      * @return Listener

@@ -50,72 +50,72 @@ mp_history(nullptr)
 
 TestWriterRegistered::~TestWriterRegistered()
 {
-	RTPSDomain::removeRTPSParticipant(mp_participant);
-	delete(mp_history);
+    RTPSDomain::removeRTPSParticipant(mp_participant);
+    delete(mp_history);
 }
 
 bool TestWriterRegistered::init()
 {
-	//CREATE PARTICIPANT
-	RTPSParticipantAttributes PParam;
-	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-	PParam.builtin.use_WriterLivelinessProtocol = true;
-	mp_participant = RTPSDomain::createParticipant(PParam);
-	if(mp_participant==nullptr)
-		return false;
+    //CREATE PARTICIPANT
+    RTPSParticipantAttributes PParam;
+    PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+    PParam.builtin.use_WriterLivelinessProtocol = true;
+    mp_participant = RTPSDomain::createParticipant(PParam);
+    if(mp_participant==nullptr)
+        return false;
 
-	//CREATE WRITERHISTORY
-	HistoryAttributes hatt;
-	hatt.payloadMaxSize = 255;
-	mp_history = new WriterHistory(hatt);
+    //CREATE WRITERHISTORY
+    HistoryAttributes hatt;
+    hatt.payloadMaxSize = 255;
+    mp_history = new WriterHistory(hatt);
 
-	//CREATE WRITER
-	WriterAttributes watt;
-	watt.endpoint.reliabilityKind = RELIABLE;
-	watt.times.heartbeatPeriod.seconds = 5;
-	mp_writer = RTPSDomain::createRTPSWriter(mp_participant,watt,mp_history,&m_listener);
-	if(mp_writer == nullptr)
-		return false;
+    //CREATE WRITER
+    WriterAttributes watt;
+    watt.endpoint.reliabilityKind = RELIABLE;
+    watt.times.heartbeatPeriod.seconds = 5;
+    mp_writer = RTPSDomain::createRTPSWriter(mp_participant,watt,mp_history,&m_listener);
+    if(mp_writer == nullptr)
+        return false;
 
-	return true;
+    return true;
 }
 
 bool TestWriterRegistered::reg()
 {
-	cout << "Registering Writer" << endl;
-	TopicAttributes Tatt;
-	Tatt.topicKind = NO_KEY;
-	Tatt.topicDataType = "string";
-	Tatt.topicName = "exampleTopic";
-	WriterQos Wqos;
-	Wqos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	return mp_participant->registerWriter(mp_writer, Tatt, Wqos);
+    cout << "Registering Writer" << endl;
+    TopicAttributes Tatt;
+    Tatt.topicKind = NO_KEY;
+    Tatt.topicDataType = "string";
+    Tatt.topicName = "exampleTopic";
+    WriterQos Wqos;
+    Wqos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    return mp_participant->registerWriter(mp_writer, Tatt, Wqos);
 }
 
 
 void TestWriterRegistered::run(uint16_t samples)
 {
-	cout << "Waiting for matched Readers" << endl;
-	while (m_listener.n_matched==0)
-	{
-		eClock::my_sleep(250);
-	}
-	std::cout << "Enter to send messages"<<std::endl;
-	std::cin.ignore();
-	for(int i = 0;i<samples;++i )
-	{
-		CacheChange_t * ch = mp_writer->new_change(ALIVE);
+    cout << "Waiting for matched Readers" << endl;
+    while (m_listener.n_matched==0)
+    {
+        eClock::my_sleep(250);
+    }
+    std::cout << "Enter to send messages"<<std::endl;
+    std::cin.ignore();
+    for(int i = 0;i<samples;++i )
+    {
+        CacheChange_t * ch = mp_writer->new_change(ALIVE);
 #if defined(_WIN32)
-		ch->serializedPayload.length =
-			sprintf_s((char*)ch->serializedPayload.data,255, "My example string %d", i)+1;
+        ch->serializedPayload.length =
+            sprintf_s((char*)ch->serializedPayload.data,255, "My example string %d", i)+1;
 #else
-		ch->serializedPayload.length =
-			sprintf((char*)ch->serializedPayload.data,"My example string %d",i)+1;
+        ch->serializedPayload.length =
+            sprintf((char*)ch->serializedPayload.data,"My example string %d",i)+1;
 #endif
-		printf("Sending: %s\n",(char*)ch->serializedPayload.data);
-		mp_history->add_change(ch);
-		if(i == 3)
-			mp_participant->loose_next_change();
-	}
-	std::cin.ignore();
+        printf("Sending: %s\n",(char*)ch->serializedPayload.data);
+        mp_history->add_change(ch);
+        if(i == 3)
+            mp_participant->loose_next_change();
+    }
+    std::cin.ignore();
 }
