@@ -86,19 +86,9 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 
             RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
 
-            if(cptr->getFragmentSize() != 0)
+            if(!group.add_data(*cptr, remote_readers, locators, false))
             {
-                for(uint32_t fragment = 1; fragment <= cptr->getFragmentCount(); ++fragment)
-                {
-                    group.add_data_frag(*cptr, fragment, remote_readers, locators, false);
-                }
-            }
-            else
-            {
-                if(!group.add_data(*cptr, remote_readers, locators, false))
-                {
-                    logError(RTPS_WRITER, "Error sending change " << cptr->sequenceNumber);
-                }
+                logError(RTPS_WRITER, "Error sending change " << cptr->sequenceNumber);
             }
         }
     }
@@ -229,13 +219,20 @@ void StatelessWriter::send_any_unsent_changes()
                             if(change->getDataFragments()->at(fragment) == PRESENT)
                             {
                                 //TODO(Ricardo) Frag = 0
-                                group.add_data_frag(*change, fragment + 1, remote_readers, locators, false);
+                                if(!group.add_data_frag(*change, fragment + 1, remote_readers, locators, false))
+                                {
+                                    logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber <<
+                                            ", " << fragment + 1 << ")");
+                                }
                             }
                         }
                     }
                     else
                     {
-                        group.add_data(*change, remote_readers, locators, false);
+                        if(!group.add_data(*change, remote_readers, locators, false))
+                        {
+                            logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+                        }
                     }
                 }
             }

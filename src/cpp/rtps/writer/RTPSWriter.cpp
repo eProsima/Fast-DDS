@@ -129,7 +129,12 @@ constexpr uint32_t data_frag_submessage_header_length = 36;
 
 uint32_t RTPSWriter::getMaxDataSize()
 {
-    uint32_t maxDataSize = mp_RTPSParticipant->getMaxDataSize();
+    return calculateMaxDataSize(mp_RTPSParticipant->getMaxDataSize());
+}
+
+uint32_t RTPSWriter::calculateMaxDataSize(uint32_t length)
+{
+    uint32_t maxDataSize = length;
 
     maxDataSize -= info_dst_message_length +
         info_ts_message_length +

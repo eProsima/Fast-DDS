@@ -124,6 +124,8 @@ class RTPSWriter : public Endpoint
 
     uint32_t getMaxDataSize();
 
+    uint32_t calculateMaxDataSize(uint32_t length);
+
     /**
      * Get listener
      * @return Listener

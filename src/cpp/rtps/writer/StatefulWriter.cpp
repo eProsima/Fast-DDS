@@ -146,7 +146,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
             }
 
             RTPSMessageGroup group(mp_RTPSParticipant, this,  RTPSMessageGroup::WRITER, m_cdrmessages);
-            if(group.add_data(*change, remote_readers, locators, expectsInlineQos))
+            if(!group.add_data(*change, remote_readers, locators, expectsInlineQos))
             {
                 logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
             }
@@ -292,6 +292,11 @@ void StatefulWriter::send_any_unsent_changes()
                                 if(group.add_data_frag(*change, fragment+1, remote_readers,
                                             locators, (*m_reader_iterator)->m_att.expectsInlineQos))
                                     (*m_reader_iterator)->mark_fragment_as_sent_for_change(change, fragment + 1);
+                                else
+                                {
+                                    logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber <<
+                                            ", " << fragment + 1 << ")");
+                                }
                             }
                         }
                     }
@@ -304,6 +309,10 @@ void StatefulWriter::send_any_unsent_changes()
                                 (*m_reader_iterator)->set_change_to_status(change, UNDERWAY);
                             else
                                 (*m_reader_iterator)->set_change_to_status(change, ACKNOWLEDGED);
+                        }
+                        else
+                        {
+                            logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
                         }
                     }
                 }

@@ -116,10 +116,18 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
         //TODO(Ricardo) This logic in a class. Then a user of rtps layer can use it.
         if(high_mark_for_frag_ == 0)
         {
-            high_mark_for_frag_ = mp_writer->getMaxDataSize() > m_att.throughputController.bytesPerPeriod ?
-                m_att.throughputController.bytesPerPeriod : mp_writer->getMaxDataSize();
-            if(high_mark_for_frag_ > mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod)
-                high_mark_for_frag_ = mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod;
+            uint32_t max_data_size = mp_writer->getMaxDataSize();
+            uint32_t writer_throughput_controller_bytes =
+                mp_writer->calculateMaxDataSize(m_att.throughputController.bytesPerPeriod);
+            uint32_t participant_throughput_controller_bytes =
+                mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod;
+
+            high_mark_for_frag_ =
+                max_data_size > writer_throughput_controller_bytes ?
+                writer_throughput_controller_bytes :
+                (max_data_size > participant_throughput_controller_bytes ?
+                 participant_throughput_controller_bytes :
+                 max_data_size);
         }
 
         // If it is big data, fragment it.
