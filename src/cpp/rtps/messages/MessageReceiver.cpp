@@ -519,7 +519,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
     if(inlineQosFlag)
     {
-        inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch);
+        inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch, false);
 
         if(inlineQosSize <= 0)
         {
@@ -565,7 +565,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
                 return false;
             }
             //uint32_t param_size;
-            if(ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch) <= 0)
+            if(ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch, false) <= 0)
             {
                 logInfo(RTPS_MSG_IN,IDSTRING"SubMessage Data ERROR, keyFlag ParameterList");
                 return false;
@@ -703,7 +703,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
     if (inlineQosFlag)
     {
-        inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch);
+        inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch, false);
 
         if (inlineQosSize <= 0)
         {
@@ -759,7 +759,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
            return false;
            }
         //uint32_t param_size;
-        if (ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch) <= 0)
+        if (ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch, false) <= 0)
         {
         logInfo(RTPS_MSG_IN, IDSTRING"SubMessage Data ERROR, keyFlag ParameterList");
         return false;

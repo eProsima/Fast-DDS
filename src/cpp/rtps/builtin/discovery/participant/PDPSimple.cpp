@@ -760,7 +760,7 @@ CDRMessage_t PDPSimple::get_participant_proxy_data_serialized(Endianness_t endia
     }
 
     ParameterList_t plist(getLocalParticipantProxyData()->m_QosList.allQos);
-    ParameterList::updateCDRMsg(&plist, BIGEND);
+    ParameterList::updateCDRMsg(&plist, BIGEND, true);
     return CDRMessage_t(std::move(plist.m_cdrmsg));
 }
 

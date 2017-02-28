@@ -252,10 +252,10 @@ bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
         {
             rdata->toParameterList();
 #if EPROSIMA_BIG_ENDIAN
-            ParameterList::updateCDRMsg(&rdata->m_parameterList, BIGEND);
+            ParameterList::updateCDRMsg(&rdata->m_parameterList, BIGEND, true);
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
 #else
-            ParameterList::updateCDRMsg(&rdata->m_parameterList, LITTLEEND);
+            ParameterList::updateCDRMsg(&rdata->m_parameterList, LITTLEEND, true);
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
 #endif
             change->serializedPayload.length = (uint16_t)rdata->m_parameterList.m_cdrmsg.length;
@@ -289,10 +289,10 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
         {
             wdata->toParameterList();
 #if EPROSIMA_BIG_ENDIAN
-            ParameterList::updateCDRMsg(&wdata->m_parameterList,BIGEND);
+            ParameterList::updateCDRMsg(&wdata->m_parameterList,BIGEND, true);
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
 #else
-            ParameterList::updateCDRMsg(&wdata->m_parameterList, LITTLEEND);
+            ParameterList::updateCDRMsg(&wdata->m_parameterList, LITTLEEND, true);
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
 #endif
             change->serializedPayload.length = (uint16_t)wdata->m_parameterList.m_cdrmsg.length;

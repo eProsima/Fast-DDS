@@ -135,7 +135,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg, const CacheChange_
             {
                 if(inlineQos->m_hasChanged || inlineQos->m_cdrmsg.msg_endian != submsgElem.msg_endian)
                 {
-                    ParameterList::updateCDRMsg(inlineQos,submsgElem.msg_endian);
+                    ParameterList::updateCDRMsg(inlineQos, submsgElem.msg_endian, false);
                 }
             }
 
@@ -344,7 +344,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheCha
         {
             if (inlineQos != NULL)
                 if (inlineQos->m_hasChanged || inlineQos->m_cdrmsg.msg_endian != submsgElem.msg_endian)
-                    ParameterList::updateCDRMsg(inlineQos, submsgElem.msg_endian);
+                    ParameterList::updateCDRMsg(inlineQos, submsgElem.msg_endian, false);
 
             if(change->write_params.related_sample_identity() != SampleIdentity::unknown())
                 CDRMessage::addParameterSampleIdentity(&submsgElem, change->write_params.related_sample_identity());

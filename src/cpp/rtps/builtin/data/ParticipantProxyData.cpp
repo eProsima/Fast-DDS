@@ -176,9 +176,9 @@ bool ParticipantProxyData::toParameterList()
         //			valid&= this->addStaticEDPInfo();
 
 #if EPROSIMA_BIG_ENDIAN
-        valid &= ParameterList::updateCDRMsg(&m_QosList.allQos, BIGEND);
+        valid &= ParameterList::updateCDRMsg(&m_QosList.allQos, BIGEND, true);
 #else
-        valid &= ParameterList::updateCDRMsg(&m_QosList.allQos, LITTLEEND);
+        valid &= ParameterList::updateCDRMsg(&m_QosList.allQos, LITTLEEND, true);
 #endif
         if(valid)
             m_hasChanged = false;
@@ -189,8 +189,7 @@ bool ParticipantProxyData::toParameterList()
 
 bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 {
-
-    if(ParameterList::readParameterListfromCDRMsg(msg, &m_QosList.allQos, NULL)>0)
+    if(ParameterList::readParameterListfromCDRMsg(msg, &m_QosList.allQos, NULL, true) > 0)
     {
         for(std::vector<Parameter_t*>::iterator it = m_QosList.allQos.m_parameters.begin();
                 it!=m_QosList.allQos.m_parameters.end();++it)

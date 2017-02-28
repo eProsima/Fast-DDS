@@ -27,10 +27,22 @@ namespace fastrtps {
 #define IF_VALID_ADD {if(valid){plist->m_parameters.push_back((Parameter_t*)p);plist->m_hasChanged = true;paramlist_byte_size += plength;}else{delete(p);return -1;}break;}
 
 
-bool ParameterList::updateCDRMsg(ParameterList_t* plist,Endianness_t endian)
+bool ParameterList::updateCDRMsg(ParameterList_t* plist, Endianness_t endian, bool encapsulation)
 {
     CDRMessage::initCDRMsg(&plist->m_cdrmsg);
     plist->m_cdrmsg.msg_endian = endian;
+
+    if(encapsulation)
+    {
+        // Set encapsulation
+        CDRMessage::addOctet(&plist->m_cdrmsg, 0);
+        if(endian == BIGEND)
+            CDRMessage::addOctet(&plist->m_cdrmsg, PL_CDR_BE);
+        else
+            CDRMessage::addOctet(&plist->m_cdrmsg, PL_CDR_LE);
+        CDRMessage::addUInt16(&plist->m_cdrmsg, 0);
+    }
+
     for(std::vector<Parameter_t*>::iterator it=plist->m_parameters.begin();
             it!=plist->m_parameters.end();++it)
     {
@@ -51,13 +63,28 @@ bool ParameterList::updateCDRMsg(ParameterList_t* plist,Endianness_t endian)
 }
 
 
-int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterList_t*plist, CacheChange_t *change)
+int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterList_t*plist, CacheChange_t *change,
+        bool encapsulation)
 {
     uint32_t paramlist_byte_size = 0;
     bool is_sentinel = false;
     bool valid = true;
     ParameterId_t pid;
     uint16_t plength;
+
+    if(encapsulation)
+    {
+        // Read encapsulation
+        msg->pos += 1;
+        octet encapsulation = 0;
+        CDRMessage::readOctet(msg, &encapsulation);
+        msg->msg_endian = encapsulation == CDR_BE || encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+        if(change != NULL)
+            change->serializedPayload.encapsulation = (uint16_t)encapsulation;
+        msg->pos +=2;
+    }
+
+
     while(!is_sentinel)
     {
         valid = true;
