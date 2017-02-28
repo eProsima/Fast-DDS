@@ -120,7 +120,7 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
             uint32_t writer_throughput_controller_bytes =
                 mp_writer->calculateMaxDataSize(m_att.throughputController.bytesPerPeriod);
             uint32_t participant_throughput_controller_bytes =
-                mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod;
+                mp_writer->calculateMaxDataSize(mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod);
 
             high_mark_for_frag_ =
                 max_data_size > writer_throughput_controller_bytes ?

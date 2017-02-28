@@ -1028,7 +1028,12 @@ uint32_t RTPSParticipantImpl::getMaxMessageSize() const
 
 uint32_t RTPSParticipantImpl::getMaxDataSize()
 {
-    uint32_t maxDataSize = getMaxMessageSize();
+    return calculateMaxDataSize(getMaxMessageSize());
+}
+
+uint32_t RTPSParticipantImpl::calculateMaxDataSize(uint32_t length)
+{
+    uint32_t maxDataSize = length;
 
 #if HAVE_SECURITY
     // If there is rtps messsage protection, reduce max size for messages,

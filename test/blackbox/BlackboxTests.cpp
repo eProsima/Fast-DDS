@@ -68,8 +68,8 @@ class BlackboxEnvironment : public ::testing::Environment
 
             if(global_port + 7400 > global_port)
                 global_port += 7400;
-            Log::SetVerbosity(Log::Info);
-            Log::SetCategoryFilter(std::regex("(SECURITY)"));
+            //Log::SetVerbosity(Log::Info);
+            //Log::SetCategoryFilter(std::regex("(SECURITY)"));
         }
 
         void TearDown()
@@ -1102,7 +1102,7 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(4));
+        data = reader.block(std::chrono::seconds(3));
 
         ASSERT_GE(data.size(), static_cast<size_t>(7));
         ASSERT_LE(data.size(), static_cast<size_t>(9));
