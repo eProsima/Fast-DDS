@@ -278,6 +278,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Wparam.topic.historyQos.depth = 50;
     Wparam.topic.resourceLimitsQos.max_samples = 50;
+    Wparam.topic.resourceLimitsQos.allocated_samples = 50;
     Wparam.topic.topicDataType = "ThroughputCommand";
     Wparam.topic.topicKind = NO_KEY;
     std::ostringstream pct;
