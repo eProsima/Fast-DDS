@@ -280,9 +280,9 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
         {
             logInfo(RTPS_MSG_IN, IDSTRING"Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " << getGuid().entityId);
 
-#if HAVE_SECURITY
-            CacheChange_t* change_to_add = nullptr;
+            CacheChange_t* change_to_add = incomingChange;
 
+#if HAVE_SECURITY
             if(is_payload_protected())
             {
                 if(reserveCache(&change_to_add, incomingChange->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
@@ -297,8 +297,6 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
                     }
                 }
             }
-            else
-                change_to_add = incomingChange;
 #endif
 
             // Fragments manager has to process incomming fragments.
