@@ -2047,7 +2047,7 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_rtps_data300kb)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
+    data = reader.block(std::chrono::seconds(5));
 
     print_non_received_messages(data, default_data300kb_print);
     ASSERT_EQ(data.size(), 0);
@@ -2261,7 +2261,7 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_submessage_data300kb
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
+    data = reader.block(std::chrono::seconds(5));
 
     print_non_received_messages(data, default_data300kb_print);
     ASSERT_EQ(data.size(), 0);
@@ -2475,7 +2475,7 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_payload_data300kb)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
+    data = reader.block(std::chrono::seconds(5));
 
     print_non_received_messages(data, default_data300kb_print);
     ASSERT_EQ(data.size(), 0);
@@ -2701,7 +2701,7 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_all_data300kb)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
+    data = reader.block(std::chrono::seconds(5));
 
     print_non_received_messages(data, default_data300kb_print);
     ASSERT_EQ(data.size(), 0);
