@@ -218,14 +218,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
             m_att.defaultUnicastLocatorList.push_back((*it));
         }
-        // FIXME -- We have to  discuss the rules for deafult locator assignment for each transport
-        loc2.port= m_att.port.portBase+
-            m_att.port.domainIDGain*PParam.builtin.domainId+
-            m_att.port.offsetd2+
-            m_att.port.participantIDGain*m_att.participantID;
-        loc2.set_IP4_address(239,255,1,4);
-        m_att.defaultMulticastLocatorList.push_back(loc2);
-        /* INSERT DEFAULT MULTICAST LOCATORS FOR THE PARTICIPANT */
     }
     else
     {
