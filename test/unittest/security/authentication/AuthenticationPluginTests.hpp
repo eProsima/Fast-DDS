@@ -195,7 +195,7 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     ParticipantProxyData participant_data1;
     participant_data1.m_guid = adjusted_participant_key1;
     participant_data1.toParameterList();
-    ParameterList::updateCDRMsg(&participant_data1.m_QosList.allQos, BIGEND, false);
+    ParameterList::updateCDRMsg(&participant_data1.m_QosList.allQos, BIGEND, true);
 
     result = plugin.begin_handshake_request(&handshake_handle,
             &handshake_message,
@@ -214,7 +214,7 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     ParticipantProxyData participant_data2;
     participant_data2.m_guid = adjusted_participant_key2;
     participant_data2.toParameterList();
-    ASSERT_TRUE(ParameterList::updateCDRMsg(&participant_data2.m_QosList.allQos, BIGEND, false));
+    ASSERT_TRUE(ParameterList::updateCDRMsg(&participant_data2.m_QosList.allQos, BIGEND, true));
 
     result = plugin.begin_handshake_reply(&handshake_handle_reply,
             &handshake_message_reply,

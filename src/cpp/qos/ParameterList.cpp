@@ -78,7 +78,12 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
         msg->pos += 1;
         octet encapsulation = 0;
         CDRMessage::readOctet(msg, &encapsulation);
-        msg->msg_endian = encapsulation == CDR_BE || encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+        if(encapsulation == PL_CDR_BE)
+            msg->msg_endian = BIGEND;
+        else if(encapsulation == PL_CDR_LE)
+            msg->msg_endian = LITTLEEND;
+        else
+            return -1;
         if(change != NULL)
             change->serializedPayload.encapsulation = (uint16_t)encapsulation;
         msg->pos +=2;

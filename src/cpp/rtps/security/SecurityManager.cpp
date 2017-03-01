@@ -484,7 +484,8 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
 
         CacheChange_t* change = participant_stateless_message_writer_->new_change([&message]() -> uint32_t
                 {
-                    return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
+                    return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
+                            + 4 /*encapsulation*/);
                 }
                 , ALIVE, c_InstanceHandle_Unknown);
 
@@ -496,7 +497,19 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
             aux_msg.buffer = change->serializedPayload.data;
             aux_msg.length = change->serializedPayload.length;
             aux_msg.max_size = change->serializedPayload.max_size;
-            aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+            // Serialize encapsulation
+            CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+            aux_msg.msg_endian = BIGEND;
+            change->serializedPayload.encapsulation = PL_CDR_BE;
+            CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+            aux_msg.msg_endian = LITTLEEND;
+            change->serializedPayload.encapsulation = PL_CDR_LE;
+            CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+            CDRMessage::addUInt16(&aux_msg, 0);
 
             if(CDRMessage::addParticipantGenericMessage(&aux_msg, message))
             {
@@ -899,7 +912,18 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.length = change->serializedPayload.length;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Read encapsulation
+    aux_msg.pos += 1;
+    octet encapsulation = 0;
+    CDRMessage::readOctet(&aux_msg, &encapsulation);
+    if(encapsulation == PL_CDR_BE)
+        aux_msg.msg_endian = BIGEND;
+    else if(encapsulation == PL_CDR_LE)
+        aux_msg.msg_endian = LITTLEEND;
+    else
+        return;
+    aux_msg.pos +=2;
 
     CDRMessage::readParticipantGenericMessage(&aux_msg, message);
 
@@ -1087,7 +1111,18 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.length = change->serializedPayload.length;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Read encapsulation
+    aux_msg.pos += 1;
+    octet encapsulation = 0;
+    CDRMessage::readOctet(&aux_msg, &encapsulation);
+    if(encapsulation == PL_CDR_BE)
+        aux_msg.msg_endian = BIGEND;
+    else if(encapsulation == PL_CDR_LE)
+        aux_msg.msg_endian = LITTLEEND;
+    else
+        return;
+    aux_msg.pos +=2;
 
     CDRMessage::readParticipantGenericMessage(&aux_msg, message);
 
@@ -1407,7 +1442,8 @@ ParticipantCryptoHandle* SecurityManager::register_and_match_crypto_endpoint(Par
 
             CacheChange_t* change = participant_volatile_message_secure_writer_->new_change([&message]() -> uint32_t
                     {
-                        return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
+                        return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
+                                + 4 /*encapsulation*/);
                     }
                     , ALIVE, c_InstanceHandle_Unknown);
 
@@ -1419,7 +1455,19 @@ ParticipantCryptoHandle* SecurityManager::register_and_match_crypto_endpoint(Par
                 aux_msg.buffer = change->serializedPayload.data;
                 aux_msg.length = change->serializedPayload.length;
                 aux_msg.max_size = change->serializedPayload.max_size;
-                aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+                // Serialize encapsulation
+                CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+                aux_msg.msg_endian = BIGEND;
+                change->serializedPayload.encapsulation = PL_CDR_BE;
+                CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+                aux_msg.msg_endian = LITTLEEND;
+                change->serializedPayload.encapsulation = PL_CDR_LE;
+                CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+                CDRMessage::addUInt16(&aux_msg, 0);
 
                 if(CDRMessage::addParticipantGenericMessage(&aux_msg, message))
                 {
@@ -1651,7 +1699,8 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
 
                     CacheChange_t* change = participant_volatile_message_secure_writer_->new_change([&message]() -> uint32_t
                             {
-                                return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
+                                return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
+                                        + 4 /*encapsulation*/);
                             }
                             , ALIVE, c_InstanceHandle_Unknown);
 
@@ -1663,7 +1712,19 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                         aux_msg.buffer = change->serializedPayload.data;
                         aux_msg.length = change->serializedPayload.length;
                         aux_msg.max_size = change->serializedPayload.max_size;
-                        aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+                        // Serialize encapsulation
+                        CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+                        aux_msg.msg_endian = BIGEND;
+                        change->serializedPayload.encapsulation = PL_CDR_BE;
+                        CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+                        aux_msg.msg_endian = LITTLEEND;
+                        change->serializedPayload.encapsulation = PL_CDR_LE;
+                        CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+                        CDRMessage::addUInt16(&aux_msg, 0);
 
                         if(CDRMessage::addParticipantGenericMessage(&aux_msg, message))
                         {
@@ -1774,7 +1835,8 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
 
                     CacheChange_t* change = participant_volatile_message_secure_writer_->new_change([&message]() -> uint32_t
                             {
-                                return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
+                                return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
+                                        + 4 /*encapsulation*/);
                             }
                             , ALIVE, c_InstanceHandle_Unknown);
 
@@ -1786,7 +1848,19 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
                         aux_msg.buffer = change->serializedPayload.data;
                         aux_msg.length = change->serializedPayload.length;
                         aux_msg.max_size = change->serializedPayload.max_size;
-                        aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+                        // Serialize encapsulation
+                        CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+                        aux_msg.msg_endian = BIGEND;
+                        change->serializedPayload.encapsulation = PL_CDR_BE;
+                        CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+                        aux_msg.msg_endian = LITTLEEND;
+                        change->serializedPayload.encapsulation = PL_CDR_LE;
+                        CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+                        CDRMessage::addUInt16(&aux_msg, 0);
 
                         if(CDRMessage::addParticipantGenericMessage(&aux_msg, message))
                         {

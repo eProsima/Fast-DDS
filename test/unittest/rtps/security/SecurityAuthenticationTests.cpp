@@ -182,12 +182,26 @@ class SecurityAuthenticationTest : public ::testing::Test
             message.message_class_id("dds.sec.auth");
             HandshakeMessageToken token;
             message.message_data().push_back(token);
-            CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))); //TODO(Ricardo) Think casting
+            CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+                    + 4 /*encapsulation*/); //TODO(Ricardo) Think casting
             CDRMessage_t aux_msg(0);
             aux_msg.wraps = true;
             aux_msg.buffer = change->serializedPayload.data;
             aux_msg.max_size = change->serializedPayload.max_size;
-            aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+            // Serialize encapsulation
+            CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+            aux_msg.msg_endian = BIGEND;
+            change->serializedPayload.encapsulation = PL_CDR_BE;
+            CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+            aux_msg.msg_endian = LITTLEEND;
+            change->serializedPayload.encapsulation = PL_CDR_LE;
+            CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+            CDRMessage::addUInt16(&aux_msg, 0);
+
             ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
             change->serializedPayload.length = aux_msg.length;
 
@@ -231,12 +245,26 @@ class SecurityAuthenticationTest : public ::testing::Test
             message.message_class_id("dds.sec.auth");
             HandshakeMessageToken token;
             message.message_data().push_back(token);
-            CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+            CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+                    + 4 /*encapsulation*/);
             CDRMessage_t aux_msg(0);
             aux_msg.wraps = true;
             aux_msg.buffer = change->serializedPayload.data;
             aux_msg.max_size = change->serializedPayload.max_size;
-            aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+            // 
+            // Serialize encapsulation
+            CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+            aux_msg.msg_endian = BIGEND;
+            change->serializedPayload.encapsulation = PL_CDR_BE;
+            CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+            aux_msg.msg_endian = LITTLEEND;
+            change->serializedPayload.encapsulation = PL_CDR_LE;
+            CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+            CDRMessage::addUInt16(&aux_msg, 0);
+
             ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
             change->serializedPayload.length = aux_msg.length;
 
@@ -882,12 +910,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_not_re
 
     ParticipantGenericMessage message;
     message.message_class_id("dds.sec.auth");
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
@@ -913,12 +955,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_bad_me
     ASSERT_TRUE(manager_.discovered_participant(&participant_data));
 
     ParticipantGenericMessage message;
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
@@ -958,12 +1014,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_not_ex
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
@@ -996,12 +1066,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_b
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
@@ -1042,12 +1126,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_beg
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
@@ -1109,12 +1207,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_new_ch
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
@@ -1159,12 +1271,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_add_ch
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
@@ -1248,12 +1374,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_pendin
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
@@ -1318,12 +1458,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_p
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
@@ -1362,12 +1516,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_pro
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
@@ -1423,12 +1591,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
@@ -1467,12 +1649,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
@@ -1533,12 +1729,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_proces
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
@@ -1569,12 +1779,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_bad_re
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
@@ -1604,12 +1828,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_bad_re
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
@@ -1639,12 +1877,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_fail_p
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
@@ -1683,12 +1935,26 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_pro
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
-    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)));
+    CacheChange_t* change = new CacheChange_t(static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message))
+            + 4 /*encapsulation*/);
     CDRMessage_t aux_msg(0);
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    aux_msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+
+    // Serialize encapsulation
+    CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+    aux_msg.msg_endian = BIGEND;
+    change->serializedPayload.encapsulation = PL_CDR_BE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+#else
+    aux_msg.msg_endian = LITTLEEND;
+    change->serializedPayload.encapsulation = PL_CDR_LE;
+    CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+#endif
+    CDRMessage::addUInt16(&aux_msg, 0);
+
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
