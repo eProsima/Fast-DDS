@@ -25,16 +25,16 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     set(PUBLISHER_SOURCE ${COMMON_SOURCE}
         Publisher.cpp
         )
-    add_executable(Publisher ${PUBLISHER_SOURCE})
-    target_include_directories(Publisher PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox/types)
-    target_link_libraries(Publisher fastrtps fastcdr)
+    add_executable(SimpleCommunicationPublisher ${PUBLISHER_SOURCE})
+    target_include_directories(SimpleCommunicationPublisher PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
+    target_link_libraries(SimpleCommunicationPublisher fastrtps fastcdr)
 
     set(SUBSCRIBER_SOURCE ${COMMON_SOURCE}
         Subscriber.cpp
         )
-    add_executable(Subscriber ${SUBSCRIBER_SOURCE})
-    target_include_directories(Subscriber PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox/types)
-    target_link_libraries(Subscriber fastrtps fastcdr)
+    add_executable(SimpleCommunicationSubscriber ${SUBSCRIBER_SOURCE})
+    target_include_directories(SimpleCommunicationSubscriber PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
+    target_link_libraries(SimpleCommunicationSubscriber fastrtps fastcdr)
 
     if(PYTHONINTERP_FOUND)
         add_test(NAME SimpleCommunication
@@ -49,8 +49,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${BOOST_LIBRARYDIR}\\;${WIN_PATH}")
         endif()
         set_property(TEST SimpleCommunication APPEND PROPERTY ENVIRONMENT
-            "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:Publisher>")
+            "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
         set_property(TEST SimpleCommunication APPEND PROPERTY ENVIRONMENT
-            "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:Subscriber>")
+            "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
     endif()
 endif()

@@ -24,7 +24,7 @@
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
 
-#include <HelloWorldType.h>
+#include <types/HelloWorldType.h>
 
 using namespace eprosima::fastrtps;
 
