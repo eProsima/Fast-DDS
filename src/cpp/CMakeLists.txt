@@ -175,7 +175,7 @@ if(TINYXML2_SOURCE_DIR)
     list(APPEND ${PROJECT_NAME}_source_files
         ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
         )
-    set_sources(../../thirdparty/tinyxml2/tinyxml2.cpp)
+    set_sources(${TINYXML2_SOURCE_DIR}/tinyxml2.cpp)
 endif()
 
 if(ANDROID)
@@ -200,18 +200,6 @@ endif()
 # If INTERNAL_DEBUG = ON, define symbol for extensive debug messages
 if(INTERNAL_DEBUG)
     add_definitions(-D__INTERNALDEBUG)
-endif()
-
-add_definitions(
-  -DBOOST_ASIO_STANDALONE
-  -DASIO_STANDALONE
-)
-
-if(ANDROID)
-  add_definitions(
-    -DASIO_DISABLE_MOVE
-    -DASIO_DISABLE_STD_STRING_VIEW
-  )
 endif()
 
 set(${PROJECT_NAME}_include_dirs
