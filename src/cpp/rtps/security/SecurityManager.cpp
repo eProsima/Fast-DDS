@@ -2286,7 +2286,7 @@ uint32_t SecurityManager::calculate_extra_size_for_rtps_message()
 
     std::unique_lock<std::mutex> lock(mutex_);
 
-    return crypto_plugin_->cryptotransform()->calculate_extra_size_for_rtps_message(discovered_participants_.size());
+    return crypto_plugin_->cryptotransform()->calculate_extra_size_for_rtps_message(static_cast<uint32_t>(discovered_participants_.size()));
 }
 
 uint32_t SecurityManager::calculate_extra_size_for_rtps_submessage(const GUID_t& writer_guid)
@@ -2300,7 +2300,7 @@ uint32_t SecurityManager::calculate_extra_size_for_rtps_submessage(const GUID_t&
 
     if(wr_it != writer_handles_.end())
     {
-        return crypto_plugin_->cryptotransform()->calculate_extra_size_for_rtps_submessage(wr_it->second.associated_readers.size());
+        return crypto_plugin_->cryptotransform()->calculate_extra_size_for_rtps_submessage(static_cast<uint32_t>(wr_it->second.associated_readers.size()));
     }
     else
     {
@@ -2321,7 +2321,7 @@ uint32_t SecurityManager::calculate_extra_size_for_encoded_payload(const GUID_t&
 
     if(wr_it != writer_handles_.end())
     {
-        return crypto_plugin_->cryptotransform()->calculate_extra_size_for_encoded_payload(wr_it->second.associated_readers.size());
+        return crypto_plugin_->cryptotransform()->calculate_extra_size_for_encoded_payload(static_cast<uint32_t>(wr_it->second.associated_readers.size()));
     }
     else
     {

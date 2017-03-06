@@ -42,6 +42,8 @@ class HandshakeMessageTokenResent : public TimedEvent
 
     private:
 
+        HandshakeMessageTokenResent& operator=(const HandshakeMessageTokenResent&) NON_COPYABLE_CXX11;
+
         SecurityManager& security_manager_;
 
         GUID_t remote_participant_key_;

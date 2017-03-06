@@ -1636,15 +1636,15 @@ bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &
     return true;
 }
 
-constexpr uint32_t srtps_prefix_length = 4;
+CONSTEXPR uint32_t srtps_prefix_length = 4;
 // 4 bytes to serialize length of the body.
-constexpr uint32_t srtps_postfix_length = 4;
-constexpr uint32_t sec_prefix_length = 4;
+CONSTEXPR uint32_t srtps_postfix_length = 4;
+CONSTEXPR uint32_t sec_prefix_length = 4;
 // 4 bytes to serialize length of the body.
-constexpr uint32_t sec_postfix_length = 4;
-constexpr uint32_t aesgcmgmac_header_length = 20;
-constexpr uint32_t aesgcmgmac_body_length_attr = 4;
-constexpr uint32_t aesgcmgmac_common_tag = 16;
+CONSTEXPR uint32_t sec_postfix_length = 4;
+CONSTEXPR uint32_t aesgcmgmac_header_length = 20;
+CONSTEXPR uint32_t aesgcmgmac_body_length_attr = 4;
+CONSTEXPR uint32_t aesgcmgmac_common_tag = 16;
 
 uint32_t AESGCMGMAC_Transform::calculate_extra_size_for_rtps_message(uint32_t number_discovered_participants) const
 {
