@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <mutex>
+
 #include <fastrtps/rtps/resources/AsyncInterestTree.h>
 #include "../participant/RTPSParticipantImpl.h"
-
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
 
 AsyncInterestTree::AsyncInterestTree():
    mActiveInterest(&mInterestAlpha),
@@ -32,7 +31,7 @@ void AsyncInterestTree::RegisterInterest(const RTPSWriter* writer)
 
 void AsyncInterestTree::RegisterInterest(const RTPSParticipantImpl* participant)
 {
-   boost::lock_guard<boost::recursive_mutex> guard_participant(*participant->getParticipantMutex());
+   std::lock_guard<std::recursive_mutex> guard_participant(*participant->getParticipantMutex());
    std::unique_lock<std::mutex> guard(mMutexHidden);
    auto writers = participant->getAllWriters();
 

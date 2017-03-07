@@ -22,8 +22,7 @@
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include "../participant/RTPSParticipantImpl.h"
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 #include <fastrtps/log/Log.h>
 
@@ -49,7 +48,7 @@ StatelessWriter::~StatelessWriter()
 
 void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     if(!isAsync())
     {
@@ -83,8 +82,8 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 
 bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
 {
-	 boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-    auto newEnd = remove_if(m_unsent_changes.begin(), 
+	 std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    auto newEnd = std::remove_if(m_unsent_changes.begin(),
                             m_unsent_changes.end(),
                             [change](const CacheChangeForGroup_t& ccfg)
                                {return ccfg.getChange() == change 
@@ -118,7 +117,7 @@ void StatelessWriter::update_unsent_changes(const std::vector<CacheChangeForGrou
 
 size_t StatelessWriter::send_any_unsent_changes()
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     size_t number_of_changes_sent= 0;
 
    // Shallow copy the list
@@ -167,7 +166,7 @@ size_t StatelessWriter::send_any_unsent_changes()
 
 bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 	if(rdata.guid != c_Guid_Unknown)
 	{
 		for(auto it=m_matched_readers.begin();it!=m_matched_readers.end();++it)
@@ -248,7 +247,7 @@ bool StatelessWriter::add_locator(RemoteReaderAttributes& rdata,Locator_t& loc)
 
 bool StatelessWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 	bool found = false;
 	if(rdata.guid == c_Guid_Unknown)
 		found = true;
@@ -285,7 +284,7 @@ bool StatelessWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 
 bool StatelessWriter::matched_reader_is_matched(RemoteReaderAttributes& rdata)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 	for(auto rit = m_matched_readers.begin();
 			rit!=m_matched_readers.end();++rit)
 	{
@@ -317,7 +316,7 @@ bool StatelessWriter::remove_locator(Locator_t& loc)
 
 void StatelessWriter::unsent_changes_reset()
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
    m_unsent_changes.clear();
 

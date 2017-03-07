@@ -14,21 +14,21 @@
 
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <gtest/gtest.h>
-#include <boost/thread.hpp>
+#include <thread>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/log/Log.h>
 #include <memory>
+#include <asio.hpp>
 
-using namespace std;
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-using namespace boost::interprocess;
 
 #ifndef __APPLE__
 const uint32_t ReceiveBufferCapacity = 65536;
 #endif
 
-class UDPv4Tests: public ::testing::Test 
+class UDPv4Tests: public ::testing::Test
 {
     public:
         UDPv4Tests()
@@ -44,8 +44,8 @@ class UDPv4Tests: public ::testing::Test
         void HELPER_SetDescriptorDefaults();
 
         UDPv4TransportDescriptor descriptor;
-        unique_ptr<boost::thread> senderThread;
-        unique_ptr<boost::thread> receiverThread;
+        std::unique_ptr<std::thread> senderThread;
+        std::unique_ptr<std::thread> receiverThread;
 };
 
 TEST_F(UDPv4Tests, locators_with_kind_1_supported)
@@ -126,7 +126,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
         EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
     };
 
-    auto receiveThreadFunction = [&]() 
+    auto receiveThreadFunction = [&]()
     {
         octet receiveBuffer[ReceiveBufferCapacity];
         uint32_t receiveBufferSize;
@@ -136,8 +136,8 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
         EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
     };
 
-    receiverThread.reset(new boost::thread(receiveThreadFunction));      
-    senderThread.reset(new boost::thread(sendThreadFunction));      
+    receiverThread.reset(new std::thread(receiveThreadFunction));
+    senderThread.reset(new std::thread(sendThreadFunction));
     senderThread->join();
     receiverThread->join();
 }
@@ -168,7 +168,7 @@ TEST_F(UDPv4Tests, send_to_loopback)
         EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
     };
 
-    auto receiveThreadFunction = [&]() 
+    auto receiveThreadFunction = [&]()
     {
         octet receiveBuffer[ReceiveBufferCapacity];
         uint32_t receiveBufferSize;
@@ -178,8 +178,8 @@ TEST_F(UDPv4Tests, send_to_loopback)
         EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
     };
 
-    receiverThread.reset(new boost::thread(receiveThreadFunction));      
-    senderThread.reset(new boost::thread(sendThreadFunction));      
+    receiverThread.reset(new std::thread(receiveThreadFunction));
+    senderThread.reset(new std::thread(sendThreadFunction));
     senderThread->join();
     receiverThread->join();
 }
@@ -201,7 +201,7 @@ TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
     destinationLocator.port = 7410;
 
     // Then
-    vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
+    std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
     ASSERT_FALSE(transportUnderTest.Send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(), genericOutputChannelLocator, destinationLocator));
 }
 
@@ -275,7 +275,7 @@ TEST_F(UDPv4Tests, send_to_wrong_interface)
 
     //Sending through a different IP will NOT work, except 0.0.0.0
     outputChannelLocator.set_IP4_address(111,111,111,111);
-    vector<octet> message = { 'H','e','l','l','o' };
+    std::vector<octet> message = { 'H','e','l','l','o' };
     ASSERT_FALSE(transportUnderTest.Send(message.data(), (uint32_t)message.size(), outputChannelLocator, Locator_t()));
 }
 

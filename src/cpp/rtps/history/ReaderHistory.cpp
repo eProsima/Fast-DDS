@@ -20,12 +20,11 @@
 #include <fastrtps/rtps/history/ReaderHistory.h>
 
 #include <fastrtps/log/Log.h>
+#include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
-#include <boost/interprocess/sync/interprocess_semaphore.hpp>
+#include <mutex>
 
 namespace eprosima {
 namespace fastrtps{
@@ -44,7 +43,7 @@ inline bool sort_ReaderHistoryCache(CacheChange_t*c1, CacheChange_t*c2)
 ReaderHistory::ReaderHistory(const HistoryAttributes& att):
                         History(att),
                         mp_reader(nullptr),
-                        mp_semaphore(new boost::interprocess::interprocess_semaphore(0)),
+                        mp_semaphore(new Semaphore(0)),
                   m_cachedRecordLocation(nullptr),
                   m_cachedGUID()
 
@@ -88,7 +87,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
         return false;
     }
 
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     if(m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE && a_change->serializedPayload.length > m_att.payloadMaxSize)
     {
         logError(RTPS_HISTORY,
@@ -136,7 +135,7 @@ bool ReaderHistory::remove_change(CacheChange_t* a_change)
         return false;
     }
 
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     if(a_change == nullptr)
     {
         logError(RTPS_HISTORY,"Pointer is not valid")
@@ -172,7 +171,7 @@ bool ReaderHistory::remove_changes_with_guid(GUID_t* a_guid)
     }
 
     {//Lock scope
-        boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+        std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
         if(a_guid == nullptr)
         {
             logError(RTPS_HISTORY, "Target Guid for Cachechange deletion is not valid");
@@ -231,7 +230,7 @@ void ReaderHistory::waitSemaphore() //TODO CAMBIAR NOMBRE PARA que el usuario se
 
 bool ReaderHistory::thereIsRecordOf(GUID_t& guid, SequenceNumber_t& seq)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
    if (guid == m_cachedGUID)
       return m_cachedRecordLocation->find(seq) != m_cachedRecordLocation->end();
 
@@ -240,7 +239,7 @@ bool ReaderHistory::thereIsRecordOf(GUID_t& guid, SequenceNumber_t& seq)
 
 bool ReaderHistory::thereIsUpperRecordOf(GUID_t& guid, SequenceNumber_t& seq)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
    if (guid == m_cachedGUID)
       return m_cachedRecordLocation->upper_bound(seq) != m_cachedRecordLocation->end();
 

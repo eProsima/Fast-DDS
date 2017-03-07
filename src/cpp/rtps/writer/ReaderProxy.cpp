@@ -27,8 +27,7 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 #include <cassert>
 
@@ -38,7 +37,7 @@ using namespace eprosima::fastrtps::rtps;
 ReaderProxy::ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW) :
     m_att(rdata), mp_SFW(SW),
     mp_nackResponse(nullptr), mp_nackSupression(nullptr), mp_initialHeartbeat(nullptr), m_lastAcknackCount(0),
-    mp_mutex(new boost::recursive_mutex()), lastNackfragCount_(0)
+    mp_mutex(new std::recursive_mutex()), lastNackfragCount_(0)
 {
     if(rdata.endpoint.reliabilityKind == RELIABLE)
     {
@@ -80,7 +79,7 @@ void ReaderProxy::destroy_timers()
 
 void ReaderProxy::addChange(const ChangeForReader_t& change)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     assert(change.getSequenceNumber() > changesFromRLowMark_);
     assert(m_changesForReader.rbegin() != m_changesForReader.rend() ?
@@ -101,13 +100,13 @@ void ReaderProxy::addChange(const ChangeForReader_t& change)
 
 size_t ReaderProxy::countChangesForReader() const
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     return m_changesForReader.size();
 }
 
 bool ReaderProxy::change_is_acked(const SequenceNumber_t& sequence_number)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     if(sequence_number <= changesFromRLowMark_)
         return true;
@@ -121,7 +120,7 @@ bool ReaderProxy::change_is_acked(const SequenceNumber_t& sequence_number)
 
 bool ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     if(seqNum > changesFromRLowMark_)
     {
@@ -136,7 +135,7 @@ bool ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
 bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet)
 {
     bool isSomeoneWasSetRequested = false;
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     for(std::vector<SequenceNumber_t>::iterator sit=seqNumSet.begin();sit!=seqNumSet.end();++sit)
     {
@@ -168,7 +167,7 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
 std::vector<const ChangeForReader_t*> ReaderProxy::get_unsent_changes() const
 {
     std::vector<const ChangeForReader_t*> unsent_changes;
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     auto it = m_changesForReader.begin();
     for (; it!= m_changesForReader.end(); ++it)
@@ -181,7 +180,7 @@ std::vector<const ChangeForReader_t*> ReaderProxy::get_unsent_changes() const
 std::vector<const ChangeForReader_t*> ReaderProxy::get_requested_changes() const
 {
     std::vector<const ChangeForReader_t*> unsent_changes;
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     auto it = m_changesForReader.begin();
     for (; it!= m_changesForReader.end(); ++it)
@@ -247,7 +246,7 @@ void ReaderProxy::mark_fragments_as_sent_for_change(const CacheChange_t* change,
 
 void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     bool mustWakeUpAsyncThread = false; 
 
     auto it = m_changesForReader.begin();
@@ -282,7 +281,7 @@ void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous
 
 void ReaderProxy::setNotValid(const CacheChange_t* change)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     // Check sequence number is in the container, because it was not clean up.
     if(m_changesForReader.size() == 0 || change->sequenceNumber < m_changesForReader.begin()->getSequenceNumber())
@@ -325,7 +324,7 @@ void ReaderProxy::setNotValid(const CacheChange_t* change)
 bool ReaderProxy::thereIsUnacknowledged() const
 {
     bool returnedValue = false;
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     for(auto it = m_changesForReader.begin(); it!=m_changesForReader.end(); ++it)
     {
@@ -352,14 +351,14 @@ bool change_min2(const ChangeForReader_t ch1, const ChangeForReader_t ch2)
 bool ReaderProxy::minChange(std::vector<ChangeForReader_t*>* Changes,
         ChangeForReader_t* changeForReader)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     *changeForReader = **std::min_element(Changes->begin(),Changes->end(),change_min);
     return true;
 }
 
 bool ReaderProxy::requested_fragment_set(SequenceNumber_t sequence_number, const FragmentNumberSet_t& frag_set)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     // Locate the outbound change referenced by the NACK_FRAG
     auto changeIter = std::find_if(m_changesForReader.begin(), m_changesForReader.end(), 

@@ -20,9 +20,8 @@
 #ifndef _TEST_BLACKBOX_REQREPASRELIABLEHELLOWORLDREPLIER_HPP_
 #define _TEST_BLACKBOX_REQREPASRELIABLEHELLOWORLDREPLIER_HPP_
 
-#include "ReqRepHelloWorldReplier.hpp" 
-#include <boost/asio.hpp>
-#include <boost/interprocess/detail/os_thread_functions.hpp>
+#include "ReqRepHelloWorldReplier.hpp"
+#include <asio.hpp>
 
 class ReqRepAsReliableHelloWorldReplier : public ReqRepHelloWorldReplier
 {
@@ -33,7 +32,7 @@ class ReqRepAsReliableHelloWorldReplier : public ReqRepHelloWorldReplier
 
             std::ostringstream t;
 
-            t << "ReqRepAsReliableHelloworld_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id() << "_" << suffix;
+            t << "ReqRepAsReliableHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
 
             sattr.topic.topicName = t.str();
         };
@@ -44,11 +43,10 @@ class ReqRepAsReliableHelloWorldReplier : public ReqRepHelloWorldReplier
 
             std::ostringstream t;
 
-            t << "ReqRepAsReliableHelloworld_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id() << "_" << suffix;
+            t << "ReqRepAsReliableHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
 
             puattr.topic.topicName = t.str();
         }
 };
 
 #endif // _TEST_BLACKBOX_REQREPASRELIABLEHELLOWORLDREPLIER_HPP_
-

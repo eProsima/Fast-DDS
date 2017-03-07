@@ -19,14 +19,14 @@
 
 #include <atomic>
 #include <condition_variable>
-#include <boost/asio.hpp>
-#include <boost/thread.hpp>
+#include <asio.hpp>
+#include <thread>
 
 class MockEvent : public eprosima::fastrtps::rtps::TimedEvent
 {
     public:
 
-        MockEvent(boost::asio::io_service &service, const boost::thread& event_thread, double milliseconds, bool autorestart, TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
+        MockEvent(asio::io_service &service, const std::thread& event_thread, double milliseconds, bool autorestart, TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
 
         virtual ~MockEvent();
 

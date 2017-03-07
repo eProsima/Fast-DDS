@@ -20,14 +20,14 @@
 
 #include <atomic>
 #include <condition_variable>
-#include <boost/asio.hpp>
-#include <boost/thread.hpp>
+#include <asio.hpp>
+#include <thread>
 
 class MockParentEvent : public eprosima::fastrtps::rtps::TimedEvent
 {
     public:
 
-        MockParentEvent(boost::asio::io_service &service, const boost::thread& event_thread, double milliseconds, unsigned int countUntilDestruction,
+        MockParentEvent(asio::io_service &service, const std::thread& event_thread, double milliseconds, unsigned int countUntilDestruction,
                 TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
 
         virtual ~MockParentEvent();
@@ -53,4 +53,3 @@ class MockParentEvent : public eprosima::fastrtps::rtps::TimedEvent
 };
 
 #endif // _TEST_RTPS_RESOURCES_TIMEDEVENT_MOCKPARENTEVENT_H_
-

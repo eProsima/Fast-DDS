@@ -25,11 +25,7 @@
 #include <vector>
 #include <cstdint>
 
-#include <boost/foreach.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-
-using boost::property_tree::ptree;
+#include <tinyxml2.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -70,7 +66,7 @@ public:
 	 */
 	bool loadXMLFile(std::string& filename);
 
-    void loadXMLParticipantEndpoint(ptree::value_type& xml_endpoint, StaticRTPSParticipantInfo* pdata);
+    void loadXMLParticipantEndpoint(tinyxml2::XMLElement* xml_endpoint, StaticRTPSParticipantInfo* pdata);
 
 	/**
 	 * Load a Reader endpoint.
@@ -78,14 +74,14 @@ public:
 	 * @param pdata Pointer to the RTPSParticipantInfo where the reader must be added.
 	 * @return True if correctly added.
 	 */
-	bool loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticRTPSParticipantInfo* pdata);
+	bool loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endpoint,StaticRTPSParticipantInfo* pdata);
 	/**
 	 * Load a Writer endpoint.
 	 * @param xml_endpoint Reference of a tree child for a writer.
 	 * @param pdata Pointer to the RTPSParticipantInfo where the reader must be added.
 	 * @return True if correctly added.
 	 */
-	bool loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticRTPSParticipantInfo* pdata);
+	bool loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endpoint,StaticRTPSParticipantInfo* pdata);
 	/**
 	 * Look for a reader in the previously loaded endpoints.
 	 * @param[in] partname RTPSParticipant name

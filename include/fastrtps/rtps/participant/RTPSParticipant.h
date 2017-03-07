@@ -22,7 +22,6 @@
 
 #include <cstdlib>
 #include <memory>
-#include "../flowcontrol/FlowController.h"
 #include "../../fastrtps_dll.h"
 #include "../common/Guid.h"
 #include <fastrtps/rtps/reader/StatefulReader.h>

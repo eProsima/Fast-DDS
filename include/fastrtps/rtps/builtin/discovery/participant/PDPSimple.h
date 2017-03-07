@@ -21,17 +21,13 @@
 #define PDPSIMPLE_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <mutex>
 #include "../../../common/Guid.h"
 #include "../../../attributes/RTPSParticipantAttributes.h"
 
 #include "../../../../qos/QosPolicies.h"
 
 using namespace eprosima::fastrtps;
-
-namespace boost
-{
-class recursive_mutex;
-}
 
 namespace eprosima {
 namespace fastrtps{
@@ -227,7 +223,7 @@ public:
 	 * Get the mutex.
 	 * @return Pointer to the Mutex
 	 */
-	inline boost::recursive_mutex* getMutex() const {return mp_mutex;}
+	inline std::recursive_mutex* getMutex() const {return mp_mutex;}
 
 private:
 	//!Pointer to the local RTPSParticipant.
@@ -258,7 +254,7 @@ private:
 	 * @return True if correct.
 	 */
 	bool createSPDPEndpoints();
-	boost::recursive_mutex* mp_mutex;
+	std::recursive_mutex* mp_mutex;
 
 
 

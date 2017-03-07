@@ -53,8 +53,8 @@ class UserDefinedTransportExampleReader
         ReaderAttributes rattr;
 	RTPSReader *my_reader;
 	HistoryAttributes hattr;
-	ReaderQos rqos;
-	TopicAttributes tattr;
+	eprosima::fastrtps::ReaderQos rqos;
+	eprosima::fastrtps::TopicAttributes tattr;
 	ReaderHistory *my_history;
 	bool initialized_;
 };

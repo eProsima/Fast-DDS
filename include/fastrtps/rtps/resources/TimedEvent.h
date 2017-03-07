@@ -20,17 +20,10 @@
 #ifndef TIMEDEVENT_H_
 #define TIMEDEVENT_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#include <thread>
 #include <cstdint>
+#include <asio.hpp>
 #include "../common/Time_t.h"
-namespace boost
-{
-    class thread;
-
-    namespace asio
-    {
-        class io_service;
-    }
-}
 
 namespace eprosima {
 namespace fastrtps{
@@ -68,7 +61,7 @@ public:
 	* @param milliseconds Interval of the timedEvent.
    * @param autodestruction Self-destruct mode flag.
 	*/
-    TimedEvent(boost::asio::io_service &service, const boost::thread& event_thread, double milliseconds, TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
+    TimedEvent(asio::io_service &service, const std::thread& event_thread, double milliseconds, TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
 	virtual ~TimedEvent();
 	
 	/**

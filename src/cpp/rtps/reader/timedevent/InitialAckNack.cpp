@@ -18,6 +18,8 @@
  */
 
 #include <fastrtps/rtps/reader/timedevent/InitialAckNack.h>
+#include <mutex>
+
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/rtps/reader/StatefulReader.h>
@@ -28,9 +30,6 @@
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 
 #include <fastrtps/log/Log.h>
-
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
 
 namespace eprosima {
 namespace fastrtps{
@@ -61,7 +60,7 @@ void InitialAckNack::event(EventCode code, const char* msg)
 		Count_t acknackCount = 0;
 
 		{//BEGIN PROTECTION
-            boost::lock_guard<boost::recursive_mutex> guard_reader(*wp_->getMutex());
+            std::lock_guard<std::recursive_mutex> guard_reader(*wp_->getMutex());
             wp_->m_acknackCount++;
             acknackCount = wp_->m_acknackCount;
 		}
@@ -96,7 +95,7 @@ void InitialAckNack::event(EventCode code, const char* msg)
 	}
 	else
 	{
-		logInfo(RTPS_WRITER,"Boost message: " <<msg);
+		logInfo(RTPS_WRITER,"Message: " <<msg);
 	}
 }
 

@@ -15,8 +15,7 @@
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 
-#include <boost/thread.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 #include <algorithm>
 #include <cassert>

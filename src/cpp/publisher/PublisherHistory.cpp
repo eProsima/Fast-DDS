@@ -17,6 +17,8 @@
  *
  */
 
+#include <mutex>
+
 #include <fastrtps/publisher/PublisherHistory.h>
 
 #include "PublisherImpl.h"
@@ -25,9 +27,7 @@
 
 #include <fastrtps/log/Log.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
-
+#include <mutex>
 
 extern ::rtps::WriteParams WRITE_PARAM_DEFAULT;
 
@@ -59,7 +59,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
         return false;
     }
 
-    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
     if(m_isHistoryFull && !this->mp_pubImpl->clean_history(1))
     {
         logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<<this->mp_pubImpl->getGuid().entityId);
@@ -204,7 +204,7 @@ bool PublisherHistory::removeAllChange(size_t* removed)
 {
 
     size_t rem = 0;
-    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
 
     while(m_changes.size()>0)
     {
@@ -229,7 +229,7 @@ bool PublisherHistory::removeMinChange()
         return false;
     }
 
-    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
     if(m_changes.size()>0)
         return remove_change_pub(m_changes.front());
     return false;
@@ -244,7 +244,7 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::
         return false;
     }
 
-    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
     if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
         if(this->remove_change(change))

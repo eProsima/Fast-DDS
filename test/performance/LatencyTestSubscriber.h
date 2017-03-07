@@ -20,7 +20,7 @@
 #ifndef LATENCYTESTSUBSCRIBER_H_
 #define LATENCYTESTSUBSCRIBER_H_
 
-#include <boost/asio.hpp>
+#include <asio.hpp>
 #include <condition_variable>
 #include "LatencyTestTypes.h"
 
