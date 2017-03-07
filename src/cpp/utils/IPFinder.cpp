@@ -37,7 +37,6 @@
 #endif
 
 
-
 namespace eprosima {
 namespace fastrtps{
 

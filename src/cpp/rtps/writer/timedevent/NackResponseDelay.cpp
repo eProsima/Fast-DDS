@@ -31,8 +31,7 @@
 
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -59,8 +58,8 @@ void NackResponseDelay::event(EventCode code, const char* msg)
     if(code == EVENT_SUCCESS)
     {
         logInfo(RTPS_WRITER,"Responding to Acknack msg";);
-        boost::lock_guard<boost::recursive_mutex> guardW(*mp_RP->mp_SFW->getMutex());
-        boost::lock_guard<boost::recursive_mutex> guard(*mp_RP->mp_mutex);
+        std::lock_guard<std::recursive_mutex> guardW(*mp_RP->mp_SFW->getMutex());
+        std::lock_guard<std::recursive_mutex> guard(*mp_RP->mp_mutex);
         mp_RP->convert_status_on_all_changes(REQUESTED,UNSENT);
     }
 }

@@ -24,12 +24,7 @@
 #include "../common/CacheChange.h"
 #include <map>
 #include <set>
-
-
-namespace boost
-{
-	namespace interprocess{ class interprocess_semaphore; }
-}
+#include <fastrtps/utils/Semaphore.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -109,7 +104,7 @@ protected:
 	//!Pointer to the reader
 	RTPSReader* mp_reader;
 	//!Pointer to the semaphore, used to halt execution until new message arrives.
-	boost::interprocess::interprocess_semaphore* mp_semaphore;
+	Semaphore* mp_semaphore;
 	//!Information about changes already in History
 private:
 	std::map<GUID_t, std::set<SequenceNumber_t>> m_historyRecord;//TODO sustituir por una clase que sea más efectiva,

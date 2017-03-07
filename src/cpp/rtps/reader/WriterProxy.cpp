@@ -23,8 +23,7 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <boost/thread/lock_guard.hpp>
-#include <boost/thread/recursive_mutex.hpp>
+#include <mutex>
 
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
 #include <fastrtps/rtps/reader/timedevent/WriterProxyLiveliness.h>
@@ -117,7 +116,7 @@ WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
     mp_initialAcknack(nullptr),
     m_heartbeatFinalFlag(false),
     m_isAlive(true),
-    mp_mutex(new boost::recursive_mutex())
+    mp_mutex(new std::recursive_mutex())
 
 {
     m_changesFromW.clear();
@@ -133,7 +132,7 @@ WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
 void WriterProxy::missing_changes_update(const SequenceNumber_t& seqNum)
 {
     logInfo(RTPS_READER,m_att.guid.entityId<<": changes up to seqNum: " << seqNum <<" missing.");
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     // Check was not removed from container.
     if(seqNum > changesFromWLowMark_)
@@ -198,7 +197,7 @@ bool WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
 {
     bool returnedValue = false;
     logInfo(RTPS_READER,m_att.guid.entityId<<": up to seqNum: "<<seqNum);
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     // Check was not removed from container.
     if(seqNum > changesFromWLowMark_)
@@ -243,7 +242,7 @@ bool WriterProxy::irrelevant_change_set(const SequenceNumber_t& seqNum)
 
 bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum, bool is_relevance)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     // Check if CacheChange_t was already and it was already removed from changesFromW container.
     if(seqNum <= changesFromWLowMark_)
@@ -306,7 +305,7 @@ bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum, bool is_re
 const std::vector<ChangeFromWriter_t> WriterProxy::missing_changes()
 {
     std::vector<ChangeFromWriter_t> returnedValue;
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     for(auto ch : m_changesFromW)
     {
@@ -328,7 +327,7 @@ const std::vector<ChangeFromWriter_t> WriterProxy::missing_changes()
 
 const SequenceNumber_t WriterProxy::available_changes_max() const
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     return changesFromWLowMark_;
 }
 
@@ -351,7 +350,7 @@ void WriterProxy::assertLiveliness()
 
     logInfo(RTPS_READER,this->m_att.guid.entityId << " Liveliness asserted");
 
-    //boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    //std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     m_isAlive=true;
 
@@ -361,7 +360,7 @@ void WriterProxy::assertLiveliness()
 
 void WriterProxy::setNotValid(const SequenceNumber_t& seqNum)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     // Check sequence number is in the container, because it was not clean up.
     if(seqNum <= changesFromWLowMark_)
@@ -401,7 +400,7 @@ void WriterProxy::cleanup()
 bool WriterProxy::areThereMissing()
 {
     bool returnedValue = false;
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     for(auto ch : m_changesFromW)
     {
@@ -418,7 +417,7 @@ bool WriterProxy::areThereMissing()
 size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seqNum)
 {
     size_t returnedValue = 0;
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     if(seqNum > changesFromWLowMark_)
     {
@@ -435,13 +434,13 @@ size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seqNum
 
 size_t WriterProxy::numberOfChangeFromWriter() const
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     return m_changesFromW.size();
 }
 
 SequenceNumber_t WriterProxy::nextCacheChangeToBeNotified()
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     if(lastNotified_ < changesFromWLowMark_)
     {

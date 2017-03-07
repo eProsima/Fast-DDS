@@ -82,7 +82,7 @@ void WriterProxyLiveliness::event(EventCode code, const char* msg)
 	}
 	else
 	{
-		logInfo(RTPS_LIVELINESS,"boost message: " <<msg);
+		logInfo(RTPS_LIVELINESS,"message: " <<msg);
 	}
 }
 

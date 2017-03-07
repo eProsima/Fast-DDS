@@ -20,6 +20,7 @@
 #ifndef PARTICIPANTPROXYDATA_H_
 #define PARTICIPANTPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#include <mutex>
 #include "../../../qos/QosList.h"
 #include "../../../qos/ParameterList.h"
 
@@ -44,11 +45,6 @@
 #define DISC_BUILTIN_ENDPOINT_PARTICIPANT_STATE_DETECTOR 0x00000001 << 9;
 #define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER 0x00000001 << 10;
 #define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER 0x00000001 << 11;
-
-namespace boost
-{
-	class recursive_mutex;
-}
 
 namespace eprosima {
 namespace fastrtps{
@@ -117,7 +113,7 @@ public:
 	//!
 	std::vector<RemoteWriterAttributes> m_builtinWriters;
 
-	boost::recursive_mutex* mp_mutex;
+	std::recursive_mutex* mp_mutex;
 	/**
 	 * Initialize the object with the data of the lcoal RTPSParticipant.
 	 * @param part Pointer to the RTPSParticipant.

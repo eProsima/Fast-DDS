@@ -23,8 +23,7 @@
 #include <fastrtps/rtps/writer/ReaderProxy.h>
 #include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
 #include "../../participant/RTPSParticipantImpl.h"
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 #include <fastrtps/log/Log.h>
 
@@ -54,7 +53,7 @@ void NackSupressionDuration::event(EventCode code, const char* msg)
 
 	if(code == EVENT_SUCCESS)
 	{
-		boost::lock_guard<boost::recursive_mutex> guard(*mp_RP->mp_mutex);
+		std::lock_guard<std::recursive_mutex> guard(*mp_RP->mp_mutex);
 
 		logInfo(RTPS_WRITER,"Changing underway to unacked for Reader: "<<mp_RP->m_att.guid);
 
@@ -70,7 +69,7 @@ void NackSupressionDuration::event(EventCode code, const char* msg)
 	}
 	else
 	{
-		logInfo(RTPS_WRITER,"Boost message: " <<msg);
+		logInfo(RTPS_WRITER,"Message: " <<msg);
 	}
 }
 }

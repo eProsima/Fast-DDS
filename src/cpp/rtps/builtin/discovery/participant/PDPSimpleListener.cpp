@@ -35,8 +35,7 @@
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 #include <fastrtps/log/Log.h>
 
@@ -49,7 +48,7 @@ namespace rtps {
 void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in)
 {
     CacheChange_t* change = (CacheChange_t*)(change_in);
-    boost::lock_guard<boost::recursive_mutex> rguard(*reader->getMutex());
+    std::lock_guard<std::recursive_mutex> rguard(*reader->getMutex());
     logInfo(RTPS_PDP,"SPDP Message received");
     if(change->instanceHandle == c_InstanceHandle_Unknown)
     {
@@ -82,7 +81,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             //LOOK IF IS AN UPDATED INFORMATION
             ParticipantProxyData* pdata_ptr = nullptr;
             bool found = false;
-            boost::lock_guard<boost::recursive_mutex> guard(*mp_SPDP->getMutex());
+            std::lock_guard<std::recursive_mutex> guard(*mp_SPDP->getMutex());
             for (auto it = mp_SPDP->m_participantProxies.begin();
                     it != mp_SPDP->m_participantProxies.end();++it)
             {
@@ -103,7 +102,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
                 info.m_status = DISCOVERED_RTPSPARTICIPANT;
                 //IF WE DIDNT FOUND IT WE MUST CREATE A NEW ONE
                 ParticipantProxyData* pdata = new ParticipantProxyData();
-                boost::lock_guard<boost::recursive_mutex> pguard(*pdata->mp_mutex);
+                std::lock_guard<std::recursive_mutex> pguard(*pdata->mp_mutex);
                 pdata->copy(m_ParticipantProxyData);
                 pdata_ptr = pdata;
                 pdata_ptr->isAlive = true;
@@ -118,7 +117,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             else
             {
                 info.m_status = CHANGED_QOS_RTPSPARTICIPANT;
-                boost::lock_guard<boost::recursive_mutex> pguard(*pdata_ptr->mp_mutex);
+                std::lock_guard<std::recursive_mutex> pguard(*pdata_ptr->mp_mutex);
                 pdata_ptr->updateData(m_ParticipantProxyData);
                 if(mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
                     mp_SPDP->mp_EDP->assignRemoteEndpoints(&m_ParticipantProxyData);

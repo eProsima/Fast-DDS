@@ -88,7 +88,7 @@ macro(add_gtest test)
                 # Add environment
                 if(WIN32)
                     set_tests_properties(${GTEST_GROUP_NAME}.${GTEST_NAME} PROPERTIES ENVIRONMENT
-                        "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
+                        "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;$ENV{PATH}")
                 endif()
             endforeach()
         endforeach()
@@ -97,7 +97,7 @@ macro(add_gtest test)
         # Add environment
         if(WIN32)
             set_tests_properties(${test} PROPERTIES ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;$ENV{PATH}")
         endif()
     endif()
 endmacro()

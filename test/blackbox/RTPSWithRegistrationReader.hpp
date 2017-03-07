@@ -38,13 +38,11 @@
 
 #include <list>
 #include <condition_variable>
-#include <boost/asio.hpp>
-#include <boost/interprocess/detail/os_thread_functions.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <asio.hpp>
 #include <gtest/gtest.h>
 
 template<class TypeSupport>
-class RTPSWithRegistrationReader 
+class RTPSWithRegistrationReader
 {
     public:
 
@@ -83,13 +81,13 @@ class RTPSWithRegistrationReader
 
     public:
 
-        RTPSWithRegistrationReader(const std::string& topic_name) : listener_(*this), 
+        RTPSWithRegistrationReader(const std::string& topic_name) : listener_(*this),
         participant_(nullptr), reader_(nullptr), history_(nullptr), initialized_(false), receiving_(false), matched_(0)
         {
             topic_attr_.topicDataType = type_.getName();
             // Generate topic name
             std::ostringstream t;
-            t << topic_name << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+            t << topic_name << "_" << asio::ip::host_name() << "_" << GET_PID();
             topic_attr_.topicName = t.str();
 
             // By default, heartbeat period delay is 100 milliseconds.
@@ -110,7 +108,7 @@ class RTPSWithRegistrationReader
             eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
             pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
             pattr.builtin.use_WriterLivelinessProtocol = true;
-            pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+            pattr.builtin.domainId = (uint32_t)GET_PID() % 230;
             participant_ = RTPSDomain::createParticipant(pattr);
             ASSERT_NE(participant_, nullptr);
 
@@ -168,12 +166,12 @@ class RTPSWithRegistrationReader
             receiving_ = true;
             mutex_.unlock();
 
-            boost::unique_lock<boost::recursive_mutex> lock(*history_->getMutex());
+            std::unique_lock<std::recursive_mutex> lock(*history_->getMutex());
             while(history_->changesBegin() != history_->changesEnd())
             {
                 eprosima::fastrtps::rtps::CacheChange_t* change = *history_->changesBegin();
                 receive_one(reader_, change);
-            } 
+            }
         }
 
         void stopReception()
@@ -220,7 +218,7 @@ class RTPSWithRegistrationReader
 		hattr_.memoryPolicy=memoryPolicy;
 		return *this;
 	}
-	
+
 	RTPSWithRegistrationReader& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
         {
             reader_attr_.endpoint.reliabilityKind = kind;
@@ -262,7 +260,7 @@ class RTPSWithRegistrationReader
                 cdr >> data;
 
                 auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
-                ASSERT_NE(it, total_msgs_.end()); 
+                ASSERT_NE(it, total_msgs_.end());
                 total_msgs_.erase(it);
                 ++current_received_count_;
 

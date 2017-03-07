@@ -35,9 +35,7 @@ message(STATUS "Configuring UseCaseDemonstrator example...")
 file(GLOB USECASEDEMONSTRATOR_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(keys ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} keys.cpp)
-target_include_directories(keys PRIVATE ${Boost_INCLUDE_DIR})
-target_link_libraries(keys fastrtps fastcdr ${Boost_LIBRARIES})
-install(TARGETS keys 
+target_link_libraries(keys fastrtps fastcdr)
+install(TARGETS keys
     RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
     )
-

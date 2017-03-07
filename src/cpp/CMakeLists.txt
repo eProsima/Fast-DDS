@@ -16,44 +16,44 @@ include(${PROJECT_SOURCE_DIR}/cmake/dev/set_sources.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 
 # Set source files
-set_sources(
+set(${PROJECT_NAME}_source_files
     log/Log.cpp
     log/StdoutConsumer.cpp
-    utils/eClock.cpp 
-    utils/IPFinder.cpp 
-    utils/md5.cpp 
-    utils/StringMatching.cpp 
-    rtps/resources/ResourceEvent.cpp 
-    rtps/resources/TimedEvent.cpp 
-    rtps/resources/TimedEventImpl.cpp 
+    utils/eClock.cpp
+    utils/IPFinder.cpp
+    utils/md5.cpp
+    utils/StringMatching.cpp
+    rtps/resources/ResourceEvent.cpp
+    rtps/resources/TimedEvent.cpp
+    rtps/resources/TimedEventImpl.cpp
     rtps/resources/AsyncWriterThread.cpp
     rtps/resources/AsyncInterestTree.cpp
-    rtps/Endpoint.cpp 
-    rtps/writer/RTPSWriter.cpp 
-    rtps/writer/StatefulWriter.cpp 
-    rtps/writer/ReaderProxy.cpp 
-    rtps/writer/StatelessWriter.cpp 
-    rtps/writer/ReaderLocator.cpp 
-    rtps/writer/timedevent/InitialHeartbeat.cpp 
-    rtps/writer/timedevent/PeriodicHeartbeat.cpp 
-    rtps/writer/timedevent/NackResponseDelay.cpp 
-    rtps/writer/timedevent/NackSupressionDuration.cpp 
-    rtps/history/CacheChangePool.cpp 
-    rtps/history/History.cpp 
-    rtps/history/WriterHistory.cpp 
-    rtps/history/ReaderHistory.cpp 
-    rtps/reader/timedevent/HeartbeatResponseDelay.cpp 
-    rtps/reader/timedevent/WriterProxyLiveliness.cpp 
-    rtps/reader/timedevent/InitialAckNack.cpp 
+    rtps/Endpoint.cpp
+    rtps/writer/RTPSWriter.cpp
+    rtps/writer/StatefulWriter.cpp
+    rtps/writer/ReaderProxy.cpp
+    rtps/writer/StatelessWriter.cpp
+    rtps/writer/ReaderLocator.cpp
+    rtps/writer/timedevent/InitialHeartbeat.cpp
+    rtps/writer/timedevent/PeriodicHeartbeat.cpp
+    rtps/writer/timedevent/NackResponseDelay.cpp
+    rtps/writer/timedevent/NackSupressionDuration.cpp
+    rtps/history/CacheChangePool.cpp
+    rtps/history/History.cpp
+    rtps/history/WriterHistory.cpp
+    rtps/history/ReaderHistory.cpp
+    rtps/reader/timedevent/HeartbeatResponseDelay.cpp
+    rtps/reader/timedevent/WriterProxyLiveliness.cpp
+    rtps/reader/timedevent/InitialAckNack.cpp
     rtps/reader/CompoundReaderListener.cpp
-    rtps/reader/WriterProxy.cpp 
-    rtps/reader/StatefulReader.cpp 
-    rtps/reader/StatelessReader.cpp 
-    rtps/reader/RTPSReader.cpp 
+    rtps/reader/WriterProxy.cpp
+    rtps/reader/StatefulReader.cpp
+    rtps/reader/StatelessReader.cpp
+    rtps/reader/RTPSReader.cpp
     rtps/reader/FragmentedChangePitStop.cpp
-    rtps/messages/CDRMessagePool.cpp 
-    rtps/messages/RTPSMessageCreator.cpp 
-    rtps/messages/RTPSMessageGroup.cpp 
+    rtps/messages/CDRMessagePool.cpp
+    rtps/messages/RTPSMessageCreator.cpp
+    rtps/messages/RTPSMessageGroup.cpp
     rtps/messages/MessageReceiver.cpp
     rtps/messages/submessages/AckNackMsg.hpp
     rtps/messages/submessages/DataMsg.hpp
@@ -62,47 +62,56 @@ set_sources(
     rtps/network/NetworkFactory.cpp
     rtps/network/SenderResource.cpp
     rtps/network/ReceiverResource.cpp
-    rtps/participant/RTPSParticipant.cpp 
-    rtps/participant/RTPSParticipantImpl.cpp 
-    rtps/RTPSDomain.cpp 
-    Domain.cpp 
-    participant/Participant.cpp 
-    participant/ParticipantImpl.cpp 
-    publisher/Publisher.cpp 
-    publisher/PublisherImpl.cpp 
-    publisher/PublisherHistory.cpp 
-    subscriber/Subscriber.cpp 
-    subscriber/SubscriberImpl.cpp 
-    subscriber/SubscriberHistory.cpp 
-    transport/UDPv4Transport.cpp 
-    transport/UDPv6Transport.cpp 
-    transport/test_UDPv4Transport.cpp 
-    qos/ParameterList.cpp 
-    qos/ParameterTypes.cpp 
-    qos/QosList.cpp 
-    qos/QosPolicies.cpp 
-    qos/WriterQos.cpp 
-    qos/ReaderQos.cpp 
-    rtps/builtin/BuiltinProtocols.cpp 
-    rtps/builtin/discovery/participant/PDPSimple.cpp 
-    rtps/builtin/discovery/participant/PDPSimpleListener.cpp 
-    rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp 
-    rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp 
-    rtps/builtin/discovery/endpoint/EDP.cpp 
-    rtps/builtin/discovery/endpoint/EDPSimple.cpp 
-    rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp 
-    rtps/builtin/discovery/endpoint/EDPStaticXML.cpp 
-    rtps/builtin/discovery/endpoint/EDPStatic.cpp 
-    rtps/builtin/liveliness/WLP.cpp 
-    rtps/builtin/liveliness/WLPListener.cpp 
-    rtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp 
-    rtps/builtin/data/ParticipantProxyData.cpp 
-    rtps/builtin/data/WriterProxyData.cpp 
-    rtps/builtin/data/ReaderProxyData.cpp 
-    rtps/flowcontrol/ThroughputController.cpp 
-    rtps/flowcontrol/FlowController.cpp 
-    fastrtps.rc
+    rtps/participant/RTPSParticipant.cpp
+    rtps/participant/RTPSParticipantImpl.cpp
+    rtps/RTPSDomain.cpp
+    Domain.cpp
+    participant/Participant.cpp
+    participant/ParticipantImpl.cpp
+    publisher/Publisher.cpp
+    publisher/PublisherImpl.cpp
+    publisher/PublisherHistory.cpp
+    subscriber/Subscriber.cpp
+    subscriber/SubscriberImpl.cpp
+    subscriber/SubscriberHistory.cpp
+    transport/UDPv4Transport.cpp
+    transport/UDPv6Transport.cpp
+    transport/test_UDPv4Transport.cpp
+    qos/ParameterList.cpp
+    qos/ParameterTypes.cpp
+    qos/QosList.cpp
+    qos/QosPolicies.cpp
+    qos/WriterQos.cpp
+    qos/ReaderQos.cpp
+    rtps/builtin/BuiltinProtocols.cpp
+    rtps/builtin/discovery/participant/PDPSimple.cpp
+    rtps/builtin/discovery/participant/PDPSimpleListener.cpp
+    rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp
+    rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp
+    rtps/builtin/discovery/endpoint/EDP.cpp
+    rtps/builtin/discovery/endpoint/EDPSimple.cpp
+    rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp
+    rtps/builtin/discovery/endpoint/EDPStaticXML.cpp
+    rtps/builtin/discovery/endpoint/EDPStatic.cpp
+    rtps/builtin/liveliness/WLP.cpp
+    rtps/builtin/liveliness/WLPListener.cpp
+    rtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp
+    rtps/builtin/data/ParticipantProxyData.cpp
+    rtps/builtin/data/WriterProxyData.cpp
+    rtps/builtin/data/ReaderProxyData.cpp
+    rtps/flowcontrol/ThroughputController.cpp
+    rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+    rtps/flowcontrol/FlowController.cpp
+    ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2/tinyxml2.cpp
     )
+
+if(ANDROID)
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${PROJECT_SOURCE_DIR}/thirdparty/android-ifaddrs/ifaddrs.c
+    )
+endif()
+
+set_sources(${${PROJECT_NAME}_source_files})
 
 # Set version
 set(${PROJECT_NAME_UPPER}_VERSION_MAJOR ${PROJECT_MAJOR_VERSION})
@@ -117,14 +126,29 @@ configure_file(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/config.h.in
 # If Windows, set define for export dll functions
 add_definitions(-D${PROJECT_NAME_UPPER}_SOURCE)
 if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
+    if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
+        add_definitions(-D_WIN32_WINNT=0x0603)
+    else()
+        add_definitions(-D_WIN32_WINNT=0x0601)
+    endif()
 endif()
 # If INTERNAL_DEBUG = ON, define symbol for extensive debug messages
 if(INTERNAL_DEBUG)
-	add_definitions(-D__INTERNALDEBUG)
+    add_definitions(-D__INTERNALDEBUG)
 endif()
-# Include Boost header files.
-include_directories(${Boost_INCLUDE_DIR})
+
+set(${PROJECT_NAME}_include_dirs
+    ${PROJECT_SOURCE_DIR}/thirdparty/asio/asio/include
+    ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2
+)
+
+if(ANDROID)
+    list(APPEND ${PROJECT_NAME}_include_dirs ${PROJECT_SOURCE_DIR}/thirdparty/android-ifaddrs)
+else()
+    find_package(Threads REQUIRED)
+endif()
+
+include_directories(${${PROJECT_NAME}_include_dirs})
 
 # Create libraries
 if(MSVC OR MSVC_IDE)
@@ -144,9 +168,12 @@ if(MSVC OR MSVC_IDE)
         set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES RELWITHDEBINFO_POSTFIX -${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
         set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES DEBUG_POSTFIX d-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
 
+        if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
+            set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES VS_WINRT_COMPONENT "true")
+        endif()
+
         # Export symbols in DLL library
-        target_compile_definitions(${PROJECT_NAME} PUBLIC BOOST_ALL_DYN_LINK ${PROJECT_NAME_UPPER}_DYN_LINK)
-        target_compile_definitions(${PROJECT_NAME}_static PUBLIC BOOST_ALL_DYN_LINK)
+        target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME_UPPER}_DYN_LINK)
 
         # Define public headers
         target_include_directories(${PROJECT_NAME} PUBLIC
@@ -166,9 +193,9 @@ if(MSVC OR MSVC_IDE)
             set(PRIVACY "PRIVATE")
         endif()
 
-        # Link library to external win32 libraries and boost.
+        # Link library to external win32 libraries.
         target_link_libraries(${PROJECT_NAME} ${PRIVACY}
-            ${Boost_LIBRARIES} iphlpapi Shlwapi
+            ${CMAKE_THREAD_LIBS_INIT} iphlpapi Shlwapi kernel32 user32.dll
             )
     endif()
 else()
@@ -176,7 +203,7 @@ else()
 	    add_definitions(-D__DEBUG)
     endif()
     #Create library
-    add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
+    add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
 
     # Define public headers
     target_include_directories(${PROJECT_NAME} PUBLIC
@@ -186,7 +213,7 @@ else()
 
     # Link library to external libraries.
     target_link_libraries(${PROJECT_NAME}
-        ${Boost_LIBRARIES}
+        ${CMAKE_THREAD_LIBS_INIT}
         )
 endif()
 

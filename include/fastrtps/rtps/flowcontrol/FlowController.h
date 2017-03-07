@@ -21,20 +21,23 @@
 #include <memory>
 #include <fastrtps/rtps/common/CacheChange.h>
 #include <fastrtps/rtps/messages/RTPSMessageGroup.h>
+#include <thread>
 
-// Boost forward declarations
-namespace boost{ class thread; namespace asio{ class io_service; }}
+namespace asio{
+    class io_context;
+    typedef io_context io_service;
+}
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
 /**
  * Flow Controllers take a vector of cache changes (by reference) and return a filtered
- * vector, with a collection of changes this filter considers valid for sending, 
+ * vector, with a collection of changes this filter considers valid for sending,
  * ordered by its subjective priority.
  * @ingroup NETWORK_MODULE.
  * */
-class FlowController 
+class FlowController
 {
 public:
    //! Called when a change is finally dispatched.
@@ -52,7 +55,7 @@ private:
    void DeRegisterAsListeningController();
 
    static std::vector<FlowController*> ListeningControllers;
-   static std::unique_ptr<boost::thread> ControllerThread;
+   static std::unique_ptr<std::thread> ControllerThread;
    static void StartControllerService();
    static void StopControllerService();
 
@@ -65,7 +68,7 @@ private:
 
 protected:
    static std::recursive_mutex FlowControllerMutex;
-	static std::unique_ptr<boost::asio::io_service> ControllerService;
+	static std::unique_ptr<asio::io_service> ControllerService;
 
 public:
    // To be used by derived filters to schedule asynchronous operations.

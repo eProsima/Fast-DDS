@@ -28,17 +28,19 @@
 
 #include <memory>
 
-#include <boost/asio/io_service.hpp>
-#include <boost/asio/deadline_timer.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/system/error_code.hpp>
-#include <boost/asio/placeholders.hpp>
-#include <boost/asio/io_service.hpp>
-#include <boost/bind.hpp>
-#include <boost/interprocess/sync/interprocess_semaphore.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition_variable.hpp>
-#include <boost/thread/thread.hpp>
+#include <asio/io_service.hpp>
+#include <asio/steady_timer.hpp>
+#include <asio/deadline_timer.hpp>
+#include <asio/placeholders.hpp>
+#include <asio/io_service.hpp>
+
+#include <fastrtps/utils/Semaphore.h>
+
+#include <thread>
+#include <functional>
+#include <mutex>
+#include <condition_variable>
+#include <system_error>
 
 
 
@@ -55,7 +57,7 @@ namespace eprosima
              * All timedEvents must be a specification of this class, implementing the event method.
              *@ingroup MANAGEMENT_MODULE
              */
-            class TimedEventImpl 
+            class TimedEventImpl
             {
                 public:
 
@@ -65,7 +67,7 @@ namespace eprosima
                      * @param serv IO service
                      * @param milliseconds Interval of the timedEvent.
                      */
-                    TimedEventImpl(TimedEvent* ev, boost::asio::io_service &service, const boost::thread& event_thread, boost::posix_time::microseconds interval, TimedEvent::AUTODESTRUCTION_MODE autodestruction);
+                    TimedEventImpl(TimedEvent* ev, asio::io_service &service, const std::thread& event_thread, std::chrono::microseconds interval, TimedEvent::AUTODESTRUCTION_MODE autodestruction);
 
                     /**
                      * Method invoked when the event occurs. Abstract method.
@@ -73,14 +75,14 @@ namespace eprosima
                      * @param code Code representing the status of the event
                      * @param msg Message associated to the event
                      */
-                    void event(const boost::system::error_code& ec, const std::shared_ptr<TimerState>& state);
+                    void event(const std::error_code& ec, const std::shared_ptr<TimerState>& state);
 
 
                 protected:
                     //!Pointer to the timer.
-                    boost::asio::deadline_timer timer_;
+                    asio::steady_timer timer_;
                     //!Interval to be used in the timed Event.
-                    boost::posix_time::microseconds m_interval_microsec;
+                    std::chrono::microseconds m_interval_microsec;
                     //!TimedEvent pointer
                     TimedEvent* mp_event;
 
@@ -116,7 +118,8 @@ namespace eprosima
                      */
                     double getIntervalMsec()
                     {
-                        return (double)(m_interval_microsec.total_microseconds()/1000);
+                        auto total_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(m_interval_microsec);
+                        return static_cast<double>(total_milliseconds.count());
                     }
 
                     /**
@@ -125,20 +128,20 @@ namespace eprosima
                      */
                     double getRemainingTimeMilliSec()
                     {
-                        boost::unique_lock<boost::mutex> lock(mutex_);
-                        return (double)timer_.expires_from_now().total_milliseconds();
+                        std::unique_lock<std::mutex> lock(mutex_);
+                        return static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(timer_.expires_from_now()).count());
                     }
 
                 private:
 
                     TimedEvent::AUTODESTRUCTION_MODE autodestruction_;
                     //Duration_t m_timeInfinite;
-                    boost::mutex mutex_;
-                    boost::condition_variable cond_;
+                    std::mutex mutex_;
+                    std::condition_variable cond_;
 
                     std::shared_ptr<TimerState> state_;
 
-                    boost::thread::id event_thread_id_;
+                    std::thread::id event_thread_id_;
             };
 
 

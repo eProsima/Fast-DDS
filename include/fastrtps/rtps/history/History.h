@@ -20,6 +20,8 @@
 #ifndef HISTORY_H_
 #define HISTORY_H_
 
+#include <mutex>
+
 #include "../../fastrtps_dll.h"
 
 #include "CacheChangePool.h"
@@ -30,11 +32,6 @@
 
 #include <cassert>
 
-
-namespace boost
-{
-	class recursive_mutex;
-}
 
 namespace eprosima {
 namespace fastrtps{
@@ -134,7 +131,7 @@ public:
 	 * Get the mutex
 	 * @return Mutex
 	 */
-	RTPS_DllAPI inline boost::recursive_mutex* getMutex() { assert(mp_mutex != nullptr); return mp_mutex; }
+	RTPS_DllAPI inline std::recursive_mutex* getMutex() { assert(mp_mutex != nullptr); return mp_mutex; }
 
 	RTPS_DllAPI bool get_change(SequenceNumber_t& seq, GUID_t& guid,CacheChange_t** change);
 
@@ -154,7 +151,7 @@ protected:
 	//!Print the seqNum of the changes in the History (for debugging purposes).
 	void print_changes_seqNum2();
 	//!Mutex for the History.
-	boost::recursive_mutex* mp_mutex;
+	std::recursive_mutex* mp_mutex;
 };
 }
 } /* namespace rtps */

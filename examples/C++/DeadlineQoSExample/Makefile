@@ -17,7 +17,7 @@ LN=g++
 AR=ar
 CP=cp
 SYSLIBS= -ldl -lnsl -lm -lpthread -lrt
-DEFINES= 
+DEFINES=
 COMMON_CFLAGS= -c -Wall -D__LITTLE_ENDIAN__ -std=c++11
 
 ## CHOOSE HERE BETWEEN 32 and 64 bit architecture
@@ -32,9 +32,9 @@ LDFLAGS=-m64
 
 CFLAGS = $(COMMON_CFLAGS) -O2
 
-INCLUDES= -I.
+INCLUDES= -I../../../thirdparty/asio/asio/include
 
-LIBS = -lfastcdr -lfastrtps -lboost_system -lboost_thread -lboost_date_time $(SYSLIBS)
+LIBS = -lfastcdr -lfastrtps $(SYSLIBS)
 
 DIRECTORIES= output.dir bin.dir
 
@@ -49,7 +49,7 @@ DEADLINEQOSEXAMPLE_SRC_CPPFILES= DeadlineQoSExample/deadlinepayload.cxx \
 								DeadlineQoSExample/deadlinepayloadPublisher.cxx \
 								DeadlineQoSExample/deadlinepayloadSubscriber.cxx \
 								DeadlineQoSExample/deadlinepayloadPubSubMain.cxx \
-								DeadlineQoSExample/deadlineQoS.cxx 
+								DeadlineQoSExample/deadlineQoS.cxx
 
 
 # Project sources are copied to the current directory
@@ -95,7 +95,7 @@ ifneq ($(MAKECMDGOALS), clean)
 -include $(DEPS)
 endif
 
-%.dir : 
+%.dir :
 	@echo "Checking directory $*"
 	@if [ ! -d $* ]; then \
 		echo "Making directory $*"; \

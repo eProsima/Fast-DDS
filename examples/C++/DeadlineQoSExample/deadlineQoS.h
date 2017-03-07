@@ -30,35 +30,38 @@
 
 #include <fastrtps/Domain.h>
 
-#include "boost/thread.hpp"
-#include "boost/bind.hpp"
-#include "boost/asio.hpp"
-#include "boost/date_time/posix_time/posix_time.hpp"
+#include <asio.hpp>
+#include <asio/steady_timer.hpp>
 #include "mapableKey.h"
 #include <iostream>
 #include <map>
+#include <thread>
 
-using namespace boost:: asio;
+using namespace asio;
 using namespace eprosima;
 using namespace eprosima::fastrtps;
 
 class deadlineQoS
 {
 	public:
-		deadlineQoS(deadline_timer &timer, io_service &ioserv): t(timer),io(ioserv){
+		deadlineQoS(steady_timer &timer, io_service &ioserv): t(timer),io(ioserv){
 			init();
+		}
+		~deadlineQoS(){
+			delete dlqos;
 		}
 		void callback();
 		void setFlag(mapable_key target);
-		
+
 		void run();
 		void stop();
 		//deadlineQoS_struct deadlineQoSlist[32];
 		std::map<mapable_key,bool> deadlineQoSmap;
-		boost::mutex mapmtx;
+		std::mutex mapmtx;
 	private:
-		deadline_timer &t;
+		steady_timer &t;
 		io_service &io;
+		std::thread* dlqos;
 		void runner();
 		void init();
 		void wait();

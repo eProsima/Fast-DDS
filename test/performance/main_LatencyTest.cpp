@@ -15,26 +15,25 @@
 #include "LatencyTestPublisher.h"
 #include "LatencyTestSubscriber.h"
 
+#include "optionparser.h"
+
 #include <stdio.h>
 #include <string>
 #include <iostream>
 #include <iomanip>
 #include <bitset>
 #include <cstdint>
-#include <sstream>
 
-#include <fastrtps/fastrtps_all.h>
+#include <fastrtps/log/Log.h>
+#include <fastrtps/Domain.h>
 
 #if defined(_MSC_VER)
 #pragma warning (push)
 #pragma warning (disable:4512)
 #endif
 
-#include <boost/program_options.hpp>
-
 using namespace eprosima;
-using namespace rtps;
-using namespace std;
+using namespace fastrtps;
 
 
 #if defined(__LITTLE_ENDIAN__)
@@ -49,166 +48,199 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #define COPYSTR strcpy
 #endif
 
+
+struct Arg: public option::Arg{
+
+    static void printError(const char* msg1, const option::Option& opt, const char* msg2){
+        fprintf(stderr, "%s", msg1);
+        fwrite(opt.name, opt.namelen, 1, stderr);
+        fprintf(stderr, "%s", msg2);
+    }
+
+    static option::ArgStatus Unknown(const option::Option& option, bool msg){
+        if (msg) printError("Unknown option '", option, "'\n");
+        return option::ARG_ILLEGAL;
+    }
+
+    static option::ArgStatus Required(const option::Option& option, bool msg){
+        if (option.arg != 0 && option.arg[0] != 0)
+        return option::ARG_OK;
+
+        if (msg) printError("Option '", option, "' requires an argument\n");
+        return option::ARG_ILLEGAL;
+    }
+
+    static option::ArgStatus Numeric(const option::Option& option, bool msg){
+        char* endptr = 0;
+        if (option.arg != 0 && strtol(option.arg, &endptr, 10)){};
+        if (endptr != option.arg && *endptr == 0)
+        return option::ARG_OK;
+
+        if (msg) printError("Option '", option, "' requires a numeric argument\n");
+        return option::ARG_ILLEGAL;
+    }
+};
+
+enum  optionIndex {
+    UNKNOWN_OPT,
+    HELP,
+    RELIABILITY,
+    SAMPLES,
+    SEED,
+    SUBSCRIBERS,
+    ECHO_OPT,
+    HOSTNAME,
+    EXPORT_CSV
+};
+
+const option::Descriptor usage[] = {
+    { UNKNOWN_OPT, 0,"", "",            Arg::None,      "Usage: ThroughputTest <publisher|subscriber>\n\nGeneral options:" },
+    { HELP,    0,"h", "help",           Arg::None,      "  -h \t--help  \tProduce help message." },
+    { RELIABILITY,0,"r","reliability",  Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
+    { SAMPLES,0,"s","samples",          Arg::Numeric,  "  -s <num>, \t--samples=<num>  \tNumber of samples." },
+    { SEED,0,"","seed",                 Arg::Numeric,  "  \t--seed=<num>  \tNumber of subscribers." },
+    { UNKNOWN_OPT, 0,"", "",            Arg::None,      "\nPublisher options:"},
+    { SUBSCRIBERS,0,"n","subscribers",  Arg::Numeric,  "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
+    { UNKNOWN_OPT, 0,"", "",            Arg::None,      "\nSubscriber options:"},
+    { ECHO_OPT, 0,"e","echo",           Arg::Required,  "  -e <arg>, \t--echo=<arg>  \tEcho mode (\"true\"/\"false\")." },
+    { HOSTNAME,0,"","hostname",         Arg::None,      "" },
+    { EXPORT_CSV,0,"","export_csv",     Arg::None,      "" },
+    { 0, 0, 0, 0, 0, 0 }
+};
+
 const int c_n_samples = 10000;
 
-int main(int argc, char** argv)
-{
-    const char* const LATENCY_TEST_USAGE = "Usage: LatencyTest <publisher|subscriber>\n";
-    const char* const LATENCY_TEST_USAGE_SUBSCRIBER = "Usage: LatencyTest subscriber\n";
+int main(int argc, char** argv){
 
-    boost::program_options::options_description p_optionals("Publisher options");
-    p_optionals.add_options()
-        ("subscribers,n", boost::program_options::value<int>()->default_value(1), "number of subscribers")
-        ;
+    int columns;
 
-    boost::program_options::options_description s_optionals("Subscriber options");
-    s_optionals.add_options()
-        ("echo,e", boost::program_options::value<string>()->default_value("true"), "echo mode (\"true\"/\"false\")")
-        ;
+#if defined(_WIN32)
+    char* buf = nullptr;
+    size_t sz = 0;
+    if (_dupenv_s(&buf, &sz, "COLUMNS") == 0 && buf != nullptr){
+        columns = strtol(buf, nullptr, 10);
+        free(buf);
+    }
+    else{
+        columns = 80;
+    }
+#else
+    columns = getenv("COLUMNS")? atoi(getenv("COLUMNS")) : 80;
+#endif
 
-    boost::program_options::options_description g_optionals("General options");
-    g_optionals.add_options()
-        ("help,h", "produce help message")
-        ("reliability,r", boost::program_options::value<string>()->default_value("besteffort"), "set reliability (\"reliable\"/\"besteffort\")")
-		("samples,s", boost::program_options::value<int>()->default_value(c_n_samples), "number of samples")
-		("seed", boost::program_options::value<uint32_t>()->default_value(80), "seed to calculate domain and topic, to isolate test")
-        ;
-
-    boost::program_options::options_description visible_optionals("Allowed options");
-    visible_optionals.add(g_optionals).add(p_optionals).add(s_optionals);
-
-    boost::program_options::options_description visible_p_optionals("Allowed options");
-    visible_p_optionals.add(g_optionals).add(p_optionals);
-
-    boost::program_options::options_description visible_s_optionals("Allowed options");
-    visible_s_optionals.add(g_optionals).add(s_optionals);
-
-    boost::program_options::options_description all_optionals("Allowed options");
-	all_optionals.add_options()
-		("hostname", "use hostname in topic name")
-		("export_csv", "export csv")
-        ;
-    all_optionals.add(g_optionals).add(p_optionals).add(s_optionals);
-
-
-	int type;
-	int sub_number = 1;
-	int n_samples = c_n_samples;
-	bool echo = true;
+    bool pub_sub = false;
+    int sub_number = 1;
+    int n_samples = c_n_samples;
+    bool echo = true;
     bool reliable = false;
-	uint32_t seed = 80;
-	bool hostname = false;
-	bool export_csv = false;
+    uint32_t seed = 80;
+    bool hostname = false;
+    bool export_csv = false;
 
-	if (argc > 1)
-	{
-		if (strcmp(argv[1], "publisher") == 0)
-			type = 1;
-		else if (strcmp(argv[1], "subscriber") == 0)
-			type = 2;
-		else
-		{
-			cout << LATENCY_TEST_USAGE << visible_optionals << endl;
-			return -1;
-		}
-
-		boost::program_options::variables_map vm;
-		try
-		{
-			boost::program_options::store(boost::program_options::parse_command_line(argc - 1, argv + 1, all_optionals), vm);
-			boost::program_options::notify(vm);
-		}
-		catch (std::exception ex)
-		{
-			cout << "Error: " << ex.what() << std::endl;
-			cout << LATENCY_TEST_USAGE << visible_optionals << endl;
-			return -1;
-		}
-
-		if (type == 1)
-		{
-			sub_number = vm["subscribers"].as<int>();
-		}
-		else
-		{
-			string s_echo = vm["echo"].as<std::string>();
-
-			if (s_echo.compare("true") == 0)
-			{
-				echo = true;
-			}
-			else if (s_echo.compare("false") == 0)
-			{
-				echo = false;
-			}
-			else
-			{
-				cout << "Bad argument for option --echo. Valid values: \"true\"/\"false\".\n" << endl;
-				cout << LATENCY_TEST_USAGE_SUBSCRIBER << visible_s_optionals << endl;
-				return -1;
-			}
-		}
-
-		if (vm.count("help"))
-		{
-			cout << LATENCY_TEST_USAGE << visible_optionals << endl;
-			return 0;
-		}
-
-		std::string reliability = vm["reliability"].as<std::string>();
-
-		if (reliability.compare("reliable") == 0)
-		{
-			reliable = true;
-		}
-		else if (reliability.compare("besteffort") == 0)
-		{
-			reliable = false;
-		}
-		else
-		{
-			cout << "Bad argument for option --reliability. Valid values: \"reliable\"/\"besteffort\".\n" << endl;
-			cout << LATENCY_TEST_USAGE << visible_optionals << endl;
-			return -1;
-		}
-
-		n_samples = vm["samples"].as<int>();
-		seed = vm["seed"].as<uint32_t>();
-
-		if (vm.count("hostname"))
-			hostname = true;
-		if (vm.count("export_csv"))
-			export_csv = true;
-	}
-	else
-	{
-        cout << LATENCY_TEST_USAGE << visible_optionals << endl;
-		return -1;
+    argc-=(argc>0); argv+=(argc>0); // skip program name argv[0] if present
+    if(argc){
+		if(strcmp(argv[0],"publisher") == 0){
+			pub_sub = true;
+        }
+		else if(strcmp(argv[0],"subscriber") == 0){
+			pub_sub = false;
+        }
+        else{
+            option::printUsage(fwrite, stdout, usage, columns);
+            return 0;
+        }
+    }
+	else{
+        option::printUsage(fwrite, stdout, usage, columns);
+        return 0;
 	}
 
-	std::cout << "Starting" << std::endl;
+    argc-=(argc>0); argv+=(argc>0); // skip pub/sub argument
+    option::Stats stats(usage, argc, argv);
+    std::vector<option::Option> options(stats.options_max);
+    std::vector<option::Option> buffer(stats.buffer_max);
+    option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
 
-    switch (type)
-    {
-        case 1:
-            {
-                cout << "Performing test with "<< sub_number << " subscribers and "<<n_samples << " samples" <<endl;
-                LatencyTestPublisher latencyPub;
-                latencyPub.init(sub_number,n_samples, reliable, seed, hostname, export_csv);
-                latencyPub.run();
+    if (parse.error())
+    return 1;
+
+    if (options[HELP]){
+        option::printUsage(fwrite, stdout, usage, columns);
+        return 0;
+    }
+
+    for (int i = 0; i < parse.optionsCount(); ++i){
+        option::Option& opt = buffer[i];
+        switch (opt.index()){
+            case HELP:
+                // not possible, because handled further above and exits the program
                 break;
-            }
-        case 2:
-            {
-                LatencyTestSubscriber latencySub;
-				latencySub.init(echo, n_samples, reliable, seed, hostname);
-                latencySub.run();
+            case RELIABILITY:
+                if(strcmp(opt.arg, "reliable") == 0){
+        			reliable = true;
+                }
+        		else if(strcmp(opt.arg, "besteffort") == 0){
+        			reliable = false;
+                }
+                else{
+                    option::printUsage(fwrite, stdout, usage, columns);
+                    return 0;
+                }
                 break;
-            }
+
+            case SEED:
+                seed = strtol(opt.arg, nullptr, 10);
+                break;
+            case SAMPLES:
+                n_samples = strtol(opt.arg, nullptr, 10);
+                break;
+
+            case SUBSCRIBERS:
+                sub_number = strtol(opt.arg, nullptr, 10);
+                break;
+
+            case ECHO_OPT:
+                if(strcmp(opt.arg, "true") == 0){
+                    echo = true;
+                }
+                else if(strcmp(opt.arg, "false") == 0){
+                    echo = false;
+                }
+                else{
+                    option::printUsage(fwrite, stdout, usage, columns);
+                    return 0;
+                }
+                break;
+
+            case HOSTNAME:
+                hostname = true;
+                break;
+
+            case EXPORT_CSV:
+                export_csv = true;
+                break;
+
+            case UNKNOWN_OPT:
+                option::printUsage(fwrite, stdout, usage, columns);
+                return 0;
+                break;
+        }
+    }
+
+    if (pub_sub){
+        cout << "Performing test with "<< sub_number << " subscribers and "<<n_samples << " samples" <<endl;
+        LatencyTestPublisher latencyPub;
+        latencyPub.init(sub_number,n_samples, reliable, seed, hostname, export_csv);
+        latencyPub.run();
+    }
+    else {
+        LatencyTestSubscriber latencySub;
+		latencySub.init(echo, n_samples, reliable, seed, hostname);
+        latencySub.run();
     }
 
 	eClock::my_sleep(1000);
-	
+
 	cout << "EVERYTHING STOPPED FINE"<<endl;
 
 	return 0;

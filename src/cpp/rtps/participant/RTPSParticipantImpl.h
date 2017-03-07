@@ -23,20 +23,14 @@
 #include <stdlib.h>
 #include <list>
 #include <sys/types.h>
+#include <mutex>
+#include <fastrtps/utils/Semaphore.h>
 
 #if defined(_WIN32)
 #include <process.h>
 #else
 #include <unistd.h>
 #endif
-
-
-namespace boost
-{
-namespace interprocess{class interprocess_semaphore;}
-namespace asio{class io_service;}
-class recursive_mutex;
-}
 
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/rtps/common/Guid.h>
@@ -60,8 +54,6 @@ namespace rtps {
 
 class RTPSParticipant;
 class RTPSParticipantListener;
-class ListenResource;
-class ResourceSend;
 class ResourceEvent;
 class AsyncWriterThread;
 class BuiltinProtocols;
@@ -91,8 +83,8 @@ class StatefulReader;
 typedef struct ReceiverControlBlock{
     ReceiverResource Receiver;
     MessageReceiver* mp_receiver;		//Associated Readers/Writers inside of MessageReceiver
-    boost::mutex mtx; //Fix declaration
-    boost::thread* m_thread;
+    std::mutex mtx; //Fix declaration
+    std::thread* m_thread;
     bool resourceAlive;
     ReceiverControlBlock(ReceiverResource&& rec):Receiver(std::move(rec)), mp_receiver(nullptr), m_thread(nullptr), resourceAlive(true)
     {
@@ -171,7 +163,7 @@ class RTPSParticipantImpl
         //!Send Method - Deprecated - Stays here for reference purposes
         void sendSync(CDRMessage_t* msg, Endpoint *pend, const Locator_t& destination_loc);
         //!Get the participant Mutex
-        boost::recursive_mutex* getParticipantMutex() const {return mp_mutex;};
+        std::recursive_mutex* getParticipantMutex() const {return mp_mutex;};
         /**
          * Get the participant listener
          * @return participant listener
@@ -196,12 +188,12 @@ class RTPSParticipantImpl
 
         /*!
          * @remarks Non thread-safe.
-         */ 
+         */
         const std::vector<RTPSWriter*>& getAllWriters() const;
 
         /*!
          * @remarks Non thread-safe.
-         */ 
+         */
         const std::vector<RTPSReader*>& getAllReaders() const;
 
         uint32_t getMaxMessageSize() const;
@@ -211,14 +203,12 @@ class RTPSParticipantImpl
         RTPSParticipantAttributes m_att;
         //!Guid of the RTPSParticipant.
         const GUID_t m_guid;
-        //! Sending resources. - DEPRECATED -Stays commented for reference purposes
-        // ResourceSend* mp_send_thr;
         //! Event Resource
         ResourceEvent* mp_event_thr;
         //! BuiltinProtocols of this RTPSParticipant
         BuiltinProtocols* mp_builtinProtocols;
         //!Semaphore to wait for the listen thread creation.
-        boost::interprocess::interprocess_semaphore* mp_ResourceSemaphore;
+        Semaphore* mp_ResourceSemaphore;
         //!Id counter to correctly assign the ids to writers and readers.
         uint32_t IdCounter;
         //!Writer List.
@@ -236,11 +226,9 @@ class RTPSParticipantImpl
         //!ReceiverControlBlock list - encapsulates all associated resources on a Receiving element
         std::list<ReceiverControlBlock> m_receiverResourcelist;
         //!SenderResource List
-        boost::mutex m_send_resources_mutex;
+        std::mutex m_send_resources_mutex;
         std::vector<SenderResource> m_senderResource;
 
-        //!Listen Resource list - DEPRECATED - Stays commented for reference purposes
-        // std::vector<ListenResource*> m_listenResourceList;
         //!Participant Listener
         RTPSParticipantListener* mp_participantListener;
         //!Pointer to the user participant
@@ -278,7 +266,7 @@ class RTPSParticipantImpl
           */
         bool createAndAssociateReceiverswithEndpoint(Endpoint * pend);
 
-        /** Function to be called from a new thread, which takes cares of performing a blocking receive 
+        /** Function to be called from a new thread, which takes cares of performing a blocking receive
           operation on the ReceiveResource
           @param buffer - Position of the buffer we use to store data
           @param locator - Locator that triggered the creation of the resource
@@ -297,7 +285,7 @@ class RTPSParticipantImpl
         Locator_t applyLocatorAdaptRule(Locator_t loc);
 
         //!Participant Mutex
-        boost::recursive_mutex* mp_mutex;
+        std::recursive_mutex* mp_mutex;
 
         /*
          * Flow controllers for this participant.
@@ -421,8 +409,3 @@ class RTPSParticipantImpl
 } /* namespace eprosima */
 #endif
 #endif /* RTPSParticipant_H_ */
-
-
-
-
-

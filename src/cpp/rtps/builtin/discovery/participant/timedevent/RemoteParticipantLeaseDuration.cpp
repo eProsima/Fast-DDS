@@ -27,7 +27,7 @@
 
 #include <fastrtps/log/Log.h>
 
-#include <boost/thread/recursive_mutex.hpp>
+#include <mutex>
 
 
 
@@ -75,7 +75,7 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
 	}
 	else
 	{
-		logInfo(RTPS_LIVELINESS,"boost message: " <<msg);
+		logInfo(RTPS_LIVELINESS,"message: " <<msg);
 	}
 }
 

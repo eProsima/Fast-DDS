@@ -14,20 +14,20 @@
 
 #include <fastrtps/transport/UDPv6Transport.h>
 #include <gtest/gtest.h>
-#include <boost/thread.hpp>
+#include <thread>
 #include <memory>
 #include <fastrtps/log/Log.h>
+#include <asio.hpp>
 
-using namespace std;
+
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps;
-using namespace boost::interprocess;
 
 #ifndef __APPLE__
 const uint32_t ReceiveBufferCapacity = 65536;
 #endif
 
-class UDPv6Tests: public ::testing::Test 
+class UDPv6Tests: public ::testing::Test
 {
     public:
         UDPv6Tests()
@@ -43,8 +43,8 @@ class UDPv6Tests: public ::testing::Test
         void HELPER_SetDescriptorDefaults();
 
         UDPv6TransportDescriptor descriptor;
-        unique_ptr<boost::thread> senderThread;
-        unique_ptr<boost::thread> receiverThread;
+        std::unique_ptr<std::thread> senderThread;
+        std::unique_ptr<std::thread> receiverThread;
 };
 
 TEST_F(UDPv6Tests, conversion_to_ip6_string)
@@ -156,7 +156,7 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
         EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
     };
 
-    auto receiveThreadFunction = [&]() 
+    auto receiveThreadFunction = [&]()
     {
         octet receiveBuffer[ReceiveBufferCapacity];
         uint32_t receiveBufferSize;
@@ -165,8 +165,8 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
         EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
     };
 
-    receiverThread.reset(new boost::thread(receiveThreadFunction));      
-    senderThread.reset(new boost::thread(sendThreadFunction));      
+    receiverThread.reset(new std::thread(receiveThreadFunction));
+    senderThread.reset(new std::thread(sendThreadFunction));
     senderThread->join();
     receiverThread->join();
 }
@@ -208,8 +208,8 @@ TEST_F(UDPv6Tests, send_to_loopback)
         EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
     };
 
-    receiverThread.reset(new boost::thread(receiveThreadFunction));
-    senderThread.reset(new boost::thread(sendThreadFunction));
+    receiverThread.reset(new std::thread(receiveThreadFunction));
+    senderThread.reset(new std::thread(sendThreadFunction));
     senderThread->join();
     receiverThread->join();
 }

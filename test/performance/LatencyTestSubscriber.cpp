@@ -90,7 +90,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     std::ostringstream pt;
     pt << "LatencyTest_";
     if(hostname)
-        pt << boost::asio::ip::host_name() << "_";
+        pt << asio::ip::host_name() << "_";
     pt << pid << "_SUB2PUB";
     PubDataparam.topic.topicName = pt.str();
 	PubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -102,7 +102,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     if(!reliable)
         PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	//PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	
+
 	Locator_t loc;
 	loc.port = 15002;
 	PubDataparam.unicastLocatorList.push_back(loc);
@@ -117,7 +117,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     std::ostringstream st;
     st << "LatencyTest_";
     if(hostname)
-        st << boost::asio::ip::host_name() << "_";
+        st << asio::ip::host_name() << "_";
     st << pid << "_PUB2SUB";
     SubDataparam.topic.topicName = st.str();
 	SubDataparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
@@ -139,7 +139,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     std::ostringstream pct;
     pct << "LatencyTest_Command_";
     if(hostname)
-        pct << boost::asio::ip::host_name() << "_";
+        pct << asio::ip::host_name() << "_";
     pct << pid << "_SUB2PUB";
     PubCommandParam.topic.topicName = pct.str();
 	PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -156,7 +156,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     std::ostringstream sct;
     sct << "LatencyTest_Command_";
     if(hostname)
-        sct << boost::asio::ip::host_name() << "_";
+        sct << asio::ip::host_name() << "_";
     sct << pid << "_PUB2SUB";
     SubCommandParam.topic.topicName = sct.str();
 	SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
