@@ -27,12 +27,12 @@ namespace fastrtps {
 #define IF_VALID_ADD {if(valid){plist->m_parameters.push_back((Parameter_t*)p);plist->m_hasChanged = true;paramlist_byte_size += plength;}else{delete(p);return -1;}break;}
 
 
-bool ParameterList::updateCDRMsg(ParameterList_t* plist, Endianness_t endian, bool encapsulation)
+bool ParameterList::updateCDRMsg(ParameterList_t* plist, Endianness_t endian, bool use_encapsulation)
 {
     CDRMessage::initCDRMsg(&plist->m_cdrmsg);
     plist->m_cdrmsg.msg_endian = endian;
 
-    if(encapsulation)
+    if(use_encapsulation)
     {
         // Set encapsulation
         CDRMessage::addOctet(&plist->m_cdrmsg, 0);
@@ -64,7 +64,7 @@ bool ParameterList::updateCDRMsg(ParameterList_t* plist, Endianness_t endian, bo
 
 
 int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterList_t*plist, CacheChange_t *change,
-        bool encapsulation)
+        bool use_encapsulation)
 {
     uint32_t paramlist_byte_size = 0;
     bool is_sentinel = false;
@@ -72,7 +72,7 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
     ParameterId_t pid;
     uint16_t plength;
 
-    if(encapsulation)
+    if(use_encapsulation)
     {
         // Read encapsulation
         msg->pos += 1;

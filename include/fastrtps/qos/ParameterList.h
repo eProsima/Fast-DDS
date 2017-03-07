@@ -86,7 +86,7 @@ public:
 	 * @param endian Endianness that the resulting CDRMessage_t should have.
 	 * @return True if correct.
 	 */
-	static bool updateCDRMsg(ParameterList_t* plist, Endianness_t endian, bool encapsulation);
+	static bool updateCDRMsg(ParameterList_t* plist, Endianness_t endian, bool use_encapsulation);
 	/**
 	 * Read a parameterList from a CDRMessage
 	 * @param[in] msg Pointer to the message (the pos should be correct, otherwise the behaviour is undefined).

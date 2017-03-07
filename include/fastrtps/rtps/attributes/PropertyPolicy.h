@@ -20,6 +20,7 @@
 
 #include "../common/Property.h"
 #include "../common/BinaryProperty.h"
+#include "../../fastrtps_dll.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -29,46 +30,46 @@ class PropertyPolicy
 {
     public:
 
-        PropertyPolicy() {}
+        RTPS_DllAPI PropertyPolicy() {}
 
-        PropertyPolicy(const PropertyPolicy& property_policy) :
+        RTPS_DllAPI PropertyPolicy(const PropertyPolicy& property_policy) :
             properties_(property_policy.properties_),
             binary_properties_(property_policy.binary_properties_) {}
 
-        PropertyPolicy(PropertyPolicy&& property_policy) :
+        RTPS_DllAPI PropertyPolicy(PropertyPolicy&& property_policy) :
             properties_(std::move(property_policy.properties_)),
             binary_properties_(std::move(property_policy.binary_properties_)) {}
 
-        PropertyPolicy& operator=(const PropertyPolicy& property_policy)
+        RTPS_DllAPI PropertyPolicy& operator=(const PropertyPolicy& property_policy)
         {
             properties_ = property_policy.properties_;
             binary_properties_ = property_policy.binary_properties_;
             return *this;
         }
 
-        PropertyPolicy& operator=(PropertyPolicy&& property_policy)
+        RTPS_DllAPI PropertyPolicy& operator=(PropertyPolicy&& property_policy)
         {
             properties_ = std::move(property_policy.properties_);
             binary_properties_= std::move(property_policy.binary_properties_);
             return *this;
         }
 
-        const PropertySeq& properties() const
+        RTPS_DllAPI const PropertySeq& properties() const
         {
             return properties_;
         }
 
-        PropertySeq& properties()
+        RTPS_DllAPI PropertySeq& properties()
         {
             return properties_;
         }
 
-        const BinaryPropertySeq& binary_properties() const
+        RTPS_DllAPI const BinaryPropertySeq& binary_properties() const
         {
             return binary_properties_;
         }
 
-        BinaryPropertySeq& binary_properties()
+        RTPS_DllAPI BinaryPropertySeq& binary_properties()
         {
             return binary_properties_;
         }
@@ -91,14 +92,14 @@ class PropertyPolicyHelper
          * @param prefix Prefix used to search properties.
          * @return A copy of properties whose name starts with the prefix.
          */
-        static PropertyPolicy get_properties_with_prefix(const PropertyPolicy& property_policy,
+        RTPS_DllAPI static PropertyPolicy get_properties_with_prefix(const PropertyPolicy& property_policy,
                 const std::string& prefix);
 
-        static size_t length(const PropertyPolicy& property_policy);
+        RTPS_DllAPI static size_t length(const PropertyPolicy& property_policy);
 
-        static std::string* find_property(PropertyPolicy& property_policy, const std::string& name);
+        RTPS_DllAPI static std::string* find_property(PropertyPolicy& property_policy, const std::string& name);
 
-        static const std::string* find_property(const PropertyPolicy& property_policy, const std::string& name);
+        RTPS_DllAPI static const std::string* find_property(const PropertyPolicy& property_policy, const std::string& name);
 };
 
 } //namespace rtps
