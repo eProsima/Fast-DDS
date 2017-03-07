@@ -31,8 +31,7 @@
 
 #include <fastrtps/log/Log.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 #include <sstream>
 
@@ -60,7 +59,7 @@ bool EDPStatic::initEDP(BuiltinAttributes& attributes)
 	logInfo(RTPS_EDP,"Beginning STATIC EndpointDiscoveryProtocol");
 	m_attributes = attributes;
 	mp_edpXML = new EDPStaticXML();
-	std::string filename = std::string(m_attributes.getStaticEndpointXMLFilename());
+	std::string filename(m_attributes.getStaticEndpointXMLFilename());
 	return this->mp_edpXML->loadXMLFile(filename);
 }
 
@@ -135,7 +134,7 @@ bool EDPStatic::processLocalWriterProxyData(WriterProxyData* wdata)
 bool EDPStatic::removeLocalReader(RTPSReader* R)
 {
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-	boost::lock_guard<boost::recursive_mutex> guard(*localpdata->mp_mutex);
+	std::lock_guard<std::recursive_mutex> guard(*localpdata->mp_mutex);
 	for(std::vector<std::pair<std::string,std::string>>::iterator pit = localpdata->m_properties.properties.begin();
 			pit!=localpdata->m_properties.properties.end();++pit)
 	{
@@ -155,7 +154,7 @@ bool EDPStatic::removeLocalReader(RTPSReader* R)
 bool EDPStatic::removeLocalWriter(RTPSWriter*W)
 {
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-	boost::lock_guard<boost::recursive_mutex> guard(*localpdata->mp_mutex);
+	std::lock_guard<std::recursive_mutex> guard(*localpdata->mp_mutex);
 	for(std::vector<std::pair<std::string,std::string>>::iterator pit = localpdata->m_properties.properties.begin();
 			pit!=localpdata->m_properties.properties.end();++pit)
 	{
@@ -174,7 +173,7 @@ bool EDPStatic::removeLocalWriter(RTPSWriter*W)
 
 void EDPStatic::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
+	std::lock_guard<std::recursive_mutex> guard(*pdata->mp_mutex);
 	for(std::vector<std::pair<std::string,std::string>>::iterator pit = pdata->m_properties.properties.begin();
 			pit!=pdata->m_properties.properties.end();++pit)
 	{

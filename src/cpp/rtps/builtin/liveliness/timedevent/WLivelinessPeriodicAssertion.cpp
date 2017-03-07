@@ -32,8 +32,7 @@
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 
 namespace eprosima {
@@ -84,16 +83,16 @@ void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
 	}
 	else
 	{
-		logInfo(RTPS_LIVELINESS,"Boost message: " <<msg);
+		logInfo(RTPS_LIVELINESS,"Message: " <<msg);
 	}
 }
 
 bool WLivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
+	std::lock_guard<std::recursive_mutex> guard(*this->mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
 	if(this->mp_WLP->m_livAutomaticWriters.size()>0)
 	{
-		boost::lock_guard<boost::recursive_mutex> wguard(*this->mp_WLP->mp_builtinWriter->getMutex());
+		std::lock_guard<std::recursive_mutex> wguard(*this->mp_WLP->mp_builtinWriter->getMutex());
 		CacheChange_t* change=this->mp_WLP->mp_builtinWriter->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE,m_iHandle);
 		if(change!=nullptr)
 		{
@@ -128,7 +127,7 @@ bool WLivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
 
 bool WLivelinessPeriodicAssertion::ManualByRTPSParticipantLivelinessAssertion()
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
+	std::lock_guard<std::recursive_mutex> guard(*this->mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
 	bool livelinessAsserted = false;
 	for(std::vector<RTPSWriter*>::iterator wit=this->mp_WLP->m_livManRTPSParticipantWriters.begin();
 			wit!=this->mp_WLP->m_livManRTPSParticipantWriters.end();++wit)
@@ -141,7 +140,7 @@ bool WLivelinessPeriodicAssertion::ManualByRTPSParticipantLivelinessAssertion()
 	}
 	if(livelinessAsserted)
 	{
-		boost::lock_guard<boost::recursive_mutex> wguard(*this->mp_WLP->mp_builtinWriter->getMutex());
+		std::lock_guard<std::recursive_mutex> wguard(*this->mp_WLP->mp_builtinWriter->getMutex());
 		CacheChange_t* change=this->mp_WLP->mp_builtinWriter->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE);
 		if(change!=nullptr)
 		{

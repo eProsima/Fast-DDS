@@ -36,7 +36,7 @@
 
 #include <cassert>
 #include <thread>
-#include <boost/thread/recursive_mutex.hpp>
+#include <mutex>
 
 #define BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_READER (1 << 22)
 #define BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_WRITER (1 << 23)

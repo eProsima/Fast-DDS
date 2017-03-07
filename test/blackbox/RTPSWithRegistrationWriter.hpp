@@ -37,11 +37,10 @@
 #include <string>
 #include <list>
 #include <condition_variable>
-#include <boost/interprocess/detail/os_thread_functions.hpp>
 #include <gtest/gtest.h>
 
 template<class TypeSupport>
-class RTPSWithRegistrationWriter 
+class RTPSWithRegistrationWriter
 {
     public:
 
@@ -80,7 +79,7 @@ class RTPSWithRegistrationWriter
         topic_attr_.topicDataType = type_.getName();
         // Generate topic name
         std::ostringstream t;
-        t << topic_name << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+        t << topic_name << "_" << asio::ip::host_name() << "_" << GET_PID();
         topic_attr_.topicName = t.str();
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
@@ -104,7 +103,7 @@ class RTPSWithRegistrationWriter
         RTPSParticipantAttributes pattr;
         pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
         pattr.builtin.use_WriterLivelinessProtocol = true;
-        pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+        pattr.builtin.domainId = (uint32_t)GET_PID() % 230;
         participant_ = RTPSDomain::createParticipant(pattr);
         ASSERT_NE(participant_, nullptr);
 

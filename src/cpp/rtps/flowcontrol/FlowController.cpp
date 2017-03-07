@@ -13,20 +13,20 @@
 // limitations under the License.
 
 #include <fastrtps/rtps/flowcontrol/FlowController.h>
-#include <boost/asio.hpp>
-#include <boost/thread.hpp>
+#include <asio.hpp>
+#include <thread>
 
 using namespace eprosima::fastrtps::rtps;
 
 std::vector<FlowController*> FlowController::ListeningControllers;
 std::recursive_mutex FlowController::FlowControllerMutex;
-std::unique_ptr<boost::thread> FlowController::ControllerThread;
-std::unique_ptr<boost::asio::io_service> FlowController::ControllerService;
+std::unique_ptr<std::thread> FlowController::ControllerThread;
+std::unique_ptr<asio::io_service> FlowController::ControllerService;
 
 FlowController::FlowController()
 {
    if (!ControllerService)
-      ControllerService.reset(new boost::asio::io_service);
+      ControllerService.reset(new asio::io_service);
    RegisterAsListeningController();
 }
 
@@ -72,10 +72,10 @@ void FlowController::StartControllerService()
    auto ioServiceFunction = [&]()
    {
       ControllerService->reset();
-      boost::asio::io_service::work work(*ControllerService);
+      asio::io_service::work work(*ControllerService);
       ControllerService->run();
    };
-   ControllerThread.reset(new boost::thread(ioServiceFunction));
+   ControllerThread.reset(new std::thread(ioServiceFunction));
 }
 
 void FlowController::StopControllerService()

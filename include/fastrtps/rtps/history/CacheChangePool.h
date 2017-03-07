@@ -28,11 +28,8 @@
 #include <functional>
 #include <cstdint>
 #include <cstddef>
+#include <mutex>
 
-namespace boost
-{
-	class mutex;
-}
 
 namespace eprosima {
 namespace fastrtps{
@@ -92,7 +89,7 @@ class CacheChangePool {
         std::vector<CacheChange_t*> m_allCaches;
         bool allocateGroup(uint32_t pool_size);
         CacheChange_t* allocateSingle(uint32_t dataSize);
-        boost::mutex* mp_mutex;
+        std::mutex* mp_mutex;
         MemoryManagementPolicy_t memoryMode;
 };
 }

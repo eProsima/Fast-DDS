@@ -26,13 +26,12 @@
 #include "FragmentedChangePitStop.h"
 
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
-#include <boost/thread.hpp>
+#include <mutex>
+#include <thread>
 
 #include <cassert>
 
-#define IDSTRING "(ID:"<< boost::this_thread::get_id() <<") "<<
+#define IDSTRING "(ID:"<< std::this_thread::get_id() <<") "<<
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -53,7 +52,7 @@ StatelessReader::StatelessReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
 
 bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
     {
         if((*it).guid == wdata.guid)
@@ -66,7 +65,7 @@ bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
 }
 bool StatelessReader::matched_writer_remove(RemoteWriterAttributes& wdata)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
     {
         if((*it).guid == wdata.guid)
@@ -81,7 +80,7 @@ bool StatelessReader::matched_writer_remove(RemoteWriterAttributes& wdata)
 
 bool StatelessReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
     {
         if((*it).guid == wdata.guid)
@@ -92,7 +91,7 @@ bool StatelessReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
     return false;
 }
 
-bool StatelessReader::change_received(CacheChange_t* change, boost::unique_lock<boost::recursive_mutex> &lock)
+bool StatelessReader::change_received(CacheChange_t* change, std::unique_lock<std::recursive_mutex> &lock)
 {
     // Only make visible the change if there is not other with bigger sequence number.
     // TODO Revisar si no hay que incluirlo.
@@ -117,14 +116,14 @@ bool StatelessReader::change_received(CacheChange_t* change, boost::unique_lock<
 
 bool StatelessReader::nextUntakenCache(CacheChange_t** change,WriterProxy** /*wpout*/)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     return mp_history->get_min_change(change);
 }
 
 
 bool StatelessReader::nextUnreadCache(CacheChange_t** change,WriterProxy** /*wpout*/)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     //m_reader_cache.sortCacheChangesBySeqNum();
     bool found = false;
     std::vector<CacheChange_t*>::iterator it;
@@ -158,7 +157,7 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
 
     assert(change);
 
-    boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
     if(acceptMsgFrom(change->writerGUID))
     {
@@ -220,7 +219,7 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
 
     assert(incomingChange);
 
-    boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
     if (acceptMsgFrom(incomingChange->writerGUID))
     {

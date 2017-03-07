@@ -24,7 +24,6 @@
 #include <cstdio>
 #include "../rtps/common/Guid.h"
 #include "../rtps/common/Time_t.h"
-#include "../rtps/flowcontrol/FlowController.h"
 #include "../attributes/PublisherAttributes.h"
 
 namespace eprosima {

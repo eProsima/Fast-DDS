@@ -15,13 +15,6 @@
 macro(find_eprosima_package package)
     if(NOT (EPROSIMA_INSTALLER AND (MSVC OR MSVC_IDE)))
         if(THIRDPARTY)
-            set(USE_BOOST_ "")
-            foreach(arg ${ARGN})
-                if("${arg}" STREQUAL "USE_BOOST")
-                    set(USE_BOOST_ "-DEPROSIMA_BOOST=${EPROSIMA_BOOST}")
-                endif()
-            endforeach()
-
             set(${package}ExternalDir ${PROJECT_BINARY_DIR}/external/${package})
 
             if(MINION)
@@ -37,7 +30,6 @@ macro(find_eprosima_package package)
                 "\${GENERATOR_}"
                 ${BUILD_OPTION}
                 "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
-                ${USE_BOOST_}
                 "-DMINION=ON"
                 "-DEPROSIMA_INSTALLER_MINION=${EPROSIMA_INSTALLER_MINION}"
                 "-DBIN_INSTALL_DIR:PATH=${BIN_INSTALL_DIR}"
@@ -123,6 +115,25 @@ macro(find_eprosima_package package)
             message(STATUS "${package} library not found...")
         endif()
 
+    endif()
+endmacro()
+
+macro(find_eprosima_thirdparty package)
+    if(NOT (EPROSIMA_INSTALLER AND (MSVC OR MSVC_IDE)))
+        if(THIRDPARTY)
+
+            execute_process(
+                COMMAND git submodule update --recursive --init "thirdparty/${package}"
+                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                RESULT_VARIABLE EXECUTE_RESULT
+                )
+
+            if(NOT EXECUTE_RESULT EQUAL 0)
+                message(FATAL_ERROR "Cannot configure Git submodule ${package}")
+            endif()
+
+            set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_INSTALL_PREFIX_})
+        endif()
     endif()
 endmacro()
 

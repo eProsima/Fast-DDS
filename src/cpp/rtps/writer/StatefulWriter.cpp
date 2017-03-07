@@ -26,8 +26,6 @@
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include <fastrtps/rtps/messages/RTPSMessageGroup.h>
 
-#include <fastrtps/rtps/resources/ResourceSend.h>
-
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
@@ -40,10 +38,7 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
-#include <boost/thread/condition_variable.hpp>
-#include <boost/chrono/duration.hpp>
+#include <mutex>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -64,8 +59,8 @@ StatefulWriter::StatefulWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
     else
         m_HBReaderEntityId = c_EntityId_Unknown;
     mp_periodicHB = new PeriodicHeartbeat(this,TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
-    all_acked_mutex_ = new boost::mutex();
-    all_acked_cond_ = new boost::condition_variable();
+    all_acked_mutex_ = new std::mutex();
+    all_acked_cond_ = new std::condition_variable();
     m_reader_iterator = matched_readers.begin();
 }
 
@@ -97,7 +92,7 @@ StatefulWriter::~StatefulWriter()
 
 void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     //TODO Think about when set liveliness assertion when writer is asynchronous.
     this->setLivelinessAsserted(true);
@@ -164,7 +159,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 else
                     changeForReader.setStatus(UNACKNOWLEDGED);
 
-                boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
+                std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
                 changeForReader.setRelevance((*it)->rtps_is_relevant(change));
                 (*it)->addChange(changeForReader);
             }
@@ -179,7 +174,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 
 bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     logInfo(RTPS_WRITER,"Change "<< a_change->sequenceNumber << " to be removed.");
 
 	// Invalidate CacheChange pointer in ReaderProxies.
@@ -201,7 +196,7 @@ bool StatefulWriter::wrap_around_readers()
         return false;
 
     m_readers_to_walk--;
-    m_reader_iterator++; 
+    m_reader_iterator++;
     if (m_reader_iterator == matched_readers.end())
         m_reader_iterator = matched_readers.begin();
 
@@ -210,16 +205,16 @@ bool StatefulWriter::wrap_around_readers()
 
 void StatefulWriter::send_any_unsent_changes()
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     // TODO(Ricardo) Change this while when implement Collector class.
     // Collector needs to know about fragments too.
     m_readers_to_walk = matched_readers.size();
-    // The reader proxy vector is walked in a different order each time 
+    // The reader proxy vector is walked in a different order each time
     // to prevent persistent prioritization of a single reader
     while(wrap_around_readers())
     {
-        boost::lock_guard<boost::recursive_mutex> rguard(*(*m_reader_iterator)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> rguard(*(*m_reader_iterator)->mp_mutex);
 
         //std::vector<const ChangeForReader_t*> ch_vec = (*m_reader_iterator)->get_unsent_changes();
         std::vector<ChangeForReader_t*> ch_vec = (*m_reader_iterator)->get_unsent_changes();
@@ -362,7 +357,7 @@ void StatefulWriter::send_any_unsent_changes()
  */
 bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     if(rdata.guid == c_Guid_Unknown)
     {
         logError(RTPS_WRITER,"Reliable Writer need GUID_t of matched readers");
@@ -372,7 +367,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     // Check if it is already matched.
     for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
     {
-        boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
         if((*it)->m_att.guid == rdata.guid)
         {
             logInfo(RTPS_WRITER, "Attempting to add existing reader" << endl);
@@ -438,11 +433,11 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 {
     ReaderProxy *rproxy = nullptr;
-    boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
     for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
     {
-        boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
         if((*it)->m_att.guid == rdata.guid)
         {
             logInfo(RTPS_WRITER, "Reader Proxy removed: " << (*it)->m_att.guid);
@@ -476,10 +471,10 @@ bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 
 bool StatefulWriter::matched_reader_is_matched(RemoteReaderAttributes& rdata)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
     {
-        boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
         if((*it)->m_att.guid == rdata.guid)
         {
             return true;
@@ -490,11 +485,11 @@ bool StatefulWriter::matched_reader_is_matched(RemoteReaderAttributes& rdata)
 
 bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     std::vector<ReaderProxy*>::iterator it;
     for(it=matched_readers.begin();it!=matched_readers.end();++it)
     {
-        boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
         if((*it)->m_att.guid == readerGuid)
         {
             *RP = *it;
@@ -506,7 +501,7 @@ bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
 
 bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     if(change->writerGUID != this->getGuid())
     {
@@ -527,14 +522,14 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 
 bool StatefulWriter::wait_for_all_acked(const Duration_t& max_wait)
 {
-    boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
-    boost::unique_lock<boost::mutex> all_lock(*all_acked_mutex_);
+    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
+    std::unique_lock<std::mutex> all_lock(*all_acked_mutex_);
 
     all_acked_ = true;
 
     for(auto it = matched_readers.begin(); it != matched_readers.end(); ++it)
     {
-        boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
         if((*it)->countChangesForReader() > 0)
         {
             all_acked_ = false;
@@ -545,8 +540,8 @@ bool StatefulWriter::wait_for_all_acked(const Duration_t& max_wait)
 
     if(!all_acked_)
     {
-        boost::chrono::microseconds max_w(::TimeConv::Time_t2MicroSecondsInt64(max_wait));
-        if(all_acked_cond_->wait_for(all_lock, max_w)  == boost::cv_status::no_timeout)
+        std::chrono::microseconds max_w(::TimeConv::Time_t2MicroSecondsInt64(max_wait));
+        if(all_acked_cond_->wait_for(all_lock, max_w)  == std::cv_status::no_timeout)
             all_acked_ = true;
     }
 
@@ -555,14 +550,14 @@ bool StatefulWriter::wait_for_all_acked(const Duration_t& max_wait)
 
 void StatefulWriter::check_for_all_acked()
 {
-    boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
-    boost::unique_lock<boost::mutex> all_lock(*all_acked_mutex_);
+    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
+    std::unique_lock<std::mutex> all_lock(*all_acked_mutex_);
 
     all_acked_ = true;
 
     for(auto it = matched_readers.begin(); it != matched_readers.end(); ++it)
     {
-        boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
         if((*it)->countChangesForReader() > 0)
         {
             all_acked_ = false;
@@ -581,7 +576,7 @@ void StatefulWriter::check_for_all_acked()
 bool StatefulWriter::clean_history(unsigned int max)
 {
     logInfo(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     std::vector<CacheChange_t*> ackca;
     bool limit = (max != 0);
 
@@ -622,7 +617,7 @@ void StatefulWriter::updateAttributes(WriterAttributes& att)
 
 void StatefulWriter::updateTimes(WriterTimes& times)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     if(m_times.heartbeatPeriod != times.heartbeatPeriod)
     {
         this->mp_periodicHB->update_interval(times.heartbeatPeriod);
@@ -632,7 +627,7 @@ void StatefulWriter::updateTimes(WriterTimes& times)
         for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
                 it!=this->matched_readers.end();++it)
         {
-            boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
+            std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
 
             if((*it)->mp_nackResponse != nullptr) // It is reliable
                 (*it)->mp_nackResponse->update_interval(times.nackResponseDelay);
@@ -647,7 +642,7 @@ void StatefulWriter::updateTimes(WriterTimes& times)
         for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
                 it!=this->matched_readers.end();++it)
         {
-            boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
+            std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
             (*it)->mp_nackResponse->update_interval(times.nackResponseDelay);
         }
     }
@@ -656,7 +651,7 @@ void StatefulWriter::updateTimes(WriterTimes& times)
         for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
                 it!=this->matched_readers.end();++it)
         {
-            boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
+            std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
 
             if((*it)->mp_nackSupression != nullptr) // It is reliable
                 (*it)->mp_nackSupression->update_interval(times.nackSupressionDuration);

@@ -21,12 +21,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "RTPSReader.h"
-
-namespace boost
-{
-    template<typename T> class unique_lock;
-}
-
+#include <mutex>
 
 namespace eprosima {
 namespace fastrtps{
@@ -127,7 +122,7 @@ class StatefulReader:public RTPSReader
          * @param lock mutex protecting the StatefulReader.
          * @return True if added.
          */
-        bool change_received(CacheChange_t* a_change, WriterProxy* prox, boost::unique_lock<boost::recursive_mutex> &lock);
+        bool change_received(CacheChange_t* a_change, WriterProxy* prox, std::unique_lock<std::recursive_mutex> &lock);
 
         /**
          * Get the RTPS participant

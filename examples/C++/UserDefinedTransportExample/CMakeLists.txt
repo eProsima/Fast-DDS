@@ -34,6 +34,8 @@ endif()
 message(STATUS "Configuring UserDefinedTransportExample...")
 file(GLOB USERDEFINEDTRANSPORTEXAMPLE_SOURCES_HXX "*.cpp")
 
+include_directories(${PROJECT_SOURCE_DIR}/../../../thirdparty/asio/asio/include)
+
 add_executable(UserDefinedTransportExample ${USERDEFINEDTRANSPORTEXAMPLE_SOURCES_HXX})
 target_link_libraries(UserDefinedTransportExample fastrtps fastcdr)
 install(TARGETS UserDefinedTransportExample

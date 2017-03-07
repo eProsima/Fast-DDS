@@ -32,11 +32,10 @@
 #include <string>
 #include <list>
 #include <condition_variable>
-#include <boost/asio.hpp>
-#include <boost/interprocess/detail/os_thread_functions.hpp>
+#include <asio.hpp>
 
 template<class TypeSupport>
-class PubSubReader 
+class PubSubReader
 {
     public:
 
@@ -84,7 +83,7 @@ class PubSubReader
             subscriber_attr_.topic.topicDataType = type_.getName();
             // Generate topic name
             std::ostringstream t;
-            t << topic_name_ << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+            t << topic_name_ << "_" << asio::ip::host_name() << "_" << GET_PID();
             subscriber_attr_.topic.topicName = t.str();
         }
 
@@ -97,7 +96,7 @@ class PubSubReader
         void init()
         {
             eprosima::fastrtps::ParticipantAttributes pattr;
-            pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+            pattr.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
             participant_ = eprosima::fastrtps::Domain::createParticipant(pattr);
 
             // Register type
@@ -282,4 +281,3 @@ class PubSubReader
 };
 
 #endif // _TEST_PROFILING_PUBSUBREADER_HPP_
-

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 ###############################################################################
-# CMake build rules for FastRTPS                                                
+# CMake build rules for FastRTPS
 ###############################################################################
 cmake_minimum_required(VERSION 2.8.12)
 
@@ -99,7 +99,19 @@ if(MSVC OR MSVC_IDE)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
     endif()
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-unknown-pragmas")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-unknown-pragmas -std=c++11")
+endif()
+
+add_definitions(
+  -DBOOST_ASIO_STANDALONE
+  -DASIO_STANDALONE
+)
+
+if(ANDROID)
+  add_definitions(
+    -DASIO_DISABLE_MOVE
+    -DASIO_DISABLE_STD_STRING_VIEW
+  )
 endif()
 
 ###############################################################################
@@ -165,6 +177,7 @@ if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER_MINION)
 	set(INTERNAL_DEBUG ON)
 endif()
 
+
 ###############################################################################
 # Performance tests
 ###############################################################################
@@ -175,18 +188,18 @@ option(PERFORMANCE_TESTS "Activate the building and execution of performance tes
 ###############################################################################
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules)
 
-###############################################################################
-# Check libraries
-###############################################################################
-include(${PROJECT_SOURCE_DIR}/cmake/dev/boost_libraries.cmake)
-set(BOOST_LIBRARIES_DEFAULT thread system date_time chrono regex atomic)
-if(PERFORMANCE_TESTS)
-    set(BOOST_LIBRARIES_DEFAULT ${BOOST_LIBRARIES_DEFAULT} program_options)
-endif()
-check_boost(${BOOST_LIBRARIES_DEFAULT})
 
 ###############################################################################
-# Load external eProsima projects.
+# Default shared libraries
+###############################################################################
+option(BUILD_SHARED_LIBS
+    "Global flag to cause add_library() to create shared libraries if on. \
+    If set to true, this will cause all libraries to be built shared \
+    unless the library was explicitly added as a static library."
+    ON)
+
+###############################################################################
+# Load external projects.
 ###############################################################################
 option(THIRDPARTY "Activate the use of internal thirdparties" OFF)
 
@@ -197,6 +210,9 @@ endif()
 include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)
 
 find_eprosima_package(fastcdr)
+find_eprosima_thirdparty(asio)
+find_eprosima_thirdparty(tinyxml2)
+find_eprosima_thirdparty(android-ifaddrs)
 
 ###############################################################################
 # Options
@@ -233,14 +249,14 @@ add_subdirectory(src/cpp)
 ###############################################################################
 # Testing
 ###############################################################################
-if(NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MINION)
+if(EPROSIMA_BUILD_TESTS AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MINION)
     enable_testing()
     include(CTest)
     add_subdirectory(test)
 endif()
 
 ###############################################################################
-# Examples 
+# Examples
 ###############################################################################
 option(COMPILE_EXAMPLES "Build example" OFF)
 if(COMPILE_EXAMPLES)
@@ -323,7 +339,7 @@ if(BUILD_DOCUMENTATION)
     endif()
 
     add_custom_target(libreoffice
-        COMMAND "${LIBREOFFICE_EXE}" --headless ${LIBREOFFICE_CONVERT_README_MACRO} 
+        COMMAND "${LIBREOFFICE_EXE}" --headless ${LIBREOFFICE_CONVERT_README_MACRO}
         COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/README.html" "${README_LOCATION}/README.html"
         DEPENDS
         "${PROJECT_SOURCE_DIR}/doc/README.odt"
@@ -354,7 +370,6 @@ endif()
 ###############################################################################
 # Install external eprosima libraries
 install_eprosima_libraries()
-install_boost(ALL thread system date_time chrono regex atomic)
 
 # Install licenses
 install(FILES ${PROJECT_SOURCE_DIR}/LICENSE

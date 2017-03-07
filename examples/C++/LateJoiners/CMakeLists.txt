@@ -35,8 +35,7 @@ message(STATUS "Configuring UseCaseDemonstrator example...")
 file(GLOB USECASEDEMONSTRATOR_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(latejoiners ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} latejoiners.cpp)
-target_include_directories(latejoiners PRIVATE ${Boost_INCLUDE_DIR})
-target_link_libraries(latejoiners fastrtps fastcdr ${Boost_LIBRARIES})
+target_link_libraries(latejoiners fastrtps fastcdr)
 install(TARGETS latejoiners
     RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
     )

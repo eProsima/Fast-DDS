@@ -15,12 +15,13 @@
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     include(${PROJECT_SOURCE_DIR}/cmake/dev/gtest.cmake)
     check_gtest()
-	
+
     if(GTEST_FOUND)
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
+        include_directories(${PROJECT_SOURCE_DIR}/thirdparty/asio/asio/include)
 
         ###############################################################################
         # Unit tests
@@ -63,7 +64,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             )
         target_compile_definitions(BlackboxTests_PreallocMem PRIVATE
             PREALLOCATED_MEMORY_MODE_TEST)
-        target_include_directories(BlackboxTests_PreallocMem PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS})
+        target_include_directories(BlackboxTests_PreallocMem PRIVATE ${GTEST_INCLUDE_DIRS})
         target_link_libraries(BlackboxTests_PreallocMem fastrtps fastcdr ${GTEST_LIBRARIES})
 
         add_executable(BlackboxTests_ReallocMem ${BLACKBOXTESTS_SOURCE})
@@ -76,7 +77,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             )
         target_compile_definitions(BlackboxTests_ReallocMem PRIVATE
             PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
-        target_include_directories(BlackboxTests_ReallocMem PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS})
+        target_include_directories(BlackboxTests_ReallocMem PRIVATE ${GTEST_INCLUDE_DIRS})
         target_link_libraries(BlackboxTests_ReallocMem fastrtps fastcdr ${GTEST_LIBRARIES})
 
         add_executable(BlackboxTests_DynMem ${BLACKBOXTESTS_SOURCE})
@@ -89,8 +90,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             )
         target_compile_definitions(BlackboxTests_DynMem PRIVATE
             DYNAMIC_RESERVE_MEMORY_MODE_TEST)
-        target_include_directories(BlackboxTests_DynMem PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS})
+        target_include_directories(BlackboxTests_DynMem PRIVATE ${GTEST_INCLUDE_DIRS})
         target_link_libraries(BlackboxTests_DynMem fastrtps fastcdr ${GTEST_LIBRARIES})
     endif()
 endif()
-

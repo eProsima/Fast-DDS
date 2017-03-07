@@ -108,7 +108,9 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
 
     PParam.participantID = ID;
     int pid;
-#if defined(_WIN32)
+#if defined(__cplusplus_winrt)
+    pid = (int)GetCurrentProcessId();
+#elif defined(_WIN32)
     pid = (int)_getpid();
 #else
     pid = (int)getpid();

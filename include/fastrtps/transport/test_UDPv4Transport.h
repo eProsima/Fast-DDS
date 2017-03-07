@@ -18,7 +18,6 @@
 #include <fastrtps/rtps/messages/RTPS_messages.h>
 #include <fastrtps/rtps/common/SequenceNumber.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
-#include <boost/thread.hpp>
 #include <vector>
 
 #include "test_UDPv4TransportDescriptor.h"

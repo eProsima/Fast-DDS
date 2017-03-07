@@ -20,6 +20,8 @@
 #define WRITERPROXY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <mutex>
+
 #include "../common/Types.h"
 #include "../common/Locator.h"
 #include "../common/CacheChange.h"
@@ -31,11 +33,6 @@
 #ifndef TEST_FRIENDS
 #define TEST_FRIENDS
 #endif // TEST_FRIENDS
-
-namespace boost
-{
-    class recursive_mutex;
-}
 
 namespace eprosima
 {
@@ -154,7 +151,7 @@ namespace eprosima
                      * Get the mutex
                      * @return Associated mutex
                      */
-                    inline boost::recursive_mutex* getMutex(){return mp_mutex;};
+                    inline std::recursive_mutex* getMutex(){return mp_mutex;};
 
                     /*!
                      * @brief Returns number of ChangeFromWriter_t managed currently by the WriterProxy.
@@ -191,7 +188,7 @@ namespace eprosima
                     void print_changes_fromWriter_test2();
 
                     //!Mutex Pointer
-                    boost::recursive_mutex* mp_mutex;
+                    std::recursive_mutex* mp_mutex;
 
                     //!Vector containing the ChangeFromWriter_t objects.
                     std::set<ChangeFromWriter_t, ChangeFromWriterCmp> m_changesFromW;

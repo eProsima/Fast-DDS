@@ -29,8 +29,7 @@
 
 #include <fastrtps/log/Log.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 namespace eprosima {
 namespace fastrtps{
@@ -67,7 +66,7 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
         std::vector<GUID_t> remote_readers;
 
         {//BEGIN PROTECTION
-            boost::lock_guard<boost::recursive_mutex> guardW(*mp_SFW->getMutex());
+            std::lock_guard<std::recursive_mutex> guardW(*mp_SFW->getMutex());
             for(std::vector<ReaderProxy*>::iterator it = mp_SFW->matchedReadersBegin();
                     it != mp_SFW->matchedReadersEnd(); ++it)
             {
@@ -124,7 +123,7 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
     }
     else
     {
-        logInfo(RTPS_WRITER,"Boost message: " <<msg);
+        logInfo(RTPS_WRITER,"Event message: " << msg);
     }
 }
 

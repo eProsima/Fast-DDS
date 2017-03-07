@@ -99,7 +99,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
 
 		switch (*it + 4)
         {
-		case 16: 
+		case 16:
 			output_file_16 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
 			output_file_16 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
 			break;
@@ -183,7 +183,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     std::ostringstream pt;
     pt << "LatencyTest_";
     if(hostname)
-        pt << boost::asio::ip::host_name() << "_";
+        pt << asio::ip::host_name() << "_";
     pt << pid << "_PUB2SUB";
     PubDataparam.topic.topicName = pt.str();
 	PubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -207,7 +207,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     std::ostringstream st;
     st << "LatencyTest_";
     if(hostname)
-        st << boost::asio::ip::host_name() << "_";
+        st << asio::ip::host_name() << "_";
     st << pid << "_SUB2PUB";
     SubDataparam.topic.topicName = st.str();
 	SubDataparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
@@ -229,7 +229,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     std::ostringstream pct;
     pct << "LatencyTest_Command_";
     if(hostname)
-        pct << boost::asio::ip::host_name() << "_";
+        pct << asio::ip::host_name() << "_";
     pct << pid << "_PUB2SUB";
     PubCommandParam.topic.topicName = pct.str();
 	PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -246,7 +246,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     std::ostringstream sct;
     sct << "LatencyTest_Command_";
     if(hostname)
-        sct << boost::asio::ip::host_name() << "_";
+        sct << asio::ip::host_name() << "_";
     sct << pid << "_SUB2PUB";
     SubCommandParam.topic.topicName = sct.str();
 	SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -509,12 +509,12 @@ bool LatencyTestPublisher::test(uint32_t datasize)
     lock.unlock();
 	//cout << endl;
 	//BEGIN THE TEST:
-    
+
     for(unsigned int count = 1; count <= n_samples; ++count)
     {
         mp_latency_in->seqnum = 0;
         mp_latency_out->seqnum = count;
-        
+
         t_start_ = std::chrono::steady_clock::now();
         mp_datapub->write((void*)mp_latency_out);
 
@@ -563,31 +563,31 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 		auxstdev += pow(((*tit).count() - TS.mean), 2);
 	}
 	auxstdev = sqrt(auxstdev / times_.size());
-	TS.stdev = (double)round(auxstdev);
+	TS.stdev = static_cast<double>(round(auxstdev));
 
 	std::sort(times_.begin(), times_.end());
-	size_t elem;
+	size_t elem = 0;
 
-	elem = (size_t)(times_.size() * 0.5);
-    if(elem >  0 && elem <= times_.size())
+	elem = static_cast<size_t>(times_.size() * 0.5);
+    if(elem > 0 && elem <= times_.size())
         TS.p50 = times_.at(--elem).count();
     else
         TS.p50 = NAN;
 
-     elem = (size_t)times_.size() * 0.9;
-    if(elem >  0 && elem <= times_.size())
+    elem = static_cast<size_t>(times_.size() * 0.9);
+    if(elem > 0 && elem <= times_.size())
         TS.p90 = times_.at(--elem).count();
     else
         TS.p90 = NAN;
 
-     elem = (size_t)times_.size() * 0.99;
-    if(elem >  0 && elem <= times_.size())
+    elem = static_cast<size_t>(times_.size() * 0.99);
+    if(elem > 0 && elem <= times_.size())
         TS.p99 = times_.at(--elem).count();
     else
         TS.p99 = NAN;
 
-     elem = (size_t)times_.size() * 0.9999;
-    if(elem >  0 && elem <= times_.size())
+    elem = static_cast<size_t>(times_.size() * 0.9999);
+    if(elem > 0 && elem <= times_.size())
         TS.p9999 = times_.at(--elem).count();
     else
         TS.p9999 = NAN;
@@ -640,7 +640,7 @@ void LatencyTestPublisher::printStat(TimeStats& TS)
 		break;
 	}
 
-	printf("%8lu,%8u,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
+	printf("%8llu,%8u,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
 			TS.nbytes, TS.received, TS.stdev, TS.mean,
 			TS.m_min.count(),
 			TS.p50, TS.p90, TS.p99, TS.p9999,

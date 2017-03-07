@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/rtps/flowcontrol/ThroughputController.h>
+#include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include <gtest/gtest.h>
 
 using namespace std;
@@ -25,7 +26,7 @@ static const unsigned int numberOfTestChanges = 10;
 
 static const ThroughputControllerDescriptor testDescriptor = {controllerSize, periodMillisecs};
 
-class ThroughputControllerTests: public ::testing::Test 
+class ThroughputControllerTests: public ::testing::Test
 {
    public:
 

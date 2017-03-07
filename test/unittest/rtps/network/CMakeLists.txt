@@ -23,8 +23,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
-        set(NETWORKFACTORYTESTS_SOURCE 
-            NetworkFactoryTests.cpp 
+        include_directories(${PROJECT_SOURCE_DIR}/thirdparty/asio/asio/include)
+
+        set(NETWORKFACTORYTESTS_SOURCE
+            NetworkFactoryTests.cpp
             mock/MockTransport.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/ReceiverResource.cpp
@@ -35,11 +37,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_executable(NetworkFactoryTests ${NETWORKFACTORYTESTS_SOURCE})
         add_gtest(NetworkFactoryTests ${NETWORKFACTORYTESTS_SOURCE})
         target_compile_definitions(NetworkFactoryTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(NetworkFactoryTests PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS}
+        target_include_directories(NetworkFactoryTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(NetworkFactoryTests ${GTEST_LIBRARIES} ${Boost_LIBRARIES} ${MOCKS} ${CMAKE_THREAD_LIBS_INIT})
+        target_link_libraries(NetworkFactoryTests ${GTEST_LIBRARIES} ${MOCKS} ${CMAKE_THREAD_LIBS_INIT})
         target_link_libraries(NetworkFactoryTests fastrtps fastcdr) # Later so mocks have precedence
     endif()
 endif()

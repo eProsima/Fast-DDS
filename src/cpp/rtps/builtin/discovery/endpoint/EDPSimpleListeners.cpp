@@ -32,8 +32,7 @@
 
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 #include <fastrtps/log/Log.h>
 
@@ -44,7 +43,7 @@ namespace rtps {
 void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const change_in)
 {
 	CacheChange_t* change = (CacheChange_t*)change_in;
-	//boost::lock_guard<boost::recursive_mutex> guard(*this->mp_SEDP->mp_PubReader.first->getMutex());
+	//std::lock_guard<std::recursive_mutex> guard(*this->mp_SEDP->mp_PubReader.first->getMutex());
 	logInfo(RTPS_EDP,"");
 	if(!computeKey(change))
 	{
@@ -174,7 +173,7 @@ bool EDPSimpleSUBListener::computeKey(CacheChange_t* change)
 void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const change_in)
 {
 	CacheChange_t* change = (CacheChange_t*)change_in;
-	//boost::lock_guard<boost::recursive_mutex> guard(*this->mp_SEDP->mp_SubReader.first->getMutex());
+	//std::lock_guard<std::recursive_mutex> guard(*this->mp_SEDP->mp_SubReader.first->getMutex());
 	logInfo(RTPS_EDP,"");
 	if(!computeKey(change))
 	{

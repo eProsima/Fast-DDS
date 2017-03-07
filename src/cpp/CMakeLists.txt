@@ -16,7 +16,7 @@ include(${PROJECT_SOURCE_DIR}/cmake/dev/set_sources.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 
 # Set source files
-set_sources(
+set(${PROJECT_NAME}_source_files
     log/Log.cpp
     log/StdoutConsumer.cpp
     utils/eClock.cpp
@@ -100,15 +100,28 @@ set_sources(
     rtps/builtin/data/WriterProxyData.cpp
     rtps/builtin/data/ReaderProxyData.cpp
     rtps/flowcontrol/ThroughputController.cpp
+    rtps/flowcontrol/ThroughputControllerDescriptor.cpp
     rtps/flowcontrol/FlowController.cpp
     rtps/exceptions/Exception.cpp
     rtps/attributes/PropertyPolicy.cpp
     rtps/common/Token.cpp
-    fastrtps.rc
+    ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2/tinyxml2.cpp
     )
 
+if(WIN32)
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps.rc
+        )
+endif()
+
+if(ANDROID)
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${PROJECT_SOURCE_DIR}/thirdparty/android-ifaddrs/ifaddrs.c
+        )
+endif()
+
 if(SECURITY)
-    set_sources(
+    list(APPEND ${PROJECT_NAME}_source_files
         rtps/security/exceptions/SecurityException.cpp
         rtps/security/common/SharedSecretHandle.cpp
         rtps/security/SecurityManager.cpp
@@ -134,6 +147,8 @@ else()
     set(HAVE_SECURITY 0)
 endif()
 
+set_sources(${${PROJECT_NAME}_source_files})
+
 # Set version
 set(${PROJECT_NAME_UPPER}_VERSION_MAJOR ${PROJECT_MAJOR_VERSION})
 set(${PROJECT_NAME_UPPER}_VERSION_MINOR ${PROJECT_MINOR_VERSION})
@@ -147,14 +162,29 @@ configure_file(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/config.h.in
 # If Windows, set define for export dll functions
 add_definitions(-D${PROJECT_NAME_UPPER}_SOURCE)
 if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
+    if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
+        add_definitions(-D_WIN32_WINNT=0x0603)
+    else()
+        add_definitions(-D_WIN32_WINNT=0x0601)
+    endif()
 endif()
 # If INTERNAL_DEBUG = ON, define symbol for extensive debug messages
 if(INTERNAL_DEBUG)
     add_definitions(-D__INTERNALDEBUG)
 endif()
-# Include Boost header files.
-include_directories(${Boost_INCLUDE_DIR})
+
+set(${PROJECT_NAME}_include_dirs
+    ${PROJECT_SOURCE_DIR}/thirdparty/asio/asio/include
+    ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2
+)
+
+if(ANDROID)
+    list(APPEND ${PROJECT_NAME}_include_dirs ${PROJECT_SOURCE_DIR}/thirdparty/android-ifaddrs)
+else()
+    find_package(Threads REQUIRED)
+endif()
+
+include_directories(${${PROJECT_NAME}_include_dirs})
 
 # Create libraries
 if(MSVC OR MSVC_IDE)
@@ -174,9 +204,12 @@ if(MSVC OR MSVC_IDE)
         set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES RELWITHDEBINFO_POSTFIX -${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
         set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES DEBUG_POSTFIX d-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
 
+        if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
+            set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES VS_WINRT_COMPONENT "true")
+        endif()
+
         # Export symbols in DLL library
-        target_compile_definitions(${PROJECT_NAME} PUBLIC BOOST_ALL_DYN_LINK ${PROJECT_NAME_UPPER}_DYN_LINK)
-        target_compile_definitions(${PROJECT_NAME}_static PUBLIC BOOST_ALL_DYN_LINK)
+        target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME_UPPER}_DYN_LINK)
 
         # Define public headers
         target_include_directories(${PROJECT_NAME} PUBLIC
@@ -198,9 +231,9 @@ if(MSVC OR MSVC_IDE)
             set(PRIVACY "PRIVATE")
         endif()
 
-        # Link library to external win32 libraries and boost.
+        # Link library to external win32 libraries.
         target_link_libraries(${PROJECT_NAME} ${PRIVACY}
-            ${Boost_LIBRARIES} iphlpapi Shlwapi
+            ${CMAKE_THREAD_LIBS_INIT} iphlpapi Shlwapi kernel32 user32.dll
             ${EXTRA_LIBRARIES}
             )
     endif()
@@ -209,7 +242,7 @@ else()
         add_definitions(-D__DEBUG)
     endif()
     #Create library
-    add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
+    add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
 
     # Define public headers
     target_include_directories(${PROJECT_NAME} PUBLIC
@@ -220,7 +253,7 @@ else()
 
     # Link library to external libraries.
     target_link_libraries(${PROJECT_NAME}
-        ${Boost_LIBRARIES}
+        ${CMAKE_THREAD_LIBS_INIT}
         ${EXTRA_LIBRARIES}
         )
 endif()

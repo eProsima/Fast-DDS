@@ -37,7 +37,6 @@
 #endif
 
 
-
 namespace eprosima {
 namespace fastrtps{
 
@@ -52,29 +51,32 @@ IPFinder::~IPFinder() {
 
 #if defined(_WIN32)
 
+#define DEFAULT_ADAPTER_ADDRESSES_SIZE 15360
 
 bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
 {
-    DWORD rv, size;
+    DWORD rv, size = DEFAULT_ADAPTER_ADDRESSES_SIZE;
     PIP_ADAPTER_ADDRESSES adapter_addresses, aa;
     PIP_ADAPTER_UNICAST_ADDRESS ua;
 
-    rv = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, NULL, &size);
-
-
-    if (rv != ERROR_BUFFER_OVERFLOW) {
-        fprintf(stderr, "GetAdaptersAddresses() failed...");
-        return false;
-    }
-    adapter_addresses = (PIP_ADAPTER_ADDRESSES)malloc(size);
+    adapter_addresses = (PIP_ADAPTER_ADDRESSES)malloc(DEFAULT_ADAPTER_ADDRESSES_SIZE);
 
     rv = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, adapter_addresses, &size);
-    if (rv != ERROR_SUCCESS) {
+
+    if (rv != ERROR_SUCCESS)
+    {
+        adapter_addresses = (PIP_ADAPTER_ADDRESSES)realloc(adapter_addresses, size);
+
+        rv = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, adapter_addresses, &size);
+    }
+
+    if (rv != ERROR_SUCCESS)
+    {
         fprintf(stderr, "GetAdaptersAddresses() failed...");
         free(adapter_addresses);
         return false;
     }
-    //cout << "IP INFORMATION " << endl;
+
     for (aa = adapter_addresses; aa != NULL; aa = aa->Next) {
         if (aa->OperStatus == 1) //is ENABLED
         {

@@ -18,8 +18,8 @@ int MockParentEvent::destructed_ = 0;
 std::mutex MockParentEvent::destruction_mutex_;
 std::condition_variable MockParentEvent::destruction_cond_;
 
-MockParentEvent::MockParentEvent(boost::asio::io_service& service, const boost::thread& event_thread, double milliseconds, unsigned int countUntilDestruction,
-        TimedEvent::AUTODESTRUCTION_MODE autodestruction) : 
+MockParentEvent::MockParentEvent(asio::io_service& service, const std::thread& event_thread, double milliseconds, unsigned int countUntilDestruction,
+        TimedEvent::AUTODESTRUCTION_MODE autodestruction) :
     TimedEvent(service, event_thread, milliseconds, autodestruction), successed_(0), cancelled_(0), sem_count_(0),
     event_(nullptr), countUntilDestruction_(countUntilDestruction), currentCount_(0)
 {
@@ -81,4 +81,3 @@ bool MockParentEvent::wait(unsigned int milliseconds)
     --sem_count_;
     return true;
 }
-

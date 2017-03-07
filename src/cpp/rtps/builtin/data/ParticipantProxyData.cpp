@@ -32,8 +32,7 @@
 
 #include <fastrtps/qos/QosPolicies.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 using namespace eprosima::fastrtps;
 
@@ -49,7 +48,7 @@ ParticipantProxyData::ParticipantProxyData():
     isAlive(false),
     m_hasChanged(true),
     mp_leaseDurationTimer(nullptr),
-    mp_mutex(new boost::recursive_mutex())
+    mp_mutex(new std::recursive_mutex())
     {
         set_VendorId_Unknown(m_VendorId);
     }

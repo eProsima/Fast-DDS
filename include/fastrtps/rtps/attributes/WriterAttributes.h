@@ -21,7 +21,7 @@
 
 #include "../common/Time_t.h"
 #include "../common/Guid.h"
-#include "../flowcontrol/ThroughputController.h"
+#include "../flowcontrol/ThroughputControllerDescriptor.h"
 #include "EndpointAttributes.h"
 
 namespace eprosima{

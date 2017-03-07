@@ -25,12 +25,6 @@
 #include "../../common/Time_t.h"
 #include "../../common/Locator.h"
 
-namespace boost
-{
-class recursive_mutex;
-}
-
-
 namespace eprosima {
 namespace fastrtps{
 

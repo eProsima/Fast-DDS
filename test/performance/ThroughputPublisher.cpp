@@ -141,7 +141,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     std::ostringstream pt;
     pt << "ThroughputTest_";
     if(hostname)
-        pt << boost::asio::ip::host_name() << "_";
+        pt << asio::ip::host_name() << "_";
     pt << pid << "_UP";
     Wparam.topic.topicName = pt.str();
 
@@ -177,7 +177,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     std::ostringstream sct;
     sct << "ThroughputTest_Command_";
     if(hostname)
-        sct << boost::asio::ip::host_name() << "_";
+        sct << asio::ip::host_name() << "_";
     sct << pid << "_SUB2PUB";
     Rparam.topic.topicName = sct.str();
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -193,7 +193,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     std::ostringstream pct;
     pct << "ThroughputTest_Command_";
     if(hostname)
-        pct << boost::asio::ip::host_name() << "_";
+        pct << asio::ip::host_name() << "_";
     pct << pid << "_PUB2SUB";
     Wparam2.topic.topicName = pct.str();
     Wparam2.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -352,7 +352,7 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
                 if(reliable_)
                     str_reliable = "reliable";
                 std::string fileName = "perf_ThroughputTest_" +
-                    std::to_string(result.payload_size) + "B_" + str_reliable + "_" + 
+                    std::to_string(result.payload_size) + "B_" + str_reliable + "_" +
                     std::to_string(result.demand) + "demand"
                     ".csv";
                 outFile.open(fileName);
@@ -427,8 +427,8 @@ bool ThroughputPublisher::loadDemandsPayload()
             if(end == std::string::npos)
             {
                 more = false;
-                std::istringstream iss(line.substr(start,end-start));
-                if(iss >> demand)
+                std::istringstream n_iss(line.substr(start,end-start));
+                if(n_iss >> demand)
                     m_demand_payload[payload].push_back(demand);
             }
         }
@@ -478,6 +478,3 @@ bool ThroughputPublisher::loadDemandsPayload()
 
     return true;
 }
-
-
-

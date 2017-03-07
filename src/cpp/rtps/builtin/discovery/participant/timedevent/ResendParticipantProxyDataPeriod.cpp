@@ -67,7 +67,7 @@ void ResendParticipantProxyDataPeriod::event(EventCode code, const char* msg)
 	}
 	else
 	{
-		logInfo(RTPS_PDP,"boost message: " <<msg);
+		logInfo(RTPS_PDP,"message: " <<msg);
 	}
 }
 

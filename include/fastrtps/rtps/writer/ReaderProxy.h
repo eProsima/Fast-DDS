@@ -19,7 +19,9 @@
 #ifndef READERPROXY_H_
 #define READERPROXY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
+#include <algorithm>
+#include <mutex>
+#include <set>
 #include "../common/Types.h"
 #include "../common/Locator.h"
 #include "../common/SequenceNumber.h"
@@ -28,11 +30,6 @@
 #include "../attributes/WriterAttributes.h"
 
 #include <set>
-
-namespace boost
-{
-    class recursive_mutex;
-}
 
 namespace eprosima
 {
@@ -183,7 +180,7 @@ namespace eprosima
                 inline bool rtps_is_relevant(CacheChange_t* change){(void)change; return true;};
 
                 //!Mutex
-                boost::recursive_mutex* mp_mutex;
+                std::recursive_mutex* mp_mutex;
 
                 std::set<ChangeForReader_t, ChangeForReaderCmp> m_changesForReader;
 

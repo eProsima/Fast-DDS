@@ -21,8 +21,7 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 namespace eprosima {
 namespace fastrtps{
@@ -47,14 +46,13 @@ WriterHistory::~WriterHistory()
 
 bool WriterHistory::add_change(CacheChange_t* a_change)
 {
-
     if(mp_writer == nullptr || mp_mutex == nullptr)
     {
         logError(RTPS_HISTORY,"You need to create a Writer with this History before adding any changes");
         return false;
     }
 
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     if(a_change->writerGUID != mp_writer->getGuid())
     {
         logError(RTPS_HISTORY,"Change writerGUID "<< a_change->writerGUID << " different than Writer GUID "<< mp_writer->getGuid());
@@ -87,7 +85,7 @@ bool WriterHistory::remove_change(CacheChange_t* a_change)
         return false;
     }
 
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     if(a_change == nullptr)
     {
         logError(RTPS_HISTORY,"Pointer is not valid")
@@ -95,9 +93,9 @@ bool WriterHistory::remove_change(CacheChange_t* a_change)
     }
     if(a_change->writerGUID != mp_writer->getGuid())
     {
-        //		cout << "a change " << a_change->sequenceNumber<< endl;
-        //		cout << "a change "<< a_change->writerGUID << endl;
-        //		cout << "writer: "<< mp_writer->getGuid()<<endl;
+        // cout << "a change " << a_change->sequenceNumber<< endl;
+        // cout << "a change "<< a_change->writerGUID << endl;
+        // cout << "writer: "<< mp_writer->getGuid()<<endl;
         logError(RTPS_HISTORY,"Change writerGUID "<< a_change->writerGUID << " different than Writer GUID "<< mp_writer->getGuid());
         return false;
     }
@@ -131,7 +129,7 @@ bool WriterHistory::remove_change(const SequenceNumber_t& sequence_number)
         return false;
     }
 
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     for(std::vector<CacheChange_t*>::iterator chit = m_changes.begin();
             chit!=m_changes.end();++chit)
@@ -158,7 +156,7 @@ CacheChange_t* WriterHistory::remove_change_and_reuse(const SequenceNumber_t& se
         return nullptr;
     }
 
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     for(std::vector<CacheChange_t*>::iterator chit = m_changes.begin();
             chit!=m_changes.end();++chit)
@@ -201,7 +199,7 @@ bool WriterHistory::remove_min_change()
         return false;
     }
 
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     if(m_changes.size() > 0 && remove_change_g(mp_minSeqCacheChange))
     {
         updateMaxMinSeqNum();

@@ -31,11 +31,10 @@
 #include <string>
 #include <list>
 #include <condition_variable>
-#include <boost/asio.hpp>
-#include <boost/interprocess/detail/os_thread_functions.hpp>
+#include <asio.hpp>
 
 template<class TypeSupport>
-class PubSubWriter 
+class PubSubWriter
 {
     class Listener : public eprosima::fastrtps::PublisherListener
     {
@@ -72,10 +71,10 @@ class PubSubWriter
             publisher_attr_.topic.topicDataType = type_.getName();
             // Generate topic name
             std::ostringstream t;
-            t << topic_name_ << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+            t << topic_name_ << "_" << asio::ip::host_name() << "_" << GET_PID();
             publisher_attr_.topic.topicName = t.str();
     }
-    
+
     ~PubSubWriter()
     {
         if(participant_ != nullptr)
@@ -86,7 +85,7 @@ class PubSubWriter
     {
         //Create participant
         eprosima::fastrtps::ParticipantAttributes pattr;
-        pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+        pattr.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
         participant_ = eprosima::fastrtps::Domain::createParticipant(pattr);
 
         if(participant_ != nullptr)
@@ -121,7 +120,7 @@ class PubSubWriter
     void send(std::list<type>& msgs)
     {
         auto it = msgs.begin();
-        
+
         while(it != msgs.end())
         {
             if(publisher_->write((void*)&(*it)))

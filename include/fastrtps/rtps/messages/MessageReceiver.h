@@ -26,9 +26,6 @@
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/thread.hpp>
-
 using namespace eprosima::fastrtps;
 namespace eprosima {
 namespace fastrtps{
@@ -36,7 +33,6 @@ namespace rtps {
 
 class RTPSWriter;
 class RTPSReader;
-class ListenResource;
 struct SubmessageHeader_t;
 
 /**
@@ -85,7 +81,7 @@ class MessageReceiver
     private:
         std::vector<RTPSWriter *> AssociatedWriters;
         std::vector<RTPSReader *> AssociatedReaders;
-        boost::mutex mtx;
+        std::mutex mtx;
         //ReceiverControlBlock* receiver_resources;
         CacheChange_t* mp_change;
         //!Protocol version of the message

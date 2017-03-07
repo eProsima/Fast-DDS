@@ -37,13 +37,19 @@
 #include <string>
 #include <list>
 #include <condition_variable>
-#include <boost/asio.hpp>
-#include <boost/interprocess/detail/os_thread_functions.hpp>
-#include <boost/thread/mutex.hpp>
+#include <asio.hpp>
 #include <gtest/gtest.h>
 
+
+#if defined(_WIN32)
+#include <process.h>
+#define GET_PID _getpid
+#else
+#define GET_PID getpid
+#endif
+
 template<class TypeSupport>
-class RTPSAsSocketReader 
+class RTPSAsSocketReader
 {
     public:
 
@@ -81,7 +87,7 @@ class RTPSAsSocketReader
         number_samples_expected_(0), port_(0)
         {
             std::ostringstream mw;
-            mw << magicword << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+            mw << magicword << "_" << asio::ip::host_name() << "_" << GET_PID();
             magicword_ = mw.str();
 
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
@@ -111,7 +117,7 @@ class RTPSAsSocketReader
             eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
             pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = false;
             pattr.builtin.use_WriterLivelinessProtocol = false;
-            pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+            pattr.builtin.domainId = (uint32_t)GET_PID() % 230;
             pattr.participantID = 1;
             participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(pattr);
             ASSERT_NE(participant_, nullptr);
@@ -170,12 +176,12 @@ class RTPSAsSocketReader
             receiving_ = true;
             mutex_.unlock();
 
-            boost::unique_lock<boost::recursive_mutex> lock(*history_->getMutex());
+            std::unique_lock<std::recursive_mutex> lock(*history_->getMutex());
             while(history_->changesBegin() != history_->changesEnd())
             {
                 eprosima::fastrtps::rtps::CacheChange_t* change = *history_->changesBegin();
                 receive_one(reader_, change);
-            } 
+            }
         }
 
         void stopReception()
@@ -281,7 +287,7 @@ class RTPSAsSocketReader
                     cdr >> data;
 
                     auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
-                    ASSERT_NE(it, total_msgs_.end()); 
+                    ASSERT_NE(it, total_msgs_.end());
                     total_msgs_.erase(it);
                     ++current_received_count_;
 

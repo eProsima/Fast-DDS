@@ -81,6 +81,6 @@ void HandshakeMessageTokenResent::event(EventCode code, const char* msg)
     }
     else
     {
-        logInfo(SECURITY, "HandshakeMessageTokenResent boost message: " <<msg);
+        logInfo(SECURITY, "HandshakeMessageTokenResent event message: " <<msg);
     }
 }

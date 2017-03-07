@@ -27,11 +27,10 @@
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 
-#include <boost/interprocess/detail/os_thread_functions.hpp>
-#include <boost/asio.hpp>
+#include <asio.hpp>
 
 RTPSAsSocketReader::RTPSAsSocketReader(): listener_(*this), lastvalue_(std::numeric_limits<uint16_t>::max()),
-    participant_(nullptr), reader_(nullptr), history_(nullptr), initialized_(false) 
+    participant_(nullptr), reader_(nullptr), history_(nullptr), initialized_(false)
 {
 }
 
@@ -49,7 +48,7 @@ void RTPSAsSocketReader::init(std::string &ip, uint32_t port, uint16_t nmsgs)
 	RTPSParticipantAttributes pattr;
 	pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = false;
 	pattr.builtin.use_WriterLivelinessProtocol = false;
-    pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+    pattr.builtin.domainId = (uint32_t)GET_PID() % 230;
     pattr.participantID = 1;
 	participant_ = RTPSDomain::createParticipant(pattr);
 
@@ -78,8 +77,8 @@ void RTPSAsSocketReader::init(std::string &ip, uint32_t port, uint16_t nmsgs)
     }
 
     text_ = getText();
-    domainId_ = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id();
-    hostname_ = boost::asio::ip::host_name();
+    domainId_ = (uint32_t)GET_PID();
+    hostname_ = asio::ip::host_name();
 
     std::ostringstream word;
     word << text_ << "_" << hostname_ << "_" << domainId_;

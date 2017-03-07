@@ -39,8 +39,7 @@
 #include <fastrtps/utils/StringMatching.h>
 #include <fastrtps/log/Log.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 using namespace eprosima::fastrtps;
 
@@ -160,7 +159,7 @@ bool EDP::removeWriterProxy(const GUID_t& writer)
     ParticipantProxyData* pdata = nullptr;
     WriterProxyData* wdata = nullptr;
     // Block because other thread can be removing the participant.
-    boost::lock_guard<boost::recursive_mutex> pguard(*mp_PDP->getMutex());
+    std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
     if(this->mp_PDP->lookupWriterProxyData(writer,&wdata, &pdata))
     {
         logInfo(RTPS_EDP," in topic: " << wdata->topicName());
@@ -177,7 +176,7 @@ bool EDP::removeReaderProxy(const GUID_t& reader)
     ParticipantProxyData* pdata = nullptr;
     ReaderProxyData* rdata = nullptr;
     // Block because other thread can be removing the participant.
-    boost::lock_guard<boost::recursive_mutex> pguard(*mp_PDP->getMutex());
+    std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
     if(this->mp_PDP->lookupReaderProxyData(reader,&rdata, &pdata))
     {
         logInfo(RTPS_EDP," in topic: "<<rdata->m_topicName);
@@ -191,12 +190,12 @@ bool EDP::removeReaderProxy(const GUID_t& reader)
 bool EDP::unpairWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata)
 {
     logInfo(RTPS_EDP, wdata->guid() << " in topic: " << wdata->topicName());
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
+    std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
             rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
     {
         RemoteWriterAttributes watt;
-        boost::unique_lock<boost::recursive_mutex> plock(*pdata->mp_mutex);
+        std::unique_lock<std::recursive_mutex> plock(*pdata->mp_mutex);
         watt.guid = wdata->guid();
         if((*rit)->matched_writer_remove(watt))
         {
@@ -216,12 +215,12 @@ bool EDP::unpairWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata)
 bool EDP::unpairReaderProxy(ParticipantProxyData *pdata, ReaderProxyData* rdata)
 {
     logInfo(RTPS_EDP,rdata->m_guid << " in topic: "<< rdata->m_topicName);
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
+    std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
             wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
     {
         RemoteReaderAttributes ratt;
-        boost::unique_lock<boost::recursive_mutex> plock(*pdata->mp_mutex);
+        std::unique_lock<std::recursive_mutex> plock(*pdata->mp_mutex);
         ratt.guid = rdata->m_guid;
         if((*wit)->matched_reader_remove(ratt))
         {
@@ -429,11 +428,11 @@ bool EDP::pairingReader(RTPSReader* R)
     if(this->mp_PDP->lookupReaderProxyData(R->getGuid(),&rdata, &pdata))
     {
         logInfo(RTPS_EDP,R->getGuid()<<" in topic: \"" << rdata->m_topicName<<"\"");
-        boost::lock_guard<boost::recursive_mutex> pguard(*mp_PDP->getMutex());
+        std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
         for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
                 pit!=mp_PDP->ParticipantProxiesEnd();++pit)
         {
-            boost::lock_guard<boost::recursive_mutex> guard(*(*pit)->mp_mutex);
+            std::lock_guard<std::recursive_mutex> guard(*(*pit)->mp_mutex);
             for(std::vector<WriterProxyData*>::iterator wdatait = (*pit)->m_writers.begin();
                     wdatait!=(*pit)->m_writers.end();++wdatait)
             {
@@ -487,11 +486,11 @@ bool EDP::pairingWriter(RTPSWriter* W)
     if(this->mp_PDP->lookupWriterProxyData(W->getGuid(),&wdata, &pdata))
     {
         logInfo(RTPS_EDP, W->getGuid() << " in topic: \"" << wdata->topicName() <<"\"");
-        boost::lock_guard<boost::recursive_mutex> pguard(*mp_PDP->getMutex());
+        std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
         for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
                 pit!=mp_PDP->ParticipantProxiesEnd();++pit)
         {
-            boost::lock_guard<boost::recursive_mutex> guard(*(*pit)->mp_mutex);
+            std::lock_guard<std::recursive_mutex> guard(*(*pit)->mp_mutex);
             for(std::vector<ReaderProxyData*>::iterator rdatait = (*pit)->m_readers.begin();
                     rdatait!=(*pit)->m_readers.end(); ++rdatait)
             {
@@ -541,11 +540,11 @@ bool EDP::pairingWriter(RTPSWriter* W)
 bool EDP::pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata)
 {
     logInfo(RTPS_EDP,rdata->m_guid<<" in topic: \"" << rdata->m_topicName <<"\"");
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
+    std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
             wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
     {
-        boost::unique_lock<boost::recursive_mutex> lock(*(*wit)->getMutex());
+        std::unique_lock<std::recursive_mutex> lock(*(*wit)->getMutex());
         GUID_t writerGUID = (*wit)->getGuid();
 #if HAVE_SECURITY
         bool is_submessage_protected = (*wit)->is_submessage_protected();
@@ -556,7 +555,7 @@ bool EDP::pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata
         WriterProxyData* wdata = nullptr;
         if(mp_PDP->lookupWriterProxyData(writerGUID,&wdata, &wpdata))
         {
-            boost::unique_lock<boost::recursive_mutex> plock(*pdata->mp_mutex);
+            std::unique_lock<std::recursive_mutex> plock(*pdata->mp_mutex);
 
             wpdata->mp_mutex->lock();
             bool valid = validMatching(wdata, rdata);
@@ -619,12 +618,12 @@ bool EDP::pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata
 bool EDP::pairingWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata)
 {
     logInfo(RTPS_EDP, wdata->guid() <<" in topic: \"" << wdata->topicName() <<"\"");
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
+    std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
             rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
     {
         GUID_t readerGUID;
-        boost::unique_lock<boost::recursive_mutex> lock(*(*rit)->getMutex());
+        std::unique_lock<std::recursive_mutex> lock(*(*rit)->getMutex());
         readerGUID = (*rit)->getGuid();
 #if HAVE_SECURITY
         bool is_submessage_protected = (*rit)->is_submessage_protected();
@@ -635,7 +634,7 @@ bool EDP::pairingWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata
         ReaderProxyData* rdata = nullptr;
         if(mp_PDP->lookupReaderProxyData(readerGUID, &rdata, &rpdata))
         {
-            boost::unique_lock<boost::recursive_mutex> plock(*pdata->mp_mutex);
+            std::unique_lock<std::recursive_mutex> plock(*pdata->mp_mutex);
 
             rpdata->mp_mutex->lock();
             bool valid = validMatching(rdata, wdata);

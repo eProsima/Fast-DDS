@@ -20,30 +20,25 @@
 
 #ifndef ENDPOINT_H_
 #define ENDPOINT_H_
+#include <mutex>
 #include "common/Types.h"
 #include "common/Locator.h"
 #include "common/Guid.h"
 
 #include "attributes/EndpointAttributes.h"
 
-namespace boost
-{
-	class recursive_mutex;
-}
-
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
 class RTPSParticipantImpl;
-class ResourceSend;
 class ResourceEvent;
 
 
 /**
  * Class Endpoint, all entities of the RTPS network derive from this class.
  * Although the RTPSParticipant is also defined as an endpoint in the RTPS specification, in this implementation
- * the RTPSParticipant class **does not** inherit from the endpoint class. Each Endpoint object owns a pointer to the 
+ * the RTPSParticipant class **does not** inherit from the endpoint class. Each Endpoint object owns a pointer to the
  * RTPSParticipant it belongs to.
  * @ingroup COMMON_MODULE
  */
@@ -65,7 +60,7 @@ class Endpoint
      * Get mutex
      * @return Associated Mutex
      */
-    RTPS_DllAPI inline boost::recursive_mutex* getMutex() const { return mp_mutex; }
+    RTPS_DllAPI inline std::recursive_mutex* getMutex() const { return mp_mutex; }
 
     /**
      * Get associated attributes
@@ -89,7 +84,7 @@ class Endpoint
     //!Endpoint Attributes
     EndpointAttributes m_att;
     //!Endpoint Mutex
-    boost::recursive_mutex* mp_mutex;
+    std::recursive_mutex* mp_mutex;
 
     private:
 

@@ -20,7 +20,7 @@
 #ifndef LATENCYPUBLISHER_H_
 #define LATENCYPUBLISHER_H_
 
-#include <boost/asio.hpp>
+#include <asio.hpp>
 
 #include "LatencyTestTypes.h"
 
@@ -112,7 +112,7 @@ public:
 
 	LatencyDataType latency_t;
     TestCommandDataType command_t;
-		
+
 	std::stringstream output_file_minimum;
 	std::stringstream output_file_average;
 	std::stringstream output_file_16;

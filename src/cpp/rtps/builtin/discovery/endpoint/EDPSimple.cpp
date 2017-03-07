@@ -44,8 +44,7 @@
 
 #include <fastrtps/log/Log.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 namespace eprosima {
 namespace fastrtps{
@@ -260,7 +259,7 @@ bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
 #endif
             change->serializedPayload.length = (uint16_t)rdata->m_parameterList.m_cdrmsg.length;
             memcpy(change->serializedPayload.data,rdata->m_parameterList.m_cdrmsg.buffer,change->serializedPayload.length);
-            boost::unique_lock<boost::recursive_mutex> lock(*mp_SubWriter.second->getMutex());
+            std::unique_lock<std::recursive_mutex> lock(*mp_SubWriter.second->getMutex());
             for(auto ch = mp_SubWriter.second->changesBegin();ch!=mp_SubWriter.second->changesEnd();++ch)
             {
                 if((*ch)->instanceHandle == change->instanceHandle)
@@ -297,7 +296,7 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 #endif
             change->serializedPayload.length = (uint16_t)wdata->m_parameterList.m_cdrmsg.length;
             memcpy(change->serializedPayload.data,wdata->m_parameterList.m_cdrmsg.buffer,change->serializedPayload.length);
-            boost::unique_lock<boost::recursive_mutex> lock(*mp_PubWriter.second->getMutex());
+            std::unique_lock<std::recursive_mutex> lock(*mp_PubWriter.second->getMutex());
             for(auto ch = mp_PubWriter.second->changesBegin();ch!=mp_PubWriter.second->changesEnd();++ch)
             {
                 if((*ch)->instanceHandle == change->instanceHandle)
@@ -327,7 +326,7 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
         CacheChange_t* change = mp_PubWriter.first->new_change([]() -> uint32_t {return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;}, NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
         if(change != nullptr)
         {
-            boost::lock_guard<boost::recursive_mutex> guard(*mp_PubWriter.second->getMutex());
+            std::lock_guard<std::recursive_mutex> guard(*mp_PubWriter.second->getMutex());
             for(auto ch = mp_PubWriter.second->changesBegin();ch!=mp_PubWriter.second->changesEnd();++ch)
             {
                 if((*ch)->instanceHandle == change->instanceHandle)
@@ -352,7 +351,7 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
         CacheChange_t* change = mp_SubWriter.first->new_change([]() -> uint32_t {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;}, NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
         if(change != nullptr)
         {
-            boost::lock_guard<boost::recursive_mutex> guard(*mp_SubWriter.second->getMutex());
+            std::lock_guard<std::recursive_mutex> guard(*mp_SubWriter.second->getMutex());
             for(auto ch = mp_SubWriter.second->changesBegin();ch!=mp_SubWriter.second->changesEnd();++ch)
             {
                 if((*ch)->instanceHandle == change->instanceHandle)
@@ -377,7 +376,7 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
     auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*pdata->mp_mutex);
     if(auxendp!=0 && mp_PubReader.first!=nullptr) //Exist Pub Writer and i have pub reader
     {
         logInfo(RTPS_EDP,"Adding SEDP Pub Writer to my Pub Reader");
@@ -450,7 +449,7 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
     logInfo(RTPS_EDP,"For RTPSParticipant: "<<pdata->m_guid);
-    boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*pdata->mp_mutex);
     for (auto it = pdata->m_builtinReaders.begin(); it != pdata->m_builtinReaders.end();++it)
     {
         if(it->guid.entityId == c_EntityId_SEDPPubReader && this->mp_PubWriter.first !=nullptr)

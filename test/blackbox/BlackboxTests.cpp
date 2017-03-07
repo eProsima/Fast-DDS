@@ -64,7 +64,7 @@ class BlackboxEnvironment : public ::testing::Environment
 
         void SetUp()
         {
-            global_port = boost::interprocess::ipcdetail::get_current_process_id();
+            global_port = GET_PID();
 
             if(global_port + 7400 > global_port)
                 global_port += 7400;

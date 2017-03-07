@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 add_subdirectory(blackbox)
 add_subdirectory(communication)
 add_subdirectory(performance)
@@ -29,6 +30,7 @@ add_subdirectory(unittest/rtps/network)
 add_subdirectory(unittest/rtps/flowcontrol)
 add_subdirectory(unittest/transport)
 add_subdirectory(unittest/logging)
+add_subdirectory(unittest/utils)
 if(SECURITY)
     add_subdirectory(unittest/security/authentication)
     add_subdirectory(unittest/security/cryptography)

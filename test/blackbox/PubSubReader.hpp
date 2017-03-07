@@ -33,8 +33,7 @@
 #include <string>
 #include <list>
 #include <condition_variable>
-#include <boost/asio.hpp>
-#include <boost/interprocess/detail/os_thread_functions.hpp>
+#include <asio.hpp>
 #include <gtest/gtest.h>
 
 template<class TypeSupport>
@@ -116,7 +115,7 @@ class PubSubReader
             subscriber_attr_.topic.topicDataType = type_.getName();
             // Generate topic name
             std::ostringstream t;
-            t << topic_name_ << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+            t << topic_name_ << "_" << asio::ip::host_name() << "_" << GET_PID();
             subscriber_attr_.topic.topicName = t.str();
 
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
@@ -140,8 +139,9 @@ class PubSubReader
 
         void init()
         {
-            participant_attr_.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+            participant_attr_.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
             participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr_, &participant_listener_);
+
             ASSERT_NE(participant_, nullptr);
 
             // Register type
@@ -383,7 +383,7 @@ class PubSubReader
                     if(info.sampleKind == ALIVE)
                     {
                         auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
-                        ASSERT_NE(it, total_msgs_.end()); 
+                        ASSERT_NE(it, total_msgs_.end());
                         total_msgs_.erase(it);
                         ++current_received_count_;
 
@@ -454,4 +454,3 @@ class PubSubReader
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBREADER_HPP_
-
