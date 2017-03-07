@@ -105,10 +105,16 @@ set(${PROJECT_NAME}_source_files
     ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2/tinyxml2.cpp
     )
 
+if(WIN32)
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps.rc
+        )
+endif()
+
 if(ANDROID)
     list(APPEND ${PROJECT_NAME}_source_files
         ${PROJECT_SOURCE_DIR}/thirdparty/android-ifaddrs/ifaddrs.c
-    )
+        )
 endif()
 
 set_sources(${${PROJECT_NAME}_source_files})
