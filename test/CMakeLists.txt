@@ -15,7 +15,6 @@
 
 add_subdirectory(blackbox)
 add_subdirectory(communication)
-add_subdirectory(performance)
 if(NOT ((MSVC OR MSVC_IDE)))
    find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
    if(CTEST_MEMORYCHECK_COMMAND)
