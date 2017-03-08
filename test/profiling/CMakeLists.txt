@@ -19,7 +19,7 @@ if(PROFILING_TESTS)
       -DASIO_STANDALONE
     )
 
-    include_directories(${PROJECT_SOURCE_DIR}/thirdparty/asio/asio/include)
+    include_directories(${ASIO_INCLUDE_DIR})
 
     set(RTPSCOMMSPROFILING_SOURCE
         RTPSCommsProfiling.cpp

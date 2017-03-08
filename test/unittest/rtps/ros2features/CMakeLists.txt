@@ -21,7 +21,7 @@ if(NOT ((NSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             add_definitions(-D_WIN32_WINNT=0x0501)
         endif()
 
-        include_directories(${PROJECT_SOURCE_DIR}/thirdparty/asio/asio/include)
+        include_directories(${ASIO_INCLUDE_DIR})
 
         set(ROS2FEATURES_SOURCE ros2feature_test.cpp
             types/HelloWorldType.cpp

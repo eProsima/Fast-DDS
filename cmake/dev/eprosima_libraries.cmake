@@ -132,8 +132,11 @@ macro(find_eprosima_thirdparty package)
                 message(FATAL_ERROR "Cannot configure Git submodule ${package}")
             endif()
 
-            set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_INSTALL_PREFIX_})
+            set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${package})
+            set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${package}/${package})
         endif()
+
+        find_package(${package} REQUIRED)
     endif()
 endmacro()
 

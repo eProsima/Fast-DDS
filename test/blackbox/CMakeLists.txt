@@ -26,7 +26,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
           -DASIO_STANDALONE
         )
 
-        include_directories(${PROJECT_SOURCE_DIR}/thirdparty/asio/asio/include)
+        include_directories(${ASIO_INCLUDE_DIR})
 
         ###############################################################################
         # Unit tests

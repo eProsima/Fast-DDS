@@ -22,7 +22,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         endif()
 
         include_directories(mock/)
-        include_directories(${PROJECT_SOURCE_DIR}/thirdparty/asio/asio/include)
+        include_directories(${ASIO_INCLUDE_DIR})
 
         set(THROUGHPUTCONTROLLERTESTS_SOURCE
             ThroughputControllerTests.cpp

@@ -102,7 +102,7 @@ set(${PROJECT_NAME}_source_files
     rtps/flowcontrol/ThroughputController.cpp
     rtps/flowcontrol/ThroughputControllerDescriptor.cpp
     rtps/flowcontrol/FlowController.cpp
-    ../../thirdparty/tinyxml2/tinyxml2.cpp
+    ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
     )
 
 if(WIN32)
@@ -156,8 +156,8 @@ if(ANDROID)
 endif()
 
 set(${PROJECT_NAME}_include_dirs
-    ${PROJECT_SOURCE_DIR}/thirdparty/asio/asio/include
-    ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2
+    ${ASIO_INCLUDE_DIR}
+    ${TINYXML2_INCLUDE_DIR}
 )
 
 if(ANDROID)
@@ -251,12 +251,12 @@ set_public_header(${PROJECT_BINARY_DIR}/include ${PROJECT_NAME} config.h
     COMPONENT headers
     )
 
-set_public_headers_directory(${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2 ""
+set_public_headers_directory(${TINYXML2_INCLUDE_DIR} ""
     DESTINATION ${INCLUDE_INSTALL_DIR}
     COMPONENT headers
     )
 
-set_public_headers_directory(${PROJECT_SOURCE_DIR}/thirdparty/asio/asio/include ""
+set_public_headers_directory(${ASIO_INCLUDE_DIR} ""
     DESTINATION ${INCLUDE_INSTALL_DIR}
     COMPONENT headers
     )
@@ -276,7 +276,7 @@ if(UNIX AND EPROSIMA_INSTALLER)
         PATTERN "*.hpp"
         )
 
-    install(DIRECTORY ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2
+    install(DIRECTORY ${TINYXML2_SOURCE_DIR}
         DESTINATION thirdparty
         COMPONENT sources
         FILES_MATCHING

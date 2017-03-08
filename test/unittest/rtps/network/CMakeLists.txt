@@ -23,7 +23,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
-        include_directories(${PROJECT_SOURCE_DIR}/thirdparty/asio/asio/include)
+        include_directories(${ASIO_INCLUDE_DIR})
 
         set(NETWORKFACTORYTESTS_SOURCE
             NetworkFactoryTests.cpp
