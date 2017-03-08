@@ -160,44 +160,6 @@ void print_non_received_messages(const std::list<T>& data, const std::function<v
 }
 /***** End auxiliary lambda function *****/
 
-// This test has to be de first because depends on participant ID.
-BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-
-    reader.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        disable_multicast().init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    writer.history_depth(100).
-        disable_multicast().init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Because its volatile the durability
-    // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
-
-    auto data = default_helloword_data_generator();
-
-    reader.expected_data(data);
-    reader.startReception();
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
-}
-
 BLACKBOXTEST(BlackBox, RTPSAsNonReliableSocket)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
@@ -1678,6 +1640,43 @@ BLACKBOXTEST(BlackBox, StaticDiscovery)
 
     print_non_received_messages(data, default_helloworld_print);
     ASSERT_EQ(data.size(), static_cast<size_t>(0));
+}
+
+BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    reader.history_depth(100).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        disable_multicast(0).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.history_depth(100).
+        disable_multicast(1).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_helloword_data_generator();
+
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(2));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_EQ(data.size(), 0);
 }
 
 int main(int argc, char **argv)

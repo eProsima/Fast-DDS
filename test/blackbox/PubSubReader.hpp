@@ -297,8 +297,10 @@ class PubSubReader
             return *this;
         }
 
-        PubSubReader& disable_multicast()
+        PubSubReader& disable_multicast(int32_t participantId)
         {
+            participant_attr_.rtps.participantID = participantId;
+
             LocatorList_t default_unicast_locators;
             Locator_t default_unicast_locator;
 
