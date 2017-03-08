@@ -24,6 +24,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             endif()
         endif()
 
+        add_definitions(
+          -DBOOST_ASIO_STANDALONE
+          -DASIO_STANDALONE
+        )
+
         include_directories(${PROJECT_SOURCE_DIR}/thirdparty/asio/asio/include)
 
         ###############################################################################

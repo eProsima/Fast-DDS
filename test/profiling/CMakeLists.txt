@@ -14,6 +14,13 @@
 
 if(PROFILING_TESTS)
 
+    add_definitions(
+      -DBOOST_ASIO_STANDALONE
+      -DASIO_STANDALONE
+    )
+
+    include_directories(${PROJECT_SOURCE_DIR}/thirdparty/asio/asio/include)
+
     set(RTPSCOMMSPROFILING_SOURCE
         RTPSCommsProfiling.cpp
         RTPSAsSocketReader.cpp

@@ -102,18 +102,6 @@ else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-unknown-pragmas -std=c++11")
 endif()
 
-add_definitions(
-  -DBOOST_ASIO_STANDALONE
-  -DASIO_STANDALONE
-)
-
-if(ANDROID)
-  add_definitions(
-    -DASIO_DISABLE_MOVE
-    -DASIO_DISABLE_STD_STRING_VIEW
-  )
-endif()
-
 ###############################################################################
 # GCC colors if using CCache
 ###############################################################################

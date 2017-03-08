@@ -102,7 +102,7 @@ set(${PROJECT_NAME}_source_files
     rtps/flowcontrol/ThroughputController.cpp
     rtps/flowcontrol/ThroughputControllerDescriptor.cpp
     rtps/flowcontrol/FlowController.cpp
-    ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2/tinyxml2.cpp
+    ../../thirdparty/tinyxml2/tinyxml2.cpp
     )
 
 if(WIN32)
@@ -141,6 +141,18 @@ endif()
 # If INTERNAL_DEBUG = ON, define symbol for extensive debug messages
 if(INTERNAL_DEBUG)
     add_definitions(-D__INTERNALDEBUG)
+endif()
+
+add_definitions(
+  -DBOOST_ASIO_STANDALONE
+  -DASIO_STANDALONE
+)
+
+if(ANDROID)
+  add_definitions(
+    -DASIO_DISABLE_MOVE
+    -DASIO_DISABLE_STD_STRING_VIEW
+  )
 endif()
 
 set(${PROJECT_NAME}_include_dirs
@@ -239,6 +251,16 @@ set_public_header(${PROJECT_BINARY_DIR}/include ${PROJECT_NAME} config.h
     COMPONENT headers
     )
 
+set_public_headers_directory(${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2 ""
+    DESTINATION ${INCLUDE_INSTALL_DIR}
+    COMPONENT headers
+    )
+
+set_public_headers_directory(${PROJECT_SOURCE_DIR}/thirdparty/asio/asio/include ""
+    DESTINATION ${INCLUDE_INSTALL_DIR}
+    COMPONENT headers
+    )
+
 set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers" PARENT_SCOPE)
 set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers" PARENT_SCOPE)
 
@@ -246,6 +268,16 @@ set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Head
 if(UNIX AND EPROSIMA_INSTALLER)
     install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/cpp
         DESTINATION src
+        COMPONENT sources
+        FILES_MATCHING
+        PATTERN "*.c"
+        PATTERN "*.cpp"
+        PATTERN "*.h"
+        PATTERN "*.hpp"
+        )
+
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2
+        DESTINATION thirdparty
         COMPONENT sources
         FILES_MATCHING
         PATTERN "*.c"
