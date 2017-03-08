@@ -198,6 +198,8 @@ class RTPSParticipantImpl
 
         uint32_t getMaxMessageSize() const;
 
+        NetworkFactory& network_factory() { return m_network_Factory; }
+
     private:
         //!Attributes of the RTPSParticipant
         RTPSParticipantAttributes m_att;

@@ -48,6 +48,7 @@
 #include <fastrtps/utils/Semaphore.h>
 
 #include <mutex>
+#include <algorithm>
 
 #include <fastrtps/log/Log.h>
 
@@ -74,11 +75,11 @@ Locator_t RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t loc)
     switch (loc.kind){
         case LOCATOR_KIND_UDPv4:
             //This is a completely made up rule
-            loc.port += 2;
+            loc.port += m_att.port.participantIDGain;
             break;
         case LOCATOR_KIND_UDPv6:
             //TODO - Define the rest of rules
-            loc.port += 2;
+            loc.port += m_att.port.participantIDGain;
             break;
     }
     return loc;
@@ -87,7 +88,7 @@ Locator_t RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t loc)
 RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam,
         const GuidPrefix_t& guidP,
         RTPSParticipant* par,
-        RTPSParticipantListener* plisten):	m_att(PParam), m_guid(guidP,c_EntityId_RTPSParticipant),
+        RTPSParticipantListener* plisten): m_att(PParam), m_guid(guidP,c_EntityId_RTPSParticipant),
     mp_event_thr(nullptr),
     mp_builtinProtocols(nullptr),
     mp_ResourceSemaphore(new Semaphore(0)),
@@ -163,6 +164,17 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     }
     else
     {
+        // Locator with port 0, calculate port.
+        std::for_each(m_att.defaultUnicastLocatorList.begin(),
+                m_att.defaultUnicastLocatorList.end(),
+                [&](Locator_t& loc) {
+                    if(loc.port == 0)
+                        loc.port = m_att.port.portBase+
+                            m_att.port.domainIDGain*PParam.builtin.domainId+
+                            m_att.port.offsetd3+
+                            m_att.port.participantIDGain*m_att.participantID;
+                });
+
         // Normalize unicast locators.
         m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
     }

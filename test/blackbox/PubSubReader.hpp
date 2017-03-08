@@ -297,6 +297,20 @@ class PubSubReader
             return *this;
         }
 
+        PubSubReader& disable_multicast()
+        {
+            LocatorList_t default_unicast_locators;
+            Locator_t default_unicast_locator;
+
+            default_unicast_locators.push_back(default_unicast_locator);
+            participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = default_unicast_locators;
+
+            Locator_t loopback_locator;
+            loopback_locator.set_IP4_address(127, 0, 0, 1);
+            participant_attr_.rtps.builtin.initialPeersList.push_back(loopback_locator);
+            return *this;
+        }
+
     private:
 
         void receive_one(eprosima::fastrtps::Subscriber* subscriber, bool& returnedValue)

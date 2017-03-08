@@ -322,11 +322,9 @@ bool PDPSimple::createSPDPEndpoints()
     {
         mp_SPDPWriter = dynamic_cast<StatelessWriter*>(wout);
         RemoteReaderAttributes ratt;
-        for(LocatorListIterator lit = mp_builtin->m_metatrafficMulticastLocatorList.begin();
-                lit!=mp_builtin->m_metatrafficMulticastLocatorList.end();++lit)
+        for(LocatorListIterator lit = mp_builtin->m_initialPeersList.begin();
+                lit != mp_builtin->m_initialPeersList.end(); ++lit)
             mp_SPDPWriter->add_locator(ratt,*lit);
-        if(this->mp_builtin->m_useMandatory)
-            mp_SPDPWriter->add_locator(ratt,mp_builtin->m_mandatoryMulticastLocator);
     }
     else
     {
