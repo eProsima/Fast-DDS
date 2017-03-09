@@ -39,7 +39,8 @@ macro(find_eprosima_package package)
                     "-DANDROID_ARM_NEON=${ANDROID_ARM_NEON}"
                     "-DANDROID_DISABLE_NO_EXECUTE=${ANDROID_DISABLE_NO_EXECUTE}"
                     "-DANDROID_DISABLE_RELRO=${ANDROID_DISABLE_RELRO}"
-                    "-DANDROID_DISABLE_FORMAT_STRING_CHECKS=${ANDROID_DISABLE_FORMAT_STRING_CHECKS}"                    
+                    "-DANDROID_DISABLE_FORMAT_STRING_CHECKS=${ANDROID_DISABLE_FORMAT_STRING_CHECKS}"
+                    "-DANDROID_FUNCTION_LEVEL_LINKING=${ANDROID_FUNCTION_LEVEL_LINKING}"
                     )
             endif()
 
