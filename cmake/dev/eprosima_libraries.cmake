@@ -41,8 +41,8 @@ macro(find_eprosima_package package)
             set(${package}_CMAKE_ARGS
                 "\${SOURCE_DIR_}"
                 "\${GENERATOR_}"
-                "-DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}"
-                "-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}"
+                "\${CMAKE_C_COMPILER_}"
+                "\${CMAKE_CXX_COMPILER_}"
                 "-DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS_}"
                 "-DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS_}"
                 ${BUILD_OPTION}
@@ -67,6 +67,8 @@ macro(find_eprosima_package package)
                 "set(GENERATOR_ -G \"${CMAKE_GENERATOR}\")\n"
                 "set(CMAKE_INSTALL_PREFIX_ \"-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX_}\")\n"
                 "set(CMAKE_PREFIX_PATH_ -DCMAKE_PREFIX_PATH=\"${CMAKE_PREFIX_PATH_}\")\n"
+                "set(CMAKE_C_COMPILER_ \"-DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}\")\n"
+                "set(CMAKE_CXX_COMPILER_ \"-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}\")\n"
                 "ExternalProject_Add(${package}\n"
                 "CONFIGURE_COMMAND \"${CMAKE_COMMAND}\"\n"
                 "${${package}_CMAKE_ARGS}\n"
