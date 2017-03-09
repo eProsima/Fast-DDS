@@ -113,7 +113,7 @@ endif()
 
 if(ANDROID)
     list(APPEND ${PROJECT_NAME}_source_files
-        ${PROJECT_SOURCE_DIR}/thirdparty/android-ifaddrs/ifaddrs.c
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
         )
 endif()
 
@@ -161,7 +161,7 @@ set(${PROJECT_NAME}_include_dirs
 )
 
 if(ANDROID)
-    list(APPEND ${PROJECT_NAME}_include_dirs ${PROJECT_SOURCE_DIR}/thirdparty/android-ifaddrs)
+    list(APPEND ${PROJECT_NAME}_include_dirs ${ANDROID_IFADDRS_INCLUDE_DIR})
 else()
     find_package(Threads REQUIRED)
 endif()

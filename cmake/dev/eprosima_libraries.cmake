@@ -23,12 +23,30 @@ macro(find_eprosima_package package)
                 set(CMAKE_INSTALL_PREFIX_ "${PROJECT_BINARY_DIR}/external/install")
             endif()
 
+            set(ANDROID_BUILD_OPTIONS "")
+            if(ANDROID)
+                set(ANDROID_BUILD_OPTIONS "-DANDROID_ABI=${ANDROID_ABI}"
+                    "-DANDROID_NDK=${ANDROID_NDK}"
+                    "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}"
+                    "-DANDROID_NATIVE_API_LEVEL=${ANDROID_NATIVE_API_LEVEL}"
+                    "-DANDROID_TOOLCHAIN=${ANDROID_TOOLCHAIN}"
+                    )
+            endif()
+
             # Separate CMAKE_PREFIX_PATH
             string(REPLACE ";" "|" CMAKE_PREFIX_PATH_ "${CMAKE_PREFIX_PATH}")
+            string(REPLACE " " "\\ " CMAKE_C_FLAGS_ "${CMAKE_C_FLAGS}")
+            string(REPLACE " " "\\ " CMAKE_CXX_FLAGS_ "${CMAKE_CXX_FLAGS}")
+
             set(${package}_CMAKE_ARGS
                 "\${SOURCE_DIR_}"
                 "\${GENERATOR_}"
+                "-DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}"
+                "-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}"
+                "-DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS_}"
+                "-DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS_}"
                 ${BUILD_OPTION}
+                ${ANDROID_BUILD_OPTIONS}
                 "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
                 "-DMINION=ON"
                 "-DEPROSIMA_INSTALLER_MINION=${EPROSIMA_INSTALLER_MINION}"
@@ -61,6 +79,7 @@ macro(find_eprosima_package package)
             execute_process(COMMAND ${CMAKE_COMMAND}
                 -G ${CMAKE_GENERATOR}
                 ${BUILD_OPTION}
+                ${ANDROID_BUILD_OPTIONS}
                 WORKING_DIRECTORY ${${package}ExternalDir}
                 RESULT_VARIABLE EXECUTE_RESULT
                 )
@@ -131,10 +150,10 @@ macro(find_eprosima_thirdparty package)
             if(NOT EXECUTE_RESULT EQUAL 0)
                 message(FATAL_ERROR "Cannot configure Git submodule ${package}")
             endif()
-
-            set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${package})
-            set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${package}/${package})
         endif()
+
+        set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${package})
+        set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${package}/${package})
 
         find_package(${package} REQUIRED)
     endif()
