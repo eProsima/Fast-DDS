@@ -48,6 +48,7 @@
 #include <fastrtps/utils/Semaphore.h>
 
 #include <mutex>
+#include <algorithm>
 
 #include <fastrtps/log/Log.h>
 
@@ -74,11 +75,11 @@ Locator_t RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t loc)
     switch (loc.kind){
         case LOCATOR_KIND_UDPv4:
             //This is a completely made up rule
-            loc.port += 2;
+            loc.port += m_att.port.participantIDGain;
             break;
         case LOCATOR_KIND_UDPv6:
             //TODO - Define the rest of rules
-            loc.port += 2;
+            loc.port += m_att.port.participantIDGain;
             break;
     }
     return loc;
@@ -148,50 +149,74 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
     /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
 
-    //UDPv4
-    if(m_att.builtin.metatrafficMulticastLocatorList.empty())
+    if(m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
     {
+        //UDPv4
         Locator_t mandatoryMulticastLocator;
         mandatoryMulticastLocator.kind = LOCATOR_KIND_UDPv4;
         mandatoryMulticastLocator.port = metatraffic_multicast_port;
         mandatoryMulticastLocator.set_IP4_address(239,255,0,1);
+
         m_att.builtin.metatrafficMulticastLocatorList.push_back(mandatoryMulticastLocator);
+
+        Locator_t default_metatraffic_unicast_locator;
+        default_metatraffic_unicast_locator.port = metatraffic_unicast_port;
+        m_att.builtin.metatrafficUnicastLocatorList.push_back(default_metatraffic_unicast_locator);
+
+        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
     else
     {
-        //Copy metatrafficMulticastLocatorList from the BuiltinAttributs
-        for(std::vector<Locator_t>::iterator it = m_att.builtin.metatrafficMulticastLocatorList.begin();
-                it!=m_att.builtin.metatrafficMulticastLocatorList.end();++it)
-        {
-            m_att.builtin.metatrafficMulticastLocatorList.push_back(*it);
-        }
+        std::for_each(m_att.builtin.metatrafficMulticastLocatorList.begin(), m_att.builtin.metatrafficMulticastLocatorList.end(),
+                [&](Locator_t& locator) {
+                    if(locator.port == 0)
+                        locator.port = metatraffic_multicast_port;
+                });
+        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
+
+        std::for_each(m_att.builtin.metatrafficUnicastLocatorList.begin(), m_att.builtin.metatrafficUnicastLocatorList.end(),
+                [&](Locator_t& locator) {
+                    if(locator.port == 0)
+                        locator.port = metatraffic_unicast_port;
+                });
+        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
+
     //Create ReceiverResources now and update the list with the REAL used ones
     createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
-    /* INSERT DEFAULT UNICAST LOCATORS HERE */
 
-    if(m_att.builtin.metatrafficUnicastLocatorList.empty())
+    //Create ReceiverResources now and update the list with the REAL used ones
+    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
+
+    // Initial peers
+    if(m_att.builtin.initialPeersList.empty())
     {
-        //Add default metatrafficUnicastLocators
-        LocatorList_t locators;
-        IPFinder::getIP4Address(&locators);
-        for(std::vector<Locator_t>::iterator it=locators.begin();it!=locators.end();++it)
-        {
-            it->port = metatraffic_unicast_port;
-            m_att.builtin.metatrafficUnicastLocatorList.push_back(*it);
-        }
+        m_att.builtin.initialPeersList = m_att.builtin.metatrafficMulticastLocatorList;
     }
     else
     {
-        //If locators existed, just import them to the class
-        for(std::vector<Locator_t>::iterator it = m_att.builtin.metatrafficUnicastLocatorList.begin();
-                it!=m_att.builtin.metatrafficUnicastLocatorList.end();++it)
-        {
-            m_att.builtin.metatrafficUnicastLocatorList.push_back(*it);
-        }
+        LocatorList_t initial_peers;
+        initial_peers.swap(m_att.builtin.initialPeersList);
+
+        std::for_each(initial_peers.begin(), initial_peers.end(),
+                [&](Locator_t& locator) {
+                    if(locator.port == 0)
+                    {
+                        // TODO(Ricardo) Make configurable.
+                        for(int32_t i = 0; i < 4; ++i)
+                        {
+                            Locator_t auxloc(locator);
+                            auxloc.port = m_att.port.getUnicastPort(m_att.builtin.domainId, i);
+
+                            m_att.builtin.initialPeersList.push_back(auxloc);
+                        }
+                    }
+                    else
+                        m_att.builtin.initialPeersList.push_back(locator);
+                });
+
+        m_network_Factory.NormalizeLocators(m_att.builtin.initialPeersList);
     }
-    //Create ReceiverResources now and update the list with the REAL used ones
-    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
 
     /// Creation of user locator and receiver resources
 
@@ -224,6 +249,17 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     }
     else
     {
+        // Locator with port 0, calculate port.
+        std::for_each(m_att.defaultUnicastLocatorList.begin(),
+                m_att.defaultUnicastLocatorList.end(),
+                [&](Locator_t& loc) {
+                    if(loc.port == 0)
+                        loc.port = m_att.port.portBase+
+                            m_att.port.domainIDGain*PParam.builtin.domainId+
+                            m_att.port.offsetd3+
+                            m_att.port.participantIDGain*m_att.participantID;
+                });
+
         // Normalize unicast locators.
         m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
     }

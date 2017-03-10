@@ -194,10 +194,7 @@ inline bool IsLocatorValid(const Locator_t&loc)
 {
     if(loc.kind<0)
         return false;
-    if(loc.port == 0)
-        return false;
     return true;
-
 }
 
 inline bool operator==(const Locator_t&loc1,const Locator_t& loc2)
@@ -247,7 +244,6 @@ typedef std::vector<Locator_t>::const_iterator LocatorListConstIterator;
 class LocatorList_t
 {
     public:
-
         RTPS_DllAPI LocatorList_t(){};
 
         RTPS_DllAPI ~LocatorList_t(){};

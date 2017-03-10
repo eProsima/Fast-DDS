@@ -34,6 +34,11 @@ endif()
 message(STATUS "Configuring DeadlineQoS example...")
 file(GLOB DEADLINEQOS_EXAMPLE_SOURCES "*.cxx")
 
+add_definitions(
+  -DBOOST_ASIO_STANDALONE
+  -DASIO_STANDALONE
+)
+
 include_directories(${PROJECT_SOURCE_DIR}/../../../thirdparty/asio/asio/include)
 
 add_executable(DeadlineQoSExample ${DEADLINEQOS_EXAMPLE_SOURCES})

@@ -105,7 +105,7 @@ set(${PROJECT_NAME}_source_files
     rtps/exceptions/Exception.cpp
     rtps/attributes/PropertyPolicy.cpp
     rtps/common/Token.cpp
-    ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2/tinyxml2.cpp
+    ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
     )
 
 if(WIN32)
@@ -116,7 +116,7 @@ endif()
 
 if(ANDROID)
     list(APPEND ${PROJECT_NAME}_source_files
-        ${PROJECT_SOURCE_DIR}/thirdparty/android-ifaddrs/ifaddrs.c
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
         )
 endif()
 
@@ -173,13 +173,25 @@ if(INTERNAL_DEBUG)
     add_definitions(-D__INTERNALDEBUG)
 endif()
 
-set(${PROJECT_NAME}_include_dirs
-    ${PROJECT_SOURCE_DIR}/thirdparty/asio/asio/include
-    ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2
+add_definitions(
+  -DBOOST_ASIO_STANDALONE
+  -DASIO_STANDALONE
 )
 
 if(ANDROID)
-    list(APPEND ${PROJECT_NAME}_include_dirs ${PROJECT_SOURCE_DIR}/thirdparty/android-ifaddrs)
+  add_definitions(
+    -DASIO_DISABLE_MOVE
+    -DASIO_DISABLE_STD_STRING_VIEW
+  )
+endif()
+
+set(${PROJECT_NAME}_include_dirs
+    ${ASIO_INCLUDE_DIR}
+    ${TINYXML2_INCLUDE_DIR}
+)
+
+if(ANDROID)
+    list(APPEND ${PROJECT_NAME}_include_dirs ${ANDROID_IFADDRS_INCLUDE_DIR})
 else()
     find_package(Threads REQUIRED)
 endif()
@@ -274,6 +286,16 @@ set_public_header(${PROJECT_BINARY_DIR}/include ${PROJECT_NAME} config.h
     COMPONENT headers
     )
 
+set_public_headers_directory(${TINYXML2_INCLUDE_DIR} ""
+    DESTINATION ${INCLUDE_INSTALL_DIR}
+    COMPONENT headers
+    )
+
+set_public_headers_directory(${ASIO_INCLUDE_DIR} ""
+    DESTINATION ${INCLUDE_INSTALL_DIR}
+    COMPONENT headers
+    )
+
 set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers" PARENT_SCOPE)
 set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers" PARENT_SCOPE)
 
@@ -281,6 +303,16 @@ set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Head
 if(UNIX AND EPROSIMA_INSTALLER)
     install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/cpp
         DESTINATION src
+        COMPONENT sources
+        FILES_MATCHING
+        PATTERN "*.c"
+        PATTERN "*.cpp"
+        PATTERN "*.h"
+        PATTERN "*.hpp"
+        )
+
+    install(DIRECTORY ${TINYXML2_SOURCE_DIR}
+        DESTINATION thirdparty
         COMPONENT sources
         FILES_MATCHING
         PATTERN "*.c"

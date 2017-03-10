@@ -22,7 +22,6 @@
 #include <asio.hpp>
 #include <thread>
 #include <functional>
-#include "../participant/RTPSParticipantImpl.h"
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/log/Log.h>
 

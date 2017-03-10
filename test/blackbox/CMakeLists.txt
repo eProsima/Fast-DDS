@@ -21,7 +21,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
-        include_directories(${PROJECT_SOURCE_DIR}/thirdparty/asio/asio/include)
+        add_definitions(
+          -DBOOST_ASIO_STANDALONE
+          -DASIO_STANDALONE
+        )
+
+        include_directories(${ASIO_INCLUDE_DIR})
 
         ###############################################################################
         # Unit tests

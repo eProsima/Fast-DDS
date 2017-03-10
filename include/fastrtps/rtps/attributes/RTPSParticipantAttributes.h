@@ -148,6 +148,8 @@ class BuiltinAttributes{
         LocatorList_t metatrafficUnicastLocatorList;
         //!Metatraffic Multicast Locator List.
         LocatorList_t metatrafficMulticastLocatorList;
+        //! Initial peers.
+        LocatorList_t initialPeersList;
 
         BuiltinAttributes()
         {

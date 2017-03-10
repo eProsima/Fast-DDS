@@ -16,6 +16,7 @@
 #include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include <asio.hpp>
+#include <asio/steady_timer.hpp>
 
 
 namespace eprosima{

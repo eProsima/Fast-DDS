@@ -22,10 +22,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
+        include_directories(${ASIO_INCLUDE_DIR})
+
         set(SOURCES_SECURITY_TEST_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
@@ -41,10 +44,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${CMAKE_CURRENT_SOURCE_DIR}/SecurityAuthenticationTests.cpp)
         add_gtest(SecurityAuthentication 
             ${CMAKE_CURRENT_SOURCE_DIR}/SecurityAuthenticationTests.cpp)
-        target_compile_definitions(SecurityAuthentication PRIVATE BOOST_ALL_DYN_LINK FASTRTPS_NO_LIB)
+        target_compile_definitions(SecurityAuthentication PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(SecurityAuthentication PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            ${Boost_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityPluginFactory
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
@@ -61,6 +63,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(SecurityAuthentication ${Boost_LIBRARIES} ${GMOCK_LIBRARIES})
+        target_link_libraries(SecurityAuthentication ${GMOCK_LIBRARIES})
     endif()
 endif()

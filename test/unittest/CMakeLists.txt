@@ -1,4 +1,4 @@
-# Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2017 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,10 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ACLOCAL_AMFLAGS = -I m4 --install
+add_definitions(
+  -DBOOST_ASIO_STANDALONE
+  -DASIO_STANDALONE
+)
 
-lib_LTLIBRARIES = lib${PROJECT_NAME}.la
-lib${PROJECT_NAME}_la_SOURCES = ${${PROJECT_NAME}_SOURCES_AUTOTOOLS}
-lib${PROJECT_NAME}_la_LDFLAGS = -version-number ${PROJECT_VERSION_AUTOTOOLS}
-
-AM_CPPFLAGS = -DFASTRTPS_SOURCE -DBOOST_ASIO_STANDALONE -DASIO_STANDALONE -I../../include
+add_subdirectory(rtps/common)
+add_subdirectory(rtps/reader)
+add_subdirectory(rtps/resources/timedevent)
+add_subdirectory(rtps/ros2features)
+add_subdirectory(rtps/network)
+add_subdirectory(rtps/flowcontrol)
+add_subdirectory(transport)
+add_subdirectory(logging)
+add_subdirectory(utils)

@@ -1672,6 +1672,43 @@ BLACKBOXTEST(BlackBox, StaticDiscovery)
     ASSERT_EQ(data.size(), static_cast<size_t>(0));
 }
 
+BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    reader.history_depth(100).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        disable_multicast(0).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.history_depth(100).
+        disable_multicast(1).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_helloword_data_generator();
+
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(2));
+
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_EQ(data.size(), 0);
+}
+
 #if HAVE_SECURITY
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok)

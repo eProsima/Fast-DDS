@@ -102,18 +102,6 @@ else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-unknown-pragmas -std=c++11")
 endif()
 
-add_definitions(
-  -DBOOST_ASIO_STANDALONE
-  -DASIO_STANDALONE
-)
-
-if(ANDROID)
-  add_definitions(
-    -DASIO_DISABLE_MOVE
-    -DASIO_DISABLE_STD_STRING_VIEW
-  )
-endif()
-
 ###############################################################################
 # GCC colors if using CCache
 ###############################################################################
@@ -177,12 +165,6 @@ if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER_MINION)
 	set(INTERNAL_DEBUG ON)
 endif()
 
-
-###############################################################################
-# Performance tests
-###############################################################################
-option(PERFORMANCE_TESTS "Activate the building and execution of performance tests" OFF)
-
 ###############################################################################
 # Load CMake modules
 ###############################################################################
@@ -212,7 +194,10 @@ include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)
 find_eprosima_package(fastcdr)
 find_eprosima_thirdparty(asio)
 find_eprosima_thirdparty(tinyxml2)
-find_eprosima_thirdparty(android-ifaddrs)
+
+if(ANDROID)
+    find_eprosima_thirdparty(android-ifaddrs)
+endif()
 
 ###############################################################################
 # Options
@@ -247,6 +232,16 @@ endif()
 add_subdirectory(src/cpp)
 
 ###############################################################################
+# Testing options
+###############################################################################
+option(PERFORMANCE_TESTS "Activate the building and execution of performance tests" OFF)
+option(EPROSIMA_BUILD_TESTS "Activate the building and execution unit tests and integral tests" OFF)
+
+if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MINION)
+    set(EPROSIMA_BUILD_TESTS ON)
+endif()
+
+###############################################################################
 # Testing
 ###############################################################################
 if(EPROSIMA_BUILD_TESTS AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MINION)
@@ -254,6 +249,11 @@ if(EPROSIMA_BUILD_TESTS AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MI
     include(CTest)
     add_subdirectory(test)
 endif()
+
+###############################################################################
+# Performance tests
+###############################################################################
+add_subdirectory(test/performance)
 
 ###############################################################################
 # Examples

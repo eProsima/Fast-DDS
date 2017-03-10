@@ -287,17 +287,6 @@ public class fastrtpsgen {
                     solution.addInclude("$(JAVA_HOME)/include/linux");
             }
 
-			if (m_exampleOption != null && m_exampleOption.contains("Linux")) {
-				solution.addLibrary("boost_system");
-				solution.addLibrary("boost_thread");
-			}
-
-			if(m_exampleOption != null && m_exampleOption.contains("Win"))
-			{
-				solution.addInclude("$(LIB_BOOST_PATH)");
-			}
-
-
 			if (m_exampleOption != null && !m_exampleOption.contains("Win")) {
 				solution.addLibrary("fastcdr");
 			}
@@ -305,13 +294,6 @@ public class fastrtpsgen {
 			// Add product library
 			solution.addLibrary("fastrtps");
 
-			//Add boost dependencies as libraries in Linux.
-			//TODO Automatically link with fastrtps
-			if (m_exampleOption != null && m_exampleOption.contains("Linux")) {
-				solution.addLibrary("boost_system");
-				solution.addLibrary("boost_thread");
-				solution.addLibrary("boost_date_time");
-			}
 
 			for (int count = 0; returnedValue && (count < m_idlFiles.size()); ++count) {
 				Project project = process(m_idlFiles.get(count));

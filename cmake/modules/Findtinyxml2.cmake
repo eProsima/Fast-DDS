@@ -1,0 +1,16 @@
+# TINYXML2_FOUND
+# TINYXML2_INCLUDE_DIR
+# TINYXML2_SOURCE_DIR
+
+set(NO_FIND_ROOT_PATH_ "")
+if(ANDROID)
+    set(NO_FIND_ROOT_PATH_ NO_CMAKE_FIND_ROOT_PATH)
+endif()
+
+find_path(TINYXML2_INCLUDE_DIR NAMES tinyxml2.h ${NO_FIND_ROOT_PATH_})
+find_path(TINYXML2_SOURCE_DIR NAMES tinyxml2.cpp ${NO_FIND_ROOT_PATH_})
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(tinyxml2 DEFAULT_MSG TINYXML2_SOURCE_DIR TINYXML2_INCLUDE_DIR)
+
+mark_as_advanced(TINYXML2_INCLUDE_DIR TINYXML2_SOURCE_DIR)

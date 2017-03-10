@@ -27,9 +27,10 @@
 
 #include "../participant/RTPSParticipantImpl.h"
 
-
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/IPFinder.h>
+
+#include <algorithm>
 
 
 
@@ -45,7 +46,6 @@ BuiltinProtocols::BuiltinProtocols():
     mp_PDP(nullptr),
     mp_WLP(nullptr)
     {
-        // TODO Auto-generated constructor stub
     }
 
 BuiltinProtocols::~BuiltinProtocols() {

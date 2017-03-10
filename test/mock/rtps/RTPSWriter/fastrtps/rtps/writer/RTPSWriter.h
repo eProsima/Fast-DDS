@@ -21,6 +21,7 @@
 
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
 #include <fastrtps/rtps/Endpoint.h>
+#include <fastrtps/rtps/common/CacheChange.h>
 
 #include <condition_variable>
 #include <gmock/gmock.h>

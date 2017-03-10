@@ -72,6 +72,7 @@ class ReaderHistory;
 class ReaderListener;
 class StatefulReader;
 class PDPSimple;
+class FlowController;
 
 /*
    Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
