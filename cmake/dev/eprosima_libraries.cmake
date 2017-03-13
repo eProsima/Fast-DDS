@@ -30,6 +30,17 @@ macro(find_eprosima_package package)
                     "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}"
                     "-DANDROID_NATIVE_API_LEVEL=${ANDROID_NATIVE_API_LEVEL}"
                     "-DANDROID_TOOLCHAIN=${ANDROID_TOOLCHAIN}"
+                    "-DANDROID_PLATFORM=${ANDROID_PLATFORM}"               
+                    "-DANDROID_STL=${ANDROID_STL}"
+                    "-DANDROID_PIE=${ANDROID_PIE}"
+                    "-DANDROID_CPP_FEATURES=${ANDROID_CPP_FEATURES}"
+                    "-DANDROID_ALLOW_UNDEFINED_SYMBOLS=${ANDROID_ALLOW_UNDEFINED_SYMBOLS}"
+                    "-DANDROID_ARM_MODE=${ANDROID_ARM_MODE}"
+                    "-DANDROID_ARM_NEON=${ANDROID_ARM_NEON}"
+                    "-DANDROID_DISABLE_NO_EXECUTE=${ANDROID_DISABLE_NO_EXECUTE}"
+                    "-DANDROID_DISABLE_RELRO=${ANDROID_DISABLE_RELRO}"
+                    "-DANDROID_DISABLE_FORMAT_STRING_CHECKS=${ANDROID_DISABLE_FORMAT_STRING_CHECKS}"
+                    "-DANDROID_FUNCTION_LEVEL_LINKING=${ANDROID_FUNCTION_LEVEL_LINKING}"
                     )
             endif()
 
