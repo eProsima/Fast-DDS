@@ -66,6 +66,7 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
     m_att = attributes;
     m_metatrafficUnicastLocatorList = m_att.metatrafficUnicastLocatorList;
     m_metatrafficMulticastLocatorList = m_att.metatrafficMulticastLocatorList;
+    m_initialPeersList = m_att.initialPeersList;
 
     if(m_att.use_SIMPLE_RTPSParticipantDiscoveryProtocol)
     {
