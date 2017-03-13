@@ -39,15 +39,15 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Types.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIIdentityHandle.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/access/mockAccessHandle.cpp
-
             ${CMAKE_CURRENT_SOURCE_DIR}/builtinAESGCMGMACTests.cpp)
+
         add_gtest(BuiltinAESGCMGMAC ${COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE}
             ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyExchange.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Transform.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Types.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinAESGCMGMACTests.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/builtinAESGCMGMACTests.cpp
             ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
         target_compile_definitions(BuiltinAESGCMGMAC PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(BuiltinAESGCMGMAC PRIVATE
