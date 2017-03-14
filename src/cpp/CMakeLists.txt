@@ -105,38 +105,40 @@ set(${PROJECT_NAME}_source_files
     rtps/exceptions/Exception.cpp
     rtps/attributes/PropertyPolicy.cpp
     rtps/common/Token.cpp
-    ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
     )
 
-if(WIN32)
-    list(APPEND ${PROJECT_NAME}_source_files
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps.rc
-        )
-endif()
+# Add sources to Makefile.am
+set_sources(${${PROJECT_NAME}_source_files})
 
-if(ANDROID)
-    list(APPEND ${PROJECT_NAME}_source_files
-        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
-        )
-endif()
+
+# Security sources
+set(${PROJECT_NAME}_security_source_files
+    rtps/security/exceptions/SecurityException.cpp
+    rtps/security/common/SharedSecretHandle.cpp
+    rtps/security/SecurityManager.cpp
+    rtps/security/SecurityPluginFactory.cpp
+    rtps/security/timedevent/HandshakeMessageTokenResent.cpp
+    security/OpenSSLInit.cpp
+    security/authentication/PKIDH.cpp
+    security/cryptography/AESGCMGMAC.cpp
+    security/cryptography/AESGCMGMAC_KeyExchange.cpp
+    security/cryptography/AESGCMGMAC_KeyFactory.cpp
+    security/cryptography/AESGCMGMAC_Transform.cpp
+    security/cryptography/AESGCMGMAC_Types.cpp
+    security/authentication/PKIIdentityHandle.cpp
+    security/access/mockAccessHandle.cpp
+    security/authentication/PKIHandshakeHandle.cpp
+    )
+
+# Add sources to Makefile.am
+set_sources(SECTION SECURITY)
+set_sources(${${PROJECT_NAME}_security_source_files})
+set_sources(ENDSECTION)
 
 if(SECURITY)
+
     list(APPEND ${PROJECT_NAME}_source_files
-        rtps/security/exceptions/SecurityException.cpp
-        rtps/security/common/SharedSecretHandle.cpp
-        rtps/security/SecurityManager.cpp
-        rtps/security/SecurityPluginFactory.cpp
-        rtps/security/timedevent/HandshakeMessageTokenResent.cpp
-        security/OpenSSLInit.cpp
-        security/authentication/PKIDH.cpp
-        security/cryptography/AESGCMGMAC.cpp
-        security/cryptography/AESGCMGMAC_KeyExchange.cpp
-        security/cryptography/AESGCMGMAC_KeyFactory.cpp
-        security/cryptography/AESGCMGMAC_Transform.cpp
-        security/cryptography/AESGCMGMAC_Types.cpp
-        security/authentication/PKIIdentityHandle.cpp
-        security/access/mockAccessHandle.cpp
-        security/authentication/PKIHandshakeHandle.cpp
+        ${${PROJECT_NAME}_security_source_files}
         )
 
     include_directories(${OPENSSL_INCLUDE_DIR})
@@ -147,7 +149,23 @@ else()
     set(HAVE_SECURITY 0)
 endif()
 
-set_sources(${${PROJECT_NAME}_source_files})
+if(WIN32)
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps.rc
+        )
+endif()
+
+# External sources
+list(APPEND ${PROJECT_NAME}_source_files
+    ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
+    )
+set_sources(../../thirdparty/tinyxml2/tinyxml2.cpp)
+
+if(ANDROID)
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+endif()
 
 # Set version
 set(${PROJECT_NAME_UPPER}_VERSION_MAJOR ${PROJECT_MAJOR_VERSION})
@@ -206,9 +224,9 @@ if(MSVC OR MSVC_IDE)
         generate_msvc_libraries(i86Win32VS2015)
         generate_msvc_libraries(x64Win64VS2015)
     else()
-        add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
+        add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_source_files})
 
-        add_library(${PROJECT_NAME}_static STATIC ${${PROJECT_NAME}_SOURCES})
+        add_library(${PROJECT_NAME}_static STATIC ${${PROJECT_NAME}_source_files})
         # Rename the library to have a "lib" before.
         set_target_properties(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})
 
@@ -254,7 +272,7 @@ else()
         add_definitions(-D__DEBUG)
     endif()
     #Create library
-    add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
+    add_library(${PROJECT_NAME} ${${PROJECT_NAME}_source_files})
 
     # Define public headers
     target_include_directories(${PROJECT_NAME} PUBLIC
@@ -278,23 +296,29 @@ endif()
 set_public_headers_directory(${PROJECT_SOURCE_DIR}/include ${PROJECT_NAME}
     DESTINATION ${INCLUDE_INSTALL_DIR}
     COMPONENT headers
+    INSTALL
     )
 
 # Install config.h header
 set_public_header(${PROJECT_BINARY_DIR}/include ${PROJECT_NAME} config.h
     DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}
     COMPONENT headers
+    INSTALL
     )
 
-set_public_headers_directory(${TINYXML2_INCLUDE_DIR} ""
-    DESTINATION ${INCLUDE_INSTALL_DIR}
-    COMPONENT headers
-    )
 
-set_public_headers_directory(${ASIO_INCLUDE_DIR} ""
-    DESTINATION ${INCLUDE_INSTALL_DIR}
-    COMPONENT headers
-    )
+# Install external sources
+if(EPROSIMA_INSTALLER)
+    set_public_header(${TINYXML2_INCLUDE_DIR} "" tinyxml2.h
+        DESTINATION thirdparty/tinyxml2
+        COMPONENT headers
+        )
+
+    set_public_headers_directory(${ASIO_INCLUDE_DIR} ""
+        DESTINATION thirdparty/asio
+        COMPONENT headers
+        )
+endif()
 
 set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers" PARENT_SCOPE)
 set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers" PARENT_SCOPE)
@@ -311,14 +335,11 @@ if(UNIX AND EPROSIMA_INSTALLER)
         PATTERN "*.hpp"
         )
 
-    install(DIRECTORY ${TINYXML2_SOURCE_DIR}
-        DESTINATION thirdparty
+    # Install external sources
+    install(FILES ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
+        ${TINYXML2_SOURCE_DIR}/tinyxml2.h
+        DESTINATION thirdparty/tinyxml2
         COMPONENT sources
-        FILES_MATCHING
-        PATTERN "*.c"
-        PATTERN "*.cpp"
-        PATTERN "*.h"
-        PATTERN "*.hpp"
         )
 
     install(DIRECTORY ${PROJECT_BINARY_DIR}/autotools/

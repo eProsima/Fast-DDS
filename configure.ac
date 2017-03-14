@@ -56,6 +56,22 @@ AC_C_BIGENDIAN(
   AC_MSG_ERROR(universial endianess not supported)
 )
 
+# Security
+AC_ARG_ENABLE([security],
+    AS_HELP_STRING([--enable-security], [Enables security support]),
+    ac_enable_security=$enableval,
+    ac_enable_security=no
+    )
+AS_IF([test "$ac_enable_security" = yes],
+    [
+     AC_DEFINE([HAVE_SECURITY], [1], [Defined if security support is enable])
+     AC_CHECK_HEADER([openssl/opensslconf.h],
+                     [AC_MSG_NOTICE([Found OpenSSL])],
+                     [AC_MSG_ERROR([Could not find OpenSSL])])
+    ],
+    [AC_DEFINE([HAVE_SECURITY], [0], [Defined if security support is enable])])
+AM_CONDITIONAL(SECURITY, test $ac_enable_security = yes)
+
 # Check for libraries used in the main build process
 AC_PROG_CXX
 AC_PROG_CPP
