@@ -172,7 +172,7 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     logInfo(RTPS_WRITER,"Change "<< a_change->sequenceNumber << " to be removed.");
 
-	// Invalidate CacheChange pointer in ReaderProxies.
+    // Invalidate CacheChange pointer in ReaderProxies.
     for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
             it!=this->matched_readers.end();++it)
     {
@@ -225,7 +225,7 @@ size_t StatefulWriter::send_any_unsent_changes()
             else
             {
                 not_relevant_changes.push_back((*cit)->getSequenceNumber());
-                (*m_reader_iterator)->set_change_to_status((*cit)->getChange(), UNDERWAY);
+                (*m_reader_iterator)->set_change_to_status((*cit)->getSequenceNumber(), UNDERWAY);
             }
         }
 
@@ -245,9 +245,9 @@ size_t StatefulWriter::send_any_unsent_changes()
             else
             {
                 if((*m_reader_iterator)->m_att.endpoint.reliabilityKind == RELIABLE)
-                    (*m_reader_iterator)->set_change_to_status(change.getChange(), UNDERWAY);
+                    (*m_reader_iterator)->set_change_to_status(change.getChange()->sequenceNumber, UNDERWAY);
                 else
-                    (*m_reader_iterator)->set_change_to_status(change.getChange(), ACKNOWLEDGED);
+                    (*m_reader_iterator)->set_change_to_status(change.getChange()->sequenceNumber, ACKNOWLEDGED);
             }
         }
 
