@@ -190,12 +190,12 @@ std::vector<const ChangeForReader_t*> ReaderProxy::get_requested_changes() const
     return unsent_changes;
 }
 
-void ReaderProxy::set_change_to_status(const CacheChange_t* change, ChangeForReaderStatus_t status)
+void ReaderProxy::set_change_to_status(const SequenceNumber_t& seq_num, ChangeForReaderStatus_t status)
 {
-    if(change->sequenceNumber <= changesFromRLowMark_)
+    if(seq_num <= changesFromRLowMark_)
         return;
 
-    auto it = m_changesForReader.find(ChangeForReader_t(change->sequenceNumber));
+    auto it = m_changesForReader.find(ChangeForReader_t(seq_num));
     bool mustWakeUpAsyncThread = false;
 
     if(it != m_changesForReader.end())
@@ -203,7 +203,7 @@ void ReaderProxy::set_change_to_status(const CacheChange_t* change, ChangeForRea
         if(status == ACKNOWLEDGED && it == m_changesForReader.begin())
         {
             m_changesForReader.erase(it);
-            changesFromRLowMark_ = change->sequenceNumber;
+            changesFromRLowMark_ = seq_num;
         }
         else
         {

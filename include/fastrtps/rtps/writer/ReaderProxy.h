@@ -102,7 +102,7 @@ namespace eprosima
                  * @param change change to search and set.
                  * @param status Status to apply.
                  */
-                void set_change_to_status(const CacheChange_t* change, ChangeForReaderStatus_t status);
+                void set_change_to_status(const SequenceNumber_t& seq_num, ChangeForReaderStatus_t status);
 
                 void mark_fragment_as_sent_for_change(const CacheChange_t* change, FragmentNumber_t fragment);
 

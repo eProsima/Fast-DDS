@@ -177,7 +177,7 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     logInfo(RTPS_WRITER,"Change "<< a_change->sequenceNumber << " to be removed.");
 
-	// Invalidate CacheChange pointer in ReaderProxies.
+    // Invalidate CacheChange pointer in ReaderProxies.
     for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
             it!=this->matched_readers.end();++it)
     {
@@ -246,7 +246,7 @@ void StatefulWriter::send_any_unsent_changes()
             else
             {
                 not_relevant_changes.push_back((*cit)->getSequenceNumber());
-                (*m_reader_iterator)->set_change_to_status((*cit)->getChange(), UNDERWAY);
+                (*m_reader_iterator)->set_change_to_status((*cit)->getSequenceNumber(), UNDERWAY);
             }
         }
 
@@ -301,9 +301,9 @@ void StatefulWriter::send_any_unsent_changes()
                                 locators, (*m_reader_iterator)->m_att.expectsInlineQos))
                         {
                             if((*m_reader_iterator)->m_att.endpoint.reliabilityKind == RELIABLE)
-                                (*m_reader_iterator)->set_change_to_status(change, UNDERWAY);
+                                (*m_reader_iterator)->set_change_to_status(change->sequenceNumber, UNDERWAY);
                             else
-                                (*m_reader_iterator)->set_change_to_status(change, ACKNOWLEDGED);
+                                (*m_reader_iterator)->set_change_to_status(change->sequenceNumber, ACKNOWLEDGED);
                         }
                         else
                         {
@@ -328,7 +328,7 @@ void StatefulWriter::send_any_unsent_changes()
         {
             // Change status to UNACKNOWLEDGED
             for(const auto* change : relevant_changes)
-                (*m_reader_iterator)->set_change_to_status(change, UNACKNOWLEDGED);
+                (*m_reader_iterator)->set_change_to_status(change->sequenceNumber, UNACKNOWLEDGED);
 
             SequenceNumber_t firstSeq = this->get_seq_num_min();
             SequenceNumber_t lastSeq = this->get_seq_num_max();

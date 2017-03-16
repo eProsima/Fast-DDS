@@ -247,7 +247,7 @@ namespace eprosima
                 {
                    if (change->getFragmentSize() != 0)
                     for (uint32_t i = 1; i != change->getFragmentCount() + 1; i++)
-                       unsent_fragments_.add(i); // Indexed on 1
+                       unsent_fragments_.insert(i); // Indexed on 1
                 }
 
                 ChangeForReader_t(const SequenceNumber_t& seq_num) : status_(UNSENT),
@@ -325,17 +325,18 @@ namespace eprosima
                 {
                    if (change_->getFragmentSize() != 0)
                     for (uint32_t i = 1; i != change_->getFragmentCount() + 1; i++)
-                       unsent_fragments_.add(i); // Indexed on 1
+                       unsent_fragments_.insert(i); // Indexed on 1
                 }
 
                 void markFragmentsAsSent(const FragmentNumber_t& sentFragment)
                 {
-                    unsent_fragments_ -= sentFragment;
+                    unsent_fragments_.erase(sentFragment);
                 }
 
                 void markFragmentsAsUnsent(const FragmentNumberSet_t& unsentFragments)
                 {
-                    unsent_fragments_ += unsentFragments;
+                    for(auto element : unsentFragments.set)
+                        unsent_fragments_.insert(element);
                 }
 
                 private:
@@ -353,7 +354,7 @@ namespace eprosima
                 //const CacheChange_t* change_;
                 CacheChange_t* change_;
 
-                FragmentNumberSet_t unsent_fragments_;
+                std::set<FragmentNumber_t> unsent_fragments_;
             };
 
             struct ChangeForReaderCmp
