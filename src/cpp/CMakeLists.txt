@@ -308,7 +308,7 @@ set_public_header(${PROJECT_BINARY_DIR}/include ${PROJECT_NAME} config.h
 
 
 # Install external sources
-if(EPROSIMA_INSTALLER)
+if(UNIX AND EPROSIMA_INSTALLER)
     set_public_header(${TINYXML2_INCLUDE_DIR} "" tinyxml2.h
         DESTINATION thirdparty/tinyxml2
         COMPONENT headers
@@ -386,6 +386,15 @@ if(MSVC OR MSVC_IDE)
             FILES_MATCHING
             PATTERN "*.pdb"
             )
+
+        if(EPROSIMA_INSTALLER_MINION AND EPROSIMA_INSTALLER_OPENSSL_ROOT)
+            install(FILES ${EPROSIMA_INSTALLER_OPENSSL_ROOT}/bin/libeay32.dll
+                ${EPROSIMA_INSTALLER_OPENSSL_ROOT}/bin/ssleay32.dll
+                DESTINATION ${BIN_INSTALL_DIR}${DIR_EXTENSION}
+                COMPONENT libraries_${MSVC_ARCH}
+                )
+        endif()
+
 
         string(TOUPPER "${MSVC_ARCH}" MSVC_ARCH_UPPER)
         set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DISPLAY_NAME "${MSVC_ARCH}" PARENT_SCOPE)

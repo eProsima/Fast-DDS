@@ -21,12 +21,16 @@ macro(generate_msvc_libraries platform)
     set(GENERATOR_ "")
     if(IS_I86WIN32VS2013)
         set(GENERATOR_ "Visual Studio 12 2013")
+        set(OPENSSL_ROOT_ $ENV{OPENSSL32_ROOT})
     elseif(IS_X64WIN64VS2013)
         set(GENERATOR_ "Visual Studio 12 2013 Win64")
+        set(OPENSSL_ROOT_ $ENV{OPENSSL64_ROOT})
     elseif(IS_I86WIN32VS2015)
         set(GENERATOR_ "Visual Studio 14 2015")
+        set(OPENSSL_ROOT_ $ENV{OPENSSL32_ROOT})
     elseif(IS_X64WIN64VS2015)
         set(GENERATOR_ "Visual Studio 14 2015 Win64")
+        set(OPENSSL_ROOT_ $ENV{OPENSSL64_ROOT})
     else()
         message(FATAL_ERROR "Lexical error defining platform. Trying to use platform \"${platform}\"")
     endif()
@@ -36,7 +40,7 @@ macro(generate_msvc_libraries platform)
         )
 
     add_custom_target(${PROJECT_NAME}_${platform} ALL
-        COMMAND ${CMAKE_COMMAND} -G "${GENERATOR_}" -DEPROSIMA_BUILD=ON -DMINION=ON -DEPROSIMA_INSTALLER_MINION=ON -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install ../../../..
+        COMMAND ${CMAKE_COMMAND} -G "${GENERATOR_}" -DEPROSIMA_BUILD=ON -DMINION=ON -DEPROSIMA_INSTALLER_MINION=ON -DEPROSIMA_INSTALLER_OPENSSL_ROOT=${OPENSSL_ROOT_} -DSECURITY=ON -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install ../../../..
         COMMAND ${CMAKE_COMMAND} --build . --target install --config Release
         COMMAND ${CMAKE_COMMAND} --build . --target install --config Debug
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}
