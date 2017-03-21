@@ -77,6 +77,9 @@ inline bool CDRMessage::readEntityId(CDRMessage_t* msg,const EntityId_t* id) {
 }
 
 inline bool CDRMessage::readData(CDRMessage_t* msg, octet* o, uint32_t length) {
+    if(msg->pos+length > msg->length){
+        return false;
+    }
     memcpy(o,&msg->buffer[msg->pos],length);
     msg->pos+=length;
     return true;
@@ -264,6 +267,9 @@ inline bool CDRMessage::readString(CDRMessage_t*msg, std::string* stri)
     uint32_t str_size = 1;
     bool valid = true;
     valid&=CDRMessage::readUInt32(msg,&str_size);
+    if(msg->pos+str_size > msg->length){
+        return false;
+    }
     if(str_size>1)
     {
         *stri = std::string();stri->resize(str_size-1);
