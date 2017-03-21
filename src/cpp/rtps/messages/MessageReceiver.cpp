@@ -722,6 +722,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
         ch->serializedPayload.encapsulation = (uint16_t)encapsulation;
         msg->pos += 2; //CDR Options, not used in this version
+        payload_size -= 4;
     }
 
 	if (!keyFlag)
