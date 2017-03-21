@@ -251,34 +251,32 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                         ParameterPropertyList_t* p = new ParameterPropertyList_t(pid,plength);
                         uint32_t num_properties;
                         valid&=CDRMessage::readUInt32(msg,&num_properties);
-                        //uint16_t msg_pos_first = msg->pos;
-                        //cout << "READING PARAMETER PROPERTY LIST " << endl;
-                        std::string str;
-                        std::pair<std::string,std::string> pair;
-                        //uint32_t rest=0;
-                        for(uint32_t n_prop =0;n_prop<num_properties;++n_prop)
-                        {
-                            //cout << "READING PROPERTY " << n_prop << endl;
-                            pair.first.clear();
-                            valid &= CDRMessage::readString(msg,&pair.first);
-                            pair.second.clear();
-                            valid &= CDRMessage::readString(msg,&pair.second);
-
-                            p->properties.push_back(pair);
-                            //					delete(oc1);
-                            //					delete(oc2);
-                        }
-                        if(valid)
-                        {
-                            plist->m_parameters.push_back((Parameter_t*)p);
-                            plist->m_hasChanged = true;
-                            paramlist_byte_size += plength;
-                        }
-                        else
-                        {
+                        if(!valid){
                             delete(p);
                             return -1;
                         }
+                        std::string str;
+                        std::pair<std::string,std::string> pair;
+                        for(uint32_t n_prop =0;n_prop<num_properties;++n_prop)
+                        {
+                            pair.first.clear();
+                            valid &= CDRMessage::readString(msg,&pair.first);
+                            if(!valid){
+                                delete(p);
+                                return -1;
+                            }
+                            pair.second.clear();
+                            valid &= CDRMessage::readString(msg,&pair.second);
+                            if(!valid){
+                                delete(p);
+                                return -1;
+                            }
+                            p->properties.push_back(pair);
+                        }
+
+                        plist->m_parameters.push_back((Parameter_t*)p);
+                        plist->m_hasChanged = true;
+                        paramlist_byte_size += plength;
                         break;
                     }
                 case PID_STATUS_INFO:
