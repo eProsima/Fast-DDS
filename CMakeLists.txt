@@ -341,6 +341,7 @@ if(BUILD_DOCUMENTATION)
     add_custom_target(libreoffice
         COMMAND "${LIBREOFFICE_EXE}" --headless ${LIBREOFFICE_CONVERT_README_MACRO}
         COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/README.html" "${README_LOCATION}/README.html"
+        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/README_html_181c5124a393013a.png" "${README_LOCATION}/README_html_181c5124a393013a.png"
         DEPENDS
         "${PROJECT_SOURCE_DIR}/doc/README.odt"
         COMMENT "Generating documentation with libreoffice" VERBATIM)
@@ -426,6 +427,7 @@ if(BUILD_DOCUMENTATION)
 
     install(FILES
         "${README_LOCATION}/README.html"
+        "${README_LOCATION}/README_html_181c5124a393013a.png"
         DESTINATION ${README_INSTALL_LOCATION}
         COMPONENT documentation
         )
