@@ -97,7 +97,10 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
         valid&=CDRMessage::readUInt16(msg,&plength);
         paramlist_byte_size +=4;
         //cout << "PARAMETER WITH ID: " << std::hex << (uint32_t)pid <<std::dec<< endl;
-        if(valid)
+        if(!valid){
+            return -1;
+        }
+        try
         {
             switch(pid)
             {
@@ -366,15 +369,21 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                         //cout << "Parameter length " << plength << endl;
                         uint32_t vec_size = 0;
                         valid&=CDRMessage::readUInt32(msg,&vec_size);
+                        if(!valid || msg->pos+vec_size > msg->length){
+                            delete(p);
+                            return -1;
+                        }
                         //cout << "User Data of size " << vec_size << endl;
                         p->dataVec.resize(vec_size);
                         octet* oc=new octet[vec_size];
                         valid &= CDRMessage::readData(msg,p->dataVec.data(),vec_size);
-                        for(uint32_t i =0;i<vec_size;i++)
-                            p->dataVec.at(i) = oc[i];
-                        msg->pos += (plength - 4 - vec_size);
                         if(valid)
                         {
+                            for(uint32_t i =0;i<vec_size;i++){
+                                p->dataVec.at(i) = oc[i];
+                            }
+                            msg->pos += (plength - 4 - vec_size);
+
                             plist->m_parameters.push_back((Parameter_t*)p);
                             plist->m_hasChanged = true;
                             paramlist_byte_size += plength;
@@ -544,8 +553,9 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                     }
             }
         }
-        else
+        catch (std::bad_alloc& ba)
         {
+            std::cerr << "bad_alloc caught: " << ba.what() << '\n';
             return -1;
         }
     }
@@ -554,7 +564,3 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
 
 } /* namespace pubsub */
 } /* namespace eprosima */
-
-
-
-
