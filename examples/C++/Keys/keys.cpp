@@ -28,7 +28,7 @@ typedef struct{
     uint16_t history_size;
     uint8_t depth;
     uint8_t no_keys;
-    uint16_t max_samples_per_key; 
+    uint16_t max_samples_per_key;
 } example_configuration;
 
 void keys();
@@ -52,11 +52,11 @@ void keys(){
     Participant *PubParticipant = Domain::createParticipant(PparamPub);
     if(PubParticipant == nullptr){
         std::cout << " Something went wrong while creating the Publisher Participant..." << std::endl;
-        return; 
+        return;
     }
     Domain::registerType(PubParticipant,(TopicDataType*) &sampleType);
 
-    
+
     //Publisher config
     PublisherAttributes Pparam;
     Pparam.topic.topicDataType = sampleType.getName();
@@ -69,16 +69,17 @@ void keys(){
     Pparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Pparam.topic.historyQos.depth =  10;
     Pparam.topic.resourceLimitsQos.max_samples = 50;
+    Pparam.topic.resourceLimitsQos.allocated_samples = 50;
     Pparam.topic.resourceLimitsQos.max_instances = 5;
     Pparam.topic.resourceLimitsQos.max_samples_per_instance = 10;
 
-    std::cout << "Creating Publisher..." << std::endl; 
+    std::cout << "Creating Publisher..." << std::endl;
     Publisher *myPub= Domain::createPublisher(PubParticipant, Pparam, nullptr);
     if(myPub == nullptr){
         std::cout << "Something went wrong while creating the Publisher..." << std::endl;
         return;
     }
-  
+
 
     ParticipantAttributes PparamSub;
     PparamSub.rtps.builtin.domainId = 0;
@@ -104,6 +105,7 @@ void keys(){
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.topic.historyQos.depth =  10;
     Rparam.topic.resourceLimitsQos.max_samples = 100;
+    Rparam.topic.resourceLimitsQos.allocated_samples = 100;
     Rparam.topic.resourceLimitsQos.max_instances = 5;
     Rparam.topic.resourceLimitsQos.max_samples_per_instance = 20;
 
@@ -113,12 +115,12 @@ void keys(){
         std::cout << "Something went wrong while creating the Subscriber..." << std::endl;
         return;
     }
-    
-    //Send 20 samples
+
+    //Send 10 samples
     std::cout << "Publishing 5 keys, 10 samples per key..." << std::endl;
     for(uint8_t i=0; i < 5; i++){
-        for(uint8_t j=0; j < 20; j++){
-            my_sample.index(j+1); 
+        for(uint8_t j=0; j < 10; j++){
+            my_sample.index(j+1);
             my_sample.key_value(i+1);
             myPub->write(&my_sample);
         }
@@ -128,7 +130,7 @@ void keys(){
 
     std::cout << "Publishing 10 more samples on a key 3..." << std::endl;
     for(uint8_t j=0; j < 10; j++){
-        my_sample.index(j+11); 
+        my_sample.index(j+11);
         my_sample.key_value(3);
         myPub->write(&my_sample);
     }
@@ -152,5 +154,3 @@ void keys(){
     std::cout << std::endl;
 
 }
-
-
