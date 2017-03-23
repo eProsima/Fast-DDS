@@ -65,9 +65,7 @@ AC_ARG_ENABLE([security],
 AS_IF([test "$ac_enable_security" = yes],
     [
      AC_DEFINE([HAVE_SECURITY], [1], [Defined if security support is enable])
-     AC_CHECK_HEADER([openssl/opensslconf.h],
-                     [AC_MSG_NOTICE([Found OpenSSL])],
-                     [AC_MSG_ERROR([Could not find OpenSSL])])
+     AX_CHECK_OPENSSL([AC_MSG_NOTICE([Found OpenSSL])], [AC_MSG_ERROR([Could not find OpenSSL])])
     ],
     [AC_DEFINE([HAVE_SECURITY], [0], [Defined if security support is enable])])
 AM_CONDITIONAL(SECURITY, test $ac_enable_security = yes)
