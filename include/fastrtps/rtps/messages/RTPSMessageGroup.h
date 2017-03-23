@@ -121,7 +121,9 @@ class RTPSMessageGroup
         void check_and_maybe_flush(const LocatorList_t& locator_list,
                 const std::vector<GUID_t>& remote_endpoints);
 
-        bool insert_submessage();
+        bool insert_submessage(const std::vector<GUID_t>& remote_endpoints);
+
+        bool add_info_dst_in_buffer(CDRMessage_t* buffer, const std::vector<GUID_t>& remote_endpoints);
 
         bool add_info_ts_in_buffer(const std::vector<GUID_t>& remote_readers);
 

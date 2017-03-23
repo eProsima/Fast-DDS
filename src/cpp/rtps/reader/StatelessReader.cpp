@@ -216,7 +216,6 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
 
 bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t sampleSize, uint32_t fragmentStartingNum)
 {
-
     assert(incomingChange);
 
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);

@@ -134,7 +134,7 @@ void FlowControlExamplePublisher::run()
         {
             st.wasFast(false);
             mp_slow_publisher->write(&st);  ++msgsent_slow;
-            std::cout << "Sending sample, count=" << msgsent_slow << " through the slow writer. Send another sample? (f-fast,s-slow,q-quit): " << std::endl;
+            std::cout << "Sending sample, count=" << msgsent_slow << " through the slow writer. Send another sample? (f-fast,s-slow,q-quit): ";
         }
         else if (ch == 'q')
         {
