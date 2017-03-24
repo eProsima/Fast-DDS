@@ -538,7 +538,7 @@ bool RTPSMessageGroup::add_gap(std::vector<SequenceNumber_t>& changesSeqNum,
 
     uint16_t gap_n = 1;
 
-    while(gap_n < Sequences.size()) //There is still a message to add
+    while(gap_n <= Sequences.size()) //There is still a message to add
     {
         // Check preconditions. If fail flush and reset.
         check_and_maybe_flush(locators, v_remote_reader);
