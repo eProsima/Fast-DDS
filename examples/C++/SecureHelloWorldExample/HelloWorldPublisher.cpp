@@ -43,11 +43,11 @@ bool HelloWorldPublisher::init()
     participant_property_policy.properties().emplace_back("dds.sec.auth.plugin",
             "builtin.PKI-DH");
     participant_property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_ca",
-            "file:///home/ricardo/workspace/curro/eProsima/desarrollo/proyectos/fastrtps/test/certs/maincacert.pem");
+            "file://maincacert.pem");
     participant_property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-            "file:///home/ricardo/workspace/curro/eProsima/desarrollo/proyectos/fastrtps/test/certs/mainpubcert.pem");
+            "file://mainpubcert.pem");
     participant_property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.private_key",
-            "file:///home/ricardo/workspace/curro/eProsima/desarrollo/proyectos/fastrtps/test/certs/mainpubkey.pem");
+            "file://mainpubkey.pem");
     participant_property_policy.properties().emplace_back("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC");
     participant_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
@@ -118,7 +118,6 @@ void HelloWorldPublisher::run(uint32_t samples)
         {
             std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
         }
-        eClock::my_sleep(2000);
     }
 }
 

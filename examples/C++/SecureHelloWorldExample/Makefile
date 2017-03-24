@@ -38,7 +38,7 @@ LIBS = -lfastcdr -lfastrtps $(SYSLIBS)
 
 DIRECTORIES= output.dir bin.dir
 
-all: $(DIRECTORIES) SecureHelloWorldExample
+all: $(DIRECTORIES) CopyCerts SecureHelloWorldExample
 
 HELLOWORLDEXAMPLE_TARGET= bin/SecureHelloWorldExample
 
@@ -84,7 +84,11 @@ output/%.cpp.o:%.cpp
 	@echo Compiling $<
 	@$(CPP) $(CFLAGS) $(INCLUDES) $< -o $@
 
-.PHONY: SecureHelloWorldExample
+.PHONY: CopyCerts SecureHelloWorldExample
+
+CopyCerts: $(DIRECTORIES)
+	@echo Copying certificates to binary directory
+	@cp certs/*.pem bin/
 
 clean:
 	@rm -f $(OBJS)

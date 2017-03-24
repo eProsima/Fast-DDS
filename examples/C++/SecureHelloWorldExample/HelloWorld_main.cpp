@@ -32,47 +32,47 @@ using namespace fastrtps;
 using namespace rtps;
 int main(int argc, char** argv)
 {
-	cout << "Starting "<< endl;
-	int type = 1;
-	if(argc > 1)
-	{
-		if(strcmp(argv[1],"publisher")==0)
-			type = 1;
-		else if(strcmp(argv[1],"subscriber")==0)
-			type = 2;
-	}
-	else
-	{
-		cout << "publisher OR subscriber argument needed"<<endl;
-      Log::Reset();
-		return 0;
-	}
+    std::cout << "Starting "<< std::endl;
+    int type = 1;
+    if(argc > 1)
+    {
+        if(strcmp(argv[1],"publisher")==0)
+            type = 1;
+        else if(strcmp(argv[1],"subscriber")==0)
+            type = 2;
+    }
+    else
+    {
+        std::cout << "publisher OR subscriber argument needed"<<std::endl;
+        Log::Reset();
+        return 0;
+    }
 
-            Log::SetVerbosity(Log::Info);
-            Log::SetCategoryFilter(std::regex("(SECURITY)"));
+    //Log::SetVerbosity(Log::Info);
+    //Log::SetCategoryFilter(std::regex("(SECURITY)"));
 
-	switch(type)
-	{
-	case 1:
-	{
-		HelloWorldPublisher mypub;
-		if(mypub.init())
-		{
-			mypub.run(1000);
-		}
-		break;
-	}
-	case 2:
-	{
-		HelloWorldSubscriber mysub;
-		if(mysub.init())
-		{
-			mysub.run();
-		}
-		break;
-	}
-	}
-	Domain::stopAll();
-   Log::Reset();
-	return 0;
+    switch(type)
+    {
+        case 1:
+            {
+                HelloWorldPublisher mypub;
+                if(mypub.init())
+                {
+                    mypub.run(10);
+                }
+                break;
+            }
+        case 2:
+            {
+                HelloWorldSubscriber mysub;
+                if(mysub.init())
+                {
+                    mysub.run();
+                }
+                break;
+            }
+    }
+    Domain::stopAll();
+    Log::Reset();
+    return 0;
 }
