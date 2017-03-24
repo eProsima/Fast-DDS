@@ -66,6 +66,8 @@ class SecurityManager
 
         bool discovered_participant(ParticipantProxyData* participant_data);
 
+        void remove_participant(ParticipantProxyData* participant_data);
+
         bool register_local_writer(const GUID_t& writer_guid, const PropertySeq& writer_properties);
 
         bool register_local_reader(const GUID_t& reader_guid, const PropertySeq& reader_properties);
@@ -73,7 +75,13 @@ class SecurityManager
         bool discovered_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
                 const GUID_t& remote_reader_guid);
 
+        void remove_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
+                const GUID_t& remote_reader_guid);
+
         bool discovered_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
+                const GUID_t& remote_writer_guid);
+
+        void remove_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
                 const GUID_t& remote_writer_guid);
 
         bool get_identity_token(IdentityToken** identity_token);
@@ -87,7 +95,7 @@ class SecurityManager
         bool encode_rtps_message(CDRMessage_t& message,
                 const std::vector<GuidPrefix_t>& receiving_list);
 
-        bool decode_rtps_message(CDRMessage_t& message, CDRMessage_t& out_message,
+        int decode_rtps_message(CDRMessage_t& message, CDRMessage_t& out_message,
                 const GuidPrefix_t& sending_participant);
 
         bool encode_writer_submessage(CDRMessage_t& message, const GUID_t& writer_guid,
@@ -96,7 +104,7 @@ class SecurityManager
         bool encode_reader_submessage(CDRMessage_t& message, const GUID_t& reader_guid,
                 const std::vector<GUID_t>& receiving_list);
 
-        bool decode_rtps_submessage(CDRMessage_t& message, CDRMessage_t& out_message,
+        int decode_rtps_submessage(CDRMessage_t& message, CDRMessage_t& out_message,
                 const GuidPrefix_t& sending_participant);
 
         bool encode_serialized_payload(const SerializedPayload_t& payload, CDRMessage_t& output_message,
@@ -275,6 +283,8 @@ class SecurityManager
         void delete_participant_volatile_message_secure_reader();
 
         void match_builtin_endpoints(ParticipantProxyData* participant_data);
+
+        void unmatch_builtin_endpoints(ParticipantProxyData* participant_data);
 
         ParticipantCryptoHandle* register_and_match_crypto_endpoint(ParticipantProxyData* participant_data, IdentityHandle& remote_participant_identity,
                 SharedSecretHandle& shared_secret);

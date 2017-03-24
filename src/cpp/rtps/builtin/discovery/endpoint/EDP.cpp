@@ -199,6 +199,10 @@ bool EDP::unpairWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata)
         watt.guid = wdata->guid();
         if((*rit)->matched_writer_remove(watt))
         {
+#if HAVE_SECURITY
+            mp_RTPSParticipant->security_manager().remove_writer((*rit)->getGuid(), pdata->m_guid, wdata->guid());
+#endif
+
             //MATCHED AND ADDED CORRECTLY:
             if((*rit)->getListener()!=nullptr)
             {
@@ -224,6 +228,9 @@ bool EDP::unpairReaderProxy(ParticipantProxyData *pdata, ReaderProxyData* rdata)
         ratt.guid = rdata->m_guid;
         if((*wit)->matched_reader_remove(ratt))
         {
+#if HAVE_SECURITY
+            mp_RTPSParticipant->security_manager().remove_reader((*wit)->getGuid(), pdata->m_guid, rdata->m_guid);
+#endif
             //MATCHED AND ADDED CORRECTLY:
             if((*wit)->getListener()!=nullptr)
             {

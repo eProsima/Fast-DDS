@@ -202,7 +202,11 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 #if HAVE_SECURITY
     CDRMessage_t* auxiliary_buffer = &m_crypto_msg;
 
-    if(participant_->security_manager().decode_rtps_message(*msg, *auxiliary_buffer, sourceGuidPrefix))
+    int decode_ret = participant_->security_manager().decode_rtps_message(*msg, *auxiliary_buffer, sourceGuidPrefix);
+
+    if(decode_ret < 0)
+        return;
+    else if(decode_ret == 0)
     {
         // Swap
         std::swap(msg, auxiliary_buffer);
@@ -221,7 +225,11 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
         CDRMessage_t* submessage = msg;
 
 #if HAVE_SECURITY
-        if(participant_->security_manager().decode_rtps_submessage(*msg, *auxiliary_buffer, sourceGuidPrefix))
+        decode_ret = participant_->security_manager().decode_rtps_submessage(*msg, *auxiliary_buffer, sourceGuidPrefix);
+
+        if(decode_ret < 0)
+            return;
+        else if(decode_ret == 0)
             submessage = auxiliary_buffer;
 #endif
 

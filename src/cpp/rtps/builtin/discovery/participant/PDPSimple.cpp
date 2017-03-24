@@ -632,6 +632,9 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
                 mp_EDP->unpairWriterProxy(pdata, *wit);
             }
         }
+#if HAVE_SECURITY
+        mp_builtin->mp_participantImpl->security_manager().remove_participant(pdata);
+#endif
         if(mp_builtin->mp_WLP != nullptr)
             this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
         this->mp_EDP->removeRemoteEndpoints(pdata);

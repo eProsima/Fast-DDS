@@ -103,7 +103,6 @@ bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata)
 
     lock.unlock();
 
-        
     if(wproxy != nullptr)
     {
         delete wproxy;
