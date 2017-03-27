@@ -1753,7 +1753,6 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
     auto dp_it = discovered_participants_.find(remote_participant_key);
     bool ret = false;
 
-    // TODO(Ricardo) If no get_participant_crypto, reader is not discovered. Store it until crypto is received.
     if(dp_it != discovered_participants_.end() && dp_it->second.get_participant_crypto() != nullptr)
     {
         auto shared_secret_handle = dp_it->second.get_shared_secret();
@@ -2466,7 +2465,6 @@ void SecurityManager::participant_authorized(const DiscoveredParticipantInfo::Au
             {
                 crypto_plugin_->cryptokeyfactory()->unregister_participant(participant_crypto_handle, exception);
             }
-
         }
         else
         {

@@ -454,7 +454,7 @@ bool EDP::pairingReader(RTPSReader* R)
                     bool is_payload_protected = R->is_payload_protected();
 
                     if((!is_submessage_protected && !is_payload_protected) ||
-                            mp_RTPSParticipant->security_manager().discovered_writer(R->m_guid, pdata->m_guid,
+                            mp_RTPSParticipant->security_manager().discovered_writer(R->m_guid, (*pit)->m_guid,
                                 **wdatait))
                     {
 #endif
@@ -537,7 +537,7 @@ bool EDP::pairingWriter(RTPSWriter* W)
                     bool is_payload_protected = W->is_payload_protected();
 
                     if((!is_submessage_protected && !is_payload_protected) ||
-                            mp_RTPSParticipant->security_manager().discovered_reader(W->getGuid(), pdata->m_guid,
+                            mp_RTPSParticipant->security_manager().discovered_reader(W->getGuid(), (*pit)->m_guid,
                                 **rdatait))
                     {
 #endif
