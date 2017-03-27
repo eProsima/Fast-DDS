@@ -143,25 +143,25 @@ class SecurityManager
 
                     AuthenticationInfo(AuthenticationStatus auth_status) :
                         identity_handle_(nullptr), handshake_handle_(nullptr),
-                        auth_status_(auth_status), expected_sequence_number_(0), 
+                        auth_status_(auth_status), expected_sequence_number_(0),
                         change_sequence_number_(SequenceNumber_t::unknown()),
-                        event_(nullptr), shared_secret_handle_(nullptr) {}
+                        event_(nullptr) {}
 
                     AuthenticationInfo(const AuthenticationInfo& auth) :
                         identity_handle_(auth.identity_handle_),
-                        handshake_handle_(auth.handshake_handle_), 
+                        handshake_handle_(auth.handshake_handle_),
                         auth_status_(auth.auth_status_),
-                        expected_sequence_number_(auth.expected_sequence_number_), 
+                        expected_sequence_number_(auth.expected_sequence_number_),
                         change_sequence_number_(auth.change_sequence_number_),
-                        event_(auth.event_), shared_secret_handle_(auth.shared_secret_handle_) {}
+                        event_(auth.event_) {}
 
                     AuthenticationInfo(AuthenticationInfo&& auth) :
                         identity_handle_(std::move(auth.identity_handle_)),
-                        handshake_handle_(std::move(auth.handshake_handle_)), 
+                        handshake_handle_(std::move(auth.handshake_handle_)),
                         auth_status_(auth.auth_status_),
-                        expected_sequence_number_(auth.expected_sequence_number_), 
+                        expected_sequence_number_(auth.expected_sequence_number_),
                         change_sequence_number_(std::move(auth.change_sequence_number_)),
-                        event_(std::move(auth.event_)), shared_secret_handle_(std::move(auth.shared_secret_handle_)) {}
+                        event_(std::move(auth.event_)) {}
 
                     IdentityHandle* identity_handle_;
 
@@ -174,8 +174,6 @@ class SecurityManager
                     SequenceNumber_t change_sequence_number_;
 
                     HandshakeMessageTokenResent* event_;
-
-                    SharedSecretHandle* shared_secret_handle_;
             };
 
             struct EmptyDelete
@@ -189,11 +187,13 @@ class SecurityManager
 
                 DiscoveredParticipantInfo(ParticipantProxyData* participant_data, AuthenticationStatus auth_status) :
                     auth_(auth_status), auth_ptr_(&auth_),
+                    shared_secret_handle_(nullptr),
                     participant_data_(participant_data),
                     participant_crypto_(nullptr) {}
 
                 DiscoveredParticipantInfo(DiscoveredParticipantInfo&& info) :
                     auth_(std::move(info.auth_)),  auth_ptr_(&auth_),
+                    shared_secret_handle_(std::move(info.shared_secret_handle_)),
                     participant_data_(info.participant_data_),
                     participant_crypto_(info.participant_crypto_) {}
 
@@ -208,6 +208,16 @@ class SecurityManager
                 ParticipantProxyData* get_participant_data()
                 {
                     return participant_data_;
+                }
+
+                void set_shared_secret(SharedSecretHandle* shared_secret)
+                {
+                    shared_secret_handle_ = shared_secret;
+                }
+
+                SharedSecretHandle* get_shared_secret()
+                {
+                    return shared_secret_handle_;
                 }
 
                 void set_participant_crypto(ParticipantCryptoHandle* participant_crypto)
@@ -227,6 +237,8 @@ class SecurityManager
                 AuthenticationInfo auth_;
 
                 AuthUniquePtr auth_ptr_;
+
+                SharedSecretHandle* shared_secret_handle_;
 
                 ParticipantProxyData* participant_data_;
 
@@ -317,7 +329,8 @@ class SecurityManager
                 const GUID_t& destination_endpoint_key, const GUID_t& source_endpoint_key,
                 ParticipantCryptoTokenSeq& crypto_tokens);
 
-        void participant_authorized(const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info, ParticipantProxyData* data);
+        void participant_authorized(const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
+                SharedSecretHandle* shared_secret_handle, ParticipantProxyData* data);
 
         RTPSParticipantImpl* participant_;
         StatelessWriter* participant_stateless_message_writer_;

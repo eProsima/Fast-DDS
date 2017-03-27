@@ -197,11 +197,16 @@ void SecurityManager::destroy()
         for(auto& dp_it : discovered_participants_)
         {
             auto auth_ptr = dp_it.second.get_auth();
-            remove_discovered_participant_info(auth_ptr);
 
             ParticipantCryptoHandle* participant_crypto_handle = dp_it.second.get_participant_crypto();
             if(participant_crypto_handle != nullptr)
                     crypto_plugin_->cryptokeyfactory()->unregister_participant(participant_crypto_handle, exception);
+
+            SharedSecretHandle* shared_secret_handle = dp_it.second.get_shared_secret();
+            if(shared_secret_handle != nullptr)
+                authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
+
+            remove_discovered_participant_info(auth_ptr);
         }
 
         discovered_participants_.clear();
@@ -240,12 +245,6 @@ void SecurityManager::remove_discovered_participant_info(DiscoveredParticipantIn
 
     if(auth_ptr)
     {
-        if(auth_ptr->shared_secret_handle_ != nullptr)
-        {
-            authentication_plugin_->return_sharedsecret_handle(auth_ptr->shared_secret_handle_, exception);
-            auth_ptr->shared_secret_handle_ = nullptr;
-        }
-
         if(auth_ptr->event_ != nullptr)
         {
             delete auth_ptr->event_;
@@ -366,7 +365,7 @@ bool SecurityManager::discovered_participant(ParticipantProxyData* participant_d
         if(auth_status == AUTHENTICATION_OK)
         {
             //TODO(Ricardo) Shared secret on this case?
-            participant_authorized(remote_participant_info, participant_data);
+            participant_authorized(remote_participant_info, nullptr, participant_data);
         }
     }
     else
@@ -403,11 +402,16 @@ void SecurityManager::remove_participant(ParticipantProxyData* participant_data)
     {
         SecurityException exception;
         auto auth_ptr = dp_it->second.get_auth();
-        remove_discovered_participant_info(auth_ptr);
 
         ParticipantCryptoHandle* participant_crypto_handle = dp_it->second.get_participant_crypto();
         if(participant_crypto_handle != nullptr)
             crypto_plugin_->cryptokeyfactory()->unregister_participant(participant_crypto_handle, exception);
+
+        SharedSecretHandle* shared_secret_handle = dp_it->second.get_shared_secret();
+        if(shared_secret_handle != nullptr)
+            authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
+
+        remove_discovered_participant_info(auth_ptr);
 
         discovered_participants_.erase(dp_it);
     }
@@ -586,10 +590,9 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
                     // if authentication was finished, starts encryption.
                     if(remote_participant_info->auth_status_ == AUTHENTICATION_OK)
                     {
-                        assert(remote_participant_info->shared_secret_handle_ == nullptr);
-                        remote_participant_info->shared_secret_handle_ = authentication_plugin_->get_shared_secret(
+                        SharedSecretHandle* shared_secret_handle = authentication_plugin_->get_shared_secret(
                                     *remote_participant_info->handshake_handle_, exception);
-                        participant_authorized(remote_participant_info, participant_data);
+                        participant_authorized(remote_participant_info, shared_secret_handle, participant_data);
                     }
 
                     if(ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE)
@@ -1753,7 +1756,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
     // TODO(Ricardo) If no get_participant_crypto, reader is not discovered. Store it until crypto is received.
     if(dp_it != discovered_participants_.end() && dp_it->second.get_participant_crypto() != nullptr)
     {
-        auto remote_participant_info = dp_it->second.get_auth();
+        auto shared_secret_handle = dp_it->second.get_shared_secret();
         auto local_writer = writer_handles_.find(writer_guid);
 
         if(local_writer != writer_handles_.end())
@@ -1763,7 +1766,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
 
             DatareaderCryptoHandle* remote_reader_handle = crypto_plugin_->cryptokeyfactory()->register_matched_remote_datareader(
                     *local_writer->second.writer_handle, *dp_it->second.get_participant_crypto(),
-                    *remote_participant_info->shared_secret_handle_, false, exception);
+                    *shared_secret_handle, false, exception);
 
             if(remote_reader_handle != nullptr && !remote_reader_handle->nil())
             {
@@ -1865,8 +1868,6 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
         {
             logError(SECURITY, "Cannot find local writer " << writer_guid << std::endl);
         }
-
-        dp_it->second.set_auth(remote_participant_info);
     }
     else
     {
@@ -1935,7 +1936,7 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
 
     if(dp_it != discovered_participants_.end() && dp_it->second.get_participant_crypto() != nullptr)
     {
-        auto remote_participant_info = dp_it->second.get_auth();
+        auto shared_secret_handle = dp_it->second.get_shared_secret();
         auto local_reader = reader_handles_.find(reader_guid);
 
         if(local_reader != reader_handles_.end())
@@ -1945,7 +1946,7 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
 
             DatawriterCryptoHandle* remote_writer_handle = crypto_plugin_->cryptokeyfactory()->register_matched_remote_datawriter(
                     *local_reader->second.reader_handle, *dp_it->second.get_participant_crypto(),
-                    *remote_participant_info->shared_secret_handle_, exception);
+                    *shared_secret_handle, exception);
 
             if(remote_writer_handle != nullptr && !remote_writer_handle->nil())
             {
@@ -2047,8 +2048,6 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
         {
             logError(SECURITY, "Cannot find local reader " << reader_guid << std::endl);
         }
-
-        dp_it->second.set_auth(remote_participant_info);
     }
     else
     {
@@ -2384,14 +2383,17 @@ bool SecurityManager::decode_serialized_payload(const SerializedPayload_t& secur
 }
 
 void SecurityManager::participant_authorized(const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
-        ParticipantProxyData* participant_data)
+        SharedSecretHandle* shared_secret_handle, ParticipantProxyData* participant_data)
 {
     logInfo(SECURITY, "Authorized participant " << participant_data->m_guid);
+
+    std::list<std::pair<ReaderProxyData, GUID_t>> temp_readers;
+    std::list<std::pair<WriterProxyData, GUID_t>> temp_writers;
 
     if(crypto_plugin_ != nullptr)
     {
         // TODO(Ricardo) Study cryptography without sharedsecret
-        if(remote_participant_info->shared_secret_handle_ == nullptr)
+        if(shared_secret_handle == nullptr)
         {
             logError(SECURITY, "Not shared secret for participant " << participant_data->m_guid);
             return;
@@ -2402,12 +2404,13 @@ void SecurityManager::participant_authorized(const DiscoveredParticipantInfo::Au
         // Starts cryptography mechanism
         ParticipantCryptoHandle* participant_crypto_handle = register_and_match_crypto_endpoint(participant_data,
                 *remote_participant_info->identity_handle_,
-                *remote_participant_info->shared_secret_handle_);
+                *shared_secret_handle);
 
         // Store cryptography info
         if(participant_crypto_handle != nullptr && !participant_crypto_handle->nil())
         {
             std::unique_lock<std::mutex> lock(mutex_);
+
             // Check there is a pending crypto message.
             auto pending = remote_participant_pending_messages_.find(participant_data->m_guid);
 
@@ -2425,16 +2428,45 @@ void SecurityManager::participant_authorized(const DiscoveredParticipantInfo::Au
                 remote_participant_pending_messages_.erase(pending);
             }
 
+            // Search in pendings readers and writers
+            auto rit = remote_reader_pending_discovery_messages_.begin();
+            while(rit != remote_reader_pending_discovery_messages_.end())
+            {
+                if(std::get<1>(*rit) == participant_data->m_guid)
+                {
+                    temp_readers.push_back(std::make_pair(std::get<0>(*rit), std::get<2>(*rit)));
+                    rit = remote_reader_pending_discovery_messages_.erase(rit);
+                    continue;
+                }
+
+                ++rit;
+            }
+
+            auto wit = remote_writer_pending_discovery_messages_.begin();
+            while(wit != remote_writer_pending_discovery_messages_.end())
+            {
+                if(std::get<1>(*wit) == participant_data->m_guid)
+                {
+                    temp_writers.push_back(std::make_pair(std::get<0>(*wit), std::get<2>(*wit)));
+                    wit = remote_writer_pending_discovery_messages_.erase(wit);
+                    continue;
+                }
+
+                ++wit;
+            }
+
             auto dp_it = discovered_participants_.find(participant_data->m_guid);
 
             if(dp_it != discovered_participants_.end())
             {
                 dp_it->second.set_participant_crypto(participant_crypto_handle);
+                dp_it->second.set_shared_secret(shared_secret_handle);
             }
             else
             {
                 crypto_plugin_->cryptokeyfactory()->unregister_participant(participant_crypto_handle, exception);
             }
+
         }
         else
         {
@@ -2454,39 +2486,6 @@ void SecurityManager::participant_authorized(const DiscoveredParticipantInfo::Au
         info.guid(participant_data->m_guid);
         participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
     }
-
-    // Search in pendings readers and writers
-    std::unique_lock<std::mutex> lock(mutex_);
-    std::list<std::pair<ReaderProxyData, GUID_t>> temp_readers;
-    std::list<std::pair<WriterProxyData, GUID_t>> temp_writers;
-
-    auto rit = remote_reader_pending_discovery_messages_.begin();
-    while(rit != remote_reader_pending_discovery_messages_.end())
-    {
-        if(std::get<1>(*rit) == participant_data->m_guid)
-        {
-            temp_readers.push_back(std::make_pair(std::get<0>(*rit), std::get<2>(*rit)));
-            rit = remote_reader_pending_discovery_messages_.erase(rit);
-            continue;
-        }
-
-        ++rit;
-    }
-
-    auto wit = remote_writer_pending_discovery_messages_.begin();
-    while(wit != remote_writer_pending_discovery_messages_.end())
-    {
-        if(std::get<1>(*wit) == participant_data->m_guid)
-        {
-            temp_writers.push_back(std::make_pair(std::get<0>(*wit), std::get<2>(*wit)));
-            wit = remote_writer_pending_discovery_messages_.erase(wit);
-            continue;
-        }
-
-        ++wit;
-    }
-
-    lock.unlock();
 
     for(auto& remote_reader : temp_readers)
     {
