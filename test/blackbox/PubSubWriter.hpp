@@ -182,11 +182,10 @@ class PubSubWriter
 
     void waitDiscovery()
     {
-        //std::cout << "Writer waiting for discovery..." << std::endl;
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
         if(matched_ == 0)
-            cv_.wait_for(lock, std::chrono::seconds(10));
+            cv_.wait(lock);
 
         ASSERT_NE(matched_, 0u);
         //std::cout << "Writer discovery phase finished" << std::endl;
@@ -194,10 +193,10 @@ class PubSubWriter
 
     void waitRemoval()
     {
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
         if(matched_ != 0)
-            cv_.wait_for(lock, std::chrono::seconds(10));
+            cv_.wait(lock);
 
         ASSERT_EQ(matched_, 0u);
     }
@@ -207,8 +206,8 @@ class PubSubWriter
     {
         std::unique_lock<std::mutex> lock(mutexAuthentication_);
 
-        if(authorized_ != how_many)
-            cvAuthentication_.wait_for(lock, std::chrono::seconds(10));
+        while(authorized_ != how_many)
+            cvAuthentication_.wait(lock);
 
         ASSERT_EQ(authorized_, how_many);
     }
@@ -217,8 +216,8 @@ class PubSubWriter
     {
         std::unique_lock<std::mutex> lock(mutexAuthentication_);
 
-        if(unauthorized_ != how_many)
-            cvAuthentication_.wait_for(lock, std::chrono::seconds(10));
+        while(unauthorized_ != how_many)
+            cvAuthentication_.wait(lock);
 
         ASSERT_EQ(unauthorized_, how_many);
     }
@@ -378,14 +377,14 @@ class PubSubWriter
 
     void matched()
     {
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
         ++matched_;
         cv_.notify_one();
     }
 
     void unmatched()
     {
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
         --matched_;
         cv_.notify_one();
     }
@@ -416,7 +415,7 @@ class PubSubWriter
     eprosima::fastrtps::PublisherAttributes publisher_attr_;
     std::string topic_name_;
     bool initialized_;
-    std::mutex mutex_;
+    std::mutex mutexDiscovery_;
     std::condition_variable cv_;
     unsigned int matched_;
     type_support type_;

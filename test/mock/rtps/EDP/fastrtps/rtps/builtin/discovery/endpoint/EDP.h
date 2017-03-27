@@ -13,13 +13,15 @@
 // limitations under the License.
 
 /**
- * @file PDPSimple.h
+ * @file EDP.h
  */
 
-#ifndef RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
-#define RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
+#ifndef RTPS_BUILTIN_DISCOVERY_PARTICIPANT_EDP_H_
+#define RTPS_BUILTIN_DISCOVERY_PARTICIPANT_EDP_H_
 
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
@@ -30,23 +32,22 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class PDPSimple
+class EDP
 {
     public:
 
-        MOCK_METHOD1(notifyAboveRemoteEndpoints, void(ParticipantProxyData*));
+#if HAVE_SECURITY
+        MOCK_METHOD3(pairingLaterReaderProxy, bool(const GUID_t local_writer, ParticipantProxyData& pdata,
+                    ReaderProxyData& rdata));
 
-        MOCK_METHOD1(get_participant_proxy_data_serialized, CDRMessage_t(Endianness_t));
-
-        EDP* getEDP() { return &edp_; }
-
-    private:
-
-        EDP edp_;
+        MOCK_METHOD3(pairingLaterWriterProxy, bool(const GUID_t local_reader, ParticipantProxyData& pdata,
+                WriterProxyData& wdata));
+#endif
 };
 
 } //namespace rtps
 } //namespace fastrtps
 } //namespace eprosima
 
-#endif // RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
+#endif // RTPS_BUILTIN_DISCOVERY_PARTICIPANT_EDP_H_
+

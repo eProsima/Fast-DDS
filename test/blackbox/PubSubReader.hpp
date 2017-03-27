@@ -217,14 +217,12 @@ class PubSubReader
 
         void waitDiscovery()
         {
-            //std::cout << "Reader waiting for discovery..." << std::endl;
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
             if(matched_ == 0)
-                cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
+                cvDiscovery_.wait(lock);
 
             ASSERT_NE(matched_, 0u);
-            //std::cout << "Reader discovery phase finished" << std::endl;
         }
 
         void waitRemoval()
@@ -232,7 +230,7 @@ class PubSubReader
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
             if(matched_ != 0)
-                cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
+                cvDiscovery_.wait(lock);
 
             ASSERT_EQ(matched_, 0u);
         }
@@ -242,8 +240,8 @@ class PubSubReader
         {
             std::unique_lock<std::mutex> lock(mutexAuthentication_);
 
-            if(authorized_ != how_many)
-                cvAuthentication_.wait_for(lock, std::chrono::seconds(10));
+            while(authorized_ != how_many)
+                cvAuthentication_.wait(lock);
 
             ASSERT_EQ(authorized_, how_many);
         }
@@ -252,8 +250,8 @@ class PubSubReader
         {
             std::unique_lock<std::mutex> lock(mutexAuthentication_);
 
-            if(unauthorized_ != how_many)
-                cvAuthentication_.wait_for(lock, std::chrono::seconds(10));
+            while(unauthorized_ != how_many)
+                cvAuthentication_.wait(lock);
 
             ASSERT_EQ(unauthorized_, how_many);
         }

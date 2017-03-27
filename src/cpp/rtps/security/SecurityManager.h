@@ -26,11 +26,14 @@
 #include <fastrtps/rtps/common/SequenceNumber.h>
 #include "timedevent/HandshakeMessageTokenResent.h"
 #include <fastrtps/rtps/common/SerializedPayload.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
 #include <map>
 #include <mutex>
 #include <atomic>
 #include <memory>
+#include <list>
 
 namespace eprosima {
 namespace fastrtps {
@@ -73,13 +76,13 @@ class SecurityManager
         bool register_local_reader(const GUID_t& reader_guid, const PropertySeq& reader_properties);
 
         bool discovered_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
-                const GUID_t& remote_reader_guid);
+                ReaderProxyData& remote_reader_data);
 
         void remove_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
                 const GUID_t& remote_reader_guid);
 
         bool discovered_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
-                const GUID_t& remote_writer_guid);
+                WriterProxyData& remote_writer_guid);
 
         void remove_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
                 const GUID_t& remote_writer_guid);
@@ -370,6 +373,8 @@ class SecurityManager
         std::map<GUID_t, DataHolderSeq> remote_participant_pending_messages_;
         std::map<GUID_t, DataHolderSeq> remote_writer_pending_messages_;
         std::map<GUID_t, DataHolderSeq> remote_reader_pending_messages_;
+        std::list<std::tuple<ReaderProxyData, GUID_t, GUID_t>> remote_reader_pending_discovery_messages_;
+        std::list<std::tuple<WriterProxyData, GUID_t, GUID_t>> remote_writer_pending_discovery_messages_;
 };
 
 } //namespace security

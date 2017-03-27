@@ -449,18 +449,39 @@ bool EDP::pairingReader(RTPSReader* R)
 
                 if(valid)
                 {
-                    logInfo(RTPS_EDP, "Valid Matching to writerProxy: " << (*wdatait)->guid());
-                    if(R->matched_writer_add((*wdatait)->toRemoteWriterAttributes()))
+#if HAVE_SECURITY
+                    bool is_submessage_protected = R->is_submessage_protected();
+                    bool is_payload_protected = R->is_payload_protected();
+
+                    if((!is_submessage_protected && !is_payload_protected) ||
+                            mp_RTPSParticipant->security_manager().discovered_writer(R->m_guid, pdata->m_guid,
+                                **wdatait))
                     {
-                        //MATCHED AND ADDED CORRECTLY:
-                        if(R->getListener()!=nullptr)
+#endif
+                        if(R->matched_writer_add((*wdatait)->toRemoteWriterAttributes()))
                         {
-                            MatchingInfo info;
-                            info.status = MATCHED_MATCHING;
-                            info.remoteEndpointGuid = (*wdatait)->guid();
-                            R->getListener()->onReaderMatched(R,info);
+                            logInfo(RTPS_EDP, "Valid Matching to writerProxy: " << (*wdatait)->guid());
+                            //MATCHED AND ADDED CORRECTLY:
+                            if(R->getListener()!=nullptr)
+                            {
+                                MatchingInfo info;
+                                info.status = MATCHED_MATCHING;
+                                info.remoteEndpointGuid = (*wdatait)->guid();
+                                R->getListener()->onReaderMatched(R,info);
+                            }
                         }
+                        else
+                        {
+                            logError(RTPS_ERROR, "Reader " << R->getGuid() << " cannot match writer " << (*wdatait)->guid());
+                        }
+#if HAVE_SECURITY
                     }
+                    else
+                        if(is_submessage_protected || is_payload_protected)
+                        {
+                            logError(RTPS_EDP, "Security manager returns an error for reader " << R->getGuid());
+                        }
+#endif
                 }
                 else
                 {
@@ -468,6 +489,10 @@ bool EDP::pairingReader(RTPSReader* R)
                     if(R->matched_writer_is_matched((*wdatait)->toRemoteWriterAttributes())
                             && R->matched_writer_remove((*wdatait)->toRemoteWriterAttributes()))
                     {
+#if HAVE_SECURITY
+                        mp_RTPSParticipant->security_manager().remove_writer(R->getGuid(), pdata->m_guid, (*wdatait)->guid());
+#endif
+
                         //MATCHED AND ADDED CORRECTLY:
                         if(R->getListener()!=nullptr)
                         {
@@ -507,19 +532,40 @@ bool EDP::pairingWriter(RTPSWriter* W)
 
                 if(valid)
                 {
-                    //std::cout << "VALID MATCHING to " <<(*rdatait)->m_guid<< std::endl;
-                    logInfo(RTPS_EDP,"Valid Matching to readerProxy: "<<(*rdatait)->m_guid);
-                    if(W->matched_reader_add((*rdatait)->toRemoteReaderAttributes()))
+#if HAVE_SECURITY
+                    bool is_submessage_protected = W->is_submessage_protected();
+                    bool is_payload_protected = W->is_payload_protected();
+
+                    if((!is_submessage_protected && !is_payload_protected) ||
+                            mp_RTPSParticipant->security_manager().discovered_reader(W->getGuid(), pdata->m_guid,
+                                **rdatait))
                     {
-                        //MATCHED AND ADDED CORRECTLY:
-                        if(W->getListener()!=nullptr)
+#endif
+                        //std::cout << "VALID MATCHING to " <<(*rdatait)->m_guid<< std::endl;
+                        if(W->matched_reader_add((*rdatait)->toRemoteReaderAttributes()))
                         {
-                            MatchingInfo info;
-                            info.status = MATCHED_MATCHING;
-                            info.remoteEndpointGuid = (*rdatait)->m_guid;
-                            W->getListener()->onWriterMatched(W,info);
+                            logInfo(RTPS_EDP,"Valid Matching to readerProxy: "<<(*rdatait)->m_guid);
+                            //MATCHED AND ADDED CORRECTLY:
+                            if(W->getListener()!=nullptr)
+                            {
+                                MatchingInfo info;
+                                info.status = MATCHED_MATCHING;
+                                info.remoteEndpointGuid = (*rdatait)->m_guid;
+                                W->getListener()->onWriterMatched(W,info);
+                            }
                         }
+                        else
+                        {
+                            logError(RTPS_ERROR, "Writer " << W->getGuid() << " cannot match reader " << (*rdatait)->m_guid);
+                        }
+#if HAVE_SECURITY
                     }
+                    else
+                        if(is_submessage_protected || is_payload_protected)
+                        {
+                            logError(RTPS_EDP, "Security manager returns an error for writer " << W->getGuid());
+                        }
+#endif
                 }
                 else
                 {
@@ -527,6 +573,9 @@ bool EDP::pairingWriter(RTPSWriter* W)
                     if(W->matched_reader_is_matched((*rdatait)->toRemoteReaderAttributes()) &&
                             W->matched_reader_remove((*rdatait)->toRemoteReaderAttributes()))
                     {
+#if HAVE_SECURITY
+                        mp_RTPSParticipant->security_manager().remove_reader(W->getGuid(), pdata->m_guid, (*rdatait)->m_guid);
+#endif
                         //MATCHED AND ADDED CORRECTLY:
                         if(W->getListener()!=nullptr)
                         {
@@ -573,7 +622,7 @@ bool EDP::pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata
 #if HAVE_SECURITY
                 if((!is_submessage_protected && !is_payload_protected) ||
                         mp_RTPSParticipant->security_manager().discovered_reader(writerGUID, pdata->m_guid,
-                        rdata->m_guid))
+                        *rdata))
                 {
 #endif
                     if((*wit)->matched_reader_add(rdata->toRemoteReaderAttributes()))
@@ -606,6 +655,9 @@ bool EDP::pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata
                 if((*wit)->matched_reader_is_matched(rdata->toRemoteReaderAttributes())
                         && (*wit)->matched_reader_remove(rdata->toRemoteReaderAttributes()))
                 {
+#if HAVE_SECURITY
+                    mp_RTPSParticipant->security_manager().remove_reader((*wit)->getGuid(), pdata->m_guid, rdata->m_guid);
+#endif
                     //MATCHED AND ADDED CORRECTLY:
                     if((*wit)->getListener()!=nullptr)
                     {
@@ -621,6 +673,84 @@ bool EDP::pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata
 
     return true;
 }
+
+#if HAVE_SECURITY
+bool EDP::pairingLaterReaderProxy(const GUID_t local_writer, ParticipantProxyData& pdata, ReaderProxyData& rdata)
+{
+    logInfo(RTPS_EDP, rdata.m_guid <<" in topic: \"" << rdata.m_topicName <<"\"");
+    std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
+    for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
+            wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
+    {
+        std::unique_lock<std::recursive_mutex> lock(*(*wit)->getMutex());
+        GUID_t writerGUID = (*wit)->getGuid();
+        bool is_submessage_protected = (*wit)->is_submessage_protected();
+        bool is_payload_protected = (*wit)->is_payload_protected();
+        lock.unlock();
+
+        if(local_writer == writerGUID)
+        {
+            ParticipantProxyData* wpdata = nullptr;
+            WriterProxyData* wdata = nullptr;
+            if(mp_PDP->lookupWriterProxyData(writerGUID,&wdata, &wpdata))
+            {
+                std::unique_lock<std::recursive_mutex> plock(*pdata.mp_mutex);
+
+                wpdata->mp_mutex->lock();
+                bool valid = validMatching(wdata, &rdata);
+                wpdata->mp_mutex->unlock();
+
+                if(valid)
+                {
+                    if((!is_submessage_protected && !is_payload_protected) ||
+                            mp_RTPSParticipant->security_manager().discovered_reader(writerGUID, pdata.m_guid, rdata))
+                    {
+                        if((*wit)->matched_reader_add(rdata.toRemoteReaderAttributes()))
+                        {
+                            logInfo(RTPS_EDP, "Valid Matching to local writer: " << writerGUID.entityId);
+                            //MATCHED AND ADDED CORRECTLY:
+                            if((*wit)->getListener()!=nullptr)
+                            {
+                                MatchingInfo info;
+                                info.status = MATCHED_MATCHING;
+                                info.remoteEndpointGuid = rdata.m_guid;
+                                (*wit)->getListener()->onWriterMatched((*wit),info);
+                            }
+                        }
+                        else
+                        {
+                            logError(RTPS_ERROR, "Writer " << writerGUID << " cannot match reader " << rdata.m_guid);
+                        }
+                    }
+                    else
+                        if(is_submessage_protected || is_payload_protected)
+                        {
+                            logError(RTPS_EDP, "Security manager returns an error for writer " << writerGUID);
+                        }
+                }
+                else
+                {
+                    if((*wit)->matched_reader_is_matched(rdata.toRemoteReaderAttributes())
+                            && (*wit)->matched_reader_remove(rdata.toRemoteReaderAttributes()))
+                    {
+                        mp_RTPSParticipant->security_manager().remove_reader((*wit)->getGuid(), pdata.m_guid, rdata.m_guid);
+                        //MATCHED AND ADDED CORRECTLY:
+                        if((*wit)->getListener()!=nullptr)
+                        {
+                            MatchingInfo info;
+                            info.status = REMOVED_MATCHING;
+                            info.remoteEndpointGuid = rdata.m_guid;
+                            (*wit)->getListener()->onWriterMatched((*wit),info);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return true;
+}
+#endif
 
 bool EDP::pairingWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata)
 {
@@ -652,7 +782,7 @@ bool EDP::pairingWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata
 #if HAVE_SECURITY
                 if((!is_submessage_protected && !is_payload_protected) ||
                         mp_RTPSParticipant->security_manager().discovered_writer(readerGUID, pdata->m_guid,
-                        wdata->guid()))
+                        *wdata))
                 {
 #endif
                     if((*rit)->matched_writer_add(wdata->toRemoteWriterAttributes()))
@@ -666,6 +796,10 @@ bool EDP::pairingWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata
                             info.remoteEndpointGuid = wdata->guid();
                             (*rit)->getListener()->onReaderMatched((*rit),info);
                         }
+                    }
+                    else
+                    {
+                        logError(RTPS_ERROR, "Reader " << readerGUID << " cannot match writer " << wdata->guid());
                     }
 #if HAVE_SECURITY
                 }
@@ -681,6 +815,9 @@ bool EDP::pairingWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata
                 if((*rit)->matched_writer_is_matched(wdata->toRemoteWriterAttributes())
                         && (*rit)->matched_writer_remove(wdata->toRemoteWriterAttributes()))
                 {
+#if HAVE_SECURITY
+                    mp_RTPSParticipant->security_manager().remove_writer((*rit)->getGuid(), pdata->m_guid, wdata->guid());
+#endif
                     //MATCHED AND ADDED CORRECTLY:
                     if((*rit)->getListener()!=nullptr)
                     {
@@ -695,6 +832,85 @@ bool EDP::pairingWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata
     }
     return true;
 }
+
+#if HAVE_SECURITY
+bool EDP::pairingLaterWriterProxy(const GUID_t local_reader, ParticipantProxyData& pdata, WriterProxyData& wdata)
+{
+    logInfo(RTPS_EDP, wdata.guid() <<" in topic: \"" << wdata.topicName() <<"\"");
+    std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
+    for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
+            rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
+    {
+        GUID_t readerGUID;
+        std::unique_lock<std::recursive_mutex> lock(*(*rit)->getMutex());
+        readerGUID = (*rit)->getGuid();
+        bool is_submessage_protected = (*rit)->is_submessage_protected();
+        bool is_payload_protected = (*rit)->is_payload_protected();
+        lock.unlock();
+
+        if(local_reader == readerGUID)
+        {
+            ParticipantProxyData* rpdata = nullptr;
+            ReaderProxyData* rdata = nullptr;
+            if(mp_PDP->lookupReaderProxyData(readerGUID, &rdata, &rpdata))
+            {
+                std::unique_lock<std::recursive_mutex> plock(*pdata.mp_mutex);
+
+                rpdata->mp_mutex->lock();
+                bool valid = validMatching(rdata, &wdata);
+                rpdata->mp_mutex->unlock();
+
+                if(valid)
+                {
+                    if((!is_submessage_protected && !is_payload_protected) ||
+                            mp_RTPSParticipant->security_manager().discovered_writer(readerGUID, pdata.m_guid,
+                                wdata))
+                    {
+                        if((*rit)->matched_writer_add(wdata.toRemoteWriterAttributes()))
+                        {
+                            logInfo(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId);
+                            //MATCHED AND ADDED CORRECTLY:
+                            if((*rit)->getListener()!=nullptr)
+                            {
+                                MatchingInfo info;
+                                info.status = MATCHED_MATCHING;
+                                info.remoteEndpointGuid = wdata.guid();
+                                (*rit)->getListener()->onReaderMatched((*rit),info);
+                            }
+                        }
+                        else
+                        {
+                            logError(RTPS_ERROR, "Reader " << readerGUID << " cannot match writer " << wdata.guid());
+                        }
+                    }
+                    else
+                        if(is_submessage_protected || is_payload_protected)
+                        {
+                            logError(RTPS_EDP, "Security manager returns an error for reader " << readerGUID);
+                        }
+                }
+                else
+                {
+                    if((*rit)->matched_writer_is_matched(wdata.toRemoteWriterAttributes())
+                            && (*rit)->matched_writer_remove(wdata.toRemoteWriterAttributes()))
+                    {
+                        mp_RTPSParticipant->security_manager().remove_writer((*rit)->getGuid(), pdata.m_guid, wdata.guid());
+                        //MATCHED AND ADDED CORRECTLY:
+                        if((*rit)->getListener()!=nullptr)
+                        {
+                            MatchingInfo info;
+                            info.status = REMOVED_MATCHING;
+                            info.remoteEndpointGuid = wdata.guid();
+                            (*rit)->getListener()->onReaderMatched((*rit),info);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return true;
+}
+#endif
 
 }
 } /* namespace rtps */
