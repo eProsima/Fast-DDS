@@ -87,7 +87,7 @@ MessageReceiver::~MessageReceiver()
 }
 
 void MessageReceiver::associateEndpoint(Endpoint *to_add){
-    bool found = false;	
+    bool found = false;
     std::lock_guard<std::mutex> guard(mtx);
     if(to_add->getAttributes()->endpointKind == WRITER){
         for(auto it = AssociatedWriters.begin();it != AssociatedWriters.end(); ++it){
@@ -630,12 +630,13 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
     //Extra flags don't matter now. Avoid those bytes
     msg->pos += 2;
 
+    bool valid = true;
     int16_t octetsToInlineQos;
-    CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
+    valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
 
     //reader and writer ID
     EntityId_t readerID;
-    CDRMessage::readEntityId(msg, &readerID);
+    valid &= CDRMessage::readEntityId(msg, &readerID);
 
     //WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
     if(AssociatedReaders.empty())
@@ -665,10 +666,10 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
     //We ask the reader for a cachechange to store the information.
     CacheChange_t* ch = mp_change;
     ch->writerGUID.guidPrefix = sourceGuidPrefix;
-    CDRMessage::readEntityId(msg, &ch->writerGUID.entityId);
+    valid &= CDRMessage::readEntityId(msg, &ch->writerGUID.entityId);
 
     //Get sequence number
-    CDRMessage::readSequenceNumber(msg, &ch->sequenceNumber);
+    valid &= CDRMessage::readSequenceNumber(msg, &ch->sequenceNumber);
 
     if (ch->sequenceNumber.to64long() <= 0 || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid //TODO make faster
     {
@@ -678,19 +679,23 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
     // READ FRAGMENT NUMBER
     uint32_t fragmentStartingNum;
-    CDRMessage::readUInt32(msg, &fragmentStartingNum);
+    valid &= CDRMessage::readUInt32(msg, &fragmentStartingNum);
 
     // READ FRAGMENTSINSUBMESSAGE
     uint16_t fragmentsInSubmessage;
-    CDRMessage::readUInt16(msg, &fragmentsInSubmessage);
+    valid &= CDRMessage::readUInt16(msg, &fragmentsInSubmessage);
 
     // READ FRAGMENTSIZE
     uint16_t fragmentSize;
-    CDRMessage::readUInt16(msg, &fragmentSize);
+    valid &= CDRMessage::readUInt16(msg, &fragmentSize);
 
     // READ SAMPLESIZE
     uint32_t sampleSize;
-    CDRMessage::readUInt32(msg, &sampleSize);
+    valid &= CDRMessage::readUInt32(msg, &sampleSize);
+
+    if(!valid){
+        return false;
+    }
 
     //Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
     if (octetsToInlineQos > RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG)
@@ -736,7 +741,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
             ch->getDataFragments()->clear();
             ch->getDataFragments()->resize(fragmentsInSubmessage, ChangeFragmentStatus_t::PRESENT);
 
-            CDRMessage::readData(msg,
+            valid &= CDRMessage::readData(msg,
                     ch->serializedPayload.data, payload_size);
 
             ch->kind = ALIVE;
@@ -770,6 +775,9 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
         }
         msg->msg_endian = previous_endian;
         */
+    }
+    if (!valid){
+        return false;
     }
 
     //Is the final message?
