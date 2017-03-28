@@ -463,12 +463,13 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
     //Extra flags don't matter now. Avoid those bytes
     msg->pos+=2;
 
+    bool valid = true;
     int16_t octetsToInlineQos;
-    CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
+    valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
 
     //reader and writer ID
     EntityId_t readerID;
-    CDRMessage::readEntityId(msg,&readerID);
+    valid &= CDRMessage::readEntityId(msg,&readerID);
 
     //WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
 
@@ -497,10 +498,14 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
     //We ask the reader for a cachechange to store the information.
     CacheChange_t* ch = mp_change;
     ch->writerGUID.guidPrefix = sourceGuidPrefix;
-    CDRMessage::readEntityId(msg,&ch->writerGUID.entityId);
+    valid &= CDRMessage::readEntityId(msg,&ch->writerGUID.entityId);
 
     //Get sequence number
-    CDRMessage::readSequenceNumber(msg,&ch->sequenceNumber);
+    valid &= CDRMessage::readSequenceNumber(msg,&ch->sequenceNumber);
+
+    if (!valid){
+        return false;
+    }
 
     if(ch->sequenceNumber <= SequenceNumber_t(0, 0) || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid //TODO make faster
     {
@@ -543,15 +548,18 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
         if(dataFlag)
         {
-            if(ch->serializedPayload.max_size >= payload_size)
+            if(ch->serializedPayload.max_size >= payload_size && payload_size > 0)
             {
                 ch->serializedPayload.length = payload_size;
-                CDRMessage::readData(msg,ch->serializedPayload.data,ch->serializedPayload.length);
+                valid &= CDRMessage::readData(msg,ch->serializedPayload.data,ch->serializedPayload.length);
+                if (!valid){
+                    return false;
+                }
                 ch->kind = ALIVE;
             }
             else
             {
-                logWarning(RTPS_MSG_IN,IDSTRING"Serialized Payload larger than maximum allowed size "
+                logWarning(RTPS_MSG_IN,IDSTRING"Serialized Payload value invalid or larger than maximum allowed size"
                         "(" <<payload_size <<"/"<< ch->serializedPayload.max_size<<")");
                 return false;
             }
@@ -732,7 +740,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
     if (!keyFlag)
     {
-        if (ch->serializedPayload.max_size >= payload_size)
+        if (ch->serializedPayload.max_size >= payload_size && payload_size > 0)
         {
             ch->serializedPayload.length = payload_size;
 
@@ -748,7 +756,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
         }
         else
         {
-            logWarning(RTPS_MSG_IN, IDSTRING"Serialized Payload larger than maximum allowed size "
+            logWarning(RTPS_MSG_IN, IDSTRING"Serialized Payload value invalid or larger than maximum allowed size "
                     "(" << payload_size << "/" << ch->serializedPayload.max_size << ")");
             //firstReader->releaseCache(ch);
             return false;
