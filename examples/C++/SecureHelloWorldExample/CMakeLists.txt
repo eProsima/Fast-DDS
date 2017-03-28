@@ -42,6 +42,6 @@ install(TARGETS SecureHelloWorldExample
     RUNTIME DESTINATION examples/C++/SecureHelloWorldExample/${BIN_INSTALL_DIR})
 
 add_custom_command(TARGET SecureHelloWorldExample POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${PROJECT_SOURCE_DIR}/certs/*.pem
-            ${PROJECT_BINARY_DIR})
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/certs
+            ${PROJECT_BINARY_DIR}/certs)

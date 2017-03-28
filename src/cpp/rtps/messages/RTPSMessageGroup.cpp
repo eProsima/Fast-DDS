@@ -258,6 +258,7 @@ bool RTPSMessageGroup::insert_submessage(const std::vector<GUID_t>& remote_endpo
 
 bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer, const std::vector<GUID_t>& remote_endpoints)
 {
+    (void)remote_endpoints;
     bool added = false;
 
 #if HAVE_SECURITY
@@ -310,6 +311,7 @@ bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer, const std::v
 
 bool RTPSMessageGroup::add_info_ts_in_buffer(const std::vector<GUID_t>& remote_readers)
 {
+    (void)remote_readers;
     logInfo(RTPS_WRITER, "Sending INFO_TS message");
 
 #if HAVE_SECURITY

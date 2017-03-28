@@ -39,11 +39,11 @@ bool HelloWorldSubscriber::init()
     participant_property_policy.properties().emplace_back("dds.sec.auth.plugin",
                 "builtin.PKI-DH");
     participant_property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_ca",
-                    "file://maincacert.pem");
+                    "file://certs/maincacert.pem");
     participant_property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-                    "file://mainsubcert.pem");
+                    "file://certs/mainsubcert.pem");
     participant_property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.private_key",
-                    "file://mainsubkey.pem");
+                    "file://certs/mainsubkey.pem");
     participant_property_policy.properties().emplace_back("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC");
     participant_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
