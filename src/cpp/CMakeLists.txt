@@ -156,10 +156,12 @@ if(WIN32)
 endif()
 
 # External sources
-list(APPEND ${PROJECT_NAME}_source_files
-    ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
-    )
-set_sources(../../thirdparty/tinyxml2/tinyxml2.cpp)
+if(TINYXML2_SOURCE_DIR)
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
+        )
+    set_sources(../../thirdparty/tinyxml2/tinyxml2.cpp)
+endif()
 
 if(ANDROID)
     list(APPEND ${PROJECT_NAME}_source_files
@@ -263,9 +265,16 @@ if(MSVC OR MSVC_IDE)
 
         # Link library to external win32 libraries.
         target_link_libraries(${PROJECT_NAME} ${PRIVACY}
-            ${CMAKE_THREAD_LIBS_INIT} iphlpapi Shlwapi kernel32 user32.dll
+            ${CMAKE_THREAD_LIBS_INIT}
+            iphlpapi Shlwapi kernel32 user32.dll
             ${EXTRA_LIBRARIES}
             )
+
+        if(TINYXML2_LIBRARY)
+            target_link_libraries(${PROJECT_NAME} ${PRIVACY}
+                ${TINYXML2_LIBRARY}
+                )
+        endif()
     endif()
 else()
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -286,6 +295,12 @@ else()
         ${CMAKE_THREAD_LIBS_INIT}
         ${EXTRA_LIBRARIES}
         )
+
+    if(TINYXML2_LIBRARY)
+        target_link_libraries(${PROJECT_NAME}
+            ${TINYXML2_LIBRARY}
+            )
+    endif()
 endif()
 
 ###############################################################################

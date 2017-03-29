@@ -22,6 +22,7 @@
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include <fastrtps/log/Log.h>
 #include "../participant/RTPSParticipantImpl.h"
+#include "../flowcontrol/FlowController.h"
 
 #include <mutex>
 

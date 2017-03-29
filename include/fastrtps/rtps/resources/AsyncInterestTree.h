@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ASYNC_INTEREST_TREE_H
-#define ASYNC_INTEREST_TREE_H
+#ifndef _RTPS_RESOURCES_ASYNC_INTEREST_TREE_H_
+#define _RTPS_RESOURCES_ASYNC_INTEREST_TREE_H_
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <mutex>
@@ -61,4 +61,4 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // _RTPS_RESOURCES_ASYNC_INTEREST_TREE_H_

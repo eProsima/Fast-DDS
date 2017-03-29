@@ -22,7 +22,6 @@
 #include "../Endpoint.h"
 #include "../messages/RTPSMessageGroup.h"
 #include "../attributes/WriterAttributes.h"
-#include "../flowcontrol/FlowController.h"
 #include <vector>
 #include <memory>
 
@@ -32,6 +31,7 @@ namespace rtps {
 
 class WriterListener;
 class WriterHistory;
+class FlowController;
 struct CacheChange_t;
 
 

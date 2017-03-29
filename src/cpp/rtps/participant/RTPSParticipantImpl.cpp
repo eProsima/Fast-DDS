@@ -19,7 +19,7 @@
 
 #include "RTPSParticipantImpl.h"
 
-#include <fastrtps/rtps/flowcontrol/ThroughputController.h>
+#include "../flowcontrol/ThroughputController.h"
 
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>

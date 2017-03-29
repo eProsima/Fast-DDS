@@ -21,6 +21,7 @@
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include "../participant/RTPSParticipantImpl.h"
+#include "../flowcontrol/FlowController.h"
 
 #include <mutex>
 

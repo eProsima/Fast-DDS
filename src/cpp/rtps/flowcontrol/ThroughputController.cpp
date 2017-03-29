@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/rtps/flowcontrol/ThroughputController.h>
-#include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
+#include "ThroughputController.h"
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include <asio.hpp>
 #include <asio/steady_timer.hpp>

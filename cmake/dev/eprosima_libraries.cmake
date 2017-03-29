@@ -150,12 +150,11 @@ macro(find_eprosima_package package)
     endif()
 endmacro()
 
-macro(find_eprosima_thirdparty package)
+macro(find_eprosima_thirdparty package thirdparty_name)
     if(NOT (EPROSIMA_INSTALLER AND (MSVC OR MSVC_IDE)))
         if(THIRDPARTY)
-
             execute_process(
-                COMMAND git submodule update --recursive --init "thirdparty/${package}"
+                COMMAND git submodule update --recursive --init "thirdparty/${thirdparty_name}"
                 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
                 RESULT_VARIABLE EXECUTE_RESULT
                 )
@@ -165,8 +164,8 @@ macro(find_eprosima_thirdparty package)
             endif()
         endif()
 
-        set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${package})
-        set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${package}/${package})
+        set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name})
+        set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name}/${thirdparty_name})
 
         find_package(${package} REQUIRED)
     endif()

@@ -12,12 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <vector>
-#include "../../../../../src/cpp/rtps/participant/RTPSParticipantImpl.h"
+/**
+ * @file AsyncWriterThread.h
+ *
+ */
+#ifndef _RTPS_RESOURCES_ASYNCWRITERTHREAD_H_
+#define _RTPS_RESOURCES_ASYNCWRITERTHREAD_H_
 
-static std::vector<RTPSWriter*> writers;
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
-const std::vector<RTPSWriter*>& eprosima::fastrtps::rtps::RTPSParticipantImpl::getAllWriters() const
+class RTPSParticipantImpl;
+class RTPSWriter;
+
+class AsyncWriterThread
 {
-   return writers;
-}
+    public:
+
+        static void wakeUp(const RTPSParticipantImpl*) {}
+
+        static void wakeUp(const RTPSWriter*) {}
+};
+
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
+#endif // _RTPS_RESOURCES_ASYNCWRITERTHREAD_H_

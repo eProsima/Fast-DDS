@@ -15,7 +15,7 @@
 #include <mutex>
 
 #include <fastrtps/rtps/resources/AsyncInterestTree.h>
-#include "../participant/RTPSParticipantImpl.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 AsyncInterestTree::AsyncInterestTree():
    mActiveInterest(&mInterestAlpha),

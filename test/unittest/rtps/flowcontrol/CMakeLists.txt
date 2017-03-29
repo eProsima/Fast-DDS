@@ -21,14 +21,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
-        include_directories(mock/)
         include_directories(${ASIO_INCLUDE_DIR})
 
         set(THROUGHPUTCONTROLLERTESTS_SOURCE
             ThroughputControllerTests.cpp
-            mock/mock.RTPSParticipantImpl.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/AsyncWriterThread.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/AsyncInterestTree.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowController.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputController.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp)
@@ -37,6 +33,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_gtest(ThroughputControllerTests ${THROUGHPUTCONTROLLERTESTS_SOURCE})
         target_compile_definitions(ThroughputControllerTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(ThroughputControllerTests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/AsyncWriterThread
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}
             ${PROJECT_SOURCE_DIR}/src/cpp
             )

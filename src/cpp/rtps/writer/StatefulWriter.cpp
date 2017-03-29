@@ -22,6 +22,7 @@
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #include "../participant/RTPSParticipantImpl.h"
+#include "../flowcontrol/FlowController.h"
 
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include <fastrtps/rtps/messages/RTPSMessageGroup.h>

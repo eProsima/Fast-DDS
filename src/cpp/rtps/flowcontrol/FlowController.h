@@ -20,13 +20,10 @@
 #include <functional>
 #include <memory>
 #include <fastrtps/rtps/common/CacheChange.h>
+#include <asio.hpp>
 
 #include <thread>
 
-namespace asio{
-    class io_context;
-    typedef io_context io_service;
-}
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{

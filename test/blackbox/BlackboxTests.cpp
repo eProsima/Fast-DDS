@@ -27,7 +27,7 @@
 #include "PubSubWriter.hpp"
 
 #include <fastrtps/rtps/RTPSDomain.h>
-#include <fastrtps/rtps/flowcontrol/ThroughputController.h>
+#include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/transport/test_UDPv4Transport.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>

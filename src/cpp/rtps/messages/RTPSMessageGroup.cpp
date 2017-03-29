@@ -19,9 +19,9 @@
 
 #include <fastrtps/rtps/messages/RTPSMessageGroup.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
-#include <fastrtps/rtps/flowcontrol/FlowController.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include "../participant/RTPSParticipantImpl.h"
+#include "../flowcontrol/FlowController.h"
 
 #include <fastrtps/log/Log.h>
 
