@@ -456,14 +456,15 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                     }
                 case PID_PRESENTATION:
                     {
-                        if(plength != 4){ //TODO Fix coherence with PARAMETER_PRESENTATION_LENGTH (8)
+                        if(plength != PARAMETER_PRESENTATION_LENGTH){
                             return -1;
                         }
                         PresentationQosPolicy* p = new PresentationQosPolicy();
                         valid&=CDRMessage::readOctet(msg,(octet*)&p->access_scope);
+                        msg->pos+=3;
                         valid&=CDRMessage::readOctet(msg,(octet*)&p->coherent_access);
                         valid&=CDRMessage::readOctet(msg,(octet*)&p->ordered_access);
-                        msg->pos++;
+                        msg->pos+=2;
                         IF_VALID_ADD
                     }
                 case PID_PARTITION:
@@ -652,26 +653,25 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                     }
                 case PID_RELATED_SAMPLE_IDENTITY:
                     {
-                        uint32_t length_diff = 0;
-                        uint32_t pos_ref = 0;
-                        ParameterSampleIdentity_t *p = new ParameterSampleIdentity_t(pid, plength);
-                        pos_ref = msg->pos;
-                        valid &= CDRMessage::readData(msg, p->sample_id.writer_guid().guidPrefix.value, GuidPrefix_t::size);
-                        length_diff += msg->pos-pos_ref;
-                        pos_ref = msg->pos;
-                        valid &= CDRMessage::readData(msg, p->sample_id.writer_guid().entityId.value, EntityId_t::size);
-                        length_diff += msg->pos-pos_ref;
-                        valid &= CDRMessage::readInt32(msg, &p->sample_id.sequence_number().high);
-                        length_diff += 4;
-                        valid &= CDRMessage::readUInt32(msg, &p->sample_id.sequence_number().low);
-                        length_diff += 4;
-                        if(plength != length_diff){
-                            delete(p);
+                        if(plength == 24){
+                            ParameterSampleIdentity_t *p = new ParameterSampleIdentity_t(pid, plength);
+                            valid &= CDRMessage::readData(msg, p->sample_id.writer_guid().guidPrefix.value, GuidPrefix_t::size);
+                            valid &= CDRMessage::readData(msg, p->sample_id.writer_guid().entityId.value, EntityId_t::size);
+                            valid &= CDRMessage::readInt32(msg, &p->sample_id.sequence_number().high);
+                            valid &= CDRMessage::readUInt32(msg, &p->sample_id.sequence_number().low);
+
+                            if(change != NULL)
+                                change->write_params.sample_identity(p->sample_id);
+                            IF_VALID_ADD
+                        }
+                        else if(plength > msg->length-msg->pos || plength > 24){
                             return -1;
                         }
-                        if(change != NULL)
-                            change->write_params.sample_identity(p->sample_id);
-                        IF_VALID_ADD
+                        else{
+                            msg->pos +=plength;
+                            paramlist_byte_size +=plength;
+                            break;
+                        }
                     }
                 case PID_IDENTITY_TOKEN:
                     {
