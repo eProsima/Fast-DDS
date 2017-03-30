@@ -329,7 +329,7 @@ class SecurityManager
                 const GUID_t& destination_endpoint_key, const GUID_t& source_endpoint_key,
                 ParticipantCryptoTokenSeq& crypto_tokens);
 
-        void participant_authorized(const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
+        bool participant_authorized(const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
                 SharedSecretHandle* shared_secret_handle, ParticipantProxyData* data);
 
         RTPSParticipantImpl* participant_;

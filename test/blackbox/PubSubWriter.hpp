@@ -173,6 +173,7 @@ class PubSubWriter
         {
             if(publisher_->write((void*)&(*it)))
             {
+                default_send_print<type>(*it);
                 it = msgs.erase(it);
             }
             else

@@ -245,6 +245,7 @@ endif()
 # Testing
 ###############################################################################
 if(EPROSIMA_BUILD_TESTS AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MINION)
+    file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/valgrind.supp" MEMORYCHECK_SUPPRESSIONS_FILE)
     enable_testing()
     include(CTest)
     add_subdirectory(test)

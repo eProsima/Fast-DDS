@@ -17,6 +17,69 @@
 #include "types/Data64kbType.h"
 #include "types/Data1mbType.h"
 
+/****** Auxiliary print functions  ******/
+template<class Type>
+void default_receive_print(const Type&)
+{
+    std::cout << "Received data" << std::endl;
+}
+
+template<>
+void default_receive_print(const HelloWorld& hello)
+{
+    std::cout << "Received HelloWorld " << hello.index() << std::endl;
+}
+
+template<>
+void default_receive_print(const String& str)
+{
+    std::cout << "Received String " <<str.message()[str.message().size() - 2]
+        << str.message()[str.message().size() - 1] << std::endl;
+}
+
+template<>
+void default_receive_print(const Data64kb& data)
+{
+    std::cout << "Received Data64kb " << (uint16_t)data.data()[0] << std::endl;
+}
+
+template<>
+void default_receive_print(const Data1mb& data)
+{
+    std::cout << "Received Data1mb " << (uint16_t)data.data()[0] << std::endl;;
+}
+
+template<class Type>
+void default_send_print(const Type&)
+{
+    std::cout << "Sent data" << std::endl;
+}
+
+template<>
+void default_send_print(const HelloWorld& hello)
+{
+    std::cout << "Sent HelloWorld " << hello.index() << std::endl;
+}
+
+template<>
+void default_send_print(const String& str)
+{
+    std::cout << "Sent String " <<str.message()[str.message().size() - 2]
+        << str.message()[str.message().size() - 1] << std::endl;
+}
+
+template<>
+void default_send_print(const Data64kb& data)
+{
+    std::cout << "Sent Data64kb " << (uint16_t)data.data()[0] << std::endl;
+}
+
+template<>
+void default_send_print(const Data1mb& data)
+{
+    std::cout << "Sent Data1mb " << (uint16_t)data.data()[0] << std::endl;;
+}
+
 #include "RTPSAsSocketReader.hpp"
 #include "RTPSAsSocketWriter.hpp"
 #include "RTPSWithRegistrationReader.hpp"
@@ -80,7 +143,7 @@ class BlackboxEnvironment : public ::testing::Environment
 };
 
 /****** Auxiliary data generators *******/
-std::list<HelloWorld> default_helloword_data_generator(size_t max = 0)
+std::list<HelloWorld> default_helloworld_data_generator(size_t max = 0)
 {
     uint16_t index = 1;
     size_t maximum = max ? max : 10;
@@ -206,7 +269,7 @@ BLACKBOXTEST(BlackBox, RTPSAsNonReliableSocket)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
     size_t data_length = data.size();
 
     reader.expected_data(data);
@@ -238,7 +301,7 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsNonReliableSocket)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
     size_t data_length = data.size();
 
     reader.expected_data(data);
@@ -273,7 +336,7 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl
 
     ASSERT_TRUE(writer.isInitialized());
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
     size_t data_length = data.size();
 
     reader.expected_data(data);
@@ -305,7 +368,7 @@ BLACKBOXTEST(BlackBox, RTPSAsReliableSocket)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
     reader.expected_data(data);
     reader.startReception();
@@ -338,7 +401,7 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsReliableSocket)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
     reader.expected_data(data);
     reader.startReception();
@@ -372,7 +435,7 @@ BLACKBOXTEST(BlackBox, RTPSAsNonReliableWithRegistration)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
     size_t data_length = data.size();
 
     reader.expected_data(data);
@@ -407,7 +470,7 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
     size_t data_length = data.size();
 
     reader.expected_data(data);
@@ -442,7 +505,7 @@ BLACKBOXTEST(BlackBox, RTPSAsReliableWithRegistration)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
     reader.expected_data(data);
     reader.startReception();
@@ -477,7 +540,7 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsReliableWithRegistration)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
     reader.expected_data(data);
     reader.startReception();
@@ -510,20 +573,15 @@ BLACKBOXTEST(BlackBox, PubSubAsNonReliableHelloworld)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
-    size_t data_length = data.size();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(1));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_LE(data.size(), data_length - 2);
+    reader.block_for_at_least(2);
 }
 
 BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
@@ -545,20 +603,15 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
-    size_t data_length = data.size();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(1));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_LE(data.size(), data_length - 2);
+    reader.block_for_at_least(2);
 }
 
 BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworld)
@@ -580,20 +633,16 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworld)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableHelloworld)
@@ -616,20 +665,16 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableHelloworld)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, ReqRepAsReliableHelloworld)
@@ -672,7 +717,7 @@ BLACKBOXTEST(BlackBox, ParticipantRemoval)
     reader.waitDiscovery();
 
     // Send some data.
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
@@ -705,20 +750,14 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableData64kb)
 
     auto data = default_data64kb_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(5));
-
-    print_non_received_messages(data, default_data64kb_print);
-    if(data.size() != 0)
-        printf("JODER");
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
@@ -747,18 +786,14 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
 
     auto data = default_data64kb_data_generator(3);
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(5));
-
-    print_non_received_messages(data, default_data64kb_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTransport)
@@ -791,18 +826,14 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAn
 
     auto data = default_data64kb_data_generator(3);
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(5));
-
-    print_non_received_messages(data, default_data64kb_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, PubSubAsNonReliableData300kb)
@@ -868,19 +899,14 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
     reader.waitDiscovery();
 
     auto data = default_data300kb_data_generator();
-    size_t data_length = data.size();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_data300kb_print);
-    ASSERT_LE(data.size(), data_length - 2);
+    reader.block_for_at_least(2);
 }
 
 BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kb)
@@ -911,18 +937,14 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kb)
 
     auto data = default_data300kb_data_generator(5);
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(5));
-
-    print_non_received_messages(data, default_data300kb_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, AsyncPubSubWithFlowController64kb)
@@ -934,7 +956,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubWithFlowController64kb)
         reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(reader.isInitialized());
 
-    uint32_t sizeToClear = 75000; //75kb
+    uint32_t sizeToClear = 68000; //68kb
     uint32_t periodInMs = 1000; //1sec
 
     slowWriter.history_depth(2).
@@ -947,12 +969,11 @@ BLACKBOXTEST(BlackBox, AsyncPubSubWithFlowController64kb)
 
     auto data = default_data64kb_data_generator(2);
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
     slowWriter.send(data);
-    data=reader.block(std::chrono::seconds(1));  // In 1 second only one of the messages has time to arrive
-    ASSERT_LE(data.size(), static_cast<size_t>(1));
-
+    // In 1 second only one of the messages has time to arrive
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    ASSERT_EQ(reader.getReceivedCount(), 1);
 }
 
 BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
@@ -994,18 +1015,14 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
 
     auto data = default_data300kb_data_generator(5);
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(5));
-
-    print_non_received_messages(data, default_data300kb_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 
     // Sanity check. Make sure we have dropped a few packets
     ASSERT_EQ(test_UDPv4Transport::DropLog.size(), testTransport->dropLogLength);
@@ -1047,18 +1064,18 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
 
         auto data = default_data64kb_data_generator();
 
-        reader.expected_data(data);
-        reader.startReception();
+        reader.startReception(data);
 
         // Send data
         writer.send(data);
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+        size_t current_received = reader.getReceivedCount();
+        ASSERT_GE(current_received, static_cast<size_t>(1));
+        ASSERT_LE(current_received, static_cast<size_t>(3));
 
-        ASSERT_GE(data.size(), static_cast<size_t>(7));
-        ASSERT_LE(data.size(), static_cast<size_t>(9));
     }
     // ThroghputController size smaller than maxMessageSize.
     {
@@ -1094,18 +1111,17 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
 
         auto data = default_data64kb_data_generator();
 
-        reader.expected_data(data);
-        reader.startReception();
+        reader.startReception(data);
 
         // Send data
         writer.send(data);
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(3));
-
-        ASSERT_GE(data.size(), static_cast<size_t>(7));
-        ASSERT_LE(data.size(), static_cast<size_t>(9));
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+        size_t current_received = reader.getReceivedCount();
+        ASSERT_GE(current_received, static_cast<size_t>(1));
+        ASSERT_LE(current_received, static_cast<size_t>(3));
     }
 }
 
@@ -1180,32 +1196,25 @@ BLACKBOXTEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-
-    unsigned int tries = 0;
-    for(; tries < 6 && !data.empty(); ++tries)
+    while(data.size() > 1)
     {
-        // Store previous data vector size.
-        size_t previous_size = data.size();
+        auto expected_data(data);
+
         // Send data
         writer.send(data);
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        reader.startReception();
+        reader.startReception(expected_data);
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::milliseconds(500));
+        size_t current_received = reader.block_for_at_least(2);
         reader.stopReception();
         // Should be received only two samples.
-        ASSERT_EQ(previous_size - data.size(), 2);
+        ASSERT_EQ(current_received, 2);
+        data = reader.data_not_received();
     }
-    // To send 10 samples needs at least five tries.
-    ASSERT_GE(tries, 5u);
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
 }
 
 //Test created to deal with Issue 39 on Github
@@ -1237,17 +1246,15 @@ BLACKBOXTEST(BlackBox, CacheChangeReleaseTest)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     writer.send(data);
     ASSERT_TRUE(data.empty());
-    data = reader.block(std::chrono::seconds(3));
+    size_t current_received = reader.block_for_all(std::chrono::seconds(3));
 
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_LE(data.size(), static_cast<size_t>(9));
+    ASSERT_GE(current_received, static_cast<size_t>(1));
 }
 
 // Test created to check bug #1555 (Github #31)
@@ -1273,32 +1280,28 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-
-    unsigned int tries = 0;
-    for(; tries < 5 && !data.empty(); ++tries)
+    while(data.size() > 1)
     {
-        // Store previous data vector size.
-        size_t previous_size = data.size();
+        auto data_backup(data);
+        decltype(data) expected_data;
+        expected_data.push_back(data_backup.back()); data_backup.pop_back();
+        expected_data.push_back(data_backup.back()); data_backup.pop_back();
+
         // Send data
         writer.send(data);
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
-        writer.waitForAllAcked(std::chrono::seconds(3));
-        reader.startReception();
-        // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::milliseconds(500));
-        reader.stopReception();
+        writer.waitForAllAcked(std::chrono::seconds(300));
         // Should be received only two samples.
-        ASSERT_EQ(previous_size - data.size(), 2);
-        if(data.size() > 0)
-            ASSERT_EQ(data.back().index(), previous_size - 2);
-    }
+        reader.startReception(expected_data);
+        // Block reader until reception finished or timeout.
+        reader.block_for_all();
+        reader.stopReception();
 
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), static_cast<size_t>(0));
+        data = data_backup;
+    }
 }
 
 // Test created to check bug #1738 (Github #54)
@@ -1321,20 +1324,16 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableKeepLastWriterSmallDepth)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(3));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_NE(data.size(), static_cast<size_t>(10));
+    reader.block_for_at_least(2);
 }
 
 // Test created to check bug #1558 (Github #33)
@@ -1361,38 +1360,26 @@ BLACKBOXTEST(BlackBox, PubSubKeepAll)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-
-    unsigned int tries = 0;
-    for(; tries < 5 && !data.empty(); ++tries)
+    while(!data.empty())
     {
-        // Backup data vector size.
-        size_t previous_size = data.size();
+        auto expected_data(data);
+
         // Send data
         writer.send(data);
-        // Store number samples sent.
-        size_t sent_size = previous_size - data.size();
-        // In this test the history has 20 max_samples.
-        ASSERT_LE(sent_size, 2u);
-        writer.waitForAllAcked(std::chrono::seconds(3));
-        reader.startReception(sent_size);
-        // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::milliseconds(500));
-        reader.stopReception();
-        // Should be received the data was sent.
-        ASSERT_EQ(previous_size - data.size(), sent_size);
-        if(data.size() > 0)
-            ASSERT_EQ(data.front().index(), (sent_size * (tries + 1)) + 1);
-        //Wait for acknowledge, because then the history could be entirely again.
-        ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(3)));
-    }
-    // To send 100 samples needs at least five tries.
-    ASSERT_EQ(tries, 5);
 
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+        for(auto& value : data)
+            expected_data.remove(value);
+
+        // In this test the history has 20 max_samples.
+        ASSERT_LE(expected_data.size(), 2u);
+        writer.waitForAllAcked(std::chrono::seconds(300));
+        reader.startReception(expected_data);
+        // Block reader until reception finished or timeout.
+        reader.block_for_all();
+        reader.stopReception();
+    }
 }
 
 // Test created to check bug #1558 (Github #33)
@@ -1420,38 +1407,26 @@ BLACKBOXTEST(BlackBox, PubSubKeepAllTransient)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-
-    unsigned int tries = 0;
-    for(; tries < 5 && !data.empty(); ++tries)
+    while(!data.empty())
     {
-        // Backup data vector size.
-        size_t previous_size = data.size();
+        auto expected_data(data);
+
         // Send data
         writer.send(data);
-        // Store number samples sent.
-        size_t sent_size = previous_size - data.size();
-        // In this test the history has 20 max_samples.
-        ASSERT_LE(sent_size, 2u);
-        writer.waitForAllAcked(std::chrono::seconds(3));
-        reader.startReception(sent_size);
-        // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::milliseconds(500));
-        reader.stopReception();
-        // Should be received the data was sent.
-        ASSERT_EQ(previous_size - data.size(), sent_size);
-        if(data.size() > 0)
-            ASSERT_EQ(data.front().index(), (sent_size * (tries + 1)) + 1);
-        //Wait for acknowledge, because then the history could be entirely again.
-        ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(3)));
-    }
-    // To send 100 samples needs at least five tries.
-    ASSERT_EQ(tries, 5);
 
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+        for(auto& value : data)
+            expected_data.remove(value);
+
+        // In this test the history has 20 max_samples.
+        ASSERT_LE(expected_data.size(), 2u);
+        writer.waitForAllAcked(std::chrono::seconds(300));
+        reader.startReception(expected_data);
+        // Block reader until reception finished or timeout.
+        reader.block_for_all();
+        reader.stopReception();
+    }
 }
 
 BLACKBOXTEST(BlackBox, PubReliableKeepAllSubNonReliable)
@@ -1474,20 +1449,15 @@ BLACKBOXTEST(BlackBox, PubReliableKeepAllSubNonReliable)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
-    size_t data_length = data.size();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(1));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_LE(data.size(), data_length - 2);
+    reader.block_for_at_least(2);
 }
 
 //Verify that outLocatorList is used to select the desired output channel
@@ -1525,17 +1495,13 @@ BLACKBOXTEST(BlackBox, PubSubOutLocatorSelection){
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     writer.send(data);
     ASSERT_TRUE(data.empty());
-    data = reader.block(std::chrono::seconds(3));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), static_cast<size_t>(0));
+    reader.block_for_all();
 }
 
 //Verify that Cachechanges are removed from History when the a Writer unmatches
@@ -1553,17 +1519,17 @@ BLACKBOXTEST(BlackBox, StatefulReaderCacheChangeRelease){
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator(2);
-    reader.expected_data(data);
+    auto data = default_helloworld_data_generator(2);
+    auto expected_data(data);
 
     writer.send(data);
     ASSERT_TRUE(data.empty());
-    writer.waitForAllAcked(std::chrono::seconds(3));
+    writer.waitForAllAcked(std::chrono::seconds(300));
     writer.destroy();
-    reader.startReception();
-    data = reader.block(std::chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    reader.startReception(expected_data);
 
-    ASSERT_EQ(data.size(), static_cast<size_t>(2));
+    ASSERT_EQ(reader.getReceivedCount(), 0);
 }
 
 BLACKBOXTEST(BlackBox, PubSubMoreThan256Unacknowledged)
@@ -1575,7 +1541,7 @@ BLACKBOXTEST(BlackBox, PubSubMoreThan256Unacknowledged)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    auto data = default_helloword_data_generator(600);
+    auto data = default_helloworld_data_generator(600);
     auto expected_data(data);
 
     writer.send(data);
@@ -1589,12 +1555,8 @@ BLACKBOXTEST(BlackBox, PubSubMoreThan256Unacknowledged)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    reader.expected_data(expected_data);
-    reader.startReception();
-    data = reader.block(std::chrono::seconds(10));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), static_cast<size_t>(0));
+    reader.startReception(expected_data);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, StaticDiscovery)
@@ -1658,18 +1620,14 @@ BLACKBOXTEST(BlackBox, StaticDiscovery)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
     auto expected_data(data);
 
     writer.send(data);
     ASSERT_TRUE(data.empty());
 
-    reader.expected_data(expected_data);
-    reader.startReception();
-    data = reader.block(std::chrono::seconds(5));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), static_cast<size_t>(0));
+    reader.startReception(expected_data);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
@@ -1693,20 +1651,16 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 #if HAVE_SECURITY
@@ -1755,20 +1709,16 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_fail)
@@ -1935,20 +1885,16 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_rtps_ok)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_rtps_large_string)
@@ -2003,18 +1949,14 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_rtps_large_string)
 
     auto data = default_large_string_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_string_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_rtps_data300kb)
@@ -2076,18 +2018,14 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_rtps_data300kb)
 
     auto data = default_data300kb_data_generator(5);
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(5));
-
-    print_non_received_messages(data, default_data300kb_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_submessage_ok)
@@ -2143,20 +2081,16 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_submessage_ok)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_submessage_large_string)
@@ -2214,18 +2148,14 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_submessage_large_str
 
     auto data = default_large_string_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_string_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_submessage_data300kb)
@@ -2290,18 +2220,14 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_submessage_data300kb
 
     auto data = default_data300kb_data_generator(5);
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(5));
-
-    print_non_received_messages(data, default_data300kb_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_payload_ok)
@@ -2357,20 +2283,16 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_payload_ok)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_payload_large_string)
@@ -2428,17 +2350,15 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_payload_large_string
 
     auto data = default_large_string_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
+    reader.block_for_all();
 
-    print_non_received_messages(data, default_string_print);
     ASSERT_EQ(data.size(), 0);
 }
 
@@ -2504,18 +2424,14 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_payload_data300kb)
 
     auto data = default_data300kb_data_generator(5);
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(5));
-
-    print_non_received_messages(data, default_data300kb_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_all_ok)
@@ -2575,20 +2491,16 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_all_ok)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloworld_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_all_large_string)
@@ -2650,18 +2562,14 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_all_large_string)
 
     auto data = default_large_string_data_generator();
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_string_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_all_data300kb)
@@ -2730,18 +2638,14 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_all_data300kb)
 
     auto data = default_data300kb_data_generator(5);
 
-    reader.expected_data(data);
-    reader.startReception();
+    reader.startReception(data);
 
     // Send data
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(5));
-
-    print_non_received_messages(data, default_data300kb_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 #endif

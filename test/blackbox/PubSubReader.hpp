@@ -165,26 +165,18 @@ class PubSubReader
             }
         }
 
-        void expected_data(const std::list<type>& msgs)
+        std::list<type> data_not_received()
         {
             std::unique_lock<std::mutex> lock(mutex_);
-            total_msgs_ = msgs;
+            return total_msgs_;
         }
 
-        void expected_data(std::list<type>&& msgs)
-        {
-            std::unique_lock<std::mutex> lock(mutex_);
-            total_msgs_ = std::move(msgs);
-        }
-
-        void startReception(size_t number_samples_expected = 0)
+        void startReception(std::list<type>& msgs)
         {
             mutex_.lock();
+            total_msgs_ = msgs;
+            number_samples_expected_ = total_msgs_.size();
             current_received_count_ = 0;
-            if(number_samples_expected > 0)
-                number_samples_expected_ = number_samples_expected;
-            else
-                number_samples_expected_ = total_msgs_.size();
             receiving_ = true;
             mutex_.unlock();
 
@@ -203,16 +195,38 @@ class PubSubReader
             mutex_.unlock();
         }
 
+        void block_for_all()
+        {
+            block([this]() -> bool {
+                    return number_samples_expected_ == current_received_count_;
+                    });
+        }
+
+        size_t block_for_at_least(size_t at_least)
+        {
+            block([this, at_least]() -> bool {
+                    return current_received_count_ >= at_least;
+                    });
+            return current_received_count_;
+        }
+
+        void block(std::function<bool()> checker)
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            cv_.wait(lock, checker);
+        }
+
         template<class _Rep,
             class _Period
                 >
-                std::list<type> block(const std::chrono::duration<_Rep, _Period>& max_wait)
+                size_t block_for_all(const std::chrono::duration<_Rep, _Period>& max_wait)
                 {
                     std::unique_lock<std::mutex> lock(mutex_);
-                    if(current_received_count_ != number_samples_expected_)
-                        cv_.wait_for(lock, max_wait);
+                    cv_.wait_for(lock, max_wait, [this]() -> bool {
+                            return number_samples_expected_ == current_received_count_;
+                            });
 
-                    return total_msgs_;
+                    return current_received_count_;
                 }
 
         void waitDiscovery()
@@ -257,7 +271,7 @@ class PubSubReader
         }
 #endif
 
-        unsigned int getReceivedCount() const
+        size_t getReceivedCount() const
         {
             return current_received_count_;
         }
@@ -400,9 +414,8 @@ class PubSubReader
                         ASSERT_NE(it, total_msgs_.end());
                         total_msgs_.erase(it);
                         ++current_received_count_;
-
-                        if(current_received_count_ == number_samples_expected_)
-                            cv_.notify_one();
+                        default_receive_print<type>(data);
+                        cv_.notify_one();
                     }
                 }
             }

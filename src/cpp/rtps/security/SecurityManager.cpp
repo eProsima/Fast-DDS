@@ -592,7 +592,9 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_key,
                     {
                         SharedSecretHandle* shared_secret_handle = authentication_plugin_->get_shared_secret(
                                     *remote_participant_info->handshake_handle_, exception);
-                        participant_authorized(remote_participant_info, shared_secret_handle, participant_data);
+                        if(!participant_authorized(remote_participant_info, shared_secret_handle, participant_data))
+                            authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
+
                     }
 
                     if(ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE)
@@ -2381,7 +2383,7 @@ bool SecurityManager::decode_serialized_payload(const SerializedPayload_t& secur
     return false;
 }
 
-void SecurityManager::participant_authorized(const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
+bool SecurityManager::participant_authorized(const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
         SharedSecretHandle* shared_secret_handle, ParticipantProxyData* participant_data)
 {
     logInfo(SECURITY, "Authorized participant " << participant_data->m_guid);
@@ -2395,7 +2397,7 @@ void SecurityManager::participant_authorized(const DiscoveredParticipantInfo::Au
         if(shared_secret_handle == nullptr)
         {
             logError(SECURITY, "Not shared secret for participant " << participant_data->m_guid);
-            return;
+            return false;
         }
 
         SecurityException exception;
@@ -2464,13 +2466,27 @@ void SecurityManager::participant_authorized(const DiscoveredParticipantInfo::Au
             else
             {
                 crypto_plugin_->cryptokeyfactory()->unregister_participant(participant_crypto_handle, exception);
+                logError(SECURITY, "Cannot find remote participant " << participant_data->m_guid);
+                return false;
             }
         }
         else
         {
             logError(SECURITY, "Cannot register remote participant in crypto plugin ("
                     << participant_data->m_guid << ")");
-            return;
+            return false;
+        }
+    }
+    else
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+
+        // Store shared_secret.
+        auto dp_it = discovered_participants_.find(participant_data->m_guid);
+
+        if(dp_it != discovered_participants_.end())
+        {
+            dp_it->second.set_shared_secret(shared_secret_handle);
         }
     }
 
@@ -2496,6 +2512,8 @@ void SecurityManager::participant_authorized(const DiscoveredParticipantInfo::Au
         participant_->pdpsimple()->getEDP()->pairingLaterWriterProxy(remote_writer.second, *participant_data,
                 remote_writer.first);
     }
+
+    return true;
 }
 
 uint32_t SecurityManager::calculate_extra_size_for_rtps_message()
