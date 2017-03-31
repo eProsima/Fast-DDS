@@ -66,19 +66,14 @@ class WriterHistory
             samples_number_ = 0;
         }
 
-        bool wait_for_some_sample(std::chrono::milliseconds milliseconds)
+        void wait_for_some_sample()
         {
-            bool returnedValue = true;
-
             std::unique_lock<std::mutex> lock(samples_number_mutex_);
 
             if(samples_number_ == 0)
             {
-                if(samples_number_cond_.wait_for(lock, milliseconds) == std::cv_status::timeout)
-                    returnedValue = false;
+                samples_number_cond_.wait(lock);
             }
-
-            return returnedValue;
         }
 
     private:

@@ -744,7 +744,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(request_message_change)).Times(1).
         WillOnce(Return(true));
     stateless_writer_->history_->reset_samples_number();
-    ASSERT_TRUE(stateless_writer_->history_->wait_for_some_sample(std::chrono::seconds(1)));
+    stateless_writer_->history_->wait_for_some_sample();
 
     delete request_message_change;
 }
@@ -1374,7 +1374,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_pendin
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(reply_message_change)).Times(1).
         WillOnce(Return(true));
     stateless_writer_->history_->reset_samples_number();
-    ASSERT_TRUE(stateless_writer_->history_->wait_for_some_sample(std::chrono::seconds(1)));
+    stateless_writer_->history_->wait_for_some_sample();
 
     delete reply_message_change;
 }

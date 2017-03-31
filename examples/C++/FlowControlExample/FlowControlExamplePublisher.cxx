@@ -24,7 +24,7 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/rtps/flowcontrol/ThroughputController.h>
+#include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 
 #include <fastrtps/Domain.h>
 
