@@ -2,27 +2,32 @@
 # TINYXML2_INCLUDE_DIR
 # TINYXML2_SOURCE_DIR
 
-set(NO_FIND_ROOT_PATH_ "")
-if(ANDROID)
-    set(NO_FIND_ROOT_PATH_ NO_CMAKE_FIND_ROOT_PATH)
-endif()
-
-find_path(TINYXML2_INCLUDE_DIR NAMES tinyxml2.h ${NO_FIND_ROOT_PATH_})
-
-if(THIRDPARTY)
-    find_path(TINYXML2_SOURCE_DIR NAMES tinyxml2.cpp ${NO_FIND_ROOT_PATH_})
+find_package(TinyXML2 CONFIG QUIET)
+if(TinyXML2_FOUND)
+    message(STATUS "Using TinyXML2 package from CMake registry")
 else()
-    find_library(TINYXML2_LIBRARY tinyxml2)
-endif()
+    set(NO_FIND_ROOT_PATH_ "")
+    if(ANDROID)
+        set(NO_FIND_ROOT_PATH_ NO_CMAKE_FIND_ROOT_PATH)
+    endif()
 
-include(FindPackageHandleStandardArgs)
+    find_path(TINYXML2_INCLUDE_DIR NAMES tinyxml2.h ${NO_FIND_ROOT_PATH_})
 
-if(THIRDPARTY)
-    find_package_handle_standard_args(tinyxml2 DEFAULT_MSG TINYXML2_SOURCE_DIR TINYXML2_INCLUDE_DIR)
+    if(THIRDPARTY)
+        find_path(TINYXML2_SOURCE_DIR NAMES tinyxml2.cpp ${NO_FIND_ROOT_PATH_})
+    else()
+        find_library(TINYXML2_LIBRARY tinyxml2)
+    endif()
 
-    mark_as_advanced(TINYXML2_INCLUDE_DIR TINYXML2_SOURCE_DIR)
-else()
-    find_package_handle_standard_args(tinyxml2 DEFAULT_MSG TINYXML2_LIBRARY TINYXML2_INCLUDE_DIR)
+    include(FindPackageHandleStandardArgs)
 
-    mark_as_advanced(TINYXML2_INCLUDE_DIR TINYXML2_LIBRARY)
+    if(THIRDPARTY)
+        find_package_handle_standard_args(tinyxml2 DEFAULT_MSG TINYXML2_SOURCE_DIR TINYXML2_INCLUDE_DIR)
+
+        mark_as_advanced(TINYXML2_INCLUDE_DIR TINYXML2_SOURCE_DIR)
+    else()
+        find_package_handle_standard_args(tinyxml2 DEFAULT_MSG TINYXML2_LIBRARY TINYXML2_INCLUDE_DIR)
+
+        mark_as_advanced(TINYXML2_INCLUDE_DIR TINYXML2_LIBRARY)
+    endif()
 endif()
