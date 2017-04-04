@@ -109,6 +109,11 @@ bool Domain::removeSubscriber(Subscriber* sub)
     return false;
 }
 
+/*Participant* Domain::createParticipant(const std::string &participant_profile, ParticipantListener* listen)
+{
+    ParticipantAttributes participant_att = XMLParser::getParticipantProfile(participant_profile);
+    return createParticipant(participant_att, listen);
+}*/
 
 Participant* Domain::createParticipant(ParticipantAttributes& att,ParticipantListener* listen)
 {
