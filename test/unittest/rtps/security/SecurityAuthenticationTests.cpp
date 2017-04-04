@@ -1014,7 +1014,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_bad_me
 
 TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_not_expecting_request)
 {
-    initialization_ok();
+    initialization_auth_ok();
 
     MockIdentityHandle remote_identity_handle;
 
