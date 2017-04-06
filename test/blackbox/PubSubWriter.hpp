@@ -185,21 +185,26 @@ class PubSubWriter
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
+        std::cout << "Writer is waiting discovery..." << std::endl;
+
         if(matched_ == 0)
             cv_.wait(lock);
 
         ASSERT_NE(matched_, 0u);
-        //std::cout << "Writer discovery phase finished" << std::endl;
+        std::cout << "Writer discovery finished..." << std::endl;
     }
 
     void waitRemoval()
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
+        std::cout << "Writer is waiting removal..." << std::endl;
+
         if(matched_ != 0)
             cv_.wait(lock);
 
         ASSERT_EQ(matched_, 0u);
+        std::cout << "Writer removal finished..." << std::endl;
     }
 
 #if HAVE_SECURITY
@@ -207,20 +212,26 @@ class PubSubWriter
     {
         std::unique_lock<std::mutex> lock(mutexAuthentication_);
 
+        std::cout << "Writer is waiting authorization..." << std::endl;
+
         while(authorized_ != how_many)
             cvAuthentication_.wait(lock);
 
         ASSERT_EQ(authorized_, how_many);
+        std::cout << "Writer authorization finished..." << std::endl;
     }
 
     void waitUnauthorized(unsigned int how_many = 1)
     {
         std::unique_lock<std::mutex> lock(mutexAuthentication_);
 
+        std::cout << "Writer is waiting unauthorization..." << std::endl;
+
         while(unauthorized_ != how_many)
             cvAuthentication_.wait(lock);
 
         ASSERT_EQ(unauthorized_, how_many);
+        std::cout << "Writer unauthorization finished..." << std::endl;
     }
 #endif
 

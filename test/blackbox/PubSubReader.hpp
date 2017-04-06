@@ -233,20 +233,26 @@ class PubSubReader
         {
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
+            std::cout << "Reader is waiting discovery..." << std::endl;
+
             if(matched_ == 0)
                 cvDiscovery_.wait(lock);
 
             ASSERT_NE(matched_, 0u);
+            std::cout << "Reader discovery finished..." << std::endl;
         }
 
         void waitRemoval()
         {
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
+            std::cout << "Reader is waiting removal..." << std::endl;
+
             if(matched_ != 0)
                 cvDiscovery_.wait(lock);
 
             ASSERT_EQ(matched_, 0u);
+            std::cout << "Reader removal finished..." << std::endl;
         }
 
 #if HAVE_SECURITY
@@ -254,20 +260,26 @@ class PubSubReader
         {
             std::unique_lock<std::mutex> lock(mutexAuthentication_);
 
+            std::cout << "Reader is waiting authorization..." << std::endl;
+
             while(authorized_ != how_many)
                 cvAuthentication_.wait(lock);
 
             ASSERT_EQ(authorized_, how_many);
+            std::cout << "Reader authorization finished..." << std::endl;
         }
 
         void waitUnauthorized(unsigned int how_many = 1)
         {
             std::unique_lock<std::mutex> lock(mutexAuthentication_);
 
+            std::cout << "Reader is waiting unauthorization..." << std::endl;
+
             while(unauthorized_ != how_many)
                 cvAuthentication_.wait(lock);
 
             ASSERT_EQ(unauthorized_, how_many);
+            std::cout << "Reader unauthorization finished..." << std::endl;
         }
 #endif
 
