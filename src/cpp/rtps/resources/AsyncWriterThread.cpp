@@ -36,14 +36,15 @@ bool AsyncWriterThread::addWriter(RTPSWriter& writer)
 {
     bool returnedValue = false;
 
-    std::unique_lock<std::mutex> data_guard(data_structure_mutex_);
+    data_structure_mutex_.lock();
     async_writers.push_back(&writer);
     returnedValue = true;
 
+    std::unique_lock<std::mutex> cond_guard(condition_variable_mutex_);
+    data_structure_mutex_.unlock();
     // If thread not running, start it.
     if(thread_ == nullptr)
     {
-        std::unique_lock<std::mutex> cond_guard(condition_variable_mutex_);
         running_ = true;
         run_scheduled_ = true;
         thread_ = new std::thread(AsyncWriterThread::run);
@@ -73,6 +74,7 @@ bool AsyncWriterThread::removeWriter(RTPSWriter& writer)
         if(async_writers.empty())
         {
             std::unique_lock<std::mutex> cond_guard(condition_variable_mutex_);
+            data_guard.unlock();
             running_ = false;
             run_scheduled_ = false;
             cond_guard.unlock();
@@ -109,16 +111,16 @@ void AsyncWriterThread::wakeUp(const RTPSWriter* interestedWriter)
 
 void AsyncWriterThread::run()
 {
+    std::unique_lock<std::mutex> cond_guard(condition_variable_mutex_);
     while(running_)
     {
-       std::unique_lock<std::mutex> cond_guard(condition_variable_mutex_);
-       while(run_scheduled_ && running_)
+       if(run_scheduled_)
        {
           run_scheduled_ = false;
           cond_guard.unlock();
           interestTree.Swap();
           auto interestedWriters = interestTree.GetInterestedWriters();
-          
+
           std::unique_lock<std::mutex> data_guard(data_structure_mutex_);
           for(auto writer : async_writers)
              if (interestedWriters.count(writer))
@@ -126,7 +128,7 @@ void AsyncWriterThread::run()
 
           cond_guard.lock();
        }
-
-       cv_.wait(cond_guard);
+       else
+           cv_.wait(cond_guard);
     }
 }
