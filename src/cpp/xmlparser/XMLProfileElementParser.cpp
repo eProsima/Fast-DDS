@@ -1,5 +1,5 @@
 #include <cstring>
-#include "XMLProfileParser.h"
+#include <fastrtps/xmlparser/XMLProfileParser.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -69,7 +69,6 @@ XMLP_ret XMLProfileParser::getXMLBuiltinAttributes(XMLElement *elem, BuiltinAttr
     // domainId - uint32Type
     if (nullptr != (p_aux0 = elem->FirstChildElement(DOMAIN_ID)))
     {
-        unsigned int ui = 0u;
         if (XMLP_ret::OK != getXMLUint(p_aux0, &builtin.domainId, ident))
             return XMLP_ret::ERROR;
     }
@@ -206,7 +205,6 @@ XMLP_ret XMLProfileParser::getXMLThroughputController(XMLElement *elem,
     // periodMillisecs - uint32Type
     if (nullptr != (p_aux0 = elem->FirstChildElement(PERIOD_MILLISECS)))
     {
-        unsigned int ui = 0u;
         if (XMLP_ret::OK != getXMLUint(p_aux0, &throughputController.periodMillisecs, ident)) return XMLP_ret::ERROR;
     }
 

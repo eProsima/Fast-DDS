@@ -3,10 +3,10 @@
 
 #include "stdio.h"
 #include <string>
+#include <tinyxml2.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include "tinyxml2/tinyxml2.h"
 #include "XMLProfileParserCommon.h"
 
 using namespace tinyxml2;

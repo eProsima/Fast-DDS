@@ -1,18 +1,6 @@
-#include "XMLProfileParser.h"
+#include <fastrtps/xmlparser/XMLProfileParser.h>
 
 using namespace eprosima::fastrtps;
-
-int main(int argc, char *argv[])
-{
-    printf("\n\nRUN!\n\n\n");
-
-    if (XMLP_ret::OK != XMLProfileParser::loadXMLFile(std::string(argv[1])))
-    {
-        printf("\nERROR PARSING FILE '%s'\n", argv[1]);
-    }
-
-    return 0;
-}
 
 namespace eprosima {
 namespace fastrtps {
