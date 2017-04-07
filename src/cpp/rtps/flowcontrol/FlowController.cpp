@@ -47,16 +47,29 @@ void FlowController::RegisterAsListeningController()
    ListeningControllers.push_back(this);
 
    if (!ControllerThread)
-      StartControllerService();
+   {
+       auto ioServiceFunction = [&]()
+       {
+           ControllerService->reset();
+           asio::io_service::work work(*ControllerService);
+           ControllerService->run();
+       };
+       ControllerThread.reset(new std::thread(ioServiceFunction));
+   }
 }
 
 void FlowController::DeRegisterAsListeningController()
 {
-    FlowControllerMutex.lock();
+    std::unique_lock<std::recursive_mutex> scopedLock(FlowControllerMutex);
+
     ListeningControllers.erase(std::remove(ListeningControllers.begin(), ListeningControllers.end(), this), ListeningControllers.end());
-    FlowControllerMutex.unlock();
     if (ListeningControllers.empty() && ControllerThread)
-        StopControllerService();
+    {
+        auto thread_to_join(std::move(ControllerThread));
+        scopedLock.unlock();
+        ControllerService->stop();
+        thread_to_join->join();
+    }
 }
 
 bool FlowController::IsListening(FlowController* filter) 
@@ -64,22 +77,4 @@ bool FlowController::IsListening(FlowController* filter)
    std::unique_lock<std::recursive_mutex> scopedLock(FlowControllerMutex);
    auto it = find(ListeningControllers.begin(), ListeningControllers.end(), filter);
    return it != ListeningControllers.end();
-}
-
-void FlowController::StartControllerService()
-{
-   auto ioServiceFunction = [&]()
-   {
-      ControllerService->reset();
-      asio::io_service::work work(*ControllerService);
-      ControllerService->run();
-   };
-   ControllerThread.reset(new std::thread(ioServiceFunction));
-}
-
-void FlowController::StopControllerService()
-{
-   ControllerService->stop();
-   ControllerThread->join();
-   ControllerThread.reset();
 }

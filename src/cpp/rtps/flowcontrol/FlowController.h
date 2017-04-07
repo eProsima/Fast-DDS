@@ -53,8 +53,6 @@ class FlowController
 
         static std::vector<FlowController*> ListeningControllers;
         static std::unique_ptr<std::thread> ControllerThread;
-        static void StartControllerService();
-        static void StopControllerService();
 
         // No copy, assignment or move! Controllers are accessed by reference
         // from several places.

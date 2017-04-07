@@ -806,7 +806,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAn
 
     ASSERT_TRUE(reader.isInitialized());
 
-    uint32_t bytesPerPeriod = 300000;
+    uint32_t bytesPerPeriod = 65000;
     uint32_t periodInMs = 500;
     writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
 
