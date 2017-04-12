@@ -105,6 +105,7 @@ set(${PROJECT_NAME}_source_files
     rtps/exceptions/Exception.cpp
     rtps/attributes/PropertyPolicy.cpp
     rtps/common/Token.cpp
+    xmlparser/XMLProfileParserCommon.cpp
     xmlparser/XMLProfileElementParser.cpp
     xmlparser/XMLProfileParser.cpp
     )

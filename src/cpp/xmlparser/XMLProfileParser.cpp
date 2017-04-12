@@ -1,10 +1,10 @@
+#include <tinyxml2.h>
+#include <fastrtps/xmlparser/XMLProfileParserCommon.h>
 #include <fastrtps/xmlparser/XMLProfileParser.h>
-
-using namespace eprosima::fastrtps;
 
 namespace eprosima {
 namespace fastrtps {
-
+namespace xmlparser {
 
 std::map<std::string, ParticipantAttributes> XMLProfileParser::m_participant_profiles;
 std::map<std::string, PublisherAttributes>   XMLProfileParser::m_publisher_profiles;
@@ -79,16 +79,28 @@ XMLP_ret XMLProfileParser::fillSubscriberProfile(const std::string profile_name,
     subs_map_iterator_t it = m_subscriber_profiles.find(profile_name);
     if (it == m_subscriber_profiles.end())
     {
-        logError(XMLPROFILEPARSER, "Profile '" << profile_name << "' not founded '");
+        logError(XMLPROFILEPARSER, "Profile '" << profile_name << "' not founded");
         return XMLP_ret::ERROR;
     }
     atts = it->second;
     return XMLP_ret::OK;
 }
 
+XMLP_ret XMLProfileParser::loadDefaultXMLFile()
+{
+    return loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
+}
+
 XMLP_ret XMLProfileParser::loadXMLFile(const std::string filename)
 {
-    if (m_xml_files.find(filename) != m_xml_files.end())
+    if (filename.empty())
+    {
+        logError(XMLPROFILEPARSER, "Error loading XML file, filename empty");
+        return XMLP_ret::ERROR;
+    }
+
+    xmlfile_map_iterator_t it = m_xml_files.find(filename);
+    if (it != m_xml_files.end() && XMLP_ret::OK == it->second)
     {
         logInfo(XMLPROFILEPARSER, "XML file '" << filename << "' already parsed");
         return XMLP_ret::OK;
@@ -151,7 +163,7 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string filename)
                 }
                 else
                 {
-                    logError(XMLPROFILEPARSER, "Error parsing participant profile");
+                    logError(XMLPROFILEPARSER, "Error parsing publisher profile");
                 }
             }
             else if (strcmp(tag, SUBSCRIBER) == 0)
@@ -168,7 +180,7 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string filename)
                 }
                 else
                 {
-                    logError(XMLPROFILEPARSER, "Error parsing participant profile");
+                    logError(XMLPROFILEPARSER, "Error parsing subscriber profile");
                 }
             }
             else
@@ -188,20 +200,6 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string filename)
     }
 
     m_xml_files.emplace(filename, XMLP_ret::OK);
-
-
-    for (auto &profile: m_participant_profiles)
-    {
-        printf("%s\n", profile.first.c_str());
-    }
-    for (auto &profile: m_publisher_profiles)
-    {
-        printf("%s\n", profile.first.c_str());
-    }
-    for (auto &profile: m_subscriber_profiles)
-    {
-        printf("%s\n", profile.first.c_str());
-    }
 
     return XMLP_ret::OK;
 }
@@ -443,18 +441,24 @@ XMLP_ret XMLProfileParser::parseXMLPublisherProf(XMLElement *p_profile,
         if (XMLP_ret::OK != getXMLHistoryMemoryPolicy(p_aux, publisher_atts.historyMemoryPolicy, ident))
             return XMLP_ret::ERROR;
     }
+    // propertiesPolicy
+    if (nullptr != (p_aux = p_profile->FirstChildElement(PROPERTIES_POLICY)))
+    {
+        if (XMLP_ret::OK != getXMLPropertiesPolicy(p_aux, publisher_atts.properties, ident))
+            return XMLP_ret::ERROR;
+    }
     // userDefinedID - int16type
     if (nullptr != (p_aux = p_profile->FirstChildElement(USER_DEF_ID)))
     {
         int i = 0;
-        if (XMLP_ret::OK != getXMLInt(p_aux, &i, ident)) return XMLP_ret::ERROR;
+        if (XMLP_ret::OK != getXMLInt(p_aux, &i, ident) || i > 255) return XMLP_ret::ERROR;
         publisher_atts.setUserDefinedID(i);
     }
     // entityID - int16Type
     if (nullptr != (p_aux = p_profile->FirstChildElement(ENTITY_ID)))
     {
         int i = 0;
-        if (XMLP_ret::OK != getXMLInt(p_aux, &i, ident)) return XMLP_ret::ERROR;
+        if (XMLP_ret::OK != getXMLInt(p_aux, &i, ident) || i > 255) return XMLP_ret::ERROR;
         publisher_atts.setEntityID(i);
     }
     return XMLP_ret::OK;
@@ -535,7 +539,6 @@ XMLP_ret XMLProfileParser::parseXMLSubscriberProf(XMLElement *p_profile,
     // expectsInlineQos - boolType
     if (nullptr != (p_aux = p_profile->FirstChildElement(EXP_INLINE_QOS)))
     {
-        bool b = false;
         if (XMLP_ret::OK != getXMLBool(p_aux, &subscriber_atts.expectsInlineQos, ident))
             return XMLP_ret::ERROR;
     }
@@ -555,19 +558,19 @@ XMLP_ret XMLProfileParser::parseXMLSubscriberProf(XMLElement *p_profile,
     if (nullptr != (p_aux = p_profile->FirstChildElement(USER_DEF_ID)))
     {
         int i = 0;
-        if (XMLP_ret::OK != getXMLInt(p_aux, &i, ident)) return XMLP_ret::ERROR;
+        if (XMLP_ret::OK != getXMLInt(p_aux, &i, ident) || i > 255) return XMLP_ret::ERROR;
         subscriber_atts.setUserDefinedID(i);
     }
     // entityID - int16Type
     if (nullptr != (p_aux = p_profile->FirstChildElement(ENTITY_ID)))
     {
         int i = 0;
-        if (XMLP_ret::OK != getXMLInt(p_aux, &i, ident)) return XMLP_ret::ERROR;
+        if (XMLP_ret::OK != getXMLInt(p_aux, &i, ident) || i > 255) return XMLP_ret::ERROR;
         subscriber_atts.setEntityID(i);
     }
     return XMLP_ret::OK;
 }
 
-
+} /* xmlparser  */
 } /* namespace  */
 } /* namespace eprosima */

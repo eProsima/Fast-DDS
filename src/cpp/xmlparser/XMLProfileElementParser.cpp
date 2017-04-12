@@ -1,8 +1,11 @@
 #include <cstring>
+#include <tinyxml2.h>
+#include <fastrtps/xmlparser/XMLProfileParserCommon.h>
 #include <fastrtps/xmlparser/XMLProfileParser.h>
 
 namespace eprosima {
 namespace fastrtps {
+namespace xmlparser {
 
 XMLP_ret XMLProfileParser::getXMLBuiltinAttributes(XMLElement *elem, BuiltinAttributes &builtin, uint8_t ident)
 {
@@ -357,7 +360,7 @@ XMLP_ret XMLProfileParser::getXMLHistoryQosPolicy(XMLElement *elem, HistoryQosPo
     return XMLP_ret::OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLWriterQosPolicies(XMLElement *elem, WriterQos qos, uint8_t ident)
+XMLP_ret XMLProfileParser::getXMLWriterQosPolicies(XMLElement *elem, WriterQos &qos, uint8_t ident)
 {
     /*<xs:complexType name="writerQosPoliciesType">
         <xs:all minOccurs="0">
@@ -422,7 +425,7 @@ XMLP_ret XMLProfileParser::getXMLWriterQosPolicies(XMLElement *elem, WriterQos q
         nullptr != (p_aux = elem->FirstChildElement(        TOPIC_DATA)) ||
         nullptr != (p_aux = elem->FirstChildElement(        GROUP_DATA)))
 
-        logError(XMLPROFILEPARSER, "***Quality os Service '" << p_aux->Value() << "' do not supported for now");
+        logError(XMLPROFILEPARSER, "Quality os Service '" << p_aux->Value() << "' do not supported for now");
 
     // TODO: Do not supported for now
     //if (nullptr != (p_aux = elem->FirstChildElement(    DURABILITY_SRV))) getXMLDurabilityServiceQos(p_aux, ident);
@@ -441,7 +444,7 @@ XMLP_ret XMLProfileParser::getXMLWriterQosPolicies(XMLElement *elem, WriterQos q
     return XMLP_ret::OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLReaderQosPolicies(XMLElement *elem, ReaderQos qos, uint8_t ident)
+XMLP_ret XMLProfileParser::getXMLReaderQosPolicies(XMLElement *elem, ReaderQos &qos, uint8_t ident)
 {
     /*<xs:complexType name="readerQosPoliciesType">
         <xs:all minOccurs="0">
@@ -499,7 +502,7 @@ XMLP_ret XMLProfileParser::getXMLReaderQosPolicies(XMLElement *elem, ReaderQos q
         nullptr != (p_aux = elem->FirstChildElement(        TOPIC_DATA)) ||
         nullptr != (p_aux = elem->FirstChildElement(        GROUP_DATA)))
 
-        logError(XMLPROFILEPARSER, "***Quality os Service '" << p_aux->Value() << "' do not supported for now");
+        logError(XMLPROFILEPARSER, "Quality os Service '" << p_aux->Value() << "' do not supported for now");
 
     // TODO: Do not supported for now
     //if (nullptr != (p_aux = elem->FirstChildElement(    DURABILITY_SRV))) getXMLDurabilityServiceQos(p_aux, ident);
@@ -517,7 +520,7 @@ XMLP_ret XMLProfileParser::getXMLReaderQosPolicies(XMLElement *elem, ReaderQos q
     return XMLP_ret::OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLDurabilityQos(XMLElement *elem, DurabilityQosPolicy &durability, uint8_t ident)
+XMLP_ret XMLProfileParser::getXMLDurabilityQos(XMLElement *elem, DurabilityQosPolicy &durability, uint8_t /*ident*/)
 {
     /*<xs:complexType name="durabilityQosPolicyType">
           <xs:all minOccurs="0">
@@ -850,7 +853,7 @@ XMLP_ret XMLProfileParser::getXMLTimeBasedFilterQos(XMLElement *elem,
     return XMLP_ret::OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLOwnershipQos(XMLElement *elem, OwnershipQosPolicy &ownership, uint8_t ident)
+XMLP_ret XMLProfileParser::getXMLOwnershipQos(XMLElement *elem, OwnershipQosPolicy &ownership, uint8_t /*ident*/)
 {
     /*<xs:complexType name="ownershipQosPolicyType">
       <xs:all>
@@ -907,7 +910,6 @@ XMLP_ret XMLProfileParser::getXMLOwnershipStrengthQos(XMLElement *elem,
 
     if (nullptr != (p_aux0 = elem->FirstChildElement(VALUE)))
     {
-        unsigned int ui = 0u;
         if (XMLP_ret::OK != getXMLUint(p_aux0, &ownershipStrength.value, ident)) return XMLP_ret::ERROR;
     }
     else
@@ -921,7 +923,7 @@ XMLP_ret XMLProfileParser::getXMLOwnershipStrengthQos(XMLElement *elem,
 
 XMLP_ret XMLProfileParser::getXMLDestinationOrderQos(XMLElement *elem,
                                                      DestinationOrderQosPolicy &destinationOrder,
-                                                     uint8_t ident)
+                                                     uint8_t /*ident*/)
 {
     /*<xs:complexType name="destinationOrderQosPolicyType">
       <xs:all>
@@ -1055,7 +1057,7 @@ XMLP_ret XMLProfileParser::getXMLPartitionQos(XMLElement *elem, PartitionQosPoli
     return XMLP_ret::OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLPublishModeQos(XMLElement *elem, PublishModeQosPolicy &publishMode, uint8_t ident)
+XMLP_ret XMLProfileParser::getXMLPublishModeQos(XMLElement *elem, PublishModeQosPolicy &publishMode, uint8_t /*ident*/)
 {
     /*<xs:complexType name="publishModeQosPolicyType">
       <xs:all>
@@ -1242,7 +1244,6 @@ XMLP_ret XMLProfileParser::getXMLLocatorList(XMLElement *elem, LocatorList_t &lo
         return XMLP_ret::ERROR;
     }
 
-    Locator_t loc;
     while (nullptr != p_aux0)
     {
         /*<xs:complexType name="locatorType">
@@ -1252,7 +1253,7 @@ XMLP_ret XMLProfileParser::getXMLLocatorList(XMLElement *elem, LocatorList_t &lo
             <xs:element name="address" type="stringType"/> <!-- octet address[16] -->
           </xs:all>
         </xs:complexType>*/
-
+        Locator_t loc;
         // kind
         if (nullptr != (p_aux1 = p_aux0->FirstChildElement(KIND)))
         {
@@ -1290,7 +1291,7 @@ XMLP_ret XMLProfileParser::getXMLLocatorList(XMLElement *elem, LocatorList_t &lo
         /// address - stringType
         if (nullptr != (p_aux1 = p_aux0->FirstChildElement(ADDRESS)))
         {
-            logError(XMLPROFILEPARSER, "***Tag '" << p_aux1->Value() << "' do not supported for now");
+            logError(XMLPROFILEPARSER, "Tag '" << p_aux1->Value() << "' do not supported for now");
             /*std::string s = "";
             if (XMLP_ret::OK != getXMLString(p_aux1, &s, ident + 1)) return XMLP_ret::ERROR;
             strncpy(loc.address, s.c_str(), 16);*/
@@ -1305,7 +1306,7 @@ XMLP_ret XMLProfileParser::getXMLLocatorList(XMLElement *elem, LocatorList_t &lo
 
 XMLP_ret XMLProfileParser::getXMLHistoryMemoryPolicy(XMLElement *elem,
                                                      MemoryManagementPolicy_t &historyMemoryPolicy,
-                                                     uint8_t ident)
+                                                     uint8_t /*ident*/)
 {
     /*<xs:simpleType name="historyMemoryPolicyType">
       <xs:restriction base="xs:string">
@@ -1354,7 +1355,7 @@ XMLP_ret XMLProfileParser::getXMLPropertiesPolicy(XMLElement *elem, PropertyPoli
             logError(XMLPROFILEPARSER, "Node '" << PROPERTIES << "' without content");
             return XMLP_ret::ERROR;
         }
-        Property prop;
+
         while (nullptr != p_aux1)
         {
             /*<xs:complexType name="propertyType">
@@ -1364,7 +1365,7 @@ XMLP_ret XMLProfileParser::getXMLPropertiesPolicy(XMLElement *elem, PropertyPoli
                 <xs:element name="propagate" type="boolType"/>
               </xs:all>
             </xs:complexType>*/
-
+            Property prop;
             // name - stringType
             if (nullptr != (p_aux2 = p_aux1->FirstChildElement(NAME)))
             {
@@ -1400,7 +1401,7 @@ XMLP_ret XMLProfileParser::getXMLPropertiesPolicy(XMLElement *elem, PropertyPoli
             logError(XMLPROFILEPARSER, "Node '" << BIN_PROPERTIES << "' without content");
             return XMLP_ret::ERROR;
         }
-        BinaryProperty bin_prop;
+
         while (nullptr != p_aux1)
         {
             /*<xs:complexType name="binaryPropertyType">
@@ -1410,7 +1411,7 @@ XMLP_ret XMLProfileParser::getXMLPropertiesPolicy(XMLElement *elem, PropertyPoli
                   <xs:element name="propagate" type="boolType"/>
               </xs:all>
             </xs:complexType>*/
-
+            BinaryProperty bin_prop;
             // name - stringType
             if (nullptr != (p_aux2 = p_aux1->FirstChildElement(NAME)))
             {
@@ -1422,7 +1423,7 @@ XMLP_ret XMLProfileParser::getXMLPropertiesPolicy(XMLElement *elem, PropertyPoli
             // value - stringType
             if (nullptr != (p_aux2 = p_aux1->FirstChildElement(VALUE)))
             {
-                logError(XMLPROFILEPARSER, "***Tag '" << p_aux2->Value() << "' do not supported for now");
+                logError(XMLPROFILEPARSER, "Tag '" << p_aux2->Value() << "' do not supported for now");
                 /*std::string s = "";
                 if (XMLP_ret::OK != getXMLString(p_aux2, &s, ident + 2)) return XMLP_ret::ERROR;
                 bin_prop.value(s);*/
@@ -1442,13 +1443,13 @@ XMLP_ret XMLProfileParser::getXMLPropertiesPolicy(XMLElement *elem, PropertyPoli
 }
 
 // TODO
-XMLP_ret XMLProfileParser::getXMLOctetVector(XMLElement *elem, std::vector<octet> &octetVector, uint8_t ident)
+XMLP_ret XMLProfileParser::getXMLOctetVector(XMLElement *elem, std::vector<octet> &/*octetVector*/, uint8_t /*ident*/)
 {
-    logError(XMLPROFILEPARSER, "***Tag '" << elem->Value() << "' octetVector do not supported for now");
+    logError(XMLPROFILEPARSER, "Tag '" << elem->Value() << "' octetVector do not supported for now");
     return XMLP_ret::OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLInt(XMLElement *elem, int *in, uint8_t ident)
+XMLP_ret XMLProfileParser::getXMLInt(XMLElement *elem, int *in, uint8_t /*ident*/)
 {
     if (nullptr == elem ||
         nullptr == in    ||
@@ -1460,7 +1461,7 @@ XMLP_ret XMLProfileParser::getXMLInt(XMLElement *elem, int *in, uint8_t ident)
     return XMLP_ret::OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLUint(XMLElement *elem, unsigned int *ui, uint8_t ident)
+XMLP_ret XMLProfileParser::getXMLUint(XMLElement *elem, unsigned int *ui, uint8_t /*ident*/)
 {
     if (nullptr == elem ||
         nullptr == ui   ||
@@ -1472,7 +1473,7 @@ XMLP_ret XMLProfileParser::getXMLUint(XMLElement *elem, unsigned int *ui, uint8_
     return XMLP_ret::OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLUint(XMLElement *elem, uint16_t *ui16, uint8_t ident)
+XMLP_ret XMLProfileParser::getXMLUint(XMLElement *elem, uint16_t *ui16, uint8_t /*ident*/)
 {
     unsigned int ui = 0u;
     if (nullptr == elem ||
@@ -1487,7 +1488,7 @@ XMLP_ret XMLProfileParser::getXMLUint(XMLElement *elem, uint16_t *ui16, uint8_t 
     return XMLP_ret::OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLBool(XMLElement *elem, bool *b, uint8_t ident)
+XMLP_ret XMLProfileParser::getXMLBool(XMLElement *elem, bool *b, uint8_t /*ident*/)
 {
     if (nullptr == elem ||
         nullptr == b    ||
@@ -1499,7 +1500,7 @@ XMLP_ret XMLProfileParser::getXMLBool(XMLElement *elem, bool *b, uint8_t ident)
     return XMLP_ret::OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLString(XMLElement *elem, std::string *s, uint8_t ident)
+XMLP_ret XMLProfileParser::getXMLString(XMLElement *elem, std::string *s, uint8_t /*ident*/)
 {
     const char* text = nullptr;
     if (nullptr == elem ||
@@ -1513,5 +1514,6 @@ XMLP_ret XMLProfileParser::getXMLString(XMLElement *elem, std::string *s, uint8_
     return XMLP_ret::OK;
 }
 
-} /* namespace  */
+} /* xmlparser */
+} /* namespace */
 } /* namespace eprosima */

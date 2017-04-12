@@ -483,6 +483,7 @@
         <xs:element name="outLocatorList" type="locatorListType"/>
         <xs:element name="throughputController" type="throughputControllerType"/>
         <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType"/>
+        <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
         <xs:element name="userDefinedID" type="int16Type"/>
         <xs:element name="entityID" type="int16Type"/>
       </xs:all>

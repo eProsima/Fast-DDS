@@ -3,18 +3,24 @@
 
 #include "stdio.h"
 #include <string>
-#include <tinyxml2.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include "XMLProfileParserCommon.h"
+#include <fastrtps/xmlparser/XMLProfileParserCommon.h>
+
+
+namespace tinyxml2
+{
+    class XMLElement;
+}
 
 using namespace tinyxml2;
+using namespace eprosima::fastrtps::rtps;
 
 namespace eprosima{
 namespace fastrtps{
+namespace xmlparser{
 
-using namespace rtps;
 
 enum class XMLP_ret
 {
@@ -23,6 +29,7 @@ enum class XMLP_ret
     NOK,
 };
 
+
 typedef std::map<std::string, ParticipantAttributes> participant_map_t;
 typedef std::map<std::string, PublisherAttributes> publisher_map_t;
 typedef std::map<std::string, SubscriberAttributes> subscriber_map_t;
@@ -30,13 +37,15 @@ typedef std::map<std::string, XMLP_ret> xmlfiles_map_t;
 typedef std::map<std::string, ParticipantAttributes>::iterator part_map_iterator_t;
 typedef std::map<std::string, PublisherAttributes>::iterator publ_map_iterator_t;
 typedef std::map<std::string, SubscriberAttributes>::iterator subs_map_iterator_t;
-typedef std::map<std::string, XMLP_ret>::iterator xml_map_iterator_t;
+typedef std::map<std::string, XMLP_ret>::iterator xmlfile_map_iterator_t;
+
 
 class XMLProfileParser
 {
 
 public:
 
+    RTPS_DllAPI static XMLP_ret loadDefaultXMLFile();
     RTPS_DllAPI static XMLP_ret loadXMLFile(const std::string filename);
     RTPS_DllAPI static XMLP_ret fillParticipantProfileFromXMLFile(const std::string filename,
                                                                   const std::string profile_name,
@@ -63,8 +72,8 @@ protected:
     RTPS_DllAPI static XMLP_ret getXMLWriterTimes(XMLElement *elem, WriterTimes &times, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLReaderTimes(XMLElement *elem, ReaderTimes &times, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLDuration(XMLElement *elem, Duration_t &duration, uint8_t ident);
-    RTPS_DllAPI static XMLP_ret getXMLWriterQosPolicies(XMLElement *elem, WriterQos qos, uint8_t ident);
-    RTPS_DllAPI static XMLP_ret getXMLReaderQosPolicies(XMLElement *elem, ReaderQos qos, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLWriterQosPolicies(XMLElement *elem, WriterQos &qos, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLReaderQosPolicies(XMLElement *elem, ReaderQos &qos, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLPublishModeQos(XMLElement *elem, PublishModeQosPolicy &publishMode, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLGroupDataQos(XMLElement *elem, GroupDataQosPolicy &groupData, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLTopicDataQos(XMLElement *elem, TopicDataQosPolicy &topicData, uint8_t ident);
@@ -103,6 +112,7 @@ private:
     static xmlfiles_map_t    m_xml_files;
 };
 
+} /* xmlparser */
 } /* namespace */
 } /* namespace eprosima */
 
