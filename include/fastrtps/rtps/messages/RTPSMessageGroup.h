@@ -131,8 +131,6 @@ class RTPSMessageGroup
 
         Endpoint* endpoint_;
 
-        ENDPOINT_TYPE type_;
-
         CDRMessage_t* full_msg_;
 
         CDRMessage_t* submessage_msg_;
