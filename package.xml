@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>fast_rtps</name>
+  <version>1.0.1</version>
+  <description>
+    eProsima's implementation of RTPS.
+  </description>
+  <maintainer email="william@osrfoundation.org">William Woodall</maintainer>
+  <license>LGPLv3</license>
+
+  <url>https://github.com/eProsima/Fast-RTPS</url>
+
+  <build_depend>fast_cdr</build_depend>
+  <build_export_depend>fast_cdr</build_export_depend>
+  <exec_depend>fast_cdr</exec_depend>
+
+  <export>
+    <build_type>cmake</build_type>
+  </export>
+</package>
