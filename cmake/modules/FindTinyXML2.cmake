@@ -4,7 +4,7 @@
 
 find_package(TinyXML2 CONFIG QUIET)
 if(TinyXML2_FOUND)
-    message(STATUS "Using TinyXML2 package from CMake registry")
+    message(STATUS "Found TinyXML2")
 else()
     set(NO_FIND_ROOT_PATH_ "")
     if(ANDROID)

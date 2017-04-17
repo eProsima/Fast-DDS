@@ -3,7 +3,7 @@
 
 find_package(Asio CONFIG QUIET)
 if(Asio_FOUND)
-    message(STATUS "Using Asio package from CMake registry")
+    message(STATUS "Found Asio")
 else()
     set(NO_FIND_ROOT_PATH_ "")
     if(ANDROID)
