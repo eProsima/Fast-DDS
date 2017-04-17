@@ -385,6 +385,12 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& partition(std::string partition)
+    {
+        publisher_attr_.qos.m_partition.push_back(partition.c_str());
+        return *this;
+    }
+
     private:
 
     void matched()

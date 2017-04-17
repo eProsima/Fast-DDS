@@ -469,25 +469,25 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                     }
                 case PID_PARTITION:
                     {
-                        uint32_t length_diff = 0;
-                        uint32_t pos_ref = 0;
+                        uint32_t pos_ref = msg->pos;
                         PartitionQosPolicy * p = new PartitionQosPolicy();
                         p->length = plength;
                         uint32_t namessize;
                         valid &= CDRMessage::readUInt32(msg,&namessize);
-                        length_diff+=4;
                         for(uint32_t i = 1;i<=namessize;++i)
                         {
                             std::string auxstr;
-                            pos_ref = msg->pos;
                             valid &= CDRMessage::readString(msg,&auxstr);
-                            length_diff += msg->pos-pos_ref;
+
+                            if(plength < msg->pos - pos_ref)
+                            {
+                                delete(p);
+                                return -1;
+                            }
+
                             p->names.push_back(auxstr);
                         }
-                        if(plength != length_diff){
-                            delete(p);
-                            return -1;
-                        }
+
                         IF_VALID_ADD
                     }
                 case PID_TOPIC_DATA:

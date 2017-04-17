@@ -400,6 +400,12 @@ class PubSubReader
             return *this;
         }
 
+        PubSubReader& partition(std::string partition)
+        {
+            subscriber_attr_.qos.m_partition.push_back(partition.c_str());
+            return *this;
+        }
+
     private:
 
         void receive_one(eprosima::fastrtps::Subscriber* subscriber, bool& returnedValue)
