@@ -138,14 +138,15 @@ EntityId_t get_entity_id(const std::vector<GUID_t> endpoints)
 
 RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
         RTPSMessageGroup_t& msg_group) :
-    participant_(participant), endpoint_(endpoint), type_(type), full_msg_(&msg_group.rtpsmsg_fullmsg_),
+    participant_(participant), endpoint_(endpoint), full_msg_(&msg_group.rtpsmsg_fullmsg_),
     submessage_msg_(&msg_group.rtpsmsg_submessage_)
 #if HAVE_SECURITY
-    , encrypt_msg_(&msg_group.rtpsmsg_encrypt_)
+    , type_(type), encrypt_msg_(&msg_group.rtpsmsg_encrypt_)
 #endif
 {
     assert(participant);
     assert(endpoint);
+    (void)type;
 
     // Init RTPS message.
     reset_to_header();
