@@ -17,6 +17,7 @@
  */
 
 #include <fastrtps/participant/Participant.h>
+#include <fastrtps/participant/ParticipantListener.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
@@ -28,6 +29,40 @@
 
 using namespace eprosima::fastrtps;
 
+bool run = true;
+
+class ParListener : public ParticipantListener
+{
+    public:
+        ParListener(bool exit_on_lost_liveliness) : exit_on_lost_liveliness_(exit_on_lost_liveliness) {};
+        virtual ~ParListener(){};
+
+        /**
+         * This method is called when a new Participant is discovered, or a previously discovered participant changes its QOS or is removed.
+         * @param p Pointer to the Participant
+         * @param info DiscoveryInfo.
+         */
+        void onParticipantDiscovery(Participant* /*p*/, ParticipantDiscoveryInfo info) override
+        {
+            if(info.rtps.m_status == DISCOVERED_RTPSPARTICIPANT)
+                std::cout << "Published discovered a participant" << std::endl;
+            else if(info.rtps.m_status == CHANGED_QOS_RTPSPARTICIPANT)
+                std::cout << "Published detected changes on a participant" << std::endl;
+            else if(info.rtps.m_status == REMOVED_RTPSPARTICIPANT)
+                std::cout << "Published removed a participant" << std::endl;
+            else if(info.rtps.m_status == DROPPED_RTPSPARTICIPANT)
+            {
+                std::cout << "Published dropped a participant" << std::endl;
+                if(exit_on_lost_liveliness_)
+                    run = false;
+            }
+        }
+
+    private:
+
+        bool exit_on_lost_liveliness_;
+};
+
 class PubListener : public PublisherListener
 {
     public:
@@ -36,21 +71,41 @@ class PubListener : public PublisherListener
 
         ~PubListener() {};
 
-        void onPublicationMatched(Publisher* /*publisher*/, MatchingInfo& info)
+        void onPublicationMatched(Publisher* /*publisher*/, MatchingInfo& info) override
         {
             if(info.status == MATCHED_MATCHING)
+            {
+                std::cout << "Subscriber matched" << std::endl;
                 matched_++;
+            }
             else
+            {
+                std::cout << "Subscriber unmatched" << std::endl;
                 matched_--;
+            }
         }
 
         unsigned int matched_;
 };
 
-int main()
+int main(int argc, char** argv)
 {
+    int arg_count = 1;
+    bool exit_on_lost_liveliness = false;
+
+    while(arg_count < argc)
+    {
+        if(strcmp(argv[arg_count], "--exit_on_lost_liveliness") == 0)
+            exit_on_lost_liveliness = true;
+
+        ++arg_count;
+    }
+
     ParticipantAttributes participant_attributes;
-    Participant* participant = Domain::createParticipant(participant_attributes);
+    participant_attributes.rtps.builtin.leaseDuration.seconds = 3;
+    participant_attributes.rtps.builtin.leaseDuration_announcementperiod.seconds = 1;
+    ParListener participant_listener(exit_on_lost_liveliness);
+    Participant* participant = Domain::createParticipant(participant_attributes, &participant_listener);
 
     if(participant == nullptr)
         return 1;
@@ -80,7 +135,6 @@ int main()
     data.index(1);
     data.message("HelloWorld");
 
-    bool run = true;
     while(run)
     {
         publisher->write((void*)&data);

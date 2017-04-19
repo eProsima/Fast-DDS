@@ -24,6 +24,8 @@
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
 #include "../../../../participant/RTPSParticipantImpl.h"
+#include <fastrtps/rtps/participant/RTPSParticipantDiscoveryInfo.h>
+#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 
 #include <fastrtps/log/Log.h>
 
@@ -67,6 +69,14 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
         mp_participantProxyData->mp_leaseDurationTimer = nullptr;
         mp_participantProxyData->mp_mutex->unlock();
         mp_PDP->removeRemoteParticipant(mp_participantProxyData->m_guid);
+
+        RTPSParticipantDiscoveryInfo info;
+        info.m_status = DROPPED_RTPSPARTICIPANT;
+        info.m_guid = mp_participantProxyData->m_guid;
+        if(mp_PDP->getRTPSParticipant()->getListener()!=nullptr)
+            mp_PDP->getRTPSParticipant()->getListener()->onRTPSParticipantDiscovery(
+                    mp_PDP->getRTPSParticipant()->getUserRTPSParticipant(),
+                    info);
 	}
 	else if(code == EVENT_ABORT)
 	{

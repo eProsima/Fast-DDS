@@ -52,5 +52,21 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
         set_property(TEST SimpleCommunication APPEND PROPERTY ENVIRONMENT
             "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
+
+        add_test(NAME LivelinessAssertion
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.py)
+
+        # Set test with label NoMemoryCheck
+        set_property(TEST LivelinessAssertion PROPERTY LABELS "NoMemoryCheck")
+
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST LivelinessAssertion PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${BOOST_LIBRARYDIR}\\;${WIN_PATH}")
+        endif()
+        set_property(TEST LivelinessAssertion APPEND PROPERTY ENVIRONMENT
+            "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
+        set_property(TEST LivelinessAssertion APPEND PROPERTY ENVIRONMENT
+            "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
     endif()
 endif()

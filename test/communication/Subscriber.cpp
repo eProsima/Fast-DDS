@@ -38,9 +38,15 @@ class SubListener : public SubscriberListener
 
         ~SubListener() {}
 
-        void onSubscriptionMatched(Subscriber* /*subscriber*/, MatchingInfo& /*info*/) {}
+        void onSubscriptionMatched(Subscriber* /*subscriber*/, MatchingInfo& info) override
+        {
+            if(info.status == MATCHED_MATCHING)
+                std::cout << "Publisher matched" << std::endl;
+            else
+                std::cout << "Publisher unmatched" << std::endl;
+        }
 
-        void onNewDataMessage(Subscriber* subscriber)
+        void onNewDataMessage(Subscriber* subscriber) override
         {
             HelloWorld sample;
             SampleInfo_t info;
@@ -58,9 +64,22 @@ class SubListener : public SubscriberListener
         unsigned int number_samples_;
 };
 
-int main()
+int main(int argc, char** argv)
 {
+    int arg_count = 1;
+    bool notexit = false;
+
+    while(arg_count < argc)
+    {
+        if(strcmp(argv[arg_count], "--notexit") == 0)
+            notexit = true;
+
+        ++arg_count;
+    }
+
 	ParticipantAttributes participant_attributes;
+    participant_attributes.rtps.builtin.leaseDuration.seconds = 3;
+    participant_attributes.rtps.builtin.leaseDuration_announcementperiod.seconds = 1;
 	Participant* participant = Domain::createParticipant(participant_attributes);
 	if(participant==nullptr)
 		return 1;
@@ -86,7 +105,7 @@ int main()
 		return 1;
     }
 
-    while(listener.number_samples_ < 4)
+    while(notexit || listener.number_samples_ < 4)
         eClock::my_sleep(250);
 
     Domain::removeParticipant(participant);
