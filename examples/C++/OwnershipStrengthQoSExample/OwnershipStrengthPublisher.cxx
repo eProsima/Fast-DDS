@@ -44,80 +44,80 @@ void OwnershipStrengthPublisher::setOwnershipStrength(unsigned int strength)
 
 bool OwnershipStrengthPublisher::init()
 {
-	// Create RTPSParticipant
-	
-	ParticipantAttributes PParam;
-	PParam.rtps.builtin.domainId = 0;
-	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-	PParam.rtps.setName("Participant_publisher");
-   mp_participant = Domain::createParticipant(PParam);
-	if(mp_participant == nullptr)
-		return false;
-	
-	//Register the type
-	
-	Domain::registerType(mp_participant,(TopicDataType*) &myType);
-	
-	// Create Publisher
-	
-	PublisherAttributes Wparam;
-	Wparam.topic.topicKind = NO_KEY;
-	Wparam.topic.topicDataType = myType.getName();  //This type MUST be registered
-	Wparam.topic.topicName = "OwnershipStrengthPubSubTopic";
-	mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
-	if(mp_publisher == nullptr)
-		return false;
-	cout << "Publisher created, waiting for Subscribers." << endl;
-	return true;
+    // Create RTPSParticipant
+
+    ParticipantAttributes PParam;
+    PParam.rtps.builtin.domainId = 0;
+    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PParam.rtps.setName("Participant_publisher");
+    mp_participant = Domain::createParticipant(PParam);
+    if(mp_participant == nullptr)
+        return false;
+
+    //Register the type
+
+    Domain::registerType(mp_participant,(TopicDataType*) &myType);
+
+    // Create Publisher
+
+    PublisherAttributes Wparam;
+    Wparam.topic.topicKind = NO_KEY;
+    Wparam.topic.topicDataType = myType.getName();  //This type MUST be registered
+    Wparam.topic.topicName = "OwnershipStrengthPubSubTopic";
+    mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
+    if(mp_publisher == nullptr)
+        return false;
+    std::cout << "Publisher created, waiting for Subscribers." << std::endl;
+    return true;
 }
 
 void OwnershipStrengthPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
-	if (info.status == MATCHED_MATCHING)
-	{
-		n_matched++;
-		cout << "Publisher matched" << endl;
-	}
-	else
-	{
-		n_matched--;
-		cout << "Publisher unmatched" << endl;
-	}
+    if (info.status == MATCHED_MATCHING)
+    {
+        n_matched++;
+        std::cout << "Publisher matched" << std::endl;
+    }
+    else
+    {
+        n_matched--;
+        std::cout << "Publisher unmatched" << std::endl;
+    }
 }
 
 void OwnershipStrengthPublisher::run()
 {
-	while(m_listener.n_matched == 0)
-	{
-		eClock::my_sleep(250); // Sleep 250 ms
-	}
-	
-	char ch = 'y';
-	do
-	{
-		if(ch == 'y')
-		{
-         ExampleMessage st;
-         std::stringstream ss;
-         ss << "Hello with strength " << m_strength;
+    while(m_listener.n_matched == 0)
+    {
+        eClock::my_sleep(250); // Sleep 250 ms
+    }
 
-         st.message(ss.str());
-         st.ownershipStrength(m_strength);
-         st.index(m_messagesSent);
-			mp_publisher->write(&st);  
+    char ch = 'y';
+    do
+    {
+        if(ch == 'y')
+        {
+            ExampleMessage st;
+            std::stringstream ss;
+            ss << "Hello with strength " << m_strength;
 
-         m_messagesSent++;
-			cout << "Sending message, index = " << m_messagesSent << " with strength " << m_strength << ", send another sample?(y-yes,n-stop): ";
-		}
-		else if(ch == 'n')
-		{
-			cout << "Stopping execution " << endl;
-			break;
-		}
-		else
-		{
-			cout << "Command " << ch << " not recognized, please enter \"y/n\":";
-		}
+            st.message(ss.str());
+            st.ownershipStrength(m_strength);
+            st.index(m_messagesSent);
+            mp_publisher->write(&st);  
 
-	} while(std::cin >> ch);
+            m_messagesSent++;
+            std::cout << "Sending message, index = " << m_messagesSent << " with strength " << m_strength << ", send another sample?(y-yes,n-stop): ";
+        }
+        else if(ch == 'n')
+        {
+            std::cout << "Stopping execution " << std::endl;
+            break;
+        }
+        else
+        {
+            std::cout << "Command " << ch << " not recognized, please enter \"y/n\":";
+        }
+
+    } while(std::cin >> ch);
 }

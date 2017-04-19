@@ -21,6 +21,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "Types.h"
 #include <stdlib.h>
+#include <cstring>
 
 namespace eprosima{
 namespace fastrtps{
@@ -29,7 +30,7 @@ namespace rtps{
 
 //!Max size of RTPS message in bytes.
 #define RTPSMESSAGE_DEFAULT_SIZE 10500  //max size of rtps message in bytes
-#define RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE 536 //common payload a rtps message has
+#define RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE 536 //common payload a rtps message has TODO(Ricardo) It is necessary?
 #define RTPSMESSAGE_COMMON_DATA_PAYLOAD_SIZE 10000 //common data size
 #define RTPSMESSAGE_HEADER_SIZE 20  //header size in bytes
 #define RTPSMESSAGE_SUBMESSAGEHEADER_SIZE 4
@@ -45,35 +46,35 @@ namespace rtps{
  * @ingroup COMMON_MODULE
  */
 struct RTPS_DllAPI CDRMessage_t{
-	//! Default constructor
-	CDRMessage_t():wraps(false){
-		pos = 0;
-		length = 0;
-		buffer = (octet*) malloc(RTPSMESSAGE_DEFAULT_SIZE);
-		max_size = RTPSMESSAGE_DEFAULT_SIZE;
+    //! Default constructor
+    CDRMessage_t():wraps(false){
+        pos = 0;
+        length = 0;
+        buffer = (octet*) malloc(RTPSMESSAGE_DEFAULT_SIZE);
+        max_size = RTPSMESSAGE_DEFAULT_SIZE;
 
 #if EPROSIMA_BIG_ENDIAN
-		msg_endian = BIGEND;
+        msg_endian = BIGEND;
 #else
         msg_endian = LITTLEEND;
 #endif
-	}
+    }
 
-	~CDRMessage_t()
-	{
-		if(buffer != nullptr && !wraps)
-			free(buffer);
-	}
+    ~CDRMessage_t()
+    {
+        if(buffer != nullptr && !wraps)
+            free(buffer);
+    }
 
-	/**
-	 * Constructor with maximum size
-	 * @param size Maximum size
-	 */
-	CDRMessage_t(uint32_t size)
-	{
-      wraps = false;
-		pos = 0;
-		length = 0;
+    /**
+     * Constructor with maximum size
+     * @param size Maximum size
+     */
+    CDRMessage_t(uint32_t size)
+    {
+        wraps = false;
+        pos = 0;
+        length = 0;
 
         if(size != 0)
             buffer = (octet*)malloc(size);
@@ -87,21 +88,59 @@ struct RTPS_DllAPI CDRMessage_t{
 #else
         msg_endian = LITTLEEND;
 #endif
-	}
+    }
 
-	//!Pointer to the buffer where the data is stored.
-	octet* buffer;
-	//!Read or write position.
-	uint32_t pos;
-	//!Max size of the message.
-	uint32_t max_size;
-	//!Current length of the message.
-	uint32_t length;
-	//!Endianness of the message.
-	Endianness_t msg_endian;
-   //Whether this message is wrapping a buffer managed elsewhere.
-   bool wraps;
+    CDRMessage_t(const CDRMessage_t& message)
+    {
+        wraps = false;
+        pos = 0;
+        length = message.length;
+        max_size = message.max_size;
+        msg_endian = message.msg_endian;
+        
+        if(max_size != 0)
+        {
+            buffer =  (octet*)malloc(max_size);
+            memcpy(buffer, message.buffer, length);
+        }
+        else
+            buffer = nullptr;
+    }
+
+    CDRMessage_t(CDRMessage_t&& message)
+    {
+        wraps = message.wraps;
+        message.wraps = false;
+        pos = message.pos;
+        message.pos = 0;
+        length = message.length;
+        message.length = 0;
+        max_size = message.max_size;
+        message.max_size = 0;
+        msg_endian = message.msg_endian;
+#if EPROSIMA_BIG_ENDIAN
+        message.msg_endian = BIGEND;
+#else
+        message.msg_endian = LITTLEEND;
+#endif
+        buffer = message.buffer;
+        message.buffer = nullptr;
+    }
+
+    //!Pointer to the buffer where the data is stored.
+    octet* buffer;
+    //!Read or write position.
+    uint32_t pos;
+    //!Max size of the message.
+    uint32_t max_size;
+    //!Current length of the message.
+    uint32_t length;
+    //!Endianness of the message.
+    Endianness_t msg_endian;
+    //Whether this message is wrapping a buffer managed elsewhere.
+    bool wraps;
 };
+
 }
 }
 }

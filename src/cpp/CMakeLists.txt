@@ -16,44 +16,44 @@ include(${PROJECT_SOURCE_DIR}/cmake/dev/set_sources.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 
 # Set source files
-set_sources(
+set(${PROJECT_NAME}_source_files
     log/Log.cpp
     log/StdoutConsumer.cpp
-    utils/eClock.cpp 
-    utils/IPFinder.cpp 
-    utils/md5.cpp 
-    utils/StringMatching.cpp 
-    rtps/resources/ResourceEvent.cpp 
-    rtps/resources/TimedEvent.cpp 
-    rtps/resources/TimedEventImpl.cpp 
+    utils/eClock.cpp
+    utils/IPFinder.cpp
+    utils/md5.cpp
+    utils/StringMatching.cpp
+    rtps/resources/ResourceEvent.cpp
+    rtps/resources/TimedEvent.cpp
+    rtps/resources/TimedEventImpl.cpp
     rtps/resources/AsyncWriterThread.cpp
     rtps/resources/AsyncInterestTree.cpp
-    rtps/Endpoint.cpp 
-    rtps/writer/RTPSWriter.cpp 
-    rtps/writer/StatefulWriter.cpp 
-    rtps/writer/ReaderProxy.cpp 
-    rtps/writer/StatelessWriter.cpp 
-    rtps/writer/ReaderLocator.cpp 
-    rtps/writer/timedevent/InitialHeartbeat.cpp 
-    rtps/writer/timedevent/PeriodicHeartbeat.cpp 
-    rtps/writer/timedevent/NackResponseDelay.cpp 
-    rtps/writer/timedevent/NackSupressionDuration.cpp 
-    rtps/history/CacheChangePool.cpp 
-    rtps/history/History.cpp 
-    rtps/history/WriterHistory.cpp 
-    rtps/history/ReaderHistory.cpp 
-    rtps/reader/timedevent/HeartbeatResponseDelay.cpp 
-    rtps/reader/timedevent/WriterProxyLiveliness.cpp 
-    rtps/reader/timedevent/InitialAckNack.cpp 
+    rtps/Endpoint.cpp
+    rtps/writer/RTPSWriter.cpp
+    rtps/writer/StatefulWriter.cpp
+    rtps/writer/ReaderProxy.cpp
+    rtps/writer/StatelessWriter.cpp
+    rtps/writer/ReaderLocator.cpp
+    rtps/writer/timedevent/InitialHeartbeat.cpp
+    rtps/writer/timedevent/PeriodicHeartbeat.cpp
+    rtps/writer/timedevent/NackResponseDelay.cpp
+    rtps/writer/timedevent/NackSupressionDuration.cpp
+    rtps/history/CacheChangePool.cpp
+    rtps/history/History.cpp
+    rtps/history/WriterHistory.cpp
+    rtps/history/ReaderHistory.cpp
+    rtps/reader/timedevent/HeartbeatResponseDelay.cpp
+    rtps/reader/timedevent/WriterProxyLiveliness.cpp
+    rtps/reader/timedevent/InitialAckNack.cpp
     rtps/reader/CompoundReaderListener.cpp
-    rtps/reader/WriterProxy.cpp 
-    rtps/reader/StatefulReader.cpp 
-    rtps/reader/StatelessReader.cpp 
-    rtps/reader/RTPSReader.cpp 
+    rtps/reader/WriterProxy.cpp
+    rtps/reader/StatefulReader.cpp
+    rtps/reader/StatelessReader.cpp
+    rtps/reader/RTPSReader.cpp
     rtps/reader/FragmentedChangePitStop.cpp
-    rtps/messages/CDRMessagePool.cpp 
-    rtps/messages/RTPSMessageCreator.cpp 
-    rtps/messages/RTPSMessageGroup.cpp 
+    rtps/messages/CDRMessagePool.cpp
+    rtps/messages/RTPSMessageCreator.cpp
+    rtps/messages/RTPSMessageGroup.cpp
     rtps/messages/MessageReceiver.cpp
     rtps/messages/submessages/AckNackMsg.hpp
     rtps/messages/submessages/DataMsg.hpp
@@ -62,47 +62,112 @@ set_sources(
     rtps/network/NetworkFactory.cpp
     rtps/network/SenderResource.cpp
     rtps/network/ReceiverResource.cpp
-    rtps/participant/RTPSParticipant.cpp 
-    rtps/participant/RTPSParticipantImpl.cpp 
-    rtps/RTPSDomain.cpp 
-    Domain.cpp 
-    participant/Participant.cpp 
-    participant/ParticipantImpl.cpp 
-    publisher/Publisher.cpp 
-    publisher/PublisherImpl.cpp 
-    publisher/PublisherHistory.cpp 
-    subscriber/Subscriber.cpp 
-    subscriber/SubscriberImpl.cpp 
-    subscriber/SubscriberHistory.cpp 
-    transport/UDPv4Transport.cpp 
-    transport/UDPv6Transport.cpp 
-    transport/test_UDPv4Transport.cpp 
-    qos/ParameterList.cpp 
-    qos/ParameterTypes.cpp 
-    qos/QosList.cpp 
-    qos/QosPolicies.cpp 
-    qos/WriterQos.cpp 
-    qos/ReaderQos.cpp 
-    rtps/builtin/BuiltinProtocols.cpp 
-    rtps/builtin/discovery/participant/PDPSimple.cpp 
-    rtps/builtin/discovery/participant/PDPSimpleListener.cpp 
-    rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp 
-    rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp 
-    rtps/builtin/discovery/endpoint/EDP.cpp 
-    rtps/builtin/discovery/endpoint/EDPSimple.cpp 
-    rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp 
-    rtps/builtin/discovery/endpoint/EDPStaticXML.cpp 
-    rtps/builtin/discovery/endpoint/EDPStatic.cpp 
-    rtps/builtin/liveliness/WLP.cpp 
-    rtps/builtin/liveliness/WLPListener.cpp 
-    rtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp 
-    rtps/builtin/data/ParticipantProxyData.cpp 
-    rtps/builtin/data/WriterProxyData.cpp 
-    rtps/builtin/data/ReaderProxyData.cpp 
-    rtps/flowcontrol/ThroughputController.cpp 
-    rtps/flowcontrol/FlowController.cpp 
-    fastrtps.rc
+    rtps/participant/RTPSParticipant.cpp
+    rtps/participant/RTPSParticipantImpl.cpp
+    rtps/RTPSDomain.cpp
+    Domain.cpp
+    participant/Participant.cpp
+    participant/ParticipantImpl.cpp
+    publisher/Publisher.cpp
+    publisher/PublisherImpl.cpp
+    publisher/PublisherHistory.cpp
+    subscriber/Subscriber.cpp
+    subscriber/SubscriberImpl.cpp
+    subscriber/SubscriberHistory.cpp
+    transport/UDPv4Transport.cpp
+    transport/UDPv6Transport.cpp
+    transport/test_UDPv4Transport.cpp
+    qos/ParameterList.cpp
+    qos/ParameterTypes.cpp
+    qos/QosList.cpp
+    qos/QosPolicies.cpp
+    qos/WriterQos.cpp
+    qos/ReaderQos.cpp
+    rtps/builtin/BuiltinProtocols.cpp
+    rtps/builtin/discovery/participant/PDPSimple.cpp
+    rtps/builtin/discovery/participant/PDPSimpleListener.cpp
+    rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp
+    rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp
+    rtps/builtin/discovery/endpoint/EDP.cpp
+    rtps/builtin/discovery/endpoint/EDPSimple.cpp
+    rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp
+    rtps/builtin/discovery/endpoint/EDPStaticXML.cpp
+    rtps/builtin/discovery/endpoint/EDPStatic.cpp
+    rtps/builtin/liveliness/WLP.cpp
+    rtps/builtin/liveliness/WLPListener.cpp
+    rtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp
+    rtps/builtin/data/ParticipantProxyData.cpp
+    rtps/builtin/data/WriterProxyData.cpp
+    rtps/builtin/data/ReaderProxyData.cpp
+    rtps/flowcontrol/ThroughputController.cpp
+    rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+    rtps/flowcontrol/FlowController.cpp
+    rtps/exceptions/Exception.cpp
+    rtps/attributes/PropertyPolicy.cpp
+    rtps/common/Token.cpp
     )
+
+# Add sources to Makefile.am
+set_sources(${${PROJECT_NAME}_source_files})
+
+
+# Security sources
+set(${PROJECT_NAME}_security_source_files
+    rtps/security/exceptions/SecurityException.cpp
+    rtps/security/common/SharedSecretHandle.cpp
+    rtps/security/SecurityManager.cpp
+    rtps/security/SecurityPluginFactory.cpp
+    rtps/security/timedevent/HandshakeMessageTokenResent.cpp
+    security/OpenSSLInit.cpp
+    security/authentication/PKIDH.cpp
+    security/cryptography/AESGCMGMAC.cpp
+    security/cryptography/AESGCMGMAC_KeyExchange.cpp
+    security/cryptography/AESGCMGMAC_KeyFactory.cpp
+    security/cryptography/AESGCMGMAC_Transform.cpp
+    security/cryptography/AESGCMGMAC_Types.cpp
+    security/authentication/PKIIdentityHandle.cpp
+    security/access/mockAccessHandle.cpp
+    security/authentication/PKIHandshakeHandle.cpp
+    )
+
+# Add sources to Makefile.am
+set_sources(SECTION SECURITY)
+set_sources(${${PROJECT_NAME}_security_source_files})
+set_sources(ENDSECTION)
+
+if(SECURITY)
+
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${${PROJECT_NAME}_security_source_files}
+        )
+
+    include_directories(${OPENSSL_INCLUDE_DIR})
+    set(EXTRA_LIBRARIES ${EXTRA_LIBRARIES} ${OPENSSL_LIBRARIES})
+
+    set(HAVE_SECURITY 1)
+else()
+    set(HAVE_SECURITY 0)
+endif()
+
+if(WIN32)
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps.rc
+        )
+endif()
+
+# External sources
+if(TINYXML2_SOURCE_DIR)
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
+        )
+    set_sources(../../thirdparty/tinyxml2/tinyxml2.cpp)
+endif()
+
+if(ANDROID)
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+endif()
 
 # Set version
 set(${PROJECT_NAME_UPPER}_VERSION_MAJOR ${PROJECT_MAJOR_VERSION})
@@ -117,14 +182,41 @@ configure_file(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/config.h.in
 # If Windows, set define for export dll functions
 add_definitions(-D${PROJECT_NAME_UPPER}_SOURCE)
 if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
+    if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
+        add_definitions(-D_WIN32_WINNT=0x0603)
+    else()
+        add_definitions(-D_WIN32_WINNT=0x0601)
+    endif()
 endif()
 # If INTERNAL_DEBUG = ON, define symbol for extensive debug messages
 if(INTERNAL_DEBUG)
-	add_definitions(-D__INTERNALDEBUG)
+    add_definitions(-D__INTERNALDEBUG)
 endif()
-# Include Boost header files.
-include_directories(${Boost_INCLUDE_DIR})
+
+add_definitions(
+  -DBOOST_ASIO_STANDALONE
+  -DASIO_STANDALONE
+)
+
+if(ANDROID)
+  add_definitions(
+    -DASIO_DISABLE_MOVE
+    -DASIO_DISABLE_STD_STRING_VIEW
+  )
+endif()
+
+set(${PROJECT_NAME}_include_dirs
+    ${ASIO_INCLUDE_DIR}
+    ${TINYXML2_INCLUDE_DIR}
+)
+
+if(ANDROID)
+    list(APPEND ${PROJECT_NAME}_include_dirs ${ANDROID_IFADDRS_INCLUDE_DIR})
+else()
+    find_package(Threads REQUIRED)
+endif()
+
+include_directories(${${PROJECT_NAME}_include_dirs})
 
 # Create libraries
 if(MSVC OR MSVC_IDE)
@@ -134,9 +226,9 @@ if(MSVC OR MSVC_IDE)
         generate_msvc_libraries(i86Win32VS2015)
         generate_msvc_libraries(x64Win64VS2015)
     else()
-        add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
+        add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_source_files})
 
-        add_library(${PROJECT_NAME}_static STATIC ${${PROJECT_NAME}_SOURCES})
+        add_library(${PROJECT_NAME}_static STATIC ${${PROJECT_NAME}_source_files})
         # Rename the library to have a "lib" before.
         set_target_properties(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})
 
@@ -144,19 +236,24 @@ if(MSVC OR MSVC_IDE)
         set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES RELWITHDEBINFO_POSTFIX -${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
         set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES DEBUG_POSTFIX d-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
 
+        if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
+            set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES VS_WINRT_COMPONENT "true")
+        endif()
+
         # Export symbols in DLL library
-        target_compile_definitions(${PROJECT_NAME} PUBLIC BOOST_ALL_DYN_LINK ${PROJECT_NAME_UPPER}_DYN_LINK)
-        target_compile_definitions(${PROJECT_NAME}_static PUBLIC BOOST_ALL_DYN_LINK)
+        target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME_UPPER}_DYN_LINK)
 
         # Define public headers
         target_include_directories(${PROJECT_NAME} PUBLIC
             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}>
+            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/cpp>
             $<INSTALL_INTERFACE:include>
             )
 
         # Define public headers for static library
         target_include_directories(${PROJECT_NAME}_static PUBLIC
             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}>
+            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/cpp>
             $<INSTALL_INTERFACE:include>
             )
 
@@ -166,30 +263,46 @@ if(MSVC OR MSVC_IDE)
             set(PRIVACY "PRIVATE")
         endif()
 
-        # Link library to external win32 libraries and boost.
+        # Link library to external win32 libraries.
         target_link_libraries(${PROJECT_NAME} ${PRIVACY}
-            ${Boost_LIBRARIES} iphlpapi Shlwapi
+            ${CMAKE_THREAD_LIBS_INIT}
+            iphlpapi Shlwapi kernel32 user32.dll
+            ${EXTRA_LIBRARIES}
             )
+
+        if(TINYXML2_LIBRARY)
+            target_link_libraries(${PROJECT_NAME} ${PRIVACY}
+                ${TINYXML2_LIBRARY}
+                )
+        endif()
     endif()
 else()
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	    add_definitions(-D__DEBUG)
+        add_definitions(-D__DEBUG)
     endif()
     #Create library
-    add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
+    add_library(${PROJECT_NAME} ${${PROJECT_NAME}_source_files})
     set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
     set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_MAJOR_VERSION})
 
     # Define public headers
     target_include_directories(${PROJECT_NAME} PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}>
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/cpp>
         $<INSTALL_INTERFACE:include>
         )
 
     # Link library to external libraries.
     target_link_libraries(${PROJECT_NAME}
-        ${Boost_LIBRARIES}
+        ${CMAKE_THREAD_LIBS_INIT}
+        ${EXTRA_LIBRARIES}
         )
+
+    if(TINYXML2_LIBRARY)
+        target_link_libraries(${PROJECT_NAME}
+            ${TINYXML2_LIBRARY}
+            )
+    endif()
 endif()
 
 ###############################################################################
@@ -200,13 +313,29 @@ endif()
 set_public_headers_directory(${PROJECT_SOURCE_DIR}/include ${PROJECT_NAME}
     DESTINATION ${INCLUDE_INSTALL_DIR}
     COMPONENT headers
+    INSTALL
     )
 
 # Install config.h header
 set_public_header(${PROJECT_BINARY_DIR}/include ${PROJECT_NAME} config.h
     DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}
     COMPONENT headers
+    INSTALL
     )
+
+
+# Install external sources
+if(UNIX AND EPROSIMA_INSTALLER)
+    set_public_header(${TINYXML2_INCLUDE_DIR} "" tinyxml2.h
+        DESTINATION thirdparty/tinyxml2
+        COMPONENT headers
+        )
+
+    set_public_headers_directory(${ASIO_INCLUDE_DIR} ""
+        DESTINATION thirdparty/asio
+        COMPONENT headers
+        )
+endif()
 
 set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers" PARENT_SCOPE)
 set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers" PARENT_SCOPE)
@@ -221,6 +350,13 @@ if(UNIX AND EPROSIMA_INSTALLER)
         PATTERN "*.cpp"
         PATTERN "*.h"
         PATTERN "*.hpp"
+        )
+
+    # Install external sources
+    install(FILES ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
+        ${TINYXML2_SOURCE_DIR}/tinyxml2.h
+        DESTINATION thirdparty/tinyxml2
+        COMPONENT sources
         )
 
     install(DIRECTORY ${PROJECT_BINARY_DIR}/autotools/
@@ -267,6 +403,15 @@ if(MSVC OR MSVC_IDE)
             FILES_MATCHING
             PATTERN "*.pdb"
             )
+
+        if(EPROSIMA_INSTALLER_MINION AND EPROSIMA_INSTALLER_OPENSSL_ROOT)
+            install(FILES ${EPROSIMA_INSTALLER_OPENSSL_ROOT}/bin/libeay32.dll
+                ${EPROSIMA_INSTALLER_OPENSSL_ROOT}/bin/ssleay32.dll
+                DESTINATION ${BIN_INSTALL_DIR}${DIR_EXTENSION}
+                COMPONENT libraries_${MSVC_ARCH}
+                )
+        endif()
+
 
         string(TOUPPER "${MSVC_ARCH}" MSVC_ARCH_UPPER)
         set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DISPLAY_NAME "${MSVC_ARCH}" PARENT_SCOPE)

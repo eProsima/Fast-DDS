@@ -31,8 +31,6 @@
 
 #include <fastrtps/Domain.h>
 
-#include <boost/numeric/conversion/cast.hpp>
-
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
@@ -248,7 +246,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     std::ostringstream st;
     st << "ThroughputTest_";
     if(hostname)
-        st << boost::asio::ip::host_name() << "_";
+        st << asio::ip::host_name() << "_";
     st << pid << "_UP";
     Sparam.topic.topicName = st.str();
 
@@ -278,12 +276,13 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Wparam.topic.historyQos.depth = 50;
     Wparam.topic.resourceLimitsQos.max_samples = 50;
+    Wparam.topic.resourceLimitsQos.allocated_samples = 50;
     Wparam.topic.topicDataType = "ThroughputCommand";
     Wparam.topic.topicKind = NO_KEY;
     std::ostringstream pct;
     pct << "ThroughputTest_Command_";
     if(hostname)
-        pct << boost::asio::ip::host_name() << "_";
+        pct << asio::ip::host_name() << "_";
     pct << pid << "_SUB2PUB";
     Wparam.topic.topicName = pct.str();
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -296,7 +295,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     std::ostringstream sct;
     sct << "ThroughputTest_Command_";
     if(hostname)
-        sct << boost::asio::ip::host_name() << "_";
+        sct << asio::ip::host_name() << "_";
     sct << pid << "_PUB2SUB";
     Rparam.topic.topicName = sct.str();
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -323,7 +322,7 @@ void ThroughputSubscriber::run()
     std::unique_lock<std::mutex> lock(mutex_);
     while(disc_count_ != 3) disc_cond_.wait(lock);
     cout << "Discovery complete"<<endl;
-    //printLabelsSubscriber();
+
     while (stop_count_ != 2)
     {
         stop_cond_.wait(lock);
@@ -342,12 +341,21 @@ void ThroughputSubscriber::run()
             comm.m_size = m_datasize + 4 + 4;
             comm.m_lastrecsample = m_DataSubListener.saved_lastseqnum;
             comm.m_lostsamples = m_DataSubListener.saved_lostsamples;
-            comm.m_totaltime = boost::numeric_cast<uint64_t>((std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count());
+
+            auto total_time_count = (std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count();
+            if(total_time_count < std::numeric_limits<uint64_t>::min()){
+                comm.m_totaltime = std::numeric_limits<uint64_t>::min();
+            }
+            else if(total_time_count > std::numeric_limits<uint64_t>::max()){
+                comm.m_totaltime = std::numeric_limits<uint64_t>::max();
+            }
+            else{
+                comm.m_totaltime = static_cast<uint64_t>(total_time_count);
+            }
+
             cout << "Last Received Sample: " << comm.m_lastrecsample << endl;
             cout << "Lost Samples: " << comm.m_lostsamples << endl;
             cout << "Test of size " << comm.m_size << " and demand " << comm.m_demand << " ends." << endl;
-            //cout << "SEND COMMAND: "<< comm.m_command << endl;
-            //cout << "writecall "<< ++writecalls << endl;
             mp_commandpubli->write(&comm);
 
             stop_count_ = 0;
@@ -356,8 +364,3 @@ void ThroughputSubscriber::run()
     return;
 
 }
-
-
-
-
-

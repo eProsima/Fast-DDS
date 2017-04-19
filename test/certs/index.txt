@@ -1,0 +1,4 @@
+V	261008085659Z		01	unknown	/C=ES/ST=MA/O=eProsima/CN=Main Publisher/emailAddress=mainpub@eprosima.com
+V	161014092316Z		02	unknown	/C=ES/ST=MA/O=eProsima/CN=Expired Publisher/emailAddress=expiredpub@eprosima.com
+R	261011093039Z	161013093251Z	03	unknown	/C=ES/ST=MA/O=eProsima/CN=Revoked Publisher/emailAddress=revokedpub@eprosima.com
+V	270111105604Z		04	unknown	/C=ES/ST=MA/O=eProsima/CN=Main Subscriber/emailAddress=mainsub@eprosima.com

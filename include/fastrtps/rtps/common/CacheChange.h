@@ -115,7 +115,7 @@ namespace eprosima
                  * @param[in] ch_ptr Pointer to the change.
                  * @return True if correct.
                  */
-                bool copy(CacheChange_t* ch_ptr)
+                bool copy(const CacheChange_t* ch_ptr)
                 {
                     kind = ch_ptr->kind;
                     writerGUID = ch_ptr->writerGUID;
@@ -134,7 +134,7 @@ namespace eprosima
                     return ret;
                 }
 
-                void copy_not_memcpy(CacheChange_t* ch_ptr)
+                void copy_not_memcpy(const CacheChange_t* ch_ptr)
                 {
                     kind = ch_ptr->kind;
                     writerGUID = ch_ptr->writerGUID;
@@ -145,6 +145,9 @@ namespace eprosima
 
                     // Copy certain values from serializedPayload
                     serializedPayload.encapsulation = ch_ptr->serializedPayload.encapsulation;
+
+                    setFragmentSize(ch_ptr->fragment_size_);
+                    dataFragments_->assign(ch_ptr->dataFragments_->begin(), ch_ptr->dataFragments_->end());
 
                     isRead = ch_ptr->isRead;
                 }
@@ -237,12 +240,14 @@ namespace eprosima
                 {
                 }
 
-                ChangeForReader_t(const CacheChange_t* change) : status_(UNSENT),
+                //TODO(Ricardo) Temporal
+                //ChangeForReader_t(const CacheChange_t* change) : status_(UNSENT),
+                ChangeForReader_t(CacheChange_t* change) : status_(UNSENT),
                 is_relevant_(true), seq_num_(change->sequenceNumber), change_(change)
                 {
                    if (change->getFragmentSize() != 0)
                     for (uint32_t i = 1; i != change->getFragmentCount() + 1; i++)
-                       unsent_fragments_.add(i); // Indexed on 1
+                       unsent_fragments_.insert(i); // Indexed on 1
                 }
 
                 ChangeForReader_t(const SequenceNumber_t& seq_num) : status_(UNSENT),
@@ -266,7 +271,9 @@ namespace eprosima
                  * Get the cache change
                  * @return Cache change
                  */
-                const CacheChange_t* getChange() const
+                // TODO(Ricardo) Temporal
+                //const CacheChange_t* getChange() const
+                CacheChange_t* getChange() const
                 {
                     return change_;
                 }
@@ -318,17 +325,18 @@ namespace eprosima
                 {
                    if (change_->getFragmentSize() != 0)
                     for (uint32_t i = 1; i != change_->getFragmentCount() + 1; i++)
-                       unsent_fragments_.add(i); // Indexed on 1
+                       unsent_fragments_.insert(i); // Indexed on 1
                 }
 
-                void markFragmentsAsSent(const FragmentNumberSet_t& sentFragments)
+                void markFragmentsAsSent(const FragmentNumber_t& sentFragment)
                 {
-                    unsent_fragments_ -= sentFragments;
+                    unsent_fragments_.erase(sentFragment);
                 }
 
                 void markFragmentsAsUnsent(const FragmentNumberSet_t& unsentFragments)
                 {
-                    unsent_fragments_ += unsentFragments;
+                    for(auto element : unsentFragments.set)
+                        unsent_fragments_.insert(element);
                 }
 
                 private:
@@ -342,9 +350,11 @@ namespace eprosima
                 //!Sequence number
                 SequenceNumber_t seq_num_;
 
-                const CacheChange_t* change_;
+                // TODO(Ricardo) Temporal
+                //const CacheChange_t* change_;
+                CacheChange_t* change_;
 
-                FragmentNumberSet_t unsent_fragments_;
+                std::set<FragmentNumber_t> unsent_fragments_;
             };
 
             struct ChangeForReaderCmp

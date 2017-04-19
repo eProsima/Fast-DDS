@@ -35,77 +35,77 @@ FlowControlExampleSubscriber::~FlowControlExampleSubscriber() {	Domain::removePa
 
 bool FlowControlExampleSubscriber::init()
 {
-	// Create RTPSParticipant
-	
-	ParticipantAttributes PParam;
-	PParam.rtps.builtin.domainId = 0; //MUST BE THE SAME AS IN THE PUBLISHER
-	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-	PParam.rtps.setName("Participant_subscriber"); //You can put the name you want
-	mp_participant = Domain::createParticipant(PParam);
-	if(mp_participant == nullptr)
-			return false;
-	
-	//Register the type
-	
-	Domain::registerType(mp_participant,(TopicDataType*) &myType);		
-			
-	// Create Subscriber
-			
-	SubscriberAttributes Rparam;
-	Rparam.topic.topicKind = NO_KEY;
-	Rparam.topic.topicDataType = myType.getName(); //Must be registered before the creation of the subscriber
-	Rparam.topic.topicName = "FlowControlExamplePubSubTopic";
-	mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
-	if(mp_subscriber == nullptr)
-		return false;
-	return true;
+    // Create RTPSParticipant
+
+    ParticipantAttributes PParam;
+    PParam.rtps.builtin.domainId = 0; //MUST BE THE SAME AS IN THE PUBLISHER
+    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PParam.rtps.setName("Participant_subscriber"); //You can put the name you want
+    mp_participant = Domain::createParticipant(PParam);
+    if(mp_participant == nullptr)
+        return false;
+
+    //Register the type
+
+    Domain::registerType(mp_participant,(TopicDataType*) &myType);		
+
+    // Create Subscriber
+
+    SubscriberAttributes Rparam;
+    Rparam.topic.topicKind = NO_KEY;
+    Rparam.topic.topicDataType = myType.getName(); //Must be registered before the creation of the subscriber
+    Rparam.topic.topicName = "FlowControlExamplePubSubTopic";
+    mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
+    if(mp_subscriber == nullptr)
+        return false;
+    return true;
 }
 
 void FlowControlExampleSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
 {
-	if (info.status == MATCHED_MATCHING)
-	{
-		n_matched++;
-		cout << "Subscriber matched" << endl;
-	}
-	else
-	{
-		n_matched--;
-		cout << "Subscriber unmatched" << endl;
-	}
+    if (info.status == MATCHED_MATCHING)
+    {
+        n_matched++;
+        std::cout << "Subscriber matched" << std::endl;
+    }
+    else
+    {
+        n_matched--;
+        std::cout << "Subscriber unmatched" << std::endl;
+    }
 }
 
 void FlowControlExampleSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 {
-		// Take data
-		FlowControlExample st;
-		
-		if(sub->takeNextData(&st, &m_info))
-		{
-			if(m_info.sampleKind == ALIVE)
-			{
-				++n_msg;
+    // Take data
+    FlowControlExample st;
+
+    if(sub->takeNextData(&st, &m_info))
+    {
+        if(m_info.sampleKind == ALIVE)
+        {
+            ++n_msg;
             static unsigned int fastMessages = 0;
             static unsigned int slowMessages = 0;
-				// Print your structure data here.
+            // Print your structure data here.
             if (st.wasFast())
             {
-               fastMessages++;
-				   cout << "Sample received from fast writer, count=" << fastMessages << endl;
+                fastMessages++;
+                std::cout << "Sample received from fast writer, count=" << fastMessages << std::endl;
             }
             else
             {
-               slowMessages++;
-				   cout << "Sample received from slow writer, count=" << slowMessages << endl;
+                slowMessages++;
+                std::cout << "Sample received from slow writer, count=" << slowMessages << std::endl;
             }
-			}
-		}
+        }
+    }
 }
 
 void FlowControlExampleSubscriber::run()
 {
-	cout << "Waiting for Data, press Enter to stop the Subscriber. "<<endl;
-	std::cin.ignore();
-	cout << "Shutting down the Subscriber." << endl;
+    std::cout << "Waiting for Data, press Enter to stop the Subscriber. "<<std::endl;
+    std::cin.ignore();
+    std::cout << "Shutting down the Subscriber." << std::endl;
 }
 

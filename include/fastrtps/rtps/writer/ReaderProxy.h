@@ -19,7 +19,9 @@
 #ifndef READERPROXY_H_
 #define READERPROXY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
+#include <algorithm>
+#include <mutex>
+#include <set>
 #include "../common/Types.h"
 #include "../common/Locator.h"
 #include "../common/SequenceNumber.h"
@@ -28,12 +30,6 @@
 #include "../attributes/WriterAttributes.h"
 
 #include <set>
-#include <unordered_map>
-
-namespace boost
-{
-    class recursive_mutex;
-}
 
 namespace eprosima
 {
@@ -92,7 +88,9 @@ namespace eprosima
                  * @brief Lists all unsent changes. These changes are also relevants and valid.
                  * @return STL vector with the unsent change list.
                  */
-                std::vector<const ChangeForReader_t*> get_unsent_changes() const;
+                //TODO(Ricardo) Temporal
+                //std::vector<const ChangeForReader_t*> get_unsent_changes() const;
+                std::vector<ChangeForReader_t*> get_unsent_changes();
                 /*!
                  * @brief Lists all requested changes.
                  * @return STL vector with the requested change list.
@@ -104,10 +102,10 @@ namespace eprosima
                  * @param change change to search and set.
                  * @param status Status to apply.
                  */
-                void set_change_to_status(const CacheChange_t* change, ChangeForReaderStatus_t status);
+                void set_change_to_status(const SequenceNumber_t& seq_num, ChangeForReaderStatus_t status);
 
-                void mark_fragments_as_sent_for_change(const CacheChange_t* change, FragmentNumberSet_t fragments);
-               
+                void mark_fragment_as_sent_for_change(const CacheChange_t* change, FragmentNumber_t fragment);
+
                 /*
                  * Converts all changes with a given status to a different status.
                  * @param previous Status to change.
@@ -115,7 +113,8 @@ namespace eprosima
                  */
                 void convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next);
 
-                void setNotValid(const CacheChange_t* change);
+                //void setNotValid(const CacheChange_t* change);
+                void setNotValid(CacheChange_t* change);
 
                 /*!
                  * @brief Returns there is some UNACKNOWLEDGED change.
@@ -181,7 +180,7 @@ namespace eprosima
                 inline bool rtps_is_relevant(CacheChange_t* change){(void)change; return true;};
 
                 //!Mutex
-                boost::recursive_mutex* mp_mutex;
+                std::recursive_mutex* mp_mutex;
 
                 std::set<ChangeForReader_t, ChangeForReaderCmp> m_changesForReader;
 

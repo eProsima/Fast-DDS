@@ -18,6 +18,8 @@
  */
 
 #include <fastrtps/rtps/writer/timedevent/InitialHeartbeat.h>
+#include <mutex>
+
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
@@ -29,9 +31,6 @@
 
 #include <fastrtps/log/Log.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
-
 namespace eprosima {
 namespace fastrtps{
 namespace rtps{
@@ -39,14 +38,15 @@ namespace rtps{
 
 InitialHeartbeat::~InitialHeartbeat()
 {
-	logInfo(RTPS_WRITER,"Destroying InitialHB");
+    logInfo(RTPS_WRITER,"Destroying InitialHB");
     destroy();
 }
 
 InitialHeartbeat::InitialHeartbeat(ReaderProxy* rp, double interval) :
     TimedEvent(rp->mp_SFW->getRTPSParticipant()->getEventResource().getIOService(),
         rp->mp_SFW->getRTPSParticipant()->getEventResource().getThread(), interval),
-    rp_(rp)
+    m_cdrmessages(rp->mp_SFW->getRTPSParticipant()->getMaxMessageSize(),
+    rp->mp_SFW->getRTPSParticipant()->getGuid().guidPrefix), rp_(rp)
 {
 }
 
@@ -56,20 +56,20 @@ void InitialHeartbeat::event(EventCode code, const char* msg)
     // Unused in release mode.
     (void)msg;
 
-	if(code == EVENT_SUCCESS)
-	{
-		SequenceNumber_t firstSeq, lastSeq;
-		Count_t heartbeatCount = 0;
+    if(code == EVENT_SUCCESS)
+    {
+        SequenceNumber_t firstSeq, lastSeq;
+        Count_t heartbeatCount = 0;
 
-		{//BEGIN PROTECTION
-            boost::lock_guard<boost::recursive_mutex> guard_writer(*rp_->mp_SFW->getMutex());
+        {//BEGIN PROTECTION
+            std::lock_guard<std::recursive_mutex> guard_writer(*rp_->mp_SFW->getMutex());
 
-			firstSeq = rp_->mp_SFW->get_seq_num_min();
-			lastSeq = rp_->mp_SFW->get_seq_num_max();
+            firstSeq = rp_->mp_SFW->get_seq_num_min();
+            lastSeq = rp_->mp_SFW->get_seq_num_max();
 
             if(firstSeq == c_SequenceNumber_Unknown || lastSeq == c_SequenceNumber_Unknown)
             {
-				firstSeq = rp_->mp_SFW->next_sequence_number();
+                firstSeq = rp_->mp_SFW->next_sequence_number();
                 lastSeq = SequenceNumber_t(0, 0);
             }
             else
@@ -79,28 +79,26 @@ void InitialHeartbeat::event(EventCode code, const char* msg)
             }
 
             rp_->mp_SFW->incrementHBCount();
-			heartbeatCount = rp_->mp_SFW->getHeartbeatCount();
-		}
+            heartbeatCount = rp_->mp_SFW->getHeartbeatCount();
+        }
 
-        CDRMessage::initCDRMsg(&initial_hb_msg_);
+        RTPSMessageGroup group(rp_->mp_SFW->getRTPSParticipant(), rp_->mp_SFW, RTPSMessageGroup::WRITER, m_cdrmessages);
+
+        LocatorList_t locators(rp_->m_att.endpoint.unicastLocatorList);
+        locators.push_back(rp_->m_att.endpoint.multicastLocatorList);
+
         // FinalFlag is always false because this is a StatefulWriter in Reliable.
-        RTPSMessageCreator::addMessageHeartbeat(&initial_hb_msg_, rp_->mp_SFW->getGuid().guidPrefix, rp_->m_att.guid.guidPrefix,
-                rp_->m_att.guid.entityId, rp_->mp_SFW->getGuid().entityId,
-                firstSeq, lastSeq, heartbeatCount, false, false);
+        group.add_heartbeat(std::vector<GUID_t>{rp_->m_att.guid}, firstSeq, lastSeq, heartbeatCount, false, false, locators);
         logInfo(RTPS_WRITER, rp_->mp_SFW->getGuid().entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq << ")");
-        for (auto lit = rp_->m_att.endpoint.multicastLocatorList.begin(); lit != rp_->m_att.endpoint.multicastLocatorList.end(); ++lit)
-            rp_->mp_SFW->getRTPSParticipant()->sendSync(&initial_hb_msg_, (Endpoint *)rp_->mp_SFW, (*lit));
-        for (auto lit = rp_->m_att.endpoint.unicastLocatorList.begin(); lit != rp_->m_att.endpoint.unicastLocatorList.end(); ++lit)
-            rp_->mp_SFW->getRTPSParticipant()->sendSync(&initial_hb_msg_, (Endpoint *)rp_->mp_SFW, (*lit));
-	}
-	else if(code == EVENT_ABORT)
-	{
-		logInfo(RTPS_WRITER,"Aborted");
-	}
-	else
-	{
-		logInfo(RTPS_WRITER,"Boost message: " <<msg);
-	}
+    }
+    else if(code == EVENT_ABORT)
+    {
+        logInfo(RTPS_WRITER,"Aborted");
+    }
+    else
+    {
+        logInfo(RTPS_WRITER,"Event message: " <<msg);
+    }
 }
 
 }

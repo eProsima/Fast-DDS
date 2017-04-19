@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/rtps/flowcontrol/ThroughputController.h>
+#include "ThroughputController.h"
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
-#include <boost/asio.hpp>
+#include <asio.hpp>
+#include <asio/steady_timer.hpp>
 
-using namespace std;
-using namespace boost::asio;
 
 namespace eprosima{
 namespace fastrtps{
@@ -41,15 +40,7 @@ ThroughputController::ThroughputController(const ThroughputControllerDescriptor&
 {
 }
 
-ThroughputControllerDescriptor::ThroughputControllerDescriptor(): bytesPerPeriod(UINT32_MAX), periodMillisecs(0)
-{
-}
-
-ThroughputControllerDescriptor::ThroughputControllerDescriptor(uint32_t size, uint32_t time): bytesPerPeriod(size), periodMillisecs(time)
-{
-}
-
-void ThroughputController::operator()(vector<CacheChangeForGroup_t>& changes)
+void ThroughputController::operator()(std::vector<CacheChange_t*>& changes)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
 
@@ -57,21 +48,30 @@ void ThroughputController::operator()(vector<CacheChangeForGroup_t>& changes)
     unsigned int clearedChanges = 0;
     while (clearedChanges < changes.size())
     {
-        auto& change = changes[clearedChanges];
-        if (change.isFragmented())
+        CacheChange_t* change = changes[clearedChanges];
+
+        if (change->getFragmentSize() != 0)
         {
-            unsigned int fittingFragments = min((mBytesPerPeriod - mAccumulatedPayloadSize) / change.getChange()->getFragmentSize(),
-                    static_cast<uint32_t>(change.getFragmentsClearedForSending().set.size()));
+            ptrdiff_t fragments_to_send = std::count(change->getDataFragments()->begin(),
+                    change->getDataFragments()->end(), PRESENT);
+            unsigned int fittingFragments = std::min((mBytesPerPeriod - mAccumulatedPayloadSize) / change->getFragmentSize(),
+                    static_cast<unsigned int>(fragments_to_send));
 
             if (fittingFragments)
             {
-                mAccumulatedPayloadSize += fittingFragments * change.getChange()->getFragmentSize();
+                mAccumulatedPayloadSize += fittingFragments * change->getFragmentSize();
 
-                auto limitedFragments = change.getFragmentsClearedForSending();
-                while (limitedFragments.set.size() > fittingFragments)
-                    limitedFragments.set.erase(std::prev(limitedFragments.set.end())); // remove biggest fragment
+                for(auto& aux_c : *change->getDataFragments())
+                {
+                    if(aux_c == PRESENT)
+                    {
+                        if(fittingFragments)
+                            --fittingFragments;
+                        else
+                            aux_c = NOT_PRESENT;
+                    }
+                }
 
-                change.setFragmentsClearedForSending(limitedFragments);
                 clearedChanges++;
             }
             else
@@ -79,11 +79,11 @@ void ThroughputController::operator()(vector<CacheChangeForGroup_t>& changes)
         }
         else
         {
-            bool fits = (mAccumulatedPayloadSize + change.getChange()->serializedPayload.length) <= mBytesPerPeriod;
+            bool fits = (mAccumulatedPayloadSize + change->serializedPayload.length) <= mBytesPerPeriod;
 
             if (fits)
             {
-                mAccumulatedPayloadSize += change.getChange()->serializedPayload.length;
+                mAccumulatedPayloadSize += change->serializedPayload.length;
                 clearedChanges++;
             }
             else
@@ -99,11 +99,11 @@ void ThroughputController::operator()(vector<CacheChangeForGroup_t>& changes)
 
 void ThroughputController::ScheduleRefresh(uint32_t sizeToRestore)
 {
-    shared_ptr<deadline_timer> throwawayTimer(make_shared<deadline_timer>(*FlowController::ControllerService));
+    std::shared_ptr<asio::steady_timer> throwawayTimer(std::make_shared<asio::steady_timer>(*FlowController::ControllerService));
     auto refresh = [throwawayTimer, this, sizeToRestore]
-        (const boost::system::error_code& error)
+        (const asio::error_code& error)
         {
-            if ((error != boost::asio::error::operation_aborted) &&
+            if ((error != asio::error::operation_aborted) &&
                     FlowController::IsListening(this))
             {
                 std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
@@ -117,7 +117,7 @@ void ThroughputController::ScheduleRefresh(uint32_t sizeToRestore)
             }
         };
 
-    throwawayTimer->expires_from_now(boost::posix_time::milliseconds(mPeriodMillisecs));
+    throwawayTimer->expires_from_now(std::chrono::milliseconds(mPeriodMillisecs));
     throwawayTimer->async_wait(refresh);
 }
 

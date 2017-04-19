@@ -21,7 +21,7 @@
 #define RTPSMESSAGEGROUP_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "../common/CDRMessage_t.h"
+#include "../messages/RTPSMessageCreator.h"
 #include "../../qos/ParameterList.h"
 #include <fastrtps/rtps/common/FragmentNumber.h>
 
@@ -29,149 +29,127 @@
 #include <cassert>
 
 namespace eprosima {
-    namespace fastrtps{
-        namespace rtps {
+namespace fastrtps{
+namespace rtps {
 
-            class CacheChangeForGroup_t
-            {
-            public:
+class RTPSParticipantImpl;
+class Endpoint;
 
-                CacheChangeForGroup_t(const CacheChange_t* change) : 
-                   change_(change)
-                {
-                    fragments_cleared_for_sending_.base = 0;
-                    for (uint32_t i = 1; i != change->getFragmentCount() + 1; i++)
-                       fragments_cleared_for_sending_.add(i); // Indexed on 1
+/**
+ * Class RTPSMessageGroup_t that contains the messages used to send multiples changes as one message.
+ * @ingroup WRITER_MODULE
+ */
+class RTPSMessageGroup_t
+{
+    public:
 
-                }
+        RTPSMessageGroup_t(uint32_t payload, GuidPrefix_t participant_guid):
+            rtpsmsg_submessage_(payload),
+            rtpsmsg_fullmsg_(payload)
+#if HAVE_SECURITY
+            , rtpsmsg_encrypt_(payload)
+#endif
+        {
+            CDRMessage::initCDRMsg(&rtpsmsg_fullmsg_);
+            RTPSMessageCreator::addHeader(&rtpsmsg_fullmsg_, participant_guid);
+        }
 
-                CacheChangeForGroup_t(const CacheChangeForGroup_t& c) : 
-                   change_(c.change_),
-                   fragments_cleared_for_sending_(c.fragments_cleared_for_sending_)
-                {
-                }
+        CDRMessage_t rtpsmsg_submessage_;
 
-                 CacheChangeForGroup_t(const ChangeForReader_t& c) : 
-                    change_(c.getChange()),
-                    fragments_cleared_for_sending_(c.getUnsentFragments())
-                {
-                }
+        CDRMessage_t rtpsmsg_fullmsg_;
 
-                const CacheChangeForGroup_t& operator=(const CacheChangeForGroup_t& c)
-                { 
-                    change_ = c.change_;
-                    fragments_cleared_for_sending_ = c.fragments_cleared_for_sending_;
-                    return *this;
-                }
+#if HAVE_SECURITY
+        CDRMessage_t rtpsmsg_encrypt_;
+#endif
+};
 
-                const CacheChange_t* getChange() const
-                {
-                    return change_;
-                }
+class RTPSWriter;
 
-                bool isFragmented() const
-                {
-                    return change_->getFragmentSize() != 0;
-                }
+/**
+ * RTPSMessageGroup Class used to construct a RTPS message.
+ * @ingroup WRITER_MODULE
+ */
+class RTPSMessageGroup
+{
+    public:
 
-                const FragmentNumberSet_t& getFragmentsClearedForSending() const
-                {
-                    return fragments_cleared_for_sending_;
-                }
+        enum ENDPOINT_TYPE
+        {
+            WRITER,
+            READER
+        };
 
-                void setFragmentsClearedForSending(FragmentNumberSet_t fragments)
-                {
-                    fragments_cleared_for_sending_ = fragments;
-                }
+        RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE,
+                RTPSMessageGroup_t& msg_group);
 
-                private:
-                    const CacheChange_t* change_;
+        ~RTPSMessageGroup();
 
-                    FragmentNumberSet_t fragments_cleared_for_sending_;
-            };
+        bool add_data(const CacheChange_t& change, const std::vector<GUID_t>& remote_readers,
+                const LocatorList_t& locators, bool expectsInlineQos);
 
-            /**
-             * Class RTPSMessageGroup_t that contains the messages used to send multiples changes as one message.
-             * @ingroup WRITER_MODULE
-             */
-            class RTPSMessageGroup_t{
-                public:
-                    CDRMessage_t m_rtpsmsg_header;
-                    CDRMessage_t m_rtpsmsg_submessage;
-                    CDRMessage_t m_rtpsmsg_fullmsg;
-                    RTPSMessageGroup_t(uint32_t payload):
-                        m_rtpsmsg_header(RTPSMESSAGE_HEADER_SIZE),
-                        m_rtpsmsg_submessage(payload),
-                        m_rtpsmsg_fullmsg(payload){};
-            };
+        bool add_data_frag(const CacheChange_t& change, const uint32_t fragment_number,
+                const std::vector<GUID_t>& remote_readers, const LocatorList_t& locators,
+                bool expectsInlineQos);
 
-            class RTPSWriter;
+        bool add_heartbeat(const std::vector<GUID_t>& remote_readers, const SequenceNumber_t& firstSN,
+                const SequenceNumber_t& lastSN, Count_t count,
+                bool isFinal, bool livelinessFlag, const LocatorList_t& locators);
 
-            /**
-             * RTPSMessageGroup class used to send multiple changes as a single CDRMessage.
-             * @ingroup WRITER_MODULE
-             */
-            class RTPSMessageGroup {
-                public:
+        bool add_gap(std::vector<SequenceNumber_t>& changesSeqNum, const GUID_t& remote_reader,
+                const LocatorList_t& locators);
 
-                    /**
-                     * @param msg_group
-                     * @param W
-                     * @param changesSeqNum
-                     * @param remoteGuidPrefix
-                     * @param readerId
-                     * @param unicast
-                     * @param multicast
-                     * @return 
-                     */
-                static bool send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
-                        RTPSWriter* W,
-                        std::vector<SequenceNumber_t>* changesSeqNum,
-                        const GuidPrefix_t& remoteGuidPrefix,
-                        const EntityId_t& readerId,
-                        LocatorList_t* unicast,
-                        LocatorList_t* multicast);
+        bool add_acknack(const GUID_t& remote_writer, SequenceNumberSet_t& SNSet,
+                int32_t count, bool finalFlag, const LocatorList_t& locators);
 
-                /**
-                 * @param changesSeqNum
-                 * @param Sequences
-                 */
-                static void prepare_SequenceNumberSet(std::vector<SequenceNumber_t>* changesSeqNum,
-                        std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>>* Sequences);
+        bool add_nackfrag(const GUID_t& remote_writer, SequenceNumber_t& writerSN,
+                FragmentNumberSet_t fnState, int32_t count, const LocatorList_t locators);
 
-                /**
-                 * @param msg_group
-                 * @param W
-                 * @param changes
-                 * @param remoteGuidPrefix
-                 * @param unicast
-                 * @param multicast
-                 * @param expectsInlineQos
-                 * @param ReaderId
-                 * @return 
-                 */
-                static uint32_t send_Changes_AsData(RTPSMessageGroup_t* msg_group,
-                        RTPSWriter* W,
-                        std::vector<CacheChangeForGroup_t>& changes,
-                        const GuidPrefix_t& remoteGuidPrefix,
-                        const EntityId_t& ReaderId,
-                        LocatorList_t& unicast,
-                        LocatorList_t& multicast,
-                        bool expectsInlineQos);
-                /**
-                 * @param W
-                 * @param submsg
-                 * @param expectsInlineQos
-                 * @param change
-                 * @param ReaderId
-                 * @return 
-                 */
-                static void prepareDataSubM(RTPSWriter* W, CDRMessage_t* submsg, bool expectsInlineQos, const CacheChange_t* change, const EntityId_t& ReaderId);
+    private:
 
-                static void prepareDataFragSubM(RTPSWriter* W, CDRMessage_t* submsg, bool expectsInlineQos, const CacheChange_t* change, const EntityId_t& ReaderId, uint32_t fragment_number);
-            };
-        } /* namespace rtps */
-    } /* namespace fastrtps */
+        void reset_to_header();
+
+        bool check_preconditions(const LocatorList_t& locator_list,
+                const std::vector<GuidPrefix_t>& remote_participants) const;
+
+        void flush_and_reset(const LocatorList_t& locator_list,
+                std::vector<GuidPrefix_t>&& remote_participants);
+
+        void flush();
+
+        void send();
+
+        void check_and_maybe_flush(const LocatorList_t& locator_list,
+                const std::vector<GUID_t>& remote_endpoints);
+
+        bool insert_submessage(const std::vector<GUID_t>& remote_endpoints);
+
+        bool add_info_dst_in_buffer(CDRMessage_t* buffer, const std::vector<GUID_t>& remote_endpoints);
+
+        bool add_info_ts_in_buffer(const std::vector<GUID_t>& remote_readers);
+
+        RTPSParticipantImpl* participant_;
+
+        Endpoint* endpoint_;
+
+        CDRMessage_t* full_msg_;
+
+        CDRMessage_t* submessage_msg_;
+
+#if HAVE_SECURITY
+        ENDPOINT_TYPE type_;
+
+        CDRMessage_t* encrypt_msg_;
+#endif
+
+        LocatorList_t current_locators_;
+
+        GuidPrefix_t current_dst_;
+
+        std::vector<GuidPrefix_t> current_remote_participants_;
+};
+
+} /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif

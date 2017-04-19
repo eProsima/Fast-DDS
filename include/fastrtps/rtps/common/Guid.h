@@ -144,6 +144,11 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 #define ENTITYID_SPDP_BUILTIN_RTPSParticipant_READER  0x000100c7
 #define ENTITYID_P2P_BUILTIN_RTPSParticipant_MESSAGE_WRITER  0x000200C2
 #define ENTITYID_P2P_BUILTIN_RTPSParticipant_MESSAGE_READER  0x000200C7
+#define ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_WRITER  0x000201C3
+#define ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_READER  0x000201C4
+#define ENTITYID_P2P_BUILTIN_PARTICIPANT_VOLATILE_MESSAGE_SECURE_WRITER  0xff0202C3
+#define ENTITYID_P2P_BUILTIN_PARTICIPANT_VOLATILE_MESSAGE_SECURE_READER  0xff0202C4
+
 
 //!@brief Structure EntityId_t, entity id part of GUID_t.
 //!@ingroup COMMON_MODULE
@@ -301,6 +306,12 @@ const EntityId_t c_EntityId_RTPSParticipant = ENTITYID_RTPSParticipant;
 
 const EntityId_t c_EntityId_WriterLiveliness = ENTITYID_P2P_BUILTIN_RTPSParticipant_MESSAGE_WRITER;
 const EntityId_t c_EntityId_ReaderLiveliness = ENTITYID_P2P_BUILTIN_RTPSParticipant_MESSAGE_READER;
+
+const EntityId_t participant_stateless_message_writer_entity_id = ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_WRITER;
+const EntityId_t participant_stateless_message_reader_entity_id = ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_READER;
+
+const EntityId_t participant_volatile_message_secure_writer_entity_id = ENTITYID_P2P_BUILTIN_PARTICIPANT_VOLATILE_MESSAGE_SECURE_WRITER;
+const EntityId_t participant_volatile_message_secure_reader_entity_id = ENTITYID_P2P_BUILTIN_PARTICIPANT_VOLATILE_MESSAGE_SECURE_READER;
 
 
 

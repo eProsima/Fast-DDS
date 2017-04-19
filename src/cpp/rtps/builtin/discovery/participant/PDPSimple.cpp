@@ -51,8 +51,7 @@
 
 #include <fastrtps/log/Log.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 using namespace eprosima::fastrtps;
 
@@ -72,7 +71,7 @@ PDPSimple::PDPSimple(BuiltinProtocols* built):
     mp_listener(nullptr),
     mp_SPDPWriterHistory(nullptr),
     mp_SPDPReaderHistory(nullptr),
-    mp_mutex(new boost::recursive_mutex())
+    mp_mutex(new std::recursive_mutex())
     {
 
     }
@@ -89,7 +88,7 @@ PDPSimple::~PDPSimple()
     delete(mp_SPDPReader);
     delete(mp_SPDPWriterHistory);
     delete(mp_SPDPReaderHistory);
-    
+
     delete(mp_listener);
     for(auto it = this->m_participantProxies.begin();
             it!=this->m_participantProxies.end();++it)
@@ -100,21 +99,81 @@ PDPSimple::~PDPSimple()
     delete(mp_mutex);
 }
 
+void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant_data)
+{
+    participant_data->m_leaseDuration = mp_RTPSParticipant->getAttributes().builtin.leaseDuration;
+    set_VendorId_eProsima(participant_data->m_VendorId);
+
+    participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+    participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+    if(mp_RTPSParticipant->getAttributes().builtin.use_WriterLivelinessProtocol)
+    {
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+    }
+    if(mp_RTPSParticipant->getAttributes().builtin.use_SIMPLE_EndpointDiscoveryProtocol)
+    {
+        if(mp_RTPSParticipant->getAttributes().builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
+        {
+            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+        }
+        if(mp_RTPSParticipant->getAttributes().builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+        {
+            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+        }
+    }
+
+#if HAVE_SECURITY
+    participant_data->m_availableBuiltinEndpoints |= mp_RTPSParticipant->security_manager().builtin_endpoints();
+#endif
+
+    participant_data->m_defaultUnicastLocatorList = mp_RTPSParticipant->getAttributes().defaultUnicastLocatorList;
+    participant_data->m_defaultMulticastLocatorList = mp_RTPSParticipant->getAttributes().defaultMulticastLocatorList;
+    participant_data->m_expectsInlineQos = false;
+    participant_data->m_guid = mp_RTPSParticipant->getGuid();
+    for(uint8_t i = 0; i<16; ++i)
+    {
+        if(i<12)
+            participant_data->m_key.value[i] = participant_data->m_guid.guidPrefix.value[i];
+        else
+            participant_data->m_key.value[i] = participant_data->m_guid.entityId.value[i - 12];
+    }
+
+
+    participant_data->m_metatrafficMulticastLocatorList = this->mp_builtin->m_metatrafficMulticastLocatorList;
+    participant_data->m_metatrafficUnicastLocatorList = this->mp_builtin->m_metatrafficUnicastLocatorList;
+
+    participant_data->m_participantName = std::string(mp_RTPSParticipant->getAttributes().getName());
+
+    participant_data->m_userData = mp_RTPSParticipant->getAttributes().userData;
+
+#if HAVE_SECURITY
+    IdentityToken* identity_token = nullptr;
+    if(mp_RTPSParticipant->security_manager().get_identity_token(&identity_token) && identity_token != nullptr)
+    {
+        participant_data->identity_token_ = std::move(*identity_token);
+        mp_RTPSParticipant->security_manager().return_identity_token(identity_token);
+    }
+#endif
+}
+
 bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 {
     logInfo(RTPS_PDP,"Beginning");
     mp_RTPSParticipant = part;
     m_discovery = mp_RTPSParticipant->getAttributes().builtin;
-    boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
     //CREATE ENDPOINTS
     if(!createSPDPEndpoints())
         return false;
     //UPDATE METATRAFFIC.
     mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->getAttributes()->unicastLocatorList);
-    //boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
-    //boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
+    //std::lock_guard<std::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
+    //std::lock_guard<std::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
     m_participantProxies.push_back(new ParticipantProxyData());
-    m_participantProxies.front()->initializeData(mp_RTPSParticipant,this);
+    initializeParticipantProxyData(m_participantProxies.front());
 
     //INIT EDP
     if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
@@ -156,7 +215,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
     logInfo(RTPS_PDP,"Announcing RTPSParticipant State (new change: "<< new_change <<")");
     CacheChange_t* change = nullptr;
 
-    boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
 
     if(!dispose)
     {
@@ -165,6 +224,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
             this->getLocalParticipantProxyData()->m_manualLivelinessCount++;
             if(mp_SPDPWriterHistory->getHistorySize() > 0)
                 mp_SPDPWriterHistory->remove_min_change();
+            // TODO(Ricardo) Change DISCOVERY_PARTICIPANT_DATA_MAX_SIZE with getLocalParticipantProxyData()->size().
             change = mp_SPDPWriter->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE,getLocalParticipantProxyData()->m_key);
             if(getLocalParticipantProxyData()->toParameterList())
             {
@@ -208,11 +268,11 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
 
 bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData** rdata, ParticipantProxyData** pdata)
 {
-    boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
     for (auto pit = m_participantProxies.begin();
             pit != m_participantProxies.end();++pit)
     {
-        boost::lock_guard<boost::recursive_mutex> guard(*(*pit)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> guard(*(*pit)->mp_mutex);
         for (auto rit = (*pit)->m_readers.begin();
                 rit != (*pit)->m_readers.end();++rit)
         {
@@ -229,11 +289,11 @@ bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData** rd
 
 bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData** wdata, ParticipantProxyData** pdata)
 {
-    boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
     for (auto pit = m_participantProxies.begin();
             pit != m_participantProxies.end(); ++pit)
     {
-        boost::lock_guard<boost::recursive_mutex> guard(*(*pit)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> guard(*(*pit)->mp_mutex);
         for (auto wit = (*pit)->m_writers.begin();
                 wit != (*pit)->m_writers.end(); ++wit)
         {
@@ -251,8 +311,8 @@ bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData** wd
 bool PDPSimple::removeReaderProxyData(ParticipantProxyData* pdata, ReaderProxyData* rdata)
 {
     logInfo(RTPS_PDP,rdata->m_guid);
-    boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
-    boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*pdata->mp_mutex);
     for(std::vector<ReaderProxyData*>::iterator rit = pdata->m_readers.begin();
             rit != pdata->m_readers.end(); ++rit)
     {
@@ -269,8 +329,8 @@ bool PDPSimple::removeReaderProxyData(ParticipantProxyData* pdata, ReaderProxyDa
 bool PDPSimple::removeWriterProxyData(ParticipantProxyData* pdata, WriterProxyData* wdata)
 {
     logInfo(RTPS_PDP, wdata->guid());
-    boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
-    boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*pdata->mp_mutex);
     for(std::vector<WriterProxyData*>::iterator wit = pdata->m_writers.begin();
             wit != pdata->m_writers.end(); ++wit)
     {
@@ -288,7 +348,7 @@ bool PDPSimple::removeWriterProxyData(ParticipantProxyData* pdata, WriterProxyDa
 bool PDPSimple::lookupParticipantProxyData(const GUID_t& pguid,ParticipantProxyData** pdata)
 {
     logInfo(RTPS_PDP,pguid);
-    boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
     for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
             pit!=m_participantProxies.end();++pit)
     {
@@ -321,13 +381,14 @@ bool PDPSimple::createSPDPEndpoints()
     RTPSWriter* wout;
     if(mp_RTPSParticipant->createWriter(&wout,watt,mp_SPDPWriterHistory,nullptr,c_EntityId_SPDPWriter,true))
     {
+#if HAVE_SECURITY
+        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
+#endif
         mp_SPDPWriter = dynamic_cast<StatelessWriter*>(wout);
         RemoteReaderAttributes ratt;
-        for(LocatorListIterator lit = mp_builtin->m_metatrafficMulticastLocatorList.begin();
-                lit!=mp_builtin->m_metatrafficMulticastLocatorList.end();++lit)
+        for(LocatorListIterator lit = mp_builtin->m_initialPeersList.begin();
+                lit != mp_builtin->m_initialPeersList.end(); ++lit)
             mp_SPDPWriter->add_locator(ratt,*lit);
-        if(this->mp_builtin->m_useMandatory)
-            mp_SPDPWriter->add_locator(ratt,mp_builtin->m_mandatoryMulticastLocator);
     }
     else
     {
@@ -350,6 +411,9 @@ bool PDPSimple::createSPDPEndpoints()
     RTPSReader* rout;
     if(mp_RTPSParticipant->createReader(&rout,ratt,mp_SPDPReaderHistory,mp_listener,c_EntityId_SPDPReader,true, false))
     {
+#if HAVE_SECURITY
+        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(rout, false);
+#endif
         mp_SPDPReader = dynamic_cast<StatelessReader*>(rout);
     }
     else
@@ -370,11 +434,11 @@ bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata,bool copydata,
         ReaderProxyData** returnReaderProxyData,ParticipantProxyData** pdata)
 {
     logInfo(RTPS_PDP,rdata->m_guid);
-    boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
     for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
             pit!=m_participantProxies.end();++pit)
     {
-        boost::lock_guard<boost::recursive_mutex> guard(*(*pit)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> guard(*(*pit)->mp_mutex);
         if((*pit)->m_guid.guidPrefix == rdata->m_guid.guidPrefix)
         {
             //CHECK THAT IT IS NOT ALREADY THERE:
@@ -415,11 +479,11 @@ bool PDPSimple::addWriterProxyData(WriterProxyData* wdata,bool copydata,
         WriterProxyData** returnWriterProxyData,ParticipantProxyData** pdata)
 {
     logInfo(RTPS_PDP,wdata->guid());
-    boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
     for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
             pit!=m_participantProxies.end();++pit)
     {
-        boost::lock_guard<boost::recursive_mutex> guard(*(*pit)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> guard(*(*pit)->mp_mutex);
         if((*pit)->m_guid.guidPrefix == wdata->guid().guidPrefix)
         {
             //CHECK THAT IT IS NOT ALREADY THERE:
@@ -463,7 +527,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
     uint32_t auxendp = endp;
     auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
     // TODO Review because the mutex is already take in PDPSimpleListener.
-    boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*pdata->mp_mutex);
     if(auxendp!=0)
     {
         RemoteWriterAttributes watt;
@@ -492,6 +556,20 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         mp_SPDPWriter->matched_reader_add(ratt);
     }
 
+#if HAVE_SECURITY
+    // Validate remote participant
+    mp_RTPSParticipant->security_manager().discovered_participant(pdata);
+#else
+    //Inform EDP of new RTPSParticipant data:
+    notifyAboveRemoteEndpoints(pdata);
+#endif
+}
+
+void PDPSimple::notifyAboveRemoteEndpoints(ParticipantProxyData* pdata)
+{
+    std::lock_guard<std::recursive_mutex> guard_pdpsimple(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard_pdata(*pdata->mp_mutex);
+
     //Inform EDP of new RTPSParticipant data:
     if(mp_EDP!=nullptr)
         mp_EDP->assignRemoteEndpoints(pdata);
@@ -503,7 +581,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 void PDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
     logInfo(RTPS_PDP,"For RTPSParticipant: "<<pdata->m_guid);
-    boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*pdata->mp_mutex);
     for(auto it = pdata->m_builtinReaders.begin();
             it!=pdata->m_builtinReaders.end();++it)
     {
@@ -521,15 +599,15 @@ void PDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 {
     logInfo(RTPS_PDP,partGUID );
-    boost::unique_lock<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
-    boost::unique_lock<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
+    std::unique_lock<std::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
+    std::unique_lock<std::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
     ParticipantProxyData* pdata = nullptr;
     //Remove it from our vector or RTPSParticipantProxies:
-    boost::unique_lock<boost::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::unique_lock<std::recursive_mutex> guardPDP(*this->mp_mutex);
     for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
             pit!=m_participantProxies.end();++pit)
     {
-        boost::lock_guard<boost::recursive_mutex> guard(*(*pit)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> guard(*(*pit)->mp_mutex);
         if((*pit)->m_guid == partGUID)
         {
             pdata = *pit;
@@ -554,6 +632,9 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
                 mp_EDP->unpairWriterProxy(pdata, *wit);
             }
         }
+#if HAVE_SECURITY
+        mp_builtin->mp_participantImpl->security_manager().remove_participant(pdata);
+#endif
         if(mp_builtin->mp_WLP != nullptr)
             this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
         this->mp_EDP->removeRemoteEndpoints(pdata);
@@ -583,11 +664,11 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 
 void PDPSimple::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
 {
-    boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
     for(std::vector<ParticipantProxyData*>::iterator it = this->m_participantProxies.begin();
             it!=this->m_participantProxies.end();++it)
     {
-        boost::lock_guard<boost::recursive_mutex> guard(*(*it)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> guard(*(*it)->mp_mutex);
         if((*it)->m_guid.guidPrefix == guidP)
         {
             logInfo(RTPS_LIVELINESS,"RTPSParticipant "<< (*it)->m_guid << " is Alive");
@@ -607,8 +688,8 @@ void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
 {
     logInfo(RTPS_LIVELINESS,"of type " << (kind==AUTOMATIC_LIVELINESS_QOS?"AUTOMATIC":"")
             <<(kind==MANUAL_BY_PARTICIPANT_LIVELINESS_QOS?"MANUAL_BY_PARTICIPANT":""));
-    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
-    boost::lock_guard<boost::recursive_mutex> guard2(*this->m_participantProxies.front()->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard2(*this->m_participantProxies.front()->mp_mutex);
     for(std::vector<WriterProxyData*>::iterator wit = this->m_participantProxies.front()->m_writers.begin();
             wit!=this->m_participantProxies.front()->m_writers.end();++wit)
     {
@@ -622,13 +703,13 @@ void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
 
 void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind)
 {
-    boost::lock_guard<boost::recursive_mutex> pguard(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> pguard(*this->mp_mutex);
     logInfo(RTPS_LIVELINESS,"of type " << (kind==AUTOMATIC_LIVELINESS_QOS?"AUTOMATIC":"")
             <<(kind==MANUAL_BY_PARTICIPANT_LIVELINESS_QOS?"MANUAL_BY_PARTICIPANT":""));
     for(std::vector<ParticipantProxyData*>::iterator pit=this->m_participantProxies.begin();
             pit!=this->m_participantProxies.end();++pit)
     {
-        boost::lock_guard<boost::recursive_mutex> guard(*(*pit)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> guard(*(*pit)->mp_mutex);
         if((*pit)->m_guid.guidPrefix == guidP)
         {
             for(std::vector<WriterProxyData*>::iterator wit = (*pit)->m_writers.begin();
@@ -637,7 +718,7 @@ void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosP
                 if((*wit)->m_qos.m_liveliness.kind == kind)
                 {
                     (*wit)->isAlive(true);
-                    boost::lock_guard<boost::recursive_mutex> guardP(*mp_RTPSParticipant->getParticipantMutex());
+                    std::lock_guard<std::recursive_mutex> guardP(*mp_RTPSParticipant->getParticipantMutex());
                     for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
                             rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
                     {
@@ -670,6 +751,19 @@ bool PDPSimple::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16
             dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteReader(pdata,userDefinedId);
     }
     return false;
+}
+
+CDRMessage_t PDPSimple::get_participant_proxy_data_serialized(Endianness_t endian)
+{
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    if(getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.msg_endian == endian)
+    {
+        return CDRMessage_t(getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg);
+    }
+
+    ParameterList_t plist(getLocalParticipantProxyData()->m_QosList.allQos);
+    ParameterList::updateCDRMsg(&plist, BIGEND, true);
+    return CDRMessage_t(std::move(plist.m_cdrmsg));
 }
 
 } /* namespace rtps */

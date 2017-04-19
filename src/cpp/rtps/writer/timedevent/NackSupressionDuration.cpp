@@ -23,8 +23,7 @@
 #include <fastrtps/rtps/writer/ReaderProxy.h>
 #include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
 #include "../../participant/RTPSParticipantImpl.h"
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 #include <fastrtps/log/Log.h>
 
@@ -52,26 +51,26 @@ void NackSupressionDuration::event(EventCode code, const char* msg)
     // Unused in release mode.
     (void)msg;
 
-	if(code == EVENT_SUCCESS)
-	{
-		boost::lock_guard<boost::recursive_mutex> guard(*mp_RP->mp_mutex);
+    if(code == EVENT_SUCCESS)
+    {
+        std::lock_guard<std::recursive_mutex> guard(*mp_RP->mp_mutex);
 
-		logInfo(RTPS_WRITER,"Changing underway to unacked for Reader: "<<mp_RP->m_att.guid);
+        logInfo(RTPS_WRITER,"Changing underway to unacked for Reader: "<<mp_RP->m_att.guid);
 
         if(mp_RP->m_att.endpoint.reliabilityKind == RELIABLE)
         {
             mp_RP->convert_status_on_all_changes(UNDERWAY,UNACKNOWLEDGED);
             mp_RP->mp_SFW->mp_periodicHB->restart_timer();
         }
-	}
-	else if(code == EVENT_ABORT)
-	{
-		logInfo(RTPS_WRITER,"Aborted");
-	}
-	else
-	{
-		logInfo(RTPS_WRITER,"Boost message: " <<msg);
-	}
+    }
+    else if(code == EVENT_ABORT)
+    {
+        logInfo(RTPS_WRITER,"Aborted");
+    }
+    else
+    {
+        logInfo(RTPS_WRITER,"Event message: " <<msg);
+    }
 }
 }
 } /* namespace dds */

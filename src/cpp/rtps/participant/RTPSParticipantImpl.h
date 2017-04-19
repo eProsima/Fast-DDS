@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file RTPSParticipant.h
+ * @file RTPSParticipantImpl.h
  */
 
 #ifndef RTPSParticipantIMPL_H_
@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <list>
 #include <sys/types.h>
+#include <mutex>
+#include <fastrtps/utils/Semaphore.h>
 
 #if defined(_WIN32)
 #include <process.h>
@@ -30,23 +32,18 @@
 #include <unistd.h>
 #endif
 
-
-namespace boost
-{
-namespace interprocess{class interprocess_semaphore;}
-namespace asio{class io_service;}
-class recursive_mutex;
-}
-
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
 
-//Santi - Adding .h files for the new transport layers
 #include <fastrtps/rtps/network/NetworkFactory.h>
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
+
+#if HAVE_SECURITY
+#include "../security/SecurityManager.h"
+#endif
 
 namespace eprosima {
 namespace fastrtps{
@@ -60,8 +57,6 @@ namespace rtps {
 
 class RTPSParticipant;
 class RTPSParticipantListener;
-class ListenResource;
-class ResourceSend;
 class ResourceEvent;
 class AsyncWriterThread;
 class BuiltinProtocols;
@@ -76,6 +71,8 @@ class ReaderAttributes;
 class ReaderHistory;
 class ReaderListener;
 class StatefulReader;
+class PDPSimple;
+class FlowController;
 
 /*
    Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
@@ -90,9 +87,9 @@ class StatefulReader;
 */
 typedef struct ReceiverControlBlock{
     ReceiverResource Receiver;
-    MessageReceiver* mp_receiver;		//Associated Readers/Writers inside of MessageReceiver
-    boost::mutex mtx; //Fix declaration
-    boost::thread* m_thread;
+    MessageReceiver* mp_receiver; //Associated Readers/Writers inside of MessageReceiver
+    std::mutex mtx; //Fix declaration
+    std::thread* m_thread;
     bool resourceAlive;
     ReceiverControlBlock(ReceiverResource&& rec):Receiver(std::move(rec)), mp_receiver(nullptr), m_thread(nullptr), resourceAlive(true)
     {
@@ -131,7 +128,9 @@ class RTPSParticipantImpl
          * Get associated GUID
          * @return Associated GUID
          */
-        inline const GUID_t& getGuid() const {return m_guid;};
+        inline const GUID_t& getGuid() const { return m_guid; }
+
+        void setGuid(GUID_t& guid) { m_guid = guid; }
 
         //! Announce RTPSParticipantState (force the sending of a DPD message.)
         void announceRTPSParticipantState();
@@ -171,7 +170,7 @@ class RTPSParticipantImpl
         //!Send Method - Deprecated - Stays here for reference purposes
         void sendSync(CDRMessage_t* msg, Endpoint *pend, const Locator_t& destination_loc);
         //!Get the participant Mutex
-        boost::recursive_mutex* getParticipantMutex() const {return mp_mutex;};
+        std::recursive_mutex* getParticipantMutex() const {return mp_mutex;};
         /**
          * Get the participant listener
          * @return participant listener
@@ -196,21 +195,33 @@ class RTPSParticipantImpl
 
         /*!
          * @remarks Non thread-safe.
-         */ 
+         */
         const std::vector<RTPSWriter*>& getAllWriters() const;
 
         /*!
          * @remarks Non thread-safe.
-         */ 
+         */
         const std::vector<RTPSReader*>& getAllReaders() const;
 
         uint32_t getMaxMessageSize() const;
+
+        uint32_t getMaxDataSize();
+
+        uint32_t calculateMaxDataSize(uint32_t length);
+
+#if HAVE_SECURITY
+        ::security::SecurityManager& security_manager() { return m_security_manager; }
+
+        bool is_rtps_protected() const { return is_rtps_protected_; }
+#endif
+
+        PDPSimple* pdpsimple();
 
     private:
         //!Attributes of the RTPSParticipant
         RTPSParticipantAttributes m_att;
         //!Guid of the RTPSParticipant.
-        const GUID_t m_guid;
+        GUID_t m_guid;
         //! Sending resources. - DEPRECATED -Stays commented for reference purposes
         // ResourceSend* mp_send_thr;
         //! Event Resource
@@ -218,7 +229,7 @@ class RTPSParticipantImpl
         //! BuiltinProtocols of this RTPSParticipant
         BuiltinProtocols* mp_builtinProtocols;
         //!Semaphore to wait for the listen thread creation.
-        boost::interprocess::interprocess_semaphore* mp_ResourceSemaphore;
+        Semaphore* mp_ResourceSemaphore;
         //!Id counter to correctly assign the ids to writers and readers.
         uint32_t IdCounter;
         //!Writer List.
@@ -233,14 +244,18 @@ class RTPSParticipantImpl
 
         //!Network Factory
         NetworkFactory m_network_Factory;
+
+#if HAVE_SECURITY
+        // Security manager
+        ::security::SecurityManager m_security_manager;
+#endif
+
         //!ReceiverControlBlock list - encapsulates all associated resources on a Receiving element
         std::list<ReceiverControlBlock> m_receiverResourcelist;
         //!SenderResource List
-        boost::mutex m_send_resources_mutex;
+        std::mutex m_send_resources_mutex;
         std::vector<SenderResource> m_senderResource;
 
-        //!Listen Resource list - DEPRECATED - Stays commented for reference purposes
-        // std::vector<ListenResource*> m_listenResourceList;
         //!Participant Listener
         RTPSParticipantListener* mp_participantListener;
         //!Pointer to the user participant
@@ -278,7 +293,7 @@ class RTPSParticipantImpl
           */
         bool createAndAssociateReceiverswithEndpoint(Endpoint * pend);
 
-        /** Function to be called from a new thread, which takes cares of performing a blocking receive 
+        /** Function to be called from a new thread, which takes cares of performing a blocking receive
           operation on the ReceiveResource
           @param buffer - Position of the buffer we use to store data
           @param locator - Locator that triggered the creation of the resource
@@ -297,16 +312,23 @@ class RTPSParticipantImpl
         Locator_t applyLocatorAdaptRule(Locator_t loc);
 
         //!Participant Mutex
-        boost::recursive_mutex* mp_mutex;
+        std::recursive_mutex* mp_mutex;
 
         /*
          * Flow controllers for this participant.
          */
         std::vector<std::unique_ptr<FlowController> > m_controllers;
 
+#if HAVE_SECURITY
+        bool is_rtps_protected_;
+#endif
+
     public:
 
-        const RTPSParticipantAttributes& getRTPSParticipantAttributes() const;
+        const RTPSParticipantAttributes& getRTPSParticipantAttributes() const
+        {
+            return this->m_att;
+        }
 
         /**
          * Create a Writer in this RTPSParticipant.
@@ -410,10 +432,17 @@ class RTPSParticipantImpl
           @param Locator_list - Locator list to be used to create the ReceiverResources
           @param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
           */
-        static const int MutationTries = 5;
+        static const int MutationTries = 100;
         void createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
 
         bool networkFactoryHasRegisteredTransports() const;
+
+#if HAVE_SECURITY
+        void set_endpoint_rtps_protection_supports(Endpoint* endpoint, bool support)
+        {
+            endpoint->supports_rtps_protection_ = support;
+        }
+#endif
 };
 
 }
@@ -421,8 +450,3 @@ class RTPSParticipantImpl
 } /* namespace eprosima */
 #endif
 #endif /* RTPSParticipant_H_ */
-
-
-
-
-

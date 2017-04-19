@@ -134,8 +134,8 @@ bool PartitionQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 	{
 		this->length +=4;
 		this->length += (uint16_t)it->size()+1;
-		rest = ((uint16_t)it->size()+1)%4;
-		this->length += rest!=0?rest:4-rest;
+		rest = ((uint16_t)it->size() +1 ) % 4;
+		this->length += rest != 0 ? 4 - rest : 0;
 	}
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
 	valid &= CDRMessage::addUInt32(msg,(uint32_t)this->names.size());

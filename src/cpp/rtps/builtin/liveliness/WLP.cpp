@@ -37,8 +37,7 @@
 #include <fastrtps/utils/TimeConversion.h>
 
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 namespace eprosima {
 namespace fastrtps{
@@ -151,8 +150,8 @@ bool WLP::createEndpoints()
 
 bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
-    boost::lock_guard<boost::recursive_mutex> guard2(*pdata->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
+    std::lock_guard<std::recursive_mutex> guard2(*pdata->mp_mutex);
     logInfo(RTPS_LIVELINESS,"For remote RTPSParticipant "<<pdata->m_guid);
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t partdet = endp;
@@ -201,8 +200,8 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
-    boost::lock_guard<boost::recursive_mutex> guard2(*pdata->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
+    std::lock_guard<std::recursive_mutex> guard2(*pdata->mp_mutex);
     logInfo(RTPS_LIVELINESS,"for RTPSParticipant: "<<pdata->m_guid);
     for(auto it = pdata->m_builtinReaders.begin();
             it!=pdata->m_builtinReaders.end();++it)
@@ -228,7 +227,7 @@ void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
 
 bool WLP::addLocalWriter(RTPSWriter* W,WriterQos& wqos)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
+    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
     logInfo(RTPS_LIVELINESS,W->getGuid().entityId	<<" to Liveliness Protocol")
         double wAnnouncementPeriodMilliSec(TimeConv::Time_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
     if(wqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
@@ -282,7 +281,7 @@ typedef std::vector<RTPSWriter*>::iterator t_WIT;
 
 bool WLP::removeLocalWriter(RTPSWriter* W)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
+    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
     logInfo(RTPS_LIVELINESS,W->getGuid().entityId
             <<" from Liveliness Protocol");
     t_WIT wToEraseIt;
@@ -383,7 +382,7 @@ bool WLP::updateLocalWriter(RTPSWriter* W, WriterQos& wqos)
     // Unused in release mode.
     (void)W;
 
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
+    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
     logInfo(RTPS_LIVELINESS,W->getGuid().entityId);
     double wAnnouncementPeriodMilliSec(TimeConv::Time_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
     if(wqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )

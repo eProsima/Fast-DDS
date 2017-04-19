@@ -19,10 +19,10 @@
 
 #include "RTPSParticipantImpl.h"
 
-#include <fastrtps/rtps/resources/ResourceSend.h>
+#include "../flowcontrol/ThroughputController.h"
+
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
-#include <fastrtps/rtps/resources/ListenResource.h>
 
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 
@@ -45,10 +45,10 @@
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/eClock.h>
 
-#include <boost/thread.hpp>
-#include <boost/interprocess/sync/interprocess_semaphore.hpp>
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <fastrtps/utils/Semaphore.h>
+
+#include <mutex>
+#include <algorithm>
 
 #include <fastrtps/log/Log.h>
 
@@ -75,11 +75,11 @@ Locator_t RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t loc)
     switch (loc.kind){
         case LOCATOR_KIND_UDPv4:
             //This is a completely made up rule
-            loc.port += 2;
+            loc.port += m_att.port.participantIDGain;
             break;
         case LOCATOR_KIND_UDPv6:
             //TODO - Define the rest of rules
-            loc.port += 2;
+            loc.port += m_att.port.participantIDGain;
             break;
     }
     return loc;
@@ -88,20 +88,33 @@ Locator_t RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t loc)
 RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam,
         const GuidPrefix_t& guidP,
         RTPSParticipant* par,
-        RTPSParticipantListener* plisten):	m_att(PParam), m_guid(guidP,c_EntityId_RTPSParticipant),
+        RTPSParticipantListener* plisten): m_att(PParam), m_guid(guidP ,c_EntityId_RTPSParticipant),
     mp_event_thr(nullptr),
     mp_builtinProtocols(nullptr),
-    mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
+    mp_ResourceSemaphore(new Semaphore(0)),
     IdCounter(0),
+#if HAVE_SECURITY
+    m_security_manager(this),
+#endif
     mp_participantListener(plisten),
     mp_userParticipant(par),
-    mp_mutex(new boost::recursive_mutex())
-
+    mp_mutex(new std::recursive_mutex())
+#if HAVE_SECURITY
+    , is_rtps_protected_(false)
+#endif
 {
+#if HAVE_SECURITY
+    // Read participant properties.
+    const std::string* property_value = PropertyPolicyHelper::find_property(PParam.properties,
+            "rtps.participant.rtps_protection_kind");
+    if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
+        is_rtps_protected_ = true;
+#endif
+
     // Builtin transport by default
     if (PParam.useBuiltinTransports)
     {
-        UDPv4TransportDescriptor descriptor; 
+        UDPv4TransportDescriptor descriptor;
         descriptor.sendBufferSize = m_att.sendSocketBufferSize;
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
         m_network_Factory.RegisterTransport(&descriptor);
@@ -111,7 +124,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     for (const auto& transportDescriptor : PParam.userTransports)
         m_network_Factory.RegisterTransport(transportDescriptor.get());
 
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     mp_userParticipant->mp_impl = this;
     Locator_t loc;
     loc.port = PParam.defaultSendPort;
@@ -126,6 +139,86 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         std::unique_ptr<FlowController> controller(new ThroughputController(PParam.throughputController, this));
         m_controllers.push_back(std::move(controller));
     }
+
+    /// Creation of metatraffic locator and receiver resources
+    uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(m_att.builtin.domainId);
+    uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(m_att.builtin.domainId, m_att.participantID);
+
+    /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
+       Else -> Take them */
+
+    /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
+
+    if(m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
+    {
+        //UDPv4
+        Locator_t mandatoryMulticastLocator;
+        mandatoryMulticastLocator.kind = LOCATOR_KIND_UDPv4;
+        mandatoryMulticastLocator.port = metatraffic_multicast_port;
+        mandatoryMulticastLocator.set_IP4_address(239,255,0,1);
+
+        m_att.builtin.metatrafficMulticastLocatorList.push_back(mandatoryMulticastLocator);
+
+        Locator_t default_metatraffic_unicast_locator;
+        default_metatraffic_unicast_locator.port = metatraffic_unicast_port;
+        m_att.builtin.metatrafficUnicastLocatorList.push_back(default_metatraffic_unicast_locator);
+
+        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
+    }
+    else
+    {
+        std::for_each(m_att.builtin.metatrafficMulticastLocatorList.begin(), m_att.builtin.metatrafficMulticastLocatorList.end(),
+                [&](Locator_t& locator) {
+                    if(locator.port == 0)
+                        locator.port = metatraffic_multicast_port;
+                });
+        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
+
+        std::for_each(m_att.builtin.metatrafficUnicastLocatorList.begin(), m_att.builtin.metatrafficUnicastLocatorList.end(),
+                [&](Locator_t& locator) {
+                    if(locator.port == 0)
+                        locator.port = metatraffic_unicast_port;
+                });
+        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
+    }
+
+    //Create ReceiverResources now and update the list with the REAL used ones
+    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
+
+    //Create ReceiverResources now and update the list with the REAL used ones
+    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
+
+    // Initial peers
+    if(m_att.builtin.initialPeersList.empty())
+    {
+        m_att.builtin.initialPeersList = m_att.builtin.metatrafficMulticastLocatorList;
+    }
+    else
+    {
+        LocatorList_t initial_peers;
+        initial_peers.swap(m_att.builtin.initialPeersList);
+
+        std::for_each(initial_peers.begin(), initial_peers.end(),
+                [&](Locator_t& locator) {
+                    if(locator.port == 0)
+                    {
+                        // TODO(Ricardo) Make configurable.
+                        for(int32_t i = 0; i < 4; ++i)
+                        {
+                            Locator_t auxloc(locator);
+                            auxloc.port = m_att.port.getUnicastPort(m_att.builtin.domainId, i);
+
+                            m_att.builtin.initialPeersList.push_back(auxloc);
+                        }
+                    }
+                    else
+                        m_att.builtin.initialPeersList.push_back(locator);
+                });
+
+        m_network_Factory.NormalizeLocators(m_att.builtin.initialPeersList);
+    }
+
+    /// Creation of user locator and receiver resources
 
     bool hasLocatorsDefined = true;
     //If no default locators are defined we define some.
@@ -153,25 +246,28 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
             m_att.defaultUnicastLocatorList.push_back((*it));
         }
-        // FIXME -- We have to  discuss the rules for deafult locator assignment for each transport
-        loc2.port= m_att.port.portBase+
-            m_att.port.domainIDGain*PParam.builtin.domainId+
-            m_att.port.offsetd2+
-            m_att.port.participantIDGain*m_att.participantID;
-        loc2.set_IP4_address(239,255,1,4);
-        m_att.defaultMulticastLocatorList.push_back(loc2);
-        /* INSERT DEFAULT MULTICAST LOCATORS FOR THE PARTICIPANT */
     }
     else
     {
+        // Locator with port 0, calculate port.
+        std::for_each(m_att.defaultUnicastLocatorList.begin(),
+                m_att.defaultUnicastLocatorList.end(),
+                [&](Locator_t& loc) {
+                    if(loc.port == 0)
+                        loc.port = m_att.port.portBase+
+                            m_att.port.domainIDGain*PParam.builtin.domainId+
+                            m_att.port.offsetd3+
+                            m_att.port.participantIDGain*m_att.participantID;
+                });
+
         // Normalize unicast locators.
         m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
     }
 
-    /*	
-        Since nothing guarantees the correct creation of the Resources on the Locators we have specified, and 
+    /*
+        Since nothing guarantees the correct creation of the Resources on the Locators we have specified, and
         in order to maintain synchrony between the defaultLocator list and the actuar ReceiveResources,
-        We create the resources for these Locators now. Furthermore, in case these resources are taken, 
+        We create the resources for these Locators now. Furthermore, in case these resources are taken,
         we create them on another Locator and then update de defaultList.
         */
     createReceiverResources(m_att.defaultUnicastLocatorList, true);
@@ -202,14 +298,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         uint32_t tries = 100;
         while(newSendersBuffer.empty() && tries != 0)
         {
-            //No ReceiverResources have been added, therefore we have to change the Locator 
+            //No ReceiverResources have been added, therefore we have to change the Locator
             (*it) = applyLocatorAdaptRule(*it); //Mutate the Locator to find a suitable rule. Overwrite the old one as it is useless now.
             newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
             --tries;
         }
         //Now we DO have resources, and the new locator is already replacing the old one.
         for(auto mit= newSendersBuffer.begin(); mit!= newSendersBuffer.end(); ++mit){
-            newSenders.push_back(std::move(*mit));	
+            newSenders.push_back(std::move(*mit));
         }
 
         //newSenders.insert(newSenders.end(), newSendersBuffer.begin(), newSendersBuffer.end());
@@ -226,7 +322,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     if (!hasLocatorsDefined){
         logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Send Locator List, adding Locators: " << m_att.defaultOutLocatorList);
     }
-    logInfo(RTPS_PARTICIPANT,"RTPSParticipant \"" <<  m_att.getName() << "\" with guidPrefix: " <<m_guid.guidPrefix);
+
+#if HAVE_SECURITY
+    // Start security
+    m_security_manager.init();
+#endif
+
     //START BUILTIN PROTOCOLS
     mp_builtinProtocols = new BuiltinProtocols();
     if(!mp_builtinProtocols->initBuiltinProtocols(this,m_att.builtin))
@@ -234,6 +335,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         logWarning(RTPS_PARTICIPANT, "The builtin protocols were not corecctly initialized");
     }
     //eClock::my_sleep(300);
+
+    logInfo(RTPS_PARTICIPANT,"RTPSParticipant \"" <<  m_att.getName() << "\" with guidPrefix: " <<m_guid.guidPrefix);
 }
 
 const std::vector<RTPSWriter*>& RTPSParticipantImpl::getAllWriters() const
@@ -269,6 +372,9 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 
     m_receiverResourcelist.clear();
     delete(this->mp_builtinProtocols);
+#if HAVE_SECURITY
+    m_security_manager.destroy();
+#endif
     delete(this->mp_ResourceSemaphore);
     delete(this->mp_userParticipant);
     m_senderResource.clear();
@@ -343,6 +449,20 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
         return false;
     }
 
+    // Get properties.
+#if HAVE_SECURITY
+    bool submessage_protection = false;
+    const std::string* property_value = PropertyPolicyHelper::find_property(param.endpoint.properties, "rtps.endpoint.submessage_protection_kind");
+
+    if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
+        submessage_protection = true;
+
+    bool payload_protection = false;
+    property_value = PropertyPolicyHelper::find_property(param.endpoint.properties, "rtps.endpoint.payload_protection_kind");
+
+    if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
+        payload_protection = true;
+#endif
 
     // Normalize unicast locators
     if (!param.endpoint.unicastLocatorList.empty())
@@ -358,6 +478,22 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
     if(SWriter==nullptr)
         return false;
 
+#if HAVE_SECURITY
+    if(submessage_protection || payload_protection)
+    {
+        if(submessage_protection)
+            SWriter->is_submessage_protected_ = true;
+        if(payload_protection)
+            SWriter->is_payload_protected_ = true;
+
+        if(!m_security_manager.register_local_writer(SWriter->getGuid(), param.endpoint.properties.properties()))
+        {
+            delete(SWriter);
+            return false;
+        }
+    }
+#endif
+
     createSendResources((Endpoint *)SWriter);
     if(param.endpoint.reliabilityKind == RELIABLE)
     {
@@ -372,7 +508,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
     // nack response duties.
     AsyncWriterThread::addWriter(*SWriter);
 
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     m_allWriterList.push_back(SWriter);
     if(!isBuiltin)
         m_userWriterList.push_back(SWriter);
@@ -440,6 +576,21 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
         return false;
     }
 
+    // Get properties.
+#if HAVE_SECURITY
+    bool submessage_protection = false;
+    const std::string* property_value = PropertyPolicyHelper::find_property(param.endpoint.properties, "rtps.endpoint.submessage_protection_kind");
+
+    if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
+        submessage_protection = true;
+
+    bool payload_protection = false;
+    property_value = PropertyPolicyHelper::find_property(param.endpoint.properties, "rtps.endpoint.payload_protection_kind");
+
+    if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
+        payload_protection = true;
+#endif
+
     // Normalize unicast locators
     if (!param.endpoint.unicastLocatorList.empty())
         m_network_Factory.NormalizeLocators(param.endpoint.unicastLocatorList);
@@ -453,6 +604,22 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 
     if(SReader==nullptr)
         return false;
+
+#if HAVE_SECURITY
+    if(submessage_protection || payload_protection)
+    {
+        if(submessage_protection)
+            SReader->is_submessage_protected_ = true;
+        if(payload_protection)
+            SReader->is_payload_protected_ = true;
+
+        if(!m_security_manager.register_local_reader(SReader->getGuid(), param.endpoint.properties.properties()))
+        {
+            delete(SReader);
+            return false;
+        }
+    }
+#endif
 
     //SReader->setListener(inlisten);
     //SReader->setQos(param.qos,true);
@@ -473,7 +640,7 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
         }
     }
 
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     m_allReaderList.push_back(SReader);
     if(!isBuiltin)
         m_userReaderList.push_back(SReader);
@@ -587,22 +754,23 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
     createReceiverResources(pend->getAttributes()->multicastLocatorList, false);
 
     // Associate the Endpoint with ReceiverResources inside ReceiverControlBlocks
-    assignEndpointListenResources(pend); 
+    assignEndpointListenResources(pend);
     return true;
 }
 
 void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver, Locator_t input_locator)
 {
     while(receiver->resourceAlive)
-    {	
+    {
         // Blocking receive.
         auto& msg = receiver->mp_receiver->m_rec_msg;
+        CDRMessage::initCDRMsg(&msg);
         if(!receiver->Receiver.Receive(msg.buffer, msg.max_size, msg.length, input_locator))
             continue;
 
         // Processes the data through the CDR Message interface.
         receiver->mp_receiver->processCDRMsg(getGuid().guidPrefix, &input_locator, &receiver->mp_receiver->m_rec_msg);
-    }	
+    }
 }
 
 
@@ -619,20 +787,20 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
     LocatorList_t finalList;
     for(auto lit = list.begin();lit != list.end();++lit){
         //Iteration of all Locators within the Locator list passed down as argument
-        boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+        std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
         //Check among ReceiverResources whether the locator is supported or not
         for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
             //Take mutex for the resource since we are going to interact with shared resources
-            //boost::lock_guard<boost::mutex> guard((*it).mtx);
+            //std::lock_guard<std::mutex> guard((*it).mtx);
             if ((*it).Receiver.SupportsLocator(*lit)){
                 //Supported! Take mutex and update lists - We maintain reader/writer discrimination just in case
-                (*it).mp_receiver->associateEndpoint(endp);	
+                (*it).mp_receiver->associateEndpoint(endp);
                 // end association between reader/writer and the receive resources
             }
 
         }
         //Finished iteratig through all ListenResources for a single Locator (from the parameter list).
-        //Since this function is called after checking with NetFactory we do not have to create any more resource. 
+        //Since this function is called after checking with NetFactory we do not have to create any more resource.
     }
     return true;
 }
@@ -655,7 +823,7 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend){
         SendersBuffer.clear();
     }
 
-    boost::lock_guard<boost::mutex> guard(m_send_resources_mutex);
+    std::lock_guard<std::mutex> guard(m_send_resources_mutex);
     for(auto mit = newSenders.begin();mit!=newSenders.end();++mit){
         m_senderResource.push_back(std::move(*mit));
     }
@@ -678,7 +846,7 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
                 tries++;
                 (*it_loc) = applyLocatorAdaptRule(*it_loc);
                 ret = m_network_Factory.BuildReceiverResources((*it_loc), newItemsBuffer);
-            }	
+            }
         }
 
         for(auto it_buffer = newItemsBuffer.begin(); it_buffer != newItemsBuffer.end(); ++it_buffer)
@@ -687,14 +855,14 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
             m_receiverResourcelist.push_back(ReceiverControlBlock(std::move(*it_buffer)));
             //Create and init the MessageReceiver
             //TODO(Ricardo) listenSocketBufferSize is too much size. Review
-            m_receiverResourcelist.back().mp_receiver = new MessageReceiver(m_att.listenSocketBufferSize);
+            m_receiverResourcelist.back().mp_receiver = new MessageReceiver(this, m_att.listenSocketBufferSize);
             m_receiverResourcelist.back().mp_receiver->init(m_att.listenSocketBufferSize);
 
             //Init the thread
-            m_receiverResourcelist.back().m_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation,this, &(m_receiverResourcelist.back()),(*it_loc));
+            m_receiverResourcelist.back().m_thread = new std::thread(&RTPSParticipantImpl::performListenOperation,this, &(m_receiverResourcelist.back()),(*it_loc));
         }
         newItemsBuffer.clear();
-    }	
+    }
 }
 
 
@@ -708,7 +876,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
     {
         if(p_endpoint->getAttributes()->endpointKind == WRITER)
         {
-            boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+            std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
             for(auto wit=m_userWriterList.begin();
                     wit!=m_userWriterList.end();++wit)
             {
@@ -732,7 +900,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
         }
         else
         {
-            boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+            std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
             for(auto rit=m_userReaderList.begin()
                     ;rit!=m_userReaderList.end();++rit)
             {
@@ -762,9 +930,9 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
         else
             mp_builtinProtocols->removeLocalReader((RTPSReader*)p_endpoint);
         //BUILTINPROTOCOLS
-        boost::lock_guard<boost::recursive_mutex> guardParticipant(*mp_mutex);
+        std::lock_guard<std::recursive_mutex> guardParticipant(*mp_mutex);
     }
-    //	boost::lock_guard<boost::recursive_mutex> guardEndpoint(*p_endpoint->getMutex());
+    //	std::lock_guard<std::recursive_mutex> guardEndpoint(*p_endpoint->getMutex());
     delete(p_endpoint);
     return true;
 }
@@ -778,7 +946,7 @@ ResourceEvent& RTPSParticipantImpl::getEventResource()
 std::pair<StatefulReader*,StatefulReader*> RTPSParticipantImpl::getEDPReaders(){
     std::pair<StatefulReader*,StatefulReader*> buffer;
     EDPSimple *EDPPointer = dynamic_cast<EDPSimple*>(mp_builtinProtocols->mp_PDP->getEDP());
-    if(EDPPointer != nullptr){	
+    if(EDPPointer != nullptr){
         //Means the EDP attached is actually non static and therefore it has Readers
         buffer.first=EDPPointer->mp_SubReader.first;
         buffer.second=EDPPointer->mp_PubReader.first;
@@ -804,7 +972,7 @@ std::vector<std::string> RTPSParticipantImpl::getParticipantNames(){
 
 void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint *pend, const Locator_t& destination_loc)
 {
-    boost::lock_guard<boost::mutex> guard(m_send_resources_mutex);
+    std::lock_guard<std::mutex> guard(m_send_resources_mutex);
     for (auto it = m_senderResource.begin(); it != m_senderResource.end(); ++it)
     {
         bool sendThroughResource = false;
@@ -876,11 +1044,6 @@ void RTPSParticipantImpl::assertRemoteRTPSParticipantLiveliness(const GuidPrefix
     this->mp_builtinProtocols->mp_PDP->assertRemoteParticipantLiveliness(guidP);
 }
 
-const RTPSParticipantAttributes& RTPSParticipantImpl::getRTPSParticipantAttributes() const
-{
-    return this->m_att;
-}
-
 uint32_t RTPSParticipantImpl::getMaxMessageSize() const
 {
     uint32_t minMaxMessageSize = UINT32_MAX;
@@ -898,13 +1061,40 @@ uint32_t RTPSParticipantImpl::getMaxMessageSize() const
     return minMaxMessageSize;
 }
 
+uint32_t RTPSParticipantImpl::getMaxDataSize()
+{
+    return calculateMaxDataSize(getMaxMessageSize());
+}
+
+uint32_t RTPSParticipantImpl::calculateMaxDataSize(uint32_t length)
+{
+    uint32_t maxDataSize = length;
+
+#if HAVE_SECURITY
+    // If there is rtps messsage protection, reduce max size for messages,
+    // because extra data is added on encryption.
+    if(is_rtps_protected_)
+    {
+        maxDataSize -= m_security_manager.calculate_extra_size_for_rtps_message();
+    }
+#endif
+
+    // RTPS header
+    maxDataSize -= RTPSMESSAGE_HEADER_SIZE;
+
+    return maxDataSize;
+}
+
 bool RTPSParticipantImpl::networkFactoryHasRegisteredTransports() const
 {
     return m_network_Factory.numberOfRegisteredTransports() > 0;
 }
 
+PDPSimple* RTPSParticipantImpl::pdpsimple()
+{
+    return mp_builtinProtocols->mp_PDP;
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
-
-

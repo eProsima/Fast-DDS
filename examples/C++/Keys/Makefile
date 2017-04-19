@@ -34,7 +34,7 @@ CFLAGS = $(COMMON_CFLAGS) -O2
 
 INCLUDES= -I.
 
-LIBS = -lfastcdr -lfastrtps -lboost_system -lboost_thread -lboost_date_time $(SYSLIBS)
+LIBS = -lfastcdr -lfastrtps $(SYSLIBS)
 
 DIRECTORIES= output.dir bin.dir
 

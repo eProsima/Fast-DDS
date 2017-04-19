@@ -31,13 +31,27 @@ namespace fastrtps {
  * Class ParticipantDiscoveryInfo, provided to the user with information regarding a Discovered Participant.
  * @ingroup FASTRTPS_MODULE
  */
-class ParticipantDiscoveryInfo {
-public:
-	ParticipantDiscoveryInfo(){};
-	virtual ~ParticipantDiscoveryInfo(){};
-	//!RTPSParticipantAttributes of the discovered participant.
-	RTPSParticipantDiscoveryInfo rtps;
+class ParticipantDiscoveryInfo
+{
+    public:
+        ParticipantDiscoveryInfo(){}
+        virtual ~ParticipantDiscoveryInfo(){}
+        //!RTPSParticipantAttributes of the discovered participant.
+        RTPSParticipantDiscoveryInfo rtps;
 };
+
+#if HAVE_SECURITY
+class ParticipantAuthenticationInfo
+{
+    public:
+
+        ParticipantAuthenticationInfo() {}
+
+        virtual ~ParticipantAuthenticationInfo() {}
+
+        RTPSParticipantAuthenticationInfo rtps;
+};
+#endif
 
 } /* namespace fastrtps */
 } /* namespace eprosima */

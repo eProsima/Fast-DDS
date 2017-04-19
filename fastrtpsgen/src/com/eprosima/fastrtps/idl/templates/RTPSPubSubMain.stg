@@ -29,7 +29,7 @@ using namespace eprosima::fastrtps;
 
 int main(int argc, char** argv)
 {
-	cout << "Starting " << endl;
+    std::cout << "Starting " << std::endl;
 	int type = 1;
 	if (argc > 1)
 	{
@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 	}
 	else
 	{
-		cout << "publisher OR subscriber argument needed" << endl;
+        std::cout << "publisher OR subscriber argument needed" << std::endl;
 		return 0;
 	}
 	

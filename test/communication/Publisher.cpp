@@ -24,7 +24,7 @@
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
 
-#include <HelloWorldType.h>
+#include <types/HelloWorldType.h>
 
 using namespace eprosima::fastrtps;
 
@@ -49,32 +49,32 @@ class PubListener : public PublisherListener
 
 int main()
 {
-	ParticipantAttributes participant_attributes;
-	Participant* participant = Domain::createParticipant(participant_attributes);
+    ParticipantAttributes participant_attributes;
+    Participant* participant = Domain::createParticipant(participant_attributes);
 
-	if(participant == nullptr)
-		return 1;
+    if(participant == nullptr)
+        return 1;
 
     HelloWorldType type;
-	Domain::registerType(participant,&type);
+    Domain::registerType(participant,&type);
 
     PubListener listener;
 
-	//CREATE THE PUBLISHER
-	PublisherAttributes publisher_attributes;
-	publisher_attributes.topic.topicKind = NO_KEY;
-	publisher_attributes.topic.topicDataType = type.getName();
-	publisher_attributes.topic.topicName = "HelloWorldTopic";
-	publisher_attributes.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	Publisher* publisher = Domain::createPublisher(participant, publisher_attributes, &listener);
-	if(publisher == nullptr)
+    //CREATE THE PUBLISHER
+    PublisherAttributes publisher_attributes;
+    publisher_attributes.topic.topicKind = NO_KEY;
+    publisher_attributes.topic.topicDataType = type.getName();
+    publisher_attributes.topic.topicName = "HelloWorldTopic";
+    publisher_attributes.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    Publisher* publisher = Domain::createPublisher(participant, publisher_attributes, &listener);
+    if(publisher == nullptr)
     {
         Domain::removeParticipant(participant);
-		return 1;
+        return 1;
     }
 
     while(listener.matched_ == 0)
-		eClock::my_sleep(250);
+        eClock::my_sleep(250);
 
     HelloWorld data;
     data.index(1);
@@ -90,10 +90,10 @@ int main()
         else
             ++data.index();
 
-		eClock::my_sleep(250);
+        eClock::my_sleep(250);
     };
 
-	Domain::removeParticipant(participant);
+    Domain::removeParticipant(participant);
 
-	return 0;
+    return 0;
 }

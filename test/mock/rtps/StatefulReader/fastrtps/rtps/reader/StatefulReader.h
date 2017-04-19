@@ -15,31 +15,38 @@
 #ifndef _RTPS_READER_STATEFULREADER_H_
 #define _RTPS_READER_STATEFULREADER_H_
 
+#include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/rtps/common/Guid.h>
 
-namespace eprosima
-{
-    namespace fastrtps
+namespace eprosima {
+namespace fastrtps {
+namespace rtps{
+
+class StatefulReader : public RTPSReader
     {
-        namespace rtps
-        {
-            class StatefulReader
-            {
-                public:
+        public:
 
-                    // In real class, inherited from Endpoint base class.
-                    inline const GUID_t& getGuid() const { return guid_; };
+            virtual ~StatefulReader() {}
 
-                    inline ReaderTimes& getTimes(){return times_;};
+            MOCK_METHOD1(matched_writer_add, bool(RemoteWriterAttributes&));
 
-                private:
+            MOCK_METHOD1(matched_writer_remove, bool(RemoteWriterAttributes&));
 
-                    GUID_t guid_;
+            // In real class, inherited from Endpoint base class.
+            inline const GUID_t& getGuid() const { return guid_; };
 
-                    ReaderTimes times_;
-            };
-        } // namespace rtps
-    } // namespace fastrtps
+            inline ReaderTimes& getTimes(){return times_;};
+
+        private:
+
+            GUID_t guid_;
+
+            ReaderTimes times_;
+    };
+
+} // namespace rtps
+} // namespace fastrtps
 } // namespace eprosima
+
 #endif // _RTPS_READER_STATEFULREADER_H_

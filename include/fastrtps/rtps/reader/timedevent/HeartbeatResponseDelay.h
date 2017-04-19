@@ -22,6 +22,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "../../resources/TimedEvent.h"
 #include "../../common/CDRMessage_t.h"
+#include "../../messages/RTPSMessageGroup.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -34,30 +35,31 @@ class WriterProxy;
  * Class HeartbeatResponseDelay, TimedEvent used to delay the response to a specific HB.
  * @ingroup READER_MODULE
  */
-class HeartbeatResponseDelay:public TimedEvent {
-public:
-	virtual ~HeartbeatResponseDelay();
-	
-	/**
-	* @param p_WP
-	* @param interval
-	*/
-	HeartbeatResponseDelay(WriterProxy* p_WP,double interval);
-	
-	/**
-	* Method invoked when the event occurs
-	*
-	* @param code Code representing the status of the event
-	* @param msg Message associated to the event
-	*/
-	void event(EventCode code, const char* msg= nullptr);
-	
-	//!Pointer to the WriterProxy associated with this specific event.
-	WriterProxy* mp_WP;
-	//!CDRMessage_t used in the response.
-	CDRMessage_t m_heartbeat_response_msg;
+class HeartbeatResponseDelay:public TimedEvent
+    {
+        public:
+            virtual ~HeartbeatResponseDelay();
 
-};
+            /**
+             * @param p_WP
+             * @param interval
+             */
+            HeartbeatResponseDelay(WriterProxy* p_WP,double interval);
+
+            /**
+             * Method invoked when the event occurs
+             *
+             * @param code Code representing the status of the event
+             * @param msg Message associated to the event
+             */
+            void event(EventCode code, const char* msg= nullptr);
+
+            //!Pointer to the WriterProxy associated with this specific event.
+            WriterProxy* mp_WP;
+            //!CDRMessage_t used in the response.
+            RTPSMessageGroup_t m_cdrmessages;
+
+    };
 }
 } /* namespace rtps */
 } /* namespace eprosima */

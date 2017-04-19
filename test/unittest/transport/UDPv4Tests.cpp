@@ -14,21 +14,23 @@
 
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <gtest/gtest.h>
-#include <boost/thread.hpp>
+#include <thread>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/log/Log.h>
 #include <memory>
+#include <asio.hpp>
 
-using namespace std;
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-using namespace boost::interprocess;
 
 #ifndef __APPLE__
 const uint32_t ReceiveBufferCapacity = 65536;
 #endif
 
-class UDPv4Tests: public ::testing::Test 
+static uint32_t g_default_port = 7400;
+
+class UDPv4Tests: public ::testing::Test
 {
     public:
         UDPv4Tests()
@@ -44,8 +46,8 @@ class UDPv4Tests: public ::testing::Test
         void HELPER_SetDescriptorDefaults();
 
         UDPv4TransportDescriptor descriptor;
-        unique_ptr<boost::thread> senderThread;
-        unique_ptr<boost::thread> receiverThread;
+        std::unique_ptr<std::thread> senderThread;
+        std::unique_ptr<std::thread> receiverThread;
 };
 
 TEST_F(UDPv4Tests, locators_with_kind_1_supported)
@@ -72,7 +74,7 @@ TEST_F(UDPv4Tests, opening_and_closing_output_channel)
 
     Locator_t genericOutputChannelLocator;
     genericOutputChannelLocator.kind = LOCATOR_KIND_UDPv4;
-    genericOutputChannelLocator.port = 7400; // arbitrary
+    genericOutputChannelLocator.port = g_default_port; // arbitrary
 
     // Then
     ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
@@ -91,7 +93,7 @@ TEST_F(UDPv4Tests, opening_and_closing_input_channel)
 
     Locator_t multicastFilterLocator;
     multicastFilterLocator.kind = LOCATOR_KIND_UDPv4;
-    multicastFilterLocator.port = 7410; // arbitrary
+    multicastFilterLocator.port = g_default_port; // arbitrary
     multicastFilterLocator.set_IP4_address(239, 255, 0, 1);
 
     // Then
@@ -110,12 +112,12 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
     transportUnderTest.init();
 
     Locator_t multicastLocator;
-    multicastLocator.port = 7410;
+    multicastLocator.port = g_default_port;
     multicastLocator.kind = LOCATOR_KIND_UDPv4;
     multicastLocator.set_IP4_address(239, 255, 0, 1);
 
     Locator_t outputChannelLocator;
-    outputChannelLocator.port = 7400;
+    outputChannelLocator.port = g_default_port + 1;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
     ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator));
@@ -126,7 +128,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
         EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
     };
 
-    auto receiveThreadFunction = [&]() 
+    auto receiveThreadFunction = [&]()
     {
         octet receiveBuffer[ReceiveBufferCapacity];
         uint32_t receiveBufferSize;
@@ -136,8 +138,8 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
         EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
     };
 
-    receiverThread.reset(new boost::thread(receiveThreadFunction));      
-    senderThread.reset(new boost::thread(sendThreadFunction));      
+    receiverThread.reset(new std::thread(receiveThreadFunction));
+    senderThread.reset(new std::thread(sendThreadFunction));
     senderThread->join();
     receiverThread->join();
 }
@@ -148,12 +150,12 @@ TEST_F(UDPv4Tests, send_to_loopback)
     transportUnderTest.init();
 
     Locator_t multicastLocator;
-    multicastLocator.port = 7410;
+    multicastLocator.port = g_default_port;
     multicastLocator.kind = LOCATOR_KIND_UDPv4;
     multicastLocator.set_IP4_address(239, 255, 0, 1);
 
     Locator_t outputChannelLocator;
-    outputChannelLocator.port = 7400;
+    outputChannelLocator.port = g_default_port + 1;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
     outputChannelLocator.set_IP4_address(127,0,0,1); // Loopback
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
@@ -163,12 +165,12 @@ TEST_F(UDPv4Tests, send_to_loopback)
     auto sendThreadFunction = [&]()
     {
         Locator_t destinationLocator;
-        destinationLocator.port = 7410;
+        destinationLocator.port = g_default_port;
         destinationLocator.kind = LOCATOR_KIND_UDPv4;
         EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
     };
 
-    auto receiveThreadFunction = [&]() 
+    auto receiveThreadFunction = [&]()
     {
         octet receiveBuffer[ReceiveBufferCapacity];
         uint32_t receiveBufferSize;
@@ -178,8 +180,8 @@ TEST_F(UDPv4Tests, send_to_loopback)
         EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
     };
 
-    receiverThread.reset(new boost::thread(receiveThreadFunction));      
-    senderThread.reset(new boost::thread(sendThreadFunction));      
+    receiverThread.reset(new std::thread(receiveThreadFunction));
+    senderThread.reset(new std::thread(sendThreadFunction));
     senderThread->join();
     receiverThread->join();
 }
@@ -193,15 +195,15 @@ TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
 
     Locator_t genericOutputChannelLocator;
     genericOutputChannelLocator.kind = LOCATOR_KIND_UDPv4;
-    genericOutputChannelLocator.port = 7400;
+    genericOutputChannelLocator.port = g_default_port;
     transportUnderTest.OpenOutputChannel(genericOutputChannelLocator);
 
     Locator_t destinationLocator;
     destinationLocator.kind = LOCATOR_KIND_UDPv4;
-    destinationLocator.port = 7410;
+    destinationLocator.port = g_default_port + 1;
 
     // Then
-    vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
+    std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
     ASSERT_FALSE(transportUnderTest.Send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(), genericOutputChannelLocator, destinationLocator));
 }
 
@@ -213,7 +215,7 @@ TEST_F(UDPv4Tests, Receive_is_rejected_if_buffer_size_is_smaller_than_size_speci
 
     Locator_t genericInputChannelLocator;
     genericInputChannelLocator.kind = LOCATOR_KIND_UDPv4;
-    genericInputChannelLocator.port = 7410;
+    genericInputChannelLocator.port = g_default_port;
     transportUnderTest.OpenInputChannel(genericInputChannelLocator);
 
     Locator_t originLocator;
@@ -231,7 +233,7 @@ TEST_F(UDPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
 
     Locator_t remoteLocator;
     remoteLocator.kind = LOCATOR_KIND_UDPv4;
-    remoteLocator.port = 7410;
+    remoteLocator.port = g_default_port;
     remoteLocator.set_IP4_address(222,222,222,222);
 
     // When
@@ -250,7 +252,7 @@ TEST_F(UDPv4Tests, match_if_port_AND_address_matches)
     transportUnderTest.init();
 
     Locator_t locatorAlpha;
-    locatorAlpha.port = 50000;
+    locatorAlpha.port = g_default_port;
     locatorAlpha.set_IP4_address(239, 255, 0, 1);
     Locator_t locatorBeta = locatorAlpha;
 
@@ -268,14 +270,14 @@ TEST_F(UDPv4Tests, send_to_wrong_interface)
     transportUnderTest.init();
 
     Locator_t outputChannelLocator;
-    outputChannelLocator.port = 7400;
+    outputChannelLocator.port = g_default_port;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
     outputChannelLocator.set_IP4_address(127,0,0,1); // Loopback
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
 
     //Sending through a different IP will NOT work, except 0.0.0.0
     outputChannelLocator.set_IP4_address(111,111,111,111);
-    vector<octet> message = { 'H','e','l','l','o' };
+    std::vector<octet> message = { 'H','e','l','l','o' };
     ASSERT_FALSE(transportUnderTest.Send(message.data(), (uint32_t)message.size(), outputChannelLocator, Locator_t()));
 }
 
@@ -289,6 +291,10 @@ void UDPv4Tests::HELPER_SetDescriptorDefaults()
 int main(int argc, char **argv)
 {
     Log::SetVerbosity(Log::Info);
+
+    if(const char* env_p = std::getenv("PORT_RANDOM_NUMBER"))
+        g_default_port = std::stoi(env_p);
+
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

@@ -22,8 +22,9 @@
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include <fastrtps/log/Log.h>
 #include "../participant/RTPSParticipantImpl.h"
+#include "../flowcontrol/FlowController.h"
 
-#include <boost/thread/recursive_mutex.hpp>
+#include <mutex>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -37,7 +38,7 @@ RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes
             att.throughputController.bytesPerPeriod :
             impl->getMaxMessageSize() > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
             impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
-            impl->getMaxMessageSize()),
+            impl->getMaxMessageSize(), impl->getGuid().guidPrefix),
     m_livelinessAsserted(false),
     mp_history(hist),
     mp_listener(listen),
@@ -45,16 +46,8 @@ RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes
 {
     mp_history->mp_writer = this;
     mp_history->mp_mutex = mp_mutex;
-    this->init_header();
     logInfo(RTPS_WRITER,"RTPSWriter created");
 }
-
-void RTPSWriter::init_header()
-{
-    CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_header);
-    RTPSMessageCreator::addHeader(&m_cdrmessages.m_rtpsmsg_header,m_guid.guidPrefix);
-}
-
 
 RTPSWriter::~RTPSWriter()
 {
@@ -115,7 +108,7 @@ uint32_t RTPSWriter::getTypeMaxSerialized()
 bool RTPSWriter::remove_older_changes(unsigned int max)
 {
     logInfo(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     bool limit = (max != 0);
 
     bool remove_ret = mp_history->remove_min_change();
@@ -129,4 +122,38 @@ bool RTPSWriter::remove_older_changes(unsigned int max)
     }
 
     return at_least_one;
+}
+
+CONSTEXPR uint32_t info_dst_message_length = 16;
+CONSTEXPR uint32_t info_ts_message_length = 12;
+CONSTEXPR uint32_t data_frag_submessage_header_length = 36;
+
+uint32_t RTPSWriter::getMaxDataSize()
+{
+    return calculateMaxDataSize(mp_RTPSParticipant->getMaxMessageSize());
+}
+
+uint32_t RTPSWriter::calculateMaxDataSize(uint32_t length)
+{
+    uint32_t maxDataSize = mp_RTPSParticipant->calculateMaxDataSize(length);
+
+    maxDataSize -= info_dst_message_length +
+        info_ts_message_length +
+        data_frag_submessage_header_length;
+
+    //TODO(Ricardo) inlineqos in future.
+
+#if HAVE_SECURITY
+    if(is_submessage_protected())
+    {
+        maxDataSize -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_rtps_submessage(m_guid);
+    }
+
+    if(is_payload_protected())
+    {
+        maxDataSize -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_encoded_payload(m_guid);
+    }
+#endif
+
+    return maxDataSize;
 }

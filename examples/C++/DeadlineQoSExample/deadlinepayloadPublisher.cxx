@@ -32,81 +32,81 @@ deadlinepayloadPublisher::~deadlinepayloadPublisher() {	Domain::removeParticipan
 
 bool deadlinepayloadPublisher::init()
 {
-	// Create RTPSParticipant
-	
-	ParticipantAttributes PParam;
-	PParam.rtps.builtin.domainId = 0;
-	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-	PParam.rtps.setName("Participant_publisher");  //You can put here the name you want
-	mp_participant = Domain::createParticipant(PParam);	
-	if(mp_participant == nullptr)
-		return false;
-	
-	//Register the type
-	
-	Domain::registerType(mp_participant,(TopicDataType*) &myType);
-	
-	// Create Publisher
-	
-	PublisherAttributes Wparam;
-	Wparam.topic.topicKind = WITH_KEY;
-	Wparam.topic.topicDataType = myType.getName();  //This type MUST be registered
-	Wparam.topic.topicName = "deadlinepayloadPubSubTopic";
-	Wparam.topic.resourceLimitsQos.max_instances=32;
-	Wparam.topic.resourceLimitsQos.max_samples_per_instance=5;
-	Wparam.topic.resourceLimitsQos.max_samples = 32*5;
-	Wparam.topic.historyQos.depth = 5;
+    // Create RTPSParticipant
+
+    ParticipantAttributes PParam;
+    PParam.rtps.builtin.domainId = 0;
+    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PParam.rtps.setName("Participant_publisher");  //You can put here the name you want
+    mp_participant = Domain::createParticipant(PParam);	
+    if(mp_participant == nullptr)
+        return false;
+
+    //Register the type
+
+    Domain::registerType(mp_participant,(TopicDataType*) &myType);
+
+    // Create Publisher
+
+    PublisherAttributes Wparam;
+    Wparam.topic.topicKind = WITH_KEY;
+    Wparam.topic.topicDataType = myType.getName();  //This type MUST be registered
+    Wparam.topic.topicName = "deadlinepayloadPubSubTopic";
+    Wparam.topic.resourceLimitsQos.max_instances=32;
+    Wparam.topic.resourceLimitsQos.max_samples_per_instance=5;
+    Wparam.topic.resourceLimitsQos.max_samples = 32*5;
+    Wparam.topic.historyQos.depth = 5;
     Wparam.qos.m_reliability.kind= RELIABLE_RELIABILITY_QOS;
-	mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
-	if(mp_publisher == nullptr)
-		return false;
-	cout << "Publisher created, waiting for Subscribers." << endl;
-	return true;
+    mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
+    if(mp_publisher == nullptr)
+        return false;
+    std::cout << "Publisher created, waiting for Subscribers." << std::endl;
+    return true;
 }
 
 void deadlinepayloadPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
-	if (info.status == MATCHED_MATCHING)
-	{
-		n_matched++;
-		cout << "Publisher matched" << endl;
-	}
-	else
-	{
-		n_matched--;
-		cout << "Publisher unmatched" << endl;
-	}
+    if (info.status == MATCHED_MATCHING)
+    {
+        n_matched++;
+        std::cout << "Publisher matched" << std::endl;
+    }
+    else
+    {
+        n_matched--;
+        std::cout << "Publisher unmatched" << std::endl;
+    }
 }
 
 void deadlinepayloadPublisher::run()
 {
-	while(m_listener.n_matched == 0)
-	{
-		eClock::my_sleep(250); // Sleep 250 ms
-	}
-	
-	// Publication code
-	
-	HelloMsg st;
-	std::stringstream stream;
-	//Filling sample message
-	stream << "generic payload";
-	st.payload(stream.str());
+    while(m_listener.n_matched == 0)
+    {
+        eClock::my_sleep(250); // Sleep 250 ms
+    }
 
-	/* Initialize your structure here */
-	
-	while(true){
-		eClock::my_sleep(900);
+    // Publication code
 
-		//Send messages
-		for(unsigned short i=0;i<32;i++){
-			st.deadlinekey(i);				//Set key
-			if(i==15){						//Force key 15 message to be sent half of the times
-				double_time = !double_time;
-				if(double_time)	mp_publisher->write(&st);
-			}else{
-				mp_publisher->write(&st);
-			}
-		}
-	}
+    HelloMsg st;
+    std::stringstream stream;
+    //Filling sample message
+    stream << "generic payload";
+    st.payload(stream.str());
+
+    /* Initialize your structure here */
+
+    while(true){
+        eClock::my_sleep(900);
+
+        //Send messages
+        for(unsigned short i=0;i<32;i++){
+            st.deadlinekey(i);				//Set key
+            if(i==15){						//Force key 15 message to be sent half of the times
+                double_time = !double_time;
+                if(double_time)	mp_publisher->write(&st);
+            }else{
+                mp_publisher->write(&st);
+            }
+        }
+    }
 }

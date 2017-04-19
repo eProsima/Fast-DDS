@@ -14,7 +14,7 @@
 
 #include <fastrtps/transport/test_UDPv4Transport.h>
 #include <gtest/gtest.h>
-#include <boost/thread.hpp>
+#include <thread>
 #include <fastrtps/rtps/common/CDRMessage_t.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include <fastrtps/qos/ParameterList.h>
@@ -23,11 +23,11 @@
 #include <memory>
 #include <string>
 
-using namespace std;
-using namespace eprosima::fastrtps::rtps;
-using namespace boost::interprocess;
+static uint32_t g_default_port = 7400;
 
-class test_UDPv4Tests: public ::testing::Test 
+using namespace eprosima::fastrtps::rtps;
+
+class test_UDPv4Tests: public ::testing::Test
 {
    public:
    test_UDPv4Tests()
@@ -47,12 +47,12 @@ class test_UDPv4Tests: public ::testing::Test
    void HELPER_FillHeartbeatMessage(CDRMessage_t& message);
 
    test_UDPv4TransportDescriptor descriptor;
-   unique_ptr<boost::thread> senderThread;
-   unique_ptr<boost::thread> receiverThread;
+   std::unique_ptr<std::thread> senderThread;
+   std::unique_ptr<std::thread> receiverThread;
 };
 
 TEST_F(test_UDPv4Tests, DATA_messages_dropped)
-{  
+{
    // Given
    descriptor.dropDataMessagesPercentage = 100;
    test_UDPv4Transport transportUnderTest(descriptor);
@@ -60,7 +60,7 @@ TEST_F(test_UDPv4Tests, DATA_messages_dropped)
    HELPER_FillDataMessage(testDataMessage, SequenceNumber_t());
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.port = 7400;
+   locator.port = g_default_port;
    locator.kind = LOCATOR_KIND_UDPv4;
 
    // Then
@@ -69,7 +69,7 @@ TEST_F(test_UDPv4Tests, DATA_messages_dropped)
 }
 
 TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
-{  
+{
    // Given
    descriptor.dropAckNackMessagesPercentage = 100;
    test_UDPv4Transport transportUnderTest(descriptor);
@@ -77,7 +77,7 @@ TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
    HELPER_FillAckNackMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.port = 7400;
+   locator.port = g_default_port;
    locator.kind = LOCATOR_KIND_UDPv4;
 
    // Then
@@ -86,7 +86,7 @@ TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
 }
 
 TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
-{  
+{
    // Given
    descriptor.dropHeartbeatMessagesPercentage = 100;
    test_UDPv4Transport transportUnderTest(descriptor);
@@ -94,7 +94,7 @@ TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
    HELPER_FillHeartbeatMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.port = 7400;
+   locator.port = g_default_port;
    locator.kind = LOCATOR_KIND_UDPv4;
 
    // Then
@@ -103,7 +103,7 @@ TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
 }
 
 TEST_F(test_UDPv4Tests, Dropping_by_random_chance)
-{  
+{
    // Given
    descriptor.percentageOfMessagesToDrop = 100; // To avoid a non-deterministic test
    test_UDPv4Transport transportUnderTest(descriptor);
@@ -111,7 +111,7 @@ TEST_F(test_UDPv4Tests, Dropping_by_random_chance)
    HELPER_FillAckNackMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.port = 7400;
+   locator.port = g_default_port;
    locator.kind = LOCATOR_KIND_UDPv4;
 
    // Then
@@ -122,7 +122,7 @@ TEST_F(test_UDPv4Tests, Dropping_by_random_chance)
 }
 
 TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
-{  
+{
    // Given
    std::vector<SequenceNumber_t> sequenceNumbersToDrop(1);
    sequenceNumbersToDrop.back().low = 1;
@@ -133,7 +133,7 @@ TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
    HELPER_FillDataMessage(testDataMessage, sequenceNumbersToDrop.back());
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.port = 7400;
+   locator.port = g_default_port;
    locator.kind = LOCATOR_KIND_UDPv4;
 
    // Then
@@ -142,7 +142,7 @@ TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
 }
 
 TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
-{  
+{
    // Given
    descriptor.dropHeartbeatMessagesPercentage = 100;
    descriptor.dropDataMessagesPercentage = 100;
@@ -153,7 +153,7 @@ TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
    HELPER_FillAckNackMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.port = 7400;
+   locator.port = g_default_port;
    locator.kind = LOCATOR_KIND_UDPv4;
    locator.set_IP4_address(239, 255, 1, 4);
 
@@ -178,7 +178,7 @@ void test_UDPv4Tests::HELPER_SetDescriptorDefaults()
 void test_UDPv4Tests::HELPER_WarmUpOutput(test_UDPv4Transport& transport)
 {
    Locator_t outputChannelLocator;
-   outputChannelLocator.port = 7400;
+   outputChannelLocator.port = g_default_port;
    outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
    ASSERT_TRUE(transport.OpenOutputChannel(outputChannelLocator));
 }
@@ -213,6 +213,9 @@ void test_UDPv4Tests::HELPER_FillHeartbeatMessage(CDRMessage_t& message)
 
 int main(int argc, char **argv)
 {
+    if(const char* env_p = std::getenv("PORT_RANDOM_NUMBER"))
+        g_default_port = std::stoi(env_p);
+
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

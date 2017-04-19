@@ -68,12 +68,12 @@ void $ctx.filename$Subscriber::SubListener::onSubscriptionMatched(Subscriber* su
 	if (info.status == MATCHED_MATCHING)
 	{
 		n_matched++;
-		cout << "Subscriber matched" << endl;
+		std::cout << "Subscriber matched" << std::endl;
 	}
 	else
 	{
 		n_matched--;
-		cout << "Subscriber unmatched" << endl;
+		std::cout << "Subscriber unmatched" << std::endl;
 	}
 }
 
@@ -88,16 +88,16 @@ void $ctx.filename$Subscriber::SubListener::onNewDataMessage(Subscriber* sub)
 			{
 				// Print your structure data here.
 				++n_msg;
-				cout << "Sample received, count=" << n_msg << endl;
+				std::cout << "Sample received, count=" << n_msg << std::endl;
 			}
 		}
 }
 
 void $ctx.filename$Subscriber::run()
 {
-	cout << "Waiting for Data, press Enter to stop the Subscriber. "<<endl;
+	std::cout << "Waiting for Data, press Enter to stop the Subscriber. "<<std::endl;
 	std::cin.ignore();
-	cout << "Shutting down the Subscriber." << endl;
+	std::cout << "Shutting down the Subscriber." << std::endl;
 }
 
 

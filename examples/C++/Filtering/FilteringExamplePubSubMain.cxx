@@ -24,70 +24,70 @@ using namespace eprosima::fastrtps;
 
 int main(int argc, char** argv)
 {
-	cout << "Starting " << endl;
-	int type = 1;
-	int subscriberType = 1;
-	if (argc > 1)
-	{
-		if (strcmp(argv[1], "publisher") == 0)
-		{
-			type = 1;
-		}
-		else if (strcmp(argv[1], "subscriber") == 0)
-		{
-			type = 2;
-		}
-	}
-	else
-	{
-		cout << "publisher OR subscriber argument needed" << endl;
-		return 0;
-	}
+    std::cout << "Starting " << std::endl;
+    int type = 1;
+    int subscriberType = 1;
+    if (argc > 1)
+    {
+        if (strcmp(argv[1], "publisher") == 0)
+        {
+            type = 1;
+        }
+        else if (strcmp(argv[1], "subscriber") == 0)
+        {
+            type = 2;
+        }
+    }
+    else
+    {
+        std::cout << "publisher OR subscriber argument needed" << std::endl;
+        return 0;
+    }
 
 
-	if (type == 2) // get the subscriber type (fast or slow)
-	{
-		if (argc > 2) {
-			if (strcmp(argv[2], "fast") == 0)
-			{
-				subscriberType = 1;
-			}
-			else if (strcmp(argv[2], "slow") == 0)
-			{
-				subscriberType = 2;
-			}
-		}
-		else
-		{
-			cout << "subscriber type argument needed (fast or slow)" << endl;
-			return 0;
-		}
-	}
+    if (type == 2) // get the subscriber type (fast or slow)
+    {
+        if (argc > 2) {
+            if (strcmp(argv[2], "fast") == 0)
+            {
+                subscriberType = 1;
+            }
+            else if (strcmp(argv[2], "slow") == 0)
+            {
+                subscriberType = 2;
+            }
+        }
+        else
+        {
+            std::cout << "subscriber type argument needed (fast or slow)" << std::endl;
+            return 0;
+        }
+    }
 
-	// Register the type being used
-	
-	
-	switch(type)
-	{
-		case 1:
-		{
-			FilteringExamplePublisher mypub;
-			if (mypub.init())
-			{
-				mypub.run();
-			}
-			break;
-		}
-		case 2:
-		{
-			FilteringExampleSubscriber mysub;
-			if (mysub.init(subscriberType))
-			{
-				mysub.run();
-			}
-			break;
-		}
-	}
-	
-	return 0;
+    // Register the type being used
+
+
+    switch(type)
+    {
+        case 1:
+            {
+                FilteringExamplePublisher mypub;
+                if (mypub.init())
+                {
+                    mypub.run();
+                }
+                break;
+            }
+        case 2:
+            {
+                FilteringExampleSubscriber mysub;
+                if (mysub.init(subscriberType))
+                {
+                    mysub.run();
+                }
+                break;
+            }
+    }
+
+    return 0;
 }

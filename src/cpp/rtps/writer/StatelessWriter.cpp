@@ -21,9 +21,9 @@
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include "../participant/RTPSParticipantImpl.h"
+#include "../flowcontrol/FlowController.h"
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 #include <fastrtps/log/Log.h>
 
@@ -33,131 +33,213 @@ namespace rtps {
 
 
 StatelessWriter::StatelessWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
-		WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
-							RTPSWriter(pimpl,guid,att,hist,listen)
+        WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
+    RTPSWriter(pimpl,guid,att,hist,listen)
 {}
 
 StatelessWriter::~StatelessWriter()
 {
-   AsyncWriterThread::removeWriter(*this);
-	logInfo(RTPS_WRITER,"StatelessWriter destructor";);
+    AsyncWriterThread::removeWriter(*this);
+    logInfo(RTPS_WRITER,"StatelessWriter destructor";);
+}
+
+std::vector<GUID_t> StatelessWriter::get_remote_readers()
+{
+    std::vector<GUID_t> remote_readers;
+
+    if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER)
+        remote_readers.emplace_back(GuidPrefix_t(), c_EntityId_SPDPReader);
+#if HAVE_SECURITY
+    else if(this->m_guid.entityId == ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_WRITER)
+        remote_readers.emplace_back(GuidPrefix_t(), participant_stateless_message_reader_entity_id);
+#endif
+    else
+        for(auto& reader : m_matched_readers)
+            remote_readers.push_back(reader.guid);
+
+    return remote_readers;
 }
 
 /*
  *	CHANGE-RELATED METHODS
  */
 
+// TODO(Ricardo) This function only can be used by history. Private it and frined History.
+// TODO(Ricardo) Look for other functions
 void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     if(!isAsync())
     {
-        std::vector<CacheChangeForGroup_t> changes_to_send;
-        changes_to_send.push_back(CacheChangeForGroup_t(cptr));
         this->setLivelinessAsserted(true);
 
-        if(!reader_locator.empty()) //TODO change to m_reader_locator.
+
+        // TODO(Ricardo) ReaderLocators should store remote reader GUIDs
+        std::vector<GUID_t> remote_readers = get_remote_readers();
+
+        for(auto& reader_locator : reader_locators)
         {
+            //TODO(Ricardo) Temporal.
+            LocatorList_t locators;
+            locators.push_back(reader_locator.locator);
 
-            uint32_t bytesSent = RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
-                    changes_to_send, c_GuidPrefix_Unknown,
-                    this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER ? c_EntityId_SPDPReader : c_EntityId_Unknown,
-                    m_loc_list_1_for_sync_send, m_loc_list_2_for_sync_send, false);
+            RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
 
-            // Check send
-            if(bytesSent == 0 || changes_to_send.size() > 0)
+            if(!group.add_data(*cptr, remote_readers, locators, false))
+            {
                 logError(RTPS_WRITER, "Error sending change " << cptr->sequenceNumber);
-        }
-        else
-        {
-            logWarning(RTPS_WRITER, "No reader locator to send change");
+            }
         }
     }
     else
     {
-        m_unsent_changes.emplace_back(cptr);
+        for(auto& reader_locator : reader_locators)
+            reader_locator.unsent_changes.push_back(ChangeForReader_t(cptr));
         AsyncWriterThread::wakeUp(this);
     }
 }
 
 bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
 {
-	 boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-    auto newEnd = remove_if(m_unsent_changes.begin(), 
-                            m_unsent_changes.end(),
-                            [change](const CacheChangeForGroup_t& ccfg)
-                               {return ccfg.getChange() == change 
-                                || ccfg.getChange()->sequenceNumber == change->sequenceNumber;});
-    bool removed = newEnd != m_unsent_changes.end();
-    m_unsent_changes.erase(newEnd, m_unsent_changes.end());
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-    return removed;
+    for(auto& reader_locator : reader_locators)
+        reader_locator.unsent_changes.erase(std::remove_if(
+                    reader_locator.unsent_changes.begin(),
+                    reader_locator.unsent_changes.end(),
+                    [change](ChangeForReader_t& cptr)
+                    {
+                        return cptr.getChange() == change ||
+                            cptr.getChange()->sequenceNumber == change->sequenceNumber;
+                    }),
+                    reader_locator.unsent_changes.end());
+
+    return true;
 }
 
-void StatelessWriter::update_unsent_changes(const std::vector<CacheChangeForGroup_t>& changes)
+void StatelessWriter::update_unsent_changes(ReaderLocator& reader_locator,
+        const std::vector<CacheChange_t*>& changes)
 {
-   for (auto& change : changes)
-   {
-      auto it = std::find_if(m_unsent_changes.begin(),
-                             m_unsent_changes.end(),
-                             [&](const CacheChangeForGroup_t& unsent_change){ 
-                                return change.getChange() == unsent_change.getChange();});
+    //TODO(Ricardo)
+    //for (const auto* change : changes)
+    for (auto* change : changes)
+    {
+        auto it = std::find_if(reader_locator.unsent_changes.begin(),
+                reader_locator.unsent_changes.end(),
+                [change](const ChangeForReader_t& unsent_change)
+                {
+                    return change == unsent_change.getChange();
+                });
 
-      if (change.isFragmented())
-      {
-         // We remove the ones we are already sending.
-         it->setFragmentsClearedForSending(it->getFragmentsClearedForSending() - change.getFragmentsClearedForSending());
-         if (it->getFragmentsClearedForSending().isSetEmpty())
-            m_unsent_changes.erase(it);
-      }
-      else
-         m_unsent_changes.erase(it);
-   }
+        if (change->getFragmentSize() != 0)
+        {
+            FragmentNumberSet_t fragment_sns = it->getUnsentFragments();
+            // We remove the ones we are already sending.
+            auto frag_sn_it = fragment_sns.set.begin();
+            while(frag_sn_it != fragment_sns.set.end())
+            {
+                if(change->getDataFragments()->at(*frag_sn_it - 1) == PRESENT)
+                {
+                    it->markFragmentsAsSent(*frag_sn_it++);
+                }
+                else
+                    break;
+            }
+
+            if (frag_sn_it == fragment_sns.set.end())
+                reader_locator.unsent_changes.erase(it);
+        }
+        else
+            reader_locator.unsent_changes.erase(it);
+    }
 }
 
-size_t StatelessWriter::send_any_unsent_changes()
+void StatelessWriter::send_any_unsent_changes()
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-    size_t number_of_changes_sent= 0;
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-   // Shallow copy the list
-   auto changes_to_send = m_unsent_changes; 
+    std::vector<GUID_t> remote_readers = get_remote_readers();
 
-   // Clear through local controllers
-   for (auto& controller : m_controllers)
-       (*controller)(changes_to_send);
+    for(auto& reader_locator : reader_locators)
+    {
+        // Shallow copy the list
+        std::vector<CacheChange_t*> changes_to_send;
 
-   // Clear through parent controllers
-   for (auto& controller : mp_RTPSParticipant->getFlowControllers())
-       (*controller)(changes_to_send); 
+        for(auto cit = reader_locator.unsent_changes.begin() ; cit != reader_locator.unsent_changes.end(); ++cit)
+        {
+            changes_to_send.push_back(cit->getChange());
 
-   // Remove the messages selected for sending from the original list,
-   // and update those that were fragmented with the new sent index
-   update_unsent_changes(changes_to_send);
+            if(cit->getChange()->getFragmentSize() > 0)
+            {
+                cit->getChange()->getDataFragments()->assign(cit->getChange()->getDataFragments()->size(),
+                        NOT_PRESENT);
+                FragmentNumberSet_t frag_sns = cit->getUnsentFragments();
 
-   // Notify the controllers
-   for (const auto& change : changes_to_send)
-       FlowController::NotifyControllersChangeSent(&change);
+                for(auto sn = frag_sns.get_begin(); sn != frag_sns.get_end(); ++sn)
+                {
+                    assert(*sn <= cit->getChange()->getDataFragments()->size());
+                    cit->getChange()->getDataFragments()->at(*sn - 1) = PRESENT;
+                }
+            }
+        }
 
-   if(!changes_to_send.empty())
-   {
-      number_of_changes_sent += changes_to_send.size();
-      if(m_pushMode)
-      {
-         uint32_t bytesSent = 0;
+        // Clear through local controllers
+        for (auto& controller : m_controllers)
+            (*controller)(changes_to_send);
 
-         do
-         {
-             bytesSent = RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
-                         changes_to_send, c_GuidPrefix_Unknown,
-                         this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER ? c_EntityId_SPDPReader : c_EntityId_Unknown,
-                         m_loc_list_1_for_sync_send, m_loc_list_2_for_sync_send, false);
-         } while(bytesSent > 0 && changes_to_send.size() > 0);
-      }
-   }
-	logInfo(RTPS_WRITER, "Finish sending unsent changes";);
-   return number_of_changes_sent;
+        // Clear through parent controllers
+        for (auto& controller : mp_RTPSParticipant->getFlowControllers())
+            (*controller)(changes_to_send);
+
+        // Remove the messages selected for sending from the original list,
+        // and update those that were fragmented with the new sent index
+        update_unsent_changes(reader_locator, changes_to_send);
+
+        if(!changes_to_send.empty())
+        {
+            if(m_pushMode)
+            {
+                RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
+
+
+                for (auto* change : changes_to_send)
+                {
+                    // Notify the controllers
+                    FlowController::NotifyControllersChangeSent(change);
+
+                    // TODO(Ricardo) Temporal
+                    LocatorList_t locators;
+                    locators.push_back(reader_locator.locator);
+
+                    if(change->getFragmentSize() != 0)
+                    {
+                        for(uint32_t fragment  = 0; fragment < change->getDataFragments()->size(); ++fragment)
+                        {
+                            if(change->getDataFragments()->at(fragment) == PRESENT)
+                            {
+                                //TODO(Ricardo) Frag = 0
+                                if(!group.add_data_frag(*change, fragment + 1, remote_readers, locators, false))
+                                {
+                                    logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber <<
+                                            ", " << fragment + 1 << ")");
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if(!group.add_data(*change, remote_readers, locators, false))
+                        {
+                            logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    logInfo(RTPS_WRITER, "Finish sending unsent changes";);
 }
 
 
@@ -167,177 +249,156 @@ size_t StatelessWriter::send_any_unsent_changes()
 
 bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	if(rdata.guid != c_Guid_Unknown)
-	{
-		for(auto it=m_matched_readers.begin();it!=m_matched_readers.end();++it)
-		{
-			if((*it).guid == rdata.guid)
-			{
-				logWarning(RTPS_WRITER, "Attempting to add existing reader");
-				return false;
-			}
-		}
-	}
-	bool send_any_unsent_changes = false;
-	for(std::vector<Locator_t>::iterator lit = rdata.endpoint.unicastLocatorList.begin();
-			lit!=rdata.endpoint.unicastLocatorList.end();++lit)
-	{
-		send_any_unsent_changes |= add_locator(rdata,*lit);
-	}
-	for(std::vector<Locator_t>::iterator lit = rdata.endpoint.multicastLocatorList.begin();
-			lit!=rdata.endpoint.multicastLocatorList.end();++lit)
-	{
-		send_any_unsent_changes |= add_locator(rdata,*lit);
-	}
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    if(rdata.guid != c_Guid_Unknown)
+    {
+        for(auto it=m_matched_readers.begin();it!=m_matched_readers.end();++it)
+        {
+            if((*it).guid == rdata.guid)
+            {
+                logWarning(RTPS_WRITER, "Attempting to add existing reader");
+                return false;
+            }
+        }
+    }
+    bool send_any_unsent_changes = false;
+    for(std::vector<Locator_t>::iterator lit = rdata.endpoint.unicastLocatorList.begin();
+            lit!=rdata.endpoint.unicastLocatorList.end();++lit)
+    {
+        send_any_unsent_changes |= add_locator(rdata,*lit);
+    }
+    for(std::vector<Locator_t>::iterator lit = rdata.endpoint.multicastLocatorList.begin();
+            lit!=rdata.endpoint.multicastLocatorList.end();++lit)
+    {
+        send_any_unsent_changes |= add_locator(rdata,*lit);
+    }
 
-	this->m_matched_readers.push_back(rdata);
-	logInfo(RTPS_READER,"Reader " << rdata.guid << " added to "<<m_guid.entityId);
-	return true;
+    this->m_matched_readers.push_back(rdata);
+    logInfo(RTPS_READER,"Reader " << rdata.guid << " added to "<<m_guid.entityId);
+    return true;
 }
 
 
 bool StatelessWriter::add_locator(RemoteReaderAttributes& rdata,Locator_t& loc)
 {
-	logInfo(RTPS_WRITER, "Adding Locator: " << loc << " to StatelessWriter";);
-	std::vector<ReaderLocator>::iterator rit;
+    logInfo(RTPS_WRITER, "Adding Locator: " << loc << " to StatelessWriter";);
 
-	bool found = false;
+    auto rit = std::find_if(reader_locators.rbegin(), reader_locators.rend(),
+            [loc](const ReaderLocator& reader_locator) {
+                if(reader_locator.locator == loc)
+                   return true;
 
-	for(rit=reader_locator.begin();rit!=reader_locator.end();++rit)
-	{
-		if(rit->locator == loc)
-		{
-			rit->n_used++;
-			found = true;
-			break;
-		}
-	}
+                return false;
+            });
 
-	if(!found)
-	{
-		ReaderLocator rl;
-		rl.expectsInlineQos = rdata.expectsInlineQos;
-		rl.locator = loc;
-		reader_locator.push_back(rl);
-      m_loc_list_1_for_sync_send.push_back(loc);
-		rit = reader_locator.end()-1;
-	}
+    if(rit != reader_locators.rend())
+    {
+        ++rit->n_used;
+    }
+    else
+    {
+        ReaderLocator rl;
+        rl.expectsInlineQos = rdata.expectsInlineQos;
+        rl.locator = loc;
+        reader_locators.push_back(rl);
+        rit = reader_locators.rbegin();
+    }
 
-	if(rdata.endpoint.durabilityKind >= TRANSIENT_LOCAL)
-	{
-		//TODO handle locators separately
-      for(std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
-				it!=mp_history->changesEnd();++it)
-		{
-         auto cit = std::find_if(m_unsent_changes.begin(),
-                                 m_unsent_changes.end(),
-                                 [&](const CacheChangeForGroup_t& unsent_change){ 
-                                    return *it == unsent_change.getChange();});
+    if(rdata.endpoint.durabilityKind >= TRANSIENT_LOCAL)
+    {
+        rit->unsent_changes.assign(mp_history->changesBegin(), mp_history->changesEnd());
+        AsyncWriterThread::wakeUp(this);
+    }
 
-         if (cit == m_unsent_changes.end())
-         {
-            m_unsent_changes.emplace_back(*it);
-            AsyncWriterThread::wakeUp(this);
-         }
-		}
-	}
-
-	return true;
+    return true;
 }
 
 bool StatelessWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	bool found = false;
-	if(rdata.guid == c_Guid_Unknown)
-		found = true;
-	else
-	{
-		for(auto rit = m_matched_readers.begin();
-				rit!=m_matched_readers.end();++rit)
-		{
-			if((*rit).guid == rdata.guid)
-			{
-				found = true;
-				m_matched_readers.erase(rit);
-				break;
-			}
-		}
-	}
-	if(found)
-	{
-		logInfo(RTPS_WRITER, "Reader Proxy removed: " << rdata.guid;);
-		for(std::vector<Locator_t>::iterator lit = rdata.endpoint.unicastLocatorList.begin();
-				lit!=rdata.endpoint.unicastLocatorList.end();++lit)
-		{
-			remove_locator(*lit);
-		}
-		for(std::vector<Locator_t>::iterator lit = rdata.endpoint.multicastLocatorList.begin();
-				lit!=rdata.endpoint.multicastLocatorList.end();++lit)
-		{
-			remove_locator(*lit);
-		}
-		return true;
-	}
-	return false;
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    bool found = false;
+    if(rdata.guid == c_Guid_Unknown)
+        found = true;
+    else
+    {
+        for(auto rit = m_matched_readers.begin();
+                rit!=m_matched_readers.end();++rit)
+        {
+            if((*rit).guid == rdata.guid)
+            {
+                found = true;
+                m_matched_readers.erase(rit);
+                break;
+            }
+        }
+    }
+    if(found)
+    {
+        logInfo(RTPS_WRITER, "Reader Proxy removed: " << rdata.guid;);
+        for(std::vector<Locator_t>::iterator lit = rdata.endpoint.unicastLocatorList.begin();
+                lit!=rdata.endpoint.unicastLocatorList.end();++lit)
+        {
+            remove_locator(*lit);
+        }
+        for(std::vector<Locator_t>::iterator lit = rdata.endpoint.multicastLocatorList.begin();
+                lit!=rdata.endpoint.multicastLocatorList.end();++lit)
+        {
+            remove_locator(*lit);
+        }
+        return true;
+    }
+    return false;
 }
 
 bool StatelessWriter::matched_reader_is_matched(RemoteReaderAttributes& rdata)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	for(auto rit = m_matched_readers.begin();
-			rit!=m_matched_readers.end();++rit)
-	{
-		if((*rit).guid == rdata.guid)
-		{
-			return true;
-		}
-	}
-	return false;
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    for(auto rit = m_matched_readers.begin();
+            rit!=m_matched_readers.end();++rit)
+    {
+        if((*rit).guid == rdata.guid)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool StatelessWriter::remove_locator(Locator_t& loc)
 {
-	for(auto rit=reader_locator.begin();rit!=reader_locator.end();++rit)
-	{
-		if(rit->locator == loc)
-		{
-			rit->n_used--;
-			if(rit->n_used == 0)
-			{
-				reader_locator.erase(rit);
-            m_loc_list_1_for_sync_send.erase(loc);
-			}
-			break;
-		}
-	}
-	return true;
+    for(auto rit = reader_locators.begin(); rit != reader_locators.end(); ++rit)
+    {
+        if(rit->locator == loc)
+        {
+            rit->n_used--;
+            if(rit->n_used == 0)
+            {
+                reader_locators.erase(rit);
+            }
+            break;
+        }
+    }
+
+    return true;
 }
 
 void StatelessWriter::unsent_changes_reset()
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-   m_unsent_changes.clear();
+    for(auto& reader_locator : reader_locators)
+        reader_locator.unsent_changes.assign(mp_history->changesBegin(),
+                mp_history->changesEnd());
 
-   for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
-         cit!=mp_history->changesEnd();++cit)
-   {
-      m_unsent_changes.emplace_back(*cit);    
-   }
-
-   AsyncWriterThread::wakeUp(this);
+    AsyncWriterThread::wakeUp(this);
 }
 
 void StatelessWriter::add_flow_controller(std::unique_ptr<FlowController> controller)
 {
-   m_controllers.push_back(std::move(controller));
+    m_controllers.push_back(std::move(controller));
 }
 
 
 } /* namespace rtps */
 } /* namespace eprosima */
-
-
 }

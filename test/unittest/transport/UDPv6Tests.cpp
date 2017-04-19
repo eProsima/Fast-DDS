@@ -14,20 +14,22 @@
 
 #include <fastrtps/transport/UDPv6Transport.h>
 #include <gtest/gtest.h>
-#include <boost/thread.hpp>
+#include <thread>
 #include <memory>
 #include <fastrtps/log/Log.h>
+#include <asio.hpp>
 
-using namespace std;
+
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps;
-using namespace boost::interprocess;
 
 #ifndef __APPLE__
 const uint32_t ReceiveBufferCapacity = 65536;
 #endif
 
-class UDPv6Tests: public ::testing::Test 
+static uint32_t g_default_port = 7400;
+
+class UDPv6Tests: public ::testing::Test
 {
     public:
         UDPv6Tests()
@@ -43,8 +45,8 @@ class UDPv6Tests: public ::testing::Test
         void HELPER_SetDescriptorDefaults();
 
         UDPv6TransportDescriptor descriptor;
-        unique_ptr<boost::thread> senderThread;
-        unique_ptr<boost::thread> receiverThread;
+        std::unique_ptr<std::thread> senderThread;
+        std::unique_ptr<std::thread> receiverThread;
 };
 
 TEST_F(UDPv6Tests, conversion_to_ip6_string)
@@ -99,7 +101,7 @@ TEST_F(UDPv6Tests, opening_and_closing_output_channel)
 
     Locator_t genericOutputChannelLocator;
     genericOutputChannelLocator.kind = LOCATOR_KIND_UDPv6;
-    genericOutputChannelLocator.port = 7400; // arbitrary
+    genericOutputChannelLocator.port = g_default_port; // arbitrary
 
     // Then
     ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
@@ -119,7 +121,7 @@ TEST_F(UDPv6Tests, opening_and_closing_input_channel)
 
     Locator_t multicastFilterLocator;
     multicastFilterLocator.kind = LOCATOR_KIND_UDPv6;
-    multicastFilterLocator.port = 7410; // arbitrary
+    multicastFilterLocator.port = g_default_port; // arbitrary
     multicastFilterLocator.set_IP6_address(0xff31, 0, 0, 0, 0, 0, 0x8000, 0x1234);
 
     // Then
@@ -137,12 +139,12 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
     transportUnderTest.init();
 
     Locator_t multicastLocator;
-    multicastLocator.port = 7410;
+    multicastLocator.port = g_default_port;
     multicastLocator.kind = LOCATOR_KIND_UDPv6;
     multicastLocator.set_IP6_address(0xff31, 0, 0, 0, 0, 0, 0, 0);
 
     Locator_t outputChannelLocator;
-    outputChannelLocator.port = 7400;
+    outputChannelLocator.port = g_default_port + 1;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv6;
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
     ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator));
@@ -151,12 +153,12 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
     auto sendThreadFunction = [&]()
     {
         Locator_t destinationLocator;
-        destinationLocator.port = 7410;
+        destinationLocator.port = g_default_port;
         destinationLocator.kind = LOCATOR_KIND_UDPv6;
         EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
     };
 
-    auto receiveThreadFunction = [&]() 
+    auto receiveThreadFunction = [&]()
     {
         octet receiveBuffer[ReceiveBufferCapacity];
         uint32_t receiveBufferSize;
@@ -165,8 +167,8 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
         EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
     };
 
-    receiverThread.reset(new boost::thread(receiveThreadFunction));      
-    senderThread.reset(new boost::thread(sendThreadFunction));      
+    receiverThread.reset(new std::thread(receiveThreadFunction));
+    senderThread.reset(new std::thread(sendThreadFunction));
     senderThread->join();
     receiverThread->join();
 }
@@ -178,12 +180,12 @@ TEST_F(UDPv6Tests, send_to_loopback)
     transportUnderTest.init();
 
     Locator_t multicastLocator;
-    multicastLocator.port = 7410;
+    multicastLocator.port = g_default_port;
     multicastLocator.kind = LOCATOR_KIND_UDPv6;
     multicastLocator.set_IP6_address(0xff31, 0, 0, 0, 0, 0, 0, 0);
 
     Locator_t outputChannelLocator;
-    outputChannelLocator.port = 7400;
+    outputChannelLocator.port = g_default_port + 1;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv6;
     outputChannelLocator.set_IP6_address(0,0,0,0,0,0,0,1); // Loopback
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
@@ -193,7 +195,7 @@ TEST_F(UDPv6Tests, send_to_loopback)
     auto sendThreadFunction = [&]()
     {
         Locator_t destinationLocator;
-        destinationLocator.port = 7410;
+        destinationLocator.port = g_default_port;
         destinationLocator.kind = LOCATOR_KIND_UDPv6;
         EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
     };
@@ -208,8 +210,8 @@ TEST_F(UDPv6Tests, send_to_loopback)
         EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
     };
 
-    receiverThread.reset(new boost::thread(receiveThreadFunction));
-    senderThread.reset(new boost::thread(sendThreadFunction));
+    receiverThread.reset(new std::thread(receiveThreadFunction));
+    senderThread.reset(new std::thread(sendThreadFunction));
     senderThread->join();
     receiverThread->join();
 }
@@ -225,6 +227,9 @@ void UDPv6Tests::HELPER_SetDescriptorDefaults()
 
 int main(int argc, char **argv)
 {
+    if(const char* env_p = std::getenv("PORT_RANDOM_NUMBER"))
+        g_default_port = std::stoi(env_p);
+
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

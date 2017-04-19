@@ -23,6 +23,10 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "../common/CDRMessage_t.h"
 #include "../../qos/ParameterTypes.h"
+#include "../common/Property.h"
+#include "../common/BinaryProperty.h"
+
+#include "../security/common/ParticipantGenericMessage.h"
 
 using namespace eprosima::fastrtps;
 
@@ -51,6 +55,7 @@ namespace CDRMessage{
 	  inline bool readDataReversed(CDRMessage_t* msg, octet* o, uint32_t length);
 	  inline bool readInt32(CDRMessage_t* msg,int32_t* lo);
 	  inline bool readUInt32(CDRMessage_t* msg, uint32_t* ulo);
+	  inline bool readInt64(CDRMessage_t* msg, int64_t* lolo);
 	  inline bool readSequenceNumber(CDRMessage_t* msg, SequenceNumber_t* sn);
 	  inline bool readInt16(CDRMessage_t* msg,int16_t* i16);
 	  inline bool readUInt16(CDRMessage_t* msg,uint16_t* i16);
@@ -61,6 +66,15 @@ namespace CDRMessage{
 	  inline bool readTimestamp(CDRMessage_t*msg,Time_t* ts);
 	  inline bool readString(CDRMessage_t*msg,std::string* p_str);
 	  inline bool readOctetVector(CDRMessage_t*msg,std::vector<octet>* ocvec);
+
+      inline bool readProperty(CDRMessage_t* msg, Property& property);
+      inline bool readBinaryProperty(CDRMessage_t* msg, BinaryProperty& binary_property);
+      inline bool readPropertySeq(CDRMessage_t* msg, PropertySeq& properties);
+      inline bool readBinaryPropertySeq(CDRMessage_t* msg, BinaryPropertySeq& binary_properties);
+      inline bool readDataHolder(CDRMessage_t* msg, DataHolder& data_holder);
+      inline bool readDataHolderSeq(CDRMessage_t* msg, DataHolderSeq& data_holders);
+      inline bool readMessageIdentity(CDRMessage_t* msg, ::security::MessageIdentity& message_identity);
+      inline bool readParticipantGenericMessage(CDRMessage_t* msg, ::security::ParticipantGenericMessage& message);
 	///@}
 
 
@@ -102,18 +116,27 @@ namespace CDRMessage{
 	  inline bool addInt64(CDRMessage_t*msg,int64_t lo);
 	  inline bool addEntityId(CDRMessage_t*msg,const EntityId_t* id);
 	  inline bool addSequenceNumber(CDRMessage_t*msg, const SequenceNumber_t* sn);
-	  inline bool addSequenceNumberSet(CDRMessage_t*msg, SequenceNumberSet_t* sns);
+	  inline bool addSequenceNumberSet(CDRMessage_t*msg, const SequenceNumberSet_t* sns);
 	  inline bool addFragmentNumberSet(CDRMessage_t*msg, FragmentNumberSet_t* fns);
 	  inline bool addLocator(CDRMessage_t*msg,Locator_t*loc);
 	  inline bool addParameterStatus(CDRMessage_t*msg,octet status);
 	  inline bool addParameterKey(CDRMessage_t*msg, const InstanceHandle_t* iHandle);
 	  inline bool addParameterSentinel(CDRMessage_t*msg);
 	  inline bool addParameterId(CDRMessage_t*msg,ParameterId_t pid);
-	  inline bool addString(CDRMessage_t*msg,std::string& in_str);
-	  inline bool addOctetVector(CDRMessage_t*msg,std::vector<octet>* ocvec);
+	  inline bool addString(CDRMessage_t*msg, const std::string& in_str);
+	  inline bool addOctetVector(CDRMessage_t*msg, const std::vector<octet>* ocvec);
       inline bool addParameterSampleIdentity(CDRMessage_t *msg, const SampleIdentity &sample_id);
 	///@}
-
+    
+      inline bool addProperty(CDRMessage_t* msg, const Property& property);
+      inline bool addBinaryProperty(CDRMessage_t* msg, const BinaryProperty& binary_property);
+      inline bool addPropertySeq(CDRMessage_t* msg, const PropertySeq& properties);
+      inline bool addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties);
+      inline bool addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties, const std::string& property_limit);
+      inline bool addDataHolder(CDRMessage_t* msg, const DataHolder& data_holder);
+      inline bool addDataHolderSeq(CDRMessage_t* msg, const DataHolderSeq& data_holders);
+      inline bool addMessageIdentity(CDRMessage_t* msg, const ::security::MessageIdentity& message_identity);
+      inline bool addParticipantGenericMessage(CDRMessage_t* msg, const ::security::ParticipantGenericMessage& message);
 }
 
 }

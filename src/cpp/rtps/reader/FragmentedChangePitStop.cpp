@@ -48,8 +48,8 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
             return nullptr;
 
         //Change comes preallocated (size sampleSize)
-	original_change->copy_not_memcpy(incoming_change);
-	// The length of the serialized payload has to be sample size.
+        original_change->copy_not_memcpy(incoming_change);
+        // The length of the serialized payload has to be sample size.
         original_change->serializedPayload.length = sampleSize;
         original_change->serializedPayload.reserve(sampleSize);
         original_change->setFragmentSize(incoming_change->getFragmentSize());
@@ -77,12 +77,6 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
             }
 
             original_change_cit->getChange()->getDataFragments()->at(count) = ChangeFragmentStatus_t::PRESENT;
-
-            if(fragmentStartingNum == 1)
-            {  
-                // Update encapsulation
-                original_change_cit->getChange()->serializedPayload.encapsulation = incoming_change->serializedPayload.encapsulation;
-            }
 
             was_updated = true;
         }

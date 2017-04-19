@@ -14,6 +14,7 @@
 
 macro(set_sources)
     set(${PROJECT_NAME}_SOURCES
+        ${${PROJECT_NAME}_SOURCES}
         ${ARGN}
         )
 
@@ -21,26 +22,80 @@ macro(set_sources)
 endmacro()
 
 macro(set_public_headers_directory abs_directory rel_directory)
+    set(args_to_install_)
+    set(next_)
+    set(install_ FALSE)
+
+    foreach(arg ${ARGN})
+        if(next_)
+            if("${next_}" STREQUAL "DESTINATION")
+                list(APPEND args_to_install_ "DESTINATION" "${arg}")
+            elseif("${next_}" STREQUAL "COMPONENT")
+                list(APPEND args_to_install_ "COMPONENT" "${arg}")
+            else()
+                message(FATAL_ERROR "set_public_headers_directory: assert error")
+            endif()
+            set(next_)
+        elseif("${arg}" STREQUAL "DESTINATION")
+            set(next_ "${arg}")
+        elseif("${arg}" STREQUAL "COMPONENT")
+            set(next_ "${arg}")
+        elseif("${arg}" STREQUAL "INSTALL")
+            set(install_ TRUE)
+        else()
+            message(FATAL_ERROR "set_public_headers_directory: Unknown argmuent ${arg}")
+        endif()
+    endforeach()
 
     install(DIRECTORY ${abs_directory}/${rel_directory}
-        ${ARGN}
+        ${args_to_install_}
         FILES_MATCHING
         PATTERN "*.h"
         PATTERN "*.hpp"
+        PATTERN "*.ipp"
         )
 
-    get_property(${PROJECT_NAME}_PUBLIC_HEADERS_DIRECTORIES GLOBAL PROPERTY ${PROJECT_NAME}_PUBLIC_HEADERS_DIRECTORIES_PROPERTY)
-    set(${PROJECT_NAME}_PUBLIC_HEADERS_DIRECTORIES ${${PROJECT_NAME}_PUBLIC_HEADERS_DIRECTORIES} ${abs_directory})
-    set_property(GLOBAL PROPERTY ${PROJECT_NAME}_PUBLIC_HEADERS_DIRECTORIES_PROPERTY ${${PROJECT_NAME}_PUBLIC_HEADERS_DIRECTORIES})
+    if(install_)
+        get_property(${PROJECT_NAME}_PUBLIC_HEADERS_DIRECTORIES GLOBAL PROPERTY ${PROJECT_NAME}_PUBLIC_HEADERS_DIRECTORIES_PROPERTY)
+        set(${PROJECT_NAME}_PUBLIC_HEADERS_DIRECTORIES ${${PROJECT_NAME}_PUBLIC_HEADERS_DIRECTORIES} ${abs_directory})
+        set_property(GLOBAL PROPERTY ${PROJECT_NAME}_PUBLIC_HEADERS_DIRECTORIES_PROPERTY ${${PROJECT_NAME}_PUBLIC_HEADERS_DIRECTORIES})
+    endif()
 
 endmacro()
 
 macro(set_public_header abs_directory rel_directory file)
+    set(args_to_install_)
+    set(next_)
+    set(install_ FALSE)
+
+    foreach(arg ${ARGN})
+        if(next_)
+            if("${next_}" STREQUAL "DESTINATION")
+                list(APPEND args_to_install_ "DESTINATION" "${arg}")
+            elseif("${next_}" STREQUAL "COMPONENT")
+                list(APPEND args_to_install_ "COMPONENT" "${arg}")
+            else()
+                message(FATAL_ERROR "set_public_headers_directory: assert error")
+            endif()
+            set(next_)
+        elseif("${arg}" STREQUAL "DESTINATION")
+            set(next_ "${arg}")
+        elseif("${arg}" STREQUAL "COMPONENT")
+            set(next_ "${arg}")
+        elseif("${arg}" STREQUAL "INSTALL")
+            set(install_ TRUE)
+        else()
+            message(FATAL_ERROR "set_public_headers_directory: Unknown argmuent ${arg}")
+        endif()
+    endforeach()
+
     install(FILES ${abs_directory}/${rel_directory}/${file}
-        ${ARGN}
+        ${args_to_install_}
         )
 
-    get_property(${PROJECT_NAME}_PUBLIC_HEADERS_FILES GLOBAL PROPERTY ${PROJECT_NAME}_PUBLIC_HEADERS_FILES_PROPERTY)
-    set(${PROJECT_NAME}_PUBLIC_HEADERS_FILES ${${PROJECT_NAME}_PUBLIC_HEADERS_FILES} ${rel_directory}/${file})
-    set_property(GLOBAL PROPERTY ${PROJECT_NAME}_PUBLIC_HEADERS_FILES_PROPERTY ${${PROJECT_NAME}_PUBLIC_HEADERS_FILES})
+    if(install_)
+        get_property(${PROJECT_NAME}_PUBLIC_HEADERS_FILES GLOBAL PROPERTY ${PROJECT_NAME}_PUBLIC_HEADERS_FILES_PROPERTY)
+        set(${PROJECT_NAME}_PUBLIC_HEADERS_FILES ${${PROJECT_NAME}_PUBLIC_HEADERS_FILES} ${rel_directory}/${file})
+        set_property(GLOBAL PROPERTY ${PROJECT_NAME}_PUBLIC_HEADERS_FILES_PROPERTY ${${PROJECT_NAME}_PUBLIC_HEADERS_FILES})
+    endif()
 endmacro()

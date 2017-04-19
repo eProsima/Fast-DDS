@@ -36,38 +36,38 @@ namespace rtps{
  * @ingroup COMMON_MODULE
  */
 enum Endianness_t{
-	//! @brief Big endianness.
-	BIGEND = 0x1,
-	//! @brief Little endianness.
-	LITTLEEND = 0x0
+    //! @brief Big endianness.
+    BIGEND = 0x1,
+    //! @brief Little endianness.
+    LITTLEEND = 0x0
 };
 
 //!Reliability enum used for internal purposes
 //!@ingroup COMMON_MODULE
 typedef enum ReliabilityKind_t{
-	RELIABLE,
-	BEST_EFFORT
+    RELIABLE,
+    BEST_EFFORT
 }ReliabilityKind_t;
 
 //!Durability kind
 //!@ingroup COMMON_MODULE
 typedef enum DurabilityKind_t
 {
-	VOLATILE,
-	TRANSIENT_LOCAL
+    VOLATILE,
+    TRANSIENT_LOCAL
 }DurabilityKind_t;
 
 //!Endpoint kind
 //!@ingroup COMMON_MODULE
 typedef enum EndpointKind_t{
-	READER,
-	WRITER
+    READER,
+    WRITER
 }EndpointKind_t;
 
 //!Topic kind
 typedef enum TopicKind_t{
-	NO_KEY,
-	WITH_KEY
+    NO_KEY,
+    WITH_KEY
 }TopicKind_t;
 
 
@@ -100,20 +100,20 @@ typedef uint32_t Count_t;
 
 //!@brief Structure ProtocolVersion_t, contains the protocol version.
 struct RTPS_DllAPI ProtocolVersion_t{
-	octet m_major;
-	octet m_minor;
-	ProtocolVersion_t():
-		m_major(2),
-		m_minor(1)
-	{
+    octet m_major;
+    octet m_minor;
+    ProtocolVersion_t():
+        m_major(2),
+        m_minor(1)
+    {
 
-	};
-	ProtocolVersion_t(octet maj,octet min):
-		m_major(maj),
-		m_minor(min)
-	{
+    };
+    ProtocolVersion_t(octet maj,octet min):
+        m_major(maj),
+        m_minor(min)
+    {
 
-	}
+    }
 };
 
 
@@ -132,19 +132,16 @@ const VendorId_t c_VendorId_eProsima={0x01,0x0F};
 
 static inline void set_VendorId_Unknown(VendorId_t& id)
 {
-	id[0]=0x0;id[1]=0x0;
+    id[0]=0x0;id[1]=0x0;
 }
 
 static inline void set_VendorId_eProsima(VendorId_t& id)
 {
-	id[0]=0x01;id[1]=0x0F;
+    id[0]=0x01;id[1]=0x0F;
 }
 
 }
 }
 }
-
-using std::cout;
-using std::endl;
 
 #endif /* COMMON_TYPES_H_ */

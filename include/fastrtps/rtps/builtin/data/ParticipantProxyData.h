@@ -20,11 +20,13 @@
 #ifndef PARTICIPANTPROXYDATA_H_
 #define PARTICIPANTPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#include <mutex>
 #include "../../../qos/QosList.h"
 #include "../../../qos/ParameterList.h"
 
 #include "../../attributes/WriterAttributes.h"
 #include "../../attributes/ReaderAttributes.h"
+#include "../../common/Token.h"
 
 #define DISCOVERY_PARTICIPANT_DATA_MAX_SIZE 5000
 #define DISCOVERY_TOPIC_DATA_MAX_SIZE 500
@@ -45,11 +47,6 @@
 #define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER 0x00000001 << 10;
 #define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER 0x00000001 << 11;
 
-namespace boost
-{
-	class recursive_mutex;
-}
-
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -65,95 +62,98 @@ class WriterProxyData;
 * ParticipantProxyData class is used to store and convert the information Participants send to each other during the PDP phase.
 *@ingroup BUILTIN_MODULE
 */
-class ParticipantProxyData {
-public:
-	ParticipantProxyData();
-	virtual ~ParticipantProxyData();
+class ParticipantProxyData
+{
+    public:
 
-	//!Protocol version
-	ProtocolVersion_t m_protocolVersion;
-	//!GUID
-	GUID_t m_guid;
-	//!Vendor ID
-	VendorId_t m_VendorId;
-	//!Expects Inline QOS.
-	bool m_expectsInlineQos;
-	//!Available builtin endpoints
-	BuiltinEndpointSet_t m_availableBuiltinEndpoints;
-	//!Metatraffic unicast locator list
-	LocatorList_t m_metatrafficUnicastLocatorList;
-	//!Metatraffic multicast locator list
-	LocatorList_t m_metatrafficMulticastLocatorList;
-	//!Default unicast locator list
-	LocatorList_t m_defaultUnicastLocatorList;
-	//!Default multicast locator list
-	LocatorList_t m_defaultMulticastLocatorList;
-	//!Manual liveliness count
-	Count_t m_manualLivelinessCount;
-	//!Participant name
-	std::string m_participantName;
-	//!
-	InstanceHandle_t m_key;
-	//!
-	Duration_t m_leaseDuration;
-	//!
-	bool isAlive;
-	//!
-	QosList_t m_QosList;
-	//!
-	ParameterPropertyList_t m_properties;
-	//!
-	std::vector<octet> m_userData;
-	//!
-	bool m_hasChanged;
-	//!
-	RemoteParticipantLeaseDuration* mp_leaseDurationTimer;
-	//!
-	std::vector<ReaderProxyData*> m_readers;
-	//!
-	std::vector<WriterProxyData*> m_writers;
-	//!
-	std::vector<RemoteReaderAttributes> m_builtinReaders;
-	//!
-	std::vector<RemoteWriterAttributes> m_builtinWriters;
+        ParticipantProxyData();
+        virtual ~ParticipantProxyData();
 
-	boost::recursive_mutex* mp_mutex;
-	/**
-	 * Initialize the object with the data of the lcoal RTPSParticipant.
-	 * @param part Pointer to the RTPSParticipant.
-	 * @param pdp Pointer to the PDPSimple object.
-	 * @return True if correctly initialized.
-	 */
-	bool initializeData(RTPSParticipantImpl* part, PDPSimple* pdp);
-	/**
-	 * Update the data.
-	 * @param pdata Object to copy the data from
-	 * @return True on success
-	 */
-	bool updateData(ParticipantProxyData& pdata);
-	/**
-	 * Convert information to parameter list.
-	 * @return True on success
-	 */
-	bool toParameterList();
-	/**
-	 * Read the parameter list from a recevied CDRMessage_t
-	 * @return True on success
-	 */
-	bool readFromCDRMessage(CDRMessage_t* msg);
-	//!Clear the data (restore to default state.)
-	void clear();
-	/**
-	 * Copy the data from another object.
-	 * @param pdata Object to copy the data from
-	 */
-	void copy(ParticipantProxyData& pdata);
+        //!Protocol version
+        ProtocolVersion_t m_protocolVersion;
+        //!GUID
+        GUID_t m_guid;
+        //!Vendor ID
+        VendorId_t m_VendorId;
+        //!Expects Inline QOS.
+        bool m_expectsInlineQos;
+        //!Available builtin endpoints
+        BuiltinEndpointSet_t m_availableBuiltinEndpoints;
+        //!Metatraffic unicast locator list
+        LocatorList_t m_metatrafficUnicastLocatorList;
+        //!Metatraffic multicast locator list
+        LocatorList_t m_metatrafficMulticastLocatorList;
+        //!Default unicast locator list
+        LocatorList_t m_defaultUnicastLocatorList;
+        //!Default multicast locator list
+        LocatorList_t m_defaultMulticastLocatorList;
+        //!Manual liveliness count
+        Count_t m_manualLivelinessCount;
+        //!Participant name
+        std::string m_participantName;
+        //!
+        InstanceHandle_t m_key;
+        //!
+        Duration_t m_leaseDuration;
+        //!
+        IdentityToken identity_token_;
+        //!
+        bool isAlive;
+        //!
+        QosList_t m_QosList;
+        //!
+        ParameterPropertyList_t m_properties;
+        //!
+        std::vector<octet> m_userData;
+        //!
+        bool m_hasChanged;
+        //!
+        RemoteParticipantLeaseDuration* mp_leaseDurationTimer;
+        //!
+        std::vector<ReaderProxyData*> m_readers;
+        //!
+        std::vector<WriterProxyData*> m_writers;
+        //!
+        std::vector<RemoteReaderAttributes> m_builtinReaders;
+        //!
+        std::vector<RemoteWriterAttributes> m_builtinWriters;
 
-
+        std::recursive_mutex* mp_mutex;
+        /**
+         * Initialize the object with the data of the lcoal RTPSParticipant.
+         * @param part Pointer to the RTPSParticipant.
+         * @param pdp Pointer to the PDPSimple object.
+         * @return True if correctly initialized.
+         */
+        bool initializeData(RTPSParticipantImpl* part, PDPSimple* pdp);
+        /**
+         * Update the data.
+         * @param pdata Object to copy the data from
+         * @return True on success
+         */
+        bool updateData(ParticipantProxyData& pdata);
+        /**
+         * Convert information to parameter list.
+         * @return True on success
+         */
+        bool toParameterList();
+        /**
+         * Read the parameter list from a recevied CDRMessage_t
+         * @return True on success
+         */
+        bool readFromCDRMessage(CDRMessage_t* msg);
+        //!Clear the data (restore to default state.)
+        void clear();
+        /**
+         * Copy the data from another object.
+         * @param pdata Object to copy the data from
+         */
+        void copy(ParticipantProxyData& pdata);
 };
 
 }
 } /* namespace rtps */
 } /* namespace eprosima */
+
 #endif
 #endif /* RTPSParticipantPROXYDATA_H_ */

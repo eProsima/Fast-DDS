@@ -29,17 +29,22 @@ namespace fastrtps {
  * Class ParticipantListener, overrides behaviour towards certain events.
  * @ingroup FASTRTPS_MODULE
  */
-class ParticipantListener {
-public:
-	ParticipantListener(){};
-	virtual ~ParticipantListener(){};
-	
-	/**
-	* This method is called when a new Participant is discovered, or a previously discovered participant changes its QOS or is removed.
-	* @param p Pointer to the Participant
-	* @param info DiscoveryInfo.
-	*/
-	virtual void onParticipantDiscovery(Participant* p, ParticipantDiscoveryInfo info){(void)p, (void)info;};
+class ParticipantListener
+{
+    public:
+        ParticipantListener(){};
+        virtual ~ParticipantListener(){};
+
+        /**
+         * This method is called when a new Participant is discovered, or a previously discovered participant changes its QOS or is removed.
+         * @param p Pointer to the Participant
+         * @param info DiscoveryInfo.
+         */
+        virtual void onParticipantDiscovery(Participant* p, ParticipantDiscoveryInfo info){(void)p, (void)info;}
+
+#if HAVE_SECURITY
+        virtual void onParticipantAuthentication(Participant* p, const ParticipantAuthenticationInfo& info){(void)p, (void)info;}
+#endif
 };
 
 } /* namespace fastrtps */

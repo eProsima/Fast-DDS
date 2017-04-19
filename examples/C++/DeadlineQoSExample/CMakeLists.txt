@@ -16,7 +16,6 @@ cmake_minimum_required(VERSION 2.8.12)
 project("DeadlineQoSExample")
 
 # Find requirements
-find_package(Boost REQUIRED COMPONENTS thread system chrono regex)
 find_package(fastcdr REQUIRED)
 find_package(fastrtps REQUIRED)
 
@@ -35,9 +34,15 @@ endif()
 message(STATUS "Configuring DeadlineQoS example...")
 file(GLOB DEADLINEQOS_EXAMPLE_SOURCES "*.cxx")
 
+add_definitions(
+  -DBOOST_ASIO_STANDALONE
+  -DASIO_STANDALONE
+)
+
+include_directories(${PROJECT_SOURCE_DIR}/../../../thirdparty/asio/asio/include)
+
 add_executable(DeadlineQoSExample ${DEADLINEQOS_EXAMPLE_SOURCES})
-target_include_directories(DeadlineQoSExample PRIVATE ${Boost_INCLUDE_DIR})
-target_link_libraries(DeadlineQoSExample fastrtps fastcdr ${Boost_LIBRARIES})
+target_link_libraries(DeadlineQoSExample fastrtps fastcdr)
 if(UNIX)
   target_link_libraries(DeadlineQoSExample pthread)
 endif()

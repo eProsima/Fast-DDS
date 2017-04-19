@@ -48,6 +48,7 @@ class StatelessWriter : public RTPSWriter
      * @param p Pointer to the change.
      */
     void unsent_change_added_to_history(CacheChange_t* p);
+
     /**
      * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
      * @param a_change Pointer to the change that is going to be removed.
@@ -75,7 +76,7 @@ class StatelessWriter : public RTPSWriter
     /**
      * Method to indicate that there are changes not sent in some of all ReaderProxy.
      */
-    size_t send_any_unsent_changes();
+    void send_any_unsent_changes();
 
     /**
      * Update the Attributes of the Writer.
@@ -95,7 +96,8 @@ class StatelessWriter : public RTPSWriter
      */
     bool add_locator(RemoteReaderAttributes& rdata,Locator_t& loc);
 
-    void update_unsent_changes(const std::vector<CacheChangeForGroup_t>& changes);
+    void update_unsent_changes(ReaderLocator& reader_locator,
+            const std::vector<CacheChange_t*>& changes);
 
     /**
      * Remove a remote locator from the writer.
@@ -119,19 +121,13 @@ class StatelessWriter : public RTPSWriter
     void add_flow_controller(std::unique_ptr<FlowController> controller);
 
     private:
+
+    std::vector<GUID_t> get_remote_readers();
+
     //Duration_t resendDataPeriod; //FIXME: Not used yet.
-    std::vector<ReaderLocator> reader_locator;
-    LocatorList_t m_loc_list_1_for_sync_send;
-    LocatorList_t m_loc_list_2_for_sync_send;
+    std::vector<ReaderLocator> reader_locators;
     std::vector<RemoteReaderAttributes> m_matched_readers;
     std::vector<std::unique_ptr<FlowController> > m_controllers;
-
-    /**
-     * Vector containing pointers to the unsent changes from this writer.
-     * it's crucial to notify the async writer
-     * thread when anything is pushed into it.
-     */	
-    std::vector<CacheChangeForGroup_t> m_unsent_changes;
 };
 }
 } /* namespace rtps */

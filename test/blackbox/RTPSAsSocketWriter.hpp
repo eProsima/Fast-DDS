@@ -34,13 +34,12 @@
 
 #include <string>
 #include <list>
-#include <boost/interprocess/detail/os_thread_functions.hpp>
-#include <boost/asio.hpp>
+#include <asio.hpp>
 #include <gtest/gtest.h>
 
 
 template<class TypeSupport>
-class RTPSAsSocketWriter 
+class RTPSAsSocketWriter
 {
     public:
 
@@ -51,7 +50,7 @@ class RTPSAsSocketWriter
         writer_(nullptr), history_(nullptr), initialized_(false), port_(0)
         {
             std::ostringstream mw;
-            mw << magicword << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+            mw << magicword << "_" << asio::ip::host_name() << "_" << GET_PID();
             magicword_ = mw.str();
 
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
@@ -83,7 +82,7 @@ class RTPSAsSocketWriter
             eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
             pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = false;
             pattr.builtin.use_WriterLivelinessProtocol = false;
-            pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+            pattr.builtin.domainId = (uint32_t)GET_PID() % 230;
             pattr.participantID = 2;
             participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(pattr);
             ASSERT_NE(participant_, nullptr);

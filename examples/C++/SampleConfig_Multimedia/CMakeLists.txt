@@ -35,8 +35,7 @@ message(STATUS "Configuring UseCaseDemonstrator example...")
 file(GLOB USECASEDEMONSTRATOR_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(sampleconfig_multimedia ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} sampleconfig_fastest.cpp)
-target_include_directories(sampleconfig_multimedia PRIVATE ${Boost_INCLUDE_DIR})
-target_link_libraries(sampleconfig_multimedia fastrtps fastcdr ${Boost_LIBRARIES})
+target_link_libraries(sampleconfig_multimedia fastrtps fastcdr)
 install(TARGETS sampleconfig_multimedia
     RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
     )

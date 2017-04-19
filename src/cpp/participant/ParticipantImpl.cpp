@@ -173,6 +173,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
     watt.endpoint.unicastLocatorList = att.unicastLocatorList;
     watt.endpoint.outLocatorList = att.outLocatorList;
     watt.mode = att.qos.m_publishMode.kind == eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
+    watt.endpoint.properties = att.properties;
     if(att.getEntityID()>0)
         watt.endpoint.setEntityID((uint8_t)att.getEntityID());
     if(att.getUserDefinedID()>0)
@@ -297,6 +298,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
     ratt.endpoint.unicastLocatorList = att.unicastLocatorList;
     ratt.endpoint.outLocatorList = att.outLocatorList;
     ratt.expectsInlineQos = att.expectsInlineQos;
+    ratt.endpoint.properties = att.properties;
     if(att.getEntityID()>0)
         ratt.endpoint.setEntityID((uint8_t)att.getEntityID());
     if(att.getUserDefinedID()>0)
@@ -420,6 +422,19 @@ void ParticipantImpl::MyRTPSParticipantListener::onRTPSParticipantDiscovery(RTPS
         this->mp_participantimpl->mp_listener->onParticipantDiscovery(mp_participantimpl->mp_participant,info);
     }
 }
+
+#if HAVE_SECURITY
+void ParticipantImpl::MyRTPSParticipantListener::onRTPSParticipantAuthentication(RTPSParticipant* part, const RTPSParticipantAuthenticationInfo& rtps_info)
+{
+    if(this->mp_participantimpl->mp_listener != nullptr)
+    {
+        ParticipantAuthenticationInfo info;
+        info.rtps = rtps_info;
+        this->mp_participantimpl->mp_rtpsParticipant = part;
+        this->mp_participantimpl->mp_listener->onParticipantAuthentication(mp_participantimpl->mp_participant, info);
+    }
+}
+#endif
 
 bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t endpointId,
         EndpointKind_t kind)

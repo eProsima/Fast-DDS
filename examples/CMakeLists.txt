@@ -13,8 +13,8 @@
 # limitations under the License.
 
 include(${PROJECT_SOURCE_DIR}/cmake/dev/compile_example.cmake)
-compile_example(DeadlineQoSExample C++/DeadlineQoSExample USE_BOOST)
-compile_example(OwnershipStrengthQoSExample C++/OwnershipStrengthQoSExample USE_BOOST)
+compile_example(DeadlineQoSExample C++/DeadlineQoSExample)
+compile_example(OwnershipStrengthQoSExample C++/OwnershipStrengthQoSExample)
 compile_example(HelloWorldExample C++/HelloWorldExample)
 compile_example(FilteringExample C++/Filtering)
 compile_example(UserDefinedTransportExample C++/UserDefinedTransportExample)
@@ -29,3 +29,7 @@ compile_example(SampleConfig_Controller C++/SampleConfig_Controller)
 compile_example(SampleConfig_Events C++/SampleConfig_Events)
 compile_example(SampleConfig_Multimedia C++/SampleConfig_Multimedia)
 compile_example(Configurability C++/Configurability)
+
+if(SECURITY)
+    compile_example(SecureHelloWorldExample C++/SecureHelloWorldExample)
+endif()

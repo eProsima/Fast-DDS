@@ -20,7 +20,7 @@
 #ifndef THROUGHPUTPUBLISHER_H_
 #define THROUGHPUTPUBLISHER_H_
 
-#include <boost/asio.hpp>
+#include <asio.hpp>
 
 #include "ThroughputTypes.h"
 
@@ -32,7 +32,7 @@ using namespace eprosima::fastrtps;
 
 #include <condition_variable>
 #include <chrono>
-
+#include <map>
 #include <vector>
 #include <string>
 

@@ -22,7 +22,6 @@
 #include "../Endpoint.h"
 #include "../messages/RTPSMessageGroup.h"
 #include "../attributes/WriterAttributes.h"
-#include "../flowcontrol/FlowController.h"
 #include <vector>
 #include <memory>
 
@@ -32,6 +31,7 @@ namespace rtps {
 
 class WriterListener;
 class WriterHistory;
+class FlowController;
 struct CacheChange_t;
 
 
@@ -102,13 +102,7 @@ class RTPSWriter : public Endpoint
      * This method triggers the send operation for unsent changes.
      * @return number of messages sent
      */
-    RTPS_DllAPI virtual size_t send_any_unsent_changes() = 0;
-
-    /**
-     * This method triggers the send operation for unsent changes,
-     * provided they are cleared by the given controllers.
-     */
-    //RTPS_DllAPI virtual void send_any_unsent_changes(const std::vector<FlowController*>* parentControllers) = 0;
+    RTPS_DllAPI virtual void send_any_unsent_changes() = 0;
 
     /**
      * Get Min Seq Num in History.
@@ -127,6 +121,10 @@ class RTPSWriter : public Endpoint
      * @return Maximum size of the serialized type
      */
     RTPS_DllAPI uint32_t getTypeMaxSerialized();
+
+    uint32_t getMaxDataSize();
+
+    uint32_t calculateMaxDataSize(uint32_t length);
 
     /**
      * Get listener
@@ -161,6 +159,12 @@ class RTPSWriter : public Endpoint
      */
     virtual void add_flow_controller(std::unique_ptr<FlowController> controller) = 0;
 
+    /**
+     * Get RTPS participant
+     * @return RTPS participant
+     */
+    inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
+
     protected:
 
     //!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
@@ -192,12 +196,6 @@ class RTPSWriter : public Endpoint
      * @return True if removed correctly.
      */
     virtual bool change_removed_by_history(CacheChange_t* a_change)=0;
-
-    /**
-     * Get RTPS participant
-     * @return RTPS participant
-     */
-    inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
 
     private:
 

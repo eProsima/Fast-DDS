@@ -24,9 +24,10 @@
 #include "../rtps/common/Locator.h"
 #include "../rtps/common/Time_t.h"
 #include "../rtps/attributes/WriterAttributes.h"
-#include <fastrtps/rtps/flowcontrol/ThroughputController.h>
+#include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include "TopicAttributes.h"
 #include "../qos/WriterQos.h"
+#include "../rtps/attributes/PropertyPolicy.h"
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -63,6 +64,7 @@ class PublisherAttributes {
         ThroughputControllerDescriptor throughputController;
         //!Underlying History memory policy
         MemoryManagementPolicy_t historyMemoryPolicy;
+        PropertyPolicy properties;
 
         /**
          * Get the user defined ID

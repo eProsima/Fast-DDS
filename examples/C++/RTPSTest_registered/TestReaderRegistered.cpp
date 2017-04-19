@@ -46,55 +46,55 @@ mp_history(nullptr)
 
 TestReaderRegistered::~TestReaderRegistered()
 {
-	RTPSDomain::removeRTPSParticipant(mp_participant);
-	delete(mp_history);
+    RTPSDomain::removeRTPSParticipant(mp_participant);
+    delete(mp_history);
 }
 
 bool TestReaderRegistered::init()
 {
-	//CREATE PARTICIPANT
-	RTPSParticipantAttributes PParam;
-	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-	PParam.builtin.use_WriterLivelinessProtocol = true;
-	mp_participant = RTPSDomain::createParticipant(PParam);
-	if(mp_participant==nullptr)
-		return false;
-	//CREATE READERHISTORY
-	HistoryAttributes hatt;
-	hatt.payloadMaxSize = 255;
-	mp_history = new ReaderHistory(hatt);
+    //CREATE PARTICIPANT
+    RTPSParticipantAttributes PParam;
+    PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+    PParam.builtin.use_WriterLivelinessProtocol = true;
+    mp_participant = RTPSDomain::createParticipant(PParam);
+    if(mp_participant==nullptr)
+        return false;
+    //CREATE READERHISTORY
+    HistoryAttributes hatt;
+    hatt.payloadMaxSize = 255;
+    mp_history = new ReaderHistory(hatt);
 
-	//CREATE READER
-	ReaderAttributes ratt;
-	Locator_t loc(22222);
-	ratt.endpoint.unicastLocatorList.push_back(loc);
-	mp_reader = RTPSDomain::createRTPSReader(mp_participant,ratt,mp_history,&m_listener);
-	if(mp_reader == nullptr)
-		return false;
+    //CREATE READER
+    ReaderAttributes ratt;
+    Locator_t loc(22222);
+    ratt.endpoint.unicastLocatorList.push_back(loc);
+    mp_reader = RTPSDomain::createRTPSReader(mp_participant,ratt,mp_history,&m_listener);
+    if(mp_reader == nullptr)
+        return false;
 
-	return true;
+    return true;
 }
 
 bool TestReaderRegistered::reg()
 {
-	cout << "Registering Reader" << endl;
-	TopicAttributes Tatt;
-	Tatt.topicKind = NO_KEY;
-	Tatt.topicDataType = "string";
-	Tatt.topicName = "exampleTopic";
-	ReaderQos Rqos;
-	return mp_participant->registerReader(mp_reader, Tatt, Rqos);
+    std::cout << "Registering Reader" << std::endl;
+    TopicAttributes Tatt;
+    Tatt.topicKind = NO_KEY;
+    Tatt.topicDataType = "string";
+    Tatt.topicName = "exampleTopic";
+    ReaderQos Rqos;
+    return mp_participant->registerReader(mp_reader, Tatt, Rqos);
 }
 
 void TestReaderRegistered::run()
 {
-	printf("Press Enter to stop the Reader.\n");
-	std::cin.ignore();
+    printf("Press Enter to stop the Reader.\n");
+    std::cin.ignore();
 }
 
 void TestReaderRegistered::MyListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change)
 {
-	printf("Received: %s\n",change->serializedPayload.data);
-	reader->getHistory()->remove_change((CacheChange_t*)change);
-	n_received++;
+    printf("Received: %s\n",change->serializedPayload.data);
+    reader->getHistory()->remove_change((CacheChange_t*)change);
+    n_received++;
 }

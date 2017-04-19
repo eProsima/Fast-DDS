@@ -187,7 +187,7 @@ class $struct.name$PubSubJNI : public TopicDataType, public SubscriberListener
         vm_(vm), version_(version), listener_(listener), receiveId_(receiveId)
         {
             setName("$struct.scopedname$");
-            m_typeSize = (uint32_t)$struct.scopedname$::getMaxCdrSerializedSize();
+            m_typeSize = (uint32_t)$struct.scopedname$::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
             m_isGetKeyDefined = $struct.scopedname$::isKeyDefined();
             m_keyBuffer = (unsigned char*)malloc($struct.scopedname$::getKeyMaxCdrSerializedSize()>16 ? $struct.scopedname$::getKeyMaxCdrSerializedSize() : 16);
 
@@ -212,8 +212,11 @@ class $struct.name$PubSubJNI : public TopicDataType, public SubscriberListener
         {
             $struct.scopedname$ *p_type = ($struct.scopedname$*) data;
             eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size);
-            eprosima::fastcdr::Cdr ser(fastbuffer,eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS);
-            payload->encapsulation = CDR_LE;
+            eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                    eprosima::fastcdr::Cdr::DDS_CDR);
+            payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+            // Serialize encapsulation
+            ser.serialize_encapsulation();
             p_type->serialize(ser);
             payload->length = (uint16_t)ser.getSerializedDataLength();
             return true;
@@ -223,8 +226,11 @@ class $struct.name$PubSubJNI : public TopicDataType, public SubscriberListener
         {
             $struct.scopedname$* p_type = ($struct.scopedname$*) data;
             eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);
-            eprosima::fastcdr::Cdr::Endianness endian = payload->encapsulation == CDR_LE ? eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS : eprosima::fastcdr::Cdr::BIG_ENDIANNESS;
-            eprosima::fastcdr::Cdr deser(fastbuffer,endian);
+            eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                    eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
+            // Deserialize encapsulation.
+            deser.read_encapsulation();
+            payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
             p_type->deserialize(deser);
             return true;
         }

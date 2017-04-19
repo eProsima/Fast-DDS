@@ -23,6 +23,7 @@
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/participant/Participant.h>
+#include <fastrtps/participant/ParticipantListener.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
@@ -32,8 +33,7 @@
 #include <string>
 #include <list>
 #include <condition_variable>
-#include <boost/asio.hpp>
-#include <boost/interprocess/detail/os_thread_functions.hpp>
+#include <asio.hpp>
 #include <gtest/gtest.h>
 
 template<class TypeSupport>
@@ -46,62 +46,90 @@ class PubSubReader
 
     private:
 
-    class Listener: public eprosima::fastrtps::SubscriberListener
-    {
-        public:
-            Listener(PubSubReader &reader) : reader_(reader) {};
+        class ParticipantListener : public eprosima::fastrtps::ParticipantListener
+        {
+            public:
 
-            ~Listener(){};
+                ParticipantListener(PubSubReader &reader) : reader_(reader) {}
 
-            void onNewDataMessage(eprosima::fastrtps::Subscriber *sub)
-            {
-                ASSERT_NE(sub, nullptr);
+                ~ParticipantListener() {}
 
-                bool ret = false;
-                reader_.receive_one(sub, ret);
-            }
+#if HAVE_SECURITY
+                void onParticipantAuthentication(Participant*, const ParticipantAuthenticationInfo& info)
+                {
+                    if(info.rtps.status() == AUTHORIZED_RTPSPARTICIPANT)
+                        reader_.authorized();
+                    else if(info.rtps.status() == UNAUTHORIZED_RTPSPARTICIPANT)
+                        reader_.unauthorized();
+                }
+#endif
 
-            void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, MatchingInfo& info)
-            {
-                if (info.status == MATCHED_MATCHING)
-                    reader_.matched();
-                else
-                    reader_.unmatched();
-            }
+            private:
 
-        private:
+                ParticipantListener& operator=(const ParticipantListener&) NON_COPYABLE_CXX11;
 
-            Listener& operator=(const Listener&) NON_COPYABLE_CXX11;
+                PubSubReader& reader_;
+        } participant_listener_;
 
-            PubSubReader &reader_;
-    } listener_;
+        class Listener: public eprosima::fastrtps::SubscriberListener
+        {
+            public:
+                Listener(PubSubReader &reader) : reader_(reader) {}
+
+                ~Listener(){}
+
+                void onNewDataMessage(eprosima::fastrtps::Subscriber *sub)
+                {
+                    ASSERT_NE(sub, nullptr);
+
+                    bool ret = false;
+                    reader_.receive_one(sub, ret);
+                }
+
+                void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, MatchingInfo& info)
+                {
+                    if (info.status == MATCHED_MATCHING)
+                        reader_.matched();
+                    else
+                        reader_.unmatched();
+                }
+
+            private:
+
+                Listener& operator=(const Listener&) NON_COPYABLE_CXX11;
+
+                PubSubReader& reader_;
+        } listener_;
 
         friend class Listener;
 
     public:
 
-        PubSubReader(const std::string& topic_name) : listener_(*this), participant_(nullptr), subscriber_(nullptr),
+        PubSubReader(const std::string& topic_name) : participant_listener_(*this), listener_(*this), participant_(nullptr), subscriber_(nullptr),
         topic_name_(topic_name), initialized_(false), matched_(0), receiving_(false), current_received_count_(0),
         number_samples_expected_(0)
-    {
-        subscriber_attr_.topic.topicDataType = type_.getName();
-        // Generate topic name
-        std::ostringstream t;
-        t << topic_name_ << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
-        subscriber_attr_.topic.topicName = t.str();
+#if HAVE_SECURITY
+        , authorized_(0), unauthorized_(0)
+#endif
+        {
+            subscriber_attr_.topic.topicDataType = type_.getName();
+            // Generate topic name
+            std::ostringstream t;
+            t << topic_name_ << "_" << asio::ip::host_name() << "_" << GET_PID();
+            subscriber_attr_.topic.topicName = t.str();
 
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
-        subscriber_attr_.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+            subscriber_attr_.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 #elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
-        subscriber_attr_.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+            subscriber_attr_.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
 #else
-        subscriber_attr_.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+            subscriber_attr_.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
 #endif
 
-        // By default, heartbeat period delay is 100 milliseconds.
-        subscriber_attr_.times.heartbeatResponseDelay.seconds = 0;
-        subscriber_attr_.times.heartbeatResponseDelay.fraction = 4294967 * 100;
-    }
+            // By default, heartbeat period delay is 100 milliseconds.
+            subscriber_attr_.times.heartbeatResponseDelay.seconds = 0;
+            subscriber_attr_.times.heartbeatResponseDelay.fraction = 4294967 * 100;
+        }
 
         ~PubSubReader()
         {
@@ -111,8 +139,9 @@ class PubSubReader
 
         void init()
         {
-            participant_attr_.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
-            participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr_);
+            participant_attr_.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
+            participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr_, &participant_listener_);
+
             ASSERT_NE(participant_, nullptr);
 
             // Register type
@@ -136,26 +165,18 @@ class PubSubReader
             }
         }
 
-        void expected_data(const std::list<type>& msgs)
+        std::list<type> data_not_received()
         {
             std::unique_lock<std::mutex> lock(mutex_);
-            total_msgs_ = msgs;
+            return total_msgs_;
         }
 
-        void expected_data(std::list<type>&& msgs)
-        {
-            std::unique_lock<std::mutex> lock(mutex_);
-            total_msgs_ = std::move(msgs);
-        }
-
-        void startReception(size_t number_samples_expected = 0)
+        void startReception(std::list<type>& msgs)
         {
             mutex_.lock();
+            total_msgs_ = msgs;
+            number_samples_expected_ = total_msgs_.size();
             current_received_count_ = 0;
-            if(number_samples_expected > 0)
-                number_samples_expected_ = number_samples_expected;
-            else
-                number_samples_expected_ = total_msgs_.size();
             receiving_ = true;
             mutex_.unlock();
 
@@ -174,41 +195,95 @@ class PubSubReader
             mutex_.unlock();
         }
 
+        void block_for_all()
+        {
+            block([this]() -> bool {
+                    return number_samples_expected_ == current_received_count_;
+                    });
+        }
+
+        size_t block_for_at_least(size_t at_least)
+        {
+            block([this, at_least]() -> bool {
+                    return current_received_count_ >= at_least;
+                    });
+            return current_received_count_;
+        }
+
+        void block(std::function<bool()> checker)
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            cv_.wait(lock, checker);
+        }
+
         template<class _Rep,
             class _Period
                 >
-                std::list<type> block(const std::chrono::duration<_Rep, _Period>& max_wait)
+                size_t block_for_all(const std::chrono::duration<_Rep, _Period>& max_wait)
                 {
                     std::unique_lock<std::mutex> lock(mutex_);
-                    if(current_received_count_ != number_samples_expected_)
-                        cv_.wait_for(lock, max_wait);
+                    cv_.wait_for(lock, max_wait, [this]() -> bool {
+                            return number_samples_expected_ == current_received_count_;
+                            });
 
-                    return total_msgs_;
+                    return current_received_count_;
                 }
 
         void waitDiscovery()
         {
-            std::cout << "Reader waiting for discovery..." << std::endl;
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
+            std::cout << "Reader is waiting discovery..." << std::endl;
+
             if(matched_ == 0)
-                cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
+                cvDiscovery_.wait(lock);
 
             ASSERT_NE(matched_, 0u);
-            std::cout << "Reader discovery phase finished" << std::endl;
+            std::cout << "Reader discovery finished..." << std::endl;
         }
 
         void waitRemoval()
         {
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
+            std::cout << "Reader is waiting removal..." << std::endl;
+
             if(matched_ != 0)
-                cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
+                cvDiscovery_.wait(lock);
 
             ASSERT_EQ(matched_, 0u);
+            std::cout << "Reader removal finished..." << std::endl;
         }
 
-        unsigned int getReceivedCount() const
+#if HAVE_SECURITY
+        void waitAuthorized(unsigned int how_many = 1)
+        {
+            std::unique_lock<std::mutex> lock(mutexAuthentication_);
+
+            std::cout << "Reader is waiting authorization..." << std::endl;
+
+            while(authorized_ != how_many)
+                cvAuthentication_.wait(lock);
+
+            ASSERT_EQ(authorized_, how_many);
+            std::cout << "Reader authorization finished..." << std::endl;
+        }
+
+        void waitUnauthorized(unsigned int how_many = 1)
+        {
+            std::unique_lock<std::mutex> lock(mutexAuthentication_);
+
+            std::cout << "Reader is waiting unauthorization..." << std::endl;
+
+            while(unauthorized_ != how_many)
+                cvAuthentication_.wait(lock);
+
+            ASSERT_EQ(unauthorized_, how_many);
+            std::cout << "Reader unauthorization finished..." << std::endl;
+        }
+#endif
+
+        size_t getReceivedCount() const
         {
             return current_received_count_;
         }
@@ -297,6 +372,40 @@ class PubSubReader
             return *this;
         }
 
+        PubSubReader& disable_multicast(int32_t participantId)
+        {
+            participant_attr_.rtps.participantID = participantId;
+
+            LocatorList_t default_unicast_locators;
+            Locator_t default_unicast_locator;
+
+            default_unicast_locators.push_back(default_unicast_locator);
+            participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = default_unicast_locators;
+
+            Locator_t loopback_locator;
+            loopback_locator.set_IP4_address(127, 0, 0, 1);
+            participant_attr_.rtps.builtin.initialPeersList.push_back(loopback_locator);
+            return *this;
+        }
+
+        PubSubReader& property_policy(const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+        {
+            participant_attr_.rtps.properties = property_policy;
+            return *this;
+        }
+
+        PubSubReader& entity_property_policy(const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+        {
+            subscriber_attr_.properties = property_policy;
+            return *this;
+        }
+
+        PubSubReader& partition(std::string partition)
+        {
+            subscriber_attr_.qos.m_partition.push_back(partition.c_str());
+            return *this;
+        }
+
     private:
 
         void receive_one(eprosima::fastrtps::Subscriber* subscriber, bool& returnedValue)
@@ -320,12 +429,11 @@ class PubSubReader
                     if(info.sampleKind == ALIVE)
                     {
                         auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
-                        ASSERT_NE(it, total_msgs_.end()); 
+                        ASSERT_NE(it, total_msgs_.end());
                         total_msgs_.erase(it);
                         ++current_received_count_;
-
-                        if(current_received_count_ == number_samples_expected_)
-                            cv_.notify_one();
+                        default_receive_print<type>(data);
+                        cv_.notify_one();
                     }
                 }
             }
@@ -345,12 +453,30 @@ class PubSubReader
             cvDiscovery_.notify_one();
         }
 
+#if HAVE_SECURITY
+        void authorized()
+        {
+            mutexAuthentication_.lock();
+            ++authorized_;
+            mutexAuthentication_.unlock();
+            cvAuthentication_.notify_all();
+        }
+
+        void unauthorized()
+        {
+            mutexAuthentication_.lock();
+            ++unauthorized_;
+            mutexAuthentication_.unlock();
+            cvAuthentication_.notify_all();
+        }
+#endif
+
         PubSubReader& operator=(const PubSubReader&)NON_COPYABLE_CXX11;
 
         eprosima::fastrtps::Participant *participant_;
         eprosima::fastrtps::ParticipantAttributes participant_attr_;
-        eprosima::fastrtps::SubscriberAttributes subscriber_attr_;
         eprosima::fastrtps::Subscriber *subscriber_;
+        eprosima::fastrtps::SubscriberAttributes subscriber_attr_;
         std::string topic_name_;
         bool initialized_;
         std::list<type> total_msgs_;
@@ -364,7 +490,12 @@ class PubSubReader
         SequenceNumber_t last_seq;
         size_t current_received_count_;
         size_t number_samples_expected_;
+#if HAVE_SECURITY
+        std::mutex mutexAuthentication_;
+        std::condition_variable cvAuthentication_;
+        unsigned int authorized_;
+        unsigned int unauthorized_;
+#endif
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBREADER_HPP_
-

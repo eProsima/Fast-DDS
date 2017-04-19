@@ -26,8 +26,7 @@
 #include <fastrtps/TopicDataType.h>
 #include <fastrtps/log/Log.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 namespace eprosima {
 namespace fastrtps {
@@ -67,7 +66,7 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, size_t unknown_
         return false;
     }
 
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     //NO KEY HISTORY
     if(mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
@@ -274,7 +273,7 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
         return false;
     }
 
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     CacheChange_t* change;
     WriterProxy * wp;
     if(this->mp_reader->nextUnreadCache(&change,&wp))
@@ -316,7 +315,7 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
         return false;
     }
 
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     CacheChange_t* change;
     WriterProxy * wp;
     if(this->mp_reader->nextUntakenCache(&change,&wp))
@@ -388,7 +387,7 @@ bool SubscriberHistory::find_Key(CacheChange_t* a_change, t_v_Inst_Caches::itera
                     return true;
                 }
             }
-            logWarning(SUBSCRIBER, "History has reached the maximum number of instances" << endl;)
+            logWarning(SUBSCRIBER, "History has reached the maximum number of instances");
         }
 
     }
@@ -405,7 +404,7 @@ bool SubscriberHistory::remove_change_sub(CacheChange_t* change,t_v_Inst_Caches:
         return false;
     }
 
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     if(mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
         if(this->remove_change(change))

@@ -32,49 +32,49 @@ using namespace eprosima::fastrtps;
 
 int main(int argc, char** argv)
 {
-	cout << "Starting " << endl;
-	int type = 1;
-	if (argc > 1)
-	{
-		if (strcmp(argv[1], "publisher") == 0)
-		{
-			type = 1;
-		}
-		else if (strcmp(argv[1], "subscriber") == 0)
-		{
-			type = 2;
-		}
-	}
-	else
-	{
-		cout << "publisher OR subscriber argument needed" << endl;
-		return 0;
-	}
-	
-	// Register the type being used
-	
-	
-	switch(type)
-	{
-		case 1:
-		{
-			FlowControlExamplePublisher mypub;
-			if (mypub.init())
-			{
-				mypub.run();
-			}
-			break;
-		}
-		case 2:
-		{
-			FlowControlExampleSubscriber mysub;
-			if (mysub.init())
-			{
-				mysub.run();
-			}
-			break;
-		}
-	}
-	
-	return 0;
+    std::cout << "Starting " << std::endl;
+    int type = 1;
+    if (argc > 1)
+    {
+        if (strcmp(argv[1], "publisher") == 0)
+        {
+            type = 1;
+        }
+        else if (strcmp(argv[1], "subscriber") == 0)
+        {
+            type = 2;
+        }
+    }
+    else
+    {
+        std::cout << "publisher OR subscriber argument needed" << std::endl;
+        return 0;
+    }
+
+    // Register the type being used
+
+
+    switch(type)
+    {
+        case 1:
+            {
+                FlowControlExamplePublisher mypub;
+                if (mypub.init())
+                {
+                    mypub.run();
+                }
+                break;
+            }
+        case 2:
+            {
+                FlowControlExampleSubscriber mysub;
+                if (mysub.init())
+                {
+                    mysub.run();
+                }
+                break;
+            }
+    }
+
+    return 0;
 }

@@ -22,12 +22,15 @@ namespace fastrtps{
 namespace rtps{
 
 static const uint32_t maximumUDPSocketSize = 65536;
-static const uint32_t maximumMessageSize = 65000;
+static const uint32_t maximumMessageSize = 65500;
 vector<vector<octet> > test_UDPv4Transport::DropLog;
 uint32_t test_UDPv4Transport::DropLogLength = 0;
 
 test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor):
     mDropDataMessagesPercentage(descriptor.dropDataMessagesPercentage),
+    mDropParticipantBuiltinTopicData(descriptor.dropParticipantBuiltinTopicData),
+    mDropPublicationBuiltinTopicData(descriptor.dropPublicationBuiltinTopicData),
+    mDropSubscriptionBuiltinTopicData(descriptor.dropSubscriptionBuiltinTopicData),
     mDropDataFragMessagesPercentage(descriptor.dropDataFragMessagesPercentage),
     mDropHeartbeatMessagesPercentage(descriptor.dropHeartbeatMessagesPercentage),
     mDropAckNackMessagesPercentage(descriptor.dropAckNackMessagesPercentage),
@@ -46,6 +49,9 @@ RTPS_DllAPI test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor():
     sendBufferSize(maximumUDPSocketSize),
     receiveBufferSize(maximumUDPSocketSize),
     dropDataMessagesPercentage(0),
+    dropParticipantBuiltinTopicData(false),
+    dropPublicationBuiltinTopicData(false),
+    dropSubscriptionBuiltinTopicData(false),
     dropDataFragMessagesPercentage(0),
     dropHeartbeatMessagesPercentage(0),
     dropAckNackMessagesPercentage(0),
@@ -71,8 +77,8 @@ static bool ReadSubmessageHeader(CDRMessage_t& msg, SubmessageHeader_t& smh)
     if(msg.length - msg.pos < 4)
         return false;
 
-    smh.submessageId = msg.buffer[msg.pos];msg.pos++;
-    smh.flags = msg.buffer[msg.pos];msg.pos++;
+    smh.submessageId = msg.buffer[msg.pos]; msg.pos++;
+    smh.flags = msg.buffer[msg.pos]; msg.pos++;
     msg.msg_endian = smh.flags & BIT(0) ? LITTLEEND : BIGEND;
     CDRMessage::readUInt16(&msg, &smh.submessageLength);
     return true;
@@ -84,20 +90,16 @@ bool test_UDPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sen
     memcpy(cdrMessage.buffer, sendBuffer, sendBufferSize);
     cdrMessage.length = sendBufferSize;
 
-    return ( (mDropDataMessagesPercentage      > (rand()%100) && ContainsSubmessageOfID(cdrMessage, DATA))       ||
-            (mDropAckNackMessagesPercentage   > (rand()%100) && ContainsSubmessageOfID(cdrMessage, ACKNACK))    ||
-            (mDropHeartbeatMessagesPercentage > (rand()%100) && ContainsSubmessageOfID(cdrMessage, HEARTBEAT))  || 
-            (mDropDataFragMessagesPercentage  > (rand()%100) && ContainsSubmessageOfID(cdrMessage, DATA_FRAG))  || 
-            ContainsSequenceNumberToDrop(cdrMessage)                                                           ||
-            RandomChanceDrop());
-}
-
-bool test_UDPv4Transport::ContainsSubmessageOfID(CDRMessage_t& cdrMessage, octet ID)
-{
     if(cdrMessage.length < RTPSMESSAGE_HEADER_SIZE)
         return false;
 
-    cdrMessage.pos = 4 + 12; // RTPS header letters + RTPS version
+    if(cdrMessage.buffer[cdrMessage.pos++] != 'R' ||
+            cdrMessage.buffer[cdrMessage.pos++] != 'T' ||
+            cdrMessage.buffer[cdrMessage.pos++] != 'P' ||
+            cdrMessage.buffer[cdrMessage.pos++] != 'S')
+        return false;
+
+    cdrMessage.pos += 4 + 12; // RTPS version + GUID
 
     SubmessageHeader_t cdrSubMessageHeader;
     while (cdrMessage.pos < cdrMessage.length)
@@ -105,15 +107,76 @@ bool test_UDPv4Transport::ContainsSubmessageOfID(CDRMessage_t& cdrMessage, octet
         ReadSubmessageHeader(cdrMessage, cdrSubMessageHeader);
         if (cdrMessage.pos + cdrSubMessageHeader.submessageLength > cdrMessage.length)
             return false;
-        if (cdrSubMessageHeader.submessageId == ID)
+
+        SequenceNumber_t sequence_number{SequenceNumber_t::unknown()};
+        EntityId_t writer_id;
+        auto old_pos = cdrMessage.pos;
+
+        switch(cdrSubMessageHeader.submessageId)
+        {
+            case DATA:
+                // Get WriterID.
+                cdrMessage.pos += 8;
+                CDRMessage::readEntityId(&cdrMessage, &writer_id);
+                CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
+                CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
+                cdrMessage.pos = old_pos;
+
+                if((!mDropParticipantBuiltinTopicData && writer_id == c_EntityId_SPDPWriter) ||
+                        (!mDropPublicationBuiltinTopicData && writer_id == c_EntityId_SEDPPubWriter) ||
+                        (!mDropSubscriptionBuiltinTopicData && writer_id == c_EntityId_SEDPSubWriter))
+                    return false;
+
+                if(mDropDataMessagesPercentage > (rand()%100))
+                    return true;
+
+                break;
+
+            case ACKNACK:
+                if(mDropAckNackMessagesPercentage > (rand()%100))
+                    return true;
+
+                break;
+
+            case HEARTBEAT:
+                cdrMessage.pos += 8;
+                CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
+                CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
+                cdrMessage.pos = old_pos;
+                if(mDropHeartbeatMessagesPercentage > (rand()%100))
+                    return true;
+
+                break;
+
+            case DATA_FRAG:
+                if(mDropDataFragMessagesPercentage  > (rand()%100))
+                    return true;
+
+                break;
+
+            case GAP:
+                cdrMessage.pos += 8;
+                CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
+                CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
+                cdrMessage.pos = old_pos;
+
+                break;
+        }
+
+        if(sequence_number != SequenceNumber_t::unknown() &&
+                find(mSequenceNumberDataMessagesToDrop.begin(),
+                    mSequenceNumberDataMessagesToDrop.end(),
+                    sequence_number) != mSequenceNumberDataMessagesToDrop.end())
             return true;
 
         cdrMessage.pos += cdrSubMessageHeader.submessageLength;
     }
 
+    if(RandomChanceDrop())
+        return true;
+
     return false;
 }
-
 
 bool test_UDPv4Transport::LogDrop(const octet* buffer, uint32_t size)
 {
@@ -123,56 +186,6 @@ bool test_UDPv4Transport::LogDrop(const octet* buffer, uint32_t size)
         message.assign(buffer, buffer + size);
         DropLog.push_back(message);
         return true;
-    }
-
-    return false;
-}
-
-bool test_UDPv4Transport::ContainsSequenceNumberToDrop(CDRMessage_t& cdrMessage)
-{
-    if(cdrMessage.length < RTPSMESSAGE_HEADER_SIZE)
-        return false;
-
-    cdrMessage.pos = 4 + 12; // RTPS header letters + RTPS version
-
-    SubmessageHeader_t cdrSubMessageHeader;
-    while (cdrMessage.pos < cdrMessage.length)
-    {  
-        ReadSubmessageHeader(cdrMessage, cdrSubMessageHeader);
-        if (cdrMessage.pos + cdrSubMessageHeader.submessageLength > cdrMessage.length)
-            return false;
-
-        auto positionBeforeSubmessageData = cdrMessage.pos;
-
-        // Skip ahead based on message fields
-        switch (cdrSubMessageHeader.submessageId)
-        {
-            case DATA:
-                cdrMessage.pos += (2+2+4+4); // Flagskip + Octets to QoS + entityID + entityID
-                break;
-            case GAP:
-                cdrMessage.pos += (4+4); // entityID + entityID
-                break;
-            case HEARTBEAT:
-                cdrMessage.pos += (4+4); // entityID + entityID. We read FirstSN
-            default:
-                cdrMessage.pos += cdrSubMessageHeader.submessageLength;
-                continue; // Messages without sequence number
-        }
-
-        SequenceNumber_t sequenceNumber;
-        bool valid = CDRMessage::readInt32(&cdrMessage, &sequenceNumber.high);
-        valid &= CDRMessage::readUInt32(&cdrMessage, &sequenceNumber.low);
-        bool contained = find(mSequenceNumberDataMessagesToDrop.begin(),
-                mSequenceNumberDataMessagesToDrop.end(),
-                sequenceNumber) != mSequenceNumberDataMessagesToDrop.end();
-
-        if (valid && contained)
-            return true;
-
-        // Jump to the next submessage
-        cdrMessage.pos = positionBeforeSubmessageData;
-        cdrMessage.pos += cdrSubMessageHeader.submessageLength;
     }
 
     return false;

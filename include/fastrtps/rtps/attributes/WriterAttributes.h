@@ -21,7 +21,7 @@
 
 #include "../common/Time_t.h"
 #include "../common/Guid.h"
-#include "../flowcontrol/ThroughputController.h"
+#include "../flowcontrol/ThroughputControllerDescriptor.h"
 #include "EndpointAttributes.h"
 
 namespace eprosima{
@@ -42,23 +42,24 @@ typedef enum RTPSWriterPublishMode : octet
  */
 class  WriterTimes
 {
-public:
-	WriterTimes()
-	{
-		initialHeartbeatDelay.fraction = 200*1000*1000;
-		heartbeatPeriod.seconds = 3;
-		nackResponseDelay.fraction = 200*1000*1000;
-	};
-	virtual ~WriterTimes(){};
+    public:
 
-    //! Initial heartbeat delay. Default value ~45ms.
-    Duration_t initialHeartbeatDelay;
-	//! Periodic HB period, default value 3s.
-	Duration_t heartbeatPeriod;
-	//!Delay to apply to the response of a ACKNACK message, default value ~45ms.
-	Duration_t nackResponseDelay;
-	//!This time allows the RTPSWriter to ignore nack messages too soon after the data as sent, default value 0s.
-	Duration_t nackSupressionDuration;
+        WriterTimes()
+        {
+            initialHeartbeatDelay.fraction = 200*1000*1000;
+            heartbeatPeriod.seconds = 3;
+            nackResponseDelay.fraction = 200*1000*1000;
+        };
+        virtual ~WriterTimes(){};
+
+        //! Initial heartbeat delay. Default value ~45ms.
+        Duration_t initialHeartbeatDelay;
+        //! Periodic HB period, default value 3s.
+        Duration_t heartbeatPeriod;
+        //!Delay to apply to the response of a ACKNACK message, default value ~45ms.
+        Duration_t nackResponseDelay;
+        //!This time allows the RTPSWriter to ignore nack messages too soon after the data as sent, default value 0s.
+        Duration_t nackSupressionDuration;
 };
 
 /**
@@ -67,22 +68,22 @@ public:
  */
 class  WriterAttributes
 {
-public:
-	WriterAttributes() : mode(SYNCHRONOUS_WRITER)
-	{
-		endpoint.endpointKind = WRITER;
-		endpoint.durabilityKind = TRANSIENT_LOCAL;
-		endpoint.reliabilityKind = RELIABLE;
-	};
-	virtual ~WriterAttributes(){};
-	//!Attributes of the associated endpoint.
-	EndpointAttributes endpoint;
-	//!Writer Times (only used for RELIABLE).
-	WriterTimes times;
-	//!Indicates if the Writer is synchronous or asynchronous
-	RTPSWriterPublishMode mode;
-   // Throughput controller, always the last one to apply 
-   ThroughputControllerDescriptor throughputController;
+    public:
+        WriterAttributes() : mode(SYNCHRONOUS_WRITER)
+    {
+        endpoint.endpointKind = WRITER;
+        endpoint.durabilityKind = TRANSIENT_LOCAL;
+        endpoint.reliabilityKind = RELIABLE;
+    };
+        virtual ~WriterAttributes(){};
+        //!Attributes of the associated endpoint.
+        EndpointAttributes endpoint;
+        //!Writer Times (only used for RELIABLE).
+        WriterTimes times;
+        //!Indicates if the Writer is synchronous or asynchronous
+        RTPSWriterPublishMode mode;
+        // Throughput controller, always the last one to apply 
+        ThroughputControllerDescriptor throughputController;
 };
 
 /**
@@ -91,22 +92,22 @@ public:
  */
 class  RemoteReaderAttributes
 {
-public:
-	RemoteReaderAttributes()
-	{
-		endpoint.endpointKind = READER;
-		expectsInlineQos = false;
-	};
-	virtual ~RemoteReaderAttributes()
-	{
+    public:
+        RemoteReaderAttributes()
+        {
+            endpoint.endpointKind = READER;
+            expectsInlineQos = false;
+        };
+        virtual ~RemoteReaderAttributes()
+        {
 
-	};
-	//!Attributes of the associated endpoint.
-	EndpointAttributes endpoint;
-	//!GUID_t of the reader.
-	GUID_t guid;
-	//!Expects inline QOS.
-	bool expectsInlineQos;
+        };
+        //!Attributes of the associated endpoint.
+        EndpointAttributes endpoint;
+        //!GUID_t of the reader.
+        GUID_t guid;
+        //!Expects inline QOS.
+        bool expectsInlineQos;
 };
 }
 }

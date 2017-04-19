@@ -22,11 +22,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "../common/CDRMessage_t.h"
 #include <vector>
-
-namespace boost
-{
-    class mutex;
-}
+#include <mutex>
 
 namespace eprosima {
 namespace fastrtps{
@@ -61,7 +57,7 @@ protected:
 	uint16_t m_group_size;
 	void allocateGroup();
 	void allocateGroup(uint16_t payload);
-    boost::mutex *mutex_;
+    std::mutex *mutex_;
 };
 
 

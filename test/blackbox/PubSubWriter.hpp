@@ -23,6 +23,7 @@
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/participant/Participant.h>
+#include <fastrtps/participant/ParticipantListener.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/publisher/PublisherListener.h>
@@ -31,13 +32,37 @@
 #include <string>
 #include <list>
 #include <condition_variable>
-#include <boost/asio.hpp>
-#include <boost/interprocess/detail/os_thread_functions.hpp>
+#include <asio.hpp>
 #include <gtest/gtest.h>
 
 template<class TypeSupport>
-class PubSubWriter 
+class PubSubWriter
 {
+    class ParticipantListener : public eprosima::fastrtps::ParticipantListener
+    {
+        public:
+
+            ParticipantListener(PubSubWriter &writer) : writer_(writer) {}
+
+            ~ParticipantListener() {}
+
+#if HAVE_SECURITY
+            void onParticipantAuthentication(Participant*, const ParticipantAuthenticationInfo& info)
+            {
+                if(info.rtps.status() == AUTHORIZED_RTPSPARTICIPANT)
+                    writer_.authorized();
+                else if(info.rtps.status() == UNAUTHORIZED_RTPSPARTICIPANT)
+                    writer_.unauthorized();
+            }
+#endif
+
+        private:
+
+            ParticipantListener& operator=(const ParticipantListener&) NON_COPYABLE_CXX11;
+
+            PubSubWriter& writer_;
+    } participant_listener_;
+
     class Listener : public eprosima::fastrtps::PublisherListener
     {
         public:
@@ -67,13 +92,16 @@ class PubSubWriter
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
 
-    PubSubWriter(const std::string &topic_name) : listener_(*this), participant_(nullptr),
+    PubSubWriter(const std::string &topic_name) : participant_listener_(*this), listener_(*this), participant_(nullptr),
     publisher_(nullptr), topic_name_(topic_name), initialized_(false), matched_(0)
+#if HAVE_SECURITY
+    , authorized_(0), unauthorized_(0)
+#endif
     {
         publisher_attr_.topic.topicDataType = type_.getName();
         // Generate topic name
         std::ostringstream t;
-        t << topic_name_ << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+        t << topic_name_ << "_" << asio::ip::host_name() << "_" << GET_PID();
         publisher_attr_.topic.topicName = t.str();
 
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
@@ -100,8 +128,8 @@ class PubSubWriter
     void init()
     {
         //Create participant
-        participant_attr_.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
-        participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr_);
+        participant_attr_.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
+        participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr_, &participant_listener_);
 
         if(participant_ != nullptr)
         {
@@ -145,6 +173,7 @@ class PubSubWriter
         {
             if(publisher_->write((void*)&(*it)))
             {
+                default_send_print<type>(*it);
                 it = msgs.erase(it);
             }
             else
@@ -154,25 +183,57 @@ class PubSubWriter
 
     void waitDiscovery()
     {
-        std::cout << "Writer waiting for discovery..." << std::endl;
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+
+        std::cout << "Writer is waiting discovery..." << std::endl;
 
         if(matched_ == 0)
-            cv_.wait_for(lock, std::chrono::seconds(10));
+            cv_.wait(lock);
 
         ASSERT_NE(matched_, 0u);
-        std::cout << "Writer discovery phase finished" << std::endl;
+        std::cout << "Writer discovery finished..." << std::endl;
     }
 
     void waitRemoval()
     {
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+
+        std::cout << "Writer is waiting removal..." << std::endl;
 
         if(matched_ != 0)
-            cv_.wait_for(lock, std::chrono::seconds(10));
+            cv_.wait(lock);
 
         ASSERT_EQ(matched_, 0u);
+        std::cout << "Writer removal finished..." << std::endl;
     }
+
+#if HAVE_SECURITY
+    void waitAuthorized(unsigned int how_many = 1)
+    {
+        std::unique_lock<std::mutex> lock(mutexAuthentication_);
+
+        std::cout << "Writer is waiting authorization..." << std::endl;
+
+        while(authorized_ != how_many)
+            cvAuthentication_.wait(lock);
+
+        ASSERT_EQ(authorized_, how_many);
+        std::cout << "Writer authorization finished..." << std::endl;
+    }
+
+    void waitUnauthorized(unsigned int how_many = 1)
+    {
+        std::unique_lock<std::mutex> lock(mutexAuthentication_);
+
+        std::cout << "Writer is waiting unauthorization..." << std::endl;
+
+        while(unauthorized_ != how_many)
+            cvAuthentication_.wait(lock);
+
+        ASSERT_EQ(unauthorized_, how_many);
+        std::cout << "Writer unauthorization finished..." << std::endl;
+    }
+#endif
 
     template<class _Rep,
         class _Period
@@ -192,7 +253,7 @@ class PubSubWriter
     PubSubWriter& add_throughput_controller_descriptor_to_pparams(uint32_t bytesPerPeriod, uint32_t periodInMs)
     {
         ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
-        participant_attr_.rtps.throughputController = descriptor;
+        publisher_attr_.throughputController = descriptor;
 
         return *this;
     }
@@ -283,6 +344,18 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& property_policy(const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+    {
+        participant_attr_.rtps.properties = property_policy;
+        return *this;
+    }
+
+    PubSubWriter& entity_property_policy(const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+    {
+        publisher_attr_.properties = property_policy;
+        return *this;
+    }
+
     PubSubWriter& setPublisherIDs(uint8_t UserID, uint8_t EntityID)
     {
         publisher_attr_.setUserDefinedID(UserID);
@@ -295,34 +368,81 @@ class PubSubWriter
         publisher_attr_.topic.topicName=topicName;
         return *this;
     }
+
+    PubSubWriter& disable_multicast(int32_t participantId)
+    {
+        participant_attr_.rtps.participantID = participantId;
+
+        LocatorList_t default_unicast_locators;
+        Locator_t default_unicast_locator;
+
+        default_unicast_locators.push_back(default_unicast_locator);
+        participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = default_unicast_locators;
+
+        Locator_t loopback_locator;
+        loopback_locator.set_IP4_address(127, 0, 0, 1);
+        participant_attr_.rtps.builtin.initialPeersList.push_back(loopback_locator);
+        return *this;
+    }
+
+    PubSubWriter& partition(std::string partition)
+    {
+        publisher_attr_.qos.m_partition.push_back(partition.c_str());
+        return *this;
+    }
+
     private:
 
     void matched()
     {
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
         ++matched_;
         cv_.notify_one();
     }
 
     void unmatched()
     {
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
         --matched_;
         cv_.notify_one();
     }
 
+#if HAVE_SECURITY
+    void authorized()
+    {
+        mutexAuthentication_.lock();
+        ++authorized_;
+        mutexAuthentication_.unlock();
+        cvAuthentication_.notify_all();
+    }
+
+    void unauthorized()
+    {
+        mutexAuthentication_.lock();
+        ++unauthorized_;
+        mutexAuthentication_.unlock();
+        cvAuthentication_.notify_all();
+    }
+#endif
+
     PubSubWriter& operator=(const PubSubWriter&)NON_COPYABLE_CXX11;
 
     eprosima::fastrtps::Participant *participant_;
-    eprosima::fastrtps::PublisherAttributes publisher_attr_;
     eprosima::fastrtps::ParticipantAttributes participant_attr_;
     eprosima::fastrtps::Publisher *publisher_;
+    eprosima::fastrtps::PublisherAttributes publisher_attr_;
     std::string topic_name_;
     bool initialized_;
-    std::mutex mutex_;
+    std::mutex mutexDiscovery_;
     std::condition_variable cv_;
     unsigned int matched_;
     type_support type_;
+#if HAVE_SECURITY
+    std::mutex mutexAuthentication_;
+    std::condition_variable cvAuthentication_;
+    unsigned int authorized_;
+    unsigned int unauthorized_;
+#endif
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBWRITER_HPP_

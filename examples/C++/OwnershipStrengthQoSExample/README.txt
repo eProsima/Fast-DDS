@@ -50,16 +50,4 @@ on a lost deadline.
 
 Internally, the strength hierarchy makes use of the ordering properties of std::map
 to provide quick access to the maximum strength value, and is made thread-safe by
-a boost mutex.
-
-			====================
-			= COMPILING ON WIN =
-			====================
-
-To compile this example, the following arguments must be passed to CMAKE:
-- BOOST_ROOT : Root Boost folder containing the headers of the version
-  FastRTPS currently uses
-- BOOST_LIBRARYDIR : Folder containing the Boost lib files
-  distributed with the current version of FastRTPS. This folder depends on the
-Visual Studio version under usage
-
+a C++11 mutex.

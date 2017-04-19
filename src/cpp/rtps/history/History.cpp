@@ -25,8 +25,7 @@
 
 #include <fastrtps/log/Log.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 namespace eprosima {
     namespace fastrtps{
@@ -72,7 +71,7 @@ namespace eprosima {
                     return false;
                 }
 
-                boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+                std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
                 if(!m_changes.empty())
                 {
                     while(!m_changes.empty())
@@ -89,7 +88,7 @@ namespace eprosima {
 
             //bool History::remove_change(CacheChange_t* ch)
             //{
-            //	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+            //	std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
             //	if(mp_Endpoint->getTopic().topicKind == WITH_KEY)
             //	{
             //		for(std::vector<std::pair<InstanceHandle_t,std::vector<CacheChange_t*>>>::iterator kchit = m_keyedChanges.begin();
@@ -155,7 +154,7 @@ namespace eprosima {
                     return false;
                 }
 
-                boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+                std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
                 for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();
                         it!=m_changes.end();++it)
                 {
@@ -189,8 +188,8 @@ namespace eprosima{
                 {
                     ss << (*it)->sequenceNumber << "-";
                 }
-                ss << endl;
-                cout << ss.str();
+                ss << std::endl;
+                std::cout << ss.str();
             }
 
 

@@ -18,6 +18,8 @@
  */
 
 #include <fastrtps/rtps/reader/timedevent/InitialAckNack.h>
+#include <mutex>
+
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/rtps/reader/StatefulReader.h>
@@ -29,24 +31,23 @@
 
 #include <fastrtps/log/Log.h>
 
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
-
 namespace eprosima {
 namespace fastrtps{
 namespace rtps{
 
+// TODO(Ricardo) Maybe join initial heartbeat, ack and gap
 
 InitialAckNack::~InitialAckNack()
 {
-	logInfo(RTPS_WRITER,"Destroying InitialAckNack");
+    logInfo(RTPS_WRITER,"Destroying InitialAckNack");
     destroy();
 }
 
 InitialAckNack::InitialAckNack(WriterProxy* wp, double interval):
     TimedEvent(wp->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
             wp->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval),
-    wp_(wp)
+    m_cdrmessages(wp->mp_SFR->getRTPSParticipant()->getMaxMessageSize(),
+            wp->mp_SFR->getRTPSParticipant()->getGuid().guidPrefix), wp_(wp)
 {
 }
 
@@ -56,15 +57,15 @@ void InitialAckNack::event(EventCode code, const char* msg)
     // Unused in release mode.
     (void)msg;
 
-	if(code == EVENT_SUCCESS)
-	{
-		Count_t acknackCount = 0;
+    if(code == EVENT_SUCCESS)
+    {
+        Count_t acknackCount = 0;
 
-		{//BEGIN PROTECTION
-            boost::lock_guard<boost::recursive_mutex> guard_reader(*wp_->getMutex());
+        {//BEGIN PROTECTION
+            std::lock_guard<std::recursive_mutex> guard_reader(*wp_->getMutex());
             wp_->m_acknackCount++;
             acknackCount = wp_->m_acknackCount;
-		}
+        }
 
         // Send initial NACK.
         SequenceNumberSet_t sns;
@@ -72,32 +73,21 @@ void InitialAckNack::event(EventCode code, const char* msg)
 
         logInfo(RTPS_READER,"Sending ACKNACK: "<< sns;);
 
-        CDRMessage::initCDRMsg(&initial_acknack_msg_);
-        RTPSMessageCreator::addMessageAcknack(&initial_acknack_msg_,
-                wp_->mp_SFR->getGuid().guidPrefix,
-                wp_->m_att.guid.guidPrefix,
-                wp_->mp_SFR->getGuid().entityId,
-                wp_->m_att.guid.entityId,
-                sns,
-                acknackCount,
-                false);
+        RTPSMessageGroup group(wp_->mp_SFR->getRTPSParticipant(), wp_->mp_SFR, RTPSMessageGroup::READER, m_cdrmessages);
 
-        for(auto lit = wp_->m_att.endpoint.unicastLocatorList.begin();
-                lit != wp_->m_att.endpoint.unicastLocatorList.end(); ++lit)
-            wp_->mp_SFR->getRTPSParticipant()->sendSync(&initial_acknack_msg_, static_cast<Endpoint *>(wp_->mp_SFR), (*lit));
+        LocatorList_t locators(wp_->m_att.endpoint.unicastLocatorList);
+        locators.push_back(wp_->m_att.endpoint.multicastLocatorList);
 
-        for(auto lit = wp_->m_att.endpoint.multicastLocatorList.begin();
-                lit != wp_->m_att.endpoint.multicastLocatorList.end(); ++lit)
-            wp_->mp_SFR->getRTPSParticipant()->sendSync(&initial_acknack_msg_, static_cast<Endpoint *>(wp_->mp_SFR),(*lit));
-	}
-	else if(code == EVENT_ABORT)
-	{
-		logInfo(RTPS_WRITER,"Aborted");
-	}
-	else
-	{
-		logInfo(RTPS_WRITER,"Boost message: " <<msg);
-	}
+        group.add_acknack(wp_->m_att.guid, sns, acknackCount, false, locators);
+    }
+    else if(code == EVENT_ABORT)
+    {
+        logInfo(RTPS_WRITER,"Aborted");
+    }
+    else
+    {
+        logInfo(RTPS_WRITER,"Event message: " <<msg);
+    }
 }
 
 }

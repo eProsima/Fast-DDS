@@ -16,6 +16,8 @@
 #include "ThroughputPublisher.h"
 #include "ThroughputSubscriber.h"
 
+#include "optionparser.h"
+
 #include <stdio.h>
 #include <string>
 #include <iostream>
@@ -31,13 +33,8 @@
 #pragma warning (disable:4512)
 #endif
 
-#include <boost/program_options.hpp>
-
 using namespace eprosima;
 using namespace fastrtps;
-
-
-using namespace std;
 
 
 #if defined(__LITTLE_ENDIAN__)
@@ -53,154 +50,204 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #endif
 
 
-int main(int argc, char** argv)
-{
-    const char* const THROUGHPUT_TEST_USAGE = "Usage: ThroughputTest <publisher|subscriber>\n";
+struct Arg: public option::Arg{
 
-    boost::program_options::options_description p_optionals("Publisher options");
-    p_optionals.add_options()
-        ("time,t", boost::program_options::value<uint32_t>()->default_value(5), "time of the test in seconds")
-        ("recovery_time", boost::program_options::value<uint32_t>()->default_value(5), "how long to sleep after writing a demand in milliseconds")
-        ("demand,d", boost::program_options::value<int>()->default_value(0), "number of sample sent in block")
-		("msg_size,s", boost::program_options::value<int>()->default_value(0), "size of the message")
-		("file,f", boost::program_options::value<std::string>(), "file to read the payload demands from")
-        ;
+    static void printError(const char* msg1, const option::Option& opt, const char* msg2){
+        fprintf(stderr, "%s", msg1);
+        fwrite(opt.name, opt.namelen, 1, stderr);
+        fprintf(stderr, "%s", msg2);
+    }
 
-    boost::program_options::options_description g_optionals("General options");
-    g_optionals.add_options()
-        ("help,h", "produce help message")
-        ("reliability,r", boost::program_options::value<string>()->default_value("besteffort"), "set reliability (\"reliable\"/\"besteffort\")")
-		("seed", boost::program_options::value<uint32_t>()->default_value(80), "seed to calculate domain and topic, to isolate test")
-        ;
+    static option::ArgStatus Unknown(const option::Option& option, bool msg){
+        if (msg) printError("Unknown option '", option, "'\n");
+        return option::ARG_ILLEGAL;
+    }
 
-    boost::program_options::options_description visible_optionals("Allowed options");
-    visible_optionals.add(g_optionals).add(p_optionals);
+    static option::ArgStatus Required(const option::Option& option, bool msg){
+        if (option.arg != 0 && option.arg[0] != 0)
+        return option::ARG_OK;
 
-    boost::program_options::options_description visible_p_optionals("Allowed options");
-    visible_p_optionals.add(g_optionals).add(p_optionals);
+        if (msg) printError("Option '", option, "' requires an argument\n");
+        return option::ARG_ILLEGAL;
+    }
 
-    boost::program_options::options_description visible_s_optionals("Allowed options");
-    visible_s_optionals.add(g_optionals);
+    static option::ArgStatus Numeric(const option::Option& option, bool msg){
+        char* endptr = 0;
+        if (option.arg != 0 && strtol(option.arg, &endptr, 10)){};
+        if (endptr != option.arg && *endptr == 0)
+        return option::ARG_OK;
 
-    boost::program_options::options_description all_optionals("Allowed options");
-    all_optionals.add_options()
-		("hostname", "use hostname in topic name")
-		("export_csv", "export csv")
-        ;
-    all_optionals.add(g_optionals).add(p_optionals);
+        if (msg) printError("Option '", option, "' requires a numeric argument\n");
+        return option::ARG_ILLEGAL;
+    }
+};
 
-	int type;
-	uint32_t test_time_sec = 5, recovery_time_ms = 5;
-	int demand = 0;
-	int msg_size = 0;
+enum  optionIndex {
+    UNKNOWN_OPT,
+    HELP,
+    RELIABILITY,
+    SEED,
+    TIME,
+    RECOVERY_TIME,
+    DEMAND,
+    MSG_SIZE,
+    FILE_R,
+    HOSTNAME,
+    EXPORT_CSV
+};
+
+const option::Descriptor usage[] = {
+    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "Usage: ThroughputTest <publisher|subscriber>\n\nGeneral options:" },
+    { HELP,    0,"h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
+    { RELIABILITY,0,"r","reliability",      Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
+    { SEED,0,"s","seed",                    Arg::Numeric,   "  \t--seed=<num>  \tSeed to calculate domain and topic, to isolate test." },
+    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nPublisher options:"},
+    { TIME, 0,"t","time",                   Arg::Numeric,   "  -t <num>, \t--time=<num>  \tTime of the test in seconds." },
+    { RECOVERY_TIME, 0,"","recovery_time",  Arg::Numeric,   "  \t--recovery_time=<num>  \tHow long to sleep after writing a demand in milliseconds." },
+    { DEMAND, 0,"d","demand",               Arg::Numeric,   "  -d <num>, \t--demand=<num>  \tNumber of sample sent in block." },
+    { MSG_SIZE, 0,"s","msg_size",           Arg::Numeric,   "  -s <num>, \t--msg_size=<num>  \tSize of the message." },
+    { FILE_R,0,"f","file",                  Arg::Required,  "  -f <arg>, \t--file=<arg>   \tFile to read the payload demands from.\t" },
+    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nNote:\nIf no demand or msg_size is provided the .csv file is used.\n"},
+    { HOSTNAME,0,"","hostname",             Arg::None,      "" },
+    { EXPORT_CSV,0,"","export_csv",         Arg::None,      "" },
+    { FILE_R,0,"f","file",                  Arg::Required,  "  -f <arg>, \t--file=<arg>   \tFile to read the payload demands from.\t" },
+    { 0, 0, 0, 0, 0, 0 }
+};
+
+
+int main(int argc, char** argv){
+
+    int columns;
+
+#if defined(_WIN32)
+    char* buf = nullptr;
+    size_t sz = 0;
+    if (_dupenv_s(&buf, &sz, "COLUMNS") == 0 && buf != nullptr){
+        columns = strtol(buf, nullptr, 10);
+        free(buf);
+    }
+    else{
+        columns = 80;
+    }
+#else
+    columns = getenv("COLUMNS")? atoi(getenv("COLUMNS")) : 80;
+#endif
+
+    bool pub_sub = false;
+    uint32_t test_time_sec = 5, recovery_time_ms = 5;
+    int demand = 0;
+    int msg_size = 0;
     bool reliable = false;
     uint32_t seed = 80;
-	bool hostname = false;
-	bool export_csv = false;
-	std::string file_name = "";
+    bool hostname = false;
+    bool export_csv = false;
+    std::string file_name = "";
 
-	if(argc > 1)
-	{
-		if(strcmp(argv[1],"publisher")==0)
-        {
-			type = 1;
+    argc-=(argc>0); argv+=(argc>0); // skip program name argv[0] if present
+    if(argc){
+        if(strcmp(argv[0],"publisher") == 0){
+            pub_sub = true;
         }
-		else if(strcmp(argv[1],"subscriber")==0)
-        {
-			type = 2;
+        else if(strcmp(argv[0],"subscriber") == 0){
+            pub_sub = false;
         }
-		else
-		{
-			cout << THROUGHPUT_TEST_USAGE << visible_optionals << endl;
-            cout << "Note:\n\tIf no demand or msg_size is provided the .cvs file is used"<<endl;
-			return -1;
-		}
-
-        boost::program_options::variables_map vm;
-        try
-        {
-            boost::program_options::store(boost::program_options::parse_command_line(argc - 1, argv + 1, all_optionals), vm);
-            boost::program_options::notify(vm);
-        }
-        catch (std::exception ex)
-        {
-            cout << "Error: " << ex.what() << std::endl;
-			cout << THROUGHPUT_TEST_USAGE << visible_optionals << endl;
-            return -1;
-        }
-
-        if(type == 1)
-        {
-			if (vm.count("file"))
-			{
-				file_name = vm["file"].as<std::string>();
-			}
-
-            test_time_sec = vm["time"].as<uint32_t>();
-            recovery_time_ms = vm["recovery_time"].as<uint32_t>();
-            demand = vm["demand"].as<int>();
-            msg_size = vm["msg_size"].as<int>();
-        }
-
-        if(vm.count("help"))
-        {
-			cout << THROUGHPUT_TEST_USAGE << visible_optionals << endl;
+        else{
+            option::printUsage(fwrite, stdout, usage, columns);
             return 0;
         }
+    }
+    else{
+        option::printUsage(fwrite, stdout, usage, columns);
+        return 0;
+	}
 
-        std::string reliability = vm["reliability"].as<std::string>();
+    argc-=(argc>0); argv+=(argc>0); // skip pub/sub argument
+    option::Stats stats(usage, argc, argv);
+    std::vector<option::Option> options(stats.options_max);
+    std::vector<option::Option> buffer(stats.buffer_max);
+    option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
 
-        if(reliability.compare("reliable") == 0)
-        {
-            reliable = true;
+    if (parse.error())
+    return 1;
+
+    if (options[HELP]){
+        option::printUsage(fwrite, stdout, usage, columns);
+        return 0;
+    }
+
+    for (int i = 0; i < parse.optionsCount(); ++i){
+        option::Option& opt = buffer[i];
+        switch (opt.index()){
+            case HELP:
+                // not possible, because handled further above and exits the program
+                break;
+            case RELIABILITY:
+                if(strcmp(opt.arg, "reliable") == 0){
+                    reliable = true;
+                }
+                else if(strcmp(opt.arg, "besteffort") == 0){
+                    reliable = false;
+                }
+                else{
+                    option::printUsage(fwrite, stdout, usage, columns);
+                    return 0;
+                }
+                break;
+
+            case SEED:
+                seed = strtol(opt.arg, nullptr, 10);
+                break;
+
+            case TIME:
+                test_time_sec = strtol(opt.arg, nullptr, 10);
+                break;
+
+            case RECOVERY_TIME:
+                recovery_time_ms = strtol(opt.arg, nullptr, 10);
+                break;
+
+            case DEMAND:
+                demand = strtol(opt.arg, nullptr, 10);
+                break;
+
+            case MSG_SIZE:
+                msg_size = strtol(opt.arg, nullptr, 10);
+                break;
+
+            case FILE_R:
+                file_name = opt.arg;
+                break;
+
+            case HOSTNAME:
+                hostname = true;
+                break;
+
+            case EXPORT_CSV:
+                export_csv = true;
+                break;
+
+            case UNKNOWN_OPT:
+                option::printUsage(fwrite, stdout, usage, columns);
+                return 0;
+                break;
         }
-        else if(reliability.compare("besteffort") == 0)
-        {
-            reliable = false;
-        }
-        else
-        {
-			cout << THROUGHPUT_TEST_USAGE << visible_optionals << endl;
-            return -1;
-        }
+    }
 
-        seed = vm["seed"].as<uint32_t>();
+    cout << "Starting Throughput Test"<< endl;
 
-        if(vm.count("hostname"))
-            hostname = true;
-		if (vm.count("export_csv"))
-			export_csv = true;
-	}
-	else
-	{
-        cout << THROUGHPUT_TEST_USAGE << visible_optionals << endl;
-		cout << "Note:\n\tIf no demand or msg_size is provided the .cvs file is used"<<endl;
-        return -1;
-	}
+    if(pub_sub){
+        ThroughputPublisher tpub(reliable, seed, hostname, export_csv);
+        tpub.m_file_name = file_name;
+        tpub.run(test_time_sec, recovery_time_ms, demand, msg_size);
+    }
+    else{
+        ThroughputSubscriber tsub(reliable, seed, hostname);
+        tsub.run();
+    }
 
-	cout << "Starting Throughput Test"<< endl;
+    Domain::stopAll();
 
-	switch (type)
-	{
-	case 1:
-	{
-		ThroughputPublisher tpub(reliable, seed, hostname, export_csv);
-		tpub.m_file_name = file_name;
-		tpub.run(test_time_sec, recovery_time_ms, demand, msg_size);
-		break;
-	}
-	case 2:
-	{
-		ThroughputSubscriber tsub(reliable, seed, hostname);
-		tsub.run();
-		break;
-	}
-	}
-
-	Domain::stopAll();
-
-
-	return 0;
+    return 0;
 }
 
 #if defined(_MSC_VER)

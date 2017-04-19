@@ -22,7 +22,6 @@
 
 #include <cstdlib>
 #include <memory>
-#include "../flowcontrol/FlowController.h"
 #include "../../fastrtps_dll.h"
 #include "../common/Guid.h"
 #include <fastrtps/rtps/reader/StatefulReader.h>
@@ -137,6 +136,8 @@ class RTPS_DllAPI RTPSParticipant
     RTPSParticipantAttributes getRTPSParticipantAttributes();
 
     uint32_t getMaxMessageSize() const;
+
+    uint32_t getMaxDataSize() const;
 
     private:
 

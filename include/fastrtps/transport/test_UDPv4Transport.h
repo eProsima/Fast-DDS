@@ -18,7 +18,6 @@
 #include <fastrtps/rtps/messages/RTPS_messages.h>
 #include <fastrtps/rtps/common/SequenceNumber.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
-#include <boost/thread.hpp>
 #include <vector>
 
 #include "test_UDPv4TransportDescriptor.h"
@@ -44,6 +43,9 @@ public:
 
 private:
    uint8_t mDropDataMessagesPercentage;
+   bool mDropParticipantBuiltinTopicData;
+   bool mDropPublicationBuiltinTopicData;
+   bool mDropSubscriptionBuiltinTopicData;
    uint8_t mDropDataFragMessagesPercentage;
    uint8_t mDropHeartbeatMessagesPercentage;
    uint8_t mDropAckNackMessagesPercentage;
@@ -52,8 +54,6 @@ private:
 
    bool LogDrop(const octet* buffer, uint32_t size);
    bool PacketShouldDrop(const octet* sendBuffer, uint32_t sendBufferSize);
-   bool ContainsSubmessageOfID(CDRMessage_t& cdrMessage, octet ID);
-   bool ContainsSequenceNumberToDrop(CDRMessage_t& cdrMessage);
    bool RandomChanceDrop();
 };
 

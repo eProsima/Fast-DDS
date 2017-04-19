@@ -19,6 +19,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     if(GTEST_FOUND)
         find_package(Threads REQUIRED)
 
+        include_directories(${ASIO_INCLUDE_DIR})
+
         set(TIMEDEVENTTESTS_SOURCE mock/MockEvent.cpp
             mock/MockParentEvent.cpp
             TimedEventTests.cpp
@@ -32,9 +34,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(TimedEventTests ${TIMEDEVENTTESTS_SOURCE})
         add_gtest(TimedEventTests ${TIMEDEVENTTESTS_SOURCE})
-        target_compile_definitions(TimedEventTests PRIVATE BOOST_ALL_DYN_LINK FASTRTPS_NO_LIB)
-        target_include_directories(TimedEventTests PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS}
+        target_compile_definitions(TimedEventTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(TimedEventTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
-        target_link_libraries(TimedEventTests ${Boost_LIBRARIES} ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+        target_link_libraries(TimedEventTests ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
     endif()
 endif()

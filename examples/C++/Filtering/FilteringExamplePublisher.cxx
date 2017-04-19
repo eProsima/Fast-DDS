@@ -32,83 +32,83 @@ FilteringExamplePublisher::~FilteringExamplePublisher() {	Domain::removeParticip
 
 bool FilteringExamplePublisher::init()
 {
-	// Create RTPSParticipant
-	
-	ParticipantAttributes PParam;
-	PParam.rtps.builtin.domainId = 0;
-	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-	PParam.rtps.setName("Participant_publisher");  //You can put here the name you want
-	mp_participant = Domain::createParticipant(PParam);
-	if(mp_participant == nullptr)
-		return false;
-	
-	//Register the type
-	
-	Domain::registerType(mp_participant,(TopicDataType*) &myType);
-	
-	// Create Publishers
+    // Create RTPSParticipant
 
-	// Create "Fast" Publisher
-	PublisherAttributes Wparam_fast;
-	Wparam_fast.topic.topicKind = NO_KEY;
-	Wparam_fast.topic.topicDataType = myType.getName();  //This type MUST be registered
-	Wparam_fast.topic.topicName = "FilteringExamplePubSubTopic";
-	Wparam_fast.qos.m_partition.push_back("Fast_Partition");
-	mp_fast_publisher = Domain::createPublisher(mp_participant, Wparam_fast, (PublisherListener*)&m_listener);
-	if (mp_fast_publisher == nullptr)
-		return false;
-	cout << "Fast Publisher created, waiting for Subscribers." << endl;
+    ParticipantAttributes PParam;
+    PParam.rtps.builtin.domainId = 0;
+    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PParam.rtps.setName("Participant_publisher");  //You can put here the name you want
+    mp_participant = Domain::createParticipant(PParam);
+    if(mp_participant == nullptr)
+        return false;
 
-	// Create "Slow" Publisher
-	PublisherAttributes Wparam_slow;
-	Wparam_slow.topic.topicKind = NO_KEY;
-	Wparam_slow.topic.topicDataType = myType.getName();  //This type MUST be registered
-	Wparam_slow.topic.topicName = "FilteringExamplePubSubTopic";
-	Wparam_slow.qos.m_partition.push_back("Slow_Partition");
-	mp_slow_publisher = Domain::createPublisher(mp_participant, Wparam_slow, (PublisherListener*)&m_listener);
-	if (mp_slow_publisher == nullptr)
-		return false;
-	cout << "Slow Publisher created, waiting for Subscribers." << endl;
+    //Register the type
 
-	return true;
+    Domain::registerType(mp_participant,(TopicDataType*) &myType);
+
+    // Create Publishers
+
+    // Create "Fast" Publisher
+    PublisherAttributes Wparam_fast;
+    Wparam_fast.topic.topicKind = NO_KEY;
+    Wparam_fast.topic.topicDataType = myType.getName();  //This type MUST be registered
+    Wparam_fast.topic.topicName = "FilteringExamplePubSubTopic";
+    Wparam_fast.qos.m_partition.push_back("Fast_Partition");
+    mp_fast_publisher = Domain::createPublisher(mp_participant, Wparam_fast, (PublisherListener*)&m_listener);
+    if (mp_fast_publisher == nullptr)
+        return false;
+    std::cout << "Fast Publisher created, waiting for Subscribers." << std::endl;
+
+    // Create "Slow" Publisher
+    PublisherAttributes Wparam_slow;
+    Wparam_slow.topic.topicKind = NO_KEY;
+    Wparam_slow.topic.topicDataType = myType.getName();  //This type MUST be registered
+    Wparam_slow.topic.topicName = "FilteringExamplePubSubTopic";
+    Wparam_slow.qos.m_partition.push_back("Slow_Partition");
+    mp_slow_publisher = Domain::createPublisher(mp_participant, Wparam_slow, (PublisherListener*)&m_listener);
+    if (mp_slow_publisher == nullptr)
+        return false;
+    std::cout << "Slow Publisher created, waiting for Subscribers." << std::endl;
+
+    return true;
 
 }
 
 void FilteringExamplePublisher::PubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
 {
-	if (info.status == MATCHED_MATCHING)
-	{
-		n_matched++;
-		cout << "Publisher matched" << endl;
-	}
-	else
-	{
-		n_matched--;
-		cout << "Publisher unmatched" << endl;
-	}
+    if (info.status == MATCHED_MATCHING)
+    {
+        n_matched++;
+        std::cout << "Publisher matched" << std::endl;
+    }
+    else
+    {
+        n_matched--;
+        std::cout << "Publisher unmatched" << std::endl;
+    }
 }
 
 void FilteringExamplePublisher::run()
 {
-	while(m_listener.n_matched == 0)
-	{
-		eClock::my_sleep(250); // Sleep 250 ms
-	}
-	
-	// Publication code
-	
-	FilteringExample st;
-	
-	int sampleNumber = 0;
+    while(m_listener.n_matched == 0)
+    {
+        eClock::my_sleep(250); // Sleep 250 ms
+    }
 
-	while (1) {
-		sampleNumber++;
-		st.sampleNumber(sampleNumber);
-		mp_fast_publisher->write(&st);
-		if (sampleNumber % 5 == 0) { // slow publisher writes every 5 secs.
-			mp_slow_publisher->write(&st);
-		}
-		eClock::my_sleep(1000);
-	}
+    // Publication code
+
+    FilteringExample st;
+
+    int sampleNumber = 0;
+
+    while (1) {
+        sampleNumber++;
+        st.sampleNumber(sampleNumber);
+        mp_fast_publisher->write(&st);
+        if (sampleNumber % 5 == 0) { // slow publisher writes every 5 secs.
+            mp_slow_publisher->write(&st);
+        }
+        eClock::my_sleep(1000);
+    }
 
 }

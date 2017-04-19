@@ -21,17 +21,8 @@
 #define RESOURCEEVENT_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-
-
-namespace boost
-{
-class thread;
-namespace asio
-{
-class io_service;
-}
-}
-
+#include <thread>
+#include <asio.hpp>
 
 namespace eprosima {
 namespace fastrtps{
@@ -58,16 +49,16 @@ public:
 	* Get the associated IO service
 	* @return Associated IO service
 	*/
-	boost::asio::io_service& getIOService() { return *mp_io_service; }
+	asio::io_service& getIOService() { return *mp_io_service; }
 
-    boost::thread& getThread() { return *mp_b_thread; }
+    std::thread& getThread() { return *mp_b_thread; }
 
 private:
 
 	//!Thread
-	boost::thread* mp_b_thread;
+	std::thread* mp_b_thread;
 	//!IO service
-	boost::asio::io_service* mp_io_service;
+	asio::io_service* mp_io_service;
 	//!
 	void * mp_work;
 

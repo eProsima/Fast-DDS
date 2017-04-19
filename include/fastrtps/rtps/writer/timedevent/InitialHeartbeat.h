@@ -24,6 +24,7 @@
 #include <fastrtps/rtps/common/CDRMessage_t.h>
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/common/Locator.h>
+#include <fastrtps/rtps/messages/RTPSMessageGroup.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -36,32 +37,30 @@ class ReaderProxy;
  * InitialHeartbeat class, controls the initial send operation of HB.
  * @ingroup WRITER_MODULE
  */
-class InitialHeartbeat: public TimedEvent {
-public:
-	/**
-	*
-	* @param p_RP
-	* @param interval
-	*/
-	InitialHeartbeat(ReaderProxy* rp, double interval);
-	virtual ~InitialHeartbeat();
-	
-	/**
-	* Method invoked when the event occurs
-	*
-	* @param code Code representing the status of the event
-	* @param msg Message associated to the event
-	*/
-	void event(EventCode code, const char* msg= nullptr);
+class InitialHeartbeat: public TimedEvent
+{
+    public:
+        /**
+         *
+         * @param p_RP
+         * @param interval
+         */
+        InitialHeartbeat(ReaderProxy* rp, double interval);
+        virtual ~InitialHeartbeat();
 
-	//!
-	CDRMessage_t initial_hb_msg_;
-	//!
-    ReaderProxy* rp_;
+        /**
+         * Method invoked when the event occurs
+         *
+         * @param code Code representing the status of the event
+         * @param msg Message associated to the event
+         */
+        void event(EventCode code, const char* msg= nullptr);
+
+        //!
+        RTPSMessageGroup_t m_cdrmessages;
+        //!
+        ReaderProxy* rp_;
 };
-
-
-
 
 }
 }
