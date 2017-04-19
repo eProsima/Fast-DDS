@@ -194,6 +194,8 @@ void SecurityManager::destroy()
     {
         SecurityException exception;
 
+        mutex_.lock();
+
         for(auto& dp_it : discovered_participants_)
         {
             auto auth_ptr = dp_it.second.get_auth();
@@ -222,6 +224,8 @@ void SecurityManager::destroy()
             authentication_plugin_->return_identity_handle(local_identity_handle_, exception);
             local_identity_handle_ = nullptr;
         }
+
+        mutex_.unlock();
 
         delete_entities();
 
