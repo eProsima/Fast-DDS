@@ -83,7 +83,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     RAND_bytes( (*PCrypto)->ParticipantKeyMaterial.master_sender_key.data(), 16 );
 
     //These values are set by the standard
-    (*PCrypto)->ParticipantKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
+    (*PCrypto)->ParticipantKeyMaterial.receiver_specific_key_id = {{0, 0, 0, 0}};  //No receiver specific, as this is the Master Participant Key
     (*PCrypto)->ParticipantKeyMaterial.master_receiver_specific_key.fill(0);
 
     //Set values related to key update policy
@@ -274,7 +274,7 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
     (*WCrypto)->WriterKeyMaterial.master_sender_key.fill(0);
     RAND_bytes( (*WCrypto)->WriterKeyMaterial.master_sender_key.data(), 16 );
 
-    (*WCrypto)->WriterKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
+    (*WCrypto)->WriterKeyMaterial.receiver_specific_key_id = {{0, 0, 0, 0}};  //No receiver specific, as this is the Master Participant Key
     (*WCrypto)->WriterKeyMaterial.master_receiver_specific_key.fill(0);
 
     (*WCrypto)->max_blocks_per_session = maxblockspersession;
@@ -409,7 +409,7 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
     (*RCrypto)->ReaderKeyMaterial.master_sender_key.fill(0);
     RAND_bytes( (*RCrypto)->ReaderKeyMaterial.master_sender_key.data(), 16 );
 
-    (*RCrypto)->ReaderKeyMaterial.receiver_specific_key_id = {0,0,0,0};  //No receiver specific, as this is the Master Participant Key
+    (*RCrypto)->ReaderKeyMaterial.receiver_specific_key_id = {{0, 0, 0, 0}};  //No receiver specific, as this is the Master Participant Key
     (*RCrypto)->ReaderKeyMaterial.master_receiver_specific_key.fill(0);
 
     (*RCrypto)->max_blocks_per_session = maxblockspersession;
@@ -611,7 +611,7 @@ bool AESGCMGMAC_KeyFactory::unregister_datareader(
 }
 
 CryptoTransformKeyId AESGCMGMAC_KeyFactory::make_unique_KeyId(){
-    CryptoTransformKeyId buffer{0,0,0,0};
+    CryptoTransformKeyId buffer{{0, 0, 0, 0}};
     bool unique = false;
 
     while(!unique){
