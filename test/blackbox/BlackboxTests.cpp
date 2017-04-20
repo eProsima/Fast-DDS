@@ -1697,6 +1697,34 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldPartitions)
     reader.block_for_all();
 }
 
+BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldUserData)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    std::vector<octet> received_user_data;
+    reader.setOnDiscoveryFunction([](const ParticipantDiscoveryInfo& info) -> bool{
+            std::cout << "Received USER_DATA from the writer: ";
+            for (auto i: info.rtps.m_userData) std::cout << i << ' ';
+            return info.rtps.m_userData == std::vector<octet>({'a','b','c','d'});
+        });
+
+    reader.history_depth(100).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.history_depth(100).
+        userData({'a','b','c','d'}).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.waitDiscovery();
+    writer.waitDiscovery();
+
+    ASSERT_TRUE(reader.getDiscoveryResult());
+}
+
 #if HAVE_SECURITY
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
