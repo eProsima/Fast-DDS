@@ -111,7 +111,8 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
 
     if (XML_SUCCESS != eResult)
     {
-        logError(XMLPROFILEPARSER, "Error opening '" << filename << "'");
+        if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
+            logError(XMLPROFILEPARSER, "Error opening '" << filename << "'");
         m_xml_files.emplace(filename, XMLP_ret::ERROR);
         return XMLP_ret::ERROR;
     }
