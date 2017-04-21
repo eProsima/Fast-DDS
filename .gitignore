@@ -430,3 +430,6 @@ docs/_build/
 # PyBuilder
 target/
 
+# Eclipse
+.cproject
+.project
