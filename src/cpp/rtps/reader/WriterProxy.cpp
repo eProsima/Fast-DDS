@@ -279,16 +279,22 @@ bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum, bool is_re
 
         if(chit != m_changesFromW.begin())
         {
-            ChangeFromWriter_t newch(*chit);
-            newch.setStatus(RECEIVED);
-            newch.setRelevance(is_relevance);
+            if(chit->getStatus() != RECEIVED)
+            {
+                ChangeFromWriter_t newch(*chit);
+                newch.setStatus(RECEIVED);
+                newch.setRelevance(is_relevance);
 
-            auto hint = m_changesFromW.erase(chit);
+                auto hint = m_changesFromW.erase(chit);
 
-            m_changesFromW.insert(hint, newch);
+                m_changesFromW.insert(hint, newch);
+            }
+            else
+                return false;
         }
         else
         {
+            assert(chit->getStatus() != RECEIVED);
             changesFromWLowMark_ = seqNum;
             m_changesFromW.erase(chit);
             cleanup();
@@ -323,7 +329,20 @@ const std::vector<ChangeFromWriter_t> WriterProxy::missing_changes()
     return returnedValue;
 }
 
+bool WriterProxy::change_was_received(const SequenceNumber_t& seq_num)
+{
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
+    if(seq_num <= changesFromWLowMark_)
+        return true;
+
+    auto chit = m_changesFromW.find(ChangeFromWriter_t(seq_num));
+
+    if(chit != m_changesFromW.end() && chit->getStatus() == RECEIVED)
+        return true;
+
+    return false;
+}
 
 const SequenceNumber_t WriterProxy::available_changes_max() const
 {

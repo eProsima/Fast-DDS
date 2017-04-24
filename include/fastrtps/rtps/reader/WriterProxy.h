@@ -166,6 +166,8 @@ namespace eprosima
                      */
                     SequenceNumber_t nextCacheChangeToBeNotified();
 
+                    bool change_was_received(const SequenceNumber_t& seq_num);
+
                 private:
 
                     /*!
