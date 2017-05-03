@@ -15,7 +15,9 @@
 import sys, os, subprocess
 
 publisher_command = os.environ.get("SIMPLE_COMMUNICATION_PUBLISHER_BIN")
+assert publisher_command
 subscriber_command = os.environ.get("SIMPLE_COMMUNICATION_SUBSCRIBER_BIN")
+assert subscriber_command
 
 subscriber_proc = subprocess.Popen([subscriber_command, "--notexit"])
 publisher_proc = subprocess.Popen([publisher_command, "--exit_on_lost_liveliness"], stdout=subprocess.PIPE)
