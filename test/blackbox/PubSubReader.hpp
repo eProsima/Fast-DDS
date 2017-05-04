@@ -54,6 +54,12 @@ class PubSubReader
 
                 ~ParticipantListener() {}
 
+                void onParticipantDiscovery(Participant*, ParticipantDiscoveryInfo info){
+                    if(reader_.onDiscovery_!=nullptr){
+                        reader_.discovery_result_ = reader_.onDiscovery_(info);
+                    }
+                }
+
 #if HAVE_SECURITY
                 void onParticipantAuthentication(Participant*, const ParticipantAuthenticationInfo& info)
                 {
@@ -107,7 +113,7 @@ class PubSubReader
 
         PubSubReader(const std::string& topic_name) : participant_listener_(*this), listener_(*this), participant_(nullptr), subscriber_(nullptr),
         topic_name_(topic_name), initialized_(false), matched_(0), receiving_(false), current_received_count_(0),
-        number_samples_expected_(0)
+        number_samples_expected_(0), discovery_result_(false), onDiscovery_(nullptr)
 #if HAVE_SECURITY
         , authorized_(0), unauthorized_(0)
 #endif
@@ -406,6 +412,22 @@ class PubSubReader
             return *this;
         }
 
+        PubSubReader& userData(std::vector<octet> user_data)
+        {
+            participant_attr_.rtps.userData = user_data;
+            return *this;
+        }
+
+        /*** Function for discovery callback ***/
+
+        bool getDiscoveryResult(){
+            return discovery_result_;
+        }
+
+        void setOnDiscoveryFunction(std::function<bool(const ParticipantDiscoveryInfo&)> f){
+            onDiscovery_ = f;
+        }
+
     private:
 
         void receive_one(eprosima::fastrtps::Subscriber* subscriber, bool& returnedValue)
@@ -490,6 +512,10 @@ class PubSubReader
         SequenceNumber_t last_seq;
         size_t current_received_count_;
         size_t number_samples_expected_;
+        bool discovery_result_;
+
+        std::function<bool(const ParticipantDiscoveryInfo& info)> onDiscovery_;
+
 #if HAVE_SECURITY
         std::mutex mutexAuthentication_;
         std::condition_variable cvAuthentication_;

@@ -416,30 +416,23 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                         }
                         length_diff += 4;
                         p->dataVec.resize(vec_size);
-                        octet* oc=new octet[vec_size];
                         pos_ref = msg->pos;
                         valid &= CDRMessage::readData(msg,p->dataVec.data(),vec_size);
                         if(valid)
                         {
-                            for(uint32_t i =0;i<vec_size;i++){
-                                p->dataVec.at(i) = oc[i];
-                            }
                             msg->pos += (plength - 4 - vec_size);
                             length_diff += msg->pos - pos_ref;
                             if(plength != length_diff){
                                 delete(p);
-                                delete[] oc;
                                 return -1;
                             }
                             plist->m_parameters.push_back((Parameter_t*)p);
                             plist->m_hasChanged = true;
                             paramlist_byte_size += plength;
-                            delete[] oc;
                         }
                         else
                         {
                             delete(p);
-                            delete[] oc;
                             return -1;
                         }
                         break;

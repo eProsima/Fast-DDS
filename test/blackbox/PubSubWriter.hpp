@@ -391,6 +391,12 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& userData(std::vector<octet> user_data)
+    {
+        participant_attr_.rtps.userData = user_data;
+        return *this;
+    }
+
     private:
 
     void matched()
