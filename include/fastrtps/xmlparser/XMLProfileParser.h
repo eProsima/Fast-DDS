@@ -63,36 +63,6 @@ public:
     */
     RTPS_DllAPI static XMLP_ret loadXMLFile(const std::string &filename);
     /**
-    * Load a profiles XML file and then search for the profile specified and fill the structure.
-    * @param filename Name for the file to be loaded.
-    * @param profile_name Name for the profile to be used to fill the structure.
-    * @param atts Structure to be filled.
-    * @return XMLP_ret::OK on success, XMLP_ret::ERROR in other case.
-    */
-    RTPS_DllAPI static XMLP_ret fillParticipantProfileFromXMLFile(const std::string &filename,
-                                                                  const std::string &profile_name,
-                                                                  ParticipantAttributes &atts);
-    /**
-    * Load a profiles XML file and then search for the profile specified and fill the structure.
-    * @param filename Name for the file to be loaded.
-    * @param profile_name Name for the profile to be used to fill the structure.
-    * @param atts Structure to be filled.
-    * @return XMLP_ret::OK on success, XMLP_ret::ERROR in other case.
-    */
-    RTPS_DllAPI static XMLP_ret fillPublisherProfileFromXMLFile(const std::string &filename,
-                                                                const std::string &profile_name,
-                                                                PublisherAttributes &atts);
-    /**
-    * Load a profiles XML file and then search for the profile specified and fill the structure.
-    * @param filename Name for the file to be loaded.
-    * @param profile_name Name for the profile to be used to fill the structure.
-    * @param atts Structure to be filled.
-    * @return XMLP_ret::OK on success, XMLP_ret::ERROR in other case.
-    */
-    RTPS_DllAPI static XMLP_ret fillSubscriberProfileFromXMLFile(const std::string &filename,
-                                                                 const std::string &profile_name,
-                                                                 SubscriberAttributes &atts);
-    /**
     * Search for the profile specified and fill the structure.
     * @param profile_name Name for the profile to be used to fill the structure.
     * @param atts Structure to be filled.
@@ -100,11 +70,11 @@ public:
     */
     RTPS_DllAPI static XMLP_ret fillParticipantProfile(const std::string &profile_name, ParticipantAttributes &atts);
     /**
-        * Search for the profile specified and fill the structure.
-        * @param profile_name Name for the profile to be used to fill the structure.
-        * @param atts Structure to be filled.
-        * @return XMLP_ret::OK on success, XMLP_ret::ERROR in other case.
-        */
+    * Search for the profile specified and fill the structure.
+    * @param profile_name Name for the profile to be used to fill the structure.
+    * @param atts Structure to be filled.
+    * @return XMLP_ret::OK on success, XMLP_ret::ERROR in other case.
+    */
     RTPS_DllAPI static XMLP_ret fillPublisherProfile(const std::string &profile_name, PublisherAttributes &atts);
     /**
     * Search for the profile specified and fill the structure.

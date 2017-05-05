@@ -153,12 +153,6 @@ Participant* Domain::createParticipant(const std::string &participant_profile, P
 
 Participant* Domain::createParticipant(ParticipantAttributes& att,ParticipantListener* listen)
 {
-    if (false == default_xml_profiles_loaded)
-    {
-        XMLProfileParser::loadDefaultXMLFile();
-        default_xml_profiles_loaded = true;
-    }
-
     Participant* pubsubpar = new Participant();
     ParticipantImpl* pspartimpl = new ParticipantImpl(att,pubsubpar,listen);
     RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps,&pspartimpl->m_rtps_listener);

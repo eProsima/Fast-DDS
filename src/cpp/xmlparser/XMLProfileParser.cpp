@@ -11,45 +11,6 @@ std::map<std::string, PublisherAttributes>   XMLProfileParser::m_publisher_profi
 std::map<std::string, SubscriberAttributes>  XMLProfileParser::m_subscriber_profiles;
 std::map<std::string, XMLP_ret>              XMLProfileParser::m_xml_files;
 
-XMLP_ret XMLProfileParser::fillParticipantProfileFromXMLFile(const std::string &filename,
-                                           const std::string &profile_name,
-                                           ParticipantAttributes &atts)
-{
-    if (XMLP_ret::ERROR == XMLProfileParser::loadXMLFile(filename))
-    {
-        logError(XMLPROFILEPARSER, "Error parsing file: " << filename);
-        return XMLP_ret::ERROR;
-    }
-
-    return fillParticipantProfile(profile_name, atts);
-}
-
-XMLP_ret XMLProfileParser::fillPublisherProfileFromXMLFile(const std::string &filename,
-                                         const std::string &profile_name,
-                                         PublisherAttributes &atts)
-{
-    if (XMLP_ret::ERROR == XMLProfileParser::loadXMLFile(filename))
-    {
-        logError(XMLPROFILEPARSER, "Error parsing file: " << filename);
-        return XMLP_ret::ERROR;
-    }
-
-    return fillPublisherProfile(profile_name, atts);
-}
-
-XMLP_ret XMLProfileParser::fillSubscriberProfileFromXMLFile(const std::string &filename,
-                                          const std::string &profile_name,
-                                          SubscriberAttributes &atts)
-{
-    if (XMLP_ret::ERROR == XMLProfileParser::loadXMLFile(filename))
-    {
-        logError(XMLPROFILEPARSER, "Error parsing file: " << filename);
-        return XMLP_ret::ERROR;
-    }
-
-    return fillSubscriberProfile(profile_name, atts);
-}
-
 XMLP_ret XMLProfileParser::fillParticipantProfile(const std::string &profile_name, ParticipantAttributes &atts)
 {
     part_map_iterator_t it = m_participant_profiles.find(profile_name);
