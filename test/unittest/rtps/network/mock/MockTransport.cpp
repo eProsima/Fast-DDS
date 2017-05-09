@@ -140,6 +140,16 @@ LocatorList_t MockTransport::NormalizeLocator(const Locator_t& locator)
     return list;
 }
 
+LocatorList_t MockTransport::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
+{
+    LocatorList_t result;
+
+    for(auto locatorList : locatorLists)
+        result.push_back(locatorList);
+
+    return result;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

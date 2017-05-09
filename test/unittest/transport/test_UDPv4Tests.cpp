@@ -56,6 +56,7 @@ TEST_F(test_UDPv4Tests, DATA_messages_dropped)
    // Given
    descriptor.dropDataMessagesPercentage = 100;
    test_UDPv4Transport transportUnderTest(descriptor);
+   transportUnderTest.init();
    CDRMessage_t testDataMessage;
    HELPER_FillDataMessage(testDataMessage, SequenceNumber_t());
    HELPER_WarmUpOutput(transportUnderTest);
@@ -73,6 +74,7 @@ TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
    // Given
    descriptor.dropAckNackMessagesPercentage = 100;
    test_UDPv4Transport transportUnderTest(descriptor);
+   transportUnderTest.init();
    CDRMessage_t testDataMessage;
    HELPER_FillAckNackMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
@@ -90,6 +92,7 @@ TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
    // Given
    descriptor.dropHeartbeatMessagesPercentage = 100;
    test_UDPv4Transport transportUnderTest(descriptor);
+   transportUnderTest.init();
    CDRMessage_t testDataMessage;
    HELPER_FillHeartbeatMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
@@ -107,6 +110,7 @@ TEST_F(test_UDPv4Tests, Dropping_by_random_chance)
    // Given
    descriptor.percentageOfMessagesToDrop = 100; // To avoid a non-deterministic test
    test_UDPv4Transport transportUnderTest(descriptor);
+   transportUnderTest.init();
    CDRMessage_t testDataMessage;
    HELPER_FillAckNackMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
@@ -129,6 +133,7 @@ TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
 
    descriptor.sequenceNumberDataMessagesToDrop = sequenceNumbersToDrop;
    test_UDPv4Transport transportUnderTest(descriptor);
+   transportUnderTest.init();
    CDRMessage_t testDataMessage;
    HELPER_FillDataMessage(testDataMessage, sequenceNumbersToDrop.back());
    HELPER_WarmUpOutput(transportUnderTest);
@@ -149,6 +154,7 @@ TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
    descriptor.granularMode = false;
 
    test_UDPv4Transport transportUnderTest(descriptor); // Default, no drops
+   transportUnderTest.init();
    CDRMessage_t testDataMessage;
    HELPER_FillAckNackMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);

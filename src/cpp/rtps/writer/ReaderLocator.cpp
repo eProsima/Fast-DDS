@@ -26,36 +26,14 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-ReaderLocator::ReaderLocator()
+ReaderLocator::ReaderLocator() : expectsInlineQos(false),
+    isFixed(false)
 {
-    this->expectsInlineQos = false;
-    n_used = 1;
-
-}
-
-ReaderLocator::ReaderLocator(Locator_t& a_locator, bool expectsQos ){
-    locator = a_locator;
-    expectsInlineQos = expectsQos;
-    n_used = 1;
 }
 
 ReaderLocator::~ReaderLocator()
 {
 }
-
-/*bool ReaderLocator::remove_requested_change(const CacheChange_t* cpoin)
-{
-    std::vector<const CacheChange_t*>::iterator it;
-    for(it=requested_changes.begin();it!=requested_changes.end();++it)
-    {
-        if(cpoin == *it)
-        {
-            requested_changes.erase(it);
-            return true;
-        }
-    }
-    return false;
-}*/
 
 }
 } /* namespace rtps */

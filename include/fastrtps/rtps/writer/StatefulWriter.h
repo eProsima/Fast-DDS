@@ -59,10 +59,6 @@ namespace eprosima
                 //!WriterTimes
                 WriterTimes m_times;
 
-                std::vector<ReaderProxy*>::iterator m_reader_iterator;
-                size_t m_readers_to_walk;
-                bool wrap_around_readers();
-
                 //! Vector containin all the associated ReaderProxies.
                 std::vector<ReaderProxy*> matched_readers;
                 //!EntityId used to send the HB.(only for builtin types performance)
@@ -184,9 +180,19 @@ namespace eprosima
                  * @brief Sends a heartbeat to a remote reader.
                  * @remarks This function is non thread-safe.
                  */
-                void send_heartbeat_to(ReaderProxy& remoteReaderProxy);
+                void send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy, bool final = false);
 
                 private:
+
+                void send_heartbeat_nts_(const std::vector<GUID_t>& remote_readers, const LocatorList_t& locators,
+                        RTPSMessageGroup& message_group, bool final = false);
+
+                bool disableHeartbeatPiggyback_;
+
+                const uint32_t sendBufferSize_;
+
+                int32_t currentUsageSendBufferSize_;
+
                 std::vector<std::unique_ptr<FlowController> > m_controllers;
 
                 StatefulWriter& operator=(const StatefulWriter&) NON_COPYABLE_CXX11;

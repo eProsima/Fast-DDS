@@ -38,9 +38,15 @@ class ThroughputController : public FlowController
 public:
    ThroughputController(const ThroughputControllerDescriptor&, const RTPSWriter* associatedWriter);
    ThroughputController(const ThroughputControllerDescriptor&, const RTPSParticipantImpl* associatedParticipant);
-   virtual void operator()(std::vector<CacheChange_t*>& changes);
+
+   virtual void operator()(RTPSWriterCollector<ReaderLocator*>& changesToSend);
+   virtual void operator()(RTPSWriterCollector<ReaderProxy*>& changesToSend);
 
 private:
+
+   bool process_change_nts_(CacheChange_t* change, const SequenceNumber_t& seqNum,
+        const FragmentNumber_t fragNum);
+
    uint32_t mBytesPerPeriod;
    uint32_t mAccumulatedPayloadSize;
    uint32_t mPeriodMillisecs;

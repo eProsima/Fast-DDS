@@ -219,11 +219,12 @@ void ReaderProxy::set_change_to_status(const SequenceNumber_t& seq_num, ChangeFo
         AsyncWriterThread::wakeUp(mp_SFW);
 }
 
-void ReaderProxy::mark_fragment_as_sent_for_change(const CacheChange_t* change, FragmentNumber_t fragment)
+bool ReaderProxy::mark_fragment_as_sent_for_change(const CacheChange_t* change, FragmentNumber_t fragment)
 {
     if(change->sequenceNumber <= changesFromRLowMark_)
-        return;
+        return false;
 
+    bool allFragmentsSent = false;
     auto it = m_changesForReader.find(ChangeForReader_t(change->sequenceNumber));
 
     bool mustWakeUpAsyncThread = false; 
@@ -233,7 +234,10 @@ void ReaderProxy::mark_fragment_as_sent_for_change(const CacheChange_t* change, 
         ChangeForReader_t newch(*it);
         newch.markFragmentsAsSent(fragment);
         if (newch.getUnsentFragments().isSetEmpty())
+        {
             newch.setStatus(UNDERWAY); //TODO (Ricardo) Check
+            allFragmentsSent = true;
+        }
         else
             mustWakeUpAsyncThread = true;
         auto hint = m_changesForReader.erase(it);
@@ -242,6 +246,8 @@ void ReaderProxy::mark_fragment_as_sent_for_change(const CacheChange_t* change, 
 
     if (mustWakeUpAsyncThread)
         AsyncWriterThread::wakeUp(mp_SFW);
+
+    return allFragmentsSent;
 }
 
 void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next)

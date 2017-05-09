@@ -193,8 +193,8 @@ class RTPSParticipantAttributes
         {
             defaultSendPort = 10040;
             setName("RTPSParticipant");
-            sendSocketBufferSize = 65536;
-            listenSocketBufferSize = 65536;
+            sendSocketBufferSize = 0;
+            listenSocketBufferSize = 0;
             use_IP4_to_send = true;
             use_IP6_to_send = false;
             participantID = -1;
@@ -227,10 +227,18 @@ class RTPSParticipantAttributes
          * In this release all Endpoints use the same resource (socket) to send messages.
          */
         uint32_t defaultSendPort;
-        //!Send socket buffer size for the send resource, default value 65536.
+
+        /*!
+         * @brief Send socket buffer size for the send resource. Zero value indicates to use default system buffer size.
+         * Default value: 0.
+         */
         uint32_t sendSocketBufferSize;
-        //!Listen socket buffer for all listen resources, default value 65536.
+
+        /*! Listen socket buffer for all listen resources. Zero value indicates to use default system buffer size.
+         * Default value 65536.
+         */
         uint32_t listenSocketBufferSize;
+
         //! Builtin parameters.
         BuiltinAttributes builtin;
         //!Port Parameters

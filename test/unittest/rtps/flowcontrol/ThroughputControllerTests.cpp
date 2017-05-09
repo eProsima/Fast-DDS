@@ -13,6 +13,8 @@
 // limitations under the License.
 
 #include <rtps/flowcontrol/ThroughputController.h>
+#include <fastrtps/rtps/writer/ReaderLocator.h>
+
 #include <gtest/gtest.h>
 
 using namespace std;
@@ -35,20 +37,23 @@ class ThroughputControllerTests: public ::testing::Test
       for (unsigned int i = 0; i < numberOfTestChanges; i++)
       {
          testChanges.emplace_back(new CacheChange_t(testPayloadSize));
+         testChanges.back()->sequenceNumber = {0, i+1};
          testChanges.back()->serializedPayload.length = testPayloadSize;
-         testChangesForUse.push_back(testChanges.back().get());
+         testChangesForUse.add_change(testChanges.back().get(), &mock, FragmentNumberSet_t());
 
          otherChanges.emplace_back(new CacheChange_t(testPayloadSize));
+         otherChanges.back()->sequenceNumber = {0, i+1};
          otherChanges.back()->serializedPayload.length = testPayloadSize;
-         otherChangesForUse.emplace_back(otherChanges.back().get());
+         otherChangesForUse.add_change(otherChanges.back().get(), &mock, FragmentNumberSet_t());
       }
    }
 
    ThroughputController sController;
+   ReaderLocator mock;
    std::vector<std::unique_ptr<CacheChange_t>> testChanges;
    std::vector<std::unique_ptr<CacheChange_t>> otherChanges;
-   std::vector<CacheChange_t*> testChangesForUse;
-   std::vector<CacheChange_t*> otherChangesForUse;
+   RTPSWriterCollector<ReaderLocator*> testChangesForUse;
+   RTPSWriterCollector<ReaderLocator*> otherChangesForUse;
 };
 
 TEST_F(ThroughputControllerTests, throughput_controller_lets_only_some_elements_through)
@@ -66,30 +71,41 @@ TEST_F(ThroughputControllerTests, if_changes_are_fragmented_throughput_controlle
 {
     // Given fragmented changes
     testChangesForUse.clear();
-    for (auto& change : testChanges)
+
+    std::set<FragmentNumber_t> fragmentSet;
+    for(uint32_t i = 1; i <= 10; i++)
+        fragmentSet.insert(i);
+
+    for(auto& change : testChanges)
     {
         change->setFragmentSize(100);
-        //TODO(Ricardo)
-        change->getDataFragments()->assign(change->getDataFragments()->size(), PRESENT);
-        testChangesForUse.emplace_back(change.get());
+        testChangesForUse.add_change(change.get(), &mock, fragmentSet);
     }
 
     // When
     sController(testChangesForUse);
 
     // Then
-    ASSERT_EQ(6, testChangesForUse.size());
-
     // The first 5 are completely cleared
-    for (int i = 0; i < 5; i++)
+    // And the last one is partially cleared
+    ASSERT_EQ(55, testChangesForUse.size());
+
+    SequenceNumber_t seqNum(0, 1);
+    FragmentNumber_t fragNum = 1;
+
+    while(!testChangesForUse.empty())
     {
-        ASSERT_EQ(std::count(testChangesForUse[i]->getDataFragments()->begin(),
-                    testChangesForUse[i]->getDataFragments()->end(), PRESENT), 10);
+        RTPSWriterCollector<ReaderLocator*>::Item item = testChangesForUse.pop();
+        ASSERT_EQ(item.sequenceNumber, seqNum);
+        ASSERT_EQ(item.fragmentNumber, fragNum);
+
+        if(++fragNum > 10)
+        {
+            ++seqNum;
+            fragNum = 1;
+        }
     }
 
-    // And the last one is partially cleared
-    ASSERT_EQ(std::count(testChangesForUse[5]->getDataFragments()->begin(),
-                testChangesForUse[5]->getDataFragments()->end(), PRESENT), 5);
     std::this_thread::sleep_for(std::chrono::milliseconds(periodMillisecs + 50));
 }
 

@@ -913,7 +913,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
                             {
                                 if(SNSet.base == SequenceNumber_t(0, 0) && SNSet.isSetEmpty())
                                 {
-                                    SF->send_heartbeat_to(**rit);
+                                    SF->send_heartbeat_to_nts(**rit, true);
                                 }
 
                                 SF->mp_periodicHB->restart_timer();

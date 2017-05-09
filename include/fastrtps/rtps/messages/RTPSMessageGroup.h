@@ -95,7 +95,7 @@ class RTPSMessageGroup
                 const SequenceNumber_t& lastSN, Count_t count,
                 bool isFinal, bool livelinessFlag, const LocatorList_t& locators);
 
-        bool add_gap(std::vector<SequenceNumber_t>& changesSeqNum, const GUID_t& remote_reader,
+        bool add_gap(std::set<SequenceNumber_t>& changesSeqNum, const std::vector<GUID_t>& remote_readers,
                 const LocatorList_t& locators);
 
         bool add_acknack(const GUID_t& remote_writer, SequenceNumberSet_t& SNSet,
@@ -103,6 +103,8 @@ class RTPSMessageGroup
 
         bool add_nackfrag(const GUID_t& remote_writer, SequenceNumber_t& writerSN,
                 FragmentNumberSet_t fnState, int32_t count, const LocatorList_t locators);
+
+        uint32_t get_current_bytes_processed() { return currentBytesSent_ + full_msg_->length; }
 
     private:
 
@@ -134,6 +136,8 @@ class RTPSMessageGroup
         CDRMessage_t* full_msg_;
 
         CDRMessage_t* submessage_msg_;
+
+        uint32_t currentBytesSent_;
 
 #if HAVE_SECURITY
         ENDPOINT_TYPE type_;

@@ -41,31 +41,31 @@ struct CacheChange_t;
  */
 class ReaderLocator
 {
-public:
-    ReaderLocator();
-    /**
-     * Constructor.
-     * @param locator Locator to create the ReaderLocator.
-     * @param expectsInlineQos Indicate that the ReaderLocator expects inline QOS.
-     */
-    ReaderLocator(Locator_t& locator, bool expectsInlineQos);
-    virtual ~ReaderLocator();
-    //!Address of this ReaderLocator.
-    Locator_t locator;
-    //!Whether the Reader expects inlineQos with its data messages.
-    bool expectsInlineQos;
+    public:
 
-    std::vector<ChangeForReader_t> unsent_changes;
+        ReaderLocator();
 
-    //!Number of times this locator has been used (in case different readers use the same locator).
-    uint32_t n_used;
+        ReaderLocator(ReaderLocator&& readerLocator) : locator(std::move(readerLocator.locator)),
+            expectsInlineQos(readerLocator.expectsInlineQos), isFixed(readerLocator.isFixed),
+            unsent_changes(std::move(readerLocator.unsent_changes)) {}
 
-    /**
-     * Remove change from requested list.
-     * @param cpoin Pointer to change.
-     * @return True if correct
-     */
-    //bool remove_requested_change(const CacheChange_t* cpoin);
+        ReaderLocator(const ReaderLocator& readerLocator) : locator(readerLocator.locator),
+            expectsInlineQos(readerLocator.expectsInlineQos), isFixed(readerLocator.isFixed),
+            unsent_changes(readerLocator.unsent_changes) {}
+
+        virtual ~ReaderLocator();
+
+        //!Address of this ReaderLocator.
+        Locator_t locator;
+
+        //!Whether the Reader expects inlineQos with its data messages.
+        bool expectsInlineQos;
+
+        bool isFixed;
+
+        std::vector<GUID_t> remote_guids;
+
+        std::vector<ChangeForReader_t> unsent_changes;
 };
 }
 } /* namespace rtps */

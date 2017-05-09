@@ -39,10 +39,13 @@ typedef struct UDPv4TransportDescriptor: public TransportDescriptorInterface {
    //! Allowed interfaces in an IP string format.
    std::vector<std::string> interfaceWhiteList;
    //! Specified time to live (8bit - 255 max TTL)
-   uint8_t TTL = 1;
+   uint8_t TTL;
 
    virtual ~UDPv4TransportDescriptor(){}
+
    RTPS_DllAPI UDPv4TransportDescriptor();
+
+   RTPS_DllAPI UDPv4TransportDescriptor(const UDPv4TransportDescriptor& t);
 } UDPv4TransportDescriptor;
 
 } // namespace rtps

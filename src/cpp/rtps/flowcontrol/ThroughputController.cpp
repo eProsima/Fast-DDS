@@ -16,6 +16,7 @@
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include <asio.hpp>
 #include <asio/steady_timer.hpp>
+#include <cassert>
 
 
 namespace eprosima{
@@ -40,61 +41,59 @@ ThroughputController::ThroughputController(const ThroughputControllerDescriptor&
 {
 }
 
-void ThroughputController::operator()(std::vector<CacheChange_t*>& changes)
+void ThroughputController::operator()(RTPSWriterCollector<ReaderLocator*>& changesToSend)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
 
-    uint32_t accumulatedPayloadSizeBeforeControllering = mAccumulatedPayloadSize;
-    unsigned int clearedChanges = 0;
-    while (clearedChanges < changes.size())
+    auto it = changesToSend.items().begin();
+
+    while(it != changesToSend.items().end())
     {
-        CacheChange_t* change = changes[clearedChanges];
+        if(!process_change_nts_(it->cacheChange, it->sequenceNumber, it->fragmentNumber))
+            break;
 
-        if (change->getFragmentSize() != 0)
-        {
-            ptrdiff_t fragments_to_send = std::count(change->getDataFragments()->begin(),
-                    change->getDataFragments()->end(), PRESENT);
-            unsigned int fittingFragments = std::min((mBytesPerPeriod - mAccumulatedPayloadSize) / change->getFragmentSize(),
-                    static_cast<unsigned int>(fragments_to_send));
-
-            if (fittingFragments)
-            {
-                mAccumulatedPayloadSize += fittingFragments * change->getFragmentSize();
-
-                for(auto& aux_c : *change->getDataFragments())
-                {
-                    if(aux_c == PRESENT)
-                    {
-                        if(fittingFragments)
-                            --fittingFragments;
-                        else
-                            aux_c = NOT_PRESENT;
-                    }
-                }
-
-                clearedChanges++;
-            }
-            else
-                break;
-        }
-        else
-        {
-            bool fits = (mAccumulatedPayloadSize + change->serializedPayload.length) <= mBytesPerPeriod;
-
-            if (fits)
-            {
-                mAccumulatedPayloadSize += change->serializedPayload.length;
-                clearedChanges++;
-            }
-            else
-                break;
-        }
+        ++it;
     }
 
+    changesToSend.items().erase(it, changesToSend.items().end());
+}
 
-    if (mAccumulatedPayloadSize != accumulatedPayloadSizeBeforeControllering)
-        ScheduleRefresh(mAccumulatedPayloadSize - accumulatedPayloadSizeBeforeControllering);
-    changes.erase(changes.begin() + clearedChanges, changes.end());
+void ThroughputController::operator()(RTPSWriterCollector<ReaderProxy*>& changesToSend)
+{
+    std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
+
+    auto it = changesToSend.items().begin();
+
+    while(it != changesToSend.items().end())
+    {
+        if(!process_change_nts_(it->cacheChange, it->sequenceNumber, it->fragmentNumber))
+            break;
+
+        ++it;
+    }
+
+    changesToSend.items().erase(it, changesToSend.items().end());
+}
+
+bool ThroughputController::process_change_nts_(CacheChange_t* change, const SequenceNumber_t& /*seqNum*/,
+        const FragmentNumber_t fragNum)
+{
+    assert(change != nullptr);
+
+    uint32_t dataLength = change->serializedPayload.length;
+
+    if (fragNum != 0)
+        dataLength = (fragNum + 1) != change->getFragmentCount() ?
+            change->getFragmentSize() : change->serializedPayload.length - (fragNum * change->getFragmentSize());
+
+    if((mAccumulatedPayloadSize + dataLength) <= mBytesPerPeriod)
+    {
+        mAccumulatedPayloadSize += dataLength;
+        ScheduleRefresh(dataLength);
+        return true;
+    }
+
+    return false;
 }
 
 void ThroughputController::ScheduleRefresh(uint32_t sizeToRestore)

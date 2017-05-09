@@ -69,12 +69,14 @@ class  WriterTimes
 class  WriterAttributes
 {
     public:
-        WriterAttributes() : mode(SYNCHRONOUS_WRITER)
-    {
-        endpoint.endpointKind = WRITER;
-        endpoint.durabilityKind = TRANSIENT_LOCAL;
-        endpoint.reliabilityKind = RELIABLE;
-    };
+        WriterAttributes() : mode(SYNCHRONOUS_WRITER),
+            disableHeartbeatPiggyback(false)
+        {
+            endpoint.endpointKind = WRITER;
+            endpoint.durabilityKind = TRANSIENT_LOCAL;
+            endpoint.reliabilityKind = RELIABLE;
+        };
+
         virtual ~WriterAttributes(){};
         //!Attributes of the associated endpoint.
         EndpointAttributes endpoint;
@@ -84,6 +86,8 @@ class  WriterAttributes
         RTPSWriterPublishMode mode;
         // Throughput controller, always the last one to apply 
         ThroughputControllerDescriptor throughputController;
+        //! Disable the sending of heartbeat piggybacks.
+        bool disableHeartbeatPiggyback;
 };
 
 /**

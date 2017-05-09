@@ -87,25 +87,10 @@ class StatelessWriter : public RTPSWriter
         //FOR NOW THERE IS NOTHING TO UPDATE.
     };
 
-    /**
-     * Add a remote locator.
-     *
-     * @param rdata RemoteReaderAttributes necessary to create a new locator.
-     * @param loc Locator to add.
-     * @return True on success.
-     */
-    bool add_locator(RemoteReaderAttributes& rdata,Locator_t& loc);
+    bool add_locator(Locator_t& loc);
 
     void update_unsent_changes(ReaderLocator& reader_locator,
-            const std::vector<CacheChange_t*>& changes);
-
-    /**
-     * Remove a remote locator from the writer.
-     *
-     * @param loc Locator to remove.
-     * @return True on success.
-     */
-    bool remove_locator(Locator_t& loc);
+            const SequenceNumber_t& seqNum, const FragmentNumber_t fragNum);
 
     //!Reset the unsent changes.
     void unsent_changes_reset();
@@ -122,10 +107,11 @@ class StatelessWriter : public RTPSWriter
 
     private:
 
-    std::vector<GUID_t> get_remote_readers();
+    std::vector<GUID_t> get_builtin_guid();
 
-    //Duration_t resendDataPeriod; //FIXME: Not used yet.
-    std::vector<ReaderLocator> reader_locators;
+    void update_locators_nts_(const GUID_t& optionalGuid);
+
+    std::vector<ReaderLocator> reader_locators, fixed_locators;
     std::vector<RemoteReaderAttributes> m_matched_readers;
     std::vector<std::unique_ptr<FlowController> > m_controllers;
 };

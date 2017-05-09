@@ -180,11 +180,14 @@ public:
 
    virtual LocatorList_t NormalizeLocator(const Locator_t& locator);
 
+   virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
+
+   UDPv6TransportDescriptor get_configuration() { return mConfiguration_; }
+
 private:
-   uint32_t mMaxMessageSize;
+   UDPv6TransportDescriptor mConfiguration_;
    uint32_t mSendBufferSize;
    uint32_t mReceiveBufferSize;
-   uint8_t mTTL;
 
    // For UDPv6, the notion of channel corresponds to a port + direction tuple.
 	asio::io_service mService;

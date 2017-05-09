@@ -33,51 +33,65 @@ namespace rtps{
  */
 class NetworkFactory
 {
-public:
-   /**
-    * Allows registration of a transport statically, by specifying the transport type and
-    * its associated descriptor type. This is particularly useful for user-defined transports.
-    */
-   template<class T, class D>
-   void RegisterTransport(const D& descriptor)
-   {
-       std::unique_ptr<T> transport(new T(descriptor));
-       if(transport->init())
-           mRegisteredTransports.emplace_back(std::move(transport));
-   }
+    public:
 
-   /**
-    * Allows registration of a transport dynamically. Only the transports built into FastRTPS
-    * are supported here (although it can be easily extended at NetworkFactory.cpp)
-    * @param descriptor Structure that defines all initial configuration for a given transport.
-    */
-   void RegisterTransport(const TransportDescriptorInterface* descriptor);
+        NetworkFactory();
 
-   /**
-    * Walks over the list of transports, opening every possible channel that can send through 
-    * the given locator and returning a vector of Sender Resources associated with it.
-    * @param local Locator through which to send.
-    */
-   std::vector<SenderResource>   BuildSenderResources                 (Locator_t& local);
-   /**
-    * Walks over the list of transports, opening every possible channel that can send to the 
-    * given remote locator and returning a vector of Sender Resources associated with it.
-    * @param local Destination locator that we intend to send to.
-    */
-   std::vector<SenderResource>   BuildSenderResourcesForRemoteLocator (const Locator_t& remote);
-   /**
-    * Walks over the list of transports, opening every possible channel that we can listen to
-    * from the given locator, and returns a vector of Receiver Resources for this goal.
-    * @param local Locator from which to listen.
-    */
-   bool BuildReceiverResources (const Locator_t& local, std::vector<ReceiverResource>& returned_resources_list);
+        /**
+         * Allows registration of a transport statically, by specifying the transport type and
+         * its associated descriptor type. This is particularly useful for user-defined transports.
+         */
+        template<class T, class D>
+            void RegisterTransport(const D& descriptor)
+            {
+                std::unique_ptr<T> transport(new T(descriptor));
+                if(transport->init())
+                    mRegisteredTransports.emplace_back(std::move(transport));
+            }
 
-   void NormalizeLocators(LocatorList_t& locators);
+        /**
+         * Allows registration of a transport dynamically. Only the transports built into FastRTPS
+         * are supported here (although it can be easily extended at NetworkFactory.cpp)
+         * @param descriptor Structure that defines all initial configuration for a given transport.
+         */
+        void RegisterTransport(const TransportDescriptorInterface* descriptor);
 
-   size_t numberOfRegisteredTransports() const;
+        /**
+         * Walks over the list of transports, opening every possible channel that can send through 
+         * the given locator and returning a vector of Sender Resources associated with it.
+         * @param local Locator through which to send.
+         */
+        std::vector<SenderResource>   BuildSenderResources                 (Locator_t& local);
+        /**
+         * Walks over the list of transports, opening every possible channel that can send to the 
+         * given remote locator and returning a vector of Sender Resources associated with it.
+         * @param local Destination locator that we intend to send to.
+         */
+        std::vector<SenderResource>   BuildSenderResourcesForRemoteLocator (const Locator_t& remote);
+        /**
+         * Walks over the list of transports, opening every possible channel that we can listen to
+         * from the given locator, and returns a vector of Receiver Resources for this goal.
+         * @param local Locator from which to listen.
+         */
+        bool BuildReceiverResources (const Locator_t& local, std::vector<ReceiverResource>& returned_resources_list);
 
-private:
-   std::vector<std::unique_ptr<TransportInterface> > mRegisteredTransports;
+        void NormalizeLocators(LocatorList_t& locators);
+
+        LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists);
+
+        size_t numberOfRegisteredTransports() const;
+
+        uint32_t get_max_message_size_between_transports() { return maxMessageSizeBetweenTransports_; }
+
+        uint32_t get_min_send_buffer_size() { return minSendBufferSize_; }
+
+    private:
+
+        std::vector<std::unique_ptr<TransportInterface> > mRegisteredTransports;
+
+        uint32_t maxMessageSizeBetweenTransports_;
+
+        uint32_t minSendBufferSize_;
 };
 
 } // namespace rtps

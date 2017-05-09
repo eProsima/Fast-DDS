@@ -157,3 +157,11 @@ uint32_t RTPSWriter::calculateMaxDataSize(uint32_t length)
 
     return maxDataSize;
 }
+
+void RTPSWriter::update_cached_info_nts(std::vector<GUID_t>&& allRemoteReaders,
+            std::vector<LocatorList_t>& allLocatorLists)
+{
+    mAllRemoteReaders = std::move(allRemoteReaders);
+    mAllShrinkedLocatorList.clear();
+    mAllShrinkedLocatorList.push_back(mp_RTPSParticipant->network_factory().ShrinkLocatorLists(allLocatorLists));
+}

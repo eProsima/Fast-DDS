@@ -263,6 +263,11 @@ add_subdirectory(test/performance)
 # Examples
 ###############################################################################
 option(COMPILE_EXAMPLES "Build example" OFF)
+
+if(EPROSIMA_BUILD)
+    set(COMPILE_EXAMPLES ON)
+endif()
+
 if(COMPILE_EXAMPLES)
 	add_subdirectory(examples)
 endif()

@@ -183,6 +183,13 @@ class RTPSWriter : public Endpoint
     WriterListener* mp_listener;
     //Asynchronout publication activated
     bool is_async_;
+
+    LocatorList_t mAllShrinkedLocatorList;
+    std::vector<GUID_t> mAllRemoteReaders;
+
+    void update_cached_info_nts(std::vector<GUID_t>&& allRemoteReaders,
+            std::vector<LocatorList_t>& allLocatorLists);
+
     /**
      * Initialize the header of hte CDRMessages.
      */

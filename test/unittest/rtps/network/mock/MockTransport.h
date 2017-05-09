@@ -62,6 +62,8 @@ class MockTransport: public TransportInterface
 
         virtual LocatorList_t NormalizeLocator(const Locator_t& locator);
 
+        virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
+
         //Helpers and message record
         typedef struct
         {

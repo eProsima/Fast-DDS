@@ -17,11 +17,18 @@
 #include <fastrtps/transport/UDPv6Transport.h>
 #include <fastrtps/transport/test_UDPv4Transport.h>
 #include <utility>
+#include <limits>
+
 using namespace std;
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
+
+NetworkFactory::NetworkFactory() : maxMessageSizeBetweenTransports_(0),
+    minSendBufferSize_(std::numeric_limits<uint32_t>::max())
+{
+}
 
 vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local)
 {
@@ -86,23 +93,47 @@ bool NetworkFactory::BuildReceiverResources (const Locator_t& local, std::vector
 
 void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descriptor)
 {
+    bool wasRegistered = false;
+    bool minSendBufferSize = std::numeric_limits<uint32_t>::max();
+
     if (auto concrete = dynamic_cast<const UDPv4TransportDescriptor*> (descriptor))
     {
         std::unique_ptr<UDPv4Transport> transport(new UDPv4Transport(*concrete));
         if(transport->init())
+        {
+            minSendBufferSize = transport->get_configuration().sendBufferSize;
             mRegisteredTransports.emplace_back(std::move(transport));
+            wasRegistered = true;
+        }
     }
     if (auto concrete = dynamic_cast<const UDPv6TransportDescriptor*> (descriptor))
     {
         std::unique_ptr<UDPv6Transport> transport(new UDPv6Transport(*concrete));
         if(transport->init())
+        {
+            minSendBufferSize = transport->get_configuration().sendBufferSize;
             mRegisteredTransports.emplace_back(std::move(transport));
+            wasRegistered = true;
+        }
     }
     if (auto concrete = dynamic_cast<const test_UDPv4TransportDescriptor*> (descriptor))
     {
         std::unique_ptr<test_UDPv4Transport> transport(new test_UDPv4Transport(*concrete));
         if(transport->init())
+        {
+            minSendBufferSize = transport->get_configuration().sendBufferSize;
             mRegisteredTransports.emplace_back(std::move(transport));
+            wasRegistered = true;
+        }
+    }
+
+    if(wasRegistered)
+    {
+        if(descriptor->maxMessageSize > maxMessageSizeBetweenTransports_)
+            maxMessageSizeBetweenTransports_ = descriptor->maxMessageSize;
+
+        if(minSendBufferSize < minSendBufferSize_)
+            minSendBufferSize_ = minSendBufferSize;
     }
 }
 
@@ -127,6 +158,31 @@ void NetworkFactory::NormalizeLocators(LocatorList_t& locators)
             });
 
     locators.swap(normalizedLocators);
+}
+
+LocatorList_t NetworkFactory::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
+{
+    LocatorList_t returnedList;
+
+    for(auto& transport : mRegisteredTransports)
+    {
+        std::vector<LocatorList_t> transportLocatorLists;
+
+        for(auto& locatorList : locatorLists)
+        {
+            LocatorList_t resultList;
+
+            for(auto it = locatorList.begin(); it != locatorList.end(); ++it)
+                if(transport->IsLocatorSupported(*it))
+                    resultList.push_back(*it);
+
+            transportLocatorLists.push_back(resultList);
+        }
+
+        returnedList.push_back(transport->ShrinkLocatorLists(transportLocatorLists));
+    }
+
+    return returnedList;
 }
 
 size_t NetworkFactory::numberOfRegisteredTransports() const

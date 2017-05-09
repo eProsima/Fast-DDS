@@ -27,7 +27,6 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-static const uint32_t maximumUDPSocketSize = 65536;
 static const uint32_t maximumMessageSize = 65500;
 static const uint8_t defaultTTL = 1;
 
@@ -55,10 +54,9 @@ static asio::ip::address_v4::bytes_type locatorToNative(const Locator_t& locator
 }
 
 UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
-    mMaxMessageSize(descriptor.maxMessageSize),
+    mConfiguration_(descriptor),
     mSendBufferSize(descriptor.sendBufferSize),
-    mReceiveBufferSize(descriptor.receiveBufferSize),
-    mTTL(descriptor.TTL)
+    mReceiveBufferSize(descriptor.receiveBufferSize)
     {
         for (const auto& interface : descriptor.interfaceWhiteList)
             mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
@@ -66,16 +64,23 @@ UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
 
 UDPv4TransportDescriptor::UDPv4TransportDescriptor():
     TransportDescriptorInterface(maximumMessageSize),
-    sendBufferSize(maximumUDPSocketSize),
-    receiveBufferSize(maximumUDPSocketSize),
+    sendBufferSize(0),
+    receiveBufferSize(0),
     TTL(defaultTTL)
-    {}
+{
+}
+
+UDPv4TransportDescriptor::UDPv4TransportDescriptor(const UDPv4TransportDescriptor& t) :
+    TransportDescriptorInterface(t),
+    sendBufferSize(t.sendBufferSize),
+    receiveBufferSize(t.receiveBufferSize),
+    TTL(t.TTL)
+{
+}
 
 UDPv4Transport::UDPv4Transport() :
-    mMaxMessageSize(maximumMessageSize),
-    mSendBufferSize(maximumUDPSocketSize),
-    mReceiveBufferSize(maximumUDPSocketSize),
-    mTTL(defaultTTL)
+    mSendBufferSize(0),
+    mReceiveBufferSize(0)
     {
     }
 
@@ -90,19 +95,40 @@ UDPv4Transport::~UDPv4Transport()
 
 bool UDPv4Transport::init()
 {
-    if(mMaxMessageSize > maximumMessageSize)
+    if(mConfiguration_.sendBufferSize == 0 || mConfiguration_.receiveBufferSize == 0)
+    {
+        // Check system buffer sizes.
+        ip::udp::socket socket(mService);
+        socket.open(ip::udp::v4());
+
+        if(mConfiguration_.sendBufferSize == 0)
+        {
+            socket_base::send_buffer_size option;
+            socket.get_option(option);
+            mConfiguration_.sendBufferSize = option.value();
+        }
+
+        if(mConfiguration_.receiveBufferSize == 0)
+        {
+            socket_base::receive_buffer_size option;
+            socket.get_option(option);
+            mConfiguration_.receiveBufferSize = option.value();
+        }
+    }
+
+    if(mConfiguration_.maxMessageSize > maximumMessageSize)
     {
         logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than 65000");
         return false;
     }
 
-    if(mMaxMessageSize > mSendBufferSize)
+    if(mConfiguration_.maxMessageSize > mConfiguration_.sendBufferSize)
     {
         logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than sendBufferSize");
         return false;
     }
 
-    if(mMaxMessageSize > mReceiveBufferSize)
+    if(mConfiguration_.maxMessageSize > mConfiguration_.receiveBufferSize)
     {
         logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than receiveBufferSize");
         return false;
@@ -372,8 +398,9 @@ asio::ip::udp::socket UDPv4Transport::OpenAndBindUnicastOutputSocket(const ip::a
 {
     ip::udp::socket socket(mService);
     socket.open(ip::udp::v4());
-    socket.set_option(socket_base::send_buffer_size(mSendBufferSize));
-    socket.set_option(ip::multicast::hops(mTTL));
+    if(mSendBufferSize != 0)
+        socket.set_option(socket_base::send_buffer_size(mSendBufferSize));
+    socket.set_option(ip::multicast::hops(mConfiguration_.TTL));
 
     ip::udp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
     socket.bind(endpoint);
@@ -388,7 +415,8 @@ std::shared_ptr<asio::ip::udp::socket> UDPv4Transport::OpenAndBindUnicastOutputS
 {
     std::shared_ptr<ip::udp::socket> socket = std::make_shared<ip::udp::socket>(mService);
     socket->open(ip::udp::v4());
-    socket->set_option(socket_base::send_buffer_size(mSendBufferSize));
+    if(mSendBufferSize != 0)
+        socket->set_option(socket_base::send_buffer_size(mSendBufferSize));
 
     ip::udp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
     socket->bind(endpoint);
@@ -405,7 +433,8 @@ asio::ip::udp::socket UDPv4Transport::OpenAndBindInputSocket(uint32_t port, bool
 {
     ip::udp::socket socket(mService);
     socket.open(ip::udp::v4());
-    socket.set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
+    if(mReceiveBufferSize != 0)
+        socket.set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
     if(is_multicast)
         socket.set_option(ip::udp::socket::reuse_address( true ) );
     ip::udp::endpoint endpoint(ip::address_v4::any(), static_cast<uint16_t>(port));
@@ -418,7 +447,8 @@ std::shared_ptr<asio::ip::udp::socket> UDPv4Transport::OpenAndBindInputSocket(ui
 {
     std::shared_ptr<ip::udp::socket> socket = std::make_shared<ip::udp::socket>(mService);
     socket->open(ip::udp::v4());
-    socket->set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
+    if(mReceiveBufferSize != 0)
+        socket->set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
     if(is_multicast)
         socket->set_option(ip::udp::socket::reuse_address( true ) );
     ip::udp::endpoint endpoint(ip::address_v4::any(), static_cast<uint16_t>(port));
@@ -452,7 +482,7 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
     if (!IsOutputChannelOpen(localLocator) ||
-            sendBufferSize > mSendBufferSize)
+            sendBufferSize > mConfiguration_.sendBufferSize)
         return false;
 
     bool success = false;
@@ -478,8 +508,7 @@ static void EndpointToLocator(ip::udp::endpoint& endpoint, Locator_t& locator)
 bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
         const Locator_t& localLocator, Locator_t& remoteLocator)
 {
-    if (!IsInputChannelOpen(localLocator) ||
-            receiveBufferCapacity < mReceiveBufferSize)
+    if (!IsInputChannelOpen(localLocator))
         return false;
 
     Semaphore receiveSemaphore(0);
@@ -591,6 +620,101 @@ LocatorList_t UDPv4Transport::NormalizeLocator(const Locator_t& locator)
         list.push_back(locator);
 
     return list;
+}
+
+struct MultiUniLocatorsLinkage
+{
+    MultiUniLocatorsLinkage(LocatorList_t&& m, LocatorList_t&& u) :
+        multicast(std::move(m)), unicast(std::move(u)) {}
+
+    LocatorList_t multicast;
+    LocatorList_t unicast;
+};
+
+LocatorList_t UDPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
+{
+    LocatorList_t multicastResult, unicastResult;
+    std::vector<MultiUniLocatorsLinkage> pendingLocators;
+
+    for(auto& locatorList : locatorLists)
+    {
+        LocatorListConstIterator it = locatorList.begin();
+        bool multicastDefined = false;
+        LocatorList_t pendingMulticast, pendingUnicast;
+
+        while(it != locatorList.end())
+        {
+            assert((*it).kind == LOCATOR_KIND_UDPv4);
+
+            if(IsMulticastAddress(*it))
+            {
+                // If the multicast locator is already chosen, not choose any unicast locator.
+                if(multicastResult.contains(*it))
+                {
+                    multicastDefined = true;
+                    pendingUnicast.clear();
+                }
+                else
+                {
+                    // Search the multicast locator in pending locators.
+                    auto pending_it = pendingLocators.begin();
+
+                    while(pending_it != pendingLocators.end())
+                    {
+                        if((*pending_it).multicast.contains(*it))
+                        {
+                            // Multicast locator was found, add it to final locators.
+                            multicastResult.push_back((*pending_it).multicast);
+                            pendingLocators.erase(pending_it);
+
+                            // Not choose any unicast
+                            multicastDefined = true;
+                            pendingUnicast.clear();
+
+                            break;
+                        }
+
+                        ++pending_it;
+                    };
+
+                    // If not found, store as pending multicast.
+                    if(pending_it == pendingLocators.end())
+                        pendingMulticast.push_back(*it);
+                }
+            }
+            else
+            {
+                if(!multicastDefined)
+                {
+                    pendingUnicast.push_back(*it);
+                }
+            }
+
+            ++it;
+        }
+
+        if(pendingMulticast.size() == 0)
+        {
+            unicastResult.push_back(pendingUnicast);
+        }
+        else if(pendingUnicast.size() == 0)
+        {
+            multicastResult.push_back(pendingMulticast);
+        }
+        else
+        {
+            pendingLocators.push_back(MultiUniLocatorsLinkage(std::move(pendingMulticast), std::move(pendingUnicast)));
+        }
+    }
+
+    LocatorList_t result(std::move(unicastResult));
+    result.push_back(multicastResult);
+
+    // Store pending unicast locators
+    for(auto link : pendingLocators)
+        result.push_back(link.unicast);
+
+    return result;
 }
 
 } // namespace rtps

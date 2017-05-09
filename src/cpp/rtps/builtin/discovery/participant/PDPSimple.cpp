@@ -408,10 +408,9 @@ bool PDPSimple::createSPDPEndpoints()
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
 #endif
         mp_SPDPWriter = dynamic_cast<StatelessWriter*>(wout);
-        RemoteReaderAttributes ratt;
         for(LocatorListIterator lit = mp_builtin->m_initialPeersList.begin();
                 lit != mp_builtin->m_initialPeersList.end(); ++lit)
-            mp_SPDPWriter->add_locator(ratt,*lit);
+            mp_SPDPWriter->add_locator(*lit);
     }
     else
     {

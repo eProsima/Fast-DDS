@@ -43,11 +43,10 @@ bool sort_SeqNum(const SequenceNumber_t& s1,const SequenceNumber_t& s2)
 
 typedef std::pair<SequenceNumber_t,SequenceNumberSet_t> pair_T;
 
-void prepare_SequenceNumberSet(std::vector<SequenceNumber_t>& changesSeqNum,
+void prepare_SequenceNumberSet(std::set<SequenceNumber_t>& changesSeqNum,
         std::vector<pair_T>& sequences)
 {
     //First compute the number of GAP messages we need:
-    std::sort(changesSeqNum.begin(), changesSeqNum.end(), sort_SeqNum);
     bool new_pair = true;
     bool seqnumset_init = false;
     uint32_t count = 0;
@@ -75,7 +74,7 @@ void prepare_SequenceNumberSet(std::vector<SequenceNumber_t>& changesSeqNum,
         {
             if(seqnumset_init) //FIRST TIME SINCE it was continuous
             {
-                sequences.back().second.base = *(it-1);
+                sequences.back().second.base = *(std::prev(it));
                 seqnumset_init = false;
             }
             // Try to add, If it fails the diference between *it and base is greater than 255.
@@ -139,7 +138,7 @@ EntityId_t get_entity_id(const std::vector<GUID_t> endpoints)
 RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
         RTPSMessageGroup_t& msg_group) :
     participant_(participant), endpoint_(endpoint), full_msg_(&msg_group.rtpsmsg_fullmsg_),
-    submessage_msg_(&msg_group.rtpsmsg_submessage_)
+    submessage_msg_(&msg_group.rtpsmsg_submessage_), currentBytesSent_(0)
 #if HAVE_SECURITY
     , type_(type), encrypt_msg_(&msg_group.rtpsmsg_encrypt_)
 #endif
@@ -204,6 +203,8 @@ void RTPSMessageGroup::send()
 
         for(const auto& lit : current_locators_)
             participant_->sendSync(full_msg_, endpoint_, lit);
+
+        currentBytesSent_ += full_msg_->length;
     }
 }
 
@@ -530,11 +531,9 @@ bool RTPSMessageGroup::add_heartbeat(const std::vector<GUID_t>& remote_readers, 
 }
 
 // TODO (Ricardo) Check with standard 8.3.7.4.5
-bool RTPSMessageGroup::add_gap(std::vector<SequenceNumber_t>& changesSeqNum,
-        const GUID_t& remote_reader, const LocatorList_t& locators)
+bool RTPSMessageGroup::add_gap(std::set<SequenceNumber_t>& changesSeqNum,
+        const std::vector<GUID_t>& remote_readers, const LocatorList_t& locators)
 {
-    std::vector<GUID_t> v_remote_reader{remote_reader};
-
     std::vector<pair_T> Sequences;
     prepare_SequenceNumberSet(changesSeqNum, Sequences);
     std::vector<pair_T>::iterator seqit = Sequences.begin();
@@ -544,14 +543,16 @@ bool RTPSMessageGroup::add_gap(std::vector<SequenceNumber_t>& changesSeqNum,
     while(gap_n <= Sequences.size()) //There is still a message to add
     {
         // Check preconditions. If fail flush and reset.
-        check_and_maybe_flush(locators, v_remote_reader);
+        check_and_maybe_flush(locators, remote_readers);
 
 #if HAVE_SECURITY
         uint32_t from_buffer_position = submessage_msg_->pos;
 #endif
 
+        EntityId_t readerId = get_entity_id(remote_readers);
+
         if(!RTPSMessageCreator::addSubmessageGap(submessage_msg_, seqit->first, seqit->second,
-                remote_reader.entityId, endpoint_->getGuid().entityId))
+                readerId, endpoint_->getGuid().entityId))
         {
             logError(RTPS_WRITER, "Cannot add GAP submsg to the CDRMessage. Buffer too small");
             break;
@@ -562,7 +563,7 @@ bool RTPSMessageGroup::add_gap(std::vector<SequenceNumber_t>& changesSeqNum,
         {
             submessage_msg_->pos = from_buffer_position;
             if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, endpoint_->getGuid(),
-                        v_remote_reader))
+                        remote_readers))
             {
                 logError(RTPS_WRITER, "Cannot encrypt DATA submessage for writer " << endpoint_->getGuid());
                 return false;
@@ -570,7 +571,7 @@ bool RTPSMessageGroup::add_gap(std::vector<SequenceNumber_t>& changesSeqNum,
         }
 #endif
 
-        if(!insert_submessage(v_remote_reader))
+        if(!insert_submessage(remote_readers))
             break;
 
         ++gap_n;

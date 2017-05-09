@@ -179,13 +179,16 @@ public:
 
    virtual LocatorList_t NormalizeLocator(const Locator_t& locator);
 
+   virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
+
+   UDPv4TransportDescriptor get_configuration() { return mConfiguration_; }
+
 protected:
    //! Constructor with no descriptor is necessary for implementations derived from this class.
    UDPv4Transport();
-   uint32_t mMaxMessageSize;
+   UDPv4TransportDescriptor mConfiguration_;
    uint32_t mSendBufferSize;
    uint32_t mReceiveBufferSize;
-   uint8_t mTTL;
 
    asio::io_service mService;
    std::unique_ptr<std::thread> ioServiceThread;

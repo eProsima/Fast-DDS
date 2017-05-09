@@ -15,18 +15,22 @@
 #ifndef FLOW_CONTROLLER_H
 #define FLOW_CONTROLLER_H
 
+#include <fastrtps/rtps/common/CacheChange.h>
+#include "../writer/RTPSWriterCollector.h"
+
 #include <vector>
 #include <mutex>
 #include <functional>
 #include <memory>
-#include <fastrtps/rtps/common/CacheChange.h>
 #include <asio.hpp>
-
 #include <thread>
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
+
+class ReaderLocator;
+class ReaderProxy;
 
 /**
  * Flow Controllers take a vector of cache changes (by reference) and return a filtered
@@ -41,7 +45,8 @@ class FlowController
         static void NotifyControllersChangeSent(CacheChange_t*);
 
         //! Controller operator. Transforms the vector of changes in place.
-        virtual void operator()(std::vector<CacheChange_t*>& changes) = 0;
+        virtual void operator()(RTPSWriterCollector<ReaderLocator*>& changesToSend) = 0;
+        virtual void operator()(RTPSWriterCollector<ReaderProxy*>& changesToSend) = 0;
 
         virtual ~FlowController();
         FlowController();

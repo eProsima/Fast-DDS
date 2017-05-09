@@ -39,10 +39,13 @@ typedef struct UDPv6TransportDescriptor: public TransportDescriptorInterface {
    //! Allowed interfaces in an IP string format.
    std::vector<std::string> interfaceWhiteList;
    //! Specified time to live (8bit - 255 max TTL)
-   uint8_t TTL = 1;
+   uint8_t TTL;
 
    virtual ~UDPv6TransportDescriptor(){}
+
    RTPS_DllAPI UDPv6TransportDescriptor();
+
+   RTPS_DllAPI UDPv6TransportDescriptor(const UDPv6TransportDescriptor& t);
 } UDPv6TransportDescriptor;
 
 } // namespace rtps
