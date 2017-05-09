@@ -49,16 +49,6 @@ class Domain
     virtual ~Domain();
 public:
     /**
-     * Create a Participant from a profile name and a XML file.
-     * @param xml_profile_file XML profile file.
-     * @param participant_profile Participant profile name.
-     * @param listen ParticipantListener Pointer.
-     * @return Participant pointer. (nullptr if not created.)
-     */
-    RTPS_DllAPI static Participant* createParticipant(const std::string &xml_profile_file,
-                                                      const std::string &participant_profile,
-                                                      ParticipantListener *listen = nullptr);
-    /**
      * Create a Participant from a profile name.
      * @param participant_profile Participant profile name.
      * @param listen ParticipantListener Pointer.
@@ -74,18 +64,6 @@ public:
      */
     RTPS_DllAPI static Participant* createParticipant(ParticipantAttributes &att,
                                                       ParticipantListener *listen = nullptr);
-    /**
-     * Create a Publisher in a Participant from a profile name and a XML file.
-     * @param part Pointer to the participant where you want to create the Publisher.
-     * @param xml_profile_file XML profile file.
-     * @param publisher_profile Publisher profile name.
-     * @param listen Pointer to the PublisherListener.
-     * @return Pointer to the created Publisher (nullptr if not created).
-     */
-    RTPS_DllAPI static Publisher* createPublisher(Participant *part,
-                                                  const std::string &xml_profile_file,
-                                                  const std::string &publisher_profile,
-                                                  PublisherListener *listen = nullptr);
     /**
      * Create a Publisher in a Participant from a profile name.
      * @param part Pointer to the participant where you want to create the Publisher.
@@ -106,18 +84,6 @@ public:
     RTPS_DllAPI static Publisher* createPublisher(Participant *part,
                                                   PublisherAttributes &att,
                                                   PublisherListener *listen = nullptr);
-    /**
-     * Create a Subscriber in a Participant from a profile name and a XML file.
-     * @param part Pointer to the participant where you want to create the Publisher.
-     * @param xml_profile_file XML profile file.
-     * @param subscriber_profile Subscriber profile name.
-     * @param listen Pointer to the SubscriberListener.
-     * @return Pointer to the created Subscriber (nullptr if not created).
-     */
-    RTPS_DllAPI static Subscriber* createSubscriber(Participant *part,
-                                                    const std::string &xml_profile_file,
-                                                    const std::string &subscriber_profile,
-                                                    SubscriberListener *listen = nullptr);
     /**
      * Create a Subscriber in a Participant from a profile name.
      * @param part Pointer to the participant where you want to create the Publisher.

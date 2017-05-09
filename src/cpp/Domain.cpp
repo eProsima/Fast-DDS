@@ -113,27 +113,6 @@ bool Domain::removeSubscriber(Subscriber* sub)
     return false;
 }
 
-Participant* Domain::createParticipant(const std::string &xml_profile_file,
-                                       const std::string &participant_profile,
-                                       ParticipantListener* listen)
-{
-    if (false == default_xml_profiles_loaded)
-    {
-        XMLProfileParser::loadDefaultXMLFile();
-        default_xml_profiles_loaded = true;
-    }
-
-    ParticipantAttributes participant_att;
-    if ( XMLP_ret::ERROR == XMLProfileParser::fillParticipantProfileFromXMLFile(xml_profile_file,
-                                                                                participant_profile,
-                                                                                participant_att))
-    {
-        logError(PARTICIPANT, "Problem loading profile '" << participant_profile << "' from XML file '" << xml_profile_file << "'");
-        return nullptr;
-    }
-    return createParticipant(participant_att, listen);
-}
-
 Participant* Domain::createParticipant(const std::string &participant_profile, ParticipantListener* listen)
 {
     if (false == default_xml_profiles_loaded)
@@ -173,22 +152,6 @@ Participant* Domain::createParticipant(ParticipantAttributes& att,ParticipantLis
     return pubsubpar;
 }
 
-Publisher* Domain::createPublisher(Participant *part,
-                                   const std::string &xml_profile_file,
-                                   const std::string &publisher_profile,
-                                   PublisherListener *listen)
-{
-    PublisherAttributes publisher_att;
-    if ( XMLP_ret::ERROR == XMLProfileParser::fillPublisherProfileFromXMLFile(xml_profile_file,
-                                                                              publisher_profile,
-                                                                              publisher_att))
-    {
-        logError(PUBLISHER, "Problem loading profile '" << publisher_profile << "' from XML file '" << xml_profile_file << "'");
-        return nullptr;
-    }
-    return createPublisher(part, publisher_att, listen);
-}
-
 Publisher* Domain::createPublisher(Participant *part, const std::string &publisher_profile, PublisherListener *listen)
 {
     PublisherAttributes publisher_att;
@@ -211,22 +174,6 @@ Publisher* Domain::createPublisher(Participant *part, PublisherAttributes &att, 
     }
     //TODO MOSTRAR MENSAJE DE ERROR WARNING y COMPROBAR QUE EL PUNTERO QUE ME PASA NO ES NULL
     return nullptr;
-}
-
-Subscriber* Domain::createSubscriber(Participant *part,
-                                   const std::string &xml_profile_file,
-                                   const std::string &subscriber_profile,
-                                   SubscriberListener *listen)
-{
-    SubscriberAttributes subscriber_att;
-    if ( XMLP_ret::ERROR == XMLProfileParser::fillSubscriberProfileFromXMLFile(xml_profile_file,
-                                                                               subscriber_profile,
-                                                                               subscriber_att))
-    {
-        logError(PUBLISHER, "Problem loading profile '" << subscriber_profile << "' from XML file '" << xml_profile_file << "'");
-        return nullptr;
-    }
-    return createSubscriber(part, subscriber_att, listen);
 }
 
 Subscriber* Domain::createSubscriber(Participant *part, const std::string &subscriber_profile, SubscriberListener *listen)
