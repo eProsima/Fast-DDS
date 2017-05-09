@@ -150,9 +150,13 @@ class RTPSWriter : public Endpoint
      */
     RTPS_DllAPI inline bool isAsync(){ return is_async_; };
 
-    virtual bool clean_history(unsigned int max = 0) = 0;
+    /**
+     * Remove an specified max number of changes
+     * @return at least one change has been removed
+     */
+    RTPS_DllAPI bool remove_older_changes(unsigned int max = 0);
 
-    bool remove_older_changes(unsigned int max = 0);
+    virtual bool clean_history(unsigned int max = 0) = 0;
 
     /*
      * Adds a flow controller that will apply to this writer exclusively.

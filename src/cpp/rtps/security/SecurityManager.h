@@ -147,14 +147,6 @@ class SecurityManager
                         change_sequence_number_(SequenceNumber_t::unknown()),
                         event_(nullptr) {}
 
-                    AuthenticationInfo(const AuthenticationInfo& auth) :
-                        identity_handle_(auth.identity_handle_),
-                        handshake_handle_(auth.handshake_handle_),
-                        auth_status_(auth.auth_status_),
-                        expected_sequence_number_(auth.expected_sequence_number_),
-                        change_sequence_number_(auth.change_sequence_number_),
-                        event_(auth.event_) {}
-
                     AuthenticationInfo(AuthenticationInfo&& auth) :
                         identity_handle_(std::move(auth.identity_handle_)),
                         handshake_handle_(std::move(auth.handshake_handle_)),
@@ -174,6 +166,10 @@ class SecurityManager
                     SequenceNumber_t change_sequence_number_;
 
                     HandshakeMessageTokenResent* event_;
+
+                private:
+
+                    AuthenticationInfo(const AuthenticationInfo& auth) = delete;
             };
 
             struct EmptyDelete

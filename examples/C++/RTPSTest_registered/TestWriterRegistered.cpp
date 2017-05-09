@@ -66,10 +66,12 @@ bool TestWriterRegistered::init()
 	//CREATE WRITERHISTORY
 	HistoryAttributes hatt;
 	hatt.payloadMaxSize = 255;
+	hatt.maximumReservedCaches = 50;
 	mp_history = new WriterHistory(hatt);
 
 	//CREATE WRITER
 	WriterAttributes watt;
+	watt.endpoint.reliabilityKind = BEST_EFFORT;
 	mp_writer = RTPSDomain::createRTPSWriter(mp_participant,watt,mp_history,&m_listener);
 	if(mp_writer == nullptr)
 		return false;
@@ -100,12 +102,18 @@ void TestWriterRegistered::run(uint16_t samples)
 	for(int i = 0;i<samples;++i )
 	{
 		CacheChange_t * ch = mp_writer->new_change([]() -> uint32_t { return 255;}, ALIVE);
+		if(!ch){	// In the case history is full, remove some old changes
+			std::cout << "cleaning history...";
+			mp_writer->remove_older_changes(20);
+			ch = mp_writer->new_change([]() -> uint32_t { return 255;}, ALIVE);
+		}
+
 #if defined(_WIN32)
 		ch->serializedPayload.length =
 			sprintf_s((char*)ch->serializedPayload.data,255, "My example string %d", i)+1;
 #else
-		ch->serializedPayload.length =
-			sprintf((char*)ch->serializedPayload.data,"My example string %d",i)+1;
+	ch->serializedPayload.length =
+		sprintf((char*)ch->serializedPayload.data,"My example string %d",i)+1;
 #endif
 		printf("Sending: %s\n",(char*)ch->serializedPayload.data);
 		mp_history->add_change(ch);
