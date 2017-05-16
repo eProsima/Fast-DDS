@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles>
+    <participant profile_name="test_participant_profile"></participant>
+    <publisher profile_name="test_publisher_profile"></publisher>
+    <subscriber profile_name="test_subscriber_profile"></subscriber>
+</profiles>

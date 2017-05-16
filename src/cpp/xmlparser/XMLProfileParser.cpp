@@ -16,7 +16,7 @@ XMLP_ret XMLProfileParser::fillParticipantProfile(const std::string &profile_nam
     part_map_iterator_t it = m_participant_profiles.find(profile_name);
     if (it == m_participant_profiles.end())
     {
-        logError(XMLPROFILEPARSER, "Profile '" << profile_name << "' not founded '");
+        logError(XMLPROFILEPARSER, "Profile '" << profile_name << "' not found '");
         return XMLP_ret::ERROR;
     }
     atts = it->second;
@@ -28,7 +28,7 @@ XMLP_ret XMLProfileParser::fillPublisherProfile(const std::string &profile_name,
     publ_map_iterator_t it = m_publisher_profiles.find(profile_name);
     if (it == m_publisher_profiles.end())
     {
-        logError(XMLPROFILEPARSER, "Profile '" << profile_name << "' not founded '");
+        logError(XMLPROFILEPARSER, "Profile '" << profile_name << "' not found '");
         return XMLP_ret::ERROR;
     }
     atts = it->second;
@@ -40,7 +40,7 @@ XMLP_ret XMLProfileParser::fillSubscriberProfile(const std::string &profile_name
     subs_map_iterator_t it = m_subscriber_profiles.find(profile_name);
     if (it == m_subscriber_profiles.end())
     {
-        logError(XMLPROFILEPARSER, "Profile '" << profile_name << "' not founded");
+        logError(XMLPROFILEPARSER, "Profile '" << profile_name << "' not found");
         return XMLP_ret::ERROR;
     }
     atts = it->second;
@@ -83,7 +83,7 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
     XMLElement* p_root = xmlDoc.FirstChildElement(PROFILES);
     if (nullptr == p_root)
     {
-        logError(XMLPROFILEPARSER, "Do not founded 'profiles' root tag");
+        logError(XMLPROFILEPARSER, "Not found 'profiles' root tag");
         return XMLP_ret::ERROR;
     }
 
@@ -200,7 +200,7 @@ XMLP_ret XMLProfileParser::parseXMLParticipantProf(XMLElement *p_profile,
     const char *prof_name = p_profile->Attribute(PROFILE_NAME);
     if (nullptr == prof_name)
     {
-        logError(XMLPROFILEPARSER, "Do not founded '" << PROFILE_NAME << "' attribute");
+        logError(XMLPROFILEPARSER, "Not found '" << PROFILE_NAME << "' attribute");
         return XMLP_ret::ERROR;
     }
     profile_name = prof_name;
@@ -208,7 +208,7 @@ XMLP_ret XMLProfileParser::parseXMLParticipantProf(XMLElement *p_profile,
     XMLElement *p_element = p_profile->FirstChildElement(RTPS);
     if (nullptr == p_element)
     {
-        logError(XMLPROFILEPARSER, "Do not founded '" << RTPS << "' tag");
+        logError(XMLPROFILEPARSER, "Not found '" << RTPS << "' tag");
         return XMLP_ret::ERROR;
     }
 
@@ -348,7 +348,7 @@ XMLP_ret XMLProfileParser::parseXMLPublisherProf(XMLElement *p_profile,
     const char *prof_name = p_profile->Attribute(PROFILE_NAME);
     if (nullptr == prof_name)
     {
-        logError(XMLPROFILEPARSER, "Do not founded '" << PROFILE_NAME << "' attribute");
+        logError(XMLPROFILEPARSER, "Not found '" << PROFILE_NAME << "' attribute");
         return XMLP_ret::ERROR;
     }
     profile_name = prof_name;
@@ -455,7 +455,7 @@ XMLP_ret XMLProfileParser::parseXMLSubscriberProf(XMLElement *p_profile,
     const char *prof_name = p_profile->Attribute(PROFILE_NAME);
     if (nullptr == prof_name)
     {
-        logError(XMLPROFILEPARSER, "Do not founded '" << PROFILE_NAME << "' attribute");
+        logError(XMLPROFILEPARSER, "Not found '" << PROFILE_NAME << "' attribute");
         return XMLP_ret::ERROR;
     }
     profile_name = prof_name;
