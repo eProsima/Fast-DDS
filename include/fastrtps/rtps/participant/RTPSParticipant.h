@@ -39,6 +39,8 @@ namespace rtps {
 class RTPSParticipantImpl;
 class RTPSWriter;
 class RTPSReader;
+class WriterProxyData;
+class ReaderProxyData;
 
 
 /**
@@ -138,6 +140,10 @@ class RTPS_DllAPI RTPSParticipant
     uint32_t getMaxMessageSize() const;
 
     uint32_t getMaxDataSize() const;
+
+    bool get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo);
+
+    bool get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo);
 
     private:
 

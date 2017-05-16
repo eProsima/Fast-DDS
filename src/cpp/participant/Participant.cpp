@@ -60,12 +60,14 @@ std::vector<std::string> Participant::getParticipantNames(){
   return mp_impl->getParticipantNames();
 }
 
-int Participant::get_no_publishers(char *target_topic){
-	return mp_impl->get_no_publishers(target_topic);
+bool Participant::get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo)
+{
+    return mp_impl->get_remote_writer_info(writerGuid, returnedInfo);
 }
 
-int Participant::get_no_subscribers(char *target_topic){
-	return mp_impl->get_no_subscribers(target_topic);
+bool Participant::get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo)
+{
+    return mp_impl->get_remote_reader_info(readerGuid, returnedInfo);
 }
 
 } /* namespace pubsub */

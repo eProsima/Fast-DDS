@@ -140,7 +140,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endpoint, Sta
                 delete(rdata);
                 return false;
             }
-            rdata->m_userDefinedId = id;
+            rdata->userDefinedId(id);
         }
         else if(key == "entityId")
         {
@@ -152,9 +152,9 @@ bool EDPStaticXML::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endpoint, Sta
                 return false;
             }
             octet* c = (octet*)&id;
-            rdata->m_guid.entityId.value[2] = c[0];
-            rdata->m_guid.entityId.value[1] = c[1];
-            rdata->m_guid.entityId.value[0] = c[2];
+            rdata->guid().entityId.value[2] = c[0];
+            rdata->guid().entityId.value[1] = c[1];
+            rdata->guid().entityId.value[0] = c[2];
         }
         else if(key == "expectsInlineQos")
         {
@@ -177,24 +177,24 @@ bool EDPStaticXML::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endpoint, Sta
         }
         else if(key == "topicName")
         {
-            rdata->m_topicName = element->GetText();
+            rdata->topicName() = element->GetText();
         }
         else if(key == "topicDataType")
         {
-            rdata->m_typeName = element->GetText();
+            rdata->typeName() = element->GetText();
         }
         else if(key == "topicKind")
         {
             std::string auxString(element->GetText());
             if(auxString == "NO_KEY")
             {
-                rdata->m_topicKind = NO_KEY;
-                rdata->m_guid.entityId.value[3] = 0x04;
+                rdata->topicKind() = NO_KEY;
+                rdata->guid().entityId.value[3] = 0x04;
             }
             else if (auxString == "WITH_KEY")
             {
-                rdata->m_topicKind = WITH_KEY;
-                rdata->m_guid.entityId.value[3] = 0x07;
+                rdata->topicKind() = WITH_KEY;
+                rdata->guid().entityId.value[3] = 0x07;
             }
             else
             {
@@ -225,7 +225,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endpoint, Sta
             int port = 0;
             element->QueryIntAttribute("port", &port);
             loc.port = port;
-            rdata->m_unicastLocatorList.push_back(loc);
+            rdata->unicastLocatorList().push_back(loc);
         }
         else if(key == "multicastLocator")
         {
@@ -237,7 +237,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endpoint, Sta
             int port = 0;
             element->QueryIntAttribute("port", &port);
             loc.port = port;
-            rdata->m_multicastLocatorList.push_back(loc);
+            rdata->multicastLocatorList().push_back(loc);
         }
         else if(key == "topic")
         {
@@ -245,27 +245,27 @@ bool EDPStaticXML::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endpoint, Sta
             const char *typeName = element->Attribute("dataType");
             const char *kind = element->Attribute("kind");
 
-            rdata->m_topicName = topicName ? std::string(topicName) : std::string("");
-            rdata->m_typeName = typeName ? std::string(typeName) : std::string("");
+            rdata->topicName() = topicName ? std::string(topicName) : std::string("");
+            rdata->typeName() = typeName ? std::string(typeName) : std::string("");
             std::string auxString(kind ? kind : "");
             if(auxString == "NO_KEY")
             {
-                rdata->m_topicKind = NO_KEY;
-                rdata->m_guid.entityId.value[3] = 0x04;
+                rdata->topicKind() = NO_KEY;
+                rdata->guid().entityId.value[3] = 0x04;
             }
             else if (auxString == "WITH_KEY")
             {
-                rdata->m_topicKind = WITH_KEY;
-                rdata->m_guid.entityId.value[3] = 0x07;
+                rdata->topicKind() = WITH_KEY;
+                rdata->guid().entityId.value[3] = 0x07;
             }
             else
             {
                 logError(RTPS_EDP,"Bad XML file, topic of kind: " << auxString << " is not valid");
                 delete(rdata);return false;
             }
-            if(rdata->m_topicName == "EPROSIMA_UNKNOWN_STRING" || rdata->m_typeName == "EPROSIMA_UNKNOWN_STRING")
+            if(rdata->topicName() == "EPROSIMA_UNKNOWN_STRING" || rdata->typeName() == "EPROSIMA_UNKNOWN_STRING")
             {
-                logError(RTPS_EDP,"Bad XML file, topic: "<<rdata->m_topicName << " or typeName: "<<rdata->m_typeName << " undefined");
+                logError(RTPS_EDP,"Bad XML file, topic: " << rdata->topicName() << " or typeName: " << rdata->typeName() << " undefined");
                 delete(rdata);
                 return false;
             }
@@ -336,7 +336,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endpoint, Sta
 
         element = element->NextSiblingElement();
         }
-    if(rdata->m_userDefinedId == 0)
+    if(rdata->userDefinedId() == 0)
     {
         logError(RTPS_EDP,"Reader XML endpoint with NO ID defined");
         delete(rdata);
@@ -570,7 +570,7 @@ bool EDPStaticXML::lookforReader(std::string partname, uint16_t id,
             for(std::vector<ReaderProxyData*>::iterator rit = (*pit)->m_readers.begin();
                     rit!=(*pit)->m_readers.end();++rit)
             {
-                if((*rit)->m_userDefinedId == id)
+                if((*rit)->userDefinedId() == id)
                 {
                     *rdataptr = *rit;
                     return true;

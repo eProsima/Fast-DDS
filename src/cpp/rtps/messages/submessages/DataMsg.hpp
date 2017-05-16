@@ -131,14 +131,6 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg, const CacheChange_
 
         if(inlineQosFlag) //inlineQoS
         {
-            if(inlineQos != NULL)
-            {
-                if(inlineQos->m_hasChanged || inlineQos->m_cdrmsg.msg_endian != submsgElem.msg_endian)
-                {
-                    ParameterList::updateCDRMsg(inlineQos, submsgElem.msg_endian, false);
-                }
-            }
-
             if(change->write_params.related_sample_identity() != SampleIdentity::unknown())
             {
                 CDRMessage::addParameterSampleIdentity(&submsgElem, change->write_params.related_sample_identity());
@@ -154,10 +146,11 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg, const CacheChange_
                 CDRMessage::addParameterStatus(&submsgElem,status);
 
             if(inlineQos!=NULL)
-                CDRMessage::appendMsg(&submsgElem,&inlineQos->m_cdrmsg);
+                ParameterList::writeParameterListToCDRMsg(&submsgElem, inlineQos, false);
             else
                 CDRMessage::addParameterSentinel(&submsgElem);
         }
+
         //Add Serialized Payload
         if(dataFlag)
             added_no_error &= CDRMessage::addData(&submsgElem, change->serializedPayload.data, change->serializedPayload.length);
@@ -342,10 +335,6 @@ bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheCha
         //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
         if (inlineQosFlag) //inlineQoS
         {
-            if (inlineQos != NULL)
-                if (inlineQos->m_hasChanged || inlineQos->m_cdrmsg.msg_endian != submsgElem.msg_endian)
-                    ParameterList::updateCDRMsg(inlineQos, submsgElem.msg_endian, false);
-
             if(change->write_params.related_sample_identity() != SampleIdentity::unknown())
                 CDRMessage::addParameterSampleIdentity(&submsgElem, change->write_params.related_sample_identity());
 
@@ -356,7 +345,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheCha
                 CDRMessage::addParameterStatus(&submsgElem,status);
 
             if(inlineQos!=NULL)
-                CDRMessage::appendMsg(&submsgElem,&inlineQos->m_cdrmsg);
+                ParameterList::writeParameterListToCDRMsg(&submsgElem, inlineQos, false);
             else
                 CDRMessage::addParameterSentinel(&submsgElem);
         }

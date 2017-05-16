@@ -29,8 +29,11 @@
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/rtps/common/Locator.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <string>
 #include <list>
+#include <map>
 #include <condition_variable>
 #include <asio.hpp>
 #include <gtest/gtest.h>
@@ -87,13 +90,104 @@ class PubSubWriter
 
     } listener_;
 
+    class EDPTakeReaderInfo: public eprosima::fastrtps::rtps::ReaderListener
+    {
+        public:
+
+            EDPTakeReaderInfo(PubSubWriter &writer) : writer_(writer){};
+
+            ~EDPTakeReaderInfo(){};
+
+            void onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const change_in)
+            {
+                ReaderProxyData readerInfo;
+
+                if(change_in->kind == ALIVE)
+                {
+                    CDRMessage_t tempMsg(0);
+                    tempMsg.wraps = true;
+                    tempMsg.msg_endian = change_in->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+                    tempMsg.length = change_in->serializedPayload.length;
+                    tempMsg.max_size = change_in->serializedPayload.max_size;
+                    tempMsg.buffer = change_in->serializedPayload.data;
+
+                    if(readerInfo.readFromCDRMessage(&tempMsg))
+                    {
+                        std::cout << "Discovered reader of topic " << readerInfo.topicName() << std::endl;
+                        writer_.add_topic(readerInfo.topicName());
+                    }
+                }
+                else
+                {
+                    // Search info of entity
+                    GUID_t readerGuid;
+                    iHandle2GUID(readerGuid, change_in->instanceHandle);
+
+                    if(writer_.participant_->get_remote_reader_info(readerGuid, readerInfo))
+                        writer_.remove_topic(readerInfo.topicName());
+                }
+            }
+
+        private:
+
+            EDPTakeReaderInfo& operator=(const EDPTakeReaderInfo&) NON_COPYABLE_CXX11;
+
+            PubSubWriter &writer_;
+    };
+
+    class EDPTakeWriterInfo: public eprosima::fastrtps::rtps::ReaderListener
+    {
+        public:
+
+            EDPTakeWriterInfo(PubSubWriter &writer) : writer_(writer){};
+
+            ~EDPTakeWriterInfo(){};
+
+            void onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const change_in)
+            {
+                WriterProxyData writerInfo;
+
+                if(change_in->kind == ALIVE)
+                {
+                    CDRMessage_t tempMsg(0);
+                    tempMsg.wraps = true;
+                    tempMsg.msg_endian = change_in->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+                    tempMsg.length = change_in->serializedPayload.length;
+                    tempMsg.max_size = change_in->serializedPayload.max_size;
+                    tempMsg.buffer = change_in->serializedPayload.data;
+
+                    if(writerInfo.readFromCDRMessage(&tempMsg))
+                    {
+                        std::cout << "Discovered writer of topic " << writerInfo.topicName() << std::endl;
+                        writer_.add_topic(writerInfo.topicName());
+                    }
+                }
+                else
+                {
+                    // Search info of entity
+                    GUID_t writerGuid;
+                    iHandle2GUID(writerGuid, change_in->instanceHandle);
+
+                    if(writer_.participant_->get_remote_writer_info(writerGuid, writerInfo))
+                        writer_.remove_topic(writerInfo.topicName());
+                }
+            }
+
+        private:
+
+            EDPTakeWriterInfo& operator=(const EDPTakeWriterInfo&) NON_COPYABLE_CXX11;
+
+            PubSubWriter &writer_;
+    };
+
     public:
 
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
 
     PubSubWriter(const std::string &topic_name) : participant_listener_(*this), listener_(*this), participant_(nullptr),
-    publisher_(nullptr), topic_name_(topic_name), initialized_(false), matched_(0)
+    publisher_(nullptr), initialized_(false), matched_(0),
+    attachEDP_(false), edpReaderListener_(*this), edpWriterListener_(*this)
 #if HAVE_SECURITY
     , authorized_(0), unauthorized_(0)
 #endif
@@ -101,8 +195,9 @@ class PubSubWriter
         publisher_attr_.topic.topicDataType = type_.getName();
         // Generate topic name
         std::ostringstream t;
-        t << topic_name_ << "_" << asio::ip::host_name() << "_" << GET_PID();
+        t << topic_name << "_" << asio::ip::host_name() << "_" << GET_PID();
         publisher_attr_.topic.topicName = t.str();
+        topic_name_ = t.str();
 
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
         publisher_attr_.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
@@ -142,6 +237,14 @@ class PubSubWriter
             if(publisher_ != nullptr)
             {
                 initialized_ = true;
+
+                if(attachEDP_)
+                {
+                    std::pair<StatefulReader*, StatefulReader*> edpReaders = participant_->getEDPReaders();
+                    edpReaders.first->setListener(&edpReaderListener_);
+                    edpReaders.second->setListener(&edpWriterListener_);
+                }
+
                 return;
             }
 
@@ -242,6 +345,19 @@ class PubSubWriter
             {
                 return publisher_->wait_for_all_acked(Time_t((int32_t)max_wait.count(), 0));
             }
+
+    void block_until_discover_topic(const std::string& topicName, int repeatedTimes)
+    {
+        std::unique_lock<std::mutex> lock(mutexTopicList_);
+
+        int times = mapTopicCountList_.count(topicName) == 0 ? -1 : mapTopicCountList_[topicName];
+
+        while(times != repeatedTimes)
+        {
+            cvTopicList_.wait(lock);
+            times = mapTopicCountList_.count(topicName) == 0 ? -1 : mapTopicCountList_[topicName];
+        }
+    }
 
     /*** Function to change QoS ***/
     PubSubWriter& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
@@ -397,6 +513,14 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& attach_edp_listeners()
+    {
+        attachEDP_ = true;
+        return *this;
+    }
+
+    const std::string& topic_name() const { return topic_name_; }
+
     private:
 
     void matched()
@@ -431,6 +555,31 @@ class PubSubWriter
     }
 #endif
 
+    void add_topic(const std::string& topicName)
+    {
+        mutexTopicList_.lock();
+        auto ret = mapTopicCountList_.insert(std::make_pair(topicName, 1));
+
+        if(!ret.second)
+            ++ret.first->second;
+
+        mutexTopicList_.unlock();
+        cvTopicList_.notify_all();
+    }
+
+    void remove_topic(const std::string& topicName)
+    {
+        std::unique_lock<std::mutex> lock(mutexTopicList_);
+
+        if(mapTopicCountList_.count(topicName) > 0)
+        {
+            --mapTopicCountList_[topicName];
+            ASSERT_TRUE(mapTopicCountList_[topicName] >= 0);
+            lock.unlock();
+            cvTopicList_.notify_all();
+        }
+    }
+
     PubSubWriter& operator=(const PubSubWriter&)NON_COPYABLE_CXX11;
 
     eprosima::fastrtps::Participant *participant_;
@@ -443,6 +592,12 @@ class PubSubWriter
     std::condition_variable cv_;
     unsigned int matched_;
     type_support type_;
+    bool attachEDP_;
+    EDPTakeReaderInfo edpReaderListener_;
+    EDPTakeWriterInfo edpWriterListener_;
+    std::mutex mutexTopicList_;
+    std::condition_variable cvTopicList_;
+    std::map<std::string,  int> mapTopicCountList_;
 #if HAVE_SECURITY
     std::mutex mutexAuthentication_;
     std::condition_variable cvAuthentication_;

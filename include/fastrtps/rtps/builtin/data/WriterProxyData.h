@@ -46,6 +46,8 @@ public:
 
 	virtual RTPS_DllAPI ~WriterProxyData();
 
+    RTPS_DllAPI WriterProxyData& operator=(const WriterProxyData& writerInfo);
+
     RTPS_DllAPI void guid(const GUID_t& guid)
     {
         m_guid = guid;
@@ -260,11 +262,13 @@ public:
 	bool toParameterList();
 	//!Read a parameter list from a CDRMessage_t.
 	RTPS_DllAPI bool readFromCDRMessage(CDRMessage_t* msg);
+
 	/**
 	* Convert the ProxyData information to RemoteWriterAttributes object.
 	* @return Reference to the RemoteWriterAttributes object.
 	*/
 	RemoteWriterAttributes& toRemoteWriterAttributes();
+
 	//!Remote Attributes associated with this proxy data.
 	RemoteWriterAttributes m_remoteAtt;
 

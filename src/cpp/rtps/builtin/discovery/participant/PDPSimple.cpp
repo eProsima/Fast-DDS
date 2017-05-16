@@ -228,14 +228,22 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
             change = mp_SPDPWriter->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE,getLocalParticipantProxyData()->m_key);
             if(getLocalParticipantProxyData()->toParameterList())
             {
+                CDRMessage_t aux_msg(0);
+                aux_msg.wraps = true;
+                aux_msg.buffer = change->serializedPayload.data;
+                aux_msg.max_size = change->serializedPayload.max_size;
+
 #if EPROSIMA_BIG_ENDIAN
                 change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+                aux_msg.msg_endian = BIGEND;
 #else
                 change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+                aux_msg.msg_endian =  LITTLEEND;
 #endif
-                change->serializedPayload.length = (uint16_t)getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
-                //TODO Optimizacion, intentar quitar la copia.
-                memcpy(change->serializedPayload.data,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
+
+                ParameterList::writeParameterListToCDRMsg(&aux_msg, &getLocalParticipantProxyData()->m_QosList.allQos, true);
+                change->serializedPayload.length = (uint16_t)aux_msg.length;
+
                 mp_SPDPWriterHistory->add_change(change);
             }
             m_hasChangedLocalPDP = false;
@@ -252,14 +260,22 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
         change = mp_SPDPWriter->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;}, NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
         if(getLocalParticipantProxyData()->toParameterList())
         {
+            CDRMessage_t aux_msg(0);
+            aux_msg.wraps = true;
+            aux_msg.buffer = change->serializedPayload.data;
+            aux_msg.max_size = change->serializedPayload.max_size;
+
 #if EPROSIMA_BIG_ENDIAN
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+            aux_msg.msg_endian = BIGEND;
 #else
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+            aux_msg.msg_endian =  LITTLEEND;
 #endif
-            change->serializedPayload.length = (uint16_t)getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
-            //TODO Optimizacion, intentar quitar la copia.
-            memcpy(change->serializedPayload.data,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
+
+            ParameterList::writeParameterListToCDRMsg(&aux_msg, &getLocalParticipantProxyData()->m_QosList.allQos, true);
+            change->serializedPayload.length = (uint16_t)aux_msg.length;
+
             mp_SPDPWriterHistory->add_change(change);
         }
     }
@@ -276,7 +292,7 @@ bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData** rd
         for (auto rit = (*pit)->m_readers.begin();
                 rit != (*pit)->m_readers.end();++rit)
         {
-            if((*rit)->m_guid == reader)
+            if((*rit)->guid() == reader)
             {
                 *rdata = *rit;
                 *pdata = *pit;
@@ -310,13 +326,13 @@ bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData** wd
 
 bool PDPSimple::removeReaderProxyData(ParticipantProxyData* pdata, ReaderProxyData* rdata)
 {
-    logInfo(RTPS_PDP,rdata->m_guid);
+    logInfo(RTPS_PDP,rdata->guid());
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
     std::lock_guard<std::recursive_mutex> guard(*pdata->mp_mutex);
     for(std::vector<ReaderProxyData*>::iterator rit = pdata->m_readers.begin();
             rit != pdata->m_readers.end(); ++rit)
     {
-        if((*rit)->m_guid == rdata->m_guid)
+        if((*rit)->guid() == rdata->guid())
         {
             pdata->m_readers.erase(rit);
             delete(rdata);
@@ -433,19 +449,19 @@ bool PDPSimple::createSPDPEndpoints()
 bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata,bool copydata,
         ReaderProxyData** returnReaderProxyData,ParticipantProxyData** pdata)
 {
-    logInfo(RTPS_PDP,rdata->m_guid);
+    logInfo(RTPS_PDP,rdata->guid());
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
     for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
             pit!=m_participantProxies.end();++pit)
     {
         std::lock_guard<std::recursive_mutex> guard(*(*pit)->mp_mutex);
-        if((*pit)->m_guid.guidPrefix == rdata->m_guid.guidPrefix)
+        if((*pit)->m_guid.guidPrefix == rdata->guid().guidPrefix)
         {
             //CHECK THAT IT IS NOT ALREADY THERE:
             for(std::vector<ReaderProxyData*>::iterator rit = (*pit)->m_readers.begin();
                     rit!=(*pit)->m_readers.end();++rit)
             {
-                if((*rit)->m_guid.entityId == rdata->m_guid.entityId)
+                if((*rit)->guid().entityId == rdata->guid().entityId)
                 {
                     if(copydata)
                         *returnReaderProxyData = *rit;
@@ -756,14 +772,12 @@ bool PDPSimple::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16
 CDRMessage_t PDPSimple::get_participant_proxy_data_serialized(Endianness_t endian)
 {
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
-    if(getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.msg_endian == endian)
-    {
-        return CDRMessage_t(getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg);
-    }
+    CDRMessage_t cdr_msg;
+    cdr_msg.msg_endian = endian;
 
-    ParameterList_t plist(getLocalParticipantProxyData()->m_QosList.allQos);
-    ParameterList::updateCDRMsg(&plist, BIGEND, true);
-    return CDRMessage_t(std::move(plist.m_cdrmsg));
+    ParameterList::writeParameterListToCDRMsg(&cdr_msg, &getLocalParticipantProxyData()->m_QosList.allQos, true);
+
+    return cdr_msg;
 }
 
 } /* namespace rtps */

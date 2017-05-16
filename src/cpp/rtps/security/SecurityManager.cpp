@@ -1781,7 +1781,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                             *local_writer->second.writer_handle, *remote_reader_handle, exception))
                 {
                     ParticipantGenericMessage message = generate_writer_crypto_token_message(remote_participant_key,
-                            remote_reader_data.m_guid, writer_guid, local_writer_crypto_tokens);
+                            remote_reader_data.guid(), writer_guid, local_writer_crypto_tokens);
 
                     CacheChange_t* change = participant_volatile_message_secure_writer_->new_change([&message]() -> uint32_t
                             {
@@ -1819,8 +1819,8 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                             // Send
                             if(participant_volatile_message_secure_writer_history_->add_change(change))
                             {
-                                logInfo(SECURITY, "Process successful discovering remote reader " << remote_reader_data.m_guid);
-                                local_writer->second.associated_readers.emplace(remote_reader_data.m_guid, remote_reader_handle);
+                                logInfo(SECURITY, "Process successful discovering remote reader " << remote_reader_data.guid());
+                                local_writer->second.associated_readers.emplace(remote_reader_data.guid(), remote_reader_handle);
                                 ret = true;
                             }
                             else
@@ -1846,7 +1846,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                 }
 
                 // Check pending reader crypto messages.
-                auto pending = remote_reader_pending_messages_.find(remote_reader_data.m_guid);
+                auto pending = remote_reader_pending_messages_.find(remote_reader_data.guid());
 
                 if(pending != remote_reader_pending_messages_.end())
                 {
@@ -1857,7 +1857,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                                 exception))
                     {
                         logError(SECURITY, "Cannot set remote reader crypto tokens ("
-                                << remote_reader_data.m_guid << ") - (" << exception.what() << ")");
+                                << remote_reader_data.guid() << ") - (" << exception.what() << ")");
                     }
 
                     remote_reader_pending_messages_.erase(pending);
@@ -1865,7 +1865,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
             }
             else
             {
-                logError(SECURITY, "Crypto plugin fails registering remote reader " << remote_reader_data.m_guid <<
+                logError(SECURITY, "Crypto plugin fails registering remote reader " << remote_reader_data.guid() <<
                         " of participant " << remote_participant_key);
             }
         }
@@ -1876,7 +1876,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
     }
     else
     {
-        logInfo(SECURITY, "Storing remote reader << " << remote_reader_data.m_guid <<
+        logInfo(SECURITY, "Storing remote reader << " << remote_reader_data.guid() <<
                 " of participant " << remote_participant_key << " on pendings");
 
         remote_reader_pending_discovery_messages_.push_back(std::make_tuple(remote_reader_data,

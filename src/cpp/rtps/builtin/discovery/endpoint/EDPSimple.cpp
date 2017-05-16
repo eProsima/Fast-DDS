@@ -242,23 +242,32 @@ bool EDPSimple::createSEDPEndpoints()
 
 bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
 {
-    logInfo(RTPS_EDP,rdata->m_guid.entityId);
+    logInfo(RTPS_EDP,rdata->guid().entityId);
     if(mp_SubWriter.first !=nullptr)
     {
         // TODO(Ricardo) Write a getCdrSerializedPayload for ReaderProxyData.
-        CacheChange_t* change = mp_SubWriter.first->new_change([]() -> uint32_t {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;}, ALIVE,rdata->m_key);
+        CacheChange_t* change = mp_SubWriter.first->new_change([]() -> uint32_t {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;}, ALIVE,rdata->key());
+
         if(change !=nullptr)
         {
             rdata->toParameterList();
+
+            CDRMessage_t aux_msg(0);
+            aux_msg.wraps = true;
+            aux_msg.buffer = change->serializedPayload.data;
+            aux_msg.max_size = change->serializedPayload.max_size;
+
 #if EPROSIMA_BIG_ENDIAN
-            ParameterList::updateCDRMsg(&rdata->m_parameterList, BIGEND, true);
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+            aux_msg.msg_endian = BIGEND;
 #else
-            ParameterList::updateCDRMsg(&rdata->m_parameterList, LITTLEEND, true);
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+            aux_msg.msg_endian =  LITTLEEND;
 #endif
-            change->serializedPayload.length = (uint16_t)rdata->m_parameterList.m_cdrmsg.length;
-            memcpy(change->serializedPayload.data,rdata->m_parameterList.m_cdrmsg.buffer,change->serializedPayload.length);
+
+            ParameterList::writeParameterListToCDRMsg(&aux_msg, &rdata->m_parameterList, true);
+            change->serializedPayload.length = (uint16_t)aux_msg.length;
+
             std::unique_lock<std::recursive_mutex> lock(*mp_SubWriter.second->getMutex());
             for(auto ch = mp_SubWriter.second->changesBegin();ch!=mp_SubWriter.second->changesEnd();++ch)
             {
@@ -287,15 +296,23 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
         if(change != nullptr)
         {
             wdata->toParameterList();
+
+            CDRMessage_t aux_msg(0);
+            aux_msg.wraps = true;
+            aux_msg.buffer = change->serializedPayload.data;
+            aux_msg.max_size = change->serializedPayload.max_size;
+
 #if EPROSIMA_BIG_ENDIAN
-            ParameterList::updateCDRMsg(&wdata->m_parameterList,BIGEND, true);
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+            aux_msg.msg_endian = BIGEND;
 #else
-            ParameterList::updateCDRMsg(&wdata->m_parameterList, LITTLEEND, true);
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+            aux_msg.msg_endian =  LITTLEEND;
 #endif
-            change->serializedPayload.length = (uint16_t)wdata->m_parameterList.m_cdrmsg.length;
-            memcpy(change->serializedPayload.data,wdata->m_parameterList.m_cdrmsg.buffer,change->serializedPayload.length);
+
+            ParameterList::writeParameterListToCDRMsg(&aux_msg, &wdata->m_parameterList, true);
+            change->serializedPayload.length = (uint16_t)aux_msg.length;
+
             std::unique_lock<std::recursive_mutex> lock(*mp_PubWriter.second->getMutex());
             for(auto ch = mp_PubWriter.second->changesBegin();ch!=mp_PubWriter.second->changesEnd();++ch)
             {

@@ -1095,6 +1095,37 @@ PDPSimple* RTPSParticipantImpl::pdpsimple()
     return mp_builtinProtocols->mp_PDP;
 }
 
+
+bool RTPSParticipantImpl::get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo)
+{
+    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
+    ParticipantProxyData* pdata = nullptr;
+    WriterProxyData* wdata = nullptr;
+
+    if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(writerGuid, &wdata, &pdata))
+    {
+        returnedInfo = *wdata;
+        return true;
+    }
+
+    return false;
+}
+
+bool RTPSParticipantImpl::get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo)
+{
+    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
+    ParticipantProxyData* pdata = nullptr;
+    ReaderProxyData* rdata = nullptr;
+
+    if(this->mp_builtinProtocols->mp_PDP->lookupReaderProxyData(readerGuid, &rdata, &pdata))
+    {
+        returnedInfo = *rdata;
+        return true;
+    }
+
+    return false;
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

@@ -146,6 +146,11 @@ inline GUID_t iHandle2GUID(const InstanceHandle_t& ihandle)
 	return guid;
 }
 
+inline bool operator<(const InstanceHandle_t& h1, const InstanceHandle_t& h2)
+{
+    return memcmp(h1.value, h2.value, 16) < 0;
+}
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**

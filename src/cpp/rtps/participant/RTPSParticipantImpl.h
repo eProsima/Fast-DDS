@@ -35,6 +35,8 @@
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
 #include <fastrtps/rtps/network/NetworkFactory.h>
 #include <fastrtps/rtps/network/ReceiverResource.h>
@@ -216,6 +218,10 @@ class RTPSParticipantImpl
 #endif
 
         PDPSimple* pdpsimple();
+
+        bool get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo);
+
+        bool get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo);
 
     private:
         //!Attributes of the RTPSParticipant

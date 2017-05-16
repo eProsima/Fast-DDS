@@ -36,6 +36,11 @@ namespace fastrtps{
 class ParticipantImpl;
 class ParticipantAttributes;
 
+namespace rtps {
+class WriterProxyData;
+class ReaderProxyData;
+}
+
 /**
  * Class Participant used to group Publishers and Subscribers into a single working unit.
  * @ingroup FASTRTPS_MODULE
@@ -44,7 +49,9 @@ class RTPS_DllAPI Participant {
 	friend class Domain;
 	friend class ParticipantImpl;
 private:
+
 	Participant();
+
 	virtual ~Participant();
 
 	ParticipantImpl* mp_impl;
@@ -88,23 +95,9 @@ public:
 
 	std::vector<std::string> getParticipantNames();
 
-	/**
-	 * This method returns the number of Publishers that currently belong to the Participant that have 
-	 * a given topic name
-	 *
-	 * @param target_topic Target topic name to match
-	 * @return Number of Publishers in the Participant with that topic name
-	 */
-	int get_no_publishers(char *target_topic);
+    bool get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo);
 
-	/**
-	 * This method return the number of Subscribers that currently belong to the Participant that have
-	 * a given topic name
-	 *
-	 * @param target_topic Target topic name to match
-	 * @return Number of Subscribers in the Participant with that topic name
-	 * */
-	int get_no_subscribers(char *target_topic);
+    bool get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo);
 };
 
 }

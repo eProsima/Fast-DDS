@@ -1725,6 +1725,32 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldUserData)
     ASSERT_TRUE(reader.getDiscoveryResult());
 }
 
+BLACKBOXTEST(BlackBox, EDPSlaveReaderAttachment)
+{
+    PubSubWriter<HelloWorldType> checker(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType>* reader = new PubSubReader<HelloWorldType>(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType>* writer = new PubSubWriter<HelloWorldType>(TEST_TOPIC_NAME);
+
+    checker.attach_edp_listeners().init();
+
+    ASSERT_TRUE(checker.isInitialized());
+
+    reader->init();
+
+    ASSERT_TRUE(reader->isInitialized());
+
+    writer->init();
+
+    ASSERT_TRUE(writer->isInitialized());
+
+    checker.block_until_discover_topic(checker.topic_name(), 2);
+
+    delete reader;
+    delete writer;
+
+    checker.block_until_discover_topic(checker.topic_name(), 0);
+}
+
 #if HAVE_SECURITY
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok)

@@ -29,6 +29,10 @@ class ReaderProxyData
 {
     public:
 
+        GUID_t guid() { return m_guid; }
+
+    private:
+
         GUID_t m_guid;
 };
 

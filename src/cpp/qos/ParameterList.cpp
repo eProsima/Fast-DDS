@@ -24,48 +24,47 @@
 namespace eprosima {
 namespace fastrtps {
 
-#define IF_VALID_ADD {if(valid){plist->m_parameters.push_back((Parameter_t*)p);plist->m_hasChanged = true;paramlist_byte_size += plength;}else{delete(p);return -1;}break;}
+#define IF_VALID_ADD {if(valid){plist->m_parameters.push_back((Parameter_t*)p);paramlist_byte_size += plength;}else{delete(p);return -1;}break;}
 
 
-bool ParameterList::updateCDRMsg(ParameterList_t* plist, Endianness_t endian, bool use_encapsulation)
+bool ParameterList::writeParameterListToCDRMsg(CDRMessage_t* msg, ParameterList_t* plist, bool use_encapsulation)
 {
-    CDRMessage::initCDRMsg(&plist->m_cdrmsg);
-    plist->m_cdrmsg.msg_endian = endian;
+    assert(msg != nullptr);
+    assert(plist != nullptr);
 
     if(use_encapsulation)
     {
         // Set encapsulation
-        CDRMessage::addOctet(&plist->m_cdrmsg, 0);
-        if(endian == BIGEND)
-            CDRMessage::addOctet(&plist->m_cdrmsg, PL_CDR_BE);
+        CDRMessage::addOctet(msg, 0);
+        if(msg->msg_endian == BIGEND)
+            CDRMessage::addOctet(msg, PL_CDR_BE);
         else
-            CDRMessage::addOctet(&plist->m_cdrmsg, PL_CDR_LE);
-        CDRMessage::addUInt16(&plist->m_cdrmsg, 0);
+            CDRMessage::addOctet(msg, PL_CDR_LE);
+        CDRMessage::addUInt16(msg, 0);
     }
 
     for(std::vector<Parameter_t*>::iterator it=plist->m_parameters.begin();
             it!=plist->m_parameters.end();++it)
     {
-        if(!(*it)->addToCDRMessage(&plist->m_cdrmsg))
+        if(!(*it)->addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if(!CDRMessage::addParameterSentinel(&plist->m_cdrmsg))
+    if(!CDRMessage::addParameterSentinel(msg))
     {
         return false;
     }
-    else
-    {
-        plist->m_hasChanged = false;
-        return true;
-    }
-}
 
+    return true;
+}
 
 int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterList_t*plist, CacheChange_t *change,
         bool use_encapsulation)
 {
+    assert(msg != nullptr);
+    assert(plist != nullptr);
+
     uint32_t paramlist_byte_size = 0;
     bool is_sentinel = false;
     bool valid = true;
@@ -115,7 +114,6 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                         if(plength == PARAMETER_LOCATOR_LENGTH && valid)
                         {
                             plist->m_parameters.push_back((Parameter_t*)p);
-                            plist->m_hasChanged = true;
                             paramlist_byte_size += plength;
                         }
                         else
@@ -134,7 +132,6 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                         if(plength == PARAMETER_LOCATOR_LENGTH && valid)
                         {
                             plist->m_parameters.push_back((Parameter_t*)p);
-                            plist->m_hasChanged = true;
                             paramlist_byte_size += plength;
                         }
                         else
@@ -153,7 +150,6 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                         if(plength == PARAMETER_PROTOCOL_LENGTH && valid)
                         {
                             plist->m_parameters.push_back((Parameter_t*)p);
-                            plist->m_hasChanged = true;
                             paramlist_byte_size += plength;
                         }
                         else
@@ -181,7 +177,6 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                         if(plength == PARAMETER_VENDOR_LENGTH && valid)
                         {
                             plist->m_parameters.push_back((Parameter_t*)p);
-                            plist->m_hasChanged = true;
                             paramlist_byte_size += plength;
                         }
                         else
@@ -205,7 +200,6 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                             p->address[3] = msg->buffer[msg->pos+3];
                             msg->pos +=4;
                             plist->m_parameters.push_back((Parameter_t*)p);
-                            plist->m_hasChanged = true;
                             paramlist_byte_size += plength;
                         }
                         else
@@ -228,7 +222,6 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                         if(valid)
                         {
                             plist->m_parameters.push_back((Parameter_t*)p);
-                            plist->m_hasChanged = true;
                             paramlist_byte_size += plength;
                         }
                         else
@@ -293,7 +286,6 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                             return -1;
                         }
                         plist->m_parameters.push_back((Parameter_t*)p);
-                        plist->m_hasChanged = true;
                         paramlist_byte_size += plength;
                         break;
                     }
@@ -427,7 +419,6 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                                 return -1;
                             }
                             plist->m_parameters.push_back((Parameter_t*)p);
-                            plist->m_hasChanged = true;
                             paramlist_byte_size += plength;
                         }
                         else

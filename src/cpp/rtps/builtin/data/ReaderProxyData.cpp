@@ -43,6 +43,22 @@ ReaderProxyData::~ReaderProxyData()
     m_parameterList.deleteParams();
 }
 
+ReaderProxyData& ReaderProxyData::operator=(const ReaderProxyData& readerInfo)
+{
+    m_guid = readerInfo.m_guid;
+    m_unicastLocatorList = readerInfo.m_unicastLocatorList;
+    m_multicastLocatorList = readerInfo.m_multicastLocatorList;
+    m_key = readerInfo.m_key;
+    m_RTPSParticipantKey = readerInfo.m_RTPSParticipantKey;
+    m_typeName = readerInfo.m_typeName;
+    m_topicName = readerInfo.m_topicName;
+    m_userDefinedId = readerInfo.m_userDefinedId;
+    m_isAlive = readerInfo.m_isAlive;
+    m_topicKind = readerInfo.m_topicKind;
+
+    return *this;
+}
+
 bool ReaderProxyData::toParameterList()
 {
     m_parameterList.deleteParams();

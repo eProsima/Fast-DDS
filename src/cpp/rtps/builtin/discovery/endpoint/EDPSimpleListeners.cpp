@@ -53,10 +53,13 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
     {
         //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
         WriterProxyData writerProxyData;
-        CDRMessage_t tempMsg;
-        tempMsg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
-        tempMsg.length = change->serializedPayload.length;
-        memcpy(tempMsg.buffer,change->serializedPayload.data,tempMsg.length);
+        CDRMessage_t tempMsg(0);
+        tempMsg.wraps = true;
+        tempMsg.msg_endian = change_in->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+        tempMsg.length = change_in->serializedPayload.length;
+        tempMsg.max_size = change_in->serializedPayload.max_size;
+        tempMsg.buffer = change_in->serializedPayload.data;
+
         if(writerProxyData.readFromCDRMessage(&tempMsg))
         {
             change->instanceHandle = writerProxyData.key();
@@ -93,19 +96,21 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
                 pdata->mp_mutex->unlock();
                 mp_SEDP->pairingWriterProxy(pdata, wdata);
             }
-        }
 
-        //Call the slave, if it exists
-        if(attached_listener != nullptr){
-            attached_listener_mutex.lock();
-            attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_PubReader.first, change_in);
-            attached_listener_mutex.unlock();
+            //Call the slave, if it exists
+            if(attached_listener != nullptr)
+                attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_PubReader.first, change_in);
         }
     }
     else
     {
         //REMOVE WRITER FROM OUR READERS:
         logInfo(RTPS_EDP,"Disposed Remote Writer, removing...");
+
+        //Call the slave, if it exists
+        if(attached_listener != nullptr)
+            attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_PubReader.first, change_in);
+
         GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
         this->mp_SEDP->removeWriterProxy(auxGUID);
     }
@@ -183,14 +188,17 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
     {
         //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
         ReaderProxyData readerProxyData;
-        CDRMessage_t tempMsg;
-        tempMsg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
-        tempMsg.length = change->serializedPayload.length;
-        memcpy(tempMsg.buffer,change->serializedPayload.data,tempMsg.length);
+        CDRMessage_t tempMsg(0);
+        tempMsg.wraps = true;
+        tempMsg.msg_endian = change_in->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+        tempMsg.length = change_in->serializedPayload.length;
+        tempMsg.max_size = change_in->serializedPayload.max_size;
+        tempMsg.buffer = change_in->serializedPayload.data;
+
         if(readerProxyData.readFromCDRMessage(&tempMsg))
         {
-            change->instanceHandle = readerProxyData.m_key;
-            if(readerProxyData.m_guid.guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
+            change->instanceHandle = readerProxyData.key();
+            if(readerProxyData.guid().guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
             {
                 logInfo(RTPS_EDP,"From own RTPSParticipant, ignoring");
                 mp_SEDP->mp_SubReader.second->remove_change(change);
@@ -203,12 +211,12 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
             {
                 pdata->mp_mutex->lock();
                 //CHECK the locators:
-                if(rdata->m_unicastLocatorList.empty() && rdata->m_multicastLocatorList.empty())
+                if(rdata->unicastLocatorList().empty() && rdata->multicastLocatorList().empty())
                 {
-                    rdata->m_unicastLocatorList = pdata->m_defaultUnicastLocatorList;
-                    rdata->m_multicastLocatorList = pdata->m_defaultMulticastLocatorList;
+                    rdata->unicastLocatorList(pdata->m_defaultUnicastLocatorList);
+                    rdata->multicastLocatorList(pdata->m_defaultMulticastLocatorList);
                 }
-                rdata->m_isAlive = true;
+                rdata->isAlive(true);
                 pdata->mp_mutex->unlock();
                 mp_SEDP->pairingReaderProxy(pdata, rdata);
             }
@@ -223,17 +231,21 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
                 pdata->mp_mutex->unlock();
                 mp_SEDP->pairingReaderProxy(pdata, rdata);
             }
+
+            //Call the slave, if it exists
+            if(attached_listener != nullptr)
+                attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_SubReader.first, change);
         }
-
-        //Call the slave, if it exists
-        if(attached_listener != nullptr)
-            attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_SubReader.first, change);
-
     }
     else
     {
         //REMOVE WRITER FROM OUR READERS:
         logInfo(RTPS_EDP,"Disposed Remote Reader, removing...");
+
+        //Call the slave, if it exists
+        if(attached_listener != nullptr)
+            attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_SubReader.first, change);
+
         GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
         this->mp_SEDP->removeReaderProxy(auxGUID);
     }

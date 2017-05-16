@@ -213,33 +213,6 @@ std::vector<std::string> ParticipantImpl::getParticipantNames(){
     return mp_rtpsParticipant->getParticipantNames();
 }
 
-int ParticipantImpl::get_no_publishers(char *target_topic){
-    int count = 0;
-    std::string target_string(target_topic);
-    //Calculate the number of publishers that match the target topic
-
-    for(auto it=m_publishers.begin(); it!=m_publishers.end(); ++it){
-        if(target_string.compare( (*it).second->getAttributes().topic.topicName) == 0){
-            //Strings are equal
-            count++;
-        }	
-
-    }
-    return count;	
-}
-
-int ParticipantImpl::get_no_subscribers(char *target_topic){
-    int count = 0;
-    std::string target_string(target_topic);
-
-    for(auto it=m_subscribers.begin(); it!=m_subscribers.end(); ++it){
-        if(target_string.compare( (*it).second->getAttributes().topic.topicName) == 0){
-            count++;
-        }
-    }
-    return count;
-
-}
 Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
         SubscriberListener* listen)
 {
@@ -443,6 +416,16 @@ bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16
         return this->mp_rtpsParticipant->newRemoteWriterDiscovered(partguid, endpointId);
     else 
         return this->mp_rtpsParticipant->newRemoteReaderDiscovered(partguid, endpointId);
+}
+
+bool ParticipantImpl::get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo)
+{
+    return mp_rtpsParticipant->get_remote_writer_info(writerGuid, returnedInfo);
+}
+
+bool ParticipantImpl::get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo)
+{
+    return mp_rtpsParticipant->get_remote_reader_info(readerGuid, returnedInfo);
 }
 
 } /* namespace pubsub */

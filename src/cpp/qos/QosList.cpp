@@ -45,12 +45,8 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	std::string& string_in)
 		p->setName(string_in.c_str());
 		//p->length = string_in.size()+2;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
-		qos->allQos.m_hasChanged = true;
 		if(pid==PID_TOPIC_NAME)
-		{
 			qos->inlineQos.m_parameters.push_back((Parameter_t*)p);
-			qos->inlineQos.m_hasChanged = true;
-		}
 		return true;
 	}
 
@@ -68,7 +64,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Locator_t& loc)
 		p->locator = loc;
 		p->length = PARAMETER_LOCATOR_LENGTH;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
-		qos->allQos.m_hasChanged = true;
 		return true;
 	}
 
@@ -85,7 +80,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	uint32_t input_uint32)
 		p->port = input_uint32;
 		p->length = PARAMETER_PORT_LENGTH;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
-		qos->allQos.m_hasChanged = true;
 		return true;
 	}
 	else if(pid == PID_BUILTIN_ENDPOINT_SET)
@@ -96,7 +90,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	uint32_t input_uint32)
 		p->length = PARAMETER_BUILTINENDPOINTSET_LENGTH;
 		p->endpointSet = input_uint32;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
-		qos->allQos.m_hasChanged = true;
 		return true;
 	}
 	else if(pid == PID_PARTICIPANT_MANUAL_LIVELINESS_COUNT)
@@ -107,7 +100,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	uint32_t input_uint32)
 		p->length = PARAMETER_COUNT_LENGTH;
 		p->count = input_uint32;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
-		qos->allQos.m_hasChanged = true;
 		return true;
 	}
 
@@ -124,7 +116,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	bool in_bool)
 		p->length = PARAMETER_BOOL_LENGTH;
 		p->value = in_bool;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
-		qos->allQos.m_hasChanged = true;
 		return true;
 	}
 
@@ -143,7 +134,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	const GUID_t& guid)
 		p->length = PARAMETER_GUID_LENGTH;
 		p->guid = guid;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
-		qos->allQos.m_hasChanged = true;
 		return true;
 	}
 	return false;
@@ -158,7 +148,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	ProtocolVersion_t& proto
 		p->length = PARAMETER_PROTOCOL_LENGTH;
 		p->protocolVersion = protocol;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
-		qos->allQos.m_hasChanged = true;
 		return true;
 	}
 	return false;
@@ -174,7 +163,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	VendorId_t& vendor)
         p->vendorId[0] = vendor[0];
         p->vendorId[1] = vendor[1];
         qos->allQos.m_parameters.push_back((Parameter_t*)p);
-        qos->allQos.m_hasChanged = true;
         return true;
     }
     return false;
@@ -193,7 +181,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid, octet o1,	octet o2, octe
 		p->address[2] = o3;
 		p->address[3] = o4;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
-		qos->allQos.m_hasChanged = true;
 		return true;
 	}
 	return false;
@@ -221,7 +208,6 @@ bool QosList::addQos(QosList_t* qos,ParameterId_t pid ,std::string& str1,std::st
 		}
 		p->Pid = PID_PROPERTY_LIST;
 		p->properties.push_back(std::pair<std::string,std::string>(str1,str2));
-		qos->allQos.m_hasChanged = true;
 		if(!found)
 			qos->allQos.m_parameters.push_back((Parameter_t*)p);
 		return true;
@@ -238,7 +224,6 @@ bool QosList::addQos(QosList_t* qos,ParameterId_t pid ,std::string& str1,std::st
 		 p->properties.push_back(*it);
 	 }
 	 qos->allQos.m_parameters.push_back((Parameter_t*)p);
-	 qos->allQos.m_hasChanged = true;
 	 return true;
  }
 
@@ -253,7 +238,6 @@ bool QosList::addQos(QosList_t* qos,ParameterId_t pid ,std::string& str1,std::st
 //		p->length = PARAMETER_COUNT_LENGTH;
 //		p->count = count;
 //		qos->allQos.m_parameters.push_back((Parameter_t*)p);
-//		qos->allQos.m_hasChangedMsg = true;
 //		return true;
 //	}
 //	return false;
@@ -267,7 +251,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	const EntityId_t& entity
 		p->length = PARAMETER_ENTITYID_LENGTH;
 		p->entityId = entity;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
-		qos->allQos.m_hasChanged = true;
 		return true;
 	}
 	return false;
@@ -281,7 +264,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Time_t& time_in) {
 		p->length = PARAMETER_TIME_LENGTH;
 		p->time = time_in;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
-		qos->allQos.m_hasChanged = true;
 		return true;
 	}
 	return false;
@@ -293,7 +275,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	std::vector<octet>& ocVe
 		UserDataQosPolicy* p = new UserDataQosPolicy();
 		p->setDataVec(ocVec);
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
-		qos->allQos.m_hasChanged = true;
 		return true;
 	}
 	return false;
@@ -306,7 +287,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	const IdentityToken& ide
         p->Pid = pid;
         p->token = identity_token;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
-		qos->allQos.m_hasChanged = true;
 		return true;
 	}
 	return false;
@@ -322,7 +302,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	const IdentityToken& ide
 //		p->length = PARAMETER_BUILTINENDPOINTSET_LENGTH;
 //		p->endpointSet = endpointset;
 //		qos->allQos.m_parameters.push_back((Parameter_t*)p);
-//		qos->allQos.m_hasChanged= true;
 //		return true;
 //	}
 //	return false;

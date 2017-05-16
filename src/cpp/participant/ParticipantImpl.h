@@ -27,8 +27,11 @@
 
 namespace eprosima{
 namespace fastrtps{
+
 namespace rtps{
 class RTPSParticipant;
+class WriterProxyData;
+class ReaderProxyData;
 }
 
 using namespace rtps;
@@ -124,8 +127,6 @@ class ParticipantImpl
 
     std::vector<std::string> getParticipantNames();
 
-    int get_no_publishers(char *target_topic);
-    int get_no_subscribers(char *target_topic);
     /**
      * This method can be used when using a StaticEndpointDiscovery mechanism differnet that the one
      * included in FastRTPS, for example when communicating with other implementations.
@@ -138,6 +139,10 @@ class ParticipantImpl
      */
     bool newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t userId,
             EndpointKind_t kind);
+
+    bool get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo);
+
+    bool get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo);
 
     private:
     //!Participant Attributes

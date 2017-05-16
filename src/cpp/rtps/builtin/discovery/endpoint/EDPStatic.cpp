@@ -106,11 +106,11 @@ bool EDPStaticProperty::fromProperty(std::pair<std::string,std::string> prop)
 
 bool EDPStatic::processLocalReaderProxyData(ReaderProxyData* rdata)
 {
-	logInfo(RTPS_EDP,rdata->m_guid.entityId<< " in topic: " <<rdata->m_topicName);
+	logInfo(RTPS_EDP,rdata->guid().entityId<< " in topic: " <<rdata->topicName());
 	//Add the property list entry to our local pdp
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
 	localpdata->mp_mutex->lock();
-	localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Reader","ALIVE",rdata->m_userDefinedId,rdata->m_guid.entityId));
+	localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Reader","ALIVE", rdata->userDefinedId(), rdata->guid().entityId));
 	localpdata->m_hasChanged = true;
 	localpdata->mp_mutex->unlock();
 	this->mp_PDP->announceParticipantState(true);
@@ -229,32 +229,32 @@ bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,Enti
 	ReaderProxyData* rpd = NULL;
 	if(mp_edpXML->lookforReader(pdata->m_participantName,userId,&rpd))
 	{
-		logInfo(RTPS_EDP,"Activating: " << rpd->m_guid.entityId << " in topic " << rpd->m_topicName);
+		logInfo(RTPS_EDP,"Activating: " << rpd->guid().entityId << " in topic " << rpd->topicName());
 		ReaderProxyData* newRPD = new ReaderProxyData();
 		newRPD->copy(rpd);
-		newRPD->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
+		newRPD->guid().guidPrefix = pdata->m_guid.guidPrefix;
 		if(entId != c_EntityId_Unknown)
-			newRPD->m_guid.entityId = entId;
+			newRPD->guid().entityId = entId;
 		if(!checkEntityId(newRPD))
 		{
 			logError(RTPS_EDP,"The provided entityId for Reader with ID: "
-					<< newRPD->m_userDefinedId << " does not match the topic Kind");
+					<< newRPD->userDefinedId() << " does not match the topic Kind");
 			delete(newRPD);
 			return false;
 		}
-		newRPD->m_key = newRPD->m_guid;
-		newRPD->m_RTPSParticipantKey = pdata->m_guid;
+		newRPD->key() = newRPD->guid();
+		newRPD->RTPSParticipantKey() = pdata->m_guid;
         ParticipantProxyData* pdata_aux = nullptr;
 		if(this->mp_PDP->addReaderProxyData(newRPD,false, nullptr, &pdata_aux))
 		{
             pdata_aux->mp_mutex->lock();
 			//CHECK the locators:
-			if(newRPD->m_unicastLocatorList.empty() && newRPD->m_multicastLocatorList.empty())
+			if(newRPD->unicastLocatorList().empty() && newRPD->multicastLocatorList().empty())
 			{
-				newRPD->m_unicastLocatorList = pdata_aux->m_defaultUnicastLocatorList;
-				newRPD->m_multicastLocatorList = pdata_aux->m_defaultMulticastLocatorList;
+				newRPD->unicastLocatorList(pdata_aux->m_defaultUnicastLocatorList);
+				newRPD->multicastLocatorList(pdata_aux->m_defaultMulticastLocatorList);
 			}
-			newRPD->m_isAlive = true;
+			newRPD->isAlive(true);
             pdata_aux->mp_mutex->unlock();
 			this->pairingReaderProxy(pdata_aux, newRPD);
 			return true;
@@ -304,9 +304,9 @@ bool EDPStatic::newRemoteWriter(ParticipantProxyData* pdata,uint16_t userId,Enti
 
 bool EDPStatic::checkEntityId(ReaderProxyData* rdata)
 {
-	if(rdata->m_topicKind == WITH_KEY && rdata->m_guid.entityId.value[3] == 0x07)
+	if(rdata->topicKind() == WITH_KEY && rdata->guid().entityId.value[3] == 0x07)
 		return true;
-	if(rdata->m_topicKind == NO_KEY && rdata->m_guid.entityId.value[3] == 0x04)
+	if(rdata->topicKind() == NO_KEY && rdata->guid().entityId.value[3] == 0x04)
 		return true;
 	return false;
 }

@@ -195,13 +195,15 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     ParticipantProxyData participant_data1;
     participant_data1.m_guid = adjusted_participant_key1;
     participant_data1.toParameterList();
-    ParameterList::updateCDRMsg(&participant_data1.m_QosList.allQos, BIGEND, true);
+    CDRMessage_t auxMsg;
+    auxMsg.msg_endian = BIGEND;
+    ASSERT_TRUE(ParameterList::writeParameterListToCDRMsg(&auxMsg, &participant_data1.m_QosList.allQos, true));
 
     result = plugin.begin_handshake_request(&handshake_handle,
             &handshake_message,
             *local_identity_handle1,
             *remote_identity_handle1,
-            participant_data1.m_QosList.allQos.m_cdrmsg,
+            auxMsg,
             exception);
 
     ASSERT_TRUE(result == ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE);
@@ -214,14 +216,18 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     ParticipantProxyData participant_data2;
     participant_data2.m_guid = adjusted_participant_key2;
     participant_data2.toParameterList();
-    ASSERT_TRUE(ParameterList::updateCDRMsg(&participant_data2.m_QosList.allQos, BIGEND, true));
+    
+    auxMsg.length = 0;
+    auxMsg.pos = 0;
+
+    ASSERT_TRUE(ParameterList::writeParameterListToCDRMsg(&auxMsg, &participant_data2.m_QosList.allQos, true));
 
     result = plugin.begin_handshake_reply(&handshake_handle_reply,
             &handshake_message_reply,
             HandshakeMessageToken(*handshake_message),
             *remote_identity_handle2,
             *local_identity_handle2,
-            participant_data2.m_QosList.allQos.m_cdrmsg,
+            auxMsg,
             exception);
 
     ASSERT_TRUE(result == ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE);
