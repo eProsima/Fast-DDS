@@ -1755,21 +1755,21 @@ BLACKBOXTEST(BlackBox, EDPSlaveReaderAttachment)
 
 BLACKBOXTEST(BlackBox, XMLoadProfiles)
 {
-    ASSERT_EQ(  xmlparser::XMLP_ret::OK,
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::loadXMLFile("test_xml_profiles.xml"));
-    ASSERT_EQ(  xmlparser::XMLP_ret::OK,
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::loadXMLFile("test_xml_security_profiles.xml"));
-    ASSERT_EQ(  xmlparser::XMLP_ret::OK,
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::loadXMLFile("test_xml_duplicated_profiles.xml"));
-    ASSERT_EQ(  xmlparser::XMLP_ret::ERROR,
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_ERROR,
                 xmlparser::XMLProfileParser::loadXMLFile("missing_file.xml"));
 
     ParticipantAttributes participant_atts;
-    ASSERT_EQ(  xmlparser::XMLP_ret::OK,
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::fillParticipantProfile("test_participant_profile", participant_atts));
-    ASSERT_EQ(  xmlparser::XMLP_ret::ERROR,
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_ERROR,
                 xmlparser::XMLProfileParser::fillParticipantProfile("bad_name", participant_atts));
-    ASSERT_EQ(  xmlparser::XMLP_ret::ERROR,
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_ERROR,
                 xmlparser::XMLProfileParser::fillParticipantProfile("test_publisher_profile", participant_atts));
 }
 
@@ -1778,9 +1778,9 @@ BLACKBOXTEST(BlackBox, XMLParserParcipant)
     std::string participant_profile = std::string("test_participant_profile");
     ParticipantAttributes participant_atts;
 
-    ASSERT_EQ(  xmlparser::XMLP_ret::OK,
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::loadXMLFile("test_xml_profiles.xml"));
-    EXPECT_EQ(  xmlparser::XMLP_ret::OK,
+    EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::fillParticipantProfile(participant_profile, participant_atts));
 
     RTPSParticipantAttributes &rtps_atts = participant_atts.rtps;
@@ -1836,9 +1836,9 @@ BLACKBOXTEST(BlackBox, XMLParserPublisher)
     std::string publisher_profile = std::string("test_publisher_profile");
     PublisherAttributes publisher_atts;
 
-    ASSERT_EQ(  xmlparser::XMLP_ret::OK,
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::loadXMLFile("test_xml_profiles.xml"));
-    EXPECT_EQ(  xmlparser::XMLP_ret::OK,
+    EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::fillPublisherProfile(publisher_profile, publisher_atts));
 
     TopicAttributes &pub_topic = publisher_atts.topic;
@@ -1892,9 +1892,9 @@ BLACKBOXTEST(BlackBox, XMLParserSubscriber)
     std::string subscriber_profile = std::string("test_subscriber_profile");
     SubscriberAttributes subscriber_atts;
 
-    ASSERT_EQ(  xmlparser::XMLP_ret::OK,
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::loadXMLFile("test_xml_profiles.xml"));
-    EXPECT_EQ(  xmlparser::XMLP_ret::OK,
+    EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::fillSubscriberProfile(subscriber_profile, subscriber_atts));
 
     TopicAttributes &sub_topic = subscriber_atts.topic;
@@ -2931,9 +2931,9 @@ BLACKBOXTEST(BlackBox, XMLParserSecurity)
     std::string participant_profile = std::string("test_participant_security_profile");
     ParticipantAttributes participant_atts;
 
-    ASSERT_EQ(  xmlparser::XMLP_ret::OK,
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::loadXMLFile("test_xml_security_profiles.xml"));
-    EXPECT_EQ(  xmlparser::XMLP_ret::OK,
+    EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::fillParticipantProfile(participant_profile, participant_atts));
 
     PropertySeq &part_props = participant_atts.rtps.properties.properties();
@@ -2953,7 +2953,7 @@ BLACKBOXTEST(BlackBox, XMLParserSecurity)
 
     std::string publisher_profile = std::string("test_publisher_security_profile");
     PublisherAttributes publisher_atts;
-    EXPECT_EQ(  xmlparser::XMLP_ret::OK,
+    EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::fillPublisherProfile(publisher_profile, publisher_atts));
 
     PropertySeq &pub_props = publisher_atts.properties.properties();
@@ -2974,7 +2974,7 @@ BLACKBOXTEST(BlackBox, XMLParserSecurity)
     std::string subscriber_profile = std::string("test_subscriber_security_profile");
     SubscriberAttributes subscriber_atts;
 
-    EXPECT_EQ(xmlparser::XMLP_ret::OK,
+    EXPECT_EQ(xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::fillSubscriberProfile(subscriber_profile, subscriber_atts));
 
     PropertySeq &sub_props = subscriber_atts.properties.properties();

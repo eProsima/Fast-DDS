@@ -72,7 +72,7 @@ extern const char* NACK_RESP_DELAY;
 extern const char* NACK_SUPRESSION;
 extern const char* BY_NAME;
 extern const char* BY_VAL;
-extern const char* INFINITE;
+extern const char* _INFINITE;
 extern const char* ZERO;
 extern const char* INVALID;
 extern const char* SECONDS;

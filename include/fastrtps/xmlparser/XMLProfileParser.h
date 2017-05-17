@@ -7,6 +7,7 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileParserCommon.h>
+#include <map>
 
 
 namespace tinyxml2
@@ -27,9 +28,9 @@ namespace xmlparser{
  */
 enum class XMLP_ret
 {
-    ERROR,
-    OK,
-    NOK,
+    XML_ERROR,
+    XML_OK,
+    XML_NOK,
 };
 
 
@@ -53,34 +54,34 @@ class XMLProfileParser
 public:
     /**
     * Load the default profiles XML file.
-    * @return XMLP_ret::OK on success, XMLP_ret::ERROR in other case.
+    * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
     RTPS_DllAPI static XMLP_ret loadDefaultXMLFile();
     /**
     * Load a profiles XML file.
     * @param filename Name for the file to be loaded.
-    * @return XMLP_ret::OK on success, XMLP_ret::ERROR in other case.
+    * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
     RTPS_DllAPI static XMLP_ret loadXMLFile(const std::string &filename);
     /**
     * Search for the profile specified and fill the structure.
     * @param profile_name Name for the profile to be used to fill the structure.
     * @param atts Structure to be filled.
-    * @return XMLP_ret::OK on success, XMLP_ret::ERROR in other case.
+    * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
     RTPS_DllAPI static XMLP_ret fillParticipantProfile(const std::string &profile_name, ParticipantAttributes &atts);
     /**
     * Search for the profile specified and fill the structure.
     * @param profile_name Name for the profile to be used to fill the structure.
     * @param atts Structure to be filled.
-    * @return XMLP_ret::OK on success, XMLP_ret::ERROR in other case.
+    * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
     RTPS_DllAPI static XMLP_ret fillPublisherProfile(const std::string &profile_name, PublisherAttributes &atts);
     /**
     * Search for the profile specified and fill the structure.
     * @param profile_name Name for the profile to be used to fill the structure.
     * @param atts Structure to be filled.
-    * @return XMLP_ret::OK on success, XMLP_ret::ERROR in other case.
+    * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
     RTPS_DllAPI static XMLP_ret fillSubscriberProfile(const std::string &profile_name, SubscriberAttributes &atts);
 
