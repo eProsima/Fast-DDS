@@ -91,7 +91,6 @@ set(${PROJECT_NAME}_source_files
     rtps/builtin/discovery/endpoint/EDP.cpp
     rtps/builtin/discovery/endpoint/EDPSimple.cpp
     rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp
-    rtps/builtin/discovery/endpoint/EDPStaticXML.cpp
     rtps/builtin/discovery/endpoint/EDPStatic.cpp
     rtps/builtin/liveliness/WLP.cpp
     rtps/builtin/liveliness/WLPListener.cpp
@@ -105,8 +104,9 @@ set(${PROJECT_NAME}_source_files
     rtps/exceptions/Exception.cpp
     rtps/attributes/PropertyPolicy.cpp
     rtps/common/Token.cpp
-    xmlparser/XMLProfileParserCommon.cpp
+    xmlparser/XMLParserCommon.cpp
     xmlparser/XMLProfileElementParser.cpp
+    xmlparser/XMLEndpointParser.cpp
     xmlparser/XMLProfileParser.cpp
     )
 

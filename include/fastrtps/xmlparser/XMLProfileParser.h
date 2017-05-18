@@ -6,7 +6,7 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/xmlparser/XMLProfileParserCommon.h>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <map>
 
 
@@ -21,17 +21,6 @@ using namespace eprosima::fastrtps::rtps;
 namespace eprosima{
 namespace fastrtps{
 namespace xmlparser{
-
-/**
- * Enum class XMLP_ret, used to provide a strongly typed result from the operations within this module.
- * @ingroup XMLPARSER_MODULE
- */
-enum class XMLP_ret
-{
-    XML_ERROR,
-    XML_OK,
-    XML_NOK,
-};
 
 
 typedef std::map<std::string, ParticipantAttributes> participant_map_t;
@@ -69,21 +58,21 @@ public:
     * @param atts Structure to be filled.
     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
-    RTPS_DllAPI static XMLP_ret fillParticipantProfile(const std::string &profile_name, ParticipantAttributes &atts);
+    RTPS_DllAPI static XMLP_ret fillParticipantAttributes(const std::string &profile_name, ParticipantAttributes &atts);
     /**
     * Search for the profile specified and fill the structure.
     * @param profile_name Name for the profile to be used to fill the structure.
     * @param atts Structure to be filled.
     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
-    RTPS_DllAPI static XMLP_ret fillPublisherProfile(const std::string &profile_name, PublisherAttributes &atts);
+    RTPS_DllAPI static XMLP_ret fillPublishertAttributes(const std::string &profile_name, PublisherAttributes &atts);
     /**
     * Search for the profile specified and fill the structure.
     * @param profile_name Name for the profile to be used to fill the structure.
     * @param atts Structure to be filled.
     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
-    RTPS_DllAPI static XMLP_ret fillSubscriberProfile(const std::string &profile_name, SubscriberAttributes &atts);
+    RTPS_DllAPI static XMLP_ret fillSubscribertAttributes(const std::string &profile_name, SubscriberAttributes &atts);
 
 protected:
 

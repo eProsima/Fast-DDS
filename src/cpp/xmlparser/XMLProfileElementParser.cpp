@@ -1,6 +1,6 @@
 #include <cstring>
 #include <tinyxml2.h>
-#include <fastrtps/xmlparser/XMLProfileParserCommon.h>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLProfileParser.h>
 
 namespace eprosima {

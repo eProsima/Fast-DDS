@@ -1,5 +1,5 @@
 #include <tinyxml2.h>
-#include <fastrtps/xmlparser/XMLProfileParserCommon.h>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLProfileParser.h>
 
 namespace eprosima {
@@ -11,7 +11,7 @@ std::map<std::string, PublisherAttributes>   XMLProfileParser::m_publisher_profi
 std::map<std::string, SubscriberAttributes>  XMLProfileParser::m_subscriber_profiles;
 std::map<std::string, XMLP_ret>              XMLProfileParser::m_xml_files;
 
-XMLP_ret XMLProfileParser::fillParticipantProfile(const std::string &profile_name, ParticipantAttributes &atts)
+XMLP_ret XMLProfileParser::fillParticipantAttributes(const std::string &profile_name, ParticipantAttributes &atts)
 {
     part_map_iterator_t it = m_participant_profiles.find(profile_name);
     if (it == m_participant_profiles.end())
@@ -23,7 +23,7 @@ XMLP_ret XMLProfileParser::fillParticipantProfile(const std::string &profile_nam
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::fillPublisherProfile(const std::string &profile_name, PublisherAttributes &atts)
+XMLP_ret XMLProfileParser::fillPublishertAttributes(const std::string &profile_name, PublisherAttributes &atts)
 {
     publ_map_iterator_t it = m_publisher_profiles.find(profile_name);
     if (it == m_publisher_profiles.end())
@@ -35,7 +35,7 @@ XMLP_ret XMLProfileParser::fillPublisherProfile(const std::string &profile_name,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::fillSubscriberProfile(const std::string &profile_name, SubscriberAttributes &atts)
+XMLP_ret XMLProfileParser::fillSubscribertAttributes(const std::string &profile_name, SubscriberAttributes &atts)
 {
     subs_map_iterator_t it = m_subscriber_profiles.find(profile_name);
     if (it == m_subscriber_profiles.end())

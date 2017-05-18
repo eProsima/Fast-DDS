@@ -1,4 +1,4 @@
-#include <fastrtps/xmlparser/XMLProfileParserCommon.h>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -159,6 +159,40 @@ const char* PUBWRITER_SUBREADER = "PUBWRITER_SUBREADER";
 const char* PUBREADER_SUBWRITER = "PUBREADER_SUBWRITER";
 const char* STATIC_ENDPOINT_XML = "staticEndpointXMLFilename";
 const char* ACCESS_SCOPE = "access_scope";
+
+// Endpoint parser
+const char* STATICDISCOVERY = "staticdiscovery";
+const char* READER = "reader";
+const char* WRITER = "writer";
+const char* USER_ID = "userId";
+const char* EXPECT_INLINE_QOS = "expectsInlineQos";
+const char* TOPIC_NAME = "topicName";
+const char* TOPIC_DATA_TYPE = "topicDataType";
+const char* TOPIC_KIND = "topicKind";
+const char* RELIABILITY_QOS = "reliabilityQos";
+const char* UNICAST_LOCATOR = "unicastLocator";
+const char* MULTICAST_LOCATOR = "multicastLocator";
+const char* _RELIABLE_RELIABILITY_QOS = "RELIABLE_RELIABILITY_QOS";
+const char* _BEST_EFFORT_RELIABILITY_QOS = "BEST_EFFORT_RELIABILITY_QOS";
+const char* DURABILITY_QOS = "durabilityQos";
+const char* _TRANSIENT_LOCAL_DURABILITY_QOS = "TRANSIENT_LOCAL_DURABILITY_QOS";
+const char* _VOLATILE_DURABILITY_QOS = "VOLATILE_DURABILITY_QOS";
+const char* OWNERSHIP_QOS = "ownershipQos";
+const char* OWNERSHIP_KIND_NOT_PRESENT = "OWNERHSIP kind NOT PRESENT";
+const char* _SHARED_OWNERSHIP_QOS = "SHARED_OWNERSHIP_QOS";
+const char* _EXCLUSIVE_OWNERSHIP_QOS = "EXCLUSIVE_OWNERSHIP_QOS";
+const char* PARTITION_QOS = "partitionQos";
+const char* LIVELINESS_QOS = "livelinessQos";
+const char* LIVELINESS_KIND_NOT_PRESENT = "LIVELINESS kind NOT PRESENT";
+const char* _AUTOMATIC_LIVELINESS_QOS = "AUTOMATIC_LIVELINESS_QOS";
+const char* _MANUAL_BY_PARTICIPANT_LIVELINESS_QOS = "MANUAL_BY_PARTICIPANT_LIVELINESS_QOS";
+const char* _MANUAL_BY_TOPIC_LIVELINESS_QOS = "MANUAL_BY_TOPIC_LIVELINESS_QOS";
+const char* LEASE_DURATION_MS = "leaseDuration_ms";
+const char* _INF = "INF";
+const char* EPROSIMA_UNKNOWN_STRING = "EPROSIMA_UNKNOWN_STRING";
+const char* _OWNERSHIP_KIND_NOT_PRESENT = "OWNERSHIP_KIND_NOT_PRESENT";
+const char* STRENGTH = "strength";
+
 
 } /* xmlparser */
 } /* namespace */

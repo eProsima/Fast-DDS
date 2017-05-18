@@ -26,9 +26,11 @@
 
 namespace eprosima {
 namespace fastrtps{
+namespace xmlparser{
+    class XMLEndpointParser;
+}
 namespace rtps {
 
-class EDPStaticXML;
 
 /**
  * Class EDPStaticProperty, used to read and write the strings from the properties used to transmit the EntityId_t.
@@ -53,7 +55,7 @@ public:
 	* Convert information to a property
 	* @param type Type of endpoint
 	* @param status Status of the endpoint
-	* @param id User Id 
+	* @param id User Id
 	* @param ent EntityId
 	* @return Pair of two strings.
 	*/
@@ -134,17 +136,17 @@ public:
 	/**
 	* This method checks the provided entityId against the topic type to see if it matches
 	* @param rdata Pointer to the readerProxyData
-	* @return True if its correct. 
+	* @return True if its correct.
 	**/
 	bool checkEntityId(ReaderProxyData* rdata);
 	/**
 	* This method checks the provided entityId against the topic type to see if it matches
 	* @param wdata Pointer to the writerProxyData
-	* @return True if its correct. 
+	* @return True if its correct.
 	**/
 	bool checkEntityId(WriterProxyData* wdata);
 private:
-	EDPStaticXML* mp_edpXML;
+	xmlparser::XMLEndpointParser* mp_edpXML;
 	BuiltinAttributes m_attributes;
 };
 

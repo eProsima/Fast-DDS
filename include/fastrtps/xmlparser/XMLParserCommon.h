@@ -1,11 +1,23 @@
-#ifndef XML_PROFILE_PARSER_COMMON_H_
-#define XML_PROFILE_PARSER_COMMON_H_
+#ifndef XML_PARSER_COMMON_H_
+#define XML_PARSER_COMMON_H_
 
 namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
 #define draw(ident, text, ...) for (uint8_t i = ident + 1; i > 0; --i) (i == 1)? printf(text, ## __VA_ARGS__): printf("\t")
+
+/**
+ * Enum class XMLP_ret, used to provide a strongly typed result from the operations within this module.
+ * @ingroup XMLPARSER_MODULE
+ */
+enum class XMLP_ret
+{
+    XML_ERROR,
+    XML_OK,
+    XML_NOK
+};
+
 
 extern const char* DEFAULT_FASTRTPS_PROFILES;
 
@@ -162,6 +174,41 @@ extern const char* PUBWRITER_SUBREADER;
 extern const char* PUBREADER_SUBWRITER;
 extern const char* STATIC_ENDPOINT_XML;
 extern const char* ACCESS_SCOPE;
+
+// Endpoint parser
+extern const char* STATICDISCOVERY;
+extern const char* READER;
+extern const char* WRITER;
+extern const char* USER_ID;
+extern const char* EXPECT_INLINE_QOS;
+extern const char* TOPIC_NAME;
+extern const char* TOPIC_DATA_TYPE;
+extern const char* TOPIC_KIND;
+extern const char* RELIABILITY_QOS;
+extern const char* UNICAST_LOCATOR;
+extern const char* MULTICAST_LOCATOR;
+extern const char* _RELIABLE_RELIABILITY_QOS;
+extern const char* _BEST_EFFORT_RELIABILITY_QOS;
+extern const char* DURABILITY_QOS;
+extern const char* _TRANSIENT_LOCAL_DURABILITY_QOS;
+extern const char* _VOLATILE_DURABILITY_QOS;
+extern const char* OWNERSHIP_QOS;
+extern const char* OWNERSHIP_KIND_NOT_PRESENT;
+extern const char* _SHARED_OWNERSHIP_QOS;
+extern const char* _EXCLUSIVE_OWNERSHIP_QOS;
+extern const char* PARTITION_QOS;
+extern const char* LIVELINESS_QOS;
+extern const char* LIVELINESS_KIND_NOT_PRESENT;
+extern const char* _AUTOMATIC_LIVELINESS_QOS;
+extern const char* _MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+extern const char* _MANUAL_BY_TOPIC_LIVELINESS_QOS;
+extern const char* LEASE_DURATION_MS;
+extern const char* _INF;
+extern const char* EPROSIMA_UNKNOWN_STRING;
+extern const char* _TRANSIENT_LOCAL_DURABILITY_QOS;
+extern const char* _VOLATILE_DURABILITY_QOS;
+extern const char* STRENGTH;
+
 
 } /* xmlparser */
 } /* namespace */

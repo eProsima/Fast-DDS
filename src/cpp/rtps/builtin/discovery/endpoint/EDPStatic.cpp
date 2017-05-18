@@ -18,13 +18,12 @@
  */
 
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h>
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDPStaticXML.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastrtps/xmlparser/XMLEndpointParser.h>
 
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-
 
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
@@ -58,9 +57,9 @@ bool EDPStatic::initEDP(BuiltinAttributes& attributes)
 {
 	logInfo(RTPS_EDP,"Beginning STATIC EndpointDiscoveryProtocol");
 	m_attributes = attributes;
-	mp_edpXML = new EDPStaticXML();
+	mp_edpXML = new xmlparser::XMLEndpointParser();
 	std::string filename(m_attributes.getStaticEndpointXMLFilename());
-	return this->mp_edpXML->loadXMLFile(filename);
+	return (this->mp_edpXML->loadXMLFile(filename) == xmlparser::XMLP_ret::XML_OK);
 }
 
 std::pair<std::string,std::string> EDPStaticProperty::toProperty(std::string type,std::string status,uint16_t id,const EntityId_t& ent)
@@ -227,7 +226,7 @@ void EDPStatic::assignRemoteEndpoints(ParticipantProxyData* pdata)
 bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,EntityId_t entId)
 {
 	ReaderProxyData* rpd = NULL;
-	if(mp_edpXML->lookforReader(pdata->m_participantName,userId,&rpd))
+	if(mp_edpXML->lookforReader(pdata->m_participantName,userId,&rpd) == xmlparser::XMLP_ret::XML_OK)
 	{
 		logInfo(RTPS_EDP,"Activating: " << rpd->guid().entityId << " in topic " << rpd->topicName());
 		ReaderProxyData* newRPD = new ReaderProxyData();
@@ -266,7 +265,7 @@ bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,Enti
 bool EDPStatic::newRemoteWriter(ParticipantProxyData* pdata,uint16_t userId,EntityId_t entId)
 {
 	WriterProxyData* wpd = NULL;
-	if(mp_edpXML->lookforWriter(pdata->m_participantName,userId,&wpd))
+	if(mp_edpXML->lookforWriter(pdata->m_participantName,userId,&wpd) == xmlparser::XMLP_ret::XML_OK)
 	{
 		logInfo(RTPS_EDP,"Activating: " << wpd->guid().entityId << " in topic " << wpd->topicName());
 		WriterProxyData* newWPD = new WriterProxyData();

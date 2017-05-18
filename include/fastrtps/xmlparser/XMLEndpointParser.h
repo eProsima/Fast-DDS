@@ -13,27 +13,34 @@
 // limitations under the License.
 
 /**
- * @file EDPStaticXML.h
+ * @file XMLEndpointParser.h
  *
  */
 
-#ifndef EDPSTATICXML_H_
-#define EDPSTATICXML_H_
+#ifndef XMLENDPOINTPARSER_H_
+#define XMLENDPOINTPARSER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <set>
 #include <vector>
 #include <cstdint>
 
-#include <tinyxml2.h>
+namespace tinyxml2
+{
+    class XMLElement;
+}
 
-namespace eprosima {
+using namespace tinyxml2;
+
+namespace eprosima{
 namespace fastrtps{
-namespace rtps {
-
+namespace rtps{
 class ReaderProxyData;
 class WriterProxyData;
+}
 
+namespace xmlparser{
 
 /**
  * Class StaticRTPSParticipantInfo, contains the information of writers and readers loaded from the XML file.
@@ -46,25 +53,25 @@ public:
 	//!RTPS PArticipant name
 	std::string m_RTPSParticipantName;
 	//!Vector of ReaderProxyData pointer
-	std::vector<ReaderProxyData*> m_readers;
+	std::vector<rtps::ReaderProxyData*> m_readers;
 	//!Vector of ReaderProxyData pointer
-	std::vector<WriterProxyData*> m_writers;
+	std::vector<rtps::WriterProxyData*> m_writers;
 };
 
 /**
- * Class EDPStaticXML used to parse the XML file that contains information about remote endpoints.
+ * Class XMLEndpointParser used to parse the XML file that contains information about remote endpoints.
  * @ingroup DISCVOERYMODULE
  */
-class EDPStaticXML {
+class XMLEndpointParser {
 public:
-	EDPStaticXML();
-	virtual ~EDPStaticXML();
+	XMLEndpointParser();
+	virtual ~XMLEndpointParser();
 	/**
 	 * Load the XML file
 	 * @param filename Name of the file to load and parse.
 	 * @return True if correct.
 	 */
-	bool loadXMLFile(std::string& filename);
+	XMLP_ret loadXMLFile(std::string& filename);
 
     void loadXMLParticipantEndpoint(tinyxml2::XMLElement* xml_endpoint, StaticRTPSParticipantInfo* pdata);
 
@@ -74,14 +81,14 @@ public:
 	 * @param pdata Pointer to the RTPSParticipantInfo where the reader must be added.
 	 * @return True if correctly added.
 	 */
-	bool loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endpoint,StaticRTPSParticipantInfo* pdata);
+	XMLP_ret loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endpoint,StaticRTPSParticipantInfo* pdata);
 	/**
 	 * Load a Writer endpoint.
 	 * @param xml_endpoint Reference of a tree child for a writer.
 	 * @param pdata Pointer to the RTPSParticipantInfo where the reader must be added.
 	 * @return True if correctly added.
 	 */
-	bool loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endpoint,StaticRTPSParticipantInfo* pdata);
+	XMLP_ret loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endpoint, StaticRTPSParticipantInfo* pdata);
 	/**
 	 * Look for a reader in the previously loaded endpoints.
 	 * @param[in] partname RTPSParticipant name
@@ -89,7 +96,7 @@ public:
 	 * @param[out] rdataptr Pointer to pointer to return the information.
 	 * @return True if found.
 	 */
-	bool lookforReader(std::string partname,uint16_t id,ReaderProxyData** rdataptr);
+	XMLP_ret lookforReader(std::string partname, uint16_t id, rtps::ReaderProxyData** rdataptr);
 	/**
 	 * Look for a writer in the previously loaded endpoints.
 	 * @param[in] partname RTPSParticipant name
@@ -97,7 +104,7 @@ public:
 	 * @param[out] wdataptr Pointer to pointer to return the information.
 	 * @return True if found
 	 */
-	bool lookforWriter(std::string partname,uint16_t id,WriterProxyData** wdataptr);
+	XMLP_ret lookforWriter(std::string partname, uint16_t id, rtps::WriterProxyData** wdataptr);
 
 private:
 	std::set<int16_t> m_endpointIds;
@@ -106,8 +113,10 @@ private:
 	std::vector<StaticRTPSParticipantInfo*> m_RTPSParticipants;
 };
 
-}
-} /* namespace rtps */
+
+} /* xmlparser */
+} /* namespace */
 } /* namespace eprosima */
+
 #endif
-#endif /* EDPSTATICXML_H_ */
+#endif /* XMLENDPOINTPARSER_H_ */

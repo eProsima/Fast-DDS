@@ -1766,11 +1766,11 @@ BLACKBOXTEST(BlackBox, XMLoadProfiles)
 
     ParticipantAttributes participant_atts;
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLProfileParser::fillParticipantProfile("test_participant_profile", participant_atts));
+                xmlparser::XMLProfileParser::fillParticipantAttributes("test_participant_profile", participant_atts));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_ERROR,
-                xmlparser::XMLProfileParser::fillParticipantProfile("bad_name", participant_atts));
+                xmlparser::XMLProfileParser::fillParticipantAttributes("bad_name", participant_atts));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_ERROR,
-                xmlparser::XMLProfileParser::fillParticipantProfile("test_publisher_profile", participant_atts));
+                xmlparser::XMLProfileParser::fillParticipantAttributes("test_publisher_profile", participant_atts));
 }
 
 BLACKBOXTEST(BlackBox, XMLParserParcipant)
@@ -1781,7 +1781,7 @@ BLACKBOXTEST(BlackBox, XMLParserParcipant)
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::loadXMLFile("test_xml_profiles.xml"));
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLProfileParser::fillParticipantProfile(participant_profile, participant_atts));
+                xmlparser::XMLProfileParser::fillParticipantAttributes(participant_profile, participant_atts));
 
     RTPSParticipantAttributes &rtps_atts = participant_atts.rtps;
     BuiltinAttributes &builtin = rtps_atts.builtin;
@@ -1839,7 +1839,7 @@ BLACKBOXTEST(BlackBox, XMLParserPublisher)
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::loadXMLFile("test_xml_profiles.xml"));
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLProfileParser::fillPublisherProfile(publisher_profile, publisher_atts));
+                xmlparser::XMLProfileParser::fillPublishertAttributes(publisher_profile, publisher_atts));
 
     TopicAttributes &pub_topic = publisher_atts.topic;
     WriterQos &pub_qos = publisher_atts.qos;
@@ -1895,7 +1895,7 @@ BLACKBOXTEST(BlackBox, XMLParserSubscriber)
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::loadXMLFile("test_xml_profiles.xml"));
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLProfileParser::fillSubscriberProfile(subscriber_profile, subscriber_atts));
+                xmlparser::XMLProfileParser::fillSubscribertAttributes(subscriber_profile, subscriber_atts));
 
     TopicAttributes &sub_topic = subscriber_atts.topic;
     ReaderQos &sub_qos = subscriber_atts.qos;
@@ -2934,7 +2934,7 @@ BLACKBOXTEST(BlackBox, XMLParserSecurity)
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::loadXMLFile("test_xml_security_profiles.xml"));
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLProfileParser::fillParticipantProfile(participant_profile, participant_atts));
+                xmlparser::XMLProfileParser::fillParticipantAttributes(participant_profile, participant_atts));
 
     PropertySeq &part_props = participant_atts.rtps.properties.properties();
     BinaryPropertySeq &part_bin_props = participant_atts.rtps.properties.binary_properties();
@@ -2954,7 +2954,7 @@ BLACKBOXTEST(BlackBox, XMLParserSecurity)
     std::string publisher_profile = std::string("test_publisher_security_profile");
     PublisherAttributes publisher_atts;
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLProfileParser::fillPublisherProfile(publisher_profile, publisher_atts));
+                xmlparser::XMLProfileParser::fillPublishertAttributes(publisher_profile, publisher_atts));
 
     PropertySeq &pub_props = publisher_atts.properties.properties();
     BinaryPropertySeq &pub_bin_props = publisher_atts.properties.binary_properties();
@@ -2975,7 +2975,7 @@ BLACKBOXTEST(BlackBox, XMLParserSecurity)
     SubscriberAttributes subscriber_atts;
 
     EXPECT_EQ(xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLProfileParser::fillSubscriberProfile(subscriber_profile, subscriber_atts));
+                xmlparser::XMLProfileParser::fillSubscribertAttributes(subscriber_profile, subscriber_atts));
 
     PropertySeq &sub_props = subscriber_atts.properties.properties();
     BinaryPropertySeq &sub_bin_props = subscriber_atts.properties.binary_properties();
