@@ -111,8 +111,8 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
                         TimeConv::Time_t2MilliSecondsDouble(pdata_ptr->m_leaseDuration));
                 pdata_ptr->mp_leaseDurationTimer->restart_timer();
                 this->mp_SPDP->m_participantProxies.push_back(pdata_ptr);
-                mp_SPDP->announceParticipantState(false);
                 mp_SPDP->assignRemoteEndpoints(pdata_ptr);
+                mp_SPDP->announceParticipantState(false);
             }
             else
             {

@@ -79,6 +79,8 @@ class NetworkFactory
 
         LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists);
 
+        bool is_local_locator(const Locator_t& locator) const;
+
         size_t numberOfRegisteredTransports() const;
 
         uint32_t get_max_message_size_between_transports() { return maxMessageSizeBetweenTransports_; }

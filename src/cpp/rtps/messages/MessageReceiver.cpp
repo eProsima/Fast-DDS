@@ -50,14 +50,13 @@ namespace fastrtps{
 namespace rtps {
 
 
-MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant) : mp_change(nullptr),
-    participant_(participant) {}
+MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant) : participant_(participant) {}
+
 MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant, uint32_t rec_buffer_size) :
     m_rec_msg(rec_buffer_size),
 #if HAVE_SECURITY
     m_crypto_msg(rec_buffer_size),
 #endif
-    mp_change(nullptr),
     participant_(participant)
     {
     }
@@ -75,14 +74,12 @@ void MessageReceiver::init(uint32_t rec_buffer_size){
     LOCATOR_ADDRESS_INVALID(defUniLoc.address);
     defUniLoc.port = LOCATOR_PORT_INVALID;
     logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<<m_rec_msg.max_size);
-    uint16_t max_payload = ((uint32_t)std::numeric_limits<uint16_t>::max() < rec_buffer_size) ? std::numeric_limits<uint16_t>::max() : (uint16_t)rec_buffer_size;
-    mp_change = new CacheChange_t(max_payload, true);
+    mMaxPayload_ = ((uint32_t)std::numeric_limits<uint16_t>::max() < rec_buffer_size) ? std::numeric_limits<uint16_t>::max() : (uint16_t)rec_buffer_size;
 }
 
 MessageReceiver::~MessageReceiver()
 {
     this->m_ParamList.deleteParams();
-    delete(mp_change);
     logInfo(RTPS_MSG_IN,"");
 }
 
@@ -148,19 +145,6 @@ void MessageReceiver::reset(){
     Locator_t  loc;
     unicastReplyLocatorList.push_back(loc);
     multicastReplyLocatorList.push_back(defUniLoc);
-    mp_change->kind = ALIVE;
-    mp_change->sequenceNumber.high = 0;
-    mp_change->sequenceNumber.low = 0;
-    mp_change->writerGUID = c_Guid_Unknown;
-    mp_change->serializedPayload.length = 0;
-    mp_change->serializedPayload.pos = 0;
-    for (uint8_t i = 0; i<16; ++i)
-        mp_change->instanceHandle.value[i] = 0;
-    mp_change->isRead = 0;
-    mp_change->sourceTimestamp.seconds = 0;
-    mp_change->sourceTimestamp.fraction = 0;
-    mp_change->setFragmentSize(0);
-    //cout << "MESSAGE RECEIVER RESEST WITH MAX SIZE: " << mp_change->serializedPayload.max_size << endl;
 }
 
 void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,
@@ -496,18 +480,19 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
     }
     //FOUND THE READER.
     //We ask the reader for a cachechange to store the information.
-    CacheChange_t* ch = mp_change;
-    ch->writerGUID.guidPrefix = sourceGuidPrefix;
-    valid &= CDRMessage::readEntityId(msg,&ch->writerGUID.entityId);
+    CacheChange_t ch;
+    ch.serializedPayload.max_size = mMaxPayload_;
+    ch.writerGUID.guidPrefix = sourceGuidPrefix;
+    valid &= CDRMessage::readEntityId(msg,&ch.writerGUID.entityId);
 
     //Get sequence number
-    valid &= CDRMessage::readSequenceNumber(msg,&ch->sequenceNumber);
+    valid &= CDRMessage::readSequenceNumber(msg,&ch.sequenceNumber);
 
     if (!valid){
         return false;
     }
 
-    if(ch->sequenceNumber <= SequenceNumber_t(0, 0) || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid //TODO make faster
+    if(ch.sequenceNumber <= SequenceNumber_t(0, 0) || (ch.sequenceNumber.high == -1 && ch.sequenceNumber.low == 0)) //message invalid //TODO make faster
     {
         logWarning(RTPS_MSG_IN,IDSTRING"Invalid message received, bad sequence Number");
         return false;
@@ -528,7 +513,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
     if(inlineQosFlag)
     {
-        inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch, false);
+        inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, &ch, false);
 
         if(inlineQosSize <= 0)
         {
@@ -548,28 +533,26 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
         if(dataFlag)
         {
-            if(ch->serializedPayload.max_size >= payload_size && payload_size > 0)
+            if(ch.serializedPayload.max_size >= payload_size && payload_size > 0)
             {
-                ch->serializedPayload.length = payload_size;
-                valid &= CDRMessage::readData(msg,ch->serializedPayload.data,ch->serializedPayload.length);
-                if (!valid){
-                    return false;
-                }
-                ch->kind = ALIVE;
+                ch.serializedPayload.data = &msg->buffer[msg->pos];
+                ch.serializedPayload.length = payload_size;
+                msg->pos += payload_size;
+                ch.kind = ALIVE;
             }
             else
             {
                 logWarning(RTPS_MSG_IN,IDSTRING"Serialized Payload value invalid or larger than maximum allowed size"
-                        "(" <<payload_size <<"/"<< ch->serializedPayload.max_size<<")");
+                        "(" <<payload_size <<"/"<< ch.serializedPayload.max_size<<")");
                 return false;
             }
         }
         else if(keyFlag)
         {
             Endianness_t previous_endian = msg->msg_endian;
-            if(ch->serializedPayload.encapsulation == PL_CDR_BE)
+            if(ch.serializedPayload.encapsulation == PL_CDR_BE)
                 msg->msg_endian = BIGEND;
-            else if(ch->serializedPayload.encapsulation == PL_CDR_LE)
+            else if(ch.serializedPayload.encapsulation == PL_CDR_LE)
                 msg->msg_endian = LITTLEEND;
             else
             {
@@ -577,7 +560,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
                 return false;
             }
             //uint32_t param_size;
-            if(ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch, false) <= 0)
+            if(ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, &ch, false) <= 0)
             {
                 logInfo(RTPS_MSG_IN,IDSTRING"SubMessage Data ERROR, keyFlag ParameterList");
                 return false;
@@ -591,20 +574,22 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
     // Set sourcetimestamp
     if(haveTimestamp)
-        ch->sourceTimestamp = this->timestamp;
+        ch.sourceTimestamp = this->timestamp;
 
 
     //FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
-    logInfo(RTPS_MSG_IN,IDSTRING"from Writer " << ch->writerGUID << "; possible RTPSReaders: "<<AssociatedReaders.size());
+    logInfo(RTPS_MSG_IN,IDSTRING"from Writer " << ch.writerGUID << "; possible RTPSReaders: "<<AssociatedReaders.size());
     //Look for the correct reader to add the change
     for(std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
             it != AssociatedReaders.end(); ++it)
     {
         if((*it)->acceptMsgDirectedTo(readerID))
         {
-            (*it)->processDataMsg(ch);
+            (*it)->processDataMsg(&ch);
         }
     }
+
+    ch.serializedPayload.data = nullptr;
 
     logInfo(RTPS_MSG_IN,IDSTRING"Sub Message DATA processed");
     return true;
@@ -672,14 +657,15 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
     //FOUND THE READER.
     //We ask the reader for a cachechange to store the information.
-    CacheChange_t* ch = mp_change;
-    ch->writerGUID.guidPrefix = sourceGuidPrefix;
-    valid &= CDRMessage::readEntityId(msg, &ch->writerGUID.entityId);
+    CacheChange_t ch;
+    ch.serializedPayload.max_size = mMaxPayload_;
+    ch.writerGUID.guidPrefix = sourceGuidPrefix;
+    valid &= CDRMessage::readEntityId(msg, &ch.writerGUID.entityId);
 
     //Get sequence number
-    valid &= CDRMessage::readSequenceNumber(msg, &ch->sequenceNumber);
+    valid &= CDRMessage::readSequenceNumber(msg, &ch.sequenceNumber);
 
-    if (ch->sequenceNumber.to64long() <= 0 || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid //TODO make faster
+    if (ch.sequenceNumber.to64long() <= 0 || (ch.sequenceNumber.high == -1 && ch.sequenceNumber.low == 0)) //message invalid //TODO make faster
     {
         logWarning(RTPS_MSG_IN, IDSTRING"Invalid message received, bad sequence Number");
         return false;
@@ -720,12 +706,11 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
     if (inlineQosFlag)
     {
-        inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch, false);
+        inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, &ch, false);
 
         if (inlineQosSize <= 0)
         {
             logInfo(RTPS_MSG_IN, IDSTRING"SubMessage Data ERROR, Inline Qos ParameterList error");
-            //firstReader->releaseCache(ch);
             return false;
         }
     }
@@ -740,25 +725,25 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
     if (!keyFlag)
     {
-        if (ch->serializedPayload.max_size >= payload_size && payload_size > 0)
+        if (ch.serializedPayload.max_size >= payload_size && payload_size > 0)
         {
-            ch->serializedPayload.length = payload_size;
+            ch.serializedPayload.length = payload_size;
 
             // TODO Mejorar el reubicar el vector de fragmentos.
-            ch->setFragmentSize(fragmentSize);
-            ch->getDataFragments()->clear();
-            ch->getDataFragments()->resize(fragmentsInSubmessage, ChangeFragmentStatus_t::PRESENT);
+            ch.setFragmentSize(fragmentSize);
+            ch.getDataFragments()->clear();
+            ch.getDataFragments()->resize(fragmentsInSubmessage, ChangeFragmentStatus_t::PRESENT);
 
-            valid &= CDRMessage::readData(msg,
-                    ch->serializedPayload.data, payload_size);
+            ch.serializedPayload.data = &msg->buffer[msg->pos];
+            ch.serializedPayload.length = payload_size;
+            msg->pos += payload_size;
 
-            ch->kind = ALIVE;
+            ch.kind = ALIVE;
         }
         else
         {
             logWarning(RTPS_MSG_IN, IDSTRING"Serialized Payload value invalid or larger than maximum allowed size "
-                    "(" << payload_size << "/" << ch->serializedPayload.max_size << ")");
-            //firstReader->releaseCache(ch);
+                    "(" << payload_size << "/" << ch.serializedPayload.max_size << ")");
             return false;
         }
     }
@@ -784,9 +769,6 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
         msg->msg_endian = previous_endian;
         */
     }
-    if (!valid){
-        return false;
-    }
 
     //Is the final message?
     if (smh->submessageLength == 0)
@@ -794,19 +776,21 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
     // Set sourcetimestamp
     if (haveTimestamp)
-        ch->sourceTimestamp = this->timestamp;
+        ch.sourceTimestamp = this->timestamp;
 
     //FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
-    logInfo(RTPS_MSG_IN, IDSTRING"from Writer " << ch->writerGUID << "; possible RTPSReaders: " << AssociatedReaders.size());
+    logInfo(RTPS_MSG_IN, IDSTRING"from Writer " << ch.writerGUID << "; possible RTPSReaders: " << AssociatedReaders.size());
     //Look for the correct reader to add the change
     for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
             it != AssociatedReaders.end(); ++it)
     {
         if ((*it)->acceptMsgDirectedTo(readerID))
         {
-            (*it)->processDataFragMsg(ch, sampleSize, fragmentStartingNum);
+            (*it)->processDataFragMsg(&ch, sampleSize, fragmentStartingNum);
         }
     }
+
+    ch.serializedPayload.data = nullptr;
 
     logInfo(RTPS_MSG_IN, IDSTRING"Sub Message DATA_FRAG processed");
 

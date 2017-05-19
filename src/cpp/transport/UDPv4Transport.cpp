@@ -16,7 +16,6 @@
 #include <utility>
 #include <cstring>
 #include <algorithm>
-#include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
 
@@ -133,6 +132,9 @@ bool UDPv4Transport::init()
         logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than receiveBufferSize");
         return false;
     }
+
+    // TODO(Ricardo) Create an event that update this list.
+    GetIP4s(currentInterfaces);
 
     auto ioServiceFunction = [&]()
     {
@@ -686,7 +688,23 @@ LocatorList_t UDPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
             {
                 if(!multicastDefined)
                 {
-                    pendingUnicast.push_back(*it);
+                    // Check is local interface.
+                    auto localInterface = currentInterfaces.begin();
+                    for (; localInterface != currentInterfaces.end(); ++localInterface)
+                    {
+                        if(memcmp(&localInterface->locator.address[12], &it->address[12], 4) == 0)
+                        {
+                            // Loopback locator
+                            Locator_t loopbackLocator;
+                            loopbackLocator.set_IP4_address(127, 0, 0, 1);
+                            loopbackLocator.port = it->port;
+                            pendingUnicast.push_back(loopbackLocator);
+                            break;
+                        }
+                    }
+
+                    if(localInterface == currentInterfaces.end())
+                        pendingUnicast.push_back(*it);
                 }
             }
 
@@ -715,6 +733,23 @@ LocatorList_t UDPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
         result.push_back(link.unicast);
 
     return result;
+}
+
+bool UDPv4Transport::is_local_locator(const Locator_t& locator) const
+{
+    assert(locator.kind == LOCATOR_KIND_UDPv4);
+
+    if(locator.address[12] == 127 &&
+            locator.address[13] == 0 &&
+            locator.address[14] == 0 &&
+            locator.address[15] == 1)
+        return true;
+
+    for(auto localInterface : currentInterfaces)
+        if(localInterface.locator.address == locator.address)
+            return true;
+
+    return false;
 }
 
 } // namespace rtps

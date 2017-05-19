@@ -20,6 +20,8 @@
 
 #include "TransportInterface.h"
 #include "UDPv4TransportDescriptor.h"
+#include "../utils/IPFinder.h"
+
 #include <vector>
 #include <memory>
 #include <map>
@@ -181,9 +183,12 @@ public:
 
    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 
+   virtual bool is_local_locator(const Locator_t& locator) const override;
+
    UDPv4TransportDescriptor get_configuration() { return mConfiguration_; }
 
 protected:
+
    //! Constructor with no descriptor is necessary for implementations derived from this class.
    UDPv4Transport();
    UDPv4TransportDescriptor mConfiguration_;
@@ -197,7 +202,9 @@ protected:
    mutable std::recursive_mutex mInputMapMutex;
 
    //! The notion of output channel corresponds to a port.
-   std::map<uint32_t, std::vector<SocketInfo> > mOutputSockets; 
+   std::map<uint32_t, std::vector<SocketInfo> > mOutputSockets;
+
+   std::vector<IPFinder::info_IP> currentInterfaces;
 
    struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };

@@ -104,6 +104,8 @@ public:
    virtual LocatorList_t NormalizeLocator(const Locator_t& locator) = 0;
 
    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) = 0;
+
+   virtual bool is_local_locator(const Locator_t& locator) const = 0;
 };
 
 /**

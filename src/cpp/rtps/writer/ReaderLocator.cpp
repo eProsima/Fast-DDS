@@ -26,8 +26,7 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-ReaderLocator::ReaderLocator() : expectsInlineQos(false),
-    isFixed(false)
+ReaderLocator::ReaderLocator() : expectsInlineQos(false)
 {
 }
 

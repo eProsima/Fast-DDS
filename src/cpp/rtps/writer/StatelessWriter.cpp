@@ -265,17 +265,13 @@ bool StatelessWriter::add_locator(Locator_t& loc)
 
         ReaderLocator newLoc;
         newLoc.locator = loc;
-        newLoc.isFixed = true;
         fixed_locators.push_back(newLoc);
 
         mAllShrinkedLocatorList.push_back(loc);
 
         for(auto readerLocator : reader_locators)
             if(readerLocator.locator == newLoc.locator)
-            {
-                readerLocator.isFixed = true;
                 return true;
-            }
 
         reader_locators.push_back(newLoc);
         return true;
@@ -292,6 +288,11 @@ bool StatelessWriter::add_locator(Locator_t& loc)
 void StatelessWriter::update_locators_nts_(const GUID_t& optionalGuid)
 {
     std::vector<ReaderLocator> backup(std::move(reader_locators));
+
+    // Update mAllShrinkedLocatorList because at this point it was only updated
+    // with locators of reader_locators, and not the fixed locators.
+    for(auto fixedLocator : fixed_locators)
+            mAllShrinkedLocatorList.push_back(fixedLocator.locator);
 
     for(auto it = mAllShrinkedLocatorList.begin(); it != mAllShrinkedLocatorList.end(); ++it)
     {
@@ -326,11 +327,15 @@ void StatelessWriter::update_locators_nts_(const GUID_t& optionalGuid)
             bool found = false;
 
             for(auto loc = remoteReader->endpoint.unicastLocatorList.begin(); loc != remoteReader->endpoint.unicastLocatorList.end(); ++loc)
-                if(*loc == reader_locators.back().locator)
+            {
+                if(*loc == reader_locators.back().locator ||
+                        (mp_RTPSParticipant->network_factory().is_local_locator(*loc) &&
+                         mp_RTPSParticipant->network_factory().is_local_locator(reader_locators.back().locator)))
                 {
                     found = true;
                     break;
                 }
+            }
 
             for(auto loc = remoteReader->endpoint.multicastLocatorList.begin(); !found && loc != remoteReader->endpoint.multicastLocatorList.end(); ++loc)
                 if(*loc == reader_locators.back().locator)
@@ -351,16 +356,7 @@ void StatelessWriter::update_locators_nts_(const GUID_t& optionalGuid)
                 }
             }
         }
-
-        // Find if is fixed.
-        for(auto fixedLocator : fixed_locators)
-            if(fixedLocator.locator == reader_locators.back().locator)
-                reader_locators.back().isFixed = true;
     }
-
-    // Also update mAllShrinkedLocatorList
-    for(auto fixedLocator : fixed_locators)
-            mAllShrinkedLocatorList.push_back(fixedLocator.locator);
 }
 
 bool StatelessWriter::matched_reader_remove(RemoteReaderAttributes& rdata)

@@ -94,7 +94,7 @@ bool NetworkFactory::BuildReceiverResources (const Locator_t& local, std::vector
 void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descriptor)
 {
     bool wasRegistered = false;
-    bool minSendBufferSize = std::numeric_limits<uint32_t>::max();
+    uint32_t minSendBufferSize = std::numeric_limits<uint32_t>::max();
 
     if (auto concrete = dynamic_cast<const UDPv4TransportDescriptor*> (descriptor))
     {
@@ -183,6 +183,19 @@ LocatorList_t NetworkFactory::ShrinkLocatorLists(const std::vector<LocatorList_t
     }
 
     return returnedList;
+}
+
+bool NetworkFactory::is_local_locator(const Locator_t& locator) const
+{
+    LocatorList_t returnedList;
+
+    for(auto& transport : mRegisteredTransports)
+    {
+        if(transport->IsLocatorSupported(locator))
+            return transport->is_local_locator(locator);
+    }
+
+    return false;
 }
 
 size_t NetworkFactory::numberOfRegisteredTransports() const

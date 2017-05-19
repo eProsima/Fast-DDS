@@ -82,8 +82,6 @@ class MessageReceiver
         std::vector<RTPSWriter *> AssociatedWriters;
         std::vector<RTPSReader *> AssociatedReaders;
         std::mutex mtx;
-        //ReceiverControlBlock* receiver_resources;
-        CacheChange_t* mp_change;
         //!Protocol version of the message
         ProtocolVersion_t sourceVersion;
         //!VendorID that created the message
@@ -104,6 +102,8 @@ class MessageReceiver
         ProtocolVersion_t destVersion;
         //!Default locator used in reset
         Locator_t defUniLoc;
+
+        uint16_t mMaxPayload_;
 
 
         /**@name Processing methods.
