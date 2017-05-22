@@ -179,12 +179,19 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
     {
         mp_EDP = (EDP*)(new EDPStatic(this,mp_RTPSParticipant));
-        mp_EDP->initEDP(m_discovery);
+        if(!mp_EDP->initEDP(m_discovery)){
+            logError(RTPS_PDP,"Endpoint discovery configuration failed");
+            return false;
+        }
+
     }
     else if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
     {
         mp_EDP = (EDP*)(new EDPSimple(this,mp_RTPSParticipant));
-        mp_EDP->initEDP(m_discovery);
+        if(!mp_EDP->initEDP(m_discovery)){
+            logError(RTPS_PDP,"Endpoint discovery configuration failed");
+            return false;
+        }
     }
     else
     {
@@ -783,5 +790,3 @@ CDRMessage_t PDPSimple::get_participant_proxy_data_serialized(Endianness_t endia
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
-
-

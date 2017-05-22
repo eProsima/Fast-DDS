@@ -332,7 +332,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     mp_builtinProtocols = new BuiltinProtocols();
     if(!mp_builtinProtocols->initBuiltinProtocols(this,m_att.builtin))
     {
-        logWarning(RTPS_PARTICIPANT, "The builtin protocols were not corecctly initialized");
+        logError(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
     }
     //eClock::my_sleep(300);
 

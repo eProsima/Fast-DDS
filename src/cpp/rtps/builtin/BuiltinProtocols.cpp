@@ -71,7 +71,10 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
     if(m_att.use_SIMPLE_RTPSParticipantDiscoveryProtocol)
     {
         mp_PDP = new PDPSimple(this);
-        mp_PDP->initPDP(mp_participantImpl);
+        if(!mp_PDP->initPDP(mp_participantImpl)){
+            logError(RTPS_PDP,"Participant discovery configuration failed");
+            return false;
+        }
         if(m_att.use_WriterLivelinessProtocol)
         {
             mp_WLP = new WLP(this);
