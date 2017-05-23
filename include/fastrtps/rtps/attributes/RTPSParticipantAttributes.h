@@ -193,8 +193,13 @@ class RTPSParticipantAttributes
         {
             defaultSendPort = 10040;
             setName("RTPSParticipant");
+#if defined(_WIN32)
+            sendSocketBufferSize = 65536;
+            listenSocketBufferSize = 65536;
+#else
             sendSocketBufferSize = 0;
             listenSocketBufferSize = 0;
+#endif
             use_IP4_to_send = true;
             use_IP6_to_send = false;
             participantID = -1;
@@ -230,12 +235,14 @@ class RTPSParticipantAttributes
 
         /*!
          * @brief Send socket buffer size for the send resource. Zero value indicates to use default system buffer size.
-         * Default value: 0.
+         * Default value on Unix systems: 0.
+         * Default value on Windows: 65536.
          */
         uint32_t sendSocketBufferSize;
 
         /*! Listen socket buffer for all listen resources. Zero value indicates to use default system buffer size.
-         * Default value 65536.
+         * Default value on Unix systems: 0.
+         * Default value on Windows: 65536.
          */
         uint32_t listenSocketBufferSize;
 

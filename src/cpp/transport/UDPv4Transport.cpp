@@ -63,8 +63,13 @@ UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
 
 UDPv4TransportDescriptor::UDPv4TransportDescriptor():
     TransportDescriptorInterface(maximumMessageSize),
+#if defined(_WIN32)
+    sendBufferSize(65536),
+    receiveBufferSize(65536),
+#else
     sendBufferSize(0),
     receiveBufferSize(0),
+#endif
     TTL(defaultTTL)
 {
 }
@@ -660,6 +665,7 @@ LocatorList_t UDPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                 {
                     // Search the multicast locator in pending locators.
                     auto pending_it = pendingLocators.begin();
+                    bool found = false;
 
                     while(pending_it != pendingLocators.end())
                     {
@@ -672,6 +678,7 @@ LocatorList_t UDPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                             // Not choose any unicast
                             multicastDefined = true;
                             pendingUnicast.clear();
+                            found = true;
 
                             break;
                         }
@@ -680,7 +687,7 @@ LocatorList_t UDPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                     };
 
                     // If not found, store as pending multicast.
-                    if(pending_it == pendingLocators.end())
+                    if(!found)
                         pendingMulticast.push_back(*it);
                 }
             }

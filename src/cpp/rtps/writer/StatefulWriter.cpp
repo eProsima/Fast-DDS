@@ -433,10 +433,10 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     {
         RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
         //TODO (Ricardo) Temporal
-        LocatorList_t locators(rp->m_att.endpoint.unicastLocatorList);
-        locators.push_back(rp->m_att.endpoint.multicastLocatorList);
+        LocatorList_t locatorsList(rp->m_att.endpoint.unicastLocatorList);
+        locatorsList.push_back(rp->m_att.endpoint.multicastLocatorList);
 
-        group.add_gap(not_relevant_changes, {rp->m_att.guid}, locators);
+        group.add_gap(not_relevant_changes, {rp->m_att.guid}, locatorsList);
     }
 
     // Always activate heartbeat period. We need a confirmation of the reader.

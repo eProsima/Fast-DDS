@@ -681,6 +681,7 @@ LocatorList_t UDPv6Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                 {
                     // Search the multicast locator in pending locators.
                     auto pending_it = pendingLocators.begin();
+                    bool found = false;
 
                     while(pending_it != pendingLocators.end())
                     {
@@ -693,6 +694,7 @@ LocatorList_t UDPv6Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                             // Not choose any unicast
                             multicastDefined = true;
                             pendingUnicast.clear();
+                            found = true;
 
                             break;
                         }
@@ -701,7 +703,7 @@ LocatorList_t UDPv6Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                     };
 
                     // If not found, store as pending multicast.
-                    if(pending_it == pendingLocators.end())
+                    if(!found)
                         pendingMulticast.push_back(*it);
                 }
             }
