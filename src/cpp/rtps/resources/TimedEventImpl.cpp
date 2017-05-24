@@ -47,13 +47,13 @@ namespace eprosima
                     } StateCode;
 
                     TimerState(TimedEvent::AUTODESTRUCTION_MODE autodestruction) : code_(INACTIVE),
-                    autodestruction_(autodestruction), notify_(true) {}
+                    autodestruction_(autodestruction), forwardRestart_(false) {}
 
                     std::atomic<StateCode> code_;
 
                     TimedEvent::AUTODESTRUCTION_MODE autodestruction_;
 
-                    bool notify_;
+                    bool forwardRestart_;
             };
         }
     }
@@ -84,13 +84,6 @@ void TimedEventImpl::destroy()
     // If the event is waiting, cancel it.
     if(code == TimerState::WAITING)
         timer_.cancel();
-
-    // If the destructor is executed in the event thread, tell the future cancelling or running event to not notify.
-    if(event_thread_id_ == std::this_thread::get_id())
-    {
-        // It is safe to modify this variable because we are in the event thread.
-        state_.get()->notify_ = false;
-    }
 
     // If the event is waiting or running, wait it finishes.
     // Don't wait if it is the event thread.
@@ -136,17 +129,24 @@ void TimedEventImpl::restart_timer()
     // if the code indicate an event is already waiting, don't start other event.
     if(code != TimerState::DESTROYED && code != TimerState::WAITING)
     {
+        bool restartTimer = true;
+
         // If there is an event running, desattach state and set to not notify.
         if(code == TimerState::RUNNING)
         {
-            state_.get()->notify_ = false;
-            state_.reset(new TimerState(autodestruction_));
+            if(state_.get()->forwardRestart_)
+                restartTimer = false;
+            else
+                state_.get()->forwardRestart_ = true;
         }
+        else
+            state_.get()->code_.store(TimerState::WAITING, std::memory_order_relaxed);
 
-        state_.get()->code_.store(TimerState::WAITING, std::memory_order_relaxed);
-
-        timer_.expires_from_now(m_interval_microsec);
-        timer_.async_wait(std::bind(&TimedEventImpl::event,this,std::placeholders::_1, state_));
+        if(restartTimer)
+        {
+            timer_.expires_from_now(m_interval_microsec);
+            timer_.async_wait(std::bind(&TimedEventImpl::event,this,std::placeholders::_1, state_));
+        }
     }
 }
 
@@ -199,9 +199,17 @@ void TimedEventImpl::event(const std::error_code& ec, const std::shared_ptr<Time
     std::unique_lock<std::mutex> lock(mutex_);
 
     scode = TimerState::RUNNING;
-    ret =  state.get()->code_.compare_exchange_strong(scode, TimerState::INACTIVE, std::memory_order_relaxed);
+    if(!state.get()->forwardRestart_)
+    {
+        ret =  state.get()->code_.compare_exchange_strong(scode, TimerState::INACTIVE, std::memory_order_relaxed);
+    }
+    else
+    {
+        state.get()->forwardRestart_ = false;
+        ret =  state.get()->code_.compare_exchange_strong(scode, TimerState::WAITING, std::memory_order_relaxed);
+    }
 
-    if(scode == TimerState::DESTROYED && state.get()->notify_)
+    if(scode == TimerState::DESTROYED)
         cond_.notify_one();
 
     //Unlock mutex
