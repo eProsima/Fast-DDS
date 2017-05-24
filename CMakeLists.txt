@@ -13,7 +13,7 @@
 # limitations under the License.
 
 ###############################################################################
-# CMake build rules for FastRTPS                                                
+# CMake build rules for FastRTPS
 ###############################################################################
 cmake_minimum_required(VERSION 2.8.12)
 
@@ -35,7 +35,7 @@ string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
 set(${PROJECT_NAME}_DESCRIPTION_SUMMARY "C++ library implementation of RTPS protocol")
 set(${PROJECT_NAME}_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} library provides publication/subscription communication using RTPS protocol.")
 
-message(STATUS "Configuring ${PROJECT_NAME_LAGE}")
+message(STATUS "Configuring ${PROJECT_NAME_LARGE}")
 
 ###############################################################################
 # Version information                                                         #

@@ -22,8 +22,6 @@
 
 #include "History.h"
 #include "../common/CacheChange.h"
-#include <map>
-#include <set>
 
 
 namespace boost
@@ -101,22 +99,12 @@ public:
 	//!Wait for the semaphore
 	RTPS_DllAPI void waitSemaphore();
 
-	RTPS_DllAPI bool thereIsRecordOf(GUID_t& guid, SequenceNumber_t& seq);
-
-	RTPS_DllAPI bool thereIsUpperRecordOf(GUID_t& guid, SequenceNumber_t& seq);
-
 protected:
 	//!Pointer to the reader
 	RTPSReader* mp_reader;
 	//!Pointer to the semaphore, used to halt execution until new message arrives.
 	boost::interprocess::interprocess_semaphore* mp_semaphore;
 	//!Information about changes already in History
-private:
-	std::map<GUID_t, std::set<SequenceNumber_t>> m_historyRecord;//TODO sustituir por una clase que sea más efectiva,
-																//que no guarde todos los numeros de secuencia rebidiso sino los que falten
-                                                //
-	std::set<SequenceNumber_t>* m_cachedRecordLocation;
-   GUID_t m_cachedGUID;
 };
 
 }

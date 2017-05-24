@@ -114,7 +114,12 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 ChangeForReader_t changeForReader(change);
 
                 if(m_pushMode)
-                    changeForReader.setStatus(UNDERWAY);
+                {
+                    if((*it)->m_att.endpoint.reliabilityKind == RELIABLE)
+                        changeForReader.setStatus(UNDERWAY);
+                    else
+                        changeForReader.setStatus(ACKNOWLEDGED);
+                }
                 else
                     changeForReader.setStatus(UNACKNOWLEDGED);
 
@@ -126,7 +131,8 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 expectsInlineQos |= (*it)->m_att.expectsInlineQos;
                 (*it)->mp_mutex->unlock();
 
-                (*it)->mp_nackSupression->restart_timer();
+                if((*it)->mp_nackSupression != nullptr) // It is reliable
+                    (*it)->mp_nackSupression->restart_timer();
             }
 
             std::vector<CacheChangeForGroup_t> changes_to_send;
@@ -223,7 +229,7 @@ size_t StatefulWriter::send_any_unsent_changes()
             else
             {
                 not_relevant_changes.push_back((*cit)->getSequenceNumber());
-                (*m_reader_iterator)->set_change_to_status((*cit)->getChange(), UNDERWAY);
+                (*m_reader_iterator)->set_change_to_status((*cit)->getSequenceNumber(), UNDERWAY);
             }
         }
 
@@ -241,7 +247,7 @@ size_t StatefulWriter::send_any_unsent_changes()
             if (change.isFragmented() && !change.getFragmentsClearedForSending().isSetEmpty())
                 (*m_reader_iterator)->mark_fragments_as_sent_for_change(change.getChange(), change.getFragmentsClearedForSending());
             else
-                (*m_reader_iterator)->set_change_to_status(change.getChange(), UNDERWAY);
+                (*m_reader_iterator)->set_change_to_status(change.getChange()->sequenceNumber, UNDERWAY);
         }
 
         // And controllers are notified about the changes being sent
@@ -329,6 +335,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     }
 
     ReaderProxy* rp = new ReaderProxy(rdata,m_times,this);
+    std::vector<SequenceNumber_t> not_relevant_changes;
 
     for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
             cit != mp_history->changesEnd(); ++cit)
@@ -336,9 +343,16 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
         ChangeForReader_t changeForReader(*cit);
 
         if(rp->m_att.endpoint.durabilityKind >= TRANSIENT_LOCAL && this->getAttributes()->durabilityKind == TRANSIENT_LOCAL)
+        {
             changeForReader.setRelevance(rp->rtps_is_relevant(*cit));
+            if(!rp->rtps_is_relevant(*cit))
+                not_relevant_changes.push_back(changeForReader.getSequenceNumber());
+        }
         else
+        {
             changeForReader.setRelevance(false);
+            not_relevant_changes.push_back(changeForReader.getSequenceNumber());
+        }
 
         changeForReader.setStatus(UNACKNOWLEDGED);
         rp->addChange(changeForReader);
@@ -346,6 +360,17 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 
     // Send a initial heartbeat
     rp->mp_initialHeartbeat->restart_timer();
+
+    // Send Gap
+    if(!not_relevant_changes.empty())
+    {
+        RTPSMessageGroup::send_Changes_AsGap(&m_cdrmessages,(RTPSWriter*)this,
+                &not_relevant_changes,
+                rp->m_att.guid.guidPrefix,
+                rp->m_att.guid.entityId,
+                &rp->m_att.endpoint.unicastLocatorList,
+                &rp->m_att.endpoint.multicastLocatorList);
+    }
 
     // Always activate heartbeat period. We need a confirmation of the reader.
     // The state has to be updated.
@@ -445,17 +470,10 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
     for(auto it = matched_readers.begin(); it!=matched_readers.end(); ++it)
     {
         boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
-        ChangeForReader_t changeForReader;
-        if((*it)->getChangeForReader(change, &changeForReader))
+        if(!(*it)->change_is_acked(change->sequenceNumber))
         {
-            if(changeForReader.isRelevant())
-            {
-                if(changeForReader.getStatus() != ACKNOWLEDGED)
-                {
-                    logInfo(RTPS_WRITER, "Change not acked. Relevant: " << changeForReader.isRelevant() << " status: " << changeForReader.getStatus() << endl);
-                    return false;
-                }
-            }
+            logInfo(RTPS_WRITER, "Change " << change->sequenceNumber << " not acked." << endl);
+            return false;
         }
     }
     return true;
@@ -524,26 +542,18 @@ bool StatefulWriter::clean_history(unsigned int max)
     for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
             cit != mp_history->changesEnd() && (!limit || ackca.size() < max); ++cit)
     {
-        bool acknowledge = true, linked = false;
+        bool acknowledge = true;
 
         for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin(); it != matched_readers.end(); ++it)
         {
-            boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
-            ChangeForReader_t cr; 
-
-            if((*it)->getChangeForReader(*cit, &cr))
+            if(!(*it)->change_is_acked((*cit)->sequenceNumber))
             {
-                linked = true;
-
-                if(cr.getStatus() != ACKNOWLEDGED)
-                {
-                    acknowledge = false;
-                    break;
-                }
+                acknowledge = false;
+                break;
             }
         }
 
-        if(!linked || acknowledge)
+        if(acknowledge)
             ackca.push_back(*cit);
     }
 

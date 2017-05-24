@@ -70,22 +70,8 @@ namespace eprosima
                 void addChange(const ChangeForReader_t&);
 
                 size_t countChangesForReader() const;
-                
-                /**
-                 * Get the ChangeForReader struct associated with a determined change
-                 * @param[in] change Pointer to the change.
-                 * @param[out] changeForReader Pointer to a changeforreader structure.
-                 * @return True if found.
-                 */
-                bool getChangeForReader(const CacheChange_t* change, ChangeForReader_t* changeForReader);
 
-                /**
-                 * Get the ChangeForReader struct associated with a determined sequenceNumber
-                 * @param[in] seq SequenceNumber
-                 * @param[out] changeForReader Pointer to a changeforreader structure.
-                 * @return True if found.
-                 */
-                bool getChangeForReader(const SequenceNumber_t& seq, ChangeForReader_t* changeForReader);
+                bool change_is_acked(const SequenceNumber_t& sequence_number);
 
                 /**
                  * Mark all changes up to the one indicated by the seqNum as Acknowledged.
@@ -103,9 +89,11 @@ namespace eprosima
                 bool requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet);
 
                 /*!
-                 * @brief Lists all unsent changes.
+                 * @brief Lists all unsent changes. These changes are also relevants and valid.
                  * @return STL vector with the unsent change list.
                  */
+                //TODO(Ricardo) Temporal
+                //std::vector<const ChangeForReader_t*> get_unsent_changes() const;
                 std::vector<const ChangeForReader_t*> get_unsent_changes() const;
                 /*!
                  * @brief Lists all requested changes.
@@ -118,10 +106,10 @@ namespace eprosima
                  * @param change change to search and set.
                  * @param status Status to apply.
                  */
-                void set_change_to_status(const CacheChange_t* change, ChangeForReaderStatus_t status);
+                void set_change_to_status(const SequenceNumber_t& seq_num, ChangeForReaderStatus_t status);
 
                 void mark_fragments_as_sent_for_change(const CacheChange_t* change, FragmentNumberSet_t fragments);
-               
+
                 /*
                  * Converts all changes with a given status to a different status.
                  * @param previous Status to change.
@@ -129,7 +117,8 @@ namespace eprosima
                  */
                 void convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next);
 
-                void setNotValid(const CacheChange_t* change);
+                //void setNotValid(const CacheChange_t* change);
+                void setNotValid(CacheChange_t* change);
 
                 /*!
                  * @brief Returns there is some UNACKNOWLEDGED change.
@@ -203,6 +192,8 @@ namespace eprosima
                 private:
                 //! Last  NACKFRAG count.
                 uint32_t lastNackfragCount_;
+
+                SequenceNumber_t changesFromRLowMark_;
             };
         }
     } /* namespace rtps */

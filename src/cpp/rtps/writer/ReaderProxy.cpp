@@ -70,6 +70,19 @@ void ReaderProxy::destroy_timers()
 
 void ReaderProxy::addChange(const ChangeForReader_t& change)
 {
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
+    assert(change.getSequenceNumber() > changesFromRLowMark_);
+    assert(m_changesForReader.rbegin() != m_changesForReader.rend() ?
+            change.getSequenceNumber() > m_changesForReader.rbegin()->getSequenceNumber() :
+            true);
+
+    if(m_changesForReader.size() == 0 && change.getStatus() == ACKNOWLEDGED)
+    {
+        changesFromRLowMark_ = change.getSequenceNumber();
+        return;
+    }
+
     m_changesForReader.insert(change);
     if (change.getStatus() == UNSENT)
         AsyncWriterThread::wakeUp(mp_SFW);
@@ -77,38 +90,21 @@ void ReaderProxy::addChange(const ChangeForReader_t& change)
 
 size_t ReaderProxy::countChangesForReader() const
 {
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     return m_changesForReader.size();
 }
 
-bool ReaderProxy::getChangeForReader(const CacheChange_t* change,
-        ChangeForReader_t* changeForReader)
+bool ReaderProxy::change_is_acked(const SequenceNumber_t& sequence_number)
 {
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-    auto chit = m_changesForReader.find(ChangeForReader_t(change));
 
-    if(chit != m_changesForReader.end())
-    {
-        *changeForReader = *chit;
-        logInfo(RTPS_WRITER,"Change " << change->sequenceNumber << " found in Reader Proxy ");
+    if(sequence_number <= changesFromRLowMark_)
         return true;
-    }
 
-    return false;
-}
+    auto chit = m_changesForReader.find(ChangeForReader_t(sequence_number));
+    assert(chit != m_changesForReader.end());
 
-bool ReaderProxy::getChangeForReader(const SequenceNumber_t& seqNum, ChangeForReader_t* changeForReader)
-{
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-    auto chit = m_changesForReader.find(ChangeForReader_t(seqNum));
-
-    if(chit != m_changesForReader.end())
-    {
-        *changeForReader = *chit;
-        logInfo(RTPS_WRITER,"Change " << seqNum <<" found in Reader Proxy ");
-        return true;
-    }
-
-    return false;
+    return !chit->isRelevant() || chit->getStatus() == ACKNOWLEDGED;
 }
 
 //TODO Return value for what?
@@ -116,11 +112,11 @@ bool ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
 {
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
-    auto chit = m_changesForReader.begin();
-
-    while(chit != m_changesForReader.end() && chit->getSequenceNumber() < seqNum)
+    if(seqNum > changesFromRLowMark_)
     {
-        chit = m_changesForReader.erase(chit);
+        auto chit = m_changesForReader.find(seqNum);
+        m_changesForReader.erase(m_changesForReader.begin(), chit);
+        changesFromRLowMark_ = seqNum - 1;
     }
 
     return m_changesForReader.size() == 0;
@@ -163,10 +159,9 @@ std::vector<const ChangeForReader_t*> ReaderProxy::get_unsent_changes() const
     std::vector<const ChangeForReader_t*> unsent_changes;
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
-    auto it = m_changesForReader.begin();
-    for (; it!= m_changesForReader.end(); ++it)
-        if(it->getStatus() == UNSENT)
-            unsent_changes.push_back(&(*it));
+    for(auto &change_for_reader : m_changesForReader)
+        if(change_for_reader.getStatus() == UNSENT)
+            unsent_changes.push_back(const_cast<ChangeForReader_t*>(&change_for_reader));
 
     return unsent_changes;
 }
@@ -184,18 +179,28 @@ std::vector<const ChangeForReader_t*> ReaderProxy::get_requested_changes() const
     return unsent_changes;
 }
 
-void ReaderProxy::set_change_to_status(const CacheChange_t* change, ChangeForReaderStatus_t status)
+void ReaderProxy::set_change_to_status(const SequenceNumber_t& seq_num, ChangeForReaderStatus_t status)
 {
-    bool mustWakeUpAsyncThread = false; 
-    for (auto it = m_changesForReader.begin(); it!= m_changesForReader.end(); ++it)
+    if(seq_num <= changesFromRLowMark_)
+        return;
+
+    auto it = m_changesForReader.find(ChangeForReader_t(seq_num));
+    bool mustWakeUpAsyncThread = false;
+
+    if(it != m_changesForReader.end())
     {
-        if (it->getChange() == change){
+        if(status == ACKNOWLEDGED && it == m_changesForReader.begin())
+        {
+            m_changesForReader.erase(it);
+            changesFromRLowMark_ = seq_num;
+        }
+        else
+        {
             ChangeForReader_t newch(*it);
             newch.setStatus(status);
             if (status == UNSENT) mustWakeUpAsyncThread = true;
             auto hint = m_changesForReader.erase(it);
             m_changesForReader.insert(hint, newch);
-            break;
         }
     }
 
@@ -236,13 +241,22 @@ void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous
     {
         if(it->getStatus() == previous)
         {
-            ChangeForReader_t newch(*it);
-            newch.setStatus(next);
-            if (next == UNSENT && previous != UNSENT)
-                mustWakeUpAsyncThread = true;
-            auto hint = m_changesForReader.erase(it);
+            if(next == ACKNOWLEDGED && it == m_changesForReader.begin())
+            {
+                changesFromRLowMark_ = it->getSequenceNumber();
+                it = m_changesForReader.erase(it);
+                continue;
+            }
+            else
+            {
+                ChangeForReader_t newch(*it);
+                newch.setStatus(next);
+                if (next == UNSENT && previous != UNSENT)
+                    mustWakeUpAsyncThread = true;
+                auto hint = m_changesForReader.erase(it);
 
-            it = m_changesForReader.insert(hint, newch);
+                it = m_changesForReader.insert(hint, newch);
+            }
         }
 
         ++it;
@@ -252,7 +266,7 @@ void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous
         AsyncWriterThread::wakeUp(mp_SFW);
 }
 
-void ReaderProxy::setNotValid(const CacheChange_t* change)
+void ReaderProxy::setNotValid(CacheChange_t* change)
 {
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 

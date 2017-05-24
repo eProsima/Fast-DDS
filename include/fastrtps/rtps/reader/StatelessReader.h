@@ -23,6 +23,8 @@
 
 #include "RTPSReader.h"
 
+#include <map>
+
 namespace boost
 {
     template<typename T> class unique_lock;
@@ -138,12 +140,16 @@ public:
 
 private:
 
-	bool acceptMsgFrom(GUID_t& entityId);
+    bool acceptMsgFrom(GUID_t& entityId);
+
+    bool thereIsUpperRecordOf(GUID_t& guid, SequenceNumber_t& seq);
 
 	//!List of GUID_t os matched writers.
 	//!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();
 	std::vector<RemoteWriterAttributes> m_matched_writers;
 
+	//!Information about changes already in History
+	std::map<GUID_t, SequenceNumber_t> m_historyRecord;
 };
 
 }

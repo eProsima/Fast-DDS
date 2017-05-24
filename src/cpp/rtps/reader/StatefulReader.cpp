@@ -258,7 +258,7 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
     if(acceptMsgFrom(incomingChange->writerGUID, &pWP))
     {
         // Check if CacheChange was received.
-        if(!getHistory()->thereIsRecordOf(incomingChange->writerGUID, incomingChange->sequenceNumber))
+        if(!pWP->change_was_received(incomingChange->sequenceNumber))
         {
             logInfo(RTPS_MSG_IN, IDSTRING"Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " << getGuid().entityId);
 
@@ -446,10 +446,9 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
 
     size_t unknown_missing_changes_up_to = prox->unknown_missing_changes_up_to(a_change->sequenceNumber);
 
-    // TODO Check order
-    if(this->mp_history->received_change(a_change, unknown_missing_changes_up_to))
+    if(prox->received_change_set(a_change->sequenceNumber))
     {
-        if(prox->received_change_set(a_change->sequenceNumber))
+        if(this->mp_history->received_change(a_change, unknown_missing_changes_up_to))
         {
             GUID_t proxGUID = prox->m_att.guid;
             writerProxyLock.unlock();

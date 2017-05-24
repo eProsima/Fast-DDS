@@ -73,6 +73,7 @@ bool StatelessReader::matched_writer_remove(RemoteWriterAttributes& wdata)
 		{
 			logInfo(RTPS_READER,"Writer " <<wdata.guid<< " removed from "<<m_guid.entityId);
 			m_matched_writers.erase(it);
+            m_historyRecord.erase(wdata.guid);
 			return true;
 		}
 	}
@@ -96,10 +97,11 @@ bool StatelessReader::change_received(CacheChange_t* change, boost::unique_lock<
 {
     // Only make visible the change if there is not other with bigger sequence number.
     // TODO Revisar si no hay que incluirlo.
-    if(!mp_history->thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
+    if(!thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
     {
         if(mp_history->received_change(change, 0))
         {
+            m_historyRecord[change->writerGUID] = change->sequenceNumber;
             if(getListener() != nullptr)
             {
                 lock.unlock();
@@ -207,7 +209,7 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
 	if (acceptMsgFrom(incomingChange->writerGUID))
 	{
         // Check if CacheChange was received.
-        if(!getHistory()->thereIsRecordOf(incomingChange->writerGUID, incomingChange->sequenceNumber))
+        if(!thereIsUpperRecordOf(incomingChange->writerGUID, incomingChange->sequenceNumber))
         {
             logInfo(RTPS_MSG_IN, IDSTRING"Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " << getGuid().entityId);
 
@@ -273,4 +275,10 @@ bool StatelessReader::acceptMsgFrom(GUID_t& writerId)
 	}
 
 	return false;
+}
+
+bool StatelessReader::thereIsUpperRecordOf(GUID_t& guid, SequenceNumber_t& seq)
+{
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    return m_historyRecord.find(guid) != m_historyRecord.end() && m_historyRecord[guid] >= seq;
 }
