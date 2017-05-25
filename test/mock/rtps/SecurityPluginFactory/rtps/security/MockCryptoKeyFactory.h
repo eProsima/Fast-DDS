@@ -22,6 +22,9 @@
 #include <fastrtps/rtps/security/cryptography/CryptoTypes.h>
 #include <gmock/gmock.h>
 
+#pragma warning(push)
+#pragma warning(disable : 4373)
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -88,5 +91,7 @@ class MockCryptoKeyFactory : public CryptoKeyFactory
 } //namespace rtps
 } //namespace fastrtps
 } //namespace eprosima
+
+#pragma warning(pop)
 
 #endif // _RTPS_SECURITY_MOCKCRYPTOKEYFACTORY_H_

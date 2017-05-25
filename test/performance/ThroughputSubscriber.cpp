@@ -256,8 +256,8 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     }
 
     Sparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    Sparam.topic.resourceLimitsQos.max_samples = 10000;
-    Sparam.topic.resourceLimitsQos.allocated_samples = 1100;
+    Sparam.topic.resourceLimitsQos.max_samples = 100000;
+    Sparam.topic.resourceLimitsQos.allocated_samples = 10000;
 
     Locator_t loc;
     loc.port = 10110;

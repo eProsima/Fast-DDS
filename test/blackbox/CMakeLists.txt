@@ -18,7 +18,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
     if(GTEST_FOUND)
         if(WIN32)
-            add_definitions(-D_WIN32_WINNT=0x0601)
+            add_definitions(
+                -D_WIN32_WINNT=0x0601
+                -D_CRT_SECURE_NO_WARNINGS
+                )
         endif()
 
         add_definitions(
@@ -67,7 +70,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_duplicated_profiles.xml
             ${CMAKE_CURRENT_BINARY_DIR}/test_xml_duplicated_profiles.xml
             COPYONLY)
-
 
         add_executable(BlackboxTests_PreallocMem ${BLACKBOXTESTS_SOURCE})
         add_blackbox_gtest(BlackboxTests_PreallocMem PreallocMem ${BLACKBOXTESTS_SOURCE}

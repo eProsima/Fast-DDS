@@ -24,6 +24,9 @@
 #include <fastrtps/rtps/security/authentication/Authentication.h>
 #include <gmock/gmock.h>
 
+#pragma warning(push)
+#pragma warning(disable : 4373)
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -124,5 +127,7 @@ class MockAuthenticationPlugin : public Authentication
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
+
+#pragma warning(pop)
 
 #endif // _SECURITY_MOCKAUTHENTICATIONPLUGIN_H_
