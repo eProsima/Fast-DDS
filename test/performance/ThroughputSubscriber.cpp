@@ -211,15 +211,8 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     ready(true),m_datasize(0),m_demand(0)
 {
     ParticipantAttributes PParam;
-    PParam.rtps.defaultSendPort = 10042;
     PParam.rtps.builtin.domainId = pid % 230;
-    PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-    PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-    PParam.rtps.sendSocketBufferSize = 5242882;
-    PParam.rtps.listenSocketBufferSize = 2097152;
     PParam.rtps.setName("Participant_subscriber");
     mp_par = Domain::createParticipant(PParam);
     if(mp_par == nullptr)

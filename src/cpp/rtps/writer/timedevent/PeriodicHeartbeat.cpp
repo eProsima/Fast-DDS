@@ -100,6 +100,8 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
 
                 mp_SFW->incrementHBCount();
                 heartbeatCount = mp_SFW->getHeartbeatCount();
+
+                // TODO(Ricardo) Use StatefulWriter::send_heartbeat_to_nts.
             }
         }
 

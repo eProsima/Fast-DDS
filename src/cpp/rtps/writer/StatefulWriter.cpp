@@ -145,14 +145,16 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
             // Heartbeat piggyback.
             if(!disableHeartbeatPiggyback_)
             {
-                currentUsageSendBufferSize_ -= group.get_current_bytes_processed();
-
-                if(currentUsageSendBufferSize_ < 0)
+                if(mp_history->isFull())
                 {
-                    // Send heartbeat
                     send_heartbeat_nts_(mAllRemoteReaders, mAllShrinkedLocatorList, group);
+                }
+                else
+                {
+                    currentUsageSendBufferSize_ -= group.get_current_bytes_processed();
 
-                    currentUsageSendBufferSize_ = static_cast<int32_t>(sendBufferSize_);
+                    if(currentUsageSendBufferSize_ < 0)
+                        send_heartbeat_nts_(mAllRemoteReaders, mAllShrinkedLocatorList, group);
                 }
             }
 
@@ -317,15 +319,17 @@ void StatefulWriter::send_any_unsent_changes()
             // Heartbeat piggyback.
             if(!disableHeartbeatPiggyback_)
             {
-                currentUsageSendBufferSize_ -= group.get_current_bytes_processed() - lastBytesProcessed;
-                lastBytesProcessed = group.get_current_bytes_processed();
-
-                if(currentUsageSendBufferSize_ < 0)
+                if(mp_history->isFull())
                 {
-                    // Send heartbeat
                     send_heartbeat_nts_(mAllRemoteReaders, mAllShrinkedLocatorList, group);
+                }
+                else
+                {
+                    currentUsageSendBufferSize_ -= group.get_current_bytes_processed() - lastBytesProcessed;
+                    lastBytesProcessed = group.get_current_bytes_processed();
 
-                    currentUsageSendBufferSize_ = static_cast<int32_t>(sendBufferSize_);
+                    if(currentUsageSendBufferSize_ < 0)
+                        send_heartbeat_nts_(mAllRemoteReaders, mAllShrinkedLocatorList, group);
                 }
             }
         }
@@ -735,5 +739,9 @@ void StatefulWriter::send_heartbeat_nts_(const std::vector<GUID_t>& remote_reade
     // FinalFlag is always false because this class is used only by StatefulWriter in Reliable.
     message_group.add_heartbeat(remote_readers,
             firstSeq, lastSeq, m_heartbeatCount, final, false, locators);
+
+    // Update calculate of heartbeat piggyback.
+    currentUsageSendBufferSize_ = static_cast<int32_t>(sendBufferSize_);
+
     logInfo(RTPS_WRITER, getGuid().entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq <<")" );
 }

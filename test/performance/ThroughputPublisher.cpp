@@ -106,15 +106,8 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     ready(true), m_export_csv(export_csv), reliable_(reliable)
 {
     ParticipantAttributes PParam;
-    PParam.rtps.defaultSendPort = 10042;
     PParam.rtps.builtin.domainId = pid % 230;
-    PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-    PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-    PParam.rtps.sendSocketBufferSize = 5242882;
-    PParam.rtps.listenSocketBufferSize = 2097152;
     PParam.rtps.setName("Participant_publisher");
     mp_par = Domain::createParticipant(PParam);
     if(mp_par == nullptr)
@@ -148,7 +141,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     if(reliable)
     {
         //RELIABLE
-        Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(1);
+        Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(100);
         Wparam.times.nackSupressionDuration = TimeConv::MilliSeconds2Time_t(0);
         Wparam.times.nackResponseDelay = TimeConv::MilliSeconds2Time_t(0);
         Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;

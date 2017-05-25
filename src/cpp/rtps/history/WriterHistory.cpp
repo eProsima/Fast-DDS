@@ -66,12 +66,22 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
                 "' bytes and cannot be resized.");
         return false;
     }
+
+    if(m_isHistoryFull)
+    {
+        logWarning(RTPS_HISTORY,"History full for writer " << a_change->writerGUID);
+        return false;
+    }
+
     ++m_lastCacheChangeSeqNum;
     a_change->sequenceNumber = m_lastCacheChangeSeqNum;
     m_changes.push_back(a_change);
-    logInfo(RTPS_HISTORY,"Change "<< a_change->sequenceNumber << " added with "<<a_change->serializedPayload.length<< " bytes");
-    updateMaxMinSeqNum();
+    if(static_cast<int32_t>(m_changes.size()) == m_att.maximumReservedCaches)
+        m_isHistoryFull = true;
 
+    logInfo(RTPS_HISTORY,"Change "<< a_change->sequenceNumber << " added with "<<a_change->serializedPayload.length<< " bytes");
+
+    updateMaxMinSeqNum();
     mp_writer->unsent_change_added_to_history(a_change);
 
     return true;
@@ -109,6 +119,7 @@ bool WriterHistory::remove_change(CacheChange_t* a_change)
             m_changePool.release_Cache(a_change);
             m_changes.erase(chit);
             updateMaxMinSeqNum();
+            m_isHistoryFull = false;
             return true;
         }
     }
@@ -140,6 +151,7 @@ bool WriterHistory::remove_change(const SequenceNumber_t& sequence_number)
             m_changePool.release_Cache(*chit);
             m_changes.erase(chit);
             updateMaxMinSeqNum();
+            m_isHistoryFull = false;
             return true;
         }
     }
@@ -167,6 +179,7 @@ CacheChange_t* WriterHistory::remove_change_and_reuse(const SequenceNumber_t& se
             mp_writer->change_removed_by_history(change);
             m_changes.erase(chit);
             updateMaxMinSeqNum();
+            m_isHistoryFull = false;
             return change;
         }
     }

@@ -34,9 +34,19 @@ extern ::rtps::WriteParams WRITE_PARAM_DEFAULT;
 namespace eprosima {
 namespace fastrtps {
 
-PublisherHistory::PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMaxSize,HistoryQosPolicy& history,
-        ResourceLimitsQosPolicy& resource,MemoryManagementPolicy_t mempolicy):
-    WriterHistory(HistoryAttributes(mempolicy, payloadMaxSize, resource.allocated_samples, resource.max_samples + 1)),
+PublisherHistory::PublisherHistory(PublisherImpl* pimpl, uint32_t payloadMaxSize, HistoryQosPolicy& history,
+        ResourceLimitsQosPolicy& resource, MemoryManagementPolicy_t mempolicy):
+    WriterHistory(HistoryAttributes(mempolicy, payloadMaxSize,
+                history.kind == KEEP_ALL_HISTORY_QOS ?
+                        resource.allocated_samples :
+                        pimpl->getAttributes().topic.getTopicKind() == NO_KEY ?
+                            std::min(resource.allocated_samples, history.depth) :
+                            std::min(resource.allocated_samples, history.depth * resource.max_instances),
+                history.kind == KEEP_ALL_HISTORY_QOS ?
+                        resource.max_samples :
+                        pimpl->getAttributes().topic.getTopicKind() == NO_KEY ?
+                            history.depth :
+                            history.depth * resource.max_instances)),
     m_historyQos(history),
     m_resourceLimitsQos(resource),
     mp_pubImpl(pimpl)
@@ -66,27 +76,15 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
         return false;
     }
 
+    assert(!m_isHistoryFull);
+
     bool returnedValue = false;
 
     //NO KEY HISTORY
     if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
         if(this->add_change(change))
-        {
-            if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
-            {
-                if((int32_t)m_changes.size()>=m_resourceLimitsQos.max_samples)
-                    m_isHistoryFull = true;
-            }
-            else
-            {
-                //KEEP_LAST_HISTORY_QoS
-                if((int32_t)m_changes.size()>=m_historyQos.depth)
-                    m_isHistoryFull = true;
-            }
-
             returnedValue = true;
-        }
     }
     //HISTORY WITH KEY
     else if(mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
@@ -124,22 +122,10 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
             {
                 if(this->add_change(change))
                 {
-
                     logInfo(RTPS_HISTORY,this->mp_pubImpl->getGuid().entityId <<" Change "
                             << change->sequenceNumber << " added with key: "<<change->instanceHandle
                             << " and "<<change->serializedPayload.length<< " bytes");
                     vit->second.push_back(change);
-                    if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
-                    {
-                        if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
-                            m_isHistoryFull = true;
-                    }
-                    else
-                    {
-                        if((int32_t)m_changes.size()==m_historyQos.depth*m_resourceLimitsQos.max_instances)
-                            m_isHistoryFull = true;
-                    }
-
                     returnedValue =  true;
                 }
             }
