@@ -228,6 +228,13 @@ class PubSubWriter
 
         if(participant_ != nullptr)
         {
+            if(attachEDP_)
+            {
+                std::pair<StatefulReader*, StatefulReader*> edpReaders = participant_->getEDPReaders();
+                edpReaders.first->setListener(&edpReaderListener_);
+                edpReaders.second->setListener(&edpWriterListener_);
+            }
+
             // Register type
             eprosima::fastrtps::Domain::registerType(participant_, &type_);
 
@@ -237,14 +244,6 @@ class PubSubWriter
             if(publisher_ != nullptr)
             {
                 initialized_ = true;
-
-                if(attachEDP_)
-                {
-                    std::pair<StatefulReader*, StatefulReader*> edpReaders = participant_->getEDPReaders();
-                    edpReaders.first->setListener(&edpReaderListener_);
-                    edpReaders.second->setListener(&edpWriterListener_);
-                }
-
                 return;
             }
 

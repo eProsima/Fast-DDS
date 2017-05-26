@@ -61,7 +61,6 @@ ParticipantImpl::ParticipantImpl(ParticipantAttributes& patt,Participant* pspart
 
 ParticipantImpl::~ParticipantImpl()
 {
-    delete(mp_participant);
     while(m_publishers.size()>0)
     {
         this->removePublisher(m_publishers.begin()->first);
@@ -70,6 +69,8 @@ ParticipantImpl::~ParticipantImpl()
     {
         this->removeSubscriber(m_subscribers.begin()->first);
     }
+
+    delete(mp_participant);
 
     if(this->mp_rtpsParticipant != nullptr)
         RTPSDomain::removeRTPSParticipant(this->mp_rtpsParticipant);

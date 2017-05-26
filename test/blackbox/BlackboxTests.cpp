@@ -1743,12 +1743,12 @@ BLACKBOXTEST(BlackBox, EDPSlaveReaderAttachment)
 
     ASSERT_TRUE(writer->isInitialized());
 
-    checker.block_until_discover_topic(checker.topic_name(), 2);
+    checker.block_until_discover_topic(checker.topic_name(), 3);
 
     delete reader;
     delete writer;
 
-    checker.block_until_discover_topic(checker.topic_name(), 0);
+    checker.block_until_discover_topic(checker.topic_name(), 1);
 }
 
 #if HAVE_SECURITY

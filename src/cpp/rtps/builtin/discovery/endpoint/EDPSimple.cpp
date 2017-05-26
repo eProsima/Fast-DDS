@@ -268,19 +268,23 @@ bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
             ParameterList::writeParameterListToCDRMsg(&aux_msg, &rdata->m_parameterList, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
-            std::unique_lock<std::recursive_mutex> lock(*mp_SubWriter.second->getMutex());
-            for(auto ch = mp_SubWriter.second->changesBegin();ch!=mp_SubWriter.second->changesEnd();++ch)
             {
-                if((*ch)->instanceHandle == change->instanceHandle)
+                std::unique_lock<std::recursive_mutex> lock(*mp_SubWriter.second->getMutex());
+                for(auto ch = mp_SubWriter.second->changesBegin();ch!=mp_SubWriter.second->changesEnd();++ch)
                 {
-                    mp_SubWriter.second->remove_change(*ch);
-                    break;
+                    if((*ch)->instanceHandle == change->instanceHandle)
+                    {
+                        mp_SubWriter.second->remove_change(*ch);
+                        break;
+                    }
                 }
             }
-            lock.unlock();
+
             if(this->mp_subListen->getAttachedListener() != nullptr)
                 this->mp_subListen->getAttachedListener()->onNewCacheChangeAdded(mp_SubReader.first, change);
+
             mp_SubWriter.second->add_change(change);
+
             return true;
         }
         return false;
@@ -313,19 +317,23 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
             ParameterList::writeParameterListToCDRMsg(&aux_msg, &wdata->m_parameterList, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
-            std::unique_lock<std::recursive_mutex> lock(*mp_PubWriter.second->getMutex());
-            for(auto ch = mp_PubWriter.second->changesBegin();ch!=mp_PubWriter.second->changesEnd();++ch)
             {
-                if((*ch)->instanceHandle == change->instanceHandle)
+                std::unique_lock<std::recursive_mutex> lock(*mp_PubWriter.second->getMutex());
+                for(auto ch = mp_PubWriter.second->changesBegin();ch!=mp_PubWriter.second->changesEnd();++ch)
                 {
-                    mp_PubWriter.second->remove_change(*ch);
-                    break;
+                    if((*ch)->instanceHandle == change->instanceHandle)
+                    {
+                        mp_PubWriter.second->remove_change(*ch);
+                        break;
+                    }
                 }
             }
-            lock.unlock();
+
             if(this->mp_pubListen->getAttachedListener() != nullptr)
                 this->mp_pubListen->getAttachedListener()->onNewCacheChangeAdded(mp_PubReader.first, change);
+
             mp_PubWriter.second->add_change(change);
+
             return true;
         }
         return false;
@@ -343,15 +351,22 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
         CacheChange_t* change = mp_PubWriter.first->new_change([]() -> uint32_t {return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;}, NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
         if(change != nullptr)
         {
-            std::lock_guard<std::recursive_mutex> guard(*mp_PubWriter.second->getMutex());
-            for(auto ch = mp_PubWriter.second->changesBegin();ch!=mp_PubWriter.second->changesEnd();++ch)
             {
-                if((*ch)->instanceHandle == change->instanceHandle)
+                std::lock_guard<std::recursive_mutex> guard(*mp_PubWriter.second->getMutex());
+                for(auto ch = mp_PubWriter.second->changesBegin();ch!=mp_PubWriter.second->changesEnd();++ch)
                 {
-                    mp_PubWriter.second->remove_change(*ch);
-                    break;
+                    if((*ch)->instanceHandle == change->instanceHandle)
+                    {
+                        mp_PubWriter.second->remove_change(*ch);
+                        break;
+                    }
                 }
+
             }
+
+            if(this->mp_pubListen->getAttachedListener() != nullptr)
+                this->mp_pubListen->getAttachedListener()->onNewCacheChangeAdded(mp_PubReader.first, change);
+
             mp_PubWriter.second->add_change(change);
         }
     }
@@ -368,15 +383,21 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
         CacheChange_t* change = mp_SubWriter.first->new_change([]() -> uint32_t {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;}, NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
         if(change != nullptr)
         {
-            std::lock_guard<std::recursive_mutex> guard(*mp_SubWriter.second->getMutex());
-            for(auto ch = mp_SubWriter.second->changesBegin();ch!=mp_SubWriter.second->changesEnd();++ch)
             {
-                if((*ch)->instanceHandle == change->instanceHandle)
+                std::lock_guard<std::recursive_mutex> guard(*mp_SubWriter.second->getMutex());
+                for(auto ch = mp_SubWriter.second->changesBegin();ch!=mp_SubWriter.second->changesEnd();++ch)
                 {
-                    mp_SubWriter.second->remove_change(*ch);
-                    break;
+                    if((*ch)->instanceHandle == change->instanceHandle)
+                    {
+                        mp_SubWriter.second->remove_change(*ch);
+                        break;
+                    }
                 }
             }
+
+            if(this->mp_subListen->getAttachedListener() != nullptr)
+                this->mp_subListen->getAttachedListener()->onNewCacheChangeAdded(mp_SubReader.first, change);
+
             mp_SubWriter.second->add_change(change);
         }
     }
