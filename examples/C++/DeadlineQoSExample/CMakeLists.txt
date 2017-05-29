@@ -39,7 +39,8 @@ add_definitions(
   -DASIO_STANDALONE
 )
 
-include_directories(${PROJECT_SOURCE_DIR}/../../../thirdparty/asio/asio/include)
+find_path(ASIO_INCLUDE_DIR NAMES asio.hpp)
+include_directories(${ASIO_INCLUDE_DIR})
 
 add_executable(DeadlineQoSExample ${DEADLINEQOS_EXAMPLE_SOURCES})
 target_link_libraries(DeadlineQoSExample fastrtps fastcdr)
