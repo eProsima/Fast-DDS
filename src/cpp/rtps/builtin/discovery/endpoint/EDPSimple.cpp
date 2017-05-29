@@ -368,9 +368,6 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
                 this->mp_pubListen->getAttachedListener()->onNewCacheChangeAdded(mp_PubReader.first, change);
 
             mp_PubWriter.second->add_change(change);
-
-            if(this->mp_pubListen->getAttachedListener() != nullptr)
-                this->mp_pubListen->getAttachedListener()->onNewCacheChangeAdded(mp_PubReader.first, change);
         }
     }
     return removeWriterProxy(W->getGuid());
@@ -402,9 +399,6 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
                 this->mp_subListen->getAttachedListener()->onNewCacheChangeAdded(mp_SubReader.first, change);
 
             mp_SubWriter.second->add_change(change);
-
-            if(this->mp_subListen->getAttachedListener() != nullptr)
-                this->mp_subListen->getAttachedListener()->onNewCacheChangeAdded(mp_SubReader.first, change);
         }
     }
     return removeReaderProxy(R->getGuid());
