@@ -81,8 +81,8 @@ class AESGCMGMAC_KeyExchange : public CryptoKeyExchange
     KeyMaterial_AES_GCM_GMAC KeyMaterialCDRDeserialize(std::vector<uint8_t> *CDR);
 
     //Aux functions to cipher and decipher CryptoTokens
-    std::vector<uint8_t> aes_128_gcm_encrypt(std::vector<uint8_t> plaintext, std::array<uint8_t,32> key);
-    std::vector<uint8_t> aes_128_gcm_decrypt(std::vector<uint8_t> crypto, std::array<uint8_t,32> key);
+    std::vector<uint8_t> aes_128_gcm_encrypt(const std::vector<uint8_t>& plaintext, const std::array<uint8_t,32>& key);
+    std::vector<uint8_t> aes_128_gcm_decrypt(const std::vector<uint8_t>& crypto, const std::array<uint8_t,32>& key);
 
 };
 

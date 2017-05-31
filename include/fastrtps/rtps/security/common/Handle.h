@@ -99,13 +99,13 @@ class HandleImpl : public Handle
             return impl_.get();
         }
 
+        static HandleImpl<T> nil_handle;
+
     private:
 
         explicit HandleImpl(bool) : Handle(T::class_id_) {}
 
         std::unique_ptr<T> impl_;
-
-        static HandleImpl<T> nil_handle;
 };
 template<typename T>
 HandleImpl<T> HandleImpl<T>::nil_handle(true);

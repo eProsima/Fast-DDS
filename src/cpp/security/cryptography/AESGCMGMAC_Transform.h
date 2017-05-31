@@ -104,8 +104,8 @@ class AESGCMGMAC_Transform : public CryptoTransform
                 SecurityException &exception);
 
     //Aux function to compute session key from the master material
-    std::array<uint8_t, 32> compute_sessionkey(const std::array<uint8_t, 32> master_sender_key,
-            const std::array<uint8_t, 32> master_salt , const uint32_t &session_id);
+    std::array<uint8_t, 32> compute_sessionkey(const std::array<uint8_t, 32>& master_sender_key,
+            const std::array<uint8_t, 32>& master_salt , const uint32_t session_id);
 
     //Serialization and deserialization of message components
     std::vector<uint8_t> serialize_SecureDataHeader(SecureDataHeader &input);

@@ -84,13 +84,28 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
 
     //These values are set by the standard
     (*PCrypto)->ParticipantKeyMaterial.receiver_specific_key_id = {{0, 0, 0, 0}};  //No receiver specific, as this is the Master Participant Key
-    (*PCrypto)->ParticipantKeyMaterial.master_receiver_specific_key.fill(0);
+    (*PCrypto)->ParticipantKeyMaterial.master_receiver_specific_key = (*PCrypto)->ParticipantKeyMaterial.master_sender_key;
 
     //Set values related to key update policy
     (*PCrypto)->max_blocks_per_session = maxblockspersession;
     (*PCrypto)->session_block_counter = maxblockspersession+1; //Set to update upon first usage
 
     RAND_bytes( (unsigned char *)( &( (*PCrypto)->session_id ) ), sizeof(uint16_t));
+
+    // Fill data to use with ourselves.
+    KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Participant2ParticipantKeyMaterial
+
+    //These values must match the ones in ParticipantKeymaterial
+    buffer.transformation_kind = (*PCrypto)->ParticipantKeyMaterial.transformation_kind;
+    buffer.master_salt = (*PCrypto)->ParticipantKeyMaterial.master_salt;
+    buffer.master_sender_key = (*PCrypto)->ParticipantKeyMaterial.master_sender_key;
+    buffer.sender_key_id = (*PCrypto)->ParticipantKeyMaterial.sender_key_id;
+    buffer.receiver_specific_key_id = (*PCrypto)->ParticipantKeyMaterial.sender_key_id;
+    buffer.master_receiver_specific_key = (*PCrypto)->ParticipantKeyMaterial.master_receiver_specific_key;
+
+    (*PCrypto)->Participant2ParticipantKeyMaterial.push_back(buffer);
+    (*PCrypto)->RemoteParticipant2ParticipantKeyMaterial.push_back(buffer);
+    (*PCrypto)->Participant2ParticipantKxKeyMaterial.push_back(buffer);
 
     return PCrypto;
 }

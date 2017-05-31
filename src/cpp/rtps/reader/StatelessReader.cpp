@@ -168,7 +168,7 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
 
         CacheChange_t* change_to_add;
         if(reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
-        { 
+        {
 #if HAVE_SECURITY
             if(is_payload_protected())
             {

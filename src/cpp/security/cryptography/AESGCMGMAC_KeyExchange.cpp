@@ -64,6 +64,10 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
         std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_participant->Participant2ParticipantKeyMaterial.at(0));
         prop.value() = aes_128_gcm_encrypt(plaintext, remote_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
         prop.propagate(true);
+
+        if(prop.value().size() == 0)
+            return false;
+
         temp.binary_properties().push_back(std::move(prop));
         local_participant_crypto_tokens.push_back(std::move(temp));
     }
@@ -106,6 +110,9 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
     std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_participant_tokens.at(0).binary_properties().at(0).value(),
         remote_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
 
+    if(plaintext.size() == 0)
+        return false;
+
     KeyMaterial_AES_GCM_GMAC keymat;
     keymat = KeyMaterialCDRDeserialize(&plaintext);
     remote_participant->RemoteParticipant2ParticipantKeyMaterial.push_back(keymat);
@@ -139,6 +146,10 @@ bool AESGCMGMAC_KeyExchange::create_local_datawriter_crypto_tokens(
     std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_reader->Writer2ReaderKeyMaterial.at(0));
     prop.value() = aes_128_gcm_encrypt(plaintext, remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key);
     prop.propagate(true);
+
+    if(prop.value().size() == 0)
+        return false;
+
     temp.binary_properties().push_back(std::move(prop));
     local_datawriter_crypto_tokens.push_back(std::move(temp));
 
@@ -172,6 +183,10 @@ bool AESGCMGMAC_KeyExchange::create_local_datareader_crypto_tokens(
         std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_writer->Reader2WriterKeyMaterial.at(0));
         prop.value() = aes_128_gcm_encrypt(plaintext, remote_writer->Participant2ParticipantKxKeyMaterial.master_sender_key);
         prop.propagate(true);
+
+        if(prop.value().size() == 0)
+            return false;
+
         temp.binary_properties().push_back(std::move(prop));
         local_datareader_crypto_tokens.push_back(std::move(temp));
     }
@@ -216,6 +231,9 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
     //Valid CryptoToken, we can decrypt and push the resulting KeyMaterial in as a RemoteParticipant2ParticipantKeyMaterial
     std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_datareader_tokens.at(0).binary_properties().at(0).value(),
             remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key);
+
+    if(plaintext.size() == 0)
+        return false;
 
     KeyMaterial_AES_GCM_GMAC keymat;
     keymat = KeyMaterialCDRDeserialize(&plaintext);
@@ -269,6 +287,9 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
     std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_datawriter_tokens.at(0).binary_properties().at(0).value(),
             remote_writer->Participant2ParticipantKxKeyMaterial.master_sender_key);
 
+    if(plaintext.size() == 0)
+        return false;
+
     KeyMaterial_AES_GCM_GMAC keymat;
     keymat = KeyMaterialCDRDeserialize(&plaintext);
 
@@ -278,6 +299,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
 
     std::unique_lock<std::mutex> local_writer_lock(local_reader->mutex_);
 
+    //TODO(Ricardo) Why?
     local_reader->Writer2ReaderKeyMaterial.push_back(keymat);
 
     return true;
@@ -296,6 +318,7 @@ std::vector<uint8_t> AESGCMGMAC_KeyExchange::KeyMaterialCDRSerialize(KeyMaterial
 
 std::vector<uint8_t> buffer;
 
+    // TODO(Ricardo) If it is stored as sequences, wrong serialization. Review
     buffer.push_back(4);
     for(int i=0;i<4;i++){
         buffer.push_back(key.transformation_kind[i]);
@@ -348,7 +371,8 @@ KeyMaterial_AES_GCM_GMAC AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(std::
     return buffer;
 }
 
-std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_encrypt(std::vector<uint8_t> plaintext, std::array<uint8_t,32> key)
+std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_encrypt(const std::vector<uint8_t>& plaintext,
+        const std::array<uint8_t,32>& key)
 {
     std::vector<uint8_t> output;
 
@@ -364,11 +388,26 @@ std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_encrypt(std::vector<uin
 
         int actual_size = 0, final_size = 0;
         EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-        EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)key.data(), iv);
-        EVP_EncryptUpdate(e_ctx, &output[32], &actual_size, (const unsigned char*)plaintext.data(), static_cast<int>(plaintext.size()));
-        EVP_EncryptFinal(e_ctx, &output[32 + actual_size], &final_size);
+        if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)key.data(), iv))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encrypt data. EVP_EncryptInit function returns an error");
+            output.clear();
+            return output;
+        }
+        if(!EVP_EncryptUpdate(e_ctx, &output[32], &actual_size, (const unsigned char*)plaintext.data(), static_cast<int>(plaintext.size())))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encrypt data. EVP_EncryptUpdate function returns an error");
+            output.clear();
+            return output;
+        }
+        if(!EVP_EncryptFinal(e_ctx, &output[32 + actual_size], &final_size))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encrypt data. EVP_EncryptFinal function returns an error");
+            output.clear();
+            return output;
+        }
         EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
-        std::copy(iv, iv + 16, output.begin());
+        std::copy(tag, tag + 16, output.begin());
         std::copy(iv, iv + 16, output.begin() + 16);
         output.resize(32 + actual_size + final_size);
         EVP_CIPHER_CTX_free(e_ctx);
@@ -377,7 +416,8 @@ std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_encrypt(std::vector<uin
     return output;
 }
 
-std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_decrypt(std::vector<uint8_t> crypto, std::array<uint8_t,32> key)
+std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_decrypt(const std::vector<uint8_t>& crypto,
+        const std::array<uint8_t,32>& key)
 {
     std::vector<uint8_t> plaintext;
 
@@ -391,10 +431,25 @@ std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_decrypt(std::vector<uin
 
         int actual_size = 0, final_size = 0;
         EVP_CIPHER_CTX* d_ctx = EVP_CIPHER_CTX_new();
-        EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char*)key.data(), iv);
-        EVP_DecryptUpdate(d_ctx, &plaintext[0], &actual_size, (const unsigned char*)crypto.data() + 32, static_cast<int>(crypto.size() - 32));
+        if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char*)key.data(), iv))
+        {
+            logError(SECURITY_CRYPTO, "Unable to decrypt data. EVP_DecryptInit function returns an error");
+            plaintext.clear();
+            return plaintext;
+        }
+        if(!EVP_DecryptUpdate(d_ctx, &plaintext[0], &actual_size, (const unsigned char*)crypto.data() + 32, static_cast<int>(crypto.size() - 32)))
+        {
+            logError(SECURITY_CRYPTO, "Unable to decrypt data. EVP_DecryptUpdate function returns an error");
+            plaintext.clear();
+            return plaintext;
+        }
         EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, tag);
-        EVP_DecryptFinal(d_ctx, &plaintext[actual_size], &final_size);
+        if(!EVP_DecryptFinal(d_ctx, &plaintext[actual_size], &final_size))
+        {
+            logError(SECURITY_CRYPTO, "Unable to decrypt data. EVP_DecryptFinal function returns an error");
+            plaintext.clear();
+            return plaintext;
+        }
         plaintext.resize(actual_size + final_size, '\0');
         EVP_CIPHER_CTX_free(d_ctx);
     }

@@ -99,13 +99,29 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     int actual_size=0, final_size=0;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
     if(local_writer->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) {
-        EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_writer->SessionKey.data()), initialization_vector.data());
+        if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_writer->SessionKey.data()), initialization_vector.data()))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+            return false;
+        }
     }
     if(local_writer->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}) {
-        EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(local_writer->SessionKey.data()), initialization_vector.data());
+        if(!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(local_writer->SessionKey.data()), initialization_vector.data()))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+            return false;
+        }
     }
-    EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_buffer.data(), static_cast<int>(plain_buffer.size()));
-    EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
+    if(!EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_buffer.data(), static_cast<int>(plain_buffer.size())))
+    {
+        logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptUpdate function returns an error");
+        return false;
+    }
+    if(!EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size))
+    {
+        logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptFinal function returns an error");
+        return false;
+    }
     EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
     output.resize(actual_size+final_size);
     EVP_CIPHER_CTX_free(e_ctx);
@@ -196,9 +212,21 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
     int actual_size=0, final_size=0;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_writer->SessionKey.data()), initialization_vector.data());
-    EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_rtps_submessage.data(), static_cast<int>(plain_rtps_submessage.size()));
-    EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
+    if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_writer->SessionKey.data()), initialization_vector.data()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to encode the datawriter submessage. EVP_EncryptInit function returns an error");
+        return false;
+    }
+    if(!EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_rtps_submessage.data(), static_cast<int>(plain_rtps_submessage.size())))
+    {
+        logError(SECURITY_CRYPTO, "Unable to encode the datawriter submessage. EVP_EncryptUpdate function returns an error");
+        return false;
+    }
+    if(!EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size))
+    {
+        logError(SECURITY_CRYPTO, "Unable to encode the datawriter SubMessage. EVP_EncryptFinal function returns an error");
+        return false;
+    }
     EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
     output.resize(actual_size+final_size);
     EVP_CIPHER_CTX_free(e_ctx);
@@ -242,9 +270,21 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
         actual_size = 0; final_size = 0;
         e_ctx = EVP_CIPHER_CTX_new();
-        EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_reader->SessionKey.data()), initialization_vector.data());
-        EVP_EncryptUpdate(e_ctx, NULL, &actual_size, dataTag.common_mac.data(), 16);
-        EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
+        if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_reader->SessionKey.data()), initialization_vector.data()))
+        {
+            logError(SECURITY_CRYPTO, "Unable to create authentication for the datawriter submessage. EVP_EncryptInit function returns an error");
+            return false;
+        }
+        if(!EVP_EncryptUpdate(e_ctx, NULL, &actual_size, dataTag.common_mac.data(), 16))
+        {
+            logError(SECURITY_CRYPTO, "Unable to create authentication for the datawriter submessage. EVP_EncryptUpdate function returns an error");
+            return false;
+        }
+        if(!EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size))
+        {
+            logError(SECURITY_CRYPTO, "Unable to create authentication for the datawriter submessage. EVP_EncryptFinal function returns an error");
+            return false;
+        }
         EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
         output.resize(actual_size+final_size);
         EVP_CIPHER_CTX_free(e_ctx);
@@ -337,9 +377,21 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
 
     int actual_size=0, final_size=0;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_reader->SessionKey.data()), initialization_vector.data());
-    EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_rtps_submessage.data(), static_cast<int>(plain_rtps_submessage.size()));
-    EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
+    if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_reader->SessionKey.data()), initialization_vector.data()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to encode the datareader submessage. EVP_EncryptInit function returns an error");
+        return false;
+    }
+    if(!EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)plain_rtps_submessage.data(), static_cast<int>(plain_rtps_submessage.size())))
+    {
+        logError(SECURITY_CRYPTO, "Unable to encode the datareader submessage. EVP_EncryptUpdate function returns an error");
+        return false;
+    }
+    if(!EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size))
+    {
+        logError(SECURITY_CRYPTO, "Unable to encode the datareader submessage. EVP_EncryptFinal function returns an error");
+        return false;
+    }
     EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
     output.resize(actual_size+final_size);
     EVP_CIPHER_CTX_free(e_ctx);
@@ -382,9 +434,21 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
         actual_size = 0; final_size = 0;
         e_ctx = EVP_CIPHER_CTX_new();
-        EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_writer->SessionKey.data()), initialization_vector.data());
-        EVP_EncryptUpdate(e_ctx, NULL, &actual_size, dataTag.common_mac.data(), 16);
-        EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
+        if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_writer->SessionKey.data()), initialization_vector.data()))
+        {
+            logError(SECURITY_CRYPTO, "Unable to create authentication for the datareader submessage. EVP_EncryptInit function returns an error");
+            return false;
+        }
+        if(!EVP_EncryptUpdate(e_ctx, NULL, &actual_size, dataTag.common_mac.data(), 16))
+        {
+            logError(SECURITY_CRYPTO, "Unable tocreate authentication for the datareader submessage. EVP_EncryptUpdate function returns an error");
+            return false;
+        }
+        if(!EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size))
+        {
+            logError(SECURITY_CRYPTO, "Unable tocreate authentication for the datareader submessage. EVP_EncryptFinal function returns an error");
+            return false;
+        }
         EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
         output.resize(actual_size+final_size);
         EVP_CIPHER_CTX_free(e_ctx);
@@ -488,26 +552,54 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     if((local_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) |
             (local_participant->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC}))
     {
-        EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_participant->SessionKey.data()), initialization_vector.data());
+        if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(local_participant->SessionKey.data()), initialization_vector.data()))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encode the message. EVP_EncryptInit function returns an error");
+            return false;
+        }
     }
     if( (local_participant->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}) |
             (local_participant->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}))
     {
-        EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(local_participant->SessionKey.data()), initialization_vector.data());
+        if(!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(local_participant->SessionKey.data()), initialization_vector.data()))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encode the message. EVP_EncryptInit function returns an error");
+            return false;
+        }
     }
 
     if( (local_participant->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) |
             (local_participant->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}))
     {
         //We are in GCM mode: We need encryption and signature
-        EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)payload.data(), static_cast<int>(payload.size()));
-        EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
+        if(!EVP_EncryptUpdate(e_ctx, output.data(), &actual_size, (const unsigned char*)payload.data(), static_cast<int>(payload.size())))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encode the message. EVP_EncryptUpdate function returns an error");
+            return false;
+        }
+
+        if(!EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encode the message. EVP_EncryptFinal function returns an error");
+            return false;
+        }
+
         EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
         output.resize(actual_size+final_size);
     }else{
         //We are in GMAC mode: We need a signature but no encryption is needed
-        EVP_EncryptUpdate(e_ctx, NULL, &actual_size, (const unsigned char*)payload.data(), static_cast<int>(payload.size()));
-        EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size);
+        if(!EVP_EncryptUpdate(e_ctx, NULL, &actual_size, (const unsigned char*)payload.data(), static_cast<int>(payload.size())))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encode the message. EVP_EncryptUpdate function returns an error");
+            return false;
+        }
+
+        if(!EVP_EncryptFinal(e_ctx, output.data() + actual_size, &final_size))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encode the message. EVP_EncryptFinal function returns an error");
+            return false;
+        }
+
         EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
         output.resize(payload.size());
         memcpy(output.data(), payload.data(), payload.size());
@@ -536,7 +628,8 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
             continue;
 
         //Update the key if needed
-        if(update_specific_keys || remote_participant->session_id != local_participant->session_id)
+        if((update_specific_keys || remote_participant->session_id != local_participant->session_id) &&
+                (*remote_participant != *local_participant))
         {
             //Update triggered!
             remote_participant->session_id = local_participant->session_id;
@@ -551,15 +644,31 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         if((remote_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) |
             (remote_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC}))
         {
-            EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_participant->SessionKey.data()), initialization_vector.data());
+            if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_participant->SessionKey.data()), initialization_vector.data()))
+            {
+                logError(SECURITY_CRYPTO, "Unable to create authentication. EVP_EncryptInit function returns an error");
+                return false;
+            }
         }
         if((remote_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}) |
             (remote_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}))
         {
-            EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(remote_participant->SessionKey.data()), initialization_vector.data());
+            if(!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(remote_participant->SessionKey.data()), initialization_vector.data()))
+            {
+                logError(SECURITY_CRYPTO, "Unable to create authentication. EVP_EncryptInit function returns an error");
+                return false;
+            }
         }
-        EVP_EncryptUpdate(e_ctx, NULL, &actual_size, dataTag.common_mac.data(), 16);
-        EVP_EncryptFinal(e_ctx, NULL, &final_size);
+        if(!EVP_EncryptUpdate(e_ctx, NULL, &actual_size, dataTag.common_mac.data(), 16))
+        {
+            logError(SECURITY_CRYPTO, "Unable to create authentication. EVP_EncryptUpdate function returns an error");
+            return false;
+        }
+        if(!EVP_EncryptFinal(e_ctx, NULL, &final_size))
+        {
+            logError(SECURITY_CRYPTO, "Unable to create authentication. EVP_EncryptFinal function returns an error");
+            return false;
+        }
         EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, specific_tag);
         //output.resize(actual_size+final_size);
         EVP_CIPHER_CTX_free(e_ctx);
@@ -737,12 +846,20 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     if((sending_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) |
         (sending_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC}))
     {
-        EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
+        if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data()))
+        {
+            logError(SECURITY_CRYPTO, "Unable to decode the message. EVP_DecryptInit function returns an error");
+            return false;
+        }
     }
     if((sending_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}) |
         (sending_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}))
     {
-        EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
+        if(!EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data()))
+        {
+            logError(SECURITY_CRYPTO, "Unable to decode the message. EVP_DecryptInit function returns an error");
+            return false;
+        }
     }
 
     if((sending_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}) |
@@ -750,9 +867,20 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     {
 
         plain_buffer.resize(encoded_buffer.size());
-        EVP_DecryptUpdate(d_ctx, plain_buffer.data(), &actual_size, body.secure_data.data(), static_cast<int>(body.secure_data.size()));
+        if(!EVP_DecryptUpdate(d_ctx, plain_buffer.data(), &actual_size, body.secure_data.data(), static_cast<int>(body.secure_data.size())))
+        {
+            logError(SECURITY_CRYPTO, "Unable to decode the message. EVP_DecryptUpdate function returns an error");
+            return false;
+        }
+
         EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG,16,tag.common_mac.data());
-        EVP_DecryptFinal(d_ctx, plain_buffer.data() + actual_size, &final_size);
+
+        if(!EVP_DecryptFinal(d_ctx, plain_buffer.data() + actual_size, &final_size))
+        {
+            logError(SECURITY_CRYPTO, "Unable to decode the message. EVP_DecryptFinal function returns an error");
+            return false;
+        }
+
         plain_buffer.resize(actual_size + final_size);
     }else{
         plain_buffer.resize(body.secure_data.size());
@@ -1288,14 +1416,30 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     plain_buffer.resize(encoded_buffer.size());
 
     if(sending_writer->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}){
-        EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
+        if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data()))
+        {
+            logError(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptInit function returns an error");
+            return false;
+        }
     }
     if(sending_writer->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}){
-        EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data());
+        if(!EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data()))
+        {
+            logError(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptInit function returns an error");
+            return false;
+        }
     }
-    EVP_DecryptUpdate(d_ctx, plain_buffer.data(), &actual_size, body.secure_data.data(), static_cast<int>(body.secure_data.size()));
+    if(!EVP_DecryptUpdate(d_ctx, plain_buffer.data(), &actual_size, body.secure_data.data(), static_cast<int>(body.secure_data.size())))
+    {
+        logError(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptUpdate function returns an error");
+        return false;
+    }
     EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG,16,tag.common_mac.data());
-    EVP_DecryptFinal(d_ctx, plain_buffer.data() + actual_size, &final_size);
+    if(!EVP_DecryptFinal(d_ctx, plain_buffer.data() + actual_size, &final_size))
+    {
+        logError(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptFinal function returns an error");
+        return false;
+    }
     EVP_CIPHER_CTX_free(d_ctx);
     plain_buffer.resize(actual_size + final_size);
     //TODO(Ricardo) Check better openssl functions
@@ -1303,8 +1447,8 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     return true;
 }
 
-std::array<uint8_t, 32> AESGCMGMAC_Transform::compute_sessionkey(const std::array<uint8_t,32> master_sender_key,
-        const std::array<uint8_t,32> master_salt , const uint32_t &session_id)
+std::array<uint8_t, 32> AESGCMGMAC_Transform::compute_sessionkey(const std::array<uint8_t,32>& master_sender_key,
+        const std::array<uint8_t,32>& master_salt , const uint32_t session_id)
 {
 
     std::array<uint8_t,32> session_key;
@@ -1315,7 +1459,7 @@ std::array<uint8_t, 32> AESGCMGMAC_Transform::compute_sessionkey(const std::arra
     memcpy(source+32+10, master_salt.data(),32);
     memcpy(source+32+10+32, &(session_id),4);
 
-    EVP_Digest(source, 32+10+32+4, (unsigned char*)&(session_key), NULL, EVP_sha256(), NULL);
+    EVP_Digest(source, 32+10+32+4, session_key.data(), NULL, EVP_sha256(), NULL);
 
     free(source);
     return session_key;
