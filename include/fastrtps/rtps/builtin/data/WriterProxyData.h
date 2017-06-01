@@ -46,7 +46,7 @@ class WriterProxyData
 
         virtual RTPS_DllAPI ~WriterProxyData();
 
-        WriterProxyData(const WriterProxyData& writerInfo);
+        RTPS_DllAPI WriterProxyData(const WriterProxyData& writerInfo);
 
             RTPS_DllAPI WriterProxyData& operator=(const WriterProxyData& writerInfo);
 
