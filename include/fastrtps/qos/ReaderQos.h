@@ -71,7 +71,7 @@ public:
 	 * @param readerqos Reference from a ReaderQos object.
 	 * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
 	 */
-	RTPS_DllAPI void setQos(ReaderQos& readerqos, bool first_time);
+	RTPS_DllAPI void setQos(const ReaderQos& readerqos, bool first_time);
 	/**
 	 * Check if the Qos values are compatible between each other.
 	 * @return True if correct.

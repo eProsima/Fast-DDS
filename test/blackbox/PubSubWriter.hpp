@@ -114,7 +114,7 @@ class PubSubWriter
                     if(readerInfo.readFromCDRMessage(&tempMsg))
                     {
                         std::cout << "Discovered reader of topic " << readerInfo.topicName() << std::endl;
-                        writer_.add_topic(readerInfo.topicName());
+                        writer_.add_reader_info(readerInfo);
                     }
                 }
                 else
@@ -124,7 +124,7 @@ class PubSubWriter
                     iHandle2GUID(readerGuid, change_in->instanceHandle);
 
                     if(writer_.participant_->get_remote_reader_info(readerGuid, readerInfo))
-                        writer_.remove_topic(readerInfo.topicName());
+                        writer_.remove_reader_info(readerInfo);
                 }
             }
 
@@ -159,7 +159,7 @@ class PubSubWriter
                     if(writerInfo.readFromCDRMessage(&tempMsg))
                     {
                         std::cout << "Discovered writer of topic " << writerInfo.topicName() << std::endl;
-                        writer_.add_topic(writerInfo.topicName());
+                        writer_.add_writer_info(writerInfo);
                     }
                 }
                 else
@@ -169,7 +169,7 @@ class PubSubWriter
                     iHandle2GUID(writerGuid, change_in->instanceHandle);
 
                     if(writer_.participant_->get_remote_writer_info(writerGuid, writerInfo))
-                        writer_.remove_topic(writerInfo.topicName());
+                        writer_.remove_writer_info(writerInfo);
                 }
             }
 
@@ -347,14 +347,27 @@ class PubSubWriter
 
     void block_until_discover_topic(const std::string& topicName, int repeatedTimes)
     {
-        std::unique_lock<std::mutex> lock(mutexTopicList_);
+        std::unique_lock<std::mutex> lock(mutexEntitiesInfoList_);
 
         int times = mapTopicCountList_.count(topicName) == 0 ? -1 : mapTopicCountList_[topicName];
 
         while(times != repeatedTimes)
         {
-            cvTopicList_.wait(lock);
+            cvEntitiesInfoList_.wait(lock);
             times = mapTopicCountList_.count(topicName) == 0 ? -1 : mapTopicCountList_[topicName];
+        }
+    }
+
+    void block_until_discover_partition(const std::string& partition, int repeatedTimes)
+    {
+        std::unique_lock<std::mutex> lock(mutexEntitiesInfoList_);
+
+        int times = mapPartitionCountList_.count(partition) == 0 ? -1 : mapPartitionCountList_[partition];
+
+        while(times != repeatedTimes)
+        {
+            cvEntitiesInfoList_.wait(lock);
+            times = mapPartitionCountList_.count(partition) == 0 ? -1 : mapPartitionCountList_[partition];
         }
     }
 
@@ -554,29 +567,100 @@ class PubSubWriter
     }
 #endif
 
-    void add_topic(const std::string& topicName)
+    void add_writer_info(const WriterProxyData& writer_data)
     {
-        mutexTopicList_.lock();
-        auto ret = mapTopicCountList_.insert(std::make_pair(topicName, 1));
+        mutexEntitiesInfoList_.lock();
+        auto ret = mapWriterInfoList_.insert(std::make_pair(writer_data.guid(), writer_data));
 
         if(!ret.second)
-            ++ret.first->second;
+            ret.first->second = writer_data;
 
-        mutexTopicList_.unlock();
-        cvTopicList_.notify_all();
+        auto ret_topic = mapTopicCountList_.insert(std::make_pair(writer_data.topicName(), 1));
+
+        if(!ret_topic.second)
+            ++ret_topic.first->second;
+
+        for(auto partition : writer_data.m_qos.m_partition.getNames())
+        {
+            auto ret_partition = mapPartitionCountList_.insert(std::make_pair(partition, 1));
+
+            if(!ret_partition.second)
+                ++ret_partition.first->second;
+        }
+
+        mutexEntitiesInfoList_.unlock();
+        cvEntitiesInfoList_.notify_all();
     }
 
-    void remove_topic(const std::string& topicName)
+    void add_reader_info(const ReaderProxyData& reader_data)
     {
-        std::unique_lock<std::mutex> lock(mutexTopicList_);
+        mutexEntitiesInfoList_.lock();
+        auto ret = mapReaderInfoList_.insert(std::make_pair(reader_data.guid(), reader_data));
 
-        if(mapTopicCountList_.count(topicName) > 0)
+        if(!ret.second)
+            ret.first->second = reader_data;
+
+        auto ret_topic = mapTopicCountList_.insert(std::make_pair(reader_data.topicName(), 1));
+
+        if(!ret_topic.second)
+            ++ret_topic.first->second;
+
+        for(auto partition : reader_data.m_qos.m_partition.getNames())
         {
-            --mapTopicCountList_[topicName];
-            ASSERT_TRUE(mapTopicCountList_[topicName] >= 0);
-            lock.unlock();
-            cvTopicList_.notify_all();
+            auto ret_partition = mapPartitionCountList_.insert(std::make_pair(partition, 1));
+
+            if(!ret_partition.second)
+                ++ret_partition.first->second;
         }
+
+        mutexEntitiesInfoList_.unlock();
+        cvEntitiesInfoList_.notify_all();
+    }
+
+    void remove_writer_info(const WriterProxyData& writer_data)
+    {
+        std::unique_lock<std::mutex> lock(mutexEntitiesInfoList_);
+
+        ASSERT_GT(mapWriterInfoList_.count(writer_data.guid()), 0);
+
+        mapWriterInfoList_.erase(writer_data.guid());
+
+        ASSERT_GT(mapTopicCountList_.count(writer_data.topicName()), 0);
+
+        --mapTopicCountList_[writer_data.topicName()];
+
+        for(auto partition : writer_data.m_qos.m_partition.getNames())
+        {
+            ASSERT_GT(mapPartitionCountList_.count(partition), 0);
+
+            --mapPartitionCountList_[partition];
+        }
+
+        lock.unlock();
+        cvEntitiesInfoList_.notify_all();
+    }
+
+    void remove_reader_info(const ReaderProxyData& reader_data)
+    {
+        std::unique_lock<std::mutex> lock(mutexEntitiesInfoList_);
+
+        ASSERT_GT(mapReaderInfoList_.count(reader_data.guid()), 0);
+
+        mapReaderInfoList_.erase(reader_data.guid());
+
+        ASSERT_GT(mapTopicCountList_.count(reader_data.topicName()), 0);
+
+        --mapTopicCountList_[reader_data.topicName()];
+
+        for(auto partition : reader_data.m_qos.m_partition.getNames())
+        {
+            ASSERT_GT(mapPartitionCountList_.count(partition), 0);
+
+            --mapPartitionCountList_[partition];
+        }
+
+        lock.unlock();
+        cvEntitiesInfoList_.notify_all();
     }
 
     PubSubWriter& operator=(const PubSubWriter&)NON_COPYABLE_CXX11;
@@ -594,9 +678,12 @@ class PubSubWriter
     bool attachEDP_;
     EDPTakeReaderInfo edpReaderListener_;
     EDPTakeWriterInfo edpWriterListener_;
-    std::mutex mutexTopicList_;
-    std::condition_variable cvTopicList_;
+    std::mutex mutexEntitiesInfoList_;
+    std::condition_variable cvEntitiesInfoList_;
+    std::map<GUID_t, WriterProxyData> mapWriterInfoList_;
+    std::map<GUID_t, ReaderProxyData> mapReaderInfoList_;
     std::map<std::string,  int> mapTopicCountList_;
+    std::map<std::string,  int> mapPartitionCountList_;
 #if HAVE_SECURITY
     std::mutex mutexAuthentication_;
     std::condition_variable cvAuthentication_;

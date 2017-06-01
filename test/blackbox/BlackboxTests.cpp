@@ -1735,20 +1735,24 @@ BLACKBOXTEST(BlackBox, EDPSlaveReaderAttachment)
 
     ASSERT_TRUE(checker.isInitialized());
 
-    reader->init();
+    reader->partition("test").partition("othertest").init();
 
     ASSERT_TRUE(reader->isInitialized());
 
-    writer->init();
+    writer->partition("test").init();
 
     ASSERT_TRUE(writer->isInitialized());
 
     checker.block_until_discover_topic(checker.topic_name(), 3);
+    checker.block_until_discover_partition("test", 2);
+    checker.block_until_discover_partition("othertest", 1);
 
     delete reader;
     delete writer;
 
     checker.block_until_discover_topic(checker.topic_name(), 1);
+    checker.block_until_discover_partition("test", 0);
+    checker.block_until_discover_partition("othertest", 0);
 }
 
 #if HAVE_SECURITY

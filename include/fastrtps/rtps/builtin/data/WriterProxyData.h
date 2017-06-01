@@ -40,272 +40,274 @@ struct CDRMessage_t;
  */
 class WriterProxyData
 {
-public:
+    public:
 
-	RTPS_DllAPI WriterProxyData();
+        RTPS_DllAPI WriterProxyData();
 
-	virtual RTPS_DllAPI ~WriterProxyData();
+        virtual RTPS_DllAPI ~WriterProxyData();
 
-    RTPS_DllAPI WriterProxyData& operator=(const WriterProxyData& writerInfo);
+        WriterProxyData(const WriterProxyData& writerInfo);
 
-    RTPS_DllAPI void guid(const GUID_t& guid)
-    {
-        m_guid = guid;
-    }
+            RTPS_DllAPI WriterProxyData& operator=(const WriterProxyData& writerInfo);
 
-    RTPS_DllAPI void guid(GUID_t&& guid)
-    {
-        m_guid = std::move(guid);
-    }
+        RTPS_DllAPI void guid(const GUID_t& guid)
+        {
+            m_guid = guid;
+        }
 
-    RTPS_DllAPI GUID_t guid() const
-    {
-        return m_guid;
-    }
+        RTPS_DllAPI void guid(GUID_t&& guid)
+        {
+            m_guid = std::move(guid);
+        }
 
-    RTPS_DllAPI GUID_t& guid()
-    {
-        return m_guid;
-    }
+        RTPS_DllAPI GUID_t guid() const
+        {
+            return m_guid;
+        }
 
-    RTPS_DllAPI void unicastLocatorList(const LocatorList_t& unicastLocatorList)
-    {
-        m_unicastLocatorList = unicastLocatorList;
-    }
+        RTPS_DllAPI GUID_t& guid()
+        {
+            return m_guid;
+        }
 
-    RTPS_DllAPI void unicastLocatorList(LocatorList_t&& unicastLocatorList)
-    {
-        m_unicastLocatorList = std::move(unicastLocatorList);
-    }
+        RTPS_DllAPI void unicastLocatorList(const LocatorList_t& unicastLocatorList)
+        {
+            m_unicastLocatorList = unicastLocatorList;
+        }
 
-    RTPS_DllAPI LocatorList_t unicastLocatorList() const
-    {
-        return m_unicastLocatorList;
-    }
+        RTPS_DllAPI void unicastLocatorList(LocatorList_t&& unicastLocatorList)
+        {
+            m_unicastLocatorList = std::move(unicastLocatorList);
+        }
 
-    RTPS_DllAPI LocatorList_t& unicastLocatorList()
-    {
-        return m_unicastLocatorList;
-    }
+        RTPS_DllAPI LocatorList_t unicastLocatorList() const
+        {
+            return m_unicastLocatorList;
+        }
 
-    RTPS_DllAPI void multicastLocatorList(const LocatorList_t& multicastLocatorList)
-    {
-        m_multicastLocatorList = multicastLocatorList;
-    }
+        RTPS_DllAPI LocatorList_t& unicastLocatorList()
+        {
+            return m_unicastLocatorList;
+        }
 
-    RTPS_DllAPI void multicastLocatorList(LocatorList_t&& multicastLocatorList)
-    {
-        m_multicastLocatorList = std::move(multicastLocatorList);
-    }
+        RTPS_DllAPI void multicastLocatorList(const LocatorList_t& multicastLocatorList)
+        {
+            m_multicastLocatorList = multicastLocatorList;
+        }
 
-    RTPS_DllAPI LocatorList_t multicastLocatorList() const
-    {
-        return m_multicastLocatorList;
-    }
+        RTPS_DllAPI void multicastLocatorList(LocatorList_t&& multicastLocatorList)
+        {
+            m_multicastLocatorList = std::move(multicastLocatorList);
+        }
 
-    RTPS_DllAPI LocatorList_t& multicastLocatorList()
-    {
-        return m_multicastLocatorList;
-    }
+        RTPS_DllAPI LocatorList_t multicastLocatorList() const
+        {
+            return m_multicastLocatorList;
+        }
 
-    RTPS_DllAPI void key(const InstanceHandle_t& key)
-    {
-        m_key = key;
-    }
+        RTPS_DllAPI LocatorList_t& multicastLocatorList()
+        {
+            return m_multicastLocatorList;
+        }
 
-    RTPS_DllAPI void key(InstanceHandle_t&& key)
-    {
-        m_key = std::move(key);
-    }
+        RTPS_DllAPI void key(const InstanceHandle_t& key)
+        {
+            m_key = key;
+        }
 
-    RTPS_DllAPI InstanceHandle_t key() const
-    {
-        return m_key;
-    }
+        RTPS_DllAPI void key(InstanceHandle_t&& key)
+        {
+            m_key = std::move(key);
+        }
 
-    RTPS_DllAPI InstanceHandle_t& key()
-    {
-        return m_key;
-    }
+        RTPS_DllAPI InstanceHandle_t key() const
+        {
+            return m_key;
+        }
 
-    RTPS_DllAPI void RTPSParticipantKey(const InstanceHandle_t& RTPSParticipantKey)
-    {
-        m_RTPSParticipantKey = RTPSParticipantKey;
-    }
+        RTPS_DllAPI InstanceHandle_t& key()
+        {
+            return m_key;
+        }
 
-    RTPS_DllAPI void RTPSParticipantKey(InstanceHandle_t&& RTPSParticipantKey)
-    {
-        m_RTPSParticipantKey = std::move(RTPSParticipantKey);
-    }
+        RTPS_DllAPI void RTPSParticipantKey(const InstanceHandle_t& RTPSParticipantKey)
+        {
+            m_RTPSParticipantKey = RTPSParticipantKey;
+        }
 
-    RTPS_DllAPI InstanceHandle_t RTPSParticipantKey() const
-    {
-        return m_RTPSParticipantKey;
-    }
+        RTPS_DllAPI void RTPSParticipantKey(InstanceHandle_t&& RTPSParticipantKey)
+        {
+            m_RTPSParticipantKey = std::move(RTPSParticipantKey);
+        }
 
-    RTPS_DllAPI InstanceHandle_t& RTPSParticipantKey()
-    {
-        return m_RTPSParticipantKey;
-    }
+        RTPS_DllAPI InstanceHandle_t RTPSParticipantKey() const
+        {
+            return m_RTPSParticipantKey;
+        }
 
-    RTPS_DllAPI void typeName(const std::string& typeName)
-    {
-        m_typeName = typeName;
-    }
+        RTPS_DllAPI InstanceHandle_t& RTPSParticipantKey()
+        {
+            return m_RTPSParticipantKey;
+        }
 
-    RTPS_DllAPI void typeName(std::string&& typeName)
-    {
-        m_typeName = std::move(typeName);
-    }
+        RTPS_DllAPI void typeName(const std::string& typeName)
+        {
+            m_typeName = typeName;
+        }
 
-    RTPS_DllAPI std::string typeName() const
-    {
-        return m_typeName;
-    }
+        RTPS_DllAPI void typeName(std::string&& typeName)
+        {
+            m_typeName = std::move(typeName);
+        }
 
-    RTPS_DllAPI std::string& typeName()
-    {
-        return m_typeName;
-    }
+        RTPS_DllAPI std::string typeName() const
+        {
+            return m_typeName;
+        }
 
-    RTPS_DllAPI void topicName(const std::string& topicName)
-    {
-        m_topicName = topicName;
-    }
+        RTPS_DllAPI std::string& typeName()
+        {
+            return m_typeName;
+        }
 
-    RTPS_DllAPI void topicName(std::string&& topicName)
-    {
-        m_topicName = std::move(topicName);
-    }
+        RTPS_DllAPI void topicName(const std::string& topicName)
+        {
+            m_topicName = topicName;
+        }
 
-    RTPS_DllAPI std::string topicName() const
-    {
-        return m_topicName;
-    }
+        RTPS_DllAPI void topicName(std::string&& topicName)
+        {
+            m_topicName = std::move(topicName);
+        }
 
-    RTPS_DllAPI std::string& topicName()
-    {
-        return m_topicName;
-    }
+        RTPS_DllAPI std::string topicName() const
+        {
+            return m_topicName;
+        }
 
-    RTPS_DllAPI void userDefinedId(uint16_t userDefinedId)
-    {
-        m_userDefinedId = userDefinedId;
-    }
+        RTPS_DllAPI std::string& topicName()
+        {
+            return m_topicName;
+        }
 
-    RTPS_DllAPI uint16_t userDefinedId() const
-    {
-        return m_userDefinedId;
-    }
+        RTPS_DllAPI void userDefinedId(uint16_t userDefinedId)
+        {
+            m_userDefinedId = userDefinedId;
+        }
 
-    RTPS_DllAPI uint16_t& userDefinedId()
-    {
-        return m_userDefinedId;
-    }
+        RTPS_DllAPI uint16_t userDefinedId() const
+        {
+            return m_userDefinedId;
+        }
 
-	RTPS_DllAPI void typeMaxSerialized(uint32_t typeMaxSerialized)
-    {
-        m_typeMaxSerialized = typeMaxSerialized;
-    }
+        RTPS_DllAPI uint16_t& userDefinedId()
+        {
+            return m_userDefinedId;
+        }
 
-    RTPS_DllAPI uint32_t typeMaxSerialized() const
-    {
-        return m_typeMaxSerialized;
-    }
+        RTPS_DllAPI void typeMaxSerialized(uint32_t typeMaxSerialized)
+        {
+            m_typeMaxSerialized = typeMaxSerialized;
+        }
 
-    RTPS_DllAPI uint32_t& typeMaxSerialized()
-    {
-        return m_typeMaxSerialized;
-    }
+        RTPS_DllAPI uint32_t typeMaxSerialized() const
+        {
+            return m_typeMaxSerialized;
+        }
 
-	RTPS_DllAPI void isAlive(bool isAlive)
-    {
-        m_isAlive = isAlive;
-    }
+        RTPS_DllAPI uint32_t& typeMaxSerialized()
+        {
+            return m_typeMaxSerialized;
+        }
 
-    RTPS_DllAPI bool isAlive() const
-    {
-        return m_isAlive;
-    }
+        RTPS_DllAPI void isAlive(bool isAlive)
+        {
+            m_isAlive = isAlive;
+        }
 
-    RTPS_DllAPI bool& isAlive()
-    {
-        return m_isAlive;
-    }
+        RTPS_DllAPI bool isAlive() const
+        {
+            return m_isAlive;
+        }
 
-	RTPS_DllAPI void topicKind(TopicKind_t topicKind)
-    {
-        m_topicKind = topicKind;
-    }
+        RTPS_DllAPI bool& isAlive()
+        {
+            return m_isAlive;
+        }
 
-    RTPS_DllAPI TopicKind_t topicKind() const
-    {
-        return m_topicKind;
-    }
+        RTPS_DllAPI void topicKind(TopicKind_t topicKind)
+        {
+            m_topicKind = topicKind;
+        }
 
-    RTPS_DllAPI TopicKind_t& topicKind()
-    {
-        return m_topicKind;
-    }
+        RTPS_DllAPI TopicKind_t topicKind() const
+        {
+            return m_topicKind;
+        }
 
-	//!WriterQOS
-	WriterQos m_qos;
-	//!
-	ParameterList_t m_parameterList;
-	//!Clear the information and return the object to the default state.
-	void clear();
-	//!Update certain parameters from another object.
-	void update(WriterProxyData* rdata);
-	//!Copy all information from another object.
-	void copy(WriterProxyData* rdata);
-	//!Convert the information to a parameter list to be send in a CDRMessage.
-	bool toParameterList();
-	//!Read a parameter list from a CDRMessage_t.
-	RTPS_DllAPI bool readFromCDRMessage(CDRMessage_t* msg);
+        RTPS_DllAPI TopicKind_t& topicKind()
+        {
+            return m_topicKind;
+        }
 
-	/**
-	* Convert the ProxyData information to RemoteWriterAttributes object.
-	* @return Reference to the RemoteWriterAttributes object.
-	*/
-	RemoteWriterAttributes& toRemoteWriterAttributes();
+        //!WriterQOS
+        WriterQos m_qos;
+        //!
+        ParameterList_t m_parameterList;
+        //!Clear the information and return the object to the default state.
+        void clear();
+        //!Update certain parameters from another object.
+        void update(WriterProxyData* rdata);
+        //!Copy all information from another object.
+        void copy(WriterProxyData* rdata);
+        //!Convert the information to a parameter list to be send in a CDRMessage.
+        bool toParameterList();
+        //!Read a parameter list from a CDRMessage_t.
+        RTPS_DllAPI bool readFromCDRMessage(CDRMessage_t* msg);
 
-	//!Remote Attributes associated with this proxy data.
-	RemoteWriterAttributes m_remoteAtt;
+        /**
+         * Convert the ProxyData information to RemoteWriterAttributes object.
+         * @return Reference to the RemoteWriterAttributes object.
+         */
+        RemoteWriterAttributes& toRemoteWriterAttributes();
 
-private:
+        //!Remote Attributes associated with this proxy data.
+        RemoteWriterAttributes m_remoteAtt;
 
-	//!GUID
-	GUID_t m_guid;
+    private:
 
-	//!Unicast locator list
-	LocatorList_t m_unicastLocatorList;
+        //!GUID
+        GUID_t m_guid;
 
-	//!Multicast locator list
-	LocatorList_t m_multicastLocatorList;
+        //!Unicast locator list
+        LocatorList_t m_unicastLocatorList;
 
-	//!GUID_t of the Writer converted to InstanceHandle_t
-	InstanceHandle_t m_key;
+        //!Multicast locator list
+        LocatorList_t m_multicastLocatorList;
 
-	//!GUID_t of the participant converted to InstanceHandle
-	InstanceHandle_t m_RTPSParticipantKey;
+        //!GUID_t of the Writer converted to InstanceHandle_t
+        InstanceHandle_t m_key;
 
-	//!Type name
-	std::string m_typeName;
+        //!GUID_t of the participant converted to InstanceHandle
+        InstanceHandle_t m_RTPSParticipantKey;
 
-	//!Topic name
-	std::string m_topicName;
+        //!Type name
+        std::string m_typeName;
 
-	//!User defined ID
-	uint16_t m_userDefinedId;
+        //!Topic name
+        std::string m_topicName;
 
-	//!Maximum size of the type associated with this Wrtiter, serialized.
-	uint32_t m_typeMaxSerialized;
+        //!User defined ID
+        uint16_t m_userDefinedId;
 
-	//!Indicates if the Writer is Alive.
-	bool m_isAlive;
+        //!Maximum size of the type associated with this Wrtiter, serialized.
+        uint32_t m_typeMaxSerialized;
 
-	//!Topic kind
-	TopicKind_t m_topicKind;
+        //!Indicates if the Writer is Alive.
+        bool m_isAlive;
+
+        //!Topic kind
+        TopicKind_t m_topicKind;
 };
 
 }

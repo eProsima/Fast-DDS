@@ -48,6 +48,8 @@ class ReaderProxyData
 
         RTPS_DllAPI virtual ~ReaderProxyData();
 
+        ReaderProxyData(const ReaderProxyData& readerInfo);
+
         RTPS_DllAPI ReaderProxyData& operator=(const ReaderProxyData& readerInfo);
 
         RTPS_DllAPI void guid(const GUID_t& guid)
