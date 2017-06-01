@@ -29,9 +29,9 @@ using namespace eprosima::fastrtps;
 
 int main(int argc, char** argv)
 {
-    std::cout << "Starting " << std::endl;
-	int type = 1;
-	if (argc > 1)
+	int type = 0; 
+
+	if (argc == 2)
 	{
 		if (strcmp(argv[1], "publisher") == 0)
 		{
@@ -42,14 +42,18 @@ int main(int argc, char** argv)
 			type = 2;
 		}
 	}
-	else
+	
+	if (type==0)
 	{
-        std::cout << "publisher OR subscriber argument needed" << std::endl;
+		std::cout << "Error: Incorrect arguments." << std::endl;
+        	std::cout << "Usage: " << std::endl << std::endl;
+		std::cout << argv[0] << " publisher|subscriber" << std::endl << std::endl;
 		return 0;
 	}
 	
-	// Register the type being used
+	std::cout << "Starting " << std::endl;
 	
+	// Register the type being used
 	
 	switch(type)
 	{

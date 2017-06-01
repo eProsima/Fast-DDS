@@ -37,6 +37,22 @@ WriterProxyData::WriterProxyData():
         // TODO Auto-generated constructor stub
     }
 
+WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo) :
+    m_guid(writerInfo.m_guid),
+    m_unicastLocatorList(writerInfo.m_unicastLocatorList),
+    m_multicastLocatorList(writerInfo.m_multicastLocatorList),
+    m_key(writerInfo.m_key),
+    m_RTPSParticipantKey(writerInfo.m_RTPSParticipantKey),
+    m_typeName(writerInfo.m_typeName),
+    m_topicName(writerInfo.m_topicName),
+    m_userDefinedId(writerInfo.m_userDefinedId),
+    m_typeMaxSerialized(writerInfo.m_typeMaxSerialized),
+    m_isAlive(writerInfo.m_isAlive),
+    m_topicKind(writerInfo.m_topicKind)
+{
+    m_qos.setQos(writerInfo.m_qos, true);
+}
+
 WriterProxyData::~WriterProxyData() {
     // TODO Auto-generated destructor stub
     m_parameterList.deleteParams();
@@ -56,6 +72,7 @@ WriterProxyData& WriterProxyData::operator=(const WriterProxyData& writerInfo)
     m_typeMaxSerialized = writerInfo.m_typeMaxSerialized;
     m_isAlive = writerInfo.m_isAlive;
     m_topicKind = writerInfo.m_topicKind;
+    m_qos.setQos(writerInfo.m_qos, true);
 
     return *this;
 }

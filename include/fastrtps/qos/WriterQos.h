@@ -76,7 +76,7 @@ public:
 	 * @param qos Reference from a WriterQos object.
 	 * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
 	 */
-	RTPS_DllAPI void setQos( WriterQos& qos, bool first_time);
+	RTPS_DllAPI void setQos(const WriterQos& qos, bool first_time);
 	/**
 	 * Check if the Qos values are compatible between each other.
 	 * @return True if correct.

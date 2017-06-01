@@ -261,7 +261,7 @@ class UserDataQosPolicy : private Parameter_t, public QosPolicy{
      * Returns raw data vector.
      * @return raw data as vector of octets.
      * */
-    RTPS_DllAPI inline std::vector<octet> getDataVec(){ return dataVec; };
+    RTPS_DllAPI inline std::vector<octet> getDataVec() const { return dataVec; };
     /**
      * Sets raw data vector.
      * @param vec raw data to set.
@@ -360,7 +360,7 @@ class  PartitionQosPolicy : private Parameter_t, public QosPolicy
      * Returns partition names.
      * @return Vector of partition name strings.
      */
-    RTPS_DllAPI inline std::vector<std::string> getNames(){ return names; };
+    RTPS_DllAPI inline std::vector<std::string> getNames() const { return names; };
     /**
      * Overrides partition names
      * @param nam Vector of partition name strings.
@@ -407,7 +407,7 @@ class  TopicDataQosPolicy : private Parameter_t, public QosPolicy
      * Returns topic data
      * @return Vector of data octets.
      */
-    RTPS_DllAPI inline std::vector<octet> getValue(){ return value; };
+    RTPS_DllAPI inline std::vector<octet> getValue() const { return value; };
 
     private:
 
@@ -448,7 +448,7 @@ class  GroupDataQosPolicy : private Parameter_t, public QosPolicy
      * Returns group data
      * @return Vector of data octets.
      */
-    RTPS_DllAPI inline std::vector<octet> getValue(){ return value; };
+    RTPS_DllAPI inline std::vector<octet> getValue() const { return value; };
 
     private:
 

@@ -18,6 +18,18 @@ project("DeadlineQoSExample")
 # Find requirements
 find_package(fastcdr REQUIRED)
 find_package(fastrtps REQUIRED)
+find_package(asio)
+
+if(asio_FOUND)
+    message(STATUS "Found Asio")
+else()
+    find_path(ASIO_INCLUDE_DIR NAMES asio.hpp)
+    if(ASIO_INCLUDE_DIR)
+        message(STATUS "Found Asio in ${ASIO_INCLUDE_DIR}")
+    else()
+        message(STATUS "Asio not found!")
+    endif()
+endif()
 
 # Set C++11
 include(CheckCXXCompilerFlag)
@@ -39,7 +51,6 @@ add_definitions(
   -DASIO_STANDALONE
 )
 
-find_path(ASIO_INCLUDE_DIR NAMES asio.hpp)
 include_directories(${ASIO_INCLUDE_DIR})
 
 add_executable(DeadlineQoSExample ${DEADLINEQOS_EXAMPLE_SOURCES})
