@@ -80,12 +80,12 @@ project(solution, project, example, configurations, vsVersion) ::= <<
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Shlwapi.lib;Iphlpapi.lib;$project.dependencies : {dep |$if(!it.dll)$lib$endif$$dep$Types$if(it.debug)$d$endif$.lib}; separator=";"$;$if(!it.dll)$WS2_32.lib;$endif$%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$if(!it.dll)$libeay32MD$if(it.debug)$d$endif$.lib;$endif$Shlwapi.lib;Iphlpapi.lib;$project.dependencies : {dep |$if(!it.dll)$lib$endif$$dep$Types$if(it.debug)$d$endif$.lib}; separator=";"$;$if(!it.dll)$WS2_32.lib;$endif$%(AdditionalDependencies)</AdditionalDependencies>
       $if(it.dll)$
       <OutputFile>\$(TargetDir)\$(TargetName)\$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$solution.libraryPaths : {path |$path$;}$.\lib\\$example$;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>.\lib\\$example$\\\$(TargetName).lib</ImportLibrary>
-      $endif$   
+      $endif$
     </Link>
     $if(!it.dll)$
     <Lib>
@@ -152,7 +152,7 @@ projectPubSub(solution, project, example, configurations, vsVersion) ::= <<
     </ClCompile>
     <Link>
       <GenerateDebugInformation>$if(it.debug)$true$else$false$endif$</GenerateDebugInformation>
-      <AdditionalDependencies>$if(!it.dll)$lib$endif$$project.name$Types$if(it.debug)$d$endif$.lib;$if(!it.dll)$Shlwapi.lib;Iphlpapi.lib;$endif$$project.dependencies : {dep |$if(!it.dll)$lib$endif$$dep$Types$if(it.debug)$d$endif$.lib}; separator=";"$;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$if(!it.dll)$lib$endif$$project.name$Types$if(it.debug)$d$endif$.lib;$if(!it.dll)$libeay32MD$if(it.debug)$d$endif$.lib;Shlwapi.lib;Iphlpapi.lib;$endif$$project.dependencies : {dep |$if(!it.dll)$lib$endif$$dep$Types$if(it.debug)$d$endif$.lib}; separator=";"$;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>\$(TargetDir)\$(TargetName)\$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$solution.libraryPaths : {path |$path$;}$.\lib\\$example$;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
@@ -232,7 +232,7 @@ projectJNI(solution, project, example, configurations, vsVersion) ::= <<
       <OutputFile>\$(TargetDir)\$(TargetName)\$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$solution.libraryPaths : {path |$path$;}$.\lib\\$example$;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>.\lib\\$example$\\\$(TargetName).lib</ImportLibrary>
-      $endif$   
+      $endif$
     </Link>
     $if(!it.dll)$
     <Lib>
@@ -348,7 +348,7 @@ projectFilesJNI(project) ::= <<
  *                                                                      *
  ************************************************************************
  */
- 
+
 preprocessorDefs(conf) ::= <<
 WIN32;_CRT_SECURE_NO_WARNINGS;$if(conf.dll)$WIN32_LEAN_AND_MEAN;$endif$$if(conf.debug)$_DEBUG$else$NDEBUG$endif$
 >>
@@ -362,13 +362,13 @@ bigObjOption() ::= <<
 
 /**
  * projectRef: Internal Template
- * Produces Project Reference in a VS2005/2008 solution file. 
- * 
+ * Produces Project Reference in a VS2005/2008 solution file.
+ *
  * Params:
  *   project : Object with name, guid and dependsOn properties.
  *
  * Uses:
- */ 
+ */
 projectReferences(solution, project, example) ::= <<
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "$project.name$Types", "$project.name$Types-$example$.vcxproj", "{$project.guid$}"
 $\t$ProjectSection(ProjectDependencies) = postProject
@@ -412,15 +412,15 @@ EndProject
 /**
  * projectConfigurationPlatforms: Internal Template
  * Produces the ProjectConfigurationPlatforms section content of a VS2005 solution file
- * for the project guid provided 
- * 
+ * for the project guid provided
+ *
  * Params:
  *   guid           : Project GUID.
- *   configurations : List of configuration names. 
+ *   configurations : List of configuration names.
  *
  * Uses:
  *   postSolution - local
- */ 
+ */
 projectConfigurationPlatforms(solution, project, configurations, generateJava) ::= <<
 $configurations:{conf | $postSolution(solution=solution, project=project, conf=conf)$$if(project.containsInterfaces)$$postSolutionExtra(solution=solution, project=project, conf=conf)$$endif$$if(generateJava)$$postSolutionJava(solution=solution, project=project, conf=conf)$$endif$};separator="\n"$
 >>
@@ -431,13 +431,13 @@ $configurations:{conf | $postSolution(solution=solution, project=project, conf=c
  * Produces the Active and Build.0 attributes in projectConfigurationPlatforms section
  * of a VS2005 solution file, for the given project guid and configuration name.
  * and configuration name.
- * 
+ *
  * Params:
  *   guid : Project GUID.
- *   conf : Configuration name. 
+ *   conf : Configuration name.
  *
  * Uses:
- */ 
+ */
 postSolution(solution, project, conf) ::= <<
 $\t$$\t${$project.guid$}.$conf.name$|$conf.platform$.ActiveCfg = $conf.name$|$conf.platform$
 $\t$$\t${$project.guid$}.$conf.name$|$conf.platform$.Build.0 = $conf.name$|$conf.platform$
@@ -456,41 +456,41 @@ $\t$$\t${$project.jniGuid$}.$conf.name$|$conf.platform$.Build.0 = $conf.name$|$c
 
 /**
  * ignoreDefaultLibraryNames: Internal Template
- * Produces the IgnoreDefaultLibraryNames attribute of VCLinkerTool 
- * in a configuration section of a VS2005 .vcproj file. 
- * 
+ * Produces the IgnoreDefaultLibraryNames attribute of VCLinkerTool
+ * in a configuration section of a VS2005 .vcproj file.
+ *
  * Params:
- *   conf : VSCOnfiguration object. 
+ *   conf : VSCOnfiguration object.
  *
  * Uses:
- */ 
+ */
 ignoreDefaultLibraryNames(conf) ::= <<
 >>
 
 /**
  * generateDebugInformation: Internal Template
- * Produces the GenerateDebugInformation attribute of VCLinkerTool 
- * in a configuration section of a VS2005 .vcproj file. 
- * 
+ * Produces the GenerateDebugInformation attribute of VCLinkerTool
+ * in a configuration section of a VS2005 .vcproj file.
+ *
  * Params:
- *   conf : VSCOnfiguration object. 
+ *   conf : VSCOnfiguration object.
  *
  * Uses:
- */ 
+ */
 generateDebugInformation(conf) ::= <<
 $if(conf.debug)$true$else$false$endif$
 >>
 
 /**
  * runtimeLibrary: Internal Template
- * Produces the RuntimeLibrary attribute of VCCLCompilerTool 
- * in a configuration section of a VS2005 .vcproj file. 
- * 
+ * Produces the RuntimeLibrary attribute of VCCLCompilerTool
+ * in a configuration section of a VS2005 .vcproj file.
+ *
  * Params:
- *   conf : VSCOnfiguration object. 
+ *   conf : VSCOnfiguration object.
  *
  * Uses:
- */ 
+ */
 runtimeLibrary(conf) ::= <<
 $if(it.dll)$$if(it.debug)$MultiThreadedDebugDLL$else$MultiThreadedDLL$endif$$else$$if(it.debug)$MultiThreadedDebug$else$MultiThreaded$endif$$endif$
 >>

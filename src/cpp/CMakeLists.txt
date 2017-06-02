@@ -407,6 +407,12 @@ if(MSVC OR MSVC_IDE)
             PATTERN "*.pdb"
             )
 
+        install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_static.dir/Debug/${PROJECT_NAME}_static.pdb
+            DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}
+            COMPONENT libraries_${MSVC_ARCH}
+            CONFIGURATIONS Debug
+            )
+
         if(EPROSIMA_INSTALLER_MINION AND EPROSIMA_INSTALLER_OPENSSL_ROOT)
             install(FILES ${EPROSIMA_INSTALLER_OPENSSL_ROOT}/bin/libeay32.dll
                 ${EPROSIMA_INSTALLER_OPENSSL_ROOT}/bin/ssleay32.dll
