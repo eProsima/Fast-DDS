@@ -407,16 +407,23 @@ if(MSVC OR MSVC_IDE)
             PATTERN "*.pdb"
             )
 
-        install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_static.dir/Debug/${PROJECT_NAME}_static.pdb
-            DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}
-            COMPONENT libraries_${MSVC_ARCH}
-            CONFIGURATIONS Debug
-            )
+        if(NOT (("${MSVC_ARCH}" STREQUAL "i86Win32VS2013") OR ("${MSVC_ARCH}" STREQUAL "x64Win64VS2013")))
+            install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_static.dir/Debug/${PROJECT_NAME}_static.pdb
+                DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}
+                COMPONENT libraries_${MSVC_ARCH}
+                CONFIGURATIONS Debug
+                )
+        endif()
 
-        if(EPROSIMA_INSTALLER_MINION AND EPROSIMA_INSTALLER_OPENSSL_ROOT)
-            install(FILES ${EPROSIMA_INSTALLER_OPENSSL_ROOT}/bin/libeay32.dll
-                ${EPROSIMA_INSTALLER_OPENSSL_ROOT}/bin/ssleay32.dll
+        if(EPROSIMA_INSTALLER_MINION)
+            install(FILES ${OPENSSL_ROOT_DIR}/lib/libeay32.dll
                 DESTINATION ${BIN_INSTALL_DIR}${DIR_EXTENSION}
+                COMPONENT libraries_${MSVC_ARCH}
+                )
+
+            install(FILES ${OPENSSL_ROOT_DIR}/lib/VC/static/libeay32MD.lib
+                ${OPENSSL_ROOT_DIR}/lib/VC/static/libeay32MDd.lib
+                DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}
                 COMPONENT libraries_${MSVC_ARCH}
                 )
         endif()
