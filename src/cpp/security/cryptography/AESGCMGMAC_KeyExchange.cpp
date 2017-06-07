@@ -376,7 +376,7 @@ std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_encrypt(const std::vect
 {
     std::vector<uint8_t> output;
 
-    if(plaintext.size() <= std::numeric_limits<int>::max())
+    if(plaintext.size() <= static_cast<size_t>(std::numeric_limits<int>::max()))
     {
         size_t enc_length = plaintext.size() * 3; // TODO(Ricardo) Review size.
         output.resize(enc_length, '\0');
@@ -421,7 +421,7 @@ std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_decrypt(const std::vect
 {
     std::vector<uint8_t> plaintext;
 
-    if(crypto.size() - 32 <= std::numeric_limits<int>::max())
+    if(crypto.size() - 32 <= static_cast<size_t>(std::numeric_limits<int>::max()))
     {
         unsigned char tag[AES_BLOCK_SIZE];
         unsigned char iv[AES_BLOCK_SIZE];

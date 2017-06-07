@@ -52,7 +52,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     }
 
     // Precondition to use openssl
-    if(plain_buffer.size() > std::numeric_limits<int>::max())
+    if(plain_buffer.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
     {
         logError(SECURITY_CRYPTO, "Plain text too large");
         return false;
@@ -164,7 +164,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
         return false;
     }
 
-    if(plain_rtps_submessage.size() > std::numeric_limits<int>::max())
+    if(plain_rtps_submessage.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
     {
         logError(SECURITY_CRYPTO, "Plain rtps submessage too large");
         return false;
@@ -329,7 +329,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
         return false;
     }
 
-    if(plain_rtps_submessage.size() > std::numeric_limits<int>::max())
+    if(plain_rtps_submessage.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
     {
         logError(SECURITY_CRYPTO, "Plain rtps submessage too large");
         return false;
@@ -492,7 +492,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         return false;
     }
 
-    if(plain_rtps_message.size() > std::numeric_limits<int>::max())
+    if(plain_rtps_message.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
     {
         logError(SECURITY_CRYPTO, "Plain rtps message too large");
         return false;
@@ -711,7 +711,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
         return false;
     }
 
-    if(encoded_buffer.size() > std::numeric_limits<int>::max())
+    if(encoded_buffer.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
     {
         logError(SECURITY_CRYPTO, "Encoded rtps message too large");
         return false;
@@ -1368,7 +1368,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
         return false;
     }
 
-    if(encoded_buffer.size() > std::numeric_limits<int>::max())
+    if(encoded_buffer.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
     {
         logError(SECURITY_CRYPTO, "Encoded payload too large");
         return false;

@@ -288,7 +288,7 @@ X509* load_certificate(const std::vector<uint8_t>& data)
 {
     X509* returnedValue = nullptr;
 
-    if(data.size() <= std::numeric_limits<int>::max())
+    if(data.size() <= static_cast<size_t>(std::numeric_limits<int>::max()))
     {
         BIO* cid = BIO_new_mem_buf(data.data(), static_cast<int>(data.size()));
 
