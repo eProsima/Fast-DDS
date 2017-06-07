@@ -418,9 +418,7 @@ if(BUILD_DOCUMENTATION)
         COMPONENT documentation
         )
 
-    install(FILES
-        "${README_LOCATION}/README.html"
-        "${README_LOCATION}/README_html_181c5124a393013a.png"
+    install(FILES "${README_LOCATION}/README.html"
         DESTINATION ${README_INSTALL_LOCATION}
         COMPONENT documentation
         )
