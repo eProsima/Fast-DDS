@@ -276,7 +276,7 @@ endif()
 # Documentation
 ###############################################################################
 # Add an option to toggle the generation of the API documentation.
-option(BUILD_DOCUMENTATION "Use doxygen and libreoffice to create product documentation" OFF)
+option(BUILD_DOCUMENTATION "Use doxygen to create product documentation" OFF)
 
 if(EPROSIMA_INSTALLER)
     set(BUILD_DOCUMENTATION ON)
@@ -297,13 +297,6 @@ if(BUILD_DOCUMENTATION)
         endif()
     elseif(WIN32)
         set(DOXYFILE_MAKE make.bat)
-    endif()
-    find_program(LIBREOFFICE_EXE soffice)
-    if(LIBREOFFICE_EXE)
-        message(STATUS "Found Libreoffice: ${LIBREOFFICE_EXE}")
-        message(STATUS "Recall you need to have installed the eProsima macros for Libreoffice")
-    else()
-        message(FATAL_ERROR "libreoffice is needed to build the documentation. Please install it correctly")
     endif()
     find_program(WGET_EXE wget)
     if(WGET_EXE)
@@ -335,27 +328,18 @@ if(BUILD_DOCUMENTATION)
 
     add_dependencies(doxygen docdirs)
 
-    ### Libreoffice ########################
+    ### README html ########################
 
     if(WIN32)
-        set(LIBREOFFICE_CONVERT_README_MACRO "macro:///eProsima.documentation.changeHyperlinksAndVersionToHTML(${PROJECT_SOURCE_DIR}/doc/README.odt,${PROJECT_VERSION},./,/doc/)")
         set(README_LOCATION "${PROJECT_BINARY_DIR}/")
+        set(README_LOCATION_PREFFIX "doc/")
         set(README_INSTALL_LOCATION ".")
     else()
-        set(LIBREOFFICE_CONVERT_README_MACRO "macro:///eProsima.documentation.changeVersionToHTML(${PROJECT_SOURCE_DIR}/doc/README.odt,${PROJECT_VERSION})")
         set(README_LOCATION "${PROJECT_BINARY_DIR}/doc/")
         set(README_INSTALL_LOCATION "${DOC_INSTALL_DIR}")
     endif()
 
-    add_custom_target(libreoffice
-        COMMAND "${LIBREOFFICE_EXE}" --headless ${LIBREOFFICE_CONVERT_README_MACRO}
-        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/README.html" "${README_LOCATION}/README.html"
-        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/README_html_181c5124a393013a.png" "${README_LOCATION}/README_html_181c5124a393013a.png"
-        DEPENDS
-        "${PROJECT_SOURCE_DIR}/doc/README.odt"
-        COMMENT "Generating documentation with libreoffice" VERBATIM)
-
-    add_dependencies(libreoffice docdirs)
+    configure_file(doc/README.html.in ${README_LOCATION}/README.html @ONLY IMMEDIATE)
 
     ### ReadTheDocs ########################
 
@@ -372,7 +356,7 @@ if(BUILD_DOCUMENTATION)
     add_custom_target(doc ALL
         COMMENT "Generated project documentation" VERBATIM)
 
-    add_dependencies(doc doxygen libreoffice readthedocs)
+    add_dependencies(doc doxygen readthedocs)
 endif()
 
 ###############################################################################
