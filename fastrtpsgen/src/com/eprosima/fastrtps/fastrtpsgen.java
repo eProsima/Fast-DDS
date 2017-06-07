@@ -271,12 +271,14 @@ public class fastrtpsgen {
             TemplateManager.setGroupLoaderDirectories("com/eprosima/fastrtps/idl/templates:com/eprosima/fastcdr/idl/templates");
 
 			// In local for all products
-			//solution.addInclude("$(EPROSIMADIR)/code");
-			solution.addInclude("$(" + m_appEnv + ")/include");
-            solution.addLibraryPath("$(" + m_appEnv + ")/lib");
-			if(m_exampleOption != null) {
-				solution.addLibraryPath("$(" + m_appEnv + ")/lib/" + m_exampleOption);
-			}
+            if(m_os.contains("Windows"))
+            {
+                solution.addInclude("$(" + m_appEnv + ")/include");
+                solution.addLibraryPath("$(" + m_appEnv + ")/lib");
+                if(m_exampleOption != null) {
+                    solution.addLibraryPath("$(" + m_appEnv + ")/lib/" + m_exampleOption);
+                }
+            }
 
             // If Java, include jni headers
             if(m_languageOption == LANGUAGE.JAVA)
