@@ -352,15 +352,15 @@ const SequenceNumber_t WriterProxy::available_changes_max() const
 
 void WriterProxy::print_changes_fromWriter_test2()
 {
-    std::stringstream ss;
-    ss << this->m_att.guid.entityId<<": ";
+    std::stringstream sstream;
+    sstream << this->m_att.guid.entityId<<": ";
 
     for(auto it = m_changesFromW.begin(); it != m_changesFromW.end(); ++it)
     {
-        ss << it->getSequenceNumber() <<"("<<it->isRelevant()<<","<<it->getStatus()<<")-";
+        sstream << it->getSequenceNumber() <<"("<<it->isRelevant()<<","<<it->getStatus()<<")-";
     }
 
-    std::string auxstr = ss.str();
+    std::string auxstr = sstream.str();
     logInfo(RTPS_READER,auxstr;);
 }
 

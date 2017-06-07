@@ -621,17 +621,17 @@ class PubSubWriter
     {
         std::unique_lock<std::mutex> lock(mutexEntitiesInfoList_);
 
-        ASSERT_GT(mapWriterInfoList_.count(writer_data.guid()), 0);
+        ASSERT_GT(mapWriterInfoList_.count(writer_data.guid()), 0ul);
 
         mapWriterInfoList_.erase(writer_data.guid());
 
-        ASSERT_GT(mapTopicCountList_.count(writer_data.topicName()), 0);
+        ASSERT_GT(mapTopicCountList_.count(writer_data.topicName()), 0ul);
 
         --mapTopicCountList_[writer_data.topicName()];
 
         for(auto partition : writer_data.m_qos.m_partition.getNames())
         {
-            ASSERT_GT(mapPartitionCountList_.count(partition), 0);
+            ASSERT_GT(mapPartitionCountList_.count(partition), 0ul);
 
             --mapPartitionCountList_[partition];
         }
@@ -644,17 +644,17 @@ class PubSubWriter
     {
         std::unique_lock<std::mutex> lock(mutexEntitiesInfoList_);
 
-        ASSERT_GT(mapReaderInfoList_.count(reader_data.guid()), 0);
+        ASSERT_GT(mapReaderInfoList_.count(reader_data.guid()), 0ul);
 
         mapReaderInfoList_.erase(reader_data.guid());
 
-        ASSERT_GT(mapTopicCountList_.count(reader_data.topicName()), 0);
+        ASSERT_GT(mapTopicCountList_.count(reader_data.topicName()), 0ul);
 
         --mapTopicCountList_[reader_data.topicName()];
 
         for(auto partition : reader_data.m_qos.m_partition.getNames())
         {
-            ASSERT_GT(mapPartitionCountList_.count(partition), 0);
+            ASSERT_GT(mapPartitionCountList_.count(partition), 0ul);
 
             --mapPartitionCountList_[partition];
         }

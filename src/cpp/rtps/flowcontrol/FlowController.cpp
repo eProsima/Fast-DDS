@@ -50,7 +50,6 @@ void FlowController::RegisterAsListeningController()
    {
        auto ioServiceFunction = [&]()
        {
-           ControllerService->reset();
            asio::io_service::work work(*ControllerService);
            ControllerService->run();
        };
@@ -69,6 +68,9 @@ void FlowController::DeRegisterAsListeningController()
         scopedLock.unlock();
         ControllerService->stop();
         thread_to_join->join();
+        asio::io_service* service = ControllerService.release();
+        if(service != nullptr)
+            delete service;
     }
 }
 
