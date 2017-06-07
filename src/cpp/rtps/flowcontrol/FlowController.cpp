@@ -68,7 +68,9 @@ void FlowController::DeRegisterAsListeningController()
         scopedLock.unlock();
         ControllerService->stop();
         thread_to_join->join();
-        ControllerService.release();
+        asio::io_service* service = ControllerService.release();
+        if(service != nullptr)
+            delete service;
     }
 }
 
