@@ -21,6 +21,7 @@
 
 #include <vector>
 #include <set>
+#include <assert.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -44,24 +45,29 @@ class StatefulWriterOrganizer
 
         void organize()
         {
-            bool inserted = false;
-
-            for(auto pair : mElements_)
+            if(mLastGuid_ != GUID_t::unknown())
             {
-                if(pair.second == mLastSeqList_)
+                assert(mLastReader_ != nullptr);
+
+                bool inserted = false;
+
+                for(auto pair : mElements_)
                 {
-                    pair.first.push_back(mLastReader_);
-                    mLastSeqList_.clear();
-                    inserted = true;
-                    break;
+                    if(pair.second == mLastSeqList_)
+                    {
+                        pair.first.push_back(mLastReader_);
+                        mLastSeqList_.clear();
+                        inserted = true;
+                        break;
+                    }
                 }
+
+                if(!inserted)
+                    mElements_.push_back(std::pair<std::vector<ReaderProxy*>, std::set<SequenceNumber_t>>({mLastReader_}, std::move(mLastSeqList_)));
+
+                mLastGuid_ = GUID_t::unknown();
+                mLastReader_ = nullptr;
             }
-
-            if(!inserted)
-                mElements_.push_back(std::pair<std::vector<ReaderProxy*>, std::set<SequenceNumber_t>>({mLastReader_}, std::move(mLastSeqList_)));
-
-            mLastGuid_ = GUID_t::unknown();
-            mLastReader_ = nullptr;
         }
 
     private:
@@ -76,7 +82,7 @@ class StatefulWriterOrganizer
 
     public:
 
-        decltype(mElements_)& elements() { return mElements_; }
+        decltype(mElements_)& elements() { organize(); return mElements_; }
 
 };
 
