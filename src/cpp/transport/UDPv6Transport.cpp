@@ -27,6 +27,7 @@ namespace fastrtps{
 namespace rtps{
 
 static const uint32_t maximumMessageSize = 65500;
+static const uint32_t minimumSocketBuffer = 65536;
 static const uint8_t defaultTTL = 1;
 
 static void GetIP6s(vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
@@ -116,6 +117,9 @@ bool UDPv6Transport::init()
             socket_base::send_buffer_size option;
             socket.get_option(option);
             mConfiguration_.sendBufferSize = option.value();
+
+            if(mConfiguration_.sendBufferSize < minimumSocketBuffer)
+                mConfiguration_.sendBufferSize = minimumSocketBuffer;
         }
 
         if(mConfiguration_.receiveBufferSize == 0)
@@ -123,6 +127,9 @@ bool UDPv6Transport::init()
             socket_base::receive_buffer_size option;
             socket.get_option(option);
             mConfiguration_.receiveBufferSize = option.value();
+
+            if(mConfiguration_.receiveBufferSize < minimumSocketBuffer)
+                mConfiguration_.receiveBufferSize = minimumSocketBuffer;
         }
     }
 
