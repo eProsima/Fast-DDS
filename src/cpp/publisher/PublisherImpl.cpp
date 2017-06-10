@@ -99,6 +99,9 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
         mp_type->getKey(data,&handle);
     }
 
+    // Block lowlevel writer
+    std::unique_lock<std::recursive_mutex> lock(*mp_writer->getMutex());
+
     CacheChange_t* ch = mp_writer->new_change(mp_type->getSerializedSizeProvider(data), changeKind, handle);
     if(ch != nullptr)
     {

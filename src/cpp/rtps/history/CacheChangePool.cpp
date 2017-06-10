@@ -47,6 +47,7 @@ CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32
     std::lock_guard<std::mutex> guard(*this->mp_mutex);
 
     //Common for all modes: Set the payload size (maximum allowed), size and size limit
+    ++pool_size;
     logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<< pool_size << " with payload of size: " << payload_size);
 
     m_payload_size = payload_size;
@@ -216,7 +217,7 @@ bool CacheChangePool::allocateGroup(uint32_t group_size)
             reserved = group_size;
         }
     }
-    for(uint32_t i = 0;i<reserved;i++)
+    for(uint32_t i = 0; i < reserved; ++i)
     {
         CacheChange_t* ch = new CacheChange_t(m_payload_size);
         m_allCaches.push_back(ch);

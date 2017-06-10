@@ -70,11 +70,20 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
     }
 
     std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
-    if(m_isHistoryFull && !((m_historyQos.kind == KEEP_ALL_HISTORY_QOS && this->mp_pubImpl->clean_history(1)) ||
-                (m_historyQos.kind == KEEP_LAST_HISTORY_QOS && this->remove_min_change())))
+    if(m_isHistoryFull)
     {
-        logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<<this->mp_pubImpl->getGuid().entityId);
-        return false;
+        bool ret = false;
+
+        if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
+            ret = this->mp_pubImpl->clean_history(1);
+        else if(m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
+            ret = this->remove_min_change();
+
+        if(!ret)
+        {
+            logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<<this->mp_pubImpl->getGuid().entityId);
+            return false;
+        }
     }
 
     assert(!m_isHistoryFull);

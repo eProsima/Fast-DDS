@@ -17,6 +17,8 @@
 #include "types/Data64kbType.h"
 #include "types/Data1mbType.h"
 
+#include <thread>
+
 /****** Auxiliary print functions  ******/
 template<class Type>
 void default_receive_print(const Type&)
@@ -2902,6 +2904,53 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_all_data300kb)
 }
 
 #endif
+
+template<typename T>
+void send_async_data(PubSubWriter<T>& writer, std::list<typename T::type> data_to_send)
+{
+    // Send data
+    writer.send(data_to_send);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data_to_send.empty());
+}
+
+BLACKBOXTEST(BlackBox, PubSubAsReliableMultithreadKeepLast1)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    reader.history_depth(1).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.history_depth(1).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_helloworld_data_generator(300);
+
+    reader.startReception(data);
+
+    std::thread thr1(&send_async_data<HelloWorldType>, std::ref(writer),
+            std::list<HelloWorld>(data.begin(), std::next(data.begin(), 100)));
+    std::thread thr2(&send_async_data<HelloWorldType>, std::ref(writer),
+            std::list<HelloWorld>(std::next(data.begin(), 100), std::next(data.begin(), 200)));
+    std::thread thr3(&send_async_data<HelloWorldType>, std::ref(writer),
+            std::list<HelloWorld>(std::next(data.begin(), 200), data.end()));
+
+    thr1.join();
+    thr2.join();
+    thr3.join();
+
+    // Block reader until reception finished or timeout.
+    reader.block_for_at_least(105);
+}
 
 int main(int argc, char **argv)
 {
