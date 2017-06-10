@@ -82,9 +82,8 @@ namespace eprosima
                      * Update the lost changes up to the provided sequenceNumber.
                      * All changes with status UNKNOWN or MISSING with seqNum < input seqNum are marked LOST.
                      * @param[in] seqNum Pointer to the SequenceNumber.
-                     * @return True if there was some lost change. In other case false.
                      */
-                    bool lost_changes_update(const SequenceNumber_t& seqNum);
+                    void lost_changes_update(const SequenceNumber_t& seqNum);
 
                     /**
                      * The provided change is marked as RECEIVED.

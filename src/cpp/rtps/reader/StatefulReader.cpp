@@ -348,8 +348,8 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
         if(pWP->m_lastHeartbeatCount < hbCount)
         {
             pWP->m_lastHeartbeatCount = hbCount;
-            if(pWP->lost_changes_update(firstSN))
-                fragmentedChangePitStop_->try_to_remove_until(firstSN, pWP->m_att.guid);
+            pWP->lost_changes_update(firstSN);
+            fragmentedChangePitStop_->try_to_remove_until(firstSN, pWP->m_att.guid);
             pWP->missing_changes_update(lastSN);
             pWP->m_heartbeatFinalFlag = finalFlag;
 

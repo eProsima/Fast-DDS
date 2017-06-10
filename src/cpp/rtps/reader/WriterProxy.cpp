@@ -193,9 +193,8 @@ bool WriterProxy::maybe_add_changes_from_writer_up_to(const SequenceNumber_t& se
     return returnedValue;
 }
 
-bool WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
+void WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
 {
-    bool returnedValue = false;
     logInfo(RTPS_READER,m_att.guid.entityId<<": up to seqNum: "<<seqNum);
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
@@ -220,13 +219,9 @@ bool WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
             // Next could need to be removed.
             cleanup();
         }
-
-        returnedValue = true;
     }
 
     //print_changes_fromWriter_test2();
-
-    return returnedValue;
 }
 
 bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum)
