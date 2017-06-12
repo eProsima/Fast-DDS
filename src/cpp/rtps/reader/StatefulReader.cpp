@@ -488,58 +488,50 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
 
     if(prox->received_change_set(a_change->sequenceNumber))
     {
-        if(this->mp_history->received_change(a_change, unknown_missing_changes_up_to))
+        bool ret = this->mp_history->received_change(a_change, unknown_missing_changes_up_to);
+
+        GUID_t proxGUID = prox->m_att.guid;
+
+        // If KEEP_LAST and history full, make older changes as lost.
+        CacheChange_t* aux_change = nullptr;
+        if(this->mp_history->isFull() && mp_history->get_min_change_from(&aux_change, proxGUID))
         {
-            GUID_t proxGUID = prox->m_att.guid;
-            writerProxyLock.unlock();
-
-            SequenceNumber_t nextChangeToNotify = prox->nextCacheChangeToBeNotified();
-
-            if(a_change->sequenceNumber == nextChangeToNotify)
-            {
-                mp_history->postSemaphore();
-
-                if(getListener()!=nullptr)
-                {
-                    lock.unlock();
-                    getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
-                    lock.lock();
-
-                    // Search again the WriterProxy because could be removed after the unlock.
-                    if(!findWriterProxy(proxGUID, &prox))
-                        return true;
-                }
-
-                nextChangeToNotify = prox->nextCacheChangeToBeNotified();
-            }
-
-            while(nextChangeToNotify != SequenceNumber_t::unknown())
-            {
-                mp_history->postSemaphore();
-
-                if(getListener()!=nullptr)
-                {
-                    CacheChange_t* ch_to_give = nullptr;
-                    if(mp_history->get_change(nextChangeToNotify, proxGUID, &ch_to_give))
-                    {
-                        if(!ch_to_give->isRead)
-                        {
-                            lock.unlock();
-                            getListener()->onNewCacheChangeAdded((RTPSReader*)this,ch_to_give);
-                            lock.lock();
-                        }
-                    }
-
-                    // Search again the WriterProxy because could be removed after the unlock.
-                    if(!findWriterProxy(proxGUID, &prox))
-                        break;
-                }
-
-                nextChangeToNotify = prox->nextCacheChangeToBeNotified();
-            }
-
-            return true;
+            prox->lost_changes_update(aux_change->sequenceNumber);
+            fragmentedChangePitStop_->try_to_remove_until(aux_change->sequenceNumber, proxGUID);
         }
+
+        writerProxyLock.unlock();
+
+        SequenceNumber_t nextChangeToNotify = prox->nextCacheChangeToBeNotified();
+
+        while(nextChangeToNotify != SequenceNumber_t::unknown())
+        {
+            mp_history->postSemaphore();
+
+            if(getListener()!=nullptr)
+            {
+                CacheChange_t* ch_to_give = a_change;
+
+                if(a_change->sequenceNumber == nextChangeToNotify ||
+                        mp_history->get_change(nextChangeToNotify, proxGUID, &ch_to_give))
+                {
+                    if(!ch_to_give->isRead)
+                    {
+                        lock.unlock();
+                        getListener()->onNewCacheChangeAdded((RTPSReader*)this,ch_to_give);
+                        lock.lock();
+                    }
+                }
+
+                // Search again the WriterProxy because could be removed after the unlock.
+                if(!findWriterProxy(proxGUID, &prox))
+                    break;
+            }
+
+            nextChangeToNotify = prox->nextCacheChangeToBeNotified();
+        }
+
+        return ret;
     }
 
     return false;

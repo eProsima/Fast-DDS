@@ -191,6 +191,24 @@ void ReaderHistory::waitSemaphore() //TODO CAMBIAR NOMBRE PARA que el usuario se
     return mp_semaphore->wait();
 }
 
+bool ReaderHistory::get_min_change_from(CacheChange_t** min_change, const GUID_t& writerGuid)
+{
+    bool ret = false;
+    *min_change = nullptr;
+
+    for(auto it = m_changes.begin(); it != m_changes.end(); ++it)
+    {
+        if((*it)->writerGUID == writerGuid)
+        {
+            *min_change = *it;
+            ret = true;
+            break;
+        }
+    }
+
+    return ret;
+}
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */

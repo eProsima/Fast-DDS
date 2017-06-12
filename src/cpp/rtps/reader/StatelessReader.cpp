@@ -117,7 +117,7 @@ bool StatelessReader::change_received(CacheChange_t* change, std::unique_lock<st
     return false;
 }
 
-bool StatelessReader::nextUntakenCache(CacheChange_t** change,WriterProxy** /*wpout*/)
+bool StatelessReader::nextUntakenCache(CacheChange_t** change, WriterProxy** /*wpout*/)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     return mp_history->get_min_change(change);

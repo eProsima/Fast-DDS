@@ -74,37 +74,38 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, size_t unknown_
         bool add = false;
         if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
         {
+            // TODO(Ricardo) Check
             if(m_changes.size() + unknown_missing_changes_up_to < (size_t)m_resourceLimitsQos.max_samples)
                 add = true;
         }
         else if(m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
         {
-            if(m_changes.size()<(size_t)m_historyQos.depth)
+            if(m_changes.size() < (size_t)m_historyQos.depth)
             {
                 add = true;
             }
             else
             {
-                // Try to substitude a older samples.
-                auto older_sample = m_changes.rend();
-                for(auto it = m_changes.rbegin(); it != m_changes.rend(); ++it)
-                {
+                // TODO (Ricardo) Older samples should be selected by sourcetimestamp.
 
-                    if((*it)->writerGUID == a_change->writerGUID)
+                // Try to substitute a older samples.
+                CacheChange_t* older = nullptr;
+
+                for(auto it = m_changes.begin(); it != m_changes.end(); ++it)
+                {
+                    if((*it)->writerGUID == a_change->writerGUID &&
+                            (*it)->sequenceNumber < a_change->sequenceNumber)
                     {
-                        if((*it)->sequenceNumber < a_change->sequenceNumber)
-                            older_sample = it;
-                        // Already received
-                        else if((*it)->sequenceNumber == a_change->sequenceNumber)
-                            return false;
+                        older = *it;
+                        break;
                     }
                 }
 
-                if(older_sample != m_changes.rend())
+                if(older != nullptr)
                 {
-                    bool read = (*older_sample)->isRead;
+                    bool read = older->isRead;
 
-                    if(this->remove_change_sub(*older_sample))
+                    if(this->remove_change_sub(older))
                     {
                         if(!read)
                         {
@@ -113,9 +114,6 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, size_t unknown_
                         add = true;
                     }
                 }
-                // Not discard, but not store and set as received.
-                else
-                    return true;
             }
         }
 
@@ -131,9 +129,6 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, size_t unknown_
             if(this->add_change(a_change))
             {
                 increaseUnreadCount();
-                if(a_change->sequenceNumber < mp_maxSeqCacheChange->sequenceNumber)
-                    sortCacheChanges();
-                updateMaxMinSeqNum();
                 if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
                     m_isHistoryFull = true;
                 logInfo(SUBSCRIBER,this->mp_subImpl->getGuid().entityId
@@ -214,9 +209,6 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, size_t unknown_
                             add = true;
                         }
                     }
-                    // Not discard, but not store and set as received.
-                    else
-                        return true;
                 }
             }
 
@@ -232,9 +224,6 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, size_t unknown_
                 if(this->add_change(a_change))
                 {
                     increaseUnreadCount();
-                    if(a_change->sequenceNumber < mp_maxSeqCacheChange->sequenceNumber)
-                        sortCacheChanges();
-                    updateMaxMinSeqNum();
                     if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
                         m_isHistoryFull = true;
                     //ADD TO KEY VECTOR
@@ -347,7 +336,7 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
         this->remove_change_sub(change);
         return true;
     }
-    //cout << "NEXT UNTAKEN CACHE BAD"<<endl;
+
     return false;
 }
 

@@ -47,11 +47,16 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
         if(!parent_->reserveCache(&original_change, sampleSize))
             return nullptr;
 
+        if(original_change->serializedPayload.max_size < sampleSize)
+        {
+            parent_->releaseCache(original_change);
+            return nullptr;
+        }
+
         //Change comes preallocated (size sampleSize)
         original_change->copy_not_memcpy(incoming_change);
         // The length of the serialized payload has to be sample size.
         original_change->serializedPayload.length = sampleSize;
-        original_change->serializedPayload.reserve(sampleSize);
         original_change->setFragmentSize(incoming_change->getFragmentSize());
 
         // Insert
