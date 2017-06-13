@@ -29,9 +29,7 @@ void deadlineQoS::callback()
 
 		if(it->second == false){
 			std::cout << "Deadline QoS on key index ";
-			for(int i=0;i<16;i++){
-				std::cout << std::to_string( it->first.value[i] );
-			}
+			std::cout << static_cast<int>(it->first.value[1]);
 			std::cout << " missed." << std::endl;
 		}
 		//After checking the value, reset flag to zero

@@ -29,10 +29,11 @@
 
 #include "OwnershipStrengthPublisher.h"
 
-OwnershipStrengthPublisher::OwnershipStrengthPublisher() 
-   :mp_participant(nullptr), 
-    mp_publisher(nullptr), 
-    m_strength(DefaultStrength) 
+OwnershipStrengthPublisher::OwnershipStrengthPublisher()
+   :mp_participant(nullptr),
+    mp_publisher(nullptr),
+    m_strength(DefaultStrength),
+    m_messagesSent(0) 
     {}
 
 OwnershipStrengthPublisher::~OwnershipStrengthPublisher() {	Domain::removeParticipant(mp_participant);}
@@ -104,7 +105,7 @@ void OwnershipStrengthPublisher::run()
             st.message(ss.str());
             st.ownershipStrength(m_strength);
             st.index(m_messagesSent);
-            mp_publisher->write(&st);  
+            mp_publisher->write(&st);
 
             m_messagesSent++;
             std::cout << "Sending message, index = " << m_messagesSent << " with strength " << m_strength << ", send another sample?(y-yes,n-stop): ";

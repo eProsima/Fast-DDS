@@ -67,11 +67,10 @@ void keys(){
     Pparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     Pparam.qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
     Pparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    Pparam.topic.historyQos.depth =  10;
-    Pparam.topic.resourceLimitsQos.max_samples = 50;
-    Pparam.topic.resourceLimitsQos.allocated_samples = 50;
+    Pparam.topic.resourceLimitsQos.max_samples = 100;
+    Pparam.topic.resourceLimitsQos.allocated_samples = 100;
     Pparam.topic.resourceLimitsQos.max_instances = 5;
-    Pparam.topic.resourceLimitsQos.max_samples_per_instance = 10;
+    Pparam.topic.resourceLimitsQos.max_samples_per_instance = 20;
 
     std::cout << "Creating Publisher..." << std::endl;
     Publisher *myPub= Domain::createPublisher(PubParticipant, Pparam, nullptr);
@@ -103,7 +102,6 @@ void keys(){
     Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     Rparam.qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    Rparam.topic.historyQos.depth =  10;
     Rparam.topic.resourceLimitsQos.max_samples = 100;
     Rparam.topic.resourceLimitsQos.allocated_samples = 100;
     Rparam.topic.resourceLimitsQos.max_instances = 5;
