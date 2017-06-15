@@ -510,10 +510,9 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
 
             if(getListener()!=nullptr)
             {
-                CacheChange_t* ch_to_give = a_change;
+                CacheChange_t* ch_to_give = nullptr;
 
-                if(a_change->sequenceNumber == nextChangeToNotify ||
-                        mp_history->get_change(nextChangeToNotify, proxGUID, &ch_to_give))
+                if(mp_history->get_change(nextChangeToNotify, proxGUID, &ch_to_give))
                 {
                     if(!ch_to_give->isRead)
                     {
