@@ -119,45 +119,45 @@ public:
 
    virtual ~UDPv4Transport();
 
-   bool init();
+   bool init() override;
 
    //! Checks whether there are open and bound sockets for the given port.
-   virtual bool IsInputChannelOpen(const Locator_t&) const;
+   virtual bool IsInputChannelOpen(const Locator_t&) const override;
 
    /**
     * Checks whether there are open and bound sockets for the given port.
     */
-   virtual bool IsOutputChannelOpen(const Locator_t&) const;
+   virtual bool IsOutputChannelOpen(const Locator_t&) const override;
 
    //! Checks for UDPv4 kind.
-   virtual bool IsLocatorSupported(const Locator_t&) const;
+   virtual bool IsLocatorSupported(const Locator_t&) const override;
 
    //! Reports whether Locators correspond to the same port.
-   virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const;
+   virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
    /**
     * Converts a given remote locator (that is, a locator referring to a remote
     * destination) to the main local locator whose channel can write to that
     * destination. In this case it will return a 0.0.0.0 address on that port.
     */
-   virtual Locator_t RemoteToMainLocal(const Locator_t&) const;
+   virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
 
    /**
     * Starts listening on the specified port, and if the specified address is in the
     * multicast range, it joins the specified multicast group,
     */
-   virtual bool OpenInputChannel(const Locator_t&);
+   virtual bool OpenInputChannel(const Locator_t&) override;
 
    /**
     * Opens a socket on the given address and port (as long as they are white listed).
     */
-   virtual bool OpenOutputChannel(Locator_t&);
+   virtual bool OpenOutputChannel(Locator_t&) override;
 
    //! Removes the listening socket for the specified port.
-   virtual bool CloseInputChannel(const Locator_t&);
+   virtual bool CloseInputChannel(const Locator_t&) override;
 
    //! Removes all outbound sockets on the given port.
-   virtual bool CloseOutputChannel(const Locator_t&);
+   virtual bool CloseOutputChannel(const Locator_t&) override;
 
    /**
     * Blocking Send through the specified channel. In both modes, using a localLocator of 0.0.0.0 will
@@ -168,7 +168,8 @@ public:
     * @param localLocator Locator mapping to the channel we're sending from.
     * @param remoteLocator Locator describing the remote destination we're sending to.
     */
-   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator);
+   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
+                     const Locator_t& remoteLocator) override;
    /**
     * Blocking Receive from the specified channel.
     * @param receiveBuffer vector with enough capacity (not size) to accomodate a full receive buffer. That
@@ -177,9 +178,9 @@ public:
     * @param[out] remoteLocator Locator describing the remote restination we received a packet from.
     */
    virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-                        const Locator_t& localLocator, Locator_t& remoteLocator);
+                        const Locator_t& localLocator, Locator_t& remoteLocator) override;
 
-   virtual LocatorList_t NormalizeLocator(const Locator_t& locator);
+   virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
 
    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 
