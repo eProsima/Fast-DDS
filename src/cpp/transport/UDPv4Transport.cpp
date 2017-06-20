@@ -108,7 +108,10 @@ bool UDPv4Transport::init()
             mConfiguration_.sendBufferSize = option.value();
 
             if(mConfiguration_.sendBufferSize < minimumSocketBuffer)
+            {
                 mConfiguration_.sendBufferSize = minimumSocketBuffer;
+                mSendBufferSize = minimumSocketBuffer;
+            }
         }
 
         if(mConfiguration_.receiveBufferSize == 0)
@@ -118,7 +121,10 @@ bool UDPv4Transport::init()
             mConfiguration_.receiveBufferSize = option.value();
 
             if(mConfiguration_.receiveBufferSize < minimumSocketBuffer)
+            {
                 mConfiguration_.receiveBufferSize = minimumSocketBuffer;
+                mReceiveBufferSize = minimumSocketBuffer;
+            }
         }
     }
 
