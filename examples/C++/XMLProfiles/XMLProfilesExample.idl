@@ -1,0 +1,5 @@
+struct XMLProfilesExample
+{
+	unsigned long index;
+	string message;
+};

@@ -30,6 +30,7 @@ compile_example(SampleConfig_Events C++/SampleConfig_Events)
 compile_example(SampleConfig_Multimedia C++/SampleConfig_Multimedia)
 compile_example(Configurability C++/Configurability)
 compile_example(StaticHelloWorldExample C++/StaticHelloWorldExample)
+compile_example(XMLProfiles C++/XMLProfiles)
 
 if(SECURITY)
     compile_example(SecureHelloWorldExample C++/SecureHelloWorldExample)
