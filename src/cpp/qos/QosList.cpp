@@ -57,7 +57,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Locator_t& loc)
 {
 	if(pid == PID_UNICAST_LOCATOR || pid == PID_MULTICAST_LOCATOR ||
 			pid == PID_DEFAULT_UNICAST_LOCATOR || pid == PID_DEFAULT_MULTICAST_LOCATOR ||
-			pid == PID_METATRAFFIC_UNICAST_LOCATOR || PID_METATRAFFIC_MULTICAST_LOCATOR)
+			pid == PID_METATRAFFIC_UNICAST_LOCATOR || pid == PID_METATRAFFIC_MULTICAST_LOCATOR)
 	{
 		ParameterLocator_t* p = new ParameterLocator_t();
 		p->Pid = pid;
