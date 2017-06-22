@@ -88,7 +88,7 @@ bool $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::seria
     {
         p_type->serialize(ser); // Serialize the object:
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& exception)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -110,7 +110,7 @@ bool $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::deser
     {
         p_type->deserialize(deser); //Deserialize the object:
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& exception)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
