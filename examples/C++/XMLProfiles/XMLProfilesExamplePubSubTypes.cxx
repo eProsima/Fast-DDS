@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file XMLProfilesExamplePubSubTypes.cpp
  * This header file contains the implementation of the serialization functions.
  *
@@ -45,16 +45,7 @@ bool XMLProfilesExamplePubSubType::serialize(void *data, SerializedPayload_t *pa
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     // Serialize encapsulation
     ser.serialize_encapsulation();
-
-    try
-    {
-        p_type->serialize(ser); // Serialize the object:
-    }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& exception)
-    {
-        return false;
-    }
-
+    p_type->serialize(ser); // Serialize the object:
     payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
     return true;
 }
@@ -67,16 +58,7 @@ bool XMLProfilesExamplePubSubType::deserialize(SerializedPayload_t* payload, voi
     // Deserialize encapsulation.
     deser.read_encapsulation();
     payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
-    try
-    {
-        p_type->deserialize(deser); //Deserialize the object:
-    }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& exception)
-    {
-        return false;
-    }
-
+    p_type->deserialize(deser); //Deserialize the object:
     return true;
 }
 
@@ -117,4 +99,3 @@ bool XMLProfilesExamplePubSubType::getKey(void *data, InstanceHandle_t* handle) 
     }
     return true;
 }
-
