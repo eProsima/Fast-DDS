@@ -18,7 +18,7 @@ project("DeadlineQoSExample")
 # Find requirements
 find_package(fastcdr REQUIRED)
 find_package(fastrtps REQUIRED)
-find_package(asio)
+find_package(asio QUIET)
 
 if(asio_FOUND)
     message(STATUS "Found Asio")
@@ -27,7 +27,7 @@ else()
     if(ASIO_INCLUDE_DIR)
         message(STATUS "Found Asio in ${ASIO_INCLUDE_DIR}")
     else()
-        message(STATUS "Asio not found!")
+        message(FATAL_ERROR "Asio not found!")
     endif()
 endif()
 

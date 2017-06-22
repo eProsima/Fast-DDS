@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file FilteringExamplePubSubTypes.cpp
  * This header file contains the implementation of the serialization functions.
  *
@@ -45,7 +45,16 @@ bool FilteringExamplePubSubType::serialize(void *data, SerializedPayload_t *payl
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     // Serialize encapsulation
     ser.serialize_encapsulation();
-    p_type->serialize(ser); 	// Serialize the object:
+
+    try
+    {
+        p_type->serialize(ser); // Serialize the object:
+    }
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    {
+        return false;
+    }
+
     payload->length = (uint32_t)ser.getSerializedDataLength(); 	//Get the serialized length
     return true;
 }
@@ -58,7 +67,16 @@ bool FilteringExamplePubSubType::deserialize(SerializedPayload_t* payload, void*
     // Deserialize encapsulation.
     deser.read_encapsulation();
     payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    p_type->deserialize(deser);	//Deserialize the object:
+
+    try
+    {
+        p_type->deserialize(deser); //Deserialize the object:
+    }
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    {
+        return false;
+    }
+
     return true;
 }
 
@@ -98,4 +116,3 @@ bool FilteringExamplePubSubType::getKey(void *data, InstanceHandle_t* handle) {
     }
     return true;
 }
-
