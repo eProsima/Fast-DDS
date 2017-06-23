@@ -4,7 +4,12 @@
 
 find_package(TinyXML2 CONFIG QUIET)
 if(TinyXML2_FOUND)
-    message(STATUS "Found TinyXML2")
+    message(STATUS "Found TinyXML2: ${TinyXML2_DIR}")
+    if(NOT TINYXML2_LIBRARY AND TARGET tinyxml2)
+        # in this case, we're probably using TinyXML2 version 5.0.0 or greater
+        # in which case tinyxml2 is an exported target and we should use that
+        set(TINYXML2_LIBRARY tinyxml2)
+    endif()
 else()
     if(THIRDPARTY OR ANDROID)
         find_path(TINYXML2_INCLUDE_DIR NAMES tinyxml2.h NO_CMAKE_FIND_ROOT_PATH)
@@ -14,7 +19,7 @@ else()
 
 
     if(THIRDPARTY)
-            find_path(TINYXML2_SOURCE_DIR NAMES tinyxml2.cpp NO_CMAKE_FIND_ROOT_PATH)
+        find_path(TINYXML2_SOURCE_DIR NAMES tinyxml2.cpp NO_CMAKE_FIND_ROOT_PATH)
     else()
         find_library(TINYXML2_LIBRARY tinyxml2)
     endif()
