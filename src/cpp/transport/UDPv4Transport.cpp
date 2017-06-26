@@ -761,8 +761,13 @@ bool UDPv4Transport::is_local_locator(const Locator_t& locator) const
         return true;
 
     for(auto localInterface : currentInterfaces)
-        if(std::equal(locator.address + 12, locator.address + 16, localInterface.locator.address + 12))
+        if(locator.address[12] == localInterface.locator.address[12] &&
+            locator.address[13] == localInterface.locator.address[13] &&
+            locator.address[14] == localInterface.locator.address[14] &&
+            locator.address[15] == localInterface.locator.address[15])
+        {
             return true;
+        }
 
     return false;
 }
