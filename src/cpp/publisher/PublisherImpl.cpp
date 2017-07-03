@@ -133,15 +133,21 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
                  max_data_size);
         }
 
+        uint32_t final_high_mark_for_frag = high_mark_for_frag_;
+
+        // If needed inlineqos for related_sample_identity, then remove the inlinqos size from final fragment size.
+        if(wparams.related_sample_identity() != SampleIdentity::unknown())
+            final_high_mark_for_frag -= 32;
+
         // If it is big data, fragment it.
-        if(ch->serializedPayload.length > high_mark_for_frag_)
+        if(ch->serializedPayload.length > final_high_mark_for_frag)
         {
             // Check ASYNCHRONOUS_PUBLISH_MODE is being used, but it is an error case.
             if( m_att.qos.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
             {
                 logError(PUBLISHER, "Data cannot be sent. It's serialized size is " <<
                         ch->serializedPayload.length << "' which exceeds the maximum payload size of '" <<
-                        high_mark_for_frag_ << "' and therefore ASYNCHRONOUS_PUBLISH_MODE must be used.");
+                        final_high_mark_for_frag << "' and therefore ASYNCHRONOUS_PUBLISH_MODE must be used.");
                 m_history.release_Cache(ch);
                 return false;
             }
@@ -149,7 +155,7 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
             /// Fragment the data.
             // Set the fragment size to the cachechange.
             // Note: high_mark will always be a value that can be casted to uint16_t)
-            ch->setFragmentSize((uint16_t)high_mark_for_frag_);
+            ch->setFragmentSize((uint16_t)final_high_mark_for_frag);
         }
 
         if(&wparams != &WRITE_PARAM_DEFAULT)
