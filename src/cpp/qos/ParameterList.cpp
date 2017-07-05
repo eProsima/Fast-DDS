@@ -456,7 +456,7 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                         uint32_t pos_ref = msg->pos;
                         PartitionQosPolicy * p = new PartitionQosPolicy();
                         p->length = plength;
-                        uint32_t namessize;
+                        uint32_t namessize = 0;
                         valid &= CDRMessage::readUInt32(msg,&namessize);
                         for(uint32_t i = 1;i<=namessize;++i)
                         {

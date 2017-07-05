@@ -24,6 +24,7 @@
 #include "../attributes/WriterAttributes.h"
 #include <vector>
 #include <memory>
+#include <functional>
 
 namespace eprosima {
 namespace fastrtps{
