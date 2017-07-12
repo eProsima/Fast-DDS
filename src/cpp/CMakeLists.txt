@@ -415,7 +415,7 @@ if(MSVC OR MSVC_IDE)
                 )
         endif()
 
-        if(EPROSIMA_INSTALLER_MINION)
+        if(EPROSIMA_INSTALLER_MINION AND SECURITY)
             install(FILES ${OPENSSL_ROOT_DIR}/lib/libeay32.dll
                 DESTINATION ${BIN_INSTALL_DIR}${DIR_EXTENSION}
                 COMPONENT libraries_${MSVC_ARCH}

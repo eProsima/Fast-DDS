@@ -37,8 +37,13 @@ macro(generate_msvc_libraries platform)
         COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_BINARY_DIR}/eprosima_installer/${platform}"
         )
 
+    set(SECURITY_ACTIVATION)
+    if(NOT EPROSIMA_INSTALLER_MINION)
+        set(SECURITY_ACTIVATION "-DOPENSSL_ROOT_DIR=${OPENSSL_ROOT_} -DSECURITY=ON")
+    endif()
+
     add_custom_target(${PROJECT_NAME}_${platform} ALL
-        COMMAND ${CMAKE_COMMAND} -G "${GENERATOR_}" -DEPROSIMA_BUILD=ON -DMINION=ON -DEPROSIMA_INSTALLER_MINION=ON -DOPENSSL_ROOT_DIR=${OPENSSL_ROOT_} -DSECURITY=ON -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install ${PROJECT_SOURCE_DIR}
+        COMMAND ${CMAKE_COMMAND} -G "${GENERATOR_}" -DEPROSIMA_BUILD=ON -DMINION=ON -DEPROSIMA_INSTALLER_MINION=ON ${SECURITY_ACTIVATION} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install ${PROJECT_SOURCE_DIR}
         COMMAND ${CMAKE_COMMAND} --build . --target install --config Release
         COMMAND ${CMAKE_COMMAND} --build . --target install --config Debug
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}
