@@ -59,6 +59,7 @@ macro(find_eprosima_package package)
                 ${BUILD_OPTION}
                 ${ANDROID_BUILD_OPTIONS}
                 "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+                "-DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}"
                 "-DMINION=ON"
                 "-DEPROSIMA_INSTALLER_MINION=${EPROSIMA_INSTALLER_MINION}"
                 "-DBIN_INSTALL_DIR:PATH=${BIN_INSTALL_DIR}"

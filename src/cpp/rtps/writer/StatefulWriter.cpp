@@ -406,25 +406,44 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     ReaderProxy* rp = new ReaderProxy(rdata,m_times,this);
     std::set<SequenceNumber_t> not_relevant_changes;
 
-    for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
-            cit != mp_history->changesEnd(); ++cit)
+    SequenceNumber_t current_seq = get_seq_num_min();
+    SequenceNumber_t max_seq = get_seq_num_max();
+
+    if(current_seq != SequenceNumber_t::unknown())
     {
-        ChangeForReader_t changeForReader(*cit);
+        (void)max_seq;
+        assert(max_seq != SequenceNumber_t::unknown());
 
-        if(rp->m_att.endpoint.durabilityKind >= TRANSIENT_LOCAL && this->getAttributes()->durabilityKind == TRANSIENT_LOCAL)
+        for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
+                cit != mp_history->changesEnd(); ++cit)
         {
-            changeForReader.setRelevance(rp->rtps_is_relevant(*cit));
-            if(!rp->rtps_is_relevant(*cit))
+            while((*cit)->sequenceNumber != current_seq)
+            {
+                ChangeForReader_t changeForReader(current_seq);
+                not_relevant_changes.insert(current_seq);
+                changeForReader.setStatus(UNACKNOWLEDGED);
+                rp->addChange(changeForReader);
+                ++current_seq;
+            }
+
+            ChangeForReader_t changeForReader(*cit);
+
+            if(rp->m_att.endpoint.durabilityKind >= TRANSIENT_LOCAL && this->getAttributes()->durabilityKind == TRANSIENT_LOCAL)
+            {
+                changeForReader.setRelevance(rp->rtps_is_relevant(*cit));
+                if(!rp->rtps_is_relevant(*cit))
+                    not_relevant_changes.insert(changeForReader.getSequenceNumber());
+            }
+            else
+            {
+                changeForReader.setRelevance(false);
                 not_relevant_changes.insert(changeForReader.getSequenceNumber());
-        }
-        else
-        {
-            changeForReader.setRelevance(false);
-            not_relevant_changes.insert(changeForReader.getSequenceNumber());
-        }
+            }
 
-        changeForReader.setStatus(UNACKNOWLEDGED);
-        rp->addChange(changeForReader);
+            changeForReader.setStatus(UNACKNOWLEDGED);
+            rp->addChange(changeForReader);
+            ++current_seq;
+        }
     }
 
     // Send a initial heartbeat
