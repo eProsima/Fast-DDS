@@ -420,6 +420,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
             while((*cit)->sequenceNumber != current_seq)
             {
                 ChangeForReader_t changeForReader(current_seq);
+                changeForReader.setRelevance(false);
                 not_relevant_changes.insert(current_seq);
                 changeForReader.setStatus(UNACKNOWLEDGED);
                 rp->addChange(changeForReader);
@@ -444,6 +445,8 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
             rp->addChange(changeForReader);
             ++current_seq;
         }
+
+        assert(max_seq + 1 == current_seq);
     }
 
     // Send a initial heartbeat
