@@ -663,7 +663,7 @@ public class fastrtpsgen {
 				if (m_exampleOption.substring(3, 6).equals("Win")) {
 					System.out.println("Generating Windows solution");
 
-					if (m_exampleOption.startsWith("i86"))
+					if (m_exampleOption.startsWith("x32"))
 					{
 						if(m_exampleOption.charAt(m_exampleOption.length()-1) == '3')
 							returnedValue = genVS(solution, null, "12");
@@ -683,7 +683,7 @@ public class fastrtpsgen {
 				} else if (m_exampleOption.substring(3, 8).equals("Linux")) {
 					System.out.println("Generating makefile solution");
 
-					if (m_exampleOption.startsWith("i86")) {
+					if (m_exampleOption.startsWith("x32")) {
 						returnedValue = genMakefile(solution, "32");
 					} else if (m_exampleOption.startsWith("x64")) {
 						returnedValue = genMakefile(solution, "64");
