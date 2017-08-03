@@ -34,17 +34,17 @@ namespace rtps{
  */
 class ReaderTimes
 {
-public:
-	ReaderTimes()
-	{
-        initialAcknackDelay.fraction = 200*1000*1000;
-		heartbeatResponseDelay.fraction = 500*1000*1000;
-	};
-	virtual ~ReaderTimes(){};
-    //!Initial AckNack delay. Default value ~45ms.
-    Duration_t initialAcknackDelay;
-	//!Delay to be applied when a hearbeat message is received, default value ~116ms.
-	Duration_t heartbeatResponseDelay;
+    public:
+        ReaderTimes()
+        {
+            initialAcknackDelay.fraction = 200*1000*1000;
+            heartbeatResponseDelay.fraction = 500*1000*1000;
+        };
+        virtual ~ReaderTimes(){};
+        //!Initial AckNack delay. Default value ~45ms.
+        Duration_t initialAcknackDelay;
+        //!Delay to be applied when a hearbeat message is received, default value ~116ms.
+        Duration_t heartbeatResponseDelay;
 };
 
 /**
@@ -53,21 +53,21 @@ public:
  */
 class  ReaderAttributes
 {
-public:
-	ReaderAttributes()
-	{
-		endpoint.endpointKind = READER;
-		endpoint.durabilityKind = VOLATILE;
-		endpoint.reliabilityKind = BEST_EFFORT;
-		expectsInlineQos = false;
-	};
-	virtual ~ReaderAttributes(){};
-	//!Attributes of the associated endpoint.
-	EndpointAttributes endpoint;
-	//!Times associated with this reader.
-	ReaderTimes times;
-	//!Indicates if the reader expects Inline qos, default value 0.
-	bool expectsInlineQos;
+    public:
+        ReaderAttributes()
+        {
+            endpoint.endpointKind = READER;
+            endpoint.durabilityKind = VOLATILE;
+            endpoint.reliabilityKind = BEST_EFFORT;
+            expectsInlineQos = false;
+        };
+        virtual ~ReaderAttributes(){};
+        //!Attributes of the associated endpoint.
+        EndpointAttributes endpoint;
+        //!Times associated with this reader.
+        ReaderTimes times;
+        //!Indicates if the reader expects Inline qos, default value 0.
+        bool expectsInlineQos;
 };
 
 /**
@@ -76,25 +76,25 @@ public:
  */
 class  RemoteWriterAttributes
 {
-public:
-	RemoteWriterAttributes()
-	{
-		endpoint.endpointKind = WRITER;
-		livelinessLeaseDuration = c_TimeInfinite;
-		ownershipStrength = 0;
-	};
-	virtual ~RemoteWriterAttributes()
-	{
+    public:
+        RemoteWriterAttributes()
+        {
+            endpoint.endpointKind = WRITER;
+            livelinessLeaseDuration = c_TimeInfinite;
+            ownershipStrength = 0;
+        };
+        virtual ~RemoteWriterAttributes()
+        {
 
-	};
-	//!Attributes of the associated endpoint.
-	EndpointAttributes endpoint;
-	//!GUID_t of the writer, can be unknown if the reader is best effort.
-	GUID_t guid;
-	//!Liveliness lease duration, default value c_TimeInfinite.
-	Duration_t livelinessLeaseDuration;
-	//!Ownership Strength of the associated writer.
-	uint16_t ownershipStrength;
+        };
+        //!Attributes of the associated endpoint.
+        EndpointAttributes endpoint;
+        //!GUID_t of the writer, can be unknown if the reader is best effort.
+        GUID_t guid;
+        //!Liveliness lease duration, default value c_TimeInfinite.
+        Duration_t livelinessLeaseDuration;
+        //!Ownership Strength of the associated writer.
+        uint16_t ownershipStrength;
 };
 }
 }
