@@ -684,9 +684,11 @@ public class fastrtpsgen {
 					System.out.println("Generating makefile solution");
 
 					if (m_exampleOption.startsWith("i86")) {
-						returnedValue = genMakefile(solution, "32");
+						returnedValue = genMakefile(solution, "-m32");
 					} else if (m_exampleOption.startsWith("x64")) {
-						returnedValue = genMakefile(solution, "64");
+						returnedValue = genMakefile(solution, "-m64");
+					} else if (m_exampleOption.startsWith("arm")) {
+						returnedValue = genMakefile(solution, "");
 					} else {
 						returnedValue = false;
 					}

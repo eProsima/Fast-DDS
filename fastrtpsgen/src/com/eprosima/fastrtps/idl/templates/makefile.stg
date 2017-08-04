@@ -16,10 +16,10 @@ group Makefile;
 
 makecxx(solution, example, arch) ::= <<
 CPP= g++
-CPPFLAGS = -c -Wall -fpic -m$arch$ -O2 -std=c++0x
+CPPFLAGS = -c -Wall -fpic $arch$ -O2 -std=c++0x
 LN= g++
 AR=ar
-LDFLAGS= -m$arch$
+LDFLAGS= $arch$
 SYSLIBS= -ldl -lnsl -lm -lpthread -lrt
 DEFINES= $solution.defines : {define | -D$define$};separator=" "$
 

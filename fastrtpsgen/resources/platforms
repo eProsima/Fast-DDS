@@ -4,3 +4,4 @@ i86Win32VS2015
 x64Win64VS2015
 i86Linux2.6gcc
 x64Linux2.6gcc
+armLinux2.6gcc
