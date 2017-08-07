@@ -116,7 +116,7 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::loadXMLFile("test_xml_profiles.xml"));
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLProfileParser::fillPublishertAttributes(publisher_profile, publisher_atts));
+                xmlparser::XMLProfileParser::fillPublisherAttributes(publisher_profile, publisher_atts));
 
     TopicAttributes &pub_topic = publisher_atts.topic;
     WriterQos &pub_qos = publisher_atts.qos;
@@ -172,7 +172,7 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriber)
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::loadXMLFile("test_xml_profiles.xml"));
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLProfileParser::fillSubscribertAttributes(subscriber_profile, subscriber_atts));
+                xmlparser::XMLProfileParser::fillSubscriberAttributes(subscriber_profile, subscriber_atts));
 
     TopicAttributes &sub_topic = subscriber_atts.topic;
     ReaderQos &sub_qos = subscriber_atts.qos;
@@ -248,7 +248,7 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
     std::string publisher_profile = std::string("test_publisher_security_profile");
     PublisherAttributes publisher_atts;
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLProfileParser::fillPublishertAttributes(publisher_profile, publisher_atts));
+                xmlparser::XMLProfileParser::fillPublisherAttributes(publisher_profile, publisher_atts));
 
     PropertySeq &pub_props = publisher_atts.properties.properties();
     BinaryPropertySeq &pub_bin_props = publisher_atts.properties.binary_properties();
@@ -269,7 +269,7 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
     SubscriberAttributes subscriber_atts;
 
     EXPECT_EQ(xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLProfileParser::fillSubscribertAttributes(subscriber_profile, subscriber_atts));
+                xmlparser::XMLProfileParser::fillSubscriberAttributes(subscriber_profile, subscriber_atts));
 
     PropertySeq &sub_props = subscriber_atts.properties.properties();
     BinaryPropertySeq &sub_bin_props = subscriber_atts.properties.binary_properties();

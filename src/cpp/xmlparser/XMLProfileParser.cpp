@@ -23,7 +23,7 @@ XMLP_ret XMLProfileParser::fillParticipantAttributes(const std::string &profile_
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::fillPublishertAttributes(const std::string &profile_name, PublisherAttributes &atts)
+XMLP_ret XMLProfileParser::fillPublisherAttributes(const std::string &profile_name, PublisherAttributes &atts)
 {
     publ_map_iterator_t it = m_publisher_profiles.find(profile_name);
     if (it == m_publisher_profiles.end())
@@ -35,7 +35,7 @@ XMLP_ret XMLProfileParser::fillPublishertAttributes(const std::string &profile_n
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::fillSubscribertAttributes(const std::string &profile_name, SubscriberAttributes &atts)
+XMLP_ret XMLProfileParser::fillSubscriberAttributes(const std::string &profile_name, SubscriberAttributes &atts)
 {
     subs_map_iterator_t it = m_subscriber_profiles.find(profile_name);
     if (it == m_subscriber_profiles.end())
