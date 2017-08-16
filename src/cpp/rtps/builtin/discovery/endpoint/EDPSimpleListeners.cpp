@@ -98,8 +98,10 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
             }
 
             //Call the slave, if it exists
+            attached_listener_mutex.lock();
             if(attached_listener != nullptr)
                 attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_PubReader.first, change_in);
+            attached_listener_mutex.unlock();
         }
     }
     else
@@ -108,8 +110,10 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
         logInfo(RTPS_EDP,"Disposed Remote Writer, removing...");
 
         //Call the slave, if it exists
+        attached_listener_mutex.lock();
         if(attached_listener != nullptr)
             attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_PubReader.first, change_in);
+        attached_listener_mutex.unlock();
 
         GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
         this->mp_SEDP->removeWriterProxy(auxGUID);
@@ -233,8 +237,10 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
             }
 
             //Call the slave, if it exists
+            attached_listener_mutex.lock();
             if(attached_listener != nullptr)
                 attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_SubReader.first, change);
+            attached_listener_mutex.unlock();
         }
     }
     else
@@ -243,8 +249,10 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
         logInfo(RTPS_EDP,"Disposed Remote Reader, removing...");
 
         //Call the slave, if it exists
+        attached_listener_mutex.lock();
         if(attached_listener != nullptr)
             attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_SubReader.first, change);
+        attached_listener_mutex.unlock();
 
         GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
         this->mp_SEDP->removeReaderProxy(auxGUID);
