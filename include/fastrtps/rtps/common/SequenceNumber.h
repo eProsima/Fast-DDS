@@ -378,7 +378,8 @@ class SequenceNumberSet_t
          */
         bool add(const SequenceNumber_t& in)
         {
-            if(in >= base && in < base + 255)
+            SequenceNumber_t max = base + 255;
+            if(in >= base && in < max)
                 set.push_back(in);
             else
                 return false;
