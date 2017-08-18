@@ -44,7 +44,6 @@ bool CompoundReaderListener::hasReaderAttached(){
 	return false;
 }
 ReaderListener* CompoundReaderListener::getAttachedListener(){
-	std::lock_guard<std::mutex> lock(attached_listener_mutex);
 	if(attached_listener != nullptr)
 		return attached_listener;
 	return nullptr;
