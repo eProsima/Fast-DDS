@@ -470,10 +470,6 @@ bool EDP::pairingReader(RTPSReader* R)
                                 R->getListener()->onReaderMatched(R,info);
                             }
                         }
-                        else
-                        {
-                            logError(RTPS_ERROR, "Reader " << R->getGuid() << " cannot match writer " << (*wdatait)->guid());
-                        }
 #if HAVE_SECURITY
                     }
                     else
@@ -554,10 +550,6 @@ bool EDP::pairingWriter(RTPSWriter* W)
                                 W->getListener()->onWriterMatched(W,info);
                             }
                         }
-                        else
-                        {
-                            logError(RTPS_ERROR, "Writer " << W->getGuid() << " cannot match reader " << (*rdatait)->guid());
-                        }
 #if HAVE_SECURITY
                     }
                     else
@@ -637,10 +629,6 @@ bool EDP::pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata
                             (*wit)->getListener()->onWriterMatched((*wit),info);
                         }
                     }
-                    else
-                    {
-                        logError(RTPS_ERROR, "Writer " << writerGUID << " cannot match reader " << rdata->guid());
-                    }
 #if HAVE_SECURITY
                 }
                 else
@@ -716,10 +704,6 @@ bool EDP::pairingLaterReaderProxy(const GUID_t local_writer, ParticipantProxyDat
                                 info.remoteEndpointGuid = rdata.guid();
                                 (*wit)->getListener()->onWriterMatched((*wit),info);
                             }
-                        }
-                        else
-                        {
-                            logError(RTPS_ERROR, "Writer " << writerGUID << " cannot match reader " << rdata.guid());
                         }
                     }
                     else
@@ -797,10 +781,6 @@ bool EDP::pairingWriterProxy(ParticipantProxyData *pdata, WriterProxyData* wdata
                             (*rit)->getListener()->onReaderMatched((*rit),info);
                         }
                     }
-                    else
-                    {
-                        logError(RTPS_ERROR, "Reader " << readerGUID << " cannot match writer " << wdata->guid());
-                    }
 #if HAVE_SECURITY
                 }
                 else
@@ -877,10 +857,6 @@ bool EDP::pairingLaterWriterProxy(const GUID_t local_reader, ParticipantProxyDat
                                 info.remoteEndpointGuid = wdata.guid();
                                 (*rit)->getListener()->onReaderMatched((*rit),info);
                             }
-                        }
-                        else
-                        {
-                            logError(RTPS_ERROR, "Reader " << readerGUID << " cannot match writer " << wdata.guid());
                         }
                     }
                     else
