@@ -65,14 +65,14 @@ public:
     * @param atts Structure to be filled.
     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
-    RTPS_DllAPI static XMLP_ret fillPublishertAttributes(const std::string &profile_name, PublisherAttributes &atts);
+    RTPS_DllAPI static XMLP_ret fillPublisherAttributes(const std::string &profile_name, PublisherAttributes &atts);
     /**
     * Search for the profile specified and fill the structure.
     * @param profile_name Name for the profile to be used to fill the structure.
     * @param atts Structure to be filled.
     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
-    RTPS_DllAPI static XMLP_ret fillSubscribertAttributes(const std::string &profile_name, SubscriberAttributes &atts);
+    RTPS_DllAPI static XMLP_ret fillSubscriberAttributes(const std::string &profile_name, SubscriberAttributes &atts);
 
 protected:
 
