@@ -20,6 +20,8 @@
 #include <string>
 #include <cstdint>
 
+#undef minor
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
