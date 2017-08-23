@@ -1,3 +1,4 @@
+<!-- HTML header for doxygen 1.8.13-->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -5,14 +6,17 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <!--BEGIN PROJECT_NAME--><title>$projectname: $title</title><!--END PROJECT_NAME-->
 <!--BEGIN !PROJECT_NAME--><title>$title</title><!--END !PROJECT_NAME-->
-<link href="$relpath$tabs.css" rel="stylesheet" type="text/css"/>
-<link href="$relpath$customdoxygen.css" rel="stylesheet" type="text/css" />
+<link href="$relpath^tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="$relpath^jquery.js"></script>
+<script type="text/javascript" src="$relpath^dynsections.js"></script>
 $treeview
 $search
 $mathjax
+<link href="$relpath^$stylesheet" rel="stylesheet" type="text/css" />
+$extrastylesheet
 </head>
 <body>
-<div id="top"><!-- do not remove this div! -->
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 
 <!--BEGIN TITLEAREA-->
 <div id="titlearea">
@@ -20,10 +24,10 @@ $mathjax
  <tbody>
  <tr style="height: 56px;">
   <!--BEGIN PROJECT_LOGO-->
-  <td id="projectlogo"><a href="http://www.eprosima.com"><img alt="Logo" src="$relpath$$projectlogo"/></a></td>
+  <td id="projectlogo"><a href="http://www.eprosima.com"><img alt="Logo" src="$relpath^$projectlogo"/></a></td>
   <!--END PROJECT_LOGO-->
   <!--BEGIN PROJECT_NAME-->
-  <td style="padding-left: 0.5em;">
+  <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">$projectname
    <!--BEGIN PROJECT_NUMBER-->&#160;<span id="projectnumber">$projectnumber</span><!--END PROJECT_NUMBER-->
    </div>
@@ -47,3 +51,4 @@ $mathjax
 </table>
 </div>
 <!--END TITLEAREA-->
+<!-- end header part -->
