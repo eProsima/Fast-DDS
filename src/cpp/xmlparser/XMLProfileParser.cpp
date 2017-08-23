@@ -80,16 +80,39 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
 
     logInfo(XMLPROFILEPARSER, "File '" << filename << "' opened successfully");
 
-    XMLElement* p_root = xmlDoc.FirstChildElement(PROFILES);
-    if (nullptr == p_root)
+    XMLElement* p_profiles = xmlDoc.FirstChildElement(PROFILES);
+    if (nullptr == p_profiles)
     {
-        logError(XMLPROFILEPARSER, "Not found 'profiles' root tag");
-        return XMLP_ret::XML_ERROR;
+        // search for profiles tag inside the XML root tag
+        XMLElement* p_root = xmlDoc.FirstChildElement();
+        if (nullptr == p_root)
+        {
+            logError(XMLPROFILEPARSER, "No root tag in XML file");
+            return XMLP_ret::XML_ERROR;
+        }
+        p_profiles = p_root->FirstChildElement();
+        bool found_profiles_tag = false;
+        const char *tag = nullptr;
+        while (p_profiles != nullptr)
+        {
+            if (nullptr != (tag = p_profiles->Value())
+                && strcmp(tag, PROFILES) == 0)
+            {
+                found_profiles_tag = true;
+                break;
+            }
+            p_profiles = p_profiles->NextSiblingElement();
+        }
+        if (!found_profiles_tag)
+        {
+            logError(XMLPROFILEPARSER, "Not found 'profiles' tag as root or first child");
+            return XMLP_ret::XML_ERROR;
+        }
     }
 
     std::string profile_name = "";
     unsigned int profileCount = 0u;
-    XMLElement *p_profile = p_root->FirstChildElement();
+    XMLElement *p_profile = p_profiles->FirstChildElement();
     const char *tag = nullptr;
     while (nullptr != p_profile)
     {
