@@ -230,48 +230,43 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
         {
             logInfo(RTPS_MSG_IN, IDSTRING"Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " << getGuid().entityId);
 
+            CacheChange_t* change_to_add = incomingChange;
+
+#if HAVE_SECURITY
+            if(is_payload_protected())
+            {
+                if(reserveCache(&change_to_add, incomingChange->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
+                {
+                    change_to_add->copy_not_memcpy(incomingChange);
+                    if(!getRTPSParticipant()->security_manager().decode_serialized_payload(incomingChange->serializedPayload,
+                                change_to_add->serializedPayload, m_guid, incomingChange->writerGUID))
+                    {
+                        releaseCache(change_to_add);
+                        logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
+                        return false;
+                    }
+                }
+            }
+#endif
+
             // Fragments manager has to process incomming fragments.
             // If CacheChange_t is completed, it will be returned;
-            CacheChange_t* change_completed = fragmentedChangePitStop_->process(incomingChange, sampleSize, fragmentStartingNum);
+            CacheChange_t* change_completed = fragmentedChangePitStop_->process(change_to_add, sampleSize, fragmentStartingNum);
 
             // Try to remove previous CacheChange_t from PitStop.
             fragmentedChangePitStop_->try_to_remove_until(incomingChange->sequenceNumber, incomingChange->writerGUID);
 
+#if HAVE_SECURITY
+            if(is_payload_protected())
+                releaseCache(change_to_add);
+#endif
+
             // If the change was completed, process it.
             if(change_completed != nullptr)
             {
-
-                CacheChange_t* change_to_add = nullptr;
-
-#if HAVE_SECURITY
-                if(is_payload_protected())
+                if (!change_received(change_completed, lock))
                 {
-                    if(reserveCache(&change_to_add, change_completed->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
-                    {
-                        change_to_add->copy_not_memcpy(change_completed);
-                        if(!getRTPSParticipant()->security_manager().decode_serialized_payload(change_completed->serializedPayload,
-                                    change_to_add->serializedPayload, m_guid, change_completed->writerGUID))
-                        {
-                            releaseCache(change_to_add);
-                            releaseCache(change_completed);
-                            logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
-                            return false;
-                        }
-                    }
-
-                    releaseCache(change_completed);
-                }
-                else
-                {
-#endif
-                    change_to_add = change_completed;
-#if HAVE_SECURITY
-                }
-#endif
-
-                if (!change_received(change_to_add, lock))
-                {
-                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_to_add->sequenceNumber.to64long());
+                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long());
 
                     // Assert liveliness because if it is a participant discovery info.
                     if (getGuid().entityId == c_EntityId_SPDPReader)
@@ -280,7 +275,7 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
                     }
 
                     // Release CacheChange_t.
-                    releaseCache(change_to_add);
+                    releaseCache(change_completed);
                 }
             }
         }
