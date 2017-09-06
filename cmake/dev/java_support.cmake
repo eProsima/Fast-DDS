@@ -26,22 +26,32 @@ macro(gradle_build directory)
         message(FATAL_ERROR "gradle is needed to build the java application. Please install it correctly")
     endif()
 
-    get_filename_component(Java_JAVA_EXECUTABLE_DIR ${Java_JAVA_EXECUTABLE} DIRECTORY)
-    file(TO_NATIVE_PATH "${Java_JAVA_EXECUTABLE_DIR}" Java_JAVA_EXECUTABLE_DIR_NATIVE)
 
-    if(WIN32)
-        set(delimiter_ ";")
+    if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION} VERSION_LESS 3.1.3)
+        add_custom_target(java ALL
+            COMMAND "${GRADLE_EXE}" -Pcustomversion=${PROJECT_VERSION} build
+            WORKING_DIRECTORY ${directory}
+            COMMENT "Generating Java application" VERBATIM)
     else()
-        set(delimiter_ ":")
+        get_filename_component(Java_JAVA_EXECUTABLE_DIR ${Java_JAVA_EXECUTABLE} DIRECTORY)
+        file(TO_NATIVE_PATH "${Java_JAVA_EXECUTABLE_DIR}" Java_JAVA_EXECUTABLE_DIR_NATIVE)
+
+        if(WIN32)
+            set(delimiter_ ";")
+        else()
+            set(delimiter_ ":")
+        endif()
+
+        add_custom_target(java ALL
+            COMMAND ${CMAKE_COMMAND} -E env
+            --unset=JAVA_HOME
+            "PATH=${Java_JAVA_EXECUTABLE_DIR_NATIVE}${delimiter_}$<JOIN:$ENV{PATH},${delimiter_}>"
+            "${GRADLE_EXE}" -Pcustomversion=${PROJECT_VERSION} build
+            WORKING_DIRECTORY ${directory}
+            COMMENT "Generating Java application" VERBATIM)
     endif()
 
-    add_custom_target(java ALL
-        COMMAND ${CMAKE_COMMAND} -E env
-        --unset=JAVA_HOME
-        "PATH=${Java_JAVA_EXECUTABLE_DIR_NATIVE}${delimiter_}$<JOIN:$ENV{PATH},${delimiter_}>"
-        "${GRADLE_EXE}" -Pcustomversion=${PROJECT_VERSION} build
-        WORKING_DIRECTORY ${directory}
-        COMMENT "Generating Java application" VERBATIM)
+
 
     set(THIRDPARTY_FOUND false)
     foreach(arg ${ARGN})
