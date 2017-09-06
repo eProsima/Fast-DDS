@@ -1,4 +1,5 @@
-V	261008085659Z		01	unknown	/C=ES/ST=MA/O=eProsima/CN=Main Publisher/emailAddress=mainpub@eprosima.com
-V	161014092316Z		02	unknown	/C=ES/ST=MA/O=eProsima/CN=Expired Publisher/emailAddress=expiredpub@eprosima.com
-R	261011093039Z	161013093251Z	03	unknown	/C=ES/ST=MA/O=eProsima/CN=Revoked Publisher/emailAddress=revokedpub@eprosima.com
-V	270111105604Z		04	unknown	/C=ES/ST=MA/O=eProsima/CN=Main Subscriber/emailAddress=mainsub@eprosima.com
+V	270904090405Z		AE7BAD8C075AEAF3	unknown	/C=ES/ST=MA/O=eProsima/OU=eProsima/CN=Main Publisher/emailAddress=mainpub@eprosima.com
+V	270904090501Z		AE7BAD8C075AEAF4	unknown	/C=ES/ST=MA/O=eProsima/OU=eProsima/CN=Main Subscriber/emailAddress=mainsub@eprosima.com
+V	170907090616Z		AE7BAD8C075AEAF5	unknown	/C=ES/ST=MA/O=eProsima/OU=eProsima/CN=Expired Publisher/emailAddress=expiredpub@eprosima.com
+R	270904090708Z	170906090716Z	AE7BAD8C075AEAF6	unknown	/C=ES/ST=MA/O=eProsima/OU=eProsima/CN=Revoked Publisher/emailAddress=revokedpub@eprosima.com
+V	270904092051Z		AE7BAD8C075AEAF7	unknown	/C=ES/ST=MA/O=eProsima/OU=eProsima/CN=Password Publisher/emailAddress=pwdpub@eprosima.com

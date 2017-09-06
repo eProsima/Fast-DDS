@@ -8,5 +8,5 @@ stateOrProvinceName	= MA
 localityName			= Tres Cantos
 organizationName		= eProsima
 organizationalUnitName  = eProsima
-emailAddress			= mainpub@eprosima.com
-commonName				= Main Publisher
+emailAddress			= pwdpub@eprosima.com
+commonName				= Password Publisher

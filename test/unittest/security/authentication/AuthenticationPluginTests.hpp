@@ -216,7 +216,7 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     ParticipantProxyData participant_data2;
     participant_data2.m_guid = adjusted_participant_key2;
     participant_data2.toParameterList();
-    
+
     auxMsg.length = 0;
     auxMsg.pos = 0;
 

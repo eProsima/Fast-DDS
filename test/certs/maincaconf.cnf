@@ -9,11 +9,9 @@ default_ca = CA_default # The default ca section
 
 dir = . # Where everything is kept
 certs = $dir/certs # Where the issued certs are kept
+new_certs_dir = $dir/certs
 crl_dir = $dir/crl # Where the issued crl are kept
 database = $dir/index.txt # database index file.
-unique_subject = no # Set to 'no' to allow creation of
-                    # several ctificates with same subject.
-new_certs_dir = $dir
 
 certificate = $dir/maincacert.pem # The CA certificate
 serial = $dir/serial # The current serial number
@@ -27,11 +25,17 @@ name_opt = ca_default # Subject Name options
 cert_opt = ca_default # Certificate field options
 
 default_days = 1825 # how long to certify for
-default_crl_days = 30 # how long before next CRL
+default_crl_days = 365 # how long before next CRL
 default_md = sha256 # which md to use.
 preserve = no # keep passed DN ordering
 
 policy = policy_match
+x509_extensions = local_ca_extensions
+#
+#
+# Copy extensions specified in the certificate request
+#
+copy_extensions = copy
 
 # For the CA policy
 [ policy_match ]
@@ -54,19 +58,30 @@ organizationalUnitName = optional
 commonName = supplied
 emailAddress = optional
 
+#
+#
+# x509 extensions to use when generating server certificates.
+#
+[ local_ca_extensions ]
+basicConstraints        = CA:false
+
 [ req ]
 prompt = no
-#default_bits = 1024
+default_bits    = 2048
 #default_keyfile = privkey.pem
-distinguished_name = req_distinguished_name
+distinguished_name = root_ca_distinguished_name
 #attributes = req_attributes
-#x509_extensions = v3_ca # The extentions to add to the self signed cert
+x509_extensions         = root_ca_extensions
 string_mask = utf8only
 
-[ req_distinguished_name ]
+[ root_ca_distinguished_name ]
 countryName = ES
 stateOrProvinceName = MA
 localityName = Tres Cantos
-0.organizationName = eProsima
+organizationName = eProsima
+organizationalUnitName  = eProsima
 commonName = eProsima Main Test CA
 emailAddress = mainca@eprosima.com
+
+[ root_ca_extensions ]
+basicConstraints        = CA:true

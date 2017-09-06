@@ -7,5 +7,6 @@ countryName     		= ES
 stateOrProvinceName	= MA
 localityName			= Tres Cantos
 organizationName		= eProsima
+organizationalUnitName  = eProsima
 emailAddress			= revokedpub@eprosima.com
 commonName				= Revoked Publisher
