@@ -136,14 +136,14 @@ class EDP
          * @param rdata Pointer to the ReaderProxyData object.
          * @return True if the two can be matched.
          */
-        bool validMatching(WriterProxyData* wdata,ReaderProxyData* rdata);
+        bool validMatching(const WriterProxyData* wdata, const ReaderProxyData* rdata);
         /**
          * Check the validity of a matching between a RTPSReader and a WriterProxyData object.
          * @param rdata Pointer to the ReaderProxyData object.
          * @param wdata Pointer to the WriterProxyData object.
          * @return True if the two can be matched.
          */
-        bool validMatching(ReaderProxyData* rdata,WriterProxyData* wdata);
+        bool validMatching(const ReaderProxyData* rdata, const WriterProxyData* wdata);
         /**
          * Remove a WriterProxyDataObject based on its GUID_t.
          * @param writer Reference to the writer GUID.
@@ -162,14 +162,14 @@ class EDP
          * @param wdata Pointer to the WriterProxyData object.
          * @return True if correct.
          */
-        bool unpairWriterProxy(ParticipantProxyData* pdata, WriterProxyData* wdata);
+        bool unpairWriterProxy(const GUID_t& writer_guid);
         /**
          * Unpair a ReaderProxyData object from all local writers.
          * @param rdata Pointer to the ReaderProxyData object.
          * @param pdata Pointer to the participant proxy data.
          * @return True if correct.
          */
-        bool unpairReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata);
+        bool unpairReaderProxy(const GUID_t& reader_guid);
 
         /**
          * Try to pair/unpair ReaderProxyData.
@@ -207,13 +207,13 @@ class EDP
          * @param R Pointer to the Reader
          * @return True
          */
-        bool pairingReader(RTPSReader* R);
+        bool pairingReader(RTPSReader* R, const ParticipantProxyData& pdata, const ReaderProxyData& rdata);
         /**l
          * Try to pair/unpair a local Writer against all possible readerProxy Data.
          * @param W Pointer to the Writer
          * @return True
          */
-        bool pairingWriter(RTPSWriter* W);
+        bool pairingWriter(RTPSWriter* W, const ParticipantProxyData& pdata, const WriterProxyData& wdata);
 
 };
 

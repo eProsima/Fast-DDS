@@ -124,7 +124,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     for (const auto& transportDescriptor : PParam.userTransports)
         m_network_Factory.RegisterTransport(transportDescriptor.get());
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     mp_userParticipant->mp_impl = this;
     Locator_t loc;
     loc.port = PParam.defaultSendPort;
@@ -1097,13 +1096,10 @@ PDPSimple* RTPSParticipantImpl::pdpsimple()
 
 bool RTPSParticipantImpl::get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
-    ParticipantProxyData* pdata = nullptr;
-    WriterProxyData* wdata = nullptr;
+    ParticipantProxyData pdata;
 
-    if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(writerGuid, &wdata, &pdata))
+    if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(writerGuid, returnedInfo, pdata))
     {
-        returnedInfo = *wdata;
         return true;
     }
 
@@ -1112,13 +1108,10 @@ bool RTPSParticipantImpl::get_remote_writer_info(const GUID_t& writerGuid, Write
 
 bool RTPSParticipantImpl::get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
-    ParticipantProxyData* pdata = nullptr;
-    ReaderProxyData* rdata = nullptr;
+    ParticipantProxyData pdata;
 
-    if(this->mp_builtinProtocols->mp_PDP->lookupReaderProxyData(readerGuid, &rdata, &pdata))
+    if(this->mp_builtinProtocols->mp_PDP->lookupReaderProxyData(readerGuid, returnedInfo, pdata))
     {
-        returnedInfo = *rdata;
         return true;
     }
 

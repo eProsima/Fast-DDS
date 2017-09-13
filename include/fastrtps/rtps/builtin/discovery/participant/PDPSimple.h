@@ -88,26 +88,18 @@ class PDPSimple
     /**
      * Add a ReaderProxyData to the correct ParticipantProxyData.
      * @param rdata Pointer to the ReaderProxyData objectr to add.
-     * @param copydata Boolean variable indicating the need to copy the passed object.
-     * @param returnReaderProxyData Pointer to pointer in case you wanted the data copied.
-     * @param pdata Pointer to the associated ParticipantProxyData.
+     * @param pdata
      * @return True if correct.
      */
-    bool addReaderProxyData(ReaderProxyData* rdata,bool copydata=false,
-            ReaderProxyData** returnReaderProxyData=nullptr,
-            ParticipantProxyData** pdata = nullptr);
+    bool addReaderProxyData(ReaderProxyData* rdata, ParticipantProxyData &pdata_out);
 
     /**
      * Add a WriterProxyData to the correct ParticipantProxyData.
      * @param wdata Pointer to the WriterProxyData objectr to add.
-     * @param copydata Boolean variable indicating the need to copy the passed object.
-     * @param returnWriterProxyData Pointer to pointer in case you wanted the data copied.
-     * @param pdata Pointer to the associated ParticipantProxyData.
+     * @param pdata
      * @return True if correct.
      */
-    bool addWriterProxyData(WriterProxyData* wdata,bool copydata=false,
-            WriterProxyData** returnWriterProxyData=nullptr,
-            ParticipantProxyData** pdata = nullptr);
+    bool addWriterProxyData(WriterProxyData* wdata, ParticipantProxyData &pdata);
 
     /**
      * This method returns a pointer to a ReaderProxyData object if it is found among the registered RTPSParticipants (including the local RTPSParticipant).
@@ -116,7 +108,7 @@ class PDPSimple
      * @param pdata Pointer to pointer of the ParticipantProxyData object.
      * @return True if found.
      */
-    bool lookupReaderProxyData(const GUID_t& reader, ReaderProxyData** rdata, ParticipantProxyData** pdata);
+    bool lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rdata, ParticipantProxyData& pdata);
     /**
      * This method returns a pointer to a WriterProxyData object if it is found among the registered RTPSParticipants (including the local RTPSParticipant).
      * @param[in] writer GUID_t of the writer we are looking for.
@@ -124,28 +116,24 @@ class PDPSimple
      * @param pdata Pointer to pointer of the ParticipantProxyData object.
      * @return True if found.
      */
-    bool lookupWriterProxyData(const GUID_t& writer, WriterProxyData** wdata, ParticipantProxyData** pdata);
+    bool lookupWriterProxyData(const GUID_t& writer, WriterProxyData& wdata, ParticipantProxyData& pdata);
     /**
      * This method returns a pointer to a RTPSParticipantProxyData object if it is found among the registered RTPSParticipants.
      * @param[in] pguid GUID_t of the RTPSParticipant we are looking for.
      * @param pdata Pointer to pointer of the ParticipantProxyData object.
      * @return True if found.
      */
-    bool lookupParticipantProxyData(const GUID_t& pguid,ParticipantProxyData** pdata);
+    bool lookupParticipantProxyData(const GUID_t& pguid, ParticipantProxyData& pdata);
     /**
      * This method removes and deletes a ReaderProxyData object from its corresponding RTPSParticipant.
-     * @param rdata Pointer to the ReaderProxyData object.
-     * @param pdata Pointer to pointer of the ParticipantProxyData object.
      * @return true if found and deleted.
      */
-    bool removeReaderProxyData(ParticipantProxyData* pdata, ReaderProxyData* rdata);
+    bool removeReaderProxyData(const GUID_t& reader_guid);
     /**
      * This method removes and deletes a WriterProxyData object from its corresponding RTPSParticipant.
-     * @param wdata Pointer to the WriterProxyData object.
-     * @param pdata Pointer to pointer of the ParticipantProxyData object.
      * @return true if found and deleted.
      */
-    bool removeWriterProxyData(ParticipantProxyData* pdata, WriterProxyData* wdata);
+    bool removeWriterProxyData(const GUID_t& writer_guid);
 
     /**
      * This method assigns remtoe endpoints to the builtin endpoints defined in this protocol. It also calls the corresponding methods in EDP and WLP.

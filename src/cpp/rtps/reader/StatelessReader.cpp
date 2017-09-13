@@ -92,7 +92,7 @@ bool StatelessReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
     return false;
 }
 
-bool StatelessReader::change_received(CacheChange_t* change, std::unique_lock<std::recursive_mutex> &lock)
+bool StatelessReader::change_received(CacheChange_t* change)
 {
     // Only make visible the change if there is not other with bigger sequence number.
     // TODO Revisar si no hay que incluirlo.
@@ -104,9 +104,7 @@ bool StatelessReader::change_received(CacheChange_t* change, std::unique_lock<st
 
             if(getListener() != nullptr)
             {
-                lock.unlock();
                 getListener()->onNewCacheChangeAdded((RTPSReader*)this,change);
-                lock.lock();
             }
 
             mp_history->postSemaphore();
@@ -201,7 +199,7 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
             return false;
         }
 
-        if(!change_received(change_to_add, lock))
+        if(!change_received(change_to_add))
         {
             logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "
                     <<change_to_add->sequenceNumber);
@@ -269,7 +267,7 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
                 }
 #endif
 
-                if (!change_received(change_to_add, lock))
+                if (!change_received(change_to_add))
                 {
                     logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_to_add->sequenceNumber.to64long());
 

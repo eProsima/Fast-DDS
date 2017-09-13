@@ -252,8 +252,6 @@ class WriterProxyData
 
         //!WriterQOS
         WriterQos m_qos;
-        //!
-        ParameterList_t m_parameterList;
         //!Clear the information and return the object to the default state.
         void clear();
         //!Update certain parameters from another object.
@@ -261,7 +259,7 @@ class WriterProxyData
         //!Copy all information from another object.
         void copy(WriterProxyData* rdata);
         //!Convert the information to a parameter list to be send in a CDRMessage.
-        bool toParameterList();
+        ParameterList_t toParameterList();
         //!Read a parameter list from a CDRMessage_t.
         RTPS_DllAPI bool readFromCDRMessage(CDRMessage_t* msg);
 

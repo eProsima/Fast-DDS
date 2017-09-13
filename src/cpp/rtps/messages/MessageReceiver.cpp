@@ -79,7 +79,6 @@ void MessageReceiver::init(uint32_t rec_buffer_size){
 
 MessageReceiver::~MessageReceiver()
 {
-    this->m_ParamList.deleteParams();
     logInfo(RTPS_MSG_IN,"");
 }
 
@@ -418,9 +417,6 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 {
     std::lock_guard<std::mutex> guard(mtx);
 
-    // Reset param list
-    m_ParamList.deleteParams();
-
     //READ and PROCESS
     if(smh->submessageLength < RTPSMESSAGE_DATA_MIN_LENGTH)
     {
@@ -513,7 +509,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
     if(inlineQosFlag)
     {
-        inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, &ch, false);
+        ParameterList_t parameter_list;
+        inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg, &parameter_list, &ch, false);
 
         if(inlineQosSize <= 0)
         {
@@ -560,7 +557,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
                 return false;
             }
             //uint32_t param_size;
-            if(ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, &ch, false) <= 0)
+            ParameterList_t parameter_list;
+            if(ParameterList::readParameterListfromCDRMsg(msg, &parameter_list, &ch, false) <= 0)
             {
                 logInfo(RTPS_MSG_IN,IDSTRING"SubMessage Data ERROR, keyFlag ParameterList");
                 return false;
@@ -598,9 +596,6 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t* smh, bool* last)
 {
     std::lock_guard<std::mutex> guard(mtx);
-
-    // Reset param list
-    m_ParamList.deleteParams();
 
     //READ and PROCESS
     if (smh->submessageLength < RTPSMESSAGE_DATA_MIN_LENGTH)
@@ -706,7 +701,8 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
     if (inlineQosFlag)
     {
-        inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, &ch, false);
+        ParameterList_t parameter_list;
+        inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg, &parameter_list, &ch, false);
 
         if (inlineQosSize <= 0)
         {

@@ -265,7 +265,8 @@ bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
             aux_msg.msg_endian =  LITTLEEND;
 #endif
 
-            ParameterList::writeParameterListToCDRMsg(&aux_msg, &rdata->m_parameterList, true);
+            ParameterList_t parameter_list = rdata->toParameterList();
+            ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
             {
@@ -314,7 +315,8 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
             aux_msg.msg_endian =  LITTLEEND;
 #endif
 
-            ParameterList::writeParameterListToCDRMsg(&aux_msg, &wdata->m_parameterList, true);
+            ParameterList_t parameter_list = wdata->toParameterList();
+            ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
             {
@@ -414,7 +416,6 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
     auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    std::lock_guard<std::recursive_mutex> guard(*pdata->mp_mutex);
     if(auxendp!=0 && mp_PubReader.first!=nullptr) //Exist Pub Writer and i have pub reader
     {
         logInfo(RTPS_EDP,"Adding SEDP Pub Writer to my Pub Reader");
@@ -425,7 +426,6 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        pdata->m_builtinWriters.push_back(watt);
         mp_PubReader.first->matched_writer_add(watt);
     }
     auxendp = endp;
@@ -443,7 +443,6 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
-        pdata->m_builtinReaders.push_back(ratt);
         mp_PubWriter.first->matched_reader_add(ratt);
     }
     auxendp = endp;
@@ -460,7 +459,6 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        pdata->m_builtinWriters.push_back(watt);
         mp_SubReader.first->matched_writer_add(watt);
     }
     auxendp = endp;
@@ -478,7 +476,6 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
-        pdata->m_builtinReaders.push_back(ratt);
         mp_SubWriter.first->matched_reader_add(ratt);
     }
 }
@@ -487,33 +484,71 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
     logInfo(RTPS_EDP,"For RTPSParticipant: "<<pdata->m_guid);
-    std::lock_guard<std::recursive_mutex> guard(*pdata->mp_mutex);
-    for (auto it = pdata->m_builtinReaders.begin(); it != pdata->m_builtinReaders.end();++it)
-    {
-        if(it->guid.entityId == c_EntityId_SEDPPubReader && this->mp_PubWriter.first !=nullptr)
-        {
-            mp_PubWriter.first->matched_reader_remove(*it);
-            continue;
-        }
-        if(it->guid.entityId == c_EntityId_SEDPSubReader && this->mp_SubWriter.first !=nullptr)
-        {
-            mp_SubWriter.first->matched_reader_remove(*it);
-            continue;
-        }
-    }
 
-    for (auto it = pdata->m_builtinWriters.begin(); it != pdata->m_builtinWriters.end(); ++it)
+    uint32_t endp = pdata->m_availableBuiltinEndpoints;
+    uint32_t auxendp = endp;
+    auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+    //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
+    //auxendp = 1;
+    if(auxendp!=0 && mp_PubReader.first!=nullptr) //Exist Pub Writer and i have pub reader
     {
-        if(it->guid.entityId == c_EntityId_SEDPPubWriter && this->mp_PubReader.first !=nullptr)
-        {
-            mp_PubReader.first->matched_writer_remove(*it);
-            continue;
-        }
-        if(it->guid.entityId == c_EntityId_SEDPSubWriter && this->mp_SubReader.first !=nullptr)
-        {
-            mp_SubReader.first->matched_writer_remove(*it);
-            continue;
-        }
+        RemoteWriterAttributes watt;
+        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        watt.guid.entityId = c_EntityId_SEDPPubWriter;
+        watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+        watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        watt.endpoint.reliabilityKind = RELIABLE;
+        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+        mp_PubReader.first->matched_writer_remove(watt);
+    }
+    auxendp = endp;
+    auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+    //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
+    //auxendp = 1;
+    if(auxendp!=0 && mp_PubWriter.first!=nullptr) //Exist Pub Detector
+    {
+        RemoteReaderAttributes ratt;
+        ratt.expectsInlineQos = false;
+        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        ratt.guid.entityId = c_EntityId_SEDPPubReader;
+        ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+        ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+        ratt.endpoint.reliabilityKind = RELIABLE;
+        mp_PubWriter.first->matched_reader_remove(ratt);
+    }
+    auxendp = endp;
+    auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+    //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
+    //auxendp = 1;
+    if(auxendp!=0 && mp_SubReader.first!=nullptr) //Exist Pub Announcer
+    {
+        logInfo(RTPS_EDP,"Adding SEDP Sub Writer to my Sub Reader");
+        RemoteWriterAttributes watt;
+        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        watt.guid.entityId = c_EntityId_SEDPSubWriter;
+        watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+        watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        watt.endpoint.reliabilityKind = RELIABLE;
+        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+        mp_SubReader.first->matched_writer_remove(watt);
+    }
+    auxendp = endp;
+    auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+    //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
+    //auxendp = 1;
+    if(auxendp!=0 && mp_SubWriter.first!=nullptr) //Exist Pub Announcer
+    {
+        logInfo(RTPS_EDP,"Adding SEDP Sub Reader to my Sub Writer");
+        RemoteReaderAttributes ratt;
+        ratt.expectsInlineQos = false;
+        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        ratt.guid.entityId = c_EntityId_SEDPSubReader;
+        ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+        ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+        ratt.endpoint.reliabilityKind = RELIABLE;
+        mp_SubWriter.first->matched_reader_remove(ratt);
     }
 }
 

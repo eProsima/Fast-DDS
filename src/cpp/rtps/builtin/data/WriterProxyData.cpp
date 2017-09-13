@@ -55,7 +55,6 @@ WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo) :
 
 WriterProxyData::~WriterProxyData() {
     // TODO Auto-generated destructor stub
-    m_parameterList.deleteParams();
     logInfo(RTPS_PROXY_DATA,this->m_guid);
 }
 
@@ -77,159 +76,161 @@ WriterProxyData& WriterProxyData::operator=(const WriterProxyData& writerInfo)
     return *this;
 }
 
-bool WriterProxyData::toParameterList()
+ParameterList_t WriterProxyData::toParameterList()
 {
-    m_parameterList.deleteParams();
+    ParameterList_t parameter_list;
+
     for(LocatorListIterator lit = m_unicastLocatorList.begin();
             lit!=m_unicastLocatorList.end();++lit)
     {
         ParameterLocator_t* p = new ParameterLocator_t(PID_UNICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,*lit);
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     for(LocatorListIterator lit = m_multicastLocatorList.begin();
             lit!=m_multicastLocatorList.end();++lit)
     {
         ParameterLocator_t* p = new ParameterLocator_t(PID_MULTICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,*lit);
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     {
         ParameterGuid_t* p = new ParameterGuid_t(PID_PARTICIPANT_GUID,PARAMETER_GUID_LENGTH,m_RTPSParticipantKey);
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     {
         ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME,0,m_topicName);
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     {
         ParameterString_t * p = new ParameterString_t(PID_TYPE_NAME,0,m_typeName);
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     {
         ParameterKey_t * p = new ParameterKey_t(PID_KEY_HASH,16,m_key);
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     {
         ParameterGuid_t * p = new ParameterGuid_t(PID_ENDPOINT_GUID,16,m_guid);
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     {
         ParameterPort_t* p = new ParameterPort_t(PID_TYPE_MAX_SIZE_SERIALIZED,4,m_typeMaxSerialized);
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     {
         ParameterProtocolVersion_t* p = new ParameterProtocolVersion_t(PID_PROTOCOL_VERSION,4);
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     {
         ParameterVendorId_t*p = new ParameterVendorId_t(PID_VENDORID,4);
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if( m_qos.m_durability.sendAlways() || m_qos.m_durability.hasChanged)
     {
         DurabilityQosPolicy*p = new DurabilityQosPolicy();
         *p = m_qos.m_durability;
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if(m_qos.m_durabilityService.sendAlways() || m_qos.m_durabilityService.hasChanged)
     {
         DurabilityServiceQosPolicy*p = new DurabilityServiceQosPolicy();
         *p = m_qos.m_durabilityService;
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if(m_qos.m_deadline.sendAlways() ||  m_qos.m_deadline.hasChanged)
     {
         DeadlineQosPolicy*p = new DeadlineQosPolicy();
         *p = m_qos.m_deadline;
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if(m_qos.m_latencyBudget.sendAlways() ||  m_qos.m_latencyBudget.hasChanged)
     {
         LatencyBudgetQosPolicy*p = new LatencyBudgetQosPolicy();
         *p = m_qos.m_latencyBudget;
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if(m_qos.m_durability.sendAlways() ||  m_qos.m_liveliness.hasChanged)
     {
         LivelinessQosPolicy*p = new LivelinessQosPolicy();
         *p = m_qos.m_liveliness;
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if(m_qos.m_reliability.sendAlways() ||  m_qos.m_reliability.hasChanged)
     {
         ReliabilityQosPolicy*p = new ReliabilityQosPolicy();
         *p = m_qos.m_reliability;
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if(m_qos.m_lifespan.sendAlways() ||  m_qos.m_lifespan.hasChanged)
     {
         LifespanQosPolicy*p = new LifespanQosPolicy();
         *p = m_qos.m_lifespan;
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if( m_qos.m_userData.sendAlways() || m_qos.m_userData.hasChanged)
     {
         UserDataQosPolicy*p = new UserDataQosPolicy();
         *p = m_qos.m_userData;
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if(m_qos.m_timeBasedFilter.sendAlways() ||  m_qos.m_timeBasedFilter.hasChanged)
     {
         TimeBasedFilterQosPolicy*p = new TimeBasedFilterQosPolicy();
         *p = m_qos.m_timeBasedFilter;
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if(m_qos.m_ownership.sendAlways() ||  m_qos.m_ownership.hasChanged)
     {
         OwnershipQosPolicy*p = new OwnershipQosPolicy();
         *p = m_qos.m_ownership;
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if(m_qos.m_durability.sendAlways() ||  m_qos.m_ownershipStrength.hasChanged)
     {
         OwnershipStrengthQosPolicy*p = new OwnershipStrengthQosPolicy();
         *p = m_qos.m_ownershipStrength;
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if(m_qos.m_destinationOrder.sendAlways() ||  m_qos.m_destinationOrder.hasChanged)
     {
         DestinationOrderQosPolicy*p = new DestinationOrderQosPolicy();
         *p = m_qos.m_destinationOrder;
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if(m_qos.m_presentation.sendAlways() ||  m_qos.m_presentation.hasChanged)
     {
         PresentationQosPolicy*p = new PresentationQosPolicy();
         *p = m_qos.m_presentation;
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if(m_qos.m_partition.sendAlways() ||  m_qos.m_partition.hasChanged)
     {
         PartitionQosPolicy*p = new PartitionQosPolicy();
         *p = m_qos.m_partition;
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if(m_qos.m_topicData.sendAlways() || m_qos.m_topicData.hasChanged)
     {
         TopicDataQosPolicy*p = new TopicDataQosPolicy();
         *p = m_qos.m_topicData;
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if(m_qos.m_groupData.sendAlways() ||  m_qos.m_groupData.hasChanged)
     {
         GroupDataQosPolicy*p = new GroupDataQosPolicy();
         *p = m_qos.m_groupData;
-        m_parameterList.m_parameters.push_back((Parameter_t*)p);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
-    logInfo(RTPS_PROXY_DATA," with " << m_parameterList.m_parameters.size()<< " parameters");
-    return true;
+    logInfo(RTPS_PROXY_DATA," with " << parameter_list.m_parameters.size()<< " parameters");
+    return parameter_list;
 }
 
 bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 {
-    if(ParameterList::readParameterListfromCDRMsg(msg, &m_parameterList, NULL, true) > 0)
+    ParameterList_t parameter_list;
+    if(ParameterList::readParameterListfromCDRMsg(msg, &parameter_list, NULL, true) > 0)
     {
-        for(std::vector<Parameter_t*>::iterator it = m_parameterList.m_parameters.begin();
-                it!=m_parameterList.m_parameters.end();++it)
+        for(std::vector<Parameter_t*>::iterator it = parameter_list.m_parameters.begin();
+                it!=parameter_list.m_parameters.end();++it)
         {
             switch((*it)->Pid)
             {
@@ -418,10 +419,6 @@ void WriterProxyData::clear()
     m_typeMaxSerialized = 0;
     m_isAlive = true;
     m_topicKind = NO_KEY;
-
-
-    m_parameterList.deleteParams();
-    m_parameterList.resetList();
 }
 
 void WriterProxyData::copy(WriterProxyData* wdata)

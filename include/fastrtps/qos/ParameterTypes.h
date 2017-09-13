@@ -461,15 +461,23 @@ class ParameterBuiltinEndpointSet_t:public Parameter_t{
 /**
  *
  */
-class ParameterPropertyList_t:public Parameter_t{
+class ParameterPropertyList_t : public Parameter_t {
     public:
         std::vector<std::pair<std::string,std::string>> properties;
-        ParameterPropertyList_t():Parameter_t(PID_PROPERTY_LIST,0){};
+
+        ParameterPropertyList_t():Parameter_t(PID_PROPERTY_LIST, 0) {}
+
         /**
          * Constructor using a parameter PID and the parameter length
          * @param in_length Its associated length
          */
-        ParameterPropertyList_t(ParameterId_t /*pid*/, uint16_t in_length) : Parameter_t(PID_PROPERTY_LIST,in_length){};
+        ParameterPropertyList_t(ParameterId_t /*pid*/, uint16_t in_length) : Parameter_t(PID_PROPERTY_LIST, in_length) {}
+
+        ParameterPropertyList_t(const ParameterPropertyList_t &parameter_properties) : Parameter_t(PID_PROPERTY_LIST, 0)
+        {
+            properties.assign(parameter_properties.properties.begin(), parameter_properties.properties.end());
+        }
+
         /**
          * Add the parameter to a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message where the parameter should be added.

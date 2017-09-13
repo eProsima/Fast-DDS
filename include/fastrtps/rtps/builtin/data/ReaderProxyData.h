@@ -239,9 +239,9 @@ class ReaderProxyData
 
         /**
          * Convert the data to a parameter list to send this information as a RTPS message.
-         * @return true if correct.
+         * @return Generated parameter list
          */
-        bool toParameterList();
+        ParameterList_t toParameterList();
         /**
          *  Read the information from a CDRMessage_t. The position of hte message must be in the beggining on the parameter list.
          * @param msg Pointer to the message.
@@ -253,8 +253,6 @@ class ReaderProxyData
         bool m_expectsInlineQos;
         //!Reader Qos	
         ReaderQos m_qos;
-        //!Parameter list
-        ParameterList_t m_parameterList;
         /**
          * Clear (put to default) the information.
          */

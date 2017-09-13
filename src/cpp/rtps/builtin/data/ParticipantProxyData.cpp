@@ -46,12 +46,32 @@ ParticipantProxyData::ParticipantProxyData():
     m_availableBuiltinEndpoints(0),
     m_manualLivelinessCount(0),
     isAlive(false),
-    m_hasChanged(true),
-    mp_leaseDurationTimer(nullptr),
-    mp_mutex(new std::recursive_mutex())
+    mp_leaseDurationTimer(nullptr)
     {
         set_VendorId_Unknown(m_VendorId);
     }
+
+ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata) :
+    m_protocolVersion(pdata.m_protocolVersion),
+    m_guid(pdata.m_guid),
+    m_expectsInlineQos(pdata.m_expectsInlineQos),
+    m_availableBuiltinEndpoints(pdata.m_availableBuiltinEndpoints),
+    m_metatrafficUnicastLocatorList(pdata.m_metatrafficUnicastLocatorList),
+    m_metatrafficMulticastLocatorList(pdata.m_metatrafficMulticastLocatorList),
+    m_defaultUnicastLocatorList(pdata.m_defaultUnicastLocatorList),
+    m_defaultMulticastLocatorList(pdata.m_defaultMulticastLocatorList),
+    m_manualLivelinessCount(pdata.m_manualLivelinessCount),
+    m_participantName(pdata.m_participantName),
+    m_key(pdata.m_key),
+    m_leaseDuration(pdata.m_leaseDuration),
+    identity_token_(pdata.identity_token_),
+    isAlive(pdata.isAlive),
+    m_properties(pdata.m_properties),
+    m_userData(pdata.m_userData)
+{
+    m_VendorId[0] = pdata.m_VendorId[0];
+    m_VendorId[1] = pdata.m_VendorId[1];
+}
 
 ParticipantProxyData::~ParticipantProxyData()
 {
@@ -66,12 +86,8 @@ ParticipantProxyData::~ParticipantProxyData()
     {
         delete(*it);
     }
-    m_QosList.inlineQos.deleteParams();
-    m_QosList.allQos.deleteParams();
     if(this->mp_leaseDurationTimer != nullptr)
         delete(mp_leaseDurationTimer);
-
-    delete(mp_mutex);
 }
 
 bool ParticipantProxyData::initializeData(RTPSParticipantImpl* part,PDPSimple* pdp)
@@ -124,69 +140,100 @@ bool ParticipantProxyData::initializeData(RTPSParticipantImpl* part,PDPSimple* p
     return true;
 }
 
-bool ParticipantProxyData::toParameterList()
+ParameterList_t ParticipantProxyData::AllQostoParameterList()
 {
-    if(m_hasChanged)
+    ParameterList_t parameter_list;
+
     {
-        m_QosList.allQos.deleteParams();
-        m_QosList.allQos.resetList();
-        m_QosList.inlineQos.deleteParams();
-        m_QosList.inlineQos.resetList();
-        bool valid = QosList::addQos(&m_QosList,PID_PROTOCOL_VERSION,this->m_protocolVersion);
-        valid &=QosList::addQos(&m_QosList,PID_VENDORID,this->m_VendorId);
-        if(this->m_expectsInlineQos)
-            valid &=QosList::addQos(&m_QosList,PID_EXPECTS_INLINE_QOS,this->m_expectsInlineQos);
-        valid &=QosList::addQos(&m_QosList,PID_PARTICIPANT_GUID,this->m_guid);
-        for(std::vector<Locator_t>::iterator it=this->m_metatrafficMulticastLocatorList.begin();
-                it!=this->m_metatrafficMulticastLocatorList.end();++it)
-        {
-            valid &=QosList::addQos(&m_QosList,PID_METATRAFFIC_MULTICAST_LOCATOR,*it);
-        }
-        for(std::vector<Locator_t>::iterator it=this->m_metatrafficUnicastLocatorList.begin();
-                it!=this->m_metatrafficUnicastLocatorList.end();++it)
-        {
-            valid &=QosList::addQos(&m_QosList,PID_METATRAFFIC_UNICAST_LOCATOR,*it);
-        }
-        for(std::vector<Locator_t>::iterator it=this->m_defaultUnicastLocatorList.begin();
-                it!=this->m_defaultUnicastLocatorList.end();++it)
-        {
-            valid &=QosList::addQos(&m_QosList,PID_DEFAULT_UNICAST_LOCATOR,*it);
-        }
-        for(std::vector<Locator_t>::iterator it=this->m_defaultMulticastLocatorList.begin();
-                it!=this->m_defaultMulticastLocatorList.end();++it)
-        {
-            valid &=QosList::addQos(&m_QosList,PID_DEFAULT_MULTICAST_LOCATOR,*it);
-        }
-        valid &=QosList::addQos(&m_QosList,PID_PARTICIPANT_LEASE_DURATION,this->m_leaseDuration);
-        valid &=QosList::addQos(&m_QosList,PID_BUILTIN_ENDPOINT_SET,(uint32_t)this->m_availableBuiltinEndpoints);
-        valid &=QosList::addQos(&m_QosList,PID_ENTITY_NAME,this->m_participantName);
-
-        if(this->m_userData.size()>0)
-            valid &=QosList::addQos(&m_QosList,PID_USER_DATA,this->m_userData);
-
-        if(this->m_properties.properties.size()>0)
-            valid &= QosList::addQos(&m_QosList,PID_PROPERTY_LIST,this->m_properties);
-
-        if(!this->identity_token_.class_id().empty())
-            valid &= QosList::addQos(&m_QosList,PID_IDENTITY_TOKEN,this->identity_token_);
-
-        //FIXME: ADD STATIC INFO.
-        //		if(this.use_STATIC_EndpointDiscoveryProtocol)
-        //			valid&= this->addStaticEDPInfo();
-
-        if(valid)
-            m_hasChanged = false;
-        return valid;
+        ParameterProtocolVersion_t* p = new ParameterProtocolVersion_t(PID_PROTOCOL_VERSION,4);
+        p->protocolVersion = this->m_protocolVersion;
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
-    return true;
+    {
+        ParameterVendorId_t*p = new ParameterVendorId_t(PID_VENDORID,4);
+        p->vendorId[0] = this->m_VendorId[0];
+        p->vendorId[1] = this->m_VendorId[1];
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+    if(this->m_expectsInlineQos)
+    {
+        ParameterBool_t * p = new ParameterBool_t(PID_EXPECTS_INLINE_QOS, PARAMETER_BOOL_LENGTH, m_expectsInlineQos);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+    {
+        ParameterGuid_t* p = new ParameterGuid_t(PID_PARTICIPANT_GUID, PARAMETER_GUID_LENGTH, m_guid);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+    for(std::vector<Locator_t>::iterator it=this->m_metatrafficMulticastLocatorList.begin();
+            it!=this->m_metatrafficMulticastLocatorList.end();++it)
+    {
+        ParameterLocator_t* p = new ParameterLocator_t(PID_METATRAFFIC_MULTICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, *it);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+    for(std::vector<Locator_t>::iterator it=this->m_metatrafficUnicastLocatorList.begin();
+            it!=this->m_metatrafficUnicastLocatorList.end();++it)
+    {
+        ParameterLocator_t* p = new ParameterLocator_t(PID_METATRAFFIC_UNICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, *it);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+    for(std::vector<Locator_t>::iterator it=this->m_defaultUnicastLocatorList.begin();
+            it!=this->m_defaultUnicastLocatorList.end();++it)
+    {
+        ParameterLocator_t* p = new ParameterLocator_t(PID_DEFAULT_UNICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, *it);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+    for(std::vector<Locator_t>::iterator it=this->m_defaultMulticastLocatorList.begin();
+            it!=this->m_defaultMulticastLocatorList.end();++it)
+    {
+        ParameterLocator_t* p = new ParameterLocator_t(PID_DEFAULT_MULTICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, *it);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+    {
+        ParameterTime_t* p = new ParameterTime_t(PID_PARTICIPANT_LEASE_DURATION, PARAMETER_TIME_LENGTH);
+        p->time = m_leaseDuration;
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+    {
+        ParameterBuiltinEndpointSet_t* p = new ParameterBuiltinEndpointSet_t(PID_BUILTIN_ENDPOINT_SET, PARAMETER_BUILTINENDPOINTSET_LENGTH);
+        p->endpointSet = m_availableBuiltinEndpoints;
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+    {
+        ParameterString_t* p = new ParameterString_t(PID_ENTITY_NAME, 0, m_participantName);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+
+    if(this->m_userData.size()>0)
+    {
+        UserDataQosPolicy* p = new UserDataQosPolicy();
+        p->setDataVec(m_userData);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+
+    if(this->m_properties.properties.size()>0)
+    {
+        ParameterPropertyList_t* p = new ParameterPropertyList_t(m_properties);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+
+    if(!this->identity_token_.class_id().empty())
+    {
+		ParameterToken_t* p = new ParameterToken_t(PID_IDENTITY_TOKEN, 0);
+        p->token = identity_token_;
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+
+    return parameter_list;
 }
 
 bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 {
-    if(ParameterList::readParameterListfromCDRMsg(msg, &m_QosList.allQos, NULL, true) > 0)
+    ParameterList_t parameter_list;
+
+    if(ParameterList::readParameterListfromCDRMsg(msg, &parameter_list, NULL, true) > 0)
     {
-        for(std::vector<Parameter_t*>::iterator it = m_QosList.allQos.m_parameters.begin();
-                it!=m_QosList.allQos.m_parameters.end();++it)
+        for(std::vector<Parameter_t*>::iterator it = parameter_list.m_parameters.begin();
+                it!=parameter_list.m_parameters.end();++it)
         {
             switch((*it)->Pid)
             {
@@ -345,9 +392,6 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
         m_leaseDuration = Duration_t();
         isAlive = true;
         identity_token_ = IdentityToken();
-        m_QosList.allQos.deleteParams();
-        m_QosList.allQos.resetList();
-        m_QosList.inlineQos.resetList();
         m_properties.properties.clear();
         m_properties.length = 0;
         m_userData.clear();

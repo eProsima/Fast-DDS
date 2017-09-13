@@ -105,7 +105,7 @@ public:
      * @param a_change Pointer of the change to add.
      * @return True if added.
      */
-    bool change_received(CacheChange_t* a_change, std::unique_lock<std::recursive_mutex> &lock);
+    bool change_received(CacheChange_t* a_change);
 
     /**
      * Read the next unread CacheChange_t from the history

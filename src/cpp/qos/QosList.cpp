@@ -31,7 +31,6 @@ QosList_t::QosList_t()
 
 QosList_t::~QosList_t()
 {
-	this->allQos.deleteParams();
 }
 
 bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	std::string& string_in)

@@ -150,9 +150,6 @@ bool WLP::createEndpoints()
 
 bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
-    std::lock_guard<std::recursive_mutex> guard2(*pdata->mp_mutex);
-    logInfo(RTPS_LIVELINESS,"For remote RTPSParticipant "<<pdata->m_guid);
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t partdet = endp;
     uint32_t auxendp = endp;
@@ -173,7 +170,6 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
         watt.endpoint.topicKind = WITH_KEY;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.endpoint.reliabilityKind = RELIABLE;
-        pdata->m_builtinWriters.push_back(watt);
         mp_builtinReader->matched_writer_add(watt);
     }
     auxendp = endp;
@@ -192,7 +188,6 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
         ratt.endpoint.topicKind = WITH_KEY;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
-        pdata->m_builtinReaders.push_back(ratt);
         mp_builtinWriter->matched_reader_add(ratt);
     }
     return true;
@@ -200,26 +195,46 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
-    std::lock_guard<std::recursive_mutex> guard2(*pdata->mp_mutex);
     logInfo(RTPS_LIVELINESS,"for RTPSParticipant: "<<pdata->m_guid);
-    for(auto it = pdata->m_builtinReaders.begin();
-            it!=pdata->m_builtinReaders.end();++it)
+    uint32_t endp = pdata->m_availableBuiltinEndpoints;
+    uint32_t partdet = endp;
+    uint32_t auxendp = endp;
+    //TODO Hacer el check con RTI y solo añadirlo cuando el vendor ID sea RTI.
+    partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
+    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
+    //auxendp = 1;
+    //FIXME: WRITERLIVELINESS PUT THIS BACK TO THE ORIGINAL LINE
+
+    if((auxendp!=0 || partdet!=0) && this->mp_builtinReader!=nullptr)
     {
-        if((*it).guid.entityId == c_EntityId_ReaderLiveliness && this->mp_builtinWriter !=nullptr)
-        {
-            mp_builtinWriter->matched_reader_remove(*it);
-            break;
-        }
+        logInfo(RTPS_LIVELINESS,"Adding remote writer to my local Builtin Reader");
+        RemoteWriterAttributes watt;
+        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        watt.guid.entityId = c_EntityId_WriterLiveliness;
+        watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+        watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        watt.endpoint.topicKind = WITH_KEY;
+        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+        watt.endpoint.reliabilityKind = RELIABLE;
+        mp_builtinReader->matched_writer_remove(watt);
     }
-    for(auto it = pdata->m_builtinWriters.begin();
-            it!=pdata->m_builtinWriters.end();++it)
+    auxendp = endp;
+    auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+    //auxendp = 1;
+    //FIXME: WRITERLIVELINESS PUT THIS BACK TO THE ORIGINAL LINE
+    if((auxendp!=0 || partdet!=0) && this->mp_builtinWriter!=nullptr)
     {
-        if((*it).guid.entityId == c_EntityId_WriterLiveliness && this->mp_builtinReader !=nullptr)
-        {
-            mp_builtinReader->matched_writer_remove(*it);
-            break;
-        }
+        logInfo(RTPS_LIVELINESS,"Adding remote reader to my local Builtin Writer");
+        RemoteReaderAttributes ratt;
+        ratt.expectsInlineQos = false;
+        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        ratt.guid.entityId = c_EntityId_ReaderLiveliness;
+        ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+        ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.topicKind = WITH_KEY;
+        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+        ratt.endpoint.reliabilityKind = RELIABLE;
+        mp_builtinWriter->matched_reader_remove(ratt);
     }
 }
 
@@ -285,21 +300,21 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
     logInfo(RTPS_LIVELINESS,W->getGuid().entityId
             <<" from Liveliness Protocol");
     t_WIT wToEraseIt;
-    ParticipantProxyData* pdata = nullptr;
-    WriterProxyData* wdata = nullptr;
-    if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(W->getGuid(),&wdata, &pdata))
+    ParticipantProxyData pdata;
+    WriterProxyData wdata;
+    if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(W->getGuid(), wdata, pdata))
     {
         bool found = false;
-        if(wdata->m_qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
+        if(wdata.m_qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
         {
             m_minAutomatic_MilliSec = std::numeric_limits<double>::max();
             for(t_WIT it= m_livAutomaticWriters.begin();it!=m_livAutomaticWriters.end();++it)
             {
-                ParticipantProxyData* pdata2 = nullptr;
-                WriterProxyData* wdata2;
-                if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(),&wdata2, &pdata2))
+                ParticipantProxyData pdata2;
+                WriterProxyData wdata2;
+                if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), wdata2, pdata2))
                 {
-                    double mintimeWIT(TimeConv::Time_t2MilliSecondsDouble(wdata2->m_qos.m_liveliness.announcement_period));
+                    double mintimeWIT(TimeConv::Time_t2MilliSecondsDouble(wdata2.m_qos.m_liveliness.announcement_period));
                     if(W->getGuid().entityId == (*it)->getGuid().entityId)
                     {
                         found = true;
@@ -328,16 +343,16 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
                 }
             }
         }
-        else if(wdata->m_qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+        else if(wdata.m_qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
         {
             m_minManRTPSParticipant_MilliSec = std::numeric_limits<double>::max();
             for(t_WIT it= m_livManRTPSParticipantWriters.begin();it!=m_livManRTPSParticipantWriters.end();++it)
             {
-                ParticipantProxyData* pdata2 = nullptr;
-                WriterProxyData* wdata2 = nullptr;
-                if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(),&wdata2, &pdata2))
+                ParticipantProxyData pdata2;
+                WriterProxyData wdata2;
+                if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), wdata2, pdata2))
                 {
-                    double mintimeWIT(TimeConv::Time_t2MilliSecondsDouble(wdata2->m_qos.m_liveliness.announcement_period));
+                    double mintimeWIT(TimeConv::Time_t2MilliSecondsDouble(wdata2.m_qos.m_liveliness.announcement_period));
                     if(W->getGuid().entityId == (*it)->getGuid().entityId)
                     {
                         found = true;

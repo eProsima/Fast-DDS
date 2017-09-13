@@ -38,31 +38,22 @@ class ParameterList_t
 
         ParameterList_t() {}
 
-        ParameterList_t(const ParameterList_t& plist) : m_parameters(plist.m_parameters) {}
+        ParameterList_t(ParameterList_t&& plist) : m_parameters(std::move(plist.m_parameters)) {}
 
-        virtual ~ParameterList_t() {}
-
-        /**
-         * Delete all parameters in the list.
-         */
-        void deleteParams()
+        virtual ~ParameterList_t()
         {
             for(std::vector<Parameter_t*>::iterator it = m_parameters.begin();
                     it!=m_parameters.end();++it)
                 delete(*it);
-            resetList();
-        }
-
-        /**
-         * Reset the list of parameters (without deleting them, since they can be in use in another list).
-         */
-        void resetList()
-        {
             m_parameters.clear();
         }
 
         //! Vector of the pointers to the parameters.
         std::vector<Parameter_t*> m_parameters;
+
+    private:
+
+        ParameterList_t(const ParameterList_t& plist) NON_COPYABLE_CXX11;
 };
 
 /**

@@ -39,15 +39,15 @@ namespace rtps {
 
 
 RemoteParticipantLeaseDuration::RemoteParticipantLeaseDuration(PDPSimple* p_SPDP,
-		ParticipantProxyData* pdata,
-		double interval):
-				TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
-                p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval, TimedEvent::ON_SUCCESS),
-				mp_PDP(p_SPDP),
-				mp_participantProxyData(pdata)
-{
+        ParticipantProxyData* pdata,
+        double interval):
+    TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
+            p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval, TimedEvent::ON_SUCCESS),
+    mp_PDP(p_SPDP),
+    mp_participantProxyData(pdata)
+    {
 
-}
+    }
 
 RemoteParticipantLeaseDuration::~RemoteParticipantLeaseDuration()
 {
@@ -60,7 +60,7 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
     // Unused in release mode.
     (void)msg;
 
-	if(code == EVENT_SUCCESS)
+    if(code == EVENT_SUCCESS)
     {
         logInfo(RTPS_LIVELINESS,"RTPSParticipant no longer ALIVE, trying to remove: "
                 << mp_participantProxyData->m_guid);
@@ -70,25 +70,23 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
         info.m_guid = mp_participantProxyData->m_guid;
 
         // Set pointer to null because this call will be delete itself.
-        mp_participantProxyData->mp_mutex->lock();
         mp_participantProxyData->mp_leaseDurationTimer = nullptr;
-        mp_participantProxyData->mp_mutex->unlock();
         mp_PDP->removeRemoteParticipant(mp_participantProxyData->m_guid);
 
         if(mp_PDP->getRTPSParticipant()->getListener()!=nullptr)
             mp_PDP->getRTPSParticipant()->getListener()->onRTPSParticipantDiscovery(
                     mp_PDP->getRTPSParticipant()->getUserRTPSParticipant(),
                     info);
-	}
-	else if(code == EVENT_ABORT)
-	{
-		logInfo(RTPS_LIVELINESS," Stopped for "<<mp_participantProxyData->m_participantName
-				<< " with ID: "<< mp_participantProxyData->m_guid.guidPrefix);
-	}
-	else
-	{
-		logInfo(RTPS_LIVELINESS,"message: " <<msg);
-	}
+    }
+    else if(code == EVENT_ABORT)
+    {
+        logInfo(RTPS_LIVELINESS," Stopped for "<<mp_participantProxyData->m_participantName
+                << " with ID: "<< mp_participantProxyData->m_guid.guidPrefix);
+    }
+    else
+    {
+        logInfo(RTPS_LIVELINESS,"message: " <<msg);
+    }
 }
 
 }

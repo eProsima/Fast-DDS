@@ -67,6 +67,9 @@ class ParticipantProxyData
     public:
 
         ParticipantProxyData();
+
+        ParticipantProxyData(const ParticipantProxyData& pdata);
+
         virtual ~ParticipantProxyData();
 
         //!Protocol version
@@ -100,25 +103,16 @@ class ParticipantProxyData
         //!
         bool isAlive;
         //!
-        QosList_t m_QosList;
-        //!
         ParameterPropertyList_t m_properties;
         //!
         std::vector<octet> m_userData;
-        //!
-        bool m_hasChanged;
         //!
         RemoteParticipantLeaseDuration* mp_leaseDurationTimer;
         //!
         std::vector<ReaderProxyData*> m_readers;
         //!
         std::vector<WriterProxyData*> m_writers;
-        //!
-        std::vector<RemoteReaderAttributes> m_builtinReaders;
-        //!
-        std::vector<RemoteWriterAttributes> m_builtinWriters;
 
-        std::recursive_mutex* mp_mutex;
         /**
          * Initialize the object with the data of the lcoal RTPSParticipant.
          * @param part Pointer to the RTPSParticipant.
@@ -136,7 +130,8 @@ class ParticipantProxyData
          * Convert information to parameter list.
          * @return True on success
          */
-        bool toParameterList();
+        ParameterList_t AllQostoParameterList();
+
         /**
          * Read the parameter list from a recevied CDRMessage_t
          * @return True on success

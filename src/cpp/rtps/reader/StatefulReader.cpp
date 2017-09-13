@@ -248,7 +248,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
             pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
         }
 
-        if(!change_received(change_to_add, pWP, lock))
+        if(!change_received(change_to_add, pWP))
         {
             logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "<<change_to_add->sequenceNumber);
             releaseCache(change_to_add);
@@ -315,7 +315,7 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
 
             if(change_completed != nullptr)
             {
-                if(!change_received(change_completed, pWP, lock))
+                if(!change_received(change_completed, pWP))
                 {
                     logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long());
 
@@ -468,7 +468,7 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change, WriterPr
     return false;
 }
 
-bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox, std::unique_lock<std::recursive_mutex> &lock)
+bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox)
 {
 
 
@@ -516,9 +516,7 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
                 {
                     if(!ch_to_give->isRead)
                     {
-                        lock.unlock();
                         getListener()->onNewCacheChangeAdded((RTPSReader*)this,ch_to_give);
-                        lock.lock();
                     }
                 }
 
