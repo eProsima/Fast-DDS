@@ -471,6 +471,7 @@ bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, const size_t 
 #if IS_OPENSSL_1_1
     EVP_MD_CTX_free(ctx);
 #else
+    EVP_MD_CTX_cleanup(ctx);
     free(ctx);
 #endif
 
@@ -521,6 +522,7 @@ bool check_sign_sha256(X509* certificate, const unsigned char* data, const size_
 #if IS_OPENSSL_1_1
     EVP_MD_CTX_free(ctx);
 #else
+    EVP_MD_CTX_cleanup(ctx);
     free(ctx);
 #endif
 

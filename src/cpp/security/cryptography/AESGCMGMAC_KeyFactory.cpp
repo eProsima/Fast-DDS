@@ -205,6 +205,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
 #if IS_OPENSSL_1_1
             EVP_MD_CTX_free(ctx);
 #else
+            EVP_MD_CTX_cleanup(ctx);
             free(ctx);
 #endif
             return nullptr;
@@ -214,7 +215,8 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
 #if IS_OPENSSL_1_1
         EVP_MD_CTX_free(ctx);
 #else
-            free(ctx);
+        EVP_MD_CTX_cleanup(ctx);
+        free(ctx);
 #endif
 
         //Repeat process - concatenation is used to store the sequence to generate master_sender_key
@@ -250,6 +252,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
 #if IS_OPENSSL_1_1
             EVP_MD_CTX_free(ctx);
 #else
+            EVP_MD_CTX_cleanup(ctx);
             free(ctx);
 #endif
             return nullptr;
@@ -257,9 +260,10 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         EVP_DigestSignFinal(ctx, buffer.master_sender_key.data(), &length);
         EVP_PKEY_free(key);
 #if IS_OPENSSL_1_1
-            EVP_MD_CTX_free(ctx);
+        EVP_MD_CTX_free(ctx);
 #else
-            free(ctx);
+        EVP_MD_CTX_cleanup(ctx);
+        free(ctx);
 #endif
 
         buffer.sender_key_id.fill(0); //Specified by standard
