@@ -34,7 +34,7 @@
 using namespace eprosima::fastrtps::rtps;
 
 
-ReaderProxy::ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW) :
+ReaderProxy::ReaderProxy(const RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW) :
     m_att(rdata), mp_SFW(SW),
     mp_nackResponse(nullptr), mp_nackSupression(nullptr), mp_initialHeartbeat(nullptr), m_lastAcknackCount(0),
     mp_mutex(new std::recursive_mutex()), lastNackfragCount_(0)

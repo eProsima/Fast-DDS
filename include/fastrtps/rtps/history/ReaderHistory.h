@@ -72,7 +72,7 @@ public:
      * @param a_guid Pointer to the target guid to search for.
      * @return True if succesful, even if no changes have been removed.
      * */
-    RTPS_DllAPI bool remove_changes_with_guid(GUID_t* a_guid);
+    RTPS_DllAPI bool remove_changes_with_guid(const GUID_t& a_guid);
     /**
      * Sort the CacheChange_t from the History.
      */

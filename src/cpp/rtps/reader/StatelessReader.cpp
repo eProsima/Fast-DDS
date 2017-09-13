@@ -50,7 +50,7 @@ StatelessReader::StatelessReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
 
 
 
-bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
+bool StatelessReader::matched_writer_add(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
@@ -63,7 +63,7 @@ bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
     m_acceptMessagesFromUnkownWriters = false;
     return true;
 }
-bool StatelessReader::matched_writer_remove(RemoteWriterAttributes& wdata)
+bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
@@ -79,7 +79,7 @@ bool StatelessReader::matched_writer_remove(RemoteWriterAttributes& wdata)
     return false;
 }
 
-bool StatelessReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
+bool StatelessReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)

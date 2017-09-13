@@ -60,19 +60,19 @@ class StatelessWriter : public RTPSWriter
      * @param ratt Attributes of the reader to add.
      * @return True if added.
      */
-    bool matched_reader_add(RemoteReaderAttributes& ratt);
+    bool matched_reader_add(const RemoteReaderAttributes& ratt);
     /**
      * Remove a matched reader.
      * @param ratt Attributes of the reader to remove.
      * @return True if removed.
      */
-    bool matched_reader_remove(RemoteReaderAttributes& ratt);
+    bool matched_reader_remove(const RemoteReaderAttributes& ratt);
     /**
      * Tells us if a specific Reader is matched against this writer
      * @param ratt Attributes of the reader to check.
      * @return True if it was matched.
      */
-    bool matched_reader_is_matched(RemoteReaderAttributes& ratt);
+    bool matched_reader_is_matched(const RemoteReaderAttributes& ratt);
     /**
      * Method to indicate that there are changes not sent in some of all ReaderProxy.
      */

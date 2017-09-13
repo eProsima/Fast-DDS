@@ -450,18 +450,21 @@ void WriterProxyData::update(WriterProxyData* wdata)
 
 }
 
-RemoteWriterAttributes& WriterProxyData::toRemoteWriterAttributes()
+RemoteWriterAttributes WriterProxyData::toRemoteWriterAttributes() const
 {
-    m_remoteAtt.guid = m_guid;
-    m_remoteAtt.livelinessLeaseDuration = m_qos.m_liveliness.lease_duration;
-    m_remoteAtt.ownershipStrength = (uint16_t)m_qos.m_ownershipStrength.value;
-    m_remoteAtt.endpoint.durabilityKind = m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS ? TRANSIENT_LOCAL : VOLATILE;
-    m_remoteAtt.endpoint.endpointKind = WRITER;
-    m_remoteAtt.endpoint.topicKind = m_topicKind;
-    m_remoteAtt.endpoint.reliabilityKind = m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    m_remoteAtt.endpoint.unicastLocatorList = this->m_unicastLocatorList;
-    m_remoteAtt.endpoint.multicastLocatorList = this->m_multicastLocatorList;
-    return m_remoteAtt;
+    RemoteWriterAttributes remoteAtt;
+
+    remoteAtt.guid = m_guid;
+    remoteAtt.livelinessLeaseDuration = m_qos.m_liveliness.lease_duration;
+    remoteAtt.ownershipStrength = (uint16_t)m_qos.m_ownershipStrength.value;
+    remoteAtt.endpoint.durabilityKind = m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS ? TRANSIENT_LOCAL : VOLATILE;
+    remoteAtt.endpoint.endpointKind = WRITER;
+    remoteAtt.endpoint.topicKind = m_topicKind;
+    remoteAtt.endpoint.reliabilityKind = m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
+    remoteAtt.endpoint.unicastLocatorList = this->m_unicastLocatorList;
+    remoteAtt.endpoint.multicastLocatorList = this->m_multicastLocatorList;
+
+    return remoteAtt;
 }
 
 }

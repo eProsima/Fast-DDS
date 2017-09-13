@@ -54,18 +54,22 @@ class ReaderTimes
 class  ReaderAttributes
 {
     public:
-        ReaderAttributes()
+
+        ReaderAttributes() : expectsInlineQos(false)
         {
             endpoint.endpointKind = READER;
             endpoint.durabilityKind = VOLATILE;
             endpoint.reliabilityKind = BEST_EFFORT;
-            expectsInlineQos = false;
         };
+
         virtual ~ReaderAttributes(){};
+
         //!Attributes of the associated endpoint.
         EndpointAttributes endpoint;
+
         //!Times associated with this reader.
         ReaderTimes times;
+
         //!Indicates if the reader expects Inline qos, default value 0.
         bool expectsInlineQos;
 };
@@ -83,16 +87,21 @@ class  RemoteWriterAttributes
             livelinessLeaseDuration = c_TimeInfinite;
             ownershipStrength = 0;
         };
+
         virtual ~RemoteWriterAttributes()
         {
 
         };
+
         //!Attributes of the associated endpoint.
         EndpointAttributes endpoint;
+
         //!GUID_t of the writer, can be unknown if the reader is best effort.
         GUID_t guid;
+
         //!Liveliness lease duration, default value c_TimeInfinite.
         Duration_t livelinessLeaseDuration;
+
         //!Ownership Strength of the associated writer.
         uint16_t ownershipStrength;
 };

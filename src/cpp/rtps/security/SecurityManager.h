@@ -363,7 +363,7 @@ class SecurityManager
 
             DatawriterCryptoHandle* writer_handle;
 
-            std::map<GUID_t, DatareaderCryptoHandle*> associated_readers;
+            std::map<GUID_t, std::tuple<ReaderProxyData, DatareaderCryptoHandle*>> associated_readers;
         };
 
         struct DatareaderAssociations
@@ -372,7 +372,7 @@ class SecurityManager
 
             DatareaderCryptoHandle* reader_handle;
 
-            std::map<GUID_t, DatawriterCryptoHandle*> associated_writers;
+            std::map<GUID_t, std::tuple<WriterProxyData, DatawriterCryptoHandle*>> associated_writers;
         };
 
         // TODO(Ricardo) Temporal. Store individual in FastRTPS code.

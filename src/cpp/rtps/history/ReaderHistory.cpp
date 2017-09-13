@@ -123,7 +123,7 @@ bool ReaderHistory::remove_change(CacheChange_t* a_change)
     return false;
 }
 
-bool ReaderHistory::remove_changes_with_guid(GUID_t* a_guid)
+bool ReaderHistory::remove_changes_with_guid(const GUID_t& a_guid)
 {
     std::vector<CacheChange_t*> changes_to_remove;
 
@@ -135,19 +135,14 @@ bool ReaderHistory::remove_changes_with_guid(GUID_t* a_guid)
 
     {//Lock scope
         std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-        if(a_guid == nullptr)
-        {
-            logError(RTPS_HISTORY, "Target Guid for Cachechange deletion is not valid");
-            return false;
-        }
         for(std::vector<CacheChange_t*>::iterator chit = m_changes.begin(); chit!=m_changes.end();++chit)
         {
             bool matches = true;
-            unsigned int size = a_guid->guidPrefix.size;
-            if( !std::equal( (*chit)->writerGUID.guidPrefix.value , (*chit)->writerGUID.guidPrefix.value + size -1, a_guid->guidPrefix.value ) )
+            unsigned int size = a_guid.guidPrefix.size;
+            if( !std::equal( (*chit)->writerGUID.guidPrefix.value , (*chit)->writerGUID.guidPrefix.value + size -1, a_guid.guidPrefix.value ) )
                 matches = false;
-            size = a_guid->entityId.size;
-            if( !std::equal( (*chit)->writerGUID.entityId.value , (*chit)->writerGUID.entityId.value + size -1, a_guid->entityId.value ) )
+            size = a_guid.entityId.size;
+            if( !std::equal( (*chit)->writerGUID.entityId.value , (*chit)->writerGUID.entityId.value + size -1, a_guid.entityId.value ) )
                     matches = false;
             if(matches)
                 changes_to_remove.push_back( (*chit) );
