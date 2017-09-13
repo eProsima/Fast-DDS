@@ -177,10 +177,14 @@ class EDP
          * @param rdata Pointer to the ReaderProxyData object.
          * @return True.
          */
-        bool pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata);
+        bool pairing_reader_proxy_with_any_local_writer(ParticipantProxyData* pdata, ReaderProxyData* rdata);
 
 #if HAVE_SECURITY
-        bool pairingLaterReaderProxy(const GUID_t local_writer, ParticipantProxyData& pdata, ReaderProxyData& rdata);
+        bool pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, ParticipantProxyData& pdata,
+                ReaderProxyData& rdata);
+
+        bool pairing_remote_reader_with_local_writer_after_crypto(const GUID_t& local_writer,
+                const ReaderProxyData& remote_reader_data);
 #endif
 
         /**
@@ -189,10 +193,14 @@ class EDP
          * @param wdata Pointer to the WriterProxyData.
          * @return True.
          */
-        bool pairingWriterProxy(ParticipantProxyData* pdata, WriterProxyData* wdata);
+        bool pairing_writer_proxy_with_any_local_reader(ParticipantProxyData* pdata, WriterProxyData* wdata);
 
 #if HAVE_SECURITY
-        bool pairingLaterWriterProxy(const GUID_t local_reader, ParticipantProxyData& pdata, WriterProxyData& wdata);
+        bool pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, ParticipantProxyData& pdata,
+                WriterProxyData& wdata);
+
+        bool pairing_remote_writer_with_local_reader_after_crypto(const GUID_t& local_reader,
+                const WriterProxyData& remote_writer_data);
 #endif
 
         //! Pointer to the PDPSimple object that contains the endpoint discovery protocol.
@@ -214,7 +222,6 @@ class EDP
          * @return True
          */
         bool pairingWriter(RTPSWriter* W);
-
 };
 
 }

@@ -63,7 +63,7 @@ namespace eprosima
                      * @param watt RemoteWriterAttributes.
                      * @param SR Pointer to the StatefulReader.
                      */
-                    WriterProxy(RemoteWriterAttributes& watt, StatefulReader* SR);
+                    WriterProxy(const RemoteWriterAttributes& watt, StatefulReader* SR);
 
                     /**
                      * Get the maximum sequenceNumber received from this Writer.

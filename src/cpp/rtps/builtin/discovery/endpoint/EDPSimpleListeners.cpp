@@ -83,7 +83,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
                 }
                 wdata->isAlive(true);
                 pdata->mp_mutex->unlock();
-                mp_SEDP->pairingWriterProxy(pdata, wdata);
+                mp_SEDP->pairing_writer_proxy_with_any_local_reader(pdata, wdata);
             }
             else if(pdata == nullptr) //RTPSParticipant NOT FOUND
             {
@@ -94,7 +94,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
                 pdata->mp_mutex->lock();
                 wdata->update(&writerProxyData);
                 pdata->mp_mutex->unlock();
-                mp_SEDP->pairingWriterProxy(pdata, wdata);
+                mp_SEDP->pairing_writer_proxy_with_any_local_reader(pdata, wdata);
             }
 
             //Call the slave, if it exists
@@ -222,7 +222,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
                 }
                 rdata->isAlive(true);
                 pdata->mp_mutex->unlock();
-                mp_SEDP->pairingReaderProxy(pdata, rdata);
+                mp_SEDP->pairing_reader_proxy_with_any_local_writer(pdata, rdata);
             }
             else if(pdata == nullptr) //RTPSParticipant NOT FOUND
             {
@@ -233,7 +233,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
                 pdata->mp_mutex->lock();
                 rdata->update(&readerProxyData);
                 pdata->mp_mutex->unlock();
-                mp_SEDP->pairingReaderProxy(pdata, rdata);
+                mp_SEDP->pairing_reader_proxy_with_any_local_writer(pdata, rdata);
             }
 
             //Call the slave, if it exists

@@ -37,11 +37,17 @@ class EDP
     public:
 
 #if HAVE_SECURITY
-        MOCK_METHOD3(pairingLaterReaderProxy, bool(const GUID_t local_writer, ParticipantProxyData& pdata,
+        MOCK_METHOD3(pairing_reader_proxy_with_local_writer, bool(const GUID_t& local_writer, ParticipantProxyData& pdata,
                     ReaderProxyData& rdata));
 
-        MOCK_METHOD3(pairingLaterWriterProxy, bool(const GUID_t local_reader, ParticipantProxyData& pdata,
+        MOCK_METHOD2(pairing_remote_reader_with_local_writer_after_crypto, bool(const GUID_t& local_writer,
+                const ReaderProxyData& remote_reader_data));
+
+        MOCK_METHOD3(pairing_writer_proxy_with_local_reader, bool(const GUID_t& local_reader, ParticipantProxyData& pdata,
                 WriterProxyData& wdata));
+
+        MOCK_METHOD2(pairing_remote_writer_with_local_reader_after_crypto, bool(const GUID_t& local_reader,
+                const WriterProxyData& remote_writer_data));
 #endif
 };
 

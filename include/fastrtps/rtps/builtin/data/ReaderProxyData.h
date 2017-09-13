@@ -274,10 +274,7 @@ class ReaderProxyData
          * Convert the ProxyData information to RemoteReaderAttributes object. 
          * @return Reference to the RemoteReaderAttributes object.
          */
-        RemoteReaderAttributes& toRemoteReaderAttributes();
-
-        //!Remote Attributes associated with this proxy data.
-        RemoteReaderAttributes m_remoteAtt;
+        RemoteReaderAttributes toRemoteReaderAttributes() const;
 
     private:
 

@@ -28,7 +28,7 @@ namespace fastrtps{
 namespace rtps {
 
 
-ReaderProxyData::ReaderProxyData():
+ReaderProxyData::ReaderProxyData() :
     m_expectsInlineQos(false),
     m_userDefinedId(0),
     m_isAlive(true),
@@ -44,6 +44,7 @@ ReaderProxyData::~ReaderProxyData()
 }
 
 ReaderProxyData::ReaderProxyData(const ReaderProxyData& readerInfo) :
+    m_expectsInlineQos(readerInfo.m_expectsInlineQos),
     m_guid(readerInfo.m_guid),
     m_unicastLocatorList(readerInfo.m_unicastLocatorList),
     m_multicastLocatorList(readerInfo.m_multicastLocatorList),
@@ -60,6 +61,7 @@ ReaderProxyData::ReaderProxyData(const ReaderProxyData& readerInfo) :
 
 ReaderProxyData& ReaderProxyData::operator=(const ReaderProxyData& readerInfo)
 {
+    m_expectsInlineQos = readerInfo.m_expectsInlineQos;
     m_guid = readerInfo.m_guid;
     m_unicastLocatorList = readerInfo.m_unicastLocatorList;
     m_multicastLocatorList = readerInfo.m_multicastLocatorList;
@@ -448,17 +450,20 @@ void ReaderProxyData::copy(ReaderProxyData* rdata)
     m_topicKind = rdata->m_topicKind;
 }
 
-RemoteReaderAttributes& ReaderProxyData::toRemoteReaderAttributes()
+RemoteReaderAttributes ReaderProxyData::toRemoteReaderAttributes() const
 {
-    m_remoteAtt.guid = m_guid;
-    m_remoteAtt.expectsInlineQos = this->m_expectsInlineQos;
-    m_remoteAtt.endpoint.durabilityKind = m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS ? TRANSIENT_LOCAL : VOLATILE;
-    m_remoteAtt.endpoint.endpointKind = READER;
-    m_remoteAtt.endpoint.topicKind = m_topicKind;
-    m_remoteAtt.endpoint.reliabilityKind = m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    m_remoteAtt.endpoint.unicastLocatorList = this->m_unicastLocatorList;
-    m_remoteAtt.endpoint.multicastLocatorList = this->m_multicastLocatorList;
-    return m_remoteAtt;
+    RemoteReaderAttributes remoteAtt;
+
+    remoteAtt.guid = m_guid;
+    remoteAtt.expectsInlineQos = this->m_expectsInlineQos;
+    remoteAtt.endpoint.durabilityKind = m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS ? TRANSIENT_LOCAL : VOLATILE;
+    remoteAtt.endpoint.endpointKind = READER;
+    remoteAtt.endpoint.topicKind = m_topicKind;
+    remoteAtt.endpoint.reliabilityKind = m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
+    remoteAtt.endpoint.unicastLocatorList = this->m_unicastLocatorList;
+    remoteAtt.endpoint.multicastLocatorList = this->m_multicastLocatorList;
+
+    return remoteAtt;
 }
 
 }

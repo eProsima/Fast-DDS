@@ -269,10 +269,7 @@ class WriterProxyData
          * Convert the ProxyData information to RemoteWriterAttributes object.
          * @return Reference to the RemoteWriterAttributes object.
          */
-        RemoteWriterAttributes& toRemoteWriterAttributes();
-
-        //!Remote Attributes associated with this proxy data.
-        RemoteWriterAttributes m_remoteAtt;
+        RemoteWriterAttributes toRemoteWriterAttributes() const;
 
     private:
 
