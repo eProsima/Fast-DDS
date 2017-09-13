@@ -376,6 +376,7 @@ set(CPACK_COMPONENT_LICENSES_HIDDEN 1)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/C++
     DESTINATION examples/
     COMPONENT examples
+    PATTERN "examples/CMakeLists.txt" EXCLUDE
     )
 
 set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Examples")
