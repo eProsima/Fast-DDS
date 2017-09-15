@@ -22,6 +22,17 @@
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
+
+#include <openssl/opensslv.h>
+
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+#define IS_OPENSSL_1_1 1
+#define OPENSSL_CONST const
+#else
+#define IS_OPENSSL_1_1 0
+#define OPENSSL_CONST
+#endif
+
 #include <openssl/pem.h>
 #include <openssl/err.h>
 #include <openssl/obj_mac.h>
@@ -128,8 +139,8 @@ bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm
 {
     bool returnedValue = false;
     BUF_MEM* ptr = nullptr;
-    X509_ALGOR* sigalg = nullptr;
-    ASN1_BIT_STRING* sig = nullptr;
+    OPENSSL_CONST X509_ALGOR* sigalg = nullptr;
+    OPENSSL_CONST ASN1_BIT_STRING* sig = nullptr;
 
     BIO *out = BIO_new(BIO_s_mem());
 
@@ -203,7 +214,7 @@ X509_STORE* load_identity_ca(const std::string& identity_ca, bool& there_are_crl
                                     char* ca_subject_name_str = X509_NAME_oneline(ca_subject_name, 0, 0);
                                     assert(ca_subject_name_str != nullptr);
                                     ca_sn = ca_subject_name_str;
-                                    CRYPTO_free(ca_subject_name_str);
+                                    OPENSSL_free(ca_subject_name_str);
                                 }
 
                                 // Retrieve signature algorithm
@@ -309,19 +320,31 @@ bool verify_certificate(X509_STORE* store, X509* cert, const bool there_are_crls
 
     bool returnedValue = false;
 
-    X509_STORE_CTX ctx;
+    X509_STORE_CTX* ctx = X509_STORE_CTX_new();
 
     unsigned long flags = there_are_crls ? X509_V_FLAG_CRL_CHECK : 0;
-    X509_STORE_CTX_init(&ctx, store, cert, NULL);
-    X509_STORE_CTX_set_flags(&ctx, flags | X509_V_FLAG_X509_STRICT |
-            X509_V_FLAG_CHECK_SS_SIGNATURE | X509_V_FLAG_POLICY_CHECK);
+    if(X509_STORE_CTX_init(ctx, store, cert, NULL) > 0)
+    {
+        X509_STORE_CTX_set_flags(ctx, flags | X509_V_FLAG_X509_STRICT |
+                X509_V_FLAG_CHECK_SS_SIGNATURE | X509_V_FLAG_POLICY_CHECK);
 
-    if(X509_verify_cert(&ctx) > 0 && X509_STORE_CTX_get_error(&ctx) == X509_V_OK)
-        returnedValue = true;
+        if(X509_verify_cert(ctx) > 0 && X509_STORE_CTX_get_error(ctx) == X509_V_OK)
+        {
+            returnedValue = true;
+        }
+        else
+        {
+            logWarning(SECURITY_AUTHENTICATION, "Invalidation error of certificate  (" << X509_STORE_CTX_get_error(ctx) << ")");
+        }
+
+        X509_STORE_CTX_cleanup(ctx);
+    }
     else
-        logWarning(SECURITY_AUTHENTICATION, "Invalidation error of certificate  (" << X509_STORE_CTX_get_error(&ctx) << ")");
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Cannot init context for verifying certificate");
+    }
 
-    X509_STORE_CTX_cleanup(&ctx);
+    X509_STORE_CTX_free(ctx);
 
     return returnedValue;
 }
@@ -411,19 +434,24 @@ bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, const size_t 
     assert(data);
 
     bool returnedValue = false;
-    EVP_MD_CTX ctx;
-    EVP_MD_CTX_init(&ctx);
+    EVP_MD_CTX* ctx = 
+#if IS_OPENSSL_1_1
+        EVP_MD_CTX_new();
+#else
+        (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
+#endif
+    EVP_MD_CTX_init(ctx);
 
-    if(EVP_DigestSignInit(&ctx, NULL, EVP_sha256(), NULL, private_key) == 1)
+    if(EVP_DigestSignInit(ctx, NULL, EVP_sha256(), NULL, private_key) == 1)
     {
-        if(EVP_DigestSignUpdate(&ctx, data, data_length) == 1)
+        if(EVP_DigestSignUpdate(ctx, data, data_length) == 1)
         {
             size_t length = 0;
-            if(EVP_DigestSignFinal(&ctx, NULL, &length) == 1 && length > 0)
+            if(EVP_DigestSignFinal(ctx, NULL, &length) == 1 && length > 0)
             {
                 signature.resize(length);
 
-                if(EVP_DigestSignFinal(&ctx, signature.data(), &length) ==  1)
+                if(EVP_DigestSignFinal(ctx, signature.data(), &length) ==  1)
                 {
                     signature.resize(length);
                     returnedValue = true;
@@ -440,7 +468,12 @@ bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, const size_t 
     else
         exception = _SecurityException_(std::string("Cannot init signature (") + std::to_string(ERR_get_error()) + std::string(")"));
 
-    EVP_MD_CTX_cleanup(&ctx);
+#if IS_OPENSSL_1_1
+    EVP_MD_CTX_free(ctx);
+#else
+    EVP_MD_CTX_cleanup(ctx);
+    free(ctx);
+#endif
 
     return returnedValue;
 }
@@ -453,18 +486,23 @@ bool check_sign_sha256(X509* certificate, const unsigned char* data, const size_
 
     bool returnedValue = false;
 
-    EVP_MD_CTX ctx;
-    EVP_MD_CTX_init(&ctx);
+    EVP_MD_CTX* ctx =
+#if IS_OPENSSL_1_1
+        EVP_MD_CTX_new();
+#else
+        (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
+#endif
+    EVP_MD_CTX_init(ctx);
 
     EVP_PKEY* pubkey = X509_get_pubkey(certificate);
-    
+
     if(pubkey != nullptr)
     {
-        if(EVP_DigestVerifyInit(&ctx, NULL, EVP_sha256(), NULL, pubkey) == 1)
+        if(EVP_DigestVerifyInit(ctx, NULL, EVP_sha256(), NULL, pubkey) == 1)
         {
-            if(EVP_DigestVerifyUpdate(&ctx, data, data_length) == 1)
+            if(EVP_DigestVerifyUpdate(ctx, data, data_length) == 1)
             {
-                if(EVP_DigestVerifyFinal(&ctx, signature.data(), signature.size()) == 1)
+                if(EVP_DigestVerifyFinal(ctx, signature.data(), signature.size()) == 1)
                     returnedValue = true;
                 else
                     logWarning(SECURITY_AUTHENTICATION, "Signature verification error (" << ERR_get_error() << ")");
@@ -481,7 +519,12 @@ bool check_sign_sha256(X509* certificate, const unsigned char* data, const size_
     else
         exception = _SecurityException_("Cannot get public key from certificate");
 
-    EVP_MD_CTX_cleanup(&ctx);
+#if IS_OPENSSL_1_1
+    EVP_MD_CTX_free(ctx);
+#else
+    EVP_MD_CTX_cleanup(ctx);
+    free(ctx);
+#endif
 
     return returnedValue;
 }
@@ -647,9 +690,22 @@ bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer,
 
     if(dh != nullptr)
     {
+#if IS_OPENSSL_1_1
+        const BIGNUM* p = nullptr;
+        const BIGNUM* q = nullptr;
+        const BIGNUM* g = nullptr;
+        DH_get0_pqg(dh, &p, &q, &g);
+
+        const BIGNUM* pub_key = nullptr;
+        const BIGNUM* priv_key = nullptr;
+        DH_get0_key(dh, &pub_key, &priv_key);
+
+#else
         const BIGNUM* p = dh->p;
         const BIGNUM* g = dh->g;
         const BIGNUM* pub_key = dh->pub_key;
+#endif
+
         size_t len = BN_serialized_size(p);
         len += BN_serialized_size(g);
         len += BN_serialized_size(pub_key);
@@ -688,12 +744,31 @@ EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer, SecurityExcep
     {
         const unsigned char* pointer = buffer.data();
 
-        if((pointer = BN_deserialize(&dh->p, buffer.data(), pointer, exception)) != nullptr)
+#if IS_OPENSSL_1_1
+        BIGNUM* p_ptr = BN_new();
+        BIGNUM** p = &p_ptr;
+        BIGNUM* g_ptr = BN_new();
+        BIGNUM** g = &g_ptr;
+        BIGNUM* pub_key_ptr = BN_new();
+        BIGNUM** pub_key = &pub_key_ptr;
+#else
+        BIGNUM** p = &dh->p;
+        BIGNUM** g = &dh->g;
+        BIGNUM** pub_key = &dh->pub_key;
+#endif
+
+        if((pointer = BN_deserialize(p, buffer.data(), pointer, exception)) != nullptr)
         {
-            if((pointer = BN_deserialize(&dh->g, buffer.data(), pointer, exception)) != nullptr)
+            if((pointer = BN_deserialize(g, buffer.data(), pointer, exception)) != nullptr)
             {
-                if((pointer = BN_deserialize(&dh->pub_key, buffer.data(), pointer, exception)) != nullptr)
+#if IS_OPENSSL_1_1
+                DH_set0_pqg(dh, *p, NULL, *g);
+#endif
+                if((pointer = BN_deserialize(pub_key, buffer.data(), pointer, exception)) != nullptr)
                 {
+#if IS_OPENSSL_1_1
+                    DH_set0_key(dh, *pub_key, NULL);
+#endif
                     EVP_PKEY* key = EVP_PKEY_new();
 
                     if(key != nullptr)
@@ -730,21 +805,20 @@ EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer, SecurityExcep
 bool generate_challenge(std::vector<uint8_t>& vector, SecurityException& exception)
 {
     bool returnedValue = false;
-    BIGNUM bn;
-    BN_init(&bn);
+    BIGNUM* bn = BN_new();
 
-    if(BN_rand(&bn, 512, 0 /*BN_RAND_TOP_ONE*/, 0 /*BN_RAND_BOTTOM_ANY*/))
+    if(BN_rand(bn, 512, 0 /*BN_RAND_TOP_ONE*/, 0 /*BN_RAND_BOTTOM_ANY*/))
     {
-        int len = BN_num_bytes(&bn);
+        int len = BN_num_bytes(bn);
         vector.resize(len);
 
-        if(BN_bn2bin(&bn, vector.data()) == len)
+        if(BN_bn2bin(bn, vector.data()) == len)
             returnedValue = true;
         else
             exception = _SecurityException_("OpenSSL library cannot store challenge");
     }
 
-    BN_clear_free(&bn);
+    BN_clear_free(bn);
 
     return returnedValue;
 }
@@ -770,7 +844,7 @@ SharedSecretHandle* generate_sharedsecret(EVP_PKEY* private_key, EVP_PKEY* publi
                     SharedSecret::BinaryData data;
                     data.name("SharedSecret");
                     data.value().resize(length);
-                    
+
                     if(EVP_PKEY_derive(ctx, data.value().data(), &length) > 0)
                     {
                         data.value().resize(length);
@@ -778,21 +852,31 @@ SharedSecretHandle* generate_sharedsecret(EVP_PKEY* private_key, EVP_PKEY* publi
                         (*handle)->data_.push_back(std::move(data));
                     }
                     else
+                    {
                         exception = _SecurityException_("OpenSSL library cannot get derive");
+                    }
                 }
                 else
+                {
                     exception = _SecurityException_("OpenSSL library cannot get length");
+                }
             }
             else
+            {
                 exception = _SecurityException_("OpenSSL library cannot set peer");
+            }
         }
         else
+        {
             exception = _SecurityException_("OpenSSL library cannot init derive");
+        }
 
         EVP_PKEY_CTX_free(ctx);
     }
     else
+    {
         exception = _SecurityException_("OpenSSL library cannot allocate context");
+    }
 
     return handle;
 }
@@ -828,7 +912,7 @@ bool generate_identity_token(PKIIdentityHandle& handle)
     property.propagate(true);
     token.properties().push_back(std::move(property));
 
-    CRYPTO_free(cert_sn_str);
+    OPENSSL_free(cert_sn_str);
 
     return true;
 }
@@ -1190,11 +1274,11 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     assert(cert_sn_str != nullptr);
     if(rih->sn.compare(cert_sn_str) != 0)
     {
-        CRYPTO_free(cert_sn_str);
+        OPENSSL_free(cert_sn_str);
         logWarning(SECURITY_AUTHENTICATION, "Certificated subject name invalid");
         return ValidationResult_t::VALIDATION_FAILED;
     }
-    CRYPTO_free(cert_sn_str);
+    OPENSSL_free(cert_sn_str);
 
     if(!verify_certificate(lih->store_, rih->cert_, lih->there_are_crls_))
     {

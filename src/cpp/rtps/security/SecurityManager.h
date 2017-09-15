@@ -28,6 +28,7 @@
 #include <fastrtps/rtps/common/SerializedPayload.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
 #include <map>
 #include <mutex>
@@ -46,7 +47,6 @@ class StatefulWriter;
 class StatefulReader;
 class WriterHistory;
 class ReaderHistory;
-class ParticipantProxyData;
 
 namespace security {
 
@@ -67,9 +67,9 @@ class SecurityManager
 
         void destroy();
 
-        bool discovered_participant(ParticipantProxyData* participant_data);
+        bool discovered_participant(const ParticipantProxyData& participant_data);
 
-        void remove_participant(ParticipantProxyData* participant_data);
+        void remove_participant(const ParticipantProxyData& participant_data);
 
         bool register_local_writer(const GUID_t& writer_guid, const PropertySeq& writer_properties);
 
@@ -181,12 +181,13 @@ class SecurityManager
 
                 typedef std::unique_ptr<AuthenticationInfo, EmptyDelete> AuthUniquePtr;
 
-                DiscoveredParticipantInfo(ParticipantProxyData* participant_data, AuthenticationStatus auth_status) :
+                DiscoveredParticipantInfo(const ParticipantProxyData& participant_data, AuthenticationStatus auth_status) :
                     auth_(auth_status), auth_ptr_(&auth_),
                     shared_secret_handle_(nullptr),
                     participant_data_(participant_data),
                     participant_crypto_(nullptr) {}
 
+                // TODO(richiware) use move with participant_data
                 DiscoveredParticipantInfo(DiscoveredParticipantInfo&& info) :
                     auth_(std::move(info.auth_)),  auth_ptr_(&auth_),
                     shared_secret_handle_(std::move(info.shared_secret_handle_)),
@@ -201,7 +202,7 @@ class SecurityManager
                     auth_ptr_ = std::move(auth); 
                 }
 
-                ParticipantProxyData* get_participant_data()
+                ParticipantProxyData get_participant_data()
                 {
                     return participant_data_;
                 }
@@ -236,7 +237,7 @@ class SecurityManager
 
                 SharedSecretHandle* shared_secret_handle_;
 
-                ParticipantProxyData* participant_data_;
+                ParticipantProxyData participant_data_;
 
                 ParticipantCryptoHandle* participant_crypto_;
 
@@ -293,11 +294,11 @@ class SecurityManager
         bool create_participant_volatile_message_secure_reader();
         void delete_participant_volatile_message_secure_reader();
 
-        void match_builtin_endpoints(ParticipantProxyData* participant_data);
+        void match_builtin_endpoints(const ParticipantProxyData& participant_data);
 
-        void unmatch_builtin_endpoints(ParticipantProxyData* participant_data);
+        void unmatch_builtin_endpoints(const ParticipantProxyData& participant_data);
 
-        ParticipantCryptoHandle* register_and_match_crypto_endpoint(ParticipantProxyData* participant_data, IdentityHandle& remote_participant_identity,
+        ParticipantCryptoHandle* register_and_match_crypto_endpoint(const ParticipantProxyData& participant_data, IdentityHandle& remote_participant_identity,
                 SharedSecretHandle& shared_secret);
 
         void process_participant_stateless_message(const CacheChange_t* const change);
@@ -306,7 +307,7 @@ class SecurityManager
 
         bool on_process_handshake(const GUID_t& remote_participant_key,
                 DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
-                ParticipantProxyData* participant_data,
+                const ParticipantProxyData& participant_data,
                 MessageIdentity&& message_identity,
                 HandshakeMessageToken&& message);
 
@@ -326,7 +327,7 @@ class SecurityManager
                 ParticipantCryptoTokenSeq& crypto_tokens);
 
         bool participant_authorized(const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
-                SharedSecretHandle* shared_secret_handle, ParticipantProxyData* data);
+                SharedSecretHandle* shared_secret_handle, const ParticipantProxyData& data);
 
         RTPSParticipantImpl* participant_;
         StatelessWriter* participant_stateless_message_writer_;
@@ -363,7 +364,7 @@ class SecurityManager
 
             DatawriterCryptoHandle* writer_handle;
 
-            std::map<GUID_t, DatareaderCryptoHandle*> associated_readers;
+            std::map<GUID_t, std::tuple<ReaderProxyData, DatareaderCryptoHandle*>> associated_readers;
         };
 
         struct DatareaderAssociations
@@ -372,7 +373,7 @@ class SecurityManager
 
             DatareaderCryptoHandle* reader_handle;
 
-            std::map<GUID_t, DatawriterCryptoHandle*> associated_writers;
+            std::map<GUID_t, std::tuple<WriterProxyData, DatawriterCryptoHandle*>> associated_writers;
         };
 
         // TODO(Ricardo) Temporal. Store individual in FastRTPS code.

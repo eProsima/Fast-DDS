@@ -61,7 +61,7 @@ StatefulReader::StatefulReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
 }
 
 
-bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
+bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
@@ -82,13 +82,13 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
     return true;
 }
 
-bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata)
+bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 {
     WriterProxy *wproxy = nullptr;
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
     //Remove cachechanges belonging to the unmatched writer
-    mp_history->remove_changes_with_guid( &(wdata.guid) );
+    mp_history->remove_changes_with_guid(wdata.guid);
 
     for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
     {
@@ -113,13 +113,13 @@ bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata)
     return false;
 }
 
-bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata,bool deleteWP)
+bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata, bool deleteWP)
 {
     WriterProxy *wproxy = nullptr;
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
     //Remove cachechanges belonging to the unmatched writer
-    mp_history->remove_changes_with_guid( &(wdata.guid) );
+    mp_history->remove_changes_with_guid(wdata.guid);
 
     for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
     {
@@ -144,7 +144,7 @@ bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata,bool de
     return false;
 }
 
-bool StatefulReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
+bool StatefulReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)

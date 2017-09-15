@@ -59,7 +59,7 @@ namespace eprosima
                      * @param times WriterTimes to use in the ReaderProxy.
                      * @param SW Pointer to the StatefulWriter.
                      */
-                ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW);
+                ReaderProxy(const RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW);
 
                 void destroy_timers();
 

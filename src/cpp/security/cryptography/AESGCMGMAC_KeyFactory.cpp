@@ -16,6 +16,14 @@
  * @file AESGCMGMAC_KeyFactory.cpp
  */
 
+#include <openssl/opensslv.h>
+
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+#define IS_OPENSSL_1_1 1
+#else
+#define IS_OPENSSL_1_1 0
+#endif
+
 #include <openssl/conf.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
@@ -178,21 +186,38 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         }
         //The result of p_master_salt is now the key to perform an HMACsha256 of the shared secret
         EVP_PKEY *key = EVP_PKEY_new_mac_key(EVP_PKEY_HMAC, NULL, p_master_salt.data(), 32);
-        EVP_MD_CTX ctx;
-        EVP_MD_CTX_init(&ctx);
-        EVP_DigestSignInit(&ctx, NULL, EVP_sha256(), NULL, key);
-        EVP_DigestSignUpdate(&ctx, shared_secret_ss->data(), shared_secret_ss->size());
+        EVP_MD_CTX* ctx = 
+#if IS_OPENSSL_1_1
+            EVP_MD_CTX_new();
+#else
+            (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
+#endif
+        EVP_MD_CTX_init(ctx);
+        EVP_DigestSignInit(ctx, NULL, EVP_sha256(), NULL, key);
+        EVP_DigestSignUpdate(ctx, shared_secret_ss->data(), shared_secret_ss->size());
         size_t length = 0;
-        EVP_DigestSignFinal(&ctx, NULL, &length);
+        EVP_DigestSignFinal(ctx, NULL, &length);
         if(length > 32){
             logWarning(SECURITY_CRYPTO,"Error generating the keys to perform token transaction");
             exception = SecurityException("Encountered an error while creating KxKeyMaterials");
             delete RPCrypto;
+            EVP_PKEY_free(key);
+#if IS_OPENSSL_1_1
+            EVP_MD_CTX_free(ctx);
+#else
+            EVP_MD_CTX_cleanup(ctx);
+            free(ctx);
+#endif
             return nullptr;
         }
-        EVP_DigestSignFinal(&ctx, buffer.master_salt.data(), &length);
+        EVP_DigestSignFinal(ctx, buffer.master_salt.data(), &length);
         EVP_PKEY_free(key);
-        EVP_MD_CTX_cleanup(&ctx);
+#if IS_OPENSSL_1_1
+        EVP_MD_CTX_free(ctx);
+#else
+        EVP_MD_CTX_cleanup(ctx);
+        free(ctx);
+#endif
 
         //Repeat process - concatenation is used to store the sequence to generate master_sender_key
         std::string KxSaltCookie("keyexchange salt");
@@ -208,20 +233,38 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         }
         //The result of p_master_salt is now the key to perform an HMACsha256 of the shared secret that will go into master_sender_key
         key = EVP_PKEY_new_mac_key(EVP_PKEY_HMAC, NULL, p_master_salt.data(), 32);
-        EVP_MD_CTX_init(&ctx);
+        ctx =
+#if IS_OPENSSL_1_1
+            EVP_MD_CTX_new();
+#else
+            (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
+#endif
+        EVP_MD_CTX_init(ctx);
 
-        EVP_DigestSignInit(&ctx, NULL, EVP_sha256(), NULL, key);
-        EVP_DigestSignUpdate(&ctx, shared_secret_ss->data(), shared_secret_ss->size());
+        EVP_DigestSignInit(ctx, NULL, EVP_sha256(), NULL, key);
+        EVP_DigestSignUpdate(ctx, shared_secret_ss->data(), shared_secret_ss->size());
         length = 0;
-        EVP_DigestSignFinal(&ctx, NULL, &length);
+        EVP_DigestSignFinal(ctx, NULL, &length);
         if(length > 32){
             logWarning(SECURITY_CRYPTO,"Error generating master key material");
             delete RPCrypto;
+            EVP_PKEY_free(key);
+#if IS_OPENSSL_1_1
+            EVP_MD_CTX_free(ctx);
+#else
+            EVP_MD_CTX_cleanup(ctx);
+            free(ctx);
+#endif
             return nullptr;
         }
-        EVP_DigestSignFinal(&ctx, buffer.master_sender_key.data(), &length);
+        EVP_DigestSignFinal(ctx, buffer.master_sender_key.data(), &length);
         EVP_PKEY_free(key);
-        EVP_MD_CTX_cleanup(&ctx);
+#if IS_OPENSSL_1_1
+        EVP_MD_CTX_free(ctx);
+#else
+        EVP_MD_CTX_cleanup(ctx);
+        free(ctx);
+#endif
 
         buffer.sender_key_id.fill(0); //Specified by standard
         buffer.receiver_specific_key_id.fill(0); //Specified by standard

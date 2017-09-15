@@ -75,7 +75,7 @@ public:
 	 * @param pdata Pointer to the RTPSParticipantProxyData object.
 	 * @return True if correct.
 	 */
-	bool assignRemoteEndpoints(ParticipantProxyData* pdata);
+	bool assignRemoteEndpoints(const ParticipantProxyData& pdata);
 	/**
 	 * Remove remote endpoints from the liveliness protocol.
 	 * @param pdata Pointer to the ParticipantProxyData to remove

@@ -104,7 +104,7 @@ WriterProxy::~WriterProxy()
     delete(mp_mutex);
 }
 
-WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
+WriterProxy::WriterProxy(const RemoteWriterAttributes& watt,
         StatefulReader* SR) :
     mp_SFR(SR),
     m_att(watt),

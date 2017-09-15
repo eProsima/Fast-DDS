@@ -67,7 +67,8 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata) :
     identity_token_(pdata.identity_token_),
     isAlive(pdata.isAlive),
     m_properties(pdata.m_properties),
-    m_userData(pdata.m_userData)
+    m_userData(pdata.m_userData),
+    mp_leaseDurationTimer(nullptr)
 {
     m_VendorId[0] = pdata.m_VendorId[0];
     m_VendorId[1] = pdata.m_VendorId[1];
@@ -198,6 +199,8 @@ ParameterList_t ParticipantProxyData::AllQostoParameterList()
         p->endpointSet = m_availableBuiltinEndpoints;
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
+
+    if(m_participantName.size() > 0)
     {
         ParameterString_t* p = new ParameterString_t(PID_ENTITY_NAME, 0, m_participantName);
         parameter_list.m_parameters.push_back((Parameter_t*)p);

@@ -49,20 +49,20 @@ public:
      * @param wdata Pointer to the WPD object to add.
      * @return True if correctly added.
      */
-    bool matched_writer_add(RemoteWriterAttributes& wdata);
+    bool matched_writer_add(const RemoteWriterAttributes& wdata);
     /**
      * Remove a WriterProxyData from the matached writers.
      * @param wdata Pointer to the WPD object.
      * @return True if correct.
      */
-    bool matched_writer_remove(RemoteWriterAttributes& wdata);
+    bool matched_writer_remove(const RemoteWriterAttributes& wdata);
 
     /**
      * Tells us if a specific Writer is matched against this reader
      * @param wdata Pointer to the WriterProxyData object
      * @return True if it is matched.
      */
-    bool matched_writer_is_matched(RemoteWriterAttributes& wdata);
+    bool matched_writer_is_matched(const RemoteWriterAttributes& wdata);
 
     /**
      * Method to indicate the reader that some change has been removed due to HistoryQos requirements.

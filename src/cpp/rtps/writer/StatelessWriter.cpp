@@ -208,7 +208,7 @@ void StatelessWriter::send_any_unsent_changes()
  *	MATCHED_READER-RELATED METHODS
  */
 
-bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
+bool StatelessWriter::matched_reader_add(const RemoteReaderAttributes& rdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
@@ -359,7 +359,7 @@ void StatelessWriter::update_locators_nts_(const GUID_t& optionalGuid)
     }
 }
 
-bool StatelessWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
+bool StatelessWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
@@ -392,7 +392,7 @@ bool StatelessWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
     return found;
 }
 
-bool StatelessWriter::matched_reader_is_matched(RemoteReaderAttributes& rdata)
+bool StatelessWriter::matched_reader_is_matched(const RemoteReaderAttributes& rdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(auto rit = m_matched_readers.begin();

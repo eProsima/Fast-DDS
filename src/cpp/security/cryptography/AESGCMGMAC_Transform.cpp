@@ -771,7 +771,8 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
 
     //Auth message - The point is that we cannot verify the authorship of the message with our receiver_specific_key the message could be crafted
-    EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
+    EVP_CIPHER_CTX* d_ctx = EVP_CIPHER_CTX_new();
+    const EVP_CIPHER* d_cipher = nullptr;
     plain_buffer.clear();
     plain_buffer.resize(encoded_buffer.size());
 
@@ -787,20 +788,12 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     if((sending_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) |
             (sending_participant->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC}))
     {
-        if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(),NULL, NULL))
-        {
-            logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptInit function returns an error");
-            return false;
-        }
+        d_cipher = EVP_aes_128_gcm();
     }
     else if((sending_participant->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}) |
             (sending_participant->transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}))
     {
-        if(!EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), NULL, NULL))
-        {
-            logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptInit function returns an error");
-            return false;
-        }
+        d_cipher = EVP_aes_256_gcm();
     }
     else
     {
@@ -808,16 +801,16 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
         return false;
     }
 
-    if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, specific_mac->receiver_mac.data()))
-    {
-        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_CIPHER_CTX_ctrl function returns an error");
-        return false;
-    }
-
-    if(!EVP_DecryptInit(d_ctx, NULL, (const unsigned char *)specific_session_key.data(),
+    if(!EVP_DecryptInit(d_ctx, d_cipher, (const unsigned char *)specific_session_key.data(),
                 initialization_vector.data()))
     {
         logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptInit function returns an error");
+        return false;
+    }
+
+    if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, specific_mac->receiver_mac.data()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_CIPHER_CTX_ctrl function returns an error");
         return false;
     }
 
@@ -1098,21 +1091,16 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
             session_id);
 
     //Verify specific MAC
-    if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), NULL, NULL))
-    {
-        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptInit function returns an error");
-        return false;
-    }
-    if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, specific_mac.receiver_mac.data()))
-    {
-        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_CIPHER_CTX_ctrl function returns an error");
-        return false;
-    }
-
-    if(!EVP_DecryptInit(d_ctx, NULL, (const unsigned char *)specific_session_key.data(),
+    if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)specific_session_key.data(),
                 initialization_vector.data()))
     {
         logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptInit function returns an error");
+        return false;
+    }
+
+    if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, specific_mac.receiver_mac.data()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_CIPHER_CTX_ctrl function returns an error");
         return false;
     }
 
@@ -1134,21 +1122,16 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
 
     actual_size = 0;
     final_size = 0;
-    if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), NULL, NULL))
-    {
-        logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_DecryptInit function returns an error");
-        return false;
-    }
-    if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, tag.common_mac.data()))
-    {
-        logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_CIPHER_CTX_ctrl function returns an error");
-        return false;
-    }
-
-    if(!EVP_DecryptInit(d_ctx, NULL, (const unsigned char *)session_key.data(),
+    if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(),
                 initialization_vector.data()))
     {
         logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_DecryptInit function returns an error");
+        return false;
+    }
+
+    if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, tag.common_mac.data()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_CIPHER_CTX_ctrl function returns an error");
         return false;
     }
 
@@ -1267,21 +1250,16 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
             session_id);
 
     //Verify specific MAC
-    if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), NULL, NULL))
-    {
-        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptInit function returns an error");
-        return false;
-    }
-    if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, specific_mac.receiver_mac.data()))
-    {
-        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_CIPHER_CTX_ctrl function returns an error");
-        return false;
-    }
-
-    if(!EVP_DecryptInit(d_ctx, NULL, (const unsigned char *)specific_session_key.data(),
+    if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)specific_session_key.data(),
                 initialization_vector.data()))
     {
         logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptInit function returns an error");
+        return false;
+    }
+
+    if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, specific_mac.receiver_mac.data()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_CIPHER_CTX_ctrl function returns an error");
         return false;
     }
 
@@ -1303,21 +1281,16 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
 
     actual_size = 0;
     final_size = 0;
-    if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), NULL, NULL))
-    {
-        logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_DecryptInit function returns an error");
-        return false;
-    }
-    if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, tag.common_mac.data()))
-    {
-        logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_CIPHER_CTX_ctrl function returns an error");
-        return false;
-    }
-
-    if(!EVP_DecryptInit(d_ctx, NULL, (const unsigned char *)session_key.data(),
+    if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(),
                 initialization_vector.data()))
     {
         logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_DecryptInit function returns an error");
+        return false;
+    }
+
+    if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, tag.common_mac.data()))
+    {
+        logError(SECURITY_CRYPTO, "Unable to decrypt the message. EVP_CIPHER_CTX_ctrl function returns an error");
         return false;
     }
 

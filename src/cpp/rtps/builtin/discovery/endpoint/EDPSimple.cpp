@@ -408,10 +408,10 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
 
 
 
-void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
+void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
 {
     logInfo(RTPS_EDP,"New DPD received, adding remote endpoints to our SimpleEDP endpoints");
-    uint32_t endp = pdata->m_availableBuiltinEndpoints;
+    uint32_t endp = pdata.m_availableBuiltinEndpoints;
     uint32_t auxendp = endp;
     auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
@@ -420,10 +420,10 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
     {
         logInfo(RTPS_EDP,"Adding SEDP Pub Writer to my Pub Reader");
         RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        watt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_SEDPPubWriter;
-        watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
+        watt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         mp_PubReader.first->matched_writer_add(watt);
@@ -437,10 +437,10 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         logInfo(RTPS_EDP,"Adding SEDP Pub Reader to my Pub Writer");
         RemoteReaderAttributes ratt;
         ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        ratt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         ratt.guid.entityId = c_EntityId_SEDPPubReader;
-        ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
+        ratt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         mp_PubWriter.first->matched_reader_add(ratt);
@@ -453,10 +453,10 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
     {
         logInfo(RTPS_EDP,"Adding SEDP Sub Writer to my Sub Reader");
         RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        watt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_SEDPSubWriter;
-        watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
+        watt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         mp_SubReader.first->matched_writer_add(watt);
@@ -470,10 +470,10 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         logInfo(RTPS_EDP,"Adding SEDP Sub Reader to my Sub Writer");
         RemoteReaderAttributes ratt;
         ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        ratt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         ratt.guid.entityId = c_EntityId_SEDPSubReader;
-        ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
+        ratt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         mp_SubWriter.first->matched_reader_add(ratt);

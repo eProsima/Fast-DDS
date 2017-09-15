@@ -124,7 +124,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
                 lock.unlock();
 
                 if(mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
-                    mp_SPDP->mp_EDP->assignRemoteEndpoints(&participant_data);
+                    mp_SPDP->mp_EDP->assignRemoteEndpoints(participant_data);
             }
 
             if(this->mp_SPDP->getRTPSParticipant()->getListener()!=nullptr)

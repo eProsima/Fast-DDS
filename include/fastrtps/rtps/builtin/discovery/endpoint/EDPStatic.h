@@ -90,7 +90,7 @@ public:
 	 * Abstract method that assigns remote endpoints when a new RTPSParticipantProxyData is discovered.
 	 * @param pdata Pointer to the ParticipantProxyData.
 	 */
-	void assignRemoteEndpoints(ParticipantProxyData* pdata);
+	void assignRemoteEndpoints(const ParticipantProxyData& pdata);
 	/**
 	 * Abstract method that removes a local Reader from the discovery method
 	 * @param R Pointer to the Reader to remove.
@@ -124,7 +124,7 @@ public:
 	 * @param entId EntityId.
 	 * @return True if correct.
 	 */
-	bool newRemoteWriter(ParticipantProxyData*pdata,uint16_t userId, EntityId_t entId=c_EntityId_Unknown);
+	bool newRemoteWriter(const ParticipantProxyData& pdata, uint16_t userId, EntityId_t entId=c_EntityId_Unknown);
 	/**
 	 * New Remote Reader has been found and this method process it and calls the pairing methods.
 	 * @param pdata Pointer to the RTPSParticipantProxyData object.
@@ -132,7 +132,7 @@ public:
 	 * @param entId EntityId.
 	 * @return true if correct.
 	 */
-	bool newRemoteReader(ParticipantProxyData*pdata,uint16_t userId, EntityId_t entId=c_EntityId_Unknown);
+	bool newRemoteReader(const ParticipantProxyData& pdata, uint16_t userId, EntityId_t entId=c_EntityId_Unknown);
 	/**
 	* This method checks the provided entityId against the topic type to see if it matches
 	* @param rdata Pointer to the readerProxyData

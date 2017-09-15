@@ -60,8 +60,10 @@ macro(find_eprosima_package package)
                 ${ANDROID_BUILD_OPTIONS}
                 "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
                 "-DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}"
+                "-DCMAKE_EXE_LINKER_FLAGS=\"${CMAKE_EXE_LINKER_FLAGS}\""
                 "-DMINION=ON"
                 "-DEPROSIMA_INSTALLER_MINION=${EPROSIMA_INSTALLER_MINION}"
+                "-DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}"
                 "-DBIN_INSTALL_DIR:PATH=${BIN_INSTALL_DIR}"
                 "-DINCLUDE_INSTALL_DIR:PATH=${INCLUDE_INSTALL_DIR}"
                 "-DLIB_INSTALL_DIR:PATH=${LIB_INSTALL_DIR}"

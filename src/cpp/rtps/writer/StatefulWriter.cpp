@@ -366,7 +366,7 @@ void StatefulWriter::send_any_unsent_changes()
 /*
  *	MATCHED_READER-RELATED METHODS
  */
-bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
+bool StatefulWriter::matched_reader_add(const RemoteReaderAttributes& rdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
@@ -478,7 +478,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     return true;
 }
 
-bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
+bool StatefulWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
 {
     ReaderProxy *rproxy = nullptr;
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
@@ -528,7 +528,7 @@ bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
     return false;
 }
 
-bool StatefulWriter::matched_reader_is_matched(RemoteReaderAttributes& rdata)
+bool StatefulWriter::matched_reader_is_matched(const RemoteReaderAttributes& rdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)

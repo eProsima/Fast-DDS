@@ -42,10 +42,8 @@ namespace rtps {
 EDPStatic::EDPStatic(PDPSimple* p,RTPSParticipantImpl* part):
     EDP(p,part),
     mp_edpXML(nullptr)
-    {
-
-
-    }
+{
+}
 
 EDPStatic::~EDPStatic()
 {
@@ -168,10 +166,10 @@ bool EDPStatic::removeLocalWriter(RTPSWriter*W)
     return false;
 }
 
-void EDPStatic::assignRemoteEndpoints(ParticipantProxyData* pdata)
+void EDPStatic::assignRemoteEndpoints(const ParticipantProxyData& pdata)
 {
-    for(std::vector<std::pair<std::string,std::string>>::iterator pit = pdata->m_properties.properties.begin();
-            pit!=pdata->m_properties.properties.end();++pit)
+    for(std::vector<std::pair<std::string,std::string>>::const_iterator pit = pdata.m_properties.properties.begin();
+            pit!=pdata.m_properties.properties.end();++pit)
     {
         //cout << "STATIC EDP READING PROPERTY " << pit->first << "// " << pit->second << endl;
         EDPStaticProperty staticproperty;
@@ -181,17 +179,17 @@ void EDPStatic::assignRemoteEndpoints(ParticipantProxyData* pdata)
             {
                 ParticipantProxyData pdata_aux;
                 ReaderProxyData rdata;
-                GUID_t guid(pdata->m_guid.guidPrefix,staticproperty.m_entityId);
+                GUID_t guid(pdata.m_guid.guidPrefix,staticproperty.m_entityId);
                 if(!this->mp_PDP->lookupReaderProxyData(guid ,rdata, pdata_aux))//IF NOT FOUND, we CREATE AND PAIR IT
                 {
-                    newRemoteReader(pdata,staticproperty.m_userId,staticproperty.m_entityId);
+                    newRemoteReader(pdata, staticproperty.m_userId,staticproperty.m_entityId);
                 }
             }
             else if(staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ALIVE")
             {
                 ParticipantProxyData pdata_aux;
                 WriterProxyData wdata;
-                GUID_t guid(pdata->m_guid.guidPrefix,staticproperty.m_entityId);
+                GUID_t guid(pdata.m_guid.guidPrefix,staticproperty.m_entityId);
                 if(!this->mp_PDP->lookupWriterProxyData(guid,wdata, pdata_aux))//IF NOT FOUND, we CREATE AND PAIR IT
                 {
                     newRemoteWriter(pdata,staticproperty.m_userId,staticproperty.m_entityId);
@@ -199,12 +197,12 @@ void EDPStatic::assignRemoteEndpoints(ParticipantProxyData* pdata)
             }
             else if(staticproperty.m_endpointType == "Reader" && staticproperty.m_status == "ENDED")
             {
-                GUID_t guid(pdata->m_guid.guidPrefix,staticproperty.m_entityId);
+                GUID_t guid(pdata.m_guid.guidPrefix,staticproperty.m_entityId);
                 this->removeReaderProxy(guid);
             }
             else if(staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ENDED")
             {
-                GUID_t guid(pdata->m_guid.guidPrefix,staticproperty.m_entityId);
+                GUID_t guid(pdata.m_guid.guidPrefix,staticproperty.m_entityId);
                 this->removeWriterProxy(guid);
             }
             else
@@ -220,14 +218,14 @@ void EDPStatic::assignRemoteEndpoints(ParticipantProxyData* pdata)
     }
 }
 
-bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata, uint16_t userId,EntityId_t entId)
+bool EDPStatic::newRemoteReader(const ParticipantProxyData& pdata, uint16_t userId,EntityId_t entId)
 {
     ReaderProxyData* rpd = NULL;
-    if(mp_edpXML->lookforReader(pdata->m_participantName, userId, &rpd) == xmlparser::XMLP_ret::XML_OK)
+    if(mp_edpXML->lookforReader(pdata.m_participantName, userId, &rpd) == xmlparser::XMLP_ret::XML_OK)
     {
         logInfo(RTPS_EDP,"Activating: " << rpd->guid().entityId << " in topic " << rpd->topicName());
         ReaderProxyData newRPD(*rpd);
-        newRPD.guid().guidPrefix = pdata->m_guid.guidPrefix;
+        newRPD.guid().guidPrefix = pdata.m_guid.guidPrefix;
         if(entId != c_EntityId_Unknown)
             newRPD.guid().entityId = entId;
         if(!checkEntityId(&newRPD))
@@ -237,25 +235,25 @@ bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata, uint16_t userId,Ent
             return false;
         }
         newRPD.key() = newRPD.guid();
-        newRPD.RTPSParticipantKey() = pdata->m_guid;
+        newRPD.RTPSParticipantKey() = pdata.m_guid;
         ParticipantProxyData pdata_aux;
         if(this->mp_PDP->addReaderProxyData(&newRPD, pdata_aux))
         {
-            this->pairingReaderProxy(&pdata_aux, &newRPD);
+            this->pairing_reader_proxy_with_any_local_writer(&pdata_aux, &newRPD);
             return true;
         }
     }
     return false;
 }
 
-bool EDPStatic::newRemoteWriter(ParticipantProxyData* pdata,uint16_t userId,EntityId_t entId)
+bool EDPStatic::newRemoteWriter(const ParticipantProxyData& pdata,uint16_t userId,EntityId_t entId)
 {
     WriterProxyData* wpd = NULL;
-    if(mp_edpXML->lookforWriter(pdata->m_participantName,userId,&wpd) == xmlparser::XMLP_ret::XML_OK)
+    if(mp_edpXML->lookforWriter(pdata.m_participantName,userId,&wpd) == xmlparser::XMLP_ret::XML_OK)
     {
         logInfo(RTPS_EDP,"Activating: " << wpd->guid().entityId << " in topic " << wpd->topicName());
         WriterProxyData newWPD(*wpd);
-        newWPD.guid().guidPrefix = pdata->m_guid.guidPrefix;
+        newWPD.guid().guidPrefix = pdata.m_guid.guidPrefix;
         if(entId != c_EntityId_Unknown)
             newWPD.guid().entityId = entId;
         if(!checkEntityId(&newWPD))
@@ -265,11 +263,11 @@ bool EDPStatic::newRemoteWriter(ParticipantProxyData* pdata,uint16_t userId,Enti
             return false;
         }
         newWPD.key() = newWPD.guid();
-        newWPD.RTPSParticipantKey() = pdata->m_guid;
+        newWPD.RTPSParticipantKey() = pdata.m_guid;
         ParticipantProxyData pdata_aux;
         if(this->mp_PDP->addWriterProxyData(&newWPD, pdata_aux))
         {
-            this->pairingWriterProxy(&pdata_aux, &newWPD);
+            this->pairing_writer_proxy_with_any_local_reader(&pdata_aux, &newWPD);
             return true;
         }
     }
@@ -293,8 +291,6 @@ bool EDPStatic::checkEntityId(WriterProxyData* wdata)
         return true;
     return false;
 }
-
-
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */

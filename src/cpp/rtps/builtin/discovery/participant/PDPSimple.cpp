@@ -337,7 +337,7 @@ bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData& wda
     return false;
 }
 
-bool PDPSimple::removeReaderProxyData(const GUID_t& reader_guid)
+bool PDPSimple::removeReaderProxyData(const GUID_t& reader_guid, GUID_t& participant_guid_out)
 {
     logInfo(RTPS_PDP, "Removing reader proxy data " << reader_guid);
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
@@ -352,6 +352,7 @@ bool PDPSimple::removeReaderProxyData(const GUID_t& reader_guid)
             {
                 delete *rit;
                 (*pit)->m_readers.erase(rit);
+                participant_guid_out = (*pit)->m_guid;
                 return true;
             }
         }
@@ -360,7 +361,7 @@ bool PDPSimple::removeReaderProxyData(const GUID_t& reader_guid)
     return false;
 }
 
-bool PDPSimple::removeWriterProxyData(const GUID_t& writer_guid)
+bool PDPSimple::removeWriterProxyData(const GUID_t& writer_guid, GUID_t& participant_guid_out)
 {
     logInfo(RTPS_PDP, "Removing writer proxy data " << writer_guid);
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
@@ -375,6 +376,7 @@ bool PDPSimple::removeWriterProxyData(const GUID_t& writer_guid)
             {
                 delete *wit;
                 (*pit)->m_writers.erase(wit);
+                participant_guid_out = (*pit)->m_guid;
                 return true;
             }
         }
@@ -587,14 +589,14 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 #if HAVE_SECURITY
     // Validate remote participant
-    mp_RTPSParticipant->security_manager().discovered_participant(pdata);
+    mp_RTPSParticipant->security_manager().discovered_participant(*pdata);
 #else
     //Inform EDP of new RTPSParticipant data:
-    notifyAboveRemoteEndpoints(pdata);
+    notifyAboveRemoteEndpoints(*pdata);
 #endif
 }
 
-void PDPSimple::notifyAboveRemoteEndpoints(ParticipantProxyData* pdata)
+void PDPSimple::notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata)
 {
     //Inform EDP of new RTPSParticipant data:
     if(mp_EDP!=nullptr)
@@ -663,16 +665,16 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
             for(std::vector<ReaderProxyData*>::iterator rit = pdata->m_readers.begin();
                     rit!= pdata->m_readers.end();++rit)
             {
-                mp_EDP->unpairReaderProxy((*rit)->guid());
+                mp_EDP->unpairReaderProxy(partGUID, (*rit)->guid());
             }
             for(std::vector<WriterProxyData*>::iterator wit = pdata->m_writers.begin();
                     wit!=pdata->m_writers.end();++wit)
             {
-                mp_EDP->unpairWriterProxy((*wit)->guid());
+                mp_EDP->unpairWriterProxy(partGUID, (*wit)->guid());
             }
         }
 #if HAVE_SECURITY
-        mp_builtin->mp_participantImpl->security_manager().remove_participant(pdata);
+        mp_builtin->mp_participantImpl->security_manager().remove_participant(*pdata);
 #endif
         if(mp_builtin->mp_WLP != nullptr)
             this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
@@ -781,9 +783,9 @@ bool PDPSimple::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16
     if(lookupParticipantProxyData(pguid, pdata))
     {
         if(kind == WRITER)
-            dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteWriter(&pdata,userDefinedId);
+            dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteWriter(pdata,userDefinedId);
         else
-            dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteReader(&pdata,userDefinedId);
+            dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteReader(pdata,userDefinedId);
     }
     return false;
 }

@@ -34,7 +34,7 @@ class PDPSimple
 {
     public:
 
-        MOCK_METHOD1(notifyAboveRemoteEndpoints, void(ParticipantProxyData*));
+        MOCK_METHOD1(notifyAboveRemoteEndpoints, void(const ParticipantProxyData&));
 
         MOCK_METHOD1(get_participant_proxy_data_serialized, CDRMessage_t(Endianness_t));
 

@@ -148,9 +148,9 @@ bool WLP::createEndpoints()
     return true;
 }
 
-bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
+bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
 {
-    uint32_t endp = pdata->m_availableBuiltinEndpoints;
+    uint32_t endp = pdata.m_availableBuiltinEndpoints;
     uint32_t partdet = endp;
     uint32_t auxendp = endp;
     //TODO Hacer el check con RTI y solo añadirlo cuando el vendor ID sea RTI.
@@ -163,10 +163,10 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
     {
         logInfo(RTPS_LIVELINESS,"Adding remote writer to my local Builtin Reader");
         RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        watt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_WriterLiveliness;
-        watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
+        watt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         watt.endpoint.topicKind = WITH_KEY;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.endpoint.reliabilityKind = RELIABLE;
@@ -181,10 +181,10 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
         logInfo(RTPS_LIVELINESS,"Adding remote reader to my local Builtin Writer");
         RemoteReaderAttributes ratt;
         ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        ratt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         ratt.guid.entityId = c_EntityId_ReaderLiveliness;
-        ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
+        ratt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         ratt.endpoint.topicKind = WITH_KEY;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;

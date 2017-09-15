@@ -78,7 +78,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
             if(this->mp_SEDP->mp_PDP->addWriterProxyData(&writerProxyData, pdata)) //ADDED NEW DATA
             {
                 //CHECK the locators:
-                mp_SEDP->pairingWriterProxy(&pdata, &writerProxyData);
+                mp_SEDP->pairing_writer_proxy_with_any_local_reader(&pdata, &writerProxyData);
             }
             else //NOT ADDED BECAUSE IT WAS ALREADY THERE
             {
@@ -206,7 +206,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
             ParticipantProxyData pdata;
             if(this->mp_SEDP->mp_PDP->addReaderProxyData(&readerProxyData, pdata)) //ADDED NEW DATA
             {
-                mp_SEDP->pairingReaderProxy(&pdata, &readerProxyData);
+                mp_SEDP->pairing_reader_proxy_with_any_local_writer(&pdata, &readerProxyData);
             }
             else
             {

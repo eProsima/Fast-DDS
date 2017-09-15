@@ -18,6 +18,14 @@
 #include "../../../../src/cpp/security/authentication/PKIHandshakeHandle.h"
 #include <fastrtps/rtps/messages/CDRMessage.h>
 
+#include <openssl/opensslv.h>
+
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+#define IS_OPENSSL_1_1 1
+#else
+#define IS_OPENSSL_1_1 0
+#endif
+
 #include <iostream>
 #include <openssl/pem.h>
 
@@ -65,7 +73,7 @@ IdentityToken AuthenticationPluginTest::generate_remote_identity_token_ok(const 
     X509_NAME* cert_sn = X509_get_subject_name(h->cert_);
     char* cert_sn_str = X509_NAME_oneline(cert_sn, 0, 0);
     property.value() = cert_sn_str;
-    CRYPTO_free(cert_sn_str);
+    OPENSSL_free(cert_sn_str);
     token.properties().emplace_back(std::move(property));
 
     // dds.cert.algo
@@ -160,10 +168,20 @@ void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHa
         ((char*)&length)[3] = pointer[0];
 #endif
     pointer += 4;
-    BIGNUM bn;
-    BN_init(&bn);
-    ASSERT_TRUE(BN_bin2bn(pointer, length, &bn) !=  nullptr);
-    ASSERT_TRUE(BN_cmp(dh->p, &bn) == 0);
+    BIGNUM* bn = BN_new();
+    ASSERT_TRUE(BN_bin2bn(pointer, length, bn) !=  nullptr);
+
+#if IS_OPENSSL_1_1
+    const BIGNUM* p = nullptr;
+    const BIGNUM* q = nullptr;
+    const BIGNUM* g = nullptr;
+    DH_get0_pqg(dh, &p, &q, &g);
+#else
+    const BIGNUM* p = dh->p;
+    const BIGNUM* g = dh->g;
+#endif
+
+    ASSERT_TRUE(BN_cmp(p, bn) == 0);
     pointer += length;
     pointer += alignment(pointer - dh1->data(), 4);
 #if __BIG_ENDIAN__
@@ -178,8 +196,8 @@ void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHa
         ((char*)&length)[3] = pointer[0];
 #endif
     pointer += 4;
-    ASSERT_TRUE(BN_bin2bn(pointer, length, &bn) !=  nullptr);
-    ASSERT_TRUE(BN_cmp(dh->g, &bn) == 0);
+    ASSERT_TRUE(BN_bin2bn(pointer, length, bn) !=  nullptr);
+    ASSERT_TRUE(BN_cmp(g, bn) == 0);
     pointer += length;
     pointer += alignment(pointer - dh1->data(), 4);
 #if __BIG_ENDIAN__
@@ -194,11 +212,11 @@ void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHa
         ((char*)&length)[3] = pointer[0];
 #endif
     pointer += 4;
-    ASSERT_TRUE(BN_bin2bn(pointer, length, &bn) !=  nullptr);
+    ASSERT_TRUE(BN_bin2bn(pointer, length, bn) !=  nullptr);
     int check_result;
-    ASSERT_TRUE(DH_check_pub_key(dh, &bn, &check_result));
+    ASSERT_TRUE(DH_check_pub_key(dh, bn, &check_result));
     ASSERT_TRUE(!check_result);
-    BN_clear_free(&bn);
+    BN_clear_free(bn);
     DH_free(dh);
 
     const std::vector<uint8_t>* challenge1 = DataHolderHelper::find_binary_property_value(message, "challenge1");
@@ -263,10 +281,20 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
         ((char*)&length)[3] = pointer[0];
 #endif
     pointer += 4;
-    BIGNUM bn;
-    BN_init(&bn);
-    ASSERT_TRUE(BN_bin2bn(pointer, length, &bn) !=  nullptr);
-    ASSERT_TRUE(BN_cmp(dh->p, &bn) == 0);
+    BIGNUM* bn = BN_new();
+    ASSERT_TRUE(BN_bin2bn(pointer, length, bn) !=  nullptr);
+
+#if IS_OPENSSL_1_1
+    const BIGNUM* p = nullptr;
+    const BIGNUM* q = nullptr;
+    const BIGNUM* g = nullptr;
+    DH_get0_pqg(dh, &p, &q, &g);
+#else
+    const BIGNUM* p = dh->p;
+    const BIGNUM* g = dh->g;
+#endif
+
+    ASSERT_TRUE(BN_cmp(p, bn) == 0);
     pointer += length;
     pointer += alignment(pointer - dh2->data(), 4);
 #if __BIG_ENDIAN__
@@ -281,8 +309,8 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
         ((char*)&length)[3] = pointer[0];
 #endif
     pointer += 4;
-    ASSERT_TRUE(BN_bin2bn(pointer, length, &bn) !=  nullptr);
-    ASSERT_TRUE(BN_cmp(dh->g, &bn) == 0);
+    ASSERT_TRUE(BN_bin2bn(pointer, length, bn) !=  nullptr);
+    ASSERT_TRUE(BN_cmp(g, bn) == 0);
     pointer += length;
     pointer += alignment(pointer - dh2->data(), 4);
 #if __BIG_ENDIAN__
@@ -297,11 +325,11 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
         ((char*)&length)[3] = pointer[0];
 #endif
     pointer += 4;
-    ASSERT_TRUE(BN_bin2bn(pointer, length, &bn) !=  nullptr);
+    ASSERT_TRUE(BN_bin2bn(pointer, length, bn) !=  nullptr);
     int check_result;
-    ASSERT_TRUE(DH_check_pub_key(dh, &bn, &check_result));
+    ASSERT_TRUE(DH_check_pub_key(dh, bn, &check_result));
     ASSERT_TRUE(!check_result);
-    BN_clear_free(&bn);
+    BN_clear_free(bn);
     DH_free(dh);
 
     const std::vector<uint8_t>* hash_c1 = DataHolderHelper::find_binary_property_value(message, "hash_c1");
@@ -344,15 +372,24 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(message, "dh1"));
     //add hash_c1
     CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(message, "hash_c1"));
-    EVP_MD_CTX ctx;
-    EVP_MD_CTX_init(&ctx);
+    EVP_MD_CTX* ctx =
+#if IS_OPENSSL_1_1
+        EVP_MD_CTX_new();
+#else
+        (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
+#endif
+    EVP_MD_CTX_init(ctx);
     EVP_PKEY* pubkey = X509_get_pubkey((*handshake_handle->local_identity_handle_)->cert_);
     ASSERT_TRUE(pubkey != nullptr);
-    ASSERT_TRUE(EVP_DigestVerifyInit(&ctx, NULL, EVP_sha256(), NULL, pubkey) == 1);
-    ASSERT_TRUE(EVP_DigestVerifyUpdate(&ctx, cdrmessage2.buffer, cdrmessage2.length) == 1);
-    ASSERT_TRUE(EVP_DigestVerifyFinal(&ctx, signature->data(), signature->size()) == 1);
+    ASSERT_TRUE(EVP_DigestVerifyInit(ctx, NULL, EVP_sha256(), NULL, pubkey) == 1);
+    ASSERT_TRUE(EVP_DigestVerifyUpdate(ctx, cdrmessage2.buffer, cdrmessage2.length) == 1);
+    ASSERT_TRUE(EVP_DigestVerifyFinal(ctx, signature->data(), signature->size()) == 1);
     EVP_PKEY_free(pubkey);
-    EVP_MD_CTX_cleanup(&ctx);
+#if IS_OPENSSL_1_1
+    EVP_MD_CTX_free(ctx);
+#else
+    free(ctx);
+#endif
 }
 
 void AuthenticationPluginTest::check_handshake_final_message(const HandshakeHandle& handle, const HandshakeMessageToken& message,
@@ -416,15 +453,24 @@ void AuthenticationPluginTest::check_handshake_final_message(const HandshakeHand
     CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property(message, "dh2"));
     //add hash_c2
     CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property(message, "hash_c2"));
-    EVP_MD_CTX ctx;
-    EVP_MD_CTX_init(&ctx);
+    EVP_MD_CTX* ctx =
+#if IS_OPENSSL_1_1
+        EVP_MD_CTX_new();
+#else
+        (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
+#endif
+    EVP_MD_CTX_init(ctx);
     EVP_PKEY* pubkey = X509_get_pubkey((*handshake_handle->local_identity_handle_)->cert_);
     ASSERT_TRUE(pubkey != nullptr);
-    ASSERT_TRUE(EVP_DigestVerifyInit(&ctx, NULL, EVP_sha256(), NULL, pubkey) == 1);
-    ASSERT_TRUE(EVP_DigestVerifyUpdate(&ctx, cdrmessage.buffer, cdrmessage.length) == 1);
-    ASSERT_TRUE(EVP_DigestVerifyFinal(&ctx, signature->data(), signature->size()) == 1);
+    ASSERT_TRUE(EVP_DigestVerifyInit(ctx, NULL, EVP_sha256(), NULL, pubkey) == 1);
+    ASSERT_TRUE(EVP_DigestVerifyUpdate(ctx, cdrmessage.buffer, cdrmessage.length) == 1);
+    ASSERT_TRUE(EVP_DigestVerifyFinal(ctx, signature->data(), signature->size()) == 1);
     EVP_PKEY_free(pubkey);
-    EVP_MD_CTX_cleanup(&ctx);
+#if IS_OPENSSL_1_1
+    EVP_MD_CTX_free(ctx);
+#else
+    free(ctx);
+#endif
 }
 
 void AuthenticationPluginTest::check_shared_secrets(const SharedSecretHandle& sharedsecret1, const SharedSecretHandle& sharedsecret2)

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <chrono>
+#include <functional>
 
 #include "deadlineQoS.h"
 #include <string>

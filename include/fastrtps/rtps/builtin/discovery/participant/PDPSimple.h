@@ -128,12 +128,12 @@ class PDPSimple
      * This method removes and deletes a ReaderProxyData object from its corresponding RTPSParticipant.
      * @return true if found and deleted.
      */
-    bool removeReaderProxyData(const GUID_t& reader_guid);
+    bool removeReaderProxyData(const GUID_t& reader_guid, GUID_t& participant_guid_out);
     /**
      * This method removes and deletes a WriterProxyData object from its corresponding RTPSParticipant.
      * @return true if found and deleted.
      */
-    bool removeWriterProxyData(const GUID_t& writer_guid);
+    bool removeWriterProxyData(const GUID_t& writer_guid, GUID_t& participant_guid_out);
 
     /**
      * This method assigns remtoe endpoints to the builtin endpoints defined in this protocol. It also calls the corresponding methods in EDP and WLP.
@@ -141,7 +141,7 @@ class PDPSimple
      */
     void assignRemoteEndpoints(ParticipantProxyData* pdata);
 
-    void notifyAboveRemoteEndpoints(ParticipantProxyData* pdata);
+    void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata);
 
     /**
      * Remove remote endpoints from the participant discovery protocol

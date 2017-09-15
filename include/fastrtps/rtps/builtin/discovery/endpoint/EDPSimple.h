@@ -78,7 +78,7 @@ public:
 	 * This method assigns the remote builtin endpoints that the remote RTPSParticipant indicates is using to our local builtin endpoints.
 	 * @param pdata Pointer to the RTPSParticipantProxyData object.
 	 */
-	void assignRemoteEndpoints(ParticipantProxyData* pdata);
+	void assignRemoteEndpoints(const ParticipantProxyData& pdata);
 	/**
 	 * Remove remote endpoints from the endpoint discovery protocol
 	 * @param pdata Pointer to the ParticipantProxyData to remove

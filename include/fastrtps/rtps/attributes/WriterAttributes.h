@@ -69,6 +69,7 @@ class  WriterTimes
 class  WriterAttributes
 {
     public:
+
         WriterAttributes() : mode(SYNCHRONOUS_WRITER),
             disableHeartbeatPiggyback(false)
         {
@@ -78,14 +79,19 @@ class  WriterAttributes
         };
 
         virtual ~WriterAttributes(){};
+
         //!Attributes of the associated endpoint.
         EndpointAttributes endpoint;
+
         //!Writer Times (only used for RELIABLE).
         WriterTimes times;
+
         //!Indicates if the Writer is synchronous or asynchronous
         RTPSWriterPublishMode mode;
+
         // Throughput controller, always the last one to apply 
         ThroughputControllerDescriptor throughputController;
+
         //! Disable the sending of heartbeat piggybacks.
         bool disableHeartbeatPiggyback;
 };
@@ -97,19 +103,23 @@ class  WriterAttributes
 class  RemoteReaderAttributes
 {
     public:
-        RemoteReaderAttributes()
+
+        RemoteReaderAttributes() : expectsInlineQos(false)
         {
             endpoint.endpointKind = READER;
-            expectsInlineQos = false;
-        };
+        }
+
         virtual ~RemoteReaderAttributes()
         {
 
-        };
+        }
+
         //!Attributes of the associated endpoint.
         EndpointAttributes endpoint;
+
         //!GUID_t of the reader.
         GUID_t guid;
+
         //!Expects inline QOS.
         bool expectsInlineQos;
 };

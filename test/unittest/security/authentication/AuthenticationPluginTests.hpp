@@ -194,10 +194,10 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     HandshakeMessageToken *handshake_message = nullptr;
     ParticipantProxyData participant_data1;
     participant_data1.m_guid = adjusted_participant_key1;
-    participant_data1.toParameterList();
+    ParameterList_t parameter_list1 = participant_data1.AllQostoParameterList();
     CDRMessage_t auxMsg;
     auxMsg.msg_endian = BIGEND;
-    ASSERT_TRUE(ParameterList::writeParameterListToCDRMsg(&auxMsg, &participant_data1.m_QosList.allQos, true));
+    ASSERT_TRUE(ParameterList::writeParameterListToCDRMsg(&auxMsg, &parameter_list1, true));
 
     result = plugin.begin_handshake_request(&handshake_handle,
             &handshake_message,
@@ -215,12 +215,12 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     HandshakeMessageToken* handshake_message_reply = nullptr;
     ParticipantProxyData participant_data2;
     participant_data2.m_guid = adjusted_participant_key2;
-    participant_data2.toParameterList();
-    
+    ParameterList_t parameter_list2 = participant_data2.AllQostoParameterList();
+
     auxMsg.length = 0;
     auxMsg.pos = 0;
 
-    ASSERT_TRUE(ParameterList::writeParameterListToCDRMsg(&auxMsg, &participant_data2.m_QosList.allQos, true));
+    ASSERT_TRUE(ParameterList::writeParameterListToCDRMsg(&auxMsg, &parameter_list2, true));
 
     result = plugin.begin_handshake_reply(&handshake_handle_reply,
             &handshake_message_reply,
