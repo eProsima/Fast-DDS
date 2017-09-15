@@ -185,6 +185,8 @@ bool EDP::removeReaderProxy(const GUID_t& reader)
 
 bool EDP::unpairWriterProxy(const GUID_t& participant_guid, const GUID_t& writer_guid)
 {
+    (void)participant_guid;
+
     logInfo(RTPS_EDP, writer_guid);
 
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
@@ -214,6 +216,8 @@ bool EDP::unpairWriterProxy(const GUID_t& participant_guid, const GUID_t& writer
 
 bool EDP::unpairReaderProxy(const GUID_t& participant_guid, const GUID_t& reader_guid)
 {
+    (void)participant_guid;
+
     logInfo(RTPS_EDP, reader_guid);
 
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
@@ -649,7 +653,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(ParticipantProxyData* pdata
 }
 
 #if HAVE_SECURITY
-bool EDP::pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, const ParticipantProxyData& pdata,
+bool EDP::pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, const GUID_t& remote_participant_guid,
         ReaderProxyData& rdata)
 {
     logInfo(RTPS_EDP, rdata.guid() <<" in topic: \"" << rdata.topicName() <<"\"");
@@ -675,7 +679,8 @@ bool EDP::pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, con
                 {
                     if(is_submessage_protected || is_payload_protected)
                     {
-                        if(!mp_RTPSParticipant->security_manager().discovered_reader(writerGUID, pdata.m_guid, rdata))
+                        if(!mp_RTPSParticipant->security_manager().discovered_reader(writerGUID,
+                                    remote_participant_guid, rdata))
                         {
                             logError(RTPS_EDP, "Security manager returns an error for writer " << writerGUID);
                         }
@@ -701,7 +706,8 @@ bool EDP::pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, con
                     if((*wit)->matched_reader_is_matched(rdata.toRemoteReaderAttributes())
                             && (*wit)->matched_reader_remove(rdata.toRemoteReaderAttributes()))
                     {
-                        mp_RTPSParticipant->security_manager().remove_reader((*wit)->getGuid(), pdata.m_guid, rdata.guid());
+                        mp_RTPSParticipant->security_manager().remove_reader((*wit)->getGuid(),
+                                remote_participant_guid, rdata.guid());
                         //MATCHED AND ADDED CORRECTLY:
                         if((*wit)->getListener()!=nullptr)
                         {
@@ -830,7 +836,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(ParticipantProxyData *pdata
 }
 
 #if HAVE_SECURITY
-bool EDP::pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, const ParticipantProxyData& pdata,
+bool EDP::pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, const GUID_t& remote_participant_guid,
         WriterProxyData& wdata)
 {
     logInfo(RTPS_EDP, wdata.guid() <<" in topic: \"" << wdata.topicName() <<"\"");
@@ -857,7 +863,8 @@ bool EDP::pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, con
                 {
                     if(is_submessage_protected || is_payload_protected)
                     {
-                        if(!mp_RTPSParticipant->security_manager().discovered_writer(readerGUID, pdata.m_guid,
+                        if(!mp_RTPSParticipant->security_manager().discovered_writer(readerGUID,
+                                    remote_participant_guid,
                                     wdata))
                         {
                             logError(RTPS_EDP, "Security manager returns an error for reader " << readerGUID);
@@ -884,7 +891,8 @@ bool EDP::pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, con
                     if((*rit)->matched_writer_is_matched(wdata.toRemoteWriterAttributes())
                             && (*rit)->matched_writer_remove(wdata.toRemoteWriterAttributes()))
                     {
-                        mp_RTPSParticipant->security_manager().remove_writer((*rit)->getGuid(), pdata.m_guid, wdata.guid());
+                        mp_RTPSParticipant->security_manager().remove_writer((*rit)->getGuid(),
+                                remote_participant_guid, wdata.guid());
                         //MATCHED AND ADDED CORRECTLY:
                         if((*rit)->getListener()!=nullptr)
                         {

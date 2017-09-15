@@ -180,7 +180,7 @@ class EDP
         bool pairing_reader_proxy_with_any_local_writer(ParticipantProxyData* pdata, ReaderProxyData* rdata);
 
 #if HAVE_SECURITY
-        bool pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, const ParticipantProxyData& pdata,
+        bool pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, const GUID_t& remote_participant_guid,
                 ReaderProxyData& rdata);
 
         bool pairing_remote_reader_with_local_writer_after_crypto(const GUID_t& local_writer,
@@ -196,7 +196,7 @@ class EDP
         bool pairing_writer_proxy_with_any_local_reader(ParticipantProxyData* pdata, WriterProxyData* wdata);
 
 #if HAVE_SECURITY
-        bool pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, const ParticipantProxyData& pdata,
+        bool pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, const GUID_t& remote_participant_guid,
                 WriterProxyData& wdata);
 
         bool pairing_remote_writer_with_local_reader_after_crypto(const GUID_t& local_reader,

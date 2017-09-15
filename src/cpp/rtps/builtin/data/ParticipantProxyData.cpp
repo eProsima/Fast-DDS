@@ -69,10 +69,10 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata) :
     m_properties(pdata.m_properties),
     m_userData(pdata.m_userData),
     mp_leaseDurationTimer(nullptr)
-{
-    m_VendorId[0] = pdata.m_VendorId[0];
-    m_VendorId[1] = pdata.m_VendorId[1];
-}
+    {
+        m_VendorId[0] = pdata.m_VendorId[0];
+        m_VendorId[1] = pdata.m_VendorId[1];
+    }
 
 ParticipantProxyData::~ParticipantProxyData()
 {
@@ -221,7 +221,7 @@ ParameterList_t ParticipantProxyData::AllQostoParameterList()
 
     if(!this->identity_token_.class_id().empty())
     {
-		ParameterToken_t* p = new ParameterToken_t(PID_IDENTITY_TOKEN, 0);
+        ParameterToken_t* p = new ParameterToken_t(PID_IDENTITY_TOKEN, 0);
         p->token = identity_token_;
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }

@@ -596,6 +596,30 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 #endif
 }
 
+void PDPSimple::notifyAboveRemoteEndpoints(const GUID_t& participant_guid)
+{
+    ParticipantProxyData participant_data;
+    bool found_participant = false;
+
+    this->mp_mutex->lock();
+    for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
+            pit != m_participantProxies.end(); ++pit)
+    {
+        if((*pit)->m_guid == participant_guid)
+        {
+            participant_data.copy(**pit);
+            found_participant = true;
+            break;
+        }
+    }
+    this->mp_mutex->unlock();
+
+    if(found_participant)
+    {
+        notifyAboveRemoteEndpoints(participant_data);
+    }
+}
+
 void PDPSimple::notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata)
 {
     //Inform EDP of new RTPSParticipant data:
