@@ -37,7 +37,7 @@ TEST_F(XMLProfileParserTests, XMLoadProfiles)
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::loadXMLFile("test_xml_security_profiles.xml"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLProfileParser::loadXMLFile("test_xml_duplicated_profiles.xml"));
+                xmlparser::XMLProfileParser::loadXMLFile("test_xml_profiles.xml"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_ERROR,
                 xmlparser::XMLProfileParser::loadXMLFile("missing_file.xml"));
 
@@ -62,15 +62,19 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
 
     RTPSParticipantAttributes &rtps_atts = participant_atts.rtps;
     BuiltinAttributes &builtin = rtps_atts.builtin;
+    Locator_t locator;
     LocatorListIterator loc_list_it;
     PortParameters &port = rtps_atts.port;
 
-    EXPECT_EQ(rtps_atts.defaultUnicastLocatorList.begin()->kind, LOCATOR_KIND_UDPv4);
-    EXPECT_EQ(rtps_atts.defaultUnicastLocatorList.begin()->port, 2019);
-    EXPECT_EQ(rtps_atts.defaultMulticastLocatorList.begin()->kind, LOCATOR_KIND_UDPv6);
-    EXPECT_EQ(rtps_atts.defaultMulticastLocatorList.begin()->port, 2021);
-    EXPECT_EQ(rtps_atts.defaultOutLocatorList.begin()->kind, LOCATOR_KIND_UDPv4);
-    EXPECT_EQ(rtps_atts.defaultOutLocatorList.begin()->port, 1979);
+    locator.set_IP4_address(192, 168, 1 , 2);
+    locator.port = 2019;
+    EXPECT_EQ(*rtps_atts.defaultUnicastLocatorList.begin(), locator);
+    locator.set_IP4_address(239, 255, 0 , 1);
+    locator.port = 2021;
+    EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
+    locator.set_IP4_address(192, 168, 1 , 1);
+    locator.port = 1979;
+    EXPECT_EQ(*rtps_atts.defaultOutLocatorList.begin(), locator);
     EXPECT_EQ(rtps_atts.defaultSendPort, 80);
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000);
@@ -84,14 +88,23 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.fraction, 333);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
-    EXPECT_EQ((loc_list_it = builtin.metatrafficUnicastLocatorList.begin())->kind, LOCATOR_KIND_UDPv6);
-    EXPECT_EQ(loc_list_it++->port, 9999);
-    EXPECT_EQ(loc_list_it->kind, LOCATOR_KIND_UDPv4);
-    EXPECT_EQ(loc_list_it->port, 6666);
-    EXPECT_EQ((loc_list_it = builtin.metatrafficMulticastLocatorList.begin())->kind, LOCATOR_KIND_UDPv4);
-    EXPECT_EQ(loc_list_it++->port, 32);
-    EXPECT_EQ(loc_list_it->port, 2112);
-    EXPECT_EQ((loc_list_it = builtin.initialPeersList.begin())->kind, LOCATOR_KIND_UDPv6);
+    locator.set_IP4_address(192, 168, 1, 5);
+    locator.port = 9999;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);
+    locator.set_IP4_address(192, 168, 1, 6);
+    locator.port = 6666;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 2);
+    locator.port = 32;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficMulticastLocatorList.begin()), locator);
+    locator.set_IP4_address(239, 255, 0, 3);
+    locator.port = 2112;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 1);
+    locator.port = 21120;
+    EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
     EXPECT_EQ(port.portBase, 12);
     EXPECT_EQ(port.domainIDGain, 34);
     EXPECT_EQ(port.participantIDGain, 56);
@@ -120,6 +133,7 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
 
     TopicAttributes &pub_topic = publisher_atts.topic;
     WriterQos &pub_qos = publisher_atts.qos;
+    Locator_t locator;
     LocatorListIterator loc_list_it;
     WriterTimes &pub_times = publisher_atts.times;
 
@@ -148,14 +162,25 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(pub_times.nackResponseDelay, c_TimeInvalid);
     EXPECT_EQ(pub_times.nackSupressionDuration.seconds, 121);
     EXPECT_EQ(pub_times.nackSupressionDuration.fraction, 332);
-    EXPECT_EQ((loc_list_it = publisher_atts.unicastLocatorList.begin())->port, 197);
-    EXPECT_EQ((++loc_list_it)->kind, LOCATOR_KIND_UDPv4);
-    EXPECT_EQ(loc_list_it->port, 219);
-    EXPECT_EQ((loc_list_it = publisher_atts.multicastLocatorList.begin())->kind, LOCATOR_KIND_UDPv6);
-    EXPECT_EQ(loc_list_it++->port, 2020);
-    EXPECT_EQ(loc_list_it++->kind, LOCATOR_KIND_UDPv6);
-    EXPECT_EQ(loc_list_it->port, 1989);
-    EXPECT_EQ((loc_list_it = publisher_atts.outLocatorList.begin())->kind, LOCATOR_KIND_UDPv4);
+    locator.set_IP4_address(192, 168, 1, 3);
+    locator.port = 197;
+    EXPECT_EQ(*(loc_list_it = publisher_atts.unicastLocatorList.begin()), locator);
+    locator.set_IP4_address(192, 168, 1, 9);
+    locator.port = 219;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 1);
+    locator.port = 2020;
+    EXPECT_EQ(*(loc_list_it = publisher_atts.multicastLocatorList.begin()), locator);
+    locator.set_IP4_address(0, 0, 0, 0);
+    locator.port = 0;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.port = 1989;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.port = 2021;
+    EXPECT_EQ(*(loc_list_it = publisher_atts.outLocatorList.begin()), locator);
     EXPECT_EQ(loc_list_it->port, 2021);
     EXPECT_EQ(publisher_atts.throughputController.bytesPerPeriod, 9236);
     EXPECT_EQ(publisher_atts.throughputController.periodMillisecs, 234);
@@ -176,6 +201,7 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriber)
 
     TopicAttributes &sub_topic = subscriber_atts.topic;
     ReaderQos &sub_qos = subscriber_atts.qos;
+    Locator_t locator;
     LocatorListIterator loc_list_it;
     ReaderTimes &sub_times = subscriber_atts.times;
 
@@ -202,17 +228,27 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriber)
     EXPECT_EQ(sub_times.initialAcknackDelay, c_TimeZero);
     EXPECT_EQ(sub_times.heartbeatResponseDelay.seconds, 18);
     EXPECT_EQ(sub_times.heartbeatResponseDelay.fraction, 81);
-    EXPECT_EQ((loc_list_it = subscriber_atts.unicastLocatorList.begin())->port, 196);
-    EXPECT_EQ((++loc_list_it)->kind, LOCATOR_KIND_UDPv6);
-    EXPECT_EQ(loc_list_it->port, 212);
-    EXPECT_EQ((loc_list_it = subscriber_atts.multicastLocatorList.begin())->kind, LOCATOR_KIND_UDPv4);
-    EXPECT_EQ(loc_list_it++->port, 220);
-    EXPECT_EQ(loc_list_it++->kind, LOCATOR_KIND_UDPv4);
-    EXPECT_EQ(loc_list_it->port, 9891);
-    EXPECT_EQ((loc_list_it = subscriber_atts.outLocatorList.begin())->kind, LOCATOR_KIND_UDPv4);
-    EXPECT_EQ(loc_list_it++->port, 2079);
-    EXPECT_EQ(loc_list_it->kind, LOCATOR_KIND_UDPv6);
-    EXPECT_EQ(loc_list_it->port, 2030);
+    locator.set_IP4_address(192, 168, 1, 10);
+    locator.port = 196;
+    EXPECT_EQ(*(loc_list_it = subscriber_atts.unicastLocatorList.begin()), locator);
+    locator.set_IP4_address(0, 0, 0, 0);
+    locator.port = 212;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 10);
+    locator.port = 220;
+    EXPECT_EQ(*(loc_list_it = subscriber_atts.multicastLocatorList.begin()), locator);
+    locator.set_IP4_address(0, 0, 0, 0);
+    locator.port = 0;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 11);
+    locator.port = 9891;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(192, 168, 1, 2);
+    locator.port = 2079;
+    EXPECT_EQ(*(loc_list_it = subscriber_atts.outLocatorList.begin()), locator);
     EXPECT_EQ(subscriber_atts.historyMemoryPolicy, PREALLOCATED_WITH_REALLOC_MEMORY_MODE);
     EXPECT_EQ(subscriber_atts.getUserDefinedID(), 13);
     EXPECT_EQ(subscriber_atts.getEntityID(), 31);

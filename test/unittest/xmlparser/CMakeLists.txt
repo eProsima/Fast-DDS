@@ -30,9 +30,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_security_profiles.xml
             ${CMAKE_CURRENT_BINARY_DIR}/test_xml_security_profiles.xml
             COPYONLY)
-        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_duplicated_profiles.xml
-            ${CMAKE_CURRENT_BINARY_DIR}/test_xml_duplicated_profiles.xml
-            COPYONLY)
 
         set(XMLPROFILEPARSER_SOURCE
             XMLProfileParserTests.cpp

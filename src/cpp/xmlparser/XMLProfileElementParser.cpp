@@ -1287,14 +1287,12 @@ XMLP_ret XMLProfileParser::getXMLLocatorList(XMLElement *elem, LocatorList_t &lo
         {
             if (XMLP_ret::XML_OK != getXMLUint(p_aux1, &loc.port, ident + 1)) return XMLP_ret::XML_ERROR;
         }
-        // TODO: address must be octet address[16]
         /// address - stringType
         if (nullptr != (p_aux1 = p_aux0->FirstChildElement(ADDRESS)))
         {
-            logError(XMLPROFILEPARSER, "Tag '" << p_aux1->Value() << "' do not supported for now");
-            /*std::string s = "";
+            std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux1, &s, ident + 1)) return XMLP_ret::XML_ERROR;
-            strncpy(loc.address, s.c_str(), 16);*/
+            loc.set_IP4_address(s);
         }
 
         locatorList.push_back(loc);
