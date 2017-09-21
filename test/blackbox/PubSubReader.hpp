@@ -183,8 +183,9 @@ class PubSubReader
             total_msgs_ = msgs;
             number_samples_expected_ = total_msgs_.size();
             current_received_count_ = 0;
-            receiving_ = true;
             mutex_.unlock();
+
+            receiving_.store(true);
 
             bool ret = false;
             do
@@ -196,9 +197,7 @@ class PubSubReader
 
         void stopReception()
         {
-            mutex_.lock();
-            receiving_ = false;
-            mutex_.unlock();
+            receiving_.store(false);
         }
 
         void block_for_all()
@@ -433,9 +432,8 @@ class PubSubReader
         void receive_one(eprosima::fastrtps::Subscriber* subscriber, bool& returnedValue)
         {
             returnedValue = false;
-            std::unique_lock<std::mutex> lock(mutex_);
 
-            if(receiving_)
+            if(receiving_.load())
             {
                 type data;
                 SampleInfo_t info;
@@ -443,6 +441,8 @@ class PubSubReader
                 if(subscriber->takeNextData((void*)&data, &info))
                 {
                     returnedValue = true;
+
+                    std::unique_lock<std::mutex> lock(mutex_);
 
                     // Check order of changes.
                     ASSERT_LT(last_seq, info.sample_identity.sequence_number());
@@ -507,7 +507,7 @@ class PubSubReader
         std::mutex mutexDiscovery_;
         std::condition_variable cvDiscovery_;
         unsigned int matched_;
-        bool receiving_;
+        std::atomic<bool> receiving_;
         type_support type_;
         SequenceNumber_t last_seq;
         size_t current_received_count_;

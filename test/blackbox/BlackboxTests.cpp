@@ -1566,17 +1566,50 @@ BLACKBOXTEST(BlackBox, PubSubMoreThan256Unacknowledged)
 
 BLACKBOXTEST(BlackBox, StaticDiscovery)
 {
+    char* value = nullptr;
+    std::string TOPIC_RANDOM_NUMBER;
+    std::string W_UNICAST_PORT_RANDOM_NUMBER_STR;
+    std::string R_UNICAST_PORT_RANDOM_NUMBER_STR;
+    std::string MULTICAST_PORT_RANDOM_NUMBER_STR;
     // Get environment variables.
-    std::string TOPIC_RANDOM_NUMBER(std::getenv("TOPIC_RANDOM_NUMBER"));
-    ASSERT_FALSE(TOPIC_RANDOM_NUMBER.empty());
-    std::string W_UNICAST_PORT_RANDOM_NUMBER_STR(std::getenv("W_UNICAST_PORT_RANDOM_NUMBER"));
-    ASSERT_FALSE(W_UNICAST_PORT_RANDOM_NUMBER_STR.empty());
+    value = std::getenv("TOPIC_RANDOM_NUMBER");
+    if(value != nullptr)
+    {
+        TOPIC_RANDOM_NUMBER = value;
+    }
+    else
+    {
+        TOPIC_RANDOM_NUMBER = "1";
+    }
+    value = std::getenv("W_UNICAST_PORT_RANDOM_NUMBER");
+    if(value != nullptr)
+    {
+        W_UNICAST_PORT_RANDOM_NUMBER_STR = value;
+    }
+    else
+    {
+        W_UNICAST_PORT_RANDOM_NUMBER_STR = "7411";
+    }
     int32_t W_UNICAST_PORT_RANDOM_NUMBER = stoi(W_UNICAST_PORT_RANDOM_NUMBER_STR);
-    std::string R_UNICAST_PORT_RANDOM_NUMBER_STR(std::getenv("R_UNICAST_PORT_RANDOM_NUMBER"));
-    ASSERT_FALSE(R_UNICAST_PORT_RANDOM_NUMBER_STR.empty());
+    value =std::getenv("R_UNICAST_PORT_RANDOM_NUMBER");
+    if(value != nullptr)
+    {
+        R_UNICAST_PORT_RANDOM_NUMBER_STR = value;
+    }
+    else
+    {
+        R_UNICAST_PORT_RANDOM_NUMBER_STR = "7421";
+    }
     int32_t R_UNICAST_PORT_RANDOM_NUMBER = stoi(R_UNICAST_PORT_RANDOM_NUMBER_STR);
-    std::string MULTICAST_PORT_RANDOM_NUMBER_STR(std::getenv("MULTICAST_PORT_RANDOM_NUMBER"));
-    ASSERT_FALSE(MULTICAST_PORT_RANDOM_NUMBER_STR.empty());
+    value = std::getenv("MULTICAST_PORT_RANDOM_NUMBER");
+    if(value != nullptr)
+    {
+        MULTICAST_PORT_RANDOM_NUMBER_STR = value;
+    }
+    else
+    {
+        MULTICAST_PORT_RANDOM_NUMBER_STR = "7400";
+    }
     int32_t MULTICAST_PORT_RANDOM_NUMBER = stoi(MULTICAST_PORT_RANDOM_NUMBER_STR);
 
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -1624,6 +1657,11 @@ BLACKBOXTEST(BlackBox, StaticDiscovery)
         setSubscriberIDs(3, 4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
     ASSERT_TRUE(reader.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
 
     auto data = default_helloworld_data_generator();
     auto expected_data(data);
