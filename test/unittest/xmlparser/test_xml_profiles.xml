@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <profiles>
 
-    <participant profile_name="test_participant_profile">
+    <participant profile_name="test_participant_profile" is_default_profile="true">
         <rtps>
             <defaultUnicastLocatorList>
                 <locator>
@@ -97,7 +97,7 @@
         </rtps>
     </participant>
 
-    <publisher profile_name="test_publisher_profile">
+    <publisher profile_name="test_publisher_profile" is_default_profile="true">
         <topic>
             <kind>NO_KEY</kind>
             <name>samplePubSubTopic</name>
@@ -204,7 +204,7 @@
         <entityID>87</entityID>
     </publisher>
 
-    <subscriber profile_name="test_subscriber_profile">
+    <subscriber profile_name="test_subscriber_profile" is_default_profile="true">
         <topic>
             <kind>WITH_KEY</kind>
             <name>otherSamplePubSubTopic</name>

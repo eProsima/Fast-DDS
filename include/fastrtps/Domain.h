@@ -64,6 +64,9 @@ public:
      */
     RTPS_DllAPI static Participant* createParticipant(ParticipantAttributes &att,
                                                       ParticipantListener *listen = nullptr);
+
+    RTPS_DllAPI static void getDefaultParticipantAttributes(ParticipantAttributes& participant_attributes);
+
     /**
      * Create a Publisher in a Participant from a profile name.
      * @param part Pointer to the participant where you want to create the Publisher.
@@ -74,6 +77,7 @@ public:
     RTPS_DllAPI static Publisher* createPublisher(Participant *part,
                                                   const std::string &publisher_profile,
                                                   PublisherListener *listen = nullptr);
+
     /**
      * Create a Publisher in a Participant.
      * @param part Pointer to the participant where you want to create the Publisher.
@@ -84,6 +88,9 @@ public:
     RTPS_DllAPI static Publisher* createPublisher(Participant *part,
                                                   PublisherAttributes &att,
                                                   PublisherListener *listen = nullptr);
+
+    RTPS_DllAPI static void getDefaultPublisherAttributes(PublisherAttributes& publisher_attributes);
+
     /**
      * Create a Subscriber in a Participant from a profile name.
      * @param part Pointer to the participant where you want to create the Publisher.
@@ -104,6 +111,9 @@ public:
     RTPS_DllAPI static Subscriber* createSubscriber(Participant *part,
                                                     SubscriberAttributes &att,
                                                     SubscriberListener *listen = nullptr);
+
+    RTPS_DllAPI static void getDefaultSubscriberAttributes(SubscriberAttributes& subscriber_attributes);
+
     /**
      * Remove a Participant and all associated publishers and subscribers.
      * @param part Pointer to the participant.

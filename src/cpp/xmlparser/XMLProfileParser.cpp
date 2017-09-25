@@ -7,8 +7,11 @@ namespace fastrtps {
 namespace xmlparser {
 
 std::map<std::string, ParticipantAttributes> XMLProfileParser::m_participant_profiles;
+ParticipantAttributes default_participant_attributes;
 std::map<std::string, PublisherAttributes>   XMLProfileParser::m_publisher_profiles;
+PublisherAttributes default_publisher_attributes;
 std::map<std::string, SubscriberAttributes>  XMLProfileParser::m_subscriber_profiles;
+SubscriberAttributes default_subscriber_attributes;
 std::map<std::string, XMLP_ret>              XMLProfileParser::m_xml_files;
 
 XMLP_ret XMLProfileParser::fillParticipantAttributes(const std::string &profile_name, ParticipantAttributes &atts)
@@ -21,6 +24,21 @@ XMLP_ret XMLProfileParser::fillParticipantAttributes(const std::string &profile_
     }
     atts = it->second;
     return XMLP_ret::XML_OK;
+}
+
+void XMLProfileParser::getDefaultParticipantAttributes(ParticipantAttributes& participant_attributes)
+{
+    participant_attributes = default_participant_attributes;
+}
+
+void XMLProfileParser::getDefaultPublisherAttributes(PublisherAttributes& publisher_attributes)
+{
+    publisher_attributes = default_publisher_attributes;
+}
+
+void XMLProfileParser::getDefaultSubscriberAttributes(SubscriberAttributes& subscriber_attributes)
+{
+    subscriber_attributes = default_subscriber_attributes;
 }
 
 XMLP_ret XMLProfileParser::fillPublisherAttributes(const std::string &profile_name, PublisherAttributes &atts)
@@ -95,12 +113,20 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
     {
         if (nullptr != (tag = p_profile->Value()))
         {
+            bool is_default_profile = false;
+            p_profile->QueryBoolAttribute("is_default_profile", &is_default_profile);
+
             // If profile parsing functions fails, log and continue.
             if (strcmp(tag, PARTICIPANT) == 0)
             {
                 ParticipantAttributes participant_atts;
                 if (XMLP_ret::XML_OK == parseXMLParticipantProf(p_profile, participant_atts, profile_name))
                 {
+                    if(is_default_profile)
+                    {
+                        default_participant_attributes = participant_atts;
+                    }
+
                     if (false == m_participant_profiles.emplace(profile_name, participant_atts).second)
                     {
                         logError(XMLPROFILEPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
@@ -117,6 +143,11 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
                 PublisherAttributes publisher_atts;
                 if (XMLP_ret::XML_OK == parseXMLPublisherProf(p_profile, publisher_atts, profile_name))
                 {
+                    if(is_default_profile)
+                    {
+                        default_publisher_attributes = publisher_atts;
+                    }
+
                     if (false == m_publisher_profiles.emplace(profile_name, publisher_atts).second)
                     {
                         logError(XMLPROFILEPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
@@ -134,6 +165,11 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
                 parseXMLSubscriberProf(p_profile, subscriber_atts, profile_name);
                 if (XMLP_ret::XML_OK == parseXMLSubscriberProf(p_profile, subscriber_atts, profile_name))
                 {
+                    if(is_default_profile)
+                    {
+                        default_subscriber_attributes = subscriber_atts;
+                    }
+
                     if (false == m_subscriber_profiles.emplace(profile_name, subscriber_atts).second)
                     {
                         logError(XMLPROFILEPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
