@@ -28,7 +28,6 @@ namespace { char dummy; }
 
 #include <fastcdr/Cdr.h>
 
-#include <fastcdr/exceptions/BadParamException.h>
 using namespace eprosima::fastcdr::exception;
 
 #include <utility>
@@ -99,10 +98,7 @@ void HelloWorld::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_index;
 
-    if(m_message.length() <= 255)
     scdr << m_message;
-    else
-        throw eprosima::fastcdr::exception::BadParamException("message field exceeds the maximum length");
 }
 
 void HelloWorld::deserialize(eprosima::fastcdr::Cdr &dcdr)
