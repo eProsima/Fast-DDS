@@ -743,8 +743,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
         WillOnce(Return(request_message_change));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(request_message_change)).Times(1).
         WillOnce(Return(true));
-    stateless_writer_->history_->reset_samples_number();
-    stateless_writer_->history_->wait_for_some_sample();
+    stateless_writer_->history_->wait_for_more_samples_than(1);
 
     delete request_message_change;
 }
@@ -1373,8 +1372,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_pendin
         WillOnce(Return(reply_message_change));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(reply_message_change)).Times(1).
         WillOnce(Return(true));
-    stateless_writer_->history_->reset_samples_number();
-    stateless_writer_->history_->wait_for_some_sample();
+    stateless_writer_->history_->wait_for_more_samples_than(1);
 
     delete reply_message_change;
 }

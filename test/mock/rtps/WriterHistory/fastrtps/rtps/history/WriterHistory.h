@@ -60,19 +60,13 @@ class WriterHistory
             return ret;
         }
 
-        void reset_samples_number()
-        { 
-            std::lock_guard<std::mutex> lock(samples_number_mutex_);
-            samples_number_ = 0;
-        }
-
-        void wait_for_some_sample()
+        void wait_for_more_samples_than(unsigned int minimum)
         {
             std::unique_lock<std::mutex> lock(samples_number_mutex_);
 
-            if(samples_number_ == 0)
+            if(samples_number_ <= minimum)
             {
-                samples_number_cond_.wait(lock);
+                samples_number_cond_.wait(lock, [&]() {return samples_number_ > minimum;});
             }
         }
 

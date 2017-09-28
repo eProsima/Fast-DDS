@@ -46,12 +46,14 @@ public:
     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
     RTPS_DllAPI static XMLP_ret loadDefaultXMLFile();
+
     /**
     * Load a profiles XML file.
     * @param filename Name for the file to be loaded.
     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
     RTPS_DllAPI static XMLP_ret loadXMLFile(const std::string &filename);
+
     /**
     * Search for the profile specified and fill the structure.
     * @param profile_name Name for the profile to be used to fill the structure.
@@ -59,6 +61,9 @@ public:
     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
     RTPS_DllAPI static XMLP_ret fillParticipantAttributes(const std::string &profile_name, ParticipantAttributes &atts);
+
+    RTPS_DllAPI static void getDefaultParticipantAttributes(ParticipantAttributes& participant_attributes);
+
     /**
     * Search for the profile specified and fill the structure.
     * @param profile_name Name for the profile to be used to fill the structure.
@@ -66,6 +71,9 @@ public:
     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
     RTPS_DllAPI static XMLP_ret fillPublisherAttributes(const std::string &profile_name, PublisherAttributes &atts);
+
+    RTPS_DllAPI static void getDefaultPublisherAttributes(PublisherAttributes& publisher_attributes);
+
     /**
     * Search for the profile specified and fill the structure.
     * @param profile_name Name for the profile to be used to fill the structure.
@@ -73,6 +81,8 @@ public:
     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
     RTPS_DllAPI static XMLP_ret fillSubscriberAttributes(const std::string &profile_name, SubscriberAttributes &atts);
+
+    RTPS_DllAPI static void getDefaultSubscriberAttributes(SubscriberAttributes& subscriber_attributes);
 
 protected:
 

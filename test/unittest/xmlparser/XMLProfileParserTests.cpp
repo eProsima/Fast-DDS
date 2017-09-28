@@ -37,7 +37,7 @@ TEST_F(XMLProfileParserTests, XMLoadProfiles)
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileParser::loadXMLFile("test_xml_security_profiles.xml"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLProfileParser::loadXMLFile("test_xml_duplicated_profiles.xml"));
+                xmlparser::XMLProfileParser::loadXMLFile("test_xml_profiles.xml"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_ERROR,
                 xmlparser::XMLProfileParser::loadXMLFile("missing_file.xml"));
 
@@ -62,15 +62,19 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
 
     RTPSParticipantAttributes &rtps_atts = participant_atts.rtps;
     BuiltinAttributes &builtin = rtps_atts.builtin;
+    Locator_t locator;
     LocatorListIterator loc_list_it;
     PortParameters &port = rtps_atts.port;
 
-    EXPECT_EQ(rtps_atts.defaultUnicastLocatorList.begin()->kind, LOCATOR_KIND_UDPv4);
-    EXPECT_EQ(rtps_atts.defaultUnicastLocatorList.begin()->port, 2019);
-    EXPECT_EQ(rtps_atts.defaultMulticastLocatorList.begin()->kind, LOCATOR_KIND_UDPv6);
-    EXPECT_EQ(rtps_atts.defaultMulticastLocatorList.begin()->port, 2021);
-    EXPECT_EQ(rtps_atts.defaultOutLocatorList.begin()->kind, LOCATOR_KIND_UDPv4);
-    EXPECT_EQ(rtps_atts.defaultOutLocatorList.begin()->port, 1979);
+    locator.set_IP4_address(192, 168, 1 , 2);
+    locator.port = 2019;
+    EXPECT_EQ(*rtps_atts.defaultUnicastLocatorList.begin(), locator);
+    locator.set_IP4_address(239, 255, 0 , 1);
+    locator.port = 2021;
+    EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
+    locator.set_IP4_address(192, 168, 1 , 1);
+    locator.port = 1979;
+    EXPECT_EQ(*rtps_atts.defaultOutLocatorList.begin(), locator);
     EXPECT_EQ(rtps_atts.defaultSendPort, 80);
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000);
@@ -84,14 +88,93 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.fraction, 333);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
-    EXPECT_EQ((loc_list_it = builtin.metatrafficUnicastLocatorList.begin())->kind, LOCATOR_KIND_UDPv6);
-    EXPECT_EQ(loc_list_it++->port, 9999);
-    EXPECT_EQ(loc_list_it->kind, LOCATOR_KIND_UDPv4);
-    EXPECT_EQ(loc_list_it->port, 6666);
-    EXPECT_EQ((loc_list_it = builtin.metatrafficMulticastLocatorList.begin())->kind, LOCATOR_KIND_UDPv4);
-    EXPECT_EQ(loc_list_it++->port, 32);
-    EXPECT_EQ(loc_list_it->port, 2112);
-    EXPECT_EQ((loc_list_it = builtin.initialPeersList.begin())->kind, LOCATOR_KIND_UDPv6);
+    locator.set_IP4_address(192, 168, 1, 5);
+    locator.port = 9999;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);
+    locator.set_IP4_address(192, 168, 1, 6);
+    locator.port = 6666;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 2);
+    locator.port = 32;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficMulticastLocatorList.begin()), locator);
+    locator.set_IP4_address(239, 255, 0, 3);
+    locator.port = 2112;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 1);
+    locator.port = 21120;
+    EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
+    EXPECT_EQ(port.portBase, 12);
+    EXPECT_EQ(port.domainIDGain, 34);
+    EXPECT_EQ(port.participantIDGain, 56);
+    EXPECT_EQ(port.offsetd0, 78);
+    EXPECT_EQ(port.offsetd1, 90);
+    EXPECT_EQ(port.offsetd2, 123);
+    EXPECT_EQ(port.offsetd3, 456);
+    EXPECT_EQ(rtps_atts.participantID, 9898);
+    EXPECT_EQ(rtps_atts.use_IP4_to_send, true);
+    EXPECT_EQ(rtps_atts.use_IP6_to_send, false);
+    EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048);
+    EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45);
+    EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
+    EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
+}
+
+TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
+{
+    std::string participant_profile = std::string("test_participant_profile");
+    ParticipantAttributes participant_atts;
+
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
+                xmlparser::XMLProfileParser::loadXMLFile("test_xml_profiles.xml"));
+    xmlparser::XMLProfileParser::getDefaultParticipantAttributes(participant_atts);
+
+    RTPSParticipantAttributes &rtps_atts = participant_atts.rtps;
+    BuiltinAttributes &builtin = rtps_atts.builtin;
+    Locator_t locator;
+    LocatorListIterator loc_list_it;
+    PortParameters &port = rtps_atts.port;
+
+    locator.set_IP4_address(192, 168, 1 , 2);
+    locator.port = 2019;
+    EXPECT_EQ(*rtps_atts.defaultUnicastLocatorList.begin(), locator);
+    locator.set_IP4_address(239, 255, 0 , 1);
+    locator.port = 2021;
+    EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
+    locator.set_IP4_address(192, 168, 1 , 1);
+    locator.port = 1979;
+    EXPECT_EQ(*rtps_atts.defaultOutLocatorList.begin(), locator);
+    EXPECT_EQ(rtps_atts.defaultSendPort, 80);
+    EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32);
+    EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000);
+    EXPECT_EQ(builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
+    EXPECT_EQ(builtin.use_SIMPLE_EndpointDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.use_STATIC_EndpointDiscoveryProtocol, false);
+    EXPECT_EQ(builtin.domainId, 2019102);
+    EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
+    EXPECT_EQ(builtin.leaseDuration_announcementperiod.fraction, 333);
+    EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
+    EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
+    locator.set_IP4_address(192, 168, 1, 5);
+    locator.port = 9999;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);
+    locator.set_IP4_address(192, 168, 1, 6);
+    locator.port = 6666;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 2);
+    locator.port = 32;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficMulticastLocatorList.begin()), locator);
+    locator.set_IP4_address(239, 255, 0, 3);
+    locator.port = 2112;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 1);
+    locator.port = 21120;
+    EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
     EXPECT_EQ(port.portBase, 12);
     EXPECT_EQ(port.domainIDGain, 34);
     EXPECT_EQ(port.participantIDGain, 56);
@@ -120,6 +203,7 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
 
     TopicAttributes &pub_topic = publisher_atts.topic;
     WriterQos &pub_qos = publisher_atts.qos;
+    Locator_t locator;
     LocatorListIterator loc_list_it;
     WriterTimes &pub_times = publisher_atts.times;
 
@@ -148,14 +232,92 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(pub_times.nackResponseDelay, c_TimeInvalid);
     EXPECT_EQ(pub_times.nackSupressionDuration.seconds, 121);
     EXPECT_EQ(pub_times.nackSupressionDuration.fraction, 332);
-    EXPECT_EQ((loc_list_it = publisher_atts.unicastLocatorList.begin())->port, 197);
-    EXPECT_EQ((++loc_list_it)->kind, LOCATOR_KIND_UDPv4);
-    EXPECT_EQ(loc_list_it->port, 219);
-    EXPECT_EQ((loc_list_it = publisher_atts.multicastLocatorList.begin())->kind, LOCATOR_KIND_UDPv6);
-    EXPECT_EQ(loc_list_it++->port, 2020);
-    EXPECT_EQ(loc_list_it++->kind, LOCATOR_KIND_UDPv6);
-    EXPECT_EQ(loc_list_it->port, 1989);
-    EXPECT_EQ((loc_list_it = publisher_atts.outLocatorList.begin())->kind, LOCATOR_KIND_UDPv4);
+    locator.set_IP4_address(192, 168, 1, 3);
+    locator.port = 197;
+    EXPECT_EQ(*(loc_list_it = publisher_atts.unicastLocatorList.begin()), locator);
+    locator.set_IP4_address(192, 168, 1, 9);
+    locator.port = 219;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 1);
+    locator.port = 2020;
+    EXPECT_EQ(*(loc_list_it = publisher_atts.multicastLocatorList.begin()), locator);
+    locator.set_IP4_address(0, 0, 0, 0);
+    locator.port = 0;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.port = 1989;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.port = 2021;
+    EXPECT_EQ(*(loc_list_it = publisher_atts.outLocatorList.begin()), locator);
+    EXPECT_EQ(loc_list_it->port, 2021);
+    EXPECT_EQ(publisher_atts.throughputController.bytesPerPeriod, 9236);
+    EXPECT_EQ(publisher_atts.throughputController.periodMillisecs, 234);
+    EXPECT_EQ(publisher_atts.historyMemoryPolicy, DYNAMIC_RESERVE_MEMORY_MODE);
+    EXPECT_EQ(publisher_atts.getUserDefinedID(), 67);
+    EXPECT_EQ(publisher_atts.getEntityID(), 87);
+}
+
+TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
+{
+    std::string publisher_profile = std::string("test_publisher_profile");
+    PublisherAttributes publisher_atts;
+
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
+                xmlparser::XMLProfileParser::loadXMLFile("test_xml_profiles.xml"));
+    xmlparser::XMLProfileParser::getDefaultPublisherAttributes(publisher_atts);
+
+    TopicAttributes &pub_topic = publisher_atts.topic;
+    WriterQos &pub_qos = publisher_atts.qos;
+    Locator_t locator;
+    LocatorListIterator loc_list_it;
+    WriterTimes &pub_times = publisher_atts.times;
+
+    EXPECT_EQ(pub_topic.topicKind, NO_KEY);
+    EXPECT_EQ(pub_topic.topicName, "samplePubSubTopic");
+    EXPECT_EQ(pub_topic.topicDataType, "samplePubSubTopicType");
+    EXPECT_EQ(pub_topic.historyQos.kind, KEEP_LAST_HISTORY_QOS);
+    EXPECT_EQ(pub_topic.historyQos.depth, 50);
+    EXPECT_EQ(pub_topic.resourceLimitsQos.max_samples, 432);
+    EXPECT_EQ(pub_topic.resourceLimitsQos.max_instances, 1);
+    EXPECT_EQ(pub_topic.resourceLimitsQos.max_samples_per_instance, 100);
+    EXPECT_EQ(pub_topic.resourceLimitsQos.allocated_samples, 123);
+    EXPECT_EQ(pub_qos.m_durability.kind, TRANSIENT_LOCAL_DURABILITY_QOS);
+    EXPECT_EQ(pub_qos.m_liveliness.kind, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
+    EXPECT_EQ(pub_qos.m_liveliness.lease_duration.seconds, 1);
+    EXPECT_EQ(pub_qos.m_liveliness.lease_duration.fraction, 2);
+    EXPECT_EQ(pub_qos.m_liveliness.announcement_period, c_TimeInfinite);
+    EXPECT_EQ(pub_qos.m_reliability.kind, BEST_EFFORT_RELIABILITY_QOS);
+    EXPECT_EQ(pub_qos.m_reliability.max_blocking_time, c_TimeZero);
+    EXPECT_EQ(pub_qos.m_partition.getNames()[0], "partition_name_a");
+    EXPECT_EQ(pub_qos.m_partition.getNames()[1], "partition_name_b");
+    EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
+    EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
+    EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
+    EXPECT_EQ(pub_times.heartbeatPeriod.fraction, 32);
+    EXPECT_EQ(pub_times.nackResponseDelay, c_TimeInvalid);
+    EXPECT_EQ(pub_times.nackSupressionDuration.seconds, 121);
+    EXPECT_EQ(pub_times.nackSupressionDuration.fraction, 332);
+    locator.set_IP4_address(192, 168, 1, 3);
+    locator.port = 197;
+    EXPECT_EQ(*(loc_list_it = publisher_atts.unicastLocatorList.begin()), locator);
+    locator.set_IP4_address(192, 168, 1, 9);
+    locator.port = 219;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 1);
+    locator.port = 2020;
+    EXPECT_EQ(*(loc_list_it = publisher_atts.multicastLocatorList.begin()), locator);
+    locator.set_IP4_address(0, 0, 0, 0);
+    locator.port = 0;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.port = 1989;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.port = 2021;
+    EXPECT_EQ(*(loc_list_it = publisher_atts.outLocatorList.begin()), locator);
     EXPECT_EQ(loc_list_it->port, 2021);
     EXPECT_EQ(publisher_atts.throughputController.bytesPerPeriod, 9236);
     EXPECT_EQ(publisher_atts.throughputController.periodMillisecs, 234);
@@ -176,6 +338,7 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriber)
 
     TopicAttributes &sub_topic = subscriber_atts.topic;
     ReaderQos &sub_qos = subscriber_atts.qos;
+    Locator_t locator;
     LocatorListIterator loc_list_it;
     ReaderTimes &sub_times = subscriber_atts.times;
 
@@ -202,17 +365,91 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriber)
     EXPECT_EQ(sub_times.initialAcknackDelay, c_TimeZero);
     EXPECT_EQ(sub_times.heartbeatResponseDelay.seconds, 18);
     EXPECT_EQ(sub_times.heartbeatResponseDelay.fraction, 81);
-    EXPECT_EQ((loc_list_it = subscriber_atts.unicastLocatorList.begin())->port, 196);
-    EXPECT_EQ((++loc_list_it)->kind, LOCATOR_KIND_UDPv6);
-    EXPECT_EQ(loc_list_it->port, 212);
-    EXPECT_EQ((loc_list_it = subscriber_atts.multicastLocatorList.begin())->kind, LOCATOR_KIND_UDPv4);
-    EXPECT_EQ(loc_list_it++->port, 220);
-    EXPECT_EQ(loc_list_it++->kind, LOCATOR_KIND_UDPv4);
-    EXPECT_EQ(loc_list_it->port, 9891);
-    EXPECT_EQ((loc_list_it = subscriber_atts.outLocatorList.begin())->kind, LOCATOR_KIND_UDPv4);
-    EXPECT_EQ(loc_list_it++->port, 2079);
-    EXPECT_EQ(loc_list_it->kind, LOCATOR_KIND_UDPv6);
-    EXPECT_EQ(loc_list_it->port, 2030);
+    locator.set_IP4_address(192, 168, 1, 10);
+    locator.port = 196;
+    EXPECT_EQ(*(loc_list_it = subscriber_atts.unicastLocatorList.begin()), locator);
+    locator.set_IP4_address(0, 0, 0, 0);
+    locator.port = 212;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 10);
+    locator.port = 220;
+    EXPECT_EQ(*(loc_list_it = subscriber_atts.multicastLocatorList.begin()), locator);
+    locator.set_IP4_address(0, 0, 0, 0);
+    locator.port = 0;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 11);
+    locator.port = 9891;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(192, 168, 1, 2);
+    locator.port = 2079;
+    EXPECT_EQ(*(loc_list_it = subscriber_atts.outLocatorList.begin()), locator);
+    EXPECT_EQ(subscriber_atts.historyMemoryPolicy, PREALLOCATED_WITH_REALLOC_MEMORY_MODE);
+    EXPECT_EQ(subscriber_atts.getUserDefinedID(), 13);
+    EXPECT_EQ(subscriber_atts.getEntityID(), 31);
+}
+
+TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
+{
+    std::string subscriber_profile = std::string("test_subscriber_profile");
+    SubscriberAttributes subscriber_atts;
+
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
+                xmlparser::XMLProfileParser::loadXMLFile("test_xml_profiles.xml"));
+    xmlparser::XMLProfileParser::getDefaultSubscriberAttributes(subscriber_atts);
+
+    TopicAttributes &sub_topic = subscriber_atts.topic;
+    ReaderQos &sub_qos = subscriber_atts.qos;
+    Locator_t locator;
+    LocatorListIterator loc_list_it;
+    ReaderTimes &sub_times = subscriber_atts.times;
+
+    EXPECT_EQ(sub_topic.topicKind, WITH_KEY);
+    EXPECT_EQ(sub_topic.topicName, "otherSamplePubSubTopic");
+    EXPECT_EQ(sub_topic.topicDataType, "otherSamplePubSubTopicType");
+    EXPECT_EQ(sub_topic.historyQos.kind, KEEP_ALL_HISTORY_QOS);
+    EXPECT_EQ(sub_topic.historyQos.depth, 1001);
+    EXPECT_EQ(sub_topic.resourceLimitsQos.max_samples, 52);
+    EXPECT_EQ(sub_topic.resourceLimitsQos.max_instances, 25);
+    EXPECT_EQ(sub_topic.resourceLimitsQos.max_samples_per_instance, 32);
+    EXPECT_EQ(sub_topic.resourceLimitsQos.allocated_samples, 37);
+    EXPECT_EQ(sub_qos.m_durability.kind, PERSISTENT_DURABILITY_QOS);
+    EXPECT_EQ(sub_qos.m_liveliness.kind, MANUAL_BY_TOPIC_LIVELINESS_QOS);
+    EXPECT_EQ(sub_qos.m_liveliness.lease_duration.seconds, 11);
+    EXPECT_EQ(sub_qos.m_liveliness.lease_duration.fraction, 22);
+    EXPECT_EQ(sub_qos.m_liveliness.announcement_period, c_TimeZero);
+    EXPECT_EQ(sub_qos.m_reliability.kind, RELIABLE_RELIABILITY_QOS);
+    EXPECT_EQ(sub_qos.m_reliability.max_blocking_time, c_TimeInfinite);
+    EXPECT_EQ(sub_qos.m_partition.getNames()[0], "partition_name_c");
+    EXPECT_EQ(sub_qos.m_partition.getNames()[1], "partition_name_d");
+    EXPECT_EQ(sub_qos.m_partition.getNames()[2], "partition_name_e");
+    EXPECT_EQ(sub_qos.m_partition.getNames()[3], "partition_name_f");
+    EXPECT_EQ(sub_times.initialAcknackDelay, c_TimeZero);
+    EXPECT_EQ(sub_times.heartbeatResponseDelay.seconds, 18);
+    EXPECT_EQ(sub_times.heartbeatResponseDelay.fraction, 81);
+    locator.set_IP4_address(192, 168, 1, 10);
+    locator.port = 196;
+    EXPECT_EQ(*(loc_list_it = subscriber_atts.unicastLocatorList.begin()), locator);
+    locator.set_IP4_address(0, 0, 0, 0);
+    locator.port = 212;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 10);
+    locator.port = 220;
+    EXPECT_EQ(*(loc_list_it = subscriber_atts.multicastLocatorList.begin()), locator);
+    locator.set_IP4_address(0, 0, 0, 0);
+    locator.port = 0;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 11);
+    locator.port = 9891;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(192, 168, 1, 2);
+    locator.port = 2079;
+    EXPECT_EQ(*(loc_list_it = subscriber_atts.outLocatorList.begin()), locator);
     EXPECT_EQ(subscriber_atts.historyMemoryPolicy, PREALLOCATED_WITH_REALLOC_MEMORY_MODE);
     EXPECT_EQ(subscriber_atts.getUserDefinedID(), 13);
     EXPECT_EQ(subscriber_atts.getEntityID(), 31);

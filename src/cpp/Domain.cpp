@@ -152,6 +152,17 @@ Participant* Domain::createParticipant(ParticipantAttributes& att,ParticipantLis
     return pubsubpar;
 }
 
+void Domain::getDefaultParticipantAttributes(ParticipantAttributes& participant_attributes)
+{
+    if (false == default_xml_profiles_loaded)
+    {
+        XMLProfileParser::loadDefaultXMLFile();
+        default_xml_profiles_loaded = true;
+    }
+
+    return XMLProfileParser::getDefaultParticipantAttributes(participant_attributes);
+}
+
 Publisher* Domain::createPublisher(Participant *part, const std::string &publisher_profile, PublisherListener *listen)
 {
     PublisherAttributes publisher_att;
@@ -174,6 +185,28 @@ Publisher* Domain::createPublisher(Participant *part, PublisherAttributes &att, 
     }
     //TODO MOSTRAR MENSAJE DE ERROR WARNING y COMPROBAR QUE EL PUNTERO QUE ME PASA NO ES NULL
     return nullptr;
+}
+
+void Domain::getDefaultPublisherAttributes(PublisherAttributes& publisher_attributes)
+{
+    if (false == default_xml_profiles_loaded)
+    {
+        XMLProfileParser::loadDefaultXMLFile();
+        default_xml_profiles_loaded = true;
+    }
+
+    return XMLProfileParser::getDefaultPublisherAttributes(publisher_attributes);
+}
+
+void Domain::getDefaultSubscriberAttributes(SubscriberAttributes& subscriber_attributes)
+{
+    if (false == default_xml_profiles_loaded)
+    {
+        XMLProfileParser::loadDefaultXMLFile();
+        default_xml_profiles_loaded = true;
+    }
+
+    return XMLProfileParser::getDefaultSubscriberAttributes(subscriber_attributes);
 }
 
 Subscriber* Domain::createSubscriber(Participant *part, const std::string &subscriber_profile, SubscriberListener *listen)
