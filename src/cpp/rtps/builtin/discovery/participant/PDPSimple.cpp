@@ -687,19 +687,21 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
         if(mp_EDP!=nullptr)
         {
             for(std::vector<ReaderProxyData*>::iterator rit = pdata->m_readers.begin();
-                    rit!= pdata->m_readers.end();++rit)
+                    rit != pdata->m_readers.end();++rit)
             {
                 mp_EDP->unpairReaderProxy(partGUID, (*rit)->guid());
             }
             for(std::vector<WriterProxyData*>::iterator wit = pdata->m_writers.begin();
-                    wit!=pdata->m_writers.end();++wit)
+                    wit !=pdata->m_writers.end();++wit)
             {
                 mp_EDP->unpairWriterProxy(partGUID, (*wit)->guid());
             }
         }
+
 #if HAVE_SECURITY
         mp_builtin->mp_participantImpl->security_manager().remove_participant(*pdata);
 #endif
+
         if(mp_builtin->mp_WLP != nullptr)
             this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
         this->mp_EDP->removeRemoteEndpoints(pdata);
@@ -723,7 +725,6 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 
     return false;
 }
-
 
 void PDPSimple::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
 {

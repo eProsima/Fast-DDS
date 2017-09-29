@@ -124,7 +124,15 @@ class PubSubWriter
                     iHandle2GUID(readerGuid, change_in->instanceHandle);
 
                     if(writer_.participant_->get_remote_reader_info(readerGuid, readerInfo))
+                    {
+                        std::cout << "Undiscovered reader of topic " << readerInfo.topicName() << std::endl;
                         writer_.remove_reader_info(readerInfo);
+                    }
+                    else
+                    {
+                        std::cout << "Error getting remote reader info for topic " << readerInfo.topicName()
+                            << std::endl;
+                    }
                 }
             }
 
@@ -161,6 +169,10 @@ class PubSubWriter
                         std::cout << "Discovered writer of topic " << writerInfo.topicName() << std::endl;
                         writer_.add_writer_info(writerInfo);
                     }
+                    else
+                    {
+                        std::cout << "Error reading cdr message for topic " << writerInfo.topicName() << std::endl;
+                    }
                 }
                 else
                 {
@@ -169,7 +181,15 @@ class PubSubWriter
                     iHandle2GUID(writerGuid, change_in->instanceHandle);
 
                     if(writer_.participant_->get_remote_writer_info(writerGuid, writerInfo))
+                    {
+                        std::cout << "Undiscovered writer of topic " << writerInfo.topicName() << std::endl;
                         writer_.remove_writer_info(writerInfo);
+                    }
+                    else
+                    {
+                        std::cout << "Error getting remote writer info for topic " << writerInfo.topicName()
+                            << std::endl;
+                    }
                 }
             }
 

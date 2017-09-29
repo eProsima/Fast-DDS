@@ -62,12 +62,12 @@ class EDP
          * @param attributes DiscoveryAttributes structure.
          * @return True if correct.
          */
-        virtual bool initEDP(BuiltinAttributes& attributes)=0;
+        virtual bool initEDP(BuiltinAttributes& attributes) = 0;
         /**
          * Abstract method that assigns remote endpoints when a new RTPSParticipantProxyData is discovered.
          * @param pdata Discovered ParticipantProxyData
          */
-        virtual void assignRemoteEndpoints(const ParticipantProxyData& pdata)=0;
+        virtual void assignRemoteEndpoints(const ParticipantProxyData& pdata) = 0;
         /**
          * Remove remote endpoints from the endpoint discovery protocol
          * @param pdata Pointer to the ParticipantProxyData to remove
@@ -79,26 +79,26 @@ class EDP
          * @param R Pointer to the Reader to remove.
          * @return True if correctly removed.
          */
-        virtual bool removeLocalReader(RTPSReader* R)=0;
+        virtual bool removeLocalReader(RTPSReader* R) = 0;
         /**
          * Abstract method that removes a local Writer from the discovery method
          * @param W Pointer to the Writer to remove.
          * @return True if correctly removed.
          */
-        virtual bool removeLocalWriter(RTPSWriter*W)=0;
+        virtual bool removeLocalWriter(RTPSWriter*W) = 0;
 
         /**
          * After a new local ReaderProxyData has been created some processing is needed (depends on the implementation).
          * @param rdata Pointer to the ReaderProxyData object.
          * @return True if correct.
          */
-        virtual bool processLocalReaderProxyData(ReaderProxyData* rdata)= 0;
+        virtual bool processLocalReaderProxyData(ReaderProxyData* rdata) = 0;
         /**
          * After a new local WriterProxyData has been created some processing is needed (depends on the implementation).
          * @param wdata Pointer to the Writer ProxyData object.
          * @return True if correct.
          */
-        virtual bool processLocalWriterProxyData(WriterProxyData* wdata)= 0;
+        virtual bool processLocalWriterProxyData(WriterProxyData* wdata) = 0;
 
         /**
          * Create a new ReaderPD for a local Reader.

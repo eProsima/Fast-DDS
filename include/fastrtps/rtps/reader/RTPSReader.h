@@ -125,15 +125,17 @@ namespace eprosima
                  * @return Pointer to the associated reader listener.
                  */
                 RTPS_DllAPI ReaderListener* getListener();
-	       /**
-	 	* Switch the ReaderListener kind for the Reader.
-	 	* If the RTPSReader does not belong to the built-in protocols it switches out the old one.
-		* If it belongs to the built-in protocols, it sets the new ReaderListener callbacks to be called after the 
-		* built-in ReaderListener ones.
-	 	* @param target Pointed to ReaderLister to attach
-		* @return True is correctly set.
-	 	*/
-		RTPS_DllAPI bool setListener(ReaderListener* target);
+
+                /**
+                 * Switch the ReaderListener kind for the Reader.
+                 * If the RTPSReader does not belong to the built-in protocols it switches out the old one.
+                 * If it belongs to the built-in protocols, it sets the new ReaderListener callbacks to be called after the 
+                 * built-in ReaderListener ones.
+                 * @param target Pointed to ReaderLister to attach
+                 * @return True is correctly set.
+                 */
+                RTPS_DllAPI bool setListener(ReaderListener* target);
+
                 /**
                  * Reserve a CacheChange_t.
                  * @param change Pointer to pointer to the Cache.

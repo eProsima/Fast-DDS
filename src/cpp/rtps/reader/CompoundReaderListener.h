@@ -33,37 +33,37 @@ namespace rtps{
  */
 class CompoundReaderListener: public ReaderListener
 {
-public:
-	CompoundReaderListener():attached_listener(nullptr){};
-	virtual ~CompoundReaderListener(){};
+    public:
+        CompoundReaderListener():attached_listener(nullptr){};
+        virtual ~CompoundReaderListener(){};
 
-	virtual void onReaderMatched(RTPSReader* /*reader*/, MatchingInfo& /*info*/){};
-	virtual void onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const /*change*/){};
+        virtual void onReaderMatched(RTPSReader* /*reader*/, MatchingInfo& /*info*/){};
+        virtual void onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const /*change*/){};
 
-	/**
-	 * Attaches a secondary ReaderListener to this ReaderListener, so both callbacks are executed on a single event.
-	 * @param secondary_listener to attach
-	 */
-	void attachListener(ReaderListener *secondary_listener);
-	/**
-	 * Detaches any currently used secondary ReaderListener, but does not manage its destruction
-	 */
+        /**
+         * Attaches a secondary ReaderListener to this ReaderListener, so both callbacks are executed on a single event.
+         * @param secondary_listener to attach
+         */
+        void attachListener(ReaderListener *secondary_listener);
+        /**
+         * Detaches any currently used secondary ReaderListener, but does not manage its destruction
+         */
         void detachListener();	
-	/**
-	 * Checks if there is currently a secondary ReaderListener attached to this element
-	 * @return True if there is a reader attached
-	 */
-	bool hasReaderAttached();
-	/**
-	 * Get a pointer to the secondary ReaderListener attached to this ReaderListener, in case there is one
-	 * @return ReaderListener pointer to the secondary listener
-	 */
-	ReaderListener* getAttachedListener();	
-protected:
-	//! Mutex to ensure exclusive access to the attachedListener
-	std::mutex attached_listener_mutex;
-	//! Pointer to the secondary ReaderListener, should there be one attached
-	ReaderListener* attached_listener;
+        /**
+         * Checks if there is currently a secondary ReaderListener attached to this element
+         * @return True if there is a reader attached
+         */
+        bool hasReaderAttached();
+        /**
+         * Get a pointer to the secondary ReaderListener attached to this ReaderListener, in case there is one
+         * @return ReaderListener pointer to the secondary listener
+         */
+        ReaderListener* getAttachedListener();	
+
+        //! Mutex to ensure exclusive access to the attachedListener
+        std::mutex attached_listener_mutex;
+        //! Pointer to the secondary ReaderListener, should there be one attached
+        ReaderListener* attached_listener;
 
 };
 

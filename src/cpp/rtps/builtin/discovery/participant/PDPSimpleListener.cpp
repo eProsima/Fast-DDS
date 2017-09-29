@@ -28,11 +28,10 @@
 #include <fastrtps/rtps/reader/RTPSReader.h>
 
 #include <fastrtps/rtps/history/ReaderHistory.h>
-
-#include <fastrtps/utils/TimeConversion.h>
-//
 #include <fastrtps/rtps/participant/RTPSParticipantDiscoveryInfo.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
+
+#include <fastrtps/utils/TimeConversion.h>
 
 
 #include <mutex>
@@ -139,7 +138,8 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
     else
     {
         GUID_t guid;
-        iHandle2GUID(guid,change->instanceHandle);
+        iHandle2GUID(guid, change->instanceHandle);
+
         this->mp_SPDP->removeRemoteParticipant(guid);
         RTPSParticipantDiscoveryInfo info;
         info.m_status = REMOVED_RTPSPARTICIPANT;

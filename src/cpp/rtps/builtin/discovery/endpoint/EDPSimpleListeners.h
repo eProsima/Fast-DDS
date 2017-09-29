@@ -36,51 +36,51 @@ struct CacheChange_t;
  * Class EDPSimplePUBReaderListener, used to define the behavior when a new WriterProxyData is received.
  *@ingroup DISCOVERY_MODULE
  */
-class EDPSimplePUBListener:public CompoundReaderListener{
-public:
-	/**
-	Constructor
-	* @param p Pointer to the EDPSimple associated with this listener.
-	*/
-	EDPSimplePUBListener(EDPSimple* p):mp_SEDP(p){};
-	virtual ~EDPSimplePUBListener(){};
-	/**
-	* Virtual method, 
-	* @param reader
-	* @param change
-	*/
-	void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const  change);
-	/**
-	* Compute the Key from a CacheChange_t
-	* @param change Pointer to the change.
-	*/
-	bool computeKey(CacheChange_t* change);
-	//!Pointer to the EDPSimple
-	EDPSimple* mp_SEDP;
+class EDPSimplePUBListener : public CompoundReaderListener{
+    public:
+        /**
+          Constructor
+         * @param p Pointer to the EDPSimple associated with this listener.
+         */
+        EDPSimplePUBListener(EDPSimple* p):mp_SEDP(p){};
+        virtual ~EDPSimplePUBListener(){};
+        /**
+         * Virtual method, 
+         * @param reader
+         * @param change
+         */
+        void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const  change);
+        /**
+         * Compute the Key from a CacheChange_t
+         * @param change Pointer to the change.
+         */
+        bool computeKey(CacheChange_t* change);
+        //!Pointer to the EDPSimple
+        EDPSimple* mp_SEDP;
 };
 /**
  * Class EDPSimpleSUBReaderListener, used to define the behavior when a new ReaderProxyData is received.
  *@ingroup DISCOVERY_MODULE
  */
 class EDPSimpleSUBListener:public CompoundReaderListener{
-public:
-	/**
-	* @param p
-	*/
-	EDPSimpleSUBListener(EDPSimple* p):mp_SEDP(p){}
+    public:
+        /**
+         * @param p
+         */
+        EDPSimpleSUBListener(EDPSimple* p):mp_SEDP(p){}
 
-	virtual ~EDPSimpleSUBListener(){}
-	/**
-	* @param reader
-	* @param change
-	*/
-	void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change);
-	/**
-	* @param change
-	*/
-	bool computeKey(CacheChange_t* change);
-	//!Pointer to the EDPSimple
-	EDPSimple* mp_SEDP;
+        virtual ~EDPSimpleSUBListener(){}
+        /**
+         * @param reader
+         * @param change
+         */
+        void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change);
+        /**
+         * @param change
+         */
+        bool computeKey(CacheChange_t* change);
+        //!Pointer to the EDPSimple
+        EDPSimple* mp_SEDP;
 };
 
 } /* namespace rtps */
