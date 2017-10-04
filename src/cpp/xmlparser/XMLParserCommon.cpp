@@ -99,6 +99,11 @@ const char* SECONDS = "seconds";
 const char* FRACTION = "fraction";
 const char* SHARED = "SHARED";
 const char* EXCLUSIVE = "EXCLUSIVE";
+const char* TRANSPORT = "transport";
+const char* INTERFACE_WHITE_LIST = "interfaceWhiteList";
+const char* WHITE_LIST_OUTPUT = "whiteListOutput";
+const char* WHITE_LIST_INPUT = "whiteListInput";
+const char* WHITE_LIST_LOCATORS = "whiteListLocators";
 
 /// QOS
 const char* DURABILITY = "durability";

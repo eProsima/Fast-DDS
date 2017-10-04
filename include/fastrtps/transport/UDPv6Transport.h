@@ -116,6 +116,9 @@ public:
    //! Checks for UDPv6 kind.
    virtual bool IsLocatorSupported(const Locator_t&) const override;
 
+   //! Checks if allowed.
+   virtual bool IsLocatorAllowed(const Locator_t&) const override;
+
    //! Reports whether Locators correspond to the same port.
    virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
@@ -180,9 +183,12 @@ private:
    UDPv6TransportDescriptor mConfiguration_;
    uint32_t mSendBufferSize;
    uint32_t mReceiveBufferSize;
+   bool mWhiteListOutput;
+   bool mWhiteListInput;
+   bool mWhiteListLocators;
 
    // For UDPv6, the notion of channel corresponds to a port + direction tuple.
-	asio::io_service mService;
+   asio::io_service mService;
    std::unique_ptr<std::thread> ioServiceThread;
 
    mutable std::recursive_mutex mOutputMapMutex;
@@ -197,17 +203,17 @@ private:
    struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
    //! For both modes, an input channel corresponds to a port.
-   std::map<uint32_t, asio::ip::udp::socket> mInputSockets;
+   std::map<uint32_t, std::vector<asio::ip::udp::socket> > mInputSockets;
 
-   bool IsInterfaceAllowed(const asio::ip::address_v6& ip);
+   bool IsInterfaceAllowed(const asio::ip::address_v6& ip) const;
    std::vector<asio::ip::address_v6> mInterfaceWhiteList;
 
 
    bool OpenAndBindOutputSockets(Locator_t& locator);
-   bool OpenAndBindInputSockets(uint32_t port, bool is_multicast);
+   bool OpenAndBindInputSockets(const Locator_t& locator);
 
    asio::ip::udp::socket OpenAndBindUnicastOutputSocket(const asio::ip::address_v6&, uint32_t& port);
-   asio::ip::udp::socket OpenAndBindInputSocket(uint32_t port, bool is_multicast);
+   asio::ip::udp::socket OpenAndBindInputSocket(const asio::ip::address_v6&, uint32_t port, bool is_multicast);
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,

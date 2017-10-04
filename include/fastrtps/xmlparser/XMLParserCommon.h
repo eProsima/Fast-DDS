@@ -114,6 +114,11 @@ extern const char* SECONDS;
 extern const char* FRACTION;
 extern const char* SHARED;
 extern const char* EXCLUSIVE;
+extern const char* TRANSPORT;
+extern const char* INTERFACE_WHITE_LIST;
+extern const char* WHITE_LIST_OUTPUT;
+extern const char* WHITE_LIST_INPUT;
+extern const char* WHITE_LIST_LOCATORS;
 
 /// QOS
 extern const char* DURABILITY;

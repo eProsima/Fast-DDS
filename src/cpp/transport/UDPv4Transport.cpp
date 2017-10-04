@@ -66,16 +66,22 @@ static asio::ip::address_v4::bytes_type locatorToNative(const Locator_t& locator
 UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
     mConfiguration_(descriptor),
     mSendBufferSize(descriptor.sendBufferSize),
-    mReceiveBufferSize(descriptor.receiveBufferSize)
-    {
-        for (const auto& interface : descriptor.interfaceWhiteList)
-            mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
-    }
+    mReceiveBufferSize(descriptor.receiveBufferSize),
+    mWhiteListOutput(descriptor.whiteListOutput),
+    mWhiteListInput(descriptor.whiteListInput),
+    mWhiteListLocators(descriptor.whiteListLocators)
+{
+  for (const auto& interface : descriptor.interfaceWhiteList)
+    mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
+}
 
 UDPv4TransportDescriptor::UDPv4TransportDescriptor():
     TransportDescriptorInterface(maximumMessageSize),
     sendBufferSize(0),
     receiveBufferSize(0),
+    whiteListOutput(true),
+    whiteListInput(false),
+    whiteListLocators(false),
     TTL(defaultTTL)
 {
 }
@@ -84,18 +90,30 @@ UDPv4TransportDescriptor::UDPv4TransportDescriptor(const UDPv4TransportDescripto
     TransportDescriptorInterface(t),
     sendBufferSize(t.sendBufferSize),
     receiveBufferSize(t.receiveBufferSize),
+    interfaceWhiteList(t.interfaceWhiteList),
+    whiteListOutput(t.whiteListOutput),
+    whiteListInput(t.whiteListInput),
+    whiteListLocators(t.whiteListLocators),
     TTL(t.TTL)
 {
 }
 
 UDPv4Transport::UDPv4Transport() :
     mSendBufferSize(0),
-    mReceiveBufferSize(0)
+    mReceiveBufferSize(0),
+    mWhiteListOutput(true),
+    mWhiteListInput(false),
+    mWhiteListLocators(false)
     {
     }
 
 UDPv4Transport::~UDPv4Transport()
 {
+  if(ioServiceThread)
+  {
+    mService.stop();
+    ioServiceThread->join();
+  }
 }
 
 bool UDPv4Transport::init()
@@ -154,6 +172,13 @@ bool UDPv4Transport::init()
     // TODO(Ricardo) Create an event that update this list.
     GetIP4s(currentInterfaces);
 
+    auto ioServiceFunction = [&]()
+        {
+          io_service::work work(mService);
+          mService.run();
+        };
+    ioServiceThread.reset(new std::thread(ioServiceFunction));
+
     return true;
 }
 
@@ -195,28 +220,33 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator)
     bool success = false;
 
     if (!IsInputChannelOpen(locator))
-        success = OpenAndBindInputSockets(locator.port, IsMulticastAddress(locator));
+        success = OpenAndBindInputSockets(locator);
 
     if (IsMulticastAddress(locator) && IsInputChannelOpen(locator))
     {
         // The multicast group will be joined silently, because we do not
         // want to return another resource.
-        auto& socket = mInputSockets.at(locator.port);
-
-        std::vector<IPFinder::info_IP> locNames;
-        GetIP4sUniqueInterfaces(locNames, true);
-        for (const auto& infoIP : locNames)
+        auto& sockets = mInputSockets.at(locator.port);
+        for (auto& socket : sockets)
         {
-            auto ip = asio::ip::address_v4::from_string(infoIP.name);
-            try
-            {
-                socket.set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string()), ip));
-            }
-            catch(std::system_error& ex)
-            {
-                (void)ex;
-                logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": "<< ex.what());
-            }
+          std::vector<IPFinder::info_IP> locNames;
+          GetIP4sUniqueInterfaces(locNames, true);
+          for (const auto& infoIP : locNames)
+          {
+              auto ip = asio::ip::address_v4::from_string(infoIP.name);
+              if (!mWhiteListInput || (mWhiteListInput && IsInterfaceAllowed(ip)))
+              {
+                 try 
+                 {
+                    socket.set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string()), ip));
+                 }
+                 catch (std::system_error& ex)
+                 {
+                    (void)ex;
+                    logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": "<< ex.what());
+                 }
+              }
+          }
         }
     }
 
@@ -278,7 +308,7 @@ bool UDPv4Transport::ReleaseInputChannel(const Locator_t& locator)
     return true;
 }
 
-bool UDPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip)
+bool UDPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip) const
 {
     if (mInterfaceWhiteList.empty())
         return true;
@@ -301,7 +331,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
             GetIP4s(locNames);
             // If there is no whitelist, we can simply open a generic output socket
             // and gain efficiency.
-            if(mInterfaceWhiteList.empty())
+            if(mInterfaceWhiteList.empty() || !mWhiteListOutput)
             {
                 asio::ip::udp::socket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v4::any(), locator.port);
                 unicastSocket.set_option(ip::multicast::enable_loopback( true ) );
@@ -373,13 +403,25 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
     return true;
 }
 
-bool UDPv4Transport::OpenAndBindInputSockets(uint32_t port, bool is_multicast)
+bool UDPv4Transport::OpenAndBindInputSockets(const Locator_t& locator)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
 
+    asio::ip::address_v4 ip = ip::address_v4::from_string(locator.to_IP4_string());
+    uint32_t port = locator.port;
+    bool is_multicast = IsMulticastAddress(locator);
+
     try
     {
-        mInputSockets.emplace(port, OpenAndBindInputSocket(port, is_multicast));
+       if (is_multicast) {
+        // the locator is a multicast address, so bind to the multicast
+        // as we'll restrict the interface when we join the group
+        mInputSockets[port].push_back(OpenAndBindInputSocket(ip, port, is_multicast));
+      }
+      else {
+        // no filtering, so bind to any
+        mInputSockets[port].push_back(OpenAndBindInputSocket(ip::address_v4::any(), port, is_multicast));
+      }
     }
     catch (asio::system_error const& e)
     {
@@ -409,7 +451,7 @@ asio::ip::udp::socket UDPv4Transport::OpenAndBindUnicastOutputSocket(const ip::a
     return socket;
 }
 
-asio::ip::udp::socket UDPv4Transport::OpenAndBindInputSocket(uint32_t port, bool is_multicast)
+asio::ip::udp::socket UDPv4Transport::OpenAndBindInputSocket(const ip::address_v4& ipAddress, uint32_t port, bool is_multicast)
 {
     ip::udp::socket socket(mService);
     socket.open(ip::udp::v4());
@@ -417,7 +459,7 @@ asio::ip::udp::socket UDPv4Transport::OpenAndBindInputSocket(uint32_t port, bool
         socket.set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
     if(is_multicast)
         socket.set_option(ip::udp::socket::reuse_address( true ) );
-    ip::udp::endpoint endpoint(ip::address_v4::any(), static_cast<uint16_t>(port));
+    ip::udp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
     socket.bind(endpoint);
 
     return socket;
@@ -430,7 +472,16 @@ bool UDPv4Transport::DoLocatorsMatch(const Locator_t& left, const Locator_t& rig
 
 bool UDPv4Transport::IsLocatorSupported(const Locator_t& locator) const
 {
-    return locator.kind == LOCATOR_KIND_UDPv4;
+  return locator.kind == LOCATOR_KIND_UDPv4;
+}
+
+bool UDPv4Transport::IsLocatorAllowed(const Locator_t& locator) const
+{
+  if (!IsLocatorSupported(locator))
+    return false;
+  if (mInterfaceWhiteList.empty() || !mWhiteListLocators)
+    return true;
+  return IsInterfaceAllowed(ip::address_v4::from_string(locator.to_IP4_string()));
 }
 
 Locator_t UDPv4Transport::RemoteToMainLocal(const Locator_t& remote) const
@@ -476,35 +527,53 @@ bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
     if (!IsInputChannelOpen(localLocator))
         return false;
 
+    bool success = false;
     ip::udp::endpoint senderEndpoint;
-    ip::udp::socket* socket = nullptr;
+    Semaphore receiveSemaphore(0);
 
-    { // lock scope
-        std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-        if (!IsInputChannelOpen(localLocator))
-            return false;
-
-        socket = &mInputSockets.at(localLocator.port);
-    }
-
-    if(socket != nullptr)
-    {
-        size_t bytes = socket->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
-
-        receiveBufferSize = static_cast<uint32_t>(bytes);
-
-        if(receiveBufferSize > 0)
+    auto handler = [&receiveBufferSize, &success, &receiveSemaphore]
+        (const asio::error_code& error, std::size_t bytes_transferred)
         {
-            if(receiveBufferSize == 13 && memcmp(receiveBuffer, "EPRORTPSCLOSE", 13) == 0)
-            {
-                return false;
-            }
-
-            EndpointToLocator(senderEndpoint, remoteLocator);
-        }
+          if(error)
+          {
+            logError(RTPS_MSG_IN, "Error while listening to socket: " <<
+                     error.category().name() << "(" <<  error.value() << ")");
+            receiveBufferSize = 0;
+          }
+          else
+          {
+            receiveBufferSize = static_cast<uint32_t>(bytes_transferred);
+            success = (receiveBufferSize)? true: false;
+          }
+          receiveSemaphore.post();
+        };
+    {
+      // lock scope
+      std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
+      if (!IsInputChannelOpen(localLocator))
+      {
+        logError(RTPS_MSG_IN, "Local locator " << localLocator << " is not an open input channel");
+        return false;
+      }
+      auto& sockets = mInputSockets.at(localLocator.port);
+      for (auto& socket : sockets)
+      {
+        socket.async_receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint, handler);
+      }
     }
-
-    return (receiveBufferSize > 0);
+    receiveSemaphore.wait();
+    if (success)
+    {
+      if(receiveBufferSize == 13 && memcmp(receiveBuffer, "EPRORTPSCLOSE", 13) == 0)
+      {
+        success = false;
+      }
+      else
+      {
+        EndpointToLocator(senderEndpoint, remoteLocator);
+      }
+    }
+    return success;
 }
 
 bool UDPv4Transport::SendThroughSocket(const octet* sendBuffer,

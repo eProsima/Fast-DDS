@@ -284,7 +284,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
         <xs:element name="use_IP4_to_send" type="boolType"/>
         <xs:element name="use_IP6_to_send" type="boolType"/>
         <xs:element name="throughputController" type="throughputControllerType"/>
-        <!-- <xs:element name="userTransports" type="XXX"/> -->
+        <xs:element name="userTransports" type="transportListType"/>
         <xs:element name="useBuiltinTransports" type="boolType"/>
         <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
         <xs:element name="name" type="stringType"/>
@@ -395,10 +395,11 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
             getXMLThroughputController(p_aux, participant_node.get()->rtps.throughputController, ident))
             return XMLP_ret::XML_ERROR;
     }
-    // TODO: userTransports
+    // userTransports
     if (nullptr != (p_aux = p_element->FirstChildElement(USER_TRANS)))
     {
-        logError(XMLPARSER, "Attribute '" << p_aux->Value() << "' do not supported for now");
+        if (XMLP_ret::XML_OK != getXMLTransportList(p_aux, participant_node.get()->rtps.userTransports, ident))
+            return XMLP_ret::XML_ERROR;
     }
 
     // useBuiltinTransports - boolType

@@ -70,6 +70,11 @@ bool MockTransport::IsLocatorSupported(const Locator_t& locator) const
    return locator.kind == mockSupportedKind;
 }
 
+bool MockTransport::IsLocatorAllowed(const Locator_t& locator) const
+{
+  return true;
+}
+
 bool MockTransport::OpenOutputChannel(Locator_t& locator)
 {  
    mockOpenOutputChannels.push_back(locator.port);

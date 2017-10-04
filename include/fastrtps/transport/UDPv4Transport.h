@@ -25,6 +25,7 @@
 #include <memory>
 #include <map>
 #include <mutex>
+#include <thread>
 
 namespace eprosima{
 namespace fastrtps{
@@ -36,13 +37,13 @@ namespace rtps{
  *       This collection of sockets constitute the "outbound channel". In other words, a channel corresponds
  *       to a port + a direction.
  *
- *    - It is possible to provide a white list at construction, which limits the interfaces the transport 
+ *    - It is possible to provide a white list at construction, which limits the interfaces the transport
  *       will ever be able to interact with. If left empty, all interfaces are allowed.
  *
  *    - Opening an input channel by passing a locator will open a socket listening on the given port on every
- *       whitelisted interface, and join the multicast channel specified by the locator address. Hence, any locator 
+ *       whitelisted interface, and join the multicast channel specified by the locator address. Hence, any locator
  *       that does not correspond to the multicast range will simply open the port without a subsequent join. Joining
- *       multicast groups late is supported by attempting to open the channel again with the same port + a 
+ *       multicast groups late is supported by attempting to open the channel again with the same port + a
  *       multicast address (the OpenInputChannel function will fail, however, because no new channel has been
  *       opened in a strict sense).
  * @ingroup TRANSPORT_MODULE
@@ -114,6 +115,9 @@ public:
    //! Checks for UDPv4 kind.
    virtual bool IsLocatorSupported(const Locator_t&) const override;
 
+   //! Checks for whether locator is allowed.
+   virtual bool IsLocatorAllowed(const Locator_t&) const override;
+
    //! Reports whether Locators correspond to the same port.
    virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
@@ -182,6 +186,7 @@ protected:
    uint32_t mReceiveBufferSize;
 
    asio::io_service mService;
+   std::unique_ptr<std::thread> ioServiceThread;
 
    mutable std::recursive_mutex mOutputMapMutex;
    mutable std::recursive_mutex mInputMapMutex;
@@ -195,16 +200,19 @@ protected:
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
 
    //! For both modes, an input channel corresponds to a port.
-   std::map<uint32_t, asio::ip::udp::socket> mInputSockets;
+   std::map<uint32_t, std::vector<asio::ip::udp::socket> > mInputSockets;
 
-   bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
+   bool IsInterfaceAllowed(const asio::ip::address_v4& ip) const;
    std::vector<asio::ip::address_v4> mInterfaceWhiteList;
+   bool mWhiteListOutput;
+   bool mWhiteListInput;
+   bool mWhiteListLocators;
 
    bool OpenAndBindOutputSockets(Locator_t& locator);
-   bool OpenAndBindInputSockets(uint32_t port, bool is_multicast);
+   bool OpenAndBindInputSockets(const Locator_t& locator);
 
    asio::ip::udp::socket OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
-   asio::ip::udp::socket OpenAndBindInputSocket(uint32_t port, bool is_multicast);
+   asio::ip::udp::socket OpenAndBindInputSocket(const asio::ip::address_v4&, uint32_t port, bool is_multicast);
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,

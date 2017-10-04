@@ -45,6 +45,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/WriterQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ReaderQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv6Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             )  
@@ -81,6 +84,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         ${PROJECT_SOURCE_DIR}/src/cpp/qos/WriterQos.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/qos/ReaderQos.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv6Transport.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp     
         )            

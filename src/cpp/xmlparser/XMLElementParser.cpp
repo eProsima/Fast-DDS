@@ -13,7 +13,10 @@
 // limitations under the License.
 //
 #include <cstring>
+#include <sstream>
 #include <tinyxml2.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 
@@ -1478,8 +1481,8 @@ XMLP_ret XMLParser::getXMLInt(tinyxml2::XMLElement *elem, int *in, uint8_t /*ide
 
 XMLP_ret XMLParser::getXMLUint(tinyxml2::XMLElement *elem, unsigned int *ui, uint8_t /*ident*/)
 {
-    if (nullptr == elem || nullptr == ui)   
-    { 
+    if (nullptr == elem || nullptr == ui)
+    {
         logError(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
@@ -1512,7 +1515,7 @@ XMLP_ret XMLParser::getXMLUint(tinyxml2::XMLElement *elem, uint16_t *ui16, uint8
 XMLP_ret XMLParser::getXMLBool(tinyxml2::XMLElement *elem, bool *b, uint8_t /*ident*/)
 {
     if (nullptr == elem || nullptr == b)
-    { 
+    {
         logError(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
@@ -1529,7 +1532,7 @@ XMLP_ret XMLParser::getXMLString(tinyxml2::XMLElement *elem, std::string *s, uin
     const char* text = nullptr;
 
     if (nullptr == elem || nullptr == s)
-    { 
+    {
         logError(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
@@ -1542,3 +1545,126 @@ XMLP_ret XMLParser::getXMLString(tinyxml2::XMLElement *elem, std::string *s, uin
     return XMLP_ret::XML_OK;
 }
 
+XMLP_ret XMLParser::getXMLTransportList(
+        tinyxml2::XMLElement *elem,
+        std::vector<std::shared_ptr<TransportDescriptorInterface> > &transportList,
+        uint8_t ident)
+{
+  /*<xs:complexType name="transportListType">
+      <xs:sequence>
+        <xs:element name="transport" type="transportType" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>*/
+  tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
+  p_aux0 = elem->FirstChildElement(TRANSPORT);
+  if (nullptr == p_aux0)
+  {
+    logError(XMLPROFILEPARSER, "Node '" << elem->Value() << "' without content");
+    return XMLP_ret::XML_ERROR;
+  }
+
+  while (nullptr != p_aux0)
+  {
+    /*<xs:complexType name="transportType">
+        <xs:all minOccurs="0">
+          <xs:element name="kind" type="transportKindType"/>
+          <xs:element name="interfaceWhiteList" type="stringType"/>
+          <xs:element name="whiteListOutput" type="boolType"/>
+          <xs:element name="whiteListInput" type="boolType"/>
+          <xs:element name="whiteListLocators" type="boolType"/>
+        </xs:all>
+      </xs:complexType>*/
+
+    // kind
+    if (nullptr != (p_aux1 = p_aux0->FirstChildElement(KIND)))
+    {
+      /*<xs:simpleType name="transportKindType">
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="UDPv4"/>
+            <xs:enumeration value="UDPv6"/>
+          </xs:restriction>
+        </xs:simpleType>*/
+      const char* text = p_aux1->GetText();
+      if (nullptr == text)
+      {
+        logError(XMLPROFILEPARSER, "Node '" << KIND << "' without content");
+        return XMLP_ret::XML_ERROR;
+      }
+      bool whiteListOutput = false;
+      bool whiteListInput = false;
+      bool whiteListLocators = false;
+      std::vector<std::string> interfaceWhiteList;
+
+      // whiteListOutput - boolType
+      if (nullptr != (p_aux1 = p_aux0->FirstChildElement(WHITE_LIST_OUTPUT)))
+      {
+        if (XMLP_ret::XML_OK != getXMLBool(p_aux1, &(whiteListOutput), ident + 1))
+        {
+          return XMLP_ret::XML_ERROR;
+        }
+      }
+
+      // whiteListInput - boolType
+      if (nullptr != (p_aux1 = p_aux0->FirstChildElement(WHITE_LIST_INPUT)))
+      {
+        if (XMLP_ret::XML_OK != getXMLBool(p_aux1, &(whiteListInput), ident + 1))
+        {
+          return XMLP_ret::XML_ERROR;
+        }
+      }
+
+      // whiteListLocators - boolType
+      if (nullptr != (p_aux1 = p_aux0->FirstChildElement(WHITE_LIST_LOCATORS)))
+      {
+        if (XMLP_ret::XML_OK != getXMLBool(p_aux1, &(whiteListLocators), ident + 1))
+        {
+          return XMLP_ret::XML_ERROR;
+        }
+      }
+
+      // interfaceWhiteList - stringType
+      if (nullptr != (p_aux1 = p_aux0->FirstChildElement(INTERFACE_WHITE_LIST)))
+      {
+        std::string s = "";
+        if (XMLP_ret::XML_OK != getXMLString(p_aux1, &s, ident + 1))
+        {
+          return XMLP_ret::XML_ERROR;
+        }
+        std::stringstream ss(s);
+        std::string interface;
+        while (getline(ss, interface, ','))
+        {
+          interfaceWhiteList.push_back(interface);
+        }
+      }
+
+      if (strcmp(text, UDPv4) == 0)
+      {
+        auto transport = std::make_shared<UDPv4TransportDescriptor>();
+        transport->whiteListOutput = whiteListOutput;
+        transport->whiteListInput = whiteListInput;
+        transport->whiteListLocators = whiteListLocators;
+        transport->interfaceWhiteList = interfaceWhiteList;
+        transportList.push_back(transport);
+      }
+      else if (strcmp(text, UDPv6) == 0)
+      {
+        auto transport = std::make_shared<UDPv6TransportDescriptor>();
+        transport->whiteListOutput = whiteListOutput;
+        transport->whiteListInput = whiteListInput;
+        transport->whiteListLocators = whiteListLocators;
+        transport->interfaceWhiteList = interfaceWhiteList;
+        transportList.push_back(transport);
+      }
+      else
+      {
+        logError(XMLPROFILEPARSER, "Node '" << KIND << "' bad content");
+        return XMLP_ret::XML_ERROR;
+      }
+    }
+
+    p_aux0 = p_aux0->NextSiblingElement(TRANSPORT);
+  }
+
+  return XMLP_ret::XML_OK;
+}

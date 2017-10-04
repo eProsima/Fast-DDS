@@ -41,6 +41,13 @@
       </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="transportKindType">
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="UDPv4"/>
+        <xs:enumeration value="UDPv6"/>
+      </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="historyMemoryPolicyType">
       <xs:restriction base="xs:string">
         <xs:enumeration value="PREALLOCATED"/>
@@ -142,6 +149,22 @@
     <xs:complexType name="locatorListType">
       <xs:sequence>
         <xs:element name="locator" type="locatorType" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="transportType">
+      <xs:all minOccurs="0">
+        <xs:element name="kind" type="transportKindType"/>
+        <xs:element name="whiteListOutput" type="boolType"/>
+        <xs:element name="whiteListInput" type="boolType"/>
+        <xs:element name="whiteListLocators" type="boolType"/>
+        <xs:element name="interfaceWhiteList" type="stringType"/>
+      </xs:all>
+    </xs:complexType>
+                                                                     
+    <xs:complexType name="transportListType">
+      <xs:sequence>
+        <xs:element name="transport" type="transportType" minOccurs="0" maxOccurs="unbounded"/>
       </xs:sequence>
     </xs:complexType>
 

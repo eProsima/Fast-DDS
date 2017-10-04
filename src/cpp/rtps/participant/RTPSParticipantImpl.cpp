@@ -241,6 +241,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
             m_att.defaultUnicastLocatorList.push_back((*it));
         }
+        m_network_Factory.FilterLocators(m_att.defaultUnicastLocatorList);
+        m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
     }
     else
     {

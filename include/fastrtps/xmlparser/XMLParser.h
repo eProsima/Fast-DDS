@@ -159,6 +159,10 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret getXMLBool(tinyxml2::XMLElement* elem, bool* b, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLString(tinyxml2::XMLElement* elem, std::string* s, uint8_t ident);
 
+    RTPS_DllAPI static XMLP_ret getXMLTransportList(tinyxml2::XMLElement *elem,
+                                                    std::vector<std::shared_ptr<rtps::TransportDescriptorInterface> >&transportList,
+                                                    uint8_t ident);
+
 };
 
 } // namespace xmlparser

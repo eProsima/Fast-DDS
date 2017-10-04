@@ -92,7 +92,23 @@
                 <bytesPerPeriod>2048</bytesPerPeriod>
                 <periodMillisecs>45</periodMillisecs>
             </throughputController>
-            <useBuiltinTransports>true</useBuiltinTransports>
+            <useBuiltinTransports>false</useBuiltinTransports>
+            <userTransports>
+              <transport>
+                <kind>UDPv4</kind>
+                <interfaceWhiteList>127.0.0.1</interfaceWhiteList>
+                <whiteListOutput>true</whiteListOutput>
+                <whiteListInput>true</whiteListInput>
+                <whiteListLocators>true</whiteListLocators>
+              </transport>
+              <transport>
+                <kind>UDPv6</kind>
+                <interfaceWhiteList>::1</interfaceWhiteList>
+                <whiteListOutput>true</whiteListOutput>
+                <whiteListInput>true</whiteListInput>
+                <whiteListLocators>true</whiteListLocators>
+              </transport>
+            </userTransports>
             <name>test_name</name>
         </rtps>
     </participant>

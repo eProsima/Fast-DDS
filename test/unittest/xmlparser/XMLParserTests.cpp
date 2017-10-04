@@ -15,6 +15,8 @@
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastrtps/log/Log.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/UDPv6TransportDescriptor.h>
 
 #include <gtest/gtest.h>
 
@@ -372,6 +374,7 @@ TEST_F(XMLParserTests, Data)
     Locator_t locator;
     LocatorListIterator loc_list_it;
     PortParameters& port = rtps_atts.port;
+
     locator.set_IP4_address(192, 168, 1, 2);
     locator.port = 2019;
     EXPECT_EQ(*rtps_atts.defaultUnicastLocatorList.begin(), locator);
@@ -423,8 +426,24 @@ TEST_F(XMLParserTests, Data)
     EXPECT_EQ(rtps_atts.use_IP6_to_send, false);
     EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048);
     EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45);
-    EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
+    EXPECT_EQ(rtps_atts.useBuiltinTransports, false);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
+
+    // transport XML profile
+    EXPECT_EQ(rtps_atts.userTransports.size(), 2);
+    auto transport_v4 = std::dynamic_pointer_cast<UDPv4TransportDescriptor>(rtps_atts.userTransports.front());
+    EXPECT_EQ(transport_v4->whiteListOutput, true);
+    EXPECT_EQ(transport_v4->whiteListInput, true);
+    EXPECT_EQ(transport_v4->whiteListLocators, true);
+    EXPECT_EQ(transport_v4->interfaceWhiteList.size(), 1);
+    EXPECT_EQ(transport_v4->interfaceWhiteList.front(), "127.0.0.1");
+
+    auto transport_v6 = std::dynamic_pointer_cast<UDPv6TransportDescriptor>(rtps_atts.userTransports.back());
+    EXPECT_EQ(transport_v6->whiteListOutput, true);
+    EXPECT_EQ(transport_v6->whiteListInput, true);
+    EXPECT_EQ(transport_v6->whiteListLocators, true);
+    EXPECT_EQ(transport_v6->interfaceWhiteList.size(), 1);
+    EXPECT_EQ(transport_v6->interfaceWhiteList.front(), "::1");
 }
 
 TEST_F(XMLParserTests, DataBuffer)
@@ -511,7 +530,7 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(rtps_atts.use_IP6_to_send, false);
     EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048);
     EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45);
-    EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
+    EXPECT_EQ(rtps_atts.useBuiltinTransports, false);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
 
