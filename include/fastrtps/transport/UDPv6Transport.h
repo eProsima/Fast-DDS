@@ -133,6 +133,9 @@ public:
    //! Checks for UDPv6 kind.
    virtual bool IsLocatorSupported(const Locator_t&) const override;
 
+   //! Checks if allowed.
+   virtual bool IsLocatorAllowed(const Locator_t&) const override;
+
    //! Reports whether Locators correspond to the same port.
    virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
@@ -194,6 +197,9 @@ private:
    UDPv6TransportDescriptor mConfiguration_;
    uint32_t mSendBufferSize;
    uint32_t mReceiveBufferSize;
+   bool mWhiteListOutput;
+   bool mWhiteListInput;
+   bool mWhiteListLocators;
 
    // For UDPv6, the notion of channel corresponds to a port + direction tuple.
 	asio::io_service mService;
@@ -212,21 +218,21 @@ private:
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
    //! For both modes, an input channel corresponds to a port.
 #if defined(ASIO_HAS_MOVE)
-   std::map<uint32_t, asio::ip::udp::socket> mInputSockets;
+   std::map<uint32_t, std::vector<asio::ip::udp::socket> > mInputSockets;
 #else
-   std::map<uint32_t, std::shared_ptr<asio::ip::udp::socket>> mInputSockets;
+   std::map<uint32_t, std::vector<std::shared_ptr<asio::ip::udp::socket> > > mInputSockets;
 #endif
 
-   bool IsInterfaceAllowed(const asio::ip::address_v6& ip);
+   bool IsInterfaceAllowed(const asio::ip::address_v6& ip) const;
    std::vector<asio::ip::address_v6> mInterfaceWhiteList;
 
 
    bool OpenAndBindOutputSockets(Locator_t& locator);
-   bool OpenAndBindInputSockets(uint32_t port, bool is_multicast);
+   bool OpenAndBindInputSockets(const Locator_t& locator);
 
 #if defined(ASIO_HAS_MOVE)
    asio::ip::udp::socket OpenAndBindUnicastOutputSocket(const asio::ip::address_v6&, uint32_t& port);
-   asio::ip::udp::socket OpenAndBindInputSocket(uint32_t port, bool is_multicast);
+   asio::ip::udp::socket OpenAndBindInputSocket(const asio::ip::address_v6&, uint32_t port, bool is_multicast);
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,
@@ -234,7 +240,7 @@ private:
                           asio::ip::udp::socket& socket);
 #else
    std::shared_ptr<asio::ip::udp::socket> OpenAndBindUnicastOutputSocket(const asio::ip::address_v6&, uint32_t& port);
-   std::shared_ptr<asio::ip::udp::socket> OpenAndBindInputSocket(uint32_t port, bool is_multicast);
+   std::shared_ptr<asio::ip::udp::socket> OpenAndBindInputSocket(const asio::ip::address_v6&, uint32_t port, bool is_multicast);
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,

@@ -73,7 +73,10 @@ static asio::ip::address_v6::bytes_type locatorToNative(const Locator_t& locator
 UDPv6Transport::UDPv6Transport(const UDPv6TransportDescriptor& descriptor):
     mConfiguration_(descriptor),
     mSendBufferSize(descriptor.sendBufferSize),
-    mReceiveBufferSize(descriptor.receiveBufferSize)
+    mReceiveBufferSize(descriptor.receiveBufferSize),
+    mWhiteListOutput(descriptor.whiteListOutput),
+    mWhiteListInput(descriptor.whiteListInput),
+    mWhiteListLocators(descriptor.whiteListLocators)
     {
         for (const auto& interface : descriptor.interfaceWhiteList)
            mInterfaceWhiteList.emplace_back(ip::address_v6::from_string(interface));
@@ -83,6 +86,9 @@ UDPv6TransportDescriptor::UDPv6TransportDescriptor():
     TransportDescriptorInterface(maximumMessageSize),
     sendBufferSize(0),
     receiveBufferSize(0),
+    whiteListOutput(true),
+    whiteListInput(false),
+    whiteListLocators(false),
     TTL(defaultTTL)
 {
 }
@@ -91,6 +97,9 @@ UDPv6TransportDescriptor::UDPv6TransportDescriptor(const UDPv6TransportDescripto
     TransportDescriptorInterface(t),
     sendBufferSize(t.sendBufferSize),
     receiveBufferSize(t.receiveBufferSize),
+    whiteListOutput(true),
+    whiteListInput(false),
+    whiteListLocators(false),
     TTL(t.TTL)
 {
 }
@@ -208,24 +217,29 @@ bool UDPv6Transport::OpenInputChannel(const Locator_t& locator)
     bool success = false;
 
     if (!IsInputChannelOpen(locator))
-        success = OpenAndBindInputSockets(locator.port, IsMulticastAddress(locator));
+        success = OpenAndBindInputSockets(locator);
 
     if (IsMulticastAddress(locator) && IsInputChannelOpen(locator))
     {
         // The multicast group will be joined silently, because we do not
         // want to return another resource.
-        auto& socket = mInputSockets.at(locator.port);
-
-        std::vector<IPFinder::info_IP> locNames;
-        GetIP6s(locNames);
-        for (const auto& infoIP : locNames)
+        auto& sockets = mInputSockets.at(locator.port);
+        for (auto& socket : sockets) 
         {
-            auto ip = asio::ip::address_v6::from_string(infoIP.name);
+          std::vector<IPFinder::info_IP> locNames;
+          GetIP6s(locNames);
+          for (const auto& infoIP : locNames)
+          {
+              auto ip = asio::ip::address_v6::from_string(infoIP.name);
+              if (!mWhiteListInput || (mWhiteListInput && IsInterfaceAllowed(ip))) 
+              { 
 #if defined(ASIO_HAS_MOVE)
-            socket.set_option(ip::multicast::join_group(ip::address_v6::from_string(locator.to_IP6_string()), ip.scope_id()));
+                socket.set_option(ip::multicast::join_group(ip::address_v6::from_string(locator.to_IP6_string()), ip.scope_id()));
 #else
-            socket->set_option(ip::multicast::join_group(ip::address_v6::from_string(locator.to_IP6_string()), ip.scope_id()));
+                socket->set_option(ip::multicast::join_group(ip::address_v6::from_string(locator.to_IP6_string()), ip.scope_id()));
 #endif
+            }
+          }
         }
     }
 
@@ -262,20 +276,22 @@ bool UDPv6Transport::CloseInputChannel(const Locator_t& locator)
         return false;
 
 
-    auto& socket = mInputSockets.at(locator.port);
+    auto& sockets = mInputSockets.at(locator.port);
+    for (auto& socket : sockets)
+    {
 #if defined(ASIO_HAS_MOVE)
-    socket.cancel();
-    socket.close();
+      socket.cancel();
+      socket.close();
 #else
-    socket->cancel();
-    socket->close();
+      socket->cancel();
+      socket->close();
 #endif
-
+    }
     mInputSockets.erase(locator.port);
     return true;
 }
 
-bool UDPv6Transport::IsInterfaceAllowed(const ip::address_v6& ip)
+bool UDPv6Transport::IsInterfaceAllowed(const ip::address_v6& ip) const
 {
     if (mInterfaceWhiteList.empty())
         return true;
@@ -401,13 +417,34 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator)
     return true;
 }
 
-bool UDPv6Transport::OpenAndBindInputSockets(uint32_t port, bool is_multicast)
+bool UDPv6Transport::OpenAndBindInputSockets(const Locator_t& locator)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
 
+    asio::ip::address_v6 ip = ip::address_v6::from_string(locator.to_IP6_string());
+    uint32_t port = locator.port;
+    bool is_multicast = IsMulticastAddress(locator);
+
     try
     {
-        mInputSockets.emplace(port, OpenAndBindInputSocket(port, is_multicast));
+        if (mInterfaceWhiteList.empty() || !mWhiteListInput)
+            mInputSockets[port].push_back(OpenAndBindInputSocket(ip::address_v6::any(), port, is_multicast));
+        else 
+        {
+            if (is_multicast)
+                mInputSockets[port].push_back(OpenAndBindInputSocket(ip, port, is_multicast));
+            else
+            {
+                std::vector<IPFinder::info_IP> locnames;
+                GetIP6s(locnames);
+                for (const auto& infoIP : locnames)
+                {
+                    auto locIP = asio::ip::address_v6::from_string(infoIP.name);
+                    if (IsInterfaceAllowed(locIP))
+                      mInputSockets[port].push_back(OpenAndBindInputSocket(locIP, port, is_multicast));
+                }
+            }
+        }
     }
     catch (asio::error_code const& e)
     {
@@ -456,7 +493,7 @@ std::shared_ptr<asio::ip::udp::socket> UDPv6Transport::OpenAndBindUnicastOutputS
 #endif
 
 #if defined(ASIO_HAS_MOVE)
-asio::ip::udp::socket UDPv6Transport::OpenAndBindInputSocket(uint32_t port, bool is_multicast)
+asio::ip::udp::socket UDPv6Transport::OpenAndBindInputSocket(const ip::address_v6& ipAddress, uint32_t port, bool is_multicast)
 {
     ip::udp::socket socket(mService);
     socket.open(ip::udp::v6());
@@ -464,13 +501,13 @@ asio::ip::udp::socket UDPv6Transport::OpenAndBindInputSocket(uint32_t port, bool
         socket.set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
     if(is_multicast)
         socket.set_option(ip::udp::socket::reuse_address( true ) );
-    ip::udp::endpoint endpoint(ip::address_v6::any(), static_cast<uint16_t>(port));
+    ip::udp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
     socket.bind(endpoint);
 
     return socket;
 }
 #else
-std::shared_ptr<asio::ip::udp::socket> UDPv6Transport::OpenAndBindInputSocket(uint32_t port, bool is_multicast)
+std::shared_ptr<asio::ip::udp::socket> UDPv6Transport::OpenAndBindInputSocket(const ip::address_v6& ipAddress, uint32_t port, bool is_multicast)
 {
     std::shared_ptr<ip::udp::socket> socket = std::make_shared<ip::udp::socket>(mService);
     socket->open(ip::udp::v6());
@@ -478,7 +515,7 @@ std::shared_ptr<asio::ip::udp::socket> UDPv6Transport::OpenAndBindInputSocket(ui
         socket->set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
     if(is_multicast)
         socket->set_option(ip::udp::socket::reuse_address( true ) );
-    ip::udp::endpoint endpoint(ip::address_v6::any(), static_cast<uint16_t>(port));
+    ip::udp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
     socket->bind(endpoint);
 
     return socket;
@@ -493,6 +530,15 @@ bool UDPv6Transport::DoLocatorsMatch(const Locator_t& left, const Locator_t& rig
 bool UDPv6Transport::IsLocatorSupported(const Locator_t& locator) const
 {
     return locator.kind == LOCATOR_KIND_UDPv6;
+}
+
+bool UDPv6Transport::IsLocatorAllowed(const Locator_t& locator) const
+{
+  if (!IsLocatorSupported(locator))
+    return false;
+  if (mInterfaceWhiteList.empty() || !mWhiteListLocators)
+    return true;
+  return IsInterfaceAllowed(ip::address_v6::from_string(locator.to_IP6_string()));
 }
 
 Locator_t UDPv6Transport::RemoteToMainLocal(const Locator_t& remote) const
@@ -569,16 +615,19 @@ bool UDPv6Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
     { // lock scope
         std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
 
-        auto& socket = mInputSockets.at(localLocator.port);
+        auto& sockets = mInputSockets.at(localLocator.port);
+        for (auto& socket : sockets)
+        {
 #if defined(ASIO_HAS_MOVE)
-        socket.async_receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity),
-                senderEndpoint,
-                handler);
+          socket.async_receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity),
+                  senderEndpoint,
+                  handler);
 #else
-        socket->async_receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity),
-                senderEndpoint,
-                handler);
+          socket->async_receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity),
+                  senderEndpoint,
+                  handler);
 #endif
+        }
     }
 
     receiveSemaphore.wait();
