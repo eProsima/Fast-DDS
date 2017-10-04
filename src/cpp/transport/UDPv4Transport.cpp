@@ -63,13 +63,13 @@ static asio::ip::address_v4::bytes_type locatorToNative(const Locator_t& locator
         locator.address[13], locator.address[14], locator.address[15]}};
 }
 
-UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor) :
-    mConfiguration_(descriptor),
-    mSendBufferSize(descriptor.sendBufferSize),
-    mReceiveBufferSize(descriptor.receiveBufferSize),
-    mWhiteListOutput(descriptor.whiteListOutput),
-    mWhiteListInput(descriptor.whiteListInput),
-    mWhiteListLocators(descriptor.whiteListLocators)
+UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor)
+    : mConfiguration_(descriptor)
+    , mSendBufferSize(descriptor.sendBufferSize)
+    , mReceiveBufferSize(descriptor.receiveBufferSize)
+    , mWhiteListOutput(descriptor.whiteListOutput)
+    , mWhiteListInput(descriptor.whiteListInput)
+    , mWhiteListLocators(descriptor.whiteListLocators)
 {
     for (const auto& networkInterface : descriptor.interfaceWhiteList)
         mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(networkInterface));
