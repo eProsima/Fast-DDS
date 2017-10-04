@@ -39,28 +39,28 @@ class MockTransport: public TransportInterface
 
         ~MockTransport();
 
-        bool init();
+        bool init() override;
 
         //API implementation
-        virtual bool IsOutputChannelOpen(const Locator_t&) const;
-        virtual bool IsInputChannelOpen(const Locator_t&)  const;
+        virtual bool IsOutputChannelOpen(const Locator_t&) const override;
+        virtual bool IsInputChannelOpen(const Locator_t&)  const override;
 
-        virtual bool OpenOutputChannel(Locator_t&); 
-        virtual bool OpenInputChannel(const Locator_t&); 
+        virtual bool OpenOutputChannel(Locator_t&) override;
+        virtual bool OpenInputChannel(const Locator_t&) override;
 
-        virtual bool CloseOutputChannel(const Locator_t&);
-        virtual bool CloseInputChannel(const Locator_t&);
+        virtual bool CloseOutputChannel(const Locator_t&) override;
+        virtual bool CloseInputChannel(const Locator_t&) override;
 
-        virtual Locator_t RemoteToMainLocal(const Locator_t&) const;
+        virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
 
-        virtual bool IsLocatorSupported(const Locator_t&)  const;
-        virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const;
+        virtual bool IsLocatorSupported(const Locator_t&)  const override;
+        virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
-        virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator);
+        virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator) override;
         virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-                const Locator_t& localLocator, Locator_t& remoteLocator);
+                const Locator_t& localLocator, Locator_t& remoteLocator) override;
 
-        virtual LocatorList_t NormalizeLocator(const Locator_t& locator);
+        virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
 
         virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 
