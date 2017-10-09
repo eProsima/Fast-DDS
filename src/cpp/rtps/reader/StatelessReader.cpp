@@ -249,6 +249,28 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
             }
 #endif
 
+            // Contrast payload_size with DATA_FRAG values.
+            uint32_t num_total_fragments = sampleSize / change_to_add->getFragmentSize();
+            uint32_t num_fragments = (uint32_t)change_to_add->getDataFragments()->size();
+            uint32_t last_fragment_size = change_to_add->getFragmentSize();
+            if(sampleSize % change_to_add->getFragmentSize() > 0)
+            {
+                last_fragment_size = sampleSize - (change_to_add->getFragmentSize() * num_total_fragments);
+                ++num_total_fragments;
+            }
+            uint32_t expected_payload_size = num_fragments * change_to_add->getFragmentSize();
+            if(fragmentStartingNum + num_fragments == num_total_fragments + 1)
+            {
+                expected_payload_size = ((num_fragments - 1) * change_to_add->getFragmentSize()) + last_fragment_size;
+            }
+
+            if(change_to_add->serializedPayload.length < expected_payload_size ||
+                    change_to_add->serializedPayload.length > (expected_payload_size + ((4 - (expected_payload_size % 4)) & 3)))
+            {
+                logInfo(RTPS_MSG_IN, IDSTRING"Incorrect payload size according to DATA_FRAG values");
+                return false;
+            }
+
             // Fragments manager has to process incomming fragments.
             // If CacheChange_t is completed, it will be returned;
             CacheChange_t* change_completed = fragmentedChangePitStop_->process(change_to_add, sampleSize, fragmentStartingNum);

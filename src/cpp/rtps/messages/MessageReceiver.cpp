@@ -451,6 +451,12 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
     int16_t octetsToInlineQos;
     valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
 
+    if(octetsToInlineQos < RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG)
+    {
+        logWarning(RTPS_MSG_IN,IDSTRING"Wrong octetsToInlineQos");
+        return false;
+    }
+
     //reader and writer ID
     EntityId_t readerID;
     valid &= CDRMessage::readEntityId(msg,&readerID);
@@ -625,7 +631,13 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
     bool valid = true;
     int16_t octetsToInlineQos;
-    valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
+    valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 28 in this implementation
+
+    if(octetsToInlineQos < RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG)
+    {
+        logWarning(RTPS_MSG_IN,IDSTRING"Wrong octetsToInlineQos");
+        return false;
+    }
 
     //reader and writer ID
     EntityId_t readerID;
@@ -687,9 +699,24 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
     uint32_t sampleSize;
     valid &= CDRMessage::readUInt32(msg, &sampleSize);
 
-    if(!valid){
+    if(!valid)
+    {
         return false;
     }
+
+    // Check values about fragment.
+    if(fragmentStartingNum == 0 || fragmentSize == 0 || fragmentSize > sampleSize)
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING "Invalid DATA_FRAG values");
+        return false;
+    }
+    uint32_t num_fragments = sampleSize / fragmentSize + (sampleSize % fragmentSize > 0 ? 1 : 0);
+    if(fragmentStartingNum > num_fragments || fragmentStartingNum + fragmentsInSubmessage > num_fragments + 1)
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING "Invalid DATA_FRAG values");
+        return false;
+    }
+
 
     //Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
     if (octetsToInlineQos > RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG)
@@ -716,14 +743,16 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
     }
 
     uint32_t payload_size;
-    if (smh->submessageLength>0)
+    if(smh->submessageLength > 0)
+    {
         payload_size = smh->submessageLength - (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE + octetsToInlineQos + inlineQosSize);
+    }
     else
+    {
         payload_size = smh->submsgLengthLarger;
+    }
 
-    // Validations??? XXX TODO
-
-    if (!keyFlag)
+    if(!keyFlag)
     {
         if (ch.serializedPayload.max_size >= payload_size && payload_size > 0)
         {
@@ -747,7 +776,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
             return false;
         }
     }
-    else if (keyFlag)
+    else if(keyFlag)
     {
         /* XXX TODO
            Endianness_t previous_endian = msg->msg_endian;
