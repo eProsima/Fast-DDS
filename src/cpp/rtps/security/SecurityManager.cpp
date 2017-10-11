@@ -1960,7 +1960,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
 
                 // Check pending reader crypto messages.
                 auto pending = remote_reader_pending_messages_.find(remote_reader_data.guid());
-                GUID_t writer_guid;
+                bool pairing_cause_pending_message = false;
 
                 if(pending != remote_reader_pending_messages_.end())
                 {
@@ -1970,7 +1970,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                                 pending->second,
                                 exception))
                     {
-                        writer_guid = local_writer->first;
+                        pairing_cause_pending_message = true;
                     }
                     else
                     {
@@ -1990,7 +1990,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                 }
 
                 // If writer was found and setting of crypto tokens works, then tell core to match writer and reader.
-                if(writer_guid != GUID_t::unknown())
+                if(pairing_cause_pending_message)
                 {
                     participant_->pdpsimple()->getEDP()->pairing_remote_reader_with_local_writer_after_crypto(
                             writer_guid, remote_reader_data);
@@ -2214,8 +2214,8 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
                 }
 
                 // Check pending writer crypto messages.
-                GUID_t reader_guid;
                 auto pending = remote_writer_pending_messages_.find(remote_writer_data.guid());
+                bool pairing_cause_pending_message = false;
 
                 if(pending != remote_writer_pending_messages_.end())
                 {
@@ -2225,7 +2225,7 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
                                 pending->second,
                                 exception))
                     {
-                        reader_guid = local_reader->first;
+                        pairing_cause_pending_message = true;
                     }
                     else
                     {
@@ -2245,7 +2245,7 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
                 }
 
                 // If reader was found and setting of crypto tokens works, then tell core to match reader and writer.
-                if(reader_guid != GUID_t::unknown())
+                if(pairing_cause_pending_message)
                 {
                     participant_->pdpsimple()->getEDP()->pairing_remote_writer_with_local_reader_after_crypto(
                             reader_guid, remote_writer_data);

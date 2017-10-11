@@ -56,7 +56,6 @@ macro(find_eprosima_package package)
                 "\${CMAKE_CXX_COMPILER_}"
                 "-DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS_}"
                 "-DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS_}"
-                ${BUILD_OPTION}
                 ${ANDROID_BUILD_OPTIONS}
                 "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
                 "-DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}"
@@ -94,7 +93,6 @@ macro(find_eprosima_package package)
 
             execute_process(COMMAND ${CMAKE_COMMAND}
                 -G ${CMAKE_GENERATOR}
-                ${BUILD_OPTION}
                 ${ANDROID_BUILD_OPTIONS}
                 WORKING_DIRECTORY ${${package}ExternalDir}
                 RESULT_VARIABLE EXECUTE_RESULT
@@ -177,14 +175,14 @@ endmacro()
 macro(install_eprosima_libraries)
     if((MSVC OR MSVC_IDE) AND THIRDPARTY AND NOT MINION)
         if(EPROSIMA_INSTALLER)
-            # Install includes. Take from x64Win64VS2013
+            # Install includes. Take from x64Win64VS2015
             install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/x64Win64VS2015/install/${INCLUDE_INSTALL_DIR}/
                 DESTINATION ${INCLUDE_INSTALL_DIR}
                 COMPONENT headers
                 OPTIONAL
                 )
 
-            # Install licenses. Take from x64Win64VS2013
+            # Install licenses. Take from x64Win64VS2015
             install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/x64Win64VS2015/install/licenses/
                 DESTINATION ${LICENSE_INSTALL_DIR}
                 COMPONENT licenses

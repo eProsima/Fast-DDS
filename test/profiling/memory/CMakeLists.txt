@@ -20,7 +20,7 @@ add_test(NAME memory_profiling
 set_property(TEST memory_profiling PROPERTY LABELS "NoMemoryCheck")
 if(WIN32)
     set_property(TEST memory_profiling PROPERTY ENVIRONMENT
-        "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
+        "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
 endif()
 set_property(TEST memory_profiling APPEND PROPERTY ENVIRONMENT
     "PROFILING_BINS=$<TARGET_FILE:RTPSCommsProfiling>\\;$<TARGET_FILE:RTPSPubSubProfiling>")

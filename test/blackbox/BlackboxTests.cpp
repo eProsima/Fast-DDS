@@ -1798,6 +1798,49 @@ BLACKBOXTEST(BlackBox, EDPSlaveReaderAttachment)
     checker.block_until_discover_partition("othertest", 0);
 }
 
+// Used to detect Github issue #155
+BLACKBOXTEST(BlackBox, EndpointRediscovery)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    reader.disable_builtin_transport();
+    reader.add_user_transport_to_pparams(testTransport);
+
+    reader.lease_duration({3, 0}, {1, 0}).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // To simulate lossy conditions, we are going to remove the default
+    // bultin transport, and instead use a lossy shim layer variant.
+    testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    // We drop 20% of all data frags
+    writer.disable_builtin_transport();
+    writer.add_user_transport_to_pparams(testTransport);
+
+    writer.lease_duration({6, 0}, {2, 0}).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    // Wait heartbeat period
+    std::this_thread::sleep_for(std::chrono::seconds(4));
+
+    test_UDPv4Transport::ShutdownAllNetwork = true;
+
+    writer.waitRemoval();
+
+    test_UDPv4Transport::ShutdownAllNetwork = false;
+
+    writer.waitDiscovery();
+}
+
+
 #if HAVE_SECURITY
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok)

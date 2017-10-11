@@ -173,6 +173,11 @@ class StatefulReader:public RTPSReader
          */
         bool isInCleanState() const;
 
+        //! Acknack Count
+        uint32_t m_acknackCount;
+        //! NACKFRAG Count
+        uint32_t m_nackfragCount;
+
     private:
 
         bool acceptMsgFrom(GUID_t &entityGUID ,WriterProxy **wp, bool checkTrusted = true);

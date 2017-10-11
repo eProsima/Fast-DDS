@@ -551,6 +551,13 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& lease_duration(Duration_t lease_duration, Duration_t announce_period)
+    {
+        participant_attr_.rtps.builtin.leaseDuration = lease_duration;
+        participant_attr_.rtps.builtin.leaseDuration_announcementperiod = announce_period;
+        return *this;
+    }
+
     const std::string& topic_name() const { return topic_name_; }
 
     private:
