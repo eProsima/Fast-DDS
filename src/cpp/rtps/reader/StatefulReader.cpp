@@ -55,6 +55,8 @@ StatefulReader::~StatefulReader()
 StatefulReader::StatefulReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
         ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen):
     RTPSReader(pimpl,guid,att,hist, listen),
+    m_acknackCount(0),
+    m_nackfragCount(0),
     m_times(att.times)
 {
 

@@ -24,6 +24,7 @@ namespace rtps{
 static const uint32_t maximumMessageSize = 65500;
 vector<vector<octet> > test_UDPv4Transport::DropLog;
 uint32_t test_UDPv4Transport::DropLogLength = 0;
+bool test_UDPv4Transport::ShutdownAllNetwork = false;
 
 test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor):
     mDropDataMessagesPercentage(descriptor.dropDataMessagesPercentage),
@@ -67,8 +68,10 @@ bool test_UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
         LogDrop(sendBuffer, sendBufferSize);
         return true;
     }
-    else   
+    else
+    {
         return UDPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator);
+    }
 }
 
 static bool ReadSubmessageHeader(CDRMessage_t& msg, SubmessageHeader_t& smh)
@@ -85,6 +88,11 @@ static bool ReadSubmessageHeader(CDRMessage_t& msg, SubmessageHeader_t& smh)
 
 bool test_UDPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sendBufferSize)
 {
+    if(test_UDPv4Transport::ShutdownAllNetwork)
+    {
+        return true;
+    }
+
     CDRMessage_t cdrMessage(sendBufferSize);;
     memcpy(cdrMessage.buffer, sendBuffer, sendBufferSize);
     cdrMessage.length = sendBufferSize;

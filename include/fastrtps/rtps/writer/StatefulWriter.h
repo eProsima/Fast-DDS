@@ -42,6 +42,7 @@ namespace eprosima
             class StatefulWriter: public RTPSWriter
             {
                 friend class RTPSParticipantImpl;
+                friend class ReaderProxy;
                 public:
 
                 //!Destructor

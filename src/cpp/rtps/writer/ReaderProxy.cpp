@@ -26,6 +26,7 @@
 #include <fastrtps/rtps/writer/timedevent/InitialHeartbeat.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
+#include <fastrtps/rtps/history/WriterHistory.h>
 
 #include <mutex>
 
@@ -120,13 +121,46 @@ bool ReaderProxy::change_is_acked(const SequenceNumber_t& sequence_number)
 bool ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    SequenceNumber_t future_low_mark = seqNum;
 
     if(seqNum > changesFromRLowMark_)
     {
         auto chit = m_changesForReader.find(seqNum);
         m_changesForReader.erase(m_changesForReader.begin(), chit);
-        changesFromRLowMark_ = seqNum - 1;
     }
+    else
+    {
+        // Special case. Currently only used on Builtin StatefulWriters
+        // after losing lease duration.
+
+        SequenceNumber_t current_sequence = seqNum;
+        if(seqNum < mp_SFW->get_seq_num_min())
+        {
+            current_sequence = mp_SFW->get_seq_num_min();
+        }
+        future_low_mark = current_sequence;
+
+        for(; current_sequence <= changesFromRLowMark_; ++current_sequence)
+        {
+            CacheChange_t* change = nullptr;
+
+            if(mp_SFW->mp_history->get_change(current_sequence, mp_SFW->getGuid(), &change))
+            {
+                ChangeForReader_t cr(change);
+                cr.setStatus(UNACKNOWLEDGED);
+                m_changesForReader.insert(cr);
+            }
+            else
+            {
+                ChangeForReader_t cr;
+                cr.setStatus(UNACKNOWLEDGED);
+                cr.notValid();
+                m_changesForReader.insert(cr);
+            }
+        }
+    }
+
+    changesFromRLowMark_ = future_low_mark - 1;
 
     return m_changesForReader.size() == 0;
 }

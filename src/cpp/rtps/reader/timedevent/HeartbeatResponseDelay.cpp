@@ -96,14 +96,14 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
             }
 
             // TODO Protect
-            mp_WP->m_acknackCount++;
+            mp_WP->mp_SFR->m_acknackCount++;
             logInfo(RTPS_READER,"Sending ACKNACK: "<< sns;);
 
             bool final = false;
             if(sns.isSetEmpty())
                 final = true;
 
-            group.add_acknack(mp_WP->m_att.guid, sns, mp_WP->m_acknackCount, final, locators);
+            group.add_acknack(mp_WP->m_att.guid, sns, mp_WP->mp_SFR->m_acknackCount, final, locators);
         }
 
         // Now generage NACK_FRAGS
@@ -139,10 +139,10 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
                     ++frag_num;
                 }
 
-                ++mp_WP->m_nackfragCount;
+                ++mp_WP->mp_SFR->m_nackfragCount;
                 logInfo(RTPS_READER,"Sending NACKFRAG for sample" << cit->sequenceNumber << ": "<< frag_sns;);
 
-                group.add_nackfrag(mp_WP->m_att.guid, cit->sequenceNumber, frag_sns, mp_WP->m_nackfragCount, locators);
+                group.add_nackfrag(mp_WP->m_att.guid, cit->sequenceNumber, frag_sns, mp_WP->mp_SFR->m_nackfragCount, locators);
             }
         }
     }

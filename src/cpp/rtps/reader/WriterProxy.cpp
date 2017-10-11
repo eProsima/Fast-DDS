@@ -108,8 +108,6 @@ WriterProxy::WriterProxy(const RemoteWriterAttributes& watt,
         StatefulReader* SR) :
     mp_SFR(SR),
     m_att(watt),
-    m_acknackCount(0),
-    m_nackfragCount(0),
     m_lastHeartbeatCount(0),
     mp_heartbeatResponse(nullptr),
     mp_writerProxyLiveliness(nullptr),

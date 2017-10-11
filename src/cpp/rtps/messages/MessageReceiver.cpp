@@ -892,7 +892,9 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
                             bool maybe_all_acks = (*rit)->acked_changes_set(SNSet.base);
                             std::vector<SequenceNumber_t> set_vec = SNSet.get_set();
                             if ((*rit)->requested_changes_set(set_vec) && (*rit)->mp_nackResponse != nullptr)
+                            {
                                 (*rit)->mp_nackResponse->restart_timer();
+                            }
                             else if (!finalFlag)
                             {
                                 if(SNSet.base == SequenceNumber_t(0, 0) && SNSet.isSetEmpty())
