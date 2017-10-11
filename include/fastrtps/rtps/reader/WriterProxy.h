@@ -115,10 +115,6 @@ namespace eprosima
                     StatefulReader* mp_SFR;
                     //! Parameters of the WriterProxy
                     RemoteWriterAttributes m_att;
-                    //! Acknack Count
-                    uint32_t m_acknackCount;
-                    //! NACKFRAG Count
-                    uint32_t m_nackfragCount;
                     //! LAst HEartbeatcount.
                     uint32_t m_lastHeartbeatCount;
                     //!Timed event to postpone the heartbeatResponse.

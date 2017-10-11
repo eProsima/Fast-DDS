@@ -62,16 +62,16 @@ void InitialAckNack::event(EventCode code, const char* msg)
         Count_t acknackCount = 0;
 
         {//BEGIN PROTECTION
-            std::lock_guard<std::recursive_mutex> guard_reader(*wp_->getMutex());
-            wp_->m_acknackCount++;
-            acknackCount = wp_->m_acknackCount;
+            std::lock_guard<std::recursive_mutex> guard_reader(*wp_->mp_SFR->getMutex());
+            wp_->mp_SFR->m_acknackCount++;
+            acknackCount = wp_->mp_SFR->m_acknackCount;
         }
 
         // Send initial NACK.
         SequenceNumberSet_t sns;
         sns.base = SequenceNumber_t(0, 0);
 
-        logInfo(RTPS_READER,"Sending ACKNACK: "<< sns;);
+        logInfo(RTPS_READER,"Sending ACKNACK: "<< sns);
 
         RTPSMessageGroup group(wp_->mp_SFR->getRTPSParticipant(), wp_->mp_SFR, RTPSMessageGroup::READER, m_cdrmessages);
 

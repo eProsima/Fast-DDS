@@ -131,7 +131,7 @@ class History
          */
         RTPS_DllAPI inline std::recursive_mutex* getMutex() { assert(mp_mutex != nullptr); return mp_mutex; }
 
-        RTPS_DllAPI bool get_change(SequenceNumber_t& seq, GUID_t& guid,CacheChange_t** change);
+        RTPS_DllAPI bool get_change(const SequenceNumber_t& seq, const GUID_t& guid, CacheChange_t** change);
 
     protected:
         //!Vector of pointers to the CacheChange_t.
