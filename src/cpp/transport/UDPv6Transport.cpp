@@ -444,6 +444,7 @@ std::shared_ptr<asio::ip::udp::socket> UDPv6Transport::OpenAndBindUnicastOutputS
     socket->open(ip::udp::v6());
     if(mSendBufferSize != 0)
         socket->set_option(socket_base::send_buffer_size(mSendBufferSize));
+    socket->set_option(ip::multicast::hops(mConfiguration_.TTL));
 
     ip::udp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
     socket->bind(endpoint);
