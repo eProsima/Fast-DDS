@@ -458,6 +458,18 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& metatraffic_unicast_locator_list(LocatorList_t unicastLocators)
+    {
+        participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = unicastLocators;
+        return *this;
+    }
+
+    PubSubWriter& initial_peers(LocatorList_t initial_peers)
+    {
+        participant_attr_.rtps.builtin.initialPeersList = initial_peers;
+        return *this;
+    }
+
     PubSubWriter& outLocatorList(LocatorList_t outLocators)
     {
         publisher_attr_.outLocatorList = outLocators;
