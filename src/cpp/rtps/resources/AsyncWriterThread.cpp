@@ -77,8 +77,8 @@ bool AsyncWriterThread::removeWriter(RTPSWriter& writer)
             data_guard.unlock();
             running_ = false;
             run_scheduled_ = false;
-            cond_guard.unlock();
             cv_.notify_all();
+            cond_guard.unlock();
             thread_->join();
             cond_guard.lock();
             delete thread_;
@@ -102,10 +102,8 @@ void AsyncWriterThread::wakeUp(const RTPSParticipantImpl* interestedParticipant)
 void AsyncWriterThread::wakeUp(const RTPSWriter* interestedWriter)
 {
    interestTree.RegisterInterest(interestedWriter);
-   { // Lock scope
-      std::unique_lock<std::mutex> cond_guard(condition_variable_mutex_);
-      run_scheduled_ = true;
-   }
+   std::unique_lock<std::mutex> cond_guard(condition_variable_mutex_);
+   run_scheduled_ = true;
    cv_.notify_all();
 }
 

@@ -155,7 +155,6 @@ bool StatelessReader::change_removed_by_history(CacheChange_t* /*ch*/, WriterPro
 
 bool StatelessReader::processDataMsg(CacheChange_t *change)
 {
-
     assert(change);
 
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);

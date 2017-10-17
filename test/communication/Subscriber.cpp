@@ -28,6 +28,8 @@
 
 #include <types/HelloWorldType.h>
 
+#include <mutex>
+
 using namespace eprosima::fastrtps;
 
 class SubListener : public SubscriberListener
@@ -55,12 +57,16 @@ class SubListener : public SubscriberListener
             {
                 if(info.sampleKind == ALIVE)
                 {
+                    std::unique_lock<std::mutex> lock(mutex_);
                     ++number_samples_;
                     std::cout << "Received sample: index(" << sample.index() << "), message(" << sample.message() << ")" << std::endl;
+                    cv_.notify_all();
                 }
             }
         }
 
+        std::mutex mutex_;
+        std::condition_variable cv_;
         unsigned int number_samples_;
 };
 
@@ -77,38 +83,45 @@ int main(int argc, char** argv)
         ++arg_count;
     }
 
-	ParticipantAttributes participant_attributes;
+    ParticipantAttributes participant_attributes;
     participant_attributes.rtps.builtin.leaseDuration.seconds = 3;
     participant_attributes.rtps.builtin.leaseDuration_announcementperiod.seconds = 1;
-	Participant* participant = Domain::createParticipant(participant_attributes);
-	if(participant==nullptr)
-		return 1;
+    Participant* participant = Domain::createParticipant(participant_attributes);
+    if(participant==nullptr)
+        return 1;
 
-	//REGISTER THE TYPE
+    //REGISTER THE TYPE
 
     HelloWorldType type;
-	Domain::registerType(participant, &type);
+    Domain::registerType(participant, &type);
 
     SubListener listener;
 
-	//CREATE THE SUBSCRIBER
-	SubscriberAttributes subscriber_attributes;
-	subscriber_attributes.topic.topicKind = NO_KEY;
-	subscriber_attributes.topic.topicDataType = type.getName();
-	subscriber_attributes.topic.topicName = "HelloWorldTopic";
-	subscriber_attributes.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	Subscriber* subscriber = Domain::createSubscriber(participant, subscriber_attributes, &listener);
+    //CREATE THE SUBSCRIBER
+    SubscriberAttributes subscriber_attributes;
+    subscriber_attributes.topic.topicKind = NO_KEY;
+    subscriber_attributes.topic.topicDataType = type.getName();
+    subscriber_attributes.topic.topicName = "HelloWorldTopic";
+    subscriber_attributes.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    Subscriber* subscriber = Domain::createSubscriber(participant, subscriber_attributes, &listener);
 
-	if(subscriber == nullptr)
+    if(subscriber == nullptr)
     {
         Domain::removeParticipant(participant);
-		return 1;
+        return 1;
     }
 
-    while(notexit || listener.number_samples_ < 4)
+    while(notexit)
+    {
         eClock::my_sleep(250);
+    }
+
+    {
+        std::unique_lock<std::mutex> lock(listener.mutex_);
+        listener.cv_.wait(lock, [&]{ return listener.number_samples_ >= 4; });
+    }
 
     Domain::removeParticipant(participant);
 
-	return 0;
+    return 0;
 }

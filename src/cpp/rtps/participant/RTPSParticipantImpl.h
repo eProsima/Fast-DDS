@@ -24,6 +24,7 @@
 #include <list>
 #include <sys/types.h>
 #include <mutex>
+#include <atomic>
 #include <fastrtps/utils/Semaphore.h>
 
 #if defined(_WIN32)
@@ -87,12 +88,12 @@ class FlowController;
    from the Receiver, so the Transport Layer does not need to be aware of the existence of what is using it.
 
 */
-typedef struct ReceiverControlBlock{
+typedef struct ReceiverControlBlock
+{
     ReceiverResource Receiver;
     MessageReceiver* mp_receiver; //Associated Readers/Writers inside of MessageReceiver
-    std::mutex mtx; //Fix declaration
     std::thread* m_thread;
-    bool resourceAlive;
+    std::atomic<bool> resourceAlive;
     ReceiverControlBlock(ReceiverResource&& rec):Receiver(std::move(rec)), mp_receiver(nullptr), m_thread(nullptr), resourceAlive(true)
     {
     }
@@ -260,8 +261,11 @@ class RTPSParticipantImpl
         ::security::SecurityManager m_security_manager;
 #endif
 
-        //!ReceiverControlBlock list - encapsulates all associated resources on a Receiving element
+        //! Encapsulates all associated resources on a Receiving element.
         std::list<ReceiverControlBlock> m_receiverResourcelist;
+        //! Receiver resource list needs its own mutext to avoid a race condition.
+        std::mutex m_receiverResourcelistMutex;
+
         //!SenderResource List
         std::mutex m_send_resources_mutex;
         std::vector<SenderResource> m_senderResource;

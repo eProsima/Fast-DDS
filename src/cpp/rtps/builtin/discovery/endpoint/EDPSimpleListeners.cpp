@@ -49,6 +49,13 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
     {
         logWarning(RTPS_EDP,"Received change with no Key");
     }
+
+    //Call the slave, if it exists
+    attached_listener_mutex.lock();
+    if(attached_listener != nullptr)
+        attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_PubReader.first, change_in);
+    attached_listener_mutex.unlock();
+
     if(change->kind == ALIVE)
     {
         //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
@@ -70,41 +77,28 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
                 return;
             }
 
-            // At this point we can release reader lock.
-            reader->getMutex()->unlock();
-
             //LOOK IF IS AN UPDATED INFORMATION
             ParticipantProxyData pdata;
             if(this->mp_SEDP->mp_PDP->addWriterProxyData(&writerProxyData, pdata)) //ADDED NEW DATA
             {
-                //CHECK the locators:
+                // At this point we can release reader lock, cause change is not used
+                reader->getMutex()->unlock();
+
                 mp_SEDP->pairing_writer_proxy_with_any_local_reader(&pdata, &writerProxyData);
+
+                // Take again the reader lock.
+                reader->getMutex()->lock();
             }
             else //NOT ADDED BECAUSE IT WAS ALREADY THERE
             {
                 logWarning(RTPS_EDP,"Received message from UNKNOWN RTPSParticipant, removing");
             }
-
-            //Call the slave, if it exists
-            attached_listener_mutex.lock();
-            if(attached_listener != nullptr)
-                attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_PubReader.first, change_in);
-            attached_listener_mutex.unlock();
-
-            // Take again the reader lock.
-            reader->getMutex()->lock();
         }
     }
     else
     {
         //REMOVE WRITER FROM OUR READERS:
         logInfo(RTPS_EDP,"Disposed Remote Writer, removing...");
-
-        //Call the slave, if it exists
-        attached_listener_mutex.lock();
-        if(attached_listener != nullptr)
-            attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_PubReader.first, change_in);
-        attached_listener_mutex.unlock();
 
         GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
         this->mp_SEDP->removeWriterProxy(auxGUID);
@@ -179,6 +173,13 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
     {
         logWarning(RTPS_EDP,"Received change with no Key");
     }
+
+    //Call the slave, if it exists
+    attached_listener_mutex.lock();
+    if(attached_listener != nullptr)
+        attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_SubReader.first, change);
+    attached_listener_mutex.unlock();
+
     if(change->kind == ALIVE)
     {
         //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
@@ -199,40 +200,29 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
                 mp_SEDP->mp_SubReader.second->remove_change(change);
                 return;
             }
-            // At this point we can release reader lock.
-            reader->getMutex()->unlock();
 
             //LOOK IF IS AN UPDATED INFORMATION
             ParticipantProxyData pdata;
             if(this->mp_SEDP->mp_PDP->addReaderProxyData(&readerProxyData, pdata)) //ADDED NEW DATA
             {
+                // At this point we can release reader lock, cause change is not used
+                reader->getMutex()->unlock();
+
                 mp_SEDP->pairing_reader_proxy_with_any_local_writer(&pdata, &readerProxyData);
+
+                // Take again the reader lock.
+                reader->getMutex()->lock();
             }
             else
             {
                 logWarning(RTPS_EDP,"From UNKNOWN RTPSParticipant, removing");
             }
-
-            //Call the slave, if it exists
-            attached_listener_mutex.lock();
-            if(attached_listener != nullptr)
-                attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_SubReader.first, change);
-            attached_listener_mutex.unlock();
-
-            // Take again the reader lock.
-            reader->getMutex()->lock();
         }
     }
     else
     {
         //REMOVE WRITER FROM OUR READERS:
         logInfo(RTPS_EDP,"Disposed Remote Reader, removing...");
-
-        //Call the slave, if it exists
-        attached_listener_mutex.lock();
-        if(attached_listener != nullptr)
-            attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_SubReader.first, change);
-        attached_listener_mutex.unlock();
 
         GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
         this->mp_SEDP->removeReaderProxy(auxGUID);

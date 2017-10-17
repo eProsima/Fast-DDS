@@ -786,7 +786,7 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
     LocatorList_t finalList;
     for(auto lit = list.begin();lit != list.end();++lit){
         //Iteration of all Locators within the Locator list passed down as argument
-        std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+        std::lock_guard<std::mutex> guard(m_receiverResourcelistMutex);
         //Check among ReceiverResources whether the locator is supported or not
         for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
             //Take mutex for the resource since we are going to interact with shared resources
@@ -850,6 +850,7 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 
         for(auto it_buffer = newItemsBuffer.begin(); it_buffer != newItemsBuffer.end(); ++it_buffer)
         {
+            std::lock_guard<std::mutex> lock(m_receiverResourcelistMutex);
             //Push the new items into the ReceiverResource buffer
             m_receiverResourcelist.push_back(ReceiverControlBlock(std::move(*it_buffer)));
             //Create and init the MessageReceiver
@@ -867,9 +868,12 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 
 bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 {
+    m_receiverResourcelistMutex.lock();
     for(auto it=m_receiverResourcelist.begin();it!=m_receiverResourcelist.end();++it){
         (*it).mp_receiver->removeEndpoint(p_endpoint);
     }
+    m_receiverResourcelistMutex.unlock();
+
     bool found = false;
     {
         if(p_endpoint->getAttributes()->endpointKind == WRITER)

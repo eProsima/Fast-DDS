@@ -32,14 +32,14 @@ namespace rtps {
 
 
 ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(PDPSimple* p_SPDP,
-		double interval):
-        TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
-        p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval),
-		mp_PDP(p_SPDP)
-{
+        double interval):
+    TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
+            p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval),
+    mp_PDP(p_SPDP)
+    {
 
 
-}
+    }
 
 ResendParticipantProxyDataPeriod::~ResendParticipantProxyDataPeriod()
 {
@@ -52,23 +52,25 @@ void ResendParticipantProxyDataPeriod::event(EventCode code, const char* msg)
     // Unused in release mode.
     (void)msg;
 
-	if(code == EVENT_SUCCESS)
-	{
-		logInfo(RTPS_PDP,"ResendDiscoveryData Period");
-		//FIXME: Change for liveliness protocol
-		mp_PDP->getLocalParticipantProxyData()->m_manualLivelinessCount++;
-		mp_PDP->announceParticipantState(false);
+    if(code == EVENT_SUCCESS)
+    {
+        logInfo(RTPS_PDP,"ResendDiscoveryData Period");
+        //FIXME: Change for liveliness protocol
+        mp_PDP->getMutex()->lock();
+        mp_PDP->getLocalParticipantProxyData()->m_manualLivelinessCount++;
+        mp_PDP->getMutex()->unlock();
+        mp_PDP->announceParticipantState(false);
 
-		this->restart_timer();
-	}
-	else if(code == EVENT_ABORT)
-	{
-		logInfo(RTPS_PDP,"Response Data Period aborted");
-	}
-	else
-	{
-		logInfo(RTPS_PDP,"message: " <<msg);
-	}
+        this->restart_timer();
+    }
+    else if(code == EVENT_ABORT)
+    {
+        logInfo(RTPS_PDP,"Response Data Period aborted");
+    }
+    else
+    {
+        logInfo(RTPS_PDP,"message: " <<msg);
+    }
 }
 
 }

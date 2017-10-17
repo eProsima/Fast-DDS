@@ -27,6 +27,8 @@
 
 #include <types/HelloWorldType.h>
 
+#include <mutex>
+
 using namespace eprosima::fastrtps;
 
 bool run = true;
@@ -73,18 +75,22 @@ class PubListener : public PublisherListener
 
         void onPublicationMatched(Publisher* /*publisher*/, MatchingInfo& info) override
         {
+            std::unique_lock<std::mutex> lock(mutex_);
             if(info.status == MATCHED_MATCHING)
             {
                 std::cout << "Subscriber matched" << std::endl;
-                matched_++;
+                ++matched_;
             }
             else
             {
                 std::cout << "Subscriber unmatched" << std::endl;
-                matched_--;
+                --matched_;
             }
+            cv_.notify_all();
         }
 
+        std::mutex mutex_;
+        std::condition_variable cv_;
         unsigned int matched_;
 };
 
@@ -128,8 +134,10 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    while(listener.matched_ == 0)
-        eClock::my_sleep(250);
+    {
+        std::unique_lock<std::mutex> lock(listener.mutex_);
+        listener.cv_.wait(lock, [&]{return listener.matched_ > 0;});
+    }
 
     HelloWorld data;
     data.index(1);

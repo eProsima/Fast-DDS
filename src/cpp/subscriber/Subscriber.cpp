@@ -25,33 +25,31 @@ namespace fastrtps {
 
 const GUID_t& Subscriber::getGuid()
 {
-	return mp_impl->getGuid();
+    return mp_impl->getGuid();
 }
-
 
 void Subscriber::waitForUnreadMessage()
 {
-	return mp_impl->waitForUnreadMessage();
+    return mp_impl->waitForUnreadMessage();
 }
-
 
 bool Subscriber::readNextData(void* data,SampleInfo_t* info)
 {
-	return mp_impl->readNextData(data,info);
+    return mp_impl->readNextData(data,info);
 }
 bool Subscriber::takeNextData(void* data,SampleInfo_t* info)
 {
-	return mp_impl->takeNextData(data,info);
+    return mp_impl->takeNextData(data,info);
 }
 
 bool Subscriber::updateAttributes(SubscriberAttributes& att)
 {
-	return mp_impl->updateAttributes(att);
+    return mp_impl->updateAttributes(att);
 }
 
 SubscriberAttributes Subscriber::getAttributes()
 {
-	return mp_impl->getAttributes();
+    return mp_impl->getAttributes();
 }
 
 bool Subscriber::isInCleanState() const
@@ -59,10 +57,5 @@ bool Subscriber::isInCleanState() const
     return mp_impl->isInCleanState();
 }
 
-
-
-
 } /* namespace fastrtps */
 } /* namespace eprosima */
-
-

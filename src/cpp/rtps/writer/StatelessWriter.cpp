@@ -152,7 +152,7 @@ void StatelessWriter::send_any_unsent_changes()
     // Clear through parent controllers
     for (auto& controller : mp_RTPSParticipant->getFlowControllers())
         (*controller)(changesToSend);
-    
+
     RTPSMessageGroup group(mp_RTPSParticipant, this,  RTPSMessageGroup::WRITER, m_cdrmessages);
 
     while(!changesToSend.empty())

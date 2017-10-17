@@ -52,7 +52,7 @@ class RTPSWriterCollector
              *  If value is zero, it represents a whole change.
              */
             FragmentNumber_t fragmentNumber;
-            
+
             CacheChange_t* cacheChange;
 
             mutable std::vector<T> remoteReaders;
@@ -73,7 +73,7 @@ class RTPSWriterCollector
         };
 
         typedef std::set<Item, ItemCmp> ItemSet;
-        
+
         void add_change(CacheChange_t* change, const T& remoteReader, const FragmentNumberSet_t optionalFragmentsNotSent)
         {
             if(change->getFragmentSize() > 0)

@@ -1790,6 +1790,8 @@ BLACKBOXTEST(BlackBox, EDPSlaveReaderAttachment)
     checker.block_until_discover_partition("test", 2);
     checker.block_until_discover_partition("othertest", 1);
 
+    std::this_thread::sleep_for(std::chrono::milliseconds(400));
+
     delete reader;
     delete writer;
 

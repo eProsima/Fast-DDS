@@ -472,8 +472,6 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change, WriterPr
 
 bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox)
 {
-
-
     //First look for WriterProxy in case is not provided
     if(prox == nullptr)
     {
