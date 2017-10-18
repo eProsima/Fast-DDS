@@ -1,6 +1,20 @@
+// Copyright 2017 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 #include <tinyxml2.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
-#include <fastrtps/xmlparser/XMLProfileParser.h>
+#include <fastrtps/xmlparser/XMLParser.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -12,78 +26,78 @@ std::map<std::string, PublisherAttributes*>   XMLProfileParser::m_publisher_prof
 PublisherAttributes default_publisher_attributes;
 std::map<std::string, SubscriberAttributes*>  XMLProfileParser::m_subscriber_profiles;
 SubscriberAttributes default_subscriber_attributes;
-std::map<std::string, XMLP_ret>              XMLProfileParser::m_xml_files;
+std::map<std::string, XMLP_ret>              XMLParser::m_xml_files;
 
-BaseNode* XMLProfileParser::root = nullptr;
+BaseNode* XMLParser::root = nullptr;
 
-XMLP_ret XMLProfileParser::fillParticipantAttributes(const std::string &profile_name, ParticipantAttributes &atts)
+XMLP_ret XMLParser::fillParticipantAttributes(const std::string &profile_name, ParticipantAttributes &atts)
 {
     part_map_iterator_t it = m_participant_profiles.find(profile_name);
     if (it == m_participant_profiles.end())
     {
-        logError(XMLPROFILEPARSER, "Profile '" << profile_name << "' not found '");
+        logError(XMLPARSER, "Profile '" << profile_name << "' not found '");
         return XMLP_ret::XML_ERROR;
     }
     atts = *it->second;
     return XMLP_ret::XML_OK;
 }
 
-void XMLProfileParser::getDefaultParticipantAttributes(ParticipantAttributes& participant_attributes)
+void XMLParser::getDefaultParticipantAttributes(ParticipantAttributes& participant_attributes)
 {
     participant_attributes = default_participant_attributes;
 }
 
-void XMLProfileParser::getDefaultPublisherAttributes(PublisherAttributes& publisher_attributes)
+void XMLParser::getDefaultPublisherAttributes(PublisherAttributes& publisher_attributes)
 {
     publisher_attributes = default_publisher_attributes;
 }
 
-void XMLProfileParser::getDefaultSubscriberAttributes(SubscriberAttributes& subscriber_attributes)
+void XMLParser::getDefaultSubscriberAttributes(SubscriberAttributes& subscriber_attributes)
 {
     subscriber_attributes = default_subscriber_attributes;
 }
 
-XMLP_ret XMLProfileParser::fillPublisherAttributes(const std::string &profile_name, PublisherAttributes &atts)
+XMLP_ret XMLParser::fillPublisherAttributes(const std::string &profile_name, PublisherAttributes &atts)
 {
     publ_map_iterator_t it = m_publisher_profiles.find(profile_name);
     if (it == m_publisher_profiles.end())
     {
-        logError(XMLPROFILEPARSER, "Profile '" << profile_name << "' not found '");
+        logError(XMLPARSER, "Profile '" << profile_name << "' not found '");
         return XMLP_ret::XML_ERROR;
     }
     atts = *it->second;
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::fillSubscriberAttributes(const std::string &profile_name, SubscriberAttributes &atts)
+XMLP_ret XMLParser::fillSubscriberAttributes(const std::string &profile_name, SubscriberAttributes &atts)
 {
     subs_map_iterator_t it = m_subscriber_profiles.find(profile_name);
     if (it == m_subscriber_profiles.end())
     {
-        logError(XMLPROFILEPARSER, "Profile '" << profile_name << "' not found");
+        logError(XMLPARSER, "Profile '" << profile_name << "' not found");
         return XMLP_ret::XML_ERROR;
     }
     atts = *it->second;
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::loadDefaultXMLFile()
+XMLP_ret XMLParser::loadDefaultXMLFile()
 {
     return loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
 }
 
-XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
+XMLP_ret XMLParser::loadXMLFile(const std::string &filename)
 {
     if (filename.empty())
     {
-        logError(XMLPROFILEPARSER, "Error loading XML file, filename empty");
+        logError(XMLPARSER, "Error loading XML file, filename empty");
         return XMLP_ret::XML_ERROR;
     }
 
     xmlfile_map_iterator_t it = m_xml_files.find(filename);
     if (it != m_xml_files.end() && XMLP_ret::XML_OK == it->second)
     {
-        logInfo(XMLPROFILEPARSER, "XML file '" << filename << "' already parsed");
+        logInfo(XMLPARSER, "XML file '" << filename << "' already parsed");
         return XMLP_ret::XML_OK;
     }
 
@@ -93,17 +107,17 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
     if (XML_SUCCESS != eResult)
     {
         if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
-            logError(XMLPROFILEPARSER, "Error opening '" << filename << "'");
+            logError(XMLPARSER, "Error opening '" << filename << "'");
         m_xml_files.emplace(filename, XMLP_ret::XML_ERROR);
         return XMLP_ret::XML_ERROR;
     }
 
-    logInfo(XMLPROFILEPARSER, "File '" << filename << "' opened successfully");
+    logInfo(XMLPARSER, "File '" << filename << "' opened successfully");
 
     XMLElement* p_root = xmlDoc.FirstChildElement(PROFILES);
     if (nullptr == p_root)
     {
-        logError(XMLPROFILEPARSER, "Not found 'profiles' root tag");
+        logError(XMLPARSER, "Not found 'profiles' root tag");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -132,14 +146,14 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
                     std::unique_ptr<Node<ParticipantAttributes>> participant_node{new Node<ParticipantAttributes>{root, NodeType::PARTICIPANT, std::move(participant_atts)}};
                     if (false == m_participant_profiles.emplace(profile_name, participant_node->getData()).second)
                     {
-                        logError(XMLPROFILEPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+                        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
                     }
                     root->addChild(std::move(participant_node));
                     ++profileCount;
                 }
                 else
                 {
-                    logError(XMLPROFILEPARSER, "Error parsing participant profile");
+                    logError(XMLPARSER, "Error parsing participant profile");
                 }
             }
             else if (strcmp(tag, PUBLISHER) == 0)
@@ -155,14 +169,14 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
                     std::unique_ptr<Node<PublisherAttributes>> publisher_node{new Node<PublisherAttributes>{root, NodeType::PUBLISHER,std::move(publisher_atts)}};
                     if (false == m_publisher_profiles.emplace(profile_name, publisher_node->getData()).second)
                     {
-                        logError(XMLPROFILEPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+                        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
                     }
                     root->addChild(std::move(publisher_node));
                     ++profileCount;
                 }
                 else
                 {
-                    logError(XMLPROFILEPARSER, "Error parsing publisher profile");
+                    logError(XMLPARSER, "Error parsing publisher profile");
                 }
             }
             else if (strcmp(tag, SUBSCRIBER) == 0)
@@ -178,14 +192,14 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
                     std::unique_ptr<Node<SubscriberAttributes>> subscriber_node{new Node<SubscriberAttributes>{root, NodeType::SUBSCRIBER,std::move(subscriber_atts)}};
                     if (false == m_subscriber_profiles.emplace(profile_name, subscriber_node->getData()).second)
                     {
-                        logError(XMLPROFILEPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+                        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
                     }
                     root->addChild(std::move(subscriber_node));
                     ++profileCount;
                 }
                 else
                 {
-                    logError(XMLPROFILEPARSER, "Error parsing subscriber profile");
+                    logError(XMLPARSER, "Error parsing subscriber profile");
                 }
             }
             else if (strcmp(tag, QOS_PROFILE))
@@ -214,7 +228,7 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
             }
             else
             {
-                logError(XMLPROFILEPARSER, "Not expected tag: '" << tag << "'");
+                logError(XMLPARSER, "Not expected tag: '" << tag << "'");
             }
         }
         p_profile = p_profile->NextSiblingElement();
@@ -223,7 +237,7 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
     if (0 == profileCount)
     {
         m_xml_files.emplace(filename, XMLP_ret::XML_ERROR);
-        logError(XMLPROFILEPARSER, "Bad file '" << filename << "' content expected tag: '" << tag << "'");
+        logError(XMLPARSER, "Bad file '" << filename << "' content expected tag: '" << tag << "'");
         return XMLP_ret::XML_ERROR;
 
     }
@@ -233,7 +247,7 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::parseXMLParticipantProf(XMLElement *p_profile,
+XMLP_ret XMLParser::parseXMLParticipantProf(XMLElement *p_profile,
                                                    ParticipantAttributes &participant_atts,
                                                    std::string &profile_name)
 {
@@ -261,13 +275,13 @@ XMLP_ret XMLProfileParser::parseXMLParticipantProf(XMLElement *p_profile,
 
     if (nullptr == p_profile)
     {
-        logError(XMLPROFILEPARSER, "Bad parameters!");
+        logError(XMLPARSER, "Bad parameters!");
         return XMLP_ret::XML_ERROR;
     }
     const char *prof_name = p_profile->Attribute(PROFILE_NAME);
     if (nullptr == prof_name)
     {
-        logError(XMLPROFILEPARSER, "Not found '" << PROFILE_NAME << "' attribute");
+        logError(XMLPARSER, "Not found '" << PROFILE_NAME << "' attribute");
         return XMLP_ret::XML_ERROR;
     }
     profile_name = prof_name;
@@ -275,7 +289,7 @@ XMLP_ret XMLProfileParser::parseXMLParticipantProf(XMLElement *p_profile,
     XMLElement *p_element = p_profile->FirstChildElement(RTPS);
     if (nullptr == p_element)
     {
-        logError(XMLPROFILEPARSER, "Not found '" << RTPS << "' tag");
+        logError(XMLPARSER, "Not found '" << RTPS << "' tag");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -362,7 +376,7 @@ XMLP_ret XMLProfileParser::parseXMLParticipantProf(XMLElement *p_profile,
     // TODO: userTransports
     if (nullptr != (p_aux = p_element->FirstChildElement(USER_TRANS)))
     {
-        logError(XMLPROFILEPARSER, "Attribute '" << p_aux->Value() << "' do not supported for now");
+        logError(XMLPARSER, "Attribute '" << p_aux->Value() << "' do not supported for now");
     }
 
     // useBuiltinTransports - boolType
@@ -387,7 +401,7 @@ XMLP_ret XMLProfileParser::parseXMLParticipantProf(XMLElement *p_profile,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::parseXMLPublisherProf(XMLElement *p_profile,
+XMLP_ret XMLParser::parseXMLPublisherProf(XMLElement *p_profile,
                                                  PublisherAttributes &publisher_atts,
                                                  std::string &profile_name)
 {
@@ -409,13 +423,13 @@ XMLP_ret XMLProfileParser::parseXMLPublisherProf(XMLElement *p_profile,
 
     if (nullptr == p_profile)
     {
-        logError(XMLPROFILEPARSER, "Bad parameters!");
+        logError(XMLPARSER, "Bad parameters!");
         return XMLP_ret::XML_ERROR;
     }
     const char *prof_name = p_profile->Attribute(PROFILE_NAME);
     if (nullptr == prof_name)
     {
-        logError(XMLPROFILEPARSER, "Not found '" << PROFILE_NAME << "' attribute");
+        logError(XMLPARSER, "Not found '" << PROFILE_NAME << "' attribute");
         return XMLP_ret::XML_ERROR;
     }
     profile_name = prof_name;
@@ -493,7 +507,7 @@ XMLP_ret XMLProfileParser::parseXMLPublisherProf(XMLElement *p_profile,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::parseXMLSubscriberProf(XMLElement *p_profile,
+XMLP_ret XMLParser::parseXMLSubscriberProf(XMLElement *p_profile,
                                                   SubscriberAttributes &subscriber_atts,
                                                   std::string &profile_name)
 {
@@ -516,13 +530,13 @@ XMLP_ret XMLProfileParser::parseXMLSubscriberProf(XMLElement *p_profile,
 
     if (nullptr == p_profile)
     {
-        logError(XMLPROFILEPARSER, "Bad parameters!");
+        logError(XMLPARSER, "Bad parameters!");
         return XMLP_ret::XML_ERROR;
     }
     const char *prof_name = p_profile->Attribute(PROFILE_NAME);
     if (nullptr == prof_name)
     {
-        logError(XMLPROFILEPARSER, "Not found '" << PROFILE_NAME << "' attribute");
+        logError(XMLPARSER, "Not found '" << PROFILE_NAME << "' attribute");
         return XMLP_ret::XML_ERROR;
     }
     profile_name = prof_name;

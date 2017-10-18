@@ -1,13 +1,27 @@
+// Copyright 2017 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 #include <cstring>
 #include <tinyxml2.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
-#include <fastrtps/xmlparser/XMLProfileParser.h>
+#include <fastrtps/xmlparser/XMLParser.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
-XMLP_ret XMLProfileParser::getXMLBuiltinAttributes(XMLElement *elem, BuiltinAttributes &builtin, uint8_t ident)
+XMLP_ret XMLParser::getXMLBuiltinAttributes(XMLElement *elem, BuiltinAttributes &builtin, uint8_t ident)
 {
     /*<xs:complexType name="builtinAttributesType">
       <xs:all minOccurs="0">
@@ -50,7 +64,7 @@ XMLP_ret XMLProfileParser::getXMLBuiltinAttributes(XMLElement *elem, BuiltinAttr
         const char* text = p_aux0->GetText();
         if (nullptr == text)
         {
-            logError(XMLPROFILEPARSER, "Node '" << _EDP << "' without content");
+            logError(XMLPARSER, "Node '" << _EDP << "' without content");
             return XMLP_ret::XML_ERROR;
         }
         if (strcmp(text, SIMPLE) == 0)
@@ -65,7 +79,7 @@ XMLP_ret XMLProfileParser::getXMLBuiltinAttributes(XMLElement *elem, BuiltinAttr
         }
         else
         {
-            logError(XMLPROFILEPARSER, "Node '" << _EDP << "' with bad content");
+            logError(XMLPARSER, "Node '" << _EDP << "' with bad content");
             return XMLP_ret::XML_ERROR;
         }
     }
@@ -133,7 +147,7 @@ XMLP_ret XMLProfileParser::getXMLBuiltinAttributes(XMLElement *elem, BuiltinAttr
 
 }
 
-XMLP_ret XMLProfileParser::getXMLPortParameters(XMLElement *elem, PortParameters &port, uint8_t ident)
+XMLP_ret XMLParser::getXMLPortParameters(XMLElement *elem, PortParameters &port, uint8_t ident)
 {
     /*<xs:complexType name="portType">
       <xs:all minOccurs="0">
@@ -187,7 +201,7 @@ XMLP_ret XMLProfileParser::getXMLPortParameters(XMLElement *elem, PortParameters
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLThroughputController(XMLElement *elem,
+XMLP_ret XMLParser::getXMLThroughputController(XMLElement *elem,
                                                       ThroughputControllerDescriptor &throughputController,
                                                       uint8_t ident)
 {
@@ -214,7 +228,7 @@ XMLP_ret XMLProfileParser::getXMLThroughputController(XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLTopicAttributes(XMLElement *elem, TopicAttributes &topic, uint8_t ident)
+XMLP_ret XMLParser::getXMLTopicAttributes(XMLElement *elem, TopicAttributes &topic, uint8_t ident)
 {
     /*<xs:complexType name="topicAttributesType">
       <xs:all minOccurs="0">
@@ -240,14 +254,14 @@ XMLP_ret XMLProfileParser::getXMLTopicAttributes(XMLElement *elem, TopicAttribut
         const char* text = p_aux0->GetText();
         if (nullptr == text)
         {
-            logError(XMLPROFILEPARSER, "Node '" << KIND << "' without content");
+            logError(XMLPARSER, "Node '" << KIND << "' without content");
             return XMLP_ret::XML_ERROR;
         }
              if (strcmp(text,   _NO_KEY) == 0) topic.topicKind = TopicKind_t::NO_KEY;
         else if (strcmp(text, _WITH_KEY) == 0) topic.topicKind = TopicKind_t::WITH_KEY;
         else
         {
-            logError(XMLPROFILEPARSER, "Node '" << KIND << "' with bad content");
+            logError(XMLPARSER, "Node '" << KIND << "' with bad content");
             return XMLP_ret::XML_ERROR;
         }
     }
@@ -275,7 +289,7 @@ XMLP_ret XMLProfileParser::getXMLTopicAttributes(XMLElement *elem, TopicAttribut
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLResourceLimitsQos(XMLElement *elem,
+XMLP_ret XMLParser::getXMLResourceLimitsQos(XMLElement *elem,
                                                    ResourceLimitsQosPolicy &resourceLimitsQos,
                                                    uint8_t ident)
 {
@@ -318,7 +332,7 @@ XMLP_ret XMLProfileParser::getXMLResourceLimitsQos(XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLHistoryQosPolicy(XMLElement *elem, HistoryQosPolicy &historyQos, uint8_t ident)
+XMLP_ret XMLParser::getXMLHistoryQosPolicy(XMLElement *elem, HistoryQosPolicy &historyQos, uint8_t ident)
 {
     /*<xs:complexType name="historyQosPolicyType">
       <xs:all minOccurs="0">
@@ -341,14 +355,14 @@ XMLP_ret XMLProfileParser::getXMLHistoryQosPolicy(XMLElement *elem, HistoryQosPo
         const char* text = p_aux0->GetText();
         if (nullptr == text)
         {
-            logError(XMLPROFILEPARSER, "Node '" << KIND << "' without content");
+            logError(XMLPARSER, "Node '" << KIND << "' without content");
             return XMLP_ret::XML_ERROR;
         }
              if (strcmp(text, KEEP_LAST) == 0) historyQos.kind = HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
         else if (strcmp(text,  KEEP_ALL) == 0) historyQos.kind = HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS;
         else
         {
-            logError(XMLPROFILEPARSER, "Node '" << KIND << "' with bad content");
+            logError(XMLPARSER, "Node '" << KIND << "' with bad content");
             return XMLP_ret::XML_ERROR;
         }
     }
@@ -360,7 +374,7 @@ XMLP_ret XMLProfileParser::getXMLHistoryQosPolicy(XMLElement *elem, HistoryQosPo
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLWriterQosPolicies(XMLElement *elem, WriterQos &qos, uint8_t ident)
+XMLP_ret XMLParser::getXMLWriterQosPolicies(XMLElement *elem, WriterQos &qos, uint8_t ident)
 {
     /*<xs:complexType name="writerQosPoliciesType">
         <xs:all minOccurs="0">
@@ -425,7 +439,7 @@ XMLP_ret XMLProfileParser::getXMLWriterQosPolicies(XMLElement *elem, WriterQos &
         nullptr != (p_aux = elem->FirstChildElement(        TOPIC_DATA)) ||
         nullptr != (p_aux = elem->FirstChildElement(        GROUP_DATA)))
 
-        logError(XMLPROFILEPARSER, "Quality os Service '" << p_aux->Value() << "' do not supported for now");
+        logError(XMLPARSER, "Quality os Service '" << p_aux->Value() << "' do not supported for now");
 
     // TODO: Do not supported for now
     //if (nullptr != (p_aux = elem->FirstChildElement(    DURABILITY_SRV))) getXMLDurabilityServiceQos(p_aux, ident);
@@ -444,7 +458,7 @@ XMLP_ret XMLProfileParser::getXMLWriterQosPolicies(XMLElement *elem, WriterQos &
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLReaderQosPolicies(XMLElement *elem, ReaderQos &qos, uint8_t ident)
+XMLP_ret XMLParser::getXMLReaderQosPolicies(XMLElement *elem, ReaderQos &qos, uint8_t ident)
 {
     /*<xs:complexType name="readerQosPoliciesType">
         <xs:all minOccurs="0">
@@ -502,7 +516,7 @@ XMLP_ret XMLProfileParser::getXMLReaderQosPolicies(XMLElement *elem, ReaderQos &
         nullptr != (p_aux = elem->FirstChildElement(        TOPIC_DATA)) ||
         nullptr != (p_aux = elem->FirstChildElement(        GROUP_DATA)))
 
-        logError(XMLPROFILEPARSER, "Quality os Service '" << p_aux->Value() << "' do not supported for now");
+        logError(XMLPARSER, "Quality os Service '" << p_aux->Value() << "' do not supported for now");
 
     // TODO: Do not supported for now
     //if (nullptr != (p_aux = elem->FirstChildElement(    DURABILITY_SRV))) getXMLDurabilityServiceQos(p_aux, ident);
@@ -520,7 +534,7 @@ XMLP_ret XMLProfileParser::getXMLReaderQosPolicies(XMLElement *elem, ReaderQos &
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLDurabilityQos(XMLElement *elem, DurabilityQosPolicy &durability, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLDurabilityQos(XMLElement *elem, DurabilityQosPolicy &durability, uint8_t /*ident*/)
 {
     /*<xs:complexType name="durabilityQosPolicyType">
           <xs:all minOccurs="0">
@@ -544,7 +558,7 @@ XMLP_ret XMLProfileParser::getXMLDurabilityQos(XMLElement *elem, DurabilityQosPo
         const char* text = p_aux0->GetText();
         if (nullptr == text)
         {
-            logError(XMLPROFILEPARSER, "Node '" << KIND << "' without content");
+            logError(XMLPARSER, "Node '" << KIND << "' without content");
             return XMLP_ret::XML_ERROR;
         }
              if (strcmp(text,         _VOLATILE) == 0)
@@ -557,20 +571,20 @@ XMLP_ret XMLProfileParser::getXMLDurabilityQos(XMLElement *elem, DurabilityQosPo
             durability.kind = DurabilityQosPolicyKind::PERSISTENT_DURABILITY_QOS;
         else
         {
-            logError(XMLPROFILEPARSER, "Node '" << KIND << "' with bad content");
+            logError(XMLPARSER, "Node '" << KIND << "' with bad content");
             return XMLP_ret::XML_ERROR;
         }
     }
     else
     {
-        logError(XMLPROFILEPARSER, "Node '" << elem->Value() << "' without content");
+        logError(XMLPARSER, "Node '" << elem->Value() << "' without content");
         return XMLP_ret::XML_ERROR;
     }
 
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLDurabilityServiceQos(XMLElement *elem,
+XMLP_ret XMLParser::getXMLDurabilityServiceQos(XMLElement *elem,
                                                       DurabilityServiceQosPolicy &durabilityService,
                                                       uint8_t ident)
 {
@@ -605,7 +619,7 @@ XMLP_ret XMLProfileParser::getXMLDurabilityServiceQos(XMLElement *elem,
         const char* text = p_aux0->GetText();
         if (nullptr == text)
         {
-            logError(XMLPROFILEPARSER, "Node '" << HISTORY_KIND << "' without content");
+            logError(XMLPARSER, "Node '" << HISTORY_KIND << "' without content");
             return XMLP_ret::XML_ERROR;
         }
              if (strcmp(text, KEEP_LAST) == 0)
@@ -614,7 +628,7 @@ XMLP_ret XMLProfileParser::getXMLDurabilityServiceQos(XMLElement *elem,
             durabilityService.history_kind = HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS;
         else
         {
-            logError(XMLPROFILEPARSER, "Node '" << HISTORY_KIND << "' with bad content");
+            logError(XMLPARSER, "Node '" << HISTORY_KIND << "' with bad content");
             return XMLP_ret::XML_ERROR;
         }
     }
@@ -646,7 +660,7 @@ XMLP_ret XMLProfileParser::getXMLDurabilityServiceQos(XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLDeadlineQos(XMLElement *elem, DeadlineQosPolicy &deadline, uint8_t ident)
+XMLP_ret XMLParser::getXMLDeadlineQos(XMLElement *elem, DeadlineQosPolicy &deadline, uint8_t ident)
 {
     /*<xs:complexType name="deadlineQosPolicyType">
       <xs:all>
@@ -662,14 +676,14 @@ XMLP_ret XMLProfileParser::getXMLDeadlineQos(XMLElement *elem, DeadlineQosPolicy
     }
     else
     {
-        logError(XMLPROFILEPARSER, "Node '" << elem->Value() << "' without content");
+        logError(XMLPARSER, "Node '" << elem->Value() << "' without content");
         return XMLP_ret::XML_ERROR;
     }
 
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLLatencyBudgetQos(XMLElement *elem, LatencyBudgetQosPolicy &latencyBudget, uint8_t ident)
+XMLP_ret XMLParser::getXMLLatencyBudgetQos(XMLElement *elem, LatencyBudgetQosPolicy &latencyBudget, uint8_t ident)
 {
     /*<xs:complexType name="latencyBudgetQosPolicyType">
       <xs:all>
@@ -685,14 +699,14 @@ XMLP_ret XMLProfileParser::getXMLLatencyBudgetQos(XMLElement *elem, LatencyBudge
     }
     else
     {
-        logError(XMLPROFILEPARSER, "Node '" << elem->Value() << "' without content");
+        logError(XMLPARSER, "Node '" << elem->Value() << "' without content");
         return XMLP_ret::XML_ERROR;
     }
 
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLLivelinessQos(XMLElement *elem, LivelinessQosPolicy &liveliness, uint8_t ident)
+XMLP_ret XMLParser::getXMLLivelinessQos(XMLElement *elem, LivelinessQosPolicy &liveliness, uint8_t ident)
 {
     /*<xs:complexType name="livelinessQosPolicyType">
       <xs:all minOccurs="0">
@@ -717,7 +731,7 @@ XMLP_ret XMLProfileParser::getXMLLivelinessQos(XMLElement *elem, LivelinessQosPo
         const char* text = p_aux0->GetText();
         if (nullptr == text)
         {
-            logError(XMLPROFILEPARSER, "Node '" << KIND << "' without content");
+            logError(XMLPARSER, "Node '" << KIND << "' without content");
             return XMLP_ret::XML_ERROR;
         }
              if (strcmp(text,             AUTOMATIC) == 0)
@@ -728,7 +742,7 @@ XMLP_ret XMLProfileParser::getXMLLivelinessQos(XMLElement *elem, LivelinessQosPo
             liveliness.kind = LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS;
         else
         {
-            logError(XMLPROFILEPARSER, "Node '" << KIND << "' with bad content");
+            logError(XMLPARSER, "Node '" << KIND << "' with bad content");
             return XMLP_ret::XML_ERROR;
         }
         haveSomeField = true;
@@ -747,14 +761,14 @@ XMLP_ret XMLProfileParser::getXMLLivelinessQos(XMLElement *elem, LivelinessQosPo
     }
     if (!haveSomeField)
     {
-        logError(XMLPROFILEPARSER, "Node '" << elem->Value() << "' without content");
+        logError(XMLPARSER, "Node '" << elem->Value() << "' without content");
         return XMLP_ret::XML_ERROR;
     }
 
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLReliabilityQos(XMLElement *elem, ReliabilityQosPolicy &reliability, uint8_t ident)
+XMLP_ret XMLParser::getXMLReliabilityQos(XMLElement *elem, ReliabilityQosPolicy &reliability, uint8_t ident)
 {
     /*<xs:complexType name="reliabilityQosPolicyType">
       <xs:all>
@@ -777,7 +791,7 @@ XMLP_ret XMLProfileParser::getXMLReliabilityQos(XMLElement *elem, ReliabilityQos
         const char* text = p_aux0->GetText();
         if (nullptr == text)
         {
-            logError(XMLPROFILEPARSER, "Node '" << KIND << "' without content");
+            logError(XMLPARSER, "Node '" << KIND << "' without content");
             return XMLP_ret::XML_ERROR;
         }
              if (strcmp(text, _BEST_EFFORT) == 0)
@@ -786,7 +800,7 @@ XMLP_ret XMLProfileParser::getXMLReliabilityQos(XMLElement *elem, ReliabilityQos
             reliability.kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
         else
         {
-            logError(XMLPROFILEPARSER, "Node '" << KIND << "' with bad content");
+            logError(XMLPARSER, "Node '" << KIND << "' with bad content");
             return XMLP_ret::XML_ERROR;
         }
         haveSomeField = true;
@@ -799,13 +813,13 @@ XMLP_ret XMLProfileParser::getXMLReliabilityQos(XMLElement *elem, ReliabilityQos
     }
     if (!haveSomeField)
     {
-        logError(XMLPROFILEPARSER, "Node '" << elem->Value() << "' without content");
+        logError(XMLPARSER, "Node '" << elem->Value() << "' without content");
         return XMLP_ret::XML_ERROR;
     }
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLLifespanQos(XMLElement *elem, LifespanQosPolicy &lifespan, uint8_t ident)
+XMLP_ret XMLParser::getXMLLifespanQos(XMLElement *elem, LifespanQosPolicy &lifespan, uint8_t ident)
 {
     /*<xs:complexType name="lifespanQosPolicyType">
       <xs:all>
@@ -821,14 +835,14 @@ XMLP_ret XMLProfileParser::getXMLLifespanQos(XMLElement *elem, LifespanQosPolicy
     }
     else
     {
-        logError(XMLPROFILEPARSER, "Node '" << elem->Value() << "' without content");
+        logError(XMLPARSER, "Node '" << elem->Value() << "' without content");
         return XMLP_ret::XML_ERROR;
     }
 
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLTimeBasedFilterQos(XMLElement *elem,
+XMLP_ret XMLParser::getXMLTimeBasedFilterQos(XMLElement *elem,
                                                     TimeBasedFilterQosPolicy &timeBasedFilter,
                                                     uint8_t ident)
 {
@@ -846,14 +860,14 @@ XMLP_ret XMLProfileParser::getXMLTimeBasedFilterQos(XMLElement *elem,
     }
     else
     {
-        logError(XMLPROFILEPARSER, "Node '" << elem->Value() << "' without content");
+        logError(XMLPARSER, "Node '" << elem->Value() << "' without content");
         return XMLP_ret::XML_ERROR;
     }
 
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLOwnershipQos(XMLElement *elem, OwnershipQosPolicy &ownership, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLOwnershipQos(XMLElement *elem, OwnershipQosPolicy &ownership, uint8_t /*ident*/)
 {
     /*<xs:complexType name="ownershipQosPolicyType">
       <xs:all>
@@ -874,7 +888,7 @@ XMLP_ret XMLProfileParser::getXMLOwnershipQos(XMLElement *elem, OwnershipQosPoli
         const char* text = p_aux0->GetText();
         if (nullptr == text)
         {
-            logError(XMLPROFILEPARSER, "Node '" << KIND << "' without content");
+            logError(XMLPARSER, "Node '" << KIND << "' without content");
             return XMLP_ret::XML_ERROR;
         }
              if (strcmp(text,    SHARED) == 0)
@@ -883,20 +897,20 @@ XMLP_ret XMLProfileParser::getXMLOwnershipQos(XMLElement *elem, OwnershipQosPoli
             ownership.kind = OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS;
         else
         {
-            logError(XMLPROFILEPARSER, "Node '" << KIND << "' with bad content");
+            logError(XMLPARSER, "Node '" << KIND << "' with bad content");
             return XMLP_ret::XML_ERROR;
         }
     }
     else
     {
-        logError(XMLPROFILEPARSER, "Node '" << elem->Value() << "' without content");
+        logError(XMLPARSER, "Node '" << elem->Value() << "' without content");
         return XMLP_ret::XML_ERROR;
     }
 
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLOwnershipStrengthQos(XMLElement *elem,
+XMLP_ret XMLParser::getXMLOwnershipStrengthQos(XMLElement *elem,
                                                       OwnershipStrengthQosPolicy &ownershipStrength,
                                                       uint8_t ident)
 {
@@ -914,14 +928,14 @@ XMLP_ret XMLProfileParser::getXMLOwnershipStrengthQos(XMLElement *elem,
     }
     else
     {
-        logError(XMLPROFILEPARSER, "Node '" << elem->Value() << "' without content");
+        logError(XMLPARSER, "Node '" << elem->Value() << "' without content");
         return XMLP_ret::XML_ERROR;
     }
 
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLDestinationOrderQos(XMLElement *elem,
+XMLP_ret XMLParser::getXMLDestinationOrderQos(XMLElement *elem,
                                                      DestinationOrderQosPolicy &destinationOrder,
                                                      uint8_t /*ident*/)
 {
@@ -944,7 +958,7 @@ XMLP_ret XMLProfileParser::getXMLDestinationOrderQos(XMLElement *elem,
         const char* text = p_aux0->GetText();
         if (nullptr == text)
         {
-            logError(XMLPROFILEPARSER, "Node '" << KIND << "' without content");
+            logError(XMLPARSER, "Node '" << KIND << "' without content");
             return XMLP_ret::XML_ERROR;
         }
              if (strcmp(text, BY_RECEPTION_TIMESTAMP) == 0)
@@ -953,20 +967,20 @@ XMLP_ret XMLProfileParser::getXMLDestinationOrderQos(XMLElement *elem,
             destinationOrder.kind = DestinationOrderQosPolicyKind::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
         else
         {
-            logError(XMLPROFILEPARSER, "Node '" << KIND << "' bad content");
+            logError(XMLPARSER, "Node '" << KIND << "' bad content");
             return XMLP_ret::XML_ERROR;
         }
     }
     else
     {
-        logError(XMLPROFILEPARSER, "Node '" << elem->Value() << "' without content");
+        logError(XMLPARSER, "Node '" << elem->Value() << "' without content");
         return XMLP_ret::XML_ERROR;
     }
 
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLPresentationQos(XMLElement *elem, PresentationQosPolicy &presentation, uint8_t ident)
+XMLP_ret XMLParser::getXMLPresentationQos(XMLElement *elem, PresentationQosPolicy &presentation, uint8_t ident)
 {
     /*<xs:complexType name="presentationQosPolicyType">
       <xs:all minOccurs="0">
@@ -990,7 +1004,7 @@ XMLP_ret XMLProfileParser::getXMLPresentationQos(XMLElement *elem, PresentationQ
         const char* text = p_aux0->GetText();
         if (nullptr == text)
         {
-            logError(XMLPROFILEPARSER, "Node '" << ACCESS_SCOPE << "' without content");
+            logError(XMLPARSER, "Node '" << ACCESS_SCOPE << "' without content");
             return XMLP_ret::XML_ERROR;
         }
              if (strcmp(text, INSTANCE) == 0)
@@ -1001,7 +1015,7 @@ XMLP_ret XMLProfileParser::getXMLPresentationQos(XMLElement *elem, PresentationQ
             presentation.access_scope = PresentationQosPolicyAccessScopeKind::GROUP_PRESENTATION_QOS;
         else
         {
-            logError(XMLPROFILEPARSER, "Node '" << ACCESS_SCOPE << "' bad content");
+            logError(XMLPARSER, "Node '" << ACCESS_SCOPE << "' bad content");
             return XMLP_ret::XML_ERROR;
         }
     }
@@ -1019,7 +1033,7 @@ XMLP_ret XMLProfileParser::getXMLPresentationQos(XMLElement *elem, PresentationQ
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLPartitionQos(XMLElement *elem, PartitionQosPolicy &partition, uint8_t ident)
+XMLP_ret XMLParser::getXMLPartitionQos(XMLElement *elem, PartitionQosPolicy &partition, uint8_t ident)
 {
     /*<xs:complexType name="partitionQosPolicyType">
       <xs:all>
@@ -1035,7 +1049,7 @@ XMLP_ret XMLProfileParser::getXMLPartitionQos(XMLElement *elem, PartitionQosPoli
         if (nullptr == p_aux1)
         {
             // Not even one
-            logError(XMLPROFILEPARSER, "Node '" << NAMES << "' without content");
+            logError(XMLPARSER, "Node '" << NAMES << "' without content");
             return XMLP_ret::XML_ERROR;
         }
         std::vector<std::string> names;
@@ -1050,14 +1064,14 @@ XMLP_ret XMLProfileParser::getXMLPartitionQos(XMLElement *elem, PartitionQosPoli
     }
     else
     {
-        logError(XMLPROFILEPARSER, "Node '" << elem->Value() << "' without content");
+        logError(XMLPARSER, "Node '" << elem->Value() << "' without content");
         return XMLP_ret::XML_ERROR;
     }
 
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLPublishModeQos(XMLElement *elem, PublishModeQosPolicy &publishMode, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLPublishModeQos(XMLElement *elem, PublishModeQosPolicy &publishMode, uint8_t /*ident*/)
 {
     /*<xs:complexType name="publishModeQosPolicyType">
       <xs:all>
@@ -1078,7 +1092,7 @@ XMLP_ret XMLProfileParser::getXMLPublishModeQos(XMLElement *elem, PublishModeQos
         const char* text = p_aux0->GetText();
         if (nullptr == text)
         {
-            logError(XMLPROFILEPARSER, "Node '" << KIND << "' without content");
+            logError(XMLPARSER, "Node '" << KIND << "' without content");
             return XMLP_ret::XML_ERROR;
         }
              if (strcmp(text,  SYNCHRONOUS) == 0)
@@ -1087,20 +1101,20 @@ XMLP_ret XMLProfileParser::getXMLPublishModeQos(XMLElement *elem, PublishModeQos
             publishMode.kind = PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE;
         else
         {
-            logError(XMLPROFILEPARSER, "Node '" << KIND << "' bad content");
+            logError(XMLPARSER, "Node '" << KIND << "' bad content");
             return XMLP_ret::XML_ERROR;
         }
     }
     else
     {
-        logError(XMLPROFILEPARSER, "Node '" << elem->Value() << "' without content");
+        logError(XMLPARSER, "Node '" << elem->Value() << "' without content");
         return XMLP_ret::XML_ERROR;
     }
 
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLDuration(XMLElement *elem, Duration_t &duration, uint8_t ident)
+XMLP_ret XMLParser::getXMLDuration(XMLElement *elem, Duration_t &duration, uint8_t ident)
 {
     /*<xs:complexType name="durationType">
         <xs:choice>
@@ -1123,7 +1137,7 @@ XMLP_ret XMLProfileParser::getXMLDuration(XMLElement *elem, Duration_t &duration
         const char* text = p_aux0->GetText();
         if (nullptr == text)
         {
-            logError(XMLPROFILEPARSER, "Node '" << BY_NAME << "' without content");
+            logError(XMLPARSER, "Node '" << BY_NAME << "' without content");
             return XMLP_ret::XML_ERROR;
         }
              if (strcmp(text, _INFINITE) == 0) duration = c_TimeInfinite;
@@ -1131,14 +1145,14 @@ XMLP_ret XMLProfileParser::getXMLDuration(XMLElement *elem, Duration_t &duration
         else if (strcmp(text,   INVALID) == 0) duration = c_TimeInvalid;
         else
         {
-            logError(XMLPROFILEPARSER, "Node '" << BY_NAME << "' bad content");
+            logError(XMLPARSER, "Node '" << BY_NAME << "' bad content");
             return XMLP_ret::XML_ERROR;
         }
 
         // Both ways forbidden
         if (nullptr != (p_aux0 = elem->FirstChildElement(BY_VAL)))
         {
-            logError(XMLPROFILEPARSER, "Node '" << BY_NAME << "' with several definitions");
+            logError(XMLPARSER, "Node '" << BY_NAME << "' with several definitions");
             return XMLP_ret::XML_ERROR;
         }
     }
@@ -1167,7 +1181,7 @@ XMLP_ret XMLProfileParser::getXMLDuration(XMLElement *elem, Duration_t &duration
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLWriterTimes(XMLElement *elem, WriterTimes &times, uint8_t ident)
+XMLP_ret XMLParser::getXMLWriterTimes(XMLElement *elem, WriterTimes &times, uint8_t ident)
 {
     /*<xs:complexType name="writerTimesType">
       <xs:all minOccurs="0">
@@ -1203,7 +1217,7 @@ XMLP_ret XMLProfileParser::getXMLWriterTimes(XMLElement *elem, WriterTimes &time
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLReaderTimes(XMLElement *elem, ReaderTimes &times, uint8_t ident)
+XMLP_ret XMLParser::getXMLReaderTimes(XMLElement *elem, ReaderTimes &times, uint8_t ident)
 {
     /*<xs:complexType name="readerTimesType">
       <xs:all minOccurs="0">
@@ -1227,7 +1241,7 @@ XMLP_ret XMLProfileParser::getXMLReaderTimes(XMLElement *elem, ReaderTimes &time
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLLocatorList(XMLElement *elem, LocatorList_t &locatorList, uint8_t ident)
+XMLP_ret XMLParser::getXMLLocatorList(XMLElement *elem, LocatorList_t &locatorList, uint8_t ident)
 {
     /*<xs:complexType name="locatorListType">
       <xs:sequence>
@@ -1240,7 +1254,7 @@ XMLP_ret XMLProfileParser::getXMLLocatorList(XMLElement *elem, LocatorList_t &lo
     p_aux0 = elem->FirstChildElement(LOCATOR);
     if (nullptr == p_aux0)
     {
-        logError(XMLPROFILEPARSER, "Node '" << elem->Value() << "' without content");
+        logError(XMLPARSER, "Node '" << elem->Value() << "' without content");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -1267,7 +1281,7 @@ XMLP_ret XMLProfileParser::getXMLLocatorList(XMLElement *elem, LocatorList_t &lo
             const char* text = p_aux1->GetText();
             if (nullptr == text)
             {
-                logError(XMLPROFILEPARSER, "Node '" << KIND << "' without content");
+                logError(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
                  if (strcmp(text, RESERVED) == 0)
@@ -1278,7 +1292,7 @@ XMLP_ret XMLProfileParser::getXMLLocatorList(XMLElement *elem, LocatorList_t &lo
                 loc.kind = LOCATOR_KIND_UDPv6;
             else
             {
-                logError(XMLPROFILEPARSER, "Node '" << KIND << "' bad content");
+                logError(XMLPARSER, "Node '" << KIND << "' bad content");
                 return XMLP_ret::XML_ERROR;
             }
         }
@@ -1302,7 +1316,7 @@ XMLP_ret XMLProfileParser::getXMLLocatorList(XMLElement *elem, LocatorList_t &lo
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLHistoryMemoryPolicy(XMLElement *elem,
+XMLP_ret XMLParser::getXMLHistoryMemoryPolicy(XMLElement *elem,
                                                      MemoryManagementPolicy_t &historyMemoryPolicy,
                                                      uint8_t /*ident*/)
 {
@@ -1316,7 +1330,7 @@ XMLP_ret XMLProfileParser::getXMLHistoryMemoryPolicy(XMLElement *elem,
     const char* text = elem->GetText();
     if (nullptr == text)
     {
-        logError(XMLPROFILEPARSER, "Node '" << KIND << "' without content");
+        logError(XMLPARSER, "Node '" << KIND << "' without content");
         return XMLP_ret::XML_ERROR;
     }
          if (strcmp(text,              PREALLOCATED) == 0)
@@ -1327,14 +1341,14 @@ XMLP_ret XMLProfileParser::getXMLHistoryMemoryPolicy(XMLElement *elem,
         historyMemoryPolicy = MemoryManagementPolicy::DYNAMIC_RESERVE_MEMORY_MODE;
     else
     {
-        logError(XMLPROFILEPARSER, "Node '" << KIND << "' bad content");
+        logError(XMLPARSER, "Node '" << KIND << "' bad content");
         return XMLP_ret::XML_ERROR;
     }
 
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLPropertiesPolicy(XMLElement *elem, PropertyPolicy &propertiesPolicy, uint8_t ident)
+XMLP_ret XMLParser::getXMLPropertiesPolicy(XMLElement *elem, PropertyPolicy &propertiesPolicy, uint8_t ident)
 {
     /*<xs:complexType name="propertyPolicyType">
       <xs:all minOccurs="0">
@@ -1350,7 +1364,7 @@ XMLP_ret XMLProfileParser::getXMLPropertiesPolicy(XMLElement *elem, PropertyPoli
         p_aux1 = p_aux0->FirstChildElement(PROPERTY);
         if (nullptr == p_aux1)
         {
-            logError(XMLPROFILEPARSER, "Node '" << PROPERTIES << "' without content");
+            logError(XMLPARSER, "Node '" << PROPERTIES << "' without content");
             return XMLP_ret::XML_ERROR;
         }
 
@@ -1396,7 +1410,7 @@ XMLP_ret XMLProfileParser::getXMLPropertiesPolicy(XMLElement *elem, PropertyPoli
         p_aux1 = p_aux0->FirstChildElement(PROPERTY);
         if (nullptr == p_aux1)
         {
-            logError(XMLPROFILEPARSER, "Node '" << BIN_PROPERTIES << "' without content");
+            logError(XMLPARSER, "Node '" << BIN_PROPERTIES << "' without content");
             return XMLP_ret::XML_ERROR;
         }
 
@@ -1421,7 +1435,7 @@ XMLP_ret XMLProfileParser::getXMLPropertiesPolicy(XMLElement *elem, PropertyPoli
             // value - stringType
             if (nullptr != (p_aux2 = p_aux1->FirstChildElement(VALUE)))
             {
-                logError(XMLPROFILEPARSER, "Tag '" << p_aux2->Value() << "' do not supported for now");
+                logError(XMLPARSER, "Tag '" << p_aux2->Value() << "' do not supported for now");
                 /*std::string s = "";
                 if (XMLP_ret::XML_OK != getXMLString(p_aux2, &s, ident + 2)) return XMLP_ret::XML_ERROR;
                 bin_prop.value(s);*/
@@ -1441,37 +1455,37 @@ XMLP_ret XMLProfileParser::getXMLPropertiesPolicy(XMLElement *elem, PropertyPoli
 }
 
 // TODO
-XMLP_ret XMLProfileParser::getXMLOctetVector(XMLElement *elem, std::vector<octet> &/*octetVector*/, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLOctetVector(XMLElement *elem, std::vector<octet> &/*octetVector*/, uint8_t /*ident*/)
 {
-    logError(XMLPROFILEPARSER, "Tag '" << elem->Value() << "' octetVector do not supported for now");
+    logError(XMLPARSER, "Tag '" << elem->Value() << "' octetVector do not supported for now");
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLInt(XMLElement *elem, int *in, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLInt(XMLElement *elem, int *in, uint8_t /*ident*/)
 {
     if (nullptr == elem ||
         nullptr == in    ||
         XML_SUCCESS != elem->QueryIntText(in))
     {
-        logError(XMLPROFILEPARSER, "<" << elem->Value() << "> getXMLInt XML_ERROR!");
+        logError(XMLPARSER, "<" << elem->Value() << "> getXMLInt XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLUint(XMLElement *elem, unsigned int *ui, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLUint(XMLElement *elem, unsigned int *ui, uint8_t /*ident*/)
 {
     if (nullptr == elem ||
         nullptr == ui   ||
         XML_SUCCESS != elem->QueryUnsignedText(ui))
     {
-        logError(XMLPROFILEPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
+        logError(XMLPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLUint(XMLElement *elem, uint16_t *ui16, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLUint(XMLElement *elem, uint16_t *ui16, uint8_t /*ident*/)
 {
     unsigned int ui = 0u;
     if (nullptr == elem ||
@@ -1479,33 +1493,33 @@ XMLP_ret XMLProfileParser::getXMLUint(XMLElement *elem, uint16_t *ui16, uint8_t 
         XML_SUCCESS != elem->QueryUnsignedText(&ui) ||
         ui >= 65536)
     {
-        logError(XMLPROFILEPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
+        logError(XMLPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
     *ui16 = static_cast<uint16_t>(ui);
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLBool(XMLElement *elem, bool *b, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLBool(XMLElement *elem, bool *b, uint8_t /*ident*/)
 {
     if (nullptr == elem ||
         nullptr == b    ||
         XML_SUCCESS != elem->QueryBoolText(b))
     {
-        logError(XMLPROFILEPARSER, "<" << elem->Value() << "> getXMLBool XML_ERROR!");
+        logError(XMLPARSER, "<" << elem->Value() << "> getXMLBool XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileParser::getXMLString(XMLElement *elem, std::string *s, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLString(XMLElement *elem, std::string *s, uint8_t /*ident*/)
 {
     const char* text = nullptr;
     if (nullptr == elem ||
         nullptr == s    ||
         nullptr == (text = elem->GetText()))
     {
-        logError(XMLPROFILEPARSER, "<" << elem->Value() << "> getXMLString XML_ERROR!");
+        logError(XMLPARSER, "<" << elem->Value() << "> getXMLString XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
     *s = text;

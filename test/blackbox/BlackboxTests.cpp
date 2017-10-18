@@ -98,7 +98,7 @@ void default_send_print(const Data1mb& data)
 #include <fastrtps/transport/test_UDPv4Transport.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/xmlparser/XMLProfileParser.h>
+#include <fastrtps/xmlparser/XMLParser.h>
 
 
 #include <thread>
