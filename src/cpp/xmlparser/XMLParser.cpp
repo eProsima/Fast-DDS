@@ -23,13 +23,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
-std::map<std::string, ParticipantAttributes*> XMLParser::m_participant_profiles;
-ParticipantAttributes default_participant_attributes;
-std::map<std::string, PublisherAttributes*> XMLParser::m_publisher_profiles;
-PublisherAttributes default_publisher_attributes;
-std::map<std::string, SubscriberAttributes*> XMLParser::m_subscriber_profiles;
-SubscriberAttributes default_subscriber_attributes;
-
 BaseNode* XMLParser::root = nullptr;
 
 XMLP_ret XMLParser::fillParticipantAttributes(const std::string& profile_name, ParticipantAttributes& atts)
