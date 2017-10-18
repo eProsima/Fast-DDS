@@ -22,6 +22,108 @@ namespace eprosima{
 namespace fastrtps{
 namespace xmlparser{
 
+enum class NodeType
+{
+    PROFILES,
+    PARTICIPANT,
+    PUBLISHER,
+    SUBSCRIBER,
+    RTPS,
+    QOS_PROFILE,
+    APPLICATION,
+    TYPE,
+    TOPIC,
+    DATA_WRITER,
+    DATA_READER,
+    ROOT
+};
+
+class BaseNode 
+{
+public:
+    BaseNode(BaseNode* parent, NodeType type): data_type_(type), parent_(parent) {};
+    virtual ~BaseNode() = default;
+
+    NodeType getType() const
+    {
+        return data_type_;
+    }
+
+    void addChild(std::unique_ptr<BaseNode> child)
+    {
+        children.push_back(std::move(child));
+    }
+
+    void removeChild(const size_t &indx)
+    {
+        children.erase(children.begin() + indx);
+    }
+
+    BaseNode* getChild(const size_t &indx) const
+    {
+        return children[indx].get();
+    }
+
+    BaseNode* getParent() const
+    {
+        return parent_;
+    }
+
+    int getNumChildren() const
+    {
+        return children.size();
+    }
+
+private:
+    NodeType data_type_;
+    BaseNode* parent_;
+    std::vector<std::unique_ptr<BaseNode>> children;
+};
+
+template <class T>
+class Node : public BaseNode
+{
+  public:
+    Node(BaseNode* parent, NodeType type);
+    Node(BaseNode* parent, NodeType type, std::unique_ptr<T> data);
+    virtual ~Node();
+    
+    T* getData() const;
+    void setData(std::unique_ptr<T> data);
+
+  private:
+    std::unique_ptr<T> data;
+    
+};
+
+template <class T>
+Node<T>::Node(BaseNode* parent, NodeType type) : BaseNode(parent, type), data(nullptr)
+{
+}
+
+template <class T>
+Node<T>::Node(BaseNode* parent, NodeType type, std::unique_ptr<T> data) : BaseNode(parent, type), data(std::move(data))
+{
+}
+
+template <class T>
+Node<T>::~Node()
+{
+}
+
+
+
+template <class T>
+T* Node<T>::getData() const
+{
+    return data.get();
+}
+
+template <class T>
+void Node<T>::setData(std::unique_ptr<T> data)
+{
+    data = data;
+}
 
 typedef std::map<std::string, ParticipantAttributes> participant_map_t;
 typedef std::map<std::string, PublisherAttributes> publisher_map_t;
@@ -128,7 +230,8 @@ protected:
     RTPS_DllAPI static XMLP_ret getXMLString(XMLElement *elem, std::string *s, uint8_t ident);
 
 private:
-
+    
+    static BaseNode* root;
     static participant_map_t m_participant_profiles;
     static publisher_map_t   m_publisher_profiles;
     static subscriber_map_t  m_subscriber_profiles;

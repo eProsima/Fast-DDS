@@ -13,6 +13,13 @@ const char* PUBLISHER = "publisher";
 const char* SUBSCRIBER = "subscriber";
 const char* RTPS = "rtps";
 
+const char* QOS_PROFILE = "qos_profile";
+const char* APPLICATION = "application";
+const char* TYPE = "type";
+// const char* TOPIC = "topic";
+const char* DATA_WRITER = "data_writer";
+const char* DATA_READER = "data_reader";
+
 /// RTPS Participant attributes
 const char* DEF_UNI_LOC_LIST = "defaultUnicastLocatorList";
 const char* DEF_MULTI_LOC_LIST = "defaultMulticastLocatorList";
