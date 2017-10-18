@@ -125,13 +125,13 @@ void Node<T>::setData(std::unique_ptr<T> data)
     data = data;
 }
 
-typedef std::map<std::string, ParticipantAttributes> participant_map_t;
-typedef std::map<std::string, PublisherAttributes> publisher_map_t;
-typedef std::map<std::string, SubscriberAttributes> subscriber_map_t;
+typedef std::map<std::string, ParticipantAttributes*> participant_map_t;
+typedef std::map<std::string, PublisherAttributes*> publisher_map_t;
+typedef std::map<std::string, SubscriberAttributes*> subscriber_map_t;
 typedef std::map<std::string, XMLP_ret> xmlfiles_map_t;
-typedef std::map<std::string, ParticipantAttributes>::iterator part_map_iterator_t;
-typedef std::map<std::string, PublisherAttributes>::iterator publ_map_iterator_t;
-typedef std::map<std::string, SubscriberAttributes>::iterator subs_map_iterator_t;
+typedef std::map<std::string, ParticipantAttributes*>::iterator part_map_iterator_t;
+typedef std::map<std::string, PublisherAttributes*>::iterator publ_map_iterator_t;
+typedef std::map<std::string, SubscriberAttributes*>::iterator subs_map_iterator_t;
 typedef std::map<std::string, XMLP_ret>::iterator xmlfile_map_iterator_t;
 
 
