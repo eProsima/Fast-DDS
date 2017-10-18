@@ -105,9 +105,9 @@ set(${PROJECT_NAME}_source_files
     rtps/attributes/PropertyPolicy.cpp
     rtps/common/Token.cpp
     xmlparser/XMLParserCommon.cpp
-    xmlparser/XMLProfileElementParser.cpp
+    xmlparser/XMLElementParser.cpp
     xmlparser/XMLEndpointParser.cpp
-    xmlparser/XMLProfileParser.cpp
+    xmlparser/XMLParser.cpp
     )
 
 # Add sources to Makefile.am
