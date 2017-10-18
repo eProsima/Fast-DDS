@@ -6,11 +6,11 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
-std::map<std::string, ParticipantAttributes> XMLProfileParser::m_participant_profiles;
+std::map<std::string, ParticipantAttributes*> XMLProfileParser::m_participant_profiles;
 ParticipantAttributes default_participant_attributes;
-std::map<std::string, PublisherAttributes>   XMLProfileParser::m_publisher_profiles;
+std::map<std::string, PublisherAttributes*>   XMLProfileParser::m_publisher_profiles;
 PublisherAttributes default_publisher_attributes;
-std::map<std::string, SubscriberAttributes>  XMLProfileParser::m_subscriber_profiles;
+std::map<std::string, SubscriberAttributes*>  XMLProfileParser::m_subscriber_profiles;
 SubscriberAttributes default_subscriber_attributes;
 std::map<std::string, XMLP_ret>              XMLProfileParser::m_xml_files;
 
@@ -24,7 +24,7 @@ XMLP_ret XMLProfileParser::fillParticipantAttributes(const std::string &profile_
         logError(XMLPROFILEPARSER, "Profile '" << profile_name << "' not found '");
         return XMLP_ret::XML_ERROR;
     }
-    atts = it->second;
+    atts = *it->second;
     return XMLP_ret::XML_OK;
 }
 
@@ -51,7 +51,7 @@ XMLP_ret XMLProfileParser::fillPublisherAttributes(const std::string &profile_na
         logError(XMLPROFILEPARSER, "Profile '" << profile_name << "' not found '");
         return XMLP_ret::XML_ERROR;
     }
-    atts = it->second;
+    atts = *it->second;
     return XMLP_ret::XML_OK;
 }
 
@@ -63,7 +63,7 @@ XMLP_ret XMLProfileParser::fillSubscriberAttributes(const std::string &profile_n
         logError(XMLPROFILEPARSER, "Profile '" << profile_name << "' not found");
         return XMLP_ret::XML_ERROR;
     }
-    atts = it->second;
+    atts = *it->second;
     return XMLP_ret::XML_OK;
 }
 
@@ -107,7 +107,7 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
         return XMLP_ret::XML_ERROR;
     }
 
-    root = new Node<int>(nullptr, NodeType::ROOT);
+    root = new BaseNode(nullptr, NodeType::ROOT);
     std::string profile_name = "";
     unsigned int profileCount = 0u;
     XMLElement *p_profile = p_root->FirstChildElement();
@@ -122,21 +122,19 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
             // If profile parsing functions fails, log and continue.
             if (strcmp(tag, PARTICIPANT) == 0)
             {
-                //ParticipantAttributes participant_atts;
-                auto participant_atts = std::unique_ptr<ParticipantAttributes>{new ParticipantAttribute};                
-                if (XMLP_ret::XML_OK == parseXMLParticipantProf(p_profile, participant_atts.get(), profile_name))
+                std::unique_ptr<ParticipantAttributes> participant_atts{new ParticipantAttributes};             
+                if (XMLP_ret::XML_OK == parseXMLParticipantProf(p_profile, *participant_atts, profile_name))
                 {
                     if(is_default_profile)
                     {
-                        default_participant_attributes = participant_atts;
+                        default_participant_attributes = *participant_atts;
                     }
-                    auto node = std::unique_ptr<Node<ParticipantAttributes>>{new Node<ParticipantAttributes>{root,
-                        NodeType::PARTICIPANT, std::move(participant_atts)}};
-                    root->addChild(std::move(node));
-                    if (false == m_participant_profiles.emplace(profile_name, participant_atts).second)
+                    std::unique_ptr<Node<ParticipantAttributes>> participant_node{new Node<ParticipantAttributes>{root, NodeType::PARTICIPANT, std::move(participant_atts)}};
+                    if (false == m_participant_profiles.emplace(profile_name, participant_node->getData()).second)
                     {
                         logError(XMLPROFILEPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
                     }
+                    root->addChild(std::move(participant_node));
                     ++profileCount;
                 }
                 else
@@ -146,18 +144,20 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
             }
             else if (strcmp(tag, PUBLISHER) == 0)
             {
-                PublisherAttributes publisher_atts;
-                if (XMLP_ret::XML_OK == parseXMLPublisherProf(p_profile, publisher_atts, profile_name))
+                std::unique_ptr<PublisherAttributes> publisher_atts{new PublisherAttributes};
+                if (XMLP_ret::XML_OK == parseXMLPublisherProf(p_profile, *publisher_atts, profile_name))
                 {
                     if(is_default_profile)
                     {
-                        default_publisher_attributes = publisher_atts;
+                        default_publisher_attributes = *publisher_atts;
                     }
-
-                    if (false == m_publisher_profiles.emplace(profile_name, publisher_atts).second)
+                    
+                    std::unique_ptr<Node<PublisherAttributes>> publisher_node{new Node<PublisherAttributes>{root, NodeType::PUBLISHER,std::move(publisher_atts)}};
+                    if (false == m_publisher_profiles.emplace(profile_name, publisher_node->getData()).second)
                     {
                         logError(XMLPROFILEPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
                     }
+                    root->addChild(std::move(publisher_node));
                     ++profileCount;
                 }
                 else
@@ -167,19 +167,20 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
             }
             else if (strcmp(tag, SUBSCRIBER) == 0)
             {
-                SubscriberAttributes subscriber_atts;
-                parseXMLSubscriberProf(p_profile, subscriber_atts, profile_name);
-                if (XMLP_ret::XML_OK == parseXMLSubscriberProf(p_profile, subscriber_atts, profile_name))
+                std::unique_ptr<SubscriberAttributes> subscriber_atts{new SubscriberAttributes};
+                if (XMLP_ret::XML_OK == parseXMLSubscriberProf(p_profile, *subscriber_atts, profile_name))
                 {
                     if(is_default_profile)
                     {
-                        default_subscriber_attributes = subscriber_atts;
+                        default_subscriber_attributes = *subscriber_atts;
                     }
-
-                    if (false == m_subscriber_profiles.emplace(profile_name, subscriber_atts).second)
+                    
+                    std::unique_ptr<Node<SubscriberAttributes>> subscriber_node{new Node<SubscriberAttributes>{root, NodeType::SUBSCRIBER,std::move(subscriber_atts)}};
+                    if (false == m_subscriber_profiles.emplace(profile_name, subscriber_node->getData()).second)
                     {
                         logError(XMLPROFILEPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
                     }
+                    root->addChild(std::move(subscriber_node));
                     ++profileCount;
                 }
                 else
