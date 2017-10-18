@@ -14,6 +14,8 @@ std::map<std::string, SubscriberAttributes>  XMLProfileParser::m_subscriber_prof
 SubscriberAttributes default_subscriber_attributes;
 std::map<std::string, XMLP_ret>              XMLProfileParser::m_xml_files;
 
+BaseNode* XMLProfileParser::root = nullptr;
+
 XMLP_ret XMLProfileParser::fillParticipantAttributes(const std::string &profile_name, ParticipantAttributes &atts)
 {
     part_map_iterator_t it = m_participant_profiles.find(profile_name);
@@ -105,6 +107,7 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
         return XMLP_ret::XML_ERROR;
     }
 
+    root = new Node<int>(nullptr, NodeType::ROOT);
     std::string profile_name = "";
     unsigned int profileCount = 0u;
     XMLElement *p_profile = p_root->FirstChildElement();
@@ -119,14 +122,17 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
             // If profile parsing functions fails, log and continue.
             if (strcmp(tag, PARTICIPANT) == 0)
             {
-                ParticipantAttributes participant_atts;
-                if (XMLP_ret::XML_OK == parseXMLParticipantProf(p_profile, participant_atts, profile_name))
+                //ParticipantAttributes participant_atts;
+                auto participant_atts = std::unique_ptr<ParticipantAttributes>{new ParticipantAttribute};                
+                if (XMLP_ret::XML_OK == parseXMLParticipantProf(p_profile, participant_atts.get(), profile_name))
                 {
                     if(is_default_profile)
                     {
                         default_participant_attributes = participant_atts;
                     }
-
+                    auto node = std::unique_ptr<Node<ParticipantAttributes>>{new Node<ParticipantAttributes>{root,
+                        NodeType::PARTICIPANT, std::move(participant_atts)}};
+                    root->addChild(std::move(node));
                     if (false == m_participant_profiles.emplace(profile_name, participant_atts).second)
                     {
                         logError(XMLPROFILEPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
@@ -180,6 +186,30 @@ XMLP_ret XMLProfileParser::loadXMLFile(const std::string &filename)
                 {
                     logError(XMLPROFILEPARSER, "Error parsing subscriber profile");
                 }
+            }
+            else if (strcmp(tag, QOS_PROFILE))
+            {
+
+            }
+            else if (strcmp(tag, APPLICATION))
+            {
+
+            }
+            else if (strcmp(tag, TYPE))
+            {
+
+            }
+            else if (strcmp(tag, TOPIC))
+            {
+
+            }
+            else if (strcmp(tag, DATA_WRITER))
+            {
+
+            }
+            else if (strcmp(tag, DATA_READER))
+            {
+
             }
             else
             {

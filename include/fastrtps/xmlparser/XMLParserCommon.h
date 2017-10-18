@@ -28,6 +28,13 @@ extern const char* PUBLISHER;
 extern const char* SUBSCRIBER;
 extern const char* RTPS;
 
+extern const char* QOS_PROFILE;
+extern const char* APPLICATION;
+extern const char* TYPE;
+// extern const char* TOPIC;
+extern const char* DATA_WRITER;
+extern const char* DATA_READER;
+
 /// RTPS Participant attributes
 extern const char* DEF_UNI_LOC_LIST;
 extern const char* DEF_MULTI_LOC_LIST;
