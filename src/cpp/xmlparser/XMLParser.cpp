@@ -20,13 +20,12 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
-std::map<std::string, ParticipantAttributes*> XMLProfileParser::m_participant_profiles;
+std::map<std::string, ParticipantAttributes*> XMLParser::m_participant_profiles;
 ParticipantAttributes default_participant_attributes;
-std::map<std::string, PublisherAttributes*>   XMLProfileParser::m_publisher_profiles;
+std::map<std::string, PublisherAttributes*>   XMLParser::m_publisher_profiles;
 PublisherAttributes default_publisher_attributes;
-std::map<std::string, SubscriberAttributes*>  XMLProfileParser::m_subscriber_profiles;
+std::map<std::string, SubscriberAttributes*>  XMLParser::m_subscriber_profiles;
 SubscriberAttributes default_subscriber_attributes;
-std::map<std::string, XMLP_ret>              XMLParser::m_xml_files;
 
 BaseNode* XMLParser::root = nullptr;
 
@@ -86,42 +85,53 @@ XMLP_ret XMLParser::loadDefaultXMLFile()
     return loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
 }
 
-XMLP_ret XMLParser::loadXMLFile(const std::string &filename)
+XMLP_ret XMLParser::parseXML(XMLDocument& xmlDoc)
 {
-    if (filename.empty())
-    {
-        logError(XMLPARSER, "Error loading XML file, filename empty");
-        return XMLP_ret::XML_ERROR;
-    }
-
-    xmlfile_map_iterator_t it = m_xml_files.find(filename);
-    if (it != m_xml_files.end() && XMLP_ret::XML_OK == it->second)
-    {
-        logInfo(XMLPARSER, "XML file '" << filename << "' already parsed");
-        return XMLP_ret::XML_OK;
-    }
-
-    tinyxml2::XMLDocument xmlDoc;
-    XMLError eResult = xmlDoc.LoadFile(filename.c_str());
-
-    if (XML_SUCCESS != eResult)
-    {
-        if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
-            logError(XMLPARSER, "Error opening '" << filename << "'");
-        m_xml_files.emplace(filename, XMLP_ret::XML_ERROR);
-        return XMLP_ret::XML_ERROR;
-    }
-
-    logInfo(XMLPARSER, "File '" << filename << "' opened successfully");
-
-    XMLElement* p_root = xmlDoc.FirstChildElement(PROFILES);
+    XMLP_ret ret;
+    XMLElement* p_root = xmlDoc.FirstChildElement(ROOT);
     if (nullptr == p_root)
     {
-        logError(XMLPARSER, "Not found 'profiles' root tag");
-        return XMLP_ret::XML_ERROR;
+        if (nullptr == (p_root = xmlDoc.FirstChildElement(PROFILES)))
+        {
+            logError(XMLPARSER, "Not found root tag");
+            ret = XMLP_ret::XML_ERROR;
+        }
+        else
+        {
+            root = new BaseNode{nullptr, NodeType::ROOT};
+            ret = parseProfiles(p_root, *root);
+        }
     }
+    else
+    {
+        root = new BaseNode{nullptr, NodeType::ROOT};
+        ret = parseRoot(p_root, *root);
+    }
+    return ret;
+}
 
-    root = new BaseNode(nullptr, NodeType::ROOT);
+XMLP_ret XMLParser::parseRoot(XMLElement* p_root, BaseNode& rootNode)
+{
+    XMLP_ret ret;
+    XMLElement *root_child = nullptr;
+    if (nullptr == (root_child = p_root->FirstChildElement(PROFILES)))
+    {
+        logError(XMLPARSER, "Not found '" << PROFILES << "' tag");
+        ret = XMLP_ret::XML_ERROR;
+    }
+    else
+    {
+        std::unique_ptr<BaseNode> profiles_node = std::unique_ptr<BaseNode>(new BaseNode{&rootNode, NodeType::ROOT});
+        if (XMLP_ret::XML_OK == (ret = parseProfiles(root_child, *profiles_node)))
+        {
+            rootNode.addChild(std::move(profiles_node));
+        }
+    }
+    return ret;
+}
+
+XMLP_ret XMLParser::parseProfiles(XMLElement* p_root, BaseNode& profilesNode)
+{
     std::string profile_name = "";
     unsigned int profileCount = 0u;
     XMLElement *p_profile = p_root->FirstChildElement();
@@ -143,12 +153,12 @@ XMLP_ret XMLParser::loadXMLFile(const std::string &filename)
                     {
                         default_participant_attributes = *participant_atts;
                     }
-                    std::unique_ptr<Node<ParticipantAttributes>> participant_node{new Node<ParticipantAttributes>{root, NodeType::PARTICIPANT, std::move(participant_atts)}};
+                    std::unique_ptr<Node<ParticipantAttributes>> participant_node{new Node<ParticipantAttributes>{&profilesNode, NodeType::PARTICIPANT, std::move(participant_atts)}};
                     if (false == m_participant_profiles.emplace(profile_name, participant_node->getData()).second)
                     {
-                        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+                        logError(XMLPARSER, "Error adding profile '" << profile_name << "'");
                     }
-                    root->addChild(std::move(participant_node));
+                    profilesNode.addChild(std::move(participant_node));
                     ++profileCount;
                 }
                 else
@@ -166,12 +176,12 @@ XMLP_ret XMLParser::loadXMLFile(const std::string &filename)
                         default_publisher_attributes = *publisher_atts;
                     }
                     
-                    std::unique_ptr<Node<PublisherAttributes>> publisher_node{new Node<PublisherAttributes>{root, NodeType::PUBLISHER,std::move(publisher_atts)}};
+                    std::unique_ptr<Node<PublisherAttributes>> publisher_node{new Node<PublisherAttributes>{&profilesNode, NodeType::PUBLISHER, std::move(publisher_atts)}};
                     if (false == m_publisher_profiles.emplace(profile_name, publisher_node->getData()).second)
                     {
-                        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+                        logError(XMLPARSER, "Error adding profile '" << profile_name << "'");
                     }
-                    root->addChild(std::move(publisher_node));
+                    profilesNode.addChild(std::move(publisher_node));
                     ++profileCount;
                 }
                 else
@@ -189,12 +199,12 @@ XMLP_ret XMLParser::loadXMLFile(const std::string &filename)
                         default_subscriber_attributes = *subscriber_atts;
                     }
                     
-                    std::unique_ptr<Node<SubscriberAttributes>> subscriber_node{new Node<SubscriberAttributes>{root, NodeType::SUBSCRIBER,std::move(subscriber_atts)}};
+                    std::unique_ptr<Node<SubscriberAttributes>> subscriber_node{new Node<SubscriberAttributes>{&profilesNode, NodeType::SUBSCRIBER, std::move(subscriber_atts)}};
                     if (false == m_subscriber_profiles.emplace(profile_name, subscriber_node->getData()).second)
                     {
-                        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+                        logError(XMLPARSER, "Error adding profile '" << profile_name << "'");
                     }
-                    root->addChild(std::move(subscriber_node));
+                    profilesNode.addChild(std::move(subscriber_node));
                     ++profileCount;
                 }
                 else
@@ -233,18 +243,39 @@ XMLP_ret XMLParser::loadXMLFile(const std::string &filename)
         }
         p_profile = p_profile->NextSiblingElement();
     }
+    return XMLP_ret::XML_OK;
+}
 
-    if (0 == profileCount)
+XMLP_ret XMLParser::loadXMLFile(const std::string &filename)
+{
+    if (filename.empty())
     {
-        m_xml_files.emplace(filename, XMLP_ret::XML_ERROR);
-        logError(XMLPARSER, "Bad file '" << filename << "' content expected tag: '" << tag << "'");
+        logError(XMLPARSER, "Error loading XML file, filename empty");
         return XMLP_ret::XML_ERROR;
-
     }
 
-    m_xml_files.emplace(filename, XMLP_ret::XML_OK);
+    tinyxml2::XMLDocument xmlDoc;
+    if (XML_SUCCESS != xmlDoc.LoadFile(filename.c_str()))
+    {
+        if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
+            logError(XMLPARSER, "Error opening '" << filename << "'");
 
-    return XMLP_ret::XML_OK;
+        return XMLP_ret::XML_ERROR;
+    }
+
+    logInfo(XMLPARSER, "File '" << filename << "' opened successfully");
+    return parseXML(xmlDoc);
+}
+
+XMLP_ret XMLParser::loadXML(const char* data, size_t length)
+{
+    tinyxml2::XMLDocument xmlDoc;    
+    if (XML_SUCCESS != xmlDoc.Parse(data, length))
+    {
+        logError(XMLPARSER, "Error parsing XML buffer");
+        return XMLP_ret::XML_ERROR;
+    }
+    return parseXML(xmlDoc);
 }
 
 XMLP_ret XMLParser::parseXMLParticipantProf(XMLElement *p_profile,
