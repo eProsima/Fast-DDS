@@ -101,13 +101,13 @@ XMLP_ret XMLParser::parseXML(XMLDocument& xmlDoc)
         }
         else
         {
-            root = new BaseNode{nullptr, NodeType::ROOT};
+            root = new BaseNode{NodeType::ROOT};
             ret  = parseProfiles(p_root, *root);
         }
     }
     else
     {
-        root = new BaseNode{nullptr, NodeType::ROOT};
+        root = new BaseNode{NodeType::ROOT};
         ret  = parseRoot(p_root, *root);
     }
     return ret;
@@ -119,11 +119,128 @@ XMLP_ret XMLParser::parseRoot(XMLElement* p_root, BaseNode& rootNode)
     XMLElement* root_child = nullptr;
     if (nullptr != (root_child = p_root->FirstChildElement(PROFILES)))
     {
-        std::unique_ptr<BaseNode> profiles_node = std::unique_ptr<BaseNode>(new BaseNode{&rootNode, NodeType::ROOT});
+        std::unique_ptr<BaseNode> profiles_node = std::unique_ptr<BaseNode>(new BaseNode{NodeType::ROOT});
         if (XMLP_ret::XML_OK == (ret = parseProfiles(root_child, *profiles_node)))
         {
             rootNode.addChild(std::move(profiles_node));
         }
+    }
+    return ret;
+}
+
+XMLP_ret XMLParser::parseXMLParticipantProf(XMLElement* p_root, BaseNode& rootNode)
+{
+    XMLP_ret ret = XMLP_ret::XML_ERROR;
+    std::unique_ptr<ParticipantAttributes> participant_atts{new ParticipantAttributes};
+    std::unique_ptr<DataNode<ParticipantAttributes>> participant_node{
+        new DataNode<ParticipantAttributes>{NodeType::PARTICIPANT, std::move(participant_atts)}};
+    if (XMLP_ret::XML_OK == fillDataNode(p_root, *participant_node))
+    {
+        try
+        {
+            if (!m_participant_profiles
+                     .emplace(participant_node->getAttributes().at(PROFILE_NAME), participant_node->getData())
+                     .second)
+            {
+                logError(XMLPARSER, "Error adding profile '" << participant_node->getAttributes().at(PROFILE_NAME) << "'");
+                ret = XMLP_ret::XML_ERROR;
+            }
+        }
+        catch (const std::out_of_range&)
+        {
+            logError(XMLPARSER, "Error parsing participant profile");
+            ret = XMLP_ret::XML_ERROR;
+        }
+
+        auto find_it = participant_node->getAttributes().find("is_default_profile");
+        if ((participant_node->getAttributes().end() != find_it) && (find_it->second == "true"))
+        {
+            default_participant_attributes = *participant_node->getData();
+        }
+        rootNode.addChild(std::move(participant_node));
+    }
+    else
+    {
+        logError(XMLPARSER, "Error parsing participant profile");
+        ret = XMLP_ret::XML_ERROR;
+    }
+    return ret;
+}
+
+XMLP_ret XMLParser::parseXMLPublisherProf(XMLElement* p_root, BaseNode& rootNode)
+{    
+    XMLP_ret ret = XMLP_ret::XML_ERROR;
+    std::unique_ptr<PublisherAttributes> publisher_atts{new PublisherAttributes};
+    std::unique_ptr<DataNode<PublisherAttributes>> publisher_node{
+        new DataNode<PublisherAttributes>{NodeType::PUBLISHER, std::move(publisher_atts)}};
+    if (XMLP_ret::XML_OK == fillDataNode(p_root, *publisher_node))
+    {
+        try
+        {
+            if (!m_publisher_profiles
+                     .emplace(publisher_node->getAttributes().at(PROFILE_NAME), publisher_node->getData())
+                     .second)
+            {
+                logError(XMLPARSER, "Error adding profile '" << publisher_node->getAttributes().at(PROFILE_NAME) << "'");
+                ret = XMLP_ret::XML_ERROR;
+            }
+        }
+        catch (const std::out_of_range&)
+        {
+            logError(XMLPARSER, "Error parsing publisher profile");
+            ret = XMLP_ret::XML_ERROR;
+        }
+
+        auto find_it = publisher_node->getAttributes().find("is_default_profile");
+        if ((publisher_node->getAttributes().end() != find_it) && (find_it->second == "true"))
+        {
+            default_publisher_attributes = *publisher_node->getData();
+        }
+        rootNode.addChild(std::move(publisher_node));
+    }
+    else
+    {
+        logError(XMLPARSER, "Error parsing publisher profile");
+        ret = XMLP_ret::XML_ERROR;
+    }
+    return ret;
+}
+
+XMLP_ret XMLParser::parseXMLSubscriberProf(XMLElement* p_root, BaseNode& rootNode)
+{
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    std::unique_ptr<SubscriberAttributes> subscriber_atts{new SubscriberAttributes};
+    std::unique_ptr<DataNode<SubscriberAttributes>> subscriber_node{
+        new DataNode<SubscriberAttributes>{NodeType::SUBSCRIBER, std::move(subscriber_atts)}};
+    if (XMLP_ret::XML_OK == fillDataNode(p_root, *subscriber_node))
+    {
+        try
+        {
+            if (!m_subscriber_profiles
+                     .emplace(subscriber_node->getAttributes().at(PROFILE_NAME), subscriber_node->getData())
+                     .second)
+            {
+                logError(XMLPARSER, "Error adding profile '" << subscriber_node->getAttributes().at(PROFILE_NAME) << "'");
+                ret = XMLP_ret::XML_ERROR;
+            }
+        }
+        catch (const std::out_of_range&)
+        {
+            logError(XMLPARSER, "Error parsing publisher profile");
+            ret = XMLP_ret::XML_ERROR;
+        }
+
+        auto find_it = subscriber_node->getAttributes().find("is_default_profile");
+        if ((subscriber_node->getAttributes().end() != find_it) && (find_it->second == "true"))
+        {
+            default_subscriber_attributes = *subscriber_node->getData();
+        }
+        rootNode.addChild(std::move(subscriber_node));
+    }
+    else
+    {
+        logError(XMLPARSER, "Error parsing subscriber profile");
+        ret = XMLP_ret::XML_ERROR;
     }
     return ret;
 }
@@ -139,78 +256,15 @@ XMLP_ret XMLParser::parseProfiles(XMLElement* p_root, BaseNode& profilesNode)
             // If profile parsing functions fails, log and continue.
             if (strcmp(tag, PARTICIPANT) == 0)
             {
-                std::unique_ptr<ParticipantAttributes> participant_atts{new ParticipantAttributes};
-                std::unique_ptr<DataNode<ParticipantAttributes>> participant_node{new DataNode<ParticipantAttributes>{
-                    &profilesNode, NodeType::PARTICIPANT, std::move(participant_atts)}};
-                if (XMLP_ret::XML_OK == parseXMLParticipantProf(p_profile, *participant_node))
-                {
-                    if (!m_participant_profiles
-                             .emplace(participant_node->getAttributes()[PROFILE_NAME], participant_node->getData())
-                             .second)
-                    {
-                        logError(XMLPARSER,
-                                 "Error adding profile '" << participant_node->getAttributes()[PROFILE_NAME] << "'");
-                    }
-                    if (participant_node->getAttributes()["is_default_profile"] == "true")
-                    {
-                        default_participant_attributes = *participant_node->getData();
-                    }
-                    profilesNode.addChild(std::move(participant_node));
-                }
-                else
-                {
-                    logError(XMLPARSER, "Error parsing participant profile");
-                }
+                parseXMLParticipantProf(p_profile, profilesNode);
             }
             else if (strcmp(tag, PUBLISHER) == 0)
             {
-                std::unique_ptr<PublisherAttributes> publisher_atts{new PublisherAttributes};
-                std::unique_ptr<DataNode<PublisherAttributes>> publisher_node{
-                    new DataNode<PublisherAttributes>{&profilesNode, NodeType::PUBLISHER, std::move(publisher_atts)}};
-                if (XMLP_ret::XML_OK == parseXMLPublisherProf(p_profile, *publisher_node))
-                {
-                    if (!m_publisher_profiles
-                             .emplace(publisher_node->getAttributes()[PROFILE_NAME], publisher_node->getData())
-                             .second)
-                    {
-                        logError(XMLPARSER,
-                                 "Error adding profile '" << publisher_node->getAttributes()[PROFILE_NAME] << "'");
-                    }
-                    if (publisher_node->getAttributes()["is_default_profile"] == "true")
-                    {
-                        default_publisher_attributes = *publisher_node->getData();
-                    }
-                    profilesNode.addChild(std::move(publisher_node));
-                }
-                else
-                {
-                    logError(XMLPARSER, "Error parsing publisher profile");
-                }
+                parseXMLPublisherProf(p_profile, profilesNode);
             }
             else if (strcmp(tag, SUBSCRIBER) == 0)
             {
-                std::unique_ptr<SubscriberAttributes> subscriber_atts{new SubscriberAttributes};
-                std::unique_ptr<DataNode<SubscriberAttributes>> subscriber_node{new DataNode<SubscriberAttributes>{
-                    &profilesNode, NodeType::SUBSCRIBER, std::move(subscriber_atts)}};
-                if (XMLP_ret::XML_OK == parseXMLSubscriberProf(p_profile, *subscriber_node))
-                {
-                    if (!m_subscriber_profiles
-                             .emplace(subscriber_node->getAttributes()[PROFILE_NAME], subscriber_node->getData())
-                             .second)
-                    {
-                        logError(XMLPARSER,
-                                 "Error adding profile '" << subscriber_node->getAttributes()[PROFILE_NAME] << "'");
-                    }
-                    if (subscriber_node->getAttributes()["is_default_profile"] == "true")
-                    {
-                        default_subscriber_attributes = *subscriber_node->getData();
-                    }
-                    profilesNode.addChild(std::move(subscriber_node));
-                }
-                else
-                {
-                    logError(XMLPARSER, "Error parsing subscriber profile");
-                }
+                parseXMLSubscriberProf(p_profile, profilesNode);
             }
             else if (strcmp(tag, QOS_PROFILE))
             {
@@ -282,7 +336,7 @@ void XMLParser::addAllAttributes(XMLElement* p_profile, DataNode<T>& node)
     }
 }
 
-XMLP_ret XMLParser::parseXMLParticipantProf(XMLElement* p_profile, DataNode<ParticipantAttributes>& participant_node)
+XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<ParticipantAttributes>& participant_node)
 {
     /*<xs:complexType name="rtpsParticipantAttributesType">
       <xs:all minOccurs="0">
@@ -439,7 +493,7 @@ XMLP_ret XMLParser::parseXMLParticipantProf(XMLElement* p_profile, DataNode<Part
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::parseXMLPublisherProf(XMLElement* p_profile, DataNode<PublisherAttributes>& publisher_node)
+XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<PublisherAttributes>& publisher_node)
 {
     /*<xs:complexType name="publisherProfileType">
       <xs:all minOccurs="0">
@@ -546,7 +600,7 @@ XMLP_ret XMLParser::parseXMLPublisherProf(XMLElement* p_profile, DataNode<Publis
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::parseXMLSubscriberProf(XMLElement* p_profile, DataNode<SubscriberAttributes>& subscriber_node)
+XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<SubscriberAttributes>& subscriber_node)
 {
     /*<xs:complexType name="subscriberProfileType">
       <xs:all minOccurs="0">

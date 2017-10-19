@@ -113,11 +113,13 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret parseProfiles(XMLElement* p_root, BaseNode& profilesNode);
     RTPS_DllAPI static XMLP_ret parseRoot(XMLElement* p_root, BaseNode& rootNode);
 
-    RTPS_DllAPI static XMLP_ret parseXMLParticipantProf(XMLElement* p_profile,
-                                                        DataNode<ParticipantAttributes>& participant_node);
-    RTPS_DllAPI static XMLP_ret parseXMLPublisherProf(XMLElement* p_profile, DataNode<PublisherAttributes>& publisher_node);
-    RTPS_DllAPI static XMLP_ret parseXMLSubscriberProf(XMLElement* p_profile,
-                                                       DataNode<SubscriberAttributes>& subscriber_node);
+    RTPS_DllAPI static XMLP_ret parseXMLParticipantProf(XMLElement* p_root, BaseNode& rootNode);
+    RTPS_DllAPI static XMLP_ret parseXMLPublisherProf(XMLElement* p_root, BaseNode& rootNode);
+    RTPS_DllAPI static XMLP_ret parseXMLSubscriberProf(XMLElement* p_root, BaseNode& rootNode);
+
+    RTPS_DllAPI static XMLP_ret fillDataNode(XMLElement* p_profile, DataNode<ParticipantAttributes>& participant_node);
+    RTPS_DllAPI static XMLP_ret fillDataNode(XMLElement* p_profile, DataNode<PublisherAttributes>& publisher_node);
+    RTPS_DllAPI static XMLP_ret fillDataNode(XMLElement* p_profile, DataNode<SubscriberAttributes>& subscriber_node);
 
     template <typename T>
     RTPS_DllAPI static void addAllAttributes(XMLElement* p_profile, DataNode<T>& node);
