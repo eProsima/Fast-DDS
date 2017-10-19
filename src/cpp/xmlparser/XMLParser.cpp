@@ -14,6 +14,9 @@
 //
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
+
+#include "XMLTree.h"
+
 #include <tinyxml2.h>
 
 namespace eprosima {
@@ -137,8 +140,8 @@ XMLP_ret XMLParser::parseProfiles(XMLElement* p_root, BaseNode& profilesNode)
             if (strcmp(tag, PARTICIPANT) == 0)
             {
                 std::unique_ptr<ParticipantAttributes> participant_atts{new ParticipantAttributes};
-                std::unique_ptr<Node<ParticipantAttributes>> participant_node{
-                    new Node<ParticipantAttributes>{&profilesNode, NodeType::PARTICIPANT, std::move(participant_atts)}};
+                std::unique_ptr<DataNode<ParticipantAttributes>> participant_node{
+                    new DataNode<ParticipantAttributes>{&profilesNode, NodeType::PARTICIPANT, std::move(participant_atts)}};
                 if (XMLP_ret::XML_OK == parseXMLParticipantProf(p_profile, *participant_node))
                 {
                     if (false ==
@@ -154,7 +157,7 @@ XMLP_ret XMLParser::parseProfiles(XMLElement* p_root, BaseNode& profilesNode)
                         default_participant_attributes = *participant_node->getData();
                     }
                     profilesNode.addChild(std::move(participant_node));
-                } 
+                }
                 else
                 {
                     logError(XMLPARSER, "Error parsing participant profile");
@@ -163,8 +166,8 @@ XMLP_ret XMLParser::parseProfiles(XMLElement* p_root, BaseNode& profilesNode)
             else if (strcmp(tag, PUBLISHER) == 0)
             {
                 std::unique_ptr<PublisherAttributes> publisher_atts{new PublisherAttributes};
-                std::unique_ptr<Node<PublisherAttributes>> publisher_node{
-                    new Node<PublisherAttributes>{&profilesNode, NodeType::PUBLISHER, std::move(publisher_atts)}};
+                std::unique_ptr<DataNode<PublisherAttributes>> publisher_node{
+                    new DataNode<PublisherAttributes>{&profilesNode, NodeType::PUBLISHER, std::move(publisher_atts)}};
                 if (XMLP_ret::XML_OK == parseXMLPublisherProf(p_profile, *publisher_node))
                 {
                     if (false == m_publisher_profiles
@@ -188,8 +191,8 @@ XMLP_ret XMLParser::parseProfiles(XMLElement* p_root, BaseNode& profilesNode)
             else if (strcmp(tag, SUBSCRIBER) == 0)
             {
                 std::unique_ptr<SubscriberAttributes> subscriber_atts{new SubscriberAttributes};
-                std::unique_ptr<Node<SubscriberAttributes>> subscriber_node{
-                    new Node<SubscriberAttributes>{&profilesNode, NodeType::SUBSCRIBER, std::move(subscriber_atts)}};
+                std::unique_ptr<DataNode<SubscriberAttributes>> subscriber_node{
+                    new DataNode<SubscriberAttributes>{&profilesNode, NodeType::SUBSCRIBER, std::move(subscriber_atts)}};
                 if (XMLP_ret::XML_OK == parseXMLSubscriberProf(p_profile, *subscriber_node))
                 {
                     if (false ==
@@ -272,7 +275,7 @@ XMLP_ret XMLParser::loadXML(const char* data, size_t length)
 }
 
 template <typename T>
-void XMLParser::addAllAttributes(XMLElement* p_profile, Node<T>& node)
+void XMLParser::addAllAttributes(XMLElement* p_profile, DataNode<T>& node)
 {
     const XMLAttribute* attrib;
     for (attrib = p_profile->FirstAttribute(); attrib != NULL; attrib = attrib->Next())
@@ -281,7 +284,7 @@ void XMLParser::addAllAttributes(XMLElement* p_profile, Node<T>& node)
     }
 }
 
-XMLP_ret XMLParser::parseXMLParticipantProf(XMLElement* p_profile, Node<ParticipantAttributes>& participant_node)
+XMLP_ret XMLParser::parseXMLParticipantProf(XMLElement* p_profile, DataNode<ParticipantAttributes>& participant_node)
 {
     /*<xs:complexType name="rtpsParticipantAttributesType">
       <xs:all minOccurs="0">
@@ -438,7 +441,7 @@ XMLP_ret XMLParser::parseXMLParticipantProf(XMLElement* p_profile, Node<Particip
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::parseXMLPublisherProf(XMLElement* p_profile, Node<PublisherAttributes>& publisher_node)
+XMLP_ret XMLParser::parseXMLPublisherProf(XMLElement* p_profile, DataNode<PublisherAttributes>& publisher_node)
 {
     /*<xs:complexType name="publisherProfileType">
       <xs:all minOccurs="0">
@@ -545,7 +548,7 @@ XMLP_ret XMLParser::parseXMLPublisherProf(XMLElement* p_profile, Node<PublisherA
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::parseXMLSubscriberProf(XMLElement* p_profile, Node<SubscriberAttributes>& subscriber_node)
+XMLP_ret XMLParser::parseXMLSubscriberProf(XMLElement* p_profile, DataNode<SubscriberAttributes>& subscriber_node)
 {
     /*<xs:complexType name="subscriberProfileType">
       <xs:all minOccurs="0">
