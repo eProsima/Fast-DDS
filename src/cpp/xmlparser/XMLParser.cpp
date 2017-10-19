@@ -140,14 +140,13 @@ XMLP_ret XMLParser::parseProfiles(XMLElement* p_root, BaseNode& profilesNode)
             if (strcmp(tag, PARTICIPANT) == 0)
             {
                 std::unique_ptr<ParticipantAttributes> participant_atts{new ParticipantAttributes};
-                std::unique_ptr<DataNode<ParticipantAttributes>> participant_node{
-                    new DataNode<ParticipantAttributes>{&profilesNode, NodeType::PARTICIPANT, std::move(participant_atts)}};
+                std::unique_ptr<DataNode<ParticipantAttributes>> participant_node{new DataNode<ParticipantAttributes>{
+                    &profilesNode, NodeType::PARTICIPANT, std::move(participant_atts)}};
                 if (XMLP_ret::XML_OK == parseXMLParticipantProf(p_profile, *participant_node))
                 {
-                    if (false ==
-                        m_participant_profiles
-                            .emplace(participant_node->getAttributes()[PROFILE_NAME], participant_node->getData())
-                            .second)
+                    if (!m_participant_profiles
+                             .emplace(participant_node->getAttributes()[PROFILE_NAME], participant_node->getData())
+                             .second)
                     {
                         logError(XMLPARSER,
                                  "Error adding profile '" << participant_node->getAttributes()[PROFILE_NAME] << "'");
@@ -170,9 +169,9 @@ XMLP_ret XMLParser::parseProfiles(XMLElement* p_root, BaseNode& profilesNode)
                     new DataNode<PublisherAttributes>{&profilesNode, NodeType::PUBLISHER, std::move(publisher_atts)}};
                 if (XMLP_ret::XML_OK == parseXMLPublisherProf(p_profile, *publisher_node))
                 {
-                    if (false == m_publisher_profiles
-                                     .emplace(publisher_node->getAttributes()[PROFILE_NAME], publisher_node->getData())
-                                     .second)
+                    if (!m_publisher_profiles
+                             .emplace(publisher_node->getAttributes()[PROFILE_NAME], publisher_node->getData())
+                             .second)
                     {
                         logError(XMLPARSER,
                                  "Error adding profile '" << publisher_node->getAttributes()[PROFILE_NAME] << "'");
@@ -191,14 +190,13 @@ XMLP_ret XMLParser::parseProfiles(XMLElement* p_root, BaseNode& profilesNode)
             else if (strcmp(tag, SUBSCRIBER) == 0)
             {
                 std::unique_ptr<SubscriberAttributes> subscriber_atts{new SubscriberAttributes};
-                std::unique_ptr<DataNode<SubscriberAttributes>> subscriber_node{
-                    new DataNode<SubscriberAttributes>{&profilesNode, NodeType::SUBSCRIBER, std::move(subscriber_atts)}};
+                std::unique_ptr<DataNode<SubscriberAttributes>> subscriber_node{new DataNode<SubscriberAttributes>{
+                    &profilesNode, NodeType::SUBSCRIBER, std::move(subscriber_atts)}};
                 if (XMLP_ret::XML_OK == parseXMLSubscriberProf(p_profile, *subscriber_node))
                 {
-                    if (false ==
-                        m_subscriber_profiles
-                            .emplace(subscriber_node->getAttributes()[PROFILE_NAME], subscriber_node->getData())
-                            .second)
+                    if (!m_subscriber_profiles
+                             .emplace(subscriber_node->getAttributes()[PROFILE_NAME], subscriber_node->getData())
+                             .second)
                     {
                         logError(XMLPARSER,
                                  "Error adding profile '" << subscriber_node->getAttributes()[PROFILE_NAME] << "'");
@@ -433,7 +431,7 @@ XMLP_ret XMLParser::parseXMLParticipantProf(XMLElement* p_profile, DataNode<Part
     // name - stringType
     if (nullptr != (p_aux = p_element->FirstChildElement(NAME)))
     {
-        std::string s = "";
+        std::string s;
         if (XMLP_ret::XML_OK != getXMLString(p_aux, &s, ident))
             return XMLP_ret::XML_ERROR;
         participant_node.getData()->rtps.setName(s.c_str());

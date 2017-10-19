@@ -120,7 +120,7 @@ class XMLParser
                                                        DataNode<SubscriberAttributes>& subscriber_node);
 
     template <typename T>
-    RTPS_DllAPI static void addAllAttributes(XMLElement* p_profile, DataNode<T>& participant_node);
+    RTPS_DllAPI static void addAllAttributes(XMLElement* p_profile, DataNode<T>& node);
 
     RTPS_DllAPI static XMLP_ret getXMLPropertiesPolicy(XMLElement* elem, PropertyPolicy& propertiesPolicy,
                                                        uint8_t ident);
