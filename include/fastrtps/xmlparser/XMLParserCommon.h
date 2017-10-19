@@ -35,6 +35,7 @@ enum class XMLP_ret
 
 extern const char* DEFAULT_FASTRTPS_PROFILES;
 
+extern const char* ROOT;
 extern const char* PROFILES;
 extern const char* PROFILE_NAME;
 extern const char* PARTICIPANT;

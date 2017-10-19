@@ -27,6 +27,7 @@
 namespace tinyxml2
 {
     class XMLElement;
+    class XMLDocument;
 }
 
 using namespace tinyxml2;
@@ -105,23 +106,25 @@ class Node : public BaseNode
     T* getData() const;
     void setData(std::unique_ptr<T> data);
 
+    void addAttribute(const std::string& name, const std::string& value);
+    std::map<std::string, std::string>& getAttributes();
+
   private:
-    std::unique_ptr<T> data;
-    
+    std::map<std::string, std::string> attributes_;
+    std::unique_ptr<T> data_;    
 };
 
 template <class T>
-Node<T>::Node(BaseNode* parent, NodeType type) : BaseNode(parent, type), data(nullptr)
+Node<T>::Node(BaseNode* parent, NodeType type) : BaseNode(parent, type), attributes_(), data_(nullptr)
 {
 }
 
 template <class T>
-Node<T>::Node(BaseNode* parent, NodeType type, std::unique_ptr<T> data) : BaseNode(parent, type), data(std::move(data))
+Node<T>::Node(BaseNode* parent, NodeType type, std::unique_ptr<T> data) : BaseNode(parent, type), attributes_(), data_(std::move(data))
 {
 }
 
-template <class T>
-Node<T>::~Node()
+template <class T>Node<T>::~Node()
 {
 }
 
@@ -130,14 +133,27 @@ Node<T>::~Node()
 template <class T>
 T* Node<T>::getData() const
 {
-    return data.get();
+    return data_.get();
 }
 
 template <class T>
 void Node<T>::setData(std::unique_ptr<T> data)
 {
-    data = data;
+    data_ = data;
 }
+
+template <class T>
+void Node<T>::addAttribute(const std::string& name, const std::string& value)
+{
+    attributes_[name] = value;
+}
+
+template <class T>
+std::map<std::string, std::string>& Node<T>::getAttributes()
+{
+    return attributes_;
+}
+
 
 typedef std::map<std::string, ParticipantAttributes*> participant_map_t;
 typedef std::map<std::string, PublisherAttributes*> publisher_map_t;
@@ -150,7 +166,7 @@ typedef std::map<std::string, XMLP_ret>::iterator xmlfile_map_iterator_t;
 
 
 /**
- * Class XMLParser, used to load profiles from XML file.
+ * Class XMLParser, used to load XML data.
  * @ingroup XMLPARSER_MODULE
  */
 class XMLParser
@@ -158,17 +174,25 @@ class XMLParser
 
 public:
     /**
-    * Load the default profiles XML file.
+    * Load the default XML file.
     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
     RTPS_DllAPI static XMLP_ret loadDefaultXMLFile();
 
     /**
-    * Load a profiles XML file.
+    * Load a XML file.
     * @param filename Name for the file to be loaded.
     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
     RTPS_DllAPI static XMLP_ret loadXMLFile(const std::string &filename);
+
+    /**
+    * Load a XML data from buffer.
+    * @param data XML data to load.
+    * @param length Length of the XML data.
+    * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+    */
+    RTPS_DllAPI static XMLP_ret loadXML(const char* data, size_t length);
 
     /**
     * Search for the profile specified and fill the structure.
@@ -201,6 +225,10 @@ public:
     RTPS_DllAPI static void getDefaultSubscriberAttributes(SubscriberAttributes& subscriber_attributes);
 
 protected:
+
+    RTPS_DllAPI static XMLP_ret parseXML(XMLDocument& xmlDoc);
+    RTPS_DllAPI static XMLP_ret parseProfiles(XMLElement* p_root, BaseNode& profilesNode);
+    RTPS_DllAPI static XMLP_ret parseRoot(XMLElement* p_root, BaseNode& rootNode);
 
     RTPS_DllAPI static XMLP_ret parseXMLParticipantProf(XMLElement *p_profile, ParticipantAttributes &participant_atts, std::string &profile_name);
     RTPS_DllAPI static XMLP_ret parseXMLPublisherProf(XMLElement *p_profile, PublisherAttributes &publisher_atts, std::string &profile_name);
