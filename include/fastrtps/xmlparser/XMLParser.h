@@ -20,6 +20,7 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
+
 #include <map>
 #include <string>
 
@@ -35,122 +36,9 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
-enum class NodeType
-{
-    PROFILES,
-    PARTICIPANT,
-    PUBLISHER,
-    SUBSCRIBER,
-    RTPS,
-    QOS_PROFILE,
-    APPLICATION,
-    TYPE,
-    TOPIC,
-    DATA_WRITER,
-    DATA_READER,
-    ROOT
-};
-
-class BaseNode
-{
-  public:
-    BaseNode(BaseNode* parent, NodeType type) : data_type_(type), parent_(parent){};
-    virtual ~BaseNode() = default;
-
-    NodeType getType() const
-    {
-        return data_type_;
-    }
-
-    void addChild(std::unique_ptr<BaseNode> child)
-    {
-        children.push_back(std::move(child));
-    }
-
-    void removeChild(const size_t& indx)
-    {
-        children.erase(children.begin() + indx);
-    }
-
-    BaseNode* getChild(const size_t& indx) const
-    {
-        return children[indx].get();
-    }
-
-    BaseNode* getParent() const
-    {
-        return parent_;
-    }
-
-    int getNumChildren() const
-    {
-        return children.size();
-    }
-
-  private:
-    NodeType data_type_;
-    BaseNode* parent_;
-    std::vector<std::unique_ptr<BaseNode>> children;
-};
-
-template <class T>
-class Node : public BaseNode
-{
-  public:
-    Node(BaseNode* parent, NodeType type);
-    Node(BaseNode* parent, NodeType type, std::unique_ptr<T> data);
-    virtual ~Node();
-
-    T* getData() const;
-    void setData(std::unique_ptr<T> data);
-
-    void addAttribute(const std::string& name, const std::string& value);
-    std::map<std::string, std::string>& getAttributes();
-
-  private:
-    std::map<std::string, std::string> attributes_;
-    std::unique_ptr<T> data_;
-};
-
-template <class T>
-Node<T>::Node(BaseNode* parent, NodeType type) : BaseNode(parent, type), attributes_(), data_(nullptr)
-{
-}
-
-template <class T>
-Node<T>::Node(BaseNode* parent, NodeType type, std::unique_ptr<T> data)
-    : BaseNode(parent, type), attributes_(), data_(std::move(data))
-{
-}
-
-template <class T>
-Node<T>::~Node()
-{
-}
-
-template <class T>
-T* Node<T>::getData() const
-{
-    return data_.get();
-}
-
-template <class T>
-void Node<T>::setData(std::unique_ptr<T> data)
-{
-    data_ = data;
-}
-
-template <class T>
-void Node<T>::addAttribute(const std::string& name, const std::string& value)
-{
-    attributes_[name] = value;
-}
-
-template <class T>
-std::map<std::string, std::string>& Node<T>::getAttributes()
-{
-    return attributes_;
-}
+class BaseNode;
+template <typename T>
+class DataNode;
 
 typedef std::map<std::string, ParticipantAttributes*> participant_map_t;
 typedef std::map<std::string, PublisherAttributes*> publisher_map_t;
@@ -225,13 +113,14 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret parseProfiles(XMLElement* p_root, BaseNode& profilesNode);
     RTPS_DllAPI static XMLP_ret parseRoot(XMLElement* p_root, BaseNode& rootNode);
 
-    RTPS_DllAPI static XMLP_ret parseXMLParticipantProf(XMLElement* p_profile, Node<ParticipantAttributes>& participant_node);
-    RTPS_DllAPI static XMLP_ret parseXMLPublisherProf(XMLElement* p_profile, Node<PublisherAttributes>& publisher_node);
-    RTPS_DllAPI static XMLP_ret parseXMLSubscriberProf(XMLElement* p_profile, Node<SubscriberAttributes>& subscriber_node);
+    RTPS_DllAPI static XMLP_ret parseXMLParticipantProf(XMLElement* p_profile,
+                                                        DataNode<ParticipantAttributes>& participant_node);
+    RTPS_DllAPI static XMLP_ret parseXMLPublisherProf(XMLElement* p_profile, DataNode<PublisherAttributes>& publisher_node);
+    RTPS_DllAPI static XMLP_ret parseXMLSubscriberProf(XMLElement* p_profile,
+                                                       DataNode<SubscriberAttributes>& subscriber_node);
 
-    template<typename T>
-    RTPS_DllAPI static void addAllAttributes(XMLElement* p_profile, Node<T>& participant_node);
-
+    template <typename T>
+    RTPS_DllAPI static void addAllAttributes(XMLElement* p_profile, DataNode<T>& participant_node);
 
     RTPS_DllAPI static XMLP_ret getXMLPropertiesPolicy(XMLElement* elem, PropertyPolicy& propertiesPolicy,
                                                        uint8_t ident);
