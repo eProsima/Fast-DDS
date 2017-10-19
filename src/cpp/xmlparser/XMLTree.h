@@ -28,7 +28,7 @@ enum class NodeType
 class BaseNode
 {
   public:
-    BaseNode(BaseNode* parent, NodeType type) : data_type_(type), parent_(parent){};
+    BaseNode(NodeType type) : data_type_(type), parent_(nullptr){};
     virtual ~BaseNode() = default;
 
     NodeType getType() const
@@ -38,6 +38,7 @@ class BaseNode
 
     void addChild(std::unique_ptr<BaseNode> child)
     {
+        child->setParent(this);
         children.push_back(std::move(child));
     }
 
@@ -56,6 +57,11 @@ class BaseNode
         return parent_;
     }
 
+    void setParent(BaseNode* parent)
+    {
+        parent_ = parent;
+    }
+
     int getNumChildren() const
     {
         return children.size();
@@ -71,15 +77,15 @@ template <class T>
 class DataNode : public BaseNode
 {
   public:
-    DataNode(BaseNode* parent, NodeType type);
-    DataNode(BaseNode* parent, NodeType type, std::unique_ptr<T> data);
+    DataNode(NodeType type);
+    DataNode(NodeType type, std::unique_ptr<T> data);
     virtual ~DataNode();
 
     T* getData() const;
     void setData(std::unique_ptr<T> data);
 
     void addAttribute(const std::string& name, const std::string& value);
-    std::map<std::string, std::string>& getAttributes();
+    const std::map<std::string, std::string>& getAttributes();
 
   private:
     std::map<std::string, std::string> attributes_;
@@ -87,13 +93,13 @@ class DataNode : public BaseNode
 };
 
 template <class T>
-DataNode<T>::DataNode(BaseNode* parent, NodeType type) : BaseNode(parent, type), attributes_(), data_(nullptr)
+DataNode<T>::DataNode(NodeType type) : BaseNode(type), attributes_(), data_(nullptr)
 {
 }
 
 template <class T>
-DataNode<T>::DataNode(BaseNode* parent, NodeType type, std::unique_ptr<T> data)
-    : BaseNode(parent, type), attributes_(), data_(std::move(data))
+DataNode<T>::DataNode(NodeType type, std::unique_ptr<T> data)
+    : BaseNode(type), attributes_(), data_(std::move(data))
 {
 }
 
@@ -121,7 +127,7 @@ void DataNode<T>::addAttribute(const std::string& name, const std::string& value
 }
 
 template <class T>
-std::map<std::string, std::string>& DataNode<T>::getAttributes()
+const std::map<std::string, std::string>& DataNode<T>::getAttributes()
 {
     return attributes_;
 }
