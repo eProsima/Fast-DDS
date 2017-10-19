@@ -20,7 +20,7 @@ namespace xmlparser {
 
 const char* DEFAULT_FASTRTPS_PROFILES = "DEFAULT_FASTRTPS_PROFILES.xml";
 
-const char* ROOT = "eroot";
+const char* ROOT = "dds";
 const char* PROFILES = "profiles";
 const char* PROFILE_NAME = "profile_name";
 const char* PARTICIPANT = "participant";
