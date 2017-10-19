@@ -225,12 +225,14 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret parseProfiles(XMLElement* p_root, BaseNode& profilesNode);
     RTPS_DllAPI static XMLP_ret parseRoot(XMLElement* p_root, BaseNode& rootNode);
 
-    RTPS_DllAPI static XMLP_ret parseXMLParticipantProf(XMLElement* p_profile, ParticipantAttributes& participant_atts,
-                                                        std::string& profile_name);
-    RTPS_DllAPI static XMLP_ret parseXMLPublisherProf(XMLElement* p_profile, PublisherAttributes& publisher_atts,
-                                                      std::string& profile_name);
-    RTPS_DllAPI static XMLP_ret parseXMLSubscriberProf(XMLElement* p_profile, SubscriberAttributes& subscriber_atts,
-                                                       std::string& profile_name);
+    RTPS_DllAPI static XMLP_ret parseXMLParticipantProf(XMLElement* p_profile, Node<ParticipantAttributes>& participant_node);
+    RTPS_DllAPI static XMLP_ret parseXMLPublisherProf(XMLElement* p_profile, Node<PublisherAttributes>& publisher_node);
+    RTPS_DllAPI static XMLP_ret parseXMLSubscriberProf(XMLElement* p_profile, Node<SubscriberAttributes>& subscriber_node);
+
+    template<typename T>
+    RTPS_DllAPI static void addAllAttributes(XMLElement* p_profile, Node<T>& participant_node);
+
+
     RTPS_DllAPI static XMLP_ret getXMLPropertiesPolicy(XMLElement* elem, PropertyPolicy& propertiesPolicy,
                                                        uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLHistoryMemoryPolicy(XMLElement* elem,
