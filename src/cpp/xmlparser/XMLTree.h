@@ -48,14 +48,26 @@ class BaseNode
         children.push_back(std::move(child));
     }
 
-    void removeChild(const size_t& indx)
+    bool removeChild(const size_t& index)
     {
-        children.erase(children.begin() + indx);
+        if (children.begin() + index < children.end())
+        {
+            children.erase(children.begin() + index);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
-    BaseNode* getChild(const size_t& indx) const
+    BaseNode* getChild(const size_t& index) const
     {
-        return children[indx].get();
+        if (children.empty())
+        {
+            return nullptr;
+        }
+        return children[index].get();
     }
 
     BaseNode* getParent() const
@@ -123,7 +135,7 @@ T* DataNode<T>::getData() const
 template <class T>
 void DataNode<T>::setData(std::unique_ptr<T> data)
 {
-    data_ = data;
+    data_ = std::move(data);
 }
 
 template <class T>
