@@ -43,7 +43,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            )
+            )  
 
         # External sources
         if(TINYXML2_SOURCE_DIR)
@@ -55,14 +55,54 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(${TINYXML2_INCLUDE_DIR})
 
         add_executable(XMLProfileParserTests ${XMLPROFILEPARSER_SOURCE})
-        add_gtest(XMLProfileParserTests XMLProfileParserTests.cpp
-            )
+        add_gtest(XMLProfileParserTests XMLProfileParserTests.cpp)
+
         target_compile_definitions(XMLProfileParserTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(XMLProfileParserTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
         target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES})
         if(TINYXML2_LIBRARY)
             target_link_libraries(XMLProfileParserTests ${PRIVACY}
+                ${TINYXML2_LIBRARY}
+                )
+        endif()
+
+
+        set(XMLPARSER_SOURCE
+        XMLParserTests.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLElementParser.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/qos/QosPolicies.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/qos/WriterQos.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/qos/ReaderQos.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp     
+        )            
+
+        # External sources
+        if(TINYXML2_SOURCE_DIR)
+            list(APPEND XMLPARSER_SOURCE
+                ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
+                )
+        endif()
+
+        include_directories(${TINYXML2_INCLUDE_DIR})
+
+        add_executable(XMLParserTests ${XMLPARSER_SOURCE})
+        add_gtest(XMLParserTests XMLParserTests.cpp)
+
+        target_compile_definitions(XMLParserTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(XMLParserTests PRIVATE
+            ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include
+            ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}
+            ${PROJECT_SOURCE_DIR}/src/cpp)
+        target_link_libraries(XMLParserTests ${GTEST_LIBRARIES})
+        if(TINYXML2_LIBRARY)
+            target_link_libraries(XMLParserTests ${PRIVACY}
                 ${TINYXML2_LIBRARY}
                 )
         endif()
