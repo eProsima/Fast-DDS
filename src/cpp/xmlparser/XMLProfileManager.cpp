@@ -15,17 +15,19 @@
 #include <tinyxml2.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include "XMLTree.h"
+
 namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
-std::map<std::string, ParticipantAttributes> XMLProfileManager::m_participant_profiles;
+std::map<std::string, up_participant_t> XMLProfileManager::m_participant_profiles;
 ParticipantAttributes default_participant_attributes;
-std::map<std::string, PublisherAttributes>   XMLProfileManager::m_publisher_profiles;
+std::map<std::string, up_publisher_t>   XMLProfileManager::m_publisher_profiles;
 PublisherAttributes default_publisher_attributes;
-std::map<std::string, SubscriberAttributes>  XMLProfileManager::m_subscriber_profiles;
+std::map<std::string, up_subscriber_t>  XMLProfileManager::m_subscriber_profiles;
 SubscriberAttributes default_subscriber_attributes;
-std::map<std::string, XMLP_ret>              XMLProfileManager::m_xml_files;
+std::map<std::string, XMLP_ret>         XMLProfileManager::m_xml_files;
 
 BaseNode* XMLProfileManager::root = nullptr;
 
@@ -37,7 +39,7 @@ XMLP_ret XMLProfileManager::fillParticipantAttributes(const std::string &profile
         logError(XMLPARSER, "Profile '" << profile_name << "' not found '");
         return XMLP_ret::XML_ERROR;
     }
-    atts = it->second;
+    atts = *(it->second);
     return XMLP_ret::XML_OK;
 }
 
@@ -64,7 +66,7 @@ XMLP_ret XMLProfileManager::fillPublisherAttributes(const std::string &profile_n
         logError(XMLPARSER, "Profile '" << profile_name << "' not found '");
         return XMLP_ret::XML_ERROR;
     }
-    atts = it->second;
+    atts = *(it->second);
     return XMLP_ret::XML_OK;
 }
 
@@ -76,7 +78,7 @@ XMLP_ret XMLProfileManager::fillSubscriberAttributes(const std::string &profile_
         logError(XMLPARSER, "Profile '" << profile_name << "' not found");
         return XMLP_ret::XML_ERROR;
     }
-    atts = it->second;
+    atts = *(it->second);
     return XMLP_ret::XML_OK;
 }
 
@@ -85,7 +87,7 @@ XMLP_ret XMLProfileManager::loadDefaultXMLFile()
     return loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
 }
 
-XMLP_ret XMLProfileManager::loadXMLFile(const std::string &filename)
+XMLP_ret XMLProfileManager::loadXMLFile(const std::string& filename)
 {
     if (filename.empty())
     {
@@ -100,7 +102,8 @@ XMLP_ret XMLProfileManager::loadXMLFile(const std::string &filename)
         return XMLP_ret::XML_OK;
     }
 
-    base_node_uptr_t root_node = XMLParser::parseXML(filename);
+    up_base_node_t root_node;
+    XMLParser::loadXML(filename, root_node);
     if (!root_node)
     {
         if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
@@ -115,7 +118,7 @@ XMLP_ret XMLProfileManager::loadXMLFile(const std::string &filename)
 
     if (NodeType::PROFILES == root_node->getType())
     {
-        return XMLProfileManager::extractProfiles(std::move(root_node));
+        return XMLProfileManager::extractProfiles(std::move(root_node), filename);
     }
 
     if (NodeType::ROOT == root_node->getType())
@@ -124,7 +127,7 @@ XMLP_ret XMLProfileManager::loadXMLFile(const std::string &filename)
         {
             if (NodeType::PROFILES == child.get()->getType())
             {
-                return XMLProfileManager::extractProfiles(std::move(child));
+                return XMLProfileManager::extractProfiles(std::move(child), filename);
             }
         }
     }
@@ -132,7 +135,7 @@ XMLP_ret XMLProfileManager::loadXMLFile(const std::string &filename)
     return XMLP_ret::XML_ERROR;
 }
 
-XMLP_ret XMLProfileManager::extractProfiles(base_node_uptr_t profiles)
+XMLP_ret XMLProfileManager::extractProfiles(up_base_node_t profiles, const std::string& filename)
 {
     if (nullptr == profiles)
     {
@@ -140,146 +143,136 @@ XMLP_ret XMLProfileManager::extractProfiles(base_node_uptr_t profiles)
         return XMLP_ret::XML_ERROR;
     }
 
-    std::string profile_name = "";
     unsigned int profileCount = 0u;
 
     for (auto&& profile: profiles->getChildren())
     {
         if (NodeType::PARTICIPANT == profile->getType())
         {
-
-            node_att_cit_t it = dynamic_cast<Node<ParticipantAttributes>*>(profile.get())->getAttributes().find(PROFILE_NAME);
-            if (it == profile->attributes.end() || (*it).empty())
+            if (XMLP_ret::XML_OK == extractParticipantProfile(profile, filename))
             {
-                logError(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
-                continue;
+                ++profileCount;
             }
-
-            profile_name = *it;
-
-            std::pair<part_map_iterator_t, bool> res = m_participant_profiles.emplace(profile_name, profile.getData());
-            if (false ==res.second)
-            {
-                logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
-                continue;
-            }
-
-            it = profile.attributes.find(DEFAULT_PROF);
-            if (it != profile.attributes.end() && it->second == "true") // Set as default profile
-            {
-                // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
-                default_participant_attributes = *res.first;
-            }
-
-            ++profileCount;
         }
         else if (NodeType::PUBLISHER == profile.get()->getType())
         {
-
+            if (XMLP_ret::XML_OK == extractPublisherProfile(profile, filename))
+            {
+                ++profileCount;
+            }
         }
         else if (NodeType::SUBSCRIBER == profile.get()->getType())
         {
-
+            if (XMLP_ret::XML_OK == extractSubscriberProfile(profile, filename))
+            {
+                ++profileCount;
+            }
         }
         else
         {
-            logError(XMLPARSER, "Not expected tag: '" << tag << "'");
+            logError(XMLPARSER, "Not expected tag");
         }
     }
-
-
-/*    root = new Node<int>(nullptr, NodeType::ROOT);
-    XMLElement *p_profile = p_root->FirstChildElement();
-    const char *tag = nullptr;
-    while (nullptr != p_profile)
-    {
-        if (nullptr != (tag = p_profile->Value()))
-        {
-            bool is_default_profile = false;
-            p_profile->QueryBoolAttribute("is_default_profile", &is_default_profile);
-
-            // If profile parsing functions fails, log and continue.
-            if (strcmp(tag, PARTICIPANT) == 0)
-            {
-                ParticipantAttributes participant_atts;
-                if (XMLP_ret::XML_OK == parseXMLParticipantProf(p_profile, participant_atts, profile_name))
-                {
-                    if(is_default_profile)
-                    {
-                        default_participant_attributes = participant_atts;
-                    }
-
-                    if (false == m_participant_profiles.emplace(profile_name, participant_atts).second)
-                    {
-                        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
-                    }
-                    ++profileCount;
-                }
-                else
-                {
-                    logError(XMLPARSER, "Error parsing participant profile");
-                }
-            }
-            else if (strcmp(tag, PUBLISHER) == 0)
-            {
-                PublisherAttributes publisher_atts;
-                if (XMLP_ret::XML_OK == parseXMLPublisherProf(p_profile, publisher_atts, profile_name))
-                {
-                    if(is_default_profile)
-                    {
-                        default_publisher_attributes = publisher_atts;
-                    }
-
-                    if (false == m_publisher_profiles.emplace(profile_name, publisher_atts).second)
-                    {
-                        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
-                    }
-                    ++profileCount;
-                }
-                else
-                {
-                    logError(XMLPARSER, "Error parsing publisher profile");
-                }
-            }
-            else if (strcmp(tag, SUBSCRIBER) == 0)
-            {
-                SubscriberAttributes subscriber_atts;
-                if (XMLP_ret::XML_OK == parseXMLSubscriberProf(p_profile, subscriber_atts, profile_name))
-                {
-                    if(is_default_profile)
-                    {
-                        default_subscriber_attributes = subscriber_atts;
-                    }
-
-                    if (false == m_subscriber_profiles.emplace(profile_name, subscriber_atts).second)
-                    {
-                        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
-                    }
-                    ++profileCount;
-                }
-                else
-                {
-                    logError(XMLPARSER, "Error parsing subscriber profile");
-                }
-            }
-            else
-            {
-                logError(XMLPARSER, "Not expected tag: '" << tag << "'");
-            }
-        }
-        p_profile = p_profile->NextSiblingElement();
-    }*/
 
     if (0 == profileCount)
     {
         m_xml_files.emplace(filename, XMLP_ret::XML_ERROR);
-        logError(XMLPARSER, "Bad file '" << filename << "' content expected tag: '" << tag << "'");
+        logError(XMLPARSER, "Error, file '" << filename << "' bad content");
         return XMLP_ret::XML_ERROR;
-
     }
 
     m_xml_files.emplace(filename, XMLP_ret::XML_OK);
 
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLProfileManager::extractParticipantProfile(up_base_node_t& profile, const std::string& filename)
+{
+    std::string profile_name = "";
+
+    p_node_participant_t p_node_part = dynamic_cast<p_node_participant_t>(profile.get());
+    node_att_map_cit_t it = p_node_part->getAttributes().find(PROFILE_NAME);
+    if (it == p_node_part->getAttributes().end() || it->second.empty())
+    {
+        logError(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    profile_name = it->second;
+
+    std::pair<part_map_iterator_t, bool> emplace = m_participant_profiles.emplace(profile_name, p_node_part->getData());
+    if (false == emplace.second)
+    {
+        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    it = p_node_part->getAttributes().find(DEFAULT_PROF);
+    if (it != p_node_part->getAttributes().end() && it->second == "true") // Set as default profile
+    {
+        // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
+        default_participant_attributes = *(emplace.first->second.get() );
+    }
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLProfileManager::extractPublisherProfile(up_base_node_t& profile, const std::string& filename)
+{
+    std::string profile_name = "";
+
+    p_node_publisher_t p_node_part = dynamic_cast<p_node_publisher_t>(profile.get());
+    node_att_map_cit_t it = p_node_part->getAttributes().find(PROFILE_NAME);
+    if (it == p_node_part->getAttributes().end() || it->second.empty())
+    {
+        logError(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    profile_name = it->second;
+
+    std::pair<publ_map_iterator_t, bool> emplace = m_publisher_profiles.emplace(profile_name, p_node_part->getData());
+    if (false == emplace.second)
+    {
+        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    it = p_node_part->getAttributes().find(DEFAULT_PROF);
+    if (it != p_node_part->getAttributes().end() && it->second == "true") // Set as default profile
+    {
+        // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
+        default_publisher_attributes = *(emplace.first->second.get() );
+    }
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLProfileManager::extractSubscriberProfile(up_base_node_t& profile, const std::string& filename)
+{
+    std::string profile_name = "";
+
+    p_node_subscriber_t p_node_part = dynamic_cast<p_node_subscriber_t>(profile.get());
+    node_att_map_cit_t it = p_node_part->getAttributes().find(PROFILE_NAME);
+    if (it == p_node_part->getAttributes().end() || it->second.empty())
+    {
+        logError(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    profile_name = it->second;
+
+    std::pair<subs_map_iterator_t, bool> emplace = m_subscriber_profiles.emplace(profile_name, p_node_part->getData());
+    if (false == emplace.second)
+    {
+        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    it = p_node_part->getAttributes().find(DEFAULT_PROF);
+    if (it != p_node_part->getAttributes().end() && it->second == "true") // Set as default profile
+    {
+        // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
+        default_subscriber_attributes = *(emplace.first->second.get() );
+    }
     return XMLP_ret::XML_OK;
 }
 

@@ -24,21 +24,20 @@
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <map>
 
-
 using namespace eprosima::fastrtps::rtps;
 
 namespace eprosima{
 namespace fastrtps{
 namespace xmlparser{
 
-typedef std::map<std::string, ParticipantAttributes> participant_map_t;
-typedef std::map<std::string, PublisherAttributes> publisher_map_t;
-typedef std::map<std::string, SubscriberAttributes> subscriber_map_t;
-typedef std::map<std::string, XMLP_ret> xmlfiles_map_t;
-typedef std::map<std::string, ParticipantAttributes>::iterator part_map_iterator_t;
-typedef std::map<std::string, PublisherAttributes>::iterator publ_map_iterator_t;
-typedef std::map<std::string, SubscriberAttributes>::iterator subs_map_iterator_t;
-typedef std::map<std::string, XMLP_ret>::iterator xmlfile_map_iterator_t;
+typedef std::map<std::string, up_participant_t> participant_map_t;
+typedef participant_map_t::iterator             part_map_iterator_t;
+typedef std::map<std::string, up_publisher_t>   publisher_map_t;
+typedef publisher_map_t::iterator               publ_map_iterator_t;
+typedef std::map<std::string, up_subscriber_t>  subscriber_map_t;
+typedef subscriber_map_t::iterator              subs_map_iterator_t;
+typedef std::map<std::string, XMLP_ret>         xmlfiles_map_t;
+typedef xmlfiles_map_t::iterator                xmlfile_map_iterator_t;
 
 
 /**
@@ -94,7 +93,10 @@ public:
 
 private:
     
-    RTPS_DllAPI static XMLP_ret extractProfiles(base_node_uptr_t properties);
+    RTPS_DllAPI static XMLP_ret extractProfiles(up_base_node_t properties, const std::string& filename);
+    RTPS_DllAPI static XMLP_ret extractParticipantProfile(up_base_node_t& profile, const std::string& filename);
+    RTPS_DllAPI static XMLP_ret extractPublisherProfile(up_base_node_t& profile, const std::string& filename);
+    RTPS_DllAPI static XMLP_ret extractSubscriberProfile(up_base_node_t& profile, const std::string& filename);
 
     static BaseNode* root;
     static participant_map_t m_participant_profiles;

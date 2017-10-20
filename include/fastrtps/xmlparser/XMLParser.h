@@ -39,15 +39,26 @@ namespace xmlparser{
 class BaseNode;
 template <class T> class DataNode;
 
-typedef std::unique_ptr<BaseNode> base_node_uptr_t;
-typedef std::vector<base_node_uptr_t> base_node_uvtr_t;
-typedef std::unique_ptr<ParticipantAttributes> up_participant_att_t;
-typedef std::unique_ptr<PublisherAttributes>   up_publisher_att_t;
-typedef std::unique_ptr<SubscriberAttributes>  up_subscriber_att_t;
-typedef std::map<std::string, std::string>     att_map_t;
-typedef att_map_t::iterator                    att_map_it_t;
-typedef att_map_t::const_iterator              att_map_cit_t;
-typedef DataNode<ParticipantAttributes>*           p_node_participant_t;
+typedef std::unique_ptr<BaseNode>              up_base_node_t;
+typedef std::vector<up_base_node_t>            up_base_node_vector_t;
+typedef std::map<std::string, std::string>     node_att_map_t;
+typedef node_att_map_t::iterator               node_att_map_it_t;
+typedef node_att_map_t::const_iterator         node_att_map_cit_t;
+
+typedef std::unique_ptr<ParticipantAttributes> up_participant_t;
+typedef DataNode<ParticipantAttributes>        node_participant_t;
+typedef node_participant_t*                    p_node_participant_t;
+typedef std::unique_ptr<node_participant_t>    up_node_participant_t;
+
+typedef std::unique_ptr<PublisherAttributes>   up_publisher_t;
+typedef DataNode<PublisherAttributes>          node_publisher_t;
+typedef node_publisher_t*                      p_node_publisher_t;
+typedef std::unique_ptr<node_publisher_t>      up_node_publisher_t;
+
+typedef std::unique_ptr<SubscriberAttributes>  up_subscriber_t;
+typedef DataNode<SubscriberAttributes>         node_subscriber_t;
+typedef node_subscriber_t*                     p_node_subscriber_t;
+typedef std::unique_ptr<node_subscriber_t>     up_node_subscriber_t;
 
 /**
  * Class XMLParser, used to load XML data.
@@ -61,14 +72,14 @@ class XMLParser
      * Load the default XML file.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret loadDefaultXMLFile();
+    RTPS_DllAPI static XMLP_ret loadDefaultXMLFile(up_base_node_t& root);
 
     /**
      * Load a XML file.
      * @param filename Name for the file to be loaded.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret loadXMLFile(const std::string& filename);
+    RTPS_DllAPI static XMLP_ret loadXML(const std::string& filename, up_base_node_t& root);
 
     /**
      * Load a XML data from buffer.
@@ -76,10 +87,10 @@ class XMLParser
      * @param length Length of the XML data.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret loadXML(const char* data, size_t length);
+    RTPS_DllAPI static XMLP_ret loadXML(const char* data, size_t length, up_base_node_t& root);
 
   protected:
-    RTPS_DllAPI static XMLP_ret parseXML(XMLDocument& xmlDoc);
+    RTPS_DllAPI static XMLP_ret parseXML(XMLDocument& xmlDoc, up_base_node_t& root);
     RTPS_DllAPI static XMLP_ret parseProfiles(XMLElement* p_root, BaseNode& profilesNode);
     RTPS_DllAPI static XMLP_ret parseRoot(XMLElement* p_root, BaseNode& rootNode);
 
@@ -144,12 +155,6 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret getXMLBool(XMLElement* elem, bool* b, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLString(XMLElement* elem, std::string* s, uint8_t ident);
 
-  private:
-    static BaseNode* root;
-    static participant_map_t m_participant_profiles;
-    static publisher_map_t m_publisher_profiles;
-    static subscriber_map_t m_subscriber_profiles;
-    static xmlfiles_map_t m_xml_files;
 };
 
 } // namespace xmlparser
