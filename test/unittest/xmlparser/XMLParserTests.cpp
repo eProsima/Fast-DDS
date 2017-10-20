@@ -111,7 +111,7 @@ TEST_F(XMLTreeTests, DataNode)
     data_node.addAttribute(attribute_name1, attribute_value1);
 
     ASSERT_EQ(NodeType::PUBLISHER, data_node.getType());
-    ASSERT_EQ(data, data_node.getData());
+    ASSERT_EQ(data, data_node.getData().get());
     ASSERT_STREQ(attribute_value0.data(), data_node.getAttributes().at(attribute_name0).data());
     ASSERT_STREQ(attribute_value1.data(), data_node.getAttributes().at(attribute_name1).data());
 }
