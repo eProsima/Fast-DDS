@@ -23,6 +23,7 @@ const char* DEFAULT_FASTRTPS_PROFILES = "DEFAULT_FASTRTPS_PROFILES.xml";
 const char* ROOT = "dds";
 const char* PROFILES = "profiles";
 const char* PROFILE_NAME = "profile_name";
+const char* DEFAULT_PROF = "is_default_profile";
 const char* PARTICIPANT = "participant";
 const char* PUBLISHER = "publisher";
 const char* SUBSCRIBER = "subscriber";

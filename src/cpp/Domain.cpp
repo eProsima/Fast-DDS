@@ -30,7 +30,7 @@
 
 #include <fastrtps/log/Log.h>
 
-#include <fastrtps/xmlparser/XMLParser.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::xmlparser;
@@ -117,12 +117,12 @@ Participant* Domain::createParticipant(const std::string &participant_profile, P
 {
     if (false == default_xml_profiles_loaded)
     {
-        XMLParser::loadDefaultXMLFile();
+        XMLProfileManager::loadDefaultXMLFile();
         default_xml_profiles_loaded = true;
     }
 
     ParticipantAttributes participant_att;
-    if ( XMLP_ret::XML_ERROR == XMLParser::fillParticipantAttributes(participant_profile, participant_att))
+    if ( XMLP_ret::XML_ERROR == XMLProfileManager::fillParticipantAttributes(participant_profile, participant_att))
     {
         logError(PARTICIPANT, "Problem loading profile '" << participant_profile << "'");
         return nullptr;
@@ -156,17 +156,17 @@ void Domain::getDefaultParticipantAttributes(ParticipantAttributes& participant_
 {
     if (false == default_xml_profiles_loaded)
     {
-        XMLParser::loadDefaultXMLFile();
+        XMLProfileManager::loadDefaultXMLFile();
         default_xml_profiles_loaded = true;
     }
 
-    return XMLParser::getDefaultParticipantAttributes(participant_attributes);
+    return XMLProfileManager::getDefaultParticipantAttributes(participant_attributes);
 }
 
 Publisher* Domain::createPublisher(Participant *part, const std::string &publisher_profile, PublisherListener *listen)
 {
     PublisherAttributes publisher_att;
-    if ( XMLP_ret::XML_ERROR == XMLParser::fillPublisherAttributes(publisher_profile, publisher_att))
+    if ( XMLP_ret::XML_ERROR == XMLProfileManager::fillPublisherAttributes(publisher_profile, publisher_att))
     {
         logError(PUBLISHER, "Problem loading profile '" << publisher_profile << "'");
         return nullptr;
@@ -191,28 +191,28 @@ void Domain::getDefaultPublisherAttributes(PublisherAttributes& publisher_attrib
 {
     if (false == default_xml_profiles_loaded)
     {
-        XMLParser::loadDefaultXMLFile();
+        XMLProfileManager::loadDefaultXMLFile();
         default_xml_profiles_loaded = true;
     }
 
-    return XMLParser::getDefaultPublisherAttributes(publisher_attributes);
+    return XMLProfileManager::getDefaultPublisherAttributes(publisher_attributes);
 }
 
 void Domain::getDefaultSubscriberAttributes(SubscriberAttributes& subscriber_attributes)
 {
     if (false == default_xml_profiles_loaded)
     {
-        XMLParser::loadDefaultXMLFile();
+        XMLProfileManager::loadDefaultXMLFile();
         default_xml_profiles_loaded = true;
     }
 
-    return XMLParser::getDefaultSubscriberAttributes(subscriber_attributes);
+    return XMLProfileManager::getDefaultSubscriberAttributes(subscriber_attributes);
 }
 
 Subscriber* Domain::createSubscriber(Participant *part, const std::string &subscriber_profile, SubscriberListener *listen)
 {
     SubscriberAttributes subscriber_att;
-    if ( XMLP_ret::XML_ERROR == XMLParser::fillSubscriberAttributes(subscriber_profile, subscriber_att))
+    if ( XMLP_ret::XML_ERROR == XMLProfileManager::fillSubscriberAttributes(subscriber_profile, subscriber_att))
     {
         logError(PUBLISHER, "Problem loading profile '" << subscriber_profile << "'");
         return nullptr;
@@ -276,11 +276,11 @@ bool Domain::loadXMLProfilesFile(const std::string &xml_profile_file)
 {
     if (false == default_xml_profiles_loaded)
     {
-        XMLParser::loadDefaultXMLFile();
+        XMLProfileManager::loadDefaultXMLFile();
         default_xml_profiles_loaded = true;
     }
 
-    if ( XMLP_ret::XML_ERROR == XMLParser::loadXMLFile(xml_profile_file))
+    if ( XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLFile(xml_profile_file))
     {
         logError(DOMAIN, "Problem loading XML file '" << xml_profile_file << "'");
         return false;

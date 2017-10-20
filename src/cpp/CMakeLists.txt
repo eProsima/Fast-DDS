@@ -108,6 +108,7 @@ set(${PROJECT_NAME}_source_files
     xmlparser/XMLElementParser.cpp
     xmlparser/XMLEndpointParser.cpp
     xmlparser/XMLParser.cpp
+    xmlparser/XMLProfileManager.cpp
     )
 
 # Add sources to Makefile.am
