@@ -30,6 +30,12 @@ class BaseNode
   public:
     BaseNode(NodeType type) : data_type_(type), parent_(nullptr){};
     virtual ~BaseNode() = default;
+    
+    BaseNode(const BaseNode&) = delete;
+    BaseNode& operator=(const BaseNode&) = delete;
+    
+    BaseNode(BaseNode&&) = default;
+    BaseNode& operator=(BaseNode&&) = default;
 
     NodeType getType() const
     {
