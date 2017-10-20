@@ -85,6 +85,11 @@ class BaseNode
         return children.size();
     }
 
+    std::vector<std::unique_ptr<BaseNode>>& getChildren()
+    {
+        return children;
+    }
+
   private:
     NodeType data_type_;
     BaseNode* parent_;
@@ -99,7 +104,8 @@ class DataNode : public BaseNode
     DataNode(NodeType type, std::unique_ptr<T> data);
     virtual ~DataNode();
 
-    T* getData() const;
+    T* get() const;
+    std::unique_ptr<T> getData();
     void setData(std::unique_ptr<T> data);
 
     void addAttribute(const std::string& name, const std::string& value);
@@ -127,9 +133,15 @@ DataNode<T>::~DataNode()
 }
 
 template <class T>
-T* DataNode<T>::getData() const
+T* DataNode<T>::get() const
 {
     return data_.get();
+}
+
+template <class T>
+std::unique_ptr<T> DataNode<T>::getData()
+{
+    return std::move(data_);
 }
 
 template <class T>
