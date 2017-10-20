@@ -23,59 +23,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
-BaseNode* XMLParser::root = nullptr;
-
-XMLP_ret XMLParser::fillParticipantAttributes(const std::string& profile_name, ParticipantAttributes& atts)
-{
-    part_map_iterator_t it = m_participant_profiles.find(profile_name);
-    if (it == m_participant_profiles.end())
-    {
-        logError(XMLPARSER, "Profile '" << profile_name << "' not found '");
-        return XMLP_ret::XML_ERROR;
-    }
-    atts = *it->second;
-    return XMLP_ret::XML_OK;
-}
-
-void XMLParser::getDefaultParticipantAttributes(ParticipantAttributes& participant_attributes)
-{
-    participant_attributes = default_participant_attributes;
-}
-
-void XMLParser::getDefaultPublisherAttributes(PublisherAttributes& publisher_attributes)
-{
-    publisher_attributes = default_publisher_attributes;
-}
-
-void XMLParser::getDefaultSubscriberAttributes(SubscriberAttributes& subscriber_attributes)
-{
-    subscriber_attributes = default_subscriber_attributes;
-}
-
-XMLP_ret XMLParser::fillPublisherAttributes(const std::string& profile_name, PublisherAttributes& atts)
-{
-    publ_map_iterator_t it = m_publisher_profiles.find(profile_name);
-    if (it == m_publisher_profiles.end())
-    {
-        logError(XMLPARSER, "Profile '" << profile_name << "' not found '");
-        return XMLP_ret::XML_ERROR;
-    }
-    atts = *it->second;
-    return XMLP_ret::XML_OK;
-}
-
-XMLP_ret XMLParser::fillSubscriberAttributes(const std::string& profile_name, SubscriberAttributes& atts)
-{
-    subs_map_iterator_t it = m_subscriber_profiles.find(profile_name);
-    if (it == m_subscriber_profiles.end())
-    {
-        logError(XMLPARSER, "Profile '" << profile_name << "' not found");
-        return XMLP_ret::XML_ERROR;
-    }
-    atts = *it->second;
-    return XMLP_ret::XML_OK;
-}
-
 XMLP_ret XMLParser::loadDefaultXMLFile()
 {
     return loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
