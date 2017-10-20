@@ -25,7 +25,7 @@
 
 
 #include <fastrtps/Domain.h>
-#include <fastrtps/xmlparser/XMLParser.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima;
 using namespace eprosima::fastrtps;
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
 	std::cout << "Starting " << std::endl;
 
 	// Load an XML file with predefined profiles for publisher and subscriber
-	xmlparser::XMLParser::loadXMLFile("XMLProfilesExample.xml");
+	xmlparser::XMLProfileManager::loadXMLFile("XMLProfilesExample.xml");
 
 	// Register the type being used
 

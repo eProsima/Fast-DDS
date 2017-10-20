@@ -33,6 +33,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(XMLPROFILEPARSER_SOURCE
             XMLProfileParserTests.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLProfileManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLElementParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/xmlparser/XMLParser.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps;
@@ -33,21 +33,21 @@ class XMLProfileParserTests: public ::testing::Test
 TEST_F(XMLProfileParserTests, XMLoadProfiles)
 {
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::loadXMLFile("test_xml_profiles.xml"));
+                xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::loadXMLFile("test_xml_security_profiles.xml"));
+                xmlparser::XMLProfileManager::loadXMLFile("test_xml_security_profiles.xml"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::loadXMLFile("test_xml_profiles.xml"));
+                xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_ERROR,
-                xmlparser::XMLParser::loadXMLFile("missing_file.xml"));
+                xmlparser::XMLProfileManager::loadXMLFile("missing_file.xml"));
 
     ParticipantAttributes participant_atts;
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::fillParticipantAttributes("test_participant_profile", participant_atts));
+                xmlparser::XMLProfileManager::fillParticipantAttributes("test_participant_profile", participant_atts));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_ERROR,
-                xmlparser::XMLParser::fillParticipantAttributes("bad_name", participant_atts));
+                xmlparser::XMLProfileManager::fillParticipantAttributes("bad_name", participant_atts));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_ERROR,
-                xmlparser::XMLParser::fillParticipantAttributes("test_publisher_profile", participant_atts));
+                xmlparser::XMLProfileManager::fillParticipantAttributes("test_publisher_profile", participant_atts));
 }
 
 TEST_F(XMLProfileParserTests, XMLParserParcipant)
@@ -56,9 +56,9 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     ParticipantAttributes participant_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::loadXMLFile("test_xml_profiles.xml"));
+                xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::fillParticipantAttributes(participant_profile, participant_atts));
+                xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile, participant_atts));
 
     RTPSParticipantAttributes &rtps_atts = participant_atts.rtps;
     BuiltinAttributes &builtin = rtps_atts.builtin;
@@ -127,8 +127,8 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
     ParticipantAttributes participant_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::loadXMLFile("test_xml_profiles.xml"));
-    xmlparser::XMLParser::getDefaultParticipantAttributes(participant_atts);
+                xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+    xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts);
 
     RTPSParticipantAttributes &rtps_atts = participant_atts.rtps;
     BuiltinAttributes &builtin = rtps_atts.builtin;
@@ -197,9 +197,9 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     PublisherAttributes publisher_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::loadXMLFile("test_xml_profiles.xml"));
+                xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::fillPublisherAttributes(publisher_profile, publisher_atts));
+                xmlparser::XMLProfileManager::fillPublisherAttributes(publisher_profile, publisher_atts));
 
     TopicAttributes &pub_topic = publisher_atts.topic;
     WriterQos &pub_qos = publisher_atts.qos;
@@ -265,8 +265,8 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     PublisherAttributes publisher_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::loadXMLFile("test_xml_profiles.xml"));
-    xmlparser::XMLParser::getDefaultPublisherAttributes(publisher_atts);
+                xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+    xmlparser::XMLProfileManager::getDefaultPublisherAttributes(publisher_atts);
 
     TopicAttributes &pub_topic = publisher_atts.topic;
     WriterQos &pub_qos = publisher_atts.qos;
@@ -332,9 +332,9 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriber)
     SubscriberAttributes subscriber_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::loadXMLFile("test_xml_profiles.xml"));
+                xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::fillSubscriberAttributes(subscriber_profile, subscriber_atts));
+                xmlparser::XMLProfileManager::fillSubscriberAttributes(subscriber_profile, subscriber_atts));
 
     TopicAttributes &sub_topic = subscriber_atts.topic;
     ReaderQos &sub_qos = subscriber_atts.qos;
@@ -397,8 +397,8 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
     SubscriberAttributes subscriber_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::loadXMLFile("test_xml_profiles.xml"));
-    xmlparser::XMLParser::getDefaultSubscriberAttributes(subscriber_atts);
+                xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+    xmlparser::XMLProfileManager::getDefaultSubscriberAttributes(subscriber_atts);
 
     TopicAttributes &sub_topic = subscriber_atts.topic;
     ReaderQos &sub_qos = subscriber_atts.qos;
@@ -463,9 +463,9 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
     ParticipantAttributes participant_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::loadXMLFile("test_xml_security_profiles.xml"));
+                xmlparser::XMLProfileManager::loadXMLFile("test_xml_security_profiles.xml"));
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::fillParticipantAttributes(participant_profile, participant_atts));
+                xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile, participant_atts));
 
     PropertySeq &part_props = participant_atts.rtps.properties.properties();
     BinaryPropertySeq &part_bin_props = participant_atts.rtps.properties.binary_properties();
@@ -485,7 +485,7 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
     std::string publisher_profile = std::string("test_publisher_security_profile");
     PublisherAttributes publisher_atts;
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::fillPublisherAttributes(publisher_profile, publisher_atts));
+                xmlparser::XMLProfileManager::fillPublisherAttributes(publisher_profile, publisher_atts));
 
     PropertySeq &pub_props = publisher_atts.properties.properties();
     BinaryPropertySeq &pub_bin_props = publisher_atts.properties.binary_properties();
@@ -506,7 +506,7 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
     SubscriberAttributes subscriber_atts;
 
     EXPECT_EQ(xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLParser::fillSubscriberAttributes(subscriber_profile, subscriber_atts));
+                xmlparser::XMLProfileManager::fillSubscriberAttributes(subscriber_profile, subscriber_atts));
 
     PropertySeq &sub_props = subscriber_atts.properties.properties();
     BinaryPropertySeq &sub_bin_props = subscriber_atts.properties.binary_properties();
@@ -527,6 +527,8 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
 
 int main(int argc, char **argv)
 {
+    Log::SetVerbosity(Log::Info);
+    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
