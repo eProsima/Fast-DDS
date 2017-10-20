@@ -261,81 +261,81 @@ XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<ParticipantAttr
     if (nullptr != (p_aux = p_element->FirstChildElement(DEF_UNI_LOC_LIST)))
     {
         if (XMLP_ret::XML_OK !=
-            getXMLLocatorList(p_aux, participant_node.getData()->rtps.defaultUnicastLocatorList, ident))
+            getXMLLocatorList(p_aux, participant_node.get()->rtps.defaultUnicastLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
     // defaultMulticastLocatorList
     if (nullptr != (p_aux = p_element->FirstChildElement(DEF_MULTI_LOC_LIST)))
     {
         if (XMLP_ret::XML_OK !=
-            getXMLLocatorList(p_aux, participant_node.getData()->rtps.defaultMulticastLocatorList, ident))
+            getXMLLocatorList(p_aux, participant_node.get()->rtps.defaultMulticastLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
     // defaultOutLocatorList
     if (nullptr != (p_aux = p_element->FirstChildElement(DEF_OUT_LOC_LIST)))
     {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, participant_node.getData()->rtps.defaultOutLocatorList, ident))
+        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, participant_node.get()->rtps.defaultOutLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
     // defaultSendPort - uint32Type
     if (nullptr != (p_aux = p_element->FirstChildElement(DEF_SEND_PORT)))
     {
-        if (XMLP_ret::XML_OK != getXMLUint(p_aux, &participant_node.getData()->rtps.defaultSendPort, ident))
+        if (XMLP_ret::XML_OK != getXMLUint(p_aux, &participant_node.get()->rtps.defaultSendPort, ident))
             return XMLP_ret::XML_ERROR;
     }
     // sendSocketBufferSize - uint32Type
     if (nullptr != (p_aux = p_element->FirstChildElement(SEND_SOCK_BUF_SIZE)))
     {
-        if (XMLP_ret::XML_OK != getXMLUint(p_aux, &participant_node.getData()->rtps.sendSocketBufferSize, ident))
+        if (XMLP_ret::XML_OK != getXMLUint(p_aux, &participant_node.get()->rtps.sendSocketBufferSize, ident))
             return XMLP_ret::XML_ERROR;
     }
     // listenSocketBufferSize - uint32Type
     if (nullptr != (p_aux = p_element->FirstChildElement(LIST_SOCK_BUF_SIZE)))
     {
-        if (XMLP_ret::XML_OK != getXMLUint(p_aux, &participant_node.getData()->rtps.listenSocketBufferSize, ident))
+        if (XMLP_ret::XML_OK != getXMLUint(p_aux, &participant_node.get()->rtps.listenSocketBufferSize, ident))
             return XMLP_ret::XML_ERROR;
     }
     // builtin
     if (nullptr != (p_aux = p_element->FirstChildElement(BUILTIN)))
     {
-        if (XMLP_ret::XML_OK != getXMLBuiltinAttributes(p_aux, participant_node.getData()->rtps.builtin, ident))
+        if (XMLP_ret::XML_OK != getXMLBuiltinAttributes(p_aux, participant_node.get()->rtps.builtin, ident))
             return XMLP_ret::XML_ERROR;
     }
     // port
     if (nullptr != (p_aux = p_element->FirstChildElement(PORT)))
     {
-        if (XMLP_ret::XML_OK != getXMLPortParameters(p_aux, participant_node.getData()->rtps.port, ident))
+        if (XMLP_ret::XML_OK != getXMLPortParameters(p_aux, participant_node.get()->rtps.port, ident))
             return XMLP_ret::XML_ERROR;
     }
     // TODO: userData
     if (nullptr != (p_aux = p_element->FirstChildElement(USER_DATA)))
     {
-        if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux, participant_node.getData()->rtps.userData, ident))
+        if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux, participant_node.get()->rtps.userData, ident))
             return XMLP_ret::XML_ERROR;
     }
     // participantID - int32Type
     if (nullptr != (p_aux = p_element->FirstChildElement(PART_ID)))
     {
-        if (XMLP_ret::XML_OK != getXMLInt(p_aux, &participant_node.getData()->rtps.participantID, ident))
+        if (XMLP_ret::XML_OK != getXMLInt(p_aux, &participant_node.get()->rtps.participantID, ident))
             return XMLP_ret::XML_ERROR;
     }
     // use_IP4_to_send - boolType
     if (nullptr != (p_aux = p_element->FirstChildElement(IP4_TO_SEND)))
     {
-        if (XMLP_ret::XML_OK != getXMLBool(p_aux, &participant_node.getData()->rtps.use_IP4_to_send, ident))
+        if (XMLP_ret::XML_OK != getXMLBool(p_aux, &participant_node.get()->rtps.use_IP4_to_send, ident))
             return XMLP_ret::XML_ERROR;
     }
     // use_IP6_to_send - boolType
     if (nullptr != (p_aux = p_element->FirstChildElement(IP6_TO_SEND)))
     {
-        if (XMLP_ret::XML_OK != getXMLBool(p_aux, &participant_node.getData()->rtps.use_IP6_to_send, ident))
+        if (XMLP_ret::XML_OK != getXMLBool(p_aux, &participant_node.get()->rtps.use_IP6_to_send, ident))
             return XMLP_ret::XML_ERROR;
     }
     // throughputController
     if (nullptr != (p_aux = p_element->FirstChildElement(THROUGHPUT_CONT)))
     {
         if (XMLP_ret::XML_OK !=
-            getXMLThroughputController(p_aux, participant_node.getData()->rtps.throughputController, ident))
+            getXMLThroughputController(p_aux, participant_node.get()->rtps.throughputController, ident))
             return XMLP_ret::XML_ERROR;
     }
     // TODO: userTransports
@@ -347,13 +347,13 @@ XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<ParticipantAttr
     // useBuiltinTransports - boolType
     if (nullptr != (p_aux = p_element->FirstChildElement(USE_BUILTIN_TRANS)))
     {
-        if (XMLP_ret::XML_OK != getXMLBool(p_aux, &participant_node.getData()->rtps.useBuiltinTransports, ident))
+        if (XMLP_ret::XML_OK != getXMLBool(p_aux, &participant_node.get()->rtps.useBuiltinTransports, ident))
             return XMLP_ret::XML_ERROR;
     }
     // propertiesPolicy
     if (nullptr != (p_aux = p_element->FirstChildElement(PROPERTIES_POLICY)))
     {
-        if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux, participant_node.getData()->rtps.properties, ident))
+        if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux, participant_node.get()->rtps.properties, ident))
             return XMLP_ret::XML_ERROR;
     }
     // name - stringType
@@ -362,7 +362,7 @@ XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<ParticipantAttr
         std::string s;
         if (XMLP_ret::XML_OK != getXMLString(p_aux, &s, ident))
             return XMLP_ret::XML_ERROR;
-        participant_node.getData()->rtps.setName(s.c_str());
+        participant_node.get()->rtps.setName(s.c_str());
     }
     return XMLP_ret::XML_OK;
 }
@@ -403,56 +403,56 @@ XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<PublisherAttrib
     // topic
     if (nullptr != (p_aux = p_profile->FirstChildElement(TOPIC)))
     {
-        if (XMLP_ret::XML_OK != getXMLTopicAttributes(p_aux, publisher_node.getData()->topic, ident))
+        if (XMLP_ret::XML_OK != getXMLTopicAttributes(p_aux, publisher_node.get()->topic, ident))
             return XMLP_ret::XML_ERROR;
     }
     // qos
     if (nullptr != (p_aux = p_profile->FirstChildElement(QOS)))
     {
-        if (XMLP_ret::XML_OK != getXMLWriterQosPolicies(p_aux, publisher_node.getData()->qos, ident))
+        if (XMLP_ret::XML_OK != getXMLWriterQosPolicies(p_aux, publisher_node.get()->qos, ident))
             return XMLP_ret::XML_ERROR;
     }
     // times
     if (nullptr != (p_aux = p_profile->FirstChildElement(TIMES)))
     {
-        if (XMLP_ret::XML_OK != getXMLWriterTimes(p_aux, publisher_node.getData()->times, ident))
+        if (XMLP_ret::XML_OK != getXMLWriterTimes(p_aux, publisher_node.get()->times, ident))
             return XMLP_ret::XML_ERROR;
     }
     // unicastLocatorList
     if (nullptr != (p_aux = p_profile->FirstChildElement(UNI_LOC_LIST)))
     {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, publisher_node.getData()->unicastLocatorList, ident))
+        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, publisher_node.get()->unicastLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
     // multicastLocatorList
     if (nullptr != (p_aux = p_profile->FirstChildElement(MULTI_LOC_LIST)))
     {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, publisher_node.getData()->multicastLocatorList, ident))
+        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, publisher_node.get()->multicastLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
     // outLocatorList
     if (nullptr != (p_aux = p_profile->FirstChildElement(OUT_LOC_LIST)))
     {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, publisher_node.getData()->outLocatorList, ident))
+        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, publisher_node.get()->outLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
     // throughputController
     if (nullptr != (p_aux = p_profile->FirstChildElement(THROUGHPUT_CONT)))
     {
         if (XMLP_ret::XML_OK !=
-            getXMLThroughputController(p_aux, publisher_node.getData()->throughputController, ident))
+            getXMLThroughputController(p_aux, publisher_node.get()->throughputController, ident))
             return XMLP_ret::XML_ERROR;
     }
     // historyMemoryPolicy
     if (nullptr != (p_aux = p_profile->FirstChildElement(HIST_MEM_POLICY)))
     {
-        if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux, publisher_node.getData()->historyMemoryPolicy, ident))
+        if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux, publisher_node.get()->historyMemoryPolicy, ident))
             return XMLP_ret::XML_ERROR;
     }
     // propertiesPolicy
     if (nullptr != (p_aux = p_profile->FirstChildElement(PROPERTIES_POLICY)))
     {
-        if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux, publisher_node.getData()->properties, ident))
+        if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux, publisher_node.get()->properties, ident))
             return XMLP_ret::XML_ERROR;
     }
     // userDefinedID - int16type
@@ -461,7 +461,7 @@ XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<PublisherAttrib
         int i = 0;
         if (XMLP_ret::XML_OK != getXMLInt(p_aux, &i, ident) || i > 255)
             return XMLP_ret::XML_ERROR;
-        publisher_node.getData()->setUserDefinedID(static_cast<uint8_t>(i));
+        publisher_node.get()->setUserDefinedID(static_cast<uint8_t>(i));
     }
     // entityID - int16Type
     if (nullptr != (p_aux = p_profile->FirstChildElement(ENTITY_ID)))
@@ -469,7 +469,7 @@ XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<PublisherAttrib
         int i = 0;
         if (XMLP_ret::XML_OK != getXMLInt(p_aux, &i, ident) || i > 255)
             return XMLP_ret::XML_ERROR;
-        publisher_node.getData()->setEntityID(static_cast<uint8_t>(i));
+        publisher_node.get()->setEntityID(static_cast<uint8_t>(i));
     }
     return XMLP_ret::XML_OK;
 }
@@ -512,55 +512,55 @@ XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<SubscriberAttri
     // topic
     if (nullptr != (p_aux = p_profile->FirstChildElement(TOPIC)))
     {
-        if (XMLP_ret::XML_OK != getXMLTopicAttributes(p_aux, subscriber_node.getData()->topic, ident))
+        if (XMLP_ret::XML_OK != getXMLTopicAttributes(p_aux, subscriber_node.get()->topic, ident))
             return XMLP_ret::XML_ERROR;
     }
     // qos
     if (nullptr != (p_aux = p_profile->FirstChildElement(QOS)))
     {
-        if (XMLP_ret::XML_OK != getXMLReaderQosPolicies(p_aux, subscriber_node.getData()->qos, ident))
+        if (XMLP_ret::XML_OK != getXMLReaderQosPolicies(p_aux, subscriber_node.get()->qos, ident))
             return XMLP_ret::XML_ERROR;
     }
     // times
     if (nullptr != (p_aux = p_profile->FirstChildElement(TIMES)))
     {
-        if (XMLP_ret::XML_OK != getXMLReaderTimes(p_aux, subscriber_node.getData()->times, ident))
+        if (XMLP_ret::XML_OK != getXMLReaderTimes(p_aux, subscriber_node.get()->times, ident))
             return XMLP_ret::XML_ERROR;
     }
     // unicastLocatorList
     if (nullptr != (p_aux = p_profile->FirstChildElement(UNI_LOC_LIST)))
     {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, subscriber_node.getData()->unicastLocatorList, ident))
+        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, subscriber_node.get()->unicastLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
     // multicastLocatorList
     if (nullptr != (p_aux = p_profile->FirstChildElement(MULTI_LOC_LIST)))
     {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, subscriber_node.getData()->multicastLocatorList, ident))
+        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, subscriber_node.get()->multicastLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
     // outLocatorList
     if (nullptr != (p_aux = p_profile->FirstChildElement(OUT_LOC_LIST)))
     {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, subscriber_node.getData()->outLocatorList, ident))
+        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, subscriber_node.get()->outLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
     // expectsInlineQos - boolType
     if (nullptr != (p_aux = p_profile->FirstChildElement(EXP_INLINE_QOS)))
     {
-        if (XMLP_ret::XML_OK != getXMLBool(p_aux, &subscriber_node.getData()->expectsInlineQos, ident))
+        if (XMLP_ret::XML_OK != getXMLBool(p_aux, &subscriber_node.get()->expectsInlineQos, ident))
             return XMLP_ret::XML_ERROR;
     }
     // historyMemoryPolicy
     if (nullptr != (p_aux = p_profile->FirstChildElement(HIST_MEM_POLICY)))
     {
-        if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux, subscriber_node.getData()->historyMemoryPolicy, ident))
+        if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux, subscriber_node.get()->historyMemoryPolicy, ident))
             return XMLP_ret::XML_ERROR;
     }
     // propertiesPolicy
     if (nullptr != (p_aux = p_profile->FirstChildElement(PROPERTIES_POLICY)))
     {
-        if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux, subscriber_node.getData()->properties, ident))
+        if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux, subscriber_node.get()->properties, ident))
             return XMLP_ret::XML_ERROR;
     }
     // userDefinedID - int16Type
@@ -569,7 +569,7 @@ XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<SubscriberAttri
         int i = 0;
         if (XMLP_ret::XML_OK != getXMLInt(p_aux, &i, ident) || i > 255)
             return XMLP_ret::XML_ERROR;
-        subscriber_node.getData()->setUserDefinedID(static_cast<uint8_t>(i));
+        subscriber_node.get()->setUserDefinedID(static_cast<uint8_t>(i));
     }
     // entityID - int16Type
     if (nullptr != (p_aux = p_profile->FirstChildElement(ENTITY_ID)))
@@ -577,7 +577,7 @@ XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<SubscriberAttri
         int i = 0;
         if (XMLP_ret::XML_OK != getXMLInt(p_aux, &i, ident) || i > 255)
             return XMLP_ret::XML_ERROR;
-        subscriber_node.getData()->setEntityID(static_cast<uint8_t>(i));
+        subscriber_node.get()->setEntityID(static_cast<uint8_t>(i));
     }
     return XMLP_ret::XML_OK;
 }
