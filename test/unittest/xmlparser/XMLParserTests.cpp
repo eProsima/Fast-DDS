@@ -165,6 +165,35 @@ TEST_F(XMLParserTests, WrongName)
     ASSERT_FALSE(participant_profile);
 }
 
+TEST_F(XMLParserTests, TypesRooted)
+{
+    std::unique_ptr<BaseNode> root;   
+    ASSERT_EQ(XMLParser::loadXML("test_xml_profiles_rooted.xml", root), XMLP_ret::XML_OK);
+
+    ParticipantAttributes participant_atts;
+    bool participant_profile = false;
+    bool publisher_profile = false;
+    bool subscriber_profile = false;
+    for (const auto& profile : root->getChildren())
+    {
+        if (profile->getType() == NodeType::PARTICIPANT)
+        {
+            participant_profile = true;
+        }
+        else if (profile->getType() == NodeType::SUBSCRIBER)
+        {
+            publisher_profile = true;
+        }
+        else if (profile->getType() == NodeType::PUBLISHER)
+        {
+            subscriber_profile = true;
+        }
+    }
+    ASSERT_TRUE(participant_profile);
+    ASSERT_TRUE(publisher_profile);
+    ASSERT_TRUE(subscriber_profile);
+}
+
 TEST_F(XMLParserTests, Types)
 {
     std::unique_ptr<BaseNode> root;   
