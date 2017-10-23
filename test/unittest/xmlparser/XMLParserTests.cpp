@@ -101,7 +101,6 @@ TEST_F(XMLTreeTests, RootMultipleChildren)
 
 TEST_F(XMLTreeTests, DataNode)
 {
-    ;
     const std::string attribute_name0{"Attribute0"};
     const std::string attribute_name1{"Attribute1"};
     const std::string attribute_value0{"TESTATTRIBUTE"};
@@ -134,22 +133,88 @@ class XMLParserTests : public ::testing::Test
     
 };
 
-TEST_F(XMLParserTests, LoadFromFile)
+TEST_F(XMLParserTests, NoFIle)
+{
+    std::unique_ptr<BaseNode> root;    
+    ASSERT_EQ(XMLParser::loadXML("missing_file.xml", root), XMLP_ret::XML_ERROR);
+}
+
+TEST_F(XMLParserTests, WrongName)
 {
     std::unique_ptr<BaseNode> root;
     const std::string name_attribute{"profile_name"};
-    const std::string profile_name{"test_participant_profile"};
-    XMLP_ret ret = XMLParser::loadXML("test_xml_profiles.xml", root);
-    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    const std::string profile_name{"missing_profile"};
+    
+    ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
 
     ParticipantAttributes participant_atts;
     bool participant_profile = false;
     for(const auto& profile : root->getChildren())
     {
+        if (profile->getType() == NodeType::PARTICIPANT)        
+        {
+            auto data_node =  dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
+            auto search = data_node->getAttributes().find(name_attribute);
+            if ((search != data_node->getAttributes().end()) && (search->second == profile_name))
+            {
+                participant_atts = *data_node->get();
+                participant_profile = true;
+            }
+        }
+    }
+    ASSERT_FALSE(participant_profile);
+}
+
+TEST_F(XMLParserTests, Types)
+{
+    std::unique_ptr<BaseNode> root;   
+    ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
+
+    ParticipantAttributes participant_atts;
+    bool participant_profile = false;
+    bool publisher_profile = false;
+    bool subscriber_profile = false;
+    for (const auto& profile : root->getChildren())
+    {
         if (profile->getType() == NodeType::PARTICIPANT)
         {
             participant_profile = true;
-            participant_atts = *(dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get())->get());
+        }
+        else if (profile->getType() == NodeType::SUBSCRIBER)
+        {
+            publisher_profile = true;
+        }
+        else if (profile->getType() == NodeType::PUBLISHER)
+        {
+            subscriber_profile = true;
+        }
+    }
+    ASSERT_TRUE(participant_profile);
+    ASSERT_TRUE(publisher_profile);
+    ASSERT_TRUE(subscriber_profile);
+}
+
+TEST_F(XMLParserTests, Data)
+{
+    std::unique_ptr<BaseNode> root;
+    const std::string name_attribute{"profile_name"};
+    const std::string profile_name{"test_participant_profile"};
+    
+    ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
+
+    ParticipantAttributes participant_atts;
+    bool participant_profile = false;
+    for(const auto& profile : root->getChildren())
+    {
+        if (profile->getType() == NodeType::PARTICIPANT)        
+        {
+            auto data_node =  dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
+            auto search = data_node->getAttributes().find(name_attribute);
+            if ((search != data_node->getAttributes().end()) && (search->second == profile_name))
+            {
+                participant_atts = *data_node->get();
+                participant_profile = true;
+            }
         }
     }
 
