@@ -17,9 +17,12 @@
 
 #include <gtest/gtest.h>
 
+using eprosima::fastrtps::ParticipantAttributes;
+
 using eprosima::fastrtps::xmlparser::BaseNode;
 using eprosima::fastrtps::xmlparser::DataNode;
 using eprosima::fastrtps::xmlparser::NodeType;
+using eprosima::fastrtps::xmlparser::XMLP_ret;
 using eprosima::fastrtps::xmlparser::XMLParser;
 
 class XMLTreeTests : public ::testing::Test
@@ -89,15 +92,16 @@ TEST_F(XMLTreeTests, RootMultipleChildren)
 
     for (int i = 0; i < num_children; ++i)
     {
-        ASSERT_EQ(num_children-i, test_base.getNumChildren());
+        ASSERT_EQ(num_children - i, test_base.getNumChildren());
         ASSERT_EQ(true, test_base.removeChild(0));
-        ASSERT_EQ(num_children-i-1, test_base.getNumChildren());
-        ASSERT_EQ(false, test_base.removeChild(num_children-i));
+        ASSERT_EQ(num_children - i - 1, test_base.getNumChildren());
+        ASSERT_EQ(false, test_base.removeChild(num_children - i));
     }
 }
 
 TEST_F(XMLTreeTests, DataNode)
-{;
+{
+    ;
     const std::string attribute_name0{"Attribute0"};
     const std::string attribute_name1{"Attribute1"};
     const std::string attribute_value0{"TESTATTRIBUTE"};
@@ -105,7 +109,7 @@ TEST_F(XMLTreeTests, DataNode)
 
     DataNode<std::string> data_node{NodeType::PUBLISHER};
     std::string* data = new std::string("TESTDATA");
-    
+
     data_node.setData(std::unique_ptr<std::string>(data));
     data_node.addAttribute(attribute_name0, attribute_value0);
     data_node.addAttribute(attribute_name1, attribute_value1);
@@ -126,7 +130,90 @@ class XMLParserTests : public ::testing::Test
     ~XMLParserTests()
     {
     }
+
+    
 };
+
+TEST_F(XMLParserTests, LoadFromFile)
+{
+    std::unique_ptr<BaseNode> root;
+    const std::string name_attribute{"profile_name"};
+    const std::string profile_name{"test_participant_profile"};
+    XMLP_ret ret = XMLParser::loadXML("test_xml_profiles.xml", root);
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    ParticipantAttributes participant_atts;
+    bool participant_profile = false;
+    for(const auto& profile : root->getChildren())
+    {
+        if (profile->getType() == NodeType::PARTICIPANT)
+        {
+            participant_profile = true;
+            participant_atts = *(dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get())->get());
+        }
+    }
+
+
+    ASSERT_TRUE(participant_profile);
+    RTPSParticipantAttributes &rtps_atts = participant_atts.rtps;
+    BuiltinAttributes &builtin = rtps_atts.builtin;
+    Locator_t locator;
+    LocatorListIterator loc_list_it;
+    PortParameters &port = rtps_atts.port;
+    locator.set_IP4_address(192, 168, 1 , 2);
+    locator.port = 2019;
+    EXPECT_EQ(*rtps_atts.defaultUnicastLocatorList.begin(), locator);
+    locator.set_IP4_address(239, 255, 0 , 1);
+    locator.port = 2021;
+    EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
+    locator.set_IP4_address(192, 168, 1 , 1);
+    locator.port = 1979;
+    EXPECT_EQ(*rtps_atts.defaultOutLocatorList.begin(), locator);
+    EXPECT_EQ(rtps_atts.defaultSendPort, 80);
+    EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32);
+    EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000);
+    EXPECT_EQ(builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
+    EXPECT_EQ(builtin.use_SIMPLE_EndpointDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.use_STATIC_EndpointDiscoveryProtocol, false);
+    EXPECT_EQ(builtin.domainId, 2019102);
+    EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
+    EXPECT_EQ(builtin.leaseDuration_announcementperiod.fraction, 333);
+    EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
+    EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
+    locator.set_IP4_address(192, 168, 1, 5);
+    locator.port = 9999;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);
+    locator.set_IP4_address(192, 168, 1, 6);
+    locator.port = 6666;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 2);
+    locator.port = 32;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficMulticastLocatorList.begin()), locator);
+    locator.set_IP4_address(239, 255, 0, 3);
+    locator.port = 2112;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 1);
+    locator.port = 21120;
+    EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
+    EXPECT_EQ(port.portBase, 12);
+    EXPECT_EQ(port.domainIDGain, 34);
+    EXPECT_EQ(port.participantIDGain, 56);
+    EXPECT_EQ(port.offsetd0, 78);
+    EXPECT_EQ(port.offsetd1, 90);
+    EXPECT_EQ(port.offsetd2, 123);
+    EXPECT_EQ(port.offsetd3, 456);
+    EXPECT_EQ(rtps_atts.participantID, 9898);
+    EXPECT_EQ(rtps_atts.use_IP4_to_send, true);
+    EXPECT_EQ(rtps_atts.use_IP6_to_send, false);
+    EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048);
+    EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45);
+    EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
+    EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
+}
 
 int main(int argc, char** argv)
 {
