@@ -41,7 +41,7 @@ XMLP_ret XMLParser::parseXML(XMLDocument& xmlDoc, up_base_node_t& root)
         }
         else
         {
-            root.reset(new BaseNode{NodeType::ROOT});
+            root.reset(new BaseNode{NodeType::PROFILES});
             ret  = parseProfiles(p_root, *root);
         }
     }
@@ -59,7 +59,7 @@ XMLP_ret XMLParser::parseRoot(XMLElement* p_root, BaseNode& rootNode)
     XMLElement* root_child = nullptr;
     if (nullptr != (root_child = p_root->FirstChildElement(PROFILES)))
     {
-        up_base_node_t profiles_node = up_base_node_t(new BaseNode{NodeType::ROOT});
+        up_base_node_t profiles_node = up_base_node_t(new BaseNode{NodeType::PROFILES});
         if (XMLP_ret::XML_OK == (ret = parseProfiles(root_child, *profiles_node)))
         {
             rootNode.addChild(std::move(profiles_node));
