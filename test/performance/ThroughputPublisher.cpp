@@ -159,7 +159,6 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
 
     mp_datapub = Domain::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_DataPubListener);
 
-
     //COMMAND
     SubscriberAttributes Rparam;
     Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -309,10 +308,6 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         //cout << "samples sent: "<<samples<< endl;
         eClock::my_sleep(recovery_time_ms);
         timewait_us += t_overhead_;
-        //cout << "Removing all..."<<endl;
-        //mp_datapub->removeAllChange(&aux);
-
-        //cout << (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))<<endl;
     }
     command.m_command = TEST_ENDS;
     //cout << "SEND COMMAND "<< command.m_command << endl;

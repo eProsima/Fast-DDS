@@ -24,8 +24,8 @@ namespace fastrtps {
 class Semaphore {
 public:
   explicit Semaphore(size_t count = 0);
-  Semaphore(const Semaphore &) = delete;
-  Semaphore &operator=(const Semaphore &) = delete;
+  Semaphore(const Semaphore&) = delete;
+  Semaphore& operator=(const Semaphore&) = delete;
 
   void post();
   void wait();
@@ -49,6 +49,7 @@ inline void Semaphore::wait() {
   cv_.wait(lock, [&] { return count_ > 0; });
   --count_;
 }
+
 } // fastrtps
 } // eprosima
 

@@ -26,7 +26,6 @@
 #include <condition_variable>
 #include <mutex>
 
-
 namespace eprosima
 {
     namespace fastrtps
@@ -65,11 +64,14 @@ namespace eprosima
                 //!EntityId used to send the HB.(only for builtin types performance)
                 EntityId_t m_HBReaderEntityId;
                 // TODO Join this mutex when main mutex would not be recursive.
-                std::mutex* all_acked_mutex_;
+                std::mutex all_acked_mutex_;
+                std::condition_variable all_acked_cond_;
                 // TODO Also remove when main mutex not recursive.
                 bool all_acked_;
-                //! Conditional variable for detect all acked.
-                std::condition_variable* all_acked_cond_;
+                std::mutex may_remove_change_mutex_;
+                std::condition_variable may_remove_change_cond_;
+                unsigned int may_remove_change_;
+
                 public:
                 /**
                  * Add a specific change to all ReaderLocators.
@@ -115,9 +117,8 @@ namespace eprosima
 
                 bool wait_for_all_acked(const Duration_t& max_wait);
 
-                void check_for_all_acked();
-
-                bool clean_history(unsigned int max = 0);
+                bool try_remove_change(std::chrono::microseconds& microseconds,
+                        std::unique_lock<std::recursive_mutex>& lock);
 
                 /**
                  * Update the Attributes of the Writer.
@@ -183,10 +184,15 @@ namespace eprosima
                  */
                 void send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy, bool final = false);
 
+                void process_acknack(const GUID_t reader_guid, uint32_t ack_count,
+                        const SequenceNumberSet_t& sn_set, bool final_flag);
+
                 private:
 
                 void send_heartbeat_nts_(const std::vector<GUID_t>& remote_readers, const LocatorList_t& locators,
                         RTPSMessageGroup& message_group, bool final = false);
+
+                void check_acked_status();
 
                 bool disableHeartbeatPiggyback_;
 

@@ -180,7 +180,7 @@ class StatefulReader:public RTPSReader
 
     private:
 
-        bool acceptMsgFrom(GUID_t &entityGUID ,WriterProxy **wp, bool checkTrusted = true);
+        bool acceptMsgFrom(GUID_t &entityGUID ,WriterProxy **wp);
 
         /*!
          * @remarks Nn thread-safe.

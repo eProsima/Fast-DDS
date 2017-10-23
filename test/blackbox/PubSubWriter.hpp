@@ -283,6 +283,11 @@ class PubSubWriter
         }
     }
 
+    bool send_sample(type& msg)
+    {
+        return publisher_->write((void*)&msg);
+    }
+
     void waitDiscovery()
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
@@ -375,6 +380,12 @@ class PubSubWriter
     PubSubWriter& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
     {
         publisher_attr_.qos.m_reliability.kind = kind;
+        return *this;
+    }
+
+    PubSubWriter& max_blocking_time(const Duration_t time)
+    {
+        publisher_attr_.qos.m_reliability.max_blocking_time = time;
         return *this;
     }
 

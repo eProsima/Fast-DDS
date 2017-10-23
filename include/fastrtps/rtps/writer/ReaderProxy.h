@@ -73,9 +73,8 @@ namespace eprosima
                  * Mark all changes up to the one indicated by the seqNum as Acknowledged.
                  * If seqNum == 30, changes 1-29 are marked as ack.
                  * @param seqNum Pointer to the seqNum
-                 * @return True if all changes are acknowledge and anyone with other state.
                  */
-                bool acked_changes_set(const SequenceNumber_t& seqNum);
+                void acked_changes_set(const SequenceNumber_t& seqNum);
 
                 /**
                  * Mark all changes in the vector as requested.
@@ -178,6 +177,8 @@ namespace eprosima
                  * @return
                  */
                 inline bool rtps_is_relevant(CacheChange_t* change){(void)change; return true;};
+
+                SequenceNumber_t get_low_mark() const { return changesFromRLowMark_; }
 
                 //!Mutex
                 std::recursive_mutex* mp_mutex;

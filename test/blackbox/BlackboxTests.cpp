@@ -1365,6 +1365,7 @@ BLACKBOXTEST(BlackBox, PubSubKeepAll)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        max_blocking_time({0, 0}).
         resource_limits_allocated_samples(2).
         resource_limits_max_samples(2).init();
 
@@ -1412,6 +1413,7 @@ BLACKBOXTEST(BlackBox, PubSubKeepAllTransient)
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
         durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
+        max_blocking_time({0, 0}).
         resource_limits_allocated_samples(2).
         resource_limits_max_samples(2).init();
 
@@ -1800,7 +1802,7 @@ BLACKBOXTEST(BlackBox, EndpointRediscovery)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    // Wait heartbeat period
+    // Wait heartbeat period of builtin endpoints
     std::this_thread::sleep_for(std::chrono::seconds(4));
 
     test_UDPv4Transport::ShutdownAllNetwork = true;

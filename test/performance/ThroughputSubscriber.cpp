@@ -139,6 +139,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
                              break;
                          }
             case (READY_TO_START):{
+                                      cout << "Command: READY_TO_START" << endl;
                                       m_up.m_datasize = m_commandin.m_size;
                                       m_up.m_demand = m_commandin.m_demand;
                                       //cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
@@ -153,12 +154,13 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
                                   }
             case (TEST_STARTS):{
                                    m_up.t_start_ = std::chrono::steady_clock::now();
+                                   cout << "Command: TEST_STARTS" << endl;
                                    break;
                                }
             case (TEST_ENDS):{
                                  m_up.t_end_ = std::chrono::steady_clock::now();
                                  m_up.m_DataSubListener.saveNumbers();
-                                 cout << "TEST ends" << endl;
+                                 cout << "Command: TEST_ENDS" << endl;
                                  std::unique_lock<std::mutex> lock(m_up.mutex_);
                                  m_up.stop_count_ = 1;
                                  lock.unlock();
@@ -171,6 +173,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
                                  m_up.stop_count_ = 2;
                                  lock.unlock();
                                  m_up.stop_cond_.notify_one();
+                                 cout << "Command: ALL_STOPS" << endl;
                              }
         }
     }

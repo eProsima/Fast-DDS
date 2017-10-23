@@ -30,6 +30,7 @@
 #include <fastrtps/rtps/RTPSDomain.h>
 
 #include <fastrtps/log/Log.h>
+#include <fastrtps/utils/TimeConversion.h>
 
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
@@ -163,7 +164,7 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
             ch->write_params = wparams;
         }
 
-        if(!this->m_history.add_pub_change(ch, wparams))
+        if(!this->m_history.add_pub_change(ch, wparams, lock))
         {
             m_history.release_Cache(ch);
             return false;
@@ -282,12 +283,10 @@ void PublisherImpl::PublisherWriterListener::onWriterMatched(RTPSWriter* /*write
         mp_publisherImpl->mp_listener->onPublicationMatched(mp_publisherImpl->mp_userPublisher,info);
 }
 
-bool PublisherImpl::clean_history(unsigned int max)
+bool PublisherImpl::try_remove_change(std::unique_lock<std::recursive_mutex>& lock)
 {
-    if(m_att.topic.historyQos.kind == HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS)
-        return mp_writer->clean_history(max);
-    else
-        return mp_writer->remove_older_changes(max);
+    std::chrono::microseconds max_w(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
+    return mp_writer->try_remove_change(max_w, lock);
 }
 
 bool PublisherImpl::wait_for_all_acked(const Time_t& max_wait)
