@@ -47,8 +47,17 @@ XMLP_ret XMLParser::parseXML(XMLDocument& xmlDoc, up_base_node_t& root)
     }
     else
     {
-        root.reset(new BaseNode{NodeType::ROOT});
-        ret  = parseRoot(p_root, *root);
+        XMLElement* new_root = p_root->FirstChildElement(PROFILES);
+        if (nullptr == new_root)
+        {
+            logError(XMLPARSER, "Not found root tag");
+            ret = XMLP_ret::XML_ERROR;
+        }
+        else
+        {
+            root.reset(new BaseNode{NodeType::PROFILES});
+            ret  = parseProfiles(new_root, *root);
+        }
     }
     return ret;
 }
