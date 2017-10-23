@@ -17,6 +17,9 @@
 
 #include <gtest/gtest.h>
 
+#include <fstream>
+#include <sstream>
+
 using eprosima::fastrtps::ParticipantAttributes;
 
 using eprosima::fastrtps::xmlparser::BaseNode;
@@ -130,50 +133,106 @@ class XMLParserTests : public ::testing::Test
     {
     }
 
-    
+    bool get_participant_attributes(std::unique_ptr<BaseNode>& root, ParticipantAttributes& participant_atts)
+    {
+        const std::string name_attribute{"profile_name"};
+        const std::string profile_name{"missing_profile"};
+        participant_atts;
+        bool participant_profile = false;
+        for (const auto& profile : root->getChildren())
+        {
+            if (profile->getType() == NodeType::PARTICIPANT)
+            {
+                auto data_node = dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
+                auto search    = data_node->getAttributes().find(name_attribute);
+                if ((search != data_node->getAttributes().end()) && (search->second == profile_name))
+                {
+                    participant_atts    = *data_node->get();
+                    participant_profile = true;
+                }
+            }
+        }
+        return participant_profile;
+    }
 };
 
 TEST_F(XMLParserTests, NoFIle)
 {
-    std::unique_ptr<BaseNode> root;    
+    std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML("missing_file.xml", root), XMLP_ret::XML_ERROR);
+}
+
+TEST_F(XMLParserTests, EmptyString)
+{
+    std::ifstream inFile;
+    inFile.open("missing_file.xml");
+    std::stringstream strStream;
+    strStream << inFile.rdbuf();
+    std::unique_ptr<BaseNode> root;
+    ASSERT_EQ(XMLParser::loadXML(strStream.str().data(), strStream.str().size(), root), XMLP_ret::XML_ERROR);
 }
 
 TEST_F(XMLParserTests, WrongName)
 {
     std::unique_ptr<BaseNode> root;
-    const std::string name_attribute{"profile_name"};
-    const std::string profile_name{"missing_profile"};
-    
     ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
-
     ParticipantAttributes participant_atts;
-    bool participant_profile = false;
-    for(const auto& profile : root->getChildren())
-    {
-        if (profile->getType() == NodeType::PARTICIPANT)        
-        {
-            auto data_node =  dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
-            auto search = data_node->getAttributes().find(name_attribute);
-            if ((search != data_node->getAttributes().end()) && (search->second == profile_name))
-            {
-                participant_atts = *data_node->get();
-                participant_profile = true;
-            }
-        }
-    }
-    ASSERT_FALSE(participant_profile);
+    ASSERT_FALSE(get_participant_attributes(root, participant_atts));
+}
+
+TEST_F(XMLParserTests, WrongNameBuffer)
+{
+    std::ifstream inFile;
+    inFile.open("test_xml_profiles.xml");
+    std::stringstream strStream;
+    strStream << inFile.rdbuf();
+    std::unique_ptr<BaseNode> root;
+    ASSERT_EQ(XMLParser::loadXML(strStream.str().data(), strStream.str().size(), root), XMLP_ret::XML_OK);
+    ParticipantAttributes participant_atts;
+    ASSERT_FALSE(get_participant_attributes(root, participant_atts));
 }
 
 TEST_F(XMLParserTests, TypesRooted)
 {
-    std::unique_ptr<BaseNode> root;   
+    std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML("test_xml_profiles_rooted.xml", root), XMLP_ret::XML_OK);
 
     ParticipantAttributes participant_atts;
     bool participant_profile = false;
-    bool publisher_profile = false;
-    bool subscriber_profile = false;
+    bool publisher_profile   = false;
+    bool subscriber_profile  = false;
+    for (const auto& profile : root->getChildren())
+    {
+        if (profile->getType() == NodeType::PARTICIPANT)
+        {
+            participant_profile = true;
+        }
+        else if (profile->getType() == NodeType::SUBSCRIBER)
+        {
+            publisher_profile = true;
+        }
+        else if (profile->getType() == NodeType::PUBLISHER)
+        {
+            subscriber_profile = true;
+        }
+    }
+    ASSERT_TRUE(participant_profile);
+    ASSERT_TRUE(publisher_profile);
+    ASSERT_TRUE(subscriber_profile);
+}
+
+TEST_F(XMLParserTests, TypesRootedBuffer)
+{
+    std::ifstream inFile;
+    inFile.open("test_xml_profiles_rooted.xml");
+    std::stringstream strStream;
+    strStream << inFile.rdbuf();
+    std::unique_ptr<BaseNode> root;
+    ASSERT_EQ(XMLParser::loadXML(strStream.str().data(), strStream.str().size(), root), XMLP_ret::XML_OK);
+    ParticipantAttributes participant_atts;
+    bool participant_profile = false;
+    bool publisher_profile   = false;
+    bool subscriber_profile  = false;
     for (const auto& profile : root->getChildren())
     {
         if (profile->getType() == NodeType::PARTICIPANT)
@@ -196,13 +255,46 @@ TEST_F(XMLParserTests, TypesRooted)
 
 TEST_F(XMLParserTests, Types)
 {
-    std::unique_ptr<BaseNode> root;   
+    std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
 
     ParticipantAttributes participant_atts;
     bool participant_profile = false;
-    bool publisher_profile = false;
-    bool subscriber_profile = false;
+    bool publisher_profile   = false;
+    bool subscriber_profile  = false;
+    for (const auto& profile : root->getChildren())
+    {
+        if (profile->getType() == NodeType::PARTICIPANT)
+        {
+            participant_profile = true;
+        }
+        else if (profile->getType() == NodeType::SUBSCRIBER)
+        {
+            publisher_profile = true;
+        }
+        else if (profile->getType() == NodeType::PUBLISHER)
+        {
+            subscriber_profile = true;
+        }
+    }
+    ASSERT_TRUE(participant_profile);
+    ASSERT_TRUE(publisher_profile);
+    ASSERT_TRUE(subscriber_profile);
+}
+
+TEST_F(XMLParserTests, TypesBuffer)
+{
+    std::ifstream inFile;
+    inFile.open("test_xml_profiles.xml");
+    std::stringstream strStream;
+    strStream << inFile.rdbuf();
+    std::unique_ptr<BaseNode> root;
+    ASSERT_EQ(XMLParser::loadXML(strStream.str().data(), strStream.str().size(), root), XMLP_ret::XML_OK);
+
+    ParticipantAttributes participant_atts;
+    bool participant_profile = false;
+    bool publisher_profile   = false;
+    bool subscriber_profile  = false;
     for (const auto& profile : root->getChildren())
     {
         if (profile->getType() == NodeType::PARTICIPANT)
@@ -228,39 +320,126 @@ TEST_F(XMLParserTests, Data)
     std::unique_ptr<BaseNode> root;
     const std::string name_attribute{"profile_name"};
     const std::string profile_name{"test_participant_profile"};
-    
+
     ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
 
     ParticipantAttributes participant_atts;
     bool participant_profile = false;
-    for(const auto& profile : root->getChildren())
+    for (const auto& profile : root->getChildren())
     {
-        if (profile->getType() == NodeType::PARTICIPANT)        
+        if (profile->getType() == NodeType::PARTICIPANT)
         {
-            auto data_node =  dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
-            auto search = data_node->getAttributes().find(name_attribute);
+            auto data_node = dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
+            auto search    = data_node->getAttributes().find(name_attribute);
             if ((search != data_node->getAttributes().end()) && (search->second == profile_name))
             {
-                participant_atts = *data_node->get();
+                participant_atts    = *data_node->get();
                 participant_profile = true;
             }
         }
     }
 
-
     ASSERT_TRUE(participant_profile);
-    RTPSParticipantAttributes &rtps_atts = participant_atts.rtps;
-    BuiltinAttributes &builtin = rtps_atts.builtin;
+    RTPSParticipantAttributes& rtps_atts = participant_atts.rtps;
+    BuiltinAttributes& builtin           = rtps_atts.builtin;
     Locator_t locator;
     LocatorListIterator loc_list_it;
-    PortParameters &port = rtps_atts.port;
-    locator.set_IP4_address(192, 168, 1 , 2);
+    PortParameters& port = rtps_atts.port;
+    locator.set_IP4_address(192, 168, 1, 2);
     locator.port = 2019;
     EXPECT_EQ(*rtps_atts.defaultUnicastLocatorList.begin(), locator);
-    locator.set_IP4_address(239, 255, 0 , 1);
+    locator.set_IP4_address(239, 255, 0, 1);
     locator.port = 2021;
     EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
-    locator.set_IP4_address(192, 168, 1 , 1);
+    locator.set_IP4_address(192, 168, 1, 1);
+    locator.port = 1979;
+    EXPECT_EQ(*rtps_atts.defaultOutLocatorList.begin(), locator);
+    EXPECT_EQ(rtps_atts.defaultSendPort, 80);
+    EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32);
+    EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000);
+    EXPECT_EQ(builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
+    EXPECT_EQ(builtin.use_SIMPLE_EndpointDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.use_STATIC_EndpointDiscoveryProtocol, false);
+    EXPECT_EQ(builtin.domainId, 2019102);
+    EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
+    EXPECT_EQ(builtin.leaseDuration_announcementperiod.fraction, 333);
+    EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
+    EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
+    locator.set_IP4_address(192, 168, 1, 5);
+    locator.port = 9999;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);
+    locator.set_IP4_address(192, 168, 1, 6);
+    locator.port = 6666;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 2);
+    locator.port = 32;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficMulticastLocatorList.begin()), locator);
+    locator.set_IP4_address(239, 255, 0, 3);
+    locator.port = 2112;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.set_IP4_address(239, 255, 0, 1);
+    locator.port = 21120;
+    EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
+    EXPECT_EQ(port.portBase, 12);
+    EXPECT_EQ(port.domainIDGain, 34);
+    EXPECT_EQ(port.participantIDGain, 56);
+    EXPECT_EQ(port.offsetd0, 78);
+    EXPECT_EQ(port.offsetd1, 90);
+    EXPECT_EQ(port.offsetd2, 123);
+    EXPECT_EQ(port.offsetd3, 456);
+    EXPECT_EQ(rtps_atts.participantID, 9898);
+    EXPECT_EQ(rtps_atts.use_IP4_to_send, true);
+    EXPECT_EQ(rtps_atts.use_IP6_to_send, false);
+    EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048);
+    EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45);
+    EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
+    EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
+}
+
+TEST_F(XMLParserTests, DataBuffer)
+{
+    const std::string name_attribute{"profile_name"};
+    const std::string profile_name{"test_participant_profile"};
+    std::ifstream inFile;
+    inFile.open("test_xml_profiles.xml");
+    std::stringstream strStream;
+    strStream << inFile.rdbuf();
+    std::unique_ptr<BaseNode> root;
+    ASSERT_EQ(XMLParser::loadXML(strStream.str().data(), strStream.str().size(), root), XMLP_ret::XML_OK);
+
+    ParticipantAttributes participant_atts;
+    bool participant_profile = false;
+    for (const auto& profile : root->getChildren())
+    {
+        if (profile->getType() == NodeType::PARTICIPANT)
+        {
+            auto data_node = dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
+            auto search    = data_node->getAttributes().find(name_attribute);
+            if ((search != data_node->getAttributes().end()) && (search->second == profile_name))
+            {
+                participant_atts    = *data_node->get();
+                participant_profile = true;
+            }
+        }
+    }
+
+    ASSERT_TRUE(participant_profile);
+    RTPSParticipantAttributes& rtps_atts = participant_atts.rtps;
+    BuiltinAttributes& builtin           = rtps_atts.builtin;
+    Locator_t locator;
+    LocatorListIterator loc_list_it;
+    PortParameters& port = rtps_atts.port;
+    locator.set_IP4_address(192, 168, 1, 2);
+    locator.port = 2019;
+    EXPECT_EQ(*rtps_atts.defaultUnicastLocatorList.begin(), locator);
+    locator.set_IP4_address(239, 255, 0, 1);
+    locator.port = 2021;
+    EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
+    locator.set_IP4_address(192, 168, 1, 1);
     locator.port = 1979;
     EXPECT_EQ(*rtps_atts.defaultOutLocatorList.begin(), locator);
     EXPECT_EQ(rtps_atts.defaultSendPort, 80);
