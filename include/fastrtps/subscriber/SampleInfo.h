@@ -36,22 +36,22 @@ namespace fastrtps {
  */
 class RTPS_DllAPI SampleInfo_t {
 public:
-	SampleInfo_t():sampleKind(ALIVE), ownershipStrength(0),
-    sample_identity(SampleIdentity::unknown()), related_sample_identity(SampleIdentity::unknown()) {}
+	SampleInfo_t():sampleKind(rtps::ALIVE), ownershipStrength(0),
+    sample_identity(rtps::SampleIdentity::unknown()), related_sample_identity(rtps::SampleIdentity::unknown()) {}
 
 	virtual ~SampleInfo_t(){};
 	//!Sample kind.
-	ChangeKind_t sampleKind;
+	rtps::ChangeKind_t sampleKind;
 	//!Ownership Strength of the writer of the sample (0 if the ownership kind is set to SHARED_OWNERSHIP_QOS).
 	uint16_t ownershipStrength;
 	//!Source timestamp of the sample.
-	Time_t sourceTimestamp;
+	rtps::Time_t sourceTimestamp;
 	//!InstanceHandle of the data
-	InstanceHandle_t iHandle;
+	rtps::InstanceHandle_t iHandle;
 
-    SampleIdentity sample_identity;
+    rtps::SampleIdentity sample_identity;
 
-    SampleIdentity related_sample_identity;
+    rtps::SampleIdentity related_sample_identity;
 };
 
 } /* namespace  */

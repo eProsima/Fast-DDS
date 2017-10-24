@@ -19,12 +19,11 @@
 #ifndef SUBLISTENER_H_
 #define SUBLISTENER_H_
 
-#include "../rtps/common/MatchingInfo.h"
-
-using namespace eprosima::fastrtps::rtps;
-
 namespace eprosima {
 namespace fastrtps {
+namespace rtps {
+class MatchingInfo;
+} /* namespace rtps */
 
 class Subscriber;
 
@@ -47,10 +46,10 @@ public:
 	 * @param sub Subscriber
 	 * @param info Matching information
 	 */
-	virtual void onSubscriptionMatched(Subscriber* sub, MatchingInfo& info){(void)sub; (void)info;};
+	virtual void onSubscriptionMatched(Subscriber* sub, rtps::MatchingInfo& info){(void)sub; (void)info;};
 };
 
-} /* namespace pubsub */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif /* LISTENER_H_ */
