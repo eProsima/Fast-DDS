@@ -13,7 +13,7 @@
 # limitations under the License.
 
 CPP=c++
-CPP_FLAGS= --std=c++0x
+CPP_FLAGS= -std=c++0x
 LIBS= -lthrift
 
 SOURCE_FILES= main.cpp ApacheClient.cpp LatencyTest.cpp ApacheServer.cpp
