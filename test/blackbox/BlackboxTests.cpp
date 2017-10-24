@@ -126,6 +126,16 @@ uint32_t global_port = 0;
 static const char* certs_path = nullptr;
 #endif
 
+uint32_t get_port()
+{
+    uint32_t port = GET_PID();
+
+    if(port + 7400 > port)
+        port += 7400;
+
+    return port;
+}
+
 class BlackboxEnvironment : public ::testing::Environment
 {
     public:
@@ -1355,6 +1365,7 @@ BLACKBOXTEST(BlackBox, PubSubKeepAll)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        max_blocking_time({0, 0}).
         resource_limits_allocated_samples(2).
         resource_limits_max_samples(2).init();
 
@@ -1402,6 +1413,7 @@ BLACKBOXTEST(BlackBox, PubSubKeepAllTransient)
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
         durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
+        max_blocking_time({0, 0}).
         resource_limits_allocated_samples(2).
         resource_limits_max_samples(2).init();
 
@@ -1830,7 +1842,7 @@ BLACKBOXTEST(BlackBox, EndpointRediscovery)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    // Wait heartbeat period
+    // Wait heartbeat period of builtin endpoints
     std::this_thread::sleep_for(std::chrono::seconds(4));
 
     test_UDPv4Transport::ShutdownAllNetwork = true;
@@ -1842,6 +1854,57 @@ BLACKBOXTEST(BlackBox, EndpointRediscovery)
     writer.waitDiscovery();
 }
 
+// Used to detect Github issue #154
+BLACKBOXTEST(BlackBox, LocalInitialPeers)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    uint32_t port = get_port();
+
+    Locator_t loc_initial_peer, loc_default_unicast;
+    LocatorList_t reader_initial_peers;
+    loc_initial_peer.set_IP4_address(127, 0, 0, 1);
+    loc_initial_peer.port = port;
+    reader_initial_peers.push_back(loc_initial_peer);
+    LocatorList_t reader_default_unicast_locator;
+    loc_default_unicast.port = port + 1;
+    reader_default_unicast_locator.push_back(loc_default_unicast);
+
+    reader.metatraffic_unicast_locator_list(reader_default_unicast_locator).
+        initial_peers(reader_initial_peers).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    LocatorList_t writer_initial_peers;
+    loc_initial_peer.port = port + 1;
+    writer_initial_peers.push_back(loc_initial_peer);
+    LocatorList_t writer_default_unicast_locator;
+    loc_default_unicast.port = port;
+    writer_default_unicast_locator.push_back(loc_default_unicast);
+
+    writer.metatraffic_unicast_locator_list(writer_default_unicast_locator).
+        initial_peers(writer_initial_peers).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_helloworld_data_generator();
+
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+}
 
 #if HAVE_SECURITY
 

@@ -355,6 +355,18 @@ class PubSubReader
             return *this;
         }
 
+        PubSubReader& metatraffic_unicast_locator_list(LocatorList_t unicastLocators)
+        {
+            participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = unicastLocators;
+            return *this;
+        }
+
+        PubSubReader& initial_peers(LocatorList_t initial_peers)
+        {
+            participant_attr_.rtps.builtin.initialPeersList = initial_peers;
+            return *this;
+        }
+
         PubSubReader& outLocatorList(LocatorList_t outLocators)
         {
             subscriber_attr_.outLocatorList = outLocators;

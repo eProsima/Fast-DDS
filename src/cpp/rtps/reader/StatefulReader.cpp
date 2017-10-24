@@ -205,59 +205,63 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
     if(acceptMsgFrom(change->writerGUID, &pWP))
     {
-        logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
-
-        CacheChange_t* change_to_add;
-
-        if(reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
+        // Check if CacheChange was received.
+        if(!pWP->change_was_received(change->sequenceNumber))
         {
-#if HAVE_SECURITY
-            if(is_payload_protected())
+            logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
+
+            CacheChange_t* change_to_add;
+
+            if(reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
             {
-                change_to_add->copy_not_memcpy(change);
-                if(!getRTPSParticipant()->security_manager().decode_serialized_payload(change->serializedPayload,
-                        change_to_add->serializedPayload, m_guid, change->writerGUID))
+#if HAVE_SECURITY
+                if(is_payload_protected())
                 {
-                    releaseCache(change_to_add);
-                    logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
-                    return false;
+                    change_to_add->copy_not_memcpy(change);
+                    if(!getRTPSParticipant()->security_manager().decode_serialized_payload(change->serializedPayload,
+                                change_to_add->serializedPayload, m_guid, change->writerGUID))
+                    {
+                        releaseCache(change_to_add);
+                        logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
+                        return false;
+                    }
                 }
+                else
+                {
+#endif
+                    if (!change_to_add->copy(change))
+                    {
+                        logWarning(RTPS_MSG_IN,IDSTRING"Problem copying CacheChange, received data is: " << change->serializedPayload.length
+                                << " bytes and max size in reader " << getGuid().entityId << " is " << change_to_add->serializedPayload.max_size);
+                        releaseCache(change_to_add);
+                        return false;
+                    }
+#if HAVE_SECURITY
+                }
+#endif
             }
             else
             {
-#endif
-                if (!change_to_add->copy(change))
-                {
-                    logWarning(RTPS_MSG_IN,IDSTRING"Problem copying CacheChange, received data is: " << change->serializedPayload.length
-                            << " bytes and max size in reader " << getGuid().entityId << " is " << change_to_add->serializedPayload.max_size);
-                    releaseCache(change_to_add);
-                    return false;
-                }
-#if HAVE_SECURITY
+                logError(RTPS_MSG_IN,IDSTRING"Problem reserving CacheChange in reader: " << getGuid().entityId);
+                return false;
             }
-#endif
-        }
-        else
-        {
-            logError(RTPS_MSG_IN,IDSTRING"Problem reserving CacheChange in reader: " << getGuid().entityId);
-            return false;
-        }
 
-        // Assertion has to be done before call change_received,
-        // because this function can unlock the StatefulReader mutex.
-        if(pWP != nullptr)
-        {
-            pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
-        }
-
-        if(!change_received(change_to_add, pWP))
-        {
-            logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "<<change_to_add->sequenceNumber);
-            releaseCache(change_to_add);
-
-            if(pWP == nullptr && getGuid().entityId == c_EntityId_SPDPReader)
+            // Assertion has to be done before call change_received,
+            // because this function can unlock the StatefulReader mutex.
+            if(pWP != nullptr)
             {
-                mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change->writerGUID.guidPrefix);
+                pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
+            }
+
+            if(!change_received(change_to_add, pWP))
+            {
+                logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "<<change_to_add->sequenceNumber);
+                releaseCache(change_to_add);
+
+                if(pWP == nullptr && getGuid().entityId == c_EntityId_SPDPReader)
+                {
+                    mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change->writerGUID.guidPrefix);
+                }
             }
         }
     }
@@ -343,7 +347,7 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
 
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
-    if(acceptMsgFrom(writerGUID, &pWP, false))
+    if(acceptMsgFrom(writerGUID, &pWP))
     {
         std::unique_lock<std::recursive_mutex> wpLock(*pWP->getMutex());
 
@@ -413,7 +417,7 @@ bool StatefulReader::processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStar
 
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
-    if(acceptMsgFrom(writerGUID, &pWP, false))
+    if(acceptMsgFrom(writerGUID, &pWP))
     {
         std::lock_guard<std::recursive_mutex> guardWriterProxy(*pWP->getMutex());
         SequenceNumber_t auxSN;
@@ -434,12 +438,9 @@ bool StatefulReader::processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStar
     return true;
 }
 
-bool StatefulReader::acceptMsgFrom(GUID_t &writerId, WriterProxy **wp, bool checkTrusted)
+bool StatefulReader::acceptMsgFrom(GUID_t &writerId, WriterProxy **wp)
 {
     assert(wp != nullptr);
-
-    if(checkTrusted && writerId.entityId == this->m_trustedWriterEntityId)
-        return true;
 
     for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();
             it!=matched_writers.end();++it)
@@ -486,9 +487,9 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox)
 
     size_t unknown_missing_changes_up_to = prox->unknown_missing_changes_up_to(a_change->sequenceNumber);
 
-    if(prox->received_change_set(a_change->sequenceNumber))
+    if(this->mp_history->received_change(a_change, unknown_missing_changes_up_to))
     {
-        bool ret = this->mp_history->received_change(a_change, unknown_missing_changes_up_to);
+        bool ret = prox->received_change_set(a_change->sequenceNumber);
 
         GUID_t proxGUID = prox->m_att.guid;
 
@@ -650,30 +651,6 @@ bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
     return readok;
 }
 
-//
-//bool StatefulReader::acceptMsgFrom(GUID_t& writerId,WriterProxy** wp)
-//{
-//	if(this->m_acceptMessagesFromUnkownWriters)
-//	{
-//		for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();
-//				it!=matched_writers.end();++it)
-//		{
-//			if((*it)->m_data->m_guid == writerId)
-//			{
-//				if(wp!=NULL)
-//					*wp = *it;
-//				return true;
-//			}
-//		}
-//	}
-//	else
-//	{
-//		if(writerId.entityId == this->m_trustedWriterEntityId)
-//			return true;
-//	}
-//	return false;
-//}
-//
 bool StatefulReader::updateTimes(ReaderTimes& ti)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);

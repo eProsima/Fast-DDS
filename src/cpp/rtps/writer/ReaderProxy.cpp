@@ -118,7 +118,7 @@ bool ReaderProxy::change_is_acked(const SequenceNumber_t& sequence_number)
     return !chit->isRelevant() || chit->getStatus() == ACKNOWLEDGED;
 }
 
-bool ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
+void ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     SequenceNumber_t future_low_mark = seqNum;
@@ -161,8 +161,6 @@ bool ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
     }
 
     changesFromRLowMark_ = future_low_mark - 1;
-
-    return m_changesForReader.size() == 0;
 }
 
 bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet)

@@ -436,7 +436,7 @@ class SequenceNumberSet_t
          * Get the set of SequenceNumbers 
          * @return Set of SequenceNumbers
          */
-        std::vector<SequenceNumber_t> get_set()
+        std::vector<SequenceNumber_t> get_set() const
         {
             return set;
         }

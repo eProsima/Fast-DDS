@@ -358,9 +358,10 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
         }
 
         if(!valid || last_submsg)
+        {
             break;
+        }
     }
-
 }
 
 bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg) //check and proccess the RTPS Header
@@ -660,7 +661,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
     //Get sequence number
     valid &= CDRMessage::readSequenceNumber(msg, &ch.sequenceNumber);
 
-    if (ch.sequenceNumber.to64long() <= 0 || (ch.sequenceNumber.high == -1 && ch.sequenceNumber.low == 0)) //message invalid //TODO make faster
+    if (ch.sequenceNumber <= SequenceNumber_t())
     {
         logWarning(RTPS_MSG_IN, IDSTRING"Invalid message received, bad sequence Number");
         return false;
@@ -867,56 +868,12 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
     for (std::vector<RTPSWriter*>::iterator it = AssociatedWriters.begin();
             it != AssociatedWriters.end(); ++it)
     {
-        //Look for the readerProxy the acknack is from
-        std::lock_guard<std::recursive_mutex> guardW(*(*it)->getMutex());
-
         if((*it)->getGuid() == writerGUID)
         {
             if((*it)->getAttributes()->reliabilityKind == RELIABLE)
             {
                 StatefulWriter* SF = (StatefulWriter*)(*it);
-
-                for(auto rit = SF->matchedReadersBegin();rit!=SF->matchedReadersEnd();++rit)
-                {
-                    std::lock_guard<std::recursive_mutex> guardReaderProxy(*(*rit)->mp_mutex);
-
-                    if((*rit)->m_att.guid == readerGUID )
-                    {
-                        if((*rit)->m_lastAcknackCount < Ackcount)
-                        {
-                            (*rit)->m_lastAcknackCount = Ackcount;
-                            bool maybe_all_acks = (*rit)->acked_changes_set(SNSet.base);
-                            std::vector<SequenceNumber_t> set_vec = SNSet.get_set();
-                            if ((*rit)->requested_changes_set(set_vec) && (*rit)->mp_nackResponse != nullptr)
-                            {
-                                (*rit)->mp_nackResponse->restart_timer();
-                            }
-                            else if (!finalFlag)
-                            {
-                                if(SNSet.base == SequenceNumber_t(0, 0) && SNSet.isSetEmpty())
-                                {
-                                    SF->send_heartbeat_to_nts(**rit, true);
-                                }
-
-                                SF->mp_periodicHB->restart_timer();
-                            }
-
-                            if(SF->getAttributes()->durabilityKind == VOLATILE)
-                            {
-                                // Clean history.
-                                // TODO Change mechanism
-                                SF->clean_history();
-                            }
-
-                            // Check if all CacheChange are acknowledge, because a user could be waiting
-                            // for this.
-                            if(maybe_all_acks)
-                                SF->check_for_all_acked();
-
-                        }
-                        break;
-                    }
-                }
+                SF->process_acknack(readerGUID, Ackcount, SNSet, finalFlag);
                 return true;
             }
             else

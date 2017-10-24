@@ -60,24 +60,21 @@ PublisherHistory::~PublisherHistory() {
 }
 
 
-bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparams)
+bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparams,
+        std::unique_lock<std::recursive_mutex>& lock)
 {
-
-    if(mp_writer == nullptr || mp_mutex == nullptr)
-    {
-        logError(RTPS_HISTORY,"You need to create a Writer with this History before using it");
-        return false;
-    }
-
-    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
     if(m_isHistoryFull)
     {
         bool ret = false;
 
         if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
-            ret = this->mp_pubImpl->clean_history(1);
+        {
+            ret = this->mp_pubImpl->try_remove_change(lock);
+        }
         else if(m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
+        {
             ret = this->remove_min_change();
+        }
 
         if(!ret)
         {

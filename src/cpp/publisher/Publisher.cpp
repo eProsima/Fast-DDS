@@ -26,12 +26,10 @@ namespace eprosima {
 namespace fastrtps {
 
 
-Publisher::Publisher(PublisherImpl* pimpl):
-    mp_impl(pimpl)
-    {
-        // TODO Auto-generated constructor stub
-
-    }
+Publisher::Publisher(PublisherImpl* pimpl) : mp_impl(pimpl)
+{
+    // TODO Auto-generated constructor stub
+}
 
 Publisher::~Publisher() {
     // TODO Auto-generated destructor stub

@@ -303,6 +303,11 @@ class PubSubWriter
         }
     }
 
+    bool send_sample(type& msg)
+    {
+        return publisher_->write((void*)&msg);
+    }
+
     void waitDiscovery()
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
@@ -398,6 +403,12 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& max_blocking_time(const Duration_t time)
+    {
+        publisher_attr_.qos.m_reliability.max_blocking_time = time;
+        return *this;
+    }
+
     PubSubWriter& add_throughput_controller_descriptor_to_pparams(uint32_t bytesPerPeriod, uint32_t periodInMs)
     {
         ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
@@ -475,6 +486,18 @@ class PubSubWriter
     PubSubWriter& multicastLocatorList(LocatorList_t multicastLocators)
     {
         publisher_attr_.multicastLocatorList = multicastLocators;
+        return *this;
+    }
+
+    PubSubWriter& metatraffic_unicast_locator_list(LocatorList_t unicastLocators)
+    {
+        participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = unicastLocators;
+        return *this;
+    }
+
+    PubSubWriter& initial_peers(LocatorList_t initial_peers)
+    {
+        participant_attr_.rtps.builtin.initialPeersList = initial_peers;
         return *this;
     }
 
