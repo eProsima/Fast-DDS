@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/xmlparser/XMLParser.h>
-#include <xmlparser/XMLTree.h>
+#include <fastrtps/xmlparser/XMLTree.h>
 
 #include <gtest/gtest.h>
 
@@ -137,7 +137,6 @@ class XMLParserTests : public ::testing::Test
     {
         const std::string name_attribute{"profile_name"};
         const std::string profile_name{"missing_profile"};
-        participant_atts;
         bool participant_profile = false;
         for (const auto& profile : root->getChildren())
         {
