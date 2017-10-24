@@ -14,8 +14,7 @@
 //
 #include <tinyxml2.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-
-#include "XMLTree.h"
+#include <fastrtps/xmlparser/XMLTree.h>
 
 namespace eprosima {
 namespace fastrtps {

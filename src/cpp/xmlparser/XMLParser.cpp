@@ -14,8 +14,7 @@
 //
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
-
-#include "XMLTree.h"
+#include <fastrtps/xmlparser/XMLTree.h>
 
 #include <tinyxml2.h>
 
