@@ -21,7 +21,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
-XMLP_ret XMLParser::getXMLBuiltinAttributes(XMLElement *elem, BuiltinAttributes &builtin, uint8_t ident)
+XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinAttributes &builtin, uint8_t ident)
 {
     /*<xs:complexType name="builtinAttributesType">
       <xs:all minOccurs="0">
@@ -39,7 +39,7 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(XMLElement *elem, BuiltinAttributes 
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
     // use_SIMPLE_RTPS_PDP - boolType
     if (nullptr != (p_aux0 = elem->FirstChildElement(SIMPLE_RTPS_PDP)))
     {
@@ -147,7 +147,7 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(XMLElement *elem, BuiltinAttributes 
 
 }
 
-XMLP_ret XMLParser::getXMLPortParameters(XMLElement *elem, PortParameters &port, uint8_t ident)
+XMLP_ret XMLParser::getXMLPortParameters(tinyxml2::XMLElement *elem, PortParameters &port, uint8_t ident)
 {
     /*<xs:complexType name="portType">
       <xs:all minOccurs="0">
@@ -161,7 +161,7 @@ XMLP_ret XMLParser::getXMLPortParameters(XMLElement *elem, PortParameters &port,
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
     // portBase - uint16Type
     if (nullptr != (p_aux0 = elem->FirstChildElement(PORT_BASE)))
     {
@@ -201,7 +201,7 @@ XMLP_ret XMLParser::getXMLPortParameters(XMLElement *elem, PortParameters &port,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLThroughputController(XMLElement *elem,
+XMLP_ret XMLParser::getXMLThroughputController(tinyxml2::XMLElement *elem,
                                                       ThroughputControllerDescriptor &throughputController,
                                                       uint8_t ident)
 {
@@ -212,7 +212,7 @@ XMLP_ret XMLParser::getXMLThroughputController(XMLElement *elem,
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
 
     // bytesPerPeriod - uint32Type
     if (nullptr != (p_aux0 = elem->FirstChildElement(BYTES_PER_SECOND)))
@@ -228,7 +228,7 @@ XMLP_ret XMLParser::getXMLThroughputController(XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLTopicAttributes(XMLElement *elem, TopicAttributes &topic, uint8_t ident)
+XMLP_ret XMLParser::getXMLTopicAttributes(tinyxml2::XMLElement *elem, TopicAttributes &topic, uint8_t ident)
 {
     /*<xs:complexType name="topicAttributesType">
       <xs:all minOccurs="0">
@@ -240,7 +240,7 @@ XMLP_ret XMLParser::getXMLTopicAttributes(XMLElement *elem, TopicAttributes &top
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
 
     // kind
     if (nullptr != (p_aux0 = elem->FirstChildElement(KIND)))
@@ -289,7 +289,7 @@ XMLP_ret XMLParser::getXMLTopicAttributes(XMLElement *elem, TopicAttributes &top
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLResourceLimitsQos(XMLElement *elem,
+XMLP_ret XMLParser::getXMLResourceLimitsQos(tinyxml2::XMLElement *elem,
                                                    ResourceLimitsQosPolicy &resourceLimitsQos,
                                                    uint8_t ident)
 {
@@ -302,7 +302,7 @@ XMLP_ret XMLParser::getXMLResourceLimitsQos(XMLElement *elem,
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
 
     // max_samples - int32Type
     if (nullptr != (p_aux0 = elem->FirstChildElement(MAX_SAMPLES)))
@@ -332,7 +332,7 @@ XMLP_ret XMLParser::getXMLResourceLimitsQos(XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLHistoryQosPolicy(XMLElement *elem, HistoryQosPolicy &historyQos, uint8_t ident)
+XMLP_ret XMLParser::getXMLHistoryQosPolicy(tinyxml2::XMLElement *elem, HistoryQosPolicy &historyQos, uint8_t ident)
 {
     /*<xs:complexType name="historyQosPolicyType">
       <xs:all minOccurs="0">
@@ -341,7 +341,7 @@ XMLP_ret XMLParser::getXMLHistoryQosPolicy(XMLElement *elem, HistoryQosPolicy &h
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
 
     // kind
     if (nullptr != (p_aux0 = elem->FirstChildElement(KIND)))
@@ -374,7 +374,7 @@ XMLP_ret XMLParser::getXMLHistoryQosPolicy(XMLElement *elem, HistoryQosPolicy &h
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLWriterQosPolicies(XMLElement *elem, WriterQos &qos, uint8_t ident)
+XMLP_ret XMLParser::getXMLWriterQosPolicies(tinyxml2::XMLElement *elem, WriterQos &qos, uint8_t ident)
 {
     /*<xs:complexType name="writerQosPoliciesType">
         <xs:all minOccurs="0">
@@ -398,7 +398,7 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(XMLElement *elem, WriterQos &qos, ui
         </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux = nullptr;
+    tinyxml2::XMLElement *p_aux = nullptr;
 
     // durability
     if (nullptr != (p_aux = elem->FirstChildElement(        DURABILITY)))
@@ -458,7 +458,7 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(XMLElement *elem, WriterQos &qos, ui
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLReaderQosPolicies(XMLElement *elem, ReaderQos &qos, uint8_t ident)
+XMLP_ret XMLParser::getXMLReaderQosPolicies(tinyxml2::XMLElement *elem, ReaderQos &qos, uint8_t ident)
 {
     /*<xs:complexType name="readerQosPoliciesType">
         <xs:all minOccurs="0">
@@ -480,7 +480,7 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(XMLElement *elem, ReaderQos &qos, ui
         </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux = nullptr;
+    tinyxml2::XMLElement *p_aux = nullptr;
 
     // durability
     if (nullptr != (p_aux = elem->FirstChildElement(        DURABILITY)))
@@ -534,7 +534,7 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(XMLElement *elem, ReaderQos &qos, ui
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLDurabilityQos(XMLElement *elem, DurabilityQosPolicy &durability, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLDurabilityQos(tinyxml2::XMLElement *elem, DurabilityQosPolicy &durability, uint8_t /*ident*/)
 {
     /*<xs:complexType name="durabilityQosPolicyType">
           <xs:all minOccurs="0">
@@ -542,7 +542,7 @@ XMLP_ret XMLParser::getXMLDurabilityQos(XMLElement *elem, DurabilityQosPolicy &d
           </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
 
     // kind
     if (nullptr != (p_aux0 = elem->FirstChildElement(KIND)))
@@ -584,7 +584,7 @@ XMLP_ret XMLParser::getXMLDurabilityQos(XMLElement *elem, DurabilityQosPolicy &d
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLDurabilityServiceQos(XMLElement *elem,
+XMLP_ret XMLParser::getXMLDurabilityServiceQos(tinyxml2::XMLElement *elem,
                                                       DurabilityServiceQosPolicy &durabilityService,
                                                       uint8_t ident)
 {
@@ -599,7 +599,7 @@ XMLP_ret XMLParser::getXMLDurabilityServiceQos(XMLElement *elem,
           </xs:all>
         </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
 
     // service_cleanup_delay - durationType
     if (nullptr != (p_aux0 = elem->FirstChildElement(SRV_CLEAN_DELAY)))
@@ -660,7 +660,7 @@ XMLP_ret XMLParser::getXMLDurabilityServiceQos(XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLDeadlineQos(XMLElement *elem, DeadlineQosPolicy &deadline, uint8_t ident)
+XMLP_ret XMLParser::getXMLDeadlineQos(tinyxml2::XMLElement *elem, DeadlineQosPolicy &deadline, uint8_t ident)
 {
     /*<xs:complexType name="deadlineQosPolicyType">
       <xs:all>
@@ -668,7 +668,7 @@ XMLP_ret XMLParser::getXMLDeadlineQos(XMLElement *elem, DeadlineQosPolicy &deadl
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
 
     if (nullptr != (p_aux0 = elem->FirstChildElement(PERIOD)))
     {
@@ -683,7 +683,7 @@ XMLP_ret XMLParser::getXMLDeadlineQos(XMLElement *elem, DeadlineQosPolicy &deadl
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLLatencyBudgetQos(XMLElement *elem, LatencyBudgetQosPolicy &latencyBudget, uint8_t ident)
+XMLP_ret XMLParser::getXMLLatencyBudgetQos(tinyxml2::XMLElement *elem, LatencyBudgetQosPolicy &latencyBudget, uint8_t ident)
 {
     /*<xs:complexType name="latencyBudgetQosPolicyType">
       <xs:all>
@@ -691,7 +691,7 @@ XMLP_ret XMLParser::getXMLLatencyBudgetQos(XMLElement *elem, LatencyBudgetQosPol
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
 
     if (nullptr != (p_aux0 = elem->FirstChildElement(DURATION)))
     {
@@ -706,7 +706,7 @@ XMLP_ret XMLParser::getXMLLatencyBudgetQos(XMLElement *elem, LatencyBudgetQosPol
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLLivelinessQos(XMLElement *elem, LivelinessQosPolicy &liveliness, uint8_t ident)
+XMLP_ret XMLParser::getXMLLivelinessQos(tinyxml2::XMLElement *elem, LivelinessQosPolicy &liveliness, uint8_t ident)
 {
     /*<xs:complexType name="livelinessQosPolicyType">
       <xs:all minOccurs="0">
@@ -717,7 +717,7 @@ XMLP_ret XMLParser::getXMLLivelinessQos(XMLElement *elem, LivelinessQosPolicy &l
     </xs:complexType>*/
 
     bool haveSomeField = false;
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
     // kind
     if (nullptr != (p_aux0 = elem->FirstChildElement(KIND)))
     {
@@ -768,7 +768,7 @@ XMLP_ret XMLParser::getXMLLivelinessQos(XMLElement *elem, LivelinessQosPolicy &l
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLReliabilityQos(XMLElement *elem, ReliabilityQosPolicy &reliability, uint8_t ident)
+XMLP_ret XMLParser::getXMLReliabilityQos(tinyxml2::XMLElement *elem, ReliabilityQosPolicy &reliability, uint8_t ident)
 {
     /*<xs:complexType name="reliabilityQosPolicyType">
       <xs:all>
@@ -778,7 +778,7 @@ XMLP_ret XMLParser::getXMLReliabilityQos(XMLElement *elem, ReliabilityQosPolicy 
     </xs:complexType>*/
 
     bool haveSomeField = false;
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
     // kind
     if (nullptr != (p_aux0 = elem->FirstChildElement(KIND)))
     {
@@ -819,7 +819,7 @@ XMLP_ret XMLParser::getXMLReliabilityQos(XMLElement *elem, ReliabilityQosPolicy 
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLLifespanQos(XMLElement *elem, LifespanQosPolicy &lifespan, uint8_t ident)
+XMLP_ret XMLParser::getXMLLifespanQos(tinyxml2::XMLElement *elem, LifespanQosPolicy &lifespan, uint8_t ident)
 {
     /*<xs:complexType name="lifespanQosPolicyType">
       <xs:all>
@@ -827,7 +827,7 @@ XMLP_ret XMLParser::getXMLLifespanQos(XMLElement *elem, LifespanQosPolicy &lifes
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
 
     if (nullptr != (p_aux0 = elem->FirstChildElement(DURATION)))
     {
@@ -842,7 +842,7 @@ XMLP_ret XMLParser::getXMLLifespanQos(XMLElement *elem, LifespanQosPolicy &lifes
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLTimeBasedFilterQos(XMLElement *elem,
+XMLP_ret XMLParser::getXMLTimeBasedFilterQos(tinyxml2::XMLElement *elem,
                                                     TimeBasedFilterQosPolicy &timeBasedFilter,
                                                     uint8_t ident)
 {
@@ -852,7 +852,7 @@ XMLP_ret XMLParser::getXMLTimeBasedFilterQos(XMLElement *elem,
           </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
 
     if (nullptr != (p_aux0 = elem->FirstChildElement(MIN_SEPARATION)))
     {
@@ -867,7 +867,7 @@ XMLP_ret XMLParser::getXMLTimeBasedFilterQos(XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLOwnershipQos(XMLElement *elem, OwnershipQosPolicy &ownership, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLOwnershipQos(tinyxml2::XMLElement *elem, OwnershipQosPolicy &ownership, uint8_t /*ident*/)
 {
     /*<xs:complexType name="ownershipQosPolicyType">
       <xs:all>
@@ -875,7 +875,7 @@ XMLP_ret XMLParser::getXMLOwnershipQos(XMLElement *elem, OwnershipQosPolicy &own
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
 
     if (nullptr != (p_aux0 = elem->FirstChildElement(KIND)))
     {
@@ -910,7 +910,7 @@ XMLP_ret XMLParser::getXMLOwnershipQos(XMLElement *elem, OwnershipQosPolicy &own
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLOwnershipStrengthQos(XMLElement *elem,
+XMLP_ret XMLParser::getXMLOwnershipStrengthQos(tinyxml2::XMLElement *elem,
                                                       OwnershipStrengthQosPolicy &ownershipStrength,
                                                       uint8_t ident)
 {
@@ -920,7 +920,7 @@ XMLP_ret XMLParser::getXMLOwnershipStrengthQos(XMLElement *elem,
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
 
     if (nullptr != (p_aux0 = elem->FirstChildElement(VALUE)))
     {
@@ -935,7 +935,7 @@ XMLP_ret XMLParser::getXMLOwnershipStrengthQos(XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLDestinationOrderQos(XMLElement *elem,
+XMLP_ret XMLParser::getXMLDestinationOrderQos(tinyxml2::XMLElement *elem,
                                                      DestinationOrderQosPolicy &destinationOrder,
                                                      uint8_t /*ident*/)
 {
@@ -945,7 +945,7 @@ XMLP_ret XMLParser::getXMLDestinationOrderQos(XMLElement *elem,
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
 
     if (nullptr != (p_aux0 = elem->FirstChildElement(KIND)))
     {
@@ -980,7 +980,7 @@ XMLP_ret XMLParser::getXMLDestinationOrderQos(XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLPresentationQos(XMLElement *elem, PresentationQosPolicy &presentation, uint8_t ident)
+XMLP_ret XMLParser::getXMLPresentationQos(tinyxml2::XMLElement *elem, PresentationQosPolicy &presentation, uint8_t ident)
 {
     /*<xs:complexType name="presentationQosPolicyType">
       <xs:all minOccurs="0">
@@ -990,7 +990,7 @@ XMLP_ret XMLParser::getXMLPresentationQos(XMLElement *elem, PresentationQosPolic
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
     // access_scope
     if (nullptr != (p_aux0 = elem->FirstChildElement(ACCESS_SCOPE)))
     {
@@ -1033,7 +1033,7 @@ XMLP_ret XMLParser::getXMLPresentationQos(XMLElement *elem, PresentationQosPolic
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLPartitionQos(XMLElement *elem, PartitionQosPolicy &partition, uint8_t ident)
+XMLP_ret XMLParser::getXMLPartitionQos(tinyxml2::XMLElement *elem, PartitionQosPolicy &partition, uint8_t ident)
 {
     /*<xs:complexType name="partitionQosPolicyType">
       <xs:all>
@@ -1041,7 +1041,7 @@ XMLP_ret XMLParser::getXMLPartitionQos(XMLElement *elem, PartitionQosPolicy &par
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
 
     if (nullptr != (p_aux0 = elem->FirstChildElement(NAMES)))
     {
@@ -1071,7 +1071,7 @@ XMLP_ret XMLParser::getXMLPartitionQos(XMLElement *elem, PartitionQosPolicy &par
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLPublishModeQos(XMLElement *elem, PublishModeQosPolicy &publishMode, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLPublishModeQos(tinyxml2::XMLElement *elem, PublishModeQosPolicy &publishMode, uint8_t /*ident*/)
 {
     /*<xs:complexType name="publishModeQosPolicyType">
       <xs:all>
@@ -1079,7 +1079,7 @@ XMLP_ret XMLParser::getXMLPublishModeQos(XMLElement *elem, PublishModeQosPolicy 
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
 
     if (nullptr != (p_aux0 = elem->FirstChildElement(KIND)))
     {
@@ -1114,7 +1114,7 @@ XMLP_ret XMLParser::getXMLPublishModeQos(XMLElement *elem, PublishModeQosPolicy 
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLDuration(XMLElement *elem, Duration_t &duration, uint8_t ident)
+XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &duration, uint8_t ident)
 {
     /*<xs:complexType name="durationType">
         <xs:choice>
@@ -1123,7 +1123,7 @@ XMLP_ret XMLParser::getXMLDuration(XMLElement *elem, Duration_t &duration, uint8
         </xs:choice>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
 
     if (nullptr != (p_aux0 = elem->FirstChildElement(BY_NAME)))
     {
@@ -1181,7 +1181,7 @@ XMLP_ret XMLParser::getXMLDuration(XMLElement *elem, Duration_t &duration, uint8
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLWriterTimes(XMLElement *elem, WriterTimes &times, uint8_t ident)
+XMLP_ret XMLParser::getXMLWriterTimes(tinyxml2::XMLElement *elem, WriterTimes &times, uint8_t ident)
 {
     /*<xs:complexType name="writerTimesType">
       <xs:all minOccurs="0">
@@ -1192,7 +1192,7 @@ XMLP_ret XMLParser::getXMLWriterTimes(XMLElement *elem, WriterTimes &times, uint
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
     // initialHeartbeatDelay
     if (nullptr != (p_aux0 = elem->FirstChildElement(INIT_HEARTB_DELAY)))
     {
@@ -1217,7 +1217,7 @@ XMLP_ret XMLParser::getXMLWriterTimes(XMLElement *elem, WriterTimes &times, uint
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLReaderTimes(XMLElement *elem, ReaderTimes &times, uint8_t ident)
+XMLP_ret XMLParser::getXMLReaderTimes(tinyxml2::XMLElement *elem, ReaderTimes &times, uint8_t ident)
 {
     /*<xs:complexType name="readerTimesType">
       <xs:all minOccurs="0">
@@ -1226,7 +1226,7 @@ XMLP_ret XMLParser::getXMLReaderTimes(XMLElement *elem, ReaderTimes &times, uint
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
     // initialAcknackDelay
     if (nullptr != (p_aux0 = elem->FirstChildElement(INIT_ACKNACK_DELAY)))
     {
@@ -1241,7 +1241,7 @@ XMLP_ret XMLParser::getXMLReaderTimes(XMLElement *elem, ReaderTimes &times, uint
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLLocatorList(XMLElement *elem, LocatorList_t &locatorList, uint8_t ident)
+XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t &locatorList, uint8_t ident)
 {
     /*<xs:complexType name="locatorListType">
       <xs:sequence>
@@ -1249,7 +1249,7 @@ XMLP_ret XMLParser::getXMLLocatorList(XMLElement *elem, LocatorList_t &locatorLi
       </xs:sequence>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
 
     p_aux0 = elem->FirstChildElement(LOCATOR);
     if (nullptr == p_aux0)
@@ -1316,7 +1316,7 @@ XMLP_ret XMLParser::getXMLLocatorList(XMLElement *elem, LocatorList_t &locatorLi
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLHistoryMemoryPolicy(XMLElement *elem,
+XMLP_ret XMLParser::getXMLHistoryMemoryPolicy(tinyxml2::XMLElement *elem,
                                                      MemoryManagementPolicy_t &historyMemoryPolicy,
                                                      uint8_t /*ident*/)
 {
@@ -1348,7 +1348,7 @@ XMLP_ret XMLParser::getXMLHistoryMemoryPolicy(XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLPropertiesPolicy(XMLElement *elem, PropertyPolicy &propertiesPolicy, uint8_t ident)
+XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyPolicy &propertiesPolicy, uint8_t ident)
 {
     /*<xs:complexType name="propertyPolicyType">
       <xs:all minOccurs="0">
@@ -1357,7 +1357,7 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(XMLElement *elem, PropertyPolicy &pro
       </xs:all>
     </xs:complexType>*/
 
-    XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr, *p_aux2 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr, *p_aux2 = nullptr;
 
     if (nullptr != (p_aux0 = elem->FirstChildElement(PROPERTIES)))
     {
@@ -1455,17 +1455,17 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(XMLElement *elem, PropertyPolicy &pro
 }
 
 // TODO
-XMLP_ret XMLParser::getXMLOctetVector(XMLElement *elem, std::vector<octet> &/*octetVector*/, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLOctetVector(tinyxml2::XMLElement *elem, std::vector<octet> &/*octetVector*/, uint8_t /*ident*/)
 {
     logError(XMLPARSER, "Tag '" << elem->Value() << "' octetVector do not supported for now");
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLInt(XMLElement *elem, int *in, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLInt(tinyxml2::XMLElement *elem, int *in, uint8_t /*ident*/)
 {
     if (nullptr == elem ||
         nullptr == in    ||
-        XML_SUCCESS != elem->QueryIntText(in))
+        tinyxml2::XMLError::XML_SUCCESS != elem->QueryIntText(in))
     {
         logError(XMLPARSER, "<" << elem->Value() << "> getXMLInt XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -1473,11 +1473,11 @@ XMLP_ret XMLParser::getXMLInt(XMLElement *elem, int *in, uint8_t /*ident*/)
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLUint(XMLElement *elem, unsigned int *ui, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLUint(tinyxml2::XMLElement *elem, unsigned int *ui, uint8_t /*ident*/)
 {
     if (nullptr == elem ||
         nullptr == ui   ||
-        XML_SUCCESS != elem->QueryUnsignedText(ui))
+        tinyxml2::XMLError::XML_SUCCESS != elem->QueryUnsignedText(ui))
     {
         logError(XMLPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -1485,12 +1485,12 @@ XMLP_ret XMLParser::getXMLUint(XMLElement *elem, unsigned int *ui, uint8_t /*ide
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLUint(XMLElement *elem, uint16_t *ui16, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLUint(tinyxml2::XMLElement *elem, uint16_t *ui16, uint8_t /*ident*/)
 {
     unsigned int ui = 0u;
     if (nullptr == elem ||
         nullptr == ui16   ||
-        XML_SUCCESS != elem->QueryUnsignedText(&ui) ||
+        tinyxml2::XMLError::XML_SUCCESS != elem->QueryUnsignedText(&ui) ||
         ui >= 65536)
     {
         logError(XMLPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
@@ -1500,11 +1500,11 @@ XMLP_ret XMLParser::getXMLUint(XMLElement *elem, uint16_t *ui16, uint8_t /*ident
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLBool(XMLElement *elem, bool *b, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLBool(tinyxml2::XMLElement *elem, bool *b, uint8_t /*ident*/)
 {
     if (nullptr == elem ||
         nullptr == b    ||
-        XML_SUCCESS != elem->QueryBoolText(b))
+        tinyxml2::XMLError::XML_SUCCESS != elem->QueryBoolText(b))
     {
         logError(XMLPARSER, "<" << elem->Value() << "> getXMLBool XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -1512,7 +1512,7 @@ XMLP_ret XMLParser::getXMLBool(XMLElement *elem, bool *b, uint8_t /*ident*/)
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLString(XMLElement *elem, std::string *s, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLString(tinyxml2::XMLElement *elem, std::string *s, uint8_t /*ident*/)
 {
     const char* text = nullptr;
     if (nullptr == elem ||

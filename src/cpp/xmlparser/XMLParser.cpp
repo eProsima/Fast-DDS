@@ -21,16 +21,16 @@
 namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
-
+    
 XMLP_ret XMLParser::loadDefaultXMLFile(up_base_node_t& root)
 {
     return loadXML(DEFAULT_FASTRTPS_PROFILES, root);
 }
 
-XMLP_ret XMLParser::parseXML(XMLDocument& xmlDoc, up_base_node_t& root)
+XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root)
 {
     XMLP_ret ret;
-    XMLElement* p_root = xmlDoc.FirstChildElement(ROOT);
+    tinyxml2::XMLElement* p_root = xmlDoc.FirstChildElement(ROOT);
     if (nullptr == p_root)
     {
         if (nullptr == (p_root = xmlDoc.FirstChildElement(PROFILES)))
@@ -46,7 +46,7 @@ XMLP_ret XMLParser::parseXML(XMLDocument& xmlDoc, up_base_node_t& root)
     }
     else
     {
-        XMLElement* new_root = p_root->FirstChildElement(PROFILES);
+        tinyxml2::XMLElement* new_root = p_root->FirstChildElement(PROFILES);
         if (nullptr == new_root)
         {
             logError(XMLPARSER, "Not found root tag");
@@ -61,10 +61,10 @@ XMLP_ret XMLParser::parseXML(XMLDocument& xmlDoc, up_base_node_t& root)
     return ret;
 }
 
-XMLP_ret XMLParser::parseRoot(XMLElement* p_root, BaseNode& rootNode)
+XMLP_ret XMLParser::parseRoot(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
 {
     XMLP_ret ret           = XMLP_ret::XML_OK;
-    XMLElement* root_child = nullptr;
+    tinyxml2::XMLElement* root_child = nullptr;
     if (nullptr != (root_child = p_root->FirstChildElement(PROFILES)))
     {
         up_base_node_t profiles_node = up_base_node_t(new BaseNode{NodeType::PROFILES});
@@ -76,7 +76,7 @@ XMLP_ret XMLParser::parseRoot(XMLElement* p_root, BaseNode& rootNode)
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLParticipantProf(XMLElement* p_root, BaseNode& rootNode)
+XMLP_ret XMLParser::parseXMLParticipantProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_ERROR;
     up_participant_t participant_atts{new ParticipantAttributes};
@@ -93,7 +93,7 @@ XMLP_ret XMLParser::parseXMLParticipantProf(XMLElement* p_root, BaseNode& rootNo
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLPublisherProf(XMLElement* p_root, BaseNode& rootNode)
+XMLP_ret XMLParser::parseXMLPublisherProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
 {    
     XMLP_ret ret = XMLP_ret::XML_ERROR;
     up_publisher_t publisher_atts{new PublisherAttributes};
@@ -110,7 +110,7 @@ XMLP_ret XMLParser::parseXMLPublisherProf(XMLElement* p_root, BaseNode& rootNode
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLSubscriberProf(XMLElement* p_root, BaseNode& rootNode)
+XMLP_ret XMLParser::parseXMLSubscriberProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
     up_subscriber_t subscriber_atts{new SubscriberAttributes};
@@ -127,9 +127,9 @@ XMLP_ret XMLParser::parseXMLSubscriberProf(XMLElement* p_root, BaseNode& rootNod
     return ret;
 }
 
-XMLP_ret XMLParser::parseProfiles(XMLElement* p_root, BaseNode& profilesNode)
+XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profilesNode)
 {
-    XMLElement* p_profile = p_root->FirstChildElement();
+    tinyxml2::XMLElement* p_profile = p_root->FirstChildElement();
     const char* tag       = nullptr;
     while (nullptr != p_profile)
     {
@@ -185,7 +185,7 @@ XMLP_ret XMLParser::loadXML(const std::string& filename, up_base_node_t& root)
     }
 
     tinyxml2::XMLDocument xmlDoc;
-    if (XML_SUCCESS != xmlDoc.LoadFile(filename.c_str()))
+    if (tinyxml2::XMLError::XML_SUCCESS != xmlDoc.LoadFile(filename.c_str()))
     {
         if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
             logError(XMLPARSER, "Error opening '" << filename << "'");
@@ -200,7 +200,7 @@ XMLP_ret XMLParser::loadXML(const std::string& filename, up_base_node_t& root)
 XMLP_ret XMLParser::loadXML(const char* data, size_t length, up_base_node_t& root)
 {
     tinyxml2::XMLDocument xmlDoc;
-    if (XML_SUCCESS != xmlDoc.Parse(data, length))
+    if (tinyxml2::XMLError::XML_SUCCESS != xmlDoc.Parse(data, length))
     {
         logError(XMLPARSER, "Error parsing XML buffer");
         return XMLP_ret::XML_ERROR;
@@ -209,16 +209,16 @@ XMLP_ret XMLParser::loadXML(const char* data, size_t length, up_base_node_t& roo
 }
 
 template <typename T>
-void XMLParser::addAllAttributes(XMLElement* p_profile, DataNode<T>& node)
+void XMLParser::addAllAttributes(tinyxml2::XMLElement* p_profile, DataNode<T>& node)
 {
-    const XMLAttribute* attrib;
+    const tinyxml2::XMLAttribute* attrib;
     for (attrib = p_profile->FirstAttribute(); attrib != NULL; attrib = attrib->Next())
     {
         node.addAttribute(attrib->Name(), attrib->Value());
     }
 }
 
-XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<ParticipantAttributes>& participant_node)
+XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<ParticipantAttributes>& participant_node)
 {
     /*<xs:complexType name="rtpsParticipantAttributesType">
       <xs:all minOccurs="0">
@@ -256,7 +256,7 @@ XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<ParticipantAttr
 
     addAllAttributes(p_profile, participant_node);
 
-    XMLElement* p_element = p_profile->FirstChildElement(RTPS);
+    tinyxml2::XMLElement* p_element = p_profile->FirstChildElement(RTPS);
     if (nullptr == p_element)
     {
         logError(XMLPARSER, "Not found '" << RTPS << "' tag");
@@ -264,7 +264,7 @@ XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<ParticipantAttr
     }
 
     uint8_t ident     = 1;
-    XMLElement* p_aux = nullptr;
+    tinyxml2::XMLElement* p_aux = nullptr;
     // defaultUnicastLocatorList
     if (nullptr != (p_aux = p_element->FirstChildElement(DEF_UNI_LOC_LIST)))
     {
@@ -375,7 +375,7 @@ XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<ParticipantAttr
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<PublisherAttributes>& publisher_node)
+XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<PublisherAttributes>& publisher_node)
 {
     /*<xs:complexType name="publisherProfileType">
       <xs:all minOccurs="0">
@@ -407,7 +407,7 @@ XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<PublisherAttrib
     addAllAttributes(p_profile, publisher_node);
 
     uint8_t ident     = 1;
-    XMLElement* p_aux = nullptr;
+    tinyxml2::XMLElement* p_aux = nullptr;
     // topic
     if (nullptr != (p_aux = p_profile->FirstChildElement(TOPIC)))
     {
@@ -482,7 +482,7 @@ XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<PublisherAttrib
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<SubscriberAttributes>& subscriber_node)
+XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<SubscriberAttributes>& subscriber_node)
 {
     /*<xs:complexType name="subscriberProfileType">
       <xs:all minOccurs="0">
@@ -516,7 +516,7 @@ XMLP_ret XMLParser::fillDataNode(XMLElement* p_profile, DataNode<SubscriberAttri
     addAllAttributes(p_profile, subscriber_node);
 
     uint8_t ident     = 1;
-    XMLElement* p_aux = nullptr;
+    tinyxml2::XMLElement* p_aux = nullptr;
     // topic
     if (nullptr != (p_aux = p_profile->FirstChildElement(TOPIC)))
     {
