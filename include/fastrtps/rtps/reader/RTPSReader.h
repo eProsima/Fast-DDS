@@ -213,7 +213,7 @@ namespace eprosima
 
                 private:
 
-                RTPSReader& operator=(const RTPSReader&) NON_COPYABLE_CXX11;
+                RTPSReader& operator=(const RTPSReader&) = delete;
             };
 
         } /* namespace rtps */

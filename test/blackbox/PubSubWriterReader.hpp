@@ -62,7 +62,7 @@ class PubSubWriterReader
 
         private:
 
-            ParticipantListener& operator=(const ParticipantListener&) NON_COPYABLE_CXX11;
+            ParticipantListener& operator=(const ParticipantListener&) = delete;
 
             PubSubWriterReader& wreader_;
     } participant_listener_;
@@ -85,7 +85,7 @@ class PubSubWriterReader
 
         private:
 
-            PubListener& operator=(const PubListener&) NON_COPYABLE_CXX11;
+            PubListener& operator=(const PubListener&) = delete;
 
             PubSubWriterReader &wreader_;
 
@@ -116,7 +116,7 @@ class PubSubWriterReader
 
         private:
 
-            SubListener& operator=(const SubListener&) NON_COPYABLE_CXX11;
+            SubListener& operator=(const SubListener&) = delete;
 
             PubSubWriterReader& wreader_;
     } sub_listener_;
@@ -410,7 +410,7 @@ class PubSubWriterReader
     }
 #endif
 
-    PubSubWriterReader& operator=(const PubSubWriterReader&)NON_COPYABLE_CXX11;
+    PubSubWriterReader& operator=(const PubSubWriterReader&)= delete;
 
     eprosima::fastrtps::Participant *participant_;
     eprosima::fastrtps::ParticipantAttributes participant_attr_;

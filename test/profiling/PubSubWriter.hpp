@@ -54,7 +54,7 @@ class PubSubWriter
 
         private:
 
-            Listener& operator=(const Listener&) NON_COPYABLE_CXX11;
+            Listener& operator=(const Listener&) = delete;
 
             PubSubWriter &writer_;
 
@@ -221,7 +221,7 @@ class PubSubWriter
         cv_.notify_one();
     }
 
-    PubSubWriter& operator=(const PubSubWriter&)NON_COPYABLE_CXX11;
+    PubSubWriter& operator=(const PubSubWriter&)= delete;
 
     eprosima::fastrtps::Participant *participant_;
     eprosima::fastrtps::PublisherAttributes publisher_attr_;

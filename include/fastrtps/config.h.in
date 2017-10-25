@@ -54,15 +54,6 @@
 #define __BIG_ENDIAN__ @__BIG_ENDIAN__@
 #endif
 
-// C++11 Non-copyable feature
-#ifndef NON_COPYABLE_CXX11
-#if !defined(HAVE_CXX0X) || (defined(_MSC_VER) && _MSC_VER <= 1600)
-#define NON_COPYABLE_CXX11
-#else
-#define NON_COPYABLE_CXX11 = delete
-#endif
-#endif
-
 // Security
 #ifndef HAVE_SECURITY
 #define HAVE_SECURITY @HAVE_SECURITY@

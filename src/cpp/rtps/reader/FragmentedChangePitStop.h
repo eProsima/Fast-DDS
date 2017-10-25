@@ -70,7 +70,7 @@ namespace eprosima
 
                     private:
 
-                        ChangeInPit& operator=(const ChangeInPit& cip) NON_COPYABLE_CXX11;
+                        ChangeInPit& operator=(const ChangeInPit& cip) = delete;
 
                         const SequenceNumber_t sequence_number_;
                         CacheChange_t* change_;
@@ -142,9 +142,9 @@ namespace eprosima
 
                 RTPSReader* parent_;
 
-                FragmentedChangePitStop(const FragmentedChangePitStop&) NON_COPYABLE_CXX11;
+                FragmentedChangePitStop(const FragmentedChangePitStop&) = delete;
 
-                FragmentedChangePitStop& operator=(const FragmentedChangePitStop&) NON_COPYABLE_CXX11;
+                FragmentedChangePitStop& operator=(const FragmentedChangePitStop&) = delete;
             };
         }
     } // namespace fastrtps

@@ -67,7 +67,7 @@ class PubSubReader
 
         private:
 
-            Listener& operator=(const Listener&) NON_COPYABLE_CXX11;
+            Listener& operator=(const Listener&) = delete;
 
             PubSubReader &reader_;
     } listener_;
@@ -260,7 +260,7 @@ class PubSubReader
             cvDiscovery_.notify_one();
         }
 
-        PubSubReader& operator=(const PubSubReader&)NON_COPYABLE_CXX11;
+        PubSubReader& operator=(const PubSubReader&)= delete;
 
         eprosima::fastrtps::Participant *participant_;
         eprosima::fastrtps::SubscriberAttributes subscriber_attr_;

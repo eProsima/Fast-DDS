@@ -275,7 +275,7 @@ class RTPSParticipantImpl
         //!Pointer to the user participant
         RTPSParticipant* mp_userParticipant;
 
-        RTPSParticipantImpl& operator=(const RTPSParticipantImpl&) NON_COPYABLE_CXX11;
+        RTPSParticipantImpl& operator=(const RTPSParticipantImpl&) = delete;
 
         /**
          * Method to check if a specific entityId already exists in this RTPSParticipant

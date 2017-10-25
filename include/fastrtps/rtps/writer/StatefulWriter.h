@@ -202,7 +202,7 @@ namespace eprosima
 
                 std::vector<std::unique_ptr<FlowController> > m_controllers;
 
-                StatefulWriter& operator=(const StatefulWriter&) NON_COPYABLE_CXX11;
+                StatefulWriter& operator=(const StatefulWriter&) = delete;
             };
         } /* namespace rtps */
     } /* namespace fastrtps */
