@@ -65,7 +65,7 @@ class RTPSWithRegistrationWriter
 
         private:
 
-            Listener& operator=(const Listener&) NON_COPYABLE_CXX11;
+            Listener& operator=(const Listener&) = delete;
 
             RTPSWithRegistrationWriter &writer_;
 
@@ -208,7 +208,7 @@ class RTPSWithRegistrationWriter
 
     private:
 
-        RTPSWithRegistrationWriter& operator=(const RTPSWithRegistrationWriter&) NON_COPYABLE_CXX11;
+        RTPSWithRegistrationWriter& operator=(const RTPSWithRegistrationWriter&) = delete;
 
         eprosima::fastrtps::rtps::RTPSParticipant *participant_;
         eprosima::fastrtps::rtps::RTPSWriter *writer_;

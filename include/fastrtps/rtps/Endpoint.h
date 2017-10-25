@@ -88,7 +88,7 @@ class Endpoint
 
     private:
 
-    Endpoint& operator=(const Endpoint&)NON_COPYABLE_CXX11;
+    Endpoint& operator=(const Endpoint&) = delete;
 
 #if HAVE_SECURITY
     bool supports_rtps_protection_;

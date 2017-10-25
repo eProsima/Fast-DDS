@@ -41,7 +41,7 @@ class RTPSAsSocketReader
 
             private:
 
-                Listener& operator=(const Listener&)NON_COPYABLE_CXX11;
+                Listener& operator=(const Listener&)= delete;
 
                 RTPSAsSocketReader &reader_;
         } listener_;
@@ -60,7 +60,7 @@ class RTPSAsSocketReader
 
     private:
 
-        RTPSAsSocketReader& operator=(const RTPSAsSocketReader&) NON_COPYABLE_CXX11;
+        RTPSAsSocketReader& operator=(const RTPSAsSocketReader&) = delete;
 
         RTPSParticipant *participant_;
         RTPSReader *reader_;

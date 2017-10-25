@@ -59,7 +59,7 @@ class ReqRepHelloWorldRequester
 
         private:
 
-            ReplyListener& operator=(const ReplyListener&) NON_COPYABLE_CXX11;
+            ReplyListener& operator=(const ReplyListener&) = delete;
 
             ReqRepHelloWorldRequester &requester_;
     } reply_listener_;
@@ -78,7 +78,7 @@ class ReqRepHelloWorldRequester
 
         private:
 
-            RequestListener& operator=(const RequestListener&) NON_COPYABLE_CXX11;
+            RequestListener& operator=(const RequestListener&) = delete;
 
             ReqRepHelloWorldRequester &requester_;
 
@@ -101,7 +101,7 @@ class ReqRepHelloWorldRequester
         SubscriberAttributes sattr;
     private:
 
-        ReqRepHelloWorldRequester& operator=(const ReqRepHelloWorldRequester&)NON_COPYABLE_CXX11;
+        ReqRepHelloWorldRequester& operator=(const ReqRepHelloWorldRequester&)= delete;
 
         uint16_t current_number_;
         uint16_t number_received_;

@@ -75,7 +75,7 @@ class RTPSAsSocketReader
 
         private:
 
-            Listener& operator=(const Listener&) NON_COPYABLE_CXX11;
+            Listener& operator=(const Listener&) = delete;
 
             RTPSAsSocketReader &reader_;
     } listener_;
@@ -302,7 +302,7 @@ class RTPSAsSocketReader
             }
         }
 
-        RTPSAsSocketReader& operator=(const RTPSAsSocketReader&) NON_COPYABLE_CXX11;
+        RTPSAsSocketReader& operator=(const RTPSAsSocketReader&) = delete;
 
         eprosima::fastrtps::rtps::RTPSParticipant *participant_;
         eprosima::fastrtps::rtps::ReaderAttributes reader_attr_;

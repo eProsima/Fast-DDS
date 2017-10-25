@@ -211,7 +211,7 @@ class RTPSWriter : public Endpoint
 
     private:
 
-    RTPSWriter& operator=(const RTPSWriter&) NON_COPYABLE_CXX11;
+    RTPSWriter& operator=(const RTPSWriter&) = delete;
 };
 }
 } /* namespace rtps */

@@ -42,7 +42,7 @@ class HandshakeMessageTokenResent : public TimedEvent
 
     private:
 
-        HandshakeMessageTokenResent& operator=(const HandshakeMessageTokenResent&) NON_COPYABLE_CXX11;
+        HandshakeMessageTokenResent& operator=(const HandshakeMessageTokenResent&) = delete;
 
         SecurityManager& security_manager_;
 

@@ -58,7 +58,7 @@ class ReqRepHelloWorldReplier
 
         private:
 
-            ReplyListener& operator=(const ReplyListener&) NON_COPYABLE_CXX11;
+            ReplyListener& operator=(const ReplyListener&) = delete;
 
             ReqRepHelloWorldReplier &replier_;
     } request_listener_;
@@ -77,7 +77,7 @@ class ReqRepHelloWorldReplier
 
         private:
 
-            RequestListener& operator=(const RequestListener&) NON_COPYABLE_CXX11;
+            RequestListener& operator=(const RequestListener&) = delete;
 
             ReqRepHelloWorldReplier &replier_;
 
@@ -98,7 +98,7 @@ class ReqRepHelloWorldReplier
         PublisherAttributes puattr;
     private:
 
-        ReqRepHelloWorldReplier& operator=(const ReqRepHelloWorldReplier&)NON_COPYABLE_CXX11;
+        ReqRepHelloWorldReplier& operator=(const ReqRepHelloWorldReplier&)= delete;
 
         Participant *participant_;
         Subscriber *request_subscriber_;

@@ -253,7 +253,7 @@ class SecurityManager
 
             private:
 
-                ParticipantStatelessMessageListener& operator=(const ParticipantStatelessMessageListener&) NON_COPYABLE_CXX11;
+                ParticipantStatelessMessageListener& operator=(const ParticipantStatelessMessageListener&) = delete;
 
                 SecurityManager &manager_;
         } participant_stateless_message_listener_;
@@ -269,7 +269,7 @@ class SecurityManager
 
             private:
 
-                ParticipantVolatileMessageListener& operator=(const ParticipantVolatileMessageListener&) NON_COPYABLE_CXX11;
+                ParticipantVolatileMessageListener& operator=(const ParticipantVolatileMessageListener&) = delete;
 
                 SecurityManager &manager_;
         } participant_volatile_message_secure_listener_;
