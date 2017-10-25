@@ -97,7 +97,7 @@ class BaseNode
         parent_ = parent;
     }
 
-    int getNumChildren() const
+    size_t getNumChildren() const
     {
         return children.size();
     }
