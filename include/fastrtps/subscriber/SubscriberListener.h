@@ -40,13 +40,13 @@ public:
 	 * Virtual function to be implemented by the user containing the actions to be performed when a new  Data Message is received.
 	 * @param sub Subscriber
 	 */
-	virtual void onNewDataMessage(Subscriber * sub){(void) sub;};
+	virtual void onNewDataMessage(Subscriber * /*sub*/){};
 	/**
 	 * Virtual method to be called when the subscriber is matched with a new Writer (or unmatched); i.e., when a writer publishing in the same topic is discovered.
 	 * @param sub Subscriber
 	 * @param info Matching information
 	 */
-	virtual void onSubscriptionMatched(Subscriber* sub, rtps::MatchingInfo& info){(void)sub; (void)info;};
+	virtual void onSubscriptionMatched(Subscriber* /*sub*/, rtps::MatchingInfo& /*info*/){};
 };
 
 } /* namespace fastrtps */
