@@ -67,7 +67,7 @@ class BaseNode
 
     bool removeChild(const size_t& index)
     {
-        if (children.begin() + index < children.end())
+        if (children.size() > index)
         {
             children.erase(children.begin() + index);
             return true;
