@@ -14,6 +14,7 @@
 
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
+#include <fastrtps/log/Log.h>
 
 #include <gtest/gtest.h>
 
@@ -131,6 +132,8 @@ class XMLParserTests : public ::testing::Test
 
     ~XMLParserTests()
     {
+        eprosima::fastrtps::Log::Reset();
+        eprosima::fastrtps::Log::KillThread();
     }
 
     bool get_participant_attributes(std::unique_ptr<BaseNode>& root, ParticipantAttributes& participant_atts)
