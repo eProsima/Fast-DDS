@@ -15,11 +15,10 @@
 macro(find_eprosima_package package)
     if(NOT (EPROSIMA_INSTALLER AND (MSVC OR MSVC_IDE)))
         if(THIRDPARTY)
-            set(EPROSIMA_PACKAGE_EXTERNAL_DIR "" CACHE STRING "External directory to compile eprosima libraries")
+            set(EPROSIMA_PACKAGE_EXTERNAL_DIR "" CACHE PATH "External directory to compile eprosima libraries")
+            set(${package}ExternalDir ${PROJECT_BINARY_DIR}/external/${package})
 
-            if("${EPROSIMA_PACKAGE_EXTERNAL_DIR}" STREQUAL "")
-                set(${package}ExternalDir ${PROJECT_BINARY_DIR}/external/${package})
-            else()
+            if(NOT "${EPROSIMA_PACKAGE_EXTERNAL_DIR}" STREQUAL "")
                 set(${package}ExternalDir ${EPROSIMA_PACKAGE_EXTERNAL_DIR}/${package})
             endif()
 
