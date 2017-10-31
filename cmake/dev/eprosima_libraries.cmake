@@ -23,7 +23,7 @@ macro(find_eprosima_package package)
                 set(${package}ExternalDir ${EPROSIMA_PACKAGE_EXTERNAL_DIR}/${package})
             endif()
 
-            if(NOT EXISTS "${${package}ExternalDir}/cmake_install.cmake")
+            if(NOT EXISTS "${${package}ExternalDir}/build/cmake_install.cmake")
                 if(MINION)
                     set(CMAKE_INSTALL_PREFIX_ "${CMAKE_INSTALL_PREFIX}")
                 else()
