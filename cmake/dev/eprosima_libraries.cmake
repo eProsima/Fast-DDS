@@ -14,7 +14,10 @@
 
 macro(find_eprosima_package package)
     if(NOT (EPROSIMA_INSTALLER AND (MSVC OR MSVC_IDE)))
-        if(THIRDPARTY)
+
+        option(THIRDPARTY_${package} "Activate the use of internal thirdparty ${package}" OFF)
+
+        if(THIRDPARTY OR THIRDPARTY_${package})
             set(EPROSIMA_PACKAGE_EXTERNAL_DIR "" CACHE PATH "External directory to compile eprosima libraries")
             set(${package}ExternalDir ${PROJECT_BINARY_DIR}/external/${package})
 
@@ -22,7 +25,7 @@ macro(find_eprosima_package package)
                 set(${package}ExternalDir ${EPROSIMA_PACKAGE_EXTERNAL_DIR}/${package})
             endif()
 
-            if(NOT EXISTS "${${package}ExternalDir}/build/cmake_install.cmake")
+            if(NOT EXISTS "${${package}ExternalDir}/install.txt")
                 if(MINION)
                     set(CMAKE_INSTALL_PREFIX_ "${CMAKE_INSTALL_PREFIX}")
                 else()
@@ -94,7 +97,8 @@ macro(find_eprosima_package package)
                     "UPDATE_COMMAND cd \"${PROJECT_SOURCE_DIR}\" && git submodule update --recursive --init \"thirdparty/${package}\"\n"
                     "SOURCE_DIR \${SOURCE_DIR_}\n"
                     "BINARY_DIR \"${${package}ExternalDir}/build\"\n"
-                    ")\n")
+                    ")\n"
+                    "install(CODE \"file(WRITE install.txt \\\"Installation completed\\\")\")\n")
 
                 execute_process(COMMAND ${CMAKE_COMMAND}
                     -G ${CMAKE_GENERATOR}
@@ -124,7 +128,7 @@ macro(find_eprosima_package package)
                         message(FATAL_ERROR "Cannot build Git submodule ${package} in Debug mode")
                     endif()
 
-                    execute_process(COMMAND ${CMAKE_COMMAND} --build . --config ${BUILD_TYPE_GENERATION}
+                    execute_process(COMMAND ${CMAKE_COMMAND} --build . --config ${BUILD_TYPE_GENERATION} --target install
                         WORKING_DIRECTORY ${${package}ExternalDir}
                         RESULT_VARIABLE EXECUTE_RESULT
                         )
@@ -133,7 +137,7 @@ macro(find_eprosima_package package)
                         message(FATAL_ERROR "Cannot build Git submodule ${package} in ${BUILD_TYPE_GENERATION} mode")
                     endif()
                 else()
-                    execute_process(COMMAND ${CMAKE_COMMAND} --build .
+                    execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
                         WORKING_DIRECTORY ${${package}ExternalDir}
                         RESULT_VARIABLE EXECUTE_RESULT
                         )
@@ -160,7 +164,10 @@ endmacro()
 
 macro(find_eprosima_thirdparty package thirdparty_name)
     if(NOT (EPROSIMA_INSTALLER AND (MSVC OR MSVC_IDE)))
-        if(THIRDPARTY)
+
+        option(THIRDPARTY_${package} "Activate the use of internal thirdparty ${package}" OFF)
+
+        if(THIRDPARTY OR THIRDPARTY_${package})
             execute_process(
                 COMMAND git submodule update --recursive --init "thirdparty/${thirdparty_name}"
                 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
