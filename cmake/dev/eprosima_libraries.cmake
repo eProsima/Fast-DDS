@@ -21,7 +21,9 @@ macro(find_eprosima_package package)
             set(EPROSIMA_PACKAGE_EXTERNAL_DIR "" CACHE PATH "External directory to compile eprosima libraries")
             set(${package}ExternalDir ${PROJECT_BINARY_DIR}/external/${package})
 
-            if(NOT "${EPROSIMA_PACKAGE_EXTERNAL_DIR}" STREQUAL "")
+            if("${EPROSIMA_PACKAGE_EXTERNAL_DIR}" STREQUAL "")
+                set(EPROSIMA_PACKAGE_EXTERNAL_DIR ${PROJECT_BINARY_DIR}/external)
+            else()
                 set(${package}ExternalDir ${EPROSIMA_PACKAGE_EXTERNAL_DIR}/${package})
             endif()
 
@@ -65,7 +67,6 @@ macro(find_eprosima_package package)
                     "\${CMAKE_CXX_COMPILER_}"
                     "-DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS_}"
                     "-DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS_}"
-                    ${BUILD_OPTION}
                     ${ANDROID_BUILD_OPTIONS}
                     "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
                     "-DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}"
@@ -77,6 +78,7 @@ macro(find_eprosima_package package)
                     "-DLICENSE_INSTALL_DIR:PATH=licenses"
                     "\${CMAKE_INSTALL_PREFIX_}"
                     "\${CMAKE_PREFIX_PATH_}"
+                    "\${EPROSIMA_PACKAGE_EXTERNAL_DIR_}"
                     )
                 list(APPEND ${package}_CMAKE_ARGS LIST_SEPARATOR "|")
 
@@ -90,6 +92,7 @@ macro(find_eprosima_package package)
                     "set(CMAKE_PREFIX_PATH_ -DCMAKE_PREFIX_PATH=\"${CMAKE_PREFIX_PATH_}\")\n"
                     "set(CMAKE_C_COMPILER_ \"-DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}\")\n"
                     "set(CMAKE_CXX_COMPILER_ \"-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}\")\n"
+                    "set(EPROSIMA_PACKAGE_EXTERNAL_DIR_ \"-DEPROSIMA_PACKAGE_EXTERNAL_DIR:PATH=${EPROSIMA_PACKAGE_EXTERNAL_DIR}\")\n"
                     "ExternalProject_Add(${package}\n"
                     "CONFIGURE_COMMAND \"${CMAKE_COMMAND}\"\n"
                     "${${package}_CMAKE_ARGS}\n"
@@ -100,9 +103,12 @@ macro(find_eprosima_package package)
                     ")\n"
                     "install(CODE \"file(WRITE install.txt \\\"Installation completed\\\")\")\n")
 
+                if(NOT "$ENV{CMAKE_MAKEFLAGS}" STREQUAL "")
+                    set(ENV{MAKEFLAGS} "$ENV{CMAKE_MAKEFLAGS}")
+                endif()
+
                 execute_process(COMMAND ${CMAKE_COMMAND}
                     -G ${CMAKE_GENERATOR}
-                    ${BUILD_OPTION}
                     ${ANDROID_BUILD_OPTIONS}
                     WORKING_DIRECTORY ${${package}ExternalDir}
                     RESULT_VARIABLE EXECUTE_RESULT
