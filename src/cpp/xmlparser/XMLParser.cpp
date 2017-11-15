@@ -21,7 +21,7 @@
 namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
-    
+
 XMLP_ret XMLParser::loadDefaultXMLFile(up_base_node_t& root)
 {
     return loadXML(DEFAULT_FASTRTPS_PROFILES, root);
@@ -33,6 +33,7 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
     tinyxml2::XMLElement* p_root = xmlDoc.FirstChildElement(ROOT);
     if (nullptr == p_root)
     {
+        // Just profiles in the XML.
         if (nullptr == (p_root = xmlDoc.FirstChildElement(PROFILES)))
         {
             logError(XMLPARSER, "Not found root tag");
@@ -46,16 +47,28 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
     }
     else
     {
-        tinyxml2::XMLElement* new_root = p_root->FirstChildElement(PROFILES);
-        if (nullptr == new_root)
+        root.reset(new BaseNode{NodeType::ROOT});
+        tinyxml2::XMLElement* node = p_root->FirstChildElement();
+        const char* tag       = nullptr;
+        while (nullptr != node)
         {
-            logError(XMLPARSER, "Not found root tag");
-            ret = XMLP_ret::XML_ERROR;
-        }
-        else
-        {
-            root.reset(new BaseNode{NodeType::PROFILES});
-            ret  = parseProfiles(new_root, *root);
+            if (nullptr != (tag = node->Value()))
+            {
+                if (strcmp(tag, PROFILES) == 0)
+                {
+                    up_base_node_t profiles_node = up_base_node_t{new BaseNode{NodeType::PROFILES}};
+                    if (XMLP_ret::XML_OK == (ret = parseProfiles(node, *profiles_node)))
+                    {
+                        root->addChild(std::move(profiles_node));
+                    }
+                }
+                else if (strcmp(tag, TOPIC) == 0)
+                {
+                    ret = parseXMLTopicData(node, *root);
+                }
+            }
+
+            node = node->NextSiblingElement();
         }
     }
     return ret;
@@ -78,7 +91,7 @@ XMLP_ret XMLParser::parseRoot(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
 
 XMLP_ret XMLParser::parseXMLParticipantProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
 {
-    XMLP_ret ret = XMLP_ret::XML_ERROR;
+    XMLP_ret ret = XMLP_ret::XML_OK;
     up_participant_t participant_atts{new ParticipantAttributes};
     up_node_participant_t participant_node{new node_participant_t{NodeType::PARTICIPANT, std::move(participant_atts)}};
     if (XMLP_ret::XML_OK == fillDataNode(p_root, *participant_node))
@@ -94,8 +107,8 @@ XMLP_ret XMLParser::parseXMLParticipantProf(tinyxml2::XMLElement* p_root, BaseNo
 }
 
 XMLP_ret XMLParser::parseXMLPublisherProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
-{    
-    XMLP_ret ret = XMLP_ret::XML_ERROR;
+{
+    XMLP_ret ret = XMLP_ret::XML_OK;
     up_publisher_t publisher_atts{new PublisherAttributes};
     up_node_publisher_t publisher_node{new node_publisher_t{NodeType::PUBLISHER, std::move(publisher_atts)}};
     if (XMLP_ret::XML_OK == fillDataNode(p_root, *publisher_node))
@@ -122,6 +135,23 @@ XMLP_ret XMLParser::parseXMLSubscriberProf(tinyxml2::XMLElement* p_root, BaseNod
     else
     {
         logError(XMLPARSER, "Error parsing subscriber profile");
+        ret = XMLP_ret::XML_ERROR;
+    }
+    return ret;
+}
+
+XMLP_ret XMLParser::parseXMLTopicData(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
+{
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    up_topic_t topic_atts{new TopicAttributes};
+    up_node_topic_t topic_node{new node_topic_t{NodeType::TOPIC, std::move(topic_atts)}};
+    if (XMLP_ret::XML_OK == fillDataNode(p_root, *topic_node))
+    {
+        rootNode.addChild(std::move(topic_node));
+    }
+    else
+    {
+        logError(XMLPARSER, "Error parsing topic data node");
         ret = XMLP_ret::XML_ERROR;
     }
     return ret;
@@ -216,6 +246,27 @@ void XMLParser::addAllAttributes(tinyxml2::XMLElement* p_profile, DataNode<T>& n
     {
         node.addAttribute(attrib->Name(), attrib->Value());
     }
+}
+
+XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* node, DataNode<TopicAttributes>& topic_node)
+{
+    if (nullptr == node)
+    {
+        logError(XMLPARSER, "Bad parameters!");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    addAllAttributes(node, topic_node);
+
+    uint8_t ident     = 1;
+    tinyxml2::XMLElement* p_aux = nullptr;
+    // topic
+    if (XMLP_ret::XML_OK != getXMLTopicAttributes(node, *topic_node.get(), ident))
+    {
+            return XMLP_ret::XML_ERROR;
+    }
+
+    return XMLP_ret::XML_OK;
 }
 
 XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<ParticipantAttributes>& participant_node)

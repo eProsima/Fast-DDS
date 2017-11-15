@@ -203,24 +203,36 @@ TEST_F(XMLParserTests, TypesRooted)
     bool participant_profile = false;
     bool publisher_profile   = false;
     bool subscriber_profile  = false;
-    for (const auto& profile : root->getChildren())
+    bool topic_data          = false;
+    for (const auto& root_child : root->getChildren())
     {
-        if (profile->getType() == NodeType::PARTICIPANT)
+        if (root_child->getType() == NodeType::PROFILES)
         {
-            participant_profile = true;
+            for (const auto& profile : root_child->getChildren())
+            {
+                if (profile->getType() == NodeType::PARTICIPANT)
+                {
+                    participant_profile = true;
+                }
+                else if (profile->getType() == NodeType::SUBSCRIBER)
+                {
+                    publisher_profile = true;
+                }
+                else if (profile->getType() == NodeType::PUBLISHER)
+                {
+                    subscriber_profile = true;
+                }
+            }
         }
-        else if (profile->getType() == NodeType::SUBSCRIBER)
+        else if (root_child->getType() == NodeType::TOPIC)
         {
-            publisher_profile = true;
-        }
-        else if (profile->getType() == NodeType::PUBLISHER)
-        {
-            subscriber_profile = true;
+            topic_data = true;
         }
     }
     ASSERT_TRUE(participant_profile);
     ASSERT_TRUE(publisher_profile);
     ASSERT_TRUE(subscriber_profile);
+    ASSERT_TRUE(topic_data);
 }
 
 TEST_F(XMLParserTests, TypesRootedBuffer)
@@ -235,24 +247,36 @@ TEST_F(XMLParserTests, TypesRootedBuffer)
     bool participant_profile = false;
     bool publisher_profile   = false;
     bool subscriber_profile  = false;
-    for (const auto& profile : root->getChildren())
+    bool topic_data          = false;
+    for (const auto& root_child : root->getChildren())
     {
-        if (profile->getType() == NodeType::PARTICIPANT)
+        if (root_child->getType() == NodeType::PROFILES)
         {
-            participant_profile = true;
+            for (const auto& profile : root_child->getChildren())
+            {
+                if (profile->getType() == NodeType::PARTICIPANT)
+                {
+                    participant_profile = true;
+                }
+                else if (profile->getType() == NodeType::SUBSCRIBER)
+                {
+                    publisher_profile = true;
+                }
+                else if (profile->getType() == NodeType::PUBLISHER)
+                {
+                    subscriber_profile = true;
+                }
+            }
         }
-        else if (profile->getType() == NodeType::SUBSCRIBER)
+        else if (root_child->getType() == NodeType::TOPIC)
         {
-            publisher_profile = true;
-        }
-        else if (profile->getType() == NodeType::PUBLISHER)
-        {
-            subscriber_profile = true;
+            topic_data = true;
         }
     }
     ASSERT_TRUE(participant_profile);
     ASSERT_TRUE(publisher_profile);
     ASSERT_TRUE(subscriber_profile);
+    ASSERT_TRUE(topic_data);
 }
 
 TEST_F(XMLParserTests, Types)

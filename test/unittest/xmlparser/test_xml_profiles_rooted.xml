@@ -305,4 +305,8 @@
         </subscriber>
 
     </profiles>
+    <topic>
+        <name>SampleTopicNode</name>
+        <dataType>SampleTopicNodeType</dataType>
+    </topic>
 </dds>
