@@ -29,7 +29,7 @@ XMLP_ret XMLParser::loadDefaultXMLFile(up_base_node_t& root)
 
 XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root)
 {
-    XMLP_ret ret;
+    XMLP_ret ret = XMLP_ret::XML_OK;
     tinyxml2::XMLElement* p_root = xmlDoc.FirstChildElement(ROOT);
     if (nullptr == p_root)
     {
@@ -259,8 +259,6 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* node, DataNode<TopicAttri
     addAllAttributes(node, topic_node);
 
     uint8_t ident     = 1;
-    tinyxml2::XMLElement* p_aux = nullptr;
-    // topic
     if (XMLP_ret::XML_OK != getXMLTopicAttributes(node, *topic_node.get(), ident))
     {
             return XMLP_ret::XML_ERROR;
