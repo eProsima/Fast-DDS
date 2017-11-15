@@ -57,6 +57,11 @@ typedef DataNode<SubscriberAttributes>         node_subscriber_t;
 typedef node_subscriber_t*                     p_node_subscriber_t;
 typedef std::unique_ptr<node_subscriber_t>     up_node_subscriber_t;
 
+typedef std::unique_ptr<TopicAttributes>       up_topic_t;
+typedef DataNode<TopicAttributes>              node_topic_t;
+typedef node_topic_t*                          p_node_topic_t;
+typedef std::unique_ptr<node_topic_t>          up_node_topic_t;
+
 /**
  * Class XMLParser, used to load XML data.
  * @ingroup XMLPARSER_MODULE
@@ -94,10 +99,12 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret parseXMLParticipantProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode);
     RTPS_DllAPI static XMLP_ret parseXMLPublisherProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode);
     RTPS_DllAPI static XMLP_ret parseXMLSubscriberProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode);
+    RTPS_DllAPI static XMLP_ret parseXMLTopicData(tinyxml2::XMLElement* p_root, BaseNode& rootNode);
 
     RTPS_DllAPI static XMLP_ret fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<ParticipantAttributes>& participant_node);
     RTPS_DllAPI static XMLP_ret fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<PublisherAttributes>& publisher_node);
     RTPS_DllAPI static XMLP_ret fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<SubscriberAttributes>& subscriber_node);
+    RTPS_DllAPI static XMLP_ret fillDataNode(tinyxml2::XMLElement* node, DataNode<TopicAttributes>& topic_node);
 
     template <typename T>
     RTPS_DllAPI static void addAllAttributes(tinyxml2::XMLElement* p_profile, DataNode<T>& node);
