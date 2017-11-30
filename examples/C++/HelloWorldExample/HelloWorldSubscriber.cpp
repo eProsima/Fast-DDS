@@ -39,7 +39,7 @@ bool HelloWorldSubscriber::init()
     PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.domainId = 80;
+    PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_sub");
     mp_participant = Domain::createParticipant(PParam);
@@ -59,6 +59,7 @@ bool HelloWorldSubscriber::init()
     Rparam.topic.resourceLimitsQos.max_samples = 50;
     Rparam.topic.resourceLimitsQos.allocated_samples = 20;
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 
     if(mp_subscriber == nullptr)
