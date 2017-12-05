@@ -204,5 +204,10 @@ bool SubscriberImpl::isInCleanState() const
     return mp_reader->isInCleanState();
 }
 
+uint64_t SubscriberImpl::getUnreadCount()
+{
+    return m_history.getUnreadCount();
+}
+
 } /* namespace fastrtps */
 } /* namespace eprosima */

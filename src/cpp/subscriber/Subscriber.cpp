@@ -59,6 +59,10 @@ bool Subscriber::isInCleanState() const
     return mp_impl->isInCleanState();
 }
 
+uint64_t Subscriber::getUnreadCount()
+{
+	return mp_impl->getUnreadCount();
+}
 
 
 
