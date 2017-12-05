@@ -96,6 +96,12 @@ public:
     */
     bool isInCleanState() const;
 
+	/**
+	 * Get the unread count.
+	 * @return Unread count
+	 */
+	uint64_t getUnreadCount();
+
 private:
 	SubscriberImpl* mp_impl;
 };
