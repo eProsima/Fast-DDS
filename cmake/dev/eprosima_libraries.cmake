@@ -252,6 +252,8 @@ macro(install_eprosima_libraries)
                 FILES_MATCHING
                 PATTERN "*d.*"
                 PATTERN "*d-*.*"
+                PATTERN "*.cmake"
+                PATTERN "*-${BUILD_TYPE_INSTALLATION}.cmake" EXCLUDE
                 )
 
             install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/${LIB_INSTALL_DIR}/
@@ -263,6 +265,7 @@ macro(install_eprosima_libraries)
                 PATTERN "*"
                 PATTERN "*d.*" EXCLUDE
                 PATTERN "*d-*.*" EXCLUDE
+                PATTERN "*-debug.cmake" EXCLUDE
                 )
 
             # Install licenses
