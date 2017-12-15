@@ -76,13 +76,13 @@ public:
 	 * Check if the Qos values are compatible between each other.
 	 * @return True if correct.
 	 */
-	RTPS_DllAPI bool checkQos();
+	RTPS_DllAPI bool checkQos() const;
 	/**
 	 * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
 	 * @param qos Reference to the new qos.
 	 * @return True if they can be updated.
 	 */
-	RTPS_DllAPI bool canQosBeUpdated(ReaderQos& qos);
+	RTPS_DllAPI bool canQosBeUpdated(const ReaderQos& qos) const;
 };
 
 

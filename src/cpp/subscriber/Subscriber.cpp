@@ -49,7 +49,7 @@ bool Subscriber::updateAttributes(SubscriberAttributes& att)
 	return mp_impl->updateAttributes(att);
 }
 
-SubscriberAttributes Subscriber::getAttributes()
+SubscriberAttributes Subscriber::getAttributes() const
 {
 	return mp_impl->getAttributes();
 }
@@ -59,7 +59,7 @@ bool Subscriber::isInCleanState() const
     return mp_impl->isInCleanState();
 }
 
-uint64_t Subscriber::getUnreadCount()
+uint64_t Subscriber::getUnreadCount() const
 {
 	return mp_impl->getUnreadCount();
 }

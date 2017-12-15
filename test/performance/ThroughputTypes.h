@@ -97,7 +97,7 @@ typedef struct ThroughputType{
 	}
 }ThroughputType;
 
-inline bool operator==(ThroughputType& lt1,ThroughputType& lt2)
+inline bool operator==(const ThroughputType& lt1,const ThroughputType& lt2)
 				{
 	if(lt1.seqnum!=lt2.seqnum)
 		return false;

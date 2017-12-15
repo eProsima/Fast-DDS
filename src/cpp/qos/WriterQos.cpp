@@ -134,7 +134,7 @@ void WriterQos::setQos(const WriterQos& qos, bool first_time)
     }
 }
 
-bool WriterQos::checkQos()
+bool WriterQos::checkQos() const
 {
     if(m_durability.kind == TRANSIENT_DURABILITY_QOS)
     {
@@ -168,7 +168,7 @@ bool WriterQos::checkQos()
 }
 
 
-bool WriterQos::canQosBeUpdated(WriterQos& qos)
+bool WriterQos::canQosBeUpdated(const WriterQos& qos) const
 {
     bool updatable = true;
     if(	m_durability.kind != qos.m_durability.kind)

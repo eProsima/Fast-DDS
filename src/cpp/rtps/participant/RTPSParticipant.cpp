@@ -91,11 +91,11 @@ std::pair<StatefulReader*,StatefulReader*> RTPSParticipant::getEDPReaders(){
     return mp_impl->getEDPReaders();
 }
 
-std::vector<std::string> RTPSParticipant::getParticipantNames(){
+std::vector<std::string> RTPSParticipant::getParticipantNames() const {
     return mp_impl->getParticipantNames();
 }
 
-RTPSParticipantAttributes RTPSParticipant::getRTPSParticipantAttributes(){
+RTPSParticipantAttributes RTPSParticipant::getRTPSParticipantAttributes() const {
     return mp_impl->getRTPSParticipantAttributes();
 }
 

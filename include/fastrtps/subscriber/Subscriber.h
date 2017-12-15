@@ -86,7 +86,7 @@ public:
 	 * Get the Attributes of the Subscriber.
 	 * @return Attributes of the subscriber
 	 */
-	SubscriberAttributes getAttributes();
+	SubscriberAttributes getAttributes() const;
 
     /*!
     * @brief Returns there is a clean state with all Publishers.
@@ -100,7 +100,7 @@ public:
 	 * Get the unread count.
 	 * @return Unread count
 	 */
-	uint64_t getUnreadCount();
+	uint64_t getUnreadCount() const;
 
 private:
 	SubscriberImpl* mp_impl;

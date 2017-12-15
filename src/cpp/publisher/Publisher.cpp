@@ -83,7 +83,7 @@ const GUID_t& Publisher::getGuid()
 	return mp_impl->getGuid();
 }
 
-PublisherAttributes Publisher::getAttributes()
+PublisherAttributes Publisher::getAttributes() const
 {
 	return mp_impl->getAttributes();
 }

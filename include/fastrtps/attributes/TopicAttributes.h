@@ -95,7 +95,7 @@ class TopicAttributes
          * Method to check whether the defined QOS are correct.
          * @return True if they are valid.
          */
-        bool checkQos()
+        bool checkQos() const
         {
             if(resourceLimitsQos.max_samples_per_instance > resourceLimitsQos.max_samples && topicKind == WITH_KEY)
             {
@@ -140,7 +140,7 @@ class TopicAttributes
  * @param t2 Second instance of TopicAttributes to compare 
  * @return True if the instances are not equal. False if the instances are equal.
  */
-bool inline operator!=(TopicAttributes& t1, TopicAttributes& t2)
+bool inline operator!=(const TopicAttributes& t1, const TopicAttributes& t2)
 {
     if(t1.topicKind != t2.topicKind)
     {

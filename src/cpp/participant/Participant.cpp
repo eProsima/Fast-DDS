@@ -39,7 +39,7 @@ const GUID_t& Participant::getGuid() const
 	return mp_impl->getGuid();
 }
 
-const ParticipantAttributes& Participant::getAttributes()
+const ParticipantAttributes& Participant::getAttributes() const
 {
 	return mp_impl->getAttributes();
 }
@@ -56,7 +56,7 @@ std::pair<StatefulReader*,StatefulReader*> Participant::getEDPReaders(){
 	return mp_impl->getEDPReaders();
 }
 
-std::vector<std::string> Participant::getParticipantNames(){
+std::vector<std::string> Participant::getParticipantNames() const {
   return mp_impl->getParticipantNames();
 }
 

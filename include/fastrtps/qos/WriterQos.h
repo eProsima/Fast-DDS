@@ -81,9 +81,9 @@ public:
 	 * Check if the Qos values are compatible between each other.
 	 * @return True if correct.
 	 */
-	RTPS_DllAPI bool checkQos();
+	RTPS_DllAPI bool checkQos() const;
 
-	RTPS_DllAPI bool canQosBeUpdated(WriterQos& qos);
+	RTPS_DllAPI bool canQosBeUpdated(const WriterQos& qos) const;
 };
 
 
