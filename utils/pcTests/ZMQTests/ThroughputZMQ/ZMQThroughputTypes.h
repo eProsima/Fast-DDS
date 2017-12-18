@@ -93,7 +93,7 @@ typedef struct LatencyType{
 	}
 }LatencyType;
 
-inline bool operator==(LatencyType& lt1,LatencyType& lt2)
+inline bool operator==(const LatencyType& lt1,const LatencyType& lt2)
 						{
 	if(lt1.seqnum!=lt2.seqnum)
 		return false;

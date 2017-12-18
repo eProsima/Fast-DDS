@@ -125,7 +125,7 @@ class ParticipantImpl
 
     std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 
-    std::vector<std::string> getParticipantNames();
+    std::vector<std::string> getParticipantNames() const;
 
     /**
      * This method can be used when using a StaticEndpointDiscovery mechanism differnet that the one

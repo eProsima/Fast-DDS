@@ -204,7 +204,7 @@ bool SubscriberImpl::isInCleanState() const
     return mp_reader->isInCleanState();
 }
 
-uint64_t SubscriberImpl::getUnreadCount()
+uint64_t SubscriberImpl::getUnreadCount() const
 {
     return m_history.getUnreadCount();
 }

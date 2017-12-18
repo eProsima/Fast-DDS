@@ -957,7 +957,7 @@ std::pair<StatefulReader*,StatefulReader*> RTPSParticipantImpl::getEDPReaders(){
 
 }
 
-std::vector<std::string> RTPSParticipantImpl::getParticipantNames(){
+std::vector<std::string> RTPSParticipantImpl::getParticipantNames() const {
     std::vector<std::string> participant_names;
     auto pdp = mp_builtinProtocols->mp_PDP;
     for (auto it = pdp->ParticipantProxiesBegin();

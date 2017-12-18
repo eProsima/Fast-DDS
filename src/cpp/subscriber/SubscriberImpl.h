@@ -116,7 +116,7 @@ public:
 	 * Get the unread count.
 	 * @return Unread count
 	 */
-	uint64_t getUnreadCount();
+	uint64_t getUnreadCount() const;
 
 private:
 	//!Participant

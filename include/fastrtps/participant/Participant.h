@@ -68,7 +68,7 @@ public:
 	* Get the ParticipantAttributes.
 	* @return ParticipantAttributes.
 	*/
-	const ParticipantAttributes& getAttributes();
+	const ParticipantAttributes& getAttributes() const;
 
 	/**
 	* Called when using a StaticEndpointDiscovery mechanism different that the one
@@ -93,7 +93,7 @@ public:
 	 * */	
 	std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 
-	std::vector<std::string> getParticipantNames();
+	std::vector<std::string> getParticipantNames() const;
 
     bool get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo);
 

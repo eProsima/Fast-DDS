@@ -185,7 +185,7 @@ class RTPSParticipantImpl
          */
         std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 
-        std::vector<std::string> getParticipantNames();
+        std::vector<std::string> getParticipantNames() const;
 
         /**
          * Get the participant

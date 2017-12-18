@@ -129,13 +129,13 @@ class RTPS_DllAPI RTPSParticipant
      */
     std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 
-    std::vector<std::string> getParticipantNames();
+    std::vector<std::string> getParticipantNames() const;
 
     /**
      * Get a copy of the actual state of the RTPSParticipantParameters
      * @return RTPSParticipantAttributes copy of the params.
      */
-    RTPSParticipantAttributes getRTPSParticipantAttributes();
+    RTPSParticipantAttributes getRTPSParticipantAttributes() const;
 
     uint32_t getMaxMessageSize() const;
 

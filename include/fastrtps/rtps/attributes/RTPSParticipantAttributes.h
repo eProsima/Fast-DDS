@@ -75,7 +75,7 @@ class PortParameters
          * @param domainId Domain ID.
          * @return Multicast port
          */
-        inline uint32_t getMulticastPort(uint32_t domainId)
+        inline uint32_t getMulticastPort(uint32_t domainId) const
         {
             return portBase+ domainIDGain * domainId+ offsetd0;
         }
@@ -86,7 +86,7 @@ class PortParameters
          * @param RTPSParticipantID Participant ID.
          * @return Unicast port
          */
-        inline uint32_t getUnicastPort(uint32_t domainId,uint32_t RTPSParticipantID)
+        inline uint32_t getUnicastPort(uint32_t domainId,uint32_t RTPSParticipantID) const
         {
             return portBase+ domainIDGain * domainId	+ offsetd1	+ participantIDGain * RTPSParticipantID;
         }
@@ -168,7 +168,7 @@ class BuiltinAttributes{
          * Get the static endpoint XML filename
          * @return Static endpoint XML filename
          */
-        const char* getStaticEndpointXMLFilename(){ return m_staticEndpointXMLFilename.c_str(); };
+        const char* getStaticEndpointXMLFilename() const { return m_staticEndpointXMLFilename.c_str(); };
         /**
          * Set the static endpoint XML filename
          * @param str Static endpoint XML filename
