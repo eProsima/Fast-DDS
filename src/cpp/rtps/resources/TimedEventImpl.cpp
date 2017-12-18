@@ -186,14 +186,14 @@ void TimedEventImpl::event(const std::error_code& ec, const std::shared_ptr<Time
     }
 
     TimedEvent::EventCode code = TimedEvent::EVENT_MSG;
-    const char *message = nullptr;
+    std::string message;
 
     if(!ec)
         code = TimedEvent::EVENT_SUCCESS;
     else
-        message = ec.message().c_str();
+        message = ec.message();
 
-    this->mp_event->event(code, message);
+    this->mp_event->event(code, message.c_str());
 
     // If the destructor is waiting, signal it.
     std::unique_lock<std::mutex> lock(mutex_);
