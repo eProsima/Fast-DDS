@@ -133,60 +133,64 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
     {
         GUID_t guid;
         iHandle2GUID(guid,change->instanceHandle);
-        this->mp_SPDP->removeRemoteParticipant(guid);
-        RTPSParticipantDiscoveryInfo info;
-        info.m_status = REMOVED_RTPSPARTICIPANT;
-        info.m_guid = guid;
-        if(this->mp_SPDP->getRTPSParticipant()->getListener()!=nullptr)
-            this->mp_SPDP->getRTPSParticipant()->getListener()->onRTPSParticipantDiscovery(
-                    this->mp_SPDP->getRTPSParticipant()->getUserRTPSParticipant(),
-                    info);
+        if(this->mp_SPDP->removeRemoteParticipant(guid))
+        {
+            if(this->mp_SPDP->getRTPSParticipant()->getListener()!=nullptr)
+            {
+                RTPSParticipantDiscoveryInfo info;
+                info.m_status = REMOVED_RTPSPARTICIPANT;
+                info.m_guid = guid;
+                this->mp_SPDP->getRTPSParticipant()->getListener()->onRTPSParticipantDiscovery(
+                        this->mp_SPDP->getRTPSParticipant()->getUserRTPSParticipant(),
+                        info);
+            }
+        }
     }
-    
+
     //Remove change form history.
     this->mp_SPDP->mp_SPDPReaderHistory->remove_change(change);
 
-	return;
+    return;
 }
 
 bool PDPSimpleListener::getKey(CacheChange_t* change)
 {
-	SerializedPayload_t* pl = &change->serializedPayload;
-	CDRMessage::initCDRMsg(&aux_msg);
+    SerializedPayload_t* pl = &change->serializedPayload;
+    CDRMessage::initCDRMsg(&aux_msg);
     // TODO CHange because it create a buffer to remove after.
     free(aux_msg.buffer);
-	aux_msg.buffer = pl->data;
-	aux_msg.length = pl->length;
-	aux_msg.max_size = pl->max_size;
-	aux_msg.msg_endian = pl->encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
-	bool valid = false;
-	uint16_t pid;
-	uint16_t plength;
-	while(aux_msg.pos < aux_msg.length)
-	{
-		valid = true;
-		valid&=CDRMessage::readUInt16(&aux_msg,(uint16_t*)&pid);
-		valid&=CDRMessage::readUInt16(&aux_msg,&plength);
-		if(pid == PID_SENTINEL)
-		{
-			break;
-		}
-		if(pid == PID_PARTICIPANT_GUID)
-		{
-			valid &= CDRMessage::readData(&aux_msg,change->instanceHandle.value,16);
-			aux_msg.buffer = nullptr;
-			return true;
-		}
-		if(pid == PID_KEY_HASH)
-		{
-			valid &= CDRMessage::readData(&aux_msg,change->instanceHandle.value,16);
-			aux_msg.buffer = nullptr;
-			return true;
-		}
-		aux_msg.pos+=plength;
-	}
-	aux_msg.buffer = nullptr;
-	return false;
+    aux_msg.buffer = pl->data;
+    aux_msg.length = pl->length;
+    aux_msg.max_size = pl->max_size;
+    aux_msg.msg_endian = pl->encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+    bool valid = false;
+    uint16_t pid;
+    uint16_t plength;
+    while(aux_msg.pos < aux_msg.length)
+    {
+        valid = true;
+        valid&=CDRMessage::readUInt16(&aux_msg,(uint16_t*)&pid);
+        valid&=CDRMessage::readUInt16(&aux_msg,&plength);
+        if(pid == PID_SENTINEL)
+        {
+            break;
+        }
+        if(pid == PID_PARTICIPANT_GUID)
+        {
+            valid &= CDRMessage::readData(&aux_msg,change->instanceHandle.value,16);
+            aux_msg.buffer = nullptr;
+            return true;
+        }
+        if(pid == PID_KEY_HASH)
+        {
+            valid &= CDRMessage::readData(&aux_msg,change->instanceHandle.value,16);
+            aux_msg.buffer = nullptr;
+            return true;
+        }
+        aux_msg.pos+=plength;
+    }
+    aux_msg.buffer = nullptr;
+    return false;
 }
 
 
