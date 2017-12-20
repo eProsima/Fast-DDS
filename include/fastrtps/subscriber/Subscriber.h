@@ -26,7 +26,7 @@
 using namespace eprosima::fastrtps::rtps;
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 
 class SubscriberImpl;
 class SampleInfo_t;
@@ -39,65 +39,72 @@ class SampleInfo_t;
  */
 class RTPS_DllAPI Subscriber
 {
-	friend class SubscriberImpl;
-	virtual ~Subscriber(){};
-public:
-	/**
-	 * @param pimpl Actual implementation of the subscriber
-	 */
-	Subscriber(SubscriberImpl* pimpl):mp_impl(pimpl){};
+    friend class SubscriberImpl;
+    virtual ~Subscriber(){};
+    public:
+    /**
+     * @param pimpl Actual implementation of the subscriber
+     */
+    Subscriber(SubscriberImpl* pimpl):mp_impl(pimpl){};
 
 
-	/**
-	 * Get the associated GUID
-	 * @return Associated GUID
-	 */
-	const GUID_t& getGuid();
+    /**
+     * Get the associated GUID
+     * @return Associated GUID
+     */
+    const GUID_t& getGuid();
 
-	/**
-	 * Method to block the current thread until an unread message is available
-	 */
-	void waitForUnreadMessage();
+    /**
+     * Method to block the current thread until an unread message is available
+     */
+    void waitForUnreadMessage();
 
-	/**
-	 * Read next unread Data from the Subscriber.
-	 * @param data Pointer to the object where you want the data stored.
-	 * @param info Pointer to a SampleInfo_t structure that informs you about your sample.
-	 * @return True if a sample was read.
-	 */
-	bool readNextData(void* data,SampleInfo_t* info);
-	/**
-	 * Take next Data from the Subscriber. The data is removed from the subscriber.
-	 * @param data Pointer to the object where you want the data stored.
-	 * @param info Pointer to a SampleInfo_t structure that informs you about your sample.
-	 * @return True if a sample was taken.
-	 */
-	bool takeNextData(void* data,SampleInfo_t* info);
+    /**
+     * Read next unread Data from the Subscriber.
+     * @param data Pointer to the object where you want the data stored.
+     * @param info Pointer to a SampleInfo_t structure that informs you about your sample.
+     * @return True if a sample was read.
+     */
+    bool readNextData(void* data,SampleInfo_t* info);
+    /**
+     * Take next Data from the Subscriber. The data is removed from the subscriber.
+     * @param data Pointer to the object where you want the data stored.
+     * @param info Pointer to a SampleInfo_t structure that informs you about your sample.
+     * @return True if a sample was taken.
+     */
+    bool takeNextData(void* data,SampleInfo_t* info);
 
 
-	/**
-	 * Update the Attributes of the subscriber;
-	 * @param att Reference to a SubscriberAttributes object to update the parameters;
-	 * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
-	 */
-	bool updateAttributes(SubscriberAttributes& att);
+    /**
+     * Update the Attributes of the subscriber;
+     * @param att Reference to a SubscriberAttributes object to update the parameters;
+     * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
+     */
+    bool updateAttributes(SubscriberAttributes& att);
 
-	/**
-	 * Get the Attributes of the Subscriber.
-	 * @return Attributes of the subscriber
-	 */
-	SubscriberAttributes getAttributes();
+    /**
+     * Get the Attributes of the Subscriber.
+     * @return Attributes of the subscriber
+     */
+    SubscriberAttributes getAttributes() const;
 
     /*!
-    * @brief Returns there is a clean state with all Publishers.
-    * It occurs when the Subscriber received all samples sent by Publishers. In other words,
-    * its WriterProxies are up to date.
-    * @return There is a clean state with all Publishers.
-    */
+     * @brief Returns there is a clean state with all Publishers.
+     * It occurs when the Subscriber received all samples sent by Publishers. In other words,
+     * its WriterProxies are up to date.
+     * @return There is a clean state with all Publishers.
+     */
     bool isInCleanState() const;
 
-private:
-	SubscriberImpl* mp_impl;
+    /**
+     * Get the unread count.
+     * @return Unread count
+     */
+    uint64_t getUnreadCount() const;
+
+    private:
+
+    SubscriberImpl* mp_impl;
 };
 
 

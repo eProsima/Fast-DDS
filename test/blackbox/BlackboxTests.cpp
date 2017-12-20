@@ -1780,6 +1780,46 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldUserData)
     ASSERT_TRUE(reader.getDiscoveryResult());
 }
 
+BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    GUID_t participant_guid;
+    reader.setOnDiscoveryFunction([&participant_guid](const ParticipantDiscoveryInfo& info) -> bool{
+            if(info.rtps.m_status == DISCOVERED_RTPSPARTICIPANT)
+            {
+                std::cout << "Discovered participant " << info.rtps.m_guid << std::endl;
+                participant_guid = info.rtps.m_guid;
+            }
+            else if(info.rtps.m_status == REMOVED_RTPSPARTICIPANT)
+            {
+                std::cout << "Removed participant " << info.rtps.m_guid << std::endl;
+                return participant_guid == info.rtps.m_guid;
+            }
+
+            return false;
+        });
+
+    reader.history_depth(100).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.history_depth(100).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.waitDiscovery();
+    writer.waitDiscovery();
+
+    writer.destroy();
+
+    reader.wait_undiscovery();
+
+    ASSERT_TRUE(reader.getDiscoveryResult());
+}
+
 BLACKBOXTEST(BlackBox, EDPSlaveReaderAttachment)
 {
     PubSubWriter<HelloWorldType> checker(TEST_TOPIC_NAME);

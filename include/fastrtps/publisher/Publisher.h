@@ -106,7 +106,7 @@ public:
 	 * Get the Attributes of the Publisher.
 	 * @return Attributes of the publisher
 	 */
-	PublisherAttributes getAttributes();
+	PublisherAttributes getAttributes() const;
 
 private:
 	PublisherImpl* mp_impl;

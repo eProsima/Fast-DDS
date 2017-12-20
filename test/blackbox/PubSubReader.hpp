@@ -247,6 +247,19 @@ class PubSubReader
             std::cout << "Reader discovery finished..." << std::endl;
         }
 
+        void wait_undiscovery()
+        {
+            std::unique_lock<std::mutex> lock(mutexDiscovery_);
+
+            std::cout << "Reader is waiting undiscovery..." << std::endl;
+
+            if(matched_ != 0)
+                cvDiscovery_.wait(lock);
+
+            ASSERT_EQ(matched_, 0u);
+            std::cout << "Reader undiscovery finished..." << std::endl;
+        }
+
         void waitRemoval()
         {
             std::unique_lock<std::mutex> lock(mutexDiscovery_);

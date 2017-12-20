@@ -117,7 +117,7 @@ void ReaderQos::setQos(const ReaderQos& qos, bool first_time)
 }
 
 
-bool ReaderQos::checkQos()
+bool ReaderQos::checkQos() const
 {
 	if(m_durability.kind == TRANSIENT_DURABILITY_QOS)
 	{
@@ -142,7 +142,7 @@ bool ReaderQos::checkQos()
 	return true;
 }
 
-bool ReaderQos::canQosBeUpdated(ReaderQos& qos)
+bool ReaderQos::canQosBeUpdated(const ReaderQos& qos) const
 {
 	bool updatable = true;
 	if(	m_durability.kind != qos.m_durability.kind)

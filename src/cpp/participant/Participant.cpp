@@ -25,39 +25,39 @@ namespace eprosima {
 namespace fastrtps {
 
 Participant::Participant():
-		mp_impl(nullptr)
-{
+    mp_impl(nullptr)
+    {
 
-}
+    }
 
 Participant::~Participant() {
-	// TODO Auto-generated destructor stub
+    // TODO Auto-generated destructor stub
 }
 
 const GUID_t& Participant::getGuid() const
 {
-	return mp_impl->getGuid();
+    return mp_impl->getGuid();
 }
 
-const ParticipantAttributes& Participant::getAttributes()
+const ParticipantAttributes& Participant::getAttributes() const
 {
-	return mp_impl->getAttributes();
+    return mp_impl->getAttributes();
 }
 
 bool Participant::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t endpointId,
-	EndpointKind_t kind)
+        EndpointKind_t kind)
 {
-	return mp_impl->newRemoteEndpointDiscovered(partguid, endpointId, kind);
+    return mp_impl->newRemoteEndpointDiscovered(partguid, endpointId, kind);
 }
 
 std::pair<StatefulReader*,StatefulReader*> Participant::getEDPReaders(){
-	std::pair<StatefulReader *,StatefulReader*> buffer;
+    std::pair<StatefulReader *,StatefulReader*> buffer;
 
-	return mp_impl->getEDPReaders();
+    return mp_impl->getEDPReaders();
 }
 
-std::vector<std::string> Participant::getParticipantNames(){
-  return mp_impl->getParticipantNames();
+std::vector<std::string> Participant::getParticipantNames() const {
+    return mp_impl->getParticipantNames();
 }
 
 bool Participant::get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo)

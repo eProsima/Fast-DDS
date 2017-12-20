@@ -321,6 +321,19 @@ class PubSubWriter
         std::cout << "Writer discovery finished..." << std::endl;
     }
 
+    void wait_undiscovery()
+    {
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+
+        std::cout << "Writer is waiting undiscovery..." << std::endl;
+
+        if(matched_ != 0)
+            cv_.wait(lock);
+
+        ASSERT_EQ(matched_, 0u);
+        std::cout << "Writer undiscovery finished..." << std::endl;
+    }
+
     void waitRemoval()
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);

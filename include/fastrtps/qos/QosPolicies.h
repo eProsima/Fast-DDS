@@ -47,7 +47,7 @@ class QosPolicy{
          * Whether it should always be sent.
          * @return True if it should always be sent.
          */
-        virtual bool sendAlways(){return m_sendAlways;}
+        virtual bool sendAlways() const {return m_sendAlways;}
     protected:
         bool m_sendAlways;
 

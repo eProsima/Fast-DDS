@@ -36,18 +36,21 @@ namespace fastrtps{
 class ParticipantImpl;
 class ParticipantAttributes;
 
-namespace rtps {
-class WriterProxyData;
-class ReaderProxyData;
+namespace rtps
+{
+    class WriterProxyData;
+    class ReaderProxyData;
 }
 
 /**
  * Class Participant used to group Publishers and Subscribers into a single working unit.
  * @ingroup FASTRTPS_MODULE
  */
-class RTPS_DllAPI Participant {
+class RTPS_DllAPI Participant
+{
     friend class Domain;
     friend class ParticipantImpl;
+
     private:
 
     Participant();
@@ -62,13 +65,13 @@ class RTPS_DllAPI Participant {
      *	Get the GUID_t of the associated RTPSParticipant.
      * @return GUID_t
      */
-    const GUID_t& getGuid()const ;
+    const GUID_t& getGuid() const;
 
     /**
      * Get the ParticipantAttributes.
      * @return ParticipantAttributes.
      */
-    const ParticipantAttributes& getAttributes();
+    const ParticipantAttributes& getAttributes() const;
 
     /**
      * Called when using a StaticEndpointDiscovery mechanism different that the one
@@ -93,7 +96,7 @@ class RTPS_DllAPI Participant {
      * */	
     std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 
-    std::vector<std::string> getParticipantNames();
+    std::vector<std::string> getParticipantNames() const;
 
     bool get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo);
 

@@ -2038,6 +2038,7 @@ void SecurityManager::remove_reader(const GUID_t& writer_guid, const GUID_t& /*r
         if(rit != local_writer->second.associated_readers.end())
         {
             crypto_plugin_->cryptokeyfactory()->unregister_datareader(std::get<1>(rit->second), exception);
+            local_writer->second.associated_readers.erase(rit);
         }
         else
         {
@@ -2293,6 +2294,7 @@ void SecurityManager::remove_writer(const GUID_t& reader_guid, const GUID_t& /*r
         if(wit != local_reader->second.associated_writers.end())
         {
             crypto_plugin_->cryptokeyfactory()->unregister_datawriter(std::get<1>(wit->second), exception);
+            local_reader->second.associated_writers.erase(wit);
         }
         else
         {
