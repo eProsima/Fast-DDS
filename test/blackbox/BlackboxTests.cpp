@@ -741,7 +741,7 @@ BLACKBOXTEST(BlackBox, ParticipantRemoval)
     writer.destroy();
 
     // Check that reader receives the unmatched.
-    reader.waitRemoval();
+    reader.wait_writer_undiscovery();
 }
 
 BLACKBOXTEST(BlackBox, PubSubAsReliableData64kb)
@@ -1815,7 +1815,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
 
     writer.destroy();
 
-    reader.wait_undiscovery();
+    reader.wait_writer_undiscovery();
 
     ASSERT_TRUE(reader.getDiscoveryResult());
 }
@@ -1887,7 +1887,7 @@ BLACKBOXTEST(BlackBox, EndpointRediscovery)
 
     test_UDPv4Transport::ShutdownAllNetwork = true;
 
-    writer.waitRemoval();
+    writer.wait_reader_undiscovery();
 
     test_UDPv4Transport::ShutdownAllNetwork = false;
 

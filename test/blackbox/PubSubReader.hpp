@@ -54,9 +54,21 @@ class PubSubReader
 
                 ~ParticipantListener() {}
 
-                void onParticipantDiscovery(Participant*, ParticipantDiscoveryInfo info){
-                    if(reader_.onDiscovery_!=nullptr){
+                void onParticipantDiscovery(Participant*, ParticipantDiscoveryInfo info)
+                {
+                    if(reader_.onDiscovery_!=nullptr)
+                    {
                         reader_.discovery_result_ = reader_.onDiscovery_(info);
+
+                    }
+
+                    if(info.rtps.m_status == DISCOVERED_RTPSPARTICIPANT)
+                    {
+                        reader_.participant_matched();
+                    }
+                    else if(info.rtps.m_status == REMOVED_RTPSPARTICIPANT)
+                    {
+                        reader_.participant_unmatched();
                     }
                 }
 
@@ -111,8 +123,9 @@ class PubSubReader
 
     public:
 
-        PubSubReader(const std::string& topic_name) : participant_listener_(*this), listener_(*this), participant_(nullptr), subscriber_(nullptr),
-        topic_name_(topic_name), initialized_(false), matched_(0), receiving_(false), current_received_count_(0),
+        PubSubReader(const std::string& topic_name) : participant_listener_(*this), listener_(*this),
+        participant_(nullptr), subscriber_(nullptr), topic_name_(topic_name), initialized_(false),
+        matched_(0), participant_matched_(0), receiving_(false), current_received_count_(0),
         number_samples_expected_(0), discovery_result_(false), onDiscovery_(nullptr)
 #if HAVE_SECURITY
         , authorized_(0), unauthorized_(0)
@@ -240,36 +253,30 @@ class PubSubReader
 
             std::cout << "Reader is waiting discovery..." << std::endl;
 
-            if(matched_ == 0)
-                cvDiscovery_.wait(lock);
+            cvDiscovery_.wait(lock, [&](){return matched_ != 0;});
 
-            ASSERT_NE(matched_, 0u);
             std::cout << "Reader discovery finished..." << std::endl;
         }
 
-        void wait_undiscovery()
+        void wait_participant_undiscovery()
         {
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
             std::cout << "Reader is waiting undiscovery..." << std::endl;
 
-            if(matched_ != 0)
-                cvDiscovery_.wait(lock);
+            cvDiscovery_.wait(lock, [&](){return participant_matched_ == 0;});
 
-            ASSERT_EQ(matched_, 0u);
             std::cout << "Reader undiscovery finished..." << std::endl;
         }
 
-        void waitRemoval()
+        void wait_writer_undiscovery()
         {
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
             std::cout << "Reader is waiting removal..." << std::endl;
 
-            if(matched_ != 0)
-                cvDiscovery_.wait(lock);
+            cvDiscovery_.wait(lock, [&](){return matched_ == 0;});
 
-            ASSERT_EQ(matched_, 0u);
             std::cout << "Reader removal finished..." << std::endl;
         }
 
@@ -505,6 +512,20 @@ class PubSubReader
             }
         }
 
+        void participant_matched()
+        {
+            std::unique_lock<std::mutex> lock(mutexDiscovery_);
+            ++participant_matched_;
+            cvDiscovery_.notify_one();
+        }
+
+        void participant_unmatched()
+        {
+            std::unique_lock<std::mutex> lock(mutexDiscovery_);
+            --participant_matched_;
+            cvDiscovery_.notify_one();
+        }
+
         void matched()
         {
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
@@ -551,6 +572,7 @@ class PubSubReader
         std::mutex mutexDiscovery_;
         std::condition_variable cvDiscovery_;
         unsigned int matched_;
+        unsigned int participant_matched_;
         std::atomic<bool> receiving_;
         type_support type_;
         SequenceNumber_t last_seq;
