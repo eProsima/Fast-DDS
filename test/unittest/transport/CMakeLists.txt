@@ -76,18 +76,22 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 )
         endif()
 
-        add_executable(UDPv6Tests ${UDPV6TESTS_SOURCE})
-        add_gtest(UDPv6Tests ${UDPV6TESTS_SOURCE}
-            ENVIRONMENT "PORT_RANDOM_NUMBER=${PORT_RANDOM_NUMBER}"
-            )
-        target_compile_definitions(UDPv6Tests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(UDPv6Tests PRIVATE ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
-        target_link_libraries(UDPv6Tests ${GTEST_LIBRARIES} ${MOCKS} )
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(UDPv6Tests ${PRIVACY}
-                iphlpapi Shlwapi
+        option(DISABLE_UDPV6_TESTS "Disable UDPv6 tests because fails in some systems" OFF)
+
+        if(NOT DISABLE_UDPV6_TESTS)
+            add_executable(UDPv6Tests ${UDPV6TESTS_SOURCE})
+            add_gtest(UDPv6Tests ${UDPV6TESTS_SOURCE}
+                ENVIRONMENT "PORT_RANDOM_NUMBER=${PORT_RANDOM_NUMBER}"
                 )
+            target_compile_definitions(UDPv6Tests PRIVATE FASTRTPS_NO_LIB)
+            target_include_directories(UDPv6Tests PRIVATE ${GTEST_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
+            target_link_libraries(UDPv6Tests ${GTEST_LIBRARIES} ${MOCKS} )
+            if(MSVC OR MSVC_IDE)
+                target_link_libraries(UDPv6Tests ${PRIVACY}
+                    iphlpapi Shlwapi
+                    )
+            endif()
         endif()
 
         add_executable(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
