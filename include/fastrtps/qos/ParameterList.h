@@ -53,7 +53,7 @@ class ParameterList_t
 
     private:
 
-        ParameterList_t(const ParameterList_t& plist) NON_COPYABLE_CXX11;
+        ParameterList_t(const ParameterList_t& plist) = delete;
 };
 
 /**
