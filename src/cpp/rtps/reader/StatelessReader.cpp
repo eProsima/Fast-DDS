@@ -45,7 +45,6 @@ StatelessReader::StatelessReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
         ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen):
     RTPSReader(pimpl,guid,att,hist, listen)
 {
-
 }
 
 

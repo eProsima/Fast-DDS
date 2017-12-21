@@ -928,11 +928,27 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
             return false;
         //REMOVE FOR BUILTINPROTOCOLS
         if(p_endpoint->getAttributes()->endpointKind == WRITER)
+        {
             mp_builtinProtocols->removeLocalWriter((RTPSWriter*)p_endpoint);
+
+#if HAVE_SECURITY
+            if(p_endpoint->is_submessage_protected() || p_endpoint->is_payload_protected())
+            {
+                m_security_manager.unregister_local_writer(p_endpoint->getGuid());
+            }
+#endif
+        }
         else
+        {
             mp_builtinProtocols->removeLocalReader((RTPSReader*)p_endpoint);
-        //BUILTINPROTOCOLS
-        std::lock_guard<std::recursive_mutex> guardParticipant(*mp_mutex);
+
+#if HAVE_SECURITY
+            if(p_endpoint->is_submessage_protected() || p_endpoint->is_payload_protected())
+            {
+                m_security_manager.unregister_local_reader(p_endpoint->getGuid());
+            }
+#endif
+        }
     }
     //	std::lock_guard<std::recursive_mutex> guardEndpoint(*p_endpoint->getMutex());
     delete(p_endpoint);

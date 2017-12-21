@@ -59,6 +59,8 @@ void HandshakeMessageTokenResent::event(EventCode code, const char* msg)
 
                     if(p_change != nullptr)
                     {
+                        logInfo(SECURITY, "Authentication handshake resent to participant " <<
+                                remote_participant_key_);
                         if(security_manager_.participant_stateless_message_writer_history_->add_change(p_change))
                         {
                             remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;

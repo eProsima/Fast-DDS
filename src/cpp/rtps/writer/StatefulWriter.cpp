@@ -629,11 +629,12 @@ void StatefulWriter::check_acked_status()
     bool all_acked = true;
     SequenceNumber_t min_low_mark;
 
+
     for(auto it = matched_readers.begin(); it != matched_readers.end(); ++it)
     {
         std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
 
-        if(min_low_mark == SequenceNumber_t() || (*it)->get_low_mark() < min_low_mark)
+        if((*it)->get_low_mark() < min_low_mark)
         {
             min_low_mark = (*it)->get_low_mark();
         }
@@ -644,36 +645,39 @@ void StatefulWriter::check_acked_status()
         }
     }
 
-    // If VOLATILE, remove samples acked.
-    if(m_att.durabilityKind == VOLATILE)
+    if(get_seq_num_min() != SequenceNumber_t::unknown())
     {
-        std::vector<CacheChange_t*> to_remove;
-        for(SequenceNumber_t current_seq = get_seq_num_min(); current_seq <= min_low_mark; ++current_seq)
+        // If VOLATILE, remove samples acked.
+        if(m_att.durabilityKind == VOLATILE)
         {
-            for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
-                    cit != mp_history->changesEnd(); ++cit)
+            std::vector<CacheChange_t*> to_remove;
+            for(SequenceNumber_t current_seq = get_seq_num_min(); current_seq <= min_low_mark; ++current_seq)
             {
-                if((*cit)->sequenceNumber == current_seq)
+                for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
+                        cit != mp_history->changesEnd(); ++cit)
                 {
-                    to_remove.push_back(*cit);
+                    if((*cit)->sequenceNumber == current_seq)
+                    {
+                        to_remove.push_back(*cit);
+                    }
                 }
             }
+            for(auto cit = to_remove.begin(); cit != to_remove.end(); ++cit)
+            {
+                mp_history->remove_change_g(*cit);
+            }
         }
-        for(auto cit = to_remove.begin(); cit != to_remove.end(); ++cit)
+        else
         {
-            mp_history->remove_change_g(*cit);
-        }
-    }
-    else
-    {
-        SequenceNumber_t calc = min_low_mark < get_seq_num_min() ? SequenceNumber_t() :
-            (min_low_mark - get_seq_num_min()) + 1;
+            SequenceNumber_t calc = min_low_mark < get_seq_num_min() ? SequenceNumber_t() :
+                (min_low_mark - get_seq_num_min()) + 1;
 
-        if(calc > SequenceNumber_t())
-        {
-            std::unique_lock<std::mutex> may_lock(may_remove_change_mutex_);
-            may_remove_change_ = 1;
-            may_remove_change_cond_.notify_one();
+            if(calc > SequenceNumber_t())
+            {
+                std::unique_lock<std::mutex> may_lock(may_remove_change_mutex_);
+                may_remove_change_ = 1;
+                may_remove_change_cond_.notify_one();
+            }
         }
     }
 

@@ -196,6 +196,34 @@ void SecurityManager::destroy()
 
         mutex_.lock();
 
+        for(auto& local_reader : reader_handles_)
+        {
+            SecurityException exception;
+
+            for(auto& wit : local_reader.second.associated_writers)
+            {
+                crypto_plugin_->cryptokeyfactory()->unregister_datawriter(std::get<1>(wit.second),
+                        exception);
+            }
+
+            crypto_plugin_->cryptokeyfactory()->unregister_datareader(local_reader.second.reader_handle,
+                    exception);
+        }
+
+        for(auto& local_writer : writer_handles_)
+        {
+            SecurityException exception;
+
+            for(auto& rit : local_writer.second.associated_readers)
+            {
+                crypto_plugin_->cryptokeyfactory()->unregister_datareader(std::get<1>(rit.second),
+                        exception);
+            }
+
+            crypto_plugin_->cryptokeyfactory()->unregister_datawriter(local_writer.second.writer_handle,
+                    exception);
+        }
+
         for(auto& dp_it : discovered_participants_)
         {
             auto auth_ptr = dp_it.second.get_auth();
@@ -342,6 +370,9 @@ bool SecurityManager::discovered_participant(const ParticipantProxyData& partici
                 discovered_participants_.erase(participant_data.m_guid);
                 mutex_.unlock();
 
+                logInfo(SECURITY, "Authentication failed for participant " <<
+                        participant_data.m_guid);
+
                 // Inform user about authenticated remote participant.
                 if(participant_->getListener() != nullptr)
                 {
@@ -354,6 +385,8 @@ bool SecurityManager::discovered_participant(const ParticipantProxyData& partici
 
                 return false;
         };
+
+        logInfo(SECURITY, "Discovered participant " << participant_data.m_guid);
 
         // Match entities
         match_builtin_endpoints(participant_data);
@@ -430,6 +463,8 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_guid
     ValidationResult_t ret = VALIDATION_FAILED;
 
     assert(remote_participant_info->identity_handle_ != nullptr);
+
+    logInfo(SECURITY, "Processing handshake from participant " << remote_participant_guid);
 
     if(remote_participant_info->auth_status_ == AUTHENTICATION_REQUEST_NOT_SEND)
     {
@@ -544,6 +579,8 @@ bool SecurityManager::on_process_handshake(const GUID_t& remote_participant_guid
                 change->serializedPayload.length = aux_msg.length;
 
                 // Send
+                logInfo(SECURITY, "Authentication handshake sent to participant " <<
+                        remote_participant_guid);
                 if(participant_stateless_message_writer_history_->add_change(change))
                 {
                     handshake_message_send = true;
@@ -1774,6 +1811,37 @@ bool SecurityManager::register_local_writer(const GUID_t& writer_guid, const Pro
     return false;
 }
 
+bool SecurityManager::unregister_local_writer(const GUID_t& writer_guid)
+{
+    if(crypto_plugin_ == nullptr)
+        return false;
+
+    auto local_writer = writer_handles_.find(writer_guid);
+
+    if(local_writer != writer_handles_.end())
+    {
+        SecurityException exception;
+
+        for(auto& rit : local_writer->second.associated_readers)
+        {
+            crypto_plugin_->cryptokeyfactory()->unregister_datareader(std::get<1>(rit.second),
+                    exception);
+        }
+
+        crypto_plugin_->cryptokeyfactory()->unregister_datawriter(local_writer->second.writer_handle,
+                exception);
+        writer_handles_.erase(local_writer);
+
+        return true;
+    }
+    else
+    {
+        logError(SECURITY, "Cannot find local writer " << writer_guid << std::endl);
+    }
+
+    return false;
+}
+
 bool SecurityManager::register_local_reader(const GUID_t& reader_guid, const PropertySeq& reader_properties)
 {
     if(crypto_plugin_ == nullptr)
@@ -1792,6 +1860,37 @@ bool SecurityManager::register_local_reader(const GUID_t& reader_guid, const Pro
     else
     {
         logError(SECURITY, "Cannot register local reader in crypto plugin. (" << exception.what() << ")");
+    }
+
+    return false;
+}
+
+bool SecurityManager::unregister_local_reader(const GUID_t& reader_guid)
+{
+    if(crypto_plugin_ == nullptr)
+        return false;
+
+    auto local_reader = reader_handles_.find(reader_guid);
+
+    if(local_reader != reader_handles_.end())
+    {
+        SecurityException exception;
+
+        for(auto& wit : local_reader->second.associated_writers)
+        {
+            crypto_plugin_->cryptokeyfactory()->unregister_datawriter(std::get<1>(wit.second),
+                    exception);
+        }
+
+        crypto_plugin_->cryptokeyfactory()->unregister_datareader(local_reader->second.reader_handle,
+                exception);
+        reader_handles_.erase(local_reader);
+
+        return true;
+    }
+    else
+    {
+        logError(SECURITY, "Cannot find local reader " << reader_guid << std::endl);
     }
 
     return false;
@@ -2707,6 +2806,8 @@ bool SecurityManager::participant_authorized(const GUID_t& remote_participant_gu
     }
 
     participant_->pdpsimple()->notifyAboveRemoteEndpoints(remote_participant_guid);
+
+    logInfo(SECURITY, "Participant " << remote_participant_guid << " authenticated");
 
     // Inform user about authenticated remote participant.
     if(participant_->getListener() != nullptr)

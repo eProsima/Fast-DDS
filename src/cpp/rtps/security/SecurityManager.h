@@ -73,7 +73,11 @@ class SecurityManager
 
         bool register_local_writer(const GUID_t& writer_guid, const PropertySeq& writer_properties);
 
+        bool unregister_local_writer(const GUID_t& writer_guid);
+
         bool register_local_reader(const GUID_t& reader_guid, const PropertySeq& reader_properties);
+
+        bool unregister_local_reader(const GUID_t& reader_guid);
 
         bool discovered_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
                 ReaderProxyData& remote_reader_data);
