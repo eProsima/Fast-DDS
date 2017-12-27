@@ -91,7 +91,7 @@ macro(find_eprosima_package package)
                     "set(SOURCE_DIR_ \"${PROJECT_SOURCE_DIR}/thirdparty/${package}\")\n"
                     "set(GENERATOR_ -G \"${CMAKE_GENERATOR}\")\n"
                     "set(CMAKE_INSTALL_PREFIX_ \"-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX_}\")\n"
-                    "set(CMAKE_PREFIX_PATH_ -DCMAKE_PREFIX_PATH=\"${CMAKE_PREFIX_PATH_}\")\n"
+                    "set(CMAKE_PREFIX_PATH_ \"-DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH_}\")\n"
                     "set(CMAKE_C_COMPILER_ \"-DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}\")\n"
                     "set(CMAKE_CXX_COMPILER_ \"-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}\")\n"
                     "set(EPROSIMA_PACKAGE_EXTERNAL_DIR_ \"-DEPROSIMA_PACKAGE_EXTERNAL_DIR:PATH=${EPROSIMA_PACKAGE_EXTERNAL_DIR}\")\n"

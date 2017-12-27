@@ -383,6 +383,7 @@ bool RTPSMessageGroup::add_data(const CacheChange_t& change, const std::vector<G
                     *encrypt_msg_, endpoint_->getGuid()))
         {
             logError(RTPS_WRITER, "Error encoding change " << change.sequenceNumber);
+            change_to_add.serializedPayload.data = NULL;
             return false;
         }
 
@@ -461,6 +462,7 @@ bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t
                     *encrypt_msg_, endpoint_->getGuid()))
         {
             logError(RTPS_WRITER, "Error encoding change " << change.sequenceNumber);
+            change_to_add.serializedPayload.data = NULL;
             return false;
         }
 

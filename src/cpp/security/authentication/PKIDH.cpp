@@ -414,15 +414,21 @@ bool store_certificate_in_buffer(X509* certificate, BUF_MEM** ptr, SecurityExcep
                 returnedValue = true;
             }
             else
+            {
                 exception = _SecurityException_("OpenSSL library cannot retrieve mem ptr");
+            }
         }
         else
+        {
             exception = _SecurityException_("OpenSSL library cannot write cert");
+        }
 
         BIO_free(out);
     }
     else
+    {
         exception = _SecurityException_("OpenSSL library cannot allocate mem");
+    }
 
     return returnedValue;
 }

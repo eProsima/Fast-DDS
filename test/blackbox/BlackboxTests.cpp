@@ -741,7 +741,7 @@ BLACKBOXTEST(BlackBox, ParticipantRemoval)
     writer.destroy();
 
     // Check that reader receives the unmatched.
-    reader.wait_writer_undiscovery();
+    reader.wait_participant_undiscovery();
 }
 
 BLACKBOXTEST(BlackBox, PubSubAsReliableData64kb)
@@ -1815,7 +1815,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
 
     writer.destroy();
 
-    reader.wait_writer_undiscovery();
+    reader.wait_participant_undiscovery();
 
     ASSERT_TRUE(reader.getDiscoveryResult());
 }
@@ -2479,7 +2479,7 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_data
     // When doing fragmentation, it is necessary to have some degree of
     // flow control not to overrun the receive buffer.
     uint32_t bytesPerPeriod = 65536;
-    uint32_t periodInMs = 50;
+    uint32_t periodInMs = 500;
 
     writer.history_depth(5).
         reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
@@ -2921,7 +2921,7 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessag
     // When doing fragmentation, it is necessary to have some degree of
     // flow control not to overrun the receive buffer.
     uint32_t bytesPerPeriod = 65536;
-    uint32_t periodInMs = 50;
+    uint32_t periodInMs = 500;
 
     writer.history_depth(5).
         reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
@@ -3367,7 +3367,7 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_d
     // When doing fragmentation, it is necessary to have some degree of
     // flow control not to overrun the receive buffer.
     uint32_t bytesPerPeriod = 65536;
-    uint32_t periodInMs = 50;
+    uint32_t periodInMs = 500;
 
     writer.history_depth(5).
         reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
@@ -3791,7 +3791,7 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_data3
     // When doing fragmentation, it is necessary to have some degree of
     // flow control not to overrun the receive buffer.
     uint32_t bytesPerPeriod = 65536;
-    uint32_t periodInMs = 50;
+    uint32_t periodInMs = 1000;
 
     writer.history_depth(5).
         reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).

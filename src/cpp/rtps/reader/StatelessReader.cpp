@@ -249,9 +249,6 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
             // If CacheChange_t is completed, it will be returned;
             CacheChange_t* change_completed = fragmentedChangePitStop_->process(change_to_add, sampleSize, fragmentStartingNum);
 
-            // Try to remove previous CacheChange_t from PitStop.
-            fragmentedChangePitStop_->try_to_remove_until(incomingChange->sequenceNumber, incomingChange->writerGUID);
-
 #if HAVE_SECURITY
             if(is_payload_protected())
                 releaseCache(change_to_add);
@@ -260,6 +257,9 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
             // If the change was completed, process it.
             if(change_completed != nullptr)
             {
+                // Try to remove previous CacheChange_t from PitStop.
+                fragmentedChangePitStop_->try_to_remove_until(incomingChange->sequenceNumber, incomingChange->writerGUID);
+
                 if (!change_received(change_completed))
                 {
                     logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long());

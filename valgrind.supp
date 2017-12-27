@@ -1,18 +1,17 @@
 {
-   <Gentoo>
+   <Ignore LD leak>
    Memcheck:Leak
    match-leak-kinds: reachable
    fun:*alloc
    ...
-   obj:/lib64/ld-*
+   obj:*ld-*
    ...
 }
 {
-   <Fedora>
-   Memcheck:Leak
-   match-leak-kinds: reachable
-   fun:*alloc
-   ...
-   obj:/usr/lib64/ld-*
-   ...
+    <Ignore temporally (Fedora 27) OpenSSL malloc>
+    Memcheck:Leak
+    fun:malloc
+    fun:CRYPTO_zalloc
+    ...
+    obj:*libcrypto*
 }

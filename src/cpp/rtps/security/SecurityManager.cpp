@@ -1816,6 +1816,7 @@ bool SecurityManager::unregister_local_writer(const GUID_t& writer_guid)
     if(crypto_plugin_ == nullptr)
         return false;
 
+    std::unique_lock<std::mutex> lock(mutex_);
     auto local_writer = writer_handles_.find(writer_guid);
 
     if(local_writer != writer_handles_.end())
@@ -1870,6 +1871,7 @@ bool SecurityManager::unregister_local_reader(const GUID_t& reader_guid)
     if(crypto_plugin_ == nullptr)
         return false;
 
+    std::unique_lock<std::mutex> lock(mutex_);
     auto local_reader = reader_handles_.find(reader_guid);
 
     if(local_reader != reader_handles_.end())

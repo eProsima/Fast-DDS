@@ -49,16 +49,24 @@ class PKIIdentity
         ~PKIIdentity()
         {
             if(store_ != nullptr)
+            {
                 X509_STORE_free(store_);
+            }
 
             if(cert_ != nullptr)
+            {
                 X509_free(cert_);
+            }
 
             if(pkey_ != nullptr)
+            {
                 EVP_PKEY_free(pkey_);
+            }
 
             if(cert_content_ != nullptr)
+            {
                 BUF_MEM_free(cert_content_);
+            }
         }
 
 
