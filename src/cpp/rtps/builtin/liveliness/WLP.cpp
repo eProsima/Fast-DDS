@@ -63,8 +63,8 @@ WLP::WLP(BuiltinProtocols* p):	m_minAutomatic_MilliSec(std::numeric_limits<doubl
 WLP::~WLP()
 {
     // TODO Auto-generated destructor stub
-    delete(this->mp_builtinReader);
-    delete(this->mp_builtinWriter);
+    mp_participant->deleteUserEndpoint(mp_builtinReader);
+    mp_participant->deleteUserEndpoint(mp_builtinWriter);
     delete(this->mp_builtinReaderHistory);
     delete(this->mp_builtinWriterHistory);
     delete(this->mp_listener);

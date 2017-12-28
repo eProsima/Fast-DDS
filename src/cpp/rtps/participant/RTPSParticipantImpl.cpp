@@ -351,7 +351,7 @@ const std::vector<RTPSReader*>& RTPSParticipantImpl::getAllReaders() const
 RTPSParticipantImpl::~RTPSParticipantImpl()
 {
     // Safely abort threads.
-    for (auto& block : m_receiverResourcelist)
+    for(auto& block : m_receiverResourcelist)
     {
         block.resourceAlive = false;
         block.Receiver.Abort();
@@ -359,21 +359,29 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
         delete block.m_thread;
     }
 
-    while(m_userReaderList.size()>0)
+    while(m_userReaderList.size() > 0)
+    {
         RTPSDomain::removeRTPSReader(*m_userReaderList.begin());
+    }
 
-    while(m_userWriterList.size()>0)
+    while(m_userWriterList.size() > 0)
+    {
         RTPSDomain::removeRTPSWriter(*m_userWriterList.begin());
+    }
 
-    // Destruct message receivers
-    for (auto& block : m_receiverResourcelist)
-        delete block.mp_receiver;
-
-    m_receiverResourcelist.clear();
     delete(this->mp_builtinProtocols);
+
 #if HAVE_SECURITY
     m_security_manager.destroy();
 #endif
+
+    // Destruct message receivers
+    for(auto& block : m_receiverResourcelist)
+    {
+        delete block.mp_receiver;
+    }
+    m_receiverResourcelist.clear();
+
     delete(this->mp_ResourceSemaphore);
     delete(this->mp_userParticipant);
     m_senderResource.clear();
@@ -874,7 +882,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
     }
     m_receiverResourcelistMutex.unlock();
 
-    bool found = false;
+    bool found = false, found_in_users = false;
     {
         if(p_endpoint->getAttributes()->endpointKind == WRITER)
         {
@@ -885,7 +893,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
                 if((*wit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
                 {
                     m_userWriterList.erase(wit);
-                    found = true;
+                    found_in_users = true;
                     break;
                 }
             }
@@ -909,7 +917,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
                 if((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
                 {
                     m_userReaderList.erase(rit);
-                    found = true;
+                    found_in_users = true;
                     break;
                 }
             }
@@ -926,10 +934,14 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
         }
         if(!found)
             return false;
+
         //REMOVE FOR BUILTINPROTOCOLS
         if(p_endpoint->getAttributes()->endpointKind == WRITER)
         {
-            mp_builtinProtocols->removeLocalWriter((RTPSWriter*)p_endpoint);
+            if(found_in_users)
+            {
+                mp_builtinProtocols->removeLocalWriter((RTPSWriter*)p_endpoint);
+            }
 
 #if HAVE_SECURITY
             if(p_endpoint->is_submessage_protected() || p_endpoint->is_payload_protected())
@@ -940,7 +952,10 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
         }
         else
         {
-            mp_builtinProtocols->removeLocalReader((RTPSReader*)p_endpoint);
+            if(found_in_users)
+            {
+                mp_builtinProtocols->removeLocalReader((RTPSReader*)p_endpoint);
+            }
 
 #if HAVE_SECURITY
             if(p_endpoint->is_submessage_protected() || p_endpoint->is_payload_protected())

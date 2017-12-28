@@ -144,18 +144,7 @@ class EDP
          * @return True if the two can be matched.
          */
         bool validMatching(const ReaderProxyData* rdata, const WriterProxyData* wdata);
-        /**
-         * Remove a WriterProxyDataObject based on its GUID_t.
-         * @param writer Reference to the writer GUID.
-         * @return True if correct.
-         */
-        bool removeWriterProxy(const GUID_t& writer);
-        /**
-         * Remove a ReaderProxyDataObject based on its GUID_t.
-         * @param reader Reference to the reader GUID.
-         * @return True if correct.
-         */
-        bool removeReaderProxy(const GUID_t& reader);
+
         /**
          * Unpair a WriterProxyData object from all local readers.
          * @param pdata Pointer to the participant proxy data.

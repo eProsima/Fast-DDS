@@ -438,9 +438,13 @@ void SecurityManager::remove_participant(const ParticipantProxyData& participant
         SecurityException exception;
         auto auth_ptr = dp_it->second.get_auth();
 
-        ParticipantCryptoHandle* participant_crypto_handle = dp_it->second.get_participant_crypto();
+        ParticipantCryptoHandle* participant_crypto_handle =
+            dp_it->second.get_participant_crypto();
         if(participant_crypto_handle != nullptr)
-            crypto_plugin_->cryptokeyfactory()->unregister_participant(participant_crypto_handle, exception);
+        {
+            crypto_plugin_->cryptokeyfactory()->unregister_participant(participant_crypto_handle,
+                    exception);
+        }
 
         SharedSecretHandle* shared_secret_handle = dp_it->second.get_shared_secret();
         if(shared_secret_handle != nullptr)
@@ -737,7 +741,7 @@ void SecurityManager::delete_participant_stateless_message_writer()
 {
     if(participant_stateless_message_writer_ != nullptr)
     {
-        delete participant_stateless_message_writer_;
+        participant_->deleteUserEndpoint(participant_stateless_message_writer_);
         participant_stateless_message_writer_ = nullptr;
     }
 
@@ -781,7 +785,7 @@ void SecurityManager::delete_participant_stateless_message_reader()
 {
     if(participant_stateless_message_reader_ != nullptr)
     {
-        delete participant_stateless_message_reader_;
+        participant_->deleteUserEndpoint(participant_stateless_message_reader_);
         participant_stateless_message_reader_ = nullptr;
     }
 
@@ -852,7 +856,7 @@ void SecurityManager::delete_participant_volatile_message_secure_writer()
 {
     if(participant_volatile_message_secure_writer_ != nullptr)
     {
-        delete participant_volatile_message_secure_writer_;
+        participant_->deleteUserEndpoint(participant_volatile_message_secure_writer_);
         participant_volatile_message_secure_writer_ = nullptr;
     }
 
@@ -896,7 +900,7 @@ void SecurityManager::delete_participant_volatile_message_secure_reader()
 {
     if(participant_volatile_message_secure_reader_ != nullptr)
     {
-        delete participant_volatile_message_secure_reader_;
+        participant_->deleteUserEndpoint(participant_volatile_message_secure_reader_);
         participant_volatile_message_secure_reader_ = nullptr;
     }
 
@@ -2424,7 +2428,7 @@ bool SecurityManager::encode_writer_submessage(CDRMessage_t& message, const GUID
 
         for(const auto& rd_it : receiving_list)
         {
-            const auto& rd_it_handle = wr_it->second.associated_readers.find(rd_it);
+            const auto rd_it_handle = wr_it->second.associated_readers.find(rd_it);
 
             if(rd_it_handle != wr_it->second.associated_readers.end())
                 receiving_datareader_crypto_list.push_back(std::get<1>(rd_it_handle->second));
@@ -2484,7 +2488,7 @@ bool SecurityManager::encode_reader_submessage(CDRMessage_t& message, const GUID
 
         for(const auto& wr_it : receiving_list)
         {
-            const auto& wr_it_handle = rd_it->second.associated_writers.find(wr_it);
+            const auto wr_it_handle = rd_it->second.associated_writers.find(wr_it);
 
             if(wr_it_handle != rd_it->second.associated_writers.end())
                 receiving_datawriter_crypto_list.push_back(std::get<1>(wr_it_handle->second));
@@ -2658,7 +2662,7 @@ bool SecurityManager::decode_serialized_payload(const SerializedPayload_t& secur
 
     if(rd_it != reader_handles_.end())
     {
-        const auto& wr_it_handle = rd_it->second.associated_writers.find(writer_guid);
+        const auto wr_it_handle = rd_it->second.associated_writers.find(writer_guid);
 
         if(wr_it_handle != rd_it->second.associated_writers.end())
         {

@@ -80,27 +80,36 @@ void MessageReceiver::init(uint32_t rec_buffer_size){
 MessageReceiver::~MessageReceiver()
 {
     logInfo(RTPS_MSG_IN,"");
+    assert(AssociatedWriters.size() == 0);
+    assert(AssociatedReaders.size() == 0);
 }
 
 void MessageReceiver::associateEndpoint(Endpoint *to_add){
     bool found = false;
     std::lock_guard<std::mutex> guard(mtx);
-    if(to_add->getAttributes()->endpointKind == WRITER){
-        for(auto it = AssociatedWriters.begin();it != AssociatedWriters.end(); ++it){
-            if( (*it) == (RTPSWriter*)to_add ){
+    if(to_add->getAttributes()->endpointKind == WRITER)
+    {
+        for(auto it = AssociatedWriters.begin(); it != AssociatedWriters.end(); ++it)
+        {
+            if( (*it) == (RTPSWriter*)to_add )
+            {
                 found = true;
                 break;
             }
         }
         if(!found) AssociatedWriters.push_back((RTPSWriter*)to_add);
-    }else{
-        for(auto it = AssociatedReaders.begin();it != AssociatedReaders.end(); ++it){
-            if( (*it) == (RTPSReader*)to_add ){
+    }
+    else
+    {
+        for(auto it = AssociatedReaders.begin(); it != AssociatedReaders.end(); ++it)
+        {
+            if( (*it) == (RTPSReader*)to_add )
+            {
                 found = true;
                 break;
             }
         }
-        if(!found)	AssociatedReaders.push_back((RTPSReader*)to_add);
+        if(!found) AssociatedReaders.push_back((RTPSReader*)to_add);
     }
     return;
 }

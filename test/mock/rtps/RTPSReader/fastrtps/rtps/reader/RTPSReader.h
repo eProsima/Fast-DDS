@@ -33,6 +33,8 @@ class RTPSReader : public Endpoint
 {
     public:
 
+        virtual ~RTPSReader() = default;
+
         virtual bool matched_writer_add(RemoteWriterAttributes& wdata) = 0;
 
         virtual bool matched_writer_remove(RemoteWriterAttributes& wdata) = 0;

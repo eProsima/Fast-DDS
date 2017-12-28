@@ -101,7 +101,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
         logInfo(RTPS_EDP,"Disposed Remote Writer, removing...");
 
         GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
-        this->mp_SEDP->removeWriterProxy(auxGUID);
+        this->mp_SEDP->mp_PDP->removeWriterProxyData(auxGUID);
     }
 
     //Removing change from history
@@ -225,7 +225,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
         logInfo(RTPS_EDP,"Disposed Remote Reader, removing...");
 
         GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
-        this->mp_SEDP->removeReaderProxy(auxGUID);
+        this->mp_SEDP->mp_PDP->removeReaderProxyData(auxGUID);
     }
 
     // Remove change from history.

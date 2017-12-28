@@ -45,9 +45,13 @@ class ResourceEvent;
 class Endpoint
 {
     friend class RTPSParticipantImpl;
+
     protected:
+
     Endpoint(RTPSParticipantImpl* pimpl,GUID_t& guid,EndpointAttributes& att);
+
     virtual ~Endpoint();
+
     public:
 
     /**

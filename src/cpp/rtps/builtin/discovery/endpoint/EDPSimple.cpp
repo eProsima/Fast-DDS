@@ -65,22 +65,22 @@ EDPSimple::~EDPSimple()
 {
     if(this->mp_PubReader.first !=nullptr)
     {
-        delete(mp_PubReader.first);
+        this->mp_RTPSParticipant->deleteUserEndpoint(mp_PubReader.first);
         delete(mp_PubReader.second);
     }
     if(this->mp_SubReader.first !=nullptr)
     {
-        delete(mp_SubReader.first);
+        this->mp_RTPSParticipant->deleteUserEndpoint(mp_SubReader.first);
         delete(mp_SubReader.second);
     }
     if(this->mp_PubWriter.first !=nullptr)
     {
-        delete(mp_PubWriter.first);
+        this->mp_RTPSParticipant->deleteUserEndpoint(mp_PubWriter.first);
         delete(mp_PubWriter.second);
     }
     if(this->mp_SubWriter.first !=nullptr)
     {
-        delete(mp_SubWriter.first);
+        this->mp_RTPSParticipant->deleteUserEndpoint(mp_SubWriter.first);
         delete(mp_SubWriter.second);
     }
     if(mp_pubListen!=nullptr)
@@ -372,7 +372,7 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
             mp_PubWriter.second->add_change(change);
         }
     }
-    return removeWriterProxy(W->getGuid());
+    return mp_PDP->removeWriterProxyData(W->getGuid());
 }
 
 bool EDPSimple::removeLocalReader(RTPSReader* R)
@@ -403,7 +403,7 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
             mp_SubWriter.second->add_change(change);
         }
     }
-    return removeReaderProxy(R->getGuid());
+    return mp_PDP->removeReaderProxyData(R->getGuid());
 }
 
 

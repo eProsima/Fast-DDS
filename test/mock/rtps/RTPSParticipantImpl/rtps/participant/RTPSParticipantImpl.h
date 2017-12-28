@@ -92,6 +92,8 @@ class RTPSParticipantImpl
             return ret;
         }
 
+        void deleteUserEndpoint(Endpoint* endpoint) { delete endpoint; }
+
         PDPSimple* pdpsimple() { return &pdpsimple_; }
 
         MockParticipantListener* getListener() { return &listener_; }

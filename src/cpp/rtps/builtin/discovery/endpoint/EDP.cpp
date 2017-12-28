@@ -156,33 +156,6 @@ bool EDP::updatedLocalWriter(RTPSWriter* W,WriterQos& wqos)
     return false;
 }
 
-
-bool EDP::removeWriterProxy(const GUID_t& writer)
-{
-    logInfo(RTPS_EDP,writer);
-    GUID_t participant_guid;
-    if(this->mp_PDP->removeWriterProxyData(writer, participant_guid))
-    {
-        unpairWriterProxy(participant_guid, writer);
-        return true;
-    }
-
-    return false;
-}
-
-bool EDP::removeReaderProxy(const GUID_t& reader)
-{
-    logInfo(RTPS_EDP,reader);
-    GUID_t participant_guid;
-    if(this->mp_PDP->removeReaderProxyData(reader, participant_guid))
-    {
-        unpairReaderProxy(participant_guid, reader);
-        return true;
-    }
-
-    return false;
-}
-
 bool EDP::unpairWriterProxy(const GUID_t& participant_guid, const GUID_t& writer_guid)
 {
     (void)participant_guid;

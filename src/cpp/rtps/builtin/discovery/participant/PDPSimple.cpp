@@ -84,8 +84,8 @@ PDPSimple::~PDPSimple()
     if(mp_EDP!=nullptr)
         delete(mp_EDP);
 
-    delete(mp_SPDPWriter);
-    delete(mp_SPDPReader);
+    mp_RTPSParticipant->deleteUserEndpoint(mp_SPDPWriter);
+    mp_RTPSParticipant->deleteUserEndpoint(mp_SPDPReader);
     delete(mp_SPDPWriterHistory);
     delete(mp_SPDPReaderHistory);
 
@@ -337,7 +337,7 @@ bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData& wda
     return false;
 }
 
-bool PDPSimple::removeReaderProxyData(const GUID_t& reader_guid, GUID_t& participant_guid_out)
+bool PDPSimple::removeReaderProxyData(const GUID_t& reader_guid)
 {
     logInfo(RTPS_PDP, "Removing reader proxy data " << reader_guid);
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
@@ -350,9 +350,9 @@ bool PDPSimple::removeReaderProxyData(const GUID_t& reader_guid, GUID_t& partici
         {
             if((*rit)->guid() == reader_guid)
             {
+                mp_EDP->unpairReaderProxy((*pit)->m_guid, reader_guid);
                 delete *rit;
                 (*pit)->m_readers.erase(rit);
-                participant_guid_out = (*pit)->m_guid;
                 return true;
             }
         }
@@ -361,7 +361,7 @@ bool PDPSimple::removeReaderProxyData(const GUID_t& reader_guid, GUID_t& partici
     return false;
 }
 
-bool PDPSimple::removeWriterProxyData(const GUID_t& writer_guid, GUID_t& participant_guid_out)
+bool PDPSimple::removeWriterProxyData(const GUID_t& writer_guid)
 {
     logInfo(RTPS_PDP, "Removing writer proxy data " << writer_guid);
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
@@ -374,9 +374,9 @@ bool PDPSimple::removeWriterProxyData(const GUID_t& writer_guid, GUID_t& partici
         {
             if((*wit)->guid() == writer_guid)
             {
+                mp_EDP->unpairWriterProxy((*pit)->m_guid, writer_guid);
                 delete *wit;
                 (*pit)->m_writers.erase(wit);
-                participant_guid_out = (*pit)->m_guid;
                 return true;
             }
         }

@@ -198,12 +198,12 @@ void EDPStatic::assignRemoteEndpoints(const ParticipantProxyData& pdata)
             else if(staticproperty.m_endpointType == "Reader" && staticproperty.m_status == "ENDED")
             {
                 GUID_t guid(pdata.m_guid.guidPrefix,staticproperty.m_entityId);
-                this->removeReaderProxy(guid);
+                this->mp_PDP->removeReaderProxyData(guid);
             }
             else if(staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ENDED")
             {
                 GUID_t guid(pdata.m_guid.guidPrefix,staticproperty.m_entityId);
-                this->removeWriterProxy(guid);
+                this->mp_PDP->removeWriterProxyData(guid);
             }
             else
             {

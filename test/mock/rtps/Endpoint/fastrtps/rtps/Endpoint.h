@@ -25,6 +25,9 @@ namespace rtps {
 
 class Endpoint
 {
+    public:
+
+        virtual ~Endpoint() = default;
 };
 
 } // namespace rtps

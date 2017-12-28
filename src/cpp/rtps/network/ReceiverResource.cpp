@@ -39,13 +39,16 @@ bool ReceiverResource::Receive(octet* receiveBuffer, uint32_t receiveBufferCapac
              Locator_t& originLocator)
 {
    if (ReceiveFromAssociatedChannel)
+   {
       return ReceiveFromAssociatedChannel(receiveBuffer, receiveBufferCapacity, receiveBufferSize, originLocator);
+   }
+
    return false;
 }
 
 ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
 {
-   Cleanup.swap(rValueResource.Cleanup); 
+   Cleanup.swap(rValueResource.Cleanup);
    ReceiveFromAssociatedChannel.swap(rValueResource.ReceiveFromAssociatedChannel);
    LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
 }
@@ -59,13 +62,13 @@ bool ReceiverResource::SupportsLocator(const Locator_t& localLocator)
 
 void ReceiverResource::Abort()
 {
-   if (Cleanup)
+   if(Cleanup)
       Cleanup();
 }
 
 ReceiverResource::~ReceiverResource()
 {
-   if (Cleanup)
+   if(Cleanup)
       Cleanup();
 }
 
