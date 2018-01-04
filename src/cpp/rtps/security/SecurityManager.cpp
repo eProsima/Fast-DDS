@@ -192,8 +192,6 @@ void SecurityManager::destroy()
 {
     if(authentication_plugin_ != nullptr)
     {
-        SecurityException exception;
-
         mutex_.lock();
 
         for(auto& local_reader : reader_handles_)
@@ -223,6 +221,8 @@ void SecurityManager::destroy()
             crypto_plugin_->cryptokeyfactory()->unregister_datawriter(local_writer.second.writer_handle,
                     exception);
         }
+
+        SecurityException exception;
 
         for(auto& dp_it : discovered_participants_)
         {
