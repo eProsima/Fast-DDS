@@ -26,7 +26,7 @@
 #include "../qos/QosPolicies.h"
 #include "SampleInfo.h"
 
-using namespace eprosima::fastrtps::rtps;
+
 
 namespace eprosima {
 namespace fastrtps {
@@ -34,7 +34,7 @@ namespace fastrtps {
 namespace rtps{
 class WriterProxy;
 }
-using namespace rtps;
+
 
 class SubscriberImpl;
 

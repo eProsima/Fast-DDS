@@ -30,6 +30,9 @@
 
 #include <gtest/gtest.h>
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 ReqRepHelloWorldReplier::ReqRepHelloWorldReplier(): request_listener_(*this), reply_listener_(*this),
     participant_(nullptr), request_subscriber_(nullptr), reply_publisher_(nullptr),
     initialized_(false), matched_(0)

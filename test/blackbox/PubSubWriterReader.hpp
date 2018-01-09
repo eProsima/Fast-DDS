@@ -75,9 +75,9 @@ class PubSubWriterReader
 
             ~PubListener(){};
 
-            void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, MatchingInfo &info)
+            void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, eprosima::fastrtps::rtps::MatchingInfo &info)
             {
-                if (info.status == MATCHED_MATCHING)
+                if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                     wreader_.matched();
                 else
                     wreader_.unmatched();
@@ -106,9 +106,9 @@ class PubSubWriterReader
                 wreader_.receive_one(sub, ret);
             }
 
-            void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, MatchingInfo& info)
+            void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, eprosima::fastrtps::rtps::MatchingInfo& info)
             {
-                if (info.status == MATCHED_MATCHING)
+                if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                     wreader_.matched();
                 else
                     wreader_.unmatched();
@@ -428,7 +428,7 @@ class PubSubWriterReader
     unsigned int matched_;
     bool receiving_;
     type_support type_;
-    SequenceNumber_t last_seq;
+	eprosima::fastrtps::rtps::SequenceNumber_t last_seq;
     size_t current_received_count_;
     size_t number_samples_expected_;
 #if HAVE_SECURITY

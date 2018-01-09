@@ -36,7 +36,7 @@ class RTPSReader;
 class RTPSParticipant;
 }
 
-using namespace rtps;
+
 
 class TopicDataType;
 class SubscriberListener;

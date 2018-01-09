@@ -21,7 +21,7 @@
 #define TESTREADERSOCKET_H_
 
 #include "fastrtps/rtps/rtps_fwd.h"
-using namespace eprosima::fastrtps::rtps;
+
 
 #include "fastrtps/rtps/reader/ReaderListener.h"
 

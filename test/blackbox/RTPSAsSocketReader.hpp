@@ -315,7 +315,7 @@ class RTPSAsSocketReader
         std::condition_variable cv_;
         std::string magicword_;
         bool receiving_;
-        SequenceNumber_t last_seq_;
+		eprosima::fastrtps::rtps::SequenceNumber_t last_seq_;
         size_t current_received_count_;
         size_t number_samples_expected_;
         std::string ip_;

@@ -17,6 +17,8 @@
 #include <fastrtps/rtps/resources/AsyncInterestTree.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
+using namespace eprosima::fastrtps::rtps;
+
 AsyncInterestTree::AsyncInterestTree():
    mActiveInterest(&mInterestAlpha),
    mHiddenInterest(&mInterestBeta)

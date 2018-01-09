@@ -39,7 +39,7 @@ class RTPSWriter;
 class RTPSParticipant;
 }
 
-using namespace rtps;
+
 
 class TopicDataType;
 class PublisherListener;

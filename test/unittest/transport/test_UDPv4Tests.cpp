@@ -25,6 +25,7 @@
 
 static uint32_t g_default_port = 7400;
 
+using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 class test_UDPv4Tests: public ::testing::Test

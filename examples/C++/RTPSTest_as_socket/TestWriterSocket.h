@@ -21,7 +21,7 @@
 #define TESTWRITERSOCKET_H_
 
 #include "fastrtps/rtps/rtps_fwd.h"
-using namespace eprosima::fastrtps::rtps;
+
 
 #include <string>
 #include <cstdio>

@@ -28,7 +28,7 @@
 #include <fastrtps/subscriber/SampleInfo.h>
 #include "FlowControlExamplePubSubTypes.h"
 
-using namespace eprosima::fastrtps;
+
 
 class FlowControlExampleSubscriber 
 {

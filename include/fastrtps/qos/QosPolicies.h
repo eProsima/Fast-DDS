@@ -24,8 +24,6 @@
 #include "../rtps/common/Types.h"
 #include "../rtps/common/Time_t.h"
 #include "ParameterTypes.h"
-using namespace eprosima::fastrtps::rtps;
-
 
 namespace eprosima{
 namespace fastrtps{

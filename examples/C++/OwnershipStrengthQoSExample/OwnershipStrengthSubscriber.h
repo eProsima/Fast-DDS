@@ -31,7 +31,7 @@
 #include <mutex>
 #include <map>
 
-using namespace eprosima::fastrtps;
+
 
 class OwnershipStrengthSubscriber 
 {

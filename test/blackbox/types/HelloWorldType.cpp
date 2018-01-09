@@ -22,6 +22,8 @@
 
 #include "HelloWorldType.h"
 
+using namespace eprosima::fastrtps::rtps;
+
 HelloWorldType::HelloWorldType() {
     setName("HelloWorldType");
     m_typeSize = (uint32_t)HelloWorld::getMaxCdrSerializedSize() + 4 /*encapsulation*/;

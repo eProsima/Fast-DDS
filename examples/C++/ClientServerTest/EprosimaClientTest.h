@@ -22,7 +22,7 @@
 
 #include "EprosimaClient.h"
 #include "fastrtps/utils/eClock.h"
-using namespace eprosima::fastrtps;
+
 
 
 class EprosimaClientTest {

@@ -28,7 +28,7 @@
 #include "../qos/ReaderQos.h"
 #include "../rtps/attributes/PropertyPolicy.h"
 
-using namespace eprosima::fastrtps::rtps;
+
 
 namespace eprosima {
 namespace fastrtps {

@@ -29,7 +29,7 @@
 
 #include <mutex>
 
-extern ::rtps::WriteParams WRITE_PARAM_DEFAULT;
+extern eprosima::fastrtps::rtps::WriteParams WRITE_PARAM_DEFAULT;
 
 namespace eprosima {
 namespace fastrtps {

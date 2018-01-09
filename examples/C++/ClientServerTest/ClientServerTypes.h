@@ -23,9 +23,9 @@
 #include "fastrtps/TopicDataType.h"
 #include "fastrtps/rtps/common/all_common.h"
 
-using namespace eprosima;
-using namespace fastrtps;
-using namespace rtps;
+
+
+
 
 namespace clientserver{
 

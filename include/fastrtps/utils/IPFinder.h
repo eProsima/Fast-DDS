@@ -29,7 +29,8 @@
 
 namespace eprosima {
 namespace fastrtps{
-using namespace rtps;
+
+	using namespace eprosima::fastrtps::rtps;
 /**
  * Class IPFinder, to determine the IP of the NICs.
  * @ingroup UTILITIES_MODULE

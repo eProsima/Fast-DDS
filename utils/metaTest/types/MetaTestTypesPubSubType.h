@@ -25,7 +25,7 @@
 
 #include "fastrtps/TopicDataType.h"
 
-using namespace eprosima::fastrtps;
+
 
 #include "MetaTestTypes.h"
 

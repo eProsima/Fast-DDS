@@ -22,10 +22,12 @@
 #include "../rtps/common/Types.h"
 #include "../rtps/common/MatchingInfo.h"
 
-using namespace eprosima::fastrtps::rtps;
+
 
 namespace eprosima {
 namespace fastrtps {
+
+	using namespace eprosima::fastrtps::rtps;
 
 class Publisher;
 

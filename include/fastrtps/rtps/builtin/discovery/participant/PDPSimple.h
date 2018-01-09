@@ -27,7 +27,7 @@
 
 #include "../../../../qos/QosPolicies.h"
 
-using namespace eprosima::fastrtps;
+
 
 namespace eprosima {
 namespace fastrtps{

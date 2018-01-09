@@ -21,7 +21,8 @@
 #include <fstream>
 #include <sstream>
 
-using eprosima::fastrtps::ParticipantAttributes;
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 using eprosima::fastrtps::xmlparser::BaseNode;
 using eprosima::fastrtps::xmlparser::DataNode;

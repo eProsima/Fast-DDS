@@ -25,24 +25,22 @@
 
 #include <fastrtps/TopicDataType.h>
 
-using namespace eprosima::fastrtps;
-
 #include "sample.h"
 
 /*!
  * @brief This class represents the TopicDataType of the type sample defined by the user in the IDL file.
  * @ingroup SAMPLE
  */
-class samplePubSubType : public TopicDataType {
+class samplePubSubType : public eprosima::fastrps::rtps::TopicDataType {
 public:
         typedef sample type;
 
 	samplePubSubType();
 	virtual ~samplePubSubType();
-	bool serialize(void *data, SerializedPayload_t *payload);
-	bool deserialize(SerializedPayload_t *payload, void *data);
+	bool serialize(void *data, eprosima::fastrps::rtps::SerializedPayload_t *payload);
+	bool deserialize(eprosima::fastrps::rtps::SerializedPayload_t *payload, void *data);
         std::function<uint32_t()> getSerializedSizeProvider(void* data);
-	bool getKey(void *data, InstanceHandle_t *ihandle);
+	bool getKey(void *data, eprosima::fastrps::rtps::InstanceHandle_t *ihandle);
 	void* createData();
 	void deleteData(void * data);
 	MD5 m_md5;

@@ -25,10 +25,10 @@
 #include "fastrtps/utils/eClock.h"
 #include "fastrtps/rtps/common/Time_t.h"
 
-using namespace eprosima;
-using namespace fastrtps;
-using namespace rtps;
-using namespace std;
+
+
+
+
 
 class ZeroMQSubscriber {
 public:

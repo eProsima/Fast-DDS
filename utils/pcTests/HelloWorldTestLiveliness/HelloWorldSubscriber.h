@@ -28,7 +28,7 @@
 #include "fastrtps/subscriber/SampleInfo.h"
 
 
-using namespace eprosima::fastrtps;
+
 
 #include "HelloWorld.h"
 

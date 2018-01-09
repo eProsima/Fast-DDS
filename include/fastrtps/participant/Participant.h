@@ -27,7 +27,7 @@
 #include "../rtps/reader/StatefulReader.h"
 #include <utility>
 
-using namespace eprosima::fastrtps::rtps;
+
 
 namespace eprosima {
 namespace fastrtps{
@@ -41,6 +41,8 @@ namespace rtps
     class WriterProxyData;
     class ReaderProxyData;
 }
+
+using namespace eprosima::fastrtps::rtps;
 
 /**
  * Class Participant used to group Publishers and Subscribers into a single working unit.

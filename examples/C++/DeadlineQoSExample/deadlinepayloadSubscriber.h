@@ -33,7 +33,7 @@
 #include <asio/steady_timer.hpp>
 #include "mapableKey.h"
 
-using namespace eprosima::fastrtps;
+
 
 
 class deadlinepayloadSubscriber 
@@ -44,8 +44,8 @@ public:
 	bool init();
 	void run();
 private:
-	Participant *mp_participant;
-	Subscriber *mp_subscriber;
+	eprosima::fastrps::Participant *mp_participant;
+	eprosima::fastrps::Subscriber *mp_subscriber;
 	//io_service &io;
 	class SubListener : public SubscriberListener
 	{

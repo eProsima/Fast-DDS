@@ -30,7 +30,7 @@
 #include <fastrtps/subscriber/SampleInfo.h>
 
 
-using namespace eprosima::fastrtps;
+
 
 #include <condition_variable>
 #include <chrono>
@@ -38,7 +38,7 @@ using namespace eprosima::fastrtps;
 #include <fstream>
 #include <iostream>
 
-using namespace std;
+
 
 class ThroughputSubscriber
 {

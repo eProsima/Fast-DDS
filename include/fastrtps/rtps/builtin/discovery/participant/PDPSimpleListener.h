@@ -24,7 +24,7 @@
 #include "../../../reader/ReaderListener.h"
 #include "../../../../qos/ParameterList.h"
 #include "../../data/ParticipantProxyData.h"
-using namespace eprosima::fastrtps;
+
 
 namespace eprosima {
 namespace fastrtps{

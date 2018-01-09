@@ -107,6 +107,9 @@ void default_send_print(const Data1mb& data)
 #include <string>
 #include <gtest/gtest.h>
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
 #define MEMORY_MODE_STRING ReallocMem
 #elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)

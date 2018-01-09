@@ -27,7 +27,7 @@
 
 #include "../../attributes/WriterAttributes.h"
 
-using namespace eprosima::fastrtps;
+
 
 namespace eprosima {
 namespace fastrtps{

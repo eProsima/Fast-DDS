@@ -28,10 +28,10 @@
 #include "fastrtps/publisher/PublisherListener.h"
 #include "fastrtps/subscriber/SubscriberListener.h"
 
-using namespace eprosima;
-using namespace fastrtps;
 
-using namespace clientserver;
+
+
+
 
 class EprosimaClient {
 public:

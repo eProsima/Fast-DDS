@@ -26,7 +26,7 @@
 #include "../rtps/history/WriterHistory.h"
 #include "../qos/QosPolicies.h"
 
-using namespace eprosima::fastrtps::rtps;
+
 
 namespace eprosima {
 namespace fastrtps {

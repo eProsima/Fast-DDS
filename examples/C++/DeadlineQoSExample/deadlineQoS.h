@@ -37,9 +37,9 @@
 #include <map>
 #include <thread>
 
-using namespace asio;
-using namespace eprosima;
-using namespace eprosima::fastrtps;
+
+
+
 
 class deadlineQoS
 {

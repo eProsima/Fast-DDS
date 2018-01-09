@@ -28,7 +28,7 @@
 #include <fastrtps/subscriber/SampleInfo.h>
 #include "XMLProfilesExamplePubSubTypes.h"
 
-using namespace eprosima::fastrtps;
+
 
 class XMLProfilesExampleSubscriber 
 {

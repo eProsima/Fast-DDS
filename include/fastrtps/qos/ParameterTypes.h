@@ -26,7 +26,7 @@
 #include <string>
 #include <vector>
 
-using namespace eprosima::fastrtps::rtps;
+
 
 
 namespace eprosima {
@@ -36,11 +36,7 @@ namespace rtps{
 struct CDRMessage_t;
 }
 
-
 using namespace rtps;
-
-
-
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 

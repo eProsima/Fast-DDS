@@ -20,7 +20,7 @@
 
 #include "FilteringExamplePubSubTypes.h"
 
-using namespace eprosima::fastrtps;
+
 
 class FilteringExamplePublisher 
 {

@@ -25,7 +25,7 @@
 
 #include <fastrtps/TopicDataType.h>
 
-using namespace eprosima::fastrtps;
+
 
 #include "Data1mb.h"
 
@@ -33,7 +33,7 @@ using namespace eprosima::fastrtps;
  * @brief This class represents the TopicDataType of the type Data1mb defined by the user in the IDL file.
  * @ingroup DATA1MB
  */
-class Data1mbType : public TopicDataType
+class Data1mbType : public eprosima::fastrtps::TopicDataType
 {
 public:
 
@@ -41,9 +41,9 @@ public:
 
 	Data1mbType();
 	virtual ~Data1mbType();
-	bool serialize(void *data, SerializedPayload_t *payload);
-	bool deserialize(SerializedPayload_t *payload, void *data);
-	bool getKey(void *data, InstanceHandle_t *ihandle);
+	bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
+	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
+	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle);
 	std::function<uint32_t()> getSerializedSizeProvider(void *data);
 	void* createData();
 	void deleteData(void * data);

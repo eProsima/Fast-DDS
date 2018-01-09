@@ -28,7 +28,7 @@
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
 
-using namespace eprosima::fastrtps;
+
 
 #include <condition_variable>
 #include <chrono>
@@ -36,7 +36,7 @@ using namespace eprosima::fastrtps;
 #include <vector>
 #include <string>
 
-using namespace std;
+
 
 class ThroughputPublisher
 {

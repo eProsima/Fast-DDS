@@ -44,11 +44,11 @@ struct timezone
 
 #include "../rtps/common/Time_t.h"
 
-using namespace eprosima::fastrtps::rtps;
 
 namespace eprosima {
 namespace fastrtps{
 
+	using namespace eprosima::fastrtps::rtps;
 
 /**
  * Class eClock used to obtain the time and to sleep some processes.

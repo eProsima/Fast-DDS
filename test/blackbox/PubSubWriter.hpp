@@ -49,7 +49,7 @@ class PubSubWriter
 
             ~ParticipantListener() {}
 
-            void onParticipantDiscovery(Participant*, ParticipantDiscoveryInfo info)
+            void onParticipantDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantDiscoveryInfo info)
             {
                 if(writer_.onDiscovery_!=nullptr)
                 {
@@ -92,9 +92,9 @@ class PubSubWriter
 
             ~Listener(){};
 
-            void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, MatchingInfo &info)
+            void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, eprosima::fastrtps::rtps::MatchingInfo &info)
             {
-                if (info.status == MATCHED_MATCHING)
+                if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                     writer_.matched();
                 else
                     writer_.unmatched();
@@ -116,7 +116,7 @@ class PubSubWriter
 
             ~EDPTakeReaderInfo(){};
 
-            void onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const change_in)
+            void onNewCacheChangeAdded(eprosima::fastrtps::rtps::RTPSReader* /*reader*/, const eprosima::fastrtps::rtps::CacheChange_t* const change_in)
             {
                 ReaderProxyData readerInfo;
 
@@ -169,7 +169,7 @@ class PubSubWriter
 
             ~EDPTakeWriterInfo(){};
 
-            void onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const change_in)
+            void onNewCacheChangeAdded(eprosima::fastrtps::RTPSReader* /*reader*/, const eprosima::fastrtps::rtps::CacheChange_t* const change_in)
             {
                 WriterProxyData writerInfo;
 
@@ -429,7 +429,7 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& max_blocking_time(const Duration_t time)
+    PubSubWriter& max_blocking_time(const eprosima::fastrtps::rtps::Duration_t time)
     {
         publisher_attr_.qos.m_reliability.max_blocking_time = time;
         return *this;
@@ -467,7 +467,7 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& add_user_transport_to_pparams(std::shared_ptr<TransportDescriptorInterface> userTransportDescriptor)
+    PubSubWriter& add_user_transport_to_pparams(std::shared_ptr<eprosima::fastrtps::rtps::TransportDescriptorInterface> userTransportDescriptor)
     {
         participant_attr_.rtps.userTransports.push_back(userTransportDescriptor);
         return *this;
@@ -503,31 +503,31 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& unicastLocatorList(LocatorList_t unicastLocators)
+    PubSubWriter& unicastLocatorList(eprosima::fastrtps::rtps::LocatorList_t unicastLocators)
     {
         publisher_attr_.unicastLocatorList = unicastLocators;
         return *this;
     }
 
-    PubSubWriter& multicastLocatorList(LocatorList_t multicastLocators)
+    PubSubWriter& multicastLocatorList(eprosima::fastrtps::rtps::LocatorList_t multicastLocators)
     {
         publisher_attr_.multicastLocatorList = multicastLocators;
         return *this;
     }
 
-    PubSubWriter& metatraffic_unicast_locator_list(LocatorList_t unicastLocators)
+    PubSubWriter& metatraffic_unicast_locator_list(eprosima::fastrtps::rtps::LocatorList_t unicastLocators)
     {
         participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = unicastLocators;
         return *this;
     }
 
-    PubSubWriter& initial_peers(LocatorList_t initial_peers)
+    PubSubWriter& initial_peers(eprosima::fastrtps::rtps::LocatorList_t initial_peers)
     {
         participant_attr_.rtps.builtin.initialPeersList = initial_peers;
         return *this;
     }
 
-    PubSubWriter& outLocatorList(LocatorList_t outLocators)
+    PubSubWriter& outLocatorList(eprosima::fastrtps::rtps::LocatorList_t outLocators)
     {
         publisher_attr_.outLocatorList = outLocators;
         return *this;
@@ -588,7 +588,7 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& userData(std::vector<octet> user_data)
+    PubSubWriter& userData(std::vector<eprosima::fastrtps::rtps::octet> user_data)
     {
         participant_attr_.rtps.userData = user_data;
         return *this;
@@ -600,7 +600,7 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& lease_duration(Duration_t lease_duration, Duration_t announce_period)
+    PubSubWriter& lease_duration(eprosima::fastrtps::rtps::Duration_t lease_duration, eprosima::fastrtps::rtps::Duration_t announce_period)
     {
         participant_attr_.rtps.builtin.leaseDuration = lease_duration;
         participant_attr_.rtps.builtin.leaseDuration_announcementperiod = announce_period;
@@ -657,7 +657,7 @@ class PubSubWriter
     }
 #endif
 
-    void add_writer_info(const WriterProxyData& writer_data)
+    void add_writer_info(const eprosima::fastrtps::rtps::WriterProxyData& writer_data)
     {
         mutexEntitiesInfoList_.lock();
         auto ret = mapWriterInfoList_.insert(std::make_pair(writer_data.guid(), writer_data));
@@ -682,7 +682,7 @@ class PubSubWriter
         cvEntitiesInfoList_.notify_all();
     }
 
-    void add_reader_info(const ReaderProxyData& reader_data)
+    void add_reader_info(const eprosima::fastrtps::rtps::ReaderProxyData& reader_data)
     {
         mutexEntitiesInfoList_.lock();
         auto ret = mapReaderInfoList_.insert(std::make_pair(reader_data.guid(), reader_data));
@@ -707,7 +707,7 @@ class PubSubWriter
         cvEntitiesInfoList_.notify_all();
     }
 
-    void remove_writer_info(const WriterProxyData& writer_data)
+    void remove_writer_info(const eprosima::fastrtps::rtps::WriterProxyData& writer_data)
     {
         std::unique_lock<std::mutex> lock(mutexEntitiesInfoList_);
 
@@ -730,7 +730,7 @@ class PubSubWriter
         cvEntitiesInfoList_.notify_all();
     }
 
-    void remove_reader_info(const ReaderProxyData& reader_data)
+    void remove_reader_info(const eprosima::fastrtps::rtps::ReaderProxyData& reader_data)
     {
         std::unique_lock<std::mutex> lock(mutexEntitiesInfoList_);
 
@@ -771,13 +771,13 @@ class PubSubWriter
     EDPTakeWriterInfo edpWriterListener_;
     std::mutex mutexEntitiesInfoList_;
     std::condition_variable cvEntitiesInfoList_;
-    std::map<GUID_t, WriterProxyData> mapWriterInfoList_;
-    std::map<GUID_t, ReaderProxyData> mapReaderInfoList_;
+    std::map<eprosima::fastrtps::rtps::GUID_t, eprosima::fastrtps::rtps::WriterProxyData> mapWriterInfoList_;
+    std::map<eprosima::fastrtps::rtps::GUID_t, eprosima::fastrtps::rtps::ReaderProxyData> mapReaderInfoList_;
     std::map<std::string,  int> mapTopicCountList_;
     std::map<std::string,  int> mapPartitionCountList_;
     bool discovery_result_;
 
-    std::function<bool(const ParticipantDiscoveryInfo& info)> onDiscovery_;
+    std::function<bool(const eprosima::fastrtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
 
 #if HAVE_SECURITY
     std::mutex mutexAuthentication_;

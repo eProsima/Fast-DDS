@@ -31,7 +31,7 @@ namespace tinyxml2
     class XMLElement;
 }
 
-using namespace tinyxml2;
+
 
 namespace eprosima{
 namespace fastrtps{

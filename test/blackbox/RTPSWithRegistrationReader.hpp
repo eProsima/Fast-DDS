@@ -291,7 +291,7 @@ class RTPSWithRegistrationReader
         std::condition_variable cvDiscovery_;
         bool receiving_;
         unsigned int matched_;
-        SequenceNumber_t last_seq_;
+		eprosima::fastrtps::rtps::SequenceNumber_t last_seq_;
         size_t current_received_count_;
         size_t number_samples_expected_;
         type_support type_;

@@ -26,7 +26,7 @@
 #include "../qos/QosPolicies.h"
 #include "../log/Log.h"
 
-using namespace eprosima::fastrtps::rtps;
+
 
 namespace eprosima {
 namespace fastrtps{

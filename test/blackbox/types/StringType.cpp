@@ -22,6 +22,8 @@
 
 #include "StringType.h"
 
+using namespace eprosima::fastrtps::rtps;
+
 StringType::StringType() {
     setName("StringType");
     m_typeSize = (uint32_t)String::getMaxCdrSerializedSize() + 4 /*encapsulation*/;

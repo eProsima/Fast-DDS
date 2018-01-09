@@ -28,7 +28,7 @@
 
 #include "FlowControlExamplePubSubTypes.h"
 
-using namespace eprosima::fastrtps;
+
 
 class FlowControlExamplePublisher 
 {

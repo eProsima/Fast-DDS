@@ -22,7 +22,7 @@
 
 #include "../rtps/participant/RTPSParticipantDiscoveryInfo.h"
 
-using namespace eprosima::fastrtps::rtps;
+
 
 namespace eprosima {
 namespace fastrtps {

@@ -23,8 +23,8 @@
 #include "fastrtps/TopicDataType.h"
 #include "fastrtps/log/Log.h"
 #include <zmq.hpp>
-using namespace eprosima;
-using namespace eprosima::fastrtps;
+
+
 
 
 struct TroughputResults

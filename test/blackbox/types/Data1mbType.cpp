@@ -25,6 +25,8 @@
 
 #include "Data1mbType.h"
 
+using namespace eprosima::fastrtps::rtps;
+
 Data1mbType::Data1mbType() {
     setName("Data1mb");
     m_typeSize = (uint32_t)Data1mb::getMaxCdrSerializedSize() + 4 /*encapsulation*/;

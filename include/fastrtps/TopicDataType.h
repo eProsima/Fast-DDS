@@ -26,13 +26,14 @@
 #include <string>
 #include <functional>
 
-using namespace eprosima::fastrtps::rtps;
+
 
 
 
 namespace eprosima {
 namespace fastrtps {
 
+using namespace eprosima::fastrtps::rtps;
 
 /**
  * Class TopicDataType used to provide the DomainRTPSParticipant with the methods to serialize, deserialize and get the key of a specific data type.

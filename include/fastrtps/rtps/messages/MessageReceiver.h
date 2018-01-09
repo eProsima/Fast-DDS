@@ -26,7 +26,7 @@
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 
-using namespace eprosima::fastrtps;
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {

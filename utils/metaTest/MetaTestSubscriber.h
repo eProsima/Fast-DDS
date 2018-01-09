@@ -26,7 +26,7 @@
 #include "types/MetaTestTypes.h"
 #include "types/MetaTestTypesPubSubType.h"
 
-using namespace eprosima::fastrtps;
+
 
 namespace eprosima {
 

@@ -27,15 +27,15 @@
 
 #include "fastrtps/utils/eClock.h"
 
-using namespace eprosima;
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+
+
+
 
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 #include <fstream>
 #include <iostream>
-using namespace std;
+
 
 class ZMQThroughputSubscriber
 {

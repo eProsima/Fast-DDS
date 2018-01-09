@@ -2689,7 +2689,7 @@ struct PrintUsageImplementation
  * #include <iostream>  // cout
  * #include <sstream>   // ostringstream
  * #include <cstdio>    // fwrite()
- * using namespace std;
+ * 
  *
  * void my_write(const char* str, int size) {
  *   fwrite(str, size, 1, stdout);

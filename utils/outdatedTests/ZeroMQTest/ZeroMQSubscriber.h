@@ -23,7 +23,7 @@
 #include <zmq.hpp>
 #include <iostream>
 #include "fastrtps/rtps_all.h"
-using namespace std;
+
 
 class ZeroMQSubscriber {
 public:

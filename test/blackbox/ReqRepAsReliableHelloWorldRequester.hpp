@@ -46,7 +46,7 @@ class ReqRepAsReliableHelloWorldRequester : public ReqRepHelloWorldRequester
 
         void configPublisher(const std::string& suffix)
         {
-            puattr.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+            puattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
 
             std::ostringstream t;
 

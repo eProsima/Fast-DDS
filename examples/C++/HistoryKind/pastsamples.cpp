@@ -14,6 +14,8 @@
 
 #include "samplePubSubTypes.h"
 
+using namespace eprosima::fastrps::rtps;
+
 //Enums and configuration structure
 enum Reliability_type { Best_Effort, Reliable };
 enum Durability_type { Transient_Local, Volatile };

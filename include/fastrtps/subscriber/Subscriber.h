@@ -23,7 +23,7 @@
 #include "../rtps/common/Guid.h"
 #include "../attributes/SubscriberAttributes.h"
 
-using namespace eprosima::fastrtps::rtps;
+
 
 namespace eprosima {
 namespace fastrtps {

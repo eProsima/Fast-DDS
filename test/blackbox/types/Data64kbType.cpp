@@ -25,6 +25,8 @@
 
 #include "Data64kbType.h"
 
+using namespace eprosima::fastrtps::rtps;
+
 Data64kbType::Data64kbType() {
     setName("Data64kbType");
     m_typeSize = (uint32_t)Data64kb::getMaxCdrSerializedSize() + 4 /*encapsulation*/;

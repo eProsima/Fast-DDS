@@ -927,7 +927,7 @@ inline bool CDRMessage::readDataHolderSeq(CDRMessage_t* msg, DataHolderSeq& data
     return returnedValue;
 }
 
-inline bool CDRMessage::addMessageIdentity(CDRMessage_t* msg, const ::security::MessageIdentity& message_identity)
+inline bool CDRMessage::addMessageIdentity(CDRMessage_t* msg, const security::MessageIdentity& message_identity)
 {
     assert(msg);
 
@@ -941,7 +941,7 @@ inline bool CDRMessage::addMessageIdentity(CDRMessage_t* msg, const ::security::
     return true;
 }
 
-inline bool CDRMessage::readMessageIdentity(CDRMessage_t* msg, ::security::MessageIdentity& message_identity)
+inline bool CDRMessage::readMessageIdentity(CDRMessage_t* msg, security::MessageIdentity& message_identity)
 {
     assert(msg);
 
@@ -955,7 +955,7 @@ inline bool CDRMessage::readMessageIdentity(CDRMessage_t* msg, ::security::Messa
     return true;
 }
 
-inline bool CDRMessage::addParticipantGenericMessage(CDRMessage_t* msg, const ::security::ParticipantGenericMessage& message)
+inline bool CDRMessage::addParticipantGenericMessage(CDRMessage_t* msg, const security::ParticipantGenericMessage& message)
 {
     assert(msg);
 
@@ -983,7 +983,7 @@ inline bool CDRMessage::addParticipantGenericMessage(CDRMessage_t* msg, const ::
     return true;
 }
 
-inline bool CDRMessage::readParticipantGenericMessage(CDRMessage_t* msg, ::security::ParticipantGenericMessage& message)
+inline bool CDRMessage::readParticipantGenericMessage(CDRMessage_t* msg, security::ParticipantGenericMessage& message)
 {
     assert(msg);
 

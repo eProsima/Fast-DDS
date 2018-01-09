@@ -27,7 +27,7 @@
 #include <list>
 #include <condition_variable>
 
-using namespace eprosima::fastrtps::rtps;
+
 
 class RTPSAsSocketReader 
 {

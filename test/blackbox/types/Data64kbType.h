@@ -25,7 +25,7 @@
 
 #include <fastrtps/TopicDataType.h>
 
-using namespace eprosima::fastrtps;
+
 
 #include "Data64kb.h"
 
@@ -33,15 +33,15 @@ using namespace eprosima::fastrtps;
  * @brief This class represents the TopicDataType of the type Data64kb defined by the user in the IDL file.
  * @ingroup DATA64KB
  */
-class Data64kbType : public TopicDataType {
+class Data64kbType : public eprosima::fastrtps::TopicDataType {
 public:
     typedef Data64kb type;
 
 	Data64kbType();
 	virtual ~Data64kbType();
-	bool serialize(void *data, SerializedPayload_t *payload);
-	bool deserialize(SerializedPayload_t *payload, void *data);
-	bool getKey(void *data, InstanceHandle_t *ihandle);
+	bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
+	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
+	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle);
 	void* createData();
 	std::function<uint32_t()> getSerializedSizeProvider(void *data);
 	void deleteData(void * data);

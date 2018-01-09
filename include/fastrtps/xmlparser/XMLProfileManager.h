@@ -24,7 +24,7 @@
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <map>
 
-using namespace eprosima::fastrtps::rtps;
+
 
 namespace eprosima{
 namespace fastrtps{

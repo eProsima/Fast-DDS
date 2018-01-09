@@ -20,7 +20,7 @@
 
 #include "deadlinepayloadPubSubTypes.h"
 
-using namespace eprosima::fastrtps;
+
 
 class deadlinepayloadPublisher 
 {

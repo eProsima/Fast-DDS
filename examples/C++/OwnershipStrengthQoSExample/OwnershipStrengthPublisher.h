@@ -28,7 +28,7 @@
 
 #include "OwnershipStrengthPubSubTypes.h"
 
-using namespace eprosima::fastrtps;
+
 
 class OwnershipStrengthPublisher 
 {

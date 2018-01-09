@@ -20,8 +20,8 @@
 
 #include <gtest/gtest.h>
 
-using namespace eprosima::fastrtps::rtps;
-using namespace ::security;
+
+
 
 class AuthenticationPluginTest : public ::testing::Test
 {

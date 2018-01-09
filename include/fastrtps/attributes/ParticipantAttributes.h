@@ -22,7 +22,7 @@
 
 #include "../rtps/attributes/RTPSParticipantAttributes.h"
 
-using namespace eprosima::fastrtps::rtps;
+
 
 namespace eprosima{
 namespace fastrtps{
@@ -39,7 +39,7 @@ public:
 	ParticipantAttributes(){};
 	virtual ~ParticipantAttributes(){};
 	//!Attributes of the associated RTPSParticipant.
-	RTPSParticipantAttributes rtps;
+	rtps::RTPSParticipantAttributes rtps;
 };
 
 }

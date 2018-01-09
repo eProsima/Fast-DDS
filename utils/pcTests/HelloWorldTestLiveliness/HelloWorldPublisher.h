@@ -25,7 +25,7 @@
 #include "fastrtps/fastrtps_fwd.h"
 #include "fastrtps/attributes/PublisherAttributes.h"
 #include "fastrtps/publisher/PublisherListener.h"
-using namespace eprosima::fastrtps;
+
 
 #include "HelloWorld.h"
 

@@ -28,7 +28,7 @@
 
 #include "../security/common/ParticipantGenericMessage.h"
 
-using namespace eprosima::fastrtps;
+
 
 namespace eprosima {
 namespace fastrtps{
@@ -73,8 +73,8 @@ namespace CDRMessage{
       inline bool readBinaryPropertySeq(CDRMessage_t* msg, BinaryPropertySeq& binary_properties);
       inline bool readDataHolder(CDRMessage_t* msg, DataHolder& data_holder);
       inline bool readDataHolderSeq(CDRMessage_t* msg, DataHolderSeq& data_holders);
-      inline bool readMessageIdentity(CDRMessage_t* msg, ::security::MessageIdentity& message_identity);
-      inline bool readParticipantGenericMessage(CDRMessage_t* msg, ::security::ParticipantGenericMessage& message);
+      inline bool readMessageIdentity(CDRMessage_t* msg, security::MessageIdentity& message_identity);
+      inline bool readParticipantGenericMessage(CDRMessage_t* msg, security::ParticipantGenericMessage& message);
 	///@}
 
 
@@ -135,8 +135,8 @@ namespace CDRMessage{
       inline bool addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties, const std::string& property_limit);
       inline bool addDataHolder(CDRMessage_t* msg, const DataHolder& data_holder);
       inline bool addDataHolderSeq(CDRMessage_t* msg, const DataHolderSeq& data_holders);
-      inline bool addMessageIdentity(CDRMessage_t* msg, const ::security::MessageIdentity& message_identity);
-      inline bool addParticipantGenericMessage(CDRMessage_t* msg, const ::security::ParticipantGenericMessage& message);
+      inline bool addMessageIdentity(CDRMessage_t* msg, const security::MessageIdentity& message_identity);
+      inline bool addParticipantGenericMessage(CDRMessage_t* msg, const security::ParticipantGenericMessage& message);
 }
 
 }

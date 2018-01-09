@@ -34,7 +34,7 @@ namespace rtps
 struct GUID_t;
 class WriteParams;
 }
-using namespace rtps;
+
 
 
 class PublisherImpl;

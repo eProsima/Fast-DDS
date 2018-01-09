@@ -34,7 +34,7 @@ class WriterProxyData;
 class ReaderProxyData;
 }
 
-using namespace rtps;
+
 
 class Participant;
 class ParticipantListener;
@@ -48,6 +48,9 @@ class Subscriber;
 class SubscriberImpl;
 class SubscriberAttributes;
 class SubscriberListener;
+
+
+using namespace eprosima::fastrtps::rtps;
 
 /**
  * This is the implementation class of the Participant.

@@ -20,7 +20,7 @@
 #include <fastrtps/subscriber/SampleInfo.h>
 #include "FilteringExamplePubSubTypes.h"
 
-using namespace eprosima::fastrtps;
+
 
 class FilteringExampleSubscriber 
 {

@@ -26,8 +26,8 @@
 
 #include <chrono>
 
-using namespace eprosima;
-using namespace eprosima::fastrtps;
+
+
 
 //typedef struct TroughputTimeStats{
 //	uint32_t nsamples;
