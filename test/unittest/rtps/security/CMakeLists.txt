@@ -66,6 +66,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(SecurityAuthentication ${GMOCK_LIBRARIES})
+        target_link_libraries(SecurityAuthentication ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
     endif()
 endif()
