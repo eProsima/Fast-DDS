@@ -26,6 +26,8 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "Subscriber.cpp"], description=["This 
 
 #include "$ctx.filename$Subscriber.h"
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 $ctx.filename$Subscriber::$ctx.filename$Subscriber() : mp_participant(nullptr), mp_subscriber(nullptr) {}
 

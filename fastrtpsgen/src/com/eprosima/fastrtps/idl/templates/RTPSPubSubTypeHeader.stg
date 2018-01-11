@@ -23,8 +23,6 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "PubSubTypes.h"], description=["This h
 
 #include <fastrtps/TopicDataType.h>
 
-using namespace eprosima::fastrtps;
-
 #include "$ctx.filename$.h"
 
 $definitions; separator="\n"$
@@ -74,16 +72,16 @@ struct_type(ctx, parent, struct) ::= <<
  * @brief This class represents the TopicDataType of the type $struct.name$ defined by the user in the IDL file.
  * @ingroup $ctx.trimfilename$
  */
-class $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType : public TopicDataType {
+class $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$ type;
 
 	$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType();
 	virtual ~$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType();
-	bool serialize(void *data, SerializedPayload_t *payload);
-	bool deserialize(SerializedPayload_t *payload, void *data);
+	bool serialize(void *data, eprosima::fastrtps::SerializedPayload_t *payload);
+	bool deserialize(eprosima::fastrtps::SerializedPayload_t *payload, void *data);
         std::function<uint32_t()> getSerializedSizeProvider(void* data);
-	bool getKey(void *data, InstanceHandle_t *ihandle);
+	bool getKey(void *data, eprosima::fastrtps::InstanceHandle_t *ihandle);
 	void* createData();
 	void deleteData(void * data);
 	MD5 m_md5;

@@ -23,6 +23,8 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "PubSubTypes.cpp"], description=["This
 
 #include "$ctx.filename$PubSubTypes.h"
 
+using namespace eprosima::fastrtps;
+
 $definitions; separator="\n"$
 
 >>

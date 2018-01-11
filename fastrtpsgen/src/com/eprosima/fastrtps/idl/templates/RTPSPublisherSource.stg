@@ -29,8 +29,8 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "Publisher.cpp"], description=["This f
 
 #include "$ctx.filename$Publisher.h"
 
-
-
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 $ctx.filename$Publisher::$ctx.filename$Publisher() : mp_participant(nullptr), mp_publisher(nullptr) {}
 
