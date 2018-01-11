@@ -41,14 +41,14 @@ public:
 	void run(uint32_t number);
 private:
 	HelloWorld m_Hello;
-	Participant* mp_participant;
-	Publisher* mp_publisher;
-	class PubListener:public PublisherListener
+	eprosima::fastrtps::Participant* mp_participant;
+	eprosima::fastrtps::Publisher* mp_publisher;
+	class PubListener:public eprosima::fastrtps::PublisherListener
 	{
 	public:
 		PubListener():n_matched(0){};
 		~PubListener(){};
-		void onPublicationMatched(Publisher* pub,MatchingInfo& info);
+		void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);
 		int n_matched;
 	}m_listener;
 	HelloWorldPubSubType m_type;

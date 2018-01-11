@@ -30,17 +30,17 @@ public:
 	bool init(int type);
 	void run();
 private:
-	Participant *mp_participant;
-	Subscriber *mp_subscriber;
+	eprosima::fastrtps::Participant *mp_participant;
+	eprosima::fastrtps::Subscriber *mp_subscriber;
 	
-	class SubListener : public SubscriberListener
+	class SubListener : public eprosima::fastrtps::SubscriberListener
 	{
 	public:
 		SubListener() : n_matched(0),n_msg(0){};
 		~SubListener(){};
-		void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
-		void onNewDataMessage(Subscriber* sub);
-		SampleInfo_t m_info;
+		void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
+		void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+		eprosima::fastrtps::SampleInfo_t m_info;
 		int n_matched;
 		int n_msg;
 	} m_listener;

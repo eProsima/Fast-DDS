@@ -25,6 +25,9 @@
 
 #include "OwnershipStrengthPubSubTypes.h"
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 ExampleMessagePubSubType::ExampleMessagePubSubType() {
     setName("ExampleMessage");
     m_typeSize = (uint32_t)ExampleMessage::getMaxCdrSerializedSize() + 4 /*encapsulation*/;

@@ -31,8 +31,6 @@
 #include <mutex>
 #include <map>
 
-
-
 class OwnershipStrengthSubscriber 
 {
 public:
@@ -41,31 +39,31 @@ public:
 	bool init();
 	void run();
 private:
-	Participant *mp_participant;
-	Subscriber *mp_subscriber;
+	eprosima::fastrtps::Participant *mp_participant;
+	eprosima::fastrtps::Subscriber *mp_subscriber;
 
    class StrengthHierarchy
    {
    public:
       // Automatically adds a publisher to the hierarchy, and reports back whether it is the strongest.
-      bool IsMessageStrong(const ExampleMessage& st, const SampleInfo_t& info);
+      bool IsMessageStrong(const ExampleMessage& st, const eprosima::fastrtps::SampleInfo_t& info);
 
       // Deregisters a publisher removing it from the hierarchy.
-      void DeregisterPublisher(GUID_t guid);
+      void DeregisterPublisher(eprosima::fastrtps::GUID_t guid);
 
       // Provides an ordered hierarchy of publishers, based on the Ownership Strength QoS parameter.
-      std::map<unsigned int, std::set<GUID_t> > strengthMap; // Keyed by Ownership Strength
+      std::map<unsigned int, std::set<eprosima::fastrtps::GUID_t> > strengthMap; // Keyed by Ownership Strength
       std::mutex mapMutex;
    };
 
-	class SubListener : public SubscriberListener
+	class SubListener : public eprosima::fastrtps::SubscriberListener
 	{
 	public:
 		SubListener() : n_matched(0),n_msg(0){};
 		~SubListener(){};
-		void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
-		void onNewDataMessage(Subscriber* sub);
-		SampleInfo_t m_info;
+		void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
+		void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+		eprosima::fastrtps::SampleInfo_t m_info;
 		int n_matched;
 		int n_msg;
       StrengthHierarchy m_hierarchy;

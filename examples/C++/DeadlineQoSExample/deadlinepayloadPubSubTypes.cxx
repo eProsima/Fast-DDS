@@ -25,6 +25,9 @@
 
 #include "deadlinepayloadPubSubTypes.h"
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 HelloMsgPubSubType::HelloMsgPubSubType() {
     setName("HelloMsg");
     m_typeSize = (uint32_t)HelloMsg::getMaxCdrSerializedSize() + 4 /*encapsulation*/;

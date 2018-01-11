@@ -25,6 +25,8 @@
 
 #include "samplePubSubTypes.h"
 
+using namespace eprosima::fastrtps::rtps;
+
 samplePubSubType::samplePubSubType() {
     setName("sample");
     m_typeSize = (uint32_t)sample::getMaxCdrSerializedSize() + 4 /*encapsulation*/;

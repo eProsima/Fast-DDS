@@ -27,14 +27,14 @@
 #include <string>
 #include <list>
 
-class my_ReaderListener: public ReaderListener 
+class my_ReaderListener: public eprosima::fastrtps::ReaderListener
 {
     public:
         int n_received;
         my_ReaderListener();
         ~my_ReaderListener();
-        void onNewDataMessage(RTPSReader* reader, const CacheChange_t* const change);
-        void onReaderMatched(RTPSReader* reader,MatchingInfo& info);
+        void onNewDataMessage(eprosima::fastrtps::RTPSReader* reader, const eprosima::fastrtps::rtps::CacheChange_t* const change);
+        void onReaderMatched(eprosima::fastrtps::RTPSReader* reader, eprosima::fastrtps::rtps::MatchingInfo& info);
 };
 
 class UserDefinedTransportExampleReader
@@ -48,13 +48,13 @@ class UserDefinedTransportExampleReader
         bool isInitialized();
         bool read();
     private:
-        RTPSParticipantAttributes pattr;
-        RTPSParticipant *my_participant;
-        ReaderAttributes rattr;
-        RTPSReader *my_reader;
-        HistoryAttributes hattr;
+        eprosima::fastrtps::RTPSParticipantAttributes pattr;
+        eprosima::fastrtps::RTPSParticipant *my_participant;
+        eprosima::fastrtps::ReaderAttributes rattr;
+        eprosima::fastrtps::RTPSReader *my_reader;
+        eprosima::fastrtps::HistoryAttributes hattr;
         eprosima::fastrtps::ReaderQos rqos;
         eprosima::fastrtps::TopicAttributes tattr;
-        ReaderHistory *my_history;
+		eprosima::fastrtps::ReaderHistory *my_history;
         bool initialized_;
 };

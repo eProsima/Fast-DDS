@@ -14,7 +14,8 @@
 
 #include "samplePubSubTypes.h"
 
-using namespace eprosima::fastrps::rtps;
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 //Enums and configuration structure
 enum Reliability_type { Best_Effort, Reliable };

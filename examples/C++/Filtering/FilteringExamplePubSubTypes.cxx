@@ -25,6 +25,9 @@
 
 #include "FilteringExamplePubSubTypes.h"
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 FilteringExamplePubSubType::FilteringExamplePubSubType() {
     setName("FilteringExample");
     m_typeSize = (uint32_t)FilteringExample::getMaxCdrSerializedSize() + 4 /*encapsulation*/;

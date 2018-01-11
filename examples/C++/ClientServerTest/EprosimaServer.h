@@ -28,11 +28,6 @@
 #include "fastrtps/publisher/PublisherListener.h"
 #include "fastrtps/subscriber/SubscriberListener.h"
 
-
-
-
-
-
 class EprosimaServer {
 	friend class OperationListener;
 	friend class ResultListener;
@@ -45,33 +40,33 @@ public:
 	//Serve for samples operations.
 	void serve(uint32_t samples);
 private:
-	Subscriber* mp_operation_sub;
-	Publisher* mp_result_pub;
-	Participant* mp_participant;
-	Result::RESULTTYPE calculate(Operation::OPERATIONTYPE type, int32_t num1,int32_t num2,int32_t* result);
-	ResultDataType* mp_resultdatatype;
-	OperationDataType* mp_operationdatatype;
+	eprosima::fastrtps::Subscriber* mp_operation_sub;
+	eprosima::fastrtps::Publisher* mp_result_pub;
+	eprosima::fastrtps::Participant* mp_participant;
+	clientserver::Result::RESULTTYPE calculate(clientserver::Operation::OPERATIONTYPE type, int32_t num1,int32_t num2,int32_t* result);
+	clientserver::ResultDataType* mp_resultdatatype;
+	clientserver::OperationDataType* mp_operationdatatype;
 public:
 	uint32_t m_n_served;
-	class OperationListener:public SubscriberListener
+	class OperationListener:public eprosima::fastrtps::SubscriberListener
 	{
 	public:
 		OperationListener(EprosimaServer* up):mp_up(up){}
 		~OperationListener(){}
 		EprosimaServer* mp_up;
-		void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
-		void onNewDataMessage(Subscriber*sub);
-		Operation m_operation;
-		SampleInfo_t m_sampleInfo;
-		Result m_result;
+		void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
+		void onNewDataMessage(eprosima::fastrtps::Subscriber*sub);
+		clientserver::Operation m_operation;
+		eprosima::fastrtps::SampleInfo_t m_sampleInfo;
+		clientserver::Result m_result;
 	}m_operationsListener;
-	class ResultListener:public PublisherListener
+	class ResultListener:public eprosima::fastrtps::PublisherListener
 	{
 	public:
 		ResultListener(EprosimaServer* up):mp_up(up){}
 		~ResultListener(){}
 		EprosimaServer* mp_up;
-		void onPublicationMatched(Publisher* pub,MatchingInfo& info);
+		void onPublicationMatched(eprosima::fastrtps::Publisher* pub,eprosima::fastrtps::rtps::MatchingInfo& info);
 	}m_resultsListener;
 };
 

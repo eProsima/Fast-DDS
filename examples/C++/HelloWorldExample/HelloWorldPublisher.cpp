@@ -25,6 +25,8 @@
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 HelloWorldPublisher::HelloWorldPublisher():mp_participant(nullptr),
 mp_publisher(nullptr)

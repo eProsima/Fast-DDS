@@ -25,6 +25,8 @@
 
 #include "XMLProfilesExamplePubSubTypes.h"
 
+using namespace eprosima::fastrtps;
+
 XMLProfilesExamplePubSubType::XMLProfilesExamplePubSubType() {
     setName("XMLProfilesExample");
     m_typeSize = (uint32_t)XMLProfilesExample::getMaxCdrSerializedSize() + 4 /*encapsulation*/;

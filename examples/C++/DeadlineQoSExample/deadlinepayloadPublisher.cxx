@@ -23,8 +23,8 @@
 
 #include "deadlinepayloadPublisher.h"
 
-
-
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 deadlinepayloadPublisher::deadlinepayloadPublisher() : mp_participant(nullptr), mp_publisher(nullptr), double_time(false) {}
 

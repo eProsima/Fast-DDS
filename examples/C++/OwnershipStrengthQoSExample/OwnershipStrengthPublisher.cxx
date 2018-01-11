@@ -29,6 +29,9 @@
 
 #include "OwnershipStrengthPublisher.h"
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 OwnershipStrengthPublisher::OwnershipStrengthPublisher()
    :mp_participant(nullptr),
     mp_publisher(nullptr),

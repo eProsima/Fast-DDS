@@ -24,9 +24,9 @@
 
 typedef struct ex_mapableKey{
 
-	octet value[16];
+	eprosima::fastrtps::rtps::octet value[16];
 	
-	ex_mapableKey& operator=(const InstanceHandle_t& ihandle){
+	ex_mapableKey& operator=(const eprosima::fastrtps::rtps::InstanceHandle_t& ihandle){
 		for(uint8_t i=0;i<16;i++)
 		{
 			value[i] = ihandle.value[i];

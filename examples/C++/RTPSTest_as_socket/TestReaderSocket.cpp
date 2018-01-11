@@ -29,6 +29,8 @@
 
 #include "fastrtps/rtps/history/ReaderHistory.h"
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps; 
 
 TestReaderSocket::TestReaderSocket():
 mp_participant(nullptr),

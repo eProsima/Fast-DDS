@@ -30,6 +30,8 @@
 
 #include <algorithm>
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 OwnershipStrengthSubscriber::OwnershipStrengthSubscriber() : mp_participant(nullptr), mp_subscriber(nullptr) {}
 

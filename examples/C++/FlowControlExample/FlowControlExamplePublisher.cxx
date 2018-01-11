@@ -33,7 +33,7 @@
 #include "FlowControlExamplePublisher.h"
 
 
-
+using namespace eprosima::fastrtps;
 
 FlowControlExamplePublisher::FlowControlExamplePublisher() : mp_participant(nullptr),
                                                              mp_fast_publisher(nullptr),

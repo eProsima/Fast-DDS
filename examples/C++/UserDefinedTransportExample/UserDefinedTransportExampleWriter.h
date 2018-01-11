@@ -28,12 +28,12 @@
 #include <list>
 #include <stdio.h>
 
-class my_WriterListener: public WriterListener
+class my_WriterListener: public eprosima::fastrtps::WriterListener
 {
 	public:
 		my_WriterListener();
 		~my_WriterListener();
-		void onWriterMatched(RTPSWriter* writer, MatchingInfo& info);
+		void onWriterMatched(eprosima::fastrtps::RTPSWriter* writer, eprosima::fastrtps::rtps::MatchingInfo& info);
 		int n_matched;
 };
 
@@ -55,15 +55,15 @@ class UserDefinedTransportExampleWriter
 	void sendData();
 
     private:
-        RTPSParticipantAttributes pattr;
-	RTPSParticipant *my_participant;
-        WriterAttributes wattr;
-	RTPSWriter *my_writer;
-	HistoryAttributes hattr;
-	WriterHistory *my_history;
-	TopicAttributes tattr;
-	WriterQos wqos;
-	bool initialized_;
+        eprosima::fastrtps::RTPSParticipantAttributes pattr;
+		eprosima::fastrtps::RTPSParticipant *my_participant;
+        eprosima::fastrtps::WriterAttributes wattr;
+		eprosima::fastrtps::RTPSWriter *my_writer;
+		eprosima::fastrtps::HistoryAttributes hattr;
+		eprosima::fastrtps::WriterHistory *my_history;
+		eprosima::fastrtps::TopicAttributes tattr;
+		eprosima::fastrtps::WriterQos wqos;
+		bool initialized_;
 };
 
 

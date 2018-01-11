@@ -29,21 +29,21 @@ class TestReaderRegistered {
 public:
 	TestReaderRegistered();
 	virtual ~TestReaderRegistered();
-	RTPSParticipant* mp_participant;
-	RTPSReader* mp_reader;
-	ReaderHistory* mp_history;
+	eprosima::fastrtps::rtps::RTPSParticipant* mp_participant;
+	eprosima::fastrtps::rtps::RTPSReader* mp_reader;
+	eprosima::fastrtps::rtps::ReaderHistory* mp_history;
 	bool init(); //Initialization
 	bool reg(); //Register
 	void run(); //Run
-	class MyListener:public ReaderListener
+	class MyListener:public eprosima::fastrtps::rtps::ReaderListener
 	{
 	public:
 		MyListener():n_received(0),n_matched(0){};
 		~MyListener(){};
-		void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change);
-		void onReaderMatched(RTPSReader* reader,MatchingInfo& info)
+		void onNewCacheChangeAdded(eprosima::fastrtps::rtps::RTPSReader* reader,const eprosima::fastrtps::rtps::CacheChange_t* const change);
+		void onReaderMatched(eprosima::fastrtps::rtps::RTPSReader* reader, eprosima::fastrtps::rtps::MatchingInfo& info)
 		{
-			if(info.status == MATCHED_MATCHING) n_matched++;
+			if(info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING) n_matched++;
 		};
 		uint32_t n_received;
 		uint32_t n_matched;

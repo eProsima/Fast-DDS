@@ -38,16 +38,16 @@ public:
 	bool init();
 	void run();
 private:
-	Participant *mp_participant;
-	Publisher *mp_fast_publisher;
-	Publisher *mp_slow_publisher;
+	eprosima::fastrtps::Participant *mp_participant;
+	eprosima::fastrtps::Publisher *mp_fast_publisher;
+	eprosima::fastrtps::Publisher *mp_slow_publisher;
 	
-	class PubListener : public PublisherListener
+	class PubListener : public eprosima::fastrtps::PublisherListener
 	{
 	public:
 		PubListener() : n_matched(0){};
 		~PubListener(){};
-		void onPublicationMatched(Publisher* pub,MatchingInfo& info);
+		void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);
 		int n_matched;
 	} m_listener;
 	FlowControlExamplePubSubType myType;

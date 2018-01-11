@@ -31,8 +31,7 @@
 
 #include "XMLProfilesExamplePublisher.h"
 
-
-
+using namespace eprosima::fastrtps;
 
 XMLProfilesExamplePublisher::XMLProfilesExamplePublisher() : mp_participant(nullptr), mp_publisher(nullptr) {}
 

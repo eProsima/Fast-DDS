@@ -25,6 +25,8 @@
 
 #include "FlowControlExamplePubSubTypes.h"
 
+using namespace eprosima::fastrtps::rtps;
+
 FlowControlExamplePubSubType::FlowControlExamplePubSubType() {
     setName("FlowControlExample");
     m_typeSize = (uint32_t)FlowControlExample::getMaxCdrSerializedSize() + 4 /*encapsulation*/;

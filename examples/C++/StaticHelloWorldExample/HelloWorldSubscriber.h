@@ -43,18 +43,18 @@ public:
 	//!Run the subscriber until number samples have been recevied.
 	void run(uint32_t number);
 private:
-	Participant* mp_participant;
-	Subscriber* mp_subscriber;
+	eprosima::fastrtps::Participant* mp_participant;
+	eprosima::fastrtps::Subscriber* mp_subscriber;
 public:
-	class SubListener:public SubscriberListener
+	class SubListener:public eprosima::fastrtps::SubscriberListener
 	{
 	public:
 		SubListener():n_matched(0),n_samples(0){};
 		~SubListener(){};
-		void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
-		void onNewDataMessage(Subscriber* sub);
+		void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
+		void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
 		HelloWorld m_Hello;
-		SampleInfo_t m_info;
+		eprosima::fastrtps::SampleInfo_t m_info;
 		int n_matched;
 		uint32_t n_samples;
 	}m_listener;

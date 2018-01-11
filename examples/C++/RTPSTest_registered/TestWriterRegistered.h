@@ -29,20 +29,20 @@ class TestWriterRegistered {
 public:
 	TestWriterRegistered();
 	virtual ~TestWriterRegistered();
-	RTPSParticipant* mp_participant;
-	RTPSWriter* mp_writer;
-	WriterHistory* mp_history;
+	eprosima::fastrtps::rtps::RTPSParticipant* mp_participant;
+	eprosima::fastrtps::rtps::RTPSWriter* mp_writer;
+	eprosima::fastrtps::rtps::WriterHistory* mp_history;
 	bool init(); //Initialize writer
 	bool reg(); //Register the Writer
 	void run(uint16_t samples); //Run the Writer
-	class MyListener :public WriterListener
+	class MyListener :public eprosima::fastrtps::rtps::WriterListener
 	{
 	public:
 		MyListener():n_matched(0){};
 		~MyListener(){};
-		void onWriterMatched(RTPSWriter* writer, MatchingInfo& info)
+		void onWriterMatched(eprosima::fastrtps::rtps::RTPSWriter* writer, eprosima::fastrtps::rtps::MatchingInfo& info)
 		{
-			if (info.status == MATCHED_MATCHING)
+			if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
 				++n_matched;
 		}
 		int n_matched;

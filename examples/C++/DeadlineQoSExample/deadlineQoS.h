@@ -37,14 +37,10 @@
 #include <map>
 #include <thread>
 
-
-
-
-
 class deadlineQoS
 {
 	public:
-		deadlineQoS(steady_timer &timer, io_service &ioserv): t(timer),io(ioserv){
+		deadlineQoS(asio::steady_timer &timer, asio::io_service &ioserv): t(timer),io(ioserv){
 			init();
 		}
 		~deadlineQoS(){
@@ -59,8 +55,8 @@ class deadlineQoS
 		std::map<mapable_key,bool> deadlineQoSmap;
 		std::mutex mapmtx;
 	private:
-		steady_timer &t;
-		io_service &io;
+		asio::steady_timer &t;
+		asio::io_service &io;
 		std::thread* dlqos;
 		void runner();
 		void init();

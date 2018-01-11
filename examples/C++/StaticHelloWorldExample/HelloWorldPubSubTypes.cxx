@@ -25,6 +25,8 @@
 
 #include "HelloWorldPubSubTypes.h"
 
+using namespace eprosima::fastrtps;
+
 HelloWorldPubSubType::HelloWorldPubSubType() {
     setName("HelloWorld");
     m_typeSize = (uint32_t)HelloWorld::getMaxCdrSerializedSize() + 4 /*encapsulation*/;

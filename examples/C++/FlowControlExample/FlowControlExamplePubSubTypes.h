@@ -25,22 +25,20 @@
 
 #include <fastrtps/TopicDataType.h>
 
-
-
 #include "FlowControlExample.h"
 
 /*!
  * @brief This class represents the TopicDataType of the type FlowControlExample defined by the user in the IDL file.
  * @ingroup FLOWCONTROLEXAMPLE
  */
-class FlowControlExamplePubSubType : public TopicDataType {
+class FlowControlExamplePubSubType : public eprosima::fastrtps::TopicDataType{
 public:
     FlowControlExamplePubSubType();
     virtual ~FlowControlExamplePubSubType();
-    bool serialize(void *data, SerializedPayload_t *payload);
-    bool deserialize(SerializedPayload_t *payload, void *data);
+    bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
+    bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
     std::function<uint32_t()> getSerializedSizeProvider(void* data);
-    bool getKey(void *data, InstanceHandle_t *ihandle);
+    bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle);
     void* createData();
     void deleteData(void * data);
     MD5 m_md5;

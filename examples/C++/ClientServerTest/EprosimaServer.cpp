@@ -21,6 +21,9 @@
 
 #include "fastrtps/fastrtps_all.h"
 
+using namespace eprosima::fastrtps;
+using namespace clientserver;
+
 EprosimaServer::EprosimaServer():
 mp_operation_sub(nullptr),
 mp_result_pub(nullptr),

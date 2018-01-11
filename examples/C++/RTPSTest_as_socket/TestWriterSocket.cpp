@@ -29,6 +29,8 @@
 
 #include "fastrtps/rtps/history/WriterHistory.h"
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 TestWriterSocket::TestWriterSocket():
 mp_participant(nullptr),

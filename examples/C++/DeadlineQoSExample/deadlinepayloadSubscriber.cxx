@@ -22,6 +22,9 @@
 
 #include "deadlinepayloadSubscriber.h"
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 deadlinepayloadSubscriber::deadlinepayloadSubscriber(asio::steady_timer &timer,asio::io_service &ioserv) : mp_participant(nullptr), mp_subscriber(nullptr), m_listener(timer,ioserv) {}
 
 deadlinepayloadSubscriber::~deadlinepayloadSubscriber() {	Domain::removeParticipant(mp_participant);}

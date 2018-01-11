@@ -33,16 +33,16 @@
  * @brief This class represents the TopicDataType of the type ExampleMessage defined by the user in the IDL file.
  * @ingroup OWNERSHIPSTRENGTH
  */
-class ExampleMessagePubSubType : public TopicDataType {
+class ExampleMessagePubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef ExampleMessage type;
 
 	ExampleMessagePubSubType();
 	virtual ~ExampleMessagePubSubType();
-	bool serialize(void *data, SerializedPayload_t *payload);
-	bool deserialize(SerializedPayload_t *payload, void *data);
+	bool serialize(void *data, eprosima::fastrtps::SerializedPayload_t *payload);
+	bool deserialize(eprosima::fastrtps::SerializedPayload_t *payload, void *data);
         std::function<uint32_t()> getSerializedSizeProvider(void* data);
-	bool getKey(void *data, InstanceHandle_t *ihandle);
+	bool getKey(void *data, eprosima::fastrtps::InstanceHandle_t *ihandle);
 	void* createData();
 	void deleteData(void * data);
 	MD5 m_md5;

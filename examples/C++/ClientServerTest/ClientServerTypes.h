@@ -23,11 +23,10 @@
 #include "fastrtps/TopicDataType.h"
 #include "fastrtps/rtps/common/all_common.h"
 
-
-
-
-
 namespace clientserver{
+
+	using namespace eprosima::fastrtps;
+	using namespace eprosima::fastrtps::rtps;
 
 class Operation
 {

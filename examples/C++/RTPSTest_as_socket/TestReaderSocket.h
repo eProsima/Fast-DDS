@@ -29,17 +29,17 @@ class TestReaderSocket {
 public:
 	TestReaderSocket();
 	virtual ~TestReaderSocket();
-	RTPSParticipant* mp_participant;
-	RTPSReader* mp_reader;
-	ReaderHistory* mp_history;
+	eprosima::fastrtps::rtps::RTPSParticipant* mp_participant;
+	eprosima::fastrtps::rtps::RTPSReader* mp_reader;
+	eprosima::fastrtps::rtps::ReaderHistory* mp_history;
 	bool init(std::string ip,uint32_t port);
 	void run();
-	class MyListener:public ReaderListener
+	class MyListener:public eprosima::fastrtps::rtps::ReaderListener
 	{
 	public:
 		MyListener():m_received(0){};
 		~MyListener(){};
-		void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change);
+		void onNewCacheChangeAdded(eprosima::fastrtps::rtps::RTPSReader* reader,const eprosima::fastrtps::rtps::CacheChange_t* const change);
 		uint32_t m_received;
 	}m_listener;
 

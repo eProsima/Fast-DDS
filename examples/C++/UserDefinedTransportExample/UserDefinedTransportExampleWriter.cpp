@@ -16,6 +16,7 @@
 #include <memory>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 
+using namespace eprosima::fastrtps;
 
 	my_WriterListener::my_WriterListener():n_matched(0){};
 	my_WriterListener::~my_WriterListener(){};

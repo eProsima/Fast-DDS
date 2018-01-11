@@ -23,16 +23,14 @@
 #include "EprosimaClient.h"
 #include "fastrtps/utils/eClock.h"
 
-
-
 class EprosimaClientTest {
 public:
 	EprosimaClientTest();
 	virtual ~EprosimaClientTest();
 	EprosimaClient m_client;
 	double run(int samples);
-	eClock m_clock;
-	Time_t m_t1,m_t2;
+	eprosima::fastrtps::eClock m_clock;
+	eprosima::fastrtps::Time_t m_t1,m_t2;
 	double m_overhead;
 };
 

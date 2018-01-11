@@ -44,17 +44,17 @@ public:
 	bool init();
 	void run();
 private:
-	eprosima::fastrps::Participant *mp_participant;
-	eprosima::fastrps::Subscriber *mp_subscriber;
+	eprosima::fastrtps::Participant *mp_participant;
+	eprosima::fastrtps::Subscriber *mp_subscriber;
 	//io_service &io;
-	class SubListener : public SubscriberListener
+	class SubListener : public eprosima::fastrtps::SubscriberListener
 	{
 	public:
 		SubListener(asio::steady_timer &timer, asio::io_service &ioserv) : n_matched(0),n_msg(0), myDeadline(timer,ioserv){};
 		~SubListener(){};
-		void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
-		void onNewDataMessage(Subscriber* sub);
-		SampleInfo_t m_info;
+		void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
+		void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+		eprosima::fastrtps::SampleInfo_t m_info;
 		int n_matched;
 		int n_msg;
 		deadlineQoS myDeadline;
