@@ -54,11 +54,11 @@ class RTPSAsSocketWriter
             magicword_ = mw.str();
 
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
-            hattr_.memoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+            hattr_.memoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 #elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
-            hattr_.memoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+            hattr_.memoryPolicy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
 #else
-            hattr_.memoryPolicy = PREALLOCATED_MEMORY_MODE;
+            hattr_.memoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 #endif
 
             // By default, heartbeat period and nack response delay are 100 milliseconds.
@@ -71,7 +71,7 @@ class RTPSAsSocketWriter
         virtual ~RTPSAsSocketWriter()
         {
             if(participant_ != nullptr)
-                RTPSDomain::removeRTPSParticipant(participant_);
+                eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(participant_);
             if(history_ != nullptr)
                 delete(history_);
         }
@@ -108,12 +108,12 @@ class RTPSAsSocketWriter
 
             while(it != msgs.end())
             {
-                CacheChange_t * ch = writer_->new_change([&]() -> uint32_t
+                eprosima::fastrtps::rtps::CacheChange_t * ch = writer_->new_change([&]() -> uint32_t
                                 {
                                    size_t current_alignment =  4 + magicword_.size() + 1;
 				   return (uint32_t)(current_alignment + type::getCdrSerializedSize(*it, current_alignment));
                                 }
-                                , ALIVE);
+                                , eprosima::fastrtps::rtps::ALIVE);
 
                 eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
                 eprosima::fastcdr::Cdr cdr(buffer);
@@ -142,7 +142,7 @@ class RTPSAsSocketWriter
             ip_ = ip;
             port_ = port;
 
-            Locator_t loc;
+            eprosima::fastrtps::rtps::Locator_t loc;
             loc.set_IP4_address(ip);
             loc.port = port;
             writer_attr_.endpoint.multicastLocatorList.push_back(loc);
@@ -156,17 +156,17 @@ class RTPSAsSocketWriter
                 std::cout << "ERROR: locator has to be registered previous to call this" << std::endl;
 
             //Add remote reader (in this case a reader in the same machine)
-            GUID_t guid = participant_->getGuid();
+            eprosima::fastrtps::rtps::GUID_t guid = participant_->getGuid();
 
             eprosima::fastrtps::rtps::RemoteReaderAttributes rattr;
-            Locator_t loc;
+            eprosima::fastrtps::rtps::Locator_t loc;
             loc.set_IP4_address(ip_);
             loc.port = port_;
             rattr.endpoint.multicastLocatorList.push_back(loc);
 
-            if(writer_attr_.endpoint.reliabilityKind == RELIABLE)
+            if(writer_attr_.endpoint.reliabilityKind == eprosima::fastrtps::rtps::RELIABLE)
             {
-                rattr.endpoint.reliabilityKind = RELIABLE;
+                rattr.endpoint.reliabilityKind = eprosima::fastrtps::rtps::RELIABLE;
                 rattr.guid.guidPrefix.value[0] = guid.guidPrefix.value[0];
                 rattr.guid.guidPrefix.value[1] = guid.guidPrefix.value[1];
                 rattr.guid.guidPrefix.value[2] = guid.guidPrefix.value[2];
@@ -197,7 +197,7 @@ class RTPSAsSocketWriter
 
         RTPSAsSocketWriter& add_throughput_controller_descriptor_to_pparams(uint32_t bytesPerPeriod, uint32_t periodInMs)
         {
-            ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
+            eprosima::fastrtps::rtps::ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
             writer_attr_.throughputController = descriptor;
 
             return *this;

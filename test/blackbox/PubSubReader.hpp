@@ -62,11 +62,11 @@ class PubSubReader
 
                     }
 
-                    if(info.rtps.m_status == DISCOVERED_RTPSPARTICIPANT)
+                    if(info.rtps.m_status == eprosima::fastrtps::rtps::DISCOVERED_RTPSPARTICIPANT)
                     {
                         reader_.participant_matched();
                     }
-                    else if(info.rtps.m_status == REMOVED_RTPSPARTICIPANT)
+                    else if(info.rtps.m_status == eprosima::fastrtps::rtps::REMOVED_RTPSPARTICIPANT)
                     {
                         reader_.participant_unmatched();
                     }
@@ -138,11 +138,11 @@ class PubSubReader
             subscriber_attr_.topic.topicName = t.str();
 
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
-            subscriber_attr_.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+            subscriber_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 #elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
-            subscriber_attr_.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+            subscriber_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
 #else
-            subscriber_attr_.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+            subscriber_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 #endif
 
             // By default, heartbeat period delay is 100 milliseconds.
@@ -153,7 +153,7 @@ class PubSubReader
         ~PubSubReader()
         {
             if(participant_ != nullptr)
-                Domain::removeParticipant(participant_);
+                eprosima::fastrtps::Domain::removeParticipant(participant_);
         }
 
         void init()
@@ -179,7 +179,7 @@ class PubSubReader
         {
             if(participant_ != nullptr)
             {
-                Domain::removeParticipant(participant_);
+                eprosima::fastrtps::Domain::removeParticipant(participant_);
                 participant_ = nullptr;
             }
         }
@@ -425,13 +425,13 @@ class PubSubReader
         {
             participant_attr_.rtps.participantID = participantId;
 
-            LocatorList_t default_unicast_locators;
-            Locator_t default_unicast_locator;
+            eprosima::fastrtps::rtps::LocatorList_t default_unicast_locators;
+            eprosima::fastrtps::rtps::Locator_t default_unicast_locator;
 
             default_unicast_locators.push_back(default_unicast_locator);
             participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = default_unicast_locators;
 
-            Locator_t loopback_locator;
+            eprosima::fastrtps::rtps::Locator_t loopback_locator;
             loopback_locator.set_IP4_address(127, 0, 0, 1);
             participant_attr_.rtps.builtin.initialPeersList.push_back(loopback_locator);
             return *this;
@@ -487,7 +487,7 @@ class PubSubReader
             if(receiving_.load())
             {
                 type data;
-                SampleInfo_t info;
+                eprosima::fastrtps::SampleInfo_t info;
 
                 if(subscriber->takeNextData((void*)&data, &info))
                 {
@@ -499,7 +499,7 @@ class PubSubReader
                     ASSERT_LT(last_seq, info.sample_identity.sequence_number());
                     last_seq = info.sample_identity.sequence_number();
 
-                    if(info.sampleKind == ALIVE)
+                    if(info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
                     {
                         auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
                         ASSERT_NE(it, total_msgs_.end());

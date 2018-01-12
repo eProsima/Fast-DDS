@@ -59,7 +59,7 @@ class RTPSWithRegistrationWriter
 
             void onWriterMatched(eprosima::fastrtps::rtps::RTPSWriter* /*writer*/, eprosima::fastrtps::rtps::MatchingInfo& info)
             {
-                if (info.status == MATCHED_MATCHING)
+                if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                     writer_.matched();
             }
 
@@ -92,7 +92,7 @@ class RTPSWithRegistrationWriter
     virtual ~RTPSWithRegistrationWriter()
     {
         if(participant_ != nullptr)
-            RTPSDomain::removeRTPSParticipant(participant_);
+            eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(participant_);
         if(history_ != nullptr)
             delete(history_);
     }
@@ -100,16 +100,16 @@ class RTPSWithRegistrationWriter
     void init()
     {
         //Create participant
-        RTPSParticipantAttributes pattr;
+        eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
         pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
         pattr.builtin.use_WriterLivelinessProtocol = true;
         pattr.builtin.domainId = (uint32_t)GET_PID() % 230;
-        participant_ = RTPSDomain::createParticipant(pattr);
+        participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(pattr);
         ASSERT_NE(participant_, nullptr);
 
         //Create writerhistory
         hattr_.payloadMaxSize = type_.m_typeSize;
-        history_ = new WriterHistory(hattr_);
+        history_ = new eprosima::fastrtps::rtps::WriterHistory(hattr_);
 
         //Create writer
         writer_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(participant_, writer_attr_, history_, &listener_);
@@ -128,7 +128,7 @@ class RTPSWithRegistrationWriter
 
         while(it != msgs.end())
         {
-	    CacheChange_t * ch = writer_->new_change(*it,ALIVE);
+	    eprosima::fastrtps::rtps::CacheChange_t * ch = writer_->new_change(*it,eprosima::fastrtps::rtps::ALIVE);
 
 	    eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
             eprosima::fastcdr::Cdr cdr(buffer);
@@ -188,7 +188,7 @@ class RTPSWithRegistrationWriter
 
     RTPSWithRegistrationWriter& add_throughput_controller_descriptor_to_pparams(uint32_t bytesPerPeriod, uint32_t periodInMs)
     {
-        ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
+        eprosima::fastrtps::rtps::ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
         writer_attr_.throughputController = descriptor;
 
         return *this;

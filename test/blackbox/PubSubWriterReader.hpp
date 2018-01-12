@@ -146,14 +146,14 @@ class PubSubWriterReader
         topic_name_ = t.str();
 
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
-        publisher_attr_.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-        subscriber_attr_.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+        publisher_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+        subscriber_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 #elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
-        publisher_attr_.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
-        subscriber_attr_.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+        publisher_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
+        subscriber_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
 #else
-        publisher_attr_.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
-        subscriber_attr_.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+        publisher_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+        subscriber_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 #endif
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
@@ -355,7 +355,7 @@ class PubSubWriterReader
         if(receiving_)
         {
             type data;
-            SampleInfo_t info;
+            eprosima::fastrtps::SampleInfo_t info;
 
             if(subscriber->takeNextData((void*)&data, &info))
             {
@@ -365,7 +365,7 @@ class PubSubWriterReader
                 ASSERT_LT(last_seq, info.sample_identity.sequence_number());
                 last_seq = info.sample_identity.sequence_number();
 
-                if(info.sampleKind == ALIVE)
+                if(info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
                 {
                     auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
                     ASSERT_NE(it, total_msgs_.end());

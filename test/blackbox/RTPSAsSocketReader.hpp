@@ -58,7 +58,7 @@ class RTPSAsSocketReader
 
     private:
 
-    class Listener: public ReaderListener
+    class Listener: public eprosima::fastrtps::rtps::ReaderListener
     {
         public:
             Listener(RTPSAsSocketReader &reader) : reader_(reader) {};
@@ -91,11 +91,11 @@ class RTPSAsSocketReader
             magicword_ = mw.str();
 
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
-            hattr_.memoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+            hattr_.memoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 #elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
-            hattr_.memoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+            hattr_.memoryPolicy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
 #else
-            hattr_.memoryPolicy = PREALLOCATED_MEMORY_MODE;
+            hattr_.memoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 #endif
 
             // By default, heartbeat period delay is 100 milliseconds.
@@ -220,7 +220,7 @@ class RTPSAsSocketReader
             ip_ = ip;
             port_ = port;
 
-            Locator_t loc;
+            eprosima::fastrtps::rtps::Locator_t loc;
             loc.set_IP4_address(ip);
             loc.port = port;
             reader_attr_.endpoint.multicastLocatorList.push_back(loc);
@@ -230,20 +230,20 @@ class RTPSAsSocketReader
 
         void register_writer()
         {
-            if(reader_attr_.endpoint.reliabilityKind == RELIABLE)
+            if(reader_attr_.endpoint.reliabilityKind == eprosima::fastrtps::rtps::RELIABLE)
             {
                 if(port_ == 0)
                     std::cout << "ERROR: locator has to be registered previous to call this" << std::endl;
 
                 //Add remote writer (in this case a reader in the same machine)
-                GUID_t guid = participant_->getGuid();
+                eprosima::fastrtps::rtps::GUID_t guid = participant_->getGuid();
 
                 eprosima::fastrtps::rtps::RemoteWriterAttributes wattr;
-                Locator_t loc;
+                eprosima::fastrtps::rtps::Locator_t loc;
                 loc.set_IP4_address(ip_);
                 loc.port = port_;
                 wattr.endpoint.multicastLocatorList.push_back(loc);
-                wattr.endpoint.reliabilityKind = RELIABLE;
+                wattr.endpoint.reliabilityKind = eprosima::fastrtps::rtps::RELIABLE;
                 wattr.guid.guidPrefix.value[0] = guid.guidPrefix.value[0];
                 wattr.guid.guidPrefix.value[1] = guid.guidPrefix.value[1];
                 wattr.guid.guidPrefix.value[2] = guid.guidPrefix.value[2];
@@ -298,7 +298,7 @@ class RTPSAsSocketReader
                 eprosima::fastrtps::rtps::ReaderHistory *history = reader->getHistory();
                 ASSERT_NE(history, nullptr);
 
-                history->remove_change((CacheChange_t*)change);
+                history->remove_change((eprosima::fastrtps::rtps::CacheChange_t*)change);
             }
         }
 

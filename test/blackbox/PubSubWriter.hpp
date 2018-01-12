@@ -57,11 +57,11 @@ class PubSubWriter
 
                 }
 
-                if(info.rtps.m_status == DISCOVERED_RTPSPARTICIPANT)
+                if(info.rtps.m_status == eprosima::fastrtps::rtps::DISCOVERED_RTPSPARTICIPANT)
                 {
                     writer_.participant_matched();
                 }
-                else if(info.rtps.m_status == REMOVED_RTPSPARTICIPANT)
+                else if(info.rtps.m_status == eprosima::fastrtps::rtps::REMOVED_RTPSPARTICIPANT)
                 {
                     writer_.participant_unmatched();
                 }
@@ -118,13 +118,13 @@ class PubSubWriter
 
             void onNewCacheChangeAdded(eprosima::fastrtps::rtps::RTPSReader* /*reader*/, const eprosima::fastrtps::rtps::CacheChange_t* const change_in)
             {
-                ReaderProxyData readerInfo;
+                eprosima::fastrtps::rtps::ReaderProxyData readerInfo;
 
-                if(change_in->kind == ALIVE)
+                if(change_in->kind == eprosima::fastrtps::rtps::ALIVE)
                 {
-                    CDRMessage_t tempMsg(0);
+                    eprosima::fastrtps::rtps::CDRMessage_t tempMsg(0);
                     tempMsg.wraps = true;
-                    tempMsg.msg_endian = change_in->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+                    tempMsg.msg_endian = change_in->serializedPayload.encapsulation == PL_CDR_BE ? eprosima::fastrtps::rtps::BIGEND : eprosima::fastrtps::rtps::LITTLEEND;
                     tempMsg.length = change_in->serializedPayload.length;
                     tempMsg.max_size = change_in->serializedPayload.max_size;
                     tempMsg.buffer = change_in->serializedPayload.data;
@@ -138,7 +138,7 @@ class PubSubWriter
                 else
                 {
                     // Search info of entity
-                    GUID_t readerGuid;
+                    eprosima::fastrtps::rtps::GUID_t readerGuid;
                     iHandle2GUID(readerGuid, change_in->instanceHandle);
 
                     if(writer_.participant_->get_remote_reader_info(readerGuid, readerInfo))
@@ -171,13 +171,13 @@ class PubSubWriter
 
             void onNewCacheChangeAdded(eprosima::fastrtps::rtps::RTPSReader* /*reader*/, const eprosima::fastrtps::rtps::CacheChange_t* const change_in)
             {
-                WriterProxyData writerInfo;
+                eprosima::fastrtps::rtps::WriterProxyData writerInfo;
 
-                if(change_in->kind == ALIVE)
+                if(change_in->kind == eprosima::fastrtps::rtps::ALIVE)
                 {
-                    CDRMessage_t tempMsg(0);
+                    eprosima::fastrtps::rtps::CDRMessage_t tempMsg(0);
                     tempMsg.wraps = true;
-                    tempMsg.msg_endian = change_in->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+                    tempMsg.msg_endian = change_in->serializedPayload.encapsulation == PL_CDR_BE ? eprosima::fastrtps::rtps::BIGEND : eprosima::fastrtps::rtps::LITTLEEND;
                     tempMsg.length = change_in->serializedPayload.length;
                     tempMsg.max_size = change_in->serializedPayload.max_size;
                     tempMsg.buffer = change_in->serializedPayload.data;
@@ -195,7 +195,7 @@ class PubSubWriter
                 else
                 {
                     // Search info of entity
-                    GUID_t writerGuid;
+                    eprosima::fastrtps::rtps::GUID_t writerGuid;
                     iHandle2GUID(writerGuid, change_in->instanceHandle);
 
                     if(writer_.participant_->get_remote_writer_info(writerGuid, writerInfo))
@@ -239,11 +239,11 @@ class PubSubWriter
         topic_name_ = t.str();
 
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
-        publisher_attr_.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+        publisher_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 #elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
-        publisher_attr_.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+        publisher_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
 #else
-        publisher_attr_.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+        publisher_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 #endif
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
@@ -269,7 +269,7 @@ class PubSubWriter
         {
             if(attachEDP_)
             {
-                std::pair<StatefulReader*, StatefulReader*> edpReaders = participant_->getEDPReaders();
+                std::pair<eprosima::fastrtps::rtps::StatefulReader*, eprosima::fastrtps::rtps::StatefulReader*> edpReaders = participant_->getEDPReaders();
                 edpReaders.first->setListener(&edpReaderListener_);
                 edpReaders.second->setListener(&edpWriterListener_);
             }
@@ -393,7 +393,7 @@ class PubSubWriter
             >
             bool waitForAllAcked(const std::chrono::duration<_Rep, _Period>& max_wait)
             {
-                return publisher_->wait_for_all_acked(Time_t((int32_t)max_wait.count(), 0));
+                return publisher_->wait_for_all_acked(eprosima::fastrtps::rtps::Time_t((int32_t)max_wait.count(), 0));
             }
 
     void block_until_discover_topic(const std::string& topicName, int repeatedTimes)
@@ -437,7 +437,7 @@ class PubSubWriter
 
     PubSubWriter& add_throughput_controller_descriptor_to_pparams(uint32_t bytesPerPeriod, uint32_t periodInMs)
     {
-        ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
+        eprosima::fastrtps::rtps::ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
         publisher_attr_.throughputController = descriptor;
 
         return *this;
@@ -570,13 +570,13 @@ class PubSubWriter
     {
         participant_attr_.rtps.participantID = participantId;
 
-        LocatorList_t default_unicast_locators;
-        Locator_t default_unicast_locator;
+        eprosima::fastrtps::rtps::LocatorList_t default_unicast_locators;
+        eprosima::fastrtps::rtps::Locator_t default_unicast_locator;
 
         default_unicast_locators.push_back(default_unicast_locator);
         participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = default_unicast_locators;
 
-        Locator_t loopback_locator;
+        eprosima::fastrtps::rtps::Locator_t loopback_locator;
         loopback_locator.set_IP4_address(127, 0, 0, 1);
         participant_attr_.rtps.builtin.initialPeersList.push_back(loopback_locator);
         return *this;
