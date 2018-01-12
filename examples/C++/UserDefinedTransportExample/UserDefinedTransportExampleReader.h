@@ -27,14 +27,14 @@
 #include <string>
 #include <list>
 
-class my_ReaderListener: public eprosima::fastrtps::ReaderListener
+class my_ReaderListener: public eprosima::fastrtps::rtps::ReaderListener
 {
     public:
         int n_received;
         my_ReaderListener();
         ~my_ReaderListener();
-        void onNewDataMessage(eprosima::fastrtps::RTPSReader* reader, const eprosima::fastrtps::rtps::CacheChange_t* const change);
-        void onReaderMatched(eprosima::fastrtps::RTPSReader* reader, eprosima::fastrtps::rtps::MatchingInfo& info);
+        void onNewDataMessage(eprosima::fastrtps::rtps::RTPSReader* reader, const eprosima::fastrtps::rtps::CacheChange_t* const change);
+        void onReaderMatched(eprosima::fastrtps::rtps::RTPSReader* reader, eprosima::fastrtps::rtps::MatchingInfo& info);
 };
 
 class UserDefinedTransportExampleReader
@@ -48,13 +48,13 @@ class UserDefinedTransportExampleReader
         bool isInitialized();
         bool read();
     private:
-        eprosima::fastrtps::RTPSParticipantAttributes pattr;
-        eprosima::fastrtps::RTPSParticipant *my_participant;
-        eprosima::fastrtps::ReaderAttributes rattr;
-        eprosima::fastrtps::RTPSReader *my_reader;
-        eprosima::fastrtps::HistoryAttributes hattr;
+        eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
+        eprosima::fastrtps::rtps::RTPSParticipant *my_participant;
+        eprosima::fastrtps::rtps::ReaderAttributes rattr;
+        eprosima::fastrtps::rtps::RTPSReader *my_reader;
+        eprosima::fastrtps::rtps::HistoryAttributes hattr;
         eprosima::fastrtps::ReaderQos rqos;
         eprosima::fastrtps::TopicAttributes tattr;
-		eprosima::fastrtps::ReaderHistory *my_history;
+		eprosima::fastrtps::rtps::ReaderHistory *my_history;
         bool initialized_;
 };

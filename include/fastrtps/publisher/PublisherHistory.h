@@ -38,10 +38,10 @@ class PublisherImpl;
  * This class is created by the PublisherImpl and should not be used by the user directly.
  * @ingroup FASTRTPS_MODULE
  */
-class PublisherHistory:public WriterHistory
+class PublisherHistory:public rtps::WriterHistory
 {
     public:
-        typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_p_I_Change;
+        typedef std::pair<rtps::InstanceHandle_t,std::vector<rtps::CacheChange_t*>> t_p_I_Change;
         typedef std::vector<t_p_I_Change> t_v_Inst_Caches;
         /**
          * Constructor of the PublisherHistory.
@@ -52,7 +52,7 @@ class PublisherHistory:public WriterHistory
          * @param resource ResourceLimits for the History.
          */
         PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMax,
-                HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource,MemoryManagementPolicy_t mempolicy);
+                HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource, rtps::MemoryManagementPolicy_t mempolicy);
 
         virtual ~PublisherHistory();
 
@@ -63,7 +63,7 @@ class PublisherHistory:public WriterHistory
          * @param wparams
          * @return True if added.
          */
-        bool add_pub_change(CacheChange_t* change, WriteParams &wparams,
+        bool add_pub_change(rtps::CacheChange_t* change, rtps::WriteParams &wparams,
                 std::unique_lock<std::recursive_mutex>& lock);
 
         /**
@@ -85,9 +85,9 @@ class PublisherHistory:public WriterHistory
          * @param vit Pointer to the iterator of the Keyed history vector.
          * @return True if removed.
          */
-        bool remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit=nullptr);
+        bool remove_change_pub(rtps::CacheChange_t* change,t_v_Inst_Caches::iterator* vit=nullptr);
 
-        virtual bool remove_change_g(CacheChange_t* a_change);
+        virtual bool remove_change_g(rtps::CacheChange_t* a_change);
 
     private:
         //!Vector of pointer to the CacheChange_t divided by key.
@@ -99,7 +99,7 @@ class PublisherHistory:public WriterHistory
         //!Publisher Pointer
         PublisherImpl* mp_pubImpl;
 
-        bool find_Key(CacheChange_t* a_change,t_v_Inst_Caches::iterator* vecPairIterrator);
+        bool find_Key(rtps::CacheChange_t* a_change,t_v_Inst_Caches::iterator* vecPairIterrator);
 };
 
 } /* namespace fastrtps */

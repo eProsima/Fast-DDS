@@ -42,11 +42,11 @@ class SubscriberImpl;
  * Class SubscriberHistory, container of the different CacheChanges of a subscriber
  *  @ingroup FASTRTPS_MODULE
  */
-class SubscriberHistory: public ReaderHistory
+class SubscriberHistory: public rtps::ReaderHistory
 {
     public:
 
-        typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_p_I_Change;
+        typedef std::pair<rtps::InstanceHandle_t,std::vector<rtps::CacheChange_t*>> t_p_I_Change;
         typedef std::vector<t_p_I_Change> t_v_Inst_Caches;
 
         /**
@@ -57,7 +57,7 @@ class SubscriberHistory: public ReaderHistory
          * @param resource Resource Limit QoS policy for the reader
          */
         SubscriberHistory(SubscriberImpl* pimpl,uint32_t payloadMax,
-                HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource, MemoryManagementPolicy_t mempolicy);
+                HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource, rtps::MemoryManagementPolicy_t mempolicy);
         virtual ~SubscriberHistory();
 
         /**
@@ -67,7 +67,7 @@ class SubscriberHistory: public ReaderHistory
          * @param unknown_missing_changes_up_to Number of missing changes before this one
          * @return
          */
-        bool received_change(CacheChange_t* change, size_t unknown_missing_changes_up_to);
+        bool received_change(rtps::CacheChange_t* change, size_t unknown_missing_changes_up_to);
 
         /** @name Read or take data methods.
          * Methods to read or take data from the History.
@@ -86,7 +86,7 @@ class SubscriberHistory: public ReaderHistory
          * @param vit Pointer to the iterator of the key-ordered cacheChange vector.
          * @return True if removed.
          */
-        bool remove_change_sub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit=nullptr);
+        bool remove_change_sub(rtps::CacheChange_t* change,t_v_Inst_Caches::iterator* vit=nullptr);
 
         //!Increase the unread count.
         inline void increaseUnreadCount()
@@ -126,7 +126,7 @@ class SubscriberHistory: public ReaderHistory
         void * mp_getKeyObject;
 
 
-        bool find_Key(CacheChange_t* a_change,t_v_Inst_Caches::iterator* vecPairIterrator);
+        bool find_Key(rtps::CacheChange_t* a_change,t_v_Inst_Caches::iterator* vecPairIterrator);
 };
 
 } /* namespace fastrtps */

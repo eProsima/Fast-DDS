@@ -42,8 +42,6 @@ namespace rtps
     class ReaderProxyData;
 }
 
-using namespace eprosima::fastrtps::rtps;
-
 /**
  * Class Participant used to group Publishers and Subscribers into a single working unit.
  * @ingroup FASTRTPS_MODULE
@@ -64,10 +62,10 @@ class RTPS_DllAPI Participant
     public:
 
     /**
-     *	Get the GUID_t of the associated RTPSParticipant.
-     * @return GUID_t
+     *	Get the rtps::GUID_t of the associated RTPSParticipant.
+     * @return rtps::GUID_t
      */
-    const GUID_t& getGuid() const;
+    const rtps::GUID_t& getGuid() const;
 
     /**
      * Get the ParticipantAttributes.
@@ -80,13 +78,13 @@ class RTPS_DllAPI Participant
      * included in FastRTPS, for example when communicating with other implementations.
      * It indicates to the Participant that an Endpoint from the XML has been discovered and
      * should be activated.
-     * @param partguid Participant GUID_t.
+     * @param partguid Participant rtps::GUID_t.
      * @param userId User defined ID as shown in the XML file.
      * @param kind EndpointKind (WRITER or READER)
      * @return True if correctly found and activated.
      */
-    bool newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t userId,
-            EndpointKind_t kind);
+    bool newRemoteEndpointDiscovered(const rtps::GUID_t& partguid, uint16_t userId,
+            rtps::EndpointKind_t kind);
 
     /**
      * This method returns a pointer to the Endpoint Discovery Protocol Readers (when not in Static mode)
@@ -96,13 +94,13 @@ class RTPS_DllAPI Participant
      * 
      * @return std::pair of pointers to the EDP Readers
      * */	
-    std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
+    std::pair<rtps::StatefulReader*, rtps::StatefulReader*> getEDPReaders();
 
     std::vector<std::string> getParticipantNames() const;
 
-    bool get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo);
+    bool get_remote_writer_info(const rtps::GUID_t& writerGuid, rtps::WriterProxyData& returnedInfo);
 
-    bool get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo);
+    bool get_remote_reader_info(const rtps::GUID_t& readerGuid, rtps::ReaderProxyData& returnedInfo);
 };
 
 }

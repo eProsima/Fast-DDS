@@ -169,7 +169,7 @@ class PubSubWriter
 
             ~EDPTakeWriterInfo(){};
 
-            void onNewCacheChangeAdded(eprosima::fastrtps::RTPSReader* /*reader*/, const eprosima::fastrtps::rtps::CacheChange_t* const change_in)
+            void onNewCacheChangeAdded(eprosima::fastrtps::rtps::RTPSReader* /*reader*/, const eprosima::fastrtps::rtps::CacheChange_t* const change_in)
             {
                 WriterProxyData writerInfo;
 

@@ -28,9 +28,8 @@
 
 #include <mutex>
 
-namespace eprosima {
-namespace fastrtps {
-
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 inline bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
 {
@@ -434,7 +433,3 @@ bool SubscriberHistory::remove_change_sub(CacheChange_t* change,t_v_Inst_Caches:
     }
     return false;
 }
-
-
-} /* namespace fastrtps */
-} /* namespace eprosima */

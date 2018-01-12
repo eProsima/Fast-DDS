@@ -32,8 +32,8 @@
 
 #include "FlowControlExamplePublisher.h"
 
-
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 FlowControlExamplePublisher::FlowControlExamplePublisher() : mp_participant(nullptr),
                                                              mp_fast_publisher(nullptr),

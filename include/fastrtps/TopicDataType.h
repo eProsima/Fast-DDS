@@ -26,14 +26,8 @@
 #include <string>
 #include <functional>
 
-
-
-
-
 namespace eprosima {
 namespace fastrtps {
-
-using namespace eprosima::fastrtps::rtps;
 
 /**
  * Class TopicDataType used to provide the DomainRTPSParticipant with the methods to serialize, deserialize and get the key of a specific data type.
@@ -55,7 +49,7 @@ class  TopicDataType {
          * @param[out] payload Pointer to the payload
          * @return True if correct.
          */
-        RTPS_DllAPI virtual bool serialize(void* data, SerializedPayload_t* payload) = 0;
+        RTPS_DllAPI virtual bool serialize(void* data, rtps::SerializedPayload_t* payload) = 0;
 
         /**
          * Deserialize method, it should be implemented by the user, since it is abstract.
@@ -63,7 +57,7 @@ class  TopicDataType {
          * @param[out] data Pointer to the data
          * @return True if correct.
          */
-        RTPS_DllAPI virtual bool deserialize(SerializedPayload_t* payload, void* data) = 0;
+        RTPS_DllAPI virtual bool deserialize(rtps::SerializedPayload_t* payload, void* data) = 0;
 
         RTPS_DllAPI virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) = 0;
 
@@ -84,7 +78,7 @@ class  TopicDataType {
          * @param[out] ihandle Pointer to the Handle.
          * @return True if correct.
          */
-        RTPS_DllAPI virtual bool getKey(void* data, InstanceHandle_t* ihandle){ (void) data; (void) ihandle; return false; }
+        RTPS_DllAPI virtual bool getKey(void* data, rtps::InstanceHandle_t* ihandle){ (void) data; (void) ihandle; return false; }
 
         /**
          * Set topic data type name

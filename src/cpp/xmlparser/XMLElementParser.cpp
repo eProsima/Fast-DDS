@@ -17,9 +17,9 @@
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 
-namespace eprosima {
-namespace fastrtps {
-namespace xmlparser {
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::xmlparser;
 
 XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinAttributes &builtin, uint8_t ident)
 {
@@ -1525,7 +1525,3 @@ XMLP_ret XMLParser::getXMLString(tinyxml2::XMLElement *elem, std::string *s, uin
     *s = text;
     return XMLP_ret::XML_OK;
 }
-
-} /* xmlparser */
-} /* namespace */
-} /* namespace eprosima */

@@ -90,7 +90,7 @@ public:
 	* Get associated GUID
 	* @return Associated GUID
 	*/
-	const GUID_t& getGuid();
+	const rtps::GUID_t& getGuid();
 
 	/**
 	 * Get the Attributes of the Subscriber.
@@ -123,7 +123,7 @@ private:
 	ParticipantImpl* mp_participant;
 
 	//!Pointer to associated RTPSReader
-	RTPSReader* mp_reader;
+	rtps::RTPSReader* mp_reader;
 	//! Pointer to the TopicDataType object.
 	TopicDataType* mp_type;
 	//!Attributes of the Subscriber
@@ -132,19 +132,19 @@ private:
 	SubscriberHistory m_history;
 	//!Listener
 	SubscriberListener* mp_listener;
-	class SubscriberReaderListener : public ReaderListener
+	class SubscriberReaderListener : public rtps::ReaderListener
 	{
 	public:
 		SubscriberReaderListener(SubscriberImpl* s): mp_subscriberImpl(s){};
 		virtual ~SubscriberReaderListener(){};
-		void onReaderMatched(RTPSReader* reader,MatchingInfo& info);
-		void onNewCacheChangeAdded(RTPSReader * reader,const CacheChange_t* const change);
+		void onReaderMatched(rtps::RTPSReader* reader, rtps::MatchingInfo& info);
+		void onNewCacheChangeAdded(rtps::RTPSReader * reader,const rtps::CacheChange_t* const change);
 		SubscriberImpl* mp_subscriberImpl;
 	}m_readerListener;
 
 	Subscriber* mp_userSubscriber;
 	//!RTPSParticipant
-		RTPSParticipant* mp_rtpsParticipant;
+	rtps::RTPSParticipant* mp_rtpsParticipant;
 };
 
 

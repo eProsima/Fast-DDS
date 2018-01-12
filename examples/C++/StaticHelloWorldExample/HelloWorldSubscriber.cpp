@@ -26,6 +26,7 @@
 #include <fastrtps/utils/eClock.h>
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 HelloWorldSubscriber::HelloWorldSubscriber():mp_participant(nullptr),
 mp_subscriber(nullptr)

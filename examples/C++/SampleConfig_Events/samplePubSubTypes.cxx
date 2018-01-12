@@ -26,6 +26,7 @@
 #include "samplePubSubTypes.h"
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 samplePubSubType::samplePubSubType() {
     setName("sample");

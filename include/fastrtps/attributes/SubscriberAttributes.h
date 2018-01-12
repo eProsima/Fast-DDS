@@ -45,7 +45,7 @@ class SubscriberAttributes {
             m_userDefinedID = -1;
             m_entityID = -1;
             expectsInlineQos = false;
-            historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+            historyMemoryPolicy = rtps::PREALLOCATED_MEMORY_MODE;
         };
         virtual ~SubscriberAttributes(){};
         //!Topic Attributes
@@ -53,18 +53,18 @@ class SubscriberAttributes {
         //!Reader QOs.
         ReaderQos qos;
         //!Times for a RELIABLE Reader
-        ReaderTimes times;
+		rtps::ReaderTimes times;
         //!Unicast locator list
-        LocatorList_t unicastLocatorList;
+		rtps::LocatorList_t unicastLocatorList;
         //!Multicast locator list
-        LocatorList_t multicastLocatorList;
+		rtps::LocatorList_t multicastLocatorList;
         //!Output locator list
-        LocatorList_t outLocatorList;
+		rtps::LocatorList_t outLocatorList;
         //!Expects Inline QOS
         bool expectsInlineQos;
         //!Underlying History memory policy
-        MemoryManagementPolicy_t historyMemoryPolicy;
-        PropertyPolicy properties;
+		rtps::MemoryManagementPolicy_t historyMemoryPolicy;
+		rtps::PropertyPolicy properties;
 
         /**
          * Get the user defined ID

@@ -71,7 +71,7 @@ class PublisherImpl
      * @param  Data
      * @return
      */
-    bool create_new_change(ChangeKind_t kind, void* Data);
+    bool create_new_change(rtps::ChangeKind_t kind, void* Data);
 
     /**
      * 
@@ -80,7 +80,7 @@ class PublisherImpl
      * @param wparams
      * @return
      */
-    bool create_new_change_with_params(ChangeKind_t kind, void* Data, WriteParams &wparams);
+    bool create_new_change_with_params(rtps::ChangeKind_t kind, void* Data, rtps::WriteParams &wparams);
 
     /**
      * Removes the cache change with the minimum sequence number
@@ -104,7 +104,7 @@ class PublisherImpl
      * 
      * @return
      */
-    const GUID_t& getGuid();
+    const rtps::GUID_t& getGuid();
 
     /**
      * Update the Attributes of the publisher;
@@ -127,12 +127,12 @@ class PublisherImpl
 
     bool try_remove_change(std::unique_lock<std::recursive_mutex>& lock);
 
-    bool wait_for_all_acked(const Time_t& max_wait);
+    bool wait_for_all_acked(const rtps::Time_t& max_wait);
 
     private:
     ParticipantImpl* mp_participant;
     //! Pointer to the associated Data Writer.
-    RTPSWriter* mp_writer;
+	rtps::RTPSWriter* mp_writer;
     //! Pointer to the TopicDataType object.
     TopicDataType* mp_type;
     //!Attributes of the Publisher
@@ -142,18 +142,18 @@ class PublisherImpl
     //!PublisherListener
     PublisherListener* mp_listener;
     //!Listener to capture the events of the Writer
-    class PublisherWriterListener: public WriterListener
+    class PublisherWriterListener: public rtps::WriterListener
     {
         public:
             PublisherWriterListener(PublisherImpl* p):mp_publisherImpl(p){};
             virtual ~PublisherWriterListener(){};
-            void onWriterMatched(RTPSWriter* writer,MatchingInfo& info);
+            void onWriterMatched(rtps::RTPSWriter* writer, rtps::MatchingInfo& info);
             PublisherImpl* mp_publisherImpl;
     }m_writerListener;
 
     Publisher* mp_userPublisher;
 
-    RTPSParticipant* mp_rtpsParticipant;
+	rtps::RTPSParticipant* mp_rtpsParticipant;
 
     uint32_t high_mark_for_frag_;
 };

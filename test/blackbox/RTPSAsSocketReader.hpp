@@ -58,7 +58,7 @@ class RTPSAsSocketReader
 
     private:
 
-    class Listener: public eprosima::fastrtps::rtps::ReaderListener
+    class Listener: public ReaderListener
     {
         public:
             Listener(RTPSAsSocketReader &reader) : reader_(reader) {};

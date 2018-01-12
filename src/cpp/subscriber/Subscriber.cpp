@@ -20,8 +20,8 @@
 #include <fastrtps/subscriber/Subscriber.h>
 #include "SubscriberImpl.h"
 
-namespace eprosima {
-namespace fastrtps {
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 const GUID_t& Subscriber::getGuid()
 {
@@ -61,8 +61,3 @@ uint64_t Subscriber::getUnreadCount() const
 {
 	return mp_impl->getUnreadCount();
 }
-
-
-
-} /* namespace fastrtps */
-} /* namespace eprosima */

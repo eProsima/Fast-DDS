@@ -34,8 +34,8 @@
 
 #include "fastrtps/utils/eClock.h"
 
-using namespace eprosima;
-using namespace fastrtps;
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 
 TestWriterRegistered::TestWriterRegistered():

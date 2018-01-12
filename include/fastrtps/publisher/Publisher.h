@@ -66,7 +66,7 @@ public:
 	 * @par Calling example:
 	 * @snippet fastrtps_example.cpp ex_PublisherWrite
 	 */
-	bool write(void*Data, WriteParams &wparams);
+	bool write(void*Data, rtps::WriteParams &wparams);
 
 	/**
 	 * Dispose of a previously written data.
@@ -94,13 +94,13 @@ public:
 	 */
 	bool removeAllChange(size_t* removed = nullptr);
 
-   bool wait_for_all_acked(const Time_t& max_wait);
+   bool wait_for_all_acked(const rtps::Time_t& max_wait);
 
 	/**
 	 * Get the GUID_t of the associated RTPSWriter.
 	 * @return GUID_t.
 	 */
-	const GUID_t& getGuid();
+	const rtps::GUID_t& getGuid();
 
 	/**
 	 * Get the Attributes of the Publisher.

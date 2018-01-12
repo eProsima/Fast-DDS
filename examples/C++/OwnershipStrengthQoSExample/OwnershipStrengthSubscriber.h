@@ -49,10 +49,10 @@ private:
       bool IsMessageStrong(const ExampleMessage& st, const eprosima::fastrtps::SampleInfo_t& info);
 
       // Deregisters a publisher removing it from the hierarchy.
-      void DeregisterPublisher(eprosima::fastrtps::GUID_t guid);
+      void DeregisterPublisher(eprosima::fastrtps::rtps::GUID_t guid);
 
       // Provides an ordered hierarchy of publishers, based on the Ownership Strength QoS parameter.
-      std::map<unsigned int, std::set<eprosima::fastrtps::GUID_t> > strengthMap; // Keyed by Ownership Strength
+      std::map<unsigned int, std::set<eprosima::fastrtps::rtps::GUID_t> > strengthMap; // Keyed by Ownership Strength
       std::mutex mapMutex;
    };
 

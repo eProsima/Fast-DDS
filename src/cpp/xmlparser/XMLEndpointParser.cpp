@@ -30,10 +30,9 @@
 
 #include <tinyxml2.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace xmlparser{
-
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::xmlparser;
 
 XMLEndpointParser::XMLEndpointParser() {
     // TODO Auto-generated constructor stub
@@ -620,8 +619,3 @@ XMLP_ret XMLEndpointParser::lookforWriter(std::string partname, uint16_t id,
     }
     return XMLP_ret::XML_ERROR;
 }
-
-
-}
-} /* namespace rtps */
-} /* namespace eprosima */

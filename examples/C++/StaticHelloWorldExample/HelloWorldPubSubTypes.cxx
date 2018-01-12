@@ -26,6 +26,7 @@
 #include "HelloWorldPubSubTypes.h"
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 HelloWorldPubSubType::HelloWorldPubSubType() {
     setName("HelloWorld");

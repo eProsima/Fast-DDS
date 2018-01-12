@@ -21,9 +21,8 @@
 
 #include <fastrtps/rtps/messages/CDRMessage.h>
 
-namespace eprosima {
-namespace fastrtps {
-
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 // PARAMETER
 Parameter_t::Parameter_t():Pid(PID_PAD), length(0) { }
@@ -219,9 +218,3 @@ bool ParameterToken_t::addToCDRMessage(CDRMessage_t*msg)
 	msg->length -= 2;
 	return valid;
 }
-
-
-} /* namespace pubsub */
-} /* namespace eprosima */
-
-

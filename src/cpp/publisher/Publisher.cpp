@@ -22,9 +22,8 @@
 
 #include <fastrtps/log/Log.h>
 
-namespace eprosima {
-namespace fastrtps {
-
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 Publisher::Publisher(PublisherImpl* pimpl) : mp_impl(pimpl)
 {
@@ -85,6 +84,3 @@ PublisherAttributes Publisher::getAttributes() const
 {
     return mp_impl->getAttributes();
 }
-
-} /* namespace pubsub */
-} /* namespace eprosima */

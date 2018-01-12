@@ -26,6 +26,7 @@
 #include "XMLProfilesExamplePubSubTypes.h"
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 XMLProfilesExamplePubSubType::XMLProfilesExamplePubSubType() {
     setName("XMLProfilesExample");

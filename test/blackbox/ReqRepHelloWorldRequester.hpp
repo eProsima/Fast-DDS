@@ -51,7 +51,7 @@ class ReqRepHelloWorldRequester
             ReplyListener(ReqRepHelloWorldRequester &requester) : requester_(requester) {};
             ~ReplyListener(){};
             void onNewDataMessage(eprosima::fastrtps::Subscriber *sub);
-            void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, eprosima::fastrtps::MatchingInfo& info)
+            void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, eprosima::fastrtps::rtps::MatchingInfo& info)
             {
                 if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                     requester_.matched();
@@ -70,7 +70,7 @@ class ReqRepHelloWorldRequester
 
             RequestListener(ReqRepHelloWorldRequester &requester) : requester_(requester){};
             ~RequestListener(){};
-            void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, eprosima::fastrtps::MatchingInfo &info)
+            void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, eprosima::fastrtps::rtps::MatchingInfo &info)
             {
                 if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                     requester_.matched();
@@ -88,7 +88,7 @@ class ReqRepHelloWorldRequester
         virtual ~ReqRepHelloWorldRequester();
         void init();
         bool isInitialized() const { return initialized_; }
-        void newNumber(eprosima::fastrtps::SampleIdentity related_sample_identity, uint16_t number);
+        void newNumber(eprosima::fastrtps::rtps::SampleIdentity related_sample_identity, uint16_t number);
         void block(const std::chrono::seconds &seconds);
         void waitDiscovery();
         void matched();

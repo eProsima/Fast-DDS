@@ -15,6 +15,7 @@
 #include "samplePubSubTypes.h"
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 void fastest();
 

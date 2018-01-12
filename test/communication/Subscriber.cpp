@@ -31,6 +31,7 @@
 #include <mutex>
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 class SubListener : public SubscriberListener
 {

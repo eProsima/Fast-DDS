@@ -56,19 +56,19 @@ public:
 	 */
 	///@{
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,std::string& string_in);
-	static bool addQos(QosList_t* qos,ParameterId_t pid ,Locator_t& loc);
+	static bool addQos(QosList_t* qos,ParameterId_t pid ,rtps::Locator_t& loc);
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,uint32_t uintlong);
-	static bool addQos(QosList_t* qos,ParameterId_t pid ,const GUID_t& guid);
-	static bool addQos(QosList_t* qos,ParameterId_t pid ,ProtocolVersion_t& protocol);
-	static bool addQos(QosList_t* qos,ParameterId_t pid ,VendorId_t& vendor);
-	static bool addQos(QosList_t* qos,ParameterId_t pid ,octet o1,octet o2,octet o3,octet o4);
-	static bool addQos(QosList_t* qos,ParameterId_t pid ,const EntityId_t& entity);
-	static bool addQos(QosList_t* qos,ParameterId_t pid ,Time_t& entity);
+	static bool addQos(QosList_t* qos,ParameterId_t pid ,const rtps::GUID_t& guid);
+	static bool addQos(QosList_t* qos,ParameterId_t pid , rtps::ProtocolVersion_t& protocol);
+	static bool addQos(QosList_t* qos,ParameterId_t pid , rtps::VendorId_t& vendor);
+	static bool addQos(QosList_t* qos,ParameterId_t pid , rtps::octet o1, rtps::octet o2, rtps::octet o3, rtps::octet o4);
+	static bool addQos(QosList_t* qos,ParameterId_t pid ,const rtps::EntityId_t& entity);
+	static bool addQos(QosList_t* qos,ParameterId_t pid , rtps::Time_t& entity);
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,bool in_bool);
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,std::string& str1,std::string& str2);
-	static bool addQos(QosList_t* qos, ParameterId_t pid,	std::vector<octet>& ocVec);
+	static bool addQos(QosList_t* qos, ParameterId_t pid,	std::vector<rtps::octet>& ocVec);
 	static bool addQos(QosList_t* qos,ParameterId_t pid, const ParameterPropertyList_t& list);
-	static bool addQos(QosList_t* qos,ParameterId_t pid, const IdentityToken& identity_token);
+	static bool addQos(QosList_t* qos,ParameterId_t pid, const rtps::IdentityToken& identity_token);
 	///@}
 };
 

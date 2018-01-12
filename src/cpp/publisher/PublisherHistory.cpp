@@ -31,8 +31,8 @@
 
 extern eprosima::fastrtps::rtps::WriteParams WRITE_PARAM_DEFAULT;
 
-namespace eprosima {
-namespace fastrtps {
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 PublisherHistory::PublisherHistory(PublisherImpl* pimpl, uint32_t payloadMaxSize, HistoryQosPolicy& history,
         ResourceLimitsQosPolicy& resource, MemoryManagementPolicy_t mempolicy):
@@ -282,7 +282,3 @@ bool PublisherHistory::remove_change_g(CacheChange_t* a_change)
 {
     return remove_change_pub(a_change);
 }
-
-
-} /* namespace pubsub */
-} /* namespace eprosima */

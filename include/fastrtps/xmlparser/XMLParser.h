@@ -109,14 +109,14 @@ class XMLParser
     template <typename T>
     RTPS_DllAPI static void addAllAttributes(tinyxml2::XMLElement* p_profile, DataNode<T>& node);
 
-    RTPS_DllAPI static XMLP_ret getXMLPropertiesPolicy(tinyxml2::XMLElement* elem, PropertyPolicy& propertiesPolicy,
+    RTPS_DllAPI static XMLP_ret getXMLPropertiesPolicy(tinyxml2::XMLElement* elem, rtps::PropertyPolicy& propertiesPolicy,
                                                        uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLHistoryMemoryPolicy(tinyxml2::XMLElement* elem,
-                                                          MemoryManagementPolicy_t& historyMemoryPolicy, uint8_t ident);
-    RTPS_DllAPI static XMLP_ret getXMLLocatorList(tinyxml2::XMLElement* elem, LocatorList_t& locatorList, uint8_t ident);
-    RTPS_DllAPI static XMLP_ret getXMLWriterTimes(tinyxml2::XMLElement* elem, WriterTimes& times, uint8_t ident);
-    RTPS_DllAPI static XMLP_ret getXMLReaderTimes(tinyxml2::XMLElement* elem, ReaderTimes& times, uint8_t ident);
-    RTPS_DllAPI static XMLP_ret getXMLDuration(tinyxml2::XMLElement* elem, Duration_t& duration, uint8_t ident);
+															rtps::MemoryManagementPolicy_t& historyMemoryPolicy, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLLocatorList(tinyxml2::XMLElement* elem, rtps::LocatorList_t& locatorList, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLWriterTimes(tinyxml2::XMLElement* elem, rtps::WriterTimes& times, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLReaderTimes(tinyxml2::XMLElement* elem, rtps::ReaderTimes& times, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLDuration(tinyxml2::XMLElement* elem, rtps::Duration_t& duration, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLWriterQosPolicies(tinyxml2::XMLElement* elem, WriterQos& qos, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLReaderQosPolicies(tinyxml2::XMLElement* elem, ReaderQos& qos, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLPublishModeQos(tinyxml2::XMLElement* elem, PublishModeQosPolicy& publishMode,
@@ -149,10 +149,10 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret getXMLResourceLimitsQos(tinyxml2::XMLElement* elem, ResourceLimitsQosPolicy& resourceLimitsQos,
                                                         uint8_t ident);
     RTPS_DllAPI static XMLP_ret
-    getXMLThroughputController(tinyxml2::XMLElement* elem, ThroughputControllerDescriptor& throughputController, uint8_t ident);
-    RTPS_DllAPI static XMLP_ret getXMLPortParameters(tinyxml2::XMLElement* elem, PortParameters& port, uint8_t ident);
-    RTPS_DllAPI static XMLP_ret getXMLBuiltinAttributes(tinyxml2::XMLElement* elem, BuiltinAttributes& builtin, uint8_t ident);
-    RTPS_DllAPI static XMLP_ret getXMLOctetVector(tinyxml2::XMLElement* elem, std::vector<octet>& octetVector, uint8_t ident);
+    getXMLThroughputController(tinyxml2::XMLElement* elem, rtps::ThroughputControllerDescriptor& throughputController, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLPortParameters(tinyxml2::XMLElement* elem, rtps::PortParameters& port, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLBuiltinAttributes(tinyxml2::XMLElement* elem, rtps::BuiltinAttributes& builtin, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLOctetVector(tinyxml2::XMLElement* elem, std::vector<rtps::octet>& octetVector, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLInt(tinyxml2::XMLElement* elem, int* i, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLUint(tinyxml2::XMLElement* elem, unsigned int* ui, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLUint(tinyxml2::XMLElement* elem, uint16_t* ui16, uint8_t ident);

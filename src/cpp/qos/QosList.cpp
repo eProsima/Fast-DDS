@@ -21,8 +21,8 @@
 
 #include <fastrtps/qos/QosPolicies.h>
 
-namespace eprosima {
-namespace fastrtps {
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 QosList_t::QosList_t()
 {
@@ -305,8 +305,3 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	const IdentityToken& ide
 //	}
 //	return false;
 //}
-
-
-
-} /* namespace pubsub */
-} /* namespace eprosima */

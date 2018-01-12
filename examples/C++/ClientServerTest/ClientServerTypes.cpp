@@ -19,7 +19,8 @@
 
 #include "ClientServerTypes.h"
 
-namespace clientserver{
+using namespace clientserver;
+using namespace eprosima::fastrtps::rtps;
 
 bool OperationDataType::serialize(void* data, SerializedPayload_t* payload)
 {
@@ -107,6 +108,4 @@ void* ResultDataType::createData()
 void ResultDataType::deleteData(void* data)
 {
 	delete((Result*)data);
-}
-
 }

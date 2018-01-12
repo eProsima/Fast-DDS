@@ -32,8 +32,8 @@
 #include "fastrtps/attributes/TopicAttributes.h"
 #include "fastrtps/qos/ReaderQos.h"
 
-using namespace eprosima;
-using namespace fastrtps;
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 TestReaderRegistered::TestReaderRegistered():
 mp_participant(nullptr),

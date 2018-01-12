@@ -22,7 +22,9 @@
 #include "fastrtps/fastrtps_all.h"
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 using namespace clientserver;
+using namespace std;
 
 EprosimaServer::EprosimaServer():
 mp_operation_sub(nullptr),

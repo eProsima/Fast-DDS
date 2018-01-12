@@ -39,8 +39,8 @@ public:
 
 	samplePubSubType();
 	virtual ~samplePubSubType();
-	bool serialize(void *data, eprosima::fastrtps::SerializedPayload_t *payload);
-	bool deserialize(eprosima::fastrtps::SerializedPayload_t *payload, void *data);
+	bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
+	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
         std::function<uint32_t()> getSerializedSizeProvider(void* data);
 	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle);
 	void* createData();

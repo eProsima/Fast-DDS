@@ -186,7 +186,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
 }
 #endif
 
-bool IPFinder::getIP4Address(LocatorList_t* locators)
+bool IPFinder::getIP4Address(rtps::LocatorList_t* locators)
 {
     std::vector<info_IP> ip_names;
     if(IPFinder::getIPs(&ip_names))
@@ -206,7 +206,7 @@ bool IPFinder::getIP4Address(LocatorList_t* locators)
     return false;
 }
 
-bool IPFinder::getAllIPAddress(LocatorList_t* locators)
+bool IPFinder::getAllIPAddress(rtps::LocatorList_t* locators)
 {
     std::vector<info_IP> ip_names;
     if (IPFinder::getIPs(&ip_names))
@@ -229,7 +229,7 @@ bool IPFinder::getAllIPAddress(LocatorList_t* locators)
     return false;
 }
 
-bool IPFinder::getIP6Address(LocatorList_t* locators)
+bool IPFinder::getIP6Address(rtps::LocatorList_t* locators)
 {
     std::vector<info_IP> ip_names;
     if (IPFinder::getIPs(&ip_names))
@@ -264,10 +264,10 @@ RTPS_DllAPI bool IPFinder::parseIP4(info_IP& info)
     info.locator.port = 0;
     for (int8_t i = 0; i < 12; ++i)
         info.locator.address[i] = 0;
-    info.locator.address[12] = (octet)a;
-    info.locator.address[13] = (octet)b;
-    info.locator.address[14] = (octet)c;
-    info.locator.address[15] = (octet)d;
+    info.locator.address[12] = (rtps::octet)a;
+    info.locator.address[13] = (rtps::octet)b;
+    info.locator.address[14] = (rtps::octet)c;
+    info.locator.address[15] = (rtps::octet)d;
     return true;
 }
 RTPS_DllAPI bool IPFinder::parseIP6(info_IP& info)
@@ -313,19 +313,19 @@ RTPS_DllAPI bool IPFinder::parseIP6(info_IP& info)
                 std::stringstream ss;
                 ss << std::hex << (*it);
                 ss >> auxnumber;
-                info.locator.address[index] = (octet)auxnumber;
+                info.locator.address[index] = (rtps::octet)auxnumber;
             }
             else
             {
                 std::stringstream ss;
                 ss << std::hex << it->substr(it->length()-2);
                 ss >> auxnumber;
-                info.locator.address[index] = (octet)auxnumber;
+                info.locator.address[index] = (rtps::octet)auxnumber;
                 ss.str("");
                 ss.clear();
                 ss << std::hex << it->substr(0, it->length() - 2);
                 ss >> auxnumber;
-                info.locator.address[index - 1] = (octet)auxnumber;
+                info.locator.address[index - 1] = (rtps::octet)auxnumber;
             }
             index -= 2;
         }
@@ -343,19 +343,19 @@ RTPS_DllAPI bool IPFinder::parseIP6(info_IP& info)
                 std::stringstream ss;
                 ss << std::hex << (*it);
                 ss >> auxnumber;
-                info.locator.address[index + 1]=(octet)auxnumber;
+                info.locator.address[index + 1]=(rtps::octet)auxnumber;
             }
             else
             {
                 std::stringstream ss;
                 ss << std::hex << it->substr(it->length() - 2);
                 ss >> auxnumber;
-                info.locator.address[index + 1] = (octet)auxnumber;
+                info.locator.address[index + 1] = (rtps::octet)auxnumber;
                 ss.str("");
                 ss.clear();
                 ss << std::hex << it->substr(0, it->length() - 2);
                 ss >> auxnumber;
-                info.locator.address[index] =  (octet)auxnumber;
+                info.locator.address[index] =  (rtps::octet)auxnumber;
             }
             index += 2;
         }

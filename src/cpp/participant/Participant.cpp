@@ -21,8 +21,8 @@
 
 #include "ParticipantImpl.h"
 
-namespace eprosima {
-namespace fastrtps {
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 Participant::Participant():
     mp_impl(nullptr)
@@ -69,6 +69,3 @@ bool Participant::get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyDa
 {
     return mp_impl->get_remote_reader_info(readerGuid, returnedInfo);
 }
-
-} /* namespace pubsub */
-} /* namespace eprosima */

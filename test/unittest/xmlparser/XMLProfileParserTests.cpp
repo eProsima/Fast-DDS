@@ -16,6 +16,7 @@
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 class XMLProfileParserTests: public ::testing::Test
 {

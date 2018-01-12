@@ -35,8 +35,8 @@
 
 #include "fastrtps/Domain.h"
 
-using namespace eprosima;
-using namespace fastrtps;
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 using std::cout;
 using std::endl;
 

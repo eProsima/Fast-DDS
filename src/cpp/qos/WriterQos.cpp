@@ -20,9 +20,8 @@
 #include <fastrtps/qos/WriterQos.h>
 #include <fastrtps/log/Log.h>
 
-namespace eprosima {
-namespace fastrtps {
-
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 WriterQos::WriterQos()
 {
@@ -201,9 +200,3 @@ bool WriterQos::canQosBeUpdated(const WriterQos& qos) const
     return updatable;
 
 }
-
-
-} /* namespace pubsub */
-} /* namespace eprosima */
-
-

@@ -21,10 +21,9 @@
 
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/log/Log.h>
-namespace eprosima {
-namespace fastrtps {
 
-
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 bool DurabilityQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
@@ -232,11 +231,5 @@ bool TransportPriorityQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 	valid &= CDRMessage::addUInt32(msg,value);
 	return valid;
 }
-
-
-
-
-} /* namespace pubsub */
-} /* namespace eprosima */
 
 

@@ -20,9 +20,8 @@
 #include <fastrtps/qos/ParameterList.h>
 #include <fastrtps/qos/QosPolicies.h>
 
-
-namespace eprosima {
-namespace fastrtps {
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 #define IF_VALID_ADD {if(valid){plist->m_parameters.push_back((Parameter_t*)p);paramlist_byte_size += plength;}else{delete(p);return -1;}break;}
 
@@ -673,6 +672,3 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
     }
     return paramlist_byte_size;
 }
-
-} /* namespace pubsub */
-} /* namespace eprosima */

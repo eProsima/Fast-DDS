@@ -42,11 +42,8 @@
 
 #include <fastrtps/log/Log.h>
 
+using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-
-namespace eprosima {
-namespace fastrtps {
-
 
 ParticipantImpl::ParticipantImpl(ParticipantAttributes& patt,Participant* pspart,ParticipantListener* listen):
     m_att(patt),
@@ -428,6 +425,3 @@ bool ParticipantImpl::get_remote_reader_info(const GUID_t& readerGuid, ReaderPro
 {
     return mp_rtpsParticipant->get_remote_reader_info(readerGuid, returnedInfo);
 }
-
-} /* namespace pubsub */
-} /* namespace eprosima */

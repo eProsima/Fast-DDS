@@ -29,6 +29,7 @@
 #include "FlowControlExampleSubscriber.h"
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 FlowControlExampleSubscriber::FlowControlExampleSubscriber() : mp_participant(nullptr), mp_subscriber(nullptr) {}
 

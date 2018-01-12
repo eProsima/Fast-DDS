@@ -37,7 +37,7 @@ class ParticipantDiscoveryInfo
         ParticipantDiscoveryInfo(){}
         virtual ~ParticipantDiscoveryInfo(){}
         //!RTPSParticipantAttributes of the discovered participant.
-        RTPSParticipantDiscoveryInfo rtps;
+		rtps::RTPSParticipantDiscoveryInfo rtps;
 };
 
 #if HAVE_SECURITY
@@ -49,7 +49,7 @@ class ParticipantAuthenticationInfo
 
         virtual ~ParticipantAuthenticationInfo() {}
 
-        RTPSParticipantAuthenticationInfo rtps;
+		rtps::RTPSParticipantAuthenticationInfo rtps;
 };
 #endif
 

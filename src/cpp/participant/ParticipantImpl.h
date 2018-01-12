@@ -50,8 +50,6 @@ class SubscriberAttributes;
 class SubscriberListener;
 
 
-using namespace eprosima::fastrtps::rtps;
-
 /**
  * This is the implementation class of the Participant.
  * @ingroup FASTRTPS_MODULE
@@ -118,7 +116,7 @@ class ParticipantImpl
      * Get the GUID_t of the associated RTPSParticipant.
      * @return GUID_t.
      */
-    const GUID_t& getGuid() const;
+    const rtps::GUID_t& getGuid() const;
 
     /**
      * Get the participant attributes
@@ -126,7 +124,7 @@ class ParticipantImpl
      */
     inline const ParticipantAttributes& getAttributes() const {return m_att;};
 
-    std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
+    std::pair<rtps::StatefulReader*,rtps::StatefulReader*> getEDPReaders();
 
     std::vector<std::string> getParticipantNames() const;
 
@@ -140,18 +138,18 @@ class ParticipantImpl
      * @param kind EndpointKind (WRITER or READER)
      * @return True if correctly found and activated.
      */
-    bool newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t userId,
-            EndpointKind_t kind);
+    bool newRemoteEndpointDiscovered(const rtps::GUID_t& partguid, uint16_t userId,
+            rtps::EndpointKind_t kind);
 
-    bool get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo);
+    bool get_remote_writer_info(const rtps::GUID_t& writerGuid, rtps::WriterProxyData& returnedInfo);
 
-    bool get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo);
+    bool get_remote_reader_info(const rtps::GUID_t& readerGuid, rtps::ReaderProxyData& returnedInfo);
 
     private:
     //!Participant Attributes
     ParticipantAttributes m_att;
     //!RTPSParticipant
-    RTPSParticipant* mp_rtpsParticipant;
+	rtps::RTPSParticipant* mp_rtpsParticipant;
     //!Participant*
     Participant* mp_participant;
     //!Participant Listener
@@ -165,7 +163,7 @@ class ParticipantImpl
 
     bool getRegisteredType(const char* typeName, TopicDataType** type);
 
-    class MyRTPSParticipantListener : public RTPSParticipantListener
+    class MyRTPSParticipantListener : public rtps::RTPSParticipantListener
     {
         public:
 
@@ -173,7 +171,7 @@ class ParticipantImpl
 
             virtual ~MyRTPSParticipantListener(){};
 
-            void onRTPSParticipantDiscovery(RTPSParticipant* part, RTPSParticipantDiscoveryInfo info);
+            void onRTPSParticipantDiscovery(rtps::RTPSParticipant* part, rtps::RTPSParticipantDiscoveryInfo info);
 
 #if HAVE_SECURITY
             void onRTPSParticipantAuthentication(RTPSParticipant* part, const RTPSParticipantAuthenticationInfo& info);
