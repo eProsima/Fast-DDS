@@ -174,7 +174,7 @@ class ParticipantImpl
             void onRTPSParticipantDiscovery(rtps::RTPSParticipant* part, rtps::RTPSParticipantDiscoveryInfo info);
 
 #if HAVE_SECURITY
-            void onRTPSParticipantAuthentication(RTPSParticipant* part, const RTPSParticipantAuthenticationInfo& info);
+            void onRTPSParticipantAuthentication(rtps::RTPSParticipant* part, const rtps::RTPSParticipantAuthenticationInfo& info);
 #endif
 
             ParticipantImpl* mp_participantimpl;

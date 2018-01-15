@@ -37,7 +37,7 @@ HelloWorldPubSubType::~HelloWorldPubSubType() {
         free(m_keyBuffer);
 }
 
-bool HelloWorldPubSubType::serialize(void *data, SerializedPayload_t *payload) {
+bool HelloWorldPubSubType::serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) {
     HelloWorld *p_type = (HelloWorld*) data;
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
@@ -59,7 +59,7 @@ bool HelloWorldPubSubType::serialize(void *data, SerializedPayload_t *payload) {
     return true;
 }
 
-bool HelloWorldPubSubType::deserialize(SerializedPayload_t* payload, void* data) {
+bool HelloWorldPubSubType::deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload, void* data) {
     HelloWorld* p_type = (HelloWorld*) data; 	//Convert DATA to pointer of your type
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); 	// Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
@@ -94,7 +94,7 @@ void HelloWorldPubSubType::deleteData(void* data) {
     delete((HelloWorld*)data);
 }
 
-bool HelloWorldPubSubType::getKey(void *data, InstanceHandle_t* handle) {
+bool HelloWorldPubSubType::getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t* handle) {
     if(!m_isGetKeyDefined)
         return false;
     HelloWorld* p_type = (HelloWorld*) data;

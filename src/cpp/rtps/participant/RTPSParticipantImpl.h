@@ -213,7 +213,7 @@ class RTPSParticipantImpl
         uint32_t calculateMaxDataSize(uint32_t length);
 
 #if HAVE_SECURITY
-        ::security::SecurityManager& security_manager() { return m_security_manager; }
+        security::SecurityManager& security_manager() { return m_security_manager; }
 
         bool is_rtps_protected() const { return is_rtps_protected_; }
 #endif
@@ -258,7 +258,7 @@ class RTPSParticipantImpl
 
 #if HAVE_SECURITY
         // Security manager
-        ::security::SecurityManager m_security_manager;
+        security::SecurityManager m_security_manager;
 #endif
 
         //! Encapsulates all associated resources on a Receiving element.

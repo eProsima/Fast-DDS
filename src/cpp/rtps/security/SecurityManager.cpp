@@ -51,8 +51,8 @@
 // TODO(Ricardo) Add event because stateless messages can be not received.
 
 using namespace eprosima::fastrtps;
-using namespace ::rtps;
-using namespace ::security;
+using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::rtps::security;
 
 bool usleep_bool()
 {

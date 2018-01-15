@@ -29,6 +29,9 @@
 #include <iostream>
 #include <openssl/pem.h>
 
+using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::rtps::security;
+
 static const char* certs_path = nullptr;
 
 static size_t alignment(size_t current_alignment, size_t dataSize) { return (dataSize - (current_alignment % dataSize)) & (dataSize-1);}

@@ -29,7 +29,7 @@
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps::rtps;
-using namespace ::security;
+using namespace eprosima::fastrtps::rtps::security;
 using namespace ::testing;
 
 using ::testing::DefaultValue;

@@ -40,7 +40,7 @@
 #endif
 
 using namespace eprosima::fastrtps::rtps;
-using namespace ::security;
+using namespace eprosima::fastrtps::rtps::security;
 
 AESGCMGMAC_KeyFactory::AESGCMGMAC_KeyFactory(){}
 

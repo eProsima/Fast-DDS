@@ -20,7 +20,7 @@
 #include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps::rtps;
-using namespace ::security;
+using namespace eprosima::fastrtps::rtps::security;
 
 HandshakeMessageTokenResent::HandshakeMessageTokenResent(SecurityManager& security_manager,
         const GUID_t& remote_participant_key, double interval) :

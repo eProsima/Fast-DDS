@@ -33,6 +33,7 @@
 
 #define RTPS_HEADER_SIZE 20
 
+using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
 AESGCMGMAC_Transform::AESGCMGMAC_Transform(){}

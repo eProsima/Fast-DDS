@@ -46,8 +46,8 @@
 #define _SecurityException_(str) SecurityException(std::string(str) + LOCATION)
 
 using namespace eprosima::fastrtps;
-using namespace ::rtps;
-using namespace ::security;
+using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::rtps::security;
 
 static size_t alignment(size_t current_alignment, size_t dataSize) { return (dataSize - (current_alignment % dataSize)) & (dataSize-1);}
 

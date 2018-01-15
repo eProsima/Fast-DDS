@@ -25,6 +25,8 @@
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
 
+using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps;
 
 HelloWorldPublisher::HelloWorldPublisher():mp_participant(nullptr),
 mp_publisher(nullptr)
@@ -37,9 +39,9 @@ bool HelloWorldPublisher::init()
 {
     m_Hello.index(0);
     m_Hello.message("HelloWorld");
-    ParticipantAttributes PParam;
+	ParticipantAttributes PParam;
 
-    PropertyPolicy participant_property_policy;
+	PropertyPolicy participant_property_policy;
     participant_property_policy.properties().emplace_back("dds.sec.auth.plugin",
             "builtin.PKI-DH");
     participant_property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_ca",
