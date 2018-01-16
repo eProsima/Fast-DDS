@@ -75,9 +75,9 @@ class PubSubReader
 #if HAVE_SECURITY
                 void onParticipantAuthentication(eprosima::fastrtps::Participant*, const eprosima::fastrtps::ParticipantAuthenticationInfo& info)
                 {
-                    if(info.rtps.status() == AUTHORIZED_RTPSPARTICIPANT)
+                    if(info.rtps.status() == eprosima::fastrtps::rtps::AUTHORIZED_RTPSPARTICIPANT)
                         reader_.authorized();
-                    else if(info.rtps.status() == UNAUTHORIZED_RTPSPARTICIPANT)
+                    else if(info.rtps.status() == eprosima::fastrtps::rtps::UNAUTHORIZED_RTPSPARTICIPANT)
                         reader_.unauthorized();
                 }
 #endif
