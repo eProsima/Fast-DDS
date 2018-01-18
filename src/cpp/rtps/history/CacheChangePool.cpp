@@ -88,7 +88,13 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, const std::function<ui
     if(memoryMode != PREALLOCATED_MEMORY_MODE)
         dataSize = calculateSizeFunc();
 
-    return reserve_Cache(chan, dataSize);
+    if(reserve_Cache(chan, dataSize))
+    {
+        (*chan)->setFragmentSize(0);
+        return true;
+    }
+
+    return false;
 }
 
 bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
