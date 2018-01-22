@@ -63,6 +63,9 @@ public:
    //! Must report whether the given locator is supported by this transport (typically inspecting its "kind" value).
    virtual bool IsLocatorSupported(const Locator_t&) const = 0;
 
+   //! Must report whether the given locator is allowed by this transport.
+   virtual bool IsLocatorAllowed(const Locator_t&) const = 0;
+
    //! Returns the locator describing the main (most general) channel that can write to the provided remote locator.
    virtual Locator_t RemoteToMainLocal(const Locator_t& remote) const = 0;
 

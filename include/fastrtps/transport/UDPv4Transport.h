@@ -132,6 +132,9 @@ public:
    //! Checks for UDPv4 kind.
    virtual bool IsLocatorSupported(const Locator_t&) const override;
 
+   //! Checks for whether locator is allowed.
+   virtual bool IsLocatorAllowed(const Locator_t&) const override;
+
    //! Reports whether Locators correspond to the same port.
    virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
@@ -212,20 +215,23 @@ protected:
 
    //! For both modes, an input channel corresponds to a port.
 #if defined(ASIO_HAS_MOVE)
-   std::map<uint32_t, asio::ip::udp::socket> mInputSockets;
+   std::map<uint32_t, std::vector<asio::ip::udp::socket> > mInputSockets;
 #else
-   std::map<uint32_t, std::shared_ptr<asio::ip::udp::socket>> mInputSockets;
+   std::map<uint32_t, std::vector<std::shared_ptr<asio::ip::udp::socket>> > mInputSockets;
 #endif
 
-   bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
+   bool IsInterfaceAllowed(const asio::ip::address_v4& ip) const;
    std::vector<asio::ip::address_v4> mInterfaceWhiteList;
+   bool mWhiteListOutput;
+   bool mWhiteListInput;
+   bool mWhiteListLocators;
 
    bool OpenAndBindOutputSockets(Locator_t& locator);
-   bool OpenAndBindInputSockets(uint32_t port, bool is_multicast);
+   bool OpenAndBindInputSockets(const Locator_t& locator);
 
 #if defined(ASIO_HAS_MOVE)
    asio::ip::udp::socket OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
-   asio::ip::udp::socket OpenAndBindInputSocket(uint32_t port, bool is_multicast);
+   asio::ip::udp::socket OpenAndBindInputSocket(const asio::ip::address_v4&, uint32_t port, bool is_multicast);
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,
@@ -233,7 +239,7 @@ protected:
                           asio::ip::udp::socket& socket);
 #else
    std::shared_ptr<asio::ip::udp::socket> OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
-   std::shared_ptr<asio::ip::udp::socket> OpenAndBindInputSocket(uint32_t port, bool is_multicast);
+   std::shared_ptr<asio::ip::udp::socket> OpenAndBindInputSocket(const asio::ip::address_v4&, uint32_t port, bool is_multicast);
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,
