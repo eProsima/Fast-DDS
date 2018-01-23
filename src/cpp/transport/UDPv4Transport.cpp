@@ -30,13 +30,23 @@ static const uint32_t maximumMessageSize = 65500;
 static const uint32_t minimumSocketBuffer = 65536;
 static const uint8_t defaultTTL = 1;
 
-static void GetIP4s(vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
+static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
 {
     IPFinder::getIPs(&locNames, return_loopback);
-    auto newEnd = remove_if(locNames.begin(),
+    auto new_end = remove_if(locNames.begin(),
             locNames.end(),
             [](IPFinder::info_IP ip){return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL;});
-    locNames.erase(newEnd, locNames.end());
+    locNames.erase(new_end, locNames.end());
+}
+
+static void GetIP4sUniqueInterfaces(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
+{
+    GetIP4s(locNames, return_loopback);
+    std::sort(locNames.begin(), locNames.end(),
+            [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool {return a.dev < b.dev;});
+    auto new_end = std::unique(locNames.begin(), locNames.end(),
+            [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool {return a.dev == b.dev;});
+    locNames.erase(new_end, locNames.end());
 }
 
 static bool IsAny(const Locator_t& locator)
@@ -206,15 +216,23 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator)
         auto& socket = mInputSockets.at(locator.port);
 
         std::vector<IPFinder::info_IP> locNames;
-        GetIP4s(locNames, true);
+        GetIP4sUniqueInterfaces(locNames, true);
         for (const auto& infoIP : locNames)
         {
             auto ip = asio::ip::address_v4::from_string(infoIP.name);
+            try
+            {
 #if defined(ASIO_HAS_MOVE)
-            socket.set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string()), ip));
+                socket.set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string()), ip));
 #else
-            socket->set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string()), ip));
+                socket->set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string()), ip));
 #endif
+            }
+            catch(std::system_error& ex)
+            {
+                (void)ex;
+                logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": "<< ex.what());
+            }
         }
     }
 
@@ -533,6 +551,8 @@ bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
     auto handler = [&receiveBuffer, &receiveBufferSize, &success, &receiveSemaphore]
         (const asio::error_code& error, std::size_t bytes_transferred)
         {
+            (void)receiveBuffer;
+
             if(error)
             {
                 logInfo(RTPS_MSG_IN, "Error while listening to socket...");

@@ -37,16 +37,12 @@
 #endif
 
 
-namespace eprosima {
-namespace fastrtps{
+using namespace eprosima::fastrtps::rtps;
 
 IPFinder::IPFinder() {
-
-
 }
 
 IPFinder::~IPFinder() {
-
 }
 
 #if defined(_WIN32)
@@ -152,6 +148,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
             info_IP info;
             info.type = IP4;
             info.name = std::string(host);
+            info.dev = std::string(ifa->ifa_name);
             parseIP4(info);
 
             if (return_loopback || info.type != IP4_LOCAL)
@@ -170,6 +167,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
             info_IP info;
             info.type = IP6;
             info.name = std::string(host);
+            info.dev = std::string(ifa->ifa_name);
             if(parseIP6(info))
             {
                 info.scope_id = so->sin6_scope_id;
@@ -371,6 +369,3 @@ RTPS_DllAPI bool IPFinder::parseIP6(info_IP& info)
        */
     return true;
 }
-
-}
-} /* namespace eprosima */
