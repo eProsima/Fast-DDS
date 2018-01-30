@@ -568,16 +568,6 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                         valid &= CDRMessage::readUInt32(msg,&p->value);
                         IF_VALID_ADD
                     }
-                case PID_PAD:
-                default:
-                    {
-                        if (plength > msg->length-msg->pos){
-                            return -1;
-                        }
-                        msg->pos +=plength;
-                        paramlist_byte_size +=plength;
-                        break;
-                    }
                 case PID_PARTICIPANT_MANUAL_LIVELINESS_COUNT:
                     {
                         if(plength != 4){
@@ -661,7 +651,18 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                     {
                         ParameterToken_t* p = new ParameterToken_t(pid, plength);
                         valid &= CDRMessage::readDataHolder(msg, p->token);
+                        msg->pos += (4 - msg->pos % 4) & 3; //align
                         IF_VALID_ADD
+                    }
+                case PID_PAD:
+                default:
+                    {
+                        if (plength > msg->length-msg->pos){
+                            return -1;
+                        }
+                        msg->pos +=plength;
+                        paramlist_byte_size +=plength;
+                        break;
                     }
             }
         }

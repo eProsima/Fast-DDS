@@ -1141,6 +1141,12 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
+    if(cdr_participant_data.length == 0)
+    {
+        exception = _SecurityException_("Bad precondition");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
     unsigned char md[SHA256_DIGEST_LENGTH];
 
     // New handshake
@@ -1250,6 +1256,12 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
+    if(cdr_participant_data.length == 0)
+    {
+        exception = _SecurityException_("Bad precondition");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
     // Check TokenMessage
     if(handshake_message_in.class_id().compare("DDS:Auth:PKI-DH:1.0+Req") != 0)
     {
@@ -1300,7 +1312,6 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
     CDRMessage_t cdr_pdata(0);
     cdr_pdata.wraps = true;
     cdr_pdata.msg_endian = BIGEND;
@@ -1646,7 +1657,6 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
     CDRMessage_t cdr_pdata(0);
     cdr_pdata.wraps = true;
     cdr_pdata.msg_endian = BIGEND;

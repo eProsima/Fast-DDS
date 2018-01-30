@@ -250,10 +250,16 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
                 aux_msg.msg_endian =  LITTLEEND;
 #endif
 
-                ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true);
-                change->serializedPayload.length = (uint16_t)aux_msg.length;
+                if(ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true))
+                {
+                    change->serializedPayload.length = (uint16_t)aux_msg.length;
 
-                mp_SPDPWriterHistory->add_change(change);
+                    mp_SPDPWriterHistory->add_change(change);
+                }
+                else
+                {
+                    logError(RTPS_PDP, "Cannot serialize ParticipantProxyData.");
+                }
             }
 
             m_hasChangedLocalPDP = false;
@@ -288,10 +294,16 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
             aux_msg.msg_endian =  LITTLEEND;
 #endif
 
-            ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true);
-            change->serializedPayload.length = (uint16_t)aux_msg.length;
+            if(ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true))
+            {
+                change->serializedPayload.length = (uint16_t)aux_msg.length;
 
-            mp_SPDPWriterHistory->add_change(change);
+                mp_SPDPWriterHistory->add_change(change);
+            }
+            else
+            {
+                logError(RTPS_PDP, "Cannot serialize ParticipantProxyData.");
+            }
         }
     }
 
@@ -822,7 +834,11 @@ CDRMessage_t PDPSimple::get_participant_proxy_data_serialized(Endianness_t endia
     cdr_msg.msg_endian = endian;
 
     ParameterList_t parameter_list = getLocalParticipantProxyData()->AllQostoParameterList();
-    ParameterList::writeParameterListToCDRMsg(&cdr_msg, &parameter_list, true);
+    if(!ParameterList::writeParameterListToCDRMsg(&cdr_msg, &parameter_list, true))
+    {
+        cdr_msg.pos = 0;
+        cdr_msg.length = 0;
+    }
 
     return cdr_msg;
 }
