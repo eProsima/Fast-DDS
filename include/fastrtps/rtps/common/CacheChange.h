@@ -173,7 +173,7 @@ namespace eprosima
 
                     if (fragment_size == 0) {
                         dataFragments_->clear();
-                    } 
+                    }
                     else
                     {
                         //TODO Mirar si cuando se compatibilice con RTI funciona el calculo, porque ellos

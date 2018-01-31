@@ -210,7 +210,9 @@ std::list<Data64kb> default_data64kb_data_generator(size_t max = 0)
             data.data().resize(data64kb_length);
             data.data()[0] = index;
             for(size_t i = 1; i < data64kb_length; ++i)
-            data.data()[i] = static_cast<unsigned char>(i + data.data()[0]);
+            {
+                data.data()[i] = static_cast<unsigned char>(i + data.data()[0]);
+            }
             ++index;
             return data;
             });
@@ -230,7 +232,31 @@ std::list<Data1mb> default_data300kb_data_generator(size_t max = 0)
             data.data().resize(data300kb_length);
             data.data()[0] = index;
             for(size_t i = 1; i < data300kb_length; ++i)
-            data.data()[i] = static_cast<unsigned char>(i + data.data()[0]);
+            {
+                data.data()[i] = static_cast<unsigned char>(i + data.data()[0]);
+            }
+            ++index;
+            return data;
+            });
+
+    return returnedValue;
+}
+
+std::list<Data1mb> default_data300kb_mix_data_generator(size_t max = 0)
+{
+    unsigned char index = 1;
+    size_t maximum = max ? max : 10;
+    std::list<Data1mb> returnedValue(maximum);
+
+    std::generate(returnedValue.begin(), returnedValue.end(), [&index] {
+            Data1mb data;
+            size_t length = index % 2 != 0 ? data300kb_length : 30000;
+            data.data().resize(length);
+            data.data()[0] = index;
+            for(size_t i = 1; i < length; ++i)
+            {
+                data.data()[i] = static_cast<unsigned char>(i + data.data()[0]);
+            }
             ++index;
             return data;
             });
@@ -3899,6 +3925,151 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
     reader.block_for_all();
+}
+
+// Regression test of Refs #2457
+BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300kb_mix)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
+                   pub_property_policy, sub_property_policy;
+
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    reader.history_depth(5).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        property_policy(sub_part_property_policy).
+        entity_property_policy(sub_property_policy).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    writer.history_depth(2).resource_limits_max_samples(2).resource_limits_allocated_samples(2).
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        property_policy(pub_part_property_policy).
+        entity_property_policy(pub_property_policy).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for authorization
+    reader.waitAuthorized();
+    writer.waitAuthorized();
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_data300kb_mix_data_generator(10);
+
+    reader.startReception(data);
+
+    size_t count = 0;
+    for(auto data_sample : data)
+    {
+        // Send data
+        writer.send_sample(data_sample);
+        ++count;
+        if(count % 2 == 0)
+        {
+            // Block reader until reception finished or timeout.
+            reader.block_for_at_least(count);
+        }
+    }
+}
+
+// Regression test of Refs #2457, Github ros2 #438.
+BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_user_data)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
+                   pub_property_policy, sub_property_policy;
+
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    std::vector<octet> received_user_data;
+    reader.setOnDiscoveryFunction([](const ParticipantDiscoveryInfo& info) -> bool{
+            std::cout << "Received USER_DATA from the writer: ";
+            for (auto i: info.rtps.m_userData) std::cout << i << ' ';
+            return info.rtps.m_userData == std::vector<octet>({'a','b','c','d','e'});
+        });
+
+    reader.history_depth(100).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        property_policy(sub_part_property_policy).
+        entity_property_policy(sub_property_policy).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    writer.history_depth(100).
+        userData({'a','b','c','d','e'}).
+        property_policy(pub_part_property_policy).
+        entity_property_policy(pub_property_policy).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for authorization
+    reader.waitAuthorized();
+    writer.waitAuthorized();
+
+    reader.waitDiscovery();
+    writer.waitDiscovery();
+
+    ASSERT_TRUE(reader.getDiscoveryResult());
 }
 
 #endif
