@@ -19,6 +19,7 @@
 #include "SecurityManager.h"
 
 #include <fastrtps/rtps/security/authentication/Authentication.h>
+#include <fastrtps/rtps/security/accesscontrol/AccessControl.h>
 #include <fastrtps/log/Log.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
@@ -73,6 +74,7 @@ SecurityManager::SecurityManager(RTPSParticipantImpl *participant) :
     participant_volatile_message_secure_reader_(nullptr),
     participant_volatile_message_secure_reader_history_(nullptr),
     authentication_plugin_(nullptr),
+    access_plugin_(nullptr),
     crypto_plugin_(nullptr),
     local_identity_handle_(nullptr),
     local_participant_crypto_handle_(nullptr),
@@ -117,32 +119,53 @@ bool SecurityManager::init()
             // Set participant guid
             participant_->setGuid(adjusted_participant_key);
 
-            crypto_plugin_ = factory_.create_cryptography_plugin(participant_->getRTPSParticipantAttributes().properties);
+            access_plugin_ = factory_.create_access_control_plugin(participant_->getRTPSParticipantAttributes().properties);
 
-            if(crypto_plugin_ != nullptr)
+            if(access_plugin_ != nullptr)
             {
-                NilHandle nil_handle;
-
-                local_participant_crypto_handle_ = crypto_plugin_->cryptokeyfactory()->register_local_participant(*local_identity_handle_,
-                        nil_handle,
-                        participant_->getRTPSParticipantAttributes().properties.properties(),
+                local_permissions_handle_ = access_plugin_->validate_local_permissions(
+                        *authentication_plugin_, *local_identity_handle_,
+                        participant_->getRTPSParticipantAttributes().builtin.domainId,
+                        participant_->getRTPSParticipantAttributes(),
                         exception);
+            }
+            else
+            {
+                local_permissions_handle_ = new NilHandle();
+            }
 
-                if(local_participant_crypto_handle_ != nullptr)
+            if(local_permissions_handle_ != nullptr)
+            {
+                crypto_plugin_ = factory_.create_cryptography_plugin(participant_->getRTPSParticipantAttributes().properties);
+
+                if(crypto_plugin_ != nullptr)
                 {
-                    assert(!local_participant_crypto_handle_->nil());
+                    local_participant_crypto_handle_ = crypto_plugin_->cryptokeyfactory()->register_local_participant(*local_identity_handle_,
+                            *local_permissions_handle_,
+                            participant_->getRTPSParticipantAttributes().properties.properties(),
+                            exception);
+
+                    if(local_participant_crypto_handle_ != nullptr)
+                    {
+                        assert(!local_participant_crypto_handle_->nil());
+                    }
+                    else
+                    {
+                        logInfo(SECURITY, "Cannot register local participant in crypto plugin. (" << exception.what() << ")");
+                    }
                 }
                 else
                 {
-                    logInfo(SECURITY, "Cannot register local participant in crypto plugin. (" << exception.what() << ")");
+                    logInfo(SECURITY, "Cryptography plugin not configured.");
                 }
             }
             else
             {
-                logInfo(SECURITY, "Cryptography plugin not configured.");
+                logError(SECURITY, "Error validating the local participant permissions. (" << exception.what() << ")");
             }
 
-            if(crypto_plugin_ == nullptr || local_participant_crypto_handle_ != nullptr)
+            if((access_plugin_ == nullptr || local_permissions_handle_ != nullptr) &&
+                    (crypto_plugin_ == nullptr || local_participant_crypto_handle_ != nullptr))
             {
                 // Create RTPS entities
                 if(create_entities())
@@ -162,17 +185,18 @@ bool SecurityManager::init()
                 delete crypto_plugin_;
                 crypto_plugin_ = nullptr;
             }
+
+            //TODO(Ricardo) Return local_permissions
+
+            if(access_plugin_ != nullptr)
+            {
+                delete access_plugin_;
+                access_plugin_ = nullptr;
+            }
         }
         else
         {
-            if(strlen(exception.what()) > 0)
-            {
-                logError(SECURITY_AUTHENTICATION, exception.what());
-            }
-            else
-            {
-                logError(SECURITY, "Error validating the local participant");
-            }
+            logError(SECURITY, "Error validating the local participant identity. (" << exception.what() << ")");
         }
 
         delete authentication_plugin_;

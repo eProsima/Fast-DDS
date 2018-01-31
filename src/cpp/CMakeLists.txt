@@ -123,14 +123,15 @@ set(${PROJECT_NAME}_security_source_files
     rtps/security/timedevent/HandshakeMessageTokenResent.cpp
     security/OpenSSLInit.cpp
     security/authentication/PKIDH.cpp
+    security/accesscontrol/Permissions.cpp
     security/cryptography/AESGCMGMAC.cpp
     security/cryptography/AESGCMGMAC_KeyExchange.cpp
     security/cryptography/AESGCMGMAC_KeyFactory.cpp
     security/cryptography/AESGCMGMAC_Transform.cpp
     security/cryptography/AESGCMGMAC_Types.cpp
     security/authentication/PKIIdentityHandle.cpp
-    security/access/mockAccessHandle.cpp
     security/authentication/PKIHandshakeHandle.cpp
+    security/accesscontrol/AccessPermissionsHandle.cpp
     )
 
 # Add sources to Makefile.am

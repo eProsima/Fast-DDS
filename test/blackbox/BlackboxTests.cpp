@@ -4123,6 +4123,78 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_user_data)
     reader.wait_discovery_result();
 }
 
+BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndAccessPlugin_Permissions_validation_ok)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy pub_property_policy, sub_property_policy;
+
+    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                    "builtin.Access-Permissions"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+                    "file://" + std::string(certs_path) + "/governance.smime"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+                    "file://" + std::string(certs_path) + "/permissions.smime"));
+
+    reader.history_depth(10).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        property_policy(sub_property_policy).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                    "builtin.Access-Permissions"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+                    "file://" + std::string(certs_path) + "/governance.smime"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+                    "file://" + std::string(certs_path) + "/permissions.smime"));
+
+    writer.history_depth(10).
+        property_policy(pub_property_policy).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for authorization
+    reader.waitAuthorized();
+    writer.waitAuthorized();
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_helloworld_data_generator();
+
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+}
+
 #endif
 
 template<typename T>

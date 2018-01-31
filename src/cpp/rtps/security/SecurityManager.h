@@ -51,6 +51,7 @@ class ReaderHistory;
 namespace security {
 
 class Authentication;
+class AccessControl;
 class Cryptography;
 
 class SecurityManager
@@ -344,9 +345,13 @@ class SecurityManager
 
         Authentication* authentication_plugin_;
 
+        AccessControl* access_plugin_;
+
         Cryptography* crypto_plugin_;
 
         IdentityHandle* local_identity_handle_;
+
+        PermissionsHandle* local_permissions_handle_;
 
         ParticipantCryptoHandle* local_participant_crypto_handle_;
 

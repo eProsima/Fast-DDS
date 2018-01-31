@@ -22,7 +22,6 @@
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
-
 #include <openssl/opensslv.h>
 
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
@@ -60,7 +59,7 @@ size_t BN_serialized_size(const BIGNUM* bn, size_t current_alignment = 0)
     return current_alignment - initial_alignment;
 }
 
-unsigned char* BN_serialize(const BIGNUM* bn, const unsigned char* orig_pointer, unsigned char* current_pointer)
+static unsigned char* BN_serialize(const BIGNUM* bn, const unsigned char* orig_pointer, unsigned char* current_pointer)
 {
     assert(bn);
     assert(orig_pointer);
@@ -90,8 +89,8 @@ unsigned char* BN_serialize(const BIGNUM* bn, const unsigned char* orig_pointer,
     return nullptr;
 }
 
-const unsigned char* BN_deserialize(BIGNUM** bn, const unsigned char* orig_pointer, const unsigned char* current_pointer,
-        SecurityException& exception)
+static const unsigned char* BN_deserialize(BIGNUM** bn, const unsigned char* orig_pointer,
+        const unsigned char* current_pointer, SecurityException& exception)
 {
     assert(bn);
     assert(orig_pointer);
@@ -135,7 +134,7 @@ const unsigned char* BN_deserialize(BIGNUM** bn, const unsigned char* orig_point
     return nullptr;
 }
 
-bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm, SecurityException& exception)
+static bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm, SecurityException& exception)
 {
     bool returnedValue = false;
     BUF_MEM* ptr = nullptr;
@@ -178,7 +177,7 @@ bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm
 }
 
 // Auxiliary functions
-X509_STORE* load_identity_ca(const std::string& identity_ca, bool& there_are_crls,
+static X509_STORE* load_identity_ca(const std::string& identity_ca, bool& there_are_crls,
         std::string& ca_sn, std::string& ca_algo, SecurityException& exception)
 {
     X509_STORE* store = X509_STORE_new();
@@ -269,7 +268,7 @@ X509_STORE* load_identity_ca(const std::string& identity_ca, bool& there_are_crl
     return nullptr;
 }
 
-X509* load_certificate(const std::string& identity_cert, SecurityException& exception)
+static X509* load_certificate(const std::string& identity_cert, SecurityException& exception)
 {
     X509* returnedValue = nullptr;
 
@@ -295,7 +294,7 @@ X509* load_certificate(const std::string& identity_cert, SecurityException& exce
     return returnedValue;
 }
 
-X509* load_certificate(const std::vector<uint8_t>& data)
+static X509* load_certificate(const std::vector<uint8_t>& data)
 {
     X509* returnedValue = nullptr;
 
@@ -313,7 +312,7 @@ X509* load_certificate(const std::vector<uint8_t>& data)
     return returnedValue;
 }
 
-bool verify_certificate(X509_STORE* store, X509* cert, const bool there_are_crls)
+static bool verify_certificate(X509_STORE* store, X509* cert, const bool there_are_crls)
 {
     assert(store);
     assert(cert);
@@ -349,7 +348,7 @@ bool verify_certificate(X509_STORE* store, X509* cert, const bool there_are_crls
     return returnedValue;
 }
 
-int private_key_password_callback(char* buf, int bufsize, int /*verify*/, const char* password)
+static int private_key_password_callback(char* buf, int bufsize, int /*verify*/, const char* password)
 {
     assert(password != nullptr);
 
@@ -362,7 +361,7 @@ int private_key_password_callback(char* buf, int bufsize, int /*verify*/, const 
     return returnedValue;
 }
 
-EVP_PKEY* load_private_key(X509* certificate, const std::string& file, const std::string& password,
+static EVP_PKEY* load_private_key(X509* certificate, const std::string& file, const std::string& password,
         SecurityException& exception)
 {
     EVP_PKEY* returnedValue = nullptr;
@@ -396,7 +395,7 @@ EVP_PKEY* load_private_key(X509* certificate, const std::string& file, const std
     return returnedValue;
 }
 
-bool store_certificate_in_buffer(X509* certificate, BUF_MEM** ptr, SecurityException& exception)
+static bool store_certificate_in_buffer(X509* certificate, BUF_MEM** ptr, SecurityException& exception)
 {
     bool returnedValue = false;
 
@@ -433,7 +432,7 @@ bool store_certificate_in_buffer(X509* certificate, BUF_MEM** ptr, SecurityExcep
     return returnedValue;
 }
 
-bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, const size_t data_length,
+static bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, const size_t data_length,
         std::vector<uint8_t>& signature, SecurityException& exception)
 {
     assert(private_key);
@@ -484,7 +483,7 @@ bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, const size_t 
     return returnedValue;
 }
 
-bool check_sign_sha256(X509* certificate, const unsigned char* data, const size_t data_length,
+static bool check_sign_sha256(X509* certificate, const unsigned char* data, const size_t data_length,
         const std::vector<uint8_t>& signature, SecurityException& exception)
 {
     assert(certificate);
@@ -536,7 +535,7 @@ bool check_sign_sha256(X509* certificate, const unsigned char* data, const size_
 }
 
 
-X509_CRL* load_crl(const std::string& identity_crl, SecurityException& exception)
+static X509_CRL* load_crl(const std::string& identity_crl, SecurityException& exception)
 {
     X509_CRL* returnedValue = nullptr;
 
@@ -562,7 +561,7 @@ X509_CRL* load_crl(const std::string& identity_crl, SecurityException& exception
     return returnedValue;
 }
 
-bool adjust_participant_key(X509* cert, const GUID_t& candidate_participant_key,
+static bool adjust_participant_key(X509* cert, const GUID_t& candidate_participant_key,
         GUID_t& adjusted_participant_key, SecurityException& exception)
 {
     assert(cert != nullptr);
@@ -626,7 +625,7 @@ bool adjust_participant_key(X509* cert, const GUID_t& candidate_participant_key,
     return true;
 }
 
-int get_dh_type(const std::string& algorithm)
+static int get_dh_type(const std::string& algorithm)
 {
     if(algorithm.compare(DH_2048_256) == 0)
         return EVP_PKEY_DH;
@@ -636,7 +635,7 @@ int get_dh_type(const std::string& algorithm)
     return 0;
 }
 
-EVP_PKEY* generate_dh_key(int type, SecurityException& exception)
+static EVP_PKEY* generate_dh_key(int type, SecurityException& exception)
 {
     EVP_PKEY* keys = nullptr;
     EVP_PKEY* params = EVP_PKEY_new();
@@ -688,7 +687,7 @@ EVP_PKEY* generate_dh_key(int type, SecurityException& exception)
     return keys;
 }
 
-bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer,
+static bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer,
         SecurityException& exception)
 {
     bool returnedValue = false;
@@ -742,7 +741,7 @@ bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer,
     return returnedValue;
 }
 
-EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer, SecurityException& exception)
+static EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer, SecurityException& exception)
 {
     DH* dh = DH_new();
 
@@ -808,7 +807,7 @@ EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer, SecurityExcep
     return nullptr;
 }
 
-bool generate_challenge(std::vector<uint8_t>& vector, SecurityException& exception)
+static bool generate_challenge(std::vector<uint8_t>& vector, SecurityException& exception)
 {
     bool returnedValue = false;
     BIGNUM* bn = BN_new();
@@ -829,7 +828,7 @@ bool generate_challenge(std::vector<uint8_t>& vector, SecurityException& excepti
     return returnedValue;
 }
 
-SharedSecretHandle* generate_sharedsecret(EVP_PKEY* private_key, EVP_PKEY* public_key,
+static SharedSecretHandle* generate_sharedsecret(EVP_PKEY* private_key, EVP_PKEY* public_key,
         SecurityException& exception)
 {
     assert(private_key);
@@ -887,7 +886,7 @@ SharedSecretHandle* generate_sharedsecret(EVP_PKEY* private_key, EVP_PKEY* publi
     return handle;
 }
 
-bool generate_identity_token(PKIIdentityHandle& handle)
+static bool generate_identity_token(PKIIdentityHandle& handle)
 {
     Property property;
     IdentityToken& token = handle->identity_token_;

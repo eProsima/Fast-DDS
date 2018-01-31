@@ -57,7 +57,7 @@ class Authentication
 {
     public:
 
-        virtual ~Authentication() {}
+        virtual ~Authentication() = default;
 
         /*!
          * @brief Validates the identity of the local RTPSParticipant.

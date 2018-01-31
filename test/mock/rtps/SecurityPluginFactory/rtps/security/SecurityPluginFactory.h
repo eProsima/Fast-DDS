@@ -19,6 +19,7 @@
 #define _RTPS_SECURITY_SECURITYPLUGINFACTORY_H_
 
 #include <fastrtps/rtps/security/authentication/Authentication.h>
+#include <fastrtps/rtps/security/accesscontrol/AccessControl.h>
 #include <fastrtps/rtps/security/cryptography/Cryptography.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
 
@@ -39,6 +40,8 @@ class SecurityPluginFactory
          */
         Authentication* create_authentication_plugin(const PropertyPolicy& property_policy);
 
+        AccessControl* create_access_control_plugin(const PropertyPolicy& property_policy);
+
         /*!
          * @brief Create an Cryptography plugin  described in the PropertyPolicy.
          * @param property_policy PropertyPolicy containing the definition of the Cryptography
@@ -51,6 +54,10 @@ class SecurityPluginFactory
 
         static void release_auth_plugin();
 
+        static void set_access_control_plugin(AccessControl* plugin);
+
+        static void release_access_control_plugin();
+
         static void set_crypto_plugin(Cryptography* plugin);
 
         static void release_crypto_plugin();
@@ -58,6 +65,8 @@ class SecurityPluginFactory
     private:
 
         static Authentication* auth_plugin_;
+
+        static AccessControl* access_plugin_;
 
         static Cryptography* crypto_plugin_;
 };

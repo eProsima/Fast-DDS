@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-1"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="omg_shared_ca_domain_governance.xsd">
+    <domain_access_rules>
+        <domain_rule>
+            <domain_id>0</domain_id>
+            <rtps_protection_kind>ENCRYPT</rtps_protection_kind>
+        </domain_rule>
+        <domain_rule>
+            <domain_id>1</domain_id>
+            <rtps_protection_kind>NONE</rtps_protection_kind>
+        </domain_rule>
+    </domain_access_rules>
+</dds>
