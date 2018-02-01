@@ -132,6 +132,9 @@ set(${PROJECT_NAME}_security_source_files
     security/authentication/PKIIdentityHandle.cpp
     security/authentication/PKIHandshakeHandle.cpp
     security/accesscontrol/AccessPermissionsHandle.cpp
+    security/accesscontrol/CommonParser.cpp
+    security/accesscontrol/GovernanceParser.cpp
+    security/accesscontrol/PermissionsParser.cpp
     )
 
 # Add sources to Makefile.am

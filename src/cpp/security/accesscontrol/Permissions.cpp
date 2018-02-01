@@ -18,6 +18,8 @@
 
 #include "Permissions.h"
 #include "AccessPermissionsHandle.h"
+#include "GovernanceParser.h"
+#include "PermissionsParser.h"
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/security/exceptions/SecurityException.h>
@@ -257,8 +259,8 @@ static bool load_governance_file(AccessPermissionsHandle& ah, std::string& gover
 
         if(ptr != nullptr)
         {
-            printf("%s", ptr->data);
-            returned_value = true;
+            GovernanceParser parser;
+            returned_value = parser.parse_stream(ptr->data, ptr->length);
         }
         else
         {
@@ -285,8 +287,8 @@ static bool load_permissions_file(AccessPermissionsHandle& ah, std::string& perm
 
         if(ptr != nullptr)
         {
-            printf("%s", ptr->data);
-            returned_value = true;
+            PermissionsParser parser;
+            returned_value = parser.parse_stream(ptr->data, ptr->length);
         }
         else
         {

@@ -1,0 +1,451 @@
+// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include "PermissionsParser.h"
+#include <fastrtps/log/Log.h>
+
+#include <cstring>
+#include <cassert>
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+
+static const char* Root_str = "permissions";
+static const char* Grant_str = "grant";
+static const char* SubjectName_str = "subject_name";
+static const char* Validity_str = "validity";
+static const char* NotBefore_str = "not_before";
+static const char* NotAfter_str = "not_after";
+static const char* AllowRule_str = "allow_rule";
+static const char* DenyRule_str = "deny_rule";
+static const char* Domains_str = "domains";
+static const char* Publish_str = "publish";
+static const char* Subscribe_str = "subscribe";
+static const char* Relay_str = "relay";
+static const char* Topics_str = "topics";
+static const char* Topic_str = "topic";
+static const char* Partitions_str = "partitions";
+static const char* DataTags_str = "data_tags";
+
+using namespace eprosima::fastrtps::rtps::security;
+
+bool PermissionsParser::parse_stream(const char* stream, size_t stream_length)
+{
+    assert(stream);
+
+    bool returned_value = false;
+    tinyxml2::XMLDocument document;
+
+    if(tinyxml2::XMLError::XML_SUCCESS == document.Parse(stream, stream_length))
+    {
+        tinyxml2::XMLElement* root = document.RootElement();
+
+        if(root != nullptr)
+        {
+            if(strcmp(root->Name(), Root_str) == 0)
+            {
+                returned_value = parse_permissions(root);
+            }
+            else
+            {
+                logError(XMLPARSER, "Malformed Permissions root. Line " << root->GetLineNum());
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Not found root node in Permissions XML.");
+        }
+    }
+    else
+    {
+        logError(XMLPARSER, "Error loading Permissions XML");
+    }
+
+    return returned_value;
+}
+
+bool PermissionsParser::parse_permissions(tinyxml2::XMLElement* root)
+{
+    assert(root);
+
+    bool returned_value = false;
+    tinyxml2::XMLElement* node = root->FirstChildElement();
+
+    if(node != nullptr)
+    {
+        returned_value = true;
+
+        do
+        {
+            if(strcmp(node->Name(), Grant_str) == 0)
+            {
+                Grant grant;
+                if((returned_value = parse_grant(node, grant)) == true)
+                {
+                    permissions_.grants.push_back(std::move(grant));
+                }
+            }
+            else
+            {
+                logError(XMLPARSER, "Invalid tag. Expected  " << Grant_str << " tag. Line " << node->GetLineNum());
+                returned_value = false;
+            }
+        }
+        while(returned_value && (node = node->NextSiblingElement()) != nullptr);
+    }
+    else
+    {
+        logError(XMLPARSER, "Expected at least one " << Grant_str << " tag. Line " << root->GetLineNum() + 1);
+    }
+
+    return returned_value;
+}
+
+bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
+{
+    assert(root);
+
+    const char* name = root->Attribute("name");
+
+    if(name != nullptr)
+    {
+        grant.name = name;
+    }
+    else
+    {
+        logError(XMLPARSER, "Attribute name is required in " << Grant_str << " tag. Line " << root->GetLineNum());
+        return false;
+    }
+
+    tinyxml2::XMLElement* node = root->FirstChildElement();
+
+    if(node != nullptr)
+    {
+        if(strcmp(node->Name(), SubjectName_str) == 0)
+        {
+            const char* text = node->GetText();
+
+            if(text != nullptr)
+            {
+                grant.subject_name = text;
+            }
+            else
+            {
+                logError(XMLPARSER, "Expected text in " << SubjectName_str << " tag. Line " << node->GetLineNum());
+                return false;
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Expected " << SubjectName_str << " tag. Line " << node->GetLineNum());
+            return false;
+        }
+    }
+    else
+    {
+        logError(XMLPARSER, "Expected " << SubjectName_str << " tag. Line " << root->GetLineNum() + 1);
+        return false;
+    }
+
+    tinyxml2::XMLElement* old_node = node;
+    node = node->NextSiblingElement();
+
+    if(node != nullptr)
+    {
+        if(strcmp(node->Name(), Validity_str) == 0)
+        {
+            if(!parse_validity(node, grant.validity))
+            {
+                return false;
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Expected " << Validity_str << " tag. Line " << node->GetLineNum());
+            return false;
+        }
+    }
+    else
+    {
+        logError(XMLPARSER, "Expected " << Validity_str << " tag. Line " << old_node->GetLineNum());
+        return false;
+    }
+
+    old_node = node;
+    node = node->NextSiblingElement();
+
+    if(node != nullptr)
+    {
+        do
+        {
+            Rule rule;
+
+            if(strcmp(node->Name(), AllowRule_str) == 0)
+            {
+                rule.allow = true;
+            }
+            else if(strcmp(node->Name(), DenyRule_str) == 0)
+            {
+                rule.allow = false;
+            }
+            else
+            {
+                break;
+            }
+
+            if(!parse_rule(node, rule))
+            {
+                return false;
+            }
+
+            grant.rules.push_back(rule);
+        }
+        while((node = node->NextSiblingElement()) != nullptr);
+    }
+    else
+    {
+        logError(XMLPARSER, "Expected " << AllowRule_str << " or " << DenyRule_str << " tag. Line " <<
+                old_node->GetLineNum());
+        return false;
+    }
+
+    if(node != nullptr)
+    {
+        logError(XMLPARSER, "Not expected more tags. Line " << node->GetLineNum());
+        return false;
+    }
+
+    return true;
+}
+
+bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity& validity)
+{
+    assert(root);
+
+    bool returned_value = false;
+    tinyxml2::XMLElement* node = root->FirstChildElement();
+
+    if(node != nullptr)
+    {
+        if(strcmp(node->Name(), NotBefore_str) == 0)
+        {
+            if(node->GetText() != nullptr)
+            {
+                std::istringstream ss(node->GetText());
+                ss >> std::get_time(&validity.not_before, "%Y-%m-%dT%T");
+
+                if(!ss.fail())
+                {
+                    tinyxml2::XMLElement* old_node = node;
+                    node = node->NextSiblingElement();
+
+                    if(node != nullptr)
+                    {
+                        if(strcmp(node->Name(), NotAfter_str) == 0)
+                        {
+                            std::istringstream ss(node->GetText());
+                            ss >> std::get_time(&validity.not_after, "%Y-%m-%dT%T");
+
+                            if(!ss.fail())
+                            {
+                                returned_value = true;
+                            }
+                            else
+                            {
+                                logError(XMLPARSER, "Fail parsing datetime value in " << NotAfter_str << " tag. Line " <<
+                                        node->GetLineNum());
+                            }
+                        }
+                        else
+                        {
+                            logError(XMLPARSER, "Expected " << NotAfter_str << " tag. Line " << node->GetLineNum());
+                        }
+                    }
+                    else
+                    {
+                        logError(XMLPARSER, "Expected " << NotAfter_str << " tag. Line " << old_node->GetLineNum() + 1);
+                    }
+                }
+                else
+                {
+                    logError(XMLPARSER, "Fail parsing datetime value in " << NotBefore_str << " tag. Line " <<
+                            node->GetLineNum());
+                }
+            }
+            else
+            {
+                logError(XMLPARSER, "Expected datetime value in " << NotBefore_str << " tag. Line " <<
+                        node->GetLineNum());
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Expected " << NotBefore_str << " tag. Line " << node->GetLineNum());
+        }
+    }
+    else
+    {
+        logError(XMLPARSER, "Expected " << NotBefore_str << " tag. Line " << root->GetLineNum() + 1);
+    }
+
+    return returned_value;
+}
+
+bool PermissionsParser::parse_rule(tinyxml2::XMLElement* root, Rule& rule)
+{
+    assert(root);
+
+    tinyxml2::XMLElement* node = root->FirstChildElement();
+
+    if(node != nullptr)
+    {
+        if(strcmp(node->Name(), Domains_str) == 0)
+        {
+            if(!parse_domain_id_set(node, rule.domains))
+            {
+                return false;
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Expected " << Domains_str << " tag. Line " << node->GetLineNum());
+            return false;
+        }
+    }
+    else
+    {
+        logError(XMLPARSER, "Expected " << Domains_str << " tag. Line " << root->GetLineNum() + 1);
+        return false;
+    }
+
+    node = node->NextSiblingElement();
+
+    if(node != nullptr)
+    {
+        do
+        {
+            Criteria criteria;
+
+            if(strcmp(node->Name(), Publish_str) == 0)
+            {
+                if(!parse_criteria(node, criteria))
+                {
+                    return false;
+                }
+
+                rule.publishes.push_back(std::move(criteria));
+            }
+            else if(strcmp(node->Name(), Subscribe_str) == 0)
+            {
+                if(!parse_criteria(node, criteria))
+                {
+                    return false;
+                }
+
+                rule.subscribes.push_back(std::move(criteria));
+            }
+            else if(strcmp(node->Name(), Relay_str) == 0)
+            {
+
+                if(!parse_criteria(node, criteria))
+                {
+                    return false;
+                }
+
+                rule.relays.push_back(std::move(criteria));
+            }
+            else
+            {
+                logError(XMLPARSER, "Expected " << Publish_str << " or " << Subscribe_str <<
+                        " or " << Relay_str << " tag. Line " << node->GetLineNum());
+                return false;
+            }
+        }
+        while((node = node->NextSiblingElement()) != nullptr);
+    }
+
+    return true;
+}
+
+bool PermissionsParser::parse_criteria(tinyxml2::XMLElement* root, Criteria& criteria)
+{
+    bool returned_value = true;
+    tinyxml2::XMLElement* node = root->FirstChildElement();
+
+    if(node != nullptr)
+    {
+        do
+        {
+            if(strcmp(node->Name(), Topics_str) == 0)
+            {
+                std::string topic;
+                if((returned_value = parse_topic(node, topic)) == true)
+                {
+                    criteria.topics.push_back(std::move(topic));
+                }
+            }
+            else if(strcmp(node->Name(), Partitions_str) == 0)
+            {
+            }
+            else if(strcmp(node->Name(), DataTags_str) == 0)
+            {
+            }
+            else
+            {
+                logError(XMLPARSER, "Expected " << Topics_str << " or " << Partitions_str <<
+                        " or " << DataTags_str << " tag. Line " << node->GetLineNum());
+                returned_value = true;
+            }
+        }
+        while(returned_value && (node = node->NextSiblingElement()) != nullptr);
+    }
+
+    return returned_value;
+}
+
+bool PermissionsParser::parse_topic(tinyxml2::XMLElement* root, std::string& topic)
+{
+    bool returned_value = false;
+    tinyxml2::XMLElement* node = root->FirstChildElement();
+
+    if(node != nullptr)
+    {
+        do
+        {
+            if(strcmp(node->Name(), Topic_str) == 0)
+            {
+                if(node->GetText() != nullptr)
+                {
+                    topic = node->GetText();
+                    returned_value = true;
+                }
+                else
+                {
+                    logError(XMLPARSER, "Expected topic name in " << Topic_str << " tag. Line " << node->GetLineNum());
+                }
+            }
+            else
+            {
+                logError(XMLPARSER, "Expected " << Topic_str << " tag. Line " << node->GetLineNum());
+            }
+        }
+        while(returned_value && (node = node->NextSiblingElement()) != nullptr);
+    }
+    else
+    {
+        logError(XMLPARSER, "Expected at least one " << Topic_str << " tag. Line " << root->GetLineNum() + 1);
+    }
+
+    return returned_value;
+}
