@@ -72,6 +72,8 @@ class PermissionsParser
 
         bool parse_stream(const char* stream, size_t stream_length);
 
+        void swap(PermissionsData& permissions);
+
     private:
 
         bool parse_permissions(tinyxml2::XMLElement* root);

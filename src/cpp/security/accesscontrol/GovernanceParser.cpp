@@ -30,6 +30,11 @@ static const char* ProtectionKindEncrypt_str = "ENCRYPT";
 
 using namespace eprosima::fastrtps::rtps::security;
 
+void GovernanceParser::swap(DomainAccessRules& rules)
+{
+    rules = std::move(access_rules_);
+}
+
 bool GovernanceParser::parse_stream(const char* stream, size_t stream_length)
 {
     assert(stream);

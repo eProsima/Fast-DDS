@@ -20,6 +20,7 @@
 #include "AccessPermissionsHandle.h"
 #include "GovernanceParser.h"
 #include "PermissionsParser.h"
+#include "../authentication/PKIIdentityHandle.h"
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/security/exceptions/SecurityException.h>
@@ -49,9 +50,6 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
-
-static const char* const RSA_SHA256 = "RSASSA-PSS-SHA256";
-static const char* const ECDSA_SHA256 = "ECDSA-SHA256";
 
 static bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm, SecurityException& exception)
 {
@@ -246,7 +244,8 @@ static BIO* load_signed_file(X509_STORE* store, std::string& file, SecurityExcep
     return out;
 }
 
-static bool load_governance_file(AccessPermissionsHandle& ah, std::string& governance_file, SecurityException& exception)
+static bool load_governance_file(AccessPermissionsHandle& ah, std::string& governance_file, DomainAccessRules& rules,
+        SecurityException& exception)
 {
     bool returned_value = false;
 
@@ -260,7 +259,10 @@ static bool load_governance_file(AccessPermissionsHandle& ah, std::string& gover
         if(ptr != nullptr)
         {
             GovernanceParser parser;
-            returned_value = parser.parse_stream(ptr->data, ptr->length);
+            if((returned_value = parser.parse_stream(ptr->data, ptr->length)) == true)
+            {
+                parser.swap(rules);
+            }
         }
         else
         {
@@ -274,7 +276,8 @@ static bool load_governance_file(AccessPermissionsHandle& ah, std::string& gover
     return returned_value;
 }
 
-static bool load_permissions_file(AccessPermissionsHandle& ah, std::string& permissions_file, SecurityException& exception)
+static bool load_permissions_file(AccessPermissionsHandle& ah, std::string& permissions_file,
+        PermissionsData& permissions, SecurityException& exception)
 {
     bool returned_value = false;
 
@@ -288,7 +291,10 @@ static bool load_permissions_file(AccessPermissionsHandle& ah, std::string& perm
         if(ptr != nullptr)
         {
             PermissionsParser parser;
-            returned_value = parser.parse_stream(ptr->data, ptr->length);
+            if((returned_value = parser.parse_stream(ptr->data, ptr->length)) == true)
+            {
+                parser.swap(permissions);
+            }
         }
         else
         {
@@ -302,7 +308,37 @@ static bool load_permissions_file(AccessPermissionsHandle& ah, std::string& perm
     return returned_value;
 }
 
-PermissionsHandle* Permissions::validate_local_permissions(Authentication& auth_plugin,
+static bool check_subject_name(const IdentityHandle& ih, const PermissionsData& permissions,
+        SecurityException& exception)
+{
+    bool returned_value = false;
+    const PKIIdentityHandle& lih = PKIIdentityHandle::narrow(ih);
+
+    if(!lih.nil())
+    {
+        for(auto grant : permissions.grants)
+        {
+            if(grant.subject_name.compare(lih->sn) == 0)
+            {
+                returned_value = true;
+            }
+        }
+
+        if(!returned_value)
+        {
+            exception = _SecurityException_(std::string("Not found the identity subject name in permissions file. Subject name: ") +
+                    lih->sn);
+        }
+    }
+    else
+    {
+        exception = _SecurityException_("IdentityHandle is not of the type PKIIdentityHandle");
+    }
+
+    return returned_value;
+}
+
+PermissionsHandle* Permissions::validate_local_permissions(Authentication&,
         const IdentityHandle& identity,
         const uint32_t domain_id,
         const RTPSParticipantAttributes& participant_attr,
@@ -346,11 +382,17 @@ PermissionsHandle* Permissions::validate_local_permissions(Authentication& auth_
 
     if((*ah)->store_ != nullptr)
     {
-        if(load_governance_file(*ah, *governance, exception))
+        DomainAccessRules rules;
+        if(load_governance_file(*ah, *governance, rules, exception))
         {
-            if(load_permissions_file(*ah, *permissions, exception))
+            PermissionsData permissions_data;
+            if(load_permissions_file(*ah, *permissions, permissions_data, exception))
             {
-                return ah;
+                // Check subject name.
+                if(check_subject_name(identity, permissions_data, exception))
+                {
+                    return ah;
+                }
             }
         }
     }

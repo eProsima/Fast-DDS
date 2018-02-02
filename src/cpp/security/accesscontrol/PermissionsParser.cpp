@@ -40,6 +40,11 @@ static const char* DataTags_str = "data_tags";
 
 using namespace eprosima::fastrtps::rtps::security;
 
+void PermissionsParser::swap(PermissionsData& permissions)
+{
+    permissions = std::move(permissions_);
+}
+
 bool PermissionsParser::parse_stream(const char* stream, size_t stream_length)
 {
     assert(stream);

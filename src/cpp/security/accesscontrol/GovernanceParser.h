@@ -46,6 +46,8 @@ class GovernanceParser
 
         bool parse_stream(const char* stream, size_t stream_length);
 
+        void swap(DomainAccessRules& rules);
+
     private:
 
         bool parse_domain_access_rules_node(tinyxml2::XMLElement* root);
