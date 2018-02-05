@@ -19,6 +19,8 @@
 #define __SECURITY_ACCESSCONTROL_ACCESSPERMISSIONSHANDLE_H__
 
 #include <fastrtps/rtps/security/common/Handle.h>
+#include <fastrtps/rtps/common/Token.h>
+#include "PermissionsParser.h"
 
 #include <openssl/x509.h>
 #include <string>
@@ -40,6 +42,9 @@ class AccessPermissions
         std::string sn;
         std::string algo;
         bool there_are_crls_;
+        PermissionsToken permissions_token_;
+        PermissionsCredentialToken permissions_credential_token_;
+        Grant grant;
 };
 
 typedef HandleImpl<AccessPermissions> AccessPermissionsHandle;

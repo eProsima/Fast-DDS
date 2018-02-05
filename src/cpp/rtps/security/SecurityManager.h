@@ -96,6 +96,10 @@ class SecurityManager
 
         bool return_identity_token(IdentityToken* identity_token);
 
+        bool get_permissions_token(PermissionsToken** permissions_token);
+
+        bool return_permissions_token(PermissionsToken* permissions_token);
+
         uint32_t builtin_endpoints();
 
         RTPSParticipantImpl* participant() { return participant_; }
@@ -186,15 +190,18 @@ class SecurityManager
 
                 typedef std::unique_ptr<AuthenticationInfo, EmptyDelete> AuthUniquePtr;
 
-                DiscoveredParticipantInfo(AuthenticationStatus auth_status) :
+                DiscoveredParticipantInfo(AuthenticationStatus auth_status,
+                        const ParticipantProxyData& participant_data) :
                     auth_(auth_status), auth_ptr_(&auth_),
                     shared_secret_handle_(nullptr),
-                    participant_crypto_(nullptr) {}
+                    participant_crypto_(nullptr),
+                    participant_data_(participant_data) {}
 
                 DiscoveredParticipantInfo(DiscoveredParticipantInfo&& info) :
                     auth_(std::move(info.auth_)),  auth_ptr_(&auth_),
                     shared_secret_handle_(std::move(info.shared_secret_handle_)),
-                    participant_crypto_(info.participant_crypto_) {}
+                    participant_crypto_(info.participant_crypto_),
+                    participant_data_(std::move(info.participant_data_)) {}
 
                 AuthUniquePtr get_auth() { return std::move(auth_ptr_); }
 
@@ -232,6 +239,11 @@ class SecurityManager
                     }
                 }
 
+                const ParticipantProxyData& participant_data() const
+                {
+                    return participant_data_;
+                }
+
             private:
 
                 DiscoveredParticipantInfo(const DiscoveredParticipantInfo& info) = delete;
@@ -243,6 +255,8 @@ class SecurityManager
                 SharedSecretHandle* shared_secret_handle_;
 
                 ParticipantCryptoHandle* participant_crypto_;
+
+                ParticipantProxyData participant_data_;
 
         };
 
@@ -308,7 +322,7 @@ class SecurityManager
 
         void process_participant_volatile_message_secure(const CacheChange_t* const change);
 
-        bool on_process_handshake(const GUID_t& remote_participant_guid,
+        bool on_process_handshake(const ParticipantProxyData& participant_data,
                 DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
                 MessageIdentity&& message_identity,
                 HandshakeMessageToken&& message);
@@ -328,7 +342,7 @@ class SecurityManager
                 const GUID_t& destination_endpoint_key, const GUID_t& source_endpoint_key,
                 ParticipantCryptoTokenSeq& crypto_tokens);
 
-        bool participant_authorized(const GUID_t& remote_participant_guid,
+        bool participant_authorized(const ParticipantProxyData& participant_data,
                 const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
                 SharedSecretHandle* shared_secret_handle);
 
@@ -348,6 +362,8 @@ class SecurityManager
         AccessControl* access_plugin_;
 
         Cryptography* crypto_plugin_;
+
+        uint32_t domain_id_;
 
         IdentityHandle* local_identity_handle_;
 

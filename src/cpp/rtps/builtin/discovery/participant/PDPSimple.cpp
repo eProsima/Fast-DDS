@@ -156,6 +156,13 @@ void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant
         participant_data->identity_token_ = std::move(*identity_token);
         mp_RTPSParticipant->security_manager().return_identity_token(identity_token);
     }
+
+    PermissionsToken* permissions_token = nullptr;
+    if(mp_RTPSParticipant->security_manager().get_permissions_token(&permissions_token) && permissions_token != nullptr)
+    {
+        participant_data->permissions_token_ = std::move(*permissions_token);
+        mp_RTPSParticipant->security_manager().return_permissions_token(permissions_token);
+    }
 #endif
 }
 
@@ -606,30 +613,6 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
     //Inform EDP of new RTPSParticipant data:
     notifyAboveRemoteEndpoints(*pdata);
 #endif
-}
-
-void PDPSimple::notifyAboveRemoteEndpoints(const GUID_t& participant_guid)
-{
-    ParticipantProxyData participant_data;
-    bool found_participant = false;
-
-    this->mp_mutex->lock();
-    for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
-            pit != m_participantProxies.end(); ++pit)
-    {
-        if((*pit)->m_guid == participant_guid)
-        {
-            participant_data.copy(**pit);
-            found_participant = true;
-            break;
-        }
-    }
-    this->mp_mutex->unlock();
-
-    if(found_participant)
-    {
-        notifyAboveRemoteEndpoints(participant_data);
-    }
 }
 
 void PDPSimple::notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata)

@@ -101,6 +101,8 @@ class ParticipantProxyData
         //!
         IdentityToken identity_token_;
         //!
+        PermissionsToken permissions_token_;
+        //!
         bool isAlive;
         //!
         ParameterPropertyList_t m_properties;

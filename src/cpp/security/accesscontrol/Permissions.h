@@ -20,6 +20,7 @@
 #define _SECURITY_ACCESSCONTROL_PERMISSIONS_H_
 
 #include <fastrtps/rtps/security/accesscontrol/AccessControl.h>
+#include <fastrtps/rtps/common/Token.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -36,7 +37,35 @@ class Permissions : public AccessControl
                 const IdentityHandle& identity,
                 const uint32_t domain_id,
                 const RTPSParticipantAttributes& participant_attr,
-                SecurityException& exception);
+                SecurityException& exception) override;
+
+        bool get_permissions_token(PermissionsToken** permissions_token, const PermissionsHandle& handle,
+                SecurityException& exception) override;
+
+        bool return_permissions_token(PermissionsToken* token, SecurityException& exception) override;
+
+        bool get_permissions_credential_token(PermissionsCredentialToken** permissions_credential_token,
+                const PermissionsHandle& handle, SecurityException& exception) override;
+
+        bool return_permissions_credential_token(PermissionsCredentialToken* token,
+                SecurityException& exception) override;
+
+        bool return_permissions_handle(PermissionsHandle* permissions_handle,
+                SecurityException& exception) override;
+
+        PermissionsHandle* validate_remote_permissions(Authentication& auth_plugin,
+                const IdentityHandle& local_identity_handle,
+                const PermissionsHandle& local_permissions_handle,
+                const IdentityHandle& remote_identity_handle,
+                const PermissionsToken& remote_permissions_token,
+                const PermissionsCredentialToken& remote_credential_token,
+                SecurityException& exception) override;
+
+        bool check_create_participant(const PermissionsHandle& local_handle, const uint32_t domain_id,
+                const RTPSParticipantAttributes& qos, SecurityException& exception) override;
+
+        bool check_remote_participant(const PermissionsHandle& remote_handle, const uint32_t domain_id,
+                const ParticipantProxyData&, SecurityException& exception) override;
 };
 
 } //namespace security

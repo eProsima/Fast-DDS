@@ -91,9 +91,19 @@ class MockAuthenticationPlugin : public Authentication
         MOCK_METHOD2(return_sharedsecret_handle, bool(SharedSecretHandle* sharedsecret_handle,
                 SecurityException& exception));
 
+        MOCK_METHOD3(set_permissions_credential_and_token, bool(IdentityHandle& identity_handle,
+                PermissionsCredentialToken& permissions_credential_token,
+                SecurityException& ex));
+
+        MOCK_METHOD3(get_authenticated_peer_credential_token, bool(PermissionsCredentialToken **token,
+                const IdentityHandle& identity_handle, SecurityException& exception));
+
+        MOCK_METHOD2(return_authenticated_peer_credential_token, bool(PermissionsCredentialToken* token,
+                SecurityException& ex));
+
         ValidationResult_t validate_remote_identity(IdentityHandle** remote_identity_handle,
                 const IdentityHandle& local_identity_handle,
-                IdentityToken&& remote_identity_token,
+                const IdentityToken& remote_identity_token,
                 const GUID_t& remote_participant_key,
                 SecurityException& exception)
         {

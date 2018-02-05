@@ -42,35 +42,35 @@ class AESGCMGMAC_Transform : public CryptoTransform
                 std::vector<uint8_t> &extra_inline_qos,
                 const std::vector<uint8_t> &plain_buffer,
                 DatawriterCryptoHandle &sending_datawriter_crypto,
-                SecurityException &exception);
+                SecurityException &exception) override;
 
     bool encode_datawriter_submessage(
                 std::vector<uint8_t> &encoded_rtps_submessage,
                 const std::vector<uint8_t> &plain_rtps_submessage,
                 DatawriterCryptoHandle &sending_datawriter_crypto,
                 std::vector<DatareaderCryptoHandle*>& receiving_datareader_crypto_list,
-                SecurityException &exception);
+                SecurityException &exception) override;
 
     bool encode_datareader_submessage(
                 std::vector<uint8_t> &encoded_rtps_submessage,
                 const std::vector<uint8_t> &plain_rtps_submessage,
                 DatareaderCryptoHandle &sending_datareader_crypto,
                 std::vector<DatawriterCryptoHandle*> &receiving_datawriter_crypto_list,
-                SecurityException &exception);
+                SecurityException &exception) override;
 
     bool encode_rtps_message(
                 std::vector<uint8_t> &encoded_rtps_message,
                 const std::vector<uint8_t> &plain_rtps_message,
                 ParticipantCryptoHandle &sending_crypto,
                 const std::vector<ParticipantCryptoHandle*> &receiving_crypto_list,
-                SecurityException &exception);
+                SecurityException &exception) override;
 
     bool decode_rtps_message(
                 std::vector<uint8_t> &plain_buffer,
                 const std::vector<uint8_t> &encoded_buffer,
                 const ParticipantCryptoHandle &receiving_crypto,
                 const ParticipantCryptoHandle &sending_crypto,
-                SecurityException &exception);
+                SecurityException &exception) override;
 
     bool preprocess_secure_submsg(
                 DatawriterCryptoHandle **datawriter_crypto,
@@ -79,21 +79,21 @@ class AESGCMGMAC_Transform : public CryptoTransform
                 const CDRMessage_t& encoded_rtps_submessage,
                 ParticipantCryptoHandle &receiving_crypto,
                 ParticipantCryptoHandle &sending_crypto,
-                SecurityException &exception);
+                SecurityException &exception) override;
 
     bool decode_datawriter_submessage(
                 CDRMessage_t& plain_rtps_submessage,
                 CDRMessage_t& encoded_rtps_submessage,
                 DatareaderCryptoHandle &receiving_datareader_crypto,
                 DatawriterCryptoHandle &sending_datawriter_cryupto,
-                SecurityException &exception);
+                SecurityException &exception) override;
 
     bool decode_datareader_submessage(
                 CDRMessage_t& plain_rtps_submessage,
                 CDRMessage_t& encoded_rtps_submessage,
                 DatawriterCryptoHandle &receiving_datawriter_crypto,
                 DatareaderCryptoHandle &sending_datareader_crypto,
-                SecurityException &exception);
+                SecurityException &exception) override;
 
     bool decode_serialized_payload(
                 std::vector<uint8_t> &plain_buffer,
@@ -101,7 +101,7 @@ class AESGCMGMAC_Transform : public CryptoTransform
                 const std::vector<uint8_t> &inline_qos,
                 DatareaderCryptoHandle &receiving_datareader_crypto,
                 DatawriterCryptoHandle &sending_datawriter_crypto,
-                SecurityException &exception);
+                SecurityException &exception) override;
 
     //Aux function to compute session key from the master material
     std::array<uint8_t, 32> compute_sessionkey(const std::array<uint8_t, 32>& master_sender_key,
@@ -150,11 +150,11 @@ class AESGCMGMAC_Transform : public CryptoTransform
            std::vector<uint8_t> &serialized_tag,
            unsigned char &flags);
 
-   uint32_t calculate_extra_size_for_rtps_message(uint32_t number_discovered_participants) const;
+   uint32_t calculate_extra_size_for_rtps_message(uint32_t number_discovered_participants) const override;
 
-   uint32_t calculate_extra_size_for_rtps_submessage(uint32_t number_discovered_readers) const;
+   uint32_t calculate_extra_size_for_rtps_submessage(uint32_t number_discovered_readers) const override;
 
-   uint32_t calculate_extra_size_for_encoded_payload(uint32_t number_discovered_readers) const;
+   uint32_t calculate_extra_size_for_encoded_payload(uint32_t number_discovered_readers) const override;
 };
 
 

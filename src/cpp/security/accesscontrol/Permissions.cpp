@@ -41,6 +41,7 @@
 #include <openssl/obj_mac.h>
 
 #include <cassert>
+#include <fstream>
 
 #define S1(x) #x
 #define S2(x) S1(x)
@@ -308,7 +309,64 @@ static bool load_permissions_file(AccessPermissionsHandle& ah, std::string& perm
     return returned_value;
 }
 
-static bool check_subject_name(const IdentityHandle& ih, const PermissionsData& permissions,
+static bool verify_permissions_file(const AccessPermissionsHandle& local_handle, const std::string& permissions_file,
+        PermissionsData& permissions, SecurityException& exception)
+{
+    bool returned_value = false;
+
+    if(permissions_file.size() <= static_cast<size_t>(std::numeric_limits<int>::max()))
+    {
+        BIO* permissions_buf = BIO_new_mem_buf(permissions_file.data(), static_cast<int>(permissions_file.size()));
+
+        if(permissions_buf != nullptr)
+        {
+            BIO* indata = nullptr;
+            PKCS7* p7 = SMIME_read_PKCS7(permissions_buf, &indata);
+
+            if(p7 != nullptr)
+            {
+                BIO* out = BIO_new(BIO_s_mem());
+                if(PKCS7_verify(p7, nullptr, local_handle->store_, indata, out, PKCS7_TEXT))
+                {
+                    BUF_MEM* ptr = nullptr;
+                    BIO_get_mem_ptr(out, &ptr);
+
+                    if(ptr != nullptr)
+                    {
+                        PermissionsParser parser;
+                        if((returned_value = parser.parse_stream(ptr->data, ptr->length)) == true)
+                        {
+                            parser.swap(permissions);
+                            returned_value = true;
+                        }
+                    }
+                    else
+                    {
+                        exception = _SecurityException_("OpenSSL library cannot retrieve mem ptr from file.");
+                    }
+                }
+                else
+                {
+                    exception = _SecurityException_("Failed verification of the permissions file");
+                }
+
+                BIO_free(out);
+                BIO_free(indata);
+                PKCS7_free(p7);
+            }
+            else
+            {
+                exception = _SecurityException_("Cannot read as PKCS7 the permissions file.");
+            }
+
+            BIO_free(permissions_buf);
+        }
+    }
+
+    return returned_value;
+}
+
+static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle& ah, PermissionsData& permissions,
         SecurityException& exception)
 {
     bool returned_value = false;
@@ -318,8 +376,9 @@ static bool check_subject_name(const IdentityHandle& ih, const PermissionsData& 
     {
         for(auto grant : permissions.grants)
         {
-            if(grant.subject_name.compare(lih->sn) == 0)
+            if(grant.subject_name.compare(lih->cert_sn_) == 0)
             {
+                ah->grant = std::move(grant);
                 returned_value = true;
             }
         }
@@ -327,12 +386,66 @@ static bool check_subject_name(const IdentityHandle& ih, const PermissionsData& 
         if(!returned_value)
         {
             exception = _SecurityException_(std::string("Not found the identity subject name in permissions file. Subject name: ") +
-                    lih->sn);
+                    lih->cert_sn_);
         }
     }
     else
     {
         exception = _SecurityException_("IdentityHandle is not of the type PKIIdentityHandle");
+    }
+
+    return returned_value;
+}
+
+static bool generate_permissions_token(AccessPermissionsHandle& handle)
+{
+    Property property;
+    PermissionsToken& token = handle->permissions_token_;
+    token.class_id("DDS:Access:Permissions:1.0");
+
+    property.name("dds.perm_ca.sn");
+    property.value() = handle->sn;
+    property.propagate(true);
+    token.properties().push_back(std::move(property));
+
+    property.name("dds.perm_ca.algo");
+    property.value() = handle->algo;
+    property.propagate(true);
+    token.properties().push_back(std::move(property));
+
+    return true;
+}
+
+static bool generate_credentials_token(AccessPermissionsHandle& handle, const std::string& file,
+        SecurityException& exception)
+{
+    bool returned_value = false;
+    // Create PermissionsCredentialToken;
+    Property property;
+    PermissionsCredentialToken& token = handle->permissions_credential_token_;
+    token.class_id("DDS:Access:PermissionsCredential");
+
+    if(file.size() >= 7 && file.compare(0, 7, "file://") == 0)
+    {
+        try
+        {
+            std::ifstream ifs(file.substr(7).c_str());
+            Property property;
+            property.name("dds.perm.cert");
+            property.value().assign((std::istreambuf_iterator<char>(ifs)),
+                (std::istreambuf_iterator<char>()));
+            property.propagate(true);
+            token.properties().push_back(std::move(property));
+            returned_value = true;
+        }
+        catch(std::exception& ex)
+        {
+            exception = _SecurityException_(std::string("Cannot find file ") + file);
+        }
+    }
+    else
+    {
+        exception = _SecurityException_("Unsupported permissions_ca format");
     }
 
     return returned_value;
@@ -389,9 +502,15 @@ PermissionsHandle* Permissions::validate_local_permissions(Authentication&,
             if(load_permissions_file(*ah, *permissions, permissions_data, exception))
             {
                 // Check subject name.
-                if(check_subject_name(identity, permissions_data, exception))
+                if(check_subject_name(identity, *ah, permissions_data, exception))
                 {
-                    return ah;
+                    if(generate_permissions_token(*ah))
+                    {
+                        if(generate_credentials_token(*ah, *permissions, exception))
+                        {
+                            return ah;
+                        }
+                    }
                 }
             }
         }
@@ -400,4 +519,222 @@ PermissionsHandle* Permissions::validate_local_permissions(Authentication&,
     delete ah;
 
     return nullptr;
+}
+
+bool Permissions::get_permissions_token(PermissionsToken** permissions_token,
+        const PermissionsHandle& handle,
+        SecurityException& exception)
+{
+    const AccessPermissionsHandle& phandle = AccessPermissionsHandle::narrow(handle);
+
+    if(!phandle.nil())
+    {
+        *permissions_token = new PermissionsToken(phandle->permissions_token_);
+        return true;
+    }
+    else
+    {
+        exception = _SecurityException_("Invalid permissions handle");
+    }
+
+    return false;
+}
+
+bool Permissions::return_permissions_token(PermissionsToken* token,
+        SecurityException& /*exception*/)
+{
+    delete token;
+    return true;
+}
+
+bool Permissions::get_permissions_credential_token(PermissionsCredentialToken** permissions_credential_token,
+        const PermissionsHandle& handle, SecurityException& exception)
+{
+    const AccessPermissionsHandle& phandle = AccessPermissionsHandle::narrow(handle);
+
+    if(!phandle.nil())
+    {
+        *permissions_credential_token = new PermissionsCredentialToken(phandle->permissions_credential_token_);
+        return true;
+    }
+    else
+    {
+        exception = _SecurityException_("Invalid permissions handle");
+    }
+
+    return false;
+}
+
+bool Permissions::return_permissions_credential_token(PermissionsCredentialToken* token,
+        SecurityException&)
+{
+    delete token;
+    return true;
+}
+
+bool Permissions::return_permissions_handle(PermissionsHandle* permissions_handle,
+                SecurityException&)
+{
+    AccessPermissionsHandle* handle = &AccessPermissionsHandle::narrow(*permissions_handle);
+
+    if(!handle->nil())
+    {
+        delete handle;
+        return true;
+    }
+
+    return false;
+}
+
+PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
+        const IdentityHandle& local_identity_handle,
+        const PermissionsHandle& local_permissions_handle,
+        const IdentityHandle& remote_identity_handle,
+        const PermissionsToken& remote_permissions_token,
+        const PermissionsCredentialToken& remote_credential_token,
+        SecurityException& exception)
+{
+    const PKIIdentityHandle& lih = PKIIdentityHandle::narrow(local_identity_handle);
+    const AccessPermissionsHandle& lph = AccessPermissionsHandle::narrow(local_permissions_handle);
+    const PKIIdentityHandle& rih = PKIIdentityHandle::narrow(remote_identity_handle);
+
+    if(lih.nil() || lph.nil() || rih.nil())
+    {
+        exception = _SecurityException_("Bad precondition");
+        return nullptr;
+    }
+
+    // Check permissions.
+    // Check c.id
+    const std::string* sn = DataHolderHelper::find_property_value(remote_permissions_token, "dds.perm_ca.sn");
+
+    if(sn != nullptr)
+    {
+        if(sn->compare(lph->sn) != 0)
+        {
+            exception = _SecurityException_("Remote participant PermissionsCA differs from local");
+            return nullptr;
+        }
+    }
+
+    const std::string* algo = DataHolderHelper::find_property_value(remote_permissions_token, "dds.perm_ca.algo");
+
+    if(algo != nullptr)
+    {
+        if(algo->compare(lph->algo) != 0)
+        {
+            exception = _SecurityException_("Remote participant PermissionsCA algorithm differs from local");
+            return nullptr;
+        }
+    }
+
+    const std::string* permissions_file = DataHolderHelper::find_property_value(remote_credential_token,
+            "dds.perm.cert");
+
+    if(permissions_file == nullptr)
+    {
+        exception = _SecurityException_("Remote participant doesn't sent the signed permissions file");
+        return nullptr;
+    }
+
+    PermissionsData data;
+    if(!verify_permissions_file(lph, *permissions_file, data, exception))
+    {
+        return nullptr;
+    }
+
+    Grant remote_grant;
+    for(auto grant : data.grants)
+    {
+        if(grant.subject_name.compare(rih->cert_sn_) == 0)
+        {
+            remote_grant = std::move(grant);
+            break;
+        }
+    }
+
+    if(remote_grant.subject_name.empty())
+    {
+        exception = _SecurityException_("Remote participant doesn't found in its permissions file");
+        return nullptr;
+    }
+
+    AccessPermissionsHandle* handle =  new AccessPermissionsHandle();
+    (*handle)->grant = std::move(remote_grant);
+
+    return handle;
+}
+
+bool Permissions::check_create_participant(const PermissionsHandle& local_handle, const uint32_t domain_id,
+                const RTPSParticipantAttributes&, SecurityException& exception)
+{
+    bool returned_value = false;
+    const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(local_handle);
+
+    if(lah.nil())
+    {
+        exception = _SecurityException_("Bad precondition");
+        return false;
+    }
+
+    //Search an allow rule with my domain
+    for(auto rule_it = lah->grant.rules.begin(); !returned_value &&
+            rule_it != lah->grant.rules.end(); ++rule_it)
+    {
+        if((*rule_it).allow)
+        {
+            for(auto domain : (*rule_it).domains.ids)
+            {
+                if(domain == domain_id)
+                {
+                    returned_value = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    if(!returned_value)
+    {
+        exception = _SecurityException_("Not found a rule allowing to use the domain_id");
+    }
+
+    return returned_value;
+}
+
+bool Permissions::check_remote_participant(const PermissionsHandle& remote_handle, const uint32_t domain_id,
+                const ParticipantProxyData&, SecurityException& exception)
+{
+    bool returned_value = false;
+    const AccessPermissionsHandle& rah = AccessPermissionsHandle::narrow(remote_handle);
+
+    if(rah.nil())
+    {
+        exception = _SecurityException_("Bad precondition");
+        return false;
+    }
+
+    //Search an allow rule with my domain
+    for(auto rule_it = rah->grant.rules.begin(); !returned_value &&
+            rule_it != rah->grant.rules.end(); ++rule_it)
+    {
+        if((*rule_it).allow)
+        {
+            for(auto domain : (*rule_it).domains.ids)
+            {
+                if(domain == domain_id)
+                {
+                    returned_value = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    if(!returned_value)
+    {
+        exception = _SecurityException_("Not found a rule allowing to use the domain_id");
+    }
+
+    return returned_value;
 }

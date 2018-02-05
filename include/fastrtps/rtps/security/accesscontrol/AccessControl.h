@@ -19,12 +19,14 @@
 #define __RTPS_SECURITY_ACCESSCONTROL_ACCESSCONTROL_H__
 
 #include "../common/Handle.h"
+#include "../../common/Token.h"
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
 class RTPSParticipantAttributes;
+class ParticipantProxyData;
 
 namespace security {
 
@@ -42,6 +44,35 @@ class AccessControl
                 const uint32_t domain_id,
                 const RTPSParticipantAttributes& participant_attr,
                 SecurityException& exception) = 0;
+
+
+        virtual bool get_permissions_token(PermissionsToken** permissions_token, const PermissionsHandle& handle,
+                SecurityException& exception) = 0;
+
+        virtual bool return_permissions_token(PermissionsToken* token, SecurityException& exception) = 0;
+
+        virtual bool get_permissions_credential_token(PermissionsCredentialToken** permissions_credential_token,
+                const PermissionsHandle& handle, SecurityException& exception) = 0;
+
+        virtual bool return_permissions_credential_token(PermissionsCredentialToken* token,
+                SecurityException& exception) = 0;
+
+        virtual bool return_permissions_handle(PermissionsHandle* permissions_handle,
+                SecurityException& exception) = 0;
+
+        virtual PermissionsHandle* validate_remote_permissions(Authentication& auth_plugin,
+                const IdentityHandle& local_identity_handle,
+                const PermissionsHandle& local_permissions_handle,
+                const IdentityHandle& remote_identity_handle,
+                const PermissionsToken& remote_permissions_token,
+                const PermissionsCredentialToken& remote_credential_token,
+                SecurityException& exception) = 0;
+
+        virtual bool check_create_participant(const PermissionsHandle& local_handle, const uint32_t domain_id,
+                const RTPSParticipantAttributes& qos, SecurityException& exception) = 0;
+
+        virtual bool check_remote_participant(const PermissionsHandle& remote_handle, const uint32_t domain_id,
+                const ParticipantProxyData&, SecurityException& exception) = 0;
 };
 
 } //namespace security
