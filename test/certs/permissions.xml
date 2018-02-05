@@ -9,7 +9,10 @@
         </validity>
         <allow_rule>
             <domains>
-                <id>0</id>
+                <id_range>
+                    <min>0</min>
+                    <max>230</max>
+                </id_range>
             </domains>
             <publish>
                 <topics>
@@ -26,7 +29,10 @@
         </validity>
         <allow_rule>
             <domains>
-                <id>0</id>
+                <id_range>
+                    <min>0</min>
+                    <max>230</max>
+                </id_range>
             </domains>
             <subscribe>
                 <topics>

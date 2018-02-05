@@ -26,7 +26,7 @@ namespace security {
 
 struct Domains
 {
-    std::vector<uint32_t> ids;
+    std::vector<std::pair<uint32_t, uint32_t>> ranges;
 };
 
 bool parse_domain_id_set(tinyxml2::XMLElement* root, Domains& domains);

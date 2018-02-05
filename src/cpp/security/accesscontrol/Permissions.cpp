@@ -52,6 +52,34 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
+static bool is_domain_in_set(const uint32_t domain_id, const Domains domains)
+{
+    bool returned_value = false;
+
+    for(auto range : domains.ranges)
+    {
+        if(range.second == 0)
+        {
+            if(domain_id == range.first)
+            {
+                returned_value = true;
+                break;
+            }
+        }
+        else
+        {
+            if(domain_id >= range.first &&
+                    domain_id <= range.second)
+            {
+                returned_value = true;
+                break;
+            }
+        }
+    }
+
+    return returned_value;
+}
+
 static bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm, SecurityException& exception)
 {
     bool returnedValue = false;
@@ -678,18 +706,14 @@ bool Permissions::check_create_participant(const PermissionsHandle& local_handle
     }
 
     //Search an allow rule with my domain
-    for(auto rule_it = lah->grant.rules.begin(); !returned_value &&
-            rule_it != lah->grant.rules.end(); ++rule_it)
+    for(auto rule : lah->grant.rules)
     {
-        if((*rule_it).allow)
+        if(rule.allow)
         {
-            for(auto domain : (*rule_it).domains.ids)
+            if(is_domain_in_set(domain_id, rule.domains))
             {
-                if(domain == domain_id)
-                {
-                    returned_value = true;
-                    break;
-                }
+                returned_value = true;
+                break;
             }
         }
     }
@@ -715,18 +739,14 @@ bool Permissions::check_remote_participant(const PermissionsHandle& remote_handl
     }
 
     //Search an allow rule with my domain
-    for(auto rule_it = rah->grant.rules.begin(); !returned_value &&
-            rule_it != rah->grant.rules.end(); ++rule_it)
+    for(auto rule : rah->grant.rules)
     {
-        if((*rule_it).allow)
+        if(rule.allow)
         {
-            for(auto domain : (*rule_it).domains.ids)
+            if(is_domain_in_set(domain_id, rule.domains))
             {
-                if(domain == domain_id)
-                {
-                    returned_value = true;
-                    break;
-                }
+                returned_value = true;
+                break;
             }
         }
     }
