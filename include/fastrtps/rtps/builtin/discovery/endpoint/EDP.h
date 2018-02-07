@@ -172,7 +172,7 @@ class EDP
         bool pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, const GUID_t& remote_participant_guid,
                 ReaderProxyData& rdata);
 
-        bool pairing_remote_reader_with_local_writer_after_crypto(const GUID_t& local_writer,
+        bool pairing_remote_reader_with_local_writer_after_security(const GUID_t& local_writer,
                 const ReaderProxyData& remote_reader_data);
 #endif
 
@@ -188,7 +188,7 @@ class EDP
         bool pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, const GUID_t& remote_participant_guid,
                 WriterProxyData& wdata);
 
-        bool pairing_remote_writer_with_local_reader_after_crypto(const GUID_t& local_reader,
+        bool pairing_remote_writer_with_local_reader_after_security(const GUID_t& local_reader,
                 const WriterProxyData& remote_writer_data);
 #endif
 

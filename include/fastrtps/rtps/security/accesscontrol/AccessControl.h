@@ -23,10 +23,17 @@
 
 namespace eprosima {
 namespace fastrtps {
+
+class PartitionQosPolicy;
+class ReaderQos;
+class WriterQos;
+
 namespace rtps {
 
 class RTPSParticipantAttributes;
 class ParticipantProxyData;
+class WriterProxyData;
+class ReaderProxyData;
 
 namespace security {
 
@@ -73,6 +80,35 @@ class AccessControl
 
         virtual bool check_remote_participant(const PermissionsHandle& remote_handle, const uint32_t domain_id,
                 const ParticipantProxyData&, SecurityException& exception) = 0;
+
+        //TODO (Ricardo) Future
+        /*
+        virtual bool check_create_datawriter(const PermissionsHandle& local_handle,
+                const uint32_t domain_id, const std::string& topic_name,
+                const WriterQos& qos, const PartitionQosPolicy& partition,
+                SecurityException& exception) = 0;
+
+        virtual bool check_create_datareader(const PermissionsHandle& local_handle,
+                const uint32_t domain_id, const std::string& topic_name,
+                const ReaderQos& qos, const PartitionQosPolicy& partition,
+                SecurityException& exception) = 0;
+                */
+
+        virtual bool check_create_datawriter(const PermissionsHandle& local_handle,
+                const uint32_t domain_id, const std::string& topic_name,
+                const std::string& partitions, SecurityException& exception) = 0;
+
+        virtual bool check_create_datareader(const PermissionsHandle& local_handle,
+                const uint32_t domain_id, const std::string& topic_name,
+                const std::string& partitions, SecurityException& exception) = 0;
+
+        virtual bool check_remote_datawriter(const PermissionsHandle& remote_handle,
+                const uint32_t domain_id, const WriterProxyData& publication_data,
+                SecurityException& exception) = 0;
+
+        virtual bool check_remote_datareader(const PermissionsHandle& remote_handle,
+                const uint32_t domain_id, const ReaderProxyData& subscription_data,
+                SecurityException& exception) = 0;
 };
 
 } //namespace security

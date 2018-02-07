@@ -40,13 +40,13 @@ class EDP
         MOCK_METHOD3(pairing_reader_proxy_with_local_writer, bool(const GUID_t& local_writer,
                     const GUID_t& remote_participant_guid, ReaderProxyData& rdata));
 
-        MOCK_METHOD2(pairing_remote_reader_with_local_writer_after_crypto, bool(const GUID_t& local_writer,
+        MOCK_METHOD2(pairing_remote_reader_with_local_writer_after_security, bool(const GUID_t& local_writer,
                 const ReaderProxyData& remote_reader_data));
 
         MOCK_METHOD3(pairing_writer_proxy_with_local_reader, bool(const GUID_t& local_reader,
                     const GUID_t& remote_participant_guid, WriterProxyData& wdata));
 
-        MOCK_METHOD2(pairing_remote_writer_with_local_reader_after_crypto, bool(const GUID_t& local_reader,
+        MOCK_METHOD2(pairing_remote_writer_with_local_reader_after_security, bool(const GUID_t& local_reader,
                 const WriterProxyData& remote_writer_data));
 #endif
 };

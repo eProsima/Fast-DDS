@@ -492,14 +492,19 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
         return false;
 
 #if HAVE_SECURITY
-    if(submessage_protection || payload_protection)
+    if(submessage_protection)
     {
-        if(submessage_protection)
-            SWriter->is_submessage_protected_ = true;
-        if(payload_protection)
-            SWriter->is_payload_protected_ = true;
+        SWriter->is_submessage_protected_ = true;
+    }
+    if(payload_protection)
+    {
+        SWriter->is_payload_protected_ = true;
+    }
 
-        if(!m_security_manager.register_local_writer(SWriter->getGuid(), param.endpoint.properties.properties()))
+    if(!isBuiltin)
+    {
+        if(!m_security_manager.register_local_writer(SWriter->getGuid(),
+                    param.endpoint.properties.properties()))
         {
             delete(SWriter);
             return false;
@@ -619,14 +624,19 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
         return false;
 
 #if HAVE_SECURITY
-    if(submessage_protection || payload_protection)
+    if(submessage_protection)
     {
-        if(submessage_protection)
-            SReader->is_submessage_protected_ = true;
-        if(payload_protection)
-            SReader->is_payload_protected_ = true;
+        SReader->is_submessage_protected_ = true;
+    }
+    if(payload_protection)
+    {
+        SReader->is_payload_protected_ = true;
+    }
 
-        if(!m_security_manager.register_local_reader(SReader->getGuid(), param.endpoint.properties.properties()))
+    if(!isBuiltin)
+    {
+        if(!m_security_manager.register_local_reader(SReader->getGuid(),
+                    param.endpoint.properties.properties()))
         {
             delete(SReader);
             return false;

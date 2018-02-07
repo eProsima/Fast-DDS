@@ -66,6 +66,22 @@ class Permissions : public AccessControl
 
         bool check_remote_participant(const PermissionsHandle& remote_handle, const uint32_t domain_id,
                 const ParticipantProxyData&, SecurityException& exception) override;
+
+        bool check_create_datawriter(const PermissionsHandle& local_handle,
+                const uint32_t domain_id, const std::string& topic_name,
+                const std::string& partitions, SecurityException& exception) override;
+
+        bool check_create_datareader(const PermissionsHandle& local_handle,
+                const uint32_t domain_id, const std::string& topic_name,
+                const std::string& partitions, SecurityException& exception) override;
+
+        bool check_remote_datawriter(const PermissionsHandle& remote_handle,
+                const uint32_t domain_id, const WriterProxyData& publication_data,
+                SecurityException& exception) override;
+
+        bool check_remote_datareader(const PermissionsHandle& remote_handle,
+                const uint32_t domain_id, const ReaderProxyData& subscription_data,
+                SecurityException& exception) override;
 };
 
 } //namespace security

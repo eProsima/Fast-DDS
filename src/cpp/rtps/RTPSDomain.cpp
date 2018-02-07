@@ -183,7 +183,9 @@ RTPSWriter* RTPSDomain::createRTPSWriter(RTPSParticipant* p, WriterAttributes& w
         {
             RTPSWriter* writ;
             if(it->second->createWriter(&writ,watt,hist,listen))
+            {
                 return writ;
+            }
             return nullptr;
         }
     }
@@ -214,7 +216,10 @@ RTPSReader* RTPSDomain::createRTPSReader(RTPSParticipant* p, ReaderAttributes& r
         {
             RTPSReader* reader;
             if(it->second->createReader(&reader,ratt,rhist,rlisten))
+            {
                 return reader;
+            }
+
             return nullptr;
         }
     }

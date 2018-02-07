@@ -82,7 +82,7 @@ class TopicAttributes
         }
 
         //! TopicKind_t, default value NO_KEY.
-		rtps::TopicKind_t topicKind;
+        rtps::TopicKind_t topicKind;
         //! Topic Name.
         std::string topicName;
         //!Topic Data Type.

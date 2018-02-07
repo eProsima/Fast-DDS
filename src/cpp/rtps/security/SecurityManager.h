@@ -221,6 +221,21 @@ class SecurityManager
                     return shared_secret_handle_;
                 }
 
+                void set_permissions_handle(PermissionsHandle* handle)
+                {
+                    permissions_handle_ = handle;
+                }
+
+                PermissionsHandle* get_permissions_handle()
+                {
+                    return permissions_handle_;
+                }
+
+                const PermissionsHandle* get_permissions_handle() const
+                {
+                    return permissions_handle_;
+                }
+
                 void set_participant_crypto(ParticipantCryptoHandle* participant_crypto)
                 {
                     participant_crypto_ = participant_crypto;
@@ -253,6 +268,8 @@ class SecurityManager
                 AuthUniquePtr auth_ptr_;
 
                 SharedSecretHandle* shared_secret_handle_;
+
+                PermissionsHandle* permissions_handle_;
 
                 ParticipantCryptoHandle* participant_crypto_;
 

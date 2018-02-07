@@ -25,6 +25,9 @@
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/security/exceptions/SecurityException.h>
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastrtps/utils/StringMatching.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 
 #include <openssl/opensslv.h>
 
@@ -52,7 +55,7 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
-static bool is_domain_in_set(const uint32_t domain_id, const Domains domains)
+static bool is_domain_in_set(const uint32_t domain_id, const Domains& domains)
 {
     bool returned_value = false;
 
@@ -70,6 +73,26 @@ static bool is_domain_in_set(const uint32_t domain_id, const Domains domains)
         {
             if(domain_id >= range.first &&
                     domain_id <= range.second)
+            {
+                returned_value = true;
+                break;
+            }
+        }
+    }
+
+    return returned_value;
+}
+
+static bool is_topic_in_criterias(const std::string& topic_name, const std::vector<Criteria>& criterias)
+{
+    bool returned_value = false;
+
+    for(auto criteria_it = criterias.begin(); !returned_value &&
+            criteria_it != criterias.end(); ++criteria_it)
+    {
+        for(auto topic : (*criteria_it).topics)
+        {
+            if(StringMatching::matchString(topic.c_str(), topic_name.c_str()))
             {
                 returned_value = true;
                 break;
@@ -754,6 +777,178 @@ bool Permissions::check_remote_participant(const PermissionsHandle& remote_handl
     if(!returned_value)
     {
         exception = _SecurityException_("Not found a rule allowing to use the domain_id");
+    }
+
+    return returned_value;
+}
+
+bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
+        const uint32_t domain_id, const std::string& topic_name,
+        const std::string& partitions, SecurityException& exception)
+{
+    bool returned_value = false;
+    const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(local_handle);
+
+    if(lah.nil())
+    {
+        exception = _SecurityException_("Bad precondition");
+        return false;
+    }
+
+    for(auto rule : lah->grant.rules)
+    {
+        if(is_domain_in_set(domain_id, rule.domains))
+        {
+            if(is_topic_in_criterias(topic_name, rule.publishes))
+            {
+                if(rule.allow)
+                {
+                    returned_value = true;
+                }
+                else
+                {
+                    exception = _SecurityException_(topic_name +
+                            std::string(" topic denied by deny rule."));
+                }
+
+                break;
+            }
+        }
+    }
+
+    if(!returned_value && strlen(exception.what()) == 0)
+    {
+        exception = _SecurityException_(topic_name +
+                std::string(" topic not found in allow rule."));
+    }
+
+    return returned_value;
+}
+
+bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
+        const uint32_t domain_id, const std::string& topic_name,
+        const std::string& partitions, SecurityException& exception)
+{
+    bool returned_value = false;
+    const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(local_handle);
+
+    if(lah.nil())
+    {
+        exception = _SecurityException_("Bad precondition");
+        return false;
+    }
+
+    for(auto rule : lah->grant.rules)
+    {
+        if(is_domain_in_set(domain_id, rule.domains))
+        {
+            if(is_topic_in_criterias(topic_name, rule.subscribes))
+            {
+                if(rule.allow)
+                {
+                    returned_value = true;
+                }
+                else
+                {
+                    exception = _SecurityException_(topic_name +
+                            std::string(" topic denied by deny rule."));
+                }
+
+                break;
+            }
+        }
+    }
+
+    if(!returned_value && strlen(exception.what()) == 0)
+    {
+        exception = _SecurityException_(topic_name +
+                std::string(" topic not found in allow rule."));
+    }
+
+    return returned_value;
+}
+
+bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle,
+        const uint32_t domain_id, const WriterProxyData& publication_data,
+        SecurityException& exception)
+{
+    bool returned_value = false;
+    const AccessPermissionsHandle& rah = AccessPermissionsHandle::narrow(remote_handle);
+
+    if(rah.nil())
+    {
+        exception = _SecurityException_("Bad precondition");
+        return false;
+    }
+
+    for(auto rule : rah->grant.rules)
+    {
+        if(is_domain_in_set(domain_id, rule.domains))
+        {
+            if(is_topic_in_criterias(publication_data.topicName(), rule.publishes))
+            {
+                if(rule.allow)
+                {
+                    returned_value = true;
+                }
+                else
+                {
+                    exception = _SecurityException_(publication_data.topicName() +
+                            std::string(" topic denied by deny rule."));
+                }
+
+                break;
+            }
+        }
+    }
+
+    if(!returned_value && strlen(exception.what()) == 0)
+    {
+        exception = _SecurityException_(publication_data.topicName() +
+                std::string(" topic not found in allow rule."));
+    }
+
+    return returned_value;
+}
+
+bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle,
+        const uint32_t domain_id, const ReaderProxyData& subscription_data,
+        SecurityException& exception)
+{
+    bool returned_value = false;
+    const AccessPermissionsHandle& rah = AccessPermissionsHandle::narrow(remote_handle);
+
+    if(rah.nil())
+    {
+        exception = _SecurityException_("Bad precondition");
+        return false;
+    }
+
+    for(auto rule : rah->grant.rules)
+    {
+        if(is_domain_in_set(domain_id, rule.domains))
+        {
+            if(is_topic_in_criterias(subscription_data.topicName(), rule.subscribes))
+            {
+                if(rule.allow)
+                {
+                    returned_value = true;
+                }
+                else
+                {
+                    exception = _SecurityException_(subscription_data.topicName() +
+                            std::string(" topic denied by deny rule."));
+                }
+
+                break;
+            }
+        }
+    }
+
+    if(!returned_value && strlen(exception.what()) == 0)
+    {
+        exception = _SecurityException_(subscription_data.topicName() +
+                std::string(" topic not found in allow rule."));
     }
 
     return returned_value;

@@ -16,7 +16,7 @@
             </domains>
             <publish>
                 <topics>
-                    <topic>Circle</topic>
+                    <topic>BlackBox_*_BuiltinAuthenticationAndAccessPlugin_Permissions_validation_ok*</topic>
                 </topics>
             </publish>
         </allow_rule>
@@ -36,7 +36,7 @@
             </domains>
             <subscribe>
                 <topics>
-                    <topic>Circle</topic>
+                    <topic>BlackBox_*_BuiltinAuthenticationAndAccessPlugin_Permissions_validation_ok*</topic>
                 </topics>
             </subscribe>
         </allow_rule>
