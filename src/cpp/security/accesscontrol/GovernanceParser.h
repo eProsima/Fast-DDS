@@ -22,7 +22,7 @@ namespace fastrtps {
 namespace rtps {
 namespace security {
 
-enum ProtectionKind
+enum class ProtectionKind
 {
     NONE,
     SIGN,

@@ -99,18 +99,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     mp_participantListener(plisten),
     mp_userParticipant(par),
     mp_mutex(new std::recursive_mutex())
-#if HAVE_SECURITY
-    , is_rtps_protected_(false)
-#endif
 {
-#if HAVE_SECURITY
-    // Read participant properties.
-    const std::string* property_value = PropertyPolicyHelper::find_property(PParam.properties,
-            "rtps.participant.rtps_protection_kind");
-    if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
-        is_rtps_protected_ = true;
-#endif
-
     // Builtin transport by default
     if (PParam.useBuiltinTransports)
     {
@@ -324,7 +313,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
 #if HAVE_SECURITY
     // Start security
-    m_security_manager.init();
+    // TODO(Ricardo) Get returned value in future.
+    m_security_manager.init(security_attributes_, PParam.properties);
 #endif
 
     //START BUILTIN PROTOCOLS
@@ -1122,7 +1112,7 @@ uint32_t RTPSParticipantImpl::calculateMaxDataSize(uint32_t length)
 #if HAVE_SECURITY
     // If there is rtps messsage protection, reduce max size for messages,
     // because extra data is added on encryption.
-    if(is_rtps_protected_)
+    if(security_attributes_.is_rtps_protected)
     {
         maxDataSize -= m_security_manager.calculate_extra_size_for_rtps_message();
     }

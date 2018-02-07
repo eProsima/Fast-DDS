@@ -21,6 +21,7 @@
 #include <fastrtps/rtps/security/common/Handle.h>
 #include <fastrtps/rtps/common/Token.h>
 #include "PermissionsParser.h"
+#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 
 #include <openssl/x509.h>
 #include <string>
@@ -44,6 +45,7 @@ class AccessPermissions
         bool there_are_crls_;
         PermissionsToken permissions_token_;
         PermissionsCredentialToken permissions_credential_token_;
+        ParticipantSecurityAttributes governance;
         Grant grant;
 };
 

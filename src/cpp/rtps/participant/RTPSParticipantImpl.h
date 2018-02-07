@@ -43,6 +43,7 @@
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
+#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 
 #if HAVE_SECURITY
 #include "../security/SecurityManager.h"
@@ -215,7 +216,7 @@ class RTPSParticipantImpl
 #if HAVE_SECURITY
         security::SecurityManager& security_manager() { return m_security_manager; }
 
-        bool is_rtps_protected() const { return is_rtps_protected_; }
+        bool is_rtps_protected() const { return security_attributes_.is_rtps_protected; }
 #endif
 
         PDPSimple* pdpsimple();
@@ -334,7 +335,7 @@ class RTPSParticipantImpl
         std::vector<std::unique_ptr<FlowController> > m_controllers;
 
 #if HAVE_SECURITY
-        bool is_rtps_protected_;
+        security::ParticipantSecurityAttributes security_attributes_;
 #endif
 
     public:

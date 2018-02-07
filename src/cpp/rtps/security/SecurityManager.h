@@ -53,6 +53,7 @@ namespace security {
 class Authentication;
 class AccessControl;
 class Cryptography;
+class ParticipantSecurityAttributes;
 
 class SecurityManager
 {
@@ -64,7 +65,7 @@ class SecurityManager
 
         ~SecurityManager();
 
-        bool init();
+        bool init(ParticipantSecurityAttributes& attributes, const PropertyPolicy participant_properties);
 
         void destroy();
 

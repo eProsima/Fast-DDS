@@ -417,8 +417,8 @@ static bool verify_permissions_file(const AccessPermissionsHandle& local_handle,
     return returned_value;
 }
 
-static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle& ah, PermissionsData& permissions,
-        SecurityException& exception)
+static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle& ah, const uint32_t domain_id,
+        DomainAccessRules& governance, PermissionsData& permissions, SecurityException& exception)
 {
     bool returned_value = false;
     const PKIIdentityHandle& lih = PKIIdentityHandle::narrow(ih);
@@ -431,10 +431,38 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
             {
                 ah->grant = std::move(grant);
                 returned_value = true;
+
+                // Remove rules not apply to my domain
+                auto iterator = grant.rules.begin();
+                while(iterator != grant.rules.end())
+                {
+                    if(!is_domain_in_set(domain_id, iterator->domains))
+                    {
+                        iterator = grant.rules.erase(iterator);
+                    }
+                }
+
+                break;
             }
         }
 
-        if(!returned_value)
+        if(returned_value)
+        {
+            // Retry governance info.
+            for(auto rule : governance.rules)
+            {
+                if(is_domain_in_set(domain_id, rule.domains))
+                {
+                    if(rule.rtps_protection_kind != ProtectionKind::NONE)
+                    {
+                        ah->governance.is_rtps_protected = true;
+                    }
+
+                    break;
+                }
+            }
+        }
+        else
         {
             exception = _SecurityException_(std::string("Not found the identity subject name in permissions file. Subject name: ") +
                     lih->cert_sn_);
@@ -553,7 +581,7 @@ PermissionsHandle* Permissions::validate_local_permissions(Authentication&,
             if(load_permissions_file(*ah, *permissions, permissions_data, exception))
             {
                 // Check subject name.
-                if(check_subject_name(identity, *ah, permissions_data, exception))
+                if(check_subject_name(identity, *ah, domain_id, rules, permissions_data, exception))
                 {
                     if(generate_permissions_token(*ah))
                     {
@@ -733,11 +761,8 @@ bool Permissions::check_create_participant(const PermissionsHandle& local_handle
     {
         if(rule.allow)
         {
-            if(is_domain_in_set(domain_id, rule.domains))
-            {
-                returned_value = true;
-                break;
-            }
+            returned_value = true;
+            break;
         }
     }
 
@@ -797,22 +822,19 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
 
     for(auto rule : lah->grant.rules)
     {
-        if(is_domain_in_set(domain_id, rule.domains))
+        if(is_topic_in_criterias(topic_name, rule.publishes))
         {
-            if(is_topic_in_criterias(topic_name, rule.publishes))
+            if(rule.allow)
             {
-                if(rule.allow)
-                {
-                    returned_value = true;
-                }
-                else
-                {
-                    exception = _SecurityException_(topic_name +
-                            std::string(" topic denied by deny rule."));
-                }
-
-                break;
+                returned_value = true;
             }
+            else
+            {
+                exception = _SecurityException_(topic_name +
+                        std::string(" topic denied by deny rule."));
+            }
+
+            break;
         }
     }
 
@@ -840,22 +862,19 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
 
     for(auto rule : lah->grant.rules)
     {
-        if(is_domain_in_set(domain_id, rule.domains))
+        if(is_topic_in_criterias(topic_name, rule.subscribes))
         {
-            if(is_topic_in_criterias(topic_name, rule.subscribes))
+            if(rule.allow)
             {
-                if(rule.allow)
-                {
-                    returned_value = true;
-                }
-                else
-                {
-                    exception = _SecurityException_(topic_name +
-                            std::string(" topic denied by deny rule."));
-                }
-
-                break;
+                returned_value = true;
             }
+            else
+            {
+                exception = _SecurityException_(topic_name +
+                        std::string(" topic denied by deny rule."));
+            }
+
+            break;
         }
     }
 
@@ -952,4 +971,19 @@ bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle
     }
 
     return returned_value;
+}
+
+bool Permissions::get_participant_sec_attributes(const PermissionsHandle& local_handle,
+        ParticipantSecurityAttributes& attributes, SecurityException& exception)
+{
+    const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(local_handle);
+
+    if(lah.nil())
+    {
+        exception = _SecurityException_("Bad precondition");
+        return false;
+    }
+
+    attributes = lah->governance;
+    return true;
 }

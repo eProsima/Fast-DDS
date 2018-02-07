@@ -4138,6 +4138,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndAccessPlugin_Permissions_validati
                     "file://" + std::string(certs_path) + "/mainsubcert.pem"));
     sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
                     "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
                     "builtin.Access-Permissions"));
     sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
@@ -4161,6 +4163,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndAccessPlugin_Permissions_validati
                     "file://" + std::string(certs_path) + "/mainpubcert.pem"));
     pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
                     "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
     pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
                     "builtin.Access-Permissions"));
     pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",

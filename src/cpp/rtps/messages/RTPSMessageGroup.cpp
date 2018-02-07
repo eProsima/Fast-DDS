@@ -197,7 +197,11 @@ void RTPSMessageGroup::send()
         // TODO(Ricardo) Control message size if it will be encrypted.
         if(participant_->is_rtps_protected() && endpoint_->supports_rtps_protection())
         {
-            participant_->security_manager().encode_rtps_message(*full_msg_, current_remote_participants_);
+            if(!participant_->security_manager().encode_rtps_message(*full_msg_, current_remote_participants_))
+            {
+                logError(RTPS_WRITER,"Error encoding rtps message.");
+                return;
+            }
         }
 #endif
 

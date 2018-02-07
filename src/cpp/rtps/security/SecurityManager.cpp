@@ -34,6 +34,7 @@
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
+#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 
 #include <cassert>
 #include <thread>
@@ -91,7 +92,7 @@ SecurityManager::~SecurityManager()
     destroy();
 }
 
-bool SecurityManager::init()
+bool SecurityManager::init(ParticipantSecurityAttributes& attributes, const PropertyPolicy participant_properties)
 {
     SecurityException exception;
     domain_id_ = participant_->getRTPSParticipantAttributes().builtin.domainId;
@@ -145,8 +146,19 @@ bool SecurityManager::init()
                             if(access_plugin_->get_permissions_credential_token(&token, *local_permissions_handle_, exception))
                             {
 
-                                if(!authentication_plugin_->set_permissions_credential_and_token(*local_identity_handle_,
+                                if(authentication_plugin_->set_permissions_credential_and_token(*local_identity_handle_,
                                             *token, exception))
+                                {
+                                    if(!access_plugin_->get_participant_sec_attributes(*local_permissions_handle_,
+                                                attributes, exception))
+                                    {
+                                        logError(SECURITY, "Error getting participant security attributes. (" <<
+                                                exception.what() << ")");
+                                        access_plugin_->return_permissions_handle(local_permissions_handle_, exception);
+                                        local_permissions_handle_ = nullptr;
+                                    }
+                                }
+                                else
                                 {
                                     logError(SECURITY, "Error setting permissions credential token. (" << exception.what() << ")");
                                     access_plugin_->return_permissions_handle(local_permissions_handle_, exception);
@@ -196,10 +208,22 @@ bool SecurityManager::init()
                     if(local_participant_crypto_handle_ != nullptr)
                     {
                         assert(!local_participant_crypto_handle_->nil());
+
+                        if(access_plugin_ == nullptr)
+                        {
+                            // Read participant properties.
+                            const std::string* property_value = PropertyPolicyHelper::find_property(participant_properties,
+                                    "rtps.participant.rtps_protection_kind");
+                            if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
+                            {
+                                attributes.is_rtps_protected = true;
+                            }
+                        }
+
                     }
                     else
                     {
-                        logInfo(SECURITY, "Cannot register local participant in crypto plugin. (" << exception.what() << ")");
+                        logError(SECURITY, "Cannot register local participant in crypto plugin. (" << exception.what() << ")");
                     }
                 }
                 else
@@ -1777,7 +1801,10 @@ bool SecurityManager::encode_rtps_message(CDRMessage_t& message,
         const std::vector<GuidPrefix_t> &receiving_list)
 {
     if(crypto_plugin_ == nullptr)
+    {
+        logError(SECURITY, "Trying to encode rtps message without set cryptography plugin.");
         return false;
+    }
 
     assert(receiving_list.size() > 0);
 

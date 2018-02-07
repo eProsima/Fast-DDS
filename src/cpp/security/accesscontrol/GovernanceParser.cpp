@@ -186,15 +186,15 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
             {
                 if(strcmp(text, ProtectionKindNone_str) == 0)
                 {
-                    rule.rtps_protection_kind = NONE;
+                    rule.rtps_protection_kind = ProtectionKind::NONE;
                 }
                 else if(strcmp(text, ProtectionKindSign_str) == 0)
                 {
-                    rule.rtps_protection_kind = SIGN;
+                    rule.rtps_protection_kind = ProtectionKind::SIGN;
                 }
                 else if(strcmp(text, ProtectionKindEncrypt_str) == 0)
                 {
-                    rule.rtps_protection_kind = ENCRYPT;
+                    rule.rtps_protection_kind = ProtectionKind::ENCRYPT;
                 }
                 else
                 {

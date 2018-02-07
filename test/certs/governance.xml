@@ -4,13 +4,19 @@
     <domain_access_rules>
         <domain_rule>
             <domains>
-                <id>0</id>
+                <id_range>
+                    <min>0</min>
+                    <max>120</max>
+                </id_range>
             </domains>
             <rtps_protection_kind>ENCRYPT</rtps_protection_kind>
         </domain_rule>
         <domain_rule>
             <domains>
-                <id>1</id>
+                <id_range>
+                    <min>121</min>
+                    <max>230</max>
+                </id_range>
             </domains>
             <rtps_protection_kind>NONE</rtps_protection_kind>
         </domain_rule>
