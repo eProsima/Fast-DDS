@@ -103,6 +103,22 @@ static bool is_topic_in_criterias(const std::string& topic_name, const std::vect
     return returned_value;
 }
 
+static bool is_validation_in_time(const Validity& validity)
+{
+    bool returned_value = false;
+    std::time_t current_time = std::time(nullptr);
+
+    if(std::difftime(current_time, validity.not_before) >= 0)
+    {
+        if(std::difftime(validity.not_after, current_time) >= 0)
+        {
+            returned_value = true;
+        }
+    }
+
+    return returned_value;
+}
+
 static bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm, SecurityException& exception)
 {
     bool returnedValue = false;
@@ -427,22 +443,25 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
     {
         for(auto grant : permissions.grants)
         {
-            if(grant.subject_name.compare(lih->cert_sn_) == 0)
+            if(is_validation_in_time(grant.validity))
             {
-                ah->grant = std::move(grant);
-                returned_value = true;
-
-                // Remove rules not apply to my domain
-                auto iterator = grant.rules.begin();
-                while(iterator != grant.rules.end())
+                if(grant.subject_name.compare(lih->cert_sn_) == 0)
                 {
-                    if(!is_domain_in_set(domain_id, iterator->domains))
-                    {
-                        iterator = grant.rules.erase(iterator);
-                    }
-                }
+                    ah->grant = std::move(grant);
+                    returned_value = true;
 
-                break;
+                    // Remove rules not apply to my domain
+                    auto iterator = grant.rules.begin();
+                    while(iterator != grant.rules.end())
+                    {
+                        if(!is_domain_in_set(domain_id, iterator->domains))
+                        {
+                            iterator = grant.rules.erase(iterator);
+                        }
+                    }
+
+                    break;
+                }
             }
         }
 
@@ -725,10 +744,13 @@ PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
     Grant remote_grant;
     for(auto grant : data.grants)
     {
-        if(grant.subject_name.compare(rih->cert_sn_) == 0)
+        if(is_validation_in_time(grant.validity))
         {
-            remote_grant = std::move(grant);
-            break;
+            if(grant.subject_name.compare(rih->cert_sn_) == 0)
+            {
+                remote_grant = std::move(grant);
+                break;
+            }
         }
     }
 

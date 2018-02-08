@@ -19,7 +19,7 @@
 
 #include <tinyxml2.h>
 #include <string>
-#include <time.h>
+#include <ctime>
 
 namespace eprosima {
 namespace fastrtps {
@@ -43,14 +43,8 @@ struct Rule
 
 struct Validity
 {
-    Validity()
-    {
-        memset(&not_before, 0, sizeof(struct tm));
-        memset(&not_after, 0, sizeof(struct tm));
-    }
-
-    struct tm not_before;
-    struct tm not_after;
+    std::time_t not_before;
+    std::time_t not_after;
 };
 
 struct Grant
