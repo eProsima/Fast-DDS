@@ -148,7 +148,7 @@ bool PartitionQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 bool UserDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    uint32_t align = (4 - msg->pos % 4) & 3; //align
+    uint32_t align = (4 - (msg->pos + 6 + dataVec.size())  % 4) & 3; //align
     this->length = (uint16_t)(4 + this->dataVec.size() + align);
     valid &= CDRMessage::addUInt16(msg, this->length);
     valid &= CDRMessage::addUInt32(msg, (uint32_t)this->dataVec.size());
