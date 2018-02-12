@@ -18,6 +18,14 @@
 
 #include <cassert>
 
+#if TIXML2_MAJOR_VERSION >= 6
+#define PRINTLINE(node) node->GetLineNum()
+#define PRINTLINEPLUSONE(node) node->GetLineNum() + 1
+#else
+#define PRINTLINE(node) ""
+#define PRINTLINEPLUSONE(node) ""
+#endif
+
 static const char* DomainId_str = "id";
 static const char* DomainIdRange_str = "id_range";
 static const char* Min_str = "min";
@@ -50,7 +58,7 @@ bool eprosima::fastrtps::rtps::security::parse_domain_id_set(tinyxml2::XMLElemen
                 else
                 {
                     logError(XMLPARSER, "Invalid value of " << DomainId_str <<
-                            " tag. Line " << node->GetLineNum());
+                            " tag. Line " << PRINTLINE(node));
                     returned_value = false;
                 }
             }
@@ -67,14 +75,14 @@ bool eprosima::fastrtps::rtps::security::parse_domain_id_set(tinyxml2::XMLElemen
                         if(tinyxml2::XMLError::XML_SUCCESS != subnode->QueryUnsignedText(&min_domain_id))
                         {
                             logError(XMLPARSER, "Invalid value of " << DomainId_str <<
-                                    " tag. Line " << subnode->GetLineNum());
+                                    " tag. Line " << PRINTLINE(subnode));
                             returned_value = false;
                         }
                     }
                     else
                     {
                         logError(XMLPARSER, "Expected " << Min_str << " tag. Line " <<
-                                subnode->GetLineNum());
+                                PRINTLINE(subnode));
                         returned_value = false;
                     }
 
@@ -91,35 +99,35 @@ bool eprosima::fastrtps::rtps::security::parse_domain_id_set(tinyxml2::XMLElemen
                             else
                             {
                                 logError(XMLPARSER, "Invalid value of " << DomainId_str <<
-                                        " tag. Line " << subnode->GetLineNum());
+                                        " tag. Line " << PRINTLINE(subnode));
                                 returned_value = false;
                             }
                         }
                         else
                         {
                             logError(XMLPARSER, "Expected " << Max_str << " tag. Line " <<
-                                    subnode->GetLineNum());
+                                    PRINTLINE(subnode));
                             returned_value = false;
                         }
                     }
                     else
                     {
                         logError(XMLPARSER, "Expected " << Max_str << " tag. Line " <<
-                                node->GetLineNum());
+                                PRINTLINE(node));
                         returned_value = false;
                     }
                 }
                 else
                 {
                     logError(XMLPARSER, "Expected " << Min_str << " and " << Max_str << " tags. Line " <<
-                            node->GetLineNum() + 1);
+                            PRINTLINEPLUSONE(node));
                     returned_value = false;
                 }
             }
             else
             {
                 logError(XMLPARSER, "Not valid tag. Expected " << DomainId_str << " or " << DomainIdRange_str <<
-                        " tag. Line " << node->GetLineNum());
+                        " tag. Line " << PRINTLINE(node));
                 returned_value = false;
             }
         }
@@ -128,9 +136,8 @@ bool eprosima::fastrtps::rtps::security::parse_domain_id_set(tinyxml2::XMLElemen
     else
     {
         logError(XMLPARSER, "Minimum one " << DomainId_str << " or " << DomainIdRange_str << " tag. Line " <<
-                root->GetLineNum() + 1);
+                PRINTLINEPLUSONE(root));
     }
 
     return returned_value;
 }
-
