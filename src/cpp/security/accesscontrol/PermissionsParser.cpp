@@ -21,6 +21,14 @@
 #include <sstream>
 #include <iomanip>
 
+#if TIXML2_MAJOR_VERSION >= 6
+#define PRINTLINE(node) node->GetLineNum()
+#define PRINTLINEPLUSONE(node) node->GetLineNum() + 1
+#else
+#define PRINTLINE(node) ""
+#define PRINTLINEPLUSONE(node) ""
+#endif
+
 static const char* Root_str = "permissions";
 static const char* Grant_str = "grant";
 static const char* SubjectName_str = "subject_name";
@@ -64,7 +72,7 @@ bool PermissionsParser::parse_stream(const char* stream, size_t stream_length)
             }
             else
             {
-                logError(XMLPARSER, "Malformed Permissions root. Line " << root->GetLineNum());
+                logError(XMLPARSER, "Malformed Permissions root. Line " << PRINTLINE(root));
             }
         }
         else
@@ -103,7 +111,7 @@ bool PermissionsParser::parse_permissions(tinyxml2::XMLElement* root)
             }
             else
             {
-                logError(XMLPARSER, "Invalid tag. Expected  " << Grant_str << " tag. Line " << node->GetLineNum());
+                logError(XMLPARSER, "Invalid tag. Expected  " << Grant_str << " tag. Line " << PRINTLINE(node));
                 returned_value = false;
             }
         }
@@ -111,7 +119,7 @@ bool PermissionsParser::parse_permissions(tinyxml2::XMLElement* root)
     }
     else
     {
-        logError(XMLPARSER, "Expected at least one " << Grant_str << " tag. Line " << root->GetLineNum() + 1);
+        logError(XMLPARSER, "Expected at least one " << Grant_str << " tag. Line " << PRINTLINEPLUSONE(root));
     }
 
     return returned_value;
@@ -129,7 +137,7 @@ bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
     }
     else
     {
-        logError(XMLPARSER, "Attribute name is required in " << Grant_str << " tag. Line " << root->GetLineNum());
+        logError(XMLPARSER, "Attribute name is required in " << Grant_str << " tag. Line " << PRINTLINE(root));
         return false;
     }
 
@@ -147,19 +155,19 @@ bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
             }
             else
             {
-                logError(XMLPARSER, "Expected text in " << SubjectName_str << " tag. Line " << node->GetLineNum());
+                logError(XMLPARSER, "Expected text in " << SubjectName_str << " tag. Line " << PRINTLINE(node));
                 return false;
             }
         }
         else
         {
-            logError(XMLPARSER, "Expected " << SubjectName_str << " tag. Line " << node->GetLineNum());
+            logError(XMLPARSER, "Expected " << SubjectName_str << " tag. Line " << PRINTLINE(node));
             return false;
         }
     }
     else
     {
-        logError(XMLPARSER, "Expected " << SubjectName_str << " tag. Line " << root->GetLineNum() + 1);
+        logError(XMLPARSER, "Expected " << SubjectName_str << " tag. Line " << PRINTLINEPLUSONE(root));
         return false;
     }
 
@@ -177,13 +185,13 @@ bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
         }
         else
         {
-            logError(XMLPARSER, "Expected " << Validity_str << " tag. Line " << node->GetLineNum());
+            logError(XMLPARSER, "Expected " << Validity_str << " tag. Line " << PRINTLINE(node));
             return false;
         }
     }
     else
     {
-        logError(XMLPARSER, "Expected " << Validity_str << " tag. Line " << old_node->GetLineNum());
+        logError(XMLPARSER, "Expected " << Validity_str << " tag. Line " << PRINTLINE(old_node));
         return false;
     }
 
@@ -221,13 +229,13 @@ bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
     else
     {
         logError(XMLPARSER, "Expected " << AllowRule_str << " or " << DenyRule_str << " tag. Line " <<
-                old_node->GetLineNum());
+                PRINTLINE(old_node));
         return false;
     }
 
     if(node != nullptr)
     {
-        logError(XMLPARSER, "Not expected more tags. Line " << node->GetLineNum());
+        logError(XMLPARSER, "Not expected more tags. Line " << PRINTLINE(node));
         return false;
     }
 
@@ -275,39 +283,39 @@ bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity& val
                             else
                             {
                                 logError(XMLPARSER, "Fail parsing datetime value in " << NotAfter_str << " tag. Line " <<
-                                        node->GetLineNum());
+                                        PRINTLINE(node));
                             }
                         }
                         else
                         {
-                            logError(XMLPARSER, "Expected " << NotAfter_str << " tag. Line " << node->GetLineNum());
+                            logError(XMLPARSER, "Expected " << NotAfter_str << " tag. Line " << PRINTLINE(node));
                         }
                     }
                     else
                     {
-                        logError(XMLPARSER, "Expected " << NotAfter_str << " tag. Line " << old_node->GetLineNum() + 1);
+                        logError(XMLPARSER, "Expected " << NotAfter_str << " tag. Line " << PRINTLINEPLUSONE(old_node));
                     }
                 }
                 else
                 {
                     logError(XMLPARSER, "Fail parsing datetime value in " << NotBefore_str << " tag. Line " <<
-                            node->GetLineNum());
+                            PRINTLINE(node));
                 }
             }
             else
             {
                 logError(XMLPARSER, "Expected datetime value in " << NotBefore_str << " tag. Line " <<
-                        node->GetLineNum());
+                        PRINTLINE(node));
             }
         }
         else
         {
-            logError(XMLPARSER, "Expected " << NotBefore_str << " tag. Line " << node->GetLineNum());
+            logError(XMLPARSER, "Expected " << NotBefore_str << " tag. Line " << PRINTLINE(node));
         }
     }
     else
     {
-        logError(XMLPARSER, "Expected " << NotBefore_str << " tag. Line " << root->GetLineNum() + 1);
+        logError(XMLPARSER, "Expected " << NotBefore_str << " tag. Line " << PRINTLINEPLUSONE(root));
     }
 
     return returned_value;
@@ -330,13 +338,13 @@ bool PermissionsParser::parse_rule(tinyxml2::XMLElement* root, Rule& rule)
         }
         else
         {
-            logError(XMLPARSER, "Expected " << Domains_str << " tag. Line " << node->GetLineNum());
+            logError(XMLPARSER, "Expected " << Domains_str << " tag. Line " << PRINTLINE(node));
             return false;
         }
     }
     else
     {
-        logError(XMLPARSER, "Expected " << Domains_str << " tag. Line " << root->GetLineNum() + 1);
+        logError(XMLPARSER, "Expected " << Domains_str << " tag. Line " << PRINTLINEPLUSONE(root));
         return false;
     }
 
@@ -379,7 +387,7 @@ bool PermissionsParser::parse_rule(tinyxml2::XMLElement* root, Rule& rule)
             else
             {
                 logError(XMLPARSER, "Expected " << Publish_str << " or " << Subscribe_str <<
-                        " or " << Relay_str << " tag. Line " << node->GetLineNum());
+                        " or " << Relay_str << " tag. Line " << PRINTLINE(node));
                 return false;
             }
         }
@@ -415,7 +423,7 @@ bool PermissionsParser::parse_criteria(tinyxml2::XMLElement* root, Criteria& cri
             else
             {
                 logError(XMLPARSER, "Expected " << Topics_str << " or " << Partitions_str <<
-                        " or " << DataTags_str << " tag. Line " << node->GetLineNum());
+                        " or " << DataTags_str << " tag. Line " << PRINTLINE(node));
                 returned_value = true;
             }
         }
@@ -443,19 +451,19 @@ bool PermissionsParser::parse_topic(tinyxml2::XMLElement* root, std::string& top
                 }
                 else
                 {
-                    logError(XMLPARSER, "Expected topic name in " << Topic_str << " tag. Line " << node->GetLineNum());
+                    logError(XMLPARSER, "Expected topic name in " << Topic_str << " tag. Line " << PRINTLINE(node));
                 }
             }
             else
             {
-                logError(XMLPARSER, "Expected " << Topic_str << " tag. Line " << node->GetLineNum());
+                logError(XMLPARSER, "Expected " << Topic_str << " tag. Line " << PRINTLINE(node));
             }
         }
         while(returned_value && (node = node->NextSiblingElement()) != nullptr);
     }
     else
     {
-        logError(XMLPARSER, "Expected at least one " << Topic_str << " tag. Line " << root->GetLineNum() + 1);
+        logError(XMLPARSER, "Expected at least one " << Topic_str << " tag. Line " << PRINTLINEPLUSONE(root));
     }
 
     return returned_value;

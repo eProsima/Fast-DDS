@@ -18,6 +18,14 @@
 #include <cstring>
 #include <cassert>
 
+#if TIXML2_MAJOR_VERSION >= 6
+#define PRINTLINE(node) node->GetLineNum()
+#define PRINTLINEPLUSONE(node) node->GetLineNum() + 1
+#else
+#define PRINTLINE(node) ""
+#define PRINTLINEPLUSONE(node) ""
+#endif
+
 static const char* Root_str = "dds";
 static const char* DomainAccessRules_str = "domain_access_rules";
 static const char* DomainRule_str = "domain_rule";
@@ -54,7 +62,7 @@ bool GovernanceParser::parse_stream(const char* stream, size_t stream_length)
             }
             else
             {
-                logError(XMLPARSER, "Malformed Governance root. Line " << root->GetLineNum());
+                logError(XMLPARSER, "Malformed Governance root. Line " << PRINTLINE(root));
             }
         }
         else
@@ -89,19 +97,19 @@ bool GovernanceParser::parse_domain_access_rules_node(tinyxml2::XMLElement* root
                 }
                 else
                 {
-                    logError(XMLPARSER, "Only permitted one " << DomainAccessRules_str <<" tag. Line " <<
-                            node->NextSibling()->GetLineNum());
+                    logError(XMLPARSER, "Only permitted one " << DomainAccessRules_str <<" tag. Line "
+                            << PRINTLINE(node->NextSibling()));
                 }
             }
         }
         else
         {
-            logError(XMLPARSER, "Invalid tag. Expected " << DomainAccessRules_str << " tag. Line " << node->GetLineNum());
+            logError(XMLPARSER, "Invalid tag. Expected " << DomainAccessRules_str << " tag. Line " << PRINTLINE(node));
         }
     }
     else
     {
-        logError(XMLPARSER, "Expected " << DomainAccessRules_str << " tag after root. Line " << root->GetLineNum() + 1);
+        logError(XMLPARSER, "Expected " << DomainAccessRules_str << " tag after root. Line " << PRINTLINEPLUSONE(root));
     }
 
     return returned_value;
@@ -132,14 +140,14 @@ bool GovernanceParser::parse_domain_access_rules(tinyxml2::XMLElement* root)
             else
             {
                 returned_value = false;
-                logError(XMLPARSER, "Expected " << DomainRule_str << " tag. Line " << node->GetLineNum());
+                logError(XMLPARSER, "Expected " << DomainRule_str << " tag. Line " << PRINTLINE(node));
             }
         }
         while(returned_value && (node = node->NextSiblingElement()) != nullptr);
     }
     else
     {
-        logError(XMLPARSER, "Minimum one " << DomainRule_str << " tag. Line " << root->GetLineNum() + 1);
+        logError(XMLPARSER, "Minimum one " << DomainRule_str << " tag. Line " << PRINTLINEPLUSONE(root));
     }
 
     return returned_value;
@@ -163,13 +171,13 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
         }
         else
         {
-            logError(XMLPARSER, "Expected " << Domains_str << " tag. Line " << node->GetLineNum());
+            logError(XMLPARSER, "Expected " << Domains_str << " tag. Line " << PRINTLINE(node));
             return false;
         }
     }
     else
     {
-        logError(XMLPARSER, "Expected " << Domains_str << " tag. Line " << root->GetLineNum() + 1);
+        logError(XMLPARSER, "Expected " << Domains_str << " tag. Line " << PRINTLINEPLUSONE(root));
         return false;
     }
 
@@ -198,25 +206,25 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
                 }
                 else
                 {
-                    logError(XMLPARSER, "Invalid text in" << RtpsProtectionKind_str << " tag. Line " << node->GetLineNum());
+                    logError(XMLPARSER, "Invalid text in" << RtpsProtectionKind_str << " tag. Line " << PRINTLINE(node));
                     return false;
                 }
             }
             else
             {
-                logError(XMLPARSER, "Expected text in" << RtpsProtectionKind_str << " tag. Line " << node->GetLineNum());
+                logError(XMLPARSER, "Expected text in" << RtpsProtectionKind_str << " tag. Line " << PRINTLINE(node));
                 return false;
             }
         }
         else
         {
-            logError(XMLPARSER, "Expected " << RtpsProtectionKind_str << " tag. Line " << node->GetLineNum());
+            logError(XMLPARSER, "Expected " << RtpsProtectionKind_str << " tag. Line " << PRINTLINE(node));
             return false;
         }
     }
     else
     {
-        logError(XMLPARSER, "Expected " << RtpsProtectionKind_str << " tag. Line " << old_node->GetLineNum() + 1);
+        logError(XMLPARSER, "Expected " << RtpsProtectionKind_str << " tag. Line " << PRINTLINEPLUSONE(old_node));
         return false;
     }
 
@@ -224,7 +232,7 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
 
     if(node != nullptr)
     {
-        logError(XMLPARSER, "Not expected other tag. Line " << node->GetLineNum());
+        logError(XMLPARSER, "Not expected other tag. Line " << PRINTLINE(node));
         return false;
     }
 
