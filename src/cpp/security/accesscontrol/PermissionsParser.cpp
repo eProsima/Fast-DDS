@@ -408,11 +408,7 @@ bool PermissionsParser::parse_criteria(tinyxml2::XMLElement* root, Criteria& cri
         {
             if(strcmp(node->Name(), Topics_str) == 0)
             {
-                std::string topic;
-                if((returned_value = parse_topic(node, topic)) == true)
-                {
-                    criteria.topics.push_back(std::move(topic));
-                }
+                returned_value = parse_topic(node, criteria.topics);
             }
             else if(strcmp(node->Name(), Partitions_str) == 0)
             {
@@ -424,7 +420,7 @@ bool PermissionsParser::parse_criteria(tinyxml2::XMLElement* root, Criteria& cri
             {
                 logError(XMLPARSER, "Expected " << Topics_str << " or " << Partitions_str <<
                         " or " << DataTags_str << " tag. Line " << PRINTLINE(node));
-                returned_value = true;
+                returned_value = false;
             }
         }
         while(returned_value && (node = node->NextSiblingElement()) != nullptr);
@@ -433,30 +429,34 @@ bool PermissionsParser::parse_criteria(tinyxml2::XMLElement* root, Criteria& cri
     return returned_value;
 }
 
-bool PermissionsParser::parse_topic(tinyxml2::XMLElement* root, std::string& topic)
+bool PermissionsParser::parse_topic(tinyxml2::XMLElement* root, std::vector<std::string>& topics)
 {
     bool returned_value = false;
     tinyxml2::XMLElement* node = root->FirstChildElement();
 
     if(node != nullptr)
     {
+        returned_value = true;
+
         do
         {
             if(strcmp(node->Name(), Topic_str) == 0)
             {
                 if(node->GetText() != nullptr)
                 {
-                    topic = node->GetText();
-                    returned_value = true;
+                    std::string topic = node->GetText();
+                    topics.push_back(std::move(topic));
                 }
                 else
                 {
                     logError(XMLPARSER, "Expected topic name in " << Topic_str << " tag. Line " << PRINTLINE(node));
+                    returned_value = false;
                 }
             }
             else
             {
                 logError(XMLPARSER, "Expected " << Topic_str << " tag. Line " << PRINTLINE(node));
+                returned_value = false;
             }
         }
         while(returned_value && (node = node->NextSiblingElement()) != nullptr);

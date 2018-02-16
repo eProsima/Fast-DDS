@@ -80,7 +80,7 @@ class PermissionsParser
 
         bool parse_criteria(tinyxml2::XMLElement* root, Criteria& criteria);
 
-        bool parse_topic(tinyxml2::XMLElement* root, std::string& topic);
+        bool parse_topic(tinyxml2::XMLElement* root, std::vector<std::string>& topics);
 
         PermissionsData permissions_;
 };

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <permissions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="omg_shared_ca_domain_permissions.xsd">
     <grant name="PublisherPermissions">
@@ -16,6 +16,7 @@
             </domains>
             <publish>
                 <topics>
+                    <topic>*clock*</topic>
                     <topic>BlackBox_*_BuiltinAuthenticationAndAccessPlugin_Permissions_validation_ok*</topic>
                 </topics>
             </publish>
@@ -36,7 +37,9 @@
             </domains>
             <subscribe>
                 <topics>
+                    <topic>*clock*</topic>
                     <topic>BlackBox_*_BuiltinAuthenticationAndAccessPlugin_Permissions_validation_ok*</topic>
+                    <topic>*temperature*</topic>
                 </topics>
             </subscribe>
         </allow_rule>
