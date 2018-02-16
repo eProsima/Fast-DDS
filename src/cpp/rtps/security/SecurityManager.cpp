@@ -2135,8 +2135,8 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
         }
     }
 
-    assert(access_plugin_ == nullptr || remote_permissions != nullptr);
-    assert(crypto_plugin_ == nullptr || remote_participant_crypto_handle != nullptr);
+    // assert(access_plugin_ == nullptr || remote_permissions != nullptr);
+    // assert(crypto_plugin_ == nullptr || remote_participant_crypto_handle != nullptr);
 
     bool returned_value = true;
     SecurityException exception;
@@ -2410,8 +2410,8 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
         }
     }
 
-    assert(access_plugin_ == nullptr || remote_permissions != nullptr);
-    assert(crypto_plugin_ == nullptr || remote_participant_crypto_handle != nullptr);
+    // assert(access_plugin_ == nullptr || remote_permissions != nullptr);
+    // assert(crypto_plugin_ == nullptr || remote_participant_crypto_handle != nullptr);
 
     bool returned_value = true;
     SecurityException exception;
