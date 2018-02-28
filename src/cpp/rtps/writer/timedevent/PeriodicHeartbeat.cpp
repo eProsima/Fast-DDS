@@ -89,8 +89,7 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
 
                 if (firstSeq == c_SequenceNumber_Unknown || lastSeq == c_SequenceNumber_Unknown)
                 {
-                    firstSeq = mp_SFW->next_sequence_number();
-                    lastSeq = SequenceNumber_t(0, 0);
+                    return;
                 }
                 else
                 {

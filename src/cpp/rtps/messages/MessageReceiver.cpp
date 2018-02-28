@@ -825,7 +825,8 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
     CDRMessage::readSequenceNumber(msg,&lastSN);
     if(lastSN < firstSN && lastSN != SequenceNumber_t(0, 0))
     {
-        logInfo(RTPS_MSG_IN,IDSTRING"HB Received with lastSN < firstSN, ignoring");
+        logWarning(RTPS_MSG_IN, IDSTRING"Invalid Heartbeat received (" << firstSN << ") - (" <<
+                lastSN << "), ignoring");
         return false;
     }
     uint32_t HBCount;

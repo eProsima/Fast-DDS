@@ -34,7 +34,6 @@ set(${PROJECT_NAME}_source_files
     rtps/writer/ReaderProxy.cpp
     rtps/writer/StatelessWriter.cpp
     rtps/writer/ReaderLocator.cpp
-    rtps/writer/timedevent/InitialHeartbeat.cpp
     rtps/writer/timedevent/PeriodicHeartbeat.cpp
     rtps/writer/timedevent/NackResponseDelay.cpp
     rtps/writer/timedevent/NackSupressionDuration.cpp
