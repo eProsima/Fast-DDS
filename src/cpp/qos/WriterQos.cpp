@@ -135,11 +135,6 @@ void WriterQos::setQos(const WriterQos& qos, bool first_time)
 
 bool WriterQos::checkQos() const
 {
-    if(m_durability.kind == TRANSIENT_DURABILITY_QOS)
-    {
-        logError(RTPS_QOS_CHECK,"TRANSIENT Durability not supported");
-        return false;
-    }
     if(m_durability.kind == PERSISTENT_DURABILITY_QOS)
     {
         logError(RTPS_QOS_CHECK,"PERSISTENT Durability not supported");

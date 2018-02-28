@@ -108,6 +108,14 @@ set(${PROJECT_NAME}_source_files
     xmlparser/XMLEndpointParser.cpp
     xmlparser/XMLParser.cpp
     xmlparser/XMLProfileManager.cpp
+    rtps/writer/PersistentWriter.cpp
+    rtps/writer/StatelessPersistentWriter.cpp
+    rtps/writer/StatefulPersistentWriter.cpp
+    rtps/reader/StatelessPersistentReader.cpp
+    rtps/reader/StatefulPersistentReader.cpp
+    rtps/persistence/PersistenceFactory.cpp
+    rtps/persistence/SQLite3PersistenceService.cpp
+    rtps/persistence/sqlite3.c
     )
 
 # Add sources to Makefile.am
@@ -281,7 +289,7 @@ if(MSVC OR MSVC_IDE)
 
         # Link library to external win32 libraries.
         target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr
-            ${CMAKE_THREAD_LIBS_INIT}
+            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
             iphlpapi Shlwapi kernel32 user32.dll
             ${EXTRA_LIBRARIES}
             )
@@ -310,7 +318,7 @@ else()
 
     # Link library to external libraries.
     target_link_libraries(${PROJECT_NAME} fastcdr
-        ${CMAKE_THREAD_LIBS_INIT}
+        ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
         ${EXTRA_LIBRARIES}
         )
 

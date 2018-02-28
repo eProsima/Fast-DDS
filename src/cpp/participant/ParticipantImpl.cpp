@@ -163,7 +163,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 
     WriterAttributes watt;
     watt.throughputController = att.throughputController;
-    watt.endpoint.durabilityKind = att.qos.m_durability.kind == VOLATILE_DURABILITY_QOS ? VOLATILE : TRANSIENT_LOCAL;
+    watt.endpoint.durabilityKind = att.qos.m_durability.durabilityKind();
     watt.endpoint.endpointKind = WRITER;
     watt.endpoint.multicastLocatorList = att.multicastLocatorList;
     watt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
@@ -283,7 +283,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
     subimpl->mp_rtpsParticipant = this->mp_rtpsParticipant;
 
     ReaderAttributes ratt;
-    ratt.endpoint.durabilityKind = att.qos.m_durability.kind == VOLATILE_DURABILITY_QOS ? VOLATILE : TRANSIENT_LOCAL;
+    ratt.endpoint.durabilityKind = att.qos.m_durability.durabilityKind();
     ratt.endpoint.endpointKind = READER;
     ratt.endpoint.multicastLocatorList = att.multicastLocatorList;
     ratt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;

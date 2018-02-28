@@ -40,7 +40,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             main_LatencyTest.cpp
             )
         add_executable(LatencyTest ${LATENCYTEST_SOURCE})
-        target_link_libraries(LatencyTest fastrtps ${CMAKE_THREAD_LIBS_INIT})
+        target_link_libraries(LatencyTest fastrtps ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
         set(THROUGHPUTTEST_SOURCE ThroughputPublisher.cpp
             ThroughputSubscriber.cpp
@@ -49,7 +49,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             )
         add_executable(ThroughputTest ${THROUGHPUTTEST_SOURCE})
         target_include_directories(ThroughputTest PRIVATE)
-        target_link_libraries(ThroughputTest fastrtps ${CMAKE_THREAD_LIBS_INIT})
+        target_link_libraries(ThroughputTest fastrtps ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
         if(EPROSIMA_BUILD_TESTS)
             find_package(PythonInterp 3 REQUIRED)

@@ -40,7 +40,7 @@ class StatelessReader: public RTPSReader
 
 public:
     virtual ~StatelessReader();
-private:
+protected:
     StatelessReader(RTPSParticipantImpl*,GUID_t& guid,
             ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen=nullptr);
 public:
@@ -146,9 +146,6 @@ private:
     //!List of GUID_t os matched writers.
     //!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();
     std::vector<RemoteWriterAttributes> m_matched_writers;
-
-	//!Information about changes already in History
-	std::map<GUID_t, SequenceNumber_t> m_historyRecord;
 };
 
 }

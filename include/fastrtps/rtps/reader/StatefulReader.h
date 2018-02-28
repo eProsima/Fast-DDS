@@ -41,7 +41,7 @@ class StatefulReader:public RTPSReader
 
         virtual ~StatefulReader();
 
-    private:
+    protected:
 
         StatefulReader(RTPSParticipantImpl*,GUID_t& guid,
                 ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen=nullptr);

@@ -105,6 +105,7 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer,TopicAttributes& att, Write
     wpd.typeMaxSerialized(writer->getTypeMaxSerialized());
     wpd.m_qos = wqos;
     wpd.userDefinedId(writer->getAttributes()->getUserDefinedID());
+    wpd.persistence_guid(writer->getAttributes()->persistence_guid);
 
     //ADD IT TO THE LIST OF READERPROXYDATA
     ParticipantProxyData pdata;
@@ -244,9 +245,9 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
                 << rdata->guid() << " is Reliable and local writer is BE ");
         return false;
     }
-    if(wdata->m_qos.m_durability.kind == VOLATILE_DURABILITY_QOS
-            && rdata->m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS)
+    if(wdata->m_qos.m_durability.kind < rdata->m_qos.m_durability.kind)
     {
+        // TODO (MCC) Change log message
         logWarning(RTPS_EDP,"INCOMPATIBLE QOS (topic: "<< rdata->topicName() <<"):RemoteReader "
                 << rdata->guid() << " has TRANSIENT_LOCAL DURABILITY and we offer VOLATILE");
         return false;
@@ -334,9 +335,9 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
         logWarning(RTPS_EDP,"INCOMPATIBLE QOS (topic: "<< wdata->topicName() << "): Remote Writer " << wdata->guid() << " is Best Effort and local reader is RELIABLE " << endl;);
         return false;
     }
-    if(rdata->m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS
-            && wdata->m_qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
+    if(rdata->m_qos.m_durability.kind > wdata->m_qos.m_durability.kind)
     {
+        // TODO (MCC) Change log message
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):RemoteWriter " << wdata->guid() << " has VOLATILE DURABILITY and we want TRANSIENT_LOCAL" << endl;);
         return false;
     }

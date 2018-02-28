@@ -39,6 +39,7 @@ class EndpointAttributes
             topicKind(NO_KEY),
             reliabilityKind(BEST_EFFORT),
             durabilityKind(VOLATILE),
+            persistence_guid(),
             m_userDefinedID(-1),
             m_entityID(-1)
         {
@@ -57,6 +58,9 @@ class EndpointAttributes
 
         //!Durability kind, default value VOLATILE
         DurabilityKind_t durabilityKind;
+
+        //!GUID used for persistence
+        GUID_t persistence_guid;
 
         //!Unicast locator list
         LocatorList_t unicastLocatorList;

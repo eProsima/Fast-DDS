@@ -35,6 +35,7 @@ class RTPSWriter;
 class WriterHistory : public History
 {
     friend class RTPSWriter;
+    friend class PersistentWriter;
 
     public:
 

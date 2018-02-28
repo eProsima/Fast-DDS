@@ -66,6 +66,12 @@ namespace eprosima
                     WriterProxy(const RemoteWriterAttributes& watt, StatefulReader* SR);
 
                     /**
+                     * Set initial value for last acked sequence number.
+                     * @param[in] seqNum last acked sequence number.
+                     */
+                    void loaded_from_storage(const SequenceNumber_t& seqNum);
+
+                    /**
                      * Get the maximum sequenceNumber received from this Writer.
                      * @return the maximum sequence number.
                      */

@@ -456,7 +456,7 @@ RemoteReaderAttributes ReaderProxyData::toRemoteReaderAttributes() const
 
     remoteAtt.guid = m_guid;
     remoteAtt.expectsInlineQos = this->m_expectsInlineQos;
-    remoteAtt.endpoint.durabilityKind = m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS ? TRANSIENT_LOCAL : VOLATILE;
+    remoteAtt.endpoint.durabilityKind = m_qos.m_durability.durabilityKind();
     remoteAtt.endpoint.endpointKind = READER;
     remoteAtt.endpoint.topicKind = m_topicKind;
     remoteAtt.endpoint.reliabilityKind = m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;

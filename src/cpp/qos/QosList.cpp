@@ -125,7 +125,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	bool in_bool)
 
 bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	const GUID_t& guid)
 {
-	if(pid == PID_PARTICIPANT_GUID || pid == PID_GROUP_GUID)
+	if(pid == PID_PARTICIPANT_GUID || pid == PID_GROUP_GUID || pid == PID_PERSISTENCE_GUID)
 	{
 
 		ParameterGuid_t* p = new ParameterGuid_t();

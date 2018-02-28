@@ -127,6 +127,11 @@ WriterProxy::WriterProxy(const RemoteWriterAttributes& watt,
     logInfo(RTPS_READER,"Writer Proxy created in reader: "<<mp_SFR->getGuid().entityId);
 }
 
+void WriterProxy::loaded_from_storage(const SequenceNumber_t& seqNum)
+{
+    lastNotified_ = seqNum;
+}
+
 void WriterProxy::missing_changes_update(const SequenceNumber_t& seqNum)
 {
     logInfo(RTPS_READER,m_att.guid.entityId<<": changes up to seqNum: " << seqNum <<" missing.");

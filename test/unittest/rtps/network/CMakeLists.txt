@@ -41,7 +41,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(NetworkFactoryTests ${GTEST_LIBRARIES} ${MOCKS} ${CMAKE_THREAD_LIBS_INIT})
+        target_link_libraries(NetworkFactoryTests ${GTEST_LIBRARIES} ${MOCKS} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         target_link_libraries(NetworkFactoryTests fastrtps fastcdr) # Later so mocks have precedence
     endif()
 endif()

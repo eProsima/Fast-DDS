@@ -40,6 +40,7 @@ class StatelessWriter : public RTPSWriter
 {
     friend class RTPSParticipantImpl;
 
+    protected:
     StatelessWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
     public:
     virtual ~StatelessWriter();

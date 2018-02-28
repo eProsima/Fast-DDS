@@ -141,6 +141,11 @@ class RTPSWithRegistrationReader
                 delete(history_);
                 history_ = nullptr;
             }
+
+            reader_ = nullptr;
+            receiving_ = false;
+            initialized_ = false;
+            matched_ = 0;
         }
 
         void expected_data(const std::list<type>& msgs)
@@ -153,6 +158,11 @@ class RTPSWithRegistrationReader
         {
             std::unique_lock<std::mutex> lock(mutex_);
             total_msgs_ = std::move(msgs);
+        }
+
+        const std::list<type>& not_received_data() const
+        {
+            return total_msgs_;
         }
 
         void startReception(size_t number_samples_expected = 0)
@@ -202,14 +212,29 @@ class RTPSWithRegistrationReader
             return current_received_count_;
         }
 
+        void block_until_seq_number_greater_or_equal(const eprosima::fastrtps::rtps::SequenceNumber_t& min_seq)
+        {
+            block([this, min_seq]() -> bool {
+                return last_seq_ >= min_seq;
+            });
+        }
+
+
         void waitDiscovery()
         {
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
-            if(matched_ == 0)
-                cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
+            if (matched_ == 0)
+            {
+                cvDiscovery_.wait(lock, [this]() -> bool {
+                    return matched_ != 0;
+                });
+            }
+        }
 
-            ASSERT_NE(matched_, 0u);
+        void check_seq_number_greater_or_equal(const eprosima::fastrtps::rtps::SequenceNumber_t& min_seq)
+        {
+            ASSERT_GE(last_seq_, min_seq);
         }
 
         void matched()
@@ -243,6 +268,14 @@ class RTPSWithRegistrationReader
             return *this;
         }
 
+        RTPSWithRegistrationReader& durability(const eprosima::fastrtps::rtps::DurabilityKind_t kind)
+        {
+            reader_attr_.endpoint.durabilityKind = kind;
+            reader_qos_.m_durability.durabilityKind(kind);
+
+            return *this;
+        }
+
         RTPSWithRegistrationReader& add_to_multicast_locator_list(const std::string& ip, uint32_t port)
         {
             eprosima::fastrtps::rtps::Locator_t loc;
@@ -251,6 +284,25 @@ class RTPSWithRegistrationReader
             reader_attr_.endpoint.multicastLocatorList.push_back(loc);
 
             return *this;
+        }
+
+        RTPSWithRegistrationReader& add_property(const std::string& prop, const std::string& value)
+        {
+            reader_attr_.endpoint.properties.properties().emplace_back(prop, value);
+
+            return *this;
+        }
+
+        RTPSWithRegistrationReader& make_persistent(const std::string& filename, const eprosima::fastrtps::rtps::GuidPrefix_t& guidPrefix)
+        {
+            reader_attr_.endpoint.persistence_guid.guidPrefix = guidPrefix;
+            reader_attr_.endpoint.persistence_guid.entityId = 0x55555555;
+
+            std::cout << "Initializing persistent READER " << reader_attr_.endpoint.persistence_guid << " with file " << filename << std::endl;
+
+            return durability(eprosima::fastrtps::rtps::DurabilityKind_t::PERSISTENT)
+                .add_property("dds.persistence.plugin", "builtin.SQLITE3")
+                .add_property("dds.persistence.sqlite3.filename", filename);
         }
 
     private:

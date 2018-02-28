@@ -20,6 +20,7 @@
 #include "RTPSParticipantImpl.h"
 
 #include "../flowcontrol/ThroughputController.h"
+#include "../persistence/PersistenceService.h"
 
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
@@ -28,10 +29,13 @@
 
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/rtps/writer/StatelessPersistentWriter.h>
+#include <fastrtps/rtps/writer/StatefulPersistentWriter.h>
 
 #include <fastrtps/rtps/reader/StatelessReader.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastrtps/rtps/reader/StatelessPersistentReader.h>
+#include <fastrtps/rtps/reader/StatefulPersistentReader.h>
 
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/transport/UDPv4Transport.h>
@@ -62,12 +66,12 @@ namespace rtps {
 
 static EntityId_t TrustedWriter(const EntityId_t& reader)
 {
-    if(reader == c_EntityId_SPDPReader) return c_EntityId_SPDPWriter;
-    if(reader == c_EntityId_SEDPPubReader) return c_EntityId_SEDPPubWriter;
-    if(reader == c_EntityId_SEDPSubReader) return c_EntityId_SEDPSubWriter;
-    if(reader == c_EntityId_ReaderLiveliness) return c_EntityId_WriterLiveliness;
-
-    return c_EntityId_Unknown;
+    return 
+        (reader == c_EntityId_SPDPReader) ? c_EntityId_SPDPWriter :
+        (reader == c_EntityId_SEDPPubReader) ? c_EntityId_SEDPPubWriter :
+        (reader == c_EntityId_SEDPSubReader) ? c_EntityId_SEDPSubWriter :
+        (reader == c_EntityId_ReaderLiveliness) ? c_EntityId_WriterLiveliness :
+        c_EntityId_Unknown;
 }
 
 Locator_t RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t loc)
@@ -111,14 +115,15 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
     // User defined transports
     for (const auto& transportDescriptor : PParam.userTransports)
+    {
         m_network_Factory.RegisterTransport(transportDescriptor.get());
+    }
 
     mp_userParticipant->mp_impl = this;
     Locator_t loc;
     loc.port = PParam.defaultSendPort;
     mp_event_thr = new ResourceEvent();
     mp_event_thr->init_thread(this);
-
 
     // Throughput controller, if the descriptor has valid values
     if (PParam.throughputController.bytesPerPeriod != UINT32_MAX &&
@@ -200,7 +205,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
                         }
                     }
                     else
+                    {
                         m_att.builtin.initialPeersList.push_back(locator);
+                    }
                 });
 
         m_network_Factory.NormalizeLocators(m_att.builtin.initialPeersList);
@@ -241,11 +248,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         std::for_each(m_att.defaultUnicastLocatorList.begin(),
                 m_att.defaultUnicastLocatorList.end(),
                 [&](Locator_t& loc) {
-                    if(loc.port == 0)
+                    if(loc.port == 0) {
                         loc.port = m_att.port.portBase+
                             m_att.port.domainIDGain*PParam.builtin.domainId+
                             m_att.port.offsetd3+
                             m_att.port.participantIDGain*m_att.participantID;
+                    }
                 });
 
         // Normalize unicast locators.
@@ -452,19 +460,43 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
         return false;
     }
 
+    // Get persistence service
+    IPersistenceService* persistence = nullptr;
+    if (param.endpoint.durabilityKind >= TRANSIENT)
+    {
+        persistence = get_persistence_service(param.endpoint);
+        if (persistence == nullptr)
+        {
+            logError(RTPS_PARTICIPANT, "Couldn't create persistence service for transient/persistent writer");
+            return false;
+        }
+    }
+
     // Normalize unicast locators
     if (!param.endpoint.unicastLocatorList.empty())
+    {
         m_network_Factory.NormalizeLocators(param.endpoint.unicastLocatorList);
+    }
 
     RTPSWriter* SWriter = nullptr;
     GUID_t guid(m_guid.guidPrefix,entId);
-    if(param.endpoint.reliabilityKind == BEST_EFFORT)
-        SWriter = (RTPSWriter*)new StatelessWriter(this,guid,param,hist,listen);
-    else if(param.endpoint.reliabilityKind == RELIABLE)
-        SWriter = (RTPSWriter*)new StatefulWriter(this,guid,param,hist,listen);
+    if (param.endpoint.reliabilityKind == BEST_EFFORT)
+    {
+        SWriter = (persistence == nullptr) ?
+            (RTPSWriter*) new StatelessWriter(this, guid, param, hist, listen) :
+            (RTPSWriter*) new StatelessPersistentWriter(this, guid, param, hist, listen, persistence);
+    }
+    else if (param.endpoint.reliabilityKind == RELIABLE)
+    {
+        SWriter = (persistence == nullptr) ?
+            (RTPSWriter*) new StatefulWriter(this, guid, param, hist, listen) :
+            (RTPSWriter*) new StatefulPersistentWriter(this, guid, param, hist, listen, persistence);
+    }
 
-    if(SWriter==nullptr)
+    if (SWriter == nullptr)
+    {
         return false;
+    }
 
 #if HAVE_SECURITY
     if(!isBuiltin)
@@ -503,8 +535,10 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     m_allWriterList.push_back(SWriter);
-    if(!isBuiltin)
+    if (!isBuiltin)
+    {
         m_userWriterList.push_back(SWriter);
+    }
     *WriterOut = SWriter;
 
     // If the terminal throughput controller has proper user defined values, instantiate it
@@ -526,13 +560,19 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
     EntityId_t entId;
     if(entityId== c_EntityId_Unknown)
     {
-        if(param.endpoint.topicKind == NO_KEY)
+        if (param.endpoint.topicKind == NO_KEY)
+        {
             entId.value[3] = 0x04;
-        else if(param.endpoint.topicKind == WITH_KEY)
+        }
+        else if (param.endpoint.topicKind == WITH_KEY)
+        {
             entId.value[3] = 0x07;
+        }
         uint32_t idnum;
-        if(param.endpoint.getEntityID()>0)
+        if (param.endpoint.getEntityID() > 0)
+        {
             idnum = param.endpoint.getEntityID();
+        }
         else
         {
             IdCounter++;
@@ -569,20 +609,43 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
         return false;
     }
 
+    // Get persistence service
+    IPersistenceService* persistence = nullptr;
+    if (param.endpoint.durabilityKind >= TRANSIENT)
+    {
+        persistence = get_persistence_service(param.endpoint);
+        if (persistence == nullptr)
+        {
+            logError(RTPS_PARTICIPANT, "Couldn't create persistence service for transient/persistent reader");
+            return false;
+        }
+    }
 
     // Normalize unicast locators
     if (!param.endpoint.unicastLocatorList.empty())
+    {
         m_network_Factory.NormalizeLocators(param.endpoint.unicastLocatorList);
+    }
 
     RTPSReader* SReader = nullptr;
     GUID_t guid(m_guid.guidPrefix,entId);
-    if(param.endpoint.reliabilityKind == BEST_EFFORT)
-        SReader = (RTPSReader*)new StatelessReader(this,guid,param,hist,listen);
-    else if(param.endpoint.reliabilityKind == RELIABLE)
-        SReader = (RTPSReader*)new StatefulReader(this,guid,param,hist,listen);
+    if (param.endpoint.reliabilityKind == BEST_EFFORT)
+    {
+        SReader = (persistence == nullptr) ? 
+            (RTPSReader*) new StatelessReader(this, guid, param, hist, listen) :
+            (RTPSReader*) new StatelessPersistentReader(this, guid, param, hist, listen, persistence);
+    }
+    else if (param.endpoint.reliabilityKind == RELIABLE)
+    {
+        SReader = (persistence == nullptr) ?
+            (RTPSReader*) new StatefulReader(this, guid, param, hist, listen) :
+            (RTPSReader*) new StatefulPersistentReader(this, guid, param, hist, listen, persistence);
+    }
 
-    if(SReader==nullptr)
+    if (SReader == nullptr)
+    {
         return false;
+    }
 
 #if HAVE_SECURITY
 
@@ -609,7 +672,9 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
     //SReader->setListener(inlisten);
     //SReader->setQos(param.qos,true);
     if (param.endpoint.reliabilityKind == RELIABLE)
+    {
         createSendResources((Endpoint *)SReader);
+    }
 
     if(isBuiltin)
     {
@@ -627,8 +692,10 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     m_allReaderList.push_back(SReader);
-    if(!isBuiltin)
+    if (!isBuiltin)
+    {
         m_userReaderList.push_back(SReader);
+    }
     *ReaderOut = SReader;
     return true;
 }
@@ -674,11 +741,13 @@ bool RTPSParticipantImpl::updateLocalReader(RTPSReader* reader,ReaderQos& rqos)
     return this->mp_builtinProtocols->updateLocalReader(reader,rqos);
 }
 
+
 /*
  *
  * AUXILIARY METHODS
  *
- *  */
+ *
+ */
 
 
 bool RTPSParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t kind) const
@@ -688,8 +757,10 @@ bool RTPSParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t ki
         for(std::vector<RTPSWriter*>::const_iterator it = m_userWriterList.begin();
                 it!=m_userWriterList.end();++it)
         {
-            if(ent == (*it)->getGuid().entityId)
+            if (ent == (*it)->getGuid().entityId)
+            {
                 return true;
+            }
         }
     }
     else
@@ -697,8 +768,10 @@ bool RTPSParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t ki
         for(std::vector<RTPSReader*>::const_iterator it = m_userReaderList.begin();
                 it!=m_userReaderList.end();++it)
         {
-            if(ent == (*it)->getGuid().entityId)
+            if (ent == (*it)->getGuid().entityId)
+            {
                 return true;
+            }
         }
     }
     return false;
@@ -727,7 +800,8 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp)
     return valid;
 }
 
-bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pend){
+bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pend)
+{
     /*	This function...
         - Asks the network factory for new resources
         - Encapsulates the new resources within the ReceiverControlBlock list
@@ -799,7 +873,8 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
     }
     return true;
 }
-bool RTPSParticipantImpl::createSendResources(Endpoint *pend){
+bool RTPSParticipantImpl::createSendResources(Endpoint *pend)
+{
     std::vector<SenderResource> newSenders;
     std::vector<SenderResource> SendersBuffer;
     if (pend->m_att.outLocatorList.empty()){
@@ -922,8 +997,10 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
                 }
             }
         }
-        if(!found)
+        if (!found)
+        {
             return false;
+        }
 
         //REMOVE FOR BUILTINPROTOCOLS
         if(p_endpoint->getAttributes()->endpointKind == WRITER)
@@ -968,7 +1045,8 @@ ResourceEvent& RTPSParticipantImpl::getEventResource()
     return *this->mp_event_thr;
 }
 
-std::pair<StatefulReader*,StatefulReader*> RTPSParticipantImpl::getEDPReaders(){
+std::pair<StatefulReader*,StatefulReader*> RTPSParticipantImpl::getEDPReaders()
+{
     std::pair<StatefulReader*,StatefulReader*> buffer;
     EDPSimple *EDPPointer = dynamic_cast<EDPSimple*>(mp_builtinProtocols->mp_PDP->getEDP());
     if(EDPPointer != nullptr){
@@ -1011,7 +1089,9 @@ void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint *pend, const Loca
         }
 
         if (sendThroughResource)
+        {
             (*it).Send(msg->buffer, msg->length, destination_loc);
+        }
     }
 }
 
@@ -1079,8 +1159,10 @@ uint32_t RTPSParticipantImpl::getMaxMessageSize() const
     }
     for(const auto& it : m_att.userTransports)
     {
-        if(minMaxMessageSize > (*it).maxMessageSize)
+        if (minMaxMessageSize > (*it).maxMessageSize)
+        {
             minMaxMessageSize = (*it).maxMessageSize;
+        }
     }
 
     return minMaxMessageSize;
@@ -1143,6 +1225,16 @@ bool RTPSParticipantImpl::get_remote_reader_info(const GUID_t& readerGuid, Reade
     }
 
     return false;
+}
+
+IPersistenceService* RTPSParticipantImpl::get_persistence_service(const EndpointAttributes& param)
+{
+    IPersistenceService* ret_val;
+
+    ret_val = PersistenceFactory::create_persistence_service(param.properties);
+    return ret_val != nullptr ? 
+        ret_val :
+        PersistenceFactory::create_persistence_service(m_att.properties);
 }
 
 } /* namespace rtps */

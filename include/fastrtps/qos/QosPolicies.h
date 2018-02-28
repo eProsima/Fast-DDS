@@ -56,7 +56,7 @@ class QosPolicy{
 typedef enum DurabilityQosPolicyKind: rtps::octet{
     VOLATILE_DURABILITY_QOS  ,      //!< Volatile Durability (default for Subscribers).
     TRANSIENT_LOCAL_DURABILITY_QOS ,//!< Transient Local Durability (default for Publishers).
-    TRANSIENT_DURABILITY_QOS ,      //!< NOT IMPLEMENTED.
+    TRANSIENT_DURABILITY_QOS ,      //!< Transient Durability.
     PERSISTENT_DURABILITY_QOS       //!< NOT IMPLEMENTED.
 }DurabilityQosPolicyKind_t;
 
@@ -72,6 +72,38 @@ class DurabilityQosPolicy : private Parameter_t, public QosPolicy
         RTPS_DllAPI DurabilityQosPolicy():Parameter_t(PID_DURABILITY,PARAMETER_KIND_LENGTH),QosPolicy(true),kind(VOLATILE_DURABILITY_QOS){};
         virtual RTPS_DllAPI ~DurabilityQosPolicy(){};
         DurabilityQosPolicyKind_t kind;
+
+        /** 
+         * Translates kind to rtps layer equivalent
+         */
+        inline rtps::DurabilityKind_t durabilityKind() const
+        {
+            switch (kind)
+            {
+                default:
+                case VOLATILE_DURABILITY_QOS: return rtps::VOLATILE;
+                case TRANSIENT_LOCAL_DURABILITY_QOS: return rtps::TRANSIENT_LOCAL;
+                case TRANSIENT_DURABILITY_QOS: return rtps::TRANSIENT;
+                case PERSISTENT_DURABILITY_QOS: return rtps::PERSISTENT;
+            }
+        }
+
+        /**
+        * Set kind from rtps layer equivalent
+        */
+        inline void durabilityKind(const rtps::DurabilityKind_t new_kind)
+        {
+            switch (new_kind)
+            {
+            default:
+            case rtps::VOLATILE: kind = VOLATILE_DURABILITY_QOS; break;
+            case rtps::TRANSIENT_LOCAL: kind = TRANSIENT_LOCAL_DURABILITY_QOS; break;
+            case rtps::TRANSIENT: kind = TRANSIENT_DURABILITY_QOS; break;
+            case rtps::PERSISTENT: kind = PERSISTENT_DURABILITY_QOS; break;
+            }
+
+        }
+
         /**
          * Appends QoS to the specified CDR message.
          * @param msg Message to append the QoS Policy to.

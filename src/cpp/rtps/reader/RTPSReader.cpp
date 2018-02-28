@@ -40,7 +40,6 @@ RTPSReader::RTPSReader(RTPSParticipantImpl*pimpl,GUID_t& guid,
     m_acceptMessagesFromUnkownWriters(true),
     m_expectsInlineQos(att.expectsInlineQos),
     fragmentedChangePitStop_(nullptr)
-
     {
         mp_history->mp_reader = this;
         mp_history->mp_mutex = mp_mutex;
@@ -101,6 +100,71 @@ CacheChange_t* RTPSReader::findCacheInFragmentedCachePitStop(const SequenceNumbe
         const GUID_t& writer_guid)
 {
     return fragmentedChangePitStop_->find(sequence_number, writer_guid);
+}
+
+void RTPSReader::add_persistence_guid(const RemoteWriterAttributes& wdata)
+{
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    persistence_guid_map_[wdata.guid] = wdata.endpoint.persistence_guid;
+    persistence_guid_count_[wdata.endpoint.persistence_guid]++;
+}
+
+void RTPSReader::remove_persistence_guid(const RemoteWriterAttributes& wdata)
+{
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    persistence_guid_map_.erase(wdata.guid);
+    auto count = --persistence_guid_count_[wdata.endpoint.persistence_guid];
+    if (count == 0)
+    {
+        if (m_att.durabilityKind < TRANSIENT)
+        {
+            history_record_.erase(wdata.endpoint.persistence_guid);
+        }
+    }
+}
+
+SequenceNumber_t RTPSReader::update_last_notified(const GUID_t& guid, const SequenceNumber_t& seq)
+{
+    SequenceNumber_t ret_val(0, 0);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    auto p_guid = persistence_guid_map_.find(guid);
+    if (p_guid != persistence_guid_map_.end())
+    {
+        auto p_seq = history_record_.find(p_guid->second);
+        if (p_seq != history_record_.end())
+        {
+            ret_val = p_seq->second;
+        }
+
+        if (ret_val < seq)
+        {
+            set_last_notified(p_guid->second, seq);
+        }
+    }
+
+    return ret_val;
+}
+
+SequenceNumber_t RTPSReader::get_last_notified(const GUID_t& guid) const
+{
+    SequenceNumber_t ret_val(0, 0);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    auto p_guid = persistence_guid_map_.find(guid);
+    if (p_guid != persistence_guid_map_.end())
+    {
+        auto p_seq = history_record_.find(p_guid->second);
+        if (p_seq != history_record_.end())
+        {
+            ret_val = p_seq->second;
+        }
+    }
+
+    return ret_val;
+}
+
+void RTPSReader::set_last_notified(const GUID_t& peristence_guid, const SequenceNumber_t& seq)
+{
+    history_record_[peristence_guid] = seq;
 }
 
 }

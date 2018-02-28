@@ -48,7 +48,7 @@ class WriterProxyData
 
         RTPS_DllAPI WriterProxyData(const WriterProxyData& writerInfo);
 
-            RTPS_DllAPI WriterProxyData& operator=(const WriterProxyData& writerInfo);
+        RTPS_DllAPI WriterProxyData& operator=(const WriterProxyData& writerInfo);
 
         RTPS_DllAPI void guid(const GUID_t& guid)
         {
@@ -68,6 +68,26 @@ class WriterProxyData
         RTPS_DllAPI GUID_t& guid()
         {
             return m_guid;
+        }
+
+        RTPS_DllAPI void persistence_guid(const GUID_t& guid)
+        {
+            persistence_guid_ = guid;
+        }
+
+        RTPS_DllAPI void persistence_guid(GUID_t&& guid)
+        {
+            persistence_guid_ = std::move(guid);
+        }
+
+        RTPS_DllAPI GUID_t persistence_guid() const
+        {
+            return persistence_guid_;
+        }
+
+        RTPS_DllAPI GUID_t& persistence_guid()
+        {
+            return persistence_guid_;
         }
 
         RTPS_DllAPI void unicastLocatorList(const LocatorList_t& unicastLocatorList)
@@ -303,6 +323,9 @@ class WriterProxyData
 
         //!Topic kind
         TopicKind_t m_topicKind;
+
+        //!Persistence GUID
+        GUID_t persistence_guid_;
 };
 
 }

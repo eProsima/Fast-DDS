@@ -78,7 +78,7 @@ struct RTPS_DllAPI InstanceHandle_t{
 	* Know if the instance handle is defined
 	* @return True if the values are not zero.
 	*/
-	bool isDefined()
+	bool isDefined() const
 	{
 		for(uint8_t i=0;i<16;++i)
 		{

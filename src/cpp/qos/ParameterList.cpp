@@ -226,6 +226,7 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                 case PID_PARTICIPANT_GUID:
                 case PID_GROUP_GUID:
                 case PID_ENDPOINT_GUID:
+                case PID_PERSISTENCE_GUID:
                     {
                         if(plength != PARAMETER_GUID_LENGTH)
                         {

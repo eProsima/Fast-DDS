@@ -77,6 +77,7 @@ class ReaderListener;
 class StatefulReader;
 class PDPSimple;
 class FlowController;
+class IPersistenceService;
 
 /*
    Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
@@ -341,6 +342,12 @@ class RTPSParticipantImpl
 #if HAVE_SECURITY
         security::ParticipantSecurityAttributes security_attributes_;
 #endif
+
+        /**
+         * Get persistence service from factory, using endpoint attributes (or participant 
+         * attributes if endpoint does not define a persistence service config)
+         */
+        IPersistenceService* get_persistence_service(const EndpointAttributes& param);
 
     public:
 

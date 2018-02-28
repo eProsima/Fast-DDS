@@ -44,6 +44,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
         target_link_libraries(WriterProxyTests
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
-            ${CMAKE_THREAD_LIBS_INIT})
+            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
     endif()
 endif()

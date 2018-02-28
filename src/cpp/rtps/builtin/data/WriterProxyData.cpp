@@ -48,7 +48,8 @@ WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo) :
     m_userDefinedId(writerInfo.m_userDefinedId),
     m_typeMaxSerialized(writerInfo.m_typeMaxSerialized),
     m_isAlive(writerInfo.m_isAlive),
-    m_topicKind(writerInfo.m_topicKind)
+    m_topicKind(writerInfo.m_topicKind),
+    persistence_guid_(writerInfo.persistence_guid_)
 {
     m_qos.setQos(writerInfo.m_qos, true);
 }
@@ -71,6 +72,7 @@ WriterProxyData& WriterProxyData::operator=(const WriterProxyData& writerInfo)
     m_typeMaxSerialized = writerInfo.m_typeMaxSerialized;
     m_isAlive = writerInfo.m_isAlive;
     m_topicKind = writerInfo.m_topicKind;
+    persistence_guid_ = writerInfo.persistence_guid_;
     m_qos.setQos(writerInfo.m_qos, true);
 
     return *this;
@@ -122,6 +124,11 @@ ParameterList_t WriterProxyData::toParameterList()
     }
     {
         ParameterVendorId_t*p = new ParameterVendorId_t(PID_VENDORID,4);
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+    if(persistence_guid_ != c_Guid_Unknown)
+    {
+        ParameterGuid_t * p = new ParameterGuid_t(PID_PERSISTENCE_GUID, 16, persistence_guid_);
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     if( m_qos.m_durability.sendAlways() || m_qos.m_durability.hasChanged)
@@ -370,6 +377,12 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                         }
                         break;
                     }
+                case PID_PERSISTENCE_GUID:
+                    {
+                        ParameterGuid_t * p = (ParameterGuid_t*)(*it);
+                        persistence_guid_ = p->guid;
+                    }
+                    break;
                 case PID_UNICAST_LOCATOR:
                     {
                         ParameterLocator_t* p = (ParameterLocator_t*)(*it);
@@ -419,6 +432,7 @@ void WriterProxyData::clear()
     m_typeMaxSerialized = 0;
     m_isAlive = true;
     m_topicKind = NO_KEY;
+    persistence_guid_ = c_Guid_Unknown;
 }
 
 void WriterProxyData::copy(WriterProxyData* wdata)
@@ -435,6 +449,7 @@ void WriterProxyData::copy(WriterProxyData* wdata)
     m_typeMaxSerialized = wdata->m_typeMaxSerialized;
     m_isAlive = wdata->m_isAlive;
     m_topicKind = wdata->m_topicKind;
+    persistence_guid_ = wdata->persistence_guid_;
 }
 
 
@@ -454,12 +469,13 @@ RemoteWriterAttributes WriterProxyData::toRemoteWriterAttributes() const
     remoteAtt.guid = m_guid;
     remoteAtt.livelinessLeaseDuration = m_qos.m_liveliness.lease_duration;
     remoteAtt.ownershipStrength = (uint16_t)m_qos.m_ownershipStrength.value;
-    remoteAtt.endpoint.durabilityKind = m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS ? TRANSIENT_LOCAL : VOLATILE;
+    remoteAtt.endpoint.durabilityKind = m_qos.m_durability.durabilityKind();
     remoteAtt.endpoint.endpointKind = WRITER;
     remoteAtt.endpoint.topicKind = m_topicKind;
     remoteAtt.endpoint.reliabilityKind = m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     remoteAtt.endpoint.unicastLocatorList = this->m_unicastLocatorList;
     remoteAtt.endpoint.multicastLocatorList = this->m_multicastLocatorList;
+    remoteAtt.endpoint.persistence_guid = (persistence_guid_ == c_Guid_Unknown) ? m_guid : persistence_guid_;
 
     return remoteAtt;
 }

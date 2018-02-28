@@ -120,6 +120,20 @@ class RTPSWithRegistrationWriter
         initialized_ = true;
     }
 
+    void destroy()
+    {
+        if (participant_ != nullptr)
+            eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(participant_);
+        if (history_ != nullptr)
+            delete(history_);
+
+        participant_ = nullptr;
+        history_ = nullptr;
+        writer_ = nullptr;
+        initialized_ = false;
+        matched_ = 0;
+    }
+
     bool isInitialized() const { return initialized_; }
 
     void send(std::list<type>& msgs)
@@ -153,9 +167,13 @@ class RTPSWithRegistrationWriter
     {
         std::unique_lock<std::mutex> lock(mutex_);
 
-        if(matched_ == 0)
-            cv_.wait_for(lock, std::chrono::seconds(10));
-
+        if (matched_ == 0)
+        {
+            cv_.wait(lock, [this]() -> bool {
+                return matched_ != 0;
+            });
+        }
+        
         ASSERT_NE(matched_, 0u);
     }
 
@@ -175,6 +193,14 @@ class RTPSWithRegistrationWriter
                 writer_qos_.m_reliability.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
         else
                 writer_qos_.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+
+        return *this;
+    }
+
+    RTPSWithRegistrationWriter& durability(const eprosima::fastrtps::rtps::DurabilityKind_t kind)
+    {
+        writer_attr_.endpoint.durabilityKind = kind;
+        writer_qos_.m_durability.durabilityKind(kind);
 
         return *this;
     }
@@ -204,6 +230,24 @@ class RTPSWithRegistrationWriter
     {
         writer_attr_.times.heartbeatPeriod.fraction = frac;
         return *this;
+    }
+
+    RTPSWithRegistrationWriter& add_property(const std::string& prop, const std::string& value)
+    {
+        writer_attr_.endpoint.properties.properties().emplace_back(prop, value);
+        return *this;
+    }
+
+    RTPSWithRegistrationWriter& make_persistent(const std::string& filename, const eprosima::fastrtps::rtps::GuidPrefix_t& guidPrefix)
+    {
+        writer_attr_.endpoint.persistence_guid.guidPrefix = guidPrefix;
+        writer_attr_.endpoint.persistence_guid.entityId = 0xAAAAAAAA;
+
+        std::cout << "Initializing persistent WRITER " << writer_attr_.endpoint.persistence_guid << " with file " << filename << std::endl;
+
+        return durability(eprosima::fastrtps::rtps::DurabilityKind_t::PERSISTENT)
+            .add_property("dds.persistence.plugin", "builtin.SQLITE3")
+            .add_property("dds.persistence.sqlite3.filename", filename);
     }
 
     private:

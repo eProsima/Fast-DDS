@@ -25,7 +25,7 @@
 #include "../Endpoint.h"
 #include "../attributes/ReaderAttributes.h"
 
-
+#include <map>
 
 namespace eprosima
 {
@@ -195,6 +195,44 @@ namespace eprosima
                     m_acceptMessagesFromUnkownWriters=false;
                     m_trustedWriterEntityId = writer;
                 }
+
+                /*!
+                 * @brief Add a remote writer to the persistence_guid map
+                 * @param wdata Info of the remote writer
+                 */
+                void add_persistence_guid(const RemoteWriterAttributes& wdata);
+
+                /*!
+                * @brief Remove a remote writer from the persistence_guid map
+                * @param wdata Info of the remote writer
+                */
+                void remove_persistence_guid(const RemoteWriterAttributes& wdata);
+
+                /*!
+                * @brief Get the last notified sequence for a RTPS guid
+                * @param guid The RTPS guid to query
+                * @return Last notified sequence number for input guid
+                * @remarks Takes persistence_guid into consideration
+                */
+                SequenceNumber_t get_last_notified(const GUID_t& guid) const;
+
+                /*!
+                * @brief Update the last notified sequence for a RTPS guid
+                * @param guid The RTPS guid of the writer
+                * @param seq Max sequence number available on writer
+                * @return Previous value of last notified sequence number for input guid
+                * @remarks Takes persistence_guid into consideration
+                */
+                SequenceNumber_t update_last_notified(const GUID_t& guid, const SequenceNumber_t& seq);
+
+                /*!
+                * @brief Set the last notified sequence for a persistence guid
+                * @param guid The persistence guid to update
+                * @param seq Sequence number to set for input guid
+                * @remarks Persistent readers will write to DB
+                */
+                virtual void set_last_notified(const GUID_t& peristence_guid, const SequenceNumber_t& seq);
+
                 //!ReaderHistory
                 ReaderHistory* mp_history;
                 //!Listener
@@ -207,6 +245,13 @@ namespace eprosima
                 EntityId_t m_trustedWriterEntityId;
                 //!Expects Inline Qos.
                 bool m_expectsInlineQos;
+
+                //!Physical GUID to persistence GUID map
+                std::map<GUID_t, GUID_t> persistence_guid_map_;
+                //!Persistence GUID count map
+                std::map<GUID_t, uint16_t> persistence_guid_count_;
+                //!Information about max notified change
+                std::map<GUID_t, SequenceNumber_t> history_record_;
 
                 //TODO Select one
                 FragmentedChangePitStop* fragmentedChangePitStop_;
