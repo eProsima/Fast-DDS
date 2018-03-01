@@ -365,7 +365,7 @@ class  PartitionQosPolicy : private Parameter_t, public QosPolicy
      * Overrides partition names
      * @param nam Vector of partition name strings.
      */
-    RTPS_DllAPI inline void setNames(std::vector<std::string>& nam){ names = nam; };
+    RTPS_DllAPI inline void setNames(std::vector<std::string>& nam){ names = nam; hasChanged=true; };
 
     private:
 

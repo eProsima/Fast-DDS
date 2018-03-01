@@ -29,6 +29,8 @@
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SampleInfo.h>
+#include <fastrtps/xmlparser/XMLParser.h>
+#include <fastrtps/xmlparser/XMLTree.h>
 
 #include <string>
 #include <list>
@@ -465,6 +467,38 @@ class PubSubReader
         {
             participant_attr_.rtps.builtin.leaseDuration = lease_duration;
             participant_attr_.rtps.builtin.leaseDuration_announcementperiod = announce_period;
+            return *this;
+        }
+
+        PubSubReader& load_participant_attr(const std::string& xml)
+        {
+            std::unique_ptr<eprosima::fastrtps::xmlparser::BaseNode> root;
+            if (eprosima::fastrtps::xmlparser::XMLParser::loadXML(xml.data(), xml.size(), root) == eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK)
+            {
+                for (const auto& profile : root->getChildren())
+                {
+                    if (profile->getType() == eprosima::fastrtps::xmlparser::NodeType::PARTICIPANT)
+                    {
+                        participant_attr_ = *(dynamic_cast<eprosima::fastrtps::xmlparser::DataNode<eprosima::fastrtps::ParticipantAttributes>*>(profile.get())->get());
+                    }
+                }
+            }
+            return *this;
+        }
+
+        PubSubReader& load_subscriber_attr(const std::string& xml)
+        {
+            std::unique_ptr<eprosima::fastrtps::xmlparser::BaseNode> root;
+            if (eprosima::fastrtps::xmlparser::XMLParser::loadXML(xml.data(), xml.size(), root) == eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK)
+            {
+                for (const auto& profile : root->getChildren())
+                {
+                    if (profile->getType() == eprosima::fastrtps::xmlparser::NodeType::SUBSCRIBER)
+                    {
+                        subscriber_attr_ = *(dynamic_cast<eprosima::fastrtps::xmlparser::DataNode<eprosima::fastrtps::SubscriberAttributes>*>(profile.get())->get());
+                    }
+                }
+            }
             return *this;
         }
 
