@@ -29,7 +29,8 @@
 #define PRINTLINEPLUSONE(node) ""
 #endif
 
-static const char* Root_str = "permissions";
+static const char* Root_str = "dds";
+static const char* Permission_str = "permissions";
 static const char* Grant_str = "grant";
 static const char* SubjectName_str = "subject_name";
 static const char* Validity_str = "validity";
@@ -68,7 +69,15 @@ bool PermissionsParser::parse_stream(const char* stream, size_t stream_length)
         {
             if(strcmp(root->Name(), Root_str) == 0)
             {
-                returned_value = parse_permissions(root);
+                tinyxml2::XMLElement* permission_node = root->FirstChildElement();
+                if(strcmp(permission_node->Name(), Permission_str) == 0)
+                {
+                    returned_value = parse_permissions(permission_node);
+                }
+                else
+                {
+                    logError(XMLPARSER, "Invalid tag. Expected  " << Permission_str << " tag. Line " << PRINTLINE(permission_node));
+                }
             }
             else
             {
