@@ -22,6 +22,7 @@
                     </topics>
                 </publish>
             </allow_rule>
+            <default>DENY</default>
         </grant>
         <grant name="SubscriberPermissions">
             <subject_name>/C=ES/ST=MA/O=eProsima/OU=eProsima/CN=Main Subscriber/emailAddress=mainsub@eprosima.com</subject_name>
@@ -44,6 +45,7 @@
                     </topics>
                 </subscribe>
             </allow_rule>
+            <default>DENY</default>
         </grant>
     </permissions>
 </dds>

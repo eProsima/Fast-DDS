@@ -9,7 +9,12 @@
                     <max>120</max>
                 </id_range>
             </domains>
+            <allow_unauthenticated_participants>false</allow_unauthenticated_participants>
+            <enable_join_access_control>false</enable_join_access_control>
+            <discovery_protection_kind>ENCRYPT</discovery_protection_kind>
+            <liveliness_protection_kind>ENCRYPT</liveliness_protection_kind>
             <rtps_protection_kind>ENCRYPT</rtps_protection_kind>
+            <topic_access_rules/>
         </domain_rule>
         <domain_rule>
             <domains>
@@ -18,7 +23,12 @@
                     <max>230</max>
                 </id_range>
             </domains>
+            <allow_unauthenticated_participants>false</allow_unauthenticated_participants>
+            <enable_join_access_control>false</enable_join_access_control>
+            <discovery_protection_kind>NONE</discovery_protection_kind>
+            <liveliness_protection_kind>NONE</liveliness_protection_kind>
             <rtps_protection_kind>NONE</rtps_protection_kind>
+            <topic_access_rules/>
         </domain_rule>
     </domain_access_rules>
 </dds>

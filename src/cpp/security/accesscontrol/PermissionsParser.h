@@ -53,6 +53,7 @@ struct Grant
     std::string subject_name;
     Validity validity;
     std::vector<Rule> rules;
+    bool is_default_allow;
 };
 
 struct PermissionsData

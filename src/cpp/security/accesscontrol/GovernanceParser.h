@@ -32,6 +32,10 @@ enum class ProtectionKind
 struct DomainRule
 {
     Domains domains;
+    bool allow_unauthenticated_participants;
+    bool enable_join_access_control;
+    ProtectionKind discovery_protection_kind;
+    ProtectionKind LivelinessProtectionKind_str;
     ProtectionKind rtps_protection_kind;
 };
 

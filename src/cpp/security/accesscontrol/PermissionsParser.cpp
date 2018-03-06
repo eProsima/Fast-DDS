@@ -38,6 +38,7 @@ static const char* NotBefore_str = "not_before";
 static const char* NotAfter_str = "not_after";
 static const char* AllowRule_str = "allow_rule";
 static const char* DenyRule_str = "deny_rule";
+static const char* Default_str = "default";
 static const char* Domains_str = "domains";
 static const char* Publish_str = "publish";
 static const char* Subscribe_str = "subscribe";
@@ -46,6 +47,8 @@ static const char* Topics_str = "topics";
 static const char* Topic_str = "topic";
 static const char* Partitions_str = "partitions";
 static const char* DataTags_str = "data_tags";
+static const char* Allow_str = "ALLOW";
+static const char* Deny_str = "DENY";
 
 using namespace eprosima::fastrtps::rtps::security;
 
@@ -181,6 +184,7 @@ bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
     }
 
     tinyxml2::XMLElement* old_node = node;
+    (void)old_node;
     node = node->NextSiblingElement();
 
     if(node != nullptr)
@@ -232,6 +236,7 @@ bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
             }
 
             grant.rules.push_back(rule);
+            old_node = node;
         }
         while((node = node->NextSiblingElement()) != nullptr);
     }
@@ -244,7 +249,41 @@ bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
 
     if(node != nullptr)
     {
-        logError(XMLPARSER, "Not expected more tags. Line " << PRINTLINE(node));
+        if(strcmp(node->Name(), Default_str) == 0)
+        {
+            const char* text = node->GetText();
+
+            if(text != nullptr)
+            {
+                if(strcmp(text, Allow_str) == 0)
+                {
+                    grant.is_default_allow = true;
+                }
+                else if(strcmp(text, Deny_str) == 0)
+                {
+                    grant.is_default_allow = false;
+                }
+                else
+                {
+                    logError(XMLPARSER, "Invalid text in" << Default_str << " tag. Line " << PRINTLINE(node));
+                    return false;
+                }
+            }
+            else
+            {
+                logError(XMLPARSER, "Expected text in" << Default_str << " tag. Line " << PRINTLINE(node));
+                return false;
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid tag. Expected tag " << Default_str << ". Line " << PRINTLINE(node));
+            return false;
+        }
+    }
+    else
+    {
+        logError(XMLPARSER, "Expected tag " << Default_str << ". Line " << PRINTLINE(old_node));
         return false;
     }
 
@@ -274,6 +313,7 @@ bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity& val
                     validity.not_before = std::mktime(&time);
 
                     tinyxml2::XMLElement* old_node = node;
+                    (void)old_node;
                     node = node->NextSiblingElement();
 
                     if(node != nullptr)
