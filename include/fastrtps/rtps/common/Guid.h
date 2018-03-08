@@ -167,7 +167,9 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 	{
 		uint32_t* aux = (uint32_t*)(value);
 		*aux = id;
-		reverse();
+#if !__BIG_ENDIAN__
+        reverse();
+#endif
 	}
 
     /*!
@@ -211,7 +213,8 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 		return *this;
 		//return id;
 	}
-	//! 
+#if !__BIG_ENDIAN__
+    //! 
 	void reverse(){
 		octet oaux;
 		oaux = value[3];
@@ -221,6 +224,7 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 		value[2] = value[1];
 		value[1] = oaux;
 	}
+#endif
 
     static EntityId_t unknown()
     {
