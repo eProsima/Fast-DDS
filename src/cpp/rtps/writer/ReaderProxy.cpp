@@ -172,7 +172,7 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
     {
         auto chit = m_changesForReader.find(ChangeForReader_t(*sit));
 
-        if(chit != m_changesForReader.end() && chit->isValid())
+        if(chit != m_changesForReader.end())
         {
             ChangeForReader_t newch(*chit);
             newch.setStatus(REQUESTED);
@@ -189,6 +189,11 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
     if(isSomeoneWasSetRequested)
     {
         logInfo(RTPS_WRITER,"Requested Changes: " << seqNumSet);
+    }
+    else if(!seqNumSet.empty())
+    {
+        logWarning(RTPS_WRITER,"Requested Changes: " << seqNumSet
+                   << " not found (low mark: " << changesFromRLowMark_ << ")");
     }
 
     return isSomeoneWasSetRequested;
