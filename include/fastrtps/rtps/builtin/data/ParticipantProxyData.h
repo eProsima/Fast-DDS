@@ -21,6 +21,7 @@
 #define PARTICIPANTPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <mutex>
+#include <memory>
 #include "../../../qos/QosList.h"
 #include "../../../qos/ParameterList.h"
 
@@ -107,11 +108,11 @@ class ParticipantProxyData
         //!
         std::vector<octet> m_userData;
         //!
-        RemoteParticipantLeaseDuration* mp_leaseDurationTimer;
+        std::shared_ptr<RemoteParticipantLeaseDuration> mp_leaseDurationTimer;
         //!
-        std::vector<ReaderProxyData*> m_readers;
+        std::vector<std::shared_ptr<ReaderProxyData> > m_readers;
         //!
-        std::vector<WriterProxyData*> m_writers;
+        std::vector<std::shared_ptr<WriterProxyData> > m_writers;
 
         /**
          * Initialize the object with the data of the lcoal RTPSParticipant.

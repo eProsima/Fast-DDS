@@ -163,7 +163,7 @@ bool EDP::unpairWriterProxy(const GUID_t& participant_guid, const GUID_t& writer
     logInfo(RTPS_EDP, writer_guid);
 
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
-    for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
+    for(auto rit = mp_RTPSParticipant->userReadersListBegin();
             rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
     {
         RemoteWriterAttributes watt;
@@ -194,7 +194,7 @@ bool EDP::unpairReaderProxy(const GUID_t& participant_guid, const GUID_t& reader
     logInfo(RTPS_EDP, reader_guid);
 
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
-    for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
+    for(auto wit = mp_RTPSParticipant->userWritersListBegin();
             wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
     {
         RemoteReaderAttributes ratt;
@@ -265,10 +265,9 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
     }
     else if(wdata->m_qos.m_partition.names.empty() && rdata->m_qos.m_partition.names.size()>0)
     {
-        for(std::vector<std::string>::const_iterator rnameit = rdata->m_qos.m_partition.names.begin();
-                rnameit!=rdata->m_qos.m_partition.names.end();++rnameit)
+        for(auto const & rnameit : rdata->m_qos.m_partition.names)
         {
-            if(rnameit->size()==0)
+            if(rnameit.size()==0)
             {
                 matched = true;
                 break;
@@ -277,10 +276,9 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
     }
     else if(wdata->m_qos.m_partition.names.size()>0 && rdata->m_qos.m_partition.names.empty() )
     {
-        for(std::vector<std::string>::const_iterator wnameit = wdata->m_qos.m_partition.names.begin();
-                wnameit !=  wdata->m_qos.m_partition.names.end();++wnameit)
+        for(auto const & wnameit : wdata->m_qos.m_partition.names)
         {
-            if(wnameit->size()==0)
+            if(wnameit.size()==0)
             {
                 matched = true;
                 break;
@@ -289,13 +287,11 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
     }
     else
     {
-        for(std::vector<std::string>::const_iterator wnameit = wdata->m_qos.m_partition.names.begin();
-                wnameit !=  wdata->m_qos.m_partition.names.end();++wnameit)
+        for(auto const & wnameit : wdata->m_qos.m_partition.names)
         {
-            for(std::vector<std::string>::const_iterator rnameit = rdata->m_qos.m_partition.names.begin();
-                    rnameit!=rdata->m_qos.m_partition.names.end();++rnameit)
+            for(auto const & rnameit : rdata->m_qos.m_partition.names)
             {
-                if(StringMatching::matchString(wnameit->c_str(),rnameit->c_str()))
+                if(StringMatching::matchString(wnameit.c_str(),rnameit.c_str()))
                 {
                     matched = true;
                     break;
@@ -353,10 +349,9 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
     }
     else if(rdata->m_qos.m_partition.names.empty() && wdata->m_qos.m_partition.names.size()>0)
     {
-        for(std::vector<std::string>::const_iterator rnameit = wdata->m_qos.m_partition.names.begin();
-                rnameit!=wdata->m_qos.m_partition.names.end();++rnameit)
+        for(auto const & rnameit : wdata->m_qos.m_partition.names)
         {
-            if(rnameit->size()==0)
+            if(rnameit.size()==0)
             {
                 matched = true;
                 break;
@@ -365,10 +360,9 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
     }
     else if(rdata->m_qos.m_partition.names.size()>0 && wdata->m_qos.m_partition.names.empty() )
     {
-        for(std::vector<std::string>::const_iterator wnameit = rdata->m_qos.m_partition.names.begin();
-                wnameit !=  rdata->m_qos.m_partition.names.end();++wnameit)
+        for(auto const & wnameit : rdata->m_qos.m_partition.names)
         {
-            if(wnameit->size()==0)
+            if(wnameit.size()==0)
             {
                 matched = true;
                 break;
@@ -377,13 +371,11 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
     }
     else
     {
-        for(std::vector<std::string>::const_iterator wnameit = rdata->m_qos.m_partition.names.begin();
-                wnameit !=  rdata->m_qos.m_partition.names.end();++wnameit)
+        for(auto const & wnameit : rdata->m_qos.m_partition.names)
         {
-            for(std::vector<std::string>::const_iterator rnameit = wdata->m_qos.m_partition.names.begin();
-                    rnameit!=wdata->m_qos.m_partition.names.end();++rnameit)
+            for(auto const & rnameit : wdata->m_qos.m_partition.names)
             {
-                if(StringMatching::matchString(wnameit->c_str(),rnameit->c_str()))
+                if(StringMatching::matchString(wnameit.c_str(),rnameit.c_str()))
                 {
                     matched = true;
                     break;
@@ -409,13 +401,13 @@ bool EDP::pairingReader(RTPSReader* R, const ParticipantProxyData& pdata, const 
     logInfo(RTPS_EDP, rdata.guid() <<" in topic: \"" << rdata.topicName() <<"\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
-    for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
+    for(auto pit = mp_PDP->ParticipantProxiesBegin();
             pit!=mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
-        for(std::vector<WriterProxyData*>::iterator wdatait = (*pit)->m_writers.begin();
+        for(auto wdatait = (*pit)->m_writers.begin();
                 wdatait != (*pit)->m_writers.end(); ++wdatait)
         {
-            bool valid = validMatching(&rdata, *wdatait);
+            bool valid = validMatching(&rdata, (*wdatait).get());
 
             if(valid)
             {
@@ -483,13 +475,13 @@ bool EDP::pairingWriter(RTPSWriter* W, const ParticipantProxyData& pdata, const 
     logInfo(RTPS_EDP, W->getGuid() << " in topic: \"" << wdata.topicName() <<"\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
-    for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
+    for(auto pit = mp_PDP->ParticipantProxiesBegin();
             pit!=mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
-        for(std::vector<ReaderProxyData*>::iterator rdatait = (*pit)->m_readers.begin();
+        for(auto rdatait = (*pit)->m_readers.begin();
                 rdatait!=(*pit)->m_readers.end(); ++rdatait)
         {
-            bool valid = validMatching(&wdata, *rdatait);
+            bool valid = validMatching(&wdata, (*rdatait).get());
 
             if(valid)
             {
@@ -555,7 +547,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(ParticipantProxyData* pdata
 
     logInfo(RTPS_EDP, rdata->guid() <<" in topic: \"" << rdata->topicName() <<"\"");
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
-    for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
+    for(auto wit = mp_RTPSParticipant->userWritersListBegin();
             wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
     {
         (*wit)->getMutex()->lock();
@@ -631,7 +623,7 @@ bool EDP::pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, con
 {
     logInfo(RTPS_EDP, rdata.guid() <<" in topic: \"" << rdata.topicName() <<"\"");
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
-    for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
+    for(auto wit = mp_RTPSParticipant->userWritersListBegin();
             wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
     {
         (*wit)->getMutex()->lock();
@@ -702,7 +694,7 @@ bool EDP::pairing_remote_reader_with_local_writer_after_crypto(const GUID_t& loc
         const ReaderProxyData& remote_reader_data)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
-    for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
+    for(auto wit = mp_RTPSParticipant->userWritersListBegin();
             wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
     {
         (*wit)->getMutex()->lock();
@@ -738,7 +730,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(ParticipantProxyData *pdata
 
     logInfo(RTPS_EDP, wdata->guid() <<" in topic: \"" << wdata->topicName() <<"\"");
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
-    for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
+    for(auto rit = mp_RTPSParticipant->userReadersListBegin();
             rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
     {
         GUID_t readerGUID;
@@ -814,7 +806,7 @@ bool EDP::pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, con
 {
     logInfo(RTPS_EDP, wdata.guid() <<" in topic: \"" << wdata.topicName() <<"\"");
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
-    for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
+    for(auto rit = mp_RTPSParticipant->userReadersListBegin();
             rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
     {
         GUID_t readerGUID;
@@ -886,7 +878,7 @@ bool EDP::pairing_remote_writer_with_local_reader_after_crypto(const GUID_t& loc
                 const WriterProxyData& remote_writer_data)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
-    for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
+    for(auto rit = mp_RTPSParticipant->userReadersListBegin();
             rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
     {
         GUID_t readerGUID;

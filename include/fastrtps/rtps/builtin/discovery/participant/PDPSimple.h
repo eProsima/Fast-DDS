@@ -65,7 +65,7 @@ class PDPSimple
     PDPSimple(BuiltinProtocols* builtin);
     virtual ~PDPSimple();
 
-    void initializeParticipantProxyData(ParticipantProxyData* participant_data);
+    void initializeParticipantProxyData(std::shared_ptr<ParticipantProxyData> participant_data);
 
     /**
      * Initialize the PDP.
@@ -163,7 +163,7 @@ class PDPSimple
      * Get a pointer to the local RTPSParticipant RTPSParticipantProxyData object.
      * @return Pointer to the local RTPSParticipant RTPSParticipantProxyData object.
      */
-    ParticipantProxyData* getLocalParticipantProxyData()
+    std::shared_ptr<ParticipantProxyData> getLocalParticipantProxyData()
     {
         return m_participantProxies.front();
     }
@@ -171,17 +171,17 @@ class PDPSimple
      * Get a pointer to the EDP object.
      * @return pointer to the EDP object.
      */
-    inline EDP* getEDP(){return mp_EDP;}
+    inline std::shared_ptr<EDP> getEDP(){return mp_EDP;}
     /**
      * Get a cons_iterator to the beginning of the RTPSParticipant Proxies.
      * @return const_iterator.
      */
-    std::vector<ParticipantProxyData*>::const_iterator ParticipantProxiesBegin(){return m_participantProxies.begin();};
+    std::vector<std::shared_ptr<ParticipantProxyData> >::const_iterator ParticipantProxiesBegin(){return m_participantProxies.begin();};
     /**
      * Get a cons_iterator to the end RTPSParticipant Proxies.
      * @return const_iterator.
      */
-    std::vector<ParticipantProxyData*>::const_iterator ParticipantProxiesEnd(){return m_participantProxies.end();};
+    std::vector<std::shared_ptr<ParticipantProxyData> >::const_iterator ParticipantProxiesEnd(){return m_participantProxies.end();};
 
     /**
      * Assert the liveliness of a Remote Participant.
@@ -219,7 +219,7 @@ class PDPSimple
      * Get the mutex.
      * @return Pointer to the Mutex
      */
-    inline std::recursive_mutex* getMutex() const {return mp_mutex;}
+    inline std::shared_ptr<std::recursive_mutex> getMutex() const {return mp_mutex;}
 
     CDRMessage_t get_participant_proxy_data_serialized(Endianness_t endian);
 
@@ -233,26 +233,26 @@ class PDPSimple
     //!Pointer to the SPDPReader.
     StatelessReader* mp_SPDPReader;
     //!Pointer to the EDP object.
-    EDP* mp_EDP;
+    std::shared_ptr<EDP> mp_EDP;
     //!Registered RTPSParticipants (including the local one, that is the first one.)
-    std::vector<ParticipantProxyData*> m_participantProxies;
+    std::vector<std::shared_ptr<ParticipantProxyData> > m_participantProxies;
     //!Variable to indicate if any parameter has changed.
     bool m_hasChangedLocalPDP;
     //!TimedEvent to periodically resend the local RTPSParticipant information.
-    ResendParticipantProxyDataPeriod* mp_resendParticipantTimer;
+    std::shared_ptr<ResendParticipantProxyDataPeriod> mp_resendParticipantTimer;
     //!Listener for the SPDP messages.
-    PDPSimpleListener* mp_listener;
+    std::shared_ptr<PDPSimpleListener> mp_listener;
     //!WriterHistory
-    WriterHistory* mp_SPDPWriterHistory;
+    std::shared_ptr<WriterHistory> mp_SPDPWriterHistory;
     //!Reader History
-    ReaderHistory* mp_SPDPReaderHistory;
+    std::shared_ptr<ReaderHistory> mp_SPDPReaderHistory;
 
     /**
      * Create the SPDP Writer and Reader
      * @return True if correct.
      */
     bool createSPDPEndpoints();
-    std::recursive_mutex* mp_mutex;
+    std::shared_ptr<std::recursive_mutex> mp_mutex;
 
 
 

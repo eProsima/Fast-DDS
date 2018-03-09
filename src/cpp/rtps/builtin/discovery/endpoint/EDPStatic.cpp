@@ -106,7 +106,7 @@ bool EDPStatic::processLocalReaderProxyData(ReaderProxyData* rdata)
     logInfo(RTPS_EDP,rdata->guid().entityId<< " in topic: " <<rdata->topicName());
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
-    ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
+    auto localpdata = this->mp_PDP->getLocalParticipantProxyData();
     localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Reader","ALIVE", rdata->userDefinedId(), rdata->guid().entityId));
     mp_PDP->getMutex()->unlock();
     this->mp_PDP->announceParticipantState(true);
@@ -118,7 +118,7 @@ bool EDPStatic::processLocalWriterProxyData(WriterProxyData* wdata)
     logInfo(RTPS_EDP ,wdata->guid().entityId << " in topic: " << wdata->topicName());
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
-    ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
+    auto localpdata = this->mp_PDP->getLocalParticipantProxyData();
     localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Writer","ALIVE",
                 wdata->userDefinedId(), wdata->guid().entityId));
     mp_PDP->getMutex()->unlock();
@@ -129,7 +129,7 @@ bool EDPStatic::processLocalWriterProxyData(WriterProxyData* wdata)
 bool EDPStatic::removeLocalReader(RTPSReader* R)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_PDP->getMutex());
-    ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
+    auto localpdata = this->mp_PDP->getLocalParticipantProxyData();
     for(std::vector<std::pair<std::string,std::string>>::iterator pit = localpdata->m_properties.properties.begin();
             pit!=localpdata->m_properties.properties.end();++pit)
     {
@@ -149,7 +149,7 @@ bool EDPStatic::removeLocalReader(RTPSReader* R)
 bool EDPStatic::removeLocalWriter(RTPSWriter*W)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_PDP->getMutex());
-    ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
+    auto localpdata = this->mp_PDP->getLocalParticipantProxyData();
     for(std::vector<std::pair<std::string,std::string>>::iterator pit = localpdata->m_properties.properties.begin();
             pit!=localpdata->m_properties.properties.end();++pit)
     {
