@@ -242,7 +242,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
                 aux_msg.buffer = change->serializedPayload.data;
                 aux_msg.max_size = change->serializedPayload.max_size;
 
-#if EPROSIMA_BIG_ENDIAN
+#if __BIG_ENDIAN__
                 change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
                 aux_msg.msg_endian = BIGEND;
 #else
@@ -286,7 +286,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
             aux_msg.buffer = change->serializedPayload.data;
             aux_msg.max_size = change->serializedPayload.max_size;
 
-#if EPROSIMA_BIG_ENDIAN
+#if __BIG_ENDIAN__
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
             aux_msg.msg_endian = BIGEND;
 #else

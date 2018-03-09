@@ -36,7 +36,7 @@ inline bool CDRMessage::initCDRMsg(CDRMessage_t*msg,uint32_t payload_size)
     }
     msg->pos = 0;
     msg->length = 0;
-#if EPROSIMA_BIG_ENDIAN
+#if __BIG_ENDIAN__
     msg->msg_endian = BIGEND;
 #else
     msg->msg_endian = LITTLEEND;
@@ -53,7 +53,7 @@ inline bool CDRMessage::wrapVector(CDRMessage_t* msg, std::vector<octet>& vector
     msg->buffer = vectorToWrap.data();
     msg->length = (uint32_t)vectorToWrap.size();
     msg->max_size = (uint32_t)vectorToWrap.capacity();
-#if EPROSIMA_BIG_ENDIAN
+#if __BIG_ENDIAN__
     msg->msg_endian = BIGEND;
 #else
     msg->msg_endian = LITTLEEND;

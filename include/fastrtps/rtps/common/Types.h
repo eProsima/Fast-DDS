@@ -77,9 +77,6 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
 #endif
 
-#define EPROSIMA_BIG_ENDIAN 0
-
-
 typedef unsigned char octet;
 //typedef unsigned int uint;
 //typedef unsigned short ushort;

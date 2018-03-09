@@ -52,7 +52,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg, const CacheChange_
     //Create the two CDR msgs
     //CDRMessage_t submsgElem;
     octet flags = 0x0;
-#if EPROSIMA_BIG_ENDIAN
+#if __BIG_ENDIAN__
     submsgElem.msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);
@@ -243,7 +243,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheCha
     //Create the two CDR msgs
     //CDRMessage_t submsgElem;
     octet flags = 0x0;
-#if EPROSIMA_BIG_ENDIAN
+#if __BIG_ENDIAN__
     submsgElem.msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);

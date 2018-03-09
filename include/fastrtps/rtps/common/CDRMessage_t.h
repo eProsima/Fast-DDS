@@ -53,7 +53,7 @@ struct RTPS_DllAPI CDRMessage_t{
         buffer = (octet*) malloc(RTPSMESSAGE_DEFAULT_SIZE);
         max_size = RTPSMESSAGE_DEFAULT_SIZE;
 
-#if EPROSIMA_BIG_ENDIAN
+#if __BIG_ENDIAN__
         msg_endian = BIGEND;
 #else
         msg_endian = LITTLEEND;
@@ -83,7 +83,7 @@ struct RTPS_DllAPI CDRMessage_t{
 
         max_size = size;
 
-#if EPROSIMA_BIG_ENDIAN
+#if __BIG_ENDIAN__
         msg_endian = BIGEND;
 #else
         msg_endian = LITTLEEND;
@@ -118,7 +118,7 @@ struct RTPS_DllAPI CDRMessage_t{
         max_size = message.max_size;
         message.max_size = 0;
         msg_endian = message.msg_endian;
-#if EPROSIMA_BIG_ENDIAN
+#if __BIG_ENDIAN__
         message.msg_endian = BIGEND;
 #else
         message.msg_endian = LITTLEEND;

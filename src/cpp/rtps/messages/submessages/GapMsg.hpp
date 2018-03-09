@@ -47,7 +47,7 @@ bool RTPSMessageCreator::addSubmessageGap(CDRMessage_t* msg, const SequenceNumbe
     CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg();
     CDRMessage::initCDRMsg(&submsgElem);
     octet flags = 0x0;
-#if EPROSIMA_BIG_ENDIAN
+#if __BIG_ENDIAN__
     submsgElem.msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);

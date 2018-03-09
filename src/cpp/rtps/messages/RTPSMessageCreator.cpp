@@ -91,7 +91,7 @@ bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool
 {
     octet flags = 0x0;
     uint16_t size = 8;
-#if EPROSIMA_BIG_ENDIAN
+#if __BIG_ENDIAN__
     msg->msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);
@@ -120,7 +120,7 @@ bool RTPSMessageCreator::addSubmessageInfoDST(CDRMessage_t* msg, GuidPrefix_t gu
 {
     octet flags = 0x0;
     uint16_t size = 12;
-#if EPROSIMA_BIG_ENDIAN
+#if __BIG_ENDIAN__
     msg->msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);

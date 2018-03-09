@@ -68,7 +68,7 @@ bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg, const EntityI
     CDRMessage::initCDRMsg(&submsgElem);
 
     octet flags = 0x0;
-#if EPROSIMA_BIG_ENDIAN
+#if __BIG_ENDIAN__
     submsgElem.msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);
@@ -121,7 +121,7 @@ bool RTPSMessageCreator::addSubmessageHeartbeatFrag(CDRMessage_t* msg, const Ent
     CDRMessage::initCDRMsg(&submsgElem);
 
     octet flags = 0x0;
-#if EPROSIMA_BIG_ENDIAN
+#if __BIG_ENDIAN__
     submsgElem.msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);
