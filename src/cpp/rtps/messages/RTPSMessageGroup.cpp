@@ -74,7 +74,7 @@ void prepare_SequenceNumberSet(std::set<SequenceNumber_t>& changesSeqNum,
         {
             if(seqnumset_init) //FIRST TIME SINCE it was continuous
             {
-                sequences.back().second.base = *(std::prev(it));
+                sequences.back().second.base = (*(std::prev(it)) + 1);
                 seqnumset_init = false;
             }
             // Try to add, If it fails the diference between *it and base is greater than 255.
