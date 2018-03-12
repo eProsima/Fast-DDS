@@ -419,7 +419,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     if(auxendp!=0 && mp_PubReader.first!=nullptr) //Exist Pub Writer and i have pub reader
     {
         logInfo(RTPS_EDP,"Adding SEDP Pub Writer to my Pub Reader");
-        RemoteWriterAttributes watt;
+        RemoteWriterAttributes watt(pdata.m_VendorId);
         watt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_SEDPPubWriter;
         watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
@@ -435,7 +435,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     if(auxendp!=0 && mp_PubWriter.first!=nullptr) //Exist Pub Detector
     {
         logInfo(RTPS_EDP,"Adding SEDP Pub Reader to my Pub Writer");
-        RemoteReaderAttributes ratt;
+        RemoteReaderAttributes ratt(pdata.m_VendorId);
         ratt.expectsInlineQos = false;
         ratt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         ratt.guid.entityId = c_EntityId_SEDPPubReader;
@@ -452,7 +452,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     if(auxendp!=0 && mp_SubReader.first!=nullptr) //Exist Pub Announcer
     {
         logInfo(RTPS_EDP,"Adding SEDP Sub Writer to my Sub Reader");
-        RemoteWriterAttributes watt;
+        RemoteWriterAttributes watt(pdata.m_VendorId);
         watt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_SEDPSubWriter;
         watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
@@ -468,7 +468,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     if(auxendp!=0 && mp_SubWriter.first!=nullptr) //Exist Pub Announcer
     {
         logInfo(RTPS_EDP,"Adding SEDP Sub Reader to my Sub Writer");
-        RemoteReaderAttributes ratt;
+        RemoteReaderAttributes ratt(pdata.m_VendorId);
         ratt.expectsInlineQos = false;
         ratt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         ratt.guid.entityId = c_EntityId_SEDPSubReader;

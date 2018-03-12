@@ -30,7 +30,6 @@
 #include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
 #include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
 #include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
-#include <fastrtps/rtps/writer/timedevent/InitialHeartbeat.h>
 
 #include <fastrtps/rtps/history/WriterHistory.h>
 
@@ -420,16 +419,17 @@ bool StatefulWriter::matched_reader_add(const RemoteReaderAttributes& rdata)
 
     update_cached_info_nts(std::move(allRemoteReaders), allLocatorLists);
 
-    ReaderProxy* rp = new ReaderProxy(rdata,m_times,this);
+    ReaderProxy* rp = new ReaderProxy(rdata, m_times, this);
     std::set<SequenceNumber_t> not_relevant_changes;
 
     SequenceNumber_t current_seq = get_seq_num_min();
-    SequenceNumber_t max_seq = get_seq_num_max();
+    SequenceNumber_t last_seq = get_seq_num_max();
 
     if(current_seq != SequenceNumber_t::unknown())
     {
-        (void)max_seq;
-        assert(max_seq != SequenceNumber_t::unknown());
+        (void)last_seq;
+        assert(last_seq != SequenceNumber_t::unknown());
+        assert(current_seq <= last_seq);
 
         for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
                 cit != mp_history->changesEnd(); ++cit)
@@ -463,28 +463,34 @@ bool StatefulWriter::matched_reader_add(const RemoteReaderAttributes& rdata)
             ++current_seq;
         }
 
-        assert(max_seq + 1 == current_seq);
-    }
+        assert(last_seq + 1 == current_seq);
 
-    // Send a initial heartbeat
-    if(rp->mp_initialHeartbeat != nullptr) // It is reliable
-        rp->mp_initialHeartbeat->restart_timer();
-
-    // TODO(Ricardo) In the heartbeat event?
-    // Send Gap
-    if(!not_relevant_changes.empty())
-    {
         RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
-        //TODO (Ricardo) Temporal
         LocatorList_t locatorsList(rp->m_att.endpoint.unicastLocatorList);
         locatorsList.push_back(rp->m_att.endpoint.multicastLocatorList);
 
-        group.add_gap(not_relevant_changes, {rp->m_att.guid}, locatorsList);
-    }
+        // Send initial heartbeat
+        send_heartbeat_nts_({rp->m_att.guid}, locatorsList, group, false);
 
-    // Always activate heartbeat period. We need a confirmation of the reader.
-    // The state has to be updated.
-    this->mp_periodicHB->restart_timer();
+        // Send Gap
+        if(!not_relevant_changes.empty())
+        {
+            group.add_gap(not_relevant_changes, {rp->m_att.guid}, locatorsList);
+        }
+
+        // Always activate heartbeat period. We need a confirmation of the reader.
+        // The state has to be updated.
+        this->mp_periodicHB->restart_timer();
+    }
+    else if(rdata.is_eprosima_endpoint)
+    {
+        RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
+        LocatorList_t locatorsList(rp->m_att.endpoint.unicastLocatorList);
+        locatorsList.push_back(rp->m_att.endpoint.multicastLocatorList);
+
+        // Send initial heartbeat
+        send_heartbeat_nts_({rp->m_att.guid}, locatorsList, group, false, true);
+    }
 
     matched_readers.push_back(rp);
 
@@ -799,30 +805,39 @@ SequenceNumber_t StatefulWriter::next_sequence_number() const
     return mp_history->next_sequence_number();
 }
 
-void StatefulWriter::send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy, bool final)
+void StatefulWriter::send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy, bool final,
+        bool send_empty_history_info)
 {
     RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
     LocatorList_t locators(remoteReaderProxy.m_att.endpoint.unicastLocatorList);
     locators.push_back(remoteReaderProxy.m_att.endpoint.multicastLocatorList);
 
-    send_heartbeat_nts_(std::vector<GUID_t>{remoteReaderProxy.m_att.guid},
-            locators, group, final);
+    send_heartbeat_nts_({remoteReaderProxy.m_att.guid},
+            locators, group, final, send_empty_history_info);
 }
 
 void StatefulWriter::send_heartbeat_nts_(const std::vector<GUID_t>& remote_readers, const LocatorList_t &locators,
-        RTPSMessageGroup& message_group, bool final)
+        RTPSMessageGroup& message_group, bool final, bool send_empty_history_info)
 {
     SequenceNumber_t firstSeq = get_seq_num_min();
     SequenceNumber_t lastSeq = get_seq_num_max();
 
     if (firstSeq == c_SequenceNumber_Unknown || lastSeq == c_SequenceNumber_Unknown)
     {
-        firstSeq = next_sequence_number();
-        lastSeq = SequenceNumber_t(0, 0);
+        assert(firstSeq == c_SequenceNumber_Unknown && lastSeq == c_SequenceNumber_Unknown);
+
+        if(send_empty_history_info && remote_readers.size() == 1)
+        {
+            firstSeq = next_sequence_number();
+            lastSeq = {0, 0};
+        }
+        else
+        {
+            return;
+        }
     }
     else
     {
-        (void)firstSeq;
         assert(firstSeq <= lastSeq);
     }
 
@@ -830,8 +845,7 @@ void StatefulWriter::send_heartbeat_nts_(const std::vector<GUID_t>& remote_reade
 
     // FinalFlag is always false because this class is used only by StatefulWriter in Reliable.
     message_group.add_heartbeat(remote_readers,
-            firstSeq, lastSeq, m_heartbeatCount, final, false, locators);
-
+            firstSeq, lastSeq, m_heartbeatCount, final, false, locators); 
     // Update calculate of heartbeat piggyback.
     currentUsageSendBufferSize_ = static_cast<int32_t>(sendBufferSize_);
 
@@ -852,21 +866,23 @@ void StatefulWriter::process_acknack(const GUID_t reader_guid, uint32_t ack_coun
             if(remote_reader->m_lastAcknackCount < ack_count)
             {
                 remote_reader->m_lastAcknackCount = ack_count;
-                // Sequence numbers before Base are set as Acknowledged.
-                remote_reader->acked_changes_set(sn_set.base);
-                std::vector<SequenceNumber_t> set_vec = sn_set.get_set();
-                if (remote_reader->requested_changes_set(set_vec) && remote_reader->mp_nackResponse != nullptr)
+                if(sn_set.base != SequenceNumber_t(0, 0))
                 {
-                    remote_reader->mp_nackResponse->restart_timer();
-                }
-                else if(!final_flag)
-                {
-                    if(sn_set.base == SequenceNumber_t(0, 0) && sn_set.isSetEmpty())
+                    // Sequence numbers before Base are set as Acknowledged.
+                    remote_reader->acked_changes_set(sn_set.base);
+                    std::vector<SequenceNumber_t> set_vec = sn_set.get_set();
+                    if (remote_reader->requested_changes_set(set_vec) && remote_reader->mp_nackResponse != nullptr)
                     {
-                        send_heartbeat_to_nts(*remote_reader, true);
+                        remote_reader->mp_nackResponse->restart_timer();
                     }
-
-                    mp_periodicHB->restart_timer();
+                    else if(!final_flag)
+                    {
+                        mp_periodicHB->restart_timer();
+                    }
+                }
+                else if(sn_set.isSetEmpty() && !final_flag)
+                {
+                    send_heartbeat_to_nts(*remote_reader, true, remote_reader->m_att.is_eprosima_endpoint);
                 }
 
                 // Check if all CacheChange are acknowledge, because a user could be waiting
