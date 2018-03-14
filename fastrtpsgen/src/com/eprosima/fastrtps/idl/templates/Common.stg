@@ -29,7 +29,7 @@ fileHeader(ctx, file, description) ::= <<
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file $file$
  * $description$
  *
@@ -99,8 +99,8 @@ $keyFunctionHeaders(union)$
 keyFunctionSourcesStruct(ctx, parent, struct) ::= <<
 size_t $struct.scopedname$::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
-	size_t current_align = current_alignment;
-            
+    size_t current_align = current_alignment;
+
     $struct.members : { member | $if(boolean_converter.(member.annotations.("Key").values.("value").value))$ $max_serialized_size(ctx=ctx, typecode=member.typecode, var="current_align")$ $endif$}; separator="\n"$
 
     return current_align;
@@ -113,7 +113,9 @@ bool $struct.scopedname$::isKeyDefined()
 
 void $struct.scopedname$::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
-	$struct.members : { member |$if(boolean_converter.(member.annotations.("Key").values.("value").value))$ $object_serialization(ctx=ctx, object=member, preffix="m_")$ $endif$ }; separator="\n"$
+    (void) scdr;
+
+    $struct.members : { member |$if(boolean_converter.(member.annotations.("Key").values.("value").value))$ $object_serialization(ctx=ctx, object=member, preffix="m_")$ $endif$ }; separator="\n"$
 }
 >>
 
