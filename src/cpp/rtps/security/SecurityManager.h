@@ -105,22 +105,22 @@ class SecurityManager
 
         RTPSParticipantImpl* participant() { return participant_; }
 
-        bool encode_rtps_message(CDRMessage_t& message,
+        bool encode_rtps_message(const CDRMessage_t& input_message, CDRMessage_t& output_message,
                 const std::vector<GuidPrefix_t>& receiving_list);
 
-        int decode_rtps_message(CDRMessage_t& message, CDRMessage_t& out_message,
+        int decode_rtps_message(const CDRMessage_t& message, CDRMessage_t& out_message,
                 const GuidPrefix_t& sending_participant);
 
-        bool encode_writer_submessage(CDRMessage_t& message, const GUID_t& writer_guid,
-                const std::vector<GUID_t>& receiving_list);
+        bool encode_writer_submessage(const CDRMessage_t& input_message, CDRMessage_t& output_message,
+                const GUID_t& writer_guid, const std::vector<GUID_t>& receiving_list);
 
-        bool encode_reader_submessage(CDRMessage_t& message, const GUID_t& reader_guid,
-                const std::vector<GUID_t>& receiving_list);
+        bool encode_reader_submessage(const CDRMessage_t& input_message, CDRMessage_t& output_message,
+                const GUID_t& reader_guid, const std::vector<GUID_t>& receiving_list);
 
         int decode_rtps_submessage(CDRMessage_t& message, CDRMessage_t& out_message,
                 const GuidPrefix_t& sending_participant);
 
-        bool encode_serialized_payload(const SerializedPayload_t& payload, CDRMessage_t& output_message,
+        bool encode_serialized_payload(const SerializedPayload_t& payload, SerializedPayload_t& output_payload,
                 const GUID_t& writer_guid);
 
         bool decode_serialized_payload(const SerializedPayload_t& secure_payload,

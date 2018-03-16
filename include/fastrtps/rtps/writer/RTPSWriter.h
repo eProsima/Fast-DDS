@@ -187,6 +187,7 @@ class RTPSWriter : public Endpoint
     bool is_async_;
 
     LocatorList_t mAllShrinkedLocatorList;
+
     std::vector<GUID_t> mAllRemoteReaders;
 
     void update_cached_info_nts(std::vector<GUID_t>&& allRemoteReaders,
@@ -209,6 +210,12 @@ class RTPSWriter : public Endpoint
      * @return True if removed correctly.
      */
     virtual bool change_removed_by_history(CacheChange_t* a_change)=0;
+
+#if HAVE_SECURITY
+    SerializedPayload_t encrypt_payload_;
+
+    bool encrypt_cachechange(CacheChange_t* change);
+#endif
 
     private:
 

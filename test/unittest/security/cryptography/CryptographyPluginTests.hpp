@@ -738,20 +738,19 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     CryptoPlugin->keyexchange()->set_remote_datawriter_crypto_tokens(*reader, *remote_writer, Writer_CryptoTokens, exception);
 
     //Perform sample message exchange
-    std::vector<uint8_t> plain_payload;
-    std::vector<uint8_t> encoded_payload;
-    std::vector<uint8_t> decoded_payload;
+    eprosima::fastrtps::rtps::SerializedPayload_t plain_payload(18); // Message will have 18 length.
+    eprosima::fastrtps::rtps::SerializedPayload_t encoded_payload(100);
+    eprosima::fastrtps::rtps::SerializedPayload_t decoded_payload(18); // Message will have 18 length.
 
     char message[] = "My goose is cooked"; //Length 18
-    plain_payload.resize(18);
-    memcpy(plain_payload.data(), message, 18);
+    memcpy(plain_payload.data, message, 18);
 
     std::vector<uint8_t> inline_qos;
 
     //Send message to intended participant
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_serialized_payload(encoded_payload, inline_qos, plain_payload, *writer, exception));
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_serialized_payload(decoded_payload, encoded_payload, inline_qos, *reader, *remote_writer, exception));
-    ASSERT_TRUE(plain_payload == decoded_payload);
+    ASSERT_TRUE(memcmp(plain_payload.data, decoded_payload.data, 18));
 
     CryptoPlugin->keyfactory()->unregister_datawriter(writer,exception);
     CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer,exception);
@@ -807,7 +806,7 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     //Send message to intended participant
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_serialized_payload(encoded_payload, inline_qos, plain_payload, *writer, exception));
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_serialized_payload(decoded_payload, encoded_payload, inline_qos, *reader, *remote_writer, exception));
-    ASSERT_TRUE(plain_payload == decoded_payload);
+    ASSERT_TRUE(memcmp(plain_payload.data, decoded_payload.data, 18));
 
     delete i_handle;
     delete perm_handle;

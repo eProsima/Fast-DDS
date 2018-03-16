@@ -46,7 +46,13 @@ PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
     mp_type(pdatatype),
     m_att(att),
 #pragma warning (disable : 4355 )
-    m_history(this, pdatatype->m_typeSize, att.topic.historyQos, att.topic.resourceLimitsQos, att.historyMemoryPolicy),
+    m_history(this, pdatatype->m_typeSize
+#if HAVE_SECURITY
+            // In future v2 changepool is in writer, and writer set this value to cachechagepool.
+            + 20 /*SecureDataHeader*/ + 4 + ((2* 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
+            + 16 + 4 /*SecureDataTag*/
+#endif
+            , att.topic.historyQos, att.topic.resourceLimitsQos, att.historyMemoryPolicy),
     mp_listener(listen),
 #pragma warning (disable : 4355 )
     m_writerListener(this),
@@ -138,7 +144,9 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
 
         // If needed inlineqos for related_sample_identity, then remove the inlinqos size from final fragment size.
         if(wparams.related_sample_identity() != SampleIdentity::unknown())
+        {
             final_high_mark_for_frag -= 32;
+        }
 
         // If it is big data, fragment it.
         if(ch->serializedPayload.length > final_high_mark_for_frag)

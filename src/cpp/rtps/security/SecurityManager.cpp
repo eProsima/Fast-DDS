@@ -1797,7 +1797,7 @@ ParticipantCryptoHandle* SecurityManager::register_and_match_crypto_endpoint(con
     return nullptr;
 }
 
-bool SecurityManager::encode_rtps_message(CDRMessage_t& message,
+bool SecurityManager::encode_rtps_message(const CDRMessage_t& input_message, CDRMessage_t& output_message,
         const std::vector<GuidPrefix_t> &receiving_list)
 {
     if(crypto_plugin_ == nullptr)
@@ -1808,7 +1808,7 @@ bool SecurityManager::encode_rtps_message(CDRMessage_t& message,
 
     assert(receiving_list.size() > 0);
 
-    mutex_.lock();
+    std::unique_lock<std::mutex> lock(mutex_);
 
     std::vector<ParticipantCryptoHandle*> receiving_crypto_list;
     for(const auto remote_participant : receiving_list)
@@ -1834,33 +1834,13 @@ bool SecurityManager::encode_rtps_message(CDRMessage_t& message,
         }
     }
 
-
-    std::vector<uint8_t> cdr_message(message.buffer, message.buffer + message.length);
-    std::vector<uint8_t> encode_cdr_message;
-
     SecurityException exception;
-    bool ret = crypto_plugin_->cryptotransform()->encode_rtps_message(encode_cdr_message,
-            cdr_message,
-            *local_participant_crypto_handle_,
-            receiving_crypto_list,
+    return crypto_plugin_->cryptotransform()->encode_rtps_message(output_message,
+            input_message, *local_participant_crypto_handle_, receiving_crypto_list,
             exception);
-
-    mutex_.unlock();
-
-    if(encode_cdr_message.size() <= message.max_size)
-    {
-        memcpy(message.buffer, encode_cdr_message.data(), encode_cdr_message.size());
-        message.length = static_cast<uint32_t>(encode_cdr_message.size());
-    }
-    else
-    {
-        logError(SECURITY, "Encoded RTPS message exceeds maximum size");
-    }
-
-    return ret;
 }
 
-int SecurityManager::decode_rtps_message(CDRMessage_t& message, CDRMessage_t& out_message,
+int SecurityManager::decode_rtps_message(const CDRMessage_t& message, CDRMessage_t& out_message,
         const GuidPrefix_t& remote_participant)
 {
     if(message.buffer[message.pos] != SRTPS_PREFIX)
@@ -1894,29 +1874,16 @@ int SecurityManager::decode_rtps_message(CDRMessage_t& message, CDRMessage_t& ou
 
     if(remote_participant_crypto_handle != nullptr)
     {
-        std::vector<uint8_t> encode_cdr_message(message.buffer + message.pos, message.buffer + message.length);
-        std::vector<uint8_t> cdr_message;
-
         SecurityException exception;
-        bool ret = crypto_plugin_->cryptotransform()->decode_rtps_message(cdr_message,
-                encode_cdr_message,
+        bool ret = crypto_plugin_->cryptotransform()->decode_rtps_message(out_message,
+                message,
                 *local_participant_crypto_handle_,
                 *remote_participant_crypto_handle,
                 exception);
 
         if(ret)
         {
-            // TODO(Ricardo) Temporal
-            if(cdr_message.size() <= message.max_size)
-            {
-                memcpy(out_message.buffer, cdr_message.data(), cdr_message.size());
-                out_message.length = static_cast<uint32_t>(cdr_message.size());
-                returnedValue = 0;
-            }
-            else
-            {
-                logError(SECURITY, "Decoded RTPS message exceeds maximum size");
-            }
+            returnedValue = 0;
         }
         else
         {
@@ -2662,8 +2629,8 @@ void SecurityManager::remove_writer(const GUID_t& reader_guid, const GUID_t& /*r
     }
 }
 
-bool SecurityManager::encode_writer_submessage(CDRMessage_t& message, const GUID_t& writer_guid,
-        const std::vector<GUID_t>& receiving_list)
+bool SecurityManager::encode_writer_submessage(const CDRMessage_t& input_message, CDRMessage_t& output_message,
+        const GUID_t& writer_guid, const std::vector<GUID_t>& receiving_list)
 {
     if(crypto_plugin_ == nullptr)
         return false;
@@ -2690,27 +2657,15 @@ bool SecurityManager::encode_writer_submessage(CDRMessage_t& message, const GUID
 
         if(receiving_datareader_crypto_list.size() > 0)
         {
-            std::vector<uint8_t> cdr_message(message.buffer + message.pos, message.buffer + message.length);
-            std::vector<uint8_t> encode_cdr_message;
             SecurityException exception;
 
-            if(crypto_plugin_->cryptotransform()->encode_datawriter_submessage(encode_cdr_message,
-                        cdr_message,
+            if(crypto_plugin_->cryptotransform()->encode_datawriter_submessage(output_message,
+                        input_message,
                         *wr_it->second.writer_handle,
                         receiving_datareader_crypto_list,
                         exception))
             {
-                if(encode_cdr_message.size() <= message.max_size)
-                {
-                    memcpy(message.buffer + message.pos, encode_cdr_message.data(), encode_cdr_message.size());
-                    message.length = message.pos + static_cast<uint32_t>(encode_cdr_message.size());
-                    message.pos = message.length;
-                    return true;
-                }
-                else
-                {
-                    logError(SECURITY, "Encoded RTPS submessage exceeds maximum size");
-                }
+                return true;
             }
         }
     }
@@ -2722,8 +2677,8 @@ bool SecurityManager::encode_writer_submessage(CDRMessage_t& message, const GUID
     return false;
 }
 
-bool SecurityManager::encode_reader_submessage(CDRMessage_t& message, const GUID_t& reader_guid,
-        const std::vector<GUID_t>& receiving_list)
+bool SecurityManager::encode_reader_submessage(const CDRMessage_t& input_message, CDRMessage_t& output_message,
+        const GUID_t& reader_guid, const std::vector<GUID_t>& receiving_list)
 {
     if(crypto_plugin_ == nullptr)
         return false;
@@ -2750,27 +2705,15 @@ bool SecurityManager::encode_reader_submessage(CDRMessage_t& message, const GUID
 
         if(receiving_datawriter_crypto_list.size() > 0)
         {
-            std::vector<uint8_t> cdr_message(message.buffer + message.pos, message.buffer + message.length);
-            std::vector<uint8_t> encode_cdr_message;
             SecurityException exception;
 
-            if(crypto_plugin_->cryptotransform()->encode_datareader_submessage(encode_cdr_message,
-                        cdr_message,
+            if(crypto_plugin_->cryptotransform()->encode_datareader_submessage(output_message,
+                        input_message,
                         *rd_it->second.reader_handle,
                         receiving_datawriter_crypto_list,
                         exception))
             {
-                if(encode_cdr_message.size() <= message.max_size)
-                {
-                    memcpy(message.buffer + message.pos, encode_cdr_message.data(), encode_cdr_message.size());
-                    message.length = message.pos + static_cast<uint32_t>(encode_cdr_message.size());
-                    message.pos = message.length;
-                    return true;
-                }
-                else
-                {
-                    logError(SECURITY, "Encoded RTPS submessage exceeds maximum size");
-                }
+                return true;
             }
         }
     }
@@ -2859,7 +2802,7 @@ int SecurityManager::decode_rtps_submessage(CDRMessage_t& message, CDRMessage_t&
 }
 
 bool SecurityManager::encode_serialized_payload(const SerializedPayload_t& payload,
-        CDRMessage_t& output_message, const GUID_t& writer_guid)
+        SerializedPayload_t& output_payload, const GUID_t& writer_guid)
 {
     if(crypto_plugin_ == nullptr)
         return false;
@@ -2870,26 +2813,20 @@ bool SecurityManager::encode_serialized_payload(const SerializedPayload_t& paylo
 
     if(wr_it != writer_handles_.end())
     {
-        std::vector<uint8_t> cdr_message(payload.data, payload.data + payload.length);
-        std::vector<uint8_t> encode_cdr_message, extra_inline_qos;
         SecurityException exception;
+        std::vector<uint8_t> extra_inline_qos;
 
-        if(crypto_plugin_->cryptotransform()->encode_serialized_payload(encode_cdr_message,
+        if(crypto_plugin_->cryptotransform()->encode_serialized_payload(output_payload,
                     extra_inline_qos,
-                    cdr_message,
+                    payload,
                     *wr_it->second.writer_handle,
                     exception))
         {
-            if(encode_cdr_message.size() <= output_message.max_size) // TODO(Ricardo) Look if max_size can be 0.
-            {
-                memcpy(output_message.buffer, encode_cdr_message.data(), encode_cdr_message.size());
-                output_message.length = static_cast<uint32_t>(encode_cdr_message.size());
-                return true;
-            }
-            else
-            {
-                logError(SECURITY, "Encoded payload exceeds maximum size");
-            }
+            return true;
+        }
+        else
+        {
+            logError(SECURITY, "Error encoding payload failed");
         }
     }
     else
@@ -2916,24 +2853,14 @@ bool SecurityManager::decode_serialized_payload(const SerializedPayload_t& secur
 
         if(wr_it_handle != rd_it->second.associated_writers.end())
         {
-            std::vector<uint8_t> encode_payload(secure_payload.data, secure_payload.data + secure_payload.length);
-            std::vector<uint8_t> decode_payload, inline_qos;
+            std::vector<uint8_t> inline_qos;
             SecurityException exception;
 
-            if(crypto_plugin_->cryptotransform()->decode_serialized_payload(decode_payload,
-                        encode_payload, inline_qos, *rd_it->second.reader_handle, *std::get<1>(wr_it_handle->second), exception))
+            if(crypto_plugin_->cryptotransform()->decode_serialized_payload(payload,
+                        secure_payload, inline_qos, *rd_it->second.reader_handle,
+                        *std::get<1>(wr_it_handle->second), exception))
             {
-                if(decode_payload.size() <= payload.max_size) // TODO(Ricardo) Look if max_size can be 0.
-                {
-                    memcpy(payload.data, decode_payload.data(), decode_payload.size());
-                    payload.length = static_cast<uint32_t>(decode_payload.size());
-                    payload.encapsulation = secure_payload.encapsulation;
-                    return true;
-                }
-                else
-                {
-                    logError(SECURITY, "Decoded payload exceeds maximum size");
-                }
+                return true;
             }
             else
             {

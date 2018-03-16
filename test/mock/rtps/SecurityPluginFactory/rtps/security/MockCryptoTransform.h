@@ -34,11 +34,12 @@ class MockCryptoTransform : public CryptoTransform
         virtual ~MockCryptoTransform(){}
 
         MOCK_METHOD5(encode_serialized_payload, bool (
+                SerializedPayload_t&,
                 std::vector<uint8_t>&,
-                std::vector<uint8_t>&,
-                const std::vector<uint8_t>&,
+                const SerializedPayload_t&,
                 DatawriterCryptoHandle&,
                 SecurityException&));
+
         MOCK_METHOD5(encode_datawriter_submessage, bool (
                 std::vector<uint8_t>&,
                 const std::vector<uint8_t>&,
@@ -91,10 +92,10 @@ class MockCryptoTransform : public CryptoTransform
                 SecurityException&));
 
         MOCK_METHOD6(decode_serialized_payload, bool (
-                std::vector<uint8_t>&,
+                SerializedPayload_t&,
+                const SerializedPayload_t&,
                 const std::vector<uint8_t>&,
-                const std::vector<uint8_t>&,
-                DatareaderCryptoHandle &,
+                DatareaderCryptoHandle&,
                 DatawriterCryptoHandle&,
                 SecurityException&));
 

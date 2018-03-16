@@ -279,7 +279,7 @@ if(MSVC OR MSVC_IDE)
         endif()
 
         # Link library to external win32 libraries.
-        target_link_libraries(${PROJECT_NAME} ${PRIVACY}
+        target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr
             ${CMAKE_THREAD_LIBS_INIT}
             iphlpapi Shlwapi kernel32 user32.dll
             ${EXTRA_LIBRARIES}
@@ -308,7 +308,7 @@ else()
         )
 
     # Link library to external libraries.
-    target_link_libraries(${PROJECT_NAME}
+    target_link_libraries(${PROJECT_NAME} fastcdr
         ${CMAKE_THREAD_LIBS_INIT}
         ${EXTRA_LIBRARIES}
         )

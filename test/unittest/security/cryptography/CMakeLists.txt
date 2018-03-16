@@ -54,6 +54,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${GTEST_INCLUDE_DIRS}
             ${OPENSSL_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
-        target_link_libraries(BuiltinAESGCMGMAC ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES})
+        target_link_libraries(BuiltinAESGCMGMAC fastcdr ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES})
     endif()
 endif()

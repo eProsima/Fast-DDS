@@ -21,6 +21,7 @@
 
 #include <fastrtps/rtps/security/cryptography/CryptoTransform.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
+#include <fastcdr/Cdr.h>
 
 #include <map>
 #include "AESGCMGMAC_Types.h"
@@ -38,102 +39,117 @@ class AESGCMGMAC_Transform : public CryptoTransform
     ~AESGCMGMAC_Transform();
 
     bool encode_serialized_payload(
-                std::vector<uint8_t> &encoded_buffer,
-                std::vector<uint8_t> &extra_inline_qos,
-                const std::vector<uint8_t> &plain_buffer,
-                DatawriterCryptoHandle &sending_datawriter_crypto,
-                SecurityException &exception) override;
+            SerializedPayload_t& encoded_payload,
+            std::vector<uint8_t>& extra_inline_qos,
+            const SerializedPayload_t& payload,
+            DatawriterCryptoHandle& sending_datawriter_crypto,
+            SecurityException& exception) override;
 
     bool encode_datawriter_submessage(
-                std::vector<uint8_t> &encoded_rtps_submessage,
-                const std::vector<uint8_t> &plain_rtps_submessage,
-                DatawriterCryptoHandle &sending_datawriter_crypto,
-                std::vector<DatareaderCryptoHandle*>& receiving_datareader_crypto_list,
-                SecurityException &exception) override;
+            CDRMessage_t& encoded_rtps_submessage,
+            const CDRMessage_t& plain_rtps_submessage,
+            DatawriterCryptoHandle& sending_datawriter_crypto,
+            std::vector<DatareaderCryptoHandle*>& receiving_datareader_crypto_list,
+            SecurityException& exception) override;
 
     bool encode_datareader_submessage(
-                std::vector<uint8_t> &encoded_rtps_submessage,
-                const std::vector<uint8_t> &plain_rtps_submessage,
-                DatareaderCryptoHandle &sending_datareader_crypto,
-                std::vector<DatawriterCryptoHandle*> &receiving_datawriter_crypto_list,
-                SecurityException &exception) override;
+            CDRMessage_t& encoded_rtps_submessage,
+            const CDRMessage_t& plain_rtps_submessage,
+            DatareaderCryptoHandle& sending_datareader_crypto,
+            std::vector<DatawriterCryptoHandle*>& receiving_datawriter_crypto_list,
+            SecurityException& exception) override;
 
     bool encode_rtps_message(
-                std::vector<uint8_t> &encoded_rtps_message,
-                const std::vector<uint8_t> &plain_rtps_message,
-                ParticipantCryptoHandle &sending_crypto,
-                const std::vector<ParticipantCryptoHandle*> &receiving_crypto_list,
-                SecurityException &exception) override;
+            CDRMessage_t& encoded_rtps_message,
+            const CDRMessage_t& plain_rtps_message,
+            ParticipantCryptoHandle &sending_crypto,
+            std::vector<ParticipantCryptoHandle*> &receiving_crypto_list,
+            SecurityException &exception) override;
 
     bool decode_rtps_message(
-                std::vector<uint8_t> &plain_buffer,
-                const std::vector<uint8_t> &encoded_buffer,
-                const ParticipantCryptoHandle &receiving_crypto,
-                const ParticipantCryptoHandle &sending_crypto,
-                SecurityException &exception) override;
+            CDRMessage_t& plain_buffer,
+            const CDRMessage_t& encoded_buffer,
+            const ParticipantCryptoHandle &receiving_crypto,
+            const ParticipantCryptoHandle &sending_crypto,
+            SecurityException &exception) override;
 
     bool preprocess_secure_submsg(
-                DatawriterCryptoHandle **datawriter_crypto,
-                DatareaderCryptoHandle **datareader_crypto,
-                SecureSubmessageCategory_t &secure_submessage_category,
-                const CDRMessage_t& encoded_rtps_submessage,
-                ParticipantCryptoHandle &receiving_crypto,
-                ParticipantCryptoHandle &sending_crypto,
-                SecurityException &exception) override;
+            DatawriterCryptoHandle **datawriter_crypto,
+            DatareaderCryptoHandle **datareader_crypto,
+            SecureSubmessageCategory_t &secure_submessage_category,
+            const CDRMessage_t& encoded_rtps_submessage,
+            ParticipantCryptoHandle &receiving_crypto,
+            ParticipantCryptoHandle &sending_crypto,
+            SecurityException &exception) override;
 
     bool decode_datawriter_submessage(
-                CDRMessage_t& plain_rtps_submessage,
-                CDRMessage_t& encoded_rtps_submessage,
-                DatareaderCryptoHandle &receiving_datareader_crypto,
-                DatawriterCryptoHandle &sending_datawriter_cryupto,
-                SecurityException &exception) override;
+            CDRMessage_t& plain_rtps_submessage,
+            CDRMessage_t& encoded_rtps_submessage,
+            DatareaderCryptoHandle &receiving_datareader_crypto,
+            DatawriterCryptoHandle &sending_datawriter_cryupto,
+            SecurityException &exception) override;
 
     bool decode_datareader_submessage(
-                CDRMessage_t& plain_rtps_submessage,
-                CDRMessage_t& encoded_rtps_submessage,
-                DatawriterCryptoHandle &receiving_datawriter_crypto,
-                DatareaderCryptoHandle &sending_datareader_crypto,
-                SecurityException &exception) override;
+            CDRMessage_t& plain_rtps_submessage,
+            CDRMessage_t& encoded_rtps_submessage,
+            DatawriterCryptoHandle &receiving_datawriter_crypto,
+            DatareaderCryptoHandle &sending_datareader_crypto,
+            SecurityException &exception) override;
 
     bool decode_serialized_payload(
-                std::vector<uint8_t> &plain_buffer,
-                const std::vector<uint8_t> &encoded_buffer,
-                const std::vector<uint8_t> &inline_qos,
-                DatareaderCryptoHandle &receiving_datareader_crypto,
-                DatawriterCryptoHandle &sending_datawriter_crypto,
-                SecurityException &exception) override;
+            SerializedPayload_t& plain_payload,
+            const SerializedPayload_t& encoded_payload,
+            const std::vector<uint8_t>& inline_qos,
+            DatareaderCryptoHandle& receiving_datareader_crypto,
+            DatawriterCryptoHandle& sending_datawriter_crypto,
+            SecurityException& exception) override;
 
     //Aux function to compute session key from the master material
     std::array<uint8_t, 32> compute_sessionkey(const std::array<uint8_t, 32>& master_sender_key,
             const std::array<uint8_t, 32>& master_salt , const uint32_t session_id);
 
     //Serialization and deserialization of message components
-    std::vector<uint8_t> serialize_SecureDataHeader(SecureDataHeader &input);
-    std::vector<uint8_t> serialize_SecureDataBody(SecureDataBody &input);
-    std::vector<uint8_t> serialize_SecureDataTag(SecureDataTag &input);
-    SecureDataHeader deserialize_SecureDataHeader(std::vector<uint8_t> &input);
-    SecureDataBody deserialize_SecureDataBody(std::vector<uint8_t> &input);
-    SecureDataTag deserialize_SecureDataTag(std::vector<uint8_t> &input);
+    void serialize_SecureDataHeader(eprosima::fastcdr::Cdr& serializer,
+            const CryptoTransformKind& transformation_kind, const CryptoTransformKeyId& transformation_key_id,
+            const std::array<uint8_t, 4>& session_id, const std::array<uint8_t, 8>& initialization_vector_suffix);
 
-    //Wire assembly and disassembly of messages
-    std::vector<uint8_t> assemble_serialized_payload(std::vector<uint8_t> &serialized_header,
-            std::vector<uint8_t> &serialized_body,
-            std::vector<uint8_t> &serialized_tag,
-            unsigned char &flags);
+    bool serialize_SecureDataBody(eprosima::fastcdr::Cdr& serializer,
+            const std::array<uint8_t, 4>& transformation_kind, const std::array<uint8_t,32>& session_key,
+            const std::array<uint8_t, 12>& initialization_vector,
+            eprosima::fastcdr::FastBuffer& output_buffer, octet* plain_buffer, uint32_t plain_buffer_len,
+            SecureDataTag& tag);
+
+    bool serialize_SecureDataTag(eprosima::fastcdr::Cdr& serializer,
+            const std::array<uint8_t, 4>& transformation_kind, const uint32_t session_id,
+            const std::array<uint8_t, 12>& initialization_vector,
+            std::vector<EntityCryptoHandle*>& receiving_datareader_crypto_list, bool update_specific_keys,
+            SecureDataTag& tag);
+
+    bool serialize_SecureDataTag(eprosima::fastcdr::Cdr& serializer,
+            const AESGCMGMAC_ParticipantCryptoHandle& local_participant,
+            const std::array<uint8_t, 12>& initialization_vector,
+            std::vector<ParticipantCryptoHandle*>& receiving_crypto_list, bool update_specific_keys,
+            SecureDataTag& tag);
+
+    SecureDataHeader deserialize_SecureDataHeader(std::vector<uint8_t> &input);
+    SecureDataHeader deserialize_SecureDataHeader(eprosima::fastcdr::Cdr& decoder);
+
+    SecureDataBody deserialize_SecureDataBody(std::vector<uint8_t> &input);
+    bool predeserialize_SecureDataBody(eprosima::fastcdr::Cdr& decoder, uint32_t& body_length);
+    bool deserialize_SecureDataBody(eprosima::fastcdr::Cdr& decoder,
+            eprosima::fastcdr::Cdr::state& body_state, SecureDataTag& tag, uint32_t body_length,
+            const std::array<uint8_t, 4> transformation_kind,
+            const std::array<uint8_t,32>& session_key, const std::array<uint8_t, 12>& initialization_vector,
+            octet* plain_buffer, uint32_t& plain_buffer_len);
+
+    SecureDataTag deserialize_SecureDataTag(std::vector<uint8_t> &input);
+    bool deserialize_SecureDataTag(eprosima::fastcdr::Cdr& decoder, SecureDataTag& tag,
+            const CryptoTransformKind& transformation_kind,
+            const CryptoTransformKeyId& receiver_specific_key_id, const std::array<uint8_t, 32>& receiver_specific_key,
+            const std::array<uint8_t,32>& master_salt, const std::array<uint8_t,12>& initialization_vector,
+            uint32_t session_id, SecurityException& exception);
 
     std::vector<uint8_t> assemble_endpoint_submessage(std::vector<uint8_t> &serialized_header,
-             std::vector<uint8_t> &serialized_body,
-             std::vector<uint8_t> &serialized_tag,
-             unsigned char &flags);
-
-     std::vector<uint8_t> assemble_rtps_message(std::vector<uint8_t> &rtps_header,
-           std::vector<uint8_t> &serialized_header,
-           std::vector<uint8_t> &serialized_body,
-           std::vector<uint8_t> &serialized_tag,
-           unsigned char &flags);
-
-    bool disassemble_serialized_payload(const std::vector<uint8_t> &input,
-            std::vector<uint8_t> &serialized_header,
             std::vector<uint8_t> &serialized_body,
             std::vector<uint8_t> &serialized_tag,
             unsigned char &flags);
@@ -144,17 +160,17 @@ class AESGCMGMAC_Transform : public CryptoTransform
             std::vector<uint8_t> &serialized_tag,
             unsigned char &flags);
 
-   bool disassemble_rtps_message(const std::vector<uint8_t> &input,
-           std::vector<uint8_t> &serialized_header,
-           std::vector<uint8_t> &serialized_body,
-           std::vector<uint8_t> &serialized_tag,
-           unsigned char &flags);
+    bool disassemble_rtps_message(const std::vector<uint8_t> &input,
+            std::vector<uint8_t> &serialized_header,
+            std::vector<uint8_t> &serialized_body,
+            std::vector<uint8_t> &serialized_tag,
+            unsigned char &flags);
 
-   uint32_t calculate_extra_size_for_rtps_message(uint32_t number_discovered_participants) const override;
+    uint32_t calculate_extra_size_for_rtps_message(uint32_t number_discovered_participants) const override;
 
-   uint32_t calculate_extra_size_for_rtps_submessage(uint32_t number_discovered_readers) const override;
+    uint32_t calculate_extra_size_for_rtps_submessage(uint32_t number_discovered_readers) const override;
 
-   uint32_t calculate_extra_size_for_encoded_payload(uint32_t number_discovered_readers) const override;
+    uint32_t calculate_extra_size_for_encoded_payload(uint32_t number_discovered_readers) const override;
 };
 
 

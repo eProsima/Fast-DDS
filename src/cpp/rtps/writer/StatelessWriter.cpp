@@ -70,6 +70,10 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
+#if HAVE_SECURITY
+    encrypt_cachechange(cptr);
+#endif
+
     if(!isAsync())
     {
         this->setLivelinessAsserted(true);

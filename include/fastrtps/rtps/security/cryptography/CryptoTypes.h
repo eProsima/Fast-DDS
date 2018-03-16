@@ -29,11 +29,17 @@
 #define GMCLASSID_SECURITY_DATAWRITER_CRYPTO_TOKENS "dds.sec.datawriter_crypto_tokens"
 #define GMCLASSID_SECURITY_DATAREADER_CRYPTO_TOKENS "dds.sec.datareader_crypto_tokens"
 
-#define SEC_PREFIX              0x31
-#define SEC_POSTFIX             0x32
-#define SRTPS_PREFIX            0x33
-#define SRTPS_POSTFIX           0x32
-#define SecureBodySubmessage    0x30
+#define _SEC_PREFIX_              0x31
+#define _SEC_POSTFIX_             0x32
+#define _SRTPS_PREFIX_            0x33
+#define _SRTPS_POSTFIX_           0x32
+#define _SecureBodySubmessage_    0x30
+
+const uint8_t SEC_PREFIX = _SEC_PREFIX_;
+const uint8_t SEC_POSTFIX = _SEC_POSTFIX_;
+const uint8_t SRTPS_PREFIX = _SRTPS_PREFIX_;
+const uint8_t SRTPS_POSTFIX = _SRTPS_POSTFIX_;
+const uint8_t SecureBodySubmessage = _SecureBodySubmessage_;
 
 namespace eprosima {
 namespace fastrtps {
