@@ -34,23 +34,24 @@
 #include <map>
 #include <fstream>
 
-
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 ThroughputPublisher::DataPubListener::DataPubListener(ThroughputPublisher& up):m_up(up){}
 ThroughputPublisher::DataPubListener::~DataPubListener(){}
 
-void ThroughputPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
+void ThroughputPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(m_up.mutex_);
 
     if(info.status == MATCHED_MATCHING)
     {
-        cout << C_RED << "DATA Pub Matched"<<C_DEF<<endl;
+        std::cout << C_RED << "DATA Pub Matched"<<C_DEF<<std::endl;
         ++m_up.disc_count_;
     }
     else
     {
-        cout << C_RED << "DATA PUBLISHER MATCHING REMOVAL" << C_DEF<<endl;
+        std::cout << C_RED << "DATA PUBLISHER MATCHING REMOVAL" << C_DEF<<std::endl;
         --m_up.disc_count_;
     }
 
@@ -60,18 +61,18 @@ void ThroughputPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub
 
 ThroughputPublisher::CommandSubListener::CommandSubListener(ThroughputPublisher& up):m_up(up){}
 ThroughputPublisher::CommandSubListener::~CommandSubListener(){}
-void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(m_up.mutex_);
 
     if(info.status == MATCHED_MATCHING)
     {
-        cout << C_RED << "COMMAND Sub Matched"<<C_DEF<<endl;
+        std::cout << C_RED << "COMMAND Sub Matched"<<C_DEF<<std::endl;
         ++m_up.disc_count_;
     }
     else
     {
-        cout << C_RED << "COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF<<endl;
+        std::cout << C_RED << "COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF<<std::endl;
         --m_up.disc_count_;
     }
 
@@ -81,18 +82,19 @@ void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* 
 
 ThroughputPublisher::CommandPubListener::CommandPubListener(ThroughputPublisher& up):m_up(up){}
 ThroughputPublisher::CommandPubListener::~CommandPubListener(){}
-void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
+void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* /*pub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(m_up.mutex_);
 
     if(info.status == MATCHED_MATCHING)
     {
-        cout << C_RED << "COMMAND Pub Matched"<<C_DEF<<endl;
+        std::cout << C_RED << "COMMAND Pub Matched"<<C_DEF<<std::endl;
         ++m_up.disc_count_;
     }
     else
     {
-        cout << C_RED << "COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF<<endl;
+        std::cout << C_RED << "COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF<<std::endl;
         --m_up.disc_count_;
     }
 
@@ -112,7 +114,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     mp_par = Domain::createParticipant(PParam);
     if(mp_par == nullptr)
     {
-        cout << "ERROR creating participant"<<endl;
+        std::cout << "ERROR creating participant"<<std::endl;
         ready = false;
         return;
     }
@@ -125,7 +127,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     for(int i= 0; i < 1000; ++i)
         t_end_ = std::chrono::steady_clock::now();
     t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
-    cout << "Overhead " << t_overhead_.count() << " us"  << endl;
+    std::cout << "Overhead " << t_overhead_.count() << " us"  << std::endl;
 
     //DATA PUBLISHER
     PublisherAttributes Wparam;
@@ -219,11 +221,11 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
         payload = msg_size;
         m_demand_payload[msg_size - 8].push_back(demand);
     }
-    cout << "Waiting for discovery" << endl;
+    std::cout << "Waiting for discovery" << std::endl;
     std::unique_lock<std::mutex> disc_lock(mutex_);
     while(disc_count_ != 3) disc_cond_.wait(disc_lock);
     disc_lock.unlock();
-    cout << "Discovery complete" << endl;
+    std::cout << "Discovery complete" << std::endl;
 
     ThroughputCommandType command;
     SampleInfo_t info;
@@ -344,7 +346,7 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
                     std::to_string(result.demand) + "demand"
                     ".csv";
                 outFile.open(fileName);
-                outFile << "\"" << result.payload_size << " bytes; demand " << result.demand << " (" + str_reliable + ")\"" << endl;
+                outFile << "\"" << result.payload_size << " bytes; demand " << result.demand << " (" + str_reliable + ")\"" << std::endl;
                 outFile << "\"" << result.subscriber.MBitssec << "\"";
                 outFile.close();
             }
@@ -355,11 +357,11 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         }
         else
         {
-            cout << "The test expected results, stopping"<<endl;
+            std::cout << "The test expected results, stopping"<<std::endl;
         }
     }
     else
-        cout << "PROBLEM READING RESULTS;"<<endl;
+        std::cout << "PROBLEM READING RESULTS;"<<std::endl;
 
     return false;
 
@@ -369,7 +371,7 @@ bool ThroughputPublisher::loadDemandsPayload()
 {
     std::ifstream fi(m_file_name);
 
-    cout << "Reading File: " << m_file_name << endl;
+    std::cout << "Reading File: " << m_file_name << std::endl;
     std::string DELIM = ";";
     if(!fi.is_open())
     {
@@ -399,7 +401,7 @@ bool ThroughputPublisher::loadDemandsPayload()
                 iss >> payload;
                 if(payload<8)
                 {
-                    cout << "Minimum payload is 16 bytes"<<endl;
+                    std::cout << "Minimum payload is 16 bytes"<<std::endl;
                     return false;
                 }
                 payload -=8;
@@ -443,7 +445,7 @@ bool ThroughputPublisher::loadDemandsPayload()
             output_file << std::endl;
     //////////////////////////////*/
 
-    cout << "Performing test with this payloads/demands:"<<endl;
+    std::cout << "Performing test with this payloads/demands:"<<std::endl;
     for(auto sit=m_demand_payload.begin();sit!=m_demand_payload.end();++sit)
     {
         printf("Payload: %6d; Demands: ",sit->first+8);

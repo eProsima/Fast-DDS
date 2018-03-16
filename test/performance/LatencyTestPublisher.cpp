@@ -69,7 +69,8 @@ LatencyTestPublisher::~LatencyTestPublisher()
 }
 
 
-bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv)
+bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv,
+        const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy)
 {
     n_samples = n_sam;
     n_subscribers = n_sub;
@@ -160,6 +161,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PParam.rtps.properties = part_property_policy;
 
     PParam.rtps.sendSocketBufferSize = 65536;
     PParam.rtps.listenSocketBufferSize = 2*65536;
@@ -198,6 +200,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     Locator_t loc;
     loc.port = 15000;
     PubDataparam.unicastLocatorList.push_back(loc);
+    PubDataparam.properties = property_policy;
     mp_datapub = Domain::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
     if(mp_datapub == nullptr)
         return false;
@@ -217,6 +220,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
         SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     loc.port = 15001;
     SubDataparam.unicastLocatorList.push_back(loc);
+    SubDataparam.properties = property_policy;
 
 
 
@@ -520,11 +524,12 @@ bool LatencyTestPublisher::test(uint32_t datasize)
         mp_datapub->write((void*)mp_latency_out);
 
         lock.lock();
-        if(data_count_ == 0)
-            data_cond_.wait_for(lock, std::chrono::seconds(1));
+        data_cond_.wait_for(lock, std::chrono::seconds(1), [&]() { return data_count_ > 0; });
 
-        if(data_count_ != 0)
+        if(data_count_ > 0)
+        {
             --data_count_;
+        }
         lock.unlock();
     }
 

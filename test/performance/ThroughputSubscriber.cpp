@@ -61,12 +61,12 @@ void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*
 
     if(match_info.status == MATCHED_MATCHING)
     {
-        cout << C_RED << "DATA Sub Matched"<<C_DEF<<endl;
+        std::cout << C_RED << "DATA Sub Matched"<<C_DEF<<std::endl;
         ++m_up.disc_count_;
     }
     else
     {
-        cout << C_RED << "DATA SUBSCRIBER MATCHING REMOVAL" << C_DEF<<endl;
+        std::cout << C_RED << "DATA SUBSCRIBER MATCHING REMOVAL" << C_DEF<<std::endl;
         --m_up.disc_count_;
     }
 
@@ -91,7 +91,7 @@ void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscri
         }
         else
         {
-            cout << "NOT ALIVE DATA RECEIVED"<<endl;
+            std::cout << "NOT ALIVE DATA RECEIVED"<<std::endl;
         }
     }
     //	cout << ";O|"<<std::flush;
@@ -113,12 +113,12 @@ void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber*
 
     if(match_info.status == MATCHED_MATCHING)
     {
-        cout << C_RED << "COMMAND Sub Matched"<<C_DEF<<endl;
+        std::cout << C_RED << "COMMAND Sub Matched"<<C_DEF<<std::endl;
         ++m_up.disc_count_;
     }
     else
     {
-        cout << C_RED << "COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF<<endl;
+        std::cout << C_RED << "COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF<<std::endl;
         --m_up.disc_count_;
     }
 
@@ -139,7 +139,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
                              break;
                          }
             case (READY_TO_START):{
-                                      cout << "Command: READY_TO_START" << endl;
+                                      std::cout << "Command: READY_TO_START" << std::endl;
                                       m_up.m_datasize = m_commandin.m_size;
                                       m_up.m_demand = m_commandin.m_demand;
                                       //cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
@@ -154,13 +154,13 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
                                   }
             case (TEST_STARTS):{
                                    m_up.t_start_ = std::chrono::steady_clock::now();
-                                   cout << "Command: TEST_STARTS" << endl;
+                                   std::cout << "Command: TEST_STARTS" << std::endl;
                                    break;
                                }
             case (TEST_ENDS):{
                                  m_up.t_end_ = std::chrono::steady_clock::now();
                                  m_up.m_DataSubListener.saveNumbers();
-                                 cout << "Command: TEST_ENDS" << endl;
+                                 std::cout << "Command: TEST_ENDS" << std::endl;
                                  std::unique_lock<std::mutex> lock(m_up.mutex_);
                                  m_up.stop_count_ = 1;
                                  lock.unlock();
@@ -173,13 +173,13 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
                                  m_up.stop_count_ = 2;
                                  lock.unlock();
                                  m_up.stop_cond_.notify_one();
-                                 cout << "Command: ALL_STOPS" << endl;
+                                 std::cout << "Command: ALL_STOPS" << std::endl;
                              }
         }
     }
     else
     {
-        cout << "Error reading command"<<endl;
+        std::cout << "Error reading command"<<std::endl;
     }
 }
 
@@ -191,12 +191,12 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(Publisher* /
 
     if(info.status == MATCHED_MATCHING)
     {
-        cout << C_RED << "COMMAND Pub Matched"<<C_DEF<<endl;
+        std::cout << C_RED << "COMMAND Pub Matched"<<C_DEF<<std::endl;
         ++m_up.disc_count_;
     }
     else
     {
-        cout << C_RED << "COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF<<endl;
+        std::cout << C_RED << "COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF<<std::endl;
         --m_up.disc_count_;
     }
 
@@ -220,7 +220,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     mp_par = Domain::createParticipant(PParam);
     if(mp_par == nullptr)
     {
-        cout << "ERROR"<<endl;
+        std::cout << "ERROR"<<std::endl;
         ready = false;
         return;
     }
@@ -233,7 +233,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     for(int i = 0; i < 1000; ++i)
         t_end_ = std::chrono::steady_clock::now();
     t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
-    cout << "Overhead " << t_overhead_.count() << endl;
+    std::cout << "Overhead " << t_overhead_.count() << std::endl;
 
     //SUBSCRIBER DATA
     SubscriberAttributes Sparam;
@@ -314,10 +314,10 @@ void ThroughputSubscriber::run()
 {
     if(!ready)
         return;
-    cout << "Waiting for discovery"<<endl;
+    std::cout << "Waiting for discovery"<<std::endl;
     std::unique_lock<std::mutex> lock(mutex_);
     while(disc_count_ != 3) disc_cond_.wait(lock);
-    cout << "Discovery complete"<<endl;
+    std::cout << "Discovery complete"<<std::endl;
 
     while (stop_count_ != 2)
     {
@@ -325,12 +325,12 @@ void ThroughputSubscriber::run()
 
         if (stop_count_ == 1)
         {
-            cout << "Waiting clean state" << endl;
+            std::cout << "Waiting clean state" << std::endl;
             while (!mp_datasub->isInCleanState())
             {
                 eClock::my_sleep(50);
             }
-            cout << "Sending results" << endl;
+            std::cout << "Sending results" << std::endl;
             ThroughputCommandType comm;
             comm.m_command = TEST_RESULTS;
             comm.m_demand = m_demand;
@@ -349,9 +349,9 @@ void ThroughputSubscriber::run()
                 comm.m_totaltime = static_cast<uint64_t>(total_time_count);
             }
 
-            cout << "Last Received Sample: " << comm.m_lastrecsample << endl;
-            cout << "Lost Samples: " << comm.m_lostsamples << endl;
-            cout << "Test of size " << comm.m_size << " and demand " << comm.m_demand << " ends." << endl;
+            std::cout << "Last Received Sample: " << comm.m_lastrecsample << std::endl;
+            std::cout << "Lost Samples: " << comm.m_lostsamples << std::endl;
+            std::cout << "Test of size " << comm.m_size << " and demand " << comm.m_demand << " ends." << std::endl;
             mp_commandpubli->write(&comm);
 
             stop_count_ = 0;

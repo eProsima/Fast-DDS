@@ -33,8 +33,8 @@
 #pragma warning (disable:4512)
 #endif
 
-using namespace eprosima;
-using namespace fastrtps;
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 
 #if defined(__LITTLE_ENDIAN__)
@@ -233,7 +233,7 @@ int main(int argc, char** argv){
         }
     }
 
-    cout << "Starting Throughput Test"<< endl;
+    std::cout << "Starting Throughput Test"<< std::endl;
 
     if(pub_sub){
         ThroughputPublisher tpub(reliable, seed, hostname, export_csv);

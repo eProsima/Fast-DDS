@@ -19,6 +19,9 @@
 
 #include "ThroughputTypes.h"
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 //Funciones de serializacion y deserializacion para el ejemplo
 bool ThroughputDataType::serialize(void*data,SerializedPayload_t* payload)
 {

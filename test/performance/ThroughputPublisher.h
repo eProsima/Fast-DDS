@@ -28,85 +28,87 @@
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
 
-
-
 #include <condition_variable>
 #include <chrono>
 #include <map>
 #include <vector>
 #include <string>
 
-
-
 class ThroughputPublisher
 {
-public:
-	ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv);
-	virtual ~ThroughputPublisher();
-	Participant* mp_par;
-	Publisher* mp_datapub;
-	Publisher* mp_commandpub;
-	Subscriber* mp_commandsub;
-    std::chrono::steady_clock::time_point t_start_, t_end_;
-    std::chrono::duration<double, std::micro> t_overhead_;
-    std::mutex mutex_;
-    int disc_count_;
-    std::condition_variable disc_cond_;
-	class DataPubListener:public PublisherListener
-	{
-	public:
-		DataPubListener(ThroughputPublisher& up);
-		virtual ~DataPubListener();
-		ThroughputPublisher& m_up;
-		void onPublicationMatched(Publisher* pub,MatchingInfo& info);
+    public:
 
-	private:
+        ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv);
+        virtual ~ThroughputPublisher();
+        eprosima::fastrtps::Participant* mp_par;
+        eprosima::fastrtps::Publisher* mp_datapub;
+        eprosima::fastrtps::Publisher* mp_commandpub;
+        eprosima::fastrtps::Subscriber* mp_commandsub;
+        std::chrono::steady_clock::time_point t_start_, t_end_;
+        std::chrono::duration<double, std::micro> t_overhead_;
+        std::mutex mutex_;
+        int disc_count_;
+        std::condition_variable disc_cond_;
 
-		DataPubListener& operator=(const DataPubListener&);
-	}m_DataPubListener;
+        class DataPubListener : public eprosima::fastrtps::PublisherListener
+        {
+            public:
+                DataPubListener(ThroughputPublisher& up);
+                virtual ~DataPubListener();
+                ThroughputPublisher& m_up;
+                void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
+                        eprosima::fastrtps::rtps::MatchingInfo& info);
 
-	class CommandSubListener:public SubscriberListener
-	{
-	public:
-		CommandSubListener(ThroughputPublisher& up);
-		virtual ~CommandSubListener();
-		ThroughputPublisher& m_up;
-		void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
+            private:
 
-	private:
+                DataPubListener& operator=(const DataPubListener&);
+        } m_DataPubListener;
 
-		CommandSubListener& operator=(const CommandSubListener&);
-	}m_CommandSubListener;
-	class CommandPubListener:public PublisherListener
-	{
-	public:
-		CommandPubListener(ThroughputPublisher& up);
-		virtual ~CommandPubListener();
-		ThroughputPublisher& m_up;
-		void onPublicationMatched(Publisher* pub,MatchingInfo& info);
+        class CommandSubListener : public eprosima::fastrtps::SubscriberListener
+        {
+            public:
+                CommandSubListener(ThroughputPublisher& up);
+                virtual ~CommandSubListener();
+                ThroughputPublisher& m_up;
+                void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
+                        eprosima::fastrtps::rtps::MatchingInfo& info);
 
-	private:
+            private:
 
-		CommandPubListener& operator=(const CommandPubListener&);
-	}m_CommandPubListener;
+                CommandSubListener& operator=(const CommandSubListener&);
+        } m_CommandSubListener;
+
+        class CommandPubListener : public eprosima::fastrtps::PublisherListener
+        {
+            public:
+                CommandPubListener(ThroughputPublisher& up);
+                virtual ~CommandPubListener();
+                ThroughputPublisher& m_up;
+                void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
+                        eprosima::fastrtps::rtps::MatchingInfo& info);
+
+            private:
+
+                CommandPubListener& operator=(const CommandPubListener&);
+        } m_CommandPubListener;
 
 
-	bool ready;
+        bool ready;
 
-	void run(uint32_t test_time, uint32_t recovery_time_ms, int demand, int msg_size);
-	bool test(uint32_t test_time, uint32_t recovery_time_ms, uint32_t demand, uint32_t size);
-	std::vector<TroughputResults> m_timeStats;
-	ThroughputDataType latency_t;
-    ThroughputCommandDataType throuputcommand_t;
+        void run(uint32_t test_time, uint32_t recovery_time_ms, int demand, int msg_size);
+        bool test(uint32_t test_time, uint32_t recovery_time_ms, uint32_t demand, uint32_t size);
+        std::vector<TroughputResults> m_timeStats;
+        ThroughputDataType latency_t;
+        ThroughputCommandDataType throuputcommand_t;
 
-	bool loadDemandsPayload();
-	std::map<uint32_t,std::vector<uint32_t>> m_demand_payload;
+        bool loadDemandsPayload();
+        std::map<uint32_t,std::vector<uint32_t>> m_demand_payload;
 
-	std::string m_file_name;
-	bool m_export_csv;
-	std::stringstream output_file;
-	uint32_t payload;
-    bool reliable_;
+        std::string m_file_name;
+        bool m_export_csv;
+        std::stringstream output_file;
+        uint32_t payload;
+        bool reliable_;
 };
 
 

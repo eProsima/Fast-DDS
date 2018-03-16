@@ -70,6 +70,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 endif()
                 set_property(TEST LatencyTest APPEND PROPERTY ENVIRONMENT
                     "LATENCY_TEST_BIN=$<TARGET_FILE:LatencyTest>")
+                if(SECURITY)
+                    set_property(TEST LatencyTest APPEND PROPERTY ENVIRONMENT
+                        "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+                endif()
 
                 ###############################################################################
                 # ThroughputTest16
@@ -88,6 +92,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                     "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
                 set_property(TEST ThroughputTest16 APPEND PROPERTY ENVIRONMENT
                     "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
+                if(SECURITY)
+                    set_property(TEST ThroughputTest16 APPEND PROPERTY ENVIRONMENT
+                        "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+                endif()
 
                 ###############################################################################
                 # ThroughputTest32
@@ -106,6 +114,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                     "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
                 set_property(TEST ThroughputTest32 APPEND PROPERTY ENVIRONMENT
                     "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
+                if(SECURITY)
+                    set_property(TEST ThroughputTest32 APPEND PROPERTY ENVIRONMENT
+                        "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+                endif()
 
                 ###############################################################################
                 # ThroughputTest64
@@ -124,6 +136,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                     "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
                 set_property(TEST ThroughputTest64 APPEND PROPERTY ENVIRONMENT
                     "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
+                if(SECURITY)
+                    set_property(TEST ThroughputTest64 APPEND PROPERTY ENVIRONMENT
+                        "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+                endif()
 
                 ###############################################################################
                 # ThroughputTest128
@@ -142,6 +158,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                     "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
                 set_property(TEST ThroughputTest128 APPEND PROPERTY ENVIRONMENT
                     "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
+                if(SECURITY)
+                    set_property(TEST ThroughputTest128 APPEND PROPERTY ENVIRONMENT
+                        "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+                endif()
 
                 ###############################################################################
                 # ThroughputTest256
@@ -160,6 +180,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                     "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
                 set_property(TEST ThroughputTest256 APPEND PROPERTY ENVIRONMENT
                     "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
+                if(SECURITY)
+                    set_property(TEST ThroughputTest256 APPEND PROPERTY ENVIRONMENT
+                        "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+                endif()
 
                 ###############################################################################
                 # ThroughputTest512
@@ -178,6 +202,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                     "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
                 set_property(TEST ThroughputTest512 APPEND PROPERTY ENVIRONMENT
                     "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
+                if(SECURITY)
+                    set_property(TEST ThroughputTest512 APPEND PROPERTY ENVIRONMENT
+                        "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+                endif()
 
                 ###############################################################################
                 # ThroughputTest1024
@@ -196,6 +224,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                     "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
                 set_property(TEST ThroughputTest1024 APPEND PROPERTY ENVIRONMENT
                     "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
+                if(SECURITY)
+                    set_property(TEST ThroughputTest1024 APPEND PROPERTY ENVIRONMENT
+                        "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+                endif()
 
                 ###############################################################################
                 # ThroughputTest2048
@@ -214,6 +246,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                     "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
                 set_property(TEST ThroughputTest2048 APPEND PROPERTY ENVIRONMENT
                     "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
+                if(SECURITY)
+                    set_property(TEST ThroughputTest2048 APPEND PROPERTY ENVIRONMENT
+                        "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+                endif()
 
                 ###############################################################################
                 # ThroughputTest4096
@@ -232,6 +268,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                     "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
                 set_property(TEST ThroughputTest4096 APPEND PROPERTY ENVIRONMENT
                     "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
+                if(SECURITY)
+                    set_property(TEST ThroughputTest4096 APPEND PROPERTY ENVIRONMENT
+                        "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+                endif()
 
                 ###############################################################################
                 # ThroughputTest8192
@@ -250,6 +290,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                     "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
                 set_property(TEST ThroughputTest8192 APPEND PROPERTY ENVIRONMENT
                     "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
+                if(SECURITY)
+                    set_property(TEST ThroughputTest8192 APPEND PROPERTY ENVIRONMENT
+                        "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+                endif()
             endif()
         endif()
     endif()

@@ -62,7 +62,8 @@ LatencyTestSubscriber::~LatencyTestSubscriber()
     Domain::removeParticipant(mp_participant);
 }
 
-bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname)
+bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
+        const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy)
 {
     m_echo = echo;
     n_samples = nsam;
@@ -77,6 +78,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     PParam.rtps.sendSocketBufferSize = 65536;
     PParam.rtps.listenSocketBufferSize = 2*65536;
     PParam.rtps.setName("Participant_sub");
+    PParam.rtps.properties = part_property_policy;
     mp_participant = Domain::createParticipant(PParam);
     if(mp_participant == nullptr)
         return false;
@@ -106,6 +108,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     Locator_t loc;
     loc.port = 15002;
     PubDataparam.unicastLocatorList.push_back(loc);
+    PubDataparam.properties = property_policy;
     mp_datapub = Domain::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
     if(mp_datapub == nullptr)
         return false;
@@ -126,6 +129,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
         SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     loc.port = 15003;
     SubDataparam.unicastLocatorList.push_back(loc);
+    SubDataparam.properties = property_policy;
     //loc.set_IP4_address(239,255,0,2);
     //SubDataparam.multicastLocatorList.push_back(loc);
     mp_datasub = Domain::createSubscriber(mp_participant,SubDataparam,&this->m_datasublistener);
@@ -330,7 +334,7 @@ bool LatencyTestSubscriber::test(uint32_t datasize)
     mp_commandpub->write(&command);
 
     lock.lock();
-    if(data_count_ == 0) data_cond_.wait(lock);
+    data_cond_.wait(lock, [&]() { return data_count_ > 0;});
     --data_count_;
     lock.unlock();
 

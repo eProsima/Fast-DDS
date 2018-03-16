@@ -15,17 +15,27 @@
 import shlex, subprocess, time, os, socket, sys
 
 command = os.environ.get("LATENCY_TEST_BIN")
+certs_path = os.environ.get("CERTS_PATH")
+
+security_options = []
+
+if certs_path:
+    security_options = ["--security=true", "--certs=" + certs_path]
 
 # Best effort
-subscriber_proc = subprocess.Popen([command, "subscriber", "--seed", str(os.getpid()), "--hostname"])
-publisher_proc = subprocess.Popen([command, "publisher", "--seed", str(os.getpid()), "--hostname", "--export_csv"])
+subscriber_proc = subprocess.Popen([command, "subscriber", "--seed", str(os.getpid()), "--hostname"] +
+        security_options)
+publisher_proc = subprocess.Popen([command, "publisher", "--seed", str(os.getpid()), "--hostname", "--export_csv"] +
+        security_options)
 
 subscriber_proc.communicate()
 publisher_proc.communicate()
 
 # Reliable
-subscriber_proc = subprocess.Popen([command, "subscriber", "-r", "reliable", "--seed", str(os.getpid()), "--hostname"])
-publisher_proc = subprocess.Popen([command, "publisher", "-r", "reliable", "--seed", str(os.getpid()), "--hostname", "--export_csv"])
+subscriber_proc = subprocess.Popen([command, "subscriber", "-r", "reliable", "--seed", str(os.getpid()), "--hostname"] +
+        security_options)
+publisher_proc = subprocess.Popen([command, "publisher", "-r", "reliable", "--seed", str(os.getpid()), "--hostname",
+    "--export_csv"] + security_options)
 
 subscriber_proc.communicate()
 publisher_proc.communicate()

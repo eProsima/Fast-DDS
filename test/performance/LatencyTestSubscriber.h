@@ -24,18 +24,19 @@
 #include <condition_variable>
 #include "LatencyTestTypes.h"
 
-class LatencyTestSubscriber {
+class LatencyTestSubscriber
+{
     public:
         LatencyTestSubscriber();
         virtual ~LatencyTestSubscriber();
 
-        Participant* mp_participant;
-        Publisher* mp_datapub;
-        Publisher* mp_commandpub;
-        Subscriber* mp_datasub;
-        Subscriber* mp_commandsub;
+        eprosima::fastrtps::Participant* mp_participant;
+        eprosima::fastrtps::Publisher* mp_datapub;
+        eprosima::fastrtps::Publisher* mp_commandpub;
+        eprosima::fastrtps::Subscriber* mp_datasub;
+        eprosima::fastrtps::Subscriber* mp_commandsub;
         LatencyType* mp_latency;
-        SampleInfo_t m_sampleinfo;
+        eprosima::fastrtps::SampleInfo_t m_sampleinfo;
         std::mutex mutex_;
         int disc_count_;
         std::condition_variable disc_cond_;
@@ -46,43 +47,54 @@ class LatencyTestSubscriber {
         int m_status;
         int n_received;
         int n_samples;
-        bool init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname);
+        bool init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
+                const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
+                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy);
         void run();
         bool test(uint32_t datasize);
-        class DataPubListener : public PublisherListener
-    {
-        public:
-            DataPubListener(LatencyTestSubscriber* up):mp_up(up){}
-            ~DataPubListener(){}
-            void onPublicationMatched(Publisher* pub,MatchingInfo& info);
-            LatencyTestSubscriber* mp_up;
-    }m_datapublistener;
-        class DataSubListener : public SubscriberListener
-    {
-        public:
-            DataSubListener(LatencyTestSubscriber* up):mp_up(up){}
-            ~DataSubListener(){}
-            void onSubscriptionMatched(Subscriber* sub,MatchingInfo& into);
-            void onNewDataMessage(Subscriber* sub);
-            LatencyTestSubscriber* mp_up;
-    }m_datasublistener;
-        class CommandPubListener : public PublisherListener
-    {
-        public:
-            CommandPubListener(LatencyTestSubscriber* up):mp_up(up){}
-            ~CommandPubListener(){}
-            void onPublicationMatched(Publisher* pub,MatchingInfo& info);
-            LatencyTestSubscriber* mp_up;
-    }m_commandpublistener;
-        class CommandSubListener : public SubscriberListener
-    {
-        public:
-            CommandSubListener(LatencyTestSubscriber* up):mp_up(up){}
-            ~CommandSubListener(){}
-            void onSubscriptionMatched(Subscriber* sub,MatchingInfo& into);
-            void onNewDataMessage(Subscriber* sub);
-            LatencyTestSubscriber* mp_up;
-    }m_commandsublistener;
+
+        class DataPubListener : public eprosima::fastrtps::PublisherListener
+        {
+            public:
+                DataPubListener(LatencyTestSubscriber* up):mp_up(up){}
+                ~DataPubListener(){}
+                void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
+                        eprosima::fastrtps::rtps::MatchingInfo& info);
+                LatencyTestSubscriber* mp_up;
+        } m_datapublistener;
+
+        class DataSubListener : public eprosima::fastrtps::SubscriberListener
+        {
+            public:
+                DataSubListener(LatencyTestSubscriber* up):mp_up(up){}
+                ~DataSubListener(){}
+                void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
+                        eprosima::fastrtps::rtps::MatchingInfo& into);
+                void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+                LatencyTestSubscriber* mp_up;
+        } m_datasublistener;
+
+        class CommandPubListener : public eprosima::fastrtps::PublisherListener
+        {
+            public:
+                CommandPubListener(LatencyTestSubscriber* up):mp_up(up){}
+                ~CommandPubListener(){}
+                void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
+                        eprosima::fastrtps::rtps::MatchingInfo& info);
+                LatencyTestSubscriber* mp_up;
+        } m_commandpublistener;
+
+        class CommandSubListener : public eprosima::fastrtps::SubscriberListener
+        {
+            public:
+                CommandSubListener(LatencyTestSubscriber* up):mp_up(up){}
+                ~CommandSubListener(){}
+                void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
+                        eprosima::fastrtps::rtps::MatchingInfo& into);
+                void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+                LatencyTestSubscriber* mp_up;
+        } m_commandsublistener;
+
         bool m_echo;
         LatencyDataType latency_t;
         TestCommandDataType command_t;
