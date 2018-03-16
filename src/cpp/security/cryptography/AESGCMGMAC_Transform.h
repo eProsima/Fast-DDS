@@ -131,10 +131,8 @@ class AESGCMGMAC_Transform : public CryptoTransform
             std::vector<ParticipantCryptoHandle*>& receiving_crypto_list, bool update_specific_keys,
             SecureDataTag& tag);
 
-    SecureDataHeader deserialize_SecureDataHeader(std::vector<uint8_t> &input);
     SecureDataHeader deserialize_SecureDataHeader(eprosima::fastcdr::Cdr& decoder);
 
-    SecureDataBody deserialize_SecureDataBody(std::vector<uint8_t> &input);
     bool predeserialize_SecureDataBody(eprosima::fastcdr::Cdr& decoder, uint32_t& body_length);
     bool deserialize_SecureDataBody(eprosima::fastcdr::Cdr& decoder,
             eprosima::fastcdr::Cdr::state& body_state, SecureDataTag& tag, uint32_t body_length,
@@ -142,29 +140,11 @@ class AESGCMGMAC_Transform : public CryptoTransform
             const std::array<uint8_t,32>& session_key, const std::array<uint8_t, 12>& initialization_vector,
             octet* plain_buffer, uint32_t& plain_buffer_len);
 
-    SecureDataTag deserialize_SecureDataTag(std::vector<uint8_t> &input);
     bool deserialize_SecureDataTag(eprosima::fastcdr::Cdr& decoder, SecureDataTag& tag,
             const CryptoTransformKind& transformation_kind,
             const CryptoTransformKeyId& receiver_specific_key_id, const std::array<uint8_t, 32>& receiver_specific_key,
             const std::array<uint8_t,32>& master_salt, const std::array<uint8_t,12>& initialization_vector,
             uint32_t session_id, SecurityException& exception);
-
-    std::vector<uint8_t> assemble_endpoint_submessage(std::vector<uint8_t> &serialized_header,
-            std::vector<uint8_t> &serialized_body,
-            std::vector<uint8_t> &serialized_tag,
-            unsigned char &flags);
-
-    bool disassemble_endpoint_submessage(CDRMessage_t& input,
-            std::vector<uint8_t> &serialized_header,
-            std::vector<uint8_t> &serialized_body,
-            std::vector<uint8_t> &serialized_tag,
-            unsigned char &flags);
-
-    bool disassemble_rtps_message(const std::vector<uint8_t> &input,
-            std::vector<uint8_t> &serialized_header,
-            std::vector<uint8_t> &serialized_body,
-            std::vector<uint8_t> &serialized_tag,
-            unsigned char &flags);
 
     uint32_t calculate_extra_size_for_rtps_message(uint32_t number_discovered_participants) const override;
 

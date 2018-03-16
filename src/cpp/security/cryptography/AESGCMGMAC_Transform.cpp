@@ -1052,10 +1052,9 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
         CDRMessage_t& plain_rtps_submessage,
         CDRMessage_t& encoded_rtps_submessage,
         DatawriterCryptoHandle& /*receiving_datawriter_crypto*/,
-        DatareaderCryptoHandle &sending_datareader_crypto,
-        SecurityException &exception){
-
-
+        DatareaderCryptoHandle& sending_datareader_crypto,
+        SecurityException& /*exception*/)
+{
     AESGCMGMAC_ReaderCryptoHandle& sending_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(sending_datareader_crypto);
 
     if(sending_reader.nil())
@@ -1596,7 +1595,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
         }
 
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
-        int cipher_block_size = 0, actual_size = 0, final_size = 0;
+        int actual_size = 0, final_size = 0;
         EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
         if(local_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
                 local_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC})
@@ -1608,8 +1607,6 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
                 //TODO(Ricardo) Free context;
                 continue;
             }
-
-            cipher_block_size = EVP_CIPHER_block_size(EVP_aes_128_gcm());
         }
         else if(local_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
                 local_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC})
@@ -1620,8 +1617,6 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
                 logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
                 continue;
             }
-
-            cipher_block_size = EVP_CIPHER_block_size(EVP_aes_256_gcm());
         }
         if(!EVP_EncryptUpdate(e_ctx, NULL, &actual_size, tag.common_mac.data(), 16))
         {
@@ -1648,19 +1643,6 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
     return true;
 }
 
-SecureDataHeader AESGCMGMAC_Transform::deserialize_SecureDataHeader(std::vector<uint8_t> &input){
-
-    SecureDataHeader header;
-    int i;
-
-    for(i=0;i<4;i++) header.transform_identifier.transformation_kind.at(i) = ( input.at( i ) );
-    for(i=0;i<4;i++) header.transform_identifier.transformation_key_id.at(i) = ( input.at( i+4 ) );
-    for(i=0;i<4;i++) header.session_id.at(i) = ( input.at( i+8 ) );
-    for(i=0;i<8;i++) header.initialization_vector_suffix.at(i) = ( input.at( i+12 ) );
-
-    return header;
-}
-
 SecureDataHeader AESGCMGMAC_Transform::deserialize_SecureDataHeader(eprosima::fastcdr::Cdr& decoder)
 {
     SecureDataHeader header;
@@ -1669,16 +1651,6 @@ SecureDataHeader AESGCMGMAC_Transform::deserialize_SecureDataHeader(eprosima::fa
         header.session_id >> header.initialization_vector_suffix;
 
     return header;
-}
-
-//TODO(Ricardo) Remove
-SecureDataBody AESGCMGMAC_Transform::deserialize_SecureDataBody(std::vector<uint8_t> &input){
-
-    SecureDataBody body;
-
-    for(size_t i = 0;i < input.size(); ++i) body.secure_data.push_back(input.at(i));
-
-    return body;
 }
 
 bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& decoder,
@@ -1787,33 +1759,6 @@ bool AESGCMGMAC_Transform::predeserialize_SecureDataBody(eprosima::fastcdr::Cdr&
     return true;
 }
 
-SecureDataTag AESGCMGMAC_Transform::deserialize_SecureDataTag(std::vector<uint8_t> &input){
-
-    SecureDataTag tag;
-
-    /*
-    //Tag
-    //common_mac
-    for(int i=0;i < 16; i++) tag.common_mac.at(i) = ( input.at( i ) );
-    //receiver_specific_mac
-    int32_t spec_length = 0;
-    memcpy(&spec_length, input.data()+16, sizeof(int32_t));
-    //Read specific MACs in search for the correct one (verify the authenticity of the message)
-    ReceiverSpecificMAC specific_mac;
-    for(int j=0; j < spec_length; j++){
-        memcpy( &(specific_mac.receiver_mac_key_id),
-                input.data() + 16 + sizeof(int32_t) + j*(20),
-                4 );
-        memcpy( specific_mac.receiver_mac.data(),
-                input.data() + 16 + sizeof(int32_t) + j*(20) + 4,
-                16 );
-        tag.receiver_specific_macs.push_back(specific_mac);
-    }
-    */
-
-    return tag;
-}
-
 bool AESGCMGMAC_Transform::deserialize_SecureDataTag(eprosima::fastcdr::Cdr& decoder, SecureDataTag& tag,
         const CryptoTransformKind& transformation_kind,
         const CryptoTransformKeyId& receiver_specific_key_id, const std::array<uint8_t, 32>& receiver_specific_key,
@@ -1905,123 +1850,6 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(eprosima::fastcdr::Cdr& dec
         // TODO(Ricardo) No freed in errors.
         EVP_CIPHER_CTX_free(d_ctx);
     }
-
-    return true;
-}
-
-bool AESGCMGMAC_Transform::disassemble_endpoint_submessage(CDRMessage_t &input,
-        std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body,
-        std::vector<uint8_t> &serialized_tag, unsigned char& /*flags*/)
-{
-    int i;
-    uint8_t octet;
-
-    //SRTPS_PREFIX
-    if(!CDRMessage::readOctet(&input, &octet) || octet != SEC_PREFIX )
-    {
-        std::cout << "Not a valid prefix" << std::endl;
-        return false;
-    }
-
-    // TODO Fix Endianess
-    //Flags are ignored for the time being
-    input.pos +=1;
-
-    //OctectsToNextSugMsg
-    uint16_t octetsToNextSubMsg;
-    CDRMessage::readUInt16(&input, &octetsToNextSubMsg); //it should be 16 in this implementation
-
-    if((input.length - input.pos) < static_cast<unsigned int>(octetsToNextSubMsg))
-    {
-        std::cout << "Not a valid length" << std::endl;
-        return false;
-    }
-
-    //Header
-    serialized_header.clear();
-    for(i = 0; i < 20; i++) serialized_header.push_back(input.buffer[input.pos + i]);
-    input.pos += 20;
-
-    //Payload
-    serialized_body.clear();
-    int32_t body_length = 0;
-    CDRMessage::readInt32(&input, &body_length); //TODO(Ricardo) Check body_length. Maybe long than buffer
-    for(i=0; i < body_length; i++) serialized_body.push_back( input.buffer[input.pos + i]);
-    input.pos += body_length;
-
-    //SRTPS_POSTFIX
-    if(!CDRMessage::readOctet(&input, &octet) || octet != SEC_POSTFIX)
-    {
-        std::cout << "Not a valid post prefix" << std::endl;
-        return false;
-    }
-
-    //Flags
-    input.pos += 1;
-
-    //Octets2Nextheader
-    CDRMessage::readUInt16(&input, &octetsToNextSubMsg); //it should be 16 in this implementation
-    if((input.length - input.pos) < static_cast<unsigned int>(octetsToNextSubMsg)) return false;
-
-    //Tag
-    serialized_tag.clear();
-    for(i = 0; i < octetsToNextSubMsg; i++) serialized_tag.push_back(input.buffer[input.pos + i]);
-    input.pos += octetsToNextSubMsg;
-
-    return true;
-}
-
-bool AESGCMGMAC_Transform::disassemble_rtps_message(const std::vector<uint8_t> &input,
-        std::vector<uint8_t> &serialized_header, std::vector<uint8_t> &serialized_body,
-        std::vector<uint8_t> &serialized_tag, unsigned char& /*flags*/)
-{
-
-    uint16_t offset = 0;
-    int i;
-
-    //SRTPS_PREFIX
-    if( input.at(offset) != SRTPS_PREFIX ) return false;
-    offset += 1;
-    //Flags are ignored for the time being
-    offset +=1;
-    //Octects2NextSugMsg
-    uint8_t octets_c[2] = { 0, 0 };
-    octets_c[1] = input.at(offset);
-    offset += 1;
-    octets_c[0] = input.at(offset);
-    offset += 1;
-    uint16_t safecheck;
-    memcpy(&safecheck, octets_c, 2);
-    if( (input.size() - offset) != static_cast<unsigned int>(safecheck))
-        return false;
-
-    //Header
-    serialized_header.clear();
-    for(i=0; i < 20; i++) serialized_header.push_back( input.at(i + offset) );
-    offset += 20;
-    //Payload
-    serialized_body.clear();
-    int32_t body_length = 0;
-    memcpy(&body_length, input.data() + offset, sizeof(int32_t));
-    for(i=0; i < body_length; i++) serialized_body.push_back( input.at(i + offset + sizeof(int32_t)) );
-    offset += static_cast<uint16_t>(sizeof(int32_t) + body_length);
-    //SRTPS_POSTFIX
-    if( input.at(offset) != SRTPS_POSTFIX ) return false;
-    offset += 1;
-    //Flags are ignored for the time being
-    offset += 1;
-    //Octets2Nextheader
-    octets_c[1] = input.at(offset);
-    offset += 1;
-    octets_c[0] = input.at(offset);
-    offset += 1;
-    memcpy(&safecheck, octets_c, 2);
-    if( (input.size() - offset) != static_cast<unsigned int>(safecheck))
-        return false;
-
-    //Tag
-    serialized_tag.clear();
-    for(i = 0; i < safecheck; ++i) serialized_tag.push_back(input.at(i + offset) );
 
     return true;
 }

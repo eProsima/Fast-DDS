@@ -41,29 +41,29 @@ class MockCryptoTransform : public CryptoTransform
                 SecurityException&));
 
         MOCK_METHOD5(encode_datawriter_submessage, bool (
-                std::vector<uint8_t>&,
-                const std::vector<uint8_t>&,
+                CDRMessage_t&,
+                const CDRMessage_t&,
                 DatawriterCryptoHandle&,
                 std::vector<DatareaderCryptoHandle*>&,
                 SecurityException&));
 
         MOCK_METHOD5(encode_datareader_submessage, bool (
-                std::vector<uint8_t>&,
-                const std::vector<uint8_t>&,
+                CDRMessage_t&,
+                const CDRMessage_t&,
                 DatareaderCryptoHandle&,
                 std::vector<DatawriterCryptoHandle*>&,
                 SecurityException &exception));
 
         MOCK_METHOD5(encode_rtps_message, bool (
-                std::vector<uint8_t>&,
-                const std::vector<uint8_t>&,
+                CDRMessage_t&,
+                const CDRMessage_t&,
                 ParticipantCryptoHandle&,
-                const std::vector<ParticipantCryptoHandle*>&,
+                std::vector<ParticipantCryptoHandle*>&,
                 SecurityException&));
 
         MOCK_METHOD5(decode_rtps_message, bool (
-                std::vector<uint8_t>&,
-                const std::vector<uint8_t>&,
+                CDRMessage_t&,
+                const CDRMessage_t&,
                 const ParticipantCryptoHandle&,
                 const ParticipantCryptoHandle&,
                 SecurityException&));

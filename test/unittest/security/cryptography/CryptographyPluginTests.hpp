@@ -18,6 +18,7 @@
 #include "../../../../src/cpp/security/cryptography/AESGCMGMAC.h"
 #include "../../../../src/cpp/security/authentication/PKIIdentityHandle.h"
 #include "../../../../src/cpp/security/accesscontrol/AccessPermissionsHandle.h"
+#include <fastrtps/rtps/common/CDRMessage_t.h>
 
 #include <gtest/gtest.h>
 #include <openssl/rand.h>
@@ -321,15 +322,12 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*ParticipantB,*ParticipantB_remote,ParticipantA_CryptoTokens,exception);
 
     //Perform sample message exchange
-    std::vector<uint8_t> plain_rtps_message;
-    std::vector<uint8_t> encoded_rtps_message;
-    std::vector<uint8_t> decoded_rtps_message;
+    eprosima::fastrtps::rtps::CDRMessage_t plain_rtps_message;
+    eprosima::fastrtps::rtps::CDRMessage_t encoded_rtps_message;
+    eprosima::fastrtps::rtps::CDRMessage_t decoded_rtps_message;
 
-    char rtps_header[] = "01234567890123456789"; //Length 20
     char message[] = "RPTSMessage"; //Length 11
-    plain_rtps_message.resize(31);
-    memcpy(plain_rtps_message.data(),rtps_header, 20);
-    memcpy(plain_rtps_message.data() + 20, message, 11);
+    memcpy(plain_rtps_message.buffer, message, 11);
 
 
     eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *unintended_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*ParticipantA,*i_handle,*perm_handle,*shared_secret, exception);
@@ -338,24 +336,26 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     //Send message to intended participant
     receivers.push_back(ParticipantA_remote);
     receivers.push_back(unintended_remote);
-    std::vector<uint8_t> message_v;
-    message_v.resize(11);
-    memcpy(message_v.data(),message, 11);
-    for(int i=0;i<50;i++){
+    for(int i=0;i<50;i++)
+    {
         ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_rtps_message(encoded_rtps_message, plain_rtps_message,*ParticipantA,receivers,exception));
-        // Remove RTPS header. It is not processed by cryptography plugin.
-        encoded_rtps_message.erase(encoded_rtps_message.begin(), encoded_rtps_message.begin() + 20);
+        encoded_rtps_message.pos = 0;
         ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_rtps_message(decoded_rtps_message,encoded_rtps_message,*ParticipantB,*ParticipantB_remote,exception));
-        ASSERT_TRUE(message_v == decoded_rtps_message);
+        ASSERT_TRUE(plain_rtps_message.length == decoded_rtps_message.length);
+        ASSERT_TRUE(memcmp(plain_rtps_message.buffer, decoded_rtps_message.buffer, decoded_rtps_message.length) == 0);
+        plain_rtps_message.pos = 0;
+        encoded_rtps_message.pos = 0;
+        decoded_rtps_message.pos = 0;
     }
     //Send message to unintended participant
 
-    encoded_rtps_message.clear();
-    decoded_rtps_message.clear();
     receivers.clear();
     receivers.push_back(unintended_remote);
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_rtps_message(encoded_rtps_message, plain_rtps_message,*ParticipantA,receivers,exception));
     ASSERT_FALSE(CryptoPlugin->cryptotransform()->decode_rtps_message(decoded_rtps_message,encoded_rtps_message,*ParticipantB,*ParticipantB_remote,exception));
+    plain_rtps_message.pos = 0;
+    encoded_rtps_message.pos = 0;
+    decoded_rtps_message.pos = 0;
 
 
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantA,exception);
@@ -400,10 +400,10 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     receivers.push_back(ParticipantA_remote);
     receivers.push_back(unintended_remote);
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_rtps_message(encoded_rtps_message, plain_rtps_message,*ParticipantA,receivers,exception));
-    // Remove RTPS header. It is not processed by cryptography plugin.
-    encoded_rtps_message.erase(encoded_rtps_message.begin(), encoded_rtps_message.begin() + 20);
+    encoded_rtps_message.pos = 0;
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_rtps_message(decoded_rtps_message,encoded_rtps_message,*ParticipantB,*ParticipantB_remote,exception));
-    ASSERT_TRUE(message_v == decoded_rtps_message);
+    ASSERT_TRUE(plain_rtps_message.length == decoded_rtps_message.length);
+    ASSERT_TRUE(memcmp(plain_rtps_message.buffer, decoded_rtps_message.buffer, decoded_rtps_message.length) == 0);
 
 
     CryptoPlugin->keyfactory()->unregister_participant(unintended_remote,exception);
@@ -434,16 +434,16 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
     eprosima::fastrtps::rtps::security::AESGCMGMAC_WriterCryptoHandle& local_writer = eprosima::fastrtps::rtps::security::AESGCMGMAC_WriterCryptoHandle::narrow(*target);
     ASSERT_TRUE(!local_writer.nil());
 
-    ASSERT_TRUE(local_writer->Writer2ReaderKeyMaterial.empty());
-    ASSERT_TRUE( (local_writer->WriterKeyMaterial.transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)) );
+    ASSERT_TRUE(local_writer->Entity2RemoteKeyMaterial.empty());
+    ASSERT_TRUE( (local_writer->EntityKeyMaterial.transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)) );
 
-    ASSERT_FALSE( std::all_of(local_writer->WriterKeyMaterial.master_salt.begin(),local_writer->WriterKeyMaterial.master_salt.end(), [](uint8_t i){return i==0;}) );
+    ASSERT_FALSE( std::all_of(local_writer->EntityKeyMaterial.master_salt.begin(),local_writer->EntityKeyMaterial.master_salt.end(), [](uint8_t i){return i==0;}) );
 
-    ASSERT_FALSE( std::all_of(local_writer->WriterKeyMaterial.master_sender_key.begin(),local_writer->WriterKeyMaterial.master_sender_key.end(), [](uint8_t i){return i==0;}) );
+    ASSERT_FALSE( std::all_of(local_writer->EntityKeyMaterial.master_sender_key.begin(),local_writer->EntityKeyMaterial.master_sender_key.end(), [](uint8_t i){return i==0;}) );
 
-    ASSERT_FALSE( std::any_of(local_writer->WriterKeyMaterial.receiver_specific_key_id.begin(),local_writer->WriterKeyMaterial.receiver_specific_key_id.end(), [](uint8_t i){return i!=0;}) );
+    ASSERT_FALSE( std::any_of(local_writer->EntityKeyMaterial.receiver_specific_key_id.begin(),local_writer->EntityKeyMaterial.receiver_specific_key_id.end(), [](uint8_t i){return i!=0;}) );
 
-    ASSERT_FALSE( std::any_of(local_writer->WriterKeyMaterial.master_receiver_specific_key.begin(),local_writer->WriterKeyMaterial.master_receiver_specific_key.end(), [](uint8_t i){return i!=0;}) );
+    ASSERT_FALSE( std::any_of(local_writer->EntityKeyMaterial.master_receiver_specific_key.begin(),local_writer->EntityKeyMaterial.master_receiver_specific_key.end(), [](uint8_t i){return i!=0;}) );
 
     delete i_handle;
     delete perm_handle;
@@ -471,16 +471,16 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
     eprosima::fastrtps::rtps::security::AESGCMGMAC_ReaderCryptoHandle& local_reader = eprosima::fastrtps::rtps::security::AESGCMGMAC_ReaderCryptoHandle::narrow(*target);
     ASSERT_TRUE(!local_reader.nil());
 
-    ASSERT_TRUE(local_reader->Reader2WriterKeyMaterial.empty());
-    ASSERT_TRUE( (local_reader->ReaderKeyMaterial.transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)) );
+    ASSERT_TRUE(local_reader->Entity2RemoteKeyMaterial.empty());
+    ASSERT_TRUE( (local_reader->EntityKeyMaterial.transformation_kind == std::array<uint8_t,4>(CRYPTO_TRANSFORMATION_KIND_AES128_GCM)) );
 
-    ASSERT_FALSE( std::all_of(local_reader->ReaderKeyMaterial.master_salt.begin(),local_reader->ReaderKeyMaterial.master_salt.end(), [](uint8_t i){return i==0;}) );
+    ASSERT_FALSE( std::all_of(local_reader->EntityKeyMaterial.master_salt.begin(),local_reader->EntityKeyMaterial.master_salt.end(), [](uint8_t i){return i==0;}) );
 
-    ASSERT_FALSE( std::all_of(local_reader->ReaderKeyMaterial.master_sender_key.begin(),local_reader->ReaderKeyMaterial.master_sender_key.end(), [](uint8_t i){return i==0;}) );
+    ASSERT_FALSE( std::all_of(local_reader->EntityKeyMaterial.master_sender_key.begin(),local_reader->EntityKeyMaterial.master_sender_key.end(), [](uint8_t i){return i==0;}) );
 
-    ASSERT_FALSE( std::any_of(local_reader->ReaderKeyMaterial.receiver_specific_key_id.begin(),local_reader->ReaderKeyMaterial.receiver_specific_key_id.end(), [](uint8_t i){return i!=0;}) );
+    ASSERT_FALSE( std::any_of(local_reader->EntityKeyMaterial.receiver_specific_key_id.begin(),local_reader->EntityKeyMaterial.receiver_specific_key_id.end(), [](uint8_t i){return i!=0;}) );
 
-    ASSERT_FALSE( std::any_of(local_reader->ReaderKeyMaterial.master_receiver_specific_key.begin(),local_reader->ReaderKeyMaterial.master_receiver_specific_key.end(), [](uint8_t i){return i!=0;}) );
+    ASSERT_FALSE( std::any_of(local_reader->EntityKeyMaterial.master_receiver_specific_key.begin(),local_reader->EntityKeyMaterial.master_receiver_specific_key.end(), [](uint8_t i){return i!=0;}) );
 
     delete i_handle;
     delete perm_handle;
@@ -646,10 +646,12 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
     eprosima::fastrtps::rtps::security::AESGCMGMAC_WriterCryptoHandle& WriterH = eprosima::fastrtps::rtps::security::AESGCMGMAC_WriterCryptoHandle::narrow(*writer);
     eprosima::fastrtps::rtps::security::AESGCMGMAC_ReaderCryptoHandle& ReaderH = eprosima::fastrtps::rtps::security::AESGCMGMAC_ReaderCryptoHandle::narrow(*reader);
 
-    ASSERT_TRUE(WriterH->Reader2WriterKeyMaterial.size() == 1);
-    ASSERT_TRUE(ReaderH->Writer2ReaderKeyMaterial.size() == 1);
-    ASSERT_TRUE(WriterH->Writer2ReaderKeyMaterial.at(0).master_sender_key == ReaderH->Writer2ReaderKeyMaterial.at(0).master_sender_key);
-    ASSERT_TRUE(ReaderH->Reader2WriterKeyMaterial.at(0).master_sender_key == WriterH->Reader2WriterKeyMaterial.at(0).master_sender_key);
+    ASSERT_TRUE(WriterH->Remote2EntityKeyMaterial.size() == 1);
+    ASSERT_TRUE(ReaderH->Remote2EntityKeyMaterial.size() == 1);
+    ASSERT_TRUE(WriterH->Entity2RemoteKeyMaterial.at(0).master_sender_key ==
+            ReaderH->Remote2EntityKeyMaterial.at(0).master_sender_key);
+    ASSERT_TRUE(ReaderH->Entity2RemoteKeyMaterial.at(0).master_sender_key ==
+            WriterH->Remote2EntityKeyMaterial.at(0).master_sender_key);
 
     delete i_handle;
     delete perm_handle;
@@ -1249,42 +1251,41 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     ASSERT_TRUE( P_B->Readers.size() == 0);
 
     //Perform sample message exchange
-    std::vector<uint8_t> plain_payload;
-    std::vector<uint8_t> encoded_datareader_payload;
-    std::vector<uint8_t> encoded_datawriter_payload;
+    eprosima::fastrtps::rtps::CDRMessage_t plain_payload;
+    eprosima::fastrtps::rtps::CDRMessage_t encoded_datareader_payload;
+    eprosima::fastrtps::rtps::CDRMessage_t encoded_datawriter_payload;
 
     char message[] = "My goose is cooked"; //Length 18
-    plain_payload.resize(18);
-    memcpy(plain_payload.data(), message, 18);
+    memcpy(plain_payload.buffer, message, 18);
 
     std::vector<eprosima::fastrtps::rtps::security::DatawriterCryptoHandle*> receivers;
     receivers.push_back(remote_writer);
 
     CryptoPlugin->cryptotransform()->encode_datareader_submessage(encoded_datareader_payload, plain_payload, *reader, receivers, exception);
 
-    //TODO(Ricardo) Fix
-    /*
-       receivers.clear();
-       receivers.push_back(remote_reader);
-       CryptoPlugin->cryptotransform()->encode_datawriter_submessage(encoded_datawriter_payload, plain_payload, *writer, receivers, exception);
+    receivers.clear();
+    receivers.push_back(remote_reader);
+    plain_payload.pos = 0;
+    CryptoPlugin->cryptotransform()->encode_datawriter_submessage(encoded_datawriter_payload, plain_payload, *writer, receivers, exception);
 
-       SecureSubmessageCategory_t message_category;
-       eprosima::fastrtps::rtps::security::DatareaderCryptoHandle **target_reader = new eprosima::fastrtps::rtps::security::DatareaderCryptoHandle*;
-       DatawriterCryptoHandle **target_writer = new DatawriterCryptoHandle*;
-       ASSERT_TRUE(CryptoPlugin->cryptotransform()->preprocess_secure_submsg(target_writer, target_reader, message_category, encoded_datareader_payload, *participant_A, *ParticipantA_remote, exception));
+    eprosima::fastrtps::rtps::security::SecureSubmessageCategory_t message_category;
+    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle **target_reader = new eprosima::fastrtps::rtps::security::DatareaderCryptoHandle*;
+    eprosima::fastrtps::rtps::security::DatawriterCryptoHandle **target_writer = new eprosima::fastrtps::rtps::security::DatawriterCryptoHandle*;
+    encoded_datareader_payload.pos = 0;
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->preprocess_secure_submsg(target_writer, target_reader, message_category, encoded_datareader_payload, *participant_A, *ParticipantA_remote, exception));
 
-       ASSERT_TRUE(message_category == DATAREADER_SUBMESSAGE);
-       ASSERT_TRUE(*target_reader == remote_reader);
-       ASSERT_TRUE(*target_writer == writer);
+    ASSERT_TRUE(message_category == eprosima::fastrtps::rtps::security::DATAREADER_SUBMESSAGE);
+    ASSERT_TRUE(*target_reader == remote_reader);
+    ASSERT_TRUE(*target_writer == writer);
 
-       ASSERT_TRUE(CryptoPlugin->cryptotransform()->preprocess_secure_submsg(target_writer, target_reader, message_category, encoded_datawriter_payload, *participant_B, *ParticipantB_remote, exception));
-       ASSERT_TRUE(message_category == DATAWRITER_SUBMESSAGE);
-       ASSERT_TRUE(*target_writer == remote_writer);
-       ASSERT_TRUE(*target_reader == reader);
+    encoded_datawriter_payload.pos = 0;
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->preprocess_secure_submsg(target_writer, target_reader, message_category, encoded_datawriter_payload, *participant_B, *ParticipantB_remote, exception));
+    ASSERT_TRUE(message_category == eprosima::fastrtps::rtps::security::DATAWRITER_SUBMESSAGE);
+    ASSERT_TRUE(*target_writer == remote_writer);
+    ASSERT_TRUE(*target_reader == reader);
 
-       delete target_reader;
-       delete target_writer;
-       */
+    delete target_reader;
+    delete target_writer;
 
     CryptoPlugin->keyfactory()->unregister_datawriter(writer,exception);
     CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer,exception);
