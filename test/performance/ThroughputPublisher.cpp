@@ -102,7 +102,9 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* /*
     m_up.disc_cond_.notify_one();
 }
 
-ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv): disc_count_(0),
+ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv,
+        const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
+        const eprosima::fastrtps::rtps::PropertyPolicy& property_policy): disc_count_(0),
 #pragma warning(disable:4355)
     m_DataPubListener(*this), m_CommandSubListener(*this), m_CommandPubListener(*this),
     ready(true), m_export_csv(export_csv), reliable_(reliable)
@@ -111,6 +113,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     PParam.rtps.builtin.domainId = pid % 230;
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_publisher");
+    PParam.rtps.properties = part_property_policy;
     mp_par = Domain::createParticipant(PParam);
     if(mp_par == nullptr)
     {
@@ -158,6 +161,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     Wparam.topic.resourceLimitsQos.max_samples = 0;
     Wparam.topic.resourceLimitsQos.allocated_samples = 1000;
+    Wparam.properties = property_policy;
 
     mp_datapub = Domain::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_DataPubListener);
 

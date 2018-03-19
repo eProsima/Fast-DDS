@@ -208,7 +208,9 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(Publisher* /
 
 ThroughputSubscriber::~ThroughputSubscriber(){Domain::stopAll();}
 
-ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hostname) : disc_count_(0), stop_count_(0),
+ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hostname,
+        const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
+        const eprosima::fastrtps::rtps::PropertyPolicy& property_policy) : disc_count_(0), stop_count_(0),
 #pragma warning(disable:4355)
     m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
     ready(true),m_datasize(0),m_demand(0)
@@ -217,6 +219,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     PParam.rtps.builtin.domainId = pid % 230;
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_subscriber");
+    PParam.rtps.properties = part_property_policy;
     mp_par = Domain::createParticipant(PParam);
     if(mp_par == nullptr)
     {
@@ -265,6 +268,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     Locator_t loc;
     loc.port = 10110;
     Sparam.unicastLocatorList.push_back(loc);
+    Sparam.properties = property_policy;
     mp_datasub = Domain::createSubscriber(mp_par,Sparam,(SubscriberListener*)&this->m_DataSubListener);
     //COMMAND
     PublisherAttributes Wparam;

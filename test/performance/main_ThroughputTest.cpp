@@ -93,7 +93,9 @@ enum  optionIndex {
     MSG_SIZE,
     FILE_R,
     HOSTNAME,
-    EXPORT_CSV
+    EXPORT_CSV,
+    USE_SECURITY,
+    CERTS_PATH
 };
 
 const option::Descriptor usage[] = {
@@ -111,6 +113,10 @@ const option::Descriptor usage[] = {
     { HOSTNAME,0,"","hostname",             Arg::None,      "" },
     { EXPORT_CSV,0,"","export_csv",         Arg::None,      "" },
     { FILE_R,0,"f","file",                  Arg::Required,  "  -f <arg>, \t--file=<arg>   \tFile to read the payload demands from.\t" },
+#if HAVE_SECURITY
+    { USE_SECURITY, 0, "", "security",      Arg::Required,  "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
+    { CERTS_PATH, 0, "", "certs",           Arg::Required,  "  --certs <arg>  \tPath where located certificates." },
+#endif
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -142,6 +148,10 @@ int main(int argc, char** argv){
     bool hostname = false;
     bool export_csv = false;
     std::string file_name = "";
+#if HAVE_SECURITY
+    bool use_security = false;
+    std::string certs_path;
+#endif
 
     argc-=(argc>0); argv+=(argc>0); // skip program name argv[0] if present
     if(argc){
@@ -226,6 +236,28 @@ int main(int argc, char** argv){
                 export_csv = true;
                 break;
 
+#if HAVE_SECURITY
+            case USE_SECURITY:
+                if(strcmp(opt.arg, "true") == 0)
+                {
+                    use_security = true;
+                }
+                else if(strcmp(opt.arg, "false") == 0)
+                {
+                    use_security = false;
+                }
+                else
+                {
+                    option::printUsage(fwrite, stdout, usage, columns);
+                    return -1;
+                }
+                break;
+
+            case CERTS_PATH:
+                certs_path = opt.arg;
+                break;
+#endif
+
             case UNKNOWN_OPT:
                 option::printUsage(fwrite, stdout, usage, columns);
                 return 0;
@@ -233,15 +265,58 @@ int main(int argc, char** argv){
         }
     }
 
+    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
+                   pub_property_policy, sub_property_policy;
+
+#if HAVE_SECURITY
+    if(use_security)
+    {
+        if(certs_path.empty())
+        {
+            option::printUsage(fwrite, stdout, usage, columns);
+            return -1;
+        }
+
+        sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+        sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + certs_path + "/maincacert.pem"));
+        sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + certs_path + "/mainsubcert.pem"));
+        sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + certs_path + "/mainsubkey.pem"));
+        sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+        sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+        sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+        sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+        pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+        pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + certs_path + "/maincacert.pem"));
+        pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + certs_path + "/mainpubcert.pem"));
+        pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + certs_path + "/mainpubkey.pem"));
+        pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+        pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+        pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+        pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+    }
+#endif
+
     std::cout << "Starting Throughput Test"<< std::endl;
 
     if(pub_sub){
-        ThroughputPublisher tpub(reliable, seed, hostname, export_csv);
+        ThroughputPublisher tpub(reliable, seed, hostname, export_csv, pub_part_property_policy,
+                pub_property_policy);
         tpub.m_file_name = file_name;
         tpub.run(test_time_sec, recovery_time_ms, demand, msg_size);
     }
     else{
-        ThroughputSubscriber tsub(reliable, seed, hostname);
+        ThroughputSubscriber tsub(reliable, seed, hostname, sub_part_property_policy, sub_property_policy);
         tsub.run();
     }
 

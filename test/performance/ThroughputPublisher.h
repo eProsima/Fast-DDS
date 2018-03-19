@@ -27,6 +27,7 @@
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
+#include <fastrtps/rtps/attributes/PropertyPolicy.h>
 
 #include <condition_variable>
 #include <chrono>
@@ -38,7 +39,9 @@ class ThroughputPublisher
 {
     public:
 
-        ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv);
+        ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv,
+                const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
+                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy);
         virtual ~ThroughputPublisher();
         eprosima::fastrtps::Participant* mp_par;
         eprosima::fastrtps::Publisher* mp_datapub;

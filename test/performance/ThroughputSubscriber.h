@@ -28,7 +28,7 @@
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/subscriber/SampleInfo.h>
-
+#include <fastrtps/rtps/attributes/PropertyPolicy.h>
 
 
 
@@ -44,7 +44,9 @@ class ThroughputSubscriber
 {
     public:
 
-        ThroughputSubscriber(bool reliable, uint32_t pid, bool hostname);
+        ThroughputSubscriber(bool reliable, uint32_t pid, bool hostname,
+                const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
+                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy);
         virtual ~ThroughputSubscriber();
         eprosima::fastrtps::Participant* mp_par;
         eprosima::fastrtps::Subscriber* mp_datasub;
