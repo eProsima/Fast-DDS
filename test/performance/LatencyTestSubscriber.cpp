@@ -27,8 +27,9 @@ using namespace eprosima::fastrtps::rtps;
 
 
 uint32_t datassub[] = {12,28,60,124,252,508,1020,2044,4092,8188,16380};
+uint32_t datassub_large[] = {63996, 131068};
 
-std::vector<uint32_t> data_size_sub (datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
+std::vector<uint32_t> data_size_sub;
 
 LatencyTestSubscriber::LatencyTestSubscriber():
     mp_participant(nullptr),
@@ -63,8 +64,16 @@ LatencyTestSubscriber::~LatencyTestSubscriber()
 }
 
 bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
-        const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy)
+        const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data)
 {
+    if(!large_data)
+    {
+         data_size_sub.assign(datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
+    }
+    else
+    {
+        data_size_sub.assign(datassub_large, datassub_large + sizeof(datassub_large) / sizeof(uint32_t) );
+    }
     m_echo = echo;
     n_samples = nsam;
     ParticipantAttributes PParam;
@@ -109,6 +118,10 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     loc.port = 15002;
     PubDataparam.unicastLocatorList.push_back(loc);
     PubDataparam.properties = property_policy;
+    if(large_data)
+    {
+        PubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    }
     mp_datapub = Domain::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
     if(mp_datapub == nullptr)
         return false;
@@ -132,6 +145,10 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     SubDataparam.properties = property_policy;
     //loc.set_IP4_address(239,255,0,2);
     //SubDataparam.multicastLocatorList.push_back(loc);
+    if(large_data)
+    {
+        SubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    }
     mp_datasub = Domain::createSubscriber(mp_participant,SubDataparam,&this->m_datasublistener);
     if(mp_datasub == nullptr)
         return false;

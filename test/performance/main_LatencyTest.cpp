@@ -100,11 +100,12 @@ enum  optionIndex {
     HOSTNAME,
     EXPORT_CSV,
     USE_SECURITY,
-    CERTS_PATH
+    CERTS_PATH,
+    LARGE_DATA
 };
 
 const option::Descriptor usage[] = {
-    { UNKNOWN_OPT, 0,"", "",            Arg::None,      "Usage: ThroughputTest <publisher|subscriber>\n\nGeneral options:" },
+    { UNKNOWN_OPT, 0,"", "",            Arg::None,      "Usage: LatencyTest <publisher|subscriber>\n\nGeneral options:" },
     { HELP,    0,"h", "help",           Arg::None,      "  -h \t--help  \tProduce help message." },
     { RELIABILITY,0,"r","reliability",  Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
     { SAMPLES,0,"s","samples",          Arg::Numeric,  "  -s <num>, \t--samples=<num>  \tNumber of samples." },
@@ -119,6 +120,7 @@ const option::Descriptor usage[] = {
     { USE_SECURITY, 0, "", "security",  Arg::Required,      "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
     { CERTS_PATH, 0, "", "certs",       Arg::Required,      "  --certs <arg>  \tPath where located certificates." },
 #endif
+    { LARGE_DATA, 0, "l", "large",      Arg::None,      "  -l \t--large\tTest large data."},
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -154,6 +156,7 @@ int main(int argc, char** argv){
     uint32_t seed = 80;
     bool hostname = false;
     bool export_csv = false;
+    bool large_data = false;
 
     argc-=(argc>0); argv+=(argc>0); // skip program name argv[0] if present
     if(argc){
@@ -238,6 +241,10 @@ int main(int argc, char** argv){
                 export_csv = true;
                 break;
 
+            case LARGE_DATA:
+                large_data = true;
+                break;
+
 #if HAVE_SECURITY
             case USE_SECURITY:
                 if(strcmp(opt.arg, "true") == 0)
@@ -313,12 +320,13 @@ int main(int argc, char** argv){
         cout << "Performing test with "<< sub_number << " subscribers and "<<n_samples << " samples" <<endl;
         LatencyTestPublisher latencyPub;
         latencyPub.init(sub_number,n_samples, reliable, seed, hostname, export_csv, pub_part_property_policy,
-                pub_property_policy);
+                pub_property_policy, large_data);
         latencyPub.run();
     }
     else {
         LatencyTestSubscriber latencySub;
-        latencySub.init(echo, n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy);
+        latencySub.init(echo, n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
+                large_data);
         latencySub.run();
     }
 

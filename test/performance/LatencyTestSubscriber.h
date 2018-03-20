@@ -49,7 +49,7 @@ class LatencyTestSubscriber
         int n_samples;
         bool init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy);
+                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data);
         void run();
         bool test(uint32_t datasize);
 
