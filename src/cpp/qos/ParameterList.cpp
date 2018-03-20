@@ -673,3 +673,58 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
     }
     return paramlist_byte_size;
 }
+
+bool ParameterList::readInstanceHandleFromCDRMsg(CacheChange_t* change, const uint16_t search_pid)
+{
+    // Only process data when change does not already have a handle
+    if (change->instanceHandle.isDefined())
+    {
+        return true;
+    }
+
+    // Use a temporary wraping message
+    CDRMessage_t msg(0);
+    msg.wraps = true;
+    msg.buffer = change->serializedPayload.data;
+    msg.length = change->serializedPayload.length;
+
+    // Read encapsulation
+    msg.pos += 1;
+    octet encapsulation = 0;
+    CDRMessage::readOctet(&msg, &encapsulation);
+    if (encapsulation == PL_CDR_BE)
+        msg.msg_endian = BIGEND;
+    else if (encapsulation == PL_CDR_LE)
+        msg.msg_endian = LITTLEEND;
+    else
+        return false;
+    if (change != NULL)
+        change->serializedPayload.encapsulation = (uint16_t)encapsulation;
+    msg.pos += 2;
+
+    bool valid = false;
+    uint16_t pid;
+    uint16_t plength;
+    while (msg.pos < msg.length)
+    {
+        valid = true;
+        valid &= CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
+        valid &= CDRMessage::readUInt16(&msg, &plength);
+        if ( (pid == PID_SENTINEL) || !valid)
+        {
+            break;
+        }
+        if (pid == PID_KEY_HASH)
+        {
+            valid &= CDRMessage::readData(&msg, change->instanceHandle.value, 16);
+            return valid;
+        }
+        if (pid == search_pid)
+        {
+            valid &= CDRMessage::readData(&msg, change->instanceHandle.value, 16);
+            return valid;
+        }
+        msg.pos += plength;
+    }
+    return false;
+}

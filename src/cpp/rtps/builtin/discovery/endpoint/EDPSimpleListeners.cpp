@@ -110,58 +110,14 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
     return;
 }
 
-static inline bool compute_key(CDRMessage_t* aux_msg,CacheChange_t* change)
-{
-    if(change->instanceHandle == c_InstanceHandle_Unknown)
-    {
-        SerializedPayload_t* pl = &change->serializedPayload;
-        aux_msg->buffer = pl->data;
-        aux_msg->length = pl->length;
-        aux_msg->max_size = pl->max_size;
-        aux_msg->msg_endian = pl->encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
-        bool valid = false;
-        uint16_t pid;
-        uint16_t plength;
-        while(aux_msg->pos < aux_msg->length)
-        {
-            valid = true;
-            valid&=CDRMessage::readUInt16(aux_msg,(uint16_t*)&pid);
-            valid&=CDRMessage::readUInt16(aux_msg,&plength);
-            if(pid == PID_SENTINEL)
-            {
-                break;
-            }
-            if(pid == PID_KEY_HASH)
-            {
-                valid &= CDRMessage::readData(aux_msg,change->instanceHandle.value,16);
-                aux_msg->buffer = nullptr;
-                return true;
-            }
-            if(pid == PID_ENDPOINT_GUID)
-            {
-                valid &= CDRMessage::readData(aux_msg,change->instanceHandle.value,16);
-                aux_msg->buffer = nullptr;
-                return true;
-            }
-            aux_msg->pos+=plength;
-        }
-        aux_msg->buffer = nullptr;
-        return false;
-    }
-    aux_msg->buffer = nullptr;
-    return true;
-}
-
 bool EDPSimplePUBListener::computeKey(CacheChange_t* change)
 {
-    CDRMessage_t aux_msg(0);
-    return compute_key(&aux_msg,change);
+    return ParameterList::readInstanceHandleFromCDRMsg(change, PID_ENDPOINT_GUID);
 }
 
 bool EDPSimpleSUBListener::computeKey(CacheChange_t* change)
 {
-    CDRMessage_t aux_msg(0);
-    return compute_key(&aux_msg,change);
+    return ParameterList::readInstanceHandleFromCDRMsg(change, PID_ENDPOINT_GUID);
 }
 
 void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in)

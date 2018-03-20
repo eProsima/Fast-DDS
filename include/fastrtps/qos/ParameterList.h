@@ -82,6 +82,14 @@ class ParameterList
          */
         static int32_t readParameterListfromCDRMsg(rtps::CDRMessage_t* msg, ParameterList_t* plist, rtps::CacheChange_t* change,
                 bool encapsulation);
+
+        /**
+         * Read change instanceHandle from the KEY_HASH or another specific PID parameter of a CDRMessage
+         * @param[in-out] change Pointer to the cache change.
+         * @param[in] pid Specific PID to search
+         * @return True when instanceHandle is updated.
+         */
+        static bool readInstanceHandleFromCDRMsg(rtps::CacheChange_t* change, const uint16_t pid);
 };
 
 } /* namespace  */
