@@ -121,6 +121,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     if(large_data)
     {
         PubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+        PubDataparam.qos.m_publishMode.kind = eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE;
     }
     mp_datapub = Domain::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
     if(mp_datapub == nullptr)
@@ -336,7 +337,7 @@ void LatencyTestSubscriber::run()
 bool LatencyTestSubscriber::test(uint32_t datasize)
 {
     cout << "Preparing test with data size: " << datasize+4<<endl;
-    mp_latency = new LatencyType((uint16_t)datasize);
+    mp_latency = new LatencyType(datasize);
 
     std::unique_lock<std::mutex> lock(mutex_);
     if(comm_count_ == 0) comm_cond_.wait(lock);

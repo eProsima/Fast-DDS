@@ -32,7 +32,7 @@ bool LatencyDataType::serialize(void*data,SerializedPayload_t* payload)
 
     //std::copy(lt->data.begin(),lt->data.end(),payload->data+8);
     memcpy(payload->data + 8, lt->data.data(), lt->data.size());
-    payload->length = (uint16_t)(8+lt->data.size());
+    payload->length = (uint32_t)(8+lt->data.size());
     return true;
 }
 
