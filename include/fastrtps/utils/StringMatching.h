@@ -19,6 +19,11 @@
 
 #ifndef STRINGMATCHING_H_
 #define STRINGMATCHING_H_
+
+#include <string>
+#include <vector>
+#include <stdint.h>
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 namespace eprosima {
 namespace fastrtps {
@@ -33,7 +38,9 @@ class StringMatching
 public:
 
     StringMatching();
+
     virtual ~StringMatching();
+
     /** Static method to match two strings.
      * It checks if the input strings match. Any of the strings or both can be a pattern.
      */
@@ -47,8 +54,18 @@ public:
     static bool matchPattern(
             const char* pattern,
             const char* input);
+
+    static std::vector<std::string> split(
+            const std::string& str,
+            const std::string& delim);
+
+    static bool readUint32(
+            uint32_t& n,
+            std::string const& str,
+            int base = 10);
 };
-} // namespace rtps
+
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

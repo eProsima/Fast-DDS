@@ -346,7 +346,8 @@ bool TCPTransportInterface::DoInputLocatorsMatch(
     return IPLocator::getPhysicalPort(left) ==  IPLocator::getPhysicalPort(right);
 }
 
-bool TCPTransportInterface::init()
+bool TCPTransportInterface::init(
+        const fastrtps::rtps::PropertyPolicy*)
 {
     apply_tls_config();
     if (configuration()->sendBufferSize == 0 || configuration()->receiveBufferSize == 0)

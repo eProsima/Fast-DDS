@@ -155,7 +155,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         UDPv4TransportDescriptor descriptor;
         descriptor.sendBufferSize = m_att.sendSocketBufferSize;
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
-        m_network_Factory.RegisterTransport(&descriptor);
+        m_network_Factory.RegisterTransport(&descriptor, &m_att.properties);
 
 #ifdef SHM_TRANSPORT_BUILTIN
         SharedMemTransportDescriptor shm_transport;
@@ -202,7 +202,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     // User defined transports
     for (const auto& transportDescriptor : PParam.userTransports)
     {
-        if (m_network_Factory.RegisterTransport(transportDescriptor.get()))
+        if (m_network_Factory.RegisterTransport(transportDescriptor.get(), &m_att.properties))
         {
             has_shm_transport_ |=
                     (dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr);

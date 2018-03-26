@@ -50,7 +50,8 @@ public:
 
     const SharedMemTransportDescriptor* configuration() const;
 
-    bool init() override;
+    bool init(
+            const fastrtps::rtps::PropertyPolicy* properties = nullptr) override;
 
     virtual ~SharedMemTransport() override;
 
@@ -218,7 +219,7 @@ private:
 
     std::shared_ptr<SharedMemManager::Segment> shared_mem_segment_;
 
-    std::shared_ptr<PacketsLog<SHMPacketFileConsumer>> packet_logger_;
+    std::shared_ptr<PacketsLog<SHMPacketFileConsumer> > packet_logger_;
 
     friend class SharedMemChannelResource;
 

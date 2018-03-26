@@ -115,7 +115,8 @@ bool UDPTransportInterface::DoInputLocatorsMatch(
     return IPLocator::getPhysicalPort(left) == IPLocator::getPhysicalPort(right);
 }
 
-bool UDPTransportInterface::init()
+bool UDPTransportInterface::init(
+        const fastrtps::rtps::PropertyPolicy*)
 {
     if (configuration()->sendBufferSize == 0 || configuration()->receiveBufferSize == 0)
     {
