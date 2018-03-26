@@ -23,6 +23,7 @@
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
 #include <fastdds/rtps/network/SenderResource.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -82,9 +83,11 @@ public:
 
     /**
      * Initialize this transport. This method will prepare all the internals of the transport.
+     * @param properties Optional policy to specify additional parameters of the created transport.
      * @return True when the transport was correctly intialized.
      */
-    virtual bool init() = 0;
+    virtual bool init(
+            const fastrtps::rtps::PropertyPolicy* properties = nullptr) = 0;
 
     /**
      * Must report whether the input channel associated to this locator is open. Channels must either be

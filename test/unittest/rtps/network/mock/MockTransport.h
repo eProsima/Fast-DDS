@@ -20,147 +20,211 @@
 #include <utility>
 #include <vector>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 class MockTransportDescriptor;
 
 class MockSenderResource : public SenderResource
 {
-    public:
+public:
 
-        MockSenderResource(Locator_t locator)
-            : SenderResource(locator.kind)
-            , locator_(locator) {}
+    MockSenderResource(
+            Locator_t locator)
+        : SenderResource(locator.kind)
+        , locator_(locator)
+    {
+    }
 
-        const Locator_t& locator() const { return locator_; }
+    const Locator_t& locator() const
+    {
+        return locator_;
+    }
 
-    private:
+private:
 
-        Locator_t locator_;
+    Locator_t locator_;
 };
 
 class MockTransport : public TransportInterface
 {
-    public:
+public:
 
-        MockTransport(const MockTransportDescriptor& descriptor);
+    MockTransport(
+            const MockTransportDescriptor& descriptor);
 
-        MockTransport();
+    MockTransport();
 
-        ~MockTransport();
+    ~MockTransport();
 
-        bool init() override;
+    bool init(
+            const PropertyPolicy* properties = nullptr) override;
 
-        //API implementation
-        virtual bool IsInputChannelOpen(const Locator_t&)  const override;
+    //API implementation
+    virtual bool IsInputChannelOpen(
+            const Locator_t&)  const override;
 
-        virtual bool OpenOutputChannel(
-                SendResourceList& sender_resource_list,
-                const Locator_t&) override;
+    virtual bool OpenOutputChannel(
+            SendResourceList& sender_resource_list,
+            const Locator_t&) override;
 
-        virtual bool OpenInputChannel(
+    virtual bool OpenInputChannel(
+        const Locator_t&,
+        TransportReceiverInterface*,
+        uint32_t) override;
+
+    virtual bool CloseInputChannel(
+            const Locator_t&) override;
+
+    virtual Locator_t RemoteToMainLocal(
+            const Locator_t&) const override;
+
+    virtual bool IsLocatorSupported(
+            const Locator_t&)  const override;
+    virtual bool is_locator_allowed(
+            const Locator_t& locator) const override;
+    virtual bool DoInputLocatorsMatch(
             const Locator_t&,
-            TransportReceiverInterface*,
-            uint32_t) override;
+            const Locator_t&) const override;
 
-        virtual bool CloseInputChannel(const Locator_t&) override;
+    virtual LocatorList_t NormalizeLocator(
+            const Locator_t& locator) override;
 
-        virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
+    /**
+     * Performs the locator selection algorithm for this transport.
+     *
+     * It basically consists of the following steps
+     *   - selector.transport_starts is called
+     *   - transport handles the selection state of each locator
+     *   - if a locator from an entry is selected, selector.select is called for that entry
+     *
+     * In the case of the mock transport all unicast locators are selected.
+     *
+     * @param [in, out] selector Locator selector.
+     */
+    virtual void select_locators(
+            LocatorSelector& selector) const override;
 
-        virtual bool IsLocatorSupported(const Locator_t&)  const override;
-        virtual bool is_locator_allowed(const Locator_t& locator) const override;
-        virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
+    virtual bool is_local_locator(
+            const Locator_t&) const override
+    {
+        return false;
+    }
 
-        virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
+    virtual TransportDescriptorInterface* get_configuration() override
+    {
+        return nullptr;
+    }
 
-        /**
-         * Performs the locator selection algorithm for this transport.
-         *
-         * It basically consists of the following steps
-         *   - selector.transport_starts is called
-         *   - transport handles the selection state of each locator
-         *   - if a locator from an entry is selected, selector.select is called for that entry
-         *
-         * In the case of the mock transport all unicast locators are selected.
-         *
-         * @param [in, out] selector Locator selector.
-         */
-        virtual void select_locators(LocatorSelector& selector) const override;
+    virtual void AddDefaultOutputLocator(
+            LocatorList_t&) override
+    {
+    }
 
-        virtual bool is_local_locator(const Locator_t&) const override { return false; }
+    virtual bool getDefaultMetatrafficMulticastLocators(
+            LocatorList_t&,
+            uint32_t ) const override
+    {
+        return true;
+    }
 
-        virtual TransportDescriptorInterface* get_configuration() override { return nullptr; };
+    virtual bool getDefaultMetatrafficUnicastLocators(
+            LocatorList_t&,
+            uint32_t ) const override
+    {
+        return true;
+    }
 
-        virtual void AddDefaultOutputLocator(LocatorList_t &) override {};
+    virtual bool getDefaultUnicastLocators(
+            LocatorList_t&,
+            uint32_t ) const override
+    {
+        return true;
+    }
 
-        virtual bool getDefaultMetatrafficMulticastLocators(
-            LocatorList_t &,
-            uint32_t ) const override { return true; }
+    virtual bool fillMetatrafficUnicastLocator(
+            Locator_t&,
+            uint32_t ) const override
+    {
+        return true;
+    }
 
-        virtual bool getDefaultMetatrafficUnicastLocators(
-            LocatorList_t &,
-            uint32_t ) const override { return true; }
+    virtual bool fillMetatrafficMulticastLocator(
+            Locator_t&,
+            uint32_t ) const override
+    {
+        return true;
+    }
 
-        virtual bool getDefaultUnicastLocators(
-            LocatorList_t &,
-            uint32_t ) const override { return true; }
+    virtual bool configureInitialPeerLocator(
+            Locator_t&,
+            const PortParameters&,
+            uint32_t,
+            LocatorList_t& ) const override
+    {
+        return true;
+    }
 
-        virtual bool fillMetatrafficUnicastLocator(
-            Locator_t &,
-            uint32_t ) const override { return true; }
+    virtual bool fillUnicastLocator(
+            Locator_t&,
+            uint32_t) const override
+    {
+        return true;
+    }
 
-        virtual bool fillMetatrafficMulticastLocator(
-            Locator_t &,
-            uint32_t ) const override { return true; }
+    virtual uint32_t max_recv_buffer_size() const override
+    {
+        return 0x8FFF;
+    }
 
-        virtual bool configureInitialPeerLocator(
-            Locator_t &,
-            const PortParameters &,
-            uint32_t ,
-            LocatorList_t& ) const override { return true; }
+    bool transform_remote_locator(
+            const fastrtps::rtps::Locator_t&,
+            fastrtps::rtps::Locator_t&) const override
+    {
+        return true;
+    }
 
-        virtual bool fillUnicastLocator(
-            Locator_t &,
-            uint32_t) const override { return true; }
+    //Helpers and message record
+    typedef struct
+    {
+        Locator_t destination;
+        Locator_t origin;
+        std::vector<octet> data;
+    } MockMessage;
 
-        virtual uint32_t max_recv_buffer_size() const override
-        {
-            return 0x8FFF;
-        }
+    std::vector<MockMessage> mockMessagesToReceive;
+    std::vector<MockMessage> mockMessagesSent;
 
-        //Helpers and message record
-        typedef struct
-        {
-            Locator_t destination;
-            Locator_t origin;
-            std::vector<octet> data;
-        } MockMessage;
+    // For the mock, port + direction tuples will have a 1:1 relatonship with channels
+    typedef uint32_t Port;
+    std::vector<Port> mockOpenInputChannels;
 
-        std::vector<MockMessage> mockMessagesToReceive;
-        std::vector<MockMessage> mockMessagesSent;
+    const static int DefaultKind = 1;
 
-        // For the mock, port + direction tuples will have a 1:1 relatonship with channels
-        typedef uint32_t Port;
-        std::vector<Port> mockOpenInputChannels;
+    const static int DefaultMaxChannels = 10;
+    int mockMaximumChannels;
 
-        const static int DefaultKind = 1;
-
-        const static int DefaultMaxChannels = 10;
-        int mockMaximumChannels;
-
-        //Helper persistent handles
-        static std::vector<MockTransport*> mockTransportInstances;
+    //Helper persistent handles
+    static std::vector<MockTransport*> mockTransportInstances;
 };
 
-class MockTransportDescriptor: public SocketTransportDescriptor
+class MockTransportDescriptor : public SocketTransportDescriptor
 {
 public:
-    MockTransportDescriptor() : SocketTransportDescriptor(0x8FFF, 4) {}
+
+    MockTransportDescriptor()
+        : SocketTransportDescriptor(0x8FFF, 4)
+    {
+    }
+
     int maximumChannels;
     int supportedKind;
-    virtual TransportInterface* create_transport() const override { return new MockTransport(*this); }
+    virtual TransportInterface* create_transport() const override
+    {
+        return new MockTransport(*this);
+    }
+
 };
 
 } // namespace rtps

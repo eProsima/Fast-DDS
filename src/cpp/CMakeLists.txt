@@ -128,6 +128,7 @@ set(${PROJECT_NAME}_source_files
     rtps/transport/test_UDPv4Transport.cpp
     rtps/transport/tcp/TCPControlMessage.cpp
     rtps/transport/tcp/RTCPMessageManager.cpp
+    rtps/transport/ChainingTransport.cpp
 
     dynamic-types/AnnotationDescriptor.cpp
     dynamic-types/AnnotationParameterValue.cpp

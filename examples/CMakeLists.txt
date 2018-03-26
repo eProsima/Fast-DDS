@@ -39,6 +39,7 @@ add_subdirectory(C++/StaticHelloWorldExample)
 add_subdirectory(C++/XMLProfiles)
 add_subdirectory(C++/Benchmark)
 add_subdirectory(C++/DDS)
+add_subdirectory(C++/RTPSTest_custom_transport)
 
 if(SECURITY)
     add_subdirectory(C++/SecureHelloWorldExample)

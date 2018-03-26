@@ -63,9 +63,11 @@ public:
      * Allows registration of a transport dynamically. Only the transports built into FastRTPS
      * are supported here (although it can be easily extended at NetworkFactory.cpp)
      * @param descriptor Structure that defines all initial configuration for a given transport.
+     * @param properties Optional policy to specify additional parameters of the created transport.
      */
     bool RegisterTransport(
-            const fastdds::rtps::TransportDescriptorInterface* descriptor);
+            const fastdds::rtps::TransportDescriptorInterface* descriptor,
+            const fastrtps::rtps::PropertyPolicy* properties = nullptr);
 
     /**
      * Walks over the list of transports, opening every possible channel that can send through

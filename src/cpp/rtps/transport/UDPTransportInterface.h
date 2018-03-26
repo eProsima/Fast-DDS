@@ -59,7 +59,8 @@ public:
 
     virtual const UDPTransportDescriptor* configuration() const = 0;
 
-    bool init() override;
+    bool init(
+            const fastrtps::rtps::PropertyPolicy* properties = nullptr) override;
 
     //! Checks whether there are open and bound sockets for the given port.
     virtual bool IsInputChannelOpen(
@@ -168,7 +169,7 @@ protected:
     std::vector<fastrtps::rtps::IPFinder::info_IP> currentInterfaces;
 
     mutable std::recursive_mutex mInputMapMutex;
-    std::map<uint16_t, std::vector<UDPChannelResource*>> mInputSockets;
+    std::map<uint16_t, std::vector<UDPChannelResource*> > mInputSockets;
 
     uint32_t mSendBufferSize;
     uint32_t mReceiveBufferSize;

@@ -47,7 +47,8 @@ MockTransport::~MockTransport()
                                 mockTransportInstances.end());
 }
 
-bool MockTransport::init()
+bool MockTransport::init(const PropertyPolicy* /*properties*/)
+
 {
     return true;
 }

@@ -49,7 +49,6 @@ struct UDPv6TransportDescriptor : public UDPTransportDescriptor
 
     RTPS_DllAPI bool operator ==(
             const UDPv6TransportDescriptor& t) const;
-
 };
 
 } // namespace rtps
