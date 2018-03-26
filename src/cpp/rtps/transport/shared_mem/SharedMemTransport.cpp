@@ -80,7 +80,7 @@ bool SharedMemTransport::getDefaultMetatrafficMulticastLocators(
         uint32_t metatraffic_multicast_port) const
 {
     locators.push_back(SHMLocator::create_locator(metatraffic_multicast_port, SHMLocator::Type::MULTICAST));
-    
+
     return true;
 }
 
@@ -234,17 +234,18 @@ bool SharedMemTransport::DoInputLocatorsMatch(
     return left.kind == right.kind && left.port == right.port;
 }
 
-bool SharedMemTransport::init()
+bool SharedMemTransport::init(
+        const fastrtps::rtps::PropertyPolicy*)
 {
     // TODO(Adolfo): Calculate this value from UDP sockets buffers size.
     static constexpr uint32_t shm_default_segment_size = 512 * 1024;
 
-    if(configuration_.segment_size() == 0)
+    if (configuration_.segment_size() == 0)
     {
         configuration_.segment_size(shm_default_segment_size);
     }
 
-    if(configuration_.segment_size() < configuration_.max_message_size())
+    if (configuration_.segment_size() < configuration_.max_message_size())
     {
         logError(RTPS_MSG_OUT, "max_message_size cannot be greater than segment_size");
         return false;
@@ -258,7 +259,7 @@ bool SharedMemTransport::init()
 
         // Memset the whole segment to zero in order to force physical map of the buffer
         auto buffer = shared_mem_segment_->alloc_buffer(configuration_.segment_size(),
-                        (std::chrono::steady_clock::now()+std::chrono::milliseconds(100)));
+                        (std::chrono::steady_clock::now() + std::chrono::milliseconds(100)));
         memset(buffer->data(), 0, configuration_.segment_size());
         buffer.reset();
 
@@ -505,7 +506,7 @@ bool SharedMemTransport::send(
     }
 
     logInfo(RTPS_MSG_OUT,
-            "(ID:" << std::this_thread::get_id() <<") " << "SharedMemTransport: " << buffer->size() << " bytes to port " <<
+            "(ID:" << std::this_thread::get_id() << ") " << "SharedMemTransport: " << buffer->size() << " bytes to port " <<
             remote_locator.port);
 
     return true;

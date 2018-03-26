@@ -19,9 +19,9 @@
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <functional>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 typedef struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor{
 
@@ -48,12 +48,15 @@ typedef struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor{
 
    std::vector<fastrtps::rtps::SequenceNumber_t> sequenceNumberDataMessagesToDrop;
 
-   uint32_t dropLogLength; // logs dropped packets.
+    uint32_t dropLogLength; // logs dropped packets.
 
-   RTPS_DllAPI test_UDPv4TransportDescriptor();
-   virtual ~test_UDPv4TransportDescriptor(){}
+    RTPS_DllAPI test_UDPv4TransportDescriptor();
+    virtual ~test_UDPv4TransportDescriptor()
+    {
+    }
 
-   virtual TransportInterface* create_transport() const override;
+    virtual TransportInterface* create_transport() const override;
+
 } test_UDPv4TransportDescriptor;
 
 } // namespace rtps

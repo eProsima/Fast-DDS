@@ -28,48 +28,56 @@
 #include <map>
 #include <mutex>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 class UDPTransportInterface : public TransportInterface
 {
 public:
 
-   virtual ~UDPTransportInterface() override;
+    virtual ~UDPTransportInterface() override;
 
-   void clean();
+    void clean();
 
-   //! Removes the listening socket for the specified port.
-   virtual bool CloseInputChannel(const fastrtps::rtps::Locator_t&) override;
+    //! Removes the listening socket for the specified port.
+    virtual bool CloseInputChannel(
+            const fastrtps::rtps::Locator_t&) override;
 
-   //! Removes all outbound sockets on the given port.
-   void CloseOutputChannel(eProsimaUDPSocket& socket);
+    //! Removes all outbound sockets on the given port.
+    void CloseOutputChannel(
+            eProsimaUDPSocket& socket);
 
-   //! Reports whether Locators correspond to the same port.
-   virtual bool DoInputLocatorsMatch(const fastrtps::rtps::Locator_t&, const fastrtps::rtps::Locator_t&) const override;
+    //! Reports whether Locators correspond to the same port.
+    virtual bool DoInputLocatorsMatch(
+            const fastrtps::rtps::Locator_t&,
+            const fastrtps::rtps::Locator_t&) const override;
 
-   virtual const UDPTransportDescriptor* configuration() const = 0;
+    virtual const UDPTransportDescriptor* configuration() const = 0;
 
-   bool init() override;
+    bool init(
+            const fastrtps::rtps::PropertyPolicy* properties = nullptr) override;
 
-   //! Checks whether there are open and bound sockets for the given port.
-   virtual bool IsInputChannelOpen(const fastrtps::rtps::Locator_t&) const override;
+    //! Checks whether there are open and bound sockets for the given port.
+    virtual bool IsInputChannelOpen(
+            const fastrtps::rtps::Locator_t&) const override;
 
-   //! Checks for TCP kinds.
-   virtual bool IsLocatorSupported(const fastrtps::rtps::Locator_t&) const override;
+    //! Checks for TCP kinds.
+    virtual bool IsLocatorSupported(
+            const fastrtps::rtps::Locator_t&) const override;
 
-   //! Opens a socket on the given address and port (as long as they are white listed).
-   virtual bool OpenOutputChannel(
-           SendResourceList& sender_resource_list,
-           const fastrtps::rtps::Locator_t&) override;
+    //! Opens a socket on the given address and port (as long as they are white listed).
+    virtual bool OpenOutputChannel(
+            SendResourceList& sender_resource_list,
+            const fastrtps::rtps::Locator_t&) override;
 
-   /**
-   * Converts a given remote locator (that is, a locator referring to a remote
-   * destination) to the main local locator whose channel can write to that
-   * destination. In this case it will return a 0.0.0.0 address on that port.
-   */
-   virtual fastrtps::rtps::Locator_t RemoteToMainLocal(const fastrtps::rtps::Locator_t&) const override;
+    /**
+     * Converts a given remote locator (that is, a locator referring to a remote
+     * destination) to the main local locator whose channel can write to that
+     * destination. In this case it will return a 0.0.0.0 address on that port.
+     */
+    virtual fastrtps::rtps::Locator_t RemoteToMainLocal(
+            const fastrtps::rtps::Locator_t&) const override;
 
     /**
      * Transforms a remote locator into a locator optimized for local communications.
@@ -86,28 +94,28 @@ public:
             const fastrtps::rtps::Locator_t& remote_locator,
             fastrtps::rtps::Locator_t& result_locator) const override;
 
-   /**
-   * Blocking Send through the specified channel. In both modes, using a localLocator of 0.0.0.0 will
-   * send through all whitelisted interfaces provided the channel is open.
-   * @param send_buffer Slice into the raw data to send.
-   * @param send_buffer_size Size of the raw data. It will be used as a bounds check for the previous argument.
-   * It must not exceed the send_buffer_size fed to this class during construction.
-   * @param socket channel we're sending from.
-   * @param destination_locators_begin pointer to destination locators iterator begin, the iterator can be advanced inside this fuction
-   * so should not be reuse.
-   * @param destination_locators_end pointer to destination locators iterator end, the iterator can be advanced inside this fuction
-   * so should not be reuse.
-   * @param only_multicast_purpose
-   * @param max_blocking_time_point maximum blocking time.
-   */
-   virtual bool send(
-           const fastrtps::rtps::octet* send_buffer,
-           uint32_t send_buffer_size,
-           eProsimaUDPSocket& socket,
-           fastrtps::rtps::LocatorsIterator* destination_locators_begin,
-           fastrtps::rtps::LocatorsIterator* destination_locators_end,
-           bool only_multicast_purpose,
-           const std::chrono::steady_clock::time_point& max_blocking_time_point);
+    /**
+     * Blocking Send through the specified channel. In both modes, using a localLocator of 0.0.0.0 will
+     * send through all whitelisted interfaces provided the channel is open.
+     * @param send_buffer Slice into the raw data to send.
+     * @param send_buffer_size Size of the raw data. It will be used as a bounds check for the previous argument.
+     * It must not exceed the send_buffer_size fed to this class during construction.
+     * @param socket channel we're sending from.
+     * @param destination_locators_begin pointer to destination locators iterator begin, the iterator can be advanced inside this fuction
+     * so should not be reuse.
+     * @param destination_locators_end pointer to destination locators iterator end, the iterator can be advanced inside this fuction
+     * so should not be reuse.
+     * @param only_multicast_purpose
+     * @param max_blocking_time_point maximum blocking time.
+     */
+    virtual bool send(
+            const fastrtps::rtps::octet* send_buffer,
+            uint32_t send_buffer_size,
+            eProsimaUDPSocket& socket,
+            fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+            fastrtps::rtps::LocatorsIterator* destination_locators_end,
+            bool only_multicast_purpose,
+            const std::chrono::steady_clock::time_point& max_blocking_time_point);
 
     /**
      * Performs the locator selection algorithm for this transport.
@@ -122,17 +130,26 @@ public:
      *
      * @param [in, out] selector Locator selector.
      */
-    virtual void select_locators(fastrtps::rtps::LocatorSelector& selector) const override;
+    virtual void select_locators(
+            fastrtps::rtps::LocatorSelector& selector) const override;
 
-    virtual bool fillMetatrafficMulticastLocator(fastrtps::rtps::Locator_t &locator,
-        uint32_t metatraffic_multicast_port) const override;
+    virtual bool fillMetatrafficMulticastLocator(
+            fastrtps::rtps::Locator_t& locator,
+            uint32_t metatraffic_multicast_port) const override;
 
-    virtual bool fillMetatrafficUnicastLocator(fastrtps::rtps::Locator_t &locator, uint32_t metatraffic_unicast_port) const override;
+    virtual bool fillMetatrafficUnicastLocator(
+            fastrtps::rtps::Locator_t& locator,
+            uint32_t metatraffic_unicast_port) const override;
 
-    virtual bool configureInitialPeerLocator(fastrtps::rtps::Locator_t &locator, const fastrtps::rtps::PortParameters &port_params, uint32_t domainId,
-        fastrtps::rtps::LocatorList_t& list) const override;
+    virtual bool configureInitialPeerLocator(
+            fastrtps::rtps::Locator_t& locator,
+            const fastrtps::rtps::PortParameters& port_params,
+            uint32_t domainId,
+            fastrtps::rtps::LocatorList_t& list) const override;
 
-    virtual bool fillUnicastLocator(fastrtps::rtps::Locator_t &locator, uint32_t well_known_port) const override;
+    virtual bool fillUnicastLocator(
+            fastrtps::rtps::Locator_t& locator,
+            uint32_t well_known_port) const override;
 
     virtual uint32_t max_recv_buffer_size() const override
     {
@@ -148,60 +165,95 @@ protected:
     std::vector<fastrtps::rtps::IPFinder::info_IP> currentInterfaces;
 
     mutable std::recursive_mutex mInputMapMutex;
-    std::map<uint16_t, std::vector<UDPChannelResource*>> mInputSockets;
+    std::map<uint16_t, std::vector<UDPChannelResource*> > mInputSockets;
 
     uint32_t mSendBufferSize;
     uint32_t mReceiveBufferSize;
 
-    UDPTransportInterface(int32_t transport_kind);
+    UDPTransportInterface(
+            int32_t transport_kind);
 
-    virtual bool compare_locator_ip(const fastrtps::rtps::Locator_t& lh, const fastrtps::rtps::Locator_t& rh) const = 0;
-    virtual bool compare_locator_ip_and_port(const fastrtps::rtps::Locator_t& lh, const fastrtps::rtps::Locator_t& rh) const = 0;
+    virtual bool compare_locator_ip(
+            const fastrtps::rtps::Locator_t& lh,
+            const fastrtps::rtps::Locator_t& rh) const = 0;
+    virtual bool compare_locator_ip_and_port(
+            const fastrtps::rtps::Locator_t& lh,
+            const fastrtps::rtps::Locator_t& rh) const = 0;
 
-    virtual void endpoint_to_locator(asio::ip::udp::endpoint& endpoint, fastrtps::rtps::Locator_t& locator) = 0;
-    virtual void fill_local_ip(fastrtps::rtps::Locator_t& loc) const = 0;
+    virtual void endpoint_to_locator(
+            asio::ip::udp::endpoint& endpoint,
+            fastrtps::rtps::Locator_t& locator) = 0;
+    virtual void fill_local_ip(
+            fastrtps::rtps::Locator_t& loc) const = 0;
 
-    virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(uint16_t port) = 0;
-    virtual asio::ip::udp::endpoint generate_endpoint(uint16_t port) = 0;
-    virtual asio::ip::udp::endpoint generate_endpoint(const std::string& sIp, uint16_t port) = 0;
-    virtual asio::ip::udp::endpoint generate_endpoint(const fastrtps::rtps::Locator_t& loc, uint16_t port) = 0;
-    virtual asio::ip::udp::endpoint generate_local_endpoint(const fastrtps::rtps::Locator_t& loc, uint16_t port) = 0;
+    virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(
+            uint16_t port) = 0;
+    virtual asio::ip::udp::endpoint generate_endpoint(
+            uint16_t port) = 0;
+    virtual asio::ip::udp::endpoint generate_endpoint(
+            const std::string& sIp,
+            uint16_t port) = 0;
+    virtual asio::ip::udp::endpoint generate_endpoint(
+            const fastrtps::rtps::Locator_t& loc,
+            uint16_t port) = 0;
+    virtual asio::ip::udp::endpoint generate_local_endpoint(
+            const fastrtps::rtps::Locator_t& loc,
+            uint16_t port) = 0;
     virtual asio::ip::udp generate_protocol() const = 0;
-    virtual void get_ips(std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames, bool return_loopback = false) = 0;
+    virtual void get_ips(
+            std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
+            bool return_loopback = false) = 0;
 
     //! Checks if the interfaces white list is empty.
     virtual bool is_interface_whitelist_empty() const = 0;
 
     //! Checks if the given interface is allowed by the white list.
-    virtual bool is_interface_allowed(const std::string& interface) const = 0;
+    virtual bool is_interface_allowed(
+            const std::string& interface) const = 0;
 
     /**
-    * Method to get a list of interfaces to bind the socket associated to the given locator.
-    * @return Vector of interfaces in string format.
-    */
+     * Method to get a list of interfaces to bind the socket associated to the given locator.
+     * @return Vector of interfaces in string format.
+     */
     virtual std::vector<std::string> get_binding_interfaces_list() = 0;
 
-    bool OpenAndBindInputSockets(const fastrtps::rtps::Locator_t& locator, TransportReceiverInterface* receiver, bool is_multicast,
-        uint32_t maxMsgSize);
-    UDPChannelResource* CreateInputChannelResource(const std::string& sInterface, const fastrtps::rtps::Locator_t& locator,
-        bool is_multicast, uint32_t maxMsgSize, TransportReceiverInterface* receiver);
-    virtual eProsimaUDPSocket OpenAndBindInputSocket(const std::string& sIp, uint16_t port, bool is_multicast) = 0;
-    eProsimaUDPSocket OpenAndBindUnicastOutputSocket(const asio::ip::udp::endpoint& endpoint, uint16_t& port);
+    bool OpenAndBindInputSockets(
+            const fastrtps::rtps::Locator_t& locator,
+            TransportReceiverInterface* receiver,
+            bool is_multicast,
+            uint32_t maxMsgSize);
+    UDPChannelResource* CreateInputChannelResource(
+            const std::string& sInterface,
+            const fastrtps::rtps::Locator_t& locator,
+            bool is_multicast,
+            uint32_t maxMsgSize,
+            TransportReceiverInterface* receiver);
+    virtual eProsimaUDPSocket OpenAndBindInputSocket(
+            const std::string& sIp,
+            uint16_t port,
+            bool is_multicast) = 0;
+    eProsimaUDPSocket OpenAndBindUnicastOutputSocket(
+            const asio::ip::udp::endpoint& endpoint,
+            uint16_t& port);
 
-    virtual void set_receive_buffer_size(uint32_t size) = 0;
-    virtual void set_send_buffer_size(uint32_t size) = 0;
-    virtual void SetSocketOutboundInterface(eProsimaUDPSocket&, const std::string&) = 0;
+    virtual void set_receive_buffer_size(
+            uint32_t size) = 0;
+    virtual void set_send_buffer_size(
+            uint32_t size) = 0;
+    virtual void SetSocketOutboundInterface(
+            eProsimaUDPSocket&,
+            const std::string&) = 0;
 
     /**
      * Send a buffer to a destination
      */
     bool send(
-        const fastrtps::rtps::octet* send_buffer,
-        uint32_t send_buffer_size,
-        eProsimaUDPSocket& socket,
-        const fastrtps::rtps::Locator_t& remote_locator,
-        bool only_multicast_purpose,
-        const std::chrono::microseconds& timeout);
+            const fastrtps::rtps::octet* send_buffer,
+            uint32_t send_buffer_size,
+            eProsimaUDPSocket& socket,
+            const fastrtps::rtps::Locator_t& remote_locator,
+            bool only_multicast_purpose,
+            const std::chrono::microseconds& timeout);
 };
 
 } // namespace rtps

@@ -126,14 +126,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         UDPv4TransportDescriptor descriptor;
         descriptor.sendBufferSize = m_att.sendSocketBufferSize;
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
-        m_network_Factory.RegisterTransport(&descriptor);
+        m_network_Factory.RegisterTransport(&descriptor, &m_att.properties);
 
 #ifdef SHM_TRANSPORT_BUILTIN
         SharedMemTransportDescriptor shm_transport;
         // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
         // the equivalent segment size in SHM would be socket buffer size x 2
-        auto segment_size_udp_equivalent = 
-            std::max(m_att.sendSocketBufferSize, m_att.listenSocketBufferSize) * 2;
+        auto segment_size_udp_equivalent =
+                std::max(m_att.sendSocketBufferSize, m_att.listenSocketBufferSize) * 2;
         shm_transport.segment_size(segment_size_udp_equivalent);
         // Use same default max_message_size on both UDP and SHM
         shm_transport.max_message_size(descriptor.max_message_size());
@@ -172,7 +172,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     // User defined transports
     for (const auto& transportDescriptor : PParam.userTransports)
     {
-        if (m_network_Factory.RegisterTransport(transportDescriptor.get()))
+        if (m_network_Factory.RegisterTransport(transportDescriptor.get(), &m_att.properties))
         {
             has_shm_transport_ |=
                     (dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr);
@@ -1421,11 +1421,11 @@ uint32_t RTPSParticipantImpl::get_domain_id() const
 
 //!Compare metatraffic locators list searching for mutations
 bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
-    const LocatorList_t& MulticastLocatorList,
-    const LocatorList_t& UnicastLocatorList) const
+        const LocatorList_t& MulticastLocatorList,
+        const LocatorList_t& UnicastLocatorList) const
 {
-    if(m_att.builtin.metatrafficMulticastLocatorList == MulticastLocatorList
-        && m_att.builtin.metatrafficUnicastLocatorList == UnicastLocatorList)
+    if (m_att.builtin.metatrafficMulticastLocatorList == MulticastLocatorList
+            && m_att.builtin.metatrafficUnicastLocatorList == UnicastLocatorList)
     {
         // no mutation
         return false;
@@ -1435,7 +1435,7 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
     std::list<Locator_t> unicast_real_locators;
     LocatorListConstIterator it = UnicastLocatorList.begin(), old_it;
     LocatorList_t locals;
- 
+
     do
     {
         // copy ordinary locators till the first ANY
@@ -1446,51 +1446,52 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
         std::copy(old_it, it, std::back_inserter(unicast_real_locators));
 
         // transform new ones if needed
-        if(it != UnicastLocatorList.end())
+        if (it != UnicastLocatorList.end())
         {
-            const Locator_t & an_any = *it;
+            const Locator_t& an_any = *it;
 
             // load interfaces if needed
-            if(locals.empty())
+            if (locals.empty())
             {
                 IPFinder::getIP4Address(&locals);
             }
 
             // add a locator for each local
             std::transform(locals.begin(),
-                locals.end(),
-                std::back_inserter(unicast_real_locators),
-                [&an_any](const Locator_t & loc) -> Locator_t
-                {
-                    Locator_t specific(loc);
-                    specific.port = an_any.port;
-                    specific.kind = an_any.kind;
-                    return specific;
-                });
+                    locals.end(),
+                    std::back_inserter(unicast_real_locators),
+                    [&an_any](const Locator_t& loc) -> Locator_t
+                        {
+                            Locator_t specific(loc);
+                            specific.port = an_any.port;
+                            specific.kind = an_any.kind;
+                            return specific;
+                        });
 
             // search for the next if any
             ++it;
         }
-    } while(it != UnicastLocatorList.end());
+    } while (it != UnicastLocatorList.end());
 
     // TCP is a special case because physical ports are taken from the TransportDescriptors
     struct ResetLogical : public std::unary_function<Locator_t, const Locator_t&>
     {
-        typedef std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> Transports;
+        typedef std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> > Transports;
 
-        ResetLogical(const Transports& tp) 
+        ResetLogical(
+                const Transports& tp)
             : Transports_(tp)
             , tcp4(nullptr)
             , tcp6(nullptr)
         {
-            for(auto desc : Transports_)
+            for (auto desc : Transports_)
             {
-                if(nullptr == tcp4)
+                if (nullptr == tcp4)
                 {
                     tcp4 = dynamic_cast<fastdds::rtps::TCPv4TransportDescriptor*>(desc.get());
                 }
 
-                if(nullptr == tcp6)
+                if (nullptr == tcp6)
                 {
                     tcp6 = dynamic_cast<fastdds::rtps::TCPv6TransportDescriptor*>(desc.get());
                 }
@@ -1507,24 +1508,25 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
             return tcp6 ? ( tcp6->listening_ports.empty() ? 0 : tcp6->listening_ports[0]) : 0;
         }
 
-        Locator_t operator()(const Locator_t& loc) const
+        Locator_t operator ()(
+                const Locator_t& loc) const
         {
             Locator_t ret(loc);
-            switch(loc.kind)
+            switch (loc.kind)
             {
-            case LOCATOR_KIND_TCPv4:
-                IPLocator::setPhysicalPort(ret, Tcp4ListeningPort());
-                break;
-            case LOCATOR_KIND_TCPv6:
-                IPLocator::setPhysicalPort(ret, Tcp6ListeningPort());
-                break;
+                case LOCATOR_KIND_TCPv4:
+                    IPLocator::setPhysicalPort(ret, Tcp4ListeningPort());
+                    break;
+                case LOCATOR_KIND_TCPv6:
+                    IPLocator::setPhysicalPort(ret, Tcp6ListeningPort());
+                    break;
             }
             return ret;
         }
 
         // reference to the transports
         const Transports& Transports_;
-        TCPTransportDescriptor *tcp4, *tcp6;
+        TCPTransportDescriptor* tcp4, * tcp6;
 
     } transform_functor(m_att.userTransports);
 
@@ -1533,25 +1535,25 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
 
     std::transform(m_att.builtin.metatrafficMulticastLocatorList.begin(),
             m_att.builtin.metatrafficMulticastLocatorList.end(),
-            std::inserter(update_attributes,update_attributes.begin()),
+            std::inserter(update_attributes, update_attributes.begin()),
             transform_functor);
 
     std::transform(m_att.builtin.metatrafficUnicastLocatorList.begin(),
             m_att.builtin.metatrafficUnicastLocatorList.end(),
-            std::inserter(update_attributes,update_attributes.begin()),
+            std::inserter(update_attributes, update_attributes.begin()),
             transform_functor);
 
     std::set<Locator_t> original_ones;
 
     std::transform(MulticastLocatorList.begin(),
-        MulticastLocatorList.end(),
-        std::inserter(original_ones,original_ones.begin()),
-        transform_functor);
+            MulticastLocatorList.end(),
+            std::inserter(original_ones, original_ones.begin()),
+            transform_functor);
 
     std::transform(unicast_real_locators.begin(),
-        unicast_real_locators.end(),
-        std::inserter(original_ones, original_ones.begin()),
-        transform_functor);
+            unicast_real_locators.end(),
+            std::inserter(original_ones, original_ones.begin()),
+            transform_functor);
 
     // if equal then no mutation took place on physical ports
     return !(update_attributes == original_ones);

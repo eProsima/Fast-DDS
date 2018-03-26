@@ -20,9 +20,9 @@
 
 #include <fastdds/rtps/transport/UDPv4Transport.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 using UDPv4Transport = fastdds::rtps::UDPv4Transport;
 

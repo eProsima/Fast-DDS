@@ -90,4 +90,14 @@
 #define FASTRTPS_DEPRECATED(msg)
 #endif
 
+// ZLIB
+#ifndef HAVE_ZLIB
+#define HAVE_ZLIB @HAVE_ZLIB@
+#endif
+
+// BZIP2
+#ifndef HAVE_BZIP2
+#define HAVE_BZIP2 @HAVE_BZIP2@
+#endif
+
 #endif // _FASTRTPS_CONFIG_H_

@@ -19,25 +19,45 @@
 
 #ifndef STRINGMATCHING_H_
 #define STRINGMATCHING_H_
+
+#include <string>
+#include <vector>
+#include <stdint.h>
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 /**
  * Class StringMatching used to match different strings against each other as defined by the POSIX fnmatch API (1003.2-1992
-section B.6).
- @ingroup UTILITIES_MODULE
+   section B.6).
+   @ingroup UTILITIES_MODULE
  */
 class StringMatching
 {
-    public:
-        StringMatching();
-        virtual ~StringMatching();
-        /** Static method to match two strings.
-         * It checks the string specified by the input argument to see if it matches the pattern specified by the pattern argument.
-         */
-        static bool matchString(const char* pattern,const char* input);
+public:
+
+    StringMatching();
+
+    virtual ~StringMatching();
+
+    /** Static method to match two strings.
+     * It checks the string specified by the input argument to see if it matches the pattern specified by the pattern argument.
+     */
+    static bool matchString(
+            const char* pattern,
+            const char* input);
+
+    static std::vector<std::string> split(
+            const std::string& str,
+            const std::string& delim);
+
+    static bool readUint32(
+            uint32_t& n,
+            std::string const& str,
+            int base = 10);
 };
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */

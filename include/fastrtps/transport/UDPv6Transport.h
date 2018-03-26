@@ -20,9 +20,9 @@
 
 #include <fastdds/rtps/transport/UDPv6Transport.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 using UDPv6Transport = fastdds::rtps::UDPv6Transport;
 
