@@ -392,9 +392,7 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
                     {
                         if(!ch_to_give->isRead)
                         {
-                            lock.unlock();
                             getListener()->onNewCacheChangeAdded((RTPSReader*)this,ch_to_give);
-                            lock.lock();
                         }
                     }
 
