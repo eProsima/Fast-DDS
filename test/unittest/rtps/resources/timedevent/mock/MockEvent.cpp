@@ -57,6 +57,18 @@ void MockEvent::event(EventCode code, const char* msg)
     sem_cond_.notify_one();
 }
 
+void MockEvent::wait()
+{
+    std::unique_lock<std::mutex> lock(sem_mutex_);
+
+    if(sem_count_ == 0)
+    {
+        sem_cond_.wait(lock, [&]() -> bool { return sem_count_ != 0; } );
+    }
+
+    --sem_count_;
+}
+
 bool MockEvent::wait(unsigned int milliseconds)
 {
     std::unique_lock<std::mutex> lock(sem_mutex_);

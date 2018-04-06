@@ -63,8 +63,7 @@ TEST(TimedEvent, EventNonAutoDestruc_SuccessEvents)
     for(int i = 0; i < 10; ++i)
     {
         event.restart_timer();
-
-        ASSERT_TRUE(event.wait(150));
+        event.wait();
     }
 
     int successed = event.successed_.load(std::memory_order_relaxed);
@@ -91,8 +90,7 @@ TEST(TimedEvent, EventNonAutoDestruc_CancelEvents)
     {
         event.restart_timer();
         event.cancel_timer();
-
-        ASSERT_TRUE(event.wait(150));
+        event.wait();
     }
 
     int successed = event.successed_.load(std::memory_order_relaxed);
@@ -120,7 +118,9 @@ TEST(TimedEvent, EventNonAutoDestruc_RestartEvents)
     }
 
     for(int i = 0; i < 10; ++i)
-        ASSERT_TRUE(event.wait(150));
+    {
+        event.wait();
+    }
 
     int successed = event.successed_.load(std::memory_order_relaxed);
 
@@ -133,12 +133,12 @@ TEST(TimedEvent, EventNonAutoDestruc_RestartEvents)
 
 /*!
  * @fn TEST(TimedEvent, EventOnSuccessAutoDestruc_SuccessEvents)
- * @brief This test checks the correct behaviour of autodestruction on succesful execution.
+ * @brief This test checks the correct behaviour of autodestruction on successful execution.
  * This test launches an event configured to destroy itself when the event is executed successfully.
  */
 TEST(TimedEvent, EventOnSuccessAutoDestruc_SuccessEvents)
 {
-    // Restart destriction counter.
+    // Restart destruction counter.
     MockEvent::destructed_ = 0;
     MockEvent *event = new MockEvent(env->service_, *env->thread_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
 
@@ -147,7 +147,9 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_SuccessEvents)
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
+    {
         MockEvent::destruction_cond_.wait_for(lock, std::chrono::seconds(1));
+    }
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -156,7 +158,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_SuccessEvents)
  * @fn TEST(TimedEvent, EventOnSuccessAutoDestruc_CancelEvents)
  * @brief This test checks the event is not destroyed when it is canceled.
  * This test launches an event, configured to destroy itself when the event is executed successfully,
- * several times but inmediatly cancelling it.
+ * several times but immediately cancelling it.
  */
 TEST(TimedEvent, EventOnSuccessAutoDestruc_CancelEvents)
 {
@@ -170,7 +172,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_CancelEvents)
         event->restart_timer();
         event->cancel_timer();
 
-        ASSERT_TRUE(event->wait(150));
+        event->wait();
 
         ASSERT_EQ(MockEvent::destructed_, 0);
     }
@@ -189,7 +191,9 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_CancelEvents)
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
+    {
         MockEvent::destruction_cond_.wait_for(lock, std::chrono::seconds(1));
+    }
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -212,7 +216,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickCancelEvents)
         event->restart_timer();
         event->cancel_timer();
 
-        ASSERT_TRUE(event->wait(100));
+        event->wait();
 
         ASSERT_EQ(MockEvent::destructed_, 0);
     }
@@ -231,7 +235,9 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickCancelEvents)
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
+    {
         MockEvent::destruction_cond_.wait_for(lock, std::chrono::seconds(1));
+    }
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -257,7 +263,9 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_RestartEvents)
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
+    {
         MockEvent::destruction_cond_.wait_for(lock, std::chrono::seconds(1));
+    }
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -283,7 +291,9 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickRestartEvents)
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
+    {
         MockEvent::destruction_cond_.wait_for(lock, std::chrono::seconds(1));
+    }
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -304,7 +314,9 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_SuccessEvents)
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
+    {
         MockEvent::destruction_cond_.wait_for(lock, std::chrono::seconds(1));
+    }
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -326,7 +338,9 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_CancelEvents)
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
+    {
         MockEvent::destruction_cond_.wait_for(lock, std::chrono::milliseconds(100));
+    }
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -348,7 +362,9 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_QuickCancelEvents)
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
+    {
         MockEvent::destruction_cond_.wait_for(lock, std::chrono::milliseconds(100));
+    }
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -379,7 +395,9 @@ TEST(TimedEvent, EventNonAutoDestruct_AutoRestart)
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
+    {
         MockEvent::destruction_cond_.wait_for(lock, std::chrono::milliseconds(100));
+    }
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -410,7 +428,9 @@ TEST(TimedEvent, EventNonAutoDestruc_AutoRestartAndDeleteRandomly)
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
+    {
         MockEvent::destruction_cond_.wait_for(lock, std::chrono::milliseconds(100));
+    }
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -432,7 +452,9 @@ TEST(TimedEvent, ParentEventNonAutoDestruc_InternallyDeleteEventNonAutoDestruct)
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
+    {
         MockEvent::destruction_cond_.wait_for(lock, std::chrono::milliseconds(300));
+    }
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -509,8 +531,10 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_TwoStartTwoCancel)
 
     // Wait until finish the execution of the event.
     int count = 0;
-    while(event.wait(150))
+    while(event.wait(500))
+    {
         ++count;
+    }
 
     int successed = event.successed_.load(std::memory_order_relaxed);
     int cancelled = event.cancelled_.load(std::memory_order_relaxed);
@@ -554,8 +578,10 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickTwoStartTwoCancel)
 
     // Wait until finish the execution of the event.
     int count = 0;
-    while(event.wait(150))
+    while(event.wait(500))
+    {
         ++count;
+    }
 
     int successed = event.successed_.load(std::memory_order_relaxed);
     int cancelled = event.cancelled_.load(std::memory_order_relaxed);
@@ -599,8 +625,10 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickestTwoStartTwoCancel)
 
     // Wait until finish the execution of the event.
     int count = 0;
-    while(event.wait(150))
+    while(event.wait(500))
+    {
         ++count;
+    }
 
     int successed = event.successed_.load(std::memory_order_relaxed);
     int cancelled = event.cancelled_.load(std::memory_order_relaxed);
@@ -650,7 +678,9 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_FourAutoRestart)
     std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
+    {
         MockEvent::destruction_cond_.wait_for(lock, std::chrono::seconds(1));
+    }
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
