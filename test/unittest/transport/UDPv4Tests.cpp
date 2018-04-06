@@ -28,7 +28,23 @@ using namespace eprosima::fastrtps::rtps;
 const uint32_t ReceiveBufferCapacity = 65536;
 #endif
 
-static uint32_t g_default_port = 7400;
+#if defined(_WIN32)
+#define GET_PID _getpid
+#else
+#define GET_PID getpid
+#endif
+
+static uint32_t g_default_port = 0;
+
+uint32_t get_port()
+{
+    uint32_t port = GET_PID();
+
+    if(port + 7400 > port)
+        port += 7400;
+
+    return port;
+}
 
 class UDPv4Tests: public ::testing::Test
 {
@@ -164,9 +180,6 @@ TEST_F(UDPv4Tests, send_to_loopback)
 
     auto sendThreadFunction = [&]()
     {
-        Locator_t destinationLocator;
-        destinationLocator.port = g_default_port;
-        destinationLocator.kind = LOCATOR_KIND_UDPv4;
         EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
     };
 
