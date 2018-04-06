@@ -109,13 +109,13 @@ public:
 	 * @param rdata Pointer to the ReaderProxyData object.
 	 * @return True if correct.
 	 */
-	bool processLocalReaderProxyData(ReaderProxyData* rdata);
+	bool processLocalReaderProxyData(RTPSReader* reader, ReaderProxyData* rdata) override;
 	/**
 	 * After a new local WriterProxyData has been created some processing is needed (depends on the implementation).
 	 * @param wdata Pointer to the Writer ProxyData object.
 	 * @return True if correct.
 	 */
-	bool processLocalWriterProxyData(WriterProxyData* wdata);
+	bool processLocalWriterProxyData(RTPSWriter* writer, WriterProxyData* wdata) override;
 
 	/**
 	 * New Remote Writer has been found and this method process it and calls the pairing methods.

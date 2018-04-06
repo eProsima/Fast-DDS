@@ -46,6 +46,7 @@ static const char* Relay_str = "relay";
 static const char* Topics_str = "topics";
 static const char* Topic_str = "topic";
 static const char* Partitions_str = "partitions";
+static const char* Partition_str = "partition";
 static const char* DataTags_str = "data_tags";
 static const char* Allow_str = "ALLOW";
 static const char* Deny_str = "DENY";
@@ -461,6 +462,7 @@ bool PermissionsParser::parse_criteria(tinyxml2::XMLElement* root, Criteria& cri
             }
             else if(strcmp(node->Name(), Partitions_str) == 0)
             {
+                returned_value = parse_partition(node, criteria.partitions);
             }
             else if(strcmp(node->Name(), DataTags_str) == 0)
             {
@@ -513,6 +515,46 @@ bool PermissionsParser::parse_topic(tinyxml2::XMLElement* root, std::vector<std:
     else
     {
         logError(XMLPARSER, "Expected at least one " << Topic_str << " tag. Line " << PRINTLINEPLUSONE(root));
+    }
+
+    return returned_value;
+}
+
+bool PermissionsParser::parse_partition(tinyxml2::XMLElement* root, std::vector<std::string>& partitions)
+{
+    bool returned_value = false;
+    tinyxml2::XMLElement* node = root->FirstChildElement();
+
+    if(node != nullptr)
+    {
+        returned_value = true;
+
+        do
+        {
+            if(strcmp(node->Name(), Partition_str) == 0)
+            {
+                if(node->GetText() != nullptr)
+                {
+                    std::string partition = node->GetText();
+                    partitions.push_back(std::move(partition));
+                }
+                else
+                {
+                    logError(XMLPARSER, "Expected topic name in " << Partition_str << " tag. Line " << PRINTLINE(node));
+                    returned_value = false;
+                }
+            }
+            else
+            {
+                logError(XMLPARSER, "Expected " << Partition_str << " tag. Line " << PRINTLINE(node));
+                returned_value = false;
+            }
+        }
+        while(returned_value && (node = node->NextSiblingElement()) != nullptr);
+    }
+    else
+    {
+        logError(XMLPARSER, "Expected at least one " << Partition_str << " tag. Line " << PRINTLINEPLUSONE(root));
     }
 
     return returned_value;

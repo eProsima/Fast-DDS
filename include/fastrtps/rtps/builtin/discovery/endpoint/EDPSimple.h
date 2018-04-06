@@ -48,6 +48,7 @@ class EDPSimple : public EDP
     typedef std::pair<StatefulReader*,ReaderHistory*> t_p_StatefulReader;
 
     public:
+
     /**
      * Constructor.
      * @param p Pointer to the PDPSimple
@@ -65,6 +66,17 @@ class EDPSimple : public EDP
     t_p_StatefulReader mp_PubReader;
     //!Pointer to the Subscriptions Reader (only created if indicated in the DiscoveryAtributes).
     t_p_StatefulReader mp_SubReader;
+
+#if HAVE_SECURITY
+    t_p_StatefulWriter sedp_builtin_publications_secure_writer_;
+
+    t_p_StatefulReader sedp_builtin_publications_secure_reader_;
+
+    t_p_StatefulWriter sedp_builtin_subscriptions_secure_writer_;
+
+    t_p_StatefulReader sedp_builtin_subscriptions_secure_reader_;
+#endif
+
     //!Pointer to the ReaderListener associated with PubReader
     EDPSimplePUBListener* mp_pubListen;
     //!Pointer to the ReaderListener associated with SubReader
@@ -88,22 +100,17 @@ class EDPSimple : public EDP
     void removeRemoteEndpoints(ParticipantProxyData* pdata);
 
     /**
-     * Create local SEDP Endpoints based on the DiscoveryAttributes.
-     * @return True if correct.
-     */
-    bool createSEDPEndpoints();
-    /**
      * This method generates the corresponding change in the subscription writer and send it to all known remote endpoints.
      * @param rdata Pointer to the ReaderProxyData object.
      * @return true if correct.
      */
-    bool processLocalReaderProxyData(ReaderProxyData* rdata);
+    bool processLocalReaderProxyData(RTPSReader* reader, ReaderProxyData* rdata) override;
     /**
      * This method generates the corresponding change in the publciations writer and send it to all known remote endpoints.
      * @param wdata Pointer to the WriterProxyData object.
      * @return true if correct.
      */
-    bool processLocalWriterProxyData(WriterProxyData* wdata);
+    bool processLocalWriterProxyData(RTPSWriter* writer, WriterProxyData* wdata) override;
     /**
      * This methods generates the change disposing of the local Reader and calls the unpairing and removal methods of the base class.
      * @param R Pointer to the RTPSReader object.
@@ -116,6 +123,18 @@ class EDPSimple : public EDP
      * @return True if correct.
      */
     bool removeLocalWriter(RTPSWriter*W);
+
+    private:
+
+    /**
+     * Create local SEDP Endpoints based on the DiscoveryAttributes.
+     * @return True if correct.
+     */
+    bool createSEDPEndpoints();
+
+#if HAVE_SECURITY
+    bool create_sedp_secure_endpoints();
+#endif
 
 };
 

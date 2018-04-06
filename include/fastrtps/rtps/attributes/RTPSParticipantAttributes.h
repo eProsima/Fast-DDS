@@ -43,9 +43,20 @@ class SimpleEDPAttributes
         bool use_PublicationWriterANDSubscriptionReader;
         //!Default value true.
         bool use_PublicationReaderANDSubscriptionWriter;
+
+#if HAVE_SECURITY
+        bool enable_builtin_secure_publications_writer_and_subscriptions_reader;
+
+        bool enable_builtin_secure_subscriptions_writer_and_publications_reader;
+#endif
+
         SimpleEDPAttributes():
             use_PublicationWriterANDSubscriptionReader(true),
             use_PublicationReaderANDSubscriptionWriter(true)
+#if HAVE_SECURITY
+            , enable_builtin_secure_publications_writer_and_subscriptions_reader(true),
+            enable_builtin_secure_subscriptions_writer_and_publications_reader(true)
+#endif
         {
 
         }

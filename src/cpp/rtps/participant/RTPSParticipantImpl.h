@@ -216,7 +216,7 @@ class RTPSParticipantImpl
 #if HAVE_SECURITY
         security::SecurityManager& security_manager() { return m_security_manager; }
 
-        bool is_rtps_protected() const { return security_attributes_.is_rtps_protected; }
+        const security::ParticipantSecurityAttributes& security_attributes() { return security_attributes_; }
 #endif
 
         PDPSimple* pdpsimple();

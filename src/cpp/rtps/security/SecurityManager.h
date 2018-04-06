@@ -53,7 +53,8 @@ namespace security {
 class Authentication;
 class AccessControl;
 class Cryptography;
-class ParticipantSecurityAttributes;
+struct ParticipantSecurityAttributes;
+struct EndpointSecurityAttributes;
 
 class SecurityManager
 {
@@ -65,7 +66,7 @@ class SecurityManager
 
         ~SecurityManager();
 
-        bool init(ParticipantSecurityAttributes& attributes, const PropertyPolicy participant_properties);
+        bool init(ParticipantSecurityAttributes& attributes, const PropertyPolicy& participant_properties);
 
         void destroy();
 
@@ -73,11 +74,13 @@ class SecurityManager
 
         void remove_participant(const ParticipantProxyData& participant_data);
 
-        bool register_local_writer(const GUID_t& writer_guid, const PropertySeq& writer_properties);
+        bool register_local_writer(const GUID_t& writer_guid, const PropertyPolicy& writer_properties,
+                EndpointSecurityAttributes& security_attributes);
 
         bool unregister_local_writer(const GUID_t& writer_guid);
 
-        bool register_local_reader(const GUID_t& reader_guid, const PropertySeq& reader_properties);
+        bool register_local_reader(const GUID_t& reader_guid, const PropertyPolicy& reader_properties,
+                EndpointSecurityAttributes& security_attributes);
 
         bool unregister_local_reader(const GUID_t& reader_guid);
 

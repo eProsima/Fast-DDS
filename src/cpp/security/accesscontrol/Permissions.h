@@ -69,11 +69,11 @@ class Permissions : public AccessControl
 
         bool check_create_datawriter(const PermissionsHandle& local_handle,
                 const uint32_t domain_id, const std::string& topic_name,
-                const std::string& partitions, SecurityException& exception) override;
+                const std::vector<std::string>& partitions, SecurityException& exception) override;
 
         bool check_create_datareader(const PermissionsHandle& local_handle,
                 const uint32_t domain_id, const std::string& topic_name,
-                const std::string& partitions, SecurityException& exception) override;
+                const std::vector<std::string>& partitions, SecurityException& exception) override;
 
         bool check_remote_datawriter(const PermissionsHandle& remote_handle,
                 const uint32_t domain_id, const WriterProxyData& publication_data,
@@ -85,6 +85,14 @@ class Permissions : public AccessControl
 
         bool get_participant_sec_attributes(const PermissionsHandle& local_handle,
                 ParticipantSecurityAttributes& attributes, SecurityException& exception) override;
+
+        bool get_datawriter_sec_attributes(const PermissionsHandle& permissions_handle,
+                const std::string& topic_name, const std::vector<std::string>& partitions,
+                EndpointSecurityAttributes& attributes, SecurityException& exception) override;
+
+        bool get_datareader_sec_attributes(const PermissionsHandle& permissions_handle,
+                const std::string& topic_name, const std::vector<std::string>& partitions,
+                EndpointSecurityAttributes& attributes, SecurityException& exception) override;
 };
 
 } //namespace security

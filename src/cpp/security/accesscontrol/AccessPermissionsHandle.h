@@ -22,9 +22,11 @@
 #include <fastrtps/rtps/common/Token.h>
 #include "PermissionsParser.h"
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <fastrtps/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 
 #include <openssl/x509.h>
 #include <string>
+#include <map>
 
 namespace eprosima {
 namespace fastrtps {
@@ -45,7 +47,9 @@ class AccessPermissions
         bool there_are_crls_;
         PermissionsToken permissions_token_;
         PermissionsCredentialToken permissions_credential_token_;
-        ParticipantSecurityAttributes governance;
+        ParticipantSecurityAttributes governance_rule_;
+        std::map<std::string, EndpointSecurityAttributes> governance_reader_topic_rules_;
+        std::map<std::string, EndpointSecurityAttributes> governance_writer_topic_rules_;
         Grant grant;
 };
 

@@ -35,6 +35,7 @@
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <fastrtps/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 
 #include <cassert>
 #include <thread>
@@ -92,7 +93,7 @@ SecurityManager::~SecurityManager()
     destroy();
 }
 
-bool SecurityManager::init(ParticipantSecurityAttributes& attributes, const PropertyPolicy participant_properties)
+bool SecurityManager::init(ParticipantSecurityAttributes& attributes, const PropertyPolicy& participant_properties)
 {
     SecurityException exception;
     domain_id_ = participant_->getRTPSParticipantAttributes().builtin.domainId;
@@ -1899,7 +1900,8 @@ int SecurityManager::decode_rtps_message(const CDRMessage_t& message, CDRMessage
     return returnedValue;
 }
 
-bool SecurityManager::register_local_writer(const GUID_t& writer_guid, const PropertySeq& writer_properties)
+bool SecurityManager::register_local_writer(const GUID_t& writer_guid, const PropertyPolicy& writer_properties,
+        EndpointSecurityAttributes& security_attributes)
 {
     bool returned_value = true;
     SecurityException exception;
@@ -1907,26 +1909,52 @@ bool SecurityManager::register_local_writer(const GUID_t& writer_guid, const Pro
     if(access_plugin_ != nullptr)
     {
         // Extract topic and partitions.
-        std::string topic_name, partitions;
-        for(auto property : writer_properties)
+        std::string topic_name, partitions_str;
+        std::vector<std::string> partitions;
+        const std::string* property_value = PropertyPolicyHelper::find_property(writer_properties,
+                "topic_name");
+
+        if(property_value != nullptr)
         {
-            if(property.name().compare("topic_name") == 0)
+            topic_name = *property_value;
+        }
+
+        property_value = PropertyPolicyHelper::find_property(writer_properties,
+                "partitions");
+
+        if(property_value != nullptr)
+        {
+            partitions_str = *property_value;
+
+            // Extract partitions.
+            std::size_t initial_pos = 0, last_pos = partitions_str.find_first_of(';');
+            while(last_pos != std::string::npos)
             {
-                topic_name = property.value();
+                partitions.emplace_back(partitions_str.begin() + initial_pos,
+                        partitions_str.begin() + last_pos);
+                initial_pos = last_pos + 1;
+                last_pos = partitions_str.find_first_of(';', last_pos + 1);
             }
-            else if(property.name().compare("partitions") == 0)
-            {
-                partitions = property.value();
-            }
+            partitions.emplace_back(partitions_str.begin() + initial_pos, partitions_str.end());
         }
 
         if(!topic_name.empty())
         {
-            if(!(returned_value = access_plugin_->check_create_datawriter( *local_permissions_handle_,
-                            domain_id_, topic_name, partitions, exception)))
+            if(access_plugin_->check_create_datawriter(*local_permissions_handle_,
+                            domain_id_, topic_name, partitions, exception))
             {
-                logError(SECURITY, "Error checking creation of local reader " << writer_guid <<
-                        " (" << exception.what() << ")" << std::endl);
+                if(!(returned_value = access_plugin_->get_datawriter_sec_attributes(*local_permissions_handle_,
+                                topic_name, partitions, security_attributes, exception)))
+                {
+                    logError(SECURITY, "Error getting security attributes of local writer " << writer_guid <<
+                            " (" << exception.what() << ")" << std::endl);
+                }
+            }
+            else
+            {
+                    logError(SECURITY, "Error checking creation of local writer " << writer_guid <<
+                            " (" << exception.what() << ")" << std::endl);
+                    returned_value = false;
             }
         }
         else
@@ -1935,11 +1963,30 @@ bool SecurityManager::register_local_writer(const GUID_t& writer_guid, const Pro
                 returned_value = false;
         }
     }
+    else
+    {
+        // Get properties.
+        const std::string* property_value = PropertyPolicyHelper::find_property(writer_properties,
+                "rtps.endpoint.submessage_protection_kind");
+
+        if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
+        {
+            security_attributes.is_submessage_protected = true;
+        }
+
+        property_value = PropertyPolicyHelper::find_property(writer_properties,
+                "rtps.endpoint.payload_protection_kind");
+
+        if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
+        {
+            security_attributes.is_payload_protected = true;
+        }
+    }
 
     if(returned_value && crypto_plugin_ != nullptr)
     {
         DatawriterCryptoHandle* writer_handle = crypto_plugin_->cryptokeyfactory()->register_local_datawriter(
-                *local_participant_crypto_handle_, writer_properties, exception);
+                *local_participant_crypto_handle_, writer_properties.properties(), exception);
 
         if(writer_handle != nullptr && !writer_handle->nil())
         {
@@ -1988,7 +2035,8 @@ bool SecurityManager::unregister_local_writer(const GUID_t& writer_guid)
     return false;
 }
 
-bool SecurityManager::register_local_reader(const GUID_t& reader_guid, const PropertySeq& reader_properties)
+bool SecurityManager::register_local_reader(const GUID_t& reader_guid, const PropertyPolicy& reader_properties,
+        EndpointSecurityAttributes& security_attributes)
 {
     bool returned_value = true;
     SecurityException exception;
@@ -1996,26 +2044,52 @@ bool SecurityManager::register_local_reader(const GUID_t& reader_guid, const Pro
     if(access_plugin_ != nullptr)
     {
         // Extract topic and partitions.
-        std::string topic_name, partitions;
-        for(auto property : reader_properties)
+        std::string topic_name, partitions_str;
+        std::vector<std::string> partitions;
+        const std::string* property_value = PropertyPolicyHelper::find_property(reader_properties,
+                "topic_name");
+
+        if(property_value != nullptr)
         {
-            if(property.name().compare("topic_name") == 0)
+            topic_name = *property_value;
+        }
+
+        property_value = PropertyPolicyHelper::find_property(reader_properties,
+                "partitions");
+
+        if(property_value != nullptr)
+        {
+            partitions_str = *property_value;
+
+            // Extract partitions.
+            std::size_t initial_pos = 0, last_pos = partitions_str.find_first_of(';');
+            while(last_pos != std::string::npos)
             {
-                topic_name = property.value();
+                partitions.emplace_back(partitions_str.begin() + initial_pos,
+                        partitions_str.begin() + last_pos);
+                initial_pos = last_pos + 1;
+                last_pos = partitions_str.find_first_of(';', last_pos + 1);
             }
-            else if(property.name().compare("partitions") == 0)
-            {
-                partitions = property.value();
-            }
+            partitions.emplace_back(partitions_str.begin() + initial_pos, partitions_str.end());
         }
 
         if(!topic_name.empty())
         {
-            if(!(returned_value = access_plugin_->check_create_datareader( *local_permissions_handle_,
-                            domain_id_, topic_name, partitions, exception)))
+            if(access_plugin_->check_create_datareader( *local_permissions_handle_,
+                            domain_id_, topic_name, partitions, exception))
+            {
+                if(!(returned_value = access_plugin_->get_datareader_sec_attributes(*local_permissions_handle_,
+                                topic_name, partitions, security_attributes, exception)))
+                {
+                    logError(SECURITY, "Error getting security attributes of local reader " << reader_guid <<
+                            " (" << exception.what() << ")" << std::endl);
+                }
+            }
+            else
             {
                 logError(SECURITY, "Error checking creation of local reader " << reader_guid <<
                         " (" << exception.what() << ")" << std::endl);
+                returned_value = false;
             }
         }
         else
@@ -2024,12 +2098,31 @@ bool SecurityManager::register_local_reader(const GUID_t& reader_guid, const Pro
                 returned_value = false;
         }
     }
+    else
+    {
+        // Get properties.
+        const std::string* property_value = PropertyPolicyHelper::find_property(reader_properties,
+                "rtps.endpoint.submessage_protection_kind");
+
+        if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
+        {
+            security_attributes.is_submessage_protected = true;
+        }
+
+        property_value = PropertyPolicyHelper::find_property(reader_properties,
+                "rtps.endpoint.payload_protection_kind");
+
+        if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
+        {
+            security_attributes.is_payload_protected = true;
+        }
+    }
 
     if(returned_value && crypto_plugin_ != nullptr)
     {
 
         DatareaderCryptoHandle* reader_handle = crypto_plugin_->cryptokeyfactory()->register_local_datareader(
-                *local_participant_crypto_handle_, reader_properties, exception);
+                *local_participant_crypto_handle_, reader_properties.properties(), exception);
 
         if(reader_handle != nullptr && !reader_handle->nil())
         {

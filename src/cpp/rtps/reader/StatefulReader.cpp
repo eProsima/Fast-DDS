@@ -215,7 +215,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
             if(reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
             {
 #if HAVE_SECURITY
-                if(is_payload_protected())
+                if(getAttributes()->security_attributes().is_payload_protected)
                 {
                     change_to_add->copy_not_memcpy(change);
                     if(!getRTPSParticipant()->security_manager().decode_serialized_payload(change->serializedPayload,
@@ -287,7 +287,7 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
             CacheChange_t* change_to_add = incomingChange;
 
 #if HAVE_SECURITY
-            if(is_payload_protected())
+            if(getAttributes()->security_attributes().is_payload_protected)
             {
                 if(reserveCache(&change_to_add, incomingChange->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
                 {
@@ -308,7 +308,7 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
             CacheChange_t* change_completed = fragmentedChangePitStop_->process(change_to_add, sampleSize, fragmentStartingNum);
 
 #if HAVE_SECURITY
-            if(is_payload_protected())
+            if(getAttributes()->security_attributes().is_payload_protected)
                 releaseCache(change_to_add);
 #endif
 

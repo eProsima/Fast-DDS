@@ -101,7 +101,7 @@ bool EDPStaticProperty::fromProperty(std::pair<std::string,std::string> prop)
 
 
 
-bool EDPStatic::processLocalReaderProxyData(ReaderProxyData* rdata)
+bool EDPStatic::processLocalReaderProxyData(RTPSReader*, ReaderProxyData* rdata)
 {
     logInfo(RTPS_EDP,rdata->guid().entityId<< " in topic: " <<rdata->topicName());
     mp_PDP->getMutex()->lock();
@@ -113,7 +113,7 @@ bool EDPStatic::processLocalReaderProxyData(ReaderProxyData* rdata)
     return true;
 }
 
-bool EDPStatic::processLocalWriterProxyData(WriterProxyData* wdata)
+bool EDPStatic::processLocalWriterProxyData(RTPSWriter*, WriterProxyData* wdata)
 {
     logInfo(RTPS_EDP ,wdata->guid().entityId << " in topic: " << wdata->topicName());
     mp_PDP->getMutex()->lock();

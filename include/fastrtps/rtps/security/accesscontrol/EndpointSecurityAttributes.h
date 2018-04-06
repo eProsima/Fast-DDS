@@ -13,26 +13,28 @@
 // limitations under the License.
 
 /*!
- * @file ParticipantSecurityAttributes.h
+ * @file EndpointSecurityAttributes.h
  */
-#ifndef __RTPS_SECURITY_ACCESSCONTROL_PARTICIPANTSECURITYATTRIBUTES_H__
-#define __RTPS_SECURITY_ACCESSCONTROL_PARTICIPANTSECURITYATTRIBUTES_H__
+#ifndef __RTPS_SECURITY_ACCESSCONTROL_ENDPOINTSECURITYATTRIBUTES_H__
+#define __RTPS_SECURITY_ACCESSCONTROL_ENDPOINTSECURITYATTRIBUTES_H__
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 namespace security {
 
-struct ParticipantSecurityAttributes
+struct EndpointSecurityAttributes
 {
-    ParticipantSecurityAttributes() : is_access_protected(true), is_discovered_protected(false),
-    is_rtps_protected(false) {}
+    EndpointSecurityAttributes() : is_access_protected(true), is_discovered_protected(false),
+    is_submessage_protected(false), is_payload_protected(false) {}
 
     bool is_access_protected;
 
     bool is_discovered_protected;
 
-    bool is_rtps_protected;
+    bool is_submessage_protected;
+
+    bool is_payload_protected;
 };
 
 }
@@ -40,4 +42,4 @@ struct ParticipantSecurityAttributes
 }
 }
 
-#endif // __RTPS_SECURITY_ACCESSCONTROL_PARTICIPANTSECURITYATTRIBUTES_H__
+#endif // __RTPS_SECURITY_ACCESSCONTROL_ENDPOINTSECURITYATTRIBUTES_H__

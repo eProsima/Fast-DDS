@@ -17,6 +17,8 @@
 
 #include "CommonParser.h"
 
+#include <string>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -29,6 +31,16 @@ enum class ProtectionKind
     ENCRYPT
 };
 
+struct TopicRule
+{
+    std::string topic_expression;
+    bool enable_discovery_protection;
+    bool enable_read_access_control;
+    bool enable_write_access_control;
+    ProtectionKind metadata_protection_kind;
+    ProtectionKind data_protection_kind;
+};
+
 struct DomainRule
 {
     Domains domains;
@@ -37,6 +49,7 @@ struct DomainRule
     ProtectionKind discovery_protection_kind;
     ProtectionKind LivelinessProtectionKind_str;
     ProtectionKind rtps_protection_kind;
+    std::vector<TopicRule> topic_rules;
 };
 
 struct DomainAccessRules
@@ -59,6 +72,10 @@ class GovernanceParser
         bool parse_domain_access_rules(tinyxml2::XMLElement* root);
 
         bool parse_domain_rule(tinyxml2::XMLElement* root, DomainRule& rule);
+
+        bool parse_topic_access_rules(tinyxml2::XMLElement* root, std::vector<TopicRule>& rules);
+
+        bool parse_topic_rule(tinyxml2::XMLElement* root, TopicRule& rule);
 
         DomainAccessRules access_rules_;
 };

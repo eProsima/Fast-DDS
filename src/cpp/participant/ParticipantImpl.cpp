@@ -188,14 +188,17 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
     property.name("topic_name");
     property.value(att.topic.getTopicName());
     watt.endpoint.properties.properties().push_back(std::move(property));
-    property.name("partitions");
-    std::string partitions;
-    for(auto partition : att.qos.m_partition.getNames())
+    if(att.qos.m_partition.getNames().size() > 0)
     {
-        partitions += partition + ";";
+        property.name("partitions");
+        std::string partitions;
+        for(auto partition : att.qos.m_partition.getNames())
+        {
+            partitions += partition + ";";
+        }
+        property.value(std::move(partitions));
+        watt.endpoint.properties.properties().push_back(std::move(property));
     }
-    property.value(std::move(partitions));
-    watt.endpoint.properties.properties().push_back(std::move(property));
 
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(this->mp_rtpsParticipant,
             watt,
@@ -301,14 +304,17 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
     property.name("topic_name");
     property.value(att.topic.getTopicName());
     ratt.endpoint.properties.properties().push_back(std::move(property));
-    property.name("partitions");
-    std::string partitions;
-    for(auto partition : att.qos.m_partition.getNames())
+    if(att.qos.m_partition.getNames().size() > 0)
     {
-        partitions += partition + ";";
+        property.name("partitions");
+        std::string partitions;
+        for(auto partition : att.qos.m_partition.getNames())
+        {
+            partitions += partition + ";";
+        }
+        property.value(std::move(partitions));
+        ratt.endpoint.properties.properties().push_back(std::move(property));
     }
-    property.value(std::move(partitions));
-    ratt.endpoint.properties.properties().push_back(std::move(property));
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(this->mp_rtpsParticipant,
             ratt,

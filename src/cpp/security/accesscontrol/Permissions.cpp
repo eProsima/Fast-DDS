@@ -83,6 +83,23 @@ static bool is_domain_in_set(const uint32_t domain_id, const Domains& domains)
     return returned_value;
 }
 
+static const EndpointSecurityAttributes* is_topic_in_sec_attributes(const std::string& topic_name,
+        const std::map<std::string, EndpointSecurityAttributes>& attributes)
+{
+    EndpointSecurityAttributes* returned_value = nullptr;
+
+    for(auto topic : attributes)
+    {
+        if(StringMatching::matchString(topic.first.c_str(), topic_name.c_str()))
+        {
+            returned_value = &topic.second;
+            break;
+        }
+    }
+
+    return returned_value;
+}
+
 static bool is_topic_in_criterias(const std::string& topic_name, const std::vector<Criteria>& criterias)
 {
     bool returned_value = false;
@@ -93,6 +110,26 @@ static bool is_topic_in_criterias(const std::string& topic_name, const std::vect
         for(auto topic : (*criteria_it).topics)
         {
             if(StringMatching::matchString(topic.c_str(), topic_name.c_str()))
+            {
+                returned_value = true;
+                break;
+            }
+        }
+    }
+
+    return returned_value;
+}
+
+static bool is_partition_in_criterias(const std::string& partition, const std::vector<Criteria>& criterias)
+{
+    bool returned_value = false;
+
+    for(auto criteria_it = criterias.begin(); !returned_value &&
+            criteria_it != criterias.end(); ++criteria_it)
+    {
+        for(auto part : (*criteria_it).partitions)
+        {
+            if(StringMatching::matchString(partition.c_str(), part.c_str()))
             {
                 returned_value = true;
                 break;
@@ -472,9 +509,64 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
             {
                 if(is_domain_in_set(domain_id, rule.domains))
                 {
-                    if(rule.rtps_protection_kind != ProtectionKind::NONE)
+                    ah->governance_rule_.is_access_protected = rule.enable_join_access_control;
+
+                    if(rule.discovery_protection_kind == ProtectionKind::NONE)
                     {
-                        ah->governance.is_rtps_protected = true;
+                        ah->governance_rule_.is_discovered_protected = false;
+                    }
+                    else
+                    {
+                        ah->governance_rule_.is_discovered_protected = true;
+                    }
+
+                    if(rule.rtps_protection_kind == ProtectionKind::NONE)
+                    {
+                        ah->governance_rule_.is_rtps_protected = false;
+                    }
+                    else
+                    {
+                        ah->governance_rule_.is_rtps_protected = true;
+                    }
+
+                    for(auto topic_rule : rule.topic_rules)
+                    {
+                        std::string topic_expression = topic_rule.topic_expression;
+                        EndpointSecurityAttributes reader_attributes;
+                        EndpointSecurityAttributes writer_attributes;
+
+                        reader_attributes.is_discovered_protected = topic_rule.enable_discovery_protection;
+                        writer_attributes.is_discovered_protected = topic_rule.enable_discovery_protection;
+                        reader_attributes.is_access_protected = topic_rule.enable_read_access_control;
+                        writer_attributes.is_access_protected = topic_rule.enable_write_access_control;
+
+                        if(topic_rule.metadata_protection_kind == ProtectionKind::NONE)
+                        {
+                            reader_attributes.is_submessage_protected = false;
+                            writer_attributes.is_submessage_protected = false;
+                        }
+                        else
+                        {
+                            reader_attributes.is_submessage_protected = true;
+                            writer_attributes.is_submessage_protected = true;
+                        }
+
+                        if(topic_rule.data_protection_kind == ProtectionKind::NONE)
+                        {
+                            reader_attributes.is_payload_protected = false;
+                            writer_attributes.is_payload_protected = false;
+                        }
+                        else
+                        {
+                            reader_attributes.is_payload_protected = true;
+                            writer_attributes.is_payload_protected = true;
+                        }
+
+
+                        ah->governance_reader_topic_rules_.insert(std::pair<std::string, EndpointSecurityAttributes>(
+                                    topic_expression, std::move(reader_attributes)));
+                        ah->governance_writer_topic_rules_.insert(std::pair<std::string, EndpointSecurityAttributes>(
+                                    std::move(topic_expression), std::move(writer_attributes)));
                     }
 
                     break;
@@ -762,11 +854,14 @@ PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
 
     AccessPermissionsHandle* handle =  new AccessPermissionsHandle();
     (*handle)->grant = std::move(remote_grant);
+    (*handle)->governance_rule_ = lph->governance_rule_;
+    (*handle)->governance_reader_topic_rules_ = lph->governance_reader_topic_rules_;
+    (*handle)->governance_writer_topic_rules_ = lph->governance_writer_topic_rules_;
 
     return handle;
 }
 
-bool Permissions::check_create_participant(const PermissionsHandle& local_handle, const uint32_t domain_id,
+bool Permissions::check_create_participant(const PermissionsHandle& local_handle, const uint32_t /*domain_id*/,
                 const RTPSParticipantAttributes&, SecurityException& exception)
 {
     bool returned_value = false;
@@ -808,6 +903,11 @@ bool Permissions::check_remote_participant(const PermissionsHandle& remote_handl
         return false;
     }
 
+    if(!rah->governance_rule_.is_access_protected)
+    {
+        return true;
+    }
+
     //Search an allow rule with my domain
     for(auto rule : rah->grant.rules)
     {
@@ -830,8 +930,8 @@ bool Permissions::check_remote_participant(const PermissionsHandle& remote_handl
 }
 
 bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
-        const uint32_t domain_id, const std::string& topic_name,
-        const std::string& partitions, SecurityException& exception)
+        const uint32_t /*domain_id*/, const std::string& topic_name,
+        const std::vector<std::string>& partitions, SecurityException& exception)
 {
     bool returned_value = false;
     const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(local_handle);
@@ -842,6 +942,22 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
         return false;
     }
 
+    const EndpointSecurityAttributes* attributes = nullptr;
+
+    if((attributes = is_topic_in_sec_attributes(topic_name, lah->governance_writer_topic_rules_)) != nullptr)
+    {
+        if(!attributes->is_access_protected)
+        {
+            return true;
+        }
+    }
+    else
+    {
+        exception = _SecurityException_("Not found topic access rule for topic " + topic_name);
+        return false;
+    }
+
+    // Search topic
     for(auto rule : lah->grant.rules)
     {
         if(is_topic_in_criterias(topic_name, rule.publishes))
@@ -849,11 +965,21 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
             if(rule.allow)
             {
                 returned_value = true;
+
+                // Search partitions
+                for(auto partition_it = partitions.begin(); returned_value && partition_it != partitions.end();
+                        ++partition_it)
+                {
+                    if(!is_partition_in_criterias(*partition_it, rule.publishes))
+                    {
+                        returned_value = false;
+                        exception = _SecurityException_(*partition_it + std::string(" partition not found in rule."));
+                    }
+                }
             }
             else
             {
-                exception = _SecurityException_(topic_name +
-                        std::string(" topic denied by deny rule."));
+                exception = _SecurityException_(topic_name + std::string(" topic denied by deny rule."));
             }
 
             break;
@@ -862,16 +988,15 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
 
     if(!returned_value && strlen(exception.what()) == 0)
     {
-        exception = _SecurityException_(topic_name +
-                std::string(" topic not found in allow rule."));
+        exception = _SecurityException_(topic_name + std::string(" topic not found in allow rule."));
     }
 
     return returned_value;
 }
 
 bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
-        const uint32_t domain_id, const std::string& topic_name,
-        const std::string& partitions, SecurityException& exception)
+        const uint32_t /*domain_id*/, const std::string& topic_name,
+        const std::vector<std::string>& partitions, SecurityException& exception)
 {
     bool returned_value = false;
     const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(local_handle);
@@ -879,6 +1004,21 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
     if(lah.nil())
     {
         exception = _SecurityException_("Bad precondition");
+        return false;
+    }
+
+    const EndpointSecurityAttributes* attributes = nullptr;
+
+    if((attributes = is_topic_in_sec_attributes(topic_name, lah->governance_reader_topic_rules_)) != nullptr)
+    {
+        if(!attributes->is_access_protected)
+        {
+            return true;
+        }
+    }
+    else
+    {
+        exception = _SecurityException_("Not found topic access rule for topic " + topic_name);
         return false;
     }
 
@@ -889,11 +1029,21 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
             if(rule.allow)
             {
                 returned_value = true;
+
+                // Search partitions
+                for(auto partition_it = partitions.begin(); returned_value && partition_it != partitions.end();
+                        ++partition_it)
+                {
+                    if(!is_partition_in_criterias(*partition_it, rule.subscribes))
+                    {
+                        returned_value = false;
+                        exception = _SecurityException_(*partition_it + std::string(" partition not found in rule."));
+                    }
+                }
             }
             else
             {
-                exception = _SecurityException_(topic_name +
-                        std::string(" topic denied by deny rule."));
+                exception = _SecurityException_(topic_name + std::string(" topic denied by deny rule."));
             }
 
             break;
@@ -902,8 +1052,7 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
 
     if(!returned_value && strlen(exception.what()) == 0)
     {
-        exception = _SecurityException_(topic_name +
-                std::string(" topic not found in allow rule."));
+        exception = _SecurityException_(topic_name + std::string(" topic not found in allow rule."));
     }
 
     return returned_value;
@@ -919,6 +1068,22 @@ bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle
     if(rah.nil())
     {
         exception = _SecurityException_("Bad precondition");
+        return false;
+    }
+
+    const EndpointSecurityAttributes* attributes = nullptr;
+
+    if((attributes = is_topic_in_sec_attributes(publication_data.topicName(),rah->governance_writer_topic_rules_))
+            != nullptr)
+    {
+        if(!attributes->is_access_protected)
+        {
+            return true;
+        }
+    }
+    else
+    {
+        exception = _SecurityException_("Not found topic access rule for topic " + publication_data.topicName());
         return false;
     }
 
@@ -965,6 +1130,22 @@ bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle
         return false;
     }
 
+    const EndpointSecurityAttributes* attributes = nullptr;
+
+    if((attributes = is_topic_in_sec_attributes(subscription_data.topicName(),rah->governance_reader_topic_rules_))
+            != nullptr)
+    {
+        if(!attributes->is_access_protected)
+        {
+            return true;
+        }
+    }
+    else
+    {
+        exception = _SecurityException_("Not found topic access rule for topic " + subscription_data.topicName());
+        return false;
+    }
+
     for(auto rule : rah->grant.rules)
     {
         if(is_domain_in_set(domain_id, rule.domains))
@@ -1006,6 +1187,49 @@ bool Permissions::get_participant_sec_attributes(const PermissionsHandle& local_
         return false;
     }
 
-    attributes = lah->governance;
+    attributes = lah->governance_rule_;
     return true;
+}
+
+
+bool Permissions::get_datawriter_sec_attributes(const PermissionsHandle& permissions_handle,
+        const std::string& topic_name, const std::vector<std::string>& /*partitions*/,
+        EndpointSecurityAttributes& attributes, SecurityException& exception)
+{
+    const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(permissions_handle);
+    const EndpointSecurityAttributes* attr = nullptr;
+
+    if((attr = is_topic_in_sec_attributes(topic_name, lah->governance_writer_topic_rules_))
+            != nullptr)
+    {
+        attributes = *attr;
+        return true;
+    }
+    else
+    {
+        exception = _SecurityException_("Not found topic access rule for topic " + topic_name);
+    }
+
+    return false;
+}
+
+bool Permissions::get_datareader_sec_attributes(const PermissionsHandle& permissions_handle,
+        const std::string& topic_name, const std::vector<std::string>& /*partitions*/,
+        EndpointSecurityAttributes& attributes, SecurityException& exception)
+{
+    const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(permissions_handle);
+    const EndpointSecurityAttributes* attr = nullptr;
+
+    if((attr = is_topic_in_sec_attributes(topic_name, lah->governance_reader_topic_rules_))
+            != nullptr)
+    {
+        attributes = *attr;
+        return true;
+    }
+    else
+    {
+        exception = _SecurityException_("Not found topic access rule for topic " + topic_name);
+    }
+
+    return false;
 }

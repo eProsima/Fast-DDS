@@ -92,13 +92,14 @@ class EDP
          * @param rdata Pointer to the ReaderProxyData object.
          * @return True if correct.
          */
-        virtual bool processLocalReaderProxyData(ReaderProxyData* rdata) = 0;
+        virtual bool processLocalReaderProxyData(RTPSReader* reader, ReaderProxyData* rdata) = 0;
+
         /**
          * After a new local WriterProxyData has been created some processing is needed (depends on the implementation).
          * @param wdata Pointer to the Writer ProxyData object.
          * @return True if correct.
          */
-        virtual bool processLocalWriterProxyData(WriterProxyData* wdata) = 0;
+        virtual bool processLocalWriterProxyData(RTPSWriter* writer, WriterProxyData* wdata) = 0;
 
         /**
          * Create a new ReaderPD for a local Reader.

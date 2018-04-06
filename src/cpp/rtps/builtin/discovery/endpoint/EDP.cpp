@@ -85,7 +85,7 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, TopicAttributes& att, Read
     pairing_reader_proxy_with_any_local_writer(&pdata, &rpd);
     pairingReader(reader, pdata, rpd);
     //DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
-    processLocalReaderProxyData(&rpd);
+    processLocalReaderProxyData(reader, &rpd);
     return true;
 }
 
@@ -117,29 +117,29 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer,TopicAttributes& att, Write
     pairing_writer_proxy_with_any_local_reader(&pdata, &wpd);
     pairingWriter(writer, pdata, wpd);
     //DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
-    processLocalWriterProxyData(&wpd);
+    processLocalWriterProxyData(writer, &wpd);
     return true;
 }
 
-bool EDP::updatedLocalReader(RTPSReader* R, ReaderQos& rqos)
+bool EDP::updatedLocalReader(RTPSReader* reader, ReaderQos& rqos)
 {
     ParticipantProxyData pdata;
     ReaderProxyData rdata;
     rdata.m_qos.setQos(rqos, true);
-    rdata.m_expectsInlineQos = R->expectsInlineQos();
+    rdata.m_expectsInlineQos = reader->expectsInlineQos();
 
     if(this->mp_PDP->addReaderProxyData(&rdata, pdata))
     {
-        processLocalReaderProxyData(&rdata);
+        processLocalReaderProxyData(reader, &rdata);
         //this->updatedReaderProxy(rdata);
         pairing_reader_proxy_with_any_local_writer(&pdata, &rdata);
-        pairingReader(R, pdata, rdata);
+        pairingReader(reader, pdata, rdata);
         return true;
     }
     return false;
 }
 
-bool EDP::updatedLocalWriter(RTPSWriter* W,WriterQos& wqos)
+bool EDP::updatedLocalWriter(RTPSWriter* writer, WriterQos& wqos)
 {
     ParticipantProxyData pdata;
     WriterProxyData wdata;
@@ -147,10 +147,10 @@ bool EDP::updatedLocalWriter(RTPSWriter* W,WriterQos& wqos)
 
     if(this->mp_PDP->addWriterProxyData(&wdata, pdata))
     {
-        processLocalWriterProxyData(&wdata);
+        processLocalWriterProxyData(writer, &wdata);
         //this->updatedWriterProxy(wdata);
         pairing_writer_proxy_with_any_local_reader(&pdata, &wdata);
-        pairingWriter(W, pdata, wdata);
+        pairingWriter(writer, pdata, wdata);
         return true;
     }
     return false;

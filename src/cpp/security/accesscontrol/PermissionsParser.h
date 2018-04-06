@@ -83,6 +83,8 @@ class PermissionsParser
 
         bool parse_topic(tinyxml2::XMLElement* root, std::vector<std::string>& topics);
 
+        bool parse_partition(tinyxml2::XMLElement* root, std::vector<std::string>& partitions);
+
         PermissionsData permissions_;
 };
 

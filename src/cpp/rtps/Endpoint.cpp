@@ -32,9 +32,7 @@ Endpoint::Endpoint(RTPSParticipantImpl* pimpl,GUID_t& guid,EndpointAttributes& a
     m_att(att),
     mp_mutex(new std::recursive_mutex())
 #if HAVE_SECURITY
-    ,supports_rtps_protection_(true),
-    is_submessage_protected_(false),
-    is_payload_protected_(false)
+    ,supports_rtps_protection_(true)
 #endif
     {
     }
