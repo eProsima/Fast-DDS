@@ -15,19 +15,14 @@
 #ifndef __SECURITY_ACCESSCONTROL_COMMON_H__
 #define __SECURITY_ACCESSCONTROL_COMMON_H__
 
-#include <vector>
-#include <cstdint>
+#include "PermissionsTypes.h"
+
 #include <tinyxml2.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 namespace security {
-
-struct Domains
-{
-    std::vector<std::pair<uint32_t, uint32_t>> ranges;
-};
 
 bool parse_domain_id_set(tinyxml2::XMLElement* root, Domains& domains);
 

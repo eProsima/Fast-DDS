@@ -18,43 +18,11 @@
 #include "CommonParser.h"
 
 #include <tinyxml2.h>
-#include <string>
-#include <ctime>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 namespace security {
-
-struct Criteria
-{
-    std::vector<std::string> topics;
-    std::vector<std::string> partitions;
-};
-
-struct Rule
-{
-    bool allow;
-    Domains domains;
-    std::vector<Criteria> publishes;
-    std::vector<Criteria> subscribes;
-    std::vector<Criteria> relays;
-};
-
-struct Validity
-{
-    std::time_t not_before;
-    std::time_t not_after;
-};
-
-struct Grant
-{
-    std::string name;
-    std::string subject_name;
-    Validity validity;
-    std::vector<Rule> rules;
-    bool is_default_allow;
-};
 
 struct PermissionsData
 {

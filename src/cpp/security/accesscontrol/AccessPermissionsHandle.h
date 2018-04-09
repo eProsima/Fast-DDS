@@ -20,7 +20,7 @@
 
 #include <fastrtps/rtps/security/common/Handle.h>
 #include <fastrtps/rtps/common/Token.h>
-#include "PermissionsParser.h"
+#include "PermissionsTypes.h"
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <fastrtps/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 
