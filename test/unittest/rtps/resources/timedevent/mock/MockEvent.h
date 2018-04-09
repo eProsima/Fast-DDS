@@ -32,6 +32,8 @@ class MockEvent : public eprosima::fastrtps::rtps::TimedEvent
 
         void event(EventCode code, const char* msg= nullptr);
 
+        void wait();
+
         bool wait(unsigned int milliseconds);
 
         std::atomic<int> successed_;

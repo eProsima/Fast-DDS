@@ -95,9 +95,13 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
                         continue;
 
                     if (info.type == IP4)
+                    {
                         parseIP4(info);
+                    }
                     else if (info.type == IP6)
+                    {
                         parseIP6(info);
+                    }
                     if (info.type == IP6 || info.type == IP6_LOCAL)
                     {
                         sockaddr_in6* so = (sockaddr_in6*)ua->Address.lpSockaddr;
@@ -105,7 +109,9 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
                     }
 
                     if(return_loopback || (info.type != IP6_LOCAL && info.type != IP4_LOCAL))
+                    {
                         vec_name->push_back(info);
+                    }
                     //printf("Buffer: %s\n", buf);
                 }
             }

@@ -554,6 +554,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(ParticipantProxyData* pdata
     (void)pdata;
 
     logInfo(RTPS_EDP, rdata->guid() <<" in topic: \"" << rdata->topicName() <<"\"");
+    std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
             wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
@@ -630,6 +631,7 @@ bool EDP::pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, con
         ReaderProxyData& rdata)
 {
     logInfo(RTPS_EDP, rdata.guid() <<" in topic: \"" << rdata.topicName() <<"\"");
+    std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
             wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
@@ -701,6 +703,7 @@ bool EDP::pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, con
 bool EDP::pairing_remote_reader_with_local_writer_after_crypto(const GUID_t& local_writer,
         const ReaderProxyData& remote_reader_data)
 {
+    std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
             wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
@@ -737,6 +740,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(ParticipantProxyData *pdata
     (void)pdata;
 
     logInfo(RTPS_EDP, wdata->guid() <<" in topic: \"" << wdata->topicName() <<"\"");
+    std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
             rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
@@ -813,6 +817,7 @@ bool EDP::pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, con
         WriterProxyData& wdata)
 {
     logInfo(RTPS_EDP, wdata.guid() <<" in topic: \"" << wdata.topicName() <<"\"");
+    std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
             rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
@@ -885,6 +890,7 @@ bool EDP::pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, con
 bool EDP::pairing_remote_writer_with_local_reader_after_crypto(const GUID_t& local_reader,
                 const WriterProxyData& remote_writer_data)
 {
+    std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
             rit!=mp_RTPSParticipant->userReadersListEnd();++rit)

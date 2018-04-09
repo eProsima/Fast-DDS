@@ -102,8 +102,14 @@ class PubSubReader
                 {
                     ASSERT_NE(sub, nullptr);
 
-                    bool ret = false;
-                    reader_.receive_one(sub, ret);
+                    if(reader_.receiving_.load())
+                    {
+                        bool ret = false;
+                        do
+                        {
+                            reader_.receive_one(sub, ret);
+                        } while(ret);
+                    }
                 }
 
                 void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, eprosima::fastrtps::rtps::MatchingInfo& info)
@@ -200,14 +206,14 @@ class PubSubReader
             current_received_count_ = 0;
             mutex_.unlock();
 
-            receiving_.store(true);
-
             bool ret = false;
             do
             {
                 receive_one(subscriber_, ret);
             }
             while(ret);
+
+            receiving_.store(true);
         }
 
         void stopReception()
@@ -517,31 +523,27 @@ class PubSubReader
         void receive_one(eprosima::fastrtps::Subscriber* subscriber, bool& returnedValue)
         {
             returnedValue = false;
+            type data;
+            eprosima::fastrtps::SampleInfo_t info;
 
-            if(receiving_.load())
+            if(subscriber->takeNextData((void*)&data, &info))
             {
-                type data;
-                eprosima::fastrtps::SampleInfo_t info;
+                returnedValue = true;
 
-                if(subscriber->takeNextData((void*)&data, &info))
+                std::unique_lock<std::mutex> lock(mutex_);
+
+                // Check order of changes.
+                ASSERT_LT(last_seq, info.sample_identity.sequence_number());
+                last_seq = info.sample_identity.sequence_number();
+
+                if(info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
                 {
-                    returnedValue = true;
-
-                    std::unique_lock<std::mutex> lock(mutex_);
-
-                    // Check order of changes.
-                    ASSERT_LT(last_seq, info.sample_identity.sequence_number());
-                    last_seq = info.sample_identity.sequence_number();
-
-                    if(info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
-                    {
-                        auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
-                        ASSERT_NE(it, total_msgs_.end());
-                        total_msgs_.erase(it);
-                        ++current_received_count_;
-                        default_receive_print<type>(data);
-                        cv_.notify_one();
-                    }
+                    auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
+                    ASSERT_NE(it, total_msgs_.end());
+                    total_msgs_.erase(it);
+                    ++current_received_count_;
+                    default_receive_print<type>(data);
+                    cv_.notify_one();
                 }
             }
         }

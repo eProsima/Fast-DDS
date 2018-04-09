@@ -102,8 +102,14 @@ class PubSubWriterReader
             {
                 ASSERT_NE(sub, nullptr);
 
-                bool ret = false;
-                wreader_.receive_one(sub, ret);
+                if(wreader_.receiving_.load())
+                {
+                    bool ret = false;
+                    do
+                    {
+                        wreader_.receive_one(sub, ret);
+                    } while(ret);
+                }
             }
 
             void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, eprosima::fastrtps::rtps::MatchingInfo& info)
@@ -242,7 +248,6 @@ class PubSubWriterReader
         total_msgs_ = msgs;
         number_samples_expected_ = total_msgs_.size();
         current_received_count_ = 0;
-        receiving_ = true;
         mutex_.unlock();
 
         bool ret = false;
@@ -251,13 +256,13 @@ class PubSubWriterReader
             receive_one(subscriber_, ret);
         }
         while(ret);
+
+        receiving_.store(true);
     }
 
     void stopReception()
     {
-        mutex_.lock();
-        receiving_ = false;
-        mutex_.unlock();
+        receiving_.store(false);
     }
 
     void block_for_all()
@@ -350,30 +355,27 @@ class PubSubWriterReader
     void receive_one(eprosima::fastrtps::Subscriber* subscriber, bool& returnedValue)
     {
         returnedValue = false;
-        std::unique_lock<std::mutex> lock(mutex_);
+        type data;
+        eprosima::fastrtps::SampleInfo_t info;
 
-        if(receiving_)
+        if(subscriber->takeNextData((void*)&data, &info))
         {
-            type data;
-            eprosima::fastrtps::SampleInfo_t info;
+            returnedValue = true;
 
-            if(subscriber->takeNextData((void*)&data, &info))
+            std::unique_lock<std::mutex> lock(mutex_);
+
+            // Check order of changes.
+            ASSERT_LT(last_seq, info.sample_identity.sequence_number());
+            last_seq = info.sample_identity.sequence_number();
+
+            if(info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
             {
-                returnedValue = true;
-
-                // Check order of changes.
-                ASSERT_LT(last_seq, info.sample_identity.sequence_number());
-                last_seq = info.sample_identity.sequence_number();
-
-                if(info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
-                {
-                    auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
-                    ASSERT_NE(it, total_msgs_.end());
-                    total_msgs_.erase(it);
-                    ++current_received_count_;
-                    default_receive_print<type>(data);
-                    cv_.notify_one();
-                }
+                auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
+                ASSERT_NE(it, total_msgs_.end());
+                total_msgs_.erase(it);
+                ++current_received_count_;
+                default_receive_print<type>(data);
+                cv_.notify_one();
             }
         }
     }
@@ -426,7 +428,7 @@ class PubSubWriterReader
     std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
     unsigned int matched_;
-    bool receiving_;
+    std::atomic<bool> receiving_;
     type_support type_;
 	eprosima::fastrtps::rtps::SequenceNumber_t last_seq;
     size_t current_received_count_;
