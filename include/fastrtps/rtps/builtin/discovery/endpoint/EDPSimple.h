@@ -87,17 +87,17 @@ class EDPSimple : public EDP
      * @param attributes Reference to the DiscoveryAttributes.
      * @return True if correct.
      */
-    bool initEDP(BuiltinAttributes& attributes);
+    bool initEDP(BuiltinAttributes& attributes) override;
     /**
      * This method assigns the remote builtin endpoints that the remote RTPSParticipant indicates is using to our local builtin endpoints.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
      */
-    void assignRemoteEndpoints(const ParticipantProxyData& pdata);
+    void assignRemoteEndpoints(const ParticipantProxyData& pdata) override;
     /**
      * Remove remote endpoints from the endpoint discovery protocol
      * @param pdata Pointer to the ParticipantProxyData to remove
      */
-    void removeRemoteEndpoints(ParticipantProxyData* pdata);
+    void removeRemoteEndpoints(ParticipantProxyData* pdata) override;
 
     /**
      * This method generates the corresponding change in the subscription writer and send it to all known remote endpoints.
@@ -116,13 +116,13 @@ class EDPSimple : public EDP
      * @param R Pointer to the RTPSReader object.
      * @return True if correct.
      */
-    bool removeLocalReader(RTPSReader*R);
+    bool removeLocalReader(RTPSReader*R) override;
     /**
      * This methods generates the change disposing of the local Writer and calls the unpairing and removal methods of the base class.
      * @param W Pointer to the RTPSWriter object.
      * @return True if correct.
      */
-    bool removeLocalWriter(RTPSWriter*W);
+    bool removeLocalWriter(RTPSWriter*W) override;
 
     private:
 

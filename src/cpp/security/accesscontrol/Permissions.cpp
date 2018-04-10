@@ -86,9 +86,9 @@ static bool is_domain_in_set(const uint32_t domain_id, const Domains& domains)
 static const EndpointSecurityAttributes* is_topic_in_sec_attributes(const std::string& topic_name,
         const std::map<std::string, EndpointSecurityAttributes>& attributes)
 {
-    EndpointSecurityAttributes* returned_value = nullptr;
+    const EndpointSecurityAttributes* returned_value = nullptr;
 
-    for(auto topic : attributes)
+    for(auto& topic : attributes)
     {
         if(StringMatching::matchString(topic.first.c_str(), topic_name.c_str()))
         {
@@ -611,7 +611,6 @@ static bool generate_credentials_token(AccessPermissionsHandle& handle, const st
 {
     bool returned_value = false;
     // Create PermissionsCredentialToken;
-    Property property;
     PermissionsCredentialToken& token = handle->permissions_credential_token_;
     token.class_id("DDS:Access:PermissionsCredential");
 
@@ -628,7 +627,7 @@ static bool generate_credentials_token(AccessPermissionsHandle& handle, const st
             token.properties().push_back(std::move(property));
             returned_value = true;
         }
-        catch(std::exception& ex)
+        catch(std::exception&)
         {
             exception = _SecurityException_(std::string("Cannot find file ") + file);
         }

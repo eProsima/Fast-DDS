@@ -1943,8 +1943,8 @@ bool SecurityManager::register_local_writer(const GUID_t& writer_guid, const Pro
             if(access_plugin_->check_create_datawriter(*local_permissions_handle_,
                             domain_id_, topic_name, partitions, exception))
             {
-                if(!(returned_value = access_plugin_->get_datawriter_sec_attributes(*local_permissions_handle_,
-                                topic_name, partitions, security_attributes, exception)))
+                if((returned_value = access_plugin_->get_datawriter_sec_attributes(*local_permissions_handle_,
+                                topic_name, partitions, security_attributes, exception)) == false)
                 {
                     logError(SECURITY, "Error getting security attributes of local writer " << writer_guid <<
                             " (" << exception.what() << ")" << std::endl);
@@ -2078,8 +2078,8 @@ bool SecurityManager::register_local_reader(const GUID_t& reader_guid, const Pro
             if(access_plugin_->check_create_datareader( *local_permissions_handle_,
                             domain_id_, topic_name, partitions, exception))
             {
-                if(!(returned_value = access_plugin_->get_datareader_sec_attributes(*local_permissions_handle_,
-                                topic_name, partitions, security_attributes, exception)))
+                if((returned_value = access_plugin_->get_datareader_sec_attributes(*local_permissions_handle_,
+                                topic_name, partitions, security_attributes, exception)) == false)
                 {
                     logError(SECURITY, "Error getting security attributes of local reader " << reader_guid <<
                             " (" << exception.what() << ")" << std::endl);
@@ -2203,8 +2203,8 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
 
     if(access_plugin_ != nullptr && remote_permissions != nullptr)
     {
-        if(!(returned_value = access_plugin_->check_remote_datareader(
-                        *remote_permissions, domain_id_, remote_reader_data, exception)))
+        if((returned_value = access_plugin_->check_remote_datareader(
+                        *remote_permissions, domain_id_, remote_reader_data, exception)) == false)
         {
             logError(SECURITY, "Error checking create remote reader " << remote_reader_data.guid() << " (" << exception.what() << ")");
         }
@@ -2478,8 +2478,8 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
 
     if(access_plugin_ != nullptr && remote_permissions != nullptr)
     {
-        if(!(returned_value = access_plugin_->check_remote_datawriter(
-                        *remote_permissions, domain_id_, remote_writer_data, exception)))
+        if((returned_value = access_plugin_->check_remote_datawriter(
+                        *remote_permissions, domain_id_, remote_writer_data, exception)) == false)
         {
             logError(SECURITY, "Error checking create remote writer " << remote_writer_data.guid() << " (" << exception.what() << ")");
         }

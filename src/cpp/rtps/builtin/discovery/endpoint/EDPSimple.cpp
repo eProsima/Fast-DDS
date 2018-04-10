@@ -435,6 +435,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
 bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProxyData* rdata)
 {
     logInfo(RTPS_EDP,rdata->guid().entityId);
+    (void)local_reader;
 
     auto* writer = &mp_SubWriter;
     auto* reader = &mp_SubReader;
@@ -502,6 +503,7 @@ bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
 bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProxyData* wdata)
 {
     logInfo(RTPS_EDP, wdata->guid().entityId);
+    (void)local_writer;
 
     auto* writer = &mp_PubWriter;
     auto* reader = &mp_PubReader;

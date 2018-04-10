@@ -85,24 +85,24 @@ public:
 	 * @param attributes DiscoveryAttributes structure.
 	 * @return True if correct.
 	 */
-	bool initEDP(BuiltinAttributes& attributes);
+	bool initEDP(BuiltinAttributes& attributes) override;
 	/**
 	 * Abstract method that assigns remote endpoints when a new RTPSParticipantProxyData is discovered.
 	 * @param pdata Pointer to the ParticipantProxyData.
 	 */
-	void assignRemoteEndpoints(const ParticipantProxyData& pdata);
+	void assignRemoteEndpoints(const ParticipantProxyData& pdata) override;
 	/**
 	 * Abstract method that removes a local Reader from the discovery method
 	 * @param R Pointer to the Reader to remove.
 	 * @return True if correctly removed.
 	 */
-	bool removeLocalReader(RTPSReader* R);
+	bool removeLocalReader(RTPSReader* R) override;
 	/**
 	 * Abstract method that removes a local Writer from the discovery method
 	 * @param W Pointer to the Writer to remove.
 	 * @return True if correctly removed.
 	 */
-	bool removeLocalWriter(RTPSWriter*W);
+	bool removeLocalWriter(RTPSWriter*W) override;
 
 	/**
 	 * After a new local ReaderProxyData has been created some processing is needed (depends on the implementation).

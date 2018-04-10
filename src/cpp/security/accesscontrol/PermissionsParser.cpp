@@ -322,7 +322,8 @@ bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity& val
                         if(strcmp(node->Name(), NotAfter_str) == 0)
                         {
                             memset(&time, 0, sizeof(struct tm));
-                            std::istringstream ss(node->GetText());
+                            ss.str(node->GetText());
+                            ss.clear();
                             ss >> std::get_time(&time, "%Y-%m-%dT%T");
 
                             if(!ss.fail())

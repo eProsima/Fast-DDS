@@ -34,8 +34,15 @@
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
-AESGCMGMAC_Transform::AESGCMGMAC_Transform(){}
-AESGCMGMAC_Transform::~AESGCMGMAC_Transform(){}
+constexpr int initialization_vector_suffix_length = 8;
+
+AESGCMGMAC_Transform::AESGCMGMAC_Transform()
+{
+}
+
+AESGCMGMAC_Transform::~AESGCMGMAC_Transform()
+{
+}
 
 bool AESGCMGMAC_Transform::encode_serialized_payload(
         SerializedPayload_t& output_payload,
@@ -78,8 +85,8 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     local_writer->session_block_counter += 1;
 
     //Build NONCE elements (Build once, use once)
-    std::array<uint8_t, 8> initialization_vector_suffix;  //iv suffix changes with every operation
-    RAND_bytes(initialization_vector_suffix.data(), initialization_vector_suffix.size());
+    std::array<uint8_t, initialization_vector_suffix_length> initialization_vector_suffix;  //iv suffix changes with every operation
+    RAND_bytes(initialization_vector_suffix.data(), initialization_vector_suffix_length);
     std::array<uint8_t, 12> initialization_vector; //96 bytes, session_id + suffix
     memcpy(initialization_vector.data(),&(local_writer->session_id),4);
     memcpy(initialization_vector.data() + 4, initialization_vector_suffix.data(), 8);
@@ -92,7 +99,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
         serialize_SecureDataHeader(serializer, local_writer->EntityKeyMaterial.transformation_kind,
                 local_writer->EntityKeyMaterial.sender_key_id, session_id, initialization_vector_suffix);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataHeader");
         return false;
@@ -109,7 +116,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
             return false;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataBody");
         return false;
@@ -124,14 +131,14 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
             return false;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataTag");
         return false;
     }
 
     // Store information in CDRMessage_t
-    output_payload.length = serializer.getSerializedDataLength();
+    output_payload.length = static_cast<uint32_t>(serializer.getSerializedDataLength());
 
     return true;
 }
@@ -179,8 +186,8 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     local_writer->session_block_counter += 1;
 
     //Build remaining NONCE elements
-    std::array<uint8_t, 8> initialization_vector_suffix;  //iv suffix changes with every operation
-    RAND_bytes(initialization_vector_suffix.data(), initialization_vector_suffix.size());
+    std::array<uint8_t, initialization_vector_suffix_length> initialization_vector_suffix;  //iv suffix changes with every operation
+    RAND_bytes(initialization_vector_suffix.data(), initialization_vector_suffix_length);
     std::array<uint8_t,12> initialization_vector; //96 bytes, session_id + suffix
     memcpy(initialization_vector.data(),&(local_writer->session_id),4);
     memcpy(initialization_vector.data() + 4, initialization_vector_suffix.data(), 8);
@@ -210,12 +217,12 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
         eprosima::fastcdr::Cdr::state current_state = serializer.getState();
         //TODO(Ricardo) fastcdr functinality: length substracting two Cdr::state.
-        length =  serializer.getCurrentPosition() - length_position;
+        length =  static_cast<uint16_t>(serializer.getCurrentPosition() - length_position);
         serializer.setState(length_state);
         serializer << length;
         serializer.setState(current_state);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& )
     {
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataHeader");
         return false;
@@ -233,7 +240,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
             return false;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataBody");
         return false;
@@ -257,19 +264,19 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
         eprosima::fastcdr::Cdr::state current_state = serializer.getState();
         //TODO(Ricardo) fastcdr functinality: length substracting two Cdr::state.
-        length =  serializer.getCurrentPosition() - length_position;
+        length =  static_cast<uint16_t>(serializer.getCurrentPosition() - length_position);
         serializer.setState(length_state);
         serializer << length;
         serializer.setState(current_state);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataTag");
         return false;
     }
 
-    encoded_rtps_submessage.pos += serializer.getSerializedDataLength();
-    encoded_rtps_submessage.length += serializer.getSerializedDataLength();
+    encoded_rtps_submessage.pos += static_cast<uint32_t>(serializer.getSerializedDataLength());
+    encoded_rtps_submessage.length += static_cast<uint32_t>(serializer.getSerializedDataLength());
 
     return true;
 }
@@ -316,8 +323,8 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     local_reader->session_block_counter += 1;
 
     //Build remaining NONCE elements
-    std::array<uint8_t, 8> initialization_vector_suffix;  //iv suffix changes with every operation
-    RAND_bytes(initialization_vector_suffix.data(), initialization_vector_suffix.size());
+    std::array<uint8_t, initialization_vector_suffix_length> initialization_vector_suffix;  //iv suffix changes with every operation
+    RAND_bytes(initialization_vector_suffix.data(), initialization_vector_suffix_length);
     std::array<uint8_t,12> initialization_vector; //96 bytes, session_id + suffix
     memcpy(initialization_vector.data(),&(local_reader->session_id),4);
     memcpy(initialization_vector.data() + 4, initialization_vector_suffix.data(), 8);
@@ -347,12 +354,12 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
 
         eprosima::fastcdr::Cdr::state current_state = serializer.getState();
         //TODO(Ricardo) fastcdr functinality: length substracting two Cdr::state.
-        length =  serializer.getCurrentPosition() - length_position;
+        length =  static_cast<uint16_t>(serializer.getCurrentPosition() - length_position);
         serializer.setState(length_state);
         serializer << length;
         serializer.setState(current_state);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataHeader");
         return false;
@@ -370,7 +377,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
             return false;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataBody");
         return false;
@@ -394,19 +401,19 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
 
         eprosima::fastcdr::Cdr::state current_state = serializer.getState();
         //TODO(Ricardo) fastcdr functinality: length substracting two Cdr::state.
-        length =  serializer.getCurrentPosition() - length_position;
+        length =  static_cast<uint16_t>(serializer.getCurrentPosition() - length_position);
         serializer.setState(length_state);
         serializer << length;
         serializer.setState(current_state);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataTag");
         return false;
     }
 
-    encoded_rtps_submessage.pos += serializer.getSerializedDataLength();
-    encoded_rtps_submessage.length += serializer.getSerializedDataLength();
+    encoded_rtps_submessage.pos += static_cast<uint32_t>(serializer.getSerializedDataLength());
+    encoded_rtps_submessage.length += static_cast<uint32_t>(serializer.getSerializedDataLength());
 
     return true;
 }
@@ -456,8 +463,8 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     local_participant->session_block_counter += 1;
 
     //Build remaining NONCE elements
-    std::array<uint8_t, 8> initialization_vector_suffix;  //iv suffix changes with every operation
-    RAND_bytes(initialization_vector_suffix.data(), initialization_vector_suffix.size());
+    std::array<uint8_t, initialization_vector_suffix_length> initialization_vector_suffix;  //iv suffix changes with every operation
+    RAND_bytes(initialization_vector_suffix.data(), initialization_vector_suffix_length);
     std::array<uint8_t,12> initialization_vector; //96 bytes, session_id + suffix
     memcpy(initialization_vector.data(),&(local_participant->session_id),4);
     memcpy(initialization_vector.data() + 4, initialization_vector_suffix.data(), 8);
@@ -487,12 +494,12 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
 
         eprosima::fastcdr::Cdr::state current_state = serializer.getState();
         //TODO(Ricardo) fastcdr functinality: length substracting two Cdr::state.
-        length =  serializer.getCurrentPosition() - length_position;
+        length =  static_cast<uint16_t>(serializer.getCurrentPosition() - length_position);
         serializer.setState(length_state);
         serializer << length;
         serializer.setState(current_state);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataHeader");
         return false;
@@ -510,7 +517,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
             return false;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataBody");
         return false;
@@ -534,19 +541,19 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
 
         eprosima::fastcdr::Cdr::state current_state = serializer.getState();
         //TODO(Ricardo) fastcdr functinality: length substracting two Cdr::state.
-        length =  serializer.getCurrentPosition() - length_position;
+        length =  static_cast<uint16_t>(serializer.getCurrentPosition() - length_position);
         serializer.setState(length_state);
         serializer << length;
         serializer.setState(current_state);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataTag");
         return false;
     }
 
-    encoded_rtps_message.pos += serializer.getSerializedDataLength();
-    encoded_rtps_message.length += serializer.getSerializedDataLength();
+    encoded_rtps_message.pos += static_cast<uint32_t>(serializer.getSerializedDataLength());
+    encoded_rtps_message.length += static_cast<uint32_t>(serializer.getSerializedDataLength());
 
     return true;
 }
@@ -624,7 +631,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
             return false;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataHeader");
         return false;
@@ -653,7 +660,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
             return false;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataBody header");
         return false;
@@ -707,7 +714,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
             return false;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataTag length");
         return false;
@@ -790,7 +797,7 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             return false;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataHeader");
         return false;
@@ -945,7 +952,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
             return false;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataHeader");
         return false;
@@ -973,7 +980,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
             return false;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataBody header");
         return false;
@@ -1027,7 +1034,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
             return false;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataTag length");
         return false;
@@ -1043,7 +1050,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     }
 
     plain_rtps_submessage.length += length;
-    encoded_rtps_submessage.pos += decoder.getSerializedDataLength();
+    encoded_rtps_submessage.pos += static_cast<uint32_t>(decoder.getSerializedDataLength());
 
     return true;
 }
@@ -1118,7 +1125,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
             return false;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataHeader");
         return false;
@@ -1146,7 +1153,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
             return false;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataBody header");
         return false;
@@ -1200,7 +1207,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
             return false;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataTag length");
         return false;
@@ -1260,7 +1267,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     {
         header = deserialize_SecureDataHeader(decoder);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataHeader");
         return false;
@@ -1289,7 +1296,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
             return false;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataBody header");
         return false;
@@ -1304,7 +1311,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
         SecurityException exception;
         deserialize_SecureDataTag(decoder, tag, {}, {}, {}, {}, {}, 0, exception);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& ex)
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataTag length");
         return false;
