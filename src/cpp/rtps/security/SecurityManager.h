@@ -198,12 +198,14 @@ class SecurityManager
                         const ParticipantProxyData& participant_data) :
                     auth_(auth_status), auth_ptr_(&auth_),
                     shared_secret_handle_(nullptr),
+                    permissions_handle_(nullptr),
                     participant_crypto_(nullptr),
                     participant_data_(participant_data) {}
 
                 DiscoveredParticipantInfo(DiscoveredParticipantInfo&& info) :
                     auth_(std::move(info.auth_)),  auth_ptr_(&auth_),
                     shared_secret_handle_(std::move(info.shared_secret_handle_)),
+                    permissions_handle_(std::move(info.permissions_handle_)),
                     participant_crypto_(info.participant_crypto_),
                     participant_data_(std::move(info.participant_data_)) {}
 

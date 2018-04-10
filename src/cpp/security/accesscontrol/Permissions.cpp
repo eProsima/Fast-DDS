@@ -260,9 +260,10 @@ static X509_STORE* load_permissions_ca(const std::string& permissions_ca, bool& 
                             }
                         }
 
+                        sk_X509_INFO_pop_free(inf, X509_INFO_free);
+
                         if(count > 0)
                         {
-                            sk_X509_INFO_pop_free(inf, X509_INFO_free);
                             BIO_free(in);
 
                             return store;
@@ -272,8 +273,6 @@ static X509_STORE* load_permissions_ca(const std::string& permissions_ca, bool& 
                     {
                         exception = _SecurityException_(std::string("OpenSSL library cannot read X509 info in file ") + permissions_ca.substr(7));
                     }
-
-                    sk_X509_INFO_pop_free(inf, X509_INFO_free);
                 }
                 else
                 {
@@ -326,12 +325,16 @@ static BIO* load_signed_file(X509_STORE* store, std::string& file, SecurityExcep
                     out = nullptr;
                 }
 
-                BIO_free(indata);
                 PKCS7_free(p7);
             }
             else
             {
                 exception = _SecurityException_(std::string("Cannot read as PKCS7 the file ") + file);
+            }
+
+            if(indata != nullptr)
+            {
+                BIO_free(indata);
             }
 
             BIO_free(in);
@@ -455,12 +458,16 @@ static bool verify_permissions_file(const AccessPermissionsHandle& local_handle,
                 }
 
                 BIO_free(out);
-                BIO_free(indata);
                 PKCS7_free(p7);
             }
             else
             {
                 exception = _SecurityException_("Cannot read as PKCS7 the permissions file.");
+            }
+
+            if(indata != nullptr)
+            {
+                BIO_free(indata);
             }
 
             BIO_free(permissions_buf);

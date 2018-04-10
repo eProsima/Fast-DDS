@@ -39,6 +39,14 @@ class AccessPermissions
 
         AccessPermissions() : store_(nullptr), there_are_crls_(false)  {}
 
+        ~AccessPermissions()
+        {
+            if(store_ != nullptr)
+            {
+                X509_STORE_free(store_);
+            }
+        }
+
         static const char* const class_id_;
 
         X509_STORE* store_;

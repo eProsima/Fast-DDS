@@ -306,10 +306,10 @@ bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity& val
             {
                 struct tm time;
                 memset(&time, 0, sizeof(struct tm));
-                std::istringstream ss(node->GetText());
-                ss >> std::get_time(&time, "%Y-%m-%dT%T");
+                std::istringstream stream(node->GetText());
+                stream >> std::get_time(&time, "%Y-%m-%dT%T");
 
-                if(!ss.fail())
+                if(!stream.fail())
                 {
                     validity.not_before = std::mktime(&time);
 
@@ -322,11 +322,11 @@ bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity& val
                         if(strcmp(node->Name(), NotAfter_str) == 0)
                         {
                             memset(&time, 0, sizeof(struct tm));
-                            ss.str(node->GetText());
-                            ss.clear();
-                            ss >> std::get_time(&time, "%Y-%m-%dT%T");
+                            stream.str(node->GetText());
+                            stream.clear();
+                            stream >> std::get_time(&time, "%Y-%m-%dT%T");
 
-                            if(!ss.fail())
+                            if(!stream.fail())
                             {
                                 validity.not_after = std::mktime(&time);
                                 returned_value = true;

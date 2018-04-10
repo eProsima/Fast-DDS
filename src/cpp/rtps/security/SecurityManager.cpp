@@ -325,11 +325,21 @@ void SecurityManager::destroy()
 
             ParticipantCryptoHandle* participant_crypto_handle = dp_it.second.get_participant_crypto();
             if(participant_crypto_handle != nullptr)
+            {
                     crypto_plugin_->cryptokeyfactory()->unregister_participant(participant_crypto_handle, exception);
+            }
+
+            PermissionsHandle* permissions_handle = dp_it.second.get_permissions_handle();
+            if(permissions_handle != nullptr)
+            {
+                access_plugin_->return_permissions_handle(permissions_handle, exception);
+            }
 
             SharedSecretHandle* shared_secret_handle = dp_it.second.get_shared_secret();
             if(shared_secret_handle != nullptr)
+            {
                 authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
+            }
 
             remove_discovered_participant_info(auth_ptr);
         }
@@ -553,9 +563,17 @@ void SecurityManager::remove_participant(const ParticipantProxyData& participant
                     exception);
         }
 
+        PermissionsHandle* permissions_handle = dp_it->second.get_permissions_handle();
+        if(permissions_handle != nullptr)
+        {
+            access_plugin_->return_permissions_handle(permissions_handle, exception);
+        }
+
         SharedSecretHandle* shared_secret_handle = dp_it->second.get_shared_secret();
         if(shared_secret_handle != nullptr)
+        {
             authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
+        }
 
         remove_discovered_participant_info(auth_ptr);
 

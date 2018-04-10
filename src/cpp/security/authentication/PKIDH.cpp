@@ -238,18 +238,19 @@ static X509_STORE* load_identity_ca(const std::string& identity_ca, bool& there_
                             }
                         }
 
+                        sk_X509_INFO_pop_free(inf, X509_INFO_free);
+
                         if(count > 0)
                         {
-                            sk_X509_INFO_pop_free(inf, X509_INFO_free);
                             BIO_free(in);
 
                             return store;
                         }
                     }
                     else
+                    {
                         exception = _SecurityException_(std::string("OpenSSL library cannot read X509 info in file ") + identity_ca.substr(7));
-
-                    sk_X509_INFO_pop_free(inf, X509_INFO_free);
+                    }
                 }
                 else
                     exception = _SecurityException_(std::string("OpenSSL library cannot read file ") + identity_ca.substr(7));

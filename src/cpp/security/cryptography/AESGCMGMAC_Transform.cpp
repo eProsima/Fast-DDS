@@ -34,7 +34,7 @@
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
-constexpr int initialization_vector_suffix_length = 8;
+CONSTEXPR int initialization_vector_suffix_length = 8;
 
 AESGCMGMAC_Transform::AESGCMGMAC_Transform()
 {
@@ -1222,7 +1222,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
         return false;
     }
 
-    plain_rtps_submessage.length += length;
+    plain_rtps_submessage.length += static_cast<uint32_t>(length);
     encoded_rtps_submessage.pos += decoder.getSerializedDataLength();
 
     return true;
@@ -1308,7 +1308,6 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     // Tag
     try
     {
-        SecurityException exception;
         deserialize_SecureDataTag(decoder, tag, {}, {}, {}, {}, {}, 0, exception);
     }
     catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
