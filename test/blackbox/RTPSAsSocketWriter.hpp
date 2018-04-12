@@ -127,6 +127,11 @@ class RTPSAsSocketWriter
             }
         }
 
+        bool is_history_empty () 
+        {
+            return history_->getHistorySize() == 0;
+        }
+
         /*** Function to change QoS ***/
         RTPSAsSocketWriter& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
         {
@@ -134,6 +139,13 @@ class RTPSAsSocketWriter
 
             if(kind == eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE)
                 writer_attr_.endpoint.setEntityID(2);
+            return *this;
+        }
+
+        RTPSAsSocketWriter& durability(const eprosima::fastrtps::rtps::DurabilityKind_t kind)
+        {
+            writer_attr_.endpoint.durabilityKind = kind;
+
             return *this;
         }
 
