@@ -640,7 +640,7 @@ void StatefulWriter::check_acked_status()
     {
         std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
 
-        if((*it)->get_low_mark() < min_low_mark)
+        if(min_low_mark == SequenceNumber_t() || (*it)->get_low_mark() < min_low_mark)
         {
             min_low_mark = (*it)->get_low_mark();
         }
