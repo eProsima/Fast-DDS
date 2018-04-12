@@ -191,13 +191,25 @@ class RTPSAsSocketReader
             mutex_.unlock();
         }
 
-        std::list<type> block(const std::chrono::seconds &max_wait)
+        void block(std::function<bool()> checker)
         {
             std::unique_lock<std::mutex> lock(mutex_);
-            if(current_received_count_ != number_samples_expected_)
-                cv_.wait_for(lock, max_wait);
+            cv_.wait(lock, checker);
+        }
 
-            return total_msgs_;
+        void block_for_all()
+        {
+            block([this]() -> bool {
+                    return number_samples_expected_ == current_received_count_;
+                    });
+        }
+
+        size_t block_for_at_least(size_t at_least)
+        {
+            block([this, at_least]() -> bool {
+                    return current_received_count_ >= at_least;
+                    });
+            return current_received_count_;
         }
 
         unsigned int getReceivedCount() const
@@ -290,9 +302,8 @@ class RTPSAsSocketReader
                     ASSERT_NE(it, total_msgs_.end());
                     total_msgs_.erase(it);
                     ++current_received_count_;
-
-                    if(current_received_count_ == number_samples_expected_)
-                        cv_.notify_one();
+                    default_receive_print<type>(data);
+                    cv_.notify_one();
                 }
 
                 eprosima::fastrtps::rtps::ReaderHistory *history = reader->getHistory();
@@ -315,7 +326,7 @@ class RTPSAsSocketReader
         std::condition_variable cv_;
         std::string magicword_;
         bool receiving_;
-		eprosima::fastrtps::rtps::SequenceNumber_t last_seq_;
+        eprosima::fastrtps::rtps::SequenceNumber_t last_seq_;
         size_t current_received_count_;
         size_t number_samples_expected_;
         std::string ip_;

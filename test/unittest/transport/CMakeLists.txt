@@ -56,16 +56,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         include_directories(mock/)
 
-        string(RANDOM LENGTH 4 ALPHABET 0123456789 PORT_RANDOM_NUMBER)
-        math(EXPR PORT_RANDOM_NUMBER "${PORT_RANDOM_NUMBER} + 0") # Remove extra leading 0s.
-        if(PORT_RANDOM_NUMBER LESS 1025)
-            math(EXPR PORT_RANDOM_NUMBER "${PORT_RANDOM_NUMBER} + 1024") # Remove extra leading 0s.
-        endif()
-
         add_executable(UDPv4Tests ${UDPV4TESTS_SOURCE})
-        add_gtest(UDPv4Tests ${UDPV4TESTS_SOURCE}
-            ENVIRONMENT "PORT_RANDOM_NUMBER=${PORT_RANDOM_NUMBER}"
-            )
+        add_gtest(UDPv4Tests ${UDPV4TESTS_SOURCE})
         target_compile_definitions(UDPv4Tests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(UDPv4Tests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
@@ -80,9 +72,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         if(NOT DISABLE_UDPV6_TESTS)
             add_executable(UDPv6Tests ${UDPV6TESTS_SOURCE})
-            add_gtest(UDPv6Tests ${UDPV6TESTS_SOURCE}
-                ENVIRONMENT "PORT_RANDOM_NUMBER=${PORT_RANDOM_NUMBER}"
-                )
+            add_gtest(UDPv6Tests ${UDPV6TESTS_SOURCE})
             target_compile_definitions(UDPv6Tests PRIVATE FASTRTPS_NO_LIB)
             target_include_directories(UDPv6Tests PRIVATE ${GTEST_INCLUDE_DIRS}
                 ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
@@ -95,9 +85,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         endif()
 
         add_executable(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
-        add_gtest(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE}
-            ENVIRONMENT "PORT_RANDOM_NUMBER=${PORT_RANDOM_NUMBER}"
-            )
+        add_gtest(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
         target_compile_definitions(test_UDPv4Tests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(test_UDPv4Tests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})

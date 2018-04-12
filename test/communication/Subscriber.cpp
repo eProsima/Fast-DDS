@@ -17,6 +17,8 @@
  *
  */
 
+#include <asio.hpp>
+
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
@@ -29,6 +31,7 @@
 #include <types/HelloWorldType.h>
 
 #include <mutex>
+#include <fstream>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -75,16 +78,30 @@ int main(int argc, char** argv)
 {
     int arg_count = 1;
     bool notexit = false;
+    uint32_t seed = 7800;
 
     while(arg_count < argc)
     {
         if(strcmp(argv[arg_count], "--notexit") == 0)
+        {
             notexit = true;
+        }
+        else if(strcmp(argv[arg_count], "--seed") == 0)
+        {
+            if(++arg_count >= argc)
+            {
+                std::cout << "--seed expects a parameter" << std::endl;
+                return -1;
+            }
+
+            seed = strtol(argv[arg_count], nullptr, 10);
+        }
 
         ++arg_count;
     }
 
     ParticipantAttributes participant_attributes;
+    participant_attributes.rtps.builtin.domainId = seed % 230;
     participant_attributes.rtps.builtin.leaseDuration.seconds = 3;
     participant_attributes.rtps.builtin.leaseDuration_announcementperiod.seconds = 1;
     Participant* participant = Domain::createParticipant(participant_attributes);
@@ -98,11 +115,15 @@ int main(int argc, char** argv)
 
     SubListener listener;
 
+    // Generate topic name
+    std::ostringstream topic;
+    topic << "HelloWorldTopic_" << asio::ip::host_name() << "_" << seed;
+
     //CREATE THE SUBSCRIBER
     SubscriberAttributes subscriber_attributes;
     subscriber_attributes.topic.topicKind = NO_KEY;
     subscriber_attributes.topic.topicDataType = type.getName();
-    subscriber_attributes.topic.topicName = "HelloWorldTopic";
+    subscriber_attributes.topic.topicName = topic.str();
     subscriber_attributes.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Subscriber* subscriber = Domain::createSubscriber(participant, subscriber_attributes, &listener);
 

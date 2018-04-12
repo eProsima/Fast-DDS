@@ -123,19 +123,22 @@ using namespace eprosima::fastrtps::rtps;
 #define BLACKBOXTEST(test_case_name, test_name) TEST(EVALUATOR(test_case_name, MEMORY_MODE_STRING), test_name)
 #define TEST_TOPIC_NAME std::string(test_info_->test_case_name() + std::string("_") + test_info_->name())
 
-uint32_t global_port = 0;
+uint16_t global_port = 0;
 
 #if HAVE_SECURITY
 static const char* certs_path = nullptr;
 #endif
 
-uint32_t get_port()
+uint16_t get_port()
 {
-    uint32_t port = GET_PID();
+    uint16_t port = static_cast<uint16_t>(GET_PID());
 
-    if(port + 7400 > port)
-        port += 7400;
+    if(4000 > port)
+    {
+        port += 4000;
+    }
 
+    std::cout << "Generating port " << port << std::endl;
     return port;
 }
 
@@ -145,10 +148,7 @@ class BlackboxEnvironment : public ::testing::Environment
 
         void SetUp()
         {
-            global_port = GET_PID();
-
-            if(global_port + 7400 > global_port)
-                global_port += 7400;
+            global_port = get_port();
             //Log::SetVerbosity(Log::Info);
             //Log::SetCategoryFilter(std::regex("(SECURITY)"));
         }
@@ -314,7 +314,6 @@ BLACKBOXTEST(BlackBox, RTPSAsNonReliableSocket)
     ASSERT_TRUE(writer.isInitialized());
 
     auto data = default_helloworld_data_generator();
-    size_t data_length = data.size();
 
     reader.expected_data(data);
     reader.startReception();
@@ -323,10 +322,7 @@ BLACKBOXTEST(BlackBox, RTPSAsNonReliableSocket)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(1));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_LE(data.size(), data_length - 2);
+    reader.block_for_at_least(2);
 }
 
 BLACKBOXTEST(BlackBox, AsyncRTPSAsNonReliableSocket)
@@ -346,7 +342,6 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsNonReliableSocket)
     ASSERT_TRUE(writer.isInitialized());
 
     auto data = default_helloworld_data_generator();
-    size_t data_length = data.size();
 
     reader.expected_data(data);
     reader.startReception();
@@ -355,10 +350,7 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsNonReliableSocket)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(1));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_LE(data.size(), data_length - 2);
+    reader.block_for_at_least(2);
 }
 
 BLACKBOXTEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
@@ -381,7 +373,6 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl
     ASSERT_TRUE(writer.isInitialized());
 
     auto data = default_helloworld_data_generator();
-    size_t data_length = data.size();
 
     reader.expected_data(data);
     reader.startReception();
@@ -390,10 +381,7 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(1));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_LE(data.size(), data_length - 2);
+    reader.block_for_at_least(2);
 }
 
 BLACKBOXTEST(BlackBox, RTPSAsReliableSocket)
@@ -422,10 +410,7 @@ BLACKBOXTEST(BlackBox, RTPSAsReliableSocket)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, AsyncRTPSAsReliableSocket)
@@ -455,10 +440,7 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsReliableSocket)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, RTPSAsNonReliableWithRegistration)
@@ -480,7 +462,6 @@ BLACKBOXTEST(BlackBox, RTPSAsNonReliableWithRegistration)
     reader.waitDiscovery();
 
     auto data = default_helloworld_data_generator();
-    size_t data_length = data.size();
 
     reader.expected_data(data);
     reader.startReception();
@@ -489,10 +470,7 @@ BLACKBOXTEST(BlackBox, RTPSAsNonReliableWithRegistration)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(1));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_LE(data.size(), data_length - 2);
+    reader.block_for_at_least(2);
 }
 
 BLACKBOXTEST(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
@@ -515,7 +493,6 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
     reader.waitDiscovery();
 
     auto data = default_helloworld_data_generator();
-    size_t data_length = data.size();
 
     reader.expected_data(data);
     reader.startReception();
@@ -524,10 +501,7 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(1));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_LE(data.size(), data_length - 2);
+    reader.block_for_at_least(2);
 }
 
 BLACKBOXTEST(BlackBox, RTPSAsReliableWithRegistration)
@@ -559,10 +533,7 @@ BLACKBOXTEST(BlackBox, RTPSAsReliableWithRegistration)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, AsyncRTPSAsReliableWithRegistration)
@@ -594,10 +565,7 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsReliableWithRegistration)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 }
 
 BLACKBOXTEST(BlackBox, PubSubAsNonReliableHelloworld)
@@ -1786,45 +1754,17 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldUserData)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-    std::vector<octet> received_user_data;
-    reader.setOnDiscoveryFunction([](const ParticipantDiscoveryInfo& info) -> bool{
-            std::cout << "Received USER_DATA from the writer: ";
-            for (auto i: info.rtps.m_userData) std::cout << i << ' ';
-            return info.rtps.m_userData == std::vector<octet>({'a','b','c','d'});
-        });
-
-    reader.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
     writer.history_depth(100).
         userData({'a','b','c','d'}).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
-    reader.waitDiscovery();
-    writer.waitDiscovery();
-
-    ASSERT_TRUE(reader.getDiscoveryResult());
-}
-
-BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-
-    GUID_t participant_guid;
-    reader.setOnDiscoveryFunction([&participant_guid](const ParticipantDiscoveryInfo& info) -> bool{
-            if(info.rtps.m_status == DISCOVERED_RTPSPARTICIPANT)
+    reader.setOnDiscoveryFunction([&writer](const ParticipantDiscoveryInfo& info) -> bool{
+            if(info.rtps.m_guid == writer.participant_guid())
             {
-                std::cout << "Discovered participant " << info.rtps.m_guid << std::endl;
-                participant_guid = info.rtps.m_guid;
-            }
-            else if(info.rtps.m_status == REMOVED_RTPSPARTICIPANT)
-            {
-                std::cout << "Removed participant " << info.rtps.m_guid << std::endl;
-                return participant_guid == info.rtps.m_guid;
+                std::cout << "Received USER_DATA from the writer: ";
+                for (auto i: info.rtps.m_userData) std::cout << i << ' ';
+                return info.rtps.m_userData == std::vector<octet>({'a','b','c','d'});
             }
 
             return false;
@@ -1835,9 +1775,46 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
 
     ASSERT_TRUE(reader.isInitialized());
 
+
+    reader.waitDiscovery();
+    writer.waitDiscovery();
+
+    reader.wait_discovery_result();
+}
+
+BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
     writer.history_depth(100).init();
 
     ASSERT_TRUE(writer.isInitialized());
+
+    int count = 0;
+    reader.setOnDiscoveryFunction([&writer, &count](const ParticipantDiscoveryInfo& info) -> bool{
+            if(info.rtps.m_guid == writer.participant_guid())
+            {
+                if(info.rtps.m_status == DISCOVERED_RTPSPARTICIPANT)
+                {
+                    std::cout << "Discovered participant " << info.rtps.m_guid << std::endl;
+                    ++count;
+                }
+                else if(info.rtps.m_status == REMOVED_RTPSPARTICIPANT ||
+                        info.rtps.m_status == DROPPED_RTPSPARTICIPANT)
+                {
+                    std::cout << "Removed participant " << info.rtps.m_guid << std::endl;
+                    return ++count == 2;
+                }
+            }
+
+            return false;
+        });
+
+    reader.history_depth(100).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
 
     reader.waitDiscovery();
     writer.waitDiscovery();
@@ -1846,7 +1823,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
 
     reader.wait_participant_undiscovery();
 
-    ASSERT_TRUE(reader.getDiscoveryResult());
+    reader.wait_discovery_result();
 }
 
 BLACKBOXTEST(BlackBox, EDPSlaveReaderAttachment)
@@ -2037,10 +2014,7 @@ BLACKBOXTEST(BlackBox, RTPSAsReliableVolatileSocket)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(2));
-
-    print_non_received_messages(data, default_helloworld_print);
-    ASSERT_EQ(data.size(), 0);
+    reader.block_for_all();
 
     // Wait for acks to be sent and check writer history is empty
     std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -4086,34 +4060,6 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_user_data)
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
                    pub_property_policy, sub_property_policy;
 
-    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-                    "builtin.PKI-DH"));
-    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-                    "file://" + std::string(certs_path) + "/maincacert.pem"));
-    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
-    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
-    sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-                    "builtin.AES-GCM-GMAC"));
-    sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    std::vector<octet> received_user_data;
-    reader.setOnDiscoveryFunction([](const ParticipantDiscoveryInfo& info) -> bool{
-            std::cout << "Received USER_DATA from the writer: ";
-            for (auto i: info.rtps.m_userData) std::cout << i << ' ';
-            return info.rtps.m_userData == std::vector<octet>({'a','b','c','d','e'});
-        });
-
-    reader.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        property_policy(sub_part_property_policy).
-        entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
     pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
                     "builtin.PKI-DH"));
     pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
@@ -4135,6 +4081,38 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_user_data)
 
     ASSERT_TRUE(writer.isInitialized());
 
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
+    sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
+    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    reader.setOnDiscoveryFunction([&writer](const ParticipantDiscoveryInfo& info) -> bool{
+            if(info.rtps.m_guid == writer.participant_guid())
+            {
+                std::cout << "Received USER_DATA from the writer: ";
+                for (auto i: info.rtps.m_userData) std::cout << i << ' ';
+                return info.rtps.m_userData == std::vector<octet>({'a','b','c','d','e'});
+            }
+
+            return false;
+        });
+
+    reader.history_depth(100).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        property_policy(sub_part_property_policy).
+        entity_property_policy(sub_property_policy).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
     // Wait for authorization
     reader.waitAuthorized();
     writer.waitAuthorized();
@@ -4142,7 +4120,7 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_user_data)
     reader.waitDiscovery();
     writer.waitDiscovery();
 
-    ASSERT_TRUE(reader.getDiscoveryResult());
+    reader.wait_discovery_result();
 }
 
 #endif

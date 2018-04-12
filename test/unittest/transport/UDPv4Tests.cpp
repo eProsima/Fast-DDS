@@ -34,14 +34,16 @@ const uint32_t ReceiveBufferCapacity = 65536;
 #define GET_PID getpid
 #endif
 
-static uint32_t g_default_port = 0;
+static uint16_t g_default_port = 0;
 
-uint32_t get_port()
+uint16_t get_port()
 {
-    uint32_t port = GET_PID();
+    uint16_t port = static_cast<uint16_t>(GET_PID());
 
-    if(port + 7400 > port)
-        port += 7400;
+    if(4000 > port)
+    {
+        port += 4000;
+    }
 
     return port;
 }
@@ -473,9 +475,7 @@ void UDPv4Tests::HELPER_SetDescriptorDefaults()
 int main(int argc, char **argv)
 {
     Log::SetVerbosity(Log::Info);
-
-    if(const char* env_p = std::getenv("PORT_RANDOM_NUMBER"))
-        g_default_port = std::stoi(env_p);
+    g_default_port = get_port();
 
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -200,7 +200,7 @@ class SecurityManager
                 void set_auth(AuthUniquePtr& auth)
                 {
                     assert(auth.get() == &auth_);
-                    auth_ptr_ = std::move(auth); 
+                    auth_ptr_ = std::move(auth);
                 }
 
                 void set_shared_secret(SharedSecretHandle* shared_secret)
@@ -221,6 +221,14 @@ class SecurityManager
                 ParticipantCryptoHandle* get_participant_crypto()
                 {
                     return participant_crypto_;
+                }
+
+                void stop_event()
+                {
+                    if(auth_.event_ != nullptr)
+                    {
+                        auth_.event_->cancel_timer();
+                    }
                 }
 
             private:

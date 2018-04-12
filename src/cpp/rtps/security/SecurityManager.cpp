@@ -226,6 +226,8 @@ void SecurityManager::destroy()
 
         for(auto& dp_it : discovered_participants_)
         {
+            dp_it.second.stop_event();
+
             auto auth_ptr = dp_it.second.get_auth();
 
             ParticipantCryptoHandle* participant_crypto_handle = dp_it.second.get_participant_crypto();

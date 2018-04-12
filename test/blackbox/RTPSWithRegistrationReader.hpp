@@ -181,13 +181,25 @@ class RTPSWithRegistrationReader
             mutex_.unlock();
         }
 
-        std::list<type> block(const std::chrono::seconds &max_wait)
+        void block(std::function<bool()> checker)
         {
             std::unique_lock<std::mutex> lock(mutex_);
-            if(current_received_count_ != number_samples_expected_)
-                cv_.wait_for(lock, max_wait);
+            cv_.wait(lock, checker);
+        }
 
-            return total_msgs_;
+        void block_for_all()
+        {
+            block([this]() -> bool {
+                    return number_samples_expected_ == current_received_count_;
+                    });
+        }
+
+        size_t block_for_at_least(size_t at_least)
+        {
+            block([this, at_least]() -> bool {
+                    return current_received_count_ >= at_least;
+                    });
+            return current_received_count_;
         }
 
         void waitDiscovery()
@@ -214,12 +226,12 @@ class RTPSWithRegistrationReader
 
         /*** Function to change QoS ***/
         RTPSWithRegistrationReader& memoryMode(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryPolicy)
-	{
-		hattr_.memoryPolicy=memoryPolicy;
-		return *this;
-	}
+        {
+            hattr_.memoryPolicy=memoryPolicy;
+            return *this;
+        }
 
-	RTPSWithRegistrationReader& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
+        RTPSWithRegistrationReader& reliability(const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
         {
             reader_attr_.endpoint.reliabilityKind = kind;
 
@@ -263,9 +275,8 @@ class RTPSWithRegistrationReader
                 ASSERT_NE(it, total_msgs_.end());
                 total_msgs_.erase(it);
                 ++current_received_count_;
-
-                if(current_received_count_ == number_samples_expected_)
-                    cv_.notify_one();
+                default_receive_print<type>(data);
+                cv_.notify_one();
 
                 eprosima::fastrtps::rtps::ReaderHistory *history = reader->getHistory();
                 ASSERT_NE(history, nullptr);
@@ -282,7 +293,7 @@ class RTPSWithRegistrationReader
         eprosima::fastrtps::TopicAttributes topic_attr_;
         eprosima::fastrtps::ReaderQos reader_qos_;
         eprosima::fastrtps::rtps::ReaderHistory* history_;
-	eprosima::fastrtps::rtps::HistoryAttributes hattr_;
+        eprosima::fastrtps::rtps::HistoryAttributes hattr_;
         bool initialized_;
         std::list<type> total_msgs_;
         std::mutex mutex_;
@@ -291,7 +302,7 @@ class RTPSWithRegistrationReader
         std::condition_variable cvDiscovery_;
         bool receiving_;
         unsigned int matched_;
-		eprosima::fastrtps::rtps::SequenceNumber_t last_seq_;
+        eprosima::fastrtps::rtps::SequenceNumber_t last_seq_;
         size_t current_received_count_;
         size_t number_samples_expected_;
         type_support type_;

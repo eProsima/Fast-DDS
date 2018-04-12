@@ -63,7 +63,8 @@ class PubSubWriter
                 {
                     writer_.participant_matched();
                 }
-                else if(info.rtps.m_status == eprosima::fastrtps::rtps::REMOVED_RTPSPARTICIPANT)
+                else if(info.rtps.m_status == eprosima::fastrtps::rtps::REMOVED_RTPSPARTICIPANT ||
+                        info.rtps.m_status == eprosima::fastrtps::rtps::DROPPED_RTPSPARTICIPANT)
                 {
                     writer_.participant_unmatched();
                 }
@@ -97,9 +98,15 @@ class PubSubWriter
             void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, eprosima::fastrtps::rtps::MatchingInfo &info)
             {
                 if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
+                {
+                    std::cout << "Matched subscriber " << info.remoteEndpointGuid << std::endl;
                     writer_.matched();
+                }
                 else
+                {
+                    std::cout << "Unmatched subscriber " << info.remoteEndpointGuid << std::endl;
                     writer_.unmatched();
+                }
             }
 
         private:
@@ -269,6 +276,8 @@ class PubSubWriter
 
         if(participant_ != nullptr)
         {
+            participant_guid_ = participant_->getGuid();
+
             if(attachEDP_)
             {
                 std::pair<eprosima::fastrtps::rtps::StatefulReader*, eprosima::fastrtps::rtps::StatefulReader*> edpReaders = participant_->getEDPReaders();
@@ -284,6 +293,8 @@ class PubSubWriter
 
             if(publisher_ != nullptr)
             {
+                std::cout << "Created publisher " << publisher_->getGuid() << " for topic " <<
+                    publisher_attr_.topic.topicName << std::endl;
                 initialized_ = true;
                 return;
             }
@@ -363,29 +374,25 @@ class PubSubWriter
     }
 
 #if HAVE_SECURITY
-    void waitAuthorized(unsigned int how_many = 1)
+    void waitAuthorized()
     {
         std::unique_lock<std::mutex> lock(mutexAuthentication_);
 
         std::cout << "Writer is waiting authorization..." << std::endl;
 
-        while(authorized_ != how_many)
-            cvAuthentication_.wait(lock);
+        cvAuthentication_.wait(lock, [&]() -> bool { return authorized_ > 0; });
 
-        ASSERT_EQ(authorized_, how_many);
         std::cout << "Writer authorization finished..." << std::endl;
     }
 
-    void waitUnauthorized(unsigned int how_many = 1)
+    void waitUnauthorized()
     {
         std::unique_lock<std::mutex> lock(mutexAuthentication_);
 
         std::cout << "Writer is waiting unauthorization..." << std::endl;
 
-        while(unauthorized_ != how_many)
-            cvAuthentication_.wait(lock);
+        cvAuthentication_.wait(lock, [&]() -> bool { return unauthorized_ > 0; });
 
-        ASSERT_EQ(unauthorized_, how_many);
         std::cout << "Writer unauthorization finished..." << std::endl;
     }
 #endif
@@ -643,6 +650,11 @@ class PubSubWriter
 
     const std::string& topic_name() const { return topic_name_; }
 
+    eprosima::fastrtps::rtps::GUID_t participant_guid()
+    {
+        return participant_guid_;
+    }
+
     private:
 
     void participant_matched()
@@ -794,6 +806,7 @@ class PubSubWriter
     eprosima::fastrtps::Publisher *publisher_;
     eprosima::fastrtps::PublisherAttributes publisher_attr_;
     std::string topic_name_;
+    eprosima::fastrtps::rtps::GUID_t participant_guid_;
     bool initialized_;
     std::mutex mutexDiscovery_;
     std::condition_variable cv_;

@@ -58,17 +58,19 @@ class PubSubReader
 
                 void onParticipantDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantDiscoveryInfo info)
                 {
-                    if(reader_.onDiscovery_!=nullptr)
+                    if(reader_.onDiscovery_!= nullptr)
                     {
-                        reader_.discovery_result_ = reader_.onDiscovery_(info);
-
+                        std::unique_lock<std::mutex> lock(reader_.mutexDiscovery_);
+                        reader_.discovery_result_ |= reader_.onDiscovery_(info);
+                        reader_.cvDiscovery_.notify_one();
                     }
 
                     if(info.rtps.m_status == eprosima::fastrtps::rtps::DISCOVERED_RTPSPARTICIPANT)
                     {
                         reader_.participant_matched();
                     }
-                    else if(info.rtps.m_status == eprosima::fastrtps::rtps::REMOVED_RTPSPARTICIPANT)
+                    else if(info.rtps.m_status == eprosima::fastrtps::rtps::REMOVED_RTPSPARTICIPANT ||
+                            info.rtps.m_status == eprosima::fastrtps::rtps::DROPPED_RTPSPARTICIPANT)
                     {
                         reader_.participant_unmatched();
                     }
@@ -115,9 +117,15 @@ class PubSubReader
                 void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, eprosima::fastrtps::rtps::MatchingInfo& info)
                 {
                     if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
+                    {
+                        std::cout << "Matched publisher " << info.remoteEndpointGuid << std::endl;
                         reader_.matched();
+                    }
                     else
+                    {
+                        std::cout << "Unmatched publisher " << info.remoteEndpointGuid << std::endl;
                         reader_.unmatched();
+                    }
                 }
 
             private:
@@ -171,12 +179,17 @@ class PubSubReader
 
             ASSERT_NE(participant_, nullptr);
 
+            participant_guid_ = participant_->getGuid();
+
             // Register type
             ASSERT_EQ(eprosima::fastrtps::Domain::registerType(participant_, &type_), true);
 
             //Create subscribe r
             subscriber_ = eprosima::fastrtps::Domain::createSubscriber(participant_, subscriber_attr_, &listener_);
             ASSERT_NE(subscriber_, nullptr);
+
+            std::cout << "Created subscriber " << subscriber_->getGuid() << " for topic " <<
+                subscriber_attr_.topic.topicName << std::endl;
 
             initialized_ = true;
         }
@@ -289,29 +302,25 @@ class PubSubReader
         }
 
 #if HAVE_SECURITY
-        void waitAuthorized(unsigned int how_many = 1)
+        void waitAuthorized()
         {
             std::unique_lock<std::mutex> lock(mutexAuthentication_);
 
             std::cout << "Reader is waiting authorization..." << std::endl;
 
-            while(authorized_ != how_many)
-                cvAuthentication_.wait(lock);
+            cvAuthentication_.wait(lock, [&]() -> bool { return authorized_ > 0; });
 
-            ASSERT_EQ(authorized_, how_many);
             std::cout << "Reader authorization finished..." << std::endl;
         }
 
-        void waitUnauthorized(unsigned int how_many = 1)
+        void waitUnauthorized()
         {
             std::unique_lock<std::mutex> lock(mutexAuthentication_);
 
             std::cout << "Reader is waiting unauthorization..." << std::endl;
 
-            while(unauthorized_ != how_many)
-                cvAuthentication_.wait(lock);
+            cvAuthentication_.wait(lock, [&]() -> bool { return unauthorized_ > 0; });
 
-            ASSERT_EQ(unauthorized_, how_many);
             std::cout << "Reader unauthorization finished..." << std::endl;
         }
 #endif
@@ -510,12 +519,24 @@ class PubSubReader
 
         /*** Function for discovery callback ***/
 
-        bool getDiscoveryResult(){
-            return discovery_result_;
+        void wait_discovery_result()
+        {
+            std::unique_lock<std::mutex> lock(mutexDiscovery_);
+
+            std::cout << "Reader is waiting discovery result..." << std::endl;
+
+            cvDiscovery_.wait(lock, [&](){return discovery_result_;});
+
+            std::cout << "Reader gets discovery result..." << std::endl;
         }
 
         void setOnDiscoveryFunction(std::function<bool(const eprosima::fastrtps::ParticipantDiscoveryInfo&)> f){
             onDiscovery_ = f;
+        }
+
+        const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
+        {
+            return participant_guid_;
         }
 
     private:
@@ -601,6 +622,7 @@ class PubSubReader
         eprosima::fastrtps::Subscriber *subscriber_;
         eprosima::fastrtps::SubscriberAttributes subscriber_attr_;
         std::string topic_name_;
+        eprosima::fastrtps::rtps::GUID_t participant_guid_;
         bool initialized_;
         std::list<type> total_msgs_;
         std::mutex mutex_;
@@ -611,7 +633,7 @@ class PubSubReader
         unsigned int participant_matched_;
         std::atomic<bool> receiving_;
         type_support type_;
-		eprosima::fastrtps::rtps::SequenceNumber_t last_seq;
+        eprosima::fastrtps::rtps::SequenceNumber_t last_seq;
         size_t current_received_count_;
         size_t number_samples_expected_;
         bool discovery_result_;

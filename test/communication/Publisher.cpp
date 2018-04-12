@@ -16,6 +16,8 @@
  * @file Publisher.cpp
  */
 
+#include <asio.hpp>
+
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/participant/ParticipantListener.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
@@ -28,6 +30,7 @@
 #include <types/HelloWorldType.h>
 
 #include <mutex>
+#include <fstream>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -99,16 +102,30 @@ int main(int argc, char** argv)
 {
     int arg_count = 1;
     bool exit_on_lost_liveliness = false;
+    uint32_t seed = 7800;
 
     while(arg_count < argc)
     {
         if(strcmp(argv[arg_count], "--exit_on_lost_liveliness") == 0)
+        {
             exit_on_lost_liveliness = true;
+        }
+        else if(strcmp(argv[arg_count], "--seed") == 0)
+        {
+            if(++arg_count >= argc)
+            {
+                std::cout << "--seed expects a parameter" << std::endl;
+                return -1;
+            }
+
+            seed = strtol(argv[arg_count], nullptr, 10);
+        }
 
         ++arg_count;
     }
 
     ParticipantAttributes participant_attributes;
+    participant_attributes.rtps.builtin.domainId = seed % 230;
     participant_attributes.rtps.builtin.leaseDuration.seconds = 3;
     participant_attributes.rtps.builtin.leaseDuration_announcementperiod.seconds = 1;
     ParListener participant_listener(exit_on_lost_liveliness);
@@ -122,11 +139,15 @@ int main(int argc, char** argv)
 
     PubListener listener;
 
+    // Generate topic name
+    std::ostringstream topic;
+    topic << "HelloWorldTopic_" << asio::ip::host_name() << "_" << seed;
+
     //CREATE THE PUBLISHER
     PublisherAttributes publisher_attributes;
     publisher_attributes.topic.topicKind = NO_KEY;
     publisher_attributes.topic.topicDataType = type.getName();
-    publisher_attributes.topic.topicName = "HelloWorldTopic";
+    publisher_attributes.topic.topicName = topic.str();
     publisher_attributes.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Publisher* publisher = Domain::createPublisher(participant, publisher_attributes, &listener);
     if(publisher == nullptr)

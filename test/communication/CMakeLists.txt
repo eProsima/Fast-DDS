@@ -15,6 +15,13 @@
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     find_package(PythonInterp 3)
 
+    add_definitions(
+        -DBOOST_ASIO_STANDALONE
+        -DASIO_STANDALONE
+        )
+
+    include_directories(${ASIO_INCLUDE_DIR})
+
     ###############################################################################
     # Binaries
     ###############################################################################

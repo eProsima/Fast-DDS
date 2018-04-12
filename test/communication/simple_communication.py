@@ -19,8 +19,8 @@ assert publisher_command
 subscriber_command = os.environ.get("SIMPLE_COMMUNICATION_SUBSCRIBER_BIN")
 assert subscriber_command
 
-subscriber_proc = subprocess.Popen([subscriber_command])
-publisher_proc = subprocess.Popen([publisher_command])
+subscriber_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid())])
+publisher_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid())])
 
 subscriber_proc.communicate()
 retvalue = subscriber_proc.returncode
