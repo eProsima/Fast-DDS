@@ -1223,7 +1223,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     }
 
     plain_rtps_submessage.length += static_cast<uint32_t>(length);
-    encoded_rtps_submessage.pos += decoder.getSerializedDataLength();
+    encoded_rtps_submessage.pos += static_cast<uint32_t>(decoder.getSerializedDataLength());
 
     return true;
 }

@@ -304,6 +304,7 @@ bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity& val
         {
             if(node->GetText() != nullptr)
             {
+#if _MSC_VER != 1800
                 struct tm time;
                 memset(&time, 0, sizeof(struct tm));
                 std::istringstream stream(node->GetText());
@@ -312,6 +313,7 @@ bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity& val
                 if(!stream.fail())
                 {
                     validity.not_before = std::mktime(&time);
+#endif
 
                     tinyxml2::XMLElement* old_node = node;
                     (void)old_node;
@@ -321,6 +323,7 @@ bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity& val
                     {
                         if(strcmp(node->Name(), NotAfter_str) == 0)
                         {
+#if _MSC_VER != 1800
                             memset(&time, 0, sizeof(struct tm));
                             stream.str(node->GetText());
                             stream.clear();
@@ -329,6 +332,7 @@ bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity& val
                             if(!stream.fail())
                             {
                                 validity.not_after = std::mktime(&time);
+#endif
                                 returned_value = true;
                             }
                             else
@@ -336,22 +340,26 @@ bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity& val
                                 logError(XMLPARSER, "Fail parsing datetime value in " << NotAfter_str << " tag. Line " <<
                                         PRINTLINE(node));
                             }
+#if _MSC_VER != 1800
                         }
                         else
                         {
                             logError(XMLPARSER, "Expected " << NotAfter_str << " tag. Line " << PRINTLINE(node));
                         }
+#endif
                     }
                     else
                     {
                         logError(XMLPARSER, "Expected " << NotAfter_str << " tag. Line " << PRINTLINEPLUSONE(old_node));
                     }
+#if _MSC_VER != 1800
                 }
                 else
                 {
                     logError(XMLPARSER, "Fail parsing datetime value in " << NotBefore_str << " tag. Line " <<
                             PRINTLINE(node));
                 }
+#endif
             }
             else
             {

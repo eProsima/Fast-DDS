@@ -142,6 +142,7 @@ static bool is_partition_in_criterias(const std::string& partition, const std::v
 
 static bool is_validation_in_time(const Validity& validity)
 {
+#if _MSC_VER != 1800
     bool returned_value = false;
     std::time_t current_time = std::time(nullptr);
 
@@ -154,6 +155,10 @@ static bool is_validation_in_time(const Validity& validity)
     }
 
     return returned_value;
+#else
+    (void)validity;
+    return true;
+#endif
 }
 
 static bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm, SecurityException& exception)
@@ -501,6 +506,10 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
                         if(!is_domain_in_set(domain_id, iterator->domains))
                         {
                             iterator = grant.rules.erase(iterator);
+                        }
+                        else
+                        {
+                            ++iterator;
                         }
                     }
 
