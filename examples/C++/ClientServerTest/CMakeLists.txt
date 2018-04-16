@@ -13,11 +13,21 @@
 # limitations under the License.
 
 cmake_minimum_required(VERSION 2.8.12)
+
+if(NOT CMAKE_VERSION VERSION_LESS 3.0)
+    cmake_policy(SET CMP0048 NEW)
+endif()
+
 project("ClientServerTest")
 
 # Find requirements
-find_package(fastcdr REQUIRED)
+if(NOT fastcdr_FOUND)
+    find_package(fastcdr REQUIRED)
+endif()
+
+if(NOT fastrtps_FOUND)
 find_package(fastrtps REQUIRED)
+endif()
 
 # Set C++11
 include(CheckCXXCompilerFlag)

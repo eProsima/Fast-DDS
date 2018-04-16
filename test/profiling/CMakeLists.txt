@@ -28,7 +28,7 @@ if(PROFILING_TESTS)
 
     add_executable(RTPSCommsProfiling ${RTPSCOMMSPROFILING_SOURCE})
     target_compile_definitions(RTPSCommsProfiling PRIVATE FASTRTPS_NO_LIB)
-    target_include_directories(RTPSCommsProfiling PRIVATE ../ ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
+    target_include_directories(RTPSCommsProfiling PRIVATE ../ ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
     target_link_libraries(RTPSCommsProfiling fastrtps fastcdr ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
     set(RTPSPUBSUBPROFILING_SOURCE
@@ -38,7 +38,7 @@ if(PROFILING_TESTS)
 
     add_executable(RTPSPubSubProfiling ${RTPSPUBSUBPROFILING_SOURCE})
     target_compile_definitions(RTPSPubSubProfiling PRIVATE FASTRTPS_NO_LIB)
-    target_include_directories(RTPSPubSubProfiling PRIVATE ../ ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
+    target_include_directories(RTPSPubSubProfiling PRIVATE ../ ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
     target_link_libraries(RTPSPubSubProfiling fastrtps fastcdr ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
     add_subdirectory(memory)

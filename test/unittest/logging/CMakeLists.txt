@@ -13,7 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/dev/gtest.cmake)
+    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
     check_gtest()
 
     if(GTEST_FOUND)
@@ -32,7 +32,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_gtest(LogTests ${LOGTESTS_SOURCE})
         target_compile_definitions(LogTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(LogTests PRIVATE ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(LogTests ${GTEST_LIBRARIES} ${MOCKS} )
 		if(MSVC OR MSVC_IDE)
 			target_link_libraries(LogTests ${PRIVACY}
