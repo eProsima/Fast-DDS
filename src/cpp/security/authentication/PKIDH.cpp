@@ -1004,6 +1004,14 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
             assert(cert_sn_str != nullptr);
             (*ih)->cert_sn_ = cert_sn_str;
             OPENSSL_free(cert_sn_str);
+            BIO* cert_sn_rfc2253_str = BIO_new(BIO_s_mem());
+            X509_NAME_print_ex(cert_sn_rfc2253_str, cert_sn, 0, XN_FLAG_RFC2253 & ~ASN1_STRFLGS_ESC_MSB);
+            const int bufsize = 1024;
+            char buffer[bufsize];
+            int length = BIO_read(cert_sn_rfc2253_str, buffer, bufsize);
+            BIO_free(cert_sn_rfc2253_str);
+            (*ih)->cert_sn_rfc2253_.assign(buffer, length);
+
 
             if(verify_certificate((*ih)->store_, (*ih)->cert_, (*ih)->there_are_crls_))
             {
@@ -1313,13 +1321,18 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     assert(cert_sn_str != nullptr);
     if(rih->cert_sn_.compare(cert_sn_str) != 0)
     {
-        std::cout << "joder1 " << rih->cert_sn_ <<std::endl;
-        std::cout << "joder2 " << cert_sn_str <<std::endl;
         OPENSSL_free(cert_sn_str);
         logWarning(SECURITY_AUTHENTICATION, "Certificated subject name invalid");
         return ValidationResult_t::VALIDATION_FAILED;
     }
     OPENSSL_free(cert_sn_str);
+    BIO* cert_sn_rfc2253_str = BIO_new(BIO_s_mem());
+    X509_NAME_print_ex(cert_sn_rfc2253_str, cert_sn, 0, XN_FLAG_RFC2253 & ~ASN1_STRFLGS_ESC_MSB);
+    const int bufsize = 1024;
+    char buffer[bufsize];
+    int str_length = BIO_read(cert_sn_rfc2253_str, buffer, bufsize);
+    BIO_free(cert_sn_rfc2253_str);
+    rih->cert_sn_rfc2253_.assign(buffer, str_length);
 
     if(!verify_certificate(lih->store_, rih->cert_, lih->there_are_crls_))
     {
@@ -1704,6 +1717,25 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
+    X509_NAME* cert_sn = X509_get_subject_name(rih->cert_);
+    assert(cert_sn != nullptr);
+    char* cert_sn_str = X509_NAME_oneline(cert_sn, 0, 0);
+    assert(cert_sn_str != nullptr);
+    if(rih->cert_sn_.compare(cert_sn_str) != 0)
+    {
+        OPENSSL_free(cert_sn_str);
+        logWarning(SECURITY_AUTHENTICATION, "Certificated subject name invalid");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+    OPENSSL_free(cert_sn_str);
+    BIO* cert_sn_rfc2253_str = BIO_new(BIO_s_mem());
+    X509_NAME_print_ex(cert_sn_rfc2253_str, cert_sn, 0, XN_FLAG_RFC2253 & ~ASN1_STRFLGS_ESC_MSB);
+    const int bufsize = 1024;
+    char buffer[bufsize];
+    int str_length = BIO_read(cert_sn_rfc2253_str, buffer, bufsize);
+    BIO_free(cert_sn_rfc2253_str);
+    rih->cert_sn_rfc2253_.assign(buffer, str_length);
+
     if(!verify_certificate(lih->store_, rih->cert_, lih->there_are_crls_))
     {
         logWarning(SECURITY_AUTHENTICATION, "Error verifying certificate");
@@ -1755,9 +1787,6 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
         logWarning(SECURITY_AUTHENTICATION, "Bad participant_key's first bit in c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
     }
-
-    X509_NAME* cert_sn = X509_get_subject_name(rih->cert_);
-    assert(cert_sn != nullptr);
 
     unsigned char md[SHA256_DIGEST_LENGTH];
     unsigned int length = 0;

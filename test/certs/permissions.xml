@@ -3,7 +3,7 @@
     <permissions>
         xsi:noNamespaceSchemaLocation="omg_shared_ca_domain_permissions.xsd">
         <grant name="PublisherPermissions">
-            <subject_name>/C=ES/ST=MA/O=eProsima/OU=eProsima/CN=Main Publisher/emailAddress=mainpub@eprosima.com</subject_name>
+            <subject_name>emailAddress=mainpub@eprosima.com, CN=Main Publisher, OU=eProsima, O=eProsima, ST=MA, C=ES</subject_name>
             <validity>
                 <not_before>2013-06-01T13:00:00</not_before>
                 <not_after>2018-06-01T13:00:00</not_after>
@@ -25,7 +25,7 @@
             <default>DENY</default>
         </grant>
         <grant name="SubscriberPermissions">
-            <subject_name>/C=ES/ST=MA/O=eProsima/OU=eProsima/CN=Main Subscriber/emailAddress=mainsub@eprosima.com</subject_name>
+            <subject_name> emailAddress=mainsub@eprosima.com, CN=Main Subscriber, OU=eProsima, O=eProsima, ST=MA, C=ES</subject_name>
             <validity>
                 <not_before>2013-06-01T13:00:00</not_before>
                 <not_after>2018-06-01T13:00:00</not_after>

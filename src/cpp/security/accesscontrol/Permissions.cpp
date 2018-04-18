@@ -203,6 +203,62 @@ static bool get_signature_algorithm(X509* certificate, std::string& signature_al
     return returnedValue;
 }
 
+static bool rfc2253_string_compare(const std::string& str1, const std::string& str2)
+{
+    bool returned_value = true;
+
+    size_t str1_mark_low = 0, str1_mark_high = 0, str2_mark_low = 0, str2_mark_high = 0;
+
+    str1_mark_high = str1.find_first_of(',');
+    if(str1_mark_high == std::string::npos)
+    {
+        str1_mark_high = str1.length();
+    }
+    str2_mark_high = str2.find_first_of(',');
+    if(str2_mark_high == std::string::npos)
+    {
+        str2_mark_high = str2.length();
+    }
+
+    while(str1_mark_low < str1_mark_high && str2_mark_low < str2_mark_high)
+    {
+        // Trim
+        size_t str1_trim_high = str1_mark_high - 1, str2_trim_high = str2_mark_high - 1;
+
+        while(str1.at(str1_mark_low) == ' ' && (str1_mark_low + 1) != str1_trim_high) ++str1_mark_low;
+        while(str2.at(str2_mark_low) == ' ' && (str2_mark_low + 1) != str2_trim_high) ++str2_mark_low;
+        while(str1.at(str1_trim_high) == ' ' && (str1_trim_high - 1) != str1_mark_low) --str1_trim_high;
+        while(str2.at(str2_trim_high) == ' ' && (str2_trim_high - 1) != str2_mark_low) --str2_trim_high;
+
+        if(str1.compare(str1_mark_low, str1_trim_high - str1_mark_low + 1, str2,
+                    str2_mark_low, str2_trim_high - str2_mark_low + 1) != 0)
+        {
+            returned_value = false;
+            break;
+        }
+
+        str1_mark_low = str1_mark_high + 1;
+        str2_mark_low = str2_mark_high + 1;
+        str1_mark_high = str1.find_first_of(',', str1_mark_low);
+        if(str1_mark_high == std::string::npos)
+        {
+            str1_mark_high = str1.length();
+        }
+        str2_mark_high = str2.find_first_of(',', str2_mark_low);
+        if(str2_mark_high == std::string::npos)
+        {
+            str2_mark_high = str2.length();
+        }
+    }
+
+    if(str1_mark_low < str1_mark_high || str2_mark_low < str2_mark_high)
+    {
+        returned_value = false;
+    }
+
+    return returned_value;
+}
+
 // Auxiliary functions
 static X509_STORE* load_permissions_ca(const std::string& permissions_ca, bool& there_are_crls,
         std::string& ca_sn, std::string& ca_algo, SecurityException& exception)
@@ -494,7 +550,7 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
         {
             if(is_validation_in_time(grant.validity))
             {
-                if(grant.subject_name.compare(lih->cert_sn_) == 0)
+                if(rfc2253_string_compare(grant.subject_name, lih->cert_sn_rfc2253_))
                 {
                     ah->grant = std::move(grant);
                     returned_value = true;
@@ -592,7 +648,7 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
         else
         {
             exception = _SecurityException_(std::string("Not found the identity subject name in permissions file. Subject name: ") +
-                    lih->cert_sn_);
+                    lih->cert_sn_rfc2253_);
         }
     }
     else
@@ -853,7 +909,7 @@ PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
     {
         if(is_validation_in_time(grant.validity))
         {
-            if(grant.subject_name.compare(rih->cert_sn_) == 0)
+            if(rfc2253_string_compare(grant.subject_name, rih->cert_sn_rfc2253_))
             {
                 remote_grant = std::move(grant);
                 break;
