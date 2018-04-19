@@ -209,6 +209,7 @@ option(SECURITY "Activate security" OFF)
 
 if(SECURITY)
     find_package(OpenSSL REQUIRED)
+    find_package(fastcdr REQUIRED)
 endif()
 
 ###############################################################################
