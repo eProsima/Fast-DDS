@@ -35,6 +35,7 @@ struct TopicRule
 {
     std::string topic_expression;
     bool enable_discovery_protection;
+    bool enable_liveliness_protection;
     bool enable_read_access_control;
     bool enable_write_access_control;
     ProtectionKind metadata_protection_kind;

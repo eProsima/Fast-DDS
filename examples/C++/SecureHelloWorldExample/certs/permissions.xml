@@ -16,8 +16,7 @@
                 </domains>
                 <publish>
                     <topics>
-                        <topic>*clock*</topic>
-                        <topic>BlackBox_*_BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions*_validation_ok*</topic>
+                        <topic>HelloWorldTopic</topic>
                     </topics>
                 </publish>
             </allow_rule>
@@ -38,9 +37,7 @@
                 </domains>
                 <subscribe>
                     <topics>
-                        <topic>*clock*</topic>
-                        <topic>BlackBox_*_BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions*_validation_ok*</topic>
-                        <topic>*temperature*</topic>
+                        <topic>HelloWorldTopic</topic>
                     </topics>
                 </subscribe>
             </allow_rule>

@@ -39,6 +39,7 @@ static const char* TopicAccessRules_str = "topic_access_rules";
 static const char* TopicRule_str = "topic_rule";
 static const char* TopicExpression_str = "topic_expression";
 static const char* EnableDiscoveryProtection_str = "enable_discovery_protection";
+static const char* EnableLivelinessProtection_str = "enable_liveliness_protection";
 static const char* EnableReadAccessControl_str = "enable_read_access_control";
 static const char* EnableWriteAccessControl_str = "enable_write_access_control";
 static const char* MetadataProtectionKind_str = "metadata_protection_kind";
@@ -507,6 +508,31 @@ bool GovernanceParser::parse_topic_rule(tinyxml2::XMLElement* root, TopicRule& r
     else
     {
         logError(XMLPARSER, "Expected " << EnableDiscoveryProtection_str << " tag. Line " << PRINTLINEPLUSONE(old_node));
+        return false;
+    }
+
+    old_node = node;
+    node = node->NextSiblingElement();
+
+    if(node != nullptr)
+    {
+        if(strcmp(node->Name(), EnableLivelinessProtection_str) == 0)
+        {
+            if(node->QueryBoolText(&rule.enable_liveliness_protection) != tinyxml2::XMLError::XML_SUCCESS)
+            {
+                logError(XMLPARSER, "Expected boolean value in " << EnableLivelinessProtection_str << " tag. Line " << PRINTLINE(node));
+                return false;
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Expected " << EnableLivelinessProtection_str << " tag. Line " << PRINTLINE(node));
+            return false;
+        }
+    }
+    else
+    {
+        logError(XMLPARSER, "Expected " << EnableLivelinessProtection_str << " tag. Line " << PRINTLINEPLUSONE(old_node));
         return false;
     }
 

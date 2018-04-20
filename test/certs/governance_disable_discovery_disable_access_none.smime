@@ -1,9 +1,9 @@
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----8C2B5D27BC841027C375AFF7476F59DA"
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----7755820831CA4CB5DED8EF066C4726FB"
 
 This is an S/MIME signed message
 
-------8C2B5D27BC841027C375AFF7476F59DA
+------7755820831CA4CB5DED8EF066C4726FB
 Content-Type: text/plain
 
 <?xml version="1.0" encoding="utf-8"?>
@@ -26,6 +26,7 @@ Content-Type: text/plain
                 <topic_rule>
                     <topic_expression>BlackBox_*_BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_encrypt_*</topic_expression>
                     <enable_discovery_protection>true</enable_discovery_protection>
+                    <enable_liveliness_protection>false</enable_liveliness_protection>
                     <enable_read_access_control>true</enable_read_access_control>
                     <enable_write_access_control>true</enable_write_access_control>
                     <metadata_protection_kind>ENCRYPT</metadata_protection_kind>
@@ -34,6 +35,7 @@ Content-Type: text/plain
                 <topic_rule>
                     <topic_expression>BlackBox_*_BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_encrypt_*</topic_expression>
                     <enable_discovery_protection>false</enable_discovery_protection>
+                    <enable_liveliness_protection>false</enable_liveliness_protection>
                     <enable_read_access_control>true</enable_read_access_control>
                     <enable_write_access_control>true</enable_write_access_control>
                     <metadata_protection_kind>ENCRYPT</metadata_protection_kind>
@@ -42,6 +44,7 @@ Content-Type: text/plain
                 <topic_rule>
                     <topic_expression>BlackBox_*_BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_encrypt_*</topic_expression>
                     <enable_discovery_protection>false</enable_discovery_protection>
+                    <enable_liveliness_protection>false</enable_liveliness_protection>
                     <enable_read_access_control>false</enable_read_access_control>
                     <enable_write_access_control>false</enable_write_access_control>
                     <metadata_protection_kind>ENCRYPT</metadata_protection_kind>
@@ -50,6 +53,7 @@ Content-Type: text/plain
                 <topic_rule>
                     <topic_expression>BlackBox_*_BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_encrypt_*</topic_expression>
                     <enable_discovery_protection>true</enable_discovery_protection>
+                    <enable_liveliness_protection>false</enable_liveliness_protection>
                     <enable_read_access_control>false</enable_read_access_control>
                     <enable_write_access_control>false</enable_write_access_control>
                     <metadata_protection_kind>ENCRYPT</metadata_protection_kind>
@@ -58,6 +62,7 @@ Content-Type: text/plain
                 <topic_rule>
                     <topic_expression>BlackBox_*_BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_none_*</topic_expression>
                     <enable_discovery_protection>true</enable_discovery_protection>
+                    <enable_liveliness_protection>false</enable_liveliness_protection>
                     <enable_read_access_control>true</enable_read_access_control>
                     <enable_write_access_control>true</enable_write_access_control>
                     <metadata_protection_kind>NONE</metadata_protection_kind>
@@ -66,6 +71,7 @@ Content-Type: text/plain
                 <topic_rule>
                     <topic_expression>BlackBox_*_BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_none_*</topic_expression>
                     <enable_discovery_protection>false</enable_discovery_protection>
+                    <enable_liveliness_protection>false</enable_liveliness_protection>
                     <enable_read_access_control>true</enable_read_access_control>
                     <enable_write_access_control>true</enable_write_access_control>
                     <metadata_protection_kind>NONE</metadata_protection_kind>
@@ -74,6 +80,7 @@ Content-Type: text/plain
                 <topic_rule>
                     <topic_expression>BlackBox_*_BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_none_*</topic_expression>
                     <enable_discovery_protection>false</enable_discovery_protection>
+                    <enable_liveliness_protection>false</enable_liveliness_protection>
                     <enable_read_access_control>false</enable_read_access_control>
                     <enable_write_access_control>false</enable_write_access_control>
                     <metadata_protection_kind>NONE</metadata_protection_kind>
@@ -82,6 +89,7 @@ Content-Type: text/plain
                 <topic_rule>
                     <topic_expression>BlackBox_*_BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_none_*</topic_expression>
                     <enable_discovery_protection>true</enable_discovery_protection>
+                    <enable_liveliness_protection>false</enable_liveliness_protection>
                     <enable_read_access_control>false</enable_read_access_control>
                     <enable_write_access_control>false</enable_write_access_control>
                     <metadata_protection_kind>NONE</metadata_protection_kind>
@@ -92,12 +100,12 @@ Content-Type: text/plain
     </domain_access_rules>
 </dds>
 
-------8C2B5D27BC841027C375AFF7476F59DA
+------7755820831CA4CB5DED8EF066C4726FB
 Content-Type: application/x-pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
 
-MIIEeAYJKoZIhvcNAQcCoIIEaTCCBGUCAQExDzANBglghkgBZQMEAgEFADALBgkq
+MIIEeQYJKoZIhvcNAQcCoIIEajCCBGYCAQExDzANBglghkgBZQMEAgEFADALBgkq
 hkiG9w0BBwGgggJAMIICPDCCAeOgAwIBAgIJALZwpgo2sxthMAoGCCqGSM49BAMC
 MIGaMQswCQYDVQQGEwJFUzELMAkGA1UECAwCTUExFDASBgNVBAcMC1RyZXMgQ2Fu
 dG9zMREwDwYDVQQKDAhlUHJvc2ltYTERMA8GA1UECwwIZVByb3NpbWExHjAcBgNV
@@ -110,17 +118,17 @@ cm9zaW1hLmNvbTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABGLlhB3WQ8l1fpUE
 3DfOoulA/de38Zfj7hmpKtOnxiH2q6RJbwhxvJeA7R7mkmAKaJKmzx695BjyiXVS
 7bE7vgejEDAOMAwGA1UdEwQFMAMBAf8wCgYIKoZIzj0EAwIDRwAwRAIgVTY1BEvT
 4pw3GyBMzaUqmp69wi0kBkyOgq04OhyJ13UCICR125vvt0fUhXsXaxOAx28E4Ac9
-SVxpI+3UYs2kV5n0MYIB/DCCAfgCAQEwgagwgZoxCzAJBgNVBAYTAkVTMQswCQYD
+SVxpI+3UYs2kV5n0MYIB/TCCAfkCAQEwgagwgZoxCzAJBgNVBAYTAkVTMQswCQYD
 VQQIDAJNQTEUMBIGA1UEBwwLVHJlcyBDYW50b3MxETAPBgNVBAoMCGVQcm9zaW1h
 MREwDwYDVQQLDAhlUHJvc2ltYTEeMBwGA1UEAwwVZVByb3NpbWEgTWFpbiBUZXN0
 IENBMSIwIAYJKoZIhvcNAQkBFhNtYWluY2FAZXByb3NpbWEuY29tAgkAtnCmCjaz
 G2EwDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAc
-BgkqhkiG9w0BCQUxDxcNMTgwNDEyMDkyNTM1WjAvBgkqhkiG9w0BCQQxIgQgdxQp
-KFEaHIZhUeAhGSiVDb/XFk0Eq0StVIGRBUfbDnMweQYJKoZIhvcNAQkPMWwwajAL
+BgkqhkiG9w0BCQUxDxcNMTgwNDIwMDgwNDM0WjAvBgkqhkiG9w0BCQQxIgQgjM4t
+GUBfrEYr90QCgshcCLRAYprPfNga63+xYzg1gYgweQYJKoZIhvcNAQkPMWwwajAL
 BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0D
 BzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAgcwDQYIKoZI
-hvcNAwICASgwCgYIKoZIzj0EAwIERjBEAiAt0XRZ2VqFEuyqSVlATYkv3mrAqrHS
-f04HIXcU79jnBAIgIuS0wBaRa4246HMeIgqEG/SMIF/HlMOy95RUw/m+Uic=
+hvcNAwICASgwCgYIKoZIzj0EAwIERzBFAiAGgzxA7YLPYgxHpRvN1y13M5GKDkGm
+W7cRqbqYqDHfRgIhAIeDyD1v8ZohVhjMD088ORd2BSRaNQBlN7Uny/UENG5d
 
-------8C2B5D27BC841027C375AFF7476F59DA--
+------7755820831CA4CB5DED8EF066C4726FB--
 
