@@ -81,7 +81,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             reader->getMutex()->unlock();
 
             //LOOK IF IS AN UPDATED INFORMATION
-            ParticipantProxyData* pdata = nullptr;
+            std::shared_ptr<ParticipantProxyData> pdata;
             std::unique_lock<std::recursive_mutex> lock(*mp_SPDP->getMutex());
             for (auto it = mp_SPDP->m_participantProxies.begin();
                     it != mp_SPDP->m_participantProxies.end();++it)
@@ -103,11 +103,11 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             {
                 info.m_status = DISCOVERED_RTPSPARTICIPANT;
                 //IF WE DIDNT FOUND IT WE MUST CREATE A NEW ONE
-                pdata = new ParticipantProxyData(participant_data);
+                pdata.reset(new ParticipantProxyData(participant_data));
                 pdata->isAlive = true;
-                pdata->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(mp_SPDP,
-                        pdata,
-                        TimeConv::Time_t2MilliSecondsDouble(pdata->m_leaseDuration));
+                pdata->mp_leaseDurationTimer.reset(new RemoteParticipantLeaseDuration(mp_SPDP,
+                        pdata.get(),
+                        TimeConv::Time_t2MilliSecondsDouble(pdata->m_leaseDuration)));
                 pdata->mp_leaseDurationTimer->restart_timer();
                 this->mp_SPDP->m_participantProxies.push_back(pdata);
                 lock.unlock();

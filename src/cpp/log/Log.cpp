@@ -140,8 +140,8 @@ void Log::QueueLog(const std::string& message, const Log::Context& context, Log:
    {
       std::unique_lock<std::mutex> guard(mResources.mCvMutex);
       mResources.mWork = true;
+      mResources.mCv.notify_all();
    }
-   mResources.mCv.notify_all();
 }
 
 Log::Kind Log::GetVerbosity()

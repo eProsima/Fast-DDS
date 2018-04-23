@@ -77,18 +77,6 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata) :
 ParticipantProxyData::~ParticipantProxyData()
 {
     logInfo(RTPS_PARTICIPANT,this->m_guid);
-    for(std::vector<ReaderProxyData*>::iterator it = this->m_readers.begin();
-            it!=this->m_readers.end();++it)
-    {
-        delete(*it);
-    }
-    for(std::vector<WriterProxyData*>::iterator it = this->m_writers.begin();
-            it!=this->m_writers.end();++it)
-    {
-        delete(*it);
-    }
-    if(this->mp_leaseDurationTimer != nullptr)
-        delete(mp_leaseDurationTimer);
 }
 
 bool ParticipantProxyData::initializeData(RTPSParticipantImpl* part,PDPSimple* pdp)
