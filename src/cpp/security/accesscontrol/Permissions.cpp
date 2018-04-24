@@ -1037,14 +1037,25 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
             {
                 returned_value = true;
 
-                // Search partitions
-                for(auto partition_it = partitions.begin(); returned_value && partition_it != partitions.end();
-                        ++partition_it)
+                if (partitions.empty())
                 {
-                    if(!is_partition_in_criterias(*partition_it, rule.publishes))
+                    if (!is_partition_in_criterias(std::string(), rule.publishes))
                     {
                         returned_value = false;
-                        exception = _SecurityException_(*partition_it + std::string(" partition not found in rule."));
+                        exception = _SecurityException_(std::string("<empty> partition not found in rule."));
+                    }
+                }
+                else
+                {
+                    // Search partitions
+                    for (auto partition_it = partitions.begin(); returned_value && partition_it != partitions.end();
+                        ++partition_it)
+                    {
+                        if (!is_partition_in_criterias(*partition_it, rule.publishes))
+                        {
+                            returned_value = false;
+                            exception = _SecurityException_(*partition_it + std::string(" partition not found in rule."));
+                        }
                     }
                 }
             }
@@ -1101,14 +1112,25 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
             {
                 returned_value = true;
 
-                // Search partitions
-                for(auto partition_it = partitions.begin(); returned_value && partition_it != partitions.end();
-                        ++partition_it)
+                if (partitions.empty())
                 {
-                    if(!is_partition_in_criterias(*partition_it, rule.subscribes))
+                    if (!is_partition_in_criterias(std::string(), rule.subscribes))
                     {
                         returned_value = false;
-                        exception = _SecurityException_(*partition_it + std::string(" partition not found in rule."));
+                        exception = _SecurityException_(std::string("<empty> partition not found in rule."));
+                    }
+                }
+                else
+                {
+                    // Search partitions
+                    for (auto partition_it = partitions.begin(); returned_value && partition_it != partitions.end();
+                        ++partition_it)
+                    {
+                        if (!is_partition_in_criterias(*partition_it, rule.subscribes))
+                        {
+                            returned_value = false;
+                            exception = _SecurityException_(*partition_it + std::string(" partition not found in rule."));
+                        }
                     }
                 }
             }

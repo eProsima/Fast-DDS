@@ -486,6 +486,11 @@ bool PermissionsParser::parse_criteria(tinyxml2::XMLElement* root, Criteria& cri
         while(returned_value && (node = node->NextSiblingElement()) != nullptr);
     }
 
+    if (returned_value && criteria.partitions.empty())
+    {
+        criteria.partitions.push_back(std::string());
+    }
+
     return returned_value;
 }
 
@@ -549,8 +554,16 @@ bool PermissionsParser::parse_partition(tinyxml2::XMLElement* root, std::vector<
                 }
                 else
                 {
-                    logError(XMLPARSER, "Expected topic name in " << Partition_str << " tag. Line " << PRINTLINE(node));
-                    returned_value = false;
+                    // Detect empty partition tag
+                    if (node->NoChildren())
+                    {
+                        partitions.push_back(std::string());
+                    }
+                    else
+                    {
+                        logError(XMLPARSER, "Expected topic name in " << Partition_str << " tag. Line " << PRINTLINE(node));
+                        returned_value = false;
+                    }
                 }
             }
             else
