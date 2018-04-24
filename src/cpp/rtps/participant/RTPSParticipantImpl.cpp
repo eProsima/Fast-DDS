@@ -314,7 +314,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 #if HAVE_SECURITY
     // Start security
     // TODO(Ricardo) Get returned value in future.
-    m_security_manager.init(security_attributes_, PParam.properties);
+    m_security_manager_initialized = m_security_manager.init(security_attributes_, PParam.properties);
 #endif
 
     //START BUILTIN PROTOCOLS

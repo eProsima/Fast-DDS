@@ -217,6 +217,8 @@ class RTPSParticipantImpl
         security::SecurityManager& security_manager() { return m_security_manager; }
 
         const security::ParticipantSecurityAttributes& security_attributes() { return security_attributes_; }
+
+        bool is_security_initialized() const { return m_security_manager_initialized; }
 #endif
 
         PDPSimple* pdpsimple();
@@ -260,6 +262,8 @@ class RTPSParticipantImpl
 #if HAVE_SECURITY
         // Security manager
         security::SecurityManager m_security_manager;
+        // Security manager initialization result
+        bool m_security_manager_initialized;
 #endif
 
         //! Encapsulates all associated resources on a Receiving element.

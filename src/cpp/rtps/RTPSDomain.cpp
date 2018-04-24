@@ -144,6 +144,16 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
     RTPSParticipant* p = new RTPSParticipant(nullptr);
     RTPSParticipantImpl* pimpl = new RTPSParticipantImpl(PParam,guidP,p,listen);
 
+#if HAVE_SECURITY
+    // Check security was correctly initialized
+    if (!pimpl->is_security_initialized())
+    {
+        logError(RTPS_PARTICIPANT, "Cannot create participant due to security initialization error");
+        delete pimpl;
+        return nullptr;
+    }
+#endif
+
     // Check there is at least one transport registered.
     if(!pimpl->networkFactoryHasRegisteredTransports())
     {
