@@ -432,6 +432,10 @@ static bool load_governance_file(AccessPermissionsHandle& ah, std::string& gover
             {
                 parser.swap(rules);
             }
+            else
+            {
+                exception = _SecurityException_(std::string("Malformed governance file ") + governance_file);
+            }
         }
         else
         {
@@ -463,6 +467,10 @@ static bool load_permissions_file(AccessPermissionsHandle& ah, std::string& perm
             if((returned_value = parser.parse_stream(ptr->data, ptr->length)) == true)
             {
                 parser.swap(permissions);
+            }
+            else
+            {
+                exception = _SecurityException_(std::string("Malformed permissions file ") + permissions_file);
             }
         }
         else
@@ -506,6 +514,10 @@ static bool verify_permissions_file(const AccessPermissionsHandle& local_handle,
                         {
                             parser.swap(permissions);
                             returned_value = true;
+                        }
+                        else
+                        {
+                            exception = _SecurityException_(std::string("Malformed permissions file ") + permissions_file);
                         }
                     }
                     else
