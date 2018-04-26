@@ -904,8 +904,9 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
             }
 
 #if HAVE_SECURITY
-            if(p_endpoint->getAttributes()->security_attributes().is_submessage_protected ||
-                    p_endpoint->getAttributes()->security_attributes().is_payload_protected)
+            if (p_endpoint->supports_rtps_protection() &&
+                (p_endpoint->getAttributes()->security_attributes().is_submessage_protected ||
+                 p_endpoint->getAttributes()->security_attributes().is_payload_protected))
             {
                 m_security_manager.unregister_local_writer(p_endpoint->getGuid());
             }
@@ -919,8 +920,9 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
             }
 
 #if HAVE_SECURITY
-            if(p_endpoint->getAttributes()->security_attributes().is_submessage_protected ||
-                    p_endpoint->getAttributes()->security_attributes().is_payload_protected)
+            if(p_endpoint->supports_rtps_protection() && 
+                (p_endpoint->getAttributes()->security_attributes().is_submessage_protected ||
+                 p_endpoint->getAttributes()->security_attributes().is_payload_protected) )
             {
                 m_security_manager.unregister_local_reader(p_endpoint->getGuid());
             }

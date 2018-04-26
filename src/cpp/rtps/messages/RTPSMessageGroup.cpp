@@ -303,7 +303,8 @@ bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer, const std::v
     if(added)
     {
 #if HAVE_SECURITY
-        if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
+        if(endpoint_->getAttributes()->security_attributes().is_submessage_protected &&
+           endpoint_->supports_rtps_protection())
         {
             buffer->pos = from_buffer_position;
             CDRMessage::initCDRMsg(encrypt_msg_);
@@ -362,7 +363,8 @@ bool RTPSMessageGroup::add_info_ts_in_buffer(const std::vector<GUID_t>& remote_r
     }
 
 #if HAVE_SECURITY
-    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
+    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected &&
+       endpoint_->supports_rtps_protection())
     {
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
@@ -423,7 +425,8 @@ bool RTPSMessageGroup::add_data(const CacheChange_t& change, const std::vector<G
     }
 
 #if HAVE_SECURITY
-    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
+    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected &&
+       endpoint_->supports_rtps_protection())
     {
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
@@ -520,7 +523,8 @@ bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t
     change_to_add.serializedPayload.data = NULL;
 
 #if HAVE_SECURITY
-    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
+    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected &&
+       endpoint_->supports_rtps_protection())
     {
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
@@ -568,7 +572,8 @@ bool RTPSMessageGroup::add_heartbeat(const std::vector<GUID_t>& remote_readers, 
     }
 
 #if HAVE_SECURITY
-    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
+    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected &&
+       endpoint_->supports_rtps_protection())
     {
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
@@ -625,7 +630,8 @@ bool RTPSMessageGroup::add_gap(std::set<SequenceNumber_t>& changesSeqNum,
         }
 
 #if HAVE_SECURITY
-        if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
+        if(endpoint_->getAttributes()->security_attributes().is_submessage_protected &&
+           endpoint_->supports_rtps_protection())
         {
             submessage_msg_->pos = from_buffer_position;
             CDRMessage::initCDRMsg(encrypt_msg_);
@@ -677,7 +683,8 @@ bool RTPSMessageGroup::add_acknack(const GUID_t& remote_writer, SequenceNumberSe
     }
 
 #if HAVE_SECURITY
-    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
+    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected &&
+       endpoint_->supports_rtps_protection())
     {
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
@@ -722,7 +729,8 @@ bool RTPSMessageGroup::add_nackfrag(const GUID_t& remote_writer, SequenceNumber_
     }
 
 #if HAVE_SECURITY
-    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
+    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected &&
+       endpoint_->supports_rtps_protection())
     {
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
