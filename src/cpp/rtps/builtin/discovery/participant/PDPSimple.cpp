@@ -81,8 +81,12 @@ PDPSimple::~PDPSimple()
     if(mp_resendParticipantTimer != nullptr)
         delete(mp_resendParticipantTimer);
 
+    mp_RTPSParticipant->disableReader(mp_SPDPReader);
+
     if(mp_EDP!=nullptr)
+    {
         delete(mp_EDP);
+    }
 
     mp_RTPSParticipant->deleteUserEndpoint(mp_SPDPWriter);
     mp_RTPSParticipant->deleteUserEndpoint(mp_SPDPReader);
@@ -710,14 +714,14 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
             }
         }
 
-#if HAVE_SECURITY
-        mp_builtin->mp_participantImpl->security_manager().remove_participant(*pdata);
-#endif
-
         if(mp_builtin->mp_WLP != nullptr)
             this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
         this->mp_EDP->removeRemoteEndpoints(pdata);
         this->removeRemoteEndpoints(pdata);
+
+#if HAVE_SECURITY
+        mp_builtin->mp_participantImpl->security_manager().remove_participant(*pdata);
+#endif
 
         this->mp_SPDPReaderHistory->getMutex()->lock();
         for(std::vector<CacheChange_t*>::iterator it=this->mp_SPDPReaderHistory->changesBegin();

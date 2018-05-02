@@ -134,6 +134,12 @@ class EDPSimple : public EDP
 
 #if HAVE_SECURITY
     bool create_sedp_secure_endpoints();
+
+    bool pairing_remote_writer_with_local_builtin_reader_after_security(const GUID_t& local_reader,
+                const WriterProxyData& remote_writer_data);
+
+    bool pairing_remote_reader_with_local_builtin_writer_after_security(const GUID_t& local_writer,
+                const ReaderProxyData& remote_reader_data);
 #endif
 
 };

@@ -2001,10 +2001,36 @@ bool SecurityManager::register_local_writer(const GUID_t& writer_guid, const Pro
         }
     }
 
-    if(returned_value && crypto_plugin_ != nullptr)
+    if(returned_value && crypto_plugin_ != nullptr && (security_attributes.is_submessage_protected ||
+                security_attributes.is_payload_protected))
     {
         DatawriterCryptoHandle* writer_handle = crypto_plugin_->cryptokeyfactory()->register_local_datawriter(
                 *local_participant_crypto_handle_, writer_properties.properties(), exception);
+
+        if(writer_handle != nullptr && !writer_handle->nil())
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            writer_handles_.emplace(writer_guid, writer_handle);
+        }
+        else
+        {
+            logError(SECURITY, "Cannot register local writer in crypto plugin. (" << exception.what() << ")");
+            returned_value = false;
+        }
+    }
+
+    return returned_value;
+}
+
+bool SecurityManager::register_local_builtin_writer(const GUID_t& writer_guid, EndpointSecurityAttributes& security_attributes)
+{
+    bool returned_value = true;
+    SecurityException exception;
+
+    if(crypto_plugin_ != nullptr && security_attributes.is_submessage_protected)
+    {
+        DatawriterCryptoHandle* writer_handle = crypto_plugin_->cryptokeyfactory()->register_local_datawriter(
+                *local_participant_crypto_handle_, PropertySeq(), exception);
 
         if(writer_handle != nullptr && !writer_handle->nil())
         {
@@ -2044,10 +2070,6 @@ bool SecurityManager::unregister_local_writer(const GUID_t& writer_guid)
         writer_handles_.erase(local_writer);
 
         return true;
-    }
-    else
-    {
-        logError(SECURITY, "Cannot find local writer " << writer_guid << std::endl);
     }
 
     return false;
@@ -2136,11 +2158,37 @@ bool SecurityManager::register_local_reader(const GUID_t& reader_guid, const Pro
         }
     }
 
-    if(returned_value && crypto_plugin_ != nullptr)
+    if(returned_value && crypto_plugin_ != nullptr && (security_attributes.is_submessage_protected ||
+                security_attributes.is_payload_protected))
     {
 
         DatareaderCryptoHandle* reader_handle = crypto_plugin_->cryptokeyfactory()->register_local_datareader(
                 *local_participant_crypto_handle_, reader_properties.properties(), exception);
+
+        if(reader_handle != nullptr && !reader_handle->nil())
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            reader_handles_.emplace(reader_guid, reader_handle);
+        }
+        else
+        {
+            logError(SECURITY, "Cannot register local reader in crypto plugin. (" << exception.what() << ")");
+            returned_value = false;
+        }
+    }
+
+    return returned_value;
+}
+
+bool SecurityManager::register_local_builtin_reader(const GUID_t& reader_guid, EndpointSecurityAttributes& security_attributes)
+{
+    bool returned_value = true;
+    SecurityException exception;
+
+    if(crypto_plugin_ != nullptr && security_attributes.is_submessage_protected)
+    {
+        DatareaderCryptoHandle* reader_handle = crypto_plugin_->cryptokeyfactory()->register_local_datareader(
+                *local_participant_crypto_handle_, PropertySeq(), exception);
 
         if(reader_handle != nullptr && !reader_handle->nil())
         {
@@ -2181,16 +2229,52 @@ bool SecurityManager::unregister_local_reader(const GUID_t& reader_guid)
 
         return true;
     }
-    else
-    {
-        logError(SECURITY, "Cannot find local reader " << reader_guid << std::endl);
-    }
 
     return false;
 }
 
 bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t& remote_participant_key,
-        ReaderProxyData& remote_reader_data)
+        ReaderProxyData& remote_reader_data, const EndpointSecurityAttributes& security_attributes)
+{
+    return discovered_reader(writer_guid, remote_participant_key, remote_reader_data, security_attributes, false);
+}
+
+void SecurityManager::remove_reader(const GUID_t& writer_guid, const GUID_t& /*remote_participant_key*/,
+        const GUID_t& remote_reader_guid)
+{
+    if(crypto_plugin_ == nullptr)
+        return;
+
+    std::unique_lock<std::mutex> lock(mutex_);
+
+    auto local_writer = writer_handles_.find(writer_guid);
+
+    if(local_writer != writer_handles_.end())
+    {
+        SecurityException exception;
+
+        auto rit = local_writer->second.associated_readers.find(remote_reader_guid);
+
+        if(rit != local_writer->second.associated_readers.end())
+        {
+            crypto_plugin_->cryptokeyfactory()->unregister_datareader(std::get<1>(rit->second), exception);
+            local_writer->second.associated_readers.erase(rit);
+        }
+        else
+        {
+            logInfo(SECURITY, "Cannot find remote reader " << remote_reader_guid << std::endl);
+        }
+    }
+}
+
+bool SecurityManager::discovered_builtin_reader(const GUID_t& writer_guid, const GUID_t& remote_participant_key,
+        ReaderProxyData& remote_reader_data, const EndpointSecurityAttributes& security_attributes)
+{
+    return discovered_reader(writer_guid, remote_participant_key, remote_reader_data, security_attributes, true);
+}
+
+bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t& remote_participant_key,
+        ReaderProxyData& remote_reader_data, const EndpointSecurityAttributes& security_attributes, bool is_builtin)
 {
     std::unique_lock<std::mutex> lock(mutex_);
     PermissionsHandle* remote_permissions = nullptr;
@@ -2219,7 +2303,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
     bool returned_value = true;
     SecurityException exception;
 
-    if(access_plugin_ != nullptr && remote_permissions != nullptr)
+    if(!is_builtin && access_plugin_ != nullptr && remote_permissions != nullptr)
     {
         if((returned_value = access_plugin_->check_remote_datareader(
                         *remote_permissions, domain_id_, remote_reader_data, exception)) == false)
@@ -2228,15 +2312,14 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
         }
     }
 
-    if(returned_value && crypto_plugin_ != nullptr)
+    if(returned_value && crypto_plugin_ != nullptr && (security_attributes.is_submessage_protected ||
+                security_attributes.is_payload_protected))
     {
         auto local_writer = writer_handles_.find(writer_guid);
         returned_value = false;
 
         if(local_writer != writer_handles_.end())
         {
-
-
             if(remote_participant_crypto_handle != nullptr)
             {
                 DatareaderCryptoHandle* remote_reader_handle = crypto_plugin_->cryptokeyfactory()->register_matched_remote_datareader(
@@ -2425,6 +2508,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
     }
     else if(returned_value)
     {
+        lock.unlock();
         participant_->pdpsimple()->getEDP()->pairing_remote_reader_with_local_writer_after_security(
                 writer_guid, remote_reader_data);
     }
@@ -2432,40 +2516,48 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
     return returned_value;
 }
 
-void SecurityManager::remove_reader(const GUID_t& writer_guid, const GUID_t& /*remote_participant_key*/,
-        const GUID_t& remote_reader_guid)
+bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t& remote_participant_key,
+        WriterProxyData& remote_writer_data, const EndpointSecurityAttributes& security_attributes)
+{
+    return discovered_writer(reader_guid, remote_participant_key, remote_writer_data, security_attributes, false);
+}
+
+void SecurityManager::remove_writer(const GUID_t& reader_guid, const GUID_t& /*remote_participant_key*/,
+        const GUID_t& remote_writer_guid)
 {
     if(crypto_plugin_ == nullptr)
         return;
 
     std::unique_lock<std::mutex> lock(mutex_);
 
-    auto local_writer = writer_handles_.find(writer_guid);
+    auto local_reader = reader_handles_.find(reader_guid);
 
-    if(local_writer != writer_handles_.end())
+    if(local_reader != reader_handles_.end())
     {
         SecurityException exception;
 
-        auto rit = local_writer->second.associated_readers.find(remote_reader_guid);
+        auto wit = local_reader->second.associated_writers.find(remote_writer_guid);
 
-        if(rit != local_writer->second.associated_readers.end())
+        if(wit != local_reader->second.associated_writers.end())
         {
-            crypto_plugin_->cryptokeyfactory()->unregister_datareader(std::get<1>(rit->second), exception);
-            local_writer->second.associated_readers.erase(rit);
+            crypto_plugin_->cryptokeyfactory()->unregister_datawriter(std::get<1>(wit->second), exception);
+            local_reader->second.associated_writers.erase(wit);
         }
         else
         {
-            logInfo(SECURITY, "Cannot find remote reader " << remote_reader_guid << std::endl);
+            logInfo(SECURITY, "Cannot find remote writer " << remote_writer_guid << std::endl);
         }
-    }
-    else
-    {
-        logError(SECURITY, "Cannot find local writer " << writer_guid << std::endl);
     }
 }
 
+bool SecurityManager::discovered_builtin_writer(const GUID_t& reader_guid, const GUID_t& remote_participant_key,
+        WriterProxyData& remote_writer_data, const EndpointSecurityAttributes& security_attributes)
+{
+    return discovered_writer(reader_guid, remote_participant_key, remote_writer_data, security_attributes, true);
+}
+
 bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t& remote_participant_key,
-        WriterProxyData& remote_writer_data)
+        WriterProxyData& remote_writer_data, const EndpointSecurityAttributes& security_attributes, bool is_builtin)
 {
     std::unique_lock<std::mutex> lock(mutex_);
     PermissionsHandle* remote_permissions = nullptr;
@@ -2494,7 +2586,7 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
     bool returned_value = true;
     SecurityException exception;
 
-    if(access_plugin_ != nullptr && remote_permissions != nullptr)
+    if(!is_builtin && access_plugin_ != nullptr && remote_permissions != nullptr)
     {
         if((returned_value = access_plugin_->check_remote_datawriter(
                         *remote_permissions, domain_id_, remote_writer_data, exception)) == false)
@@ -2503,7 +2595,8 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
         }
     }
 
-    if(returned_value && crypto_plugin_ != nullptr)
+    if(returned_value && crypto_plugin_ != nullptr && (security_attributes.is_submessage_protected ||
+                security_attributes.is_payload_protected))
     {
         auto local_reader = reader_handles_.find(reader_guid);
         returned_value = false;
@@ -2512,8 +2605,6 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
         {
             if(remote_participant_crypto_handle != nullptr)
             {
-
-
                 DatawriterCryptoHandle* remote_writer_handle = crypto_plugin_->cryptokeyfactory()->register_matched_remote_datawriter(
                         *local_reader->second.reader_handle, *remote_participant_crypto_handle,
                         *shared_secret_handle, exception);
@@ -2701,43 +2792,12 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
     }
     else if(returned_value)
     {
+        lock.unlock();
         participant_->pdpsimple()->getEDP()->pairing_remote_writer_with_local_reader_after_security(
                 reader_guid, remote_writer_data);
     }
 
     return returned_value;
-}
-
-void SecurityManager::remove_writer(const GUID_t& reader_guid, const GUID_t& /*remote_participant_key*/,
-        const GUID_t& remote_writer_guid)
-{
-    if(crypto_plugin_ == nullptr)
-        return;
-
-    std::unique_lock<std::mutex> lock(mutex_);
-
-    auto local_reader = reader_handles_.find(reader_guid);
-
-    if(local_reader != reader_handles_.end())
-    {
-        SecurityException exception;
-
-        auto wit = local_reader->second.associated_writers.find(remote_writer_guid);
-
-        if(wit != local_reader->second.associated_writers.end())
-        {
-            crypto_plugin_->cryptokeyfactory()->unregister_datawriter(std::get<1>(wit->second), exception);
-            local_reader->second.associated_writers.erase(wit);
-        }
-        else
-        {
-            logInfo(SECURITY, "Cannot find remote writer " << remote_writer_guid << std::endl);
-        }
-    }
-    else
-    {
-        logError(SECURITY, "Cannot find local reader " << reader_guid << std::endl);
-    }
 }
 
 bool SecurityManager::encode_writer_submessage(const CDRMessage_t& input_message, CDRMessage_t& output_message,

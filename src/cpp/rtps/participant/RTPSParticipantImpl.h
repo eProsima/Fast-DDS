@@ -373,6 +373,8 @@ class RTPSParticipantImpl
 
         bool enableReader(RTPSReader *reader);
 
+        void disableReader(RTPSReader *reader);
+
         /**
          * Register a Writer in the BuiltinProtocols.
          * @param Writer Pointer to the RTPSWriter.

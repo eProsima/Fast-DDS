@@ -470,7 +470,16 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
     if(!isBuiltin)
     {
         if(!m_security_manager.register_local_writer(SWriter->getGuid(),
-                    param.endpoint.properties, param.endpoint.security_attributes()))
+                    param.endpoint.properties, SWriter->getAttributes()->security_attributes()))
+        {
+            delete(SWriter);
+            return false;
+        }
+    }
+    else
+    {
+        if(!m_security_manager.register_local_builtin_writer(SWriter->getGuid(),
+                    SWriter->getAttributes()->security_attributes()))
         {
             delete(SWriter);
             return false;
@@ -580,7 +589,16 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
     if(!isBuiltin)
     {
         if(!m_security_manager.register_local_reader(SReader->getGuid(),
-                    param.endpoint.properties, param.endpoint.security_attributes()))
+                    param.endpoint.properties, SReader->getAttributes()->security_attributes()))
+        {
+            delete(SReader);
+            return false;
+        }
+    }
+    else
+    {
+        if(!m_security_manager.register_local_builtin_reader(SReader->getGuid(),
+                    SReader->getAttributes()->security_attributes()))
         {
             delete(SReader);
             return false;
@@ -625,8 +643,16 @@ bool RTPSParticipantImpl::enableReader(RTPSReader *reader)
     return true;
 }
 
-
-
+// Avoid to receive PDPSimple reader a DATA while calling ~PDPSimple and EDP was destroy already.
+void RTPSParticipantImpl::disableReader(RTPSReader *reader)
+{
+    m_receiverResourcelistMutex.lock();
+    for(auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it)
+    {
+        (*it).mp_receiver->removeEndpoint(reader);
+    }
+    m_receiverResourcelistMutex.unlock();
+}
 
 bool RTPSParticipantImpl::registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos)
 {
@@ -904,9 +930,8 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
             }
 
 #if HAVE_SECURITY
-            if (p_endpoint->supports_rtps_protection() &&
-                (p_endpoint->getAttributes()->security_attributes().is_submessage_protected ||
-                 p_endpoint->getAttributes()->security_attributes().is_payload_protected))
+            if(p_endpoint->getAttributes()->security_attributes().is_submessage_protected ||
+                    p_endpoint->getAttributes()->security_attributes().is_payload_protected)
             {
                 m_security_manager.unregister_local_writer(p_endpoint->getGuid());
             }
@@ -920,9 +945,8 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
             }
 
 #if HAVE_SECURITY
-            if(p_endpoint->supports_rtps_protection() && 
-                (p_endpoint->getAttributes()->security_attributes().is_submessage_protected ||
-                 p_endpoint->getAttributes()->security_attributes().is_payload_protected) )
+            if(p_endpoint->getAttributes()->security_attributes().is_submessage_protected ||
+                    p_endpoint->getAttributes()->security_attributes().is_payload_protected)
             {
                 m_security_manager.unregister_local_reader(p_endpoint->getGuid());
             }

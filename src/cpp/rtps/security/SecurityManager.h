@@ -77,24 +77,34 @@ class SecurityManager
         bool register_local_writer(const GUID_t& writer_guid, const PropertyPolicy& writer_properties,
                 EndpointSecurityAttributes& security_attributes);
 
+        bool register_local_builtin_writer(const GUID_t& writer_guid, EndpointSecurityAttributes& security_attributes);
+
         bool unregister_local_writer(const GUID_t& writer_guid);
 
         bool register_local_reader(const GUID_t& reader_guid, const PropertyPolicy& reader_properties,
                 EndpointSecurityAttributes& security_attributes);
 
+        bool register_local_builtin_reader(const GUID_t& reader_guid, EndpointSecurityAttributes& security_attributes);
+
         bool unregister_local_reader(const GUID_t& reader_guid);
 
         bool discovered_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
-                ReaderProxyData& remote_reader_data);
+                ReaderProxyData& remote_reader_data, const EndpointSecurityAttributes& security_attributes);
 
         void remove_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
                 const GUID_t& remote_reader_guid);
 
+        bool discovered_builtin_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
+                ReaderProxyData& remote_reader_data, const EndpointSecurityAttributes& security_attributes);
+
         bool discovered_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
-                WriterProxyData& remote_writer_guid);
+                WriterProxyData& remote_writer_guid, const EndpointSecurityAttributes& security_attributes);
 
         void remove_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
                 const GUID_t& remote_writer_guid);
+
+        bool discovered_builtin_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
+                WriterProxyData& remote_writer_guid, const EndpointSecurityAttributes& security_attributes);
 
         bool get_identity_token(IdentityToken** identity_token);
 
@@ -333,6 +343,14 @@ class SecurityManager
         void delete_participant_volatile_message_secure_writer();
         bool create_participant_volatile_message_secure_reader();
         void delete_participant_volatile_message_secure_reader();
+
+        bool discovered_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
+                ReaderProxyData& remote_reader_data, const EndpointSecurityAttributes& security_attributes,
+                bool is_builtin);
+
+        bool discovered_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
+                WriterProxyData& remote_writer_guid, const EndpointSecurityAttributes& security_attributes,
+                bool is_builtin);
 
         void match_builtin_endpoints(const ParticipantProxyData& participant_data);
 
