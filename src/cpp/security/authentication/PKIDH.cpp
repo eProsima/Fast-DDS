@@ -22,7 +22,6 @@
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
-
 #include <openssl/opensslv.h>
 
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
@@ -60,7 +59,7 @@ size_t BN_serialized_size(const BIGNUM* bn, size_t current_alignment = 0)
     return current_alignment - initial_alignment;
 }
 
-unsigned char* BN_serialize(const BIGNUM* bn, const unsigned char* orig_pointer, unsigned char* current_pointer)
+static unsigned char* BN_serialize(const BIGNUM* bn, const unsigned char* orig_pointer, unsigned char* current_pointer)
 {
     assert(bn);
     assert(orig_pointer);
@@ -90,8 +89,8 @@ unsigned char* BN_serialize(const BIGNUM* bn, const unsigned char* orig_pointer,
     return nullptr;
 }
 
-const unsigned char* BN_deserialize(BIGNUM** bn, const unsigned char* orig_pointer, const unsigned char* current_pointer,
-        SecurityException& exception)
+static const unsigned char* BN_deserialize(BIGNUM** bn, const unsigned char* orig_pointer,
+        const unsigned char* current_pointer, SecurityException& exception)
 {
     assert(bn);
     assert(orig_pointer);
@@ -135,7 +134,7 @@ const unsigned char* BN_deserialize(BIGNUM** bn, const unsigned char* orig_point
     return nullptr;
 }
 
-bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm, SecurityException& exception)
+static bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm, SecurityException& exception)
 {
     bool returnedValue = false;
     BUF_MEM* ptr = nullptr;
@@ -178,7 +177,7 @@ bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm
 }
 
 // Auxiliary functions
-X509_STORE* load_identity_ca(const std::string& identity_ca, bool& there_are_crls,
+static X509_STORE* load_identity_ca(const std::string& identity_ca, bool& there_are_crls,
         std::string& ca_sn, std::string& ca_algo, SecurityException& exception)
 {
     X509_STORE* store = X509_STORE_new();
@@ -239,18 +238,19 @@ X509_STORE* load_identity_ca(const std::string& identity_ca, bool& there_are_crl
                             }
                         }
 
+                        sk_X509_INFO_pop_free(inf, X509_INFO_free);
+
                         if(count > 0)
                         {
-                            sk_X509_INFO_pop_free(inf, X509_INFO_free);
                             BIO_free(in);
 
                             return store;
                         }
                     }
                     else
+                    {
                         exception = _SecurityException_(std::string("OpenSSL library cannot read X509 info in file ") + identity_ca.substr(7));
-
-                    sk_X509_INFO_pop_free(inf, X509_INFO_free);
+                    }
                 }
                 else
                     exception = _SecurityException_(std::string("OpenSSL library cannot read file ") + identity_ca.substr(7));
@@ -269,7 +269,7 @@ X509_STORE* load_identity_ca(const std::string& identity_ca, bool& there_are_crl
     return nullptr;
 }
 
-X509* load_certificate(const std::string& identity_cert, SecurityException& exception)
+static X509* load_certificate(const std::string& identity_cert, SecurityException& exception)
 {
     X509* returnedValue = nullptr;
 
@@ -295,7 +295,7 @@ X509* load_certificate(const std::string& identity_cert, SecurityException& exce
     return returnedValue;
 }
 
-X509* load_certificate(const std::vector<uint8_t>& data)
+static X509* load_certificate(const std::vector<uint8_t>& data)
 {
     X509* returnedValue = nullptr;
 
@@ -313,7 +313,7 @@ X509* load_certificate(const std::vector<uint8_t>& data)
     return returnedValue;
 }
 
-bool verify_certificate(X509_STORE* store, X509* cert, const bool there_are_crls)
+static bool verify_certificate(X509_STORE* store, X509* cert, const bool there_are_crls)
 {
     assert(store);
     assert(cert);
@@ -349,7 +349,7 @@ bool verify_certificate(X509_STORE* store, X509* cert, const bool there_are_crls
     return returnedValue;
 }
 
-int private_key_password_callback(char* buf, int bufsize, int /*verify*/, const char* password)
+static int private_key_password_callback(char* buf, int bufsize, int /*verify*/, const char* password)
 {
     assert(password != nullptr);
 
@@ -362,7 +362,7 @@ int private_key_password_callback(char* buf, int bufsize, int /*verify*/, const 
     return returnedValue;
 }
 
-EVP_PKEY* load_private_key(X509* certificate, const std::string& file, const std::string& password,
+static EVP_PKEY* load_private_key(X509* certificate, const std::string& file, const std::string& password,
         SecurityException& exception)
 {
     EVP_PKEY* returnedValue = nullptr;
@@ -396,7 +396,7 @@ EVP_PKEY* load_private_key(X509* certificate, const std::string& file, const std
     return returnedValue;
 }
 
-bool store_certificate_in_buffer(X509* certificate, BUF_MEM** ptr, SecurityException& exception)
+static bool store_certificate_in_buffer(X509* certificate, BUF_MEM** ptr, SecurityException& exception)
 {
     bool returnedValue = false;
 
@@ -433,7 +433,7 @@ bool store_certificate_in_buffer(X509* certificate, BUF_MEM** ptr, SecurityExcep
     return returnedValue;
 }
 
-bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, const size_t data_length,
+static bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, const size_t data_length,
         std::vector<uint8_t>& signature, SecurityException& exception)
 {
     assert(private_key);
@@ -484,7 +484,7 @@ bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, const size_t 
     return returnedValue;
 }
 
-bool check_sign_sha256(X509* certificate, const unsigned char* data, const size_t data_length,
+static bool check_sign_sha256(X509* certificate, const unsigned char* data, const size_t data_length,
         const std::vector<uint8_t>& signature, SecurityException& exception)
 {
     assert(certificate);
@@ -536,7 +536,7 @@ bool check_sign_sha256(X509* certificate, const unsigned char* data, const size_
 }
 
 
-X509_CRL* load_crl(const std::string& identity_crl, SecurityException& exception)
+static X509_CRL* load_crl(const std::string& identity_crl, SecurityException& exception)
 {
     X509_CRL* returnedValue = nullptr;
 
@@ -562,7 +562,7 @@ X509_CRL* load_crl(const std::string& identity_crl, SecurityException& exception
     return returnedValue;
 }
 
-bool adjust_participant_key(X509* cert, const GUID_t& candidate_participant_key,
+static bool adjust_participant_key(X509* cert, const GUID_t& candidate_participant_key,
         GUID_t& adjusted_participant_key, SecurityException& exception)
 {
     assert(cert != nullptr);
@@ -626,7 +626,7 @@ bool adjust_participant_key(X509* cert, const GUID_t& candidate_participant_key,
     return true;
 }
 
-int get_dh_type(const std::string& algorithm)
+static int get_dh_type(const std::string& algorithm)
 {
     if(algorithm.compare(DH_2048_256) == 0)
         return EVP_PKEY_DH;
@@ -636,7 +636,7 @@ int get_dh_type(const std::string& algorithm)
     return 0;
 }
 
-EVP_PKEY* generate_dh_key(int type, SecurityException& exception)
+static EVP_PKEY* generate_dh_key(int type, SecurityException& exception)
 {
     EVP_PKEY* keys = nullptr;
     EVP_PKEY* params = EVP_PKEY_new();
@@ -688,7 +688,7 @@ EVP_PKEY* generate_dh_key(int type, SecurityException& exception)
     return keys;
 }
 
-bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer,
+static bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer,
         SecurityException& exception)
 {
     bool returnedValue = false;
@@ -742,7 +742,7 @@ bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer,
     return returnedValue;
 }
 
-EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer, SecurityException& exception)
+static EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer, SecurityException& exception)
 {
     DH* dh = DH_new();
 
@@ -808,7 +808,7 @@ EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer, SecurityExcep
     return nullptr;
 }
 
-bool generate_challenge(std::vector<uint8_t>& vector, SecurityException& exception)
+static bool generate_challenge(std::vector<uint8_t>& vector, SecurityException& exception)
 {
     bool returnedValue = false;
     BIGNUM* bn = BN_new();
@@ -829,7 +829,7 @@ bool generate_challenge(std::vector<uint8_t>& vector, SecurityException& excepti
     return returnedValue;
 }
 
-SharedSecretHandle* generate_sharedsecret(EVP_PKEY* private_key, EVP_PKEY* public_key,
+static SharedSecretHandle* generate_sharedsecret(EVP_PKEY* private_key, EVP_PKEY* public_key,
         SecurityException& exception)
 {
     assert(private_key);
@@ -887,19 +887,14 @@ SharedSecretHandle* generate_sharedsecret(EVP_PKEY* private_key, EVP_PKEY* publi
     return handle;
 }
 
-bool generate_identity_token(PKIIdentityHandle& handle)
+static bool generate_identity_token(PKIIdentityHandle& handle)
 {
     Property property;
     IdentityToken& token = handle->identity_token_;
     token.class_id("DDS:Auth:PKI-DH:1.0");
 
-    X509_NAME* cert_sn = X509_get_subject_name(handle->cert_);
-    assert(cert_sn != nullptr);
-    char* cert_sn_str = X509_NAME_oneline(cert_sn, 0, 0);
-    assert(cert_sn_str != nullptr);
-
     property.name("dds.cert.sn");
-    property.value() = cert_sn_str;
+    property.value() = handle->cert_sn_;
     property.propagate(true);
     token.properties().push_back(std::move(property));
 
@@ -917,8 +912,6 @@ bool generate_identity_token(PKIIdentityHandle& handle)
     property.value() = handle->algo;
     property.propagate(true);
     token.properties().push_back(std::move(property));
-
-    OPENSSL_free(cert_sn_str);
 
     return true;
 }
@@ -1004,6 +997,22 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
 
         if((*ih)->cert_ != nullptr)
         {
+            // Get subject name.
+            X509_NAME* cert_sn = X509_get_subject_name((*ih)->cert_);
+            assert(cert_sn != nullptr);
+            char* cert_sn_str = X509_NAME_oneline(cert_sn, 0, 0);
+            assert(cert_sn_str != nullptr);
+            (*ih)->cert_sn_ = cert_sn_str;
+            OPENSSL_free(cert_sn_str);
+            BIO* cert_sn_rfc2253_str = BIO_new(BIO_s_mem());
+            X509_NAME_print_ex(cert_sn_rfc2253_str, cert_sn, 0, XN_FLAG_RFC2253 & ~ASN1_STRFLGS_ESC_MSB);
+            const int bufsize = 1024;
+            char buffer[bufsize];
+            int length = BIO_read(cert_sn_rfc2253_str, buffer, bufsize);
+            BIO_free(cert_sn_rfc2253_str);
+            (*ih)->cert_sn_rfc2253_.assign(buffer, length);
+
+
             if(verify_certificate((*ih)->store_, (*ih)->cert_, (*ih)->there_are_crls_))
             {
                 if(store_certificate_in_buffer((*ih)->cert_, &(*ih)->cert_content_, exception))
@@ -1041,7 +1050,7 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
 
 ValidationResult_t PKIDH::validate_remote_identity(IdentityHandle** remote_identity_handle,
         const IdentityHandle& local_identity_handle,
-        IdentityToken&& remote_identity_token,
+        const IdentityToken& remote_identity_token,
         const GUID_t& remote_participant_key,
         SecurityException& /*exception*/)
 {
@@ -1055,22 +1064,22 @@ ValidationResult_t PKIDH::validate_remote_identity(IdentityHandle** remote_ident
     if(!lih.nil())
     {
         // dds.ca.sn
-        const std::string* property = DataHolderHelper::find_property_value(remote_identity_token, "dds.ca.sn");
+        const std::string* ca_sn = DataHolderHelper::find_property_value(remote_identity_token, "dds.ca.sn");
 
-        if(property == nullptr)
+        if(ca_sn == nullptr)
         {
             logWarning(SECURITY_AUTHENTICATION, "Not found property \"dds.ca.sn\" in remote identity token");
             return ValidationResult_t::VALIDATION_FAILED;
         }
 
-        if(*property != lih->sn)
+        if(*ca_sn != lih->sn)
         {
             logWarning(SECURITY_AUTHENTICATION, "Invalid CA subject name in remote identity token");
             return ValidationResult_t::VALIDATION_FAILED;
         }
 
         // dds.ca.algo
-        property = DataHolderHelper::find_property_value(remote_identity_token, "dds.ca.algo");
+        const std::string* property = DataHolderHelper::find_property_value(remote_identity_token, "dds.ca.algo");
 
         if(property == nullptr)
         {
@@ -1105,10 +1114,10 @@ ValidationResult_t PKIDH::validate_remote_identity(IdentityHandle** remote_ident
 
         PKIIdentityHandle* rih = new PKIIdentityHandle();
 
-        (*rih)->sn = *cert_sn;
+        (*rih)->sn = *ca_sn;
+        (*rih)->cert_sn_ = *cert_sn;
         (*rih)->algo = *cert_algo;
         (*rih)->participant_key_ = remote_participant_key;
-        (*rih)->identity_token_ = std::move(remote_identity_token);
         *remote_identity_handle = rih;
 
         if(lih->participant_key_ < remote_participant_key )
@@ -1162,6 +1171,26 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
             lih->cert_content_->data + lih->cert_content_->length);
     bproperty.propagate(true);
     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
+
+    // c.perm
+    if(lih->permissions_credential_token_.class_id().compare("DDS:Access:PermissionsCredential") == 0)
+    {
+        const Property* permissions_file = DataHolderHelper::find_property(lih->permissions_credential_token_,
+                "dds.perm.cert");
+
+        if(permissions_file != nullptr)
+        {
+            bproperty.name("c.perm");
+            bproperty.value().assign(permissions_file->value().begin(), permissions_file->value().end());
+            bproperty.propagate(true);
+            (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
+        }
+        else
+        {
+            exception = _SecurityException_("Cannot find permissions file in permissions credential token");
+            return ValidationResult_t::VALIDATION_FAILED;
+        }
+    }
 
     // c.pdata
     bproperty.name("c.pdata");
@@ -1290,18 +1319,44 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     assert(cert_sn != nullptr);
     char* cert_sn_str = X509_NAME_oneline(cert_sn, 0, 0);
     assert(cert_sn_str != nullptr);
-    if(rih->sn.compare(cert_sn_str) != 0)
+    if(rih->cert_sn_.compare(cert_sn_str) != 0)
     {
         OPENSSL_free(cert_sn_str);
         logWarning(SECURITY_AUTHENTICATION, "Certificated subject name invalid");
         return ValidationResult_t::VALIDATION_FAILED;
     }
     OPENSSL_free(cert_sn_str);
+    BIO* cert_sn_rfc2253_str = BIO_new(BIO_s_mem());
+    X509_NAME_print_ex(cert_sn_rfc2253_str, cert_sn, 0, XN_FLAG_RFC2253 & ~ASN1_STRFLGS_ESC_MSB);
+    const int bufsize = 1024;
+    char buffer[bufsize];
+    int str_length = BIO_read(cert_sn_rfc2253_str, buffer, bufsize);
+    BIO_free(cert_sn_rfc2253_str);
+    rih->cert_sn_rfc2253_.assign(buffer, str_length);
 
     if(!verify_certificate(lih->store_, rih->cert_, lih->there_are_crls_))
     {
         logWarning(SECURITY_AUTHENTICATION, "Error verifying certificate");
         return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // c.perm
+    if(lih->permissions_credential_token_.class_id().compare("DDS:Access:PermissionsCredential") == 0)
+    {
+        const std::vector<uint8_t>* perm = DataHolderHelper::find_binary_property_value(handshake_message_in,
+                "c.perm");
+
+        if(perm == nullptr)
+        {
+            logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.perm");
+            return ValidationResult_t::VALIDATION_FAILED;
+        }
+
+        rih->permissions_credential_token_.class_id("DDS:Access:PermissionsCredential");
+        Property permission_file;
+        permission_file.name("dds.perm.cert");
+        permission_file.value().assign(perm->begin(), perm->end());
+        rih->permissions_credential_token_.properties().push_back(std::move(permission_file));
     }
 
     const std::vector<uint8_t>* pdata = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.pdata");
@@ -1419,7 +1474,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
         exception = _SecurityException_("Cannot generate SHA256 of request");
         return ValidationResult_t::VALIDATION_FAILED;
     }
-    
+
     if(memcmp(md, hash_c1->data(), SHA256_DIGEST_LENGTH) != 0)
     {
         logWarning(SECURITY_AUTHENTICATION, "Wrong hash_c1");
@@ -1465,6 +1520,26 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     bproperty.propagate(true);
     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
+    // c.perm
+    if(lih->permissions_credential_token_.class_id().compare("DDS:Access:PermissionsCredential") == 0)
+    {
+        const Property* permissions_file = DataHolderHelper::find_property(lih->permissions_credential_token_,
+                "dds.perm.cert");
+
+        if(permissions_file != nullptr)
+        {
+            bproperty.name("c.perm");
+            bproperty.value().assign(permissions_file->value().begin(), permissions_file->value().end());
+            bproperty.propagate(true);
+            (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
+        }
+        else
+        {
+            exception = _SecurityException_("Cannot find permissions file in permissions credential token");
+            return ValidationResult_t::VALIDATION_FAILED;
+        }
+    }
+
     // c.pdata
     bproperty.name("c.pdata");
     bproperty.value().assign(cdr_participant_data.buffer,
@@ -1502,7 +1577,6 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     bproperty.value().assign(md, md + SHA256_DIGEST_LENGTH);
     bproperty.propagate(true);
     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
-    
 
     // dh2
     if(((*handshake_handle_aux)->dhkeys_ = generate_dh_key(get_dh_type((*handshake_handle_aux)->kagree_alg_), exception)) != nullptr)
@@ -1643,10 +1717,48 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
+    X509_NAME* cert_sn = X509_get_subject_name(rih->cert_);
+    assert(cert_sn != nullptr);
+    char* cert_sn_str = X509_NAME_oneline(cert_sn, 0, 0);
+    assert(cert_sn_str != nullptr);
+    if(rih->cert_sn_.compare(cert_sn_str) != 0)
+    {
+        OPENSSL_free(cert_sn_str);
+        logWarning(SECURITY_AUTHENTICATION, "Certificated subject name invalid");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+    OPENSSL_free(cert_sn_str);
+    BIO* cert_sn_rfc2253_str = BIO_new(BIO_s_mem());
+    X509_NAME_print_ex(cert_sn_rfc2253_str, cert_sn, 0, XN_FLAG_RFC2253 & ~ASN1_STRFLGS_ESC_MSB);
+    const int bufsize = 1024;
+    char buffer[bufsize];
+    int str_length = BIO_read(cert_sn_rfc2253_str, buffer, bufsize);
+    BIO_free(cert_sn_rfc2253_str);
+    rih->cert_sn_rfc2253_.assign(buffer, str_length);
+
     if(!verify_certificate(lih->store_, rih->cert_, lih->there_are_crls_))
     {
         logWarning(SECURITY_AUTHENTICATION, "Error verifying certificate");
         return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    // c.perm
+    if(lih->permissions_credential_token_.class_id().compare("DDS:Access:PermissionsCredential") == 0)
+    {
+        const std::vector<uint8_t>* perm = DataHolderHelper::find_binary_property_value(handshake_message_in,
+                "c.perm");
+
+        if(perm == nullptr)
+        {
+            logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.perm");
+            return ValidationResult_t::VALIDATION_FAILED;
+        }
+
+        rih->permissions_credential_token_.class_id("DDS:Access:PermissionsCredential");
+        Property permission_file;
+        permission_file.name("dds.perm.cert");
+        permission_file.value().assign(perm->begin(), perm->end());
+        rih->permissions_credential_token_.properties().push_back(std::move(permission_file));
     }
 
     const std::vector<uint8_t>* pdata = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.pdata");
@@ -1676,9 +1788,6 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    X509_NAME* cert_sn = X509_get_subject_name(rih->cert_);
-    assert(cert_sn != nullptr);
-
     unsigned char md[SHA256_DIGEST_LENGTH];
     unsigned int length = 0;
 
@@ -1703,7 +1812,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
         logWarning(SECURITY_AUTHENTICATION, "Bad participant_key's 47bits in c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
     }
-    
+
     // c.dsign_algo
     const std::vector<uint8_t>* dsign_algo = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.dsign_algo");
 
@@ -1765,7 +1874,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
         exception = _SecurityException_("Cannot generate SHA256 of request");
         return ValidationResult_t::VALIDATION_FAILED;
     }
-    
+
     if(memcmp(md, hash_c2->value().data(), SHA256_DIGEST_LENGTH) != 0)
     {
         logWarning(SECURITY_AUTHENTICATION, "Wrong hash_c2");
@@ -2262,5 +2371,49 @@ bool PKIDH::return_sharedsecret_handle(SharedSecretHandle* sharedsecret_handle,
         SecurityException& /*exception*/)
 {
     delete sharedsecret_handle;
+    return true;
+}
+
+bool PKIDH::set_permissions_credential_and_token(IdentityHandle& identity_handle,
+        PermissionsCredentialToken& permissions_credential_token,
+        SecurityException& exception)
+{
+    PKIIdentityHandle& ihandle = PKIIdentityHandle::narrow(identity_handle);
+
+    if(!ihandle.nil())
+    {
+        ihandle->permissions_credential_token_ = std::move(permissions_credential_token);
+        return true;
+    }
+    else
+    {
+        exception = _SecurityException_("Invalid identity handle");
+    }
+
+    return false;
+}
+
+bool PKIDH::get_authenticated_peer_credential_token(PermissionsCredentialToken **token,
+        const IdentityHandle& identity_handle, SecurityException& exception)
+{
+    const PKIIdentityHandle& handle = PKIIdentityHandle::narrow(identity_handle);
+
+    if(!handle.nil())
+    {
+        *token = new PermissionsCredentialToken(handle->permissions_credential_token_);
+        return true;
+    }
+    else
+    {
+        exception = _SecurityException_("Invalid handshake handle");
+    }
+
+    return false;
+}
+
+bool PKIDH::return_authenticated_peer_credential_token(PermissionsCredentialToken* token,
+        SecurityException&)
+{
+    delete token;
     return true;
 }

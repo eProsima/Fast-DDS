@@ -40,13 +40,19 @@ class PKIHandshake
         ~PKIHandshake()
         {
             if(dhkeys_ != nullptr)
+            {
                 EVP_PKEY_free(dhkeys_);
+            }
 
             if(peerkeys_ != nullptr)
+            {
                 EVP_PKEY_free(peerkeys_);
+            }
 
             if(sharedsecret_ != nullptr)
+            {
                 delete sharedsecret_;
+            }
         }
 
 

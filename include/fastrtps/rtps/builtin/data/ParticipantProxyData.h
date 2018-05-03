@@ -46,6 +46,10 @@
 #define DISC_BUILTIN_ENDPOINT_PARTICIPANT_STATE_DETECTOR 0x00000001 << 9;
 #define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER 0x00000001 << 10;
 #define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER 0x00000001 << 11;
+#define DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER 0x00000001 << 16;
+#define DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR 0x00000001 << 17;
+#define DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER 0x00000001 << 18;
+#define DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR 0x00000001 << 19;
 
 namespace eprosima {
 namespace fastrtps{
@@ -101,6 +105,8 @@ class ParticipantProxyData
         //!
         IdentityToken identity_token_;
         //!
+        PermissionsToken permissions_token_;
+        //!
         bool isAlive;
         //!
         ParameterPropertyList_t m_properties;
@@ -113,13 +119,6 @@ class ParticipantProxyData
         //!
         std::vector<WriterProxyData*> m_writers;
 
-        /**
-         * Initialize the object with the data of the lcoal RTPSParticipant.
-         * @param part Pointer to the RTPSParticipant.
-         * @param pdp Pointer to the PDPSimple object.
-         * @return True if correctly initialized.
-         */
-        bool initializeData(RTPSParticipantImpl* part, PDPSimple* pdp);
         /**
          * Update the data.
          * @param pdata Object to copy the data from

@@ -225,6 +225,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     if(large_data)
     {
         PubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+        PubDataparam.qos.m_publishMode.kind = eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE;
     }
     mp_datapub = Domain::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
     if(mp_datapub == nullptr)
@@ -529,8 +530,8 @@ bool LatencyTestPublisher::test(uint32_t datasize)
     //cout << "Beginning test of size: "<<datasize+4 <<endl;
     m_status = 0;
     n_received = 0;
-    mp_latency_in = new LatencyType((uint16_t)datasize);
-    mp_latency_out = new LatencyType((uint16_t)datasize);
+    mp_latency_in = new LatencyType(datasize);
+    mp_latency_out = new LatencyType(datasize);
     times_.clear();
     TestCommandType command;
     command.m_command = READY;

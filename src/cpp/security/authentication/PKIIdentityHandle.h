@@ -21,6 +21,7 @@
 #include <fastrtps/rtps/security/common/Handle.h>
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/common/Token.h>
+
 #include <openssl/x509.h>
 #include <string>
 
@@ -81,8 +82,11 @@ class PKIIdentity
         std::string algo;
         std::string sign_alg_;
         std::string kagree_alg_;
+        std::string cert_sn_;
+        std::string cert_sn_rfc2253_;
         bool there_are_crls_;
         IdentityToken identity_token_;
+        PermissionsCredentialToken permissions_credential_token_;
 };
 
 typedef HandleImpl<PKIIdentity> PKIIdentityHandle;

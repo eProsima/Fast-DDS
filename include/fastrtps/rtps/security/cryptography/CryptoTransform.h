@@ -20,6 +20,7 @@
 
 #include "CryptoTypes.h"
 #include "../../common/CDRMessage_t.h"
+#include "../../common/SerializedPayload.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -41,11 +42,11 @@ class CryptoTransform
          * @return TRUE if successful
          */
         virtual bool encode_serialized_payload(
-                std::vector<uint8_t> &encoded_buffer,
-                std::vector<uint8_t> &extra_inline_qos,
-                const std::vector<uint8_t> &plain_buffer,
-                DatawriterCryptoHandle &sending_datawriter_crypto,
-                SecurityException &exception) = 0;
+                SerializedPayload_t& encoded_payload,
+                std::vector<uint8_t>& extra_inline_qos,
+                const SerializedPayload_t& payload,
+                DatawriterCryptoHandle& sending_datawriter_crypto,
+                SecurityException& exception) = 0;
         /**
          * Encodes a Data, DataFrag, Gap, Heartbeat or HeartBeatFrag
          * @param encoded_rtps_submessage (out) Result of the encryption
@@ -56,11 +57,11 @@ class CryptoTransform
          * @return TRUE is successful
          */
         virtual bool encode_datawriter_submessage(
-                std::vector<uint8_t> &encoded_rtps_submessage,
-                const std::vector<uint8_t> &plain_rtps_submessage,
-                DatawriterCryptoHandle &sending_datawriter_crypto,
+                CDRMessage_t& encoded_rtps_submessage,
+                const CDRMessage_t& plain_rtps_submessage,
+                DatawriterCryptoHandle& sending_datawriter_crypto,
                 std::vector<DatareaderCryptoHandle*>& receiving_datareader_crypto_list,
-                SecurityException &exception) = 0;
+                SecurityException& exception) = 0;
 
         /**
          * Encodes an AckNack or NackFrag
@@ -72,11 +73,11 @@ class CryptoTransform
          * @return TRUE if successful
          */
         virtual bool encode_datareader_submessage(
-                std::vector<uint8_t> &encoded_rtps_submessage,
-                const std::vector<uint8_t> &plain_rtps_submessage,
-                DatareaderCryptoHandle &sending_datareader_crypto,
-                std::vector<DatawriterCryptoHandle*> &receiving_datawriter_crypto_list,
-                SecurityException &exception) = 0;
+                CDRMessage_t& encoded_rtps_submessage,
+                const CDRMessage_t& plain_rtps_submessage,
+                DatareaderCryptoHandle& sending_datareader_crypto,
+                std::vector<DatawriterCryptoHandle*>& receiving_datawriter_crypto_list,
+                SecurityException& exception) = 0;
 
         /**
          * Encodes a full rtps message
@@ -88,10 +89,10 @@ class CryptoTransform
          * @return TRUE if successful
          */
         virtual bool encode_rtps_message(
-                std::vector<uint8_t> &encoded_rtps_message,
-                const std::vector<uint8_t> &plain_rtps_message,
+                CDRMessage_t& encoded_rtps_message,
+                const CDRMessage_t& plain_rtps_message,
                 ParticipantCryptoHandle &sending_crypto,
-                const std::vector<ParticipantCryptoHandle*> &receiving_crypto_list,
+                std::vector<ParticipantCryptoHandle*> &receiving_crypto_list,
                 SecurityException &exception) = 0;
 
         /**
@@ -104,8 +105,8 @@ class CryptoTransform
          * @return TRUE is successful
          */
         virtual bool decode_rtps_message(
-                std::vector<uint8_t> &plain_buffer,
-                const std::vector<uint8_t> &encoded_buffer,
+                CDRMessage_t& plain_buffer,
+                const CDRMessage_t& encoded_buffer,
                 const ParticipantCryptoHandle &receiving_crypto,
                 const ParticipantCryptoHandle &sending_crypto,
                 SecurityException &exception) = 0;
@@ -173,12 +174,12 @@ class CryptoTransform
          * @return TRUE if successful
          */
         virtual bool decode_serialized_payload(
-                std::vector<uint8_t> &plain_buffer,
-                const std::vector<uint8_t> &encoded_buffer,
-                const std::vector<uint8_t> &inline_qos,
-                DatareaderCryptoHandle &receiving_datareader_crypto,
-                DatawriterCryptoHandle &sending_datawriter_crypto,
-                SecurityException &exception) = 0;
+                SerializedPayload_t& plain_payload,
+                const SerializedPayload_t& encoded_payload,
+                const std::vector<uint8_t>& inline_qos,
+                DatareaderCryptoHandle& receiving_datareader_crypto,
+                DatawriterCryptoHandle& sending_datawriter_crypto,
+                SecurityException& exception) = 0;
 
         virtual uint32_t calculate_extra_size_for_rtps_message(uint32_t number_discovered_participants) const = 0;
 

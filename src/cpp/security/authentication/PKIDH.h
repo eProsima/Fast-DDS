@@ -37,20 +37,20 @@ class PKIDH : public Authentication
                 const uint32_t domain_id,
                 const RTPSParticipantAttributes& participant_attr,
                 const GUID_t& candidate_participant_key,
-                SecurityException& exception);
+                SecurityException& exception) override;
 
         ValidationResult_t validate_remote_identity(IdentityHandle** remote_identity_handle,
                 const IdentityHandle& local_identity_handle,
-                IdentityToken&& remote_identity_token,
+                const IdentityToken& remote_identity_token,
                 const GUID_t& remote_participant_key,
-                SecurityException& exception);
+                SecurityException& exception) override;
 
         ValidationResult_t begin_handshake_request(HandshakeHandle** handshake_handle,
                 HandshakeMessageToken** handshake_message,
                 const IdentityHandle& initiator_identity_handle,
                 IdentityHandle& replier_identity_handle,
                 const CDRMessage_t& cdr_participant_data,
-                SecurityException& exception);
+                SecurityException& exception) override;
 
         ValidationResult_t begin_handshake_reply(HandshakeHandle** handshake_handle,
                 HandshakeMessageToken** handshake_message_out,
@@ -58,34 +58,44 @@ class PKIDH : public Authentication
                 IdentityHandle& initiator_identity_handle,
                 const IdentityHandle& replier_identity_handle,
                 const CDRMessage_t& cdr_participant_data,
-                SecurityException& exception);
+                SecurityException& exception) override;
 
         ValidationResult_t process_handshake(HandshakeMessageToken** handshake_message_out,
                 HandshakeMessageToken&& handshake_message_in,
                 HandshakeHandle& handshake_handle,
-                SecurityException& exception);
+                SecurityException& exception) override;
 
         SharedSecretHandle* get_shared_secret(const HandshakeHandle& handshake_handle,
-                SecurityException& exception);
+                SecurityException& exception) override;
 
         bool set_listener(AuthenticationListener* listener,
-                SecurityException& exception);
+                SecurityException& exception) override;
 
         bool get_identity_token(IdentityToken** identity_token,
                 const IdentityHandle& handle,
-                SecurityException& exception);
+                SecurityException& exception) override;
 
         bool return_identity_token(IdentityToken* token,
-                SecurityException& exception);
+                SecurityException& exception) override;
 
         bool return_handshake_handle(HandshakeHandle* handshake_handle,
-                SecurityException& exception);
+                SecurityException& exception) override;
 
         bool return_identity_handle(IdentityHandle* identity_handle,
-                SecurityException& exception);
+                SecurityException& exception) override;
 
         bool return_sharedsecret_handle(SharedSecretHandle* sharedsecret_handle,
-                SecurityException& exception);
+                SecurityException& exception) override;
+
+        bool set_permissions_credential_and_token(IdentityHandle& identity_handle,
+                PermissionsCredentialToken& permissions_credential_token,
+                SecurityException& ex) override;
+
+        bool get_authenticated_peer_credential_token(PermissionsCredentialToken **token,
+                const IdentityHandle& identity_handle, SecurityException& exception) override;
+
+        bool return_authenticated_peer_credential_token(PermissionsCredentialToken* token,
+                SecurityException& ex) override;
 
     private:
 

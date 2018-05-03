@@ -23,6 +23,8 @@ using namespace eprosima::fastrtps::rtps::security;
 
 Authentication* SecurityPluginFactory::auth_plugin_ = nullptr;
 
+AccessControl* SecurityPluginFactory::access_plugin_ = nullptr;
+
 Cryptography* SecurityPluginFactory::crypto_plugin_ = nullptr;
 
 Authentication* SecurityPluginFactory::create_authentication_plugin(const PropertyPolicy& /*property_policy*/)
@@ -43,6 +45,27 @@ void SecurityPluginFactory::release_auth_plugin()
     {
         delete auth_plugin_;
         auth_plugin_ = nullptr;
+    }
+}
+
+AccessControl* SecurityPluginFactory::create_access_control_plugin(const PropertyPolicy& /*property_policy*/)
+{
+    AccessControl* ret =  access_plugin_;
+    access_plugin_ = nullptr;
+    return ret;
+}
+
+void SecurityPluginFactory::set_access_control_plugin(AccessControl* plugin)
+{
+    access_plugin_ = plugin;
+}
+
+void SecurityPluginFactory::release_access_control_plugin()
+{
+    if(access_plugin_ != nullptr)
+    {
+        delete access_plugin_;
+        access_plugin_ = nullptr;
     }
 }
 

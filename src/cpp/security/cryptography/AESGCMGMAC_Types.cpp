@@ -23,6 +23,4 @@ using namespace eprosima::fastrtps::rtps::security;
 
 
 const char* const ParticipantKeyHandle::class_id_ = "ParticipantCryptohandle";
-const char * const ReaderKeyHandle::class_id_ = "DatareaderCryptohandle";
-const char * const WriterKeyHandle::class_id_ = "DatawriterCryptohandle";
-
+const char * const EntityKeyHandle::class_id_ = "EntityCryptohandle";

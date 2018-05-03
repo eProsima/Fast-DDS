@@ -40,41 +40,41 @@ class AESGCMGMAC_KeyExchange : public CryptoKeyExchange
             ParticipantCryptoTokenSeq& local_participant_crypto_tokens,
             const ParticipantCryptoHandle& local_participant_crypto,
             ParticipantCryptoHandle& remote_participant_crypto,
-            SecurityException& exception);
+            SecurityException& exception) override;
 
     bool set_remote_participant_crypto_tokens(
             const ParticipantCryptoHandle &local_participant_crypto,
             ParticipantCryptoHandle &remote_participant_crypto,
             const ParticipantCryptoTokenSeq &remote_participant_tokens,
-            SecurityException &exception);
+            SecurityException &exception) override;
 
     bool create_local_datawriter_crypto_tokens(
             DatawriterCryptoTokenSeq &local_datawriter_crypto_tokens,
             DatawriterCryptoHandle &local_datawriter_crypto,
             DatareaderCryptoHandle &remote_datareader_crypto,
-            SecurityException &exception);
+            SecurityException &exception) override;
 
     bool create_local_datareader_crypto_tokens(
             DatareaderCryptoTokenSeq &local_datareader_crypto_tokens,
             DatareaderCryptoHandle &local_datareader_crypto,
             DatawriterCryptoHandle &remote_datawriter_crypto,
-            SecurityException &exception);
+            SecurityException &exception) override;
 
     bool set_remote_datareader_crypto_tokens(
              DatawriterCryptoHandle &local_datawriter_crypto,
              DatareaderCryptoHandle &remote_datareader_crypto,
              const DatareaderCryptoTokenSeq &remote_datareader_tokens,
-             SecurityException &exception);
+             SecurityException &exception) override;
 
     bool set_remote_datawriter_crypto_tokens(
              DatareaderCryptoHandle &local_datareader_crypto,
              DatawriterCryptoHandle &remote_datawriter_crypto,
              const DatawriterCryptoTokenSeq &remote_datawriter_tokens,
-             SecurityException &exception);
+             SecurityException &exception) override;
 
     bool return_crypto_tokens(
             const CryptoTokenSeq &crypto_tokens,
-            SecurityException &exception);
+            SecurityException &exception) override;
 
     //CDR Serialization and Deserialization of KeyMaterials
     std::vector<uint8_t> KeyMaterialCDRSerialize(KeyMaterial_AES_GCM_GMAC &key);

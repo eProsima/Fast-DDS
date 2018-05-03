@@ -79,20 +79,16 @@ struct KeyMaterial_AES_GCM_GMAC{
 
 //Holds information about the type of encryption performed, the id of the key to use
 //and the initialization vector
-struct SecureDataHeader{
+struct SecureDataHeader
+{
     CryptoTransformIdentifier transform_identifier;
     std::array<uint8_t, 4> session_id;
     std::array<uint8_t, 8> initialization_vector_suffix;
 };
+
 //Holds the ciphered data
 struct SecureDataBody{
     std::vector<uint8_t> secure_data;
-};
-
-//Identifies the specific keys used to calculate them
-struct ReceiverSpecificMAC{
-    CryptoTransformKeyId receiver_mac_key_id;
-    std::array<uint8_t, 16> receiver_mac;
 };
 
 //Holds signatures.
@@ -100,7 +96,8 @@ struct ReceiverSpecificMAC{
 //specific_mac->SignatureS made with the specific keys that only each pair of sender/receiver knows
 struct SecureDataTag{
     std::array<uint8_t, 16> common_mac;
-    std::vector<ReceiverSpecificMAC> receiver_specific_macs;
+    CryptoTransformKeyId receiver_mac_key_id;
+    std::array<uint8_t, 16> receiver_mac;
 };
 /* Key Management
  * --------------
@@ -119,27 +116,27 @@ struct SecureDataTag{
  * Note: the common key of the remote cryptohandle is stored along with the specific keys. KeyMaterial->master_sender_key
  */
 
-class  WriterKeyHandle
+class  EntityKeyHandle
 {
     public:
-        WriterKeyHandle() : session_id(std::numeric_limits<uint32_t>::max()),
+        EntityKeyHandle() : session_id(std::numeric_limits<uint32_t>::max()),
                 session_block_counter(0), max_blocks_per_session(0){}
 
-        ~WriterKeyHandle(){
+        ~EntityKeyHandle(){
         }
 
         static const char* const class_id_;
 
         //Storage for the LocalCryptoHandle master_key, not used in RemoteCryptoHandles
-        KeyMaterial_AES_GCM_GMAC WriterKeyMaterial;
+        KeyMaterial_AES_GCM_GMAC EntityKeyMaterial;
         //KeyId of the master_key of the parent Participant and pointer to the relevant CryptoHandle
         CryptoTransformKeyId Participant_master_key_id;
         ParticipantCryptoHandle* Parent_participant;
 
         //(Direct) ReceiverSpecific Keys - Inherently hold the master_key of the writer
-        std::vector<KeyMaterial_AES_GCM_GMAC> Writer2ReaderKeyMaterial;
+        std::vector<KeyMaterial_AES_GCM_GMAC> Entity2RemoteKeyMaterial;
         //(Reverse) ReceiverSpecific Keys - Inherently hold the master_key of the remote readers
-        std::vector<KeyMaterial_AES_GCM_GMAC> Reader2WriterKeyMaterial;
+        std::vector<KeyMaterial_AES_GCM_GMAC> Remote2EntityKeyMaterial;
         //Copy of the Keymaterial used to Cypher CryptoTokens (inherited from the parent participant)
         KeyMaterial_AES_GCM_GMAC Participant2ParticipantKxKeyMaterial;
 
@@ -151,43 +148,9 @@ class  WriterKeyHandle
         CryptoTransformKind transformation_kind;
         std::mutex mutex_;
 };
-typedef HandleImpl<WriterKeyHandle> AESGCMGMAC_WriterCryptoHandle;
-
-
-class  ReaderKeyHandle
-{
-    public:
-        ReaderKeyHandle() : session_id(std::numeric_limits<uint32_t>::max()),
-                session_block_counter(0), max_blocks_per_session(0){}
-
-        ~ReaderKeyHandle(){
-        }
-
-        static const char* const class_id_;
-
-        //Storage for the LocalCryptoHandle master_key, not used in RemoteCryptoHandles
-        KeyMaterial_AES_GCM_GMAC ReaderKeyMaterial;
-        //KeyId of the master_key of the parent Participant and pointer to the relevant CryptoHandle
-        CryptoTransformKeyId Participant_master_key_id;
-        ParticipantCryptoHandle* Parent_participant;
-
-        //(Direct) ReceiverSpecific Keys - Inherently hold the master_key of the writer
-        std::vector<KeyMaterial_AES_GCM_GMAC> Reader2WriterKeyMaterial;
-        //(Reverse) ReceiverSpecific Keys - Inherently hold the master_key of the remote readers
-        std::vector<KeyMaterial_AES_GCM_GMAC> Writer2ReaderKeyMaterial;
-        //Copy of the Keymaterial used to Cypher CryptoTokens (inherited from the parent participant)
-        KeyMaterial_AES_GCM_GMAC Participant2ParticipantKxKeyMaterial;
-
-        //Data used to store the current session keys and to determine when it has to be updated
-        uint32_t session_id;
-        std::array<uint8_t,32> SessionKey;
-        uint64_t session_block_counter;
-        uint64_t max_blocks_per_session;
-        CryptoTransformKind transformation_kind;
-        std::mutex mutex_;
-};
-
-typedef HandleImpl<ReaderKeyHandle> AESGCMGMAC_ReaderCryptoHandle;
+typedef HandleImpl<EntityKeyHandle> AESGCMGMAC_WriterCryptoHandle;
+typedef HandleImpl<EntityKeyHandle> AESGCMGMAC_ReaderCryptoHandle;
+typedef HandleImpl<EntityKeyHandle> AESGCMGMAC_EntityCryptoHandle;
 
 
 class  ParticipantKeyHandle

@@ -176,7 +176,7 @@ bool RTPSMessageGroup::check_preconditions(const LocatorList_t& locator_list,
 
     return locator_list == current_locators_
 #if HAVE_SECURITY
-        && (!participant_->is_rtps_protected() || !endpoint_->supports_rtps_protection() ||
+        && (!participant_->security_attributes().is_rtps_protected || !endpoint_->supports_rtps_protection() ||
          compare_remote_participants(remote_participants, current_remote_participants_))
 #endif
         ;
@@ -195,14 +195,34 @@ void RTPSMessageGroup::send()
     {
 #if HAVE_SECURITY
         // TODO(Ricardo) Control message size if it will be encrypted.
-        if(participant_->is_rtps_protected() && endpoint_->supports_rtps_protection())
+        if(participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
         {
-            participant_->security_manager().encode_rtps_message(*full_msg_, current_remote_participants_);
+            CDRMessage::initCDRMsg(encrypt_msg_);
+            full_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
+
+            if(!participant_->security_manager().encode_rtps_message(*full_msg_, *encrypt_msg_, current_remote_participants_))
+            {
+                logError(RTPS_WRITER,"Error encoding rtps message.");
+                return;
+            }
+
+            if((full_msg_->max_size) >= (RTPSMESSAGE_HEADER_SIZE + encrypt_msg_->length))
+            {
+                memcpy(&full_msg_->buffer[RTPSMESSAGE_HEADER_SIZE], encrypt_msg_->buffer, encrypt_msg_->length);
+                full_msg_->length = RTPSMESSAGE_HEADER_SIZE + encrypt_msg_->length;
+            }
+            else
+            {
+                logError(RTPS_OUT, "Not enough memory to copy encrypted data for " << endpoint_->getGuid());
+                return ;
+            }
         }
 #endif
 
         for(const auto& lit : current_locators_)
+        {
             participant_->sendSync(full_msg_, endpoint_, lit);
+        }
 
         currentBytesSent_ += full_msg_->length;
     }
@@ -283,13 +303,14 @@ bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer, const std::v
     if(added)
     {
 #if HAVE_SECURITY
-        if(endpoint_->is_submessage_protected())
+        if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
         {
             buffer->pos = from_buffer_position;
+            CDRMessage::initCDRMsg(encrypt_msg_);
             if(type_ == WRITER)
             {
-                if(!participant_->security_manager().encode_writer_submessage(*buffer, endpoint_->getGuid(),
-                            remote_endpoints))
+                if(!participant_->security_manager().encode_writer_submessage(*buffer, *encrypt_msg_,
+                            endpoint_->getGuid(), remote_endpoints))
                 {
                     logError(RTPS_WRITER, "Cannot encrypt INFO_DST submessage for writer " << endpoint_->getGuid());
                     return false;
@@ -297,12 +318,24 @@ bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer, const std::v
             }
             else
             {
-                if(!participant_->security_manager().encode_reader_submessage(*buffer, endpoint_->getGuid(),
-                            remote_endpoints))
+                if(!participant_->security_manager().encode_reader_submessage(*buffer, *encrypt_msg_,
+                            endpoint_->getGuid(), remote_endpoints))
                 {
                     logError(RTPS_READER, "Cannot encrypt INFO_DST submessage for reader " << endpoint_->getGuid());
                     return false;
                 }
+            }
+
+            if((buffer->max_size - from_buffer_position) >= encrypt_msg_->length)
+            {
+                memcpy(&buffer->buffer[from_buffer_position], encrypt_msg_->buffer, encrypt_msg_->length);
+                buffer->length = from_buffer_position + encrypt_msg_->length;
+                buffer->pos = buffer->length;
+            }
+            else
+            {
+                logError(RTPS_OUT, "Not enough memory to copy encrypted data for " << endpoint_->getGuid());
+                return false;
             }
         }
 #endif
@@ -329,13 +362,26 @@ bool RTPSMessageGroup::add_info_ts_in_buffer(const std::vector<GUID_t>& remote_r
     }
 
 #if HAVE_SECURITY
-    if(endpoint_->is_submessage_protected())
+    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
     {
         submessage_msg_->pos = from_buffer_position;
-        if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, endpoint_->getGuid(),
-                    remote_readers))
+        CDRMessage::initCDRMsg(encrypt_msg_);
+        if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, *encrypt_msg_,
+                    endpoint_->getGuid(), remote_readers))
         {
             logError(RTPS_WRITER, "Cannot encrypt DATA submessage for writer " << endpoint_->getGuid());
+            return false;
+        }
+
+        if((submessage_msg_->max_size - from_buffer_position) >= encrypt_msg_->length)
+        {
+            memcpy(&submessage_msg_->buffer[from_buffer_position], encrypt_msg_->buffer, encrypt_msg_->length);
+            submessage_msg_->length = from_buffer_position + encrypt_msg_->length;
+            submessage_msg_->pos = submessage_msg_->length;
+        }
+        else
+        {
+            logError(RTPS_OUT, "Not enough memory to copy encrypted data for " << endpoint_->getGuid());
             return false;
         }
     }
@@ -368,47 +414,35 @@ bool RTPSMessageGroup::add_data(const CacheChange_t& change, const std::vector<G
     EntityId_t readerId = get_entity_id(remote_readers);
 
     // TODO (Ricardo). Check to create special wrapper.
-    CacheChange_t change_to_add;
-    change_to_add.copy_not_memcpy(&change);
-    change_to_add.serializedPayload.data = change.serializedPayload.data;
-    change_to_add.serializedPayload.length = change.serializedPayload.length;
 
-#if HAVE_SECURITY
-    if(endpoint_->is_payload_protected())
-    {
-        CDRMessage::initCDRMsg(encrypt_msg_);
-
-        // If payload protection, encode payload
-        if(!participant_->security_manager().encode_serialized_payload(change.serializedPayload,
-                    *encrypt_msg_, endpoint_->getGuid()))
-        {
-            logError(RTPS_WRITER, "Error encoding change " << change.sequenceNumber);
-            change_to_add.serializedPayload.data = NULL;
-            return false;
-        }
-
-        change_to_add.serializedPayload.data = encrypt_msg_->buffer;
-        change_to_add.serializedPayload.length = encrypt_msg_->length;
-    }
-#endif
-
-    if(!RTPSMessageCreator::addSubmessageData(submessage_msg_, &change_to_add, endpoint_->getAttributes()->topicKind,
+    if(!RTPSMessageCreator::addSubmessageData(submessage_msg_, &change, endpoint_->getAttributes()->topicKind,
                 readerId, expectsInlineQos, inlineQos))
     {
         logError(RTPS_WRITER, "Cannot add DATA submsg to the CDRMessage. Buffer too small");
-        change_to_add.serializedPayload.data = NULL;
         return false;
     }
-    change_to_add.serializedPayload.data = NULL;
 
 #if HAVE_SECURITY
-    if(endpoint_->is_submessage_protected())
+    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
     {
         submessage_msg_->pos = from_buffer_position;
-        if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, endpoint_->getGuid(),
-                    remote_readers))
+        CDRMessage::initCDRMsg(encrypt_msg_);
+        if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, *encrypt_msg_,
+                    endpoint_->getGuid(), remote_readers))
         {
             logError(RTPS_WRITER, "Cannot encrypt DATA submessage for writer " << endpoint_->getGuid());
+            return false;
+        }
+
+        if((submessage_msg_->max_size - from_buffer_position) >= encrypt_msg_->length)
+        {
+            memcpy(&submessage_msg_->buffer[from_buffer_position], encrypt_msg_->buffer, encrypt_msg_->length);
+            submessage_msg_->length = from_buffer_position + encrypt_msg_->length;
+            submessage_msg_->pos = submessage_msg_->length;
+        }
+        else
+        {
+            logError(RTPS_OUT, "Not enough memory to copy encrypted data for " << endpoint_->getGuid());
             return false;
         }
     }
@@ -453,21 +487,25 @@ bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t
     change_to_add.serializedPayload.length = fragment_size;
 
 #if HAVE_SECURITY
-    if(endpoint_->is_payload_protected())
+    if(endpoint_->getAttributes()->security_attributes().is_payload_protected)
     {
-        CDRMessage::initCDRMsg(encrypt_msg_);
+        SerializedPayload_t encrypt_payload;
+        encrypt_payload.data = encrypt_msg_->buffer;
+        encrypt_payload.max_size = encrypt_msg_->max_size;
 
         // If payload protection, encode payload
         if(!participant_->security_manager().encode_serialized_payload(change_to_add.serializedPayload,
-                    *encrypt_msg_, endpoint_->getGuid()))
+                    encrypt_payload, endpoint_->getGuid()))
         {
             logError(RTPS_WRITER, "Error encoding change " << change.sequenceNumber);
-            change_to_add.serializedPayload.data = NULL;
+            change_to_add.serializedPayload.data = nullptr;
+            encrypt_payload.data = nullptr;
             return false;
         }
 
         change_to_add.serializedPayload.data = encrypt_msg_->buffer;
-        change_to_add.serializedPayload.length = encrypt_msg_->length;
+        encrypt_payload.data = nullptr;
+        change_to_add.serializedPayload.length = encrypt_payload.length;
     }
 #endif
 
@@ -482,13 +520,26 @@ bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t
     change_to_add.serializedPayload.data = NULL;
 
 #if HAVE_SECURITY
-    if(endpoint_->is_submessage_protected())
+    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
     {
         submessage_msg_->pos = from_buffer_position;
-        if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, endpoint_->getGuid(),
-                    remote_readers))
+        CDRMessage::initCDRMsg(encrypt_msg_);
+        if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, *encrypt_msg_,
+                    endpoint_->getGuid(), remote_readers))
         {
             logError(RTPS_WRITER, "Cannot encrypt DATA submessage for writer " << endpoint_->getGuid());
+            return false;
+        }
+
+        if((submessage_msg_->max_size - from_buffer_position) >= encrypt_msg_->length)
+        {
+            memcpy(&submessage_msg_->buffer[from_buffer_position], encrypt_msg_->buffer, encrypt_msg_->length);
+            submessage_msg_->length = from_buffer_position + encrypt_msg_->length;
+            submessage_msg_->pos = submessage_msg_->length;
+        }
+        else
+        {
+            logError(RTPS_OUT, "Not enough memory to copy encrypted data for " << endpoint_->getGuid());
             return false;
         }
     }
@@ -517,13 +568,26 @@ bool RTPSMessageGroup::add_heartbeat(const std::vector<GUID_t>& remote_readers, 
     }
 
 #if HAVE_SECURITY
-    if(endpoint_->is_submessage_protected())
+    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
     {
         submessage_msg_->pos = from_buffer_position;
-        if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, endpoint_->getGuid(),
-                    remote_readers))
+        CDRMessage::initCDRMsg(encrypt_msg_);
+        if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, *encrypt_msg_,
+                    endpoint_->getGuid(), remote_readers))
         {
             logError(RTPS_WRITER, "Cannot encrypt HEARTBEAT submessage for writer " << endpoint_->getGuid());
+            return false;
+        }
+
+        if((submessage_msg_->max_size - from_buffer_position) >= encrypt_msg_->length)
+        {
+            memcpy(&submessage_msg_->buffer[from_buffer_position], encrypt_msg_->buffer, encrypt_msg_->length);
+            submessage_msg_->length = from_buffer_position + encrypt_msg_->length;
+            submessage_msg_->pos = submessage_msg_->length;
+        }
+        else
+        {
+            logError(RTPS_OUT, "Not enough memory to copy encrypted data for " << endpoint_->getGuid());
             return false;
         }
     }
@@ -561,13 +625,26 @@ bool RTPSMessageGroup::add_gap(std::set<SequenceNumber_t>& changesSeqNum,
         }
 
 #if HAVE_SECURITY
-        if(endpoint_->is_submessage_protected())
+        if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
         {
             submessage_msg_->pos = from_buffer_position;
-            if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, endpoint_->getGuid(),
-                        remote_readers))
+            CDRMessage::initCDRMsg(encrypt_msg_);
+            if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, *encrypt_msg_,
+                        endpoint_->getGuid(), remote_readers))
             {
                 logError(RTPS_WRITER, "Cannot encrypt DATA submessage for writer " << endpoint_->getGuid());
+                return false;
+            }
+
+            if((submessage_msg_->max_size - from_buffer_position) >= encrypt_msg_->length)
+            {
+                memcpy(&submessage_msg_->buffer[from_buffer_position], encrypt_msg_->buffer, encrypt_msg_->length);
+                submessage_msg_->length = from_buffer_position + encrypt_msg_->length;
+                submessage_msg_->pos = submessage_msg_->length;
+            }
+            else
+            {
+                logError(RTPS_OUT, "Not enough memory to copy encrypted data for " << endpoint_->getGuid());
                 return false;
             }
         }
@@ -600,13 +677,26 @@ bool RTPSMessageGroup::add_acknack(const GUID_t& remote_writer, SequenceNumberSe
     }
 
 #if HAVE_SECURITY
-    if(endpoint_->is_submessage_protected())
+    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
     {
         submessage_msg_->pos = from_buffer_position;
-        if(!participant_->security_manager().encode_reader_submessage(*submessage_msg_, endpoint_->getGuid(),
-                    std::vector<GUID_t>{remote_writer}))
+        CDRMessage::initCDRMsg(encrypt_msg_);
+        if(!participant_->security_manager().encode_reader_submessage(*submessage_msg_, *encrypt_msg_,
+                    endpoint_->getGuid(), std::vector<GUID_t>{remote_writer}))
         {
             logError(RTPS_READER, "Cannot encrypt ACKNACK submessage for writer " << endpoint_->getGuid());
+            return false;
+        }
+
+        if((submessage_msg_->max_size - from_buffer_position) >= encrypt_msg_->length)
+        {
+            memcpy(&submessage_msg_->buffer[from_buffer_position], encrypt_msg_->buffer, encrypt_msg_->length);
+            submessage_msg_->length = from_buffer_position + encrypt_msg_->length;
+            submessage_msg_->pos = submessage_msg_->length;
+        }
+        else
+        {
+            logError(RTPS_OUT, "Not enough memory to copy encrypted data for " << endpoint_->getGuid());
             return false;
         }
     }
@@ -632,13 +722,26 @@ bool RTPSMessageGroup::add_nackfrag(const GUID_t& remote_writer, SequenceNumber_
     }
 
 #if HAVE_SECURITY
-    if(endpoint_->is_submessage_protected())
+    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
     {
         submessage_msg_->pos = from_buffer_position;
-        if(!participant_->security_manager().encode_reader_submessage(*submessage_msg_, endpoint_->getGuid(),
-                    std::vector<GUID_t>{remote_writer}))
+        CDRMessage::initCDRMsg(encrypt_msg_);
+        if(!participant_->security_manager().encode_reader_submessage(*submessage_msg_, *encrypt_msg_,
+                    endpoint_->getGuid(), std::vector<GUID_t>{remote_writer}))
         {
             logError(RTPS_READER, "Cannot encrypt ACKNACK submessage for writer " << endpoint_->getGuid());
+            return false;
+        }
+
+        if((submessage_msg_->max_size - from_buffer_position) >= encrypt_msg_->length)
+        {
+            memcpy(&submessage_msg_->buffer[from_buffer_position], encrypt_msg_->buffer, encrypt_msg_->length);
+            submessage_msg_->length = from_buffer_position + encrypt_msg_->length;
+            submessage_msg_->pos = submessage_msg_->length;
+        }
+        else
+        {
+            logError(RTPS_OUT, "Not enough memory to copy encrypted data for " << endpoint_->getGuid());
             return false;
         }
     }

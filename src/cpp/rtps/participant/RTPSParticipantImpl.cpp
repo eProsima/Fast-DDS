@@ -99,18 +99,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     mp_participantListener(plisten),
     mp_userParticipant(par),
     mp_mutex(new std::recursive_mutex())
-#if HAVE_SECURITY
-    , is_rtps_protected_(false)
-#endif
 {
-#if HAVE_SECURITY
-    // Read participant properties.
-    const std::string* property_value = PropertyPolicyHelper::find_property(PParam.properties,
-            "rtps.participant.rtps_protection_kind");
-    if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
-        is_rtps_protected_ = true;
-#endif
-
     // Builtin transport by default
     if (PParam.useBuiltinTransports)
     {
@@ -324,7 +313,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
 #if HAVE_SECURITY
     // Start security
-    m_security_manager.init();
+    // TODO(Ricardo) Get returned value in future.
+    m_security_manager_initialized = m_security_manager.init(security_attributes_, PParam.properties);
 #endif
 
     //START BUILTIN PROTOCOLS
@@ -462,21 +452,6 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
         return false;
     }
 
-    // Get properties.
-#if HAVE_SECURITY
-    bool submessage_protection = false;
-    const std::string* property_value = PropertyPolicyHelper::find_property(param.endpoint.properties, "rtps.endpoint.submessage_protection_kind");
-
-    if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
-        submessage_protection = true;
-
-    bool payload_protection = false;
-    property_value = PropertyPolicyHelper::find_property(param.endpoint.properties, "rtps.endpoint.payload_protection_kind");
-
-    if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
-        payload_protection = true;
-#endif
-
     // Normalize unicast locators
     if (!param.endpoint.unicastLocatorList.empty())
         m_network_Factory.NormalizeLocators(param.endpoint.unicastLocatorList);
@@ -492,14 +467,19 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
         return false;
 
 #if HAVE_SECURITY
-    if(submessage_protection || payload_protection)
+    if(!isBuiltin)
     {
-        if(submessage_protection)
-            SWriter->is_submessage_protected_ = true;
-        if(payload_protection)
-            SWriter->is_payload_protected_ = true;
-
-        if(!m_security_manager.register_local_writer(SWriter->getGuid(), param.endpoint.properties.properties()))
+        if(!m_security_manager.register_local_writer(SWriter->getGuid(),
+                    param.endpoint.properties, SWriter->getAttributes()->security_attributes()))
+        {
+            delete(SWriter);
+            return false;
+        }
+    }
+    else
+    {
+        if(!m_security_manager.register_local_builtin_writer(SWriter->getGuid(),
+                    SWriter->getAttributes()->security_attributes()))
         {
             delete(SWriter);
             return false;
@@ -589,20 +569,6 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
         return false;
     }
 
-    // Get properties.
-#if HAVE_SECURITY
-    bool submessage_protection = false;
-    const std::string* property_value = PropertyPolicyHelper::find_property(param.endpoint.properties, "rtps.endpoint.submessage_protection_kind");
-
-    if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
-        submessage_protection = true;
-
-    bool payload_protection = false;
-    property_value = PropertyPolicyHelper::find_property(param.endpoint.properties, "rtps.endpoint.payload_protection_kind");
-
-    if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
-        payload_protection = true;
-#endif
 
     // Normalize unicast locators
     if (!param.endpoint.unicastLocatorList.empty())
@@ -619,14 +585,20 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
         return false;
 
 #if HAVE_SECURITY
-    if(submessage_protection || payload_protection)
-    {
-        if(submessage_protection)
-            SReader->is_submessage_protected_ = true;
-        if(payload_protection)
-            SReader->is_payload_protected_ = true;
 
-        if(!m_security_manager.register_local_reader(SReader->getGuid(), param.endpoint.properties.properties()))
+    if(!isBuiltin)
+    {
+        if(!m_security_manager.register_local_reader(SReader->getGuid(),
+                    param.endpoint.properties, SReader->getAttributes()->security_attributes()))
+        {
+            delete(SReader);
+            return false;
+        }
+    }
+    else
+    {
+        if(!m_security_manager.register_local_builtin_reader(SReader->getGuid(),
+                    SReader->getAttributes()->security_attributes()))
         {
             delete(SReader);
             return false;
@@ -671,8 +643,16 @@ bool RTPSParticipantImpl::enableReader(RTPSReader *reader)
     return true;
 }
 
-
-
+// Avoid to receive PDPSimple reader a DATA while calling ~PDPSimple and EDP was destroy already.
+void RTPSParticipantImpl::disableReader(RTPSReader *reader)
+{
+    m_receiverResourcelistMutex.lock();
+    for(auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it)
+    {
+        (*it).mp_receiver->removeEndpoint(reader);
+    }
+    m_receiverResourcelistMutex.unlock();
+}
 
 bool RTPSParticipantImpl::registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos)
 {
@@ -950,7 +930,8 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
             }
 
 #if HAVE_SECURITY
-            if(p_endpoint->is_submessage_protected() || p_endpoint->is_payload_protected())
+            if(p_endpoint->getAttributes()->security_attributes().is_submessage_protected ||
+                    p_endpoint->getAttributes()->security_attributes().is_payload_protected)
             {
                 m_security_manager.unregister_local_writer(p_endpoint->getGuid());
             }
@@ -964,7 +945,8 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
             }
 
 #if HAVE_SECURITY
-            if(p_endpoint->is_submessage_protected() || p_endpoint->is_payload_protected())
+            if(p_endpoint->getAttributes()->security_attributes().is_submessage_protected ||
+                    p_endpoint->getAttributes()->security_attributes().is_payload_protected)
             {
                 m_security_manager.unregister_local_reader(p_endpoint->getGuid());
             }
@@ -1112,7 +1094,7 @@ uint32_t RTPSParticipantImpl::calculateMaxDataSize(uint32_t length)
 #if HAVE_SECURITY
     // If there is rtps messsage protection, reduce max size for messages,
     // because extra data is added on encryption.
-    if(is_rtps_protected_)
+    if(security_attributes_.is_rtps_protected)
     {
         maxDataSize -= m_security_manager.calculate_extra_size_for_rtps_message();
     }

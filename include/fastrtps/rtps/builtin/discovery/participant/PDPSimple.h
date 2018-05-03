@@ -141,8 +141,6 @@ class PDPSimple
      */
     void assignRemoteEndpoints(ParticipantProxyData* pdata);
 
-    void notifyAboveRemoteEndpoints(const GUID_t& participant_guid);
-
     void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata);
 
     /**

@@ -92,13 +92,14 @@ class EDP
          * @param rdata Pointer to the ReaderProxyData object.
          * @return True if correct.
          */
-        virtual bool processLocalReaderProxyData(ReaderProxyData* rdata) = 0;
+        virtual bool processLocalReaderProxyData(RTPSReader* reader, ReaderProxyData* rdata) = 0;
+
         /**
          * After a new local WriterProxyData has been created some processing is needed (depends on the implementation).
          * @param wdata Pointer to the Writer ProxyData object.
          * @return True if correct.
          */
-        virtual bool processLocalWriterProxyData(WriterProxyData* wdata) = 0;
+        virtual bool processLocalWriterProxyData(RTPSWriter* writer, WriterProxyData* wdata) = 0;
 
         /**
          * Create a new ReaderPD for a local Reader.
@@ -172,7 +173,7 @@ class EDP
         bool pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, const GUID_t& remote_participant_guid,
                 ReaderProxyData& rdata);
 
-        bool pairing_remote_reader_with_local_writer_after_crypto(const GUID_t& local_writer,
+        bool pairing_remote_reader_with_local_writer_after_security(const GUID_t& local_writer,
                 const ReaderProxyData& remote_reader_data);
 #endif
 
@@ -188,8 +189,14 @@ class EDP
         bool pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, const GUID_t& remote_participant_guid,
                 WriterProxyData& wdata);
 
-        bool pairing_remote_writer_with_local_reader_after_crypto(const GUID_t& local_reader,
+        bool pairing_remote_writer_with_local_reader_after_security(const GUID_t& local_reader,
                 const WriterProxyData& remote_writer_data);
+
+        virtual bool pairing_remote_writer_with_local_builtin_reader_after_security(const GUID_t& /*local_reader*/,
+                const WriterProxyData& /*remote_writer_data*/) { return false; }
+
+        virtual bool pairing_remote_reader_with_local_builtin_writer_after_security(const GUID_t& /*local_writer*/,
+                const ReaderProxyData& /*remote_reader_data*/) { return false; }
 #endif
 
         //! Pointer to the PDPSimple object that contains the endpoint discovery protocol.

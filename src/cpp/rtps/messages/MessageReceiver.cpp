@@ -189,10 +189,13 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 
     //Once everything is set, the reading begins:
     if(!checkRTPSHeader(msg))
+    {
         return;
+    }
 
 #if HAVE_SECURITY
     CDRMessage_t* auxiliary_buffer = &m_crypto_msg;
+    CDRMessage::initCDRMsg(auxiliary_buffer);
 
     int decode_ret = participant_->security_manager().decode_rtps_message(*msg, *auxiliary_buffer, sourceGuidPrefix);
 
@@ -217,12 +220,17 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
         CDRMessage_t* submessage = msg;
 
 #if HAVE_SECURITY
+        CDRMessage::initCDRMsg(auxiliary_buffer);
         decode_ret = participant_->security_manager().decode_rtps_submessage(*msg, *auxiliary_buffer, sourceGuidPrefix);
 
         if(decode_ret < 0)
+        {
             return;
+        }
         else if(decode_ret == 0)
+        {
             submessage = auxiliary_buffer;
+        }
 #endif
 
         //First 4 bytes must contain: ID | flags | octets to next header
@@ -582,7 +590,9 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
     // Set sourcetimestamp
     if(haveTimestamp)
+    {
         ch.sourceTimestamp = this->timestamp;
+    }
 
 
     //FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
@@ -597,6 +607,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
         }
     }
 
+    //TODO(Ricardo) If a exception is thrown (ex, by fastcdr), this line is not executed -> segmentation fault
     ch.serializedPayload.data = nullptr;
 
     logInfo(RTPS_MSG_IN,IDSTRING"Sub Message DATA processed");

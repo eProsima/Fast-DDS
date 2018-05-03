@@ -143,7 +143,7 @@ bool AESGCMGMAC_KeyExchange::create_local_datawriter_crypto_tokens(
     temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
     BinaryProperty prop;
     prop.name() = std::string("dds.cryp.keymat");
-    std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_reader->Writer2ReaderKeyMaterial.at(0));
+    std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_reader->Remote2EntityKeyMaterial.at(0));
     prop.value() = aes_128_gcm_encrypt(plaintext, remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key);
     prop.propagate(true);
 
@@ -180,7 +180,7 @@ bool AESGCMGMAC_KeyExchange::create_local_datareader_crypto_tokens(
         temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
         BinaryProperty prop;
         prop.name() = std::string("dds.cryp.keymat");
-        std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_writer->Reader2WriterKeyMaterial.at(0));
+        std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_writer->Remote2EntityKeyMaterial.at(0));
         prop.value() = aes_128_gcm_encrypt(plaintext, remote_writer->Participant2ParticipantKxKeyMaterial.master_sender_key);
         prop.propagate(true);
 
@@ -237,13 +237,13 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
 
     KeyMaterial_AES_GCM_GMAC keymat;
     keymat = KeyMaterialCDRDeserialize(&plaintext);
-    remote_reader->Reader2WriterKeyMaterial.push_back(keymat);
+    remote_reader->Entity2RemoteKeyMaterial.push_back(keymat);
 
     remote_reader_lock.unlock();
 
     std::unique_lock<std::mutex> local_writer_lock(local_writer->mutex_);
 
-    local_writer->Reader2WriterKeyMaterial.push_back(keymat);
+    local_writer->Remote2EntityKeyMaterial.push_back(keymat);
 
     return true;
  }
@@ -293,14 +293,14 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
     KeyMaterial_AES_GCM_GMAC keymat;
     keymat = KeyMaterialCDRDeserialize(&plaintext);
 
-    remote_writer->Writer2ReaderKeyMaterial.push_back(keymat);
+    remote_writer->Entity2RemoteKeyMaterial.push_back(keymat);
 
     remote_writer_lock.unlock();
 
     std::unique_lock<std::mutex> local_writer_lock(local_reader->mutex_);
 
     //TODO(Ricardo) Why?
-    local_reader->Writer2ReaderKeyMaterial.push_back(keymat);
+    local_reader->Remote2EntityKeyMaterial.push_back(keymat);
 
     return true;
 }

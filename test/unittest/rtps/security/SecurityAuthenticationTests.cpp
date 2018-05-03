@@ -25,6 +25,7 @@
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <rtps/security/SecurityPluginFactory.h>
 #include <rtps/security/SecurityManager.h>
+#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 
 #include <gtest/gtest.h>
 
@@ -139,7 +140,7 @@ class SecurityAuthenticationTest : public ::testing::Test
                 WillOnce(DoAll(SetArgPointee<0>(stateless_reader_), Return(true))).
                 WillOnce(DoAll(SetArgPointee<0>(volatile_reader_), Return(true)));
 
-            ASSERT_TRUE(manager_.init());
+            ASSERT_TRUE(manager_.init(security_attributes_, participant_properties_));
         }
 
         void initialization_auth_ok()
@@ -159,7 +160,7 @@ class SecurityAuthenticationTest : public ::testing::Test
             EXPECT_CALL(participant_, createReader_mock(_,_,_,_,_,_,_)).Times(1).
                 WillOnce(DoAll(SetArgPointee<0>(stateless_reader_), Return(true)));
 
-            ASSERT_TRUE(manager_.init());
+            ASSERT_TRUE(manager_.init(security_attributes_, participant_properties_));
         }
 
         void request_process_ok(CacheChange_t** request_message_change = nullptr)
@@ -305,7 +306,8 @@ class SecurityAuthenticationTest : public ::testing::Test
                 WillOnce(Return(true));
             EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
                 WillOnce(Return(true));
-            EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(participant_data_.m_guid)).Times(1);
+            //TODO(Ricardo) Verify parameter passed to notifyAboveRemoteEndpoints
+            EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
             EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle_),_)).Times(1).
                 WillOnce(Return(&shared_secret_handle));
             EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(&shared_secret_handle,_)).Times(1).
@@ -358,6 +360,8 @@ class SecurityAuthenticationTest : public ::testing::Test
         MockHandshakeHandle handshake_handle_;
         MockParticipantCryptoHandle local_participant_crypto_handle_;
         ParticipantProxyData participant_data_;
+        ParticipantSecurityAttributes security_attributes_;
+        PropertyPolicy participant_properties_;
 };
 
 TEST_F(SecurityAuthenticationTest, initialization_auth_nullptr)
@@ -366,7 +370,7 @@ TEST_F(SecurityAuthenticationTest, initialization_auth_nullptr)
     DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
     DefaultValue<const GUID_t&>::Set(guid);
 
-    ASSERT_TRUE(manager_.init());
+    ASSERT_TRUE(manager_.init(security_attributes_, participant_properties_));
 }
 
 TEST_F(SecurityAuthenticationTest, initialization_auth_failed)
@@ -377,7 +381,7 @@ TEST_F(SecurityAuthenticationTest, initialization_auth_failed)
     EXPECT_CALL(*auth_plugin_, validate_local_identity(_,_,_,_,_,_)).Times(1).
         WillOnce(Return(ValidationResult_t::VALIDATION_FAILED));
 
-    ASSERT_FALSE(manager_.init());
+    ASSERT_FALSE(manager_.init(security_attributes_, participant_properties_));
 }
 
 TEST_F(SecurityAuthenticationTest, initialization_register_local_participant_error)
@@ -390,7 +394,7 @@ TEST_F(SecurityAuthenticationTest, initialization_register_local_participant_err
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_)).Times(1).
         WillOnce(Return(nullptr));
 
-    ASSERT_FALSE(manager_.init());
+    ASSERT_FALSE(manager_.init(security_attributes_, participant_properties_));
 }
 
 TEST_F(SecurityAuthenticationTest, initialization_fail_participant_stateless_message_writer)
@@ -408,7 +412,7 @@ TEST_F(SecurityAuthenticationTest, initialization_fail_participant_stateless_mes
     EXPECT_CALL(participant_, createWriter_mock(_,_,_,_,_,_)).Times(1).
         WillOnce(Return(false));
 
-    ASSERT_FALSE(manager_.init());
+    ASSERT_FALSE(manager_.init(security_attributes_, participant_properties_));
 }
 
 TEST_F(SecurityAuthenticationTest, initialization_fail_participant_stateless_message_reader)
@@ -429,7 +433,7 @@ TEST_F(SecurityAuthenticationTest, initialization_fail_participant_stateless_mes
     EXPECT_CALL(participant_, createReader_mock(_,_,_,_,_,_,_)).Times(1).
         WillOnce(Return(false));
 
-    ASSERT_FALSE(manager_.init());
+    ASSERT_FALSE(manager_.init(security_attributes_, participant_properties_));
 }
 
 TEST_F(SecurityAuthenticationTest, initialization_fail_participant_volatile_message_writer)
@@ -452,7 +456,7 @@ TEST_F(SecurityAuthenticationTest, initialization_fail_participant_volatile_mess
     EXPECT_CALL(participant_, createReader_mock(_,_,_,_,_,_,_)).Times(1).
         WillOnce(DoAll(SetArgPointee<0>(stateless_reader), Return(true)));
 
-    ASSERT_FALSE(manager_.init());
+    ASSERT_FALSE(manager_.init(security_attributes_, participant_properties_));
 }
 
 TEST_F(SecurityAuthenticationTest, initialization_fail_participant_volatile_message_reader)
@@ -477,7 +481,7 @@ TEST_F(SecurityAuthenticationTest, initialization_fail_participant_volatile_mess
         WillOnce(DoAll(SetArgPointee<0>(stateless_reader), Return(true))).
         WillOnce(Return(false));
 
-    ASSERT_FALSE(manager_.init());
+    ASSERT_FALSE(manager_.init(security_attributes_, participant_properties_));
 }
 
 TEST_F(SecurityAuthenticationTest, initialization_auth_retry)
@@ -506,7 +510,7 @@ TEST_F(SecurityAuthenticationTest, initialization_auth_retry)
     EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillOnce(Return(true));
 
-    ASSERT_TRUE(manager_.init());
+    ASSERT_TRUE(manager_.init(security_attributes_, participant_properties_));
 }
 
 
@@ -551,7 +555,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
         WillOnce(Return(true));
     EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(participant_data.m_guid)).Times(1);
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
 
     RTPSParticipantAuthenticationInfo info;
     info.status(AUTHORIZED_RTPSPARTICIPANT);
@@ -629,7 +633,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
         WillRepeatedly(Return(true));
     EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillRepeatedly(Return(true));
-    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(participant_data.m_guid)).Times(1);
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
     EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
     EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle),_)).Times(1).
         WillOnce(Return(&shared_secret_handle));
@@ -777,7 +781,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_validation_remote_iden
         WillRepeatedly(Return(true));
     EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(participant_data.m_guid)).Times(1);
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
     EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
     EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle),_)).Times(1).
         WillOnce(Return(&shared_secret_handle));
@@ -1022,7 +1026,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_not_ex
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
-    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(participant_data.m_guid)).Times(1);
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
 
     RTPSParticipantAuthenticationInfo info;
     info.status(AUTHORIZED_RTPSPARTICIPANT);
@@ -1188,7 +1192,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_beg
         WillOnce(Return(true));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(participant_data.m_guid)).Times(1);
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
     EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
     EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle),_)).Times(1).
         WillOnce(Return(&shared_secret_handle));
@@ -1441,7 +1445,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_pendin
         WillOnce(Return(true));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(participant_data.m_guid)).Times(1);
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
     EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
     EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle),_)).Times(1).
         WillOnce(Return(&shared_secret_handle));
@@ -1574,7 +1578,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_pro
         WillOnce(Return(true));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(participant_data_.m_guid)).Times(1);
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
     EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle_),_)).Times(1).
         WillOnce(Return(&shared_secret_handle));
     EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(&shared_secret_handle,_)).Times(1).
@@ -1993,7 +1997,7 @@ TEST_F(SecurityAuthenticationTest, discovered_participant_process_message_ok_pro
         WillOnce(Return(true));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(participant_data_.m_guid)).Times(1);
+    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
     EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle_),_)).Times(1).
         WillOnce(Return(&shared_secret_handle));
     EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(&shared_secret_handle,_)).Times(1).

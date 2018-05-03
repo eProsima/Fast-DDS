@@ -123,14 +123,18 @@ set(${PROJECT_NAME}_security_source_files
     rtps/security/timedevent/HandshakeMessageTokenResent.cpp
     security/OpenSSLInit.cpp
     security/authentication/PKIDH.cpp
+    security/accesscontrol/Permissions.cpp
     security/cryptography/AESGCMGMAC.cpp
     security/cryptography/AESGCMGMAC_KeyExchange.cpp
     security/cryptography/AESGCMGMAC_KeyFactory.cpp
     security/cryptography/AESGCMGMAC_Transform.cpp
     security/cryptography/AESGCMGMAC_Types.cpp
     security/authentication/PKIIdentityHandle.cpp
-    security/access/mockAccessHandle.cpp
     security/authentication/PKIHandshakeHandle.cpp
+    security/accesscontrol/AccessPermissionsHandle.cpp
+    security/accesscontrol/CommonParser.cpp
+    security/accesscontrol/GovernanceParser.cpp
+    security/accesscontrol/PermissionsParser.cpp
     )
 
 # Add sources to Makefile.am
@@ -211,6 +215,7 @@ endif()
 set(${PROJECT_NAME}_include_dirs
     ${ASIO_INCLUDE_DIR}
     ${TINYXML2_INCLUDE_DIR}
+    ${fastcdr_INCLUDE_DIR}
 )
 
 if(ANDROID)
@@ -275,7 +280,7 @@ if(MSVC OR MSVC_IDE)
         endif()
 
         # Link library to external win32 libraries.
-        target_link_libraries(${PROJECT_NAME} ${PRIVACY}
+        target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr
             ${CMAKE_THREAD_LIBS_INIT}
             iphlpapi Shlwapi kernel32 user32.dll
             ${EXTRA_LIBRARIES}
@@ -304,7 +309,7 @@ else()
         )
 
     # Link library to external libraries.
-    target_link_libraries(${PROJECT_NAME}
+    target_link_libraries(${PROJECT_NAME} fastcdr
         ${CMAKE_THREAD_LIBS_INIT}
         ${EXTRA_LIBRARIES}
         )

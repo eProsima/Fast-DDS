@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,37 +13,31 @@
 // limitations under the License.
 
 /*!
- * @file mockAccessHandle.h
+ * @file ParticipantSecurityAttributes.h
  */
-#ifndef _SECURITY_ACCESS_MOCKACCESSHANDLE_H_
-#define _SECURITY_ACCESS_MOCKACCESSHANDLE_H_
-
-#include <fastrtps/rtps/security/common/Handle.h>
-#include <fastrtps/rtps/common/Guid.h>
-#include <string>
+#ifndef __RTPS_SECURITY_ACCESSCONTROL_PARTICIPANTSECURITYATTRIBUTES_H__
+#define __RTPS_SECURITY_ACCESSCONTROL_PARTICIPANTSECURITYATTRIBUTES_H__
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 namespace security {
 
-class mockAccess
+struct ParticipantSecurityAttributes
 {
-    public:
+    ParticipantSecurityAttributes() : is_access_protected(true), is_discovered_protected(false),
+    is_rtps_protected(false) {}
 
-        mockAccess(){}
+    bool is_access_protected;
 
-        ~mockAccess(){}
+    bool is_discovered_protected;
 
-        static const char* const class_id_;
-
+    bool is_rtps_protected;
 };
 
-typedef HandleImpl<mockAccess> mockAccessHandle;
+}
+}
+}
+}
 
-} //namespace security
-} //namespace rtps
-} //namespace fastrtps
-} //namespace eprosima
-
-#endif // _SECURITY_ACESS_MOCKACCESSHANDLE_H_
+#endif // __RTPS_SECURITY_ACCESSCONTROL_PARTICIPANTSECURITYATTRIBUTES_H__

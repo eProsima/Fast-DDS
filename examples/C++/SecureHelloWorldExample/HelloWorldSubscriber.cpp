@@ -46,9 +46,16 @@ bool HelloWorldSubscriber::init()
                     "file://certs/mainsubcert.pem");
     participant_property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.private_key",
                     "file://certs/mainsubkey.pem");
+    participant_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                    "builtin.Access-Permissions"));
+    participant_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                    "file://certs/maincacert.pem"));
+    participant_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+                    "file://certs/governance.smime"));
+    participant_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+                    "file://certs/permissions.smime"));
     participant_property_policy.properties().emplace_back("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC");
-    participant_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
     PParam.rtps.properties = participant_property_policy;
 
     mp_participant = Domain::createParticipant(PParam);
@@ -68,12 +75,6 @@ bool HelloWorldSubscriber::init()
     Rparam.topic.resourceLimitsQos.max_samples = 50;
     Rparam.topic.resourceLimitsQos.allocated_samples = 20;
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-
-    PropertyPolicy subscriber_property_policy;
-    subscriber_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    subscriber_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    Rparam.properties = subscriber_property_policy;
 
     mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 

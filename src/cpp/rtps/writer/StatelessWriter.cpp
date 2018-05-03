@@ -70,6 +70,10 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
+#if HAVE_SECURITY
+    encrypt_cachechange(cptr);
+#endif
+
     if(!isAsync())
     {
         this->setLivelinessAsserted(true);
@@ -251,7 +255,8 @@ bool StatelessWriter::matched_reader_add(const RemoteReaderAttributes& rdata)
 bool StatelessWriter::add_locator(Locator_t& loc)
 {
 #if HAVE_SECURITY
-    if(!is_submessage_protected() && !is_payload_protected())
+    if(!getAttributes()->security_attributes().is_submessage_protected &&
+            !getAttributes()->security_attributes().is_payload_protected)
 #endif
     {
         std::lock_guard<std::recursive_mutex> guard(*mp_mutex);

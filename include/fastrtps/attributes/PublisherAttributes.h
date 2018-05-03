@@ -39,10 +39,12 @@ namespace fastrtps{
  * Class PublisherAttributes, used by the user to define the attributes of a Publisher.
  * @ingroup FASTRTPS_ATTRIBUTES_MODULE
  */
-class PublisherAttributes {
-
+class PublisherAttributes
+{
     public:
-        PublisherAttributes(){
+
+        PublisherAttributes()
+        {
             m_userDefinedID = -1;
             m_entityID = -1;
             historyMemoryPolicy = rtps::PREALLOCATED_MEMORY_MODE;
@@ -57,14 +59,14 @@ class PublisherAttributes {
         //!Unicast locator list
         rtps::LocatorList_t unicastLocatorList;
         //!Multicast locator list
-		rtps::LocatorList_t multicastLocatorList;
+        rtps::LocatorList_t multicastLocatorList;
         //!Output locator list
-		rtps::LocatorList_t outLocatorList;
+        rtps::LocatorList_t outLocatorList;
         //!Throughput controller
-		rtps::ThroughputControllerDescriptor throughputController;
+        rtps::ThroughputControllerDescriptor throughputController;
         //!Underlying History memory policy
-		rtps::MemoryManagementPolicy_t historyMemoryPolicy;
-		rtps::PropertyPolicy properties;
+        rtps::MemoryManagementPolicy_t historyMemoryPolicy;
+        rtps::PropertyPolicy properties;
 
         /**
          * Get the user defined ID

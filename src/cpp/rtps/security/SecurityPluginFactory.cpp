@@ -18,6 +18,7 @@
 
 #include "SecurityPluginFactory.h"
 #include "../../security/authentication/PKIDH.h"
+#include "../../security/accesscontrol/Permissions.h"
 #include "../../security/cryptography/AESGCMGMAC.h"
 
 using namespace eprosima::fastrtps::rtps;
@@ -26,7 +27,8 @@ using namespace eprosima::fastrtps::rtps::security;
 Authentication* SecurityPluginFactory::create_authentication_plugin(const PropertyPolicy& property_policy)
 {
     Authentication* plugin = nullptr;
-    const std::string* auth_plugin_property = PropertyPolicyHelper::find_property(property_policy, "dds.sec.auth.plugin");
+    const std::string* auth_plugin_property = PropertyPolicyHelper::find_property(property_policy,
+            "dds.sec.auth.plugin");
 
     if(auth_plugin_property != nullptr)
     {
@@ -39,10 +41,28 @@ Authentication* SecurityPluginFactory::create_authentication_plugin(const Proper
     return plugin;
 }
 
+AccessControl* SecurityPluginFactory::create_access_control_plugin(const PropertyPolicy& property_policy)
+{
+    AccessControl* plugin = nullptr;
+    const std::string* access_plugin_property = PropertyPolicyHelper::find_property(property_policy,
+            "dds.sec.access.plugin");
+
+    if(access_plugin_property != nullptr)
+    {
+        if(access_plugin_property->compare("builtin.Access-Permissions") == 0)
+        {
+            plugin = new Permissions();
+        }
+    }
+
+    return plugin;
+}
+
 Cryptography* SecurityPluginFactory::create_cryptography_plugin(const PropertyPolicy& property_policy)
 {
     Cryptography* plugin = nullptr;
-    const std::string* crypto_plugin_property = PropertyPolicyHelper::find_property(property_policy, "dds.sec.crypto.plugin");
+    const std::string* crypto_plugin_property = PropertyPolicyHelper::find_property(property_policy,
+            "dds.sec.crypto.plugin");
 
     if(crypto_plugin_property != nullptr)
     {

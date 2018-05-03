@@ -107,6 +107,8 @@ class RTPSParticipantImpl
         void ResourceSemaphoreWait() {}
         void ResourceSemaphorePost() {}
 
+        uint32_t getMaxMessageSize() const { return 65536; }
+
     private:
 
         PDPSimple pdpsimple_;

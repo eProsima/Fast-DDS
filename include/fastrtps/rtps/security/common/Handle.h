@@ -58,6 +58,8 @@ class HandleImpl : public Handle
 
         HandleImpl() : Handle(T::class_id_), impl_(new T) {}
 
+        virtual ~HandleImpl() = default;
+
         static HandleImpl<T>& narrow(Handle& handle)
         {
             if(handle.get_class_id().compare(T::class_id_) == 0)
@@ -74,7 +76,7 @@ class HandleImpl : public Handle
             return HandleImpl<T>::nil_handle;
         }
 
-        bool nil() const
+        bool nil() const override
         {
             return impl_ ? false : true;
         }
@@ -116,7 +118,9 @@ class NilHandle : public Handle
 
         NilHandle() : Handle("nil_handle") {}
 
-        bool nil() const { return true; }
+        virtual ~NilHandle() = default;
+
+        bool nil() const override { return true; }
 };
 
 
@@ -126,6 +130,7 @@ typedef Handle IdentityHandle;
 typedef Handle PermissionsHandle;
 
 typedef Handle ParticipantCryptoHandle;
+typedef Handle EntityCryptoHandle;
 typedef Handle DatawriterCryptoHandle;
 typedef Handle DatareaderCryptoHandle;
 

@@ -19,6 +19,7 @@
 #define _RTPS_SECURITY_SECURITYPLUGINFACTORY_H_
 
 #include <fastrtps/rtps/security/authentication/Authentication.h>
+#include <fastrtps/rtps/security/accesscontrol/AccessControl.h>
 #include <fastrtps/rtps/security/cryptography/Cryptography.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
 
@@ -38,6 +39,8 @@ class SecurityPluginFactory
          * @param Pointer to the new Authentication plugin. In case of error nullptr will be returned.
          */
         Authentication* create_authentication_plugin(const PropertyPolicy& property_policy);
+
+        AccessControl* create_access_control_plugin(const PropertyPolicy& property_policy);
 
         /*!
          * @brief Create an Cryptographic plugin  described in the PropertyPolicy.

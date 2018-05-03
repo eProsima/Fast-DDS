@@ -34,35 +34,36 @@ class MockCryptoTransform : public CryptoTransform
         virtual ~MockCryptoTransform(){}
 
         MOCK_METHOD5(encode_serialized_payload, bool (
+                SerializedPayload_t&,
                 std::vector<uint8_t>&,
-                std::vector<uint8_t>&,
-                const std::vector<uint8_t>&,
+                const SerializedPayload_t&,
                 DatawriterCryptoHandle&,
                 SecurityException&));
+
         MOCK_METHOD5(encode_datawriter_submessage, bool (
-                std::vector<uint8_t>&,
-                const std::vector<uint8_t>&,
+                CDRMessage_t&,
+                const CDRMessage_t&,
                 DatawriterCryptoHandle&,
                 std::vector<DatareaderCryptoHandle*>&,
                 SecurityException&));
 
         MOCK_METHOD5(encode_datareader_submessage, bool (
-                std::vector<uint8_t>&,
-                const std::vector<uint8_t>&,
+                CDRMessage_t&,
+                const CDRMessage_t&,
                 DatareaderCryptoHandle&,
                 std::vector<DatawriterCryptoHandle*>&,
                 SecurityException &exception));
 
         MOCK_METHOD5(encode_rtps_message, bool (
-                std::vector<uint8_t>&,
-                const std::vector<uint8_t>&,
+                CDRMessage_t&,
+                const CDRMessage_t&,
                 ParticipantCryptoHandle&,
-                const std::vector<ParticipantCryptoHandle*>&,
+                std::vector<ParticipantCryptoHandle*>&,
                 SecurityException&));
 
         MOCK_METHOD5(decode_rtps_message, bool (
-                std::vector<uint8_t>&,
-                const std::vector<uint8_t>&,
+                CDRMessage_t&,
+                const CDRMessage_t&,
                 const ParticipantCryptoHandle&,
                 const ParticipantCryptoHandle&,
                 SecurityException&));
@@ -91,10 +92,10 @@ class MockCryptoTransform : public CryptoTransform
                 SecurityException&));
 
         MOCK_METHOD6(decode_serialized_payload, bool (
-                std::vector<uint8_t>&,
+                SerializedPayload_t&,
+                const SerializedPayload_t&,
                 const std::vector<uint8_t>&,
-                const std::vector<uint8_t>&,
-                DatareaderCryptoHandle &,
+                DatareaderCryptoHandle&,
                 DatawriterCryptoHandle&,
                 SecurityException&));
 

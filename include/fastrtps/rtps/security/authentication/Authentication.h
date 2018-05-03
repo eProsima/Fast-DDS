@@ -57,7 +57,7 @@ class Authentication
 {
     public:
 
-        virtual ~Authentication() {}
+        virtual ~Authentication() = default;
 
         /*!
          * @brief Validates the identity of the local RTPSParticipant.
@@ -94,7 +94,7 @@ class Authentication
          */
         virtual ValidationResult_t validate_remote_identity(IdentityHandle** remote_identity_handle,
                 const IdentityHandle& local_identity_handle,
-                IdentityToken&& remote_identity_token,
+                const IdentityToken& remote_identity_token,
                 const GUID_t& remote_participant_key,
                 SecurityException& exception) = 0;
 
@@ -209,6 +209,16 @@ class Authentication
          */
         virtual bool return_sharedsecret_handle(SharedSecretHandle* sharedsecret_handle,
                 SecurityException& exception) = 0;
+
+        virtual bool set_permissions_credential_and_token(IdentityHandle& identity_handle,
+                PermissionsCredentialToken& permissions_credential_token,
+                SecurityException& ex) = 0;
+
+        virtual bool get_authenticated_peer_credential_token(PermissionsCredentialToken **token,
+                const IdentityHandle& identity_handle, SecurityException& exception) = 0;
+
+        virtual bool return_authenticated_peer_credential_token(PermissionsCredentialToken* token,
+                SecurityException& ex) = 0;
 
 };
 

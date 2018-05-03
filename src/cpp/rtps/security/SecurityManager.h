@@ -51,7 +51,10 @@ class ReaderHistory;
 namespace security {
 
 class Authentication;
+class AccessControl;
 class Cryptography;
+struct ParticipantSecurityAttributes;
+struct EndpointSecurityAttributes;
 
 class SecurityManager
 {
@@ -63,7 +66,7 @@ class SecurityManager
 
         ~SecurityManager();
 
-        bool init();
+        bool init(ParticipantSecurityAttributes& attributes, const PropertyPolicy& participant_properties);
 
         void destroy();
 
@@ -71,50 +74,66 @@ class SecurityManager
 
         void remove_participant(const ParticipantProxyData& participant_data);
 
-        bool register_local_writer(const GUID_t& writer_guid, const PropertySeq& writer_properties);
+        bool register_local_writer(const GUID_t& writer_guid, const PropertyPolicy& writer_properties,
+                EndpointSecurityAttributes& security_attributes);
+
+        bool register_local_builtin_writer(const GUID_t& writer_guid, EndpointSecurityAttributes& security_attributes);
 
         bool unregister_local_writer(const GUID_t& writer_guid);
 
-        bool register_local_reader(const GUID_t& reader_guid, const PropertySeq& reader_properties);
+        bool register_local_reader(const GUID_t& reader_guid, const PropertyPolicy& reader_properties,
+                EndpointSecurityAttributes& security_attributes);
+
+        bool register_local_builtin_reader(const GUID_t& reader_guid, EndpointSecurityAttributes& security_attributes);
 
         bool unregister_local_reader(const GUID_t& reader_guid);
 
         bool discovered_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
-                ReaderProxyData& remote_reader_data);
+                ReaderProxyData& remote_reader_data, const EndpointSecurityAttributes& security_attributes);
 
         void remove_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
                 const GUID_t& remote_reader_guid);
 
+        bool discovered_builtin_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
+                ReaderProxyData& remote_reader_data, const EndpointSecurityAttributes& security_attributes);
+
         bool discovered_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
-                WriterProxyData& remote_writer_guid);
+                WriterProxyData& remote_writer_guid, const EndpointSecurityAttributes& security_attributes);
 
         void remove_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
                 const GUID_t& remote_writer_guid);
+
+        bool discovered_builtin_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
+                WriterProxyData& remote_writer_guid, const EndpointSecurityAttributes& security_attributes);
 
         bool get_identity_token(IdentityToken** identity_token);
 
         bool return_identity_token(IdentityToken* identity_token);
 
+        bool get_permissions_token(PermissionsToken** permissions_token);
+
+        bool return_permissions_token(PermissionsToken* permissions_token);
+
         uint32_t builtin_endpoints();
 
         RTPSParticipantImpl* participant() { return participant_; }
 
-        bool encode_rtps_message(CDRMessage_t& message,
+        bool encode_rtps_message(const CDRMessage_t& input_message, CDRMessage_t& output_message,
                 const std::vector<GuidPrefix_t>& receiving_list);
 
-        int decode_rtps_message(CDRMessage_t& message, CDRMessage_t& out_message,
+        int decode_rtps_message(const CDRMessage_t& message, CDRMessage_t& out_message,
                 const GuidPrefix_t& sending_participant);
 
-        bool encode_writer_submessage(CDRMessage_t& message, const GUID_t& writer_guid,
-                const std::vector<GUID_t>& receiving_list);
+        bool encode_writer_submessage(const CDRMessage_t& input_message, CDRMessage_t& output_message,
+                const GUID_t& writer_guid, const std::vector<GUID_t>& receiving_list);
 
-        bool encode_reader_submessage(CDRMessage_t& message, const GUID_t& reader_guid,
-                const std::vector<GUID_t>& receiving_list);
+        bool encode_reader_submessage(const CDRMessage_t& input_message, CDRMessage_t& output_message,
+                const GUID_t& reader_guid, const std::vector<GUID_t>& receiving_list);
 
         int decode_rtps_submessage(CDRMessage_t& message, CDRMessage_t& out_message,
                 const GuidPrefix_t& sending_participant);
 
-        bool encode_serialized_payload(const SerializedPayload_t& payload, CDRMessage_t& output_message,
+        bool encode_serialized_payload(const SerializedPayload_t& payload, SerializedPayload_t& output_payload,
                 const GUID_t& writer_guid);
 
         bool decode_serialized_payload(const SerializedPayload_t& secure_payload,
@@ -185,15 +204,20 @@ class SecurityManager
 
                 typedef std::unique_ptr<AuthenticationInfo, EmptyDelete> AuthUniquePtr;
 
-                DiscoveredParticipantInfo(AuthenticationStatus auth_status) :
+                DiscoveredParticipantInfo(AuthenticationStatus auth_status,
+                        const ParticipantProxyData& participant_data) :
                     auth_(auth_status), auth_ptr_(&auth_),
                     shared_secret_handle_(nullptr),
-                    participant_crypto_(nullptr) {}
+                    permissions_handle_(nullptr),
+                    participant_crypto_(nullptr),
+                    participant_data_(participant_data) {}
 
                 DiscoveredParticipantInfo(DiscoveredParticipantInfo&& info) :
                     auth_(std::move(info.auth_)),  auth_ptr_(&auth_),
                     shared_secret_handle_(std::move(info.shared_secret_handle_)),
-                    participant_crypto_(info.participant_crypto_) {}
+                    permissions_handle_(std::move(info.permissions_handle_)),
+                    participant_crypto_(info.participant_crypto_),
+                    participant_data_(std::move(info.participant_data_)) {}
 
                 AuthUniquePtr get_auth() { return std::move(auth_ptr_); }
 
@@ -211,6 +235,21 @@ class SecurityManager
                 SharedSecretHandle* get_shared_secret()
                 {
                     return shared_secret_handle_;
+                }
+
+                void set_permissions_handle(PermissionsHandle* handle)
+                {
+                    permissions_handle_ = handle;
+                }
+
+                PermissionsHandle* get_permissions_handle()
+                {
+                    return permissions_handle_;
+                }
+
+                const PermissionsHandle* get_permissions_handle() const
+                {
+                    return permissions_handle_;
                 }
 
                 void set_participant_crypto(ParticipantCryptoHandle* participant_crypto)
@@ -231,6 +270,11 @@ class SecurityManager
                     }
                 }
 
+                const ParticipantProxyData& participant_data() const
+                {
+                    return participant_data_;
+                }
+
             private:
 
                 DiscoveredParticipantInfo(const DiscoveredParticipantInfo& info) = delete;
@@ -241,7 +285,11 @@ class SecurityManager
 
                 SharedSecretHandle* shared_secret_handle_;
 
+                PermissionsHandle* permissions_handle_;
+
                 ParticipantCryptoHandle* participant_crypto_;
+
+                ParticipantProxyData participant_data_;
 
         };
 
@@ -296,6 +344,14 @@ class SecurityManager
         bool create_participant_volatile_message_secure_reader();
         void delete_participant_volatile_message_secure_reader();
 
+        bool discovered_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
+                ReaderProxyData& remote_reader_data, const EndpointSecurityAttributes& security_attributes,
+                bool is_builtin);
+
+        bool discovered_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
+                WriterProxyData& remote_writer_guid, const EndpointSecurityAttributes& security_attributes,
+                bool is_builtin);
+
         void match_builtin_endpoints(const ParticipantProxyData& participant_data);
 
         void unmatch_builtin_endpoints(const ParticipantProxyData& participant_data);
@@ -307,7 +363,7 @@ class SecurityManager
 
         void process_participant_volatile_message_secure(const CacheChange_t* const change);
 
-        bool on_process_handshake(const GUID_t& remote_participant_guid,
+        bool on_process_handshake(const ParticipantProxyData& participant_data,
                 DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
                 MessageIdentity&& message_identity,
                 HandshakeMessageToken&& message);
@@ -327,7 +383,7 @@ class SecurityManager
                 const GUID_t& destination_endpoint_key, const GUID_t& source_endpoint_key,
                 ParticipantCryptoTokenSeq& crypto_tokens);
 
-        bool participant_authorized(const GUID_t& remote_participant_guid,
+        bool participant_authorized(const ParticipantProxyData& participant_data,
                 const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
                 SharedSecretHandle* shared_secret_handle);
 
@@ -344,9 +400,15 @@ class SecurityManager
 
         Authentication* authentication_plugin_;
 
+        AccessControl* access_plugin_;
+
         Cryptography* crypto_plugin_;
 
+        uint32_t domain_id_;
+
         IdentityHandle* local_identity_handle_;
+
+        PermissionsHandle* local_permissions_handle_;
 
         ParticipantCryptoHandle* local_participant_crypto_handle_;
 

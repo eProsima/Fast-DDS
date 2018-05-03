@@ -31,7 +31,7 @@ class LatencyType
 
         LatencyType(): seqnum(0) {}
 
-        LatencyType(uint16_t number) :
+        LatencyType(uint32_t number) :
             seqnum(0), data(number,0) {}
 
         ~LatencyType() {}
