@@ -94,6 +94,32 @@ class RTPS_DllAPI Locator_t
             return *this;
         }
 
+        bool set_TCP_port(uint16_t tcp_port)
+        {
+            std::memcpy(&port, &tcp_port, 2 * sizeof(char));
+            return true;
+        }
+
+        bool set_RTPS_port(uint16_t rtps_port)
+        {
+            std::memcpy(&port + 2, &rtps_port, 2 * sizeof(char));
+            return true;
+        }
+
+        uint16_t get_TCP_port()
+        {
+            uint16_t oport;
+            std::memcpy(&oport, &port, 2 * sizeof(char));
+            return oport;
+        }
+
+        uint16_t get_RTPS_port()
+        {
+            uint16_t oport;
+            std::memcpy(&oport, &port + 2, 2 * sizeof(char));
+            return oport;
+        }
+
         bool set_IP4_address(octet o1,octet o2,octet o3,octet o4){
             LOCATOR_ADDRESS_INVALID(address);
             address[12] = o1;
