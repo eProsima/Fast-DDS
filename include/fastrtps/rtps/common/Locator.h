@@ -38,9 +38,12 @@ namespace rtps{
 #define LOCATOR_KIND_RESERVED 0
 #define LOCATOR_KIND_UDPv4 1
 #define LOCATOR_KIND_UDPv6 2
+#define LOCATOR_KIND_TCPv4 4
+#define LOCATOR_KIND_TCPv6 8
 
+// TODO Make this class a base class for each kind of locator?
 
-//!@brief Class Locator_t, uniquely identifies a communication channel for a particular transport. 
+//!@brief Class Locator_t, uniquely identifies a communication channel for a particular transport.
 //For example, an address+port combination in the case of UDP.
 //!@ingroup COMMON_MODULE
 class RTPS_DllAPI Locator_t
@@ -51,6 +54,8 @@ class RTPS_DllAPI Locator_t
          * @brief Specifies the locator type. Valid values are:
          * LOCATOR_KIND_UDPv4
          * LOCATOR_KIND_UDPv6
+         * LOCATOR_KIND_TCPv4
+         * LOCATOR_KIND_TCPv6
          */
         int32_t kind;
         uint32_t port;
@@ -97,6 +102,16 @@ class RTPS_DllAPI Locator_t
             address[15] = o4;
             return true;
         }
+
+        bool set_IP4_WAN_address(octet o1,octet o2,octet o3,octet o4){
+            if (kind == LOCATOR_KIND_UDPv4) return false;
+            address[8] = o1;
+            address[9] = o2;
+            address[10] = o3;
+            address[11] = o4;
+            return true;
+        }
+
         bool set_IP4_address(const std::string& in_address)
         {
             std::stringstream ss(in_address);
@@ -110,11 +125,49 @@ class RTPS_DllAPI Locator_t
             address[15] = (octet)d;
             return true;
         }
+
+        bool set_IP4_WAN_address(const std::string& in_address)
+        {
+            if (kind == LOCATOR_KIND_UDPv4) return false;
+            std::stringstream ss(in_address);
+            int a,b,c,d; //to store the 4 ints
+            char ch; //to temporarily store the '.'
+            ss >> a >> ch >> b >> ch >> c >> ch >> d;
+            address[8] = (octet)a;
+            address[9] = (octet)b;
+            address[10] = (octet)c;
+            address[11] = (octet)d;
+            return true;
+        }
+
         std::string to_IP4_string() const {
             std::stringstream ss;
             ss << (int)address[12] << "." << (int)address[13] << "." << (int)address[14]<< "." << (int)address[15];
             return ss.str();
         }
+
+        std::string to_IP4_WAN_string() const {
+            if (kind == LOCATOR_KIND_UDPv4) return "";
+            std::stringstream ss;
+            ss << (int)address[11] << "." << (int)address[10] << "." << (int)address[9]<< "." << (int)address[8];
+            return ss.str();
+        }
+
+        uint64_t to_LAN_ID() const {
+            if (kind == LOCATOR_KIND_UDPv4) return "";
+            uint64_t lanId;
+            octet* oLanId = (octet*)&lanId;
+            std::memcpy(oLanId,address,8*sizeof(octet));
+            return lanId;
+        }
+
+        bool set_LAN_ID(int64_t lanId)
+        {
+            octet* oLanId = (octet*)&lanId;
+            std::memcpy(address, oLanId, 8*sizeof(octet));
+            return true;
+        }
+
         uint32_t to_IP4_long()
         {
             uint32_t addr;
@@ -127,6 +180,24 @@ class RTPS_DllAPI Locator_t
             oaddr[1] = address[14];
             oaddr[2] = address[13];
             oaddr[3] = address[12];
+#endif
+
+            return addr;
+        }
+
+        uint32_t to_IP4_WAN_long()
+        {
+            if (kind == LOCATOR_KIND_UDPv4) return 0;
+            uint32_t addr;
+            octet* oaddr = (octet*)&addr;
+#if __BIG_ENDIAN__
+            std::memcpy(oaddr,address+8,4*sizeof(octet));
+#else
+            // TODO (Santi) - Are we sure we want to flip this?
+            oaddr[0] = address[11];
+            oaddr[1] = address[10];
+            oaddr[2] = address[9];
+            oaddr[3] = address[8];
 #endif
 
             return addr;
@@ -157,7 +228,7 @@ class RTPS_DllAPI Locator_t
         std::string to_IP6_string() const{
             std::stringstream ss;
             ss << std::hex;
-            for (int i = 0; i != 14; i+= 2) 
+            for (int i = 0; i != 14; i+= 2)
             {
                 auto field = (address[i] << 8) + address[i+1];
                 ss << field << ":";
@@ -171,7 +242,7 @@ class RTPS_DllAPI Locator_t
 
 inline bool IsAddressDefined(const Locator_t& loc)
 {
-    if(loc.kind == LOCATOR_KIND_UDPv4)
+    if(loc.kind == LOCATOR_KIND_UDPv4 || loc.kind == LOCATOR_KIND_TCPv4) // WAN addr in TCPv4 is optional, isn't?
     {
         for(uint8_t i = 12; i < 16; ++i)
         {
@@ -179,7 +250,7 @@ inline bool IsAddressDefined(const Locator_t& loc)
                 return true;
         }
     }
-    else if (loc.kind == LOCATOR_KIND_UDPv6)
+    else if (loc.kind == LOCATOR_KIND_UDPv6 || loc.kind == LOCATOR_KIND_TCPv6)
     {
         for(uint8_t i = 0; i < 16; ++i)
         {
@@ -214,11 +285,11 @@ inline bool operator==(const Locator_t&loc1,const Locator_t& loc2)
 
 inline std::ostream& operator<<(std::ostream& output,const Locator_t& loc)
 {
-    if(loc.kind == LOCATOR_KIND_UDPv4)
+    if(loc.kind == LOCATOR_KIND_UDPv4 || loc.kind == LOCATOR_KIND_TCPv4)
     {
         output<<(int)loc.address[12] << "." << (int)loc.address[13] << "." << (int)loc.address[14]<< "." << (int)loc.address[15]<<":"<<loc.port;
     }
-    else if(loc.kind == LOCATOR_KIND_UDPv6)
+    else if(loc.kind == LOCATOR_KIND_UDPv6 || loc.kind == LOCATOR_KIND_TCPv6)
     {
         for(uint8_t i =0;i<16;++i)
         {
