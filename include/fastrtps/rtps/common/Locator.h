@@ -154,7 +154,7 @@ class RTPS_DllAPI Locator_t
         }
 
         uint64_t to_LAN_ID() const {
-            if (kind == LOCATOR_KIND_UDPv4) return "";
+            if (kind == LOCATOR_KIND_UDPv4) return 0;
             uint64_t lanId;
             octet* oLanId = (octet*)&lanId;
             std::memcpy(oLanId,address,8*sizeof(octet));
