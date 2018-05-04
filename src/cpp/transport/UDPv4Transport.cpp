@@ -26,10 +26,6 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-static const uint32_t maximumMessageSize = 65500;
-static const uint32_t minimumSocketBuffer = 65536;
-static const uint8_t defaultTTL = 1;
-
 static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
 {
     IPFinder::getIPs(&locNames, return_loopback);
@@ -73,19 +69,18 @@ UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
     }
 
 UDPv4TransportDescriptor::UDPv4TransportDescriptor():
-    TransportDescriptorInterface(maximumMessageSize),
-    sendBufferSize(0),
-    receiveBufferSize(0),
-    TTL(defaultTTL)
+    TransportDescriptorInterface(maximumMessageSize)
 {
 }
 
 UDPv4TransportDescriptor::UDPv4TransportDescriptor(const UDPv4TransportDescriptor& t) :
-    TransportDescriptorInterface(t),
-    sendBufferSize(t.sendBufferSize),
-    receiveBufferSize(t.receiveBufferSize),
-    TTL(t.TTL)
+    TransportDescriptorInterface(t)
 {
+}
+
+TransportInterface* UDPv4TransportDescriptor::create_transport() const
+{
+    return new UDPv4Transport(*this);
 }
 
 UDPv4Transport::UDPv4Transport() :

@@ -22,9 +22,6 @@ namespace fastrtps{
 namespace rtps{
 
 typedef struct test_UDPv4TransportDescriptor : public TransportDescriptorInterface{
-   // UDPv4 layer parameters
-   uint32_t sendBufferSize;
-   uint32_t receiveBufferSize;
    bool granularMode;
 
    // Test shim parameters
@@ -44,6 +41,8 @@ typedef struct test_UDPv4TransportDescriptor : public TransportDescriptorInterfa
 
    RTPS_DllAPI test_UDPv4TransportDescriptor();
    virtual ~test_UDPv4TransportDescriptor(){}
+
+   virtual TransportInterface* create_transport() const override;
 } test_UDPv4TransportDescriptor;
 
 } // namespace rtps

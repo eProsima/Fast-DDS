@@ -32,16 +32,9 @@ namespace rtps{
  * @ingroup TRANSPORT_MODULE
  */
 typedef struct UDPv4TransportDescriptor: public TransportDescriptorInterface {
-   //! Length of the send buffer.
-   uint32_t sendBufferSize;
-   //! Length of the receive buffer.
-   uint32_t receiveBufferSize;
-   //! Allowed interfaces in an IP string format.
-   std::vector<std::string> interfaceWhiteList;
-   //! Specified time to live (8bit - 255 max TTL)
-   uint8_t TTL;
-
    virtual ~UDPv4TransportDescriptor(){}
+
+   virtual TransportInterface* create_transport() const override;
 
    RTPS_DllAPI UDPv4TransportDescriptor();
 

@@ -26,10 +26,6 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-static const uint32_t maximumMessageSize = 65500;
-static const uint32_t minimumSocketBuffer = 65536;
-static const uint8_t defaultTTL = 1;
-
 static void GetIP6s(vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
 {
     IPFinder::getIPs(&locNames, return_loopback);
@@ -90,19 +86,18 @@ UDPv6Transport::UDPv6Transport(const UDPv6TransportDescriptor& descriptor):
     }
 
 UDPv6TransportDescriptor::UDPv6TransportDescriptor():
-    TransportDescriptorInterface(maximumMessageSize),
-    sendBufferSize(0),
-    receiveBufferSize(0),
-    TTL(defaultTTL)
+    TransportDescriptorInterface(maximumMessageSize)
 {
 }
 
 UDPv6TransportDescriptor::UDPv6TransportDescriptor(const UDPv6TransportDescriptor& t) :
-    TransportDescriptorInterface(t),
-    sendBufferSize(t.sendBufferSize),
-    receiveBufferSize(t.receiveBufferSize),
-    TTL(t.TTL)
+    TransportDescriptorInterface(t)
 {
+}
+
+TransportInterface* UDPv6TransportDescriptor::create_transport() const
+{
+    return new UDPv6Transport(*this);
 }
 
 UDPv6Transport::~UDPv6Transport()
