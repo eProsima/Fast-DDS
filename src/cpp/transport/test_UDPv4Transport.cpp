@@ -44,7 +44,7 @@ test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& de
     }
 
 RTPS_DllAPI test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor():
-    TransportDescriptorInterface(maximumMessageSize),
+    TransportDescriptorInterface(s_maximumMessageSize),
     dropDataMessagesPercentage(0),
     dropParticipantBuiltinTopicData(false),
     dropPublicationBuiltinTopicData(false),
