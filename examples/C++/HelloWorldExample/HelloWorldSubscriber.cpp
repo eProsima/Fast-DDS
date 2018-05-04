@@ -21,6 +21,7 @@
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
@@ -44,6 +45,14 @@ bool HelloWorldSubscriber::init()
     PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_sub");
+
+    //ARCE:
+    //PParam.rtps.useBuiltinTransports = false;
+    //std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+    //descriptor->sendBufferSize = 0;
+    //descriptor->receiveBufferSize = 0;
+    //PParam.rtps.userTransports.emplace_back(descriptor);
+
     mp_participant = Domain::createParticipant(PParam);
     if(mp_participant==nullptr)
         return false;

@@ -14,6 +14,7 @@
 
 #include <fastrtps/rtps/network/NetworkFactory.h>
 #include <fastrtps/transport/UDPv4Transport.h>
+#include <fastrtps/transport/TCPv4Transport.h>
 #include <fastrtps/transport/UDPv6Transport.h>
 #include <fastrtps/transport/test_UDPv4Transport.h>
 #include <utility>
@@ -120,7 +121,17 @@ void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descr
     if (auto concrete = dynamic_cast<const test_UDPv4TransportDescriptor*> (descriptor))
     {
         std::unique_ptr<test_UDPv4Transport> transport(new test_UDPv4Transport(*concrete));
-        if(transport->init())
+        if (transport->init())
+        {
+            minSendBufferSize = transport->get_configuration().sendBufferSize;
+            mRegisteredTransports.emplace_back(std::move(transport));
+            wasRegistered = true;
+        }
+    }
+    if (auto concrete = dynamic_cast<const TCPv4TransportDescriptor*> (descriptor))
+    {
+        std::unique_ptr<TCPv4Transport> transport(new TCPv4Transport(*concrete));
+        if (transport->init())
         {
             minSendBufferSize = transport->get_configuration().sendBufferSize;
             mRegisteredTransports.emplace_back(std::move(transport));
