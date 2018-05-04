@@ -22,6 +22,7 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
 
@@ -48,6 +49,14 @@ bool HelloWorldPublisher::init()
     PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_pub");
+
+    //ARCE:
+    //PParam.rtps.useBuiltinTransports = false;
+    //std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+    //descriptor->sendBufferSize = 0;
+    //descriptor->receiveBufferSize = 0;
+    //PParam.rtps.userTransports.emplace_back(descriptor);
+
     mp_participant = Domain::createParticipant(PParam);
 
     if(mp_participant==nullptr)
