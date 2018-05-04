@@ -262,7 +262,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
     /*
         Since nothing guarantees the correct creation of the Resources on the Locators we have specified, and
-        in order to maintain synchrony between the defaultLocator list and the actuar ReceiveResources,
+        in order to maintain synchrony between the defaultLocator list and the actual ReceiveResources,
         We create the resources for these Locators now. Furthermore, in case these resources are taken,
         we create them on another Locator and then update de defaultList.
         */

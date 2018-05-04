@@ -91,6 +91,7 @@ bool NetworkFactory::BuildReceiverResources (const Locator_t& local, std::vector
     return returnedValue;
 }
 
+// TODO To abstract from actual classes.
 void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descriptor)
 {
     bool wasRegistered = false;
