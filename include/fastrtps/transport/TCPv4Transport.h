@@ -117,7 +117,7 @@ public:
 
    RTPS_DllAPI TCPv4Transport(const TCPv4TransportDescriptor&);
 
-   virtual ~TCPv4Transport();
+   virtual ~TCPv4Transport() override;
 
    bool init() override;
 
@@ -186,7 +186,7 @@ public:
 
    virtual bool is_local_locator(const Locator_t& locator) const override;
 
-   TCPv4TransportDescriptor get_configuration() { return mConfiguration_; }
+   TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
 
 protected:
 

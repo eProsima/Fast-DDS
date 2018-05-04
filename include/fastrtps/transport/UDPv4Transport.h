@@ -99,7 +99,7 @@ public:
 
    RTPS_DllAPI UDPv4Transport(const UDPv4TransportDescriptor&);
 
-   virtual ~UDPv4Transport();
+   virtual ~UDPv4Transport() override;
 
    bool init() override;
 
@@ -171,7 +171,7 @@ public:
 
    virtual bool is_local_locator(const Locator_t& locator) const override;
 
-   UDPv4TransportDescriptor get_configuration() { return mConfiguration_; }
+   TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
 
 protected:
 

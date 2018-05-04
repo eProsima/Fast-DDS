@@ -98,6 +98,15 @@ void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descr
     bool wasRegistered = false;
     uint32_t minSendBufferSize = std::numeric_limits<uint32_t>::max();
 
+    std::unique_ptr<TransportInterface> transport(descriptor->create_transport());
+    if(transport->init())
+    {
+        minSendBufferSize = transport->get_configuration()->sendBufferSize;
+        mRegisteredTransports.emplace_back(std::move(transport));
+        wasRegistered = true;
+    }
+
+    /*
     if (auto concrete = dynamic_cast<const UDPv4TransportDescriptor*> (descriptor))
     {
         std::unique_ptr<UDPv4Transport> transport(new UDPv4Transport(*concrete));
@@ -138,6 +147,7 @@ void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descr
             wasRegistered = true;
         }
     }
+    */
 
     if(wasRegistered)
     {

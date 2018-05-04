@@ -22,6 +22,11 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+static const uint32_t maximumMessageSize = 65500;
+static const uint32_t minimumSocketBuffer = 65536;
+static const uint8_t defaultTTL = 1;
+
+struct TransportDescriptorInterface;
 
 /**
  * Interface against which to implement a transport layer, decoupled from FastRTPS internals.
@@ -44,7 +49,7 @@ public:
     *    MyTransport(const MyTransportDescriptor&);
     *    ...
     */
-   virtual ~TransportInterface(){};
+   virtual ~TransportInterface() = default;
 
    virtual bool init() = 0;
 
@@ -114,6 +119,8 @@ public:
    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) = 0;
 
    virtual bool is_local_locator(const Locator_t& locator) const = 0;
+
+   virtual TransportDescriptorInterface* get_configuration() = 0;
 };
 
 /**
@@ -122,13 +129,32 @@ public:
  * */
 struct TransportDescriptorInterface
 {
-    TransportDescriptorInterface(uint32_t maximumMessageSize) : maxMessageSize(maximumMessageSize) {}
+    TransportDescriptorInterface(uint32_t maximumMessageSize) : maxMessageSize(maximumMessageSize)
+        , sendBufferSize(0)
+        , receiveBufferSize(0)
+        , TTL(defaultTTL)
+    {}
 
-    TransportDescriptorInterface(const TransportDescriptorInterface& t) : maxMessageSize(t.maxMessageSize) {}
+    TransportDescriptorInterface(const TransportDescriptorInterface& t) : maxMessageSize(t.maxMessageSize)
+        , sendBufferSize(t.sendBufferSize)
+        , receiveBufferSize(t.receiveBufferSize)
+        , TTL(t.TTL)
+    {}
 
     virtual ~TransportDescriptorInterface(){}
 
+    virtual TransportInterface* create_transport() const = 0;
+
     uint32_t maxMessageSize;
+
+    //! Length of the send buffer.
+    uint32_t sendBufferSize;
+    //! Length of the receive buffer.
+    uint32_t receiveBufferSize;
+    //! Allowed interfaces in an IP string format.
+    std::vector<std::string> interfaceWhiteList;
+    //! Specified time to live (8bit - 255 max TTL)
+    uint8_t TTL;
 };
 
 } // namespace rtps
