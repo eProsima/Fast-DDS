@@ -22,9 +22,9 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-static const uint32_t maximumMessageSize = 65500;
-static const uint32_t minimumSocketBuffer = 65536;
-static const uint8_t defaultTTL = 1;
+static const uint32_t s_maximumMessageSize = 65500;
+static const uint32_t s_minimumSocketBuffer = 65536;
+static const uint8_t s_defaultTTL = 1;
 
 struct TransportDescriptorInterface;
 
@@ -132,7 +132,7 @@ struct TransportDescriptorInterface
     TransportDescriptorInterface(uint32_t maximumMessageSize) : maxMessageSize(maximumMessageSize)
         , sendBufferSize(0)
         , receiveBufferSize(0)
-        , TTL(defaultTTL)
+        , TTL(s_defaultTTL)
     {}
 
     TransportDescriptorInterface(const TransportDescriptorInterface& t) : maxMessageSize(t.maxMessageSize)

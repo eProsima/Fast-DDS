@@ -86,7 +86,7 @@ UDPv6Transport::UDPv6Transport(const UDPv6TransportDescriptor& descriptor):
     }
 
 UDPv6TransportDescriptor::UDPv6TransportDescriptor():
-    TransportDescriptorInterface(maximumMessageSize)
+    TransportDescriptorInterface(s_maximumMessageSize)
 {
 }
 
@@ -118,10 +118,10 @@ bool UDPv6Transport::init()
             socket.get_option(option);
             mConfiguration_.sendBufferSize = option.value();
 
-            if(mConfiguration_.sendBufferSize < minimumSocketBuffer)
+            if(mConfiguration_.sendBufferSize < s_minimumSocketBuffer)
             {
-                mConfiguration_.sendBufferSize = minimumSocketBuffer;
-                mSendBufferSize = minimumSocketBuffer;
+                mConfiguration_.sendBufferSize = s_minimumSocketBuffer;
+                mSendBufferSize = s_minimumSocketBuffer;
             }
         }
 
@@ -131,15 +131,15 @@ bool UDPv6Transport::init()
             socket.get_option(option);
             mConfiguration_.receiveBufferSize = option.value();
 
-            if(mConfiguration_.receiveBufferSize < minimumSocketBuffer)
+            if(mConfiguration_.receiveBufferSize < s_minimumSocketBuffer)
             {
-                mConfiguration_.receiveBufferSize = minimumSocketBuffer;
-                mReceiveBufferSize = minimumSocketBuffer;
+                mConfiguration_.receiveBufferSize = s_minimumSocketBuffer;
+                mReceiveBufferSize = s_minimumSocketBuffer;
             }
         }
     }
 
-    if(mConfiguration_.maxMessageSize > maximumMessageSize)
+    if(mConfiguration_.maxMessageSize > s_maximumMessageSize)
     {
         logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than 65000");
         return false;
