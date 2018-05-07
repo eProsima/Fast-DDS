@@ -213,7 +213,7 @@ protected:
    //! For both modes, an input channel corresponds to a port.
    std::map<uint32_t, std::thread*> mWaitingThreads;
 #if defined(ASIO_HAS_MOVE)
-   void waitForConnection(asio::ip::tcp::socket& socket, uint16_t port);
+   void waitForConnection(asio::ip::tcp::socket socket, uint16_t port);
 
    std::map<uint32_t, asio::ip::tcp::socket> mPendingInputSockets;
    std::map<uint32_t, asio::ip::tcp::socket> mInputSockets;
