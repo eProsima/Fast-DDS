@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
+#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 
 using namespace std;
 using namespace asio;
@@ -507,8 +508,43 @@ Locator_t TCPv4Transport::RemoteToMainLocal(const Locator_t& remote) const
     return mainLocal;
 }
 
+static void fillTcpHeader(octet* header, uint32_t size, const Locator_t& loc)
+{
+    header[0] = 'R';
+    header[1] = 'T';
+    header[2] = 'P';
+    header[3] = 'S';
+    size += 14;
+    octet* s = (octet*)&size;
+    header[4] = s[0];
+    header[5] = s[1];
+    header[6] = s[2];
+    header[7] = s[3];
+    uint16_t port = loc.get_RTPS_port();
+    octet* p = (octet*)&port;
+    header[12] = p[0];
+    header[13] = p[1];
+}
+
 bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
 {
+    CDRMessage_t msg;
+    octet tcp_header[14];
+    fillTcpHeader(tcp_header, sendBufferSize, localLocator);
+    // TODO generate and fill CRC
+    //uint32_t crc = ...
+    // octet *crcp = (octet*)&crc;
+    // tcp_header[8] = crcp[0];
+    // ... 
+    // tcp_header[11] = crcp[3];
+    for (int i = 0; i < 4; ++i)
+    {
+        tcp_header[8 + i] = 0x00; // CRC to 0
+    }
+
+    RTPSMessageCreator::addCustomHeader(&msg, tcp_header, sizeof(tcp_header));
+    RTPSMessageCreator::addCustomHeader(&msg, sendBuffer, sendBufferSize);
+
     std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
     if (!IsOutputChannelOpen(localLocator) ||
             sendBufferSize > mConfiguration_.sendBufferSize)
@@ -521,7 +557,10 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     for (auto& socket : sockets)
     {
         if(is_multicast_remote_address || !socket.only_multicast_purpose())
-            success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket.socket_);
+        {
+            //success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket.socket_);
+            success |= SendThroughSocket(msg.buffer, msg.length, remoteLocator, socket.socket_);
+        }
     }
 
     return success;
@@ -534,19 +573,64 @@ static void EndpointToLocator(ip::tcp::endpoint& endpoint, Locator_t& locator)
     memcpy(&locator.address[12], ipBytes.data(), sizeof(ipBytes));
 }
 
+static uint32_t getSize(const octet *header)
+{
+    uint32_t size;
+    octet* ps = (octet*)&size;
+    ps[0] = header[4];
+    ps[1] = header[5];
+    ps[2] = header[6];
+    ps[3] = header[7];
+    return size;
+}
+
+// TODO uncomment when needed
+/*
+static uint32_t getCRC(const octet *header)
+{
+    uint32_t crc;
+    octet* ps = (octet*)&crc;
+    ps[0] = header[8];
+    ps[1] = header[9];
+    ps[2] = header[10];
+    ps[3] = header[11];
+    return crc;
+}
+
+static uint16_t getRTPSPort(const octet *header)
+{
+    uint16_t port;
+    octet* ps = (octet*)&port;
+    ps[0] = header[12];
+    ps[1] = header[13];
+    return port;
+}
+*/
+
+/**
+ * On TCP, we must receive the header (14 Bytes) and then, 
+ * the rest of the message, whose length is on the header.
+ * TCP Header is transparent to the caller, so receiveBuffer
+ * doesn't include it.
+ * */
 bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
         const Locator_t& localLocator, Locator_t& remoteLocator)
 {
+    octet* header = new octet[14];
+    uint32_t size;// = getSize(header) - 14;
+
     if (!IsInputChannelOpen(localLocator))
         return false;
 
     Semaphore receiveSemaphore(0);
     bool success = false;
 
-    auto handler = [&receiveBuffer, &receiveBufferSize, &success, &receiveSemaphore]
+    // LuisGasco - Why needs receiveBuffer?
+    //auto handler = [&receiveBuffer, &receiveBufferSize, &success, &receiveSemaphore]
+    auto handler = [&receiveBufferSize, &success, &receiveSemaphore]
         (const asio::error_code& error, std::size_t bytes_transferred)
         {
-            (void)receiveBuffer;
+            //(void)receiveBuffer;
 
             if(error)
             {
@@ -559,8 +643,6 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
                 receiveBufferSize = static_cast<uint32_t>(bytes_transferred);
                 success = true;
             }
-
-            receiveSemaphore.post();
         };
 
     ip::tcp::endpoint senderEndpoint;
@@ -571,18 +653,62 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
             return false;
 
         auto& socket = mInputSockets.at(localLocator.port);
+
+        auto handlerHeader = [&header, &size, &receiveBuffer, &receiveBufferCapacity, &receiveSemaphore, handler, &socket]
+            (const asio::error_code& error, std::size_t bytes_transferred)
+            {
+                //(void)receiveBuffer;
+
+                if(error)
+                {
+                    logInfo(RTPS_MSG_IN, "Error while listening to socket (tcp header)...");
+                    size = 0;
+                }
+                else
+                {
+                    logInfo(RTPS_MSG_IN,"TCP Header processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ");
+                    if (bytes_transferred != 14)
+                    {
+                        logError(RTPS_MSG_IN, "Bad TCP header size: " << bytes_transferred);
+                    }
+
+                    size = getSize(header);
+
+                    if (size > receiveBufferCapacity)
+                    {
+                        logError(RTPS_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: " << size << " vs. " << receiveBufferCapacity << ".");
+                    }
+                    else
+                    {
+                        // Read the body
 #if defined(ASIO_HAS_MOVE)
-        socket.async_receive(asio::buffer(receiveBuffer, receiveBufferCapacity),
-                0,
-                handler);
+                        socket.async_receive(asio::buffer(receiveBuffer, size),
+                                0,
+                                handler);
 #else
-        socket->async_receive(asio::buffer(receiveBuffer, receiveBufferCapacity),
+                        socket->async_receive(asio::buffer(receiveBuffer, size),
+                                0,
+                                handler);
+#endif
+                    }
+                }
+
+                receiveSemaphore.post();
+            };
+
+        // Read the header
+#if defined(ASIO_HAS_MOVE)
+        socket.async_receive(asio::buffer(header, 14),
                 0,
-                handler);
+                handlerHeader);
+#else
+        socket->async_receive(asio::buffer(header, 14),
+                0,
+                handlerHeader);
 #endif
     }
-
     receiveSemaphore.wait();
+
     if (success)
         EndpointToLocator(senderEndpoint, remoteLocator);
 

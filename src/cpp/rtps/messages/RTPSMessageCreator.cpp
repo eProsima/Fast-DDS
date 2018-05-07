@@ -70,6 +70,14 @@ bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPre
     return RTPSMessageCreator::addHeader(msg,guidPrefix, c_ProtocolVersion,c_VendorId_eProsima);
 }
 
+bool RTPSMessageCreator::addCustomHeader(CDRMessage_t*msg, const octet* header, const size_t headerSize)
+{
+    for (size_t i = 0; i < headerSize; ++i)
+    {
+        CDRMessage::addOctet(msg, header[i]);
+    }
+    return true;
+}
 
 bool RTPSMessageCreator::addSubmessageHeader(CDRMessage_t* msg,
         octet id,octet flags,uint16_t size) {

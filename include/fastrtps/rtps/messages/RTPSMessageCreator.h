@@ -68,6 +68,15 @@ class RTPSMessageCreator
         static bool addHeader(CDRMessage_t*msg ,const GuidPrefix_t& Prefix);
 
         /**
+         * Create a Header to the serialized message.
+         * @param msg Pointer to the Message.
+         * @param header content of the header to create.
+         * @param headerSize size of the header content.
+         * @return True if correct.
+         */
+        static bool addCustomHeader(CDRMessage_t*msg, const octet* header, const size_t headerSize);
+
+        /**
          * Create SubmessageHeader.
          * @param msg Pointer to the CDRMessage.
          * @param id SubMessage Id.
