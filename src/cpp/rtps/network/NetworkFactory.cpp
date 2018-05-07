@@ -92,7 +92,6 @@ bool NetworkFactory::BuildReceiverResources (const Locator_t& local, std::vector
     return returnedValue;
 }
 
-// TODO To abstract from actual classes.
 void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descriptor)
 {
     bool wasRegistered = false;
@@ -105,49 +104,6 @@ void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descr
         mRegisteredTransports.emplace_back(std::move(transport));
         wasRegistered = true;
     }
-
-    /*
-    if (auto concrete = dynamic_cast<const UDPv4TransportDescriptor*> (descriptor))
-    {
-        std::unique_ptr<UDPv4Transport> transport(new UDPv4Transport(*concrete));
-        if(transport->init())
-        {
-            minSendBufferSize = transport->get_configuration().sendBufferSize;
-            mRegisteredTransports.emplace_back(std::move(transport));
-            wasRegistered = true;
-        }
-    }
-    if (auto concrete = dynamic_cast<const UDPv6TransportDescriptor*> (descriptor))
-    {
-        std::unique_ptr<UDPv6Transport> transport(new UDPv6Transport(*concrete));
-        if(transport->init())
-        {
-            minSendBufferSize = transport->get_configuration().sendBufferSize;
-            mRegisteredTransports.emplace_back(std::move(transport));
-            wasRegistered = true;
-        }
-    }
-    if (auto concrete = dynamic_cast<const test_UDPv4TransportDescriptor*> (descriptor))
-    {
-        std::unique_ptr<test_UDPv4Transport> transport(new test_UDPv4Transport(*concrete));
-        if (transport->init())
-        {
-            minSendBufferSize = transport->get_configuration().sendBufferSize;
-            mRegisteredTransports.emplace_back(std::move(transport));
-            wasRegistered = true;
-        }
-    }
-    if (auto concrete = dynamic_cast<const TCPv4TransportDescriptor*> (descriptor))
-    {
-        std::unique_ptr<TCPv4Transport> transport(new TCPv4Transport(*concrete));
-        if (transport->init())
-        {
-            minSendBufferSize = transport->get_configuration().sendBufferSize;
-            mRegisteredTransports.emplace_back(std::move(transport));
-            wasRegistered = true;
-        }
-    }
-    */
 
     if(wasRegistered)
     {
