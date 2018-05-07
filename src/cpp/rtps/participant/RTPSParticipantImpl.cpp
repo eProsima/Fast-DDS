@@ -120,8 +120,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     }
 
     mp_userParticipant->mp_impl = this;
-    Locator_t loc;
-    loc.port = PParam.defaultSendPort;
     mp_event_thr = new ResourceEvent();
     mp_event_thr->init_thread(this);
 
