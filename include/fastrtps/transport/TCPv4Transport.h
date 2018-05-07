@@ -211,9 +211,16 @@ protected:
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
 
    //! For both modes, an input channel corresponds to a port.
+   std::map<uint32_t, std::thread*> mWaitingThreads;
 #if defined(ASIO_HAS_MOVE)
+   void waitForConnection(asio::ip::tcp::socket& socket, uint16_t port);
+
+   std::map<uint32_t, asio::ip::tcp::socket> mPendingInputSockets;
    std::map<uint32_t, asio::ip::tcp::socket> mInputSockets;
 #else
+   void waitForConnection(std::shared_ptr<asio::ip::tcp::socket> socket, uint16_t port);
+
+   std::map<uint32_t, std::shared_ptr<asio::ip::tcp::socket>> mPendingInputSockets;
    std::map<uint32_t, std::shared_ptr<asio::ip::tcp::socket>> mInputSockets;
 #endif
 
@@ -221,11 +228,11 @@ protected:
    std::vector<asio::ip::address_v4> mInterfaceWhiteList;
 
    bool OpenAndBindOutputSockets(Locator_t& locator);
-   bool OpenAndBindInputSockets(uint32_t port, bool is_multicast);
+   bool OpenAndBindInputSockets(uint32_t port);
 
 #if defined(ASIO_HAS_MOVE)
    asio::ip::tcp::socket OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
-   asio::ip::tcp::socket OpenAndBindInputSocket(uint32_t port, bool is_multicast);
+   asio::ip::tcp::socket OpenAndBindInputSocket(uint32_t port);
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,
@@ -233,7 +240,7 @@ protected:
                           asio::ip::tcp::socket& socket);
 #else
    std::shared_ptr<asio::ip::tcp::socket> OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
-   std::shared_ptr<asio::ip::tcp::socket> OpenAndBindInputSocket(uint32_t port, bool is_multicast);
+   std::shared_ptr<asio::ip::tcp::socket> OpenAndBindInputSocket(uint32_t port);
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,

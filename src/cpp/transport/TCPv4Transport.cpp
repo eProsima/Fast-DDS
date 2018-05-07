@@ -36,24 +36,6 @@ static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopba
     locNames.erase(new_end, locNames.end());
 }
 
-static void GetIP4sUniqueInterfaces(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
-{
-    GetIP4s(locNames, return_loopback);
-    std::sort(locNames.begin(), locNames.end(),
-            [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool {return a.dev < b.dev;});
-    auto new_end = std::unique(locNames.begin(), locNames.end(),
-            [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool {return a.type != IPFinder::IP4_LOCAL && b.type != IPFinder::IP4_LOCAL && a.dev == b.dev;});
-    locNames.erase(new_end, locNames.end());
-}
-
-static bool IsAny(const Locator_t& locator)
-{
-    return locator.address[12] == 0 &&
-        locator.address[13] == 0 &&
-        locator.address[14] == 0 &&
-        locator.address[15] == 0;
-}
-
 static asio::ip::address_v4::bytes_type locatorToNative(const Locator_t& locator)
 {
     return {{locator.address[12],
@@ -189,11 +171,6 @@ bool TCPv4Transport::OpenOutputChannel(Locator_t& locator)
     return OpenAndBindOutputSockets(locator);
 }
 
-static bool IsMulticastAddress(const Locator_t& locator)
-{
-    return locator.address[12] >= 224 && locator.address[12] <= 239;
-}
-
 bool TCPv4Transport::OpenInputChannel(const Locator_t& locator)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
@@ -201,38 +178,10 @@ bool TCPv4Transport::OpenInputChannel(const Locator_t& locator)
         return false;
 
     bool success = false;
-
     if (!IsInputChannelOpen(locator))
-        success = OpenAndBindInputSockets(locator.port, IsMulticastAddress(locator));
+        success = OpenAndBindInputSockets(locator.port);
 
-    if (IsMulticastAddress(locator) && IsInputChannelOpen(locator))
-    {
-        // The multicast group will be joined silently, because we do not
-        // want to return another resource.
-        auto& socket = mInputSockets.at(locator.port);
-
-        std::vector<IPFinder::info_IP> locNames;
-        GetIP4sUniqueInterfaces(locNames, true);
-        for (const auto& infoIP : locNames)
-        {
-            auto ip = asio::ip::address_v4::from_string(infoIP.name);
-            try
-            {
-#if defined(ASIO_HAS_MOVE)
-                socket.set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string()), ip));
-#else
-                socket->set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string()), ip));
-#endif
-            }
-            catch(std::system_error& ex)
-            {
-                (void)ex;
-                logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": "<< ex.what());
-            }
-        }
-    }
-
-    return success;
+	return success;
 }
 
 bool TCPv4Transport::CloseOutputChannel(const Locator_t& locator)
@@ -260,10 +209,25 @@ bool TCPv4Transport::CloseOutputChannel(const Locator_t& locator)
 
 bool TCPv4Transport::CloseInputChannel(const Locator_t& locator)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-    if (!IsInputChannelOpen(locator))
-        return false;
+	std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
+	if (mPendingInputSockets.find(locator.port) != mPendingInputSockets.end())
+	{
+		auto& socket = mPendingInputSockets.at(locator.port);
+#if defined(ASIO_HAS_MOVE)
+		socket.cancel();
+		socket.close();
+#else
+		socket->cancel();
+		socket->close();
+#endif
 
+		mPendingInputSockets.erase(locator.port);
+		return true;
+	}
+	else if (!IsInputChannelOpen(locator))
+	{
+		return false;
+	}
 
     auto& socket = mInputSockets.at(locator.port);
 #if defined(ASIO_HAS_MOVE)
@@ -291,131 +255,42 @@ bool TCPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip)
 
 bool TCPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
+	std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
 
-    try
-    {
-        if(IsAny(locator))
-        {
-            std::vector<IPFinder::info_IP> locNames;
-            GetIP4s(locNames);
-            // If there is no whitelist, we can simply open a generic output socket
-            // and gain efficiency.
-            if(mInterfaceWhiteList.empty())
-            {
+	try
+	{
+		auto ip = asio::ip::address_v4(locatorToNative(locator));
 #if defined(ASIO_HAS_MOVE)
-                asio::ip::tcp::socket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v4::any(), locator.port);
-                unicastSocket.set_option(ip::multicast::enable_loopback( true ) );
+		asio::ip::tcp::socket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
 #else
-                std::shared_ptr<asio::ip::tcp::socket> unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v4::any(), locator.port);
-                unicastSocket->set_option(ip::multicast::enable_loopback( true ) );
+		std::shared_ptr<asio::ip::tcp::socket> unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
 #endif
+		mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
+	}
+	catch (asio::system_error const& e)
+	{
+		(void)e;
+		logInfo(RTPS_MSG_OUT, "TCPv4 Error binding at port: (" << locator.port << ")" << " with msg: " << e.what());
+		mOutputSockets.erase(locator.port);
+		return false;
+	}
 
-                // If more than one interface, then create sockets for outbounding multicast.
-                if(locNames.size() > 1)
-                {
-                    auto locIt = locNames.begin();
-
-                    // Outbounding first interface with already created socket.
-#if defined(ASIO_HAS_MOVE)
-                    unicastSocket.set_option(ip::multicast::outbound_interface(asio::ip::address_v4::from_string((*locIt).name)));
-#else
-                    unicastSocket->set_option(ip::multicast::outbound_interface(asio::ip::address_v4::from_string((*locIt).name)));
-#endif
-                    mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
-
-                    // Create other socket for outbounding rest of interfaces.
-                    for(++locIt; locIt != locNames.end(); ++locIt)
-                    {
-                        auto ip = asio::ip::address_v4::from_string((*locIt).name);
-                        uint32_t new_port = 0;
-#if defined(ASIO_HAS_MOVE)
-                        asio::ip::tcp::socket multicastSocket = OpenAndBindUnicastOutputSocket(ip, new_port);
-                        multicastSocket.set_option(ip::multicast::outbound_interface(ip));
-#else
-                        std::shared_ptr<asio::ip::tcp::socket> multicastSocket = OpenAndBindUnicastOutputSocket(ip, new_port);
-                        multicastSocket->set_option(ip::multicast::outbound_interface(ip));
-#endif
-                        SocketInfo mSocket(multicastSocket);
-                        mSocket.only_multicast_purpose(true);
-                        mOutputSockets[locator.port].push_back(std::move(mSocket));
-                    }
-                }
-                else
-                {
-                    // Multicast data will be sent for the only one interface.
-                    mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
-                }
-            }
-            else
-            {
-                bool firstInterface = false;
-                for (const auto& infoIP : locNames)
-                {
-                    auto ip = asio::ip::address_v4::from_string(infoIP.name);
-                    if (IsInterfaceAllowed(ip))
-                    {
-#if defined(ASIO_HAS_MOVE)
-                        asio::ip::tcp::socket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
-                        unicastSocket.set_option(ip::multicast::outbound_interface(ip));
-                        if(firstInterface)
-                        {
-                            unicastSocket.set_option(ip::multicast::enable_loopback( true ) );
-                            firstInterface = true;
-                        }
-#else
-                        std::shared_ptr<asio::ip::tcp::socket> unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
-                        unicastSocket->set_option(ip::multicast::outbound_interface(ip));
-                        if(firstInterface)
-                        {
-                            unicastSocket->set_option(ip::multicast::enable_loopback( true ) );
-                            firstInterface = true;
-                        }
-#endif
-                        mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
-                    }
-                }
-            }
-        }
-        else
-        {
-            auto ip = asio::ip::address_v4(locatorToNative(locator));
-#if defined(ASIO_HAS_MOVE)
-            asio::ip::tcp::socket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
-            unicastSocket.set_option(ip::multicast::outbound_interface(ip));
-            unicastSocket.set_option(ip::multicast::enable_loopback( true ) );
-#else
-            std::shared_ptr<asio::ip::tcp::socket> unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
-            unicastSocket->set_option(ip::multicast::outbound_interface(ip));
-            unicastSocket->set_option(ip::multicast::enable_loopback( true ) );
-#endif
-            mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
-        }
-    }
-    catch (asio::system_error const& e)
-    {
-        (void)e;
-        logInfo(RTPS_MSG_OUT, "TCPv4 Error binding at port: (" << locator.port << ")" << " with msg: "<<e.what());
-        mOutputSockets.erase(locator.port);
-        return false;
-    }
-
-    return true;
+	return true;
 }
 
-bool TCPv4Transport::OpenAndBindInputSockets(uint32_t port, bool is_multicast)
+bool TCPv4Transport::OpenAndBindInputSockets(uint32_t port)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
 
     try
     {
-        mInputSockets.emplace(port, OpenAndBindInputSocket(port, is_multicast));
+		mPendingInputSockets.emplace(port, OpenAndBindInputSocket(port));
     }
     catch (asio::system_error const& e)
     {
         (void)e;
         logInfo(RTPS_MSG_OUT, "TCPv4 Error binding at port: (" << port << ")" << " with msg: "<<e.what());
-        mInputSockets.erase(port);
+		mPendingInputSockets.erase(port);
         return false;
     }
 
@@ -426,13 +301,12 @@ bool TCPv4Transport::OpenAndBindInputSockets(uint32_t port, bool is_multicast)
 asio::ip::tcp::socket TCPv4Transport::OpenAndBindUnicastOutputSocket(const ip::address_v4& ipAddress, uint32_t& port)
 {
     ip::tcp::socket socket(mService);
-    socket.open(ip::tcp::v4());
+    //socket.open(ip::tcp::v4());
     if(mSendBufferSize != 0)
         socket.set_option(socket_base::send_buffer_size(mSendBufferSize));
-    socket.set_option(ip::multicast::hops(mConfiguration_.TTL));
 
     ip::tcp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
-    socket.bind(endpoint);
+    socket.connect(endpoint);
 
     if(port == 0)
         port = socket.local_endpoint().port();
@@ -446,7 +320,6 @@ std::shared_ptr<asio::ip::tcp::socket> TCPv4Transport::OpenAndBindUnicastOutputS
     socket->open(ip::tcp::v4());
     if(mSendBufferSize != 0)
         socket->set_option(socket_base::send_buffer_size(mSendBufferSize));
-    socket->set_option(ip::multicast::hops(mConfiguration_.TTL));
 
     ip::tcp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
     socket->bind(endpoint);
@@ -459,31 +332,53 @@ std::shared_ptr<asio::ip::tcp::socket> TCPv4Transport::OpenAndBindUnicastOutputS
 #endif
 
 #if defined(ASIO_HAS_MOVE)
-asio::ip::tcp::socket TCPv4Transport::OpenAndBindInputSocket(uint32_t port, bool is_multicast)
+void TCPv4Transport::waitForConnection(ip::tcp::socket& socket, uint16_t port)
 {
-    ip::tcp::socket socket(mService);
-    socket.open(ip::tcp::v4());
-    if(mReceiveBufferSize != 0)
-        socket.set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
-    if(is_multicast)
-        socket.set_option(ip::tcp::socket::reuse_address( true ) );
-    ip::tcp::endpoint endpoint(ip::address_v4::any(), static_cast<uint16_t>(port));
-    socket.bind(endpoint);
+	ip::tcp::endpoint endpoint(ip::tcp::v4(), port);
+	ip::tcp::acceptor acceptor(mService, endpoint);
+	acceptor.accept(socket);
+	//acceptor.async_accept(socket, boost::bind(&TCPv4Transport::handle_accept, this, socket, port, boost::asio::placeholders::error));
 
+	std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
+	mInputSockets.emplace(port, std::move(socket));
+	mPendingInputSockets.erase(port);
+}
+#else
+void TCPv4Transport::waitForConnection(std::shared_ptr<asio::ip::tcp::socket> socket, uint16_t port)
+{
+	ip::tcp::endpoint endpoint(ip::tcp::v4(), port);
+	ip::tcp::acceptor acceptor(mService, endpoint);
+	acceptor.accept(*socket);
+
+	std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
+	mInputSockets[port] = socket;
+	mPendingInputSockets.erase(port);
+}
+#endif
+
+#if defined(ASIO_HAS_MOVE)
+asio::ip::tcp::socket TCPv4Transport::OpenAndBindInputSocket(uint32_t port)
+{
+	ip::tcp::socket socket(mService);
+	if (mReceiveBufferSize != 0)
+		socket.set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
+	//socket.open(ip::tcp::v4());
+	//socket.bind(endpoint);
+	std::thread* pThread = new std::thread(&TCPv4Transport::waitForConnection, this, std::move(socket), static_cast<uint16_t>(port));
+	mWaitingThreads[port] = pThread;
     return socket;
 }
 #else
-std::shared_ptr<asio::ip::tcp::socket> TCPv4Transport::OpenAndBindInputSocket(uint32_t port, bool is_multicast)
+std::shared_ptr<asio::ip::tcp::socket> TCPv4Transport::OpenAndBindInputSocket(uint32_t port)
 {
-    std::shared_ptr<ip::tcp::socket> socket = std::make_shared<ip::tcp::socket>(mService);
-    socket->open(ip::tcp::v4());
-    if(mReceiveBufferSize != 0)
-        socket->set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
-    if(is_multicast)
-        socket->set_option(ip::tcp::socket::reuse_address( true ) );
-    ip::tcp::endpoint endpoint(ip::address_v4::any(), static_cast<uint16_t>(port));
-    socket->bind(endpoint);
-
+	ip::tcp::endpoint endpoint(ip::tcp::v4(), static_cast<uint16_t>(port));
+	ip::tcp::acceptor acceptor(mService, endpoint);
+	std::shared_ptr<ip::tcp::socket> socket = std::make_shared<ip::tcp::socket>(mService);
+	if(mReceiveBufferSize != 0)
+	    socket->set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
+	//socket->open(ip::tcp::v4());
+	//socket->bind(endpoint);
+	mWaitingThreads.emplace(port, new std::thread(&TCPv4Transport::waitForConnection, this, socket, static_cast<uint16_t>(port)));
     return socket;
 }
 #endif
@@ -535,7 +430,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     //uint32_t crc = ...
     // octet *crcp = (octet*)&crc;
     // tcp_header[8] = crcp[0];
-    // ... 
+    // ...
     // tcp_header[11] = crcp[3];
     for (int i = 0; i < 4; ++i)
     {
@@ -551,16 +446,11 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         return false;
 
     bool success = false;
-    bool is_multicast_remote_address = IsMulticastAddress(remoteLocator);
-
     auto& sockets = mOutputSockets.at(localLocator.port);
     for (auto& socket : sockets)
     {
-        if(is_multicast_remote_address || !socket.only_multicast_purpose())
-        {
-            //success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket.socket_);
-            success |= SendThroughSocket(msg.buffer, msg.length, remoteLocator, socket.socket_);
-        }
+        if(!socket.only_multicast_purpose())
+			success |= SendThroughSocket(msg.buffer, msg.length, remoteLocator, socket.socket_);
     }
 
     return success;
@@ -608,7 +498,7 @@ static uint16_t getRTPSPort(const octet *header)
 */
 
 /**
- * On TCP, we must receive the header (14 Bytes) and then, 
+ * On TCP, we must receive the header (14 Bytes) and then,
  * the rest of the message, whose length is on the header.
  * TCP Header is transparent to the caller, so receiveBuffer
  * doesn't include it.
@@ -631,21 +521,30 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
         (const asio::error_code& error, std::size_t bytes_transferred)
         {
             //(void)receiveBuffer;
+			if (receiveBufferSize > 0)
+			{
+				if (error)
+				{
+					logInfo(RTPS_MSG_IN, "Error while listening to socket...");
+					receiveBufferSize = 0;
+				}
+				else
+				{
+					logInfo(RTPS_MSG_IN, "Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ");
+					receiveBufferSize = static_cast<uint32_t>(bytes_transferred);
+					success = true;
+				}
+			}
 
-            if(error)
-            {
-                logInfo(RTPS_MSG_IN, "Error while listening to socket...");
-                receiveBufferSize = 0;
-            }
-            else
-            {
-                logInfo(RTPS_MSG_IN,"Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ");
-                receiveBufferSize = static_cast<uint32_t>(bytes_transferred);
-                success = true;
-            }
+            receiveSemaphore.post();
         };
 
     ip::tcp::endpoint senderEndpoint;
+
+	ip::tcp::endpoint endpoint(ip::tcp::v4(), static_cast<uint16_t>(localLocator.port));
+	ip::tcp::acceptor acceptor(mService, endpoint);
+	//acceptor.async_accept(socket, accept_handler);
+	//acceptor.accept(socket);
 
     { // lock scope
         std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
@@ -796,74 +695,29 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
     for(auto& locatorList : locatorLists)
     {
         LocatorListConstIterator it = locatorList.begin();
-        bool multicastDefined = false;
         LocatorList_t pendingMulticast, pendingUnicast;
 
         while(it != locatorList.end())
         {
             assert((*it).kind == LOCATOR_KIND_TCPv4);
 
-            if(IsMulticastAddress(*it))
+            // Check is local interface.
+            auto localInterface = currentInterfaces.begin();
+            for (; localInterface != currentInterfaces.end(); ++localInterface)
             {
-                // If the multicast locator is already chosen, not choose any unicast locator.
-                if(multicastResult.contains(*it))
+                if(memcmp(&localInterface->locator.address[12], &it->address[12], 4) == 0)
                 {
-                    multicastDefined = true;
-                    pendingUnicast.clear();
-                }
-                else
-                {
-                    // Search the multicast locator in pending locators.
-                    auto pending_it = pendingLocators.begin();
-                    bool found = false;
-
-                    while(pending_it != pendingLocators.end())
-                    {
-                        if((*pending_it).multicast.contains(*it))
-                        {
-                            // Multicast locator was found, add it to final locators.
-                            multicastResult.push_back((*pending_it).multicast);
-                            pendingLocators.erase(pending_it);
-
-                            // Not choose any unicast
-                            multicastDefined = true;
-                            pendingUnicast.clear();
-                            found = true;
-
-                            break;
-                        }
-
-                        ++pending_it;
-                    };
-
-                    // If not found, store as pending multicast.
-                    if(!found)
-                        pendingMulticast.push_back(*it);
+                    // Loopback locator
+                    Locator_t loopbackLocator;
+                    loopbackLocator.set_IP4_address(127, 0, 0, 1);
+                    loopbackLocator.port = it->port;
+                    pendingUnicast.push_back(loopbackLocator);
+                    break;
                 }
             }
-            else
-            {
-                if(!multicastDefined)
-                {
-                    // Check is local interface.
-                    auto localInterface = currentInterfaces.begin();
-                    for (; localInterface != currentInterfaces.end(); ++localInterface)
-                    {
-                        if(memcmp(&localInterface->locator.address[12], &it->address[12], 4) == 0)
-                        {
-                            // Loopback locator
-                            Locator_t loopbackLocator;
-                            loopbackLocator.set_IP4_address(127, 0, 0, 1);
-                            loopbackLocator.port = it->port;
-                            pendingUnicast.push_back(loopbackLocator);
-                            break;
-                        }
-                    }
 
-                    if(localInterface == currentInterfaces.end())
-                        pendingUnicast.push_back(*it);
-                }
-            }
+            if(localInterface == currentInterfaces.end())
+                pendingUnicast.push_back(*it);
 
             ++it;
         }

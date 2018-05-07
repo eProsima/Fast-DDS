@@ -37,7 +37,35 @@ mp_subscriber(nullptr)
 bool HelloWorldSubscriber::init()
 {
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+
+	// TCP CONNECTION PEER.
+	//Locator_t initial_peer_locator;
+	//initial_peer_locator.kind = LOCATOR_KIND_TCPv4;
+	//initial_peer_locator.set_IP4_address("127.0.0.1");
+	//initial_peer_locator.port = 7401;
+	//PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
+
+	// TCP CONNECTION PEER.
+	Locator_t initial_peer_locator;
+	initial_peer_locator.kind = LOCATOR_KIND_TCPv4;
+	initial_peer_locator.set_IP4_address("127.0.0.1");
+	initial_peer_locator.set_TCP_port(7400);
+	PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
+	PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
+
+	Locator_t unicast_locator;
+	unicast_locator.kind = LOCATOR_KIND_TCPv4;
+	unicast_locator.set_IP4_address("127.0.0.1");
+	unicast_locator.set_TCP_port(7401);
+	PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
+
+	Locator_t meta_locator;
+	meta_locator.kind = LOCATOR_KIND_TCPv4;
+	meta_locator.set_IP4_address("127.0.0.1");
+	meta_locator.set_TCP_port(7402);
+	PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
+
+	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
     PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
@@ -46,11 +74,11 @@ bool HelloWorldSubscriber::init()
     PParam.rtps.setName("Participant_sub");
 
     //ARCE:
-    //PParam.rtps.useBuiltinTransports = false;
-    //std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
-    //descriptor->sendBufferSize = 0;
-    //descriptor->receiveBufferSize = 0;
-    //PParam.rtps.userTransports.emplace_back(descriptor);
+    PParam.rtps.useBuiltinTransports = false;
+    std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+    descriptor->sendBufferSize = 0;
+    descriptor->receiveBufferSize = 0;
+    PParam.rtps.userTransports.emplace_back(descriptor);
 
     mp_participant = Domain::createParticipant(PParam);
     if(mp_participant==nullptr)
@@ -63,7 +91,7 @@ bool HelloWorldSubscriber::init()
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = NO_KEY;
     Rparam.topic.topicDataType = "HelloWorld";
-    Rparam.topic.topicName = "HelloWorldTopic";
+    Rparam.topic.topicName = "HelloWorldTopic1";
     Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Rparam.topic.historyQos.depth = 30;
     Rparam.topic.resourceLimitsQos.max_samples = 50;

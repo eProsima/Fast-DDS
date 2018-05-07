@@ -42,7 +42,21 @@ bool HelloWorldPublisher::init()
     m_Hello.message("HelloWorld");
     ParticipantAttributes PParam;
     PParam.rtps.use_IP6_to_send = true;
-    PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+
+	// TCP CONNECTION PEER.
+	Locator_t unicast_locator;
+	unicast_locator.kind = LOCATOR_KIND_TCPv4;
+	unicast_locator.set_IP4_address("127.0.0.1");
+	unicast_locator.port = 7400;
+	PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
+
+	Locator_t meta_locator;
+	meta_locator.kind = LOCATOR_KIND_TCPv4;
+	meta_locator.set_IP4_address("127.0.0.1");
+	meta_locator.set_TCP_port(7402);
+	PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
+
+	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
     PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
@@ -50,12 +64,11 @@ bool HelloWorldPublisher::init()
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_pub");
 
-    //ARCE:
-    //PParam.rtps.useBuiltinTransports = false;
-    //std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
-    //descriptor->sendBufferSize = 0;
-    //descriptor->receiveBufferSize = 0;
-    //PParam.rtps.userTransports.emplace_back(descriptor);
+    PParam.rtps.useBuiltinTransports = false;
+    std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+    descriptor->sendBufferSize = 0;
+    descriptor->receiveBufferSize = 0;
+    PParam.rtps.userTransports.emplace_back(descriptor);
 
     mp_participant = Domain::createParticipant(PParam);
 
@@ -69,7 +82,7 @@ bool HelloWorldPublisher::init()
     PublisherAttributes Wparam;
     Wparam.topic.topicKind = NO_KEY;
     Wparam.topic.topicDataType = "HelloWorld";
-    Wparam.topic.topicName = "HelloWorldTopic";
+    Wparam.topic.topicName = "HelloWorldTopic1";
     Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Wparam.topic.historyQos.depth = 30;
     Wparam.topic.resourceLimitsQos.max_samples = 50;
