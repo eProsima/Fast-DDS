@@ -106,14 +106,14 @@ class RTPS_DllAPI Locator_t
             return true;
         }
 
-        uint16_t get_TCP_port()
+        uint16_t get_TCP_port() const
         {
             uint16_t oport;
             std::memcpy(&oport, &port, 2 * sizeof(char));
             return oport;
         }
 
-        uint16_t get_RTPS_port()
+        uint16_t get_RTPS_port() const
         {
             uint16_t oport;
             std::memcpy(&oport, &port + 2, 2 * sizeof(char));
@@ -194,7 +194,7 @@ class RTPS_DllAPI Locator_t
             return true;
         }
 
-        uint32_t to_IP4_long()
+        uint32_t to_IP4_long() const
         {
             uint32_t addr;
             octet* oaddr = (octet*)&addr;
@@ -211,7 +211,7 @@ class RTPS_DllAPI Locator_t
             return addr;
         }
 
-        uint32_t to_IP4_WAN_long()
+        uint32_t to_IP4_WAN_long() const
         {
             if (kind == LOCATOR_KIND_UDPv4) return 0;
             uint32_t addr;
