@@ -612,6 +612,7 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
     if (success)
         EndpointToLocator(senderEndpoint, remoteLocator);
 
+    delete[] header;
     return success;
 }
 
