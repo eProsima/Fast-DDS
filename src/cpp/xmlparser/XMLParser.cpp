@@ -274,7 +274,6 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
         <xs:element name="defaultUnicastLocatorList" type="locatorListType"/>
         <xs:element name="defaultMulticastLocatorList" type="locatorListType"/>
         <xs:element name="defaultOutLocatorList" type="locatorListType"/>
-        <xs:element name="defaultSendPort" type="uint32Type"/>
         <xs:element name="sendSocketBufferSize" type="uint32Type"/>
         <xs:element name="listenSocketBufferSize" type="uint32Type"/>
         <xs:element name="builtin" type="builtinAttributesType"/>
@@ -332,12 +331,6 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
     if (nullptr != (p_aux = p_element->FirstChildElement(DEF_OUT_LOC_LIST)))
     {
         if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, participant_node.get()->rtps.defaultOutLocatorList, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // defaultSendPort - uint32Type
-    if (nullptr != (p_aux = p_element->FirstChildElement(DEF_SEND_PORT)))
-    {
-        if (XMLP_ret::XML_OK != getXMLUint(p_aux, &participant_node.get()->rtps.defaultSendPort, ident))
             return XMLP_ret::XML_ERROR;
     }
     // sendSocketBufferSize - uint32Type

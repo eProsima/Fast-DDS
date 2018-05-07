@@ -202,7 +202,6 @@ class RTPSParticipantAttributes
 
         RTPSParticipantAttributes()
         {
-            defaultSendPort = 10040;
             setName("RTPSParticipant");
             sendSocketBufferSize = 0;
             listenSocketBufferSize = 0;
@@ -227,7 +226,7 @@ class RTPSParticipantAttributes
         LocatorList_t defaultMulticastLocatorList;
 
         /**
-         * Default list of Locators used to send messages through. Used to link with SenderResources in the case and 
+         * Default list of Locators used to send messages through. Used to link with SenderResources in the case and
          * Endpoint is created with NO outLocators. This list contains the default outLocators for the Transports implemented
          * by eProsima.
          */
@@ -267,7 +266,7 @@ class RTPSParticipantAttributes
         //!Get the name of the participant.
         inline const char* getName() const {return name.c_str();}
         //!Throughput controller parameters. Leave default for uncontrolled flow.
-        ThroughputControllerDescriptor throughputController; 
+        ThroughputControllerDescriptor throughputController;
         //!User defined transports to use alongside or in place of builtins.
         std::vector<std::shared_ptr<TransportDescriptorInterface> > userTransports;
         //!Set as false to disable the default UDPv4 implementation.
