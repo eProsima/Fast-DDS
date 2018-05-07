@@ -120,20 +120,22 @@ void NetworkFactory::NormalizeLocators(LocatorList_t& locators)
     LocatorList_t normalizedLocators;
 
     std::for_each(locators.begin(), locators.end(), [&](Locator_t& loc) {
-            bool normalized = false;
-            for (auto& transport : mRegisteredTransports)
-            {
+        bool normalized = false;
+        for (auto& transport : mRegisteredTransports)
+        {
             if (transport->IsLocatorSupported(loc))
             {
-            // First found transport that supports it, this will normalize the locator.
-            normalizedLocators.push_back(transport->NormalizeLocator(loc));
-            normalized = true;
+                // First found transport that supports it, this will normalize the locator.
+                normalizedLocators.push_back(transport->NormalizeLocator(loc));
+                normalized = true;
             }
-            }
+        }
 
-            if (!normalized)
+        if (!normalized)
+        {
             normalizedLocators.push_back(loc);
-            });
+        }
+    });
 
     locators.swap(normalizedLocators);
 }
