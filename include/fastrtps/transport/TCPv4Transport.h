@@ -170,6 +170,8 @@ public:
 
    TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
 
+   void SocketConnected(uint16_t port, const asio::error_code& error);
+
 protected:
 
    //! Constructor with no descriptor is necessary for implementations derived from this class.
@@ -192,17 +194,28 @@ protected:
    struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
 
-   //! For both modes, an input channel corresponds to a port.
-   std::map<uint32_t, std::thread*> mWaitingThreads;
+   class TCPConnectionAccepter
+   {
+   public:
+	   asio::ip::tcp::acceptor m_acceptor;
 #if defined(ASIO_HAS_MOVE)
-   void waitForConnection(asio::ip::tcp::socket socket, uint16_t port);
+	   asio::ip::tcp::socket m_socket;
+#else
+	   std::shared_ptr<asio::ip::tcp::socket> m_socket;
+#endif
 
-   std::map<uint32_t, asio::ip::tcp::socket> mPendingInputSockets;
+	   ~TCPConnectionAccepter()
+	   {
+	   }
+
+	   TCPConnectionAccepter(TCPv4Transport* parent, asio::io_service& io_service, uint16_t port, uint32_t receiveBufferSize);
+   };
+
+   //! For both modes, an input channel corresponds to a port.
+   std::map<uint32_t, TCPConnectionAccepter*> mWaitingSockets;
+#if defined(ASIO_HAS_MOVE)
    std::map<uint32_t, asio::ip::tcp::socket> mInputSockets;
 #else
-   void waitForConnection(std::shared_ptr<asio::ip::tcp::socket> socket, uint16_t port);
-
-   std::map<uint32_t, std::shared_ptr<asio::ip::tcp::socket>> mPendingInputSockets;
    std::map<uint32_t, std::shared_ptr<asio::ip::tcp::socket>> mInputSockets;
 #endif
 
@@ -212,9 +225,10 @@ protected:
    bool OpenAndBindOutputSockets(Locator_t& locator);
    bool OpenAndBindInputSockets(uint32_t port);
 
+   void OpenAndBindInputSocket(uint32_t port);
+
 #if defined(ASIO_HAS_MOVE)
    asio::ip::tcp::socket OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
-   asio::ip::tcp::socket OpenAndBindInputSocket(uint32_t port);
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,
@@ -222,7 +236,6 @@ protected:
                           asio::ip::tcp::socket& socket);
 #else
    std::shared_ptr<asio::ip::tcp::socket> OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
-   std::shared_ptr<asio::ip::tcp::socket> OpenAndBindInputSocket(uint32_t port);
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,
