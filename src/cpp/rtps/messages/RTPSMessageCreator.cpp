@@ -76,11 +76,11 @@ bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPre
     return RTPSMessageCreator::addHeader(msg,guidPrefix,prot,vend);
 }
 
-bool RTPSMessageCreator::addCustomHeader(CDRMessage_t*msg, const octet* header, const size_t headerSize)
+bool RTPSMessageCreator::addCustomContent(CDRMessage_t*msg, const octet* content, const size_t contentSize)
 {
-    for (size_t i = 0; i < headerSize; ++i)
+    for (size_t i = 0; i < contentSize; ++i)
     {
-        CDRMessage::addOctet(msg, header[i]);
+        CDRMessage::addOctet(msg, content[i]);
     }
     return true;
 }
