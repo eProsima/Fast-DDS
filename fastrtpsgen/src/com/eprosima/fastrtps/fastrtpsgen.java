@@ -195,6 +195,12 @@ public class fastrtpsgen {
 				} else {
 					throw new BadArgumentException("No URL specified after -d argument");
 				}
+            } else if (arg.equals("-t")) {
+                if (count < args.length) {
+                    m_tempDir = Utils.addFileSeparator(args[count++]);
+                } else {
+                    throw new BadArgumentException("No temporary directory specified after -t argument");
+                }
 			} else if (arg.equals("-version")) {
 				showVersion();
 				System.exit(0);
@@ -210,7 +216,15 @@ public class fastrtpsgen {
             {
                 fusion_ = true;
             }
-            else { // TODO: More options: -local, -rpm, -debug -I
+            else if(arg.equals("-I"))
+			{
+                if (count < args.length) {
+                    m_includePaths.add("-I".concat(args[count++]));
+                } else {
+                    throw new BadArgumentException("No include directory specified after -I argument");
+                }
+			}
+            else { // TODO: More options: -rpm, -debug
 				throw new BadArgumentException("Unknown argument " + arg);
 			}
 
@@ -398,6 +412,7 @@ public class fastrtpsgen {
 		System.out.println("\t\t-replace: replaces existing generated files.");
 		System.out.println("\t\t-ppDisable: disables the preprocessor.");
 		System.out.println("\t\t-ppPath: specifies the preprocessor path.");
+		System.out.println("\t\t-I <path>: add directory to preprocessor include paths.");
 		System.out.println("\t\t-d <path>: sets an output directory for generated files.");
 		System.out.println("\t\t-t <temp dir>: sets a specific directory as a temporary directory.");
 		System.out.println("\tand the supported input files are:");

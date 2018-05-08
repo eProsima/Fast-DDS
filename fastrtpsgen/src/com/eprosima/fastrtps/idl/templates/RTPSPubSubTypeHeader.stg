@@ -27,7 +27,7 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "PubSubTypes.h"], description=["This h
 
 $definitions; separator="\n"$
 
-#endif // _$ctx.filename; format="toUpper"$_PUBSUBTYPE_H_
+#endif // _$ctx.fileNameUpper$_PUBSUBTYPES_H_
 >>
 
 // TODO name -> module
