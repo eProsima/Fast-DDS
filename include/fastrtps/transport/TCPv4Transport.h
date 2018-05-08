@@ -170,7 +170,7 @@ public:
 
    TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
 
-   void SocketConnected(uint16_t port, const asio::error_code& error);
+   void SocketConnected(uint16_t port, uint32_t receiveBufferSize, const asio::error_code& error);
 
 protected:
 
