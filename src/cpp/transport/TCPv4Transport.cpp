@@ -48,9 +48,8 @@ TCPv4Transport::TCPConnectionAccepter::TCPConnectionAccepter(TCPv4Transport* par
 	: m_socket(io_service)
 	, m_acceptor(io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
 {
-	if (receiveBufferSize != 0)
-		m_socket.set_option(asio::socket_base::receive_buffer_size(receiveBufferSize));
-	m_acceptor.async_accept(m_socket, std::bind(&TCPv4Transport::SocketConnected, parent, port, std::placeholders::_1));
+	m_acceptor.async_accept(m_socket, std::bind(&TCPv4Transport::SocketConnected, parent, port, receiveBufferSize,
+		std::placeholders::_1));
 }
 #else
 TCPv4Transport::TCPConnectionAccepter::TCPConnectionAccepter(TCPv4Transport* parent, asio::io_service& io_service,
@@ -58,9 +57,8 @@ TCPv4Transport::TCPConnectionAccepter::TCPConnectionAccepter(TCPv4Transport* par
 	: m_socket(std::make_shared<asio::ip::tcp::socket>(io_service))
 	, m_acceptor(io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
 {
-	if (receiveBufferSize != 0)
-		m_socket->set_option(asio::socket_base::receive_buffer_size(receiveBufferSize));
-	m_acceptor.async_accept(*m_socket, std::bind(&TCPv4Transport::SocketConnected, parent, port, std::placeholders::_1));
+	m_acceptor.async_accept(*m_socket, std::bind(&TCPv4Transport::SocketConnected, parent, port, receiveBufferSize,
+		std::placeholders::_1));
 }
 
 #endif
@@ -355,12 +353,9 @@ std::shared_ptr<asio::ip::tcp::socket> TCPv4Transport::OpenAndBindUnicastOutputS
 
 void TCPv4Transport::OpenAndBindInputSocket(uint32_t port)
 {
-	if (mWaitingSockets.find(port) == mWaitingSockets.end())
-	{
-		TCPConnectionAccepter* newAccepter = new TCPConnectionAccepter(this, mService, static_cast<uint16_t>(port),
-			mReceiveBufferSize);
-		mWaitingSockets.insert(std::make_pair(port, newAccepter));
-	}
+	TCPConnectionAccepter* newAccepter = new TCPConnectionAccepter(this, mService, static_cast<uint16_t>(port),
+		mReceiveBufferSize);
+	mWaitingSockets.insert(std::make_pair(port, newAccepter));
 }
 
 bool TCPv4Transport::DoLocatorsMatch(const Locator_t& left, const Locator_t& right) const
@@ -726,7 +721,7 @@ bool TCPv4Transport::is_local_locator(const Locator_t& locator) const
     return false;
 }
 
-void TCPv4Transport::SocketConnected(uint16_t port, const asio::error_code& error)
+void TCPv4Transport::SocketConnected(uint16_t port, uint32_t receiveBufferSize, const asio::error_code& error)
 {
 	//std::string value = error.message();
 	if (!error.value())
@@ -734,9 +729,14 @@ void TCPv4Transport::SocketConnected(uint16_t port, const asio::error_code& erro
 		std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
 		if (mWaitingSockets.find(port) != mWaitingSockets.end())
 		{
+			auto& socket = mWaitingSockets.at(port)->m_socket;
 #if defined(ASIO_HAS_MOVE)
+			if (receiveBufferSize != 0)
+				socket.set_option(asio::socket_base::receive_buffer_size(receiveBufferSize));
 			mInputSockets.emplace(port, std::move(mWaitingSockets.at(port)->m_socket));
 #else
+			if (receiveBufferSize != 0)
+				socket->set_option(asio::socket_base::receive_buffer_size(receiveBufferSize));
 			mInputSockets.emplace(port, mWaitingSockets.at(port)->m_socket);
 #endif
 
