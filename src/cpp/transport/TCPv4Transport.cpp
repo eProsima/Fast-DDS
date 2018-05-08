@@ -17,7 +17,6 @@
 #include <cstring>
 #include <algorithm>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 
 using namespace std;
@@ -353,6 +352,7 @@ std::shared_ptr<asio::ip::tcp::socket> TCPv4Transport::OpenAndBindUnicastOutputS
 
 void TCPv4Transport::OpenAndBindInputSocket(uint32_t port)
 {
+    mInputSemaphores.emplace(port, new Semaphore(0));
 	TCPConnectionAccepter* newAccepter = new TCPConnectionAccepter(this, mService, static_cast<uint16_t>(port),
 		mReceiveBufferSize);
 	mWaitingSockets.insert(std::make_pair(port, newAccepter));
@@ -418,8 +418,8 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
 		tcp_header[8 + i] = 0x00; // CRC to 0
 	}
 
-	RTPSMessageCreator::addCustomHeader(&msg, tcp_header, sizeof(tcp_header));
-	RTPSMessageCreator::addCustomHeader(&msg, sendBuffer, sendBufferSize);
+	RTPSMessageCreator::addCustomContent(&msg, tcp_header, sizeof(tcp_header));
+	RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
 
     bool success = false;
     auto& sockets = mOutputSockets.at(localLocator.port);
@@ -484,11 +484,19 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
     if (!IsInputChannelOpen(localLocator))
         return false;
 
-	octet* header = new octet[14];
+	octet header[14];
 	uint32_t size;// = getSize(header) - 14;
 
 	Semaphore receiveSemaphore(0);
     bool success = false;
+
+    // Resources semaphore
+    if (mInputSemaphores.find(localLocator.port) == mInputSemaphores.end())
+    {
+        sleep(1); // No semaphore? Let's sleep a while
+        return false;
+    }
+    mInputSemaphores.at(localLocator.port)->wait();
 
     { // lock scope
         std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
@@ -503,8 +511,6 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 				&receiveSemaphore, &socket]
 				(const asio::error_code& error, std::size_t bytes_transferred)
 			{
-				//(void)receiveBuffer;
-
 				if (error)
 				{
 					logInfo(RTPS_MSG_IN, "Error while listening to socket (tcp header)...");
@@ -565,7 +571,6 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 		EndpointToLocator(senderEndpoint, remoteLocator);
 	}
 
-    delete[] header;
     return success;
 }
 
@@ -717,6 +722,8 @@ void TCPv4Transport::SocketConnected(uint16_t port, uint32_t receiveBufferSize, 
 
 			delete mWaitingSockets[port];
 			mWaitingSockets.erase(port);
+
+            mInputSemaphores[port]->disable();
 		}
 	}
 }
