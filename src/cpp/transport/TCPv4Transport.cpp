@@ -44,9 +44,9 @@ static asio::ip::address_v4::bytes_type locatorToNative(const Locator_t& locator
 
 #if defined(ASIO_HAS_MOVE)
 TCPv4Transport::TCPConnectionAccepter::TCPConnectionAccepter(TCPv4Transport* parent, asio::io_service& io_service,
-	uint16_t port, uint32_t receiveBufferSize)
-	: m_socket(io_service)
-	, m_acceptor(io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
+	uint16_t port, uint32_t receiveBufferSize) :
+	m_acceptor(io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
+	, m_socket(io_service)
 {
 	m_acceptor.async_accept(m_socket, std::bind(&TCPv4Transport::SocketConnected, parent, port, receiveBufferSize,
 		std::placeholders::_1));
@@ -490,31 +490,6 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 	Semaphore receiveSemaphore(0);
     bool success = false;
 
-    // LuisGasco - Why needs receiveBuffer?
-    //auto handler = [&receiveBuffer, &receiveBufferSize, &success, &receiveSemaphore]
-    /*auto handler = [&receiveBufferSize, &success, &receiveSemaphore]
-        (const asio::error_code& error, std::size_t bytes_transferred)
-        {
-            //(void)receiveBuffer;
-			if (receiveBufferSize > 0)
-			{
-				if (error)
-				{
-					logInfo(RTPS_MSG_IN, "Error while listening to socket...");
-					receiveBufferSize = 0;
-				}
-				else
-				{
-					logInfo(RTPS_MSG_IN, "Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ");
-					receiveBufferSize = static_cast<uint32_t>(bytes_transferred);
-					success = true;
-				}
-			}
-
-            receiveSemaphore.post();
-        };
-        */
-
     { // lock scope
         std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
         if (!IsInputChannelOpen(localLocator))
@@ -524,7 +499,7 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 		{
 			auto& socket = mInputSockets.at(localLocator.port);
 
-			auto handlerHeader = [&header, &success, &size, &receiveBuffer, &receiveBufferSize, &receiveBufferCapacity,
+			auto handler = [&header, &success, &size, &receiveBuffer, &receiveBufferSize, &receiveBufferCapacity,
 				&receiveSemaphore, &socket]
 				(const asio::error_code& error, std::size_t bytes_transferred)
 			{
@@ -573,11 +548,11 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 #if defined(ASIO_HAS_MOVE)
 			socket.async_receive(asio::buffer(header, 14),
 				0,
-				handlerHeader);
+				handler);
 #else
 			socket->async_receive(asio::buffer(header, 14),
 				0,
-				handlerHeader);
+				handler);
 #endif
 		}
     }
