@@ -56,21 +56,20 @@ class TCPv4Transport : public TransportInterface
 
 #if defined(ASIO_HAS_MOVE)
             SocketInfo(asio::ip::tcp::socket& socket) :
-                socket_(std::move(socket)), only_multicast_purpose_(false)
+                socket_(std::move(socket))
 #else
             SocketInfo(std::shared_ptr<asio::ip::tcp::socket> socket) :
-                socket_(socket), only_multicast_purpose_(false)
+                socket_(socket)
 #endif
             {
             }
 
             SocketInfo(SocketInfo&& socketInfo) :
 #if defined(ASIO_HAS_MOVE)
-                socket_(std::move(socketInfo.socket_)),
+                socket_(std::move(socketInfo.socket_))
 #else
-                socket_(socketInfo.socket_),
+                socket_(socketInfo.socket_)
 #endif
-                only_multicast_purpose_(socketInfo.only_multicast_purpose_)
             {
             }
 
@@ -81,23 +80,7 @@ class TCPv4Transport : public TransportInterface
 #else
                 socket_ = socketInfo.socket_;
 #endif
-                only_multicast_purpose_ = socketInfo.only_multicast_purpose_;
                 return *this;
-            }
-
-            void only_multicast_purpose(const bool value)
-            {
-                only_multicast_purpose_ = value;
-            };
-
-            bool& only_multicast_purpose()
-            {
-                return only_multicast_purpose_;
-            }
-
-            bool only_multicast_purpose() const
-            {
-                return only_multicast_purpose_;
             }
 
 #if defined(ASIO_HAS_MOVE)
@@ -105,7 +88,6 @@ class TCPv4Transport : public TransportInterface
 #else
             std::shared_ptr<asio::ip::tcp::socket> socket_;
 #endif
-            bool only_multicast_purpose_;
 
         private:
 

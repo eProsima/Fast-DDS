@@ -362,22 +362,15 @@ asio::ip::tcp::socket TCPv4Transport::OpenAndBindInputSocket(uint32_t port)
 	ip::tcp::socket socket(mService);
 	if (mReceiveBufferSize != 0)
 		socket.set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
-	//socket.open(ip::tcp::v4());
-	//socket.bind(endpoint);
-	std::thread* pThread = new std::thread(&TCPv4Transport::waitForConnection, this, std::move(socket), static_cast<uint16_t>(port));
-	mWaitingThreads[port] = pThread;
+	mWaitingThreads.emplace(port, new std::thread(&TCPv4Transport::waitForConnection, this, std::move(socket), static_cast<uint16_t>(port)));
     return socket;
 }
 #else
 std::shared_ptr<asio::ip::tcp::socket> TCPv4Transport::OpenAndBindInputSocket(uint32_t port)
 {
-	ip::tcp::endpoint endpoint(ip::tcp::v4(), static_cast<uint16_t>(port));
-	ip::tcp::acceptor acceptor(mService, endpoint);
 	std::shared_ptr<ip::tcp::socket> socket = std::make_shared<ip::tcp::socket>(mService);
 	if(mReceiveBufferSize != 0)
 	    socket->set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
-	//socket->open(ip::tcp::v4());
-	//socket->bind(endpoint);
 	mWaitingThreads.emplace(port, new std::thread(&TCPv4Transport::waitForConnection, this, socket, static_cast<uint16_t>(port)));
     return socket;
 }
@@ -449,8 +442,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     auto& sockets = mOutputSockets.at(localLocator.port);
     for (auto& socket : sockets)
     {
-        if(!socket.only_multicast_purpose())
-			success |= SendThroughSocket(msg.buffer, msg.length, remoteLocator, socket.socket_);
+		success |= SendThroughSocket(msg.buffer, msg.length, remoteLocator, socket.socket_);
     }
 
     return success;
@@ -680,71 +672,43 @@ LocatorList_t TCPv4Transport::NormalizeLocator(const Locator_t& locator)
     return list;
 }
 
-struct MultiUniLocatorsLinkage
-{
-    MultiUniLocatorsLinkage(LocatorList_t&& m, LocatorList_t&& u) :
-        multicast(std::move(m)), unicast(std::move(u)) {}
-
-    LocatorList_t multicast;
-    LocatorList_t unicast;
-};
-
 LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
 {
-    LocatorList_t multicastResult, unicastResult;
-    std::vector<MultiUniLocatorsLinkage> pendingLocators;
+    LocatorList_t unicastResult;
+	for (auto& locatorList : locatorLists)
+	{
+		LocatorListConstIterator it = locatorList.begin();
+		LocatorList_t pendingUnicast;
 
-    for(auto& locatorList : locatorLists)
-    {
-        LocatorListConstIterator it = locatorList.begin();
-        LocatorList_t pendingMulticast, pendingUnicast;
+		while (it != locatorList.end())
+		{
+			assert((*it).kind == LOCATOR_KIND_TCPv4);
 
-        while(it != locatorList.end())
-        {
-            assert((*it).kind == LOCATOR_KIND_TCPv4);
+			// Check is local interface.
+			auto localInterface = currentInterfaces.begin();
+			for (; localInterface != currentInterfaces.end(); ++localInterface)
+			{
+				if (memcmp(&localInterface->locator.address[12], &it->address[12], 4) == 0)
+				{
+					// Loopback locator
+					Locator_t loopbackLocator;
+					loopbackLocator.set_IP4_address(127, 0, 0, 1);
+					loopbackLocator.port = it->port;
+					pendingUnicast.push_back(loopbackLocator);
+					break;
+				}
+			}
 
-            // Check is local interface.
-            auto localInterface = currentInterfaces.begin();
-            for (; localInterface != currentInterfaces.end(); ++localInterface)
-            {
-                if(memcmp(&localInterface->locator.address[12], &it->address[12], 4) == 0)
-                {
-                    // Loopback locator
-                    Locator_t loopbackLocator;
-                    loopbackLocator.set_IP4_address(127, 0, 0, 1);
-                    loopbackLocator.port = it->port;
-                    pendingUnicast.push_back(loopbackLocator);
-                    break;
-                }
-            }
+			if (localInterface == currentInterfaces.end())
+				pendingUnicast.push_back(*it);
 
-            if(localInterface == currentInterfaces.end())
-                pendingUnicast.push_back(*it);
+			++it;
+		}
 
-            ++it;
-        }
-
-        if(pendingMulticast.size() == 0)
-        {
-            unicastResult.push_back(pendingUnicast);
-        }
-        else if(pendingUnicast.size() == 0)
-        {
-            multicastResult.push_back(pendingMulticast);
-        }
-        else
-        {
-            pendingLocators.push_back(MultiUniLocatorsLinkage(std::move(pendingMulticast), std::move(pendingUnicast)));
-        }
-    }
+		unicastResult.push_back(pendingUnicast);
+	}
 
     LocatorList_t result(std::move(unicastResult));
-    result.push_back(multicastResult);
-
-    // Store pending unicast locators
-    for(auto link : pendingLocators)
-        result.push_back(link.unicast);
-
     return result;
 }
 
