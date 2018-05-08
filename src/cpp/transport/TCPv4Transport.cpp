@@ -498,13 +498,13 @@ static uint16_t getRTPSPort(const octet *header)
 bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
         const Locator_t& localLocator, Locator_t& remoteLocator)
 {
-    octet* header = new octet[14];
-    uint32_t size;// = getSize(header) - 14;
-
     if (!IsInputChannelOpen(localLocator))
         return false;
 
-    Semaphore receiveSemaphore(0);
+	octet* header = new octet[14];
+	uint32_t size;// = getSize(header) - 14;
+
+	Semaphore receiveSemaphore(0);
     bool success = false;
 
     // LuisGasco - Why needs receiveBuffer?
