@@ -101,11 +101,8 @@ TCPConnector::TCPConnector(asio::io_service& io_service, const ip::address_v4& i
 void TCPConnector::Connect(TCPv4Transport* parent, uint32_t& port)
 {
     m_socket.open(ip::tcp::v4());
-    if (m_sendBufferSize != 0)
-        m_socket.set_option(socket_base::send_buffer_size(m_sendBufferSize));
-
     ip::tcp::endpoint endpoint(m_ipAddress, static_cast<uint16_t>(port));
-    m_socket.async_connect(endpoint, std::bind(&TCPv4Transport::SocketConnected, parent, m_port, m_id, std::placeholders::_1));
+    m_socket.async_connect(endpoint, std::bind(&TCPv4Transport::SocketConnected, parent, m_port, m_id, m_sendBufferSize, std::placeholders::_1));
 
     if (port == 0)
         port = m_socket.local_endpoint().port();
@@ -135,7 +132,7 @@ void TCPConnector::Connect(TCPv4Transport* parent, uint32_t& port)
         m_socket->set_option(socket_base::send_buffer_size(m_sendBufferSize));
 
     ip::tcp::endpoint endpoint(m_ipAddress, static_cast<uint16_t>(port));
-    m_socket->async_connect(endpoint, std::bind(&TCPv4Transport::SocketConnected, parent, m_port, m_id, std::placeholders::_1));
+    m_socket->async_connect(endpoint, std::bind(&TCPv4Transport::SocketConnected, parent, m_port, m_id, m_sendBufferSize, std::placeholders::_1));
 
     if (port == 0)
         port = m_socket->local_endpoint().port();
@@ -812,7 +809,7 @@ void TCPv4Transport::SocketAccepted(uint32_t port, uint32_t receiveBufferSize, c
     }
 }
 
-void TCPv4Transport::SocketConnected(uint32_t port, uint32_t id, const asio::error_code& error)
+void TCPv4Transport::SocketConnected(uint32_t port, uint32_t id, uint32_t sendBufferSize, const asio::error_code& error)
 {
     std::string value = error.message();
     std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
@@ -824,8 +821,12 @@ void TCPv4Transport::SocketConnected(uint32_t port, uint32_t id, const asio::err
             if (socketsMap.find(id) != socketsMap.end())
             {
 #if defined(ASIO_HAS_MOVE)
+                if (sendBufferSize != 0)
+                    socketsMap.at(id)->m_socket.set_option(socket_base::send_buffer_size(sendBufferSize));
                 mOutputSockets[port].push_back(SocketInfo(socketsMap.at(id)->m_socket));
 #else
+                if (sendBufferSize != 0)
+                    socketsMap.at(id)->m_socket->set_option(socket_base::send_buffer_size(sendBufferSize));
                 mOutputSockets[port].push_back(SocketInfo(socketsMap.at(id)->m_socket));
 #endif
                 delete socketsMap[id];
