@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
+#include <fastrtps/utils/eClock.h>
 
 using namespace std;
 using namespace asio;
@@ -65,7 +66,8 @@ TCPv4Transport::TCPConnectionAccepter::TCPConnectionAccepter(TCPv4Transport* par
 TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor):
     mConfiguration_(descriptor),
     mSendBufferSize(descriptor.sendBufferSize),
-    mReceiveBufferSize(descriptor.receiveBufferSize)
+    mReceiveBufferSize(descriptor.receiveBufferSize),
+	m_uOutputSocketId(0)
     {
         for (const auto& interface : descriptor.interfaceWhiteList)
             mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
@@ -88,7 +90,8 @@ TransportInterface* TCPv4TransportDescriptor::create_transport() const
 
 TCPv4Transport::TCPv4Transport() :
     mSendBufferSize(0),
-    mReceiveBufferSize(0)
+    mReceiveBufferSize(0),
+	m_uOutputSocketId(0)
     {
     }
 
@@ -171,7 +174,7 @@ bool TCPv4Transport::IsInputChannelOpen(const Locator_t& locator) const
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
     return IsLocatorSupported(locator) && (mInputSockets.find(locator.port) != mInputSockets.end() ||
-		(mWaitingSockets.find(locator.port) != mWaitingSockets.end()));
+		(mPendingInputSockets.find(locator.port) != mPendingInputSockets.end()));
 }
 
 bool TCPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
@@ -231,17 +234,17 @@ bool TCPv4Transport::CloseOutputChannel(const Locator_t& locator)
 bool TCPv4Transport::CloseInputChannel(const Locator_t& locator)
 {
 	std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-	if (mWaitingSockets.find(locator.port) != mWaitingSockets.end())
+	if (mPendingInputSockets.find(locator.port) != mPendingInputSockets.end())
 	{
 
 #if defined(ASIO_HAS_MOVE)
-		mWaitingSockets[locator.port]->m_socket.cancel();
-		mWaitingSockets[locator.port]->m_socket.close();
+		mPendingInputSockets[locator.port]->m_socket.cancel();
+		mPendingInputSockets[locator.port]->m_socket.close();
 #else
-		mWaitingSockets[locator.port]->m_socket->cancel();
-		mWaitingSockets[locator.port]->m_socket->close();
+		mPendingInputSockets[locator.port]->m_socket->cancel();
+		mPendingInputSockets[locator.port]->m_socket->close();
 #endif
-		mWaitingSockets.erase(locator.port);
+		mPendingInputSockets.erase(locator.port);
 		return true;
 	}
 	else if (IsInputChannelOpen(locator))
@@ -355,7 +358,7 @@ void TCPv4Transport::OpenAndBindInputSocket(uint32_t port)
     mInputSemaphores.emplace(port, new Semaphore(0));
 	TCPConnectionAccepter* newAccepter = new TCPConnectionAccepter(this, mService, static_cast<uint16_t>(port),
 		mReceiveBufferSize);
-	mWaitingSockets.insert(std::make_pair(port, newAccepter));
+	mPendingInputSockets.insert(std::make_pair(port, newAccepter));
 }
 
 bool TCPv4Transport::DoLocatorsMatch(const Locator_t& left, const Locator_t& right) const
@@ -493,7 +496,7 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
     // Resources semaphore
     if (mInputSemaphores.find(localLocator.port) == mInputSemaphores.end())
     {
-        sleep(1); // No semaphore? Let's sleep a while
+		eClock::my_sleep(1000);
         return false;
     }
     mInputSemaphores.at(localLocator.port)->wait();
@@ -707,21 +710,21 @@ void TCPv4Transport::SocketConnected(uint16_t port, uint32_t receiveBufferSize, 
 	if (!error.value())
 	{
 		std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-		if (mWaitingSockets.find(port) != mWaitingSockets.end())
+		if (mPendingInputSockets.find(port) != mPendingInputSockets.end())
 		{
-			auto& socket = mWaitingSockets.at(port)->m_socket;
+			auto& socket = mPendingInputSockets.at(port)->m_socket;
 #if defined(ASIO_HAS_MOVE)
 			if (receiveBufferSize != 0)
 				socket.set_option(asio::socket_base::receive_buffer_size(receiveBufferSize));
-			mInputSockets.emplace(port, std::move(mWaitingSockets.at(port)->m_socket));
+			mInputSockets.emplace(port, std::move(mPendingInputSockets.at(port)->m_socket));
 #else
 			if (receiveBufferSize != 0)
 				socket->set_option(asio::socket_base::receive_buffer_size(receiveBufferSize));
-			mInputSockets.emplace(port, mWaitingSockets.at(port)->m_socket);
+			mInputSockets.emplace(port, mPendingInputSockets.at(port)->m_socket);
 #endif
 
-			delete mWaitingSockets[port];
-			mWaitingSockets.erase(port);
+			delete mPendingInputSockets[port];
+			mPendingInputSockets.erase(port);
 
             mInputSemaphores[port]->disable();
 		}
