@@ -165,6 +165,46 @@ struct TCPControlMsgHeader
     }
 };
 
+class TCPv4Transport;
+
+class TCPAccepter
+{
+public:
+	asio::ip::tcp::acceptor m_acceptor;
+	uint16_t m_port;
+	uint32_t m_receiveBufferSize;
+#if defined(ASIO_HAS_MOVE)
+	asio::ip::tcp::socket m_socket;
+#else
+	std::shared_ptr<asio::ip::tcp::socket> m_socket;
+#endif
+
+	TCPAccepter(asio::io_service& io_service, uint16_t port, uint32_t receiveBufferSize);
+
+	void Accept(TCPv4Transport* parent);
+	void RetryAccept(asio::io_service& io_service, TCPv4Transport* parent);
+};
+
+class TCPConnector
+{
+public:
+	uint32_t m_port;
+	uint32_t m_id;
+	const asio::ip::address_v4 m_ipAddress;
+	uint32_t m_sendBufferSize;
+#if defined(ASIO_HAS_MOVE)
+	asio::ip::tcp::socket m_socket;
+#else
+	std::shared_ptr<asio::ip::tcp::socket> m_socket;
+#endif
+
+	TCPConnector(asio::io_service& io_service, const asio::ip::address_v4& ipAddress, uint16_t port, uint32_t id, uint32_t sendBufferSize);
+
+	void Connect(TCPv4Transport* parent, uint32_t& port);
+	void RetryConnect(asio::io_service& io_service, TCPv4Transport* parent);
+};
+
+
 /**
  * This is a default TCPv4 implementation.
  *    - Opening an output channel by passing a locator will open a socket per interface on the given port.
@@ -304,8 +344,8 @@ public:
 
    TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
 
-   void SocketConnected(uint16_t port, uint32_t receiveBufferSize, const asio::error_code& error);
-
+   void SocketAccepted(uint32_t port, uint32_t receiveBufferSize, const asio::error_code& error);
+   void SocketConnected(uint32_t port, uint32_t id, const asio::error_code& error);
 protected:
 
    //! Constructor with no descriptor is necessary for implementations derived from this class.
@@ -322,7 +362,7 @@ protected:
 
    //! The notion of output channel corresponds to a port.
    uint32_t m_uOutputSocketId;
-   std::map<uint32_t, std::map<uint32_t, SocketInfo>> mPendingOutputSockets;
+   std::map<uint32_t, std::map<uint32_t, TCPConnector*>> mPendingOutputSockets;
    std::map<uint32_t, std::vector<SocketInfo>> mOutputSockets;
 
    std::vector<IPFinder::info_IP> currentInterfaces;
@@ -330,25 +370,8 @@ protected:
    struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
 
-   class TCPConnectionAccepter
-   {
-   public:
-	   asio::ip::tcp::acceptor m_acceptor;
-#if defined(ASIO_HAS_MOVE)
-	   asio::ip::tcp::socket m_socket;
-#else
-	   std::shared_ptr<asio::ip::tcp::socket> m_socket;
-#endif
-
-	   ~TCPConnectionAccepter()
-	   {
-	   }
-
-	   TCPConnectionAccepter(TCPv4Transport* parent, asio::io_service& io_service, uint16_t port, uint32_t receiveBufferSize);
-   };
-
    //! For both modes, an input channel corresponds to a port.
-   std::map<uint32_t, TCPConnectionAccepter*> mPendingInputSockets;
+   std::map<uint32_t, TCPAccepter*> mPendingInputSockets;
 #if defined(ASIO_HAS_MOVE)
    std::map<uint32_t, asio::ip::tcp::socket> mInputSockets;
 #else
@@ -364,16 +387,15 @@ protected:
    bool OpenAndBindInputSockets(uint32_t port);
 
    void OpenAndBindInputSocket(uint32_t port);
+   void OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
 
 #if defined(ASIO_HAS_MOVE)
-   asio::ip::tcp::socket OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
-
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,
                           const Locator_t& remoteLocator,
                           asio::ip::tcp::socket& socket);
 #else
-   std::shared_ptr<asio::ip::tcp::socket> OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
+
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,
