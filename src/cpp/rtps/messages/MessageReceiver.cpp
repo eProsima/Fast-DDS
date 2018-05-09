@@ -146,12 +146,12 @@ void MessageReceiver::reset(){
     haveTimestamp = false;
     timestamp = c_TimeInvalid;
 
-    unicastReplyLocatorList.clear();
-    unicastReplyLocatorList.reserve(1);
+    //unicastReplyLocatorList.clear();
+    //unicastReplyLocatorList.reserve(1);
     multicastReplyLocatorList.clear();
     multicastReplyLocatorList.reserve(1);
-    Locator_t  loc;
-    unicastReplyLocatorList.push_back(loc);
+    //Locator_t  loc;
+    //unicastReplyLocatorList.push_back(loc);
     multicastReplyLocatorList.push_back(defUniLoc);
 }
 
@@ -167,6 +167,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
     this->reset();
 
     destGuidPrefix = RTPSParticipantguidprefix;
+    /*
     unicastReplyLocatorList.begin()->kind = loc->kind;
 
     uint8_t n_start = 0;
@@ -185,6 +186,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
         unicastReplyLocatorList.begin()->address[i] = loc->address[i];
     }
     unicastReplyLocatorList.begin()->port = loc->port;
+    */
     msg->pos = 0; //Start reading at 0
 
     //Once everything is set, the reading begins:
