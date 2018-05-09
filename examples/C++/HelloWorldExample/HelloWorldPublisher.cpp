@@ -46,20 +46,30 @@ bool HelloWorldPublisher::init(bool tcp)
 
 	// TCP CONNECTION PEER.
     uint32_t kind = (tcp) ? LOCATOR_KIND_TCPv4 : LOCATOR_KIND_UDPv4;
-	Locator_t unicast_locator;
-	unicast_locator.kind = kind;
-	unicast_locator.set_IP4_address("127.0.0.1");
-	unicast_locator.port = 7401;
-    PParam.rtps.defaultOutLocatorList.push_back(unicast_locator);
+	Locator_t initial_peer_locator;
+    initial_peer_locator.kind = kind;
+    initial_peer_locator.set_IP4_address("127.0.0.1");
+    //initial_peer_locator.port = 7402;
+    PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
+    //PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
+
+    //Locator_t unicast_locator;
+    //unicast_locator.kind = kind;
+    //unicast_locator.set_IP4_address("127.0.0.1");
+    //unicast_locator.port = 7401;
+    //PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
 
 	Locator_t meta_locator;
 	meta_locator.kind = kind;
-	meta_locator.set_IP4_address("127.0.0.1");
-	meta_locator.port = 7400;
+	//meta_locator.set_IP4_address("127.0.0.1");
+	//meta_locator.port = 7400;
 	PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
 
+    PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
+    PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
+    PParam.rtps.builtin.setStaticEndpointXMLFilename("HelloWorldSubscriber.xml");
+
 	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-    PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.domainId = 0;
@@ -67,19 +77,20 @@ bool HelloWorldPublisher::init(bool tcp)
     PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5,0);
     PParam.rtps.setName("Participant_pub");
 
-    PParam.rtps.useBuiltinTransports = false;
     std::shared_ptr<TransportDescriptorInterface> descriptor;
     if (tcp)
     {
+        PParam.rtps.useBuiltinTransports = false;
         descriptor = std::make_shared<TCPv4TransportDescriptor>();
+        descriptor->sendBufferSize = 0;
+        descriptor->receiveBufferSize = 0;
+        PParam.rtps.userTransports.emplace_back(descriptor);
     }
     else
     {
-        descriptor = std::make_shared<UDPv4TransportDescriptor>();
+        PParam.rtps.useBuiltinTransports = true;
+        //descriptor = std::make_shared<UDPv4TransportDescriptor>();
     }
-    descriptor->sendBufferSize = 0;
-    descriptor->receiveBufferSize = 0;
-    PParam.rtps.userTransports.emplace_back(descriptor);
 
     mp_participant = Domain::createParticipant(PParam);
 
@@ -101,6 +112,8 @@ bool HelloWorldPublisher::init(bool tcp)
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    Wparam.setUserDefinedID(1);
+    Wparam.setEntityID(2);
     mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
     if(mp_publisher == nullptr)
         return false;

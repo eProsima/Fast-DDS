@@ -43,24 +43,27 @@ bool HelloWorldSubscriber::init(bool tcp)
 	Locator_t initial_peer_locator;
     initial_peer_locator.kind = kind;
 	initial_peer_locator.set_IP4_address("127.0.0.1");
-	initial_peer_locator.port = 7400;
+	//initial_peer_locator.port = 7401;
     PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
-    PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
+    //PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
 
-	Locator_t unicast_locator;
-	unicast_locator.kind = kind;
-	unicast_locator.set_IP4_address("127.0.0.1");
-	unicast_locator.port = 7401;
-	PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
+	//Locator_t unicast_locator;
+	//unicast_locator.kind = kind;
+	//unicast_locator.set_IP4_address("127.0.0.1");
+	//unicast_locator.port = 7402;
+	//PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
 
 	Locator_t meta_locator;
 	meta_locator.kind = kind;
-	meta_locator.set_IP4_address("127.0.0.1");
-	meta_locator.port = 7402;
+	//meta_locator.set_IP4_address("127.0.0.1");
+	//meta_locator.port = 7401;
 	PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
 
+    PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
+    PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
+    PParam.rtps.builtin.setStaticEndpointXMLFilename("HelloWorldPublisher.xml");
+
 	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-    PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.domainId = 0;
@@ -101,6 +104,8 @@ bool HelloWorldSubscriber::init(bool tcp)
     Rparam.topic.resourceLimitsQos.allocated_samples = 20;
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    Rparam.setUserDefinedID(3);
+    Rparam.setEntityID(4);
     mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 
     if(mp_subscriber == nullptr)
