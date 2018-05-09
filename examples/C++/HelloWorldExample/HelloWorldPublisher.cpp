@@ -22,7 +22,8 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+//#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
 
@@ -45,31 +46,43 @@ bool HelloWorldPublisher::init()
 
 	// TCP CONNECTION PEER.
 	Locator_t unicast_locator;
-	unicast_locator.kind = LOCATOR_KIND_TCPv4;
+	unicast_locator.kind = LOCATOR_KIND_UDPv4;
 	unicast_locator.set_IP4_address("127.0.0.1");
-	unicast_locator.port = 7400;
-	PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
-
+	unicast_locator.port = 7401;
+	//PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
+    PParam.rtps.defaultOutLocatorList.push_back(unicast_locator);
+	/*
+	Locator_t initial_peer_locator;
+	initial_peer_locator.kind = LOCATOR_KIND_TCPv4;
+	initial_peer_locator.set_IP4_address("127.0.0.1");
+	initial_peer_locator.set_TCP_port(7401);
+	PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
+	PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
+*/
 	Locator_t meta_locator;
-	meta_locator.kind = LOCATOR_KIND_TCPv4;
+	meta_locator.kind = LOCATOR_KIND_UDPv4;
 	meta_locator.set_IP4_address("127.0.0.1");
-	meta_locator.set_TCP_port(7402);
+	meta_locator.port = 7400;
 	PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
 
 	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
     PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+    //PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
+    //PParam.rtps.builtin.setStaticEndpointXMLFilename("HelloWorldSubscriber.xml");
     PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5,0);
     PParam.rtps.setName("Participant_pub");
 
+/*
     PParam.rtps.useBuiltinTransports = false;
-    std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+    std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
     descriptor->sendBufferSize = 0;
     descriptor->receiveBufferSize = 0;
     PParam.rtps.userTransports.emplace_back(descriptor);
-
+*/
     mp_participant = Domain::createParticipant(PParam);
 
     if(mp_participant==nullptr)
@@ -90,6 +103,7 @@ bool HelloWorldPublisher::init()
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    //Wparam.unicastLocatorList.push_back(unicast_locator);
     mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
     if(mp_publisher == nullptr)
         return false;
@@ -120,21 +134,35 @@ void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,M
 
 void HelloWorldPublisher::run(uint32_t samples)
 {
-    for(uint32_t i = 0;i<samples;++i)
+    if (samples == 0)
     {
-        if(!publish())
-            --i;
-        else
+        while(true)
         {
-            std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+            if(publish(false))
+            {
+                std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+            }
+            eClock::my_sleep(1000);
         }
-        eClock::my_sleep(25);
+    }
+    else
+    {
+        for(uint32_t i = 0;i<samples;++i)
+        {
+            if(!publish())
+                --i;
+            else
+            {
+                std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+            }
+            eClock::my_sleep(25);
+        }
     }
 }
 
-bool HelloWorldPublisher::publish()
+bool HelloWorldPublisher::publish(bool waitForListener)
 {
-    if(m_listener.n_matched>0)
+    if(!waitForListener || m_listener.n_matched>0)
     {
         m_Hello.index(m_Hello.index()+1);
         mp_publisher->write((void*)&m_Hello);

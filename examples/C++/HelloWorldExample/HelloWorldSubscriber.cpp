@@ -21,7 +21,7 @@
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
@@ -47,39 +47,44 @@ bool HelloWorldSubscriber::init()
 
 	// TCP CONNECTION PEER.
 	Locator_t initial_peer_locator;
-	initial_peer_locator.kind = LOCATOR_KIND_TCPv4;
+	initial_peer_locator.kind = LOCATOR_KIND_UDPv4;
 	initial_peer_locator.set_IP4_address("127.0.0.1");
-	initial_peer_locator.set_TCP_port(7400);
+	initial_peer_locator.port = 7400;
 	PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
-	PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
+	//PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
 
 	Locator_t unicast_locator;
-	unicast_locator.kind = LOCATOR_KIND_TCPv4;
+	unicast_locator.kind = LOCATOR_KIND_UDPv4;
 	unicast_locator.set_IP4_address("127.0.0.1");
-	unicast_locator.set_TCP_port(7401);
+	unicast_locator.port = 7401;
 	PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
+	//PParam.rtps.defaultOutLocatorList.push_back(unicast_locator);
 
 	Locator_t meta_locator;
-	meta_locator.kind = LOCATOR_KIND_TCPv4;
+	meta_locator.kind = LOCATOR_KIND_UDPv4;
 	meta_locator.set_IP4_address("127.0.0.1");
-	meta_locator.set_TCP_port(7402);
+	meta_locator.port = 7402;
 	PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
 
 	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
     PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+    //PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
+    //PParam.rtps.builtin.setStaticEndpointXMLFilename("HelloWorldPublisher.xml");
     PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5,0);
     PParam.rtps.setName("Participant_sub");
 
+/*
     //ARCE:
     PParam.rtps.useBuiltinTransports = false;
-    std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+    std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
     descriptor->sendBufferSize = 0;
     descriptor->receiveBufferSize = 0;
     PParam.rtps.userTransports.emplace_back(descriptor);
-
+*/
     mp_participant = Domain::createParticipant(PParam);
     if(mp_participant==nullptr)
         return false;
@@ -98,6 +103,8 @@ bool HelloWorldSubscriber::init()
     Rparam.topic.resourceLimitsQos.allocated_samples = 20;
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    //Rparam.unicastLocatorList.push_back(unicast_locator);
+    //Rparam.unicastLocatorList.push_back(initial_peer_locator);
     mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 
     if(mp_subscriber == nullptr)
