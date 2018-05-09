@@ -49,16 +49,8 @@ bool HelloWorldPublisher::init()
 	unicast_locator.kind = LOCATOR_KIND_UDPv4;
 	unicast_locator.set_IP4_address("127.0.0.1");
 	unicast_locator.port = 7401;
-	//PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
     PParam.rtps.defaultOutLocatorList.push_back(unicast_locator);
-	/*
-	Locator_t initial_peer_locator;
-	initial_peer_locator.kind = LOCATOR_KIND_TCPv4;
-	initial_peer_locator.set_IP4_address("127.0.0.1");
-	initial_peer_locator.set_TCP_port(7401);
-	PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
-	PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
-*/
+
 	Locator_t meta_locator;
 	meta_locator.kind = LOCATOR_KIND_UDPv4;
 	meta_locator.set_IP4_address("127.0.0.1");
@@ -67,8 +59,6 @@ bool HelloWorldPublisher::init()
 
 	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
     PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    //PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
-    //PParam.rtps.builtin.setStaticEndpointXMLFilename("HelloWorldSubscriber.xml");
     PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.domainId = 0;
@@ -76,13 +66,12 @@ bool HelloWorldPublisher::init()
     PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5,0);
     PParam.rtps.setName("Participant_pub");
 
-/*
     PParam.rtps.useBuiltinTransports = false;
     std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
     descriptor->sendBufferSize = 0;
     descriptor->receiveBufferSize = 0;
     PParam.rtps.userTransports.emplace_back(descriptor);
-*/
+
     mp_participant = Domain::createParticipant(PParam);
 
     if(mp_participant==nullptr)
@@ -103,7 +92,6 @@ bool HelloWorldPublisher::init()
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    //Wparam.unicastLocatorList.push_back(unicast_locator);
     mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
     if(mp_publisher == nullptr)
         return false;
