@@ -337,7 +337,7 @@ bool TCPv4Transport::CloseInputChannel(const Locator_t& locator)
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
     if (mPendingInputSockets.find(locator.port) != mPendingInputSockets.end())
     {
-
+        mInputSemaphores[locator.port]->disable();
 #if defined(ASIO_HAS_MOVE)
         mPendingInputSockets[locator.port]->m_socket.close();
 #else
