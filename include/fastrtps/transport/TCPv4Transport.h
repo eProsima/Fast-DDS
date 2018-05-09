@@ -379,6 +379,7 @@ protected:
 #endif
 
    std::map<uint32_t, Semaphore*> mInputSemaphores;
+   std::map<uint32_t, Semaphore*> mOutputSemaphores;
 
    bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
    std::vector<asio::ip::address_v4> mInterfaceWhiteList;
