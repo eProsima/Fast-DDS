@@ -22,7 +22,7 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
-//#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
@@ -37,7 +37,7 @@ mp_publisher(nullptr)
 
 }
 
-bool HelloWorldPublisher::init()
+bool HelloWorldPublisher::init(bool tcp)
 {
     m_Hello.index(0);
     m_Hello.message("HelloWorld");
@@ -45,14 +45,15 @@ bool HelloWorldPublisher::init()
     PParam.rtps.use_IP6_to_send = true;
 
 	// TCP CONNECTION PEER.
+    uint32_t kind = (tcp) ? LOCATOR_KIND_TCPv4 : LOCATOR_KIND_UDPv4;
 	Locator_t unicast_locator;
-	unicast_locator.kind = LOCATOR_KIND_UDPv4;
+	unicast_locator.kind = kind;
 	unicast_locator.set_IP4_address("127.0.0.1");
 	unicast_locator.port = 7401;
     PParam.rtps.defaultOutLocatorList.push_back(unicast_locator);
 
 	Locator_t meta_locator;
-	meta_locator.kind = LOCATOR_KIND_UDPv4;
+	meta_locator.kind = kind;
 	meta_locator.set_IP4_address("127.0.0.1");
 	meta_locator.port = 7400;
 	PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
@@ -67,7 +68,15 @@ bool HelloWorldPublisher::init()
     PParam.rtps.setName("Participant_pub");
 
     PParam.rtps.useBuiltinTransports = false;
-    std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+    std::shared_ptr<TransportDescriptorInterface> descriptor;
+    if (tcp)
+    {
+        descriptor = std::make_shared<TCPv4TransportDescriptor>();
+    }
+    else
+    {
+        descriptor = std::make_shared<UDPv4TransportDescriptor>();
+    }
     descriptor->sendBufferSize = 0;
     descriptor->receiveBufferSize = 0;
     PParam.rtps.userTransports.emplace_back(descriptor);

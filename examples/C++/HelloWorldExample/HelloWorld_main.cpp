@@ -33,15 +33,35 @@ int main(int argc, char** argv)
     std::cout << "Starting "<< std::endl;
     int type = 1;
     int count = 0;
+    bool tcp = false;
     if(argc > 1)
     {
         if(strcmp(argv[1],"publisher")==0)
-            type = 1;
-        else if(strcmp(argv[1],"subscriber")==0)
-            type = 2;
-        if (argc == 3)
         {
-            count = atoi(argv[2]);
+            type = 1;
+
+            for (int i = 2; i < argc; ++i)
+            {
+                if (strncmp(argv[i], "tcp", strlen(argv[i])) == 0)
+                {
+                    tcp = true;
+                }
+                else
+                {
+                    count = atoi(argv[i]);
+                }
+            }
+        }
+        else if(strcmp(argv[1],"subscriber")==0)
+        {
+            type = 2;
+            for (int i = 2; i < argc; ++i)
+            {
+                if (strncmp(argv[i], "tcp", strlen(argv[i])) == 0)
+                {
+                    tcp = true;
+                }
+            }
         }
     }
     else
@@ -57,7 +77,7 @@ int main(int argc, char** argv)
         case 1:
             {
                 HelloWorldPublisher mypub;
-                if(mypub.init())
+                if(mypub.init(tcp))
                 {
                     mypub.run(count);
                 }
@@ -66,7 +86,7 @@ int main(int argc, char** argv)
         case 2:
             {
                 HelloWorldSubscriber mysub;
-                if(mysub.init())
+                if(mysub.init(tcp))
                 {
                     mysub.run();
                 }

@@ -22,6 +22,7 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
@@ -34,25 +35,25 @@ mp_subscriber(nullptr)
 {
 }
 
-bool HelloWorldSubscriber::init()
+bool HelloWorldSubscriber::init(bool tcp)
 {
     ParticipantAttributes PParam;
+    int32_t kind = (tcp) ? LOCATOR_KIND_TCPv4 : LOCATOR_KIND_UDPv4;
 
-	// TCP CONNECTION PEER.
 	Locator_t initial_peer_locator;
-	initial_peer_locator.kind = LOCATOR_KIND_UDPv4;
+    initial_peer_locator.kind = kind;
 	initial_peer_locator.set_IP4_address("127.0.0.1");
 	initial_peer_locator.port = 7400;
 	PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
 
 	Locator_t unicast_locator;
-	unicast_locator.kind = LOCATOR_KIND_UDPv4;
+	unicast_locator.kind = kind;
 	unicast_locator.set_IP4_address("127.0.0.1");
 	unicast_locator.port = 7401;
 	PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
 
 	Locator_t meta_locator;
-	meta_locator.kind = LOCATOR_KIND_UDPv4;
+	meta_locator.kind = kind;
 	meta_locator.set_IP4_address("127.0.0.1");
 	meta_locator.port = 7402;
 	PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
@@ -68,7 +69,15 @@ bool HelloWorldSubscriber::init()
 
     //ARCE:
     PParam.rtps.useBuiltinTransports = false;
-    std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+    std::shared_ptr<TransportDescriptorInterface> descriptor;
+    if (tcp)
+    {
+        descriptor = std::make_shared<TCPv4TransportDescriptor>();
+    }
+    else
+    {
+        descriptor = std::make_shared<UDPv4TransportDescriptor>();
+    }
     descriptor->sendBufferSize = 0;
     descriptor->receiveBufferSize = 0;
     PParam.rtps.userTransports.emplace_back(descriptor);

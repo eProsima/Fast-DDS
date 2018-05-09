@@ -34,7 +34,7 @@ public:
 	HelloWorldPublisher();
 	virtual ~HelloWorldPublisher();
 	//!Initialize
-	bool init();
+	bool init(bool tcp);
 	//!Publish a sample
 	bool publish(bool waitForListener = true);
 	//!Run for number samples
