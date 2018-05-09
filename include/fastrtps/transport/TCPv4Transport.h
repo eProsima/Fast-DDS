@@ -345,7 +345,7 @@ public:
    TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
 
    void SocketAccepted(uint32_t port, uint32_t receiveBufferSize, const asio::error_code& error);
-   void SocketConnected(uint32_t port, uint32_t id, const asio::error_code& error);
+   void SocketConnected(uint32_t port, uint32_t id, uint32_t sendBufferSize, const asio::error_code& error);
 protected:
 
    //! Constructor with no descriptor is necessary for implementations derived from this class.
