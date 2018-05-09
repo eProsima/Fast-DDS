@@ -40,8 +40,8 @@ struct TCPHeader
     uint32_t crc;
     uint16_t logicalPort;
 
-    TCPHeader() : 
-        rtps({'R','T','P','S'})
+    TCPHeader() :
+		rtps{'R','T','P','S'}
         , length(sizeof(TCPHeader))
         , crc(0)
         , logicalPort(0)
@@ -151,17 +151,17 @@ struct TCPControlMsgHeader
 
     bool getEndianess()
     {
-        return flags & BIT(1);
+        return (flags & BIT(1)) != 0;
     }
 
     bool getHasPayload()
     {
-        return flags & BIT(2);
+        return (flags & BIT(2)) != 0;
     }
 
     bool getRequiresResponse()
     {
-        return flags & BIT(3);
+        return (flags & BIT(3)) != 0;
     }
 };
 
@@ -321,7 +321,9 @@ protected:
    mutable std::recursive_mutex mInputMapMutex;
 
    //! The notion of output channel corresponds to a port.
-   std::map<uint32_t, std::vector<SocketInfo> > mOutputSockets;
+   uint32_t m_uOutputSocketId;
+   std::map<uint32_t, std::map<uint32_t, SocketInfo>> mPendingOutputSockets;
+   std::map<uint32_t, std::vector<SocketInfo>> mOutputSockets;
 
    std::vector<IPFinder::info_IP> currentInterfaces;
 
@@ -346,7 +348,7 @@ protected:
    };
 
    //! For both modes, an input channel corresponds to a port.
-   std::map<uint32_t, TCPConnectionAccepter*> mWaitingSockets;
+   std::map<uint32_t, TCPConnectionAccepter*> mPendingInputSockets;
 #if defined(ASIO_HAS_MOVE)
    std::map<uint32_t, asio::ip::tcp::socket> mInputSockets;
 #else
