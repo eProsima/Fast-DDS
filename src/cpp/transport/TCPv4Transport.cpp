@@ -323,11 +323,11 @@ bool TCPv4Transport::OpenAndBindInputSockets(uint32_t port)
 asio::ip::tcp::socket TCPv4Transport::OpenAndBindUnicastOutputSocket(const ip::address_v4& ipAddress, uint32_t& port)
 {
     ip::tcp::socket socket(mService);
-    if(mSendBufferSize != 0)
-        socket.set_option(socket_base::send_buffer_size(mSendBufferSize));
-
     ip::tcp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
     socket.connect(endpoint);
+
+    if(mSendBufferSize != 0)
+        socket.set_option(socket_base::send_buffer_size(mSendBufferSize));
 
     if(port == 0)
         port = socket.local_endpoint().port();
