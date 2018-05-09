@@ -44,10 +44,10 @@ static asio::ip::address_v4::bytes_type locatorToNative(const Locator_t& locator
 
 #if defined(ASIO_HAS_MOVE)
 TCPAccepter::TCPAccepter(asio::io_service& io_service, uint16_t port, uint32_t receiveBufferSize)
-    : m_socket(io_service)
+    : m_acceptor(io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
     , m_port(port)
     , m_receiveBufferSize(receiveBufferSize)
-    , m_acceptor(io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
+    , m_socket(io_service)
 {
 }
 
@@ -66,10 +66,10 @@ void TCPAccepter::RetryAccept(asio::io_service& io_service, TCPv4Transport* pare
 
 #else
 TCPAccepter::TCPAccepter(asio::io_service& io_service, uint16_t port, uint32_t receiveBufferSize)
-    : m_socket(std::make_shared<asio::ip::tcp::socket>(io_service))
+    : m_acceptor(io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
     , m_port(port)
     , m_receiveBufferSize(receiveBufferSize)
-    , m_acceptor(io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
+    , m_socket(std::make_shared<asio::ip::tcp::socket>(io_service))
 {
 }
 
@@ -272,11 +272,15 @@ bool TCPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
 
 bool TCPv4Transport::OpenOutputChannel(Locator_t& locator)
 {
-    if (IsOutputChannelOpen(locator) ||
-        !IsLocatorSupported(locator))
+    std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
+    if (!IsLocatorSupported(locator))
         return false;
 
-    return OpenAndBindOutputSockets(locator);
+    bool success = false;
+    if (!IsOutputChannelOpen(locator))
+        success = OpenAndBindOutputSockets(locator);
+
+    return success;
 }
 
 bool TCPv4Transport::OpenInputChannel(const Locator_t& locator)
@@ -300,6 +304,7 @@ bool TCPv4Transport::CloseOutputChannel(const Locator_t& locator)
 
     if (mPendingOutputSockets.find(locator.port) != mPendingOutputSockets.end())
     {
+        mOutputSemaphores[locator.port]->disable();
         auto& pendingSockets = mPendingOutputSockets.at(locator.port);
         for (auto& socket : pendingSockets)
         {
@@ -415,6 +420,7 @@ bool TCPv4Transport::OpenAndBindInputSockets(uint32_t port)
 void TCPv4Transport::OpenAndBindUnicastOutputSocket(const ip::address_v4& ipAddress, uint32_t& port)
 {
     m_uOutputSocketId++;
+    mOutputSemaphores.emplace(port, new Semaphore(0));
     TCPConnector* newConnector = new TCPConnector(mService, ipAddress, static_cast<uint16_t>(port), m_uOutputSocketId, mSendBufferSize);
     mPendingOutputSockets[port].insert(std::make_pair(m_uOutputSocketId, newConnector));
     newConnector->Connect(this, port);
@@ -473,6 +479,15 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     if (!IsOutputChannelOpen(localLocator) ||
         sendBufferSize > mConfiguration_.sendBufferSize)
         return false;
+
+    
+    // Resources semaphore
+    if (mOutputSemaphores.find(localLocator.port) == mOutputSemaphores.end())
+    {
+        eClock::my_sleep(1000);
+        return false;
+    }
+    mOutputSemaphores.at(localLocator.port)->wait();
 
     if (mOutputSockets.find(localLocator.port) != mOutputSockets.end())
     {
@@ -831,6 +846,7 @@ void TCPv4Transport::SocketConnected(uint32_t port, uint32_t id, uint32_t sendBu
 #endif
                 delete socketsMap[id];
                 socketsMap.erase(id);
+                mOutputSemaphores[port]->disable();
             }
         }
     }
