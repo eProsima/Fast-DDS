@@ -94,16 +94,41 @@ class RTPS_DllAPI Locator_t
             return *this;
         }
 
+        bool set_port(uint16_t port)
+        {
+            if (kind == LOCATOR_KIND_TCPv4 || kind == LOCATOR_KIND_TCPv6)
+            {
+                return set_TCP_port(port);
+            }
+            else
+            {
+                this->port = port;
+            }
+            return true;
+        }
+
         bool set_TCP_port(uint16_t tcp_port)
         {
             std::memcpy(&port, &tcp_port, 2 * sizeof(char));
             return true;
         }
 
-        bool set_RTPS_port(uint16_t rtps_port)
+        bool set_Logical_port(uint16_t rtps_port)
         {
             std::memcpy(&port + 2, &rtps_port, 2 * sizeof(char));
             return true;
+        }
+
+        uint16_t get_port() const
+        {
+            if (kind == LOCATOR_KIND_TCPv4 || kind == LOCATOR_KIND_TCPv6)
+            {
+                return get_TCP_port();
+            }
+            else
+            {
+                return port;
+            }
         }
 
         uint16_t get_TCP_port() const
@@ -113,7 +138,7 @@ class RTPS_DllAPI Locator_t
             return oport;
         }
 
-        uint16_t get_RTPS_port() const
+        uint16_t get_Logical_port() const
         {
             uint16_t oport;
             std::memcpy(&oport, &port + 2, 2 * sizeof(char));
@@ -292,6 +317,25 @@ inline bool IsLocatorValid(const Locator_t&loc)
     if(loc.kind<0)
         return false;
     return true;
+}
+
+inline bool operator<(const Locator_t &loc1, const Locator_t &loc2)
+{
+    return memcmp(&loc1, &loc2, sizeof(Locator_t)) < 0;
+    /*
+    if(loc1.kind < loc2.kind)
+        return true;
+    
+    for(uint8_t i = 0; i < 16; ++i){
+    	if(loc1.address[i] < loc2.address[i])
+    		return true;
+    }
+
+    if(loc1.port < loc2.port)
+        return true;
+
+    return false;
+    */
 }
 
 inline bool operator==(const Locator_t&loc1,const Locator_t& loc2)
