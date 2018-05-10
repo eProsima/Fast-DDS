@@ -44,8 +44,13 @@ endif()
 message(STATUS "Configuring HelloWorld example...")
 file(GLOB HELLOWORLD_EXAMPLE_SOURCES_CXX "*.cxx")
 file(GLOB HELLOWORLD_EXAMPLE_SOURCES_CPP "*.cpp")
+#file(GLOB XML_CONFIG_FILES "*.xml")
+#message(STATUS "XML Files: " ${XML_CONFIG_FILES})
+configure_file("HelloWorldSubscriber.xml" "HelloWorldSubscriber.xml" COPYONLY)
+configure_file("HelloWorldPublisher.xml" "HelloWorldPublisher.xml" COPYONLY)
 
 add_executable(HelloWorldExample ${HELLOWORLD_EXAMPLE_SOURCES_CXX} ${HELLOWORLD_EXAMPLE_SOURCES_CPP})
 target_link_libraries(HelloWorldExample fastrtps fastcdr)
 install(TARGETS HelloWorldExample
     RUNTIME DESTINATION examples/C++/HelloWorldExample/${BIN_INSTALL_DIR})
+
