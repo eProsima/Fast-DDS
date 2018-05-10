@@ -466,7 +466,7 @@ static void fillTcpHeader(octet* header, uint32_t size, const Locator_t& loc)
     header[5] = s[1];
     header[6] = s[2];
     header[7] = s[3];
-    uint16_t port = loc.get_RTPS_port();
+    uint16_t port = loc.get_Logical_port();
     octet* p = (octet*)&port;
     header[12] = p[0];
     header[13] = p[1];
