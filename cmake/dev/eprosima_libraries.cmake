@@ -38,7 +38,6 @@ macro(find_eprosima_package package)
                 if(ANDROID)
                     set(ANDROID_BUILD_OPTIONS "-DANDROID_ABI=${ANDROID_ABI}"
                         "-DANDROID_NDK=${ANDROID_NDK}"
-                        "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}"
                         "-DANDROID_NATIVE_API_LEVEL=${ANDROID_NATIVE_API_LEVEL}"
                         "-DANDROID_TOOLCHAIN=${ANDROID_TOOLCHAIN}"
                         "-DANDROID_PLATFORM=${ANDROID_PLATFORM}"               
@@ -67,6 +66,7 @@ macro(find_eprosima_package package)
                     "\${CMAKE_CXX_COMPILER_}"
                     "-DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS_}"
                     "-DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS_}"
+                    "-DCMAKE_TOOLCHAIN_FILE:FILEPATH=${CMAKE_TOOLCHAIN_FILE}"
                     ${ANDROID_BUILD_OPTIONS}
                     "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
                     "-DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}"
@@ -111,6 +111,7 @@ macro(find_eprosima_package package)
 
                 execute_process(COMMAND ${CMAKE_COMMAND}
                     -G ${CMAKE_GENERATOR}
+                    -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
                     ${ANDROID_BUILD_OPTIONS}
                     WORKING_DIRECTORY ${${package}ExternalDir}
                     RESULT_VARIABLE EXECUTE_RESULT
