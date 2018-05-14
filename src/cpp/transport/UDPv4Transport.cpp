@@ -91,6 +91,11 @@ UDPv4Transport::UDPv4Transport() :
 
 UDPv4Transport::~UDPv4Transport()
 {
+    if(ioServiceThread)
+    {
+        mService.stop();
+        ioServiceThread->join();
+    }
 }
 
 bool UDPv4Transport::init()
@@ -149,6 +154,13 @@ bool UDPv4Transport::init()
     // TODO(Ricardo) Create an event that update this list.
     GetIP4s(currentInterfaces);
 
+    auto ioServiceFunction = [&]()
+    {
+        io_service::work work(mService);
+        mService.run();
+    };
+    ioServiceThread.reset(new std::thread(ioServiceFunction));
+
     return true;
 }
 
@@ -205,11 +217,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator)
             auto ip = asio::ip::address_v4::from_string(infoIP.name);
             try
             {
-#if defined(ASIO_HAS_MOVE)
-                socket.set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string()), ip));
-#else
-                socket->set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string()), ip));
-#endif
+                getSocketPtr(socket)->set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string()), ip));
             }
             catch(std::system_error& ex)
             {
@@ -231,13 +239,8 @@ bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
     auto& sockets = mOutputSockets.at(locator.port);
     for (auto& socket : sockets)
     {
-#if defined(ASIO_HAS_MOVE)
-        socket.socket_.cancel();
-        socket.socket_.close();
-#else
-        socket.socket_->cancel();
-        socket.socket_->close();
-#endif
+        socket.getSocket()->cancel();
+        socket.getSocket()->close();
     }
 
     mOutputSockets.erase(locator.port);
@@ -249,9 +252,12 @@ bool UDPv4Transport::CloseInputChannel(const Locator_t& locator)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
     if (!IsInputChannelOpen(locator))
-    {
         return false;
-    }
+
+
+    auto& socket = mInputSockets.at(locator.port);
+    getSocketPtr(socket)->cancel();
+    getSocketPtr(socket)->close();
 
     mInputSockets.erase(locator.port);
     return true;
@@ -267,11 +273,11 @@ bool UDPv4Transport::ReleaseInputChannel(const Locator_t& locator)
 
     try
     {
-        ip::udp::socket socket(mService);
-        socket.open(ip::udp::v4());
+        auto& socket = mInputSockets.at(locator.port);
+        //getSocketPtr(socket)->open(ip::udp::v4());
         auto destinationEndpoint = ip::udp::endpoint(asio::ip::address_v4(locatorToNative(locator)),
                 static_cast<uint16_t>(locator.port));
-        socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
+        getSocketPtr(socket)->send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
     }
     catch (const std::exception& error)
     {
@@ -307,13 +313,8 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
             // and gain efficiency.
             if(mInterfaceWhiteList.empty())
             {
-#if defined(ASIO_HAS_MOVE)
-                asio::ip::udp::socket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v4::any(), locator.port);
-                unicastSocket.set_option(ip::multicast::enable_loopback( true ) );
-#else
-                std::shared_ptr<asio::ip::udp::socket> unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v4::any(), locator.port);
-                unicastSocket->set_option(ip::multicast::enable_loopback( true ) );
-#endif
+                eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v4::any(), locator.port);
+                getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
 
                 // If more than one interface, then create sockets for outbounding multicast.
                 if(locNames.size() > 1)
@@ -321,26 +322,17 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
                     auto locIt = locNames.begin();
 
                     // Outbounding first interface with already created socket.
-#if defined(ASIO_HAS_MOVE)
-                    unicastSocket.set_option(ip::multicast::outbound_interface(asio::ip::address_v4::from_string((*locIt).name)));
-#else
-                    unicastSocket->set_option(ip::multicast::outbound_interface(asio::ip::address_v4::from_string((*locIt).name)));
-#endif
-                    mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
+                    getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(asio::ip::address_v4::from_string((*locIt).name)));
+                    mOutputSockets[locator.port].push_back(UDPSocketInfo(unicastSocket));
 
                     // Create other socket for outbounding rest of interfaces.
                     for(++locIt; locIt != locNames.end(); ++locIt)
                     {
                         auto ip = asio::ip::address_v4::from_string((*locIt).name);
                         uint32_t new_port = 0;
-#if defined(ASIO_HAS_MOVE)
-                        asio::ip::udp::socket multicastSocket = OpenAndBindUnicastOutputSocket(ip, new_port);
-                        multicastSocket.set_option(ip::multicast::outbound_interface(ip));
-#else
-                        std::shared_ptr<asio::ip::udp::socket> multicastSocket = OpenAndBindUnicastOutputSocket(ip, new_port);
-                        multicastSocket->set_option(ip::multicast::outbound_interface(ip));
-#endif
-                        SocketInfo mSocket(multicastSocket);
+                        eProsimaUDPSocket multicastSocket = OpenAndBindUnicastOutputSocket(ip, new_port);
+                        getSocketPtr(multicastSocket)->set_option(ip::multicast::outbound_interface(ip));
+                        UDPSocketInfo mSocket(multicastSocket);
                         mSocket.only_multicast_purpose(true);
                         mOutputSockets[locator.port].push_back(std::move(mSocket));
                     }
@@ -348,7 +340,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
                 else
                 {
                     // Multicast data will be sent for the only one interface.
-                    mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
+                    mOutputSockets[locator.port].push_back(UDPSocketInfo(unicastSocket));
                 }
             }
             else
@@ -359,24 +351,14 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
                     auto ip = asio::ip::address_v4::from_string(infoIP.name);
                     if (IsInterfaceAllowed(ip))
                     {
-#if defined(ASIO_HAS_MOVE)
-                        asio::ip::udp::socket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
-                        unicastSocket.set_option(ip::multicast::outbound_interface(ip));
+                        eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
+                        getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(ip));
                         if(firstInterface)
                         {
-                            unicastSocket.set_option(ip::multicast::enable_loopback( true ) );
+                            getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
                             firstInterface = true;
                         }
-#else
-                        std::shared_ptr<asio::ip::udp::socket> unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
-                        unicastSocket->set_option(ip::multicast::outbound_interface(ip));
-                        if(firstInterface)
-                        {
-                            unicastSocket->set_option(ip::multicast::enable_loopback( true ) );
-                            firstInterface = true;
-                        }
-#endif
-                        mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
+                        mOutputSockets[locator.port].push_back(UDPSocketInfo(unicastSocket));
                     }
                 }
             }
@@ -384,16 +366,10 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
         else
         {
             auto ip = asio::ip::address_v4(locatorToNative(locator));
-#if defined(ASIO_HAS_MOVE)
-            asio::ip::udp::socket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
-            unicastSocket.set_option(ip::multicast::outbound_interface(ip));
-            unicastSocket.set_option(ip::multicast::enable_loopback( true ) );
-#else
-            std::shared_ptr<asio::ip::udp::socket> unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
-            unicastSocket->set_option(ip::multicast::outbound_interface(ip));
-            unicastSocket->set_option(ip::multicast::enable_loopback( true ) );
-#endif
-            mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
+            eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
+            getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(ip));
+            getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
+            mOutputSockets[locator.port].push_back(UDPSocketInfo(unicastSocket));
         }
     }
     catch (asio::system_error const& e)
@@ -426,71 +402,36 @@ bool UDPv4Transport::OpenAndBindInputSockets(uint32_t port, bool is_multicast)
     return true;
 }
 
-#if defined(ASIO_HAS_MOVE)
-asio::ip::udp::socket UDPv4Transport::OpenAndBindUnicastOutputSocket(const ip::address_v4& ipAddress, uint32_t& port)
+eProsimaUDPSocket UDPv4Transport::OpenAndBindUnicastOutputSocket(const ip::address_v4& ipAddress, uint32_t& port)
 {
-    ip::udp::socket socket(mService);
-    socket.open(ip::udp::v4());
+    eProsimaUDPSocket socket = createUDPSocket(mService);
+    getSocketPtr(socket)->open(ip::udp::v4());
     if(mSendBufferSize != 0)
-        socket.set_option(socket_base::send_buffer_size(mSendBufferSize));
-    socket.set_option(ip::multicast::hops(mConfiguration_.TTL));
+        getSocketPtr(socket)->set_option(socket_base::send_buffer_size(mSendBufferSize));
+    getSocketPtr(socket)->set_option(ip::multicast::hops(mConfiguration_.TTL));
 
     ip::udp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
-    socket.bind(endpoint);
+    getSocketPtr(socket)->bind(endpoint);
 
     if(port == 0)
-        port = socket.local_endpoint().port();
+        port = getSocketPtr(socket)->local_endpoint().port();
 
     return socket;
 }
-#else
-std::shared_ptr<asio::ip::udp::socket> UDPv4Transport::OpenAndBindUnicastOutputSocket(const ip::address_v4& ipAddress, uint32_t& port)
+
+eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(uint32_t port, bool is_multicast)
 {
-    std::shared_ptr<ip::udp::socket> socket = std::make_shared<ip::udp::socket>(mService);
-    socket->open(ip::udp::v4());
-    if(mSendBufferSize != 0)
-        socket->set_option(socket_base::send_buffer_size(mSendBufferSize));
-    socket->set_option(ip::multicast::hops(mConfiguration_.TTL));
-
-    ip::udp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
-    socket->bind(endpoint);
-
-    if(port == 0)
-        port = socket->local_endpoint().port();
-
-    return socket;
-}
-#endif
-
-#if defined(ASIO_HAS_MOVE)
-asio::ip::udp::socket UDPv4Transport::OpenAndBindInputSocket(uint32_t port, bool is_multicast)
-{
-    ip::udp::socket socket(mService);
-    socket.open(ip::udp::v4());
+    eProsimaUDPSocket socket = createUDPSocket(mService);
+    getSocketPtr(socket)->open(ip::udp::v4());
     if(mReceiveBufferSize != 0)
-        socket.set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
+        getSocketPtr(socket)->set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
     if(is_multicast)
-        socket.set_option(ip::udp::socket::reuse_address( true ) );
+        getSocketPtr(socket)->set_option(ip::udp::socket::reuse_address( true ) );
     ip::udp::endpoint endpoint(ip::address_v4::any(), static_cast<uint16_t>(port));
-    socket.bind(endpoint);
+    getSocketPtr(socket)->bind(endpoint);
 
     return socket;
 }
-#else
-std::shared_ptr<asio::ip::udp::socket> UDPv4Transport::OpenAndBindInputSocket(uint32_t port, bool is_multicast)
-{
-    std::shared_ptr<ip::udp::socket> socket = std::make_shared<ip::udp::socket>(mService);
-    socket->open(ip::udp::v4());
-    if(mReceiveBufferSize != 0)
-        socket->set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
-    if(is_multicast)
-        socket->set_option(ip::udp::socket::reuse_address( true ) );
-    ip::udp::endpoint endpoint(ip::address_v4::any(), static_cast<uint16_t>(port));
-    socket->bind(endpoint);
-
-    return socket;
-}
-#endif
 
 bool UDPv4Transport::DoLocatorsMatch(const Locator_t& left, const Locator_t& right) const
 {
@@ -526,7 +467,7 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     for (auto& socket : sockets)
     {
         if(is_multicast_remote_address || !socket.only_multicast_purpose())
-            success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket.socket_);
+            success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(socket.getSocket()));
     }
 
     return success;
@@ -546,7 +487,7 @@ bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
         return false;
 
     ip::udp::endpoint senderEndpoint;
-    ip::udp::socket* socket = nullptr;
+    eProsimaSocketUDP* socket = nullptr;
 
     { // lock scope
         std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
@@ -558,11 +499,7 @@ bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 
     if(socket != nullptr)
     {
-#if defined(ASIO_HAS_MOVE)
-        size_t bytes = socket->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
-#else
-        size_t bytes = socket.get()->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
-#endif
+        size_t bytes = getSocketPtr(socket)->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
 
         receiveBufferSize = static_cast<uint32_t>(bytes);
 
@@ -583,32 +520,19 @@ bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 bool UDPv4Transport::SendThroughSocket(const octet* sendBuffer,
         uint32_t sendBufferSize,
         const Locator_t& remoteLocator,
-#if defined(ASIO_HAS_MOVE)
-        asio::ip::udp::socket& socket)
-#else
-        std::shared_ptr<asio::ip::udp::socket> socket)
-#endif
+        eProsimaUDPSocket& socket)
 {
 
     asio::ip::address_v4::bytes_type remoteAddress;
     memcpy(&remoteAddress, &remoteLocator.address[12], sizeof(remoteAddress));
     auto destinationEndpoint = ip::udp::endpoint(asio::ip::address_v4(remoteAddress), static_cast<uint16_t>(remoteLocator.port));
     size_t bytesSent = 0;
-#if defined(ASIO_HAS_MOVE)
     logInfo(RTPS_MSG_OUT,"UDPv4: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
-            << " FROM " << socket.local_endpoint());
-#else
-    logInfo(RTPS_MSG_OUT,"UDPv4: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
-            << " FROM " << socket->local_endpoint());
-#endif
+            << " FROM " << getSocketPtr(socket)->local_endpoint());
 
     try
     {
-#if defined(ASIO_HAS_MOVE)
-        bytesSent = socket.send_to(asio::buffer(sendBuffer, sendBufferSize), destinationEndpoint);
-#else
-        bytesSent = socket->send_to(asio::buffer(sendBuffer, sendBufferSize), destinationEndpoint);
-#endif
+        bytesSent = getSocketPtr(socket)->send_to(asio::buffer(sendBuffer, sendBufferSize), destinationEndpoint);
     }
     catch (const std::exception& error)
     {

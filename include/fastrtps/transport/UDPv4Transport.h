@@ -18,6 +18,7 @@
 #include <asio.hpp>
 
 #include "TransportInterface.h"
+#include "SocketInfo.h"
 #include "UDPv4TransportDescriptor.h"
 #include "../utils/IPFinder.h"
 
@@ -49,69 +50,6 @@ namespace rtps{
  */
 class UDPv4Transport : public TransportInterface
 {
-    class SocketInfo
-    {
-        public:
-
-#if defined(ASIO_HAS_MOVE)
-            SocketInfo(asio::ip::udp::socket& socket) :
-                socket_(std::move(socket)), only_multicast_purpose_(false)
-#else
-            SocketInfo(std::shared_ptr<asio::ip::udp::socket> socket) :
-                socket_(socket), only_multicast_purpose_(false)
-#endif
-            {
-            }
-
-            SocketInfo(SocketInfo&& socketInfo) :
-#if defined(ASIO_HAS_MOVE)
-                socket_(std::move(socketInfo.socket_)),
-#else
-                socket_(socketInfo.socket_),
-#endif
-                only_multicast_purpose_(socketInfo.only_multicast_purpose_)
-            {
-            }
-
-            SocketInfo& operator=(SocketInfo&& socketInfo)
-            {
-#if defined(ASIO_HAS_MOVE)
-                socket_ = std::move(socketInfo.socket_);
-#else
-                socket_ = socketInfo.socket_;
-#endif
-                only_multicast_purpose_ = socketInfo.only_multicast_purpose_;
-                return *this;
-            }
-
-            void only_multicast_purpose(const bool value)
-            {
-                only_multicast_purpose_ = value;
-            };
-
-            bool& only_multicast_purpose()
-            {
-                return only_multicast_purpose_;
-            }
-
-            bool only_multicast_purpose() const
-            {
-                return only_multicast_purpose_;
-            }
-
-#if defined(ASIO_HAS_MOVE)
-            asio::ip::udp::socket socket_;
-#else
-            std::shared_ptr<asio::ip::udp::socket> socket_;
-#endif
-            bool only_multicast_purpose_;
-
-        private:
-
-            SocketInfo(const SocketInfo&) = delete;
-            SocketInfo& operator=(const SocketInfo&) = delete;
-    };
-
 public:
 
    RTPS_DllAPI UDPv4Transport(const UDPv4TransportDescriptor&);
@@ -204,7 +142,7 @@ protected:
    mutable std::recursive_mutex mInputMapMutex;
 
    //! The notion of output channel corresponds to a port.
-   std::map<uint32_t, std::vector<SocketInfo> > mOutputSockets;
+   std::map<uint32_t, std::vector<UDPSocketInfo> > mOutputSockets;
 
    std::vector<IPFinder::info_IP> currentInterfaces;
 
@@ -212,11 +150,7 @@ protected:
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
 
    //! For both modes, an input channel corresponds to a port.
-#if defined(ASIO_HAS_MOVE)
-   std::map<uint32_t, asio::ip::udp::socket> mInputSockets;
-#else
-   std::map<uint32_t, std::shared_ptr<asio::ip::udp::socket>> mInputSockets;
-#endif
+   std::map<uint32_t, eProsimaUDPSocket> mInputSockets;
 
    bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
    std::vector<asio::ip::address_v4> mInterfaceWhiteList;
@@ -224,23 +158,13 @@ protected:
    bool OpenAndBindOutputSockets(Locator_t& locator);
    bool OpenAndBindInputSockets(uint32_t port, bool is_multicast);
 
-#if defined(ASIO_HAS_MOVE)
-   asio::ip::udp::socket OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
-   asio::ip::udp::socket OpenAndBindInputSocket(uint32_t port, bool is_multicast);
+   eProsimaUDPSocket OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
+   eProsimaUDPSocket OpenAndBindInputSocket(uint32_t port, bool is_multicast);
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,
                           const Locator_t& remoteLocator,
-                          asio::ip::udp::socket& socket);
-#else
-   std::shared_ptr<asio::ip::udp::socket> OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
-   std::shared_ptr<asio::ip::udp::socket> OpenAndBindInputSocket(uint32_t port, bool is_multicast);
-
-   bool SendThroughSocket(const octet* sendBuffer,
-                          uint32_t sendBufferSize,
-                          const Locator_t& remoteLocator,
-                          std::shared_ptr<asio::ip::udp::socket> socket);
-#endif
+                          eProsimaUDPSocket& socket);
 };
 
 } // namespace rtps
