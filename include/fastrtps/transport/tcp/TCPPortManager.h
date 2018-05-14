@@ -73,15 +73,16 @@ protected:
     void OpenAndBindInputSocket(Locator_t &locator, const TCPInputSocketListener *listener);
     void RegisterListener(const TCPInputSocketListener *listener);
 private:
-    const uint16_t m_Port;                                              // Local bound physical port
-    SocketInfo* m_socket;                                                // Input socket
-    std::map<uint16_t, const TCPInputSocketListener*> m_InputListeners; // Logical ports map
-    std::vector<const TCPInputSocketListener*> m_AcceptListeners;       // Listeners for no logical port cases
-    std::vector<SocketInfo*> m_Connections;                             // Already bound connections
-    std::vector<SocketInfo*> m_UnboundConnections;                      // Not yet bound connections
-    TCPAccepter* m_Accepter;                                            // For input connections
-    std::map<RemoteLocator_t, std::vector<Locator_t>> m_LocatorToRemote;
-    std::map<RemoteLocator_t, SocketInfo*> m_OutputConnections;         // Key is remote locator
+    const uint16_t m_Port;                                                  // Local bound physical port
+    SocketInfo* m_socket;                                                   // Input socket
+    std::map<uint16_t, const TCPInputSocketListener*> m_InputListeners;     // Logical ports map
+    std::map<Locator_t, const TCPOutputSocketListener*> m_OutputListeners;  // Logical ports map
+    std::vector<const TCPInputSocketListener*> m_AcceptListeners;           // Listeners for no logical port cases
+    std::vector<SocketInfo*> m_Connections;                                 // Already bound connections
+    std::vector<SocketInfo*> m_UnboundConnections;                          // Not yet bound connections
+    TCPAccepter* m_Accepter;                                                // For input connections
+    std::map<RemoteLocator_t, std::vector<Locator_t>> m_LocatorToRemote;    // Concrete Locators
+    std::map<RemoteLocator_t, SocketInfo*> m_OutputConnections;             // Key is remote locator
     //std::map<Locator_t, Semaphore*> mInputSemaphores;
     //std::map<Locator_t, Semaphore*> mOutputSemaphores;
 };
