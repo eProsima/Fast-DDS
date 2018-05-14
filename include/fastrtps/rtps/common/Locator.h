@@ -94,15 +94,15 @@ class RTPS_DllAPI Locator_t
             return *this;
         }
 
-        bool set_port(uint16_t port)
+        bool set_port(uint16_t iPort)
         {
             if (kind == LOCATOR_KIND_TCPv4 || kind == LOCATOR_KIND_TCPv6)
             {
-                return set_TCP_port(port);
+                return set_TCP_port(iPort);
             }
             else
             {
-                this->port = port;
+                this->port = iPort;
             }
             return true;
         }
@@ -119,11 +119,11 @@ class RTPS_DllAPI Locator_t
             return true;
         }
 
-        uint16_t get_port() const
+        uint32_t get_port() const
         {
             if (kind == LOCATOR_KIND_TCPv4 || kind == LOCATOR_KIND_TCPv6)
             {
-                return get_TCP_port();
+                return static_cast<uint32_t>(get_TCP_port());
             }
             else
             {
@@ -325,7 +325,7 @@ inline bool operator<(const Locator_t &loc1, const Locator_t &loc2)
     /*
     if(loc1.kind < loc2.kind)
         return true;
-    
+
     for(uint8_t i = 0; i < 16; ++i){
     	if(loc1.address[i] < loc2.address[i])
     		return true;

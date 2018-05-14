@@ -77,8 +77,6 @@ set(${PROJECT_NAME}_source_files
     transport/TCPv4Transport.cpp
     transport/UDPv6Transport.cpp
     transport/test_UDPv4Transport.cpp
-    transport/tcp/TCPManager.cpp
-    transport/tcp/TCPManagerLocator.cpp
     qos/ParameterList.cpp
     qos/ParameterTypes.cpp
     qos/QosPolicies.cpp
