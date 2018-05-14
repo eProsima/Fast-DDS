@@ -353,6 +353,20 @@ inline bool operator==(const Locator_t&loc1,const Locator_t& loc2)
     return true;
 }
 
+/**
+ * Compares if both locators are equals, except for logical port
+ * */
+inline bool equalsPhysicalLocator(const Locator_t &loc1, const Locator_t &loc2)
+{
+    if(loc1.kind != loc2.kind)
+        return false;
+    if(loc1.get_TCP_port() != loc2.get_TCP_port())
+        return false;
+    if(!std::equal(loc1.address, loc1.address + 16, loc2.address))
+        return false;
+    return true;
+}
+
 inline std::ostream& operator<<(std::ostream& output,const Locator_t& loc)
 {
     if(loc.kind == LOCATOR_KIND_UDPv4 || loc.kind == LOCATOR_KIND_TCPv4)
