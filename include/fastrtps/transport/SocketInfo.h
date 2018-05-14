@@ -9,64 +9,183 @@ namespace fastrtps{
 namespace rtps{
 
 #if defined(ASIO_HAS_MOVE)
-	typedef asio::ip::tcp::socket eProsimaSocket;
-	inline eProsimaSocket* getSocketPtr(eProsimaSocket &socket)
+    // Typedefs
+	typedef asio::ip::udp::socket eProsimaUDPSocket;
+	typedef asio::ip::tcp::socket eProsimaTCPSocket;
+    // UDP
+	inline eProsimaUDPSocket* getSocketPtr(eProsimaUDPSocket &socket)
     {
         return &socket;
     }
-    inline eProsimaSocket&& moveSocket(eProsimaSocket &socket)
+    inline eProsimaUDPSocket moveSocket(eProsimaUDPSocket &socket)
     {
         return std::move(socket);
     }
-    inline eProsimaSocket&& createSocket(asio::io_service& io_service)
+    inline eProsimaUDPSocket createUDPSocket(asio::io_service& io_service)
+    {
+        return std::move(asio::ip::udp::socket(io_service));
+    }
+    inline eProsimaUDPSocket& getRefFromPtr(eProsimaUDPSocket* socket)
+    {
+        return *socket;
+    }
+    // TCP
+	inline eProsimaTCPSocket* getSocketPtr(eProsimaTCPSocket &socket)
+    {
+        return &socket;
+    }
+    inline eProsimaTCPSocket moveSocket(eProsimaTCPSocket &socket)
+    {
+        return std::move(socket);
+    }
+    inline eProsimaTCPSocket createTCPSocket(asio::io_service& io_service)
     {
         return std::move(asio::ip::tcp::socket(io_service));
     }
+    inline eProsimaTCPSocket& getRefFromPtr(eProsimaTCPSocket* socket)
+    {
+        return *socket;
+    }
 #else
-	typedef std::shared_ptr<asio::ip::tcp::socket> eProsimaSocket;
-    inline eProsimaSocket getSocketPtr(eProsimaSocket &socket)
+    // Typedefs
+	typedef std::shared_ptr<asio::ip::udp::socket> eProsimaUDPSocket;
+	typedef std::shared_ptr<asio::ip::tcp::socket> eProsimaTCPSocket;
+    // UDP
+    inline eProsimaUDPSocket getSocketPtr(eProsimaUDPSocket &socket)
     {
         return socket;
     }
-    inline eProsimaSocket& moveSocket(eProsimaSocket &socket)
+    inline eProsimaUDPSocket& moveSocket(eProsimaUDPSocket &socket)
     {
         return socket;
     }
-    inline eProsimaSocket&& createSocket(asio::io_service& io_service)
+    inline eProsimaUDPSocket createUDPSocket(asio::io_service& io_service)
     {
-        return std::move(std::make_shared<asio::ip::tcp::socket>(io_service));
+        return std::make_shared<asio::ip::udp::socket>(io_service);
+    }
+    inline eProsimaUDPSocket& getRefFromPtr(eProsimaUDPSocket &socket)
+    {
+        return socket;
+    }
+    // TCP
+    inline eProsimaTCPSocket getSocketPtr(eProsimaTCPSocket &socket)
+    {
+        return socket;
+    }
+    inline eProsimaTCPSocket& moveSocket(eProsimaTCPSocket &socket)
+    {
+        return socket;
+    }
+    inline eProsimaTCPSocket createTCPSocket(asio::io_service& io_service)
+    {
+        return std::make_shared<asio::ip::tcp::socket>(io_service);
+    }
+    inline eProsimaTCPSocket& getRefFromPtr(eProsimaTCPSocket &socket)
+    {
+        return socket;
     }
 #endif
 
-class SocketInfo
+class UDPSocketInfo
     {
         public:
-            SocketInfo(eProsimaSocket& socket) :
+            UDPSocketInfo(eProsimaUDPSocket& socket) :
                 socket_(moveSocket(socket))
             {
             }
 
-            SocketInfo(SocketInfo&& socketInfo) :
+            UDPSocketInfo(UDPSocketInfo&& socketInfo) :
                 socket_(moveSocket(socketInfo.socket_))
             {
             }
 
-            SocketInfo& operator=(SocketInfo&& socketInfo)
+            UDPSocketInfo& operator=(UDPSocketInfo&& socketInfo)
             {
                 socket_ = moveSocket(socketInfo.socket_);
                 return *this;
             }
 
-            inline const eProsimaSocket* getSocket()
+            void only_multicast_purpose(const bool value)
+            {
+                only_multicast_purpose_ = value;
+            };
+
+            bool& only_multicast_purpose()
+            {
+                return only_multicast_purpose_;
+            }
+
+            bool only_multicast_purpose() const
+            {
+                return only_multicast_purpose_;
+            }
+
+#if defined(ASIO_HAS_MOVE)
+            inline eProsimaUDPSocket* getSocket()
+#else
+            inline eProsimaUDPSocket getSocket()
+#endif
             {
                 return getSocketPtr(socket_);
             }
 
         private:
-            eProsimaSocket socket_;
-            SocketInfo(const SocketInfo&) = delete;
-            SocketInfo& operator=(const SocketInfo&) = delete;
+            eProsimaUDPSocket socket_;
+            bool only_multicast_purpose_;
+            UDPSocketInfo(const UDPSocketInfo&) = delete;
+            UDPSocketInfo& operator=(const UDPSocketInfo&) = delete;
     };
+
+    class TCPSocketInfo
+    {
+        public:
+            TCPSocketInfo(eProsimaTCPSocket& socket) :
+                socket_(moveSocket(socket))
+            {
+            }
+
+            TCPSocketInfo(TCPSocketInfo&& socketInfo) :
+                socket_(moveSocket(socketInfo.socket_))
+            {
+            }
+
+            TCPSocketInfo& operator=(TCPSocketInfo&& socketInfo)
+            {
+                socket_ = moveSocket(socketInfo.socket_);
+                return *this;
+            }
+
+            void only_multicast_purpose(const bool value)
+            {
+                only_multicast_purpose_ = value;
+            };
+
+            bool& only_multicast_purpose()
+            {
+                return only_multicast_purpose_;
+            }
+
+            bool only_multicast_purpose() const
+            {
+                return only_multicast_purpose_;
+            }
+
+#if defined(ASIO_HAS_MOVE)
+            inline const eProsimaTCPSocket* getSocket()
+#else
+            inline const eProsimaTCPSocket getSocket()
+#endif
+            {
+                return getSocketPtr(socket_);
+            }
+
+        private:
+            eProsimaTCPSocket socket_;
+            bool only_multicast_purpose_;
+            TCPSocketInfo(const TCPSocketInfo&) = delete;
+            TCPSocketInfo& operator=(const TCPSocketInfo&) = delete;
+    };
+
 
 } // namespace rtps
 } // namespace fastrtps

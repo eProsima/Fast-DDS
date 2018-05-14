@@ -102,6 +102,11 @@ TransportInterface* UDPv6TransportDescriptor::create_transport() const
 
 UDPv6Transport::~UDPv6Transport()
 {
+    if(ioServiceThread)
+    {
+        mService.stop();
+        ioServiceThread->join();
+    }
 }
 
 bool UDPv6Transport::init()
@@ -160,6 +165,13 @@ bool UDPv6Transport::init()
     // TODO(Ricardo) Create an event that update this list.
     GetIP6s(currentInterfaces);
 
+    auto ioServiceFunction = [&]()
+    {
+        io_service::work work(mService);
+        mService.run();
+    };
+    ioServiceThread.reset(new std::thread(ioServiceFunction));
+
     return true;
 }
 
@@ -216,7 +228,7 @@ bool UDPv6Transport::OpenInputChannel(const Locator_t& locator)
             auto ip = asio::ip::address_v6::from_string(infoIP.name);
             try
             {
-                socket.set_option(ip::multicast::join_group(ip::address_v6::from_string(locator.to_IP6_string()), ip.scope_id()));
+                getSocketPtr(socket)->set_option(ip::multicast::join_group(ip::address_v6::from_string(locator.to_IP6_string()), ip.scope_id()));
             }
             catch(std::system_error& ex)
             {
@@ -238,8 +250,8 @@ bool UDPv6Transport::CloseOutputChannel(const Locator_t& locator)
     auto& sockets = mOutputSockets.at(locator.port);
     for (auto& socket : sockets)
     {
-        socket.socket_.cancel();
-        socket.socket_.close();
+        socket.getSocket()->cancel();
+        socket.getSocket()->close();
     }
 
     mOutputSockets.erase(locator.port);
@@ -253,6 +265,11 @@ bool UDPv6Transport::CloseInputChannel(const Locator_t& locator)
     if (!IsInputChannelOpen(locator))
         return false;
 
+
+    auto& socket = mInputSockets.at(locator.port);
+    getSocketPtr(socket)->cancel();
+    getSocketPtr(socket)->close();
+
     mInputSockets.erase(locator.port);
     return true;
 }
@@ -265,11 +282,11 @@ bool UDPv6Transport::ReleaseInputChannel(const Locator_t& locator)
 
     try
     {
-        ip::udp::socket socket(mService);
-        socket.open(ip::udp::v6());
+    	auto& socket = mInputSockets.at(locator.port);
+        //getSocketPtr(socket)->open(ip::udp::v6());
         auto destinationEndpoint = ip::udp::endpoint(asio::ip::address_v6(locatorToNative(locator)),
                 static_cast<uint16_t>(locator.port));
-        socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
+        getSocketPtr(socket)->send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
     }
     catch (const std::exception& error)
     {
@@ -306,8 +323,8 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator)
             // and gain efficiency.
             if(mInterfaceWhiteList.empty())
             {
-                asio::ip::udp::socket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v6::any(), locator.port);
-                unicastSocket.set_option(ip::multicast::enable_loopback( true ) );
+                eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v6::any(), locator.port);
+                getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
 
                 // If more than one interface, then create sockets for outbounding multicast.
                 if(locNames.size() > 1)
@@ -315,17 +332,17 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator)
                     auto locIt = locNames.begin();
 
                     // Outbounding first interface with already created socket.
-                    unicastSocket.set_option(ip::multicast::outbound_interface(asio::ip::address_v6::from_string((*locIt).name).scope_id()));
-                    mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
+                    getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(asio::ip::address_v6::from_string((*locIt).name).scope_id()));
+                    mOutputSockets[locator.port].push_back(UDPSocketInfo(unicastSocket));
 
                     // Create other socket for outbounding rest of interfaces.
                     for(++locIt; locIt != locNames.end(); ++locIt)
                     {
                         auto ip = asio::ip::address_v6::from_string((*locIt).name);
                         uint32_t new_port = 0;
-                        asio::ip::udp::socket multicastSocket = OpenAndBindUnicastOutputSocket(ip, new_port);
-                        multicastSocket.set_option(ip::multicast::outbound_interface(ip.scope_id()));
-                        SocketInfo mSocket(multicastSocket);
+                        eProsimaUDPSocket multicastSocket = OpenAndBindUnicastOutputSocket(ip, new_port);
+                        getSocketPtr(multicastSocket)->set_option(ip::multicast::outbound_interface(ip.scope_id()));
+                        UDPSocketInfo mSocket(multicastSocket);
                         mSocket.only_multicast_purpose(true);
                         mOutputSockets[locator.port].push_back(std::move(mSocket));
                     }
@@ -333,7 +350,7 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator)
                 else
                 {
                     // Multicast data will be sent for the only one interface.
-                    mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
+                    mOutputSockets[locator.port].push_back(UDPSocketInfo(unicastSocket));
                 }
             }
             else
@@ -344,14 +361,14 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator)
                     auto ip = asio::ip::address_v6::from_string(infoIP.name);
                     if (IsInterfaceAllowed(ip))
                     {
-                        asio::ip::udp::socket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
-                        unicastSocket.set_option(ip::multicast::outbound_interface(ip.scope_id()));
+                        eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
+                        getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(ip.scope_id()));
                         if(firstInterface)
                         {
-                            unicastSocket.set_option(ip::multicast::enable_loopback( true ) );
+                            getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
                             firstInterface = true;
                         }
-                        mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
+                        mOutputSockets[locator.port].push_back(UDPSocketInfo(unicastSocket));
                     }
                 }
             }
@@ -359,10 +376,10 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator)
         else
         {
             auto ip = asio::ip::address_v6(locatorToNative(locator));
-            asio::ip::udp::socket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
-            unicastSocket.set_option(ip::multicast::outbound_interface(ip.scope_id()));
-            unicastSocket.set_option(ip::multicast::enable_loopback( true ) );
-            mOutputSockets[locator.port].push_back(SocketInfo(unicastSocket));
+            eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
+            getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(ip.scope_id()));
+            getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
+            mOutputSockets[locator.port].push_back(UDPSocketInfo(unicastSocket));
         }
     }
     catch (asio::system_error const& e)
@@ -395,33 +412,33 @@ bool UDPv6Transport::OpenAndBindInputSockets(uint32_t port, bool is_multicast)
     return true;
 }
 
-asio::ip::udp::socket UDPv6Transport::OpenAndBindUnicastOutputSocket(const ip::address_v6& ipAddress, uint32_t& port)
+eProsimaUDPSocket UDPv6Transport::OpenAndBindUnicastOutputSocket(const ip::address_v6& ipAddress, uint32_t& port)
 {
-    ip::udp::socket socket(mService);
-    socket.open(ip::udp::v6());
+    eProsimaUDPSocket socket = createUDPSocket(mService);
+    getSocketPtr(socket)->open(ip::udp::v6());
     if(mSendBufferSize != 0)
-        socket.set_option(socket_base::send_buffer_size(mSendBufferSize));
-    socket.set_option(ip::multicast::hops(mConfiguration_.TTL));
+        getSocketPtr(socket)->set_option(socket_base::send_buffer_size(mSendBufferSize));
+    getSocketPtr(socket)->set_option(ip::multicast::hops(mConfiguration_.TTL));
 
     ip::udp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
-    socket.bind(endpoint);
+    getSocketPtr(socket)->bind(endpoint);
 
     if(port == 0)
-        port = socket.local_endpoint().port();
+        port = getSocketPtr(socket)->local_endpoint().port();
 
     return socket;
 }
 
-asio::ip::udp::socket UDPv6Transport::OpenAndBindInputSocket(uint32_t port, bool is_multicast)
+eProsimaUDPSocket UDPv6Transport::OpenAndBindInputSocket(uint32_t port, bool is_multicast)
 {
-    ip::udp::socket socket(mService);
-    socket.open(ip::udp::v6());
+    eProsimaUDPSocket socket = createUDPSocket(mService);
+    getSocketPtr(socket)->open(ip::udp::v6());
     if(mReceiveBufferSize != 0)
-        socket.set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
+        getSocketPtr(socket)->set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
     if(is_multicast)
-        socket.set_option(ip::udp::socket::reuse_address( true ) );
+        getSocketPtr(socket)->set_option(ip::udp::socket::reuse_address( true ) );
     ip::udp::endpoint endpoint(ip::address_v6::any(), static_cast<uint16_t>(port));
-    socket.bind(endpoint);
+    getSocketPtr(socket)->bind(endpoint);
 
     return socket;
 }
@@ -461,7 +478,7 @@ bool UDPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     for (auto& socket : sockets)
     {
         if(is_multicast_remote_address || !socket.only_multicast_purpose())
-            success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket.socket_);
+            success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(socket.getSocket()));
     }
 
     return success;
@@ -486,7 +503,7 @@ bool UDPv6Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
         return false;
 
     ip::udp::endpoint senderEndpoint;
-    ip::udp::socket* socket = nullptr;
+    eProsimaSocketUDP* socket = nullptr;
 
     { // lock scope
         std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
@@ -496,7 +513,7 @@ bool UDPv6Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 
     if(socket != nullptr)
     {
-        size_t bytes = socket->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
+        size_t bytes = getSocketPtr(socket)->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
 
         receiveBufferSize = static_cast<uint32_t>(bytes);
 
@@ -517,19 +534,18 @@ bool UDPv6Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 bool UDPv6Transport::SendThroughSocket(const octet* sendBuffer,
         uint32_t sendBufferSize,
         const Locator_t& remoteLocator,
-        asio::ip::udp::socket& socket)
+        eProsimaUDPSocket& socket)
 {
-
     asio::ip::address_v6::bytes_type remoteAddress;
     memcpy(&remoteAddress, &remoteLocator.address[0], sizeof(remoteAddress));
     auto destinationEndpoint = ip::udp::endpoint(asio::ip::address_v6(remoteAddress), static_cast<uint16_t>(remoteLocator.port));
     size_t bytesSent = 0;
     logInfo(RTPS_MSG_OUT,"UDPv6: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
-            << " FROM " << socket.local_endpoint());
+            << " FROM " << getSocketPtr(socket)->local_endpoint());
 
     try
     {
-        bytesSent = socket.send_to(asio::buffer(sendBuffer, sendBufferSize), destinationEndpoint);
+        bytesSent = getSocketPtr(socket)->send_to(asio::buffer(sendBuffer, sendBufferSize), destinationEndpoint);
     }
     catch (const std::exception& error)
     {

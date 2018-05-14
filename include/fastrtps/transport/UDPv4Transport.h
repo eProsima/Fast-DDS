@@ -18,6 +18,7 @@
 #include <asio.hpp>
 
 #include "TransportInterface.h"
+#include "SocketInfo.h"
 #include "UDPv4TransportDescriptor.h"
 #include "../utils/IPFinder.h"
 
@@ -49,52 +50,6 @@ namespace rtps{
  */
 class UDPv4Transport : public TransportInterface
 {
-    class SocketInfo
-    {
-        public:
-
-            SocketInfo(asio::ip::udp::socket& socket) :
-                socket_(std::move(socket)), only_multicast_purpose_(false)
-            {
-            }
-
-            SocketInfo(SocketInfo&& socketInfo) :
-                socket_(std::move(socketInfo.socket_)),
-                only_multicast_purpose_(socketInfo.only_multicast_purpose_)
-            {
-            }
-
-            SocketInfo& operator=(SocketInfo&& socketInfo)
-            {
-                socket_ = std::move(socketInfo.socket_);
-                only_multicast_purpose_ = socketInfo.only_multicast_purpose_;
-                return *this;
-            }
-
-            void only_multicast_purpose(const bool value)
-            {
-                only_multicast_purpose_ = value;
-            };
-
-            bool& only_multicast_purpose()
-            {
-                return only_multicast_purpose_;
-            }
-
-            bool only_multicast_purpose() const
-            {
-                return only_multicast_purpose_;
-            }
-
-            asio::ip::udp::socket socket_;
-            bool only_multicast_purpose_;
-
-        private:
-
-            SocketInfo(const SocketInfo&) = delete;
-            SocketInfo& operator=(const SocketInfo&) = delete;
-    };
-
 public:
 
    RTPS_DllAPI UDPv4Transport(const UDPv4TransportDescriptor&);
@@ -187,7 +142,7 @@ protected:
    mutable std::recursive_mutex mInputMapMutex;
 
    //! The notion of output channel corresponds to a port.
-   std::map<uint32_t, std::vector<SocketInfo> > mOutputSockets;
+   std::map<uint32_t, std::vector<UDPSocketInfo> > mOutputSockets;
 
    std::vector<IPFinder::info_IP> currentInterfaces;
 
@@ -195,7 +150,7 @@ protected:
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
 
    //! For both modes, an input channel corresponds to a port.
-   std::map<uint32_t, asio::ip::udp::socket> mInputSockets;
+   std::map<uint32_t, eProsimaUDPSocket> mInputSockets;
 
    bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
    std::vector<asio::ip::address_v4> mInterfaceWhiteList;
@@ -203,13 +158,13 @@ protected:
    bool OpenAndBindOutputSockets(Locator_t& locator);
    bool OpenAndBindInputSockets(uint32_t port, bool is_multicast);
 
-   asio::ip::udp::socket OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
-   asio::ip::udp::socket OpenAndBindInputSocket(uint32_t port, bool is_multicast);
+   eProsimaUDPSocket OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
+   eProsimaUDPSocket OpenAndBindInputSocket(uint32_t port, bool is_multicast);
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,
                           const Locator_t& remoteLocator,
-                          asio::ip::udp::socket& socket);
+                          eProsimaUDPSocket& socket);
 };
 
 } // namespace rtps
