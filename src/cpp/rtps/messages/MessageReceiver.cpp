@@ -158,6 +158,7 @@ void MessageReceiver::reset(){
 void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,
         Locator_t* loc, CDRMessage_t*msg)
 {
+    (void)loc;
     if(msg->length < RTPSMESSAGE_HEADER_SIZE)
     {
         logWarning(RTPS_MSG_IN,IDSTRING"Received message too short, ignoring");

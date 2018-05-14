@@ -472,6 +472,18 @@ static void fillTcpHeader(octet* header, uint32_t size, const Locator_t& loc)
     header[13] = p[1];
 }
 
+/*
+static void showCDRMessage(CDRMessage_t* msg)
+{
+    std::cout << "MSG: ";
+    for (uint32_t i = 0; i < msg->length; ++i)
+    {
+        std::cout << std::hex << static_cast<int>(msg->buffer[i]) << " ";
+    }
+    std::cout << std::endl;
+}
+*/
+
 bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
     const Locator_t& remoteLocator)
 {
@@ -512,6 +524,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         auto& sockets = mOutputSockets.at(localLocator.port);
         for (auto& socket : sockets)
         {
+            //showCDRMessage(&msg);
             success |= SendThroughSocket(msg.buffer, msg.length, remoteLocator, socket.socket_);
         }
         return success;

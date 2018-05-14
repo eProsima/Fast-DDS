@@ -35,18 +35,18 @@ namespace rtps{
 // TCP Header structs and enums.
 struct TCPHeader
 {
-    const char rtps[4];
+    const char rtcp[4];
     uint32_t length;
     uint32_t crc;
     uint16_t logicalPort;
 
     TCPHeader() :
-		rtps{'R','T','P','S'}
+		rtcp{'R','T','C','P'}
         , length(sizeof(TCPHeader))
         , crc(0)
         , logicalPort(0)
     {
-        //memcpy((char*)rtps, "RTPS", sizeof(char) * 4);
+        //memcpy((char*)rtcp, "RTCP", sizeof(char) * 4);
     }
 };
 

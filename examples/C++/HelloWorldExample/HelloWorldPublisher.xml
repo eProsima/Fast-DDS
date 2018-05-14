@@ -3,7 +3,7 @@
 		<name>HelloWorldPublisher</name>
 		<writer>
 			<userId>1</userId>
-			<entityId>2</entityId>
+			<entityID>2</entityID>
             <topicName>HelloWorldTopic1</topicName>
 			<topicDataType>HelloWorld</topicDataType>
 			<topicKind>NO_KEY</topicKind>
