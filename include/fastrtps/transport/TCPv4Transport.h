@@ -168,32 +168,31 @@ struct TCPControlMsgHeader
 
 class TCPv4Transport;
 
-class TCPAccepter
+class TCPAcceptor
 {
 public:
 	asio::ip::tcp::acceptor m_acceptor;
 	uint16_t m_port;
 	uint32_t m_receiveBufferSize;
-	eProsimaTCPSocket m_socket;
 
-	TCPAccepter(asio::io_service& io_service, uint16_t port, uint32_t receiveBufferSize);
+    TCPAcceptor(asio::io_service& io_service, uint16_t port, uint32_t receiveBufferSize);
 
 	void Accept(TCPv4Transport* parent);
-	void RetryAccept(asio::io_service& io_service, TCPv4Transport* parent);
 };
 
 class TCPConnector
 {
 public:
-	uint32_t m_port;
-	uint32_t m_id;
+    uint16_t m_logical_port;
+    uint16_t m_tcp_port;
 	const asio::ip::address_v4 m_ipAddress;
 	uint32_t m_sendBufferSize;
 	eProsimaTCPSocket m_socket;
 
-	TCPConnector(asio::io_service& io_service, const asio::ip::address_v4& ipAddress, uint16_t port, uint32_t id, uint32_t sendBufferSize);
+	TCPConnector(asio::io_service& io_service, const asio::ip::address_v4& ipAddress, uint16_t tcp_port,
+        uint16_t logical_port, uint32_t sendBufferSize);
 
-	void Connect(TCPv4Transport* parent, uint32_t& port);
+	void Connect(TCPv4Transport* parent);
 	void RetryConnect(asio::io_service& io_service, TCPv4Transport* parent);
 };
 
@@ -292,8 +291,8 @@ public:
 
    TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
 
-   void SocketAccepted(uint32_t port, uint32_t receiveBufferSize, const asio::error_code& error);
-   void SocketConnected(uint32_t port, uint32_t id, uint32_t sendBufferSize, const asio::error_code& error);
+   void SocketAccepted(uint32_t port, uint32_t receiveBufferSize, const asio::error_code& error, asio::ip::tcp::socket s);
+   void SocketConnected(uint32_t logical_port, uint32_t sendBufferSize, const asio::error_code& error);
 protected:
 
    //! Constructor with no descriptor is necessary for implementations derived from this class.
@@ -308,36 +307,29 @@ protected:
    mutable std::recursive_mutex mOutputMapMutex;
    mutable std::recursive_mutex mInputMapMutex;
 
-   //! The notion of output channel corresponds to a port.
-   uint32_t m_uOutputSocketId;
-   std::map<uint32_t, std::map<uint32_t, TCPConnector*>> mPendingOutputSockets;
-   std::map<uint32_t, std::vector<TCPSocketInfo>> mOutputSockets;
+   std::map<uint32_t, TCPConnector*> mPendingOutputSockets;     // The Key is the "Logical Port"
+   std::map<uint32_t, std::vector<TCPSocketInfo>> mOutputSockets;  // The Key is the "Logical Port"
+   std::map<uint32_t, Semaphore*> mOutputSemaphores;            // Control the physical connection
 
    std::vector<IPFinder::info_IP> currentInterfaces;
 
    struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
 
-   //! For both modes, an input channel corresponds to a port.
-   std::map<uint32_t, TCPAccepter*> mPendingInputSockets;
-   std::map<uint32_t, eProsimaTCPSocket> mInputSockets;
-
-   std::map<uint32_t, Semaphore*> mInputSemaphores;
-   std::map<uint32_t, Semaphore*> mOutputSemaphores;
+   std::map<uint32_t, std::shared_ptr<TCPAcceptor>> mPendingInputSockets;
+   std::map<uint32_t, std::vector<eProsimaTCPSocket>> mInputSockets;
 
    bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
    std::vector<asio::ip::address_v4> mInterfaceWhiteList;
 
    bool OpenAndBindOutputSockets(Locator_t& locator);
+   void OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint16_t logical_port, uint16_t tcp_port);
+
    bool OpenAndBindInputSockets(uint32_t port);
+   bool ReceiveDataCB(const asio::error_code& error, std::size_t bytes_transferred);
 
-   void OpenAndBindInputSocket(uint32_t port);
-   void OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
-
-   bool SendThroughSocket(const octet* sendBuffer,
-                          uint32_t sendBufferSize,
-                          const Locator_t& remoteLocator,
-                          eProsimaTCPSocket& socket);
+   bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
+       eProsimaTCPSocket& socket);
 
 };
 
