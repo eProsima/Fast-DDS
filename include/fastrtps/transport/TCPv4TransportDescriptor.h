@@ -32,13 +32,35 @@ namespace rtps{
  * @ingroup TRANSPORT_MODULE
  */
 typedef struct TCPv4TransportDescriptor: public TransportDescriptorInterface {
-   virtual ~TCPv4TransportDescriptor(){}
+    virtual ~TCPv4TransportDescriptor(){}
 
-   virtual TransportInterface* create_transport() const override;
+    virtual TransportInterface* create_transport() const override;
 
-   RTPS_DllAPI TCPv4TransportDescriptor();
+    std::vector<uint16_t> listening_ports;
+    octet wan_addr[4];
 
-   RTPS_DllAPI TCPv4TransportDescriptor(const TCPv4TransportDescriptor& t);
+    void set_WAN_address(octet o1,octet o2,octet o3,octet o4){
+        wan_addr[0] = o1;
+        wan_addr[1] = o2;
+        wan_addr[2] = o3;
+        wan_addr[3] = o4;
+    }
+
+    void set_WAN_address(const std::string& in_address)
+    {
+        std::stringstream ss(in_address);
+        int a,b,c,d; //to store the 4 ints
+        char ch; //to temporarily store the '.'
+        ss >> a >> ch >> b >> ch >> c >> ch >> d;
+        wan_addr[12] = (octet)a;
+        wan_addr[13] = (octet)b;
+        wan_addr[14] = (octet)c;
+        wan_addr[15] = (octet)d;
+    }
+
+    RTPS_DllAPI TCPv4TransportDescriptor();
+
+    RTPS_DllAPI TCPv4TransportDescriptor(const TCPv4TransportDescriptor& t);
 } TCPv4TransportDescriptor;
 
 } // namespace rtps
