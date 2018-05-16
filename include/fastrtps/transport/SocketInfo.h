@@ -136,55 +136,55 @@ class UDPSocketInfo
             UDPSocketInfo& operator=(const UDPSocketInfo&) = delete;
     };
 
-    class TCPSocketInfo
-    {
-        public:
-            TCPSocketInfo(eProsimaTCPSocket& socket) :
-                socket_(moveSocket(socket))
-            {
-            }
+class TCPSocketInfo
+{
+    public:
+        TCPSocketInfo(eProsimaTCPSocket& socket) :
+            socket_(moveSocket(socket))
+        {
+        }
 
-            TCPSocketInfo(TCPSocketInfo&& socketInfo) :
-                socket_(moveSocket(socketInfo.socket_))
-            {
-            }
+        TCPSocketInfo(TCPSocketInfo&& socketInfo) :
+            socket_(moveSocket(socketInfo.socket_))
+        {
+        }
 
-            TCPSocketInfo& operator=(TCPSocketInfo&& socketInfo)
-            {
-                socket_ = moveSocket(socketInfo.socket_);
-                return *this;
-            }
+        TCPSocketInfo& operator=(TCPSocketInfo&& socketInfo)
+        {
+            socket_ = moveSocket(socketInfo.socket_);
+            return *this;
+        }
 
-            void only_multicast_purpose(const bool value)
-            {
-                only_multicast_purpose_ = value;
-            };
+        void only_multicast_purpose(const bool value)
+        {
+            only_multicast_purpose_ = value;
+        };
 
-            bool& only_multicast_purpose()
-            {
-                return only_multicast_purpose_;
-            }
+        bool& only_multicast_purpose()
+        {
+            return only_multicast_purpose_;
+        }
 
-            bool only_multicast_purpose() const
-            {
-                return only_multicast_purpose_;
-            }
+        bool only_multicast_purpose() const
+        {
+            return only_multicast_purpose_;
+        }
 
 #if defined(ASIO_HAS_MOVE)
-            inline const eProsimaTCPSocket* getSocket()
+        inline eProsimaTCPSocket* getSocket()
 #else
-            inline const eProsimaTCPSocket getSocket()
+        inline eProsimaTCPSocket getSocket()
 #endif
-            {
-                return getSocketPtr(socket_);
-            }
+        {
+            return getSocketPtr(socket_);
+        }
 
-        private:
-            eProsimaTCPSocket socket_;
-            bool only_multicast_purpose_;
-            TCPSocketInfo(const TCPSocketInfo&) = delete;
-            TCPSocketInfo& operator=(const TCPSocketInfo&) = delete;
-    };
+    private:
+        eProsimaTCPSocket socket_;
+        bool only_multicast_purpose_;
+        TCPSocketInfo(const TCPSocketInfo&) = delete;
+        TCPSocketInfo& operator=(const TCPSocketInfo&) = delete;
+};
 
 
 } // namespace rtps
