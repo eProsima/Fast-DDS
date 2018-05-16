@@ -142,11 +142,13 @@ class TCPSocketInfo
         TCPSocketInfo(eProsimaTCPSocket& socket) :
             socket_(moveSocket(socket))
         {
+            mMutex = std::make_shared<std::recursive_mutex>();
         }
 
         TCPSocketInfo(TCPSocketInfo&& socketInfo) :
             socket_(moveSocket(socketInfo.socket_))
         {
+            mMutex = std::make_shared<std::recursive_mutex>();
         }
 
         TCPSocketInfo& operator=(TCPSocketInfo&& socketInfo)
@@ -179,7 +181,13 @@ class TCPSocketInfo
             return getSocketPtr(socket_);
         }
 
+        std::recursive_mutex& GetMutex() const
+        {
+            return *mMutex;
+        }
+
     private:
+        std::shared_ptr<std::recursive_mutex> mMutex;
         eProsimaTCPSocket socket_;
         bool only_multicast_purpose_;
         TCPSocketInfo(const TCPSocketInfo&) = delete;
