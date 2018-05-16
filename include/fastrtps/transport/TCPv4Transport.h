@@ -21,6 +21,7 @@
 #include <fastrtps/utils/Semaphore.h>
 #include "TransportInterface.h"
 #include "TCPv4TransportDescriptor.h"
+#include "SocketInfo.h"
 #include "../utils/IPFinder.h"
 
 #include <vector>
@@ -173,11 +174,7 @@ public:
 	asio::ip::tcp::acceptor m_acceptor;
 	uint16_t m_port;
 	uint32_t m_receiveBufferSize;
-#if defined(ASIO_HAS_MOVE)
-	asio::ip::tcp::socket m_socket;
-#else
-	std::shared_ptr<asio::ip::tcp::socket> m_socket;
-#endif
+	eProsimaTCPSocket m_socket;
 
 	TCPAccepter(asio::io_service& io_service, uint16_t port, uint32_t receiveBufferSize);
 
@@ -192,11 +189,7 @@ public:
 	uint32_t m_id;
 	const asio::ip::address_v4 m_ipAddress;
 	uint32_t m_sendBufferSize;
-#if defined(ASIO_HAS_MOVE)
-	asio::ip::tcp::socket m_socket;
-#else
-	std::shared_ptr<asio::ip::tcp::socket> m_socket;
-#endif
+	eProsimaTCPSocket m_socket;
 
 	TCPConnector(asio::io_service& io_service, const asio::ip::address_v4& ipAddress, uint16_t port, uint32_t id, uint32_t sendBufferSize);
 
@@ -224,51 +217,6 @@ public:
  */
 class TCPv4Transport : public TransportInterface
 {
-    class SocketInfo
-    {
-        public:
-
-#if defined(ASIO_HAS_MOVE)
-            SocketInfo(asio::ip::tcp::socket& socket) :
-                socket_(std::move(socket))
-#else
-            SocketInfo(std::shared_ptr<asio::ip::tcp::socket> socket) :
-                socket_(socket)
-#endif
-            {
-            }
-
-            SocketInfo(SocketInfo&& socketInfo) :
-#if defined(ASIO_HAS_MOVE)
-                socket_(std::move(socketInfo.socket_))
-#else
-                socket_(socketInfo.socket_)
-#endif
-            {
-            }
-
-            SocketInfo& operator=(SocketInfo&& socketInfo)
-            {
-#if defined(ASIO_HAS_MOVE)
-                socket_ = std::move(socketInfo.socket_);
-#else
-                socket_ = socketInfo.socket_;
-#endif
-                return *this;
-            }
-
-#if defined(ASIO_HAS_MOVE)
-            asio::ip::tcp::socket socket_;
-#else
-            std::shared_ptr<asio::ip::tcp::socket> socket_;
-#endif
-
-        private:
-
-            SocketInfo(const SocketInfo&) = delete;
-            SocketInfo& operator=(const SocketInfo&) = delete;
-    };
-
 public:
 
    RTPS_DllAPI TCPv4Transport(const TCPv4TransportDescriptor&);
@@ -363,7 +311,7 @@ protected:
    //! The notion of output channel corresponds to a port.
    uint32_t m_uOutputSocketId;
    std::map<uint32_t, std::map<uint32_t, TCPConnector*>> mPendingOutputSockets;
-   std::map<uint32_t, std::vector<SocketInfo>> mOutputSockets;
+   std::map<uint32_t, std::vector<TCPSocketInfo>> mOutputSockets;
 
    std::vector<IPFinder::info_IP> currentInterfaces;
 
@@ -372,11 +320,7 @@ protected:
 
    //! For both modes, an input channel corresponds to a port.
    std::map<uint32_t, TCPAccepter*> mPendingInputSockets;
-#if defined(ASIO_HAS_MOVE)
-   std::map<uint32_t, asio::ip::tcp::socket> mInputSockets;
-#else
-   std::map<uint32_t, std::shared_ptr<asio::ip::tcp::socket>> mInputSockets;
-#endif
+   std::map<uint32_t, eProsimaTCPSocket> mInputSockets;
 
    std::map<uint32_t, Semaphore*> mInputSemaphores;
    std::map<uint32_t, Semaphore*> mOutputSemaphores;
@@ -390,19 +334,11 @@ protected:
    void OpenAndBindInputSocket(uint32_t port);
    void OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
 
-#if defined(ASIO_HAS_MOVE)
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,
                           const Locator_t& remoteLocator,
-                          asio::ip::tcp::socket& socket);
-#else
+                          eProsimaTCPSocket& socket);
 
-
-   bool SendThroughSocket(const octet* sendBuffer,
-                          uint32_t sendBufferSize,
-                          const Locator_t& remoteLocator,
-                          std::shared_ptr<asio::ip::tcp::socket> socket);
-#endif
 };
 
 } // namespace rtps

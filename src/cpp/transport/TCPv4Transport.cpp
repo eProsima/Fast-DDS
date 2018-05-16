@@ -42,109 +42,52 @@ static asio::ip::address_v4::bytes_type locatorToNative(const Locator_t& locator
         locator.address[13], locator.address[14], locator.address[15]} };
 }
 
-#if defined(ASIO_HAS_MOVE)
 TCPAccepter::TCPAccepter(asio::io_service& io_service, uint16_t port, uint32_t receiveBufferSize)
     : m_acceptor(io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
     , m_port(port)
     , m_receiveBufferSize(receiveBufferSize)
-    , m_socket(io_service)
+    , m_socket(createTCPSocket(io_service))
 {
 }
 
 void TCPAccepter::Accept(TCPv4Transport* parent)
 {
-    m_acceptor.async_accept(m_socket, std::bind(&TCPv4Transport::SocketAccepted, parent, m_port, m_receiveBufferSize,
+    m_acceptor.async_accept(*getSocketPtr(m_socket), std::bind(&TCPv4Transport::SocketAccepted, parent, m_port, m_receiveBufferSize,
         std::placeholders::_1));
 }
 
 void TCPAccepter::RetryAccept(asio::io_service& io_service, TCPv4Transport* parent)
 {
     m_socket.close();
-    m_socket = asio::ip::tcp::socket(io_service);
+    m_socket = createTCPSocket(io_service);
     Accept(parent);
 }
 
-#else
-TCPAccepter::TCPAccepter(asio::io_service& io_service, uint16_t port, uint32_t receiveBufferSize)
-    : m_acceptor(io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
-    , m_port(port)
-    , m_receiveBufferSize(receiveBufferSize)
-    , m_socket(std::make_shared<asio::ip::tcp::socket>(io_service))
-{
-}
-
-void TCPAccepter::Accept(TCPv4Transport* parent)
-{
-    m_acceptor.async_accept(*m_socket, std::bind(&TCPv4Transport::SocketAccepted, parent, m_port, m_receiveBufferSize,
-        std::placeholders::_1));
-}
-
-void TCPAccepter::RetryAccept(asio::io_service& io_service, TCPv4Transport* parent)
-{
-    m_socket->close();
-    m_socket = std::make_shared<asio::ip::tcp::socket>(io_service);
-    Accept(parent);
-}
-
-#endif
-
-#if defined(ASIO_HAS_MOVE)
 TCPConnector::TCPConnector(asio::io_service& io_service, const ip::address_v4& ipAddress, uint16_t port, uint32_t id, uint32_t sendBufferSize)
     : m_port(port)
     , m_id(id)
     , m_ipAddress(ipAddress)
     , m_sendBufferSize(sendBufferSize)
-    , m_socket(io_service)
+    , m_socket(createTCPSocket(io_service))
 {
 }
 
 void TCPConnector::Connect(TCPv4Transport* parent, uint32_t& port)
 {
-    m_socket.open(ip::tcp::v4());
+    getSocketPtr(m_socket)->open(ip::tcp::v4());
     ip::tcp::endpoint endpoint(m_ipAddress, static_cast<uint16_t>(port));
-    m_socket.async_connect(endpoint, std::bind(&TCPv4Transport::SocketConnected, parent, m_port, m_id, m_sendBufferSize, std::placeholders::_1));
+    getSocketPtr(m_socket)->async_connect(endpoint, std::bind(&TCPv4Transport::SocketConnected, parent, m_port, m_id, m_sendBufferSize, std::placeholders::_1));
 
     if (port == 0)
-        port = m_socket.local_endpoint().port();
+        port = getSocketPtr(m_socket)->local_endpoint().port();
 }
 
 void TCPConnector::RetryConnect(asio::io_service& io_service, TCPv4Transport* parent)
 {
-    m_socket.close();
-    m_socket = asio::ip::tcp::socket(io_service);
+    getSocketPtr(m_socket)->close();
+    m_socket = createTCPSocket(io_service);
     Connect(parent, m_port);
 }
-
-#else
-TCPConnector::TCPConnector(asio::io_service& io_service, const ip::address_v4& ipAddress, uint16_t port, uint32_t id, uint32_t sendBufferSize)
-    : m_port(port)
-    , m_id(id)
-    , m_ipAddress(ipAddress)
-    , m_sendBufferSize(sendBufferSize)
-    , m_socket(std::make_shared<asio::ip::tcp::socket>(io_service))
-{
-}
-
-void TCPConnector::Connect(TCPv4Transport* parent, uint32_t& port)
-{
-    m_socket->open(ip::tcp::v4());
-    if (m_sendBufferSize != 0)
-        m_socket->set_option(socket_base::send_buffer_size(m_sendBufferSize));
-
-    ip::tcp::endpoint endpoint(m_ipAddress, static_cast<uint16_t>(port));
-    m_socket->async_connect(endpoint, std::bind(&TCPv4Transport::SocketConnected, parent, m_port, m_id, m_sendBufferSize, std::placeholders::_1));
-
-    if (port == 0)
-        port = m_socket->local_endpoint().port();
-}
-
-void TCPConnector::RetryConnect(asio::io_service& io_service, TCPv4Transport* parent)
-{
-    m_socket->close();
-    m_socket = std::make_shared<asio::ip::tcp::socket>(io_service);
-    Connect(parent, m_port);
-}
-#endif
 
 TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor) :
     mConfiguration_(descriptor),
@@ -308,11 +251,7 @@ bool TCPv4Transport::CloseOutputChannel(const Locator_t& locator)
         auto& pendingSockets = mPendingOutputSockets.at(locator.port);
         for (auto& socket : pendingSockets)
         {
-#if defined(ASIO_HAS_MOVE)
-            socket.second->m_socket.close();
-#else
-            socket.second->m_socket->close();
-#endif
+            getSocketPtr(socket.second->m_socket)->close();
         }
         mPendingOutputSockets.erase(locator.port);
     }
@@ -322,13 +261,8 @@ bool TCPv4Transport::CloseOutputChannel(const Locator_t& locator)
         auto& sockets = mOutputSockets.at(locator.port);
         for (auto& socket : sockets)
         {
-#if defined(ASIO_HAS_MOVE)
-            socket.socket_.cancel();
-            socket.socket_.close();
-#else
-            socket.socket_->cancel();
-            socket.socket_->close();
-#endif
+            socket.getSocket()->cancel();
+            socket.getSocket()->close();
         }
         mOutputSockets.erase(locator.port);
     }
@@ -343,24 +277,15 @@ bool TCPv4Transport::CloseInputChannel(const Locator_t& locator)
     if (mPendingInputSockets.find(locator.port) != mPendingInputSockets.end())
     {
         mInputSemaphores[locator.port]->disable();
-#if defined(ASIO_HAS_MOVE)
-        mPendingInputSockets[locator.port]->m_socket.close();
-#else
-        mPendingInputSockets[locator.port]->m_socket->close();
-#endif
+        getSocketPtr(mPendingInputSockets[locator.port]->m_socket)->close();
         mPendingInputSockets.erase(locator.port);
         return true;
     }
     else if (IsInputChannelOpen(locator))
     {
         auto& socket = mInputSockets.at(locator.port);
-#if defined(ASIO_HAS_MOVE)
-        socket.cancel();
-        socket.close();
-#else
-        socket->cancel();
-        socket->close();
-#endif
+        getSocketPtr(socket)->cancel();
+        getSocketPtr(socket)->close();
 
         mInputSockets.erase(locator.port);
         return true;
@@ -525,7 +450,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         for (auto& socket : sockets)
         {
             //showCDRMessage(&msg);
-            success |= SendThroughSocket(msg.buffer, msg.length, remoteLocator, socket.socket_);
+            success |= SendThroughSocket(msg.buffer, msg.length, remoteLocator, getRefFromPtr(socket.getSocket()));
         }
         return success;
     }
@@ -636,11 +561,7 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
                     else
                     {
                         // Read the body
-#if defined(ASIO_HAS_MOVE)
-                        receiveBufferSize = (uint32_t)socket.receive(asio::buffer(receiveBuffer, size));
-#else
-                        receiveBufferSize = (uint32_t)socket->receive(asio::buffer(receiveBuffer, size));
-#endif
+                        receiveBufferSize = (uint32_t)getSocketPtr(socket)->receive(asio::buffer(receiveBuffer, size));
                         if (receiveBufferSize == size)
                         {
                             success = true;
@@ -652,15 +573,9 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
             };
 
             // Read the header
-#if defined(ASIO_HAS_MOVE)
-            socket.async_receive(asio::buffer(header, 14),
+            getSocketPtr(socket)->async_receive(asio::buffer(header, 14),
                 0,
                 handler);
-#else
-            socket->async_receive(asio::buffer(header, 14),
-                0,
-                handler);
-#endif
         }
     }
     receiveSemaphore.wait();
@@ -678,11 +593,7 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
     uint32_t sendBufferSize,
     const Locator_t& remoteLocator,
-#if defined(ASIO_HAS_MOVE)
-    asio::ip::tcp::socket& socket)
-#else
-    std::shared_ptr<asio::ip::tcp::socket> socket)
-#endif
+    eProsimaTCPSocket& socket)
 {
 
     asio::ip::address_v4::bytes_type remoteAddress;
@@ -690,21 +601,12 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
     auto destinationEndpoint = ip::tcp::endpoint(asio::ip::address_v4(remoteAddress),
         static_cast<uint16_t>(remoteLocator.port));
     size_t bytesSent = 0;
-#if defined(ASIO_HAS_MOVE)
     logInfo(RTPS_MSG_OUT, "TCPv4: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
-        << " FROM " << socket.local_endpoint());
-#else
-    logInfo(RTPS_MSG_OUT, "TCPv4: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
-        << " FROM " << socket->local_endpoint());
-#endif
+        << " FROM " << getSocketPtr(socket)->local_endpoint());
 
     try
     {
-#if defined(ASIO_HAS_MOVE)
-        bytesSent = socket.send(asio::buffer(sendBuffer, sendBufferSize));
-#else
-        bytesSent = socket->send(asio::buffer(sendBuffer, sendBufferSize));
-#endif
+        bytesSent = getSocketPtr(socket)->send(asio::buffer(sendBuffer, sendBufferSize));
     }
     catch (const std::exception& error)
     {
@@ -811,15 +713,9 @@ void TCPv4Transport::SocketAccepted(uint32_t port, uint32_t receiveBufferSize, c
         if (mPendingInputSockets.find(port) != mPendingInputSockets.end())
         {
             auto& socket = mPendingInputSockets.at(port)->m_socket;
-#if defined(ASIO_HAS_MOVE)
             if (receiveBufferSize != 0)
-                socket.set_option(asio::socket_base::receive_buffer_size(receiveBufferSize));
-            mInputSockets.emplace(port, std::move(mPendingInputSockets.at(port)->m_socket));
-#else
-            if (receiveBufferSize != 0)
-                socket->set_option(asio::socket_base::receive_buffer_size(receiveBufferSize));
-            mInputSockets.emplace(port, mPendingInputSockets.at(port)->m_socket);
-#endif
+                getSocketPtr(socket)->set_option(asio::socket_base::receive_buffer_size(receiveBufferSize));
+            mInputSockets.emplace(port, moveSocket(mPendingInputSockets.at(port)->m_socket));
 
             delete mPendingInputSockets[port];
             mPendingInputSockets.erase(port);
@@ -848,15 +744,9 @@ void TCPv4Transport::SocketConnected(uint32_t port, uint32_t id, uint32_t sendBu
             auto& socketsMap = mPendingOutputSockets.at(port);
             if (socketsMap.find(id) != socketsMap.end())
             {
-#if defined(ASIO_HAS_MOVE)
                 if (sendBufferSize != 0)
-                    socketsMap.at(id)->m_socket.set_option(socket_base::send_buffer_size(sendBufferSize));
-                mOutputSockets[port].push_back(SocketInfo(socketsMap.at(id)->m_socket));
-#else
-                if (sendBufferSize != 0)
-                    socketsMap.at(id)->m_socket->set_option(socket_base::send_buffer_size(sendBufferSize));
-                mOutputSockets[port].push_back(SocketInfo(socketsMap.at(id)->m_socket));
-#endif
+                    getSocketPtr(socketsMap.at(id)->m_socket)->set_option(socket_base::send_buffer_size(sendBufferSize));
+                mOutputSockets[port].push_back(TCPSocketInfo(socketsMap.at(id)->m_socket));
                 delete socketsMap[id];
                 socketsMap.erase(id);
                 mOutputSemaphores[port]->disable();
