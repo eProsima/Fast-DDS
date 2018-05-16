@@ -204,7 +204,7 @@ static bool IsMulticastAddress(const Locator_t& locator)
     return locator.address[0] == 0xFF;
 }
 
-bool UDPv6Transport::OpenInputChannel(const Locator_t& locator, std::shared_ptr<MessageReceiver>)
+bool UDPv6Transport::OpenInputChannel(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
     if (!IsLocatorSupported(locator))
@@ -213,13 +213,13 @@ bool UDPv6Transport::OpenInputChannel(const Locator_t& locator, std::shared_ptr<
     bool success = false;
 
     if (!IsInputChannelOpen(locator))
-        success = OpenAndBindInputSockets(locator.port, IsMulticastAddress(locator));
+        success = OpenAndBindInputSockets(locator, msgReceiver, IsMulticastAddress(locator));
 
     if (IsMulticastAddress(locator) && IsInputChannelOpen(locator))
     {
         // The multicast group will be joined silently, because we do not
         // want to return another resource.
-        auto& socket = mInputSockets.at(locator.port);
+        auto& socketInfo = mInputSockets.at(locator.port);
 
         std::vector<IPFinder::info_IP> locNames;
         GetIP6sUniqueInterfaces(locNames);
@@ -228,7 +228,7 @@ bool UDPv6Transport::OpenInputChannel(const Locator_t& locator, std::shared_ptr<
             auto ip = asio::ip::address_v6::from_string(infoIP.name);
             try
             {
-                getSocketPtr(socket)->set_option(ip::multicast::join_group(ip::address_v6::from_string(locator.to_IP6_string()), ip.scope_id()));
+                socketInfo->getSocket()->set_option(ip::multicast::join_group(ip::address_v6::from_string(locator.to_IP6_string()), ip.scope_id()));
             }
             catch(std::system_error& ex)
             {
@@ -266,9 +266,9 @@ bool UDPv6Transport::CloseInputChannel(const Locator_t& locator)
         return false;
 
 
-    auto& socket = mInputSockets.at(locator.port);
-    getSocketPtr(socket)->cancel();
-    getSocketPtr(socket)->close();
+    auto& socketInfo = mInputSockets.at(locator.port);
+    socketInfo->getSocket()->cancel();
+    socketInfo->getSocket()->close();
 
     mInputSockets.erase(locator.port);
     return true;
@@ -393,23 +393,46 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator)
     return true;
 }
 
-bool UDPv6Transport::OpenAndBindInputSockets(uint32_t port, bool is_multicast)
+bool UDPv6Transport::OpenAndBindInputSockets(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver,
+    bool is_multicast)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
 
     try
     {
-        mInputSockets.emplace(port, OpenAndBindInputSocket(port, is_multicast));
+        eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(locator.get_port(), is_multicast);
+        UDPSocketInfo* socketInfo = new UDPSocketInfo(unicastSocket);
+        socketInfo->SetMessageReceiver(msgReceiver);
+        std::thread* newThread = new std::thread(&UDPv6Transport::performListenOperation, this, socketInfo, locator);
+        socketInfo->SetThread(newThread);
+        mInputSockets.emplace(locator.get_port(), socketInfo);
     }
     catch (asio::error_code const& e)
     {
         (void)e;
         logInfo(RTPS_MSG_OUT, "UDPv6 Error binding at port: (" << port << ")" << " with msg: "<<e.message() );
-        mInputSockets.erase(port);
+        mInputSockets.erase(locator.get_port());
         return false;
     }
 
     return true;
+}
+
+void UDPv6Transport::performListenOperation(UDPSocketInfo* pSocketInfo, Locator_t input_locator)
+{
+    Locator_t remoteLocator;
+    while (pSocketInfo->IsAlive())
+    {
+        // Blocking receive.
+        auto& msg = pSocketInfo->GetMessageReceiver()->m_rec_msg;
+        CDRMessage::initCDRMsg(&msg);
+        if (!Receive(msg.buffer, msg.max_size, msg.length, input_locator, remoteLocator))
+            continue;
+
+        // Processes the data through the CDR Message interface.
+        pSocketInfo->GetMessageReceiver()->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix, &input_locator,
+            &pSocketInfo->GetMessageReceiver()->m_rec_msg);
+    }
 }
 
 eProsimaUDPSocket UDPv6Transport::OpenAndBindUnicastOutputSocket(const ip::address_v6& ipAddress, uint32_t& port)
