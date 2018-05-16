@@ -245,11 +245,14 @@ public:
     */
    virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
 
+   //! Sets the ID of the participant that has created the transport.
+   virtual void SetParticipantGUIDPrefix(const GuidPrefix_t& prefix) override;
+
    /**
     * Starts listening on the specified port, and if the specified address is in the
     * multicast range, it joins the specified multicast group,
     */
-   virtual bool OpenInputChannel(const Locator_t&) override;
+   virtual bool OpenInputChannel(const Locator_t&, std::shared_ptr<MessageReceiver>) override;
 
    /**
     * Opens a socket on the given address and port (as long as they are white listed).

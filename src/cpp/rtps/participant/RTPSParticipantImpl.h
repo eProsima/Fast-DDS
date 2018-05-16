@@ -93,15 +93,12 @@ class IPersistenceService;
 typedef struct ReceiverControlBlock
 {
     ReceiverResource Receiver;
-    MessageReceiver* mp_receiver; //Associated Readers/Writers inside of MessageReceiver
-    std::thread* m_thread;
-    std::atomic<bool> resourceAlive;
-    ReceiverControlBlock(ReceiverResource&& rec):Receiver(std::move(rec)), mp_receiver(nullptr), m_thread(nullptr), resourceAlive(true)
+    std::shared_ptr<MessageReceiver> mp_receiver; //Associated Readers/Writers inside of MessageReceiver
+    ReceiverControlBlock(ReceiverResource&& rec):Receiver(std::move(rec)), mp_receiver(nullptr)
     {
     }
-    ReceiverControlBlock(ReceiverControlBlock&& origen):Receiver(std::move(origen.Receiver)), mp_receiver(origen.mp_receiver), m_thread(origen.m_thread), resourceAlive(true)
+    ReceiverControlBlock(ReceiverControlBlock&& origen):Receiver(std::move(origen.Receiver)), mp_receiver(origen.mp_receiver)
     {
-        origen.m_thread = nullptr;
         origen.mp_receiver = nullptr;
     }
 
@@ -312,13 +309,6 @@ class RTPSParticipantImpl
           @param pend - Pointer to the endpoint which triggered the creation of the Receivers
           */
         bool createAndAssociateReceiverswithEndpoint(Endpoint * pend);
-
-        /** Function to be called from a new thread, which takes cares of performing a blocking receive
-          operation on the ReceiveResource
-          @param buffer - Position of the buffer we use to store data
-          @param locator - Locator that triggered the creation of the resource
-          */
-        void performListenOperation(ReceiverControlBlock *receiver, Locator_t input_locator);
 
         /** Create non-existent SendResources based on the Locator list of the entity
           @param pend - Pointer to the endpoint whose SenderResources are to be created

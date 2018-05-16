@@ -20,10 +20,11 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-ReceiverResource::ReceiverResource(TransportInterface& transport, const Locator_t& locator)
+ReceiverResource::ReceiverResource(TransportInterface& transport, const Locator_t& locator,
+    std::shared_ptr<MessageReceiver> newMsgReceiver)
 {
    // Internal channel is opened and assigned to this resource.
-   mValid = transport.OpenInputChannel(locator);
+   mValid = transport.OpenInputChannel(locator, newMsgReceiver);
    if (!mValid)
       return; // Invalid resource to be discarded by the factory.
 

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/rtps/network/NetworkFactory.h>
+#include <fastrtps/rtps/common/Guid.h>
 #include <utility>
 #include <limits>
 
@@ -63,7 +64,8 @@ vector<SenderResource> NetworkFactory::BuildSenderResourcesForRemoteLocator(cons
     return newSenderResources;
 }
 
-bool NetworkFactory::BuildReceiverResources (const Locator_t& local, std::vector<ReceiverResource>& returned_resources_list)
+bool NetworkFactory::BuildReceiverResources(const Locator_t& local, std::shared_ptr<MessageReceiver> newMsgReceiver,
+    std::vector<ReceiverResource>& returned_resources_list)
 {
     bool returnedValue = false;
 
@@ -73,7 +75,7 @@ bool NetworkFactory::BuildReceiverResources (const Locator_t& local, std::vector
         {
             if(!transport->IsInputChannelOpen(local))
             {
-                ReceiverResource newReceiverResource(*transport, local);
+                ReceiverResource newReceiverResource(*transport, local, newMsgReceiver);
                 if(newReceiverResource.mValid)
                 {
                     returned_resources_list.push_back(std::move(newReceiverResource));
@@ -88,7 +90,7 @@ bool NetworkFactory::BuildReceiverResources (const Locator_t& local, std::vector
     return returnedValue;
 }
 
-void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descriptor)
+bool NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descriptor)
 {
     bool wasRegistered = false;
     uint32_t minSendBufferSize = std::numeric_limits<uint32_t>::max();
@@ -108,6 +110,17 @@ void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descr
 
         if(minSendBufferSize < minSendBufferSize_)
             minSendBufferSize_ = minSendBufferSize;
+    }
+    return wasRegistered;
+}
+
+void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descriptor,
+    const GuidPrefix_t& participantGuidPrefix)
+{
+    bool bWasRegistered = RegisterTransport(descriptor);
+    if (bWasRegistered)
+    {
+        mRegisteredTransports.back()->SetParticipantGUIDPrefix(participantGuidPrefix);
     }
 }
 

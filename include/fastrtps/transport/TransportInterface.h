@@ -15,8 +15,10 @@
 #ifndef TRANSPORT_INTERFACE_H
 #define TRANSPORT_INTERFACE_H
 
+#include <memory>
 #include <vector>
 #include <fastrtps/rtps/common/Locator.h>
+#include <fastrtps/rtps/common/guid.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -27,12 +29,13 @@ static const uint32_t s_minimumSocketBuffer = 65536;
 static const uint8_t s_defaultTTL = 1;
 
 struct TransportDescriptorInterface;
+class MessageReceiver;
 
 /**
  * Interface against which to implement a transport layer, decoupled from FastRTPS internals.
  * TransportInterface expects the user to implement a logical equivalence between Locators and protocol-specific "channels".
  * This equivalence can be narrowing: For instance in UDP/IP, a port would take the role of channel, and several different
- * locators can map to the same port, and hence the same channel. 
+ * locators can map to the same port, and hence the same channel.
  * @ingroup TRANSPORT_MODULE
  * */
 class TransportInterface
@@ -54,13 +57,13 @@ public:
    virtual bool init() = 0;
 
    /**
-    * Must report whether the output channel associated to this locator is open. Channels must either be 
+    * Must report whether the output channel associated to this locator is open. Channels must either be
     * fully closed or fully open, so that "open" and "close" operations are whole and definitive.
     */
    virtual bool IsOutputChannelOpen(const Locator_t&) const = 0;
 
    /**
-    * Must report whether the input channel associated to this locator is open. Channels must either be 
+    * Must report whether the input channel associated to this locator is open. Channels must either be
     * fully closed or fully open, so that "open" and "close" operations are whole and definitive.
     */
    virtual bool IsInputChannelOpen(const Locator_t&) const = 0;
@@ -74,7 +77,7 @@ public:
    //! Must open the channel that maps to/from the given locator. This method must allocate, reserve and mark
    //! any resources that are needed for said channel.
    virtual bool OpenOutputChannel(Locator_t&) = 0;
-   virtual bool OpenInputChannel(const Locator_t&) = 0;
+   virtual bool OpenInputChannel(const Locator_t&, std::shared_ptr<MessageReceiver>) = 0;
 
    /**
     * Must close the channel that maps to/from the given locator.
@@ -114,6 +117,8 @@ public:
    virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
                         const Locator_t& localLocator, Locator_t& remoteLocator) = 0;
 
+   virtual void SetParticipantGUIDPrefix(const GuidPrefix_t& prefix) = 0;
+
    virtual LocatorList_t NormalizeLocator(const Locator_t& locator) = 0;
 
    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) = 0;
@@ -139,6 +144,7 @@ struct TransportDescriptorInterface
         , sendBufferSize(t.sendBufferSize)
         , receiveBufferSize(t.receiveBufferSize)
         , TTL(t.TTL)
+        , rtpsParticipantGuidPrefix(t.rtpsParticipantGuidPrefix)
     {}
 
     virtual ~TransportDescriptorInterface(){}
@@ -155,6 +161,8 @@ struct TransportDescriptorInterface
     std::vector<std::string> interfaceWhiteList;
     //! Specified time to live (8bit - 255 max TTL)
     uint8_t TTL;
+    //! Participant GUID prefix.
+    GuidPrefix_t rtpsParticipantGuidPrefix;
 };
 
 } // namespace rtps
