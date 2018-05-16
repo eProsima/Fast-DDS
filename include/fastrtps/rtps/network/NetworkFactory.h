@@ -18,6 +18,7 @@
 #include <fastrtps/transport/TransportInterface.h>
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
+#include <fastrtps/rtps/messages/MessageReceiver.h>
 #include <vector>
 #include <memory>
 
@@ -50,20 +51,28 @@ class NetworkFactory
             }
 
         /**
-         * Allows registration of a transport dynamically. Only the transports built into FastRTPS
-         * are supported here (although it can be easily extended at NetworkFactory.cpp)
-         * @param descriptor Structure that defines all initial configuration for a given transport.
-         */
-        void RegisterTransport(const TransportDescriptorInterface* descriptor);
+        * Allows registration of a transport dynamically. Only the transports built into FastRTPS
+        * are supported here (although it can be easily extended at NetworkFactory.cpp)
+        * @param descriptor Structure that defines all initial configuration for a given transport.
+        */
+        bool RegisterTransport(const TransportDescriptorInterface* descriptor);
 
         /**
-         * Walks over the list of transports, opening every possible channel that can send through 
+        * Allows registration of a transport dynamically. Only the transports built into FastRTPS
+        * are supported here (although it can be easily extended at NetworkFactory.cpp)
+        * @param descriptor Structure that defines all initial configuration for a given transport.
+        */
+        void RegisterTransport(const TransportDescriptorInterface* descriptor,
+            const GuidPrefix_t& participantGuidPrefix);
+
+        /**
+         * Walks over the list of transports, opening every possible channel that can send through
          * the given locator and returning a vector of Sender Resources associated with it.
          * @param local Locator through which to send.
          */
         std::vector<SenderResource>   BuildSenderResources                 (Locator_t& local);
         /**
-         * Walks over the list of transports, opening every possible channel that can send to the 
+         * Walks over the list of transports, opening every possible channel that can send to the
          * given remote locator and returning a vector of Sender Resources associated with it.
          * @param local Destination locator that we intend to send to.
          */
@@ -73,7 +82,8 @@ class NetworkFactory
          * from the given locator, and returns a vector of Receiver Resources for this goal.
          * @param local Locator from which to listen.
          */
-        bool BuildReceiverResources (const Locator_t& local, std::vector<ReceiverResource>& returned_resources_list);
+        bool BuildReceiverResources(const Locator_t& local, std::shared_ptr<MessageReceiver> newMsgReceiver,
+            std::vector<ReceiverResource>& returned_resources_list);
 
         void NormalizeLocators(LocatorList_t& locators);
 

@@ -37,13 +37,13 @@ namespace rtps{
  *       This collection of sockets constitute the "outbound channel". In other words, a channel corresponds
  *       to a port + a direction.
  *
- *    - It is possible to provide a white list at construction, which limits the interfaces the transport 
+ *    - It is possible to provide a white list at construction, which limits the interfaces the transport
  *       will ever be able to interact with. If left empty, all interfaces are allowed.
  *
  *    - Opening an input channel by passing a locator will open a socket listening on the given port on every
- *       whitelisted interface, and join the multicast channel specified by the locator address. Hence, any locator 
+ *       whitelisted interface, and join the multicast channel specified by the locator address. Hence, any locator
  *       that does not correspond to the multicast range will simply open the port without a subsequent join. Joining
- *       multicast groups late is supported by attempting to open the channel again with the same port + a 
+ *       multicast groups late is supported by attempting to open the channel again with the same port + a
  *       multicast address (the OpenInputChannel function will fail, however, because no new channel has been
  *       opened in a strict sense).
  * @ingroup TRANSPORT_MODULE
@@ -79,11 +79,17 @@ public:
     */
    virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
 
+   //! Sets the ID of the participant that has created the transport.
+   virtual void SetParticipantGUIDPrefix(const GuidPrefix_t& prefix) override
+   {
+       mConfiguration_.rtpsParticipantGuidPrefix = prefix;
+   }
+
    /**
     * Starts listening on the specified port, and if the specified address is in the
     * multicast range, it joins the specified multicast group,
     */
-   virtual bool OpenInputChannel(const Locator_t&) override;
+   virtual bool OpenInputChannel(const Locator_t&, std::shared_ptr<MessageReceiver>) override;
 
    /**
     * Opens a socket on the given address and port (as long as they are white listed).
@@ -135,7 +141,7 @@ protected:
    UDPv4TransportDescriptor mConfiguration_;
    uint32_t mSendBufferSize;
    uint32_t mReceiveBufferSize;
-
+   uint32_t mMaxMessageSizeBetweenTransports;
    asio::io_service mService;
 
    mutable std::recursive_mutex mOutputMapMutex;
@@ -150,16 +156,22 @@ protected:
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
 
    //! For both modes, an input channel corresponds to a port.
-   std::map<uint32_t, eProsimaUDPSocket> mInputSockets;
+   std::map<uint32_t, UDPSocketInfo*> mInputSockets;
 
    bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
    std::vector<asio::ip::address_v4> mInterfaceWhiteList;
 
    bool OpenAndBindOutputSockets(Locator_t& locator);
-   bool OpenAndBindInputSockets(uint32_t port, bool is_multicast);
+   bool OpenAndBindInputSockets(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver, bool is_multicast);
 
    eProsimaUDPSocket OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint32_t& port);
    eProsimaUDPSocket OpenAndBindInputSocket(uint32_t port, bool is_multicast);
+
+   /** Function to be called from a new thread, which takes cares of performing a blocking receive
+   operation on the ReceiveResource
+   @param input_locator - Locator that triggered the creation of the resource
+   */
+   void performListenOperation(UDPSocketInfo* pSocketInfo, Locator_t input_locator);
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,

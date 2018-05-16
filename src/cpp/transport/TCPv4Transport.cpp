@@ -252,7 +252,7 @@ bool TCPv4Transport::OpenOutputChannel(Locator_t& locator)
     return success;
 }
 
-bool TCPv4Transport::OpenInputChannel(const Locator_t& locator)
+bool TCPv4Transport::OpenInputChannel(const Locator_t& locator, std::shared_ptr<MessageReceiver>)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
     if (!IsLocatorSupported(locator))
@@ -397,6 +397,11 @@ Locator_t TCPv4Transport::RemoteToMainLocal(const Locator_t& remote) const
     Locator_t mainLocal(remote);
     memset(mainLocal.address, 0x00, sizeof(mainLocal.address));
     return mainLocal;
+}
+
+void TCPv4Transport::SetParticipantGUIDPrefix(const GuidPrefix_t& prefix)
+{
+    mConfiguration_.rtpsParticipantGuidPrefix = prefix;
 }
 
 static void fillTcpHeader(octet* header, uint32_t size, const Locator_t& loc)

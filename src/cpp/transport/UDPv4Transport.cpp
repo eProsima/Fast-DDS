@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/transport/UDPv4Transport.h>
+#include <fastrtps/rtps/messages/CDRMessage.h>
 #include <utility>
 #include <cstring>
 #include <algorithm>
@@ -193,7 +194,7 @@ static bool IsMulticastAddress(const Locator_t& locator)
     return locator.address[12] >= 224 && locator.address[12] <= 239;
 }
 
-bool UDPv4Transport::OpenInputChannel(const Locator_t& locator)
+bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
     if (!IsLocatorSupported(locator))
@@ -202,13 +203,13 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator)
     bool success = false;
 
     if (!IsInputChannelOpen(locator))
-        success = OpenAndBindInputSockets(locator.port, IsMulticastAddress(locator));
+        success = OpenAndBindInputSockets(locator, msgReceiver, IsMulticastAddress(locator));
 
     if (IsMulticastAddress(locator) && IsInputChannelOpen(locator))
     {
         // The multicast group will be joined silently, because we do not
         // want to return another resource.
-        auto& socket = mInputSockets.at(locator.port);
+        auto& socketInfo = mInputSockets.at(locator.port);
 
         std::vector<IPFinder::info_IP> locNames;
         GetIP4sUniqueInterfaces(locNames, true);
@@ -217,7 +218,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator)
             auto ip = asio::ip::address_v4::from_string(infoIP.name);
             try
             {
-                getSocketPtr(socket)->set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string()), ip));
+                socketInfo->getSocket()->set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string()), ip));
             }
             catch(std::system_error& ex)
             {
@@ -255,10 +256,11 @@ bool UDPv4Transport::CloseInputChannel(const Locator_t& locator)
         return false;
 
 
-    auto& socket = mInputSockets.at(locator.port);
-    getSocketPtr(socket)->cancel();
-    getSocketPtr(socket)->close();
+    auto& socketInfo = mInputSockets.at(locator.port);
+    socketInfo->getSocket()->cancel();
+    socketInfo->getSocket()->close();
 
+    delete mInputSockets[locator.port];
     mInputSockets.erase(locator.port);
     return true;
 }
@@ -383,23 +385,45 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
     return true;
 }
 
-bool UDPv4Transport::OpenAndBindInputSockets(uint32_t port, bool is_multicast)
+bool UDPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver, bool is_multicast)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
 
     try
     {
-        mInputSockets.emplace(port, OpenAndBindInputSocket(port, is_multicast));
+        eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(locator.get_port(), is_multicast);
+        UDPSocketInfo* socketInfo = new UDPSocketInfo(unicastSocket);
+        socketInfo->SetMessageReceiver(msgReceiver);
+        std::thread* newThread = new std::thread(&UDPv4Transport::performListenOperation, this, socketInfo, locator);
+        socketInfo->SetThread(newThread);
+        mInputSockets.emplace(locator.get_port(), socketInfo);
     }
     catch (asio::system_error const& e)
     {
         (void)e;
         logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << port << ")" << " with msg: "<<e.what());
-        mInputSockets.erase(port);
+        mInputSockets.erase(locator.get_port());
         return false;
     }
 
     return true;
+}
+
+void UDPv4Transport::performListenOperation(UDPSocketInfo* pSocketInfo, Locator_t input_locator)
+{
+    Locator_t remoteLocator;
+    while (pSocketInfo->IsAlive())
+    {
+        // Blocking receive.
+        auto& msg = pSocketInfo->GetMessageReceiver()->m_rec_msg;
+        CDRMessage::initCDRMsg(&msg);
+        if (!Receive(msg.buffer, msg.max_size, msg.length, input_locator, remoteLocator))
+            continue;
+
+        // Processes the data through the CDR Message interface.
+        pSocketInfo->GetMessageReceiver()->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix, &input_locator,
+            &pSocketInfo->GetMessageReceiver()->m_rec_msg);
+    }
 }
 
 eProsimaUDPSocket UDPv4Transport::OpenAndBindUnicastOutputSocket(const ip::address_v4& ipAddress, uint32_t& port)

@@ -204,7 +204,7 @@ static bool IsMulticastAddress(const Locator_t& locator)
     return locator.address[0] == 0xFF;
 }
 
-bool UDPv6Transport::OpenInputChannel(const Locator_t& locator)
+bool UDPv6Transport::OpenInputChannel(const Locator_t& locator, std::shared_ptr<MessageReceiver>)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
     if (!IsLocatorSupported(locator))
@@ -462,6 +462,12 @@ Locator_t UDPv6Transport::RemoteToMainLocal(const Locator_t& remote) const
     Locator_t mainLocal(remote);
     memset(mainLocal.address, 0x00, sizeof(mainLocal.address));
     return remote;
+}
+
+//! Sets the ID of the participant that has created the transport.
+void UDPv6Transport::SetParticipantGUIDPrefix(const GuidPrefix_t& prefix)
+{
+    mConfiguration_.rtpsParticipantGuidPrefix = prefix;
 }
 
 bool UDPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)

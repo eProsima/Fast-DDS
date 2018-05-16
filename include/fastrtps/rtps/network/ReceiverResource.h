@@ -17,12 +17,14 @@
 
 #include <functional>
 #include <vector>
+#include <memory>
 #include <fastrtps/transport/TransportInterface.h>
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+class MessageReceiver;
 /**
  * RAII object that encapsulates the Receive operation over one chanel in an unknown transport.
  * A Receiver resource is always univocally associated to a transport channel; the
@@ -30,7 +32,7 @@ namespace rtps{
  * closes it.
  * @ingroup NETWORK_MODULE
  */
-class ReceiverResource 
+class ReceiverResource
 {
    //! Only NetworkFactory is ever allowed to construct a ReceiverResource from scratch.
    //! In doing so, it guarantees the transport and channel are in a valid state for
@@ -63,7 +65,7 @@ public:
    void Abort();
 
    /**
-    * Resources can only be transfered through move semantics. Copy, assignment, and 
+    * Resources can only be transfered through move semantics. Copy, assignment, and
     * construction outside of the factory are forbidden.
     */
    ReceiverResource(ReceiverResource&&);
@@ -74,7 +76,7 @@ private:
    ReceiverResource(const ReceiverResource&)            = delete;
    ReceiverResource& operator=(const ReceiverResource&) = delete;
 
-   ReceiverResource(TransportInterface&, const Locator_t&);
+   ReceiverResource(TransportInterface&, const Locator_t&, std::shared_ptr<MessageReceiver> newMsgReceiver);
    std::function<void()> Cleanup;
    std::function<void()> Close;
    std::function<bool(octet*, uint32_t, uint32_t&, Locator_t&)> ReceiveFromAssociatedChannel;

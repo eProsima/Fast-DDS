@@ -3,6 +3,7 @@
 
 #include <asio.hpp>
 #include <memory>
+#include <fastrtps/rtps/messages/MessageReceiver.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -89,14 +90,24 @@ namespace rtps{
 class UDPSocketInfo
     {
         public:
-            UDPSocketInfo(eProsimaUDPSocket& socket) :
-                socket_(moveSocket(socket))
+            UDPSocketInfo(eProsimaUDPSocket& socket)
+                : socket_(moveSocket(socket))
+                , m_bAlive(true)
             {
             }
 
-            UDPSocketInfo(UDPSocketInfo&& socketInfo) :
-                socket_(moveSocket(socketInfo.socket_))
+            UDPSocketInfo(UDPSocketInfo&& socketInfo)
+                : socket_(moveSocket(socketInfo.socket_))
+                , m_bAlive(true)
             {
+            }
+
+            ~UDPSocketInfo()
+            {
+                m_bAlive = false;
+                m_thread->join();
+                delete m_thread;
+                mp_receiver = nullptr;
             }
 
             UDPSocketInfo& operator=(UDPSocketInfo&& socketInfo)
@@ -129,7 +140,36 @@ class UDPSocketInfo
                 return getSocketPtr(socket_);
             }
 
+            inline void SetThread(std::thread* pThread)
+            {
+                m_thread = pThread;
+            }
+
+            inline bool IsAlive() const
+            {
+                return m_bAlive;
+            }
+
+            inline void Disable()
+            {
+                m_bAlive = false;
+            }
+
+            inline void SetMessageReceiver(std::shared_ptr<MessageReceiver> receiver)
+            {
+                mp_receiver = receiver;
+            }
+
+            inline std::shared_ptr<MessageReceiver> GetMessageReceiver()
+            {
+                return mp_receiver;
+            }
+
         private:
+
+            std::shared_ptr<MessageReceiver> mp_receiver; //Associated Readers/Writers inside of MessageReceiver
+            bool m_bAlive;
+            std::thread* m_thread;
             eProsimaUDPSocket socket_;
             bool only_multicast_purpose_;
             UDPSocketInfo(const UDPSocketInfo&) = delete;
