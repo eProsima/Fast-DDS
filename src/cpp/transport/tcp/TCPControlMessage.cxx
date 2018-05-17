@@ -27,11 +27,6 @@ namespace { char dummy; }
 #include <fastrtps/transport/tcp/TCPControlMessage.h>
 #include <fastrtps/rtps/common/Types.h>
 
-#include <fastcdr/Cdr.h>
-
-#include <fastcdr/exceptions/BadParamException.h>
-using namespace eprosima::fastcdr::exception;
-
 #include <utility>
 
 namespace eprosima{
@@ -76,65 +71,6 @@ ConnectionRequest_t& ConnectionRequest_t::operator=(ConnectionRequest_t &&x)
     return *this;
 }
 
-size_t ConnectionRequest_t::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
-}
-
-size_t ConnectionRequest_t::getCdrSerializedSize(const ConnectionRequest_t& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
-}
-
-void ConnectionRequest_t::serialize(eprosima::fastcdr::Cdr &scdr) const
-{
-    scdr << m_protocolVersion;
-    scdr << m_vendorId;
-    scdr << m_transportLocator;
-}
-
-void ConnectionRequest_t::deserialize(eprosima::fastcdr::Cdr &dcdr)
-{
-    dcdr >> m_protocolVersion;
-    dcdr >> m_vendorId;
-    dcdr >> m_transportLocator;
-}
-
-size_t ConnectionRequest_t::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-    return current_align;
-}
-
-bool ConnectionRequest_t::isKeyDefined()
-{
-    return false;
-}
-
-void ConnectionRequest_t::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	 
-	 
-	 
-}
 OpenLogicalPortRequest_t::OpenLogicalPortRequest_t()
 {
     m_logicalPort = 0;
@@ -168,53 +104,6 @@ OpenLogicalPortRequest_t& OpenLogicalPortRequest_t::operator=(OpenLogicalPortReq
     return *this;
 }
 
-size_t OpenLogicalPortRequest_t::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
-}
-
-size_t OpenLogicalPortRequest_t::getCdrSerializedSize(const OpenLogicalPortRequest_t& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
-}
-
-void OpenLogicalPortRequest_t::serialize(eprosima::fastcdr::Cdr &scdr) const
-{
-    scdr << m_logicalPort;
-}
-
-void OpenLogicalPortRequest_t::deserialize(eprosima::fastcdr::Cdr &dcdr)
-{
-    dcdr >> m_logicalPort;
-}
-
-size_t OpenLogicalPortRequest_t::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-            
-
-    return current_align;
-}
-
-bool OpenLogicalPortRequest_t::isKeyDefined()
-{
-    return false;
-}
-
-void OpenLogicalPortRequest_t::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	 
-}
 CheckLogicalPortsRequest_t::CheckLogicalPortsRequest_t()
 {
 }
@@ -247,55 +136,6 @@ CheckLogicalPortsRequest_t& CheckLogicalPortsRequest_t::operator=(CheckLogicalPo
     return *this;
 }
 
-size_t CheckLogicalPortsRequest_t::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += (100 * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
-}
-
-size_t CheckLogicalPortsRequest_t::getCdrSerializedSize(const CheckLogicalPortsRequest_t& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += (data.logicalPortsRange().size() * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
-}
-
-void CheckLogicalPortsRequest_t::serialize(eprosima::fastcdr::Cdr &scdr) const
-{
-    scdr << m_logicalPortsRange;
-}
-
-void CheckLogicalPortsRequest_t::deserialize(eprosima::fastcdr::Cdr &dcdr)
-{
-    dcdr >> m_logicalPortsRange;
-}
-
-size_t CheckLogicalPortsRequest_t::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-            
-
-    return current_align;
-}
-
-bool CheckLogicalPortsRequest_t::isKeyDefined()
-{
-    return false;
-}
-
-void CheckLogicalPortsRequest_t::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	 
-}
 KeepAliveRequest_t::KeepAliveRequest_t()
 {
 }
@@ -328,53 +168,6 @@ KeepAliveRequest_t& KeepAliveRequest_t::operator=(KeepAliveRequest_t &&x)
     return *this;
 }
 
-size_t KeepAliveRequest_t::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
-}
-
-size_t KeepAliveRequest_t::getCdrSerializedSize(const KeepAliveRequest_t& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
-}
-
-void KeepAliveRequest_t::serialize(eprosima::fastcdr::Cdr &scdr) const
-{
-    scdr << m_locator;
-}
-
-void KeepAliveRequest_t::deserialize(eprosima::fastcdr::Cdr &dcdr)
-{
-    dcdr >> m_locator;
-}
-
-size_t KeepAliveRequest_t::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-            
-
-    return current_align;
-}
-
-bool KeepAliveRequest_t::isKeyDefined()
-{
-    return false;
-}
-
-void KeepAliveRequest_t::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	 
-}
 LogicalPortIsClosedRequest_t::LogicalPortIsClosedRequest_t()
 {
     m_logicalPort = 0;
@@ -408,53 +201,6 @@ LogicalPortIsClosedRequest_t& LogicalPortIsClosedRequest_t::operator=(LogicalPor
     return *this;
 }
 
-size_t LogicalPortIsClosedRequest_t::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
-}
-
-size_t LogicalPortIsClosedRequest_t::getCdrSerializedSize(const LogicalPortIsClosedRequest_t& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
-}
-
-void LogicalPortIsClosedRequest_t::serialize(eprosima::fastcdr::Cdr &scdr) const
-{
-    scdr << m_logicalPort;
-}
-
-void LogicalPortIsClosedRequest_t::deserialize(eprosima::fastcdr::Cdr &dcdr)
-{
-    dcdr >> m_logicalPort;
-}
-
-size_t LogicalPortIsClosedRequest_t::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-            
-
-    return current_align;
-}
-
-bool LogicalPortIsClosedRequest_t::isKeyDefined()
-{
-    return false;
-}
-
-void LogicalPortIsClosedRequest_t::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	 
-}
 RequestData::RequestData()
 {
     m__d = BIND_CONNECTION;
@@ -633,9 +379,12 @@ void RequestData::_d(TCPCommonKind __d)
             break;
         }
         break;
+        default:
+        b = false;
+        break;
     }
     
-    if(!b) throw BadParamException("Discriminator doesn't correspond with the selected union member");
+    if(!b) throw ("Discriminator doesn't correspond with the selected union member");
     
     m__d = __d;
 }
@@ -674,7 +423,7 @@ const ConnectionRequest_t& RequestData::connectionRequest() const
         default:
         break;
     }    
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b) throw ("This member is not been selected");
     
     return m_connectionRequest;
 }
@@ -691,7 +440,7 @@ ConnectionRequest_t& RequestData::connectionRequest()
         default:
         break;
     }    
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b) throw ("This member is not been selected");
     
     return m_connectionRequest;
 }
@@ -719,7 +468,7 @@ const OpenLogicalPortRequest_t& RequestData::openLogicalPortRequest() const
         default:
         break;
     }    
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b) throw ("This member is not been selected");
     
     return m_openLogicalPortRequest;
 }
@@ -736,7 +485,7 @@ OpenLogicalPortRequest_t& RequestData::openLogicalPortRequest()
         default:
         break;
     }    
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b) throw ("This member is not been selected");
     
     return m_openLogicalPortRequest;
 }
@@ -764,7 +513,7 @@ const CheckLogicalPortsRequest_t& RequestData::checkLogicalPortsRequest() const
         default:
         break;
     }    
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b) throw ("This member is not been selected");
     
     return m_checkLogicalPortsRequest;
 }
@@ -781,7 +530,7 @@ CheckLogicalPortsRequest_t& RequestData::checkLogicalPortsRequest()
         default:
         break;
     }    
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b) throw ("This member is not been selected");
     
     return m_checkLogicalPortsRequest;
 }
@@ -809,7 +558,7 @@ const KeepAliveRequest_t& RequestData::keepAliveRequest() const
         default:
         break;
     }    
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b) throw ("This member is not been selected");
     
     return m_keepAliveRequest;
 }
@@ -826,7 +575,7 @@ KeepAliveRequest_t& RequestData::keepAliveRequest()
         default:
         break;
     }    
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b) throw ("This member is not been selected");
     
     return m_keepAliveRequest;
 }
@@ -854,7 +603,7 @@ const LogicalPortIsClosedRequest_t& RequestData::logicalPortIsClosedRequest() co
         default:
         break;
     }    
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b) throw ("This member is not been selected");
     
     return m_logicalPortIsClosedRequest;
 }
@@ -871,147 +620,10 @@ LogicalPortIsClosedRequest_t& RequestData::logicalPortIsClosedRequest()
         default:
         break;
     }    
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b) throw ("This member is not been selected");
     
     return m_logicalPortIsClosedRequest;
 }
-
-size_t RequestData::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    size_t reset_alignment = 0;
-    size_t union_max_size_serialized = 0;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += ConnectionRequest_t::getMaxCdrSerializedSize(reset_alignment);
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-        reset_alignment = current_alignment;
-
-        reset_alignment += OpenLogicalPortRequest_t::getMaxCdrSerializedSize(reset_alignment);
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-        reset_alignment = current_alignment;
-
-        reset_alignment += CheckLogicalPortsRequest_t::getMaxCdrSerializedSize(reset_alignment);
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-        reset_alignment = current_alignment;
-
-        reset_alignment += KeepAliveRequest_t::getMaxCdrSerializedSize(reset_alignment);
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-        reset_alignment = current_alignment;
-
-        reset_alignment += LogicalPortIsClosedRequest_t::getMaxCdrSerializedSize(reset_alignment);
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-
-    return union_max_size_serialized - initial_alignment;
-}
-
-// TODO(Ricardo) Review
-size_t RequestData::getCdrSerializedSize(const RequestData& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    switch(data.m__d)
-    {
-        case BIND_CONNECTION:
-        current_alignment += ConnectionRequest_t::getCdrSerializedSize(data.connectionRequest(), current_alignment);
-        break;
-        case OPEN_LOGICAL_PORT:
-        current_alignment += OpenLogicalPortRequest_t::getCdrSerializedSize(data.openLogicalPortRequest(), current_alignment);
-        break;
-        case CHECK_LOGICAL_PORT:
-        current_alignment += CheckLogicalPortsRequest_t::getCdrSerializedSize(data.checkLogicalPortsRequest(), current_alignment);
-        break;
-        case KEEP_ALIVE:
-        current_alignment += KeepAliveRequest_t::getCdrSerializedSize(data.keepAliveRequest(), current_alignment);
-        break;
-        case LOGICAL_PORT_IS_CLOSED:
-        current_alignment += LogicalPortIsClosedRequest_t::getCdrSerializedSize(data.logicalPortIsClosedRequest(), current_alignment);
-        break;
-        default:
-        break;
-    }
-
-    return current_alignment - initial_alignment;
-}
-
-void RequestData::serialize(eprosima::fastcdr::Cdr &scdr) const
-{
-    scdr << (uint32_t)m__d;
-
-    switch(m__d)
-    {
-        case BIND_CONNECTION:
-        scdr << m_connectionRequest;
-        break;
-        case OPEN_LOGICAL_PORT:
-        scdr << m_openLogicalPortRequest;
-        break;
-        case CHECK_LOGICAL_PORT:
-        scdr << m_checkLogicalPortsRequest;
-        break;
-        case KEEP_ALIVE:
-        scdr << m_keepAliveRequest;
-        break;
-        case LOGICAL_PORT_IS_CLOSED:
-        scdr << m_logicalPortIsClosedRequest;
-        break;
-        default:
-        break;
-    }
-}
-
-void RequestData::deserialize(eprosima::fastcdr::Cdr &dcdr)
-{
-    dcdr >> (uint32_t&)m__d;
-
-    switch(m__d)
-    {
-        case BIND_CONNECTION:
-        dcdr >> m_connectionRequest;
-        break;
-        case OPEN_LOGICAL_PORT:
-        dcdr >> m_openLogicalPortRequest;
-        break;
-        case CHECK_LOGICAL_PORT:
-        dcdr >> m_checkLogicalPortsRequest;
-        break;
-        case KEEP_ALIVE:
-        dcdr >> m_keepAliveRequest;
-        break;
-        case LOGICAL_PORT_IS_CLOSED:
-        dcdr >> m_logicalPortIsClosedRequest;
-        break;
-        default:
-        break;
-    }
-}
-
 
 ControlProtocolRequestData::ControlProtocolRequestData()
 {
@@ -1045,52 +657,6 @@ ControlProtocolRequestData& ControlProtocolRequestData::operator=(ControlProtoco
     return *this;
 }
 
-size_t ControlProtocolRequestData::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += RequestData::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
-size_t ControlProtocolRequestData::getCdrSerializedSize(const ControlProtocolRequestData& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += RequestData::getCdrSerializedSize(data.requestData(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
-void ControlProtocolRequestData::serialize(eprosima::fastcdr::Cdr &scdr) const
-{
-    scdr << m_requestData;
-}
-
-void ControlProtocolRequestData::deserialize(eprosima::fastcdr::Cdr &dcdr)
-{
-    dcdr >> m_requestData;
-}
-
-size_t ControlProtocolRequestData::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-            
-
-    return current_align;
-}
-
-bool ControlProtocolRequestData::isKeyDefined()
-{
-    return false;
-}
-
-void ControlProtocolRequestData::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	 
-}
-
 BindConnectionResponse_t::BindConnectionResponse_t()
 {
 }
@@ -1121,54 +687,6 @@ BindConnectionResponse_t& BindConnectionResponse_t::operator=(BindConnectionResp
     m_locator = x.m_locator;
     
     return *this;
-}
-
-size_t BindConnectionResponse_t::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
-}
-
-size_t BindConnectionResponse_t::getCdrSerializedSize(const BindConnectionResponse_t& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
-}
-
-void BindConnectionResponse_t::serialize(eprosima::fastcdr::Cdr &scdr) const
-{
-    scdr << m_locator;
-}
-
-void BindConnectionResponse_t::deserialize(eprosima::fastcdr::Cdr &dcdr)
-{
-    dcdr >> m_locator;
-}
-
-size_t BindConnectionResponse_t::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-            
-
-    return current_align;
-}
-
-bool BindConnectionResponse_t::isKeyDefined()
-{
-    return false;
-}
-
-void BindConnectionResponse_t::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	 
 }
 CheckLogicalPortsResponse_t::CheckLogicalPortsResponse_t()
 {
@@ -1202,55 +720,6 @@ CheckLogicalPortsResponse_t& CheckLogicalPortsResponse_t::operator=(CheckLogical
     return *this;
 }
 
-size_t CheckLogicalPortsResponse_t::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += (100 * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
-}
-
-size_t CheckLogicalPortsResponse_t::getCdrSerializedSize(const CheckLogicalPortsResponse_t& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += (data.availableLogicalPorts().size() * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
-}
-
-void CheckLogicalPortsResponse_t::serialize(eprosima::fastcdr::Cdr &scdr) const
-{
-    scdr << m_availableLogicalPorts;
-}
-
-void CheckLogicalPortsResponse_t::deserialize(eprosima::fastcdr::Cdr &dcdr)
-{
-    dcdr >> m_availableLogicalPorts;
-}
-
-size_t CheckLogicalPortsResponse_t::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-            
-
-    return current_align;
-}
-
-bool CheckLogicalPortsResponse_t::isKeyDefined()
-{
-    return false;
-}
-
-void CheckLogicalPortsResponse_t::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	 
-}
 ResponseData::ResponseData()
 {
     m__d = BIND_CONNECTION;
@@ -1336,9 +805,12 @@ void ResponseData::_d(TCPCommonKind __d)
             break;
         }
         break;
+        default:
+        b = false;
+        break;
     }
     
-    if(!b) throw BadParamException("Discriminator doesn't correspond with the selected union member");
+    if(!b) throw ("Discriminator doesn't correspond with the selected union member");
     
     m__d = __d;
 }
@@ -1377,7 +849,7 @@ const BindConnectionResponse_t& ResponseData::bindConnectionResponse() const
         default:
         break;
     }    
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b) throw ("This member is not been selected");
     
     return m_bindConnectionResponse;
 }
@@ -1394,79 +866,10 @@ BindConnectionResponse_t& ResponseData::bindConnectionResponse()
         default:
         break;
     }    
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b) throw ("This member is not been selected");
     
     return m_bindConnectionResponse;
 }
-
-size_t ResponseData::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    size_t reset_alignment = 0;
-    size_t union_max_size_serialized = 0;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += BindConnectionResponse_t::getMaxCdrSerializedSize(reset_alignment);
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-
-    return union_max_size_serialized - initial_alignment;
-}
-
-// TODO(Ricardo) Review
-size_t ResponseData::getCdrSerializedSize(const ResponseData& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    switch(data.m__d)
-    {
-        case BIND_CONNECTION:
-        current_alignment += BindConnectionResponse_t::getCdrSerializedSize(data.bindConnectionResponse(), current_alignment);
-        break;
-        default:
-        break;
-    }
-
-    return current_alignment - initial_alignment;
-}
-
-void ResponseData::serialize(eprosima::fastcdr::Cdr &scdr) const
-{
-    scdr << (uint32_t)m__d;
-
-    switch(m__d)
-    {
-        case BIND_CONNECTION:
-        scdr << m_bindConnectionResponse;
-        break;
-        default:
-        break;
-    }
-}
-
-void ResponseData::deserialize(eprosima::fastcdr::Cdr &dcdr)
-{
-    dcdr >> (uint32_t&)m__d;
-
-    switch(m__d)
-    {
-        case BIND_CONNECTION:
-        dcdr >> m_bindConnectionResponse;
-        break;
-        default:
-        break;
-    }
-}
-
 
 ControlProtocolResponseData::ControlProtocolResponseData()
 {
@@ -1504,61 +907,6 @@ ControlProtocolResponseData& ControlProtocolResponseData::operator=(ControlProto
     m_responseData = std::move(x.m_responseData);
     
     return *this;
-}
-
-size_t ControlProtocolResponseData::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    current_alignment += ResponseData::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
-size_t ControlProtocolResponseData::getCdrSerializedSize(const ControlProtocolResponseData& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    current_alignment += ResponseData::getCdrSerializedSize(data.responseData(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
-void ControlProtocolResponseData::serialize(eprosima::fastcdr::Cdr &scdr) const
-{
-    scdr << (uint32_t)m_responseCode;
-    scdr << m_responseData;
-}
-
-void ControlProtocolResponseData::deserialize(eprosima::fastcdr::Cdr &dcdr)
-{
-    dcdr >> (uint32_t&)m_responseCode;
-    dcdr >> m_responseData;
-}
-
-size_t ControlProtocolResponseData::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-            
-
-
-
-    return current_align;
-}
-
-bool ControlProtocolResponseData::isKeyDefined()
-{
-    return false;
-}
-
-void ControlProtocolResponseData::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	 
-	 
 }
 
 }

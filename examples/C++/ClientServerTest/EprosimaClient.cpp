@@ -92,7 +92,7 @@ bool EprosimaClient::init()
 	//DATA SUBSCRIBER
 	SubscriberAttributes SubDataparam;
 	Locator_t loc;
-	loc.port = 7555;
+	loc.set_port(7555);
 	PubDataparam.unicastLocatorList.push_back(loc);
 	SubDataparam.topic.topicDataType = "Result";
 	SubDataparam.topic.topicKind = NO_KEY;
