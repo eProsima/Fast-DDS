@@ -17,7 +17,7 @@
 #include <cassert>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/writer/RTPSwriter.h>
+#include <fastrtps/rtps/writer/RTPSWriter.h>
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
@@ -185,7 +185,7 @@ bool ReceiverResource::checkReaders(EntityId_t readerID)
 
 void ReceiverResource::processDataMsg(EntityId_t readerID, CacheChange_t* ch)
 {
-    logInfo(RTPS_MSG_IN, IDSTRING"from Writer " << ch.writerGUID << "; possible RTPSReaders: " << AssociatedReaders.size());
+    logInfo(RTPS_MSG_IN, IDSTRING"from Writer " << ch->writerGUID << "; possible RTPSReaders: " << AssociatedReaders.size());
 
     std::lock_guard<std::mutex> guard(mtx);
     //Look for the correct reader to add the change
@@ -201,7 +201,7 @@ void ReceiverResource::processDataMsg(EntityId_t readerID, CacheChange_t* ch)
 void ReceiverResource::processDataFragMsg(EntityId_t readerID, CacheChange_t *incomingChange, uint32_t sampleSize,
     uint32_t fragmentStartingNum)
 {
-    logInfo(RTPS_MSG_IN, IDSTRING"from Writer " << ch.writerGUID << "; possible RTPSReaders: " << AssociatedReaders.size());
+    logInfo(RTPS_MSG_IN, IDSTRING"from Writer " << incomingChange->writerGUID << "; possible RTPSReaders: " << AssociatedReaders.size());
 
     std::lock_guard<std::mutex> guard(mtx);
     //Look for the correct reader to add the change

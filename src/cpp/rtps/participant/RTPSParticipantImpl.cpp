@@ -251,7 +251,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
                 loc.set_port(static_cast<uint16_t>(m_att.port.portBase +
                     m_att.port.domainIDGain*PParam.builtin.domainId +
                     m_att.port.offsetd3 +
-                    m_att.port.participantIDGain*m_att.participantID, true));
+                    m_att.port.participantIDGain*m_att.participantID), true);
                 });
 
         // Normalize unicast locators.
