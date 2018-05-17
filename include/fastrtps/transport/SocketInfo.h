@@ -91,22 +91,29 @@ class UDPSocketInfo
     {
         public:
             UDPSocketInfo(eProsimaUDPSocket& socket)
-                : socket_(moveSocket(socket))
+                : mp_receiver(nullptr)
                 , m_bAlive(true)
+                , m_thread(nullptr)
+                , socket_(moveSocket(socket))
             {
             }
 
             UDPSocketInfo(UDPSocketInfo&& socketInfo)
-                : socket_(moveSocket(socketInfo.socket_))
+                : mp_receiver(nullptr)
                 , m_bAlive(true)
+                , m_thread(nullptr)
+                , socket_(moveSocket(socketInfo.socket_))
             {
             }
 
             ~UDPSocketInfo()
             {
                 m_bAlive = false;
-                m_thread->join();
-                delete m_thread;
+                if (m_thread != nullptr)
+                {
+                    m_thread->join();
+                    delete m_thread;
+                }
                 mp_receiver = nullptr;
             }
 
@@ -179,16 +186,33 @@ class UDPSocketInfo
 class TCPSocketInfo
 {
     public:
-        TCPSocketInfo(eProsimaTCPSocket& socket) :
-            socket_(moveSocket(socket))
+        TCPSocketInfo(eProsimaTCPSocket& socket)
+            : mp_receiver(nullptr)
+            , m_bAlive(true)
+            , m_thread(nullptr)
+            , socket_(moveSocket(socket))
         {
             mMutex = std::make_shared<std::recursive_mutex>();
         }
 
-        TCPSocketInfo(TCPSocketInfo&& socketInfo) :
-            socket_(moveSocket(socketInfo.socket_))
+        TCPSocketInfo(TCPSocketInfo&& socketInfo)
+            : mp_receiver(nullptr)
+            , m_bAlive(true)
+            , m_thread(nullptr)
+            , socket_(moveSocket(socketInfo.socket_))
         {
             mMutex = std::make_shared<std::recursive_mutex>();
+        }
+
+        ~TCPSocketInfo()
+        {
+            m_bAlive = false;
+            if (m_thread != nullptr)
+            {
+                m_thread->join();
+                delete m_thread;
+            }
+            mp_receiver = nullptr;
         }
 
         TCPSocketInfo& operator=(TCPSocketInfo&& socketInfo)
@@ -226,7 +250,36 @@ class TCPSocketInfo
             return *mMutex;
         }
 
+        inline void SetThread(std::thread* pThread)
+        {
+            m_thread = pThread;
+        }
+
+        inline bool IsAlive() const
+        {
+            return m_bAlive;
+        }
+
+        inline void Disable()
+        {
+            m_bAlive = false;
+        }
+
+        inline void SetMessageReceiver(std::shared_ptr<MessageReceiver> receiver)
+        {
+            mp_receiver = receiver;
+        }
+
+        inline std::shared_ptr<MessageReceiver> GetMessageReceiver()
+        {
+            return mp_receiver;
+        }
+
     private:
+
+        std::shared_ptr<MessageReceiver> mp_receiver; //Associated Readers/Writers inside of MessageReceiver
+        bool m_bAlive;
+        std::thread* m_thread;
         std::shared_ptr<std::recursive_mutex> mMutex;
         eProsimaTCPSocket socket_;
         bool only_multicast_purpose_;

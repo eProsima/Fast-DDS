@@ -50,8 +50,8 @@ public:
    * @param[out] originLocator Address of the remote sender.
    * @return Success of the managed Receive operation.
    */
-   bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-                Locator_t& originLocator);
+   //bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
+   //             Locator_t& originLocator);
 
   /**
    * Reports whether this resource supports the given local locator (i.e., said locator
@@ -78,8 +78,6 @@ private:
 
    ReceiverResource(TransportInterface&, const Locator_t&, std::shared_ptr<MessageReceiver> newMsgReceiver);
    std::function<void()> Cleanup;
-   std::function<void()> Close;
-   std::function<bool(octet*, uint32_t, uint32_t&, Locator_t&)> ReceiveFromAssociatedChannel;
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
    bool mValid; // Post-construction validity check for the NetworkFactory
 };

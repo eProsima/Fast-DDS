@@ -172,10 +172,12 @@ class TCPAcceptor
 {
 public:
 	asio::ip::tcp::acceptor m_acceptor;
-	uint16_t m_port;
+    Locator_t m_locator;
+    std::shared_ptr<MessageReceiver> m_msgReceiver;
 	uint32_t m_receiveBufferSize;
 
-    TCPAcceptor(asio::io_service& io_service, uint16_t port, uint32_t receiveBufferSize);
+    TCPAcceptor(asio::io_service& io_service, const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver,
+        uint32_t receiveBufferSize);
 
 	void Accept(TCPv4Transport* parent);
 };
@@ -294,7 +296,8 @@ public:
 
    TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
 
-   void SocketAccepted(uint32_t port, uint32_t receiveBufferSize, const asio::error_code& error, asio::ip::tcp::socket s);
+   void SocketAccepted(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver,
+       uint32_t receiveBufferSize, const asio::error_code& error, asio::ip::tcp::socket s);
    void SocketConnected(uint32_t logical_port, uint32_t sendBufferSize, const asio::error_code& error);
 protected:
 
@@ -320,7 +323,7 @@ protected:
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
 
    std::map<uint32_t, std::shared_ptr<TCPAcceptor>> mPendingInputSockets;
-   std::map<uint32_t, std::vector<eProsimaTCPSocket>> mInputSockets;
+   std::map<uint32_t, std::vector<TCPSocketInfo*>> mInputSockets;
 
    bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
    std::vector<asio::ip::address_v4> mInterfaceWhiteList;
@@ -328,8 +331,13 @@ protected:
    bool OpenAndBindOutputSockets(Locator_t& locator);
    void OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint16_t logical_port, uint16_t tcp_port);
 
-   bool OpenAndBindInputSockets(uint32_t port);
-   bool ReceiveDataCB(const asio::error_code& error, std::size_t bytes_transferred);
+   bool OpenAndBindInputSockets(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver);
+
+   /** Function to be called from a new thread, which takes cares of performing a blocking receive
+   operation on the ReceiveResource
+   @param input_locator - Locator that triggered the creation of the resource
+   */
+   void performListenOperation(TCPSocketInfo* pSocketInfo, Locator_t input_locator);
 
    bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
        eProsimaTCPSocket& socket);
