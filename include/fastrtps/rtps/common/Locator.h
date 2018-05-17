@@ -134,7 +134,7 @@ class RTPS_DllAPI Locator_t
             return true;
         }
 
-        bool set_Logical_port(uint16_t rtps_port)
+        bool set_logical_port(uint16_t rtps_port)
         {
             return (this->ports_.logical_port = rtps_port);
         }
@@ -171,7 +171,7 @@ class RTPS_DllAPI Locator_t
             return port;
         }
 
-        uint16_t get_Logical_port() const
+        uint16_t get_logical_port() const
         {
             return ports_.logical_port;
         }
@@ -656,7 +656,7 @@ inline bool equalsPhysicalLocator(const Locator_t &loc1, const Locator_t &loc2)
 {
     if(loc1.kind != loc2.kind)
         return false;
-    if(loc1.get_Logical_port() != loc2.get_Logical_port())
+    if(loc1.get_logical_port() != loc2.get_logical_port())
         return false;
     if(!std::equal(loc1.address, loc1.address + 16, loc2.address))
         return false;
