@@ -25,6 +25,11 @@ struct TCPHeader
     {
         //memcpy((char*)rtcp, "RTCP", sizeof(char) * 4);
     }
+
+    const octet* getAddress()
+    {
+        return (const octet*)this;
+    }
 };
 
 union TCPTransactionId
