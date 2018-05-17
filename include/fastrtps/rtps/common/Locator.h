@@ -113,11 +113,19 @@ class RTPS_DllAPI Locator_t
             return *this;
         }
 
-        bool set_port(uint16_t iPort)
+        bool set_port(uint16_t iPort, bool well_known = false)
         {
             if (kind == LOCATOR_KIND_TCPv4 || kind == LOCATOR_KIND_TCPv6)
             {
-                return (this->ports_.physical_port = iPort);
+                if (well_known)
+                {
+                    this->ports_.logical_port = iPort;
+                }
+                else
+                {
+                    this->ports_.physical_port = iPort;
+                }
+                return iPort != 0;
             }
             else
             {
