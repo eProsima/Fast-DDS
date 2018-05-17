@@ -1299,7 +1299,7 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
         // port - uint32Type
         if (nullptr != (p_aux1 = p_aux0->FirstChildElement(PORT)))
         {
-            if (XMLP_ret::XML_OK != getXMLUint(p_aux1, &loc.port, ident + 1)) return XMLP_ret::XML_ERROR;
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux1, &loc.get_port_by_ref(), ident + 1)) return XMLP_ret::XML_ERROR;
         }
         /// address - stringType
         if (nullptr != (p_aux1 = p_aux0->FirstChildElement(ADDRESS)))

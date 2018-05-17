@@ -106,7 +106,8 @@ PDPSimple::~PDPSimple()
 void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant_data)
 {
     participant_data->m_leaseDuration = mp_RTPSParticipant->getAttributes().builtin.leaseDuration;
-    set_VendorId_eProsima(participant_data->m_VendorId);
+    //set_VendorId_eProsima(participant_data->m_VendorId);
+    participant_data->m_VendorId = c_VendorId_eProsima;
 
     participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
     participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;

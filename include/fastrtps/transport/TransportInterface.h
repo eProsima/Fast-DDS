@@ -18,7 +18,7 @@
 #include <memory>
 #include <vector>
 #include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/rtps/common/guid.h>
+#include <fastrtps/rtps/common/Guid.h>
 
 namespace eprosima{
 namespace fastrtps{

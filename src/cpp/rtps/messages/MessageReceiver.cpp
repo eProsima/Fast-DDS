@@ -50,13 +50,17 @@ namespace fastrtps{
 namespace rtps {
 
 
-MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant) : participant_(participant) {}
+MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant) : 
+    sourceVendorId(c_VendorId_Unknown),
+    participant_(participant)
+    {}
 
 MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant, uint32_t rec_buffer_size) :
     m_rec_msg(rec_buffer_size),
 #if HAVE_SECURITY
     m_crypto_msg(rec_buffer_size),
 #endif
+    sourceVendorId(c_VendorId_Unknown),
     participant_(participant)
     {
     }
@@ -64,15 +68,15 @@ MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant, uint32_t rec_
 void MessageReceiver::init(uint32_t rec_buffer_size){
     destVersion = c_ProtocolVersion;
     sourceVersion = c_ProtocolVersion;
-    set_VendorId_Unknown(sourceVendorId);
+    sourceVendorId = c_VendorId_Unknown;
     sourceGuidPrefix = c_GuidPrefix_Unknown;
     destGuidPrefix = c_GuidPrefix_Unknown;
     haveTimestamp = false;
     timestamp = c_TimeInvalid;
 
     defUniLoc.kind = LOCATOR_KIND_UDPv4;
-    LOCATOR_ADDRESS_INVALID(defUniLoc.address);
-    defUniLoc.port = LOCATOR_PORT_INVALID;
+    defUniLoc.set_Invalid_Address();
+    defUniLoc.set_port(LOCATOR_PORT_INVALID);
     logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<<m_rec_msg.max_size);
     mMaxPayload_ = ((uint32_t)std::numeric_limits<uint16_t>::max() < rec_buffer_size) ? std::numeric_limits<uint16_t>::max() : (uint16_t)rec_buffer_size;
 }
@@ -140,7 +144,7 @@ void MessageReceiver::removeEndpoint(Endpoint *to_remove){
 void MessageReceiver::reset(){
     destVersion = c_ProtocolVersion;
     sourceVersion = c_ProtocolVersion;
-    set_VendorId_Unknown(sourceVendorId);
+    sourceVendorId = c_VendorId_Unknown;
     sourceGuidPrefix = c_GuidPrefix_Unknown;
     destGuidPrefix = c_GuidPrefix_Unknown;
     haveTimestamp = false;
@@ -434,6 +438,18 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg, SubmessageHeader_t
     return true;
 }
 
+/*
+static void showCDRMessage(CDRMessage_t* msg)
+{
+    std::cout << "MSG: ";
+    for (uint32_t i = 0; i < msg->length; ++i)
+    {
+        std::cout << std::hex << static_cast<int>(msg->buffer[i]) << " ";
+    }
+    std::cout << std::endl;
+}
+*/
+
 bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
     std::lock_guard<std::mutex> guard(mtx);
@@ -492,6 +508,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
     }
     if(firstReader == nullptr) //Reader not found
     {
+        //showCDRMessage(msg);
         logWarning(RTPS_MSG_IN, IDSTRING"No Reader accepts this message (directed to: " <<readerID << ")");
         return false;
     }
@@ -1012,7 +1029,7 @@ bool MessageReceiver::proc_Submsg_InfoSRC(CDRMessage_t* msg,SubmessageHeader_t* 
         msg->pos+=4;
         CDRMessage::readOctet(msg,&this->sourceVersion.m_major);
         CDRMessage::readOctet(msg,&this->sourceVersion.m_minor);
-        CDRMessage::readData(msg,this->sourceVendorId,2);
+        CDRMessage::readData(msg,&this->sourceVendorId[0],2);
         CDRMessage::readData(msg,this->sourceGuidPrefix.value,12);
         //Is the final message?
         if(smh->submessageLength == 0)

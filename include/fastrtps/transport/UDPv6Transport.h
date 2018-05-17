@@ -147,7 +147,7 @@ private:
    mutable std::recursive_mutex mInputMapMutex;
 
    //! The notion of output channel corresponds to a port.
-   std::map<uint32_t, std::vector<UDPSocketInfo> > mOutputSockets;
+   std::map<uint16_t, std::vector<UDPSocketInfo> > mOutputSockets;
 
    std::vector<IPFinder::info_IP> currentInterfaces;
 
@@ -155,7 +155,7 @@ private:
    struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
    //! For both modes, an input channel corresponds to a port.
-   std::map<uint32_t, UDPSocketInfo*> mInputSockets;
+   std::map<uint16_t, UDPSocketInfo*> mInputSockets;
 
    bool IsInterfaceAllowed(const asio::ip::address_v6& ip);
    std::vector<asio::ip::address_v6> mInterfaceWhiteList;
@@ -164,8 +164,8 @@ private:
    bool OpenAndBindOutputSockets(Locator_t& locator);
    bool OpenAndBindInputSockets(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver, bool is_multicast);
 
-   eProsimaUDPSocket OpenAndBindUnicastOutputSocket(const asio::ip::address_v6&, uint32_t& port);
-   eProsimaUDPSocket OpenAndBindInputSocket(uint32_t port, bool is_multicast);
+   eProsimaUDPSocket OpenAndBindUnicastOutputSocket(const asio::ip::address_v6&, uint16_t& port);
+   eProsimaUDPSocket OpenAndBindInputSocket(uint16_t port, bool is_multicast);
 
    void performListenOperation(UDPSocketInfo* pSocketInfo, Locator_t input_locator);
 

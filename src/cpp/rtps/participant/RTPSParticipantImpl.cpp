@@ -79,11 +79,11 @@ Locator_t RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t loc)
     switch (loc.kind){
         case LOCATOR_KIND_UDPv4:
             //This is a completely made up rule
-            loc.port += m_att.port.participantIDGain;
+            loc.get_port_by_ref() += m_att.port.participantIDGain;
             break;
         case LOCATOR_KIND_UDPv6:
             //TODO - Define the rest of rules
-            loc.port += m_att.port.participantIDGain;
+            loc.get_port_by_ref() += m_att.port.participantIDGain;
             break;
     }
     return loc;
@@ -146,30 +146,30 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         //UDPv4
         Locator_t mandatoryMulticastLocator;
         mandatoryMulticastLocator.kind = LOCATOR_KIND_UDPv4;
-        mandatoryMulticastLocator.port = metatraffic_multicast_port;
+        mandatoryMulticastLocator.set_port(metatraffic_multicast_port);
         mandatoryMulticastLocator.set_IP4_address(239,255,0,1);
 
         m_att.builtin.metatrafficMulticastLocatorList.push_back(mandatoryMulticastLocator);
 
         Locator_t default_metatraffic_unicast_locator;
-        default_metatraffic_unicast_locator.port = metatraffic_unicast_port;
+        default_metatraffic_unicast_locator.set_port(metatraffic_unicast_port);
         m_att.builtin.metatrafficUnicastLocatorList.push_back(default_metatraffic_unicast_locator);
 
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
-    else
+    else // TODO UDPv6 is this brach... but TCP isn't 
     {
         std::for_each(m_att.builtin.metatrafficMulticastLocatorList.begin(), m_att.builtin.metatrafficMulticastLocatorList.end(),
                 [&](Locator_t& locator) {
-                    if(locator.port == 0)
-                        locator.port = metatraffic_multicast_port;
+                    if(locator.get_port() == 0)
+                        locator.set_port(metatraffic_multicast_port);
                 });
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
 
         std::for_each(m_att.builtin.metatrafficUnicastLocatorList.begin(), m_att.builtin.metatrafficUnicastLocatorList.end(),
                 [&](Locator_t& locator) {
-                    if(locator.port == 0)
-                        locator.port = metatraffic_unicast_port;
+                    if(locator.get_port() == 0)
+                        locator.set_port(metatraffic_unicast_port);
                 });
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
@@ -192,13 +192,13 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
         std::for_each(initial_peers.begin(), initial_peers.end(),
                 [&](Locator_t& locator) {
-                    if(locator.port == 0)
+                    if(locator.get_port() == 0)
                     {
                         // TODO(Ricardo) Make configurable.
                         for(int32_t i = 0; i < 4; ++i)
                         {
                             Locator_t auxloc(locator);
-                            auxloc.port = m_att.port.getUnicastPort(m_att.builtin.domainId, i);
+                            auxloc.set_port(m_att.port.getUnicastPort(m_att.builtin.domainId, i));
 
                             m_att.builtin.initialPeersList.push_back(auxloc);
                         }
@@ -232,10 +232,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         LocatorList_t loclist;
         IPFinder::getIP4Address(&loclist);
         for(auto it=loclist.begin();it!=loclist.end();++it){
-            (*it).port=m_att.port.portBase+
+            (*it).set_port(m_att.port.portBase+
                 m_att.port.domainIDGain*PParam.builtin.domainId+
                 m_att.port.offsetd3+
-                m_att.port.participantIDGain*m_att.participantID;
+                m_att.port.participantIDGain*m_att.participantID);
             (*it).kind = LOCATOR_KIND_UDPv4;
 
             m_att.defaultUnicastLocatorList.push_back((*it));
@@ -247,12 +247,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         std::for_each(m_att.defaultUnicastLocatorList.begin(),
                 m_att.defaultUnicastLocatorList.end(),
                 [&](Locator_t& loc) {
-                    if(loc.port == 0) {
-                        loc.port = m_att.port.portBase+
+                    if(loc.get_port() == 0)
+                        loc.set_port(m_att.port.portBase+
                             m_att.port.domainIDGain*PParam.builtin.domainId+
                             m_att.port.offsetd3+
-                            m_att.port.participantIDGain*m_att.participantID;
-                    }
+                            m_att.port.participantIDGain*m_att.participantID);
                 });
 
         // Normalize unicast locators.
