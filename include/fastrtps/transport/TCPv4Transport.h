@@ -207,7 +207,7 @@ protected:
    void performListenOperation(TCPSocketInfo* pSocketInfo, Locator_t input_locator);
 
    bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
-       eProsimaTCPSocket& socket);
+       TCPSocketInfo& socket);
 
 };
 
