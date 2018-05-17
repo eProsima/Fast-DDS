@@ -398,7 +398,7 @@ bool UDPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, std::shar
     catch (asio::system_error const& e)
     {
         (void)e;
-        logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << port << ")" << " with msg: "<<e.what());
+        logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << locator.get_port() << ")" << " with msg: "<<e.what());
         mInputSockets.erase(locator.get_port());
         return false;
     }
