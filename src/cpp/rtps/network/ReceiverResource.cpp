@@ -29,30 +29,14 @@ ReceiverResource::ReceiverResource(TransportInterface& transport, const Locator_
       return; // Invalid resource to be discarded by the factory.
 
    // Implementation functions are bound to the right transport parameters
-   Cleanup = [&transport,locator](){ transport.ReleaseInputChannel(locator); };
-   Close = [&transport,locator](){ transport.CloseInputChannel(locator); };
-   ReceiveFromAssociatedChannel = [&transport, locator](octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize, Locator_t& origin)-> bool
-                                  { return transport.Receive(receiveBuffer, receiveBufferCapacity, receiveBufferSize, locator, origin); };
+   Cleanup = [&transport,locator](){ transport.CloseInputChannel(locator); };
    LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
                                  { return transport.DoLocatorsMatch(locator, locatorToCheck); };
-}
-
-bool ReceiverResource::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-             Locator_t& originLocator)
-{
-   if (ReceiveFromAssociatedChannel)
-   {
-      return ReceiveFromAssociatedChannel(receiveBuffer, receiveBufferCapacity, receiveBufferSize, originLocator);
-   }
-
-   return false;
 }
 
 ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
 {
    Cleanup.swap(rValueResource.Cleanup);
-   Close.swap(rValueResource.Close);
-   ReceiveFromAssociatedChannel.swap(rValueResource.ReceiveFromAssociatedChannel);
    LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
 }
 
