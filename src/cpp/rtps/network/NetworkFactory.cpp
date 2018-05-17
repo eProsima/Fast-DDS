@@ -45,27 +45,9 @@ vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local)
     return newSenderResources;
 }
 
-// TODO(Ricardo) Review if necessary
-vector<SenderResource> NetworkFactory::BuildSenderResourcesForRemoteLocator(const Locator_t& remote)
-{
-    vector<SenderResource> newSenderResources;
-
-    for(auto& transport : mRegisteredTransports)
-    {
-        Locator_t local = transport->RemoteToMainLocal(remote);
-        if ( transport->IsLocatorSupported(local) &&
-                !transport->IsOutputChannelOpen(local) )
-        {
-            SenderResource newSenderResource(*transport, local);
-            if (newSenderResource.mValid)
-                newSenderResources.push_back(move(newSenderResource));
-        }
-    }
-    return newSenderResources;
-}
-
-bool NetworkFactory::BuildReceiverResources(const Locator_t& local, std::shared_ptr<MessageReceiver> newMsgReceiver,
-    std::vector<ReceiverResource>& returned_resources_list)
+bool NetworkFactory::BuildReceiverResources (const Locator_t& local, 
+            std::shared_ptr<MessageReceiver> newMsgReceiver,
+            std::vector<ReceiverResource>& returned_resources_list)
 {
     bool returnedValue = false;
 

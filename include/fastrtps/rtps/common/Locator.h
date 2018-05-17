@@ -58,9 +58,28 @@ class RTPS_DllAPI Locator_t
          * LOCATOR_KIND_TCPv6
          */
         int32_t kind;
-        uint32_t port;
-        octet address[16];
+    protected:
+        union
+        {
+            uint32_t port;
+            struct
+            {
+                uint16_t physical_port;
+                uint16_t logical_port;
+            } ports_;
+        };
+        union
+        {
+            octet address[16];
+            struct
+            {
+                octet unique_lan_id[8];
+                octet wan_address[4];
+                octet ip_address[4];
+            } addresses_;
+        };
 
+    public:
         //!Default constructor
         Locator_t():kind(1),port(0)
     {
@@ -98,7 +117,7 @@ class RTPS_DllAPI Locator_t
         {
             if (kind == LOCATOR_KIND_TCPv4 || kind == LOCATOR_KIND_TCPv6)
             {
-                return set_TCP_port(iPort);
+                return (this->ports_.physical_port = iPort);
             }
             else
             {
@@ -107,23 +126,16 @@ class RTPS_DllAPI Locator_t
             return true;
         }
 
-        bool set_TCP_port(uint16_t tcp_port)
-        {
-            std::memcpy(&port, &tcp_port, 2 * sizeof(char));
-            return true;
-        }
-
         bool set_Logical_port(uint16_t rtps_port)
         {
-            std::memcpy(&port + 2, &rtps_port, 2 * sizeof(char));
-            return true;
+            return (this->ports_.logical_port = rtps_port);
         }
 
         uint32_t get_port() const
         {
             if (kind == LOCATOR_KIND_TCPv4 || kind == LOCATOR_KIND_TCPv6)
             {
-                return static_cast<uint32_t>(get_TCP_port());
+                return static_cast<uint32_t>(ports_.physical_port);
             }
             else
             {
@@ -131,36 +143,71 @@ class RTPS_DllAPI Locator_t
             }
         }
 
-        uint16_t get_TCP_port() const
+        uint16_t get_physical_port() const
         {
-            uint16_t oport;
-            std::memcpy(&oport, &port, 2 * sizeof(char));
-            return oport;
+            return ports_.physical_port;
+        }
+
+        uint16_t& get_physical_port()
+        {
+            return ports_.physical_port;
+        }
+
+        uint16_t& get_logical_port()
+        {
+            return ports_.logical_port;
+        }
+
+        uint32_t& get_port_by_ref()
+        {
+            return port;
         }
 
         uint16_t get_Logical_port() const
         {
-            uint16_t oport;
-            std::memcpy(&oport, &port + 2, 2 * sizeof(char));
-            return oport;
+            return ports_.logical_port;
         }
 
         bool set_IP4_address(octet o1,octet o2,octet o3,octet o4){
             LOCATOR_ADDRESS_INVALID(address);
-            address[12] = o1;
-            address[13] = o2;
-            address[14] = o3;
-            address[15] = o4;
+            // address[12] = o1;
+            // address[13] = o2;
+            // address[14] = o3;
+            // address[15] = o4;
+            addresses_.ip_address[0] = o1;
+            addresses_.ip_address[1] = o2;
+            addresses_.ip_address[2] = o3;
+            addresses_.ip_address[3] = o4;
             return true;
+        }
+
+        bool set_IP4_address(const Locator_t &other)
+        {
+            memcpy(addresses_.ip_address, other.addresses_.ip_address, sizeof(octet) * 4);
+            return true;
+        }
+
+        octet* get_IP4_address()
+        {
+            return addresses_.ip_address;
         }
 
         bool set_IP4_WAN_address(octet o1,octet o2,octet o3,octet o4){
             if (kind == LOCATOR_KIND_UDPv4) return false;
-            address[8] = o1;
-            address[9] = o2;
-            address[10] = o3;
-            address[11] = o4;
+            // address[8] = o1;
+            // address[9] = o2;
+            // address[10] = o3;
+            // address[11] = o4;
+            addresses_.wan_address[0] = o1;
+            addresses_.wan_address[1] = o2;
+            addresses_.wan_address[2] = o3;
+            addresses_.wan_address[3] = o4;
             return true;
+        }
+
+        octet* get_IP4_WAN_address()
+        {
+            return addresses_.wan_address;
         }
 
         bool set_IP4_address(const std::string& in_address)
@@ -170,10 +217,20 @@ class RTPS_DllAPI Locator_t
             char ch; //to temporarily store the '.'
             ss >> a >> ch >> b >> ch >> c >> ch >> d;
             LOCATOR_ADDRESS_INVALID(address);
-            address[12] = (octet)a;
-            address[13] = (octet)b;
-            address[14] = (octet)c;
-            address[15] = (octet)d;
+            // address[12] = (octet)a;
+            // address[13] = (octet)b;
+            // address[14] = (octet)c;
+            // address[15] = (octet)d;
+            addresses_.ip_address[0] = (octet)a;
+            addresses_.ip_address[1] = (octet)b;
+            addresses_.ip_address[2] = (octet)c;
+            addresses_.ip_address[3] = (octet)d;
+            return true;
+        }
+
+        bool set_IP4_address(const unsigned char* addr)
+        {
+            memcpy(addresses_.ip_address, addr, 4 * sizeof(char));
             return true;
         }
 
@@ -184,23 +241,31 @@ class RTPS_DllAPI Locator_t
             int a,b,c,d; //to store the 4 ints
             char ch; //to temporarily store the '.'
             ss >> a >> ch >> b >> ch >> c >> ch >> d;
-            address[8] = (octet)a;
-            address[9] = (octet)b;
-            address[10] = (octet)c;
-            address[11] = (octet)d;
+            // address[8] = (octet)a;
+            // address[9] = (octet)b;
+            // address[10] = (octet)c;
+            // address[11] = (octet)d;
+            addresses_.wan_address[8] = (octet)a;
+            addresses_.wan_address[9] = (octet)b;
+            addresses_.wan_address[10] = (octet)c;
+            addresses_.wan_address[11] = (octet)d;
             return true;
         }
 
         std::string to_IP4_string() const {
             std::stringstream ss;
-            ss << (int)address[12] << "." << (int)address[13] << "." << (int)address[14]<< "." << (int)address[15];
+            // ss << (int)address[12] << "." << (int)address[13] << "." << (int)address[14]<< "." << (int)address[15];
+            ss << (int)addresses_.ip_address[0] << "." << (int)addresses_.ip_address[1] 
+                << "." << (int)addresses_.ip_address[2]<< "." << (int)addresses_.ip_address[3];
             return ss.str();
         }
 
         std::string to_IP4_WAN_string() const {
             if (kind == LOCATOR_KIND_UDPv4) return "";
             std::stringstream ss;
-            ss << (int)address[11] << "." << (int)address[10] << "." << (int)address[9]<< "." << (int)address[8];
+            //ss << (int)address[11] << "." << (int)address[10] << "." << (int)address[9]<< "." << (int)address[8];
+            ss << (int)addresses_.wan_address[0] << "." << (int)addresses_.wan_address[1] 
+                << "." << (int)addresses_.wan_address[2]<< "." << (int)addresses_.wan_address[3];
             return ss.str();
         }
 
@@ -210,6 +275,16 @@ class RTPS_DllAPI Locator_t
             octet* oLanId = (octet*)&lanId;
             std::memcpy(oLanId,address,8*sizeof(octet));
             return lanId;
+        }
+
+        octet* get_LAN_ID()
+        {
+            return addresses_.unique_lan_id;
+        }
+
+        octet* get_Address()
+        {
+            return address;
         }
 
         bool set_LAN_ID(int64_t lanId)
@@ -227,10 +302,14 @@ class RTPS_DllAPI Locator_t
             std::memcpy(oaddr,address+12,4*sizeof(octet));
 #else
             // TODO (Santi) - Are we sure we want to flip this?
-            oaddr[0] = address[15];
-            oaddr[1] = address[14];
-            oaddr[2] = address[13];
-            oaddr[3] = address[12];
+            // oaddr[0] = address[15];
+            // oaddr[1] = address[14];
+            // oaddr[2] = address[13];
+            // oaddr[3] = address[12];
+            oaddr[0] = addresses_.ip_address[3];
+            oaddr[1] = addresses_.ip_address[2];
+            oaddr[2] = addresses_.ip_address[1];
+            oaddr[3] = addresses_.ip_address[0];
 #endif
 
             return addr;
@@ -245,10 +324,14 @@ class RTPS_DllAPI Locator_t
             std::memcpy(oaddr,address+8,4*sizeof(octet));
 #else
             // TODO (Santi) - Are we sure we want to flip this?
-            oaddr[0] = address[11];
-            oaddr[1] = address[10];
-            oaddr[2] = address[9];
-            oaddr[3] = address[8];
+            // oaddr[0] = address[11];
+            // oaddr[1] = address[10];
+            // oaddr[2] = address[9];
+            // oaddr[3] = address[8];
+            oaddr[0] = addresses_.wan_address[3];
+            oaddr[1] = addresses_.wan_address[2];
+            oaddr[2] = addresses_.wan_address[1];
+            oaddr[3] = addresses_.wan_address[0];
 #endif
 
             return addr;
@@ -276,6 +359,114 @@ class RTPS_DllAPI Locator_t
             return true;
         }
 
+        bool set_IP6_address(const unsigned char* addr)
+        {
+            memcpy(address, addr, 16 * sizeof(char));
+            return true;
+        }
+
+        void copy_Address(unsigned char* dest) const
+        {
+            memcpy(dest, address, 16 * sizeof(char));
+        }
+
+        void copy_IP4_address(unsigned char* dest) const
+        {
+            memcpy(dest, addresses_.ip_address, 4 * sizeof(char));
+        }
+
+        bool set_IP6_address(const std::string &hex_address)
+        {
+            std::vector<std::string> hexdigits;
+
+            size_t start = 0, end = 0;
+            std::string auxstr;
+
+            while(end != std::string::npos)
+            {
+                end = hex_address.find(':',start);
+                if (end - start > 1)
+                {
+                    hexdigits.push_back(hex_address.substr(start, end - start));
+                }
+                else
+                    hexdigits.push_back(std::string("EMPTY"));
+                start = end + 1;
+            }
+
+            //FOUND a . in the last element (MAP TO IP4 address)
+            if ((hexdigits.end() - 1)->find('.') != std::string::npos) 
+            {
+                return false;
+            }
+            
+            *(hexdigits.end() - 1) = (hexdigits.end() - 1)->substr(0, (hexdigits.end() - 1)->find('%'));
+
+            int auxnumber = 0;
+            uint8_t index= 15;
+            for (auto it = hexdigits.rbegin(); it != hexdigits.rend(); ++it)
+            {
+                if (*it != std::string("EMPTY"))
+                {
+                    if (it->length() <= 2)
+                    {
+                        address[index - 1] = 0;
+                        std::stringstream ss;
+                        ss << std::hex << (*it);
+                        ss >> auxnumber;
+                        address[index] = (octet)auxnumber;
+                    }
+                    else
+                    {
+                        std::stringstream ss;
+                        ss << std::hex << it->substr(it->length()-2);
+                        ss >> auxnumber;
+                        address[index] = (octet)auxnumber;
+                        ss.str("");
+                        ss.clear();
+                        ss << std::hex << it->substr(0, it->length() - 2);
+                        ss >> auxnumber;
+                        address[index - 1] = (octet)auxnumber;
+                    }
+                    index -= 2;
+                }
+                else
+                    break;
+            }
+            index = 0;
+            for (auto it = hexdigits.begin(); it != hexdigits.end(); ++it)
+            {
+                if (*it != std::string("EMPTY"))
+                {
+                    if (it->length() <= 2)
+                    {
+                        address[index] = 0;
+                        std::stringstream ss;
+                        ss << std::hex << (*it);
+                        ss >> auxnumber;
+                        address[index + 1]=(octet)auxnumber;
+                    }
+                    else
+                    {
+                        std::stringstream ss;
+                        ss << std::hex << it->substr(it->length() - 2);
+                        ss >> auxnumber;
+                        address[index + 1] = (octet)auxnumber;
+                        ss.str("");
+                        ss.clear();
+                        ss << std::hex << it->substr(0, it->length() - 2);
+                        ss >> auxnumber;
+                        address[index] =  (octet)auxnumber;
+                    }
+                    index += 2;
+                }
+                else
+                    break;
+            }
+
+            return true;
+        }
+
         std::string to_IP6_string() const{
             std::stringstream ss;
             ss << std::hex;
@@ -288,6 +479,98 @@ class RTPS_DllAPI Locator_t
             ss << field;
             return ss.str();
         }
+
+        bool is_Local_Address() const
+        {
+            if (kind == LOCATOR_KIND_UDPv4 || kind == LOCATOR_KIND_TCPv4)
+            {
+                return is_IP4_Local();
+            }
+            else
+            {
+                return is_IP6_Local();
+            }
+        }
+
+        bool is_IP4_Local() const
+        {
+            return (addresses_.ip_address[0] == 127 
+                 && addresses_.ip_address[1] == 0 
+                 && addresses_.ip_address[2] == 0 
+                 && addresses_.ip_address[3] == 1);
+        }
+
+        bool is_IP6_Local() const
+        {
+            // Tal y como se calculaba antes... un poco optimista creo.
+            // return (address[0] == 0 && address[1] == 0);
+            return  address[0] == 0 && address[1] == 0 && address[2] == 0 && address[3] == 0 && 
+                    address[4] == 0 && address[5] == 0 && address[6] == 0 && address[7] == 0 &&
+                    address[8] == 0 && address[9] == 0 && address[10] == 0 && address[11] == 0 &&
+                    address[12] == 0 && address[13] == 0 && address[14] == 0 && address[15] == 1;
+        }
+
+        void set_Invalid_Address()
+        {
+            LOCATOR_ADDRESS_INVALID(address);
+        }
+
+        bool is_Any() const
+        {
+            if (kind == LOCATOR_KIND_UDPv4 || kind == LOCATOR_KIND_TCPv4)
+            {
+                return addresses_.ip_address[0] == 0 &&
+                    addresses_.ip_address[1] == 0 &&
+                    addresses_.ip_address[2] == 0 &&
+                    addresses_.ip_address[3] == 0;
+            }
+            else
+            {
+                return address[0] == 0 &&
+                    address[1] == 0 &&
+                    address[2] == 0 &&
+                    address[3] == 0 &&
+                    address[4] == 0 &&
+                    address[5] == 0 &&
+                    address[6] == 0 &&
+                    address[7] == 0 &&
+                    address[8] == 0 &&
+                    address[9] == 0 &&
+                    address[10] == 0 &&
+                    address[11] == 0 &&
+                    address[12] == 0 &&
+                    address[13] == 0 &&
+                    address[14] == 0 &&
+                    address[15] == 0;
+            }
+        }
+
+        bool is_Multicast() const
+        {
+            if (kind == LOCATOR_KIND_UDPv4 || kind == LOCATOR_KIND_TCPv4)
+            {
+                return addresses_.ip_address[0] >= 224 && addresses_.ip_address[0] <= 239;
+            }
+            else
+            {
+                return address[0] == 0xFF;
+            }
+        }
+
+        bool compare_IP6_address(const Locator_t &other) const
+        {
+            return memcmp(address, other.address, 16) == 0;
+        }
+
+        bool compare_IP4_address(const Locator_t &other) const
+        {
+            return memcmp(addresses_.ip_address, other.addresses_.ip_address, 4) == 0;
+        }
+
+        friend inline bool IsAddressDefined(const Locator_t& loc);
+        friend inline bool operator==(const Locator_t&loc1,const Locator_t& loc2);
+        friend inline bool equalsPhysicalLocator(const Locator_t &loc1, const Locator_t &loc2);
+        friend inline std::ostream& operator<<(std::ostream& output,const Locator_t& loc);
 };
 
 
@@ -295,9 +578,14 @@ inline bool IsAddressDefined(const Locator_t& loc)
 {
     if(loc.kind == LOCATOR_KIND_UDPv4 || loc.kind == LOCATOR_KIND_TCPv4) // WAN addr in TCPv4 is optional, isn't?
     {
-        for(uint8_t i = 12; i < 16; ++i)
+        // for(uint8_t i = 12; i < 16; ++i)
+        // {
+        //     if(loc.address[i] != 0)
+        //         return true;
+        // }
+        for(uint8_t i = 0; i < 4; ++i)
         {
-            if(loc.address[i] != 0)
+            if(loc.addresses_.ip_address[i] != 0)
                 return true;
         }
     }
@@ -360,7 +648,7 @@ inline bool equalsPhysicalLocator(const Locator_t &loc1, const Locator_t &loc2)
 {
     if(loc1.kind != loc2.kind)
         return false;
-    if(loc1.get_TCP_port() != loc2.get_TCP_port())
+    if(loc1.get_Logical_port() != loc2.get_Logical_port())
         return false;
     if(!std::equal(loc1.address, loc1.address + 16, loc2.address))
         return false;
@@ -371,7 +659,10 @@ inline std::ostream& operator<<(std::ostream& output,const Locator_t& loc)
 {
     if(loc.kind == LOCATOR_KIND_UDPv4 || loc.kind == LOCATOR_KIND_TCPv4)
     {
-        output<<(int)loc.address[12] << "." << (int)loc.address[13] << "." << (int)loc.address[14]<< "." << (int)loc.address[15]<<":"<<loc.port;
+        //output<<(int)loc.address[12] << "." << (int)loc.address[13] << "." << (int)loc.address[14]<< "." << (int)loc.address[15]<<":"<<loc.port;
+        output<<(int)loc.addresses_.ip_address[0] << "." << (int)loc.addresses_.ip_address[1] 
+            << "." << (int)loc.addresses_.ip_address[2]<< "." << (int)loc.addresses_.ip_address[3]
+            <<":"<<loc.ports_.physical_port;
     }
     else if(loc.kind == LOCATOR_KIND_UDPv6 || loc.kind == LOCATOR_KIND_TCPv6)
     {
@@ -512,7 +803,7 @@ class LocatorList_t
                 }
                 else
                 {
-                    if(loc.kind == (*it).kind && loc.port == (*it).port)
+                    if(loc.kind == (*it).kind && loc.get_port() == (*it).get_port())
                         return true;
                 }
             }

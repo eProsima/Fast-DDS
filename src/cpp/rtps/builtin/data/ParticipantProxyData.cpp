@@ -42,18 +42,19 @@ namespace fastrtps{
 namespace rtps {
 
 ParticipantProxyData::ParticipantProxyData():
+    m_VendorId(c_VendorId_Unknown),
     m_expectsInlineQos(false),
     m_availableBuiltinEndpoints(0),
     m_manualLivelinessCount(0),
     isAlive(false),
     mp_leaseDurationTimer(nullptr)
     {
-        set_VendorId_Unknown(m_VendorId);
     }
 
 ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata) :
     m_protocolVersion(pdata.m_protocolVersion),
     m_guid(pdata.m_guid),
+    m_VendorId(pdata.m_VendorId),
     m_expectsInlineQos(pdata.m_expectsInlineQos),
     m_availableBuiltinEndpoints(pdata.m_availableBuiltinEndpoints),
     m_metatrafficUnicastLocatorList(pdata.m_metatrafficUnicastLocatorList),
@@ -71,8 +72,6 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata) :
     m_userData(pdata.m_userData),
     mp_leaseDurationTimer(nullptr)
     {
-        m_VendorId[0] = pdata.m_VendorId[0];
-        m_VendorId[1] = pdata.m_VendorId[1];
     }
 
 ParticipantProxyData::~ParticipantProxyData()
@@ -90,6 +89,57 @@ ParticipantProxyData::~ParticipantProxyData()
     }
     if(this->mp_leaseDurationTimer != nullptr)
         delete(mp_leaseDurationTimer);
+}
+
+bool ParticipantProxyData::initializeData(RTPSParticipantImpl* part,PDPSimple* pdp)
+{
+    this->m_leaseDuration = part->getAttributes().builtin.leaseDuration;
+    //set_VendorId_eProsima(this->m_VendorId);
+    this->m_VendorId = c_VendorId_eProsima;
+
+    this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+    this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+    if(part->getAttributes().builtin.use_WriterLivelinessProtocol)
+    {
+        this->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
+        this->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+    }
+    if(part->getAttributes().builtin.use_SIMPLE_EndpointDiscoveryProtocol)
+    {
+        if(part->getAttributes().builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
+        {
+            this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+            this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+        }
+        if(part->getAttributes().builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+        {
+            this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+            this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+        }
+    }
+
+    this->m_defaultUnicastLocatorList = part->getAttributes().defaultUnicastLocatorList;
+    // (Ricardo) Removed multicast by default in user endpoints.
+    //this->m_defaultMulticastLocatorList = part->getAttributes().defaultMulticastLocatorList;
+    this->m_expectsInlineQos = false;
+    this->m_guid = part->getGuid();
+    for(uint8_t i = 0; i<16; ++i)
+    {
+        if(i<12)
+            this->m_key.value[i] = m_guid.guidPrefix.value[i];
+        else
+            this->m_key.value[i] = m_guid.entityId.value[i - 12];
+    }
+
+
+    this->m_metatrafficMulticastLocatorList = pdp->mp_builtin->m_metatrafficMulticastLocatorList;
+    this->m_metatrafficUnicastLocatorList = pdp->mp_builtin->m_metatrafficUnicastLocatorList;
+
+    this->m_participantName = std::string(part->getAttributes().getName());
+
+    this->m_userData = part->getAttributes().userData;
+
+    return true;
 }
 
 ParameterList_t ParticipantProxyData::AllQostoParameterList()
@@ -348,7 +398,8 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
     {
         m_protocolVersion = ProtocolVersion_t();
         m_guid = GUID_t();
-        set_VendorId_Unknown(m_VendorId);
+        //set_VendorId_Unknown(m_VendorId);
+        m_VendorId = c_VendorId_Unknown;
         m_expectsInlineQos = false;
         m_availableBuiltinEndpoints = 0;
         m_metatrafficUnicastLocatorList.clear();

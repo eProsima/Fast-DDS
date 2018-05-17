@@ -46,18 +46,15 @@ static void GetIP4sUniqueInterfaces(std::vector<IPFinder::info_IP>& locNames, bo
     locNames.erase(new_end, locNames.end());
 }
 
-static bool IsAny(const Locator_t& locator)
+static bool IsAny(Locator_t& locator)
 {
-    return locator.address[12] == 0 &&
-        locator.address[13] == 0 &&
-        locator.address[14] == 0 &&
-        locator.address[15] == 0;
+    return locator.is_Any();
 }
 
-static asio::ip::address_v4::bytes_type locatorToNative(const Locator_t& locator)
+static asio::ip::address_v4::bytes_type locatorToNative(Locator_t& locator)
 {
-    return {{locator.address[12],
-        locator.address[13], locator.address[14], locator.address[15]}};
+    return {{locator.get_IP4_address()[0],
+        locator.get_IP4_address()[1], locator.get_IP4_address()[2], locator.get_IP4_address()[3]}};
 }
 
 UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
@@ -168,7 +165,7 @@ bool UDPv4Transport::init()
 bool UDPv4Transport::IsInputChannelOpen(const Locator_t& locator) const
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-    return IsLocatorSupported(locator) && (mInputSockets.find(locator.port) != mInputSockets.end());
+    return IsLocatorSupported(locator) && (mInputSockets.find(locator.get_physical_port()) != mInputSockets.end());
 }
 
 bool UDPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
@@ -177,7 +174,7 @@ bool UDPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
     if (!IsLocatorSupported(locator))
         return false;
 
-    return mOutputSockets.find(locator.port) != mOutputSockets.end();
+    return mOutputSockets.find(locator.get_physical_port()) != mOutputSockets.end();
 }
 
 bool UDPv4Transport::OpenOutputChannel(Locator_t& locator)
@@ -191,7 +188,7 @@ bool UDPv4Transport::OpenOutputChannel(Locator_t& locator)
 
 static bool IsMulticastAddress(const Locator_t& locator)
 {
-    return locator.address[12] >= 224 && locator.address[12] <= 239;
+    return locator.is_Multicast();
 }
 
 bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver)
@@ -209,7 +206,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, std::shared_ptr<
     {
         // The multicast group will be joined silently, because we do not
         // want to return another resource.
-        auto& socketInfo = mInputSockets.at(locator.port);
+        auto& socketInfo = mInputSockets.at(locator.get_physical_port());
 
         std::vector<IPFinder::info_IP> locNames;
         GetIP4sUniqueInterfaces(locNames, true);
@@ -237,14 +234,14 @@ bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
     if (!IsOutputChannelOpen(locator))
         return false;
 
-    auto& sockets = mOutputSockets.at(locator.port);
+    auto& sockets = mOutputSockets.at(locator.get_physical_port());
     for (auto& socket : sockets)
     {
         socket.getSocket()->cancel();
         socket.getSocket()->close();
     }
 
-    mOutputSockets.erase(locator.port);
+    mOutputSockets.erase(locator.get_physical_port());
 
     return true;
 }
@@ -256,12 +253,12 @@ bool UDPv4Transport::CloseInputChannel(const Locator_t& locator)
         return false;
 
 
-    auto& socketInfo = mInputSockets.at(locator.port);
+    auto& socketInfo = mInputSockets.at(locator.get_port());
     socketInfo->getSocket()->cancel();
     socketInfo->getSocket()->close();
 
-    delete mInputSockets[locator.port];
-    mInputSockets.erase(locator.port);
+    delete mInputSockets[locator.get_port()];
+    mInputSockets.erase(locator.get_port());
     return true;
 }
 
@@ -315,7 +312,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
             // and gain efficiency.
             if(mInterfaceWhiteList.empty())
             {
-                eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v4::any(), locator.port);
+                eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v4::any(), locator.get_physical_port());
                 getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
 
                 // If more than one interface, then create sockets for outbounding multicast.
@@ -325,24 +322,24 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
 
                     // Outbounding first interface with already created socket.
                     getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(asio::ip::address_v4::from_string((*locIt).name)));
-                    mOutputSockets[locator.port].push_back(UDPSocketInfo(unicastSocket));
+                    mOutputSockets[locator.get_physical_port()].push_back(UDPSocketInfo(unicastSocket));
 
                     // Create other socket for outbounding rest of interfaces.
                     for(++locIt; locIt != locNames.end(); ++locIt)
                     {
                         auto ip = asio::ip::address_v4::from_string((*locIt).name);
-                        uint32_t new_port = 0;
+                        uint16_t new_port = 0;
                         eProsimaUDPSocket multicastSocket = OpenAndBindUnicastOutputSocket(ip, new_port);
                         getSocketPtr(multicastSocket)->set_option(ip::multicast::outbound_interface(ip));
                         UDPSocketInfo mSocket(multicastSocket);
                         mSocket.only_multicast_purpose(true);
-                        mOutputSockets[locator.port].push_back(std::move(mSocket));
+                        mOutputSockets[locator.get_physical_port()].push_back(std::move(mSocket));
                     }
                 }
                 else
                 {
                     // Multicast data will be sent for the only one interface.
-                    mOutputSockets[locator.port].push_back(UDPSocketInfo(unicastSocket));
+                    mOutputSockets[locator.get_physical_port()].push_back(UDPSocketInfo(unicastSocket));
                 }
             }
             else
@@ -353,14 +350,14 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
                     auto ip = asio::ip::address_v4::from_string(infoIP.name);
                     if (IsInterfaceAllowed(ip))
                     {
-                        eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
+                        eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.get_physical_port());
                         getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(ip));
                         if(firstInterface)
                         {
                             getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
                             firstInterface = true;
                         }
-                        mOutputSockets[locator.port].push_back(UDPSocketInfo(unicastSocket));
+                        mOutputSockets[locator.get_physical_port()].push_back(UDPSocketInfo(unicastSocket));
                     }
                 }
             }
@@ -368,17 +365,17 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
         else
         {
             auto ip = asio::ip::address_v4(locatorToNative(locator));
-            eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.port);
+            eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.get_physical_port());
             getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(ip));
             getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
-            mOutputSockets[locator.port].push_back(UDPSocketInfo(unicastSocket));
+            mOutputSockets[locator.get_physical_port()].push_back(UDPSocketInfo(unicastSocket));
         }
     }
     catch (asio::system_error const& e)
     {
         (void)e;
-        logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << locator.port << ")" << " with msg: "<<e.what());
-        mOutputSockets.erase(locator.port);
+        logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << locator.get_physical_port() << ")" << " with msg: "<<e.what());
+        mOutputSockets.erase(locator.get_physical_port());
         return false;
     }
 
@@ -426,7 +423,7 @@ void UDPv4Transport::performListenOperation(UDPSocketInfo* pSocketInfo, Locator_
     }
 }
 
-eProsimaUDPSocket UDPv4Transport::OpenAndBindUnicastOutputSocket(const ip::address_v4& ipAddress, uint32_t& port)
+eProsimaUDPSocket UDPv4Transport::OpenAndBindUnicastOutputSocket(const ip::address_v4& ipAddress, uint16_t& port)
 {
     eProsimaUDPSocket socket = createUDPSocket(mService);
     getSocketPtr(socket)->open(ip::udp::v4());
@@ -434,7 +431,7 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindUnicastOutputSocket(const ip::addre
         getSocketPtr(socket)->set_option(socket_base::send_buffer_size(mSendBufferSize));
     getSocketPtr(socket)->set_option(ip::multicast::hops(mConfiguration_.TTL));
 
-    ip::udp::endpoint endpoint(ipAddress, static_cast<uint16_t>(port));
+    ip::udp::endpoint endpoint(ipAddress, port);
     getSocketPtr(socket)->bind(endpoint);
 
     if(port == 0)
@@ -443,7 +440,7 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindUnicastOutputSocket(const ip::addre
     return socket;
 }
 
-eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(uint32_t port, bool is_multicast)
+eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(uint16_t port, bool is_multicast)
 {
     eProsimaUDPSocket socket = createUDPSocket(mService);
     getSocketPtr(socket)->open(ip::udp::v4());
@@ -451,7 +448,7 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(uint32_t port, bool is_
         getSocketPtr(socket)->set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
     if(is_multicast)
         getSocketPtr(socket)->set_option(ip::udp::socket::reuse_address( true ) );
-    ip::udp::endpoint endpoint(ip::address_v4::any(), static_cast<uint16_t>(port));
+    ip::udp::endpoint endpoint(ip::address_v4::any(), port);
     getSocketPtr(socket)->bind(endpoint);
 
     return socket;
@@ -459,7 +456,7 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(uint32_t port, bool is_
 
 bool UDPv4Transport::DoLocatorsMatch(const Locator_t& left, const Locator_t& right) const
 {
-    return left.port == right.port;
+    return left.get_port() == right.get_port();
 }
 
 bool UDPv4Transport::IsLocatorSupported(const Locator_t& locator) const
@@ -473,7 +470,8 @@ Locator_t UDPv4Transport::RemoteToMainLocal(const Locator_t& remote) const
         return false;
 
     Locator_t mainLocal(remote);
-    memset(mainLocal.address, 0x00, sizeof(mainLocal.address));
+    //memset(mainLocal.address, 0x00, sizeof(mainLocal.address));
+    mainLocal.set_Invalid_Address();
     return mainLocal;
 }
 
@@ -487,7 +485,7 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     bool success = false;
     bool is_multicast_remote_address = IsMulticastAddress(remoteLocator);
 
-    auto& sockets = mOutputSockets.at(localLocator.port);
+    auto& sockets = mOutputSockets.at(localLocator.get_port());
     for (auto& socket : sockets)
     {
         if(is_multicast_remote_address || !socket.only_multicast_purpose())
@@ -499,9 +497,10 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
 
 static void EndpointToLocator(ip::udp::endpoint& endpoint, Locator_t& locator)
 {
-    locator.port = endpoint.port();
+    locator.get_physical_port() = endpoint.port();
     auto ipBytes = endpoint.address().to_v4().to_bytes();
-    memcpy(&locator.address[12], ipBytes.data(), sizeof(ipBytes));
+    //memcpy(&locator.address[12], ipBytes.data(), sizeof(ipBytes));
+    locator.set_IP4_address(ipBytes.data());
 }
 
 bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
@@ -548,8 +547,9 @@ bool UDPv4Transport::SendThroughSocket(const octet* sendBuffer,
 {
 
     asio::ip::address_v4::bytes_type remoteAddress;
-    memcpy(&remoteAddress, &remoteLocator.address[12], sizeof(remoteAddress));
-    auto destinationEndpoint = ip::udp::endpoint(asio::ip::address_v4(remoteAddress), static_cast<uint16_t>(remoteLocator.port));
+    //memcpy(&remoteAddress, &remoteLocator.address[12], sizeof(remoteAddress));
+    remoteLocator.copy_IP4_address(remoteAddress.data());
+    auto destinationEndpoint = ip::udp::endpoint(asio::ip::address_v4(remoteAddress), static_cast<uint16_t>(remoteLocator.get_port()));
     size_t bytesSent = 0;
     logInfo(RTPS_MSG_OUT,"UDPv4: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
             << " FROM " << getSocketPtr(socket)->local_endpoint());
@@ -573,16 +573,14 @@ LocatorList_t UDPv4Transport::NormalizeLocator(const Locator_t& locator)
 {
     LocatorList_t list;
 
-    if (locator.address[12] == 0x0 && locator.address[13] == 0x0 &&
-            locator.address[14] == 0x0 && locator.address[15] == 0x0)
+    if (locator.is_Any())
     {
         std::vector<IPFinder::info_IP> locNames;
         GetIP4s(locNames);
         for (const auto& infoIP : locNames)
         {
             Locator_t newloc(locator);
-            newloc.set_IP4_address(infoIP.locator.address[12], infoIP.locator.address[13],
-                    infoIP.locator.address[14], infoIP.locator.address[15]);
+            newloc.set_IP4_address(infoIP.locator);
             list.push_back(newloc);
         }
     }
@@ -662,12 +660,13 @@ LocatorList_t UDPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                     auto localInterface = currentInterfaces.begin();
                     for (; localInterface != currentInterfaces.end(); ++localInterface)
                     {
-                        if(memcmp(&localInterface->locator.address[12], &it->address[12], 4) == 0)
+                        //if(memcmp(&localInterface->locator.address[12], &it->address[12], 4) == 0)
+                        if(localInterface->locator.compare_IP4_address(*it))
                         {
                             // Loopback locator
                             Locator_t loopbackLocator;
                             loopbackLocator.set_IP4_address(127, 0, 0, 1);
-                            loopbackLocator.port = it->port;
+                            loopbackLocator.set_port(it->get_port());
                             pendingUnicast.push_back(loopbackLocator);
                             break;
                         }
@@ -709,17 +708,11 @@ bool UDPv4Transport::is_local_locator(const Locator_t& locator) const
 {
     assert(locator.kind == LOCATOR_KIND_UDPv4);
 
-    if(locator.address[12] == 127 &&
-            locator.address[13] == 0 &&
-            locator.address[14] == 0 &&
-            locator.address[15] == 1)
+    if(locator.is_IP4_Local())
         return true;
 
     for(auto localInterface : currentInterfaces)
-        if(locator.address[12] == localInterface.locator.address[12] &&
-            locator.address[13] == localInterface.locator.address[13] &&
-            locator.address[14] == localInterface.locator.address[14] &&
-            locator.address[15] == localInterface.locator.address[15])
+        if(locator.compare_IP4_address(localInterface.locator))
         {
             return true;
         }

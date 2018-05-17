@@ -293,13 +293,17 @@ class ParameterProtocolVersion_t: public Parameter_t {
 class ParameterVendorId_t:public Parameter_t{
     public:
         rtps::VendorId_t vendorId;
-        ParameterVendorId_t(){rtps::set_VendorId_eProsima(vendorId);};
+        ParameterVendorId_t() : vendorId(rtps::c_VendorId_eProsima) {}
+        //{rtps::set_VendorId_eProsima(vendorId);};
         /**
          * Constructor using a parameter PID and the parameter length
          * @param pid Pid of the parameter
          * @param in_length Its associated length
          */
-        ParameterVendorId_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){ rtps::set_VendorId_eProsima(vendorId);};
+        ParameterVendorId_t(ParameterId_t pid,uint16_t in_length) :
+              Parameter_t(pid,in_length)
+            , vendorId(rtps::c_VendorId_eProsima) {}
+        //{ rtps::set_VendorId_eProsima(vendorId);};
         /**
          * Add the parameter to a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message where the parameter should be added.

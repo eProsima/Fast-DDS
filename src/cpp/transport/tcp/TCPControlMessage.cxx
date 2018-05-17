@@ -24,7 +24,8 @@
 namespace { char dummy; }
 #endif
 
-#include "TCPControlMessage.h"
+#include <fastrtps/transport/tcp/TCPControlMessage.h>
+#include <fastrtps/rtps/common/Types.h>
 
 #include <fastcdr/Cdr.h>
 
@@ -33,8 +34,11 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
+namespace eprosima{
+namespace fastrtps{
+namespace rtps{
 
-ConnectionRequest_t::ConnectionRequest_t() : m_vendorId(c_VendorId_eProsima);
+ConnectionRequest_t::ConnectionRequest_t() : m_vendorId(c_VendorId_eProsima)
 {
 }
 
@@ -42,17 +46,15 @@ ConnectionRequest_t::~ConnectionRequest_t()
 {
 }
 
-ConnectionRequest_t::ConnectionRequest_t(const ConnectionRequest_t &x)
+ConnectionRequest_t::ConnectionRequest_t(const ConnectionRequest_t &x) : m_vendorId(x.m_vendorId)
 {
     m_protocolVersion = x.m_protocolVersion;
-    m_vendorId = x.m_vendorId;
     m_transportLocator = x.m_transportLocator;
 }
 
-ConnectionRequest_t::ConnectionRequest_t(ConnectionRequest_t &&x)
+ConnectionRequest_t::ConnectionRequest_t(ConnectionRequest_t &&x) : m_vendorId(x.m_vendorId)
 {
     m_protocolVersion = x.m_protocolVersion;
-    m_vendorId = x.m_vendorId;
     m_transportLocator = x.m_transportLocator;
 }
 
@@ -455,7 +457,7 @@ void LogicalPortIsClosedRequest_t::serializeKey(eprosima::fastcdr::Cdr &scdr) co
 }
 RequestData::RequestData()
 {
-    m__d = ::BIND_CONNECTION;
+    m__d = BIND_CONNECTION;
 
 
 
@@ -473,19 +475,19 @@ RequestData::RequestData(const RequestData &x)
     
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         m_connectionRequest = x.m_connectionRequest;
         break;
-        case ::OPEN_LOGICAL_PORT:
+        case OPEN_LOGICAL_PORT:
         m_openLogicalPortRequest = x.m_openLogicalPortRequest;
         break;
-        case ::CHECK_LOGICAL_PORT:
+        case CHECK_LOGICAL_PORT:
         m_checkLogicalPortsRequest = x.m_checkLogicalPortsRequest;
         break;
-        case ::KEEP_ALIVE:
+        case KEEP_ALIVE:
         m_keepAliveRequest = x.m_keepAliveRequest;
         break;
-        case ::LOGICAL_PORT_IS_CLOSED:
+        case LOGICAL_PORT_IS_CLOSED:
         m_logicalPortIsClosedRequest = x.m_logicalPortIsClosedRequest;
         break;
         default:
@@ -499,19 +501,19 @@ RequestData::RequestData(RequestData &&x)
     
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         m_connectionRequest = std::move(x.m_connectionRequest);
         break;
-        case ::OPEN_LOGICAL_PORT:
+        case OPEN_LOGICAL_PORT:
         m_openLogicalPortRequest = std::move(x.m_openLogicalPortRequest);
         break;
-        case ::CHECK_LOGICAL_PORT:
+        case CHECK_LOGICAL_PORT:
         m_checkLogicalPortsRequest = std::move(x.m_checkLogicalPortsRequest);
         break;
-        case ::KEEP_ALIVE:
+        case KEEP_ALIVE:
         m_keepAliveRequest = std::move(x.m_keepAliveRequest);
         break;
-        case ::LOGICAL_PORT_IS_CLOSED:
+        case LOGICAL_PORT_IS_CLOSED:
         m_logicalPortIsClosedRequest = std::move(x.m_logicalPortIsClosedRequest);
         break;
         default:
@@ -525,19 +527,19 @@ RequestData& RequestData::operator=(const RequestData &x)
     
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         m_connectionRequest = x.m_connectionRequest;
         break;
-        case ::OPEN_LOGICAL_PORT:
+        case OPEN_LOGICAL_PORT:
         m_openLogicalPortRequest = x.m_openLogicalPortRequest;
         break;
-        case ::CHECK_LOGICAL_PORT:
+        case CHECK_LOGICAL_PORT:
         m_checkLogicalPortsRequest = x.m_checkLogicalPortsRequest;
         break;
-        case ::KEEP_ALIVE:
+        case KEEP_ALIVE:
         m_keepAliveRequest = x.m_keepAliveRequest;
         break;
-        case ::LOGICAL_PORT_IS_CLOSED:
+        case LOGICAL_PORT_IS_CLOSED:
         m_logicalPortIsClosedRequest = x.m_logicalPortIsClosedRequest;
         break;
         default:
@@ -553,19 +555,19 @@ RequestData& RequestData::operator=(RequestData &&x)
     
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         m_connectionRequest = std::move(x.m_connectionRequest);
         break;
-        case ::OPEN_LOGICAL_PORT:
+        case OPEN_LOGICAL_PORT:
         m_openLogicalPortRequest = std::move(x.m_openLogicalPortRequest);
         break;
-        case ::CHECK_LOGICAL_PORT:
+        case CHECK_LOGICAL_PORT:
         m_checkLogicalPortsRequest = std::move(x.m_checkLogicalPortsRequest);
         break;
-        case ::KEEP_ALIVE:
+        case KEEP_ALIVE:
         m_keepAliveRequest = std::move(x.m_keepAliveRequest);
         break;
-        case ::LOGICAL_PORT_IS_CLOSED:
+        case LOGICAL_PORT_IS_CLOSED:
         m_logicalPortIsClosedRequest = std::move(x.m_logicalPortIsClosedRequest);
         break;
         default:
@@ -581,50 +583,50 @@ void RequestData::_d(TCPCommonKind __d)
     
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         switch(__d)
         {
-            case ::BIND_CONNECTION:
+            case BIND_CONNECTION:
             b = true;
             break;
             default:
             break;
         }
         break;
-        case ::OPEN_LOGICAL_PORT:
+        case OPEN_LOGICAL_PORT:
         switch(__d)
         {
-            case ::OPEN_LOGICAL_PORT:
+            case OPEN_LOGICAL_PORT:
             b = true;
             break;
             default:
             break;
         }
         break;
-        case ::CHECK_LOGICAL_PORT:
+        case CHECK_LOGICAL_PORT:
         switch(__d)
         {
-            case ::CHECK_LOGICAL_PORT:
+            case CHECK_LOGICAL_PORT:
             b = true;
             break;
             default:
             break;
         }
         break;
-        case ::KEEP_ALIVE:
+        case KEEP_ALIVE:
         switch(__d)
         {
-            case ::KEEP_ALIVE:
+            case KEEP_ALIVE:
             b = true;
             break;
             default:
             break;
         }
         break;
-        case ::LOGICAL_PORT_IS_CLOSED:
+        case LOGICAL_PORT_IS_CLOSED:
         switch(__d)
         {
-            case ::LOGICAL_PORT_IS_CLOSED:
+            case LOGICAL_PORT_IS_CLOSED:
             b = true;
             break;
             default:
@@ -651,13 +653,13 @@ TCPCommonKind& RequestData::_d()
 void RequestData::connectionRequest(const ConnectionRequest_t &_connectionRequest)
 {
     m_connectionRequest = _connectionRequest;
-    m__d = ::BIND_CONNECTION;
+    m__d = BIND_CONNECTION;
 }
 
 void RequestData::connectionRequest(ConnectionRequest_t &&_connectionRequest)
 {
     m_connectionRequest = std::move(_connectionRequest);
-    m__d = ::BIND_CONNECTION;
+    m__d = BIND_CONNECTION;
 }
 
 const ConnectionRequest_t& RequestData::connectionRequest() const
@@ -666,7 +668,7 @@ const ConnectionRequest_t& RequestData::connectionRequest() const
         
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         b = true;
         break;
         default:
@@ -683,7 +685,7 @@ ConnectionRequest_t& RequestData::connectionRequest()
         
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         b = true;
         break;
         default:
@@ -696,13 +698,13 @@ ConnectionRequest_t& RequestData::connectionRequest()
 void RequestData::openLogicalPortRequest(const OpenLogicalPortRequest_t &_openLogicalPortRequest)
 {
     m_openLogicalPortRequest = _openLogicalPortRequest;
-    m__d = ::OPEN_LOGICAL_PORT;
+    m__d = OPEN_LOGICAL_PORT;
 }
 
 void RequestData::openLogicalPortRequest(OpenLogicalPortRequest_t &&_openLogicalPortRequest)
 {
     m_openLogicalPortRequest = std::move(_openLogicalPortRequest);
-    m__d = ::OPEN_LOGICAL_PORT;
+    m__d = OPEN_LOGICAL_PORT;
 }
 
 const OpenLogicalPortRequest_t& RequestData::openLogicalPortRequest() const
@@ -711,7 +713,7 @@ const OpenLogicalPortRequest_t& RequestData::openLogicalPortRequest() const
         
     switch(m__d)
     {
-        case ::OPEN_LOGICAL_PORT:
+        case OPEN_LOGICAL_PORT:
         b = true;
         break;
         default:
@@ -728,7 +730,7 @@ OpenLogicalPortRequest_t& RequestData::openLogicalPortRequest()
         
     switch(m__d)
     {
-        case ::OPEN_LOGICAL_PORT:
+        case OPEN_LOGICAL_PORT:
         b = true;
         break;
         default:
@@ -741,13 +743,13 @@ OpenLogicalPortRequest_t& RequestData::openLogicalPortRequest()
 void RequestData::checkLogicalPortsRequest(const CheckLogicalPortsRequest_t &_checkLogicalPortsRequest)
 {
     m_checkLogicalPortsRequest = _checkLogicalPortsRequest;
-    m__d = ::CHECK_LOGICAL_PORT;
+    m__d = CHECK_LOGICAL_PORT;
 }
 
 void RequestData::checkLogicalPortsRequest(CheckLogicalPortsRequest_t &&_checkLogicalPortsRequest)
 {
     m_checkLogicalPortsRequest = std::move(_checkLogicalPortsRequest);
-    m__d = ::CHECK_LOGICAL_PORT;
+    m__d = CHECK_LOGICAL_PORT;
 }
 
 const CheckLogicalPortsRequest_t& RequestData::checkLogicalPortsRequest() const
@@ -756,7 +758,7 @@ const CheckLogicalPortsRequest_t& RequestData::checkLogicalPortsRequest() const
         
     switch(m__d)
     {
-        case ::CHECK_LOGICAL_PORT:
+        case CHECK_LOGICAL_PORT:
         b = true;
         break;
         default:
@@ -773,7 +775,7 @@ CheckLogicalPortsRequest_t& RequestData::checkLogicalPortsRequest()
         
     switch(m__d)
     {
-        case ::CHECK_LOGICAL_PORT:
+        case CHECK_LOGICAL_PORT:
         b = true;
         break;
         default:
@@ -786,13 +788,13 @@ CheckLogicalPortsRequest_t& RequestData::checkLogicalPortsRequest()
 void RequestData::keepAliveRequest(const KeepAliveRequest_t &_keepAliveRequest)
 {
     m_keepAliveRequest = _keepAliveRequest;
-    m__d = ::KEEP_ALIVE;
+    m__d = KEEP_ALIVE;
 }
 
 void RequestData::keepAliveRequest(KeepAliveRequest_t &&_keepAliveRequest)
 {
     m_keepAliveRequest = std::move(_keepAliveRequest);
-    m__d = ::KEEP_ALIVE;
+    m__d = KEEP_ALIVE;
 }
 
 const KeepAliveRequest_t& RequestData::keepAliveRequest() const
@@ -801,7 +803,7 @@ const KeepAliveRequest_t& RequestData::keepAliveRequest() const
         
     switch(m__d)
     {
-        case ::KEEP_ALIVE:
+        case KEEP_ALIVE:
         b = true;
         break;
         default:
@@ -818,7 +820,7 @@ KeepAliveRequest_t& RequestData::keepAliveRequest()
         
     switch(m__d)
     {
-        case ::KEEP_ALIVE:
+        case KEEP_ALIVE:
         b = true;
         break;
         default:
@@ -831,13 +833,13 @@ KeepAliveRequest_t& RequestData::keepAliveRequest()
 void RequestData::logicalPortIsClosedRequest(const LogicalPortIsClosedRequest_t &_logicalPortIsClosedRequest)
 {
     m_logicalPortIsClosedRequest = _logicalPortIsClosedRequest;
-    m__d = ::LOGICAL_PORT_IS_CLOSED;
+    m__d = LOGICAL_PORT_IS_CLOSED;
 }
 
 void RequestData::logicalPortIsClosedRequest(LogicalPortIsClosedRequest_t &&_logicalPortIsClosedRequest)
 {
     m_logicalPortIsClosedRequest = std::move(_logicalPortIsClosedRequest);
-    m__d = ::LOGICAL_PORT_IS_CLOSED;
+    m__d = LOGICAL_PORT_IS_CLOSED;
 }
 
 const LogicalPortIsClosedRequest_t& RequestData::logicalPortIsClosedRequest() const
@@ -846,7 +848,7 @@ const LogicalPortIsClosedRequest_t& RequestData::logicalPortIsClosedRequest() co
         
     switch(m__d)
     {
-        case ::LOGICAL_PORT_IS_CLOSED:
+        case LOGICAL_PORT_IS_CLOSED:
         b = true;
         break;
         default:
@@ -863,7 +865,7 @@ LogicalPortIsClosedRequest_t& RequestData::logicalPortIsClosedRequest()
         
     switch(m__d)
     {
-        case ::LOGICAL_PORT_IS_CLOSED:
+        case LOGICAL_PORT_IS_CLOSED:
         b = true;
         break;
         default:
@@ -936,19 +938,19 @@ size_t RequestData::getCdrSerializedSize(const RequestData& data, size_t current
 
     switch(data.m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         current_alignment += ConnectionRequest_t::getCdrSerializedSize(data.connectionRequest(), current_alignment);
         break;
-        case ::OPEN_LOGICAL_PORT:
+        case OPEN_LOGICAL_PORT:
         current_alignment += OpenLogicalPortRequest_t::getCdrSerializedSize(data.openLogicalPortRequest(), current_alignment);
         break;
-        case ::CHECK_LOGICAL_PORT:
+        case CHECK_LOGICAL_PORT:
         current_alignment += CheckLogicalPortsRequest_t::getCdrSerializedSize(data.checkLogicalPortsRequest(), current_alignment);
         break;
-        case ::KEEP_ALIVE:
+        case KEEP_ALIVE:
         current_alignment += KeepAliveRequest_t::getCdrSerializedSize(data.keepAliveRequest(), current_alignment);
         break;
-        case ::LOGICAL_PORT_IS_CLOSED:
+        case LOGICAL_PORT_IS_CLOSED:
         current_alignment += LogicalPortIsClosedRequest_t::getCdrSerializedSize(data.logicalPortIsClosedRequest(), current_alignment);
         break;
         default:
@@ -964,19 +966,19 @@ void RequestData::serialize(eprosima::fastcdr::Cdr &scdr) const
 
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         scdr << m_connectionRequest;
         break;
-        case ::OPEN_LOGICAL_PORT:
+        case OPEN_LOGICAL_PORT:
         scdr << m_openLogicalPortRequest;
         break;
-        case ::CHECK_LOGICAL_PORT:
+        case CHECK_LOGICAL_PORT:
         scdr << m_checkLogicalPortsRequest;
         break;
-        case ::KEEP_ALIVE:
+        case KEEP_ALIVE:
         scdr << m_keepAliveRequest;
         break;
-        case ::LOGICAL_PORT_IS_CLOSED:
+        case LOGICAL_PORT_IS_CLOSED:
         scdr << m_logicalPortIsClosedRequest;
         break;
         default:
@@ -990,19 +992,19 @@ void RequestData::deserialize(eprosima::fastcdr::Cdr &dcdr)
 
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         dcdr >> m_connectionRequest;
         break;
-        case ::OPEN_LOGICAL_PORT:
+        case OPEN_LOGICAL_PORT:
         dcdr >> m_openLogicalPortRequest;
         break;
-        case ::CHECK_LOGICAL_PORT:
+        case CHECK_LOGICAL_PORT:
         dcdr >> m_checkLogicalPortsRequest;
         break;
-        case ::KEEP_ALIVE:
+        case KEEP_ALIVE:
         dcdr >> m_keepAliveRequest;
         break;
-        case ::LOGICAL_PORT_IS_CLOSED:
+        case LOGICAL_PORT_IS_CLOSED:
         dcdr >> m_logicalPortIsClosedRequest;
         break;
         default:
@@ -1251,7 +1253,7 @@ void CheckLogicalPortsResponse_t::serializeKey(eprosima::fastcdr::Cdr &scdr) con
 }
 ResponseData::ResponseData()
 {
-    m__d = ::BIND_CONNECTION;
+    m__d = BIND_CONNECTION;
 }
 
 ResponseData::~ResponseData()
@@ -1264,7 +1266,7 @@ ResponseData::ResponseData(const ResponseData &x)
     
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         m_bindConnectionResponse = x.m_bindConnectionResponse;
         break;
         default:
@@ -1278,7 +1280,7 @@ ResponseData::ResponseData(ResponseData &&x)
     
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         m_bindConnectionResponse = std::move(x.m_bindConnectionResponse);
         break;
         default:
@@ -1292,7 +1294,7 @@ ResponseData& ResponseData::operator=(const ResponseData &x)
     
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         m_bindConnectionResponse = x.m_bindConnectionResponse;
         break;
         default:
@@ -1308,7 +1310,7 @@ ResponseData& ResponseData::operator=(ResponseData &&x)
     
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         m_bindConnectionResponse = std::move(x.m_bindConnectionResponse);
         break;
         default:
@@ -1324,10 +1326,10 @@ void ResponseData::_d(TCPCommonKind __d)
     
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         switch(__d)
         {
-            case ::BIND_CONNECTION:
+            case BIND_CONNECTION:
             b = true;
             break;
             default:
@@ -1354,13 +1356,13 @@ TCPCommonKind& ResponseData::_d()
 void ResponseData::bindConnectionResponse(const BindConnectionResponse_t &_bindConnectionResponse)
 {
     m_bindConnectionResponse = _bindConnectionResponse;
-    m__d = ::BIND_CONNECTION;
+    m__d = BIND_CONNECTION;
 }
 
 void ResponseData::bindConnectionResponse(BindConnectionResponse_t &&_bindConnectionResponse)
 {
     m_bindConnectionResponse = std::move(_bindConnectionResponse);
-    m__d = ::BIND_CONNECTION;
+    m__d = BIND_CONNECTION;
 }
 
 const BindConnectionResponse_t& ResponseData::bindConnectionResponse() const
@@ -1369,7 +1371,7 @@ const BindConnectionResponse_t& ResponseData::bindConnectionResponse() const
         
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         b = true;
         break;
         default:
@@ -1386,7 +1388,7 @@ BindConnectionResponse_t& ResponseData::bindConnectionResponse()
         
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         b = true;
         break;
         default:
@@ -1427,7 +1429,7 @@ size_t ResponseData::getCdrSerializedSize(const ResponseData& data, size_t curre
 
     switch(data.m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         current_alignment += BindConnectionResponse_t::getCdrSerializedSize(data.bindConnectionResponse(), current_alignment);
         break;
         default:
@@ -1443,7 +1445,7 @@ void ResponseData::serialize(eprosima::fastcdr::Cdr &scdr) const
 
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         scdr << m_bindConnectionResponse;
         break;
         default:
@@ -1457,7 +1459,7 @@ void ResponseData::deserialize(eprosima::fastcdr::Cdr &dcdr)
 
     switch(m__d)
     {
-        case ::BIND_CONNECTION:
+        case BIND_CONNECTION:
         dcdr >> m_bindConnectionResponse;
         break;
         default:
@@ -1468,7 +1470,7 @@ void ResponseData::deserialize(eprosima::fastcdr::Cdr &dcdr)
 
 ControlProtocolResponseData::ControlProtocolResponseData()
 {
-    m_responseCode = ::RETCODE_OK;
+    m_responseCode = RETCODE_OK;
 
 }
 
@@ -1558,3 +1560,7 @@ void ControlProtocolResponseData::serializeKey(eprosima::fastcdr::Cdr &scdr) con
 	 
 	 
 }
+
+}
+}
+} // Namespaces

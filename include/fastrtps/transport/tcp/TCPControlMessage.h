@@ -24,13 +24,7 @@
 
 // TODO Poner en el contexto.
 
-#include <stdint.h>
-#include <array>
-#include <string>
-#include <vector>
-#include <fastrtps/rtps/common/Types.h>
-#include "../TransportInterface.h"
-#include "../TCPv4TransportDescriptor.h"
+#include <fastrtps/rtps/common/Locator.h>
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -80,7 +74,7 @@ enum TCPCommonKind : uint32_t
     CHECK_LOGICAL_PORT,
     KEEP_ALIVE,
     UNBIND_CONNECTION,
-    LOGICAL_PORT_IS_OPEN
+    LOGICAL_PORT_IS_CLOSED
 };
 /*!
  * @brief This class represents the structure ConnectionRequest_t defined by the user in the IDL file.

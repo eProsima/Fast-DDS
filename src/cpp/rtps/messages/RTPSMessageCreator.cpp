@@ -71,8 +71,7 @@ bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPre
 {
     ProtocolVersion_t prot;
     prot = c_ProtocolVersion;
-    VendorId_t vend;
-    set_VendorId_eProsima(vend);
+    VendorId_t vend(c_VendorId_eProsima);
     return RTPSMessageCreator::addHeader(msg,guidPrefix,prot,vend);
 }
 
