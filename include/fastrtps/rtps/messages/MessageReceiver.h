@@ -34,6 +34,7 @@ namespace rtps {
 class RTPSWriter;
 class RTPSReader;
 struct SubmessageHeader_t;
+class ReceiverResource;
 
 /**
  * Class MessageReceiver, process the received messages.
@@ -45,8 +46,8 @@ class MessageReceiver
         /**
          * @param rec_buffer_size
          */
-        MessageReceiver(RTPSParticipantImpl* participant, uint32_t rec_buffer_size);
-        MessageReceiver(RTPSParticipantImpl* participant);
+        MessageReceiver(RTPSParticipantImpl* participant, ReceiverResource* receiverResource, uint32_t rec_buffer_size);
+        MessageReceiver(RTPSParticipantImpl* participant, ReceiverResource* receiverResource_);
         virtual ~MessageReceiver();
         //!Reset the MessageReceiver to process a new message.
         void reset();
@@ -74,13 +75,8 @@ class MessageReceiver
 #endif
         //!PArameter list
         ParameterList_t m_ParamList;
-        // Functions to associate/remove associatedendpoints
-        void associateEndpoint(Endpoint *to_add);
-        void removeEndpoint(Endpoint *to_remove);
 
     private:
-        std::vector<RTPSWriter *> AssociatedWriters;
-        std::vector<RTPSReader *> AssociatedReaders;
         std::mutex mtx;
         //!Protocol version of the message
         ProtocolVersion_t sourceVersion;
@@ -152,6 +148,7 @@ class MessageReceiver
         bool proc_Submsg_SecureSubMessage(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 
         RTPSParticipantImpl* participant_;
+        ReceiverResource* receiverResource_;
 };
 }
 } /* namespace rtps */

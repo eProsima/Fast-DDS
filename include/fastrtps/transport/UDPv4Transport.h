@@ -89,7 +89,7 @@ public:
     * Starts listening on the specified port, and if the specified address is in the
     * multicast range, it joins the specified multicast group,
     */
-   virtual bool OpenInputChannel(const Locator_t&, std::shared_ptr<MessageReceiver>) override;
+   virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*) override;
 
    /**
     * Opens a socket on the given address and port (as long as they are white listed).
@@ -162,7 +162,7 @@ protected:
    std::vector<asio::ip::address_v4> mInterfaceWhiteList;
 
    bool OpenAndBindOutputSockets(Locator_t& locator);
-   bool OpenAndBindInputSockets(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver, bool is_multicast);
+   bool OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource, bool is_multicast);
 
    eProsimaUDPSocket OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint16_t& port);
    eProsimaUDPSocket OpenAndBindInputSocket(uint16_t port, bool is_multicast);

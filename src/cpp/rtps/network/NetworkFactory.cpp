@@ -46,9 +46,8 @@ vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local)
     return newSenderResources;
 }
 
-bool NetworkFactory::BuildReceiverResources (const Locator_t& local, 
-            std::shared_ptr<MessageReceiver> newMsgReceiver,
-            std::vector<ReceiverResource>& returned_resources_list)
+bool NetworkFactory::BuildReceiverResources (const Locator_t& local, RTPSParticipantImpl* participant,
+    uint32_t maxMsgSize, std::vector<ReceiverResource>& returned_resources_list)
 {
     bool returnedValue = false;
 
@@ -58,7 +57,7 @@ bool NetworkFactory::BuildReceiverResources (const Locator_t& local,
         {
             if(!transport->IsInputChannelOpen(local))
             {
-                ReceiverResource newReceiverResource(*transport, local, newMsgReceiver);
+                ReceiverResource newReceiverResource(participant, *transport, local, maxMsgSize);
                 if(newReceiverResource.mValid)
                 {
                     returned_resources_list.push_back(std::move(newReceiverResource));
@@ -175,7 +174,7 @@ size_t NetworkFactory::numberOfRegisteredTransports() const
     return mRegisteredTransports.size();
 }
 
-bool NetworkFactory::generate_locators(uint16_t physical_port, int locator_kind, 
+bool NetworkFactory::generate_locators(uint16_t physical_port, int locator_kind,
         LocatorList_t &ret_locators)
 {
     IPFinder ipf;

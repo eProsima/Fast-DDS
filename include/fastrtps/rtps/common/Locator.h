@@ -136,7 +136,8 @@ class RTPS_DllAPI Locator_t
 
         bool set_logical_port(uint16_t rtps_port)
         {
-            return (this->ports_.logical_port = rtps_port);
+            this->ports_.logical_port = rtps_port;
+            return (rtps_port != 0);
         }
 
         uint32_t get_port() const
@@ -263,7 +264,7 @@ class RTPS_DllAPI Locator_t
         std::string to_IP4_string() const {
             std::stringstream ss;
             // ss << (int)address[12] << "." << (int)address[13] << "." << (int)address[14]<< "." << (int)address[15];
-            ss << (int)addresses_.ip_address[0] << "." << (int)addresses_.ip_address[1] 
+            ss << (int)addresses_.ip_address[0] << "." << (int)addresses_.ip_address[1]
                 << "." << (int)addresses_.ip_address[2]<< "." << (int)addresses_.ip_address[3];
             return ss.str();
         }
@@ -272,7 +273,7 @@ class RTPS_DllAPI Locator_t
             if (kind == LOCATOR_KIND_UDPv4) return "";
             std::stringstream ss;
             //ss << (int)address[11] << "." << (int)address[10] << "." << (int)address[9]<< "." << (int)address[8];
-            ss << (int)addresses_.wan_address[0] << "." << (int)addresses_.wan_address[1] 
+            ss << (int)addresses_.wan_address[0] << "." << (int)addresses_.wan_address[1]
                 << "." << (int)addresses_.wan_address[2]<< "." << (int)addresses_.wan_address[3];
             return ss.str();
         }
@@ -403,11 +404,11 @@ class RTPS_DllAPI Locator_t
             }
 
             //FOUND a . in the last element (MAP TO IP4 address)
-            if ((hexdigits.end() - 1)->find('.') != std::string::npos) 
+            if ((hexdigits.end() - 1)->find('.') != std::string::npos)
             {
                 return false;
             }
-            
+
             *(hexdigits.end() - 1) = (hexdigits.end() - 1)->substr(0, (hexdigits.end() - 1)->find('%'));
 
             int auxnumber = 0;
@@ -502,9 +503,9 @@ class RTPS_DllAPI Locator_t
 
         bool is_IP4_Local() const
         {
-            return (addresses_.ip_address[0] == 127 
-                 && addresses_.ip_address[1] == 0 
-                 && addresses_.ip_address[2] == 0 
+            return (addresses_.ip_address[0] == 127
+                 && addresses_.ip_address[1] == 0
+                 && addresses_.ip_address[2] == 0
                  && addresses_.ip_address[3] == 1);
         }
 
@@ -512,7 +513,7 @@ class RTPS_DllAPI Locator_t
         {
             // Tal y como se calculaba antes... un poco optimista creo.
             // return (address[0] == 0 && address[1] == 0);
-            return  address[0] == 0 && address[1] == 0 && address[2] == 0 && address[3] == 0 && 
+            return  address[0] == 0 && address[1] == 0 && address[2] == 0 && address[3] == 0 &&
                     address[4] == 0 && address[5] == 0 && address[6] == 0 && address[7] == 0 &&
                     address[8] == 0 && address[9] == 0 && address[10] == 0 && address[11] == 0 &&
                     address[12] == 0 && address[13] == 0 && address[14] == 0 && address[15] == 1;
@@ -668,7 +669,7 @@ inline std::ostream& operator<<(std::ostream& output,const Locator_t& loc)
     if(loc.kind == LOCATOR_KIND_UDPv4 || loc.kind == LOCATOR_KIND_TCPv4)
     {
         //output<<(int)loc.address[12] << "." << (int)loc.address[13] << "." << (int)loc.address[14]<< "." << (int)loc.address[15]<<":"<<loc.port;
-        output<<(int)loc.addresses_.ip_address[0] << "." << (int)loc.addresses_.ip_address[1] 
+        output<<(int)loc.addresses_.ip_address[0] << "." << (int)loc.addresses_.ip_address[1]
             << "." << (int)loc.addresses_.ip_address[2]<< "." << (int)loc.addresses_.ip_address[3]
             <<":"<<loc.ports_.physical_port;
     }

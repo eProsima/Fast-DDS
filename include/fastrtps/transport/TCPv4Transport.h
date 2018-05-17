@@ -40,12 +40,16 @@ class TCPAcceptor
 public:
 	asio::ip::tcp::acceptor m_acceptor;
     Locator_t m_locator;
-    std::shared_ptr<MessageReceiver> m_msgReceiver;
 	uint32_t m_receiveBufferSize;
+    std::function<std::shared_ptr<MessageReceiver>()> m_acceptCallback;
 
-    TCPAcceptor(asio::io_service& io_service, const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver,
+    TCPAcceptor(asio::io_service& io_service, const Locator_t& locator, ReceiverResource* receiverResource,
         uint32_t receiveBufferSize);
 
+    ~TCPAcceptor()
+    {
+        m_acceptCallback = nullptr;
+    }
 	void Accept(TCPv4Transport* parent);
 };
 
@@ -121,7 +125,7 @@ public:
     * Starts listening on the specified port, and if the specified address is in the
     * multicast range, it joins the specified multicast group,
     */
-   virtual bool OpenInputChannel(const Locator_t&, std::shared_ptr<MessageReceiver>) override;
+   virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*) override;
 
    /**
     * Opens a socket on the given address and port (as long as they are white listed).
@@ -163,8 +167,7 @@ public:
 
    TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
 
-   void SocketAccepted(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver,
-       uint32_t receiveBufferSize, const asio::error_code& error, asio::ip::tcp::socket s);
+   void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket s);
    void SocketConnected(uint16_t logical_port, uint32_t sendBufferSize, const asio::error_code& error);
 protected:
 
@@ -198,13 +201,16 @@ protected:
    bool OpenAndBindOutputSockets(Locator_t& locator);
    void OpenAndBindUnicastOutputSocket(const asio::ip::address_v4&, uint16_t logical_port, uint16_t tcp_port);
 
-   bool OpenAndBindInputSockets(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver);
+   bool OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource);
 
    /** Function to be called from a new thread, which takes cares of performing a blocking receive
    operation on the ReceiveResource
    @param input_locator - Locator that triggered the creation of the resource
    */
    void performListenOperation(TCPSocketInfo* pSocketInfo, Locator_t input_locator);
+
+   bool DataReceived(TCPHeader& header, octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
+       Semaphore* semaphore, TCPSocketInfo* pSocketInfo, bool& bSuccess, const asio::error_code& error, std::size_t bytes_transferred);
 
    bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
        TCPSocketInfo& socket);

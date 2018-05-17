@@ -20,6 +20,7 @@
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include <fastrtps/utils/eClock.h>
 #include "asio.hpp"
+#include <fastrtps/rtps/network/ReceiverResource.h>
 
 using namespace std;
 using namespace asio;
@@ -43,19 +44,19 @@ static asio::ip::address_v4::bytes_type locatorToNative(Locator_t& locator)
         locator.get_IP4_address()[1], locator.get_IP4_address()[2], locator.get_IP4_address()[3]} };
 }
 
-TCPAcceptor::TCPAcceptor(asio::io_service& io_service, const Locator_t& locator,
-    std::shared_ptr<MessageReceiver> msgReceiver, uint32_t receiveBufferSize)
+TCPAcceptor::TCPAcceptor(asio::io_service& io_service, const Locator_t& locator, ReceiverResource* receiverResource,
+    uint32_t receiveBufferSize)
     : m_acceptor(io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), locator.get_physical_port()))
     , m_locator(locator)
-    , m_msgReceiver(msgReceiver)
     , m_receiveBufferSize(receiveBufferSize)
 {
+    m_acceptCallback = std::bind(&ReceiverResource::CreateMessageReceiver, receiverResource);
 }
 
 void TCPAcceptor::Accept(TCPv4Transport* parent)
 {
-    m_acceptor.async_accept(std::bind(&TCPv4Transport::SocketAccepted, parent, m_locator, m_msgReceiver,
-        m_receiveBufferSize, std::placeholders::_1, std::placeholders::_2));
+    m_acceptor.async_accept(std::bind(&TCPv4Transport::SocketAccepted, parent, this, std::placeholders::_1,
+        std::placeholders::_2));
 }
 
 #if defined(ASIO_HAS_MOVE)
@@ -227,8 +228,8 @@ bool TCPv4Transport::init()
 bool TCPv4Transport::IsInputChannelOpen(const Locator_t& locator) const
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-    return IsLocatorSupported(locator) && (mInputSockets.find(locator.get_port()) != mInputSockets.end() ||
-        (mPendingInputSockets.find(locator.get_port()) != mPendingInputSockets.end()));
+    return IsLocatorSupported(locator) && (mInputSockets.find(locator.get_physical_port()) != mInputSockets.end() ||
+        (mPendingInputSockets.find(locator.get_physical_port()) != mPendingInputSockets.end()));
 }
 
 bool TCPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
@@ -254,7 +255,7 @@ bool TCPv4Transport::OpenOutputChannel(Locator_t& locator)
     return success;
 }
 
-bool TCPv4Transport::OpenInputChannel(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver)
+bool TCPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource* receiverResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
     if (!IsLocatorSupported(locator))
@@ -262,7 +263,7 @@ bool TCPv4Transport::OpenInputChannel(const Locator_t& locator, std::shared_ptr<
 
     bool success = false;
     if (!IsInputChannelOpen(locator))
-        success = OpenAndBindInputSockets(locator, msgReceiver);
+        success = OpenAndBindInputSockets(locator, receiverResource);
 
     return success;
 }
@@ -300,22 +301,22 @@ bool TCPv4Transport::CloseOutputChannel(const Locator_t& locator)
 bool TCPv4Transport::CloseInputChannel(const Locator_t& locator)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-    if (mPendingInputSockets.find(locator.get_port()) != mPendingInputSockets.end())
+    if (mPendingInputSockets.find(locator.get_physical_port()) != mPendingInputSockets.end())
     {
-        mPendingInputSockets.erase(locator.get_port());
+        mPendingInputSockets.erase(locator.get_physical_port());
         return true;
     }
     else if (IsInputChannelOpen(locator))
     {
-        auto& sockets = mInputSockets.at(locator.get_port());
-        for (unsigned int i = 0; i < sockets.size(); ++i)
+        auto& sockets = mInputSockets.at(locator.get_physical_port());
+        for (uint32_t i = 0; i < sockets.size(); ++i)
         {
             sockets[i]->getSocket()->cancel();
             sockets[i]->getSocket()->close();
             delete sockets[i];
         }
 
-        mInputSockets.erase(locator.get_port());
+        mInputSockets.erase(locator.get_physical_port());
         return true;
     }
     return false;
@@ -351,15 +352,15 @@ bool TCPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
     return true;
 }
 
-bool TCPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver)
+bool TCPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
     try
     {
-        std::shared_ptr<TCPAcceptor> newAccepter = std::make_shared<TCPAcceptor>(mService,
-            locator, msgReceiver, mReceiveBufferSize);
-        mPendingInputSockets.insert(std::make_pair(locator.get_physical_port(), newAccepter));
-        newAccepter->Accept(this);
+        std::shared_ptr<TCPAcceptor> newAcceptor = std::make_shared<TCPAcceptor>(mService,
+            locator, receiverResource, mReceiveBufferSize);
+        mPendingInputSockets.insert(std::make_pair(locator.get_physical_port(), newAcceptor));
+        newAcceptor->Accept(this);
     }
     catch (asio::system_error const& e)
     {
@@ -487,9 +488,6 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
         return false;
 
     TCPHeader header;
-    //octet header[14];
-    uint32_t size;
-
     Semaphore receiveSemaphore(0);
     bool success = false;
 
@@ -498,58 +496,18 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
         if (!IsInputChannelOpen(localLocator))
             return false;
 
-        if (mInputSockets.find(localLocator.get_port()) != mInputSockets.end())
+        if (mInputSockets.find(localLocator.get_physical_port()) != mInputSockets.end())
         {
-            auto& sockets = mInputSockets.at(localLocator.get_port());
+            success = true;
+
+            auto& sockets = mInputSockets.at(localLocator.get_physical_port());
             for (auto& socket : sockets)
             {
-                auto handler = [&header, &success, &size, &receiveBuffer, &receiveBufferSize, &receiveBufferCapacity,
-                    &receiveSemaphore, &socket]
-                    (const asio::error_code& error, std::size_t bytes_transferred)
-                {
-                    if (error)
-                    {
-                        logInfo(RTPS_MSG_IN, "Error while listening to socket (tcp header)...");
-                        size = 0;
-
-                        if (error == asio::error::eof || error == asio::error::connection_reset)
-                        {
-                            //TODO: Delete input socket.
-
-                        }
-                    }
-                    else
-                    {
-                        logInfo(RTPS_MSG_IN, "TCP Header processed (" << bytes_transferred << " bytes received), \
-				Socket async receive put again to listen ");
-                        if (bytes_transferred != 14)
-                        {
-                            logError(RTPS_MSG_IN, "Bad TCP header size: " << bytes_transferred);
-                        }
-
-                        size = header.length - 14;
-
-                        if (size > receiveBufferCapacity)
-                        {
-                            logError(RTPS_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
-                                << size << " vs. " << receiveBufferCapacity << ".");
-                        }
-                        else
-                        {
-                            // Read the body
-                            receiveBufferSize = (uint32_t)socket->getSocket()->receive(asio::buffer(receiveBuffer, size));
-                            if (receiveBufferSize == size)
-                            {
-                                success = true;
-                            }
-                        }
-                    }
-
-                    receiveSemaphore.post();
-                };
-
                 // Read the header
-                socket->getSocket()->async_receive(asio::buffer(&header, sizeof(header)), 0, handler);
+                socket->getSocket()->async_receive(asio::buffer(&header, sizeof(header)), 0,
+                    std::bind(&TCPv4Transport::DataReceived, this, header, receiveBuffer, receiveBufferCapacity,
+                        receiveBufferSize, &receiveSemaphore, socket, success,
+                        std::placeholders::_1, std::placeholders::_2));
             }
         }
     }
@@ -561,10 +519,76 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
         ip::tcp::endpoint senderEndpoint;
         EndpointToLocator(senderEndpoint, remoteLocator);
     }
+    else
+    {
+        if (mInputSockets.find(localLocator.get_physical_port()) != mInputSockets.end())
+        {
+            auto& sockets = mInputSockets.at(localLocator.get_physical_port());
+            for (auto it = sockets.begin(); it != sockets.end();)
+            {
+                if (!(*it)->IsAlive())
+                {
+                    delete *it;
+                    it = sockets.erase(it);
+                }
+                else
+                    ++it;
+            }
+        }
+    }
 
     return success;
 }
 
+
+bool TCPv4Transport::DataReceived(TCPHeader& header, octet* receiveBuffer, uint32_t receiveBufferCapacity,
+    uint32_t& receiveBufferSize, Semaphore* semaphore, TCPSocketInfo* pSocketInfo, bool& bSuccess,
+    const asio::error_code& error, std::size_t bytes_transferred)
+{
+    uint32_t size(0);
+
+    if (error)
+    {
+        logInfo(RTPS_MSG_IN, "Error while listening to socket (tcp header)...");
+        size = 0;
+        if (error == asio::error::eof || error == asio::error::connection_reset)
+        {
+            // Disable the socket to erase it after the reception.
+            pSocketInfo->Disable();
+            bSuccess = false;
+        }
+    }
+    else
+    {
+        logInfo(RTPS_MSG_IN, "TCP Header processed (" << bytes_transferred << " bytes received), \
+				Socket async receive put again to listen ");
+        if (bytes_transferred != 14)
+        {
+            logError(RTPS_MSG_IN, "Bad TCP header size: " << bytes_transferred);
+        }
+
+        size = header.length - sizeof(header);
+
+        if (size > receiveBufferCapacity)
+        {
+            logError(RTPS_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
+                << size << " vs. " << receiveBufferCapacity << ".");
+            bSuccess = false;
+        }
+        else
+        {
+            // Read the body
+            receiveBufferSize = (uint32_t)pSocketInfo->getSocket()->receive(asio::buffer(receiveBuffer, size));
+            if (receiveBufferSize != size)
+            {
+                bSuccess = false;
+            }
+        }
+    }
+
+    semaphore->post();
+    return bSuccess;
+}
 
 bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
     uint32_t sendBufferSize,
@@ -594,8 +618,8 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
             CloseOutputChannel(remoteLocator);
             Locator_t locator = remoteLocator;
             auto ip = asio::ip::address_v4(locatorToNative(locator));
-            OpenAndBindUnicastOutputSocket(ip, 
-                remoteLocator.get_logical_port(), 
+            OpenAndBindUnicastOutputSocket(ip,
+                remoteLocator.get_logical_port(),
                 locator.get_physical_port());
         }
     }
@@ -653,7 +677,7 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                     // Loopback locator
                     Locator_t loopbackLocator;
                     loopbackLocator.set_IP4_address(127, 0, 0, 1);
-                    loopbackLocator.set_port(it->get_port());
+                    loopbackLocator.set_port(it->get_physical_port());
                     pendingUnicast.push_back(loopbackLocator);
                     break;
                 }
@@ -688,30 +712,30 @@ bool TCPv4Transport::is_local_locator(const Locator_t& locator) const
     return false;
 }
 
-void TCPv4Transport::SocketAccepted(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver,
-    uint32_t receiveBufferSize, const asio::error_code& error, asio::ip::tcp::socket socket)
+void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket socket)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-    if (mPendingInputSockets.find(locator.get_physical_port()) != mPendingInputSockets.end())
+    if (mPendingInputSockets.find(acceptor->m_locator.get_physical_port()) != mPendingInputSockets.end())
     {
         if (!error.value())
         {
-            if (receiveBufferSize != 0)
+            if (acceptor->m_receiveBufferSize != 0)
             {
-                socket.set_option(asio::socket_base::receive_buffer_size(receiveBufferSize));
+                socket.set_option(asio::socket_base::receive_buffer_size(acceptor->m_receiveBufferSize));
             }
 
             // Store the new connection.
             eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(std::move(socket));
             TCPSocketInfo* socketInfo = new TCPSocketInfo(unicastSocket);
-            socketInfo->SetMessageReceiver(msgReceiver);
-            std::thread* newThread = new std::thread(&TCPv4Transport::performListenOperation, this, socketInfo, locator);
+            socketInfo->SetMessageReceiver(acceptor->m_acceptCallback());
+            std::thread* newThread = new std::thread(&TCPv4Transport::performListenOperation, this, socketInfo,
+                acceptor->m_locator);
             socketInfo->SetThread(newThread);
-            mInputSockets[locator.get_port()].emplace_back(socketInfo);
+            mInputSockets[acceptor->m_locator.get_physical_port()].emplace_back(socketInfo);
         }
 
         // Accept new connections for the same port.
-        mPendingInputSockets.at(locator.get_physical_port())->Accept(this);
+        mPendingInputSockets.at(acceptor->m_locator.get_physical_port())->Accept(this);
     }
 }
 
