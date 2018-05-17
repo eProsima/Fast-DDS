@@ -273,25 +273,25 @@ bool TCPv4Transport::CloseOutputChannel(const Locator_t& locator)
     if (!IsOutputChannelOpen(locator))
         return false;
 
-    if (mPendingOutputSockets.find(locator.get_port()) != mPendingOutputSockets.end())
+    if (mPendingOutputSockets.find(locator.get_Logical_port()) != mPendingOutputSockets.end())
     {
-        mOutputSemaphores[locator.get_port()]->disable();
+        mOutputSemaphores[locator.get_Logical_port()]->disable();
 
-        auto& pendingSocket = mPendingOutputSockets.at(locator.get_port());
+        auto& pendingSocket = mPendingOutputSockets.at(locator.get_Logical_port());
         getSocketPtr(pendingSocket->m_socket)->close();
 
-        mPendingOutputSockets.erase(locator.get_port());
+        mPendingOutputSockets.erase(locator.get_Logical_port());
     }
 
-    if (mOutputSockets.find(locator.get_port()) != mOutputSockets.end())
+    if (mOutputSockets.find(locator.get_Logical_port()) != mOutputSockets.end())
     {
-        auto& sockets = mOutputSockets.at(locator.get_port());
+        auto& sockets = mOutputSockets.at(locator.get_Logical_port());
         for (auto& socket : sockets)
         {
             socket.getSocket()->cancel();
             socket.getSocket()->close();
         }
-        mOutputSockets.erase(locator.get_port());
+        mOutputSockets.erase(locator.get_Logical_port());
     }
 
     return true;
@@ -492,7 +492,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
 
         bool success = false;
-        auto& sockets = mOutputSockets.at(localLocator.get_port());
+        auto& sockets = mOutputSockets.at(logicalPort);
         for (auto& socket : sockets)
         {
             //showCDRMessage(&msg);
