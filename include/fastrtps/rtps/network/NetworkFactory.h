@@ -71,13 +71,13 @@ class NetworkFactory
          * @param local Locator through which to send.
          */
         std::vector<SenderResource>   BuildSenderResources                 (Locator_t& local);
-        
+
         /**
          * Walks over the list of transports, opening every possible channel that we can listen to
          * from the given locator, and returns a vector of Receiver Resources for this goal.
          * @param local Locator from which to listen.
          */
-        bool BuildReceiverResources(const Locator_t& local, std::shared_ptr<MessageReceiver> newMsgReceiver,
+        bool BuildReceiverResources(const Locator_t& local, RTPSParticipantImpl* participant, uint32_t maxMsgSize,
             std::vector<ReceiverResource>& returned_resources_list);
 
         void NormalizeLocators(LocatorList_t& locators);

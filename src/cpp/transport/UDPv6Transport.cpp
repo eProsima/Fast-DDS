@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
+#include <fastrtps/rtps/network/ReceiverResource.h>
 
 using namespace std;
 using namespace asio;
@@ -163,7 +164,7 @@ bool UDPv6Transport::init()
 bool UDPv6Transport::IsInputChannelOpen(const Locator_t& locator) const
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-    return IsLocatorSupported(locator) && (mInputSockets.find(locator.get_port()) != mInputSockets.end());
+    return IsLocatorSupported(locator) && (mInputSockets.find(locator.get_physical_port()) != mInputSockets.end());
 }
 
 bool UDPv6Transport::IsOutputChannelOpen(const Locator_t& locator) const
@@ -189,7 +190,7 @@ static bool IsMulticastAddress(const Locator_t& locator)
     return locator.is_Multicast();
 }
 
-bool UDPv6Transport::OpenInputChannel(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver)
+bool UDPv6Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource* receiverResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
     if (!IsLocatorSupported(locator))
@@ -198,13 +199,13 @@ bool UDPv6Transport::OpenInputChannel(const Locator_t& locator, std::shared_ptr<
     bool success = false;
 
     if (!IsInputChannelOpen(locator))
-        success = OpenAndBindInputSockets(locator, msgReceiver, IsMulticastAddress(locator));
+        success = OpenAndBindInputSockets(locator, receiverResource, IsMulticastAddress(locator));
 
     if (IsMulticastAddress(locator) && IsInputChannelOpen(locator))
     {
         // The multicast group will be joined silently, because we do not
         // want to return another resource.
-        auto& socketInfo = mInputSockets.at(locator.get_port());
+        auto& socketInfo = mInputSockets.at(locator.get_physical_port());
 
         std::vector<IPFinder::info_IP> locNames;
         GetIP6sUniqueInterfaces(locNames);
@@ -251,11 +252,11 @@ bool UDPv6Transport::CloseInputChannel(const Locator_t& locator)
         return false;
 
 
-    auto& socketInfo = mInputSockets.at(locator.get_port());
+    auto& socketInfo = mInputSockets.at(locator.get_physical_port());
     socketInfo->getSocket()->cancel();
     socketInfo->getSocket()->close();
 
-    mInputSockets.erase(locator.get_port());
+    mInputSockets.erase(locator.get_physical_port());
     return true;
 }
 
@@ -378,7 +379,7 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator)
     return true;
 }
 
-bool UDPv6Transport::OpenAndBindInputSockets(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver,
+bool UDPv6Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource,
     bool is_multicast)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
@@ -387,16 +388,16 @@ bool UDPv6Transport::OpenAndBindInputSockets(const Locator_t& locator, std::shar
     {
         eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(locator.get_port(), is_multicast);
         UDPSocketInfo* socketInfo = new UDPSocketInfo(unicastSocket);
-        socketInfo->SetMessageReceiver(msgReceiver);
+        socketInfo->SetMessageReceiver(receiverResource->CreateMessageReceiver());
         std::thread* newThread = new std::thread(&UDPv6Transport::performListenOperation, this, socketInfo, locator);
         socketInfo->SetThread(newThread);
-        mInputSockets.emplace(locator.get_port(), socketInfo);
+        mInputSockets.emplace(locator.get_physical_port(), socketInfo);
     }
     catch (asio::error_code const& e)
     {
         (void)e;
         logInfo(RTPS_MSG_OUT, "UDPv6 Error binding at port: (" << locator.get_port() << ")" << " with msg: "<<e.message() );
-        mInputSockets.erase(locator.get_port());
+        mInputSockets.erase(locator.get_physical_port());
         return false;
     }
 

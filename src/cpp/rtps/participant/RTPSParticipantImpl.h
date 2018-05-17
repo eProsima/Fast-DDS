@@ -79,36 +79,6 @@ class PDPSimple;
 class FlowController;
 class IPersistenceService;
 
-/*
-   Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
-   It contains:
-   -A ReceiverResource (as produced by the NetworkFactory Element)
-   -A list of associated wirters and readers
-   -A buffer for message storage
-   -A mutex for the lists
-   The idea is to create the thread that performs blocking calllto ReceiverResource.Receive and processes the message
-   from the Receiver, so the Transport Layer does not need to be aware of the existence of what is using it.
-
-*/
-typedef struct ReceiverControlBlock
-{
-    ReceiverResource Receiver;
-    std::shared_ptr<MessageReceiver> mp_receiver; //Associated Readers/Writers inside of MessageReceiver
-    ReceiverControlBlock(ReceiverResource&& rec):Receiver(std::move(rec)), mp_receiver(nullptr)
-    {
-    }
-    ReceiverControlBlock(ReceiverControlBlock&& origen):Receiver(std::move(origen.Receiver)), mp_receiver(origen.mp_receiver)
-    {
-        origen.mp_receiver = nullptr;
-    }
-
-    private:
-    ReceiverControlBlock(const ReceiverControlBlock&) = delete;
-    const ReceiverControlBlock& operator=(const ReceiverControlBlock&) = delete;
-
-} ReceiverControlBlock;
-
-
 /**
  * @brief Class RTPSParticipantImpl, it contains the private implementation of the RTPSParticipant functions and allows the creation and removal of writers and readers. It manages the send and receive threads.
  * @ingroup RTPS_MODULE
@@ -265,7 +235,7 @@ class RTPSParticipantImpl
 #endif
 
         //! Encapsulates all associated resources on a Receiving element.
-        std::list<ReceiverControlBlock> m_receiverResourcelist;
+        std::list<ReceiverResource> m_receiverResourcelist;
         //! Receiver resource list needs its own mutext to avoid a race condition.
         std::mutex m_receiverResourcelistMutex;
 

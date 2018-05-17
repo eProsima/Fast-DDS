@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
+#include <fastrtps/rtps/network/ReceiverResource.h>
 
 using namespace std;
 using namespace asio;
@@ -191,7 +192,7 @@ static bool IsMulticastAddress(const Locator_t& locator)
     return locator.is_Multicast();
 }
 
-bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver)
+bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource* receiverResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
     if (!IsLocatorSupported(locator))
@@ -200,7 +201,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, std::shared_ptr<
     bool success = false;
 
     if (!IsInputChannelOpen(locator))
-        success = OpenAndBindInputSockets(locator, msgReceiver, IsMulticastAddress(locator));
+        success = OpenAndBindInputSockets(locator, receiverResource, IsMulticastAddress(locator));
 
     if (IsMulticastAddress(locator) && IsInputChannelOpen(locator))
     {
@@ -246,19 +247,26 @@ bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
     return true;
 }
 
+
 bool UDPv4Transport::CloseInputChannel(const Locator_t& locator)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-    if (!IsInputChannelOpen(locator))
-        return false;
+    UDPSocketInfo* socketInfo = nullptr;
+    {
+        std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
+        if (!IsInputChannelOpen(locator))
+            return false;
 
+        socketInfo = mInputSockets.at(locator.get_port());
+        socketInfo->getSocket()->cancel();
+        socketInfo->getSocket()->close();
+        mInputSockets.erase(locator.get_port());
+    }
 
-    auto& socketInfo = mInputSockets.at(locator.get_port());
-    socketInfo->getSocket()->cancel();
-    socketInfo->getSocket()->close();
+    if (socketInfo != nullptr)
+    {
+        delete socketInfo;
+    }
 
-    delete mInputSockets[locator.get_port()];
-    mInputSockets.erase(locator.get_port());
     return true;
 }
 
@@ -382,7 +390,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
     return true;
 }
 
-bool UDPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, std::shared_ptr<MessageReceiver> msgReceiver, bool is_multicast)
+bool UDPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource, bool is_multicast)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
 
@@ -390,7 +398,7 @@ bool UDPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, std::shar
     {
         eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(locator.get_port(), is_multicast);
         UDPSocketInfo* socketInfo = new UDPSocketInfo(unicastSocket);
-        socketInfo->SetMessageReceiver(msgReceiver);
+        socketInfo->SetMessageReceiver(receiverResource->CreateMessageReceiver());
         std::thread* newThread = new std::thread(&UDPv4Transport::performListenOperation, this, socketInfo, locator);
         socketInfo->SetThread(newThread);
         mInputSockets.emplace(locator.get_port(), socketInfo);

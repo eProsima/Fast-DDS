@@ -231,7 +231,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
             loc.set_IP4_address(auxString);
             int port = 0;
             element->QueryIntAttribute(PORT, &port);
-            loc.set_port(port);
+            loc.set_port(static_cast<uint16_t>(port));
             rdata->unicastLocatorList().push_back(loc);
         }
         else if(key == MULTICAST_LOCATOR)
@@ -243,7 +243,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
             loc.set_IP4_address(auxString);
             int port = 0;
             element->QueryIntAttribute(PORT, &port);
-            loc.set_port(port);
+            loc.set_port(static_cast<uint16_t>(port));
             rdata->multicastLocatorList().push_back(loc);
         }
         else if(key == TOPIC)
@@ -448,7 +448,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
             loc.set_IP4_address(auxString);
             int port = 0;
             element->QueryIntAttribute(PORT, &port);
-            loc.set_port(port);
+            loc.set_port(static_cast<uint16_t>(port));
             wdata->unicastLocatorList().push_back(loc);
         }
         else if(key == MULTICAST_LOCATOR)
@@ -460,7 +460,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
             loc.set_IP4_address(auxString);
             int port = 0;
             element->QueryIntAttribute(PORT, &port);
-            loc.set_port(port);
+            loc.set_port(static_cast<uint16_t>(port));
             wdata->multicastLocatorList().push_back(loc);
         }
         else if(key == TOPIC)

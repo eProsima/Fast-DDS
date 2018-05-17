@@ -18,27 +18,12 @@
  */
 
 #include <fastrtps/rtps/messages/MessageReceiver.h>
-
-#include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
-
-#include <fastrtps/rtps/writer/ReaderProxy.h>
-#include <fastrtps/rtps/reader/WriterProxy.h>
-
-#include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
-
-#include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
-
-#include <fastrtps/rtps/reader/ReaderListener.h>
-
+#include <fastrtps/rtps/network/ReceiverResource.h>
 #include "../participant/RTPSParticipantImpl.h"
 
 #include <mutex>
-
 #include <limits>
 #include <cassert>
-
-
 #include <fastrtps/log/Log.h>
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() <<") "<<
@@ -50,18 +35,20 @@ namespace fastrtps{
 namespace rtps {
 
 
-MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant) : 
-    sourceVendorId(c_VendorId_Unknown),
-    participant_(participant)
+MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant, ReceiverResource* receiverResource)
+    : sourceVendorId(c_VendorId_Unknown)
+    , participant_(participant)
+    , receiverResource_(receiverResource)
     {}
 
-MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant, uint32_t rec_buffer_size) :
-    m_rec_msg(rec_buffer_size),
+MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant, ReceiverResource* receiverResource, uint32_t rec_buffer_size)
+    : m_rec_msg(rec_buffer_size)
 #if HAVE_SECURITY
-    m_crypto_msg(rec_buffer_size),
+    , m_crypto_msg(rec_buffer_size)
 #endif
-    sourceVendorId(c_VendorId_Unknown),
-    participant_(participant)
+    , sourceVendorId(c_VendorId_Unknown)
+    , participant_(participant)
+    , receiverResource_(receiverResource)
     {
     }
 
@@ -84,62 +71,7 @@ void MessageReceiver::init(uint32_t rec_buffer_size){
 MessageReceiver::~MessageReceiver()
 {
     logInfo(RTPS_MSG_IN,"");
-    assert(AssociatedWriters.size() == 0);
-    assert(AssociatedReaders.size() == 0);
 }
-
-void MessageReceiver::associateEndpoint(Endpoint *to_add){
-    bool found = false;
-    std::lock_guard<std::mutex> guard(mtx);
-    if(to_add->getAttributes()->endpointKind == WRITER)
-    {
-        for(auto it = AssociatedWriters.begin(); it != AssociatedWriters.end(); ++it)
-        {
-            if( (*it) == (RTPSWriter*)to_add )
-            {
-                found = true;
-                break;
-            }
-        }
-        if(!found) AssociatedWriters.push_back((RTPSWriter*)to_add);
-    }
-    else
-    {
-        for(auto it = AssociatedReaders.begin(); it != AssociatedReaders.end(); ++it)
-        {
-            if( (*it) == (RTPSReader*)to_add )
-            {
-                found = true;
-                break;
-            }
-        }
-        if(!found) AssociatedReaders.push_back((RTPSReader*)to_add);
-    }
-    return;
-}
-void MessageReceiver::removeEndpoint(Endpoint *to_remove){
-
-    std::lock_guard<std::mutex> guard(mtx);
-    if(to_remove->getAttributes()->endpointKind == WRITER){
-        RTPSWriter* var = (RTPSWriter *)to_remove;
-        for(auto it=AssociatedWriters.begin(); it !=AssociatedWriters.end(); ++it){
-            if ((*it) == var){
-                AssociatedWriters.erase(it);
-                break;
-            }
-        }
-    }else{
-        RTPSReader *var = (RTPSReader *)to_remove;
-        for(auto it=AssociatedReaders.begin(); it !=AssociatedReaders.end(); ++it){
-            if ((*it) == var){
-                AssociatedReaders.erase(it);
-                break;
-            }
-        }
-    }
-    return;
-}
-
 
 void MessageReceiver::reset(){
     destVersion = c_ProtocolVersion;
@@ -489,29 +421,11 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
     valid &= CDRMessage::readEntityId(msg,&readerID);
 
     //WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
-
-    RTPSReader* firstReader = nullptr;
-    if(AssociatedReaders.empty())
+    if (receiverResource_->checkReaders(readerID))
     {
-        logWarning(RTPS_MSG_IN,IDSTRING"Data received when NO readers are listening");
         return false;
     }
 
-    for(std::vector<RTPSReader*>::iterator it=AssociatedReaders.begin();
-            it != AssociatedReaders.end(); ++it)
-    {
-        if((*it)->acceptMsgDirectedTo(readerID)) //add
-        {
-            firstReader = *it;
-            break;
-        }
-    }
-    if(firstReader == nullptr) //Reader not found
-    {
-        //showCDRMessage(msg);
-        logWarning(RTPS_MSG_IN, IDSTRING"No Reader accepts this message (directed to: " <<readerID << ")");
-        return false;
-    }
     //FOUND THE READER.
     //We ask the reader for a cachechange to store the information.
     CacheChange_t ch;
@@ -616,16 +530,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 
     //FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
-    logInfo(RTPS_MSG_IN,IDSTRING"from Writer " << ch.writerGUID << "; possible RTPSReaders: "<<AssociatedReaders.size());
-    //Look for the correct reader to add the change
-    for(std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
-            it != AssociatedReaders.end(); ++it)
-    {
-        if((*it)->acceptMsgDirectedTo(readerID))
-        {
-            (*it)->processDataMsg(&ch);
-        }
-    }
+    receiverResource_->processDataMsg(readerID, &ch);
 
     //TODO(Ricardo) If a exception is thrown (ex, by fastcdr), this line is not executed -> segmentation fault
     ch.serializedPayload.data = nullptr;
@@ -668,26 +573,8 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
     valid &= CDRMessage::readEntityId(msg, &readerID);
 
     //WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
-    if(AssociatedReaders.empty())
+    if (!receiverResource_->checkReaders(readerID))
     {
-        logWarning(RTPS_MSG_IN, IDSTRING"Data received when NO readers are listening");
-        return false;
-    }
-
-    RTPSReader* firstReader = nullptr;
-    for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
-            it != AssociatedReaders.end(); ++it)
-    {
-        if ((*it)->acceptMsgDirectedTo(readerID)) //add
-        {
-            firstReader = *it;
-            break;
-        }
-    }
-
-    if (firstReader == nullptr) //Reader not found
-    {
-        logWarning(RTPS_MSG_IN, IDSTRING"No Reader accepts this message (directed to: " << readerID << ")");
         return false;
     }
 
@@ -816,17 +703,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
         ch.sourceTimestamp = this->timestamp;
 
     //FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
-    logInfo(RTPS_MSG_IN, IDSTRING"from Writer " << ch.writerGUID << "; possible RTPSReaders: " << AssociatedReaders.size());
-    //Look for the correct reader to add the change
-    for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
-            it != AssociatedReaders.end(); ++it)
-    {
-        if ((*it)->acceptMsgDirectedTo(readerID))
-        {
-            (*it)->processDataFragMsg(&ch, sampleSize, fragmentStartingNum);
-        }
-    }
-
+    receiverResource_->processDataFragMsg(readerID, &ch, sampleSize, fragmentStartingNum);
     ch.serializedPayload.data = nullptr;
 
     logInfo(RTPS_MSG_IN, IDSTRING"Sub Message DATA_FRAG processed");
@@ -863,16 +740,9 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
     uint32_t HBCount;
     CDRMessage::readUInt32(msg,&HBCount);
 
-    std::lock_guard<std::mutex> guard(mtx);
-    //Look for the correct reader and writers:
-    for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
-            it != AssociatedReaders.end(); ++it)
-    {
-        if((*it)->acceptMsgDirectedTo(readerGUID.entityId))
-        {
-            (*it)->processHeartbeatMsg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag);
-        }
-    }
+    receiverResource_->processHeartbeatMsg(readerGUID.entityId, writerGUID, HBCount, firstSN, lastSN, finalFlag,
+        livelinessFlag);
+
     //Is the final message?
     if(smh->submessageLength == 0)
         *last = true;
@@ -904,29 +774,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
     if(smh->submessageLength == 0)
         *last = true;
 
-    std::lock_guard<std::mutex> guard(mtx);
-    //Look for the correct writer to use the acknack
-    for (std::vector<RTPSWriter*>::iterator it = AssociatedWriters.begin();
-            it != AssociatedWriters.end(); ++it)
-    {
-        if((*it)->getGuid() == writerGUID)
-        {
-            if((*it)->getAttributes()->reliabilityKind == RELIABLE)
-            {
-                StatefulWriter* SF = (StatefulWriter*)(*it);
-                SF->process_acknack(readerGUID, Ackcount, SNSet, finalFlag);
-                return true;
-            }
-            else
-            {
-                logInfo(RTPS_MSG_IN,IDSTRING"Acknack msg to NOT stateful writer ");
-                return false;
-            }
-        }
-    }
-    logInfo(RTPS_MSG_IN,IDSTRING"Acknack msg to UNKNOWN writer (I loooked through "
-            << AssociatedWriters.size() << " writers in this ListenResource)");
-    return false;
+    return receiverResource_->processAckNack(readerGUID, writerGUID, Ackcount, SNSet, finalFlag);
 }
 
 
@@ -956,15 +804,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
     if(gapStart <= SequenceNumber_t(0, 0))
         return false;
 
-    std::lock_guard<std::mutex> guard(mtx);
-    for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
-            it != AssociatedReaders.end(); ++it)
-    {
-        if((*it)->acceptMsgDirectedTo(readerGUID.entityId))
-        {
-            (*it)->processGapMsg(writerGUID, gapStart, gapList);
-        }
-    }
+    receiverResource_->processGapMsg(readerGUID.entityId, writerGUID, gapStart, gapList);
 
     return true;
 }
@@ -1068,49 +908,7 @@ bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t*
     if (smh->submessageLength == 0)
         *last = true;
 
-    std::lock_guard<std::mutex> guard(mtx);
-    //Look for the correct writer to use the acknack
-    for (std::vector<RTPSWriter*>::iterator it = AssociatedWriters.begin();
-            it != AssociatedWriters.end(); ++it)
-    {
-        //Look for the readerProxy the acknack is from
-        std::lock_guard<std::recursive_mutex> guardW(*(*it)->getMutex());
-        if ((*it)->getGuid() == writerGUID)
-        {
-            if ((*it)->getAttributes()->reliabilityKind == RELIABLE)
-            {
-                StatefulWriter* SF = (StatefulWriter*)(*it);
-
-                for (auto rit = SF->matchedReadersBegin(); rit != SF->matchedReadersEnd(); ++rit)
-                {
-                    std::lock_guard<std::recursive_mutex> guardReaderProxy(*(*rit)->mp_mutex);
-
-                    if ((*rit)->m_att.guid == readerGUID)
-                    {
-                        if ((*rit)->getLastNackfragCount() < Ackcount)
-                        {
-                            (*rit)->setLastNackfragCount(Ackcount);
-                            // TODO Not doing Acknowledged.
-                            if((*rit)->requested_fragment_set(writerSN, fnState))
-                            {
-                                (*rit)->mp_nackResponse->restart_timer();
-                            }
-                        }
-                        break;
-                    }
-                }
-                return true;
-            }
-            else
-            {
-                logInfo(RTPS_MSG_IN, IDSTRING"Acknack msg to NOT stateful writer ");
-                return false;
-            }
-        }
-    }
-    logInfo(RTPS_MSG_IN, IDSTRING"Acknack msg to UNKNOWN writer (I looked through "
-            << AssociatedWriters.size() << " writers in this ListenResource)");
-    return false;
+    return receiverResource_->processSubMsgNackFrag(readerGUID, writerGUID, writerSN, fnState, Ackcount);
 }
 
 bool MessageReceiver::proc_Submsg_HeartbeatFrag(CDRMessage_t*msg, SubmessageHeader_t* smh, bool*last) {
@@ -1139,18 +937,18 @@ bool MessageReceiver::proc_Submsg_HeartbeatFrag(CDRMessage_t*msg, SubmessageHead
 
     // XXX TODO VALIDATE DATA?
 
-    std::lock_guard<std::mutex> guard(mtx);
-    //Look for the correct reader and writers:
-    for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
-            it != AssociatedReaders.end(); ++it)
-    {
-        /* XXX TODO PROCESS
-           if ((*it)->acceptMsgDirectedTo(readerGUID.entityId))
-           {
-           (*it)->processHeartbeatMsg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag);
-           }
-           */
-    }
+    //std::lock_guard<std::mutex> guard(mtx);
+    ////Look for the correct reader and writers:
+    //for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
+    //        it != AssociatedReaders.end(); ++it)
+    //{
+    //    /* XXX TODO PROCESS
+    //       if ((*it)->acceptMsgDirectedTo(readerGUID.entityId))
+    //       {
+    //       (*it)->processHeartbeatMsg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag);
+    //       }
+    //       */
+    //}
 
     //Is the final message?
     if (smh->submessageLength == 0)

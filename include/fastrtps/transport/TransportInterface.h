@@ -29,7 +29,7 @@ static const uint32_t s_minimumSocketBuffer = 65536;
 static const uint8_t s_defaultTTL = 1;
 
 struct TransportDescriptorInterface;
-class MessageReceiver;
+class ReceiverResource;
 
 /**
  * Interface against which to implement a transport layer, decoupled from FastRTPS internals.
@@ -77,7 +77,7 @@ public:
    //! Must open the channel that maps to/from the given locator. This method must allocate, reserve and mark
    //! any resources that are needed for said channel.
    virtual bool OpenOutputChannel(Locator_t&) = 0;
-   virtual bool OpenInputChannel(const Locator_t&, std::shared_ptr<MessageReceiver>) = 0;
+   virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*) = 0;
 
    /**
     * Must close the channel that maps to/from the given locator.
