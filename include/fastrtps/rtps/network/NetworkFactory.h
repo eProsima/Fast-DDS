@@ -92,6 +92,13 @@ class NetworkFactory
 
         uint32_t get_min_send_buffer_size() { return minSendBufferSize_; }
 
+        /**
+         * Fills ret_locators with the list of all possible locators in the local machine at the given
+         * physical_port of the locator_kind.
+         * Return if found any.
+         * */
+        bool generate_locators(uint16_t physical_port, int locator_kind, LocatorList_t &ret_locators);
+
     private:
 
         std::vector<std::unique_ptr<TransportInterface> > mRegisteredTransports;
