@@ -221,6 +221,11 @@ class TCPSocketInfo
             return *this;
         }
 
+        bool operator==(const TCPSocketInfo& socketInfo) const
+        {
+            return &socket_ == &(socketInfo.socket_);
+        }
+
         void only_multicast_purpose(const bool value)
         {
             only_multicast_purpose_ = value;

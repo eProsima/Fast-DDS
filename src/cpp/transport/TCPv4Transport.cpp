@@ -424,36 +424,6 @@ void TCPv4Transport::SetParticipantGUIDPrefix(const GuidPrefix_t& prefix)
 {
     mConfiguration_.rtpsParticipantGuidPrefix = prefix;
 }
-/*
-static void fillTcpHeader(octet* header, uint32_t size, const Locator_t& loc)
-{
-    header[0] = 'R';
-    header[1] = 'T';
-    header[2] = 'P';
-    header[3] = 'S';
-    size += 14;
-    octet* s = (octet*)&size;
-    header[4] = s[0];
-    header[5] = s[1];
-    header[6] = s[2];
-    header[7] = s[3];
-    uint16_t port = loc.get_logical_port();
-    octet* p = (octet*)&port;
-    header[12] = p[0];
-    header[13] = p[1];
-}
-*/
-/*
-static void showCDRMessage(CDRMessage_t* msg)
-{
-    std::cout << "MSG: ";
-    for (uint32_t i = 0; i < msg->length; ++i)
-    {
-        std::cout << std::hex << static_cast<int>(msg->buffer[i]) << " ";
-    }
-    std::cout << std::endl;
-}
-*/
 
 bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
     const Locator_t& remoteLocator)
@@ -489,7 +459,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         {
             //showCDRMessage(&msg);
             std::unique_lock<std::recursive_mutex> sendLock(socket.GetMutex());
-            success |= SendThroughSocket(msg.buffer, msg.length, remoteLocator, getRefFromPtr(socket.getSocket()));
+            success |= SendThroughSocket(msg.buffer, msg.length, remoteLocator, socket);
         }
         return success;
     }
@@ -599,7 +569,7 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
     uint32_t sendBufferSize,
     const Locator_t& remoteLocator,
-    eProsimaTCPSocket& socket)
+    TCPSocketInfo& socket)
 {
 
     asio::ip::address_v4::bytes_type remoteAddress;
@@ -608,13 +578,26 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
     auto destinationEndpoint = ip::tcp::endpoint(asio::ip::address_v4(remoteAddress),
         static_cast<uint16_t>(remoteLocator.get_port()));
     size_t bytesSent = 0;
-    (void)destinationEndpoint;
+    //(void)destinationEndpoint;
     logInfo(RTPS_MSG_OUT, "TCPv4: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
-        << " FROM " << getSocketPtr(socket)->local_endpoint());
+        << " FROM " << socket.getSocket()->local_endpoint());
 
     try
     {
-        bytesSent = getSocketPtr(socket)->send(asio::buffer(sendBuffer, sendBufferSize));
+        bytesSent = socket.getSocket()->send(asio::buffer(sendBuffer, sendBufferSize));
+    }
+    catch (const asio::error_code& error)
+    {
+        if ((asio::error::eof == error) ||
+            (asio::error::connection_reset == error))
+        {
+            CloseOutputChannel(remoteLocator);
+            Locator_t locator = remoteLocator;
+            auto ip = asio::ip::address_v4(locatorToNative(locator));
+            OpenAndBindUnicastOutputSocket(ip, 
+                remoteLocator.get_logical_port(), 
+                locator.get_physical_port());
+        }
     }
     catch (const std::exception& error)
     {
