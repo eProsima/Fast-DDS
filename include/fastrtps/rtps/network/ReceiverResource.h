@@ -74,6 +74,7 @@ public:
     * Resources can only be transfered through move semantics. Copy, assignment, and
     * construction outside of the factory are forbidden.
     */
+   ReceiverResource(RTPSParticipantImpl*, TransportInterface&, const Locator_t&, uint32_t maxMsgSize);
    ReceiverResource(ReceiverResource&&);
    ~ReceiverResource();
 
@@ -101,7 +102,6 @@ private:
    ReceiverResource()                                   = delete;
    ReceiverResource(const ReceiverResource&)            = delete;
    ReceiverResource& operator=(const ReceiverResource&) = delete;
-   ReceiverResource(RTPSParticipantImpl*, TransportInterface&, const Locator_t&, uint32_t maxMsgSize);
 
    std::mutex mtx;
    std::vector<RTPSWriter *> AssociatedWriters;

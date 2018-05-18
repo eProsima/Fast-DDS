@@ -47,7 +47,7 @@ class MessageReceiver
          * @param rec_buffer_size
          */
         MessageReceiver(RTPSParticipantImpl* participant, ReceiverResource* receiverResource, uint32_t rec_buffer_size);
-        MessageReceiver(RTPSParticipantImpl* participant, ReceiverResource* receiverResource_);
+        MessageReceiver(RTPSParticipantImpl* participant, ReceiverResource* receiverResource);
         virtual ~MessageReceiver();
         //!Reset the MessageReceiver to process a new message.
         void reset();

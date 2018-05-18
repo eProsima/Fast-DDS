@@ -157,7 +157,7 @@ public:
     * @param[out] remoteLocator Locator describing the remote restination we received a packet from.
     */
    virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-                        const Locator_t& localLocator, Locator_t& remoteLocator) override;
+       SocketInfo* socketInfo, Locator_t& remoteLocator) override;
 
    virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
 

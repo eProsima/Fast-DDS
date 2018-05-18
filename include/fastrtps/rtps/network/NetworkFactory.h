@@ -78,7 +78,7 @@ class NetworkFactory
          * @param local Locator from which to listen.
          */
         bool BuildReceiverResources(const Locator_t& local, RTPSParticipantImpl* participant, uint32_t maxMsgSize,
-            std::vector<ReceiverResource>& returned_resources_list);
+            std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list);
 
         void NormalizeLocators(LocatorList_t& locators);
 

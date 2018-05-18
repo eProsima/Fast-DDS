@@ -87,132 +87,131 @@ namespace rtps{
     }
 #endif
 
-class UDPSocketInfo
+class SocketInfo
+{
+public:
+    SocketInfo()
+    : mp_receiver(nullptr)
+    , m_bAlive(true)
+    , m_thread(nullptr)
     {
-        public:
-            UDPSocketInfo(eProsimaUDPSocket& socket)
-                : mp_receiver(nullptr)
-                , m_bAlive(true)
-                , m_thread(nullptr)
-                , socket_(moveSocket(socket))
-            {
-            }
+    }
 
-            UDPSocketInfo(UDPSocketInfo&& socketInfo)
-                : mp_receiver(nullptr)
-                , m_bAlive(true)
-                , m_thread(nullptr)
-                , socket_(moveSocket(socketInfo.socket_))
-            {
-            }
+    virtual ~SocketInfo()
+    {
+        m_bAlive = false;
+        if (m_thread != nullptr)
+        {
+            m_thread->join();
+            delete m_thread;
+        }
+        mp_receiver = nullptr;
+    }
 
-            ~UDPSocketInfo()
-            {
-                m_bAlive = false;
-                if (m_thread != nullptr)
-                {
-                    m_thread->join();
-                    delete m_thread;
-                }
-                mp_receiver = nullptr;
-            }
+    inline void SetThread(std::thread* pThread)
+    {
+        m_thread = pThread;
+    }
 
-            UDPSocketInfo& operator=(UDPSocketInfo&& socketInfo)
-            {
-                socket_ = moveSocket(socketInfo.socket_);
-                return *this;
-            }
+    inline bool IsAlive() const
+    {
+        return m_bAlive;
+    }
 
-            void only_multicast_purpose(const bool value)
-            {
-                only_multicast_purpose_ = value;
-            };
+    inline void Disable()
+    {
+        m_bAlive = false;
+    }
 
-            bool& only_multicast_purpose()
-            {
-                return only_multicast_purpose_;
-            }
+    inline void SetMessageReceiver(std::shared_ptr<MessageReceiver> receiver)
+    {
+        mp_receiver = receiver;
+    }
 
-            bool only_multicast_purpose() const
-            {
-                return only_multicast_purpose_;
-            }
+    inline std::shared_ptr<MessageReceiver> GetMessageReceiver()
+    {
+        return mp_receiver;
+    }
+protected:
+    std::shared_ptr<MessageReceiver> mp_receiver; //Associated Readers/Writers inside of MessageReceiver
+    bool m_bAlive;
+    std::thread* m_thread;
+};
 
-#if defined(ASIO_HAS_MOVE)
-            inline eProsimaUDPSocket* getSocket()
-#else
-            inline eProsimaUDPSocket getSocket()
-#endif
-            {
-                return getSocketPtr(socket_);
-            }
+class UDPSocketInfo : public SocketInfo
+{
+public:
+    UDPSocketInfo(eProsimaUDPSocket& socket)
+        : socket_(moveSocket(socket))
+    {
+    }
 
-            inline void SetThread(std::thread* pThread)
-            {
-                m_thread = pThread;
-            }
+    UDPSocketInfo(UDPSocketInfo&& socketInfo)
+        : socket_(moveSocket(socketInfo.socket_))
+    {
+    }
 
-            inline bool IsAlive() const
-            {
-                return m_bAlive;
-            }
+    virtual ~UDPSocketInfo()
+    {
+    }
 
-            inline void Disable()
-            {
-                m_bAlive = false;
-            }
+    UDPSocketInfo& operator=(UDPSocketInfo&& socketInfo)
+    {
+        socket_ = moveSocket(socketInfo.socket_);
+        return *this;
+    }
 
-            inline void SetMessageReceiver(std::shared_ptr<MessageReceiver> receiver)
-            {
-                mp_receiver = receiver;
-            }
-
-            inline std::shared_ptr<MessageReceiver> GetMessageReceiver()
-            {
-                return mp_receiver;
-            }
-
-        private:
-
-            std::shared_ptr<MessageReceiver> mp_receiver; //Associated Readers/Writers inside of MessageReceiver
-            bool m_bAlive;
-            std::thread* m_thread;
-            eProsimaUDPSocket socket_;
-            bool only_multicast_purpose_;
-            UDPSocketInfo(const UDPSocketInfo&) = delete;
-            UDPSocketInfo& operator=(const UDPSocketInfo&) = delete;
+    void only_multicast_purpose(const bool value)
+    {
+        only_multicast_purpose_ = value;
     };
 
-class TCPSocketInfo
+    bool& only_multicast_purpose()
+    {
+        return only_multicast_purpose_;
+    }
+
+    bool only_multicast_purpose() const
+    {
+        return only_multicast_purpose_;
+    }
+
+#if defined(ASIO_HAS_MOVE)
+    inline eProsimaUDPSocket* getSocket()
+#else
+    inline eProsimaUDPSocket getSocket()
+#endif
+    {
+        return getSocketPtr(socket_);
+    }
+
+private:
+
+    eProsimaUDPSocket socket_;
+    bool only_multicast_purpose_;
+    UDPSocketInfo(const UDPSocketInfo&) = delete;
+    UDPSocketInfo& operator=(const UDPSocketInfo&) = delete;
+};
+
+class TCPSocketInfo : public SocketInfo
 {
     public:
         TCPSocketInfo(eProsimaTCPSocket& socket)
-            : mp_receiver(nullptr)
-            , m_bAlive(true)
-            , m_thread(nullptr)
-            , socket_(moveSocket(socket))
+            : socket_(moveSocket(socket))
+            , m_physicalPort(0)
         {
             mMutex = std::make_shared<std::recursive_mutex>();
         }
 
         TCPSocketInfo(TCPSocketInfo&& socketInfo)
-            : mp_receiver(nullptr)
-            , m_bAlive(true)
-            , m_thread(nullptr)
-            , socket_(moveSocket(socketInfo.socket_))
+            : socket_(moveSocket(socketInfo.socket_))
+            , m_physicalPort(0)
         {
             mMutex = std::make_shared<std::recursive_mutex>();
         }
 
-        ~TCPSocketInfo()
+        virtual ~TCPSocketInfo()
         {
-            m_bAlive = false;
-            if (m_thread != nullptr)
-            {
-                m_thread->join();
-                delete m_thread;
-            }
-            mp_receiver = nullptr;
         }
 
         TCPSocketInfo& operator=(TCPSocketInfo&& socketInfo)
@@ -255,36 +254,18 @@ class TCPSocketInfo
             return *mMutex;
         }
 
-        inline void SetThread(std::thread* pThread)
+        inline void SetPhysicalPort(uint16_t port)
         {
-            m_thread = pThread;
+            m_physicalPort = port;
         }
 
-        inline bool IsAlive() const
+        inline uint16_t GetPhysicalPort() const
         {
-            return m_bAlive;
+            return m_physicalPort;
         }
-
-        inline void Disable()
-        {
-            m_bAlive = false;
-        }
-
-        inline void SetMessageReceiver(std::shared_ptr<MessageReceiver> receiver)
-        {
-            mp_receiver = receiver;
-        }
-
-        inline std::shared_ptr<MessageReceiver> GetMessageReceiver()
-        {
-            return mp_receiver;
-        }
-
     private:
 
-        std::shared_ptr<MessageReceiver> mp_receiver; //Associated Readers/Writers inside of MessageReceiver
-        bool m_bAlive;
-        std::thread* m_thread;
+        uint16_t m_physicalPort;
         std::shared_ptr<std::recursive_mutex> mMutex;
         eProsimaTCPSocket socket_;
         bool only_multicast_purpose_;

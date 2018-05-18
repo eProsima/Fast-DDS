@@ -349,7 +349,7 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     // Safely abort threads.
     for(auto& receiverResource : m_receiverResourcelist)
     {
-        receiverResource.Abort();
+        receiverResource->Abort();
     }
 
     while(m_userReaderList.size() > 0)
@@ -834,9 +834,9 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
         for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
             //Take mutex for the resource since we are going to interact with shared resources
             //std::lock_guard<std::mutex> guard((*it).mtx);
-            if ((*it).SupportsLocator(*lit)){
+            if ((*it)->SupportsLocator(*lit)){
                 //Supported! Take mutex and update lists - We maintain reader/writer discrimination just in case
-                (*it).associateEndpoint(endp);
+                (*it)->associateEndpoint(endp);
                 // end association between reader/writer and the receive resources
             }
 
@@ -876,7 +876,7 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend)
 
 void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation)
 {
-    std::vector<ReceiverResource> newItemsBuffer;
+    std::vector<std::shared_ptr<ReceiverResource>> newItemsBuffer;
 
     uint32_t size = m_network_Factory.get_max_message_size_between_transports();
     for(auto it_loc = Locator_list.begin(); it_loc != Locator_list.end(); ++it_loc)
@@ -897,7 +897,7 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
         {
             std::lock_guard<std::mutex> lock(m_receiverResourcelistMutex);
             //Push the new items into the ReceiverResource buffer
-            m_receiverResourcelist.push_back(std::move(*it_buffer));
+            m_receiverResourcelist.push_back(*it_buffer);
         }
         newItemsBuffer.clear();
     }
@@ -909,7 +909,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 {
     m_receiverResourcelistMutex.lock();
     for(auto it=m_receiverResourcelist.begin();it!=m_receiverResourcelist.end();++it){
-        (*it).removeEndpoint(p_endpoint);
+        (*it)->removeEndpoint(p_endpoint);
     }
     m_receiverResourcelistMutex.unlock();
 

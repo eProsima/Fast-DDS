@@ -380,7 +380,7 @@ void TCPv4Transport::performListenOperation(TCPSocketInfo* pSocketInfo, Locator_
         // Blocking receive.
         auto& msg = pSocketInfo->GetMessageReceiver()->m_rec_msg;
         CDRMessage::initCDRMsg(&msg);
-        if (!Receive(msg.buffer, msg.max_size, msg.length, input_locator, remoteLocator))
+        if (!Receive(msg.buffer, msg.max_size, msg.length, pSocketInfo, remoteLocator))
             continue;
 
         // Processes the data through the CDR Message interface.
@@ -482,34 +482,25 @@ static void EndpointToLocator(ip::tcp::endpoint& endpoint, Locator_t& locator)
     * doesn't include it.
     * */
 bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-    const Locator_t& localLocator, Locator_t& remoteLocator)
+    SocketInfo* socketInfo, Locator_t& remoteLocator)
 {
-    if (!IsInputChannelOpen(localLocator))
-        return false;
-
     TCPHeader header;
     Semaphore receiveSemaphore(0);
     bool success = false;
+    TCPSocketInfo* tcpSocketInfo = reinterpret_cast<TCPSocketInfo*>(socketInfo);
 
     { // lock scope
         std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-        if (!IsInputChannelOpen(localLocator))
+        if (!socketInfo->IsAlive())
             return false;
 
-        if (mInputSockets.find(localLocator.get_physical_port()) != mInputSockets.end())
-        {
-            success = true;
+        success = true;
 
-            auto& sockets = mInputSockets.at(localLocator.get_physical_port());
-            for (auto& socket : sockets)
-            {
-                // Read the header
-                socket->getSocket()->async_receive(asio::buffer(&header, sizeof(header)), 0,
-                    std::bind(&TCPv4Transport::DataReceived, this, header, receiveBuffer, receiveBufferCapacity,
-                        receiveBufferSize, &receiveSemaphore, socket, success,
-                        std::placeholders::_1, std::placeholders::_2));
-            }
-        }
+        // Read the header
+        tcpSocketInfo->getSocket()->async_receive(asio::buffer(&header, sizeof(header)), 0,
+            std::bind(&TCPv4Transport::DataReceived, this, header, receiveBuffer, receiveBufferCapacity,
+                receiveBufferSize, &receiveSemaphore, tcpSocketInfo, success, std::placeholders::_1,
+                std::placeholders::_2));
     }
     receiveSemaphore.wait();
 
@@ -521,9 +512,10 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
     }
     else
     {
-        if (mInputSockets.find(localLocator.get_physical_port()) != mInputSockets.end())
+        uint16_t port = tcpSocketInfo->GetPhysicalPort();
+        if (mInputSockets.find(port) != mInputSockets.end())
         {
-            auto& sockets = mInputSockets.at(localLocator.get_physical_port());
+            auto& sockets = mInputSockets.at(port);
             for (auto it = sockets.begin(); it != sockets.end();)
             {
                 if (!(*it)->IsAlive())
@@ -727,6 +719,7 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             // Store the new connection.
             eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(std::move(socket));
             TCPSocketInfo* socketInfo = new TCPSocketInfo(unicastSocket);
+            socketInfo->SetPhysicalPort(acceptor->m_locator.get_physical_port());
             socketInfo->SetMessageReceiver(acceptor->m_acceptCallback());
             std::thread* newThread = new std::thread(&TCPv4Transport::performListenOperation, this, socketInfo,
                 acceptor->m_locator);

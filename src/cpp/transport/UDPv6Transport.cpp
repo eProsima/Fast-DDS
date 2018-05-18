@@ -173,7 +173,7 @@ bool UDPv6Transport::IsOutputChannelOpen(const Locator_t& locator) const
     if (!IsLocatorSupported(locator))
         return false;
 
-    return mOutputSockets.find(locator.get_port()) != mOutputSockets.end();
+    return mOutputSockets.find(locator.get_physical_port()) != mOutputSockets.end();
 }
 
 bool UDPv6Transport::OpenOutputChannel(Locator_t& locator)
@@ -233,14 +233,14 @@ bool UDPv6Transport::CloseOutputChannel(const Locator_t& locator)
     if (!IsOutputChannelOpen(locator))
         return false;
 
-    auto& sockets = mOutputSockets.at(locator.get_port());
+    auto& sockets = mOutputSockets.at(locator.get_physical_port());
     for (auto& socket : sockets)
     {
         socket.getSocket()->cancel();
         socket.getSocket()->close();
     }
 
-    mOutputSockets.erase(locator.get_port());
+    mOutputSockets.erase(locator.get_physical_port());
 
     return true;
 }
@@ -386,7 +386,7 @@ bool UDPv6Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverR
 
     try
     {
-        eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(locator.get_port(), is_multicast);
+        eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(locator.get_physical_port(), is_multicast);
         UDPSocketInfo* socketInfo = new UDPSocketInfo(unicastSocket);
         socketInfo->SetMessageReceiver(receiverResource->CreateMessageReceiver());
         std::thread* newThread = new std::thread(&UDPv6Transport::performListenOperation, this, socketInfo, locator);
@@ -396,7 +396,7 @@ bool UDPv6Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverR
     catch (asio::error_code const& e)
     {
         (void)e;
-        logInfo(RTPS_MSG_OUT, "UDPv6 Error binding at port: (" << locator.get_port() << ")" << " with msg: "<<e.message() );
+        logInfo(RTPS_MSG_OUT, "UDPv6 Error binding at port: (" << locator.get_physical_port() << ")" << " with msg: "<<e.message() );
         mInputSockets.erase(locator.get_physical_port());
         return false;
     }
@@ -412,7 +412,7 @@ void UDPv6Transport::performListenOperation(UDPSocketInfo* pSocketInfo, Locator_
         // Blocking receive.
         auto& msg = pSocketInfo->GetMessageReceiver()->m_rec_msg;
         CDRMessage::initCDRMsg(&msg);
-        if (!Receive(msg.buffer, msg.max_size, msg.length, input_locator, remoteLocator))
+        if (!Receive(msg.buffer, msg.max_size, msg.length, pSocketInfo, remoteLocator))
             continue;
 
         // Processes the data through the CDR Message interface.
@@ -489,7 +489,7 @@ bool UDPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     bool success = false;
     bool is_multicast_remote_address = IsMulticastAddress(remoteLocator);
 
-    auto& sockets = mOutputSockets.at(localLocator.get_port());
+    auto& sockets = mOutputSockets.at(localLocator.get_physical_port());
     for (auto& socket : sockets)
     {
         if(is_multicast_remote_address || !socket.only_multicast_purpose())
@@ -511,10 +511,10 @@ static Locator_t EndpointToLocator(ip::udp::endpoint& endpoint)
 }
 
 bool UDPv6Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-        const Locator_t& localLocator, Locator_t& remoteLocator)
+        SocketInfo* socketInfo, Locator_t& remoteLocator)
 {
 
-    if (!IsInputChannelOpen(localLocator))
+    if (!socketInfo->IsAlive())
         return false;
 
     ip::udp::endpoint senderEndpoint;
@@ -672,7 +672,7 @@ LocatorList_t UDPv6Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                             // Loopback locator
                             Locator_t loopbackLocator;
                             loopbackLocator.set_IP6_address(0, 0, 0, 0, 0, 0, 0, 1);
-                            loopbackLocator.set_port(it->get_port());
+                            loopbackLocator.set_port(it->get_physical_port());
                             pendingUnicast.push_back(loopbackLocator);
                             break;
                         }
