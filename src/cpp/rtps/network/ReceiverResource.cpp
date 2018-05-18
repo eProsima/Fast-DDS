@@ -60,7 +60,6 @@ std::shared_ptr<MessageReceiver> ReceiverResource::CreateMessageReceiver()
     std::shared_ptr<MessageReceiver> newMsgReceiver = std::make_shared<MessageReceiver>(m_participant, this,
         m_maxMsgSize);
     newMsgReceiver->init(m_maxMsgSize);
-    //m_vMessageReceivers.emplace_back(newMsgReceiver);
     return newMsgReceiver;
 }
 

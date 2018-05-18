@@ -74,7 +74,6 @@ public:
     * Resources can only be transfered through move semantics. Copy, assignment, and
     * construction outside of the factory are forbidden.
     */
-   ReceiverResource(RTPSParticipantImpl*, TransportInterface&, const Locator_t&, uint32_t maxMsgSize);
    ReceiverResource(ReceiverResource&&);
    ~ReceiverResource();
 
@@ -102,11 +101,11 @@ private:
    ReceiverResource()                                   = delete;
    ReceiverResource(const ReceiverResource&)            = delete;
    ReceiverResource& operator=(const ReceiverResource&) = delete;
+   ReceiverResource(RTPSParticipantImpl*, TransportInterface&, const Locator_t&, uint32_t maxMsgSize);
 
    std::mutex mtx;
    std::vector<RTPSWriter *> AssociatedWriters;
    std::vector<RTPSReader *> AssociatedReaders;
-   std::vector<std::shared_ptr<MessageReceiver>> m_vMessageReceivers;
    std::function<void()> Cleanup;
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
    bool mValid; // Post-construction validity check for the NetworkFactory

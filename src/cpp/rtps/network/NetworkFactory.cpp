@@ -57,8 +57,8 @@ bool NetworkFactory::BuildReceiverResources (const Locator_t& local, RTPSPartici
         {
             if(!transport->IsInputChannelOpen(local))
             {
-                std::shared_ptr<ReceiverResource> newReceiverResource = std::make_shared<ReceiverResource>(
-                    participant, *transport, local, maxMsgSize);
+                std::shared_ptr<ReceiverResource> newReceiverResource = std::shared_ptr<ReceiverResource>(
+                    new ReceiverResource(participant, *transport, local, maxMsgSize));
 
                 if(newReceiverResource->mValid)
                 {
