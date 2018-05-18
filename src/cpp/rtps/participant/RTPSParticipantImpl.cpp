@@ -198,7 +198,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
                         for(int32_t i = 0; i < 4; ++i)
                         {
                             Locator_t auxloc(locator);
-                            auxloc.set_port(static_cast<uint16_t>(m_att.port.getUnicastPort(m_att.builtin.domainId, i)));
+                            auxloc.set_port(static_cast<uint16_t>(m_att.port.getUnicastPort(m_att.builtin.domainId, i)), true);
 
                             m_att.builtin.initialPeersList.push_back(auxloc);
                         }
@@ -284,11 +284,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     hasLocatorsDefined = true;
     if (m_att.defaultOutLocatorList.empty()){
         hasLocatorsDefined = false;
-        Locator_t SendLocator;
+        //Locator_t SendLocator;
         /*TODO - Fill with desired default Send Locators for our transports*/
+        m_network_Factory.GetDefaultLocators(m_att.defaultOutLocatorList);
         //Warning - Mock rule being used (and only for IPv4)!
-        SendLocator.kind = LOCATOR_KIND_UDPv4;
-        m_att.defaultOutLocatorList.push_back(SendLocator);
+        //SendLocator.kind = LOCATOR_KIND_UDPv4;
+        //m_att.defaultOutLocatorList.push_back(SendLocator);
     }
     //Create the default sendResources - For the same reason as in the ReceiverResources
     std::vector<SenderResource > newSenders;

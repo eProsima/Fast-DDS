@@ -127,6 +127,8 @@ public:
    virtual bool is_local_locator(const Locator_t& locator) const = 0;
 
    virtual TransportDescriptorInterface* get_configuration() = 0;
+
+   virtual void AddDefaultLocator(LocatorList_t &defaultList) = 0;
 };
 
 /**

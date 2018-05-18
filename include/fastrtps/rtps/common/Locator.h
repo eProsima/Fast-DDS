@@ -82,28 +82,33 @@ class RTPS_DllAPI Locator_t
     public:
         //!Default constructor
         Locator_t():kind(1),port(0)
-    {
-        LOCATOR_ADDRESS_INVALID(address);
-    }
+        {
+            LOCATOR_ADDRESS_INVALID(address);
+        }
 
         Locator_t(Locator_t&& loc):
             kind(loc.kind),
             port(loc.port)
-    {
-        std::memcpy(address,loc.address,16*sizeof(octet));
-    }
+        {
+            std::memcpy(address,loc.address,16*sizeof(octet));
+        }
 
         Locator_t(const Locator_t& loc) :
             kind(loc.kind),
             port(loc.port)
-    {
-        std::memcpy(address,loc.address,16*sizeof(octet));
-    }
+        {
+            std::memcpy(address,loc.address,16*sizeof(octet));
+        }
 
         Locator_t(uint32_t portin):kind(1),port(portin)
-    {
-        LOCATOR_ADDRESS_INVALID(address);
-    }
+        {
+            LOCATOR_ADDRESS_INVALID(address);
+        }
+
+        Locator_t(int32_t kindin, uint32_t portin):kind(kindin),port(portin)
+        {
+            LOCATOR_ADDRESS_INVALID(address);
+        }
 
         Locator_t& operator=(const Locator_t& loc)
         {
@@ -771,6 +776,23 @@ class LocatorList_t
 
         RTPS_DllAPI void push_back(const Locator_t& loc)
         {
+            bool already = false;
+            for(LocatorListIterator it=this->begin(); it!=this->end(); ++it)
+            {
+                if(loc == *it)
+                {
+                    already = true;
+                    break;
+                }
+            }
+            if(!already)
+                m_locators.push_back(loc);
+        }
+
+        template<typename... Args>
+        RTPS_DllAPI void emplace_back(Args&&... args)
+        {
+            Locator_t loc(std::forward<Args>(args) ...);
             bool already = false;
             for(LocatorListIterator it=this->begin(); it!=this->end(); ++it)
             {

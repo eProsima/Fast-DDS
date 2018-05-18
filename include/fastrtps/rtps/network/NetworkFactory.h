@@ -99,6 +99,11 @@ class NetworkFactory
          * */
         bool generate_locators(uint16_t physical_port, int locator_kind, LocatorList_t &ret_locators);
 
+        /**
+         * For each transport, ask for their default locators.
+         * */
+        void GetDefaultLocators(LocatorList_t &defaultLocators);
+
     private:
 
         std::vector<std::unique_ptr<TransportInterface> > mRegisteredTransports;
