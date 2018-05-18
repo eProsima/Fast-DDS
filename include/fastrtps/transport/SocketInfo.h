@@ -143,11 +143,13 @@ class UDPSocketInfo : public SocketInfo
 public:
     UDPSocketInfo(eProsimaUDPSocket& socket)
         : socket_(moveSocket(socket))
+        , only_multicast_purpose_(false)
     {
     }
 
     UDPSocketInfo(UDPSocketInfo&& socketInfo)
         : socket_(moveSocket(socketInfo.socket_))
+        , only_multicast_purpose_(false)
     {
     }
 
