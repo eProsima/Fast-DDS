@@ -244,14 +244,22 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     else
     {
         // Locator with port 0, calculate port.
-        std::for_each(m_att.defaultUnicastLocatorList.begin(),
-                m_att.defaultUnicastLocatorList.end(),
+        std::for_each(m_att.defaultUnicastLocatorList.begin(), m_att.defaultUnicastLocatorList.end(),
                 [&](Locator_t& loc) {
-            if (loc.get_port() == 0)
-                loc.set_port(static_cast<uint16_t>(m_att.port.portBase +
-                    m_att.port.domainIDGain*PParam.builtin.domainId +
-                    m_att.port.offsetd3 +
-                    m_att.port.participantIDGain*m_att.participantID), true);
+                    if (loc.get_port() == 0 && loc.get_logical_port() == 0)
+                    {
+                        loc.set_port(static_cast<uint16_t>(m_att.port.portBase +
+                            m_att.port.domainIDGain*PParam.builtin.domainId +
+                            m_att.port.offsetd3 +
+                            m_att.port.participantIDGain*m_att.participantID), true);
+                    }
+                    if (loc.get_physical_port() == 0)
+                    {
+                        loc.set_port(static_cast<uint16_t>(m_att.port.portBase +
+                            m_att.port.domainIDGain*PParam.builtin.domainId +
+                            m_att.port.offsetd3 +
+                            m_att.port.participantIDGain*m_att.participantID));
+                    }
                 });
 
         // Normalize unicast locators.
