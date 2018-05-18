@@ -197,15 +197,15 @@ class TCPSocketInfo : public SocketInfo
 {
     public:
         TCPSocketInfo(eProsimaTCPSocket& socket)
-            : socket_(moveSocket(socket))
-            , m_physicalPort(0)
+            : m_physicalPort(0)
+            , socket_(moveSocket(socket))
         {
             mMutex = std::make_shared<std::recursive_mutex>();
         }
 
         TCPSocketInfo(TCPSocketInfo&& socketInfo)
-            : socket_(moveSocket(socketInfo.socket_))
-            , m_physicalPort(0)
+            : m_physicalPort(0)
+            , socket_(moveSocket(socketInfo.socket_))
         {
             mMutex = std::make_shared<std::recursive_mutex>();
         }
