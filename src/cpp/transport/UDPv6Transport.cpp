@@ -95,6 +95,11 @@ UDPv6Transport::~UDPv6Transport()
     }
 }
 
+void UDPv6Transport::AddDefaultLocator(LocatorList_t &defaultList)
+{
+    defaultList.emplace_back(LOCATOR_KIND_UDPv6, 0);
+}
+
 bool UDPv6Transport::init()
 {
     if(mConfiguration_.sendBufferSize == 0 || mConfiguration_.receiveBufferSize == 0)

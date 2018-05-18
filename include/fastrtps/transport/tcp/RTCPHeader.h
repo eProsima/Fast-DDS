@@ -30,6 +30,8 @@ struct TCPHeader
     {
         return (const octet*)this;
     }
+
+    static inline size_t GetSize() { return 14; }
 };
 
 union TCPTransactionId

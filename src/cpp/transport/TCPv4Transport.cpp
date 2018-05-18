@@ -364,7 +364,7 @@ void TCPv4Transport::OpenAndBindUnicastOutputSocket(const ip::address_v4& ipAddr
 {
     mOutputSemaphores.emplace(logical_port, new Semaphore(0));
 
-    TCPConnector* newConnector = new TCPConnector(mService, ipAddress, logical_port, tcp_port, mSendBufferSize);
+    TCPConnector* newConnector = new TCPConnector(mService, ipAddress, tcp_port, logical_port, mSendBufferSize);
     mPendingOutputSockets[logical_port] = newConnector;
     newConnector->Connect(this);
 }
@@ -377,6 +377,12 @@ bool TCPv4Transport::DoLocatorsMatch(const Locator_t& left, const Locator_t& rig
 bool TCPv4Transport::IsLocatorSupported(const Locator_t& locator) const
 {
     return locator.kind == LOCATOR_KIND_TCPv4;
+}
+
+void TCPv4Transport::AddDefaultLocator(LocatorList_t &/*defaultList*/)
+{
+    // On TCP, no default send locators.
+    //defaultList.emplace_back(LOCATOR_KIND_TCPv4, 0);
 }
 
 Locator_t TCPv4Transport::RemoteToMainLocal(const Locator_t& remote) const
@@ -400,7 +406,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
     uint16_t logicalPort = localLocator.get_logical_port();
-    if (!IsOutputChannelOpen(logicalPort) || sendBufferSize > mConfiguration_.sendBufferSize)
+    if (!IsOutputChannelOpen(localLocator) || sendBufferSize > mConfiguration_.sendBufferSize)
         return false;
 
 
@@ -416,11 +422,11 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     {
         CDRMessage_t msg;
         TCPHeader tcp_header;
-        tcp_header.length = sendBufferSize + sizeof(tcp_header);
+        tcp_header.length = sendBufferSize + TCPHeader::GetSize();
         tcp_header.logicalPort = localLocator.get_logical_port();
         tcp_header.crc = 0; // TODO generate and fill CRC
 
-        RTPSMessageCreator::addCustomContent(&msg, tcp_header.getAddress(), sizeof(tcp_header));
+        RTPSMessageCreator::addCustomContent(&msg, tcp_header.getAddress(), TCPHeader::GetSize());
         RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
 
         bool success = false;
@@ -466,7 +472,8 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
         success = true;
 
         // Read the header
-        tcpSocketInfo->getSocket()->async_receive(asio::buffer(&header, sizeof(header)), 0,
+        tcpSocketInfo->getSocket()->set_option(asio::socket_base::receive_low_watermark(TCPHeader::GetSize()));
+        tcpSocketInfo->getSocket()->async_receive(asio::buffer(&header, TCPHeader::GetSize()), 0,
             std::bind(&TCPv4Transport::DataReceived, this, header, receiveBuffer, receiveBufferCapacity,
                 receiveBufferSize, &receiveSemaphore, tcpSocketInfo, success, std::placeholders::_1,
                 std::placeholders::_2));
@@ -523,12 +530,12 @@ bool TCPv4Transport::DataReceived(TCPHeader& header, octet* receiveBuffer, uint3
     {
         logInfo(RTPS_MSG_IN, "TCP Header processed (" << bytes_transferred << " bytes received), \
 				Socket async receive put again to listen ");
-        if (bytes_transferred != 14)
+        if (bytes_transferred != TCPHeader::GetSize())
         {
-            logError(RTPS_MSG_IN, "Bad TCP header size: " << bytes_transferred);
+            logError(RTPS_MSG_IN, "Bad TCP header size: " << bytes_transferred << "(expected: : " << TCPHeader::GetSize() << ")");
         }
 
-        size = header.length - sizeof(header);
+        size = header.length - TCPHeader::GetSize();
 
         if (size > receiveBufferCapacity)
         {
@@ -539,6 +546,7 @@ bool TCPv4Transport::DataReceived(TCPHeader& header, octet* receiveBuffer, uint3
         else
         {
             // Read the body
+            pSocketInfo->getSocket()->set_option(asio::socket_base::receive_low_watermark(size));
             receiveBufferSize = (uint32_t)pSocketInfo->getSocket()->receive(asio::buffer(receiveBuffer, size));
             if (receiveBufferSize != size)
             {
@@ -569,6 +577,7 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
 
     try
     {
+        socket.getSocket()->set_option(asio::socket_base::send_low_watermark(sendBufferSize));
         bytesSent = socket.getSocket()->send(asio::buffer(sendBuffer, sendBufferSize));
     }
     catch (const asio::error_code& error)

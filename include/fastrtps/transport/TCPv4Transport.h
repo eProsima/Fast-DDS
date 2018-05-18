@@ -167,6 +167,8 @@ public:
 
    TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
 
+   virtual void AddDefaultLocator(LocatorList_t &defaultList) override;
+
    void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket s);
    void SocketConnected(uint16_t logical_port, uint32_t sendBufferSize, const asio::error_code& error);
 protected:

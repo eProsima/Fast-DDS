@@ -133,6 +133,8 @@ public:
 
    TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
 
+   virtual void AddDefaultLocator(LocatorList_t &defaultList) override;
+
 private:
 
    UDPv6TransportDescriptor mConfiguration_;

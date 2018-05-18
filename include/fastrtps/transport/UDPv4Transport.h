@@ -134,6 +134,8 @@ public:
 
    TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
 
+   virtual void AddDefaultLocator(LocatorList_t &defaultList) override;
+
 protected:
 
    //! Constructor with no descriptor is necessary for implementations derived from this class.

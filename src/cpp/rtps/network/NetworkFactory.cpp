@@ -197,6 +197,15 @@ bool NetworkFactory::generate_locators(uint16_t physical_port, int locator_kind,
     return !ret_locators.empty();
 }
 
+void NetworkFactory::GetDefaultLocators(LocatorList_t &defaultLocators)
+{
+    defaultLocators.clear();
+    for(auto& transport : mRegisteredTransports)
+    {
+        transport->AddDefaultLocator(defaultLocators);
+    }
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
