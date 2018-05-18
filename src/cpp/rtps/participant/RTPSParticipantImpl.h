@@ -235,7 +235,7 @@ class RTPSParticipantImpl
 #endif
 
         //! Encapsulates all associated resources on a Receiving element.
-        std::list<ReceiverResource> m_receiverResourcelist;
+        std::list<std::shared_ptr<ReceiverResource>> m_receiverResourcelist;
         //! Receiver resource list needs its own mutext to avoid a race condition.
         std::mutex m_receiverResourcelistMutex;
 

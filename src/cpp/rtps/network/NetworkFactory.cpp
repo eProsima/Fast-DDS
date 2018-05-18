@@ -47,7 +47,7 @@ vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local)
 }
 
 bool NetworkFactory::BuildReceiverResources (const Locator_t& local, RTPSParticipantImpl* participant,
-    uint32_t maxMsgSize, std::vector<ReceiverResource>& returned_resources_list)
+    uint32_t maxMsgSize, std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list)
 {
     bool returnedValue = false;
 
@@ -57,10 +57,12 @@ bool NetworkFactory::BuildReceiverResources (const Locator_t& local, RTPSPartici
         {
             if(!transport->IsInputChannelOpen(local))
             {
-                ReceiverResource newReceiverResource(participant, *transport, local, maxMsgSize);
-                if(newReceiverResource.mValid)
+                std::shared_ptr<ReceiverResource> newReceiverResource = std::make_shared<ReceiverResource>(
+                    participant, *transport, local, maxMsgSize);
+
+                if(newReceiverResource->mValid)
                 {
-                    returned_resources_list.push_back(std::move(newReceiverResource));
+                    returned_resources_list.push_back(newReceiverResource);
                     returnedValue = true;
                 }
             }

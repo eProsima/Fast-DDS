@@ -256,10 +256,10 @@ bool UDPv4Transport::CloseInputChannel(const Locator_t& locator)
         if (!IsInputChannelOpen(locator))
             return false;
 
-        socketInfo = mInputSockets.at(locator.get_port());
+        socketInfo = mInputSockets.at(locator.get_physical_port());
         socketInfo->getSocket()->cancel();
         socketInfo->getSocket()->close();
-        mInputSockets.erase(locator.get_port());
+        mInputSockets.erase(locator.get_physical_port());
     }
 
     if (socketInfo != nullptr)
@@ -396,18 +396,18 @@ bool UDPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverR
 
     try
     {
-        eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(locator.get_port(), is_multicast);
+        eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(locator.get_physical_port(), is_multicast);
         UDPSocketInfo* socketInfo = new UDPSocketInfo(unicastSocket);
         socketInfo->SetMessageReceiver(receiverResource->CreateMessageReceiver());
         std::thread* newThread = new std::thread(&UDPv4Transport::performListenOperation, this, socketInfo, locator);
         socketInfo->SetThread(newThread);
-        mInputSockets.emplace(locator.get_port(), socketInfo);
+        mInputSockets.emplace(locator.get_physical_port(), socketInfo);
     }
     catch (asio::system_error const& e)
     {
         (void)e;
-        logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << locator.get_port() << ")" << " with msg: "<<e.what());
-        mInputSockets.erase(locator.get_port());
+        logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << locator.get_physical_port() << ")" << " with msg: "<<e.what());
+        mInputSockets.erase(locator.get_physical_port());
         return false;
     }
 
@@ -422,7 +422,7 @@ void UDPv4Transport::performListenOperation(UDPSocketInfo* pSocketInfo, Locator_
         // Blocking receive.
         auto& msg = pSocketInfo->GetMessageReceiver()->m_rec_msg;
         CDRMessage::initCDRMsg(&msg);
-        if (!Receive(msg.buffer, msg.max_size, msg.length, input_locator, remoteLocator))
+        if (!Receive(msg.buffer, msg.max_size, msg.length, pSocketInfo, remoteLocator))
             continue;
 
         // Processes the data through the CDR Message interface.
@@ -512,9 +512,9 @@ static void EndpointToLocator(ip::udp::endpoint& endpoint, Locator_t& locator)
 }
 
 bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-        const Locator_t& localLocator, Locator_t& remoteLocator)
+    SocketInfo* socketInfo, Locator_t& remoteLocator)
 {
-    if (!IsInputChannelOpen(localLocator))
+    if (!socketInfo->IsAlive())
         return false;
 
     ip::udp::endpoint senderEndpoint;
@@ -522,7 +522,7 @@ bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 
     { // lock scope
         std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-        if (!IsInputChannelOpen(localLocator))
+        if (!socketInfo->IsAlive())
             return false;
 
         socket = &mInputSockets.at(localLocator.port);
@@ -674,7 +674,7 @@ LocatorList_t UDPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                             // Loopback locator
                             Locator_t loopbackLocator;
                             loopbackLocator.set_IP4_address(127, 0, 0, 1);
-                            loopbackLocator.set_port(it->get_port());
+                            loopbackLocator.set_port(it->get_physical_port());
                             pendingUnicast.push_back(loopbackLocator);
                             break;
                         }
