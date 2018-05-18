@@ -59,7 +59,6 @@ void TCPAcceptor::Accept(TCPv4Transport* parent)
         std::placeholders::_2));
 }
 
-#if defined(ASIO_HAS_MOVE)
 TCPConnector::TCPConnector(asio::io_service& io_service,
     const ip::address_v4& ipAddress,
     uint16_t tcp_port,
@@ -87,36 +86,6 @@ void TCPConnector::RetryConnect(asio::io_service& io_service, TCPv4Transport* pa
     m_socket = createTCPSocket(io_service);
     Connect(parent);
 }
-
-#else
-TCPConnector::TCPConnector(asio::io_service& io_service,
-    const ip::address_v4& ipAddress,
-    uint16_t tcp_port,
-    uint16_t logical_port,
-    uint32_t sendBufferSize)
-    : m_tcp_port(tcp_port)
-    , m_logical_port(logical_port)
-    , m_ipAddress(ipAddress)
-    , m_sendBufferSize(sendBufferSize)
-    , m_socket(createTCPSocket(io_service))
-{
-}
-
-void TCPConnector::Connect(TCPv4Transport* parent)
-{
-    getSocketPtr(m_socket)->open(ip::tcp::v4());
-    ip::tcp::endpoint endpoint(m_ipAddress, static_cast<uint16_t>(m_tcp_port));
-    getSocketPtr(m_socket)->async_connect(endpoint, std::bind(&TCPv4Transport::SocketConnected, parent, m_logical_port,
-        m_sendBufferSize, std::placeholders::_1));
-}
-
-void TCPConnector::RetryConnect(asio::io_service& io_service, TCPv4Transport* parent)
-{
-    getSocketPtr(m_socket)->close();
-    m_socket = createTCPSocket(io_service);
-    Connect(parent);
-}
-#endif
 
 TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor) :
     mConfiguration_(descriptor),
