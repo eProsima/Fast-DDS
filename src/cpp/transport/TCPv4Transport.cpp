@@ -391,7 +391,6 @@ Locator_t TCPv4Transport::RemoteToMainLocal(const Locator_t& remote) const
         return false;
 
     Locator_t mainLocal(remote);
-    //memset(mainLocal.address, 0x00, sizeof(mainLocal.address));
     mainLocal.set_Invalid_Address();
     return mainLocal;
 }
@@ -433,7 +432,6 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         auto& sockets = mOutputSockets.at(logicalPort);
         for (auto& socket : sockets)
         {
-            //showCDRMessage(&msg);
             std::unique_lock<std::recursive_mutex> sendLock(socket.GetMutex());
             success |= SendThroughSocket(msg.buffer, msg.length, remoteLocator, socket);
         }
@@ -444,9 +442,9 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
 
 static void EndpointToLocator(ip::tcp::endpoint& endpoint, Locator_t& locator)
 {
+    locator.kind = LOCATOR_KIND_TCPv4;
     locator.set_port(endpoint.port());
     auto ipBytes = endpoint.address().to_v4().to_bytes();
-    //memcpy(&locator.address[12], ipBytes.data(), sizeof(ipBytes));
     locator.set_IP4_address(ipBytes.data());
 }
 
@@ -459,7 +457,7 @@ static void EndpointToLocator(ip::tcp::endpoint& endpoint, Locator_t& locator)
 bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
     SocketInfo* socketInfo, Locator_t& remoteLocator)
 {
-    TCPHeader header;
+    //TCPHeader header;
     Semaphore receiveSemaphore(0);
     bool success = false;
     TCPSocketInfo* tcpSocketInfo = reinterpret_cast<TCPSocketInfo*>(socketInfo);
@@ -473,12 +471,16 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 
         // Read the header
         tcpSocketInfo->getSocket()->set_option(asio::socket_base::receive_low_watermark(TCPHeader::GetSize()));
-        tcpSocketInfo->getSocket()->async_receive(asio::buffer(&header, TCPHeader::GetSize()), 0,
+               
+        octet header[14];
+        async_read(*tcpSocketInfo->getSocket(), asio::buffer(&header, TCPHeader::GetSize()),
             std::bind(&TCPv4Transport::DataReceived, this, header, receiveBuffer, receiveBufferCapacity,
-                receiveBufferSize, &receiveSemaphore, tcpSocketInfo, success, std::placeholders::_1,
+                &receiveBufferSize, &receiveSemaphore, tcpSocketInfo, success, std::placeholders::_1,
                 std::placeholders::_2));
     }
     receiveSemaphore.wait();
+
+    success = success && receiveBufferSize > 0;
 
     if (success)
     {
@@ -509,12 +511,14 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 }
 
 
-bool TCPv4Transport::DataReceived(TCPHeader& header, octet* receiveBuffer, uint32_t receiveBufferCapacity,
-    uint32_t& receiveBufferSize, Semaphore* semaphore, TCPSocketInfo* pSocketInfo, bool& bSuccess,
+bool TCPv4Transport::DataReceived(const octet* header, octet* receiveBuffer, uint32_t receiveBufferCapacity,
+    uint32_t* receiveBufferSize, Semaphore* semaphore, TCPSocketInfo* pSocketInfo, bool& bSuccess,
     const asio::error_code& error, std::size_t bytes_transferred)
 {
     uint32_t size(0);
 
+    TCPHeader tcp_header;
+    memcpy(&tcp_header, header, TCPHeader::GetSize()); // TODO Can avoid this memcpy?
     if (error)
     {
         logInfo(RTPS_MSG_IN, "Error while listening to socket (tcp header)...");
@@ -535,7 +539,7 @@ bool TCPv4Transport::DataReceived(TCPHeader& header, octet* receiveBuffer, uint3
             logError(RTPS_MSG_IN, "Bad TCP header size: " << bytes_transferred << "(expected: : " << TCPHeader::GetSize() << ")");
         }
 
-        size = header.length - TCPHeader::GetSize();
+        size = tcp_header.length - TCPHeader::GetSize();
 
         if (size > receiveBufferCapacity)
         {
@@ -547,8 +551,8 @@ bool TCPv4Transport::DataReceived(TCPHeader& header, octet* receiveBuffer, uint3
         {
             // Read the body
             pSocketInfo->getSocket()->set_option(asio::socket_base::receive_low_watermark(size));
-            receiveBufferSize = (uint32_t)pSocketInfo->getSocket()->receive(asio::buffer(receiveBuffer, size));
-            if (receiveBufferSize != size)
+            *receiveBufferSize = (uint32_t) pSocketInfo->getSocket()->read_some(asio::buffer(receiveBuffer, size));
+            if (*receiveBufferSize != size)
             {
                 bSuccess = false;
             }
@@ -566,18 +570,15 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
 {
 
     asio::ip::address_v4::bytes_type remoteAddress;
-    //memcpy(&remoteAddress, &remoteLocator.address[12], sizeof(remoteAddress));
     remoteLocator.copy_IP4_address(remoteAddress.data());
     auto destinationEndpoint = ip::tcp::endpoint(asio::ip::address_v4(remoteAddress),
         static_cast<uint16_t>(remoteLocator.get_port()));
     size_t bytesSent = 0;
-    //(void)destinationEndpoint;
     logInfo(RTPS_MSG_OUT, "TCPv4: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
         << " FROM " << socket.getSocket()->local_endpoint());
 
     try
     {
-        socket.getSocket()->set_option(asio::socket_base::send_low_watermark(sendBufferSize));
         bytesSent = socket.getSocket()->send(asio::buffer(sendBuffer, sendBufferSize));
     }
     catch (const asio::error_code& error)
