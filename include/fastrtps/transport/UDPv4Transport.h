@@ -123,8 +123,8 @@ public:
     * @param localLocator Locator mapping to the local channel we're listening to.
     * @param[out] remoteLocator Locator describing the remote restination we received a packet from.
     */
-   virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-       SocketInfo* socketInfo, Locator_t& remoteLocator) override;
+   bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
+       SocketInfo* socketInfo, Locator_t& remoteLocator);
 
    virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
 

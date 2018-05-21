@@ -220,12 +220,12 @@ public:
 
     TCPSocketInfo(TCPSocketInfo&& socketInfo)
         : m_locator(socketInfo.m_locator)
-        , m_physicalPort(0)
-        , m_inputSocket(false)
+        , m_physicalPort(socketInfo.m_physicalPort)
+        , m_inputSocket(socketInfo.m_inputSocket)
         , socket_(moveSocket(socketInfo.socket_))
-        , mConnectionStatus(eConnectionStatus::eDisconnected)
+        , mConnectionStatus(socketInfo.mConnectionStatus)
+        , mMutex(socketInfo.mMutex)
     {
-        mMutex = std::make_shared<std::recursive_mutex>();
     }
 
     virtual ~TCPSocketInfo()

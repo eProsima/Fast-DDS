@@ -117,6 +117,7 @@ public:
    bool IsOutputChannelBound(const Locator_t&) const;
    bool IsOutputChannelConnected(const Locator_t&) const;
    void BindOutputChannel(const Locator_t&);
+   void UnbindInputSocket(std::shared_ptr<SocketInfo>);
 
    //! Checks for TCPv4 kind.
    virtual bool IsLocatorSupported(const Locator_t&) const override;
@@ -169,8 +170,8 @@ public:
     * @param localLocator Locator mapping to the local channel we're listening to.
     * @param[out] remoteLocator Locator describing the remote restination we received a packet from.
     */
-   virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-       SocketInfo* socketInfo, Locator_t& remoteLocator) override;
+   bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
+       std::shared_ptr<TCPSocketInfo> socketInfo, Locator_t& remoteLocator);
 
    virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
 
@@ -201,7 +202,6 @@ protected:
     std::map<Locator_t, TCPConnector*> mPendingOutputSockets;
     std::vector<std::shared_ptr<TCPSocketInfo>> mOutputSockets;
     std::map<Locator_t, std::shared_ptr<TCPSocketInfo>> mBoundOutputSockets;
-    std::map<uint16_t, Semaphore*> mOutputSemaphores;                       // Control the physical connection
 
     std::vector<IPFinder::info_IP> currentInterfaces;
 
@@ -228,7 +228,7 @@ protected:
     void performListenOperation(std::shared_ptr<TCPSocketInfo> pSocketInfo);
 
     bool DataReceived(const octet* header, octet* receiveBuffer, uint32_t receiveBufferCapacity,
-        uint32_t* receiveBufferSize, Semaphore* semaphore, TCPSocketInfo* pSocketInfo,
+        uint32_t* receiveBufferSize, Semaphore* semaphore, std::shared_ptr<TCPSocketInfo> pSocketInfo,
         bool& bSuccess, const asio::error_code& error, std::size_t bytes_transferred);
 
     bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,

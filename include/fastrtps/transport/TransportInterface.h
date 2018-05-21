@@ -111,14 +111,6 @@ public:
    */
    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator) = 0;
 
-   /**
-    * Must execute a blocking receive, on the inbound channel that maps to the localLocator, receiving from the
-    * address that gets written to remoteLocator. Must be threadsafe between channels, but not necessarily
-    * within the same channel.
-    */
-   virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-       SocketInfo* socketInfo, Locator_t& remoteLocator) = 0;
-
    virtual void SetParticipantGUIDPrefix(const GuidPrefix_t& prefix) = 0;
 
    virtual LocatorList_t NormalizeLocator(const Locator_t& locator) = 0;
