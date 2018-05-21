@@ -220,11 +220,11 @@ protected:
     @param input_locator - Locator that triggered the creation of the resource
     */
     void performListenOperation(TCPSocketInfo* pSocketInfo);
-/*
+
    bool DataReceived(const octet* header, octet* receiveBuffer, uint32_t receiveBufferCapacity,
         uint32_t* receiveBufferSize, Semaphore* semaphore, TCPSocketInfo* pSocketInfo,
         bool& bSuccess, const asio::error_code& error, std::size_t bytes_transferred);
-*/
+
     bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
         TCPSocketInfo& socket);
 

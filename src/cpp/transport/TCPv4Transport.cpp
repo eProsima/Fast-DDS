@@ -488,8 +488,7 @@ static void EndpointToLocator(ip::tcp::endpoint& endpoint, Locator_t& locator)
 bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
     SocketInfo* socketInfo, Locator_t& remoteLocator)
 {
-    TCPHeader header;
-    //Semaphore receiveSemaphore(0);
+    Semaphore receiveSemaphore(0);
     bool success = false;
     TCPSocketInfo* tcpSocketInfo = reinterpret_cast<TCPSocketInfo*>(socketInfo);
 
@@ -504,57 +503,14 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
         tcpSocketInfo->getSocket()->set_option(asio::socket_base::receive_low_watermark(
             static_cast<int>(TCPHeader::GetSize())));
 
-        //octet header[14];
-        asio::error_code error;
-        size_t recv_header_size = tcpSocketInfo->getSocket()->read_some(
-            asio::buffer(&header, TCPHeader::GetSize()),
-            error);
-        if (error)
-        {
-            logInfo(RTPS_MSG_IN, "Error while listening to socket (tcp header)...");
-            if (error == asio::error::eof || error == asio::error::connection_reset)
-            {
-                // Disable the socket to erase it after the reception.
-                tcpSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eDisconnected);
-                tcpSocketInfo->Disable();
-            }
-            success = false;
-        } 
-        else if (recv_header_size != TCPHeader::GetSize())
-        {
-            logError(RTPS_MSG_IN, "Bad TCP header size: " << recv_header_size << "(expected: : " << TCPHeader::GetSize() << ")");
-            success = false;
-        }
-        else
-        {
-            logInfo(RTPS_MSG_IN, "TCP Header processed (" << recv_header_size << " bytes received), \
-                    Socket async receive put again to listen ");
-            
-            uint32_t size(0);
-            size = header.length - static_cast<uint32_t>(TCPHeader::GetSize());
-
-            if (size > receiveBufferCapacity)
-            {
-                logError(RTPS_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
-                    << size << " vs. " << receiveBufferCapacity << ".");
-                success = false;
-            }
-            else
-            {
-                // Read the body
-                tcpSocketInfo->getSocket()->set_option(asio::socket_base::receive_low_watermark(size));
-                receiveBufferSize = (uint32_t) tcpSocketInfo->getSocket()->read_some(asio::buffer(receiveBuffer, size));
-
-                // TODO Check header.crc
-
-                if (receiveBufferSize != size)
-                {
-                    success = false;
-                }
-            }
-        }
+        //TCPHeader header;
+        octet header[14];
+        async_read(*tcpSocketInfo->getSocket(), asio::buffer(&header, TCPHeader::GetSize()),
+            std::bind(&TCPv4Transport::DataReceived, this, header, receiveBuffer, receiveBufferCapacity,
+                &receiveBufferSize, &receiveSemaphore, tcpSocketInfo, success, std::placeholders::_1,
+                std::placeholders::_2));
     }
-
+    receiveSemaphore.wait();
     success = success && receiveBufferSize > 0;
 
     if (success)
@@ -585,7 +541,6 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
     return success;
 }
 
-/*
 bool TCPv4Transport::DataReceived(const octet* header, octet* receiveBuffer, uint32_t receiveBufferCapacity,
     uint32_t* receiveBufferSize, Semaphore* semaphore, TCPSocketInfo* pSocketInfo, bool& bSuccess,
     const asio::error_code& error, std::size_t bytes_transferred)
@@ -638,7 +593,7 @@ bool TCPv4Transport::DataReceived(const octet* header, octet* receiveBuffer, uin
     semaphore->post();
     return bSuccess;
 }
-*/
+
 bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
     uint32_t sendBufferSize,
     const Locator_t& remoteLocator,
@@ -673,6 +628,13 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
     catch (const std::exception& error)
     {
         logWarning(RTPS_MSG_OUT, "Error: " << error.what());
+        // Close the channel
+        Locator_t prevLocator = socket.m_locator;
+        std::shared_ptr<MessageReceiver> prevMsgReceiver = socket.GetMessageReceiver();
+        CloseOutputChannel(socket.m_locator);
+
+        // Create a new connector to retry the connection.
+        OpenAndBindUnicastOutputSocket(prevLocator, prevMsgReceiver);
         return false;
     }
 
