@@ -48,11 +48,19 @@ bool HelloWorldSubscriber::init(bool tcp)
     PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
     PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
 
-	//Locator_t unicast_locator;
-	//unicast_locator.kind = kind;
-	//unicast_locator.set_IP4_address("127.0.0.1");
-	//unicast_locator.port = 7402;
-	//PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
+	Locator_t unicast_locator;
+	unicast_locator.kind = kind;
+	unicast_locator.set_IP4_address("127.0.0.1");
+	unicast_locator.set_port(5101);
+	unicast_locator.set_logical_port(7411);
+	PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
+
+	Locator_t out_locator;
+	out_locator.kind = kind;
+	out_locator.set_IP4_address("127.0.0.1");
+	out_locator.set_port(5100);
+	out_locator.set_logical_port(7400);
+	PParam.rtps.defaultOutLocatorList.push_back(out_locator);
 
 	Locator_t meta_locator;
 	meta_locator.kind = kind;

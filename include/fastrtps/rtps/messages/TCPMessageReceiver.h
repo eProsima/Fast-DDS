@@ -25,7 +25,7 @@
 #include "../../qos/ParameterList.h"
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
-
+#include "fastrtps/transport/tcp/TCPControlMessage.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -44,9 +44,30 @@ public:
     TCPMessageReceiver();
     virtual ~TCPMessageReceiver();
 
-    bool CheckTCPControlMessage(TCPSocketInfo* pSocketInfo, octet* buffer, uint32_t bufferSize);
+    void sendConnectionRequest(TCPSocketInfo* pSocketInfo, const Locator_t &transportLocator);
+    void sendOpenLogicalPortRequest(TCPSocketInfo* pSocketInfo, OpenLogicalPortRequest_t &request);
+    void sendCheckLogicalPortsRequest(TCPSocketInfo* pSocketInfo, CheckLogicalPortsRequest_t &request);
+    void sendKeepAliveRequest(TCPSocketInfo* pSocketInfo, KeepAliveRequest_t &request);
+    void sendLogicalPortIsClosedRequest(TCPSocketInfo* pSocketInfo, LogicalPortIsClosedRequest_t &request);
+
+    void processConnectionRequest(TCPSocketInfo* pSocketInfo, const ConnectionRequest_t &request, 
+        Locator_t &localLocator);
+    void processOpenLogicalPortRequest(TCPSocketInfo* pSocketInfo, const OpenLogicalPortRequest_t &request);
+    void processCheckLogicalPortsRequest(TCPSocketInfo* pSocketInfo, const CheckLogicalPortsRequest_t &request);
+    void processKeepAliveRequest(TCPSocketInfo* pSocketInfo, const KeepAliveRequest_t &request);
+    void processLogicalPortIsClosedRequest(TCPSocketInfo* pSocketInfo, const LogicalPortIsClosedRequest_t &request);
+
+    void processBindConnectionResponse(TCPSocketInfo* pSocketInfo, const BindConnectionResponse_t &response);
+    void processCheckLogicalPortsResponse(TCPSocketInfo* pSocketInfo, const CheckLogicalPortsResponse_t &response);
+    void processResponse(TCPSocketInfo* pSocketInfo, const ControlProtocolResponseData &response);
 
 private:
+    bool sendResponseData(TCPSocketInfo* pSocketInfo, 
+        const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
+        const ControlProtocolResponseData &response);
+    bool sendRequestData(TCPSocketInfo* pSocketInfo, 
+        const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
+        const ControlProtocolRequestData &request);
 };
 }
 } /* namespace rtps */

@@ -26,7 +26,7 @@ struct TCPHeader
         //memcpy((char*)rtcp, "RTCP", sizeof(char) * 4);
     }
 
-    const octet* getAddress()
+    const octet* getAddress() const
     {
         return (const octet*)this;
     }

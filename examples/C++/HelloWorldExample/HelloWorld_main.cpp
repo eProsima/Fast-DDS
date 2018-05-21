@@ -30,6 +30,8 @@ using namespace fastrtps;
 using namespace rtps;
 int main(int argc, char** argv)
 {
+    Log::SetVerbosity(Log::Kind::Warning);
+
     std::cout << "Starting "<< std::endl;
     int type = 1;
     int count = 0;

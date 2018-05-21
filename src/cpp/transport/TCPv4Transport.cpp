@@ -479,43 +479,14 @@ void TCPv4Transport::performListenOperation(std::shared_ptr<TCPSocketInfo> pSock
     Locator_t remoteLocator;
     while (pSocketInfo->IsAlive())
     {
-        if (pSocketInfo->mConnectionStatus == TCPSocketInfo::eConnectionStatus::eEstablished)
-        {
-            if (pSocketInfo->mPendingLogicalPorts.size() > 0)
-            {
-                //TODO: Send OpenLogicalPort Message
-            }
-
-            // Blocking receive.
-            auto& msg = pSocketInfo->GetMessageReceiver()->m_rec_msg;
-            CDRMessage::initCDRMsg(&msg);
-            if (!Receive(msg.buffer, msg.max_size, msg.length, pSocketInfo, remoteLocator))
-                continue;
-
-            if (mTCPMessageReceiver->CheckTCPControlMessage(pSocketInfo.get(), msg.buffer, msg.length))
-            {
-            }
-            else
-            {
-                // Processes the data through the CDR Message interface.
-                pSocketInfo->GetMessageReceiver()->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix,
-                    &pSocketInfo->m_locator, &pSocketInfo->GetMessageReceiver()->m_rec_msg);
-            }
-        }
-        else
-        {
-            switch (pSocketInfo->mConnectionStatus)
-            {
-            default:
-            case TCPSocketInfo::eConnectionStatus::eWaitingForBind:
-                // DO NOTHING
-                break;
-            case TCPSocketInfo::eConnectionStatus::eConnected:
-                pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eWaitingForBindResponse);
-                //ARCE: Send Bind Message.
-                break;
-            }
-        }
+        // Blocking receive.
+        auto& msg = pSocketInfo->GetMessageReceiver()->m_rec_msg;
+        CDRMessage::initCDRMsg(&msg);
+        if (!Receive(msg.buffer, msg.max_size, msg.length, pSocketInfo, remoteLocator))
+            continue;
+        // Processes the data through the CDR Message interface.
+        pSocketInfo->GetMessageReceiver()->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix,
+            &pSocketInfo->m_locator, &pSocketInfo->GetMessageReceiver()->m_rec_msg);
     }
 }
 
@@ -598,7 +569,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     return true;
 }
 
-static void EndpointToLocator(ip::tcp::endpoint& endpoint, Locator_t& locator)
+static void EndpointToLocator(const ip::tcp::endpoint& endpoint, Locator_t& locator)
 {
     locator.kind = LOCATOR_KIND_TCPv4;
     locator.set_port(endpoint.port());
@@ -615,6 +586,8 @@ static void EndpointToLocator(ip::tcp::endpoint& endpoint, Locator_t& locator)
 bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
     std::shared_ptr<TCPSocketInfo> socketInfo, Locator_t& remoteLocator)
 {
+    //TCPHeader header;
+    octet header[14];
     Semaphore receiveSemaphore(0);
     bool success = false;
 
@@ -641,8 +614,7 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 
     if (success)
     {
-        // ??
-        ip::tcp::endpoint senderEndpoint;
+        ip::tcp::endpoint senderEndpoint = tcpSocketInfo->getSocket()->remote_endpoint();
         EndpointToLocator(senderEndpoint, remoteLocator);
     }
     else
@@ -714,6 +686,86 @@ bool TCPv4Transport::DataReceived(const octet* header, octet* receiveBuffer, uin
             {
                 bSuccess = false;
             }
+
+            if (tcp_header.logicalPort == 0) // RTCP control protocol (do nothing if RTPS message)
+            {
+                TCPControlMsgHeader controlHeader;
+                uint32_t sizeCtrlHeader = sizeof(TCPControlMsgHeader);
+                memcpy(&controlHeader, receiveBuffer, sizeCtrlHeader);
+                switch(controlHeader.kind)
+                {
+                    case BIND_CONNECTION_REQUEST:
+                        {
+                            ConnectionRequest_t request;
+                            Locator_t myLocator;
+                            EndpointToLocator(pSocketInfo->getSocket()->local_endpoint(), myLocator);
+                            memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), sizeof(ConnectionRequest_t));
+                            mTCPMessageReceiver->processConnectionRequest(pSocketInfo, request, myLocator);
+                        }
+                        break; 
+                    case BIND_CONNECTION_RESPONSE: 
+                        {
+                            BindConnectionResponse_t response;
+                            memcpy(&response, &(receiveBuffer[sizeCtrlHeader]), sizeof(BindConnectionResponse_t));
+                            mTCPMessageReceiver->processBindConnectionResponse(pSocketInfo, response);
+
+                            //TODO mBoundSockets[response.locator()] = pSocketInfo;
+                            //mOutputSockets[response.locator].push_back(pSocketInfo);
+                            //mOutputSemaphores[port]->disable();
+                        }
+                        break;
+                    case OPEN_LOGICAL_PORT_REQUEST: 
+                        {
+                            OpenLogicalPortRequest_t request;
+                            memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), sizeof(OpenLogicalPortRequest_t));
+                            mTCPMessageReceiver->processOpenLogicalPortRequest(pSocketInfo, request);
+                        }
+                        break;
+                    case CHECK_LOGICAL_PORT_REQUEST: 
+                        {
+                            CheckLogicalPortsRequest_t request;
+                            memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), sizeof(CheckLogicalPortsRequest_t));
+                            mTCPMessageReceiver->processCheckLogicalPortsRequest(pSocketInfo, request);
+                        }
+                        break;
+                    case CHECK_LOGICAL_PORT_RESPONSE: 
+                        {
+                            CheckLogicalPortsResponse_t response;
+                            memcpy(&response, &(receiveBuffer[sizeCtrlHeader]), sizeof(CheckLogicalPortsResponse_t));
+                            mTCPMessageReceiver->processCheckLogicalPortsResponse(pSocketInfo, response);
+                        }
+                        break;
+                    case KEEP_ALIVE_REQUEST: 
+                        {
+                            KeepAliveRequest_t request;
+                            memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), sizeof(KeepAliveRequest_t));
+                            mTCPMessageReceiver->processKeepAliveRequest(pSocketInfo, request);
+                        }
+                        break;
+                    case LOGICAL_PORT_IS_CLOSED_REQUEST:
+                        {
+                            LogicalPortIsClosedRequest_t request;
+                            memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), sizeof(LogicalPortIsClosedRequest_t));
+                            mTCPMessageReceiver->processLogicalPortIsClosedRequest(pSocketInfo, request);
+                        }
+                        break;
+                    case UNBIND_CONNECTION_REQUEST:
+                        {
+                            // TODO Close socket
+                        }
+                        break;
+                    case OPEN_LOGICAL_PORT_RESPONSE: 
+                    case KEEP_ALIVE_RESPONSE:
+                        {
+                            ControlProtocolResponseData response;
+                            memcpy(&response, &(receiveBuffer[sizeCtrlHeader]), sizeof(ControlProtocolResponseData));
+                            mTCPMessageReceiver->processResponse(pSocketInfo, response);
+                        }
+                        break;
+                }
+                
+                bSuccess = false; // Isn't a RTPS message.
+            }
         }
     }
 
@@ -731,6 +783,7 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
     remoteLocator.copy_IP4_address(remoteAddress.data());
     auto destinationEndpoint = ip::tcp::endpoint(asio::ip::address_v4(remoteAddress),
         static_cast<uint16_t>(remoteLocator.get_port()));
+
     size_t bytesSent = 0;
     logInfo(RTPS_MSG_OUT, "TCPv4: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
         << " FROM " << socket.getSocket()->local_endpoint());
@@ -877,6 +930,28 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
     }
 }
 
+/*
+
+
+    // RTCP Control protocol
+    switch(socket.mConnectionStatus)
+    {
+        case TCPSocketInfo::eConnectionStatus::eDisconnected:
+            return false;
+            break;
+        case TCPSocketInfo::eConnectionStatus::eConnected:
+            break;
+        case TCPSocketInfo::eConnectionStatus::eWaitingForBind:
+            break;
+        case TCPSocketInfo::eConnectionStatus::eWaitingForBindResponse:
+            break;
+        case TCPSocketInfo::eConnectionStatus::eEstablished:
+            break;
+        case TCPSocketInfo::eConnectionStatus::eUnbinding:
+            break;
+    }
+    */
+
 void TCPv4Transport::SocketConnected(Locator_t& locator, uint32_t sendBufferSize, const asio::error_code& error)
 {
     std::string value = error.message();
@@ -906,6 +981,11 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, uint32_t sendBufferSize
             outputSocket->ChangeStatus(TCPSocketInfo::eConnectionStatus::eConnected);
 
             mOutputSockets.push_back(outputSocket);
+
+            // RTCP Control Message
+            Locator_t myLocator;
+            EndpointToLocator(outputSocket->getSocket()->local_endpoint(), myLocator);
+            mTCPMessageReceiver->sendConnectionRequest(outputSocket, myLocator);
         }
         else
         {
