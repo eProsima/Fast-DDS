@@ -13,16 +13,18 @@
 // limitations under the License.
 
 #include <fastrtps/rtps/network/SenderResource.h>
+#include <fastrtps/rtps/messages/MessageReceiver.h>
 
 using namespace std;
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator)
+SenderResource::SenderResource(RTPSParticipantImpl* participant, TransportInterface& transport, Locator_t& locator)
+    : m_participant(participant)
 {
    // Internal channel is opened and assigned to this resource.
-   mValid = transport.OpenOutputChannel(locator);
+   mValid = transport.OpenOutputChannel(locator, this);
    if (!mValid)
       return; // Invalid resource, will be discarded by the factory.
 
@@ -36,6 +38,14 @@ SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator
                                  { return transport.DoLocatorsMatch(locator, transport.RemoteToMainLocal(locatorToCheck)); };
 }
 
+std::shared_ptr<MessageReceiver> SenderResource::CreateMessageReceiver(uint32_t msgSize)
+{
+    std::shared_ptr<MessageReceiver> newMsgReceiver = std::make_shared<MessageReceiver>(m_participant, nullptr,
+        msgSize);
+    newMsgReceiver->init(msgSize);
+    return newMsgReceiver;
+}
+
 bool SenderResource::Send(const octet* data, uint32_t dataLength, const Locator_t& destinationLocator)
 {
    if (SendThroughAssociatedChannel)
@@ -46,7 +56,7 @@ bool SenderResource::Send(const octet* data, uint32_t dataLength, const Locator_
 SenderResource::SenderResource(SenderResource&& rValueResource)
 {
     mValid = rValueResource.mValid;
-    Cleanup.swap(rValueResource.Cleanup); 
+    Cleanup.swap(rValueResource.Cleanup);
     SendThroughAssociatedChannel.swap(rValueResource.SendThroughAssociatedChannel);
     LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
     ManagedChannelMapsToRemote.swap(rValueResource.ManagedChannelMapsToRemote);

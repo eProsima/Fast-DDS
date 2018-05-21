@@ -182,6 +182,15 @@ class RTPS_DllAPI Locator_t
             return ports_.logical_port;
         }
 
+        std::string get_connection_id() const
+        {
+            std::string s = "";
+            for (uint16_t i = 0; i < 16; ++i)
+                s += std::to_string(address[i]);
+            s += ":" + std::to_string(port);
+            return s;
+        }
+
         bool set_IP4_address(octet o1,octet o2,octet o3,octet o4){
             LOCATOR_ADDRESS_INVALID(address);
             // address[12] = o1;
