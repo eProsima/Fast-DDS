@@ -17,6 +17,7 @@
  *
  */
 
+#include <fastrtps/transport/tcp/RTCPHeader.h>
 #include <fastrtps/rtps/messages/TCPMessageReceiver.h>
 #include <fastrtps/transport/SocketInfo.h>
 #include <fastrtps/log/Log.h>
@@ -37,12 +38,155 @@ TCPMessageReceiver::~TCPMessageReceiver()
 {
 }
 
-bool TCPMessageReceiver::CheckTCPControlMessage(TCPSocketInfo* pSocketInfo, octet* buffer, uint32_t bufferSize)
+bool TCPMessageReceiver::sendResponseData(TCPSocketInfo* pSocketInfo, 
+        const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
+        const ControlProtocolResponseData &response)
 {
-    //TODO: Check OpenLogicalPortResponse to remove the pending logical ports from socketInfo
+    CDRMessage_t msg;
+    CDRMessage::initCDRMsg(&msg);
+    RTPSMessageCreator::addCustomContent(&msg, header.getAddress(), TCPHeader::GetSize());
+    RTPSMessageCreator::addCustomContent(&msg, (octet*)(&ctrlHeader), sizeof(TCPControlMsgHeader));
+    RTPSMessageCreator::addCustomContent(&msg, (octet*)(&response), sizeof(ControlProtocolResponseData));
 
-    return false;
+    return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
 }
+
+bool TCPMessageReceiver::sendRequestData(TCPSocketInfo* pSocketInfo, 
+        const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
+        const ControlProtocolRequestData &request)
+{
+    CDRMessage_t msg;
+    CDRMessage::initCDRMsg(&msg);
+    RTPSMessageCreator::addCustomContent(&msg, header.getAddress(), TCPHeader::GetSize());
+    RTPSMessageCreator::addCustomContent(&msg, (octet*)(&ctrlHeader), sizeof(TCPControlMsgHeader));
+    RTPSMessageCreator::addCustomContent(&msg, (octet*)(&request), sizeof(ControlProtocolRequestData));
+
+    return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
+}
+
+void TCPMessageReceiver::sendConnectionRequest(TCPSocketInfo* pSocketInfo, const Locator_t &transportLocator)
+{
+    TCPHeader header;
+    TCPControlMsgHeader ctrlHeader;
+    ConnectionRequest_t request;
+    ControlProtocolRequestData requestData;
+
+    header.logicalPort = 0; // This is a control message
+    ctrlHeader.length = sizeof(TCPControlMsgHeader) + sizeof(ControlProtocolRequestData);
+    ctrlHeader.kind = BIND_CONNECTION_REQUEST;
+    ctrlHeader.setFlags(false, true, true);
+    ctrlHeader.setEndianess(DEFAULT_ENDIAN);
+    header.length = ctrlHeader.length + TCPHeader::GetSize();
+    request.transportLocator(transportLocator);
+
+    requestData.requestData().connectionRequest(request);
+
+    sendRequestData(pSocketInfo, header, ctrlHeader, requestData);
+
+    pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eWaitingForBindResponse);
+}
+
+void TCPMessageReceiver::sendOpenLogicalPortRequest(TCPSocketInfo* pSocketInfo, OpenLogicalPortRequest_t &request)
+{
+
+}
+
+void TCPMessageReceiver::sendCheckLogicalPortsRequest(TCPSocketInfo* pSocketInfo, CheckLogicalPortsRequest_t &request)
+{
+
+}
+
+void TCPMessageReceiver::sendKeepAliveRequest(TCPSocketInfo* pSocketInfo, KeepAliveRequest_t &request)
+{
+
+}
+
+void TCPMessageReceiver::sendLogicalPortIsClosedRequest(TCPSocketInfo* pSocketInfo, 
+        LogicalPortIsClosedRequest_t &request)
+{
+
+}
+
+void TCPMessageReceiver::processConnectionRequest(TCPSocketInfo* pSocketInfo, const ConnectionRequest_t &request,   
+        Locator_t &localLocator)
+{
+    TCPHeader header;
+    TCPControlMsgHeader ctrlHeader;
+    BindConnectionResponse_t response;
+    ControlProtocolResponseData responseData;
+
+    header.logicalPort = 0; // This is a control message
+    ctrlHeader.length = sizeof(TCPControlMsgHeader) + sizeof(ControlProtocolResponseData);
+    ctrlHeader.kind = BIND_CONNECTION_RESPONSE;
+    ctrlHeader.setFlags(false, true, false);
+    ctrlHeader.setEndianess(DEFAULT_ENDIAN);
+    header.length = ctrlHeader.length + TCPHeader::GetSize();
+    response.locator(localLocator);
+    responseData.responseData().bindConnectionResponse(response);
+ 
+    if (pSocketInfo->mConnectionStatus == TCPSocketInfo::eConnectionStatus::eWaitingForBind)
+    {
+        responseData.responseCode(RETCODE_OK); // TODO More options!
+
+        sendResponseData(pSocketInfo, header, ctrlHeader, responseData);
+
+        pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eEstablished);
+    }
+    else
+    {
+        if (pSocketInfo->mConnectionStatus == TCPSocketInfo::eConnectionStatus::eEstablished)
+        {
+            responseData.responseCode(RETCODE_EXISTING_CONNECTION); // TODO More options!
+            sendResponseData(pSocketInfo, header, ctrlHeader, responseData);
+        }
+        else
+        {
+            responseData.responseCode(RETCODE_SERVER_ERROR); // TODO More options!
+            sendResponseData(pSocketInfo, header, ctrlHeader, responseData);
+        }
+    }
+}
+
+void TCPMessageReceiver::processOpenLogicalPortRequest(TCPSocketInfo* pSocketInfo, 
+        const OpenLogicalPortRequest_t &request)
+{
+
+}
+
+void TCPMessageReceiver::processCheckLogicalPortsRequest(TCPSocketInfo* pSocketInfo, 
+        const CheckLogicalPortsRequest_t &request)
+{
+
+}
+
+void TCPMessageReceiver::processKeepAliveRequest(TCPSocketInfo* pSocketInfo, const KeepAliveRequest_t &request)
+{
+
+}
+
+void TCPMessageReceiver::processLogicalPortIsClosedRequest(TCPSocketInfo* pSocketInfo, 
+        const LogicalPortIsClosedRequest_t &request)
+{
+
+}
+
+void TCPMessageReceiver::processBindConnectionResponse(TCPSocketInfo* pSocketInfo, 
+        const BindConnectionResponse_t &response)
+{
+
+}
+
+void TCPMessageReceiver::processCheckLogicalPortsResponse(TCPSocketInfo* pSocketInfo, 
+        const CheckLogicalPortsResponse_t &response)
+{
+
+}
+
+void TCPMessageReceiver::processResponse(TCPSocketInfo* pSocketInfo, const ControlProtocolResponseData &response)
+{
+
+}
+
 
 } /* namespace rtps */
 } /* namespace fastrtps */

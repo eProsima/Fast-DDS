@@ -38,11 +38,11 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(tcp_idl.1_SOURCE)
+#if defined(tcp_idl_SOURCE)
 #define tcp_idl_DllAPI __declspec( dllexport )
 #else
 #define tcp_idl_DllAPI __declspec( dllimport )
-#endif // tcp_idl.1_SOURCE
+#endif // tcp_idl_SOURCE
 #else
 #define tcp_idl_DllAPI
 #endif
