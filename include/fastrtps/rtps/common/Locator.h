@@ -157,7 +157,7 @@ class RTPS_DllAPI Locator_t
             }
         }
 
-        uint16_t get_physical_port() const
+        inline uint16_t get_physical_port() const
         {
             return ports_.physical_port;
         }
@@ -589,6 +589,17 @@ class RTPS_DllAPI Locator_t
         {
             return memcmp(addresses_.ip_address, other.addresses_.ip_address, 4) == 0;
         }
+
+        bool compare_IP4_address_and_port(const Locator_t& other) const
+        {
+            return compare_IP4_address(other) && ports_.physical_port == other.ports_.physical_port;
+        }
+
+        bool compare_IP6_address_and_port(const Locator_t& other) const
+        {
+            return compare_IP6_address(other) && ports_.physical_port == other.ports_.physical_port;
+        }
+
 
         friend inline bool IsAddressDefined(const Locator_t& loc);
         friend inline bool operator==(const Locator_t&loc1,const Locator_t& loc2);
