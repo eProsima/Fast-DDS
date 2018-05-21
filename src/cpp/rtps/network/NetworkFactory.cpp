@@ -29,7 +29,7 @@ NetworkFactory::NetworkFactory() : maxMessageSizeBetweenTransports_(0),
 {
 }
 
-vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local)
+vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local, RTPSParticipantImpl* participant)
 {
     vector<SenderResource> newSenderResources;
 
@@ -38,7 +38,7 @@ vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local)
         if ( transport->IsLocatorSupported(local) &&
                 !transport->IsOutputChannelOpen(local) )
         {
-            SenderResource newSenderResource(*transport, local);
+            SenderResource newSenderResource(participant, *transport, local);
             if (newSenderResource.mValid)
                 newSenderResources.push_back(move(newSenderResource));
         }

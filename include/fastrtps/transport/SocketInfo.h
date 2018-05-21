@@ -197,82 +197,97 @@ private:
 
 class TCPSocketInfo : public SocketInfo
 {
-    public:
-        TCPSocketInfo(eProsimaTCPSocket& socket)
-            : m_physicalPort(0)
-            , socket_(moveSocket(socket))
-        {
-            mMutex = std::make_shared<std::recursive_mutex>();
-        }
+enum eConnectionStatus
+{
+    eDisconnected = 0,
+    eConnected,
+    eBinded,
+    eCheckingLogicalPort,
+    eEstablished,
+    eUnbinding
+};
 
-        TCPSocketInfo(TCPSocketInfo&& socketInfo)
-            : m_physicalPort(0)
-            , socket_(moveSocket(socketInfo.socket_))
-        {
-            mMutex = std::make_shared<std::recursive_mutex>();
-        }
+public:
+    TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator)
+        : m_locator(locator)
+        , m_physicalPort(0)
+        , m_inputSocket(false)
+        , socket_(moveSocket(socket))
+        , mConnectionStatus(eConnectionStatus::eDisconnected)
+    {
+        mMutex = std::make_shared<std::recursive_mutex>();
+    }
 
-        virtual ~TCPSocketInfo()
-        {
-        }
+    TCPSocketInfo(TCPSocketInfo&& socketInfo)
+        : m_locator(socketInfo.m_locator)
+        , m_physicalPort(0)
+        , m_inputSocket(false)
+        , socket_(moveSocket(socketInfo.socket_))
+        , mConnectionStatus(eConnectionStatus::eDisconnected)
+    {
+        mMutex = std::make_shared<std::recursive_mutex>();
+    }
 
-        TCPSocketInfo& operator=(TCPSocketInfo&& socketInfo)
-        {
-            socket_ = moveSocket(socketInfo.socket_);
-            return *this;
-        }
+    virtual ~TCPSocketInfo()
+    {
+    }
 
-        bool operator==(const TCPSocketInfo& socketInfo) const
-        {
-            return &socket_ == &(socketInfo.socket_);
-        }
+    TCPSocketInfo& operator=(TCPSocketInfo&& socketInfo)
+    {
+        socket_ = moveSocket(socketInfo.socket_);
+        return *this;
+    }
 
-        void only_multicast_purpose(const bool value)
-        {
-            only_multicast_purpose_ = value;
-        };
-
-        bool& only_multicast_purpose()
-        {
-            return only_multicast_purpose_;
-        }
-
-        bool only_multicast_purpose() const
-        {
-            return only_multicast_purpose_;
-        }
+    bool operator==(const TCPSocketInfo& socketInfo) const
+    {
+        return &socket_ == &(socketInfo.socket_);
+    }
 
 #if defined(ASIO_HAS_MOVE)
-        inline eProsimaTCPSocket* getSocket()
+    inline eProsimaTCPSocket* getSocket()
 #else
-        inline eProsimaTCPSocket getSocket()
+    inline eProsimaTCPSocket getSocket()
 #endif
-        {
-            return getSocketPtr(socket_);
-        }
+    {
+        return getSocketPtr(socket_);
+    }
 
-        std::recursive_mutex& GetMutex() const
-        {
-            return *mMutex;
-        }
+    std::recursive_mutex& GetMutex() const
+    {
+        return *mMutex;
+    }
 
-        inline void SetPhysicalPort(uint16_t port)
-        {
-            m_physicalPort = port;
-        }
+    inline void SetPhysicalPort(uint16_t port)
+    {
+        m_physicalPort = port;
+    }
 
-        inline uint16_t GetPhysicalPort() const
-        {
-            return m_physicalPort;
-        }
-    private:
+    inline uint16_t GetPhysicalPort() const
+    {
+        return m_physicalPort;
+    }
 
-        uint16_t m_physicalPort;
-        std::shared_ptr<std::recursive_mutex> mMutex;
-        eProsimaTCPSocket socket_;
-        bool only_multicast_purpose_;
-        TCPSocketInfo(const TCPSocketInfo&) = delete;
-        TCPSocketInfo& operator=(const TCPSocketInfo&) = delete;
+    inline void SetIsInputSocket(bool bInput)
+    {
+        m_inputSocket = bInput;
+    }
+protected:
+    inline void ChangeStatus(eConnectionStatus s)
+    {
+        mConnectionStatus = s;
+    }
+
+    friend class TCPv4Transport;
+
+private:
+    Locator_t m_locator;
+    uint16_t m_physicalPort;
+    bool m_inputSocket;
+    std::shared_ptr<std::recursive_mutex> mMutex;
+    eProsimaTCPSocket socket_;
+    eConnectionStatus mConnectionStatus;
+    TCPSocketInfo(const TCPSocketInfo&) = delete;
+    TCPSocketInfo& operator=(const TCPSocketInfo&) = delete;
 };
 
 
