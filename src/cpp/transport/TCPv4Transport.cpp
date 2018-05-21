@@ -226,6 +226,15 @@ bool TCPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
         mPendingOutputSockets.find(locator.get_logical_port()) != mPendingOutputSockets.end();
 }
 
+bool TCPv4Transport::IsOutputChannelConnected(const Locator_t& locator) const
+{
+    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+    if (!IsLocatorSupported(locator))
+        return false;
+
+    return mOutputSockets.find(locator.get_logical_port()) != mOutputSockets.end();
+}
+
 bool TCPv4Transport::OpenOutputChannel(Locator_t& locator, SenderResource* senderResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
@@ -427,7 +436,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     uint16_t logicalPort = localLocator.get_logical_port();
-    if (!IsOutputChannelOpen(localLocator) || sendBufferSize > mConfiguration_.sendBufferSize)
+    if (!IsOutputChannelConnected(localLocator) || sendBufferSize > mConfiguration_.sendBufferSize)
         return false;
 
 

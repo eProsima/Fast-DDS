@@ -113,6 +113,7 @@ public:
     * Checks whether there are open and bound sockets for the given port.
     */
    virtual bool IsOutputChannelOpen(const Locator_t&) const override;
+   bool IsOutputChannelConnected(const Locator_t&) const;
 
    //! Checks for TCPv4 kind.
    virtual bool IsLocatorSupported(const Locator_t&) const override;
