@@ -200,9 +200,9 @@ class TCPSocketInfo : public SocketInfo
 enum eConnectionStatus
 {
     eDisconnected = 0,
-    eConnected,
-    eBinded,
-    eCheckingLogicalPort,
+    eConnected,                 // Output -> Send bind message.
+    eWaitingForBind,            // Input -> Waiting for the bind message.
+    eWaitingForBindResponse,    // Output -> Waiting for the bind response message.
     eEstablished,
     eUnbinding
 };
@@ -283,6 +283,8 @@ private:
     Locator_t m_locator;
     uint16_t m_physicalPort;
     bool m_inputSocket;
+    std::vector<uint16_t> mPendingLogicalPorts;
+    std::vector<uint16_t> mLogicalPorts;
     std::shared_ptr<std::recursive_mutex> mMutex;
     eProsimaTCPSocket socket_;
     eConnectionStatus mConnectionStatus;
