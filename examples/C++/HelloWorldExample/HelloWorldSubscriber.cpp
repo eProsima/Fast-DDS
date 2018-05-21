@@ -46,7 +46,7 @@ bool HelloWorldSubscriber::init(bool tcp)
 	initial_peer_locator.set_port(5100);
 	initial_peer_locator.set_logical_port(7400);
     PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
-    //PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
+    PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
 
 	//Locator_t unicast_locator;
 	//unicast_locator.kind = kind;
