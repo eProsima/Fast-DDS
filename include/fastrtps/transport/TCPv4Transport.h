@@ -35,6 +35,7 @@ namespace fastrtps{
 namespace rtps{
 class TCPv4Transport;
 class SenderResource;
+class TCPMessageReceiver;
 
 class TCPAcceptor
 {
@@ -188,15 +189,17 @@ protected:
     TCPv4TransportDescriptor mConfiguration_;
     uint32_t mSendBufferSize;
     uint32_t mReceiveBufferSize;
+    TCPMessageReceiver* mTCPMessageReceiver;
 
     asio::io_service mService;
     std::unique_ptr<std::thread> ioServiceThread;
 
     mutable std::recursive_mutex mSocketsMapMutex;
 
-    std::map<uint16_t, TCPConnector*> mPendingOutputSockets;         // The Key is the "Logical Port"
-    std::map<uint16_t, std::vector<TCPSocketInfo*>> mOutputSockets;  // The Key is the "Logical Port"
-    std::map<uint16_t, Semaphore*> mOutputSemaphores;                // Control the physical connection
+    std::map<uint16_t, TCPConnector*> mPendingOutputSockets;                // The Key is the "Logical Port"
+    std::map<uint16_t, std::vector<TCPSocketInfo*>> mOutputSockets;         // The Key is the "Logical Port"
+    std::map<TCPSocketInfo*, std::vector<Locator_t>> mBoundSockets;    // The Key is the "Logical Port"
+    std::map<uint16_t, Semaphore*> mOutputSemaphores;                       // Control the physical connection
 
     std::vector<IPFinder::info_IP> currentInterfaces;
 
@@ -212,6 +215,7 @@ protected:
     bool OpenAndBindOutputSockets(Locator_t& locator, SenderResource* senderResource);
     void OpenAndBindUnicastOutputSocket(Locator_t& locator, SenderResource* senderResource);
     void OpenAndBindUnicastOutputSocket(Locator_t& locator, std::shared_ptr<MessageReceiver> messageReceiver);
+    bool EnqueueLogicalPort(Locator_t& locator);
 
     bool OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource);
 

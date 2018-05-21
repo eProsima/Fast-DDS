@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
+#include <fastrtps/rtps/messages/TCPMessageReceiver.h>
 #include <fastrtps/utils/eClock.h>
 #include "asio.hpp"
 #include <fastrtps/rtps/network/ReceiverResource.h>
@@ -126,9 +127,10 @@ TransportInterface* TCPv4TransportDescriptor::create_transport() const
     return new TCPv4Transport(*this);
 }
 
-TCPv4Transport::TCPv4Transport() :
-    mSendBufferSize(0),
-    mReceiveBufferSize(0)
+TCPv4Transport::TCPv4Transport()
+    : mSendBufferSize(0)
+    , mReceiveBufferSize(0)
+    , mTCPMessageReceiver(nullptr)
 {
 }
 
@@ -196,6 +198,8 @@ bool TCPv4Transport::init()
         return false;
     }
 
+    mTCPMessageReceiver = new TCPMessageReceiver();
+
     // TODO(Ricardo) Create an event that update this list.
     GetIP4s(currentInterfaces);
 
@@ -242,8 +246,17 @@ bool TCPv4Transport::OpenOutputChannel(Locator_t& locator, SenderResource* sende
         return false;
 
     bool success = false;
-    if (!IsOutputChannelOpen(locator))
-        success = OpenAndBindOutputSockets(locator, senderResource);
+    if (!IsOutputChannelConnected(locator))
+    {
+        if (!IsOutputChannelOpen(locator))
+        {
+            success = OpenAndBindOutputSockets(locator, senderResource);
+        }
+        else
+        {
+            success = EnqueueLogicalPort(locator);
+        }
+    }
 
     return success;
 }
@@ -327,6 +340,15 @@ bool TCPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip)
     return find(mInterfaceWhiteList.begin(), mInterfaceWhiteList.end(), ip) != mInterfaceWhiteList.end();
 }
 
+bool TCPv4Transport::EnqueueLogicalPort(Locator_t& locator)
+{
+    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+    if (mOutputSockets.find(locator.get_logical_port()) != mOutputSockets.end())
+    {
+    }
+    return false;
+}
+
 bool TCPv4Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource* senderResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
@@ -370,15 +392,43 @@ void TCPv4Transport::performListenOperation(TCPSocketInfo* pSocketInfo)
     Locator_t remoteLocator;
     while (pSocketInfo->IsAlive())
     {
-        // Blocking receive.
-        auto& msg = pSocketInfo->GetMessageReceiver()->m_rec_msg;
-        CDRMessage::initCDRMsg(&msg);
-        if (!Receive(msg.buffer, msg.max_size, msg.length, pSocketInfo, remoteLocator))
-            continue;
+        if (pSocketInfo->mConnectionStatus == TCPSocketInfo::eConnectionStatus::eEstablished)
+        {
+            if (pSocketInfo->mPendingLogicalPorts.size() > 0)
+            {
+                //TODO: Send OpenLogicalPort Message
+            }
 
-        // Processes the data through the CDR Message interface.
-        pSocketInfo->GetMessageReceiver()->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix,
-            &pSocketInfo->m_locator, &pSocketInfo->GetMessageReceiver()->m_rec_msg);
+            // Blocking receive.
+            auto& msg = pSocketInfo->GetMessageReceiver()->m_rec_msg;
+            CDRMessage::initCDRMsg(&msg);
+            if (!Receive(msg.buffer, msg.max_size, msg.length, pSocketInfo, remoteLocator))
+                continue;
+
+            if (mTCPMessageReceiver->CheckTCPControlMessage(pSocketInfo, msg.buffer, msg.length))
+            {
+            }
+            else
+            {
+                // Processes the data through the CDR Message interface.
+                pSocketInfo->GetMessageReceiver()->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix,
+                    &pSocketInfo->m_locator, &pSocketInfo->GetMessageReceiver()->m_rec_msg);
+            }
+        }
+        else
+        {
+            switch (pSocketInfo->mConnectionStatus)
+            {
+            default:
+            case TCPSocketInfo::eConnectionStatus::eWaitingForBind:
+                // DO NOTHING
+                break;
+            case TCPSocketInfo::eConnectionStatus::eConnected:
+                pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eWaitingForBindResponse);
+                //ARCE: Send Bind Message.
+                break;
+            }
+        }
     }
 }
 
@@ -741,7 +791,7 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             socketInfo->SetPhysicalPort(acceptor->m_locator.get_physical_port());
             std::thread* newThread = new std::thread(&TCPv4Transport::performListenOperation, this, socketInfo);
             socketInfo->SetThread(newThread);
-            socketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eConnected);
+            socketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eWaitingForBind);
             mInputSockets[acceptor->m_locator.get_physical_port()].emplace_back(socketInfo);
         }
 
