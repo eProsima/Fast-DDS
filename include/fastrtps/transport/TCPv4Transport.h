@@ -211,8 +211,9 @@ protected:
    */
    void performListenOperation(TCPSocketInfo* pSocketInfo, Locator_t input_locator);
 
-   bool DataReceived(TCPHeader& header, octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-       Semaphore* semaphore, TCPSocketInfo* pSocketInfo, bool& bSuccess, const asio::error_code& error, std::size_t bytes_transferred);
+   bool DataReceived(const octet* header, octet* receiveBuffer, uint32_t receiveBufferCapacity, 
+        uint32_t* receiveBufferSize, Semaphore* semaphore, TCPSocketInfo* pSocketInfo, 
+        bool& bSuccess, const asio::error_code& error, std::size_t bytes_transferred);
 
    bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
        TCPSocketInfo& socket);
