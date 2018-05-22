@@ -222,9 +222,9 @@ public:
         : m_locator(socketInfo.m_locator)
         , m_physicalPort(socketInfo.m_physicalPort)
         , m_inputSocket(socketInfo.m_inputSocket)
+        , mMutex(socketInfo.mMutex)
         , socket_(moveSocket(socketInfo.socket_))
         , mConnectionStatus(socketInfo.mConnectionStatus)
-        , mMutex(socketInfo.mMutex)
     {
     }
 
