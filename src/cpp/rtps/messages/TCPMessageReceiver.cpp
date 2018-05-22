@@ -30,10 +30,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-TCPMessageReceiver::TCPMessageReceiver()
-{
-}
-
 TCPMessageReceiver::~TCPMessageReceiver()
 {
 }
@@ -48,7 +44,8 @@ bool TCPMessageReceiver::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
     RTPSMessageCreator::addCustomContent(&msg, (octet*)(&ctrlHeader), sizeof(TCPControlMsgHeader));
     RTPSMessageCreator::addCustomContent(&msg, data, size);
 
-    return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
+    return transport->Send(pSocketInfo, msg.buffer, msg.length) > 0;
+    //return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
 }
 
 bool TCPMessageReceiver::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
@@ -62,7 +59,8 @@ bool TCPMessageReceiver::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
     RTPSMessageCreator::addCustomContent(&msg, (octet*)(&respCode), 4); // uint32_t
     RTPSMessageCreator::addCustomContent(&msg, data, size);
 
-    return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
+    return transport->Send(pSocketInfo, msg.buffer, msg.length) > 0;
+    //return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
 }
 
 bool TCPMessageReceiver::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
@@ -75,7 +73,8 @@ bool TCPMessageReceiver::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
     RTPSMessageCreator::addCustomContent(&msg, (octet*)(&ctrlHeader), sizeof(TCPControlMsgHeader));
     RTPSMessageCreator::addCustomContent(&msg, (octet*)(&respCode), 4); // uint32_t
 
-    return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
+    return transport->Send(pSocketInfo, msg.buffer, msg.length) > 0;
+    //return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
 }
 
 bool TCPMessageReceiver::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
@@ -86,7 +85,8 @@ bool TCPMessageReceiver::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
     RTPSMessageCreator::addCustomContent(&msg, header.getAddress(), TCPHeader::GetSize());
     RTPSMessageCreator::addCustomContent(&msg, (octet*)(&ctrlHeader), sizeof(TCPControlMsgHeader));
 
-    return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
+    return transport->Send(pSocketInfo, msg.buffer, msg.length) > 0;
+    //return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
 }
 
 void TCPMessageReceiver::sendConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const Locator_t &transportLocator)

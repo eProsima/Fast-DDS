@@ -143,6 +143,7 @@ TCPv4Transport::~TCPv4Transport()
         mService.stop();
         ioServiceThread->join();
     }
+    delete mTCPMessageReceiver;
 }
 
 bool TCPv4Transport::init()
@@ -200,7 +201,7 @@ bool TCPv4Transport::init()
         return false;
     }
 
-    mTCPMessageReceiver = new TCPMessageReceiver();
+    mTCPMessageReceiver = new TCPMessageReceiver(this);
 
     // TODO(Ricardo) Create an event that update this list.
     GetIP4s(currentInterfaces);
@@ -549,6 +550,11 @@ void TCPv4Transport::performListenOperation(std::shared_ptr<TCPSocketInfo> pSock
 void TCPv4Transport::OpenAndBindUnicastOutputSocket(Locator_t& locator, SenderResource* senderResource)
 {
     TCPConnector* newConnector = new TCPConnector(mService, locator, senderResource, mSendBufferSize);
+    if (mPendingOutputSockets.find(locator) != mPendingOutputSockets.end())
+    {
+        TCPConnector* oldConnector = mPendingOutputSockets.at(locator);
+        delete oldConnector;
+    }
     mPendingOutputSockets[locator] = newConnector;
     newConnector->Connect(this);
 }
@@ -556,6 +562,11 @@ void TCPv4Transport::OpenAndBindUnicastOutputSocket(Locator_t& locator, SenderRe
 void TCPv4Transport::OpenAndBindUnicastOutputSocket(Locator_t& locator, std::shared_ptr<MessageReceiver> messageReceiver)
 {
     TCPConnector* newConnector = new TCPConnector(mService, locator, messageReceiver, mSendBufferSize);
+    if (mPendingOutputSockets.find(locator) != mPendingOutputSockets.end())
+    {
+        TCPConnector* oldConnector = mPendingOutputSockets.at(locator);
+        delete oldConnector;
+    }
     mPendingOutputSockets[locator] = newConnector;
     newConnector->Connect(this);
 }
@@ -918,14 +929,13 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
     logInfo(RTPS_MSG_OUT, "TCPv4: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
         << " FROM " << socket->getSocket()->local_endpoint());
 
-    try
+    SOCKET_ERROR_CODES errorCode;
+    bytesSent = Send(socket, sendBuffer, sendBufferSize, errorCode);
+    switch(errorCode)
     {
-        bytesSent = socket->getSocket()->send(asio::buffer(sendBuffer, sendBufferSize));
-    }
-    catch (const asio::error_code& error)
-    {
-        if ((asio::error::eof == error) || (asio::error::connection_reset == error))
-        {
+        case NO_ERROR:
+            break;
+        default:
             // Close the channel
             Locator_t prevLocator = socket->m_locator;
             std::shared_ptr<MessageReceiver> prevMsgReceiver = socket->GetMessageReceiver();
@@ -933,24 +943,11 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
 
             // Create a new connector to retry the connection.
             OpenAndBindUnicastOutputSocket(prevLocator, prevMsgReceiver);
-        }
-    }
-    catch (const std::exception& error)
-    {
-        logWarning(RTPS_MSG_OUT, "Error: " << error.what());
-        // Close the channel
-        Locator_t prevLocator = socket->m_locator;
-        std::shared_ptr<MessageReceiver> prevMsgReceiver = socket->GetMessageReceiver();
-        CloseOutputChannel(socket->m_locator);
-
-        // Create a new connector to retry the connection.
-        OpenAndBindUnicastOutputSocket(prevLocator, prevMsgReceiver);
-        return false;
+            break;
     }
 
-    (void)bytesSent;
     logInfo(RTPS_MSG_OUT, "SENT " << bytesSent);
-    return true;
+    return bytesSent > 0;
 }
 
 LocatorList_t TCPv4Transport::NormalizeLocator(const Locator_t& locator)
@@ -1101,6 +1098,48 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, uint32_t /*sendBufferSi
             pendingConector->RetryConnect(mService, this);
         }
     }
+}
+
+size_t TCPv4Transport::Send(std::shared_ptr<TCPSocketInfo> &socketInfo, const octet *data, 
+        size_t size, SOCKET_ERROR_CODES &errorCode) const
+{
+    size_t bytesSent = 0;
+    try
+    {
+        // TODO mutex
+        bytesSent = socketInfo->getSocket()->send(asio::buffer(data, size));
+        errorCode = NO_ERROR;
+    }
+    catch (const asio::error_code& error)
+    {
+        logWarning(RTPS_MSG_OUT, "Error: " << error.message());
+        if ((asio::error::eof == error) || (asio::error::connection_reset == error))
+        {
+            errorCode = BROKEN_PIPE;
+        }
+        else
+        {
+            errorCode = ASIO_ERROR;
+        }
+    }
+    catch (const asio::system_error& error)
+    {
+        logWarning(RTPS_MSG_OUT, "Error: " << error.what());
+        errorCode = SYSTEM_ERROR;
+    }
+    catch (const std::exception& error)
+    {
+        logWarning(RTPS_MSG_OUT, "Error: " << error.what());
+        errorCode = EXCEPTION;
+    }
+
+    return bytesSent;
+}
+
+size_t TCPv4Transport::Send(std::shared_ptr<TCPSocketInfo> &socketInfo, const octet *data, size_t size) const
+{
+    SOCKET_ERROR_CODES error;
+    return Send(socketInfo, data, size, error);
 }
 
 } // namespace rtps

@@ -100,59 +100,60 @@ public:
 class TCPv4Transport : public TransportInterface
 {
 public:
+    friend class TCPMessageReceiver;
 
-   RTPS_DllAPI TCPv4Transport(const TCPv4TransportDescriptor&);
+    RTPS_DllAPI TCPv4Transport(const TCPv4TransportDescriptor&);
 
-   virtual ~TCPv4Transport() override;
+    virtual ~TCPv4Transport() override;
 
-   bool init() override;
+    bool init() override;
 
-   //! Checks whether there are open and bound sockets for the given port.
-   virtual bool IsInputChannelOpen(const Locator_t&) const override;
+    //! Checks whether there are open and bound sockets for the given port.
+    virtual bool IsInputChannelOpen(const Locator_t&) const override;
 
-   /**
+    /**
     * Checks whether there are open and bound sockets for the given port.
     */
-   virtual bool IsOutputChannelOpen(const Locator_t&) const override;
-   bool IsOutputChannelBound(const Locator_t&) const;
-   bool IsOutputChannelConnected(const Locator_t&) const;
-   void BindOutputChannel(const Locator_t&);
-   void UnbindInputSocket(std::shared_ptr<SocketInfo>);
+    virtual bool IsOutputChannelOpen(const Locator_t&) const override;
+    bool IsOutputChannelBound(const Locator_t&) const;
+    bool IsOutputChannelConnected(const Locator_t&) const;
+    void BindOutputChannel(const Locator_t&);
+    void UnbindInputSocket(std::shared_ptr<SocketInfo>);
 
-   //! Checks for TCPv4 kind.
-   virtual bool IsLocatorSupported(const Locator_t&) const override;
+    //! Checks for TCPv4 kind.
+    virtual bool IsLocatorSupported(const Locator_t&) const override;
 
-   //! Reports whether Locators correspond to the same port.
-   virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const override;
+    //! Reports whether Locators correspond to the same port.
+    virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
-   /**
+    /**
     * Converts a given remote locator (that is, a locator referring to a remote
     * destination) to the main local locator whose channel can write to that
     * destination. In this case it will return a 0.0.0.0 address on that port.
     */
-   virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
+    virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
 
-   //! Sets the ID of the participant that has created the transport.
-   virtual void SetParticipantGUIDPrefix(const GuidPrefix_t& prefix) override;
+    //! Sets the ID of the participant that has created the transport.
+    virtual void SetParticipantGUIDPrefix(const GuidPrefix_t& prefix) override;
 
-   /**
+    /**
     * Starts listening on the specified port, and if the specified address is in the
     * multicast range, it joins the specified multicast group,
     */
-   virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*) override;
+    virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*) override;
 
-   /**
+    /**
     * Opens a socket on the given address and port (as long as they are white listed).
     */
-   virtual bool OpenOutputChannel(Locator_t&, SenderResource* senderResource) override;
+    virtual bool OpenOutputChannel(Locator_t&, SenderResource* senderResource) override;
 
-   //! Removes the listening socket for the specified port.
-   virtual bool CloseInputChannel(const Locator_t&) override;
+    //! Removes the listening socket for the specified port.
+    virtual bool CloseInputChannel(const Locator_t&) override;
 
-   //! Removes all outbound sockets on the given port.
-   virtual bool CloseOutputChannel(const Locator_t&) override;
+    //! Removes all outbound sockets on the given port.
+    virtual bool CloseOutputChannel(const Locator_t&) override;
 
-   /**
+    /**
     * Blocking Send through the specified channel. In both modes, using a localLocator of 0.0.0.0 will
     * send through all whitelisted interfaces provided the channel is open.
     * @param sendBuffer Slice into the raw data to send.
@@ -161,31 +162,39 @@ public:
     * @param localLocator Locator mapping to the channel we're sending from.
     * @param remoteLocator Locator describing the remote destination we're sending to.
     */
-   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
-                     const Locator_t& remoteLocator) override;
-   /**
+    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
+                        const Locator_t& remoteLocator) override;
+    /**
     * Blocking Receive from the specified channel.
     * @param receiveBuffer vector with enough capacity (not size) to accomodate a full receive buffer. That
     * capacity must not be less than the receiveBufferSize supplied to this class during construction.
     * @param localLocator Locator mapping to the local channel we're listening to.
     * @param[out] remoteLocator Locator describing the remote restination we received a packet from.
     */
-   bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-       std::shared_ptr<TCPSocketInfo> socketInfo, Locator_t& remoteLocator);
+    bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
+        std::shared_ptr<TCPSocketInfo> socketInfo, Locator_t& remoteLocator);
 
-   virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
+    virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
 
-   virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
+    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 
-   virtual bool is_local_locator(const Locator_t& locator) const override;
+    virtual bool is_local_locator(const Locator_t& locator) const override;
 
-   TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
+    TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
 
-   virtual void AddDefaultLocator(LocatorList_t &defaultList) override;
+    virtual void AddDefaultLocator(LocatorList_t &defaultList) override;
 
-   void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket s);
-   void SocketConnected(Locator_t& locator, uint32_t sendBufferSize, const asio::error_code& error);
+    void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket s);
+    void SocketConnected(Locator_t& locator, uint32_t sendBufferSize, const asio::error_code& error);
 protected:
+    enum SOCKET_ERROR_CODES
+    {
+        NO_ERROR,
+        BROKEN_PIPE,
+        ASIO_ERROR,
+        SYSTEM_ERROR,
+        EXCEPTION
+    };
 
     //! Constructor with no descriptor is necessary for implementations derived from this class.
     TCPv4Transport();
@@ -234,6 +243,10 @@ protected:
 
     bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
         std::shared_ptr<TCPSocketInfo> socket);
+
+    size_t Send(std::shared_ptr<TCPSocketInfo> &socketInfo, const octet* data, 
+        size_t size, SOCKET_ERROR_CODES &error) const;
+    size_t Send(std::shared_ptr<TCPSocketInfo> &socketInfo, const octet* data, size_t size) const;
 
 };
 
