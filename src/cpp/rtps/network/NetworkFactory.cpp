@@ -179,15 +179,14 @@ size_t NetworkFactory::numberOfRegisteredTransports() const
 bool NetworkFactory::generate_locators(uint16_t physical_port, int locator_kind,
         LocatorList_t &ret_locators)
 {
-    IPFinder ipf;
     ret_locators.clear();
     if (locator_kind == LOCATOR_KIND_TCPv4 || locator_kind == LOCATOR_KIND_UDPv4)
     {
-        ipf.getIP4Address(&ret_locators);
+        IPFinder::getIP4Address(&ret_locators);
     }
     else if (locator_kind == LOCATOR_KIND_TCPv6 || locator_kind == LOCATOR_KIND_UDPv6)
     {
-        ipf.getIP6Address(&ret_locators);
+        IPFinder::getIP6Address(&ret_locators);
     }
     for (Locator_t loc : ret_locators)
     {
