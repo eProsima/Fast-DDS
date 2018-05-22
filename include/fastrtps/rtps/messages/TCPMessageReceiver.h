@@ -26,6 +26,7 @@
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include "fastrtps/transport/tcp/TCPControlMessage.h"
+#include "fastrtps/transport/TCPv4Transport.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -41,7 +42,7 @@ class TCPMessageReceiver
 {
 public:
 
-    TCPMessageReceiver();
+    TCPMessageReceiver(TCPv4Transport* tcpv4_transport) : transport(tcpv4_transport) {}
     virtual ~TCPMessageReceiver();
 
     void sendConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const Locator_t &transportLocator);
@@ -65,6 +66,9 @@ public:
 
     void processBindConnectionResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const BindConnectionResponse_t &response, const uint16_t logicalPort);
     void processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const CheckLogicalPortsResponse_t &response);
+
+protected:
+    TCPv4Transport* transport;
 
 private:
     bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
