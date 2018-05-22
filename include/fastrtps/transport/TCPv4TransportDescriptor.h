@@ -41,6 +41,11 @@ typedef struct TCPv4TransportDescriptor: public TransportDescriptorInterface {
     std::vector<uint16_t> listening_ports;
     octet wan_addr[4];
 
+    void add_listener_port(uint16_t port)
+    {
+        listening_ports.push_back(port);
+    }
+
     void set_WAN_address(octet o1,octet o2,octet o3,octet o4){
         wan_addr[0] = o1;
         wan_addr[1] = o2;

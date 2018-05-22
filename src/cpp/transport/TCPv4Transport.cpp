@@ -114,6 +114,8 @@ TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor) :
 
 TCPv4TransportDescriptor::TCPv4TransportDescriptor() :
     TransportDescriptorInterface(s_maximumMessageSize)
+    , keep_alive_frequency_ms(0)
+    , keep_alive_timeout_ms(0)
 {
 }
 
@@ -656,14 +658,20 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
             //    static_cast<int>(TCPHeader::GetSize())));
             //TCPHeader header;
             octet header[14];
-            async_read(*socketInfo->getSocket(), asio::buffer(&header, TCPHeader::GetSize()),
-                std::bind(&TCPv4Transport::DataReceived, this, header, receiveBuffer, receiveBufferCapacity,
-                    &receiveBufferSize, &receiveSemaphore, socketInfo, success, std::placeholders::_1,
-                    std::placeholders::_2));
+            size_t t = read(*socketInfo->getSocket(), asio::buffer(&header, TCPHeader::GetSize()), transfer_exactly(14));
+
+            asio::error_code c;
+            DataReceived(header, receiveBuffer, receiveBufferCapacity,
+                &receiveBufferSize, &receiveSemaphore, socketInfo, success, c, t);
+
+            //async_read(*socketInfo->getSocket(), asio::buffer(&header, TCPHeader::GetSize()),
+            //    std::bind(&TCPv4Transport::DataReceived, this, header, receiveBuffer, receiveBufferCapacity,
+            //        &receiveBufferSize, &receiveSemaphore, socketInfo, success, std::placeholders::_1,
+            //        std::placeholders::_2));
         }
-        catch (const asio::system_error& error)
+        catch (const asio::error_code& code)
         {
-            if ((error.code() == asio::error::eof) || (error.code() == asio::error::connection_reset))
+            if ((code == asio::error::eof) || (code == asio::error::connection_reset))
             {
                 // Close the channel
                 Locator_t prevLocator = socketInfo->m_locator;
@@ -673,6 +681,19 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
                 // Create a new connector to retry the connection.
                 OpenAndBindUnicastOutputSocket(prevLocator, prevMsgReceiver);
             }
+            receiveSemaphore.post();
+        }
+        catch (const asio::system_error& error)
+        {
+            // Close the channel
+            Locator_t prevLocator = socketInfo->m_locator;
+            std::shared_ptr<MessageReceiver> prevMsgReceiver = socketInfo->GetMessageReceiver();
+            CloseOutputChannel(socketInfo->m_locator);
+
+            // Create a new connector to retry the connection.
+            OpenAndBindUnicastOutputSocket(prevLocator, prevMsgReceiver);
+
+            receiveSemaphore.post();
         }
     }
     receiveSemaphore.wait();
@@ -747,7 +768,9 @@ bool TCPv4Transport::DataReceived(const octet* header, octet* receiveBuffer, uin
         {
             // Read the body
             //pSocketInfo->getSocket()->set_option(asio::socket_base::receive_low_watermark(size));
-            *receiveBufferSize = static_cast<uint32_t>(pSocketInfo->getSocket()->read_some(asio::buffer(receiveBuffer, size)));
+
+            *receiveBufferSize = static_cast<uint32_t>(read(*pSocketInfo->getSocket(), asio::buffer(receiveBuffer, size), transfer_exactly(size)));
+            //*receiveBufferSize = static_cast<uint32_t>(pSocketInfo->getSocket()->read_some(asio::buffer(receiveBuffer, size)));
             if (*receiveBufferSize != size)
             {
                 bSuccess = false;
