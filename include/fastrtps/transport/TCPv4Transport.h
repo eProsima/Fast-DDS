@@ -217,7 +217,8 @@ protected:
     bool OpenAndBindOutputSockets(Locator_t& locator, SenderResource* senderResource);
     void OpenAndBindUnicastOutputSocket(Locator_t& locator, SenderResource* senderResource);
     void OpenAndBindUnicastOutputSocket(Locator_t& locator, std::shared_ptr<MessageReceiver> messageReceiver);
-    bool EnqueueLogicalPort(Locator_t& locator);
+    bool EnqueueLogicalOutputPort(Locator_t& locator);
+    bool EnqueueLogicalInputPort(const Locator_t& locator);
 
     bool OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource);
 

@@ -208,7 +208,7 @@ enum eConnectionStatus
 };
 
 public:
-    TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator)
+    TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator)
         : m_locator(locator)
         , m_physicalPort(0)
         , m_inputSocket(false)
@@ -216,6 +216,14 @@ public:
         , mConnectionStatus(eConnectionStatus::eDisconnected)
     {
         mMutex = std::make_shared<std::recursive_mutex>();
+        if (outputLocator)
+        {
+            mPendingLogicalOutputPorts.emplace_back(locator.get_logical_port());
+        }
+        else
+        {
+            mLogicalInputPorts.emplace_back(locator.get_logical_port());
+        }
     }
 
     TCPSocketInfo(TCPSocketInfo&& socketInfo)
@@ -284,8 +292,9 @@ private:
     Locator_t m_locator;
     uint16_t m_physicalPort;
     bool m_inputSocket;
-    std::vector<uint16_t> mPendingLogicalPorts;
-    std::vector<uint16_t> mLogicalPorts;
+    std::vector<uint16_t> mPendingLogicalOutputPorts;
+    std::vector<uint16_t> mLogicalOutputPorts;
+    std::vector<uint16_t> mLogicalInputPorts;
     std::shared_ptr<std::recursive_mutex> mMutex;
     eProsimaTCPSocket socket_;
     eConnectionStatus mConnectionStatus;
