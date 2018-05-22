@@ -817,7 +817,7 @@ class LocatorList_t
             if(!already)
                 m_locators.push_back(loc);
         }
-
+/*
         template<typename... Args>
         RTPS_DllAPI void emplace_back(Args&&... args)
         {
@@ -834,7 +834,7 @@ class LocatorList_t
             if(!already)
                 m_locators.push_back(loc);
         }
-
+*/
         RTPS_DllAPI void push_back(const LocatorList_t& locList)
         {
             for(auto it = locList.m_locators.begin(); it!=locList.m_locators.end(); ++it)

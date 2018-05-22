@@ -279,6 +279,12 @@ public:
     {
         m_inputSocket = bInput;
     }
+
+    bool IsConnectionEstablished()
+    {
+        return mConnectionStatus == eConnectionStatus::eEstablished;
+    }
+
 protected:
     inline void ChangeStatus(eConnectionStatus s)
     {
