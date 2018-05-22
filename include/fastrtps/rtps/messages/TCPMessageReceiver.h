@@ -46,9 +46,15 @@ public:
 
     void sendConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const Locator_t &transportLocator);
     void sendOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, OpenLogicalPortRequest_t &request);
+    void sendOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, uint16_t port);
     void sendCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, CheckLogicalPortsRequest_t &request);
+    void sendCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, std::vector<uint16_t> &ports);
     void sendKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, KeepAliveRequest_t &request);
-    void sendLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, LogicalPortIsClosedRequest_t &request);
+    void sendKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo);
+    void sendLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+        LogicalPortIsClosedRequest_t &request);
+    void sendLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, uint16_t port);
+    void sendUnbindConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo);
 
     void processConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const ConnectionRequest_t &request, 
         Locator_t &localLocator);
@@ -57,9 +63,8 @@ public:
     void processKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const KeepAliveRequest_t &request);
     void processLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const LogicalPortIsClosedRequest_t &request);
 
-    void processBindConnectionResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const BindConnectionResponse_t &response);
+    void processBindConnectionResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const BindConnectionResponse_t &response, const uint16_t logicalPort);
     void processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const CheckLogicalPortsResponse_t &response);
-    void processResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const ControlProtocolResponseData &response);
 
 private:
     bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
@@ -68,6 +73,11 @@ private:
     bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
         const octet *data, const uint32_t size, const ResponseCode respCode);
+    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+        const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader, 
+        const ResponseCode respCode);
+    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+        const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader);
 };
 }
 } /* namespace rtps */
