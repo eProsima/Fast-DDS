@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file Time_t.h 	
+ * @file Time_t.h
  */
 
 #ifndef TIME_T_H_
@@ -50,7 +50,20 @@ struct RTPS_DllAPI Time_t{
 		seconds = sec;
 		fraction = frac;
 	}
-	
+
+    /**
+    * @param ms Time in milliseconds
+    */
+    inline void add_milliseconds(uint32_t ms)
+    {
+        seconds += ms / 1000;
+        fraction += (ms % 1000) << 29;
+    }
+
+    inline uint32_t distance_milliseconds(const Time_t& other)
+    {
+        return ((seconds - other.seconds) * 1000) + ((fraction >> 29) - (other.fraction >> 29));
+    }
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
@@ -86,45 +99,87 @@ static inline bool operator!=(const Time_t& t1,const Time_t& t2)
 }
 
 /**
- * Checks if a Time_t is less than other.
- * @param t1 First Time_t to compare
- * @param t2 Second Time_t to compare
- * @return True if the first Time_t is less than the second
- */
-static inline bool operator<(const Time_t& t1,const Time_t& t2)
+* Checks if a Time_t is less than other.
+* @param t1 First Time_t to compare
+* @param t2 Second Time_t to compare
+* @return True if the first Time_t is less than the second
+*/
+static inline bool operator<(const Time_t& t1, const Time_t& t2)
 {
-	if(t1.seconds < t2.seconds)
-		return true;
-	else if(t1.seconds > t2.seconds)
-		return false;
-	else
-	{
-		if(t1.fraction < t2.fraction)
-			return true;
-		else
-			return false;
-	}
+    if (t1.seconds < t2.seconds)
+        return true;
+    else if (t1.seconds > t2.seconds)
+        return false;
+    else
+    {
+        if (t1.fraction < t2.fraction)
+            return true;
+        else
+            return false;
+    }
 }
 
 /**
- * Checks if a Time_t is less or equal than other.
- * @param t1 First Time_t to compare
- * @param t2 Second Time_t to compare
- * @return True if the first Time_t is less or equal than the second
- */
-static inline bool operator<=(const Time_t& t1,const Time_t& t2)
+* Checks if a Time_t is greather than other.
+* @param t1 First Time_t to compare
+* @param t2 Second Time_t to compare
+* @return True if the first Time_t is greather than the second
+*/
+static inline bool operator>(const Time_t& t1, const Time_t& t2)
 {
-	if(t1.seconds < t2.seconds)
-		return true;
-	else if(t1.seconds > t2.seconds)
-		return false;
-	else
-	{
-		if(t1.fraction <= t2.fraction)
-			return true;
-		else
-			return false;
-	}
+    if (t1.seconds > t2.seconds)
+        return true;
+    else if (t1.seconds < t2.seconds)
+        return false;
+    else
+    {
+        if (t1.fraction > t2.fraction)
+            return true;
+        else
+            return false;
+    }
+}
+
+/**
+* Checks if a Time_t is less or equal than other.
+* @param t1 First Time_t to compare
+* @param t2 Second Time_t to compare
+* @return True if the first Time_t is less or equal than the second
+*/
+static inline bool operator<=(const Time_t& t1, const Time_t& t2)
+{
+    if (t1.seconds < t2.seconds)
+        return true;
+    else if (t1.seconds > t2.seconds)
+        return false;
+    else
+    {
+        if (t1.fraction <= t2.fraction)
+            return true;
+        else
+            return false;
+    }
+}
+
+/**
+* Checks if a Time_t is greather or equal than other.
+* @param t1 First Time_t to compare
+* @param t2 Second Time_t to compare
+* @return True if the first Time_t is greather or equal than the second
+*/
+static inline bool operator>=(const Time_t& t1, const Time_t& t2)
+{
+    if (t1.seconds > t2.seconds)
+        return true;
+    else if (t1.seconds < t2.seconds)
+        return false;
+    else
+    {
+        if (t1.fraction >= t2.fraction)
+            return true;
+        else
+            return false;
+    }
 }
 
 inline std::ostream& operator<<(std::ostream& output,const Time_t& t)

@@ -730,7 +730,7 @@ bool UDPv4Transport::is_local_locator(const Locator_t& locator) const
 
 void UDPv4Transport::AddDefaultLocator(LocatorList_t &defaultList)
 {
-    defaultList.emplace_back(LOCATOR_KIND_UDPv4, 0);
+    defaultList.push_back(Locator_t(LOCATOR_KIND_UDPv4, 0));
 }
 
 } // namespace rtps
