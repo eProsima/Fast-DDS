@@ -38,7 +38,7 @@ TCPMessageReceiver::~TCPMessageReceiver()
 {
 }
 
-bool TCPMessageReceiver::sendResponseData(TCPSocketInfo* pSocketInfo, 
+bool TCPMessageReceiver::sendResponseData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
         const ControlProtocolResponseData &response)
 {
@@ -51,7 +51,7 @@ bool TCPMessageReceiver::sendResponseData(TCPSocketInfo* pSocketInfo,
     return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
 }
 
-bool TCPMessageReceiver::sendRequestData(TCPSocketInfo* pSocketInfo, 
+bool TCPMessageReceiver::sendRequestData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
         const ControlProtocolRequestData &request)
 {
@@ -64,7 +64,7 @@ bool TCPMessageReceiver::sendRequestData(TCPSocketInfo* pSocketInfo,
     return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
 }
 
-void TCPMessageReceiver::sendConnectionRequest(TCPSocketInfo* pSocketInfo, const Locator_t &transportLocator)
+void TCPMessageReceiver::sendConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const Locator_t &transportLocator)
 {
     TCPHeader header;
     TCPControlMsgHeader ctrlHeader;
@@ -86,28 +86,28 @@ void TCPMessageReceiver::sendConnectionRequest(TCPSocketInfo* pSocketInfo, const
     pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eWaitingForBindResponse);
 }
 
-void TCPMessageReceiver::sendOpenLogicalPortRequest(TCPSocketInfo* pSocketInfo, OpenLogicalPortRequest_t &request)
+void TCPMessageReceiver::sendOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, OpenLogicalPortRequest_t &request)
 {
 
 }
 
-void TCPMessageReceiver::sendCheckLogicalPortsRequest(TCPSocketInfo* pSocketInfo, CheckLogicalPortsRequest_t &request)
+void TCPMessageReceiver::sendCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, CheckLogicalPortsRequest_t &request)
 {
 
 }
 
-void TCPMessageReceiver::sendKeepAliveRequest(TCPSocketInfo* pSocketInfo, KeepAliveRequest_t &request)
+void TCPMessageReceiver::sendKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, KeepAliveRequest_t &request)
 {
 
 }
 
-void TCPMessageReceiver::sendLogicalPortIsClosedRequest(TCPSocketInfo* pSocketInfo, 
+void TCPMessageReceiver::sendLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         LogicalPortIsClosedRequest_t &request)
 {
 
 }
 
-void TCPMessageReceiver::processConnectionRequest(TCPSocketInfo* pSocketInfo, const ConnectionRequest_t &request,   
+void TCPMessageReceiver::processConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const ConnectionRequest_t &request,   
         Locator_t &localLocator)
 {
     TCPHeader header;
@@ -147,42 +147,42 @@ void TCPMessageReceiver::processConnectionRequest(TCPSocketInfo* pSocketInfo, co
     }
 }
 
-void TCPMessageReceiver::processOpenLogicalPortRequest(TCPSocketInfo* pSocketInfo, 
+void TCPMessageReceiver::processOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const OpenLogicalPortRequest_t &request)
 {
 
 }
 
-void TCPMessageReceiver::processCheckLogicalPortsRequest(TCPSocketInfo* pSocketInfo, 
+void TCPMessageReceiver::processCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const CheckLogicalPortsRequest_t &request)
 {
 
 }
 
-void TCPMessageReceiver::processKeepAliveRequest(TCPSocketInfo* pSocketInfo, const KeepAliveRequest_t &request)
+void TCPMessageReceiver::processKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const KeepAliveRequest_t &request)
 {
 
 }
 
-void TCPMessageReceiver::processLogicalPortIsClosedRequest(TCPSocketInfo* pSocketInfo, 
+void TCPMessageReceiver::processLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const LogicalPortIsClosedRequest_t &request)
 {
 
 }
 
-void TCPMessageReceiver::processBindConnectionResponse(TCPSocketInfo* pSocketInfo, 
+void TCPMessageReceiver::processBindConnectionResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const BindConnectionResponse_t &response)
 {
 
 }
 
-void TCPMessageReceiver::processCheckLogicalPortsResponse(TCPSocketInfo* pSocketInfo, 
+void TCPMessageReceiver::processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const CheckLogicalPortsResponse_t &response)
 {
 
 }
 
-void TCPMessageReceiver::processResponse(TCPSocketInfo* pSocketInfo, const ControlProtocolResponseData &response)
+void TCPMessageReceiver::processResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const ControlProtocolResponseData &response)
 {
 
 }

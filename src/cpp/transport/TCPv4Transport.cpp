@@ -482,7 +482,7 @@ void TCPv4Transport::performListenOperation(std::shared_ptr<TCPSocketInfo> pSock
         // Blocking receive.
         auto& msg = pSocketInfo->GetMessageReceiver()->m_rec_msg;
         CDRMessage::initCDRMsg(&msg);
-        if (!Receive(msg.buffer, msg.max_size, msg.length, pSocketInfo, remoteLocator))
+        if (!Receive(msg.buffer, msg.max_size, msg.length, pSocketInfo.get(), remoteLocator))
             continue;
         // Processes the data through the CDR Message interface.
         pSocketInfo->GetMessageReceiver()->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix,
@@ -692,25 +692,26 @@ bool TCPv4Transport::DataReceived(const octet* header, octet* receiveBuffer, uin
                 TCPControlMsgHeader controlHeader;
                 uint32_t sizeCtrlHeader = sizeof(TCPControlMsgHeader);
                 memcpy(&controlHeader, receiveBuffer, sizeCtrlHeader);
+                std::shared_ptr<TCPSocketInfo> socketInfo(pSocketInfo);
                 switch(controlHeader.kind)
                 {
                     case BIND_CONNECTION_REQUEST:
                         {
                             ConnectionRequest_t request;
                             Locator_t myLocator;
-                            EndpointToLocator(pSocketInfo->getSocket()->local_endpoint(), myLocator);
+                            EndpointToLocator(socketInfo->getSocket()->local_endpoint(), myLocator);
                             memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), sizeof(ConnectionRequest_t));
-                            mTCPMessageReceiver->processConnectionRequest(pSocketInfo, request, myLocator);
+                            mTCPMessageReceiver->processConnectionRequest(socketInfo, request, myLocator);
                         }
                         break; 
                     case BIND_CONNECTION_RESPONSE: 
                         {
                             BindConnectionResponse_t response;
                             memcpy(&response, &(receiveBuffer[sizeCtrlHeader]), sizeof(BindConnectionResponse_t));
-                            mTCPMessageReceiver->processBindConnectionResponse(pSocketInfo, response);
+                            mTCPMessageReceiver->processBindConnectionResponse(socketInfo, response);
 
-                            //TODO mBoundSockets[response.locator()] = pSocketInfo;
-                            //mOutputSockets[response.locator].push_back(pSocketInfo);
+                            //TODO mBoundSockets[response.locator()] = socketInfo;
+                            //mOutputSockets[response.locator].push_back(socketInfo);
                             //mOutputSemaphores[port]->disable();
                         }
                         break;
@@ -718,35 +719,35 @@ bool TCPv4Transport::DataReceived(const octet* header, octet* receiveBuffer, uin
                         {
                             OpenLogicalPortRequest_t request;
                             memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), sizeof(OpenLogicalPortRequest_t));
-                            mTCPMessageReceiver->processOpenLogicalPortRequest(pSocketInfo, request);
+                            mTCPMessageReceiver->processOpenLogicalPortRequest(socketInfo, request);
                         }
                         break;
                     case CHECK_LOGICAL_PORT_REQUEST: 
                         {
                             CheckLogicalPortsRequest_t request;
                             memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), sizeof(CheckLogicalPortsRequest_t));
-                            mTCPMessageReceiver->processCheckLogicalPortsRequest(pSocketInfo, request);
+                            mTCPMessageReceiver->processCheckLogicalPortsRequest(socketInfo, request);
                         }
                         break;
                     case CHECK_LOGICAL_PORT_RESPONSE: 
                         {
                             CheckLogicalPortsResponse_t response;
                             memcpy(&response, &(receiveBuffer[sizeCtrlHeader]), sizeof(CheckLogicalPortsResponse_t));
-                            mTCPMessageReceiver->processCheckLogicalPortsResponse(pSocketInfo, response);
+                            mTCPMessageReceiver->processCheckLogicalPortsResponse(socketInfo, response);
                         }
                         break;
                     case KEEP_ALIVE_REQUEST: 
                         {
                             KeepAliveRequest_t request;
                             memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), sizeof(KeepAliveRequest_t));
-                            mTCPMessageReceiver->processKeepAliveRequest(pSocketInfo, request);
+                            mTCPMessageReceiver->processKeepAliveRequest(socketInfo, request);
                         }
                         break;
                     case LOGICAL_PORT_IS_CLOSED_REQUEST:
                         {
                             LogicalPortIsClosedRequest_t request;
                             memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), sizeof(LogicalPortIsClosedRequest_t));
-                            mTCPMessageReceiver->processLogicalPortIsClosedRequest(pSocketInfo, request);
+                            mTCPMessageReceiver->processLogicalPortIsClosedRequest(socketInfo, request);
                         }
                         break;
                     case UNBIND_CONNECTION_REQUEST:
@@ -759,7 +760,7 @@ bool TCPv4Transport::DataReceived(const octet* header, octet* receiveBuffer, uin
                         {
                             ControlProtocolResponseData response;
                             memcpy(&response, &(receiveBuffer[sizeCtrlHeader]), sizeof(ControlProtocolResponseData));
-                            mTCPMessageReceiver->processResponse(pSocketInfo, response);
+                            mTCPMessageReceiver->processResponse(socketInfo, response);
                         }
                         break;
                 }
@@ -786,7 +787,7 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
 
     size_t bytesSent = 0;
     logInfo(RTPS_MSG_OUT, "TCPv4: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
-        << " FROM " << socket.getSocket()->local_endpoint());
+        << " FROM " << socket->getSocket()->local_endpoint());
 
     try
     {
