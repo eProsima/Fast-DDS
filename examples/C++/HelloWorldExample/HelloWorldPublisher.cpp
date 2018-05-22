@@ -86,8 +86,9 @@ bool HelloWorldPublisher::init(bool tcp)
         descriptor = std::make_shared<TCPv4TransportDescriptor>();
         descriptor->sendBufferSize = 0;
         descriptor->receiveBufferSize = 0;
-        std::static_pointer_cast<TCPv4TransportDescriptor>(descriptor)->set_WAN_address("127.0.0.1");
-        //std::static_pointer_cast<TCPv4TransportDescriptor>(descriptor)->listening_ports.push_back(5100);
+        std::shared_ptr<TCPv4TransportDescriptor> tcp = std::dynamic_pointer_cast<TCPv4TransportDescriptor>(descriptor);
+        tcp->set_WAN_address("127.0.0.1");
+        tcp->add_listener_port(5100);
         PParam.rtps.userTransports.push_back(descriptor);
     }
     else
