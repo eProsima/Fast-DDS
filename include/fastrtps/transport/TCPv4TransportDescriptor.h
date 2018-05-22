@@ -54,10 +54,10 @@ typedef struct TCPv4TransportDescriptor: public TransportDescriptorInterface {
         int a,b,c,d; //to store the 4 ints
         char ch; //to temporarily store the '.'
         ss >> a >> ch >> b >> ch >> c >> ch >> d;
-        wan_addr[12] = (octet)a;
-        wan_addr[13] = (octet)b;
-        wan_addr[14] = (octet)c;
-        wan_addr[15] = (octet)d;
+        wan_addr[0] = (octet)a;
+        wan_addr[1] = (octet)b;
+        wan_addr[2] = (octet)c;
+        wan_addr[3] = (octet)d;
     }
 
     RTPS_DllAPI TCPv4TransportDescriptor();
