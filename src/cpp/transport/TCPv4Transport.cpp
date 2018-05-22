@@ -1037,7 +1037,7 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
     }
 }
 
-void TCPv4Transport::SocketConnected(Locator_t& locator, uint32_t sendBufferSize, const asio::error_code& error)
+void TCPv4Transport::SocketConnected(Locator_t& locator, uint32_t /*sendBufferSize*/, const asio::error_code& error)
 {
     std::string value = error.message();
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
@@ -1074,6 +1074,7 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, uint32_t sendBufferSize
         }
         else
         {
+            eClock::my_sleep(100);
             pendingConector->RetryConnect(mService, this);
         }
     }
