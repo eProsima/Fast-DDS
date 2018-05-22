@@ -482,7 +482,7 @@ void TCPv4Transport::performListenOperation(std::shared_ptr<TCPSocketInfo> pSock
         // Blocking receive.
         auto& msg = pSocketInfo->GetMessageReceiver()->m_rec_msg;
         CDRMessage::initCDRMsg(&msg);
-        if (!Receive(msg.buffer, msg.max_size, msg.length, pSocketInfo.get(), remoteLocator))
+        if (!Receive(msg.buffer, msg.max_size, msg.length, pSocketInfo, remoteLocator))
             continue;
         // Processes the data through the CDR Message interface.
         pSocketInfo->GetMessageReceiver()->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix,
@@ -535,11 +535,10 @@ void TCPv4Transport::SetParticipantGUIDPrefix(const GuidPrefix_t& prefix)
     mConfiguration_.rtpsParticipantGuidPrefix = prefix;
 }
 
-bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
+bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& /*localLocator*/,
     const Locator_t& remoteLocator)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-    uint16_t logicalPort = remoteLocator.get_logical_port();
     if (!IsOutputChannelConnected(remoteLocator) || sendBufferSize > mConfiguration_.sendBufferSize)
         return false;
 
@@ -548,7 +547,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         CDRMessage_t msg;
         TCPHeader tcp_header;
         tcp_header.length = sendBufferSize + static_cast<uint32_t>(TCPHeader::GetSize());
-        tcp_header.logicalPort = localLocator.get_logical_port();
+        tcp_header.logicalPort = remoteLocator.get_logical_port();
         tcp_header.crc = 0; // TODO generate and fill CRC
 
         RTPSMessageCreator::addCustomContent(&msg, tcp_header.getAddress(), TCPHeader::GetSize());
@@ -586,8 +585,6 @@ static void EndpointToLocator(const ip::tcp::endpoint& endpoint, Locator_t& loca
 bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
     std::shared_ptr<TCPSocketInfo> socketInfo, Locator_t& remoteLocator)
 {
-    //TCPHeader header;
-    octet header[14];
     Semaphore receiveSemaphore(0);
     bool success = false;
 
@@ -614,7 +611,7 @@ bool TCPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 
     if (success)
     {
-        ip::tcp::endpoint senderEndpoint = tcpSocketInfo->getSocket()->remote_endpoint();
+        ip::tcp::endpoint senderEndpoint = socketInfo->getSocket()->remote_endpoint();
         EndpointToLocator(senderEndpoint, remoteLocator);
     }
     else
