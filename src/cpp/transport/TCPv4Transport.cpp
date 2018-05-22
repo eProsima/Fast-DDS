@@ -687,7 +687,7 @@ bool TCPv4Transport::DataReceived(const octet* header, octet* receiveBuffer, uin
             if (tcp_header.logicalPort == 0) // RTCP control protocol (do nothing if RTPS message)
             {
                 TCPControlMsgHeader controlHeader;
-                uint32_t sizeCtrlHeader = sizeof(TCPControlMsgHeader);
+                uint32_t sizeCtrlHeader = TCPControlMsgHeader::GetSize();
                 memcpy(&controlHeader, receiveBuffer, sizeCtrlHeader);
                 std::shared_ptr<TCPSocketInfo> socketInfo(pSocketInfo);
                 switch(controlHeader.kind)
@@ -697,14 +697,16 @@ bool TCPv4Transport::DataReceived(const octet* header, octet* receiveBuffer, uin
                             ConnectionRequest_t request;
                             Locator_t myLocator;
                             EndpointToLocator(socketInfo->getSocket()->local_endpoint(), myLocator);
-                            memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), sizeof(ConnectionRequest_t));
+                            memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), request.GetSize());
                             mTCPMessageReceiver->processConnectionRequest(socketInfo, request, myLocator);
                         }
                         break; 
                     case BIND_CONNECTION_RESPONSE: 
                         {
+                            ResponseCode respCode;
                             BindConnectionResponse_t response;
-                            memcpy(&response, &(receiveBuffer[sizeCtrlHeader]), sizeof(BindConnectionResponse_t));
+                            memcpy(&respCode, &(receiveBuffer[sizeCtrlHeader]), 4); // uint32_t
+                            memcpy(&response, &(receiveBuffer[sizeCtrlHeader+4]), response.GetSize());
                             mTCPMessageReceiver->processBindConnectionResponse(socketInfo, response);
 
                             //TODO mBoundSockets[response.locator()] = socketInfo;
@@ -715,35 +717,37 @@ bool TCPv4Transport::DataReceived(const octet* header, octet* receiveBuffer, uin
                     case OPEN_LOGICAL_PORT_REQUEST: 
                         {
                             OpenLogicalPortRequest_t request;
-                            memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), sizeof(OpenLogicalPortRequest_t));
+                            memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), request.GetSize());
                             mTCPMessageReceiver->processOpenLogicalPortRequest(socketInfo, request);
                         }
                         break;
                     case CHECK_LOGICAL_PORT_REQUEST: 
                         {
                             CheckLogicalPortsRequest_t request;
-                            memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), sizeof(CheckLogicalPortsRequest_t));
+                            memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), request.GetSize());
                             mTCPMessageReceiver->processCheckLogicalPortsRequest(socketInfo, request);
                         }
                         break;
                     case CHECK_LOGICAL_PORT_RESPONSE: 
                         {
+                            ResponseCode respCode;
                             CheckLogicalPortsResponse_t response;
-                            memcpy(&response, &(receiveBuffer[sizeCtrlHeader]), sizeof(CheckLogicalPortsResponse_t));
+                            memcpy(&respCode, &(receiveBuffer[sizeCtrlHeader]), 4); // uint32_t
+                            memcpy(&response, &(receiveBuffer[sizeCtrlHeader+4]), response.GetSize());
                             mTCPMessageReceiver->processCheckLogicalPortsResponse(socketInfo, response);
                         }
                         break;
                     case KEEP_ALIVE_REQUEST: 
                         {
                             KeepAliveRequest_t request;
-                            memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), sizeof(KeepAliveRequest_t));
+                            memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), request.GetSize());
                             mTCPMessageReceiver->processKeepAliveRequest(socketInfo, request);
                         }
                         break;
                     case LOGICAL_PORT_IS_CLOSED_REQUEST:
                         {
                             LogicalPortIsClosedRequest_t request;
-                            memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), sizeof(LogicalPortIsClosedRequest_t));
+                            memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), request.GetSize());
                             mTCPMessageReceiver->processLogicalPortIsClosedRequest(socketInfo, request);
                         }
                         break;

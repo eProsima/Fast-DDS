@@ -54,14 +54,14 @@ bool HelloWorldSubscriber::init(bool tcp)
 	unicast_locator.set_port(5101);
 	unicast_locator.set_logical_port(7411);
 	PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
-
+/*
 	Locator_t out_locator;
 	out_locator.kind = kind;
 	out_locator.set_IP4_address("127.0.0.1");
 	out_locator.set_port(5100);
 	out_locator.set_logical_port(7400);
 	PParam.rtps.defaultOutLocatorList.push_back(out_locator);
-
+*/
 	Locator_t meta_locator;
 	meta_locator.kind = kind;
 	meta_locator.set_IP4_address("127.0.0.1");

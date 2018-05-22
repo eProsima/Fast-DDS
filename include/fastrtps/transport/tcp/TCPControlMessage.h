@@ -171,10 +171,15 @@ public:
         return m_transportLocator;
     }
     
+    inline size_t GetSize() const
+    {
+        return 28;
+    }
+
 private:
-    ProtocolVersion_t m_protocolVersion;
-    VendorId_t m_vendorId;
-    Locator_t m_transportLocator;
+    ProtocolVersion_t m_protocolVersion; // 2 bytes
+    VendorId_t m_vendorId; // 2 bytes
+    Locator_t m_transportLocator; // 24
 };
 /*!
  * @brief This class represents the structure OpenLogicalPortRequest_t defined by the user in the IDL file.
@@ -243,6 +248,11 @@ public:
     inline eProsima_user_DllExport uint16_t& logicalPort()
     {
         return m_logicalPort;
+    }
+    
+    inline size_t GetSize() const
+    {
+        return 2;
     }
     
 private:
@@ -326,6 +336,11 @@ public:
         return m_logicalPortsRange;
     }
     
+    inline size_t GetSize() const
+    {
+        return m_logicalPortsRange.size() * 2; // 2 bytes each port
+    }
+    
 private:
     std::vector<uint16_t> m_logicalPortsRange;
 };
@@ -398,6 +413,11 @@ public:
         return m_locator;
     }
     
+    inline size_t GetSize() const
+    {
+        return 24;
+    }
+    
 private:
     Locator_t m_locator;
 };
@@ -468,6 +488,11 @@ public:
     inline eProsima_user_DllExport uint16_t& logicalPort()
     {
         return m_logicalPort;
+    }
+    
+    inline size_t GetSize() const
+    {
+        return 2;
     }
     
 private:
@@ -833,6 +858,11 @@ public:
         return m_locator;
     }
     
+    inline size_t GetSize() const
+    {
+        return 24;
+    }
+    
 private:
     Locator_t m_locator;
 };
@@ -912,6 +942,11 @@ public:
     inline eProsima_user_DllExport std::vector<uint16_t>& availableLogicalPorts()
     {
         return m_availableLogicalPorts;
+    }
+    
+    inline size_t GetSize() const
+    {
+        return 2 * m_availableLogicalPorts.size();
     }
     
 private:

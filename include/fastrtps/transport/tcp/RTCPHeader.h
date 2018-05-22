@@ -83,10 +83,15 @@ enum TCPCPMKind : octet
 
 struct TCPControlMsgHeader
 {
-    TCPCPMKind kind;
-    octet flags;
-    uint16_t length;
-    TCPTransactionId transactionId;
+    TCPCPMKind kind; // 1 byte
+    octet flags; // 1 byte
+    uint16_t length; // 2 bytes
+    TCPTransactionId transactionId; // 12 bytes
+
+    static inline size_t GetSize()
+    {
+        return 16;
+    }
 
     void setFlags(bool endianess, bool hasPayload, bool requiresResponse)
     {

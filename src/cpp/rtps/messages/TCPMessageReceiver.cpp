@@ -38,28 +38,29 @@ TCPMessageReceiver::~TCPMessageReceiver()
 {
 }
 
-bool TCPMessageReceiver::sendResponseData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+bool TCPMessageReceiver::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
-        const ControlProtocolResponseData &response)
+        const octet *data, const uint32_t size)
 {
     CDRMessage_t msg;
     CDRMessage::initCDRMsg(&msg);
     RTPSMessageCreator::addCustomContent(&msg, header.getAddress(), TCPHeader::GetSize());
     RTPSMessageCreator::addCustomContent(&msg, (octet*)(&ctrlHeader), sizeof(TCPControlMsgHeader));
-    RTPSMessageCreator::addCustomContent(&msg, (octet*)(&response), sizeof(ControlProtocolResponseData));
+    RTPSMessageCreator::addCustomContent(&msg, data, size);
 
     return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
 }
 
-bool TCPMessageReceiver::sendRequestData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+bool TCPMessageReceiver::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
-        const ControlProtocolRequestData &request)
+        const octet *data, const uint32_t size, const ResponseCode respCode)
 {
     CDRMessage_t msg;
     CDRMessage::initCDRMsg(&msg);
     RTPSMessageCreator::addCustomContent(&msg, header.getAddress(), TCPHeader::GetSize());
     RTPSMessageCreator::addCustomContent(&msg, (octet*)(&ctrlHeader), sizeof(TCPControlMsgHeader));
-    RTPSMessageCreator::addCustomContent(&msg, (octet*)(&request), sizeof(ControlProtocolRequestData));
+    RTPSMessageCreator::addCustomContent(&msg, (octet*)(&respCode), 4); // uint32_t
+    RTPSMessageCreator::addCustomContent(&msg, data, size);
 
     return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
 }
@@ -69,7 +70,6 @@ void TCPMessageReceiver::sendConnectionRequest(std::shared_ptr<TCPSocketInfo> &p
     TCPHeader header;
     TCPControlMsgHeader ctrlHeader;
     ConnectionRequest_t request;
-    ControlProtocolRequestData requestData;
 
     header.logicalPort = 0; // This is a control message
     ctrlHeader.length = sizeof(TCPControlMsgHeader) + sizeof(ControlProtocolRequestData);
@@ -79,9 +79,7 @@ void TCPMessageReceiver::sendConnectionRequest(std::shared_ptr<TCPSocketInfo> &p
     header.length = ctrlHeader.length + TCPHeader::GetSize();
     request.transportLocator(transportLocator);
 
-    requestData.requestData().connectionRequest(request);
-
-    sendRequestData(pSocketInfo, header, ctrlHeader, requestData);
+    sendData(pSocketInfo, header, ctrlHeader, (octet*)&request, request.GetSize());
 
     pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eWaitingForBindResponse);
 }
@@ -113,7 +111,6 @@ void TCPMessageReceiver::processConnectionRequest(std::shared_ptr<TCPSocketInfo>
     TCPHeader header;
     TCPControlMsgHeader ctrlHeader;
     BindConnectionResponse_t response;
-    ControlProtocolResponseData responseData;
 
     header.logicalPort = 0; // This is a control message
     ctrlHeader.length = sizeof(TCPControlMsgHeader) + sizeof(ControlProtocolResponseData);
@@ -122,27 +119,23 @@ void TCPMessageReceiver::processConnectionRequest(std::shared_ptr<TCPSocketInfo>
     ctrlHeader.setEndianess(DEFAULT_ENDIAN);
     header.length = ctrlHeader.length + TCPHeader::GetSize();
     response.locator(localLocator);
-    responseData.responseData().bindConnectionResponse(response);
  
+    // TODO More options!
     if (pSocketInfo->mConnectionStatus == TCPSocketInfo::eConnectionStatus::eWaitingForBind)
     {
-        responseData.responseCode(RETCODE_OK); // TODO More options!
 
-        sendResponseData(pSocketInfo, header, ctrlHeader, responseData);
-
+        sendData(pSocketInfo, header, ctrlHeader, (octet*)&response, response.GetSize(), RETCODE_OK);
         pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eEstablished);
     }
     else
     {
         if (pSocketInfo->mConnectionStatus == TCPSocketInfo::eConnectionStatus::eEstablished)
         {
-            responseData.responseCode(RETCODE_EXISTING_CONNECTION); // TODO More options!
-            sendResponseData(pSocketInfo, header, ctrlHeader, responseData);
+            sendData(pSocketInfo, header, ctrlHeader, (octet*)&response, response.GetSize(), RETCODE_EXISTING_CONNECTION);
         }
         else
         {
-            responseData.responseCode(RETCODE_SERVER_ERROR); // TODO More options!
-            sendResponseData(pSocketInfo, header, ctrlHeader, responseData);
+            sendData(pSocketInfo, header, ctrlHeader, (octet*)&response, response.GetSize(), RETCODE_SERVER_ERROR);
         }
     }
 }
