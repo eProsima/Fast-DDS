@@ -62,12 +62,12 @@ public:
     void processResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const ControlProtocolResponseData &response);
 
 private:
-    bool sendResponseData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
-        const ControlProtocolResponseData &response);
-    bool sendRequestData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+        const octet *data, const uint32_t size);
+    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
-        const ControlProtocolRequestData &request);
+        const octet *data, const uint32_t size, const ResponseCode respCode);
 };
 }
 } /* namespace rtps */
