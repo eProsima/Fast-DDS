@@ -516,24 +516,29 @@ void TCPv4Transport::performListenOperation(std::shared_ptr<TCPSocketInfo> pSock
         //sClock.setTimeNow(&time_now);
         if (pSocketInfo->IsConnectionEstablished())
         {
-            //TODO: LLGP: Send Pending logical output ports.
+            if (!pSocketInfo->mPendingLogicalOutputPorts.empty())
+            {
+                // TODO negotiation about logical ports
+                mTCPMessageReceiver->sendOpenLogicalPortRequest(pSocketInfo, 
+                    *(pSocketInfo->mPendingLogicalOutputPorts.begin()));
+            }
 
             // Keep Alive Management
-            //if (time_now > next_time)
-            //{
-            //    //TODO: Send KeepAliveMessage;
-            //    next_time = time_now;
-            //    next_time.add_milliseconds(mConfiguration_.keep_alive_frequency_ms);
-            //    timeout_time = time_now;
-            //    timeout_time.add_milliseconds(mConfiguration_.keep_alive_timeout_ms);
-            //}
-            //else if (timeout_time != c_TimeZero && time_now >= timeout_time)
-            //{
-            //    // Disable the socket to erase it after the reception.
-            //    pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eDisconnected);
-            //    pSocketInfo->Disable();
-            //    continue;
-            //}
+            if (time_now > next_time)
+            {
+               mTCPMessageReceiver->sendKeepAliveRequest(pSocketInfo);
+               next_time = time_now;
+               next_time.add_milliseconds(mConfiguration_.keep_alive_frequency_ms);
+               timeout_time = time_now;
+               timeout_time.add_milliseconds(mConfiguration_.keep_alive_timeout_ms);
+            }
+            else if (timeout_time != c_TimeZero && time_now >= timeout_time)
+            {
+               // Disable the socket to erase it after the reception.
+               pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eDisconnected);
+               pSocketInfo->Disable();
+               continue;
+            }
         }
 
         // Blocking receive.
