@@ -188,7 +188,7 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
     // Finally, calculate the CRC
     octet* it = (octet*)&retCtrlHeader;
     uint32_t crc = 0;
-    for (size_t i = 0; i < retCtrlHeader.length; ++i)
+    for (size_t i = 0; i < retCtrlHeader.GetSize(); ++i)
     {
         crc = addToCRC(crc, it[i]);
     }
