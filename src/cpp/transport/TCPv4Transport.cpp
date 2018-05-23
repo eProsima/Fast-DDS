@@ -578,9 +578,11 @@ bool TCPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverR
 
 void TCPv4Transport::performRTPCManagementThread(std::shared_ptr<TCPSocketInfo> pSocketInfo)
 {
-    std::chrono::time_point<std::chrono::system_clock> time_now;
-    std::chrono::time_point<std::chrono::system_clock> next_time;
-    std::chrono::time_point<std::chrono::system_clock> timeout_time;
+    std::chrono::time_point<std::chrono::system_clock> time_now = std::chrono::system_clock::now();
+    std::chrono::time_point<std::chrono::system_clock> next_time = time_now +
+        std::chrono::milliseconds(mConfiguration_.keep_alive_frequency_ms);
+    std::chrono::time_point<std::chrono::system_clock> timeout_time =
+        time_now + std::chrono::milliseconds(mConfiguration_.keep_alive_timeout_ms);
 
     while (pSocketInfo->IsAlive())
     {
@@ -1006,7 +1008,7 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             socketInfo->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, socketInfo));
             socketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eWaitingForBind);
             mInputSockets[acceptor->m_locator.get_physical_port()].emplace_back(socketInfo);
-            
+
             std::cout << "[RTCP] Accepted connection (physical: " << acceptor->m_locator.get_physical_port() << ")" << std::endl;
         }
 

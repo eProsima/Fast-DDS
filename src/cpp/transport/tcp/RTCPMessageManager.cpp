@@ -408,9 +408,7 @@ bool RTCPMessageManager::processBindConnectionResponse(std::shared_ptr<TCPSocket
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
     {
-        OpenLogicalPortRequest_t request;
-        request.logicalPort(logicalPort);
-        sendOpenLogicalPortRequest(pSocketInfo, request);
+        pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eEstablished);
         mUnconfirmedTransactions.erase(it);
         return true;
     }
@@ -439,16 +437,19 @@ bool RTCPMessageManager::processCheckLogicalPortsResponse(std::shared_ptr<TCPSoc
 }
 
 bool RTCPMessageManager::processOpenLogicalPortResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
-        ResponseCode respCode, const TCPTransactionId &transactionId, const Locator_t &remoteLocator)
+        ResponseCode respCode, const TCPTransactionId &transactionId, Locator_t &remoteLocator)
 {
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
     {
         if (respCode == RETCODE_OK)
         {
+            remoteLocator.set_logical_port(pSocketInfo->mPendingLogicalPort);
+
             pSocketInfo->mLogicalOutputPorts.emplace_back(*(pSocketInfo->mPendingLogicalOutputPorts.begin()));
             pSocketInfo->mPendingLogicalOutputPorts.erase(pSocketInfo->mPendingLogicalOutputPorts.begin());
             pSocketInfo->mPendingLogicalPort = 0;
+
             transport->mBoundOutputSockets[remoteLocator] = pSocketInfo;
         }
         else
