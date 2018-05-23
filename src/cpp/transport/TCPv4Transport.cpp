@@ -759,70 +759,70 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
         std::unique_lock<std::recursive_mutex> scopedLock(socketInfo->GetReadMutex());
         if (!socketInfo->IsAlive())
         {
-            return false;
+            success = false;
         }
-
-        success = true;
-        try
+        else
         {
-            // Read the header
-            octet header[14];
-            size_t bytes_received = read(*socketInfo->getSocket(),
-                asio::buffer(&header, TCPHeader::GetSize()), transfer_exactly(14));
-            TCPHeader tcp_header;
-            memcpy(&tcp_header, header, TCPHeader::GetSize()); // TODO Can avoid this memcpy?
-            if (bytes_received != TCPHeader::GetSize())
+            success = true;
+            try
             {
-                logError(RTPS_MSG_IN, "Bad TCP header size: " << bytes_received << "(expected: : " << TCPHeader::GetSize() << ")");
-            }
-
-            size_t body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::GetSize());
-
-            if (body_size > receiveBufferCapacity)
-            {
-                logError(RTPS_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
-                    << body_size << " vs. " << receiveBufferCapacity << ".");
-                success = false;
-            }
-            else
-            {
-                success = ReadBody(receiveBuffer, receiveBufferCapacity, &receiveBufferSize, socketInfo, body_size);
-
-                if (!RTCPMessageManager::CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
+                // Read the header
+                octet header[14];
+                size_t bytes_received = read(*socketInfo->getSocket(),
+                    asio::buffer(&header, TCPHeader::GetSize()), transfer_exactly(14));
+                TCPHeader tcp_header;
+                memcpy(&tcp_header, header, TCPHeader::GetSize()); // TODO Can avoid this memcpy?
+                if (bytes_received != TCPHeader::GetSize())
                 {
-                    logWarning(RTPS_MSG_IN, "Bad TCP header CRC");
+                    logError(RTPS_MSG_IN, "Bad TCP header size: " << bytes_received << "(expected: : " << TCPHeader::GetSize() << ")");
                 }
 
-                if (tcp_header.logicalPort == 0)
+                size_t body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::GetSize());
+
+                if (body_size > receiveBufferCapacity)
                 {
-                    std::cout << "[RTCP] Receive [RTCP Control]: " << receiveBufferSize << " bytes." << std::endl;
-                    mRTCPMessageManager->processRTCPMessage(socketInfo, receiveBuffer);
+                    logError(RTPS_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
+                        << body_size << " vs. " << receiveBufferCapacity << ".");
                     success = false;
                 }
                 else
                 {
-                    std::cout << "[RTCP] Receive [RTPS Data]: " << receiveBufferSize << " bytes." << std::endl;
+                    success = ReadBody(receiveBuffer, receiveBufferCapacity, &receiveBufferSize, socketInfo, body_size);
+
+                    if (!RTCPMessageManager::CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
+                    {
+                        logWarning(RTPS_MSG_IN, "Bad TCP header CRC");
+                    }
+
+                    if (tcp_header.logicalPort == 0)
+                    {
+                        std::cout << "[RTCP] Receive [RTCP Control]: " << receiveBufferSize << " bytes." << std::endl;
+                        mRTCPMessageManager->processRTCPMessage(socketInfo, receiveBuffer);
+                        success = false;
+                    }
+                    else
+                    {
+                        std::cout << "[RTCP] Receive [RTPS Data]: " << receiveBufferSize << " bytes." << std::endl;
+                    }
                 }
             }
-            receiveSemaphore.post();
-        }
-        catch (const asio::error_code& code)
-        {
-            if ((code == asio::error::eof) || (code == asio::error::connection_reset))
+            catch (const asio::error_code& code)
+            {
+                if ((code == asio::error::eof) || (code == asio::error::connection_reset))
+                {
+                    // Close the channel
+                    socketInfo->Disable();
+                    CloseTCPSocket(socketInfo);
+                }
+            }
+            catch (const asio::system_error& /*error*/)
             {
                 // Close the channel
                 socketInfo->Disable();
                 CloseTCPSocket(socketInfo);
             }
-            receiveSemaphore.post();
         }
-        catch (const asio::system_error& /*error*/)
-        {
-            // Close the channel
-            socketInfo->Disable();
-            CloseTCPSocket(socketInfo);
-            receiveSemaphore.post();
-        }
+        receiveSemaphore.post();
     }
     receiveSemaphore.wait();
     success = success && receiveBufferSize > 0;
