@@ -178,7 +178,7 @@ TCPv4Transport::~TCPv4Transport()
     }
 
     {
-        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        std::unique_lock<std::recursive_mutex> scopedLock(mThreadPoolMutex);
         for (auto it = mThreadPool.begin(); it != mThreadPool.end(); ++it)
         {
             (*it)->join();
@@ -582,7 +582,6 @@ void TCPv4Transport::performRTPCManagementThread(std::shared_ptr<TCPSocketInfo> 
 
     while (pSocketInfo->IsAlive())
     {
-        time_now = std::chrono::system_clock::now();
         if (pSocketInfo->IsConnectionEstablished())
         {
             if (pSocketInfo->mPendingLogicalPort == 0 && !pSocketInfo->mPendingLogicalOutputPorts.empty())
@@ -592,6 +591,8 @@ void TCPv4Transport::performRTPCManagementThread(std::shared_ptr<TCPSocketInfo> 
             }
             else if (mConfiguration_.keep_alive_frequency_ms > 0 && mConfiguration_.keep_alive_timeout_ms > 0)
             {
+                time_now = std::chrono::system_clock::now();
+
                 // Keep Alive Management
                 if (!pSocketInfo->mWaitingForKeepAlive && time_now > next_time)
                 {
@@ -603,12 +604,14 @@ void TCPv4Transport::performRTPCManagementThread(std::shared_ptr<TCPSocketInfo> 
                 else if (pSocketInfo->mWaitingForKeepAlive && time_now >= timeout_time)
                 {
                     // Disable the socket to erase it after the reception.
+                    mRTCPMessageManager->sendUnbindConnectionRequest(pSocketInfo);
                     pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eDisconnected);
                     pSocketInfo->Disable();
                     continue;
                 }
             }
         }
+        eClock::my_sleep(1000);
     }
     pSocketInfo = nullptr;
 }
@@ -750,7 +753,7 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
 
     { // lock scope
         std::unique_lock<std::recursive_mutex> scopedLock(socketInfo->GetReadMutex());
-        if (socketInfo->IsAlive())
+        if (!socketInfo->IsAlive())
         {
             return false;
         }
@@ -1096,7 +1099,7 @@ void TCPv4Transport::CloseTCPSocket(std::shared_ptr<TCPSocketInfo> socketInfo)
 void TCPv4Transport::ReleaseTCPSocket(std::shared_ptr<TCPSocketInfo> socketInfo)
 {
     {
-        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        std::unique_lock<std::recursive_mutex> scopedLock(mThreadPoolMutex);
         for (auto it = mThreadPool.begin(); it != mThreadPool.end(); ++it)
         {
             (*it)->join();
@@ -1110,7 +1113,7 @@ void TCPv4Transport::ReleaseTCPSocket(std::shared_ptr<TCPSocketInfo> socketInfo)
     socketInfo->getSocket()->close();
 
     {
-        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        std::unique_lock<std::recursive_mutex> scopedLock(mThreadPoolMutex);
         mThreadPool.emplace_back(socketInfo->ReleaseThread());
         mThreadPool.emplace_back(socketInfo->ReleaseRTCPThread());
     }

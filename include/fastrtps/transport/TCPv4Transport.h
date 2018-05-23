@@ -210,6 +210,7 @@ protected:
     std::unique_ptr<std::thread> ioServiceThread;
 
     mutable std::recursive_mutex mSocketsMapMutex;
+    std::recursive_mutex mThreadPoolMutex;
 
     std::map<Locator_t, TCPConnector*> mPendingOutputSockets;
     std::vector<std::shared_ptr<TCPSocketInfo>> mOutputSockets;
