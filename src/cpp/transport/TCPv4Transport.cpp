@@ -717,7 +717,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         TCPHeader tcp_header;
         tcp_header.length = sendBufferSize + static_cast<uint32_t>(TCPHeader::GetSize());
         tcp_header.logicalPort = remoteLocator.get_logical_port();
-        tcp_header.crc = 0; // TODO generate and fill CRC
+        RTCPMessageManager::CalculateCRC(tcp_header, sendBuffer, sendBufferSize);
 
         RTPSMessageCreator::addCustomContent(&msg, tcp_header.getAddress(), TCPHeader::GetSize());
         RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
@@ -759,7 +759,8 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
         {
             // Read the header
             octet header[14];
-            size_t bytes_received = read(*socketInfo->getSocket(), asio::buffer(&header, TCPHeader::GetSize()), transfer_exactly(14));
+            size_t bytes_received = read(*socketInfo->getSocket(), 
+                asio::buffer(&header, TCPHeader::GetSize()), transfer_exactly(14));
             TCPHeader tcp_header;
             memcpy(&tcp_header, header, TCPHeader::GetSize()); // TODO Can avoid this memcpy?
             if (bytes_received != TCPHeader::GetSize())
@@ -778,6 +779,11 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
             else
             {
                 success = ReadBody(receiveBuffer, receiveBufferCapacity, &receiveBufferSize, socketInfo, body_size);
+
+                if (!RTCPMessageManager::CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
+                {
+                    logWarning(RTPS_MSG_IN, "Bad TCP header CRC");
+                }
 
                 if (tcp_header.logicalPort == 0)
                 {

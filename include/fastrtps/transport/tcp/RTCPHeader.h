@@ -123,16 +123,30 @@ union TCPTransactionId
         return *this;
     }
 
-    bool operator==(const TCPTransactionId& t)
+    bool operator==(const TCPTransactionId& t) const
     {
         return memcmp(ints, t.ints, 3 * sizeof(uint32_t)) == 0;
     }
 
-    bool operator<(const TCPTransactionId& t)
+    bool operator<(const TCPTransactionId& t) const
     {
         return memcmp(ints, t.ints, 3 * sizeof(uint32_t)) < 0;
     }
 };
+
+inline std::ostream& operator<<(std::ostream& output,const TCPTransactionId& t)
+{
+    bool printed = false; // Don't skip cases like 99 0 34
+    for (int i = 2; i >= 0; --i)
+    {
+        if (printed || t.ints[i] > 0)
+        {
+            output << t.ints[i]; 
+            printed = true;
+        }
+    }
+    return output;
+}
 
 enum TCPCPMKind : octet
 {

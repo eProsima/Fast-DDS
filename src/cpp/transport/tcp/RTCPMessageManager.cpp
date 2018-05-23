@@ -130,6 +130,26 @@ static uint32_t& addToCRC(uint32_t &crc, octet data)
     return crc;
 }
 
+bool RTCPMessageManager::CheckCRC(const TCPHeader &header, const octet *data, uint32_t size)
+{
+    uint32_t crc(0);
+    for (uint32_t i = 0; i < size; ++i)
+    {
+        crc = addToCRC(crc, data[i]);
+    }
+    return crc == header.crc;
+}
+
+void RTCPMessageManager::CalculateCRC(TCPHeader &header, const octet *data, uint32_t size)
+{
+    uint32_t crc(0);
+    for (uint32_t i = 0; i < size; ++i)
+    {
+        crc = addToCRC(crc, data[i]);
+    }
+    header.crc = crc;
+}
+
 void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &transactionId,
         TCPControlMsgHeader &retCtrlHeader,  TCPHeader &header, const octet *data,
         const uint32_t *size,  const ResponseCode *respCode)
@@ -147,6 +167,7 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
         case CHECK_LOGICAL_PORT_REQUEST:
         case KEEP_ALIVE_REQUEST:
             retCtrlHeader.setFlags(false, true, true);
+            mUnconfirmedTransactions.emplace(retCtrlHeader.transactionId);
             break;
         case LOGICAL_PORT_IS_CLOSED_REQUEST:
         case BIND_CONNECTION_RESPONSE:
@@ -167,7 +188,7 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
     // Finally, calculate the CRC
     octet* it = (octet*)&retCtrlHeader;
     uint32_t crc = 0;
-    for (size_t i = 0; i < TCPHeader::GetSize(); ++i)
+    for (size_t i = 0; i < retCtrlHeader.length; ++i)
     {
         crc = addToCRC(crc, it[i]);
     }
@@ -345,19 +366,98 @@ void RTCPMessageManager::processLogicalPortIsClosedRequest(std::shared_ptr<TCPSo
     // TODO?
 }
 
-void RTCPMessageManager::processBindConnectionResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
-        const BindConnectionResponse_t &/*response*/, const TCPTransactionId &/*transactionId*/,
+bool RTCPMessageManager::processBindConnectionResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
+        const BindConnectionResponse_t &/*response*/, const TCPTransactionId &transactionId,
         const uint16_t logicalPort)
 {
-    OpenLogicalPortRequest_t request;
-    request.logicalPort(logicalPort);
-    sendOpenLogicalPortRequest(pSocketInfo, request);
+    auto it = mUnconfirmedTransactions.find(transactionId);
+    if (it != mUnconfirmedTransactions.end())
+    {
+        OpenLogicalPortRequest_t request;
+        request.logicalPort(logicalPort);
+        sendOpenLogicalPortRequest(pSocketInfo, request);
+        mUnconfirmedTransactions.erase(it);
+        return true;
+    }
+    else
+    {
+        logWarning(RTPS_MSG_IN, "Received response for BindConnection with an unexpected transactionId: " << transactionId);
+        return false;
+    }
 }
 
-void RTCPMessageManager::processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &/*pSocketInfo*/,
-        const CheckLogicalPortsResponse_t &/*response*/, const TCPTransactionId &/*transactionId*/)
+bool RTCPMessageManager::processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &/*pSocketInfo*/,
+        const CheckLogicalPortsResponse_t &/*response*/, const TCPTransactionId &transactionId)
 {
     // TODO? Not here I guess...
+    auto it = mUnconfirmedTransactions.find(transactionId);
+    if (it != mUnconfirmedTransactions.end())
+    {
+        mUnconfirmedTransactions.erase(it);
+        return true;
+    }
+    else
+    {
+        logWarning(RTPS_MSG_IN, "Received response for CheckLogicalPorts with an unexpected transactionId: " << transactionId);
+        return false;
+    }
+}
+
+bool RTCPMessageManager::processOpenLogicalPortResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+        ResponseCode respCode, const TCPTransactionId &transactionId)
+{
+    auto it = mUnconfirmedTransactions.find(transactionId);
+    if (it != mUnconfirmedTransactions.end())
+    {
+        if (respCode == RETCODE_OK)
+        {
+            pSocketInfo->mLogicalOutputPorts.emplace_back(
+                *(pSocketInfo->mPendingLogicalOutputPorts.begin()));
+            pSocketInfo->mPendingLogicalOutputPorts.erase(
+                pSocketInfo->mPendingLogicalOutputPorts.begin());
+        }
+        else
+        {
+            // TODO Check ports and retry
+        }
+        mUnconfirmedTransactions.erase(it);
+        return true;
+    }
+    else
+    {
+        logWarning(RTPS_MSG_IN, "Received response for OpenLogicalPort with an unexpected transactionId: " << transactionId);
+        return false;
+    }
+}
+
+bool RTCPMessageManager::processKeepAliveResponse(std::shared_ptr<TCPSocketInfo> &/*pSocketInfo*/, 
+        ResponseCode respCode, const TCPTransactionId &transactionId)
+{
+    auto it = mUnconfirmedTransactions.find(transactionId);
+    if (it != mUnconfirmedTransactions.end())
+    {
+        // TODO Notify transport in each case
+        switch (respCode)
+        {
+        case RETCODE_OK:
+            break;
+        case RETCODE_UNKNOWN_LOCATOR:
+            break;
+        case RETCODE_BAD_REQUEST:
+            break;
+        case RETCODE_SERVER_ERROR:
+            break;
+        default:
+            break;
+        }
+        mUnconfirmedTransactions.erase(it);
+        return true;
+    }
+    else
+    {
+        logWarning(RTPS_MSG_IN, "Received response for KeepAlive with an unexpected transactionId: " << transactionId);
+        return false;
+    }
 }
 
 void RTCPMessageManager::processRTCPMessage(std::shared_ptr<TCPSocketInfo> socketInfo, octet* receiveBuffer)
@@ -443,16 +543,9 @@ void RTCPMessageManager::processRTCPMessage(std::shared_ptr<TCPSocketInfo> socke
     {
         ResponseCode respCode;
         memcpy(&respCode, &(receiveBuffer[sizeCtrlHeader]), 4);
-        if (respCode == RETCODE_OK)
+        if (!processOpenLogicalPortResponse(socketInfo, respCode, controlHeader.transactionId))
         {
-            socketInfo->mLogicalOutputPorts.emplace_back(
-                *(socketInfo->mPendingLogicalOutputPorts.begin()));
-            socketInfo->mPendingLogicalOutputPorts.erase(
-                socketInfo->mPendingLogicalOutputPorts.begin());
-        }
-        else
-        {
-            // TODO Check ports and retry
+            // TODO unexpected transactionId
         }
     }
     break;
@@ -461,18 +554,9 @@ void RTCPMessageManager::processRTCPMessage(std::shared_ptr<TCPSocketInfo> socke
         // TODO
         ResponseCode respCode;
         memcpy(&respCode, &(receiveBuffer[sizeCtrlHeader]), 4);
-        switch (respCode)
+        if (!processKeepAliveResponse(socketInfo, respCode, controlHeader.transactionId))
         {
-        case RETCODE_OK:
-            break;
-        case RETCODE_UNKNOWN_LOCATOR:
-            break;
-        case RETCODE_BAD_REQUEST:
-            break;
-        case RETCODE_SERVER_ERROR:
-            break;
-        default:
-            break;
+            // TODO unexpected transactionId
         }
     }
     break;

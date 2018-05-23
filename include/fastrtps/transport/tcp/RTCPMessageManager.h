@@ -70,15 +70,23 @@ public:
     void processLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const LogicalPortIsClosedRequest_t &request, const TCPTransactionId &transactionId);
 
-    void processBindConnectionResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+    bool processBindConnectionResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const BindConnectionResponse_t &response, const TCPTransactionId &transactionId, const uint16_t logicalPort);
-    void processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+    bool processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const CheckLogicalPortsResponse_t &response, const TCPTransactionId &transactionId);
+    bool processOpenLogicalPortResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+        ResponseCode respCode, const TCPTransactionId &transactionId);
+    bool processKeepAliveResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+        ResponseCode respCode, const TCPTransactionId &transactionId);
 
     void processRTCPMessage(std::shared_ptr<TCPSocketInfo> socketInfo, octet* receiveBuffer);
+    // data must contain full RTCP message without the TCPHeader
+    static bool CheckCRC(const TCPHeader &header, const octet *data, uint32_t size);
+    static void CalculateCRC(TCPHeader &header, const octet *data, uint32_t size);
 
 protected:
     TCPv4Transport* transport;
+    std::set<TCPTransactionId> mUnconfirmedTransactions;
 
 private:
     TCPTransactionId myTransId;
