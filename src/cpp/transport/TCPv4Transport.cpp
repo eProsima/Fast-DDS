@@ -29,6 +29,9 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps {
 
+static const int s_default_keep_alive_frequency = 50000; // 50 SECONDS
+static const int s_default_keep_alive_timeout = 10000; // 10 SECONDS
+
 static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
 {
     IPFinder::getIPs(&locNames, return_loopback);
@@ -112,15 +115,15 @@ TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor) :
 
 TCPv4TransportDescriptor::TCPv4TransportDescriptor() :
     TransportDescriptorInterface(s_maximumMessageSize)
-    , keep_alive_frequency_ms(0)
-    , keep_alive_timeout_ms(0)
+    , keep_alive_frequency_ms(s_default_keep_alive_frequency)
+    , keep_alive_timeout_ms(s_default_keep_alive_timeout)
 {
 }
 
 TCPv4TransportDescriptor::TCPv4TransportDescriptor(const TCPv4TransportDescriptor& t) :
     TransportDescriptorInterface(t)
-    , keep_alive_frequency_ms(0)
-    , keep_alive_timeout_ms(0)
+    , keep_alive_frequency_ms(t.keep_alive_frequency_ms)
+    , keep_alive_timeout_ms(t.keep_alive_timeout_ms)
 {
 }
 
@@ -573,35 +576,31 @@ bool TCPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverR
 
 void TCPv4Transport::performRTPCManagementThread(std::shared_ptr<TCPSocketInfo> pSocketInfo)
 {
-    static eClock sClock;
-    Time_t time_now;
-    Time_t next_time;
-    Time_t timeout_time;
+    std::chrono::time_point<std::chrono::system_clock> time_now;
+    std::chrono::time_point<std::chrono::system_clock> next_time;
+    std::chrono::time_point<std::chrono::system_clock> timeout_time;
 
     while (pSocketInfo->IsAlive())
     {
-        sClock.setTimeNow(&time_now);
+        time_now = std::chrono::system_clock::now();
         if (pSocketInfo->IsConnectionEstablished())
         {
-            if (!pSocketInfo->mPendingLogicalOutputPorts.empty())
+            if (pSocketInfo->mPendingLogicalPort == 0 && !pSocketInfo->mPendingLogicalOutputPorts.empty())
             {
-                // TODO negotiation about logical ports
-                mRTCPMessageManager->sendOpenLogicalPortRequest(pSocketInfo,
-                    *(pSocketInfo->mPendingLogicalOutputPorts.begin()));
+                pSocketInfo->mPendingLogicalPort = *pSocketInfo->mPendingLogicalOutputPorts.begin();
+                mRTCPMessageManager->sendOpenLogicalPortRequest(pSocketInfo, pSocketInfo->mPendingLogicalPort);
             }
-
-            if (mConfiguration_.keep_alive_frequency_ms > 0)
+            else if (mConfiguration_.keep_alive_frequency_ms > 0 && mConfiguration_.keep_alive_timeout_ms > 0)
             {
                 // Keep Alive Management
-                if (time_now > next_time)
+                if (!pSocketInfo->mWaitingForKeepAlive && time_now > next_time)
                 {
                     mRTCPMessageManager->sendKeepAliveRequest(pSocketInfo);
-                    next_time = time_now;
-                    next_time.add_milliseconds(mConfiguration_.keep_alive_frequency_ms);
-                    timeout_time = time_now;
-                    timeout_time.add_milliseconds(mConfiguration_.keep_alive_timeout_ms);
+                    pSocketInfo->mWaitingForKeepAlive = true;
+                    next_time = time_now + std::chrono::milliseconds(mConfiguration_.keep_alive_frequency_ms);
+                    timeout_time = time_now + std::chrono::milliseconds(mConfiguration_.keep_alive_timeout_ms);
                 }
-                else if (timeout_time != c_TimeZero && time_now >= timeout_time)
+                else if (pSocketInfo->mWaitingForKeepAlive && time_now >= timeout_time)
                 {
                     // Disable the socket to erase it after the reception.
                     pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eDisconnected);
@@ -611,6 +610,7 @@ void TCPv4Transport::performRTPCManagementThread(std::shared_ptr<TCPSocketInfo> 
             }
         }
     }
+    pSocketInfo = nullptr;
 }
 
 void TCPv4Transport::performListenOperation(std::shared_ptr<TCPSocketInfo> pSocketInfo)
@@ -750,16 +750,17 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
 
     { // lock scope
         std::unique_lock<std::recursive_mutex> scopedLock(socketInfo->GetReadMutex());
-        if (!socketInfo->IsAlive())
+        if (socketInfo->IsAlive())
+        {
             return false;
+        }
 
         success = true;
-
         try
         {
             // Read the header
             octet header[14];
-            size_t bytes_received = read(*socketInfo->getSocket(), 
+            size_t bytes_received = read(*socketInfo->getSocket(),
                 asio::buffer(&header, TCPHeader::GetSize()), transfer_exactly(14));
             TCPHeader tcp_header;
             memcpy(&tcp_header, header, TCPHeader::GetSize()); // TODO Can avoid this memcpy?
@@ -788,11 +789,7 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
                 if (tcp_header.logicalPort == 0)
                 {
                     mRTCPMessageManager->processRTCPMessage(socketInfo, receiveBuffer);
-                    return false;
-                }
-                else
-                {
-                    return success;
+                    success = false;
                 }
             }
             receiveSemaphore.post();
@@ -1037,13 +1034,13 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, uint32_t /*sendBufferSi
     }
 }
 
-size_t TCPv4Transport::Send(std::shared_ptr<TCPSocketInfo> &socketInfo, const octet *data,
+size_t TCPv4Transport::Send(std::shared_ptr<TCPSocketInfo> socketInfo, const octet *data,
         size_t size, eSocketErrorCodes &errorCode) const
 {
     size_t bytesSent = 0;
     try
     {
-        // TODO mutex
+        std::unique_lock<std::recursive_mutex> scopedLock(socketInfo->GetWriteMutex());
         bytesSent = socketInfo->getSocket()->send(asio::buffer(data, size));
         errorCode = eSocketErrorCodes::eNoError;
     }
@@ -1073,7 +1070,7 @@ size_t TCPv4Transport::Send(std::shared_ptr<TCPSocketInfo> &socketInfo, const oc
     return bytesSent;
 }
 
-size_t TCPv4Transport::Send(std::shared_ptr<TCPSocketInfo> &socketInfo, const octet *data, size_t size) const
+size_t TCPv4Transport::Send(std::shared_ptr<TCPSocketInfo> socketInfo, const octet *data, size_t size) const
 {
     eSocketErrorCodes error;
     return Send(socketInfo, data, size, error);
