@@ -817,9 +817,10 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
                     CloseTCPSocket(socketInfo);
                 }
             }
-            catch (const asio::system_error& /*error*/)
+            catch (const asio::system_error& error)
             {
                 // Close the channel
+                std::cout << "[RTCP] ASIO ERROR [RECEIVE]: " << error.what() << std::endl;
                 socketInfo->Disable();
                 CloseTCPSocket(socketInfo);
             }
