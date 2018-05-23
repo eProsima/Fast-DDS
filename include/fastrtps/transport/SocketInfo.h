@@ -92,35 +92,55 @@ class SocketInfo
 public:
     SocketInfo()
     : mp_receiver(nullptr)
-    , m_bAlive(true)
-    , m_thread(nullptr)
+    , mAlive(true)
+    , mThread(nullptr)
+    , mAutoRelease(true)
     {
     }
 
     virtual ~SocketInfo()
     {
-        m_bAlive = false;
-        if (m_thread != nullptr)
+        mAlive = false;
+        if (mAutoRelease)
         {
-            m_thread->join();
-            delete m_thread;
+            if (mThread != nullptr)
+            {
+                mThread->join();
+                delete mThread;
+            }
+        }
+        else
+        {
+            assert(mThread == nullptr);
         }
         mp_receiver = nullptr;
     }
 
     inline void SetThread(std::thread* pThread)
     {
-        m_thread = pThread;
+        mThread = pThread;
+    }
+
+    inline void SetAutoRelease(bool bRelease)
+    {
+        mAutoRelease = bRelease;
+    }
+
+    inline std::thread* ReleaseThread()
+    {
+        std::thread* outThread = mThread;
+        mThread = nullptr;
+        return outThread;
     }
 
     inline bool IsAlive() const
     {
-        return m_bAlive;
+        return mAlive;
     }
 
     inline void Disable()
     {
-        m_bAlive = false;
+        mAlive = false;
     }
 
     inline void SetMessageReceiver(std::shared_ptr<MessageReceiver> receiver)
@@ -134,8 +154,9 @@ public:
     }
 protected:
     std::shared_ptr<MessageReceiver> mp_receiver; //Associated Readers/Writers inside of MessageReceiver
-    bool m_bAlive;
-    std::thread* m_thread;
+    bool mAlive;
+    std::thread* mThread;
+    bool mAutoRelease;
 };
 
 class UDPSocketInfo : public SocketInfo
@@ -212,10 +233,11 @@ public:
         : m_locator(locator)
         , m_physicalPort(0)
         , m_inputSocket(false)
-        , socket_(moveSocket(socket))
+        , mSocket(moveSocket(socket))
         , mConnectionStatus(eConnectionStatus::eDisconnected)
     {
-        mMutex = std::make_shared<std::recursive_mutex>();
+        mReadMutex = std::make_shared<std::recursive_mutex>();
+        mWriteMutex = std::make_shared<std::recursive_mutex>();
         if (outputLocator)
         {
             mPendingLogicalOutputPorts.emplace_back(locator.get_logical_port());
@@ -230,8 +252,9 @@ public:
         : m_locator(socketInfo.m_locator)
         , m_physicalPort(socketInfo.m_physicalPort)
         , m_inputSocket(socketInfo.m_inputSocket)
-        , mMutex(socketInfo.mMutex)
-        , socket_(moveSocket(socketInfo.socket_))
+        , mReadMutex(socketInfo.mReadMutex)
+        , mWriteMutex(socketInfo.mWriteMutex)
+        , mSocket(moveSocket(socketInfo.mSocket))
         , mConnectionStatus(socketInfo.mConnectionStatus)
     {
     }
@@ -242,13 +265,13 @@ public:
 
     TCPSocketInfo& operator=(TCPSocketInfo&& socketInfo)
     {
-        socket_ = moveSocket(socketInfo.socket_);
+        mSocket = moveSocket(socketInfo.mSocket);
         return *this;
     }
 
     bool operator==(const TCPSocketInfo& socketInfo) const
     {
-        return &socket_ == &(socketInfo.socket_);
+        return &mSocket == &(socketInfo.mSocket);
     }
 
 #if defined(ASIO_HAS_MOVE)
@@ -257,12 +280,17 @@ public:
     inline eProsimaTCPSocket getSocket()
 #endif
     {
-        return getSocketPtr(socket_);
+        return getSocketPtr(mSocket);
     }
 
-    std::recursive_mutex& GetMutex() const
+    std::recursive_mutex& GetReadMutex() const
     {
-        return *mMutex;
+        return *mReadMutex;
+    }
+
+    std::recursive_mutex& GetWriteMutex() const
+    {
+        return *mWriteMutex;
     }
 
     inline void SetPhysicalPort(uint16_t port)
@@ -273,6 +301,11 @@ public:
     inline uint16_t GetPhysicalPort() const
     {
         return m_physicalPort;
+    }
+
+    inline bool GetIsInputSocket() const
+    {
+        return m_inputSocket;
     }
 
     inline void SetIsInputSocket(bool bInput)
@@ -301,8 +334,9 @@ private:
     std::vector<uint16_t> mPendingLogicalOutputPorts;
     std::vector<uint16_t> mLogicalOutputPorts;
     std::vector<uint16_t> mLogicalInputPorts;
-    std::shared_ptr<std::recursive_mutex> mMutex;
-    eProsimaTCPSocket socket_;
+    std::shared_ptr<std::recursive_mutex> mReadMutex;
+    std::shared_ptr<std::recursive_mutex> mWriteMutex;
+    eProsimaTCPSocket mSocket;
     eConnectionStatus mConnectionStatus;
     TCPSocketInfo(const TCPSocketInfo&) = delete;
     TCPSocketInfo& operator=(const TCPSocketInfo&) = delete;

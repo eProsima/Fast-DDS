@@ -45,19 +45,19 @@ public:
     TCPMessageReceiver(TCPv4Transport* tcpv4_transport) : transport(tcpv4_transport) {}
     virtual ~TCPMessageReceiver();
 
-    void sendConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const Locator_t &transportLocator);
+    void sendConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo);
     void sendOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, OpenLogicalPortRequest_t &request);
     void sendOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, uint16_t port);
     void sendCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, CheckLogicalPortsRequest_t &request);
     void sendCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, std::vector<uint16_t> &ports);
     void sendKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, KeepAliveRequest_t &request);
     void sendKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo);
-    void sendLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+    void sendLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
         LogicalPortIsClosedRequest_t &request);
     void sendLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, uint16_t port);
     void sendUnbindConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo);
 
-    void processConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const ConnectionRequest_t &request, 
+    void processConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const ConnectionRequest_t &request,
         Locator_t &localLocator);
     void processOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const OpenLogicalPortRequest_t &request);
     void processCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const CheckLogicalPortsRequest_t &request);
@@ -66,21 +66,22 @@ public:
 
     void processBindConnectionResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const BindConnectionResponse_t &response, const uint16_t logicalPort);
     void processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const CheckLogicalPortsResponse_t &response);
+    void processRTCPMessage(std::shared_ptr<TCPSocketInfo> socketInfo, octet* receiveBuffer);
 
 protected:
     TCPv4Transport* transport;
 
 private:
-    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
         const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
         const octet *data, const uint32_t size);
-    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
         const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
         const octet *data, const uint32_t size, const ResponseCode respCode);
-    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
-        const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader, 
+    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
+        const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
         const ResponseCode respCode);
-    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
         const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader);
 };
 }

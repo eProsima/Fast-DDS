@@ -171,8 +171,8 @@ public:
     * @param localLocator Locator mapping to the local channel we're listening to.
     * @param[out] remoteLocator Locator describing the remote restination we received a packet from.
     */
-    bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-        std::shared_ptr<TCPSocketInfo> socketInfo, Locator_t& remoteLocator);
+   bool Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* receiveBuffer, uint32_t receiveBufferCapacity,
+       uint32_t& receiveBufferSize);
 
     virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
 
@@ -187,13 +187,13 @@ public:
     void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket s);
     void SocketConnected(Locator_t& locator, uint32_t sendBufferSize, const asio::error_code& error);
 protected:
-    enum SOCKET_ERROR_CODES
+    enum eSocketErrorCodes
     {
-        NO_ERROR,
-        BROKEN_PIPE,
-        ASIO_ERROR,
-        SYSTEM_ERROR,
-        EXCEPTION
+        eNoError,
+        eBrokenPipe,
+        eAsioError,
+        eSystemError,
+        eException
     };
 
     //! Constructor with no descriptor is necessary for implementations derived from this class.
@@ -201,8 +201,9 @@ protected:
     TCPv4TransportDescriptor mConfiguration_;
     uint32_t mSendBufferSize;
     uint32_t mReceiveBufferSize;
+    bool mActive;
     TCPMessageReceiver* mTCPMessageReceiver;
-
+    std::vector<std::thread*> mThreadPool;
     asio::io_service mService;
     std::unique_ptr<std::thread> ioServiceThread;
 
@@ -230,6 +231,8 @@ protected:
     bool EnqueueLogicalInputPort(const Locator_t& locator);
 
     bool OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource);
+    void CloseTCPSocket(std::shared_ptr<TCPSocketInfo> socketInfo);
+    void ReleaseTCPSocket(std::shared_ptr<TCPSocketInfo> socketInfo);
 
     /** Function to be called from a new thread, which takes cares of performing a blocking receive
     operation on the ReceiveResource
@@ -237,15 +240,14 @@ protected:
     */
     void performListenOperation(std::shared_ptr<TCPSocketInfo> pSocketInfo);
 
-    bool DataReceived(const octet* header, octet* receiveBuffer, uint32_t receiveBufferCapacity,
-        uint32_t* receiveBufferSize, Semaphore* semaphore, std::shared_ptr<TCPSocketInfo> pSocketInfo,
-        bool& bSuccess, const asio::error_code& error, std::size_t bytes_transferred);
+    bool ReadBody(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t* bytes_received,
+        std::shared_ptr<TCPSocketInfo> pSocketInfo, std::size_t body_size);
 
     bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
         std::shared_ptr<TCPSocketInfo> socket);
 
-    size_t Send(std::shared_ptr<TCPSocketInfo> &socketInfo, const octet* data, 
-        size_t size, SOCKET_ERROR_CODES &error) const;
+    size_t Send(std::shared_ptr<TCPSocketInfo> &socketInfo, const octet* data,
+        size_t size, eSocketErrorCodes &error) const;
     size_t Send(std::shared_ptr<TCPSocketInfo> &socketInfo, const octet* data, size_t size) const;
 
 };
