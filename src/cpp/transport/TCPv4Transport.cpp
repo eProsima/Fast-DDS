@@ -770,6 +770,7 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
             {
                 // Read the header
                 octet header[14];
+                std::cout << "[RTCP] Receive [TCPHeader]" << std::endl;
                 size_t bytes_received = read(*socketInfo->getSocket(),
                     asio::buffer(&header, TCPHeader::GetSize()), transfer_exactly(14));
                 TCPHeader tcp_header;
@@ -789,6 +790,7 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
                 }
                 else
                 {
+                    std::cout << "[RTCP] Receive [ReadBody]" << std::endl;
                     success = ReadBody(receiveBuffer, receiveBufferCapacity, &receiveBufferSize, socketInfo, body_size);
 
                     if (!RTCPMessageManager::CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
