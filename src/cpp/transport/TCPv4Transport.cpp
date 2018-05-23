@@ -145,7 +145,7 @@ TCPv4Transport::~TCPv4Transport()
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         mActive = false;
-        mPendingInputSockets.clear();
+        mSocketsAcceptors.clear();
         for (auto it = mPendingOutputSockets.begin(); it != mPendingOutputSockets.end(); ++it)
         {
             delete(it->second);
@@ -266,7 +266,7 @@ bool TCPv4Transport::IsInputChannelOpen(const Locator_t& locator) const
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     return IsLocatorSupported(locator) && (mInputSockets.find(locator.get_physical_port()) != mInputSockets.end() ||
-        (mPendingInputSockets.find(locator.get_physical_port()) != mPendingInputSockets.end()));
+        (mSocketsAcceptors.find(locator.get_physical_port()) != mSocketsAcceptors.end()));
 }
 
 bool TCPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
@@ -452,9 +452,9 @@ bool TCPv4Transport::CloseInputChannel(const Locator_t& locator)
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
 
-        if (mPendingInputSockets.find(locator.get_physical_port()) != mPendingInputSockets.end())
+        if (mSocketsAcceptors.find(locator.get_physical_port()) != mSocketsAcceptors.end())
         {
-            mPendingInputSockets.erase(locator.get_physical_port());
+            mSocketsAcceptors.erase(locator.get_physical_port());
             bClosed = true;
         }
 
@@ -558,7 +558,7 @@ bool TCPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverR
     {
         std::shared_ptr<TCPAcceptor> newAcceptor = std::make_shared<TCPAcceptor>(mService,
             locator, receiverResource, mReceiveBufferSize);
-        mPendingInputSockets.insert(std::make_pair(locator.get_physical_port(), newAcceptor));
+        mSocketsAcceptors.insert(std::make_pair(locator.get_physical_port(), newAcceptor));
         newAcceptor->Accept(this);
     }
     catch (asio::system_error const& e)
@@ -571,7 +571,7 @@ bool TCPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverR
     return true;
 }
 
-void TCPv4Transport::KeepAliveAndOpenPortsThread(std::shared_ptr<TCPSocketInfo> pSocketInfo)
+void TCPv4Transport::performRTPCManagementThread(std::shared_ptr<TCPSocketInfo> pSocketInfo)
 {
     static eClock sClock;
     Time_t time_now;
@@ -974,25 +974,24 @@ bool TCPv4Transport::is_local_locator(const Locator_t& locator) const
 void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket socket)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-    if (mPendingInputSockets.find(acceptor->m_locator.get_physical_port()) != mPendingInputSockets.end())
+    if (mSocketsAcceptors.find(acceptor->m_locator.get_physical_port()) != mSocketsAcceptors.end())
     {
         if (!error.value())
         {
             // Store the new connection.
             eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(std::move(socket));
-            std::shared_ptr<TCPSocketInfo> socketInfo = std::make_shared<TCPSocketInfo>(unicastSocket, acceptor->m_locator, false);
-            socketInfo->SetAutoRelease(false);
-            socketInfo->SetIsInputSocket(true);
+            std::shared_ptr<TCPSocketInfo> socketInfo = std::make_shared<TCPSocketInfo>(unicastSocket,
+                acceptor->m_locator, false, true, false);
             socketInfo->SetMessageReceiver(acceptor->m_acceptCallback());
             socketInfo->SetPhysicalPort(acceptor->m_locator.get_physical_port());
-            std::thread* newThread = new std::thread(&TCPv4Transport::performListenOperation, this, socketInfo);
-            socketInfo->SetThread(newThread);
+            socketInfo->SetThread(new std::thread(&TCPv4Transport::performListenOperation, this, socketInfo));
+            socketInfo->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, socketInfo));
             socketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eWaitingForBind);
             mInputSockets[acceptor->m_locator.get_physical_port()].emplace_back(socketInfo);
         }
 
         // Accept new connections for the same port.
-        mPendingInputSockets.at(acceptor->m_locator.get_physical_port())->Accept(this);
+        mSocketsAcceptors.at(acceptor->m_locator.get_physical_port())->Accept(this);
     }
 }
 
@@ -1005,9 +1004,9 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, uint32_t /*sendBufferSi
         auto& pendingConector = mPendingOutputSockets.at(locator);
         if (!error.value())
         {
-            std::shared_ptr<TCPSocketInfo> outputSocket = std::make_shared<TCPSocketInfo>(pendingConector->m_socket, locator, true);
-            outputSocket->SetIsInputSocket(false);
-            outputSocket->SetAutoRelease(false);
+            std::shared_ptr<TCPSocketInfo> outputSocket = std::make_shared<TCPSocketInfo>(pendingConector->m_socket,
+                locator, true, false, false);
+
             if (pendingConector->m_messageReceiver != nullptr)
             {
                 outputSocket->SetMessageReceiver(pendingConector->m_messageReceiver);
@@ -1016,9 +1015,8 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, uint32_t /*sendBufferSi
             {
                 outputSocket->SetMessageReceiver(pendingConector->m_connectCallback(pendingConector->m_sendBufferSize));
             }
-            std::thread* newThread = new std::thread(&TCPv4Transport::performListenOperation, this, outputSocket);
-            //std::thread newThread(&TCPv4Transport::performListenOperation, this, outputSocket);
-            outputSocket->SetThread(newThread);
+            outputSocket->SetThread(new std::thread(&TCPv4Transport::performListenOperation, this, outputSocket));
+            outputSocket->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, outputSocket));
             outputSocket->ChangeStatus(TCPSocketInfo::eConnectionStatus::eConnected);
             mOutputSockets.push_back(outputSocket);
 
@@ -1111,6 +1109,7 @@ void TCPv4Transport::ReleaseTCPSocket(std::shared_ptr<TCPSocketInfo> socketInfo)
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         mThreadPool.emplace_back(socketInfo->ReleaseThread());
+        mThreadPool.emplace_back(socketInfo->ReleaseRTCPThread());
     }
 }
 

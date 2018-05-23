@@ -220,7 +220,7 @@ protected:
     struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
 
-    std::map<uint16_t, std::shared_ptr<TCPAcceptor>> mPendingInputSockets; // The Key is the "Physical Port"
+    std::map<uint16_t, std::shared_ptr<TCPAcceptor>> mSocketsAcceptors; // The Key is the "Physical Port"
     std::map<uint16_t, std::vector<std::shared_ptr<TCPSocketInfo>>> mInputSockets;   // The Key is the "Physical Port"
 
     eClock mClock;
@@ -244,11 +244,10 @@ protected:
     @param input_locator - Locator that triggered the creation of the resource
     */
     void performListenOperation(std::shared_ptr<TCPSocketInfo> pSocketInfo);
+    void performRTPCManagementThread(std::shared_ptr<TCPSocketInfo> pSocketInfo);
 
     bool ReadBody(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t* bytes_received,
         std::shared_ptr<TCPSocketInfo> pSocketInfo, std::size_t body_size);
-
-    void KeepAliveAndOpenPortsThread(std::shared_ptr<TCPSocketInfo> pSocketInfo);
 
     bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
         std::shared_ptr<TCPSocketInfo> socket);

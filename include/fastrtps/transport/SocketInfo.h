@@ -229,13 +229,14 @@ enum eConnectionStatus
 };
 
 public:
-    TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator)
+    TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket, bool autoRelease)
         : m_locator(locator)
         , m_physicalPort(0)
-        , m_inputSocket(false)
+        , m_inputSocket(inputSocket)
         , mSocket(moveSocket(socket))
         , mConnectionStatus(eConnectionStatus::eDisconnected)
     {
+        mAutoRelease = autoRelease;
         mReadMutex = std::make_shared<std::recursive_mutex>();
         mWriteMutex = std::make_shared<std::recursive_mutex>();
         if (outputLocator)
@@ -261,6 +262,19 @@ public:
 
     virtual ~TCPSocketInfo()
     {
+        mAlive = false;
+        if (mAutoRelease)
+        {
+            if (mRTCPThread != nullptr)
+            {
+                mRTCPThread->join();
+                delete mRTCPThread;
+            }
+        }
+        else
+        {
+            assert(mRTCPThread == nullptr);
+        }
     }
 
     TCPSocketInfo& operator=(TCPSocketInfo&& socketInfo)
@@ -291,6 +305,18 @@ public:
     std::recursive_mutex& GetWriteMutex() const
     {
         return *mWriteMutex;
+    }
+
+    inline void SetRTCPThread(std::thread* pThread)
+    {
+        mRTCPThread = pThread;
+    }
+
+    inline std::thread* ReleaseRTCPThread()
+    {
+        std::thread* outThread = mRTCPThread;
+        mRTCPThread = nullptr;
+        return outThread;
     }
 
     inline void SetPhysicalPort(uint16_t port)
@@ -331,6 +357,7 @@ private:
     Locator_t m_locator;
     uint16_t m_physicalPort;
     bool m_inputSocket;
+    std::thread* mRTCPThread;
     std::vector<uint16_t> mPendingLogicalOutputPorts;
     std::vector<uint16_t> mLogicalOutputPorts;
     std::vector<uint16_t> mLogicalInputPorts;
