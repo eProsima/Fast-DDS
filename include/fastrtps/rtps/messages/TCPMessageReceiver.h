@@ -73,6 +73,8 @@ public:
     void processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const CheckLogicalPortsResponse_t &response, const TCPTransactionId &transactionId);
 
+    void processRTCPMessage(std::shared_ptr<TCPSocketInfo> socketInfo, octet* receiveBuffer);
+
 protected:
     TCPv4Transport* transport;
 

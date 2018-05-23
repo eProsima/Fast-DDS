@@ -133,8 +133,8 @@ TransportInterface* TCPv4TransportDescriptor::create_transport() const
 TCPv4Transport::TCPv4Transport()
     : mSendBufferSize(0)
     , mReceiveBufferSize(0)
-    , mTCPMessageReceiver(nullptr)
     , mActive(true)
+    , mTCPMessageReceiver(nullptr)
 {
 }
 
@@ -876,7 +876,7 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
     bytesSent = Send(socket, sendBuffer, sendBufferSize, errorCode);
     switch(errorCode)
     {
-        case NO_ERROR:
+        case eNoError:
             break;
         default:
             // Close the channel
