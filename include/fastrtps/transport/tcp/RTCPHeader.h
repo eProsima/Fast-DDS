@@ -39,6 +39,57 @@ union TCPTransactionId
     uint32_t ints[3];
     octet octets[12];
 
+    TCPTransactionId()
+    {
+        memset(ints, 0, 3 * sizeof(uint32_t));
+    }
+
+    TCPTransactionId(const TCPTransactionId& t)
+    {
+        memcpy(ints, t.ints, 3 * sizeof(uint32_t));
+    }
+
+    TCPTransactionId& operator++()
+    {
+        if (ints[0] == 0xffffffff)
+        {
+            if (ints[1] == 0xffffffff)
+            {
+                if (ints[2] == 0xffffffff)
+                {
+                    memset(ints, 0, 3 * sizeof(uint32_t));
+                }
+                else
+                {
+                    ints[2] += 1;
+                }
+            }
+            else
+            {
+                ints[1] += 1;
+            }
+        }
+        else
+        {
+            ints[0] += 1;
+        }
+        return *this;
+    }
+
+    TCPTransactionId operator++(int)
+    {
+        TCPTransactionId prev = *this;
+        ++(*this);
+        return prev;
+    }
+
+
+    TCPTransactionId& operator=(const TCPTransactionId& t)
+    {
+        memcpy(ints, t.ints, 3 * sizeof(uint32_t));
+        return *this;
+    }
+
     TCPTransactionId& operator=(const octet* id)
     {
         memcpy(octets, id, 12 * sizeof(octet));
@@ -48,6 +99,12 @@ union TCPTransactionId
     TCPTransactionId& operator=(const char* id)
     {
         memcpy(octets, id, 12 * sizeof(octet));
+        return *this;
+    }
+
+    TCPTransactionId& operator=(const uint32_t* id)
+    {
+        memcpy(ints, id, 3 * sizeof(uint32_t));
         return *this;
     }
 
@@ -64,6 +121,16 @@ union TCPTransactionId
         memset(ints, 0, sizeof(uint32_t) * 3);
         memcpy(ints, &id, sizeof(uint64_t));
         return *this;
+    }
+
+    bool operator==(const TCPTransactionId& t)
+    {
+        return memcmp(ints, t.ints, 3 * sizeof(uint32_t)) == 0;
+    }
+
+    bool operator<(const TCPTransactionId& t)
+    {
+        return memcmp(ints, t.ints, 3 * sizeof(uint32_t)) < 0;
     }
 };
 

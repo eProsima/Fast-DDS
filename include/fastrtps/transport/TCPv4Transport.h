@@ -19,6 +19,7 @@
 #include <thread>
 
 #include <fastrtps/utils/Semaphore.h>
+#include <fastrtps/utils/eClock.h>
 #include "TransportInterface.h"
 #include "TCPv4TransportDescriptor.h"
 #include "SocketInfo.h"
@@ -221,6 +222,9 @@ protected:
     std::map<uint16_t, std::shared_ptr<TCPAcceptor>> mPendingInputSockets; // The Key is the "Physical Port"
     std::map<uint16_t, std::vector<std::shared_ptr<TCPSocketInfo>>> mInputSockets;   // The Key is the "Physical Port"
 
+    eClock mClock;
+    std::map<uint16_t, Time_t> last_keep_alive_time; // The key is the "Physical port"
+
     bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
     std::vector<asio::ip::address_v4> mInterfaceWhiteList;
 
@@ -242,6 +246,8 @@ protected:
 
     bool ReadBody(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t* bytes_received,
         std::shared_ptr<TCPSocketInfo> pSocketInfo, std::size_t body_size);
+
+    void KeepAliveAndOpenPortsThread(std::shared_ptr<TCPSocketInfo> pSocketInfo);
 
     bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
         std::shared_ptr<TCPSocketInfo> socket);
