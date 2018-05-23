@@ -75,7 +75,7 @@ public:
     bool processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const CheckLogicalPortsResponse_t &response, const TCPTransactionId &transactionId);
     bool processOpenLogicalPortResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
-        ResponseCode respCode, const TCPTransactionId &transactionId);
+        ResponseCode respCode, const TCPTransactionId &transactionId, const Locator_t &remoteLocator);
     bool processKeepAliveResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         ResponseCode respCode, const TCPTransactionId &transactionId);
 

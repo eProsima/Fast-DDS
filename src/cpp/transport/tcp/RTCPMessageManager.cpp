@@ -439,7 +439,7 @@ bool RTCPMessageManager::processCheckLogicalPortsResponse(std::shared_ptr<TCPSoc
 }
 
 bool RTCPMessageManager::processOpenLogicalPortResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
-        ResponseCode respCode, const TCPTransactionId &transactionId)
+        ResponseCode respCode, const TCPTransactionId &transactionId, const Locator_t &remoteLocator)
 {
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
@@ -449,6 +449,7 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(std::shared_ptr<TCPSocke
             pSocketInfo->mLogicalOutputPorts.emplace_back(*(pSocketInfo->mPendingLogicalOutputPorts.begin()));
             pSocketInfo->mPendingLogicalOutputPorts.erase(pSocketInfo->mPendingLogicalOutputPorts.begin());
             pSocketInfo->mPendingLogicalPort = 0;
+            transport->mBoundOutputSockets[remoteLocator] = pSocketInfo;
         }
         else
         {
@@ -587,7 +588,9 @@ void RTCPMessageManager::processRTCPMessage(std::shared_ptr<TCPSocketInfo> socke
         std::cout << "[RTCP] Receive [OPEN_LOGICAL_PORT_RESPONSE]" << std::endl;
         ResponseCode respCode;
         memcpy(&respCode, &(receiveBuffer[sizeCtrlHeader]), 4);
-        if (!processOpenLogicalPortResponse(socketInfo, respCode, controlHeader.transactionId))
+        Locator_t remoteLocator;
+        EndpointToLocator(socketInfo->getSocket()->remote_endpoint(), remoteLocator);
+        if (!processOpenLogicalPortResponse(socketInfo, respCode, controlHeader.transactionId, remoteLocator))
         {
             // TODO unexpected transactionId
         }
