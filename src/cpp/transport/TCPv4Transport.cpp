@@ -18,7 +18,6 @@
 #include <algorithm>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
-#include <fastrtps/rtps/messages/TCPMessageReceiver.h>
 #include "asio.hpp"
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
@@ -134,7 +133,7 @@ TCPv4Transport::TCPv4Transport()
     : mSendBufferSize(0)
     , mReceiveBufferSize(0)
     , mActive(true)
-    , mTCPMessageReceiver(nullptr)
+    , mRTCPMessageManager(nullptr)
 {
 }
 
@@ -190,7 +189,7 @@ TCPv4Transport::~TCPv4Transport()
         mService.stop();
         ioServiceThread->join();
     }
-    delete mTCPMessageReceiver;
+    delete mRTCPMessageManager;
 }
 
 bool TCPv4Transport::init()
@@ -248,7 +247,7 @@ bool TCPv4Transport::init()
         return false;
     }
 
-    mTCPMessageReceiver = new TCPMessageReceiver(this);
+    mRTCPMessageManager = new RTCPMessageManager(this);
 
     // TODO(Ricardo) Create an event that update this list.
     GetIP4s(currentInterfaces);
@@ -587,7 +586,7 @@ void TCPv4Transport::KeepAliveAndOpenPortsThread(std::shared_ptr<TCPSocketInfo> 
             if (!pSocketInfo->mPendingLogicalOutputPorts.empty())
             {
                 // TODO negotiation about logical ports
-                mTCPMessageReceiver->sendOpenLogicalPortRequest(pSocketInfo,
+                mRTCPMessageManager->sendOpenLogicalPortRequest(pSocketInfo,
                     *(pSocketInfo->mPendingLogicalOutputPorts.begin()));
             }
 
@@ -596,7 +595,7 @@ void TCPv4Transport::KeepAliveAndOpenPortsThread(std::shared_ptr<TCPSocketInfo> 
                 // Keep Alive Management
                 if (time_now > next_time)
                 {
-                    mTCPMessageReceiver->sendKeepAliveRequest(pSocketInfo);
+                    mRTCPMessageManager->sendKeepAliveRequest(pSocketInfo);
                     next_time = time_now;
                     next_time.add_milliseconds(mConfiguration_.keep_alive_frequency_ms);
                     timeout_time = time_now;
@@ -782,7 +781,7 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
 
                 if (tcp_header.logicalPort == 0)
                 {
-                    mTCPMessageReceiver->processRTCPMessage(socketInfo, receiveBuffer);
+                    mRTCPMessageManager->processRTCPMessage(socketInfo, receiveBuffer);
                     return false;
                 }
                 else
@@ -1024,7 +1023,7 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, uint32_t /*sendBufferSi
             mOutputSockets.push_back(outputSocket);
 
             // RTCP Control Message
-            mTCPMessageReceiver->sendConnectionRequest(outputSocket);
+            mRTCPMessageManager->sendConnectionRequest(outputSocket);
         }
         else
         {

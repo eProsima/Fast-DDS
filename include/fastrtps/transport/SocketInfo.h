@@ -325,7 +325,7 @@ protected:
     }
 
     friend class TCPv4Transport;
-    friend class TCPMessageReceiver;
+    friend class RTCPMessageManager;
 
 private:
     Locator_t m_locator;

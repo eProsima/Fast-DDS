@@ -18,6 +18,7 @@
 #include <asio.hpp>
 #include <thread>
 
+#include <fastrtps/transport/tcp/RTCPMessageManager.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/eClock.h>
 #include "TransportInterface.h"
@@ -36,7 +37,7 @@ namespace fastrtps{
 namespace rtps{
 class TCPv4Transport;
 class SenderResource;
-class TCPMessageReceiver;
+class RTCPMessageManager;
 
 class TCPAcceptor
 {
@@ -101,7 +102,7 @@ public:
 class TCPv4Transport : public TransportInterface
 {
 public:
-    friend class TCPMessageReceiver;
+    friend class RTCPMessageManager;
 
     RTPS_DllAPI TCPv4Transport(const TCPv4TransportDescriptor&);
 
@@ -203,7 +204,7 @@ protected:
     uint32_t mSendBufferSize;
     uint32_t mReceiveBufferSize;
     bool mActive;
-    TCPMessageReceiver* mTCPMessageReceiver;
+    RTCPMessageManager* mRTCPMessageManager;
     std::vector<std::thread*> mThreadPool;
     asio::io_service mService;
     std::unique_ptr<std::thread> ioServiceThread;
