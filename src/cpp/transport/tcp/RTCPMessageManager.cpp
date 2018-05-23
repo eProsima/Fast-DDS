@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file TCPMessageReceiver.cpp
+ * @file RTCPMessageManager.cpp
  *
  */
 
 #include <fastrtps/transport/tcp/RTCPHeader.h>
-#include <fastrtps/rtps/messages/TCPMessageReceiver.h>
+#include <fastrtps/transport/tcp/RTCPMessageManager.h>
 #include <fastrtps/transport/SocketInfo.h>
 #include <fastrtps/log/Log.h>
 
@@ -38,11 +38,11 @@ static void EndpointToLocator(const asio::ip::tcp::endpoint& endpoint, Locator_t
     locator.set_IP4_address(ipBytes.data());
 }
 
-TCPMessageReceiver::~TCPMessageReceiver()
+RTCPMessageManager::~RTCPMessageManager()
 {
 }
 
-bool TCPMessageReceiver::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+bool RTCPMessageManager::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         TCPCPMKind kind, const TCPTransactionId &transactionId, 
         const octet *data, const uint32_t size)
 {
@@ -61,7 +61,7 @@ bool TCPMessageReceiver::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
     //return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
 }
 
-bool TCPMessageReceiver::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+bool RTCPMessageManager::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         TCPCPMKind kind, const TCPTransactionId &transactionId, 
         const octet *data, const uint32_t size, const ResponseCode respCode)
 {
@@ -81,7 +81,7 @@ bool TCPMessageReceiver::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
     //return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
 }
 
-bool TCPMessageReceiver::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+bool RTCPMessageManager::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         TCPCPMKind kind, const TCPTransactionId &transactionId, const ResponseCode respCode)
 {
     TCPHeader header;
@@ -99,7 +99,7 @@ bool TCPMessageReceiver::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
     //return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
 }
 
-bool TCPMessageReceiver::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+bool RTCPMessageManager::sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         TCPCPMKind kind, const TCPTransactionId &transactionId)
 {
     TCPHeader header;
@@ -130,7 +130,7 @@ static uint32_t& addToCRC(uint32_t &crc, octet data)
     return crc;
 }
 
-void TCPMessageReceiver::fillHeaders(TCPCPMKind kind, const TCPTransactionId &transactionId, 
+void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &transactionId, 
         TCPControlMsgHeader &retCtrlHeader,  TCPHeader &header, const octet *data,
         const uint32_t *size,  const ResponseCode *respCode)
 {
@@ -189,7 +189,7 @@ void TCPMessageReceiver::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
     header.crc = crc;
 }
 
-void TCPMessageReceiver::sendConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo)
+void RTCPMessageManager::sendConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo)
 {
     ConnectionRequest_t request;
     request.transportLocator(pSocketInfo->m_locator);
@@ -199,20 +199,20 @@ void TCPMessageReceiver::sendConnectionRequest(std::shared_ptr<TCPSocketInfo> &p
     pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eWaitingForBindResponse);
 }
 
-void TCPMessageReceiver::sendOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, uint16_t port)
+void RTCPMessageManager::sendOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, uint16_t port)
 {
     OpenLogicalPortRequest_t request;
     request.logicalPort(port);
     sendOpenLogicalPortRequest(pSocketInfo, request);
 }
 
-void TCPMessageReceiver::sendOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
+void RTCPMessageManager::sendOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
     OpenLogicalPortRequest_t &request)
 {
     sendData(pSocketInfo, OPEN_LOGICAL_PORT_REQUEST, getTransactionId(), (octet*)&request, request.GetSize());
 }
 
-void TCPMessageReceiver::sendCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
+void RTCPMessageManager::sendCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
     std::vector<uint16_t> &ports)
 {
     CheckLogicalPortsRequest_t request;
@@ -220,31 +220,31 @@ void TCPMessageReceiver::sendCheckLogicalPortsRequest(std::shared_ptr<TCPSocketI
     sendCheckLogicalPortsRequest(pSocketInfo, request);
 }
 
-void TCPMessageReceiver::sendCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
+void RTCPMessageManager::sendCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
     CheckLogicalPortsRequest_t &request)
 {
     sendData(pSocketInfo, CHECK_LOGICAL_PORT_REQUEST, getTransactionId(), (octet*)&request, request.GetSize());
 }
 
-void TCPMessageReceiver::sendKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, KeepAliveRequest_t &request)
+void RTCPMessageManager::sendKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, KeepAliveRequest_t &request)
 {
     sendData(pSocketInfo, KEEP_ALIVE_REQUEST, getTransactionId(), (octet*)&request, request.GetSize());
 }
 
-void TCPMessageReceiver::sendKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo)
+void RTCPMessageManager::sendKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo)
 {
     KeepAliveRequest_t request;
     request.locator(pSocketInfo->m_locator);
     sendKeepAliveRequest(pSocketInfo, request);
 }
 
-void TCPMessageReceiver::sendLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
+void RTCPMessageManager::sendLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
         LogicalPortIsClosedRequest_t &request)
 {
     sendData(pSocketInfo, LOGICAL_PORT_IS_CLOSED_REQUEST, getTransactionId(), (octet*)&request, request.GetSize());
 }
 
-void TCPMessageReceiver::sendLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
+void RTCPMessageManager::sendLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
         uint16_t port)
 {
     LogicalPortIsClosedRequest_t request;
@@ -252,12 +252,12 @@ void TCPMessageReceiver::sendLogicalPortIsClosedRequest(std::shared_ptr<TCPSocke
     sendLogicalPortIsClosedRequest(pSocketInfo, request);
 }
 
-void TCPMessageReceiver::sendUnbindConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo)
+void RTCPMessageManager::sendUnbindConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo)
 {
     sendData(pSocketInfo, UNBIND_CONNECTION_REQUEST, getTransactionId());
 }
 
-void TCPMessageReceiver::processConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+void RTCPMessageManager::processConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const ConnectionRequest_t &/*request*/, const TCPTransactionId &transactionId, Locator_t &localLocator)
 {
     BindConnectionResponse_t response;
@@ -287,7 +287,7 @@ void TCPMessageReceiver::processConnectionRequest(std::shared_ptr<TCPSocketInfo>
 }
 
 
-void TCPMessageReceiver::processOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+void RTCPMessageManager::processOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const OpenLogicalPortRequest_t &request, const TCPTransactionId &transactionId)
 {
     // TODO More options!
@@ -302,7 +302,7 @@ void TCPMessageReceiver::processOpenLogicalPortRequest(std::shared_ptr<TCPSocket
     sendData(pSocketInfo, OPEN_LOGICAL_PORT_RESPONSE, transactionId, RETCODE_INVALID_PORT);
 }
 
-void TCPMessageReceiver::processCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+void RTCPMessageManager::processCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const CheckLogicalPortsRequest_t &request, const TCPTransactionId &transactionId)
 {
     CheckLogicalPortsResponse_t response;
@@ -321,7 +321,7 @@ void TCPMessageReceiver::processCheckLogicalPortsRequest(std::shared_ptr<TCPSock
         (octet*)&response, response.GetSize(), RETCODE_OK);
 }
 
-void TCPMessageReceiver::processKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+void RTCPMessageManager::processKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const KeepAliveRequest_t &request, const TCPTransactionId &transactionId)
 { 
     if (pSocketInfo->m_locator.get_logical_port() == request.locator().get_logical_port())
@@ -334,13 +334,13 @@ void TCPMessageReceiver::processKeepAliveRequest(std::shared_ptr<TCPSocketInfo> 
     }
 }
 
-void TCPMessageReceiver::processLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &/*pSocketInfo*/, 
+void RTCPMessageManager::processLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &/*pSocketInfo*/, 
         const LogicalPortIsClosedRequest_t &/*request*/, const TCPTransactionId &/*transactionId*/)
 {
     // TODO?
 }
 
-void TCPMessageReceiver::processBindConnectionResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+void RTCPMessageManager::processBindConnectionResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
         const BindConnectionResponse_t &/*response*/, const TCPTransactionId &/*transactionId*/, 
         const uint16_t logicalPort)
 {
@@ -349,13 +349,13 @@ void TCPMessageReceiver::processBindConnectionResponse(std::shared_ptr<TCPSocket
     sendOpenLogicalPortRequest(pSocketInfo, request);
 }
 
-void TCPMessageReceiver::processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &/*pSocketInfo*/, 
+void RTCPMessageManager::processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &/*pSocketInfo*/, 
         const CheckLogicalPortsResponse_t &/*response*/, const TCPTransactionId &/*transactionId*/)
 {
     // TODO? Not here I guess...
 }
 
-void TCPMessageReceiver::processRTCPMessage(std::shared_ptr<TCPSocketInfo> socketInfo, octet* receiveBuffer)
+void RTCPMessageManager::processRTCPMessage(std::shared_ptr<TCPSocketInfo> socketInfo, octet* receiveBuffer)
 {
     TCPControlMsgHeader controlHeader;
     uint32_t sizeCtrlHeader = static_cast<uint32_t>(TCPControlMsgHeader::GetSize());

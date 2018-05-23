@@ -13,37 +13,39 @@
 // limitations under the License.
 
 /**
- * @file TCPMessageReceiver.h
+ * @file RTCPMessageManager.h
  */
 
 
 
-#ifndef TCP_MESSAGERECEIVER_H_
-#define TCP_MESSAGERECEIVER_H_
+#ifndef RTCP_MESSAGEMANAGER_H_
+#define RTCP_MESSAGEMANAGER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "../common/all_common.h"
 #include "../../qos/ParameterList.h"
+#include <fastrtps/rtps/common/all_common.h>
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
-#include "fastrtps/transport/tcp/TCPControlMessage.h"
-#include "fastrtps/transport/TCPv4Transport.h"
+#include <fastrtps/transport/tcp/TCPControlMessage.h>
+#include <fastrtps/transport/tcp/RTCPHeader.h>
+#include <fastrtps/transport/TCPv4Transport.h>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
 class TCPSocketInfo;
+class TCPv4Transport;
 
 /**
- * Class TCPMessageReceiver, process the received TCP messages.
+ * Class RTCPMessageManager, process the received TCP messages.
  * @ingroup MANAGEMENT_MODULE
  */
-class TCPMessageReceiver
+class RTCPMessageManager
 {
 public:
 
-    TCPMessageReceiver(TCPv4Transport* tcpv4_transport) : transport(tcpv4_transport) {}
-    virtual ~TCPMessageReceiver();
+    RTCPMessageManager(TCPv4Transport* tcpv4_transport) : transport(tcpv4_transport) {}
+    virtual ~RTCPMessageManager();
 
     void sendConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo);
     void sendOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, OpenLogicalPortRequest_t &request);
@@ -101,8 +103,8 @@ private:
         TCPControlMsgHeader &retCtrlHeader, TCPHeader &header, const octet *data = nullptr,
         const uint32_t *size = nullptr, const ResponseCode *respCode = nullptr);
 };
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 #endif
-#endif /* TCP_MESSAGERECEIVER_H_ */
+#endif /* RTCP_MESSAGEMANAGER_H_ */

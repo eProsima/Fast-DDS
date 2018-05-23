@@ -54,7 +54,6 @@ set(${PROJECT_NAME}_source_files
     rtps/messages/RTPSMessageCreator.cpp
     rtps/messages/RTPSMessageGroup.cpp
     rtps/messages/MessageReceiver.cpp
-    rtps/messages/TCPMessageReceiver.cpp
     rtps/messages/submessages/AckNackMsg.hpp
     rtps/messages/submessages/DataMsg.hpp
     rtps/messages/submessages/GapMsg.hpp
@@ -79,6 +78,7 @@ set(${PROJECT_NAME}_source_files
     transport/UDPv6Transport.cpp
     transport/test_UDPv4Transport.cpp
     transport/tcp/TCPControlMessage.cxx
+    transport/tcp/RTCPMessageManager.cpp
     qos/ParameterList.cpp
     qos/ParameterTypes.cpp
     qos/QosPolicies.cpp
