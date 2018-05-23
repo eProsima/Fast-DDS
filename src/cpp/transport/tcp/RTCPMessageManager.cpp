@@ -403,7 +403,7 @@ bool RTCPMessageManager::processCheckLogicalPortsResponse(std::shared_ptr<TCPSoc
     }
 }
 
-bool RTCPMessageManager::processOpenLogicalPortResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+bool RTCPMessageManager::processOpenLogicalPortResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
         ResponseCode respCode, const TCPTransactionId &transactionId)
 {
     auto it = mUnconfirmedTransactions.find(transactionId);
@@ -411,10 +411,9 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(std::shared_ptr<TCPSocke
     {
         if (respCode == RETCODE_OK)
         {
-            pSocketInfo->mLogicalOutputPorts.emplace_back(
-                *(pSocketInfo->mPendingLogicalOutputPorts.begin()));
-            pSocketInfo->mPendingLogicalOutputPorts.erase(
-                pSocketInfo->mPendingLogicalOutputPorts.begin());
+            pSocketInfo->mLogicalOutputPorts.emplace_back(*(pSocketInfo->mPendingLogicalOutputPorts.begin()));
+            pSocketInfo->mPendingLogicalOutputPorts.erase(pSocketInfo->mPendingLogicalOutputPorts.begin());
+            pSocketInfo->mPendingLogicalPort = 0;
         }
         else
         {
@@ -430,7 +429,7 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(std::shared_ptr<TCPSocke
     }
 }
 
-bool RTCPMessageManager::processKeepAliveResponse(std::shared_ptr<TCPSocketInfo> &/*pSocketInfo*/, 
+bool RTCPMessageManager::processKeepAliveResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
         ResponseCode respCode, const TCPTransactionId &transactionId)
 {
     auto it = mUnconfirmedTransactions.find(transactionId);
@@ -440,6 +439,7 @@ bool RTCPMessageManager::processKeepAliveResponse(std::shared_ptr<TCPSocketInfo>
         switch (respCode)
         {
         case RETCODE_OK:
+            pSocketInfo->mWaitingForKeepAlive = false;
             break;
         case RETCODE_UNKNOWN_LOCATOR:
             break;

@@ -252,9 +252,9 @@ protected:
     bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
         std::shared_ptr<TCPSocketInfo> socket);
 
-    size_t Send(std::shared_ptr<TCPSocketInfo> &socketInfo, const octet* data,
+    size_t Send(std::shared_ptr<TCPSocketInfo> socketInfo, const octet* data,
         size_t size, eSocketErrorCodes &error) const;
-    size_t Send(std::shared_ptr<TCPSocketInfo> &socketInfo, const octet* data, size_t size) const;
+    size_t Send(std::shared_ptr<TCPSocketInfo> socketInfo, const octet* data, size_t size) const;
 
 };
 

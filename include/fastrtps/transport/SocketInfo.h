@@ -233,6 +233,8 @@ public:
         : m_locator(locator)
         , m_physicalPort(0)
         , m_inputSocket(inputSocket)
+        , mWaitingForKeepAlive(false)
+        , mPendingLogicalPort(0)
         , mSocket(moveSocket(socket))
         , mConnectionStatus(eConnectionStatus::eDisconnected)
     {
@@ -253,6 +255,8 @@ public:
         : m_locator(socketInfo.m_locator)
         , m_physicalPort(socketInfo.m_physicalPort)
         , m_inputSocket(socketInfo.m_inputSocket)
+        , mWaitingForKeepAlive(socketInfo.m_inputSocket)
+        , mPendingLogicalPort(0)
         , mReadMutex(socketInfo.mReadMutex)
         , mWriteMutex(socketInfo.mWriteMutex)
         , mSocket(moveSocket(socketInfo.mSocket))
@@ -357,6 +361,8 @@ private:
     Locator_t m_locator;
     uint16_t m_physicalPort;
     bool m_inputSocket;
+    bool mWaitingForKeepAlive;
+    uint16_t mPendingLogicalPort;
     std::thread* mRTCPThread;
     std::vector<uint16_t> mPendingLogicalOutputPorts;
     std::vector<uint16_t> mLogicalOutputPorts;
