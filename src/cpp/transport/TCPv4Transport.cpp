@@ -107,7 +107,8 @@ void TCPConnector::RetryConnect(asio::io_service& io_service, TCPv4Transport* pa
 TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor) :
     mConfiguration_(descriptor),
     mSendBufferSize(descriptor.sendBufferSize),
-    mReceiveBufferSize(descriptor.receiveBufferSize)
+    mReceiveBufferSize(descriptor.receiveBufferSize),
+    mActive(true)
 {
     for (const auto& interface : descriptor.interfaceWhiteList)
         mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
@@ -562,6 +563,7 @@ bool TCPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverR
         std::shared_ptr<TCPAcceptor> newAcceptor = std::make_shared<TCPAcceptor>(mService,
             locator, receiverResource, mReceiveBufferSize);
         mSocketsAcceptors.insert(std::make_pair(locator.get_physical_port(), newAcceptor));
+        std::cout << "[RTCP] OpenAndBindInput (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")" << std::endl;
         newAcceptor->Accept(this);
     }
     catch (asio::system_error const& e)
@@ -648,6 +650,7 @@ void TCPv4Transport::OpenAndBindUnicastOutputSocket(Locator_t& locator, SenderRe
             delete oldConnector;
         }
         mPendingOutputSockets[locator] = newConnector;
+        std::cout << "[RTCP] OpenAndBindOutput (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")" << std::endl;
         newConnector->Connect(this);
     }
 }
@@ -702,6 +705,7 @@ void TCPv4Transport::SetParticipantGUIDPrefix(const GuidPrefix_t& prefix)
 bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& /*localLocator*/,
     const Locator_t& remoteLocator)
 {
+    std::cout << "[RTCP] SEND: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << std::endl;
     std::shared_ptr<TCPSocketInfo> socket = nullptr;
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
@@ -791,8 +795,13 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
 
                 if (tcp_header.logicalPort == 0)
                 {
+                    std::cout << "[RTCP] Receive [RTCP Control]: " << receiveBufferSize << " bytes." << std::endl;
                     mRTCPMessageManager->processRTCPMessage(socketInfo, receiveBuffer);
                     success = false;
+                }
+                else
+                {
+                    std::cout << "[RTCP] Receive [RTPS Data]: " << receiveBufferSize << " bytes." << std::endl;
                 }
             }
             receiveSemaphore.post();
@@ -882,9 +891,11 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
     switch(errorCode)
     {
         case eNoError:
+            std::cout << "[RTCP] Sent [OK]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << std::endl;
             break;
         default:
             // Close the channel
+            std::cout << "[RTCP] Sent [FAILED]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << " ERROR=" << errorCode << std::endl;
             socket->Disable();
             Locator_t prevLocator = socket->m_locator;
             std::shared_ptr<MessageReceiver> prevMsgReceiver = socket->GetMessageReceiver();
@@ -980,6 +991,7 @@ bool TCPv4Transport::is_local_locator(const Locator_t& locator) const
 void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket socket)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+
     if (mSocketsAcceptors.find(acceptor->m_locator.get_physical_port()) != mSocketsAcceptors.end())
     {
         if (!error.value())
@@ -994,6 +1006,8 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             socketInfo->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, socketInfo));
             socketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eWaitingForBind);
             mInputSockets[acceptor->m_locator.get_physical_port()].emplace_back(socketInfo);
+            
+            std::cout << "[RTCP] Accepted connection (physical: " << acceptor->m_locator.get_physical_port() << ")" << std::endl;
         }
 
         // Accept new connections for the same port.
@@ -1025,6 +1039,8 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, uint32_t /*sendBufferSi
             outputSocket->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, outputSocket));
             outputSocket->ChangeStatus(TCPSocketInfo::eConnectionStatus::eConnected);
             mOutputSockets.push_back(outputSocket);
+
+            std::cout << "[RTCP] Connection established (physical: " << locator.get_physical_port() << ")" << std::endl;
 
             // RTCP Control Message
             mRTCPMessageManager->sendConnectionRequest(outputSocket);

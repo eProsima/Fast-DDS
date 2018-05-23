@@ -244,10 +244,13 @@ public:
         if (outputLocator)
         {
             mPendingLogicalOutputPorts.emplace_back(locator.get_logical_port());
+            
+            std::cout << "[RTCP] Bound output locator (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")" << std::endl;
         }
         else
         {
             mLogicalInputPorts.emplace_back(locator.get_logical_port());
+            std::cout << "[RTCP] Bound input locator (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")" << std::endl;
         }
     }
 
