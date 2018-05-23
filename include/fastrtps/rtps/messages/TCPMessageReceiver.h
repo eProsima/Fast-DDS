@@ -57,32 +57,47 @@ public:
     void sendLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, uint16_t port);
     void sendUnbindConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo);
 
-    void processConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const ConnectionRequest_t &request,
-        Locator_t &localLocator);
-    void processOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const OpenLogicalPortRequest_t &request);
-    void processCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const CheckLogicalPortsRequest_t &request);
-    void processKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const KeepAliveRequest_t &request);
-    void processLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const LogicalPortIsClosedRequest_t &request);
+    void processConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const ConnectionRequest_t &request, 
+        const TCPTransactionId &transactionId, Locator_t &localLocator);
+    void processOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+        const OpenLogicalPortRequest_t &request, const TCPTransactionId &transactionId);
+    void processCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+        const CheckLogicalPortsRequest_t &request, const TCPTransactionId &transactionId);
+    void processKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+        const KeepAliveRequest_t &request, const TCPTransactionId &transactionId);
+    void processLogicalPortIsClosedRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+        const LogicalPortIsClosedRequest_t &request, const TCPTransactionId &transactionId);
 
-    void processBindConnectionResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const BindConnectionResponse_t &response, const uint16_t logicalPort);
-    void processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, const CheckLogicalPortsResponse_t &response);
-    void processRTCPMessage(std::shared_ptr<TCPSocketInfo> socketInfo, octet* receiveBuffer);
+    void processBindConnectionResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+        const BindConnectionResponse_t &response, const TCPTransactionId &transactionId, const uint16_t logicalPort);
+    void processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo, 
+        const CheckLogicalPortsResponse_t &response, const TCPTransactionId &transactionId);
 
 protected:
     TCPv4Transport* transport;
 
 private:
-    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
-        const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
-        const octet *data, const uint32_t size);
-    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
-        const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
-        const octet *data, const uint32_t size, const ResponseCode respCode);
-    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
-        const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader,
-        const ResponseCode respCode);
-    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
-        const TCPHeader &header, const TCPControlMsgHeader &ctrlHeader);
+    TCPTransactionId myTransId;
+    std::recursive_mutex mutex;
+
+    TCPTransactionId getTransactionId()
+    {
+        std::unique_lock<std::recursive_mutex> scopedLock(mutex);
+        return myTransId++;
+    }
+
+    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, TCPCPMKind kind,
+        const TCPTransactionId &transactionId, const octet *data, const uint32_t size);
+    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, TCPCPMKind kind,
+        const TCPTransactionId &transactionId, const octet *data, 
+        const uint32_t size, const ResponseCode respCode);
+    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, TCPCPMKind kind,
+        const TCPTransactionId &transactionId, const ResponseCode respCode);
+    bool sendData(std::shared_ptr<TCPSocketInfo> &pSocketInfo, TCPCPMKind kind,
+        const TCPTransactionId &transactionId);
+    void fillHeaders(TCPCPMKind kind, const TCPTransactionId &transactionId, 
+        TCPControlMsgHeader &retCtrlHeader, TCPHeader &header, const octet *data = nullptr,
+        const uint32_t *size = nullptr, const ResponseCode *respCode = nullptr);
 };
 }
 } /* namespace rtps */

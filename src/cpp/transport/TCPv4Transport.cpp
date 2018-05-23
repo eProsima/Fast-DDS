@@ -19,7 +19,6 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include <fastrtps/rtps/messages/TCPMessageReceiver.h>
-#include <fastrtps/utils/eClock.h>
 #include "asio.hpp"
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
@@ -121,6 +120,8 @@ TCPv4TransportDescriptor::TCPv4TransportDescriptor() :
 
 TCPv4TransportDescriptor::TCPv4TransportDescriptor(const TCPv4TransportDescriptor& t) :
     TransportDescriptorInterface(t)
+    , keep_alive_frequency_ms(0)
+    , keep_alive_timeout_ms(0)
 {
 }
 
@@ -571,14 +572,16 @@ bool TCPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverR
     return true;
 }
 
-void TCPv4Transport::performListenOperation(std::shared_ptr<TCPSocketInfo> pSocketInfo)
+void TCPv4Transport::KeepAliveAndOpenPortsThread(std::shared_ptr<TCPSocketInfo> pSocketInfo)
 {
-    Time_t time_now, next_time, timeout_time;
     static eClock sClock;
+    Time_t time_now;
+    Time_t next_time;
+    Time_t timeout_time;
 
     while (pSocketInfo->IsAlive())
     {
-        //sClock.setTimeNow(&time_now);
+        sClock.setTimeNow(&time_now);
         if (pSocketInfo->IsConnectionEstablished())
         {
             if (!pSocketInfo->mPendingLogicalOutputPorts.empty())
@@ -588,24 +591,35 @@ void TCPv4Transport::performListenOperation(std::shared_ptr<TCPSocketInfo> pSock
                     *(pSocketInfo->mPendingLogicalOutputPorts.begin()));
             }
 
-            // Keep Alive Management
-            if (time_now > next_time)
+            if (mConfiguration_.keep_alive_frequency_ms > 0)
             {
-               mTCPMessageReceiver->sendKeepAliveRequest(pSocketInfo);
-               next_time = time_now;
-               next_time.add_milliseconds(mConfiguration_.keep_alive_frequency_ms);
-               timeout_time = time_now;
-               timeout_time.add_milliseconds(mConfiguration_.keep_alive_timeout_ms);
-            }
-            else if (timeout_time != c_TimeZero && time_now >= timeout_time)
-            {
-               // Disable the socket to erase it after the reception.
-               pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eDisconnected);
-               pSocketInfo->Disable();
-               continue;
+                // Keep Alive Management
+                if (time_now > next_time)
+                {
+                    mTCPMessageReceiver->sendKeepAliveRequest(pSocketInfo);
+                    next_time = time_now;
+                    next_time.add_milliseconds(mConfiguration_.keep_alive_frequency_ms);
+                    timeout_time = time_now;
+                    timeout_time.add_milliseconds(mConfiguration_.keep_alive_timeout_ms);
+                }
+                else if (timeout_time != c_TimeZero && time_now >= timeout_time)
+                {
+                    // Disable the socket to erase it after the reception.
+                    pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eDisconnected);
+                    pSocketInfo->Disable();
+                    continue;
+                }
             }
         }
+    }
+}
 
+void TCPv4Transport::performListenOperation(std::shared_ptr<TCPSocketInfo> pSocketInfo)
+{
+    Locator_t remoteLocator;
+
+    while (pSocketInfo->IsAlive())
+    {
         // Blocking receive.
         auto& msg = pSocketInfo->GetMessageReceiver()->m_rec_msg;
         CDRMessage::initCDRMsg(&msg);
