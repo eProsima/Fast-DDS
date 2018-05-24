@@ -181,41 +181,6 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
             break;
     }
 
-    // LOG
-    switch(kind)
-    {
-        case BIND_CONNECTION_REQUEST:
-            std::cout << "[RTCP] Send [BIND_CONNECTION_REQUEST]" << std::endl;
-            break;
-        case OPEN_LOGICAL_PORT_REQUEST:
-            std::cout << "[RTCP] Send [OPEN_LOGICAL_PORT_REQUEST]" << std::endl;
-            break;
-        case CHECK_LOGICAL_PORT_REQUEST:
-            std::cout << "[RTCP] Send [CHECK_LOGICAL_PORT_REQUEST]" << std::endl;
-            break;
-        case KEEP_ALIVE_REQUEST:
-            std::cout << "[RTCP] Send [KEEP_ALIVE_REQUEST]" << std::endl;
-            break;
-        case LOGICAL_PORT_IS_CLOSED_REQUEST:
-            std::cout << "[RTCP] Send [LOGICAL_PORT_IS_CLOSED_REQUEST]" << std::endl;
-            break;
-        case BIND_CONNECTION_RESPONSE:
-            std::cout << "[RTCP] Send [BIND_CONNECTION_RESPONSE]" << std::endl;
-            break;
-        case OPEN_LOGICAL_PORT_RESPONSE:
-            std::cout << "[RTCP] Send [OPEN_LOGICAL_PORT_RESPONSE]" << std::endl;
-            break;
-        case CHECK_LOGICAL_PORT_RESPONSE:
-            std::cout << "[RTCP] Send [CHECK_LOGICAL_PORT_RESPONSE]" << std::endl;
-            break;
-        case KEEP_ALIVE_RESPONSE:
-            std::cout << "[RTCP] Send [KEEP_ALIVE_RESPONSE]" << std::endl;
-            break;
-        case UNBIND_CONNECTION_REQUEST:
-            std::cout << "[RTCP] Send [UNBIND_CONNECTION_REQUEST]" << std::endl;
-            break;
-    }
-
     retCtrlHeader.setEndianess(DEFAULT_ENDIAN); // Override "false" endianess set on the switch
     header.logicalPort = 0; // This is a control message
     header.length = static_cast<uint32_t>(retCtrlHeader.length + TCPHeader::GetSize());
@@ -243,6 +208,41 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
         }
     }
     header.crc = crc;
+
+    // LOG
+    switch(kind)
+    {
+        case BIND_CONNECTION_REQUEST:
+            std::cout << "[RTCP] Send [BIND_CONNECTION_REQUEST]" << std::endl;
+            break;
+        case OPEN_LOGICAL_PORT_REQUEST:
+            std::cout << "[RTCP] Send [OPEN_LOGICAL_PORT_REQUEST]" << std::endl;
+            break;
+        case CHECK_LOGICAL_PORT_REQUEST:
+            std::cout << "[RTCP] Send [CHECK_LOGICAL_PORT_REQUEST]: " << retCtrlHeader.length << std::endl;
+            break;
+        case KEEP_ALIVE_REQUEST:
+            std::cout << "[RTCP] Send [KEEP_ALIVE_REQUEST]" << std::endl;
+            break;
+        case LOGICAL_PORT_IS_CLOSED_REQUEST:
+            std::cout << "[RTCP] Send [LOGICAL_PORT_IS_CLOSED_REQUEST]" << std::endl;
+            break;
+        case BIND_CONNECTION_RESPONSE:
+            std::cout << "[RTCP] Send [BIND_CONNECTION_RESPONSE]" << std::endl;
+            break;
+        case OPEN_LOGICAL_PORT_RESPONSE:
+            std::cout << "[RTCP] Send [OPEN_LOGICAL_PORT_RESPONSE]" << std::endl;
+            break;
+        case CHECK_LOGICAL_PORT_RESPONSE:
+            std::cout << "[RTCP] Send [CHECK_LOGICAL_PORT_RESPONSE]" << std::endl;
+            break;
+        case KEEP_ALIVE_RESPONSE:
+            std::cout << "[RTCP] Send [KEEP_ALIVE_RESPONSE]" << std::endl;
+            break;
+        case UNBIND_CONNECTION_REQUEST:
+            std::cout << "[RTCP] Send [UNBIND_CONNECTION_REQUEST]" << std::endl;
+            break;
+    }
 }
 
 void RTCPMessageManager::sendConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo)
@@ -352,15 +352,16 @@ void RTCPMessageManager::processConnectionRequest(std::shared_ptr<TCPSocketInfo>
 void RTCPMessageManager::processOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
         const OpenLogicalPortRequest_t &request, const TCPTransactionId &transactionId)
 {
-    // TODO More options!
     for (uint16_t port : pSocketInfo->mLogicalInputPorts)
     {
         if (port == request.logicalPort())
         {
+            std::cout << "[RTCP] OpenLogicalPortRequest [OK]: " << request.logicalPort() << std::endl;
             sendData(pSocketInfo, OPEN_LOGICAL_PORT_RESPONSE, transactionId, RETCODE_OK);
             return;
         }
     }
+    std::cout << "[RTCP] OpenLogicalPortRequest [FAILED]: " << request.logicalPort() << std::endl;
     sendData(pSocketInfo, OPEN_LOGICAL_PORT_RESPONSE, transactionId, RETCODE_INVALID_PORT);
 }
 
@@ -369,13 +370,27 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(std::shared_ptr<TCPSock
 {
     CheckLogicalPortsResponse_t response;
 
-    for (uint16_t port : request.logicalPortsRange())
+    std::cout << "[RTCP] CheckOpenedLogicalPort [STARTING]: " << request.logicalPortsRange().size() << std::endl;
+
+    //for (uint16_t port : request.logicalPortsRange())
+    for (size_t i = 0; i < request.logicalPortsRange().size(); ++i)
     {
+        std::cout << "#### A " << std::endl;
+        uint16_t port = request.logicalPortsRange()[i];
+        /*
         if (std::find(pSocketInfo->mLogicalInputPorts.begin(),
                 pSocketInfo->mLogicalInputPorts.end(), port)
                 != pSocketInfo->mLogicalInputPorts.end())
+        */
+        std::cout << "#### B " << std::endl;
+        for (uint16_t opened_port : pSocketInfo->mLogicalInputPorts)
         {
-            response.availableLogicalPorts().emplace_back(port);
+            std::cout << "[RTCP] CheckOpenedLogicalPort: " << port << ":" << opened_port << std::endl;
+            if (opened_port == port)
+            {
+                std::cout << "[RTCP] FoundOpenedLogicalPort: " << port << std::endl;
+                response.availableLogicalPorts().emplace_back(port);
+            }
         }
     }
 
@@ -403,8 +418,7 @@ void RTCPMessageManager::processLogicalPortIsClosedRequest(std::shared_ptr<TCPSo
 }
 
 bool RTCPMessageManager::processBindConnectionResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
-        const BindConnectionResponse_t &/*response*/, const TCPTransactionId &transactionId,
-        const uint16_t logicalPort)
+        const BindConnectionResponse_t &/*response*/, const TCPTransactionId &transactionId)
 {
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
@@ -420,13 +434,29 @@ bool RTCPMessageManager::processBindConnectionResponse(std::shared_ptr<TCPSocket
     }
 }
 
-bool RTCPMessageManager::processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &/*pSocketInfo*/,
-        const CheckLogicalPortsResponse_t &/*response*/, const TCPTransactionId &transactionId)
+bool RTCPMessageManager::processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
+        const CheckLogicalPortsResponse_t &response, const TCPTransactionId &transactionId)
 {
-    // TODO? Not here I guess...
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
     {
+        if (response.availableLogicalPorts().empty())
+        {
+            pSocketInfo->mCheckingLogicalPort += (transport->mConfiguration_.logical_port_range 
+                                                * transport->mConfiguration_.logical_port_increment);
+            prepareAndSendCheckLogicalPortsRequest(pSocketInfo);
+        }
+        else
+        {
+            pSocketInfo->mCheckingLogicalPort = response.availableLogicalPorts()[0];
+            pSocketInfo->mPendingLogicalOutputPorts.emplace_back(pSocketInfo->mCheckingLogicalPort);
+            std::cout << "[RTCP] NegotiatingLogicalPort: " << pSocketInfo->mCheckingLogicalPort << std::endl;
+            if (pSocketInfo->mNegotiatingLogicalPort == 0)
+            {
+                logWarning(RTPS_MSG_IN, "Negotiated new logical port wihtout initial port?");
+            }
+        }
+                
         mUnconfirmedTransactions.erase(it);
         return true;
     }
@@ -437,25 +467,98 @@ bool RTCPMessageManager::processCheckLogicalPortsResponse(std::shared_ptr<TCPSoc
     }
 }
 
-bool RTCPMessageManager::processOpenLogicalPortResponse(std::shared_ptr<TCPSocketInfo> pSocketInfo,
+void RTCPMessageManager::prepareAndSendCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo)
+{
+    // Dont try again this port
+    {
+        std::unique_lock<std::recursive_mutex> scopedLock(pSocketInfo->mPendingLogicalMutex);
+        if (!pSocketInfo->mPendingLogicalOutputPorts.empty())
+        {
+            pSocketInfo->mPendingLogicalOutputPorts.erase(pSocketInfo->mPendingLogicalOutputPorts.begin());
+        }
+
+        if (pSocketInfo->mNegotiatingLogicalPort == 0) // Keep original logical port being negotiated
+        {
+            pSocketInfo->mNegotiatingLogicalPort = pSocketInfo->mPendingLogicalPort;
+            pSocketInfo->mCheckingLogicalPort = pSocketInfo->mPendingLogicalPort;
+            std::cout << "[RTCP] OpenLogicalPort failed: " << pSocketInfo->mCheckingLogicalPort << std::endl;
+        }
+        pSocketInfo->mPendingLogicalPort = 0;
+    }
+
+    std::vector<uint16_t> ports;
+    for (uint16_t p = pSocketInfo->mCheckingLogicalPort + transport->mConfiguration_.logical_port_increment;
+        p <= pSocketInfo->mCheckingLogicalPort + 
+            (transport->mConfiguration_.logical_port_range 
+             * transport->mConfiguration_.logical_port_increment);
+        p += transport->mConfiguration_.logical_port_increment)
+    {
+        if (p <= transport->mConfiguration_.max_logical_port)
+        {
+            ports.emplace_back(p);
+        }
+    }
+
+    if (ports.empty()) // No more available ports!
+    {
+        logError(RTPS_MSG_IN, "Cannot find an available logical port.");
+    }
+    else
+    {
+        sendCheckLogicalPortsRequest(pSocketInfo, ports);
+    }
+}
+
+bool RTCPMessageManager::processOpenLogicalPortResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
         ResponseCode respCode, const TCPTransactionId &transactionId, Locator_t &remoteLocator)
 {
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
     {
-        if (respCode == RETCODE_OK)
+        switch(respCode)
         {
-            remoteLocator.set_logical_port(pSocketInfo->mPendingLogicalPort);
+            case RETCODE_OK:
+            {
+                std::unique_lock<std::recursive_mutex> scopedLock(pSocketInfo->mPendingLogicalMutex);
+                if (pSocketInfo->mNegotiatingLogicalPort != 0 
+                        && pSocketInfo->mPendingLogicalPort == pSocketInfo->mCheckingLogicalPort)
+                {
+                    // Add route
+                    pSocketInfo->mLogicalPortRouting[pSocketInfo->mNegotiatingLogicalPort] 
+                        = pSocketInfo->mPendingLogicalPort;
 
-            pSocketInfo->mLogicalOutputPorts.emplace_back(*(pSocketInfo->mPendingLogicalOutputPorts.begin()));
-            pSocketInfo->mPendingLogicalOutputPorts.erase(pSocketInfo->mPendingLogicalOutputPorts.begin());
-            pSocketInfo->mPendingLogicalPort = 0;
+                    std::cout << "[RTCP] OpenedAndRoutedLogicalPort " << pSocketInfo->mNegotiatingLogicalPort << "->" << pSocketInfo->mPendingLogicalPort << std::endl;
 
-            transport->BindInputSocket(remoteLocator, pSocketInfo);
-        }
-        else
-        {
-            // TODO Check ports and retry
+                    // We want the reference to the negotiated port, not the real logical one
+                    remoteLocator.set_logical_port(pSocketInfo->mNegotiatingLogicalPort);
+
+                    // Both, real one and negotiated must be added
+                    pSocketInfo->mLogicalOutputPorts.emplace_back(pSocketInfo->mNegotiatingLogicalPort);
+                    
+                    pSocketInfo->mNegotiatingLogicalPort = 0;
+                    pSocketInfo->mCheckingLogicalPort = 0;
+                }
+                else
+                {
+                    remoteLocator.set_logical_port(pSocketInfo->mPendingLogicalPort);
+                    std::cout << "[RTCP] OpenedLogicalPort " << pSocketInfo->mPendingLogicalPort << std::endl;
+                }
+
+                pSocketInfo->mLogicalOutputPorts.emplace_back(*(pSocketInfo->mPendingLogicalOutputPorts.begin()));
+                pSocketInfo->mPendingLogicalOutputPorts.erase(pSocketInfo->mPendingLogicalOutputPorts.begin());
+                pSocketInfo->mPendingLogicalPort = 0;
+                transport->mBoundOutputSockets[remoteLocator] = pSocketInfo;
+            }
+            break;
+            case RETCODE_INVALID_PORT:
+            {
+                prepareAndSendCheckLogicalPortsRequest(pSocketInfo);
+            }
+            break;
+            default:
+                logWarning(RTPS_MSG_IN, 
+                    "Received response for OpenLogicalPort with error code: " << ((respCode == RETCODE_BAD_REQUEST) ? "BAD_REQUEST" : "SERVER_ERROR"));
+            break;
         }
         mUnconfirmedTransactions.erase(it);
         return true;
@@ -525,10 +628,10 @@ void RTCPMessageManager::processRTCPMessage(std::shared_ptr<TCPSocketInfo> socke
         memcpy(&response, &(receiveBuffer[sizeCtrlHeader + 4]), response.GetSize());
         if (respCode == RETCODE_OK || respCode == RETCODE_EXISTING_CONNECTION)
         {
+            std::unique_lock<std::recursive_mutex> scopedLock(socketInfo->mPendingLogicalMutex);
             if (!socketInfo->mPendingLogicalOutputPorts.empty())
             {
-                processBindConnectionResponse(socketInfo, response, controlHeader.transactionId,
-                    *(socketInfo->mPendingLogicalOutputPorts.begin()));
+                processBindConnectionResponse(socketInfo, response, controlHeader.transactionId);
             }
         }
         else
@@ -547,9 +650,9 @@ void RTCPMessageManager::processRTCPMessage(std::shared_ptr<TCPSocketInfo> socke
     break;
     case CHECK_LOGICAL_PORT_REQUEST:
     {
-        std::cout << "[RTCP] Receive [CHECK_LOGICAL_PORT_REQUEST]" << std::endl;
+        std::cout << "[RTCP] Receive [CHECK_LOGICAL_PORT_REQUEST]: " << controlHeader.length << std::endl;
         CheckLogicalPortsRequest_t request;
-        memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), request.GetSize());
+        memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), controlHeader.length - sizeCtrlHeader);
         processCheckLogicalPortsRequest(socketInfo, request, controlHeader.transactionId);
     }
     break;

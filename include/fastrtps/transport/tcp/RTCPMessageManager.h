@@ -71,7 +71,7 @@ public:
         const LogicalPortIsClosedRequest_t &request, const TCPTransactionId &transactionId);
 
     bool processBindConnectionResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
-        const BindConnectionResponse_t &response, const TCPTransactionId &transactionId, const uint16_t logicalPort);
+        const BindConnectionResponse_t &response, const TCPTransactionId &transactionId);
     bool processCheckLogicalPortsResponse(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
         const CheckLogicalPortsResponse_t &response, const TCPTransactionId &transactionId);
     bool processOpenLogicalPortResponse(std::shared_ptr<TCPSocketInfo> pSocketInfo,
@@ -87,6 +87,8 @@ public:
 protected:
     TCPv4Transport* transport;
     std::set<TCPTransactionId> mUnconfirmedTransactions;
+
+    void prepareAndSendCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo);
 
 private:
     TCPTransactionId myTransId;

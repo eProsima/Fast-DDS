@@ -39,6 +39,9 @@ typedef struct TCPv4TransportDescriptor: public TransportDescriptorInterface {
     std::vector<uint16_t> listening_ports;
     uint32_t keep_alive_frequency_ms;
     uint32_t keep_alive_timeout_ms;
+    uint16_t max_logical_port;
+    uint16_t logical_port_range;
+    uint16_t logical_port_increment;
     octet wan_addr[4];
 
     void add_listener_port(uint16_t port)
