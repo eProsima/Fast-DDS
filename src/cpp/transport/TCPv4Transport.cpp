@@ -188,6 +188,19 @@ bool TCPv4Transport::init()
         ip::tcp::socket socket(mService);
         socket.open(ip::tcp::v4());
 
+        if (mConfiguration_.sendBufferSize == 0)
+        {
+            socket_base::send_buffer_size option;
+            socket.get_option(option);
+            mConfiguration_.sendBufferSize = option.value();
+
+            if (mConfiguration_.sendBufferSize < s_minimumSocketBuffer)
+            {
+                mConfiguration_.sendBufferSize = s_minimumSocketBuffer;
+                //mSendBufferSize = s_minimumSocketBuffer;
+            }
+        }
+
         if (mConfiguration_.receiveBufferSize == 0)
         {
             socket_base::receive_buffer_size option;
