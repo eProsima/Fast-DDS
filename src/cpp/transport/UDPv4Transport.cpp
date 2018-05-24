@@ -192,7 +192,8 @@ static bool IsMulticastAddress(const Locator_t& locator)
     return locator.is_Multicast();
 }
 
-bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource* receiverResource)
+bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource* receiverResource,
+    uint32_t maxMsgSize)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
     if (!IsLocatorSupported(locator))
@@ -201,7 +202,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource
     bool success = false;
 
     if (!IsInputChannelOpen(locator))
-        success = OpenAndBindInputSockets(locator, receiverResource, IsMulticastAddress(locator));
+        success = OpenAndBindInputSockets(locator, receiverResource, IsMulticastAddress(locator), maxMsgSize);
 
     if (IsMulticastAddress(locator) && IsInputChannelOpen(locator))
     {
@@ -390,14 +391,14 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
     return true;
 }
 
-bool UDPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource, bool is_multicast)
+bool UDPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource, bool is_multicast, uint32_t maxMsgSize)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
 
     try
     {
         eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(locator.get_physical_port(), is_multicast);
-        UDPSocketInfo* socketInfo = new UDPSocketInfo(unicastSocket);
+        UDPSocketInfo* socketInfo = new UDPSocketInfo(unicastSocket, maxMsgSize);
         socketInfo->SetMessageReceiver(receiverResource->CreateMessageReceiver());
         std::thread* newThread = new std::thread(&UDPv4Transport::performListenOperation, this, socketInfo, locator);
         socketInfo->SetThread(newThread);
@@ -420,14 +421,14 @@ void UDPv4Transport::performListenOperation(UDPSocketInfo* pSocketInfo, Locator_
     while (pSocketInfo->IsAlive())
     {
         // Blocking receive.
-        auto& msg = pSocketInfo->GetMessageReceiver()->m_rec_msg;
+        auto msg = pSocketInfo->GetMessageBuffer();
         CDRMessage::initCDRMsg(&msg);
         if (!Receive(msg.buffer, msg.max_size, msg.length, pSocketInfo, remoteLocator))
             continue;
 
         // Processes the data through the CDR Message interface.
         pSocketInfo->GetMessageReceiver()->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix, &input_locator,
-            &pSocketInfo->GetMessageReceiver()->m_rec_msg);
+            &pSocketInfo->GetMessageBuffer());
     }
 }
 

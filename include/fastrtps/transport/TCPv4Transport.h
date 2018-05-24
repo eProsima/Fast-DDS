@@ -41,17 +41,18 @@ class RTCPMessageManager;
 class TCPAcceptor
 {
 public:
-	asio::ip::tcp::acceptor m_acceptor;
-    Locator_t m_locator;
-	uint32_t m_receiveBufferSize;
-    std::function<std::shared_ptr<MessageReceiver>()> m_acceptCallback;
+	asio::ip::tcp::acceptor mAcceptor;
+    Locator_t mLocator;
+	uint32_t mReceiveBufferSize;
+    uint32_t mMaxMsgSize;
+    std::function<std::shared_ptr<MessageReceiver>()> mAcceptCallback;
 
     TCPAcceptor(asio::io_service& io_service, const Locator_t& locator, ReceiverResource* receiverResource,
-        uint32_t receiveBufferSize);
+        uint32_t receiveBufferSize, uint32_t maxMsgSize);
 
     ~TCPAcceptor()
     {
-        m_acceptCallback = nullptr;
+        mAcceptCallback = nullptr;
     }
 	void Accept(TCPv4Transport* parent);
 };
@@ -141,7 +142,7 @@ public:
     * Starts listening on the specified port, and if the specified address is in the
     * multicast range, it joins the specified multicast group,
     */
-    virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*) override;
+    virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) override;
 
     /**
     * Opens a socket on the given address and port (as long as they are white listed).
@@ -173,7 +174,7 @@ public:
     * @param[out] remoteLocator Locator describing the remote restination we received a packet from.
     */
    bool Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* receiveBuffer, uint32_t receiveBufferCapacity,
-       uint32_t& receiveBufferSize);
+       uint32_t& receiveBufferSize, uint16_t& logicalPort);
 
     virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
 
@@ -215,14 +216,16 @@ protected:
     std::vector<std::shared_ptr<TCPSocketInfo>> mOutputSockets;
     std::map<Locator_t, std::shared_ptr<TCPSocketInfo>> mBoundOutputSockets;
 
-    std::vector<IPFinder::info_IP> currentInterfaces;
+    std::vector<IPFinder::info_IP> mCurrentInterfaces;
 
     struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
 
     std::map<uint16_t, std::shared_ptr<TCPAcceptor>> mSocketsAcceptors; // The Key is the "Physical Port"
     std::map<uint16_t, std::vector<std::shared_ptr<TCPSocketInfo>>> mInputSockets;   // The Key is the "Physical Port"
+    std::map<Locator_t, ReceiverResource*> mReceiverResources;
 
+    bool IsTCPInputSocket(const Locator_t& locator) const;
     bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
     std::vector<asio::ip::address_v4> mInterfaceWhiteList;
 
@@ -232,14 +235,11 @@ protected:
     bool EnqueueLogicalOutputPort(Locator_t& locator);
     bool EnqueueLogicalInputPort(const Locator_t& locator);
 
-    bool OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource);
+    bool OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource, uint32_t maxMsgSize);
     void CloseTCPSocket(std::shared_ptr<TCPSocketInfo> socketInfo);
     void ReleaseTCPSocket(std::shared_ptr<TCPSocketInfo> socketInfo);
 
-    /** Function to be called from a new thread, which takes cares of performing a blocking receive
-    operation on the ReceiveResource
-    @param input_locator - Locator that triggered the creation of the resource
-    */
+    // Functions to be called from a new thread, which takes cares of performing a blocking receive
     void performListenOperation(std::shared_ptr<TCPSocketInfo> pSocketInfo);
     void performRTPCManagementThread(std::shared_ptr<TCPSocketInfo> pSocketInfo);
 

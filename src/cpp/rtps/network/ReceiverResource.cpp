@@ -39,7 +39,7 @@ ReceiverResource::ReceiverResource(RTPSParticipantImpl* participant, TransportIn
 , m_maxMsgSize(maxMsgSize)
 {
    // Internal channel is opened and assigned to this resource.
-   mValid = transport.OpenInputChannel(locator, this);
+   mValid = transport.OpenInputChannel(locator, this, m_maxMsgSize);
    if (!mValid)
       return; // Invalid resource to be discarded by the factory.
 
@@ -57,8 +57,7 @@ ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
 
 std::shared_ptr<MessageReceiver> ReceiverResource::CreateMessageReceiver()
 {
-    std::shared_ptr<MessageReceiver> newMsgReceiver = std::make_shared<MessageReceiver>(m_participant, this,
-        m_maxMsgSize);
+    std::shared_ptr<MessageReceiver> newMsgReceiver = std::make_shared<MessageReceiver>(m_participant, this);
     newMsgReceiver->init(m_maxMsgSize);
     return newMsgReceiver;
 }

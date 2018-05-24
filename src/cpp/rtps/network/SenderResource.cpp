@@ -40,8 +40,7 @@ SenderResource::SenderResource(RTPSParticipantImpl* participant, TransportInterf
 
 std::shared_ptr<MessageReceiver> SenderResource::CreateMessageReceiver(uint32_t msgSize)
 {
-    std::shared_ptr<MessageReceiver> newMsgReceiver = std::make_shared<MessageReceiver>(m_participant, nullptr,
-        msgSize);
+    std::shared_ptr<MessageReceiver> newMsgReceiver = std::make_shared<MessageReceiver>(m_participant, nullptr);
     newMsgReceiver->init(msgSize);
     return newMsgReceiver;
 }

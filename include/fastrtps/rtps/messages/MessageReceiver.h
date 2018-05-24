@@ -46,7 +46,6 @@ class MessageReceiver
         /**
          * @param rec_buffer_size
          */
-        MessageReceiver(RTPSParticipantImpl* participant, ReceiverResource* receiverResource, uint32_t rec_buffer_size);
         MessageReceiver(RTPSParticipantImpl* participant, ReceiverResource* receiverResource);
         virtual ~MessageReceiver();
         //!Reset the MessageReceiver to process a new message.
@@ -66,13 +65,11 @@ class MessageReceiver
          */
         void processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,Locator_t* loc, CDRMessage_t*msg);
 
+        //! Sets the related receiverResource only if the current is not set.
+        void setReceiverResource(ReceiverResource* receiverResource);
+
         //!Pointer to the Listen Resource that contains this MessageReceiver.
 
-        //!Received message
-        CDRMessage_t m_rec_msg;
-#if HAVE_SECURITY
-        CDRMessage_t m_crypto_msg;
-#endif
         //!PArameter list
         ParameterList_t m_ParamList;
 
