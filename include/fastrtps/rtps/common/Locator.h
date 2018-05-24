@@ -145,9 +145,9 @@ class RTPS_DllAPI Locator_t
             return (rtps_port != 0);
         }
 
-        uint32_t get_port() const
+        uint32_t get_port(bool fullPort = false) const
         {
-            if (kind == LOCATOR_KIND_TCPv4 || kind == LOCATOR_KIND_TCPv6)
+            if (!fullPort && (kind == LOCATOR_KIND_TCPv4 || kind == LOCATOR_KIND_TCPv6))
             {
                 return static_cast<uint32_t>(ports_.physical_port);
             }
@@ -306,6 +306,11 @@ class RTPS_DllAPI Locator_t
         }
 
         octet* get_Address()
+        {
+            return address;
+        }
+
+        const octet* get_Address() const
         {
             return address;
         }
