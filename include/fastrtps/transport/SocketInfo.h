@@ -281,6 +281,10 @@ public:
 
     std::shared_ptr<MessageReceiver> GetMessageReceiver(uint16_t logicalPort);
 
+    inline const Locator_t& GetLocator() const
+    {
+        return mLocator;
+    }
 protected:
     inline void ChangeStatus(eConnectionStatus s)
     {
@@ -291,7 +295,7 @@ protected:
     friend class RTCPMessageManager;
 
 private:
-    Locator_t m_locator;
+    Locator_t mLocator;
     uint16_t m_physicalPort;
     bool m_inputSocket;
     bool mWaitingForKeepAlive;
