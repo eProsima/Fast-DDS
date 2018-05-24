@@ -299,16 +299,21 @@ private:
     uint16_t m_physicalPort;
     bool m_inputSocket;
     bool mWaitingForKeepAlive;
-    uint16_t mPendingLogicalPort;
+    uint16_t mPendingLogicalPort; // Must be accessed after lock mPendingLogicalMutex
+    uint16_t mNegotiatingLogicalPort; // Must be accessed after lock mPendingLogicalMutex
+    uint16_t mCheckingLogicalPort; // Must be accessed after lock mPendingLogicalMutex
     std::thread* mRTCPThread;
-    std::vector<uint16_t> mPendingLogicalOutputPorts;
+    std::vector<uint16_t> mPendingLogicalOutputPorts; // Must be accessed after lock mPendingLogicalMutex
     std::vector<uint16_t> mLogicalOutputPorts;
     std::vector<uint16_t> mLogicalInputPorts;
     std::recursive_mutex* mReadMutex;
     std::recursive_mutex* mWriteMutex;
     std::map<uint16_t, MessageReceiver*> mReceiversMap;  // The key is the logical port.
+    std::recursive_mutex mPendingLogicalMutex;
+    std::map<uint16_t, uint16_t> mLogicalPortRouting;
     eProsimaTCPSocket mSocket;
     eConnectionStatus mConnectionStatus;
+
     TCPSocketInfo(const TCPSocketInfo&) = delete;
     TCPSocketInfo& operator=(const TCPSocketInfo&) = delete;
 };

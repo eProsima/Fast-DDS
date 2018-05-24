@@ -96,6 +96,9 @@ TCPv4TransportDescriptor::TCPv4TransportDescriptor() :
     TransportDescriptorInterface(s_maximumMessageSize)
     , keep_alive_frequency_ms(s_default_keep_alive_frequency)
     , keep_alive_timeout_ms(s_default_keep_alive_timeout)
+    , max_logical_port(100)
+    , logical_port_range(20)
+    , logical_port_increment(2)
 {
     memset(wan_addr, 0, 4);
 }
@@ -105,6 +108,8 @@ TCPv4TransportDescriptor::TCPv4TransportDescriptor(const TCPv4TransportDescripto
     , keep_alive_frequency_ms(t.keep_alive_frequency_ms)
     , keep_alive_timeout_ms(t.keep_alive_timeout_ms)
     , listening_ports(t.listening_ports)
+    , max_logical_port(t.max_logical_port)
+    , logical_port_range(t.logical_port_range)
 {
     memcpy(wan_addr, t.wan_addr, 4);
 }
@@ -573,7 +578,7 @@ bool TCPv4Transport::EnqueueLogicalOutputPort(Locator_t& locator)
             (*it)->mPendingLogicalOutputPorts.end(), locator.get_logical_port())
                 == (*it)->mPendingLogicalOutputPorts.end())
         {
-            (*it)->mPendingLogicalOutputPorts.push_back(locator.get_logical_port());
+            socketInfo->mPendingLogicalOutputPorts.push_back(locator.get_logical_port());
             return true;
         }
     }
@@ -591,7 +596,7 @@ bool TCPv4Transport::EnqueueLogicalInputPort(const Locator_t& locator)
             if ((*it)->GetLocator().compare_IP4_address_and_port(locator)
                     && std::find((*it)->mLogicalInputPorts.begin(),
                 (*it)->mLogicalInputPorts.end(), locator.get_logical_port())
-                    == (*it)->mLogicalOutputPorts.end())
+                    == (*it)->mLogicalInputPorts.end())
             {
                 (*it)->mLogicalInputPorts.push_back(locator.get_logical_port());
                 return true;
@@ -651,12 +656,17 @@ void TCPv4Transport::performRTPCManagementThread(std::shared_ptr<TCPSocketInfo> 
     {
         if (pSocketInfo->IsConnectionEstablished())
         {
-            if (pSocketInfo->mPendingLogicalPort == 0 && !pSocketInfo->mPendingLogicalOutputPorts.empty())
-            {
-                pSocketInfo->mPendingLogicalPort = *pSocketInfo->mPendingLogicalOutputPorts.begin();
-                mRTCPMessageManager->sendOpenLogicalPortRequest(pSocketInfo, pSocketInfo->mPendingLogicalPort);
+            { // Logical Ports
+                std::unique_lock<std::recursive_mutex> scopedLock(pSocketInfo->mPendingLogicalMutex);
+                if (pSocketInfo->mPendingLogicalPort == 0 && !pSocketInfo->mPendingLogicalOutputPorts.empty())
+                {
+                    pSocketInfo->mPendingLogicalPort = *pSocketInfo->mPendingLogicalOutputPorts.begin();
+                    mRTCPMessageManager->sendOpenLogicalPortRequest(pSocketInfo, pSocketInfo->mPendingLogicalPort);
+                }
             }
-            else if (mConfiguration_.keep_alive_frequency_ms > 0 && mConfiguration_.keep_alive_timeout_ms > 0)
+
+            // KeepAlive
+            if (mConfiguration_.keep_alive_frequency_ms > 0 && mConfiguration_.keep_alive_timeout_ms > 0)
             {
                 time_now = std::chrono::system_clock::now();
 
@@ -780,7 +790,15 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         CDRMessage_t msg;
         TCPHeader tcp_header;
         tcp_header.length = sendBufferSize + static_cast<uint32_t>(TCPHeader::GetSize());
-        tcp_header.logicalPort = remoteLocator.get_logical_port();
+        
+        if (socket->mLogicalPortRouting.find(remoteLocator.get_logical_port()) != socket->mLogicalPortRouting.end())
+        {
+            tcp_header.logicalPort = socket->mLogicalPortRouting.at(remoteLocator.get_logical_port());
+        }
+        else
+        {
+            tcp_header.logicalPort = remoteLocator.get_logical_port();
+        }
         RTCPMessageManager::CalculateCRC(tcp_header, sendBuffer, sendBufferSize);
 
         RTPSMessageCreator::addCustomContent(&msg, tcp_header.getAddress(), TCPHeader::GetSize());
@@ -935,7 +953,6 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
     const Locator_t& remoteLocator,
     std::shared_ptr<TCPSocketInfo> socket)
 {
-
     asio::ip::address_v4::bytes_type remoteAddress;
     remoteLocator.copy_IP4_address(remoteAddress.data());
     auto destinationEndpoint = ip::tcp::endpoint(asio::ip::address_v4(remoteAddress),
