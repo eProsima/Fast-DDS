@@ -41,18 +41,8 @@ MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant, ReceiverResou
     , receiverResource_(receiverResource)
     {}
 
-MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant, ReceiverResource* receiverResource, uint32_t rec_buffer_size)
-    : m_rec_msg(rec_buffer_size)
-#if HAVE_SECURITY
-    , m_crypto_msg(rec_buffer_size)
-#endif
-    , sourceVendorId(c_VendorId_Unknown)
-    , participant_(participant)
-    , receiverResource_(receiverResource)
-    {
-    }
-
-void MessageReceiver::init(uint32_t rec_buffer_size){
+void MessageReceiver::init(uint32_t rec_buffer_size)
+{
     destVersion = c_ProtocolVersion;
     sourceVersion = c_ProtocolVersion;
     sourceVendorId = c_VendorId_Unknown;
@@ -64,7 +54,6 @@ void MessageReceiver::init(uint32_t rec_buffer_size){
     defUniLoc.kind = LOCATOR_KIND_UDPv4;
     defUniLoc.set_Invalid_Address();
     defUniLoc.set_port(LOCATOR_PORT_INVALID);
-    logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<<m_rec_msg.max_size);
     mMaxPayload_ = ((uint32_t)std::numeric_limits<uint16_t>::max() < rec_buffer_size) ? std::numeric_limits<uint16_t>::max() : (uint16_t)rec_buffer_size;
 }
 
@@ -89,6 +78,14 @@ void MessageReceiver::reset(){
     //Locator_t  loc;
     //unicastReplyLocatorList.push_back(loc);
     multicastReplyLocatorList.push_back(defUniLoc);
+}
+
+void MessageReceiver::setReceiverResource(ReceiverResource* receiverResource)
+{
+    if (receiverResource_ == nullptr)
+    {
+        receiverResource_ = receiverResource;
+    }
 }
 
 void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,

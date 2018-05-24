@@ -85,6 +85,11 @@ Locator_t RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t loc)
             //TODO - Define the rest of rules
             loc.get_port_by_ref() += m_att.port.participantIDGain;
             break;
+        case LOCATOR_KIND_TCPv4:
+        case LOCATOR_KIND_TCPv6:
+            //TODO: Check Physical <-> Logical Port
+            loc.set_logical_port(loc.get_logical_port() + m_att.port.participantIDGain);
+            break;
     }
     return loc;
 }
