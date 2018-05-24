@@ -422,7 +422,7 @@ void UDPv6Transport::performListenOperation(UDPSocketInfo* pSocketInfo, Locator_
 
         // Processes the data through the CDR Message interface.
         pSocketInfo->GetMessageReceiver()->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix, &input_locator,
-            &pSocketInfo->GetMessageBuffer());
+            &msg);
     }
 }
 
