@@ -24,7 +24,7 @@ SenderResource::SenderResource(RTPSParticipantImpl* participant, TransportInterf
     : m_participant(participant)
 {
    // Internal channel is opened and assigned to this resource.
-   mValid = transport.OpenOutputChannel(locator, this);
+   mValid = transport.OpenOutputChannel(locator);
    if (!mValid)
       return; // Invalid resource, will be discarded by the factory.
 

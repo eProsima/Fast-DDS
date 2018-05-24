@@ -52,22 +52,6 @@ struct RTPS_DllAPI Time_t{
 	}
 
     // TODO Ctr Sec
-
-    /**
-    * @param ms Time in milliseconds
-    */
-    inline void add_milliseconds(uint32_t ms)
-    {
-        seconds += ms / 1000;
-        // TODO FIX ((uint32_t)(m_now.tv_usec*pow(2.0,32)*pow(10.0,-6)))
-        fraction += (ms % 1000) << 29;
-    }
-
-    inline uint32_t distance_milliseconds(const Time_t& other)
-    {
-        // TODO FIX ((uint32_t)(m_now.tv_usec*pow(2.0,32)*pow(10.0,-6)))
-        return ((seconds - other.seconds) * 1000) + ((fraction >> 29) - (other.fraction >> 29));
-    }
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

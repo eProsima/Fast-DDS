@@ -61,21 +61,10 @@ class TCPConnector
 {
 public:
     Locator_t m_locator;
-	uint32_t m_sendBufferSize;
 	eProsimaTCPSocket m_socket;
-    SenderResource* m_senderResource;
-    std::shared_ptr<MessageReceiver> m_messageReceiver;
-    std::function<std::shared_ptr<MessageReceiver>(uint32_t)> m_connectCallback;
 
-    TCPConnector(asio::io_service& io_service, Locator_t& locator, SenderResource* senderResource,
-        uint32_t sendBufferSize);
-
-    TCPConnector(asio::io_service& io_service, Locator_t& locator, std::shared_ptr<MessageReceiver> messageReceiver,
-        uint32_t sendBufferSize);
-    ~TCPConnector()
-    {
-        m_connectCallback = nullptr;
-    }
+    TCPConnector(asio::io_service& io_service, Locator_t& locator);
+    ~TCPConnector(){}
 
 	void Connect(TCPv4Transport* parent);
 	void RetryConnect(asio::io_service& io_service, TCPv4Transport* parent);
@@ -119,8 +108,9 @@ public:
     virtual bool IsOutputChannelOpen(const Locator_t&) const override;
     bool IsOutputChannelBound(const Locator_t&) const;
     bool IsOutputChannelConnected(const Locator_t&) const;
+    void BindInputSocket(const Locator_t&, std::shared_ptr<TCPSocketInfo>);
     void BindOutputChannel(const Locator_t&);
-    void UnbindInputSocket(std::shared_ptr<SocketInfo>);
+    void UnbindInputSocket(std::shared_ptr<TCPSocketInfo>);
 
     //! Checks for TCPv4 kind.
     virtual bool IsLocatorSupported(const Locator_t&) const override;
@@ -147,7 +137,7 @@ public:
     /**
     * Opens a socket on the given address and port (as long as they are white listed).
     */
-    virtual bool OpenOutputChannel(Locator_t&, SenderResource* senderResource) override;
+    virtual bool OpenOutputChannel(Locator_t&) override;
 
     //! Removes the listening socket for the specified port.
     virtual bool CloseInputChannel(const Locator_t&) override;
@@ -187,7 +177,7 @@ public:
     virtual void AddDefaultLocator(LocatorList_t &defaultList) override;
 
     void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket s);
-    void SocketConnected(Locator_t& locator, uint32_t sendBufferSize, const asio::error_code& error);
+    void SocketConnected(Locator_t& locator, const asio::error_code& error);
 protected:
     enum eSocketErrorCodes
     {
@@ -201,7 +191,6 @@ protected:
     //! Constructor with no descriptor is necessary for implementations derived from this class.
     TCPv4Transport();
     TCPv4TransportDescriptor mConfiguration_;
-    uint32_t mSendBufferSize;
     uint32_t mReceiveBufferSize;
     bool mActive;
     RTCPMessageManager* mRTCPMessageManager;
@@ -229,9 +218,8 @@ protected:
     bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
     std::vector<asio::ip::address_v4> mInterfaceWhiteList;
 
-    bool OpenAndBindOutputSockets(Locator_t& locator, SenderResource* senderResource);
-    void OpenAndBindUnicastOutputSocket(Locator_t& locator, SenderResource* senderResource);
-    void OpenAndBindUnicastOutputSocket(Locator_t& locator, std::shared_ptr<MessageReceiver> messageReceiver);
+    bool OpenAndBindOutputSockets(Locator_t& locator);
+    void OpenAndBindUnicastOutputSocket(Locator_t& locator);
     bool EnqueueLogicalOutputPort(Locator_t& locator);
     bool EnqueueLogicalInputPort(const Locator_t& locator);
 

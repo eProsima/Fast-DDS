@@ -181,10 +181,9 @@ bool UDPv6Transport::IsOutputChannelOpen(const Locator_t& locator) const
     return mOutputSockets.find(locator.get_physical_port()) != mOutputSockets.end();
 }
 
-bool UDPv6Transport::OpenOutputChannel(Locator_t& locator, SenderResource*)
+bool UDPv6Transport::OpenOutputChannel(Locator_t& locator)
 {
-    if (IsOutputChannelOpen(locator) ||
-            !IsLocatorSupported(locator))
+    if (!IsLocatorSupported(locator) || IsOutputChannelOpen(locator))
         return false;
 
     return OpenAndBindOutputSockets(locator);
