@@ -43,16 +43,12 @@ class TCPAcceptor
 public:
 	asio::ip::tcp::acceptor mAcceptor;
     Locator_t mLocator;
-	uint32_t mReceiveBufferSize;
     uint32_t mMaxMsgSize;
-    std::function<std::shared_ptr<MessageReceiver>()> mAcceptCallback;
 
-    TCPAcceptor(asio::io_service& io_service, const Locator_t& locator, ReceiverResource* receiverResource,
-        uint32_t receiveBufferSize, uint32_t maxMsgSize);
+    TCPAcceptor(asio::io_service& io_service, const Locator_t& locator, uint32_t maxMsgSize);
 
     ~TCPAcceptor()
     {
-        mAcceptCallback = nullptr;
     }
 	void Accept(TCPv4Transport* parent);
 };
@@ -101,6 +97,7 @@ public:
 
     //! Checks whether there are open and bound sockets for the given port.
     virtual bool IsInputChannelOpen(const Locator_t&) const override;
+    bool IsInputSocketOpen(const Locator_t&) const;
 
     /**
     * Checks whether there are open and bound sockets for the given port.
@@ -191,7 +188,6 @@ protected:
     //! Constructor with no descriptor is necessary for implementations derived from this class.
     TCPv4Transport();
     TCPv4TransportDescriptor mConfiguration_;
-    uint32_t mReceiveBufferSize;
     bool mActive;
     RTCPMessageManager* mRTCPMessageManager;
     std::vector<std::thread*> mThreadPool;
@@ -211,7 +207,7 @@ protected:
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
 
     std::map<uint16_t, std::shared_ptr<TCPAcceptor>> mSocketsAcceptors; // The Key is the "Physical Port"
-    std::map<uint16_t, std::vector<std::shared_ptr<TCPSocketInfo>>> mInputSockets;   // The Key is the "Physical Port"
+    std::map<uint16_t, std::vector<std::shared_ptr<TCPSocketInfo>>> mInputSockets; // The Key is the "Physical Port"
     std::map<Locator_t, ReceiverResource*> mReceiverResources;
 
     bool IsTCPInputSocket(const Locator_t& locator) const;
@@ -223,7 +219,7 @@ protected:
     bool EnqueueLogicalOutputPort(Locator_t& locator);
     bool EnqueueLogicalInputPort(const Locator_t& locator);
 
-    bool OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource, uint32_t maxMsgSize);
+    bool OpenAndBindInputSockets(const Locator_t& locator, uint32_t maxMsgSize);
     void CloseTCPSocket(std::shared_ptr<TCPSocketInfo> socketInfo);
     void ReleaseTCPSocket(std::shared_ptr<TCPSocketInfo> socketInfo);
 

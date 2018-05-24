@@ -44,14 +44,14 @@ bool HelloWorldSubscriber::init(bool tcp)
     initial_peer_locator.kind = kind;
 	initial_peer_locator.set_IP4_address("127.0.0.1");
 	initial_peer_locator.set_port(5100);
-	initial_peer_locator.set_logical_port(7400);
+	initial_peer_locator.set_logical_port(7401);
     PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
     PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
 
 	Locator_t unicast_locator;
 	unicast_locator.kind = kind;
 	unicast_locator.set_IP4_address("127.0.0.1");
-	unicast_locator.set_port(5101);
+	unicast_locator.set_port(5100);
 	unicast_locator.set_logical_port(7411);
 	PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
 /*
@@ -65,7 +65,7 @@ bool HelloWorldSubscriber::init(bool tcp)
 	Locator_t meta_locator;
 	meta_locator.kind = kind;
 	meta_locator.set_IP4_address("127.0.0.1");
-	meta_locator.set_port(5101);
+	meta_locator.set_port(5100);
 	meta_locator.set_logical_port(7401);
 	PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
 
@@ -88,10 +88,6 @@ bool HelloWorldSubscriber::init(bool tcp)
     {
         PParam.rtps.useBuiltinTransports = false;
         descriptor = std::make_shared<TCPv4TransportDescriptor>();
-        /*
-        std::static_pointer_cast<TCPv4TransportDescriptor>(descriptor)->set_WAN_address("127.0.0.1");
-        std::static_pointer_cast<TCPv4TransportDescriptor>(descriptor)->listening_ports.push_back(7400);
-        */
     }
     else
     {

@@ -49,14 +49,11 @@ static asio::ip::address_v4::bytes_type locatorToNative(Locator_t& locator)
         locator.get_IP4_address()[1], locator.get_IP4_address()[2], locator.get_IP4_address()[3]} };
 }
 
-TCPAcceptor::TCPAcceptor(asio::io_service& io_service, const Locator_t& locator, ReceiverResource* receiverResource,
-    uint32_t receiveBufferSize, uint32_t maxMsgSize)
+TCPAcceptor::TCPAcceptor(asio::io_service& io_service, const Locator_t& locator, uint32_t maxMsgSize)
     : mAcceptor(io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), locator.get_physical_port()))
     , mLocator(locator)
-    , mReceiveBufferSize(receiveBufferSize)
     , mMaxMsgSize(maxMsgSize)
 {
-    mAcceptCallback = std::bind(&ReceiverResource::CreateMessageReceiver, receiverResource);
 }
 
 void TCPAcceptor::Accept(TCPv4Transport* parent)
@@ -89,7 +86,6 @@ void TCPConnector::RetryConnect(asio::io_service& io_service, TCPv4Transport* pa
 
 TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor) :
     mConfiguration_(descriptor),
-    mReceiveBufferSize(descriptor.receiveBufferSize),
     mActive(true)
 {
     for (const auto& interface : descriptor.interfaceWhiteList)
@@ -119,8 +115,7 @@ TransportInterface* TCPv4TransportDescriptor::create_transport() const
 }
 
 TCPv4Transport::TCPv4Transport()
-    : mReceiveBufferSize(0)
-    , mActive(true)
+    : mActive(true)
     , mRTCPMessageManager(nullptr)
 {
 }
@@ -210,7 +205,7 @@ bool TCPv4Transport::init()
             if (mConfiguration_.receiveBufferSize < s_minimumSocketBuffer)
             {
                 mConfiguration_.receiveBufferSize = s_minimumSocketBuffer;
-                mReceiveBufferSize = s_minimumSocketBuffer;
+                //mReceiveBufferSize = s_minimumSocketBuffer;
             }
         }
 
@@ -253,6 +248,12 @@ bool TCPv4Transport::init()
 bool TCPv4Transport::IsInputChannelOpen(const Locator_t& locator) const
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+    return IsLocatorSupported(locator) && mReceiverResources.find(locator) != mReceiverResources.end();
+}
+
+bool TCPv4Transport::IsInputSocketOpen(const Locator_t& locator) const
+{
+    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     return IsLocatorSupported(locator) && (mInputSockets.find(locator.get_physical_port()) != mInputSockets.end() ||
         (mSocketsAcceptors.find(locator.get_physical_port()) != mSocketsAcceptors.end()));
 }
@@ -269,7 +270,7 @@ bool TCPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
     {
         for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
         {
-            if ((*it)->m_locator.compare_IP4_address_and_port(locator))
+            if ((*it)->GetLocator().compare_IP4_address_and_port(locator))
             {
                 return true;
             }
@@ -321,7 +322,7 @@ void TCPv4Transport::BindOutputChannel(const Locator_t& locator)
     assert(mBoundOutputSockets.find(locator) == mBoundOutputSockets.end());
     for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
     {
-        if ((*it)->m_locator.compare_IP4_address_and_port(locator))
+        if ((*it)->GetLocator().compare_IP4_address_and_port(locator))
         {
             mBoundOutputSockets[locator] = (*it);
         }
@@ -345,7 +346,7 @@ bool TCPv4Transport::IsOutputChannelConnected(const Locator_t& locator) const
 
     for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
     {
-        if ((*it)->m_locator.compare_IP4_address_and_port(locator))
+        if ((*it)->GetLocator().compare_IP4_address_and_port(locator))
         {
             return true;
         }
@@ -399,13 +400,23 @@ bool TCPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource
         success = IsTCPInputSocket(locator);
         if (success)
         {
-            if (!IsInputChannelOpen(locator))
+            if (!IsInputSocketOpen(locator))
             {
-                success = OpenAndBindInputSockets(locator, receiverResource, maxMsgSize);
+                success = OpenAndBindInputSockets(locator, maxMsgSize);
+                if (success && mReceiverResources.find(locator) == mReceiverResources.end())
+                {
+                    mReceiverResources[locator] = receiverResource;
+                }
+
             }
             else
             {
-                success = EnqueueLogicalInputPort(locator);
+                //TODO: Accept ?
+                EnqueueLogicalInputPort(locator);
+                if (mReceiverResources.find(locator) == mReceiverResources.end())
+                {
+                    mReceiverResources[locator] = receiverResource;
+                }
             }
         }
         else
@@ -445,7 +456,7 @@ bool TCPv4Transport::CloseOutputChannel(const Locator_t& locator)
 
         for (auto it = mOutputSockets.begin(); it != mOutputSockets.end();)
         {
-            if ((*it)->m_locator == locator)
+            if ((*it)->GetLocator() == locator)
             {
                 vDeletedSockets.emplace_back(*it);
                 it = mOutputSockets.erase(it);
@@ -540,7 +551,7 @@ bool TCPv4Transport::EnqueueLogicalOutputPort(Locator_t& locator)
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
     {
-        if ((*it)->m_locator.compare_IP4_address_and_port(locator)
+        if ((*it)->GetLocator().compare_IP4_address_and_port(locator)
                 && std::find((*it)->mLogicalOutputPorts.begin(),
             (*it)->mLogicalOutputPorts.end(), locator.get_logical_port())
                 == (*it)->mLogicalOutputPorts.end()
@@ -561,9 +572,9 @@ bool TCPv4Transport::EnqueueLogicalInputPort(const Locator_t& locator)
     if (mInputSockets.find(locator.get_physical_port()) != mInputSockets.end())
     {
         for (auto it = mInputSockets.at(locator.get_physical_port()).begin();
-                it != mInputSockets.at(locator.get_physical_port()).end(); ++it)
+            it != mInputSockets.at(locator.get_physical_port()).end(); ++it)
         {
-            if ((*it)->m_locator.compare_IP4_address_and_port(locator)
+            if ((*it)->GetLocator().compare_IP4_address_and_port(locator)
                     && std::find((*it)->mLogicalInputPorts.begin(),
                 (*it)->mLogicalInputPorts.end(), locator.get_logical_port())
                     == (*it)->mLogicalOutputPorts.end())
@@ -586,7 +597,7 @@ bool TCPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
     catch (asio::system_error const& e)
     {
         (void)e;
-        logInfo(RTPS_MSG_OUT, "TCPv4 Error binding at port: (" << locator.get_port() << ")" << " with msg: " << e.what());
+        logInfo(RTPS_MSG_OUT,"TCPv4 Error binding at port:(" << locator.get_port() << ")" << " with msg:" << e.what());
         CloseOutputChannel(locator);
         return false;
     }
@@ -594,13 +605,12 @@ bool TCPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
     return true;
 }
 
-bool TCPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource, uint32_t maxMsgSize)
+bool TCPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, uint32_t maxMsgSize)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     try
     {
-        std::shared_ptr<TCPAcceptor> newAcceptor = std::make_shared<TCPAcceptor>(mService,
-            locator, receiverResource, mReceiveBufferSize, maxMsgSize);
+        std::shared_ptr<TCPAcceptor> newAcceptor = std::make_shared<TCPAcceptor>(mService, locator, maxMsgSize);
         mSocketsAcceptors.insert(std::make_pair(locator.get_physical_port(), newAcceptor));
         std::cout << "[RTCP] OpenAndBindInput (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")" << std::endl;
         newAcceptor->Accept(this);
@@ -677,7 +687,7 @@ void TCPv4Transport::performListenOperation(std::shared_ptr<TCPSocketInfo> pSock
         if (receiver != nullptr)
         {
             receiver->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix,
-                &pSocketInfo->m_locator, &pSocketInfo->GetMessageBuffer());
+                &pSocketInfo->mLocator, &msg);
         }
     }
     pSocketInfo = nullptr;
@@ -688,11 +698,7 @@ void TCPv4Transport::OpenAndBindUnicastOutputSocket(Locator_t& locator)
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     if (mActive)
     {
-        std::string sIp = "" + locator.get_Address()[0];
-        sIp += "." + locator.get_Address()[1];
-        sIp += "." + locator.get_Address()[2];
-            sIp += "." + locator.get_Address()[3];
-        asio::ip::address_v4 ip = asio::ip::make_address_v4(sIp);
+        asio::ip::address_v4 ip = asio::ip::make_address_v4(locator.to_IP4_string());
         if (IsInterfaceAllowed(ip))
         {
             TCPConnector* newConnector = new TCPConnector(mService, locator);
@@ -789,7 +795,6 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
 bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* receiveBuffer,
     uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize, uint16_t& logicalPort)
 {
-    Semaphore receiveSemaphore(0);
     bool success = false;
 
     { // lock scope
@@ -863,17 +868,14 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
                 CloseTCPSocket(socketInfo);
             }
         }
-        receiveSemaphore.post();
     }
-    receiveSemaphore.wait();
     success = success && receiveBufferSize > 0;
 
     if (!success)
     {
-        uint16_t port = socketInfo->GetPhysicalPort();
-        if (mInputSockets.find(port) != mInputSockets.end())
+        if (mInputSockets.find(socketInfo->GetLocator().get_physical_port()) != mInputSockets.end())
         {
-            auto& sockets = mInputSockets.at(port);
+            auto& sockets = mInputSockets.at(socketInfo->GetLocator().get_physical_port());
             for (auto it = sockets.begin(); it != sockets.end();)
             {
                 if (!(*it)->IsAlive())
@@ -938,9 +940,9 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
             // Close the channel
             std::cout << "[RTCP] Sent [FAILED]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << " ERROR=" << errorCode << std::endl;
             socket->Disable();
-            Locator_t prevLocator = socket->m_locator;
 
-            CloseOutputChannel(socket->m_locator);
+            Locator_t prevLocator = socket->GetLocator();
+            CloseOutputChannel(prevLocator);
 
             //TODO: //ARCE:
             // Create a new connector to retry the connection.
@@ -1046,6 +1048,17 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             socketInfo->SetThread(new std::thread(&TCPv4Transport::performListenOperation, this, socketInfo));
             socketInfo->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, socketInfo));
             socketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eWaitingForBind);
+
+            // Create one message receiver for each registered receiver resources.
+            for (auto it = mReceiverResources.begin(); it != mReceiverResources.end(); ++it)
+            {
+                if (it->first.compare_IP4_address_and_port(acceptor->mLocator) &&
+                    socketInfo->GetMessageReceiver(it->first.get_logical_port()) == nullptr)
+                {
+                    socketInfo->AddMessageReceiver(acceptor->mLocator.get_logical_port(), it->second->CreateMessageReceiver());
+                }
+            }
+
             mInputSockets[acceptor->mLocator.get_physical_port()].emplace_back(socketInfo);
 
             std::cout << "[RTCP] Accepted connection (physical: " << acceptor->mLocator.get_physical_port() << ")" << std::endl;
@@ -1142,12 +1155,12 @@ void TCPv4Transport::CloseTCPSocket(std::shared_ptr<TCPSocketInfo> socketInfo)
 {
     if (socketInfo->GetIsInputSocket())
     {
-        CloseInputChannel(socketInfo->m_locator);
+        CloseInputChannel(socketInfo->GetLocator());
     }
     else
     {
-        Locator_t prevLocator = socketInfo->m_locator;
-        CloseOutputChannel(socketInfo->m_locator);
+        Locator_t prevLocator = socketInfo->GetLocator();
+        CloseOutputChannel(prevLocator);
 
         //TODO: //ARCE:
         // Create a new connector to retry the connection.

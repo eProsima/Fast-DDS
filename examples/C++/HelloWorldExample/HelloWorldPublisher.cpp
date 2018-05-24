@@ -46,12 +46,13 @@ bool HelloWorldPublisher::init(bool tcp)
 
 	// TCP CONNECTION PEER.
     uint32_t kind = (tcp) ? LOCATOR_KIND_TCPv4 : LOCATOR_KIND_UDPv4;
-	//Locator_t initial_peer_locator;
-    //initial_peer_locator.kind = kind;
-    //initial_peer_locator.set_IP4_address("127.0.0.1");
-    //initial_peer_locator.port = 7402;
-    //PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
-    //PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
+	Locator_t initial_peer_locator;
+    initial_peer_locator.kind = kind;
+    initial_peer_locator.set_IP4_address("127.0.0.1");
+    initial_peer_locator.set_port(5100);
+    initial_peer_locator.set_logical_port(7400);
+    PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
+    PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
 
     Locator_t unicast_locator;
     unicast_locator.kind = kind;
@@ -64,7 +65,7 @@ bool HelloWorldPublisher::init(bool tcp)
 	meta_locator.kind = kind;
 	meta_locator.set_IP4_address("127.0.0.1");
     meta_locator.set_port(5100);
-	meta_locator.set_logical_port(7400);
+	meta_locator.set_logical_port(7401);
 	PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
 
     PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
@@ -79,16 +80,20 @@ bool HelloWorldPublisher::init(bool tcp)
     PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5,0);
     PParam.rtps.setName("Participant_pub");
 
-    std::shared_ptr<TransportDescriptorInterface> descriptor;
     if (tcp)
     {
         PParam.rtps.useBuiltinTransports = false;
-        descriptor = std::make_shared<TCPv4TransportDescriptor>();
+        TCPv4TransportDescriptor* test2 = new TCPv4TransportDescriptor();
+        test2->add_listener_port(5100);
+
+        std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
         descriptor->sendBufferSize = 0;
         descriptor->receiveBufferSize = 0;
-        std::shared_ptr<TCPv4TransportDescriptor> tcp = std::dynamic_pointer_cast<TCPv4TransportDescriptor>(descriptor);
-        tcp->set_WAN_address("127.0.0.1");
-        tcp->add_listener_port(5100);
+        descriptor->set_WAN_address("127.0.0.1");
+        //descriptor->listening_ports.emplace_back(5100);
+        descriptor->add_listener_port(5100);
+        //descriptor->keep_alive_frequency_ms = 100000;
+        //descriptor->keep_alive_timeout_ms = 10000;
         PParam.rtps.userTransports.push_back(descriptor);
     }
     else
@@ -181,6 +186,7 @@ bool HelloWorldPublisher::publish(bool waitForListener)
     {
         m_Hello.index(m_Hello.index()+1);
         mp_publisher->write((void*)&m_Hello);
+        eClock::my_sleep(10000);
         return true;
     }
     return false;

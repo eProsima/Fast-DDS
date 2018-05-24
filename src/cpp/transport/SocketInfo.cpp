@@ -77,7 +77,7 @@ UDPSocketInfo::~UDPSocketInfo()
 
 TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket,
     bool autoRelease)
-    : m_locator(locator)
+    : mLocator(locator)
     , m_physicalPort(0)
     , m_inputSocket(inputSocket)
     , mWaitingForKeepAlive(false)
@@ -103,7 +103,7 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
 TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket,
     bool autoRelease, uint32_t maxMsgSize)
     : SocketInfo(maxMsgSize)
-    , m_locator(locator)
+    , mLocator(locator)
     , m_physicalPort(0)
     , m_inputSocket(inputSocket)
     , mWaitingForKeepAlive(false)
@@ -127,7 +127,7 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
 }
 
 TCPSocketInfo::TCPSocketInfo(TCPSocketInfo&& socketInfo)
-    : m_locator(socketInfo.m_locator)
+    : mLocator(socketInfo.mLocator)
     , m_physicalPort(socketInfo.m_physicalPort)
     , m_inputSocket(socketInfo.m_inputSocket)
     , mWaitingForKeepAlive(socketInfo.m_inputSocket)

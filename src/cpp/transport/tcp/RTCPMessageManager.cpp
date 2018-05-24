@@ -248,7 +248,7 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
 void RTCPMessageManager::sendConnectionRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo)
 {
     ConnectionRequest_t request;
-    request.transportLocator(pSocketInfo->m_locator);
+    request.transportLocator(pSocketInfo->mLocator);
 
     sendData(pSocketInfo, BIND_CONNECTION_REQUEST, getTransactionId(), (octet*)&request,
         static_cast<uint32_t>(request.GetSize()));
@@ -294,7 +294,7 @@ void RTCPMessageManager::sendKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pS
 void RTCPMessageManager::sendKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo)
 {
     KeepAliveRequest_t request;
-    request.locator(pSocketInfo->m_locator);
+    request.locator(pSocketInfo->GetLocator());
     sendKeepAliveRequest(pSocketInfo, request);
 }
 
@@ -386,7 +386,7 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(std::shared_ptr<TCPSock
 void RTCPMessageManager::processKeepAliveRequest(std::shared_ptr<TCPSocketInfo> &pSocketInfo,
         const KeepAliveRequest_t &request, const TCPTransactionId &transactionId)
 {
-    if (pSocketInfo->m_locator.get_logical_port() == request.locator().get_logical_port())
+    if (pSocketInfo->GetLocator().get_logical_port() == request.locator().get_logical_port())
     {
         sendData(pSocketInfo, KEEP_ALIVE_RESPONSE, transactionId, RETCODE_OK);
     }
