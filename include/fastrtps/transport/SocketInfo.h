@@ -93,6 +93,7 @@ class SocketInfo
 {
 public:
     SocketInfo();
+    SocketInfo(SocketInfo&& socketInfo);
     SocketInfo(uint32_t rec_buffer_size);
     virtual ~SocketInfo();
 

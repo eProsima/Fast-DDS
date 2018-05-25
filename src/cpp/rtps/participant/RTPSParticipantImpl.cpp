@@ -302,13 +302,13 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     LocatorList_t defcopy = m_att.defaultOutLocatorList;
     for (auto it = defcopy.begin(); it != defcopy.end(); ++it){
         /* Try to build resources with that specific Locator*/
-        newSendersBuffer = m_network_Factory.BuildSenderResources((*it), this);
+        newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
         uint32_t tries = 100;
         while(newSendersBuffer.empty() && tries != 0)
         {
             //No ReceiverResources have been added, therefore we have to change the Locator
             (*it) = applyLocatorAdaptRule(*it); //Mutate the Locator to find a suitable rule. Overwrite the old one as it is useless now.
-            newSendersBuffer = m_network_Factory.BuildSenderResources((*it), this);
+            newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
             --tries;
         }
         //Now we DO have resources, and the new locator is already replacing the old one.
@@ -872,7 +872,7 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend)
     }
     //Output locators have been specified, create them
     for (auto it = pend->m_att.outLocatorList.begin(); it != pend->m_att.outLocatorList.end(); ++it){
-        SendersBuffer = m_network_Factory.BuildSenderResources((*it), this);
+        SendersBuffer = m_network_Factory.BuildSenderResources((*it));
         for(auto mit = SendersBuffer.begin(); mit!= SendersBuffer.end(); ++mit){
             newSenders.push_back(std::move(*mit));
         }

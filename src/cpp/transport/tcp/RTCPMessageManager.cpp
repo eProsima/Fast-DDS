@@ -386,17 +386,14 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(std::shared_ptr<TCPSock
     //for (uint16_t port : request.logicalPortsRange())
     for (size_t i = 0; i < request.logicalPortsRange().size(); ++i)
     {
-        std::cout << "#### A " << std::endl;
         uint16_t port = request.logicalPortsRange()[i];
         /*
         if (std::find(pSocketInfo->mLogicalInputPorts.begin(),
                 pSocketInfo->mLogicalInputPorts.end(), port)
                 != pSocketInfo->mLogicalInputPorts.end())
         */
-        std::cout << "#### B " << std::endl;
         for (uint16_t opened_port : pSocketInfo->mLogicalInputPorts)
         {
-            std::cout << "[RTCP] CheckOpenedLogicalPort: " << port << ":" << opened_port << std::endl;
             if (opened_port == port)
             {
                 std::cout << "[RTCP] FoundOpenedLogicalPort: " << port << std::endl;
@@ -407,7 +404,8 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(std::shared_ptr<TCPSock
 
     SerializedPayload_t payload(CheckLogicalPortsResponse_t::getCdrSerializedSize(response));
     response.serialize(&payload);
-
+    std::cout << "[RTCP] INFO: " << payload.length << std::endl;
+    std::cout << "[RTCP] INFO: " << response.availableLogicalPorts().size() << std::endl;
     sendData(pSocketInfo, CHECK_LOGICAL_PORT_RESPONSE, transactionId, payload.data, payload.length, RETCODE_OK);
 }
 
@@ -506,7 +504,7 @@ void RTCPMessageManager::prepareAndSendCheckLogicalPortsRequest(std::shared_ptr<
              * transport->mConfiguration_.logical_port_increment);
         p += transport->mConfiguration_.logical_port_increment)
     {
-        if (p <= transport->mConfiguration_.max_logical_port)
+        if (p <= pSocketInfo->mNegotiatingLogicalPort + transport->mConfiguration_.max_logical_port)
         {
             ports.emplace_back(p);
         }
@@ -697,7 +695,7 @@ void RTCPMessageManager::processRTCPMessage(std::shared_ptr<TCPSocketInfo> socke
         SerializedPayload_t payload(controlHeader.length - TCPControlMsgHeader::getSize());
         memcpy(&respCode, &(receiveBuffer[TCPControlMsgHeader::getSize()]), 4); // uint32_t
         //memcpy(&response, &(receiveBuffer[TCPControlMsgHeader::getSize() + 4]), controlHeader.length - TCPControlMsgHeader::getSize());
-        payload.data = &(receiveBuffer[TCPControlMsgHeader::getSize()]);
+        payload.data = &(receiveBuffer[TCPControlMsgHeader::getSize() + 4]);
         payload.length = controlHeader.length - TCPControlMsgHeader::getSize();
         response.deserialize(&payload);
         processCheckLogicalPortsResponse(socketInfo, response, controlHeader.transactionId);

@@ -29,7 +29,7 @@ NetworkFactory::NetworkFactory() : maxMessageSizeBetweenTransports_(0),
 {
 }
 
-vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local, RTPSParticipantImpl* participant)
+vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local)
 {
     vector<SenderResource> newSenderResources;
 
