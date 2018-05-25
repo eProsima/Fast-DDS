@@ -235,14 +235,14 @@ public:
         return getSocketPtr(mSocket);
     }
 
-    std::recursive_mutex& GetReadMutex() const
+    std::recursive_mutex* GetReadMutex() const
     {
-        return *mReadMutex;
+        return mReadMutex;
     }
 
-    std::recursive_mutex& GetWriteMutex() const
+    std::recursive_mutex* GetWriteMutex() const
     {
-        return *mWriteMutex;
+        return mWriteMutex;
     }
 
     inline void SetRTCPThread(std::thread* pThread)
@@ -304,8 +304,8 @@ private:
     std::vector<uint16_t> mPendingLogicalOutputPorts;
     std::vector<uint16_t> mLogicalOutputPorts;
     std::vector<uint16_t> mLogicalInputPorts;
-    std::shared_ptr<std::recursive_mutex> mReadMutex;
-    std::shared_ptr<std::recursive_mutex> mWriteMutex;
+    std::recursive_mutex* mReadMutex;
+    std::recursive_mutex* mWriteMutex;
     std::map<uint16_t, MessageReceiver*> mReceiversMap;  // The key is the logical port.
     eProsimaTCPSocket mSocket;
     eConnectionStatus mConnectionStatus;

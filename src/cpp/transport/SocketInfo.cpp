@@ -88,8 +88,8 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
     , mConnectionStatus(eConnectionStatus::eDisconnected)
 {
     mAutoRelease = autoRelease;
-    mReadMutex = std::make_shared<std::recursive_mutex>();
-    mWriteMutex = std::make_shared<std::recursive_mutex>();
+    mReadMutex = new std::recursive_mutex();
+    mWriteMutex = new std::recursive_mutex();
     if (outputLocator)
     {
         mPendingLogicalOutputPorts.emplace_back(locator.get_logical_port());
@@ -114,8 +114,8 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
     , mConnectionStatus(eConnectionStatus::eDisconnected)
 {
     mAutoRelease = autoRelease;
-    mReadMutex = std::make_shared<std::recursive_mutex>();
-    mWriteMutex = std::make_shared<std::recursive_mutex>();
+    mReadMutex = new std::recursive_mutex();
+    mWriteMutex = new std::recursive_mutex();
     if (outputLocator)
     {
         mPendingLogicalOutputPorts.emplace_back(locator.get_logical_port());
@@ -139,6 +139,8 @@ TCPSocketInfo::TCPSocketInfo(TCPSocketInfo&& socketInfo)
     , mSocket(moveSocket(socketInfo.mSocket))
     , mConnectionStatus(socketInfo.mConnectionStatus)
 {
+    socketInfo.mReadMutex = nullptr;
+    socketInfo.mWriteMutex = nullptr;
 }
 
 TCPSocketInfo::~TCPSocketInfo()
@@ -160,9 +162,20 @@ TCPSocketInfo::~TCPSocketInfo()
     for (auto it = mReceiversMap.begin(); it != mReceiversMap.end(); ++it)
     {
         if (it->second != nullptr)
+        {
             delete(it->second);
+        }
     }
     mReceiversMap.clear();
+
+    if (mReadMutex != nullptr)
+    {
+        delete mReadMutex;
+    }
+    if (mWriteMutex != nullptr)
+    {
+        delete mWriteMutex;
+    }
 }
 
 std::thread* TCPSocketInfo::ReleaseRTCPThread()

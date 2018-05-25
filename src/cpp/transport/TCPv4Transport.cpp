@@ -778,14 +778,16 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
 
         bool success = false;
-        std::unique_lock<std::recursive_mutex> sendLock(socket->GetWriteMutex());
-        success |= SendThroughSocket(msg.buffer, msg.length, remoteLocator, socket);
+        {
+            std::unique_lock<std::recursive_mutex> sendLock(*socket->GetWriteMutex());
+            success |= SendThroughSocket(msg.buffer, msg.length, remoteLocator, socket);
+        }
 
         return success;
     }
     else
     {
-        eClock::my_sleep(1000);
+        eClock::my_sleep(100);
         return false;
     }
     return true;
@@ -803,7 +805,7 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
     bool success = false;
 
     { // lock scope
-        std::unique_lock<std::recursive_mutex> scopedLock(socketInfo->GetReadMutex());
+        std::unique_lock<std::recursive_mutex> scopedLock(*socketInfo->GetReadMutex());
         if (!socketInfo->IsAlive())
         {
             success = false;
@@ -1120,7 +1122,7 @@ size_t TCPv4Transport::Send(std::shared_ptr<TCPSocketInfo> socketInfo, const oct
     size_t bytesSent = 0;
     try
     {
-        std::unique_lock<std::recursive_mutex> scopedLock(socketInfo->GetWriteMutex());
+        std::unique_lock<std::recursive_mutex> scopedLock(*socketInfo->GetWriteMutex());
         bytesSent = socketInfo->getSocket()->send(asio::buffer(data, size));
         errorCode = eSocketErrorCodes::eNoError;
     }
