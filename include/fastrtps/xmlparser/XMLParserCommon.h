@@ -98,6 +98,8 @@ extern const char* ADDRESS;
 extern const char* RESERVED;
 extern const char* UDPv4;
 extern const char* UDPv6;
+extern const char* TCPv4;
+extern const char* TCPv6;
 extern const char* INIT_ACKNACK_DELAY;
 extern const char* HEARTB_RESP_DELAY;
 extern const char* INIT_HEARTB_DELAY;
