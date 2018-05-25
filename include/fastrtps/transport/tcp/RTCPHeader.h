@@ -2,8 +2,13 @@
 #ifndef RTCP_HEADER_H
 #define RTCP_HEADER_H
 
+#include <fastrtps/TopicDataType.h>
 #include <fastrtps/rtps/common/Types.h>
 #include <cstring>
+#include <fastcdr/FastCdr.h>
+#include <fastcdr/Cdr.h>
+
+#include <fastcdr/exceptions/BadParamException.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -30,8 +35,137 @@ struct TCPHeader
     {
         return (const octet*)this;
     }
+    
+    /*!
+     * @brief This function returns the maximum serialized size of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0)
+    {
+        size_t initial_alignment = current_alignment;
+                
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
-    static inline size_t GetSize() { return 14; }
+        return current_alignment - initial_alignment;
+    }
+
+    /*!
+     * @brief This function returns the serialized size of a data depending on the buffer alignment.
+     * @param data Data which is calculated its serialized size.
+     * @param current_alignment Buffer alignment.
+     * @return Serialized size.
+     */
+    static size_t getCdrSerializedSize(const TCPHeader&, size_t current_alignment = 0)
+    {
+        return TCPHeader::getMaxCdrSerializedSize(current_alignment);
+    }
+
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    void serialize(eprosima::fastcdr::Cdr &cdr) const
+    {
+        for (int i = 0; i < 4; ++i)
+        {
+            cdr << rtcp[i];
+        }
+        cdr << length;
+        cdr << crc;
+        cdr << logicalPort;        
+    }
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    void deserialize(eprosima::fastcdr::Cdr &cdr)
+    {
+        char temp[4];
+        for (int i = 0; i < 4; ++i)
+        {
+            cdr >> temp[i];
+        }
+        memcpy((char*)rtcp, temp, 4);
+        cdr >> length;
+        cdr >> crc;
+        cdr >> logicalPort;   
+    }
+
+
+
+    /*!
+     * @brief This function returns the maximum serialized size of the Key of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0)
+    {
+        return current_alignment;
+    }
+
+    /*!
+     * @brief This function tells you if the Key has been defined for this type
+     */
+    static bool isKeyDefined() { return false; }
+
+    /*!
+     * @brief This function serializes the key members of an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    void serializeKey(eprosima::fastcdr::Cdr &) const {}
+
+    bool serialize(SerializedPayload_t *payload)
+    {
+        TCPHeader *p_type = this;
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
+
+        try
+        {
+            p_type->serialize(ser); // Serialize the object:
+        }
+        catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+        {
+            return false;
+        }
+
+        payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        return true;
+    }
+
+    bool deserialize(SerializedPayload_t *payload)
+    {
+        TCPHeader* p_type = this; 	//Convert DATA to pointer of your type
+        eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+        try
+        {
+            p_type->deserialize(deser); //Deserialize the object:
+        }
+        catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+        {
+            return false;
+        }
+
+        return true;
+    }
 };
 
 union TCPTransactionId
@@ -169,11 +303,6 @@ struct TCPControlMsgHeader
     uint16_t length; // 2 bytes
     TCPTransactionId transactionId; // 12 bytes
 
-    static inline size_t GetSize()
-    {
-        return 16;
-    }
-
     void setFlags(bool endianess, bool hasPayload, bool requiresResponse)
     {
         octet e = (endianess) ? BIT(1) : 0x00;
@@ -232,6 +361,135 @@ struct TCPControlMsgHeader
     bool getRequiresResponse()
     {
         return (flags & BIT(3)) != 0;
+    }
+    
+    /*!
+     * @brief This function returns the maximum serialized size of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0)
+    {
+        size_t initial_alignment = current_alignment;
+                
+        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+        current_alignment += 12 + eprosima::fastcdr::Cdr::alignment(current_alignment, 12);
+
+        return current_alignment - initial_alignment;
+    }
+
+    /*!
+     * @brief This function returns the serialized size of a data depending on the buffer alignment.
+     * @param data Data which is calculated its serialized size.
+     * @param current_alignment Buffer alignment.
+     * @return Serialized size.
+     */
+    static size_t getCdrSerializedSize(const TCPControlMsgHeader&, size_t current_alignment = 0)
+    {
+        return TCPControlMsgHeader::getMaxCdrSerializedSize(current_alignment);
+    }
+
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    void serialize(eprosima::fastcdr::Cdr &cdr) const
+    {
+        cdr << (octet)kind;
+        cdr << flags;
+        cdr << length;     
+        for (int i = 0; i < 12; ++i)
+        {
+            cdr << transactionId.octets[i];
+        }   
+    }
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    void deserialize(eprosima::fastcdr::Cdr &cdr)
+    {
+        cdr >> *((octet*)&kind);
+        cdr >> flags;
+        cdr >> length;     
+        for (int i = 0; i < 12; ++i)
+        {
+            cdr >> transactionId.octets[i];
+        }     
+    }
+
+
+
+    /*!
+     * @brief This function returns the maximum serialized size of the Key of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0)
+    {
+        return current_alignment;
+    }
+
+    /*!
+     * @brief This function tells you if the Key has been defined for this type
+     */
+    static bool isKeyDefined() { return false; }
+
+    /*!
+     * @brief This function serializes the key members of an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    void serializeKey(eprosima::fastcdr::Cdr &) const {}
+
+    bool serialize(SerializedPayload_t *payload)
+    {
+        TCPControlMsgHeader *p_type = this;
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
+
+        try
+        {
+            p_type->serialize(ser); // Serialize the object:
+        }
+        catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+        {
+            return false;
+        }
+
+        payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        return true;
+    }
+
+    bool deserialize(SerializedPayload_t *payload)
+    {
+        TCPControlMsgHeader* p_type = this; 	//Convert DATA to pointer of your type
+        eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+        try
+        {
+            p_type->deserialize(deser); //Deserialize the object:
+        }
+        catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+        {
+            return false;
+        }
+
+        return true;
     }
 };
 

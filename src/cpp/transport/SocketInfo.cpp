@@ -192,7 +192,7 @@ bool TCPSocketInfo::AddMessageReceiver(uint16_t logicalPort, MessageReceiver* re
         mReceiversMap[logicalPort] = receiver;
         return true;
     }
-    return nullptr;
+    return false;
 }
 
 MessageReceiver* TCPSocketInfo::GetMessageReceiver(uint16_t logicalPort)
