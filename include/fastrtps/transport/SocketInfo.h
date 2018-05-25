@@ -173,19 +173,19 @@ public:
         return getSocketPtr(socket_);
     }
 
-    inline void SetMessageReceiver(std::shared_ptr<MessageReceiver> receiver)
+    inline void SetMessageReceiver(MessageReceiver* receiver)
     {
         mMsgReceiver = receiver;
     }
 
-    inline std::shared_ptr<MessageReceiver> GetMessageReceiver()
+    inline MessageReceiver* GetMessageReceiver()
     {
         return mMsgReceiver;
     }
 
 private:
 
-    std::shared_ptr<MessageReceiver> mMsgReceiver; //Associated Readers/Writers inside of MessageReceiver
+    MessageReceiver* mMsgReceiver; //Associated Readers/Writers inside of MessageReceiver
     eProsimaUDPSocket socket_;
     bool only_multicast_purpose_;
     UDPSocketInfo(const UDPSocketInfo&) = delete;
@@ -277,9 +277,9 @@ public:
         return mConnectionStatus == eConnectionStatus::eEstablished;
     }
 
-    bool AddMessageReceiver(uint16_t logicalPort, std::shared_ptr<MessageReceiver> receiver);
+    bool AddMessageReceiver(uint16_t logicalPort, MessageReceiver* receiver);
 
-    std::shared_ptr<MessageReceiver> GetMessageReceiver(uint16_t logicalPort);
+    MessageReceiver* GetMessageReceiver(uint16_t logicalPort);
 
     inline const Locator_t& GetLocator() const
     {
@@ -306,7 +306,7 @@ private:
     std::vector<uint16_t> mLogicalInputPorts;
     std::shared_ptr<std::recursive_mutex> mReadMutex;
     std::shared_ptr<std::recursive_mutex> mWriteMutex;
-    std::map<uint16_t, std::shared_ptr<MessageReceiver>> mReceiversMap;  // The key is the logical port.
+    std::map<uint16_t, MessageReceiver*> mReceiversMap;  // The key is the logical port.
     eProsimaTCPSocket mSocket;
     eConnectionStatus mConnectionStatus;
     TCPSocketInfo(const TCPSocketInfo&) = delete;

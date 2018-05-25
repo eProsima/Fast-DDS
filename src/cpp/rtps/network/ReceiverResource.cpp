@@ -55,9 +55,9 @@ ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
    LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
 }
 
-std::shared_ptr<MessageReceiver> ReceiverResource::CreateMessageReceiver()
+MessageReceiver* ReceiverResource::CreateMessageReceiver()
 {
-    std::shared_ptr<MessageReceiver> newMsgReceiver = std::make_shared<MessageReceiver>(m_participant, this);
+    MessageReceiver* newMsgReceiver = new MessageReceiver(m_participant, this);
     newMsgReceiver->init(m_maxMsgSize);
     return newMsgReceiver;
 }

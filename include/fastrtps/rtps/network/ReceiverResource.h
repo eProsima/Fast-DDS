@@ -77,7 +77,7 @@ public:
    ReceiverResource(ReceiverResource&&);
    ~ReceiverResource();
 
-   std::shared_ptr<MessageReceiver> CreateMessageReceiver();
+   MessageReceiver* CreateMessageReceiver();
 
    // Functions to associate/remove associatedendpoints
    void associateEndpoint(Endpoint *to_add);

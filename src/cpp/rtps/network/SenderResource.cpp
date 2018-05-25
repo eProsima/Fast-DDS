@@ -20,8 +20,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-SenderResource::SenderResource(RTPSParticipantImpl* participant, TransportInterface& transport, Locator_t& locator)
-    : m_participant(participant)
+SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator)
 {
    // Internal channel is opened and assigned to this resource.
    mValid = transport.OpenOutputChannel(locator);
@@ -36,13 +35,6 @@ SenderResource::SenderResource(RTPSParticipantImpl* participant, TransportInterf
                                  { return transport.DoLocatorsMatch(locator, locatorToCheck); };
    ManagedChannelMapsToRemote = [&transport, locator](const Locator_t& locatorToCheck) -> bool
                                  { return transport.DoLocatorsMatch(locator, transport.RemoteToMainLocal(locatorToCheck)); };
-}
-
-std::shared_ptr<MessageReceiver> SenderResource::CreateMessageReceiver(uint32_t msgSize)
-{
-    std::shared_ptr<MessageReceiver> newMsgReceiver = std::make_shared<MessageReceiver>(m_participant, nullptr);
-    newMsgReceiver->init(msgSize);
-    return newMsgReceiver;
 }
 
 bool SenderResource::Send(const octet* data, uint32_t dataLength, const Locator_t& destinationLocator)
