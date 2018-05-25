@@ -53,13 +53,8 @@ bool RTCPMessageManager::sendData(std::shared_ptr<TCPSocketInfo> pSocketInfo,
 
     fillHeaders(kind, transactionId, ctrlHeader, header, data, &size);
 
-    SerializedPayload_t headerPayload(TCPHeader::getMaxCdrSerializedSize());
-    SerializedPayload_t ctrlHeaderPayload(TCPControlMsgHeader::getMaxCdrSerializedSize());
-    header.serialize(&headerPayload);
-    ctrlHeader.serialize(&ctrlHeaderPayload);
-
-    RTPSMessageCreator::addCustomContent(&msg, headerPayload.data, headerPayload.length);
-    RTPSMessageCreator::addCustomContent(&msg, ctrlHeaderPayload.data, ctrlHeaderPayload.length);
+    RTPSMessageCreator::addCustomContent(&msg, (octet*)&header, TCPHeader::getSize());
+    RTPSMessageCreator::addCustomContent(&msg, (octet*)&ctrlHeader, TCPControlMsgHeader::getSize());
     RTPSMessageCreator::addCustomContent(&msg, data, size);
 
     return transport->Send(pSocketInfo, msg.buffer, msg.length) > 0;
@@ -77,13 +72,8 @@ bool RTCPMessageManager::sendData(std::shared_ptr<TCPSocketInfo> pSocketInfo,
 
     fillHeaders(kind, transactionId, ctrlHeader, header, data, &size, &respCode);
 
-    SerializedPayload_t headerPayload(TCPHeader::getMaxCdrSerializedSize());
-    SerializedPayload_t ctrlHeaderPayload(TCPControlMsgHeader::getMaxCdrSerializedSize());
-    header.serialize(&headerPayload);
-    ctrlHeader.serialize(&ctrlHeaderPayload);
-
-    RTPSMessageCreator::addCustomContent(&msg, headerPayload.data, headerPayload.length);
-    RTPSMessageCreator::addCustomContent(&msg, ctrlHeaderPayload.data, ctrlHeaderPayload.length);
+    RTPSMessageCreator::addCustomContent(&msg, (octet*)&header, TCPHeader::getSize());
+    RTPSMessageCreator::addCustomContent(&msg, (octet*)&ctrlHeader, TCPControlMsgHeader::getSize());
     RTPSMessageCreator::addCustomContent(&msg, (octet*)(&respCode), 4); // uint32_t
     RTPSMessageCreator::addCustomContent(&msg, data, size);
 
@@ -101,13 +91,8 @@ bool RTCPMessageManager::sendData(std::shared_ptr<TCPSocketInfo> pSocketInfo,
 
     fillHeaders(kind, transactionId, ctrlHeader, header, nullptr, nullptr, &respCode);
 
-    SerializedPayload_t headerPayload(TCPHeader::getMaxCdrSerializedSize());
-    SerializedPayload_t ctrlHeaderPayload(TCPControlMsgHeader::getMaxCdrSerializedSize());
-    header.serialize(&headerPayload);
-    ctrlHeader.serialize(&ctrlHeaderPayload);
-
-    RTPSMessageCreator::addCustomContent(&msg, headerPayload.data, headerPayload.length);
-    RTPSMessageCreator::addCustomContent(&msg, ctrlHeaderPayload.data, ctrlHeaderPayload.length);
+    RTPSMessageCreator::addCustomContent(&msg, (octet*)&header, TCPHeader::getSize());
+    RTPSMessageCreator::addCustomContent(&msg, (octet*)&ctrlHeader, TCPControlMsgHeader::getSize());
     RTPSMessageCreator::addCustomContent(&msg, (octet*)(&respCode), 4); // uint32_t
 
     return transport->Send(pSocketInfo, msg.buffer, msg.length) > 0;
@@ -124,13 +109,8 @@ bool RTCPMessageManager::sendData(std::shared_ptr<TCPSocketInfo> pSocketInfo,
 
     fillHeaders(kind, transactionId, ctrlHeader, header);
 
-    SerializedPayload_t headerPayload(TCPHeader::getMaxCdrSerializedSize());
-    SerializedPayload_t ctrlHeaderPayload(TCPControlMsgHeader::getMaxCdrSerializedSize());
-    header.serialize(&headerPayload);
-    ctrlHeader.serialize(&ctrlHeaderPayload);
-
-    RTPSMessageCreator::addCustomContent(&msg, headerPayload.data, headerPayload.length);
-    RTPSMessageCreator::addCustomContent(&msg, ctrlHeaderPayload.data, ctrlHeaderPayload.length);
+    RTPSMessageCreator::addCustomContent(&msg, (octet*)&header, TCPHeader::getSize());
+    RTPSMessageCreator::addCustomContent(&msg, (octet*)&ctrlHeader, TCPControlMsgHeader::getSize());
 
     return transport->Send(pSocketInfo, msg.buffer, msg.length) > 0;
     //return pSocketInfo->getSocket()->write_some(asio::buffer(msg.buffer, msg.length)) > 0;
@@ -175,7 +155,7 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
         const size_t *size,  const ResponseCode *respCode)
 {
     retCtrlHeader.kind = kind;
-    retCtrlHeader.length = static_cast<uint16_t>(TCPControlMsgHeader::getMaxCdrSerializedSize());
+    retCtrlHeader.length = static_cast<uint16_t>(TCPControlMsgHeader::getSize());
     retCtrlHeader.length += static_cast<uint16_t>((size != nullptr) ? *size : 0);
     retCtrlHeader.length += static_cast<uint16_t>((respCode != nullptr) ? 4 : 0);
     retCtrlHeader.transactionId = transactionId;
@@ -203,12 +183,12 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
 
     retCtrlHeader.setEndianess(DEFAULT_ENDIAN); // Override "false" endianess set on the switch
     header.logicalPort = 0; // This is a control message
-    header.length = static_cast<uint32_t>(retCtrlHeader.length + TCPHeader::getKeyMaxCdrSerializedSize());
+    header.length = static_cast<uint32_t>(retCtrlHeader.length + TCPHeader::getSize());
 
     // Finally, calculate the CRC
     octet* it = (octet*)&retCtrlHeader;
     uint32_t crc = 0;
-    for (size_t i = 0; i < TCPControlMsgHeader::getMaxCdrSerializedSize(); ++i)
+    for (size_t i = 0; i < TCPControlMsgHeader::getSize(); ++i)
     {
         crc = addToCRC(crc, it[i]);
     }
@@ -233,34 +213,34 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
     switch(kind)
     {
         case BIND_CONNECTION_REQUEST:
-            std::cout << "[RTCP] Send [BIND_CONNECTION_REQUEST]" << std::endl;
+            std::cout << "[RTCP] Send [BIND_CONNECTION_REQUEST] " << retCtrlHeader.transactionId << std::endl;
             break;
         case OPEN_LOGICAL_PORT_REQUEST:
-            std::cout << "[RTCP] Send [OPEN_LOGICAL_PORT_REQUEST]" << std::endl;
+            std::cout << "[RTCP] Send [OPEN_LOGICAL_PORT_REQUEST] " << retCtrlHeader.transactionId << std::endl;
             break;
         case CHECK_LOGICAL_PORT_REQUEST:
-            std::cout << "[RTCP] Send [CHECK_LOGICAL_PORT_REQUEST]: " << retCtrlHeader.length << std::endl;
+            std::cout << "[RTCP] Send [CHECK_LOGICAL_PORT_REQUEST]: " << retCtrlHeader.length << " - " << retCtrlHeader.transactionId << std::endl;
             break;
         case KEEP_ALIVE_REQUEST:
-            std::cout << "[RTCP] Send [KEEP_ALIVE_REQUEST]" << std::endl;
+            std::cout << "[RTCP] Send [KEEP_ALIVE_REQUEST] " << retCtrlHeader.transactionId << std::endl;
             break;
         case LOGICAL_PORT_IS_CLOSED_REQUEST:
-            std::cout << "[RTCP] Send [LOGICAL_PORT_IS_CLOSED_REQUEST]" << std::endl;
+            std::cout << "[RTCP] Send [LOGICAL_PORT_IS_CLOSED_REQUEST] " << retCtrlHeader.transactionId << std::endl;
             break;
         case BIND_CONNECTION_RESPONSE:
-            std::cout << "[RTCP] Send [BIND_CONNECTION_RESPONSE]" << std::endl;
+            std::cout << "[RTCP] Send [BIND_CONNECTION_RESPONSE] " << retCtrlHeader.transactionId << std::endl;
             break;
         case OPEN_LOGICAL_PORT_RESPONSE:
-            std::cout << "[RTCP] Send [OPEN_LOGICAL_PORT_RESPONSE]" << std::endl;
+            std::cout << "[RTCP] Send [OPEN_LOGICAL_PORT_RESPONSE] " << retCtrlHeader.transactionId << std::endl;
             break;
         case CHECK_LOGICAL_PORT_RESPONSE:
-            std::cout << "[RTCP] Send [CHECK_LOGICAL_PORT_RESPONSE]" << std::endl;
+            std::cout << "[RTCP] Send [CHECK_LOGICAL_PORT_RESPONSE] " << retCtrlHeader.transactionId << std::endl;
             break;
         case KEEP_ALIVE_RESPONSE:
-            std::cout << "[RTCP] Send [KEEP_ALIVE_RESPONSE]" << std::endl;
+            std::cout << "[RTCP] Send [KEEP_ALIVE_RESPONSE] " << retCtrlHeader.transactionId << std::endl;
             break;
         case UNBIND_CONNECTION_REQUEST:
-            std::cout << "[RTCP] Send [UNBIND_CONNECTION_REQUEST]" << std::endl;
+            std::cout << "[RTCP] Send [UNBIND_CONNECTION_REQUEST] " << retCtrlHeader.transactionId << std::endl;
             break;
     }
 }
@@ -268,7 +248,7 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
 void RTCPMessageManager::sendConnectionRequest(std::shared_ptr<TCPSocketInfo> pSocketInfo)
 {
     ConnectionRequest_t request;
-    request.transportLocator(pSocketInfo->m_locator);
+    request.transportLocator(pSocketInfo->mLocator);
 
     SerializedPayload_t payload(ConnectionRequest_t::getCdrSerializedSize(request));
     request.serialize(&payload);
@@ -637,35 +617,35 @@ bool RTCPMessageManager::processKeepAliveResponse(std::shared_ptr<TCPSocketInfo>
 void RTCPMessageManager::processRTCPMessage(std::shared_ptr<TCPSocketInfo> socketInfo, octet* receiveBuffer)
 {
     TCPControlMsgHeader controlHeader;
-    uint32_t sizeCtrlHeader = static_cast<uint32_t>(TCPControlMsgHeader::getMaxCdrSerializedSize());
-    memcpy(&controlHeader, receiveBuffer, sizeCtrlHeader);
+    memcpy(&controlHeader, receiveBuffer, TCPControlMsgHeader::getSize());
 
     switch (controlHeader.kind)
     {
     case BIND_CONNECTION_REQUEST:
     {
-        std::cout << "[RTCP] Receive [BIND_CONNECTION_REQUEST]" << std::endl;
+        std::cout << "[RTCP] Receive [BIND_CONNECTION_REQUEST] " << controlHeader.transactionId << std::endl;
         ConnectionRequest_t request;
         Locator_t myLocator;
-        SerializedPayload_t payload;
+        SerializedPayload_t payload(ConnectionRequest_t::getCdrSerializedSize(request));
         EndpointToLocator(socketInfo->getSocket()->local_endpoint(), myLocator);
-        //memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), ConnectionRequest_t::getCdrSerializedSize(request));
-        payload.data = &(receiveBuffer[sizeCtrlHeader]);
+        //memcpy(&request, &(receiveBuffer[TCPControlMsgHeader::getSize()]), ConnectionRequest_t::getCdrSerializedSize(request));
+        payload.data = &(receiveBuffer[TCPControlMsgHeader::getSize()]);
         payload.length = ConnectionRequest_t::getCdrSerializedSize(request);
         request.deserialize(&payload);
         processConnectionRequest(socketInfo, request, controlHeader.transactionId, myLocator);
+        payload.data = nullptr;
     }
     break;
     case BIND_CONNECTION_RESPONSE:
     {
-        std::cout << "[RTCP] Receive [BIND_CONNECTION_RESPONSE]" << std::endl;
+        std::cout << "[RTCP] Receive [BIND_CONNECTION_RESPONSE] " << controlHeader.transactionId << std::endl;
         ResponseCode respCode;
         BindConnectionResponse_t response;
-        SerializedPayload_t payload;
-        memcpy(&respCode, &(receiveBuffer[sizeCtrlHeader]), 4); // uint32_t
-        //memcpy(&response, &(receiveBuffer[sizeCtrlHeader + 4]), 
+        SerializedPayload_t payload(BindConnectionResponse_t::getCdrSerializedSize(response));
+        memcpy(&respCode, &(receiveBuffer[TCPControlMsgHeader::getSize()]), 4); // uint32_t
+        //memcpy(&response, &(receiveBuffer[TCPControlMsgHeader::getSize() + 4]), 
         //    BindConnectionResponse_t::getCdrSerializedSize(response));
-        payload.data = &(receiveBuffer[sizeCtrlHeader + 4]);
+        payload.data = &(receiveBuffer[TCPControlMsgHeader::getSize() + 4]);
         payload.length = BindConnectionResponse_t::getCdrSerializedSize(response);
         response.deserialize(&payload);
         if (respCode == RETCODE_OK || respCode == RETCODE_EXISTING_CONNECTION)
@@ -680,81 +660,87 @@ void RTCPMessageManager::processRTCPMessage(std::shared_ptr<TCPSocketInfo> socke
         {
             // TODO Manage errors
         }
+        payload.data = nullptr;
     }
     break;
     case OPEN_LOGICAL_PORT_REQUEST:
     {
-        std::cout << "[RTCP] Receive [OPEN_LOGICAL_PORT_REQUEST]" << std::endl;
+        std::cout << "[RTCP] Receive [OPEN_LOGICAL_PORT_REQUEST] " << controlHeader.transactionId << std::endl;
         OpenLogicalPortRequest_t request;
-        SerializedPayload_t payload;
-        //memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), OpenLogicalPortRequest_t::getCdrSerializedSize(request));
-        payload.data = &(receiveBuffer[sizeCtrlHeader]);
+        SerializedPayload_t payload(OpenLogicalPortRequest_t::getCdrSerializedSize(request));
+        //memcpy(&request, &(receiveBuffer[TCPControlMsgHeader::getSize()]), OpenLogicalPortRequest_t::getCdrSerializedSize(request));
+        payload.data = &(receiveBuffer[TCPControlMsgHeader::getSize()]);
         payload.length = OpenLogicalPortRequest_t::getCdrSerializedSize(request);
         request.deserialize(&payload);
         processOpenLogicalPortRequest(socketInfo, request, controlHeader.transactionId);
+        payload.data = nullptr;
     }
     break;
     case CHECK_LOGICAL_PORT_REQUEST:
     {
-        std::cout << "[RTCP] Receive [CHECK_LOGICAL_PORT_REQUEST]: " << controlHeader.length << std::endl;
+        std::cout << "[RTCP] Receive [CHECK_LOGICAL_PORT_REQUEST]: " << controlHeader.length << " - " << controlHeader.transactionId <<  std::endl;
         CheckLogicalPortsRequest_t request;
-        SerializedPayload_t payload;
-        //memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), controlHeader.length - sizeCtrlHeader);
-        payload.data = &(receiveBuffer[sizeCtrlHeader]);
-        payload.length = CheckLogicalPortsRequest_t::getCdrSerializedSize(request);
+        SerializedPayload_t payload(controlHeader.length - TCPControlMsgHeader::getSize());
+        //memcpy(&request, &(receiveBuffer[TCPControlMsgHeader::getSize()]), controlHeader.length - TCPControlMsgHeader::getSize());
+        payload.data = &(receiveBuffer[TCPControlMsgHeader::getSize()]);
+        payload.length = controlHeader.length - TCPControlMsgHeader::getSize();
         request.deserialize(&payload);
         processCheckLogicalPortsRequest(socketInfo, request, controlHeader.transactionId);
+        payload.data = nullptr;
     }
     break;
     case CHECK_LOGICAL_PORT_RESPONSE:
     {
-        std::cout << "[RTCP] Receive [CHECK_LOGICAL_PORT_RESPONSE]" << std::endl;
+        std::cout << "[RTCP] Receive [CHECK_LOGICAL_PORT_RESPONSE] " << controlHeader.transactionId << std::endl;
         ResponseCode respCode;
         CheckLogicalPortsResponse_t response;
-        SerializedPayload_t payload;
-        memcpy(&respCode, &(receiveBuffer[sizeCtrlHeader]), 4); // uint32_t
-        //memcpy(&response, &(receiveBuffer[sizeCtrlHeader + 4]), controlHeader.length - sizeCtrlHeader);
-        payload.data = &(receiveBuffer[sizeCtrlHeader]);
-        payload.length = CheckLogicalPortsResponse_t::getCdrSerializedSize(response);
+        SerializedPayload_t payload(controlHeader.length - TCPControlMsgHeader::getSize());
+        memcpy(&respCode, &(receiveBuffer[TCPControlMsgHeader::getSize()]), 4); // uint32_t
+        //memcpy(&response, &(receiveBuffer[TCPControlMsgHeader::getSize() + 4]), controlHeader.length - TCPControlMsgHeader::getSize());
+        payload.data = &(receiveBuffer[TCPControlMsgHeader::getSize()]);
+        payload.length = controlHeader.length - TCPControlMsgHeader::getSize();
         response.deserialize(&payload);
         processCheckLogicalPortsResponse(socketInfo, response, controlHeader.transactionId);
+        payload.data = nullptr;
     }
     break;
     case KEEP_ALIVE_REQUEST:
     {
-        std::cout << "[RTCP] Receive [KEEP_ALIVE_REQUEST]" << std::endl;
+        std::cout << "[RTCP] Receive [KEEP_ALIVE_REQUEST] " << controlHeader.transactionId << std::endl;
         KeepAliveRequest_t request;
-        SerializedPayload_t payload;
-        //memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), KeepAliveRequest_t::getCdrSerializedSize(request));
-        payload.data = &(receiveBuffer[sizeCtrlHeader]);
+        SerializedPayload_t payload(KeepAliveRequest_t::getCdrSerializedSize(request));
+        //memcpy(&request, &(receiveBuffer[TCPControlMsgHeader::getSize()]), KeepAliveRequest_t::getCdrSerializedSize(request));
+        payload.data = &(receiveBuffer[TCPControlMsgHeader::getSize()]);
         payload.length = KeepAliveRequest_t::getCdrSerializedSize(request);
         request.deserialize(&payload);
         processKeepAliveRequest(socketInfo, request, controlHeader.transactionId);
+        payload.data = nullptr;
     }
     break;
     case LOGICAL_PORT_IS_CLOSED_REQUEST:
     {
-        std::cout << "[RTCP] Receive [LOGICAL_PORT_IS_CLOSED_REQUEST]" << std::endl;
+        std::cout << "[RTCP] Receive [LOGICAL_PORT_IS_CLOSED_REQUEST] " << controlHeader.transactionId << std::endl;
         LogicalPortIsClosedRequest_t request;
-        SerializedPayload_t payload;
-        //memcpy(&request, &(receiveBuffer[sizeCtrlHeader]), LogicalPortIsClosedRequest_t::getCdrSerializedSize(request));
-        payload.data = &(receiveBuffer[sizeCtrlHeader]);
+        SerializedPayload_t payload(LogicalPortIsClosedRequest_t::getCdrSerializedSize(request));
+        //memcpy(&request, &(receiveBuffer[TCPControlMsgHeader::getSize()]), LogicalPortIsClosedRequest_t::getCdrSerializedSize(request));
+        payload.data = &(receiveBuffer[TCPControlMsgHeader::getSize()]);
         payload.length = LogicalPortIsClosedRequest_t::getCdrSerializedSize(request);
         request.deserialize(&payload);
         processLogicalPortIsClosedRequest(socketInfo, request, controlHeader.transactionId);
+        payload.data = nullptr;
     }
     break;
     case UNBIND_CONNECTION_REQUEST:
     {
         // TODO Close socket
-        std::cout << "[RTCP] Receive [UNBIND_CONNECTION_REQUEST]" << std::endl;
+        std::cout << "[RTCP] Receive [UNBIND_CONNECTION_REQUEST] " << controlHeader.transactionId << std::endl;
     }
     break;
     case OPEN_LOGICAL_PORT_RESPONSE:
     {
-        std::cout << "[RTCP] Receive [OPEN_LOGICAL_PORT_RESPONSE]" << std::endl;
+        std::cout << "[RTCP] Receive [OPEN_LOGICAL_PORT_RESPONSE] " << controlHeader.transactionId << std::endl;
         ResponseCode respCode;
-        memcpy(&respCode, &(receiveBuffer[sizeCtrlHeader]), 4);
+        memcpy(&respCode, &(receiveBuffer[TCPControlMsgHeader::getSize()]), 4);
         Locator_t remoteLocator;
         EndpointToLocator(socketInfo->getSocket()->remote_endpoint(), remoteLocator);
         if (!processOpenLogicalPortResponse(socketInfo, respCode, controlHeader.transactionId, remoteLocator))
@@ -765,9 +751,9 @@ void RTCPMessageManager::processRTCPMessage(std::shared_ptr<TCPSocketInfo> socke
     break;
     case KEEP_ALIVE_RESPONSE:
     {
-        std::cout << "[RTCP] Receive [KEEP_ALIVE_RESPONSE]" << std::endl;
+        std::cout << "[RTCP] Receive [KEEP_ALIVE_RESPONSE] " << controlHeader.transactionId << std::endl;
         ResponseCode respCode;
-        memcpy(&respCode, &(receiveBuffer[sizeCtrlHeader]), 4);
+        memcpy(&respCode, &(receiveBuffer[TCPControlMsgHeader::getSize()]), 4);
         if (!processKeepAliveResponse(socketInfo, respCode, controlHeader.transactionId))
         {
             // TODO unexpected transactionId

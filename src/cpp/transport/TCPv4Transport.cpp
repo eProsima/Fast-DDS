@@ -579,7 +579,7 @@ bool TCPv4Transport::EnqueueLogicalOutputPort(Locator_t& locator)
             (*it)->mPendingLogicalOutputPorts.end(), locator.get_logical_port())
                 == (*it)->mPendingLogicalOutputPorts.end())
         {
-            socketInfo->mPendingLogicalOutputPorts.push_back(locator.get_logical_port());
+            (*it)->mPendingLogicalOutputPorts.push_back(locator.get_logical_port());
             return true;
         }
     }
@@ -773,7 +773,7 @@ void TCPv4Transport::SetParticipantGUIDPrefix(const GuidPrefix_t& prefix)
 bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& /*localLocator*/,
     const Locator_t& remoteLocator)
 {
-    std::cout << "[RTCP] SEND: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << std::endl;
+    std::cout << "[RTCP] SEND [RTPS]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << std::endl;
     std::shared_ptr<TCPSocketInfo> socket = nullptr;
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
@@ -790,7 +790,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     {
         CDRMessage_t msg;
         TCPHeader tcp_header;
-        tcp_header.length = sendBufferSize + static_cast<uint32_t>(TCPHeader::getKeyMaxCdrSerializedSize());
+        tcp_header.length = sendBufferSize + static_cast<uint32_t>(TCPHeader::getSize());
         
         if (socket->mLogicalPortRouting.find(remoteLocator.get_logical_port()) != socket->mLogicalPortRouting.end())
         {
@@ -801,11 +801,8 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
             tcp_header.logicalPort = remoteLocator.get_logical_port();
         }
         RTCPMessageManager::CalculateCRC(tcp_header, sendBuffer, sendBufferSize);
-
-        SerializedPayload_t payload(TCPHeader::getMaxCdrSerializedSize());
-        tcp_header.serialize(&payload);
-        // TODO It is possible add sendBuffer content to the payload to align it all?
-        RTPSMessageCreator::addCustomContent(&msg, payload.data, payload.length);
+        
+        RTPSMessageCreator::addCustomContent(&msg, (octet*)&tcp_header, TCPHeader::getSize());
         RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
 
         bool success = false;
@@ -847,46 +844,49 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
             try
             {
                 // Read the header
-                SerializedPayload_t headerPayload(TCPHeader::getKeyMaxCdrSerializedSize());
+                octet header[TCPHEADER_SIZE];
                 std::cout << "[RTCP] Receive [TCPHeader]" << std::endl;
                 size_t bytes_received = read(*socketInfo->getSocket(),
-                    asio::buffer(headerPayload.data, TCPHeader::getKeyMaxCdrSerializedSize()), 
-                    transfer_exactly(TCPHeader::getKeyMaxCdrSerializedSize()));
-                TCPHeader tcp_header;
-                tcp_header.deserialize(&headerPayload);
-                if (bytes_received != TCPHeader::getKeyMaxCdrSerializedSize())
+                    asio::buffer(header, TCPHeader::getSize()), 
+                    transfer_exactly(TCPHeader::getSize()));
+                if (bytes_received != TCPHeader::getSize())
                 {
-                    logError(RTPS_MSG_IN, "Bad TCP header size: " << bytes_received << "(expected: : " << TCPHeader::getKeyMaxCdrSerializedSize() << ")");
-                }
-
-                size_t body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::getKeyMaxCdrSerializedSize());
-
-                if (body_size > receiveBufferCapacity)
-                {
-                    logError(RTPS_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
-                        << body_size << " vs. " << receiveBufferCapacity << ".");
+                    logError(RTPS_MSG_IN, "Bad TCP header size: " << bytes_received << "(expected: : " << TCPHeader::getSize() << ")");
                     success = false;
                 }
                 else
                 {
-                    std::cout << "[RTCP] Receive [ReadBody]" << std::endl;
-                    success = ReadBody(receiveBuffer, receiveBufferCapacity, &receiveBufferSize, socketInfo, body_size);
+                    TCPHeader tcp_header;
+                    memcpy(&tcp_header, header, TCPHeader::getSize());
+                    size_t body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::getSize());
 
-                    if (!RTCPMessageManager::CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
+                    if (body_size > receiveBufferCapacity)
                     {
-                        logWarning(RTPS_MSG_IN, "Bad TCP header CRC");
-                    }
-
-                    if (tcp_header.logicalPort == 0)
-                    {
-                        std::cout << "[RTCP] Receive [RTCP Control]: " << receiveBufferSize << " bytes." << std::endl;
-                        mRTCPMessageManager->processRTCPMessage(socketInfo, receiveBuffer);
+                        logError(RTPS_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
+                            << body_size << " vs. " << receiveBufferCapacity << ".");
                         success = false;
                     }
                     else
                     {
-                        logicalPort = tcp_header.logicalPort;
-                        std::cout << "[RTCP] Receive [RTPS Data]: " << receiveBufferSize << " bytes." << std::endl;
+                        std::cout << "[RTCP] Receive [ReadBody]" << std::endl;
+                        success = ReadBody(receiveBuffer, receiveBufferCapacity, &receiveBufferSize, socketInfo, body_size);
+
+                        if (!RTCPMessageManager::CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
+                        {
+                            logWarning(RTPS_MSG_IN, "Bad TCP header CRC");
+                        }
+
+                        if (tcp_header.logicalPort == 0)
+                        {
+                            std::cout << "[RTCP] Receive [RTCP Control]: " << receiveBufferSize << " bytes." << std::endl;
+                            mRTCPMessageManager->processRTCPMessage(socketInfo, receiveBuffer);
+                            success = false;
+                        }
+                        else
+                        {
+                            logicalPort = tcp_header.logicalPort;
+                            std::cout << "[RTCP] Receive [RTPS Data]: " << receiveBufferSize << " bytes." << std::endl;
+                        }
                     }
                 }
             }
@@ -946,7 +946,7 @@ bool TCPv4Transport::ReadBody(octet* receiveBuffer, uint32_t receiveBufferCapaci
 
     if (*bytes_received != body_size)
     {
-        logError(RTPS_MSG_IN, "Bad TCP body size: " << bytes_received << "(expected: " << TCPHeader::getKeyMaxCdrSerializedSize() << ")");
+        logError(RTPS_MSG_IN, "Bad TCP body size: " << bytes_received << "(expected: " << TCPHeader::getSize() << ")");
         return false;
     }
 
