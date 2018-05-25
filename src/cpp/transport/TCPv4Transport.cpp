@@ -357,35 +357,40 @@ bool TCPv4Transport::IsOutputChannelConnected(const Locator_t& locator) const
 bool TCPv4Transport::OpenOutputChannel(Locator_t& locator)
 {
     bool success = false;
-    if (IsLocatorSupported(locator) && !IsTCPInputSocket(locator))
+    if (IsLocatorSupported(locator))
     {
-        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-        if (!IsOutputChannelConnected(locator))
+        if (!IsTCPInputSocket(locator))
         {
-            if (!IsOutputChannelOpen(locator))
+            std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+            if (!IsOutputChannelConnected(locator))
             {
-                success = OpenAndBindOutputSockets(locator);
+                if (!IsOutputChannelOpen(locator))
+                {
+                    success = OpenAndBindOutputSockets(locator);
+                }
+                else
+                {
+                    BindOutputChannel(locator);
+                    success = EnqueueLogicalOutputPort(locator);
+                }
             }
             else
             {
-                BindOutputChannel(locator);
-                success = EnqueueLogicalOutputPort(locator);
+                if (!IsOutputChannelBound(locator))
+                {
+                    BindOutputChannel(locator);
+                    success = EnqueueLogicalOutputPort(locator);
+                }
+                else
+                    success = true;
             }
         }
         else
-        {
-            if (!IsOutputChannelBound(locator))
-            {
-                BindOutputChannel(locator);
-                success = EnqueueLogicalOutputPort(locator);
-            }
-            else
-                success = true;
-        }
+            success = true;
     }
     else
     {
-        success = false;
+        success = true;
     }
     return success;
 }
@@ -664,7 +669,7 @@ void TCPv4Transport::performRTPCManagementThread(std::shared_ptr<TCPSocketInfo> 
                 }
             }
         }
-        eClock::my_sleep(1000);
+        eClock::my_sleep(100);
     }
     pSocketInfo = nullptr;
 }

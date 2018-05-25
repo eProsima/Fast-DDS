@@ -1284,12 +1284,16 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
                 logError(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-                 if (strcmp(text, RESERVED) == 0)
+            if (strcmp(text, RESERVED) == 0)
                 loc.kind = LOCATOR_KIND_RESERVED;
-            else if (strcmp(text,    UDPv4) == 0)
+            else if (strcmp(text, UDPv4) == 0)
                 loc.kind = LOCATOR_KIND_UDPv4;
-            else if (strcmp(text,    UDPv6) == 0)
+            else if (strcmp(text, UDPv6) == 0)
                 loc.kind = LOCATOR_KIND_UDPv6;
+            else if (strcmp(text, TCPv4) == 0)
+                loc.kind = LOCATOR_KIND_TCPv4;
+            else if (strcmp(text, TCPv6) == 0)
+                loc.kind = LOCATOR_KIND_TCPv6;
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' bad content");
