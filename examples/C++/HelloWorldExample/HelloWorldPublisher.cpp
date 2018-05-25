@@ -44,41 +44,44 @@ bool HelloWorldPublisher::init(bool tcp)
     ParticipantAttributes PParam;
     PParam.rtps.use_IP6_to_send = true;
 
-	// TCP CONNECTION PEER.
-    uint32_t kind = (tcp) ? LOCATOR_KIND_TCPv4 : LOCATOR_KIND_UDPv4;
-	Locator_t initial_peer_locator;
-    initial_peer_locator.kind = kind;
-    initial_peer_locator.set_IP4_address("127.0.0.1");
-    initial_peer_locator.set_port(5100);
-    initial_peer_locator.set_logical_port(7400);
-    PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
-    PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
+    if (tcp)
+    {
+        // TCP CONNECTION PEER.
+        uint32_t kind = (tcp) ? LOCATOR_KIND_TCPv4 : LOCATOR_KIND_UDPv4;
+        Locator_t initial_peer_locator;
+        initial_peer_locator.kind = kind;
+        initial_peer_locator.set_IP4_address("127.0.0.1");
+        initial_peer_locator.set_port(5100);
+        initial_peer_locator.set_logical_port(7401);
+        PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
+        PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
 
-    Locator_t unicast_locator;
-    unicast_locator.kind = kind;
-    unicast_locator.set_IP4_address("127.0.0.1");
-    unicast_locator.set_port(5100);
-    unicast_locator.set_logical_port(7410);
-    PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
+        Locator_t unicast_locator;
+        unicast_locator.kind = kind;
+        unicast_locator.set_IP4_address("127.0.0.1");
+        unicast_locator.set_port(5100);
+        unicast_locator.set_logical_port(7411);
+        PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
 
-	Locator_t meta_locator;
-	meta_locator.kind = kind;
-	meta_locator.set_IP4_address("127.0.0.1");
-    meta_locator.set_port(5100);
-	meta_locator.set_logical_port(7401);
-	PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
+        Locator_t meta_locator;
+        meta_locator.kind = kind;
+        meta_locator.set_IP4_address("127.0.0.1");
+        meta_locator.set_port(5100);
+        meta_locator.set_logical_port(7401);
+        PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
 
-    PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
-    PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
-    PParam.rtps.builtin.setStaticEndpointXMLFilename("HelloWorldSubscriber.xml");
+        PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
+        PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
+        PParam.rtps.builtin.setStaticEndpointXMLFilename("HelloWorldSubscriber.xml");
 
-	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-    PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.domainId = 0;
-    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-    PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5,0);
-    PParam.rtps.setName("Participant_pub");
+        PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+        PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+        PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+        PParam.rtps.builtin.domainId = 0;
+        PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+        PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5, 0);
+        PParam.rtps.setName("Participant_pub");
+    }
 
     if (tcp)
     {
@@ -90,10 +93,7 @@ bool HelloWorldPublisher::init(bool tcp)
         descriptor->sendBufferSize = 0;
         descriptor->receiveBufferSize = 0;
         descriptor->set_WAN_address("127.0.0.1");
-        //descriptor->listening_ports.emplace_back(5100);
         descriptor->add_listener_port(5100);
-        //descriptor->keep_alive_frequency_ms = 100000;
-        //descriptor->keep_alive_timeout_ms = 10000;
         PParam.rtps.userTransports.push_back(descriptor);
     }
     else

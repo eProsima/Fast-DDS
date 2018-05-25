@@ -206,7 +206,7 @@ protected:
     struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
 
-    std::map<uint16_t, std::shared_ptr<TCPAcceptor>> mSocketsAcceptors; // The Key is the "Physical Port"
+    std::map<uint16_t, TCPAcceptor*> mSocketsAcceptors; // The Key is the "Physical Port"
     std::map<uint16_t, std::vector<std::shared_ptr<TCPSocketInfo>>> mInputSockets; // The Key is the "Physical Port"
     std::map<Locator_t, ReceiverResource*> mReceiverResources;
 

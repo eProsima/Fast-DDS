@@ -128,7 +128,13 @@ TCPv4Transport::~TCPv4Transport()
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         mActive = false;
+
+        for (auto it = mSocketsAcceptors.begin(); it != mSocketsAcceptors.end(); ++it)
+        {
+            delete it->second;
+        }
         mSocketsAcceptors.clear();
+
         for (auto it = mPendingOutputSockets.begin(); it != mPendingOutputSockets.end(); ++it)
         {
             delete(it->second);
@@ -496,21 +502,24 @@ bool TCPv4Transport::CloseInputChannel(const Locator_t& locator)
             bClosed = true;
         }
 
-        if (mSocketsAcceptors.find(locator.get_physical_port()) != mSocketsAcceptors.end())
+        auto acceptorIt = mSocketsAcceptors.find(locator.get_physical_port());
+        if (acceptorIt != mSocketsAcceptors.end())
         {
-            mSocketsAcceptors.erase(locator.get_physical_port());
+            delete acceptorIt->second;
+            mSocketsAcceptors.erase(acceptorIt);
             bClosed = true;
         }
 
-        if (mInputSockets.find(locator.get_physical_port()) != mInputSockets.end())
+        auto InputSocketIt = mInputSockets.find(locator.get_physical_port());
+        if (InputSocketIt != mInputSockets.end())
         {
-            std::vector<std::shared_ptr<TCPSocketInfo>> sockets = mInputSockets.at(locator.get_physical_port());
+            std::vector<std::shared_ptr<TCPSocketInfo>> sockets = InputSocketIt->second;
             for (auto it = sockets.begin(); it != sockets.end(); ++it)
             {
                 vDeletedSockets.emplace_back(*it);
             }
 
-            mInputSockets.erase(locator.get_physical_port());
+            mInputSockets.erase(InputSocketIt);
             bClosed = true;
         }
     }
@@ -615,7 +624,7 @@ bool TCPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, uint32_t 
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     try
     {
-        std::shared_ptr<TCPAcceptor> newAcceptor = std::make_shared<TCPAcceptor>(mService, locator, maxMsgSize);
+        TCPAcceptor* newAcceptor = new TCPAcceptor(mService, locator, maxMsgSize);
         mSocketsAcceptors.insert(std::make_pair(locator.get_physical_port(), newAcceptor));
         std::cout << "[RTCP] OpenAndBindInput (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")" << std::endl;
         newAcceptor->Accept(this);
