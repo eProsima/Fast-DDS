@@ -105,11 +105,12 @@ TCPv4TransportDescriptor::TCPv4TransportDescriptor() :
 
 TCPv4TransportDescriptor::TCPv4TransportDescriptor(const TCPv4TransportDescriptor& t) :
     TransportDescriptorInterface(t)
+    , listening_ports(t.listening_ports)
     , keep_alive_frequency_ms(t.keep_alive_frequency_ms)
     , keep_alive_timeout_ms(t.keep_alive_timeout_ms)
-    , listening_ports(t.listening_ports)
     , max_logical_port(t.max_logical_port)
     , logical_port_range(t.logical_port_range)
+    , logical_port_increment(t.logical_port_increment)
 {
     memcpy(wan_addr, t.wan_addr, 4);
 }
@@ -789,7 +790,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     {
         CDRMessage_t msg;
         TCPHeader tcp_header;
-        tcp_header.length = sendBufferSize + static_cast<uint32_t>(TCPHeader::GetSize());
+        tcp_header.length = sendBufferSize + static_cast<uint32_t>(TCPHeader::getKeyMaxCdrSerializedSize());
         
         if (socket->mLogicalPortRouting.find(remoteLocator.get_logical_port()) != socket->mLogicalPortRouting.end())
         {
@@ -801,7 +802,10 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         }
         RTCPMessageManager::CalculateCRC(tcp_header, sendBuffer, sendBufferSize);
 
-        RTPSMessageCreator::addCustomContent(&msg, tcp_header.getAddress(), TCPHeader::GetSize());
+        SerializedPayload_t payload(TCPHeader::getMaxCdrSerializedSize());
+        tcp_header.serialize(&payload);
+        // TODO It is possible add sendBuffer content to the payload to align it all?
+        RTPSMessageCreator::addCustomContent(&msg, payload.data, payload.length);
         RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
 
         bool success = false;
@@ -843,18 +847,19 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
             try
             {
                 // Read the header
-                octet header[14];
+                SerializedPayload_t headerPayload(TCPHeader::getKeyMaxCdrSerializedSize());
                 std::cout << "[RTCP] Receive [TCPHeader]" << std::endl;
                 size_t bytes_received = read(*socketInfo->getSocket(),
-                    asio::buffer(&header, TCPHeader::GetSize()), transfer_exactly(14));
+                    asio::buffer(headerPayload.data, TCPHeader::getKeyMaxCdrSerializedSize()), 
+                    transfer_exactly(TCPHeader::getKeyMaxCdrSerializedSize()));
                 TCPHeader tcp_header;
-                memcpy(&tcp_header, header, TCPHeader::GetSize());
-                if (bytes_received != TCPHeader::GetSize())
+                tcp_header.deserialize(&headerPayload);
+                if (bytes_received != TCPHeader::getKeyMaxCdrSerializedSize())
                 {
-                    logError(RTPS_MSG_IN, "Bad TCP header size: " << bytes_received << "(expected: : " << TCPHeader::GetSize() << ")");
+                    logError(RTPS_MSG_IN, "Bad TCP header size: " << bytes_received << "(expected: : " << TCPHeader::getKeyMaxCdrSerializedSize() << ")");
                 }
 
-                size_t body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::GetSize());
+                size_t body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::getKeyMaxCdrSerializedSize());
 
                 if (body_size > receiveBufferCapacity)
                 {
@@ -941,7 +946,7 @@ bool TCPv4Transport::ReadBody(octet* receiveBuffer, uint32_t receiveBufferCapaci
 
     if (*bytes_received != body_size)
     {
-        logError(RTPS_MSG_IN, "Bad TCP body size: " << bytes_received << "(expected: " << TCPHeader::GetSize() << ")");
+        logError(RTPS_MSG_IN, "Bad TCP body size: " << bytes_received << "(expected: " << TCPHeader::getKeyMaxCdrSerializedSize() << ")");
         return false;
     }
 
@@ -1095,6 +1100,10 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             mInputSockets[acceptor->mLocator.get_physical_port()].emplace_back(socketInfo);
 
             std::cout << "[RTCP] Accepted connection (physical: " << acceptor->mLocator.get_physical_port() << ")" << std::endl;
+        }
+        else
+        {
+            std::cout << "[RTCP] Accepting connection failed (error: " << error.message() << ")" << std::endl;
         }
 
         // Accept new connections for the same port.
