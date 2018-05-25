@@ -38,7 +38,7 @@ vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local, RT
         if ( transport->IsLocatorSupported(local) &&
                 !transport->IsOutputChannelOpen(local) )
         {
-            SenderResource newSenderResource(participant, *transport, local);
+            SenderResource newSenderResource(*transport, local);
             if (newSenderResource.mValid)
                 newSenderResources.push_back(move(newSenderResource));
         }

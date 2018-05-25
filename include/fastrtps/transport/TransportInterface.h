@@ -111,6 +111,8 @@ public:
    */
    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator) = 0;
 
+   //virtual SocketInfo* FindSocket(const Locator_t& remoteLocator) = 0;
+
    virtual void SetParticipantGUIDPrefix(const GuidPrefix_t& prefix) = 0;
 
    virtual LocatorList_t NormalizeLocator(const Locator_t& locator) = 0;

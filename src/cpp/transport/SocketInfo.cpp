@@ -71,6 +71,8 @@ UDPSocketInfo::UDPSocketInfo(UDPSocketInfo&& socketInfo)
 
 UDPSocketInfo::~UDPSocketInfo()
 {
+    if (mMsgReceiver != nullptr)
+        delete mMsgReceiver;
     mMsgReceiver = nullptr;
 }
 
@@ -154,6 +156,13 @@ TCPSocketInfo::~TCPSocketInfo()
     {
         assert(mRTCPThread == nullptr);
     }
+
+    for (auto it = mReceiversMap.begin(); it != mReceiversMap.end(); ++it)
+    {
+        if (it->second != nullptr)
+            delete(it->second);
+    }
+    mReceiversMap.clear();
 }
 
 std::thread* TCPSocketInfo::ReleaseRTCPThread()
@@ -163,7 +172,7 @@ std::thread* TCPSocketInfo::ReleaseRTCPThread()
     return outThread;
 }
 
-bool TCPSocketInfo::AddMessageReceiver(uint16_t logicalPort, std::shared_ptr<MessageReceiver> receiver)
+bool TCPSocketInfo::AddMessageReceiver(uint16_t logicalPort, MessageReceiver* receiver)
 {
     if (mReceiversMap.find(logicalPort) == mReceiversMap.end())
     {
@@ -173,7 +182,7 @@ bool TCPSocketInfo::AddMessageReceiver(uint16_t logicalPort, std::shared_ptr<Mes
     return nullptr;
 }
 
-std::shared_ptr<MessageReceiver> TCPSocketInfo::GetMessageReceiver(uint16_t logicalPort)
+MessageReceiver* TCPSocketInfo::GetMessageReceiver(uint16_t logicalPort)
 {
     if (mReceiversMap.find(logicalPort) != mReceiversMap.end())
         return mReceiversMap[logicalPort];

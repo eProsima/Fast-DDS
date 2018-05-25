@@ -252,16 +252,23 @@ bool UDPv6Transport::CloseOutputChannel(const Locator_t& locator)
 
 bool UDPv6Transport::CloseInputChannel(const Locator_t& locator)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-    if (!IsInputChannelOpen(locator))
-        return false;
+    UDPSocketInfo* socketInfo = nullptr;
+    {
+        std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
+        if (!IsInputChannelOpen(locator))
+            return false;
 
+        socketInfo = mInputSockets.at(locator.get_physical_port());
+        socketInfo->getSocket()->cancel();
+        socketInfo->getSocket()->close();
+        mInputSockets.erase(locator.get_physical_port());
+    }
 
-    auto& socketInfo = mInputSockets.at(locator.get_physical_port());
-    socketInfo->getSocket()->cancel();
-    socketInfo->getSocket()->close();
+    if (socketInfo != nullptr)
+    {
+        delete socketInfo;
+    }
 
-    mInputSockets.erase(locator.get_physical_port());
     return true;
 }
 

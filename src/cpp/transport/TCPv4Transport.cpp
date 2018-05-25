@@ -688,7 +688,7 @@ void TCPv4Transport::performListenOperation(std::shared_ptr<TCPSocketInfo> pSock
             continue;
 
         // Processes the data through the CDR Message interface.
-        std::shared_ptr<MessageReceiver> receiver = pSocketInfo->GetMessageReceiver(logicalPort);
+        MessageReceiver* receiver = pSocketInfo->GetMessageReceiver(logicalPort);
         if (receiver != nullptr)
         {
             receiver->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix,
