@@ -131,7 +131,6 @@ size_t ConnectionRequest_t::getMaxCdrSerializedSize(size_t current_alignment)
 
     current_alignment += 24 + eprosima::fastcdr::Cdr::alignment(current_alignment, 24);
 
-
     return current_alignment - initial_alignment;
 }
 
@@ -187,7 +186,7 @@ void ConnectionRequest_t::serializeKey(eprosima::fastcdr::Cdr &/*scdr*/) const
 bool ConnectionRequest_t::serialize(SerializedPayload_t *payload) 
 {
     ConnectionRequest_t *p_type = this;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size + 4); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -210,7 +209,7 @@ bool ConnectionRequest_t::serialize(SerializedPayload_t *payload)
 bool ConnectionRequest_t::deserialize(SerializedPayload_t* payload) 
 {
     ConnectionRequest_t* p_type = this; 	//Convert DATA to pointer of your type
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->length + 4); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
     // Deserialize encapsulation.
@@ -313,7 +312,7 @@ void OpenLogicalPortRequest_t::serializeKey(eprosima::fastcdr::Cdr &/*scdr*/) co
 bool OpenLogicalPortRequest_t::serialize(SerializedPayload_t *payload) 
 {
     OpenLogicalPortRequest_t *p_type = this;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size + 4); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -336,7 +335,7 @@ bool OpenLogicalPortRequest_t::serialize(SerializedPayload_t *payload)
 bool OpenLogicalPortRequest_t::deserialize(SerializedPayload_t* payload) 
 {
     OpenLogicalPortRequest_t* p_type = this; 	//Convert DATA to pointer of your type
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->length + 4); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
     // Deserialize encapsulation.
@@ -440,7 +439,7 @@ void CheckLogicalPortsRequest_t::serializeKey(eprosima::fastcdr::Cdr &/*scdr*/) 
 bool CheckLogicalPortsRequest_t::serialize(SerializedPayload_t *payload) 
 {
     CheckLogicalPortsRequest_t *p_type = this;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size + 4); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -463,7 +462,7 @@ bool CheckLogicalPortsRequest_t::serialize(SerializedPayload_t *payload)
 bool CheckLogicalPortsRequest_t::deserialize(SerializedPayload_t* payload) 
 {
     CheckLogicalPortsRequest_t* p_type = this; 	//Convert DATA to pointer of your type
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->length + 4); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
     // Deserialize encapsulation.
@@ -519,7 +518,7 @@ size_t KeepAliveRequest_t::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
             
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    current_alignment += 24 + eprosima::fastcdr::Cdr::alignment(current_alignment, 24);
 
 
     return current_alignment - initial_alignment;
@@ -529,7 +528,7 @@ size_t KeepAliveRequest_t::getCdrSerializedSize(const KeepAliveRequest_t& /*data
 {
     size_t initial_alignment = current_alignment;
             
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    current_alignment += 24 + eprosima::fastcdr::Cdr::alignment(current_alignment, 24);
 
 
     return current_alignment - initial_alignment;
@@ -566,7 +565,7 @@ void KeepAliveRequest_t::serializeKey(eprosima::fastcdr::Cdr &/*scdr*/) const
 bool KeepAliveRequest_t::serialize(SerializedPayload_t *payload) 
 {
     KeepAliveRequest_t *p_type = this;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size + 4); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -589,7 +588,7 @@ bool KeepAliveRequest_t::serialize(SerializedPayload_t *payload)
 bool KeepAliveRequest_t::deserialize(SerializedPayload_t* payload) 
 {
     KeepAliveRequest_t* p_type = this; 	//Convert DATA to pointer of your type
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->length + 4); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
     // Deserialize encapsulation.
@@ -692,7 +691,7 @@ void LogicalPortIsClosedRequest_t::serializeKey(eprosima::fastcdr::Cdr &/*scdr*/
 bool LogicalPortIsClosedRequest_t::serialize(SerializedPayload_t *payload) 
 {
     LogicalPortIsClosedRequest_t *p_type = this;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size + 4); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -715,7 +714,7 @@ bool LogicalPortIsClosedRequest_t::serialize(SerializedPayload_t *payload)
 bool LogicalPortIsClosedRequest_t::deserialize(SerializedPayload_t* payload) 
 {
     LogicalPortIsClosedRequest_t* p_type = this; 	//Convert DATA to pointer of your type
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->length + 4); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
     // Deserialize encapsulation.
@@ -1406,7 +1405,7 @@ size_t BindConnectionResponse_t::getMaxCdrSerializedSize(size_t current_alignmen
 {
     size_t initial_alignment = current_alignment;
             
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    current_alignment += 24 + eprosima::fastcdr::Cdr::alignment(current_alignment, 24);
 
 
     return current_alignment - initial_alignment;
@@ -1416,7 +1415,7 @@ size_t BindConnectionResponse_t::getCdrSerializedSize(const BindConnectionRespon
 {
     size_t initial_alignment = current_alignment;
             
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    current_alignment += 24 + eprosima::fastcdr::Cdr::alignment(current_alignment, 24);
 
 
     return current_alignment - initial_alignment;
@@ -1453,7 +1452,7 @@ void BindConnectionResponse_t::serializeKey(eprosima::fastcdr::Cdr &/*scdr*/) co
 bool BindConnectionResponse_t::serialize(SerializedPayload_t *payload) 
 {
     BindConnectionResponse_t *p_type = this;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size + 4); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -1476,7 +1475,7 @@ bool BindConnectionResponse_t::serialize(SerializedPayload_t *payload)
 bool BindConnectionResponse_t::deserialize(SerializedPayload_t* payload) 
 {
     BindConnectionResponse_t* p_type = this; 	//Convert DATA to pointer of your type
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->length + 4); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
     // Deserialize encapsulation.
@@ -1580,7 +1579,7 @@ void CheckLogicalPortsResponse_t::serializeKey(eprosima::fastcdr::Cdr &/*scdr*/)
 bool CheckLogicalPortsResponse_t::serialize(SerializedPayload_t *payload) 
 {
     CheckLogicalPortsResponse_t *p_type = this;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size + 4); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -1603,7 +1602,7 @@ bool CheckLogicalPortsResponse_t::serialize(SerializedPayload_t *payload)
 bool CheckLogicalPortsResponse_t::deserialize(SerializedPayload_t* payload) 
 {
     CheckLogicalPortsResponse_t* p_type = this; 	//Convert DATA to pointer of your type
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->length + 4); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
     // Deserialize encapsulation.

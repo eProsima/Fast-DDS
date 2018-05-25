@@ -607,7 +607,7 @@ inline bool CDRMessage::addFragmentNumberSet(CDRMessage_t* msg,
 
 inline bool CDRMessage::addLocator(CDRMessage_t* msg, Locator_t* loc) {
     addInt32(msg,loc->kind);
-    addUInt32(msg,loc->get_port());
+    addUInt32(msg,loc->get_port(true));
 
     addData(msg,loc->get_Address(),16);
 
