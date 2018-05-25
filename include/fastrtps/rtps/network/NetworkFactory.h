@@ -70,7 +70,7 @@ class NetworkFactory
          * the given locator and returning a vector of Sender Resources associated with it.
          * @param local Locator through which to send.
          */
-        std::vector<SenderResource> BuildSenderResources(Locator_t& local, RTPSParticipantImpl* participant);
+        std::vector<SenderResource> BuildSenderResources(Locator_t& local);
 
         /**
          * Walks over the list of transports, opening every possible channel that we can listen to

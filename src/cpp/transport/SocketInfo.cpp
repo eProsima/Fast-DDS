@@ -12,6 +12,19 @@ SocketInfo::SocketInfo()
     logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
 }
 
+SocketInfo::SocketInfo(SocketInfo&& socketInfo)
+    : mAlive(socketInfo.mAlive)
+    , mThread(socketInfo.mThread)
+    , mAutoRelease(socketInfo.mAutoRelease)
+{
+    socketInfo.mThread = nullptr;
+    //logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
+    m_rec_msg = std::move(socketInfo.m_rec_msg);
+#if HAVE_SECURITY
+    m_crypto_msg = std::move(socketInfo.m_crypto_msg);
+#endif
+}
+
 SocketInfo::SocketInfo(uint32_t rec_buffer_size)
     : m_rec_msg(rec_buffer_size)
 #if HAVE_SECURITY
@@ -76,7 +89,6 @@ UDPSocketInfo::~UDPSocketInfo()
     mMsgReceiver = nullptr;
 }
 
-
 TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket,
     bool autoRelease)
     : mLocator(locator)
@@ -84,6 +96,8 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
     , m_inputSocket(inputSocket)
     , mWaitingForKeepAlive(false)
     , mPendingLogicalPort(0)
+    , mNegotiatingLogicalPort(0)
+    , mCheckingLogicalPort(0)
     , mSocket(moveSocket(socket))
     , mConnectionStatus(eConnectionStatus::eDisconnected)
 {
@@ -110,6 +124,8 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
     , m_inputSocket(inputSocket)
     , mWaitingForKeepAlive(false)
     , mPendingLogicalPort(0)
+    , mNegotiatingLogicalPort(0)
+    , mCheckingLogicalPort(0)
     , mSocket(moveSocket(socket))
     , mConnectionStatus(eConnectionStatus::eDisconnected)
 {
@@ -133,7 +149,10 @@ TCPSocketInfo::TCPSocketInfo(TCPSocketInfo&& socketInfo)
     , m_physicalPort(socketInfo.m_physicalPort)
     , m_inputSocket(socketInfo.m_inputSocket)
     , mWaitingForKeepAlive(socketInfo.m_inputSocket)
-    , mPendingLogicalPort(0)
+    , mPendingLogicalPort(socketInfo.mPendingLogicalPort)
+    , mNegotiatingLogicalPort(socketInfo.mNegotiatingLogicalPort)
+    , mCheckingLogicalPort(socketInfo.mCheckingLogicalPort)
+    , mRTCPThread(socketInfo.mRTCPThread)
     , mReadMutex(socketInfo.mReadMutex)
     , mWriteMutex(socketInfo.mWriteMutex)
     , mSocket(moveSocket(socketInfo.mSocket))
@@ -141,6 +160,7 @@ TCPSocketInfo::TCPSocketInfo(TCPSocketInfo&& socketInfo)
 {
     socketInfo.mReadMutex = nullptr;
     socketInfo.mWriteMutex = nullptr;
+    socketInfo.mRTCPThread = nullptr;
 }
 
 TCPSocketInfo::~TCPSocketInfo()

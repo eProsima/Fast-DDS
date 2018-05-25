@@ -127,6 +127,28 @@ struct RTPS_DllAPI CDRMessage_t{
         message.buffer = nullptr;
     }
 
+    CDRMessage_t& operator=(CDRMessage_t &&message)
+    {
+        wraps = message.wraps;
+        message.wraps = false;
+        pos = message.pos;
+        message.pos = 0;
+        length = message.length;
+        message.length = 0;
+        max_size = message.max_size;
+        message.max_size = 0;
+        msg_endian = message.msg_endian;
+#if __BIG_ENDIAN__
+        message.msg_endian = BIGEND;
+#else
+        message.msg_endian = LITTLEEND;
+#endif
+        buffer = message.buffer;
+        message.buffer = nullptr;
+
+        return *(this);
+    }
+
     //!Pointer to the buffer where the data is stored.
     octet* buffer;
     //!Read or write position.
