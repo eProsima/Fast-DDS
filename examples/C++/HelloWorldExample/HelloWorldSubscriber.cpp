@@ -71,9 +71,9 @@ bool HelloWorldSubscriber::init(bool tcp)
         meta_locator.set_logical_port(7401);
         PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
 
-        PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
-        PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
-        PParam.rtps.builtin.setStaticEndpointXMLFilename("HelloWorldPublisher.xml");
+        //PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+        //PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = false;
+        //PParam.rtps.builtin.setStaticEndpointXMLFilename("HelloWorldPublisher.xml");
 
         PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
         PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;

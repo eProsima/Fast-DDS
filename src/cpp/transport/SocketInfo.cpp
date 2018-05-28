@@ -79,7 +79,9 @@ UDPSocketInfo::UDPSocketInfo(eProsimaUDPSocket& socket, uint32_t maxMsgSize)
 UDPSocketInfo::UDPSocketInfo(UDPSocketInfo&& socketInfo)
     : socket_(moveSocket(socketInfo.socket_))
     , only_multicast_purpose_(socketInfo.only_multicast_purpose_)
+    , mMsgReceiver(socketInfo.mMsgReceiver)
 {
+    socketInfo.mMsgReceiver = nullptr;
 }
 
 UDPSocketInfo::~UDPSocketInfo()
@@ -92,7 +94,6 @@ UDPSocketInfo::~UDPSocketInfo()
 TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket,
     bool autoRelease)
     : mLocator(locator)
-    , m_physicalPort(0)
     , m_inputSocket(inputSocket)
     , mWaitingForKeepAlive(false)
     , mPendingLogicalPort(0)
@@ -120,7 +121,6 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
     bool autoRelease, uint32_t maxMsgSize)
     : SocketInfo(maxMsgSize)
     , mLocator(locator)
-    , m_physicalPort(0)
     , m_inputSocket(inputSocket)
     , mWaitingForKeepAlive(false)
     , mPendingLogicalPort(0)
@@ -146,7 +146,6 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
 
 TCPSocketInfo::TCPSocketInfo(TCPSocketInfo&& socketInfo)
     : mLocator(socketInfo.mLocator)
-    , m_physicalPort(socketInfo.m_physicalPort)
     , m_inputSocket(socketInfo.m_inputSocket)
     , mWaitingForKeepAlive(socketInfo.m_inputSocket)
     , mPendingLogicalPort(socketInfo.mPendingLogicalPort)

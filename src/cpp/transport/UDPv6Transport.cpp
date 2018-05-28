@@ -561,7 +561,7 @@ bool UDPv6Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 bool UDPv6Transport::SendThroughSocket(const octet* sendBuffer,
         uint32_t sendBufferSize,
         const Locator_t& remoteLocator,
-        eProsimaUDPSocket& socket)
+        eProsimaUDPSocketRef socket)
 {
     asio::ip::address_v6::bytes_type remoteAddress;
     //memcpy(&remoteAddress, remoteLocator.get_Address(), sizeof(remoteAddress));

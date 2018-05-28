@@ -176,10 +176,8 @@ protected:
    */
    void performListenOperation(UDPSocketInfo* pSocketInfo, Locator_t input_locator);
 
-   bool SendThroughSocket(const octet* sendBuffer,
-                          uint32_t sendBufferSize,
-                          const Locator_t& remoteLocator,
-                          eProsimaUDPSocket& socket);
+   bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
+       eProsimaUDPSocketRef socket);
 };
 
 } // namespace rtps

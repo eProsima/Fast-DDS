@@ -15,6 +15,9 @@ namespace rtps{
     // Typedefs
 	typedef asio::ip::udp::socket eProsimaUDPSocket;
 	typedef asio::ip::tcp::socket eProsimaTCPSocket;
+    typedef eProsimaUDPSocket& eProsimaUDPSocketRef;
+    typedef eProsimaTCPSocket& eProsimaTCPSocketRef;
+
     // UDP
 	inline eProsimaUDPSocket* getSocketPtr(eProsimaUDPSocket &socket)
     {
@@ -53,12 +56,15 @@ namespace rtps{
     // Typedefs
 	typedef std::shared_ptr<asio::ip::udp::socket> eProsimaUDPSocket;
 	typedef std::shared_ptr<asio::ip::tcp::socket> eProsimaTCPSocket;
+    typedef eProsimaUDPSocket eProsimaUDPSocketRef;
+    typedef eProsimaTCPSocket eProsimaTCPSocketRef;
+
     // UDP
-    inline eProsimaUDPSocket getSocketPtr(eProsimaUDPSocket &socket)
+    inline eProsimaUDPSocket getSocketPtr(eProsimaUDPSocket socket)
     {
         return socket;
     }
-    inline eProsimaUDPSocket& moveSocket(eProsimaUDPSocket &socket)
+    inline eProsimaUDPSocket moveSocket(eProsimaUDPSocket socket)
     {
         return socket;
     }
@@ -66,16 +72,16 @@ namespace rtps{
     {
         return std::make_shared<asio::ip::udp::socket>(io_service);
     }
-    inline eProsimaUDPSocket& getRefFromPtr(eProsimaUDPSocket &socket)
+    inline eProsimaUDPSocket getRefFromPtr(eProsimaUDPSocket socket)
     {
         return socket;
     }
     // TCP
-    inline eProsimaTCPSocket getSocketPtr(eProsimaTCPSocket &socket)
+    inline eProsimaTCPSocket getSocketPtr(eProsimaTCPSocket socket)
     {
         return socket;
     }
-    inline eProsimaTCPSocket& moveSocket(eProsimaTCPSocket &socket)
+    inline eProsimaTCPSocket moveSocket(eProsimaTCPSocket socket)
     {
         return socket;
     }
@@ -83,7 +89,7 @@ namespace rtps{
     {
         return std::make_shared<asio::ip::tcp::socket>(io_service);
     }
-    inline eProsimaTCPSocket& getRefFromPtr(eProsimaTCPSocket &socket)
+    inline eProsimaTCPSocket getRefFromPtr(eProsimaTCPSocket socket)
     {
         return socket;
     }
@@ -253,16 +259,6 @@ public:
 
     std::thread* ReleaseRTCPThread();
 
-    inline void SetPhysicalPort(uint16_t port)
-    {
-        m_physicalPort = port;
-    }
-
-    inline uint16_t GetPhysicalPort() const
-    {
-        return m_physicalPort;
-    }
-
     inline bool GetIsInputSocket() const
     {
         return m_inputSocket;
@@ -297,7 +293,6 @@ protected:
 
 private:
     Locator_t mLocator;
-    uint16_t m_physicalPort;
     bool m_inputSocket;
     bool mWaitingForKeepAlive;
     uint16_t mPendingLogicalPort; // Must be accessed after lock mPendingLogicalMutex

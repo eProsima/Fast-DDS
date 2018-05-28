@@ -44,13 +44,18 @@ public:
 	asio::ip::tcp::acceptor mAcceptor;
     Locator_t mLocator;
     uint32_t mMaxMsgSize;
+#ifndef ASIO_HAS_MOVE
+    std::shared_ptr<asio::ip::tcp::socket> mSocket;
+    asio::ip::tcp::endpoint mEndPoint;
+#endif
 
     TCPAcceptor(asio::io_service& io_service, const Locator_t& locator, uint32_t maxMsgSize);
 
     ~TCPAcceptor()
     {
     }
-	void Accept(TCPv4Transport* parent);
+
+    void Accept(TCPv4Transport* parent, asio::io_service&);
 };
 
 class TCPConnector
@@ -173,7 +178,12 @@ public:
 
     virtual void AddDefaultLocator(LocatorList_t &defaultList) override;
 
+#ifdef ASIO_HAS_MOVE
     void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket s);
+#else
+    void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error);
+#endif
+
     void SocketConnected(Locator_t& locator, const asio::error_code& error);
 protected:
     enum eSocketErrorCodes
