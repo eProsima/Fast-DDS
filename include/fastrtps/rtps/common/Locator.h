@@ -713,6 +713,10 @@ inline std::ostream& operator<<(std::ostream& output,const Locator_t& loc)
         }
         output<<":"<<loc.port;
     }
+    if (loc.ports_.logical_port != 0)
+    {
+        output <<":"<<loc.ports_.logical_port;
+    }
     return output;
 }
 
