@@ -551,7 +551,7 @@ bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 bool UDPv4Transport::SendThroughSocket(const octet* sendBuffer,
         uint32_t sendBufferSize,
         const Locator_t& remoteLocator,
-        eProsimaUDPSocket& socket)
+        eProsimaUDPSocketRef socket)
 {
 
     asio::ip::address_v4::bytes_type remoteAddress;

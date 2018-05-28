@@ -221,6 +221,7 @@ endif()
 set(${PROJECT_NAME}_include_dirs
     ${ASIO_INCLUDE_DIR}
     ${TINYXML2_INCLUDE_DIR}
+    ${fastcdr_INCLUDE_DIR}
 )
 
 if(ANDROID)
