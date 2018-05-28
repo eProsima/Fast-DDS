@@ -121,17 +121,9 @@ ConnectionRequest_t& ConnectionRequest_t::operator=(ConnectionRequest_t &&x)
     return *this;
 }
 
-size_t ConnectionRequest_t::getMaxCdrSerializedSize(size_t current_alignment)
+size_t ConnectionRequest_t::getBufferCdrSerializedSize(const ConnectionRequest_t& data, size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-    current_alignment += 24 + eprosima::fastcdr::Cdr::alignment(current_alignment, 24);
-
-    return current_alignment - initial_alignment;
+    return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
 size_t ConnectionRequest_t::getCdrSerializedSize(const ConnectionRequest_t& /*data*/, size_t current_alignment)
@@ -186,7 +178,7 @@ void ConnectionRequest_t::serializeKey(eprosima::fastcdr::Cdr &/*scdr*/) const
 bool ConnectionRequest_t::serialize(SerializedPayload_t *payload) 
 {
     ConnectionRequest_t *p_type = this;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size + 4); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -261,14 +253,9 @@ OpenLogicalPortRequest_t& OpenLogicalPortRequest_t::operator=(OpenLogicalPortReq
     return *this;
 }
 
-size_t OpenLogicalPortRequest_t::getMaxCdrSerializedSize(size_t current_alignment)
+size_t OpenLogicalPortRequest_t::getBufferCdrSerializedSize(const OpenLogicalPortRequest_t& data, size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
+    return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
 size_t OpenLogicalPortRequest_t::getCdrSerializedSize(const OpenLogicalPortRequest_t& /*data*/, size_t current_alignment)
@@ -312,7 +299,7 @@ void OpenLogicalPortRequest_t::serializeKey(eprosima::fastcdr::Cdr &/*scdr*/) co
 bool OpenLogicalPortRequest_t::serialize(SerializedPayload_t *payload) 
 {
     OpenLogicalPortRequest_t *p_type = this;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size + 4); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -386,15 +373,9 @@ CheckLogicalPortsRequest_t& CheckLogicalPortsRequest_t::operator=(CheckLogicalPo
     return *this;
 }
 
-size_t CheckLogicalPortsRequest_t::getMaxCdrSerializedSize(size_t current_alignment)
+size_t CheckLogicalPortsRequest_t::getBufferCdrSerializedSize(const CheckLogicalPortsRequest_t& data, size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += (100 * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
+    return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
 size_t CheckLogicalPortsRequest_t::getCdrSerializedSize(const CheckLogicalPortsRequest_t& data, size_t current_alignment)
@@ -439,7 +420,7 @@ void CheckLogicalPortsRequest_t::serializeKey(eprosima::fastcdr::Cdr &/*scdr*/) 
 bool CheckLogicalPortsRequest_t::serialize(SerializedPayload_t *payload) 
 {
     CheckLogicalPortsRequest_t *p_type = this;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size + 4); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -514,14 +495,9 @@ KeepAliveRequest_t& KeepAliveRequest_t::operator=(KeepAliveRequest_t &&x)
     return *this;
 }
 
-size_t KeepAliveRequest_t::getMaxCdrSerializedSize(size_t current_alignment)
+size_t KeepAliveRequest_t::getBufferCdrSerializedSize(const KeepAliveRequest_t& data, size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 24 + eprosima::fastcdr::Cdr::alignment(current_alignment, 24);
-
-
-    return current_alignment - initial_alignment;
+    return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
 size_t KeepAliveRequest_t::getCdrSerializedSize(const KeepAliveRequest_t& /*data*/, size_t current_alignment)
@@ -565,7 +541,7 @@ void KeepAliveRequest_t::serializeKey(eprosima::fastcdr::Cdr &/*scdr*/) const
 bool KeepAliveRequest_t::serialize(SerializedPayload_t *payload) 
 {
     KeepAliveRequest_t *p_type = this;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size + 4); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -640,14 +616,9 @@ LogicalPortIsClosedRequest_t& LogicalPortIsClosedRequest_t::operator=(LogicalPor
     return *this;
 }
 
-size_t LogicalPortIsClosedRequest_t::getMaxCdrSerializedSize(size_t current_alignment)
+size_t LogicalPortIsClosedRequest_t::getBufferCdrSerializedSize(const LogicalPortIsClosedRequest_t& data, size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
+    return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
 size_t LogicalPortIsClosedRequest_t::getCdrSerializedSize(const LogicalPortIsClosedRequest_t& /*data*/, size_t current_alignment)
@@ -691,7 +662,7 @@ void LogicalPortIsClosedRequest_t::serializeKey(eprosima::fastcdr::Cdr &/*scdr*/
 bool LogicalPortIsClosedRequest_t::serialize(SerializedPayload_t *payload) 
 {
     LogicalPortIsClosedRequest_t *p_type = this;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size + 4); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -1153,57 +1124,9 @@ LogicalPortIsClosedRequest_t& RequestData::logicalPortIsClosedRequest()
     return m_logicalPortIsClosedRequest;
 }
 
-size_t RequestData::getMaxCdrSerializedSize(size_t current_alignment)
+size_t RequestData::getBufferCdrSerializedSize(const RequestData& data, size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-    size_t reset_alignment = 0;
-    size_t union_max_size_serialized = 0;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += ConnectionRequest_t::getMaxCdrSerializedSize(reset_alignment);
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-        reset_alignment = current_alignment;
-
-        reset_alignment += OpenLogicalPortRequest_t::getMaxCdrSerializedSize(reset_alignment);
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-        reset_alignment = current_alignment;
-
-        reset_alignment += CheckLogicalPortsRequest_t::getMaxCdrSerializedSize(reset_alignment);
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-        reset_alignment = current_alignment;
-
-        reset_alignment += KeepAliveRequest_t::getMaxCdrSerializedSize(reset_alignment);
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-        reset_alignment = current_alignment;
-
-        reset_alignment += LogicalPortIsClosedRequest_t::getMaxCdrSerializedSize(reset_alignment);
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-
-    return union_max_size_serialized - initial_alignment;
+    return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
 // TODO(Ricardo) Review
@@ -1322,13 +1245,9 @@ ControlProtocolRequestData& ControlProtocolRequestData::operator=(ControlProtoco
     return *this;
 }
 
-size_t ControlProtocolRequestData::getMaxCdrSerializedSize(size_t current_alignment)
+size_t ControlProtocolRequestData::getBufferCdrSerializedSize(const ControlProtocolRequestData& data, size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += RequestData::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
+    return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
 size_t ControlProtocolRequestData::getCdrSerializedSize(const ControlProtocolRequestData& data, size_t current_alignment)
@@ -1401,14 +1320,9 @@ BindConnectionResponse_t& BindConnectionResponse_t::operator=(BindConnectionResp
     return *this;
 }
 
-size_t BindConnectionResponse_t::getMaxCdrSerializedSize(size_t current_alignment)
+size_t BindConnectionResponse_t::getBufferCdrSerializedSize(const BindConnectionResponse_t& data, size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 24 + eprosima::fastcdr::Cdr::alignment(current_alignment, 24);
-
-
-    return current_alignment - initial_alignment;
+    return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
 size_t BindConnectionResponse_t::getCdrSerializedSize(const BindConnectionResponse_t& /*data*/, size_t current_alignment)
@@ -1452,7 +1366,7 @@ void BindConnectionResponse_t::serializeKey(eprosima::fastcdr::Cdr &/*scdr*/) co
 bool BindConnectionResponse_t::serialize(SerializedPayload_t *payload) 
 {
     BindConnectionResponse_t *p_type = this;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size + 4); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -1526,15 +1440,9 @@ CheckLogicalPortsResponse_t& CheckLogicalPortsResponse_t::operator=(CheckLogical
     return *this;
 }
 
-size_t CheckLogicalPortsResponse_t::getMaxCdrSerializedSize(size_t current_alignment)
+size_t CheckLogicalPortsResponse_t::getBufferCdrSerializedSize(const CheckLogicalPortsResponse_t& data, size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += (100 * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
+    return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
 size_t CheckLogicalPortsResponse_t::getCdrSerializedSize(const CheckLogicalPortsResponse_t& data, size_t current_alignment)
@@ -1579,7 +1487,7 @@ void CheckLogicalPortsResponse_t::serializeKey(eprosima::fastcdr::Cdr &/*scdr*/)
 bool CheckLogicalPortsResponse_t::serialize(SerializedPayload_t *payload) 
 {
     CheckLogicalPortsResponse_t *p_type = this;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size + 4); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -1771,25 +1679,9 @@ BindConnectionResponse_t& ResponseData::bindConnectionResponse()
     return m_bindConnectionResponse;
 }
 
-size_t ResponseData::getMaxCdrSerializedSize(size_t current_alignment)
+size_t ResponseData::getBufferCdrSerializedSize(const ResponseData& data, size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-    size_t reset_alignment = 0;
-    size_t union_max_size_serialized = 0;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += BindConnectionResponse_t::getMaxCdrSerializedSize(reset_alignment);
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-
-    return union_max_size_serialized - initial_alignment;
+    return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
 // TODO(Ricardo) Review
@@ -1878,15 +1770,9 @@ ControlProtocolResponseData& ControlProtocolResponseData::operator=(ControlProto
     return *this;
 }
 
-size_t ControlProtocolResponseData::getMaxCdrSerializedSize(size_t current_alignment)
+size_t ControlProtocolResponseData::getBufferCdrSerializedSize(const ControlProtocolResponseData& data, size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-            
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    current_alignment += ResponseData::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
+    return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
 size_t ControlProtocolResponseData::getCdrSerializedSize(const ControlProtocolResponseData& data, size_t current_alignment)
