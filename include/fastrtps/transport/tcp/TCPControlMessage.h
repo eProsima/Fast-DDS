@@ -204,7 +204,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(const ConnectionRequest_t& data, size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -331,7 +331,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(const OpenLogicalPortRequest_t& data, size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -465,7 +465,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(const CheckLogicalPortsRequest_t& data, size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -590,7 +590,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(const KeepAliveRequest_t& data, size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -715,7 +715,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(const LogicalPortIsClosedRequest_t& data, size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -958,7 +958,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(const RequestData& data, size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1095,7 +1095,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(const ControlProtocolRequestData& data, size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1148,7 +1148,8 @@ private:
  */
 enum ResponseCode : uint32_t
 {
-    RETCODE_OK,
+    RETCODE_VOID = (uint32_t)(-1),
+    RETCODE_OK = 0,
     RETCODE_BAD_REQUEST,
     RETCODE_EXISTING_CONNECTION,
     RETCODE_INVALID_PORT,
@@ -1231,7 +1232,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(const BindConnectionResponse_t& data, size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1365,7 +1366,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(const CheckLogicalPortsResponse_t& data, size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1508,7 +1509,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(const ResponseData& data, size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1667,7 +1668,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(const ControlProtocolResponseData& data, size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
