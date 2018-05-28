@@ -33,10 +33,19 @@ namespace rtps {
 
 static void EndpointToLocator(const asio::ip::tcp::endpoint& endpoint, Locator_t& locator)
 {
-    locator.kind = LOCATOR_KIND_TCPv4;
+    if (endpoint.protocol() == asio::ip::tcp::v4())
+    {
+        locator.kind = LOCATOR_KIND_TCPv4;
+        auto ipBytes = endpoint.address().to_v4().to_bytes();
+        locator.set_IP4_address(ipBytes.data());
+    }
+    else if (endpoint.protocol() == asio::ip::tcp::v6())
+    {
+        locator.kind = LOCATOR_KIND_TCPv6;
+        auto ipBytes = endpoint.address().to_v6().to_bytes();
+        locator.set_IP6_address(ipBytes.data());
+    }
     locator.set_port(endpoint.port());
-    auto ipBytes = endpoint.address().to_v4().to_bytes();
-    locator.set_IP4_address(ipBytes.data());
 }
 
 static void readSerializedPayload(SerializedPayload_t &payload, const octet* data, size_t size)
@@ -234,10 +243,13 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
     }
 }
 
-void RTCPMessageManager::sendConnectionRequest(std::shared_ptr<TCPSocketInfo> pSocketInfo)
+void RTCPMessageManager::sendConnectionRequest(std::shared_ptr<TCPSocketInfo> pSocketInfo, uint16_t localLogicalPort)
 {
     ConnectionRequest_t request;
-    request.transportLocator(pSocketInfo->mLocator);
+    Locator_t locator;
+    EndpointToLocator(pSocketInfo->getSocket()->local_endpoint(), locator);
+    locator.set_logical_port(localLogicalPort);
+    request.transportLocator(locator);
 
     SerializedPayload_t payload(static_cast<uint32_t>(ConnectionRequest_t::getBufferCdrSerializedSize(request)));
     request.serialize(&payload);
@@ -317,7 +329,7 @@ void RTCPMessageManager::sendUnbindConnectionRequest(std::shared_ptr<TCPSocketIn
 }
 
 void RTCPMessageManager::processConnectionRequest(std::shared_ptr<TCPSocketInfo> pSocketInfo,
-        const ConnectionRequest_t &/*request*/, const TCPTransactionId &transactionId, Locator_t &localLocator)
+        const ConnectionRequest_t &request, const TCPTransactionId &transactionId, Locator_t &localLocator)
 {
     BindConnectionResponse_t response;
     response.locator(localLocator);
@@ -328,7 +340,10 @@ void RTCPMessageManager::processConnectionRequest(std::shared_ptr<TCPSocketInfo>
     // TODO More options!
     if (pSocketInfo->mConnectionStatus == TCPSocketInfo::eConnectionStatus::eWaitingForBind)
     {
-
+        {
+            std::unique_lock<std::recursive_mutex> scope(pSocketInfo->mPendingLogicalMutex);
+            pSocketInfo->mPendingLogicalOutputPorts.push_back(request.transportLocator().get_logical_port());
+        }
         sendData(pSocketInfo, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_OK);
         pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eEstablished);
     }

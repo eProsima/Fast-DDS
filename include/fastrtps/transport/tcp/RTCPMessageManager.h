@@ -47,7 +47,7 @@ public:
     RTCPMessageManager(TCPv4Transport* tcpv4_transport) : transport(tcpv4_transport) {}
     virtual ~RTCPMessageManager();
 
-    void sendConnectionRequest(std::shared_ptr<TCPSocketInfo> pSocketInfo);
+    void sendConnectionRequest(std::shared_ptr<TCPSocketInfo> pSocketInfo, uint16_t localLogicalPort);
     void sendOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> pSocketInfo, OpenLogicalPortRequest_t &request);
     void sendOpenLogicalPortRequest(std::shared_ptr<TCPSocketInfo> pSocketInfo, uint16_t port);
     void sendCheckLogicalPortsRequest(std::shared_ptr<TCPSocketInfo> pSocketInfo, CheckLogicalPortsRequest_t &request);
