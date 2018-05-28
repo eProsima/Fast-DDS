@@ -101,17 +101,18 @@ private:
     }
 
     bool sendData(std::shared_ptr<TCPSocketInfo> pSocketInfo, TCPCPMKind kind,
-        const TCPTransactionId &transactionId, const octet *data, const size_t size);
+        const TCPTransactionId &transactionId, const SerializedPayload_t &payload);
     bool sendData(std::shared_ptr<TCPSocketInfo> pSocketInfo, TCPCPMKind kind,
-        const TCPTransactionId &transactionId, const octet *data,
-        const size_t size, const ResponseCode respCode);
+        const TCPTransactionId &transactionId, const SerializedPayload_t &payload, 
+        const ResponseCode respCode);
     bool sendData(std::shared_ptr<TCPSocketInfo> pSocketInfo, TCPCPMKind kind,
         const TCPTransactionId &transactionId, const ResponseCode respCode);
     bool sendData(std::shared_ptr<TCPSocketInfo> pSocketInfo, TCPCPMKind kind,
         const TCPTransactionId &transactionId);
     void fillHeaders(TCPCPMKind kind, const TCPTransactionId &transactionId,
-        TCPControlMsgHeader &retCtrlHeader, TCPHeader &header, const octet *data = nullptr,
-        const size_t *size = nullptr, const ResponseCode *respCode = nullptr);
+        TCPControlMsgHeader &retCtrlHeader, TCPHeader &header, 
+        const SerializedPayload_t *payload = nullptr,
+        const ResponseCode *respCode = nullptr);
 };
 } /* namespace rtps */
 } /* namespace fastrtps */
