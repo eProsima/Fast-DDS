@@ -77,9 +77,9 @@ UDPSocketInfo::UDPSocketInfo(eProsimaUDPSocket& socket, uint32_t maxMsgSize)
 }
 
 UDPSocketInfo::UDPSocketInfo(UDPSocketInfo&& socketInfo)
-    : socket_(moveSocket(socketInfo.socket_))
+    : mMsgReceiver(socketInfo.mMsgReceiver)
+    , socket_(moveSocket(socketInfo.socket_))
     , only_multicast_purpose_(socketInfo.only_multicast_purpose_)
-    , mMsgReceiver(socketInfo.mMsgReceiver)
 {
     socketInfo.mMsgReceiver = nullptr;
 }

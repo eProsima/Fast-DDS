@@ -779,7 +779,7 @@ void TCPv4Transport::SetParticipantGUIDPrefix(const GuidPrefix_t& prefix)
 bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& /*localLocator*/,
     const Locator_t& remoteLocator)
 {
-    std::cout << "[RTCP] SEND [RTPS]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << std::endl;
+    //std::cout << "[RTCP] SEND [RTPS]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << std::endl;
     std::shared_ptr<TCPSocketInfo> socket = nullptr;
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
@@ -867,7 +867,7 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
                     TCPHeader tcp_header;
                     memcpy(&tcp_header, header, TCPHeader::getSize());
                     size_t body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::getSize());
-                    std::cout << "[RTCP] Received [TCPHeader] (CRC=" << tcp_header.crc << ")" << std::endl;
+                    //std::cout << "[RTCP] Received [TCPHeader] (CRC=" << tcp_header.crc << ")" << std::endl;
 
                     if (body_size > receiveBufferCapacity)
                     {
@@ -878,7 +878,7 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
                     else
                     {
                         success = ReadBody(receiveBuffer, receiveBufferCapacity, &receiveBufferSize, socketInfo, body_size);
-                        std::cout << "[RTCP] Received [ReadBody]" << std::endl;
+                        //std::cout << "[RTCP] Received [ReadBody]" << std::endl;
 
                         if (!RTCPMessageManager::CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
                         {
@@ -887,14 +887,14 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
 
                         if (tcp_header.logicalPort == 0)
                         {
-                            std::cout << "[RTCP] Receive [RTCP Control]  (" << receiveBufferSize+bytes_received << " bytes): " << receiveBufferSize << " bytes." << std::endl;
+                            //std::cout << "[RTCP] Receive [RTCP Control]  (" << receiveBufferSize+bytes_received << " bytes): " << receiveBufferSize << " bytes." << std::endl;
                             mRTCPMessageManager->processRTCPMessage(socketInfo, receiveBuffer);
                             success = false;
                         }
                         else
                         {
                             logicalPort = tcp_header.logicalPort;
-                            std::cout << "[RTCP] Receive [RTPS Data]: " << receiveBufferSize << " bytes." << std::endl;
+                            //std::cout << "[RTCP] Receive [RTPS Data]: " << receiveBufferSize << " bytes." << std::endl;
                         }
                     }
                 }
@@ -981,7 +981,7 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
     switch(errorCode)
     {
         case eNoError:
-            std::cout << "[RTCP] Sent [OK]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << std::endl;
+            //std::cout << "[RTCP] Sent [OK]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << std::endl;
             break;
         default:
             // Close the channel
@@ -1201,7 +1201,11 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, const asio::error_code&
             std::cout << "[RTCP] Connection established (physical: " << locator.get_physical_port() << ")" << std::endl;
 
             // RTCP Control Message
-            mRTCPMessageManager->sendConnectionRequest(outputSocket, 7401);
+            for (uint16_t p : outputSocket->mLogicalInputPorts)
+            {
+                // TODO Send only the metatraffic port?
+                mRTCPMessageManager->sendConnectionRequest(outputSocket, p);
+            }
         }
         else
         {
