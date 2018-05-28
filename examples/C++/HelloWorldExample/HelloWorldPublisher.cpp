@@ -74,9 +74,9 @@ bool HelloWorldPublisher::init(bool tcp)
         //PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = false;
         //PParam.rtps.builtin.setStaticEndpointXMLFilename("HelloWorldSubscriber.xml");
 
-        PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-        PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-        PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+        //PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+        //PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+        //PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
         PParam.rtps.builtin.domainId = 0;
         PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
         PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5, 0);
@@ -186,7 +186,7 @@ bool HelloWorldPublisher::publish(bool waitForListener)
     {
         m_Hello.index(m_Hello.index()+1);
         mp_publisher->write((void*)&m_Hello);
-        eClock::my_sleep(100);
+        eClock::my_sleep(10000);
         return true;
     }
     return false;

@@ -332,6 +332,7 @@ void RTCPMessageManager::processConnectionRequest(std::shared_ptr<TCPSocketInfo>
         const ConnectionRequest_t &request, const TCPTransactionId &transactionId, Locator_t &localLocator)
 {
     BindConnectionResponse_t response;
+    localLocator.set_logical_port(request.transportLocator().get_logical_port());
     response.locator(localLocator);
 
     SerializedPayload_t payload(static_cast<uint32_t>(BindConnectionResponse_t::getBufferCdrSerializedSize(response)));
@@ -343,6 +344,7 @@ void RTCPMessageManager::processConnectionRequest(std::shared_ptr<TCPSocketInfo>
         {
             std::unique_lock<std::recursive_mutex> scope(pSocketInfo->mPendingLogicalMutex);
             pSocketInfo->mPendingLogicalOutputPorts.push_back(request.transportLocator().get_logical_port());
+            transport->BindInputSocket(localLocator, pSocketInfo);
         }
         sendData(pSocketInfo, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_OK);
         pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eEstablished);

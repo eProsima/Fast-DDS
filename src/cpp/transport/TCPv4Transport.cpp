@@ -379,7 +379,8 @@ bool TCPv4Transport::IsOutputChannelConnected(const Locator_t& locator) const
             return true;
         }
     }
-    return false;
+
+    return IsOutputChannelBound(locator);
 }
 
 bool TCPv4Transport::OpenOutputChannel(Locator_t& locator)
@@ -1193,6 +1194,8 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, const asio::error_code&
             outputSocket->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, outputSocket));
             outputSocket->ChangeStatus(TCPSocketInfo::eConnectionStatus::eConnected);
             mOutputSockets.push_back(outputSocket);
+            BindOutputChannel(locator);
+
             //mInputSockets[outputSocket->GetLocator().get_physical_port()].emplace_back(outputSocket);
 
             std::cout << "[RTCP] Connection established (physical: " << locator.get_physical_port() << ")" << std::endl;
