@@ -449,7 +449,6 @@ bool TCPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource
             else
             {
                 //TODO: Accept ?
-                EnqueueLogicalInputPort(locator);
                 if (mReceiverResources.find(locator) == mReceiverResources.end())
                 {
                     mReceiverResources[locator] = receiverResource;
@@ -601,27 +600,6 @@ bool TCPv4Transport::EnqueueLogicalOutputPort(Locator_t& locator)
         {
             (*it)->mPendingLogicalOutputPorts.push_back(locator.get_logical_port());
             return true;
-        }
-    }
-    return false;
-}
-
-bool TCPv4Transport::EnqueueLogicalInputPort(const Locator_t& locator)
-{
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-    if (mInputSockets.find(locator.get_physical_port()) != mInputSockets.end())
-    {
-        for (auto it = mInputSockets.at(locator.get_physical_port()).begin();
-            it != mInputSockets.at(locator.get_physical_port()).end(); ++it)
-        {
-            if ((*it)->GetLocator().compare_IP4_address_and_port(locator)
-                    && std::find((*it)->mLogicalInputPorts.begin(),
-                (*it)->mLogicalInputPorts.end(), locator.get_logical_port())
-                    == (*it)->mLogicalInputPorts.end())
-            {
-                (*it)->mLogicalInputPorts.push_back(locator.get_logical_port());
-                return true;
-            }
         }
     }
     return false;
@@ -1124,6 +1102,7 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
                     socketInfo->GetMessageReceiver(it->first.get_logical_port()) == nullptr)
                 {
                     socketInfo->AddMessageReceiver(acceptor->mLocator.get_logical_port(), it->second->CreateMessageReceiver());
+                    socketInfo->mLogicalInputPorts.emplace_back(it->first.get_logical_port());
                 }
             }
 
@@ -1168,6 +1147,7 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
                     socketInfo->GetMessageReceiver(it->first.get_logical_port()) == nullptr)
                 {
                     socketInfo->AddMessageReceiver(acceptor->mLocator.get_logical_port(), it->second->CreateMessageReceiver());
+                    socketInfo->mLogicalInputPorts.emplace_back(it->first.get_logical_port());
                 }
             }
 
@@ -1205,6 +1185,7 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, const asio::error_code&
                     outputSocket->GetMessageReceiver(locator.get_logical_port()) == nullptr)
                 {
                     outputSocket->AddMessageReceiver(locator.get_logical_port(), it->second->CreateMessageReceiver());
+                    outputSocket->mLogicalInputPorts.emplace_back(it->first.get_logical_port());
                 }
             }
 
