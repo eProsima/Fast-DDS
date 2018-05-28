@@ -389,6 +389,7 @@ bool TCPv4Transport::OpenOutputChannel(Locator_t& locator)
     {
         if (!IsTCPInputSocket(locator))
         {
+            std::cout << "##### OUTPUT " << locator.get_logical_port() << std::endl;
             std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
             if (!IsOutputChannelConnected(locator))
             {
@@ -414,7 +415,10 @@ bool TCPv4Transport::OpenOutputChannel(Locator_t& locator)
             }
         }
         else
+        {
+            std::cout << "##### INPUT " << locator.get_logical_port() << std::endl;
             success = true;
+        }
     }
     else
     {
@@ -801,7 +805,10 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         if (!IsOutputChannelConnected(remoteLocator) || sendBufferSize > mConfiguration_.sendBufferSize)
+        {
+            std::cout << "[RTCP] SEND [RTPS] Failed: Not connect. " << remoteLocator.get_logical_port() << std::endl;
             return false;
+        }
 
         if (mBoundOutputSockets.find(remoteLocator) != mBoundOutputSockets.end())
         {
@@ -868,7 +875,6 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
             {
                 // Read the header
                 octet header[TCPHEADER_SIZE];
-                std::cout << "[RTCP] Receive [TCPHeader]" << std::endl;
                 size_t bytes_received = read(*socketInfo->getSocket(),
                     asio::buffer(header, TCPHeader::getSize()),
                     transfer_exactly(TCPHeader::getSize()));
@@ -892,7 +898,6 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
                     }
                     else
                     {
-                        std::cout << "[RTCP] Receive [ReadBody]" << std::endl;
                         success = ReadBody(receiveBuffer, receiveBufferCapacity, &receiveBufferSize, socketInfo, body_size);
                         std::cout << "[RTCP] Received [ReadBody]" << std::endl;
 
@@ -1123,6 +1128,7 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             }
 
             mInputSockets[acceptor->mLocator.get_physical_port()].emplace_back(socketInfo);
+            //mOutputSockets.push_back(socketInfo);
 
             std::cout << "[RTCP] Accepted connection (physical: " << acceptor->mLocator.get_physical_port() << ")" << std::endl;
         }
@@ -1206,11 +1212,12 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, const asio::error_code&
             outputSocket->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, outputSocket));
             outputSocket->ChangeStatus(TCPSocketInfo::eConnectionStatus::eConnected);
             mOutputSockets.push_back(outputSocket);
+            //mInputSockets[outputSocket->GetLocator().get_physical_port()].emplace_back(outputSocket);
 
             std::cout << "[RTCP] Connection established (physical: " << locator.get_physical_port() << ")" << std::endl;
 
             // RTCP Control Message
-            mRTCPMessageManager->sendConnectionRequest(outputSocket);
+            mRTCPMessageManager->sendConnectionRequest(outputSocket, 7401);
         }
         else
         {
