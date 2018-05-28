@@ -227,7 +227,6 @@ protected:
     bool OpenAndBindOutputSockets(Locator_t& locator);
     void OpenAndBindUnicastOutputSocket(Locator_t& locator);
     bool EnqueueLogicalOutputPort(Locator_t& locator);
-    bool EnqueueLogicalInputPort(const Locator_t& locator);
 
     bool OpenAndBindInputSockets(const Locator_t& locator, uint32_t maxMsgSize);
     void CloseTCPSocket(std::shared_ptr<TCPSocketInfo> socketInfo);
