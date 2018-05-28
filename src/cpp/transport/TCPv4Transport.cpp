@@ -882,6 +882,7 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
                     TCPHeader tcp_header;
                     memcpy(&tcp_header, header, TCPHeader::getSize());
                     size_t body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::getSize());
+                    std::cout << "[RTCP] Received [TCPHeader] (CRC=" << tcp_header.crc << ")" << std::endl;
 
                     if (body_size > receiveBufferCapacity)
                     {
@@ -893,6 +894,7 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
                     {
                         std::cout << "[RTCP] Receive [ReadBody]" << std::endl;
                         success = ReadBody(receiveBuffer, receiveBufferCapacity, &receiveBufferSize, socketInfo, body_size);
+                        std::cout << "[RTCP] Received [ReadBody]" << std::endl;
 
                         if (!RTCPMessageManager::CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
                         {
@@ -901,7 +903,7 @@ bool TCPv4Transport::Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* r
 
                         if (tcp_header.logicalPort == 0)
                         {
-                            std::cout << "[RTCP] Receive [RTCP Control]: " << receiveBufferSize << " bytes." << std::endl;
+                            std::cout << "[RTCP] Receive [RTCP Control]  (" << receiveBufferSize+bytes_received << " bytes): " << receiveBufferSize << " bytes." << std::endl;
                             mRTCPMessageManager->processRTCPMessage(socketInfo, receiveBuffer);
                             success = false;
                         }
