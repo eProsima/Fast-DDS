@@ -13,21 +13,11 @@
 # limitations under the License.
 
 cmake_minimum_required(VERSION 2.8.12)
-
-if(NOT CMAKE_VERSION VERSION_LESS 3.0)
-    cmake_policy(SET CMP0048 NEW)
-endif()
-
-project(HelloWorldExample)
+project("HelloWorldExample")
 
 # Find requirements
-if(NOT fastcdr_FOUND)
-    find_package(fastcdr REQUIRED)
-endif()
-
-if(NOT fastrtps_FOUND)
-    find_package(fastrtps REQUIRED)
-endif()
+find_package(fastcdr REQUIRED)
+find_package(fastrtps REQUIRED)
 
 # Set C++11
 include(CheckCXXCompilerFlag)
@@ -44,8 +34,13 @@ endif()
 message(STATUS "Configuring HelloWorld example...")
 file(GLOB HELLOWORLD_EXAMPLE_SOURCES_CXX "*.cxx")
 file(GLOB HELLOWORLD_EXAMPLE_SOURCES_CPP "*.cpp")
+#file(GLOB XML_CONFIG_FILES "*.xml")
+#message(STATUS "XML Files: " ${XML_CONFIG_FILES})
+configure_file("HelloWorldSubscriber.xml" "HelloWorldSubscriber.xml" COPYONLY)
+configure_file("HelloWorldPublisher.xml" "HelloWorldPublisher.xml" COPYONLY)
 
 add_executable(HelloWorldExample ${HELLOWORLD_EXAMPLE_SOURCES_CXX} ${HELLOWORLD_EXAMPLE_SOURCES_CPP})
 target_link_libraries(HelloWorldExample fastrtps fastcdr)
 install(TARGETS HelloWorldExample
     RUNTIME DESTINATION examples/C++/HelloWorldExample/${BIN_INSTALL_DIR})
+

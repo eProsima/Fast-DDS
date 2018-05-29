@@ -21,6 +21,8 @@
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
@@ -33,17 +35,70 @@ mp_subscriber(nullptr)
 {
 }
 
-bool HelloWorldSubscriber::init()
+bool HelloWorldSubscriber::init(bool tcp)
 {
     ParticipantAttributes PParam;
-    PParam.rtps.defaultSendPort = 10043;
-    PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-    PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.domainId = 0;
-    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-    PParam.rtps.setName("Participant_sub");
+    int32_t kind = (tcp) ? LOCATOR_KIND_TCPv4 : LOCATOR_KIND_UDPv4;
+
+    if (tcp)
+    {
+        Locator_t initial_peer_locator;
+        initial_peer_locator.kind = kind;
+        initial_peer_locator.set_IP4_address("127.0.0.1");
+        initial_peer_locator.set_port(5100);
+        initial_peer_locator.set_logical_port(7401);
+        PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
+        PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
+
+        Locator_t unicast_locator;
+        unicast_locator.kind = kind;
+        unicast_locator.set_IP4_address("127.0.0.1");
+        unicast_locator.set_port(5100);
+        unicast_locator.set_logical_port(7411);
+        PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
+        /*
+            Locator_t out_locator;
+            out_locator.kind = kind;
+            out_locator.set_IP4_address("127.0.0.1");
+            out_locator.set_port(5100);
+            out_locator.set_logical_port(7400);
+            PParam.rtps.defaultOutLocatorList.push_back(out_locator);
+        */
+        Locator_t meta_locator;
+        meta_locator.kind = kind;
+        meta_locator.set_IP4_address("127.0.0.1");
+        meta_locator.set_port(5100);
+        meta_locator.set_logical_port(7401);
+        PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
+
+        //PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+        //PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = false;
+        //PParam.rtps.builtin.setStaticEndpointXMLFilename("HelloWorldPublisher.xml");
+
+        //PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+        //PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+        //PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+        PParam.rtps.builtin.domainId = 0;
+        PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+        PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5, 0);
+        PParam.rtps.setName("Participant_sub");
+    }
+
+    std::shared_ptr<TransportDescriptorInterface> descriptor;
+    if (tcp)
+    {
+        PParam.rtps.useBuiltinTransports = false;
+        descriptor = std::make_shared<TCPv4TransportDescriptor>();
+    }
+    else
+    {
+        PParam.rtps.useBuiltinTransports = true;
+        descriptor = std::make_shared<UDPv4TransportDescriptor>();
+    }
+    //descriptor->sendBufferSize = 0;
+    //descriptor->receiveBufferSize = 0;
+    PParam.rtps.userTransports.push_back(descriptor);
+
     mp_participant = Domain::createParticipant(PParam);
     if(mp_participant==nullptr)
         return false;
@@ -55,13 +110,15 @@ bool HelloWorldSubscriber::init()
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = NO_KEY;
     Rparam.topic.topicDataType = "HelloWorld";
-    Rparam.topic.topicName = "HelloWorldTopic";
+    Rparam.topic.topicName = "HelloWorldTopic1";
     Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Rparam.topic.historyQos.depth = 30;
     Rparam.topic.resourceLimitsQos.max_samples = 50;
     Rparam.topic.resourceLimitsQos.allocated_samples = 20;
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    Rparam.setUserDefinedID(3);
+    Rparam.setEntityID(4);
     mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 
     if(mp_subscriber == nullptr)
@@ -114,6 +171,6 @@ void HelloWorldSubscriber::run()
 void HelloWorldSubscriber::run(uint32_t number)
 {
     std::cout << "Subscriber running until "<< number << "samples have been received"<<std::endl;
-    while(number > this->m_listener.n_samples)
+    while(number < this->m_listener.n_samples)
         eClock::my_sleep(500);
 }

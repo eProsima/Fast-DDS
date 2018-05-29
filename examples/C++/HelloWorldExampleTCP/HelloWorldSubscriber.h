@@ -37,7 +37,7 @@ public:
 	HelloWorldSubscriber();
 	virtual ~HelloWorldSubscriber();
 	//!Initialize the subscriber
-	bool init();
+	bool init(bool tcp);
 	//!RUN the subscriber
 	void run();
 	//!Run the subscriber until number samples have been recevied.
