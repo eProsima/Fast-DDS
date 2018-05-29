@@ -280,7 +280,7 @@ class RTPSWithRegistrationReader
         {
             eprosima::fastrtps::rtps::Locator_t loc;
             loc.set_IP4_address(ip);
-            loc.port = port;
+            loc.set_port(port);
             reader_attr_.endpoint.multicastLocatorList.push_back(loc);
 
             return *this;

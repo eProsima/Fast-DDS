@@ -23,11 +23,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-typedef struct  
-{
-    int maximumChannels;
-    int supportedKind;
-} MockTransportDescriptor;
+class MockTransportDescriptor;
 
 class MockTransport: public TransportInterface
 {
@@ -46,7 +42,7 @@ class MockTransport: public TransportInterface
         virtual bool IsInputChannelOpen(const Locator_t&)  const override;
 
         virtual bool OpenOutputChannel(Locator_t&) override;
-        virtual bool OpenInputChannel(const Locator_t&) override;
+        virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) override;
 
         virtual bool CloseOutputChannel(const Locator_t&) override;
         virtual bool CloseInputChannel(const Locator_t&) override;
@@ -58,14 +54,18 @@ class MockTransport: public TransportInterface
         virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
         virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator) override;
-        virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-                const Locator_t& localLocator, Locator_t& remoteLocator) override;
+        //virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
+        //        const Locator_t& localLocator, Locator_t& remoteLocator) override;
 
         virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
 
         virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 
         virtual bool is_local_locator(const Locator_t&) const override { return false; }
+
+        virtual void SetParticipantGUIDPrefix(const GuidPrefix_t&) override {};
+        virtual TransportDescriptorInterface* get_configuration() override { return nullptr; };
+        virtual void AddDefaultLocator(LocatorList_t &) override {};
 
         //Helpers and message record
         typedef struct
@@ -92,6 +92,15 @@ class MockTransport: public TransportInterface
 
         //Helper persistent handles
         static std::vector<MockTransport*> mockTransportInstances;
+};
+
+class MockTransportDescriptor: public TransportDescriptorInterface
+{
+public:
+    MockTransportDescriptor() : TransportDescriptorInterface(0x8FFF) {}
+    int maximumChannels;
+    int supportedKind;
+    virtual TransportInterface* create_transport() const override { return new MockTransport(*this); }
 };
 
 } // namespace rtps

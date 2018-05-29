@@ -31,21 +31,26 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/SocketInfo.cpp)
 
         set(UDPV6TESTS_SOURCE
             UDPv6Tests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv6Transport.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv6Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/SocketInfo.cpp)
 
         set(TCPV4TESTS_SOURCE
             TCPv4Tests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPv4Transport.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPv4Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/SocketInfo.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/RTCPMessageManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cxx)
 
         set(TEST_UDPV4TESTS_SOURCE
             test_UDPv4Tests.cpp
@@ -59,15 +64,16 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/test_UDPv4Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/SocketInfo.cpp)
 
         include_directories(mock/)
 
         add_executable(UDPv4Tests ${UDPV4TESTS_SOURCE})
         target_compile_definitions(UDPv4Tests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(UDPv4Tests PRIVATE ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(UDPv4Tests ${GTEST_LIBRARIES} ${MOCKS} )
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
+        target_link_libraries(UDPv4Tests ${GTEST_LIBRARIES} ${MOCKS} fastrtps)
         if(MSVC OR MSVC_IDE)
             target_link_libraries(UDPv4Tests ${PRIVACY}
                 iphlpapi Shlwapi
@@ -81,8 +87,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             add_executable(UDPv6Tests ${UDPV6TESTS_SOURCE})
             target_compile_definitions(UDPv6Tests PRIVATE FASTRTPS_NO_LIB)
             target_include_directories(UDPv6Tests PRIVATE ${GTEST_INCLUDE_DIRS}
-                ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-            target_link_libraries(UDPv6Tests ${GTEST_LIBRARIES} ${MOCKS} )
+                ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
+            target_link_libraries(UDPv6Tests ${GTEST_LIBRARIES} ${MOCKS} fastrtps)
             if(MSVC OR MSVC_IDE)
                 target_link_libraries(UDPv6Tests ${PRIVACY}
                     iphlpapi Shlwapi
@@ -94,8 +100,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_executable(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
         target_compile_definitions(test_UDPv4Tests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(test_UDPv4Tests PRIVATE ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(test_UDPv4Tests ${GTEST_LIBRARIES} ${MOCKS} )
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
+        target_link_libraries(test_UDPv4Tests ${GTEST_LIBRARIES} ${MOCKS} fastrtps)
         if(MSVC OR MSVC_IDE)
             target_link_libraries(test_UDPv4Tests ${PRIVACY}
                 iphlpapi Shlwapi
@@ -107,7 +113,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_compile_definitions(TCPv4Tests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(TCPv4Tests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
-        target_link_libraries(TCPv4Tests ${GTEST_LIBRARIES} ${MOCKS} )
+        target_link_libraries(TCPv4Tests ${GTEST_LIBRARIES} ${MOCKS} fastcdr fastrtps)
         if(MSVC OR MSVC_IDE)
             target_link_libraries(TCPv4Tests ${PRIVACY}
                 iphlpapi Shlwapi
