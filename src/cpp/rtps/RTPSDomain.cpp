@@ -38,9 +38,7 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-//---------------------------------------------------------------------------------------------------------------------
 RTPSDomain& RTPSDomain::getInstance()
-//---------------------------------------------------------------------------------------------------------------------
 {
   static RTPSDomain s_instance;
   return s_instance;
