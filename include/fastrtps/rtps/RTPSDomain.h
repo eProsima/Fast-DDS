@@ -27,6 +27,7 @@
 
 #include <set>
 #include <mutex>
+#include <atomic>
 
 namespace eprosima{
 namespace fastrtps{
@@ -136,7 +137,7 @@ class RTPSDomain
 
     std::mutex m_mutex;
     std::set<uint32_t> m_RTPSParticipantIDs;
-    uint32_t m_maxRTPSParticipantID;
+    std::atomic<uint32_t> m_maxRTPSParticipantID;
     std::vector<t_p_RTPSParticipant> m_RTPSParticipants;
 
 };

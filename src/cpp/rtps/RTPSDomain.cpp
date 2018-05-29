@@ -46,7 +46,7 @@ RTPSDomain& RTPSDomain::getInstance()
   return s_instance;
 }
 
-RTPSDomain::RTPSDomain()
+RTPSDomain::RTPSDomain() : m_maxRTPSParticipantID(0)
 {
     srand (static_cast <unsigned> (time(0)));
 }
