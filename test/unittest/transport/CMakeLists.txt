@@ -40,6 +40,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv6Transport.cpp)
 
+        set(TCPV4TESTS_SOURCE
+            TCPv4Tests.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPv4Transport.cpp)
+
         set(TEST_UDPV4TESTS_SOURCE
             test_UDPv4Tests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
@@ -94,6 +101,19 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 iphlpapi Shlwapi
                 )
         endif()
+
+        add_executable(TCPv4Tests ${TCPV4TESTS_SOURCE})
+        add_gtest(TCPv4Tests ${TCPV4TESTS_SOURCE})
+        target_compile_definitions(TCPv4Tests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(TCPv4Tests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
+        target_link_libraries(TCPv4Tests ${GTEST_LIBRARIES} ${MOCKS} )
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(TCPv4Tests ${PRIVACY}
+                iphlpapi Shlwapi
+                )
+        endif()
+
         add_gtest(test_UDPv4Tests SOURCES ${TEST_UDPV4TESTS_SOURCE})
     endif()
 endif()
