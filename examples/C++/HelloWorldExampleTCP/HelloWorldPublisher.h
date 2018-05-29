@@ -34,11 +34,11 @@ public:
 	HelloWorldPublisher();
 	virtual ~HelloWorldPublisher();
 	//!Initialize
-	bool init(bool tcp);
+	bool init();
 	//!Publish a sample
-	bool publish(bool waitForListener = true);
+	bool publish(long sleep_ms, bool waitForListener = true);
 	//!Run for number samples
-	void run(uint32_t number);
+	void run(uint32_t number, long sleep_ms);
 private:
 	HelloWorld m_Hello;
 	eprosima::fastrtps::Participant* mp_participant;

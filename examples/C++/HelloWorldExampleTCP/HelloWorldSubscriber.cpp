@@ -35,66 +35,54 @@ mp_subscriber(nullptr)
 {
 }
 
-bool HelloWorldSubscriber::init(bool tcp)
+bool HelloWorldSubscriber::init()
 {
     ParticipantAttributes PParam;
-    int32_t kind = (tcp) ? LOCATOR_KIND_TCPv4 : LOCATOR_KIND_UDPv4;
+    int32_t kind = LOCATOR_KIND_TCPv4;
 
-    if (tcp)
-    {
-        Locator_t initial_peer_locator;
-        initial_peer_locator.kind = kind;
-        initial_peer_locator.set_IP4_address("127.0.0.1");
-        initial_peer_locator.set_port(5100);
-        initial_peer_locator.set_logical_port(7401);
-        PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
-        PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
+    Locator_t initial_peer_locator;
+    initial_peer_locator.kind = kind;
+    initial_peer_locator.set_IP4_address("127.0.0.1");
+    initial_peer_locator.set_port(5100);
+    initial_peer_locator.set_logical_port(7401);
+    PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
+    PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
 
-        Locator_t unicast_locator;
-        unicast_locator.kind = kind;
-        unicast_locator.set_IP4_address("127.0.0.1");
-        unicast_locator.set_port(5100);
-        unicast_locator.set_logical_port(7411);
-        PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
-        /*
-            Locator_t out_locator;
-            out_locator.kind = kind;
-            out_locator.set_IP4_address("127.0.0.1");
-            out_locator.set_port(5100);
-            out_locator.set_logical_port(7400);
-            PParam.rtps.defaultOutLocatorList.push_back(out_locator);
-        */
-        Locator_t meta_locator;
-        meta_locator.kind = kind;
-        meta_locator.set_IP4_address("127.0.0.1");
-        meta_locator.set_port(5100);
-        meta_locator.set_logical_port(7401);
-        PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
+    Locator_t unicast_locator;
+    unicast_locator.kind = kind;
+    unicast_locator.set_IP4_address("127.0.0.1");
+    unicast_locator.set_port(5100);
+    unicast_locator.set_logical_port(7411);
+    PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
+    /*
+        Locator_t out_locator;
+        out_locator.kind = kind;
+        out_locator.set_IP4_address("127.0.0.1");
+        out_locator.set_port(5100);
+        out_locator.set_logical_port(7400);
+        PParam.rtps.defaultOutLocatorList.push_back(out_locator);
+    */
+    Locator_t meta_locator;
+    meta_locator.kind = kind;
+    meta_locator.set_IP4_address("127.0.0.1");
+    meta_locator.set_port(5100);
+    meta_locator.set_logical_port(7401);
+    PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
 
-        //PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-        //PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = false;
-        //PParam.rtps.builtin.setStaticEndpointXMLFilename("HelloWorldPublisher.xml");
+    //PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+    //PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = false;
+    //PParam.rtps.builtin.setStaticEndpointXMLFilename("HelloWorldPublisher.xml");
 
-        //PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-        //PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-        //PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-        PParam.rtps.builtin.domainId = 0;
-        PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-        PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5, 0);
-        PParam.rtps.setName("Participant_sub");
-    }
+    //PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+    //PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+    //PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+    PParam.rtps.builtin.domainId = 0;
+    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5, 0);
+    PParam.rtps.setName("Participant_sub");
 
-    std::shared_ptr<TransportDescriptorInterface> descriptor;
-    if (tcp)
-    {
-        PParam.rtps.useBuiltinTransports = false;
-        descriptor = std::make_shared<TCPv4TransportDescriptor>();
-    }
-    else
-    {
-        PParam.rtps.useBuiltinTransports = true;
-        descriptor = std::make_shared<UDPv4TransportDescriptor>();
-    }
+    std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+    PParam.rtps.useBuiltinTransports = false;
     //descriptor->sendBufferSize = 0;
     //descriptor->receiveBufferSize = 0;
     PParam.rtps.userTransports.push_back(descriptor);
@@ -110,7 +98,7 @@ bool HelloWorldSubscriber::init(bool tcp)
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = NO_KEY;
     Rparam.topic.topicDataType = "HelloWorld";
-    Rparam.topic.topicName = "HelloWorldTopic1";
+    Rparam.topic.topicName = "HelloWorldTopicTCP";
     Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Rparam.topic.historyQos.depth = 30;
     Rparam.topic.resourceLimitsQos.max_samples = 50;
