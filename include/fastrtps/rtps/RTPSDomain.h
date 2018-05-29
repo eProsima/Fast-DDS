@@ -26,7 +26,8 @@
 #include "attributes/RTPSParticipantAttributes.h"
 
 #include <set>
-
+#include <mutex>
+#include <atomic>
 
 namespace eprosima{
 namespace fastrtps{
@@ -53,15 +54,6 @@ class ReaderListener;
 class RTPSDomain
 {
     typedef std::pair<RTPSParticipant*,RTPSParticipantImpl*> t_p_RTPSParticipant;
-
-    private:
-
-    RTPSDomain();
-
-    /**
-     * DomainRTPSParticipant destructor
-     */
-    ~RTPSDomain();
 
     public:
     /**
@@ -124,23 +116,29 @@ class RTPSDomain
      * @param maxRTPSParticipantId ID.
      */
     static inline void setMaxRTPSParticipantId(uint32_t maxRTPSParticipantId) {
-        m_maxRTPSParticipantID = maxRTPSParticipantId;
+        getInstance().m_maxRTPSParticipantID = maxRTPSParticipantId;
     }
 
 
 
     private:
-    static uint32_t m_maxRTPSParticipantID;
+    RTPSDomain();
+    ~RTPSDomain();
 
-    static std::vector<t_p_RTPSParticipant> m_RTPSParticipants;
+    RTPSDomain(RTPSDomain const&) = delete;
+    RTPSDomain& operator=(const RTPSDomain&) = delete;
+    static RTPSDomain& getInstance();
 
     /**
      * @brief Get Id to create a RTPSParticipant.
      * @return Different ID for each call.
      */
-    static inline uint32_t getNewId() {return m_maxRTPSParticipantID++;}
+    static inline uint32_t getNewId() {return getInstance().m_maxRTPSParticipantID++;}
 
-    static std::set<uint32_t> m_RTPSParticipantIDs;
+    std::mutex m_mutex;
+    std::set<uint32_t> m_RTPSParticipantIDs;
+    std::atomic<uint32_t> m_maxRTPSParticipantID;
+    std::vector<t_p_RTPSParticipant> m_RTPSParticipants;
 
 };
 
