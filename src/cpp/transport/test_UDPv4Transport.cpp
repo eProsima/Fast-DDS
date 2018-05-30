@@ -125,7 +125,7 @@ bool test_UDPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sen
 
     SubmessageHeader_t cdrSubMessageHeader;
     while (cdrMessage.pos < cdrMessage.length)
-    {  
+    {
         ReadSubmessageHeader(cdrMessage, cdrSubMessageHeader);
         if (cdrMessage.pos + cdrSubMessageHeader.submessageLength > cdrMessage.length)
             return false;

@@ -47,17 +47,6 @@ static void GetIP4sUniqueInterfaces(std::vector<IPFinder::info_IP>& locNames, bo
     locNames.erase(new_end, locNames.end());
 }
 
-static bool IsAny(Locator_t& locator)
-{
-    return locator.is_Any();
-}
-
-static asio::ip::address_v4::bytes_type locatorToNative(Locator_t& locator)
-{
-    return {{locator.get_IP4_address()[0],
-        locator.get_IP4_address()[1], locator.get_IP4_address()[2], locator.get_IP4_address()[3]}};
-}
-
 UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
     mConfiguration_(descriptor),
     mSendBufferSize(descriptor.sendBufferSize),
@@ -67,13 +56,15 @@ UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
             mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
     }
 
-UDPv4TransportDescriptor::UDPv4TransportDescriptor():
-    TransportDescriptorInterface(s_maximumMessageSize)
+UDPv4TransportDescriptor::UDPv4TransportDescriptor()
+    : TransportDescriptorInterface(s_maximumMessageSize)
+    , m_output_upd_socket(0)
 {
 }
 
-UDPv4TransportDescriptor::UDPv4TransportDescriptor(const UDPv4TransportDescriptor& t) :
-    TransportDescriptorInterface(t)
+UDPv4TransportDescriptor::UDPv4TransportDescriptor(const UDPv4TransportDescriptor& t)
+    : TransportDescriptorInterface(t)
+    , m_output_upd_socket(t.m_output_upd_socket)
 {
 }
 
@@ -332,89 +323,74 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource
 
     try
     {
-        if(IsAny(locator))
+        std::vector<IPFinder::info_IP> locNames;
+        GetIP4s(locNames);
+        // If there is no whitelist, we can simply open a generic output socket
+        // and gain efficiency.
+        if(mInterfaceWhiteList.empty())
         {
-            std::vector<IPFinder::info_IP> locNames;
-            GetIP4s(locNames);
-            // If there is no whitelist, we can simply open a generic output socket
-            // and gain efficiency.
-            if(mInterfaceWhiteList.empty())
+            eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v4::any(),
+                mConfiguration_.m_output_upd_socket);
+
+            getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
+
+            // If more than one interface, then create sockets for outbounding multicast.
+            if(locNames.size() > 1)
             {
-                eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v4::any(), locator.get_physical_port());
-                getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
+                auto locIt = locNames.begin();
 
-                // If more than one interface, then create sockets for outbounding multicast.
-                if(locNames.size() > 1)
+                // Outbounding first interface with already created socket.
+                getSocketPtr(unicastSocket)->set_option(
+                    ip::multicast::outbound_interface(asio::ip::address_v4::from_string((*locIt).name)));
+
+                // TODO Who will be on charge of free this allocation?
+                mOutputSockets[locator.get_physical_port()].push_back(new UDPSocketInfo(unicastSocket));
+
+                // Create other socket for outbounding rest of interfaces.
+                for(++locIt; locIt != locNames.end(); ++locIt)
                 {
-                    auto locIt = locNames.begin();
-
-                    // Outbounding first interface with already created socket.
-                    getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(asio::ip::address_v4::from_string((*locIt).name)));
+                    auto ip = asio::ip::address_v4::from_string((*locIt).name);
+                    uint16_t new_port = 0;
+                    eProsimaUDPSocket multicastSocket = OpenAndBindUnicastOutputSocket(ip, new_port);
+                    getSocketPtr(multicastSocket)->set_option(ip::multicast::outbound_interface(ip));
                     // TODO Who will be on charge of free this allocation?
-                    mOutputSockets[locator.get_physical_port()].push_back(new UDPSocketInfo(unicastSocket));
-
-                    // Create other socket for outbounding rest of interfaces.
-                    for(++locIt; locIt != locNames.end(); ++locIt)
-                    {
-                        auto ip = asio::ip::address_v4::from_string((*locIt).name);
-                        uint16_t new_port = 0;
-                        eProsimaUDPSocket multicastSocket = OpenAndBindUnicastOutputSocket(ip, new_port);
-                        getSocketPtr(multicastSocket)->set_option(ip::multicast::outbound_interface(ip));
-                        // TODO Who will be on charge of free this allocation?
-                        UDPSocketInfo* mSocket = new UDPSocketInfo(multicastSocket);
-                        mSocket->only_multicast_purpose(true);
-                        mOutputSockets[locator.get_physical_port()].push_back(mSocket);
-                        // senderResource cannot be optimize in this cases
-                    }
-                }
-                else
-                {
-                    // Multicast data will be sent for the only one interface.
-                    UDPSocketInfo *mSocket = new UDPSocketInfo(unicastSocket);
+                    UDPSocketInfo* mSocket = new UDPSocketInfo(multicastSocket);
+                    mSocket->only_multicast_purpose(true);
                     mOutputSockets[locator.get_physical_port()].push_back(mSocket);
-                    if (senderResource != nullptr)
-                    {
-                        senderResource->SetSocketInfo(mSocket);
-                        AssociateSenderToSocket(mSocket, senderResource);
-                    }
+                    // senderResource cannot be optimize in this cases
                 }
             }
             else
             {
-                bool firstInterface = false;
-                for (const auto& infoIP : locNames)
+                // Multicast data will be sent for the only one interface.
+                UDPSocketInfo *mSocket = new UDPSocketInfo(unicastSocket);
+                mOutputSockets[locator.get_physical_port()].push_back(mSocket);
+                if (senderResource != nullptr)
                 {
-                    auto ip = asio::ip::address_v4::from_string(infoIP.name);
-                    if (IsInterfaceAllowed(ip))
-                    {
-                        eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.get_physical_port());
-                        getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(ip));
-                        if(firstInterface)
-                        {
-                            getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
-                            firstInterface = true;
-                        }
-                        // TODO Who will be on charge of free this allocation?
-                        mOutputSockets[locator.get_physical_port()].push_back(new UDPSocketInfo(unicastSocket));
-                        // senderResource cannot be optimized in this cases
-                    }
+                    senderResource->SetSocketInfo(mSocket);
+                    AssociateSenderToSocket(mSocket, senderResource);
                 }
             }
         }
         else
         {
-            auto ip = asio::ip::address_v4(locatorToNative(locator));
-            eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.get_physical_port());
-            getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(ip));
-            getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
-            // TODO Who will be on charge of free this allocation?
-            UDPSocketInfo *mSocket = new UDPSocketInfo(unicastSocket);
-            mOutputSockets[locator.get_physical_port()].push_back(mSocket);
-
-            if (senderResource != nullptr)
+            bool firstInterface = false;
+            for (const auto& infoIP : locNames)
             {
-                senderResource->SetSocketInfo(mSocket);
-                AssociateSenderToSocket(mSocket, senderResource);
+                auto ip = asio::ip::address_v4::from_string(infoIP.name);
+                if (IsInterfaceAllowed(ip))
+                {
+                    eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, mConfiguration_.m_output_upd_socket);
+                    getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(ip));
+                    if(firstInterface)
+                    {
+                        getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
+                        firstInterface = true;
+                    }
+                    // TODO Who will be on charge of free this allocation?
+                    mOutputSockets[locator.get_physical_port()].push_back(new UDPSocketInfo(unicastSocket));
+                    // senderResource cannot be optimized in this cases
+                }
             }
         }
     }
@@ -422,22 +398,25 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource
     {
         (void)e;
         logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << locator.get_physical_port() << ")" << " with msg: "<<e.what());
-        auto& sockets = mOutputSockets.at(locator.get_physical_port());
-        for (auto& socket : sockets)
+        if (mOutputSockets.find(locator.get_physical_port()) != mOutputSockets.end())
         {
-            auto it = mSocketToSenders.find(socket);
-            if (it != mSocketToSenders.end())
+            auto& sockets = mOutputSockets.at(locator.get_physical_port());
+            for (auto& socket : sockets)
             {
-                auto& senders = mSocketToSenders.at(socket);
-                for (auto& sender : senders)
+                auto it = mSocketToSenders.find(socket);
+                if (it != mSocketToSenders.end())
                 {
-                    sender->SetSocketInfo(nullptr);
+                    auto& senders = mSocketToSenders.at(socket);
+                    for (auto& sender : senders)
+                    {
+                        sender->SetSocketInfo(nullptr);
+                    }
                 }
-            }
 
-            delete socket;
+                delete socket;
+            }
+            mOutputSockets.erase(locator.get_physical_port());
         }
-        mOutputSockets.erase(locator.get_physical_port());
         return false;
     }
 
