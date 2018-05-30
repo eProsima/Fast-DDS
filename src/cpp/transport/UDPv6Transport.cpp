@@ -172,21 +172,29 @@ bool UDPv6Transport::IsInputChannelOpen(const Locator_t& locator) const
     return IsLocatorSupported(locator) && (mInputSockets.find(locator.get_physical_port()) != mInputSockets.end());
 }
 
-bool UDPv6Transport::IsOutputChannelOpen(const Locator_t& locator) const
+bool UDPv6Transport::IsOutputChannelOpen(const Locator_t& locator, SenderResource*) const
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
     if (!IsLocatorSupported(locator))
         return false;
 
-    return mOutputSockets.find(locator.get_physical_port()) != mOutputSockets.end();
+    auto socket = mOutputSockets.find(locator.get_physical_port());
+
+    if (socket != mOutputSockets.end())
+    {
+        // Don't optimize senderResource, because could be multiple interfaces.
+        return true;
+    }
+
+    return false;
 }
 
-bool UDPv6Transport::OpenOutputChannel(Locator_t& locator)
+bool UDPv6Transport::OpenOutputChannel(Locator_t& locator, SenderResource* senderResource)
 {
-    if (!IsLocatorSupported(locator) || IsOutputChannelOpen(locator))
+    if (!IsLocatorSupported(locator) || IsOutputChannelOpen(locator, senderResource))
         return false;
 
-    return OpenAndBindOutputSockets(locator);
+    return OpenAndBindOutputSockets(locator, senderResource);
 }
 
 static bool IsMulticastAddress(const Locator_t& locator)
@@ -241,8 +249,20 @@ bool UDPv6Transport::CloseOutputChannel(const Locator_t& locator)
     auto& sockets = mOutputSockets.at(locator.get_physical_port());
     for (auto& socket : sockets)
     {
-        socket.getSocket()->cancel();
-        socket.getSocket()->close();
+        socket->getSocket()->cancel();
+        socket->getSocket()->close();
+
+        auto it = mSocketToSenders.find(socket);
+        if (it != mSocketToSenders.end())
+        {
+            auto& senders = mSocketToSenders.at(socket);
+            for (auto& sender : senders)
+            {
+                sender->SetSocketInfo(nullptr);
+            }
+        }
+
+        delete socket;
     }
 
     mOutputSockets.erase(locator.get_physical_port());
@@ -307,7 +327,7 @@ bool UDPv6Transport::IsInterfaceAllowed(const ip::address_v6& ip)
 }
 
 
-bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator)
+bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource *senderResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
 
@@ -331,7 +351,7 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator)
 
                     // Outbounding first interface with already created socket.
                     getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(asio::ip::address_v6::from_string((*locIt).name).scope_id()));
-                    mOutputSockets[locator.get_physical_port()].push_back(UDPSocketInfo(unicastSocket));
+                    mOutputSockets[locator.get_physical_port()].push_back(new UDPSocketInfo(unicastSocket));
 
                     // Create other socket for outbounding rest of interfaces.
                     for(++locIt; locIt != locNames.end(); ++locIt)
@@ -340,15 +360,22 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator)
                         uint16_t new_port = 0;
                         eProsimaUDPSocket multicastSocket = OpenAndBindUnicastOutputSocket(ip, new_port);
                         getSocketPtr(multicastSocket)->set_option(ip::multicast::outbound_interface(ip.scope_id()));
-                        UDPSocketInfo mSocket(multicastSocket);
-                        mSocket.only_multicast_purpose(true);
-                        mOutputSockets[locator.get_physical_port()].push_back(std::move(mSocket));
+                        UDPSocketInfo *mSocket = new UDPSocketInfo(multicastSocket);
+                        mSocket->only_multicast_purpose(true);
+                        mOutputSockets[locator.get_physical_port()].push_back(mSocket);
+                        // senderResource cannot be optimize in this cases
                     }
                 }
                 else
                 {
                     // Multicast data will be sent for the only one interface.
-                    mOutputSockets[locator.get_physical_port()].push_back(UDPSocketInfo(unicastSocket));
+                    UDPSocketInfo *mSocket = new UDPSocketInfo(unicastSocket);
+                    mOutputSockets[locator.get_physical_port()].push_back(mSocket);
+                    if (senderResource != nullptr)
+                    {
+                        senderResource->SetSocketInfo(mSocket);
+                        AssociateSenderToSocket(mSocket, senderResource);
+                    }
                 }
             }
             else
@@ -366,7 +393,8 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator)
                             getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
                             firstInterface = true;
                         }
-                        mOutputSockets[locator.get_physical_port()].push_back(UDPSocketInfo(unicastSocket));
+                        mOutputSockets[locator.get_physical_port()].push_back(new UDPSocketInfo(unicastSocket));
+                        // senderResource cannot be optimize in this cases
                     }
                 }
             }
@@ -377,13 +405,37 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator)
             eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.get_physical_port());
             getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(ip.scope_id()));
             getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
-            mOutputSockets[locator.get_physical_port()].push_back(UDPSocketInfo(unicastSocket));
+
+            UDPSocketInfo *mSocket = new UDPSocketInfo(unicastSocket);
+            mOutputSockets[locator.get_physical_port()].push_back(mSocket);
+            if (senderResource != nullptr)
+            {
+                senderResource->SetSocketInfo(mSocket);
+                AssociateSenderToSocket(mSocket, senderResource);
+            }
         }
     }
     catch (asio::system_error const& e)
     {
         (void)e;
         logInfo(RTPS_MSG_OUT, "UDPv6 Error binding at port: (" << locator.get_physical_port() << ")" << " with msg: "<<e.what());
+
+        auto& sockets = mOutputSockets.at(locator.get_physical_port());
+        for (auto& socket : sockets)
+        {
+            auto it = mSocketToSenders.find(socket);
+            if (it != mSocketToSenders.end())
+            {
+                auto& senders = mSocketToSenders.at(socket);
+                for (auto& sender : senders)
+                {
+                    sender->SetSocketInfo(nullptr);
+                }
+            }
+
+            delete socket;
+        }
+
         mOutputSockets.erase(locator.get_physical_port());
         return false;
     }
@@ -504,11 +556,17 @@ bool UDPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     auto& sockets = mOutputSockets.at(localLocator.get_physical_port());
     for (auto& socket : sockets)
     {
-        if(is_multicast_remote_address || !socket.only_multicast_purpose())
-            success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(socket.getSocket()));
+        if(is_multicast_remote_address || !socket->only_multicast_purpose())
+            success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(socket->getSocket()));
     }
 
     return success;
+}
+
+bool UDPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, SocketInfo *socketInfo)
+{
+    UDPSocketInfo *udpSocket = dynamic_cast<UDPSocketInfo*>(socketInfo);
+    return SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(udpSocket->getSocket()));
 }
 
 static Locator_t EndpointToLocator(ip::udp::endpoint& endpoint)
@@ -734,6 +792,24 @@ bool UDPv6Transport::is_local_locator(const Locator_t& locator) const
             return true;
 
     return false;
+}
+
+void UDPv6Transport::AssociateSenderToSocket(UDPSocketInfo *socket, SenderResource *sender) const
+{
+    auto it = mSocketToSenders.find(socket);
+    if (it == mSocketToSenders.end())
+    {
+        mSocketToSenders[socket].emplace_back(sender);
+    }
+    else
+    {
+        auto srit = std::find((*it).second.begin(), (*it).second.end(), sender);
+        if (srit == (*it).second.end())
+        {
+            (*it).second.emplace_back(sender);
+        }
+        // else already associated
+    }
 }
 
 } // namespace rtps

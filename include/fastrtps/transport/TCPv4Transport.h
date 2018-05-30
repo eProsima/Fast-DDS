@@ -35,7 +35,6 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 class TCPv4Transport;
-class SenderResource;
 class RTCPMessageManager;
 
 class TCPAcceptor
@@ -67,8 +66,8 @@ public:
     TCPConnector(asio::io_service& io_service, Locator_t& locator);
     ~TCPConnector(){}
 
-	void Connect(TCPv4Transport* parent);
-	void RetryConnect(asio::io_service& io_service, TCPv4Transport* parent);
+	void Connect(TCPv4Transport* parent, SenderResource *senderResource);
+	void RetryConnect(asio::io_service& io_service, TCPv4Transport* parent, SenderResource *senderResource);
 };
 
 
@@ -107,12 +106,12 @@ public:
     /**
     * Checks whether there are open and bound sockets for the given port.
     */
-    virtual bool IsOutputChannelOpen(const Locator_t&) const override;
-    bool IsOutputChannelBound(const Locator_t&) const;
+    virtual bool IsOutputChannelOpen(const Locator_t&, SenderResource* senderResource = nullptr) const override;
+    bool IsOutputChannelBound(const Locator_t&, SenderResource *senderResource = nullptr) const;
     bool IsOutputChannelConnected(const Locator_t&) const;
-    void BindInputSocket(const Locator_t&, std::shared_ptr<TCPSocketInfo>);
-    void BindOutputChannel(const Locator_t&);
-    void UnbindInputSocket(std::shared_ptr<TCPSocketInfo>);
+    void BindInputSocket(const Locator_t&, TCPSocketInfo*);
+    void BindOutputChannel(const Locator_t&, SenderResource *senderResource = nullptr);
+    void UnbindInputSocket(TCPSocketInfo*);
 
     //! Checks for TCPv4 kind.
     virtual bool IsLocatorSupported(const Locator_t&) const override;
@@ -139,7 +138,7 @@ public:
     /**
     * Opens a socket on the given address and port (as long as they are white listed).
     */
-    virtual bool OpenOutputChannel(Locator_t&) override;
+    virtual bool OpenOutputChannel(Locator_t&, SenderResource*) override;
 
     //! Removes the listening socket for the specified port.
     virtual bool CloseInputChannel(const Locator_t&) override;
@@ -158,6 +157,9 @@ public:
     */
     virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
                         const Locator_t& remoteLocator) override;
+
+    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
+                        const Locator_t& remoteLocator, SocketInfo* pSocketInfo) override;
     /**
     * Blocking Receive from the specified channel.
     * @param receiveBuffer vector with enough capacity (not size) to accomodate a full receive buffer. That
@@ -165,7 +167,7 @@ public:
     * @param localLocator Locator mapping to the local channel we're listening to.
     * @param[out] remoteLocator Locator describing the remote restination we received a packet from.
     */
-   bool Receive(std::shared_ptr<TCPSocketInfo> socketInfo, octet* receiveBuffer, uint32_t receiveBufferCapacity,
+   bool Receive(TCPSocketInfo* socketInfo, octet* receiveBuffer, uint32_t receiveBufferCapacity,
        uint32_t& receiveBufferSize, uint16_t& logicalPort);
 
     virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
@@ -184,7 +186,7 @@ public:
     void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error);
 #endif
 
-    void SocketConnected(Locator_t& locator, const asio::error_code& error);
+    void SocketConnected(Locator_t& locator, SenderResource *senderResource, const asio::error_code& error);
 protected:
     enum eSocketErrorCodes
     {
@@ -208,8 +210,8 @@ protected:
     std::recursive_mutex mThreadPoolMutex;
 
     std::map<Locator_t, TCPConnector*> mPendingOutputSockets;
-    std::vector<std::shared_ptr<TCPSocketInfo>> mOutputSockets;
-    std::map<Locator_t, std::shared_ptr<TCPSocketInfo>> mBoundOutputSockets;
+    std::vector<TCPSocketInfo*> mOutputSockets;
+    std::map<Locator_t, TCPSocketInfo*> mBoundOutputSockets;
 
     std::vector<IPFinder::info_IP> mCurrentInterfaces;
 
@@ -217,34 +219,37 @@ protected:
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
 
     std::map<uint16_t, TCPAcceptor*> mSocketsAcceptors; // The Key is the "Physical Port"
-    std::map<uint16_t, std::vector<std::shared_ptr<TCPSocketInfo>>> mInputSockets; // The Key is the "Physical Port"
+    std::map<uint16_t, std::vector<TCPSocketInfo*>> mInputSockets; // The Key is the "Physical Port"
     std::map<Locator_t, ReceiverResource*> mReceiverResources;
 
-    bool IsTCPInputSocket(const Locator_t& locator) const;
+    mutable std::map<TCPSocketInfo*, std::vector<SenderResource*>> mSocketToSenders;
+
+    void AssociateSenderToSocket(TCPSocketInfo*, SenderResource*) const;
+    bool IsTCPInputSocket(const Locator_t& locator, SenderResource *senderResource) const;
     bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
     std::vector<asio::ip::address_v4> mInterfaceWhiteList;
 
-    bool OpenAndBindOutputSockets(Locator_t& locator);
-    void OpenAndBindUnicastOutputSocket(Locator_t& locator);
+    bool OpenAndBindOutputSockets(Locator_t& locator, SenderResource *senderResource);
+    void OpenAndBindUnicastOutputSocket(Locator_t& locator, SenderResource *senderResource);
     bool EnqueueLogicalOutputPort(Locator_t& locator);
 
     bool OpenAndBindInputSockets(const Locator_t& locator, uint32_t maxMsgSize);
-    void CloseTCPSocket(std::shared_ptr<TCPSocketInfo> socketInfo);
-    void ReleaseTCPSocket(std::shared_ptr<TCPSocketInfo> socketInfo);
+    void CloseTCPSocket(TCPSocketInfo* socketInfo);
+    void ReleaseTCPSocket(TCPSocketInfo* socketInfo);
 
     // Functions to be called from a new thread, which takes cares of performing a blocking receive
-    void performListenOperation(std::shared_ptr<TCPSocketInfo> pSocketInfo);
-    void performRTPCManagementThread(std::shared_ptr<TCPSocketInfo> pSocketInfo);
+    void performListenOperation(TCPSocketInfo* pSocketInfo);
+    void performRTPCManagementThread(TCPSocketInfo* pSocketInfo);
 
     bool ReadBody(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t* bytes_received,
-        std::shared_ptr<TCPSocketInfo> pSocketInfo, std::size_t body_size);
+        TCPSocketInfo* pSocketInfo, std::size_t body_size);
 
     bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
-        std::shared_ptr<TCPSocketInfo> socket);
+        TCPSocketInfo* socket);
 
-    size_t Send(std::shared_ptr<TCPSocketInfo> socketInfo, const octet* data,
+    size_t Send(TCPSocketInfo* socketInfo, const octet* data,
         size_t size, eSocketErrorCodes &error) const;
-    size_t Send(std::shared_ptr<TCPSocketInfo> socketInfo, const octet* data, size_t size) const;
+    size_t Send(TCPSocketInfo* socketInfo, const octet* data, size_t size) const;
 
 };
 

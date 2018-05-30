@@ -101,7 +101,7 @@ TEST_F(TCPv4Tests, opening_and_closing_output_channel)
 
     // Then
     ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-    ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator));
+    ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator, nullptr));
     ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
     ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
     ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
@@ -179,7 +179,7 @@ TEST_F(TCPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
     Locator_t genericOutputChannelLocator;
     genericOutputChannelLocator.kind = LOCATOR_KIND_TCPv4;
     genericOutputChannelLocator.set_port(g_output_port);
-    transportUnderTest.OpenOutputChannel(genericOutputChannelLocator);
+    transportUnderTest.OpenOutputChannel(genericOutputChannelLocator, nullptr);
 
     Locator_t destinationLocator;
     destinationLocator.kind = LOCATOR_KIND_TCPv4;
@@ -237,7 +237,7 @@ TEST_F(TCPv4Tests, send_to_wrong_interface)
     outputChannelLocator.set_port(g_output_port);
     outputChannelLocator.kind = LOCATOR_KIND_TCPv4;
     outputChannelLocator.set_IP4_address(127,0,0,1); // Loopback
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator, nullptr));
 
     //Sending through a different IP will NOT work, except 0.0.0.0
     outputChannelLocator.set_IP4_address(111,111,111,111);

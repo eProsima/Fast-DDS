@@ -169,21 +169,29 @@ bool UDPv4Transport::IsInputChannelOpen(const Locator_t& locator) const
     return IsLocatorSupported(locator) && (mInputSockets.find(locator.get_physical_port()) != mInputSockets.end());
 }
 
-bool UDPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
+bool UDPv4Transport::IsOutputChannelOpen(const Locator_t& locator, SenderResource*) const
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
     if (!IsLocatorSupported(locator))
         return false;
 
-    return mOutputSockets.find(locator.get_physical_port()) != mOutputSockets.end();
+    auto it = mOutputSockets.find(locator.get_physical_port());
+
+    if (it != mOutputSockets.end())
+    {
+        // Don't optimize senderResource, because could be multiple interfaces.
+        return true;
+    }
+
+    return false;
 }
 
-bool UDPv4Transport::OpenOutputChannel(Locator_t& locator)
+bool UDPv4Transport::OpenOutputChannel(Locator_t& locator, SenderResource* senderResource)
 {
-    if (!IsLocatorSupported(locator) || IsOutputChannelOpen(locator))
+    if (!IsLocatorSupported(locator) || IsOutputChannelOpen(locator, senderResource))
         return false;
 
-    return OpenAndBindOutputSockets(locator);
+    return OpenAndBindOutputSockets(locator, senderResource);
 }
 
 static bool IsMulticastAddress(const Locator_t& locator)
@@ -238,8 +246,20 @@ bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
     auto& sockets = mOutputSockets.at(locator.get_physical_port());
     for (auto& socket : sockets)
     {
-        socket.getSocket()->cancel();
-        socket.getSocket()->close();
+        socket->getSocket()->cancel();
+        socket->getSocket()->close();
+        
+        auto it = mSocketToSenders.find(socket);
+        if (it != mSocketToSenders.end())
+        {
+            auto& senders = mSocketToSenders.at(socket);
+            for (auto& sender : senders)
+            {
+                sender->SetSocketInfo(nullptr);
+            }
+        }
+        
+        delete socket;
     }
 
     mOutputSockets.erase(locator.get_physical_port());
@@ -306,7 +326,7 @@ bool UDPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip)
     return find(mInterfaceWhiteList.begin(), mInterfaceWhiteList.end(), ip) != mInterfaceWhiteList.end();
 }
 
-bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
+bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource *senderResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
 
@@ -330,7 +350,8 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
 
                     // Outbounding first interface with already created socket.
                     getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(asio::ip::address_v4::from_string((*locIt).name)));
-                    mOutputSockets[locator.get_physical_port()].push_back(UDPSocketInfo(unicastSocket));
+                    // TODO Who will be on charge of free this allocation?
+                    mOutputSockets[locator.get_physical_port()].push_back(new UDPSocketInfo(unicastSocket));
 
                     // Create other socket for outbounding rest of interfaces.
                     for(++locIt; locIt != locNames.end(); ++locIt)
@@ -339,15 +360,23 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
                         uint16_t new_port = 0;
                         eProsimaUDPSocket multicastSocket = OpenAndBindUnicastOutputSocket(ip, new_port);
                         getSocketPtr(multicastSocket)->set_option(ip::multicast::outbound_interface(ip));
-                        UDPSocketInfo mSocket(multicastSocket);
-                        mSocket.only_multicast_purpose(true);
-                        mOutputSockets[locator.get_physical_port()].push_back(std::move(mSocket));
+                        // TODO Who will be on charge of free this allocation?
+                        UDPSocketInfo* mSocket = new UDPSocketInfo(multicastSocket);
+                        mSocket->only_multicast_purpose(true);
+                        mOutputSockets[locator.get_physical_port()].push_back(mSocket);
+                        // senderResource cannot be optimize in this cases
                     }
                 }
                 else
                 {
                     // Multicast data will be sent for the only one interface.
-                    mOutputSockets[locator.get_physical_port()].push_back(UDPSocketInfo(unicastSocket));
+                    UDPSocketInfo *mSocket = new UDPSocketInfo(unicastSocket);
+                    mOutputSockets[locator.get_physical_port()].push_back(mSocket);
+                    if (senderResource != nullptr)
+                    {
+                        senderResource->SetSocketInfo(mSocket);
+                        AssociateSenderToSocket(mSocket, senderResource);
+                    }
                 }
             }
             else
@@ -365,7 +394,9 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
                             getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
                             firstInterface = true;
                         }
-                        mOutputSockets[locator.get_physical_port()].push_back(UDPSocketInfo(unicastSocket));
+                        // TODO Who will be on charge of free this allocation?
+                        mOutputSockets[locator.get_physical_port()].push_back(new UDPSocketInfo(unicastSocket));
+                        // senderResource cannot be optimized in this cases
                     }
                 }
             }
@@ -376,13 +407,36 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator)
             eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.get_physical_port());
             getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(ip));
             getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
-            mOutputSockets[locator.get_physical_port()].push_back(UDPSocketInfo(unicastSocket));
+            // TODO Who will be on charge of free this allocation?
+            UDPSocketInfo *mSocket = new UDPSocketInfo(unicastSocket); 
+            mOutputSockets[locator.get_physical_port()].push_back(mSocket);
+
+            if (senderResource != nullptr)
+            {
+                senderResource->SetSocketInfo(mSocket);
+                AssociateSenderToSocket(mSocket, senderResource);
+            }
         }
     }
     catch (asio::system_error const& e)
     {
         (void)e;
         logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << locator.get_physical_port() << ")" << " with msg: "<<e.what());
+        auto& sockets = mOutputSockets.at(locator.get_physical_port());
+        for (auto& socket : sockets)
+        {
+            auto it = mSocketToSenders.find(socket);
+            if (it != mSocketToSenders.end())
+            {
+                auto& senders = mSocketToSenders.at(socket);
+                for (auto& sender : senders)
+                {
+                    sender->SetSocketInfo(nullptr);
+                }
+            }
+
+            delete socket;
+        }
         mOutputSockets.erase(locator.get_physical_port());
         return false;
     }
@@ -496,11 +550,17 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     auto& sockets = mOutputSockets.at(localLocator.get_port());
     for (auto& socket : sockets)
     {
-        if(is_multicast_remote_address || !socket.only_multicast_purpose())
-            success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(socket.getSocket()));
+        if(is_multicast_remote_address || !socket->only_multicast_purpose())
+            success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(socket->getSocket()));
     }
 
     return success;
+}
+
+bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, SocketInfo *socketInfo)
+{
+    UDPSocketInfo *udpSocket = dynamic_cast<UDPSocketInfo*>(socketInfo);
+    return SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(udpSocket->getSocket()));
 }
 
 static void EndpointToLocator(ip::udp::endpoint& endpoint, Locator_t& locator)
@@ -731,6 +791,24 @@ bool UDPv4Transport::is_local_locator(const Locator_t& locator) const
 void UDPv4Transport::AddDefaultLocator(LocatorList_t &defaultList)
 {
     defaultList.push_back(Locator_t(LOCATOR_KIND_UDPv4, 0));
+}
+
+void UDPv4Transport::AssociateSenderToSocket(UDPSocketInfo *socket, SenderResource *sender) const
+{
+    auto it = mSocketToSenders.find(socket);
+    if (it == mSocketToSenders.end())
+    {
+        mSocketToSenders[socket].emplace_back(sender);
+    }
+    else
+    {
+        auto srit = std::find((*it).second.begin(), (*it).second.end(), sender);
+        if (srit == (*it).second.end())
+        {
+            (*it).second.emplace_back(sender);
+        }
+        // else already associated
+    }
 }
 
 } // namespace rtps

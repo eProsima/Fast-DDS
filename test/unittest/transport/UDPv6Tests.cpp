@@ -124,7 +124,7 @@ TEST_F(UDPv6Tests, opening_and_closing_output_channel)
 
     // Then
     ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-    ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator));
+    ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator, nullptr));
     ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
     ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
     ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
@@ -178,7 +178,7 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
     factory.BuildReceiverResources(multicastLocator, nullptr, 0x8FFF, receivers);
     ReceiverResource* receiver = receivers.back().get();
 
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator, nullptr)); // Includes loopback
     ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator, receiver, 0x8FFF));
     octet message[5] = { 'H','e','l','l','o' };
 

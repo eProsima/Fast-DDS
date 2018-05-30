@@ -19,6 +19,7 @@
 #include <vector>
 #include <fastrtps/rtps/common/Locator.h>
 #include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/rtps/network/SenderResource.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -62,7 +63,7 @@ public:
     * Must report whether the output channel associated to this locator is open. Channels must either be
     * fully closed or fully open, so that "open" and "close" operations are whole and definitive.
     */
-   virtual bool IsOutputChannelOpen(const Locator_t&) const = 0;
+   virtual bool IsOutputChannelOpen(const Locator_t&, SenderResource* senderResource) const = 0;
 
    /**
     * Must report whether the input channel associated to this locator is open. Channels must either be
@@ -78,7 +79,7 @@ public:
 
    //! Must open the channel that maps to/from the given locator. This method must allocate, reserve and mark
    //! any resources that are needed for said channel.
-   virtual bool OpenOutputChannel(Locator_t&) = 0;
+   virtual bool OpenOutputChannel(Locator_t&, SenderResource*) = 0;
    virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) = 0;
 
    /**
@@ -110,6 +111,8 @@ public:
    * within the same channel.
    */
    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator) = 0;
+
+   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, SocketInfo* pSocketInfo) = 0;
 
    //virtual SocketInfo* FindSocket(const Locator_t& remoteLocator) = 0;
 

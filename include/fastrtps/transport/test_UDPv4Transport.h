@@ -35,7 +35,10 @@ class test_UDPv4Transport : public UDPv4Transport
 public:
    RTPS_DllAPI test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor);
 
-   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator);
+   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator) override;
+
+   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
+                        const Locator_t& remoteLocator, SocketInfo* pSocketInfo) override;
 
    // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
    RTPS_DllAPI static std::vector<std::vector<octet> > DropLog;
