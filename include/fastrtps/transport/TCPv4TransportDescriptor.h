@@ -69,6 +69,11 @@ typedef struct TCPv4TransportDescriptor: public TransportDescriptorInterface {
         wan_addr[3] = (octet)d;
     }
 
+    void set_metadata_logical_port(uint16_t port)
+    {
+        metadata_logical_port = port;
+    }
+
     RTPS_DllAPI TCPv4TransportDescriptor();
 
     RTPS_DllAPI TCPv4TransportDescriptor(const TCPv4TransportDescriptor& t);
