@@ -194,8 +194,10 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     mp_RTPSParticipant = part;
     m_discovery = mp_RTPSParticipant->getAttributes().builtin;
     //CREATE ENDPOINTS
-    if(!createSPDPEndpoints())
+    if (!createSPDPEndpoints())
+    {
         return false;
+    }
     //UPDATE METATRAFFIC.
     mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->getAttributes().unicastLocatorList);
     m_participantProxies.push_back(new ParticipantProxyData());
@@ -205,7 +207,8 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
     {
         mp_EDP = (EDP*)(new EDPStatic(this,mp_RTPSParticipant));
-        if(!mp_EDP->initEDP(m_discovery)){
+        if(!mp_EDP->initEDP(m_discovery))
+        {
             logError(RTPS_PDP,"Endpoint discovery configuration failed");
             return false;
         }
@@ -214,7 +217,8 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     else if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
     {
         mp_EDP = (EDP*)(new EDPSimple(this,mp_RTPSParticipant));
-        if(!mp_EDP->initEDP(m_discovery)){
+        if(!mp_EDP->initEDP(m_discovery))
+        {
             logError(RTPS_PDP,"Endpoint discovery configuration failed");
             return false;
         }
@@ -475,6 +479,7 @@ bool PDPSimple::createSPDPEndpoints()
             {
                 rwatt.endpoint.outLocatorList.push_back(*it);
             }
+//            rwatt.endpoint.outLocatorList = mp_builtin->m_initialPeersList;
             rwatt.endpoint.topicKind = WITH_KEY;
             rwatt.endpoint.durabilityKind = TRANSIENT_LOCAL;
             rwatt.endpoint.reliabilityKind = BEST_EFFORT;
@@ -531,7 +536,8 @@ bool PDPSimple::createSPDPEndpoints()
                     rratt.endpoint.unicastLocatorList.push_back(*it);
                 }
             }
-
+            //rratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
+            //rratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
             rratt.endpoint.topicKind = WITH_KEY;
             rratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
             rratt.endpoint.reliabilityKind = BEST_EFFORT;

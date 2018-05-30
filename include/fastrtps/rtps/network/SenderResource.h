@@ -71,7 +71,7 @@ public:
    */
    bool CanSendToRemoteLocator(const Locator_t& remote);
 
-   void SetSocketInfo(SocketInfo* socketInfo) { pSocketInfo = socketInfo; }
+   void SetSocketInfo(SocketInfo* socketInfo) { m_pSocketInfo = socketInfo; }
 
    /**
    * Resources can only be transfered through move semantics. Copy, assignment, and
@@ -92,7 +92,7 @@ private:
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
    std::function<bool(const Locator_t&)> ManagedChannelMapsToRemote;
    bool mValid; // Post-construction validity check for the NetworkFactory
-   SocketInfo* pSocketInfo;
+   SocketInfo* m_pSocketInfo;
 };
 
 } // namespace rtps

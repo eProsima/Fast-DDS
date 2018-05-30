@@ -20,7 +20,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator) : pSocketInfo(nullptr)
+SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator) : m_pSocketInfo(nullptr)
 {
     // Internal channel is opened and assigned to this resource.
     mValid = transport.OpenOutputChannel(locator, this);
@@ -31,7 +31,7 @@ SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator
     Cleanup = [&transport, locator, this]()
         {
             transport.CloseOutputChannel(locator);
-            this->pSocketInfo = nullptr;
+            this->m_pSocketInfo = nullptr;
         };
 
     AddSenderLocatorToManagedChannel = [&transport, this](Locator_t& destination)->bool
@@ -66,7 +66,7 @@ bool SenderResource::AddSenderLocator(Locator_t& destination)
 bool SenderResource::Send(const octet* data, uint32_t dataLength, const Locator_t& destinationLocator)
 {
    if (SendThroughAssociatedChannel)
-      return SendThroughAssociatedChannel(data, dataLength, destinationLocator, this->pSocketInfo);
+      return SendThroughAssociatedChannel(data, dataLength, destinationLocator, this->m_pSocketInfo);
    return false;
 }
 
@@ -78,7 +78,8 @@ SenderResource::SenderResource(SenderResource&& rValueResource)
     SendThroughAssociatedChannel.swap(rValueResource.SendThroughAssociatedChannel);
     LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
     ManagedChannelMapsToRemote.swap(rValueResource.ManagedChannelMapsToRemote);
-    pSocketInfo = rValueResource.pSocketInfo;
+    m_pSocketInfo = rValueResource.m_pSocketInfo;
+    rValueResource.m_pSocketInfo = nullptr;
 }
 
 bool SenderResource::SupportsLocator(const Locator_t& local)

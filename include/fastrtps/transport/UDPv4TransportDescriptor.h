@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef UDPV4_TRANSPORT_DESCRIPTOR 
+#ifndef UDPV4_TRANSPORT_DESCRIPTOR
 #define UDPV4_TRANSPORT_DESCRIPTOR
 
 #include "TransportInterface.h"
@@ -31,7 +31,8 @@ namespace rtps{
  * - interfaceWhiteList: Lists the allowed interfaces.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPv4TransportDescriptor: public TransportDescriptorInterface {
+typedef struct UDPv4TransportDescriptor: public TransportDescriptorInterface
+{
    virtual ~UDPv4TransportDescriptor(){}
 
    virtual TransportInterface* create_transport() const override;
@@ -39,6 +40,8 @@ typedef struct UDPv4TransportDescriptor: public TransportDescriptorInterface {
    RTPS_DllAPI UDPv4TransportDescriptor();
 
    RTPS_DllAPI UDPv4TransportDescriptor(const UDPv4TransportDescriptor& t);
+
+   uint16_t m_output_upd_socket;
 } UDPv4TransportDescriptor;
 
 } // namespace rtps
