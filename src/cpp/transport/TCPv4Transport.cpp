@@ -83,6 +83,11 @@ TCPConnector::TCPConnector(asio::io_service& io_service, Locator_t& locator)
 {
 }
 
+TCPConnector::~TCPConnector()
+{
+    getSocketPtr(m_socket)->close();
+}
+
 void TCPConnector::Connect(TCPv4Transport* parent, SenderResource *senderResource)
 {
     getSocketPtr(m_socket)->open(ip::tcp::v4());
@@ -1329,7 +1334,7 @@ void TCPv4Transport::CloseTCPSocket(TCPSocketInfo *socketInfo)
 
         //TODO: //ARCE:
         // Create a new connector to retry the connection.
-        //OpenAndBindUnicastOutputSocket(prevLocator, prevMsgReceiver);
+        OpenAndBindUnicastOutputSocket(prevLocator, nullptr);
     }
 }
 

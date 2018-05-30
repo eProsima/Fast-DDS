@@ -30,6 +30,11 @@ using namespace fastrtps;
 using namespace rtps;
 int main(int argc, char** argv)
 {
+    double vm, rss;
+    HelloWorld::ProcessMemUsage(vm, rss);
+    std::cout << "Initial memory ussage: " << std::endl;
+    std::cout << "\tVM: " << vm << std::endl;
+    std::cout << "\tRSS: " << rss << std::endl;
     Log::SetVerbosity(Log::Kind::Warning);
 
     std::cout << "Starting "<< std::endl;
@@ -91,5 +96,15 @@ int main(int argc, char** argv)
     }
     Domain::stopAll();
     Log::Reset();
+
+    double fvm, frss;
+    HelloWorld::ProcessMemUsage(fvm, frss);
+    std::cout << "####################" << std::endl;
+    std::cout << "Final memory ussage: " << std::endl;
+    std::cout << "\tVM: " << fvm << std::endl;
+    std::cout << "\tRSS: " << frss << std::endl;
+    std::cout << "\tDiff VM: " << fvm - vm << std::endl;
+    std::cout << "\tDiff RSS: " << frss - rss << std::endl;
+
     return 0;
 }
