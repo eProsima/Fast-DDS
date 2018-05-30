@@ -277,6 +277,9 @@ bool StatelessWriter::matched_reader_add(const RemoteReaderAttributes& rdata)
         allLocatorLists.push_back(locators);
     }
 
+    getRTPSParticipant()->createSenderResources(rdata.endpoint.unicastLocatorList, false);
+    getRTPSParticipant()->createSenderResources(rdata.endpoint.multicastLocatorList, false);
+
     // Add info of new datareader.
     if(addGuid)
         allRemoteReaders.push_back(rdata.guid);

@@ -59,6 +59,12 @@ public:
    * maps to the transport channel managed by this resource).
    */
    bool SupportsLocator(const Locator_t& local);
+
+   /**
+   * Communicate to the transport that this locator is going to be used to send messages
+   */
+   bool AddSenderLocator(Locator_t& local);
+
    /**
    * Reports whether this resource supports the given remote locator (i.e., this resource
    * maps to a transport channel capable of sending to it).
@@ -81,6 +87,7 @@ private:
 
    SenderResource(TransportInterface&, Locator_t&);
    std::function<void()> Cleanup;
+   std::function<bool(Locator_t&)> AddSenderLocatorToManagedChannel;
    std::function<bool(const octet*, uint32_t, const Locator_t&, SocketInfo*)> SendThroughAssociatedChannel;
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
    std::function<bool(const Locator_t&)> ManagedChannelMapsToRemote;

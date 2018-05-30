@@ -139,6 +139,7 @@ public:
     * Opens a socket on the given address and port (as long as they are white listed).
     */
     virtual bool OpenOutputChannel(Locator_t&, SenderResource*) override;
+    virtual bool OpenExtraOutputChannel(Locator_t&, SenderResource*) override;
 
     //! Removes the listening socket for the specified port.
     virtual bool CloseInputChannel(const Locator_t&) override;
@@ -208,7 +209,7 @@ protected:
 
     mutable std::recursive_mutex mSocketsMapMutex;
     std::recursive_mutex mThreadPoolMutex;
-
+    std::vector<Locator_t> mPendingOutputPorts;
     std::map<Locator_t, TCPConnector*> mPendingOutputSockets;
     std::vector<TCPSocketInfo*> mOutputSockets;
     std::map<Locator_t, TCPSocketInfo*> mBoundOutputSockets;
@@ -236,6 +237,7 @@ protected:
     bool OpenAndBindInputSockets(const Locator_t& locator, uint32_t maxMsgSize);
     void CloseTCPSocket(TCPSocketInfo* socketInfo);
     void ReleaseTCPSocket(TCPSocketInfo* socketInfo);
+    void RegisterReceiverResources(TCPSocketInfo* socketInfo, const Locator_t& locator);
 
     // Functions to be called from a new thread, which takes cares of performing a blocking receive
     void performListenOperation(TCPSocketInfo* pSocketInfo);

@@ -241,7 +241,7 @@ class RTPSParticipantImpl
 
         //!SenderResource List
         std::mutex m_send_resources_mutex;
-        std::vector<SenderResource> m_senderResource;
+        std::vector<SenderResource> m_senderResourceList;
 
         //!Participant Listener
         RTPSParticipantListener* mp_participantListener;
@@ -290,6 +290,11 @@ class RTPSParticipantImpl
           @param loc -  Locator we want to change
           */
         Locator_t applyLocatorAdaptRule(Locator_t loc);
+
+        /** Checks if there is any sender resource available to reach the given locator.
+        @param loc -  Locator we want to check
+        */
+        bool checkSenderResource(Locator_t& locator);
 
         //!Participant Mutex
         std::recursive_mutex* mp_mutex;
@@ -421,7 +426,8 @@ class RTPSParticipantImpl
           @param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
           */
         static const int MutationTries = 100;
-        void createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
+        void createReceiverResources(const LocatorList_t& Locator_list, bool ApplyMutation);
+        void createSenderResources(const LocatorList_t& Locator_list, bool ApplyMutation);
 
         bool networkFactoryHasRegisteredTransports() const;
 

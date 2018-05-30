@@ -74,6 +74,10 @@ bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
             return false;
         }
     }
+
+    getRTPSParticipant()->createReceiverResources(wdata.endpoint.outLocatorList, false);
+    //getRTPSParticipant()->createReceiverResources(wdata.endpoint.multicastLocatorList, false);
+
     WriterProxy* wp = new WriterProxy(wdata, this);
 
     wp->mp_initialAcknack->restart_timer();

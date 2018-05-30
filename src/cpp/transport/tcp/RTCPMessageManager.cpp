@@ -350,6 +350,7 @@ void RTCPMessageManager::processConnectionRequest(TCPSocketInfo *pSocketInfo,
             std::cout << "## Bound as Input " << localLocator << std::endl;
         }
         sendData(pSocketInfo, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_OK);
+        std::cout << "[RTCP] Connection established (physical: " << pSocketInfo->mLocator.get_physical_port() << ")" << std::endl;
         pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eEstablished);
     }
     else
@@ -430,7 +431,7 @@ void RTCPMessageManager::processKeepAliveRequest(TCPSocketInfo *pSocketInfo,
     }
 }
 
-void RTCPMessageManager::processLogicalPortIsClosedRequest(TCPSocketInfo */*pSocketInfo*/,
+void RTCPMessageManager::processLogicalPortIsClosedRequest(TCPSocketInfo* /*pSocketInfo*/,
         const LogicalPortIsClosedRequest_t &/*request*/, const TCPTransactionId &/*transactionId*/)
 {
     // TODO?
@@ -442,6 +443,7 @@ bool RTCPMessageManager::processBindConnectionResponse(TCPSocketInfo *pSocketInf
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
     {
+        std::cout << "[RTCP] Connection established (physical: " << pSocketInfo->mLocator.get_physical_port() << ")" << std::endl;
         pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eEstablished);
         mUnconfirmedTransactions.erase(it);
         return true;

@@ -14,7 +14,7 @@
 
 /*
  * @file StatelessReader.cpp
- *             	
+ *
  */
 
 #include <fastrtps/rtps/reader/StatelessReader.h>
@@ -56,6 +56,9 @@ bool StatelessReader::matched_writer_add(const RemoteWriterAttributes& wdata)
         if((*it).guid == wdata.guid)
             return false;
     }
+
+    getRTPSParticipant()->createReceiverResources(wdata.endpoint.outLocatorList, false);
+
     logInfo(RTPS_READER,"Writer " << wdata.guid << " added to "<<m_guid.entityId);
     m_matched_writers.push_back(wdata);
     add_persistence_guid(wdata);
