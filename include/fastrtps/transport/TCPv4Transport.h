@@ -64,7 +64,7 @@ public:
 	eProsimaTCPSocket m_socket;
 
     TCPConnector(asio::io_service& io_service, Locator_t& locator);
-    ~TCPConnector(){}
+    ~TCPConnector();
 
 	void Connect(TCPv4Transport* parent, SenderResource *senderResource);
 	void RetryConnect(asio::io_service& io_service, TCPv4Transport* parent, SenderResource *senderResource);

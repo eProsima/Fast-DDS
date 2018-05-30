@@ -13,13 +13,14 @@ SocketInfo::SocketInfo()
 }
 
 SocketInfo::SocketInfo(SocketInfo&& socketInfo)
-    : mAlive(socketInfo.mAlive)
+    : m_rec_msg(std::move(socketInfo.m_rec_msg))
+    , mAlive(socketInfo.mAlive)
     , mThread(socketInfo.mThread)
     , mAutoRelease(socketInfo.mAutoRelease)
 {
     socketInfo.mThread = nullptr;
     //logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
-    m_rec_msg = std::move(socketInfo.m_rec_msg);
+    //m_rec_msg = std::move(socketInfo.m_rec_msg);
 #if HAVE_SECURITY
     m_crypto_msg = std::move(socketInfo.m_crypto_msg);
 #endif
@@ -145,7 +146,8 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
 }
 
 TCPSocketInfo::TCPSocketInfo(TCPSocketInfo&& socketInfo)
-    : mLocator(socketInfo.mLocator)
+    : SocketInfo(std::move(socketInfo))
+    , mLocator(socketInfo.mLocator)
     , m_inputSocket(socketInfo.m_inputSocket)
     , mWaitingForKeepAlive(socketInfo.m_inputSocket)
     , mPendingLogicalPort(socketInfo.mPendingLogicalPort)
