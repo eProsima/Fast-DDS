@@ -192,13 +192,12 @@ TCPv4Transport::~TCPv4Transport()
     }
 
     {
-        std::unique_lock<std::recursive_mutex> scopedLock(mThreadPoolMutex);
-        for (auto it = mThreadPool.begin(); it != mThreadPool.end(); ++it)
+        std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
+        for (auto it = mDeletedSocketsPool.begin(); it != mDeletedSocketsPool.end(); ++it)
         {
-            (*it)->join();
             delete(*it);
         }
-        mThreadPool.clear();
+        mDeletedSocketsPool.clear();
     }
 
     if (ioServiceThread)
@@ -1182,7 +1181,7 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             // Store the new connection.
             eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(std::move(socket));
             TCPSocketInfo *socketInfo = new TCPSocketInfo(unicastSocket,
-                acceptor->mLocator, false, true, false, acceptor->mMaxMsgSize);
+                acceptor->mLocator, false, true, acceptor->mMaxMsgSize);
             socketInfo->SetThread(new std::thread(&TCPv4Transport::performListenOperation, this, socketInfo));
             socketInfo->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, socketInfo));
             socketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eWaitingForBind);
@@ -1268,8 +1267,11 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, SenderResource *senderR
 
             // RTCP Control Message
             mRTCPMessageManager->sendConnectionRequest(outputSocket, mConfiguration_.metadata_logical_port);
-            senderResource->SetSocketInfo(outputSocket);
-            AssociateSenderToSocket(outputSocket, senderResource);
+            if (senderResource != nullptr)
+            {
+                senderResource->SetSocketInfo(outputSocket);
+                AssociateSenderToSocket(outputSocket, senderResource);
+            }
         }
         else
         {
@@ -1341,13 +1343,12 @@ void TCPv4Transport::CloseTCPSocket(TCPSocketInfo *socketInfo)
 void TCPv4Transport::ReleaseTCPSocket(TCPSocketInfo *socketInfo)
 {
     {
-        std::unique_lock<std::recursive_mutex> scopedLock(mThreadPoolMutex);
-        for (auto it = mThreadPool.begin(); it != mThreadPool.end(); ++it)
+        std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
+        for (auto it = mDeletedSocketsPool.begin(); it != mDeletedSocketsPool.end(); ++it)
         {
-            (*it)->join();
             delete(*it);
         }
-        mThreadPool.clear();
+        mDeletedSocketsPool.clear();
     }
 
     socketInfo->Disable();
@@ -1366,12 +1367,10 @@ void TCPv4Transport::ReleaseTCPSocket(TCPSocketInfo *socketInfo)
     }
 
     {
-        std::unique_lock<std::recursive_mutex> scopedLock(mThreadPoolMutex);
-        mThreadPool.emplace_back(socketInfo->ReleaseThread());
-        mThreadPool.emplace_back(socketInfo->ReleaseRTCPThread());
+        std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
+        mDeletedSocketsPool.emplace_back(socketInfo);
     }
-
-    delete socketInfo;
+    socketInfo = nullptr;
 }
 
 void TCPv4Transport::AssociateSenderToSocket(TCPSocketInfo *socket, SenderResource *sender) const
