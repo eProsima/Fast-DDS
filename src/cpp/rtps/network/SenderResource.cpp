@@ -29,28 +29,38 @@ SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator
 
     // Implementation functions are bound to the right transport parameters
     Cleanup = [&transport, locator, this]()
-        { 
-            transport.CloseOutputChannel(locator); 
+        {
+            transport.CloseOutputChannel(locator);
             this->pSocketInfo = nullptr;
         };
 
-    SendThroughAssociatedChannel = 
+    AddSenderLocatorToManagedChannel = [&transport, this](Locator_t& destination)->bool
+        { return transport.OpenExtraOutputChannel(destination, this); };
+
+    SendThroughAssociatedChannel =
         [&transport, locator, this]
         (const octet* data, uint32_t dataSize, const Locator_t& destination, SocketInfo* socketInfo)-> bool
-        { 
+        {
             if (socketInfo == nullptr)
             {
-                return transport.Send(data, dataSize, locator, destination); 
+                return transport.Send(data, dataSize, locator, destination);
             }
             else
             {
-                return transport.Send(data, dataSize, locator, destination, socketInfo); 
+                return transport.Send(data, dataSize, locator, destination, socketInfo);
             }
         };
     LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
                                  { return transport.DoLocatorsMatch(locator, locatorToCheck); };
     ManagedChannelMapsToRemote = [&transport, locator](const Locator_t& locatorToCheck) -> bool
                                  { return transport.DoLocatorsMatch(locator, transport.RemoteToMainLocal(locatorToCheck)); };
+}
+
+bool SenderResource::AddSenderLocator(Locator_t& destination)
+{
+    if (AddSenderLocatorToManagedChannel)
+        return AddSenderLocatorToManagedChannel(destination);
+    return false;
 }
 
 bool SenderResource::Send(const octet* data, uint32_t dataLength, const Locator_t& destinationLocator)
@@ -64,6 +74,7 @@ SenderResource::SenderResource(SenderResource&& rValueResource)
 {
     mValid = rValueResource.mValid;
     Cleanup.swap(rValueResource.Cleanup);
+    AddSenderLocatorToManagedChannel.swap(rValueResource.AddSenderLocatorToManagedChannel);
     SendThroughAssociatedChannel.swap(rValueResource.SendThroughAssociatedChannel);
     LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
     ManagedChannelMapsToRemote.swap(rValueResource.ManagedChannelMapsToRemote);

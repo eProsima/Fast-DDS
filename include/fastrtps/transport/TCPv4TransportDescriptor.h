@@ -42,6 +42,7 @@ typedef struct TCPv4TransportDescriptor: public TransportDescriptorInterface {
     uint16_t max_logical_port;
     uint16_t logical_port_range;
     uint16_t logical_port_increment;
+    uint16_t metadata_logical_port;
     octet wan_addr[4];
 
     void add_listener_port(uint16_t port)

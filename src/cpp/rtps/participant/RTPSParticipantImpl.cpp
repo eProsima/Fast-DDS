@@ -138,52 +138,52 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     }
 
     /// Creation of metatraffic locator and receiver resources
-    uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(m_att.builtin.domainId);
-    uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(m_att.builtin.domainId, m_att.participantID);
+    //uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(m_att.builtin.domainId);
+    //uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(m_att.builtin.domainId, m_att.participantID);
 
     /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
        Else -> Take them */
 
     /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
 
-    if(m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
-    {
-        //UDPv4
-        Locator_t mandatoryMulticastLocator;
-        mandatoryMulticastLocator.kind = LOCATOR_KIND_UDPv4;
-        mandatoryMulticastLocator.set_port(static_cast<uint16_t>(metatraffic_multicast_port));
-        mandatoryMulticastLocator.set_IP4_address(239,255,0,1);
+    //if(m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
+    //{
+    //    //UDPv4
+    //    Locator_t mandatoryMulticastLocator;
+    //    mandatoryMulticastLocator.kind = LOCATOR_KIND_UDPv4;
+    //    mandatoryMulticastLocator.set_port(static_cast<uint16_t>(metatraffic_multicast_port));
+    //    mandatoryMulticastLocator.set_IP4_address(239,255,0,1);
 
-        m_att.builtin.metatrafficMulticastLocatorList.push_back(mandatoryMulticastLocator);
+    //    m_att.builtin.metatrafficMulticastLocatorList.push_back(mandatoryMulticastLocator);
 
-        Locator_t default_metatraffic_unicast_locator;
-        default_metatraffic_unicast_locator.set_port(static_cast<uint16_t>(metatraffic_unicast_port));
-        m_att.builtin.metatrafficUnicastLocatorList.push_back(default_metatraffic_unicast_locator);
+    //    Locator_t default_metatraffic_unicast_locator;
+    //    default_metatraffic_unicast_locator.set_port(static_cast<uint16_t>(metatraffic_unicast_port));
+    //    m_att.builtin.metatrafficUnicastLocatorList.push_back(default_metatraffic_unicast_locator);
 
-        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
-    }
-    else // TODO UDPv6 is this brach... but TCP isn't
-    {
-        std::for_each(m_att.builtin.metatrafficMulticastLocatorList.begin(), m_att.builtin.metatrafficMulticastLocatorList.end(),
-                [&](Locator_t& locator) {
-                    if(locator.get_port() == 0)
-                        locator.set_port(static_cast<uint16_t>(metatraffic_multicast_port));
-                });
-        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
+    //    m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
+    //}
+    //else // TODO UDPv6 is this brach... but TCP isn't
+    //{
+    //    std::for_each(m_att.builtin.metatrafficMulticastLocatorList.begin(), m_att.builtin.metatrafficMulticastLocatorList.end(),
+    //            [&](Locator_t& locator) {
+    //                if(locator.get_port() == 0)
+    //                    locator.set_port(static_cast<uint16_t>(metatraffic_multicast_port));
+    //            });
+    //    m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
 
-        std::for_each(m_att.builtin.metatrafficUnicastLocatorList.begin(), m_att.builtin.metatrafficUnicastLocatorList.end(),
-                [&](Locator_t& locator) {
-                    if(locator.get_port() == 0)
-                        locator.set_port(static_cast<uint16_t>(metatraffic_unicast_port));
-                });
-        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
-    }
+    //    std::for_each(m_att.builtin.metatrafficUnicastLocatorList.begin(), m_att.builtin.metatrafficUnicastLocatorList.end(),
+    //            [&](Locator_t& locator) {
+    //                if(locator.get_port() == 0)
+    //                    locator.set_port(static_cast<uint16_t>(metatraffic_unicast_port));
+    //            });
+    //    m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
+    //}
 
-    //Create ReceiverResources now and update the list with the REAL used ones
-    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
+    ////Create ReceiverResources now and update the list with the REAL used ones
+    //createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
 
-    //Create ReceiverResources now and update the list with the REAL used ones
-    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
+    ////Create ReceiverResources now and update the list with the REAL used ones
+    //createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
 
     // Initial peers
     if(m_att.builtin.initialPeersList.empty())
@@ -219,117 +219,118 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
     /// Creation of user locator and receiver resources
 
-    bool hasLocatorsDefined = true;
-    //If no default locators are defined we define some.
-    /* The reasoning here is the following.
-       If the parameters of the RTPS Participant don't hold default listening locators for the creation
-       of Endpoints, we make some for Unicast only.
-       If there is at least one listen locator of any kind, we do not create any default ones.
-       If there are no sending locators defined, we create default ones for the transports we implement.
-       */
-    if(m_att.defaultUnicastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
-    {
-        //Default Unicast Locators in case they have not been provided
-        /* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
-        hasLocatorsDefined = false;
-        Locator_t loc2;
+    //bool hasLocatorsDefined = true;
+    ////If no default locators are defined we define some.
+    ///* The reasoning here is the following.
+    //   If the parameters of the RTPS Participant don't hold default listening locators for the creation
+    //   of Endpoints, we make some for Unicast only.
+    //   If there is at least one listen locator of any kind, we do not create any default ones.
+    //   If there are no sending locators defined, we create default ones for the transports we implement.
+    //   */
+    //if(m_att.defaultUnicastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
+    //{
+    //    //Default Unicast Locators in case they have not been provided
+    //    /* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
+    //    hasLocatorsDefined = false;
+    //    Locator_t loc2;
 
-        LocatorList_t loclist;
-        IPFinder::getIP4Address(&loclist);
-        for(auto it=loclist.begin();it!=loclist.end();++it){
-            (*it).set_port(static_cast<uint16_t>(m_att.port.portBase+
-                m_att.port.domainIDGain*PParam.builtin.domainId+
-                m_att.port.offsetd3+
-                m_att.port.participantIDGain*m_att.participantID));
-            (*it).kind = LOCATOR_KIND_UDPv4;
+    //    LocatorList_t loclist;
+    //    IPFinder::getIP4Address(&loclist);
+    //    for(auto it=loclist.begin();it!=loclist.end();++it){
+    //        (*it).set_port(static_cast<uint16_t>(m_att.port.portBase+
+    //            m_att.port.domainIDGain*PParam.builtin.domainId+
+    //            m_att.port.offsetd3+
+    //            m_att.port.participantIDGain*m_att.participantID));
+    //        (*it).kind = LOCATOR_KIND_UDPv4;
 
-            m_att.defaultUnicastLocatorList.push_back((*it));
-        }
-    }
-    else
-    {
-        // Locator with port 0, calculate port.
-        std::for_each(m_att.defaultUnicastLocatorList.begin(), m_att.defaultUnicastLocatorList.end(),
-                [&](Locator_t& loc) {
-                    if (loc.get_port() == 0 && loc.get_logical_port() == 0)
-                    {
-                        loc.set_port(static_cast<uint16_t>(m_att.port.portBase +
-                            m_att.port.domainIDGain*PParam.builtin.domainId +
-                            m_att.port.offsetd3 +
-                            m_att.port.participantIDGain*m_att.participantID), true);
-                    }
-                    if (loc.get_physical_port() == 0)
-                    {
-                        loc.set_port(static_cast<uint16_t>(m_att.port.portBase +
-                            m_att.port.domainIDGain*PParam.builtin.domainId +
-                            m_att.port.offsetd3 +
-                            m_att.port.participantIDGain*m_att.participantID));
-                    }
-                });
+    //        m_att.defaultUnicastLocatorList.push_back((*it));
+    //    }
+    //}
+    //else
+    //{
+    //    // Locator with port 0, calculate port.
+    //    std::for_each(m_att.defaultUnicastLocatorList.begin(), m_att.defaultUnicastLocatorList.end(),
+    //            [&](Locator_t& loc) {
+    //                if (loc.get_port() == 0 && loc.get_logical_port() == 0)
+    //                {
+    //                    loc.set_port(static_cast<uint16_t>(m_att.port.portBase +
+    //                        m_att.port.domainIDGain*PParam.builtin.domainId +
+    //                        m_att.port.offsetd3 +
+    //                        m_att.port.participantIDGain*m_att.participantID), true);
+    //                }
+    //                if (loc.get_physical_port() == 0)
+    //                {
+    //                    loc.set_port(static_cast<uint16_t>(m_att.port.portBase +
+    //                        m_att.port.domainIDGain*PParam.builtin.domainId +
+    //                        m_att.port.offsetd3 +
+    //                        m_att.port.participantIDGain*m_att.participantID));
+    //                }
+    //            });
 
-        // Normalize unicast locators.
-        m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
-    }
+    //    // Normalize unicast locators.
+    //    m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
+    //}
 
     /*
         Since nothing guarantees the correct creation of the Resources on the Locators we have specified, and
         in order to maintain synchrony between the defaultLocator list and the actual ReceiveResources,
         We create the resources for these Locators now. Furthermore, in case these resources are taken,
         we create them on another Locator and then update de defaultList.
-        */
-    createReceiverResources(m_att.defaultUnicastLocatorList, true);
+    */
+    //createReceiverResources(m_att.defaultUnicastLocatorList, true);
 
-    if(!hasLocatorsDefined){
-        logInfo(RTPS_PARTICIPANT,m_att.getName()<<" Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
-    }
-    //Multicast
-    createReceiverResources(m_att.defaultMulticastLocatorList, true);
+    //if(!hasLocatorsDefined){
+    //    logInfo(RTPS_PARTICIPANT,m_att.getName()<<" Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
+    //}
+    ////Multicast
+    //createReceiverResources(m_att.defaultMulticastLocatorList, true);
 
     //Check if defaultOutLocatorsExist, create some if they don't
-    hasLocatorsDefined = true;
-    if (m_att.defaultOutLocatorList.empty()){
-        hasLocatorsDefined = false;
-        //Locator_t SendLocator;
-        /*TODO - Fill with desired default Send Locators for our transports*/
-        m_network_Factory.GetDefaultLocators(m_att.defaultOutLocatorList);
-        //Warning - Mock rule being used (and only for IPv4)!
-        //SendLocator.kind = LOCATOR_KIND_UDPv4;
-        //m_att.defaultOutLocatorList.push_back(SendLocator);
-    }
-    //Create the default sendResources - For the same reason as in the ReceiverResources
-    std::vector<SenderResource > newSenders;
-    std::vector<SenderResource > newSendersBuffer;
-    LocatorList_t defcopy = m_att.defaultOutLocatorList;
-    for (auto it = defcopy.begin(); it != defcopy.end(); ++it){
-        /* Try to build resources with that specific Locator*/
-        newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
-        uint32_t tries = 100;
-        while(newSendersBuffer.empty() && tries != 0)
-        {
-            //No ReceiverResources have been added, therefore we have to change the Locator
-            (*it) = applyLocatorAdaptRule(*it); //Mutate the Locator to find a suitable rule. Overwrite the old one as it is useless now.
-            newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
-            --tries;
-        }
-        //Now we DO have resources, and the new locator is already replacing the old one.
-        for(auto mit= newSendersBuffer.begin(); mit!= newSendersBuffer.end(); ++mit){
-            newSenders.push_back(std::move(*mit));
-        }
+    //hasLocatorsDefined = true;
+    //if (m_att.defaultOutLocatorList.empty()){
+    //    hasLocatorsDefined = false;
+    //    //Locator_t SendLocator;
+    //    /*TODO - Fill with desired default Send Locators for our transports*/
+    //    m_network_Factory.GetDefaultLocators(m_att.defaultOutLocatorList);
+    //    //Warning - Mock rule being used (and only for IPv4)!
+    //    //SendLocator.kind = LOCATOR_KIND_UDPv4;
+    //    //m_att.defaultOutLocatorList.push_back(SendLocator);
+    //}
 
-        //newSenders.insert(newSenders.end(), newSendersBuffer.begin(), newSendersBuffer.end());
-        newSendersBuffer.clear();
-    }
+    ////Create the default sendResources - For the same reason as in the ReceiverResources
+    //std::vector<SenderResource> newSenders;
+    //std::vector<SenderResource> newSendersBuffer;
+    //LocatorList_t defcopy = m_att.defaultOutLocatorList;
+    //for (auto it = defcopy.begin(); it != defcopy.end(); ++it){
+    //    /* Try to build resources with that specific Locator*/
+    //    newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
+    //    uint32_t tries = 100;
+    //    while(newSendersBuffer.empty() && tries != 0)
+    //    {
+    //        //No ReceiverResources have been added, therefore we have to change the Locator
+    //        (*it) = applyLocatorAdaptRule(*it); //Mutate the Locator to find a suitable rule. Overwrite the old one as it is useless now.
+    //        newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
+    //        --tries;
+    //    }
+    //    //Now we DO have resources, and the new locator is already replacing the old one.
+    //    for(auto mit= newSendersBuffer.begin(); mit!= newSendersBuffer.end(); ++mit){
+    //        newSenders.push_back(std::move(*mit));
+    //    }
 
-    m_send_resources_mutex.lock();
-    for(auto mit=newSenders.begin(); mit!=newSenders.end();++mit){
-        m_senderResource.push_back(std::move(*mit));
-    }
-    m_send_resources_mutex.unlock();
-    m_att.defaultOutLocatorList = defcopy;
+    //    //newSenders.insert(newSenders.end(), newSendersBuffer.begin(), newSendersBuffer.end());
+    //    newSendersBuffer.clear();
+    //}
 
-    if (!hasLocatorsDefined){
-        logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Send Locator List, adding Locators: " << m_att.defaultOutLocatorList);
-    }
+    //m_send_resources_mutex.lock();
+    //for(auto mit=newSenders.begin(); mit!=newSenders.end();++mit){
+    //    m_senderResourceList.push_back(std::move(*mit));
+    //}
+    //m_send_resources_mutex.unlock();
+    //m_att.defaultOutLocatorList = defcopy;
+
+    //if (!hasLocatorsDefined){
+    //    logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Send Locator List, adding Locators: " << m_att.defaultOutLocatorList);
+    //}
 
 #if HAVE_SECURITY
     // Start security
@@ -387,7 +388,7 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 
     delete(this->mp_ResourceSemaphore);
     delete(this->mp_userParticipant);
-    m_senderResource.clear();
+    m_senderResourceList.clear();
 
     delete(this->mp_event_thr);
 
@@ -882,28 +883,30 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend)
 
     std::lock_guard<std::mutex> guard(m_send_resources_mutex);
     for(auto mit = newSenders.begin();mit!=newSenders.end();++mit){
-        m_senderResource.push_back(std::move(*mit));
+        m_senderResourceList.push_back(std::move(*mit));
     }
 
     return true;
 }
 
-void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation)
+void RTPSParticipantImpl::createReceiverResources(const LocatorList_t& Locator_list, bool ApplyMutation)
 {
     std::vector<std::shared_ptr<ReceiverResource>> newItemsBuffer;
+    Locator_t locator;
 
     uint32_t size = m_network_Factory.get_max_message_size_between_transports();
     for(auto it_loc = Locator_list.begin(); it_loc != Locator_list.end(); ++it_loc)
     {
-        bool ret  = m_network_Factory.BuildReceiverResources((*it_loc), this, size, newItemsBuffer);
+        locator = *it_loc;
+        bool ret  = m_network_Factory.BuildReceiverResources(locator, this, size, newItemsBuffer);
 
         if(!ret && ApplyMutation)
         {
             int tries = 0;
             while(!ret && (tries < MutationTries)){
                 tries++;
-                (*it_loc) = applyLocatorAdaptRule(*it_loc);
-                ret = m_network_Factory.BuildReceiverResources((*it_loc), this, size, newItemsBuffer);
+                locator = applyLocatorAdaptRule(locator);
+                ret = m_network_Factory.BuildReceiverResources(locator, this, size, newItemsBuffer);
             }
         }
 
@@ -917,6 +920,50 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
     }
 }
 
+bool RTPSParticipantImpl::checkSenderResource(Locator_t& locator)
+{
+    for (auto it = m_senderResourceList.begin(); it != m_senderResourceList.end(); ++it)
+    {
+        if (it->SupportsLocator(locator))
+        {
+            it->AddSenderLocator(locator);
+            return true;
+        }
+    }
+    return false;
+}
+
+void RTPSParticipantImpl::createSenderResources(const LocatorList_t& Locator_list, bool ApplyMutation)
+{
+    Locator_t temp;
+    std::vector<SenderResource> buffer;
+    for (auto it_loc = Locator_list.begin(); it_loc != Locator_list.end(); ++it_loc)
+    {
+        temp = *it_loc;
+        if (!checkSenderResource(temp))
+        {
+            buffer = m_network_Factory.BuildSenderResources(temp);
+            if (buffer.size() == 0 && ApplyMutation)
+            {
+                int tries = 0;
+                while (buffer.size() == 0 && (tries < MutationTries))
+                {
+                    tries++;
+                    temp = applyLocatorAdaptRule(temp);
+                    buffer = m_network_Factory.BuildSenderResources(temp);
+                }
+            }
+
+            for (auto it_buffer = buffer.begin(); it_buffer != buffer.end(); ++it_buffer)
+            {
+                std::lock_guard<std::mutex> lock(m_send_resources_mutex);
+                //Push the new items into the SenderResource buffer
+                m_senderResourceList.push_back(std::move(*it_buffer));
+            }
+            buffer.clear();
+        }
+    }
+}
 
 
 bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
@@ -1053,25 +1100,29 @@ std::vector<std::string> RTPSParticipantImpl::getParticipantNames() const {
     return participant_names;
 }
 
-void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint *pend, const Locator_t& destination_loc)
+void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint* /*pend*/, const Locator_t& destination_loc)
 {
     std::lock_guard<std::mutex> guard(m_send_resources_mutex);
-    for (auto it = m_senderResource.begin(); it != m_senderResource.end(); ++it)
+    for (int i = 0; i < m_senderResourceList.size(); ++i)
     {
+        auto& it = m_senderResourceList[i];
         bool sendThroughResource = false;
-        for (auto sit = pend->m_att.outLocatorList.begin(); sit != pend->m_att.outLocatorList.end(); ++sit)
+        if (it.SupportsLocator(destination_loc))
         {
-            if ((*it).SupportsLocator((*sit)))
-            {
-                sendThroughResource = true;
-                break;
-            }
+            sendThroughResource = true;
         }
 
+        //for (auto sit = pend->m_att.outLocatorList.begin(); sit != pend->m_att.outLocatorList.end(); ++sit)
+        //{
+        //    if (it.SupportsLocator((*sit)))
+        //    {
+        //        sendThroughResource = true;
+        //        break;
+        //    }
+        //}
+
         if (sendThroughResource)
-        {
-            (*it).Send(msg->buffer, msg->length, destination_loc);
-        }
+            it.Send(msg->buffer, msg->length, destination_loc);
     }
 }
 

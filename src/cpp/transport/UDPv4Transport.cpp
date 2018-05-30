@@ -248,7 +248,7 @@ bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
     {
         socket->getSocket()->cancel();
         socket->getSocket()->close();
-        
+
         auto it = mSocketToSenders.find(socket);
         if (it != mSocketToSenders.end())
         {
@@ -258,7 +258,7 @@ bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
                 sender->SetSocketInfo(nullptr);
             }
         }
-        
+
         delete socket;
     }
 
@@ -408,7 +408,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource
             getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(ip));
             getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
             // TODO Who will be on charge of free this allocation?
-            UDPSocketInfo *mSocket = new UDPSocketInfo(unicastSocket); 
+            UDPSocketInfo *mSocket = new UDPSocketInfo(unicastSocket);
             mOutputSockets[locator.get_physical_port()].push_back(mSocket);
 
             if (senderResource != nullptr)
@@ -516,9 +516,10 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(uint16_t port, bool is_
     return socket;
 }
 
-bool UDPv4Transport::DoLocatorsMatch(const Locator_t& left, const Locator_t& right) const
+bool UDPv4Transport::DoLocatorsMatch(const Locator_t& /*left*/, const Locator_t& /*right*/) const
 {
-    return left.get_port() == right.get_port();
+    //TODO: Address network checking.
+    return true; // left.get_port() == right.get_port();
 }
 
 bool UDPv4Transport::IsLocatorSupported(const Locator_t& locator) const
@@ -557,7 +558,7 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     return success;
 }
 
-bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, SocketInfo *socketInfo)
+bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& /*localLocator*/, const Locator_t& remoteLocator, SocketInfo *socketInfo)
 {
     UDPSocketInfo *udpSocket = dynamic_cast<UDPSocketInfo*>(socketInfo);
     return SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(udpSocket->getSocket()));

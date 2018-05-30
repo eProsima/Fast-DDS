@@ -563,7 +563,7 @@ bool UDPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     return success;
 }
 
-bool UDPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, SocketInfo *socketInfo)
+bool UDPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& /*localLocator*/, const Locator_t& remoteLocator, SocketInfo *socketInfo)
 {
     UDPSocketInfo *udpSocket = dynamic_cast<UDPSocketInfo*>(socketInfo);
     return SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(udpSocket->getSocket()));

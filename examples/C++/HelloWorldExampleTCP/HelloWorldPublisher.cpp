@@ -65,7 +65,7 @@ bool HelloWorldPublisher::init()
     meta_locator.kind = kind;
     meta_locator.set_IP4_address("127.0.0.1");
     meta_locator.set_port(5100);
-    meta_locator.set_logical_port(7401);
+    meta_locator.set_logical_port(7402);
     PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
 
     //PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
@@ -81,8 +81,6 @@ bool HelloWorldPublisher::init()
     PParam.rtps.setName("Participant_pub");
 
     PParam.rtps.useBuiltinTransports = false;
-    TCPv4TransportDescriptor* test2 = new TCPv4TransportDescriptor();
-    test2->add_listener_port(5100);
 
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
     descriptor->sendBufferSize = 0;

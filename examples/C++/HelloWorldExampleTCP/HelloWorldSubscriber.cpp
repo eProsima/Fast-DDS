@@ -44,7 +44,7 @@ bool HelloWorldSubscriber::init()
     initial_peer_locator.kind = kind;
     initial_peer_locator.set_IP4_address("127.0.0.1");
     initial_peer_locator.set_port(5100);
-    initial_peer_locator.set_logical_port(7401);
+    initial_peer_locator.set_logical_port(7402);
     PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
     PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
 
@@ -66,7 +66,7 @@ bool HelloWorldSubscriber::init()
     meta_locator.kind = kind;
     meta_locator.set_IP4_address("127.0.0.1");
     meta_locator.set_port(5100);
-    meta_locator.set_logical_port(7401);
+    meta_locator.set_logical_port(7403);
     PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
 
     //PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
@@ -81,10 +81,9 @@ bool HelloWorldSubscriber::init()
     PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5, 0);
     PParam.rtps.setName("Participant_sub");
 
-    std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
     PParam.rtps.useBuiltinTransports = false;
-    //descriptor->sendBufferSize = 0;
-    //descriptor->receiveBufferSize = 0;
+    std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+    descriptor->set_metadata_logical_port(7403);
     PParam.rtps.userTransports.push_back(descriptor);
 
     mp_participant = Domain::createParticipant(PParam);
