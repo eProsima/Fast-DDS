@@ -351,12 +351,12 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 
     while(m_userReaderList.size() > 0)
     {
-        RTPSDomain::removeRTPSReader(*m_userReaderList.begin());
+        deleteUserEndpoint((Endpoint*)*m_userReaderList.begin());
     }
 
     while(m_userWriterList.size() > 0)
     {
-        RTPSDomain::removeRTPSWriter(*m_userWriterList.begin());
+        deleteUserEndpoint((Endpoint*)*m_userWriterList.begin());
     }
 
     delete(this->mp_builtinProtocols);
