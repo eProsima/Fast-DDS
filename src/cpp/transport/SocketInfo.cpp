@@ -7,7 +7,6 @@ namespace rtps {
 SocketInfo::SocketInfo()
     : mAlive(true)
     , mThread(nullptr)
-    , mAutoRelease(true)
 {
     logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
 }
@@ -16,7 +15,6 @@ SocketInfo::SocketInfo(SocketInfo&& socketInfo)
     : m_rec_msg(std::move(socketInfo.m_rec_msg))
     , mAlive(socketInfo.mAlive)
     , mThread(socketInfo.mThread)
-    , mAutoRelease(socketInfo.mAutoRelease)
 {
     socketInfo.mThread = nullptr;
     //logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
@@ -33,7 +31,6 @@ SocketInfo::SocketInfo(uint32_t rec_buffer_size)
 #endif
     , mAlive(true)
     , mThread(nullptr)
-    , mAutoRelease(true)
 {
     logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
 }
@@ -41,17 +38,11 @@ SocketInfo::SocketInfo(uint32_t rec_buffer_size)
 SocketInfo::~SocketInfo()
 {
     mAlive = false;
-    if (mAutoRelease)
+    if (mThread != nullptr)
     {
-        if (mThread != nullptr)
-        {
-            mThread->join();
-            delete mThread;
-        }
-    }
-    else
-    {
-        assert(mThread == nullptr);
+        mThread->join();
+        delete mThread;
+        mThread = nullptr;
     }
 }
 
@@ -92,8 +83,7 @@ UDPSocketInfo::~UDPSocketInfo()
     mMsgReceiver = nullptr;
 }
 
-TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket,
-    bool autoRelease)
+TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket)
     : mLocator(locator)
     , m_inputSocket(inputSocket)
     , mWaitingForKeepAlive(false)
@@ -103,7 +93,6 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
     , mSocket(moveSocket(socket))
     , mConnectionStatus(eConnectionStatus::eDisconnected)
 {
-    mAutoRelease = autoRelease;
     mReadMutex = new std::recursive_mutex();
     mWriteMutex = new std::recursive_mutex();
     if (outputLocator)
@@ -119,7 +108,7 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
 }
 
 TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket,
-    bool autoRelease, uint32_t maxMsgSize)
+    uint32_t maxMsgSize)
     : SocketInfo(maxMsgSize)
     , mLocator(locator)
     , m_inputSocket(inputSocket)
@@ -130,7 +119,6 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
     , mSocket(moveSocket(socket))
     , mConnectionStatus(eConnectionStatus::eDisconnected)
 {
-    mAutoRelease = autoRelease;
     mReadMutex = new std::recursive_mutex();
     mWriteMutex = new std::recursive_mutex();
     if (outputLocator)
@@ -167,19 +155,6 @@ TCPSocketInfo::TCPSocketInfo(TCPSocketInfo&& socketInfo)
 TCPSocketInfo::~TCPSocketInfo()
 {
     mAlive = false;
-    if (mAutoRelease)
-    {
-        if (mRTCPThread != nullptr)
-        {
-            mRTCPThread->join();
-            delete mRTCPThread;
-        }
-    }
-    else
-    {
-        assert(mRTCPThread == nullptr);
-    }
-
     for (auto it = mReceiversMap.begin(); it != mReceiversMap.end(); ++it)
     {
         if (it->second != nullptr)
@@ -196,6 +171,13 @@ TCPSocketInfo::~TCPSocketInfo()
     if (mWriteMutex != nullptr)
     {
         delete mWriteMutex;
+    }
+
+    if (mRTCPThread != nullptr)
+    {
+        mRTCPThread->join();
+        delete(mRTCPThread);
+        mRTCPThread = nullptr;
     }
 }
 

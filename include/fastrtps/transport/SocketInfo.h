@@ -108,11 +108,6 @@ public:
         mThread = pThread;
     }
 
-    inline void SetAutoRelease(bool bRelease)
-    {
-        mAutoRelease = bRelease;
-    }
-
     std::thread* ReleaseThread();
 
     inline bool IsAlive() const
@@ -139,7 +134,6 @@ protected:
 
     bool mAlive;
     std::thread* mThread;
-    bool mAutoRelease;
 };
 
 class UDPSocketInfo : public SocketInfo
@@ -212,11 +206,10 @@ enum eConnectionStatus
 };
 
 public:
-    TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket,
-        bool autoRelease);
+    TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket);
 
     TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket,
-        bool autoRelease, uint32_t maxMsgSize);
+        uint32_t maxMsgSize);
 
     TCPSocketInfo(TCPSocketInfo&& socketInfo);
 

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file HelloWorld.h
  * This header file contains the declaration of the described types in the IDL file.
  *
@@ -28,7 +28,6 @@
 #include <array>
 #include <string>
 #include <vector>
-#include <unistd.h>
 #include <ios>
 #include <iostream>
 #include <fstream>
@@ -40,6 +39,7 @@
 #define eProsima_user_DllExport
 #endif
 #else
+#include <unistd.h>
 #define eProsima_user_DllExport
 #endif
 
@@ -77,36 +77,36 @@ public:
      * @brief Default constructor.
      */
     eProsima_user_DllExport HelloWorld();
-    
+
     /*!
      * @brief Default destructor.
      */
     eProsima_user_DllExport ~HelloWorld();
-    
+
     /*!
      * @brief Copy constructor.
      * @param x Reference to the object HelloWorld that will be copied.
      */
     eProsima_user_DllExport HelloWorld(const HelloWorld &x);
-    
+
     /*!
      * @brief Move constructor.
      * @param x Reference to the object HelloWorld that will be copied.
      */
     eProsima_user_DllExport HelloWorld(HelloWorld &&x);
-    
+
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object HelloWorld that will be copied.
      */
     eProsima_user_DllExport HelloWorld& operator=(const HelloWorld &x);
-    
+
     /*!
      * @brief Move assignment.
      * @param x Reference to the object HelloWorld that will be copied.
      */
     eProsima_user_DllExport HelloWorld& operator=(HelloWorld &&x);
-    
+
     /*!
      * @brief This function sets a value in member index
      * @param _index New value for member index
@@ -168,7 +168,7 @@ public:
     {
         return m_message;
     }
-    
+
     /*!
      * @brief This function returns the maximum serialized size of an object
      * depending on the buffer alignment.
@@ -221,6 +221,11 @@ public:
 
     inline static void ProcessMemUsage(double& vm_usage, double& resident_set)
     {
+#if defined(_WIN32)
+        //TODO: Memory management
+        vm_usage = 0;
+        resident_set = 0;
+#else
         using std::ios_base;
         using std::ifstream;
         using std::string;
@@ -254,8 +259,9 @@ public:
         long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024; // in case x86-64 is configured to use 2MB pages
         vm_usage     = vsize / 1024.0;
         resident_set = rss * page_size_kb;
+#endif
     }
-    
+
 private:
     uint32_t m_index;
     std::string m_message;

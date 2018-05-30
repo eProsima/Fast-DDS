@@ -203,12 +203,12 @@ protected:
     TCPv4TransportDescriptor mConfiguration_;
     bool mActive;
     RTCPMessageManager* mRTCPMessageManager;
-    std::vector<std::thread*> mThreadPool;
+    std::vector<TCPSocketInfo*> mDeletedSocketsPool;
     asio::io_service mService;
     std::unique_ptr<std::thread> ioServiceThread;
 
     mutable std::recursive_mutex mSocketsMapMutex;
-    std::recursive_mutex mThreadPoolMutex;
+    std::recursive_mutex mDeletedSocketsPoolMutex;
     std::vector<Locator_t> mPendingOutputPorts;
     std::map<Locator_t, TCPConnector*> mPendingOutputSockets;
     std::vector<TCPSocketInfo*> mOutputSockets;
