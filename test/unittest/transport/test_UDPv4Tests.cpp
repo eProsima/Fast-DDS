@@ -205,7 +205,7 @@ void test_UDPv4Tests::HELPER_WarmUpOutput(test_UDPv4Transport& transport)
    Locator_t outputChannelLocator;
    outputChannelLocator.set_port(g_default_port);
    outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
-   ASSERT_TRUE(transport.OpenOutputChannel(outputChannelLocator));
+   ASSERT_TRUE(transport.OpenOutputChannel(outputChannelLocator, nullptr));
 }
 
 void test_UDPv4Tests::HELPER_FillDataMessage(CDRMessage_t& message, SequenceNumber_t sequenceNumber)

@@ -18,6 +18,7 @@
 #include <functional>
 #include <vector>
 #include <fastrtps/transport/TransportInterface.h>
+#include <fastrtps/transport/SocketInfo.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -26,6 +27,7 @@ namespace rtps{
 class RTPSParticipantImpl;
 class MessageReceiver;
 class SocketInfo;
+class TransportInterface;
 
 /**
  * RAII object that encapsulates the Send operation over one chanel in an unknown transport.
@@ -63,6 +65,8 @@ public:
    */
    bool CanSendToRemoteLocator(const Locator_t& remote);
 
+   void SetSocketInfo(SocketInfo* socketInfo) { pSocketInfo = socketInfo; }
+
    /**
    * Resources can only be transfered through move semantics. Copy, assignment, and
    * construction outside of the factory are forbidden.
@@ -77,10 +81,11 @@ private:
 
    SenderResource(TransportInterface&, Locator_t&);
    std::function<void()> Cleanup;
-   std::function<bool(const octet* data, uint32_t dataLength, const Locator_t&)> SendThroughAssociatedChannel;
+   std::function<bool(const octet*, uint32_t, const Locator_t&, SocketInfo*)> SendThroughAssociatedChannel;
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
    std::function<bool(const Locator_t&)> ManagedChannelMapsToRemote;
    bool mValid; // Post-construction validity check for the NetworkFactory
+   SocketInfo* pSocketInfo;
 };
 
 } // namespace rtps

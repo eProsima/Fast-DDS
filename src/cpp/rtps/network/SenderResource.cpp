@@ -20,27 +20,43 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator)
+SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator) : pSocketInfo(nullptr)
 {
-   // Internal channel is opened and assigned to this resource.
-   mValid = transport.OpenOutputChannel(locator);
-   if (!mValid)
-      return; // Invalid resource, will be discarded by the factory.
+    // Internal channel is opened and assigned to this resource.
+    mValid = transport.OpenOutputChannel(locator, this);
+    if (!mValid)
+        return; // Invalid resource, will be discarded by the factory.
 
-   // Implementation functions are bound to the right transport parameters
-   Cleanup = [&transport,locator](){ transport.CloseOutputChannel(locator); };
-   SendThroughAssociatedChannel = [&transport, locator](const octet* data, uint32_t dataSize, const Locator_t& destination)-> bool
-                                  { return transport.Send(data,dataSize, locator, destination); };
-   LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
+    // Implementation functions are bound to the right transport parameters
+    Cleanup = [&transport, locator, this]()
+        { 
+            transport.CloseOutputChannel(locator); 
+            this->pSocketInfo = nullptr;
+        };
+
+    SendThroughAssociatedChannel = 
+        [&transport, locator, this]
+        (const octet* data, uint32_t dataSize, const Locator_t& destination, SocketInfo* socketInfo)-> bool
+        { 
+            if (socketInfo == nullptr)
+            {
+                return transport.Send(data, dataSize, locator, destination); 
+            }
+            else
+            {
+                return transport.Send(data, dataSize, locator, destination, socketInfo); 
+            }
+        };
+    LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
                                  { return transport.DoLocatorsMatch(locator, locatorToCheck); };
-   ManagedChannelMapsToRemote = [&transport, locator](const Locator_t& locatorToCheck) -> bool
+    ManagedChannelMapsToRemote = [&transport, locator](const Locator_t& locatorToCheck) -> bool
                                  { return transport.DoLocatorsMatch(locator, transport.RemoteToMainLocal(locatorToCheck)); };
 }
 
 bool SenderResource::Send(const octet* data, uint32_t dataLength, const Locator_t& destinationLocator)
 {
    if (SendThroughAssociatedChannel)
-      return SendThroughAssociatedChannel(data, dataLength, destinationLocator);
+      return SendThroughAssociatedChannel(data, dataLength, destinationLocator, this->pSocketInfo);
    return false;
 }
 
@@ -51,6 +67,7 @@ SenderResource::SenderResource(SenderResource&& rValueResource)
     SendThroughAssociatedChannel.swap(rValueResource.SendThroughAssociatedChannel);
     LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
     ManagedChannelMapsToRemote.swap(rValueResource.ManagedChannelMapsToRemote);
+    pSocketInfo = rValueResource.pSocketInfo;
 }
 
 bool SenderResource::SupportsLocator(const Locator_t& local)

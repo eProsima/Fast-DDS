@@ -64,7 +64,7 @@ public:
    /**
     * Checks whether there are open and bound sockets for the given port.
     */
-   virtual bool IsOutputChannelOpen(const Locator_t&) const override;
+   virtual bool IsOutputChannelOpen(const Locator_t&, SenderResource* senderResource = nullptr) const override;
 
    //! Checks for UDPv4 kind.
    virtual bool IsLocatorSupported(const Locator_t&) const override;
@@ -94,7 +94,7 @@ public:
    /**
     * Opens a socket on the given address and port (as long as they are white listed).
     */
-   virtual bool OpenOutputChannel(Locator_t&) override;
+   virtual bool OpenOutputChannel(Locator_t&, SenderResource*) override;
 
    //! Removes the listening socket for the specified port.
    virtual bool CloseInputChannel(const Locator_t&) override;
@@ -116,6 +116,9 @@ public:
     */
    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
                      const Locator_t& remoteLocator) override;
+
+   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
+                        const Locator_t& remoteLocator, SocketInfo* pSocketInfo) override;
    /**
     * Blocking Receive from the specified channel.
     * @param receiveBuffer vector with enough capacity (not size) to accomodate a full receive buffer. That
@@ -150,7 +153,7 @@ protected:
    mutable std::recursive_mutex mInputMapMutex;
 
    //! The notion of output channel corresponds to a port.
-   std::map<uint32_t, std::vector<UDPSocketInfo> > mOutputSockets;
+   std::map<uint32_t, std::vector<UDPSocketInfo*> > mOutputSockets;
 
    std::vector<IPFinder::info_IP> currentInterfaces;
 
@@ -163,7 +166,7 @@ protected:
    bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
    std::vector<asio::ip::address_v4> mInterfaceWhiteList;
 
-   bool OpenAndBindOutputSockets(Locator_t& locator);
+   bool OpenAndBindOutputSockets(Locator_t& locator, SenderResource*);
    bool OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource, bool is_multicast,
        uint32_t maxMsgSize);
 
@@ -178,6 +181,9 @@ protected:
 
    bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
        eProsimaUDPSocketRef socket);
+
+    mutable std::map<UDPSocketInfo*, std::vector<SenderResource*>> mSocketToSenders;
+    void AssociateSenderToSocket(UDPSocketInfo*, SenderResource*) const;
 };
 
 } // namespace rtps
