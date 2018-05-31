@@ -347,10 +347,10 @@ void RTCPMessageManager::processConnectionRequest(TCPSocketInfo *pSocketInfo,
             std::unique_lock<std::recursive_mutex> scope(pSocketInfo->mPendingLogicalMutex);
             pSocketInfo->mPendingLogicalOutputPorts.push_back(request.transportLocator().get_logical_port());
             transport->BindInputSocket(localLocator, pSocketInfo);
-            std::cout << "## Bound as Input " << localLocator << std::endl;
+            //std::cout << "## Bound as Input " << localLocator << std::endl;
         }
         sendData(pSocketInfo, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_OK);
-        std::cout << "[RTCP] Connection established (physical: " << pSocketInfo->mLocator.get_physical_port() << ")" << std::endl;
+        //std::cout << "[RTCP] Connection established (Req) (physical: " << pSocketInfo->mLocator.get_physical_port() << ")" << std::endl;
         pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eEstablished);
     }
     else
@@ -376,12 +376,12 @@ void RTCPMessageManager::processOpenLogicalPortRequest(TCPSocketInfo *pSocketInf
     {
         if (port == request.logicalPort())
         {
-            std::cout << "[RTCP] OpenLogicalPortRequest [OK]: " << request.logicalPort() << std::endl;
+            //std::cout << "[RTCP] OpenLogicalPortRequest [OK]: " << request.logicalPort() << std::endl;
             sendData(pSocketInfo, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_OK);
             return;
         }
     }
-    std::cout << "[RTCP] OpenLogicalPortRequest [FAILED]: " << request.logicalPort() << std::endl;
+    //std::cout << "[RTCP] OpenLogicalPortRequest [FAILED]: " << request.logicalPort() << std::endl;
     sendData(pSocketInfo, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_INVALID_PORT);
 }
 
@@ -390,7 +390,7 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(TCPSocketInfo *pSocketI
 {
     CheckLogicalPortsResponse_t response;
 
-    std::cout << "[RTCP] CheckOpenedLogicalPort [STARTING]: " << request.logicalPortsRange().size() << std::endl;
+    //std::cout << "[RTCP] CheckOpenedLogicalPort [STARTING]: " << request.logicalPortsRange().size() << std::endl;
 
     //for (uint16_t port : request.logicalPortsRange())
     for (size_t i = 0; i < request.logicalPortsRange().size(); ++i)
@@ -405,7 +405,7 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(TCPSocketInfo *pSocketI
         {
             if (opened_port == port)
             {
-                std::cout << "[RTCP] FoundOpenedLogicalPort: " << port << std::endl;
+                //std::cout << "[RTCP]FoundOpenedLogicalPort: " << port << std::endl;
                 response.availableLogicalPorts().emplace_back(port);
             }
         }
@@ -443,7 +443,7 @@ bool RTCPMessageManager::processBindConnectionResponse(TCPSocketInfo *pSocketInf
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
     {
-        std::cout << "[RTCP] Connection established (physical: " << pSocketInfo->mLocator.get_physical_port() << ")" << std::endl;
+        //std::cout << "[RTCP]Connection established (Resp) (physical: " << pSocketInfo->mLocator.get_physical_port() << ")" << std::endl;
         pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eEstablished);
         mUnconfirmedTransactions.erase(it);
         return true;
@@ -502,7 +502,7 @@ void RTCPMessageManager::prepareAndSendCheckLogicalPortsRequest(TCPSocketInfo *p
         {
             pSocketInfo->mNegotiatingLogicalPort = pSocketInfo->mPendingLogicalPort;
             pSocketInfo->mCheckingLogicalPort = pSocketInfo->mPendingLogicalPort;
-            std::cout << "[RTCP] OpenLogicalPort failed: " << pSocketInfo->mCheckingLogicalPort << std::endl;
+            //std::cout << "[RTCP]OpenLogicalPort failed: " << pSocketInfo->mCheckingLogicalPort << std::endl;
         }
         pSocketInfo->mPendingLogicalPort = 0;
     }
@@ -562,7 +562,7 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPSocketInfo *pSocketIn
                 else
                 {
                     remoteLocator.set_logical_port(pSocketInfo->mPendingLogicalPort);
-                    std::cout << "[RTCP] OpenedLogicalPort " << pSocketInfo->mPendingLogicalPort << std::endl;
+                    //std::cout << "[RTCP]OpenedLogicalPort " << pSocketInfo->mPendingLogicalPort << std::endl;
                 }
 
                 pSocketInfo->mLogicalOutputPorts.emplace_back(*(pSocketInfo->mPendingLogicalOutputPorts.begin()));

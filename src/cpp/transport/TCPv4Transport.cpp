@@ -195,6 +195,16 @@ TCPv4Transport::~TCPv4Transport()
         std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
         for (auto it = mDeletedSocketsPool.begin(); it != mDeletedSocketsPool.end(); ++it)
         {
+            std::thread* rtcpThread = (*it)->ReleaseRTCPThread();
+            std::thread* thread = (*it)->ReleaseThread();
+            if (rtcpThread != nullptr)
+            {
+                rtcpThread->join();
+            }
+            if (thread != nullptr)
+            {
+                thread->join();
+            }
             delete(*it);
         }
         mDeletedSocketsPool.clear();
@@ -417,7 +427,6 @@ bool TCPv4Transport::OpenOutputChannel(Locator_t& locator, SenderResource* sende
     {
         if (!IsTCPInputSocket(locator, senderResource))
         {
-            std::cout << "##### OUTPUT " << locator.get_logical_port() << std::endl;
             std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
             if (!IsOutputChannelConnected(locator))
             {
@@ -723,6 +732,7 @@ void TCPv4Transport::performRTPCManagementThread(TCPSocketInfo *pSocketInfo)
         time_now + std::chrono::milliseconds(mConfiguration_.keep_alive_timeout_ms);
 
     bool bSendOpenLogicalPort = false;
+    std::cout << "#### START performRTPCManagementThread " << pSocketInfo->GetLocator() << " ####" << std::endl;
     while (pSocketInfo->IsAlive())
     {
         if (pSocketInfo->IsConnectionEstablished())
@@ -767,13 +777,15 @@ void TCPv4Transport::performRTPCManagementThread(TCPSocketInfo *pSocketInfo)
         }
         eClock::my_sleep(100);
     }
-    pSocketInfo = nullptr;
+    std::cout << "#### End performRTPCManagementThread " << pSocketInfo->GetLocator() << " ####" << std::endl;
+    //pSocketInfo = nullptr;
 }
 
 void TCPv4Transport::performListenOperation(TCPSocketInfo *pSocketInfo)
 {
     Locator_t remoteLocator;
     uint16_t logicalPort(0);
+    std::cout << "#### START PerformListenOperation " << pSocketInfo->GetLocator() << " ####" << std::endl;
     while (pSocketInfo->IsAlive())
     {
         // Blocking receive.
@@ -791,7 +803,9 @@ void TCPv4Transport::performListenOperation(TCPSocketInfo *pSocketInfo)
                 &pSocketInfo->mLocator, &msg);
         }
     }
-    pSocketInfo = nullptr;
+
+    std::cout << "#### End PerformListenOperation " << pSocketInfo->GetLocator() << " ####" << std::endl;
+    //pSocketInfo = nullptr;
 }
 
 void TCPv4Transport::OpenAndBindUnicastOutputSocket(Locator_t& locator, SenderResource *senderResource)
@@ -983,6 +997,7 @@ bool TCPv4Transport::Receive(TCPSocketInfo *socketInfo, octet* receiveBuffer,
                     socketInfo->Disable();
                     CloseTCPSocket(socketInfo);
                 }
+                success = false;
             }
             catch (const asio::system_error& error)
             {
@@ -990,6 +1005,7 @@ bool TCPv4Transport::Receive(TCPSocketInfo *socketInfo, octet* receiveBuffer,
                 std::cout << "[RTCP] ASIO ERROR [RECEIVE]: " << error.what() << std::endl;
                 socketInfo->Disable();
                 CloseTCPSocket(socketInfo);
+                success = false;
             }
         }
     }
@@ -1182,8 +1198,6 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(std::move(socket));
             TCPSocketInfo *socketInfo = new TCPSocketInfo(unicastSocket,
                 acceptor->mLocator, false, true, acceptor->mMaxMsgSize);
-            socketInfo->SetThread(new std::thread(&TCPv4Transport::performListenOperation, this, socketInfo));
-            socketInfo->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, socketInfo));
             socketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eWaitingForBind);
             RegisterReceiverResources(socketInfo, acceptor->mLocator);
 
@@ -1194,6 +1208,9 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
                     BindInputSocket(*it, socketInfo);
                 }
             }
+            socketInfo->SetThread(new std::thread(&TCPv4Transport::performListenOperation, this, socketInfo));
+            socketInfo->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, socketInfo));
+
             mInputSockets[acceptor->mLocator.get_physical_port()].emplace_back(socketInfo);
             std::cout << "[RTCP] Accepted connection (physical: " << acceptor->mLocator.get_physical_port() << ")" << std::endl;
         }

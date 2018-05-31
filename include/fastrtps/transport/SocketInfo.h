@@ -210,16 +210,19 @@ public:
 
     TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket,
         uint32_t maxMsgSize);
-
+/*
     TCPSocketInfo(TCPSocketInfo&& socketInfo);
-
+*/
     virtual ~TCPSocketInfo();
 
+/*
     TCPSocketInfo& operator=(TCPSocketInfo&& socketInfo)
     {
         mSocket = moveSocket(socketInfo.mSocket);
+        std::cout << "############ MOVE ASSIGN ###########" << std::endl;
         return *this;
     }
+*/
 
     bool operator==(const TCPSocketInfo& socketInfo) const
     {
