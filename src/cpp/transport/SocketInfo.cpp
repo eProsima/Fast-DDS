@@ -132,7 +132,7 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
         std::cout << "[RTCP] Bound input locator (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")" << std::endl;
     }
 }
-
+/*
 TCPSocketInfo::TCPSocketInfo(TCPSocketInfo&& socketInfo)
     : SocketInfo(std::move(socketInfo))
     , mLocator(socketInfo.mLocator)
@@ -150,8 +150,9 @@ TCPSocketInfo::TCPSocketInfo(TCPSocketInfo&& socketInfo)
     socketInfo.mReadMutex = nullptr;
     socketInfo.mWriteMutex = nullptr;
     socketInfo.mRTCPThread = nullptr;
+    std::cout << "############ MOVE CTOR ###########" << std::endl;
 }
-
+*/
 TCPSocketInfo::~TCPSocketInfo()
 {
     mAlive = false;
