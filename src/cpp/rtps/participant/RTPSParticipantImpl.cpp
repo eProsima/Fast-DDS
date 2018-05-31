@@ -179,12 +179,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
 
-    ////Create ReceiverResources now and update the list with the REAL used ones
-    //createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
-
-    ////Create ReceiverResources now and update the list with the REAL used ones
-    //createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
-
     // Initial peers
     if(m_att.builtin.initialPeersList.empty())
     {
@@ -271,21 +265,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
     }
 
-    /*
-        Since nothing guarantees the correct creation of the Resources on the Locators we have specified, and
-        in order to maintain synchrony between the defaultLocator list and the actual ReceiveResources,
-        We create the resources for these Locators now. Furthermore, in case these resources are taken,
-        we create them on another Locator and then update de defaultList.
-    */
-    //createReceiverResources(m_att.defaultUnicastLocatorList, true);
-
     if (!hasLocatorsDefined)
     {
         logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
             << m_att.defaultUnicastLocatorList);
     }
-    ////Multicast
-    //createReceiverResources(m_att.defaultMulticastLocatorList, true);
 
     //Check if defaultOutLocatorsExist, create some if they don't
     hasLocatorsDefined = true;
@@ -299,38 +283,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         //SendLocator.kind = LOCATOR_KIND_UDPv4;
         //m_att.defaultOutLocatorList.push_back(SendLocator);
     }
-
-    ////Create the default sendResources - For the same reason as in the ReceiverResources
-    //std::vector<SenderResource> newSenders;
-    //std::vector<SenderResource> newSendersBuffer;
-    //LocatorList_t defcopy = m_att.defaultOutLocatorList;
-    //for (auto it = defcopy.begin(); it != defcopy.end(); ++it){
-    //    /* Try to build resources with that specific Locator*/
-    //    newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
-    //    uint32_t tries = 100;
-    //    while(newSendersBuffer.empty() && tries != 0)
-    //    {
-    //        //No ReceiverResources have been added, therefore we have to change the Locator
-    //        (*it) = applyLocatorAdaptRule(*it);   //Mutate the Locator to find a suitable rule.
-    //                                              // Overwrite the old one as it is useless now.
-    //        newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
-    //        --tries;
-    //    }
-    //    //Now we DO have resources, and the new locator is already replacing the old one.
-    //    for(auto mit= newSendersBuffer.begin(); mit!= newSendersBuffer.end(); ++mit){
-    //        newSenders.push_back(std::move(*mit));
-    //    }
-
-    //    //newSenders.insert(newSenders.end(), newSendersBuffer.begin(), newSendersBuffer.end());
-    //    newSendersBuffer.clear();
-    //}
-
-    //m_send_resources_mutex.lock();
-    //for(auto mit=newSenders.begin(); mit!=newSenders.end();++mit){
-    //    m_senderResourceList.push_back(std::move(*mit));
-    //}
-    //m_send_resources_mutex.unlock();
-    //m_att.defaultOutLocatorList = defcopy;
 
     if (!hasLocatorsDefined)
     {

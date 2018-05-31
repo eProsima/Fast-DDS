@@ -329,9 +329,8 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource
         // and gain efficiency.
         if(mInterfaceWhiteList.empty())
         {
-            eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v4::any(),
-                mConfiguration_.m_output_upd_socket);
-
+            locator.set_port(mConfiguration_.m_output_upd_socket);
+            eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v4::any(), locator.get_physical_port());
             getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
 
             // If more than one interface, then create sockets for outbounding multicast.
@@ -380,7 +379,9 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource
                 auto ip = asio::ip::address_v4::from_string(infoIP.name);
                 if (IsInterfaceAllowed(ip))
                 {
-                    eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, mConfiguration_.m_output_upd_socket);
+                    locator.set_port(mConfiguration_.m_output_upd_socket);
+
+                    eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.get_physical_port());
                     getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(ip));
                     if(firstInterface)
                     {
@@ -426,7 +427,6 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource
 bool UDPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource, bool is_multicast, uint32_t maxMsgSize)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-
     try
     {
         eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(locator.get_physical_port(), is_multicast);
@@ -439,7 +439,7 @@ bool UDPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverR
     catch (asio::system_error const& e)
     {
         (void)e;
-        logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << locator.get_physical_port() << ")" << " with msg: "<<e.what());
+        logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << locator.get_physical_port() << ")" << " with msg: " << e.what());
         mInputSockets.erase(locator.get_physical_port());
         return false;
     }
@@ -495,10 +495,9 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(uint16_t port, bool is_
     return socket;
 }
 
-bool UDPv4Transport::DoLocatorsMatch(const Locator_t& /*left*/, const Locator_t& /*right*/) const
+bool UDPv4Transport::DoLocatorsMatch(const Locator_t& left, const Locator_t& right) const
 {
-    //TODO: Address network checking.
-    return true; // left.get_port() == right.get_port();
+    return left.get_port() == right.get_port();
 }
 
 bool UDPv4Transport::IsLocatorSupported(const Locator_t& locator) const
