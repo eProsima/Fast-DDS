@@ -76,6 +76,7 @@ private:
 
    ReceiverResource(TransportInterface&, const Locator_t&);
    std::function<void()> Cleanup;
+   std::function<void()> Close;
    std::function<bool(octet*, uint32_t, uint32_t&, Locator_t&)> ReceiveFromAssociatedChannel;
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
    bool mValid; // Post-construction validity check for the NetworkFactory

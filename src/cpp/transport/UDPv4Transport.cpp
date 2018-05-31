@@ -96,11 +96,6 @@ UDPv4Transport::UDPv4Transport() :
 
 UDPv4Transport::~UDPv4Transport()
 {
-    if(ioServiceThread)
-    {
-        mService.stop();
-        ioServiceThread->join();
-    }
 }
 
 bool UDPv4Transport::init()
@@ -158,13 +153,6 @@ bool UDPv4Transport::init()
 
     // TODO(Ricardo) Create an event that update this list.
     GetIP4s(currentInterfaces);
-
-    auto ioServiceFunction = [&]()
-    {
-        io_service::work work(mService);
-        mService.run();
-    };
-    ioServiceThread.reset(new std::thread(ioServiceFunction));
 
     return true;
 }
@@ -266,19 +254,28 @@ bool UDPv4Transport::CloseInputChannel(const Locator_t& locator)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
     if (!IsInputChannelOpen(locator))
+    {
         return false;
-
-
-    auto& socket = mInputSockets.at(locator.port);
-#if defined(ASIO_HAS_MOVE)
-    socket.cancel();
-    socket.close();
-#else
-    socket->cancel();
-    socket->close();
-#endif
+    }
 
     mInputSockets.erase(locator.port);
+    return true;
+}
+
+bool UDPv4Transport::ReleaseInputChannel(const Locator_t& locator)
+{
+    std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
+    if (!IsInputChannelOpen(locator))
+    {
+        return false;
+    }
+
+    ip::udp::socket socket(mService);
+    socket.open(ip::udp::v4());
+    auto destinationEndpoint = ip::udp::endpoint(asio::ip::address_v4(locatorToNative(locator)),
+            static_cast<uint16_t>(locator.port));
+    socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
+
     return true;
 }
 
@@ -545,53 +542,39 @@ bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
     if (!IsInputChannelOpen(localLocator))
         return false;
 
-    Semaphore receiveSemaphore(0);
-    bool success = false;
-
-    auto handler = [&receiveBuffer, &receiveBufferSize, &success, &receiveSemaphore]
-        (const asio::error_code& error, std::size_t bytes_transferred)
-        {
-            (void)receiveBuffer;
-
-            if(error)
-            {
-                logInfo(RTPS_MSG_IN, "Error while listening to socket...");
-                receiveBufferSize = 0;
-            }
-            else
-            {
-                logInfo(RTPS_MSG_IN,"Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ");
-                receiveBufferSize = static_cast<uint32_t>(bytes_transferred);
-                success = true;
-            }
-
-            receiveSemaphore.post();
-        };
-
     ip::udp::endpoint senderEndpoint;
+    ip::udp::socket* socket = nullptr;
 
     { // lock scope
         std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
         if (!IsInputChannelOpen(localLocator))
             return false;
 
-        auto& socket = mInputSockets.at(localLocator.port);
-#if defined(ASIO_HAS_MOVE)
-        socket.async_receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity),
-                senderEndpoint,
-                handler);
-#else
-        socket->async_receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity),
-                senderEndpoint,
-                handler);
-#endif
+        socket = &mInputSockets.at(localLocator.port);
     }
 
-    receiveSemaphore.wait();
-    if (success)
-        EndpointToLocator(senderEndpoint, remoteLocator);
+    if(socket != nullptr)
+    {
+#if defined(ASIO_HAS_MOVE)
+        size_t bytes = socket->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
+#else
+        size_t bytes = socket.get()->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
+#endif
 
-    return success;
+        receiveBufferSize = static_cast<uint32_t>(bytes);
+
+        if(receiveBufferSize > 0)
+        {
+            if(receiveBufferSize == 13 && memcmp(receiveBuffer, "EPRORTPSCLOSE", 13) == 0)
+            {
+                return false;
+            }
+
+            EndpointToLocator(senderEndpoint, remoteLocator);
+        }
+    }
+
+    return (receiveBufferSize > 0);
 }
 
 bool UDPv4Transport::SendThroughSocket(const octet* sendBuffer,

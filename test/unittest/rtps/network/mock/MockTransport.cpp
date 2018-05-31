@@ -133,6 +133,11 @@ bool MockTransport::CloseInputChannel(const Locator_t& locator)
    return true;
 }
 
+bool MockTransport::ReleaseInputChannel(const Locator_t& /*locator*/)
+{
+   return true;
+}
+
 LocatorList_t MockTransport::NormalizeLocator(const Locator_t& locator)
 {
     LocatorList_t list;
