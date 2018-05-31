@@ -35,7 +35,9 @@ int main(int argc, char** argv)
     std::cout << "Initial memory ussage: " << std::endl;
     std::cout << "\tVM: " << vm << std::endl;
     std::cout << "\tRSS: " << rss << std::endl;
-    Log::SetVerbosity(Log::Kind::Warning);
+    Log::SetVerbosity(Log::Kind::Info);
+    std::regex filter("RTCP(?!_SEQ)");
+    Log::SetCategoryFilter(filter);
 
     std::cout << "Starting "<< std::endl;
     int type = 1;
