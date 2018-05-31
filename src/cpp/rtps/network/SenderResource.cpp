@@ -41,7 +41,7 @@ SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator
         [&transport, locator, this]
         (const octet* data, uint32_t dataSize, const Locator_t& destination, SocketInfo* socketInfo)-> bool
         {
-            if (socketInfo == nullptr)
+            if (true || socketInfo == nullptr)
             {
                 return transport.Send(data, dataSize, locator, destination);
             }
