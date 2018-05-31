@@ -125,12 +125,12 @@ void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*
     if(info.status == MATCHED_MATCHING)
     {
         n_matched++;
-        std::cout << "Subscriber matched"<<std::endl;
+        std::cout << "[RTCP] Subscriber matched"<<std::endl;
     }
     else
     {
         n_matched--;
-        std::cout << "Subscriber unmatched"<<std::endl;
+        std::cout << "[RTCP] Subscriber unmatched"<<std::endl;
     }
 }
 
@@ -142,7 +142,7 @@ void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
         {
             this->n_samples++;
             // Print your structure data here.
-            std::cout << "Message "<<m_Hello.message()<< " "<< m_Hello.index()<< " RECEIVED"<<std::endl;
+            std::cout << "[RTCP] Message "<<m_Hello.message()<< " "<< m_Hello.index()<< " RECEIVED"<<std::endl;
         }
     }
 
@@ -151,13 +151,13 @@ void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 
 void HelloWorldSubscriber::run()
 {
-    std::cout << "Subscriber running. Please press enter to stop the Subscriber" << std::endl;
+    std::cout << "[RTCP] Subscriber running. Please press enter to stop the Subscriber" << std::endl;
     std::cin.ignore();
 }
 
 void HelloWorldSubscriber::run(uint32_t number)
 {
-    std::cout << "Subscriber running until "<< number << "samples have been received"<<std::endl;
+    std::cout << "[RTCP] Subscriber running until "<< number << "samples have been received"<<std::endl;
     while(number < this->m_listener.n_samples)
         eClock::my_sleep(500);
 }

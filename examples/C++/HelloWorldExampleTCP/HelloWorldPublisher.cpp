@@ -130,12 +130,12 @@ void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,M
     if(info.status == MATCHED_MATCHING)
     {
         n_matched++;
-        std::cout << "Publisher matched"<<std::endl;
+        std::cout << "[RTCP] Publisher matched"<<std::endl;
     }
     else
     {
         n_matched--;
-        std::cout << "Publisher unmatched"<<std::endl;
+        std::cout << "[RTCP] Publisher unmatched"<<std::endl;
     }
 }
 
@@ -147,7 +147,7 @@ void HelloWorldPublisher::run(uint32_t samples, long sleep_ms)
         {
             if(publish(sleep_ms, false))
             {
-                std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+                std::cout << "[RTCP] Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
             }
             eClock::my_sleep(0);
         }
@@ -160,7 +160,7 @@ void HelloWorldPublisher::run(uint32_t samples, long sleep_ms)
                 --i;
             else
             {
-                std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+                std::cout << "[RTCP] Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
             }
             eClock::my_sleep(0);
         }
