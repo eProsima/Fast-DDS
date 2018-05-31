@@ -211,34 +211,34 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
     switch(kind)
     {
         case BIND_CONNECTION_REQUEST:
-            logInfo(RTCP_MSG, "Send [BIND_CONNECTION_REQUEST] " << retCtrlHeader.transactionId);
+            logInfo(RTCP_SEQ, "Send [BIND_CONNECTION_REQUEST] Seq: " << retCtrlHeader.transactionId);
             break;
         case OPEN_LOGICAL_PORT_REQUEST:
-            logInfo(RTCP_MSG, "Send [OPEN_LOGICAL_PORT_REQUEST] " << retCtrlHeader.transactionId);
+            logInfo(RTCP_SEQ, "Send [OPEN_LOGICAL_PORT_REQUEST] Seq: " << retCtrlHeader.transactionId);
             break;
         case CHECK_LOGICAL_PORT_REQUEST:
-            logInfo(RTCP_MSG, "Send [CHECK_LOGICAL_PORT_REQUEST]: " << retCtrlHeader.length << " - " << retCtrlHeader.transactionId);
+            logInfo(RTCP_SEQ, "Send [CHECK_LOGICAL_PORT_REQUEST]: Seq: " << retCtrlHeader.transactionId);
             break;
         case KEEP_ALIVE_REQUEST:
-            logInfo(RTCP_MSG, "Send [KEEP_ALIVE_REQUEST] " << retCtrlHeader.transactionId);
+            logInfo(RTCP_SEQ, "Send [KEEP_ALIVE_REQUEST] Seq: " << retCtrlHeader.transactionId);
             break;
         case LOGICAL_PORT_IS_CLOSED_REQUEST:
-            logInfo(RTCP_MSG, "Send [LOGICAL_PORT_IS_CLOSED_REQUEST] " << retCtrlHeader.transactionId);
+            logInfo(RTCP_SEQ, "Send [LOGICAL_PORT_IS_CLOSED_REQUEST] Seq: " << retCtrlHeader.transactionId);
             break;
         case BIND_CONNECTION_RESPONSE:
-            logInfo(RTCP_MSG, "Send [BIND_CONNECTION_RESPONSE] " << retCtrlHeader.transactionId);
+            logInfo(RTCP_SEQ, "Send [BIND_CONNECTION_RESPONSE] Seq: " << retCtrlHeader.transactionId);
             break;
         case OPEN_LOGICAL_PORT_RESPONSE:
-            logInfo(RTCP_MSG, "Send [OPEN_LOGICAL_PORT_RESPONSE] " << retCtrlHeader.transactionId);
+            logInfo(RTCP_SEQ, "Send [OPEN_LOGICAL_PORT_RESPONSE] Seq: " << retCtrlHeader.transactionId);
             break;
         case CHECK_LOGICAL_PORT_RESPONSE:
-            logInfo(RTCP_MSG, "Send [CHECK_LOGICAL_PORT_RESPONSE] " << retCtrlHeader.transactionId);
+            logInfo(RTCP_SEQ, "Send [CHECK_LOGICAL_PORT_RESPONSE] Seq: " << retCtrlHeader.transactionId);
             break;
         case KEEP_ALIVE_RESPONSE:
-            logInfo(RTCP_MSG, "Send [KEEP_ALIVE_RESPONSE] " << retCtrlHeader.transactionId);
+            logInfo(RTCP_SEQ, "Send [KEEP_ALIVE_RESPONSE] Seq: " << retCtrlHeader.transactionId);
             break;
         case UNBIND_CONNECTION_REQUEST:
-            logInfo(RTCP_MSG, "Send [UNBIND_CONNECTION_REQUEST] " << retCtrlHeader.transactionId);
+            logInfo(RTCP_SEQ, "Send [UNBIND_CONNECTION_REQUEST] Seq: " << retCtrlHeader.transactionId);
             break;
     }
 }
@@ -254,6 +254,7 @@ void RTCPMessageManager::sendConnectionRequest(TCPSocketInfo *pSocketInfo, uint1
     SerializedPayload_t payload(static_cast<uint32_t>(ConnectionRequest_t::getBufferCdrSerializedSize(request)));
     request.serialize(&payload);
 
+    logInfo(RTCP_MSG, "Send [BIND_CONNECTION_REQUEST] LogicalPort: " << localLogicalPort);
     sendData(pSocketInfo, BIND_CONNECTION_REQUEST, getTransactionId(), &payload);
 /*
     sendData(pSocketInfo, BIND_CONNECTION_REQUEST, getTransactionId(), (octet*)&request,
@@ -274,6 +275,7 @@ void RTCPMessageManager::sendOpenLogicalPortRequest(TCPSocketInfo *pSocketInfo,
 {
     SerializedPayload_t payload(static_cast<uint32_t>(OpenLogicalPortRequest_t::getBufferCdrSerializedSize(request)));
     request.serialize(&payload);
+    logInfo(RTCP_MSG, "Send [OPEN_LOGICAL_PORT_REQUEST] LogicalPort: " << request.logicalPort());
     sendData(pSocketInfo, OPEN_LOGICAL_PORT_REQUEST, getTransactionId(), &payload);
 }
 
@@ -290,6 +292,7 @@ void RTCPMessageManager::sendCheckLogicalPortsRequest(TCPSocketInfo *pSocketInfo
 {
     SerializedPayload_t payload(static_cast<uint32_t>(CheckLogicalPortsRequest_t::getBufferCdrSerializedSize(request)));
     request.serialize(&payload);
+    logInfo(RTCP_MSG, "Send [CHECK_LOGICAL_PORT_REQUEST]");
     sendData(pSocketInfo, CHECK_LOGICAL_PORT_REQUEST, getTransactionId(), &payload);
 }
 
@@ -297,6 +300,7 @@ void RTCPMessageManager::sendKeepAliveRequest(TCPSocketInfo *pSocketInfo, KeepAl
 {
     SerializedPayload_t payload(static_cast<uint32_t>(KeepAliveRequest_t::getBufferCdrSerializedSize(request)));
     request.serialize(&payload);
+    logInfo(RTCP_MSG, "Send [KEEP_ALIVE_REQUEST]");
     sendData(pSocketInfo, KEEP_ALIVE_REQUEST, getTransactionId(), &payload);
 }
 
@@ -312,6 +316,7 @@ void RTCPMessageManager::sendLogicalPortIsClosedRequest(TCPSocketInfo *pSocketIn
 {
     SerializedPayload_t payload(static_cast<uint32_t>(LogicalPortIsClosedRequest_t::getBufferCdrSerializedSize(request)));
     request.serialize(&payload);
+    logInfo(RTCP_MSG, "Send [LOGICAL_PORT_IS_CLOSED_REQUEST] LogicalPort: " << request.logicalPort());
     sendData(pSocketInfo, LOGICAL_PORT_IS_CLOSED_REQUEST, getTransactionId(), &payload);
 }
 
@@ -325,6 +330,7 @@ void RTCPMessageManager::sendLogicalPortIsClosedRequest(TCPSocketInfo *pSocketIn
 
 void RTCPMessageManager::sendUnbindConnectionRequest(TCPSocketInfo *pSocketInfo)
 {
+    logInfo(RTCP_MSG, "Send [UNBIND_CONNECTION_REQUEST]");
     sendData(pSocketInfo, UNBIND_CONNECTION_REQUEST, getTransactionId());
 }
 
@@ -631,7 +637,7 @@ void RTCPMessageManager::processRTCPMessage(TCPSocketInfo *socketInfo, octet* re
     {
     case BIND_CONNECTION_REQUEST:
     {
-        logInfo(RTCP_MSG, "Receive [BIND_CONNECTION_REQUEST] " << controlHeader.transactionId);
+        logInfo(RTCP_SEQ, "Receive [BIND_CONNECTION_REQUEST] Seq: " << controlHeader.transactionId);
         ConnectionRequest_t request;
         Locator_t myLocator;
         SerializedPayload_t payload(static_cast<uint32_t>(bufferSize));
@@ -640,12 +646,13 @@ void RTCPMessageManager::processRTCPMessage(TCPSocketInfo *socketInfo, octet* re
         readSerializedPayload(payload, &(receiveBuffer[TCPControlMsgHeader::getSize()]), dataSize);
         request.deserialize(&payload);
 
+        logInfo(RTCP_MSG, "Receive [BIND_CONNECTION_REQUEST] LogicalPort: " << request.transportLocator().get_logical_port());
         processConnectionRequest(socketInfo, request, controlHeader.transactionId, myLocator);
     }
     break;
     case BIND_CONNECTION_RESPONSE:
     {
-        logInfo(RTCP_MSG, "Receive [BIND_CONNECTION_RESPONSE] " << controlHeader.transactionId);
+        logInfo(RTCP_SEQ, "Receive [BIND_CONNECTION_RESPONSE] Seq: " << controlHeader.transactionId);
         ResponseCode respCode;
         BindConnectionResponse_t response;
         SerializedPayload_t payload(static_cast<uint32_t>(dataSize - 4));
@@ -653,6 +660,8 @@ void RTCPMessageManager::processRTCPMessage(TCPSocketInfo *socketInfo, octet* re
 
         readSerializedPayload(payload, &(receiveBuffer[TCPControlMsgHeader::getSize() + 4]), dataSize - 4);
         response.deserialize(&payload);
+
+        logInfo(RTCP_MSG, "Receive [BIND_CONNECTION_RESPONSE] LogicalPort: " << response.locator().get_logical_port());
         if (respCode == RETCODE_OK || respCode == RETCODE_EXISTING_CONNECTION)
         {
             std::unique_lock<std::recursive_mutex> scopedLock(socketInfo->mPendingLogicalMutex);
@@ -669,69 +678,76 @@ void RTCPMessageManager::processRTCPMessage(TCPSocketInfo *socketInfo, octet* re
     break;
     case OPEN_LOGICAL_PORT_REQUEST:
     {
-        logInfo(RTCP_MSG, "Receive [OPEN_LOGICAL_PORT_REQUEST] " << controlHeader.transactionId);
+        logInfo(RTCP_SEQ, "Receive [OPEN_LOGICAL_PORT_REQUEST] Seq: " << controlHeader.transactionId);
         OpenLogicalPortRequest_t request;
         SerializedPayload_t payload(static_cast<uint32_t>(bufferSize));
         readSerializedPayload(payload, &(receiveBuffer[TCPControlMsgHeader::getSize()]), dataSize);
         request.deserialize(&payload);
+        logInfo(RTCP_MSG, "Receive [OPEN_LOGICAL_PORT_REQUEST] LogicalPort: " << request.logicalPort());
         processOpenLogicalPortRequest(socketInfo, request, controlHeader.transactionId);
     }
     break;
     case CHECK_LOGICAL_PORT_REQUEST:
     {
-        logInfo(RTCP_MSG, "Receive [CHECK_LOGICAL_PORT_REQUEST]: " << controlHeader.length << " - " << controlHeader.transactionId);
+        logInfo(RTCP_SEQ, "Receive [CHECK_LOGICAL_PORT_REQUEST] Seq: " << controlHeader.transactionId);
         CheckLogicalPortsRequest_t request;
         SerializedPayload_t payload(static_cast<uint32_t>(bufferSize));
         readSerializedPayload(payload, &(receiveBuffer[TCPControlMsgHeader::getSize()]), dataSize);
         request.deserialize(&payload);
+        logInfo(RTCP_MSG, "Receive [CHECK_LOGICAL_PORT_REQUEST]");
         processCheckLogicalPortsRequest(socketInfo, request, controlHeader.transactionId);
     }
     break;
     case CHECK_LOGICAL_PORT_RESPONSE:
     {
-        logInfo(RTCP_MSG, "Receive [CHECK_LOGICAL_PORT_RESPONSE] " << controlHeader.transactionId);
+        logInfo(RTCP_SEQ, "Receive [CHECK_LOGICAL_PORT_RESPONSE] Seq: " << controlHeader.transactionId);
         ResponseCode respCode;
         CheckLogicalPortsResponse_t response;
         SerializedPayload_t payload(static_cast<uint32_t>(dataSize - 4));
         memcpy(&respCode, &(receiveBuffer[TCPControlMsgHeader::getSize()]), 4); // uint32_t
         readSerializedPayload(payload, &(receiveBuffer[TCPControlMsgHeader::getSize() + 4]), dataSize - 4);
         response.deserialize(&payload);
+        logInfo(RTCP_MSG, "Receive [CHECK_LOGICAL_PORT_RESPONSE]");
         processCheckLogicalPortsResponse(socketInfo, response, controlHeader.transactionId);
     }
     break;
     case KEEP_ALIVE_REQUEST:
     {
-        logInfo(RTCP_MSG, "Receive [KEEP_ALIVE_REQUEST] " << controlHeader.transactionId);
+        logInfo(RTCP_SEQ, "Receive [KEEP_ALIVE_REQUEST] Seq: " << controlHeader.transactionId);
         KeepAliveRequest_t request;
         SerializedPayload_t payload(static_cast<uint32_t>(bufferSize));
         readSerializedPayload(payload, &(receiveBuffer[TCPControlMsgHeader::getSize()]), dataSize);
         request.deserialize(&payload);
+        logInfo(RTCP_MSG, "Receive [KEEP_ALIVE_REQUEST]");
         processKeepAliveRequest(socketInfo, request, controlHeader.transactionId);
     }
     break;
     case LOGICAL_PORT_IS_CLOSED_REQUEST:
     {
-        logInfo(RTCP_MSG, "Receive [LOGICAL_PORT_IS_CLOSED_REQUEST] " << controlHeader.transactionId);
+        logInfo(RTCP_SEQ, "Receive [LOGICAL_PORT_IS_CLOSED_REQUEST] Seq: " << controlHeader.transactionId);
         LogicalPortIsClosedRequest_t request;
         SerializedPayload_t payload(static_cast<uint32_t>(bufferSize));
         readSerializedPayload(payload, &(receiveBuffer[TCPControlMsgHeader::getSize()]), dataSize);
         request.deserialize(&payload);
+        logInfo(RTCP_MSG, "Receive [LOGICAL_PORT_IS_CLOSED_REQUEST] LogicalPort: " << request.logicalPort());
         processLogicalPortIsClosedRequest(socketInfo, request, controlHeader.transactionId);
     }
     break;
     case UNBIND_CONNECTION_REQUEST:
     {
         // TODO Close socket
-        logInfo(RTCP_MSG, "Receive [UNBIND_CONNECTION_REQUEST] " << controlHeader.transactionId);
+        logInfo(RTCP_SEQ, "Receive [UNBIND_CONNECTION_REQUEST] Seq:" << controlHeader.transactionId);
+        logInfo(RTCP_MSG, "Receive [UNBIND_CONNECTION_REQUEST]");
     }
     break;
     case OPEN_LOGICAL_PORT_RESPONSE:
     {
-        logInfo(RTCP_MSG, "Receive [OPEN_LOGICAL_PORT_RESPONSE] " << controlHeader.transactionId);
+        logInfo(RTCP_SEQ, "Receive [OPEN_LOGICAL_PORT_RESPONSE] Seq: " << controlHeader.transactionId);
         ResponseCode respCode;
         memcpy(&respCode, &(receiveBuffer[TCPControlMsgHeader::getSize()]), 4);
         Locator_t remoteLocator;
         EndpointToLocator(socketInfo->getSocket()->remote_endpoint(), remoteLocator);
+        logInfo(RTCP_MSG, "Receive [OPEN_LOGICAL_PORT_RESPONSE]");
         if (!processOpenLogicalPortResponse(socketInfo, respCode, controlHeader.transactionId, remoteLocator))
         {
             // TODO unexpected transactionId
@@ -740,9 +756,10 @@ void RTCPMessageManager::processRTCPMessage(TCPSocketInfo *socketInfo, octet* re
     break;
     case KEEP_ALIVE_RESPONSE:
     {
-        logInfo(RTCP_MSG, "Receive [KEEP_ALIVE_RESPONSE] " << controlHeader.transactionId);
+        logInfo(RTCP_SEQ, "Receive [KEEP_ALIVE_RESPONSE] Seq: " << controlHeader.transactionId);
         ResponseCode respCode;
         memcpy(&respCode, &(receiveBuffer[TCPControlMsgHeader::getSize()]), 4);
+        logInfo(RTCP_MSG, "Receive [KEEP_ALIVE_RESPONSE]");
         if (!processKeepAliveResponse(socketInfo, respCode, controlHeader.transactionId))
         {
             // TODO unexpected transactionId
