@@ -35,7 +35,7 @@ int main(int argc, char** argv)
     std::cout << "Initial memory ussage: " << std::endl;
     std::cout << "\tVM: " << vm << std::endl;
     std::cout << "\tRSS: " << rss << std::endl;
-    Log::SetVerbosity(Log::Kind::Info);
+    Log::SetVerbosity(Log::Kind::Warning);
 
     std::cout << "Starting "<< std::endl;
     int type = 1;

@@ -495,9 +495,9 @@ bool TCPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource
             mReceiverResources[locator] = receiverResource;
 
             logInfo(RTCP, " OpenInputChannel (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")");
-            success = IsTCPInputSocket(locator, nullptr);
-            if (success)
+            if (IsTCPInputSocket(locator, nullptr))
             {
+                success = true;
                 if (!IsInputSocketOpen(locator))
                 {
                     success = OpenAndBindInputSockets(locator, maxMsgSize);
@@ -506,15 +506,21 @@ bool TCPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource
             else
             {
                 success = true;
-                if (IsInputSocketOpen(locator))
+                if (IsOutputChannelConnected(locator))
                 {
-                    auto inputIt = mInputSockets.find(locator.get_physical_port());
-                    if (inputIt != mInputSockets.end())
+                    TCPSocketInfo* pSocket = nullptr;
+                    for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
                     {
-                        for (auto socketIt = inputIt->second.begin(); socketIt != inputIt->second.end(); ++socketIt)
+                        if ((*it)->GetLocator().compare_IP4_address_and_port(locator))
                         {
-                            RegisterReceiverResources(*socketIt, locator);
+                            pSocket = *it;
+                            break;
                         }
+                    }
+
+                    if (pSocket != nullptr)
+                    {
+                        RegisterReceiverResources(pSocket, locator);
                     }
                 }
             }
@@ -805,6 +811,11 @@ void TCPv4Transport::performListenOperation(TCPSocketInfo *pSocketInfo)
             receiver->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix,
                 &pSocketInfo->mLocator, &msg);
         }
+        else if (logicalPort != 0)
+        {
+            int i = 0;
+            i += 0;
+        }
     }
 
     logInfo(RTCP, "End PerformListenOperation " << pSocketInfo->GetLocator());
@@ -872,7 +883,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         if (!IsOutputChannelConnected(remoteLocator) || sendBufferSize > mConfiguration_.sendBufferSize)
         {
-            logInfo(RTCP, " SEND [RTPS] Failed: Not connect. " << remoteLocator.get_logical_port());
+            logWarning(RTCP, " SEND [RTPS] Failed: Not connect. " << remoteLocator.get_logical_port());
             return false;
         }
 
@@ -918,6 +929,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     }
     else
     {
+        logWarning(RTCP, " SEND [RTPS] Failed: Connection not established" << remoteLocator.get_logical_port());
         eClock::my_sleep(100);
         return false;
     }
@@ -970,6 +982,7 @@ bool TCPv4Transport::Receive(TCPSocketInfo *socketInfo, octet* receiveBuffer,
                     }
                     else
                     {
+                        logWarning(RTPS_MSG_IN, "Received MSG. Logical Port" << tcp_header.logicalPort);
                         success = ReadBody(receiveBuffer, receiveBufferCapacity, &receiveBufferSize, socketInfo, body_size);
                         //logInfo(RTCP, " Received [ReadBody]");
 
