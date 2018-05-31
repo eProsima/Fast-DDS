@@ -81,20 +81,14 @@ class  ReaderAttributes
 class  RemoteWriterAttributes
 {
     public:
-        RemoteWriterAttributes()
-            : livelinessLeaseDuration(c_TimeInfinite)
-            , ownershipStrength(0)
-            , is_eprosima_endpoint(true)
-            , is_initial_writer(false)
+        RemoteWriterAttributes() : livelinessLeaseDuration(c_TimeInfinite), ownershipStrength(0),
+        is_eprosima_endpoint(true), is_initial_writer(false)
         {
             endpoint.endpointKind = WRITER;
         }
 
-        RemoteWriterAttributes(const VendorId_t& vendor_id)
-            : livelinessLeaseDuration(c_TimeInfinite)
-            , ownershipStrength(0)
-            , is_eprosima_endpoint(vendor_id == c_VendorId_eProsima)
-            , is_initial_writer(false)
+        RemoteWriterAttributes(const VendorId_t& vendor_id) : livelinessLeaseDuration(c_TimeInfinite), ownershipStrength(0),
+        is_eprosima_endpoint(vendor_id == c_VendorId_eProsima), is_initial_writer(false)
         {
             endpoint.endpointKind = WRITER;
         }

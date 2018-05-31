@@ -200,10 +200,12 @@ TCPv4Transport::~TCPv4Transport()
             if (rtcpThread != nullptr)
             {
                 rtcpThread->join();
+                delete(rtcpThread);
             }
             if (thread != nullptr)
             {
                 thread->join();
+                delete(thread);
             }
             delete(*it);
         }
@@ -336,8 +338,9 @@ void TCPv4Transport::BindInputSocket(const Locator_t& locator, TCPSocketInfo *so
         return;
     }
 
-    assert(mBoundOutputSockets.find(locator) == mBoundOutputSockets.end());
-    if (mBoundOutputSockets.find(locator) == mBoundOutputSockets.end())
+    auto it = mBoundOutputSockets.find(locator);
+    assert(it == mBoundOutputSockets.end() || (it != mBoundOutputSockets.end() && it->second != socketInfo));
+    if (it == mBoundOutputSockets.end())
     {
         mBoundOutputSockets[locator] = socketInfo;
     }
@@ -1364,6 +1367,19 @@ void TCPv4Transport::ReleaseTCPSocket(TCPSocketInfo *socketInfo)
         std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
         for (auto it = mDeletedSocketsPool.begin(); it != mDeletedSocketsPool.end(); ++it)
         {
+            std::thread* rtcpThread = (*it)->ReleaseRTCPThread();
+            std::thread* thread = (*it)->ReleaseThread();
+            if (rtcpThread != nullptr)
+            {
+                rtcpThread->join();
+                delete(rtcpThread);
+            }
+            if (thread != nullptr)
+            {
+                thread->join();
+                delete(thread);
+            }
+
             delete(*it);
         }
         mDeletedSocketsPool.clear();
