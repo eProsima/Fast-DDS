@@ -171,9 +171,9 @@ bool HelloWorldPublisher::publish(long sleep_ms, bool waitForListener)
 {
     if(!waitForListener || m_listener.n_matched>0)
     {
+        eClock::my_sleep(sleep_ms);
         m_Hello.index(m_Hello.index()+1);
         mp_publisher->write((void*)&m_Hello);
-        eClock::my_sleep(sleep_ms);
         return true;
     }
     return false;

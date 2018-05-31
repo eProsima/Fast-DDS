@@ -367,18 +367,6 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg, SubmessageHeader_t
     return true;
 }
 
-/*
-static void showCDRMessage(CDRMessage_t* msg)
-{
-    std::cout << "MSG: ";
-    for (uint32_t i = 0; i < msg->length; ++i)
-    {
-        std::cout << std::hex << static_cast<int>(msg->buffer[i]) << " ";
-    }
-    std::cout << std::endl;
-}
-*/
-
 bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
     std::lock_guard<std::mutex> guard(mtx);
