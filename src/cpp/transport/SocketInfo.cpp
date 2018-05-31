@@ -98,12 +98,12 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
     if (outputLocator)
     {
         mPendingLogicalOutputPorts.emplace_back(locator.get_logical_port());
-        std::cout << "[RTCP] Bound output locator (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")" << std::endl;
+        logInfo(RTCP, "Bound output locator (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")");
     }
     else
     {
         mLogicalInputPorts.emplace_back(locator.get_logical_port());
-        std::cout << "[RTCP] Bound input locator (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")" << std::endl;
+        logInfo(RTCP, "Bound input locator (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")");
     }
 }
 
@@ -124,12 +124,12 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
     if (outputLocator)
     {
         mPendingLogicalOutputPorts.emplace_back(locator.get_logical_port());
-        std::cout << "[RTCP] Bound output locator (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")" << std::endl;
+        logInfo(RTCP, "Bound output locator (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")");
     }
     else
     {
         mLogicalInputPorts.emplace_back(locator.get_logical_port());
-        std::cout << "[RTCP] Bound input locator (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")" << std::endl;
+        logInfo(RTCP, "Bound input locator (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")");
     }
 }
 /*
