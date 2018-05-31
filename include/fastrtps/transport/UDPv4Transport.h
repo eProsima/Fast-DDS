@@ -16,7 +16,6 @@
 #define UDPV4_TRANSPORT_H
 
 #include <asio.hpp>
-#include <thread>
 
 #include "TransportInterface.h"
 #include "UDPv4TransportDescriptor.h"
@@ -156,6 +155,9 @@ public:
    //! Removes the listening socket for the specified port.
    virtual bool CloseInputChannel(const Locator_t&) override;
 
+   //! Release the listening socket for the specified port.
+   virtual bool ReleaseInputChannel(const Locator_t&) override;
+
    //! Removes all outbound sockets on the given port.
    virtual bool CloseOutputChannel(const Locator_t&) override;
 
@@ -197,7 +199,6 @@ protected:
    uint32_t mReceiveBufferSize;
 
    asio::io_service mService;
-   std::unique_ptr<std::thread> ioServiceThread;
 
    mutable std::recursive_mutex mOutputMapMutex;
    mutable std::recursive_mutex mInputMapMutex;

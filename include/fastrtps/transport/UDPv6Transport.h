@@ -157,6 +157,9 @@ public:
    //! Removes the listening socket for the specified port.
    virtual bool CloseInputChannel(const Locator_t&) override;
 
+   //! Release the listening socket for the specified port.
+   virtual bool ReleaseInputChannel(const Locator_t&) override;
+
    //! Removes all outbound sockets on the given port.
    virtual bool CloseOutputChannel(const Locator_t&) override;
 

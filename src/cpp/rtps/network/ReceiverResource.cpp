@@ -28,7 +28,8 @@ ReceiverResource::ReceiverResource(TransportInterface& transport, const Locator_
       return; // Invalid resource to be discarded by the factory.
 
    // Implementation functions are bound to the right transport parameters
-   Cleanup = [&transport,locator](){ transport.CloseInputChannel(locator); };
+   Cleanup = [&transport,locator](){ transport.ReleaseInputChannel(locator); };
+   Close = [&transport,locator](){ transport.CloseInputChannel(locator); };
    ReceiveFromAssociatedChannel = [&transport, locator](octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize, Locator_t& origin)-> bool
                                   { return transport.Receive(receiveBuffer, receiveBufferCapacity, receiveBufferSize, locator, origin); };
    LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
@@ -49,6 +50,7 @@ bool ReceiverResource::Receive(octet* receiveBuffer, uint32_t receiveBufferCapac
 ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
 {
    Cleanup.swap(rValueResource.Cleanup);
+   Close.swap(rValueResource.Close);
    ReceiveFromAssociatedChannel.swap(rValueResource.ReceiveFromAssociatedChannel);
    LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
 }
@@ -63,13 +65,22 @@ bool ReceiverResource::SupportsLocator(const Locator_t& localLocator)
 void ReceiverResource::Abort()
 {
    if(Cleanup)
+   {
       Cleanup();
+   }
 }
 
 ReceiverResource::~ReceiverResource()
 {
    if(Cleanup)
+   {
       Cleanup();
+   }
+
+   if(Close)
+   {
+       Close();
+   }
 }
 
 } // namespace rtps
