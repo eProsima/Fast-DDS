@@ -479,7 +479,8 @@ bool PDPSimple::createSPDPEndpoints()
             {
                 rwatt.endpoint.outLocatorList.push_back(*it);
             }
-//            rwatt.endpoint.outLocatorList = mp_builtin->m_initialPeersList;
+
+            rwatt.is_initial_writer = true;
             rwatt.endpoint.topicKind = WITH_KEY;
             rwatt.endpoint.durabilityKind = TRANSIENT_LOCAL;
             rwatt.endpoint.reliabilityKind = BEST_EFFORT;
@@ -536,8 +537,7 @@ bool PDPSimple::createSPDPEndpoints()
                     rratt.endpoint.unicastLocatorList.push_back(*it);
                 }
             }
-            //rratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
-            //rratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
+            rratt.is_initial_reader = true;
             rratt.endpoint.topicKind = WITH_KEY;
             rratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
             rratt.endpoint.reliabilityKind = BEST_EFFORT;
