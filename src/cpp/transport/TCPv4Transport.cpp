@@ -644,7 +644,7 @@ bool TCPv4Transport::CloseOutputChannel(const Locator_t& locator)
 void TCPv4Transport::CloseInputSocket(TCPSocketInfo *socketInfo)
 {
     if (socketInfo->IsAlive())
-    {    
+    {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         socketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eDisconnected);
         if (mInputSockets.find(socketInfo->GetLocator().get_physical_port()) != mInputSockets.end())
@@ -1115,7 +1115,7 @@ bool TCPv4Transport::Receive(TCPSocketInfo *socketInfo, octet* receiveBuffer,
                 if ((code == asio::error::eof) || (code == asio::error::connection_reset))
                 {
                     // Close the channel
-                    logInfo(RTCP, "ASIO [RECEIVE]: " << error.message());
+                    logInfo(RTCP, "ASIO [RECEIVE]: " << code.message());
                     CloseTCPSocket(socketInfo);
                 }
                 success = false;
@@ -1481,7 +1481,7 @@ void TCPv4Transport::CloseTCPSocket(TCPSocketInfo *socketInfo)
 void TCPv4Transport::ReleaseTCPSocket(TCPSocketInfo *socketInfo)
 {
     {
-        std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);        
+        std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
         for (auto it = mDeletedSocketsPool.begin(); it != mDeletedSocketsPool.end(); ++it)
         {
             std::thread* rtcpThread = (*it)->ReleaseRTCPThread();

@@ -505,7 +505,7 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(uint16_t port, bool is_
     return socket;
 }
 
-bool UDPv4Transport::DoLocatorsMatch(const Locator_t& left, const Locator_t& right) const
+bool UDPv4Transport::DoLocatorsMatch(const Locator_t& /*left*/, const Locator_t& /*right*/) const
 {
     return true; // left.get_port() == right.get_port();
 }
