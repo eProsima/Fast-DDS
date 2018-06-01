@@ -212,7 +212,7 @@ protected:
     std::vector<Locator_t> mPendingOutputPorts;
     std::map<Locator_t, TCPConnector*> mPendingOutputSockets;
     std::vector<TCPSocketInfo*> mOutputSockets;
-    std::map<Locator_t, TCPSocketInfo*> mBoundOutputSockets;
+    std::map<Locator_t, std::vector<TCPSocketInfo*>> mBoundOutputSockets;
 
     std::vector<IPFinder::info_IP> mCurrentInterfaces;
 

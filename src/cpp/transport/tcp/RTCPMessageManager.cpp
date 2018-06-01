@@ -254,7 +254,7 @@ void RTCPMessageManager::sendConnectionRequest(TCPSocketInfo *pSocketInfo, uint1
     SerializedPayload_t payload(static_cast<uint32_t>(ConnectionRequest_t::getBufferCdrSerializedSize(request)));
     request.serialize(&payload);
 
-    logInfo(RTCP_MSG, "Send [BIND_CONNECTION_REQUEST] LogicalPort: " << localLogicalPort);
+    logInfo(RTCP_MSG, "Send [BIND_CONNECTION_REQUEST] PhysicalPort: " << locator.get_physical_port() << ", LogicalPort: " << localLogicalPort);
     sendData(pSocketInfo, BIND_CONNECTION_REQUEST, getTransactionId(), &payload);
 /*
     sendData(pSocketInfo, BIND_CONNECTION_REQUEST, getTransactionId(), (octet*)&request,
@@ -338,7 +338,8 @@ void RTCPMessageManager::processConnectionRequest(TCPSocketInfo *pSocketInfo,
         const ConnectionRequest_t &request, const TCPTransactionId &transactionId, Locator_t &localLocator)
 {
     BindConnectionResponse_t response;
-    localLocator.set_logical_port(request.transportLocator().get_logical_port());
+    //localLocator.set_logical_port(request.transportLocator().get_logical_port());
+    localLocator.set_logical_port(transport->mConfiguration_.metadata_logical_port);
     response.locator(localLocator);
 
     SerializedPayload_t payload(static_cast<uint32_t>(BindConnectionResponse_t::getBufferCdrSerializedSize(response)));
@@ -350,11 +351,9 @@ void RTCPMessageManager::processConnectionRequest(TCPSocketInfo *pSocketInfo,
         {
             std::unique_lock<std::recursive_mutex> scope(pSocketInfo->mPendingLogicalMutex);
             pSocketInfo->mPendingLogicalOutputPorts.push_back(request.transportLocator().get_logical_port());
-            transport->BindInputSocket(localLocator, pSocketInfo);
-            //std::cout << "## Bound as Input " << localLocator << std::endl;
+            transport->BindInputSocket(request.transportLocator(), pSocketInfo);
         }
         sendData(pSocketInfo, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_OK);
-        //logInfo(RTCP, "Connection established (Req) (physical: " << pSocketInfo->mLocator.get_physical_port() << ")");
         pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eEstablished);
     }
     else
@@ -572,7 +571,22 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPSocketInfo *pSocketIn
                 pSocketInfo->mLogicalOutputPorts.emplace_back(*(pSocketInfo->mPendingLogicalOutputPorts.begin()));
                 pSocketInfo->mPendingLogicalOutputPorts.erase(pSocketInfo->mPendingLogicalOutputPorts.begin());
                 pSocketInfo->mPendingLogicalPort = 0;
-                transport->mBoundOutputSockets[remoteLocator] = pSocketInfo;
+                transport->BindInputSocket(remoteLocator, pSocketInfo);
+                /*
+                if (transport->mBoundOutputSockets.find(remoteLocator) == transport->mBoundOutputSockets.end())
+                {
+                    //std::cout << "################## MM" << std::endl;
+                    //std::cout << "LOCATOR KIND: " << remoteLocator.kind << std::endl;
+                    //std::cout << "LOCATOR Address: " << remoteLocator.to_IP4_string() << std::endl;
+                    //std::cout << "LOCATOR Physical: " << remoteLocator.get_physical_port() << std::endl;
+                    //std::cout << "LOCATOR Logical: " << remoteLocator.get_logical_port() << std::endl;
+                    //std::cout << "ENDPOINT Local: " << pSocketInfo->getSocket()->local_endpoint().port() << std::endl;
+                    //std::cout << "ENDPOINT Remote: " << pSocketInfo->getSocket()->remote_endpoint().port() << std::endl;
+                    transport->mBoundOutputSockets[remoteLocator] = pSocketInfo;
+                    //std::cout << transport->mBoundOutputSockets.size() << std::endl;
+                    //std::cout << "MM ##################" << std::endl;
+                }
+                */
             }
             break;
             case RETCODE_INVALID_PORT:
@@ -646,7 +660,7 @@ void RTCPMessageManager::processRTCPMessage(TCPSocketInfo *socketInfo, octet* re
         readSerializedPayload(payload, &(receiveBuffer[TCPControlMsgHeader::getSize()]), dataSize);
         request.deserialize(&payload);
 
-        logInfo(RTCP_MSG, "Receive [BIND_CONNECTION_REQUEST] LogicalPort: " << request.transportLocator().get_logical_port());
+        logInfo(RTCP_MSG, "Receive [BIND_CONNECTION_REQUEST] LogicalPort: " << request.transportLocator().get_logical_port() << ", Physical remote: " << request.transportLocator().get_physical_port());
         processConnectionRequest(socketInfo, request, controlHeader.transactionId, myLocator);
     }
     break;
@@ -661,7 +675,7 @@ void RTCPMessageManager::processRTCPMessage(TCPSocketInfo *socketInfo, octet* re
         readSerializedPayload(payload, &(receiveBuffer[TCPControlMsgHeader::getSize() + 4]), dataSize - 4);
         response.deserialize(&payload);
 
-        logInfo(RTCP_MSG, "Receive [BIND_CONNECTION_RESPONSE] LogicalPort: " << response.locator().get_logical_port());
+        logInfo(RTCP_MSG, "Receive [BIND_CONNECTION_RESPONSE] LogicalPort: " << response.locator().get_logical_port() << ", Physical remote: " << response.locator().get_physical_port());
         if (respCode == RETCODE_OK || respCode == RETCODE_EXISTING_CONNECTION)
         {
             std::unique_lock<std::recursive_mutex> scopedLock(socketInfo->mPendingLogicalMutex);
