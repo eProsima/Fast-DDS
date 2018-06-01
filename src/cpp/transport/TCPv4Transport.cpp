@@ -638,25 +638,20 @@ bool TCPv4Transport::CloseOutputChannel(const Locator_t& locator)
 
 void TCPv4Transport::CloseInputSocket(TCPSocketInfo *socketInfo)
 {
-    {
-        std::unique_lock<std::recursive_mutex> poolLock(mDeletedSocketsPoolMutex);
-        if (!socketInfo->IsAlive())
+    if (socketInfo->IsAlive())
+    {    
+        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        socketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eDisconnected);
+        if (mInputSockets.find(socketInfo->GetLocator().get_physical_port()) != mInputSockets.end())
         {
-            return;
+            auto& vector = mInputSockets[socketInfo->GetLocator().get_physical_port()];
+            auto it = std::find(vector.begin(), vector.end(), socketInfo);
+            vector.erase(it);
         }
+        UnbindInputSocket(socketInfo);
+        // UnregisterReceiverResource(socketInfo); // Unnecessary
+        ReleaseTCPSocket(socketInfo);
     }
-    
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-    socketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eDisconnected);
-    if (mInputSockets.find(socketInfo->GetLocator().get_physical_port()) != mInputSockets.end())
-    {
-        auto& vector = mInputSockets[socketInfo->GetLocator().get_physical_port()];
-        auto it = std::find(vector.begin(), vector.end(), socketInfo);
-        vector.erase(it);
-    }
-    UnbindInputSocket(socketInfo);
-    // UnregisterReceiverResource(socketInfo); // Unnecessary
-    ReleaseTCPSocket(socketInfo);
 }
 
 bool TCPv4Transport::CloseInputChannel(const Locator_t& locator)
@@ -1091,7 +1086,7 @@ bool TCPv4Transport::Receive(TCPSocketInfo *socketInfo, octet* receiveBuffer,
                 if ((code == asio::error::eof) || (code == asio::error::connection_reset))
                 {
                     // Close the channel
-                    std::cout << "--- Recv --- Disconnected: " << code.message() << std::endl;
+                    logInfo(RTCP, "ASIO [RECEIVE]: " << error.message());
                     CloseTCPSocket(socketInfo);
                 }
                 success = false;
@@ -1099,8 +1094,7 @@ bool TCPv4Transport::Receive(TCPSocketInfo *socketInfo, octet* receiveBuffer,
             catch (const asio::system_error& error)
             {
                 // Close the channel
-                std::cout << "--- Recv --- Asio error: " << error.what() << std::endl;
-                logInfo(RTCP, " ASIO ERROR [RECEIVE]: " << error.what());
+                logInfo(RTCP, "ASIO [RECEIVE]: " << error.what());
                 CloseTCPSocket(socketInfo);
                 success = false;
             }
@@ -1410,8 +1404,7 @@ size_t TCPv4Transport::Send(TCPSocketInfo *socketInfo, const octet *data,
     }
     catch (const asio::error_code& error)
     {
-        std::cout << "--- SEND --- Disconnected: " << error.message() << std::endl;
-        logWarning(RTPS_MSG_OUT, "Error: " << error.message());
+        logInfo(RTCP, "ASIO [SEND]: " << error.message());
         if ((asio::error::eof == error) || (asio::error::connection_reset == error))
         {
             errorCode = eSocketErrorCodes::eBrokenPipe;
@@ -1423,13 +1416,12 @@ size_t TCPv4Transport::Send(TCPSocketInfo *socketInfo, const octet *data,
     }
     catch (const asio::system_error& error)
     {
-        std::cout << "--- SEND --- Asio Error: " << error.what() << std::endl;
-        logWarning(RTPS_MSG_OUT, "Error: " << error.what());
+        logInfo(RTCP, "ASIO [SEND]: " << error.what());
         errorCode = eSocketErrorCodes::eSystemError;
     }
     catch (const std::exception& error)
     {
-        logWarning(RTPS_MSG_OUT, "Error: " << error.what());
+        logInfo(RTCP, "ASIO [SEND]: " << error.what());
         errorCode = eSocketErrorCodes::eException;
     }
 

@@ -130,6 +130,7 @@ void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,M
     if(info.status == MATCHED_MATCHING)
     {
         n_matched++;
+        firstConnected = true;
         std::cout << "[RTCP] Publisher matched"<<std::endl;
     }
     else
@@ -169,7 +170,7 @@ void HelloWorldPublisher::run(uint32_t samples, long sleep_ms)
 
 bool HelloWorldPublisher::publish(long sleep_ms, bool waitForListener)
 {
-    if(!waitForListener || m_listener.n_matched>0)
+    if(m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
     {
         eClock::my_sleep(sleep_ms);
         m_Hello.index(m_Hello.index()+1);
