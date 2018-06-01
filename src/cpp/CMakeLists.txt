@@ -78,6 +78,7 @@ set(${PROJECT_NAME}_source_files
     transport/TCPv4Transport.cpp
     transport/UDPv6Transport.cpp
     transport/test_UDPv4Transport.cpp
+    transport/test_TCPv4Transport.cpp
     transport/tcp/TCPControlMessage.cxx
     transport/tcp/RTCPMessageManager.cpp
     qos/ParameterList.cpp

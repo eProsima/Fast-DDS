@@ -426,8 +426,8 @@ class RTPSParticipantImpl
           @param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
           */
         static const int MutationTries = 100;
-        void createReceiverResources(const LocatorList_t& Locator_list, bool ApplyMutation);
-        void createSenderResources(const LocatorList_t& Locator_list, bool ApplyMutation);
+        void createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
+        void createSenderResources(LocatorList_t& Locator_list, bool ApplyMutation);
 
         bool networkFactoryHasRegisteredTransports() const;
 

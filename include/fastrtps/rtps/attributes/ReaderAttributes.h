@@ -82,13 +82,13 @@ class  RemoteWriterAttributes
 {
     public:
         RemoteWriterAttributes() : livelinessLeaseDuration(c_TimeInfinite), ownershipStrength(0),
-        is_eprosima_endpoint(true), is_initial_writer(false)
+        is_eprosima_endpoint(true)
         {
             endpoint.endpointKind = WRITER;
         }
 
         RemoteWriterAttributes(const VendorId_t& vendor_id) : livelinessLeaseDuration(c_TimeInfinite), ownershipStrength(0),
-        is_eprosima_endpoint(vendor_id == c_VendorId_eProsima), is_initial_writer(false)
+        is_eprosima_endpoint(vendor_id == c_VendorId_eProsima)
         {
             endpoint.endpointKind = WRITER;
         }
@@ -111,8 +111,6 @@ class  RemoteWriterAttributes
         uint16_t ownershipStrength;
 
         bool is_eprosima_endpoint;
-
-        bool is_initial_writer;
 };
 }
 }

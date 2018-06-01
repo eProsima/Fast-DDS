@@ -47,6 +47,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/test_TCPv4Transport.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPv4Transport.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/SocketInfo.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/RTCPMessageManager.cpp

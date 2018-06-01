@@ -339,7 +339,7 @@ void TCPv4Transport::BindInputSocket(const Locator_t& locator, TCPSocketInfo *so
     }
 
     auto it = mBoundOutputSockets.find(locator);
-    assert(it == mBoundOutputSockets.end() || (it != mBoundOutputSockets.end() && it->second != socketInfo));
+    assert(it == mBoundOutputSockets.end() || (it != mBoundOutputSockets.end() && it->second == socketInfo));
     if (it == mBoundOutputSockets.end())
     {
         mBoundOutputSockets[locator] = socketInfo;
