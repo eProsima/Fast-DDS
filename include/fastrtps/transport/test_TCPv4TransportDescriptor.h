@@ -24,6 +24,10 @@ namespace rtps{
 typedef struct test_TCPv4TransportDescriptor : public TransportDescriptorInterface{
    bool granularMode;
 
+   std::vector<uint16_t> logicalPortsBlocked;
+   uint8_t invalidCRCsPercentage;
+   uint8_t invalidTransactionPercentage;
+
    // Test shim parameters
    uint8_t dropDataMessagesPercentage;
    bool dropParticipantBuiltinTopicData;

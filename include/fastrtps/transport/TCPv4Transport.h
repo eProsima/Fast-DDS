@@ -254,6 +254,10 @@ protected:
         size_t size, eSocketErrorCodes &error) const;
     size_t Send(TCPSocketInfo* socketInfo, const octet* data, size_t size) const;
 
+    // data must contain full RTCP message without the TCPHeader
+    bool CheckCRC(const TCPHeader &header, const octet *data, uint32_t size);
+    void CalculateCRC(TCPHeader &header, const octet *data, uint32_t size);
+    void FillTCPHeader(TCPHeader& header, const octet* sendBuffer, uint32_t sendBufferSize, uint16_t logicalPort);
 };
 
 } // namespace rtps

@@ -81,6 +81,7 @@ set(${PROJECT_NAME}_source_files
     transport/test_TCPv4Transport.cpp
     transport/tcp/TCPControlMessage.cxx
     transport/tcp/RTCPMessageManager.cpp
+    transport/tcp/test_RTCPMessageManager.cpp
     qos/ParameterList.cpp
     qos/ParameterTypes.cpp
     qos/QosList.cpp

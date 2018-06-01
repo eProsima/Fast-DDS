@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/transport/test_TCPv4Transport.h>
+#include <fastrtps/transport/tcp/test_RTCPMessageManager.h>
 #include <cstdlib>
 
 using namespace std;
@@ -24,35 +25,44 @@ namespace rtps{
 vector<vector<octet> > test_TCPv4Transport::DropLog;
 uint32_t test_TCPv4Transport::DropLogLength = 0;
 bool test_TCPv4Transport::ShutdownAllNetwork = false;
+bool test_TCPv4Transport::CloseSocketConnection = false;//TODO://ARCE:
 
-test_TCPv4Transport::test_TCPv4Transport(const test_TCPv4TransportDescriptor& descriptor):
-    mDropDataMessagesPercentage(descriptor.dropDataMessagesPercentage),
-    mDropParticipantBuiltinTopicData(descriptor.dropParticipantBuiltinTopicData),
-    mDropPublicationBuiltinTopicData(descriptor.dropPublicationBuiltinTopicData),
-    mDropSubscriptionBuiltinTopicData(descriptor.dropSubscriptionBuiltinTopicData),
-    mDropDataFragMessagesPercentage(descriptor.dropDataFragMessagesPercentage),
-    mDropHeartbeatMessagesPercentage(descriptor.dropHeartbeatMessagesPercentage),
-    mDropAckNackMessagesPercentage(descriptor.dropAckNackMessagesPercentage),
-    mSequenceNumberDataMessagesToDrop(descriptor.sequenceNumberDataMessagesToDrop),
-    mPercentageOfMessagesToDrop(descriptor.percentageOfMessagesToDrop)
+test_TCPv4Transport::test_TCPv4Transport(const test_TCPv4TransportDescriptor& descriptor)
+    : mDropDataMessagesPercentage(descriptor.dropDataMessagesPercentage)
+    , mDropParticipantBuiltinTopicData(descriptor.dropParticipantBuiltinTopicData)
+    , mDropPublicationBuiltinTopicData(descriptor.dropPublicationBuiltinTopicData)
+    , mDropSubscriptionBuiltinTopicData(descriptor.dropSubscriptionBuiltinTopicData)
+    , mDropDataFragMessagesPercentage(descriptor.dropDataFragMessagesPercentage)
+    , mDropHeartbeatMessagesPercentage(descriptor.dropHeartbeatMessagesPercentage)
+    , mDropAckNackMessagesPercentage(descriptor.dropAckNackMessagesPercentage)
+    , mSequenceNumberDataMessagesToDrop(descriptor.sequenceNumberDataMessagesToDrop)
+    , mPercentageOfMessagesToDrop(descriptor.percentageOfMessagesToDrop)
+    , mInvalidCRCsPercentage(descriptor.invalidCRCsPercentage)
     {
         DropLog.clear();
         DropLogLength = descriptor.dropLogLength;
         srand(static_cast<unsigned>(time(NULL)));
+
+        mRTCPMessageManager = new test_RTCPMessageManager(this);
+        test_RTCPMessageManager* pMgr = ((test_RTCPMessageManager*)mRTCPMessageManager);
+        pMgr->SetInvalidTransactionPercentage(descriptor.invalidTransactionPercentage);
+        pMgr->SetLogicalPortsBlocked(descriptor.logicalPortsBlocked);
     }
 
-RTPS_DllAPI test_TCPv4TransportDescriptor::test_TCPv4TransportDescriptor():
-    TransportDescriptorInterface(s_maximumMessageSize),
-    dropDataMessagesPercentage(0),
-    dropParticipantBuiltinTopicData(false),
-    dropPublicationBuiltinTopicData(false),
-    dropSubscriptionBuiltinTopicData(false),
-    dropDataFragMessagesPercentage(0),
-    dropHeartbeatMessagesPercentage(0),
-    dropAckNackMessagesPercentage(0),
-    percentageOfMessagesToDrop(0),
-    sequenceNumberDataMessagesToDrop(),
-    dropLogLength(0)
+RTPS_DllAPI test_TCPv4TransportDescriptor::test_TCPv4TransportDescriptor()
+    : TransportDescriptorInterface(s_maximumMessageSize)
+    , dropDataMessagesPercentage(0)
+    , dropParticipantBuiltinTopicData(false)
+    , dropPublicationBuiltinTopicData(false)
+    , dropSubscriptionBuiltinTopicData(false)
+    , dropDataFragMessagesPercentage(0)
+    , dropHeartbeatMessagesPercentage(0)
+    , dropAckNackMessagesPercentage(0)
+    , percentageOfMessagesToDrop(0)
+    , sequenceNumberDataMessagesToDrop()
+    , dropLogLength(0)
+    , invalidCRCsPercentage(0)
+    , invalidTransactionPercentage(0)
     {
     }
 
@@ -84,6 +94,22 @@ bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
     else
     {
         return TCPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, socketInfo);
+    }
+}
+
+void test_TCPv4Transport::CalculateCRC(TCPHeader &header, const octet *data, uint32_t size)
+{
+    if (mInvalidCRCsPercentage <= (rand() % 100))
+    {
+        uint32_t crc(0);
+        for (uint32_t i = 0; i < size; ++i)
+        {
+            crc = RTCPMessageManager::addToCRC(crc, data[i]);
+        }
+    }
+    else
+    {
+        header.crc = 0;
     }
 }
 

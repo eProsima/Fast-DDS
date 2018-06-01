@@ -103,7 +103,7 @@ bool RTCPMessageManager::sendData(TCPSocketInfo *pSocketInfo,
     return send > 0;
 }
 
-static uint32_t& addToCRC(uint32_t &crc, octet data)
+uint32_t& RTCPMessageManager::addToCRC(uint32_t &crc, octet data)
 {
     static uint32_t max = 0xffffffff;
     if (crc + data < crc)
@@ -115,26 +115,6 @@ static uint32_t& addToCRC(uint32_t &crc, octet data)
         crc += data;
     }
     return crc;
-}
-
-bool RTCPMessageManager::CheckCRC(const TCPHeader &header, const octet *data, uint32_t size)
-{
-    uint32_t crc(0);
-    for (uint32_t i = 0; i < size; ++i)
-    {
-        crc = addToCRC(crc, data[i]);
-    }
-    return crc == header.crc;
-}
-
-void RTCPMessageManager::CalculateCRC(TCPHeader &header, const octet *data, uint32_t size)
-{
-    uint32_t crc(0);
-    for (uint32_t i = 0; i < size; ++i)
-    {
-        crc = addToCRC(crc, data[i]);
-    }
-    header.crc = crc;
 }
 
 void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &transactionId,

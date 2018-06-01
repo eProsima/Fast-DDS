@@ -44,21 +44,26 @@ public:
    RTPS_DllAPI static std::vector<std::vector<octet> > DropLog;
    RTPS_DllAPI static uint32_t DropLogLength;
    RTPS_DllAPI static bool ShutdownAllNetwork;
+   RTPS_DllAPI static bool CloseSocketConnection;
+
+protected:
+    void CalculateCRC(TCPHeader &header, const octet *data, uint32_t size);
 
 private:
-   uint8_t mDropDataMessagesPercentage;
-   bool mDropParticipantBuiltinTopicData;
-   bool mDropPublicationBuiltinTopicData;
-   bool mDropSubscriptionBuiltinTopicData;
-   uint8_t mDropDataFragMessagesPercentage;
-   uint8_t mDropHeartbeatMessagesPercentage;
-   uint8_t mDropAckNackMessagesPercentage;
-   std::vector<SequenceNumber_t> mSequenceNumberDataMessagesToDrop;
-   uint8_t mPercentageOfMessagesToDrop;
+    uint8_t mInvalidCRCsPercentage;
+    uint8_t mDropDataMessagesPercentage;
+    bool mDropParticipantBuiltinTopicData;
+    bool mDropPublicationBuiltinTopicData;
+    bool mDropSubscriptionBuiltinTopicData;
+    uint8_t mDropDataFragMessagesPercentage;
+    uint8_t mDropHeartbeatMessagesPercentage;
+    uint8_t mDropAckNackMessagesPercentage;
+    std::vector<SequenceNumber_t> mSequenceNumberDataMessagesToDrop;
+    uint8_t mPercentageOfMessagesToDrop;
 
-   bool LogDrop(const octet* buffer, uint32_t size);
-   bool PacketShouldDrop(const octet* sendBuffer, uint32_t sendBufferSize);
-   bool RandomChanceDrop();
+    bool LogDrop(const octet* buffer, uint32_t size);
+    bool PacketShouldDrop(const octet* sendBuffer, uint32_t sendBufferSize);
+    bool RandomChanceDrop();
 };
 
 } // namespace rtps

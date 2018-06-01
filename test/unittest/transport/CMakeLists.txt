@@ -51,6 +51,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPv4Transport.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/SocketInfo.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/RTCPMessageManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/test_RTCPMessageManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cxx)
 
         set(TEST_UDPV4TESTS_SOURCE

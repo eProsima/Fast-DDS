@@ -286,6 +286,7 @@ protected:
 
     friend class TCPv4Transport;
     friend class RTCPMessageManager;
+    friend class test_RTCPMessageManager;
 
 private:
     Locator_t mLocator;
