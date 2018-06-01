@@ -236,6 +236,7 @@ protected:
 
     bool OpenAndBindInputSockets(const Locator_t& locator, uint32_t maxMsgSize);
     void CloseTCPSocket(TCPSocketInfo* socketInfo);
+    void CloseInputSocket(TCPSocketInfo* socketInfo);
     void ReleaseTCPSocket(TCPSocketInfo* socketInfo);
     void RegisterReceiverResources(TCPSocketInfo* socketInfo, const Locator_t& locator);
 
