@@ -46,10 +46,11 @@ private:
 	class PubListener:public eprosima::fastrtps::PublisherListener
 	{
 	public:
-		PubListener():n_matched(0){};
+		PubListener():n_matched(0), firstConnected(false){};
 		~PubListener(){};
 		void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);
 		int n_matched;
+		bool firstConnected;
 	}m_listener;
 	HelloWorldPubSubType m_type;
 };
