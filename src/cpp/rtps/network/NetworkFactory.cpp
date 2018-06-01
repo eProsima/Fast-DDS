@@ -46,7 +46,7 @@ vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local)
     return newSenderResources;
 }
 
-bool NetworkFactory::BuildReceiverResources (const Locator_t& local, RTPSParticipantImpl* participant,
+bool NetworkFactory::BuildReceiverResources (Locator_t& local, RTPSParticipantImpl* participant,
     uint32_t maxMsgSize, std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list)
 {
     bool returnedValue = false;

@@ -62,7 +62,7 @@ StatefulReader::StatefulReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
 }
 
 
-bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
+bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
@@ -75,7 +75,7 @@ bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
         }
     }
 
-    getRTPSParticipant()->createReceiverResources(wdata.endpoint.outLocatorList, wdata.is_initial_writer);
+    getRTPSParticipant()->createReceiverResources(wdata.endpoint.outLocatorList, false);
 
     WriterProxy* wp = new WriterProxy(wdata, this);
 

@@ -480,7 +480,6 @@ bool PDPSimple::createSPDPEndpoints()
                 rwatt.endpoint.outLocatorList.push_back(*it);
             }
 
-            rwatt.is_initial_writer = true;
             rwatt.endpoint.topicKind = WITH_KEY;
             rwatt.endpoint.durabilityKind = TRANSIENT_LOCAL;
             rwatt.endpoint.reliabilityKind = BEST_EFFORT;
@@ -507,11 +506,11 @@ bool PDPSimple::createSPDPEndpoints()
     watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     watt.endpoint.reliabilityKind = BEST_EFFORT;
     watt.endpoint.topicKind = WITH_KEY;
-    if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
-            mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
+    if (mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
+        mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
         watt.mode = ASYNCHRONOUS_WRITER;
     RTPSWriter* wout;
-    if(mp_RTPSParticipant->createWriter(&wout,watt,mp_SPDPWriterHistory,nullptr,c_EntityId_SPDPWriter,true))
+    if (mp_RTPSParticipant->createWriter(&wout, watt, mp_SPDPWriterHistory, nullptr, c_EntityId_SPDPWriter, true))
     {
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
@@ -537,7 +536,6 @@ bool PDPSimple::createSPDPEndpoints()
                     rratt.endpoint.unicastLocatorList.push_back(*it);
                 }
             }
-            rratt.is_initial_reader = true;
             rratt.endpoint.topicKind = WITH_KEY;
             rratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
             rratt.endpoint.reliabilityKind = BEST_EFFORT;
@@ -546,12 +544,11 @@ bool PDPSimple::createSPDPEndpoints()
     }
     else
     {
-        logError(RTPS_PDP,"SimplePDP Writer creation failed");
+        logError(RTPS_PDP, "SimplePDP Writer creation failed");
         delete(mp_SPDPWriterHistory);
         mp_SPDPWriterHistory = nullptr;
         return false;
     }
-
     logInfo(RTPS_PDP,"SPDP Endpoints creation finished");
     return true;
 }
