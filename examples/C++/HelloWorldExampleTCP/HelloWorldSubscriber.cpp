@@ -104,8 +104,8 @@ bool HelloWorldSubscriber::init()
     Rparam.topic.resourceLimitsQos.allocated_samples = 20;
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    Rparam.setUserDefinedID(3);
-    Rparam.setEntityID(4);
+    //Rparam.setUserDefinedID(3);
+    //Rparam.setEntityID(4);
     mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 
     if(mp_subscriber == nullptr)

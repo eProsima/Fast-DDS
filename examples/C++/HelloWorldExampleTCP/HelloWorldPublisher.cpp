@@ -109,8 +109,8 @@ bool HelloWorldPublisher::init()
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    Wparam.setUserDefinedID(1);
-    Wparam.setEntityID(2);
+    //Wparam.setUserDefinedID(1);
+    //Wparam.setEntityID(2);
     mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
     if(mp_publisher == nullptr)
         return false;

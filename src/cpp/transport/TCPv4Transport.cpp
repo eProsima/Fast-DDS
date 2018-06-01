@@ -339,11 +339,36 @@ void TCPv4Transport::BindInputSocket(const Locator_t& locator, TCPSocketInfo *so
     }
 
     auto it = mBoundOutputSockets.find(locator);
-    assert(it == mBoundOutputSockets.end() || (it != mBoundOutputSockets.end() && it->second == socketInfo));
+
     if (it == mBoundOutputSockets.end())
     {
-        mBoundOutputSockets[locator] = socketInfo;
+        mBoundOutputSockets[locator].push_back(socketInfo); // First element, just add it
     }
+    else
+    {
+        // There are more, check isn't already added
+        auto found = std::find(mBoundOutputSockets[locator].begin(), mBoundOutputSockets[locator].end(), socketInfo);
+        if (found == mBoundOutputSockets[locator].end())
+        {
+            mBoundOutputSockets[locator].push_back(socketInfo);
+        }
+    }
+
+
+    //assert(it == mBoundOutputSockets.end() || (it != mBoundOutputSockets.end() && it->second != socketInfo));
+    //if (it == mBoundOutputSockets.end())
+    //{
+        // std::cout << "################## A" << std::endl;
+        // std::cout << "LOCATOR KIND: " << locator.kind << std::endl;
+        // std::cout << "LOCATOR Address: " << locator.to_IP4_string() << std::endl;
+        // std::cout << "LOCATOR Physical: " << locator.get_physical_port() << std::endl;
+        // std::cout << "LOCATOR Logical: " << locator.get_logical_port() << std::endl;
+        // std::cout << "ENDPOINT Local: " << socketInfo->getSocket()->local_endpoint().port() << std::endl;
+        // std::cout << "ENDPOINT Remote: " << socketInfo->getSocket()->remote_endpoint().port() << std::endl;
+        // mBoundOutputSockets[locator].push_back(socketInfo);
+        // std::cout << mBoundOutputSockets.size() << std::endl;
+        // std::cout << "A ##################" << std::endl;
+    //}
 }
 
 void TCPv4Transport::UnbindInputSocket(TCPSocketInfo *pSocket)
@@ -351,7 +376,14 @@ void TCPv4Transport::UnbindInputSocket(TCPSocketInfo *pSocket)
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     for (auto it = mBoundOutputSockets.begin(); it != mBoundOutputSockets.end();)
     {
-        if (it->second == pSocket)
+        auto& vector = it->second;
+        auto toRemove = std::find(vector.begin(), vector.end(), pSocket);
+        if (toRemove != vector.end())
+        {
+            vector.erase(toRemove);
+        }
+
+        if (vector.empty())
         {
             it = mBoundOutputSockets.erase(it);
         }
@@ -375,7 +407,17 @@ void TCPv4Transport::BindOutputChannel(const Locator_t& locator, SenderResource 
     {
         if ((*it)->GetLocator().compare_IP4_address_and_port(locator))
         {
-            mBoundOutputSockets[locator] = (*it);
+            // std::cout << "################## B" << std::endl;
+            // std::cout << "LOCATOR KIND: " << locator.kind << std::endl;
+            // std::cout << "LOCATOR Address: " << locator.to_IP4_string() << std::endl;
+            // std::cout << "LOCATOR Physical: " << locator.get_physical_port() << std::endl;
+            // std::cout << "LOCATOR Logical: " << locator.get_logical_port() << std::endl;
+            // std::cout << "ENDPOINT Local: " << (*it)->getSocket()->local_endpoint().port() << std::endl;
+            // std::cout << "ENDPOINT Remote: " << (*it)->getSocket()->remote_endpoint().port() << std::endl;
+            // mBoundOutputSockets[locator] = (*it);
+            // std::cout << mBoundOutputSockets.size() << std::endl;
+            // std::cout << "B ##################" << std::endl;
+            BindInputSocket(locator, *it);
             if (senderResource != nullptr)
             {
                 senderResource->SetSocketInfo(*it);
@@ -397,8 +439,12 @@ bool TCPv4Transport::IsOutputChannelBound(const Locator_t& locator, SenderResour
     {
         if (senderResource != nullptr)
         {
-            senderResource->SetSocketInfo(&(*socket).second[0]);
-            AssociateSenderToSocket(&(*socket).second[0], senderResource);
+            auto& vector = (*socket).second;
+            if (vector.size() == 1)
+            {
+                senderResource->SetSocketInfo(vector.front());
+                AssociateSenderToSocket(vector.front(), senderResource);
+            }
         }
         return true;
     }
@@ -651,9 +697,13 @@ bool TCPv4Transport::IsTCPInputSocket(const Locator_t& locator, SenderResource *
                         auto& inputs = mInputSockets.at(locator.get_physical_port());
                         if (inputs.size() > 1)
                         {
-                            logWarning(RTCP, "More than one inputSocket for physical port " << locator.get_physical_port());
+                            //logWarning(RTCP, "More than one inputSocket for physical port " << locator.get_physical_port());
+                            senderResource->SetSocketInfo(nullptr);
                         }
-                        senderResource->SetSocketInfo(*inputs.begin());
+                        else if (inputs.size() == 1)
+                        {
+                            senderResource->SetSocketInfo(*inputs.begin());
+                        }
                     }
                 }
                 return true;
@@ -877,8 +927,8 @@ void TCPv4Transport::SetParticipantGUIDPrefix(const GuidPrefix_t& prefix)
 bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
     const Locator_t& remoteLocator)
 {
-    //logInfo(RTCP, " SEND [RTPS]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port());
-    TCPSocketInfo *socket = nullptr;
+    logInfo(RTCP, " SEND [RTPS Data] to locator " << remoteLocator.get_physical_port() << ":" << remoteLocator.get_logical_port());
+    std::map<Locator_t, std::vector<TCPSocketInfo*>>::iterator it;
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         if (!IsOutputChannelConnected(remoteLocator) || sendBufferSize > mConfiguration_.sendBufferSize)
@@ -887,19 +937,27 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
             return false;
         }
 
-        if (mBoundOutputSockets.find(remoteLocator) != mBoundOutputSockets.end())
+        it = mBoundOutputSockets.find(remoteLocator);
+        if (it == mBoundOutputSockets.end())
         {
-            socket = mBoundOutputSockets.at(remoteLocator);
+            return false;
         }
     }
 
-    return Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, socket);
+    std::vector<TCPSocketInfo*>& sockets = it->second;
+    bool result = true;
+    for (TCPSocketInfo* socket : sockets)
+    {
+        result = result && Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, socket);
+    }
+    return result;
 }
 
 bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& /*localLocator*/,
     const Locator_t& remoteLocator, SocketInfo *socketInfo)
 {
     TCPSocketInfo* socket = dynamic_cast<TCPSocketInfo*>(socketInfo);
+
     if (socket != nullptr && socket->IsConnectionEstablished())
     {
         CDRMessage_t msg;
@@ -1085,6 +1143,8 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
     logInfo(RTPS_MSG_OUT, "TCPv4: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
         << " FROM " << socket->getSocket()->local_endpoint());
 
+    //logInfo(RTCP, "SOCKET SEND to physical port " << socket->getSocket()->remote_endpoint().port());
+
     eSocketErrorCodes errorCode;
     bytesSent = Send(socket, sendBuffer, sendBufferSize, errorCode);
     switch(errorCode)
@@ -1229,7 +1289,7 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             socketInfo->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, socketInfo));
 
             mInputSockets[acceptor->mLocator.get_physical_port()].emplace_back(socketInfo);
-            logInfo(RTCP, " Accepted connection (physical: " << acceptor->mLocator.get_physical_port() << ")");
+            logInfo(RTCP, " Accepted connection (physical local: " << acceptor->mLocator.get_physical_port() << ", remote: " << socketInfo->getSocket()->remote_endpoint().port() <<  ")");
         }
         else
         {
@@ -1264,7 +1324,7 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             RegisterReceiverResources(socketInfo, acceptor->mLocator);
             mInputSockets[acceptor->mLocator.get_physical_port()].emplace_back(socketInfo);
 
-            logInfo(RTCP, " Accepted connection (physical: " << acceptor->mLocator.get_physical_port() << ")");
+            logInfo(RTCP, " Accepted connection (physical local: " << acceptor->mLocator.get_physical_port() << ", remote: " << socketInfo->getSocket()->remote_endpoint().port() <<  ")");
         }
         else
         {
@@ -1297,7 +1357,7 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, SenderResource *senderR
             mOutputSockets.push_back(outputSocket);
             BindOutputChannel(locator);
 
-            logInfo(RTCP, " Socket Connected (physical: " << locator.get_physical_port() << ")");
+            logInfo(RTCP, " Socket Connected (physical remote: " << locator.get_physical_port() << ", local: " << outputSocket->getSocket()->local_endpoint().port() << ")");
 
             // RTCP Control Message
             mRTCPMessageManager->sendConnectionRequest(outputSocket, mConfiguration_.metadata_logical_port);
