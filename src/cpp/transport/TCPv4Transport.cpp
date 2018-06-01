@@ -104,9 +104,10 @@ void TCPConnector::RetryConnect(asio::io_service& io_service, TCPv4Transport* pa
     Connect(parent, senderResource);
 }
 
-TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor) :
-    mConfiguration_(descriptor),
-    mActive(true)
+TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor)
+    : mConfiguration_(descriptor)
+    , mActive(true)
+    , mRTCPMessageManager(nullptr)
 {
     for (const auto& interface : descriptor.interfaceWhiteList)
         mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
@@ -217,6 +218,7 @@ TCPv4Transport::~TCPv4Transport()
         mService.stop();
         ioServiceThread->join();
     }
+
     delete mRTCPMessageManager;
 }
 
@@ -275,7 +277,10 @@ bool TCPv4Transport::init()
         return false;
     }
 
-    mRTCPMessageManager = new RTCPMessageManager(this);
+    if (mRTCPMessageManager == nullptr)
+    {
+        mRTCPMessageManager = new RTCPMessageManager(this);
+    }
 
     // TODO(Ricardo) Create an event that update this list.
     GetIP4s(mCurrentInterfaces);
@@ -971,6 +976,35 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     return result;
 }
 
+bool TCPv4Transport::CheckCRC(const TCPHeader &header, const octet *data, uint32_t size)
+{
+    uint32_t crc(0);
+    for (uint32_t i = 0; i < size; ++i)
+    {
+        crc = RTCPMessageManager::addToCRC(crc, data[i]);
+    }
+    return crc == header.crc;
+}
+
+void TCPv4Transport::CalculateCRC(TCPHeader &header, const octet *data, uint32_t size)
+{
+    uint32_t crc(0);
+    for (uint32_t i = 0; i < size; ++i)
+    {
+        crc = RTCPMessageManager::addToCRC(crc, data[i]);
+    }
+    header.crc = crc;
+}
+
+
+void TCPv4Transport::FillTCPHeader(TCPHeader& header, const octet* sendBuffer, uint32_t sendBufferSize,
+    uint16_t logicalPort)
+{
+    header.length = sendBufferSize + static_cast<uint32_t>(TCPHeader::getSize());
+    header.logicalPort = logicalPort;
+    CalculateCRC(header, sendBuffer, sendBufferSize);
+}
+
 bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& /*localLocator*/,
     const Locator_t& remoteLocator, SocketInfo *socketInfo)
 {
@@ -980,17 +1014,12 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     {
         CDRMessage_t msg;
         TCPHeader tcp_header;
-        tcp_header.length = sendBufferSize + static_cast<uint32_t>(TCPHeader::getSize());
+        uint16_t logicalPort = socket->mLogicalPortRouting.find(remoteLocator.get_logical_port())
+            != socket->mLogicalPortRouting.end()
+            ? socket->mLogicalPortRouting.at(remoteLocator.get_logical_port())
+            : remoteLocator.get_logical_port();
 
-        if (socket->mLogicalPortRouting.find(remoteLocator.get_logical_port()) != socket->mLogicalPortRouting.end())
-        {
-            tcp_header.logicalPort = socket->mLogicalPortRouting.at(remoteLocator.get_logical_port());
-        }
-        else
-        {
-            tcp_header.logicalPort = remoteLocator.get_logical_port();
-        }
-        RTCPMessageManager::CalculateCRC(tcp_header, sendBuffer, sendBufferSize);
+        FillTCPHeader(tcp_header, sendBuffer, sendBufferSize, logicalPort);
 
         RTPSMessageCreator::addCustomContent(&msg, (octet*)&tcp_header, TCPHeader::getSize());
         RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
@@ -1062,7 +1091,7 @@ bool TCPv4Transport::Receive(TCPSocketInfo *socketInfo, octet* receiveBuffer,
                         success = ReadBody(receiveBuffer, receiveBufferCapacity, &receiveBufferSize, socketInfo, body_size);
                         //logInfo(RTCP, " Received [ReadBody]");
 
-                        if (!RTCPMessageManager::CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
+                        if (!CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
                         {
                             logWarning(RTPS_MSG_IN, "Bad TCP header CRC");
                         }
@@ -1164,22 +1193,21 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
 
     eSocketErrorCodes errorCode;
     bytesSent = Send(socket, sendBuffer, sendBufferSize, errorCode);
-    switch(errorCode)
+    switch (errorCode)
     {
-        case eNoError:
-            //logInfo(RTCP, " Sent [OK]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port());
-            break;
-        default:
-            // Close the channel
-            logInfo(RTCP, " Sent [FAILED]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << " ERROR=" << errorCode);
-            socket->Disable();
+    case eNoError:
+        //logInfo(RTCP, " Sent [OK]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port());
+        break;
+    default:
+        // Close the channel
+        logInfo(RTCP, " Sent [FAILED]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << " ERROR=" << errorCode);
+        socket->Disable();
 
-            Locator_t prevLocator = socket->GetLocator();
-            CloseOutputChannel(prevLocator);
+        Locator_t prevLocator = socket->GetLocator();
+        CloseOutputChannel(prevLocator);
 
-            //TODO: //ARCE:
-            // Create a new connector to retry the connection.
-            //OpenAndBindUnicastOutputSocket(prevLocator, prevMsgReceiver);
+        // Create a new connector to retry the connection.
+        OpenAndBindUnicastOutputSocket(prevLocator, nullptr);
         break;
     }
 
@@ -1445,7 +1473,6 @@ void TCPv4Transport::CloseTCPSocket(TCPSocketInfo *socketInfo)
         Locator_t prevLocator = socketInfo->GetLocator();
         CloseOutputChannel(prevLocator);
 
-        //TODO: //ARCE:
         // Create a new connector to retry the connection.
         OpenAndBindUnicastOutputSocket(prevLocator, nullptr);
     }

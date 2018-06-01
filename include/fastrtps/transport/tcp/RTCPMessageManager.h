@@ -80,17 +80,12 @@ public:
         ResponseCode respCode, const TCPTransactionId &transactionId);
 
     void processRTCPMessage(TCPSocketInfo *socketInfo, octet* receiveBuffer);
-    // data must contain full RTCP message without the TCPHeader
-    static bool CheckCRC(const TCPHeader &header, const octet *data, uint32_t size);
-    static void CalculateCRC(TCPHeader &header, const octet *data, uint32_t size);
+
+    static uint32_t& addToCRC(uint32_t &crc, octet data);
 
 protected:
     TCPv4Transport* transport;
     std::set<TCPTransactionId> mUnconfirmedTransactions;
-
-    void prepareAndSendCheckLogicalPortsRequest(TCPSocketInfo *pSocketInfo);
-
-private:
     TCPTransactionId myTransId;
     std::recursive_mutex mutex;
 
@@ -100,12 +95,14 @@ private:
         return myTransId++;
     }
 
+    void prepareAndSendCheckLogicalPortsRequest(TCPSocketInfo *pSocketInfo);
+
     size_t sendMessage(TCPSocketInfo *pSocketInfo, const CDRMessage_t &msg) const;
     bool sendData(TCPSocketInfo *pSocketInfo, TCPCPMKind kind,
-        const TCPTransactionId &transactionId, const SerializedPayload_t *payload = nullptr, 
+        const TCPTransactionId &transactionId, const SerializedPayload_t *payload = nullptr,
         const ResponseCode respCode = RETCODE_VOID);
     void fillHeaders(TCPCPMKind kind, const TCPTransactionId &transactionId,
-        TCPControlMsgHeader &retCtrlHeader, TCPHeader &header, 
+        TCPControlMsgHeader &retCtrlHeader, TCPHeader &header,
         const SerializedPayload_t *payload = nullptr,
         const ResponseCode *respCode = nullptr);
 };
