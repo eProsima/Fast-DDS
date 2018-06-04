@@ -113,6 +113,16 @@ struct RTPS_DllAPI ProtocolVersion_t{
     {
 
     }
+
+    bool operator==(const ProtocolVersion_t &v) const
+    {
+        return m_major == v.m_major && m_minor == v.m_minor;
+    }
+
+    bool operator!=(const ProtocolVersion_t &v) const
+    {
+        return m_major != v.m_major || m_minor != v.m_minor;
+    }
 };
 
 

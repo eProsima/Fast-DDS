@@ -299,6 +299,7 @@ private:
     std::vector<uint16_t> mPendingLogicalOutputPorts; // Must be accessed after lock mPendingLogicalMutex
     std::vector<uint16_t> mLogicalOutputPorts;
     std::vector<uint16_t> mLogicalInputPorts;
+    std::vector<uint16_t> mOpenedPorts;
     std::recursive_mutex* mReadMutex;
     std::recursive_mutex* mWriteMutex;
     std::map<uint16_t, MessageReceiver*> mReceiversMap;  // The key is the logical port.

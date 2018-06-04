@@ -118,7 +118,9 @@ TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor)
     , mRTCPMessageManager(nullptr)
 {
     for (const auto& interface : descriptor.interfaceWhiteList)
+    {
         mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
+    }
 }
 
 TCPv4TransportDescriptor::TCPv4TransportDescriptor() :
@@ -352,7 +354,6 @@ void TCPv4Transport::BindInputSocket(const Locator_t& locator, TCPSocketInfo *so
     }
 
     auto it = mBoundOutputSockets.find(locator);
-
     if (it == mBoundOutputSockets.end())
     {
         mBoundOutputSockets[locator].push_back(socketInfo); // First element, just add it
@@ -447,7 +448,6 @@ bool TCPv4Transport::IsOutputChannelBound(const Locator_t& locator, SenderResour
         return false;
 
     auto socket = mBoundOutputSockets.find(locator);
-
     if (socket != mBoundOutputSockets.end())
     {
         if (senderResource != nullptr)
@@ -655,12 +655,19 @@ void TCPv4Transport::CloseInputSocket(TCPSocketInfo *socketInfo)
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         socketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eDisconnected);
-        if (mInputSockets.find(socketInfo->GetLocator().get_physical_port()) != mInputSockets.end())
+        auto inputSocketIt = mInputSockets.find(socketInfo->GetLocator().get_physical_port());
+        if (inputSocketIt != mInputSockets.end())
         {
             auto& vector = mInputSockets[socketInfo->GetLocator().get_physical_port()];
             auto it = std::find(vector.begin(), vector.end(), socketInfo);
             vector.erase(it);
+
+            if (vector.size() == 0)
+            {
+                mInputSockets.erase(inputSocketIt);
+            }
         }
+
         UnbindInputSocket(socketInfo);
         // UnregisterReceiverResource(socketInfo); // Unnecessary
         ReleaseTCPSocket(socketInfo);
@@ -872,7 +879,6 @@ void TCPv4Transport::performRTPCManagementThread(TCPSocketInfo *pSocketInfo)
         eClock::my_sleep(100);
     }
     logInfo(RTCP, "End performRTPCManagementThread " << pSocketInfo->GetLocator());
-    //pSocketInfo = nullptr;
 }
 
 void TCPv4Transport::performListenOperation(TCPSocketInfo *pSocketInfo)
@@ -885,9 +891,10 @@ void TCPv4Transport::performListenOperation(TCPSocketInfo *pSocketInfo)
         // Blocking receive.
         auto msg = pSocketInfo->GetMessageBuffer();
         CDRMessage::initCDRMsg(&msg);
-        //Locator_t remoteLocator;
-        if (!Receive(pSocketInfo, msg.buffer, msg.max_size, msg.length, logicalPort))/*remoteLocator*/
+        if (!Receive(pSocketInfo, msg.buffer, msg.max_size, msg.length, logicalPort))
+        {
             continue;
+        }
 
         // Processes the data through the CDR Message interface.
         MessageReceiver* receiver = pSocketInfo->GetMessageReceiver(logicalPort);
@@ -896,15 +903,9 @@ void TCPv4Transport::performListenOperation(TCPSocketInfo *pSocketInfo)
             receiver->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix,
                 &pSocketInfo->mLocator, &msg);
         }
-        else if (logicalPort != 0)
-        {
-            int i = 0;
-            i += 0;
-        }
     }
 
     logInfo(RTCP, "End PerformListenOperation " << pSocketInfo->GetLocator());
-    //pSocketInfo = nullptr;
 }
 
 void TCPv4Transport::OpenAndBindUnicastOutputSocket(Locator_t& locator, SenderResource *senderResource)
@@ -940,8 +941,7 @@ bool TCPv4Transport::IsLocatorSupported(const Locator_t& locator) const
 
 void TCPv4Transport::AddDefaultLocator(LocatorList_t &/*defaultList*/)
 {
-    // On TCP, no default send locators.
-    //defaultList.emplace_back(LOCATOR_KIND_TCPv4, 0);
+    // On TCP, there aren't default send locators.
 }
 
 Locator_t TCPv4Transport::RemoteToMainLocal(const Locator_t& remote) const
@@ -962,7 +962,7 @@ void TCPv4Transport::SetParticipantGUIDPrefix(const GuidPrefix_t& prefix)
 bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
     const Locator_t& remoteLocator)
 {
-    logInfo(RTCP, " SEND [RTPS Data] to locator " << remoteLocator.get_physical_port() << ":" << remoteLocator.get_logical_port());
+//    logInfo(RTCP, " SEND [RTPS Data] to locator " << remoteLocator.get_physical_port() << ":" << remoteLocator.get_logical_port());
     std::map<Locator_t, std::vector<TCPSocketInfo*>>::iterator it;
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
@@ -979,11 +979,14 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         }
     }
 
-    std::vector<TCPSocketInfo*>& sockets = it->second;
     bool result = true;
-    for (TCPSocketInfo* socket : sockets)
+    if (it != mBoundOutputSockets.end())
     {
-        result = result && Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, socket);
+        std::vector<TCPSocketInfo*>& sockets = it->second;
+        for (TCPSocketInfo* socket : sockets)
+        {
+            result = result && Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, socket);
+        }
     }
     return result;
 }
@@ -1008,7 +1011,6 @@ void TCPv4Transport::CalculateCRC(TCPHeader &header, const octet *data, uint32_t
     header.crc = crc;
 }
 
-
 void TCPv4Transport::FillTCPHeader(TCPHeader& header, const octet* sendBuffer, uint32_t sendBufferSize,
     uint16_t logicalPort)
 {
@@ -1021,7 +1023,6 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     const Locator_t& remoteLocator, SocketInfo *socketInfo)
 {
     TCPSocketInfo* socket = dynamic_cast<TCPSocketInfo*>(socketInfo);
-
     if (socket != nullptr && socket->IsConnectionEstablished())
     {
         CDRMessage_t msg;
@@ -1031,7 +1032,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
             ? socket->mLogicalPortRouting.at(remoteLocator.get_logical_port())
             : remoteLocator.get_logical_port();
 
-        FillTCPHeader(tcp_header, sendBuffer, sendBufferSize, logicalPort); 
+        FillTCPHeader(tcp_header, sendBuffer, sendBufferSize, logicalPort);
 
         RTPSMessageCreator::addCustomContent(&msg, (octet*)&tcp_header, TCPHeader::getSize());
         RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
@@ -1113,8 +1114,12 @@ bool TCPv4Transport::Receive(TCPSocketInfo *socketInfo, octet* receiveBuffer,
 
                         if (tcp_header.logicalPort == 0)
                         {
-                            //logInfo(RTCP, " Receive [RTCP Control]  (" << receiveBufferSize+bytes_received << " bytes): " << receiveBufferSize << " bytes.");
-                            mRTCPMessageManager->processRTCPMessage(socketInfo, receiveBuffer);
+                            //logInfo(RTCP, " Receive [RTCP Control]  (" << receiveBufferSize+bytes_received
+                            // << " bytes): " << receiveBufferSize << " bytes.");
+                            if (!mRTCPMessageManager->processRTCPMessage(socketInfo, receiveBuffer, body_size))
+                            {
+                                CloseTCPSocket(socketInfo);
+                            }
                             success = false;
                         }
                         else
@@ -1164,12 +1169,6 @@ bool TCPv4Transport::Receive(TCPSocketInfo *socketInfo, octet* receiveBuffer,
             }
         }
     }
-    else
-    {
-        //ip::tcp::endpoint senderEndpoint = socketInfo->getSocket()->remote_endpoint();
-        //EndpointToLocator(senderEndpoint, remoteLocator);
-    }
-
     return success;
 }
 
@@ -1189,10 +1188,8 @@ bool TCPv4Transport::ReadBody(octet* receiveBuffer, uint32_t receiveBufferCapaci
     return true;
 }
 
-bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer,
-    uint32_t sendBufferSize,
-    const Locator_t& remoteLocator,
-    TCPSocketInfo *socket)
+bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize,
+    const Locator_t& remoteLocator, TCPSocketInfo *socket)
 {
     asio::ip::address_v4::bytes_type remoteAddress;
     remoteLocator.copy_IP4_address(remoteAddress.data());
@@ -1267,7 +1264,6 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
             auto localInterface = mCurrentInterfaces.begin();
             for (; localInterface != mCurrentInterfaces.end(); ++localInterface)
             {
-                //if (memcmp(&localInterface->locator.address[12], &it->address[12], 4) == 0)
                 if (localInterface->locator.compare_IP4_address(*it))
                 {
                     // Loopback locator
@@ -1375,7 +1371,7 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             acceptor->mSocket = nullptr;
 
             TCPSocketInfo *socketInfo = new TCPSocketInfo(unicastSocket,
-                acceptor->mLocator, false, true, false, acceptor->mMaxMsgSize);
+                acceptor->mLocator, false, true, acceptor->mMaxMsgSize);
             socketInfo->SetThread(new std::thread(&TCPv4Transport::performListenOperation, this, socketInfo));
             socketInfo->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, socketInfo));
             socketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eWaitingForBind);
@@ -1417,7 +1413,9 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, SenderResource *senderR
             mOutputSockets.push_back(outputSocket);
             BindOutputChannel(locator);
 
-            logInfo(RTCP, " Socket Connected (physical remote: " << locator.get_physical_port() << ", local: " << outputSocket->getSocket()->local_endpoint().port() << ") IP: " << outputSocket->getSocket()->remote_endpoint().address());
+            logInfo(RTCP, " Socket Connected (physical remote: " << locator.get_physical_port()
+                << ", local: " << outputSocket->getSocket()->local_endpoint().port()
+                << ") IP: " << outputSocket->getSocket()->remote_endpoint().address());
 
             // RTCP Control Message
             mRTCPMessageManager->sendConnectionRequest(outputSocket, mConfiguration_.metadata_logical_port);
@@ -1554,7 +1552,6 @@ void TCPv4Transport::AssociateSenderToSocket(TCPSocketInfo *socket, SenderResour
         {
             (*it).second.emplace_back(sender);
         }
-        // else already associated
     }
 }
 
