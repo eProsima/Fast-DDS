@@ -25,7 +25,7 @@ namespace rtps{
 vector<vector<octet> > test_TCPv4Transport::DropLog;
 uint32_t test_TCPv4Transport::DropLogLength = 0;
 bool test_TCPv4Transport::ShutdownAllNetwork = false;
-bool test_TCPv4Transport::CloseSocketConnection = false;//TODO://ARCE:
+bool test_TCPv4Transport::CloseSocketConnection = false;
 
 test_TCPv4Transport::test_TCPv4Transport(const test_TCPv4TransportDescriptor& descriptor)
     : mDropDataMessagesPercentage(descriptor.dropDataMessagesPercentage)
@@ -80,7 +80,16 @@ bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
     }
     else
     {
-        return TCPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator);
+        if (CloseSocketConnection)
+        {
+            CloseSocketConnection = false;
+            CloseOutputChannel(localLocator);
+            return true;
+        }
+        else
+        {
+            return TCPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator);
+        }
     }
 }
 
@@ -93,7 +102,17 @@ bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
     }
     else
     {
-        return TCPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, socketInfo);
+        if (CloseSocketConnection)
+        {
+            CloseSocketConnection = false;
+            socketInfo->Disable();
+            CloseOutputChannel(localLocator);
+            return true;
+        }
+        else
+        {
+            return TCPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, socketInfo);
+        }
     }
 }
 

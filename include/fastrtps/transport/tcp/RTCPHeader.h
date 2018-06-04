@@ -37,7 +37,7 @@ struct TCPHeader
     {
         return (const octet*)this;
     }
-    
+
     /*!
      * @brief This function returns the maximum serialized size of an object
      * depending on the buffer alignment.
@@ -157,7 +157,7 @@ inline std::ostream& operator<<(std::ostream& output,const TCPTransactionId& t)
     {
         if (printed || i == 0 || t.ints[i] > 0)
         {
-            output << t.ints[i]; 
+            output << t.ints[i];
             printed = true;
         }
     }
@@ -187,6 +187,7 @@ struct TCPControlMsgHeader
 
     void setFlags(bool endianess, bool hasPayload, bool requiresResponse)
     {
+        //TODO: Optimize receiving a Endianness_t
         octet e = (endianess) ? BIT(1) : 0x00;
         octet p = (hasPayload) ? BIT(2) : 0x00;
         octet r = (requiresResponse) ? BIT(3) : 0x00;
@@ -244,7 +245,7 @@ struct TCPControlMsgHeader
     {
         return (flags & BIT(3)) != 0;
     }
-    
+
     static inline size_t getSize()
     {
         return 16;
