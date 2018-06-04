@@ -43,6 +43,7 @@ private:
 	HelloWorld m_Hello;
 	eprosima::fastrtps::Participant* mp_participant;
 	eprosima::fastrtps::Publisher* mp_publisher;
+	bool stop;
 	class PubListener:public eprosima::fastrtps::PublisherListener
 	{
 	public:
@@ -53,6 +54,7 @@ private:
 		bool firstConnected;
 	}m_listener;
 	HelloWorldPubSubType m_type;
+	void runThread(uint32_t number, long sleep_ms);
 };
 
 

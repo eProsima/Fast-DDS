@@ -39,6 +39,10 @@ mp_publisher(nullptr)
 
 bool HelloWorldPublisher::init()
 {
+    stop = false;
+    //Log::SetVerbosity(Log::Kind::Info);
+    //std::regex filter("RTCP(?!_SEQ)");
+    //Log::SetCategoryFilter(filter);
     m_Hello.index(0);
     m_Hello.message("HelloWorld");
     ParticipantAttributes PParam;
@@ -108,7 +112,8 @@ bool HelloWorldPublisher::init()
     Wparam.topic.resourceLimitsQos.allocated_samples = 20;
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
-    Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    //Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
     //Wparam.setUserDefinedID(1);
     //Wparam.setEntityID(2);
     mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
@@ -140,11 +145,11 @@ void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,M
     }
 }
 
-void HelloWorldPublisher::run(uint32_t samples, long sleep_ms)
+void HelloWorldPublisher::runThread(uint32_t samples, long sleep_ms)
 {
     if (samples == 0)
     {
-        while(true)
+        while(!stop)
         {
             if(publish(sleep_ms, false))
             {
@@ -155,7 +160,7 @@ void HelloWorldPublisher::run(uint32_t samples, long sleep_ms)
     }
     else
     {
-        for(uint32_t i = 0;i<samples;++i)
+        for(uint32_t i = 0;i<samples && !stop;++i)
         {
             if(!publish(sleep_ms))
                 --i;
@@ -168,11 +173,23 @@ void HelloWorldPublisher::run(uint32_t samples, long sleep_ms)
     }
 }
 
+void HelloWorldPublisher::run(uint32_t samples, long sleep_ms)
+{
+    std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep_ms);
+    std::cout << "[RTCP] Publisher running. Please press enter to stop the Publisher at any time." << std::endl;
+    std::cin.ignore();
+    stop = true;
+    thread.join();
+    //runThread(samples, sleep_ms);
+}
+
 bool HelloWorldPublisher::publish(long sleep_ms, bool waitForListener)
 {
     if(m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
     {
+        //std::cout << "### Sleep " << sleep_ms << " ms.";
         eClock::my_sleep(sleep_ms);
+        //std::cout << " - DONE!" << std::endl;
         m_Hello.index(m_Hello.index()+1);
         mp_publisher->write((void*)&m_Hello);
         return true;
