@@ -229,6 +229,10 @@ void RTCPMessageManager::sendConnectionRequest(TCPSocketInfo *pSocketInfo, uint1
     Locator_t locator;
     EndpointToLocator(pSocketInfo->getSocket()->local_endpoint(), locator);
     locator.set_logical_port(localLogicalPort);
+    locator.set_IP4_WAN_address(transport->mConfiguration_.wan_addr[0], 
+                                transport->mConfiguration_.wan_addr[1],
+                                transport->mConfiguration_.wan_addr[2],
+                                transport->mConfiguration_.wan_addr[3]);
     request.transportLocator(locator);
 
     SerializedPayload_t payload(static_cast<uint32_t>(ConnectionRequest_t::getBufferCdrSerializedSize(request)));
@@ -320,6 +324,11 @@ void RTCPMessageManager::processConnectionRequest(TCPSocketInfo *pSocketInfo,
     BindConnectionResponse_t response;
     //localLocator.set_logical_port(request.transportLocator().get_logical_port());
     localLocator.set_logical_port(transport->mConfiguration_.metadata_logical_port);
+    localLocator.set_IP4_WAN_address(transport->mConfiguration_.wan_addr[0], 
+                                    transport->mConfiguration_.wan_addr[1],
+                                    transport->mConfiguration_.wan_addr[2],
+                                    transport->mConfiguration_.wan_addr[3]);
+
     response.locator(localLocator);
 
     SerializedPayload_t payload(static_cast<uint32_t>(BindConnectionResponse_t::getBufferCdrSerializedSize(response)));

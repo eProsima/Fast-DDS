@@ -84,6 +84,8 @@ bool HelloWorldSubscriber::init()
     PParam.rtps.useBuiltinTransports = false;
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
     descriptor->set_metadata_logical_port(7403);
+    //descriptor->set_WAN_address("192.168.1.47");
+    descriptor->set_WAN_address("192.168.1.55");
     PParam.rtps.userTransports.push_back(descriptor);
 
     mp_participant = Domain::createParticipant(PParam);
@@ -102,7 +104,8 @@ bool HelloWorldSubscriber::init()
     Rparam.topic.historyQos.depth = 30;
     Rparam.topic.resourceLimitsQos.max_samples = 50;
     Rparam.topic.resourceLimitsQos.allocated_samples = 20;
-    Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    //Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    Rparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     //Rparam.setUserDefinedID(3);
     //Rparam.setEntityID(4);

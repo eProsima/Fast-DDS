@@ -233,6 +233,14 @@ class RTPS_DllAPI Locator_t
             return addresses_.wan_address;
         }
 
+        bool has_IP4_WAN_address()
+        {
+            return addresses_.wan_address[0] != 0 && 
+                addresses_.wan_address[1] != 0 && 
+                addresses_.wan_address[2] != 0 && 
+                addresses_.wan_address[3] != 0;
+        }
+
         bool set_IP4_address(const std::string& in_address)
         {
             std::stringstream ss(in_address);
@@ -592,6 +600,7 @@ class RTPS_DllAPI Locator_t
 
         bool compare_IP4_address(const Locator_t &other) const
         {
+            // TODO Compare WAN?
             return memcmp(addresses_.ip_address, other.addresses_.ip_address, 4) == 0;
         }
 

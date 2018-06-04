@@ -44,8 +44,16 @@ static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopba
 
 static asio::ip::address_v4::bytes_type locatorToNative(Locator_t& locator)
 {
-    return{ {locator.get_IP4_address()[0],
-        locator.get_IP4_address()[1], locator.get_IP4_address()[2], locator.get_IP4_address()[3]} };
+    if (locator.has_IP4_WAN_address())
+    {
+        return{ {locator.get_IP4_WAN_address()[0],
+            locator.get_IP4_WAN_address()[1], locator.get_IP4_WAN_address()[2], locator.get_IP4_WAN_address()[3]} };
+    }
+    else
+    {
+        return{ {locator.get_IP4_address()[0],
+            locator.get_IP4_address()[1], locator.get_IP4_address()[2], locator.get_IP4_address()[3]} };
+    }
 }
 
 TCPAcceptor::TCPAcceptor(asio::io_service& io_service, const Locator_t& locator, uint32_t maxMsgSize)
@@ -772,6 +780,10 @@ bool TCPv4Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     try
     {
+        locator.set_IP4_WAN_address(mConfiguration_.wan_addr[0],
+                                    mConfiguration_.wan_addr[1],
+                                    mConfiguration_.wan_addr[2],
+                                    mConfiguration_.wan_addr[3]);
         OpenAndBindUnicastOutputSocket(locator, senderResource);
     }
     catch (asio::system_error const& e)
@@ -814,7 +826,7 @@ void TCPv4Transport::performRTPCManagementThread(TCPSocketInfo *pSocketInfo)
         time_now + std::chrono::milliseconds(mConfiguration_.keep_alive_timeout_ms);
 
     bool bSendOpenLogicalPort = false;
-    logInfo(RTCP, "START performRTPCManagementThread " << pSocketInfo->GetLocator());
+    logInfo(RTCP, "START performRTPCManagementThread " << pSocketInfo->GetLocator() << " (" << pSocketInfo->getSocket()->local_endpoint().address() << "->" << pSocketInfo->getSocket()->remote_endpoint().address() << ")");
     while (pSocketInfo->IsAlive())
     {
         if (pSocketInfo->IsConnectionEstablished())
@@ -867,7 +879,7 @@ void TCPv4Transport::performListenOperation(TCPSocketInfo *pSocketInfo)
 {
     Locator_t remoteLocator;
     uint16_t logicalPort(0);
-    logInfo(RTCP, "START PerformListenOperation " << pSocketInfo->GetLocator());
+    logInfo(RTCP, "START PerformListenOperation " << pSocketInfo->GetLocator() << " (" << pSocketInfo->getSocket()->local_endpoint().address() << "->" << pSocketInfo->getSocket()->remote_endpoint().address() << ")");
     while (pSocketInfo->IsAlive())
     {
         // Blocking receive.
@@ -1019,7 +1031,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
             ? socket->mLogicalPortRouting.at(remoteLocator.get_logical_port())
             : remoteLocator.get_logical_port();
 
-        FillTCPHeader(tcp_header, sendBuffer, sendBufferSize, logicalPort);
+        FillTCPHeader(tcp_header, sendBuffer, sendBufferSize, logicalPort); 
 
         RTPSMessageCreator::addCustomContent(&msg, (octet*)&tcp_header, TCPHeader::getSize());
         RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
@@ -1067,6 +1079,9 @@ bool TCPv4Transport::Receive(TCPSocketInfo *socketInfo, octet* receiveBuffer,
                 size_t bytes_received = read(*socketInfo->getSocket(),
                     asio::buffer(header, TCPHeader::getSize()),
                     transfer_exactly(TCPHeader::getSize()));
+
+                logInfo(RTCP, "[RECEIVE] From: " << socketInfo->getSocket()->remote_endpoint().address() << " to " << socketInfo->getSocket()->local_endpoint().address());
+
                 if (bytes_received != TCPHeader::getSize())
                 {
                     logError(RTPS_MSG_IN, "Bad TCP header size: " << bytes_received << "(expected: : " << TCPHeader::getSize() << ")");
@@ -1334,7 +1349,7 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             socketInfo->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, socketInfo));
 
             mInputSockets[acceptor->mLocator.get_physical_port()].emplace_back(socketInfo);
-            logInfo(RTCP, " Accepted connection (physical local: " << acceptor->mLocator.get_physical_port() << ", remote: " << socketInfo->getSocket()->remote_endpoint().port() <<  ")");
+            logInfo(RTCP, " Accepted connection (physical local: " << acceptor->mLocator.get_physical_port() << ", remote: " << socketInfo->getSocket()->remote_endpoint().port() <<  ") IP: " << socketInfo->getSocket()->remote_endpoint().address());
         }
         else
         {
@@ -1369,7 +1384,7 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             RegisterReceiverResources(socketInfo, acceptor->mLocator);
             mInputSockets[acceptor->mLocator.get_physical_port()].emplace_back(socketInfo);
 
-            logInfo(RTCP, " Accepted connection (physical local: " << acceptor->mLocator.get_physical_port() << ", remote: " << socketInfo->getSocket()->remote_endpoint().port() <<  ")");
+            logInfo(RTCP, " Accepted connection (physical local: " << acceptor->mLocator.get_physical_port() << ", remote: " << socketInfo->getSocket()->remote_endpoint().port() <<  ") IP: " << socketInfo->getSocket()->remote_endpoint().address());
         }
         else
         {
@@ -1402,7 +1417,7 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, SenderResource *senderR
             mOutputSockets.push_back(outputSocket);
             BindOutputChannel(locator);
 
-            logInfo(RTCP, " Socket Connected (physical remote: " << locator.get_physical_port() << ", local: " << outputSocket->getSocket()->local_endpoint().port() << ")");
+            logInfo(RTCP, " Socket Connected (physical remote: " << locator.get_physical_port() << ", local: " << outputSocket->getSocket()->local_endpoint().port() << ") IP: " << outputSocket->getSocket()->remote_endpoint().address());
 
             // RTCP Control Message
             mRTCPMessageManager->sendConnectionRequest(outputSocket, mConfiguration_.metadata_logical_port);
@@ -1428,6 +1443,7 @@ size_t TCPv4Transport::Send(TCPSocketInfo *socketInfo, const octet *data,
     {
         std::unique_lock<std::recursive_mutex> scopedLock(*socketInfo->GetWriteMutex());
         bytesSent = socketInfo->getSocket()->send(asio::buffer(data, size));
+        logInfo(RTCP, "[SENT] From: " << socketInfo->getSocket()->local_endpoint().address() << " to " << socketInfo->getSocket()->remote_endpoint().address());
         errorCode = eSocketErrorCodes::eNoError;
     }
     catch (const asio::error_code& error)
