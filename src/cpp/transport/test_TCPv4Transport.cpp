@@ -28,7 +28,8 @@ bool test_TCPv4Transport::ShutdownAllNetwork = false;
 bool test_TCPv4Transport::CloseSocketConnection = false;
 
 test_TCPv4Transport::test_TCPv4Transport(const test_TCPv4TransportDescriptor& descriptor)
-    : mDropDataMessagesPercentage(descriptor.dropDataMessagesPercentage)
+    : mInvalidCRCsPercentage(descriptor.invalidCRCsPercentage)
+    , mDropDataMessagesPercentage(descriptor.dropDataMessagesPercentage)
     , mDropParticipantBuiltinTopicData(descriptor.dropParticipantBuiltinTopicData)
     , mDropPublicationBuiltinTopicData(descriptor.dropPublicationBuiltinTopicData)
     , mDropSubscriptionBuiltinTopicData(descriptor.dropSubscriptionBuiltinTopicData)
@@ -37,7 +38,6 @@ test_TCPv4Transport::test_TCPv4Transport(const test_TCPv4TransportDescriptor& de
     , mDropAckNackMessagesPercentage(descriptor.dropAckNackMessagesPercentage)
     , mSequenceNumberDataMessagesToDrop(descriptor.sequenceNumberDataMessagesToDrop)
     , mPercentageOfMessagesToDrop(descriptor.percentageOfMessagesToDrop)
-    , mInvalidCRCsPercentage(descriptor.invalidCRCsPercentage)
     {
         DropLog.clear();
         DropLogLength = descriptor.dropLogLength;
@@ -51,6 +51,8 @@ test_TCPv4Transport::test_TCPv4Transport(const test_TCPv4TransportDescriptor& de
 
 RTPS_DllAPI test_TCPv4TransportDescriptor::test_TCPv4TransportDescriptor()
     : TransportDescriptorInterface(s_maximumMessageSize)
+    , invalidCRCsPercentage(0)
+    , invalidTransactionPercentage(0)
     , dropDataMessagesPercentage(0)
     , dropParticipantBuiltinTopicData(false)
     , dropPublicationBuiltinTopicData(false)
@@ -61,8 +63,6 @@ RTPS_DllAPI test_TCPv4TransportDescriptor::test_TCPv4TransportDescriptor()
     , percentageOfMessagesToDrop(0)
     , sequenceNumberDataMessagesToDrop()
     , dropLogLength(0)
-    , invalidCRCsPercentage(0)
-    , invalidTransactionPercentage(0)
     {
     }
 
