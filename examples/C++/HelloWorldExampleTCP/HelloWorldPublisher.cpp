@@ -175,6 +175,7 @@ void HelloWorldPublisher::runThread(uint32_t samples, long sleep_ms)
             }
             eClock::my_sleep(sleep_ms);
         }
+        std::cout << "Publisher finished." << std::endl;
     }
 }
 

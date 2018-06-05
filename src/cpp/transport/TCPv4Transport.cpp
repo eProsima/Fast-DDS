@@ -984,7 +984,10 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     bool result = true;
     for (TCPSocketInfo* socket : sockets)
     {
-        result = result && Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, socket);
+        if (socket->IsAlive())
+        {
+            result = result && Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, socket);
+        }
     }
     return result;
 }
@@ -1522,6 +1525,7 @@ void TCPv4Transport::ReleaseTCPSocket(TCPSocketInfo *socketInfo)
         socketInfo->Disable();
         socketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eDisconnected);
         socketInfo->getSocket()->cancel();
+        socketInfo->getSocket()->shutdown(ip::tcp::socket::shutdown_both);
         socketInfo->getSocket()->close();
 
         // Remove from senders
