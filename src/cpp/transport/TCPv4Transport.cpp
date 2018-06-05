@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/transport/TCPv4Transport.h>
+#include <fastrtps/transport/tcp/RTCPMessageManager.h>
 #include <fastrtps/transport/timedevent/CleanTCPSocketsEvent.h>
 #include <utility>
 #include <cstring>
@@ -23,6 +24,9 @@
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/transport/SocketInfo.h>
+
+
 
 using namespace std;
 using namespace asio;
@@ -116,7 +120,6 @@ void TCPConnector::RetryConnect(asio::io_service& io_service, TCPv4Transport* pa
 
 TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor)
     : mConfiguration_(descriptor)
-    , mActive(true)
     , mRTCPMessageManager(nullptr)
     , mCleanSocketsPoolTimer(nullptr)
 {
@@ -157,8 +160,7 @@ TransportInterface* TCPv4TransportDescriptor::create_transport() const
 }
 
 TCPv4Transport::TCPv4Transport()
-    : mActive(true)
-    , mRTCPMessageManager(nullptr)
+    : mRTCPMessageManager(nullptr)
     , mCleanSocketsPoolTimer(nullptr)
 {
 }
@@ -170,8 +172,6 @@ TCPv4Transport::~TCPv4Transport()
     // Collect all the existing sockets to delete them outside of the mutex.
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-        mActive = false;
-
         for (auto it = mSocketAcceptors.begin(); it != mSocketAcceptors.end(); ++it)
         {
             delete it->second;
@@ -328,7 +328,6 @@ bool TCPv4Transport::IsOutputChannelOpen(const Locator_t& locator, SenderResourc
             {
                 if (senderResource != nullptr)
                 {
-                    senderResource->SetSocketInfo((*it));
                     AssociateSenderToSocket(*it, senderResource);
                 }
                 return true;
@@ -339,7 +338,7 @@ bool TCPv4Transport::IsOutputChannelOpen(const Locator_t& locator, SenderResourc
     return false;
 }
 
-void TCPv4Transport::BindInputSocket(const Locator_t& locator, TCPSocketInfo *socketInfo)
+void TCPv4Transport::BindSocket(const Locator_t& locator, TCPSocketInfo *socketInfo)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     if (!IsLocatorSupported(locator))
@@ -399,10 +398,9 @@ void TCPv4Transport::BindOutputChannel(const Locator_t& locator, SenderResource 
     {
         if ((*it)->GetLocator().compare_IP4_address_and_port(locator))
         {
-            BindInputSocket(locator, *it);
+            BindSocket(locator, *it);
             if (senderResource != nullptr)
             {
-                senderResource->SetSocketInfo(*it);
                 AssociateSenderToSocket(*it, senderResource);
             }
         }
@@ -423,7 +421,6 @@ bool TCPv4Transport::IsOutputChannelBound(const Locator_t& locator, SenderResour
             auto& vector = (*socket).second;
             if (vector.size() == 1)
             {
-                senderResource->SetSocketInfo(vector.front());
                 AssociateSenderToSocket(vector.front(), senderResource);
             }
         }
@@ -491,7 +488,7 @@ bool TCPv4Transport::OpenOutputChannel(Locator_t& locator, SenderResource* sende
                 {
                     for (auto it = socketIt->second.begin(); it != socketIt->second.end(); ++it)
                     {
-                        BindInputSocket(locator, *it);
+                        BindSocket(locator, *it);
                     }
                 }
             }
@@ -879,21 +876,18 @@ void TCPv4Transport::performListenOperation(TCPSocketInfo *pSocketInfo)
 void TCPv4Transport::OpenAndBindUnicastOutputSocket(Locator_t& locator, SenderResource *senderResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-    if (mActive)
+    asio::ip::address_v4 ip = asio::ip::make_address_v4(locator.to_IP4_string());
+    if (IsInterfaceAllowed(ip))
     {
-        asio::ip::address_v4 ip = asio::ip::make_address_v4(locator.to_IP4_string());
-        if (IsInterfaceAllowed(ip))
+        TCPConnector* newConnector = new TCPConnector(mService, locator);
+        if (mSocketConnectors.find(locator) != mSocketConnectors.end())
         {
-            TCPConnector* newConnector = new TCPConnector(mService, locator);
-            if (mSocketConnectors.find(locator) != mSocketConnectors.end())
-            {
-                TCPConnector* oldConnector = mSocketConnectors.at(locator);
-                delete oldConnector;
-            }
-            mSocketConnectors[locator] = newConnector;
-            logInfo(RTCP, " OpenAndBindOutput (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")");
-            newConnector->Connect(this, senderResource);
+            TCPConnector* oldConnector = mSocketConnectors.at(locator);
+            delete oldConnector;
         }
+        mSocketConnectors[locator] = newConnector;
+        logInfo(RTCP, " OpenAndBindOutput (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")");
+        newConnector->Connect(this, senderResource);
     }
 }
 
@@ -905,11 +899,6 @@ bool TCPv4Transport::DoLocatorsMatch(const Locator_t& left, const Locator_t& rig
 bool TCPv4Transport::IsLocatorSupported(const Locator_t& locator) const
 {
     return locator.kind == LOCATOR_KIND_TCPv4;
-}
-
-void TCPv4Transport::AddDefaultLocator(LocatorList_t &/*defaultList*/)
-{
-    // On TCP, there aren't default send locators.
 }
 
 Locator_t TCPv4Transport::RemoteToMainLocal(const Locator_t& remote) const
@@ -1302,7 +1291,7 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             {
                 if (acceptor->mLocator.compare_IP4_address_and_port(*it))
                 {
-                    BindInputSocket(*it, socketInfo);
+                    BindSocket(*it, socketInfo);
                 }
             }
             socketInfo->SetThread(new std::thread(&TCPv4Transport::performListenOperation, this, socketInfo));
@@ -1385,7 +1374,6 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, SenderResource *senderR
             mRTCPMessageManager->sendConnectionRequest(outputSocket, mConfiguration_.metadata_logical_port);
             if (senderResource != nullptr)
             {
-                senderResource->SetSocketInfo(outputSocket);
                 AssociateSenderToSocket(outputSocket, senderResource);
             }
         }
@@ -1524,18 +1512,16 @@ void TCPv4Transport::ReleaseTCPSocket(TCPSocketInfo *socketInfo)
 
 void TCPv4Transport::AssociateSenderToSocket(TCPSocketInfo *socket, SenderResource *sender) const
 {
+    sender->SetSocketInfo(socket);
+
     auto it = mSocketToSenders.find(socket);
     if (it == mSocketToSenders.end())
     {
         mSocketToSenders[socket].emplace_back(sender);
     }
-    else
+    else if (std::find(it->second.begin(), it->second.end(), sender) == it->second.end())
     {
-        auto srit = std::find((*it).second.begin(), (*it).second.end(), sender);
-        if (srit == (*it).second.end())
-        {
-            (*it).second.emplace_back(sender);
-        }
+        it->second.emplace_back(sender);
     }
 }
 
