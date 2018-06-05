@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/transport/TCPv4Transport.h>
+#include <fastrtps/transport/timedevent/CleanTCPSocketsEvent.h>
 #include <utility>
 #include <cstring>
 #include <algorithm>
@@ -32,6 +33,7 @@ namespace rtps {
 
 static const int s_default_keep_alive_frequency = 50000; // 50 SECONDS
 static const int s_default_keep_alive_timeout = 10000; // 10 SECONDS
+static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
 
 static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
 {
@@ -116,6 +118,7 @@ TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor)
     : mConfiguration_(descriptor)
     , mActive(true)
     , mRTCPMessageManager(nullptr)
+    , mCleanSocketsPoolTimer(nullptr)
 {
     for (const auto& interface : descriptor.interfaceWhiteList)
     {
@@ -156,6 +159,7 @@ TransportInterface* TCPv4TransportDescriptor::create_transport() const
 TCPv4Transport::TCPv4Transport()
     : mActive(true)
     , mRTCPMessageManager(nullptr)
+    , mCleanSocketsPoolTimer(nullptr)
 {
 }
 
@@ -203,6 +207,11 @@ TCPv4Transport::~TCPv4Transport()
     }
 
     CleanDeletedSockets();
+
+    if (mCleanSocketsPoolTimer != nullptr)
+    {
+        delete mCleanSocketsPoolTimer;
+    }
 
     if (ioServiceThread)
     {
@@ -282,6 +291,9 @@ bool TCPv4Transport::init()
         mService.run();
     };
     ioServiceThread.reset(new std::thread(ioServiceFunction));
+
+    mCleanSocketsPoolTimer = new CleanTCPSocketsEvent(this, mService, *ioServiceThread.get(),
+        s_clean_deleted_sockets_pool_timeout);
 
     return true;
 }
@@ -1506,8 +1518,6 @@ void TCPv4Transport::ReleaseTCPSocket(TCPSocketInfo *socketInfo)
 {
     if (socketInfo != nullptr && socketInfo->IsAlive())
     {
-        CleanDeletedSockets();
-
         socketInfo->Disable();
         socketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eDisconnected);
         socketInfo->getSocket()->cancel();
@@ -1529,6 +1539,14 @@ void TCPv4Transport::ReleaseTCPSocket(TCPSocketInfo *socketInfo)
             mDeletedSocketsPool.emplace_back(socketInfo);
         }
         socketInfo = nullptr;
+
+        // Starts a timer to clean the deleted sockets pool.
+        if (mCleanSocketsPoolTimer != nullptr)
+        {
+            mCleanSocketsPoolTimer->cancel_timer();
+            mCleanSocketsPoolTimer->update_interval_millisec(s_clean_deleted_sockets_pool_timeout);
+            mCleanSocketsPoolTimer->restart_timer();
+        }
     }
 }
 
