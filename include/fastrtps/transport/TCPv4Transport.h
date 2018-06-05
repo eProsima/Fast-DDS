@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ namespace fastrtps{
 namespace rtps{
 class TCPv4Transport;
 class RTCPMessageManager;
+class CleanTCPSocketsEvent;
 
 class TCPAcceptor
 {
@@ -207,11 +208,13 @@ protected:
     bool mActive;
     RTCPMessageManager* mRTCPMessageManager;
     std::vector<TCPSocketInfo*> mDeletedSocketsPool;
+    std::recursive_mutex mDeletedSocketsPoolMutex;
+    CleanTCPSocketsEvent* mCleanSocketsPoolTimer;
+
     asio::io_service mService;
-    std::unique_ptr<std::thread> ioServiceThread;
+    std::shared_ptr<std::thread> ioServiceThread;
 
     mutable std::recursive_mutex mSocketsMapMutex;
-    std::recursive_mutex mDeletedSocketsPoolMutex;
     std::vector<Locator_t> mPendingOutputPorts;
     std::map<Locator_t, TCPConnector*> mSocketConnectors;
     std::vector<TCPSocketInfo*> mOutputSockets;
