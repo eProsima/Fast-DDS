@@ -165,7 +165,7 @@ void HelloWorldPublisher::runThread(uint32_t samples, long sleep_ms)
     }
     else
     {
-        for(uint32_t i = 0;i<samples && !stop;++i)
+        for(uint32_t i = 0;i<samples;++i)
         {
             if(!publish())
                 --i;
@@ -175,16 +175,22 @@ void HelloWorldPublisher::runThread(uint32_t samples, long sleep_ms)
             }
             eClock::my_sleep(sleep_ms);
         }
-        std::cout << "Publisher finished." << std::endl;
     }
 }
 
 void HelloWorldPublisher::run(uint32_t samples, long sleep_ms)
 {
     std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep_ms);
-    std::cout << "[RTCP] Publisher running. Please press enter to stop the Publisher at any time." << std::endl;
-    std::cin.ignore();
-    stop = true;
+    if (samples == 0)
+    {
+        std::cout << "Publisher running. Please press enter to stop the Publisher at any time." << std::endl;
+        std::cin.ignore();
+        stop = true;
+    }
+    else
+    {
+        std::cout << "Publisher running " << samples << " samples." << std::endl;
+    }
     thread.join();
     //runThread(samples, sleep_ms);
 }
