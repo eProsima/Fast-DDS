@@ -20,12 +20,15 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator) : m_pSocketInfo(nullptr)
+SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator)
+: m_pSocketInfo(nullptr)
 {
     // Internal channel is opened and assigned to this resource.
     mValid = transport.OpenOutputChannel(locator, this);
     if (!mValid)
+    {
         return; // Invalid resource, will be discarded by the factory.
+    }
 
     // Implementation functions are bound to the right transport parameters
     Cleanup = [&transport, locator, this]()
@@ -35,7 +38,9 @@ SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator
         };
 
     AddSenderLocatorToManagedChannel = [&transport, this](Locator_t& destination)->bool
-        { return transport.OpenExtraOutputChannel(destination, this); };
+        {
+            return transport.OpenExtraOutputChannel(destination, this);
+        };
 
     SendThroughAssociatedChannel =
         [&transport, locator, this]
@@ -51,23 +56,32 @@ SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator
             }
         };
     LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
-                                 { return transport.DoLocatorsMatch(locator, locatorToCheck); };
+        {
+            return transport.DoLocatorsMatch(locator, locatorToCheck);
+        };
+
     ManagedChannelMapsToRemote = [&transport, locator](const Locator_t& locatorToCheck) -> bool
-                                 { return transport.DoLocatorsMatch(locator, transport.RemoteToMainLocal(locatorToCheck)); };
+        {
+            return transport.DoLocatorsMatch(locator, transport.RemoteToMainLocal(locatorToCheck));
+        };
 }
 
 bool SenderResource::AddSenderLocator(Locator_t& destination)
 {
     if (AddSenderLocatorToManagedChannel)
+    {
         return AddSenderLocatorToManagedChannel(destination);
+    }
     return false;
 }
 
 bool SenderResource::Send(const octet* data, uint32_t dataLength, const Locator_t& destinationLocator)
 {
-   if (SendThroughAssociatedChannel)
-      return SendThroughAssociatedChannel(data, dataLength, destinationLocator, this->m_pSocketInfo);
-   return false;
+    if (SendThroughAssociatedChannel)
+    {
+        return SendThroughAssociatedChannel(data, dataLength, destinationLocator, this->m_pSocketInfo);
+    }
+    return false;
 }
 
 SenderResource::SenderResource(SenderResource&& rValueResource)
@@ -84,22 +98,28 @@ SenderResource::SenderResource(SenderResource&& rValueResource)
 
 bool SenderResource::SupportsLocator(const Locator_t& local)
 {
-   if (LocatorMapsToManagedChannel)
-      return LocatorMapsToManagedChannel(local);
-   return false;
+    if (LocatorMapsToManagedChannel)
+    {
+        return LocatorMapsToManagedChannel(local);
+    }
+    return false;
 }
 
 bool SenderResource::CanSendToRemoteLocator(const Locator_t& remote)
 {
-   if (ManagedChannelMapsToRemote)
-      return ManagedChannelMapsToRemote(remote);
-   return false;
+    if (ManagedChannelMapsToRemote)
+    {
+        return ManagedChannelMapsToRemote(remote);
+    }
+    return false;
 }
 
 SenderResource::~SenderResource()
 {
-   if (Cleanup)
-      Cleanup();
+    if (Cleanup)
+    {
+        Cleanup();
+    }
 }
 
 } // namespace rtps

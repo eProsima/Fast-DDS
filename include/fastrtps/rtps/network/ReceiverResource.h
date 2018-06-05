@@ -84,15 +84,19 @@ public:
    void removeEndpoint(Endpoint *to_remove);
    bool checkReaders(EntityId_t readerID);
    void processDataMsg(EntityId_t readerID, CacheChange_t* ch);
+
    void processDataFragMsg(EntityId_t readerID, CacheChange_t *incomingChange, uint32_t sampleSize,
        uint32_t fragmentStartingNum);
+
    void processHeartbeatMsg(EntityId_t readerID, GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
        SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag);
+
    void processGapMsg(EntityId_t readerID, GUID_t &writerGUID, SequenceNumber_t &gapStart,
        SequenceNumberSet_t &gapList);
 
    bool processSubMsgNackFrag(const GUID_t& readerGUID, const GUID_t& writerGUID, SequenceNumber_t& writerSN,
        FragmentNumberSet_t& fnState, uint32_t Ackcount);
+
    bool processAckNack(const GUID_t& readerGUID, const GUID_t& writerGUID, uint32_t ackCount,
        const SequenceNumberSet_t& snSet, bool finalFlag);
 
@@ -104,8 +108,8 @@ private:
    ReceiverResource(RTPSParticipantImpl*, TransportInterface&, const Locator_t&, uint32_t maxMsgSize);
 
    std::mutex mtx;
-   std::vector<RTPSWriter *> AssociatedWriters;
-   std::vector<RTPSReader *> AssociatedReaders;
+   std::vector<RTPSWriter*> AssociatedWriters;
+   std::vector<RTPSReader*> AssociatedReaders;
    std::function<void()> Cleanup;
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
    bool mValid; // Post-construction validity check for the NetworkFactory

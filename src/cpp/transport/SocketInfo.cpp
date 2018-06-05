@@ -13,9 +13,10 @@ SocketInfo::SocketInfo()
 
 SocketInfo::SocketInfo(SocketInfo&& socketInfo)
     : m_rec_msg(std::move(socketInfo.m_rec_msg))
-    , mAlive(socketInfo.mAlive)
     , mThread(socketInfo.mThread)
 {
+    bool b = socketInfo.mAlive;
+    mAlive = b;
     socketInfo.mThread = nullptr;
     //logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
     //m_rec_msg = std::move(socketInfo.m_rec_msg);
