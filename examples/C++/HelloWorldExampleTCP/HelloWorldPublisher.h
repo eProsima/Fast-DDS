@@ -36,7 +36,7 @@ public:
 	//!Initialize
 	bool init();
 	//!Publish a sample
-	bool publish(long sleep_ms, bool waitForListener = true);
+	bool publish(bool waitForListener = true);
 	//!Run for number samples
 	void run(uint32_t number, long sleep_ms);
 private:
