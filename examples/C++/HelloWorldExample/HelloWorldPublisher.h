@@ -36,21 +36,24 @@ public:
 	//!Initialize
 	bool init();
 	//!Publish a sample
-	bool publish();
+	bool publish(bool waitForListener = true);
 	//!Run for number samples
-	void run(uint32_t number);
+	void run(uint32_t number, uint32_t sleep);
 private:
 	HelloWorld m_Hello;
 	eprosima::fastrtps::Participant* mp_participant;
 	eprosima::fastrtps::Publisher* mp_publisher;
+	bool stop;
 	class PubListener:public eprosima::fastrtps::PublisherListener
 	{
 	public:
-		PubListener():n_matched(0){};
+		PubListener():n_matched(0),firstConnected(false){};
 		~PubListener(){};
 		void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);
 		int n_matched;
+        bool firstConnected;
 	}m_listener;
+	void runThread(uint32_t number, uint32_t sleep);
 	HelloWorldPubSubType m_type;
 };
 
