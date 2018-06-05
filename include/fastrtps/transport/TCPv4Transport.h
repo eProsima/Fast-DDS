@@ -188,6 +188,9 @@ public:
 #endif
 
     void SocketConnected(Locator_t& locator, SenderResource *senderResource, const asio::error_code& error);
+
+    void CleanDeletedSockets();
+
 protected:
     enum eSocketErrorCodes
     {
@@ -210,7 +213,7 @@ protected:
     mutable std::recursive_mutex mSocketsMapMutex;
     std::recursive_mutex mDeletedSocketsPoolMutex;
     std::vector<Locator_t> mPendingOutputPorts;
-    std::map<Locator_t, TCPConnector*> mPendingOutputSockets;
+    std::map<Locator_t, TCPConnector*> mSocketConnectors;
     std::vector<TCPSocketInfo*> mOutputSockets;
     std::map<Locator_t, std::vector<TCPSocketInfo*>> mBoundOutputSockets;
 
@@ -219,7 +222,7 @@ protected:
     struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
 
-    std::map<uint16_t, TCPAcceptor*> mSocketsAcceptors; // The Key is the "Physical Port"
+    std::map<uint16_t, TCPAcceptor*> mSocketAcceptors; // The Key is the "Physical Port"
     std::map<uint16_t, std::vector<TCPSocketInfo*>> mInputSockets; // The Key is the "Physical Port"
     std::map<Locator_t, ReceiverResource*> mReceiverResources;
 

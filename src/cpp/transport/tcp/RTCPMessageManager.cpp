@@ -73,7 +73,7 @@ size_t RTCPMessageManager::sendMessage(TCPSocketInfo *pSocketInfo, const CDRMess
 }
 
 bool RTCPMessageManager::sendData(TCPSocketInfo *pSocketInfo, TCPCPMKind kind, const TCPTransactionId &transactionId,
-        const SerializedPayload_t *payload, const ResponseCode respCode)
+    const SerializedPayload_t *payload, const ResponseCode respCode)
 {
     TCPHeader header;
     TCPControlMsgHeader ctrlHeader;
@@ -114,8 +114,8 @@ uint32_t& RTCPMessageManager::addToCRC(uint32_t &crc, octet data)
 }
 
 void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &transactionId,
-        TCPControlMsgHeader &retCtrlHeader,  TCPHeader &header, const SerializedPayload_t *payload,
-        const ResponseCode *respCode)
+    TCPControlMsgHeader &retCtrlHeader, TCPHeader &header, const SerializedPayload_t *payload,
+    const ResponseCode *respCode)
 {
     retCtrlHeader.kind = kind;
     retCtrlHeader.length = static_cast<uint16_t>(TCPControlMsgHeader::getSize());
@@ -123,25 +123,25 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
     retCtrlHeader.length += static_cast<uint16_t>((respCode != nullptr) ? 4 : 0);
     retCtrlHeader.transactionId = transactionId;
 
-    switch(kind)
+    switch (kind)
     {
-        case BIND_CONNECTION_REQUEST:
-        case OPEN_LOGICAL_PORT_REQUEST:
-        case CHECK_LOGICAL_PORT_REQUEST:
-        case KEEP_ALIVE_REQUEST:
-            retCtrlHeader.setFlags(false, true, true);
-            mUnconfirmedTransactions.emplace(retCtrlHeader.transactionId);
-            break;
-        case LOGICAL_PORT_IS_CLOSED_REQUEST:
-        case BIND_CONNECTION_RESPONSE:
-        case OPEN_LOGICAL_PORT_RESPONSE:
-        case CHECK_LOGICAL_PORT_RESPONSE:
-        case KEEP_ALIVE_RESPONSE:
-            retCtrlHeader.setFlags(false, true, false);
-            break;
-        case UNBIND_CONNECTION_REQUEST:
-            retCtrlHeader.setFlags(false, false, false);
-            break;
+    case BIND_CONNECTION_REQUEST:
+    case OPEN_LOGICAL_PORT_REQUEST:
+    case CHECK_LOGICAL_PORT_REQUEST:
+    case KEEP_ALIVE_REQUEST:
+        retCtrlHeader.setFlags(false, true, true);
+        mUnconfirmedTransactions.emplace(retCtrlHeader.transactionId);
+        break;
+    case LOGICAL_PORT_IS_CLOSED_REQUEST:
+    case BIND_CONNECTION_RESPONSE:
+    case OPEN_LOGICAL_PORT_RESPONSE:
+    case CHECK_LOGICAL_PORT_RESPONSE:
+    case KEEP_ALIVE_RESPONSE:
+        retCtrlHeader.setFlags(false, true, false);
+        break;
+    case UNBIND_CONNECTION_REQUEST:
+        retCtrlHeader.setFlags(false, false, false);
+        break;
     }
 
     retCtrlHeader.setEndianess(DEFAULT_ENDIAN); // Override "false" endianess set on the switch
@@ -184,38 +184,38 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
     //logInfo(RTCP, "Send (CRC= " << header.crc << ")");
 
     // LOG
-    switch(kind)
+    switch (kind)
     {
-        case BIND_CONNECTION_REQUEST:
-            logInfo(RTCP_SEQ, "Send [BIND_CONNECTION_REQUEST] Seq: " << retCtrlHeader.transactionId);
-            break;
-        case OPEN_LOGICAL_PORT_REQUEST:
-            logInfo(RTCP_SEQ, "Send [OPEN_LOGICAL_PORT_REQUEST] Seq: " << retCtrlHeader.transactionId);
-            break;
-        case CHECK_LOGICAL_PORT_REQUEST:
-            logInfo(RTCP_SEQ, "Send [CHECK_LOGICAL_PORT_REQUEST]: Seq: " << retCtrlHeader.transactionId);
-            break;
-        case KEEP_ALIVE_REQUEST:
-            logInfo(RTCP_SEQ, "Send [KEEP_ALIVE_REQUEST] Seq: " << retCtrlHeader.transactionId);
-            break;
-        case LOGICAL_PORT_IS_CLOSED_REQUEST:
-            logInfo(RTCP_SEQ, "Send [LOGICAL_PORT_IS_CLOSED_REQUEST] Seq: " << retCtrlHeader.transactionId);
-            break;
-        case BIND_CONNECTION_RESPONSE:
-            logInfo(RTCP_SEQ, "Send [BIND_CONNECTION_RESPONSE] Seq: " << retCtrlHeader.transactionId);
-            break;
-        case OPEN_LOGICAL_PORT_RESPONSE:
-            logInfo(RTCP_SEQ, "Send [OPEN_LOGICAL_PORT_RESPONSE] Seq: " << retCtrlHeader.transactionId);
-            break;
-        case CHECK_LOGICAL_PORT_RESPONSE:
-            logInfo(RTCP_SEQ, "Send [CHECK_LOGICAL_PORT_RESPONSE] Seq: " << retCtrlHeader.transactionId);
-            break;
-        case KEEP_ALIVE_RESPONSE:
-            logInfo(RTCP_SEQ, "Send [KEEP_ALIVE_RESPONSE] Seq: " << retCtrlHeader.transactionId);
-            break;
-        case UNBIND_CONNECTION_REQUEST:
-            logInfo(RTCP_SEQ, "Send [UNBIND_CONNECTION_REQUEST] Seq: " << retCtrlHeader.transactionId);
-            break;
+    case BIND_CONNECTION_REQUEST:
+        logInfo(RTCP_SEQ, "Send [BIND_CONNECTION_REQUEST] Seq: " << retCtrlHeader.transactionId);
+        break;
+    case OPEN_LOGICAL_PORT_REQUEST:
+        logInfo(RTCP_SEQ, "Send [OPEN_LOGICAL_PORT_REQUEST] Seq: " << retCtrlHeader.transactionId);
+        break;
+    case CHECK_LOGICAL_PORT_REQUEST:
+        logInfo(RTCP_SEQ, "Send [CHECK_LOGICAL_PORT_REQUEST]: Seq: " << retCtrlHeader.transactionId);
+        break;
+    case KEEP_ALIVE_REQUEST:
+        logInfo(RTCP_SEQ, "Send [KEEP_ALIVE_REQUEST] Seq: " << retCtrlHeader.transactionId);
+        break;
+    case LOGICAL_PORT_IS_CLOSED_REQUEST:
+        logInfo(RTCP_SEQ, "Send [LOGICAL_PORT_IS_CLOSED_REQUEST] Seq: " << retCtrlHeader.transactionId);
+        break;
+    case BIND_CONNECTION_RESPONSE:
+        logInfo(RTCP_SEQ, "Send [BIND_CONNECTION_RESPONSE] Seq: " << retCtrlHeader.transactionId);
+        break;
+    case OPEN_LOGICAL_PORT_RESPONSE:
+        logInfo(RTCP_SEQ, "Send [OPEN_LOGICAL_PORT_RESPONSE] Seq: " << retCtrlHeader.transactionId);
+        break;
+    case CHECK_LOGICAL_PORT_RESPONSE:
+        logInfo(RTCP_SEQ, "Send [CHECK_LOGICAL_PORT_RESPONSE] Seq: " << retCtrlHeader.transactionId);
+        break;
+    case KEEP_ALIVE_RESPONSE:
+        logInfo(RTCP_SEQ, "Send [KEEP_ALIVE_RESPONSE] Seq: " << retCtrlHeader.transactionId);
+        break;
+    case UNBIND_CONNECTION_REQUEST:
+        logInfo(RTCP_SEQ, "Send [UNBIND_CONNECTION_REQUEST] Seq: " << retCtrlHeader.transactionId);
+        break;
     }
 }
 
@@ -225,10 +225,8 @@ void RTCPMessageManager::sendConnectionRequest(TCPSocketInfo *pSocketInfo, uint1
     Locator_t locator;
     EndpointToLocator(pSocketInfo->getSocket()->local_endpoint(), locator);
     locator.set_logical_port(localLogicalPort);
-    locator.set_IP4_WAN_address(transport->mConfiguration_.wan_addr[0], 
-                                transport->mConfiguration_.wan_addr[1],
-                                transport->mConfiguration_.wan_addr[2],
-                                transport->mConfiguration_.wan_addr[3]);
+    locator.set_IP4_WAN_address(transport->mConfiguration_.wan_addr[0], transport->mConfiguration_.wan_addr[1],
+        transport->mConfiguration_.wan_addr[2], transport->mConfiguration_.wan_addr[3]);
     request.transportLocator(locator);
 
     SerializedPayload_t payload(static_cast<uint32_t>(ConnectionRequest_t::getBufferCdrSerializedSize(request)));
@@ -314,10 +312,10 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPSocketInfo *pSocketInfo
 {
     BindConnectionResponse_t response;
     localLocator.set_logical_port(transport->mConfiguration_.metadata_logical_port);
-    localLocator.set_IP4_WAN_address(transport->mConfiguration_.wan_addr[0], 
-                                    transport->mConfiguration_.wan_addr[1],
-                                    transport->mConfiguration_.wan_addr[2],
-                                    transport->mConfiguration_.wan_addr[3]);
+    localLocator.set_IP4_WAN_address(transport->mConfiguration_.wan_addr[0],
+        transport->mConfiguration_.wan_addr[1],
+        transport->mConfiguration_.wan_addr[2],
+        transport->mConfiguration_.wan_addr[3]);
 
     response.locator(localLocator);
 
@@ -349,7 +347,6 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPSocketInfo *pSocketInfo
     }
     return true;
 }
-
 
 bool RTCPMessageManager::processOpenLogicalPortRequest(TCPSocketInfo *pSocketInfo,
     const OpenLogicalPortRequest_t &request, const TCPTransactionId &transactionId)
@@ -428,7 +425,7 @@ void RTCPMessageManager::processLogicalPortIsClosedRequest(TCPSocketInfo* pSocke
 }
 
 bool RTCPMessageManager::processBindConnectionResponse(TCPSocketInfo *pSocketInfo,
-        const BindConnectionResponse_t &/*response*/, const TCPTransactionId &transactionId)
+    const BindConnectionResponse_t &/*response*/, const TCPTransactionId &transactionId)
 {
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
@@ -440,13 +437,13 @@ bool RTCPMessageManager::processBindConnectionResponse(TCPSocketInfo *pSocketInf
     }
     else
     {
-        logWarning(RTPS_MSG_IN,"Received BindConnectionResponse with an invalid transactionId: "<< transactionId);
+        logWarning(RTPS_MSG_IN, "Received BindConnectionResponse with an invalid transactionId: " << transactionId);
         return false;
     }
 }
 
 bool RTCPMessageManager::processCheckLogicalPortsResponse(TCPSocketInfo *pSocketInfo,
-        const CheckLogicalPortsResponse_t &response, const TCPTransactionId &transactionId)
+    const CheckLogicalPortsResponse_t &response, const TCPTransactionId &transactionId)
 {
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
@@ -454,7 +451,7 @@ bool RTCPMessageManager::processCheckLogicalPortsResponse(TCPSocketInfo *pSocket
         if (response.availableLogicalPorts().empty())
         {
             pSocketInfo->mCheckingLogicalPort += (transport->mConfiguration_.logical_port_range
-                                                * transport->mConfiguration_.logical_port_increment);
+                * transport->mConfiguration_.logical_port_increment);
             prepareAndSendCheckLogicalPortsRequest(pSocketInfo);
         }
         else
@@ -500,8 +497,8 @@ void RTCPMessageManager::prepareAndSendCheckLogicalPortsRequest(TCPSocketInfo *p
     std::vector<uint16_t> ports;
     for (uint16_t p = pSocketInfo->mCheckingLogicalPort + transport->mConfiguration_.logical_port_increment;
         p <= pSocketInfo->mCheckingLogicalPort +
-            (transport->mConfiguration_.logical_port_range
-             * transport->mConfiguration_.logical_port_increment);
+        (transport->mConfiguration_.logical_port_range
+            * transport->mConfiguration_.logical_port_increment);
         p += transport->mConfiguration_.logical_port_increment)
     {
         if (p <= pSocketInfo->mNegotiatingLogicalPort + transport->mConfiguration_.max_logical_port)
@@ -526,40 +523,40 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPSocketInfo *pSocketIn
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
     {
-        switch(respCode)
+        switch (respCode)
         {
-            case RETCODE_OK:
+        case RETCODE_OK:
+        {
+            std::unique_lock<std::recursive_mutex> scopedLock(pSocketInfo->mPendingLogicalMutex);
+            if (pSocketInfo->mNegotiatingLogicalPort != 0
+                && pSocketInfo->mPendingLogicalPort == pSocketInfo->mCheckingLogicalPort)
             {
-                std::unique_lock<std::recursive_mutex> scopedLock(pSocketInfo->mPendingLogicalMutex);
-                if (pSocketInfo->mNegotiatingLogicalPort != 0
-                        && pSocketInfo->mPendingLogicalPort == pSocketInfo->mCheckingLogicalPort)
-                {
-                    // Add route
-                    pSocketInfo->mLogicalPortRouting[pSocketInfo->mNegotiatingLogicalPort]
-                        = pSocketInfo->mPendingLogicalPort;
+                // Add route
+                pSocketInfo->mLogicalPortRouting[pSocketInfo->mNegotiatingLogicalPort]
+                    = pSocketInfo->mPendingLogicalPort;
 
-                    //logInfo(RTCP, "OpenedAndRoutedLogicalPort " << pSocketInfo->mNegotiatingLogicalPort
-                    // << "->" << pSocketInfo->mPendingLogicalPort);
+                //logInfo(RTCP, "OpenedAndRoutedLogicalPort " << pSocketInfo->mNegotiatingLogicalPort
+                // << "->" << pSocketInfo->mPendingLogicalPort);
 
-                    // We want the reference to the negotiated port, not the real logical one
-                    remoteLocator.set_logical_port(pSocketInfo->mNegotiatingLogicalPort);
+                // We want the reference to the negotiated port, not the real logical one
+                remoteLocator.set_logical_port(pSocketInfo->mNegotiatingLogicalPort);
 
-                    // Both, real one and negotiated must be added
-                    pSocketInfo->mLogicalOutputPorts.emplace_back(pSocketInfo->mNegotiatingLogicalPort);
+                // Both, real one and negotiated must be added
+                pSocketInfo->mLogicalOutputPorts.emplace_back(pSocketInfo->mNegotiatingLogicalPort);
 
-                    pSocketInfo->mNegotiatingLogicalPort = 0;
-                    pSocketInfo->mCheckingLogicalPort = 0;
-                }
-                else
-                {
-                    remoteLocator.set_logical_port(pSocketInfo->mPendingLogicalPort);
-                    logInfo(RTCP, "OpenedLogicalPort " << pSocketInfo->mPendingLogicalPort);
-                }
+                pSocketInfo->mNegotiatingLogicalPort = 0;
+                pSocketInfo->mCheckingLogicalPort = 0;
+            }
+            else
+            {
+                remoteLocator.set_logical_port(pSocketInfo->mPendingLogicalPort);
+                logInfo(RTCP, "OpenedLogicalPort " << pSocketInfo->mPendingLogicalPort);
+            }
 
-                pSocketInfo->mLogicalOutputPorts.emplace_back(*(pSocketInfo->mPendingLogicalOutputPorts.begin()));
-                pSocketInfo->mPendingLogicalOutputPorts.erase(pSocketInfo->mPendingLogicalOutputPorts.begin());
-                pSocketInfo->mPendingLogicalPort = 0;
-                transport->BindInputSocket(remoteLocator, pSocketInfo);
+            pSocketInfo->mLogicalOutputPorts.emplace_back(*(pSocketInfo->mPendingLogicalOutputPorts.begin()));
+            pSocketInfo->mPendingLogicalOutputPorts.erase(pSocketInfo->mPendingLogicalOutputPorts.begin());
+            pSocketInfo->mPendingLogicalPort = 0;
+            transport->BindInputSocket(remoteLocator, pSocketInfo);
             /*
             if (transport->mBoundOutputSockets.find(remoteLocator) == transport->mBoundOutputSockets.end())
             {
@@ -575,16 +572,16 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPSocketInfo *pSocketIn
                 //std::cout << "MM ##################" << std::endl;
             }
             */
-            }
-            break;
-            case RETCODE_INVALID_PORT:
-            {
-                prepareAndSendCheckLogicalPortsRequest(pSocketInfo);
-            }
-            break;
-            default:
-                logWarning(RTPS_MSG_IN, "Received response for OpenLogicalPort with error code: "
-                    << ((respCode == RETCODE_BAD_REQUEST) ? "BAD_REQUEST" : "SERVER_ERROR"));
+        }
+        break;
+        case RETCODE_INVALID_PORT:
+        {
+            prepareAndSendCheckLogicalPortsRequest(pSocketInfo);
+        }
+        break;
+        default:
+            logWarning(RTPS_MSG_IN, "Received response for OpenLogicalPort with error code: "
+                << ((respCode == RETCODE_BAD_REQUEST) ? "BAD_REQUEST" : "SERVER_ERROR"));
             break;
         }
         mUnconfirmedTransactions.erase(it);
@@ -597,7 +594,7 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPSocketInfo *pSocketIn
 }
 
 bool RTCPMessageManager::processKeepAliveResponse(TCPSocketInfo *pSocketInfo,
-        ResponseCode respCode, const TCPTransactionId &transactionId)
+    ResponseCode respCode, const TCPTransactionId &transactionId)
 {
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
@@ -775,6 +772,7 @@ bool RTCPMessageManager::processRTCPMessage(TCPSocketInfo *socketInfo, octet* re
     }
     return bProcessOk;
 }
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

@@ -35,24 +35,26 @@ namespace rtps{
 
 ReceiverResource::ReceiverResource(RTPSParticipantImpl* participant, TransportInterface& transport,
     const Locator_t& locator, uint32_t maxMsgSize)
-: m_participant(participant)
-, m_maxMsgSize(maxMsgSize)
+    : m_participant(participant)
+    , m_maxMsgSize(maxMsgSize)
 {
-   // Internal channel is opened and assigned to this resource.
-   mValid = transport.OpenInputChannel(locator, this, m_maxMsgSize);
-   if (!mValid)
-      return; // Invalid resource to be discarded by the factory.
+    // Internal channel is opened and assigned to this resource.
+    mValid = transport.OpenInputChannel(locator, this, m_maxMsgSize);
+    if (!mValid)
+    {
+        return; // Invalid resource to be discarded by the factory.
+    }
 
-   // Implementation functions are bound to the right transport parameters
-   Cleanup = [&transport,locator](){ transport.CloseInputChannel(locator); };
-   LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
-                                 { return transport.DoLocatorsMatch(locator, locatorToCheck); };
+    // Implementation functions are bound to the right transport parameters
+    Cleanup = [&transport, locator]() { transport.CloseInputChannel(locator); };
+    LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
+    { return transport.DoLocatorsMatch(locator, locatorToCheck); };
 }
 
 ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
 {
-   Cleanup.swap(rValueResource.Cleanup);
-   LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
+    Cleanup.swap(rValueResource.Cleanup);
+    LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
 }
 
 MessageReceiver* ReceiverResource::CreateMessageReceiver()
@@ -64,26 +66,29 @@ MessageReceiver* ReceiverResource::CreateMessageReceiver()
 
 bool ReceiverResource::SupportsLocator(const Locator_t& localLocator)
 {
-   if (LocatorMapsToManagedChannel)
-      return LocatorMapsToManagedChannel(localLocator);
-   return false;
+    if (LocatorMapsToManagedChannel)
+    {
+        return LocatorMapsToManagedChannel(localLocator);
+    }
+    return false;
 }
 
 void ReceiverResource::Abort()
 {
-   if(Cleanup)
-   {
-      Cleanup();
-   }
+    if (Cleanup)
+    {
+        Cleanup();
+    }
 }
 
 ReceiverResource::~ReceiverResource()
 {
-   if(Cleanup)
-   {
-      Cleanup();
-   assert(AssociatedWriters.size() == 0);
-   assert(AssociatedReaders.size() == 0);
+    if (Cleanup)
+    {
+        Cleanup();
+    }
+    assert(AssociatedWriters.size() == 0);
+    assert(AssociatedReaders.size() == 0);
 }
 
 void ReceiverResource::associateEndpoint(Endpoint *to_add)

@@ -86,6 +86,9 @@ UDPv4Transport::~UDPv4Transport()
         mService.stop();
         ioServiceThread->join();
     }
+
+    assert(mInputSockets.size() == 0);
+    assert(mOutputSockets.size() == 0);
 }
 
 bool UDPv4Transport::init()
@@ -167,7 +170,6 @@ bool UDPv4Transport::IsOutputChannelOpen(const Locator_t& locator, SenderResourc
         return false;
 
     auto it = mOutputSockets.find(locator.get_physical_port());
-
     if (it != mOutputSockets.end())
     {
         // Don't optimize senderResource, because could be multiple interfaces.
@@ -347,7 +349,6 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource
                 getSocketPtr(unicastSocket)->set_option(
                     ip::multicast::outbound_interface(asio::ip::address_v4::from_string((*locIt).name)));
 
-                // TODO Who will be on charge of free this allocation?
                 mOutputSockets[locator.get_physical_port()].push_back(new UDPSocketInfo(unicastSocket));
 
                 // Create other socket for outbounding rest of interfaces.
@@ -357,7 +358,6 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource
                     uint16_t new_port = 0;
                     eProsimaUDPSocket multicastSocket = OpenAndBindUnicastOutputSocket(ip, new_port);
                     getSocketPtr(multicastSocket)->set_option(ip::multicast::outbound_interface(ip));
-                    // TODO Who will be on charge of free this allocation?
                     UDPSocketInfo* mSocket = new UDPSocketInfo(multicastSocket);
                     mSocket->only_multicast_purpose(true);
                     mOutputSockets[locator.get_physical_port()].push_back(mSocket);
@@ -396,7 +396,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource
                         getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
                         firstInterface = true;
                     }
-                    // TODO Who will be on charge of free this allocation?
+
                     mOutputSockets[locator.get_physical_port()].push_back(new UDPSocketInfo(unicastSocket));
                     // senderResource cannot be optimized in this cases
                 }

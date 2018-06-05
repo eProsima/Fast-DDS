@@ -132,7 +132,7 @@ protected:
     CDRMessage_t m_crypto_msg;
 #endif
 
-    bool mAlive;
+    std::atomic<bool> mAlive;
     std::thread* mThread;
 };
 
