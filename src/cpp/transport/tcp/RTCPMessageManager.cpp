@@ -330,7 +330,7 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPSocketInfo *pSocketInfo
         {
             std::unique_lock<std::recursive_mutex> scope(pSocketInfo->mPendingLogicalMutex);
             pSocketInfo->mPendingLogicalOutputPorts.push_back(request.transportLocator().get_logical_port());
-            transport->BindInputSocket(request.transportLocator(), pSocketInfo);
+            transport->BindSocket(request.transportLocator(), pSocketInfo);
         }
         sendData(pSocketInfo, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_OK);
         pSocketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eEstablished);
@@ -554,22 +554,7 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPSocketInfo *pSocketIn
             pSocketInfo->mLogicalOutputPorts.emplace_back(*(pSocketInfo->mPendingLogicalOutputPorts.begin()));
             pSocketInfo->mPendingLogicalOutputPorts.erase(pSocketInfo->mPendingLogicalOutputPorts.begin());
             pSocketInfo->mPendingLogicalPort = 0;
-            transport->BindInputSocket(remoteLocator, pSocketInfo);
-            /*
-            if (transport->mBoundOutputSockets.find(remoteLocator) == transport->mBoundOutputSockets.end())
-            {
-                //std::cout << "################## MM" << std::endl;
-                //std::cout << "LOCATOR KIND: " << remoteLocator.kind << std::endl;
-                //std::cout << "LOCATOR Address: " << remoteLocator.to_IP4_string() << std::endl;
-                //std::cout << "LOCATOR Physical: " << remoteLocator.get_physical_port() << std::endl;
-                //std::cout << "LOCATOR Logical: " << remoteLocator.get_logical_port() << std::endl;
-                //std::cout << "ENDPOINT Local: " << pSocketInfo->getSocket()->local_endpoint().port() << std::endl;
-                //std::cout << "ENDPOINT Remote: " << pSocketInfo->getSocket()->remote_endpoint().port() << std::endl;
-                transport->mBoundOutputSockets[remoteLocator] = pSocketInfo;
-                //std::cout << transport->mBoundOutputSockets.size() << std::endl;
-                //std::cout << "MM ##################" << std::endl;
-            }
-            */
+            transport->BindSocket(remoteLocator, pSocketInfo);
         }
         break;
         case RETCODE_INVALID_PORT:
