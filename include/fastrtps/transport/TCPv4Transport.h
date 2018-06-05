@@ -112,7 +112,7 @@ public:
     bool IsOutputChannelConnected(const Locator_t&) const;
     void BindInputSocket(const Locator_t&, TCPSocketInfo*);
     void BindOutputChannel(const Locator_t&, SenderResource *senderResource = nullptr);
-    void UnbindInputSocket(TCPSocketInfo*);
+    void UnbindSocket(TCPSocketInfo*);
 
     //! Checks for TCPv4 kind.
     virtual bool IsLocatorSupported(const Locator_t&) const override;
