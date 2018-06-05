@@ -883,6 +883,10 @@ void TCPv4Transport::performListenOperation(TCPSocketInfo *pSocketInfo)
             receiver->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix,
                 &pSocketInfo->mLocator, &msg);
         }
+        else
+        {
+            logWarning(RTCP,"Received Message, but no MessageReceiver attached: " << logicalPort);
+        }
     }
 
     logInfo(RTCP, "End PerformListenOperation " << pSocketInfo->GetLocator());
@@ -948,7 +952,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         if (!IsOutputChannelConnected(remoteLocator) || sendBufferSize > mConfiguration_.sendBufferSize)
         {
-            logWarning(RTCP, " SEND [RTPS] Failed: Not connect. " << remoteLocator.get_logical_port());
+            logWarning(RTCP, "SEND [RTPS] Failed: Not connect: " << remoteLocator.get_logical_port());
             return false;
         }
 
@@ -959,6 +963,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         }
         else
         {
+            logWarning(RTCP, "SEND [RTPS] Failed: Not bound: " << remoteLocator.get_logical_port());
             return false;
         }
     }

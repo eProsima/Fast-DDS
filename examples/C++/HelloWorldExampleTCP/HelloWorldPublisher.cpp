@@ -54,23 +54,25 @@ bool HelloWorldPublisher::init()
     initial_peer_locator.kind = kind;
     initial_peer_locator.set_IP4_address("127.0.0.1");
     initial_peer_locator.set_port(5100);
-    initial_peer_locator.set_logical_port(7401);
-    PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
-    PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator);
+    //initial_peer_locator.set_logical_port(7401);
+    initial_peer_locator.set_logical_port(9999);
+    //PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher doesn't need initial_peer
+    PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator); // defaultOutLocatorList, just to don't init UDP
+    // TODO It would be better and option to avoid default UDP defaultOutLocatorList
 
     Locator_t unicast_locator;
     unicast_locator.kind = kind;
     unicast_locator.set_IP4_address("127.0.0.1");
     unicast_locator.set_port(5100);
     unicast_locator.set_logical_port(7410);
-    PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
+    PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Publisher's data channel
 
     Locator_t meta_locator;
     meta_locator.kind = kind;
     meta_locator.set_IP4_address("127.0.0.1");
     meta_locator.set_port(5100);
     meta_locator.set_logical_port(7402);
-    PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
+    PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);  // Publisher's meta channel 
 
     //PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
     //PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = false;
