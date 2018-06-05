@@ -206,12 +206,13 @@ TCPv4Transport::~TCPv4Transport()
         (*it) = nullptr;
     }
 
-    CleanDeletedSockets();
-
     if (mCleanSocketsPoolTimer != nullptr)
     {
+        mCleanSocketsPoolTimer->cancel_timer();
         delete mCleanSocketsPoolTimer;
     }
+
+    CleanDeletedSockets();
 
     if (ioServiceThread)
     {
