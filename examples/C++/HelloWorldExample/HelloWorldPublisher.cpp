@@ -113,7 +113,7 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
     }
     else
     {
-        for(uint32_t i = 0;i<samples && !stop;++i)
+        for(uint32_t i = 0;i<samples;++i)
         {
             if(!publish())
                 --i;
@@ -130,9 +130,16 @@ void HelloWorldPublisher::run(uint32_t samples, uint32_t sleep)
 {
     stop = false;
     std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep);
-    std::cout << "Publisher running. Please press enter to stop the Publisher at any time." << std::endl;
-    std::cin.ignore();
-    stop = true;
+    if (samples == 0)
+    {
+        std::cout << "Publisher running. Please press enter to stop the Publisher at any time." << std::endl;
+        std::cin.ignore();
+        stop = true;
+    }
+    else
+    {
+        std::cout << "Publisher running " << samples << " samples." << std::endl;
+    }
     thread.join();
 }
 
