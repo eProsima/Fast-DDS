@@ -47,11 +47,9 @@ public:
 #endif
 
     TCPAcceptor(asio::io_service& io_service, const Locator_t& locator, uint32_t maxMsgSize);
+    ~TCPAcceptor()    {    }
 
-    ~TCPAcceptor()
-    {
-    }
-
+    //! Method to start the accepting process.
     void Accept(TCPv4Transport* parent, asio::io_service&);
 };
 
@@ -64,7 +62,10 @@ public:
     TCPConnector(asio::io_service& io_service, Locator_t& locator);
     ~TCPConnector();
 
+    //! Method to start the connecting process with the endpoint set in the locator.
 	void Connect(TCPv4Transport* parent, SenderResource *senderResource);
+
+    //! Method to start the reconnection process.
 	void RetryConnect(asio::io_service& io_service, TCPv4Transport* parent, SenderResource *senderResource);
 };
 
@@ -247,34 +248,56 @@ protected:
     //! Cleans the sockets pending to delete.
     void CleanDeletedSockets();
 
+    //! Method to send the socket to the sender resource and avoid unnecessary searchs to send messages.
     void AssociateSenderToSocket(TCPSocketInfo*, SenderResource*) const;
+
+    //! Checks if the socket of the given locator has been opened as an input socket.
     bool IsTCPInputSocket(const Locator_t& locator, SenderResource *senderResource) const;
+
+    //! Checks if the given ip has been included in the white list to use it.
     bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
 
-    bool OpenAndBindOutputSockets(Locator_t& locator, SenderResource *senderResource);
-    void OpenAndBindUnicastOutputSocket(Locator_t& locator, SenderResource *senderResource);
+    //! Intermediate method to open an output socket.
+    bool OpenOutputSockets(Locator_t& locator, SenderResource *senderResource);
+
+    //! Creates a TCP acceptor to wait for incomming connections by the given locator.
+    bool CreateAcceptorSocket(const Locator_t& locator, uint32_t maxMsgSize);
+
+    //! Method to create a TCP connector to establish a socket with the given locator.
+    void CreateConnectorSocket(Locator_t& locator, SenderResource *senderResource);
+
+    //! Adds the logical port of the given locator to send an Open Logical Port request.
     bool EnqueueLogicalOutputPort(Locator_t& locator);
 
-    bool OpenAndBindInputSockets(const Locator_t& locator, uint32_t maxMsgSize);
+    //! Closes the given socketInfo and unbind it from every resource.
     void CloseTCPSocket(TCPSocketInfo* socketInfo);
+
+    //! Closes and removes the given socket from the input socket lists.
     void CloseInputSocket(TCPSocketInfo* socketInfo);
+
+    //! Closes the physical socket and mark it to be deleted.
     void ReleaseTCPSocket(TCPSocketInfo* socketInfo);
+
+    /** Associates the given socketInfo with the registered ReceiverResources with the given locator.
+    * This relationship is used to root the incomming messages to the related Receivers. 
+    */
     void RegisterReceiverResources(TCPSocketInfo* socketInfo, const Locator_t& locator);
 
-    // Functions to be called from new threads, which takes cares of performing a blocking receive
+    //! Functions to be called from new threads, which takes cares of performing a blocking receive
     void performListenOperation(TCPSocketInfo* pSocketInfo);
     void performRTPCManagementThread(TCPSocketInfo* pSocketInfo);
 
     bool ReadBody(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t* bytes_received,
         TCPSocketInfo* pSocketInfo, std::size_t body_size);
 
+    //! Sends the given buffer by the given socket.
     bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
         TCPSocketInfo* socket);
 
     size_t Send(TCPSocketInfo* socketInfo, const octet* data, size_t size, eSocketErrorCodes &error) const;
     size_t Send(TCPSocketInfo* socketInfo, const octet* data, size_t size) const;
 
-    // data must contain full RTCP message without the TCPHeader
+    //! Methods to manage the TCP headers and their CRC values.
     bool CheckCRC(const TCPHeader &header, const octet *data, uint32_t size);
     void CalculateCRC(TCPHeader &header, const octet *data, uint32_t size);
     void FillTCPHeader(TCPHeader& header, const octet* sendBuffer, uint32_t sendBufferSize, uint16_t logicalPort);
