@@ -459,7 +459,7 @@ bool TCPv4Transport::OpenOutputChannel(Locator_t& locator, SenderResource* sende
             {
                 if (!IsOutputChannelOpen(locator))
                 {
-                    success = OpenAndBindOutputSockets(locator, senderResource);
+                    success = OpenOutputSockets(locator, senderResource);
                 }
                 else
                 {
@@ -524,7 +524,7 @@ bool TCPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource
                 success = true;
                 if (!IsInputSocketOpen(locator))
                 {
-                    success = OpenAndBindInputSockets(locator, maxMsgSize);
+                    success = CreateAcceptorSocket(locator, maxMsgSize);
                 }
             }
             else
@@ -729,13 +729,13 @@ bool TCPv4Transport::EnqueueLogicalOutputPort(Locator_t& locator)
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
     {
-        if ((*it)->GetLocator().compare_IP4_address_and_port(locator)
-                && std::find((*it)->mLogicalOutputPorts.begin(),
-            (*it)->mLogicalOutputPorts.end(), locator.get_logical_port())
-                == (*it)->mLogicalOutputPorts.end()
-            && std::find((*it)->mPendingLogicalOutputPorts.begin(),
-            (*it)->mPendingLogicalOutputPorts.end(), locator.get_logical_port())
-                == (*it)->mPendingLogicalOutputPorts.end())
+        // Checks that the given logical port matches with the IP and port,
+        // and checks that the logical port ins't opened or pending to open.
+        if ((*it)->GetLocator().compare_IP4_address_and_port(locator) &&
+            std::find((*it)->mLogicalOutputPorts.begin(), (*it)->mLogicalOutputPorts.end(),
+                locator.get_logical_port()) == (*it)->mLogicalOutputPorts.end() &&
+            std::find((*it)->mPendingLogicalOutputPorts.begin(), (*it)->mPendingLogicalOutputPorts.end(),
+                locator.get_logical_port()) == (*it)->mPendingLogicalOutputPorts.end())
         {
             (*it)->mPendingLogicalOutputPorts.push_back(locator.get_logical_port());
             return true;
@@ -744,16 +744,15 @@ bool TCPv4Transport::EnqueueLogicalOutputPort(Locator_t& locator)
     return false;
 }
 
-bool TCPv4Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource *senderResource)
+bool TCPv4Transport::OpenOutputSockets(Locator_t& locator, SenderResource *senderResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     try
     {
-        locator.set_IP4_WAN_address(mConfiguration_.wan_addr[0],
-                                    mConfiguration_.wan_addr[1],
-                                    mConfiguration_.wan_addr[2],
-                                    mConfiguration_.wan_addr[3]);
-        OpenAndBindUnicastOutputSocket(locator, senderResource);
+        locator.set_IP4_WAN_address(mConfiguration_.wan_addr[0], mConfiguration_.wan_addr[1],
+            mConfiguration_.wan_addr[2], mConfiguration_.wan_addr[3]);
+
+        CreateConnectorSocket(locator, senderResource);
     }
     catch (asio::system_error const& e)
     {
@@ -766,7 +765,7 @@ bool TCPv4Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource
     return true;
 }
 
-bool TCPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, uint32_t maxMsgSize)
+bool TCPv4Transport::CreateAcceptorSocket(const Locator_t& locator, uint32_t maxMsgSize)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     try
@@ -873,7 +872,7 @@ void TCPv4Transport::performListenOperation(TCPSocketInfo *pSocketInfo)
     logInfo(RTCP, "End PerformListenOperation " << pSocketInfo->GetLocator());
 }
 
-void TCPv4Transport::OpenAndBindUnicastOutputSocket(Locator_t& locator, SenderResource *senderResource)
+void TCPv4Transport::CreateConnectorSocket(Locator_t& locator, SenderResource *senderResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     asio::ip::address_v4 ip = asio::ip::make_address_v4(locator.to_IP4_string());
@@ -1172,7 +1171,7 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer, uint32_t sendBuf
         CloseOutputChannel(socket->GetLocator());
 
         // Create a new connector to retry the connection.
-        OpenAndBindUnicastOutputSocket(prevLocator, nullptr);
+        CreateConnectorSocket(prevLocator, nullptr);
         break;
     }
 
@@ -1282,8 +1281,8 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
         {
             // Store the new connection.
             eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(std::move(socket));
-            TCPSocketInfo *socketInfo = new TCPSocketInfo(unicastSocket,
-                acceptor->mLocator, false, true, acceptor->mMaxMsgSize);
+            TCPSocketInfo *socketInfo = new TCPSocketInfo(unicastSocket, acceptor->mLocator, false, true,
+                acceptor->mMaxMsgSize);
             socketInfo->ChangeStatus(TCPSocketInfo::eConnectionStatus::eWaitingForBind);
             RegisterReceiverResources(socketInfo, acceptor->mLocator);
 
@@ -1298,7 +1297,9 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             socketInfo->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, socketInfo));
 
             mInputSockets[acceptor->mLocator.get_physical_port()].emplace_back(socketInfo);
-            logInfo(RTCP, " Accepted connection (physical local: " << acceptor->mLocator.get_physical_port() << ", remote: " << socketInfo->getSocket()->remote_endpoint().port() <<  ") IP: " << socketInfo->getSocket()->remote_endpoint().address());
+            logInfo(RTCP, " Accepted connection (physical local: " << acceptor->mLocator.get_physical_port()
+                << ", remote: " << socketInfo->getSocket()->remote_endpoint().port()
+                <<  ") IP: " << socketInfo->getSocket()->remote_endpoint().address());
         }
         else
         {
@@ -1442,7 +1443,7 @@ void TCPv4Transport::CloseTCPSocket(TCPSocketInfo *socketInfo)
             CloseOutputChannel(prevLocator);
 
             // Create a new connector to retry the connection.
-            OpenAndBindUnicastOutputSocket(prevLocator, nullptr);
+            CreateConnectorSocket(prevLocator, nullptr);
         }
     }
 }
