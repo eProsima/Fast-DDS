@@ -58,7 +58,7 @@ public:
 	int n_received;
 	bool init(int n_sub,int n_sam);
 	void run();
-	void analizeTimes(uint32_t datasize);
+	void analyzeTimes(uint32_t datasize);
 	bool test(uint32_t datasize);
 	void printStat(TimeStats& TS);
 	class DataPubListener : public PublisherListener

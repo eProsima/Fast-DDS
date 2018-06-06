@@ -70,7 +70,7 @@ class LatencyTestPublisher {
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data);
         void run();
-        void analizeTimes(uint32_t datasize);
+        void analyzeTimes(uint32_t datasize);
         bool test(uint32_t datasize);
         void printStat(TimeStats& TS);
 

@@ -45,7 +45,7 @@ public:
 	virtual ~ZeroMQPublisher();
 	bool init(std::vector<std::string>subIP,int n_samples=1000);
 	void run();
-	void analizeTimes(uint32_t datasize);
+	void analyzeTimes(uint32_t datasize);
 	bool test(uint32_t datasize);
 	void printStat(TimeStats& TS);
 	std::vector<double> m_times;

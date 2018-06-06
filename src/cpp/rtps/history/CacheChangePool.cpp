@@ -44,8 +44,6 @@ CacheChangePool::~CacheChangePool()
 
 CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size, MemoryManagementPolicy_t memoryPolicy) : mp_mutex(new std::mutex()), memoryMode(memoryPolicy)
 {
-    std::lock_guard<std::mutex> guard(*this->mp_mutex);
-
     //Common for all modes: Set the payload size (maximum allowed), size and size limit
     ++pool_size;
     logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<< pool_size << " with payload of size: " << payload_size);

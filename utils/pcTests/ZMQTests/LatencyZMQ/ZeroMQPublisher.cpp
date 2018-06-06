@@ -150,14 +150,14 @@ bool ZeroMQPublisher::test(uint32_t datasize)
 	m_clock.setTimeNow(&m_t2);
 	m_times.push_back(TimeConv::Time_t2MicroSecondsDouble(m_t2)
 	-TimeConv::Time_t2MicroSecondsDouble(m_t1)-m_overhead);
-	analizeTimes(datasize);
+	analyzeTimes(datasize);
 	printStat(m_stats.back());
 
 	return true;
 }
 
 
-void ZeroMQPublisher::analizeTimes(uint32_t datasize)
+void ZeroMQPublisher::analyzeTimes(uint32_t datasize)
 {
 	TimeStats TS;
 	TS.nbytes = datasize+4;
@@ -214,12 +214,12 @@ bool ZeroMQPublisher::test(uint32_t datasize)
 			m_times.push_back(time);
 
 	}
-	analizeTimes(datasize);
+	analyzeTimes(datasize);
 	printStat(m_stats.back());
 
 	return true;
 }
-void ZeroMQPublisher::analizeTimes(uint32_t datasize)
+void ZeroMQPublisher::analyzeTimes(uint32_t datasize)
 {
 	TimeStats TS;
 	TS.nbytes = datasize+4;
