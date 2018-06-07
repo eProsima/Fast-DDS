@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef RTPS_SOCKET_INFO_
-#define RTPS_SOCKET_INFO_
+#ifndef CHANNEL_RESOURCE_INFO_
+#define CHANNEL_RESOURCE_INFO_
 
 #include <asio.hpp>
 #include <memory>
@@ -109,13 +109,13 @@ namespace rtps{
     }
 #endif
 
-class SocketInfo
+class ChannelResource
 {
 public:
-    SocketInfo();
-    SocketInfo(SocketInfo&& socketInfo);
-    SocketInfo(uint32_t rec_buffer_size);
-    virtual ~SocketInfo();
+    ChannelResource();
+    ChannelResource(ChannelResource&& channelResource);
+    ChannelResource(uint32_t rec_buffer_size);
+    virtual ~ChannelResource();
 
     inline void SetThread(std::thread* pThread)
     {
@@ -150,17 +150,17 @@ protected:
     std::thread* mThread;
 };
 
-class UDPSocketInfo : public SocketInfo
+class UDPChannelResource : public ChannelResource
 {
 public:
-    UDPSocketInfo(eProsimaUDPSocket& socket);
-    UDPSocketInfo(eProsimaUDPSocket& socket, uint32_t maxMsgSize);
-    UDPSocketInfo(UDPSocketInfo&& socketInfo);
-    virtual ~UDPSocketInfo();
+    UDPChannelResource(eProsimaUDPSocket& socket);
+    UDPChannelResource(eProsimaUDPSocket& socket, uint32_t maxMsgSize);
+    UDPChannelResource(UDPChannelResource&& channelResource);
+    virtual ~UDPChannelResource();
 
-    UDPSocketInfo& operator=(UDPSocketInfo&& socketInfo)
+    UDPChannelResource& operator=(UDPChannelResource&& channelResource)
     {
-        socket_ = moveSocket(socketInfo.socket_);
+        socket_ = moveSocket(channelResource.socket_);
         return *this;
     }
 
@@ -203,11 +203,11 @@ private:
     MessageReceiver* mMsgReceiver; //Associated Readers/Writers inside of MessageReceiver
     eProsimaUDPSocket socket_;
     bool only_multicast_purpose_;
-    UDPSocketInfo(const UDPSocketInfo&) = delete;
-    UDPSocketInfo& operator=(const UDPSocketInfo&) = delete;
+    UDPChannelResource(const UDPChannelResource&) = delete;
+    UDPChannelResource& operator=(const UDPChannelResource&) = delete;
 };
 
-class TCPSocketInfo : public SocketInfo
+class TCPChannelResource : public ChannelResource
 {
 enum eConnectionStatus
 {
@@ -220,27 +220,27 @@ enum eConnectionStatus
 };
 
 public:
-    TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket);
+    TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket);
 
-    TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket,
+    TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket,
         uint32_t maxMsgSize);
 /*
-    TCPSocketInfo(TCPSocketInfo&& socketInfo);
+    TCPChannelResource(TCPChannelResource&& channelResource);
 */
-    virtual ~TCPSocketInfo();
+    virtual ~TCPChannelResource();
 
 /*
-    TCPSocketInfo& operator=(TCPSocketInfo&& socketInfo)
+    TCPChannelResource& operator=(TCPChannelResource&& channelResource)
     {
-        mSocket = moveSocket(socketInfo.mSocket);
+        mSocket = moveSocket(channelResource.mSocket);
         std::cout << "############ MOVE ASSIGN ###########" << std::endl;
         return *this;
     }
 */
 
-    bool operator==(const TCPSocketInfo& socketInfo) const
+    bool operator==(const TCPChannelResource& channelResource) const
     {
-        return &mSocket == &(socketInfo.mSocket);
+        return &mSocket == &(channelResource.mSocket);
     }
 
 #if defined(ASIO_HAS_MOVE)
@@ -322,8 +322,8 @@ private:
     eProsimaTCPSocket mSocket;
     eConnectionStatus mConnectionStatus;
 
-    TCPSocketInfo(const TCPSocketInfo&) = delete;
-    TCPSocketInfo& operator=(const TCPSocketInfo&) = delete;
+    TCPChannelResource(const TCPChannelResource&) = delete;
+    TCPChannelResource& operator=(const TCPChannelResource&) = delete;
 };
 
 
@@ -331,4 +331,4 @@ private:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // RTPS_TCP_PORT_MANAGER_
+#endif // CHANNEL_RESOURCE_INFO_

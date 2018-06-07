@@ -19,7 +19,7 @@
 #include <thread>
 
 #include "TransportInterface.h"
-#include "SocketInfo.h"
+#include "ChannelResource.h"
 #include "UDPv6TransportDescriptor.h"
 #include "../utils/IPFinder.h"
 
@@ -118,7 +118,7 @@ public:
                      const Locator_t& remoteLocator) override;
 
    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
-                        const Locator_t& remoteLocator, SocketInfo* pSocketInfo) override;
+                        const Locator_t& remoteLocator, ChannelResource* pChannelResource) override;
    /**
     * Blocking Receive from the specified channel.
     * @param receiveBuffer vector with enough capacity (not size) to accomodate a full receive buffer. That
@@ -127,7 +127,7 @@ public:
     * @param[out] remoteLocator Locator describing the remote restination we received a packet from.
     */
    bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-       SocketInfo* socketInfo, Locator_t& remoteLocator);
+       ChannelResource* pChannelResource, Locator_t& remoteLocator);
 
    virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
 
@@ -153,7 +153,7 @@ private:
    mutable std::recursive_mutex mInputMapMutex;
 
    //! The notion of output channel corresponds to a port.
-   std::map<uint16_t, std::vector<UDPSocketInfo*> > mOutputSockets;
+   std::map<uint16_t, std::vector<UDPChannelResource*> > mOutputSockets;
 
    std::vector<IPFinder::info_IP> currentInterfaces;
 
@@ -161,7 +161,7 @@ private:
    struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
                         {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
    //! For both modes, an input channel corresponds to a port.
-   std::map<uint16_t, UDPSocketInfo*> mInputSockets;
+   std::map<uint16_t, UDPChannelResource*> mInputSockets;
 
    bool IsInterfaceAllowed(const asio::ip::address_v6& ip);
    std::vector<asio::ip::address_v6> mInterfaceWhiteList;
@@ -174,13 +174,13 @@ private:
    eProsimaUDPSocket OpenAndBindUnicastOutputSocket(const asio::ip::address_v6&, uint16_t& port);
    eProsimaUDPSocket OpenAndBindInputSocket(uint16_t port, bool is_multicast);
 
-   void performListenOperation(UDPSocketInfo* pSocketInfo, Locator_t input_locator);
+   void performListenOperation(UDPChannelResource* pChannelResource, Locator_t input_locator);
 
    bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
        eProsimaUDPSocketRef socket);
 
-    mutable std::map<UDPSocketInfo*, std::vector<SenderResource*>> mSocketToSenders;
-    void AssociateSenderToSocket(UDPSocketInfo*, SenderResource*) const;
+    mutable std::map<UDPChannelResource*, std::vector<SenderResource*>> mSocketToSenders;
+    void AssociateSenderToSocket(UDPChannelResource*, SenderResource*) const;
 };
 
 } // namespace rtps

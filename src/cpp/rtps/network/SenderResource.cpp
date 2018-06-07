@@ -21,7 +21,7 @@ namespace fastrtps{
 namespace rtps{
 
 SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator)
-: m_pSocketInfo(nullptr)
+: m_pChannelResource(nullptr)
 {
     // Internal channel is opened and assigned to this resource.
     mValid = transport.OpenOutputChannel(locator, this);
@@ -34,7 +34,7 @@ SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator
     Cleanup = [&transport, locator, this]()
         {
             transport.CloseOutputChannel(locator);
-            this->m_pSocketInfo = nullptr;
+            this->m_pChannelResource = nullptr;
         };
 
     AddSenderLocatorToManagedChannel = [&transport, this](Locator_t& destination)->bool
@@ -44,15 +44,15 @@ SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator
 
     SendThroughAssociatedChannel =
         [&transport, locator, this]
-        (const octet* data, uint32_t dataSize, const Locator_t& destination, SocketInfo* socketInfo)-> bool
+        (const octet* data, uint32_t dataSize, const Locator_t& destination, ChannelResource* pChannelResource)-> bool
         {
-            if (socketInfo == nullptr)
+            if (pChannelResource == nullptr)
             {
                 return transport.Send(data, dataSize, locator, destination);
             }
             else
             {
-                return transport.Send(data, dataSize, locator, destination, socketInfo);
+                return transport.Send(data, dataSize, locator, destination, pChannelResource);
             }
         };
     LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
@@ -79,7 +79,7 @@ bool SenderResource::Send(const octet* data, uint32_t dataLength, const Locator_
 {
     if (SendThroughAssociatedChannel)
     {
-        return SendThroughAssociatedChannel(data, dataLength, destinationLocator, this->m_pSocketInfo);
+        return SendThroughAssociatedChannel(data, dataLength, destinationLocator, this->m_pChannelResource);
     }
     return false;
 }
@@ -92,8 +92,8 @@ SenderResource::SenderResource(SenderResource&& rValueResource)
     SendThroughAssociatedChannel.swap(rValueResource.SendThroughAssociatedChannel);
     LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
     ManagedChannelMapsToRemote.swap(rValueResource.ManagedChannelMapsToRemote);
-    m_pSocketInfo = rValueResource.m_pSocketInfo;
-    rValueResource.m_pSocketInfo = nullptr;
+    m_pChannelResource = rValueResource.m_pChannelResource;
+    rValueResource.m_pChannelResource = nullptr;
 }
 
 bool SenderResource::SupportsLocator(const Locator_t& local)

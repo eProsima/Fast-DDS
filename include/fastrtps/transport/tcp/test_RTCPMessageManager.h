@@ -42,7 +42,7 @@ public:
     void SetInvalidTransactionPercentage(uint8_t value) { mInvalidTransactionPercentage = value; }
     void SetLogicalPortsBlocked(std::vector<uint16_t> list) { mLogicalPortsBlocked = list; }
 
-    void processOpenLogicalPortRequest(TCPSocketInfo *pSocketInfo,
+    void processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
         const OpenLogicalPortRequest_t &request, const TCPTransactionId &transactionId);
 
 protected:

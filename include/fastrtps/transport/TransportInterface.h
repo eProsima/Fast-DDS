@@ -32,7 +32,7 @@ static const uint8_t s_defaultTTL = 1;
 struct TransportDescriptorInterface;
 class ReceiverResource;
 class SenderResource;
-class SocketInfo;
+class ChannelResource;
 
 /**
  * Interface against which to implement a transport layer, decoupled from FastRTPS internals.
@@ -114,9 +114,9 @@ public:
    */
    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator) = 0;
 
-   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, SocketInfo* pSocketInfo) = 0;
+   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, ChannelResource* pChannelResource) = 0;
 
-   //virtual SocketInfo* FindSocket(const Locator_t& remoteLocator) = 0;
+   //virtual ChannelResource* FindSocket(const Locator_t& remoteLocator) = 0;
 
    virtual void SetParticipantGUIDPrefix(const GuidPrefix_t& prefix) = 0;
 
