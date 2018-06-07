@@ -208,7 +208,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource
     {
         // The multicast group will be joined silently, because we do not
         // want to return another resource.
-        auto& socketInfo = mInputSockets.at(locator.get_physical_port());
+        auto& channelResource = mInputSockets.at(locator.get_physical_port());
 
         std::vector<IPFinder::info_IP> locNames;
         GetIP4sUniqueInterfaces(locNames, true);
@@ -217,7 +217,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource
             auto ip = asio::ip::address_v4::from_string(infoIP.name);
             try
             {
-                socketInfo->getSocket()->set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string()), ip));
+                channelResource->getSocket()->set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string()), ip));
             }
             catch(std::system_error& ex)
             {
@@ -248,7 +248,7 @@ bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
             auto& senders = mSocketToSenders.at(socket);
             for (auto& sender : senders)
             {
-                sender->SetSocketInfo(nullptr);
+                sender->SetChannelResource(nullptr);
             }
         }
 
@@ -263,21 +263,21 @@ bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
 
 bool UDPv4Transport::CloseInputChannel(const Locator_t& locator)
 {
-    UDPSocketInfo* socketInfo = nullptr;
+    UDPChannelResource* pChannelResource = nullptr;
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
         if (!IsInputChannelOpen(locator))
             return false;
 
-        socketInfo = mInputSockets.at(locator.get_physical_port());
-        socketInfo->getSocket()->cancel();
-        socketInfo->getSocket()->close();
+        pChannelResource = mInputSockets.at(locator.get_physical_port());
+        pChannelResource->getSocket()->cancel();
+        pChannelResource->getSocket()->close();
         mInputSockets.erase(locator.get_physical_port());
     }
 
-    if (socketInfo != nullptr)
+    if (pChannelResource != nullptr)
     {
-        delete socketInfo;
+        delete pChannelResource;
     }
 
     return true;
@@ -344,7 +344,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderRe
                 getSocketPtr(unicastSocket)->set_option(
                     ip::multicast::outbound_interface(asio::ip::address_v4::from_string((*locIt).name)));
 
-                mOutputSockets[locator.get_physical_port()].push_back(new UDPSocketInfo(unicastSocket));
+                mOutputSockets[locator.get_physical_port()].push_back(new UDPChannelResource(unicastSocket));
 
                 // Create other socket for outbounding rest of interfaces.
                 for(++locIt; locIt != locNames.end(); ++locIt)
@@ -353,7 +353,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderRe
                     uint16_t new_port = 0;
                     eProsimaUDPSocket multicastSocket = OpenAndBindUnicastOutputSocket(ip, new_port);
                     getSocketPtr(multicastSocket)->set_option(ip::multicast::outbound_interface(ip));
-                    UDPSocketInfo* mSocket = new UDPSocketInfo(multicastSocket);
+                    UDPChannelResource* mSocket = new UDPChannelResource(multicastSocket);
                     mSocket->only_multicast_purpose(true);
                     mOutputSockets[locator.get_physical_port()].push_back(mSocket);
                     // senderResource cannot be optimize in this cases
@@ -362,11 +362,11 @@ bool UDPv4Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderRe
             else
             {
                 // Multicast data will be sent for the only one interface.
-                UDPSocketInfo *mSocket = new UDPSocketInfo(unicastSocket);
+                UDPChannelResource *mSocket = new UDPChannelResource(unicastSocket);
                 mOutputSockets[locator.get_physical_port()].push_back(mSocket);
                 if (senderResource != nullptr)
                 {
-                    senderResource->SetSocketInfo(mSocket);
+                    senderResource->SetChannelResource(mSocket);
                     AssociateSenderToSocket(mSocket, senderResource);
                 }
             }
@@ -387,7 +387,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderRe
                         firstInterface = true;
                     }
 
-                    mOutputSockets[locator.get_physical_port()].push_back(new UDPSocketInfo(unicastSocket));
+                    mOutputSockets[locator.get_physical_port()].push_back(new UDPChannelResource(unicastSocket));
                     // senderResource cannot be optimized in this cases
                 }
             }
@@ -408,7 +408,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderRe
                     auto& senders = mSocketToSenders.at(socket);
                     for (auto& sender : senders)
                     {
-                        sender->SetSocketInfo(nullptr);
+                        sender->SetChannelResource(nullptr);
                     }
                 }
 
@@ -429,11 +429,11 @@ bool UDPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverR
     try
     {
         eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(locator.get_physical_port(), is_multicast);
-        UDPSocketInfo* socketInfo = new UDPSocketInfo(unicastSocket, maxMsgSize);
-        socketInfo->SetMessageReceiver(receiverResource->CreateMessageReceiver());
-        std::thread* newThread = new std::thread(&UDPv4Transport::performListenOperation, this, socketInfo, locator);
-        socketInfo->SetThread(newThread);
-        mInputSockets.emplace(locator.get_physical_port(), socketInfo);
+        UDPChannelResource* pChannelResource = new UDPChannelResource(unicastSocket, maxMsgSize);
+        pChannelResource->SetMessageReceiver(receiverResource->CreateMessageReceiver());
+        std::thread* newThread = new std::thread(&UDPv4Transport::performListenOperation, this, pChannelResource, locator);
+        pChannelResource->SetThread(newThread);
+        mInputSockets.emplace(locator.get_physical_port(), pChannelResource);
     }
     catch (asio::system_error const& e)
     {
@@ -446,20 +446,20 @@ bool UDPv4Transport::OpenAndBindInputSockets(const Locator_t& locator, ReceiverR
     return true;
 }
 
-void UDPv4Transport::performListenOperation(UDPSocketInfo* pSocketInfo, Locator_t input_locator)
+void UDPv4Transport::performListenOperation(UDPChannelResource* pChannelResource, Locator_t input_locator)
 {
     Locator_t remoteLocator;
-    while (pSocketInfo->IsAlive())
+    while (pChannelResource->IsAlive())
     {
         // Blocking receive.
-        auto msg = pSocketInfo->GetMessageBuffer();
+        auto msg = pChannelResource->GetMessageBuffer();
         CDRMessage::initCDRMsg(&msg);
-        if (!Receive(msg.buffer, msg.max_size, msg.length, pSocketInfo, remoteLocator))
+        if (!Receive(msg.buffer, msg.max_size, msg.length, pChannelResource, remoteLocator))
             continue;
 
         // Processes the data through the CDR Message interface.
         logWarning(RTPS_MSG_OUT, "RECEIVED MSG FROM: " << remoteLocator.get_connection_id());
-        pSocketInfo->GetMessageReceiver()->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix, &input_locator,
+        pChannelResource->GetMessageReceiver()->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix, &input_locator,
             &msg);
     }
 }
@@ -539,9 +539,9 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     return success;
 }
 
-bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& /*localLocator*/, const Locator_t& remoteLocator, SocketInfo *socketInfo)
+bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& /*localLocator*/, const Locator_t& remoteLocator, ChannelResource *pChannelResource)
 {
-    UDPSocketInfo *udpSocket = dynamic_cast<UDPSocketInfo*>(socketInfo);
+    UDPChannelResource *udpSocket = dynamic_cast<UDPChannelResource*>(pChannelResource);
     return SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(udpSocket->getSocket()));
 }
 
@@ -554,9 +554,9 @@ static void EndpointToLocator(ip::udp::endpoint& endpoint, Locator_t& locator)
 }
 
 bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-    SocketInfo* socketInfo, Locator_t& remoteLocator)
+    ChannelResource* pChannelResource, Locator_t& remoteLocator)
 {
-    if (!socketInfo->IsAlive())
+    if (!pChannelResource->IsAlive())
         return false;
 
     ip::udp::endpoint senderEndpoint;
@@ -564,7 +564,7 @@ bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 
     { // lock scope
         std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-        if (!socketInfo->IsAlive())
+        if (!pChannelResource->IsAlive())
             return false;
 
         socket = &mInputSockets.at(localLocator.port);
@@ -776,7 +776,7 @@ void UDPv4Transport::AddDefaultOutputLocator(LocatorList_t &defaultList)
     defaultList.push_back(Locator_t(LOCATOR_KIND_UDPv4, "239.255.0.1", mConfiguration_.m_output_upd_socket));
 }
 
-void UDPv4Transport::AssociateSenderToSocket(UDPSocketInfo *socket, SenderResource *sender) const
+void UDPv4Transport::AssociateSenderToSocket(UDPChannelResource *socket, SenderResource *sender) const
 {
     auto it = mSocketToSenders.find(socket);
     if (it == mSocketToSenders.end())

@@ -93,7 +93,7 @@ bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
     }
 }
 
-bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, SocketInfo *socketInfo)
+bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, ChannelResource *pChannelResource)
 {
     if (PacketShouldDrop(sendBuffer, sendBufferSize))
     {
@@ -105,13 +105,13 @@ bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
         if (CloseSocketConnection)
         {
             CloseSocketConnection = false;
-            socketInfo->Disable();
+            pChannelResource->Disable();
             CloseOutputChannel(localLocator);
             return true;
         }
         else
         {
-            return TCPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, socketInfo);
+            return TCPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, pChannelResource);
         }
     }
 }

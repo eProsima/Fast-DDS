@@ -33,7 +33,7 @@ namespace rtps{
 class TCPv4Transport;
 class RTCPMessageManager;
 class CleanTCPSocketsEvent;
-class TCPSocketInfo;
+class TCPChannelResource;
 
 class TCPAcceptor
 {
@@ -112,13 +112,13 @@ public:
     bool IsOutputChannelConnected(const Locator_t&) const;
 
     //! Stores the binding between the given locator and the given TCP socket.
-    void BindSocket(const Locator_t&, TCPSocketInfo*);
+    void BindSocket(const Locator_t&, TCPChannelResource*);
 
     //! Binds the output channel given by the locator to the sender resource.
     void BindOutputChannel(const Locator_t&, SenderResource *senderResource = nullptr);
 
     //! Unbind the given socket from every registered locator.
-    void UnbindSocket(TCPSocketInfo*);
+    void UnbindSocket(TCPChannelResource*);
 
     //! Checks for TCPv4 kind.
     virtual bool IsLocatorSupported(const Locator_t&) const override;
@@ -171,21 +171,21 @@ public:
     * It must not exceed the sendBufferSize fed to this class during construction.
     * @param localLocator Locator mapping to the channel we're sending from.
     * @param remoteLocator Locator describing the remote destination we're sending to.
-    * @param pSocketInfo Pointer to the socket to send the message.
+    * @param pChannelResource Pointer to the socket to send the message.
     */
     virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
-        const Locator_t& remoteLocator, SocketInfo* pSocketInfo) override;
+        const Locator_t& remoteLocator, ChannelResource* pChannelResource) override;
 
     /**
     * Blocking Receive from the specified channel.
-    * @param socketInfo pointer to the socket where the method is going to read the messages.
+    * @param pChannelResource pointer to the socket where the method is going to read the messages.
     * @param receiveBuffer vector with enough capacity (not size) to accomodate a full receive buffer. That
     * capacity must not be less than the receiveBufferSize supplied to this class during construction.
     * @param receiveBufferCapacity maximum size of the buffer.
     * @param[out] receiveBufferSize Size of the packet received.
     * @param[out] logicalPort associated to the packet.
     */
-    bool Receive(TCPSocketInfo* socketInfo, octet* receiveBuffer, uint32_t receiveBufferCapacity,
+    bool Receive(TCPChannelResource* pChannelResource, octet* receiveBuffer, uint32_t receiveBufferCapacity,
         uint32_t& receiveBufferSize, uint16_t& logicalPort);
 
     virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
@@ -226,20 +226,20 @@ protected:
     std::vector<IPFinder::info_IP> mCurrentInterfaces;
     std::vector<asio::ip::address_v4> mInterfaceWhiteList;
 
-    std::vector<TCPSocketInfo*> mDeletedSocketsPool;
+    std::vector<TCPChannelResource*> mDeletedSocketsPool;
     std::recursive_mutex mDeletedSocketsPoolMutex;
     CleanTCPSocketsEvent* mCleanSocketsPoolTimer;
 
     mutable std::recursive_mutex mSocketsMapMutex;
     std::map<uint16_t, TCPAcceptor*> mSocketAcceptors; // The Key is the "Physical Port"
-    std::map<uint16_t, std::vector<TCPSocketInfo*>> mInputSockets; // The Key is the "Physical Port"
+    std::map<uint16_t, std::vector<TCPChannelResource*>> mInputSockets; // The Key is the "Physical Port"
     std::map<Locator_t, ReceiverResource*> mReceiverResources;
 
     std::vector<Locator_t> mPendingOutputPorts;
     std::map<Locator_t, TCPConnector*> mSocketConnectors;
-    std::vector<TCPSocketInfo*> mOutputSockets;
-    std::map<Locator_t, std::vector<TCPSocketInfo*>> mBoundOutputSockets;
-    mutable std::map<TCPSocketInfo*, std::vector<SenderResource*>> mSocketToSenders;
+    std::vector<TCPChannelResource*> mOutputSockets;
+    std::map<Locator_t, std::vector<TCPChannelResource*>> mBoundOutputSockets;
+    mutable std::map<TCPChannelResource*, std::vector<SenderResource*>> mSocketToSenders;
 
     //! Constructor with no descriptor is necessary for implementations derived from this class.
     TCPv4Transport();
@@ -248,7 +248,7 @@ protected:
     void CleanDeletedSockets();
 
     //! Method to send the socket to the sender resource and avoid unnecessary searchs to send messages.
-    void AssociateSenderToSocket(TCPSocketInfo*, SenderResource*) const;
+    void AssociateSenderToSocket(TCPChannelResource*, SenderResource*) const;
 
     //! Checks if the socket of the given locator has been opened as an input socket.
     bool IsTCPInputSocket(const Locator_t& locator, SenderResource *senderResource) const;
@@ -268,33 +268,33 @@ protected:
     //! Adds the logical port of the given locator to send an Open Logical Port request.
     bool EnqueueLogicalOutputPort(const Locator_t& locator);
 
-    //! Closes the given socketInfo and unbind it from every resource.
-    void CloseTCPSocket(TCPSocketInfo* socketInfo);
+    //! Closes the given pChannelResource and unbind it from every resource.
+    void CloseTCPSocket(TCPChannelResource* pChannelResource);
 
     //! Closes and removes the given socket from the input socket lists.
-    void CloseInputSocket(TCPSocketInfo* socketInfo);
+    void CloseInputSocket(TCPChannelResource* pChannelResource);
 
     //! Closes the physical socket and mark it to be deleted.
-    void ReleaseTCPSocket(TCPSocketInfo* socketInfo);
+    void ReleaseTCPSocket(TCPChannelResource* pChannelResource);
 
-    /** Associates the given socketInfo with the registered ReceiverResources with the given locator.
+    /** Associates the given pChannelResource with the registered ReceiverResources with the given locator.
     * This relationship is used to root the incomming messages to the related Receivers.
     */
-    void RegisterReceiverResources(TCPSocketInfo* socketInfo, const Locator_t& locator);
+    void RegisterReceiverResources(TCPChannelResource* pChannelResource, const Locator_t& locator);
 
     //! Functions to be called from new threads, which takes cares of performing a blocking receive
-    void performListenOperation(TCPSocketInfo* pSocketInfo);
-    void performRTPCManagementThread(TCPSocketInfo* pSocketInfo);
+    void performListenOperation(TCPChannelResource* pChannelResource);
+    void performRTPCManagementThread(TCPChannelResource* pChannelResource);
 
     bool ReadBody(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t* bytes_received,
-        TCPSocketInfo* pSocketInfo, std::size_t body_size);
+        TCPChannelResource* pChannelResource, std::size_t body_size);
 
     //! Sends the given buffer by the given socket.
     bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
-        TCPSocketInfo* socket);
+        TCPChannelResource* socket);
 
-    size_t Send(TCPSocketInfo* socketInfo, const octet* data, size_t size, eSocketErrorCodes &error) const;
-    size_t Send(TCPSocketInfo* socketInfo, const octet* data, size_t size) const;
+    size_t Send(TCPChannelResource* pChannelResource, const octet* data, size_t size, eSocketErrorCodes &error) const;
+    size_t Send(TCPChannelResource* pChannelResource, const octet* data, size_t size) const;
 
     //! Methods to manage the TCP headers and their CRC values.
     bool CheckCRC(const TCPHeader &header, const octet *data, uint32_t size);

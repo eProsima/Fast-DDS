@@ -76,7 +76,7 @@ bool test_UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
     }
 }
 
-bool test_UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, SocketInfo *socketInfo)
+bool test_UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, ChannelResource *pChannelResource)
 {
     if (PacketShouldDrop(sendBuffer, sendBufferSize))
     {
@@ -85,7 +85,7 @@ bool test_UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
     }
     else
     {
-        return UDPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, socketInfo);
+        return UDPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, pChannelResource);
     }
 }
 

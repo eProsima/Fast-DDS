@@ -12,34 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/transport/SocketInfo.h>
+#include <fastrtps/transport/ChannelResource.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-SocketInfo::SocketInfo()
+ChannelResource::ChannelResource()
     : mAlive(true)
     , mThread(nullptr)
 {
     logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
 }
 
-SocketInfo::SocketInfo(SocketInfo&& socketInfo)
-    : m_rec_msg(std::move(socketInfo.m_rec_msg))
-    , mThread(socketInfo.mThread)
+ChannelResource::ChannelResource(ChannelResource&& channelResource)
+    : m_rec_msg(std::move(channelResource.m_rec_msg))
+    , mThread(channelResource.mThread)
 {
-    bool b = socketInfo.mAlive;
+    bool b = channelResource.mAlive;
     mAlive = b;
-    socketInfo.mThread = nullptr;
+    channelResource.mThread = nullptr;
     //logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
-    //m_rec_msg = std::move(socketInfo.m_rec_msg);
+    //m_rec_msg = std::move(channelResource.m_rec_msg);
 #if HAVE_SECURITY
-    m_crypto_msg = std::move(socketInfo.m_crypto_msg);
+    m_crypto_msg = std::move(channelResource.m_crypto_msg);
 #endif
 }
 
-SocketInfo::SocketInfo(uint32_t rec_buffer_size)
+ChannelResource::ChannelResource(uint32_t rec_buffer_size)
     : m_rec_msg(rec_buffer_size)
 #if HAVE_SECURITY
     , m_crypto_msg(rec_buffer_size)
@@ -50,7 +50,7 @@ SocketInfo::SocketInfo(uint32_t rec_buffer_size)
     logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
 }
 
-SocketInfo::~SocketInfo()
+ChannelResource::~ChannelResource()
 {
     mAlive = false;
     if (mThread != nullptr)
@@ -61,44 +61,44 @@ SocketInfo::~SocketInfo()
     }
 }
 
-std::thread* SocketInfo::ReleaseThread()
+std::thread* ChannelResource::ReleaseThread()
 {
     std::thread* outThread = mThread;
     mThread = nullptr;
     return outThread;
 }
 
-UDPSocketInfo::UDPSocketInfo(eProsimaUDPSocket& socket)
+UDPChannelResource::UDPChannelResource(eProsimaUDPSocket& socket)
     : mMsgReceiver(nullptr)
     , socket_(moveSocket(socket))
     , only_multicast_purpose_(false)
 {
 }
 
-UDPSocketInfo::UDPSocketInfo(eProsimaUDPSocket& socket, uint32_t maxMsgSize)
-    : SocketInfo(maxMsgSize)
+UDPChannelResource::UDPChannelResource(eProsimaUDPSocket& socket, uint32_t maxMsgSize)
+    : ChannelResource(maxMsgSize)
     , mMsgReceiver(nullptr)
     , socket_(moveSocket(socket))
     , only_multicast_purpose_(false)
 {
 }
 
-UDPSocketInfo::UDPSocketInfo(UDPSocketInfo&& socketInfo)
-    : mMsgReceiver(socketInfo.mMsgReceiver)
-    , socket_(moveSocket(socketInfo.socket_))
-    , only_multicast_purpose_(socketInfo.only_multicast_purpose_)
+UDPChannelResource::UDPChannelResource(UDPChannelResource&& channelResource)
+    : mMsgReceiver(channelResource.mMsgReceiver)
+    , socket_(moveSocket(channelResource.socket_))
+    , only_multicast_purpose_(channelResource.only_multicast_purpose_)
 {
-    socketInfo.mMsgReceiver = nullptr;
+    channelResource.mMsgReceiver = nullptr;
 }
 
-UDPSocketInfo::~UDPSocketInfo()
+UDPChannelResource::~UDPChannelResource()
 {
     if (mMsgReceiver != nullptr)
         delete mMsgReceiver;
     mMsgReceiver = nullptr;
 }
 
-TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket)
+TCPChannelResource::TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket)
     : mLocator(locator)
     , m_inputSocket(inputSocket)
     , mWaitingForKeepAlive(false)
@@ -122,9 +122,9 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
     }
 }
 
-TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket,
+TCPChannelResource::TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket,
     uint32_t maxMsgSize)
-    : SocketInfo(maxMsgSize)
+    : ChannelResource(maxMsgSize)
     , mLocator(locator)
     , m_inputSocket(inputSocket)
     , mWaitingForKeepAlive(false)
@@ -148,27 +148,27 @@ TCPSocketInfo::TCPSocketInfo(eProsimaTCPSocket& socket, Locator_t& locator, bool
     }
 }
 /*
-TCPSocketInfo::TCPSocketInfo(TCPSocketInfo&& socketInfo)
-    : SocketInfo(std::move(socketInfo))
-    , mLocator(socketInfo.mLocator)
-    , m_inputSocket(socketInfo.m_inputSocket)
-    , mWaitingForKeepAlive(socketInfo.m_inputSocket)
-    , mPendingLogicalPort(socketInfo.mPendingLogicalPort)
-    , mNegotiatingLogicalPort(socketInfo.mNegotiatingLogicalPort)
-    , mCheckingLogicalPort(socketInfo.mCheckingLogicalPort)
-    , mRTCPThread(socketInfo.mRTCPThread)
-    , mReadMutex(socketInfo.mReadMutex)
-    , mWriteMutex(socketInfo.mWriteMutex)
-    , mSocket(moveSocket(socketInfo.mSocket))
-    , mConnectionStatus(socketInfo.mConnectionStatus)
+TCPChannelResource::TCPChannelResource(TCPChannelResource&& channelResource)
+    : ChannelResource(std::move(channelResource))
+    , mLocator(channelResource.mLocator)
+    , m_inputSocket(channelResource.m_inputSocket)
+    , mWaitingForKeepAlive(channelResource.m_inputSocket)
+    , mPendingLogicalPort(channelResource.mPendingLogicalPort)
+    , mNegotiatingLogicalPort(channelResource.mNegotiatingLogicalPort)
+    , mCheckingLogicalPort(channelResource.mCheckingLogicalPort)
+    , mRTCPThread(channelResource.mRTCPThread)
+    , mReadMutex(channelResource.mReadMutex)
+    , mWriteMutex(channelResource.mWriteMutex)
+    , mSocket(moveSocket(channelResource.mSocket))
+    , mConnectionStatus(channelResource.mConnectionStatus)
 {
-    socketInfo.mReadMutex = nullptr;
-    socketInfo.mWriteMutex = nullptr;
-    socketInfo.mRTCPThread = nullptr;
+    channelResource.mReadMutex = nullptr;
+    channelResource.mWriteMutex = nullptr;
+    channelResource.mRTCPThread = nullptr;
     std::cout << "############ MOVE CTOR ###########" << std::endl;
 }
 */
-TCPSocketInfo::~TCPSocketInfo()
+TCPChannelResource::~TCPChannelResource()
 {
     mAlive = false;
     for (auto it = mReceiversMap.begin(); it != mReceiversMap.end(); ++it)
@@ -197,14 +197,14 @@ TCPSocketInfo::~TCPSocketInfo()
     }
 }
 
-std::thread* TCPSocketInfo::ReleaseRTCPThread()
+std::thread* TCPChannelResource::ReleaseRTCPThread()
 {
     std::thread* outThread = mRTCPThread;
     mRTCPThread = nullptr;
     return outThread;
 }
 
-bool TCPSocketInfo::AddMessageReceiver(uint16_t logicalPort, MessageReceiver* receiver)
+bool TCPChannelResource::AddMessageReceiver(uint16_t logicalPort, MessageReceiver* receiver)
 {
     if (mReceiversMap.find(logicalPort) == mReceiversMap.end())
     {
@@ -214,7 +214,7 @@ bool TCPSocketInfo::AddMessageReceiver(uint16_t logicalPort, MessageReceiver* re
     return false;
 }
 
-MessageReceiver* TCPSocketInfo::GetMessageReceiver(uint16_t logicalPort)
+MessageReceiver* TCPChannelResource::GetMessageReceiver(uint16_t logicalPort)
 {
     if (mReceiversMap.find(logicalPort) != mReceiversMap.end())
         return mReceiversMap[logicalPort];

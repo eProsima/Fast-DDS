@@ -74,7 +74,7 @@ set(${PROJECT_NAME}_source_files
     subscriber/SubscriberImpl.cpp
     subscriber/SubscriberHistory.cpp
     transport/timedevent/CleanTCPSocketsEvent.cpp
-    transport/SocketInfo.cpp
+    transport/ChannelResource.cpp
     transport/UDPv4Transport.cpp
     transport/TCPv4Transport.cpp
     transport/UDPv6Transport.cpp
