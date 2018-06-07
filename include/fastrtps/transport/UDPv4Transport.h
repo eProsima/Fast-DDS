@@ -92,7 +92,7 @@ public:
     virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) override;
 
     //! Opens a socket on the given address and port (as long as they are white listed).
-    virtual bool OpenOutputChannel(Locator_t&, SenderResource*) override;
+    virtual bool OpenOutputChannel(const Locator_t&, SenderResource*) override;
 
     //! UDP doesn't support more than one connection on the same socket.
     virtual bool OpenExtraOutputChannel(Locator_t&, SenderResource*) override { return false; };
@@ -169,7 +169,7 @@ protected:
     bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
     std::vector<asio::ip::address_v4> mInterfaceWhiteList;
 
-    bool OpenAndBindOutputSockets(Locator_t& locator, SenderResource*);
+    bool OpenAndBindOutputSockets(const Locator_t& locator, SenderResource*);
     bool OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource, bool is_multicast,
         uint32_t maxMsgSize);
 

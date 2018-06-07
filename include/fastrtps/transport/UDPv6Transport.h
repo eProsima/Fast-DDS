@@ -93,7 +93,7 @@ public:
    /**
     * Opens a socket on the given address and port (as long as they are white listed).
     */
-   virtual bool OpenOutputChannel(Locator_t&, SenderResource*) override;
+   virtual bool OpenOutputChannel(const Locator_t&, SenderResource*) override;
    virtual bool OpenExtraOutputChannel(Locator_t&, SenderResource*) override { return false; };
 
    //! Removes the listening socket for the specified port.
@@ -167,7 +167,7 @@ private:
    std::vector<asio::ip::address_v6> mInterfaceWhiteList;
 
 
-   bool OpenAndBindOutputSockets(Locator_t& locator, SenderResource*);
+   bool OpenAndBindOutputSockets(const Locator_t& locator, SenderResource*);
    bool OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource, bool is_multicast,
        uint32_t maxMsgSize);
 

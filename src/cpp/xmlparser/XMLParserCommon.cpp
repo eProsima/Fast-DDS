@@ -39,7 +39,6 @@ const char* DATA_READER = "data_reader";
 /// RTPS Participant attributes
 const char* DEF_UNI_LOC_LIST = "defaultUnicastLocatorList";
 const char* DEF_MULTI_LOC_LIST = "defaultMulticastLocatorList";
-const char* DEF_OUT_LOC_LIST= "defaultOutLocatorList";
 const char* SEND_SOCK_BUF_SIZE = "sendSocketBufferSize";
 const char* LIST_SOCK_BUF_SIZE = "listenSocketBufferSize";
 const char* BUILTIN = "builtin";

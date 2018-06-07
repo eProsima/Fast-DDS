@@ -52,7 +52,7 @@ static bool IsAny(const Locator_t& locator)
     return locator.is_Any();
 }
 
-static asio::ip::address_v6::bytes_type locatorToNative(Locator_t& locator)
+static asio::ip::address_v6::bytes_type locatorToNative(const Locator_t& locator)
 {
     return {{locator.get_Address()[0],
         locator.get_Address()[1], locator.get_Address()[2], locator.get_Address()[3],
@@ -189,7 +189,7 @@ bool UDPv6Transport::IsOutputChannelOpen(const Locator_t& locator, SenderResourc
     return false;
 }
 
-bool UDPv6Transport::OpenOutputChannel(Locator_t& locator, SenderResource* senderResource)
+bool UDPv6Transport::OpenOutputChannel(const Locator_t& locator, SenderResource* senderResource)
 {
     if (!IsLocatorSupported(locator) || IsOutputChannelOpen(locator, senderResource))
         return false;
@@ -327,9 +327,10 @@ bool UDPv6Transport::IsInterfaceAllowed(const ip::address_v6& ip)
 }
 
 
-bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource *senderResource)
+bool UDPv6Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderResource *senderResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
+    uint16_t port = locator.get_physical_port();
 
     try
     {
@@ -341,7 +342,7 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource
             // and gain efficiency.
             if(mInterfaceWhiteList.empty())
             {
-                eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v6::any(), locator.get_physical_port());
+                eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v6::any(), port);
                 getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
 
                 // If more than one interface, then create sockets for outbounding multicast.
@@ -386,7 +387,7 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource
                     auto ip = asio::ip::address_v6::from_string(infoIP.name);
                     if (IsInterfaceAllowed(ip))
                     {
-                        eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.get_physical_port());
+                        eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, port);
                         getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(ip.scope_id()));
                         if(firstInterface)
                         {
@@ -402,7 +403,7 @@ bool UDPv6Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource
         else
         {
             auto ip = asio::ip::address_v6(locatorToNative(locator));
-            eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.get_physical_port());
+            eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, port);
             getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(ip.scope_id()));
             getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
 
