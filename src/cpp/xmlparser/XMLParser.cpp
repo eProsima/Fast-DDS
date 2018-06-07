@@ -327,12 +327,6 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
             getXMLLocatorList(p_aux, participant_node.get()->rtps.defaultMulticastLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
-    // defaultOutLocatorList
-    if (nullptr != (p_aux = p_element->FirstChildElement(DEF_OUT_LOC_LIST)))
-    {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, participant_node.get()->rtps.defaultOutLocatorList, ident))
-            return XMLP_ret::XML_ERROR;
-    }
     // sendSocketBufferSize - uint32Type
     if (nullptr != (p_aux = p_element->FirstChildElement(SEND_SOCK_BUF_SIZE)))
     {

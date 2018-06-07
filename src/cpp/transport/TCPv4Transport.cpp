@@ -91,7 +91,7 @@ void TCPAcceptor::Accept(TCPv4Transport* parent, asio::io_service& io_service)
 }
 #endif
 
-TCPConnector::TCPConnector(asio::io_service& io_service, Locator_t& locator)
+TCPConnector::TCPConnector(asio::io_service& io_service, const Locator_t& locator)
     : m_locator(locator)
     , m_socket(createTCPSocket(io_service))
 {
@@ -447,7 +447,7 @@ bool TCPv4Transport::IsOutputChannelConnected(const Locator_t& locator) const
     return IsOutputChannelBound(locator);
 }
 
-bool TCPv4Transport::OpenOutputChannel(Locator_t& locator, SenderResource* senderResource)
+bool TCPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource* senderResource)
 {
     bool success = false;
     if (IsLocatorSupported(locator))
@@ -724,7 +724,7 @@ bool TCPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip)
     return find(mInterfaceWhiteList.begin(), mInterfaceWhiteList.end(), ip) != mInterfaceWhiteList.end();
 }
 
-bool TCPv4Transport::EnqueueLogicalOutputPort(Locator_t& locator)
+bool TCPv4Transport::EnqueueLogicalOutputPort(const Locator_t& locator)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
@@ -744,14 +744,11 @@ bool TCPv4Transport::EnqueueLogicalOutputPort(Locator_t& locator)
     return false;
 }
 
-bool TCPv4Transport::OpenOutputSockets(Locator_t& locator, SenderResource *senderResource)
+bool TCPv4Transport::OpenOutputSockets(const Locator_t& locator, SenderResource *senderResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     try
     {
-        locator.set_IP4_WAN_address(mConfiguration_.wan_addr[0], mConfiguration_.wan_addr[1],
-            mConfiguration_.wan_addr[2], mConfiguration_.wan_addr[3]);
-
         CreateConnectorSocket(locator, senderResource);
     }
     catch (asio::system_error const& e)
@@ -872,7 +869,7 @@ void TCPv4Transport::performListenOperation(TCPSocketInfo *pSocketInfo)
     logInfo(RTCP, "End PerformListenOperation " << pSocketInfo->GetLocator());
 }
 
-void TCPv4Transport::CreateConnectorSocket(Locator_t& locator, SenderResource *senderResource)
+void TCPv4Transport::CreateConnectorSocket(const Locator_t& locator, SenderResource *senderResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     asio::ip::address_v4 ip = asio::ip::make_address_v4(locator.to_IP4_string());

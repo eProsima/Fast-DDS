@@ -59,7 +59,7 @@ public:
     Locator_t m_locator;
 	eProsimaTCPSocket m_socket;
 
-    TCPConnector(asio::io_service& io_service, Locator_t& locator);
+    TCPConnector(asio::io_service& io_service, const Locator_t& locator);
     ~TCPConnector();
 
     //! Method to start the connecting process with the endpoint set in the locator.
@@ -142,7 +142,7 @@ public:
     virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) override;
 
     //! Opens a socket on the given address and port (as long as they are white listed).
-    virtual bool OpenOutputChannel(Locator_t&, SenderResource*) override;
+    virtual bool OpenOutputChannel(const Locator_t&, SenderResource*) override;
 
     //! Opens an additional output socket on the given address and port.
     virtual bool OpenExtraOutputChannel(Locator_t&, SenderResource*) override;
@@ -258,16 +258,16 @@ protected:
     bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
 
     //! Intermediate method to open an output socket.
-    bool OpenOutputSockets(Locator_t& locator, SenderResource *senderResource);
+    bool OpenOutputSockets(const Locator_t& locator, SenderResource *senderResource);
 
     //! Creates a TCP acceptor to wait for incomming connections by the given locator.
     bool CreateAcceptorSocket(const Locator_t& locator, uint32_t maxMsgSize);
 
     //! Method to create a TCP connector to establish a socket with the given locator.
-    void CreateConnectorSocket(Locator_t& locator, SenderResource *senderResource);
+    void CreateConnectorSocket(const Locator_t& locator, SenderResource *senderResource);
 
     //! Adds the logical port of the given locator to send an Open Logical Port request.
-    bool EnqueueLogicalOutputPort(Locator_t& locator);
+    bool EnqueueLogicalOutputPort(const Locator_t& locator);
 
     //! Closes the given socketInfo and unbind it from every resource.
     void CloseTCPSocket(TCPSocketInfo* socketInfo);
@@ -279,7 +279,7 @@ protected:
     void ReleaseTCPSocket(TCPSocketInfo* socketInfo);
 
     /** Associates the given socketInfo with the registered ReceiverResources with the given locator.
-    * This relationship is used to root the incomming messages to the related Receivers. 
+    * This relationship is used to root the incomming messages to the related Receivers.
     */
     void RegisterReceiverResources(TCPSocketInfo* socketInfo, const Locator_t& locator);
 

@@ -54,7 +54,6 @@ extern const char* DATA_READER;
 /// RTPS Participant attributes
 extern const char* DEF_UNI_LOC_LIST;
 extern const char* DEF_MULTI_LOC_LIST;
-extern const char* DEF_OUT_LOC_LIST;
 extern const char* SEND_SOCK_BUF_SIZE;
 extern const char* LIST_SOCK_BUF_SIZE;
 extern const char* BUILTIN;

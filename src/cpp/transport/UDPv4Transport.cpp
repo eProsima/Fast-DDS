@@ -179,7 +179,7 @@ bool UDPv4Transport::IsOutputChannelOpen(const Locator_t& locator, SenderResourc
     return false;
 }
 
-bool UDPv4Transport::OpenOutputChannel(Locator_t& locator, SenderResource* senderResource)
+bool UDPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource* senderResource)
 {
     if (!IsLocatorSupported(locator) || IsOutputChannelOpen(locator, senderResource))
         return false;
@@ -319,25 +319,20 @@ bool UDPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip)
     return find(mInterfaceWhiteList.begin(), mInterfaceWhiteList.end(), ip) != mInterfaceWhiteList.end();
 }
 
-bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource *senderResource)
+bool UDPv4Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderResource *senderResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
 
     try
     {
+        uint16_t port = mConfiguration_.m_output_upd_socket;
         std::vector<IPFinder::info_IP> locNames;
         GetIP4s(locNames);
         // If there is no whitelist, we can simply open a generic output socket
         // and gain efficiency.
         if(mInterfaceWhiteList.empty())
         {
-            if (mConfiguration_.m_output_upd_socket != 0)
-            {
-                locator.set_port(mConfiguration_.m_output_upd_socket);
-            }
-            eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v4::any(),
-                locator.get_physical_port());
-
+            eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip::address_v4::any(), port);
             getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback( true ) );
 
             // If more than one interface, then create sockets for outbounding multicast.
@@ -384,12 +379,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(Locator_t& locator, SenderResource
                 auto ip = asio::ip::address_v4::from_string(infoIP.name);
                 if (IsInterfaceAllowed(ip))
                 {
-                    if (mConfiguration_.m_output_upd_socket != 0)
-                    {
-                        locator.set_port(mConfiguration_.m_output_upd_socket);
-                    }
-
-                    eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, locator.get_physical_port());
+                    eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(ip, port);
                     getSocketPtr(unicastSocket)->set_option(ip::multicast::outbound_interface(ip));
                     if(firstInterface)
                     {
@@ -478,15 +468,19 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindUnicastOutputSocket(const ip::addre
 {
     eProsimaUDPSocket socket = createUDPSocket(mService);
     getSocketPtr(socket)->open(ip::udp::v4());
-    if(mSendBufferSize != 0)
+    if (mSendBufferSize != 0)
+    {
         getSocketPtr(socket)->set_option(socket_base::send_buffer_size(mSendBufferSize));
+    }
     getSocketPtr(socket)->set_option(ip::multicast::hops(mConfiguration_.TTL));
 
     ip::udp::endpoint endpoint(ipAddress, port);
     getSocketPtr(socket)->bind(endpoint);
 
-    if(port == 0)
+    if (port == 0)
+    {
         port = getSocketPtr(socket)->local_endpoint().port();
+    }
 
     return socket;
 }
@@ -529,8 +523,7 @@ Locator_t UDPv4Transport::RemoteToMainLocal(const Locator_t& remote) const
 bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
-    if (!IsOutputChannelOpen(localLocator) ||
-            sendBufferSize > mConfiguration_.sendBufferSize)
+    if (!IsOutputChannelOpen(localLocator) || sendBufferSize > mConfiguration_.sendBufferSize)
         return false;
 
     bool success = false;
