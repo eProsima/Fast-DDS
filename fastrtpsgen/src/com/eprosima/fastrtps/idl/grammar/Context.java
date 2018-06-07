@@ -216,6 +216,15 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     private String m_appProduct = null;
     
     private TypeDeclaration m_lastStructure = null;
+	
+	public String getHeaderGuardName ()
+	{
+		if(m_lastStructure!=null)
+		{
+			return m_lastStructure.getFormatedScopedname().toUpperCase();
+		}
+		return null;
+	}
 
 	public String getM_lastStructureTopicDataTypeName() {
 		String name = new String("");
