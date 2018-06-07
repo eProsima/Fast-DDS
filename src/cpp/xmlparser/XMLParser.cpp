@@ -291,7 +291,6 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
       <xs:all minOccurs="0">
         <xs:element name="defaultUnicastLocatorList" type="locatorListType"/>
         <xs:element name="defaultMulticastLocatorList" type="locatorListType"/>
-        <xs:element name="defaultOutLocatorList" type="locatorListType"/>
         <xs:element name="sendSocketBufferSize" type="uint32Type"/>
         <xs:element name="listenSocketBufferSize" type="uint32Type"/>
         <xs:element name="builtin" type="builtinAttributesType"/>
@@ -479,10 +478,10 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Publi
         if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, publisher_node.get()->multicastLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
-    // outLocatorList
-    if (nullptr != (p_aux = p_profile->FirstChildElement(OUT_LOC_LIST)))
+    // remoteLocatorList
+    if (nullptr != (p_aux = p_profile->FirstChildElement(REM_LOC_LIST)))
     {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, publisher_node.get()->outLocatorList, ident))
+        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, publisher_node.get()->remoteLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
     // throughputController
@@ -588,10 +587,10 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Subsc
         if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, subscriber_node.get()->multicastLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
-    // outLocatorList
-    if (nullptr != (p_aux = p_profile->FirstChildElement(OUT_LOC_LIST)))
+    // remote LocatorList
+    if (nullptr != (p_aux = p_profile->FirstChildElement(REM_LOC_LIST)))
     {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, subscriber_node.get()->outLocatorList, ident))
+        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, subscriber_node.get()->remoteLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
     // expectsInlineQos - boolType

@@ -74,7 +74,7 @@ extern const char* QOS;
 extern const char* TIMES;
 extern const char* UNI_LOC_LIST;
 extern const char* MULTI_LOC_LIST;
-extern const char* OUT_LOC_LIST;
+extern const char* REM_LOC_LIST;
 //extern const char* THROUGHPUT_CONT;
 extern const char* EXP_INLINE_QOS;
 extern const char* HIST_MEM_POLICY;

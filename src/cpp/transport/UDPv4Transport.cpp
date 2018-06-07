@@ -771,9 +771,9 @@ bool UDPv4Transport::is_local_locator(const Locator_t& locator) const
     return false;
 }
 
-void UDPv4Transport::AddDefaultLocator(LocatorList_t &defaultList)
+void UDPv4Transport::AddDefaultOutputLocator(LocatorList_t &defaultList)
 {
-    defaultList.push_back(Locator_t(LOCATOR_KIND_UDPv4, 0));
+    defaultList.push_back(Locator_t(LOCATOR_KIND_UDPv4, "239.255.0.1", mConfiguration_.m_output_upd_socket));
 }
 
 void UDPv4Transport::AssociateSenderToSocket(UDPSocketInfo *socket, SenderResource *sender) const

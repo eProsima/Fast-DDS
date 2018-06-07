@@ -196,8 +196,7 @@ public:
 
     TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
 
-    //! On TCP, there aren't default send locators.
-    virtual void AddDefaultLocator(LocatorList_t&) override {   }
+    virtual void AddDefaultOutputLocator(LocatorList_t&) override;
 
     //! Callback called each time that an incomming connection is accepted.
 #ifdef ASIO_HAS_MOVE

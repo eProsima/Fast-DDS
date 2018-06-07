@@ -128,7 +128,7 @@ public:
 
    virtual TransportDescriptorInterface* get_configuration() = 0;
 
-   virtual void AddDefaultLocator(LocatorList_t &defaultList) = 0;
+   virtual void AddDefaultOutputLocator(LocatorList_t &defaultList) = 0;
 };
 
 /**

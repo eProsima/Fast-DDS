@@ -105,9 +105,14 @@ class RTPS_DllAPI Locator_t
             LOCATOR_ADDRESS_INVALID(address);
         }
 
-        Locator_t(int32_t kindin, uint32_t portin):kind(kindin),port(portin)
+        Locator_t(int32_t kindin, uint32_t portin) :kind(kindin), port(portin)
         {
             LOCATOR_ADDRESS_INVALID(address);
+        }
+
+        Locator_t(int32_t kindin, const std::string& address, uint32_t portin) :kind(kindin), port(portin)
+        {
+            set_IP4_address(address);
         }
 
         Locator_t& operator=(const Locator_t& loc)
@@ -235,9 +240,9 @@ class RTPS_DllAPI Locator_t
 
         bool has_IP4_WAN_address()
         {
-            return addresses_.wan_address[0] != 0 && 
-                addresses_.wan_address[1] != 0 && 
-                addresses_.wan_address[2] != 0 && 
+            return addresses_.wan_address[0] != 0 &&
+                addresses_.wan_address[1] != 0 &&
+                addresses_.wan_address[2] != 0 &&
                 addresses_.wan_address[3] != 0;
         }
 

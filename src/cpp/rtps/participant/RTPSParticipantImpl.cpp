@@ -394,9 +394,9 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut, WriterAttributes&
         logError(RTPS_PARTICIPANT,"Multicast Locator List for Writer contains invalid Locator");
         return false;
     }
-    if(!param.endpoint.outLocatorList.isValid())
+    if(!param.endpoint.remoteLocatorList.isValid())
     {
-        logError(RTPS_PARTICIPANT,"Output Locator List for Writer contains invalid Locator");
+        logError(RTPS_PARTICIPANT,"Remote Locator List for Writer contains invalid Locator");
         return false;
     }
     if (((param.throughputController.bytesPerPeriod != UINT32_MAX && param.throughputController.periodMillisecs != 0) ||
@@ -550,9 +550,9 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut, ReaderAttributes&
         logError(RTPS_PARTICIPANT,"Multicast Locator List for Reader contains invalid Locator");
         return false;
     }
-    if(!param.endpoint.outLocatorList.isValid())
+    if(!param.endpoint.remoteLocatorList.isValid())
     {
-        logError(RTPS_PARTICIPANT,"Output Locator List for Reader contains invalid Locator");
+        logError(RTPS_PARTICIPANT,"Remote Locator List for Reader contains invalid Locator");
         return false;
     }
 
@@ -811,14 +811,14 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend)
 {
     std::vector<SenderResource> newSenders;
     std::vector<SenderResource> SendersBuffer;
-    if (pend->m_att.outLocatorList.empty())
+    if (pend->m_att.remoteLocatorList.empty())
     {
-        // Adds a default locator.
-        pend->m_att.outLocatorList.push_back(Locator_t());
+        // Adds the default locators of every registered transport.
+        m_network_Factory.GetDefaultOutputLocators(pend->m_att.remoteLocatorList);
     }
 
     //Output locators have been specified, create them
-    for (auto it = pend->m_att.outLocatorList.begin(); it != pend->m_att.outLocatorList.end(); ++it)
+    for (auto it = pend->m_att.remoteLocatorList.begin(); it != pend->m_att.remoteLocatorList.end(); ++it)
     {
         SendersBuffer = m_network_Factory.BuildSenderResources((*it));
         for (auto mit = SendersBuffer.begin(); mit != SendersBuffer.end(); ++mit)

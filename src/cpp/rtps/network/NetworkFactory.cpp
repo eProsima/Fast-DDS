@@ -160,8 +160,6 @@ LocatorList_t NetworkFactory::ShrinkLocatorLists(const std::vector<LocatorList_t
 
 bool NetworkFactory::is_local_locator(const Locator_t& locator) const
 {
-    LocatorList_t returnedList;
-
     for(auto& transport : mRegisteredTransports)
     {
         if(transport->IsLocatorSupported(locator))
@@ -196,12 +194,12 @@ bool NetworkFactory::generate_locators(uint16_t physical_port, int locator_kind,
     return !ret_locators.empty();
 }
 
-void NetworkFactory::GetDefaultLocators(LocatorList_t &defaultLocators)
+void NetworkFactory::GetDefaultOutputLocators(LocatorList_t &defaultLocators)
 {
     defaultLocators.clear();
     for(auto& transport : mRegisteredTransports)
     {
-        transport->AddDefaultLocator(defaultLocators);
+        transport->AddDefaultOutputLocator(defaultLocators);
     }
 }
 
