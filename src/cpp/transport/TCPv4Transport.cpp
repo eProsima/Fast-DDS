@@ -223,6 +223,29 @@ TCPv4Transport::~TCPv4Transport()
     delete mRTCPMessageManager;
 }
 
+void TCPv4Transport::AddDefaultOutputLocator(LocatorList_t& defaultList)
+{
+    if (mConfiguration_.listening_ports.size() > 0)
+    {
+        for (auto it = mConfiguration_.listening_ports.begin(); it != mConfiguration_.listening_ports.end(); ++it)
+        {
+            defaultList.push_back(Locator_t(LOCATOR_KIND_TCPv4, "127.0.0.1", *it));
+        }
+    }
+    else if (mSocketConnectors.size() > 0)
+    {
+        defaultList.push_back(mSocketConnectors.begin()->first);
+    }
+    else if (mBoundOutputSockets.size() > 0)
+    {
+        defaultList.push_back(mBoundOutputSockets.begin()->first);
+    }
+    else
+    {
+        defaultList.push_back(Locator_t(LOCATOR_KIND_TCPv4, "127.0.0.1", 0));
+    }
+}
+
 bool TCPv4Transport::init()
 {
     if (mConfiguration_.sendBufferSize == 0 || mConfiguration_.receiveBufferSize == 0)

@@ -57,7 +57,7 @@ bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
             return false;
     }
 
-    getRTPSParticipant()->createReceiverResources(wdata.endpoint.outLocatorList, false);
+    getRTPSParticipant()->createReceiverResources(wdata.endpoint.remoteLocatorList, false);
 
     logInfo(RTPS_READER,"Writer " << wdata.guid << " added to "<<m_guid.entityId);
     m_matched_writers.push_back(wdata);

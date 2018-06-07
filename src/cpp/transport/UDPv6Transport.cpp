@@ -95,9 +95,9 @@ UDPv6Transport::~UDPv6Transport()
     }
 }
 
-void UDPv6Transport::AddDefaultLocator(LocatorList_t &defaultList)
+void UDPv6Transport::AddDefaultOutputLocator(LocatorList_t &defaultList)
 {
-    defaultList.push_back(Locator_t(LOCATOR_KIND_UDPv6, 0));
+    defaultList.push_back(Locator_t(LOCATOR_KIND_UDPv6, "239.255.0.1", 0));
 }
 
 bool UDPv6Transport::init()

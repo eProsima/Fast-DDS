@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file PublisherAttributes.h	
+ * @file PublisherAttributes.h
  */
 
 #ifndef PUBLISHERATTRIBUTES_H_
@@ -59,9 +59,9 @@ class PublisherAttributes
         //!Unicast locator list
         rtps::LocatorList_t unicastLocatorList;
         //!Multicast locator list
-        rtps::LocatorList_t multicastLocatorList;
-        //!Output locator list
-        rtps::LocatorList_t outLocatorList;
+		rtps::LocatorList_t multicastLocatorList;
+        //!Remote locator list
+		rtps::LocatorList_t remoteLocatorList;
         //!Throughput controller
         rtps::ThroughputControllerDescriptor throughputController;
         //!Underlying History memory policy

@@ -473,18 +473,7 @@ bool PDPSimple::createSPDPEndpoints()
         if (mp_SPDPReader != nullptr)
         {
             RemoteWriterAttributes rwatt;
-            for (auto it = mp_builtin->m_metatrafficUnicastLocatorList.begin();
-                it != mp_builtin->m_metatrafficUnicastLocatorList.end(); ++it)
-            {
-                rwatt.endpoint.outLocatorList.push_back(*it);
-            }
-
-            for (auto it = mp_builtin->m_metatrafficMulticastLocatorList.begin();
-                it != mp_builtin->m_metatrafficMulticastLocatorList.end(); ++it)
-            {
-                rwatt.endpoint.outLocatorList.push_back(*it);
-            }
-
+            rwatt.endpoint.remoteLocatorList = mp_builtin->m_initialPeersList;
             rwatt.endpoint.topicKind = WITH_KEY;
             rwatt.endpoint.durabilityKind = TRANSIENT_LOCAL;
             rwatt.endpoint.reliabilityKind = BEST_EFFORT;
@@ -510,9 +499,14 @@ bool PDPSimple::createSPDPEndpoints()
     watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     watt.endpoint.reliabilityKind = BEST_EFFORT;
     watt.endpoint.topicKind = WITH_KEY;
+    watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
+
     if (mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
         mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
+    {
         watt.mode = ASYNCHRONOUS_WRITER;
+    }
+
     RTPSWriter* wout;
     if (mp_RTPSParticipant->createWriter(&wout, watt, mp_SPDPWriterHistory, nullptr, c_EntityId_SPDPWriter, true))
     {

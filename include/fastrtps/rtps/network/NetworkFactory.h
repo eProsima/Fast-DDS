@@ -100,9 +100,9 @@ class NetworkFactory
         bool generate_locators(uint16_t physical_port, int locator_kind, LocatorList_t &ret_locators);
 
         /**
-         * For each transport, ask for their default locators.
+         * For each transport, ask for their default output locators.
          * */
-        void GetDefaultLocators(LocatorList_t &defaultLocators);
+        void GetDefaultOutputLocators(LocatorList_t &defaultLocators);
 
     private:
 

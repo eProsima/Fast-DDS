@@ -50,15 +50,6 @@ bool HelloWorldPublisher::init()
 
     // TCP CONNECTION PEER.
     uint32_t kind = LOCATOR_KIND_TCPv4;
-    Locator_t initial_peer_locator;
-    initial_peer_locator.kind = kind;
-    initial_peer_locator.set_IP4_address("127.0.0.1");
-    initial_peer_locator.set_port(5100);
-    //initial_peer_locator.set_logical_port(7401);
-    initial_peer_locator.set_logical_port(9999);
-    //PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher doesn't need initial_peer
-    PParam.rtps.defaultOutLocatorList.push_back(initial_peer_locator); // defaultOutLocatorList, just to don't init UDP
-    // TODO It would be better and option to avoid default UDP defaultOutLocatorList
 
     Locator_t unicast_locator;
     unicast_locator.kind = kind;
@@ -72,7 +63,7 @@ bool HelloWorldPublisher::init()
     meta_locator.set_IP4_address("127.0.0.1");
     meta_locator.set_port(5100);
     meta_locator.set_logical_port(7402);
-    PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);  // Publisher's meta channel 
+    PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);  // Publisher's meta channel
 
     //PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
     //PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = false;

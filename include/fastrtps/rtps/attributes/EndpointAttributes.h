@@ -68,7 +68,8 @@ class EndpointAttributes
         //!Multicast locator list
         LocatorList_t multicastLocatorList;
 
-        LocatorList_t outLocatorList;
+        //! Remote locator list.
+        LocatorList_t remoteLocatorList;
 
         PropertyPolicy properties;
 

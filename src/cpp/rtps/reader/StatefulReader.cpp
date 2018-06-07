@@ -75,7 +75,7 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
         }
     }
 
-    getRTPSParticipant()->createReceiverResources(wdata.endpoint.outLocatorList, false);
+    getRTPSParticipant()->createReceiverResources(wdata.endpoint.remoteLocatorList, false);
 
     WriterProxy* wp = new WriterProxy(wdata, this);
 

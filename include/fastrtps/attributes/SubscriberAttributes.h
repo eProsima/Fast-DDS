@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file SubscriberAttributes.h 	
+ * @file SubscriberAttributes.h
  */
 
 #ifndef SUBSCRIBERATTRIBUTES_H_
@@ -58,8 +58,8 @@ class SubscriberAttributes {
 		rtps::LocatorList_t unicastLocatorList;
         //!Multicast locator list
 		rtps::LocatorList_t multicastLocatorList;
-        //!Output locator list
-		rtps::LocatorList_t outLocatorList;
+        //!Remote locator list
+		rtps::LocatorList_t remoteLocatorList;
         //!Expects Inline QOS
         bool expectsInlineQos;
         //!Underlying History memory policy

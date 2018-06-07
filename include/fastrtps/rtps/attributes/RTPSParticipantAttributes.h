@@ -225,12 +225,6 @@ class RTPSParticipantAttributes
          */
         LocatorList_t defaultMulticastLocatorList;
 
-        /**
-         * Default send port that all Endpoints in the RTPSParticipant would use to send messages, default value 10040.
-         * In this release all Endpoints use the same resource (socket) to send messages.
-         */
-        uint32_t defaultSendPort;
-
         /*!
          * @brief Send socket buffer size for the send resource. Zero value indicates to use default system buffer size.
          * Default value: 0.

@@ -135,7 +135,7 @@ public:
 
     TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
 
-    virtual void AddDefaultLocator(LocatorList_t &defaultList) override;
+    virtual void AddDefaultOutputLocator(LocatorList_t &defaultList) override;
 
 protected:
 

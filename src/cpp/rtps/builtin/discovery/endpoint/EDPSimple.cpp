@@ -158,6 +158,7 @@ bool EDPSimple::createSEDPEndpoints()
         watt.endpoint.topicKind = WITH_KEY;
         watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.times.nackResponseDelay.seconds = 0;
         watt.times.nackResponseDelay.fraction = 0;
@@ -190,6 +191,7 @@ bool EDPSimple::createSEDPEndpoints()
         ratt.endpoint.topicKind = WITH_KEY;
         ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay.seconds = 0;
         ratt.times.heartbeatResponseDelay.fraction = 0;
