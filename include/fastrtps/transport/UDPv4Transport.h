@@ -64,7 +64,7 @@ public:
     /**
         * Checks whether there are open and bound sockets for the given port.
         */
-    virtual bool IsOutputChannelOpen(const Locator_t&, SenderResource* senderResource = nullptr) const override;
+    virtual bool IsOutputChannelOpen(const Locator_t&) const override;
 
     //! Checks for UDPv4 kind.
     virtual bool IsLocatorSupported(const Locator_t&) const override;

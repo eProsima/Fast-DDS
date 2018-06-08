@@ -333,24 +333,24 @@ bool TCPv4Transport::IsInputSocketOpen(const Locator_t& locator) const
         (mSocketAcceptors.find(locator.get_physical_port()) != mSocketAcceptors.end()));
 }
 
-bool TCPv4Transport::IsOutputChannelOpen(const Locator_t& locator, SenderResource *senderResource) const
+bool TCPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     if (!IsLocatorSupported(locator))
+    {
         return false;
+    }
 
     if (mSocketConnectors.find(locator) != mSocketConnectors.end())
+    {
         return true;
+    }
     else
     {
         for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
         {
             if ((*it)->GetLocator().compare_IP4_address_and_port(locator))
             {
-                if (senderResource != nullptr)
-                {
-                    AssociateSenderToSocket(*it, senderResource);
-                }
                 return true;
             }
         }
@@ -428,7 +428,7 @@ void TCPv4Transport::BindOutputChannel(const Locator_t& locator, SenderResource 
     }
 }
 
-bool TCPv4Transport::IsOutputChannelBound(const Locator_t& locator, SenderResource *senderResource) const
+bool TCPv4Transport::IsOutputChannelBound(const Locator_t& locator) const
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     if (!IsLocatorSupported(locator))
@@ -437,14 +437,6 @@ bool TCPv4Transport::IsOutputChannelBound(const Locator_t& locator, SenderResour
     auto socket = mBoundOutputSockets.find(locator);
     if (socket != mBoundOutputSockets.end())
     {
-        if (senderResource != nullptr)
-        {
-            auto& vector = (*socket).second;
-            if (vector.size() == 1)
-            {
-                AssociateSenderToSocket(vector.front(), senderResource);
-            }
-        }
         return true;
     }
 
@@ -474,7 +466,7 @@ bool TCPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource*
     if (IsLocatorSupported(locator))
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-        if (!IsTCPInputSocket(locator, senderResource))
+        if (!IsTCPInputSocket(locator))
         {
             if (!IsOutputChannelConnected(locator))
             {
@@ -490,7 +482,7 @@ bool TCPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource*
             }
             else
             {
-                if (!IsOutputChannelBound(locator, senderResource))
+                if (!IsOutputChannelBound(locator))
                 {
                     BindOutputChannel(locator, senderResource);
                     success = EnqueueLogicalOutputPort(locator);
@@ -503,7 +495,12 @@ bool TCPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource*
         {
             if (mBoundOutputSockets.find(locator) == mBoundOutputSockets.end())
             {
-                mPendingOutputPorts.push_back(locator);
+                if (std::find(mPendingOutputPorts[locator].begin(), mPendingOutputPorts[locator].end(),
+                    senderResource) == mPendingOutputPorts[locator].end())
+                {
+                    mPendingOutputPorts[locator].push_back(senderResource);
+                }
+
                 auto socketIt = mInputSockets.find(locator.get_physical_port());
                 if (socketIt != mInputSockets.end())
                 {
@@ -540,7 +537,7 @@ bool TCPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource
             mReceiverResources[locator] = receiverResource;
 
             logInfo(RTCP, " OpenInputChannel (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")");
-            if (IsTCPInputSocket(locator, nullptr))
+            if (IsTCPInputSocket(locator))
             {
                 success = true;
                 if (!IsInputSocketOpen(locator))
@@ -595,11 +592,11 @@ bool TCPv4Transport::CloseOutputChannel(const Locator_t& locator)
             mSocketConnectors.erase(locator);
         }
 
-        if (IsTCPInputSocket(locator, nullptr))
+        if (IsTCPInputSocket(locator))
         {
             for (auto it = mPendingOutputPorts.begin(); it != mPendingOutputPorts.end();)
             {
-                if (*it == locator)
+                if (it->first == locator)
                 {
                     it = mPendingOutputPorts.erase(it);
                 }
@@ -702,7 +699,7 @@ bool TCPv4Transport::CloseInputChannel(const Locator_t& locator)
     return bClosed;
 }
 
-bool TCPv4Transport::IsTCPInputSocket(const Locator_t& locator, SenderResource *senderResource) const
+bool TCPv4Transport::IsTCPInputSocket(const Locator_t& locator) const
 {
     if (is_local_locator(locator))
     {
@@ -710,23 +707,6 @@ bool TCPv4Transport::IsTCPInputSocket(const Locator_t& locator, SenderResource *
         {
             if (locator.get_physical_port() == *it)
             {
-                if (senderResource != nullptr)
-                {
-                    auto sit = mInputSockets.find(locator.get_physical_port());
-                    if (sit != mInputSockets.end())
-                    {
-                        auto& inputs = mInputSockets.at(locator.get_physical_port());
-                        if (inputs.size() > 1)
-                        {
-                            //logWarning(RTCP, "More than one inputSocket for physical port " << locator.get_physical_port());
-                            senderResource->SetChannelResource(nullptr);
-                        }
-                        else if (inputs.size() == 1)
-                        {
-                            senderResource->SetChannelResource(*inputs.begin());
-                        }
-                    }
-                }
                 return true;
             }
         }
@@ -1306,9 +1286,13 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
 
             for (auto it = mPendingOutputPorts.begin(); it != mPendingOutputPorts.end(); ++it)
             {
-                if (acceptor->mLocator.compare_IP4_address_and_port(*it))
+                if (acceptor->mLocator.compare_IP4_address_and_port(it->first))
                 {
-                    BindSocket(*it, pChannelResource);
+                    BindSocket(it->first, pChannelResource);
+                    for (auto senderIt : it->second)
+                    {
+                        AssociateSenderToSocket(pChannelResource, senderIt);
+                    }
                 }
             }
             pChannelResource->SetThread(new std::thread(&TCPv4Transport::performListenOperation, this, pChannelResource));
@@ -1351,6 +1335,18 @@ void TCPv4Transport::SocketAccepted(TCPAcceptor* acceptor, const asio::error_cod
             // Create one message receiver for each registered receiver resources.
             RegisterReceiverResources(pChannelResource, acceptor->mLocator);
             mInputSockets[acceptor->mLocator.get_physical_port()].emplace_back(pChannelResource);
+
+            for (auto it = mPendingOutputPorts.begin(); it != mPendingOutputPorts.end(); ++it)
+            {
+                if (acceptor->mLocator.compare_IP4_address_and_port(it->first))
+                {
+                    BindSocket(it->first, pChannelResource);
+                    for (auto senderIt : it->second)
+                    {
+                        AssociateSenderToSocket(pChannelResource, senderIt);
+                    }
+                }
+            }
 
             logInfo(RTCP, " Accepted connection (physical local: " << acceptor->mLocator.get_physical_port() << ", remote: " << pChannelResource->getSocket()->remote_endpoint().port() <<  ") IP: " << pChannelResource->getSocket()->remote_endpoint().address());
         }
@@ -1511,6 +1507,7 @@ void TCPv4Transport::ReleaseTCPSocket(TCPChannelResource *pChannelResource)
             {
                 sender->SetChannelResource(nullptr);
             }
+            mSocketToSenders.erase(it);
         }
 
         {
@@ -1531,8 +1528,6 @@ void TCPv4Transport::ReleaseTCPSocket(TCPChannelResource *pChannelResource)
 
 void TCPv4Transport::AssociateSenderToSocket(TCPChannelResource *socket, SenderResource *sender) const
 {
-    sender->SetChannelResource(socket);
-
     auto it = mSocketToSenders.find(socket);
     if (it == mSocketToSenders.end())
     {
@@ -1542,6 +1537,8 @@ void TCPv4Transport::AssociateSenderToSocket(TCPChannelResource *socket, SenderR
     {
         it->second.emplace_back(sender);
     }
+
+    sender->SetChannelResource(socket);
 }
 
 } // namespace rtps

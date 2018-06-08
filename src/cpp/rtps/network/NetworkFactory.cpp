@@ -32,11 +32,9 @@ NetworkFactory::NetworkFactory() : maxMessageSizeBetweenTransports_(0),
 vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local)
 {
     vector<SenderResource> newSenderResources;
-
-    for(auto& transport : mRegisteredTransports)
+    for (auto& transport : mRegisteredTransports)
     {
-        if ( transport->IsLocatorSupported(local) &&
-                !transport->IsOutputChannelOpen(local, nullptr) )
+        if (transport->IsLocatorSupported(local) && !transport->IsOutputChannelOpen(local))
         {
             SenderResource newSenderResource(*transport, local);
             if (newSenderResource.mValid)
@@ -46,21 +44,20 @@ vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local)
     return newSenderResources;
 }
 
-bool NetworkFactory::BuildReceiverResources (Locator_t& local, RTPSParticipantImpl* participant,
+bool NetworkFactory::BuildReceiverResources(Locator_t& local, RTPSParticipantImpl* participant,
     uint32_t maxMsgSize, std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list)
 {
     bool returnedValue = false;
-
-    for(auto& transport : mRegisteredTransports)
+    for (auto& transport : mRegisteredTransports)
     {
-        if(transport->IsLocatorSupported(local))
+        if (transport->IsLocatorSupported(local))
         {
-            if(!transport->IsInputChannelOpen(local))
+            if (!transport->IsInputChannelOpen(local))
             {
                 std::shared_ptr<ReceiverResource> newReceiverResource = std::shared_ptr<ReceiverResource>(
                     new ReceiverResource(participant, *transport, local, maxMsgSize));
 
-                if(newReceiverResource->mValid)
+                if (newReceiverResource->mValid)
                 {
                     returned_resources_list.push_back(newReceiverResource);
                     returnedValue = true;
@@ -70,7 +67,6 @@ bool NetworkFactory::BuildReceiverResources (Locator_t& local, RTPSParticipantIm
                 returnedValue = true;
         }
     }
-
     return returnedValue;
 }
 
