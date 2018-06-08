@@ -1463,9 +1463,12 @@ XMLP_ret XMLParser::getXMLOctetVector(tinyxml2::XMLElement *elem, std::vector<oc
 
 XMLP_ret XMLParser::getXMLInt(tinyxml2::XMLElement *elem, int *in, uint8_t /*ident*/)
 {
-    if (nullptr == elem ||
-        nullptr == in    ||
-        tinyxml2::XMLError::XML_SUCCESS != elem->QueryIntText(in))
+    if (nullptr == elem || nullptr == in)
+    {
+        logError(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    else if (tinyxml2::XMLError::XML_SUCCESS != elem->QueryIntText(in))
     {
         logError(XMLPARSER, "<" << elem->Value() << "> getXMLInt XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -1475,9 +1478,12 @@ XMLP_ret XMLParser::getXMLInt(tinyxml2::XMLElement *elem, int *in, uint8_t /*ide
 
 XMLP_ret XMLParser::getXMLUint(tinyxml2::XMLElement *elem, unsigned int *ui, uint8_t /*ident*/)
 {
-    if (nullptr == elem ||
-        nullptr == ui   ||
-        tinyxml2::XMLError::XML_SUCCESS != elem->QueryUnsignedText(ui))
+    if (nullptr == elem || nullptr == ui)   
+    { 
+        logError(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    else if (tinyxml2::XMLError::XML_SUCCESS != elem->QueryUnsignedText(ui))
     {
         logError(XMLPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -1488,9 +1494,12 @@ XMLP_ret XMLParser::getXMLUint(tinyxml2::XMLElement *elem, unsigned int *ui, uin
 XMLP_ret XMLParser::getXMLUint(tinyxml2::XMLElement *elem, uint16_t *ui16, uint8_t /*ident*/)
 {
     unsigned int ui = 0u;
-    if (nullptr == elem ||
-        nullptr == ui16   ||
-        tinyxml2::XMLError::XML_SUCCESS != elem->QueryUnsignedText(&ui) ||
+    if (nullptr == elem || nullptr == ui16)
+    {
+        logError(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    else if (tinyxml2::XMLError::XML_SUCCESS != elem->QueryUnsignedText(&ui) ||
         ui >= 65536)
     {
         logError(XMLPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
@@ -1502,9 +1511,12 @@ XMLP_ret XMLParser::getXMLUint(tinyxml2::XMLElement *elem, uint16_t *ui16, uint8
 
 XMLP_ret XMLParser::getXMLBool(tinyxml2::XMLElement *elem, bool *b, uint8_t /*ident*/)
 {
-    if (nullptr == elem ||
-        nullptr == b    ||
-        tinyxml2::XMLError::XML_SUCCESS != elem->QueryBoolText(b))
+    if (nullptr == elem || nullptr == b)
+    { 
+        logError(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    else if (tinyxml2::XMLError::XML_SUCCESS != elem->QueryBoolText(b))
     {
         logError(XMLPARSER, "<" << elem->Value() << "> getXMLBool XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -1515,9 +1527,13 @@ XMLP_ret XMLParser::getXMLBool(tinyxml2::XMLElement *elem, bool *b, uint8_t /*id
 XMLP_ret XMLParser::getXMLString(tinyxml2::XMLElement *elem, std::string *s, uint8_t /*ident*/)
 {
     const char* text = nullptr;
-    if (nullptr == elem ||
-        nullptr == s    ||
-        nullptr == (text = elem->GetText()))
+
+    if (nullptr == elem || nullptr == s)
+    { 
+        logError(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    else if (nullptr == (text = elem->GetText()))
     {
         logError(XMLPARSER, "<" << elem->Value() << "> getXMLString XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -1525,3 +1541,4 @@ XMLP_ret XMLParser::getXMLString(tinyxml2::XMLElement *elem, std::string *s, uin
     *s = text;
     return XMLP_ret::XML_OK;
 }
+
