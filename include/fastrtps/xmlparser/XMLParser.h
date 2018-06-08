@@ -91,8 +91,23 @@ class XMLParser
      */
     RTPS_DllAPI static XMLP_ret loadXML(const char* data, size_t length, up_base_node_t& root);
 
+    /**
+     * Load a XML node.
+     * @param xmlDoc Node to be loaded.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
+    RTPS_DllAPI static XMLP_ret loadXML(tinyxml2::XMLDocument &xmlDoc, up_base_node_t& root);
+
+    /**
+     * Load a XML node.
+     * @param profiles Node to be loaded.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
+    RTPS_DllAPI static XMLP_ret loadXMLProfiles(tinyxml2::XMLElement &profiles, up_base_node_t& root);
+
   protected:
     RTPS_DllAPI static XMLP_ret parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root);
+    RTPS_DllAPI static XMLP_ret parseXMLProfiles(tinyxml2::XMLElement& profiles, up_base_node_t& root);
     RTPS_DllAPI static XMLP_ret parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profilesNode);
     RTPS_DllAPI static XMLP_ret parseRoot(tinyxml2::XMLElement* p_root, BaseNode& rootNode);
 
