@@ -55,7 +55,7 @@ bool MockTransport::init()
     return true;
 }
 
-bool MockTransport::IsOutputChannelOpen(const Locator_t& locator, SenderResource*) const
+bool MockTransport::IsOutputChannelOpen(const Locator_t& locator) const
 {
   return (find(mockOpenOutputChannels.begin(), mockOpenOutputChannels.end(), locator.get_port()) != mockOpenOutputChannels.end());
 }

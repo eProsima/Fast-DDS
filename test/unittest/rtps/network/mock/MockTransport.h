@@ -38,10 +38,10 @@ class MockTransport: public TransportInterface
         bool init() override;
 
         //API implementation
-        virtual bool IsOutputChannelOpen(const Locator_t&, SenderResource* sender = nullptr) const override;
+        virtual bool IsOutputChannelOpen(const Locator_t&) const override;
         virtual bool IsInputChannelOpen(const Locator_t&)  const override;
 
-        virtual bool OpenOutputChannel(Locator_t&, SenderResource* sender = nullptr) override;
+        virtual bool OpenOutputChannel(const Locator_t&, SenderResource* sender = nullptr) override;
         virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) override;
 
         virtual bool OpenExtraOutputChannel(Locator_t&, SenderResource*) override { return false; };
@@ -58,7 +58,7 @@ class MockTransport: public TransportInterface
         virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator) override;
 
         virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, 
-            const Locator_t& localLocator, const Locator_t& remoteLocator, SocketInfo*) override 
+            const Locator_t& localLocator, const Locator_t& remoteLocator, ChannelResource*) override 
             { 
                 return Send(sendBuffer, sendBufferSize, localLocator, remoteLocator); 
             }
@@ -71,7 +71,7 @@ class MockTransport: public TransportInterface
 
         virtual void SetParticipantGUIDPrefix(const GuidPrefix_t&) override {};
         virtual TransportDescriptorInterface* get_configuration() override { return nullptr; };
-        virtual void AddDefaultLocator(LocatorList_t &) override {};
+        virtual void AddDefaultOutputLocator(LocatorList_t &) override {};
 
         //Helpers and message record
         typedef struct
