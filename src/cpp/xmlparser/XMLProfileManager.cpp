@@ -39,6 +39,7 @@ XMLP_ret XMLProfileManager::fillParticipantAttributes(const std::string &profile
         return XMLP_ret::XML_ERROR;
     }
     atts = *(it->second);
+    atts.rtps.setName(profile_name.c_str());
     return XMLP_ret::XML_OK;
 }
 
@@ -84,6 +85,70 @@ XMLP_ret XMLProfileManager::fillSubscriberAttributes(const std::string &profile_
 XMLP_ret XMLProfileManager::loadDefaultXMLFile()
 {
     return loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
+}
+
+XMLP_ret XMLProfileManager::loadXMLProfiles(tinyxml2::XMLElement& profiles)
+{
+    up_base_node_t root_node;
+    XMLParser::loadXMLProfiles(profiles, root_node);
+
+    if (!root_node)
+    {
+        logError(XMLPARSER, "Error parsing node");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    logInfo(XMLPARSER, "Node parsed successfully");
+
+    if (NodeType::PROFILES == root_node->getType())
+    {
+        return XMLProfileManager::extractProfiles(std::move(root_node), "-XML Node-");
+    }
+
+    if (NodeType::ROOT == root_node->getType())
+    {
+        for (auto&& child: root_node->getChildren())
+        {
+            if (NodeType::PROFILES == child.get()->getType())
+            {
+                return XMLProfileManager::extractProfiles(std::move(child), "-XML Node-");
+            }
+        }
+    }
+
+    return XMLP_ret::XML_ERROR;
+}
+
+XMLP_ret XMLProfileManager::loadXMLNode(tinyxml2::XMLDocument& doc)
+{
+    up_base_node_t root_node;
+    XMLParser::loadXML(doc, root_node);
+
+    if (!root_node)
+    {
+        logError(XMLPARSER, "Error parsing node");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    logInfo(XMLPARSER, "Node parsed successfully");
+
+    if (NodeType::PROFILES == root_node->getType())
+    {
+        return XMLProfileManager::extractProfiles(std::move(root_node), "-XML Node-");
+    }
+
+    if (NodeType::ROOT == root_node->getType())
+    {
+        for (auto&& child: root_node->getChildren())
+        {
+            if (NodeType::PROFILES == child.get()->getType())
+            {
+                return XMLProfileManager::extractProfiles(std::move(child), "-XML Node-");
+            }
+        }
+    }
+
+    return XMLP_ret::XML_ERROR;
 }
 
 XMLP_ret XMLProfileManager::loadXMLFile(const std::string& filename)

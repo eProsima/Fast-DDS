@@ -29,6 +29,7 @@
 namespace tinyxml2
 {
     class XMLElement;
+    class XMLDocument;
 }
 
 
@@ -72,6 +73,12 @@ public:
 	 * @return True if correct.
 	 */
 	XMLP_ret loadXMLFile(std::string& filename);
+	/**
+	 * Load the XML node
+	 * @param doc Node to parse.
+	 * @return True if correct.
+	 */
+	XMLP_ret loadXMLNode(tinyxml2::XMLDocument& doc);
 
     void loadXMLParticipantEndpoint(tinyxml2::XMLElement* xml_endpoint, StaticRTPSParticipantInfo* pdata);
 

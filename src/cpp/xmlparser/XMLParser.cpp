@@ -74,6 +74,14 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
     return ret;
 }
 
+XMLP_ret XMLParser::parseXMLProfiles(tinyxml2::XMLElement& profiles, up_base_node_t& root)
+{
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    root.reset(new BaseNode{NodeType::PROFILES});
+    ret  = parseProfiles(&profiles, *root);
+    return ret;
+}
+
 XMLP_ret XMLParser::parseRoot(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
 {
     XMLP_ret ret           = XMLP_ret::XML_OK;
@@ -224,6 +232,16 @@ XMLP_ret XMLParser::loadXML(const std::string& filename, up_base_node_t& root)
     }
 
     logInfo(XMLPARSER, "File '" << filename << "' opened successfully");
+    return parseXML(xmlDoc, root);
+}
+
+XMLP_ret XMLParser::loadXMLProfiles(tinyxml2::XMLElement &xmlDoc, up_base_node_t& root)
+{
+    return parseXMLProfiles(xmlDoc, root);
+}
+
+XMLP_ret XMLParser::loadXML(tinyxml2::XMLDocument &xmlDoc, up_base_node_t& root)
+{
     return parseXML(xmlDoc, root);
 }
 
