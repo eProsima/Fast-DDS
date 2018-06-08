@@ -163,7 +163,7 @@ bool UDPv4Transport::IsInputChannelOpen(const Locator_t& locator) const
     return IsLocatorSupported(locator) && (mInputSockets.find(locator.get_physical_port()) != mInputSockets.end());
 }
 
-bool UDPv4Transport::IsOutputChannelOpen(const Locator_t& locator, SenderResource*) const
+bool UDPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
     if (!IsLocatorSupported(locator))
@@ -181,7 +181,7 @@ bool UDPv4Transport::IsOutputChannelOpen(const Locator_t& locator, SenderResourc
 
 bool UDPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource* senderResource)
 {
-    if (!IsLocatorSupported(locator) || IsOutputChannelOpen(locator, senderResource))
+    if (!IsLocatorSupported(locator) || IsOutputChannelOpen(locator))
         return false;
 
     return OpenAndBindOutputSockets(locator, senderResource);
@@ -366,7 +366,6 @@ bool UDPv4Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderRe
                 mOutputSockets[locator.get_physical_port()].push_back(mSocket);
                 if (senderResource != nullptr)
                 {
-                    senderResource->SetChannelResource(mSocket);
                     AssociateSenderToSocket(mSocket, senderResource);
                 }
             }
@@ -778,6 +777,8 @@ void UDPv4Transport::AddDefaultOutputLocator(LocatorList_t &defaultList)
 
 void UDPv4Transport::AssociateSenderToSocket(UDPChannelResource *socket, SenderResource *sender) const
 {
+    sender->SetChannelResource(socket);
+
     auto it = mSocketToSenders.find(socket);
     if (it == mSocketToSenders.end())
     {

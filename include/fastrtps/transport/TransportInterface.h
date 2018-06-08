@@ -63,7 +63,7 @@ public:
     * Must report whether the output channel associated to this locator is open. Channels must either be
     * fully closed or fully open, so that "open" and "close" operations are whole and definitive.
     */
-   virtual bool IsOutputChannelOpen(const Locator_t&, SenderResource* senderResource) const = 0;
+   virtual bool IsOutputChannelOpen(const Locator_t&) const = 0;
 
    /**
     * Must report whether the input channel associated to this locator is open. Channels must either be

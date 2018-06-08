@@ -172,7 +172,7 @@ bool UDPv6Transport::IsInputChannelOpen(const Locator_t& locator) const
     return IsLocatorSupported(locator) && (mInputSockets.find(locator.get_physical_port()) != mInputSockets.end());
 }
 
-bool UDPv6Transport::IsOutputChannelOpen(const Locator_t& locator, SenderResource*) const
+bool UDPv6Transport::IsOutputChannelOpen(const Locator_t& locator) const
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
     if (!IsLocatorSupported(locator))
@@ -191,7 +191,7 @@ bool UDPv6Transport::IsOutputChannelOpen(const Locator_t& locator, SenderResourc
 
 bool UDPv6Transport::OpenOutputChannel(const Locator_t& locator, SenderResource* senderResource)
 {
-    if (!IsLocatorSupported(locator) || IsOutputChannelOpen(locator, senderResource))
+    if (!IsLocatorSupported(locator) || IsOutputChannelOpen(locator))
         return false;
 
     return OpenAndBindOutputSockets(locator, senderResource);
@@ -374,7 +374,6 @@ bool UDPv6Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderRe
                     mOutputSockets[locator.get_physical_port()].push_back(mSocket);
                     if (senderResource != nullptr)
                     {
-                        senderResource->SetChannelResource(mSocket);
                         AssociateSenderToSocket(mSocket, senderResource);
                     }
                 }
@@ -411,7 +410,6 @@ bool UDPv6Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderRe
             mOutputSockets[locator.get_physical_port()].push_back(mSocket);
             if (senderResource != nullptr)
             {
-                senderResource->SetChannelResource(mSocket);
                 AssociateSenderToSocket(mSocket, senderResource);
             }
         }
@@ -797,6 +795,8 @@ bool UDPv6Transport::is_local_locator(const Locator_t& locator) const
 
 void UDPv6Transport::AssociateSenderToSocket(UDPChannelResource *socket, SenderResource *sender) const
 {
+    sender->SetChannelResource(socket);
+
     auto it = mSocketToSenders.find(socket);
     if (it == mSocketToSenders.end())
     {

@@ -100,13 +100,13 @@ public:
     virtual bool IsInputChannelOpen(const Locator_t&) const override;
 
     //! Checks whether there are open and bound sockets for the given port.
-    virtual bool IsOutputChannelOpen(const Locator_t&, SenderResource* senderResource = nullptr) const override;
+    virtual bool IsOutputChannelOpen(const Locator_t&) const override;
 
     //! Checks if there is an opened socket or an acceptor waiting for connections.
     bool IsInputSocketOpen(const Locator_t&) const;
 
     //! Checks if the channel is bound to the given sender resource.
-    bool IsOutputChannelBound(const Locator_t&, SenderResource *senderResource = nullptr) const;
+    bool IsOutputChannelBound(const Locator_t&) const;
 
     //! Checks if the channel is connected or the locator is bound to an input channel.
     bool IsOutputChannelConnected(const Locator_t&) const;
@@ -235,7 +235,7 @@ protected:
     std::map<uint16_t, std::vector<TCPChannelResource*>> mInputSockets; // The Key is the "Physical Port"
     std::map<Locator_t, ReceiverResource*> mReceiverResources;
 
-    std::vector<Locator_t> mPendingOutputPorts;
+    std::map<Locator_t, std::vector<SenderResource*>> mPendingOutputPorts;
     std::map<Locator_t, TCPConnector*> mSocketConnectors;
     std::vector<TCPChannelResource*> mOutputSockets;
     std::map<Locator_t, std::vector<TCPChannelResource*>> mBoundOutputSockets;
@@ -251,7 +251,7 @@ protected:
     void AssociateSenderToSocket(TCPChannelResource*, SenderResource*) const;
 
     //! Checks if the socket of the given locator has been opened as an input socket.
-    bool IsTCPInputSocket(const Locator_t& locator, SenderResource *senderResource) const;
+    bool IsTCPInputSocket(const Locator_t& locator) const;
 
     //! Checks if the given ip has been included in the white list to use it.
     bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
