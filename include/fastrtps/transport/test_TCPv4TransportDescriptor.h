@@ -15,17 +15,19 @@
 #ifndef TEST_TCPV4_TRANSPORT_DESCRIPTOR
 #define TEST_TCPV4_TRANSPORT_DESCRIPTOR
 
-#include "TransportInterface.h"
+#include "TCPv4TransportDescriptor.h"
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-typedef struct test_TCPv4TransportDescriptor : public TransportDescriptorInterface{
+typedef struct test_TCPv4TransportDescriptor : public TCPv4TransportDescriptor
+{
    bool granularMode;
 
    std::vector<uint16_t> logicalPortsBlocked;
    uint8_t invalidCRCsPercentage;
+   uint8_t mCloseSocketOnSendPercentage;
    uint8_t invalidTransactionPercentage;
 
    // Test shim parameters

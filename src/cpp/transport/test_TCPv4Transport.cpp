@@ -28,7 +28,9 @@ bool test_TCPv4Transport::ShutdownAllNetwork = false;
 bool test_TCPv4Transport::CloseSocketConnection = false;
 
 test_TCPv4Transport::test_TCPv4Transport(const test_TCPv4TransportDescriptor& descriptor)
-    : mInvalidCRCsPercentage(descriptor.invalidCRCsPercentage)
+    : TCPv4Transport(descriptor)
+    , mInvalidCRCsPercentage(descriptor.invalidCRCsPercentage)
+    , mCloseSocketOnSendPercentage(descriptor.mCloseSocketOnSendPercentage)
     , mDropDataMessagesPercentage(descriptor.dropDataMessagesPercentage)
     , mDropParticipantBuiltinTopicData(descriptor.dropParticipantBuiltinTopicData)
     , mDropPublicationBuiltinTopicData(descriptor.dropPublicationBuiltinTopicData)
@@ -50,8 +52,9 @@ test_TCPv4Transport::test_TCPv4Transport(const test_TCPv4TransportDescriptor& de
     }
 
 RTPS_DllAPI test_TCPv4TransportDescriptor::test_TCPv4TransportDescriptor()
-    : TransportDescriptorInterface(s_maximumMessageSize)
+    : TCPv4TransportDescriptor()
     , invalidCRCsPercentage(0)
+    , mCloseSocketOnSendPercentage(0)
     , invalidTransactionPercentage(0)
     , dropDataMessagesPercentage(0)
     , dropParticipantBuiltinTopicData(false)
@@ -73,46 +76,92 @@ TransportInterface* test_TCPv4TransportDescriptor::create_transport() const
 
 bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
 {
-    if (PacketShouldDrop(sendBuffer, sendBufferSize))
+    if (mCloseSocketOnSendPercentage <= (rand() % 100))
     {
-        LogDrop(sendBuffer, sendBufferSize);
-        return true;
-    }
-    else
-    {
-        if (CloseSocketConnection)
+        if (PacketShouldDrop(sendBuffer, sendBufferSize))
         {
-            CloseSocketConnection = false;
-            CloseOutputChannel(localLocator);
+            LogDrop(sendBuffer, sendBufferSize);
             return true;
         }
         else
         {
-            return TCPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator);
+            if (CloseSocketConnection)
+            {
+                CloseSocketConnection = false;
+                CloseOutputChannel(localLocator);
+                return true;
+            }
+            else
+            {
+                return TCPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator);
+            }
         }
+    }
+    else
+    {
+        for (auto it = mOutputSockets.begin(); it != mOutputSockets.end();++it)
+        {
+            if ((*it)->GetLocator() == localLocator)
+            {
+                try
+                {
+                    (*it)->getSocket()->cancel();
+                    (*it)->getSocket()->shutdown(asio::ip::tcp::socket::shutdown_both);
+                }
+                catch (std::exception)
+                {
+                    // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
+                }
+                (*it)->getSocket()->close();
+            }
+        }
+        return true;
     }
 }
 
 bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, ChannelResource *pChannelResource)
 {
-    if (PacketShouldDrop(sendBuffer, sendBufferSize))
+    if (mCloseSocketOnSendPercentage <= (rand() % 100))
     {
-        LogDrop(sendBuffer, sendBufferSize);
-        return true;
-    }
-    else
-    {
-        if (CloseSocketConnection)
+        if (PacketShouldDrop(sendBuffer, sendBufferSize))
         {
-            CloseSocketConnection = false;
-            pChannelResource->Disable();
-            CloseOutputChannel(localLocator);
+            LogDrop(sendBuffer, sendBufferSize);
             return true;
         }
         else
         {
-            return TCPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, pChannelResource);
+            if (CloseSocketConnection)
+            {
+                CloseSocketConnection = false;
+                pChannelResource->Disable();
+                CloseOutputChannel(localLocator);
+                return true;
+            }
+            else
+            {
+                return TCPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, pChannelResource);
+            }
         }
+    }
+    else
+    {
+        for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
+        {
+            if ((*it)->GetLocator() == localLocator)
+            {
+                try
+                {
+                    (*it)->getSocket()->cancel();
+                    (*it)->getSocket()->shutdown(asio::ip::tcp::socket::shutdown_both);
+                }
+                catch (std::exception)
+                {
+                    // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
+                }
+                (*it)->getSocket()->close();
+            }
+        }
+        return true;
     }
 }
 

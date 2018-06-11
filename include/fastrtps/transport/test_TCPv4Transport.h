@@ -51,6 +51,7 @@ protected:
 
 private:
     uint8_t mInvalidCRCsPercentage;
+    uint8_t mCloseSocketOnSendPercentage;
     uint8_t mDropDataMessagesPercentage;
     bool mDropParticipantBuiltinTopicData;
     bool mDropPublicationBuiltinTopicData;
