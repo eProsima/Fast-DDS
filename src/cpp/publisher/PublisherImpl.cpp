@@ -178,6 +178,12 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
             return false;
         }
 
+        if(m_att.qos.m_durability.kind == VOLATILE_DURABILITY_QOS &&
+                mp_writer->is_acked_by_all(ch))
+        {
+            m_history.remove_change_g(ch);
+        }
+
         return true;
     }
 

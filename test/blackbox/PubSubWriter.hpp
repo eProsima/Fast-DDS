@@ -655,6 +655,11 @@ class PubSubWriter
         return participant_guid_;
     }
 
+    bool remove_all_changes(size_t* number_of_changes_removed)
+    {
+        return publisher_->removeAllChange(number_of_changes_removed);
+    }
+
     private:
 
     void participant_matched()

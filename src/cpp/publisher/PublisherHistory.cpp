@@ -91,7 +91,9 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
     if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
         if(this->add_change(change))
+        {
             returnedValue = true;
+        }
     }
     //HISTORY WITH KEY
     else if(mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
@@ -108,7 +110,9 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
                     add = true;
                 }
                 else
+                {
                     logWarning(RTPS_HISTORY,"Change not added due to maximum number of samples per instance"<<endl;);
+                }
             }
             else if (m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
             {

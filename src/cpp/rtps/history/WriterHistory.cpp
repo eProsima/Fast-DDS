@@ -76,8 +76,11 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
     ++m_lastCacheChangeSeqNum;
     a_change->sequenceNumber = m_lastCacheChangeSeqNum;
     m_changes.push_back(a_change);
+
     if(static_cast<int32_t>(m_changes.size()) == m_att.maximumReservedCaches)
+    {
         m_isHistoryFull = true;
+    }
 
     logInfo(RTPS_HISTORY,"Change "<< a_change->sequenceNumber << " added with "<<a_change->serializedPayload.length<< " bytes");
 

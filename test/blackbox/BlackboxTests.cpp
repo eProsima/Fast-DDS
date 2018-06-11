@@ -4838,6 +4838,27 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableMultithreadKeepLast1)
     reader.block_for_at_least(105);
 }
 
+// Test created to check bug #3020 (Github #238)
+BLACKBOXTEST(BlackBox, PubSubAsReliableVolatilePubRemoveWithoutSubs)
+{
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    writer.history_depth(10).
+        durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    auto data = default_helloworld_data_generator();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+
+    size_t number_of_changes_removed = 0;
+    ASSERT_FALSE(writer.remove_all_changes(&number_of_changes_removed));
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
