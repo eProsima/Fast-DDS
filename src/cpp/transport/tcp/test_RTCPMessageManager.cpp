@@ -19,6 +19,7 @@
 
 
 #include <fastrtps/transport/tcp/test_RTCPMessageManager.h>
+#include <fastrtps/transport/TCPv4Transport.h>
 
 using namespace eprosima::fastrtps;
 
@@ -46,7 +47,7 @@ TCPTransactionId test_RTCPMessageManager::getTransactionId()
     return TCPTransactionId();
 }
 
-void test_RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
+bool test_RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
     const OpenLogicalPortRequest_t &request, const TCPTransactionId &transactionId)
 {
     if (std::find(mLogicalPortsBlocked.begin(), mLogicalPortsBlocked.end(), request.logicalPort()) !=
@@ -56,14 +57,23 @@ void test_RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *
     }
     else
     {
-        if (std::find(pChannelResource->mLogicalInputPorts.begin(), pChannelResource->mLogicalInputPorts.end(),
-            request.logicalPort()) != pChannelResource->mLogicalInputPorts.end())
+        if (pChannelResource->mConnectionStatus != TCPChannelResource::eConnectionStatus::eEstablished)
         {
-            sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_OK);
-            return;
+            sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
         }
-        sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_INVALID_PORT);
+        else if (std::find(pChannelResource->mOpenedPorts.begin(), pChannelResource->mOpenedPorts.end(),
+            request.logicalPort()) != pChannelResource->mOpenedPorts.end())
+        {
+            //logInfo(RTCP, "OpenLogicalPortRequest [FAILED]: " << request.logicalPort());
+            sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_INVALID_PORT);
+        }
+        else
+        {
+            pChannelResource->mOpenedPorts.emplace_back(request.logicalPort());
+            sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_OK);
+        }
     }
+    return true;
 }
 
 } /* namespace rtps */

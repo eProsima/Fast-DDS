@@ -35,7 +35,7 @@ class RTCPMessageManager;
 class CleanTCPSocketsEvent;
 class TCPChannelResource;
 
-class TCPAcceptor
+class TCPv4Acceptor
 {
 public:
 	asio::ip::tcp::acceptor mAcceptor;
@@ -46,21 +46,21 @@ public:
     asio::ip::tcp::endpoint mEndPoint;
 #endif
 
-    TCPAcceptor(asio::io_service& io_service, const Locator_t& locator, uint32_t maxMsgSize);
-    ~TCPAcceptor()    {    }
+    TCPv4Acceptor(asio::io_service& io_service, const Locator_t& locator, uint32_t maxMsgSize);
+    ~TCPv4Acceptor()    {    }
 
     //! Method to start the accepting process.
     void Accept(TCPv4Transport* parent, asio::io_service&);
 };
 
-class TCPConnector
+class TCPv4Connector
 {
 public:
     Locator_t m_locator;
 	eProsimaTCPSocket m_socket;
 
-    TCPConnector(asio::io_service& io_service, const Locator_t& locator);
-    ~TCPConnector();
+    TCPv4Connector(asio::io_service& io_service, const Locator_t& locator);
+    ~TCPv4Connector();
 
     //! Method to start the connecting process with the endpoint set in the locator.
 	void Connect(TCPv4Transport* parent, SenderResource *senderResource);
@@ -200,9 +200,9 @@ public:
 
     //! Callback called each time that an incomming connection is accepted.
 #ifdef ASIO_HAS_MOVE
-    void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket s);
+    void SocketAccepted(TCPv4Acceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket s);
 #else
-    void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error);
+    void SocketAccepted(TCPv4Acceptor* acceptor, const asio::error_code& error);
 #endif
 
     //! Callback called each time that an outgoing connection is established.
@@ -231,12 +231,12 @@ protected:
     CleanTCPSocketsEvent* mCleanSocketsPoolTimer;
 
     mutable std::recursive_mutex mSocketsMapMutex;
-    std::map<uint16_t, TCPAcceptor*> mSocketAcceptors; // The Key is the "Physical Port"
+    std::map<uint16_t, TCPv4Acceptor*> mSocketAcceptors; // The Key is the "Physical Port"
     std::map<uint16_t, std::vector<TCPChannelResource*>> mInputSockets; // The Key is the "Physical Port"
     std::map<Locator_t, ReceiverResource*> mReceiverResources;
 
     std::map<Locator_t, std::vector<SenderResource*>> mPendingOutputPorts;
-    std::map<Locator_t, TCPConnector*> mSocketConnectors;
+    std::map<Locator_t, TCPv4Connector*> mSocketConnectors;
     std::vector<TCPChannelResource*> mOutputSockets;
     std::map<Locator_t, std::vector<TCPChannelResource*>> mBoundOutputSockets;
     mutable std::map<TCPChannelResource*, std::vector<SenderResource*>> mSocketToSenders;

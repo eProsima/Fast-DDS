@@ -279,6 +279,11 @@ public:
         m_inputSocket = bInput;
     }
 
+    bool IsLogicalPortOpened(uint16_t port)
+    {
+        return std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port) != mLogicalOutputPorts.end();
+    }
+
     bool IsConnectionEstablished()
     {
         return mConnectionStatus == eConnectionStatus::eEstablished;

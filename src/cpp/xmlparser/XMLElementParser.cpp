@@ -1275,7 +1275,9 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
               <xs:restriction base="xs:string">
                 <xs:enumeration value="RESERVED"/>
                 <xs:enumeration value="UDPv4"/>
+                <xs:enumeration value="TCPv4"/>
                 <xs:enumeration value="UDPv6"/>
+                <xs:enumeration value="TCPv6"/>
               </xs:restriction>
             </xs:simpleType>*/
             const char* text = p_aux1->GetText();

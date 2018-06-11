@@ -73,7 +73,7 @@ public:
     bool processBindConnectionRequest(TCPChannelResource *pChannelResource, const ConnectionRequest_t &request,
         const TCPTransactionId &transactionId, Locator_t &localLocator);
 
-    bool processOpenLogicalPortRequest(TCPChannelResource *pChannelResource, const OpenLogicalPortRequest_t &request,
+    virtual bool processOpenLogicalPortRequest(TCPChannelResource *pChannelResource, const OpenLogicalPortRequest_t &request,
         const TCPTransactionId &transactionId);
 
     void processCheckLogicalPortsRequest(TCPChannelResource *pChannelResource,
