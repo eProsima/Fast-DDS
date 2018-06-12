@@ -751,7 +751,13 @@ bool TCPv4Transport::EnqueueLogicalOutputPort(const Locator_t& locator)
             auto& sockets = mInputSockets.at(locator.get_physical_port());
             for (auto it = sockets.begin(); it != sockets.end(); ++it)
             {
-                (*it)->mPendingLogicalOutputPorts.push_back(locator.get_logical_port());
+                if (std::find((*it)->mLogicalOutputPorts.begin(), (*it)->mLogicalOutputPorts.end(),
+                    locator.get_logical_port()) == (*it)->mLogicalOutputPorts.end() &&
+                    std::find((*it)->mPendingLogicalOutputPorts.begin(), (*it)->mPendingLogicalOutputPorts.end(),
+                        locator.get_logical_port()) == (*it)->mPendingLogicalOutputPorts.end())
+                {
+                    (*it)->mPendingLogicalOutputPorts.push_back(locator.get_logical_port());
+                }
             }
             return true;
         }
