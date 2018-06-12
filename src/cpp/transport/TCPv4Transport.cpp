@@ -356,18 +356,21 @@ bool TCPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
         return false;
     }
 
-    if (mSocketConnectors.find(locator) != mSocketConnectors.end())
+    // Check if there is any connector to the given locator.
+    for (auto it = mSocketConnectors.begin(); it != mSocketConnectors.end(); ++it)
     {
-        return true;
-    }
-    else
-    {
-        for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
+        if (it->first.compare_IP4_address_and_port(locator))
         {
-            if ((*it)->GetLocator().compare_IP4_address_and_port(locator))
-            {
-                return true;
-            }
+            return true;
+        }
+    }
+
+    // Check if there is any socket opened with the given locator.
+    for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
+    {
+        if ((*it)->GetLocator().compare_IP4_address_and_port(locator))
+        {
+            return true;
         }
     }
 
@@ -429,7 +432,15 @@ void TCPv4Transport::BindOutputChannel(const Locator_t& locator, SenderResource 
         return;
     }
 
-    assert(mBoundOutputSockets.find(locator) == mBoundOutputSockets.end());
+    for (auto it = mSocketConnectors.begin(); it != mSocketConnectors.end(); ++it)
+    {
+        if (it->first.compare_IP4_address_and_port(locator) && std::find(it->second->m_PendingLocators.begin(),
+            it->second->m_PendingLocators.end(), locator) == it->second->m_PendingLocators.end())
+        {
+            it->second->m_PendingLocators.emplace_back(locator);
+        }
+    }
+
     for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
     {
         if ((*it)->GetLocator().compare_IP4_address_and_port(locator))
@@ -779,8 +790,8 @@ bool TCPv4Transport::EnqueueLogicalOutputPort(const Locator_t& locator)
                 return true;
             }
         }
-        return false;
     }
+    return false;
 }
 
 bool TCPv4Transport::OpenOutputSockets(const Locator_t& locator, SenderResource *senderResource)
@@ -1412,7 +1423,7 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, SenderResource *senderR
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     if (mSocketConnectors.find(locator) != mSocketConnectors.end())
     {
-        auto& pendingConector = mSocketConnectors.at(locator);
+        auto pendingConector = mSocketConnectors.at(locator);
         if (!error.value())
         {
             TCPChannelResource *outputSocket = new TCPChannelResource(pendingConector->m_socket,
@@ -1425,6 +1436,11 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, SenderResource *senderR
             outputSocket->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, outputSocket));
             mOutputSockets.push_back(outputSocket);
             BindOutputChannel(locator);
+
+            for (auto& it : pendingConector->m_PendingLocators)
+            {
+                EnqueueLogicalOutputPort(it);
+            }
 
             logInfo(RTCP, " Socket Connected (physical remote: " << locator.get_physical_port()
                 << ", local: " << outputSocket->getSocket()->local_endpoint().port()

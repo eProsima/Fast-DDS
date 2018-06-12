@@ -46,6 +46,8 @@ bool HelloWorldSubscriber::init()
     initial_peer_locator.set_port(5100);
     initial_peer_locator.set_logical_port(7402);
     PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
+    initial_peer_locator.set_logical_port(7410);
+    PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
 
     Locator_t unicast_locator;
     unicast_locator.kind = kind;

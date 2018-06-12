@@ -58,6 +58,7 @@ class TCPv6Connector
 public:
     Locator_t m_locator;
 	eProsimaTCPSocket m_socket;
+    std::vector<Locator_t> m_PendingLocators;
 
     TCPv6Connector(asio::io_service& io_service, const Locator_t& locator);
     ~TCPv6Connector();
