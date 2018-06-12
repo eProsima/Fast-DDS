@@ -133,7 +133,7 @@ class AESGCMGMAC_Transform : public CryptoTransform
 
     SecureDataHeader deserialize_SecureDataHeader(eprosima::fastcdr::Cdr& decoder);
 
-    bool predeserialize_SecureDataBody(eprosima::fastcdr::Cdr& decoder, uint32_t& body_length);
+    bool predeserialize_SecureDataBody(eprosima::fastcdr::Cdr& decoder, uint32_t& body_length, uint32_t& body_align);
     bool deserialize_SecureDataBody(eprosima::fastcdr::Cdr& decoder,
             eprosima::fastcdr::Cdr::state& body_state, SecureDataTag& tag, uint32_t body_length,
             const std::array<uint8_t, 4> transformation_kind,

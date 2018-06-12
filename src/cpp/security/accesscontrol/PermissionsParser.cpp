@@ -291,7 +291,11 @@ bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
     return true;
 }
 
-bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity& validity)
+bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity&
+#if _MSC_VER != 1800
+        validity
+#endif
+        )
 {
     assert(root);
 

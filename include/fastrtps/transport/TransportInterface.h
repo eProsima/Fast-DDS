@@ -72,17 +72,25 @@ public:
    virtual bool OpenInputChannel(const Locator_t&) = 0;
 
    /**
-    * Must close the channel that maps to/from the given locator. 
+    * Must close the channel that maps to/from the given locator.
     * IMPORTANT: It MUST be safe to call this method even during a Send operation on another thread. You must implement
     * any necessary mutual exclusion and timeout mechanisms to make sure the channel can be closed without damage.
     */
    virtual bool CloseOutputChannel(const Locator_t&) = 0;
+
    /**
-    * Must close the channel that maps to/from the given locator. 
+    * Must close the channel that maps to/from the given locator.
     * IMPORTANT: It MUST be safe to call this method even during a Receive operation on another thread. You must implement
     * any necessary mutual exclusion and timeout mechanisms to make sure the channel can be closed without damage.
     */
    virtual bool CloseInputChannel(const Locator_t&) = 0;
+
+   /**
+    * Must release the channel that maps to/from the given locator.
+    * IMPORTANT: It MUST be safe to call this method even during a Receive operation on another thread. You must implement
+    * any necessary mutual exclusion and timeout mechanisms to make sure the channel can be closed without damage.
+    */
+   virtual bool ReleaseInputChannel(const Locator_t&) = 0;
 
    //! Must report whether two locators map to the same internal channel.
    virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const = 0;

@@ -338,7 +338,7 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 	size_t removed=0;
 	mp_datapub->removeAllChange(&removed);
 	//	cout << "REMOVED: "<< removed<<endl;
-	analizeTimes(datasize);
+	analyzeTimes(datasize);
 	printStat(m_stats.back());
 	//	delete(mp_latency_in);
 	//	delete(mp_latency_out);
@@ -346,7 +346,7 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 }
 
 #if defined(_WIN32)
-void LatencyTestPublisher::analizeTimes(uint32_t datasize)
+void LatencyTestPublisher::analyzeTimes(uint32_t datasize)
 {
 	TimeStats TS;
 	TS.nbytes = datasize+4;
@@ -363,7 +363,7 @@ void LatencyTestPublisher::printStat(TimeStats& TS)
 			TS.max);
 }
 #else
-void LatencyTestPublisher::analizeTimes(uint32_t datasize)
+void LatencyTestPublisher::analyzeTimes(uint32_t datasize)
 {
 	TimeStats TS;
 	TS.nbytes = datasize+4;

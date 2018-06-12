@@ -95,12 +95,6 @@ class PublisherImpl
     bool removeAllChange(size_t* removed);
 
     /**
-     * Get the number of elements in the History.
-     * @return Number of elements in the History.
-     */
-    size_t getHistoryElementsNumber();
-
-    /**
      * 
      * @return
      */

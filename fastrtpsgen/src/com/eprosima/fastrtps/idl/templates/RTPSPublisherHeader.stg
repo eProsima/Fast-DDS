@@ -18,8 +18,8 @@ main(ctx, definitions) ::= <<
 $fileHeader(ctx=ctx,  file=[ctx.filename, "Publisher.h"], description=["This header file contains the declaration of the publisher functions."])$
 
 
-#ifndef _$ctx.fileNameUpper$_PUBLISHER_H_
-#define _$ctx.fileNameUpper$_PUBLISHER_H_
+#ifndef _$ctx.headerGuardName$_PUBLISHER_H_
+#define _$ctx.headerGuardName$_PUBLISHER_H_
 
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/publisher/PublisherListener.h>
@@ -48,7 +48,7 @@ private:
 	$ctx.m_lastStructureTopicDataTypeName$PubSubType myType;
 };
 
-#endif // _$ctx.fileNameUpper$_PUBLISHER_H_
+#endif // _$ctx.headerGuardName$_PUBLISHER_H_
 >>
 
 module(ctx, parent, module, definition_list) ::= <<

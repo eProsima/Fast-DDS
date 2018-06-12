@@ -651,10 +651,10 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
 
     // Body
-    uint32_t body_length = 0;
+    uint32_t body_length = 0, body_align = 0;
 
     try
-    {   if(!predeserialize_SecureDataBody(decoder, body_length))
+    {   if(!predeserialize_SecureDataBody(decoder, body_length, body_align))
         {
             logError(SECURITY_CRYPTO, "Error deserializing SecureDataBody header");
             return false;
@@ -667,7 +667,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     }
 
     eprosima::fastcdr::Cdr::state body_state = decoder.getState();
-    decoder.jump(body_length);
+    decoder.jump(body_length + body_align);
 
     // Tag
     try
@@ -971,10 +971,10 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
 
     // Body
-    uint32_t body_length = 0;
+    uint32_t body_length = 0, body_align = 0;
 
     try
-    {   if(!predeserialize_SecureDataBody(decoder, body_length))
+    {   if(!predeserialize_SecureDataBody(decoder, body_length, body_align))
         {
             logError(SECURITY_CRYPTO, "Error deserializing SecureDataBody header");
             return false;
@@ -987,7 +987,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     }
 
     eprosima::fastcdr::Cdr::state body_state = decoder.getState();
-    decoder.jump(body_length);
+    decoder.jump(body_length + body_align);
 
     // Tag
     try
@@ -1144,10 +1144,10 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
 
     // Body
-    uint32_t body_length = 0;
+    uint32_t body_length = 0, body_align = 0;
 
     try
-    {   if(!predeserialize_SecureDataBody(decoder, body_length))
+    {   if(!predeserialize_SecureDataBody(decoder, body_length, body_align))
         {
             logError(SECURITY_CRYPTO, "Error deserializing SecureDataBody header");
             return false;
@@ -1160,7 +1160,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     }
 
     eprosima::fastcdr::Cdr::state body_state = decoder.getState();
-    decoder.jump(body_length);
+    decoder.jump(body_length + body_align);
 
     // Tag
     try
@@ -1287,10 +1287,10 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
 
     // Body
-    uint32_t body_length = 0;
+    uint32_t body_length = 0, body_align = 0;
 
     try
-    {   if(!predeserialize_SecureDataBody(decoder, body_length))
+    {   if(!predeserialize_SecureDataBody(decoder, body_length, body_align))
         {
             logError(SECURITY_CRYPTO, "Error deserializing SecureDataBody header");
             return false;
@@ -1303,7 +1303,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     }
 
     eprosima::fastcdr::Cdr::state body_state = decoder.getState();
-    decoder.jump(body_length);
+    decoder.jump(body_length + body_align);
 
     // Tag
     try
@@ -1466,6 +1466,14 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(eprosima::fastcdr::Cdr& seri
     serializer << static_cast<uint16_t>(actual_size + final_size);
 
     serializer.setState(current_state);
+
+    // Align submessage to 4.
+    size_t alignment = serializer.alignment(serializer.getCurrentPosition() - serializer.getBufferPointer(), sizeof(int32_t));
+    for(size_t count = 0; count != alignment; ++count)
+    {
+        uint8_t c = 0;
+        serializer << c;
+    }
 
     return true;
 }
@@ -1733,10 +1741,19 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
 
     decoder.setState(current_state);
 
+    // Align submessage to 4.
+    size_t alignment = decoder.alignment(decoder.getCurrentPosition() - decoder.getBufferPointer(), sizeof(int32_t));
+    for(size_t count = 0; count != alignment; ++count)
+    {
+        uint8_t c = 0;
+        decoder >> c;
+    }
+
     return true;
 }
 
-bool AESGCMGMAC_Transform::predeserialize_SecureDataBody(eprosima::fastcdr::Cdr& decoder, uint32_t& body_length)
+bool AESGCMGMAC_Transform::predeserialize_SecureDataBody(eprosima::fastcdr::Cdr& decoder, uint32_t& body_length,
+        uint32_t& body_align)
 {
     octet secure_submsg_id = 0, flags = 0;
     uint16_t body_length_short;
@@ -1762,6 +1779,11 @@ bool AESGCMGMAC_Transform::predeserialize_SecureDataBody(eprosima::fastcdr::Cdr&
 
     decoder >> body_length_short;
     body_length = body_length_short;
+
+    // Align submessage to 4.
+    body_align = static_cast<uint32_t>(decoder.alignment((decoder.getCurrentPosition() + body_length) -
+                decoder.getBufferPointer(), sizeof(int32_t)));
+
     return true;
 }
 
@@ -1867,7 +1889,7 @@ CONSTEXPR uint32_t sec_prefix_length = 4;
 // 4 bytes to serialize length of the body.
 CONSTEXPR uint32_t sec_postfix_length = 4;
 CONSTEXPR uint32_t aesgcmgmac_header_length = 20;
-CONSTEXPR uint32_t aesgcmgmac_body_length_attr = 4;
+CONSTEXPR uint32_t aesgcmgmac_body_length_attr = 4 + 3 /*possible alignment*/;
 CONSTEXPR uint32_t aesgcmgmac_common_tag = 16;
 
 uint32_t AESGCMGMAC_Transform::calculate_extra_size_for_rtps_message(uint32_t number_discovered_participants) const

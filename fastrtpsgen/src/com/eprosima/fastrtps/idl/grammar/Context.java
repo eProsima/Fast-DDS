@@ -216,29 +216,42 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     private String m_appProduct = null;
     
     private TypeDeclaration m_lastStructure = null;
+    
+    public String getHeaderGuardName ()
+    {
+        if(m_lastStructure!=null)
+        {
+            if(m_lastStructure.getHasScope())
+            {
+                return m_lastStructure.getScope().replaceAll("::", "_").toUpperCase() +
+                    "_" + m_fileNameUpper;
+            }
+        }
+        return m_fileNameUpper;
+    }
 
-	public String getM_lastStructureTopicDataTypeName() {
-		String name = new String("");
+    public String getM_lastStructureTopicDataTypeName() {
+        String name = new String("");
 
-		if(m_lastStructure!=null)
-		{	
+        if(m_lastStructure!=null)
+        {    
             if(m_lastStructure.getParent() instanceof Interface)
-			{
-				name = name + ((Interface)m_lastStructure.getParent()).getScopedname() + "_" + m_lastStructure.getName();
-			}
-			else
-				name = m_lastStructure.getScopedname();
-		}
-		return name;
-	}
-	
-	public String getM_lastStructureScopedName(){
-		if(m_lastStructure!=null)
-		{
-			return m_lastStructure.getScopedname();
-		}
-		return null;
-	}
+            {
+                name = name + ((Interface)m_lastStructure.getParent()).getScopedname() + "_" + m_lastStructure.getName();
+            }
+            else
+                name = m_lastStructure.getScopedname();
+        }
+        return name;
+    }
+    
+    public String getM_lastStructureScopedName(){
+        if(m_lastStructure!=null)
+        {
+            return m_lastStructure.getScopedname();
+        }
+        return null;
+    }
 
     public boolean isThereIsStructure()
     {
@@ -251,31 +264,31 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     {
         return m_lastStructure;
     }
-	
-	public boolean existsLastStructure()
-	{
-		if(m_lastStructure != null)
-			return true;
-		return false;
-	}
-
-	private String m_fileNameUpper = null;
-	
-	public void setFilename(String filename)
+    
+    public boolean existsLastStructure()
     {
-		super.setFilename(filename);
-		m_fileNameUpper = filename.toUpperCase();
+        if(m_lastStructure != null)
+            return true;
+        return false;
     }
-	public String getFileNameUpper()
-	{
-		return m_fileNameUpper;
-	}
+
+    private String m_fileNameUpper = null;
+    
+    public void setFilename(String filename)
+    {
+        super.setFilename(filename);
+        m_fileNameUpper = filename.toUpperCase();
+    }
+    public String getFileNameUpper()
+    {
+        return m_fileNameUpper;
+    }
 
     public String getJniFilename()
     {
         return getFilename().replace("_", "_1");
     }
-	
+    
     //// Java block ////
     // Java package name.
     private String m_package = "";

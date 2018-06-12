@@ -351,12 +351,12 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 
     while(m_userReaderList.size() > 0)
     {
-        RTPSDomain::removeRTPSReader(*m_userReaderList.begin());
+        deleteUserEndpoint((Endpoint*)*m_userReaderList.begin());
     }
 
     while(m_userWriterList.size() > 0)
     {
-        RTPSDomain::removeRTPSWriter(*m_userWriterList.begin());
+        deleteUserEndpoint((Endpoint*)*m_userWriterList.begin());
     }
 
     delete(this->mp_builtinProtocols);
@@ -759,7 +759,9 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver,
         auto& msg = receiver->mp_receiver->m_rec_msg;
         CDRMessage::initCDRMsg(&msg);
         if(!receiver->Receiver.Receive(msg.buffer, msg.max_size, msg.length, input_locator))
+        {
             continue;
+        }
 
         // Processes the data through the CDR Message interface.
         receiver->mp_receiver->processCDRMsg(getGuid().guidPrefix, &input_locator, &receiver->mp_receiver->m_rec_msg);
@@ -848,11 +850,13 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
             //Push the new items into the ReceiverResource buffer
             m_receiverResourcelist.push_back(ReceiverControlBlock(std::move(*it_buffer)));
             //Create and init the MessageReceiver
-            m_receiverResourcelist.back().mp_receiver = new MessageReceiver(this, m_network_Factory.get_max_message_size_between_transports());
+            m_receiverResourcelist.back().mp_receiver = new MessageReceiver(this,
+                    m_network_Factory.get_max_message_size_between_transports());
             m_receiverResourcelist.back().mp_receiver->init(m_network_Factory.get_max_message_size_between_transports());
 
             //Init the thread
-            m_receiverResourcelist.back().m_thread = new std::thread(&RTPSParticipantImpl::performListenOperation,this, &(m_receiverResourcelist.back()),(*it_loc));
+            m_receiverResourcelist.back().m_thread = new std::thread(&RTPSParticipantImpl::performListenOperation, this,
+                    &(m_receiverResourcelist.back()),(*it_loc));
         }
         newItemsBuffer.clear();
     }

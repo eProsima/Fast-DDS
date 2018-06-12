@@ -25,8 +25,9 @@
 
 #include "attributes/RTPSParticipantAttributes.h"
 
+#include <atomic>
+#include <mutex>
 #include <set>
-
 
 namespace eprosima{
 namespace fastrtps{
@@ -130,7 +131,9 @@ class RTPSDomain
 
 
     private:
-    static uint32_t m_maxRTPSParticipantID;
+    static std::mutex m_mutex;
+
+    static std::atomic<uint32_t> m_maxRTPSParticipantID;
 
     static std::vector<t_p_RTPSParticipant> m_RTPSParticipants;
 
@@ -141,6 +144,8 @@ class RTPSDomain
     static inline uint32_t getNewId() {return m_maxRTPSParticipantID++;}
 
     static std::set<uint32_t> m_RTPSParticipantIDs;
+
+    static void removeRTPSParticipant_nts(std::vector<t_p_RTPSParticipant>::iterator it);
 
 };
 

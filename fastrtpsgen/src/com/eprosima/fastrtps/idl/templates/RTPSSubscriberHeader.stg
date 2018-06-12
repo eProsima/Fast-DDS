@@ -18,8 +18,8 @@ main(ctx, definitions) ::= <<
 $fileHeader(ctx=ctx,  file=[ctx.filename, "Subscriber.h"], description=["This header file contains the declaration of the subscriber functions."])$
 
 
-#ifndef _$ctx.fileNameUpper$_SUBSCRIBER_H_
-#define _$ctx.fileNameUpper$_SUBSCRIBER_H_
+#ifndef _$ctx.headerGuardName$_SUBSCRIBER_H_
+#define _$ctx.headerGuardName$_SUBSCRIBER_H_
 
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
@@ -51,7 +51,7 @@ private:
 	$ctx.m_lastStructureTopicDataTypeName$PubSubType myType;
 };
 
-#endif // _$ctx.filename; format="toUpper"$_SUBSCRIBER_H_
+#endif // _$ctx.headerGuardName$_SUBSCRIBER_H_
 >>
 
 module(ctx, parent, module, definition_list) ::= <<

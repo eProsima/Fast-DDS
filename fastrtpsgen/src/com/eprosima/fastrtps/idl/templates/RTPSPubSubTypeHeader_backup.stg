@@ -29,7 +29,7 @@ using namespace eprosima::fastrtps;
 
 
 
-#endif // _$ctx.filename; format="toUpper"$_PUBSUBTYPE_H_
+#endif // _$ctx.headerGuardName$_PUBSUBTYPE_H_
 >>
 
 module(ctx, parent, module, definition_list) ::= <<

@@ -113,6 +113,7 @@ bool $struct.scopedname$::isKeyDefined()
 
 void $struct.scopedname$::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
+	(void) scdr;
 	$struct.members : { member |$if(boolean_converter.(member.annotations.("Key").values.("value").value))$ $object_serialization(ctx=ctx, object=member, preffix="m_")$ $endif$ }; separator="\n"$
 }
 >>

@@ -18,8 +18,8 @@ main(ctx, definitions) ::= <<
 $fileHeader(ctx=ctx,  file=[ctx.filename, "PubSubTypes.h"], description=["This header file contains the declaration of the serialization functions."])$
 
 
-#ifndef _$ctx.fileNameUpper$_PUBSUBTYPES_H_
-#define _$ctx.fileNameUpper$_PUBSUBTYPES_H_
+#ifndef _$ctx.headerGuardName$_PUBSUBTYPES_H_
+#define _$ctx.headerGuardName$_PUBSUBTYPES_H_
 
 #include <fastrtps/TopicDataType.h>
 
@@ -27,7 +27,7 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "PubSubTypes.h"], description=["This h
 
 $definitions; separator="\n"$
 
-#endif // _$ctx.filename; format="toUpper"$_PUBSUBTYPE_H_
+#endif // _$ctx.headerGuardName$_PUBSUBTYPES_H_
 >>
 
 // TODO name -> module
