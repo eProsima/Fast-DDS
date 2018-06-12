@@ -24,14 +24,13 @@
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/transport/tcp/TCPControlMessage.h>
 #include <fastrtps/transport/tcp/RTCPHeader.h>
-#include <fastrtps/transport/TCPv4Transport.h>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
 class TCPChannelResource;
-class TCPv4Transport;
+class TCPTransportInterface;
 
 /**
  * Class RTCPMessageManager, process the received TCP messages.
@@ -41,7 +40,7 @@ class RTCPMessageManager
 {
 public:
 
-    RTCPMessageManager(TCPv4Transport* tcpv4_transport) : transport(tcpv4_transport) {}
+    RTCPMessageManager(TCPTransportInterface* pTransport) : mTransport(pTransport) {}
     virtual ~RTCPMessageManager();
 
     /** @name Send RTCP Message Methods.
@@ -102,7 +101,7 @@ public:
     static uint32_t& addToCRC(uint32_t &crc, octet data);
 
 protected:
-    TCPv4Transport* transport;
+    TCPTransportInterface* mTransport;
     std::set<TCPTransactionId> mUnconfirmedTransactions;
     TCPTransactionId myTransId;
     std::recursive_mutex mutex;

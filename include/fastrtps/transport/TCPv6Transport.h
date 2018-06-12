@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TCPV4_TRANSPORT_H
-#define TCPV4_TRANSPORT_H
+#ifndef TCPV6_TRANSPORT_H
+#define TCPV6_TRANSPORT_H
 
 #include <fastrtps/transport/TCPTransportInterface.h>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/transport/tcp/RTCPHeader.h>
 
@@ -30,12 +30,12 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-class TCPv4Transport;
+class TCPv6Transport;
 class RTCPMessageManager;
 class CleanTCPSocketsEvent;
 class TCPChannelResource;
 
-class TCPv4Acceptor
+class TCPv6Acceptor
 {
 public:
 	asio::ip::tcp::acceptor mAcceptor;
@@ -46,32 +46,32 @@ public:
     asio::ip::tcp::endpoint mEndPoint;
 #endif
 
-    TCPv4Acceptor(asio::io_service& io_service, const Locator_t& locator, uint32_t maxMsgSize);
-    ~TCPv4Acceptor()    {    }
+    TCPv6Acceptor(asio::io_service& io_service, const Locator_t& locator, uint32_t maxMsgSize);
+    ~TCPv6Acceptor()    {    }
 
     //! Method to start the accepting process.
-    void Accept(TCPv4Transport* parent, asio::io_service&);
+    void Accept(TCPv6Transport* parent, asio::io_service&);
 };
 
-class TCPv4Connector
+class TCPv6Connector
 {
 public:
     Locator_t m_locator;
 	eProsimaTCPSocket m_socket;
 
-    TCPv4Connector(asio::io_service& io_service, const Locator_t& locator);
-    ~TCPv4Connector();
+    TCPv6Connector(asio::io_service& io_service, const Locator_t& locator);
+    ~TCPv6Connector();
 
     //! Method to start the connecting process with the endpoint set in the locator.
-	void Connect(TCPv4Transport* parent, SenderResource *senderResource);
+	void Connect(TCPv6Transport* parent, SenderResource *senderResource);
 
     //! Method to start the reconnection process.
-	void RetryConnect(asio::io_service& io_service, TCPv4Transport* parent, SenderResource *senderResource);
+	void RetryConnect(asio::io_service& io_service, TCPv6Transport* parent, SenderResource *senderResource);
 };
 
 
 /**
- * This is a default TCPv4 implementation.
+ * This is a default TCPv6 implementation.
  *    - Opening an output channel by passing a remote locator will try to open a TCP conection with the endpoint.
  *       If there is created a connection with the same endpoint, the transport will use the same one.
  *
@@ -84,15 +84,15 @@ public:
  *       after each establishment.
  * @ingroup TRANSPORT_MODULE
  */
-class TCPv4Transport : public TCPTransportInterface
+class TCPv6Transport : public TCPTransportInterface
 {
 public:
     friend class RTCPMessageManager;
     friend class CleanTCPSocketsEvent;
 
-    RTPS_DllAPI TCPv4Transport(const TCPv4TransportDescriptor&);
+    RTPS_DllAPI TCPv6Transport(const TCPv6TransportDescriptor&);
 
-    virtual ~TCPv4Transport() override;
+    virtual ~TCPv6Transport() override;
 
     bool init() override;
 
@@ -120,7 +120,7 @@ public:
     //! Unbind the given socket from every registered locator.
     void UnbindSocket(TCPChannelResource*);
 
-    //! Checks for TCPv4 kind.
+    //! Checks for TCPv6 kind.
     virtual bool IsLocatorSupported(const Locator_t&) const override;
 
     //! Reports whether Locators correspond to the same port.
@@ -206,9 +206,9 @@ public:
 
     //! Callback called each time that an incomming connection is accepted.
 #ifdef ASIO_HAS_MOVE
-    void SocketAccepted(TCPv4Acceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket s);
+    void SocketAccepted(TCPv6Acceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket s);
 #else
-    void SocketAccepted(TCPv4Acceptor* acceptor, const asio::error_code& error);
+    void SocketAccepted(TCPv6Acceptor* acceptor, const asio::error_code& error);
 #endif
 
     //! Callback called each time that an outgoing connection is established.
@@ -225,30 +225,30 @@ protected:
         eException
     };
 
-    TCPv4TransportDescriptor mConfiguration_;
+    TCPv6TransportDescriptor mConfiguration_;
     RTCPMessageManager* mRTCPMessageManager;
     asio::io_service mService;
     std::shared_ptr<std::thread> ioServiceThread;
     std::vector<IPFinder::info_IP> mCurrentInterfaces;
-    std::vector<asio::ip::address_v4> mInterfaceWhiteList;
+    std::vector<asio::ip::address_v6> mInterfaceWhiteList;
 
     std::vector<TCPChannelResource*> mDeletedSocketsPool;
     std::recursive_mutex mDeletedSocketsPoolMutex;
     CleanTCPSocketsEvent* mCleanSocketsPoolTimer;
 
     mutable std::recursive_mutex mSocketsMapMutex;
-    std::map<uint16_t, TCPv4Acceptor*> mSocketAcceptors; // The Key is the "Physical Port"
+    std::map<uint16_t, TCPv6Acceptor*> mSocketAcceptors; // The Key is the "Physical Port"
     std::map<uint16_t, std::vector<TCPChannelResource*>> mInputSockets; // The Key is the "Physical Port"
     std::map<Locator_t, ReceiverResource*> mReceiverResources;
 
     std::map<Locator_t, std::vector<SenderResource*>> mPendingOutputPorts;
-    std::map<Locator_t, TCPv4Connector*> mSocketConnectors;
+    std::map<Locator_t, TCPv6Connector*> mSocketConnectors;
     std::vector<TCPChannelResource*> mOutputSockets;
     std::map<Locator_t, std::vector<TCPChannelResource*>> mBoundOutputSockets;
     mutable std::map<TCPChannelResource*, std::vector<SenderResource*>> mSocketToSenders;
 
     //! Constructor with no descriptor is necessary for implementations derived from this class.
-    TCPv4Transport();
+    TCPv6Transport();
 
     //! Cleans the sockets pending to delete.
     virtual void CleanDeletedSockets() override;
@@ -260,7 +260,7 @@ protected:
     bool IsTCPInputSocket(const Locator_t& locator) const;
 
     //! Checks if the given ip has been included in the white list to use it.
-    bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
+    bool IsInterfaceAllowed(const asio::ip::address_v6& ip);
 
     //! Intermediate method to open an output socket.
     bool OpenOutputSockets(const Locator_t& locator, SenderResource *senderResource);

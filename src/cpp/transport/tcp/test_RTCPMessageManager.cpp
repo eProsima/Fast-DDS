@@ -19,7 +19,7 @@
 
 
 #include <fastrtps/transport/tcp/test_RTCPMessageManager.h>
-#include <fastrtps/transport/TCPv4Transport.h>
+#include <fastrtps/transport/TCPTransportInterface.h>
 
 using namespace eprosima::fastrtps;
 
@@ -27,8 +27,8 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-test_RTCPMessageManager::test_RTCPMessageManager(TCPv4Transport* tcpv4_transport)
-    : RTCPMessageManager(tcpv4_transport)
+test_RTCPMessageManager::test_RTCPMessageManager(TCPTransportInterface* transport)
+    : RTCPMessageManager(transport)
     , mInvalidTransactionPercentage(0)
 {
 }

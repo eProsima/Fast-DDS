@@ -215,9 +215,20 @@ class RTPS_DllAPI Locator_t
             return true;
         }
 
+        bool set_IP6_address(const Locator_t &other)
+        {
+            memcpy(address, other.address, sizeof(octet) * 16);
+            return true;
+        }
+
         octet* get_IP4_address()
         {
             return addresses_.ip_address;
+        }
+
+        octet* get_IP6_address()
+        {
+            return address;
         }
 
         bool set_IP4_WAN_address(octet o1,octet o2,octet o3,octet o4){

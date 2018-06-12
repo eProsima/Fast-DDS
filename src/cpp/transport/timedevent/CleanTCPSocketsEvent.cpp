@@ -18,7 +18,7 @@
  */
 
 #include <fastrtps/transport/timedevent/CleanTCPSocketsEvent.h>
-#include <fastrtps/transport/TCPv4Transport.h>
+#include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/log/Log.h>
 #include <mutex>
 
@@ -29,7 +29,7 @@ namespace fastrtps{
 namespace rtps {
 
 
-CleanTCPSocketsEvent::CleanTCPSocketsEvent(TCPv4Transport* p_transport, asio::io_service& service,
+CleanTCPSocketsEvent::CleanTCPSocketsEvent(TCPTransportInterface* p_transport, asio::io_service& service,
     const std::thread& thread, double interval)
 : TimedEvent(service, thread, interval, TimedEvent::NONE)
 , mp_transport(p_transport)

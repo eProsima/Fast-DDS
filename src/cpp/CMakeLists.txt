@@ -76,8 +76,10 @@ set(${PROJECT_NAME}_source_files
     transport/timedevent/CleanTCPSocketsEvent.cpp
     transport/ChannelResource.cpp
     transport/UDPv4Transport.cpp
+    transport/TCPTransportInterface.cpp
     transport/TCPv4Transport.cpp
     transport/UDPv6Transport.cpp
+    transport/TCPv6Transport.cpp
     transport/test_UDPv4Transport.cpp
     transport/test_TCPv4Transport.cpp
     transport/tcp/TCPControlMessage.cxx
