@@ -35,7 +35,7 @@ namespace rtps {
 
 static const int s_default_keep_alive_frequency = 50000; // 50 SECONDS
 static const int s_default_keep_alive_timeout = 10000; // 10 SECONDS
-static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
+static const int s_clean_deleted_sockets_pool_timeout = 1000; // 1 SECOND
 
 static void GetIP6s(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
 {
@@ -350,18 +350,21 @@ bool TCPv6Transport::IsOutputChannelOpen(const Locator_t& locator) const
         return false;
     }
 
-    if (mSocketConnectors.find(locator) != mSocketConnectors.end())
+    // Check if there is any connector to the given locator.
+    for (auto it = mSocketConnectors.begin(); it != mSocketConnectors.end(); ++it)
     {
-        return true;
-    }
-    else
-    {
-        for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
+        if (it->first.compare_IP6_address_and_port(locator))
         {
-            if ((*it)->GetLocator().compare_IP6_address_and_port(locator))
-            {
-                return true;
-            }
+            return true;
+        }
+    }
+
+    // Check if there is any socket opened with the given locator.
+    for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
+    {
+        if ((*it)->GetLocator().compare_IP6_address_and_port(locator))
+        {
+            return true;
         }
     }
 
@@ -423,7 +426,15 @@ void TCPv6Transport::BindOutputChannel(const Locator_t& locator, SenderResource 
         return;
     }
 
-    assert(mBoundOutputSockets.find(locator) == mBoundOutputSockets.end());
+    for (auto it = mSocketConnectors.begin(); it != mSocketConnectors.end(); ++it)
+    {
+        if (it->first.compare_IP6_address_and_port(locator) && std::find(it->second->m_PendingLocators.begin(),
+            it->second->m_PendingLocators.end(), locator) == it->second->m_PendingLocators.end())
+        {
+            it->second->m_PendingLocators.emplace_back(locator);
+        }
+    }
+
     for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
     {
         if ((*it)->GetLocator().compare_IP6_address_and_port(locator))
@@ -737,18 +748,40 @@ bool TCPv6Transport::IsInterfaceAllowed(const ip::address_v6& ip)
 bool TCPv6Transport::EnqueueLogicalOutputPort(const Locator_t& locator)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-    for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
+    if (IsTCPInputSocket(locator))
     {
-        // Checks that the given logical port matches with the IP and port,
-        // and checks that the logical port ins't opened or pending to open.
-        if ((*it)->GetLocator().compare_IP6_address_and_port(locator) &&
-            std::find((*it)->mLogicalOutputPorts.begin(), (*it)->mLogicalOutputPorts.end(),
-                locator.get_logical_port()) == (*it)->mLogicalOutputPorts.end() &&
-            std::find((*it)->mPendingLogicalOutputPorts.begin(), (*it)->mPendingLogicalOutputPorts.end(),
-                locator.get_logical_port()) == (*it)->mPendingLogicalOutputPorts.end())
+        if (mInputSockets.find(locator.get_physical_port()) != mInputSockets.end())
         {
-            (*it)->mPendingLogicalOutputPorts.push_back(locator.get_logical_port());
+            auto& sockets = mInputSockets.at(locator.get_physical_port());
+            for (auto it = sockets.begin(); it != sockets.end(); ++it)
+            {
+                if (std::find((*it)->mLogicalOutputPorts.begin(), (*it)->mLogicalOutputPorts.end(),
+                    locator.get_logical_port()) == (*it)->mLogicalOutputPorts.end() &&
+                    std::find((*it)->mPendingLogicalOutputPorts.begin(), (*it)->mPendingLogicalOutputPorts.end(),
+                        locator.get_logical_port()) == (*it)->mPendingLogicalOutputPorts.end())
+                {
+                    (*it)->mPendingLogicalOutputPorts.push_back(locator.get_logical_port());
+                }
+            }
             return true;
+        }
+        return false;
+    }
+    else
+    {
+        for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
+        {
+            // Checks that the given logical port matches with the IP and port,
+            // and checks that the logical port ins't opened or pending to open.
+            if ((*it)->GetLocator().compare_IP6_address_and_port(locator) &&
+                std::find((*it)->mLogicalOutputPorts.begin(), (*it)->mLogicalOutputPorts.end(),
+                    locator.get_logical_port()) == (*it)->mLogicalOutputPorts.end() &&
+                std::find((*it)->mPendingLogicalOutputPorts.begin(), (*it)->mPendingLogicalOutputPorts.end(),
+                    locator.get_logical_port()) == (*it)->mPendingLogicalOutputPorts.end())
+            {
+                (*it)->mPendingLogicalOutputPorts.push_back(locator.get_logical_port());
+                return true;
+            }
         }
     }
     return false;
@@ -926,7 +959,7 @@ bool TCPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     const Locator_t& remoteLocator)
 {
     //    logInfo(RTCP, " SEND [RTPS Data] to locator " << remoteLocator.get_physical_port() << ":" << remoteLocator.get_logical_port());
-    std::map<Locator_t, std::vector<TCPChannelResource*>>::iterator it;
+    std::vector<TCPChannelResource* > sendVector;
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         if (!IsOutputChannelConnected(remoteLocator) || sendBufferSize > mConfiguration_.sendBufferSize)
@@ -935,16 +968,20 @@ bool TCPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
             return false;
         }
 
-        it = mBoundOutputSockets.find(remoteLocator);
+        std::map<Locator_t, std::vector<TCPChannelResource*>>::iterator it = mBoundOutputSockets.find(remoteLocator);
         if (it == mBoundOutputSockets.end())
         {
             logWarning(RTCP, "SEND [RTPS] Failed: Not bound: " << remoteLocator.get_logical_port());
             return false;
         }
+        else
+        {
+            sendVector = it->second;
+        }
     }
 
     bool result = true;
-    for (TCPChannelResource* socket : it->second)
+    for (TCPChannelResource* socket : sendVector)
     {
         result = result && Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, socket);
     }
@@ -985,25 +1022,28 @@ bool TCPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     TCPChannelResource* socket = dynamic_cast<TCPChannelResource*>(pChannelResource);
     if (socket != nullptr && socket->IsConnectionEstablished())
     {
-        CDRMessage_t msg;
-        TCPHeader tcp_header;
         uint16_t logicalPort = socket->mLogicalPortRouting.find(remoteLocator.get_logical_port())
             != socket->mLogicalPortRouting.end()
             ? socket->mLogicalPortRouting.at(remoteLocator.get_logical_port())
             : remoteLocator.get_logical_port();
 
-        FillTCPHeader(tcp_header, sendBuffer, sendBufferSize, logicalPort);
-
-        RTPSMessageCreator::addCustomContent(&msg, (octet*)&tcp_header, TCPHeader::getSize());
-        RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
-
-        bool success = false;
+        if (socket->IsLogicalPortOpened(logicalPort))
         {
-            std::unique_lock<std::recursive_mutex> sendLock(*socket->GetWriteMutex());
-            success |= SendThroughSocket(msg.buffer, msg.length, remoteLocator, socket);
-        }
+            CDRMessage_t msg;
+            TCPHeader tcp_header;
+            FillTCPHeader(tcp_header, sendBuffer, sendBufferSize, logicalPort);
 
-        return success;
+            RTPSMessageCreator::addCustomContent(&msg, (octet*)&tcp_header, TCPHeader::getSize());
+            RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
+
+            bool success = false;
+            {
+                std::unique_lock<std::recursive_mutex> sendLock(*socket->GetWriteMutex());
+                success |= SendThroughSocket(msg.buffer, msg.length, remoteLocator, socket);
+            }
+            return success;
+        }
+        return false;
     }
     else
     {
@@ -1390,6 +1430,11 @@ void TCPv6Transport::SocketConnected(Locator_t& locator, SenderResource *senderR
             mOutputSockets.push_back(outputSocket);
             BindOutputChannel(locator);
 
+            for (auto& it : pendingConector->m_PendingLocators)
+            {
+                EnqueueLogicalOutputPort(it);
+            }
+
             logInfo(RTCP, " Socket Connected (physical remote: " << locator.get_physical_port()
                 << ", local: " << outputSocket->getSocket()->local_endpoint().port()
                 << ") IP: " << outputSocket->getSocket()->remote_endpoint().address());
@@ -1498,13 +1543,26 @@ void TCPv6Transport::ReleaseTCPSocket(TCPChannelResource *pChannelResource)
 {
     if (pChannelResource != nullptr && pChannelResource->IsAlive())
     {
+        // Pauses the timer to clean the deleted sockets pool.
+        if (mCleanSocketsPoolTimer != nullptr)
+        {
+            mCleanSocketsPoolTimer->cancel_timer();
+        }
+
         // Remove the all bindings with this socket.
         UnbindSocket(pChannelResource);
 
         pChannelResource->Disable();
         pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eDisconnected);
-        pChannelResource->getSocket()->cancel();
-        pChannelResource->getSocket()->shutdown(ip::tcp::socket::shutdown_both);
+        try
+        {
+            pChannelResource->getSocket()->cancel();
+            pChannelResource->getSocket()->shutdown(ip::tcp::socket::shutdown_both);
+        }
+        catch (std::exception)
+        {
+            // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
+        }
         pChannelResource->getSocket()->close();
 
         // Remove from senders
@@ -1528,7 +1586,6 @@ void TCPv6Transport::ReleaseTCPSocket(TCPChannelResource *pChannelResource)
         // Starts a timer to clean the deleted sockets pool.
         if (mCleanSocketsPoolTimer != nullptr)
         {
-            mCleanSocketsPoolTimer->cancel_timer();
             mCleanSocketsPoolTimer->update_interval_millisec(s_clean_deleted_sockets_pool_timeout);
             mCleanSocketsPoolTimer->restart_timer();
         }
