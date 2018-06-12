@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/rtps/network/NetworkFactory.h>
 #include <fastrtps/transport/UDPv6Transport.h>
 #include <gtest/gtest.h>
@@ -177,26 +178,28 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator, nullptr)); // Includes loopback
-    ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator, &receiver, 0x8FFF));
+    ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
     octet message[5] = { 'H','e','l','l','o' };
 
-    auto sendThreadFunction = [&]()
-    {
-        Locator_t destinationLocator;
-        destinationLocator.set_port(g_default_port);
-        destinationLocator.kind = LOCATOR_KIND_UDPv6;
-        EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
-    };
-
+    Semaphore sem;
     std::function<void()> recCallback = [&]()
     {
         EXPECT_EQ(memcmp(message,msg_recv->data,5), 0);
+        sem.post();
     };
 
     msg_recv->setCallback(recCallback);
 
+    auto sendThreadFunction = [&]()
+    {
+        EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
+    };
+
     senderThread.reset(new std::thread(sendThreadFunction));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
     senderThread->join();
+    sem.wait();
+    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
 }
 
 TEST_F(UDPv6Tests, send_to_loopback)
@@ -218,26 +221,28 @@ TEST_F(UDPv6Tests, send_to_loopback)
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator, nullptr));
-    ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator, &receiver, 0x8FFF));
+    ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
     octet message[5] = { 'H','e','l','l','o' };
 
-    auto sendThreadFunction = [&]()
-    {
-        Locator_t destinationLocator;
-        destinationLocator.set_port(g_default_port);
-        destinationLocator.kind = LOCATOR_KIND_UDPv6;
-        EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
-    };
-
+    Semaphore sem;
     std::function<void()> recCallback = [&]()
     {
         EXPECT_EQ(memcmp(message,msg_recv->data,5), 0);
+        sem.post();
     };
 
     msg_recv->setCallback(recCallback);
 
+    auto sendThreadFunction = [&]()
+    {
+        EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
+    };
+
     senderThread.reset(new std::thread(sendThreadFunction));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
     senderThread->join();
+    sem.wait();
+    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
 }
 #endif
 
@@ -250,6 +255,7 @@ void UDPv6Tests::HELPER_SetDescriptorDefaults()
 
 int main(int argc, char **argv)
 {
+    Log::SetVerbosity(Log::Info);
     g_default_port = get_port();
 
     testing::InitGoogleTest(&argc, argv);

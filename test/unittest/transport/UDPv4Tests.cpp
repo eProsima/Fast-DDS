@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/rtps/network/NetworkFactory.h>
 #include <gtest/gtest.h>
 #include <thread>
 #include <fastrtps/utils/IPFinder.h>
-#include <fastrtps/log/Log.h>
+//#include <fastrtps/log/Log.h>
 #include <memory>
 #include <asio.hpp>
 #include <MockReceiverResource.h>
@@ -60,7 +61,7 @@ class UDPv4Tests: public ::testing::Test
 
         ~UDPv4Tests()
         {
-            Log::KillThread();
+            //Log::KillThread();
         }
 
         void HELPER_SetDescriptorDefaults();
@@ -150,23 +151,28 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator, nullptr)); // Includes loopback
-    ASSERT_TRUE  (transportUnderTest.OpenInputChannel(multicastLocator, &receiver, 0x8FFF));
+    ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
     octet message[5] = { 'H','e','l','l','o' };
+
+    Semaphore sem;
+    std::function<void()> recCallback = [&]()
+    {
+        EXPECT_EQ(memcmp(message,msg_recv->data,5), 0);
+        sem.post();
+    };
+
+    msg_recv->setCallback(recCallback);
 
     auto sendThreadFunction = [&]()
     {
         EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
     };
 
-    std::function<void()> recCallback = [&]()
-    {
-        EXPECT_EQ(memcmp(message,msg_recv->data,5), 0);
-    };
-
-    msg_recv->setCallback(recCallback);
-
     senderThread.reset(new std::thread(sendThreadFunction));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
     senderThread->join();
+    sem.wait();
+    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
 }
 
 TEST_F(UDPv4Tests, send_to_loopback)
@@ -188,23 +194,28 @@ TEST_F(UDPv4Tests, send_to_loopback)
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator, nullptr));
-    ASSERT_TRUE  (transportUnderTest.OpenInputChannel(multicastLocator, &receiver, 0x8FFF));
+    ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
     octet message[5] = { 'H','e','l','l','o' };
 
-    auto sendThreadFunction = [&]()
-    {
-        ASSERT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
-    };
-
+    Semaphore sem;
     std::function<void()> recCallback = [&]()
     {
         EXPECT_EQ(memcmp(message,msg_recv->data,5), 0);
+        sem.post();
     };
 
     msg_recv->setCallback(recCallback);
 
+    auto sendThreadFunction = [&]()
+    {
+        EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
+    };
+
     senderThread.reset(new std::thread(sendThreadFunction));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
     senderThread->join();
+    sem.wait();
+    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
 }
 #endif
 
@@ -226,6 +237,8 @@ TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
     // Then
     std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
     ASSERT_FALSE(transportUnderTest.Send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(), genericOutputChannelLocator, destinationLocator));
+
+    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
 }
 
 TEST_F(UDPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
@@ -282,6 +295,8 @@ TEST_F(UDPv4Tests, send_to_wrong_interface)
     outputChannelLocator.set_IP4_address(111,111,111,111);
     std::vector<octet> message = { 'H','e','l','l','o' };
     ASSERT_FALSE(transportUnderTest.Send(message.data(), (uint32_t)message.size(), outputChannelLocator, Locator_t()));
+    
+    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
 }
 
 TEST_F(UDPv4Tests, shrink_locator_lists)
@@ -480,7 +495,7 @@ void UDPv4Tests::HELPER_SetDescriptorDefaults()
 
 int main(int argc, char **argv)
 {
-    Log::SetVerbosity(Log::Info);
+    //Log::SetVerbosity(Log::Info);
     g_default_port = get_port();
 
     testing::InitGoogleTest(&argc, argv);

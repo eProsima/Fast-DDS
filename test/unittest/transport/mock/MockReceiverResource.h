@@ -29,9 +29,7 @@ class MockMessageReceiver;
 class MockReceiverResource : public ReceiverResource
 {
 public:
-    MockReceiverResource(TransportInterface& transport, const Locator_t& locator) 
-        : ReceiverResource(nullptr, transport, locator, 1024)
-        , msg_receiver(nullptr) {};
+    MockReceiverResource(TransportInterface& transport, const Locator_t& locator);
     MessageReceiver* CreateMessageReceiver() override;
     MockMessageReceiver* msg_receiver;
 };
