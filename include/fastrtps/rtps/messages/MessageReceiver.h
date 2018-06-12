@@ -63,7 +63,7 @@ class MessageReceiver
          * @param[in] loc Locator indicating the sending address.
          * @param[in] msg Pointer to the message
          */
-        void processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,Locator_t* loc, CDRMessage_t*msg);
+        virtual void processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,Locator_t* loc, CDRMessage_t*msg);
 
         //! Sets the related receiverResource only if the current is not set.
         void setReceiverResource(ReceiverResource* receiverResource);

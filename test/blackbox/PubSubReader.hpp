@@ -404,12 +404,6 @@ class PubSubReader
             return *this;
         }
 
-        PubSubReader& outLocatorList(eprosima::fastrtps::rtps::LocatorList_t outLocators)
-        {
-            subscriber_attr_.outLocatorList = outLocators;
-            return *this;
-        }
-
         PubSubReader& durability_kind(const eprosima::fastrtps::DurabilityQosPolicyKind kind)
         {
             subscriber_attr_.qos.m_durability.kind = kind;

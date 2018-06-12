@@ -77,7 +77,7 @@ public:
    ReceiverResource(ReceiverResource&&);
    ~ReceiverResource();
 
-   MessageReceiver* CreateMessageReceiver();
+   virtual MessageReceiver* CreateMessageReceiver();
 
    // Functions to associate/remove associatedendpoints
    void associateEndpoint(Endpoint *to_add);
@@ -100,12 +100,14 @@ public:
    bool processAckNack(const GUID_t& readerGUID, const GUID_t& writerGUID, uint32_t ackCount,
        const SequenceNumberSet_t& snSet, bool finalFlag);
 
+protected:
+   ReceiverResource(RTPSParticipantImpl*, TransportInterface&, const Locator_t&, uint32_t maxMsgSize);
+
 private:
 
    ReceiverResource()                                   = delete;
    ReceiverResource(const ReceiverResource&)            = delete;
    ReceiverResource& operator=(const ReceiverResource&) = delete;
-   ReceiverResource(RTPSParticipantImpl*, TransportInterface&, const Locator_t&, uint32_t maxMsgSize);
 
    std::mutex mtx;
    std::vector<RTPSWriter*> AssociatedWriters;

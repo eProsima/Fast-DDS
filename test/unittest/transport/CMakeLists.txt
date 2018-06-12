@@ -28,6 +28,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(UDPV4TESTS_SOURCE
             UDPv4Tests.cpp
+            mock/MockReceiverResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
@@ -36,6 +37,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(UDPV6TESTS_SOURCE
             UDPv6Tests.cpp
+            mock/MockReceiverResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
@@ -44,6 +46,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(TCPV4TESTS_SOURCE
             TCPv4Tests.cpp
+            mock/MockReceiverResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp

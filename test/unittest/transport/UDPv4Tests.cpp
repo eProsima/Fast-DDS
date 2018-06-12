@@ -20,6 +20,7 @@
 #include <fastrtps/log/Log.h>
 #include <memory>
 #include <asio.hpp>
+#include <MockReceiverResource.h>
 
 
 using namespace eprosima::fastrtps;
@@ -145,14 +146,11 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
     outputChannelLocator.set_port(g_default_port + 1);
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
 
-    NetworkFactory factory;
-    factory.RegisterTransport<UDPv4Transport, UDPv4TransportDescriptor>(descriptor);
-    std::vector<std::shared_ptr<ReceiverResource>> receivers;
-    factory.BuildReceiverResources(multicastLocator, nullptr, 0x8FFF, receivers);
-    ReceiverResource* receiver = receivers.back().get();
+    MockReceiverResource receiver(transportUnderTest, multicastLocator);
+    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator, nullptr)); // Includes loopback
-    ASSERT_TRUE  (transportUnderTest.OpenInputChannel(multicastLocator, receiver, 0x8FFF));
+    ASSERT_TRUE  (transportUnderTest.OpenInputChannel(multicastLocator, &receiver, 0x8FFF));
     octet message[5] = { 'H','e','l','l','o' };
 
     auto sendThreadFunction = [&]()
@@ -160,21 +158,15 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
         EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
     };
 
-    auto receiveThreadFunction = [&]()
+    std::function<void()> recCallback = [&]()
     {
-        octet receiveBuffer[ReceiveBufferCapacity];
-        uint32_t receiveBufferSize;
-
-        Locator_t remoteLocatorToReceive;
-        // TODO Adapt
-        //EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, ReceiveBufferCapacity, receiveBufferSize, multicastLocator, remoteLocatorToReceive));
-        EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
+        EXPECT_EQ(memcmp(message,msg_recv->data,5), 0);
     };
 
-    receiverThread.reset(new std::thread(receiveThreadFunction));
+    msg_recv->setCallback(recCallback);
+
     senderThread.reset(new std::thread(sendThreadFunction));
     senderThread->join();
-    receiverThread->join();
 }
 
 TEST_F(UDPv4Tests, send_to_loopback)
@@ -192,14 +184,11 @@ TEST_F(UDPv4Tests, send_to_loopback)
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
     outputChannelLocator.set_IP4_address(127,0,0,1); // Loopback
 
-    NetworkFactory factory;
-    factory.RegisterTransport<UDPv4Transport, UDPv4TransportDescriptor>(descriptor);
-    std::vector<std::shared_ptr<ReceiverResource>> receivers;
-    factory.BuildReceiverResources(multicastLocator, nullptr, 0x8FFF, receivers);
-    ReceiverResource* receiver = receivers.back().get();
+    MockReceiverResource receiver(transportUnderTest, multicastLocator);
+    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator, nullptr));
-    ASSERT_TRUE  (transportUnderTest.OpenInputChannel(multicastLocator, receiver, 0x8FFF));
+    ASSERT_TRUE  (transportUnderTest.OpenInputChannel(multicastLocator, &receiver, 0x8FFF));
     octet message[5] = { 'H','e','l','l','o' };
 
     auto sendThreadFunction = [&]()
@@ -207,21 +196,15 @@ TEST_F(UDPv4Tests, send_to_loopback)
         ASSERT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
     };
 
-    auto receiveThreadFunction = [&]()
+    std::function<void()> recCallback = [&]()
     {
-        octet receiveBuffer[ReceiveBufferCapacity];
-        uint32_t receiveBufferSize;
-
-        Locator_t remoteLocatorToReceive;
-        // TODO Adapt
-        //EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, ReceiveBufferCapacity, receiveBufferSize, multicastLocator, remoteLocatorToReceive));
-        EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
+        EXPECT_EQ(memcmp(message,msg_recv->data,5), 0);
     };
 
-    receiverThread.reset(new std::thread(receiveThreadFunction));
+    msg_recv->setCallback(recCallback);
+
     senderThread.reset(new std::thread(sendThreadFunction));
     senderThread->join();
-    receiverThread->join();
 }
 #endif
 
