@@ -20,6 +20,10 @@
 #include <fastrtps/transport/tcp/RTCPMessageManager.h>
 #include <fastrtps/transport/ChannelResource.h>
 #include <fastrtps/log/Log.h>
+#include <fastrtps/transport/TCPTransportInterface.h>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() <<") "<<
 
@@ -61,7 +65,7 @@ RTCPMessageManager::~RTCPMessageManager()
 
 size_t RTCPMessageManager::sendMessage(TCPChannelResource *pChannelResource, const CDRMessage_t &msg) const
 {
-    size_t send = transport->Send(pChannelResource, msg.buffer, msg.length);
+    size_t send = mTransport->Send(pChannelResource, msg.buffer, msg.length);
     if (send != msg.length)
     {
         logWarning(RTCP, "Bad sent size..." << send << " bytes of " << msg.length << " bytes.");
@@ -223,8 +227,13 @@ void RTCPMessageManager::sendConnectionRequest(TCPChannelResource *pChannelResou
     Locator_t locator;
     EndpointToLocator(pChannelResource->getSocket()->local_endpoint(), locator);
     locator.set_logical_port(localLogicalPort);
-    locator.set_IP4_WAN_address(transport->mConfiguration_.wan_addr[0], transport->mConfiguration_.wan_addr[1],
-        transport->mConfiguration_.wan_addr[2], transport->mConfiguration_.wan_addr[3]);
+
+    if (locator.kind == LOCATOR_KIND_TCPv4)
+    {
+        const TCPv4TransportDescriptor* pTCPv4Desc = (TCPv4TransportDescriptor*)mTransport->get_configuration();
+        locator.set_IP4_WAN_address(pTCPv4Desc->wan_addr[0], pTCPv4Desc->wan_addr[1], pTCPv4Desc->wan_addr[2],
+            pTCPv4Desc->wan_addr[3]);
+    }
     request.transportLocator(locator);
 
     SerializedPayload_t payload(static_cast<uint32_t>(ConnectionRequest_t::getBufferCdrSerializedSize(request)));
@@ -309,11 +318,23 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChann
     const TCPTransactionId &transactionId, Locator_t &localLocator)
 {
     BindConnectionResponse_t response;
-    localLocator.set_logical_port(transport->mConfiguration_.metadata_logical_port);
-    localLocator.set_IP4_WAN_address(transport->mConfiguration_.wan_addr[0],
-        transport->mConfiguration_.wan_addr[1],
-        transport->mConfiguration_.wan_addr[2],
-        transport->mConfiguration_.wan_addr[3]);
+
+    if (localLocator.kind == LOCATOR_KIND_TCPv4)
+    {
+        const TCPv4TransportDescriptor* pTCPv4Desc = (TCPv4TransportDescriptor*)mTransport->get_configuration();
+        localLocator.set_logical_port(pTCPv4Desc->metadata_logical_port);
+        localLocator.set_IP4_WAN_address(pTCPv4Desc->wan_addr[0], pTCPv4Desc->wan_addr[1], pTCPv4Desc->wan_addr[2],
+            pTCPv4Desc->wan_addr[3]);
+    }
+    else if (localLocator.kind == LOCATOR_KIND_TCPv6)
+    {
+        const TCPv6TransportDescriptor* pTCPv6Desc = (TCPv6TransportDescriptor*)mTransport->get_configuration();
+        localLocator.set_logical_port(pTCPv6Desc->metadata_logical_port);
+    }
+    else
+    {
+        assert(false);
+    }
 
     response.locator(localLocator);
 
@@ -330,7 +351,7 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChann
         {
             std::unique_lock<std::recursive_mutex> scope(pChannelResource->mPendingLogicalMutex);
             pChannelResource->mPendingLogicalOutputPorts.push_back(request.transportLocator().get_logical_port());
-            transport->BindSocket(request.transportLocator(), pChannelResource);
+            mTransport->BindSocket(request.transportLocator(), pChannelResource);
         }
         sendData(pChannelResource, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_OK);
         pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eEstablished);
@@ -448,8 +469,8 @@ bool RTCPMessageManager::processCheckLogicalPortsResponse(TCPChannelResource *pC
     {
         if (response.availableLogicalPorts().empty())
         {
-            pChannelResource->mCheckingLogicalPort += (transport->mConfiguration_.logical_port_range
-                * transport->mConfiguration_.logical_port_increment);
+            pChannelResource->mCheckingLogicalPort += (mTransport->GetLogicalPortRange()
+                * mTransport->GetLogicalPortIncrement());
             prepareAndSendCheckLogicalPortsRequest(pChannelResource);
         }
         else
@@ -493,13 +514,12 @@ void RTCPMessageManager::prepareAndSendCheckLogicalPortsRequest(TCPChannelResour
     }
 
     std::vector<uint16_t> ports;
-    for (uint16_t p = pChannelResource->mCheckingLogicalPort + transport->mConfiguration_.logical_port_increment;
-        p <= pChannelResource->mCheckingLogicalPort +
-        (transport->mConfiguration_.logical_port_range
-            * transport->mConfiguration_.logical_port_increment);
-        p += transport->mConfiguration_.logical_port_increment)
+    for (uint16_t p = pChannelResource->mCheckingLogicalPort + mTransport->GetLogicalPortIncrement();
+        p <= pChannelResource->mCheckingLogicalPort + (mTransport->GetLogicalPortRange()
+            * mTransport->GetLogicalPortIncrement());
+        p += mTransport->GetLogicalPortIncrement())
     {
-        if (p <= pChannelResource->mNegotiatingLogicalPort + transport->mConfiguration_.max_logical_port)
+        if (p <= pChannelResource->mNegotiatingLogicalPort + mTransport->GetMaxLogicalPort())
         {
             ports.emplace_back(p);
         }
@@ -554,7 +574,7 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResource *pCha
             pChannelResource->mLogicalOutputPorts.emplace_back(*(pChannelResource->mPendingLogicalOutputPorts.begin()));
             pChannelResource->mPendingLogicalOutputPorts.erase(pChannelResource->mPendingLogicalOutputPorts.begin());
             pChannelResource->mPendingLogicalPort = 0;
-            transport->BindSocket(remoteLocator, pChannelResource);
+            mTransport->BindSocket(remoteLocator, pChannelResource);
         }
         break;
         case RETCODE_INVALID_PORT:

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef UDPV6_TRANSPORT_DESCRIPTOR 
+#ifndef UDPV6_TRANSPORT_DESCRIPTOR
 #define UDPV6_TRANSPORT_DESCRIPTOR
 
 #include <fastrtps/transport/TransportInterface.h>
@@ -31,14 +31,17 @@ namespace rtps{
  * - interfaceWhiteList: Lists the allowed interfaces.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPv6TransportDescriptor: public TransportDescriptorInterface {
-   virtual ~UDPv6TransportDescriptor(){}
+typedef struct UDPv6TransportDescriptor : public TransportDescriptorInterface
+{
+    virtual ~UDPv6TransportDescriptor() {}
 
-   virtual TransportInterface* create_transport() const override;
+    virtual TransportInterface* create_transport() const override;
 
-   RTPS_DllAPI UDPv6TransportDescriptor();
+    RTPS_DllAPI UDPv6TransportDescriptor();
 
-   RTPS_DllAPI UDPv6TransportDescriptor(const UDPv6TransportDescriptor& t);
+    RTPS_DllAPI UDPv6TransportDescriptor(const UDPv6TransportDescriptor& t);
+
+    uint16_t m_output_upd_socket;
 } UDPv6TransportDescriptor;
 
 } // namespace rtps

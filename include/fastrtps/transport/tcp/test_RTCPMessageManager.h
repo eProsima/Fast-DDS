@@ -28,6 +28,8 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
+class TCPTransportInterface;
+
 /**
  * Class test_RTCPMessageManager, process the received TCP messages.
  * @ingroup MANAGEMENT_MODULE
@@ -36,13 +38,13 @@ class test_RTCPMessageManager : public RTCPMessageManager
 {
 public:
 
-    test_RTCPMessageManager(TCPv4Transport* tcpv4_transport);
+    test_RTCPMessageManager(TCPTransportInterface* transport);
     virtual ~test_RTCPMessageManager();
 
     void SetInvalidTransactionPercentage(uint8_t value) { mInvalidTransactionPercentage = value; }
     void SetLogicalPortsBlocked(std::vector<uint16_t> list) { mLogicalPortsBlocked = list; }
 
-    virtual void processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
+    virtual bool processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
         const OpenLogicalPortRequest_t &request, const TCPTransactionId &transactionId) override;
 
 protected:

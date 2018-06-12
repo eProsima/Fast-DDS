@@ -15,7 +15,6 @@
 #ifndef CHANNEL_RESOURCE_INFO_
 #define CHANNEL_RESOURCE_INFO_
 
-#include <asio.hpp>
 #include <memory>
 #include <map>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
@@ -304,6 +303,7 @@ protected:
     }
 
     friend class TCPv4Transport;
+    friend class TCPv6Transport;
     friend class RTCPMessageManager;
     friend class test_RTCPMessageManager;
 
