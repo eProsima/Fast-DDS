@@ -20,16 +20,16 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 	
-my_ReaderListener::my_ReaderListener() :n_received(0) {};
-my_ReaderListener::~my_ReaderListener(){};
+my_ReaderListener::my_ReaderListener() :n_received(0) {}
+my_ReaderListener::~my_ReaderListener(){}
 
-void my_ReaderListener::onNewDataMessage(RTPSReader* reader, const CacheChange_t* const change)
+void my_ReaderListener::onNewDataMessage(RTPSReader*, const CacheChange_t* const)
 {
 	n_received++;
 	std::cout << "Received " << n_received << " samples so far" << std::endl;
 }
 
-void my_ReaderListener::onReaderMatched(RTPSReader* reader,MatchingInfo& info)
+void my_ReaderListener::onReaderMatched(RTPSReader*, MatchingInfo&)
 {
 	std::cout << "Matched with a Writer" << std::endl;
 }

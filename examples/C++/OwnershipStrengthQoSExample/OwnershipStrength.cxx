@@ -139,7 +139,7 @@ bool ExampleMessage::isKeyDefined()
     return false;
 }
 
-void ExampleMessage::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void ExampleMessage::serializeKey(eprosima::fastcdr::Cdr&) const
 {
 	 
 	 

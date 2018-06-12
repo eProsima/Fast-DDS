@@ -88,7 +88,7 @@ bool FlowControlExamplePublisher::init()
     return true;
 }
 
-void FlowControlExamplePublisher::PubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
+void FlowControlExamplePublisher::PubListener::onPublicationMatched(Publisher*, MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {

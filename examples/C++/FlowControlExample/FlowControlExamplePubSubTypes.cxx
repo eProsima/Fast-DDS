@@ -82,7 +82,7 @@ bool FlowControlExamplePubSubType::deserialize(SerializedPayload_t* payload, voi
     return true;
 }
 
-std::function<uint32_t()> FlowControlExamplePubSubType::getSerializedSizeProvider(void* data)
+std::function<uint32_t()> FlowControlExamplePubSubType::getSerializedSizeProvider(void*)
 {
     return []() -> uint32_t { return 600000 + 1 + 4 /*encapsulation*/; };
 }

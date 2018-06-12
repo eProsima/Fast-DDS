@@ -122,7 +122,7 @@ bool XMLProfilesExample::isKeyDefined()
     return false;
 }
 
-void XMLProfilesExample::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void XMLProfilesExample::serializeKey(eprosima::fastcdr::Cdr&) const
 {
 	 
 	 

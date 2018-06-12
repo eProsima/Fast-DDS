@@ -20,20 +20,30 @@ macro(eprosima_find_package package)
         set(options REQUIRED)
         cmake_parse_arguments(FIND "${options}" "" "" ${ARGN})
 
+        option(THIRDPARTY "Activate the use of internal thirdparties" OFF)
+        option(THIRDPARTY_UPDATE "Activate the auto update of internal thirdparties" ON)
+
+        if(EPROSIMA_BUILD)
+            set(THIRDPARTY ON)
+        endif()
+
         option(THIRDPARTY_${package} "Activate the use of internal thirdparty ${package}" OFF)
 
         find_package(${package} QUIET)
         if(NOT ${package}_FOUND AND (THIRDPARTY OR THIRDPARTY_${package}))
             set(SUBDIRECTORY_EXIST TRUE)
-            if(NOT EXISTS "${PROJECT_SOURCE_DIR}/thirdparty/${package}/CMakeLists.txt")
+            if(THIRDPARTY_UPDATE OR NOT EXISTS "${PROJECT_SOURCE_DIR}/thirdparty/${package}/CMakeLists.txt")
+                message(STATUS "${package} thirdparty is being updated...")
                 execute_process(
                     COMMAND git submodule update --recursive --init "thirdparty/${package}"
                     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
                     RESULT_VARIABLE EXECUTE_RESULT
                     )
                 if(NOT EXECUTE_RESULT EQUAL 0)
-                    set(SUBDIRECTORY_EXIST FALSE)
                     message(WARNING "Cannot configure Git submodule ${package}")
+                    if(NOT EXISTS "${PROJECT_SOURCE_DIR}/thirdparty/${package}/CMakeLists.txt")
+                        set(SUBDIRECTORY_EXIST FALSE)
+                    endif()
                 endif()
             endif()
 

@@ -31,7 +31,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         endif()
 
         add_executable(WriterProxyTests ${WRITERPROXYTESTS_SOURCE})
-        add_gtest(WriterProxyTests ${WRITERPROXYTESTS_SOURCE})
         target_compile_definitions(WriterProxyTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(WriterProxyTests PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
@@ -45,5 +44,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_link_libraries(WriterProxyTests
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+        add_gtest(WriterProxyTests SOURCES ${WRITERPROXYTESTS_SOURCE})
     endif()
 endif()

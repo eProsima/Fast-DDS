@@ -217,7 +217,6 @@ endif()
 set(${PROJECT_NAME}_include_dirs
     ${ASIO_INCLUDE_DIR}
     ${TINYXML2_INCLUDE_DIR}
-    ${fastcdr_INCLUDE_DIR}
 )
 
 if(ANDROID)
@@ -287,6 +286,8 @@ if(MSVC OR MSVC_IDE)
             iphlpapi Shlwapi kernel32 user32.dll
             ${EXTRA_LIBRARIES}
             )
+
+        target_link_libraries(${PROJECT_NAME}_static ${PRIVACY} fastcdr)
 
         if(TINYXML2_LIBRARY)
             target_link_libraries(${PROJECT_NAME} ${PRIVACY}

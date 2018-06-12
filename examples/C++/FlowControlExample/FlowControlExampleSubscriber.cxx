@@ -63,7 +63,7 @@ bool FlowControlExampleSubscriber::init()
     return true;
 }
 
-void FlowControlExampleSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
+void FlowControlExampleSubscriber::SubListener::onSubscriptionMatched(Subscriber*, MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {

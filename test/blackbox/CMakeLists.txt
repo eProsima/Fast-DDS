@@ -12,6 +12,69 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+macro(add_blackbox_gtest test memorymode)
+    # Parse arguments
+    set(multiValueArgs SOURCES ENVIRONMENTS)
+    cmake_parse_arguments(GTEST "" "" "${multiValueArgs}" ${ARGN})
+
+    if(GTEST_INDIVIDUAL)
+        if(WIN32)
+            set(WIN_PATH "$ENV{PATH}")
+            get_target_property(LINK_LIBRARIES_ ${test} LINK_LIBRARIES)
+            if(NOT "${LINK_LIBRARIES_}" STREQUAL "LINK_LIBRARIES_-NOTFOUND")
+                foreach(LIBRARY_LINKED ${LINK_LIBRARIES_})
+                    if(TARGET ${LIBRARY_LINKED})
+                        set(WIN_PATH "$<TARGET_FILE_DIR:${LIBRARY_LINKED}>;${WIN_PATH}")
+                    endif()
+                endforeach()
+            endif()
+            string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
+        endif()
+
+        foreach(GTEST_SOURCE_FILE ${GTEST_SOURCES})
+            file(STRINGS ${GTEST_SOURCE_FILE} GTEST_NAMES REGEX ^BLACKBOXTEST)
+            foreach(GTEST_NAME ${GTEST_NAMES})
+                string(REGEX REPLACE ["\) \(,"] ";" GTEST_NAME ${GTEST_NAME})
+                list(GET GTEST_NAME 1 GTEST_GROUP_NAME)
+                list(GET GTEST_NAME 3 GTEST_NAME)
+                add_test(NAME ${GTEST_GROUP_NAME}_${memorymode}.${GTEST_NAME}
+                    COMMAND ${test}
+                    --gtest_filter=${GTEST_GROUP_NAME}_${memorymode}.${GTEST_NAME})
+
+                # Add environment
+                if(WIN32)
+                    set_tests_properties(${GTEST_GROUP_NAME}_${memorymode}.${GTEST_NAME} PROPERTIES ENVIRONMENT "PATH=${WIN_PATH}")
+                endif()
+
+                foreach(property ${GTEST_ENVIRONMENTS})
+                    set_property(TEST ${GTEST_GROUP_NAME}_${memorymode}.${GTEST_NAME} APPEND PROPERTY ENVIRONMENT "${property}")
+                endforeach()
+            endforeach()
+        endforeach()
+    else()
+        add_test(NAME ${test} COMMAND ${test})
+
+        # Add environment
+        if(WIN32)
+            set(WIN_PATH "$ENV{PATH}")
+            get_target_property(LINK_LIBRARIES_ ${test} LINK_LIBRARIES)
+            if(NOT "${LINK_LIBRARIES_}" STREQUAL "LINK_LIBRARIES_-NOTFOUND")
+                foreach(LIBRARY_LINKED ${LINK_LIBRARIES_})
+                    if(TARGET ${LIBRARY_LINKED})
+                        set(WIN_PATH "$<TARGET_FILE_DIR:${LIBRARY_LINKED}>;${WIN_PATH}")
+                    endif()
+                endforeach()
+            endif()
+            string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
+            set_tests_properties(${test} PROPERTIES ENVIRONMENT "PATH=${WIN_PATH}")
+        endif()
+
+        foreach(property ${GTEST_ENVIRONMENTS})
+            set_property(TEST ${test} APPEND PROPERTY ENVIRONMENT "${property}")
+        endforeach()
+    endif()
+endmacro()
+
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
     check_gtest()
@@ -63,42 +126,42 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             ${CMAKE_CURRENT_BINARY_DIR}/PubSubReader.xml)
 
         add_executable(BlackboxTests_PreallocMem ${BLACKBOXTESTS_SOURCE})
-        add_blackbox_gtest(BlackboxTests_PreallocMem PreallocMem ${BLACKBOXTESTS_SOURCE}
-            ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
-            ENVIRONMENT "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
-            ENVIRONMENT "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
-            ENVIRONMENT "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
-            ENVIRONMENT "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
-            )
         target_compile_definitions(BlackboxTests_PreallocMem PRIVATE
             PREALLOCATED_MEMORY_MODE_TEST)
         target_include_directories(BlackboxTests_PreallocMem PRIVATE ${GTEST_INCLUDE_DIRS})
         target_link_libraries(BlackboxTests_PreallocMem fastrtps fastcdr ${GTEST_LIBRARIES})
+        add_blackbox_gtest(BlackboxTests_PreallocMem PreallocMem SOURCES ${BLACKBOXTESTS_SOURCE}
+            ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+            "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
+            "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
+            "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
+            "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+            )
 
         add_executable(BlackboxTests_ReallocMem ${BLACKBOXTESTS_SOURCE})
-        add_blackbox_gtest(BlackboxTests_ReallocMem ReallocMem ${BLACKBOXTESTS_SOURCE}
-            ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
-            ENVIRONMENT "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
-            ENVIRONMENT "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
-            ENVIRONMENT "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
-            ENVIRONMENT "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
-            )
         target_compile_definitions(BlackboxTests_ReallocMem PRIVATE
             PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
         target_include_directories(BlackboxTests_ReallocMem PRIVATE ${GTEST_INCLUDE_DIRS})
         target_link_libraries(BlackboxTests_ReallocMem fastrtps fastcdr ${GTEST_LIBRARIES})
+        add_blackbox_gtest(BlackboxTests_ReallocMem ReallocMem SOURCES ${BLACKBOXTESTS_SOURCE}
+            ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+            "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
+            "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
+            "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
+            "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+            )
 
         add_executable(BlackboxTests_DynMem ${BLACKBOXTESTS_SOURCE})
-        add_blackbox_gtest(BlackboxTests_DynMem DynMem ${BLACKBOXTESTS_SOURCE}
-            ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
-            ENVIRONMENT "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
-            ENVIRONMENT "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
-            ENVIRONMENT "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
-            ENVIRONMENT "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
-            )
         target_compile_definitions(BlackboxTests_DynMem PRIVATE
             DYNAMIC_RESERVE_MEMORY_MODE_TEST)
         target_include_directories(BlackboxTests_DynMem PRIVATE ${GTEST_INCLUDE_DIRS})
         target_link_libraries(BlackboxTests_DynMem fastrtps fastcdr ${GTEST_LIBRARIES})
+        add_blackbox_gtest(BlackboxTests_DynMem DynMem SOURCES ${BLACKBOXTESTS_SOURCE}
+            ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+            "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
+            "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
+            "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
+            "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+            )
     endif()
 endif()

@@ -74,7 +74,7 @@ bool FilteringExamplePublisher::init()
 
 }
 
-void FilteringExamplePublisher::PubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
+void FilteringExamplePublisher::PubListener::onPublicationMatched(Publisher*, MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {

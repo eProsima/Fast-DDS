@@ -76,7 +76,7 @@ size_t FilteringExample::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-size_t FilteringExample::getCdrSerializedSize(const FilteringExample& data, size_t current_alignment)
+size_t FilteringExample::getCdrSerializedSize(const FilteringExample&, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
             
@@ -110,7 +110,7 @@ bool FilteringExample::isKeyDefined()
     return false;
 }
 
-void FilteringExample::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void FilteringExample::serializeKey(eprosima::fastcdr::Cdr&) const
 {
 	 
 }

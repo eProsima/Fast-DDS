@@ -122,7 +122,7 @@ bool HelloWorld::isKeyDefined()
     return false;
 }
 
-void HelloWorld::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void HelloWorld::serializeKey(eprosima::fastcdr::Cdr&) const
 {
 	 
 	 

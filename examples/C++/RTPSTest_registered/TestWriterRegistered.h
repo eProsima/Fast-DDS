@@ -40,7 +40,7 @@ public:
 	public:
 		MyListener():n_matched(0){};
 		~MyListener(){};
-		void onWriterMatched(eprosima::fastrtps::rtps::RTPSWriter* writer, eprosima::fastrtps::rtps::MatchingInfo& info)
+		void onWriterMatched(eprosima::fastrtps::rtps::RTPSWriter*, eprosima::fastrtps::rtps::MatchingInfo& info)
 		{
 			if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
 				++n_matched;

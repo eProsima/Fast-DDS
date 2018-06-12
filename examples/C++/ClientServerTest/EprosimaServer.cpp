@@ -151,7 +151,7 @@ Result::RESULTTYPE EprosimaServer::calculate(Operation::OPERATIONTYPE type,
 	return Result::GOOD_RESULT;
 }
 
-void EprosimaServer::OperationListener::onNewDataMessage(Subscriber* sub)
+void EprosimaServer::OperationListener::onNewDataMessage(Subscriber*)
 {
 	mp_up->mp_operation_sub->takeNextData((void*)&m_operation,&m_sampleInfo);
 	if(m_sampleInfo.sampleKind == ALIVE)
@@ -166,14 +166,14 @@ void EprosimaServer::OperationListener::onNewDataMessage(Subscriber* sub)
 	}
 }
 
-void EprosimaServer::OperationListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
+void EprosimaServer::OperationListener::onSubscriptionMatched(Subscriber*, MatchingInfo&)
 {
 
 }
 
 
 
-void EprosimaServer::ResultListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
+void EprosimaServer::ResultListener::onPublicationMatched(Publisher*, MatchingInfo&)
 {
 
 }

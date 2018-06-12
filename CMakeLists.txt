@@ -97,8 +97,8 @@ message(STATUS "To change de version modify the file configure.ac")
 ###############################################################################
 # Generation of windows installers.
 ###############################################################################
+option(EPROSIMA_INSTALLER "Activate the creation of a build to create windows installers" OFF)
 if(WIN32)
-    option(EPROSIMA_INSTALLER "Activate the creation of a build to create windows installers" OFF)
     option(EPROSIMA_INSTALLER_MINION "Informs this is part of an installer" OFF)
 endif()
 
@@ -156,7 +156,7 @@ else()
     set(DOC_DIR "${DATA_INSTALL_DIR}/doc")
 endif()
 set(DOC_INSTALL_DIR ${DOC_DIR} CACHE PATH "Installation directory for documentation")
-if(WIN32)
+if(WIN32 AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
     set(LICENSE_INSTALL_DIR . CACHE PATH "Installation directory for licenses")
 else()
     set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
@@ -199,15 +199,9 @@ option(BUILD_SHARED_LIBS "Create shared libraries by default" ON)
 ###############################################################################
 # Load external projects.
 ###############################################################################
-option(THIRDPARTY "Activate the use of internal thirdparties" OFF)
-
-if(EPROSIMA_BUILD)
-    set(THIRDPARTY ON)
-endif()
-
 include(${PROJECT_SOURCE_DIR}/cmake/common/eprosima_libraries.cmake)
 
-eprosima_find_package(fastcdr)
+eprosima_find_package(fastcdr REQUIRED)
 eprosima_find_thirdparty(Asio asio)
 eprosima_find_thirdparty(TinyXML2 tinyxml2)
 
@@ -222,7 +216,6 @@ option(SECURITY "Activate security" OFF)
 
 if(SECURITY)
     find_package(OpenSSL REQUIRED)
-    find_package(fastcdr REQUIRED)
 endif()
 
 ###############################################################################
@@ -254,14 +247,14 @@ add_subdirectory(src/cpp)
 option(PERFORMANCE_TESTS "Activate the building and execution of performance tests" OFF)
 option(EPROSIMA_BUILD_TESTS "Activate the building and execution unit tests and integral tests" OFF)
 
-if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MINION)
+if(EPROSIMA_BUILD AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MINION)
     set(EPROSIMA_BUILD_TESTS ON)
 endif()
 
 ###############################################################################
 # Testing
 ###############################################################################
-if(EPROSIMA_BUILD_TESTS AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MINION)
+if(EPROSIMA_BUILD_TESTS)
     file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/valgrind.supp" MEMORYCHECK_SUPPRESSIONS_FILE)
     enable_testing()
     include(CTest)
@@ -278,7 +271,7 @@ add_subdirectory(test/performance)
 ###############################################################################
 option(COMPILE_EXAMPLES "Build example" OFF)
 
-if(EPROSIMA_BUILD)
+if(EPROSIMA_BUILD AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MINION)
     set(COMPILE_EXAMPLES ON)
 endif()
 

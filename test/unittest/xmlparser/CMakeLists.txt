@@ -59,8 +59,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(${TINYXML2_INCLUDE_DIR})
 
         add_executable(XMLProfileParserTests ${XMLPROFILEPARSER_SOURCE})
-        add_gtest(XMLProfileParserTests XMLProfileParserTests.cpp)
-
         target_compile_definitions(XMLProfileParserTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(XMLProfileParserTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
@@ -70,6 +68,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${TINYXML2_LIBRARY}
                 )
         endif()
+        add_gtest(XMLProfileParserTests SOURCES XMLProfileParserTests.cpp)
 
 
         set(XMLPARSER_SOURCE
@@ -96,8 +95,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(${TINYXML2_INCLUDE_DIR})
 
         add_executable(XMLParserTests ${XMLPARSER_SOURCE})
-        add_gtest(XMLParserTests XMLParserTests.cpp)
-
         target_compile_definitions(XMLParserTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(XMLParserTests PRIVATE
             ${GTEST_INCLUDE_DIRS}
@@ -110,6 +107,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${TINYXML2_LIBRARY}
                 )
         endif()
+        add_gtest(XMLParserTests SOURCES XMLParserTests.cpp)
     endif()
 endif()
 

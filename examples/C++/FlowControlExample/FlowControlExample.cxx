@@ -112,7 +112,7 @@ bool FlowControlExample::isKeyDefined()
     return false;
 }
 
-void FlowControlExample::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void FlowControlExample::serializeKey(eprosima::fastcdr::Cdr&) const
 {
 	 
 	 

@@ -65,7 +65,7 @@ bool FilteringExampleSubscriber::init(int type)
     return true;
 }
 
-void FilteringExampleSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
+void FilteringExampleSubscriber::SubListener::onSubscriptionMatched(Subscriber*, MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {

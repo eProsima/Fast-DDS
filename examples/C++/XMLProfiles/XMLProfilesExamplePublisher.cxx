@@ -59,7 +59,7 @@ bool XMLProfilesExamplePublisher::init()
 	return true;
 }
 
-void XMLProfilesExamplePublisher::PubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
+void XMLProfilesExamplePublisher::PubListener::onPublicationMatched(Publisher*, MatchingInfo& info)
 {
 	if (info.status == MATCHED_MATCHING)
 	{

@@ -32,14 +32,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(mock/)
 
         add_executable(StringMatchingTests ${STRINGMATCHINGTESTS_SOURCE})
-        add_gtest(StringMatchingTests ${STRINGMATCHINGTESTS_SOURCE})
         target_compile_definitions(StringMatchingTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(StringMatchingTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(StringMatchingTests ${GTEST_LIBRARIES} ${MOCKS})
-		if(MSVC OR MSVC_IDE)
-			target_link_libraries(StringMatchingTests ${PRIVACY} iphlpapi Shlwapi
-				)
-		endif()
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(StringMatchingTests ${PRIVACY} iphlpapi Shlwapi
+                )
+        endif()
+        add_gtest(StringMatchingTests SOURCES ${STRINGMATCHINGTESTS_SOURCE})
     endif()
 endif()

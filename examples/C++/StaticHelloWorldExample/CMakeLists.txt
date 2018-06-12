@@ -18,7 +18,7 @@ if(NOT CMAKE_VERSION VERSION_LESS 3.0)
     cmake_policy(SET CMP0048 NEW)
 endif()
 
-project("StaticHelloWorldExample")
+project(StaticHelloWorldExample)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -26,7 +26,7 @@ if(NOT fastcdr_FOUND)
 endif()
 
 if(NOT fastrtps_FOUND)
-find_package(fastrtps REQUIRED)
+    find_package(fastrtps REQUIRED)
 endif()
 
 # Set C++11

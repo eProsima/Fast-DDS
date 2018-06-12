@@ -18,7 +18,7 @@ if(NOT CMAKE_VERSION VERSION_LESS 3.0)
     cmake_policy(SET CMP0048 NEW)
 endif()
 
-project("RTPSTest_as_socket")
+project(RTPSTest_as_socket)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -26,7 +26,7 @@ if(NOT fastcdr_FOUND)
 endif()
 
 if(NOT fastrtps_FOUND)
-find_package(fastrtps REQUIRED)
+    find_package(fastrtps REQUIRED)
 endif()
 
 # Set C++11
@@ -47,5 +47,5 @@ file(GLOB RTPSTESTASSOCKET_SOURCES "*.cpp")
 add_executable(RTPSTest_as_socket ${RTPSTESTASSOCKET_SOURCES})
 target_link_libraries(RTPSTest_as_socket fastrtps fastcdr)
 install(TARGETS RTPSTest_as_socket
-	RUNTIME DESTINATION examples/C++/RTPSTest_as_socket/${BIN_INSTALL_DIR}
+    RUNTIME DESTINATION examples/C++/RTPSTest_as_socket/${BIN_INSTALL_DIR}
     )

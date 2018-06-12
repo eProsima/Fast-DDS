@@ -19,10 +19,10 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-my_WriterListener::my_WriterListener():n_matched(0){};
-my_WriterListener::~my_WriterListener(){};
+my_WriterListener::my_WriterListener():n_matched(0){}
+my_WriterListener::~my_WriterListener(){}
 
-void my_WriterListener::onWriterMatched(RTPSWriter* writer, MatchingInfo& info)
+void my_WriterListener::onWriterMatched(RTPSWriter*, MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 		++n_matched;

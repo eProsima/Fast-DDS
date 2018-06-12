@@ -14,7 +14,7 @@
 
 SUBDIRS = include src/cpp
 
-@PROJECT_NAME@_licenciasdir = $(datadir)/doc/@PROJECT_NAME@
+@PROJECT_NAME@_licenciasdir = $(datadir)/@PROJECT_NAME@
 @PROJECT_NAME@_licencias_DATA = LICENSE
 
 @PROJECT_NAME@_scriptdir = $(bindir)

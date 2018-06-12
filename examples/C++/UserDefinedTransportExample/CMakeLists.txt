@@ -18,7 +18,7 @@ if(NOT CMAKE_VERSION VERSION_LESS 3.0)
     cmake_policy(SET CMP0048 NEW)
 endif()
 
-project("UserDefinedTransportExample")
+project(UserDefinedTransportExample)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -26,7 +26,7 @@ if(NOT fastcdr_FOUND)
 endif()
 
 if(NOT fastrtps_FOUND)
-find_package(fastrtps REQUIRED)
+    find_package(fastrtps REQUIRED)
 endif()
 
 # Set C++11
@@ -49,4 +49,4 @@ include_directories(${PROJECT_SOURCE_DIR}/../../../thirdparty/asio/asio/include)
 add_executable(UserDefinedTransportExample ${USERDEFINEDTRANSPORTEXAMPLE_SOURCES_HXX})
 target_link_libraries(UserDefinedTransportExample fastrtps fastcdr)
 install(TARGETS UserDefinedTransportExample
-	RUNTIME DESTINATION examples/C++/UserDefinedTransportExample/${BIN_INSTALL_DIR})
+    RUNTIME DESTINATION examples/C++/UserDefinedTransportExample/${BIN_INSTALL_DIR})

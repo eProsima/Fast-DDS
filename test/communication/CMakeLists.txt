@@ -42,7 +42,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     add_executable(SimpleCommunicationSubscriber ${SUBSCRIBER_SOURCE})
     target_include_directories(SimpleCommunicationSubscriber PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
     target_link_libraries(SimpleCommunicationSubscriber fastrtps fastcdr ${CMAKE_DL_LIBS})
-	
+
     if(PYTHONINTERP_FOUND)
         add_test(NAME SimpleCommunication
             COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/simple_communication.py)

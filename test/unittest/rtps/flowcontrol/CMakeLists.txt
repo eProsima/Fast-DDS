@@ -31,7 +31,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/ReaderLocator.cpp)
 
         add_executable(ThroughputControllerTests ${THROUGHPUTCONTROLLERTESTS_SOURCE})
-        add_gtest(ThroughputControllerTests ${THROUGHPUTCONTROLLERTESTS_SOURCE})
         target_compile_definitions(ThroughputControllerTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(ThroughputControllerTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/AsyncWriterThread
@@ -45,5 +44,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 iphlpapi Shlwapi
                 )
         endif()
+        add_gtest(ThroughputControllerTests SOURCES ${THROUGHPUTCONTROLLERTESTS_SOURCE})
     endif()
 endif()

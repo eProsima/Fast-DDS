@@ -13,7 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/dev/gtest.cmake)
+    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
     check_gtest()
 
     if(GTEST_FOUND)
@@ -22,23 +22,23 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
-			${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-			${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-			${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp)
 
         add_executable(PersistenceTests ${PERSISTENCETESTS_SOURCE})
-        add_gtest(PersistenceTests ${PERSISTENCETESTS_SOURCE})
         target_compile_definitions(PersistenceTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(PersistenceTests PRIVATE ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(PersistenceTests ${GTEST_LIBRARIES})
-		if(MSVC OR MSVC_IDE)
-			target_link_libraries(PersistenceTests ${PRIVACY}
-				iphlpapi Shlwapi
-				)
-		endif()
+        target_link_libraries(PersistenceTests ${GTEST_LIBRARIES} ${CMAKE_DL_LIBS})
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(PersistenceTests ${PRIVACY}
+                iphlpapi Shlwapi
+                )
+        endif()
+        add_gtest(PersistenceTests SOURCES ${PERSISTENCETESTS_SOURCE})
     endif()
 endif()

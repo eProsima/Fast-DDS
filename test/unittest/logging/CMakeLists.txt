@@ -29,15 +29,15 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(mock/)
 
         add_executable(LogTests ${LOGTESTS_SOURCE})
-        add_gtest(LogTests ${LOGTESTS_SOURCE})
         target_compile_definitions(LogTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(LogTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(LogTests ${GTEST_LIBRARIES} ${MOCKS} )
-		if(MSVC OR MSVC_IDE)
-			target_link_libraries(LogTests ${PRIVACY}
-				iphlpapi Shlwapi
-				)
-		endif()
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(LogTests ${PRIVACY}
+                iphlpapi Shlwapi
+                )
+        endif()
+        add_gtest(LogTests SOURCES ${LOGTESTS_SOURCE})
     endif()
 endif()
