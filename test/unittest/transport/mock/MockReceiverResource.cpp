@@ -18,6 +18,24 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+MockReceiverResource::MockReceiverResource(TransportInterface& transport, const Locator_t& locator) 
+        : msg_receiver(nullptr) 
+{
+    m_participant = nullptr;
+    m_maxMsgSize = 0x8FFF;
+    // Internal channel is opened and assigned to this resource.
+    mValid = transport.OpenInputChannel(locator, this, m_maxMsgSize);
+    if (!mValid)
+    {
+        return; // Invalid resource to be discarded by the factory.
+    }
+
+    // Implementation functions are bound to the right transport parameters
+    Cleanup = [&transport, locator]() { transport.CloseInputChannel(locator); };
+    LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
+    { return transport.DoLocatorsMatch(locator, locatorToCheck); };
+}
+
 MessageReceiver* MockReceiverResource::CreateMessageReceiver()
 {
     if (msg_receiver == nullptr)

@@ -102,21 +102,21 @@ public:
 
 protected:
    ReceiverResource(RTPSParticipantImpl*, TransportInterface&, const Locator_t&, uint32_t maxMsgSize);
+   ReceiverResource() {};
+   std::function<void()> Cleanup;
+   std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
+   bool mValid; // Post-construction validity check for the NetworkFactory
+   RTPSParticipantImpl* m_participant;
+   uint32_t m_maxMsgSize;
 
 private:
 
-   ReceiverResource()                                   = delete;
    ReceiverResource(const ReceiverResource&)            = delete;
    ReceiverResource& operator=(const ReceiverResource&) = delete;
 
    std::mutex mtx;
    std::vector<RTPSWriter*> AssociatedWriters;
    std::vector<RTPSReader*> AssociatedReaders;
-   std::function<void()> Cleanup;
-   std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
-   bool mValid; // Post-construction validity check for the NetworkFactory
-   RTPSParticipantImpl* m_participant;
-   uint32_t m_maxMsgSize;
 };
 
 } // namespace rtps
