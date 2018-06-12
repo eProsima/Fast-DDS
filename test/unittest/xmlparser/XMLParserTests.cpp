@@ -380,8 +380,8 @@ TEST_F(XMLParserTests, Data)
     EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
     locator.set_IP4_address(192, 168, 1, 1);
     locator.set_port(1979);
-    EXPECT_EQ(*rtps_atts.defaultOutLocatorList.begin(), locator);
-    EXPECT_EQ(rtps_atts.defaultSendPort, 80);
+    //EXPECT_EQ(*rtps_atts.defaultOutLocatorList.begin(), locator);
+    //EXPECT_EQ(rtps_atts.defaultSendPort, 80);
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000);
     EXPECT_EQ(builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol, true);
@@ -468,8 +468,8 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
     locator.set_IP4_address(192, 168, 1, 1);
     locator.set_port(1979);
-    EXPECT_EQ(*rtps_atts.defaultOutLocatorList.begin(), locator);
-    EXPECT_EQ(rtps_atts.defaultSendPort, 80);
+    //EXPECT_EQ(*rtps_atts.defaultOutLocatorList.begin(), locator);
+    //EXPECT_EQ(rtps_atts.defaultSendPort, 80);
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000);
     EXPECT_EQ(builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol, true);

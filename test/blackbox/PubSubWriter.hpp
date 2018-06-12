@@ -536,12 +536,6 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& outLocatorList(eprosima::fastrtps::rtps::LocatorList_t outLocators)
-    {
-        publisher_attr_.outLocatorList = outLocators;
-        return *this;
-    }
-
     PubSubWriter& static_discovery(const char* filename)
     {
         participant_attr_.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;

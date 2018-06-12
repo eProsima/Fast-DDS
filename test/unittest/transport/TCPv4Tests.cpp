@@ -19,6 +19,7 @@
 #include <fastrtps/log/Log.h>
 #include <memory>
 #include <asio.hpp>
+#include <MockReceiverResource.h>
 
 
 using namespace eprosima::fastrtps;
@@ -129,7 +130,7 @@ TEST_F(TCPv4Tests, opening_and_closing_input_channel)
 }
 
 #ifndef __APPLE__
-/*
+
 TEST_F(TCPv4Tests, send_and_receive_between_ports)
 {
     TCPv4Transport transportUnderTest(descriptor);
@@ -143,8 +144,12 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
     Locator_t outputLocator;
     outputLocator.set_port(g_input_port);
     outputLocator.kind = LOCATOR_KIND_TCPv4;
-    //ASSERT_TRUE(transportUnderTest.OpenInputChannel(inputLocator));
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputLocator));
+
+    MockReceiverResource receiver(transportUnderTest, inputLocator);
+    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+
+    ASSERT_TRUE(transportUnderTest.OpenInputChannel(inputLocator, &receiver, 0x8FFF));
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputLocator, nullptr));
     octet message[5] = { 'H','e','l','l','o' };
 
     auto sendThreadFunction = [&]()
@@ -152,22 +157,17 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
         EXPECT_TRUE(transportUnderTest.Send(message, 5, outputLocator, inputLocator));
     };
 
-    auto receiveThreadFunction = [&]()
+    std::function<void()> recCallback = [&]()
     {
-        octet receiveBuffer[ReceiveBufferCapacity];
-        uint32_t receiveBufferSize;
-
-        Locator_t remoteLocatorToReceive;
-        EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, ReceiveBufferCapacity, receiveBufferSize, inputLocator, remoteLocatorToReceive));
-        EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
+        EXPECT_EQ(memcmp(message,msg_recv->data,5), 0);
     };
 
-    receiverThread.reset(new std::thread(receiveThreadFunction));
+    msg_recv->setCallback(recCallback);
+
     senderThread.reset(new std::thread(sendThreadFunction));
     senderThread->join();
-    receiverThread->join();
 }
-*/
+
 #endif
 
 TEST_F(TCPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_in_descriptor)

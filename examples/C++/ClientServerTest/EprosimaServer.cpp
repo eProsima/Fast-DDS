@@ -70,7 +70,7 @@ bool EprosimaServer::init()
 {
 	//CREATE RTPSParticipant
 	ParticipantAttributes PParam;
-	PParam.rtps.defaultSendPort = 10042;
+	//PParam.rtps.defaultSendPort = 10042; // TODO Create transport?
 	PParam.rtps.builtin.domainId = 80;
 	PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
 	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
