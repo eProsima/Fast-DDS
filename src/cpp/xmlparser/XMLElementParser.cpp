@@ -1294,7 +1294,7 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
       </xs:sequence>
     </xs:complexType>*/
 
-    tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr, *p_aux2 = nullptr;
 
     p_aux0 = elem->FirstChildElement(LOCATOR);
     if (nullptr == p_aux0)
@@ -1308,8 +1308,30 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
         /*<xs:complexType name="locatorType">
           <xs:all minOccurs="0">
             <xs:element name="kind" type="locatorKindType"/>
+            <xs:choice>
             <xs:element name="port" type="uint32Type"/>
-            <xs:element name="address" type="stringType"/> <!-- octet address[16] -->
+            <xs:element name="ports_" type="uint32Type">
+            <xs:complexType>
+            <xs:all minOccurs="0">
+            <xs:element name="physical_port" type="uint16Type"/>
+            <xs:element name="logical_port" type="uint16Type"/>
+            </xs:all>
+            </xs:complexType>
+            </xs:element>
+            </xs:choice>
+            <xs:choice>
+            <xs:element name="address" type="stringType"/> <!-- octet address[4] -->
+            <xs:element name="ipv6_address" type="stringType"/> <!-- octet address[16] -->
+            <xs:element name="addresses_" type="stringType">
+            <xs:complexType>
+            <xs:all minOccurs="0">
+            <xs:element name="unique_lan_id" type="stringType"/><!-- octet address[8] -->
+            <xs:element name="wan_address" type="stringType"/><!-- octet address[4] -->
+            <xs:element name="ip_address" type="stringType"/><!-- octet address[4] -->
+            </xs:all>
+            </xs:complexType>
+            </xs:element>
+            </xs:choice>
           </xs:all>
         </xs:complexType>*/
         Locator_t loc;
@@ -1347,17 +1369,94 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
                 return XMLP_ret::XML_ERROR;
             }
         }
+
         // port - uint32Type
+        bool bPortOption = false;
         if (nullptr != (p_aux1 = p_aux0->FirstChildElement(PORT)))
         {
-            if (XMLP_ret::XML_OK != getXMLUint(p_aux1, &loc.get_port_by_ref(), ident + 1)) return XMLP_ret::XML_ERROR;
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux1, &loc.get_port_by_ref(), ident + 1))
+                return XMLP_ret::XML_ERROR;
+            bPortOption = true;
         }
+
+        if (nullptr != (p_aux1 = p_aux0->FirstChildElement(PORTS)))
+        {
+            if (bPortOption)
+            {
+                logError(XMLPARSER, "Incompatible ports configuration ( 'port' <-> 'ports (physical_port & logical port)'.");
+                return XMLP_ret::XML_ERROR;
+            }
+
+            if (nullptr != (p_aux2 = p_aux1->FirstChildElement(LOGICAL_PORT)))
+            {
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux2, &loc.get_logical_port_by_ref(), ident + 1))
+                    return XMLP_ret::XML_ERROR;
+            }
+
+            if (nullptr != (p_aux2 = p_aux1->FirstChildElement(PHYSICAL_PORT)))
+            {
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux2, &loc.get_physical_port_by_ref(), ident + 1))
+                    return XMLP_ret::XML_ERROR;
+            }
+        }
+
         /// address - stringType
+        bool bAddressOption = false;
         if (nullptr != (p_aux1 = p_aux0->FirstChildElement(ADDRESS)))
         {
             std::string s = "";
-            if (XMLP_ret::XML_OK != getXMLString(p_aux1, &s, ident + 1)) return XMLP_ret::XML_ERROR;
+            if (XMLP_ret::XML_OK != getXMLString(p_aux1, &s, ident + 1))
+                return XMLP_ret::XML_ERROR;
             loc.set_IP4_address(s);
+            bAddressOption = true;
+        }
+
+        if (nullptr != (p_aux1 = p_aux0->FirstChildElement(IPV6_ADDRESS)))
+        {
+            if (bAddressOption)
+            {
+                logError(XMLPARSER, "Incompatible address configuration ( 'address' <-> 'ipv6_address' <-> 'addresses_ (unique_lan_id & wan_address & ip_address)'.");
+                return XMLP_ret::XML_ERROR;
+            }
+
+            std::string s = "";
+            if (XMLP_ret::XML_OK != getXMLString(p_aux1, &s, ident + 1))
+                return XMLP_ret::XML_ERROR;
+            loc.set_IP6_address(s);
+            bAddressOption = true;
+        }
+
+        if (nullptr != (p_aux1 = p_aux0->FirstChildElement(ADDRESSES)))
+        {
+            if (bAddressOption)
+            {
+                logError(XMLPARSER, "Incompatible address configuration ( 'address' <-> 'ipv6_address' <-> 'addresses_ (unique_lan_id & wan_address & ip_address)'.");
+                return XMLP_ret::XML_ERROR;
+            }
+
+            if (nullptr != (p_aux2 = p_aux1->FirstChildElement(UNIQUE_LAN_ID)))
+            {
+                std::string sUniqueLanId;
+                if (XMLP_ret::XML_OK != getXMLString(p_aux2, &sUniqueLanId, ident + 1))
+                    return XMLP_ret::XML_ERROR;
+                loc.set_Unique_Lan_Id(sUniqueLanId);
+            }
+
+            if (nullptr != (p_aux2 = p_aux1->FirstChildElement(WAN_ADDRESS)))
+            {
+                std::string sWanAddr;
+                if (XMLP_ret::XML_OK != getXMLString(p_aux2, &sWanAddr, ident + 1))
+                    return XMLP_ret::XML_ERROR;
+                loc.set_IP4_WAN_address(sWanAddr);
+            }
+
+            if (nullptr != (p_aux2 = p_aux1->FirstChildElement(IP_ADDRESS)))
+            {
+                std::string sIPddr;
+                if (XMLP_ret::XML_OK != getXMLString(p_aux2, &sIPddr, ident + 1))
+                    return XMLP_ret::XML_ERROR;
+                loc.set_IP4_address(sIPddr);
+            }
         }
 
         locatorList.push_back(loc);

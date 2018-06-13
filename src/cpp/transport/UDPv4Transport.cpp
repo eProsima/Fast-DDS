@@ -458,8 +458,15 @@ void UDPv4Transport::performListenOperation(UDPChannelResource* pChannelResource
 
         // Processes the data through the CDR Message interface.
         logWarning(RTPS_MSG_OUT, "RECEIVED MSG FROM: " << remoteLocator.get_connection_id());
-        pChannelResource->GetMessageReceiver()->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix, &input_locator,
-            &msg);
+        MessageReceiver* receiver = pChannelResource->GetMessageReceiver();
+        if (receiver != nullptr)
+        {
+            receiver->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix, &input_locator, &msg);
+        }
+        else
+        {
+            logWarning(RTCP, "Received Message, but no MessageReceiver attached");
+        }
     }
 }
 
@@ -546,7 +553,7 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
 
 static void EndpointToLocator(ip::udp::endpoint& endpoint, Locator_t& locator)
 {
-    locator.get_physical_port() = endpoint.port();
+    locator.get_physical_port_by_ref() = endpoint.port();
     auto ipBytes = endpoint.address().to_v4().to_bytes();
     //memcpy(&locator.address[12], ipBytes.data(), sizeof(ipBytes));
     locator.set_IP4_address(ipBytes.data());

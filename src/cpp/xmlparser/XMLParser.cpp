@@ -124,6 +124,25 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
     <xs:all minOccurs="0">
     <xs:element name="transport_id" type="stringType"/>
     <xs:element name="type" type="stringType"/>
+    <xs:element name="sendBufferSize" type="int32Type"/>
+    <xs:element name="receiveBufferSize" type="int32Type"/>
+    <xs:element name="TTL" type="int8Type"/>
+    <xs:element name="interfaceWhiteList" type="stringListType"/>
+    <xs:sequence>
+    <xs:element name="id" type="stringType"/>
+    </xs:sequence>
+    <xs:element name="wan_addr" type="stringType"/>
+    <xs:element name="output_port" type="uint16Type"/>
+    <xs:element name="keep_alive_frequency_ms" type="uint32Type"/>
+    <xs:element name="keep_alive_timeout_ms" type="uint32Type"/>
+    <xs:element name="max_logical_port" type="uint16Type"/>
+    <xs:element name="logical_port_range" type="uint16Type"/>
+    <xs:element name="logical_port_increment" type="uint16Type"/>
+    <xs:element name="metadata_logical_port" type="uint16Type"/>
+    <xs:element name="ListeningPorts" type="uint16ListType"/>
+    <xs:sequence>
+    <xs:element name="port" type="uint16Type"/>
+    </xs:sequence>
     </xs:all>
     </xs:complexType>*/
 
@@ -234,7 +253,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
     <xs:element name="TTL" type="int8Type"/>
     <xs:element name="interfaceWhiteList" type="stringListType"/>
     <xs:sequence>
-    <xs:element address="id" type="stringType"/>
+    <xs:element name="id" type="stringType"/>
     </xs:sequence>
     </xs:all>
     </xs:complexType>*/

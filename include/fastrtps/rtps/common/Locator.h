@@ -167,12 +167,12 @@ class RTPS_DllAPI Locator_t
             return ports_.physical_port;
         }
 
-        uint16_t& get_physical_port()
+        uint16_t& get_physical_port_by_ref()
         {
             return ports_.physical_port;
         }
 
-        uint16_t& get_logical_port()
+        uint16_t& get_logical_port_by_ref()
         {
             return ports_.logical_port;
         }
@@ -275,6 +275,60 @@ class RTPS_DllAPI Locator_t
             return true;
         }
 
+        bool set_address(const std::string& in_address)
+        {
+            if (kind == LOCATOR_KIND_UDPv4)
+                return false;
+            std::stringstream ss(in_address);
+            int a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p; //to store the 16 ints
+            char ch; //to temporarily store the '.'
+            ss >> a >> ch >> b >> ch >> c >> ch >> d >> ch >> e >> ch >> f >> ch >> g >> ch >> h
+                >> ch >> i >> ch >> j >> ch >> k >> ch >> l >> ch >> m >> ch >> n >> ch >> o >> ch >> p;
+            address[0] = (octet)a;
+            address[1] = (octet)b;
+            address[2] = (octet)c;
+            address[3] = (octet)d;
+            address[4] = (octet)e;
+            address[5] = (octet)f;
+            address[6] = (octet)g;
+            address[7] = (octet)h;
+            address[8] = (octet)i;
+            address[9] = (octet)j;
+            address[10] = (octet)k;
+            address[11] = (octet)l;
+            address[12] = (octet)m;
+            address[13] = (octet)n;
+            address[14] = (octet)o;
+            address[15] = (octet)p;
+            return true;
+        }
+        bool set_Unique_Lan_Id(const std::string& in_address)
+        {
+            if (kind == LOCATOR_KIND_UDPv4)
+                return false;
+            std::stringstream ss(in_address);
+            int a, b, c, d, e, f, g, h; //to store the 8 ints
+            char ch; //to temporarily store the '.'
+            ss >> a >> ch >> b >> ch >> c >> ch >> d >> ch >> e >> ch >> f >> ch >> g >> ch >> h;
+            // address[0] = (octet)a;
+            // address[1] = (octet)b;
+            // address[2] = (octet)c;
+            // address[3] = (octet)d;
+            // address[4] = (octet)e;
+            // address[5] = (octet)f;
+            // address[6] = (octet)g;
+            // address[7] = (octet)h;
+            addresses_.unique_lan_id[0] = (octet)a;
+            addresses_.unique_lan_id[1] = (octet)b;
+            addresses_.unique_lan_id[2] = (octet)c;
+            addresses_.unique_lan_id[3] = (octet)d;
+            addresses_.unique_lan_id[4] = (octet)e;
+            addresses_.unique_lan_id[5] = (octet)f;
+            addresses_.unique_lan_id[6] = (octet)g;
+            addresses_.unique_lan_id[7] = (octet)h;
+            return true;
+        }
+
         bool set_IP4_address(const unsigned char* addr)
         {
             memcpy(addresses_.ip_address, addr, 4 * sizeof(char));
@@ -292,10 +346,10 @@ class RTPS_DllAPI Locator_t
             // address[9] = (octet)b;
             // address[10] = (octet)c;
             // address[11] = (octet)d;
-            addresses_.wan_address[8] = (octet)a;
-            addresses_.wan_address[9] = (octet)b;
-            addresses_.wan_address[10] = (octet)c;
-            addresses_.wan_address[11] = (octet)d;
+            addresses_.wan_address[0] = (octet)a;
+            addresses_.wan_address[1] = (octet)b;
+            addresses_.wan_address[2] = (octet)c;
+            addresses_.wan_address[3] = (octet)d;
             return true;
         }
 
