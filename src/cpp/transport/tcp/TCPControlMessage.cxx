@@ -83,6 +83,20 @@ static void operator>>(eprosima::fastcdr::Cdr &scdr, Locator_t &locator)
     }
 }
 
+static void operator>>(eprosima::fastcdr::Cdr &scdr, TCPCommonKind &kind)
+{
+    uint32_t aux;
+    scdr >> aux;
+    kind = static_cast<TCPCommonKind>(aux);
+}
+
+static void operator>>(eprosima::fastcdr::Cdr &scdr, ResponseCode &code)
+{
+    uint32_t aux;
+    scdr >> aux;
+    code = static_cast<ResponseCode>(aux);
+}
+
 ConnectionRequest_t::ConnectionRequest_t() : m_vendorId(c_VendorId_eProsima)
 {
 }
@@ -1188,7 +1202,7 @@ void RequestData::serialize(eprosima::fastcdr::Cdr &scdr) const
 
 void RequestData::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
-    dcdr >> (uint32_t&)m__d;
+    dcdr >> m__d;
 
     switch(m__d)
     {
@@ -1719,7 +1733,7 @@ void ResponseData::serialize(eprosima::fastcdr::Cdr &scdr) const
 
 void ResponseData::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
-    dcdr >> (uint32_t&)m__d;
+    dcdr >> m__d;
 
     switch(m__d)
     {
@@ -1794,7 +1808,7 @@ void ControlProtocolResponseData::serialize(eprosima::fastcdr::Cdr &scdr) const
 
 void ControlProtocolResponseData::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
-    dcdr >> (uint32_t&)m_responseCode;
+    dcdr >> m_responseCode;
     dcdr >> m_responseData;
 }
 
