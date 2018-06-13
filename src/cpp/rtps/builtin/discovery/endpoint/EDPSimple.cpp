@@ -671,6 +671,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         RemoteWriterAttributes watt(pdata.m_VendorId);
         watt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_SEDPPubWriter;
+        watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         watt.endpoint.reliabilityKind = RELIABLE;
@@ -704,6 +705,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         RemoteWriterAttributes watt(pdata.m_VendorId);
         watt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_SEDPSubWriter;
+        watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         watt.endpoint.reliabilityKind = RELIABLE;
@@ -738,6 +740,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         WriterProxyData watt;
         watt.guid().guidPrefix = pdata.m_guid.guidPrefix;
         watt.guid().entityId = sedp_builtin_publications_secure_writer;
+        watt.persistence_guid(watt.guid());
         watt.unicastLocatorList(pdata.m_metatrafficUnicastLocatorList);
         watt.multicastLocatorList(pdata.m_metatrafficMulticastLocatorList);
         watt.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -783,6 +786,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         WriterProxyData watt;
         watt.guid().guidPrefix = pdata.m_guid.guidPrefix;
         watt.guid().entityId = sedp_builtin_subscriptions_secure_writer;
+        watt.persistence_guid(watt.guid());
         watt.unicastLocatorList(pdata.m_metatrafficUnicastLocatorList);
         watt.multicastLocatorList(pdata.m_metatrafficMulticastLocatorList);
         watt.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -837,6 +841,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         RemoteWriterAttributes watt;
         watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_SEDPPubWriter;
+        watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
         watt.endpoint.reliabilityKind = RELIABLE;
@@ -869,6 +874,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         RemoteWriterAttributes watt;
         watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_SEDPSubWriter;
+        watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
         watt.endpoint.reliabilityKind = RELIABLE;
@@ -903,6 +909,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         RemoteWriterAttributes watt;
         watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
         watt.guid.entityId = sedp_builtin_publications_secure_writer;
+        watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
         watt.endpoint.reliabilityKind = RELIABLE;
@@ -944,6 +951,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         RemoteWriterAttributes watt;
         watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
         watt.guid.entityId = sedp_builtin_subscriptions_secure_writer;
+        watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
         watt.endpoint.reliabilityKind = RELIABLE;

@@ -1628,6 +1628,7 @@ void SecurityManager::match_builtin_endpoints(const ParticipantProxyData& partic
         RemoteWriterAttributes watt(participant_data.m_VendorId);
         watt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
         watt.guid.entityId = participant_stateless_message_writer_entity_id;
+        watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
         watt.endpoint.reliabilityKind = BEST_EFFORT;
         participant_stateless_message_reader_->matched_writer_add(watt);
@@ -1651,6 +1652,7 @@ void SecurityManager::match_builtin_endpoints(const ParticipantProxyData& partic
         RemoteWriterAttributes watt(participant_data.m_VendorId);
         watt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
         watt.guid.entityId = participant_volatile_message_secure_writer_entity_id;
+        watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = VOLATILE;
@@ -1681,6 +1683,7 @@ void SecurityManager::unmatch_builtin_endpoints(const ParticipantProxyData& part
         RemoteWriterAttributes watt;
         watt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
         watt.guid.entityId = participant_stateless_message_writer_entity_id;
+        watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
         watt.endpoint.reliabilityKind = BEST_EFFORT;
         participant_stateless_message_reader_->matched_writer_remove(watt);
@@ -1704,6 +1707,7 @@ void SecurityManager::unmatch_builtin_endpoints(const ParticipantProxyData& part
         RemoteWriterAttributes watt;
         watt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
         watt.guid.entityId = participant_volatile_message_secure_writer_entity_id;
+        watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = VOLATILE;

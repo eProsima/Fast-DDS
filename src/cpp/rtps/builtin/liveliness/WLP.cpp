@@ -165,6 +165,7 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         RemoteWriterAttributes watt(pdata.m_VendorId);
         watt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_WriterLiveliness;
+        watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         watt.endpoint.topicKind = WITH_KEY;
@@ -211,6 +212,7 @@ void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
         RemoteWriterAttributes watt;
         watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_WriterLiveliness;
+        watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
         watt.endpoint.topicKind = WITH_KEY;

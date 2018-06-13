@@ -75,12 +75,12 @@ bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
         }
     }
     WriterProxy* wp = new WriterProxy(wdata, this);
-    
+
     wp->mp_initialAcknack->restart_timer();
 
-    matched_writers.push_back(wp);
     add_persistence_guid(wdata);
-    wp->loaded_from_storage(get_last_notified(wdata.guid));
+    wp->loaded_from_storage_nts(get_last_notified(wdata.guid));
+    matched_writers.push_back(wp);
     logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to " <<m_guid.entityId);
     return true;
 }

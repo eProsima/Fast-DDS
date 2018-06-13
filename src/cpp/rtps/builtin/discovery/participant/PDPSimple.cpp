@@ -606,6 +606,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         RemoteWriterAttributes watt(pdata->m_VendorId);
         watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_SPDPWriter;
+        watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
         watt.endpoint.reliabilityKind = BEST_EFFORT;
@@ -657,6 +658,7 @@ void PDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         RemoteWriterAttributes watt;
         watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_SPDPWriter;
+        watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
         watt.endpoint.reliabilityKind = BEST_EFFORT;

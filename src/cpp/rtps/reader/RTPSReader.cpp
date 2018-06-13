@@ -125,21 +125,24 @@ void RTPSReader::remove_persistence_guid(const RemoteWriterAttributes& wdata)
 
 SequenceNumber_t RTPSReader::update_last_notified(const GUID_t& guid, const SequenceNumber_t& seq)
 {
-    SequenceNumber_t ret_val(0, 0);
+    SequenceNumber_t ret_val;
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    GUID_t guid_to_look = guid;
     auto p_guid = persistence_guid_map_.find(guid);
     if (p_guid != persistence_guid_map_.end())
     {
-        auto p_seq = history_record_.find(p_guid->second);
-        if (p_seq != history_record_.end())
-        {
-            ret_val = p_seq->second;
-        }
+        guid_to_look = p_guid->second;
+    }
 
-        if (ret_val < seq)
-        {
-            set_last_notified(p_guid->second, seq);
-        }
+    auto p_seq = history_record_.find(guid_to_look);
+    if (p_seq != history_record_.end())
+    {
+        ret_val = p_seq->second;
+    }
+
+    if (ret_val < seq)
+    {
+        set_last_notified(guid_to_look, seq);
     }
 
     return ret_val;
@@ -147,16 +150,19 @@ SequenceNumber_t RTPSReader::update_last_notified(const GUID_t& guid, const Sequ
 
 SequenceNumber_t RTPSReader::get_last_notified(const GUID_t& guid) const
 {
-    SequenceNumber_t ret_val(0, 0);
+    SequenceNumber_t ret_val;
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    GUID_t guid_to_look = guid;
     auto p_guid = persistence_guid_map_.find(guid);
     if (p_guid != persistence_guid_map_.end())
     {
-        auto p_seq = history_record_.find(p_guid->second);
-        if (p_seq != history_record_.end())
-        {
-            ret_val = p_seq->second;
-        }
+        guid_to_look = p_guid->second;
+    }
+
+    auto p_seq = history_record_.find(guid_to_look);
+    if (p_seq != history_record_.end())
+    {
+        ret_val = p_seq->second;
     }
 
     return ret_val;
