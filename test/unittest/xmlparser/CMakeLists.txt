@@ -61,8 +61,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_executable(XMLProfileParserTests ${XMLPROFILEPARSER_SOURCE})
         target_compile_definitions(XMLProfileParserTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(XMLProfileParserTests PRIVATE ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES})
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
+        target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES} fastrtps fastcdr)
         if(TINYXML2_LIBRARY)
             target_link_libraries(XMLProfileParserTests ${PRIVACY}
                 ${TINYXML2_LIBRARY}
@@ -72,17 +72,18 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
 
         set(XMLPARSER_SOURCE
-        XMLParserTests.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLElementParser.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/qos/QosPolicies.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/qos/WriterQos.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/qos/ReaderQos.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp     
+            XMLParserTests.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLProfileManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLElementParser.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/QosPolicies.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/WriterQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ReaderQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
         )            
 
         # External sources
@@ -101,7 +102,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_BINARY_DIR}/include
             )
-        target_link_libraries(XMLParserTests ${GTEST_LIBRARIES})
+        target_link_libraries(XMLParserTests ${GTEST_LIBRARIES} fastrtps fastcdr)
         if(TINYXML2_LIBRARY)
             target_link_libraries(XMLParserTests ${PRIVACY}
                 ${TINYXML2_LIBRARY}
