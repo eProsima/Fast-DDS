@@ -749,13 +749,7 @@ bool TCPv4Transport::EnqueueLogicalOutputPort(const Locator_t& locator)
             auto& sockets = mInputSockets.at(locator.get_physical_port());
             for (auto it = sockets.begin(); it != sockets.end(); ++it)
             {
-                if (std::find((*it)->mLogicalOutputPorts.begin(), (*it)->mLogicalOutputPorts.end(),
-                    locator.get_logical_port()) == (*it)->mLogicalOutputPorts.end() &&
-                    std::find((*it)->mPendingLogicalOutputPorts.begin(), (*it)->mPendingLogicalOutputPorts.end(),
-                        locator.get_logical_port()) == (*it)->mPendingLogicalOutputPorts.end())
-                {
-                    (*it)->mPendingLogicalOutputPorts.push_back(locator.get_logical_port());
-                }
+                (*it)->EnqueueLogicalPort(locator.get_logical_port());
             }
             return true;
         }
@@ -767,13 +761,9 @@ bool TCPv4Transport::EnqueueLogicalOutputPort(const Locator_t& locator)
         {
             // Checks that the given logical port matches with the IP and port,
             // and checks that the logical port ins't opened or pending to open.
-            if ((*it)->GetLocator().compare_IP4_address_and_port(locator) &&
-                std::find((*it)->mLogicalOutputPorts.begin(), (*it)->mLogicalOutputPorts.end(),
-                    locator.get_logical_port()) == (*it)->mLogicalOutputPorts.end() &&
-                std::find((*it)->mPendingLogicalOutputPorts.begin(), (*it)->mPendingLogicalOutputPorts.end(),
-                    locator.get_logical_port()) == (*it)->mPendingLogicalOutputPorts.end())
+            if ((*it)->GetLocator().compare_IP4_address_and_port(locator))
             {
-                (*it)->mPendingLogicalOutputPorts.push_back(locator.get_logical_port());
+                (*it)->EnqueueLogicalPort(locator.get_logical_port());
                 return true;
             }
         }
@@ -1043,7 +1033,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
         }
         else
         {
-            socket->mPendingLogicalOutputPorts.emplace_back(logicalPort);
+            socket->EnqueueLogicalPort(logicalPort);
             return false;
         }
     }
