@@ -350,7 +350,7 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChann
     {
         {
             std::unique_lock<std::recursive_mutex> scope(pChannelResource->mPendingLogicalMutex);
-            pChannelResource->mPendingLogicalOutputPorts.push_back(request.transportLocator().get_logical_port());
+            pChannelResource->EnqueueLogicalPort(request.transportLocator().get_logical_port());
             mTransport->BindSocket(request.transportLocator(), pChannelResource);
         }
         sendData(pChannelResource, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_OK);
@@ -476,7 +476,7 @@ bool RTCPMessageManager::processCheckLogicalPortsResponse(TCPChannelResource *pC
         else
         {
             pChannelResource->mCheckingLogicalPort = response.availableLogicalPorts()[0];
-            pChannelResource->mPendingLogicalOutputPorts.emplace_back(pChannelResource->mCheckingLogicalPort);
+            pChannelResource->EnqueueLogicalPort(pChannelResource->mCheckingLogicalPort);
             //logInfo(RTCP, "NegotiatingLogicalPort: " << pChannelResource->mCheckingLogicalPort);
             if (pChannelResource->mNegotiatingLogicalPort == 0)
             {

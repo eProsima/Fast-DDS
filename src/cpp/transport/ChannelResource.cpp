@@ -232,6 +232,31 @@ MessageReceiver* TCPChannelResource::GetMessageReceiver(uint16_t logicalPort)
     return nullptr;
 }
 
+void TCPChannelResource::fillLogicalPorts(std::vector<Locator_t>& outVector)
+{
+    Locator_t temp = mLocator;
+    for (uint16_t port : mPendingLogicalOutputPorts)
+    {
+        temp.set_logical_port(port);
+        outVector.emplace_back(temp);
+    }
+    for (uint16_t port : mLogicalOutputPorts)
+    {
+        temp.set_logical_port(port);
+        outVector.emplace_back(temp);
+    }
+}
+
+void TCPChannelResource::EnqueueLogicalPort(uint16_t port)
+{
+    if (std::find(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port)
+        == mPendingLogicalOutputPorts.end()
+        && std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port) == mLogicalOutputPorts.end())
+    {
+        mPendingLogicalOutputPorts.emplace_back(port);
+    }
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
