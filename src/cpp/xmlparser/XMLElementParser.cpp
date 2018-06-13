@@ -16,6 +16,7 @@
 #include <tinyxml2.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLParser.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -196,6 +197,50 @@ XMLP_ret XMLParser::getXMLPortParameters(tinyxml2::XMLElement *elem, PortParamet
     if (nullptr != (p_aux0 = elem->FirstChildElement(OFFSETD3)))
     {
         if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.offsetd3, ident)) return XMLP_ret::XML_ERROR;
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLTransports(tinyxml2::XMLElement *elem,
+    std::vector<std::shared_ptr<TransportDescriptorInterface>> &transports, uint8_t /*ident*/)
+{
+    /*<xs:complexType name="stringListType">
+    <xs:sequence>
+    <xs:element name="id" type="stringType"/>
+    </xs:sequence>
+    </xs:complexType>*/
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+
+    p_aux0 = elem->FirstChildElement(TRANSPORT_ID);
+    if (nullptr == p_aux0)
+    {
+        logError(XMLPARSER, "Node '" << elem->Value() << "' without content");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    while (nullptr != p_aux0)
+    {
+        const char* text = p_aux0->GetText();
+        if (nullptr == text)
+        {
+            logError(XMLPARSER, "Node '" << TRANSPORT_ID << "' without content");
+            return XMLP_ret::XML_ERROR;
+        }
+        else
+        {
+            std::shared_ptr<TransportDescriptorInterface> pDescriptor = XMLProfileManager::getTransportById(text);
+            if (pDescriptor != nullptr)
+            {
+                transports.emplace_back(pDescriptor);
+            }
+            else
+            {
+                logError(XMLPARSER, "Transport Node not found. Given ID: " << text);
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        p_aux0 = p_aux0->NextSiblingElement(TRANSPORT_ID);
     }
 
     return XMLP_ret::XML_OK;

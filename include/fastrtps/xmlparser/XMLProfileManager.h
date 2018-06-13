@@ -36,8 +36,6 @@ typedef std::map<std::string, up_publisher_t>   publisher_map_t;
 typedef publisher_map_t::iterator               publ_map_iterator_t;
 typedef std::map<std::string, up_subscriber_t>  subscriber_map_t;
 typedef subscriber_map_t::iterator              subs_map_iterator_t;
-typedef std::map<std::string, up_topic_t>       topic_map_t;
-typedef topic_map_t::iterator                   topic_map_iterator_t;
 typedef std::map<std::string, XMLP_ret>         xmlfiles_map_t;
 typedef xmlfiles_map_t::iterator                xmlfile_map_iterator_t;
 
@@ -107,31 +105,22 @@ public:
 
     RTPS_DllAPI static void getDefaultSubscriberAttributes(SubscriberAttributes& subscriber_attributes);
 
-    /**
-    * Search for the profile specified and fill the structure.
-    * @param profile_name Name for the profile to be used to fill the structure.
-    * @param atts Structure to be filled.
-    * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
-    */
-    RTPS_DllAPI static XMLP_ret fillTopicAttributes(const std::string& profile_name, TopicAttributes& atts);
-
-    RTPS_DllAPI static void getDefaultTopicAttributes(TopicAttributes& topic_attributes);
-
+    RTPS_DllAPI static bool insertTransportById(const std::string& sId, sp_transport_t transport);
+    RTPS_DllAPI static sp_transport_t getTransportById(const std::string& sId);
 
 private:
-    
+
     RTPS_DllAPI static XMLP_ret extractProfiles(up_base_node_t properties, const std::string& filename);
     RTPS_DllAPI static XMLP_ret extractParticipantProfile(up_base_node_t& profile, const std::string& filename);
     RTPS_DllAPI static XMLP_ret extractPublisherProfile(up_base_node_t& profile, const std::string& filename);
     RTPS_DllAPI static XMLP_ret extractSubscriberProfile(up_base_node_t& profile, const std::string& filename);
-    RTPS_DllAPI static XMLP_ret extractTopicProfile(up_base_node_t& profile, const std::string& filename);
 
     static BaseNode* root;
     static participant_map_t m_participant_profiles;
     static publisher_map_t   m_publisher_profiles;
     static subscriber_map_t  m_subscriber_profiles;
-    static topic_map_t       m_topic_profiles;
     static xmlfiles_map_t    m_xml_files;
+    static sp_transport_map_t m_transport_profiles;
 };
 
 } /* xmlparser */

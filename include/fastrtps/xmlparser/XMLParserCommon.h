@@ -37,12 +37,29 @@ extern const char* DEFAULT_FASTRTPS_PROFILES;
 
 extern const char* ROOT;
 extern const char* PROFILES;
+extern const char* TRANSPORTS;
 extern const char* PROFILE_NAME;
 extern const char* DEFAULT_PROF;
 extern const char* PARTICIPANT;
 extern const char* PUBLISHER;
 extern const char* SUBSCRIBER;
 extern const char* RTPS;
+
+extern const char* TRANSPORT;
+extern const char* TRANSPORT_ID;
+extern const char* UDP_OUTPUT_PORT;
+extern const char* TCP_WAN_ADDR;
+extern const char* RECEIVE_BUFFER_SIZE;
+extern const char* SEND_BUFFER_SIZE;
+extern const char* TTL;
+extern const char* WHITE_LIST;
+extern const char* KEEP_ALIVE_FREQUENCY;
+extern const char* KEEP_ALIVE_TIMEOUT;
+extern const char* MAX_LOGICAL_PORT;
+extern const char* LOGICAL_PORT_RANGE;
+extern const char* LOGICAL_PORT_INCREMENT;
+extern const char* METADATA_LOGICAL_PORT;
+extern const char* LISTENING_PORTS;
 
 extern const char* QOS_PROFILE;
 extern const char* APPLICATION;

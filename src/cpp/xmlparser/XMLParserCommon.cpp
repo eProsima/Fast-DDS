@@ -22,12 +22,29 @@ const char* DEFAULT_FASTRTPS_PROFILES = "DEFAULT_FASTRTPS_PROFILES.xml";
 
 const char* ROOT = "dds";
 const char* PROFILES = "profiles";
+const char* TRANSPORTS = "transports";
 const char* PROFILE_NAME = "profile_name";
 const char* DEFAULT_PROF = "is_default_profile";
 const char* PARTICIPANT = "participant";
 const char* PUBLISHER = "publisher";
 const char* SUBSCRIBER = "subscriber";
 const char* RTPS = "rtps";
+
+const char* TRANSPORT = "transport";
+const char* TRANSPORT_ID = "transport_id";
+const char* UDP_OUTPUT_PORT = "output_port";
+const char* TCP_WAN_ADDR = "wan_addr";
+const char* RECEIVE_BUFFER_SIZE = "receiveBufferSize";
+const char* SEND_BUFFER_SIZE = "sendBufferSize";
+const char* TTL = "TTL";
+const char* WHITE_LIST = "interfaceWhiteList";
+const char* KEEP_ALIVE_FREQUENCY = "keep_alive_frequency_ms";
+const char* KEEP_ALIVE_TIMEOUT = "keep_alive_timeout_ms";
+const char* MAX_LOGICAL_PORT = "max_logical_port";
+const char* LOGICAL_PORT_RANGE = "logical_port_range";
+const char* LOGICAL_PORT_INCREMENT = "logical_port_increment";
+const char* METADATA_LOGICAL_PORT = "metadata_logical_port";
+const char* LISTENING_PORTS = "listening_ports";
 
 const char* QOS_PROFILE = "qos_profile";
 const char* APPLICATION = "application";
