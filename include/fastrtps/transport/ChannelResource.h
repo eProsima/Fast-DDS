@@ -115,6 +115,7 @@ public:
     ChannelResource(ChannelResource&& channelResource);
     ChannelResource(uint32_t rec_buffer_size);
     virtual ~ChannelResource();
+    virtual void Clear();
 
     inline void SetThread(std::thread* pThread)
     {

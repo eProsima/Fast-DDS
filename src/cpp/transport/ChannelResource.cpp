@@ -53,6 +53,11 @@ ChannelResource::ChannelResource(uint32_t rec_buffer_size)
 
 ChannelResource::~ChannelResource()
 {
+    Clear();
+}
+
+void ChannelResource::Clear()
+{
     mAlive = false;
     if (mThread != nullptr)
     {
@@ -94,8 +99,12 @@ UDPChannelResource::UDPChannelResource(UDPChannelResource&& channelResource)
 
 UDPChannelResource::~UDPChannelResource()
 {
+    Clear();
+
     if (mMsgReceiver != nullptr)
+    {
         delete mMsgReceiver;
+    }
     mMsgReceiver = nullptr;
 }
 
@@ -171,7 +180,8 @@ TCPChannelResource::TCPChannelResource(TCPChannelResource&& channelResource)
 */
 TCPChannelResource::~TCPChannelResource()
 {
-    mAlive = false;
+    Clear();
+
     for (auto it = mReceiversMap.begin(); it != mReceiversMap.end(); ++it)
     {
         if (it->second != nullptr)
