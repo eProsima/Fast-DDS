@@ -62,16 +62,46 @@ public:
     virtual void CleanDeletedSockets() = 0;
 
     virtual uint16_t GetLogicalPortIncrement() const  = 0;
-    
+
     virtual uint16_t GetLogicalPortRange() const = 0;
-    
+
     virtual uint16_t GetMaxLogicalPort() const = 0;
 
     virtual size_t Send(TCPChannelResource* pChannelResource, const octet* data, size_t size) const  = 0;
 protected:
     TCPTransportInterface();
-    
+
 };
+
+/**
+* Transport configuration
+* @ingroup TRANSPORT_MODULE
+*/
+typedef struct TCPTransportDescriptor : public TransportDescriptorInterface {
+    virtual ~TCPTransportDescriptor() {}
+
+    std::vector<uint16_t> listening_ports;
+    uint32_t keep_alive_frequency_ms;
+    uint32_t keep_alive_timeout_ms;
+    uint16_t max_logical_port;
+    uint16_t logical_port_range;
+    uint16_t logical_port_increment;
+    uint16_t metadata_logical_port;
+
+    void add_listener_port(uint16_t port)
+    {
+        listening_ports.push_back(port);
+    }
+
+    void set_metadata_logical_port(uint16_t port)
+    {
+        metadata_logical_port = port;
+    }
+
+    RTPS_DllAPI TCPTransportDescriptor();
+
+    RTPS_DllAPI TCPTransportDescriptor(const TCPTransportDescriptor& t);
+} TCPTransportDescriptor;
 
 } // namespace rtps
 } // namespace fastrtps

@@ -27,6 +27,7 @@ PublisherAttributes default_publisher_attributes;
 std::map<std::string, up_subscriber_t>  XMLProfileManager::m_subscriber_profiles;
 SubscriberAttributes default_subscriber_attributes;
 std::map<std::string, XMLP_ret>         XMLProfileManager::m_xml_files;
+sp_transport_map_t XMLProfileManager::m_transport_profiles;
 
 BaseNode* XMLProfileManager::root = nullptr;
 
@@ -338,6 +339,26 @@ XMLP_ret XMLProfileManager::extractSubscriberProfile(up_base_node_t& profile, co
         default_subscriber_attributes = *(emplace.first->second.get() );
     }
     return XMLP_ret::XML_OK;
+}
+
+bool XMLProfileManager::insertTransportById(const std::string& sId, sp_transport_t transport)
+{
+    if (m_transport_profiles.find(sId) == m_transport_profiles.end())
+    {
+        m_transport_profiles[sId] = transport;
+        return true;
+    }
+    logError(XMLPARSER, "Error adding the transport " << sId << ". There is other transport with the same id");
+    return false;
+}
+
+sp_transport_t XMLProfileManager::getTransportById(const std::string& sId)
+{
+    if (m_transport_profiles.find(sId) != m_transport_profiles.end())
+    {
+        return m_transport_profiles[sId];
+    }
+    return nullptr;
 }
 
 } /* xmlparser  */

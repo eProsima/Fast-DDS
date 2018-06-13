@@ -123,26 +123,13 @@ TCPv6Transport::TCPv6Transport(const TCPv6TransportDescriptor& descriptor)
     }
 }
 
-TCPv6TransportDescriptor::TCPv6TransportDescriptor() :
-    TransportDescriptorInterface(s_maximumMessageSize)
-    , keep_alive_frequency_ms(s_default_keep_alive_frequency)
-    , keep_alive_timeout_ms(s_default_keep_alive_timeout)
-    , max_logical_port(100)
-    , logical_port_range(20)
-    , logical_port_increment(2)
-    , metadata_logical_port(0)
+TCPv6TransportDescriptor::TCPv6TransportDescriptor()
+    : TCPTransportDescriptor()
 {
 }
 
-TCPv6TransportDescriptor::TCPv6TransportDescriptor(const TCPv6TransportDescriptor& t) :
-    TransportDescriptorInterface(t)
-    , listening_ports(t.listening_ports)
-    , keep_alive_frequency_ms(t.keep_alive_frequency_ms)
-    , keep_alive_timeout_ms(t.keep_alive_timeout_ms)
-    , max_logical_port(t.max_logical_port)
-    , logical_port_range(t.logical_port_range)
-    , logical_port_increment(t.logical_port_increment)
-    , metadata_logical_port(t.metadata_logical_port)
+TCPv6TransportDescriptor::TCPv6TransportDescriptor(const TCPv6TransportDescriptor& t)
+    : TCPTransportDescriptor(t)
 {
 }
 

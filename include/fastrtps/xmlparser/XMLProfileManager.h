@@ -105,8 +105,11 @@ public:
 
     RTPS_DllAPI static void getDefaultSubscriberAttributes(SubscriberAttributes& subscriber_attributes);
 
+    RTPS_DllAPI static bool insertTransportById(const std::string& sId, sp_transport_t transport);
+    RTPS_DllAPI static sp_transport_t getTransportById(const std::string& sId);
+
 private:
-    
+
     RTPS_DllAPI static XMLP_ret extractProfiles(up_base_node_t properties, const std::string& filename);
     RTPS_DllAPI static XMLP_ret extractParticipantProfile(up_base_node_t& profile, const std::string& filename);
     RTPS_DllAPI static XMLP_ret extractPublisherProfile(up_base_node_t& profile, const std::string& filename);
@@ -117,6 +120,7 @@ private:
     static publisher_map_t   m_publisher_profiles;
     static subscriber_map_t  m_subscriber_profiles;
     static xmlfiles_map_t    m_xml_files;
+    static sp_transport_map_t m_transport_profiles;
 };
 
 } /* xmlparser */

@@ -127,27 +127,14 @@ TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor)
     }
 }
 
-TCPv4TransportDescriptor::TCPv4TransportDescriptor() :
-    TransportDescriptorInterface(s_maximumMessageSize)
-    , keep_alive_frequency_ms(s_default_keep_alive_frequency)
-    , keep_alive_timeout_ms(s_default_keep_alive_timeout)
-    , max_logical_port(100)
-    , logical_port_range(20)
-    , logical_port_increment(2)
-    , metadata_logical_port(0)
+TCPv4TransportDescriptor::TCPv4TransportDescriptor()
+    : TCPTransportDescriptor()
 {
     memset(wan_addr, 0, 4);
 }
 
-TCPv4TransportDescriptor::TCPv4TransportDescriptor(const TCPv4TransportDescriptor& t) :
-    TransportDescriptorInterface(t)
-    , listening_ports(t.listening_ports)
-    , keep_alive_frequency_ms(t.keep_alive_frequency_ms)
-    , keep_alive_timeout_ms(t.keep_alive_timeout_ms)
-    , max_logical_port(t.max_logical_port)
-    , logical_port_range(t.logical_port_range)
-    , logical_port_increment(t.logical_port_increment)
-    , metadata_logical_port(t.metadata_logical_port)
+TCPv4TransportDescriptor::TCPv4TransportDescriptor(const TCPv4TransportDescriptor& t)
+    : TCPTransportDescriptor(t)
 {
     memcpy(wan_addr, t.wan_addr, 4);
 }
