@@ -786,7 +786,8 @@ bool TCPv4Transport::OpenOutputSockets(const Locator_t& locator, SenderResource 
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     try
     {
-        CreateConnectorSocket(locator, senderResource);
+        std::vector<Locator_t> emptyLocators;
+        CreateConnectorSocket(locator, senderResource, emptyLocators);
     }
     catch (asio::system_error const& e)
     {
@@ -906,20 +907,23 @@ void TCPv4Transport::performListenOperation(TCPChannelResource *pChannelResource
     logInfo(RTCP, "End PerformListenOperation " << pChannelResource->GetLocator());
 }
 
-void TCPv4Transport::CreateConnectorSocket(const Locator_t& locator, SenderResource *senderResource)
+void TCPv4Transport::CreateConnectorSocket(const Locator_t& locator, SenderResource *senderResource,
+    std::vector<Locator_t>& pendingLocators)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     asio::ip::address_v4 ip = asio::ip::make_address_v4(locator.to_IP4_string());
     if (IsInterfaceAllowed(ip))
     {
         TCPv4Connector* newConnector = new TCPv4Connector(mService, locator);
+        newConnector->m_PendingLocators = pendingLocators;
         if (mSocketConnectors.find(locator) != mSocketConnectors.end())
         {
             TCPv4Connector* oldConnector = mSocketConnectors.at(locator);
             delete oldConnector;
         }
         mSocketConnectors[locator] = newConnector;
-        logInfo(RTCP, " OpenAndBindOutput (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")");
+        logInfo(RTCP, " OpenAndBindOutput (physical: " << locator.get_physical_port() <<
+            "; logical: " << locator.get_logical_port() << ")");
         newConnector->Connect(this, senderResource);
     }
 }
@@ -1037,7 +1041,11 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
             }
             return success;
         }
-        return false;
+        else
+        {
+            socket->mPendingLogicalOutputPorts.emplace_back(logicalPort);
+            return false;
+        }
     }
     else
     {
@@ -1209,10 +1217,12 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer, uint32_t sendBuf
         logInfo(RTCP, " Sent [FAILED]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << " ERROR=" << errorCode);
         Locator_t prevLocator = socket->GetLocator();
 
+        std::vector<Locator_t> logicalLocators;
+        socket->fillLogicalPorts(logicalLocators);
         CloseOutputChannel(socket->GetLocator());
 
         // Create a new connector to retry the connection.
-        CreateConnectorSocket(prevLocator, nullptr);
+        CreateConnectorSocket(prevLocator, nullptr, logicalLocators);
         break;
     }
 
@@ -1502,10 +1512,13 @@ void TCPv4Transport::CloseTCPSocket(TCPChannelResource *pChannelResource)
         else
         {
             Locator_t prevLocator = pChannelResource->GetLocator();
+            std::vector<Locator_t> logicalLocators;
+            pChannelResource->fillLogicalPorts(logicalLocators);
+
             CloseOutputChannel(prevLocator);
 
             // Create a new connector to retry the connection.
-            CreateConnectorSocket(prevLocator, nullptr);
+            CreateConnectorSocket(prevLocator, nullptr, logicalLocators);
         }
     }
 }

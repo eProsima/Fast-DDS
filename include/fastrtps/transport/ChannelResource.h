@@ -243,6 +243,22 @@ public:
         return &mSocket == &(channelResource.mSocket);
     }
 
+    void fillLogicalPorts(std::vector<Locator_t>& outVector)
+    {
+        Locator_t temp = mLocator;
+        for (uint16_t port : mPendingLogicalOutputPorts)
+        {
+            temp.set_logical_port(port);
+            outVector.emplace_back(temp);
+        }
+        for (uint16_t port : mLogicalOutputPorts)
+        {
+            temp.set_logical_port(port);
+            outVector.emplace_back(temp);
+        }
+    }
+
+
 #if defined(ASIO_HAS_MOVE)
     inline eProsimaTCPSocket* getSocket()
 #else

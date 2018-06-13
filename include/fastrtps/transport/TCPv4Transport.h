@@ -200,9 +200,9 @@ public:
     virtual void AddDefaultOutputLocator(LocatorList_t&) override;
 
     virtual uint16_t GetLogicalPortIncrement() const override;
-    
+
     virtual uint16_t GetLogicalPortRange() const override;
-    
+
     virtual uint16_t GetMaxLogicalPort() const override;
 
     //! Callback called each time that an incomming connection is accepted.
@@ -270,7 +270,8 @@ protected:
     bool CreateAcceptorSocket(const Locator_t& locator, uint32_t maxMsgSize);
 
     //! Method to create a TCP connector to establish a socket with the given locator.
-    void CreateConnectorSocket(const Locator_t& locator, SenderResource *senderResource);
+    void CreateConnectorSocket(const Locator_t& locator, SenderResource *senderResource,
+        std::vector<Locator_t>& pendingLocators);
 
     //! Adds the logical port of the given locator to send an Open Logical Port request.
     bool EnqueueLogicalOutputPort(const Locator_t& locator);
