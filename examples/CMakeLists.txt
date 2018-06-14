@@ -33,6 +33,7 @@ add_subdirectory(C++/SampleConfig_Multimedia)
 add_subdirectory(C++/Configurability)
 add_subdirectory(C++/StaticHelloWorldExample)
 add_subdirectory(C++/XMLProfiles)
+add_subdirectory(C++/Benchmark)
 
 if(SECURITY)
     add_subdirectory(C++/SecureHelloWorldExample)
