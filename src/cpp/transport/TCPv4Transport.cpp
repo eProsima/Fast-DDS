@@ -1028,7 +1028,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
             bool success = false;
             {
                 std::unique_lock<std::recursive_mutex> sendLock(*socket->GetWriteMutex());
-                success |= SendThroughSocket((octet*)&tcp_header, TCPHeader::getSize(), remoteLocator, socket);
+                success |= SendThroughSocket((octet*)&tcp_header, static_cast<uint32_t>(TCPHeader::getSize()), remoteLocator, socket);
                 success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket);
             }
             return success;

@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 	int test_time = 10000;
 	ReliabilityQosPolicyKind kind = RELIABLE_RELIABILITY_QOS;
 
-    if(argc >= 1)
+    if(argc >= 2)
     {
         if(strcmp(argv[1],"publisher")==0)
         {
@@ -144,6 +144,10 @@ int main(int argc, char** argv)
 			}
 		}
     }
+	else
+	{
+		paramsOk = false;
+	}
 
     if (!paramsOk)
     {
