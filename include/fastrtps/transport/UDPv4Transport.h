@@ -92,10 +92,11 @@ public:
     virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) override;
 
     //! Opens a socket on the given address and port (as long as they are white listed).
-    virtual bool OpenOutputChannel(const Locator_t&, SenderResource*, uint32_t) override;
+    virtual bool OpenOutputChannel(const Locator_t&, SenderResource*, uint32_t size = 0) override;
 
     //! UDP doesn't support more than one connection on the same socket.
-    virtual bool OpenExtraOutputChannel(Locator_t&, SenderResource*, uint32_t) override { return false; };
+    virtual bool OpenExtraOutputChannel(Locator_t&, SenderResource*, uint32_t size = 0) override 
+    { (void)size; return false; };
 
     //! Removes the listening socket for the specified port.
     virtual bool CloseInputChannel(const Locator_t&) override;
