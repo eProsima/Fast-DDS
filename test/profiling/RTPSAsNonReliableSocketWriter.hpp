@@ -22,6 +22,9 @@
 
 #include "RTPSAsSocketWriter.hpp" 
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 class RTPSAsNonReliableSocketWriter : public RTPSAsSocketWriter
 {
     public:

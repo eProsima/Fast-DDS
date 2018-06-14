@@ -29,6 +29,9 @@
 
 #include <asio.hpp>
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 RTPSAsSocketReader::RTPSAsSocketReader(): listener_(*this), lastvalue_(std::numeric_limits<uint16_t>::max()),
     participant_(nullptr), reader_(nullptr), history_(nullptr), initialized_(false)
 {
@@ -61,7 +64,7 @@ void RTPSAsSocketReader::init(std::string &ip, uint32_t port, uint16_t nmsgs)
 	ReaderAttributes rattr;
 	Locator_t loc;
 	loc.set_IP4_address(ip);
-	loc.port = port;
+	loc.set_port(port);
 	rattr.endpoint.multicastLocatorList.push_back(loc);
     configReader(rattr);
 	reader_ = RTPSDomain::createRTPSReader(participant_, rattr, history_, &listener_);
