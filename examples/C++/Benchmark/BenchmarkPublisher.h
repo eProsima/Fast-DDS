@@ -20,10 +20,10 @@
 #ifndef BENCHMARKPUBLISHER_H_
 #define BENCHMARKPUBLISHER_H_
 
-#include "BenchMarkPubSubTypes.h"
-#include "BenchMark_smallPubSubTypes.h"
-#include "BenchMark_mediumPubSubTypes.h"
-#include "BenchMark_bigPubSubTypes.h"
+#include "BenchmarkPubSubTypes.h"
+#include "Benchmark_smallPubSubTypes.h"
+#include "Benchmark_mediumPubSubTypes.h"
+#include "Benchmark_bigPubSubTypes.h"
 
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
@@ -32,10 +32,10 @@
 #include <fastrtps/subscriber/SampleInfo.h>
 
 
-#include "BenchMark.h"
-#include "BenchMark_small.h"
-#include "BenchMark_medium.h"
-#include "BenchMark_big.h"
+#include "Benchmark.h"
+#include "Benchmark_small.h"
+#include "Benchmark_medium.h"
+#include "Benchmark_big.h"
 
 class BenchMarkPublisher {
 public:

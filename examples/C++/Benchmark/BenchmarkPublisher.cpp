@@ -17,7 +17,7 @@
  *
  */
 
-#include "BenchMarkPublisher.h"
+#include "BenchmarkPublisher.h"
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>

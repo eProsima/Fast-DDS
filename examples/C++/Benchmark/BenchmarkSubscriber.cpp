@@ -17,7 +17,7 @@
  *
  */
 
-#include "BenchMarkSubscriber.h"
+#include "BenchmarkSubscriber.h"
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>

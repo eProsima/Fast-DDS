@@ -17,8 +17,8 @@
  *
  */
 
-#include "BenchMarkPublisher.h"
-#include "BenchMarkSubscriber.h"
+#include "BenchmarkPublisher.h"
+#include "BenchmarkSubscriber.h"
 
 #include <fastrtps/Domain.h>
 
