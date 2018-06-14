@@ -22,6 +22,9 @@
 #include <chrono>
 #include <string>
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 
 int main(int argc, char* argv[])
 {
