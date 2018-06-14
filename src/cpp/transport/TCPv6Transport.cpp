@@ -1011,17 +1011,18 @@ bool TCPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
 
         if (socket->IsLogicalPortOpened(logicalPort))
         {
-			CDRMessage_t msg(static_cast<uint32_t>(sendBufferSize + TCPHeader::getSize()));
+			//CDRMessage_t msg(static_cast<uint32_t>(sendBufferSize + TCPHeader::getSize()));
             TCPHeader tcp_header;
             FillTCPHeader(tcp_header, sendBuffer, sendBufferSize, logicalPort);
 
-            RTPSMessageCreator::addCustomContent(&msg, (octet*)&tcp_header, TCPHeader::getSize());
-            RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
+            //RTPSMessageCreator::addCustomContent(&msg, (octet*)&tcp_header, TCPHeader::getSize());
+            //RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
 
             bool success = false;
             {
                 std::unique_lock<std::recursive_mutex> sendLock(*socket->GetWriteMutex());
-                success |= SendThroughSocket(msg.buffer, msg.length, remoteLocator, socket);
+                success |= SendThroughSocket((octet*)&tcp_header, TCPHeader::getSize(), remoteLocator, socket);
+                success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket);
             }
             return success;
         }
@@ -1062,9 +1063,10 @@ bool TCPv6Transport::Receive(TCPChannelResource *pChannelResource, octet* receiv
             try
             {
                 // Read the header
-                octet header[TCPHEADER_SIZE];
+                //octet header[TCPHEADER_SIZE];
+                TCPHeader tcp_header;
                 size_t bytes_received = read(*pChannelResource->getSocket(),
-                    asio::buffer(header, TCPHeader::getSize()),
+                    asio::buffer(&tcp_header, TCPHeader::getSize()),
                     transfer_exactly(TCPHeader::getSize()));
 
                 logInfo(RTCP, "[RECEIVE] From: " << pChannelResource->getSocket()->remote_endpoint().address() << " to " << pChannelResource->getSocket()->local_endpoint().address());
@@ -1076,8 +1078,8 @@ bool TCPv6Transport::Receive(TCPChannelResource *pChannelResource, octet* receiv
                 }
                 else
                 {
-                    TCPHeader tcp_header;
-                    memcpy(&tcp_header, header, TCPHeader::getSize());
+                    //TCPHeader tcp_header;
+                    //memcpy(&tcp_header, header, TCPHeader::getSize());
                     size_t body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::getSize());
                     //logInfo(RTCP, " Received [TCPHeader] (CRC=" << tcp_header.crc << ")");
 

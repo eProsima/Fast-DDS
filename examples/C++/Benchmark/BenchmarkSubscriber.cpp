@@ -24,6 +24,8 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/transport/UDPv6TransportDescriptor.h>
+#include <fastrtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/Domain.h>
@@ -57,7 +59,7 @@ bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind kind, con
     {
         PParam.rtps.useBuiltinTransports = true;
     }
-    else
+    else if (transport == 2)
     {
         int32_t kind = LOCATOR_KIND_TCPv4;
 
@@ -100,6 +102,50 @@ bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind kind, con
         //descriptor->set_WAN_address("192.168.1.55");
         PParam.rtps.userTransports.push_back(descriptor);
     }
+    else if (transport == 3)
+    {
+        uint32_t kind = LOCATOR_KIND_UDPv6;
+		PParam.rtps.use_IP4_to_send = false;
+		PParam.rtps.use_IP6_to_send = true;
+    }
+    else if (transport == 4)
+    {
+        uint32_t kind = LOCATOR_KIND_TCPv6;
+		PParam.rtps.use_IP4_to_send = false;
+		PParam.rtps.use_IP6_to_send = true;
+        PParam.rtps.useBuiltinTransports = false;
+
+        Locator_t initial_peer_locator;
+        initial_peer_locator.kind = kind;
+        initial_peer_locator.set_IP6_address("::1");
+        initial_peer_locator.set_port(5100);
+        initial_peer_locator.set_logical_port(7402);
+        PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
+        initial_peer_locator.set_logical_port(7410);
+        PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
+
+        Locator_t unicast_locator;
+        unicast_locator.kind = kind;
+        unicast_locator.set_IP6_address("::1");
+        unicast_locator.set_port(5100);
+        unicast_locator.set_logical_port(7411);
+        PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Subscriber's data channel
+
+        Locator_t meta_locator;
+        meta_locator.kind = kind;
+        meta_locator.set_IP6_address("::1");
+        meta_locator.set_port(5100);
+        meta_locator.set_logical_port(7403);
+        PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator); // Subscriber's meta channel
+
+        PParam.rtps.useBuiltinTransports = false;
+        std::shared_ptr<TCPv6TransportDescriptor> descriptor = std::make_shared<TCPv6TransportDescriptor>();
+		descriptor->sendBufferSize = 8912896; // 8.5Mb
+		descriptor->receiveBufferSize = 8912896; // 8.5Mb
+		descriptor->set_metadata_logical_port(7403);
+        PParam.rtps.userTransports.push_back(descriptor);
+    }
+
     mp_participant = Domain::createParticipant(PParam);
     if(mp_participant==nullptr)
         return false;

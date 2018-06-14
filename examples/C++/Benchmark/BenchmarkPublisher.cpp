@@ -26,6 +26,8 @@
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
 
@@ -80,7 +82,7 @@ bool BenchMarkPublisher::init(int transport, ReliabilityQosPolicyKind kind, int 
     {
         PParam.rtps.useBuiltinTransports = true;
     }
-    else
+    else if (transport == 2)
     {
         uint32_t kind = LOCATOR_KIND_TCPv4;
         PParam.rtps.useBuiltinTransports = false;
@@ -103,6 +105,40 @@ bool BenchMarkPublisher::init(int transport, ReliabilityQosPolicyKind kind, int 
         descriptor->sendBufferSize = 8912896; // 8.5Mb
         descriptor->receiveBufferSize = 8912896; // 8.5Mb
         descriptor->set_WAN_address("127.0.0.1");
+        descriptor->add_listener_port(5100);
+        PParam.rtps.userTransports.push_back(descriptor);
+    }
+    else if (transport == 3)
+    {
+        uint32_t kind = LOCATOR_KIND_UDPv6;
+		PParam.rtps.use_IP4_to_send = false;
+		PParam.rtps.use_IP6_to_send = true;
+    }
+    else if (transport == 4)
+    {
+        uint32_t kind = LOCATOR_KIND_TCPv6;
+		PParam.rtps.use_IP4_to_send = false;
+		PParam.rtps.use_IP6_to_send = true;
+        PParam.rtps.useBuiltinTransports = false;
+
+        Locator_t unicast_locator;
+        unicast_locator.kind = kind;
+        unicast_locator.set_IP6_address("::1");
+        unicast_locator.set_port(5100);
+        unicast_locator.set_logical_port(7410);
+        PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Publisher's data channel
+
+        Locator_t meta_locator;
+        meta_locator.kind = kind;
+        meta_locator.set_IP6_address("::1");
+        meta_locator.set_port(5100);
+        meta_locator.set_logical_port(7402);
+        PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);  // Publisher's meta channel
+
+        std::shared_ptr<TCPv6TransportDescriptor> descriptor = std::make_shared<TCPv6TransportDescriptor>();
+        descriptor->sendBufferSize = 8912896; // 8.5Mb
+        descriptor->receiveBufferSize = 8912896; // 8.5Mb
+        //descriptor->set_WAN_address("127.0.0.1");
         descriptor->add_listener_port(5100);
         PParam.rtps.userTransports.push_back(descriptor);
     }
