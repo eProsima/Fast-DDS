@@ -70,6 +70,14 @@ int main(int argc, char** argv)
             {
                 transport = 2;
             }
+            else if (strcmp(argv[2], "udp6") == 0)
+            {
+                transport = 3;
+            }
+            else if (strcmp(argv[2], "tcp6") == 0)
+            {
+                transport = 4;
+            }
             else
             {
                 paramsOk = false;
