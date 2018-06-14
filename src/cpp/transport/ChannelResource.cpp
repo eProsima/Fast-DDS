@@ -247,6 +247,11 @@ void TCPChannelResource::fillLogicalPorts(std::vector<Locator_t>& outVector)
     }
 }
 
+uint32_t TCPChannelResource::GetMsgSize() const
+{
+	return m_rec_msg.max_size;
+}
+
 void TCPChannelResource::EnqueueLogicalPort(uint16_t port)
 {
     if (std::find(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port)

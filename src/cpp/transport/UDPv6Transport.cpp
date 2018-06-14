@@ -189,7 +189,7 @@ bool UDPv6Transport::IsOutputChannelOpen(const Locator_t& locator) const
     return false;
 }
 
-bool UDPv6Transport::OpenOutputChannel(const Locator_t& locator, SenderResource* senderResource)
+bool UDPv6Transport::OpenOutputChannel(const Locator_t& locator, SenderResource* senderResource, uint32_t /*msgSize*/)
 {
     if (!IsLocatorSupported(locator) || IsOutputChannelOpen(locator))
         return false;

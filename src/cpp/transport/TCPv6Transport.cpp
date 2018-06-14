@@ -85,9 +85,10 @@ void TCPv6Acceptor::Accept(TCPv6Transport* parent, asio::io_service& io_service)
 }
 #endif
 
-TCPv6Connector::TCPv6Connector(asio::io_service& io_service, const Locator_t& locator)
+TCPv6Connector::TCPv6Connector(asio::io_service& io_service, const Locator_t& locator, uint32_t msgSize)
     : m_locator(locator)
     , m_socket(createTCPSocket(io_service))
+	, m_msgSize(msgSize)
 {
 }
 
@@ -452,22 +453,22 @@ bool TCPv6Transport::IsOutputChannelBound(const Locator_t& locator) const
 
 bool TCPv6Transport::IsOutputChannelConnected(const Locator_t& locator) const
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-    if (!IsLocatorSupported(locator))
-        return false;
+	std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+	if (!IsLocatorSupported(locator))
+		return false;
 
-    for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
-    {
-        if ((*it)->GetLocator().compare_IP6_address_and_port(locator))
-        {
-            return true;
-        }
-    }
+	for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
+	{
+		if ((*it)->GetLocator().compare_IP6_address_and_port(locator))
+		{
+			return true;
+		}
+	}
 
-    return IsOutputChannelBound(locator);
+	return IsOutputChannelBound(locator);
 }
 
-bool TCPv6Transport::OpenOutputChannel(const Locator_t& locator, SenderResource* senderResource)
+bool TCPv6Transport::OpenOutputChannel(const Locator_t& locator, SenderResource* senderResource, uint32_t msgSize)
 {
     bool success = false;
     if (IsLocatorSupported(locator))
@@ -479,7 +480,7 @@ bool TCPv6Transport::OpenOutputChannel(const Locator_t& locator, SenderResource*
             {
                 if (!IsOutputChannelOpen(locator))
                 {
-                    success = OpenOutputSockets(locator, senderResource);
+                    success = OpenOutputSockets(locator, senderResource, msgSize);
                 }
                 else
                 {
@@ -514,6 +515,7 @@ bool TCPv6Transport::OpenOutputChannel(const Locator_t& locator, SenderResource*
                     for (auto it = socketIt->second.begin(); it != socketIt->second.end(); ++it)
                     {
                         BindSocket(locator, *it);
+                        success = EnqueueLogicalOutputPort(locator);
                     }
                 }
             }
@@ -527,9 +529,9 @@ bool TCPv6Transport::OpenOutputChannel(const Locator_t& locator, SenderResource*
     return success;
 }
 
-bool TCPv6Transport::OpenExtraOutputChannel(Locator_t& locator, SenderResource* senderResource)
+bool TCPv6Transport::OpenExtraOutputChannel(Locator_t& locator, SenderResource* senderResource, uint32_t msgSize)
 {
-    return OpenOutputChannel(locator, senderResource);
+    return OpenOutputChannel(locator, senderResource, msgSize);
 }
 
 bool TCPv6Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource* receiverResource,
@@ -764,12 +766,13 @@ bool TCPv6Transport::EnqueueLogicalOutputPort(const Locator_t& locator)
     return false;
 }
 
-bool TCPv6Transport::OpenOutputSockets(const Locator_t& locator, SenderResource *senderResource)
+bool TCPv6Transport::OpenOutputSockets(const Locator_t& locator, SenderResource *senderResource, uint32_t msgSize)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     try
     {
-        CreateConnectorSocket(locator, senderResource);
+		std::vector<Locator_t> emptyLocators;
+        CreateConnectorSocket(locator, senderResource, emptyLocators, msgSize);
     }
     catch (asio::system_error const& e)
     {
@@ -889,14 +892,16 @@ void TCPv6Transport::performListenOperation(TCPChannelResource *pChannelResource
     logInfo(RTCP, "End PerformListenOperation " << pChannelResource->GetLocator());
 }
 
-void TCPv6Transport::CreateConnectorSocket(const Locator_t& locator, SenderResource *senderResource)
+void TCPv6Transport::CreateConnectorSocket(const Locator_t& locator, SenderResource *senderResource,
+	std::vector<Locator_t>& pendingLocators, uint32_t msgSize)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     asio::ip::address_v6 ip = asio::ip::make_address_v6(locator.to_IP6_string());
     if (IsInterfaceAllowed(ip))
     {
-        TCPv6Connector* newConnector = new TCPv6Connector(mService, locator);
-        if (mSocketConnectors.find(locator) != mSocketConnectors.end())
+        TCPv6Connector* newConnector = new TCPv6Connector(mService, locator, msgSize);
+		newConnector->m_PendingLocators = pendingLocators;
+		if (mSocketConnectors.find(locator) != mSocketConnectors.end())
         {
             TCPv6Connector* oldConnector = mSocketConnectors.at(locator);
             delete oldConnector;
@@ -1006,7 +1011,7 @@ bool TCPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
 
         if (socket->IsLogicalPortOpened(logicalPort))
         {
-            CDRMessage_t msg;
+			CDRMessage_t msg(static_cast<uint32_t>(sendBufferSize + TCPHeader::getSize()));
             TCPHeader tcp_header;
             FillTCPHeader(tcp_header, sendBuffer, sendBufferSize, logicalPort);
 
@@ -1079,7 +1084,7 @@ bool TCPv6Transport::Receive(TCPChannelResource *pChannelResource, octet* receiv
                     if (body_size > receiveBufferCapacity)
                     {
                         logError(RTPS_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
-                            << body_size << " vs. " << receiveBufferCapacity << ".");
+                            << static_cast<uint32_t>(body_size) << " vs. " << receiveBufferCapacity << ".");
                         success = false;
                     }
                     else
@@ -1162,7 +1167,7 @@ bool TCPv6Transport::ReadBody(octet* receiveBuffer, uint32_t receiveBufferCapaci
 
     if (*bytes_received != body_size)
     {
-        logError(RTPS_MSG_IN, "Bad TCP body size: " << bytes_received << "(expected: " << TCPHeader::getSize() << ")");
+        logError(RTCP, "Bad TCP body size: " << bytes_received << "(expected: " << TCPHeader::getSize() << ")");
         return false;
     }
 
@@ -1195,11 +1200,14 @@ bool TCPv6Transport::SendThroughSocket(const octet* sendBuffer, uint32_t sendBuf
         // Close the channel
         logInfo(RTCP, " Sent [FAILED]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << " ERROR=" << errorCode);
         Locator_t prevLocator = socket->GetLocator();
+		uint32_t msgSize = socket->GetMsgSize();
 
+        std::vector<Locator_t> logicalLocators;
+        socket->fillLogicalPorts(logicalLocators);
         CloseOutputChannel(socket->GetLocator());
 
         // Create a new connector to retry the connection.
-        CreateConnectorSocket(prevLocator, nullptr);
+        CreateConnectorSocket(prevLocator, nullptr, logicalLocators, msgSize);
         break;
     }
 
@@ -1397,11 +1405,11 @@ void TCPv6Transport::SocketConnected(Locator_t& locator, SenderResource *senderR
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     if (mSocketConnectors.find(locator) != mSocketConnectors.end())
     {
-        auto& pendingConector = mSocketConnectors.at(locator);
+        auto pendingConector = mSocketConnectors.at(locator);
         if (!error.value())
         {
             TCPChannelResource *outputSocket = new TCPChannelResource(pendingConector->m_socket,
-                locator, true, false, false);
+                locator, true, false, pendingConector->m_msgSize);
 
             // Create one message receiver for each registered receiver resources.
             RegisterReceiverResources(outputSocket, locator);
@@ -1489,10 +1497,14 @@ void TCPv6Transport::CloseTCPSocket(TCPChannelResource *pChannelResource)
         else
         {
             Locator_t prevLocator = pChannelResource->GetLocator();
+            std::vector<Locator_t> logicalLocators;
+            pChannelResource->fillLogicalPorts(logicalLocators);
+			uint32_t msgSize = pChannelResource->GetMsgSize();
+
             CloseOutputChannel(prevLocator);
 
             // Create a new connector to retry the connection.
-            CreateConnectorSocket(prevLocator, nullptr);
+            CreateConnectorSocket(prevLocator, nullptr, logicalLocators, msgSize);
         }
     }
 }
