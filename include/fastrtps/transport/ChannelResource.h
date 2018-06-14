@@ -247,6 +247,8 @@ public:
 
     void EnqueueLogicalPort(uint16_t port);
 
+	uint32_t GetMsgSize() const;
+
 #if defined(ASIO_HAS_MOVE)
     inline eProsimaTCPSocket* getSocket()
 #else

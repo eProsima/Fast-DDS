@@ -89,9 +89,10 @@ void TCPv4Acceptor::Accept(TCPv4Transport* parent, asio::io_service& io_service)
 }
 #endif
 
-TCPv4Connector::TCPv4Connector(asio::io_service& io_service, const Locator_t& locator)
+TCPv4Connector::TCPv4Connector(asio::io_service& io_service, const Locator_t& locator, uint32_t msgSize)
     : m_locator(locator)
     , m_socket(createTCPSocket(io_service))
+	, m_msgSize(msgSize)
 {
 }
 
@@ -473,7 +474,7 @@ bool TCPv4Transport::IsOutputChannelConnected(const Locator_t& locator) const
     return IsOutputChannelBound(locator);
 }
 
-bool TCPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource* senderResource)
+bool TCPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource* senderResource, uint32_t msgSize)
 {
     bool success = false;
     if (IsLocatorSupported(locator))
@@ -485,7 +486,7 @@ bool TCPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource*
             {
                 if (!IsOutputChannelOpen(locator))
                 {
-                    success = OpenOutputSockets(locator, senderResource);
+                    success = OpenOutputSockets(locator, senderResource, msgSize);
                 }
                 else
                 {
@@ -534,9 +535,9 @@ bool TCPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource*
     return success;
 }
 
-bool TCPv4Transport::OpenExtraOutputChannel(Locator_t& locator, SenderResource* senderResource)
+bool TCPv4Transport::OpenExtraOutputChannel(Locator_t& locator, SenderResource* senderResource, uint32_t msgSize)
 {
-    return OpenOutputChannel(locator, senderResource);
+    return OpenOutputChannel(locator, senderResource, msgSize);
 }
 
 bool TCPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource* receiverResource,
@@ -771,13 +772,13 @@ bool TCPv4Transport::EnqueueLogicalOutputPort(const Locator_t& locator)
     return false;
 }
 
-bool TCPv4Transport::OpenOutputSockets(const Locator_t& locator, SenderResource *senderResource)
+bool TCPv4Transport::OpenOutputSockets(const Locator_t& locator, SenderResource *senderResource, uint32_t msgSize)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     try
     {
         std::vector<Locator_t> emptyLocators;
-        CreateConnectorSocket(locator, senderResource, emptyLocators);
+        CreateConnectorSocket(locator, senderResource, emptyLocators, msgSize);
     }
     catch (asio::system_error const& e)
     {
@@ -898,13 +899,13 @@ void TCPv4Transport::performListenOperation(TCPChannelResource *pChannelResource
 }
 
 void TCPv4Transport::CreateConnectorSocket(const Locator_t& locator, SenderResource *senderResource,
-    std::vector<Locator_t>& pendingLocators)
+    std::vector<Locator_t>& pendingLocators, uint32_t msgSize)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     asio::ip::address_v4 ip = asio::ip::make_address_v4(locator.to_IP4_string());
     if (IsInterfaceAllowed(ip))
     {
-        TCPv4Connector* newConnector = new TCPv4Connector(mService, locator);
+        TCPv4Connector* newConnector = new TCPv4Connector(mService, locator, msgSize);
         newConnector->m_PendingLocators = pendingLocators;
         if (mSocketConnectors.find(locator) != mSocketConnectors.end())
         {
@@ -1017,7 +1018,7 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
 
         if (socket->IsLogicalPortOpened(logicalPort))
         {
-            CDRMessage_t msg;
+			CDRMessage_t msg(static_cast<uint32_t>(sendBufferSize + TCPHeader::getSize()));
             TCPHeader tcp_header;
             FillTCPHeader(tcp_header, sendBuffer, sendBufferSize, logicalPort);
 
@@ -1077,7 +1078,7 @@ bool TCPv4Transport::Receive(TCPChannelResource *pChannelResource, octet* receiv
 
                 if (bytes_received != TCPHeader::getSize())
                 {
-                    logError(RTPS_MSG_IN, "Bad TCP header size: " << bytes_received << "(expected: : " << TCPHeader::getSize() << ")");
+                    logError(RTCP, "Bad TCP header size: " << bytes_received << "(expected: : " << TCPHeader::getSize() << ")");
                     success = false;
                 }
                 else
@@ -1089,19 +1090,19 @@ bool TCPv4Transport::Receive(TCPChannelResource *pChannelResource, octet* receiv
 
                     if (body_size > receiveBufferCapacity)
                     {
-                        logError(RTPS_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
-                            << body_size << " vs. " << receiveBufferCapacity << ".");
+                        logError(RTCP, "Size of incoming TCP message is bigger than buffer capacity: "
+                            << static_cast<uint32_t>(body_size) << " vs. " << receiveBufferCapacity << ".");
                         success = false;
                     }
                     else
                     {
-                        logWarning(RTPS_MSG_IN, "Received MSG. Logical Port" << tcp_header.logicalPort);
+                        logWarning(RTCP, "Received MSG. Logical Port" << tcp_header.logicalPort);
                         success = ReadBody(receiveBuffer, receiveBufferCapacity, &receiveBufferSize, pChannelResource, body_size);
                         //logInfo(RTCP, " Received [ReadBody]");
 
                         if (!CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
                         {
-                            logWarning(RTPS_MSG_IN, "Bad TCP header CRC");
+                            logWarning(RTCP, "Bad TCP header CRC");
                         }
 
                         if (tcp_header.logicalPort == 0)
@@ -1173,7 +1174,7 @@ bool TCPv4Transport::ReadBody(octet* receiveBuffer, uint32_t receiveBufferCapaci
 
     if (*bytes_received != body_size)
     {
-        logError(RTPS_MSG_IN, "Bad TCP body size: " << bytes_received << "(expected: " << TCPHeader::getSize() << ")");
+        logError(RTCP, "Bad TCP body size: " << bytes_received << "(expected: " << TCPHeader::getSize() << ")");
         return false;
     }
 
@@ -1206,13 +1207,14 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer, uint32_t sendBuf
         // Close the channel
         logInfo(RTCP, " Sent [FAILED]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << " ERROR=" << errorCode);
         Locator_t prevLocator = socket->GetLocator();
+		uint32_t msgSize = socket->GetMsgSize();
 
         std::vector<Locator_t> logicalLocators;
         socket->fillLogicalPorts(logicalLocators);
         CloseOutputChannel(socket->GetLocator());
 
         // Create a new connector to retry the connection.
-        CreateConnectorSocket(prevLocator, nullptr, logicalLocators);
+        CreateConnectorSocket(prevLocator, nullptr, logicalLocators, msgSize);
         break;
     }
 
@@ -1414,7 +1416,7 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, SenderResource *senderR
         if (!error.value())
         {
             TCPChannelResource *outputSocket = new TCPChannelResource(pendingConector->m_socket,
-                locator, true, false, false);
+                locator, true, false, pendingConector->m_msgSize);
 
             // Create one message receiver for each registered receiver resources.
             RegisterReceiverResources(outputSocket, locator);
@@ -1504,11 +1506,12 @@ void TCPv4Transport::CloseTCPSocket(TCPChannelResource *pChannelResource)
             Locator_t prevLocator = pChannelResource->GetLocator();
             std::vector<Locator_t> logicalLocators;
             pChannelResource->fillLogicalPorts(logicalLocators);
+			uint32_t msgSize = pChannelResource->GetMsgSize();
 
             CloseOutputChannel(prevLocator);
 
             // Create a new connector to retry the connection.
-            CreateConnectorSocket(prevLocator, nullptr, logicalLocators);
+            CreateConnectorSocket(prevLocator, nullptr, logicalLocators, msgSize);
         }
     }
 }

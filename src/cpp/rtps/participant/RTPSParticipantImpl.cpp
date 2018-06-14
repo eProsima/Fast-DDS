@@ -818,9 +818,10 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend)
     }
 
     //Output locators have been specified, create them
+	uint32_t size = m_network_Factory.get_max_message_size_between_transports();
     for (auto it = pend->m_att.remoteLocatorList.begin(); it != pend->m_att.remoteLocatorList.end(); ++it)
     {
-        SendersBuffer = m_network_Factory.BuildSenderResources((*it));
+        SendersBuffer = m_network_Factory.BuildSenderResources((*it), size);
         for (auto mit = SendersBuffer.begin(); mit != SendersBuffer.end(); ++mit)
         {
             newSenders.push_back(std::move(*mit));
@@ -882,12 +883,13 @@ bool RTPSParticipantImpl::checkSenderResource(Locator_t& locator)
 
 void RTPSParticipantImpl::createSenderResources(LocatorList_t& Locator_list, bool ApplyMutation)
 {
+	uint32_t size = m_network_Factory.get_max_message_size_between_transports();
     std::vector<SenderResource> buffer;
     for (auto it_loc = Locator_list.begin(); it_loc != Locator_list.end(); ++it_loc)
     {
         if (!checkSenderResource(*it_loc))
         {
-            buffer = m_network_Factory.BuildSenderResources(*it_loc);
+            buffer = m_network_Factory.BuildSenderResources(*it_loc, size);
             if (buffer.size() == 0 && ApplyMutation)
             {
                 int tries = 0;
@@ -895,7 +897,7 @@ void RTPSParticipantImpl::createSenderResources(LocatorList_t& Locator_list, boo
                 {
                     tries++;
                     *it_loc = applyLocatorAdaptRule(*it_loc);
-                    buffer = m_network_Factory.BuildSenderResources(*it_loc);
+                    buffer = m_network_Factory.BuildSenderResources(*it_loc, size);
                 }
             }
 

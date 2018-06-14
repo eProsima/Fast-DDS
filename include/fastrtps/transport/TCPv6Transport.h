@@ -59,8 +59,9 @@ public:
     Locator_t m_locator;
 	eProsimaTCPSocket m_socket;
     std::vector<Locator_t> m_PendingLocators;
+	uint32_t m_msgSize;
 
-    TCPv6Connector(asio::io_service& io_service, const Locator_t& locator);
+    TCPv6Connector(asio::io_service& io_service, const Locator_t& locator, uint32_t msgSize);
     ~TCPv6Connector();
 
     //! Method to start the connecting process with the endpoint set in the locator.
@@ -143,10 +144,10 @@ public:
     virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) override;
 
     //! Opens a socket on the given address and port (as long as they are white listed).
-    virtual bool OpenOutputChannel(const Locator_t&, SenderResource*) override;
+    virtual bool OpenOutputChannel(const Locator_t&, SenderResource*, uint32_t) override;
 
     //! Opens an additional output socket on the given address and port.
-    virtual bool OpenExtraOutputChannel(Locator_t&, SenderResource*) override;
+    virtual bool OpenExtraOutputChannel(Locator_t&, SenderResource*, uint32_t) override;
 
     //! Removes the listening socket for the specified port.
     virtual bool CloseInputChannel(const Locator_t&) override;
@@ -200,9 +201,9 @@ public:
     virtual void AddDefaultOutputLocator(LocatorList_t&) override;
 
     virtual uint16_t GetLogicalPortIncrement() const override;
-    
+
     virtual uint16_t GetLogicalPortRange() const override;
-    
+
     virtual uint16_t GetMaxLogicalPort() const override;
 
     //! Callback called each time that an incomming connection is accepted.
@@ -264,13 +265,14 @@ protected:
     bool IsInterfaceAllowed(const asio::ip::address_v6& ip);
 
     //! Intermediate method to open an output socket.
-    bool OpenOutputSockets(const Locator_t& locator, SenderResource *senderResource);
+    bool OpenOutputSockets(const Locator_t& locator, SenderResource *senderResource, uint32_t maxMsgSize);
 
     //! Creates a TCP acceptor to wait for incomming connections by the given locator.
     bool CreateAcceptorSocket(const Locator_t& locator, uint32_t maxMsgSize);
 
     //! Method to create a TCP connector to establish a socket with the given locator.
-    void CreateConnectorSocket(const Locator_t& locator, SenderResource *senderResource);
+	void CreateConnectorSocket(const Locator_t& locator, SenderResource *senderResource,
+		std::vector<Locator_t>& pendingLocators, uint32_t msgSize);
 
     //! Adds the logical port of the given locator to send an Open Logical Port request.
     bool EnqueueLogicalOutputPort(const Locator_t& locator);
