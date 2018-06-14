@@ -113,7 +113,8 @@ bool Domain::removeSubscriber(Subscriber* sub)
     return false;
 }
 
-Participant* Domain::createParticipant(const std::string &participant_profile, ParticipantListener* listen)
+Participant* Domain::createParticipant(const std::string &participant_profile, ParticipantListener* listen,
+                                        bool user_profile_name_as_rtps_name)
 {
     if (false == default_xml_profiles_loaded)
     {
@@ -122,10 +123,17 @@ Participant* Domain::createParticipant(const std::string &participant_profile, P
     }
 
     ParticipantAttributes participant_att;
+    const char* defaultName = participant_att.rtps.getName();
     if ( XMLP_ret::XML_ERROR == XMLProfileManager::fillParticipantAttributes(participant_profile, participant_att))
     {
         logError(PARTICIPANT, "Problem loading profile '" << participant_profile << "'");
         return nullptr;
+    }
+    // TODO Needed for IS, and to don't break tests
+    if (user_profile_name_as_rtps_name 
+        && strncmp(defaultName, participant_att.rtps.getName(), strlen(defaultName)) == 0)
+    {
+        participant_att.rtps.setName(participant_profile.c_str());
     }
     return createParticipant(participant_att, listen);
 }

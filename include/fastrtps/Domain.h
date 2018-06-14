@@ -55,7 +55,8 @@ public:
      * @return Participant pointer. (nullptr if not created.)
      */
     RTPS_DllAPI static Participant* createParticipant(const std::string &participant_profile,
-                                                      ParticipantListener *listen = nullptr);
+                                                      ParticipantListener *listen = nullptr,
+                                                      bool user_profile_name_as_rtps_name = false);
     /**
      * Create a Participant.
      * @param att Participant Attributes.

@@ -250,9 +250,9 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     locator.set_port(1989);
     ++loc_list_it;
     EXPECT_EQ(*loc_list_it, locator);
-    locator.set_port(2021);
+    //locator.set_port(2021);
     //EXPECT_EQ(*(loc_list_it = publisher_atts.outLocatorList.begin()), locator);
-    EXPECT_EQ(loc_list_it->get_port(), 2021);
+    //EXPECT_EQ(loc_list_it->get_port(), 2021);
     EXPECT_EQ(publisher_atts.throughputController.bytesPerPeriod, 9236);
     EXPECT_EQ(publisher_atts.throughputController.periodMillisecs, 234);
     EXPECT_EQ(publisher_atts.historyMemoryPolicy, DYNAMIC_RESERVE_MEMORY_MODE);
@@ -317,9 +317,9 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     locator.set_port(1989);
     ++loc_list_it;
     EXPECT_EQ(*loc_list_it, locator);
-    locator.set_port(2021);
+    //locator.set_port(2021);
     //EXPECT_EQ(*(loc_list_it = publisher_atts.outLocatorList.begin()), locator);
-    EXPECT_EQ(loc_list_it->get_port(), 2021);
+    //EXPECT_EQ(loc_list_it->get_port(), 2021);
     EXPECT_EQ(publisher_atts.throughputController.bytesPerPeriod, 9236);
     EXPECT_EQ(publisher_atts.throughputController.periodMillisecs, 234);
     EXPECT_EQ(publisher_atts.historyMemoryPolicy, DYNAMIC_RESERVE_MEMORY_MODE);
