@@ -40,7 +40,6 @@ XMLP_ret XMLProfileManager::fillParticipantAttributes(const std::string &profile
         return XMLP_ret::XML_ERROR;
     }
     atts = *(it->second);
-    atts.rtps.setName(profile_name.c_str());
     return XMLP_ret::XML_OK;
 }
 
