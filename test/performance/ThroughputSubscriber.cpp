@@ -266,7 +266,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     Sparam.topic.resourceLimitsQos.allocated_samples = 10000;
 
     Locator_t loc;
-    loc.port = 10110;
+    loc.set_port(10110);
     Sparam.unicastLocatorList.push_back(loc);
     Sparam.properties = property_policy;
     mp_datasub = Domain::createSubscriber(mp_par,Sparam,(SubscriberListener*)&this->m_DataSubListener);
@@ -304,7 +304,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     Rparam.topic.historyQos.depth = 20;
     Rparam.topic.resourceLimitsQos.max_samples = 20;
     Rparam.topic.resourceLimitsQos.allocated_samples = 20;
-    loc.port = 7556;
+    loc.set_port(7556);
     Rparam.unicastLocatorList.push_back(loc);
     mp_commandsub = Domain::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 
