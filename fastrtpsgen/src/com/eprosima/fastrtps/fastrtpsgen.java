@@ -210,7 +210,18 @@ public class fastrtpsgen {
             {
                 fusion_ = true;
             }
-            else { // TODO: More options: -local, -rpm, -debug -I
+            else if(arg.equals("-I"))
+            {
+                if (count < args.length) {
+                    m_includePaths.add(args[count++]);
+                } else {
+                    throw new BadArgumentException("No path specified after -I option");
+                }
+            }
+            else if(arg.startsWith("-I")) {
+                    m_includePaths.add(arg.substring(2));
+            }
+            else { // TODO: More options: -local, -rpm, -debug
 				throw new BadArgumentException("Unknown argument " + arg);
 			}
 
@@ -884,8 +895,10 @@ public class fastrtpsgen {
 		// Add the include paths given as parameters.
 		for (int i=0; i < m_includePaths.size(); ++i) {
 			if (m_os.contains("Windows")) {
-				lineCommand.add(((String) m_includePaths.get(i)).replaceFirst("^-I", "/I"));
+				lineCommand.add("/I");
+				lineCommand.add(m_includePaths.get(i));
 			} else if (m_os.contains("Linux") || m_os.contains("Mac")) {
+				lineCommand.add("-I");
 				lineCommand.add(m_includePaths.get(i));
 			}
 		}
