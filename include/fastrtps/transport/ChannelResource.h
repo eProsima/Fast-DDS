@@ -306,6 +306,26 @@ public:
     {
         return mLocator;
     }
+
+    inline bool HasLogicalConnections() const
+    {
+        std::unique_lock<std::recursive_mutex> scoped(mLogicalConnectionsMutex);
+        return mLogicalConnections > 0;
+    }
+
+    inline void AddLogicalConnection()
+    {
+        std::unique_lock<std::recursive_mutex> scoped(mLogicalConnectionsMutex);
+        ++mLogicalConnections;
+    }
+
+    inline void RemoveLogicalConnection()
+    {
+        std::unique_lock<std::recursive_mutex> scoped(mLogicalConnectionsMutex);
+        assert(mLogicalConnections > 0);
+        --mLogicalConnections;
+    }
+
 protected:
     inline void ChangeStatus(eConnectionStatus s)
     {
@@ -337,6 +357,9 @@ private:
 	Semaphore mNegotiationSemaphore;
     eProsimaTCPSocket mSocket;
     eConnectionStatus mConnectionStatus;
+
+    uint32_t mLogicalConnections; // Count of writers/readers using this socket.
+    mutable std::recursive_mutex mLogicalConnectionsMutex;
 
     TCPChannelResource(const TCPChannelResource&) = delete;
     TCPChannelResource& operator=(const TCPChannelResource&) = delete;

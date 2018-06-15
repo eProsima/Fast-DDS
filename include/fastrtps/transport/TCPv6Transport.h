@@ -38,7 +38,7 @@ class TCPChannelResource;
 class TCPv6Acceptor
 {
 public:
-	asio::ip::tcp::acceptor mAcceptor;
+    asio::ip::tcp::acceptor mAcceptor;
     Locator_t mLocator;
     uint32_t mMaxMsgSize;
 #ifndef ASIO_HAS_MOVE
@@ -57,18 +57,18 @@ class TCPv6Connector
 {
 public:
     Locator_t m_locator;
-	eProsimaTCPSocket m_socket;
+    eProsimaTCPSocket m_socket;
     std::vector<Locator_t> m_PendingLocators;
-	uint32_t m_msgSize;
+    uint32_t m_msgSize;
 
     TCPv6Connector(asio::io_service& io_service, const Locator_t& locator, uint32_t msgSize);
     ~TCPv6Connector();
 
     //! Method to start the connecting process with the endpoint set in the locator.
-	void Connect(TCPv6Transport* parent, SenderResource *senderResource);
+    void Connect(TCPv6Transport* parent, SenderResource *senderResource);
 
     //! Method to start the reconnection process.
-	void RetryConnect(asio::io_service& io_service, TCPv6Transport* parent, SenderResource *senderResource);
+    void RetryConnect(asio::io_service& io_service, TCPv6Transport* parent, SenderResource *senderResource);
 };
 
 
@@ -271,8 +271,8 @@ protected:
     bool CreateAcceptorSocket(const Locator_t& locator, uint32_t maxMsgSize);
 
     //! Method to create a TCP connector to establish a socket with the given locator.
-	void CreateConnectorSocket(const Locator_t& locator, SenderResource *senderResource,
-		std::vector<Locator_t>& pendingLocators, uint32_t msgSize);
+    void CreateConnectorSocket(const Locator_t& locator, SenderResource *senderResource,
+        std::vector<Locator_t>& pendingLocators, uint32_t msgSize);
 
     //! Adds the logical port of the given locator to send an Open Logical Port request.
     bool EnqueueLogicalOutputPort(const Locator_t& locator);
@@ -284,7 +284,7 @@ protected:
     void CloseInputSocket(TCPChannelResource* pChannelResource);
 
     //! Closes the physical socket and mark it to be deleted.
-    void ReleaseTCPSocket(TCPChannelResource* pChannelResource);
+    void ReleaseTCPSocket(TCPChannelResource* pChannelResource, bool force);
 
     /** Associates the given pChannelResource with the registered ReceiverResources with the given locator.
     * This relationship is used to root the incomming messages to the related Receivers.

@@ -88,7 +88,7 @@ void TCPv6Acceptor::Accept(TCPv6Transport* parent, asio::io_service& io_service)
 TCPv6Connector::TCPv6Connector(asio::io_service& io_service, const Locator_t& locator, uint32_t msgSize)
     : m_locator(locator)
     , m_socket(createTCPSocket(io_service))
-	, m_msgSize(msgSize)
+    , m_msgSize(msgSize)
 {
 }
 
@@ -182,7 +182,7 @@ TCPv6Transport::~TCPv6Transport()
 
     for (auto it = vDeletedSockets.begin(); it != vDeletedSockets.end(); ++it)
     {
-        ReleaseTCPSocket(*it);
+        ReleaseTCPSocket(*it, false);
         (*it) = nullptr;
     }
 
@@ -453,19 +453,19 @@ bool TCPv6Transport::IsOutputChannelBound(const Locator_t& locator) const
 
 bool TCPv6Transport::IsOutputChannelConnected(const Locator_t& locator) const
 {
-	std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-	if (!IsLocatorSupported(locator))
-		return false;
+    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+    if (!IsLocatorSupported(locator))
+        return false;
 
-	for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
-	{
-		if ((*it)->GetLocator().compare_IP6_address_and_port(locator))
-		{
-			return true;
-		}
-	}
+    for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
+    {
+        if ((*it)->GetLocator().compare_IP6_address_and_port(locator))
+        {
+            return true;
+        }
+    }
 
-	return IsOutputChannelBound(locator);
+    return IsOutputChannelBound(locator);
 }
 
 bool TCPv6Transport::OpenOutputChannel(const Locator_t& locator, SenderResource* senderResource, uint32_t msgSize)
@@ -633,7 +633,7 @@ bool TCPv6Transport::CloseOutputChannel(const Locator_t& locator)
 
     for (auto it = vDeletedSockets.begin(); it != vDeletedSockets.end(); ++it)
     {
-        ReleaseTCPSocket(*it);
+        ReleaseTCPSocket(*it, false);
         (*it) = nullptr;
     }
     vDeletedSockets.clear();
@@ -660,7 +660,7 @@ void TCPv6Transport::CloseInputSocket(TCPChannelResource *pChannelResource)
             }
         }
 
-        ReleaseTCPSocket(pChannelResource);
+        ReleaseTCPSocket(pChannelResource, false);
     }
 }
 
@@ -701,7 +701,7 @@ bool TCPv6Transport::CloseInputChannel(const Locator_t& locator)
 
     for (auto it = vDeletedSockets.begin(); it != vDeletedSockets.end(); ++it)
     {
-        ReleaseTCPSocket(*it);
+        ReleaseTCPSocket(*it, false);
         *it = nullptr;
     }
 
@@ -771,7 +771,7 @@ bool TCPv6Transport::OpenOutputSockets(const Locator_t& locator, SenderResource 
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     try
     {
-		std::vector<Locator_t> emptyLocators;
+        std::vector<Locator_t> emptyLocators;
         CreateConnectorSocket(locator, senderResource, emptyLocators, msgSize);
     }
     catch (asio::system_error const& e)
@@ -812,6 +812,7 @@ void TCPv6Transport::performRTPCManagementThread(TCPChannelResource *pChannelRes
         std::chrono::milliseconds(mConfiguration_.keep_alive_frequency_ms);
     std::chrono::time_point<std::chrono::system_clock> timeout_time =
         time_now + std::chrono::milliseconds(mConfiguration_.keep_alive_timeout_ms);
+	std::chrono::time_point<std::chrono::system_clock> negotiation_time = time_now;
 
     bool bSendOpenLogicalPort = false;
     logInfo(RTCP, "START performRTPCManagementThread " << pChannelResource->GetLocator() << " (" << pChannelResource->getSocket()->local_endpoint().address() << "->" << pChannelResource->getSocket()->remote_endpoint().address() << ")");
@@ -826,11 +827,23 @@ void TCPv6Transport::performRTPCManagementThread(TCPChannelResource *pChannelRes
                     pChannelResource->mPendingLogicalPort = *pChannelResource->mPendingLogicalOutputPorts.begin();
                     bSendOpenLogicalPort = true;
                 }
+                else if (pChannelResource->mPendingLogicalPort == 0)
+                {
+                    if (mConfiguration_.wait_for_tcp_negotiation)
+                    {
+                        pChannelResource->mNegotiationSemaphore.post();
+                    }
+                }
+                else if (std::chrono::system_clock::now() > negotiation_time)
+                {
+                    pChannelResource->mNegotiationSemaphore.post();
+                }
             }
 
             if (bSendOpenLogicalPort)
             {
                 mRTCPMessageManager->sendOpenLogicalPortRequest(pChannelResource, pChannelResource->mPendingLogicalPort);
+                negotiation_time = time_now + std::chrono::milliseconds(mConfiguration_.tcp_negotiation_timeout);
                 bSendOpenLogicalPort = false;
             }
 
@@ -851,7 +864,7 @@ void TCPv6Transport::performRTPCManagementThread(TCPChannelResource *pChannelRes
                 {
                     // Disable the socket to erase it after the reception.
                     mRTCPMessageManager->sendUnbindConnectionRequest(pChannelResource);
-                    ReleaseTCPSocket(pChannelResource);
+                    ReleaseTCPSocket(pChannelResource, true);
                     continue;
                 }
             }
@@ -893,15 +906,15 @@ void TCPv6Transport::performListenOperation(TCPChannelResource *pChannelResource
 }
 
 void TCPv6Transport::CreateConnectorSocket(const Locator_t& locator, SenderResource *senderResource,
-	std::vector<Locator_t>& pendingLocators, uint32_t msgSize)
+    std::vector<Locator_t>& pendingLocators, uint32_t msgSize)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     asio::ip::address_v6 ip = asio::ip::make_address_v6(locator.to_IP6_string());
     if (IsInterfaceAllowed(ip))
     {
         TCPv6Connector* newConnector = new TCPv6Connector(mService, locator, msgSize);
-		newConnector->m_PendingLocators = pendingLocators;
-		if (mSocketConnectors.find(locator) != mSocketConnectors.end())
+        newConnector->m_PendingLocators = pendingLocators;
+        if (mSocketConnectors.find(locator) != mSocketConnectors.end())
         {
             TCPv6Connector* oldConnector = mSocketConnectors.at(locator);
             delete oldConnector;
@@ -1001,35 +1014,48 @@ void TCPv6Transport::FillTCPHeader(TCPHeader& header, const octet* sendBuffer, u
 bool TCPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& /*localLocator*/,
     const Locator_t& remoteLocator, ChannelResource *pChannelResource)
 {
-    TCPChannelResource* socket = dynamic_cast<TCPChannelResource*>(pChannelResource);
-    if (socket != nullptr && socket->IsConnectionEstablished())
+    bool success = false;
+    TCPChannelResource* tcpChannelResource = dynamic_cast<TCPChannelResource*>(pChannelResource);
+    if (tcpChannelResource != nullptr && tcpChannelResource->IsConnectionEstablished())
     {
-        uint16_t logicalPort = socket->mLogicalPortRouting.find(remoteLocator.get_logical_port())
-            != socket->mLogicalPortRouting.end()
-            ? socket->mLogicalPortRouting.at(remoteLocator.get_logical_port())
+        uint16_t logicalPort = tcpChannelResource->mLogicalPortRouting.find(remoteLocator.get_logical_port())
+            != tcpChannelResource->mLogicalPortRouting.end()
+            ? tcpChannelResource->mLogicalPortRouting.at(remoteLocator.get_logical_port())
             : remoteLocator.get_logical_port();
 
-        if (socket->IsLogicalPortOpened(logicalPort))
+        bool bSendMsg = true;
+        if (!tcpChannelResource->IsLogicalPortOpened(logicalPort))
         {
-			//CDRMessage_t msg(static_cast<uint32_t>(sendBufferSize + TCPHeader::getSize()));
+            tcpChannelResource->EnqueueLogicalPort(logicalPort);
+            if (mConfiguration_.wait_for_tcp_negotiation)
+            {
+                tcpChannelResource->mNegotiationSemaphore.wait();
+            }
+            else
+            {
+                bSendMsg = false;
+            }
+        }
+
+        if (bSendMsg && tcpChannelResource->IsAlive())
+        {
+            //CDRMessage_t msg(static_cast<uint32_t>(sendBufferSize + TCPHeader::getSize()));
             TCPHeader tcp_header;
             FillTCPHeader(tcp_header, sendBuffer, sendBufferSize, logicalPort);
 
             //RTPSMessageCreator::addCustomContent(&msg, (octet*)&tcp_header, TCPHeader::getSize());
             //RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
 
-            bool success = false;
             {
-                std::unique_lock<std::recursive_mutex> sendLock(*socket->GetWriteMutex());
-                success |= SendThroughSocket((octet*)&tcp_header, static_cast<uint32_t>(TCPHeader::getSize()), remoteLocator, socket);
-                success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket);
+                std::unique_lock<std::recursive_mutex> sendLock(*tcpChannelResource->GetWriteMutex());
+                success = SendThroughSocket((octet*)&tcp_header, static_cast<uint32_t>(TCPHeader::getSize()), remoteLocator, tcpChannelResource);
+
+                if (success)
+                {
+                    success = SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, tcpChannelResource);
+                }
             }
             return success;
-        }
-        else
-        {
-            socket->EnqueueLogicalPort(logicalPort);
-            return false;
         }
     }
     else
@@ -1202,7 +1228,7 @@ bool TCPv6Transport::SendThroughSocket(const octet* sendBuffer, uint32_t sendBuf
         // Close the channel
         logInfo(RTCP, " Sent [FAILED]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << " ERROR=" << errorCode);
         Locator_t prevLocator = socket->GetLocator();
-		uint32_t msgSize = socket->GetMsgSize();
+        uint32_t msgSize = socket->GetMsgSize();
 
         std::vector<Locator_t> logicalLocators;
         socket->fillLogicalPorts(logicalLocators);
@@ -1304,6 +1330,7 @@ void TCPv6Transport::RegisterReceiverResources(TCPChannelResource* pChannelResou
         {
             pChannelResource->AddMessageReceiver(it->first.get_logical_port(), it->second->CreateMessageReceiver());
             pChannelResource->mLogicalInputPorts.emplace_back(it->first.get_logical_port());
+            pChannelResource->AddLogicalConnection();
         }
     }
 }
@@ -1501,7 +1528,7 @@ void TCPv6Transport::CloseTCPSocket(TCPChannelResource *pChannelResource)
             Locator_t prevLocator = pChannelResource->GetLocator();
             std::vector<Locator_t> logicalLocators;
             pChannelResource->fillLogicalPorts(logicalLocators);
-			uint32_t msgSize = pChannelResource->GetMsgSize();
+            uint32_t msgSize = pChannelResource->GetMsgSize();
 
             CloseOutputChannel(prevLocator);
 
@@ -1534,55 +1561,59 @@ void TCPv6Transport::CleanDeletedSockets()
     mDeletedSocketsPool.clear();
 }
 
-void TCPv6Transport::ReleaseTCPSocket(TCPChannelResource *pChannelResource)
+void TCPv6Transport::ReleaseTCPSocket(TCPChannelResource *pChannelResource, bool force)
 {
     if (pChannelResource != nullptr && pChannelResource->IsAlive())
     {
-        // Pauses the timer to clean the deleted sockets pool.
-        if (mCleanSocketsPoolTimer != nullptr)
+        pChannelResource->RemoveLogicalConnection();
+        if(force || pChannelResource->HasLogicalConnections())
         {
-            mCleanSocketsPoolTimer->cancel_timer();
-        }
+              // Pauses the timer to clean the deleted sockets pool.
+              if (mCleanSocketsPoolTimer != nullptr)
+              {
+                  mCleanSocketsPoolTimer->cancel_timer();
+              }
 
-        // Remove the all bindings with this socket.
-        UnbindSocket(pChannelResource);
+              // Remove the all bindings with this socket.
+              UnbindSocket(pChannelResource);
 
-        pChannelResource->Disable();
-        pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eDisconnected);
-        try
-        {
-            pChannelResource->getSocket()->cancel();
-            pChannelResource->getSocket()->shutdown(ip::tcp::socket::shutdown_both);
-        }
-        catch (std::exception)
-        {
-            // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
-        }
-        pChannelResource->getSocket()->close();
+              pChannelResource->Disable();
+              pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eDisconnected);
+              try
+              {
+                  pChannelResource->getSocket()->cancel();
+                  pChannelResource->getSocket()->shutdown(ip::tcp::socket::shutdown_both);
+              }
+              catch (std::exception)
+              {
+                  // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
+              }
+              pChannelResource->getSocket()->close();
 
-        // Remove from senders
-        auto it = mSocketToSenders.find(pChannelResource);
-        if (it != mSocketToSenders.end())
-        {
-            auto& senders = mSocketToSenders.at(pChannelResource);
-            for (auto& sender : senders)
-            {
-                sender->SetChannelResource(nullptr);
-            }
-            mSocketToSenders.erase(it);
-        }
+              // Remove from senders
+              auto it = mSocketToSenders.find(pChannelResource);
+              if (it != mSocketToSenders.end())
+              {
+                  auto& senders = mSocketToSenders.at(pChannelResource);
+                  for (auto& sender : senders)
+                  {
+                      sender->SetChannelResource(nullptr);
+                  }
+                  mSocketToSenders.erase(it);
+              }
 
-        {
-            std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
-            mDeletedSocketsPool.emplace_back(pChannelResource);
-        }
-        pChannelResource = nullptr;
+              {
+                  std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
+                  mDeletedSocketsPool.emplace_back(pChannelResource);
+              }
+              pChannelResource = nullptr;
 
-        // Starts a timer to clean the deleted sockets pool.
-        if (mCleanSocketsPoolTimer != nullptr)
-        {
-            mCleanSocketsPoolTimer->update_interval_millisec(s_clean_deleted_sockets_pool_timeout);
-            mCleanSocketsPoolTimer->restart_timer();
+              // Starts a timer to clean the deleted sockets pool.
+              if (mCleanSocketsPoolTimer != nullptr)
+              {
+                  mCleanSocketsPoolTimer->update_interval_millisec(s_clean_deleted_sockets_pool_timeout);
+                  mCleanSocketsPoolTimer->restart_timer();
+              }
         }
     }
 }
@@ -1593,6 +1624,7 @@ void TCPv6Transport::AssociateSenderToSocket(TCPChannelResource *socket, SenderR
     if (it == mSocketToSenders.end())
     {
         mSocketToSenders[socket].emplace_back(sender);
+        socket->AddLogicalConnection();
     }
     else if (std::find(it->second.begin(), it->second.end(), sender) == it->second.end())
     {

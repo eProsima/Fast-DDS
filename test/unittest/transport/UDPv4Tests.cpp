@@ -495,7 +495,7 @@ void UDPv4Tests::HELPER_SetDescriptorDefaults()
 
 int main(int argc, char **argv)
 {
-    //Log::SetVerbosity(Log::Info);
+    Log::SetVerbosity(Log::Warning);
     g_default_port = get_port();
 
     testing::InitGoogleTest(&argc, argv);
