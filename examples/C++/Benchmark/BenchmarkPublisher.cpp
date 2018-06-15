@@ -349,6 +349,7 @@ void BenchMarkPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,Ma
 
 void BenchMarkPublisher::runThread()
 {
+	std::cout << "Publisher running..." << std::endl;
     while (!publish())
     {
 		eClock::my_sleep(10);
@@ -376,7 +377,7 @@ void BenchMarkPublisher::run()
     //std::cout << "Publisher running..." << std::endl;
     thread.join();
 
-    std::cout << "TEST RESULTS after " << g_iTestTimeMs << " milliseconds. Count: " << g_iCount << std::endl;
+    std::cout << "RESULTS after " << g_iTestTimeMs << " milliseconds. Count: " << g_iCount << std::endl;
 }
 
 bool BenchMarkPublisher::publish()

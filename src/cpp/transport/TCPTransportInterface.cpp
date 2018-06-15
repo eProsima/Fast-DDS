@@ -35,6 +35,7 @@ namespace rtps {
 static const int s_default_keep_alive_frequency = 50000; // 50 SECONDS
 static const int s_default_keep_alive_timeout = 10000; // 10 SECONDS
 static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
+static const int s_default_tcp_negotitation_timeout = 5000; // 5 Seconds
 
 TCPTransportDescriptor::TCPTransportDescriptor()
     : TransportDescriptorInterface(s_maximumMessageSize)
@@ -44,6 +45,8 @@ TCPTransportDescriptor::TCPTransportDescriptor()
     , logical_port_range(20)
     , logical_port_increment(2)
     , metadata_logical_port(0)
+	, tcp_negotiation_timeout(s_default_tcp_negotitation_timeout)
+	, wait_for_tcp_negotiation(true)
 {
 }
 
@@ -56,6 +59,8 @@ TCPTransportDescriptor::TCPTransportDescriptor(const TCPTransportDescriptor& t)
     , logical_port_range(t.logical_port_range)
     , logical_port_increment(t.logical_port_increment)
     , metadata_logical_port(t.metadata_logical_port)
+	, tcp_negotiation_timeout(t.tcp_negotiation_timeout)
+	, wait_for_tcp_negotiation(t.wait_for_tcp_negotiation)
 {
 }
 

@@ -115,7 +115,8 @@ TCPChannelResource::TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& loc
     , mPendingLogicalPort(0)
     , mNegotiatingLogicalPort(0)
     , mCheckingLogicalPort(0)
-    , mSocket(moveSocket(socket))
+	, mNegotiationSemaphore(0)
+	, mSocket(moveSocket(socket))
     , mConnectionStatus(eConnectionStatus::eDisconnected)
 {
     mReadMutex = new std::recursive_mutex();
@@ -180,6 +181,8 @@ TCPChannelResource::TCPChannelResource(TCPChannelResource&& channelResource)
 */
 TCPChannelResource::~TCPChannelResource()
 {
+	mNegotiationSemaphore.disable();
+
     Clear();
 
     for (auto it = mReceiversMap.begin(); it != mReceiversMap.end(); ++it)
@@ -206,6 +209,13 @@ TCPChannelResource::~TCPChannelResource()
         delete(mRTCPThread);
         mRTCPThread = nullptr;
     }
+}
+
+void TCPChannelResource::Disable()
+{
+	mNegotiationSemaphore.disable();
+
+	ChannelResource::Disable();
 }
 
 std::thread* TCPChannelResource::ReleaseRTCPThread()

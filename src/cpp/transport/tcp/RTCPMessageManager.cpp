@@ -398,15 +398,22 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(TCPChannelResource *pCh
     }
     else
     {
-        for (uint16_t port : request.logicalPortsRange())
-        {
-            if (std::find(pChannelResource->mOpenedPorts.begin(), pChannelResource->mOpenedPorts.end(), port) ==
-                pChannelResource->mOpenedPorts.end())
-            {
-                logInfo(RTCP, "FoundOpenedLogicalPort: " << port);
-                response.availableLogicalPorts().emplace_back(port);
-            }
-        }
+		if (request.logicalPortsRange().empty())
+		{
+			logWarning(RTCP, "No available logical ports.");
+		}
+		else
+		{
+			for (uint16_t port : request.logicalPortsRange())
+			{
+				if (std::find(pChannelResource->mOpenedPorts.begin(), pChannelResource->mOpenedPorts.end(), port) ==
+					pChannelResource->mOpenedPorts.end())
+				{
+					logInfo(RTCP, "FoundOpenedLogicalPort: " << port);
+					response.availableLogicalPorts().emplace_back(port);
+				}
+			}
+		}
 
         SerializedPayload_t payload(static_cast<uint32_t>(
             CheckLogicalPortsResponse_t::getBufferCdrSerializedSize(response)));
@@ -456,7 +463,7 @@ bool RTCPMessageManager::processBindConnectionResponse(TCPChannelResource *pChan
     }
     else
     {
-        logWarning(RTPS_MSG_IN, "Received BindConnectionResponse with an invalid transactionId: " << transactionId);
+        logWarning(RTCP, "Received BindConnectionResponse with an invalid transactionId: " << transactionId);
         return false;
     }
 }
@@ -480,7 +487,7 @@ bool RTCPMessageManager::processCheckLogicalPortsResponse(TCPChannelResource *pC
             //logInfo(RTCP, "NegotiatingLogicalPort: " << pChannelResource->mCheckingLogicalPort);
             if (pChannelResource->mNegotiatingLogicalPort == 0)
             {
-                logWarning(RTPS_MSG_IN, "Negotiated new logical port wihtout initial port?");
+                logWarning(RTCP, "Negotiated new logical port wihtout initial port?");
             }
         }
 
@@ -489,7 +496,7 @@ bool RTCPMessageManager::processCheckLogicalPortsResponse(TCPChannelResource *pC
     }
     else
     {
-        logWarning(RTPS_MSG_IN, "Received CheckLogicalPortsResponse with an invalid transactionId: " << transactionId);
+        logWarning(RTCP, "Received CheckLogicalPortsResponse with an invalid transactionId: " << transactionId);
         return false;
     }
 }
@@ -527,12 +534,12 @@ void RTCPMessageManager::prepareAndSendCheckLogicalPortsRequest(TCPChannelResour
 
     if (ports.empty()) // No more available ports!
     {
-        logError(RTPS_MSG_IN, "Cannot find an available logical port.");
+        logError(RTCP, "Cannot find an available logical port.");
     }
-    else
-    {
-        sendCheckLogicalPortsRequest(pChannelResource, ports);
-    }
+	else
+	{
+		sendCheckLogicalPortsRequest(pChannelResource, ports);
+	}
 }
 
 bool RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResource *pChannelResource, ResponseCode respCode,
@@ -583,7 +590,7 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResource *pCha
         }
         break;
         default:
-            logWarning(RTPS_MSG_IN, "Received response for OpenLogicalPort with error code: "
+            logWarning(RTCP, "Received response for OpenLogicalPort with error code: "
                 << ((respCode == RETCODE_BAD_REQUEST) ? "BAD_REQUEST" : "SERVER_ERROR"));
             break;
         }
@@ -591,7 +598,7 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResource *pCha
     }
     else
     {
-        logWarning(RTPS_MSG_IN, "Received OpenLogicalPortResponse with an invalid transactionId: " << transactionId);
+        logWarning(RTCP, "Received OpenLogicalPortResponse with an invalid transactionId: " << transactionId);
     }
     return true;
 }
@@ -616,7 +623,7 @@ bool RTCPMessageManager::processKeepAliveResponse(TCPChannelResource *pChannelRe
     }
     else
     {
-        logWarning(RTPS_MSG_IN, "Received response for KeepAlive with an unexpected transactionId: " << transactionId);
+        logWarning(RTCP, "Received response for KeepAlive with an unexpected transactionId: " << transactionId);
     }
     return true;
 }
