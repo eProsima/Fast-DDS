@@ -188,7 +188,7 @@ TCPv4Transport::~TCPv4Transport()
 
     for (auto it = vDeletedSockets.begin(); it != vDeletedSockets.end(); ++it)
     {
-        ReleaseTCPSocket(*it);
+        ReleaseTCPSocket(*it, false);
         (*it) = nullptr;
     }
 
@@ -639,7 +639,7 @@ bool TCPv4Transport::CloseOutputChannel(const Locator_t& locator)
 
     for (auto it = vDeletedSockets.begin(); it != vDeletedSockets.end(); ++it)
     {
-        ReleaseTCPSocket(*it);
+        ReleaseTCPSocket(*it, false);
         (*it) = nullptr;
     }
     vDeletedSockets.clear();
@@ -666,7 +666,7 @@ void TCPv4Transport::CloseInputSocket(TCPChannelResource *pChannelResource)
             }
         }
 
-        ReleaseTCPSocket(pChannelResource);
+        ReleaseTCPSocket(pChannelResource, false);
     }
 }
 
@@ -707,7 +707,7 @@ bool TCPv4Transport::CloseInputChannel(const Locator_t& locator)
 
     for (auto it = vDeletedSockets.begin(); it != vDeletedSockets.end(); ++it)
     {
-        ReleaseTCPSocket(*it);
+        ReleaseTCPSocket(*it, false);
         *it = nullptr;
     }
 
@@ -833,23 +833,23 @@ void TCPv4Transport::performRTPCManagementThread(TCPChannelResource *pChannelRes
                     pChannelResource->mPendingLogicalPort = *pChannelResource->mPendingLogicalOutputPorts.begin();
                     bSendOpenLogicalPort = true;
                 }
-				else if (pChannelResource->mPendingLogicalPort == 0)
-				{
-					if (mConfiguration_.wait_for_tcp_negotiation)
-					{
-						pChannelResource->mNegotiationSemaphore.post();
-					}
-				}
-				else if (std::chrono::system_clock::now() > negotiation_time)
-				{
-					pChannelResource->mNegotiationSemaphore.post();
-				}
+                else if (pChannelResource->mPendingLogicalPort == 0)
+                {
+                    if (mConfiguration_.wait_for_tcp_negotiation)
+                    {
+                        pChannelResource->mNegotiationSemaphore.post();
+                    }
+                }
+                else if (std::chrono::system_clock::now() > negotiation_time)
+                {
+                    pChannelResource->mNegotiationSemaphore.post();
+                }
             }
 
             if (bSendOpenLogicalPort)
             {
                 mRTCPMessageManager->sendOpenLogicalPortRequest(pChannelResource, pChannelResource->mPendingLogicalPort);
-				negotiation_time = time_now + std::chrono::milliseconds(mConfiguration_.tcp_negotiation_timeout);
+		negotiation_time = time_now + std::chrono::milliseconds(mConfiguration_.tcp_negotiation_timeout);
                 bSendOpenLogicalPort = false;
             }
 
@@ -870,7 +870,7 @@ void TCPv4Transport::performRTPCManagementThread(TCPChannelResource *pChannelRes
                 {
                     // Disable the socket to erase it after the reception.
                     mRTCPMessageManager->sendUnbindConnectionRequest(pChannelResource);
-                    ReleaseTCPSocket(pChannelResource);
+                    ReleaseTCPSocket(pChannelResource, true);
                     continue;
                 }
             }
@@ -1338,6 +1338,7 @@ void TCPv4Transport::RegisterReceiverResources(TCPChannelResource* pChannelResou
         {
             pChannelResource->AddMessageReceiver(it->first.get_logical_port(), it->second->CreateMessageReceiver());
             pChannelResource->mLogicalInputPorts.emplace_back(it->first.get_logical_port());
+            pChannelResource->AddLogicalConnection();
         }
     }
 }
@@ -1568,55 +1569,59 @@ void TCPv4Transport::CleanDeletedSockets()
     mDeletedSocketsPool.clear();
 }
 
-void TCPv4Transport::ReleaseTCPSocket(TCPChannelResource *pChannelResource)
+void TCPv4Transport::ReleaseTCPSocket(TCPChannelResource *pChannelResource, bool force)
 {
     if (pChannelResource != nullptr && pChannelResource->IsAlive())
     {
-        // Pauses the timer to clean the deleted sockets pool.
-        if (mCleanSocketsPoolTimer != nullptr)
+        pChannelResource->RemoveLogicalConnection();
+        if(force || pChannelResource->HasLogicalConnections())
         {
-            mCleanSocketsPoolTimer->cancel_timer();
-        }
-
-        // Remove the all bindings with this socket.
-        UnbindSocket(pChannelResource);
-
-        pChannelResource->Disable();
-        pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eDisconnected);
-        try
-        {
-            pChannelResource->getSocket()->cancel();
-            pChannelResource->getSocket()->shutdown(ip::tcp::socket::shutdown_both);
-        }
-        catch (std::exception)
-        {
-            // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
-        }
-        pChannelResource->getSocket()->close();
-
-        // Remove from senders
-        auto it = mSocketToSenders.find(pChannelResource);
-        if (it != mSocketToSenders.end())
-        {
-            auto& senders = mSocketToSenders.at(pChannelResource);
-            for (auto& sender : senders)
+            // Pauses the timer to clean the deleted sockets pool.
+            if (mCleanSocketsPoolTimer != nullptr)
             {
-                sender->SetChannelResource(nullptr);
+                mCleanSocketsPoolTimer->cancel_timer();
             }
-            mSocketToSenders.erase(it);
-        }
 
-        {
-            std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
-            mDeletedSocketsPool.emplace_back(pChannelResource);
-        }
-        pChannelResource = nullptr;
+            // Remove the all bindings with this socket.
+            UnbindSocket(pChannelResource);
 
-        // Starts a timer to clean the deleted sockets pool.
-        if (mCleanSocketsPoolTimer != nullptr)
-        {
-            mCleanSocketsPoolTimer->update_interval_millisec(s_clean_deleted_sockets_pool_timeout);
-            mCleanSocketsPoolTimer->restart_timer();
+            pChannelResource->Disable();
+            pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eDisconnected);
+            try
+            {
+                pChannelResource->getSocket()->cancel();
+                pChannelResource->getSocket()->shutdown(ip::tcp::socket::shutdown_both);
+            }
+            catch (std::exception)
+            {
+                // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
+            }
+            pChannelResource->getSocket()->close();
+
+            // Remove from senders
+            auto it = mSocketToSenders.find(pChannelResource);
+            if (it != mSocketToSenders.end())
+            {
+                auto& senders = mSocketToSenders.at(pChannelResource);
+                for (auto& sender : senders)
+                {
+                    sender->SetChannelResource(nullptr);
+                }
+                mSocketToSenders.erase(it);
+            }
+
+            {
+                std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
+                mDeletedSocketsPool.emplace_back(pChannelResource);
+            }
+            pChannelResource = nullptr;
+
+            // Starts a timer to clean the deleted sockets pool.
+            if (mCleanSocketsPoolTimer != nullptr)
+            {
+                mCleanSocketsPoolTimer->update_interval_millisec(s_clean_deleted_sockets_pool_timeout);
+                mCleanSocketsPoolTimer->restart_timer();
+            }
         }
     }
 }
@@ -1627,6 +1632,7 @@ void TCPv4Transport::AssociateSenderToSocket(TCPChannelResource *socket, SenderR
     if (it == mSocketToSenders.end())
     {
         mSocketToSenders[socket].emplace_back(sender);
+        socket->AddLogicalConnection();
     }
     else if (std::find(it->second.begin(), it->second.end(), sender) == it->second.end())
     {

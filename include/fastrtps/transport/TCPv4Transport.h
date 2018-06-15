@@ -38,7 +38,7 @@ class TCPChannelResource;
 class TCPv4Acceptor
 {
 public:
-	asio::ip::tcp::acceptor mAcceptor;
+    asio::ip::tcp::acceptor mAcceptor;
     Locator_t mLocator;
     uint32_t mMaxMsgSize;
 #ifndef ASIO_HAS_MOVE
@@ -57,18 +57,18 @@ class TCPv4Connector
 {
 public:
     Locator_t m_locator;
-	eProsimaTCPSocket m_socket;
+    eProsimaTCPSocket m_socket;
     std::vector<Locator_t> m_PendingLocators;
-	uint32_t m_msgSize;
+    uint32_t m_msgSize;
 
     TCPv4Connector(asio::io_service& io_service, const Locator_t& locator, uint32_t msgSize);
     ~TCPv4Connector();
 
     //! Method to start the connecting process with the endpoint set in the locator.
-	void Connect(TCPv4Transport* parent, SenderResource *senderResource);
+    void Connect(TCPv4Transport* parent, SenderResource *senderResource);
 
     //! Method to start the reconnection process.
-	void RetryConnect(asio::io_service& io_service, TCPv4Transport* parent, SenderResource *senderResource);
+    void RetryConnect(asio::io_service& io_service, TCPv4Transport* parent, SenderResource *senderResource);
 };
 
 
@@ -284,7 +284,7 @@ protected:
     void CloseInputSocket(TCPChannelResource* pChannelResource);
 
     //! Closes the physical socket and mark it to be deleted.
-    void ReleaseTCPSocket(TCPChannelResource* pChannelResource);
+    void ReleaseTCPSocket(TCPChannelResource* pChannelResource, bool force);
 
     /** Associates the given pChannelResource with the registered ReceiverResources with the given locator.
     * This relationship is used to root the incomming messages to the related Receivers.
