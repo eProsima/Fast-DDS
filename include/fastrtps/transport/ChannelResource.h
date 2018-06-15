@@ -18,6 +18,7 @@
 #include <memory>
 #include <map>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
+#include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/log/Log.h>
 
 namespace eprosima{
@@ -129,7 +130,7 @@ public:
         return mAlive;
     }
 
-    inline void Disable()
+    inline virtual void Disable()
     {
         mAlive = false;
     }
@@ -247,6 +248,8 @@ public:
 
     void EnqueueLogicalPort(uint16_t port);
 
+	virtual void Disable() override;
+
 	uint32_t GetMsgSize() const;
 
 #if defined(ASIO_HAS_MOVE)
@@ -331,6 +334,7 @@ private:
     std::map<uint16_t, MessageReceiver*> mReceiversMap;  // The key is the logical port.
     std::recursive_mutex mPendingLogicalMutex;
     std::map<uint16_t, uint16_t> mLogicalPortRouting;
+	Semaphore mNegotiationSemaphore;
     eProsimaTCPSocket mSocket;
     eConnectionStatus mConnectionStatus;
 
