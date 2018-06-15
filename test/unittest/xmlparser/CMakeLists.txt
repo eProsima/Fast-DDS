@@ -24,6 +24,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 )
         endif()
 
+        include_directories(${ASIO_INCLUDE_DIR})
+
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profiles.xml
             ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles.xml
             COPYONLY)
