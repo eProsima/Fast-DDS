@@ -105,6 +105,13 @@ public:
     virtual bool CloseOutputChannel(const Locator_t&) override;
 
     /**
+    * Must release the channel that maps to/from the given locator.
+    * IMPORTANT: It MUST be safe to call this method even during a Receive operation on another thread. You must implement
+    * any necessary mutual exclusion and timeout mechanisms to make sure the channel can be closed without damage.
+    */
+    virtual bool ReleaseInputChannel(const Locator_t&) override;
+
+    /**
         * Blocking Send through the specified channel. In both modes, using a localLocator of 0.0.0.0 will
         * send through all whitelisted interfaces provided the channel is open.
         * @param sendBuffer Slice into the raw data to send.

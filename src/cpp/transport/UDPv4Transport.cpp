@@ -293,11 +293,12 @@ bool UDPv4Transport::ReleaseInputChannel(const Locator_t& locator)
 
     try
     {
-        auto& socket = mInputSockets.at(locator.port);
+        // TODO preguntar Ricardo.
+        //auto& socket = mInputSockets.at(locator.get_port());
         //getSocketPtr(socket)->open(ip::udp::v4());
-        auto destinationEndpoint = ip::udp::endpoint(asio::ip::address_v4(locatorToNative(locator)),
-                static_cast<uint16_t>(locator.port));
-        getSocketPtr(socket)->send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
+        //auto destinationEndpoint = ip::udp::endpoint(asio::ip::address_v4(locatorToNative(locator)),
+        //        static_cast<uint16_t>(locator.get_port()));
+        //getSocketPtr(socket)->send(asio::buffer("EPRORTPSCLOSE", 13));
     }
     catch (const std::exception& error)
     {
@@ -566,19 +567,19 @@ bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
         return false;
 
     ip::udp::endpoint senderEndpoint;
-    eProsimaSocketUDP* socket = nullptr;
+    UDPChannelResource* socket = nullptr;
 
     { // lock scope
         std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
         if (!pChannelResource->IsAlive())
             return false;
 
-        socket = &mInputSockets.at(localLocator.port);
+        socket = mInputSockets.at(remoteLocator.get_port());
     }
 
     if(socket != nullptr)
     {
-        size_t bytes = getSocketPtr(socket)->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
+        size_t bytes = socket->getSocket()->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
 
         receiveBufferSize = static_cast<uint32_t>(bytes);
 
