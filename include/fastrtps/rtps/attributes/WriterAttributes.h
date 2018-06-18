@@ -76,9 +76,9 @@ class  WriterAttributes
             endpoint.endpointKind = WRITER;
             endpoint.durabilityKind = TRANSIENT_LOCAL;
             endpoint.reliabilityKind = RELIABLE;
-        };
+        }
 
-        virtual ~WriterAttributes(){};
+        virtual ~WriterAttributes(){}
 
         //!Attributes of the associated endpoint.
         EndpointAttributes endpoint;
