@@ -80,7 +80,7 @@ public:
    //! Must open the channel that maps to/from the given locator. This method must allocate, reserve and mark
    //! any resources that are needed for said channel.
    virtual bool OpenOutputChannel(const Locator_t&, SenderResource*, uint32_t) = 0;
-   virtual bool OpenExtraOutputChannel(Locator_t&, SenderResource*, uint32_t) = 0;
+   virtual bool OpenExtraOutputChannel(const Locator_t&, SenderResource*, uint32_t) = 0;
 
    virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) = 0;
 

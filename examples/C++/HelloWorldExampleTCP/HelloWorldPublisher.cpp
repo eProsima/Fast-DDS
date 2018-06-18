@@ -80,6 +80,7 @@ bool HelloWorldPublisher::init()
     PParam.rtps.useBuiltinTransports = false;
 
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+	descriptor->wait_for_tcp_negotiation = false;
     descriptor->sendBufferSize = 0;
     descriptor->receiveBufferSize = 0;
     descriptor->set_WAN_address("127.0.0.1");

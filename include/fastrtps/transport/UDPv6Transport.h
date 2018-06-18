@@ -94,7 +94,7 @@ public:
     * Opens a socket on the given address and port (as long as they are white listed).
     */
    virtual bool OpenOutputChannel(const Locator_t&, SenderResource*, uint32_t size = 0) override;
-   virtual bool OpenExtraOutputChannel(Locator_t&, SenderResource*, uint32_t size = 0) override
+   virtual bool OpenExtraOutputChannel(const Locator_t&, SenderResource*, uint32_t size = 0) override
    { (void)size; return false; };
 
    //! Removes the listening socket for the specified port.
