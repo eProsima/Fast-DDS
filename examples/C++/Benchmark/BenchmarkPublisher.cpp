@@ -265,11 +265,11 @@ void BenchMarkPublisher::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,
 {
     if (info.status == MATCHED_MATCHING)
     {
-        //std::cout << "Subscriber matched" << std::endl;
+        std::cout << "Subscriber matched" << std::endl;
     }
     else
     {
-        //std::cout << "Subscriber unmatched" << std::endl;
+        std::cout << "Subscriber unmatched" << std::endl;
     }
 }
 
@@ -296,7 +296,6 @@ void BenchMarkPublisher::SubListener::onNewDataMessage(Subscriber* sub)
 					}
 
 					mParent->m_iCount = m_Hello.index() + 1;
-					std::cout << "SENT INDEX: " << mParent->m_iCount << "\t";
 					mParent->mp_publisher->write((void*)&m_Hello);
 				}
 			}
