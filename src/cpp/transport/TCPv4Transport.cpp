@@ -1446,32 +1446,41 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, SenderResource *senderR
         auto pendingConector = mSocketConnectors.at(locator);
         if (!error.value())
         {
-            TCPChannelResource *outputSocket = new TCPChannelResource(pendingConector->m_socket,
-                locator, true, false, pendingConector->m_msgSize);
+			try
+			{
+				TCPChannelResource *outputSocket = new TCPChannelResource(pendingConector->m_socket,
+					locator, true, false, pendingConector->m_msgSize);
 
-            // Create one message receiver for each registered receiver resources.
-            RegisterReceiverResources(outputSocket, locator);
-            outputSocket->ChangeStatus(TCPChannelResource::eConnectionStatus::eConnected);
-            outputSocket->SetThread(new std::thread(&TCPv4Transport::performListenOperation, this, outputSocket));
-            outputSocket->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, outputSocket));
-            mOutputSockets.push_back(outputSocket);
-            BindOutputChannel(locator);
+				// Create one message receiver for each registered receiver resources.
+				RegisterReceiverResources(outputSocket, locator);
+				outputSocket->ChangeStatus(TCPChannelResource::eConnectionStatus::eConnected);
+				outputSocket->SetThread(new std::thread(&TCPv4Transport::performListenOperation, this, outputSocket));
+				outputSocket->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, outputSocket));
+				mOutputSockets.push_back(outputSocket);
+				BindOutputChannel(locator);
 
-            for (auto& it : pendingConector->m_PendingLocators)
-            {
-                EnqueueLogicalOutputPort(it);
-            }
+				for (auto& it : pendingConector->m_PendingLocators)
+				{
+					EnqueueLogicalOutputPort(it);
+				}
 
-            logInfo(RTCP, " Socket Connected (physical remote: " << locator.get_physical_port()
-                << ", local: " << outputSocket->getSocket()->local_endpoint().port()
-                << ") IP: " << outputSocket->getSocket()->remote_endpoint().address());
+				logInfo(RTCP, " Socket Connected (physical remote: " << locator.get_physical_port()
+					<< ", local: " << outputSocket->getSocket()->local_endpoint().port()
+					<< ") IP: " << outputSocket->getSocket()->remote_endpoint().address());
 
-            // RTCP Control Message
-            mRTCPMessageManager->sendConnectionRequest(outputSocket, mConfiguration_.metadata_logical_port);
-            if (senderResource != nullptr)
-            {
-                AssociateSenderToSocket(outputSocket, senderResource);
-            }
+				// RTCP Control Message
+				mRTCPMessageManager->sendConnectionRequest(outputSocket, mConfiguration_.metadata_logical_port);
+				if (senderResource != nullptr)
+				{
+					AssociateSenderToSocket(outputSocket, senderResource);
+				}
+			}
+			catch (asio::system_error const& e)
+			{
+				(void)e;
+				logInfo(RTPS_MSG_OUT, "TCPv4 Error establishing the connection at port:(" << locator.get_port() << ")" << " with msg:" << e.what());
+				CloseOutputChannel(locator);
+			}
         }
         else
         {
