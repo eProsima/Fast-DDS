@@ -35,12 +35,7 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 BenchMarkPublisher::BenchMarkPublisher()
-	: mp_participant(nullptr)
-	, mp_publisher(nullptr)
-	, mp_subscriber(nullptr)
-	, m_pubListener(this)
-	, m_subListener(this)
-	, m_testStartTime(std::chrono::system_clock::now())
+	: m_testStartTime(std::chrono::system_clock::now())
 	, m_bBenchmarkFinished(false)
 	, m_iTestTimeMs(10000)
 	, m_iTickTime(100)
@@ -49,6 +44,11 @@ BenchMarkPublisher::BenchMarkPublisher()
 	, m_iSize(0)
 	, m_vSamples(nullptr)
 	, m_iSamplesCount(0)
+	, mp_participant(nullptr)
+	, mp_publisher(nullptr)
+	, mp_subscriber(nullptr)
+	, m_pubListener(this)
+	, m_subListener(this)
 {
 }
 
@@ -118,7 +118,7 @@ bool BenchMarkPublisher::init(int transport, ReliabilityQosPolicyKind kind, int 
     }
     else if (transport == 3)
     {
-        uint32_t kind = LOCATOR_KIND_UDPv6;
+        //uint32_t kind = LOCATOR_KIND_UDPv6;
 		PParam.rtps.use_IP4_to_send = false;
 		PParam.rtps.use_IP6_to_send = true;
     }
@@ -259,7 +259,7 @@ BenchMarkPublisher::~BenchMarkPublisher()
 BenchMarkPublisher::SubListener::SubListener(BenchMarkPublisher* parent)
     : mParent(parent)
 {
-};
+}
 
 void BenchMarkPublisher::SubListener::onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& info)
 {
@@ -372,7 +372,7 @@ BenchMarkPublisher::PubListener::PubListener(BenchMarkPublisher* parent)
     : mParent(parent)
 	, n_matched(0)
 {
-};
+}
 
 void BenchMarkPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {

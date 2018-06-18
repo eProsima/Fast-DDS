@@ -83,7 +83,7 @@ size_t BenchMarkBig::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-size_t BenchMarkBig::getCdrSerializedSize(const BenchMarkBig& data, size_t current_alignment)
+size_t BenchMarkBig::getCdrSerializedSize(const BenchMarkBig&, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
             
@@ -121,7 +121,7 @@ bool BenchMarkBig::isKeyDefined()
     return false;
 }
 
-void BenchMarkBig::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void BenchMarkBig::serializeKey(eprosima::fastcdr::Cdr &) const
 {
 	 
 	 
