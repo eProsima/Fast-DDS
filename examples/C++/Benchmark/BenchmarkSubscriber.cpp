@@ -34,8 +34,6 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-static bool g_bBenchmarkFinished = false;
-
 BenchMarkSubscriber::BenchMarkSubscriber()
     : mp_participant(nullptr)
     , mp_publisher(nullptr)
@@ -231,9 +229,9 @@ bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind kind, con
     //Wparam.topic.historyQos.depth = 30;
     //Wparam.topic.resourceLimitsQos.max_samples = 50;
     //Wparam.topic.resourceLimitsQos.allocated_samples = 20;
-    Wparam.topic.historyQos.depth = 30;
-    Wparam.topic.resourceLimitsQos.max_samples = 50;
-    Wparam.topic.resourceLimitsQos.allocated_samples = 20;
+    Wparam.topic.historyQos.depth = 1;
+    Wparam.topic.resourceLimitsQos.max_samples = 1;
+    Wparam.topic.resourceLimitsQos.allocated_samples = 1;
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.fraction = 200 * 1000 * 1000;
     Wparam.qos.m_reliability.kind = kind;
@@ -275,6 +273,7 @@ void BenchMarkSubscriber::PubListener::onPublicationMatched(Publisher* /*pub*/, 
     else
     {
         n_matched--;
+		std::cin.clear();
         std::cout << "Publisher unmatched" << std::endl;
     }
 }
@@ -311,7 +310,6 @@ void BenchMarkSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 		{
 			if (m_info.sampleKind == ALIVE)
 			{
-				//std::cout << "RECEIVED INDEX: " << m_Hello.index() << "\t";
 				m_Hello.index(m_Hello.index() + 1);
 				mParent->mp_publisher->write((void*)&m_Hello);
 			}
@@ -361,9 +359,4 @@ void BenchMarkSubscriber::run()
 {
     std::cout << "Subscriber running..." << std::endl;
 	std::cin.ignore();
-
-	//while (!g_bBenchmarkFinished)
- //   {
- //       eClock::my_sleep(500);
- //   }
 }
