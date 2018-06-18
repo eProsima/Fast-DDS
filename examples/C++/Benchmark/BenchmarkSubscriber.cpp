@@ -270,12 +270,12 @@ void BenchMarkSubscriber::PubListener::onPublicationMatched(Publisher* /*pub*/, 
     {
         n_matched++;
         firstConnected = true;
-        //std::cout << "Publisher matched" << std::endl;
+        std::cout << "Publisher matched" << std::endl;
     }
     else
     {
         n_matched--;
-        //std::cout << "Publisher unmatched" << std::endl;
+        std::cout << "Publisher unmatched" << std::endl;
     }
 }
 
@@ -285,9 +285,6 @@ BenchMarkSubscriber::SubListener::SubListener(BenchMarkSubscriber* parent)
     , n_samples(0)
 {
 }
-
-static int g_isubTest = 0;
-static uint32_t g_iprevIndex = 0;
 
 void BenchMarkSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
@@ -300,9 +297,6 @@ void BenchMarkSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/
     {
         n_matched--;
         std::cout << "Subscriber unmatched"<<std::endl;
-		std::cout << "TEST: " << g_isubTest << std::endl;
-		g_isubTest = 0;
-		g_iprevIndex = 0;
     }
 }
 
@@ -317,12 +311,7 @@ void BenchMarkSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 		{
 			if (m_info.sampleKind == ALIVE)
 			{
-				if (g_iprevIndex >= m_Hello.index())
-				{
-					g_isubTest++;
-				}
-				g_iprevIndex = m_Hello.index();
-
+				//std::cout << "RECEIVED INDEX: " << m_Hello.index() << "\t";
 				m_Hello.index(m_Hello.index() + 1);
 				mParent->mp_publisher->write((void*)&m_Hello);
 			}

@@ -273,7 +273,6 @@ void BenchMarkPublisher::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,
     }
 }
 
-static int g_itest = 0;
 void BenchMarkPublisher::SubListener::onNewDataMessage(Subscriber* sub)
 {
 	if (!mParent->m_bBenchmarkFinished)
@@ -287,16 +286,17 @@ void BenchMarkPublisher::SubListener::onNewDataMessage(Subscriber* sub)
 			{
 				if (m_info.sampleKind == ALIVE)
 				{
-					if (m_Hello.index() < mParent->m_iCount)
+					if (m_Hello.index() > mParent->m_iCount)
 					{
-						g_itest++;
+						m_Hello.index(mParent->m_iCount);
+					}
+					else
+					{
+						m_Hello.index(m_Hello.index() + 1);
 					}
 
-					//mParent->m_iCount += 2;
-					//m_Hello.index(mParent->m_iCount);
-					//mParent->m_iCount += 2;
-					m_Hello.index(m_Hello.index() + 1);
-					mParent->m_iCount = m_Hello.index();
+					mParent->m_iCount = m_Hello.index() + 1;
+					std::cout << "SENT INDEX: " << mParent->m_iCount << "\t";
 					mParent->mp_publisher->write((void*)&m_Hello);
 				}
 			}
@@ -308,8 +308,16 @@ void BenchMarkPublisher::SubListener::onNewDataMessage(Subscriber* sub)
 			{
 				if (m_info.sampleKind == ALIVE)
 				{
-					mParent->m_iCount += 2;
-					m_HelloSmall.index(mParent->m_iCount);
+					if (m_HelloSmall.index() > mParent->m_iCount)
+					{
+						m_HelloSmall.index(mParent->m_iCount);
+					}
+					else
+					{
+						m_HelloSmall.index(m_HelloSmall.index() + 1);
+					}
+
+					mParent->m_iCount = m_HelloSmall.index() + 1;
 					mParent->mp_publisher->write((void*)&m_HelloSmall);
 				}
 			}
@@ -321,8 +329,16 @@ void BenchMarkPublisher::SubListener::onNewDataMessage(Subscriber* sub)
 			{
 				if (m_info.sampleKind == ALIVE)
 				{
-					mParent->m_iCount += 2;
-					m_HelloMedium.index(mParent->m_iCount);
+					if (m_HelloMedium.index() > mParent->m_iCount)
+					{
+						m_HelloMedium.index(mParent->m_iCount);
+					}
+					else
+					{
+						m_HelloMedium.index(m_HelloMedium.index() + 1);
+					}
+
+					mParent->m_iCount = m_HelloMedium.index() + 1;
 					mParent->mp_publisher->write((void*)&m_HelloMedium);
 				}
 			}
@@ -334,8 +350,16 @@ void BenchMarkPublisher::SubListener::onNewDataMessage(Subscriber* sub)
 			{
 				if (m_info.sampleKind == ALIVE)
 				{
-					mParent->m_iCount += 2;
-					m_HelloBig.index(mParent->m_iCount);
+					if (m_HelloBig.index() > mParent->m_iCount)
+					{
+						m_HelloBig.index(mParent->m_iCount);
+					}
+					else
+					{
+						m_HelloBig.index(m_HelloBig.index() + 1);
+					}
+
+					mParent->m_iCount = m_HelloBig.index() + 1;
 					mParent->mp_publisher->write((void*)&m_HelloBig);
 				}
 			}
@@ -409,7 +433,6 @@ void BenchMarkPublisher::run()
     //std::cout << "Publisher running..." << std::endl;
     thread.join();
 
-	std::cout << "TEST: " << g_itest << std::endl;
 	std::cout << "RESULTS after " << m_iTestTimeMs << " milliseconds:" << std::endl;
 	std::cout << "COUNT: " << m_iCount << std::endl;
 	std::cout << "SAMPLES: ";
@@ -430,25 +453,25 @@ bool BenchMarkPublisher::publish()
 		default:
 		case 0:
 		{
-			m_Hello.index(m_Hello.index() + 1);
+			m_Hello.index(0);
 			mp_publisher->write((void*)&m_Hello);
 			return true;
 		}
 		case 1:
 		{
-			m_HelloSmall.index(m_HelloSmall.index() + 1);
+			m_HelloSmall.index(0);
 			mp_publisher->write((void*)&m_HelloSmall);
 			return true;
 		}
 		case 2:
 		{
-			m_HelloMedium.index(m_HelloMedium.index() + 1);
+			m_HelloMedium.index(0);
 			mp_publisher->write((void*)&m_HelloMedium);
 			return true;
 		}
 		case 3:
 		{
-			m_HelloBig.index(m_HelloBig.index() + 1);
+			m_HelloBig.index(0);
 			mp_publisher->write((void*)&m_HelloBig);
 			return true;
 		}
