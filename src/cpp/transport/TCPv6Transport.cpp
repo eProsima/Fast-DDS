@@ -529,7 +529,7 @@ bool TCPv6Transport::OpenOutputChannel(const Locator_t& locator, SenderResource*
     return success;
 }
 
-bool TCPv6Transport::OpenExtraOutputChannel(Locator_t& locator, SenderResource* senderResource, uint32_t msgSize)
+bool TCPv6Transport::OpenExtraOutputChannel(const Locator_t& locator, SenderResource* senderResource, uint32_t msgSize)
 {
     return OpenOutputChannel(locator, senderResource, msgSize);
 }

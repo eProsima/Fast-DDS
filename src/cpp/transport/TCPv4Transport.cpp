@@ -535,7 +535,7 @@ bool TCPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource*
     return success;
 }
 
-bool TCPv4Transport::OpenExtraOutputChannel(Locator_t& locator, SenderResource* senderResource, uint32_t msgSize)
+bool TCPv4Transport::OpenExtraOutputChannel(const Locator_t& locator, SenderResource* senderResource, uint32_t msgSize)
 {
     return OpenOutputChannel(locator, senderResource, msgSize);
 }
@@ -745,10 +745,10 @@ bool TCPv4Transport::EnqueueLogicalOutputPort(const Locator_t& locator)
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     if (IsTCPInputSocket(locator))
     {
-        if (mInputSockets.find(locator.get_physical_port()) != mInputSockets.end())
+		auto socketIt = mInputSockets.find(locator.get_physical_port());
+        if (socketIt != mInputSockets.end())
         {
-            auto& sockets = mInputSockets.at(locator.get_physical_port());
-            for (auto it = sockets.begin(); it != sockets.end(); ++it)
+            for (auto it = socketIt->second.begin(); it != socketIt->second.end(); ++it)
             {
                 (*it)->EnqueueLogicalPort(locator.get_logical_port());
             }

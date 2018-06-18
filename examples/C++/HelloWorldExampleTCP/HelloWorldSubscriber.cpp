@@ -77,6 +77,7 @@ bool HelloWorldSubscriber::init()
 
     PParam.rtps.useBuiltinTransports = false;
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+	descriptor->wait_for_tcp_negotiation = false;
     descriptor->set_metadata_logical_port(7403);
     //descriptor->set_WAN_address("192.168.1.47");
     //descriptor->set_WAN_address("192.168.1.55");

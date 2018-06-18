@@ -147,7 +147,7 @@ public:
     virtual bool OpenOutputChannel(const Locator_t&, SenderResource*, uint32_t size = 0) override;
 
     //! Opens an additional output socket on the given address and port.
-    virtual bool OpenExtraOutputChannel(Locator_t&, SenderResource*, uint32_t size = 0) override;
+    virtual bool OpenExtraOutputChannel(const Locator_t&, SenderResource*, uint32_t size = 0) override;
 
     //! Removes the listening socket for the specified port.
     virtual bool CloseInputChannel(const Locator_t&) override;

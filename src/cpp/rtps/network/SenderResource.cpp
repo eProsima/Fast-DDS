@@ -38,7 +38,7 @@ SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator
             this->m_pChannelResource = nullptr;
         };
 
-    AddSenderLocatorToManagedChannel = [&transport, this, size](Locator_t& destination)->bool
+    AddSenderLocatorToManagedChannel = [&transport, this, size](const Locator_t& destination)->bool
         {
             return transport.OpenExtraOutputChannel(destination, this, size);
         };
@@ -67,7 +67,7 @@ SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator
         };
 }
 
-bool SenderResource::AddSenderLocator(Locator_t& destination)
+bool SenderResource::AddSenderLocator(const Locator_t& destination)
 {
     if (AddSenderLocatorToManagedChannel)
     {
