@@ -381,8 +381,8 @@ protected:
         eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
         if (loc.size()>0)
         {
-            guid_prefix_.value[10] = loc.begin()->address[14];
-            guid_prefix_.value[11] = loc.begin()->address[15];
+            guid_prefix_.value[10] = loc.begin()->get_Address()[14];
+            guid_prefix_.value[11] = loc.begin()->get_Address()[15];
         }
         else
         {
