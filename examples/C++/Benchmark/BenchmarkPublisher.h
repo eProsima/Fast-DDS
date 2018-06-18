@@ -42,13 +42,23 @@ public:
 	BenchMarkPublisher();
 	virtual ~BenchMarkPublisher();
 	//!Initialize
-	bool init(int transport, eprosima::fastrtps::ReliabilityQosPolicyKind kind, int time, const std::string& topicName, int domain, int size);
+	bool init(int transport, eprosima::fastrtps::ReliabilityQosPolicyKind kind, int time, int tick_time, int wait_time, const std::string& topicName, int domain, int size);
 	//!Publish a sample
 	bool publish();
 	//!Run for number samples
 	void run();
 private:
+
+	std::chrono::time_point<std::chrono::system_clock> m_testStartTime;
+	bool m_bBenchmarkFinished;
+	int m_iTestTimeMs;
+	int m_iTickTime;
+	int m_iWaitTime;
+	std::atomic_uint m_iCount;
 	int m_iSize;
+	int *m_vSamples;
+	int m_iSamplesSize;
+	int m_iSamplesCount;
 	BenchMark m_Hello;
 	BenchMarkSmall m_HelloSmall;
 	BenchMarkMedium m_HelloMedium;
