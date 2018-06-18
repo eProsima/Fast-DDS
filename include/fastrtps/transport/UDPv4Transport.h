@@ -95,7 +95,7 @@ public:
     virtual bool OpenOutputChannel(const Locator_t&, SenderResource*, uint32_t size = 0) override;
 
     //! UDP doesn't support more than one connection on the same socket.
-    virtual bool OpenExtraOutputChannel(Locator_t&, SenderResource*, uint32_t size = 0) override 
+    virtual bool OpenExtraOutputChannel(Locator_t&, SenderResource*, uint32_t size = 0) override
     { (void)size; return false; };
 
     //! Removes the listening socket for the specified port.
@@ -133,7 +133,7 @@ public:
         * @param[out] remoteLocator Locator describing the remote restination we received a packet from.
         */
     bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-        ChannelResource* pChannelResource, Locator_t& remoteLocator);
+        ChannelResource* pChannelResource, const Locator_t& inputLocator, Locator_t& remoteLocator);
 
     virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
 
