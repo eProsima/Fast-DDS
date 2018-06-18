@@ -47,6 +47,20 @@ static void GetIP4sUniqueInterfaces(std::vector<IPFinder::info_IP>& locNames, bo
     locNames.erase(new_end, locNames.end());
 }
 
+static asio::ip::address_v4::bytes_type locatorToNative(const Locator_t& locator)
+{
+	if (locator.has_IP4_WAN_address())
+	{
+		return{ { locator.get_IP4_WAN_address(0),
+			locator.get_IP4_WAN_address(1), locator.get_IP4_WAN_address(2), locator.get_IP4_WAN_address(3) } };
+	}
+	else
+	{
+		return{ { locator.get_IP4_address(0),
+			locator.get_IP4_address(1), locator.get_IP4_address(2), locator.get_IP4_address(3) } };
+	}
+}
+
 UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor)
     : mConfiguration_(descriptor)
     , mSendBufferSize(descriptor.sendBufferSize)
@@ -293,12 +307,11 @@ bool UDPv4Transport::ReleaseInputChannel(const Locator_t& locator)
 
     try
     {
-        // TODO preguntar Ricardo.
-        //auto& socket = mInputSockets.at(locator.get_port());
-        //getSocketPtr(socket)->open(ip::udp::v4());
-        //auto destinationEndpoint = ip::udp::endpoint(asio::ip::address_v4(locatorToNative(locator)),
-        //        static_cast<uint16_t>(locator.get_port()));
-        //getSocketPtr(socket)->send(asio::buffer("EPRORTPSCLOSE", 13));
+		ip::udp::socket socket(mService);
+		socket.open(ip::udp::v4());
+		auto destinationEndpoint = ip::udp::endpoint(asio::ip::address_v4(locatorToNative(locator)),
+			static_cast<uint16_t>(locator.get_port()));
+		socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
     }
     catch (const std::exception& error)
     {
@@ -574,7 +587,7 @@ bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
         if (!pChannelResource->IsAlive())
             return false;
 
-        socket = mInputSockets.at(remoteLocator.get_port());
+		socket = mInputSockets.at(static_cast<uint16_t>(remoteLocator.get_port()));
     }
 
     if(socket != nullptr)

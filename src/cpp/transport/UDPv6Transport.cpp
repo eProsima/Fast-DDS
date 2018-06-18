@@ -300,14 +300,11 @@ bool UDPv6Transport::ReleaseInputChannel(const Locator_t& locator)
 
     try
     {
-        // TODO Ricardo
-        /*
-    	auto& socket = mInputSockets.at(locator.get_port());
-        //getSocketPtr(socket)->open(ip::udp::v6());
-        auto destinationEndpoint = ip::udp::endpoint(asio::ip::address_v6(locatorToNative(locator)),
-                static_cast<uint16_t>(locator.get_port()));
-        getSocketPtr(socket)->send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
-        */
+		ip::udp::socket socket(mService);
+		socket.open(ip::udp::v6());
+		auto destinationEndpoint = ip::udp::endpoint(asio::ip::address_v6(locatorToNative(locator)),
+			static_cast<uint16_t>(locator.get_port()));
+		socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
     }
     catch (const std::exception& error)
     {
@@ -595,7 +592,7 @@ bool UDPv6Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
     { // lock scope
         std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
 
-        socket = mInputSockets.at(remoteLocator.get_port());
+		socket = mInputSockets.at(static_cast<uint16_t>(remoteLocator.get_port()));
     }
 
     if(socket != nullptr)
