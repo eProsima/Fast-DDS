@@ -21,7 +21,8 @@ namespace fastrtps{
 namespace rtps{
 
 SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator, uint32_t size)
-: m_pChannelResource(nullptr)
+: mValid(false)
+, m_pChannelResource(nullptr)
 {
     // Internal channel is opened and assigned to this resource.
     mValid = transport.OpenOutputChannel(locator, this, size);

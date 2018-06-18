@@ -278,6 +278,7 @@ bool UDPv6Transport::CloseInputChannel(const Locator_t& locator)
         if (!IsInputChannelOpen(locator))
             return false;
 
+        ReleaseInputChannel(locator);
         pChannelResource = mInputSockets.at(locator.get_physical_port());
         pChannelResource->getSocket()->cancel();
         pChannelResource->getSocket()->close();

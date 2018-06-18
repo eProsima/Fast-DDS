@@ -35,7 +35,8 @@ namespace rtps{
 
 ReceiverResource::ReceiverResource(RTPSParticipantImpl* participant, TransportInterface& transport,
     const Locator_t& locator, uint32_t maxMsgSize)
-    : m_participant(participant)
+    : mValid(false)
+    , m_participant(participant)
     , m_maxMsgSize(maxMsgSize)
 {
     // Internal channel is opened and assigned to this resource.
