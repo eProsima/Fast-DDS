@@ -102,9 +102,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 #if HAVE_SECURITY
     , m_security_manager(this)
 #endif
-    mp_participantListener(plisten),
-    mp_userParticipant(par),
-    mp_mutex(new std::recursive_mutex())
+    , mp_participantListener(plisten)
+    , mp_userParticipant(par)
+    , mp_mutex(new std::recursive_mutex())
 {
     // Builtin transport by default
     if (PParam.useBuiltinTransports)
@@ -192,24 +192,21 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         initial_peers.swap(m_att.builtin.initialPeersList);
 
         std::for_each(initial_peers.begin(), initial_peers.end(),
-                [&](Locator_t& locator) {
-                    if(locator.get_port() == 0)
+            [&](Locator_t& locator) {
+                if(locator.get_port() == 0)
+                {
+                    // TODO(Ricardo) Make configurable.
+                    for(int32_t i = 0; i < 4; ++i)
                     {
-                        // TODO(Ricardo) Make configurable.
-                        for(int32_t i = 0; i < 4; ++i)
-                        {
-                            Locator_t auxloc(locator);
-                            auxloc.set_port(static_cast<uint16_t>(m_att.port.getUnicastPort(m_att.builtin.domainId, i)), true);
+                        Locator_t auxloc(locator);
+                        auxloc.set_port(static_cast<uint16_t>(m_att.port.getUnicastPort(m_att.builtin.domainId, i)), true);
 
-                            m_att.builtin.initialPeersList.push_back(auxloc);
-                        }
-
-                    m_att.builtin.initialPeersList.push_back(auxloc);
+                        m_att.builtin.initialPeersList.push_back(auxloc);
+                    }
                 }
-            }
-            else
-                m_att.builtin.initialPeersList.push_back(locator);
-        });
+                else
+                    m_att.builtin.initialPeersList.push_back(locator);
+            });
         m_network_Factory.NormalizeLocators(m_att.builtin.initialPeersList);
     }
 
@@ -660,17 +657,12 @@ void RTPSParticipantImpl::disableReader(RTPSReader *reader)
     m_receiverResourcelistMutex.lock();
     for(auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it)
     {
-        (*it).mp_receiver->removeEndpoint(reader);
+        (*it)->removeEndpoint(reader);
     }
     m_receiverResourcelistMutex.unlock();
 }
 
-bool RTPSParticipantImpl::registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos)
-{
-    return this->mp_builtinProtocols->addLocalWriter(Writer,topicAtt,wqos);
-}
-
-bool RTPSParticipantImpl::registerReader(RTPSReader* reader,TopicAttributes& topicAtt,ReaderQos& rqos)
+bool RTPSParticipantImpl::registerWriter(RTPSWriter* Writer, TopicAttributes& topicAtt, WriterQos& wqos)
 {
     return this->mp_builtinProtocols->addLocalWriter(Writer, topicAtt, wqos);
 }
@@ -700,7 +692,6 @@ bool RTPSParticipantImpl::updateLocalReader(RTPSReader* reader, ReaderQos& rqos)
 
 
 bool RTPSParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t kind) const
-{
 {
     if (kind == WRITER)
     {
