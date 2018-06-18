@@ -221,10 +221,15 @@ class RTPS_DllAPI Locator_t
             return true;
         }
 
-        octet* get_IP4_address()
-        {
-            return addresses_.ip_address;
-        }
+		octet* get_IP4_address()
+		{
+			return addresses_.ip_address;
+		}
+
+		octet get_IP4_address(uint16_t field) const
+		{
+			return addresses_.ip_address[field];
+		}
 
         octet* get_IP6_address()
         {
@@ -244,12 +249,17 @@ class RTPS_DllAPI Locator_t
             return true;
         }
 
-        octet* get_IP4_WAN_address()
-        {
-            return addresses_.wan_address;
-        }
+		octet* get_IP4_WAN_address()
+		{
+			return addresses_.wan_address;
+		}
 
-        bool has_IP4_WAN_address()
+		octet get_IP4_WAN_address(uint16_t field) const
+		{
+			return addresses_.wan_address[field];
+		}
+
+        bool has_IP4_WAN_address() const
         {
             return addresses_.wan_address[0] != 0 &&
                 addresses_.wan_address[1] != 0 &&

@@ -160,7 +160,7 @@ public:
     * IMPORTANT: It MUST be safe to call this method even during a Receive operation on another thread. You must implement
     * any necessary mutual exclusion and timeout mechanisms to make sure the channel can be closed without damage.
     */
-    virtual bool ReleaseInputChannel(const Locator_t&) override;
+	virtual bool ReleaseInputChannel(const Locator_t&) override { return true; }
 
     /**
     * Blocking Send through the specified channel.
