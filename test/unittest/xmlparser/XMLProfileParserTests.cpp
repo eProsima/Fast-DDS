@@ -27,7 +27,7 @@ class XMLProfileParserTests: public ::testing::Test
 
         ~XMLProfileParserTests()
         {
-            Log::KillThread();
+            //Log::KillThread();
         }
 };
 
