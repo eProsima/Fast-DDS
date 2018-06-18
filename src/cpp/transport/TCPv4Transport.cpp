@@ -1021,10 +1021,10 @@ void TCPv4Transport::FillTCPHeader(TCPHeader& header, const octet* sendBuffer, u
 bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& /*localLocator*/,
     const Locator_t& remoteLocator, ChannelResource *pChannelResource)
 {
-	bool success = false;
     TCPChannelResource* tcpChannelResource = dynamic_cast<TCPChannelResource*>(pChannelResource);
 	if (tcpChannelResource != nullptr && tcpChannelResource->IsConnectionEstablished())
 	{
+		bool success = false;
 		uint16_t logicalPort = tcpChannelResource->mLogicalPortRouting.find(remoteLocator.get_logical_port())
 			!= tcpChannelResource->mLogicalPortRouting.end()
 			? tcpChannelResource->mLogicalPortRouting.at(remoteLocator.get_logical_port())
@@ -1164,6 +1164,7 @@ bool TCPv4Transport::Receive(TCPChannelResource *pChannelResource, octet* receiv
             }
             catch (const asio::system_error& error)
             {
+                (void) error;
                 // Close the channel
                 logInfo(RTCP, "ASIO [RECEIVE]: " << error.what());
                 CloseTCPSocket(pChannelResource);
@@ -1505,11 +1506,13 @@ size_t TCPv4Transport::Send(TCPChannelResource *pChannelResource, const octet *d
     }
     catch (const asio::system_error& error)
     {
+        (void) error;
         logInfo(RTCP, "ASIO [SEND]: " << error.what());
         errorCode = eSocketErrorCodes::eSystemError;
     }
     catch (const std::exception& error)
     {
+        (void) error;
         logInfo(RTCP, "ASIO [SEND]: " << error.what());
         errorCode = eSocketErrorCodes::eException;
     }

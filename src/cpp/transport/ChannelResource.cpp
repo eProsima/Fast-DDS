@@ -218,6 +218,12 @@ void TCPChannelResource::Disable()
 	ChannelResource::Disable();
 }
 
+bool TCPChannelResource::IsLogicalPortOpened(uint16_t port)
+{
+	std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
+	return std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port) != mLogicalOutputPorts.end();
+}
+
 std::thread* TCPChannelResource::ReleaseRTCPThread()
 {
     std::thread* outThread = mRTCPThread;
@@ -244,6 +250,7 @@ MessageReceiver* TCPChannelResource::GetMessageReceiver(uint16_t logicalPort)
 
 void TCPChannelResource::fillLogicalPorts(std::vector<Locator_t>& outVector)
 {
+	std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
     Locator_t temp = mLocator;
     for (uint16_t port : mPendingLogicalOutputPorts)
     {
@@ -264,6 +271,7 @@ uint32_t TCPChannelResource::GetMsgSize() const
 
 void TCPChannelResource::EnqueueLogicalPort(uint16_t port)
 {
+	std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
     if (std::find(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port)
         == mPendingLogicalOutputPorts.end()
         && std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port) == mLogicalOutputPorts.end())

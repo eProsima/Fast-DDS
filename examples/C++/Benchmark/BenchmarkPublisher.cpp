@@ -34,27 +34,35 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-static bool g_bBenchmarkFinished = false;
-static std::chrono::time_point<std::chrono::system_clock> g_bTestStartTime;
-static int g_iTestTimeMs = 10000;
-static int g_iCount = 0;
-
 BenchMarkPublisher::BenchMarkPublisher()
-    : mp_participant(nullptr)
-    , mp_publisher(nullptr)
-    , mp_subscriber(nullptr)
+	: mp_participant(nullptr)
+	, mp_publisher(nullptr)
+	, mp_subscriber(nullptr)
 	, m_pubListener(this)
 	, m_subListener(this)
+	, m_testStartTime(std::chrono::system_clock::now())
+	, m_bBenchmarkFinished(false)
+	, m_iTestTimeMs(10000)
+	, m_iTickTime(100)
+	, m_iWaitTime(1000)
+	, m_iCount(0)
 	, m_iSize(0)
+	, m_vSamples(nullptr)
+	, m_iSamplesCount(0)
 {
-
-
 }
 
-bool BenchMarkPublisher::init(int transport, ReliabilityQosPolicyKind kind, int time, const std::string& topicName, int domain, int size)
+bool BenchMarkPublisher::init(int transport, ReliabilityQosPolicyKind kind, int time, int tick_time, int wait_time, const std::string& topicName, int domain, int size)
 {
-	g_iTestTimeMs = time;
+	m_iTestTimeMs = time;
+	m_iTickTime = tick_time;
+	m_iWaitTime = wait_time;
 	m_iSize = size;
+	m_iSamplesSize = abs(m_iTestTimeMs / m_iTickTime) + 1;
+	m_vSamples = new int[m_iSamplesSize];
+	memset(m_vSamples, 0, sizeof(int) *m_iSamplesSize);
+	m_iSamplesCount = 0;
+
 	switch (m_iSize)
 	{
 	default:
@@ -239,6 +247,11 @@ bool BenchMarkPublisher::init(int transport, ReliabilityQosPolicyKind kind, int 
 
 BenchMarkPublisher::~BenchMarkPublisher()
 {
+	if (m_vSamples != nullptr)
+	{
+		delete(m_vSamples);
+		m_vSamples = nullptr;
+	}
     // TODO Auto-generated destructor stub
     Domain::removeParticipant(mp_participant);
 }
@@ -260,9 +273,10 @@ void BenchMarkPublisher::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,
     }
 }
 
+static int g_itest = 0;
 void BenchMarkPublisher::SubListener::onNewDataMessage(Subscriber* sub)
 {
-	if (!g_bBenchmarkFinished)
+	if (!mParent->m_bBenchmarkFinished)
 	{
 		switch (mParent->m_iSize)
 		{
@@ -273,8 +287,16 @@ void BenchMarkPublisher::SubListener::onNewDataMessage(Subscriber* sub)
 			{
 				if (m_info.sampleKind == ALIVE)
 				{
+					if (m_Hello.index() < mParent->m_iCount)
+					{
+						g_itest++;
+					}
+
+					//mParent->m_iCount += 2;
+					//m_Hello.index(mParent->m_iCount);
+					//mParent->m_iCount += 2;
 					m_Hello.index(m_Hello.index() + 1);
-					g_iCount = m_Hello.index();
+					mParent->m_iCount = m_Hello.index();
 					mParent->mp_publisher->write((void*)&m_Hello);
 				}
 			}
@@ -286,8 +308,8 @@ void BenchMarkPublisher::SubListener::onNewDataMessage(Subscriber* sub)
 			{
 				if (m_info.sampleKind == ALIVE)
 				{
-					m_HelloSmall.index(m_HelloSmall.index() + 1);
-					g_iCount = m_HelloSmall.index();
+					mParent->m_iCount += 2;
+					m_HelloSmall.index(mParent->m_iCount);
 					mParent->mp_publisher->write((void*)&m_HelloSmall);
 				}
 			}
@@ -299,8 +321,8 @@ void BenchMarkPublisher::SubListener::onNewDataMessage(Subscriber* sub)
 			{
 				if (m_info.sampleKind == ALIVE)
 				{
-					m_HelloMedium.index(m_HelloMedium.index() + 1);
-					g_iCount = m_HelloMedium.index();
+					mParent->m_iCount += 2;
+					m_HelloMedium.index(mParent->m_iCount);
 					mParent->mp_publisher->write((void*)&m_HelloMedium);
 				}
 			}
@@ -312,8 +334,8 @@ void BenchMarkPublisher::SubListener::onNewDataMessage(Subscriber* sub)
 			{
 				if (m_info.sampleKind == ALIVE)
 				{
-					m_HelloBig.index(m_HelloBig.index() + 1);
-					g_iCount = m_HelloBig.index();
+					mParent->m_iCount += 2;
+					m_HelloBig.index(mParent->m_iCount);
 					mParent->mp_publisher->write((void*)&m_HelloBig);
 				}
 			}
@@ -336,37 +358,47 @@ void BenchMarkPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,Ma
         std::cout << "Publisher matched. Test starts..." << std::endl;
         if (n_matched == 0)
         {
-            g_bTestStartTime = std::chrono::system_clock::now();
+            mParent->m_testStartTime = std::chrono::system_clock::now();
         }
         n_matched++;
     }
     else
     {
-        g_bBenchmarkFinished = true;
+        mParent->m_bBenchmarkFinished = true;
         std::cout << "Publisher unmatched. Test Aborted"<<std::endl;
     }
 }
 
 void BenchMarkPublisher::runThread()
 {
+	int iPrevCount = 0;
 	std::cout << "Publisher running..." << std::endl;
     while (!publish())
     {
 		eClock::my_sleep(10);
 	}
 
-    while(!g_bBenchmarkFinished)
+	eClock::my_sleep(m_iWaitTime);
+	m_iCount = 0;
+
+    while(!m_bBenchmarkFinished)
     {
         auto end = std::chrono::system_clock::now();
-        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - g_bTestStartTime);
-        if (elapsed.count() > g_iTestTimeMs)
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - m_testStartTime);
+        if (elapsed.count() > m_iTestTimeMs)
         {
-            g_bBenchmarkFinished = true;
+            m_bBenchmarkFinished = true;
         }
         else
         {
+			if (m_iSamplesCount < m_iSamplesSize)
+			{
+				m_vSamples[m_iSamplesCount++] = m_iCount - iPrevCount;
+				iPrevCount = m_iCount;
+			}
+
             // WAIT
-            eClock::my_sleep(1000);
+            eClock::my_sleep(m_iTickTime);
         }
     }
 }
@@ -377,7 +409,16 @@ void BenchMarkPublisher::run()
     //std::cout << "Publisher running..." << std::endl;
     thread.join();
 
-    std::cout << "RESULTS after " << g_iTestTimeMs << " milliseconds. Count: " << g_iCount << std::endl;
+	std::cout << "TEST: " << g_itest << std::endl;
+	std::cout << "RESULTS after " << m_iTestTimeMs << " milliseconds:" << std::endl;
+	std::cout << "COUNT: " << m_iCount << std::endl;
+	std::cout << "SAMPLES: ";
+
+	for (int i = 0; i < m_iSamplesCount; ++i)
+	{
+		std::cout << m_vSamples[i] << ",";
+	}
+	std::cout << std::endl;
 }
 
 bool BenchMarkPublisher::publish()
