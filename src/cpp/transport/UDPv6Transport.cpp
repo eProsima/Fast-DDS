@@ -475,7 +475,7 @@ void UDPv6Transport::performListenOperation(UDPChannelResource* pChannelResource
         // Blocking receive.
         auto msg = pChannelResource->GetMessageBuffer();
         CDRMessage::initCDRMsg(&msg);
-        if (!Receive(msg.buffer, msg.max_size, msg.length, pChannelResource, remoteLocator))
+        if (!Receive(msg.buffer, msg.max_size, msg.length, pChannelResource, input_locator, remoteLocator))
             continue;
 
         // Processes the data through the CDR Message interface.
@@ -580,37 +580,49 @@ static Locator_t EndpointToLocator(ip::udp::endpoint& endpoint)
 }
 
 bool UDPv6Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-    ChannelResource* pChannelResource, Locator_t& remoteLocator)
+	ChannelResource* pChannelResource, const Locator_t& inputLocator, Locator_t& remoteLocator)
 {
+	if (!pChannelResource->IsAlive())
+		return false;
 
-    if (!pChannelResource->IsAlive())
-        return false;
+	ip::udp::endpoint senderEndpoint;
+	UDPChannelResource* socket = nullptr;
 
-    ip::udp::endpoint senderEndpoint;
-    UDPChannelResource* socket = nullptr;
+	{ // lock scope
+		std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
 
-    { // lock scope
-        std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
+		auto socketIt = mInputSockets.find(static_cast<uint16_t>(inputLocator.get_port()));
+		if (socketIt != mInputSockets.end())
+		{
+			socket = socketIt->second;
+		}
+	}
 
-		socket = mInputSockets.at(static_cast<uint16_t>(remoteLocator.get_port()));
-    }
+	try
+	{
+		if (socket != nullptr)
+		{
+			size_t bytes = socket->getSocket()->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
 
-    if(socket != nullptr)
-    {
-        size_t bytes = socket->getSocket()->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
+			receiveBufferSize = static_cast<uint32_t>(bytes);
 
-        receiveBufferSize = static_cast<uint32_t>(bytes);
+			if (receiveBufferSize > 0)
+			{
+				if (receiveBufferSize == 13 && memcmp(receiveBuffer, "EPRORTPSCLOSE", 13) == 0)
+				{
+					return false;
+				}
 
-        if(receiveBufferSize > 0)
-        {
-            if(receiveBufferSize == 13 && memcmp(receiveBuffer, "EPRORTPSCLOSE", 13) == 0)
-            {
-                return false;
-            }
-
-            remoteLocator = EndpointToLocator(senderEndpoint);
-        }
-    }
+				remoteLocator = EndpointToLocator(senderEndpoint);
+			}
+		}
+	}
+	catch (const std::exception& error)
+	{
+		(void)error;
+		logWarning(RTPS_MSG_OUT, "Error receiving data: " << error.what());
+		return false;
+	}
 
     return (receiveBufferSize > 0);
 }
