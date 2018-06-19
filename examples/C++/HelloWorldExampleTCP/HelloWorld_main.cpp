@@ -35,10 +35,10 @@ int main(int argc, char** argv)
     std::cout << "Initial memory ussage: " << std::endl;
     std::cout << "\tVM: " << vm << std::endl;
     std::cout << "\tRSS: " << rss << std::endl;
-    //Log::SetVerbosity(Log::Kind::Info);
-    //std::regex filter("RTCP(?!_SEQ)");
+    Log::SetVerbosity(Log::Kind::Info);
+    std::regex filter("RTCP(?!_SEQ)");
     //std::regex filter("RTPS_HISTORY");
-    std::regex filter("RTPS_READER");    
+    //std::regex filter("RTPS_READER");    
     Log::SetCategoryFilter(filter);
 
     std::cout << "Starting "<< std::endl;

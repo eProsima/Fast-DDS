@@ -44,7 +44,7 @@ class MockTransport: public TransportInterface
         virtual bool OpenOutputChannel(const Locator_t&, SenderResource* sender = nullptr, uint32_t size = 0) override;
         virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) override;
 
-        virtual bool OpenExtraOutputChannel(Locator_t&, SenderResource*, uint32_t size = 0) override 
+        virtual bool OpenExtraOutputChannel(const Locator_t&, SenderResource*, uint32_t size = 0) override 
         { (void)size; return false; };
 
         virtual bool CloseOutputChannel(const Locator_t&) override;
