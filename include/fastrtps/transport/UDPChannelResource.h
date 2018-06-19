@@ -21,6 +21,8 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+class MessageReceiver;
+
 #if defined(ASIO_HAS_MOVE)
     // Typedefs
 	typedef asio::ip::udp::socket eProsimaUDPSocket;

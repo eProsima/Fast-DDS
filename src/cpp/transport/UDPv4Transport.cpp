@@ -21,6 +21,8 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/rtps/network/ReceiverResource.h>
+#include <fastrtps/rtps/network/SenderResource.h>
+#include <fastrtps/rtps/messages/MessageReceiver.h>
 
 using namespace std;
 using namespace asio;

@@ -23,6 +23,8 @@
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include "asio.hpp"
 #include <fastrtps/rtps/network/ReceiverResource.h>
+#include <fastrtps/rtps/network/SenderResource.h>
+#include <fastrtps/rtps/messages/MessageReceiver.h>
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
 

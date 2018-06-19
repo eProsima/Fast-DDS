@@ -15,11 +15,15 @@
 #ifndef TCP_CHANNEL_RESOURCE_INFO_
 #define TCP_CHANNEL_RESOURCE_INFO_
 
+#include <asio.hpp>
 #include <fastrtps/transport/ChannelResource.h>
+#include <fastrtps/rtps/common/Locator.h>
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
+
+class MessageReceiver;
 
 #if defined(ASIO_HAS_MOVE)
     // Typedefs
