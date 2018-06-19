@@ -15,11 +15,11 @@
 #ifndef UDPV4_TRANSPORT_DESCRIPTOR
 #define UDPV4_TRANSPORT_DESCRIPTOR
 
-#include "TransportInterface.h"
-
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
+
+class TransportInterface;
 
 /**
  * Transport configuration

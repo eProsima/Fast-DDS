@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastrtps/transport/TransportInterface.h>
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <utility>

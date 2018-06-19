@@ -15,11 +15,11 @@
 #ifndef TCPV6_TRANSPORT_DESCRIPTOR
 #define TCPV6_TRANSPORT_DESCRIPTOR
 
-#include "TCPTransportInterface.h"
-
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
+
+class TCPTransportInterface;
 
 /**
  * Transport configuration

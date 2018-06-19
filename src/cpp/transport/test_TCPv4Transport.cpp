@@ -14,6 +14,7 @@
 
 #include <fastrtps/transport/test_TCPv4Transport.h>
 #include <fastrtps/transport/tcp/test_RTCPMessageManager.h>
+#include <fastrtps/transport/TCPChannelResource.h>
 #include <cstdlib>
 
 using namespace std;
