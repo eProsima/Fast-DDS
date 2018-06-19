@@ -92,7 +92,7 @@ void TCPv4Acceptor::Accept(TCPv4Transport* parent, asio::io_service& io_service)
 TCPv4Connector::TCPv4Connector(asio::io_service& io_service, const Locator_t& locator, uint32_t msgSize)
     : m_locator(locator)
     , m_socket(createTCPSocket(io_service))
-	, m_msgSize(msgSize)
+    , m_msgSize(msgSize)
 {
 }
 
@@ -211,6 +211,7 @@ TCPv4Transport::~TCPv4Transport()
 
 void TCPv4Transport::AddDefaultOutputLocator(LocatorList_t& defaultList)
 {
+    std::unique_lock<std::recursive_mutex> scoped(mSocketsMapMutex);
     if (mConfiguration_.listening_ports.size() > 0)
     {
         for (auto it = mConfiguration_.listening_ports.begin(); it != mConfiguration_.listening_ports.end(); ++it)
@@ -479,34 +480,46 @@ bool TCPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource*
     bool success = false;
     if (IsLocatorSupported(locator))
     {
+        std::cout << "OpenOutputChannel (" << locator << "): ";
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         if (!IsTCPInputSocket(locator))
         {
+            std::cout << "Output ";
             if (!IsOutputChannelConnected(locator))
             {
+                std::cout << "Disconnected ";
                 if (!IsOutputChannelOpen(locator))
                 {
+                    std::cout << "Closed... OPEN " << std::endl;
                     success = OpenOutputSockets(locator, senderResource, msgSize);
                 }
                 else
                 {
+                    std::cout << "Open... BIND " << std::endl;
                     BindOutputChannel(locator, senderResource);
-                    success = EnqueueLogicalOutputPort(locator);
+                    EnqueueLogicalOutputPort(locator);
+                    success = true;
                 }
             }
             else
             {
+                std::cout << "Connected ";
                 if (!IsOutputChannelBound(locator))
                 {
+                    std::cout << "Not bound... BIND " << std::endl;
                     BindOutputChannel(locator, senderResource);
-                    success = EnqueueLogicalOutputPort(locator);
+                    EnqueueLogicalOutputPort(locator);
                 }
                 else
-                    success = true;
+                {
+                    std::cout << "Bound... DO NOTHING " << std::endl;
+                }
+                success = true;
             }
         }
         else
         {
+            std::cout << "Input " << std::endl;
             if (mBoundOutputSockets.find(locator) == mBoundOutputSockets.end())
             {
                 if (std::find(mPendingOutputPorts[locator].begin(), mPendingOutputPorts[locator].end(),
@@ -537,7 +550,9 @@ bool TCPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource*
 
 bool TCPv4Transport::OpenExtraOutputChannel(const Locator_t& locator, SenderResource* senderResource, uint32_t msgSize)
 {
+    std::cout << "OpenExtraOutputChannel " << this << ":" << locator << std::endl;
     return OpenOutputChannel(locator, senderResource, msgSize);
+    //return true;
 }
 
 bool TCPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource* receiverResource,
@@ -816,9 +831,9 @@ void TCPv4Transport::performRTPCManagementThread(TCPChannelResource *pChannelRes
     std::chrono::time_point<std::chrono::system_clock> time_now = std::chrono::system_clock::now();
     std::chrono::time_point<std::chrono::system_clock> next_time = time_now +
         std::chrono::milliseconds(mConfiguration_.keep_alive_frequency_ms);
-	std::chrono::time_point<std::chrono::system_clock> timeout_time =
-		time_now + std::chrono::milliseconds(mConfiguration_.keep_alive_timeout_ms);
-	std::chrono::time_point<std::chrono::system_clock> negotiation_time = time_now;
+    std::chrono::time_point<std::chrono::system_clock> timeout_time =
+        time_now + std::chrono::milliseconds(mConfiguration_.keep_alive_timeout_ms);
+    std::chrono::time_point<std::chrono::system_clock> negotiation_time = time_now;
 
     bool bSendOpenLogicalPort = false;
     logInfo(RTCP, "START performRTPCManagementThread " << pChannelResource->GetLocator() << " (" << pChannelResource->getSocket()->local_endpoint().address() << "->" << pChannelResource->getSocket()->remote_endpoint().address() << ")");
@@ -849,7 +864,7 @@ void TCPv4Transport::performRTPCManagementThread(TCPChannelResource *pChannelRes
             if (bSendOpenLogicalPort)
             {
                 mRTCPMessageManager->sendOpenLogicalPortRequest(pChannelResource, pChannelResource->mPendingLogicalPort);
-		negotiation_time = time_now + std::chrono::milliseconds(mConfiguration_.tcp_negotiation_timeout);
+                negotiation_time = time_now + std::chrono::milliseconds(mConfiguration_.tcp_negotiation_timeout);
                 bSendOpenLogicalPort = false;
             }
 
@@ -1022,50 +1037,50 @@ bool TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     const Locator_t& remoteLocator, ChannelResource *pChannelResource)
 {
     TCPChannelResource* tcpChannelResource = dynamic_cast<TCPChannelResource*>(pChannelResource);
-	if (tcpChannelResource != nullptr && tcpChannelResource->IsConnectionEstablished())
-	{
-		bool success = false;
-		uint16_t logicalPort = tcpChannelResource->mLogicalPortRouting.find(remoteLocator.get_logical_port())
-			!= tcpChannelResource->mLogicalPortRouting.end()
-			? tcpChannelResource->mLogicalPortRouting.at(remoteLocator.get_logical_port())
-			: remoteLocator.get_logical_port();
+    if (tcpChannelResource != nullptr && tcpChannelResource->IsConnectionEstablished())
+    {
+        bool success = false;
+        uint16_t logicalPort = tcpChannelResource->mLogicalPortRouting.find(remoteLocator.get_logical_port())
+            != tcpChannelResource->mLogicalPortRouting.end()
+            ? tcpChannelResource->mLogicalPortRouting.at(remoteLocator.get_logical_port())
+            : remoteLocator.get_logical_port();
 
-		bool bSendMsg = true;
-		if (!tcpChannelResource->IsLogicalPortOpened(logicalPort))
-		{
-			tcpChannelResource->EnqueueLogicalPort(logicalPort);
-			if (mConfiguration_.wait_for_tcp_negotiation)
-			{
-				tcpChannelResource->mNegotiationSemaphore.wait();
-			}
-			else
-			{
-				bSendMsg = false;
-			}
-		}
+        bool bSendMsg = true;
+        if (!tcpChannelResource->IsLogicalPortOpened(logicalPort))
+        {
+            tcpChannelResource->EnqueueLogicalPort(logicalPort);
+            if (mConfiguration_.wait_for_tcp_negotiation)
+            {
+                tcpChannelResource->mNegotiationSemaphore.wait();
+            }
+            else
+            {
+                bSendMsg = false;
+            }
+        }
 
-		if (bSendMsg && tcpChannelResource->IsAlive())
-		{
-			//CDRMessage_t msg(static_cast<uint32_t>(sendBufferSize + TCPHeader::getSize()));
-			TCPHeader tcp_header;
-			FillTCPHeader(tcp_header, sendBuffer, sendBufferSize, logicalPort);
+        if (bSendMsg && tcpChannelResource->IsAlive())
+        {
+            //CDRMessage_t msg(static_cast<uint32_t>(sendBufferSize + TCPHeader::getSize()));
+            TCPHeader tcp_header;
+            FillTCPHeader(tcp_header, sendBuffer, sendBufferSize, logicalPort);
 
-			//RTPSMessageCreator::addCustomContent(&msg, (octet*)&tcp_header, TCPHeader::getSize());
-			//RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
+            //RTPSMessageCreator::addCustomContent(&msg, (octet*)&tcp_header, TCPHeader::getSize());
+            //RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
 
-			{
-				std::unique_lock<std::recursive_mutex> sendLock(*tcpChannelResource->GetWriteMutex());
-				success = SendThroughSocket((octet*)&tcp_header, static_cast<uint32_t>(TCPHeader::getSize()),
-					remoteLocator, tcpChannelResource);
+            {
+                std::unique_lock<std::recursive_mutex> sendLock(*tcpChannelResource->GetWriteMutex());
+                success = SendThroughSocket((octet*)&tcp_header, static_cast<uint32_t>(TCPHeader::getSize()),
+                    remoteLocator, tcpChannelResource);
 
-				if (success)
-				{
-					success = SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, tcpChannelResource);
-				}
-			}
-		}
-		return success;
-	}
+                if (success)
+                {
+                    success = SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, tcpChannelResource);
+                }
+            }
+        }
+        return success;
+    }
     else
     {
         logWarning(RTCP, " SEND [RTPS] Failed: Connection not established" << remoteLocator.get_logical_port());
@@ -1125,7 +1140,7 @@ bool TCPv4Transport::Receive(TCPChannelResource *pChannelResource, octet* receiv
                     }
                     else
                     {
-                        logWarning(RTCP, "Received MSG. Logical Port" << tcp_header.logicalPort);
+                        logInfo(RTCP, "Received RTCP MSG. Logical Port " << tcp_header.logicalPort);
                         success = ReadBody(receiveBuffer, receiveBufferCapacity, &receiveBufferSize, pChannelResource, body_size);
                         //logInfo(RTCP, " Received [ReadBody]");
 
@@ -1237,7 +1252,7 @@ bool TCPv4Transport::SendThroughSocket(const octet* sendBuffer, uint32_t sendBuf
         // Close the channel
         logInfo(RTCP, " Sent [FAILED]: " << sendBufferSize << " bytes to locator " << remoteLocator.get_logical_port() << " ERROR=" << errorCode);
         Locator_t prevLocator = socket->GetLocator();
-		uint32_t msgSize = socket->GetMsgSize();
+        uint32_t msgSize = socket->GetMsgSize();
 
         std::vector<Locator_t> logicalLocators;
         socket->fillLogicalPorts(logicalLocators);
@@ -1446,41 +1461,42 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, SenderResource *senderR
         auto pendingConector = mSocketConnectors.at(locator);
         if (!error.value())
         {
-			try
-			{
-				TCPChannelResource *outputSocket = new TCPChannelResource(pendingConector->m_socket,
-					locator, true, false, pendingConector->m_msgSize);
+            try
+            {
+                TCPChannelResource *outputSocket = new TCPChannelResource(pendingConector->m_socket,
+                    locator, true, false, pendingConector->m_msgSize);
 
-				// Create one message receiver for each registered receiver resources.
-				RegisterReceiverResources(outputSocket, locator);
-				outputSocket->ChangeStatus(TCPChannelResource::eConnectionStatus::eConnected);
-				outputSocket->SetThread(new std::thread(&TCPv4Transport::performListenOperation, this, outputSocket));
-				outputSocket->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, outputSocket));
-				mOutputSockets.push_back(outputSocket);
-				BindOutputChannel(locator);
+                // Create one message receiver for each registered receiver resources.
+                RegisterReceiverResources(outputSocket, locator);
+                outputSocket->ChangeStatus(TCPChannelResource::eConnectionStatus::eConnected);
+                outputSocket->SetThread(new std::thread(&TCPv4Transport::performListenOperation, this, outputSocket));
+                outputSocket->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, outputSocket));
+                mOutputSockets.push_back(outputSocket);
+                BindOutputChannel(locator);
 
-				for (auto& it : pendingConector->m_PendingLocators)
-				{
-					EnqueueLogicalOutputPort(it);
-				}
+                for (auto& it : pendingConector->m_PendingLocators)
+                {
+                    EnqueueLogicalOutputPort(it);
+                }
 
-				logInfo(RTCP, " Socket Connected (physical remote: " << locator.get_physical_port()
-					<< ", local: " << outputSocket->getSocket()->local_endpoint().port()
-					<< ") IP: " << outputSocket->getSocket()->remote_endpoint().address());
+                logInfo(RTCP, " Socket Connected (physical remote: " << locator.get_physical_port()
+                    << ", local: " << outputSocket->getSocket()->local_endpoint().port()
+                    << ") IP: " << outputSocket->getSocket()->remote_endpoint().address());
 
-				// RTCP Control Message
-				mRTCPMessageManager->sendConnectionRequest(outputSocket, mConfiguration_.metadata_logical_port);
-				if (senderResource != nullptr)
-				{
-					AssociateSenderToSocket(outputSocket, senderResource);
-				}
-			}
-			catch (asio::system_error const& e)
-			{
-				(void)e;
-				logInfo(RTPS_MSG_OUT, "TCPv4 Error establishing the connection at port:(" << locator.get_port() << ")" << " with msg:" << e.what());
-				CloseOutputChannel(locator);
-			}
+                // RTCP Control Message
+                mRTCPMessageManager->sendConnectionRequest(outputSocket, mConfiguration_.metadata_logical_port);
+                if (senderResource != nullptr)
+                {
+                    std::cout << "AssociateSenderToSocket" << std::endl;
+                    AssociateSenderToSocket(outputSocket, senderResource);
+                }
+            }
+            catch (asio::system_error const& e)
+            {
+                (void)e;
+                logInfo(RTPS_MSG_OUT, "TCPv4 Error establishing the connection at port:(" << locator.get_port() << ")" << " with msg:" << e.what());
+                CloseOutputChannel(locator);
+            }
         }
         else
         {
@@ -1548,7 +1564,7 @@ void TCPv4Transport::CloseTCPSocket(TCPChannelResource *pChannelResource)
             Locator_t prevLocator = pChannelResource->GetLocator();
             std::vector<Locator_t> logicalLocators;
             pChannelResource->fillLogicalPorts(logicalLocators);
-			uint32_t msgSize = pChannelResource->GetMsgSize();
+            uint32_t msgSize = pChannelResource->GetMsgSize();
 
             CloseOutputChannel(prevLocator);
 
@@ -1640,6 +1656,7 @@ void TCPv4Transport::ReleaseTCPSocket(TCPChannelResource *pChannelResource, bool
 
 void TCPv4Transport::AssociateSenderToSocket(TCPChannelResource *socket, SenderResource *sender) const
 {
+    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     auto it = mSocketToSenders.find(socket);
     if (it == mSocketToSenders.end())
     {
