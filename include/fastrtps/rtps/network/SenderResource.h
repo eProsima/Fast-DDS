@@ -85,7 +85,7 @@ private:
 
    SenderResource(TransportInterface&, Locator_t&, uint32_t);
    std::function<void()> Cleanup;
-   std::function<bool(const Locator_t&)> AddSenderLocatorToManagedChannel;
+   std::function<bool(const Locator_t&, SenderResource*)> AddSenderLocatorToManagedChannel;
    std::function<bool(const octet*, uint32_t, const Locator_t&, ChannelResource*)> SendThroughAssociatedChannel;
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
    std::function<bool(const Locator_t&)> ManagedChannelMapsToRemote;

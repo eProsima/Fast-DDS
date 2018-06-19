@@ -34,19 +34,18 @@ SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator
     }
 
     // Implementation functions are bound to the right transport parameters
-    Cleanup = [&transport, locator, this]()
+    Cleanup = [&transport, locator]()
         {
             transport.CloseOutputChannel(locator);
-            this->m_pChannelResource = nullptr;
         };
 
-    AddSenderLocatorToManagedChannel = [&transport, this, size](const Locator_t& destination)->bool
+    AddSenderLocatorToManagedChannel = [&transport, size](const Locator_t& destination, SenderResource *senderResource)->bool
         {
-            return transport.OpenExtraOutputChannel(destination, this, size);
+            return transport.OpenExtraOutputChannel(destination, senderResource, size);
         };
 
     SendThroughAssociatedChannel =
-        [&transport, locator, this]
+        [&transport, locator]
         (const octet* data, uint32_t dataSize, const Locator_t& destination, ChannelResource* pChannelResource)-> bool
         {
             if (pChannelResource == nullptr)
@@ -73,7 +72,7 @@ bool SenderResource::AddSenderLocator(const Locator_t& destination)
 {
     if (AddSenderLocatorToManagedChannel)
     {
-        return AddSenderLocatorToManagedChannel(destination);
+        return AddSenderLocatorToManagedChannel(destination, this);
     }
     return false;
 }
