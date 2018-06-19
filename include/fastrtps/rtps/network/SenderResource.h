@@ -17,8 +17,6 @@
 
 #include <functional>
 #include <vector>
-#include <fastrtps/transport/TransportInterface.h>
-#include <fastrtps/transport/ChannelResource.h>
 
 namespace eprosima{
 namespace fastrtps{

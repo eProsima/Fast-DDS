@@ -23,8 +23,7 @@
 #include "../common/Locator.h"
 #include "PropertyPolicy.h"
 #include "../flowcontrol/ThroughputControllerDescriptor.h"
-#include "../../transport/TransportInterface.h"
-
+#include <fastrtps/transport/TransportInterface.h>
 #include <memory>
 
 namespace eprosima {

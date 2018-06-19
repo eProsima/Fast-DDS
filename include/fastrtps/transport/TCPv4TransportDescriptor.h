@@ -15,11 +15,12 @@
 #ifndef TCPV4_TRANSPORT_DESCRIPTOR
 #define TCPV4_TRANSPORT_DESCRIPTOR
 
+#include <fastrtps/transport/TCPTransportInterface.h>
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-class TCPTransportInterface;
 /**
  * Transport configuration
  * @ingroup TRANSPORT_MODULE

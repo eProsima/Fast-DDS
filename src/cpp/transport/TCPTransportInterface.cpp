@@ -16,6 +16,7 @@
 #include <fastrtps/transport/tcp/RTCPMessageManager.h>
 #include <fastrtps/transport/timedevent/CleanTCPSocketsEvent.h>
 #include <utility>
+#include <asio.hpp>
 #include <cstring>
 #include <algorithm>
 #include <fastrtps/log/Log.h>
