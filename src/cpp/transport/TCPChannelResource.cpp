@@ -14,6 +14,7 @@
 
 #include <asio.hpp>
 #include <fastrtps/transport/TCPChannelResource.h>
+#include <fastrtps/rtps/messages/MessageReceiver.h>
 
 namespace eprosima {
 namespace fastrtps {

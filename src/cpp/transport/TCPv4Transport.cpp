@@ -23,9 +23,11 @@
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include "asio.hpp"
 #include <fastrtps/rtps/network/ReceiverResource.h>
+#include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPChannelResource.h>
+#include <fastrtps/rtps/messages/MessageReceiver.h>
 
 using namespace std;
 using namespace asio;
