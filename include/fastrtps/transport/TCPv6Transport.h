@@ -19,6 +19,7 @@
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/transport/tcp/RTCPHeader.h>
+#include <fastrtps/transport/TCPChannelResource.h>
 
 #include <asio.hpp>
 #include <thread>
@@ -33,7 +34,6 @@ namespace rtps{
 class TCPv6Transport;
 class RTCPMessageManager;
 class CleanTCPSocketsEvent;
-class TCPChannelResource;
 
 class TCPv6Acceptor
 {

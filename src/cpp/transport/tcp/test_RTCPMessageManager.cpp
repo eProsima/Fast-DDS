@@ -20,6 +20,7 @@
 
 #include <fastrtps/transport/tcp/test_RTCPMessageManager.h>
 #include <fastrtps/transport/TCPTransportInterface.h>
+#include <fastrtps/transport/TCPChannelResource.h>
 
 using namespace eprosima::fastrtps;
 

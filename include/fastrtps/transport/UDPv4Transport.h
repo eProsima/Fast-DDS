@@ -18,7 +18,7 @@
 #include <asio.hpp>
 
 #include "TransportInterface.h"
-#include "ChannelResource.h"
+#include "UDPChannelResource.h"
 #include "UDPv4TransportDescriptor.h"
 #include "../utils/IPFinder.h"
 

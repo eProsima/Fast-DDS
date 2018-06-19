@@ -33,7 +33,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp)
 
         set(UDPV6TESTS_SOURCE
             UDPv6Tests.cpp
@@ -42,7 +43,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv6Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp)
 
         set(TCPV4TESTS_SOURCE
             TCPv4Tests.cpp
@@ -53,6 +55,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/test_TCPv4Transport.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPv4Transport.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/RTCPMessageManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/test_RTCPMessageManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cxx)
@@ -70,7 +73,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/test_UDPv4Transport.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp)
 
         include_directories(mock/)
 

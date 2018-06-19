@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/transport/TCPv6Transport.h>
 #include <fastrtps/transport/tcp/RTCPMessageManager.h>
 #include <fastrtps/transport/timedevent/CleanTCPSocketsEvent.h>
@@ -24,7 +25,6 @@
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
-#include <fastrtps/transport/ChannelResource.h>
 
 using namespace std;
 using namespace asio;

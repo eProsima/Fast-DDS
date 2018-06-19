@@ -19,7 +19,7 @@
 #include <thread>
 
 #include "TransportInterface.h"
-#include "ChannelResource.h"
+#include "UDPChannelResource.h"
 #include "UDPv6TransportDescriptor.h"
 #include "../utils/IPFinder.h"
 

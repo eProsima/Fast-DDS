@@ -23,7 +23,7 @@
 #include "asio.hpp"
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/utils/eClock.h>
-#include <fastrtps/transport/ChannelResource.h>
+#include <fastrtps/transport/TCPChannelResource.h>
 
 using namespace std;
 using namespace asio;
