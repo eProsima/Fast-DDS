@@ -206,7 +206,7 @@ eprosima_find_thirdparty(Asio asio)
 eprosima_find_thirdparty(TinyXML2 tinyxml2)
 
 if(ANDROID)
-    find_eprosima_thirdparty(android-ifaddrs android-ifaddrs)
+    eprosima_find_thirdparty(android-ifaddrs android-ifaddrs)
 endif()
 
 ###############################################################################
