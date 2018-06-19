@@ -231,7 +231,8 @@ protected:
         eBrokenPipe,
         eAsioError,
         eSystemError,
-        eException
+        eException,
+        eConnectionAborted = 125
     };
 
     TCPv4TransportDescriptor mConfiguration_;
