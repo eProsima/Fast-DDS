@@ -43,7 +43,7 @@ BenchMarkSubscriber::BenchMarkSubscriber()
 {
 }
 
-bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind kind, const std::string& topicName, int domain, int size)
+bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind reliabilityKind, const std::string& topicName, int domain, int size)
 {
 	m_iSize = size;
 
@@ -193,7 +193,7 @@ bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind kind, con
     Rparam.topic.historyQos.depth = 30;
     Rparam.topic.resourceLimitsQos.max_samples = 50;
     Rparam.topic.resourceLimitsQos.allocated_samples = 20;
-    Rparam.qos.m_reliability.kind = kind;
+    Rparam.qos.m_reliability.kind = reliabilityKind;
     //Rparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     //Rparam.setUserDefinedID(3);
@@ -234,7 +234,7 @@ bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind kind, con
     Wparam.topic.resourceLimitsQos.allocated_samples = 1;
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.fraction = 200 * 1000 * 1000;
-    Wparam.qos.m_reliability.kind = kind;
+    Wparam.qos.m_reliability.kind = reliabilityKind;
 	Wparam.qos.m_publishMode.kind = ASYNCHRONOUS_PUBLISH_MODE;
     //Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
     //Wparam.setUserDefinedID(1);

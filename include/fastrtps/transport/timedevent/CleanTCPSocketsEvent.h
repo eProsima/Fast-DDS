@@ -20,6 +20,7 @@
 #ifndef CLEAN_TCP_SOCKETS_EVENT_H_
 #define CLEAN_TCP_SOCKETS_EVENT_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#include <asio.hpp>
 #include "fastrtps/rtps/resources/TimedEvent.h"
 
 

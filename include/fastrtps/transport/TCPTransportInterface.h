@@ -19,7 +19,6 @@
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/transport/tcp/RTCPHeader.h>
 
-#include <asio.hpp>
 #include <thread>
 #include <vector>
 #include <map>

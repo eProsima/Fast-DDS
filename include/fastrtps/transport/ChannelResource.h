@@ -17,7 +17,6 @@
 
 #include <memory>
 #include <map>
-#include <fastrtps/rtps/messages/MessageReceiver.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/log/Log.h>
 

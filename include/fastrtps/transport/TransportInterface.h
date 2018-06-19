@@ -19,7 +19,6 @@
 #include <vector>
 #include <fastrtps/rtps/common/Locator.h>
 #include <fastrtps/rtps/common/Guid.h>
-#include <fastrtps/rtps/network/SenderResource.h>
 
 namespace eprosima{
 namespace fastrtps{
