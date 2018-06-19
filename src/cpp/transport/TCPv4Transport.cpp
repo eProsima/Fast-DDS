@@ -1463,8 +1463,16 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, SenderResource *senderR
         {
             try
             {
-                TCPChannelResource *outputSocket = new TCPChannelResource(pendingConector->m_socket,
-                    locator, true, false, pendingConector->m_msgSize);
+                TCPChannelResource *outputSocket(nullptr);
+                if (pendingConector->m_msgSize != 0)
+                {
+                    outputSocket = new TCPChannelResource(pendingConector->m_socket,
+                        locator, true, false, pendingConector->m_msgSize);
+                }
+                else
+                {
+                    outputSocket = new TCPChannelResource(pendingConector->m_socket, locator, true, false);
+                }
 
                 // Create one message receiver for each registered receiver resources.
                 RegisterReceiverResources(outputSocket, locator);
