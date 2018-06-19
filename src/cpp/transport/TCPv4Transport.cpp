@@ -1391,7 +1391,6 @@ void TCPv4Transport::SocketAccepted(TCPv4Acceptor* acceptor, const asio::error_c
     }
     else
     {
-        std::cout << "ERROR: " << error.message() << std::endl;
         logInfo(RTCP, " Accepting connection failed (error: " << error.message() << ")");
     }
 
