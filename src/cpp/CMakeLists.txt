@@ -209,7 +209,6 @@ add_definitions(
 
 if(ANDROID)
   add_definitions(
-    -DASIO_DISABLE_MOVE
     -DASIO_DISABLE_STD_STRING_VIEW
   )
 endif()
