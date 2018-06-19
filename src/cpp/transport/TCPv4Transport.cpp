@@ -483,22 +483,17 @@ bool TCPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource*
     bool success = false;
     if (IsLocatorSupported(locator))
     {
-        std::cout << "OpenOutputChannel (" << locator << "): ";
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         if (!IsTCPInputSocket(locator))
         {
-            std::cout << "Output ";
             if (!IsOutputChannelConnected(locator))
             {
-                std::cout << "Disconnected ";
                 if (!IsOutputChannelOpen(locator))
                 {
-                    std::cout << "Closed... OPEN " << std::endl;
                     success = OpenOutputSockets(locator, senderResource, msgSize);
                 }
                 else
                 {
-                    std::cout << "Open... BIND " << std::endl;
                     BindOutputChannel(locator, senderResource);
                     EnqueueLogicalOutputPort(locator);
                     success = true;
@@ -506,23 +501,16 @@ bool TCPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource*
             }
             else
             {
-                std::cout << "Connected ";
                 if (!IsOutputChannelBound(locator))
                 {
-                    std::cout << "Not bound... BIND " << std::endl;
                     BindOutputChannel(locator, senderResource);
                     EnqueueLogicalOutputPort(locator);
-                }
-                else
-                {
-                    std::cout << "Bound... DO NOTHING " << std::endl;
                 }
                 success = true;
             }
         }
         else
         {
-            std::cout << "Input " << std::endl;
             if (mBoundOutputSockets.find(locator) == mBoundOutputSockets.end())
             {
                 if (std::find(mPendingOutputPorts[locator].begin(), mPendingOutputPorts[locator].end(),
@@ -553,7 +541,6 @@ bool TCPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource*
 
 bool TCPv4Transport::OpenExtraOutputChannel(const Locator_t& locator, SenderResource* senderResource, uint32_t msgSize)
 {
-    std::cout << "OpenExtraOutputChannel " << this << ":" << locator << std::endl;
     return OpenOutputChannel(locator, senderResource, msgSize);
     //return true;
 }
@@ -1365,11 +1352,10 @@ void TCPv4Transport::RegisterReceiverResources(TCPChannelResource* pChannelResou
 #ifdef ASIO_HAS_MOVE
 void TCPv4Transport::SocketAccepted(TCPv4Acceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket socket)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-
-    if (mSocketAcceptors.find(acceptor->mLocator.get_physical_port()) != mSocketAcceptors.end())
+    if (!error.value())
     {
-        if (!error.value())
+        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        if (mSocketAcceptors.find(acceptor->mLocator.get_physical_port()) != mSocketAcceptors.end())
         {
             // Store the new connection.
             eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(std::move(socket));
@@ -1399,22 +1385,34 @@ void TCPv4Transport::SocketAccepted(TCPv4Acceptor* acceptor, const asio::error_c
         }
         else
         {
-            logInfo(RTCP, " Accepting connection failed (error: " << error.message() << ")");
+            logError(RTPC, "Incomming connection from unknown Acceptor: " << acceptor->mLocator.get_physical_port());
+            return;
         }
+    }
+    else
+    {
+        std::cout << "ERROR: " << error.message() << std::endl;
+        logInfo(RTCP, " Accepting connection failed (error: " << error.message() << ")");
+    }
 
-        // Accept new connections for the same port.
-        mSocketAcceptors.at(acceptor->mLocator.get_physical_port())->Accept(this, mService);
+    if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
+    {
+        // Accept new connections for the same port. Could be not found when exiting.
+        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        if (mSocketAcceptors.find(acceptor->mLocator.get_physical_port()) != mSocketAcceptors.end())
+        {
+            mSocketAcceptors.at(acceptor->mLocator.get_physical_port())->Accept(this, mService);
+        }
     }
 }
 #else
 
 void TCPv4Transport::SocketAccepted(TCPv4Acceptor* acceptor, const asio::error_code& error)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-
-    if (mSocketAcceptors.find(acceptor->mLocator.get_physical_port()) != mSocketAcceptors.end())
+    if (!error.value())
     {
-        if (!error.value())
+        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        if (mSocketAcceptors.find(acceptor->mLocator.get_physical_port()) != mSocketAcceptors.end())
         {
             // Store the new connection and release the pointer to the acceptor to create a new one for the next waiting.
             eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(acceptor->mSocket);
@@ -1446,11 +1444,23 @@ void TCPv4Transport::SocketAccepted(TCPv4Acceptor* acceptor, const asio::error_c
         }
         else
         {
-            logInfo(RTCP, " Accepting connection failed (error: " << error.message() << ")");
+            logError(RTPC, "Incomming connection from unknown Acceptor: " << acceptor->mLocator.get_physical_port());
+            return;
         }
+    }
+    else
+    {
+        logInfo(RTCP, " Accepting connection failed (error: " << error.message() << ")");
+    }
 
-        // Accept new connections for the same port.
-        mSocketAcceptors.at(acceptor->mLocator.get_physical_port())->Accept(this, mService);
+    if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
+    {
+        // Accept new connections for the same port. Could be not found when exiting.
+        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        if (mSocketAcceptors.find(acceptor->mLocator.get_physical_port()) != mSocketAcceptors.end())
+        {
+            mSocketAcceptors.at(acceptor->mLocator.get_physical_port())->Accept(this, mService);
+        }
     }
 }
 #endif
@@ -1498,7 +1508,6 @@ void TCPv4Transport::SocketConnected(Locator_t& locator, SenderResource *senderR
                 mRTCPMessageManager->sendConnectionRequest(outputSocket, mConfiguration_.metadata_logical_port);
                 if (senderResource != nullptr)
                 {
-                    std::cout << "AssociateSenderToSocket" << std::endl;
                     AssociateSenderToSocket(outputSocket, senderResource);
                 }
             }
@@ -1641,11 +1650,13 @@ void TCPv4Transport::ReleaseTCPSocket(TCPChannelResource *pChannelResource, bool
             auto it = mSocketToSenders.find(pChannelResource);
             if (it != mSocketToSenders.end())
             {
+                /*
                 auto& senders = mSocketToSenders.at(pChannelResource);
                 for (auto& sender : senders)
                 {
                     sender->SetChannelResource(nullptr);
                 }
+                */
                 mSocketToSenders.erase(it);
             }
 
@@ -1679,7 +1690,7 @@ void TCPv4Transport::AssociateSenderToSocket(TCPChannelResource *socket, SenderR
         it->second.emplace_back(sender);
     }
 
-    sender->SetChannelResource(socket);
+    //sender->SetChannelResource(socket);
 }
 
 } // namespace rtps

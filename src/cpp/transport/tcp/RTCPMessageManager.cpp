@@ -669,9 +669,9 @@ bool RTCPMessageManager::processRTCPMessage(TCPChannelResource *pChannelResource
         logInfo(RTCP_SEQ, "Receive [BIND_CONNECTION_RESPONSE] Seq: " << controlHeader.transactionId);
         ResponseCode respCode;
         BindConnectionResponse_t response;
-        SerializedPayload_t payload(static_cast<uint32_t>(dataSize - 4));
+        SerializedPayload_t payload(static_cast<uint32_t>(dataSize));
         memcpy(&respCode, &(receiveBuffer[TCPControlMsgHeader::getSize()]), 4); // uint32_t
-        readSerializedPayload(payload, &(receiveBuffer[TCPControlMsgHeader::getSize() + 4]), dataSize - 4);
+        readSerializedPayload(payload, &(receiveBuffer[TCPControlMsgHeader::getSize() + 4]), dataSize);
         response.deserialize(&payload);
 
         logInfo(RTCP_MSG, "Receive [BIND_CONNECTION_RESPONSE] LogicalPort: " << response.locator().get_logical_port()
@@ -719,9 +719,9 @@ bool RTCPMessageManager::processRTCPMessage(TCPChannelResource *pChannelResource
         logInfo(RTCP_SEQ, "Receive [CHECK_LOGICAL_PORT_RESPONSE] Seq: " << controlHeader.transactionId);
         ResponseCode respCode;
         CheckLogicalPortsResponse_t response;
-        SerializedPayload_t payload(static_cast<uint32_t>(dataSize - 4));
+        SerializedPayload_t payload(static_cast<uint32_t>(dataSize));
         memcpy(&respCode, &(receiveBuffer[TCPControlMsgHeader::getSize()]), 4); // uint32_t
-        readSerializedPayload(payload, &(receiveBuffer[TCPControlMsgHeader::getSize() + 4]), dataSize - 4);
+        readSerializedPayload(payload, &(receiveBuffer[TCPControlMsgHeader::getSize() + 4]), dataSize);
         response.deserialize(&payload);
         logInfo(RTCP_MSG, "Receive [CHECK_LOGICAL_PORT_RESPONSE]");
         processCheckLogicalPortsResponse(pChannelResource, response, controlHeader.transactionId);
