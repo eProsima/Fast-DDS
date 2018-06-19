@@ -20,7 +20,8 @@ namespace fastrtps {
 namespace rtps {
 
 ChannelResource::ChannelResource()
-    : mAlive(true)
+    : m_rec_msg()
+    , mAlive(true)
     , mThread(nullptr)
 {
     logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
@@ -109,7 +110,8 @@ UDPChannelResource::~UDPChannelResource()
 }
 
 TCPChannelResource::TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket)
-    : mLocator(locator)
+    : ChannelResource()
+    , mLocator(locator)
     , m_inputSocket(inputSocket)
     , mWaitingForKeepAlive(false)
     , mPendingLogicalPort(0)
