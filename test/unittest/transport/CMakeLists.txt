@@ -60,17 +60,17 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/test_RTCPMessageManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cxx)
 
-            set(TCPV6TESTS_SOURCE
-                TCPv6Tests.cpp
-                mock/MockReceiverResource.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPv6Transport.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResource.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/RTCPMessageManager.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cxx)
+        set(TCPV6TESTS_SOURCE
+            TCPv6Tests.cpp
+            mock/MockReceiverResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPv6Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/RTCPMessageManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cxx)
 
         set(TEST_UDPV4TESTS_SOURCE
             test_UDPv4Tests.cpp
