@@ -16,7 +16,7 @@
 #define XML_PARSER_H_
 
 #include "stdio.h"
-#include <fastrtps/transport/TransportDescriptor.h>
+#include <fastrtps/transport/TransportDescriptorInterface.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>

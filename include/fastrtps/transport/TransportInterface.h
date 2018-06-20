@@ -19,7 +19,7 @@
 #include <vector>
 #include <fastrtps/rtps/common/Locator.h>
 #include <fastrtps/rtps/common/Guid.h>
-#include <fastrtps/transport/TransportDescriptor.h>
+#include <fastrtps/transport/TransportDescriptorInterface.h>
 
 namespace eprosima{
 namespace fastrtps{

@@ -24,8 +24,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 )
         endif()
 
-        include_directories(${ASIO_INCLUDE_DIR})
-
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profiles.xml
             ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles.xml
             COPYONLY)
@@ -62,9 +60,16 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(XMLProfileParserTests ${XMLPROFILEPARSER_SOURCE})
         target_compile_definitions(XMLProfileParserTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(XMLProfileParserTests PRIVATE ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
-        target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES} fastrtps fastcdr)
+        target_include_directories(XMLProfileParserTests PRIVATE 
+            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)	
+
+        target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES})
         if(TINYXML2_LIBRARY)
             target_link_libraries(XMLProfileParserTests ${PRIVACY}
                 ${TINYXML2_LIBRARY}
@@ -100,11 +105,16 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_executable(XMLParserTests ${XMLPARSER_SOURCE})
         target_compile_definitions(XMLParserTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(XMLParserTests PRIVATE
-            ${GTEST_INCLUDE_DIRS}
+            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_BINARY_DIR}/include
             )
-        target_link_libraries(XMLParserTests ${GTEST_LIBRARIES} fastrtps fastcdr)
+        target_link_libraries(XMLParserTests ${GTEST_LIBRARIES} )
         if(TINYXML2_LIBRARY)
             target_link_libraries(XMLParserTests ${PRIVACY}
                 ${TINYXML2_LIBRARY}

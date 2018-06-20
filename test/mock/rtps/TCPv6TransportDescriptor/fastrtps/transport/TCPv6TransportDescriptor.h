@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef UDPV6_TRANSPORT_DESCRIPTOR
-#define UDPV6_TRANSPORT_DESCRIPTOR
+#ifndef TCPV6_TRANSPORT_DESCRIPTOR
+#define TCPV6_TRANSPORT_DESCRIPTOR
 
-#include <fastrtps/transport/TransportDescriptorInterface.h>
+#include <fastrtps/transport/TCPTransportDescriptor.h>
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-class TransportInterface;
+class TCPTransportInterface;
 
 /**
  * Transport configuration
@@ -33,18 +33,23 @@ class TransportInterface;
  * - interfaceWhiteList: Lists the allowed interfaces.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPv6TransportDescriptor : public TransportDescriptorInterface
+typedef struct TCPv6TransportDescriptor: public TCPTransportDescriptor
 {
-    virtual ~UDPv6TransportDescriptor() {}
+    virtual ~TCPv6TransportDescriptor(){}
 
-    virtual TransportInterface* create_transport() const override;
+    virtual TransportInterface* create_transport() const override {	return nullptr;	}
 
-    RTPS_DllAPI UDPv6TransportDescriptor();
+    RTPS_DllAPI TCPv6TransportDescriptor()
+    {
 
-    RTPS_DllAPI UDPv6TransportDescriptor(const UDPv6TransportDescriptor& t);
+    }
 
-    uint16_t m_output_upd_socket;
-} UDPv6TransportDescriptor;
+    RTPS_DllAPI TCPv6TransportDescriptor(const TCPv6TransportDescriptor& /*t*/)
+    {
+
+    }
+
+} TCPv6TransportDescriptor;
 
 } // namespace rtps
 } // namespace fastrtps

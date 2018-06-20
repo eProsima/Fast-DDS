@@ -48,9 +48,18 @@ typedef struct TCPTransportDescriptor : public TransportDescriptorInterface {
         metadata_logical_port = port;
     }
 
-    RTPS_DllAPI TCPTransportDescriptor();
+    RTPS_DllAPI TCPTransportDescriptor()
+    : TransportDescriptorInterface(65550)
+    {
 
-    RTPS_DllAPI TCPTransportDescriptor(const TCPTransportDescriptor& t);
+    }
+
+    RTPS_DllAPI TCPTransportDescriptor(const TCPTransportDescriptor& /*t*/)
+    : TransportDescriptorInterface(65550)
+    {
+
+    }
+    
 } TCPTransportDescriptor;
 
 } // namespace rtps
