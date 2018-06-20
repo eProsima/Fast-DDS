@@ -21,6 +21,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
+            set(LINK_LIB fastrtps_static fastcdr IPHLPAPI shlwapi)
+        else()
+        set(LINK_LIB fastrtps fastcdr)
         endif()
 
         include_directories(${ASIO_INCLUDE_DIR})
@@ -38,12 +41,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
         target_link_libraries(NetworkFactoryTests ${GTEST_LIBRARIES} ${MOCKS} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
-        target_link_libraries(NetworkFactoryTests fastrtps_static fastcdr) # Later so mocks have precedence
+        target_link_libraries(NetworkFactoryTests ${LINK_LIB}) # Later so mocks have precedence
         add_gtest(NetworkFactoryTests SOURCES ${NETWORKFACTORYTESTS_SOURCE})
-
-        if(WIN32)
-            target_link_libraries(NetworkFactoryTests IPHLPAPI shlwapi)
-        endif()        
 
     endif()
 endif()
