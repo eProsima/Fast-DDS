@@ -483,8 +483,7 @@ void UDPv6Transport::performListenOperation(UDPChannelResource* pChannelResource
             continue;
 
         // Processes the data through the CDR Message interface.
-        pChannelResource->GetMessageReceiver()->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix, &input_locator,
-            &msg);
+        pChannelResource->GetMessageReceiver()->processCDRMsg(rtpsParticipantGuidPrefix, &input_locator, &msg);
     }
 }
 
@@ -543,7 +542,7 @@ Locator_t UDPv6Transport::RemoteToMainLocal(const Locator_t& remote) const
 //! Sets the ID of the participant that has created the transport.
 void UDPv6Transport::SetParticipantGUIDPrefix(const GuidPrefix_t& prefix)
 {
-    mConfiguration_.rtpsParticipantGuidPrefix = prefix;
+    rtpsParticipantGuidPrefix = prefix;
 }
 
 bool UDPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)

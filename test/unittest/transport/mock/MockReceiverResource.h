@@ -39,7 +39,7 @@ class MockMessageReceiver : public MessageReceiver
 public:
     MockMessageReceiver() : MessageReceiver(nullptr, nullptr) {}
     void processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix, Locator_t* loc, CDRMessage_t*msg) override;
-    void setCallback(std::function<void()> callback);
+    void setCallback(std::function<void()> cb);
     octet* data;
     std::function<void()> callback;
 };

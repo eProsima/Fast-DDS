@@ -19,6 +19,7 @@
 #include <vector>
 #include <fastrtps/rtps/common/Locator.h>
 #include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/transport/TransportDescriptor.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -26,7 +27,6 @@ namespace rtps{
 
 static const uint32_t s_maximumMessageSize = 65500;
 static const uint32_t s_minimumSocketBuffer = 65536;
-static const uint8_t s_defaultTTL = 1;
 
 struct TransportDescriptorInterface;
 class ReceiverResource;
@@ -128,41 +128,9 @@ public:
    virtual TransportDescriptorInterface* get_configuration() = 0;
 
    virtual void AddDefaultOutputLocator(LocatorList_t &defaultList) = 0;
-};
 
-/**
- * Virtual base class for the data type used to define transport configuration.
- * @ingroup RTPS_MODULE
- * */
-struct TransportDescriptorInterface
-{
-    TransportDescriptorInterface(uint32_t maximumMessageSize) : maxMessageSize(maximumMessageSize)
-        , sendBufferSize(0)
-        , receiveBufferSize(0)
-        , TTL(s_defaultTTL)
-    {}
+protected:
 
-    TransportDescriptorInterface(const TransportDescriptorInterface& t) : maxMessageSize(t.maxMessageSize)
-        , sendBufferSize(t.sendBufferSize)
-        , receiveBufferSize(t.receiveBufferSize)
-        , TTL(t.TTL)
-        , rtpsParticipantGuidPrefix(t.rtpsParticipantGuidPrefix)
-    {}
-
-    virtual ~TransportDescriptorInterface(){}
-
-    virtual TransportInterface* create_transport() const = 0;
-
-    uint32_t maxMessageSize;
-
-    //! Length of the send buffer.
-    uint32_t sendBufferSize;
-    //! Length of the receive buffer.
-    uint32_t receiveBufferSize;
-    //! Allowed interfaces in an IP string format.
-    std::vector<std::string> interfaceWhiteList;
-    //! Specified time to live (8bit - 255 max TTL)
-    uint8_t TTL;
     //! Participant GUID prefix.
     GuidPrefix_t rtpsParticipantGuidPrefix;
 };

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/transport/test_TCPv4Transport.h>
+#include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/transport/tcp/test_RTCPMessageManager.h>
 #include <fastrtps/transport/TCPChannelResource.h>
 #include <cstdlib>
@@ -22,11 +23,6 @@ using namespace std;
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
-
-vector<vector<octet> > test_TCPv4Transport::DropLog;
-uint32_t test_TCPv4Transport::DropLogLength = 0;
-bool test_TCPv4Transport::ShutdownAllNetwork = false;
-bool test_TCPv4Transport::CloseSocketConnection = false;
 
 test_TCPv4Transport::test_TCPv4Transport(const test_TCPv4TransportDescriptor& descriptor)
     : TCPv4Transport(descriptor)
@@ -42,8 +38,8 @@ test_TCPv4Transport::test_TCPv4Transport(const test_TCPv4TransportDescriptor& de
     , mSequenceNumberDataMessagesToDrop(descriptor.sequenceNumberDataMessagesToDrop)
     , mPercentageOfMessagesToDrop(descriptor.percentageOfMessagesToDrop)
     {
-        DropLog.clear();
-        DropLogLength = descriptor.dropLogLength;
+        test_TCPv4Transport_DropLog.clear();
+        test_TCPv4Transport_DropLogLength = descriptor.dropLogLength;
         srand(static_cast<unsigned>(time(NULL)));
 
         mRTCPMessageManager = new test_RTCPMessageManager(this);
@@ -52,7 +48,7 @@ test_TCPv4Transport::test_TCPv4Transport(const test_TCPv4TransportDescriptor& de
         pMgr->SetLogicalPortsBlocked(descriptor.logicalPortsBlocked);
     }
 
-RTPS_DllAPI test_TCPv4TransportDescriptor::test_TCPv4TransportDescriptor()
+test_TCPv4TransportDescriptor::test_TCPv4TransportDescriptor()
     : TCPv4TransportDescriptor()
     , invalidCRCsPercentage(0)
     , mCloseSocketOnSendPercentage(0)
@@ -86,9 +82,9 @@ bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
         }
         else
         {
-            if (CloseSocketConnection)
+            if (test_TCPv4Transport_CloseSocketConnection)
             {
-                CloseSocketConnection = false;
+                test_TCPv4Transport_CloseSocketConnection = false;
                 CloseOutputChannel(localLocator);
                 return true;
             }
@@ -131,9 +127,9 @@ bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
         }
         else
         {
-            if (CloseSocketConnection)
+            if (test_TCPv4Transport_CloseSocketConnection)
             {
-                CloseSocketConnection = false;
+                test_TCPv4Transport_CloseSocketConnection = false;
                 pChannelResource->Disable();
                 CloseOutputChannel(localLocator);
                 return true;
@@ -196,7 +192,7 @@ static bool ReadSubmessageHeader(CDRMessage_t& msg, SubmessageHeader_t& smh)
 
 bool test_TCPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sendBufferSize)
 {
-    if(test_TCPv4Transport::ShutdownAllNetwork)
+    if(test_TCPv4Transport_ShutdownAllNetwork)
     {
         return true;
     }
@@ -295,11 +291,11 @@ bool test_TCPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sen
 
 bool test_TCPv4Transport::LogDrop(const octet* buffer, uint32_t size)
 {
-    if (DropLog.size() < DropLogLength)
+    if (test_TCPv4Transport_DropLog.size() < test_TCPv4Transport_DropLogLength)
     {
         vector<octet> message;
         message.assign(buffer, buffer + size);
-        DropLog.push_back(message);
+        test_TCPv4Transport_DropLog.push_back(message);
         return true;
     }
 

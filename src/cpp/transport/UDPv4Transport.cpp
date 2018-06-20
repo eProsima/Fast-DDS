@@ -479,7 +479,7 @@ void UDPv4Transport::performListenOperation(UDPChannelResource* pChannelResource
         MessageReceiver* receiver = pChannelResource->GetMessageReceiver();
         if (receiver != nullptr)
         {
-            receiver->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix, &input_locator, &msg);
+            receiver->processCDRMsg(rtpsParticipantGuidPrefix, &input_locator, &msg);
         }
         else
         {
@@ -507,6 +507,11 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindUnicastOutputSocket(const ip::addre
     }
 
     return socket;
+}
+
+void UDPv4Transport::SetParticipantGUIDPrefix(const GuidPrefix_t& prefix)
+{
+    rtpsParticipantGuidPrefix = prefix;
 }
 
 eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(uint16_t port, bool is_multicast)

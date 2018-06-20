@@ -253,7 +253,7 @@ bool IPFinder::getIP6Address(LocatorList_t* locators)
     return false;
 }
 
-RTPS_DllAPI bool IPFinder::parseIP4(info_IP& info)
+bool IPFinder::parseIP4(info_IP& info)
 {
     info.locator.kind = 1;
     info.locator.set_port(0);
@@ -264,7 +264,7 @@ RTPS_DllAPI bool IPFinder::parseIP4(info_IP& info)
     }
     return true;
 }
-RTPS_DllAPI bool IPFinder::parseIP6(info_IP& info)
+bool IPFinder::parseIP6(info_IP& info)
 {
     info.locator.kind = LOCATOR_KIND_UDPv6;
     info.locator.set_port(0);
