@@ -63,7 +63,7 @@ public:
    * Reports whether this resource supports the given local locator (i.e., said locator
    * maps to the transport channel managed by this resource).
    */
-   bool SupportsLocator(const Locator_t& localLocator) {  return true;}
+   bool SupportsLocator(const Locator_t&) {  return true;}
 
    /**
     * Aborts a blocking receive (thread safe).
@@ -80,9 +80,9 @@ public:
    virtual MessageReceiver* CreateMessageReceiver(){ return nullptr;}
 
    // Functions to associate/remove associatedendpoints
-   void associateEndpoint(Endpoint *to_add){}
-   void removeEndpoint(Endpoint *to_remove){}
-   bool checkReaders(EntityId_t readerID){}
+   void associateEndpoint(Endpoint *){}
+   void removeEndpoint(Endpoint *){}
+   bool checkReaders(EntityId_t ){ return false; }
    //void processDataMsg(EntityId_t readerID, CacheChange_t* ch){}
 
    //void processDataFragMsg(EntityId_t readerID, CacheChange_t *incomingChange, uint32_t sampleSize,
@@ -101,7 +101,7 @@ public:
    //    const SequenceNumberSet_t& snSet, bool finalFlag){}
 
 protected:
-   ReceiverResource(RTPSParticipantImpl*, TransportInterface&, const Locator_t&, uint32_t maxMsgSize){}
+   ReceiverResource(RTPSParticipantImpl*, TransportInterface&, const Locator_t&, uint32_t ){}
    ReceiverResource() {}
    std::function<void()> Cleanup;
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
