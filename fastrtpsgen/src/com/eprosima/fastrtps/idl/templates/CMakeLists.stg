@@ -34,7 +34,7 @@ $solution.projects : {$pub_sub_execs(project=it, libraries=solution.libraries)$}
 pub_sub_execs(project, libraries) ::= <<
 
 message(STATUS "Configuring $project.name$...")
-add_executable($project.name$ $project.projectSrcFiles : {$it$}; separator=" "$)
+add_executable($project.name$ $project.commonSrcFiles : {$it$}; separator=" "$ $project.projectSrcFiles : {$it$}; separator=" "$)
 target_link_libraries($project.name$ $solution.libraries : {$it$}; separator=" "$)
 
 >>
