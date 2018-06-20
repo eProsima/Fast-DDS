@@ -14,7 +14,7 @@
 
 macro(eprosima_find_package package)
 
-    if(NOT ${package}_FOUND AND NOT (EPROSIMA_INSTALLER AND (MSVC OR MSVC_IDE)))
+    if(NOT ${package}_FOUND)
 
         # Parse arguments.
         set(options REQUIRED)
@@ -29,7 +29,10 @@ macro(eprosima_find_package package)
 
         option(THIRDPARTY_${package} "Activate the use of internal thirdparty ${package}" OFF)
 
-        find_package(${package} QUIET)
+        if(NOT EPROSIMA_INSTALLER)
+            find_package(${package} QUIET)
+        endif()
+
         if(NOT ${package}_FOUND AND (THIRDPARTY OR THIRDPARTY_${package}))
             set(SUBDIRECTORY_EXIST TRUE)
             if(THIRDPARTY_UPDATE OR NOT EXISTS "${PROJECT_SOURCE_DIR}/thirdparty/${package}/CMakeLists.txt")
