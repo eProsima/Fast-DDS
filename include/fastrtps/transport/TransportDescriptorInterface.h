@@ -19,6 +19,7 @@
 #include <cstdint>
 #endif
 #include <vector>
+#include <string>
 
 namespace eprosima{
 namespace fastrtps{

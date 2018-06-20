@@ -21,6 +21,9 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+static uint32_t test_UDPv4Transport_DropLogLength;
+bool test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork;
+
 test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor):
     mDropDataMessagesPercentage(descriptor.dropDataMessagesPercentage),
     mDropParticipantBuiltinTopicData(descriptor.dropParticipantBuiltinTopicData),

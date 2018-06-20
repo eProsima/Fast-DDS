@@ -48,16 +48,16 @@ using namespace eprosima::fastrtps::rtps;
 
 class test_UDPv4Tests: public ::testing::Test
 {
-   public:
-   test_UDPv4Tests()
-   {
-      HELPER_SetDescriptorDefaults();
-   }
+    public:
+    test_UDPv4Tests()
+    {
+        HELPER_SetDescriptorDefaults();
+    }
 
-   ~test_UDPv4Tests()
-   {
-      Log::KillThread();
-   }
+    ~test_UDPv4Tests()
+    {
+        Log::KillThread();
+    }
 
    void HELPER_SetDescriptorDefaults();
    void HELPER_WarmUpOutput(test_UDPv4Transport& transport);
