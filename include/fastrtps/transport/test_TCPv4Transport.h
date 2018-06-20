@@ -26,6 +26,11 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+// Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
+static std::vector<std::vector<octet> > test_TCPv4Transport_DropLog;
+static uint32_t test_TCPv4Transport_DropLogLength;
+static bool test_TCPv4Transport_ShutdownAllNetwork;
+static bool test_TCPv4Transport_CloseSocketConnection;
 /*
  * This transport acts as a shim over TCPv4, allowing
  * packets to be dropped under certain criteria.
@@ -39,12 +44,6 @@ public:
 
    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
                         const Locator_t& remoteLocator, ChannelResource* pChannelResource) override;
-
-   // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
-   RTPS_DllAPI static std::vector<std::vector<octet> > DropLog;
-   RTPS_DllAPI static uint32_t DropLogLength;
-   RTPS_DllAPI static bool ShutdownAllNetwork;
-   RTPS_DllAPI static bool CloseSocketConnection;
 
 protected:
     void CalculateCRC(TCPHeader &header, const octet *data, uint32_t size);

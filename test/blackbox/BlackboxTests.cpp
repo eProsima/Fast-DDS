@@ -1140,7 +1140,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
     reader.block_for_all();
 
     // Sanity check. Make sure we have dropped a few packets
-    ASSERT_EQ(test_UDPv4Transport::DropLog.size(), testTransport->dropLogLength);
+    ASSERT_EQ(test_UDPv4Transport_DropLog.size(), testTransport->dropLogLength);
 }
 
 BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
@@ -1734,7 +1734,7 @@ BLACKBOXTEST(BlackBox, PubSubOutLocatorSelection){
         resource_limits_allocated_samples(20).
         resource_limits_max_samples(20).init();
         //outLocatorList(WriterOutLocators). //ARCE:
-        
+
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -2126,11 +2126,11 @@ BLACKBOXTEST(BlackBox, EndpointRediscovery)
     // Wait heartbeat period of builtin endpoints
     std::this_thread::sleep_for(std::chrono::seconds(4));
 
-    test_UDPv4Transport::ShutdownAllNetwork = true;
+    test_UDPv4Transport_ShutdownAllNetwork = true;
 
     writer.wait_reader_undiscovery();
 
-    test_UDPv4Transport::ShutdownAllNetwork = false;
+    test_UDPv4Transport_ShutdownAllNetwork = false;
 
     writer.waitDiscovery();
 }

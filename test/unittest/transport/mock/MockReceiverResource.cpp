@@ -18,8 +18,8 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-MockReceiverResource::MockReceiverResource(TransportInterface& transport, const Locator_t& locator) 
-        : msg_receiver(nullptr) 
+MockReceiverResource::MockReceiverResource(TransportInterface& transport, const Locator_t& locator)
+        : msg_receiver(nullptr)
 {
     m_participant = nullptr;
     m_maxMsgSize = 0x8FFF;
@@ -46,9 +46,9 @@ MessageReceiver* MockReceiverResource::CreateMessageReceiver()
     return msg_receiver;
 }
 
-void MockMessageReceiver::setCallback(std::function<void()> callback)
+void MockMessageReceiver::setCallback(std::function<void()> cb)
 {
-    this->callback = callback;
+    this->callback = cb;
 }
 
 void MockMessageReceiver::processCDRMsg(const GuidPrefix_t&, Locator_t*, CDRMessage_t*msg)

@@ -895,8 +895,7 @@ void TCPv6Transport::performListenOperation(TCPChannelResource *pChannelResource
         MessageReceiver* receiver = pChannelResource->GetMessageReceiver(logicalPort);
         if (receiver != nullptr)
         {
-            receiver->processCDRMsg(mConfiguration_.rtpsParticipantGuidPrefix,
-                &pChannelResource->mLocator, &msg);
+            receiver->processCDRMsg(rtpsParticipantGuidPrefix, &pChannelResource->mLocator, &msg);
         }
         else
         {
@@ -949,7 +948,7 @@ Locator_t TCPv6Transport::RemoteToMainLocal(const Locator_t& remote) const
 
 void TCPv6Transport::SetParticipantGUIDPrefix(const GuidPrefix_t& prefix)
 {
-    mConfiguration_.rtpsParticipantGuidPrefix = prefix;
+    rtpsParticipantGuidPrefix = prefix;
 }
 
 bool TCPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,

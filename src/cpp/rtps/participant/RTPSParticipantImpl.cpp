@@ -62,7 +62,7 @@ namespace rtps {
 
 static EntityId_t TrustedWriter(const EntityId_t& reader)
 {
-    return 
+    return
         (reader == c_EntityId_SPDPReader) ? c_EntityId_SPDPWriter :
         (reader == c_EntityId_SEDPPubReader) ? c_EntityId_SEDPPubWriter :
         (reader == c_EntityId_SEDPSubReader) ? c_EntityId_SEDPSubWriter :
@@ -112,8 +112,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         UDPv4TransportDescriptor descriptor;
         descriptor.sendBufferSize = m_att.sendSocketBufferSize;
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
-        descriptor.rtpsParticipantGuidPrefix = m_guid.guidPrefix;
-        m_network_Factory.RegisterTransport(&descriptor);
+        m_network_Factory.RegisterTransport(&descriptor, m_guid.guidPrefix);
     }
 
     // User defined transports
@@ -575,7 +574,7 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut, ReaderAttributes&
     GUID_t guid(m_guid.guidPrefix,entId);
     if (param.endpoint.reliabilityKind == BEST_EFFORT)
     {
-        SReader = (persistence == nullptr) ? 
+        SReader = (persistence == nullptr) ?
             (RTPSReader*) new StatelessReader(this, guid, param, hist, listen) :
             (RTPSReader*) new StatelessPersistentReader(this, guid, param, hist, listen, persistence);
     }
@@ -1181,7 +1180,7 @@ IPersistenceService* RTPSParticipantImpl::get_persistence_service(const Endpoint
     IPersistenceService* ret_val;
 
     ret_val = PersistenceFactory::create_persistence_service(param.properties);
-    return ret_val != nullptr ? 
+    return ret_val != nullptr ?
         ret_val :
         PersistenceFactory::create_persistence_service(m_att.properties);
 }
