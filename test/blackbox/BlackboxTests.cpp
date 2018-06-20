@@ -1136,7 +1136,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
     reader.block_for_all();
 
     // Sanity check. Make sure we have dropped a few packets
-    ASSERT_EQ(test_UDPv4Transport_DropLog.size(), testTransport->dropLogLength);
+    ASSERT_EQ(eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_DropLog.size(), testTransport->dropLogLength);
 }
 
 BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
