@@ -27,10 +27,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(NETWORKFACTORYTESTS_SOURCE
             NetworkFactoryTests.cpp
-            mock/MockTransport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/ReceiverResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/SenderResource.cpp)
+            mock/MockTransport.cpp)
 
         include_directories(mock/)
 
@@ -41,7 +38,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
         target_link_libraries(NetworkFactoryTests ${GTEST_LIBRARIES} ${MOCKS} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
-        target_link_libraries(NetworkFactoryTests fastrtps fastcdr) # Later so mocks have precedence
+        target_link_libraries(NetworkFactoryTests fastrtps_static fastcdr) # Later so mocks have precedence
         add_gtest(NetworkFactoryTests SOURCES ${NETWORKFACTORYTESTS_SOURCE})
+
+        if(WIN32)
+            target_link_libraries(NetworkFactoryTests IPHLPAPI shlwapi)
+        endif()        
+
     endif()
 endif()
