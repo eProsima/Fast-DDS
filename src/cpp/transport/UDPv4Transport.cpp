@@ -259,15 +259,15 @@ bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
         socket->getSocket()->cancel();
         socket->getSocket()->close();
 
-        auto it = mSocketToSenders.find(socket);
-        if (it != mSocketToSenders.end())
-        {
-            auto& senders = mSocketToSenders.at(socket);
-            for (auto& sender : senders)
-            {
-                sender->SetChannelResource(nullptr);
-            }
-        }
+        //auto it = mSocketToSenders.find(socket);
+        //if (it != mSocketToSenders.end())
+        //{
+        //    auto& senders = mSocketToSenders.at(socket);
+        //    for (auto& sender : senders)
+        //    {
+        //        sender->SetChannelResource(nullptr);
+        //    }
+        //}
 
         delete socket;
     }
@@ -419,15 +419,15 @@ bool UDPv4Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderRe
             auto& sockets = mOutputSockets.at(locator.get_physical_port());
             for (auto& socket : sockets)
             {
-                auto it = mSocketToSenders.find(socket);
-                if (it != mSocketToSenders.end())
-                {
-                    auto& senders = mSocketToSenders.at(socket);
-                    for (auto& sender : senders)
-                    {
-                        sender->SetChannelResource(nullptr);
-                    }
-                }
+                //auto it = mSocketToSenders.find(socket);
+                //if (it != mSocketToSenders.end())
+                //{
+                //    auto& senders = mSocketToSenders.at(socket);
+                //    for (auto& sender : senders)
+                //    {
+                //        sender->SetChannelResource(nullptr);
+                //    }
+                //}
 
                 delete socket;
             }
@@ -818,7 +818,7 @@ void UDPv4Transport::AddDefaultOutputLocator(LocatorList_t &defaultList)
 
 void UDPv4Transport::AssociateSenderToSocket(UDPChannelResource *socket, SenderResource *sender) const
 {
-    sender->SetChannelResource(socket);
+    //sender->SetChannelResource(socket);
 
     auto it = mSocketToSenders.find(socket);
     if (it == mSocketToSenders.end())
