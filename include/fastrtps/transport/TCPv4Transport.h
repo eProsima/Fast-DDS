@@ -224,17 +224,6 @@ public:
     void SocketConnected(Locator_t& locator, SenderResource *senderResource, const asio::error_code& error);
 
 protected:
-
-    enum eSocketErrorCodes
-    {
-        eNoError,
-        eBrokenPipe,
-        eAsioError,
-        eSystemError,
-        eException,
-        eConnectionAborted = 125
-    };
-
     TCPv4TransportDescriptor mConfiguration_;
     RTCPMessageManager* mRTCPMessageManager;
     asio::io_service mService;

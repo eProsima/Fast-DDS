@@ -225,15 +225,6 @@ public:
 
 protected:
 
-    enum eSocketErrorCodes
-    {
-        eNoError,
-        eBrokenPipe,
-        eAsioError,
-        eSystemError,
-        eException
-    };
-
     TCPv6TransportDescriptor mConfiguration_;
     RTCPMessageManager* mRTCPMessageManager;
     asio::io_service mService;

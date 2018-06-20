@@ -750,7 +750,7 @@ bool TCPv4Transport::EnqueueLogicalOutputPort(const Locator_t& locator)
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     if (IsTCPInputSocket(locator))
     {
-		auto socketIt = mInputSockets.find(locator.get_physical_port());
+        auto socketIt = mInputSockets.find(locator.get_physical_port());
         if (socketIt != mInputSockets.end())
         {
             for (auto it = socketIt->second.begin(); it != socketIt->second.end(); ++it)

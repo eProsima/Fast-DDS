@@ -207,6 +207,7 @@ TCPv6Transport::~TCPv6Transport()
 
 void TCPv6Transport::AddDefaultOutputLocator(LocatorList_t& defaultList)
 {
+    std::unique_lock<std::recursive_mutex> scoped(mSocketsMapMutex);
     if (mConfiguration_.listening_ports.size() > 0)
     {
         for (auto it = mConfiguration_.listening_ports.begin(); it != mConfiguration_.listening_ports.end(); ++it)
@@ -741,10 +742,10 @@ bool TCPv6Transport::EnqueueLogicalOutputPort(const Locator_t& locator)
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     if (IsTCPInputSocket(locator))
     {
-        if (mInputSockets.find(locator.get_physical_port()) != mInputSockets.end())
+        auto socketIt = mInputSockets.find(locator.get_physical_port());
+        if (socketIt != mInputSockets.end())
         {
-            auto& sockets = mInputSockets.at(locator.get_physical_port());
-            for (auto it = sockets.begin(); it != sockets.end(); ++it)
+            for (auto it = socketIt->second.begin(); it != socketIt->second.end(); ++it)
             {
                 (*it)->EnqueueLogicalPort(locator.get_logical_port());
             }
@@ -1341,11 +1342,10 @@ void TCPv6Transport::RegisterReceiverResources(TCPChannelResource* pChannelResou
 #ifdef ASIO_HAS_MOVE
 void TCPv6Transport::SocketAccepted(TCPv6Acceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket socket)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-
-    if (mSocketAcceptors.find(acceptor->mLocator.get_physical_port()) != mSocketAcceptors.end())
+    if (!error.value())
     {
-        if (!error.value())
+        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        if (mSocketAcceptors.find(acceptor->mLocator.get_physical_port()) != mSocketAcceptors.end())
         {
             // Store the new connection.
             eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(std::move(socket));
@@ -1375,22 +1375,33 @@ void TCPv6Transport::SocketAccepted(TCPv6Acceptor* acceptor, const asio::error_c
         }
         else
         {
-            logInfo(RTCP, " Accepting connection failed (error: " << error.message() << ")");
+            logError(RTPC, "Incomming connection from unknown Acceptor: " << acceptor->mLocator.get_physical_port());
+            return;
         }
+    }
+    else
+    {
+        logInfo(RTCP, " Accepting connection failed (error: " << error.message() << ")");
+    }
 
-        // Accept new connections for the same port.
-        mSocketAcceptors.at(acceptor->mLocator.get_physical_port())->Accept(this, mService);
+    if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
+    {
+        // Accept new connections for the same port. Could be not found when exiting.
+        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        if (mSocketAcceptors.find(acceptor->mLocator.get_physical_port()) != mSocketAcceptors.end())
+        {
+            mSocketAcceptors.at(acceptor->mLocator.get_physical_port())->Accept(this, mService);
+        }
     }
 }
 #else
 
 void TCPv6Transport::SocketAccepted(TCPv6Acceptor* acceptor, const asio::error_code& error)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-
-    if (mSocketAcceptors.find(acceptor->mLocator.get_physical_port()) != mSocketAcceptors.end())
+    if (!error.value())
     {
-        if (!error.value())
+        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        if (mSocketAcceptors.find(acceptor->mLocator.get_physical_port()) != mSocketAcceptors.end())
         {
             // Store the new connection and release the pointer to the acceptor to create a new one for the next waiting.
             eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(acceptor->mSocket);
@@ -1422,11 +1433,23 @@ void TCPv6Transport::SocketAccepted(TCPv6Acceptor* acceptor, const asio::error_c
         }
         else
         {
-            logInfo(RTCP, " Accepting connection failed (error: " << error.message() << ")");
+            logError(RTPC, "Incomming connection from unknown Acceptor: " << acceptor->mLocator.get_physical_port());
+            return;
         }
+    }
+    else
+    {
+        logInfo(RTCP, " Accepting connection failed (error: " << error.message() << ")");
+    }
 
-        // Accept new connections for the same port.
-        mSocketAcceptors.at(acceptor->mLocator.get_physical_port())->Accept(this, mService);
+    if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
+    {
+        // Accept new connections for the same port. Could be not found when exiting.
+        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        if (mSocketAcceptors.find(acceptor->mLocator.get_physical_port()) != mSocketAcceptors.end())
+        {
+            mSocketAcceptors.at(acceptor->mLocator.get_physical_port())->Accept(this, mService);
+        }
     }
 }
 #endif
@@ -1440,31 +1463,48 @@ void TCPv6Transport::SocketConnected(Locator_t& locator, SenderResource *senderR
         auto pendingConector = mSocketConnectors.at(locator);
         if (!error.value())
         {
-            TCPChannelResource *outputSocket = new TCPChannelResource(pendingConector->m_socket,
-                locator, true, false, pendingConector->m_msgSize);
-
-            // Create one message receiver for each registered receiver resources.
-            RegisterReceiverResources(outputSocket, locator);
-            outputSocket->ChangeStatus(TCPChannelResource::eConnectionStatus::eConnected);
-            outputSocket->SetThread(new std::thread(&TCPv6Transport::performListenOperation, this, outputSocket));
-            outputSocket->SetRTCPThread(new std::thread(&TCPv6Transport::performRTPCManagementThread, this, outputSocket));
-            mOutputSockets.push_back(outputSocket);
-            BindOutputChannel(locator);
-
-            for (auto& it : pendingConector->m_PendingLocators)
+            try
             {
-                EnqueueLogicalOutputPort(it);
+                TCPChannelResource *outputSocket(nullptr);
+                if (pendingConector->m_msgSize != 0)
+                {
+                    outputSocket = new TCPChannelResource(pendingConector->m_socket,
+                        locator, true, false, pendingConector->m_msgSize);
+                }
+                else
+                {
+                    outputSocket = new TCPChannelResource(pendingConector->m_socket, locator, true, false);
+                }
+
+                // Create one message receiver for each registered receiver resources.
+                RegisterReceiverResources(outputSocket, locator);
+                outputSocket->ChangeStatus(TCPChannelResource::eConnectionStatus::eConnected);
+                outputSocket->SetThread(new std::thread(&TCPv6Transport::performListenOperation, this, outputSocket));
+                outputSocket->SetRTCPThread(new std::thread(&TCPv6Transport::performRTPCManagementThread, this, outputSocket));
+                mOutputSockets.push_back(outputSocket);
+                BindOutputChannel(locator);
+
+                for (auto& it : pendingConector->m_PendingLocators)
+                {
+                    EnqueueLogicalOutputPort(it);
+                }
+
+                logInfo(RTCP, " Socket Connected (physical remote: " << locator.get_physical_port()
+                    << ", local: " << outputSocket->getSocket()->local_endpoint().port()
+                    << ") IP: " << outputSocket->getSocket()->remote_endpoint().address());
+
+                // RTCP Control Message
+                mRTCPMessageManager->sendConnectionRequest(outputSocket, mConfiguration_.metadata_logical_port);
+                if (senderResource != nullptr)
+                {
+                    AssociateSenderToSocket(outputSocket, senderResource);
+                }
             }
-
-            logInfo(RTCP, " Socket Connected (physical remote: " << locator.get_physical_port()
-                << ", local: " << outputSocket->getSocket()->local_endpoint().port()
-                << ") IP: " << outputSocket->getSocket()->remote_endpoint().address());
-
-            // RTCP Control Message
-            mRTCPMessageManager->sendConnectionRequest(outputSocket, mConfiguration_.metadata_logical_port);
-            if (senderResource != nullptr)
+            catch (asio::system_error const& e)
             {
-                AssociateSenderToSocket(outputSocket, senderResource);
+                (void)e;
+                logInfo(RTPS_MSG_OUT, "TCPv4 Error establishing the connection at port:(" << locator.get_port() << ")" << " with msg:" << e.what());
+                CloseOutputChannel(locator);
             }
         }
         else
@@ -1573,58 +1613,61 @@ void TCPv6Transport::ReleaseTCPSocket(TCPChannelResource *pChannelResource, bool
         pChannelResource->RemoveLogicalConnection();
         if(force || pChannelResource->HasLogicalConnections())
         {
-              // Pauses the timer to clean the deleted sockets pool.
-              if (mCleanSocketsPoolTimer != nullptr)
-              {
-                  mCleanSocketsPoolTimer->cancel_timer();
-              }
+            // Pauses the timer to clean the deleted sockets pool.
+            if (mCleanSocketsPoolTimer != nullptr)
+            {
+                mCleanSocketsPoolTimer->cancel_timer();
+            }
 
-              // Remove the all bindings with this socket.
-              UnbindSocket(pChannelResource);
+            // Remove the all bindings with this socket.
+            UnbindSocket(pChannelResource);
 
-              pChannelResource->Disable();
-              pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eDisconnected);
-              try
-              {
-                  pChannelResource->getSocket()->cancel();
-                  pChannelResource->getSocket()->shutdown(ip::tcp::socket::shutdown_both);
-              }
-              catch (std::exception)
-              {
-                  // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
-              }
-              pChannelResource->getSocket()->close();
+            pChannelResource->Disable();
+            pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eDisconnected);
+            try
+            {
+                pChannelResource->getSocket()->cancel();
+                pChannelResource->getSocket()->shutdown(ip::tcp::socket::shutdown_both);
+            }
+            catch (std::exception)
+            {
+                // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
+            }
+            pChannelResource->getSocket()->close();
 
-              // Remove from senders
-              auto it = mSocketToSenders.find(pChannelResource);
-              if (it != mSocketToSenders.end())
-              {
-                  auto& senders = mSocketToSenders.at(pChannelResource);
-                  for (auto& sender : senders)
-                  {
-                      sender->SetChannelResource(nullptr);
-                  }
-                  mSocketToSenders.erase(it);
-              }
+            // Remove from senders
+            auto it = mSocketToSenders.find(pChannelResource);
+            if (it != mSocketToSenders.end())
+            {
+                /*
+                auto& senders = mSocketToSenders.at(pChannelResource);
+                for (auto& sender : senders)
+                {
+                    sender->SetChannelResource(nullptr);
+                }
+                */
+                mSocketToSenders.erase(it);
+            }
 
-              {
-                  std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
-                  mDeletedSocketsPool.emplace_back(pChannelResource);
-              }
-              pChannelResource = nullptr;
+            {
+                std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
+                mDeletedSocketsPool.emplace_back(pChannelResource);
+            }
+            pChannelResource = nullptr;
 
-              // Starts a timer to clean the deleted sockets pool.
-              if (mCleanSocketsPoolTimer != nullptr)
-              {
-                  mCleanSocketsPoolTimer->update_interval_millisec(s_clean_deleted_sockets_pool_timeout);
-                  mCleanSocketsPoolTimer->restart_timer();
-              }
+            // Starts a timer to clean the deleted sockets pool.
+            if (mCleanSocketsPoolTimer != nullptr)
+            {
+                mCleanSocketsPoolTimer->update_interval_millisec(s_clean_deleted_sockets_pool_timeout);
+                mCleanSocketsPoolTimer->restart_timer();
+            }
         }
     }
 }
 
 void TCPv6Transport::AssociateSenderToSocket(TCPChannelResource *socket, SenderResource *sender) const
 {
+    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     auto it = mSocketToSenders.find(socket);
     if (it == mSocketToSenders.end())
     {
@@ -1636,7 +1679,7 @@ void TCPv6Transport::AssociateSenderToSocket(TCPChannelResource *socket, SenderR
         it->second.emplace_back(sender);
     }
 
-    sender->SetChannelResource(socket);
+    //sender->SetChannelResource(socket);
 }
 
 } // namespace rtps
