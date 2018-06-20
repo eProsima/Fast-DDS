@@ -168,11 +168,12 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
     Locator_t multicastLocator;
     multicastLocator.set_port(g_default_port);
     multicastLocator.kind = LOCATOR_KIND_UDPv6;
-    multicastLocator.set_IP6_address(0xff31, 0, 0, 0, 0, 0, 0, 0);
+    multicastLocator.set_IP6_address(0,0,0,0,0,0,0,1);
 
     Locator_t outputChannelLocator;
     outputChannelLocator.set_port(g_default_port + 1);
     outputChannelLocator.kind = LOCATOR_KIND_UDPv6;
+    outputChannelLocator.set_IP6_address(0,0,0,0,0,0,0,1);
 
     MockReceiverResource receiver(transportUnderTest, multicastLocator);
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
@@ -210,7 +211,7 @@ TEST_F(UDPv6Tests, send_to_loopback)
     Locator_t multicastLocator;
     multicastLocator.set_port(g_default_port);
     multicastLocator.kind = LOCATOR_KIND_UDPv6;
-    multicastLocator.set_IP6_address(0xff31, 0, 0, 0, 0, 0, 0, 0);
+    multicastLocator.set_IP6_address(0,0,0,0,0,0,0,1);
 
     Locator_t outputChannelLocator;
     outputChannelLocator.set_port(g_default_port + 1);

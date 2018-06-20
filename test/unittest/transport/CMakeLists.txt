@@ -157,6 +157,21 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 target_link_libraries(UDPv6Tests ${PRIVACY} iphlpapi Shlwapi )
             endif()
             add_gtest(UDPv6Tests SOURCES ${UDPV6TESTS_SOURCE})
+
+            add_executable(TCPv6Tests ${TCPV6TESTS_SOURCE})
+            add_gtest(TCPv6Tests ${TCPV6TESTS_SOURCE})
+            target_compile_definitions(TCPv6Tests PRIVATE FASTRTPS_NO_LIB)
+            target_include_directories(TCPv6Tests PRIVATE
+                ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource            
+                ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+            target_link_libraries(TCPv6Tests ${GTEST_LIBRARIES} ${MOCKS})
+            if(MSVC OR MSVC_IDE)
+                target_link_libraries(TCPv6Tests ${PRIVACY} fastcdr_static iphlpapi Shlwapi)
+            else()
+                target_link_libraries(TCPv6Tests ${PRIVACY} fastcdr)
+            endif()
         endif()
 
         add_executable(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
@@ -183,22 +198,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         if(MSVC OR MSVC_IDE)
             target_link_libraries(TCPv4Tests ${PRIVACY} fastcdr_static iphlpapi Shlwapi)
         else()
-            target_link_libraries(TCPv4Tests ${PRIVACY} iphlpapi Shlwapi)
-        endif()
-
-        add_executable(TCPv6Tests ${TCPV6TESTS_SOURCE})
-        add_gtest(TCPv6Tests ${TCPV6TESTS_SOURCE})
-        target_compile_definitions(TCPv6Tests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(TCPv6Tests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource            
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(TCPv6Tests ${GTEST_LIBRARIES} ${MOCKS})
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(TCPv6Tests ${PRIVACY} fastcdr_static iphlpapi Shlwapi)
-        else()
-            target_link_libraries(TCPv6Tests ${PRIVACY} iphlpapi Shlwapi)
+            target_link_libraries(TCPv4Tests ${PRIVACY} fastcdr)
         endif()
 
         add_gtest(test_UDPv4Tests SOURCES ${TEST_UDPV4TESTS_SOURCE})
