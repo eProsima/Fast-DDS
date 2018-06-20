@@ -31,9 +31,6 @@ namespace rtps{
  * packets to be dropped under certain criteria.
  */
 
- // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
-static std::vector<std::vector<octet> > test_UDPv4Transport_DropLog;
-
 class test_UDPv4Transport : public UDPv4Transport
 {
 public:
@@ -45,6 +42,9 @@ public:
                         const Locator_t& remoteLocator, ChannelResource* pChannelResource) override;
 
     RTPS_DllAPI static bool test_UDPv4Transport_ShutdownAllNetwork;
+    // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
+    RTPS_DllAPI static std::vector<std::vector<octet> > test_UDPv4Transport_DropLog;
+    RTPS_DllAPI static uint32_t test_UDPv4Transport_DropLogLength;
 
 private:
     uint8_t mDropDataMessagesPercentage;
