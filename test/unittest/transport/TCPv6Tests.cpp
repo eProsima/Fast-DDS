@@ -159,7 +159,7 @@ TEST_F(TCPv6Tests, opening_and_closing_input_channel)
     ASSERT_FALSE (transportUnderTest.IsInputChannelOpen(multicastFilterLocator));
     ASSERT_FALSE (transportUnderTest.CloseInputChannel(multicastFilterLocator));
 }
-/*
+
 TEST_F(TCPv6Tests, send_and_receive_between_ports)
 {
     TCPv6Transport transportUnderTest(descriptor);
@@ -244,7 +244,7 @@ TEST_F(TCPv6Tests, send_to_loopback)
     sem.wait();
     ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
 }
-*/
+
 #endif
 
 void TCPv6Tests::HELPER_SetDescriptorDefaults()
