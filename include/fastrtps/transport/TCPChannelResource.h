@@ -23,6 +23,16 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+enum eSocketErrorCodes
+{
+    eNoError,
+    eBrokenPipe,
+    eAsioError,
+    eSystemError,
+    eException,
+    eConnectionAborted = 125
+};
+
 class MessageReceiver;
 
 #if defined(ASIO_HAS_MOVE)
