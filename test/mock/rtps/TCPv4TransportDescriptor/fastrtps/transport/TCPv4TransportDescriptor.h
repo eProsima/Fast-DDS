@@ -57,7 +57,7 @@ typedef struct TCPv4TransportDescriptor: public TCPTransportDescriptor {
 
     }
 
-    RTPS_DllAPI TCPv4TransportDescriptor(const TCPv4TransportDescriptor& /*t*/)
+    RTPS_DllAPI TCPv4TransportDescriptor(const TCPv4TransportDescriptor& /*t*/) : TCPv4TransportDescriptor()
     {
 
     }
