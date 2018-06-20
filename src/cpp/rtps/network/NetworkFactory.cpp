@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/rtps/network/NetworkFactory.h>
-#include <fastrtps/transport/TransportDescriptor.h>
+#include <fastrtps/transport/TransportDescriptorInterface.h>
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <utility>

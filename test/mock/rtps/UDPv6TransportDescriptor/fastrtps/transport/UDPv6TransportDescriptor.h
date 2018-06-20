@@ -33,17 +33,25 @@ class TransportInterface;
  * - interfaceWhiteList: Lists the allowed interfaces.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPv6TransportDescriptor : public TransportDescriptorInterface
+typedef struct UDPv6TransportDescriptor: public TransportDescriptorInterface
 {
-    virtual ~UDPv6TransportDescriptor() {}
+   virtual ~UDPv6TransportDescriptor(){}
 
-    virtual TransportInterface* create_transport() const override;
+   virtual TransportInterface* create_transport() const override {	return nullptr;	}
 
-    RTPS_DllAPI UDPv6TransportDescriptor();
+   RTPS_DllAPI UDPv6TransportDescriptor()
+   : TransportDescriptorInterface(65550)
+   {
 
-    RTPS_DllAPI UDPv6TransportDescriptor(const UDPv6TransportDescriptor& t);
+   }
 
-    uint16_t m_output_upd_socket;
+   RTPS_DllAPI UDPv6TransportDescriptor(const UDPv6TransportDescriptor& /*t*/)
+   : TransportDescriptorInterface(65550)
+   {
+   	
+   }
+
+   uint16_t m_output_upd_socket;
 } UDPv6TransportDescriptor;
 
 } // namespace rtps
