@@ -179,8 +179,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(TCPv4Tests ${GTEST_LIBRARIES} ${MOCKS} fastcdr)
+        target_link_libraries(TCPv4Tests ${GTEST_LIBRARIES} ${MOCKS})
         if(MSVC OR MSVC_IDE)
+            target_link_libraries(TCPv4Tests ${PRIVACY} fastcdr_static iphlpapi Shlwapi)
+        else()
             target_link_libraries(TCPv4Tests ${PRIVACY} iphlpapi Shlwapi)
         endif()
 
@@ -192,11 +194,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource            
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(TCPv6Tests ${GTEST_LIBRARIES} ${MOCKS} fastcdr)
+        target_link_libraries(TCPv6Tests ${GTEST_LIBRARIES} ${MOCKS})
         if(MSVC OR MSVC_IDE)
-            target_link_libraries(TCPv6Tests ${PRIVACY}
-                iphlpapi Shlwapi
-                )
+            target_link_libraries(TCPv6Tests ${PRIVACY} fastcdr_static iphlpapi Shlwapi)
+        else()
+            target_link_libraries(TCPv6Tests ${PRIVACY} iphlpapi Shlwapi)
         endif()
 
         add_gtest(test_UDPv4Tests SOURCES ${TEST_UDPV4TESTS_SOURCE})
