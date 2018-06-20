@@ -255,15 +255,15 @@ bool UDPv6Transport::CloseOutputChannel(const Locator_t& locator)
         socket->getSocket()->cancel();
         socket->getSocket()->close();
 
-        auto it = mSocketToSenders.find(socket);
-        if (it != mSocketToSenders.end())
-        {
-            auto& senders = mSocketToSenders.at(socket);
-            for (auto& sender : senders)
-            {
-                sender->SetChannelResource(nullptr);
-            }
-        }
+        //auto it = mSocketToSenders.find(socket);
+        //if (it != mSocketToSenders.end())
+        //{
+        //    auto& senders = mSocketToSenders.at(socket);
+        //    for (auto& sender : senders)
+        //    {
+        //        sender->SetChannelResource(nullptr);
+        //    }
+        //}
 
         delete socket;
     }
@@ -426,15 +426,15 @@ bool UDPv6Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderRe
         auto& sockets = mOutputSockets.at(locator.get_physical_port());
         for (auto& socket : sockets)
         {
-            auto it = mSocketToSenders.find(socket);
-            if (it != mSocketToSenders.end())
-            {
-                auto& senders = mSocketToSenders.at(socket);
-                for (auto& sender : senders)
-                {
-                    sender->SetChannelResource(nullptr);
-                }
-            }
+            //auto it = mSocketToSenders.find(socket);
+            //if (it != mSocketToSenders.end())
+            //{
+            //    auto& senders = mSocketToSenders.at(socket);
+            //    for (auto& sender : senders)
+            //    {
+            //        sender->SetChannelResource(nullptr);
+            //    }
+            //}
 
             delete socket;
         }
@@ -810,7 +810,7 @@ bool UDPv6Transport::is_local_locator(const Locator_t& locator) const
 
 void UDPv6Transport::AssociateSenderToSocket(UDPChannelResource *socket, SenderResource *sender) const
 {
-    sender->SetChannelResource(socket);
+    //sender->SetChannelResource(socket);
 
     auto it = mSocketToSenders.find(socket);
     if (it == mSocketToSenders.end())
