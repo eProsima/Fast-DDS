@@ -44,7 +44,7 @@ public:
     virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
                         const Locator_t& remoteLocator, ChannelResource* pChannelResource) override;
 
-    static bool test_UDPv4Transport_ShutdownAllNetwork;
+    RTPS_DllAPI static bool test_UDPv4Transport_ShutdownAllNetwork;
 
 private:
     uint8_t mDropDataMessagesPercentage;
