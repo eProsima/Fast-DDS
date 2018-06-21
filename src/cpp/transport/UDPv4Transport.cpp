@@ -596,7 +596,9 @@ bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
 	{ // lock scope
 		std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
 		if (!pChannelResource->IsAlive())
+        {
 			return false;
+        }
 
 		auto socketIt = mInputSockets.find(static_cast<uint16_t>(inputLocator.get_port()));
 		if (socketIt != mInputSockets.end())
