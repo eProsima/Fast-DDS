@@ -75,12 +75,12 @@ UDPv6Transport::UDPv6Transport(const UDPv6TransportDescriptor& descriptor):
     }
 
 UDPv6TransportDescriptor::UDPv6TransportDescriptor():
-    TransportDescriptorInterface(s_maximumMessageSize)
+    UDPTransportDescriptor()
 {
 }
 
 UDPv6TransportDescriptor::UDPv6TransportDescriptor(const UDPv6TransportDescriptor& t) :
-    TransportDescriptorInterface(t)
+    UDPTransportDescriptor(t)
 {
 }
 

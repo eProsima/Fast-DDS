@@ -1726,7 +1726,7 @@ BLACKBOXTEST(BlackBox, PubSubOutLocatorSelection){
     ASSERT_TRUE(reader.isInitialized());
 
     std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
-    descriptor->m_output_upd_socket = static_cast<uint16_t>(LocatorBuffer.get_port());
+    descriptor->m_output_udp_socket = static_cast<uint16_t>(LocatorBuffer.get_port());
 
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
         durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).

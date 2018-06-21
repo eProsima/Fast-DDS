@@ -33,6 +33,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp
+			${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPTransportInterface.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
@@ -47,6 +48,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv6Transport.cpp
+			${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPTransportInterface.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
@@ -58,7 +60,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             TCPv4Tests.cpp
             mock/MockReceiverResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessagePool.cpp            
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessagePool.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterList.cpp
@@ -86,7 +88,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             TCPv6Tests.cpp
             mock/MockReceiverResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessagePool.cpp            
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessagePool.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterList.cpp
@@ -120,6 +122,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/test_UDPv4Transport.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp
+			${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPTransportInterface.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
@@ -131,7 +134,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(UDPv4Tests ${UDPV4TESTS_SOURCE})
         target_compile_definitions(UDPv4Tests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(UDPv4Tests PRIVATE 
+        target_include_directories(UDPv4Tests PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
@@ -164,7 +167,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             target_include_directories(TCPv6Tests PRIVATE
                 ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
                 ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
-                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource            
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
                 ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
             target_link_libraries(TCPv6Tests ${GTEST_LIBRARIES} ${MOCKS})
             if(MSVC OR MSVC_IDE)
