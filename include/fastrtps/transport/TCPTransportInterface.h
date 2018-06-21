@@ -313,6 +313,8 @@ protected:
 
     virtual void SetReceiveBufferSize(uint32_t size) = 0;
     virtual void SetSendBufferSize(uint32_t size) = 0;
+    
+    void Clean(); // Must be called on childs destructors!
 };
 
 } // namespace rtps
