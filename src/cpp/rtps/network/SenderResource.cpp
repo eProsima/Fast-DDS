@@ -24,7 +24,7 @@ namespace rtps{
 
 SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator, uint32_t size)
 : mValid(false)
-, m_pChannelResource(nullptr)
+//, m_pChannelResource(nullptr)
 {
     // Internal channel is opened and assigned to this resource.
     mValid = transport.OpenOutputChannel(locator, this, size);
@@ -81,7 +81,7 @@ bool SenderResource::Send(const octet* data, uint32_t dataLength, const Locator_
 {
     if (SendThroughAssociatedChannel)
     {
-        return SendThroughAssociatedChannel(data, dataLength, destinationLocator, this->m_pChannelResource);
+        return SendThroughAssociatedChannel(data, dataLength, destinationLocator, nullptr /*this->m_pChannelResource*/);
     }
     return false;
 }
@@ -94,8 +94,8 @@ SenderResource::SenderResource(SenderResource&& rValueResource)
     SendThroughAssociatedChannel.swap(rValueResource.SendThroughAssociatedChannel);
     LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
     ManagedChannelMapsToRemote.swap(rValueResource.ManagedChannelMapsToRemote);
-    m_pChannelResource = rValueResource.m_pChannelResource;
-    rValueResource.m_pChannelResource = nullptr;
+    //m_pChannelResource = rValueResource.m_pChannelResource;
+    //rValueResource.m_pChannelResource = nullptr;
 }
 
 bool SenderResource::SupportsLocator(const Locator_t& local)

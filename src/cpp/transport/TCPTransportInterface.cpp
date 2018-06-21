@@ -130,6 +130,10 @@ TCPTransportInterface::TCPTransportInterface()
 
 TCPTransportInterface::~TCPTransportInterface()
 {
+}
+
+void TCPTransportInterface::Clean()
+{
     std::vector<TCPChannelResource*> vDeletedSockets;
 
     // Collect all the existing sockets to delete them outside of the mutex.
@@ -1547,6 +1551,7 @@ void TCPTransportInterface::SocketConnected(Locator_t& locator, SenderResource *
         else
         {
             eClock::my_sleep(100);
+            std::cout << "Reconnect..." << this << std::endl;
             pendingConector->RetryConnect(mService, this, senderResource);
         }
     }

@@ -85,6 +85,7 @@ TCPv6Transport::TCPv6Transport()
 
 TCPv6Transport::~TCPv6Transport()
 {
+    Clean();
 }
 
 void TCPv6Transport::AddDefaultOutputLocator(LocatorList_t& defaultList)

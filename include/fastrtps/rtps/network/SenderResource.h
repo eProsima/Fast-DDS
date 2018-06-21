@@ -69,7 +69,7 @@ public:
    */
    bool CanSendToRemoteLocator(const Locator_t& remote);
 
-   void SetChannelResource(ChannelResource* pChannelResource) { m_pChannelResource = pChannelResource; }
+   //void SetChannelResource(ChannelResource* pChannelResource) { m_pChannelResource = pChannelResource; }
 
    /**
    * Resources can only be transfered through move semantics. Copy, assignment, and
@@ -90,7 +90,7 @@ private:
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
    std::function<bool(const Locator_t&)> ManagedChannelMapsToRemote;
    bool mValid; // Post-construction validity check for the NetworkFactory
-   ChannelResource* m_pChannelResource;
+   //ChannelResource* m_pChannelResource;
 };
 
 } // namespace rtps
