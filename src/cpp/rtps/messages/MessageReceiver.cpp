@@ -35,11 +35,17 @@ namespace fastrtps{
 namespace rtps {
 
 
-MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant, ReceiverResource* receiverResource)
+MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant, ReceiverResource* receiverResource,
+    uint32_t maxMsgSize)
     : sourceVendorId(c_VendorId_Unknown)
     , participant_(participant)
     , receiverResource_(receiverResource)
-    {}
+#if HAVE_SECURITY
+    , m_crypto_msg(maxMsgSize)
+#endif
+{
+    (void)maxMsgSize;
+}
 
 void MessageReceiver::init(uint32_t rec_buffer_size)
 {

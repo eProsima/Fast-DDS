@@ -22,8 +22,8 @@ namespace fastrtps{
 namespace rtps{
 
 std::vector<std::vector<octet> > test_UDPv4Transport::test_UDPv4Transport_DropLog;
-uint32_t test_UDPv4Transport::test_UDPv4Transport_DropLogLength;
-bool test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork;
+uint32_t test_UDPv4Transport::test_UDPv4Transport_DropLogLength = 0;
+bool test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
 
 test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor):
     mDropDataMessagesPercentage(descriptor.dropDataMessagesPercentage),

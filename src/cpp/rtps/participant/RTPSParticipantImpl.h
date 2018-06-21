@@ -192,8 +192,6 @@ public:
     uint32_t calculateMaxDataSize(uint32_t length);
 
 #if HAVE_SECURITY
-    security::SecurityManager& security_manager() { return m_security_manager; }
-
         security::SecurityManager& security_manager() { return m_security_manager; }
 
         const security::ParticipantSecurityAttributes& security_attributes() { return security_attributes_; }
@@ -320,7 +318,7 @@ private:
 #endif
 
         /**
-         * Get persistence service from factory, using endpoint attributes (or participant 
+         * Get persistence service from factory, using endpoint attributes (or participant
          * attributes if endpoint does not define a persistence service config)
          */
         IPersistenceService* get_persistence_service(const EndpointAttributes& param);
