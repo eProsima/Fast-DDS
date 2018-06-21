@@ -504,9 +504,12 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
                 msg->msg_endian = previous_endian;
             }
         }
+
         //Is the final message?
         if (smh->submessageLength == 0)
+        {
             *last = true;
+        }
 
 	    // Set sourcetimestamp
 	    if(haveTimestamp)

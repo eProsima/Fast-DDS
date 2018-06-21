@@ -586,7 +586,9 @@ bool UDPv4Transport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacit
     ChannelResource* pChannelResource, const Locator_t& inputLocator, Locator_t& remoteLocator)
 {
     if (!pChannelResource->IsAlive())
+    {
         return false;
+    }
 
 	ip::udp::endpoint senderEndpoint;
 	UDPChannelResource* socket = nullptr;
