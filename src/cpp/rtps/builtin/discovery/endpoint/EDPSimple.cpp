@@ -989,18 +989,20 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 
 #if HAVE_SECURITY
 bool EDPSimple::pairing_remote_writer_with_local_builtin_reader_after_security(const GUID_t& local_reader,
-        WriterProxyData& remote_writer_data)
+        const WriterProxyData& remote_writer_data)
 {
     bool returned_value = false;
 
     if(local_reader.entityId == sedp_builtin_publications_secure_reader)
     {
-        sedp_builtin_publications_secure_reader_.first->matched_writer_add(remote_writer_data.toRemoteWriterAttributes());
+        RemoteWriterAttributes attrs = remote_writer_data.toRemoteWriterAttributes();
+        sedp_builtin_publications_secure_reader_.first->matched_writer_add(attrs);
         returned_value = true;
     }
     else if(local_reader.entityId == sedp_builtin_subscriptions_secure_reader)
     {
-        sedp_builtin_subscriptions_secure_reader_.first->matched_writer_add(remote_writer_data.toRemoteWriterAttributes());
+        RemoteWriterAttributes attrs = remote_writer_data.toRemoteWriterAttributes();
+        sedp_builtin_subscriptions_secure_reader_.first->matched_writer_add(attrs);
         returned_value = true;
     }
 
@@ -1008,18 +1010,20 @@ bool EDPSimple::pairing_remote_writer_with_local_builtin_reader_after_security(c
 }
 
 bool EDPSimple::pairing_remote_reader_with_local_builtin_writer_after_security(const GUID_t& local_writer,
-        ReaderProxyData& remote_reader_data)
+        const ReaderProxyData& remote_reader_data)
 {
     bool returned_value = false;
 
     if(local_writer.entityId == sedp_builtin_publications_secure_writer)
     {
-        sedp_builtin_publications_secure_writer_.first->matched_reader_add(remote_reader_data.toRemoteReaderAttributes());
+        RemoteReaderAttributes attrs = remote_reader_data.toRemoteReaderAttributes();
+        sedp_builtin_publications_secure_writer_.first->matched_reader_add(attrs);
         returned_value = true;
     }
     else if(local_writer.entityId == sedp_builtin_subscriptions_secure_writer)
     {
-        sedp_builtin_subscriptions_secure_writer_.first->matched_reader_add(remote_reader_data.toRemoteReaderAttributes());
+        RemoteReaderAttributes attrs = remote_reader_data.toRemoteReaderAttributes();
+        sedp_builtin_subscriptions_secure_writer_.first->matched_reader_add(attrs);
         returned_value = true;
     }
 

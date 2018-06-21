@@ -102,6 +102,9 @@ class MessageReceiver
         CDRMessage_t m_crypto_msg;
 #endif
 
+        RTPSParticipantImpl* participant_;
+        ReceiverResource* receiverResource_;
+
         /**@name Processing methods.
          * These methods are designed to read a part of the message
          * and perform the corresponding actions:
@@ -146,9 +149,6 @@ class MessageReceiver
         bool proc_Submsg_HeartbeatFrag(CDRMessage_t*msg, SubmessageHeader_t* smh, bool*last);
         bool proc_Submsg_SecureMessage(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
         bool proc_Submsg_SecureSubMessage(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
-
-        RTPSParticipantImpl* participant_;
-        ReceiverResource* receiverResource_;
 };
 }
 } /* namespace rtps */
