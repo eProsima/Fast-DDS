@@ -46,7 +46,7 @@ class MessageReceiver
         /**
          * @param rec_buffer_size
          */
-        MessageReceiver(RTPSParticipantImpl* participant, ReceiverResource* receiverResource);
+        MessageReceiver(RTPSParticipantImpl* participant, ReceiverResource* receiverResource, uint32_t maxMsgSize);
         virtual ~MessageReceiver();
         //!Reset the MessageReceiver to process a new message.
         void reset();
@@ -98,6 +98,9 @@ class MessageReceiver
 
         uint16_t mMaxPayload_;
 
+#if HAVE_SECURITY
+        CDRMessage_t m_crypto_msg;
+#endif
 
         /**@name Processing methods.
          * These methods are designed to read a part of the message

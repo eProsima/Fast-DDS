@@ -59,9 +59,6 @@ public:
 protected:
     //!Received message
     CDRMessage_t m_rec_msg;
-#if HAVE_SECURITY
-    CDRMessage_t m_crypto_msg;
-#endif
 
     std::atomic<bool> mAlive;
     std::thread* mThread;

@@ -60,7 +60,7 @@ ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
 
 MessageReceiver* ReceiverResource::CreateMessageReceiver()
 {
-    MessageReceiver* newMsgReceiver = new MessageReceiver(m_participant, this);
+    MessageReceiver* newMsgReceiver = new MessageReceiver(m_participant, this, m_maxMsgSize);
     newMsgReceiver->init(m_maxMsgSize);
     return newMsgReceiver;
 }

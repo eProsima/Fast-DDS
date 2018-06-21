@@ -666,7 +666,8 @@ bool EDP::pairing_remote_reader_with_local_writer_after_security(const GUID_t& l
 
         if(local_writer == writerGUID)
         {
-            if((*wit)->matched_reader_add(remote_reader_data.toRemoteReaderAttributes()))
+            RemoteReaderAttributes rratt = remote_reader_data.toRemoteReaderAttributes();
+            if((*wit)->matched_reader_add(rratt))
             {
                 logInfo(RTPS_EDP, "Valid Matching to local writer: " << writerGUID.entityId);
                 //MATCHED AND ADDED CORRECTLY:
@@ -826,7 +827,8 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(const GUID_t& l
         if(local_reader == readerGUID)
         {
             // TODO(richiware) Implement and use move with attributes
-            if((*rit)->matched_writer_add(remote_writer_data.toRemoteWriterAttributes()))
+            RemoteWriterAttributes rwatt = remote_writer_data.toRemoteWriterAttributes();
+            if((*rit)->matched_writer_add(rwatt))
             {
                 logInfo(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId);
                 //MATCHED AND ADDED CORRECTLY:

@@ -36,16 +36,10 @@ ChannelResource::ChannelResource(ChannelResource&& channelResource)
     channelResource.mThread = nullptr;
     //logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
     //m_rec_msg = std::move(channelResource.m_rec_msg);
-#if HAVE_SECURITY
-    m_crypto_msg = std::move(channelResource.m_crypto_msg);
-#endif
 }
 
 ChannelResource::ChannelResource(uint32_t rec_buffer_size)
     : m_rec_msg(rec_buffer_size)
-#if HAVE_SECURITY
-    , m_crypto_msg(rec_buffer_size)
-#endif
     , mAlive(true)
     , mThread(nullptr)
 {
