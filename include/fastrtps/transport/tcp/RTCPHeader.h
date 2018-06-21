@@ -19,18 +19,21 @@ namespace rtps{
 // TCP Header structs and enums.
 struct TCPHeader
 {
-    const char rtcp[4];
+    char rtcp[4];
     uint32_t length;
     uint32_t crc;
     uint16_t logicalPort;
 
-    TCPHeader() :
-		rtcp{'R','T','C','P'}
-        , length(sizeof(TCPHeader))
+    TCPHeader()
+        : length(sizeof(TCPHeader))
         , crc(0)
         , logicalPort(0)
     {
-        //memcpy((char*)rtcp, "RTCP", sizeof(char) * 4);
+        // There isn't a explicit constructor because VS2013 doesn't support it.
+        rtcp[0] = 'R';
+        rtcp[1] = 'T';
+        rtcp[2] = 'C';
+        rtcp[3] = 'P';
     }
 
     const octet* getAddress() const
