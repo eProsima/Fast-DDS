@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef UDPV4_TRANSPORT_DESCRIPTOR
-#define UDPV4_TRANSPORT_DESCRIPTOR
+#ifndef UDP_TRANSPORT_DESCRIPTOR
+#define UDP_TRANSPORT_DESCRIPTOR
 
 #include <fastrtps/transport/TransportDescriptorInterface.h>
 
@@ -33,26 +33,16 @@ class TransportInterface;
  * - interfaceWhiteList: Lists the allowed interfaces.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPv4TransportDescriptor: public TransportDescriptorInterface
+typedef struct UDPTransportDescriptor: public TransportDescriptorInterface
 {
-   virtual ~UDPv4TransportDescriptor(){}
+   virtual ~UDPTransportDescriptor(){}
 
-   virtual TransportInterface* create_transport() const override {	return nullptr;	}
+   RTPS_DllAPI UDPTransportDescriptor();
 
-   RTPS_DllAPI UDPv4TransportDescriptor()
-   : TransportDescriptorInterface(65550)
-   {
-
-   }
-
-   RTPS_DllAPI UDPv4TransportDescriptor(const UDPv4TransportDescriptor& /*t*/)
-   : TransportDescriptorInterface(65550)
-   {
-
-   }
+   RTPS_DllAPI UDPTransportDescriptor(const UDPTransportDescriptor& t);
 
    uint16_t m_output_udp_socket;
-} UDPv4TransportDescriptor;
+} UDPTransportDescriptor;
 
 } // namespace rtps
 } // namespace fastrtps

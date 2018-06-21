@@ -18,7 +18,7 @@
 #include <asio.hpp>
 #include <thread>
 
-#include "TransportInterface.h"
+#include "UDPTransportInterface.h"
 #include "UDPChannelResource.h"
 #include "UDPv6TransportDescriptor.h"
 #include "../utils/IPFinder.h"
@@ -50,7 +50,7 @@ namespace rtps{
  * @ingroup TRANSPORT_MODULE
  */
 
-class UDPv6Transport : public TransportInterface
+class UDPv6Transport : public UDPTransportInterface
 {
 public:
 

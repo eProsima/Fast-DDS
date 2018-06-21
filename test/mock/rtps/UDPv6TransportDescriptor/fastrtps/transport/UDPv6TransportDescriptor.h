@@ -51,7 +51,7 @@ typedef struct UDPv6TransportDescriptor: public TransportDescriptorInterface
    	
    }
 
-   uint16_t m_output_upd_socket;
+   uint16_t m_output_udp_socket;
 } UDPv6TransportDescriptor;
 
 } // namespace rtps

@@ -182,7 +182,7 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
                 int iSocket = 0;
                 if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iSocket, 0) || iSocket < 0 || iSocket > 65535)
                     return XMLP_ret::XML_ERROR;
-                pUDPv4Desc->m_output_upd_socket = static_cast<uint16_t>(iSocket);
+                pUDPv4Desc->m_output_udp_socket = static_cast<uint16_t>(iSocket);
             }
         }
         else if (sType == UDPv6)
@@ -197,7 +197,7 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
                 int iSocket = 0;
                 if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iSocket, 0) || iSocket < 0 || iSocket > 65535)
                     return XMLP_ret::XML_ERROR;
-                pUDPv6Desc->m_output_upd_socket = static_cast<uint16_t>(iSocket);
+                pUDPv6Desc->m_output_udp_socket = static_cast<uint16_t>(iSocket);
             }
         }
         else if (sType == TCPv4)

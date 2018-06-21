@@ -74,14 +74,12 @@ UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor)
     }
 
 UDPv4TransportDescriptor::UDPv4TransportDescriptor()
-    : TransportDescriptorInterface(s_maximumMessageSize)
-    , m_output_upd_socket(0)
+    : UDPTransportDescriptor()
 {
 }
 
 UDPv4TransportDescriptor::UDPv4TransportDescriptor(const UDPv4TransportDescriptor& t)
-    : TransportDescriptorInterface(t)
-    , m_output_upd_socket(t.m_output_upd_socket)
+    : UDPTransportDescriptor(t)
 {
 }
 
@@ -343,7 +341,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderRe
 
     try
     {
-        uint16_t port = mConfiguration_.m_output_upd_socket;
+        uint16_t port = mConfiguration_.m_output_udp_socket;
         std::vector<IPFinder::info_IP> locNames;
         GetIP4s(locNames);
         // If there is no whitelist, we can simply open a generic output socket
@@ -817,7 +815,7 @@ bool UDPv4Transport::is_local_locator(const Locator_t& locator) const
 
 void UDPv4Transport::AddDefaultOutputLocator(LocatorList_t &defaultList)
 {
-    defaultList.push_back(Locator_t(LOCATOR_KIND_UDPv4, "239.255.0.1", mConfiguration_.m_output_upd_socket));
+    defaultList.push_back(Locator_t(LOCATOR_KIND_UDPv4, "239.255.0.1", mConfiguration_.m_output_udp_socket));
 }
 
 void UDPv4Transport::AssociateSenderToSocket(UDPChannelResource *socket, SenderResource *sender) const

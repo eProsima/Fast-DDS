@@ -17,7 +17,7 @@
 
 #include <asio.hpp>
 
-#include "TransportInterface.h"
+#include "UDPTransportInterface.h"
 #include "UDPChannelResource.h"
 #include "UDPv4TransportDescriptor.h"
 #include "../utils/IPFinder.h"
@@ -48,7 +48,7 @@ namespace rtps{
  *       opened in a strict sense).
  * @ingroup TRANSPORT_MODULE
  */
-class UDPv4Transport : public TransportInterface
+class UDPv4Transport : public UDPTransportInterface
 {
 public:
 
