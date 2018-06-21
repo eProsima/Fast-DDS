@@ -136,12 +136,18 @@ const ProtocolVersion_t c_ProtocolVersion(2,1);
 class VendorId_t
 {
 public:
-    VendorId_t(const VendorId_t &v) : m_vendor{v[0], v[1]}
+    VendorId_t(const VendorId_t &v)// : m_vendor{v[0], v[1]}
     {
+        // There isn't a explicit constructor because VS2013 doesn't support it.
+        m_vendor[0] = v[0];
+        m_vendor[1] = v[1];
     }
 
-    VendorId_t(const octet id0, const octet id1) : m_vendor{id0, id1}
+    VendorId_t(const octet id0, const octet id1)// : m_vendor{id0, id1}
     {
+        // There isn't a explicit constructor because VS2013 doesn't support it.
+        m_vendor[0] = id0;
+        m_vendor[1] = id1;
     }
 
     VendorId_t& operator=(const VendorId_t &v)

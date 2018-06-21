@@ -35,8 +35,8 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps {
 
-static const int s_default_keep_alive_frequency = 50000; // 50 SECONDS
-static const int s_default_keep_alive_timeout = 10000; // 10 SECONDS
+//static const int s_default_keep_alive_frequency = 50000; // 50 SECONDS
+//static const int s_default_keep_alive_timeout = 10000; // 10 SECONDS
 static const int s_clean_deleted_sockets_pool_timeout = 1000; // 1 SECOND
 
 static void GetIP6s(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)

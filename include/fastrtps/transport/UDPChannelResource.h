@@ -39,7 +39,7 @@ class MessageReceiver;
     }
     inline eProsimaUDPSocket createUDPSocket(asio::io_service& io_service)
     {
-        return std::move(asio::ip::udp::socket(io_service));
+        return asio::ip::udp::socket(io_service);
     }
     inline eProsimaUDPSocket& getRefFromPtr(eProsimaUDPSocket* socket)
     {

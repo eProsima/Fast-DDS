@@ -51,7 +51,7 @@ class MessageReceiver;
     }
     inline eProsimaTCPSocket createTCPSocket(asio::io_service& io_service)
     {
-        return std::move(asio::ip::tcp::socket(io_service));
+        return asio::ip::tcp::socket(io_service);
     }
     inline eProsimaTCPSocket& getRefFromPtr(eProsimaTCPSocket* socket)
     {
