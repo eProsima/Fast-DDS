@@ -202,8 +202,7 @@ protected:
         mConnectionStatus = s;
     }
 
-    friend class TCPv4Transport;
-    friend class TCPv6Transport;
+    friend class TCPTransportInterface;
     friend class RTCPMessageManager;
     friend class test_RTCPMessageManager;
 
