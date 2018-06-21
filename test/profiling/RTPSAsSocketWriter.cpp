@@ -30,13 +30,6 @@
 #include <asio.hpp>
 #include <inttypes.h>
 
-
-#if defined(_WIN32)
-#define GET_PID _getpid
-#else
-#define GET_PID getpid
-#endif
-
 RTPSAsSocketWriter::RTPSAsSocketWriter(): participant_(nullptr),
     writer_(nullptr), history_(nullptr), initialized_(false)
 {
@@ -69,7 +62,7 @@ void RTPSAsSocketWriter::init(std::string ip, uint32_t port)
 	WriterAttributes wattr;
 	Locator_t loc;
 	loc.set_IP4_address(ip);
-	loc.port = port;
+	loc.set_port(port);
 	wattr.endpoint.multicastLocatorList.push_back(loc);
     configWriter(wattr);
 	writer_ = RTPSDomain::createRTPSWriter(participant_, wattr, history_);
@@ -78,7 +71,7 @@ void RTPSAsSocketWriter::init(std::string ip, uint32_t port)
     GUID_t guid = participant_->getGuid();
 	RemoteReaderAttributes rattr;
 	loc.set_IP4_address(ip);
-	loc.port = port;
+	loc.set_port(port);
 	rattr.endpoint.multicastLocatorList.push_back(loc);
     configRemoteReader(rattr, guid);
 	writer_->matched_reader_add(rattr);

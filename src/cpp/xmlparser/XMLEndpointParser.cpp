@@ -98,6 +98,35 @@ XMLP_ret XMLEndpointParser::loadXMLFile(std::string& filename)
     return XMLP_ret::XML_OK;
 }
 
+XMLP_ret XMLEndpointParser::loadXMLNode(tinyxml2::XMLDocument& doc)
+{
+    logInfo(RTPS_EDP,"XML node");
+
+        tinyxml2::XMLNode* root = doc.FirstChildElement(STATICDISCOVERY);
+        if(!root){
+            logError(RTPS_EDP, "XML node has errors");
+            return XMLP_ret::XML_ERROR;
+        }
+
+
+        tinyxml2::XMLElement* xml_RTPSParticipant = root->FirstChildElement();
+
+        while(xml_RTPSParticipant != nullptr)
+        {
+            std::string key(xml_RTPSParticipant->Name());
+            if(key == PARTICIPANT)
+            {
+                StaticRTPSParticipantInfo* pdata = new StaticRTPSParticipantInfo();
+                loadXMLParticipantEndpoint(xml_RTPSParticipant, pdata);
+                m_RTPSParticipants.push_back(pdata);
+            }
+            xml_RTPSParticipant = xml_RTPSParticipant->NextSiblingElement();
+        }
+
+    logInfo(RTPS_EDP, "Finished parsing, "<< m_RTPSParticipants.size()<< " participants found.");
+    return XMLP_ret::XML_OK;
+}
+
 void XMLEndpointParser::loadXMLParticipantEndpoint(tinyxml2::XMLElement* xml_endpoint, StaticRTPSParticipantInfo* pdata)
 {
         tinyxml2::XMLNode* xml_RTPSParticipant_child = xml_endpoint;
@@ -231,7 +260,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
             loc.set_IP4_address(auxString);
             int port = 0;
             element->QueryIntAttribute(PORT, &port);
-            loc.port = port;
+            loc.set_port(static_cast<uint16_t>(port));
             rdata->unicastLocatorList().push_back(loc);
         }
         else if(key == MULTICAST_LOCATOR)
@@ -243,7 +272,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
             loc.set_IP4_address(auxString);
             int port = 0;
             element->QueryIntAttribute(PORT, &port);
-            loc.port = port;
+            loc.set_port(static_cast<uint16_t>(port));
             rdata->multicastLocatorList().push_back(loc);
         }
         else if(key == TOPIC)
@@ -448,7 +477,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
             loc.set_IP4_address(auxString);
             int port = 0;
             element->QueryIntAttribute(PORT, &port);
-            loc.port = port;
+            loc.set_port(static_cast<uint16_t>(port));
             wdata->unicastLocatorList().push_back(loc);
         }
         else if(key == MULTICAST_LOCATOR)
@@ -460,7 +489,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
             loc.set_IP4_address(auxString);
             int port = 0;
             element->QueryIntAttribute(PORT, &port);
-            loc.port = port;
+            loc.set_port(static_cast<uint16_t>(port));
             wdata->multicastLocatorList().push_back(loc);
         }
         else if(key == TOPIC)

@@ -54,8 +54,8 @@ namespace rtps{
      GuidPrefix_t guidPrefix;
      Header_t():
          version(c_ProtocolVersion)
+         , vendorId(c_VendorId_eProsima)
      {
-         set_VendorId_eProsima(vendorId);
      }
      ~Header_t(){
      }

@@ -253,118 +253,25 @@ bool IPFinder::getIP6Address(LocatorList_t* locators)
     return false;
 }
 
-RTPS_DllAPI bool IPFinder::parseIP4(info_IP& info)
+bool IPFinder::parseIP4(info_IP& info)
 {
-    std::stringstream ss(info.name);
-    int a, b, c, d;
-    char ch;
-    ss >> a >> ch >> b >> ch >> c >> ch >> d;
-    //TODO Property to activate or deactivate the loopback interface.
-    if (a == 127 && b == 0 && c == 0 && d == 1)
-        info.type = IP4_LOCAL;
-    //		if(a==169 && b==254)
-    //			continue;
     info.locator.kind = 1;
-    info.locator.port = 0;
-    for (int8_t i = 0; i < 12; ++i)
-        info.locator.address[i] = 0;
-    info.locator.address[12] = (octet)a;
-    info.locator.address[13] = (octet)b;
-    info.locator.address[14] = (octet)c;
-    info.locator.address[15] = (octet)d;
+    info.locator.set_port(0);
+    info.locator.set_IP4_address(info.name);
+    if (info.locator.is_IP4_Local())
+    {
+        info.type = IP4_LOCAL;
+    }
     return true;
 }
-RTPS_DllAPI bool IPFinder::parseIP6(info_IP& info)
+bool IPFinder::parseIP6(info_IP& info)
 {
-    std::vector<std::string> hexdigits;
-
-    size_t start = 0, end = 0;
-    std::string auxstr;
-
-    while(end != std::string::npos)
-    {
-        end = info.name.find(':',start);
-        if (end - start > 1)
-        {
-            hexdigits.push_back(info.name.substr(start, end - start));
-        }
-        else
-            hexdigits.push_back(std::string("EMPTY"));
-        start = end + 1;
-    }
-
-    if ((hexdigits.end() - 1)->find('.') != std::string::npos) //FOUND a . in the last element (MAP TO IP4 address)
-        return false;
-
-    if(*hexdigits.begin() == std::string("EMPTY") && *(hexdigits.begin() + 1) == std::string("EMPTY"))
-        info.type = IP6_LOCAL;
-
-    for (int8_t i = 0; i < 2; ++i)
-        info.locator.address[i] = 0;
     info.locator.kind = LOCATOR_KIND_UDPv6;
-    info.locator.port = 0;
-    *(hexdigits.end() - 1) = (hexdigits.end() - 1)->substr(0, (hexdigits.end() - 1)->find('%'));
-
-    int auxnumber = 0;
-    uint8_t index= 15;
-    for (auto it = hexdigits.rbegin(); it != hexdigits.rend(); ++it)
+    info.locator.set_port(0);
+    info.locator.set_IP6_address(info.name);
+    if (info.locator.is_IP6_Local())
     {
-        if (*it != std::string("EMPTY"))
-        {
-            if (it->length() <= 2)
-            {
-                info.locator.address[index - 1] = 0;
-                std::stringstream ss;
-                ss << std::hex << (*it);
-                ss >> auxnumber;
-                info.locator.address[index] = (octet)auxnumber;
-            }
-            else
-            {
-                std::stringstream ss;
-                ss << std::hex << it->substr(it->length()-2);
-                ss >> auxnumber;
-                info.locator.address[index] = (octet)auxnumber;
-                ss.str("");
-                ss.clear();
-                ss << std::hex << it->substr(0, it->length() - 2);
-                ss >> auxnumber;
-                info.locator.address[index - 1] = (octet)auxnumber;
-            }
-            index -= 2;
-        }
-        else
-            break;
-    }
-    index = 0;
-    for (auto it = hexdigits.begin(); it != hexdigits.end(); ++it)
-    {
-        if (*it != std::string("EMPTY"))
-        {
-            if (it->length() <= 2)
-            {
-                info.locator.address[index] = 0;
-                std::stringstream ss;
-                ss << std::hex << (*it);
-                ss >> auxnumber;
-                info.locator.address[index + 1]=(octet)auxnumber;
-            }
-            else
-            {
-                std::stringstream ss;
-                ss << std::hex << it->substr(it->length() - 2);
-                ss >> auxnumber;
-                info.locator.address[index + 1] = (octet)auxnumber;
-                ss.str("");
-                ss.clear();
-                ss << std::hex << it->substr(0, it->length() - 2);
-                ss >> auxnumber;
-                info.locator.address[index] =  (octet)auxnumber;
-            }
-            index += 2;
-        }
-        else
-            break;
+        info.type = IP6_LOCAL;
     }
     /*
        cout << "IPSTRING: ";

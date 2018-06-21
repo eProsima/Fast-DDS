@@ -156,7 +156,7 @@ class RTPSAsSocketWriter
 
             eprosima::fastrtps::rtps::Locator_t loc;
             loc.set_IP4_address(ip);
-            loc.port = port;
+            loc.set_port(static_cast<uint16_t>(port));
             writer_attr_.endpoint.multicastLocatorList.push_back(loc);
 
             return *this;
@@ -173,7 +173,7 @@ class RTPSAsSocketWriter
             eprosima::fastrtps::rtps::RemoteReaderAttributes rattr;
             eprosima::fastrtps::rtps::Locator_t loc;
             loc.set_IP4_address(ip_);
-            loc.port = port_;
+            loc.set_port(static_cast<uint16_t>(port_));
             rattr.endpoint.multicastLocatorList.push_back(loc);
 
             if(writer_attr_.endpoint.reliabilityKind == eprosima::fastrtps::rtps::RELIABLE)

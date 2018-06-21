@@ -97,7 +97,7 @@ namespace eprosima
                  * @param ratt Attributes of the reader to add.
                  * @return True if added.
                  */
-                bool matched_reader_add(const RemoteReaderAttributes& ratt);
+                bool matched_reader_add(RemoteReaderAttributes& ratt);
                 /**
                  * Remove a matched reader.
                  * @param ratt Attributes of the reader to remove.

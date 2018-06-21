@@ -13,9 +13,9 @@
 // limitations under the License.
 
 #include <fastrtps/rtps/network/NetworkFactory.h>
-#include <fastrtps/transport/UDPv4Transport.h>
-#include <fastrtps/transport/UDPv6Transport.h>
-#include <fastrtps/transport/test_UDPv4Transport.h>
+#include <fastrtps/transport/TransportDescriptorInterface.h>
+#include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/utils/IPFinder.h>
 #include <utility>
 #include <limits>
 
@@ -30,16 +30,14 @@ NetworkFactory::NetworkFactory() : maxMessageSizeBetweenTransports_(0),
 {
 }
 
-vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local)
+vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local, uint32_t size)
 {
     vector<SenderResource> newSenderResources;
-
-    for(auto& transport : mRegisteredTransports)
+    for (auto& transport : mRegisteredTransports)
     {
-        if ( transport->IsLocatorSupported(local) &&
-                !transport->IsOutputChannelOpen(local) )
+        if (transport->IsLocatorSupported(local) && !transport->IsOutputChannelOpen(local))
         {
-            SenderResource newSenderResource(*transport, local);
+            SenderResource newSenderResource(*transport, local, size);
             if (newSenderResource.mValid)
                 newSenderResources.push_back(move(newSenderResource));
         }
@@ -47,39 +45,22 @@ vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local)
     return newSenderResources;
 }
 
-// TODO(Ricardo) Review if necessary
-vector<SenderResource> NetworkFactory::BuildSenderResourcesForRemoteLocator(const Locator_t& remote)
-{
-    vector<SenderResource> newSenderResources;
-
-    for(auto& transport : mRegisteredTransports)
-    {
-        Locator_t local = transport->RemoteToMainLocal(remote);
-        if ( transport->IsLocatorSupported(local) &&
-                !transport->IsOutputChannelOpen(local) )
-        {
-            SenderResource newSenderResource(*transport, local);
-            if (newSenderResource.mValid)
-                newSenderResources.push_back(move(newSenderResource));
-        }
-    }
-    return newSenderResources;
-}
-
-bool NetworkFactory::BuildReceiverResources (const Locator_t& local, std::vector<ReceiverResource>& returned_resources_list)
+bool NetworkFactory::BuildReceiverResources(Locator_t& local, RTPSParticipantImpl* participant,
+    uint32_t maxMsgSize, std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list)
 {
     bool returnedValue = false;
-
-    for(auto& transport : mRegisteredTransports)
+    for (auto& transport : mRegisteredTransports)
     {
-        if(transport->IsLocatorSupported(local))
+        if (transport->IsLocatorSupported(local))
         {
-            if(!transport->IsInputChannelOpen(local))
+            if (!transport->IsInputChannelOpen(local))
             {
-                ReceiverResource newReceiverResource(*transport, local);
-                if(newReceiverResource.mValid)
+                std::shared_ptr<ReceiverResource> newReceiverResource = std::shared_ptr<ReceiverResource>(
+                    new ReceiverResource(participant, *transport, local, maxMsgSize));
+
+                if (newReceiverResource->mValid)
                 {
-                    returned_resources_list.push_back(std::move(newReceiverResource));
+                    returned_resources_list.push_back(newReceiverResource);
                     returnedValue = true;
                 }
             }
@@ -87,44 +68,20 @@ bool NetworkFactory::BuildReceiverResources (const Locator_t& local, std::vector
                 returnedValue = true;
         }
     }
-
     return returnedValue;
 }
 
-void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descriptor)
+bool NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descriptor)
 {
     bool wasRegistered = false;
     uint32_t minSendBufferSize = std::numeric_limits<uint32_t>::max();
 
-    if (auto concrete = dynamic_cast<const UDPv4TransportDescriptor*> (descriptor))
+    std::unique_ptr<TransportInterface> transport(descriptor->create_transport());
+    if(transport->init())
     {
-        std::unique_ptr<UDPv4Transport> transport(new UDPv4Transport(*concrete));
-        if(transport->init())
-        {
-            minSendBufferSize = transport->get_configuration().sendBufferSize;
-            mRegisteredTransports.emplace_back(std::move(transport));
-            wasRegistered = true;
-        }
-    }
-    if (auto concrete = dynamic_cast<const UDPv6TransportDescriptor*> (descriptor))
-    {
-        std::unique_ptr<UDPv6Transport> transport(new UDPv6Transport(*concrete));
-        if(transport->init())
-        {
-            minSendBufferSize = transport->get_configuration().sendBufferSize;
-            mRegisteredTransports.emplace_back(std::move(transport));
-            wasRegistered = true;
-        }
-    }
-    if (auto concrete = dynamic_cast<const test_UDPv4TransportDescriptor*> (descriptor))
-    {
-        std::unique_ptr<test_UDPv4Transport> transport(new test_UDPv4Transport(*concrete));
-        if(transport->init())
-        {
-            minSendBufferSize = transport->get_configuration().sendBufferSize;
-            mRegisteredTransports.emplace_back(std::move(transport));
-            wasRegistered = true;
-        }
+        minSendBufferSize = transport->get_configuration()->sendBufferSize;
+        mRegisteredTransports.emplace_back(std::move(transport));
+        wasRegistered = true;
     }
 
     if(wasRegistered)
@@ -135,6 +92,17 @@ void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descr
         if(minSendBufferSize < minSendBufferSize_)
             minSendBufferSize_ = minSendBufferSize;
     }
+    return wasRegistered;
+}
+
+void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descriptor,
+    const GuidPrefix_t& participantGuidPrefix)
+{
+    bool bWasRegistered = RegisterTransport(descriptor);
+    if (bWasRegistered)
+    {
+        mRegisteredTransports.back()->SetParticipantGUIDPrefix(participantGuidPrefix);
+    }
 }
 
 void NetworkFactory::NormalizeLocators(LocatorList_t& locators)
@@ -142,20 +110,22 @@ void NetworkFactory::NormalizeLocators(LocatorList_t& locators)
     LocatorList_t normalizedLocators;
 
     std::for_each(locators.begin(), locators.end(), [&](Locator_t& loc) {
-            bool normalized = false;
-            for (auto& transport : mRegisteredTransports)
-            {
+        bool normalized = false;
+        for (auto& transport : mRegisteredTransports)
+        {
             if (transport->IsLocatorSupported(loc))
             {
-            // First found transport that supports it, this will normalize the locator.
-            normalizedLocators.push_back(transport->NormalizeLocator(loc));
-            normalized = true;
+                // First found transport that supports it, this will normalize the locator.
+                normalizedLocators.push_back(transport->NormalizeLocator(loc));
+                normalized = true;
             }
-            }
+        }
 
-            if (!normalized)
+        if (!normalized)
+        {
             normalizedLocators.push_back(loc);
-            });
+        }
+    });
 
     locators.swap(normalizedLocators);
 }
@@ -187,8 +157,6 @@ LocatorList_t NetworkFactory::ShrinkLocatorLists(const std::vector<LocatorList_t
 
 bool NetworkFactory::is_local_locator(const Locator_t& locator) const
 {
-    LocatorList_t returnedList;
-
     for(auto& transport : mRegisteredTransports)
     {
         if(transport->IsLocatorSupported(locator))
@@ -201,6 +169,35 @@ bool NetworkFactory::is_local_locator(const Locator_t& locator) const
 size_t NetworkFactory::numberOfRegisteredTransports() const
 {
     return mRegisteredTransports.size();
+}
+
+bool NetworkFactory::generate_locators(uint16_t physical_port, int locator_kind,
+        LocatorList_t &ret_locators)
+{
+    ret_locators.clear();
+    if (locator_kind == LOCATOR_KIND_TCPv4 || locator_kind == LOCATOR_KIND_UDPv4)
+    {
+        IPFinder::getIP4Address(&ret_locators);
+    }
+    else if (locator_kind == LOCATOR_KIND_TCPv6 || locator_kind == LOCATOR_KIND_UDPv6)
+    {
+        IPFinder::getIP6Address(&ret_locators);
+    }
+    for (Locator_t loc : ret_locators)
+    {
+        loc.kind = locator_kind;
+        loc.set_port(physical_port);
+    }
+    return !ret_locators.empty();
+}
+
+void NetworkFactory::GetDefaultOutputLocators(LocatorList_t &defaultLocators)
+{
+    defaultLocators.clear();
+    for(auto& transport : mRegisteredTransports)
+    {
+        transport->AddDefaultOutputLocator(defaultLocators);
+    }
 }
 
 } // namespace rtps

@@ -147,9 +147,9 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
         logError(PARTICIPANT," Multicast Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
-    if(!att.outLocatorList.isValid())
+    if(!att.remoteLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Output Locator List for Publisher contains invalid Locator");
+        logError(PARTICIPANT,"Remote Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
     if(!att.qos.checkQos() || !att.topic.checkQos())
@@ -169,7 +169,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
     watt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     watt.endpoint.topicKind = att.topic.topicKind;
     watt.endpoint.unicastLocatorList = att.unicastLocatorList;
-    watt.endpoint.outLocatorList = att.outLocatorList;
+    watt.endpoint.remoteLocatorList = att.remoteLocatorList;
     watt.mode = att.qos.m_publishMode.kind == eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
     watt.endpoint.properties = att.properties;
     if(att.getEntityID()>0)
@@ -269,7 +269,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
         logError(PARTICIPANT," Multicast Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
-    if(!att.outLocatorList.isValid())
+    if(!att.remoteLocatorList.isValid())
     {
         logError(PARTICIPANT,"Output Locator List for Subscriber contains invalid Locator");
         return nullptr;
@@ -289,7 +289,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
     ratt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     ratt.endpoint.topicKind = att.topic.topicKind;
     ratt.endpoint.unicastLocatorList = att.unicastLocatorList;
-    ratt.endpoint.outLocatorList = att.outLocatorList;
+    ratt.endpoint.remoteLocatorList = att.remoteLocatorList;
     ratt.expectsInlineQos = att.expectsInlineQos;
     ratt.endpoint.properties = att.properties;
     if(att.getEntityID()>0)
@@ -452,7 +452,7 @@ bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16
 {
     if (kind == WRITER)
         return this->mp_rtpsParticipant->newRemoteWriterDiscovered(partguid, endpointId);
-    else 
+    else
         return this->mp_rtpsParticipant->newRemoteReaderDiscovered(partguid, endpointId);
 }
 

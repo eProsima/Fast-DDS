@@ -21,12 +21,12 @@
 #define PARTICIPANTPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <mutex>
-#include "../../../qos/QosList.h"
-#include "../../../qos/ParameterList.h"
+#include <fastrtps/qos/QosList.h>
+#include <fastrtps/qos/ParameterList.h>
 
-#include "../../attributes/WriterAttributes.h"
-#include "../../attributes/ReaderAttributes.h"
-#include "../../common/Token.h"
+#include <fastrtps/rtps/attributes/WriterAttributes.h>
+#include <fastrtps/rtps/attributes/ReaderAttributes.h>
+#include <fastrtps/rtps/common/Token.h>
 
 #define DISCOVERY_PARTICIPANT_DATA_MAX_SIZE 5000
 #define DISCOVERY_TOPIC_DATA_MAX_SIZE 500

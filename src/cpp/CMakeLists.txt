@@ -73,9 +73,20 @@ set(${PROJECT_NAME}_source_files
     subscriber/Subscriber.cpp
     subscriber/SubscriberImpl.cpp
     subscriber/SubscriberHistory.cpp
+    transport/timedevent/CleanTCPSocketsEvent.cpp
+    transport/ChannelResource.cpp
+    transport/UDPChannelResource.cpp
+    transport/TCPChannelResource.cpp
     transport/UDPv4Transport.cpp
+    transport/TCPTransportInterface.cpp
+    transport/TCPv4Transport.cpp
     transport/UDPv6Transport.cpp
+    transport/TCPv6Transport.cpp
     transport/test_UDPv4Transport.cpp
+    transport/test_TCPv4Transport.cpp
+    transport/tcp/TCPControlMessage.cxx
+    transport/tcp/RTCPMessageManager.cpp
+    transport/tcp/test_RTCPMessageManager.cpp
     qos/ParameterList.cpp
     qos/ParameterTypes.cpp
     qos/QosList.cpp
@@ -217,6 +228,7 @@ endif()
 set(${PROJECT_NAME}_include_dirs
     ${ASIO_INCLUDE_DIR}
     ${TINYXML2_INCLUDE_DIR}
+    ${fastcdr_INCLUDE_DIR}
 )
 
 if(ANDROID)
@@ -262,14 +274,18 @@ if(MSVC OR MSVC_IDE)
 
         # Define public headers
         target_include_directories(${PROJECT_NAME} PUBLIC
-            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}>
             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/cpp>
             $<INSTALL_INTERFACE:include>
             )
 
         # Define public headers for static library
         target_include_directories(${PROJECT_NAME}_static PUBLIC
-            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}>
             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/cpp>
             $<INSTALL_INTERFACE:include>
             )
@@ -306,7 +322,9 @@ else()
 
     # Define public headers
     target_include_directories(${PROJECT_NAME} PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}>
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/cpp>
         $<INSTALL_INTERFACE:include>
         )

@@ -15,7 +15,12 @@
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLTree.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/UDPv6TransportDescriptor.h>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv6TransportDescriptor.h>
 #include <tinyxml2.h>
 
 namespace eprosima {
@@ -74,6 +79,14 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
     return ret;
 }
 
+XMLP_ret XMLParser::parseXMLProfiles(tinyxml2::XMLElement& profiles, up_base_node_t& root)
+{
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    root.reset(new BaseNode{NodeType::PROFILES});
+    ret  = parseProfiles(&profiles, *root);
+    return ret;
+}
+
 XMLP_ret XMLParser::parseRoot(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
 {
     XMLP_ret ret           = XMLP_ret::XML_OK;
@@ -86,6 +99,308 @@ XMLP_ret XMLParser::parseRoot(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
             rootNode.addChild(std::move(profiles_node));
         }
     }
+    return ret;
+}
+
+XMLP_ret XMLParser::parseXMLTransportsProf(tinyxml2::XMLElement* p_root)
+{
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    tinyxml2::XMLElement* p_element = p_root->FirstChildElement(TRANSPORT);
+    while(p_element != nullptr)
+    {
+        ret = parseXMLTransportData(p_element);
+        if (ret != XMLP_ret::XML_OK)
+        {
+            return ret;
+        }
+        p_element = p_element->NextSiblingElement(TRANSPORT);
+    }
+    return ret;
+}
+
+XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
+{
+    /*<xs:complexType name="rtpsTransportDescriptorType">
+    <xs:all minOccurs="0">
+    <xs:element name="transport_id" type="stringType"/>
+    <xs:element name="type" type="stringType"/>
+    <xs:element name="sendBufferSize" type="int32Type"/>
+    <xs:element name="receiveBufferSize" type="int32Type"/>
+    <xs:element name="TTL" type="int8Type"/>
+    <xs:element name="interfaceWhiteList" type="stringListType"/>
+    <xs:sequence>
+    <xs:element name="id" type="stringType"/>
+    </xs:sequence>
+    <xs:element name="wan_addr" type="stringType"/>
+    <xs:element name="output_port" type="uint16Type"/>
+    <xs:element name="keep_alive_frequency_ms" type="uint32Type"/>
+    <xs:element name="keep_alive_timeout_ms" type="uint32Type"/>
+    <xs:element name="max_logical_port" type="uint16Type"/>
+    <xs:element name="logical_port_range" type="uint16Type"/>
+    <xs:element name="logical_port_increment" type="uint16Type"/>
+    <xs:element name="metadata_logical_port" type="uint16Type"/>
+    <xs:element name="ListeningPorts" type="uint16ListType"/>
+    <xs:sequence>
+    <xs:element name="port" type="uint16Type"/>
+    </xs:sequence>
+    </xs:all>
+    </xs:complexType>*/
+
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    std::string sId = "";
+    std::shared_ptr<rtps::TransportDescriptorInterface> pDescriptor = nullptr;
+
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    p_aux0 = p_root->FirstChildElement(TRANSPORT_ID);
+    if (nullptr == p_aux0)
+    {
+        logError(XMLPARSER, "Not found '" << TRANSPORT_ID << "' attribute");
+        return XMLP_ret::XML_ERROR;
+    }
+    else
+    {
+        sId = p_aux0->GetText();
+    }
+
+    p_aux0 = p_root->FirstChildElement(TYPE);
+    if (nullptr == p_aux0)
+    {
+        logError(XMLPARSER, "Not found '" << TYPE << "' attribute");
+        return XMLP_ret::XML_ERROR;
+    }
+    else
+    {
+        std::string sType = p_aux0->GetText();
+        if (sType == UDPv4)
+        {
+            pDescriptor = std::make_shared<rtps::UDPv4TransportDescriptor>();
+            std::shared_ptr<rtps::UDPv4TransportDescriptor> pUDPv4Desc =
+                std::dynamic_pointer_cast<rtps::UDPv4TransportDescriptor>(pDescriptor);
+            // Output UDP Socket
+            if (nullptr != (p_aux0 = p_root->FirstChildElement(UDP_OUTPUT_PORT)))
+            {
+                int iSocket = 0;
+                if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iSocket, 0) || iSocket < 0 || iSocket > 65535)
+                    return XMLP_ret::XML_ERROR;
+                pUDPv4Desc->m_output_upd_socket = static_cast<uint16_t>(iSocket);
+            }
+        }
+        else if (sType == UDPv6)
+        {
+            pDescriptor = std::make_shared<rtps::UDPv6TransportDescriptor>();
+
+            std::shared_ptr<rtps::UDPv6TransportDescriptor> pUDPv6Desc =
+                std::dynamic_pointer_cast<rtps::UDPv6TransportDescriptor>(pDescriptor);
+            // Output UDP Socket
+            if (nullptr != (p_aux0 = p_root->FirstChildElement(UDP_OUTPUT_PORT)))
+            {
+                int iSocket = 0;
+                if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iSocket, 0) || iSocket < 0 || iSocket > 65535)
+                    return XMLP_ret::XML_ERROR;
+                pUDPv6Desc->m_output_upd_socket = static_cast<uint16_t>(iSocket);
+            }
+        }
+        else if (sType == TCPv4)
+        {
+            pDescriptor = std::make_shared<rtps::TCPv4TransportDescriptor>();
+            ret = parseXMLCommonTCPTransportData(p_root, pDescriptor);
+            if (ret != XMLP_ret::XML_OK)
+            {
+                return ret;
+            }
+            else
+            {
+                std::shared_ptr<rtps::TCPv4TransportDescriptor> pTCPv4Desc =
+                    std::dynamic_pointer_cast<rtps::TCPv4TransportDescriptor>(pDescriptor);
+
+                // Wan Address
+                if (nullptr != (p_aux0 = p_root->FirstChildElement(TCP_WAN_ADDR)))
+                {
+                    std::string s;
+                    if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, 0))
+                        return XMLP_ret::XML_ERROR;
+                    pTCPv4Desc->set_WAN_address(s);
+                }
+            }
+        }
+        else if (sType == TCPv6)
+        {
+            pDescriptor = std::make_shared<rtps::TCPv6TransportDescriptor>();
+            ret = parseXMLCommonTCPTransportData(p_root, pDescriptor);
+            if (ret != XMLP_ret::XML_OK)
+            {
+                return ret;
+            }
+        }
+
+        ret = parseXMLCommonTransportData(p_root, pDescriptor);
+        if (ret != XMLP_ret::XML_OK)
+        {
+            return ret;
+        }
+
+        XMLProfileManager::insertTransportById(sId, pDescriptor);
+    }
+    return ret;
+}
+
+XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport)
+{
+    /*<xs:complexType name="rtpsTransportDescriptorType">
+    <xs:all minOccurs="0">
+    <xs:element name="sendBufferSize" type="int32Type"/>
+    <xs:element name="receiveBufferSize" type="int32Type"/>
+    <xs:element name="TTL" type="int8Type"/>
+    <xs:element name="interfaceWhiteList" type="stringListType"/>
+    <xs:sequence>
+    <xs:element name="id" type="stringType"/>
+    </xs:sequence>
+    </xs:all>
+    </xs:complexType>*/
+
+    tinyxml2::XMLElement* p_aux = nullptr;
+
+    // sendBufferSize - int32Type
+    if (nullptr != (p_aux = p_root->FirstChildElement(SEND_BUFFER_SIZE)))
+    {
+        int iSize = 0;
+        if (XMLP_ret::XML_OK != getXMLInt(p_aux, &iSize, 0) || iSize < 0)
+            return XMLP_ret::XML_ERROR;
+        p_transport->sendBufferSize = iSize;
+    }
+    // receiveBufferSize - int32Type
+    if (nullptr != (p_aux = p_root->FirstChildElement(RECEIVE_BUFFER_SIZE)))
+    {
+        int iSize = 0;
+        if (XMLP_ret::XML_OK != getXMLInt(p_aux, &iSize, 0) || iSize < 0)
+            return XMLP_ret::XML_ERROR;
+        p_transport->receiveBufferSize = iSize;
+    }
+
+    // TTL - int8Type
+    if (nullptr != (p_aux = p_root->FirstChildElement(TTL)))
+    {
+        int iTTL = 0;
+        if (XMLP_ret::XML_OK != getXMLInt(p_aux, &iTTL, 0) || iTTL < 0 || iTTL > 255)
+            return XMLP_ret::XML_ERROR;
+        p_transport->TTL = static_cast<uint8_t>(iTTL);
+    }
+
+    // InterfaceWhiteList stringListType
+    if (nullptr != (p_aux = p_root->FirstChildElement(WHITE_LIST)))
+    {
+        tinyxml2::XMLElement* p_aux1 = p_aux->FirstChildElement(ADDRESS);
+        while (nullptr != p_aux1)
+        {
+            const char* text = p_aux1->GetText();
+            if (nullptr != text)
+            {
+                p_transport->interfaceWhiteList.emplace_back(text);
+            }
+            p_aux1 = p_aux1->NextSiblingElement(ADDRESS);
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport)
+{
+    /*<xs:complexType name="rtpsTransportDescriptorType">
+    <xs:all minOccurs="0">
+    <xs:element name="keep_alive_frequency_ms" type="uint32Type"/>
+    <xs:element name="keep_alive_timeout_ms" type="uint32Type"/>
+    <xs:element name="max_logical_port" type="uint16Type"/>
+    <xs:element name="logical_port_range" type="uint16Type"/>
+    <xs:element name="logical_port_increment" type="uint16Type"/>
+    <xs:element name="metadata_logical_port" type="uint16Type"/>
+    <xs:element name="ListeningPorts" type="uint16ListType"/>
+    <xs:sequence>
+    <xs:element name="port" type="uint16Type"/>
+    </xs:sequence>
+    </xs:all>
+    </xs:complexType>*/
+
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    std::shared_ptr<rtps::TCPTransportDescriptor> pTCPDesc = std::dynamic_pointer_cast<rtps::TCPTransportDescriptor>(p_transport);
+    if (pTCPDesc != nullptr)
+    {
+        tinyxml2::XMLElement *p_aux0 = nullptr;
+
+        // keep_alive_frequency_ms - uint32Type
+        if (nullptr != (p_aux0 = p_root->FirstChildElement(KEEP_ALIVE_FREQUENCY)))
+        {
+            int iFrequency(0);
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iFrequency, 0))
+                return XMLP_ret::XML_ERROR;
+            pTCPDesc->keep_alive_frequency_ms = static_cast<uint32_t>(iFrequency);
+        }
+
+        // keep_alive_timeout_ms - uint32Type
+        if (nullptr != (p_aux0 = p_root->FirstChildElement(KEEP_ALIVE_TIMEOUT)))
+        {
+            int iTimeout(0);
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iTimeout, 0))
+                return XMLP_ret::XML_ERROR;
+            pTCPDesc->keep_alive_timeout_ms = static_cast<uint32_t>(iTimeout);
+        }
+
+        // max_logical_port - uint16Type
+        if (nullptr != (p_aux0 = p_root->FirstChildElement(MAX_LOGICAL_PORT)))
+        {
+            int iPort(0);
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iPort, 0) || iPort < 0 || iPort > 65535)
+                return XMLP_ret::XML_ERROR;
+            pTCPDesc->max_logical_port = static_cast<uint16_t>(iPort);
+        }
+
+        // logical_port_range - uint16Type
+        if (nullptr != (p_aux0 = p_root->FirstChildElement(LOGICAL_PORT_RANGE)))
+        {
+            int iPort(0);
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iPort, 0) || iPort < 0 || iPort > 65535)
+                return XMLP_ret::XML_ERROR;
+            pTCPDesc->logical_port_range = static_cast<uint16_t>(iPort);
+        }
+
+        // logical_port_increment - uint16Type
+        if (nullptr != (p_aux0 = p_root->FirstChildElement(LOGICAL_PORT_INCREMENT)))
+        {
+            int iPort(0);
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iPort, 0) || iPort < 0 || iPort > 65535)
+                return XMLP_ret::XML_ERROR;
+            pTCPDesc->logical_port_increment = static_cast<uint16_t>(iPort);
+        }
+
+        // metadata_logical_port - uint16Type
+        if (nullptr != (p_aux0 = p_root->FirstChildElement(METADATA_LOGICAL_PORT)))
+        {
+            int iPort(0);
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iPort, 0) || iPort < 0 || iPort > 65535)
+                return XMLP_ret::XML_ERROR;
+            pTCPDesc->metadata_logical_port = static_cast<uint16_t>(iPort);
+        }
+
+        // ListeningPorts uint16ListType
+        if (nullptr != (p_aux0 = p_root->FirstChildElement(LISTENING_PORTS)))
+        {
+            tinyxml2::XMLElement* p_aux1 = p_aux0->FirstChildElement(PORT);
+            while (nullptr != p_aux1)
+            {
+                int iPort = 0;
+                if (XMLP_ret::XML_OK != getXMLInt(p_aux1, &iPort, 0) || iPort < 0 || iPort > 65535)
+                    return XMLP_ret::XML_ERROR;
+                pTCPDesc->add_listener_port(static_cast<uint16_t>(iPort));
+
+                p_aux1 = p_aux1->NextSiblingElement(PORT);
+            }
+        }
+    }
+    else
+    {
+        logError(XMLPARSER, "Error parsing TCP Transport data");
+        ret = XMLP_ret::XML_ERROR;
+    }
+
     return ret;
 }
 
@@ -166,7 +481,11 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
         if (nullptr != (tag = p_profile->Value()))
         {
             // If profile parsing functions fails, log and continue.
-            if (strcmp(tag, PARTICIPANT) == 0)
+            if (strcmp(tag, TRANSPORTS) == 0)
+            {
+                parseXMLTransportsProf(p_profile);
+            }
+            else if (strcmp(tag, PARTICIPANT) == 0)
             {
                 parseXMLParticipantProf(p_profile, profilesNode);
             }
@@ -227,6 +546,16 @@ XMLP_ret XMLParser::loadXML(const std::string& filename, up_base_node_t& root)
     return parseXML(xmlDoc, root);
 }
 
+XMLP_ret XMLParser::loadXMLProfiles(tinyxml2::XMLElement &xmlDoc, up_base_node_t& root)
+{
+    return parseXMLProfiles(xmlDoc, root);
+}
+
+XMLP_ret XMLParser::loadXML(tinyxml2::XMLDocument &xmlDoc, up_base_node_t& root)
+{
+    return parseXML(xmlDoc, root);
+}
+
 XMLP_ret XMLParser::loadXML(const char* data, size_t length, up_base_node_t& root)
 {
     tinyxml2::XMLDocument xmlDoc;
@@ -273,8 +602,6 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
       <xs:all minOccurs="0">
         <xs:element name="defaultUnicastLocatorList" type="locatorListType"/>
         <xs:element name="defaultMulticastLocatorList" type="locatorListType"/>
-        <xs:element name="defaultOutLocatorList" type="locatorListType"/>
-        <xs:element name="defaultSendPort" type="uint32Type"/>
         <xs:element name="sendSocketBufferSize" type="uint32Type"/>
         <xs:element name="listenSocketBufferSize" type="uint32Type"/>
         <xs:element name="builtin" type="builtinAttributesType"/>
@@ -284,7 +611,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
         <xs:element name="use_IP4_to_send" type="boolType"/>
         <xs:element name="use_IP6_to_send" type="boolType"/>
         <xs:element name="throughputController" type="throughputControllerType"/>
-        <!-- <xs:element name="userTransports" type="XXX"/> -->
+        <xs:element name="userTransports" type="stringListType"/>
         <xs:element name="useBuiltinTransports" type="boolType"/>
         <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
         <xs:element name="name" type="stringType"/>
@@ -326,18 +653,6 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
     {
         if (XMLP_ret::XML_OK !=
             getXMLLocatorList(p_aux, participant_node.get()->rtps.defaultMulticastLocatorList, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // defaultOutLocatorList
-    if (nullptr != (p_aux = p_element->FirstChildElement(DEF_OUT_LOC_LIST)))
-    {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, participant_node.get()->rtps.defaultOutLocatorList, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // defaultSendPort - uint32Type
-    if (nullptr != (p_aux = p_element->FirstChildElement(DEF_SEND_PORT)))
-    {
-        if (XMLP_ret::XML_OK != getXMLUint(p_aux, &participant_node.get()->rtps.defaultSendPort, ident))
             return XMLP_ret::XML_ERROR;
     }
     // sendSocketBufferSize - uint32Type
@@ -395,12 +710,12 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
             getXMLThroughputController(p_aux, participant_node.get()->rtps.throughputController, ident))
             return XMLP_ret::XML_ERROR;
     }
-    // TODO: userTransports
+    // userTransports
     if (nullptr != (p_aux = p_element->FirstChildElement(USER_TRANS)))
     {
-        logError(XMLPARSER, "Attribute '" << p_aux->Value() << "' do not supported for now");
+        if (XMLP_ret::XML_OK != getXMLTransports(p_aux, participant_node.get()->rtps.userTransports, ident))
+            return XMLP_ret::XML_ERROR;
     }
-
     // useBuiltinTransports - boolType
     if (nullptr != (p_aux = p_element->FirstChildElement(USE_BUILTIN_TRANS)))
     {
@@ -487,10 +802,10 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Publi
         if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, publisher_node.get()->multicastLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
-    // outLocatorList
-    if (nullptr != (p_aux = p_profile->FirstChildElement(OUT_LOC_LIST)))
+    // remoteLocatorList
+    if (nullptr != (p_aux = p_profile->FirstChildElement(REM_LOC_LIST)))
     {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, publisher_node.get()->outLocatorList, ident))
+        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, publisher_node.get()->remoteLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
     // throughputController
@@ -596,10 +911,10 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Subsc
         if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, subscriber_node.get()->multicastLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
-    // outLocatorList
-    if (nullptr != (p_aux = p_profile->FirstChildElement(OUT_LOC_LIST)))
+    // remote LocatorList
+    if (nullptr != (p_aux = p_profile->FirstChildElement(REM_LOC_LIST)))
     {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, subscriber_node.get()->outLocatorList, ident))
+        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, subscriber_node.get()->remoteLocatorList, ident))
             return XMLP_ret::XML_ERROR;
     }
     // expectsInlineQos - boolType

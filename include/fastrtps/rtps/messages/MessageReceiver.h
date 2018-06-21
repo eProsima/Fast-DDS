@@ -34,6 +34,7 @@ namespace rtps {
 class RTPSWriter;
 class RTPSReader;
 struct SubmessageHeader_t;
+class ReceiverResource;
 
 /**
  * Class MessageReceiver, process the received messages.
@@ -45,8 +46,7 @@ class MessageReceiver
         /**
          * @param rec_buffer_size
          */
-        MessageReceiver(RTPSParticipantImpl* participant, uint32_t rec_buffer_size);
-        MessageReceiver(RTPSParticipantImpl* participant);
+        MessageReceiver(RTPSParticipantImpl* participant, ReceiverResource* receiverResource, uint32_t maxMsgSize);
         virtual ~MessageReceiver();
         //!Reset the MessageReceiver to process a new message.
         void reset();
@@ -63,24 +63,17 @@ class MessageReceiver
          * @param[in] loc Locator indicating the sending address.
          * @param[in] msg Pointer to the message
          */
-        void processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,Locator_t* loc, CDRMessage_t*msg);
+        virtual void processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,Locator_t* loc, CDRMessage_t*msg);
+
+        //! Sets the related receiverResource only if the current is not set.
+        void setReceiverResource(ReceiverResource* receiverResource);
 
         //!Pointer to the Listen Resource that contains this MessageReceiver.
 
-        //!Received message
-        CDRMessage_t m_rec_msg;
-#if HAVE_SECURITY
-        CDRMessage_t m_crypto_msg;
-#endif
         //!PArameter list
         ParameterList_t m_ParamList;
-        // Functions to associate/remove associatedendpoints
-        void associateEndpoint(Endpoint *to_add);
-        void removeEndpoint(Endpoint *to_remove);
 
     private:
-        std::vector<RTPSWriter *> AssociatedWriters;
-        std::vector<RTPSReader *> AssociatedReaders;
         std::mutex mtx;
         //!Protocol version of the message
         ProtocolVersion_t sourceVersion;
@@ -91,7 +84,7 @@ class MessageReceiver
         //!GuidPrefix of the entity that receives the message. GuidPrefix of the RTPSParticipant.
         GuidPrefix_t destGuidPrefix;
         //!Reply addresses (unicast).
-        LocatorList_t unicastReplyLocatorList;
+        //LocatorList_t unicastReplyLocatorList;
         //!Reply addresses (multicast).
         LocatorList_t multicastReplyLocatorList;
         //!Has the message timestamp?
@@ -105,6 +98,12 @@ class MessageReceiver
 
         uint16_t mMaxPayload_;
 
+#if HAVE_SECURITY
+        CDRMessage_t m_crypto_msg;
+#endif
+
+        RTPSParticipantImpl* participant_;
+        ReceiverResource* receiverResource_;
 
         /**@name Processing methods.
          * These methods are designed to read a part of the message
@@ -150,8 +149,6 @@ class MessageReceiver
         bool proc_Submsg_HeartbeatFrag(CDRMessage_t*msg, SubmessageHeader_t* smh, bool*last);
         bool proc_Submsg_SecureMessage(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
         bool proc_Submsg_SecureSubMessage(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
-
-        RTPSParticipantImpl* participant_;
 };
 }
 } /* namespace rtps */

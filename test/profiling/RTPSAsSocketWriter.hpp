@@ -20,13 +20,16 @@
 #ifndef _TEST_PROFILING_RTPSASSOCKETWRITER_HPP_
 #define _TEST_PROFILING_RTPSASSOCKETWRITER_HPP_
 
+#include "RTPSProfilingCommon.h"
+
 #include <fastrtps/rtps/rtps_fwd.h>
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
 
 #include <string>
 #include <list>
 
-
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 class RTPSAsSocketWriter 
 {

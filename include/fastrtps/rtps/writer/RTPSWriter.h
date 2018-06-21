@@ -73,7 +73,7 @@ class RTPSWriter : public Endpoint
      * @param ratt Pointer to the ReaderProxyData object added.
      * @return True if added.
      */
-    RTPS_DllAPI virtual bool matched_reader_add(const RemoteReaderAttributes& ratt) = 0;
+    RTPS_DllAPI virtual bool matched_reader_add(RemoteReaderAttributes& ratt) = 0;
     /**
      * Remove a matched reader.
      * @param ratt Pointer to the object to remove.

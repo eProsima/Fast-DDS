@@ -38,6 +38,8 @@
         <xs:enumeration value="RESERVED"/>
         <xs:enumeration value="UDPv4"/>
         <xs:enumeration value="UDPv6"/>
+        <xs:enumeration value="TCPv4"/>
+        <xs:enumeration value="TCPv6"/>
       </xs:restriction>
     </xs:simpleType>
 
@@ -134,8 +136,30 @@
     <xs:complexType name="locatorType">
       <xs:all minOccurs="0">
         <xs:element name="kind" type="locatorKindType"/>
-        <xs:element name="port" type="uint32Type"/>
-        <xs:element name="address" type="stringType"/> <!-- octet address[16] -->
+        <xs:choice>
+          <xs:element name="port" type="uint32Type"/>
+          <xs:element name="ports_" type="uint32Type">
+            <xs:complexType>
+              <xs:all minOccurs="0">
+                <xs:element name="physical_port" type="uint16Type"/>
+                <xs:element name="logical_port" type="uint16Type"/>
+              </xs:all>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+        <xs:choice>
+            <xs:element name="address" type="stringType"/> <!-- octet address[4] -->
+            <xs:element name="ipv6_address" type="stringType"/> <!-- octet address[16] -->
+            <xs:element name="addresses_" type="stringType">
+              <xs:complexType>
+                <xs:all minOccurs="0">
+                  <xs:element name="unique_lan_id" type="stringType"/><!-- octet address[8] -->
+                  <xs:element name="wan_address" type="stringType"/><!-- octet address[4] -->
+                  <xs:element name="ip_address" type="stringType"/><!-- octet address[4] -->
+              </xs:all>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
       </xs:all>
     </xs:complexType>
     
@@ -507,6 +531,38 @@
       <xs:attribute name="profile_name" type="stringType" use="required"/>
     </xs:complexType>
     
+    <xs:complexType name="rtpsTransportDescriptorType">
+      <xs:all minOccurs="0">
+        <xs:element name="transport_id" type="stringType"/>
+        <xs:element name="type" type="stringType"/>
+        <xs:element name="sendBufferSize" type="int32Type"/>
+        <xs:element name="receiveBufferSize" type="int32Type"/>
+        <xs:element name="TTL" type="uint8Type"/>
+        <xs:element name="interfaceWhiteList" type="stringListType"/>
+        <xs:sequence>
+          <xs:element name="id" type="stringType"/>
+        </xs:sequence>
+        <xs:element name="wan_addr" type="stringType"/>
+        <xs:element name="output_port" type="uint16Type"/>
+        <xs:element name="keep_alive_frequency_ms" type="uint32Type"/>
+        <xs:element name="keep_alive_timeout_ms" type="uint32Type"/>
+        <xs:element name="max_logical_port" type="uint16Type"/>
+        <xs:element name="logical_port_range" type="uint16Type"/>
+        <xs:element name="logical_port_increment" type="uint16Type"/>
+        <xs:element name="metadata_logical_port" type="uint16Type"/>
+        <xs:element name="ListeningPorts" type="uint16ListType"/>
+        <xs:sequence>
+          <xs:element name="port" type="uint16Type"/>
+        </xs:sequence>
+      </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="stringListType">
+      <xs:sequence>
+        <xs:element name="id" type="stringType"/>
+      </xs:sequence>
+    </xs:complexType>
+
     <xs:element name="profiles">
       <xs:complexType>
         <xs:sequence>

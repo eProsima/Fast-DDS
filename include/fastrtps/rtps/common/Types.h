@@ -113,6 +113,16 @@ struct RTPS_DllAPI ProtocolVersion_t{
     {
 
     }
+
+    bool operator==(const ProtocolVersion_t &v) const
+    {
+        return m_major == v.m_major && m_minor == v.m_minor;
+    }
+
+    bool operator!=(const ProtocolVersion_t &v) const
+    {
+        return m_major != v.m_major || m_minor != v.m_minor;
+    }
 };
 
 
@@ -123,21 +133,45 @@ const ProtocolVersion_t c_ProtocolVersion_2_2(2,2);
 const ProtocolVersion_t c_ProtocolVersion(2,1);
 
 //!@brief Structure VendorId_t, specifying the vendor Id of the implementation.
-typedef octet VendorId_t[2];
-
-const VendorId_t c_VendorId_Unknown={0x00,0x00};
-const VendorId_t c_VendorId_eProsima={0x01,0x0F};
-
-
-static inline void set_VendorId_Unknown(VendorId_t& id)
+class VendorId_t
 {
-    id[0]=0x0;id[1]=0x0;
-}
+public:
+    VendorId_t(const VendorId_t &v) : m_vendor{v[0], v[1]}
+    {
+    }
 
-static inline void set_VendorId_eProsima(VendorId_t& id)
-{
-    id[0]=0x01;id[1]=0x0F;
-}
+    VendorId_t(const octet id0, const octet id1) : m_vendor{id0, id1}
+    {
+    }
+
+    VendorId_t& operator=(const VendorId_t &v)
+    {
+        m_vendor[0] = v[0];
+        m_vendor[1] = v[1];
+        return *this;
+    }
+
+    octet& operator[](const int index)
+    {
+        return m_vendor[index];
+    }
+
+    octet operator[](const int index) const
+    {
+        return m_vendor[index];
+    }
+
+    bool operator==(const VendorId_t &v) const
+    {
+        return m_vendor[0] == v[0] && m_vendor[1] == v[1];
+    }
+private:
+    octet m_vendor[2];
+};
+//typedef octet VendorId_t[2];
+
+const VendorId_t c_VendorId_Unknown = {0x00,0x00};
+const VendorId_t c_VendorId_eProsima = {0x01,0x0F};
 
 }
 }

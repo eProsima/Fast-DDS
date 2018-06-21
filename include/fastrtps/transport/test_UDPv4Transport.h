@@ -29,33 +29,37 @@ namespace rtps{
 /*
  * This transport acts as a shim over UDPv4, allowing
  * packets to be dropped under certain criteria.
- */ 
+ */
+
 class test_UDPv4Transport : public UDPv4Transport
 {
 public:
-   RTPS_DllAPI test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor);
+    test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor);
 
-   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator);
+    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator) override;
 
-   // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
-   RTPS_DllAPI static std::vector<std::vector<octet> > DropLog;
-   RTPS_DllAPI static uint32_t DropLogLength;
-   RTPS_DllAPI static bool ShutdownAllNetwork;
+    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
+                        const Locator_t& remoteLocator, ChannelResource* pChannelResource) override;
+
+    RTPS_DllAPI static bool test_UDPv4Transport_ShutdownAllNetwork;
+    // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
+    RTPS_DllAPI static std::vector<std::vector<octet> > test_UDPv4Transport_DropLog;
+    RTPS_DllAPI static uint32_t test_UDPv4Transport_DropLogLength;
 
 private:
-   uint8_t mDropDataMessagesPercentage;
-   bool mDropParticipantBuiltinTopicData;
-   bool mDropPublicationBuiltinTopicData;
-   bool mDropSubscriptionBuiltinTopicData;
-   uint8_t mDropDataFragMessagesPercentage;
-   uint8_t mDropHeartbeatMessagesPercentage;
-   uint8_t mDropAckNackMessagesPercentage;
-   std::vector<SequenceNumber_t> mSequenceNumberDataMessagesToDrop;
-   uint8_t mPercentageOfMessagesToDrop;
+    uint8_t mDropDataMessagesPercentage;
+    bool mDropParticipantBuiltinTopicData;
+    bool mDropPublicationBuiltinTopicData;
+    bool mDropSubscriptionBuiltinTopicData;
+    uint8_t mDropDataFragMessagesPercentage;
+    uint8_t mDropHeartbeatMessagesPercentage;
+    uint8_t mDropAckNackMessagesPercentage;
+    std::vector<SequenceNumber_t> mSequenceNumberDataMessagesToDrop;
+    uint8_t mPercentageOfMessagesToDrop;
 
-   bool LogDrop(const octet* buffer, uint32_t size);
-   bool PacketShouldDrop(const octet* sendBuffer, uint32_t sendBufferSize);
-   bool RandomChanceDrop();
+    bool LogDrop(const octet* buffer, uint32_t size);
+    bool PacketShouldDrop(const octet* sendBuffer, uint32_t sendBufferSize);
+    bool RandomChanceDrop();
 };
 
 } // namespace rtps

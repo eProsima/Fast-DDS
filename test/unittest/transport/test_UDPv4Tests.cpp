@@ -48,16 +48,16 @@ using namespace eprosima::fastrtps::rtps;
 
 class test_UDPv4Tests: public ::testing::Test
 {
-   public:
-   test_UDPv4Tests()
-   {
-      HELPER_SetDescriptorDefaults();
-   }
+    public:
+    test_UDPv4Tests()
+    {
+        HELPER_SetDescriptorDefaults();
+    }
 
-   ~test_UDPv4Tests()
-   {
-      Log::KillThread();
-   }
+    ~test_UDPv4Tests()
+    {
+        Log::KillThread();
+    }
 
    void HELPER_SetDescriptorDefaults();
    void HELPER_WarmUpOutput(test_UDPv4Transport& transport);
@@ -80,12 +80,14 @@ TEST_F(test_UDPv4Tests, DATA_messages_dropped)
    HELPER_FillDataMessage(testDataMessage, SequenceNumber_t());
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.port = g_default_port;
+   locator.set_port(g_default_port);
    locator.kind = LOCATOR_KIND_UDPv4;
 
    // Then
    ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
-   ASSERT_EQ(1, test_UDPv4Transport::DropLog.size());
+   ASSERT_EQ(1, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
+
+   ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
 }
 
 TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
@@ -98,12 +100,13 @@ TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
    HELPER_FillAckNackMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.port = g_default_port;
+   locator.set_port(g_default_port);
    locator.kind = LOCATOR_KIND_UDPv4;
 
    // Then
    ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
-   ASSERT_EQ(1, test_UDPv4Transport::DropLog.size());
+   ASSERT_EQ(1, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
+   ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
 }
 
 TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
@@ -116,12 +119,13 @@ TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
    HELPER_FillHeartbeatMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.port = g_default_port;
+   locator.set_port(g_default_port);
    locator.kind = LOCATOR_KIND_UDPv4;
 
    // Then
    ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
-   ASSERT_EQ(1, test_UDPv4Transport::DropLog.size());
+   ASSERT_EQ(1, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
+   ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
 }
 
 TEST_F(test_UDPv4Tests, Dropping_by_random_chance)
@@ -134,14 +138,15 @@ TEST_F(test_UDPv4Tests, Dropping_by_random_chance)
    HELPER_FillAckNackMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.port = g_default_port;
+   locator.set_port(g_default_port);
    locator.kind = LOCATOR_KIND_UDPv4;
 
    // Then
    ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
-   ASSERT_EQ(3, test_UDPv4Transport::DropLog.size());
+   ASSERT_EQ(3, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
+   ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
 }
 
 TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
@@ -157,12 +162,13 @@ TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
    HELPER_FillDataMessage(testDataMessage, sequenceNumbersToDrop.back());
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.port = g_default_port;
+   locator.set_port(g_default_port);
    locator.kind = LOCATOR_KIND_UDPv4;
 
    // Then
    ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
-   ASSERT_EQ(1, test_UDPv4Transport::DropLog.size());
+   ASSERT_EQ(1, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
+   ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
 }
 
 TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
@@ -178,13 +184,14 @@ TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
    HELPER_FillAckNackMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.port = g_default_port;
+   locator.set_port(g_default_port);
    locator.kind = LOCATOR_KIND_UDPv4;
    locator.set_IP4_address(239, 255, 1, 4);
 
    // Then
    ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
-   ASSERT_EQ(0, test_UDPv4Transport::DropLog.size());
+   ASSERT_EQ(0, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
+   ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
 }
 
 void test_UDPv4Tests::HELPER_SetDescriptorDefaults()
@@ -203,9 +210,9 @@ void test_UDPv4Tests::HELPER_SetDescriptorDefaults()
 void test_UDPv4Tests::HELPER_WarmUpOutput(test_UDPv4Transport& transport)
 {
    Locator_t outputChannelLocator;
-   outputChannelLocator.port = g_default_port;
+   outputChannelLocator.set_port(g_default_port);
    outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
-   ASSERT_TRUE(transport.OpenOutputChannel(outputChannelLocator));
+   ASSERT_TRUE(transport.OpenOutputChannel(outputChannelLocator, nullptr));
 }
 
 void test_UDPv4Tests::HELPER_FillDataMessage(CDRMessage_t& message, SequenceNumber_t sequenceNumber)

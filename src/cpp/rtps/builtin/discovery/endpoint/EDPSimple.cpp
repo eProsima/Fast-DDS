@@ -158,6 +158,7 @@ bool EDPSimple::createSEDPEndpoints()
         watt.endpoint.topicKind = WITH_KEY;
         watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.times.nackResponseDelay.seconds = 0;
         watt.times.nackResponseDelay.fraction = 0;
@@ -190,6 +191,7 @@ bool EDPSimple::createSEDPEndpoints()
         ratt.endpoint.topicKind = WITH_KEY;
         ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay.seconds = 0;
         ratt.times.heartbeatResponseDelay.fraction = 0;
@@ -993,12 +995,14 @@ bool EDPSimple::pairing_remote_writer_with_local_builtin_reader_after_security(c
 
     if(local_reader.entityId == sedp_builtin_publications_secure_reader)
     {
-        sedp_builtin_publications_secure_reader_.first->matched_writer_add(remote_writer_data.toRemoteWriterAttributes());
+        RemoteWriterAttributes attrs = remote_writer_data.toRemoteWriterAttributes();
+        sedp_builtin_publications_secure_reader_.first->matched_writer_add(attrs);
         returned_value = true;
     }
     else if(local_reader.entityId == sedp_builtin_subscriptions_secure_reader)
     {
-        sedp_builtin_subscriptions_secure_reader_.first->matched_writer_add(remote_writer_data.toRemoteWriterAttributes());
+        RemoteWriterAttributes attrs = remote_writer_data.toRemoteWriterAttributes();
+        sedp_builtin_subscriptions_secure_reader_.first->matched_writer_add(attrs);
         returned_value = true;
     }
 
@@ -1012,12 +1016,14 @@ bool EDPSimple::pairing_remote_reader_with_local_builtin_writer_after_security(c
 
     if(local_writer.entityId == sedp_builtin_publications_secure_writer)
     {
-        sedp_builtin_publications_secure_writer_.first->matched_reader_add(remote_reader_data.toRemoteReaderAttributes());
+        RemoteReaderAttributes attrs = remote_reader_data.toRemoteReaderAttributes();
+        sedp_builtin_publications_secure_writer_.first->matched_reader_add(attrs);
         returned_value = true;
     }
     else if(local_writer.entityId == sedp_builtin_subscriptions_secure_writer)
     {
-        sedp_builtin_subscriptions_secure_writer_.first->matched_reader_add(remote_reader_data.toRemoteReaderAttributes());
+        RemoteReaderAttributes attrs = remote_reader_data.toRemoteReaderAttributes();
+        sedp_builtin_subscriptions_secure_writer_.first->matched_reader_add(attrs);
         returned_value = true;
     }
 

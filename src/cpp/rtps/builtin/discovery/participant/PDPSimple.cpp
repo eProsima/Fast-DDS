@@ -106,7 +106,8 @@ PDPSimple::~PDPSimple()
 void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant_data)
 {
     participant_data->m_leaseDuration = mp_RTPSParticipant->getAttributes().builtin.leaseDuration;
-    set_VendorId_eProsima(participant_data->m_VendorId);
+    //set_VendorId_eProsima(participant_data->m_VendorId);
+    participant_data->m_VendorId = c_VendorId_eProsima;
 
     participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
     participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
@@ -193,8 +194,10 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     mp_RTPSParticipant = part;
     m_discovery = mp_RTPSParticipant->getAttributes().builtin;
     //CREATE ENDPOINTS
-    if(!createSPDPEndpoints())
+    if (!createSPDPEndpoints())
+    {
         return false;
+    }
     //UPDATE METATRAFFIC.
     mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->getAttributes()->unicastLocatorList);
     m_participantProxies.push_back(new ParticipantProxyData());
@@ -204,7 +207,8 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
     {
         mp_EDP = (EDP*)(new EDPStatic(this,mp_RTPSParticipant));
-        if(!mp_EDP->initEDP(m_discovery)){
+        if(!mp_EDP->initEDP(m_discovery))
+        {
             logError(RTPS_PDP,"Endpoint discovery configuration failed");
             return false;
         }
@@ -213,7 +217,8 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     else if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
     {
         mp_EDP = (EDP*)(new EDPSimple(this,mp_RTPSParticipant));
-        if(!mp_EDP->initEDP(m_discovery)){
+        if(!mp_EDP->initEDP(m_discovery))
+        {
             logError(RTPS_PDP,"Endpoint discovery configuration failed");
             return false;
         }
@@ -448,36 +453,6 @@ bool PDPSimple::createSPDPEndpoints()
     //SPDP BUILTIN RTPSParticipant WRITER
     HistoryAttributes hatt;
     hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
-    hatt.initialReservedCaches = 20;
-    hatt.maximumReservedCaches = 100;
-    mp_SPDPWriterHistory = new WriterHistory(hatt);
-    WriterAttributes watt;
-    watt.endpoint.endpointKind = WRITER;
-    watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-    watt.endpoint.reliabilityKind = BEST_EFFORT;
-    watt.endpoint.topicKind = WITH_KEY;
-    if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
-            mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
-        watt.mode = ASYNCHRONOUS_WRITER;
-    RTPSWriter* wout;
-    if(mp_RTPSParticipant->createWriter(&wout,watt,mp_SPDPWriterHistory,nullptr,c_EntityId_SPDPWriter,true))
-    {
-#if HAVE_SECURITY
-        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
-#endif
-        mp_SPDPWriter = dynamic_cast<StatelessWriter*>(wout);
-        for(LocatorListIterator lit = mp_builtin->m_initialPeersList.begin();
-                lit != mp_builtin->m_initialPeersList.end(); ++lit)
-            mp_SPDPWriter->add_locator(*lit);
-    }
-    else
-    {
-        logError(RTPS_PDP,"SimplePDP Writer creation failed");
-        delete(mp_SPDPWriterHistory);
-        mp_SPDPWriterHistory = nullptr;
-        return false;
-    }
-    hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
     hatt.initialReservedCaches = 250;
     hatt.maximumReservedCaches = 5000;
     mp_SPDPReaderHistory = new ReaderHistory(hatt);
@@ -489,16 +464,25 @@ bool PDPSimple::createSPDPEndpoints()
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
     mp_listener = new PDPSimpleListener(this);
     RTPSReader* rout;
-    if(mp_RTPSParticipant->createReader(&rout,ratt,mp_SPDPReaderHistory,mp_listener,c_EntityId_SPDPReader,true, false))
+    if (mp_RTPSParticipant->createReader(&rout, ratt, mp_SPDPReaderHistory, mp_listener, c_EntityId_SPDPReader, true, false))
     {
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(rout, false);
 #endif
         mp_SPDPReader = dynamic_cast<StatelessReader*>(rout);
+        if (mp_SPDPReader != nullptr)
+        {
+            RemoteWriterAttributes rwatt;
+            rwatt.endpoint.remoteLocatorList = mp_builtin->m_initialPeersList;
+            rwatt.endpoint.topicKind = WITH_KEY;
+            rwatt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+            rwatt.endpoint.reliabilityKind = BEST_EFFORT;
+            mp_SPDPReader->matched_writer_add(rwatt);
+        }
     }
     else
     {
-        logError(RTPS_PDP,"SimplePDP Reader creation failed");
+        logError(RTPS_PDP, "SimplePDP Reader creation failed");
         delete(mp_SPDPReaderHistory);
         mp_SPDPReaderHistory = nullptr;
         delete(mp_listener);
@@ -506,6 +490,63 @@ bool PDPSimple::createSPDPEndpoints()
         return false;
     }
 
+    hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+    hatt.initialReservedCaches = 20;
+    hatt.maximumReservedCaches = 100;
+    mp_SPDPWriterHistory = new WriterHistory(hatt);
+    WriterAttributes watt;
+    watt.endpoint.endpointKind = WRITER;
+    watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+    watt.endpoint.reliabilityKind = BEST_EFFORT;
+    watt.endpoint.topicKind = WITH_KEY;
+    watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
+
+    if (mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
+        mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
+    {
+        watt.mode = ASYNCHRONOUS_WRITER;
+    }
+
+    RTPSWriter* wout;
+    if (mp_RTPSParticipant->createWriter(&wout, watt, mp_SPDPWriterHistory, nullptr, c_EntityId_SPDPWriter, true))
+    {
+#if HAVE_SECURITY
+        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
+#endif
+        mp_SPDPWriter = dynamic_cast<StatelessWriter*>(wout);
+        if (mp_SPDPWriter != nullptr)
+        {
+            for (LocatorListIterator lit = mp_builtin->m_initialPeersList.begin();
+                lit != mp_builtin->m_initialPeersList.end(); ++lit)
+            {
+                mp_SPDPWriter->add_locator(*lit);
+            }
+
+            RemoteReaderAttributes rratt;
+            for (auto it = mp_builtin->m_initialPeersList.begin(); it != mp_builtin->m_initialPeersList.end(); ++it)
+            {
+                if (it->is_Multicast())
+                {
+                    rratt.endpoint.multicastLocatorList.push_back(*it);
+                }
+                else
+                {
+                    rratt.endpoint.unicastLocatorList.push_back(*it);
+                }
+            }
+            rratt.endpoint.topicKind = WITH_KEY;
+            rratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+            rratt.endpoint.reliabilityKind = BEST_EFFORT;
+            mp_SPDPWriter->matched_reader_add(rratt);
+        }
+    }
+    else
+    {
+        logError(RTPS_PDP, "SimplePDP Writer creation failed");
+        delete(mp_SPDPWriterHistory);
+        mp_SPDPWriterHistory = nullptr;
+        return false;
+    }
     logInfo(RTPS_PDP,"SPDP Endpoints creation finished");
     return true;
 }

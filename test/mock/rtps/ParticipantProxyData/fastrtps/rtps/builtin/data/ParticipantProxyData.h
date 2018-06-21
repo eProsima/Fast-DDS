@@ -31,7 +31,7 @@ class ParticipantProxyData
 {
     public:
 
-        ParticipantProxyData() : m_availableBuiltinEndpoints(0) {}
+        ParticipantProxyData() : m_availableBuiltinEndpoints(0), m_VendorId(c_VendorId_Unknown) {}
 
         GUID_t m_guid;
         uint32_t m_availableBuiltinEndpoints;

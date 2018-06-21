@@ -212,7 +212,7 @@ void StatelessWriter::send_any_unsent_changes()
  *	MATCHED_READER-RELATED METHODS
  */
 
-bool StatelessWriter::matched_reader_add(const RemoteReaderAttributes& rdata)
+bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
@@ -234,6 +234,9 @@ bool StatelessWriter::matched_reader_add(const RemoteReaderAttributes& rdata)
         locators.push_back((*it).endpoint.multicastLocatorList);
         allLocatorLists.push_back(locators);
     }
+
+    getRTPSParticipant()->createSenderResources(rdata.endpoint.unicastLocatorList, false);
+    getRTPSParticipant()->createSenderResources(rdata.endpoint.multicastLocatorList, false);
 
     // Add info of new datareader.
     if(addGuid)

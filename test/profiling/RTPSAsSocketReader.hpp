@@ -20,6 +20,8 @@
 #ifndef _TEST_PROFILING_RTPSASSOCKETREADER_HPP_
 #define _TEST_PROFILING_RTPSASSOCKETREADER_HPP_
 
+#include "RTPSProfilingCommon.h"
+
 #include <fastrtps/rtps/rtps_fwd.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
@@ -27,7 +29,8 @@
 #include <list>
 #include <condition_variable>
 
-
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 class RTPSAsSocketReader 
 {

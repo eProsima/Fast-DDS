@@ -23,8 +23,7 @@
 #include "../common/Locator.h"
 #include "PropertyPolicy.h"
 #include "../flowcontrol/ThroughputControllerDescriptor.h"
-#include "../../transport/TransportInterface.h"
-
+#include <fastrtps/transport/TransportInterface.h>
 #include <memory>
 
 namespace eprosima {
@@ -202,7 +201,6 @@ class RTPSParticipantAttributes
 
         RTPSParticipantAttributes()
         {
-            defaultSendPort = 10040;
             setName("RTPSParticipant");
             sendSocketBufferSize = 0;
             listenSocketBufferSize = 0;
@@ -225,19 +223,6 @@ class RTPSParticipantAttributes
          * that it was defined with NO UnicastLocators. This is usually left empty.
          */
         LocatorList_t defaultMulticastLocatorList;
-
-        /**
-         * Default list of Locators used to send messages through. Used to link with SenderResources in the case and 
-         * Endpoint is created with NO outLocators. This list contains the default outLocators for the Transports implemented
-         * by eProsima.
-         */
-        LocatorList_t defaultOutLocatorList;
-
-        /**
-         * Default send port that all Endpoints in the RTPSParticipant would use to send messages, default value 10040.
-         * In this release all Endpoints use the same resource (socket) to send messages.
-         */
-        uint32_t defaultSendPort;
 
         /*!
          * @brief Send socket buffer size for the send resource. Zero value indicates to use default system buffer size.
@@ -267,7 +252,7 @@ class RTPSParticipantAttributes
         //!Get the name of the participant.
         inline const char* getName() const {return name.c_str();}
         //!Throughput controller parameters. Leave default for uncontrolled flow.
-        ThroughputControllerDescriptor throughputController; 
+        ThroughputControllerDescriptor throughputController;
         //!User defined transports to use alongside or in place of builtins.
         std::vector<std::shared_ptr<TransportDescriptorInterface> > userTransports;
         //!Set as false to disable the default UDPv4 implementation.

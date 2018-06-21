@@ -175,7 +175,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     //////////////////////////////
 
     ParticipantAttributes PParam;
-    PParam.rtps.defaultSendPort = 10042;
+    //PParam.rtps.defaultSendPort = 10042;
     PParam.rtps.builtin.domainId = pid % 230;
     PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
@@ -219,7 +219,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     if(!reliable)
         PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
     Locator_t loc;
-    loc.port = 15000;
+    loc.set_port(15000);
     PubDataparam.unicastLocatorList.push_back(loc);
     PubDataparam.properties = property_policy;
     if(large_data)
@@ -244,7 +244,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     SubDataparam.topic.historyQos.depth = 1;
     if(reliable)
         SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    loc.port = 15001;
+    loc.set_port(15001);
     SubDataparam.unicastLocatorList.push_back(loc);
     SubDataparam.properties = property_policy;
     if(large_data)

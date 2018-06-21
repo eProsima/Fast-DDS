@@ -58,6 +58,12 @@ void default_send_print(const Type&)
 }
 
 template<>
+void default_send_print(const StringType&)
+{
+    std::cout << "Sent StringType" << std::endl;
+}
+
+template<>
 void default_send_print(const HelloWorld& hello)
 {
     std::cout << "Sent HelloWorld " << hello.index() << std::endl;
@@ -375,8 +381,8 @@ protected:
         eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
         if (loc.size()>0)
         {
-            guid_prefix_.value[10] = loc.begin()->address[14];
-            guid_prefix_.value[11] = loc.begin()->address[15];
+            guid_prefix_.value[10] = loc.begin()->get_Address()[14];
+            guid_prefix_.value[11] = loc.begin()->get_Address()[15];
         }
         else
         {
@@ -1130,7 +1136,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
     reader.block_for_all();
 
     // Sanity check. Make sure we have dropped a few packets
-    ASSERT_EQ(test_UDPv4Transport::DropLog.size(), testTransport->dropLogLength);
+    ASSERT_EQ(eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_DropLog.size(), testTransport->dropLogLength);
 }
 
 BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
@@ -1297,7 +1303,7 @@ BLACKBOXTEST_F(BlackBoxPersistence, RTPSAsNonReliableWithPersistence)
 
     // Stop and start reader and writer
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    
+
     std::cout << "First round finished." << std::endl;
 
     reader.init();
@@ -1707,7 +1713,7 @@ BLACKBOXTEST(BlackBox, PubSubOutLocatorSelection){
     Locator_t LocatorBuffer;
 
     LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
-    LocatorBuffer.port = 31337;
+    LocatorBuffer.set_port(31337);
 
     WriterOutLocators.push_back(LocatorBuffer);
 
@@ -1719,11 +1725,16 @@ BLACKBOXTEST(BlackBox, PubSubOutLocatorSelection){
 
     ASSERT_TRUE(reader.isInitialized());
 
+    std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+    descriptor->m_output_upd_socket = static_cast<uint16_t>(LocatorBuffer.get_port());
+
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
         durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
         resource_limits_allocated_samples(20).
-        resource_limits_max_samples(20).
-        outLocatorList(WriterOutLocators).init();
+        disable_builtin_transport().
+        add_user_transport_to_pparams(descriptor).
+        resource_limits_max_samples(20).init();
+
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -1798,6 +1809,7 @@ BLACKBOXTEST(BlackBox, PubSubMoreThan256Unacknowledged)
 
 BLACKBOXTEST(BlackBox, StaticDiscovery)
 {
+    //Log::SetVerbosity(Log::Info);
     char* value = nullptr;
     std::string TOPIC_RANDOM_NUMBER;
     std::string W_UNICAST_PORT_RANDOM_NUMBER_STR;
@@ -1850,13 +1862,13 @@ BLACKBOXTEST(BlackBox, StaticDiscovery)
     Locator_t LocatorBuffer;
 
     LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
-    LocatorBuffer.port = W_UNICAST_PORT_RANDOM_NUMBER;
+    LocatorBuffer.set_port(static_cast<uint16_t>(W_UNICAST_PORT_RANDOM_NUMBER));
     LocatorBuffer.set_IP4_address(127,0,0,1);
     WriterUnicastLocators.push_back(LocatorBuffer);
 
     LocatorList_t WriterMulticastLocators;
 
-    LocatorBuffer.port = MULTICAST_PORT_RANDOM_NUMBER;
+    LocatorBuffer.set_port(static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER));
     WriterMulticastLocators.push_back(LocatorBuffer);
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
@@ -1872,12 +1884,12 @@ BLACKBOXTEST(BlackBox, StaticDiscovery)
 
     LocatorList_t ReaderUnicastLocators;
 
-    LocatorBuffer.port = R_UNICAST_PORT_RANDOM_NUMBER;
+    LocatorBuffer.set_port(static_cast<uint16_t>(R_UNICAST_PORT_RANDOM_NUMBER));
     ReaderUnicastLocators.push_back(LocatorBuffer);
 
     LocatorList_t ReaderMulticastLocators;
 
-    LocatorBuffer.port = MULTICAST_PORT_RANDOM_NUMBER;
+    LocatorBuffer.set_port(static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER));
     ReaderMulticastLocators.push_back(LocatorBuffer);
 
 
@@ -2114,11 +2126,11 @@ BLACKBOXTEST(BlackBox, EndpointRediscovery)
     // Wait heartbeat period of builtin endpoints
     std::this_thread::sleep_for(std::chrono::seconds(4));
 
-    test_UDPv4Transport::ShutdownAllNetwork = true;
+    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
 
     writer.wait_reader_undiscovery();
 
-    test_UDPv4Transport::ShutdownAllNetwork = false;
+    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
 
     writer.waitDiscovery();
 }
@@ -2134,10 +2146,10 @@ BLACKBOXTEST(BlackBox, LocalInitialPeers)
     Locator_t loc_initial_peer, loc_default_unicast;
     LocatorList_t reader_initial_peers;
     loc_initial_peer.set_IP4_address(127, 0, 0, 1);
-    loc_initial_peer.port = port;
+    loc_initial_peer.set_port(static_cast<uint16_t>(port));
     reader_initial_peers.push_back(loc_initial_peer);
     LocatorList_t reader_default_unicast_locator;
-    loc_default_unicast.port = port + 1;
+    loc_default_unicast.set_port(static_cast<uint16_t>(port + 1));
     reader_default_unicast_locator.push_back(loc_default_unicast);
 
     reader.metatraffic_unicast_locator_list(reader_default_unicast_locator).
@@ -2147,10 +2159,10 @@ BLACKBOXTEST(BlackBox, LocalInitialPeers)
     ASSERT_TRUE(reader.isInitialized());
 
     LocatorList_t writer_initial_peers;
-    loc_initial_peer.port = port + 1;
+    loc_initial_peer.set_port(static_cast<uint16_t>(port + 1));
     writer_initial_peers.push_back(loc_initial_peer);
     LocatorList_t writer_default_unicast_locator;
-    loc_default_unicast.port = port;
+    loc_default_unicast.set_port(static_cast<uint16_t>(port));
     writer_default_unicast_locator.push_back(loc_default_unicast);
 
     writer.metatraffic_unicast_locator_list(writer_default_unicast_locator).

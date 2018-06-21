@@ -386,7 +386,7 @@ void StatefulWriter::send_any_unsent_changes()
 /*
  *	MATCHED_READER-RELATED METHODS
  */
-bool StatefulWriter::matched_reader_add(const RemoteReaderAttributes& rdata)
+bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
@@ -398,6 +398,9 @@ bool StatefulWriter::matched_reader_add(const RemoteReaderAttributes& rdata)
 
     std::vector<GUID_t> allRemoteReaders;
     std::vector<LocatorList_t> allLocatorLists;
+
+    getRTPSParticipant()->createSenderResources(rdata.endpoint.unicastLocatorList, false);
+    getRTPSParticipant()->createSenderResources(rdata.endpoint.multicastLocatorList, false);
 
     // Check if it is already matched.
     for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
@@ -849,7 +852,7 @@ void StatefulWriter::send_heartbeat_nts_(const std::vector<GUID_t>& remote_reade
 
     // FinalFlag is always false because this class is used only by StatefulWriter in Reliable.
     message_group.add_heartbeat(remote_readers,
-            firstSeq, lastSeq, m_heartbeatCount, final, false, locators); 
+            firstSeq, lastSeq, m_heartbeatCount, final, false, locators);
     // Update calculate of heartbeat piggyback.
     currentUsageSendBufferSize_ = static_cast<int32_t>(sendBufferSize_);
 
