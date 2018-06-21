@@ -67,6 +67,7 @@ public:
 
     virtual uint16_t GetMaxLogicalPort() const = 0;
 
+    using TransportInterface::Send;
     virtual size_t Send(TCPChannelResource* pChannelResource, const octet* data, size_t size) const  = 0;
 protected:
     TCPTransportInterface();
