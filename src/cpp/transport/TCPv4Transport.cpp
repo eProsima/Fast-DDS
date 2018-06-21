@@ -1538,7 +1538,7 @@ size_t TCPv4Transport::Send(TCPChannelResource *pChannelResource, const octet *d
     catch (const asio::error_code& error)
     {
         logInfo(RTCP, "ASIO [SEND]: " << error.message());
-        if ((asio::error::eof == error) || (asio::error::connection_reset == error))
+        if ((asio::error::eof == error.value()) || (asio::error::connection_reset == error.value()))
         {
             errorCode = eSocketErrorCodes::eBrokenPipe;
         }
