@@ -193,10 +193,10 @@ class EDP
                 const WriterProxyData& remote_writer_data);
 
         virtual bool pairing_remote_writer_with_local_builtin_reader_after_security(const GUID_t& /*local_reader*/,
-                const WriterProxyData& /*remote_writer_data*/) { return false; }
+                WriterProxyData& /*remote_writer_data*/) { return false; }
 
         virtual bool pairing_remote_reader_with_local_builtin_writer_after_security(const GUID_t& /*local_writer*/,
-                const ReaderProxyData& /*remote_reader_data*/) { return false; }
+                ReaderProxyData& /*remote_reader_data*/) { return false; }
 #endif
 
         //! Pointer to the PDPSimple object that contains the endpoint discovery protocol.

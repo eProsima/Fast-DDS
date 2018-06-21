@@ -989,7 +989,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 
 #if HAVE_SECURITY
 bool EDPSimple::pairing_remote_writer_with_local_builtin_reader_after_security(const GUID_t& local_reader,
-        const WriterProxyData& remote_writer_data)
+        WriterProxyData& remote_writer_data)
 {
     bool returned_value = false;
 
@@ -1008,7 +1008,7 @@ bool EDPSimple::pairing_remote_writer_with_local_builtin_reader_after_security(c
 }
 
 bool EDPSimple::pairing_remote_reader_with_local_builtin_writer_after_security(const GUID_t& local_writer,
-        const ReaderProxyData& remote_reader_data)
+        ReaderProxyData& remote_reader_data)
 {
     bool returned_value = false;
 
