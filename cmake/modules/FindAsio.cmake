@@ -2,7 +2,7 @@
 # ASIO_INCLUDE_DIR
 
 find_package(Asio CONFIG QUIET)
-if(Asio_FOUND)
+if(Asio_FOUND AND NOT THIRDPARTY)
     message(STATUS "Found Asio")
 else()
     if(THIRDPARTY OR ANDROID)
