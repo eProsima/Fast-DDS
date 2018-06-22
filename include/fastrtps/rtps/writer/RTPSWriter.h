@@ -88,10 +88,10 @@ class RTPSWriter : public Endpoint
     RTPS_DllAPI virtual bool matched_reader_is_matched(const RemoteReaderAttributes& ratt) = 0;
     /**
      * Check if a specific change has been acknowledged by all Readers.
-     * Is only useful in reliable Writer. In BE Writers always returns true;
+     * Is only useful in reliable Writer. In BE Writers always returns false;
      * @return True if acknowledged by all.
      */
-    RTPS_DllAPI virtual bool is_acked_by_all(CacheChange_t* /*a_change*/){ return true; }
+    RTPS_DllAPI virtual bool is_acked_by_all(CacheChange_t* /*a_change*/){ return false; }
 
     RTPS_DllAPI virtual bool wait_for_all_acked(const Duration_t& /*max_wait*/){ return true; }
 

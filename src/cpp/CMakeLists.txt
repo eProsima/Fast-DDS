@@ -202,6 +202,17 @@ if(INTERNAL_DEBUG)
     add_definitions(-D__INTERNALDEBUG)
 endif()
 
+add_definitions(
+    -DBOOST_ASIO_STANDALONE
+    -DASIO_STANDALONE
+    )
+
+if(ANDROID)
+    if(NOT HAVE_CXX14 AND NOT HAVE_CXX1Y)
+        add_definitions(-DASIO_DISABLE_STD_STRING_VIEW)
+    endif()
+endif()
+
 set(${PROJECT_NAME}_include_dirs
     ${ASIO_INCLUDE_DIR}
     ${TINYXML2_INCLUDE_DIR}

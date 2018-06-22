@@ -121,17 +121,6 @@ else()
     endif()
 endif()
 
-add_definitions(
-  -DBOOST_ASIO_STANDALONE
-  -DASIO_STANDALONE
-)
-
-if(ANDROID)
-    if(NOT HAVE_CXX14 AND NOT HAVE_CXX1Y)
-        add_definitions(-DASIO_DISABLE_STD_STRING_VIEW)
-    endif()
-endif()
-
 ###############################################################################
 # GCC colors if using CCache
 ###############################################################################

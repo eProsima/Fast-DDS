@@ -5061,7 +5061,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableMultithreadKeepLast1)
     reader.block_for_at_least(105);
 }
 
-// Test created to check bug #3020 (Github #238)
+// Test created to check bug #3020 (Github ros2/demos #238)
 BLACKBOXTEST(BlackBox, PubSubAsReliableVolatilePubRemoveWithoutSubs)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -5080,6 +5080,38 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableVolatilePubRemoveWithoutSubs)
 
     size_t number_of_changes_removed = 0;
     ASSERT_FALSE(writer.remove_all_changes(&number_of_changes_removed));
+}
+
+// Test created to check bug #3087 (Github #230)
+BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableVolatileHelloworld)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    reader.init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.history_depth(100).
+        reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+        durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_helloworld_data_generator();
+
+    reader.startReception(data);
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_at_least(2);
 }
 
 int main(int argc, char **argv)
