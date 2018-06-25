@@ -63,7 +63,7 @@ bool usleep_bool()
     return true;
 }
 
-SecurityManager::SecurityManager(RTPSParticipantImpl *participant) : 
+SecurityManager::SecurityManager(RTPSParticipantImpl *participant) :
     participant_stateless_message_listener_(*this),
     participant_volatile_message_secure_listener_(*this),
     participant_(participant),
@@ -624,6 +624,10 @@ bool SecurityManager::on_process_handshake(const ParticipantProxyData& participa
                 *remote_participant_info->handshake_handle_,
                 exception);
     }
+    else if (remote_participant_info->auth_status_ == AUTHENTICATION_OK)
+    {
+        return true;
+    }
 
     if(ret == VALIDATION_FAILED)
     {
@@ -799,7 +803,7 @@ bool SecurityManager::create_entities()
         delete_participant_stateless_message_entities();
     }
 
-    return false; 
+    return false;
 }
 
 void SecurityManager::delete_entities()
@@ -810,14 +814,13 @@ void SecurityManager::delete_entities()
 
 bool SecurityManager::create_participant_stateless_message_entities()
 {
-    if(create_participant_stateless_message_writer())
+    if (create_participant_stateless_message_reader())
     {
-        if(create_participant_stateless_message_reader())
+        if(create_participant_stateless_message_writer())
         {
             return true;
         }
-
-        delete_participant_stateless_message_writer();
+        delete_participant_stateless_message_reader();
     }
 
     return false;
@@ -889,6 +892,7 @@ bool SecurityManager::create_participant_stateless_message_reader()
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
     ratt.endpoint.multicastLocatorList = participant_->getRTPSParticipantAttributes().builtin.metatrafficMulticastLocatorList;
     ratt.endpoint.unicastLocatorList = participant_->getRTPSParticipantAttributes().builtin.metatrafficUnicastLocatorList;
+    ratt.endpoint.remoteLocatorList = participant_->getRTPSParticipantAttributes().builtin.initialPeersList;
 
     RTPSReader* rout = nullptr;
     if(participant_->createReader(&rout, ratt, participant_stateless_message_reader_history_, &participant_stateless_message_listener_,
@@ -955,6 +959,7 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     watt.endpoint.topicKind = NO_KEY;
     watt.endpoint.durabilityKind = VOLATILE;
     watt.endpoint.unicastLocatorList = participant_->getRTPSParticipantAttributes().builtin.metatrafficUnicastLocatorList;
+    watt.endpoint.remoteLocatorList = participant_->getRTPSParticipantAttributes().builtin.initialPeersList;
     // TODO(Ricardo) Study keep_all
 
     if(participant_->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
@@ -1004,6 +1009,7 @@ bool SecurityManager::create_participant_volatile_message_secure_reader()
     ratt.endpoint.reliabilityKind = RELIABLE;
     ratt.endpoint.durabilityKind = VOLATILE;
     ratt.endpoint.unicastLocatorList = participant_->getRTPSParticipantAttributes().builtin.metatrafficUnicastLocatorList;
+    ratt.endpoint.remoteLocatorList = participant_->getRTPSParticipantAttributes().builtin.initialPeersList;
 
     RTPSReader* rout = nullptr;
     if(participant_->createReader(&rout, ratt, participant_volatile_message_secure_reader_history_, &participant_volatile_message_secure_listener_,

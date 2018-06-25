@@ -50,12 +50,15 @@ ReceiverResource::ReceiverResource(RTPSParticipantImpl* participant, TransportIn
     Cleanup = [&transport, locator]() { transport.CloseInputChannel(locator); };
     LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
     { return transport.DoLocatorsMatch(locator, locatorToCheck); };
+
+    UpdateParticipantGUID = [&transport](const GUID_t& guid) {transport.SetParticipantGUIDPrefix(guid.guidPrefix); };
 }
 
 ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
 {
     Cleanup.swap(rValueResource.Cleanup);
     LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
+    UpdateParticipantGUID.swap(rValueResource.UpdateParticipantGUID);
 }
 
 MessageReceiver* ReceiverResource::CreateMessageReceiver()
@@ -316,6 +319,14 @@ bool ReceiverResource::processAckNack(const GUID_t& readerGUID, const GUID_t& wr
     logInfo(RTPS_MSG_IN, IDSTRING"Acknack msg to UNKNOWN writer (I loooked through "
         << AssociatedWriters.size() << " writers in this ListenResource)");
     return false;
+}
+
+void ReceiverResource::updateParticipantGUID(const GUID_t& participantGUID)
+{
+    if (UpdateParticipantGUID)
+    {
+        UpdateParticipantGUID(participantGUID);
+    }
 }
 
 } // namespace rtps

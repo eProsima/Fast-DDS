@@ -100,11 +100,14 @@ public:
    bool processAckNack(const GUID_t& readerGUID, const GUID_t& writerGUID, uint32_t ackCount,
        const SequenceNumberSet_t& snSet, bool finalFlag);
 
+   void updateParticipantGUID(const GUID_t& participantGUID);
+
 protected:
    ReceiverResource(RTPSParticipantImpl*, TransportInterface&, const Locator_t&, uint32_t maxMsgSize);
    ReceiverResource() {};
    std::function<void()> Cleanup;
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
+   std::function<void(const GUID_t&)> UpdateParticipantGUID;
    bool mValid; // Post-construction validity check for the NetworkFactory
    RTPSParticipantImpl* m_participant;
    uint32_t m_maxMsgSize;
