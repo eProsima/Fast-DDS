@@ -222,6 +222,7 @@ bool EDPSimple::createSEDPEndpoints()
         ratt.endpoint.topicKind = WITH_KEY;
         ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay.seconds = 0;
         ratt.times.heartbeatResponseDelay.fraction = 0;
@@ -255,6 +256,7 @@ bool EDPSimple::createSEDPEndpoints()
         watt.endpoint.topicKind = WITH_KEY;
         watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.times.nackResponseDelay.seconds = 0;
         watt.times.nackResponseDelay.fraction = 0;
@@ -305,6 +307,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
         watt.endpoint.topicKind = WITH_KEY;
         watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.times.nackResponseDelay.seconds = 0;
         watt.times.nackResponseDelay.fraction = 0;
@@ -339,6 +342,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
         ratt.endpoint.topicKind = WITH_KEY;
         ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay.seconds = 0;
         ratt.times.heartbeatResponseDelay.fraction = 0;
@@ -374,6 +378,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
         ratt.endpoint.topicKind = WITH_KEY;
         ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay.seconds = 0;
         ratt.times.heartbeatResponseDelay.fraction = 0;
@@ -405,6 +410,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
         watt.endpoint.topicKind = WITH_KEY;
         watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.times.nackResponseDelay.seconds = 0;
         watt.times.nackResponseDelay.fraction = 0;
@@ -670,6 +676,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
+        watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         mp_PubReader.first->matched_writer_add(watt);
@@ -687,6 +694,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.guid.entityId = c_EntityId_SEDPPubReader;
         ratt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
+        ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         mp_PubWriter.first->matched_reader_add(ratt);
@@ -704,6 +712,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
+        watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         mp_SubReader.first->matched_writer_add(watt);
@@ -721,6 +730,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.guid.entityId = c_EntityId_SEDPSubReader;
         ratt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
+        ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         mp_SubWriter.first->matched_reader_add(ratt);
@@ -840,6 +850,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         mp_PubReader.first->matched_writer_remove(watt);
@@ -856,6 +867,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         ratt.guid.entityId = c_EntityId_SEDPPubReader;
         ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         mp_PubWriter.first->matched_reader_remove(ratt);
@@ -873,6 +885,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         mp_SubReader.first->matched_writer_remove(watt);
@@ -890,6 +903,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         ratt.guid.entityId = c_EntityId_SEDPSubReader;
         ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         mp_SubWriter.first->matched_reader_remove(ratt);
@@ -908,6 +922,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         if(sedp_builtin_publications_secure_reader_.first->matched_writer_remove(watt))
@@ -928,6 +943,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         ratt.guid.entityId = sedp_builtin_publications_secure_reader;
         ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         if(sedp_builtin_publications_secure_writer_.first->matched_reader_remove(ratt))
@@ -950,6 +966,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         if(sedp_builtin_subscriptions_secure_reader_.first->matched_writer_remove(watt))
@@ -970,6 +987,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         ratt.guid.entityId = sedp_builtin_subscriptions_secure_reader;
         ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         if(sedp_builtin_subscriptions_secure_writer_.first->matched_reader_remove(ratt))

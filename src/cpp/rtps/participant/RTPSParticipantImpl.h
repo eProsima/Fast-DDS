@@ -104,7 +104,7 @@ public:
         */
     inline const GUID_t& getGuid() const { return m_guid; }
 
-    void setGuid(GUID_t& guid) { m_guid = guid; }
+    void setGuid(GUID_t& guid);
 
     //! Announce RTPSParticipantState (force the sending of a DPD message.)
     void announceRTPSParticipantState();

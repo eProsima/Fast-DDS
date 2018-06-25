@@ -1052,6 +1052,20 @@ void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint* /*pend*/, const 
     }
 }
 
+void RTPSParticipantImpl::setGuid(GUID_t& guid)
+{
+    m_guid = guid;
+    for (auto it = m_senderResourceList.begin(); it != m_senderResourceList.end(); ++it)
+    {
+        it->UpdateParticipantGUID(m_guid);
+    }
+
+    for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it)
+    {
+        (*it)->updateParticipantGUID(m_guid);
+    }
+}
+
 void RTPSParticipantImpl::announceRTPSParticipantState()
 {
     return mp_builtinProtocols->announceRTPSParticipantState();

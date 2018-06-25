@@ -69,6 +69,8 @@ public:
    */
    bool CanSendToRemoteLocator(const Locator_t& remote);
 
+   void UpdateParticipantGUID(const GUID_t& guid);
+
    //void SetChannelResource(ChannelResource* pChannelResource) { m_pChannelResource = pChannelResource; }
 
    /**
@@ -89,6 +91,7 @@ private:
    std::function<bool(const octet*, uint32_t, const Locator_t&, ChannelResource*)> SendThroughAssociatedChannel;
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
    std::function<bool(const Locator_t&)> ManagedChannelMapsToRemote;
+   std::function<void(const GUID_t&)> updateParticipantGUID;
    bool mValid; // Post-construction validity check for the NetworkFactory
    //ChannelResource* m_pChannelResource;
 };
