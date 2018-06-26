@@ -290,6 +290,99 @@ bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, Re
     return true;
 }
 
+bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator, SenderResource *senderResource)
+{
+    (void)locator;
+
+    std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
+    try
+    {
+        uint16_t port = GetConfiguration()->m_output_udp_socket;
+        std::vector<IPFinder::info_IP> locNames;
+        GetIPs(locNames);
+        // If there is no whitelist, we can simply open a generic output socket
+        // and gain efficiency.
+        if (IsInterfaceWhiteListEmpty())
+        {
+            eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(GenerateAnyAddressEndpoint(port), port);
+            getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback(true));
+
+            // If more than one interface, then create sockets for outbounding multicast.
+            if (locNames.size() > 1)
+            {
+                auto locIt = locNames.begin();
+
+                // Outbounding first interface with already created socket.
+                SetSocketOutbountInterface(getSocketPtr(unicastSocket), (*locIt).name);
+                mOutputSockets.push_back(new UDPChannelResource(unicastSocket));
+
+                // Create other socket for outbounding rest of interfaces.
+                for (++locIt; locIt != locNames.end(); ++locIt)
+                {
+                    uint16_t new_port = 0;
+                    eProsimaUDPSocket multicastSocket = OpenAndBindUnicastOutputSocket(GenerateEndpoint((*locIt).name, new_port), new_port);
+                    SetSocketOutbountInterface(getSocketPtr(multicastSocket), (*locIt).name);
+
+                    UDPChannelResource* mSocket = new UDPChannelResource(multicastSocket);
+                    mSocket->only_multicast_purpose(true);
+                    mOutputSockets.push_back(mSocket);
+                }
+            }
+            else
+            {
+                // Multicast data will be sent for the only one interface.
+                UDPChannelResource *mSocket = new UDPChannelResource(unicastSocket);
+                mOutputSockets.push_back(mSocket);
+                if (senderResource != nullptr)
+                {
+                    AssociateSenderToSocket(mSocket, senderResource);
+                }
+            }
+        }
+        else
+        {
+            bool firstInterface = false;
+            for (const auto& infoIP : locNames)
+            {
+                if (IsInterfaceAllowed(infoIP.name))
+                {
+                    eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(GenerateEndpoint(infoIP.name, port), port);
+                    SetSocketOutbountInterface(getSocketPtr(unicastSocket), infoIP.name);
+                    if (firstInterface)
+                    {
+                        getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback(true));
+                        firstInterface = true;
+                    }
+                    mOutputSockets.push_back(new UDPChannelResource(unicastSocket));
+                }
+            }
+        }
+    }
+    catch (asio::system_error const& e)
+    {
+        (void)e;
+        logInfo(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << locator.get_physical_port() << ")" << " with msg: " << e.what());
+        for (auto& socket : mOutputSockets)
+        {
+            //auto it = mSocketToSenders.find(socket);
+            //if (it != mSocketToSenders.end())
+            //{
+            //    auto& senders = mSocketToSenders.at(socket);
+            //    for (auto& sender : senders)
+            //    {
+            //        sender->SetChannelResource(nullptr);
+            //    }
+            //}
+
+            delete socket;
+        }
+        mOutputSockets.clear();
+        return false;
+    }
+
+    return true;
+}
+
 eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(const ip::udp::endpoint& endpoint, uint16_t& port)
 {
     eProsimaUDPSocket socket = createUDPSocket(mService);
@@ -342,7 +435,7 @@ void UDPTransportInterface::performListenOperation(UDPChannelResource* pChannelR
         }
         else
         {
-            logWarning(RTCP, "Received Message, but no MessageReceiver attached");
+            logWarning(RTPS_MSG_IN, "Received Message, but no MessageReceiver attached");
         }
     }
 }
