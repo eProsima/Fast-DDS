@@ -518,9 +518,14 @@ eProsimaUDPSocket UDPv6Transport::OpenAndBindInputSocket(uint16_t port, bool is_
     return socket;
 }
 
-bool UDPv6Transport::DoLocatorsMatch(const Locator_t& left, const Locator_t& right) const
+bool UDPv6Transport::DoInputLocatorsMatch(const Locator_t& left, const Locator_t& right) const
 {
     return left.get_port() == right.get_port();
+}
+
+bool UDPv6Transport::DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const
+{
+    return true;
 }
 
 bool UDPv6Transport::IsLocatorSupported(const Locator_t& locator) const

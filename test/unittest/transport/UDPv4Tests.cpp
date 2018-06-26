@@ -273,11 +273,11 @@ TEST_F(UDPv4Tests, match_if_port_AND_address_matches)
     Locator_t locatorBeta = locatorAlpha;
 
     // Then
-    ASSERT_TRUE(transportUnderTest.DoLocatorsMatch(locatorAlpha, locatorBeta));
+    ASSERT_TRUE(transportUnderTest.DoInputLocatorsMatch(locatorAlpha, locatorBeta));
 
     locatorBeta.set_IP4_address(100, 100, 100, 100);
     // Then
-    ASSERT_TRUE(transportUnderTest.DoLocatorsMatch(locatorAlpha, locatorBeta));
+    ASSERT_TRUE(transportUnderTest.DoInputLocatorsMatch(locatorAlpha, locatorBeta));
 }
 
 TEST_F(UDPv4Tests, send_to_wrong_interface)
@@ -295,7 +295,7 @@ TEST_F(UDPv4Tests, send_to_wrong_interface)
     outputChannelLocator.set_IP4_address(111,111,111,111);
     std::vector<octet> message = { 'H','e','l','l','o' };
     ASSERT_FALSE(transportUnderTest.Send(message.data(), (uint32_t)message.size(), outputChannelLocator, Locator_t()));
-    
+
     ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
 }
 

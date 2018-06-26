@@ -814,13 +814,13 @@ void SecurityManager::delete_entities()
 
 bool SecurityManager::create_participant_stateless_message_entities()
 {
-    if (create_participant_stateless_message_reader())
+    if (create_participant_stateless_message_writer())
     {
-        if(create_participant_stateless_message_writer())
+        if (create_participant_stateless_message_reader())
         {
             return true;
         }
-        delete_participant_stateless_message_reader();
+        delete_participant_stateless_message_writer();
     }
 
     return false;

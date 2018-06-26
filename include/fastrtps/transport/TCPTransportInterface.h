@@ -108,7 +108,8 @@ public:
     virtual bool CloseOutputChannel(const Locator_t&) override;
 
     //! Reports whether Locators correspond to the same port.
-    virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const override;
+    virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
+    virtual bool DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
     virtual asio::ip::tcp::endpoint GenerateEndpoint(const Locator_t& loc, uint16_t port) = 0;
     virtual asio::ip::tcp::endpoint GenerateLocalEndpoint(Locator_t& loc, uint16_t port) = 0;
@@ -313,7 +314,7 @@ protected:
 
     virtual void SetReceiveBufferSize(uint32_t size) = 0;
     virtual void SetSendBufferSize(uint32_t size) = 0;
-    
+
     void Clean(); // Must be called on childs destructors!
 };
 

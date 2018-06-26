@@ -105,8 +105,10 @@ public:
    virtual bool ReleaseInputChannel(const Locator_t&) = 0;
 
    //! Must report whether two locators map to the same internal channel.
-   virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const = 0;
-  /**
+   virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const = 0;
+   //! Must report whether two locators map to the same internal channel.
+   virtual bool DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const = 0;
+   /**
    * Must execute a blocking send, through the outbound channel that maps to the localLocator, targeted to the
    * remote address defined by remoteLocator. Must be threadsafe between channels, but not necessarily
    * within the same channel.

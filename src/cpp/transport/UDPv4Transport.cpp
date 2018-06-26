@@ -184,14 +184,7 @@ bool UDPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
     if (!IsLocatorSupported(locator))
         return false;
 
-    auto it = mOutputSockets.find(locator.get_physical_port());
-    if (it != mOutputSockets.end())
-    {
-        // Don't optimize senderResource, because could be multiple interfaces.
-        return true;
-    }
-
-    return false;
+    return mOutputSockets.size() > 0;
 }
 
 bool UDPv4Transport::OpenOutputChannel(const Locator_t& locator, SenderResource* senderResource, uint32_t /*msgSize*/)
@@ -251,8 +244,7 @@ bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
     if (!IsOutputChannelOpen(locator))
         return false;
 
-    auto& sockets = mOutputSockets.at(locator.get_physical_port());
-    for (auto& socket : sockets)
+    for (auto& socket : mOutputSockets)
     {
         socket->getSocket()->cancel();
         socket->getSocket()->close();
@@ -269,8 +261,7 @@ bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
 
         delete socket;
     }
-
-    mOutputSockets.erase(locator.get_physical_port());
+    mOutputSockets.clear();
 
     return true;
 }
@@ -360,7 +351,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderRe
                 getSocketPtr(unicastSocket)->set_option(
                     ip::multicast::outbound_interface(asio::ip::address_v4::from_string((*locIt).name)));
 
-                mOutputSockets[locator.get_physical_port()].push_back(new UDPChannelResource(unicastSocket));
+                mOutputSockets.push_back(new UDPChannelResource(unicastSocket));
 
                 // Create other socket for outbounding rest of interfaces.
                 for(++locIt; locIt != locNames.end(); ++locIt)
@@ -371,7 +362,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderRe
                     getSocketPtr(multicastSocket)->set_option(ip::multicast::outbound_interface(ip));
                     UDPChannelResource* mSocket = new UDPChannelResource(multicastSocket);
                     mSocket->only_multicast_purpose(true);
-                    mOutputSockets[locator.get_physical_port()].push_back(mSocket);
+                    mOutputSockets.push_back(mSocket);
                     // senderResource cannot be optimize in this cases
                 }
             }
@@ -379,7 +370,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderRe
             {
                 // Multicast data will be sent for the only one interface.
                 UDPChannelResource *mSocket = new UDPChannelResource(unicastSocket);
-                mOutputSockets[locator.get_physical_port()].push_back(mSocket);
+                mOutputSockets.push_back(mSocket);
                 if (senderResource != nullptr)
                 {
                     AssociateSenderToSocket(mSocket, senderResource);
@@ -402,7 +393,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderRe
                         firstInterface = true;
                     }
 
-                    mOutputSockets[locator.get_physical_port()].push_back(new UDPChannelResource(unicastSocket));
+                    mOutputSockets.push_back(new UDPChannelResource(unicastSocket));
                     // senderResource cannot be optimized in this cases
                 }
             }
@@ -412,25 +403,21 @@ bool UDPv4Transport::OpenAndBindOutputSockets(const Locator_t& locator, SenderRe
     {
         (void)e;
         logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << locator.get_physical_port() << ")" << " with msg: "<<e.what());
-        if (mOutputSockets.find(locator.get_physical_port()) != mOutputSockets.end())
+        for (auto& socket : mOutputSockets)
         {
-            auto& sockets = mOutputSockets.at(locator.get_physical_port());
-            for (auto& socket : sockets)
-            {
-                //auto it = mSocketToSenders.find(socket);
-                //if (it != mSocketToSenders.end())
-                //{
-                //    auto& senders = mSocketToSenders.at(socket);
-                //    for (auto& sender : senders)
-                //    {
-                //        sender->SetChannelResource(nullptr);
-                //    }
-                //}
+            //auto it = mSocketToSenders.find(socket);
+            //if (it != mSocketToSenders.end())
+            //{
+            //    auto& senders = mSocketToSenders.at(socket);
+            //    for (auto& sender : senders)
+            //    {
+            //        sender->SetChannelResource(nullptr);
+            //    }
+            //}
 
-                delete socket;
-            }
-            mOutputSockets.erase(locator.get_physical_port());
+            delete socket;
         }
+        mOutputSockets.clear();
         return false;
     }
 
@@ -526,9 +513,14 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(uint16_t port, bool is_
     return socket;
 }
 
-bool UDPv4Transport::DoLocatorsMatch(const Locator_t& /*left*/, const Locator_t& /*right*/) const
+bool UDPv4Transport::DoInputLocatorsMatch(const Locator_t& left, const Locator_t& right) const
 {
-    return true; // left.get_port() == right.get_port();
+    return left.get_port() == right.get_port();
+}
+
+bool UDPv4Transport::DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const
+{
+    return true;
 }
 
 bool UDPv4Transport::IsLocatorSupported(const Locator_t& locator) const
@@ -556,8 +548,7 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
     bool success = false;
     bool is_multicast_remote_address = IsMulticastAddress(remoteLocator);
 
-    auto& sockets = mOutputSockets.at(localLocator.get_port());
-    for (auto& socket : sockets)
+    for (auto& socket : mOutputSockets)
     {
         if(is_multicast_remote_address || !socket->only_multicast_purpose())
             success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(socket->getSocket()));

@@ -44,7 +44,7 @@ class MockTransport: public TransportInterface
         virtual bool OpenOutputChannel(const Locator_t&, SenderResource* sender = nullptr, uint32_t size = 0) override;
         virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) override;
 
-        virtual bool OpenExtraOutputChannel(const Locator_t&, SenderResource*, uint32_t size = 0) override 
+        virtual bool OpenExtraOutputChannel(const Locator_t&, SenderResource*, uint32_t size = 0) override
         { (void)size; return false; };
 
         virtual bool CloseOutputChannel(const Locator_t&) override;
@@ -54,14 +54,15 @@ class MockTransport: public TransportInterface
         virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
 
         virtual bool IsLocatorSupported(const Locator_t&)  const override;
-        virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const override;
+        virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
+        virtual bool DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
         virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator) override;
 
-        virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, 
-            const Locator_t& localLocator, const Locator_t& remoteLocator, ChannelResource*) override 
-            { 
-                return Send(sendBuffer, sendBufferSize, localLocator, remoteLocator); 
+        virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize,
+            const Locator_t& localLocator, const Locator_t& remoteLocator, ChannelResource*) override
+            {
+                return Send(sendBuffer, sendBufferSize, localLocator, remoteLocator);
             }
 
         virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
