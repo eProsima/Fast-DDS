@@ -137,15 +137,18 @@ protected:
 
     virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(uint16_t port) = 0;
     virtual asio::ip::udp::endpoint GenerateEndpoint(uint16_t port) = 0;
+    virtual asio::ip::udp::endpoint GenerateEndpoint(const std::string sIp, uint16_t port) = 0;
     virtual asio::ip::udp::endpoint GenerateEndpoint(const Locator_t& loc, uint16_t port) = 0;
     virtual asio::ip::udp::endpoint GenerateLocalEndpoint(const Locator_t& loc, uint16_t port) = 0;
     virtual asio::ip::udp GenerateProtocol() const = 0;
     virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) = 0;
+    virtual bool IsInterfaceWhiteListEmpty() const = 0;
+    virtual bool IsInterfaceAllowed(const std::string& interface) = 0;
 
     bool OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource, bool is_multicast,
         uint32_t maxMsgSize);
     eProsimaUDPSocket OpenAndBindInputSocket(uint16_t port, bool is_multicast);
-    virtual bool OpenAndBindOutputSockets(const Locator_t& locator, SenderResource*) = 0;
+    bool OpenAndBindOutputSockets(const Locator_t& locator, SenderResource*);
     eProsimaUDPSocket OpenAndBindUnicastOutputSocket(const asio::ip::udp::endpoint& endpoint, uint16_t& port);
     /** Function to be called from a new thread, which takes cares of performing a blocking receive
     operation on the ReceiveResource
@@ -158,7 +161,7 @@ protected:
 
     virtual void SetReceiveBufferSize(uint32_t size) = 0;
     virtual void SetSendBufferSize(uint32_t size) = 0;
-
+    virtual void SetSocketOutbountInterface(eProsimaUDPSocket*, const std::string&) = 0;
     /*
         struct LocatorCompare {
         bool operator()(const Locator_t& lhs, const Locator_t& rhs) const

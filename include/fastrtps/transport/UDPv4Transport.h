@@ -77,18 +77,20 @@ protected:
 
     virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(uint16_t port) override;
     virtual asio::ip::udp::endpoint GenerateEndpoint(uint16_t port) override;
+    virtual asio::ip::udp::endpoint GenerateEndpoint(const std::string sIp, uint16_t port) override;
     virtual asio::ip::udp::endpoint GenerateEndpoint(const Locator_t& loc, uint16_t port) override;
     virtual asio::ip::udp::endpoint GenerateLocalEndpoint(const Locator_t& loc, uint16_t port) override;
     virtual asio::ip::udp GenerateProtocol() const override;
     virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) override;
 
+    virtual bool IsInterfaceAllowed(const std::string& interface) override;
     bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
+    virtual bool IsInterfaceWhiteListEmpty() const override;
     std::vector<asio::ip::address_v4> mInterfaceWhiteList;
-
-    virtual bool OpenAndBindOutputSockets(const Locator_t& locator, SenderResource*) override;
 
     virtual void SetReceiveBufferSize(uint32_t size) override;
     virtual void SetSendBufferSize(uint32_t size) override;
+    virtual void SetSocketOutbountInterface(eProsimaUDPSocket*, const std::string&) override;
 };
 
 } // namespace rtps
