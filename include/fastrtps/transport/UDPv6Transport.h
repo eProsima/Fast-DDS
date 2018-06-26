@@ -155,7 +155,7 @@ private:
    mutable std::recursive_mutex mInputMapMutex;
 
    //! The notion of output channel corresponds to a port.
-   std::map<uint16_t, std::vector<UDPChannelResource*> > mOutputSockets;
+   std::vector<UDPChannelResource*> mOutputSockets;
 
    std::vector<IPFinder::info_IP> currentInterfaces;
 
