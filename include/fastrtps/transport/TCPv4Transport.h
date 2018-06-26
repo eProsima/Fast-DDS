@@ -81,9 +81,10 @@ protected:
 
     virtual const TCPTransportDescriptor* GetConfiguration() const override;
 
+    virtual asio::ip::tcp::endpoint GenerateEndpoint(uint16_t port) override;
     virtual asio::ip::tcp::endpoint GenerateEndpoint(const Locator_t& loc, uint16_t port) override;
     virtual asio::ip::tcp::endpoint GenerateLocalEndpoint(Locator_t& loc, uint16_t port) override;
-    virtual asio::ip::tcp::endpoint GenerateEndpoint(uint16_t port) override;
+    virtual asio::ip::tcp GenerateProtocol() const override;
 
     virtual asio::ip::tcp GetProtocolType() const override { return asio::ip::tcp::v4(); }
 

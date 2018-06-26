@@ -111,9 +111,11 @@ public:
     virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
     virtual bool DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
+    virtual asio::ip::tcp::endpoint GenerateEndpoint(uint16_t port) = 0;
     virtual asio::ip::tcp::endpoint GenerateEndpoint(const Locator_t& loc, uint16_t port) = 0;
     virtual asio::ip::tcp::endpoint GenerateLocalEndpoint(Locator_t& loc, uint16_t port) = 0;
-    virtual asio::ip::tcp::endpoint GenerateEndpoint(uint16_t port) = 0;
+    virtual asio::ip::tcp GenerateProtocol() const = 0;
+
 
     virtual asio::ip::tcp GetProtocolType() const = 0;
 
