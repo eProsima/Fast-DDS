@@ -70,7 +70,8 @@ public:
     virtual bool IsLocatorSupported(const Locator_t&) const override;
 
     //! Reports whether Locators correspond to the same port.
-    virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const override;
+    virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
+    virtual bool DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
     /**
         * Converts a given remote locator (that is, a locator referring to a remote
@@ -157,7 +158,7 @@ protected:
     mutable std::recursive_mutex mInputMapMutex;
 
     //! The notion of output channel corresponds to a port.
-    std::map<uint32_t, std::vector<UDPChannelResource*> > mOutputSockets;
+    std::vector<UDPChannelResource*> mOutputSockets;
 
     std::vector<IPFinder::info_IP> currentInterfaces;
 

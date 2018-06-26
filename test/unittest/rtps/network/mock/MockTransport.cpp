@@ -71,20 +71,25 @@ bool MockTransport::IsLocatorSupported(const Locator_t& locator) const
 }
 
 bool MockTransport::OpenOutputChannel(const Locator_t& locator, SenderResource*, uint32_t)
-{  
+{
     mockOpenOutputChannels.push_back(locator.get_port());
     return true;
 }
 
 bool MockTransport::OpenInputChannel(const Locator_t& locator, ReceiverResource*, uint32_t)
-{  
+{
     mockOpenInputChannels.push_back(locator.get_port());
     return true;
 }
 
-bool MockTransport::DoLocatorsMatch(const Locator_t& left, const Locator_t& right) const
+bool MockTransport::DoInputLocatorsMatch(const Locator_t& left, const Locator_t& right) const
 {
     return left.get_port() == right.get_port();
+}
+
+bool MockTransport::DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const
+{
+    return true;
 }
 
 bool MockTransport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
@@ -100,7 +105,7 @@ bool MockTransport::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity
 {
     (void)localLocator;
 
-    memcpy(receiveBuffer, mockMessagesToReceive.back().data.data(), 
+    memcpy(receiveBuffer, mockMessagesToReceive.back().data.data(),
             std::min(receiveBufferCapacity, (uint32_t)mockMessagesToReceive.back().data.size()));
     receiveBufferSize = (uint32_t)mockMessagesToReceive.back().data.size();
     remoteLocator = mockMessagesToReceive.back().origin;

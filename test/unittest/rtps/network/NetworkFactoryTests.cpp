@@ -20,7 +20,7 @@
 using namespace std;
 using namespace eprosima::fastrtps::rtps;
 
-class NetworkTests: public ::testing::Test 
+class NetworkTests: public ::testing::Test
 {
    public:
    NetworkFactory networkFactoryUnderTest;
@@ -163,7 +163,7 @@ TEST_F(NetworkTests, destroying_a_send_resource_will_close_all_channels_mapped_t
    }
    // When (End of scope)
 
-   //resources.clear(); // Why this was failing? 
+   //resources.clear(); // Why this was failing?
 
    // Then
    const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
@@ -220,7 +220,7 @@ TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_all_compatible
    // When
    // We do it again for a locator that maps to the same channel
    locator.get_Address()[0]++; // Address can differ, since they map to the same port
-   
+
    auto secondBatchResources = networkFactoryUnderTest.BuildSenderResources(locator);
 
    // Then
@@ -266,7 +266,7 @@ TEST_F(NetworkTests, A_sender_resource_accurately_reports_whether_it_supports_a_
    locator.get_port_by_ref()++;
 
    // Then
-   ASSERT_FALSE(resource.SupportsLocator(locator));
+   ASSERT_TRUE(resource.SupportsLocator(locator));
 }
 
 TEST_F(NetworkTests, A_Sender_Resource_will_always_send_through_its_original_outbound_locator)
@@ -313,7 +313,7 @@ TEST_F(NetworkTests, A_Receiver_Resource_will_always_receive_through_its_origina
    originLocator.kind = 1;
    originLocator.get_Address()[0] = 5;
    MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
-   MockTransport::MockMessage message {locator, originLocator, testData}; 
+   MockTransport::MockMessage message {locator, originLocator, testData};
    lastRegisteredTransport->mockMessagesToReceive.push_back(message);
 
    // When

@@ -57,7 +57,7 @@ class TCPv4Tests: public ::testing::Test
     public:
         TCPv4Tests()
         {
-            HELPER_SetDescriptorDefaults();            
+            HELPER_SetDescriptorDefaults();
         }
 
         ~TCPv4Tests()
@@ -234,11 +234,11 @@ TEST_F(TCPv4Tests, match_if_port_AND_address_matches)
     Locator_t locatorBeta = locatorAlpha;
 
     // Then
-    ASSERT_TRUE(transportUnderTest.DoLocatorsMatch(locatorAlpha, locatorBeta));
+    ASSERT_TRUE(transportUnderTest.DoInputLocatorsMatch(locatorAlpha, locatorBeta));
 
     locatorBeta.set_IP4_address(100, 100, 100, 100);
     // Then
-    ASSERT_TRUE(transportUnderTest.DoLocatorsMatch(locatorAlpha, locatorBeta));
+    ASSERT_TRUE(transportUnderTest.DoInputLocatorsMatch(locatorAlpha, locatorBeta));
 }
 
 TEST_F(TCPv4Tests, send_to_wrong_interface)

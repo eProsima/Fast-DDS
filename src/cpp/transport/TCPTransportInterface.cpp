@@ -433,7 +433,12 @@ bool TCPTransportInterface::IsTCPInputSocket(const Locator_t& locator) const
     return false;
 }
 
-bool TCPTransportInterface::DoLocatorsMatch(const Locator_t& left, const Locator_t& right) const
+bool TCPTransportInterface::DoInputLocatorsMatch(const Locator_t& left, const Locator_t& right) const
+{
+    return left.get_port() == right.get_port();
+}
+
+bool TCPTransportInterface::DoOutputLocatorsMatch(const Locator_t& left, const Locator_t& right) const
 {
     return left.get_port() == right.get_port();
 }

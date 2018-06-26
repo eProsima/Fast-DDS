@@ -74,7 +74,7 @@ protected:
         }
         Cleanup = [&transport, locator]() { transport.CloseInputChannel(locator); };
         LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
-        { return transport.DoLocatorsMatch(locator, locatorToCheck); };
+        { return transport.DoInputLocatorsMatch(locator, locatorToCheck); };
     }
 
     ReceiverResource() {}

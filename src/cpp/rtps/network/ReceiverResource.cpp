@@ -49,7 +49,7 @@ ReceiverResource::ReceiverResource(RTPSParticipantImpl* participant, TransportIn
     // Implementation functions are bound to the right transport parameters
     Cleanup = [&transport, locator]() { transport.CloseInputChannel(locator); };
     LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
-    { return transport.DoLocatorsMatch(locator, locatorToCheck); };
+    { return transport.DoInputLocatorsMatch(locator, locatorToCheck); };
 
     UpdateParticipantGUID = [&transport](const GUID_t& guid) {transport.SetParticipantGUIDPrefix(guid.guidPrefix); };
 }

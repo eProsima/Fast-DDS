@@ -59,12 +59,12 @@ SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator
         };
     LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
         {
-            return transport.DoLocatorsMatch(locator, locatorToCheck);
+            return transport.DoOutputLocatorsMatch(locator, locatorToCheck);
         };
 
     ManagedChannelMapsToRemote = [&transport, locator](const Locator_t& locatorToCheck) -> bool
         {
-            return transport.DoLocatorsMatch(locator, transport.RemoteToMainLocal(locatorToCheck));
+            return transport.DoOutputLocatorsMatch(locator, transport.RemoteToMainLocal(locatorToCheck));
         };
 
     updateParticipantGUID = [&transport](const GUID_t& participantGUID)
