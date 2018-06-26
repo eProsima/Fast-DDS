@@ -46,7 +46,7 @@ TCPAcceptor::TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* pa
 {
 #ifndef ASIO_HAS_MOVE
     mSocket = std::make_shared<asio::ip::tcp::socket>(io_service);
-    mEndPoint = asio::ip::tcp::endpoint(asio::ip::tcp::v4(), locator.get_physical_port());
+    mEndPoint = asio::ip::tcp::endpoint(parent->GenerateProtocol(), locator.get_physical_port());
 #endif
 }
 
@@ -318,7 +318,7 @@ bool TCPTransportInterface::CreateAcceptorSocket(const Locator_t& locator, uint3
     catch (asio::system_error const& e)
     {
         (void)e;
-        logInfo(RTPS_MSG_OUT, "TCPv4 Error binding at port: (" << locator.get_physical_port() << ")" << " with msg: " << e.what());
+        logInfo(RTPS_MSG_OUT, "TCPTransport Error binding at port: (" << locator.get_physical_port() << ")" << " with msg: " << e.what());
         return false;
     }
 
@@ -449,7 +449,7 @@ bool TCPTransportInterface::init()
     {
         // Check system buffer sizes.
         ip::tcp::socket socket(mService);
-        socket.open(ip::tcp::v6());
+        socket.open(GenerateProtocol());
 
         if (GetConfiguration()->sendBufferSize == 0)
         {
@@ -534,7 +534,6 @@ bool TCPTransportInterface::IsLocatorSupported(const Locator_t& locator) const
 {
     return locator.kind == mTransportKind;
 }
-
 
 bool TCPTransportInterface::IsOutputChannelOpen(const Locator_t& locator) const
 {
@@ -1455,8 +1454,8 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
 
             TCPChannelResource *pChannelResource = new TCPChannelResource(unicastSocket,
                 acceptor->mLocator, false, true, acceptor->mMaxMsgSize);
-            pChannelResource->SetThread(new std::thread(&TCPv4Transport::performListenOperation, this, pChannelResource));
-            pChannelResource->SetRTCPThread(new std::thread(&TCPv4Transport::performRTPCManagementThread, this, pChannelResource));
+            pChannelResource->SetThread(new std::thread(&TCPTransportInterface::performListenOperation, this, pChannelResource));
+            pChannelResource->SetRTCPThread(new std::thread(&TCPTransportInterface::performRTPCManagementThread, this, pChannelResource));
             pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eWaitingForBind);
 
             // Create one message receiver for each registered receiver resources.
@@ -1549,7 +1548,7 @@ void TCPTransportInterface::SocketConnected(Locator_t& locator, SenderResource *
             catch (asio::system_error const& e)
             {
                 (void)e;
-                logInfo(RTPS_MSG_OUT, "TCPv4 Error establishing the connection at port:(" << locator.get_port() << ")" << " with msg:" << e.what());
+                logInfo(RTPS_MSG_OUT, "TCPTransport Error establishing the connection at port:(" << locator.get_port() << ")" << " with msg:" << e.what());
                 CloseOutputChannel(locator);
             }
         }

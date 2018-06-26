@@ -227,6 +227,11 @@ ip::tcp::endpoint TCPv4Transport::GenerateEndpoint(uint16_t port)
     return asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port);
 }
 
+asio::ip::tcp TCPv4Transport::GenerateProtocol() const
+{
+    return asio::ip::tcp::v4();
+}
+
 bool TCPv4Transport::IsInterfaceAllowed(const Locator_t& loc)
 {
     asio::ip::address_v4 ip = asio::ip::make_address_v4(loc.to_IP4_string());

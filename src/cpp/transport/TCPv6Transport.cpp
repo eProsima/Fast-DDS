@@ -201,7 +201,7 @@ bool TCPv6Transport::CompareLocatorIPAndPort(const Locator_t& lh, const Locator_
 
 void TCPv6Transport::FillLocalIp(Locator_t& loc)
 {
-    loc.set_IP4_address("::1");
+    loc.set_IP6_address("::1");
 }
 
 ip::tcp::endpoint TCPv6Transport::GenerateEndpoint(const Locator_t& loc, uint16_t port)
@@ -219,6 +219,11 @@ ip::tcp::endpoint TCPv6Transport::GenerateLocalEndpoint(Locator_t& loc, uint16_t
 ip::tcp::endpoint TCPv6Transport::GenerateEndpoint(uint16_t port)
 {
     return asio::ip::tcp::endpoint(asio::ip::tcp::v6(), port);
+}
+
+asio::ip::tcp TCPv6Transport::GenerateProtocol() const
+{
+    return asio::ip::tcp::v6();
 }
 
 bool TCPv6Transport::IsInterfaceAllowed(const Locator_t& loc)
