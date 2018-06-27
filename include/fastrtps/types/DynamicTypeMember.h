@@ -23,6 +23,7 @@ namespace types{
 
 class AnnotationDescriptor;
 class MemberDescriptor;
+class DynamicType;
 
 class DynamicTypeMember
 {
@@ -30,7 +31,7 @@ public:
 
     DynamicTypeMember();
 
-	ResponseCode get_descriptor(MemberDescriptor*) const;
+	ResponseCode get_descriptor(MemberDescriptor* descriptor) const;
 
 	uint32_t get_annotation_count();
 	ResponseCode get_annotation(AnnotationDescriptor* descriptor, uint32_t idx);
@@ -41,8 +42,8 @@ public:
 
 protected:
 
+    DynamicType* mParent;
 	std::vector<AnnotationDescriptor*> mAnnotation;
-	std::string mName;
 	MemberId mId;
 };
 

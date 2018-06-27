@@ -19,15 +19,18 @@ namespace fastrtps {
 namespace types {
 
 AnnotationDescriptor::AnnotationDescriptor()
+: mType(nullptr)
 {
 }
 
-ResponseCode AnnotationDescriptor::copy_from(const AnnotationDescriptor* descriptor) const
+ResponseCode AnnotationDescriptor::copy_from(const AnnotationDescriptor* descriptor)
 {
     if (descriptor != nullptr)
     {
         try
         {
+            mType = descriptor->mType;
+            mValue = descriptor->mValue;
         }
         catch(std::exception& e)
         {
@@ -38,24 +41,37 @@ ResponseCode AnnotationDescriptor::copy_from(const AnnotationDescriptor* descrip
     {
         return ResponseCode::RETCODE_BAD_PARAMETER;
     }
+    return ResponseCode::RETCODE_OK;
 }
 
-bool AnnotationDescriptor::equals(const AnnotationDescriptor&) const
+bool AnnotationDescriptor::equals(const AnnotationDescriptor* other) const
 {
+    if (other != nullptr && mType == other->mType)
+    {
+        for (auto it = mValue.begin(); it != mValue.end(); ++it)
+        {
+            auto it2 = other->mValue.find(it->first);
+            if (it2 == other->mValue.end() || it2->second != it->second)
+            {
+                return false;
+            }
+        }
+
+        for (auto it = other->mValue.begin(); it != other->mValue.end(); ++it)
+        {
+            auto it2 = mValue.find(it->first);
+            if (it2 == mValue.end() || it2->second != it->second)
+            {
+                return false;
+            }
+        }
+    }
     return false;
-    /*
-    std::string mName;
-    MemberId mId;
-    DynamicType mType;
-    std::string mDefaultValue;
-    const uint32_t mIndex;
-    uint64_t* mLabel;
-    bool mDefaultLabel;
-    */
 }
 
 bool AnnotationDescriptor::isConsistent() const
 {
+    //TODO:
     return false;
 }
 

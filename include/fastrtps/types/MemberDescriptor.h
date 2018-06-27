@@ -28,19 +28,21 @@ class MemberDescriptor
 public:
     MemberDescriptor();
 
-	ResponseCode copy_from(const MemberDescriptor*) const;
-	bool equals(const MemberDescriptor&) const;
-	bool isConsistent() const;
+    ResponseCode copy_from(const MemberDescriptor* other);
+
+    bool equals(const MemberDescriptor* other) const;
+
+    bool isConsistent() const;
 
 protected:
 
-	std::string mName;
-	MemberId mId;
-	DynamicType* mType;
-	std::string mDefaultValue;
-	const uint32_t mIndex;
-	std::vector<uint64_t> mLabel;
-	bool mDefaultLabel;
+    std::string mName;
+    MemberId mId;
+    DynamicType* mType;
+    std::string mDefaultValue;
+    uint32_t mIndex;
+    std::vector<uint64_t> mLabel;
+    bool mDefaultLabel;
 };
 
 } // namespace types
