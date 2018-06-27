@@ -214,7 +214,7 @@ public:
 
     //! Callback called each time that an incomming connection is accepted.
 #ifdef ASIO_HAS_MOVE
-    void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket s);
+    void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket& s);
 #else
     void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error);
 #endif
