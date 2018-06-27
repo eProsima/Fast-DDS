@@ -39,34 +39,22 @@ static const int s_default_keep_alive_timeout = 10000; // 10 SECONDS
 static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
 static const int s_default_tcp_negotitation_timeout = 5000; // 5 Seconds
 
-TCPAcceptor::TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const Locator_t& locator, uint32_t maxMsgSize)
+TCPAcceptor::TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const Locator_t& locator,
+    uint32_t maxMsgSize)
     : mAcceptor(io_service, parent->GenerateEndpoint(locator.get_physical_port()))
     , mLocator(locator)
     , mMaxMsgSize(maxMsgSize)
+    , mSocket(createTCPSocket(io_service))
 {
-#ifndef ASIO_HAS_MOVE
-    mSocket = std::make_shared<asio::ip::tcp::socket>(io_service);
     mEndPoint = asio::ip::tcp::endpoint(parent->GenerateProtocol(), locator.get_physical_port());
-#endif
 }
 
-
-#ifdef ASIO_HAS_MOVE
-void TCPAcceptor::Accept(TCPTransportInterface* parent, asio::io_service&)
-{
-    mAcceptor.async_accept(std::bind(&TCPTransportInterface::SocketAccepted, parent, this, std::placeholders::_1,
-        std::placeholders::_2));
-}
-#else
 void TCPAcceptor::Accept(TCPTransportInterface* parent, asio::io_service& io_service)
 {
-    if (mSocket == nullptr)
-    {
-        mSocket = std::make_shared<asio::ip::tcp::socket>(io_service);
-    }
-	mAcceptor.async_accept(*mSocket.get(), mEndPoint, std::bind(&TCPTransportInterface::SocketAccepted, parent, this, std::placeholders::_1));
+    mSocket = createTCPSocket(io_service);
+	mAcceptor.async_accept(getTCPSocketRef(mSocket), mEndPoint, std::bind(&TCPTransportInterface::SocketAccepted,
+        parent, this, std::placeholders::_1));
 }
-#endif
 
 TCPConnector::TCPConnector(asio::io_service& io_service, const Locator_t& locator, uint32_t msgSize)
     : m_locator(locator)
@@ -1384,19 +1372,25 @@ LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
     return result;
 }
 
-#ifdef ASIO_HAS_MOVE
-void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket& socket)
+void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error)
 {
     if (!error.value())
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         if (mSocketAcceptors.find(acceptor->mLocator.get_physical_port()) != mSocketAcceptors.end())
         {
+#if defined(ASIO_HAS_MOVE)
+            eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(std::move(acceptor->mSocket));
+#else
+            eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(acceptor->mSocket);
+            acceptor->mSocket = nullptr;
+#endif
             // Store the new connection.
-            eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(std::move(socket));
-            TCPChannelResource *pChannelResource = new TCPChannelResource(unicastSocket, acceptor->mLocator, false, true,
-                acceptor->mMaxMsgSize);
+            TCPChannelResource *pChannelResource = new TCPChannelResource(unicastSocket, acceptor->mLocator,
+                false, true, acceptor->mMaxMsgSize);
             pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eWaitingForBind);
+
+            // Create one message receiver for each registered receiver resources.
             RegisterReceiverResources(pChannelResource, acceptor->mLocator);
 
             for (auto it = mPendingOutputPorts.begin(); it != mPendingOutputPorts.end(); ++it)
@@ -1410,10 +1404,13 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
                     }
                 }
             }
-            pChannelResource->SetThread(new std::thread(&TCPTransportInterface::performListenOperation, this, pChannelResource));
-            pChannelResource->SetRTCPThread(new std::thread(&TCPTransportInterface::performRTPCManagementThread, this, pChannelResource));
 
+            pChannelResource->SetThread(new std::thread(&TCPTransportInterface::performListenOperation, this,
+                pChannelResource));
+            pChannelResource->SetRTCPThread(new std::thread(&TCPTransportInterface::performRTPCManagementThread,
+                this, pChannelResource));
             mInputSockets[acceptor->mLocator.get_physical_port()].emplace_back(pChannelResource);
+
             logInfo(RTCP, " Accepted connection (physical local: " << acceptor->mLocator.get_physical_port()
                 << ", remote: " << pChannelResource->getSocket()->remote_endpoint().port()
                 << ") IP: " << pChannelResource->getSocket()->remote_endpoint().address());
@@ -1439,65 +1436,6 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
         }
     }
 }
-#else
-
-void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error)
-{
-    if (!error.value())
-    {
-        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-        if (mSocketAcceptors.find(acceptor->mLocator.get_physical_port()) != mSocketAcceptors.end())
-        {
-            // Store the new connection and release the pointer to the acceptor to create a new one for the next waiting.
-            eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(acceptor->mSocket);
-            acceptor->mSocket = nullptr;
-
-            TCPChannelResource *pChannelResource = new TCPChannelResource(unicastSocket,
-                acceptor->mLocator, false, true, acceptor->mMaxMsgSize);
-            pChannelResource->SetThread(new std::thread(&TCPTransportInterface::performListenOperation, this, pChannelResource));
-            pChannelResource->SetRTCPThread(new std::thread(&TCPTransportInterface::performRTPCManagementThread, this, pChannelResource));
-            pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eWaitingForBind);
-
-            // Create one message receiver for each registered receiver resources.
-            RegisterReceiverResources(pChannelResource, acceptor->mLocator);
-            mInputSockets[acceptor->mLocator.get_physical_port()].emplace_back(pChannelResource);
-
-            for (auto it = mPendingOutputPorts.begin(); it != mPendingOutputPorts.end(); ++it)
-            {
-                if (CompareLocatorIPAndPort(acceptor->mLocator, it->first))
-                {
-                    BindSocket(it->first, pChannelResource);
-                    for (auto senderIt : it->second)
-                    {
-                        AssociateSenderToSocket(pChannelResource, senderIt);
-                    }
-                }
-            }
-
-            logInfo(RTCP, " Accepted connection (physical local: " << acceptor->mLocator.get_physical_port() << ", remote: " << pChannelResource->getSocket()->remote_endpoint().port() << ") IP: " << pChannelResource->getSocket()->remote_endpoint().address());
-        }
-        else
-        {
-            logError(RTPC, "Incomming connection from unknown Acceptor: " << acceptor->mLocator.get_physical_port());
-            return;
-        }
-    }
-    else
-    {
-        logInfo(RTCP, " Accepting connection failed (error: " << error.message() << ")");
-    }
-
-    if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
-    {
-        // Accept new connections for the same port. Could be not found when exiting.
-        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-        if (mSocketAcceptors.find(acceptor->mLocator.get_physical_port()) != mSocketAcceptors.end())
-        {
-            mSocketAcceptors.at(acceptor->mLocator.get_physical_port())->Accept(this, mService);
-        }
-    }
-}
-#endif
 
 void TCPTransportInterface::SocketConnected(Locator_t& locator, SenderResource *senderResource, const asio::error_code& error)
 {

@@ -42,12 +42,11 @@ public:
     asio::ip::tcp::acceptor mAcceptor;
     Locator_t mLocator;
     uint32_t mMaxMsgSize;
-#ifndef ASIO_HAS_MOVE
-    std::shared_ptr<asio::ip::tcp::socket> mSocket;
+    eProsimaTCPSocket mSocket;
     asio::ip::tcp::endpoint mEndPoint;
-#endif
 
-    TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const Locator_t& locator, uint32_t maxMsgSize);
+    TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const Locator_t& locator,
+        uint32_t maxMsgSize);
     ~TCPAcceptor() {    }
 
     //! Method to start the accepting process.
@@ -213,11 +212,7 @@ public:
     virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 
     //! Callback called each time that an incomming connection is accepted.
-#ifdef ASIO_HAS_MOVE
-    void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket& s);
-#else
     void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error);
-#endif
 
     //! Callback called each time that an outgoing connection is established.
     void SocketConnected(Locator_t& locator, SenderResource *senderResource, const asio::error_code& error);
