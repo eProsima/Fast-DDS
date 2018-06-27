@@ -53,10 +53,10 @@ class MessageReceiver;
     {
         return asio::ip::tcp::socket(io_service);
     }
-    inline eProsimaTCPSocket& getRefFromPtr(eProsimaTCPSocket* socket)
-    {
-        return *socket;
-    }
+	inline eProsimaTCPSocket& getTCPSocketRef(eProsimaTCPSocket& socket)
+	{
+		return socket;
+	}
 #else
     // Typedefs
 	typedef std::shared_ptr<asio::ip::tcp::socket> eProsimaTCPSocket;
@@ -75,9 +75,9 @@ class MessageReceiver;
     {
         return std::make_shared<asio::ip::tcp::socket>(io_service);
     }
-    inline eProsimaTCPSocket getRefFromPtr(eProsimaTCPSocket socket)
+	inline asio::ip::tcp::socket& getTCPSocketRef(eProsimaTCPSocket socket)
     {
-        return socket;
+        return *socket;
     }
 #endif
 
