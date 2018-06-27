@@ -1,0 +1,267 @@
+module DDS {    
+    local interface DynamicType;    
+    local interface DynamicTypeBuilder;    
+    valuetype TypeDescriptor;
+ 
+    typedef sequence<string> IncludePathSeq;
+ 
+    local interface DynamicTypeBuilderFactory {        
+        /*static*/ DynamicTypeBuilderFactory get_instance();        
+        /*static*/ DDS::ReturnCode_t delete_instance();
+ 
+        DynamicType get_primitive_type(in TypeKind kind);        
+        DynamicTypeBuilder create_type(in TypeDescriptor descriptor);        
+        DynamicTypeBuilder create_type_copy(in DynamicType type);        
+        DynamicTypeBuilder create_type_w_type_object(in TypeObject type_object);        
+        DynamicTypeBuilder create_string_type(in unsigned long bound);        
+        DynamicTypeBuilder create_wstring_type(in unsigned long bound);        
+        DynamicTypeBuilder create_sequence_type(in DynamicType element_type, in unsigned long bound);        
+        DynamicTypeBuilder create_array_type(in DynamicType element_type, in BoundSeq bound);        
+        DynamicTypeBuilder create_map_type(in DynamicType key_element_type, in DynamicType element_type, in unsigned long bound);        
+        DynamicTypeBuilder create_bitmask_type(in unsigned long bound);        
+        DynamicTypeBuilder create_type_w_uri( in string document_url, in string type_name, in IncludePathSeq include_paths);        
+        DynamicTypeBuilder create_type_w_document( in string document, in string type_name, in IncludePathSeq include_paths);        
+        DDS::ReturnCode_t delete_type(in DynamicType type);    
+    };
+ 
+    interface TypeSupport {    
+        //  ReturnCode_t register_type(    
+        //      in DomainParticipant domain,     
+        //      in string type_name);    
+        //  string get_type_name();
+ 
+        //  DynamicType get_type();    
+    };
+ 
+    /* Implied IDL for type "Foo":    
+    interface FooTypeSupport : DDS::TypeSupport {        
+        DDS::ReturnCode_t register_type( in DDS::DomainParticipant participant, in string type_name);        
+        string get_type_name();
+        DynamicType get_type();
+        Foo create_sample(in DynamicData src);        
+        DynamicData create_dynamic_sample(in Foo src);    
+    };    */
+ 
+    interface DynamicTypeSupport : TypeSupport {        
+    /* This interface shall instantiate the type FooTypeSupport          
+     * defined by the DDS specification where "Foo" is DynamicData.         
+     */
+ 
+        /*static*/ DynamicTypeSupport create_type_support( in DynamicType type);
+        /*static*/ DDS::ReturnCode_t delete_type_support( in DynamicTypeSupport type_support);
+ 
+        DDS::ReturnCode_t register_type( in DDS::DomainParticipant participant, in ObjectName type_name);        
+        ObjectName get_type_name();    
+    };
+ 
+    typedef map<ObjectName, ObjectName> Parameters;
+ 
+    valuetype AnnotationDescriptor  {        
+        public DynamicType type;
+ 
+        DDS::ReturnCode_t get_value( inout ObjectName value, in ObjectName key);        
+        DDS::ReturnCode_t get_all_value( inout Parameters value);        
+        DDS::ReturnCode_t set_value( in ObjectName key, in ObjectName value);
+        DDS::ReturnCode_t copy_from(in AnnotationDescriptor other);        
+        boolean equals(in AnnotationDescriptor other);        
+        boolean is_consistent();    
+    };
+ 
+    valuetype TypeDescriptor {        
+        public TypeKind kind;        
+        public ObjectName name;        
+        public DynamicType base_type;        
+        public DynamicType discriminator_type;        
+        public BoundSeq bound;        
+        @optional public DynamicType element_type;        
+        @optional public DynamicType key_element_type;
+ 
+        DDS::ReturnCode_t copy_from(in TypeDescriptor other);        
+        boolean equals(in TypeDescriptor other);        
+        boolean is_consistent();    
+    };
+ 
+    valuetype MemberDescriptor  {        
+        public ObjectName name;        
+        public MemberId id;        
+        public DynamicType type;
+        public string default_value;        
+        public unsigned long index;        
+        public UnionCaseLabelSeq label;        
+        public boolean default_label;
+ 
+        DDS::ReturnCode_t copy_from(in MemberDescriptor descriptor);        
+        boolean equals(in MemberDescriptor descriptor);        
+        boolean is_consistent();    
+    };
+ 
+    local interface DynamicTypeMember {        
+        DDS::ReturnCode_t get_descriptor( inout MemberDescriptor descriptor);
+ 
+        unsigned long get_annotation_count();        
+        DDS::ReturnCode_t get_annotation( inout AnnotationDescriptor descriptor, in unsigned long idx);
+ 
+        boolean equals(in DynamicTypeMember other);
+ 
+        MemberId get_id();        
+        ObjectName get_name();    
+    };
+ 
+    typedef map<ObjectName, DynamicTypeMember> DynamicTypeMembersByName;    
+    typedef map<MemberId, DynamicTypeMember>   DynamicTypeMembersById;
+ 
+    local interface DynamicTypeBuilder {        
+        DDS::ReturnCode_t get_descriptor( inout TypeDescriptor descriptor);
+ 
+        ObjectName get_name();        
+        TypeKind get_kind();
+ 
+        DDS::ReturnCode_t get_member_by_name( inout DynamicTypeMember member, in ObjectName name);        
+        DDS::ReturnCode_t get_all_members_by_name( inout DynamicTypeMembersByName member);
+
+         DDS::ReturnCode_t get_member( inout DynamicTypeMember member, in MemberId id);        
+         DDS::ReturnCode_t get_all_members( inout DynamicTypeMembersById member);
+ 
+        unsigned long get_annotation_count();        
+        DDS::ReturnCode_t get_annotation( inout AnnotationDescriptor descriptor, in unsigned long idx);
+ 
+        boolean equals(in DynamicType other);        
+        DDS::ReturnCode_t add_member(in MemberDescriptor descriptor);        
+        DDS::ReturnCode_t apply_annotation( in AnnotationDescriptor descriptor);
+ 
+        DynamicType build();    
+    };
+ 
+    local interface DynamicType {        
+        DDS::ReturnCode_t get_descriptor( inout TypeDescriptor descriptor);
+ 
+        ObjectName get_name();        
+        TypeKind get_kind();
+ 
+        DDS::ReturnCode_t get_member_by_name( inout DynamicTypeMember member, in ObjectName name);        
+        DDS::ReturnCode_t get_all_members_by_name( inout DynamicTypeMembersByName member);
+ 
+        DDS::ReturnCode_t get_member( inout DynamicTypeMember member, in MemberId id);        
+        DDS::ReturnCode_t get_all_members( inout DynamicTypeMembersById member);
+ 
+        unsigned long get_annotation_count();
+        DDS::ReturnCode_t get_annotation( inout AnnotationDescriptor descriptor, in unsigned long idx);
+ 
+        boolean equals(in DynamicType other);    
+    };
+ 
+    local interface DynamicData;
+ 
+    local interface DynamicDataFactory  {        
+        /*static*/ DynamicDataFactory get_instance();        
+        /*static*/ DDS::ReturnCode_t delete_instance();
+ 
+        DynamicData create_data();        
+        DDS::ReturnCode_t delete_data(in DynamicData data);    
+    };
+ 
+    typedef sequence<long>                  Int32Seq;    
+    typedef sequence<unsigned long>         UInt32Seq;    
+    typedef sequence<short>                 Int16Seq;    
+    typedef sequence<unsigned short>        UInt16Seq;    
+    typedef sequence<long long>             Int64Seq;    
+    typedef sequence<unsigned long long>    UInt64Seq;    
+    typedef sequence<float>                 Float32Seq;    
+    typedef sequence<double>                Float64Seq;    
+    typedef sequence<long double>           Float128Seq;    
+    typedef sequence<char>                  CharSeq;    
+    typedef sequence<wchar>                 WcharSeq;    
+    typedef sequence<boolean>               BooleanSeq;    
+    typedef sequence<octet>                 ByteSeq;
+ 
+    // typedef sequence<string>             StringSeq;    
+    typedef sequence<wstring>               WstringSeq;
+ 
+    local interface DynamicData {        
+        readonly attribute DynamicType type;
+ 
+        DDS::ReturnCode_t get_descriptor( inout MemberDescriptor value, in MemberId id);
+        DDS::ReturnCode_t set_descriptor( in MemberId id, in MemberDescriptor value);
+ 
+        boolean equals(in DynamicData other);
+ 
+        MemberId get_member_id_by_name(in ObjectName name);        
+        MemberId get_member_id_at_index(in unsigned long index);
+ 
+        unsigned long get_item_count();
+ 
+        DDS::ReturnCode_t clear_all_values();        
+        DDS::ReturnCode_t clear_nonkey_values();        
+        DDS::ReturnCode_t clear_value(in MemberId id);
+ 
+        DynamicData loan_value(in MemberId id);        
+        DDS::ReturnCode_t return_loaned_value(in DynamicData value);
+ 
+        DynamicData clone();
+ 
+        DDS::ReturnCode_t get_int32_value( inout long value, in MemberId id);        
+        DDS::ReturnCode_t set_int32_value( in MemberId id, in long value);        
+        DDS::ReturnCode_t get_uint32_value( inout unsigned long value, in MemberId id);        
+        DDS::ReturnCode_t set_uint32_value( in MemberId id, in unsigned long value);        
+        DDS::ReturnCode_t get_int16_value( inout short value, in MemberId id);        
+        DDS::ReturnCode_t set_int16_value( in MemberId id, in short value);        
+        DDS::ReturnCode_t get_uint16_value( inout unsigned short value, in MemberId id);        
+        DDS::ReturnCode_t set_uint16_value( in MemberId id, in unsigned short value);        
+        DDS::ReturnCode_t get_int64_value( inout long long value, in MemberId id);        
+        DDS::ReturnCode_t set_int64_value( in MemberId id, in long long value);        
+        DDS::ReturnCode_t get_uint64_value( inout unsigned long long value, in MemberId id);        
+        DDS::ReturnCode_t set_uint64_value( in MemberId id, in unsigned long long value);        
+        DDS::ReturnCode_t get_float32_value( inout float value, in MemberId id);        
+        DDS::ReturnCode_t set_float32_value( in MemberId id, in float value);        
+        DDS::ReturnCode_t get_float64_value( inout double value, in MemberId id);        
+        DDS::ReturnCode_t set_float64_value( in MemberId id, in double value);        
+        DDS::ReturnCode_t get_float128_value( inout long double value, in MemberId id);        
+        DDS::ReturnCode_t set_float128_value( in MemberId id, in long double value);        
+        DDS::ReturnCode_t get_char8_value( inout char value, in MemberId id);        
+        DDS::ReturnCode_t set_char8_value( in MemberId id, in char value);
+        DDS::ReturnCode_t get_char16_value( inout wchar value, in MemberId id);        
+        DDS::ReturnCode_t set_char16_value( in MemberId id, in wchar value);        
+        DDS::ReturnCode_t get_byte_value( inout octet value, in MemberId id);        
+        DDS::ReturnCode_t set_byte_value( in MemberId id, in octet value);       
+        DDS::ReturnCode_t get_boolean_value( inout boolean value, in MemberId id);        
+        DDS::ReturnCode_t set_boolean_value( in MemberId id, in boolean value);        
+        DDS::ReturnCode_t get_string_value( inout string value, in MemberId id);        
+        DDS::ReturnCode_t set_string_value( in MemberId id, in string value);        
+        DDS::ReturnCode_t get_wstring_value( inout wstring value, in MemberId id);        
+        DDS::ReturnCode_t set_wstring_value( in MemberId id, in wstring value);
+ 
+        DDS::ReturnCode_t get_complex_value( inout DynamicData value, in MemberId id);        
+        DDS::ReturnCode_t set_complex_value( in MemberId id, in DynamicData value);
+ 
+        DDS::ReturnCode_t get_int32_values( inout Int32Seq value, in MemberId id);        
+        DDS::ReturnCode_t set_int32_values( in MemberId id, in Int32Seq value);        
+        DDS::ReturnCode_t get_uint32_values( inout UInt32Seq value, in MemberId id);        
+        DDS::ReturnCode_t set_uint32_values( in MemberId id, in UInt32Seq value);        
+        DDS::ReturnCode_t get_int16_values( inout Int16Seq value, in MemberId id);        
+        DDS::ReturnCode_t set_int16_values( in MemberId id, in Int16Seq value);        
+        DDS::ReturnCode_t get_uint16_values( inout UInt16Seq value, in MemberId id);        
+        DDS::ReturnCode_t set_uint16_values( in MemberId id, in UInt16Seq value);        
+        DDS::ReturnCode_t get_int64_values( inout Int64Seq value, in MemberId id);        
+        DDS::ReturnCode_t set_int64_values( in MemberId id, in Int64Seq value);        
+        DDS::ReturnCode_t get_uint64_values( inout UInt64Seq value, in MemberId id);        
+        DDS::ReturnCode_t set_uint64_values( in MemberId id, in UInt64Seq value);        
+        DDS::ReturnCode_t get_float32_values( inout Float32Seq value, in MemberId id);        
+        DDS::ReturnCode_t set_float32_values( in MemberId id, in Float32Seq value);
+        DDS::ReturnCode_t get_float64_values( inout Float64Seq value, in MemberId id);        
+        DDS::ReturnCode_t set_float64_values( in MemberId id, in Float64Seq value);        
+        DDS::ReturnCode_t get_float128_values( inout Float128Seq value, in MemberId id);        
+        DDS::ReturnCode_t set_float128_values( in MemberId id, in Float128Seq value);        
+        DDS::ReturnCode_t get_char8_values( inout CharSeq value, in MemberId id);        
+        DDS::ReturnCode_t set_char8_values( in MemberId id, in CharSeq value);        
+        DDS::ReturnCode_t get_char16_values( inout WcharSeq value, in MemberId id);        
+        DDS::ReturnCode_t set_char16_values( in MemberId id, in WcharSeq value);        
+        DDS::ReturnCode_t get_byte_values( inout ByteSeq value, in MemberId id);        
+        DDS::ReturnCode_t set_byte_values( in MemberId id, in ByteSeq value);        
+        DDS::ReturnCode_t get_boolean_values( inout BooleanSeq value, in MemberId id);        
+        DDS::ReturnCode_t set_boolean_values( in MemberId id, in BooleanSeq value);        
+        DDS::ReturnCode_t get_string_values( inout StringSeq value, in MemberId id);        
+        DDS::ReturnCode_t set_string_values( in MemberId id, in StringSeq value);        
+        DDS::ReturnCode_t get_wstring_values( inout WstringSeq value, in MemberId id);        
+        DDS::ReturnCode_t set_wstring_values( in MemberId id, in WstringSeq value);    
+    };  // local interface DynamicData 
+};  // end module DDS

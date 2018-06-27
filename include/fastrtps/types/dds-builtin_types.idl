@@ -1,0 +1,137 @@
+module DDS {    
+    @extensibility(APPENDABLE)    
+    struct _String {        
+        string value;    
+    };
+
+    interface StringDataWriter : DataWriter {        
+        /* This interface shall instantiate the type FooDataWriter defined by         
+         * the DDS specification where "Foo" is an unbounded string.         
+         */    
+    };
+
+    interface StringDataReader : DataReader {        
+        /* This interface shall instantiate the type FooDataReader defined by         
+         * the DDS specification where "Foo" is an unbounded string.         
+         */    
+    };
+
+    interface StringTypeSupport : TypeSupport {        
+        /* This interface shall instantiate the type FooTypeSupport          
+         * defined by the DDS specification where "Foo" is an unbounded          
+         * string.         
+         */    
+    };
+
+    @extensibility(APPENDABLE)    
+    struct KeyedString {        
+        @key string key;        
+        string value;    
+    };    
+
+    typedef sequence<KeyedString> KeyedStringSeq;
+
+    interface KeyedStringDataWriter : DataWriter {        
+        /* This interface shall instantiate the type FooDataWriter defined by         
+         * the DDS specification where "Foo" is KeyedString. It also defines         
+         * the operations below.         
+         */        
+        InstanceHandle_t register_instance_w_key( in string key);        
+        InstanceHandle_t register_instance_w_key_w_timestamp( in string key, in Time_t source_timestamp);
+
+        ReturnCode_t unregister_instance_w_key( in string key);        
+        ReturnCode_t unregister_instance_w_key_w_timestamp( in string key, in Time_t source_timestamp);
+
+        ReturnCode_t write_string_w_key( in string key, in string str, in InstanceHandle_t handle);        
+        ReturnCode_t write_string_w_key_w_timestamp( in string key, in string str, in InstanceHandle_t handle, in Time_t source_timestamp);
+
+        ReturnCode_t dispose_w_key( in string key);        
+        ReturnCode_t dispose_w_key_w_timestamp( in string key, in Time_t source_timestamp);
+
+        ReturnCode_t get_key_value_w_key( inout string key, in InstanceHandle_t handle);
+
+        InstanceHandle_t lookup_instance_w_key( in string key);
+    };
+
+    interface KeyedStringDataReader : DataReader {        
+        /* This interface shall instantiate the type FooDataReader defined by         
+         * the DDS specification where "Foo" is KeyedString.         
+         */    
+    };
+
+    interface KeyedStringTypeSupport : TypeSupport {        
+        /* This interface shall instantiate the type FooTypeSupport          
+         * defined by the DDS specification where "Foo" is KeyedString.         
+         */    
+    };
+
+
+    @extensibility(APPENDABLE)    
+    struct Bytes {        
+        ByteSeq value;    
+    };    
+    typedef sequence<Bytes> BytesSeq;
+
+    interface BytesDataWriter : DataWriter {        
+        /* This interface shall instantiate the type FooDataWriter defined by         
+         * the DDS specification where "Foo" is an unbounded sequence of         
+         * bytes (octets). It also defines the operations below.         
+         */        
+         ReturnCode_t write_w_bytes( in ByteArray bytes, in long offset, in long length, in InstanceHandle_t handle);        
+         ReturnCode_t write_w_bytes_w_timestamp( in ByteArray bytes, in long offset, in long length, in InstanceHandle_t handle, in Time_t source_timestamp);    
+    };
+
+    interface BytesDataReader : DataReader {
+        /* This interface shall instantiate the type FooDataReader defined by         
+         * the DDS specification where "Foo" is Bytes.         
+         */    
+    }; 
+
+    interface BytesTypeSupport : TypeSupport {        
+        /* This interface shall instantiate the type FooTypeSupport          
+         * defined by the DDS specification where "Foo" is Bytes.         
+         */    
+    }; 
+
+
+    @extensibility(APPENDABLE)    
+    struct KeyedBytes {        
+        @key string key;        
+        ByteSeq value;    
+    };    
+    typedef sequence<KeyedBytes> KeyedBytesSeq;
+
+    interface KeyedBytesDataWriter : DataWriter {        
+        /* This interface shall instantiate the type FooDataWriter defined by         
+         * the DDS specification where "Foo" is KeyedBytes.
+         * It also defines the operations below.         
+         */        
+        InstanceHandle_t register_instance_w_key( in string key);        
+        InstanceHandle_t register_instance_w_key_w_timestamp( in string key, in Time_t source_timestamp);
+
+        ReturnCode_t unregister_instance_w_key( in string key);        
+        ReturnCode_t unregister_instance_w_key_w_timestamp( in string key, in Time_t source_timestamp);
+
+        ReturnCode_t write_bytes_w_key( in string key, in ByteArray bytes, in long offset, in long length, in InstanceHandle_t handle);        
+        ReturnCode_t write_bytes_w_key_w_timestamp( in string key, in ByteArray bytes, in long offset, in long length, in InstanceHandle_t handle, in Time_t source_timestamp);
+
+        ReturnCode_t dispose_w_key( in string key);        
+        ReturnCode_t dispose_w_key_w_timestamp( in string key, in Time_t source_timestamp);
+
+        ReturnCode_t get_key_value_w_key( inout string key, in InstanceHandle_t handle);
+
+        InstanceHandle_t lookup_instance_w_key( in string key);    
+    };
+
+    interface KeyedBytesDataReader : DataReader {        
+        /* This interface shall instantiate the type FooDataReader defined by         
+         * the DDS specification where "Foo" is KeyedBytes.         
+         */    
+    }; 
+
+    interface KeyedBytesTypeSupport : TypeSupport {        
+        /* This interface shall instantiate the type FooTypeSupport          
+         * defined by the DDS specification where "Foo" is KeyedBytes.         
+         */    
+    }; 
+};  // end module DDS
