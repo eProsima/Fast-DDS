@@ -87,6 +87,25 @@ enum ResponseCode : uint32_t
 };
 
 
+class TypeSupport
+{
+public:
+    //int register_type(DomainParticipant domain, std::string type_name);
+    std::string get_type_name();
+    DynamicType get_type();
+};
+
+class DynamicTypeSupport : public TypeSupport
+{
+public:
+    static DynamicTypeSupport create_type_support(DynamicType type);
+    static ResponseCode delete_type_support(DynamicTypeSupport type_support);
+
+    //ResponseCode register_type(DomainParticipant participant, std::string type_name);
+    std::string get_type_name();
+    DynamicType get_type();
+};
+
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
