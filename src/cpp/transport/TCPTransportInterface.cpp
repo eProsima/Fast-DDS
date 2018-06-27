@@ -1385,7 +1385,7 @@ LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
 }
 
 #ifdef ASIO_HAS_MOVE
-void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket socket)
+void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error, asio::ip::tcp::socket& socket)
 {
     if (!error.value())
     {
