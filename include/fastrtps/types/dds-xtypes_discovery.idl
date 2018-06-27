@@ -1,0 +1,298 @@
+/* dds-xtypes_discovery.idl */
+ 
+// The types in this file shall be serialized with XCDR encoding version 1 
+module DDS {    
+    @extensibility(APPENDABLE) @nested    
+    struct BuiltinTopicKey_t {        
+        octet value[16];    
+    };
+ 
+    @extensibility(FINAL) @nested    
+    struct Duration_t {        
+        long sec;        unsigned long nanosec;    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct DeadlineQosPolicy {        
+        Duration_t period;    
+    };
+ 
+    enum DestinationOrderQosPolicyKind {        
+        BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS,        
+        BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct DestinationOrderQosPolicy {        
+        DestinationOrderQosPolicyKind kind;    
+    };
+ 
+    enum DurabilityQosPolicyKind {        
+        VOLATILE_DURABILITY_QOS,
+        TRANSIENT_LOCAL_DURABILITY_QOS,        
+        TRANSIENT_DURABILITY_QOS,        
+        PERSISTENT_DURABILITY_QOS    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct DurabilityQosPolicy {        
+        DurabilityQosPolicyKind kind;    
+    };
+ 
+    enum HistoryQosPolicyKind {        
+        KEEP_LAST_HISTORY_QOS,        
+        KEEP_ALL_HISTORY_QOS    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct HistoryQosPolicy {        
+        HistoryQosPolicyKind kind;        
+        long depth;    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct DurabilityServiceQosPolicy {        
+        Duration_t service_cleanup_delay;        
+        HistoryQosPolicyKind history_kind;        
+        long history_depth;        
+        long max_samples;        
+        long max_instances;        
+        long max_samples_per_instance;    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct GroupDataQosPolicy {        
+        ByteSeq value;    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct LatencyBudgetQosPolicy {        
+        Duration_t duration;    
+    };
+
+    @extensibility(APPENDABLE) @nested    
+    struct LifespanQosPolicy {        
+        Duration_t duration;    
+    };
+ 
+    enum LivelinessQosPolicyKind {        
+        AUTOMATIC_LIVELINESS_QOS,        
+        MANUAL_BY_PARTICIPANT_LIVELINESS_QOS,        
+        MANUAL_BY_TOPIC_LIVELINESS_QOS    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct LivelinessQosPolicy {        
+        LivelinessQosPolicyKind kind;        
+        Duration_t lease_duration;    
+    };
+ 
+    enum OwnershipQosPolicyKind {        
+        SHARED_OWNERSHIP_QOS,        
+        EXCLUSIVE_OWNERSHIP_QOS    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct OwnershipQosPolicy {        
+        OwnershipQosPolicyKind kind;    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct OwnershipStrengthQosPolicy {        
+        long value;    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct PartitionQosPolicy {        
+        StringSeq name;    
+    };
+ 
+    enum PresentationQosPolicyAccessScopeKind {        
+        INSTANCE_PRESENTATION_QOS,
+        TOPIC_PRESENTATION_QOS,        
+        GROUP_PRESENTATION_QOS    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct PresentationQosPolicy {        
+        PresentationQosPolicyAccessScopeKind access_scope;        
+        boolean coherent_access;        
+        boolean ordered_access;    
+    };
+ 
+    enum ReliabilityQosPolicyKind {        
+        BEST_EFFORT_RELIABILITY_QOS,        
+        RELIABLE_RELIABILITY_QOS    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct ReliabilityQosPolicy {        
+        ReliabilityQosPolicyKind kind;        
+        Duration_t max_blocking_time;    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct ResourceLimitsQosPolicy {        
+        long max_samples;        
+        long max_instances;        
+        long max_samples_per_instance;    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct TimeBasedFilterQosPolicy {        
+        Duration_t minimum_separation;    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct TopicDataQosPolicy {        
+        ByteSeq value;    
+    };
+ 
+    @extensibility(APPENDABLE) @nested
+    struct TransportPriorityQosPolicy {        
+        long value;    
+    };
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct UserDataQosPolicy {        
+        ByteSeq value;    
+    };
+ 
+    @extensibility(MUTABLE)    
+    struct ParticipantBuiltinTopicData {        
+        @id(0x0050) @key BuiltinTopicKey_t key;        
+        @id(0x002C)      UserDataQosPolicy user_data;    
+    };
+ 
+    typedef short DataRepresentationId_t;
+ 
+    const DataRepresentationId_t XCDR_DATA_REPRESENTATION = 0;   
+    const DataRepresentationId_t XML_DATA_REPRESENTATION  = 1;    
+    const DataRepresentationId_t XCDR2_DATA_REPRESENTATION = 2;
+
+    typedef sequence<DataRepresentationId_t> DataRepresentationIdSeq;
+ 
+    const QosPolicyId_t DATA_REPRESENTATION_QOS_POLICY_ID = 23;    
+    const string DATA_REPRESENTATION_QOS_POLICY_NAME = "DataRepresentation";
+ 
+    @extensibility(APPENDABLE) @nested    
+    struct DataRepresentationQosPolicy {        
+        DataRepresentationIdSeq value;    
+    };
+ 
+    @bit_bound(16)    enum TypeConsistencyKind {        
+        DISALLOW_TYPE_COERCION,        
+        ALLOW_TYPE_COERCION    
+    };
+ 
+    const QosPolicyId_t TYPE_CONSISTENCY_ENFORCEMENT_QOS_POLICY_ID = 24;    
+    const string TYPE_CONSISTENCY_ENFORCEMENT_QOS_POLICY_NAME =        "TypeConsistencyEnforcement";
+
+    @extensibility(APPENDABLE) @nested    
+    struct TypeConsistencyEnforcementQosPolicy {        
+        TypeConsistencyKind kind;        
+        boolean ignore_sequence_bounds;        
+        boolean ignore_string_bounds;        
+        boolean ignore_member_names;        
+        boolean prevent_type_widening;        
+        boolean force_type_validation;    
+    };
+ 
+    @extensibility(MUTABLE)    
+    struct TopicBuiltinTopicData {        
+        @id(0x005A) @key BuiltinTopicKey_t key;        
+        @id(0x0005)      ObjectName name;        
+        @id(0x0007)      ObjectName type_name;        
+        @id(0x0069) @optional TypeIdV1 type_id; // XTYPES 1.1        
+        @id(0x0072) @optional TypeObjectV1 type; // XTYPES 1.1        
+        @id(0x0075) @optional XTypes::TypeInformation type_information;        
+                                                       // XTYPES 1.2        
+        @id(0x001D)      DurabilityQosPolicy durability;        
+        @id(0x001E)      DurabilityServiceQosPolicy durability_service;        
+        @id(0x0023)      DeadlineQosPolicy deadline;        
+        @id(0x0027)      LatencyBudgetQosPolicy latency_budget;        
+        @id(0x001B)      LivelinessQosPolicy liveliness;        
+        @id(0x001A)      ReliabilityQosPolicy reliability;        
+        @id(0x0049)      TransportPriorityQosPolicy transport_priority;       
+        @id(0x002B)      LifespanQosPolicy lifespan;        
+        @id(0x0025)      DestinationOrderQosPolicy destination_order;        
+        @id(0x0040)      HistoryQosPolicy history;        
+        @id(0x0041)      ResourceLimitsQosPolicy resource_limits;        
+        @id(0x001F)      OwnershipQosPolicy ownership;        
+        @id(0x002E)      TopicDataQosPolicy topic_data;       
+        @id(0x0073)      DataRepresentationQosPolicy representation;    
+    };
+ 
+    @extensibility(MUTABLE)    struct TopicQos {        
+        // ...        
+        DataRepresentationQosPolicy representation;
+    };
+ 
+    @extensibility(MUTABLE)    
+    struct PublicationBuiltinTopicData {        
+        @id(0x005A) @key BuiltinTopicKey_t key;        
+        @id(0x0050)      BuiltinTopicKey_t participant_key;        
+        @id(0x0005)      ObjectName topic_name;        
+        @id(0x0007)      ObjectName type_name;        
+        @id(0x0069) @optional TypeIdV1 type_id;  // XTYPES 1.1        
+        @id(0x0072) @optional TypeObjectV1 type; // XTYPES 1.1        
+        @id(0x0075) @optional XTypes::TypeInformation type_information;                                                                        
+        // XTYPES 1.2        
+        @id(0x001D)      DurabilityQosPolicy durability;         
+        @id(0x001E)      DurabilityServiceQosPolicy durability_service;        
+        @id(0x0023)      DeadlineQosPolicy deadline;        
+        @id(0x0027)      LatencyBudgetQosPolicy latency_budget;        
+        @id(0x001B)      LivelinessQosPolicy liveliness;        
+        @id(0x001A)      ReliabilityQosPolicy reliability;        
+        @id(0x002B)      LifespanQosPolicy lifespan;        
+        @id(0x002C)      UserDataQosPolicy user_data;        
+        @id(0x001F)      OwnershipQosPolicy ownership;        
+        @id(0x0006)      OwnershipStrengthQosPolicy ownership_strength;        
+        @id(0x0025)      DestinationOrderQosPolicy destination_order;        
+        @id(0x0021)      PresentationQosPolicy presentation;         
+        @id(0x0029)      PartitionQosPolicy partition;         
+        @id(0x002E)      TopicDataQosPolicy topic_data;        
+        @id(0x002D)      GroupDataQosPolicy group_data;        
+        @id(0x0073)      DataRepresentationQosPolicy representation;    
+    };
+ 
+    @extensibility(MUTABLE)    
+    struct DataWriterQos {        
+        // ...        DataRepresentationQosPolicy representation;    
+    };
+ 
+    @extensibility(MUTABLE)    
+    struct SubscriptionBuiltinTopicData {        
+        @id(0x005A) @key BuiltinTopicKey_t key;        
+        @id(0x0050)      BuiltinTopicKey_t participant_key;
+        @id(0x0005)      ObjectName topic_name;        
+        @id(0x0007)      ObjectName type_name;       
+        @id(0x0069) @optional TypeIdV1 type_id; // XTYPES 1.1        
+        @id(0x0072) @optional TypeObjectV1 type; // XTYPES 1.1        
+        @id(0x0075) @optional XTypes::TypeInformation type_information;                                                       
+        // XTYPES 1.2        
+        @id(0x001D)      DurabilityQosPolicy durability;        
+        @id(0x0023)      DeadlineQosPolicy deadline;        
+        @id(0x0027)      LatencyBudgetQosPolicy latency_budget;        
+        @id(0x001B)      LivelinessQosPolicy liveliness;        
+        @id(0x001A)      ReliabilityQosPolicy reliability;        
+        @id(0x001F)      OwnershipQosPolicy ownership;        
+        @id(0x0025)      DestinationOrderQosPolicy destination_order;        
+        @id(0x002C)      UserDataQosPolicy user_data;        
+        @id(0x0004)      TimeBasedFilterQosPolicy time_based_filter;         
+        @id(0x0021)      PresentationQosPolicy presentation;        
+        @id(0x0029)      PartitionQosPolicy partition;        
+        @id(0x002E)      TopicDataQosPolicy topic_data;        
+        @id(0x002D)      GroupDataQosPolicy group_data;        
+        @id(0x0073)      DataRepresentationQosPolicy representation;        
+        @id(0x0074)      TypeConsistencyEnforcementQosPolicy type_consistency;    
+    };
+ 
+    @extensibility(MUTABLE)    
+    struct DataReaderQos {        
+        // ...        
+        DataRepresentationQosPolicy representation;        
+        TypeConsistencyEnforcementQosPolicy type_consistency;    
+    }; 
+};  // end module DDS
+ 
