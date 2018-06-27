@@ -166,7 +166,8 @@ class BlackboxEnvironment : public ::testing::Environment
 
         void TearDown()
         {
-            Log::Reset();
+            //Log::Reset();
+            Log::KillThread();
             eprosima::fastrtps::rtps::RTPSDomain::stopAll();
         }
 };
