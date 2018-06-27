@@ -60,12 +60,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
     {
         //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
         WriterProxyData writerProxyData;
-        CDRMessage_t tempMsg(0);
-        tempMsg.wraps = true;
-        tempMsg.msg_endian = change_in->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
-        tempMsg.length = change_in->serializedPayload.length;
-        tempMsg.max_size = change_in->serializedPayload.max_size;
-        tempMsg.buffer = change_in->serializedPayload.data;
+        CDRMessage_t tempMsg(change_in->serializedPayload);
 
         if(writerProxyData.readFromCDRMessage(&tempMsg))
         {
@@ -140,12 +135,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
     {
         //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
         ReaderProxyData readerProxyData;
-        CDRMessage_t tempMsg(0);
-        tempMsg.wraps = true;
-        tempMsg.msg_endian = change_in->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
-        tempMsg.length = change_in->serializedPayload.length;
-        tempMsg.max_size = change_in->serializedPayload.max_size;
-        tempMsg.buffer = change_in->serializedPayload.data;
+        CDRMessage_t tempMsg(change_in->serializedPayload);
 
         if(readerProxyData.readFromCDRMessage(&tempMsg))
         {

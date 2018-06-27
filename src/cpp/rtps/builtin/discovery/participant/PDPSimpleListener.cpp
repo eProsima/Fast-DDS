@@ -61,10 +61,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
     {
         //LOAD INFORMATION IN TEMPORAL RTPSParticipant PROXY DATA
         ParticipantProxyData participant_data;
-        CDRMessage_t msg;
-        msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
-        msg.length = change->serializedPayload.length;
-        memcpy(msg.buffer,change->serializedPayload.data,msg.length);
+        CDRMessage_t msg(change->serializedPayload);
         if(participant_data.readFromCDRMessage(&msg))
         {
             //AFTER CORRECTLY READING IT

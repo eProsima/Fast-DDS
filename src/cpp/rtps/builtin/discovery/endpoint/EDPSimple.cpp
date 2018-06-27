@@ -459,10 +459,7 @@ bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
         {
             rdata->toParameterList();
 
-            CDRMessage_t aux_msg(0);
-            aux_msg.wraps = true;
-            aux_msg.buffer = change->serializedPayload.data;
-            aux_msg.max_size = change->serializedPayload.max_size;
+            CDRMessage_t aux_msg(change->serializedPayload);
 
 #if __BIG_ENDIAN__
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
@@ -525,10 +522,7 @@ bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
         {
             wdata->toParameterList();
 
-            CDRMessage_t aux_msg(0);
-            aux_msg.wraps = true;
-            aux_msg.buffer = change->serializedPayload.data;
-            aux_msg.max_size = change->serializedPayload.max_size;
+            CDRMessage_t aux_msg(change->serializedPayload);
 
 #if __BIG_ENDIAN__
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;

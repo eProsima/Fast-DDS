@@ -13,12 +13,13 @@
 // limitations under the License.
 
 /**
- * @file CDRMessage_t.h	
+ * @file CDRMessage_t.h
  */
 
 #ifndef CDRMESSAGE_T_H_
 #define CDRMESSAGE_T_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#include "SerializedPayload.h"
 #include "Types.h"
 #include <stdlib.h>
 #include <cstring>
@@ -88,6 +89,19 @@ struct RTPS_DllAPI CDRMessage_t{
 #else
         msg_endian = LITTLEEND;
 #endif
+    }
+
+    /**
+    * Constructor to wrap a serialized payload
+    * @param payload Payload to wrap
+    */
+    CDRMessage_t(const SerializedPayload_t& payload) : wraps(true)
+    {
+        msg_endian = payload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+        pos = payload.pos;
+        length = payload.length;
+        buffer = payload.data;
+        max_size = payload.max_size;
     }
 
     CDRMessage_t(const CDRMessage_t& message)
