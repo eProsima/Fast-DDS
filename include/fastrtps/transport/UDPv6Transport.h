@@ -90,7 +90,7 @@ protected:
 
     virtual void SetReceiveBufferSize(uint32_t size) override;
     virtual void SetSendBufferSize(uint32_t size) override;
-    virtual void SetSocketOutbountInterface(eProsimaUDPSocket*, const std::string&) override;
+    virtual void SetSocketOutbountInterface(eProsimaUDPSocket&, const std::string&) override;
 };
 
 } // namespace rtps

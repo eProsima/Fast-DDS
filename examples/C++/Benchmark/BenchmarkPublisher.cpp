@@ -40,7 +40,6 @@ BenchMarkPublisher::BenchMarkPublisher()
 	, m_iTestTimeMs(10000)
 	, m_iTickTime(100)
 	, m_iWaitTime(1000)
-	, m_iCount(0)
 	, m_iSize(0)
 	, m_vSamples(nullptr)
 	, m_iSamplesCount(0)
@@ -50,6 +49,7 @@ BenchMarkPublisher::BenchMarkPublisher()
 	, m_pubListener(this)
 	, m_subListener(this)
 {
+	m_iCount = 0;
 }
 
 bool BenchMarkPublisher::init(int transport, ReliabilityQosPolicyKind reliabilityKind, int time, int tick_time, int wait_time, const std::string& topicName, int domain, int size)
