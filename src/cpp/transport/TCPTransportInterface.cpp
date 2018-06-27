@@ -58,13 +58,13 @@ void TCPAcceptor::Accept(TCPTransportInterface* parent, asio::io_service&)
         std::placeholders::_2));
 }
 #else
-void TCPAcceptor::Accept(TCPTransport* parent, asio::io_service& io_service)
+void TCPAcceptor::Accept(TCPTransportInterface* parent, asio::io_service& io_service)
 {
     if (mSocket == nullptr)
     {
         mSocket = std::make_shared<asio::ip::tcp::socket>(io_service);
     }
-    mAcceptor.async_accept(*mSocket.get(), mEndPoint, std::bind(&TCPTransport::SocketAccepted, parent, this, std::placeholders::_1));
+	mAcceptor.async_accept(*mSocket.get(), mEndPoint, std::bind(&TCPTransportInterface::SocketAccepted, parent, this, std::placeholders::_1));
 }
 #endif
 

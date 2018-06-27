@@ -313,7 +313,7 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator, S
                 auto locIt = locNames.begin();
 
                 // Outbounding first interface with already created socket.
-                SetSocketOutbountInterface(getSocketPtr(unicastSocket), (*locIt).name);
+                SetSocketOutbountInterface(unicastSocket, (*locIt).name);
                 mOutputSockets.push_back(new UDPChannelResource(unicastSocket));
 
                 // Create other socket for outbounding rest of interfaces.
@@ -321,7 +321,7 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator, S
                 {
                     uint16_t new_port = 0;
                     eProsimaUDPSocket multicastSocket = OpenAndBindUnicastOutputSocket(GenerateEndpoint((*locIt).name, new_port), new_port);
-                    SetSocketOutbountInterface(getSocketPtr(multicastSocket), (*locIt).name);
+                    SetSocketOutbountInterface(multicastSocket, (*locIt).name);
 
                     UDPChannelResource* mSocket = new UDPChannelResource(multicastSocket);
                     mSocket->only_multicast_purpose(true);
@@ -347,7 +347,7 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator, S
                 if (IsInterfaceAllowed(infoIP.name))
                 {
                     eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(GenerateEndpoint(infoIP.name, port), port);
-                    SetSocketOutbountInterface(getSocketPtr(unicastSocket), infoIP.name);
+                    SetSocketOutbountInterface(unicastSocket, infoIP.name);
                     if (firstInterface)
                     {
                         getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback(true));
