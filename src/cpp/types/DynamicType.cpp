@@ -74,7 +74,7 @@ ResponseCode DynamicType::get_all_members(std::map<MemberId, DynamicTypeMember>&
 
 uint32_t DynamicType::get_annotation_count()
 {
-    return 0;
+    return mAnnotation.size();
 }
 
 ResponseCode DynamicType::get_annotation(AnnotationDescriptor& descriptor, uint32_t idx)

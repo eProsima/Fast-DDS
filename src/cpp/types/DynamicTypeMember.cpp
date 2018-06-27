@@ -13,6 +13,8 @@
 // limitations under the License.
 
 #include <fastrtps/types/DynamicTypeMember.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/AnnotationDescriptor.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -27,6 +29,7 @@ ResponseCode DynamicTypeMember::get_descriptor(MemberDescriptor* descriptor) con
     if (descriptor != nullptr)
     {
         //TODO: //ARCE: Fill descriptor with all the changes applied.
+        return ResponseCode::RETCODE_OK;
     }
     else
     {
@@ -36,19 +39,33 @@ ResponseCode DynamicTypeMember::get_descriptor(MemberDescriptor* descriptor) con
 
 bool DynamicTypeMember::equals(const DynamicTypeMember& other) const
 {
-    return false;
+    if (mAnnotation.size() != other.mAnnotation.size())
+    {
+        return false;
+    }
+    else
+    {
+        for (auto it = mAnnotation.begin(), it2 = other.mAnnotation.begin(); it != mAnnotation.end(); ++it, ++it2)
+        {
+
+            if (!(*it)->equals(*it2))
+            {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 std::string DynamicTypeMember::get_name() const
 {
-    return mName;
+    return mParent->get_name();
 }
 
 MemberId DynamicTypeMember::get_id() const
 {
     return mId;
 }
-
 
 } // namespace types
 } // namespace fastrtps

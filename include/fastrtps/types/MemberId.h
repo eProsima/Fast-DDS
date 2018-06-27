@@ -25,7 +25,7 @@ class DynamicType;
 
 typedef uint32_t MemberId;
 
-#define MEMBER_ID_INVALID = 0;
+#define MEMBER_ID_INVALID 0
 
 } // namespace types
 } // namespace fastrtps

@@ -19,17 +19,51 @@ namespace fastrtps {
 namespace types {
 
 MemberDescriptor::MemberDescriptor()
-: mIndex(0)
+: mName("")
+, mId(MEMBER_ID_INVALID)
+, mType(nullptr)
+, mDefaultValue("")
+, mIndex(0)
+, mDefaultLabel(false)
 {
 }
 
-ResponseCode MemberDescriptor::copy_from(const MemberDescriptor*) const
+ResponseCode MemberDescriptor::copy_from(const MemberDescriptor* other)
 {
-    return ResponseCode::RETCODE_OK;
+    if (other != nullptr)
+    {
+        try
+        {
+            mName = other->mName;
+            mId = other->mId;
+            mType = other->mType;
+            mDefaultValue = other->mDefaultValue;
+            mIndex = other->mIndex;
+            mDefaultLabel = other->mDefaultLabel;
+            mLabel = other->mLabel;
+            return ResponseCode::RETCODE_OK;
+        }
+        catch (std::exception& /*e*/)
+        {
+            return ResponseCode::RETCODE_ERROR;
+        }
+    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
 }
 
-bool MemberDescriptor::equals(const MemberDescriptor&) const
+bool MemberDescriptor::equals(const MemberDescriptor* other) const
 {
+    if (other != nullptr && mName == other->mName && mId == other->mId && mType == other->mType &&
+        mDefaultValue == other->mDefaultValue && mIndex == other->mIndex && mDefaultLabel == other->mDefaultLabel &&
+        mLabel.size() == other->mLabel.size())
+    {
+        for (auto it = mLabel.begin(), it2 = other->mLabel.begin(); it != mLabel.end(); ++it, ++it2)
+        {
+            if (*it != *it2)
+                return false;
+        }
+        return true;
+    }
     return false;
 }
 bool MemberDescriptor::isConsistent() const
