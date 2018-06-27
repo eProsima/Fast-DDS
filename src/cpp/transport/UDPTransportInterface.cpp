@@ -414,7 +414,7 @@ bool UDPTransportInterface::OpenExtraOutputChannel(const Locator_t&, SenderResou
 {
     (void)size;
     return false;
-};
+}
 
 void UDPTransportInterface::performListenOperation(UDPChannelResource* pChannelResource, Locator_t input_locator)
 {
