@@ -23,25 +23,6 @@ namespace types{
 
 class DynamicType;
 
-class TypeSupport
-{
-public:
-	//int register_type(DomainParticipant domain, std::string type_name);
-    std::string get_type_name();
-	DynamicType get_type();
-};
-
-class DynamicTypeSupport : public TypeSupport
-{
-public:
-    static DynamicTypeSupport create_type_support(DynamicType type);
-    static ResponseCode delete_type_support(DynamicTypeSupport type_support);
-
-    //ResponseCode register_type(DomainParticipant participant, std::string type_name);
-    std::string get_type_name();
-	DynamicType get_type();
-};
-
 typedef uint32_t MemberId;
 
 #define MEMBER_ID_INVALID = 0;
