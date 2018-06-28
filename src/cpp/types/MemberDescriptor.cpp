@@ -13,10 +13,29 @@
 // limitations under the License.
 
 #include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/DynamicType.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace types {
+
+static bool IsTypeNameConsistent(const std::string& sName)
+{
+    // The first letter must start with a letter ( uppercase or lowercase )
+    if (sName.length() > 0 && std::isalpha(sName[0]))
+    {
+        // All characters must be letters, numbers or underscore.
+        for (uint32_t i = 1; i < sName.length(); ++i)
+        {
+            if (!std::isalnum(sName[i]) && sName[i] != 95)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
+}
 
 MemberDescriptor::MemberDescriptor()
 : mName("")
@@ -26,6 +45,11 @@ MemberDescriptor::MemberDescriptor()
 , mIndex(0)
 , mDefaultLabel(false)
 {
+}
+
+MemberDescriptor::MemberDescriptor(const MemberDescriptor* descriptor)
+{
+    copy_from(descriptor);
 }
 
 ResponseCode MemberDescriptor::copy_from(const MemberDescriptor* other)
@@ -53,7 +77,8 @@ ResponseCode MemberDescriptor::copy_from(const MemberDescriptor* other)
 
 bool MemberDescriptor::equals(const MemberDescriptor* other) const
 {
-    if (other != nullptr && mName == other->mName && mId == other->mId && mType == other->mType &&
+    if (other != nullptr && mName == other->mName && mId == other->mId &&
+        ((mType == nullptr && other->mType == nullptr) || mType->equals(other->mType)) &&
         mDefaultValue == other->mDefaultValue && mIndex == other->mIndex && mDefaultLabel == other->mDefaultLabel &&
         mLabel.size() == other->mLabel.size())
     {
@@ -66,8 +91,50 @@ bool MemberDescriptor::equals(const MemberDescriptor* other) const
     }
     return false;
 }
+
+std::string MemberDescriptor::get_name() const
+{
+    return mName;
+}
+
+MemberId MemberDescriptor::get_id() const
+{
+    return mId;
+}
+
 bool MemberDescriptor::isConsistent() const
 {
+    // The type field is mandatory.
+    if (mType == nullptr)
+    {
+        return false;
+    }
+
+    // Only aggregated types must use the ID value.
+    if (mId != MEMBER_ID_INVALID && mType->get_kind() != TK_UNION && mType->get_kind() != TK_STRUCTURE &&
+        mType->get_kind() != TK_ANNOTATION)
+    {
+        return false;
+    }
+
+    //TODO: Check default value.
+
+    if (!IsTypeNameConsistent(mName))
+    {
+        return false;
+    }
+
+    // Only Unions need the field "label"
+    if (mLabel.size() != 0 && mType->get_kind() != TK_UNION)
+    {
+        return false;
+    }
+    // If the field ins't de default value for the union, it must have a label value.
+    else if (mType->get_kind() == TK_UNION && mDefaultLabel == false && mLabel.size() == 0)
+    {
+        return false;
+    }
+
     return false;
 }
 
