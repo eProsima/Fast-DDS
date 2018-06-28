@@ -30,6 +30,8 @@ public:
     TypeDescriptor();
     TypeDescriptor(const TypeDescriptor* other);
 
+    ~TypeDescriptor();
+
 	ResponseCode copy_from(const TypeDescriptor* descriptor);
 
 	bool equals(const TypeDescriptor* descriptor) const;

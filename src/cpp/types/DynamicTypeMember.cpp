@@ -45,6 +45,16 @@ DynamicTypeMember::DynamicTypeMember(const DynamicTypeMember* other)
     }
 }
 
+DynamicTypeMember::~DynamicTypeMember()
+{
+    mParent = nullptr;
+    for (auto it = mAnnotation.begin(); it != mAnnotation.end(); ++it)
+    {
+        delete *it;
+    }
+    mAnnotation.clear();
+}
+
 ResponseCode DynamicTypeMember::get_descriptor(MemberDescriptor* descriptor) const
 {
     if (descriptor != nullptr)

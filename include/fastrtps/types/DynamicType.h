@@ -31,6 +31,8 @@ public:
     DynamicType();
     DynamicType(const TypeDescriptor* descriptor);
 
+    virtual ~DynamicType();
+
 	ResponseCode get_descriptor(TypeDescriptor* descriptor) const;
 	bool equals(const DynamicType* other) const;
 	std::string get_name() const;
@@ -49,6 +51,8 @@ protected:
 
     friend class DynamicTypeBuilder;
     friend class DynamicTypeBuilderFactory;
+    friend class MemberDescriptor;
+    friend class TypeDescriptor;
 
     virtual void Clear();
 

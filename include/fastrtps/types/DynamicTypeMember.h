@@ -33,6 +33,8 @@ public:
     DynamicTypeMember(const DynamicTypeMember* other);
     DynamicTypeMember(const MemberDescriptor* descriptor);
 
+    ~DynamicTypeMember();
+
 	ResponseCode get_descriptor(MemberDescriptor* descriptor) const;
 
 	uint32_t get_annotation_count();

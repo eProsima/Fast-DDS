@@ -35,6 +35,8 @@ public:
     DynamicTypeBuilder(const TypeDescriptor* descriptor);
     DynamicTypeBuilder(const DynamicType* pType);
 
+    virtual ~DynamicTypeBuilder();
+
 	ResponseCode add_member(const MemberDescriptor* descriptor);
 
     ResponseCode apply_annotation(AnnotationDescriptor& descriptor);

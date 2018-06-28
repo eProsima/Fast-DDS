@@ -36,6 +36,11 @@ DynamicType::DynamicType(const DynamicType* other)
     copy_from_type(other);
 }
 
+DynamicType::~DynamicType()
+{
+    Clear();
+}
+
 void DynamicType::Clear()
 {
     mName = "";

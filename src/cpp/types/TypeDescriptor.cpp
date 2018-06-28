@@ -38,6 +38,12 @@ static bool IsTypeNameConsistent(const std::string& sName)
 }
 
 TypeDescriptor::TypeDescriptor()
+    : mKind(0)
+    , mName("")
+    , mBaseType(nullptr)
+    , mDiscriminatorType(nullptr)
+    , mElementType(nullptr)
+    , mKeyElementType(nullptr)
 {
 }
 
@@ -46,19 +52,63 @@ TypeDescriptor::TypeDescriptor(const TypeDescriptor* other)
     copy_from(other);
 }
 
+TypeDescriptor::~TypeDescriptor()
+{
+    if (mBaseType != nullptr)
+    {
+        delete mBaseType;
+        mBaseType = nullptr;
+    }
+
+    if (mDiscriminatorType != nullptr)
+    {
+        delete mDiscriminatorType;
+        mDiscriminatorType = nullptr;
+    }
+
+    if (mElementType != nullptr)
+    {
+        delete mElementType;
+        mElementType = nullptr;
+    }
+
+    if (mKeyElementType != nullptr)
+    {
+        delete mKeyElementType;
+        mKeyElementType = nullptr;
+    }
+}
+
 ResponseCode TypeDescriptor::copy_from(const TypeDescriptor* descriptor)
 {
     if (descriptor != nullptr)
     {
         try
         {
+            if (mBaseType != nullptr)
+            {
+                delete mBaseType;
+            }
+            if (mDiscriminatorType != nullptr)
+            {
+                delete mDiscriminatorType;
+            }
+            if (mElementType != nullptr)
+            {
+                delete mElementType;
+            }
+            if (mKeyElementType != nullptr)
+            {
+                delete mKeyElementType;
+            }
+
             mKind = descriptor->mKind;
             mName = descriptor->mName;
-            mBaseType = descriptor->mBaseType;
-            mDiscriminatorType = descriptor->mDiscriminatorType;
+            mBaseType = new DynamicType(descriptor->mBaseType);
+            mDiscriminatorType = new DynamicType(descriptor->mDiscriminatorType);
             mBound = descriptor->mBound;
-            mElementType = descriptor->mElementType;
-            mKeyElementType = descriptor->mKeyElementType;
+            mElementType = new DynamicType(descriptor->mElementType);
+            mKeyElementType = new DynamicType(descriptor->mKeyElementType);
             return ResponseCode::RETCODE_OK;
         }
         catch(std::exception& /*e*/)
