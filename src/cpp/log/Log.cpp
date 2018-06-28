@@ -117,7 +117,7 @@ void Log::KillThread()
       // The #ifdef workaround here is due to an unsolved MSVC bug, which Microsoft has announced
       // they have no intention of solving: https://connect.microsoft.com/VisualStudio/feedback/details/747145
       // Each VS version deals with post-main deallocation of threads in a very different way.
-#if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK) || _MSC_VER >= 1900
+#if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK) || _MSC_VER >= 1800
       mResources.mCv.notify_all();
       mResources.mLoggingThread->join();
 #endif
