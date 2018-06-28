@@ -30,19 +30,23 @@ class DynamicTypeMember
 public:
 
     DynamicTypeMember();
+    DynamicTypeMember(const DynamicTypeMember* other);
+    DynamicTypeMember(const MemberDescriptor* descriptor);
 
 	ResponseCode get_descriptor(MemberDescriptor* descriptor) const;
 
 	uint32_t get_annotation_count();
-	ResponseCode get_annotation(AnnotationDescriptor* descriptor, uint32_t idx);
+    ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
+    ResponseCode get_annotation(AnnotationDescriptor& descriptor, uint32_t idx);
 
-	bool equals(const DynamicTypeMember&) const;
+	bool equals(const DynamicTypeMember*) const;
 	std::string get_name() const;
 	MemberId get_id() const;
 
 protected:
 
     DynamicType* mParent;
+    MemberDescriptor* mDescriptor;
 	std::vector<AnnotationDescriptor*> mAnnotation;
 	MemberId mId;
 };

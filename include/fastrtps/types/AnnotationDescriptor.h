@@ -28,6 +28,8 @@ class AnnotationDescriptor
 {
 public:
     AnnotationDescriptor();
+    AnnotationDescriptor(const AnnotationDescriptor* descriptor);
+    AnnotationDescriptor(DynamicType* pType);
 
     ResponseCode get_value(std::string& value, const std::string& key);
     ResponseCode get_all_value(std::map<std::string, std::string>& value);
@@ -36,6 +38,7 @@ public:
 	ResponseCode copy_from(const AnnotationDescriptor* other);
 	bool equals(const AnnotationDescriptor*) const;
 	bool isConsistent() const;
+
 protected:
 
 	DynamicType* mType;

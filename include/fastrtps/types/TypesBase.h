@@ -19,6 +19,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <cctype>
 
 namespace eprosima{
 namespace fastrtps{
@@ -83,9 +84,12 @@ enum ResponseCode : uint32_t
 {
     RETCODE_ERROR = (uint32_t)(-1),
     RETCODE_OK = 0,
-    RETCODE_BAD_PARAMETER
+    RETCODE_BAD_PARAMETER,
+    RETCODE_PRECONDITION_NOT_MET,
+    RETCODE_ALREADY_DELETED
 };
 
+#define LENGTH_UNLIMITED    0
 
 class TypeSupport
 {

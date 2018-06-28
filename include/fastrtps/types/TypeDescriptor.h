@@ -28,12 +28,20 @@ class TypeDescriptor
 {
 public:
     TypeDescriptor();
+    TypeDescriptor(const TypeDescriptor* other);
 
-	ResponseCode copy_from(const TypeDescriptor*) const;
-	bool equals(const TypeDescriptor&) const;
+	ResponseCode copy_from(const TypeDescriptor* descriptor);
+
+	bool equals(const TypeDescriptor* descriptor) const;
+
 	bool isConsistent() const;
 
+    std::string getName() const;
+    TypeKind getKind() const;
+
 protected:
+
+    friend class DynamicTypeBuilderFactory;
 
 	TypeKind mKind;
 	std::string mName;

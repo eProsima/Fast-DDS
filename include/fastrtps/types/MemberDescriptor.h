@@ -27,12 +27,16 @@ class MemberDescriptor
 {
 public:
     MemberDescriptor();
+    MemberDescriptor(const MemberDescriptor* descriptor);
 
     ResponseCode copy_from(const MemberDescriptor* other);
 
     bool equals(const MemberDescriptor* other) const;
 
     bool isConsistent() const;
+
+    std::string get_name() const;
+    MemberId get_id() const;
 
 protected:
 

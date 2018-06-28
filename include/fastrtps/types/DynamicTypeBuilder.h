@@ -16,7 +16,7 @@
 #define TYPES_DYNAMIC_TYPE_BUILDER_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/MemberId.h>
+#include <fastrtps/types/DynamicType.h>
 
 
 namespace eprosima{
@@ -25,42 +25,30 @@ namespace types{
 
 class AnnotationDescriptor;
 class TypeDescriptor;
-class DynamicTypeMember;
 class MemberDescriptor;
 class DynamicType;
 
-class DynamicTypeBuilder
+class DynamicTypeBuilder : public DynamicType
 {
 public:
     DynamicTypeBuilder();
+    DynamicTypeBuilder(const TypeDescriptor* descriptor);
+    DynamicTypeBuilder(const DynamicType* pType);
 
-	ResponseCode get_descriptor(TypeDescriptor*) const;
+	ResponseCode add_member(const MemberDescriptor* descriptor);
 
-	bool equals(const DynamicType&) const;
+    ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
 
-	std::string get_name() const;
-	TypeKind get_kind() const;
+    ResponseCode apply_annotation_to_member(MemberId id, AnnotationDescriptor& descriptor);
 
-	ResponseCode get_member_by_name(DynamicTypeMember& member, const std::string& name);
-	ResponseCode get_all_members_by_name(std::map<std::string, DynamicTypeMember>& members);
+    DynamicType* build();
 
-	ResponseCode get_member(DynamicTypeMember& member, MemberId id);
-	ResponseCode get_all_members(std::map<MemberId, DynamicTypeMember>& member);
-
-	uint32_t get_annotation_count();
-	ResponseCode get_annotation(AnnotationDescriptor& descriptor, uint32_t idx);
-
-	ResponseCode add_member(MemberDescriptor&);
-	ResponseCode apply_annotation(AnnotationDescriptor&);
-	ResponseCode apply_annotation_to_member(MemberId, AnnotationDescriptor&);
-	DynamicType* build();
-
+    ResponseCode copy_from(const DynamicTypeBuilder* other);
 protected:
 
-	std::vector<AnnotationDescriptor*> mAnnotation;
-	std::map<std::string, DynamicTypeMember*> mMemberByName;
-	std::map<MemberId, DynamicTypeMember*> mMemberById;
+    MemberId mCurrentMemberId;
 
+    virtual void Clear() override;
 };
 
 } // namespace types

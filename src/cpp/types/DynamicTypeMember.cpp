@@ -15,20 +15,41 @@
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/AnnotationDescriptor.h>
+#include <fastrtps/types/MemberDescriptor.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace types {
 
 DynamicTypeMember::DynamicTypeMember()
+    : mParent(nullptr)
+    , mDescriptor(nullptr)
 {
+}
+
+DynamicTypeMember::DynamicTypeMember(const MemberDescriptor* descriptor)
+    : mParent(nullptr)
+{
+    mDescriptor = new MemberDescriptor(descriptor);
+}
+
+DynamicTypeMember::DynamicTypeMember(const DynamicTypeMember* other)
+    : mParent(other->mParent)
+    , mId(other->mId)
+{
+    mDescriptor = new MemberDescriptor(other->mDescriptor);
+    for (auto it = other->mAnnotation.begin(); it != other->mAnnotation.end(); ++it)
+    {
+        AnnotationDescriptor* newDesc = new AnnotationDescriptor(*it);
+        mAnnotation.push_back(newDesc);
+    }
 }
 
 ResponseCode DynamicTypeMember::get_descriptor(MemberDescriptor* descriptor) const
 {
     if (descriptor != nullptr)
     {
-        //TODO: //ARCE: Fill descriptor with all the changes applied.
+        descriptor->copy_from(mDescriptor);
         return ResponseCode::RETCODE_OK;
     }
     else
@@ -37,34 +58,61 @@ ResponseCode DynamicTypeMember::get_descriptor(MemberDescriptor* descriptor) con
     }
 }
 
-bool DynamicTypeMember::equals(const DynamicTypeMember& other) const
+bool DynamicTypeMember::equals(const DynamicTypeMember* other) const
 {
-    if (mAnnotation.size() != other.mAnnotation.size())
+    if (other != nullptr && mParent == other->mParent && mAnnotation.size() == other->mAnnotation.size())
     {
-        return false;
-    }
-    else
-    {
-        for (auto it = mAnnotation.begin(), it2 = other.mAnnotation.begin(); it != mAnnotation.end(); ++it, ++it2)
+        for (auto it = mAnnotation.begin(), it2 = other->mAnnotation.begin(); it != mAnnotation.end(); ++it, ++it2)
         {
-
             if (!(*it)->equals(*it2))
             {
                 return false;
             }
         }
+
+        return true;
     }
-    return true;
+    else
+    {
+        return false;
+    }
+}
+
+uint32_t DynamicTypeMember::get_annotation_count()
+{
+    return static_cast<uint32_t>(mAnnotation.size());
+}
+
+ResponseCode DynamicTypeMember::apply_annotation(AnnotationDescriptor& descriptor)
+{
+    if (descriptor.isConsistent())
+    {
+        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
+        pNewDescriptor->copy_from(&descriptor);
+        mAnnotation.push_back(pNewDescriptor);
+        return ResponseCode::RETCODE_OK;
+    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
+}
+
+ResponseCode DynamicTypeMember::get_annotation(AnnotationDescriptor& descriptor, uint32_t idx)
+{
+    if (idx < mAnnotation.size())
+    {
+        descriptor.copy_from(mAnnotation[idx]);
+        return ResponseCode::RETCODE_OK;
+    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
 }
 
 std::string DynamicTypeMember::get_name() const
 {
-    return mParent->get_name();
+    return mDescriptor->get_name();
 }
 
 MemberId DynamicTypeMember::get_id() const
 {
-    return mId;
+    return mDescriptor->get_id();
 }
 
 } // namespace types

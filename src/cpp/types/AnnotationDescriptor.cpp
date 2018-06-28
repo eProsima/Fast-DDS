@@ -23,6 +23,16 @@ AnnotationDescriptor::AnnotationDescriptor()
 {
 }
 
+AnnotationDescriptor::AnnotationDescriptor(const AnnotationDescriptor* descriptor)
+{
+    copy_from(descriptor);
+}
+
+AnnotationDescriptor::AnnotationDescriptor(DynamicType* pType)
+: mType(pType)
+{
+}
+
 ResponseCode AnnotationDescriptor::copy_from(const AnnotationDescriptor* descriptor)
 {
     if (descriptor != nullptr)
@@ -32,7 +42,7 @@ ResponseCode AnnotationDescriptor::copy_from(const AnnotationDescriptor* descrip
             mType = descriptor->mType;
             mValue = descriptor->mValue;
         }
-        catch(std::exception& e)
+        catch(std::exception& /*e*/)
         {
             return ResponseCode::RETCODE_ERROR;
         }
@@ -71,8 +81,15 @@ bool AnnotationDescriptor::equals(const AnnotationDescriptor* other) const
 
 bool AnnotationDescriptor::isConsistent() const
 {
-    //TODO:
-    return false;
+    if (mType == nullptr)
+    {
+        return false;
+    }
+
+    //TODO: Check consistency of mValue
+
+
+    return true;
 }
 
 

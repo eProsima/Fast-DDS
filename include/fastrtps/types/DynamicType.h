@@ -29,27 +29,38 @@ class DynamicType
 {
 public:
     DynamicType();
+    DynamicType(const TypeDescriptor* descriptor);
 
-	ResponseCode get_descriptor(TypeDescriptor*) const;
-	bool equals(const DynamicType&) const;
+	ResponseCode get_descriptor(TypeDescriptor* descriptor) const;
+	bool equals(const DynamicType* other) const;
 	std::string get_name() const;
 	TypeKind get_kind() const;
 
 	ResponseCode get_member_by_name(DynamicTypeMember& member, const std::string name);
-	ResponseCode get_all_members_by_name(std::map<std::string, DynamicTypeMember>& member);
+	ResponseCode get_all_members_by_name(std::map<std::string, DynamicTypeMember*>& members);
 
 	ResponseCode get_member(DynamicTypeMember& member, MemberId id);
-	ResponseCode get_all_members(std::map<MemberId, DynamicTypeMember>& members);
+	ResponseCode get_all_members(std::map<MemberId, DynamicTypeMember*>& members);
 
 	uint32_t get_annotation_count();
 	ResponseCode get_annotation(AnnotationDescriptor& descriptor, uint32_t idx);
 
 protected:
 
+    friend class DynamicTypeBuilder;
+    friend class DynamicTypeBuilderFactory;
+
+    virtual void Clear();
+
+    DynamicType(const DynamicType* other);
+
+    ResponseCode copy_from_type(const DynamicType* other);
+
+    TypeDescriptor* mDescriptor;
 	std::vector<AnnotationDescriptor*> mAnnotation;
-	std::map<std::string, DynamicTypeMember*> mMemberByName;
-	std::map<MemberId, DynamicTypeMember*> mMemberById;
-	std::string mName;
+	std::map<MemberId, DynamicTypeMember*> mMemberById;         // Aggregated members
+    std::map<std::string, DynamicTypeMember*> mMemberByName;    // Uses the pointers from "mMemberById".
+    std::string mName;
 	TypeKind mKind;
 };
 
