@@ -52,15 +52,27 @@ MemberDescriptor::MemberDescriptor(const MemberDescriptor* descriptor)
     copy_from(descriptor);
 }
 
+MemberDescriptor::~MemberDescriptor()
+{
+    if (mType != nullptr)
+    {
+        delete mType;
+    }
+}
+
 ResponseCode MemberDescriptor::copy_from(const MemberDescriptor* other)
 {
     if (other != nullptr)
     {
         try
         {
+            if (mType != nullptr)
+            {
+                delete mType;
+            }
+            mType = new DynamicType(other->mType);
             mName = other->mName;
             mId = other->mId;
-            mType = other->mType;
             mDefaultValue = other->mDefaultValue;
             mIndex = other->mIndex;
             mDefaultLabel = other->mDefaultLabel;

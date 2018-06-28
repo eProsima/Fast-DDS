@@ -43,6 +43,10 @@ DynamicTypeBuilder::DynamicTypeBuilder(const DynamicType* pType)
     }
 }
 
+DynamicTypeBuilder::~DynamicTypeBuilder()
+{
+}
+
 ResponseCode DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
 {
     if (mDescriptor->getKind() == TK_ANNOTATION || mDescriptor->getKind() == TK_ALIAS
