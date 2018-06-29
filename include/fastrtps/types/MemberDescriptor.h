@@ -37,10 +37,13 @@ public:
 
     bool isConsistent() const;
 
-    std::string get_name() const;
     MemberId get_id() const;
+    TypeKind get_kind() const;
+    std::string get_name() const;
 
 protected:
+
+    friend class DynamicData;
 
     std::string mName;
     MemberId mId;

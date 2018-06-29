@@ -53,6 +53,7 @@ protected:
     friend class DynamicTypeBuilderFactory;
     friend class MemberDescriptor;
     friend class TypeDescriptor;
+    friend class DynamicData;
 
     virtual void Clear();
 
