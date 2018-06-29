@@ -15,31 +15,64 @@
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicType.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace types {
 
+static DynamicDataFactory* s_instance = nullptr;
+DynamicDataFactory* DynamicDataFactory::get_instance()
+{
+    if (s_instance == nullptr)
+    {
+        s_instance = new DynamicDataFactory();
+    }
+    return s_instance;
+}
+
+ResponseCode DynamicDataFactory::delete_instance()
+{
+    if (s_instance != nullptr)
+    {
+        delete s_instance;
+        s_instance = nullptr;
+    }
+    return ResponseCode::RETCODE_OK;
+}
+
 DynamicDataFactory::DynamicDataFactory()
 {
 }
 
-DynamicDataFactory* DynamicDataFactory::get_instance()
+DynamicDataFactory::~DynamicDataFactory()
 {
-    return nullptr;
-}
-ResponseCode DynamicDataFactory::delete_instance()
-{
-    return ResponseCode::RETCODE_OK;
+    for (auto it = mDynamicDatas.begin(); it != mDynamicDatas.end(); ++it)
+        delete *it;
+    mDynamicDatas.clear();
 }
 
-DynamicData* DynamicDataFactory::create_data()
+DynamicData* DynamicDataFactory::create_data(DynamicType* pType)
 {
+    //mDynamicDatas
     return nullptr;
 }
 
 ResponseCode DynamicDataFactory::delete_data(DynamicData* data)
 {
+    if (data != nullptr)
+    {
+        auto it = std::find(mDynamicDatas.begin(), mDynamicDatas.end(), data);
+        if (it != mDynamicDatas.end())
+        {
+            mDynamicDatas.erase(it);
+            delete data;
+        }
+        else
+        {
+            return ResponseCode::RETCODE_ALREADY_DELETED;
+        }
+    }
     return ResponseCode::RETCODE_OK;
 }
 

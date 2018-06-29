@@ -22,18 +22,23 @@ namespace fastrtps{
 namespace types{
 
 class DynamicData;
+class DynamicType;
 
 class DynamicDataFactory
 {
 public:
+    ~DynamicDataFactory();
+
     static DynamicDataFactory* get_instance();
     static ResponseCode delete_instance();
 
-    DynamicData* create_data();
+    DynamicData* create_data(DynamicType* pType);
     ResponseCode delete_data(DynamicData* data);
 
 protected:
     DynamicDataFactory();
+
+    std::vector<DynamicData*> mDynamicDatas;
 };
 
 

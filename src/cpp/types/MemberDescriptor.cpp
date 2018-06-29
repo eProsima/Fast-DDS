@@ -104,14 +104,23 @@ bool MemberDescriptor::equals(const MemberDescriptor* other) const
     return false;
 }
 
-std::string MemberDescriptor::get_name() const
-{
-    return mName;
-}
-
 MemberId MemberDescriptor::get_id() const
 {
     return mId;
+}
+
+TypeKind MemberDescriptor::get_kind() const
+{
+    if (mType != nullptr)
+    {
+        return mType->get_kind();
+    }
+    return 0;
+}
+
+std::string MemberDescriptor::get_name() const
+{
+    return mName;
 }
 
 bool MemberDescriptor::isConsistent() const
