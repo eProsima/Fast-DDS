@@ -90,6 +90,7 @@ set(${PROJECT_NAME}_source_files
     transport/tcp/test_RTCPMessageManager.cpp
 
     types/AnnotationDescriptor.cpp
+    types/AnnotationParameterValue.cpp
     types/DynamicData.cpp
     types/DynamicDataFactory.cpp
     types/DynamicType.cpp
@@ -98,6 +99,10 @@ set(${PROJECT_NAME}_source_files
     types/DynamicTypeMember.cpp
     types/MemberDescriptor.cpp
     types/TypeDescriptor.cpp
+    types/TypeIdentifier.cpp
+    types/TypeIdentifierTypes.cpp
+    types/TypeObject.cpp
+    types/TypeObjectHashId.cpp
 
     qos/ParameterList.cpp
     qos/ParameterTypes.cpp
