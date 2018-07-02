@@ -30,6 +30,7 @@ add_subdirectory(C++/SampleConfig_Controller)
 add_subdirectory(C++/SampleConfig_Events)
 add_subdirectory(C++/SampleConfig_Multimedia)
 add_subdirectory(C++/Configurability)
+add_subdirectory(C++/AllocationTestExample)
 add_subdirectory(C++/StaticHelloWorldExample)
 add_subdirectory(C++/XMLProfiles)
 
