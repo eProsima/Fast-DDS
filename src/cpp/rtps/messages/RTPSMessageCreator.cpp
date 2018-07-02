@@ -46,7 +46,7 @@ RTPSMessageCreator::~RTPSMessageCreator() {
 
 
 bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPrefix,
-        ProtocolVersion_t version,VendorId_t vendorId)
+        const ProtocolVersion_t& version,const VendorId_t& vendorId)
 {
     CDRMessage::addOctet(msg,'R');
     CDRMessage::addOctet(msg,'T');
@@ -59,9 +59,7 @@ bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPre
     CDRMessage::addOctet(msg,vendorId[0]);
     CDRMessage::addOctet(msg,vendorId[1]);
 
-    for (uint8_t i = 0;i<12;i++){
-        CDRMessage::addOctet(msg,guidPrefix.value[i]);
-    }
+    CDRMessage::addData(msg,guidPrefix.value, 12);
     msg->length = msg->pos;
 
     return true;
@@ -69,11 +67,7 @@ bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPre
 
 bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPrefix)
 {
-    ProtocolVersion_t prot;
-    prot = c_ProtocolVersion;
-    VendorId_t vend;
-    set_VendorId_eProsima(vend);
-    return RTPSMessageCreator::addHeader(msg,guidPrefix,prot,vend);
+    return RTPSMessageCreator::addHeader(msg,guidPrefix, c_ProtocolVersion,c_VendorId_eProsima);
 }
 
 
