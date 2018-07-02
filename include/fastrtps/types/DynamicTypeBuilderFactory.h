@@ -15,7 +15,7 @@
 #ifndef TYPES_DYNAMIC_TYPE_BUILDER_FACTORY_H
 #define TYPES_DYNAMIC_TYPE_BUILDER_FACTORY_H
 
-#include <fastrtps/types/MemberId.h>
+#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -25,6 +25,7 @@ class AnnotationDescriptor;
 class DynamicTypeBuilder;
 class TypeDescriptor;
 class TypeObject;
+class DynamicType;
 
 class DynamicTypeBuilderFactory
 {

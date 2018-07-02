@@ -16,7 +16,6 @@
 #define TYPES_DYNAMIC_DATA_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/MemberId.h>
 
 //#define DYNAMIC_TYPES_CHECKING
 
@@ -54,7 +53,7 @@ public:
 
 	ResponseCode get_int32_value(int32_t& value, MemberId id);
 	ResponseCode set_int32_value(MemberId id, int32_t value);
-	ResponseCode get_uint32_value(uint32_t value, MemberId id);
+	ResponseCode get_uint32_value(uint32_t& value, MemberId id);
 	ResponseCode set_uint32_value(MemberId id, uint32_t value);
 	ResponseCode get_int16_value(int16_t& value, MemberId id);
 	ResponseCode set_int16_value(MemberId id, int16_t value);
@@ -83,8 +82,8 @@ public:
 	ResponseCode get_wstring_value(std::wstring& value, MemberId id);
 	ResponseCode set_wstring_value(MemberId id, const std::wstring value);
 
-	ResponseCode get_complex_value(DynamicData* value, MemberId id);
-	ResponseCode set_complex_value(MemberId id, const DynamicData* value);
+	//ResponseCode get_complex_value(DynamicData* value, MemberId id);
+	//ResponseCode set_complex_value(MemberId id, const DynamicData* value);
 
 	//ResponseCode get_int32_values(std::vector<int32_t>& value, MemberId id);
 	//ResponseCode set_int32_values(MemberId id, const std::vector<int32_t>& value);

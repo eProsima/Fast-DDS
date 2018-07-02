@@ -15,7 +15,7 @@
 #ifndef TYPES_MEMBER_DESCRIPTOR_H
 #define TYPES_MEMBER_DESCRIPTOR_H
 
-#include <fastrtps/types/MemberId.h>
+#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima{
 namespace fastrtps{

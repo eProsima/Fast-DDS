@@ -188,7 +188,7 @@ ResponseCode DynamicData::clear_all_values()
 
 ResponseCode DynamicData::clear_nonkey_values()
 {
-    //TODO: Avoid Key Values for Aggregated types ( UNION, STRUCTURES, ANNOTATIONS )
+    //TODO: Avoid Key Values for Aggregated types (UNION, STRUCTURES, ANNOTATIONS)
     for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
     {
         SetDefaultValue(it->first);
@@ -505,7 +505,7 @@ ResponseCode DynamicData::set_int32_value(MemberId id, int32_t value)
 #endif
 }
 
-ResponseCode DynamicData::get_uint32_value(uint32_t value, MemberId id)
+ResponseCode DynamicData::get_uint32_value(uint32_t& value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mUInt32Values.find(id);
@@ -1093,6 +1093,7 @@ ResponseCode DynamicData::set_wstring_value(MemberId id, const std::wstring valu
 #endif
 }
 
+/*
 
 ResponseCode DynamicData::get_complex_value(DynamicData* value, MemberId id)
 {
@@ -1139,7 +1140,6 @@ ResponseCode DynamicData::set_complex_value(MemberId id, const DynamicData* valu
 
     return ResponseCode::RETCODE_OK;
 }
-/*
 ResponseCode DynamicData::get_int32_values(std::vector<int32_t>& value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING

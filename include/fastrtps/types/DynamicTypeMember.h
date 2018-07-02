@@ -15,7 +15,7 @@
 #ifndef TYPES_DYNAMIC_TYPE_MEMBER_H
 #define TYPES_DYNAMIC_TYPE_MEMBER_H
 
-#include <fastrtps/types/MemberId.h>
+#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima{
 namespace fastrtps{
