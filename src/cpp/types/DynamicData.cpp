@@ -79,6 +79,7 @@ bool DynamicData::equals(const DynamicData* other)
     if (other != nullptr && mItemCount == other->mItemCount && mType->equals(other->mType) &&
         mDescriptors.size() == other->mDescriptors.size())
     {
+#ifdef DYNAMIC_TYPES_CHECKING
         for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
         {
             auto otherIt = other->mDescriptors.find(it->first);
@@ -87,7 +88,7 @@ bool DynamicData::equals(const DynamicData* other)
                 return false;
             }
         }
-#ifdef DYNAMIC_TYPES_CHECKING
+
         if (!map_compare(mInt32Values, other->mInt32Values) ||
             !map_compare(mUInt32Values, other->mUInt32Values) ||
             !map_compare(mInt16Values, other->mInt16Values) ||
@@ -104,27 +105,61 @@ bool DynamicData::equals(const DynamicData* other)
             !map_compare(mStringValues, other->mStringValues) ||
             !map_compare(mWStringValues, other->mWStringValues) ||
             !map_compare(mStringValues, other->mStringValues) ||
-            !map_compare(mComplexValues, other->mComplexValues) ||
-            !map_compare(mInt32ListValues, other->mInt32ListValues) ||
-            !map_compare(mUInt32ListValues, other->mUInt32ListValues) ||
-            !map_compare(mInt16ListValues, other->mInt16ListValues) ||
-            !map_compare(mUInt16ListValues, other->mUInt16ListValues) ||
-            !map_compare(mInt64ListValues, other->mInt64ListValues) ||
-            !map_compare(mUInt64ListValues, other->mUInt64ListValues) ||
-            !map_compare(mFloat32ListValues, other->mFloat32ListValues) ||
-            !map_compare(mFloat64ListValues, other->mFloat64ListValues) ||
-            !map_compare(mFloat128ListValues, other->mFloat128ListValues) ||
-            !map_compare(mChar8ListValues, other->mChar8ListValues) ||
-            !map_compare(mChar16ListValues, other->mChar16ListValues) ||
-            !map_compare(mByteListValues, other->mByteListValues) ||
-            !map_compare(mBoolListValues, other->mBoolListValues) ||
-            !map_compare(mStringListValues, other->mStringListValues) ||
-            !map_compare(mWStringListValues, other->mWStringListValues))
+            !map_compare(mComplexValues, other->mComplexValues))
+            // || !map_compare(mInt32ListValues, other->mInt32ListValues) ||
+            //!map_compare(mUInt32ListValues, other->mUInt32ListValues) ||
+            //!map_compare(mInt16ListValues, other->mInt16ListValues) ||
+            //!map_compare(mUInt16ListValues, other->mUInt16ListValues) ||
+            //!map_compare(mInt64ListValues, other->mInt64ListValues) ||
+            //!map_compare(mUInt64ListValues, other->mUInt64ListValues) ||
+            //!map_compare(mFloat32ListValues, other->mFloat32ListValues) ||
+            //!map_compare(mFloat64ListValues, other->mFloat64ListValues) ||
+            //!map_compare(mFloat128ListValues, other->mFloat128ListValues) ||
+            //!map_compare(mChar8ListValues, other->mChar8ListValues) ||
+            //!map_compare(mChar16ListValues, other->mChar16ListValues) ||
+            //!map_compare(mByteListValues, other->mByteListValues) ||
+            //!map_compare(mBoolListValues, other->mBoolListValues) ||
+            //!map_compare(mStringListValues, other->mStringListValues) ||
+            //!map_compare(mWStringListValues, other->mWStringListValues))
         {
             return false;
         }
 #else
-        //TODO: Check mValues
+
+        if (mType->is_complex_kind())
+        {
+            for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+            {
+                auto otherDescIt = other->mDescriptors.find(it->first);
+                if (otherDescIt == other->mDescriptors.end() || !it->second->equals(otherDescIt->second))
+                {
+                    return false;
+                }
+
+                auto otherIt = other->mValues.find(it->first);
+                if (!((DynamicData*)mValues[it->first])->equals(((DynamicData*) otherIt->second)))
+                {
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+            {
+                auto otherDescIt = other->mDescriptors.find(it->first);
+                if (otherDescIt == other->mDescriptors.end() || !it->second->equals(otherDescIt->second))
+                {
+                    return false;
+                }
+
+                auto otherIt = other->mValues.find(it->first);
+                if (!CompareValues(it->second->get_kind(), mValues[it->first], otherIt->second))
+                {
+                    return false;
+                }
+            }
+        }
 #endif
         return ResponseCode::RETCODE_OK;
     }
@@ -179,27 +214,294 @@ void DynamicData::Clean()
 
 ResponseCode DynamicData::clear_all_values()
 {
-    for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+    if (mType->is_complex_kind())
     {
-        SetDefaultValue(it->first);
+        for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+        {
+#ifdef DYNAMIC_TYPES_CHECKING
+            auto itValue = mComplexValues.find(it->first);
+            if (itValue != mComplexValues.end())
+            {
+                itValue->second->clear_all_values();
+            }
+#else
+            auto itValue = mValues.find(it->first);
+            if (itValue != mValues.end())
+            {
+                ((DynamicData*)itValue->second)->clear_all_values();
+            }
+#endif
+        }
+    }
+    else
+    {
+        for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+        {
+            SetDefaultValue(it->first);
+        }
     }
     return ResponseCode::RETCODE_OK;
 }
 
 ResponseCode DynamicData::clear_nonkey_values()
 {
-    //TODO: Avoid Key Values for Aggregated types (UNION, STRUCTURES, ANNOTATIONS)
-    for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+    if (mType->is_complex_kind())
     {
-        SetDefaultValue(it->first);
+        for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+        {
+#ifdef DYNAMIC_TYPES_CHECKING
+            auto itValue = mComplexValues.find(it->first);
+            if (itValue != mComplexValues.end())
+            {
+                itValue->second->clear_nonkey_values();
+            }
+#else
+            auto itValue = mValues.find(it->first);
+            if (itValue != mValues.end())
+            {
+                ((DynamicData*)itValue->second)->clear_nonkey_values();
+            }
+#endif
+        }
+    }
+    else
+    {
+        //ARCE: //TODO: Avoid Key Elements.
+        for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+        {
+            SetDefaultValue(it->first);
+        }
     }
     return ResponseCode::RETCODE_OK;
 }
 
 ResponseCode DynamicData::clear_value(MemberId id)
 {
-    SetDefaultValue(id);
+    auto it = mDescriptors.find(id);
+    if (it != mDescriptors.end())
+    {
+        if (mType->is_complex_kind())
+        {
+#ifdef DYNAMIC_TYPES_CHECKING
+            auto itValue = mComplexValues.find(it->first);
+            if (itValue != mComplexValues.end())
+            {
+                itValue->second->clear_all_values();
+            }
+#else
+            auto itValue = mValues.find(it->first);
+            if (itValue != mValues.end())
+            {
+                ((DynamicData*)itValue->second)->clear_all_values();
+            }
+#endif
+        }
+        else
+        {
+            SetDefaultValue(id);
+        }
+    }
     return ResponseCode::RETCODE_OK;
+}
+
+void* DynamicData::CloneValue(MemberId id, TypeKind kind) const
+{
+    switch (kind)
+    {
+    default:
+        break;
+    case TK_INT32:
+    {
+        int32_t* newInt32 = new int32_t();
+        get_int32_value(*newInt32, id);
+        return newInt32;
+    }
+    break;
+    case TK_UINT32:
+    {
+        uint32_t* newUInt32 = new uint32_t();
+        get_uint32_value(*newUInt32, id);
+        return newUInt32;
+    }
+    break;
+    case TK_INT16:
+    {
+        int16_t* newInt16 = new int16_t();
+        get_int16_value(*newInt16, id);
+        return newInt16;
+    }
+    break;
+    case TK_UINT16:
+    {
+        uint16_t* newUInt16 = new uint16_t();
+        get_uint16_value(*newUInt16, id);
+        return newUInt16;
+    }
+    break;
+    case TK_INT64:
+    {
+        int64_t* newInt64 = new int64_t();
+        get_int64_value(*newInt64, id);
+        return newInt64;
+    }
+    break;
+    case TK_UINT64:
+    {
+        uint64_t* newUInt64 = new uint64_t();
+        get_uint64_value(*newUInt64, id);
+        return newUInt64;
+    }
+    break;
+    case TK_FLOAT32:
+    {
+        float* newFloat32 = new float();
+        get_float32_value(*newFloat32, id);
+        return newFloat32;
+    }
+    break;
+    case TK_FLOAT64:
+    {
+        double* newFloat64 = new double();
+        get_float64_value(*newFloat64, id);
+        return newFloat64;
+    }
+    break;
+    case TK_FLOAT128:
+    {
+        long double* newFloat128 = new long double();
+        get_float128_value(*newFloat128, id);
+        return newFloat128;
+    }
+    break;
+    case TK_CHAR8:
+    {
+        char* newChar8 = new char();
+        get_char8_value(*newChar8, id);
+        return newChar8;
+    }
+    break;
+    case TK_CHAR16:
+    {
+        wchar_t* newChar16 = new wchar_t();
+        get_char16_value(*newChar16, id);
+        return newChar16;
+    }
+    break;
+    case TK_BOOLEAN:
+    {
+        bool* newBool = new bool();
+        get_bool_value(*newBool, id);
+        return newBool;
+    }
+    break;
+    case TK_BYTE:
+    {
+        octet* newByte = new octet();
+        get_byte_value(*newByte, id);
+        return newByte;
+    }
+    break;
+    case TK_STRING8:
+    {
+        std::string* newString = new std::string();
+        get_string_value(*newString, id);
+        return newString;
+    }
+    break;
+    case TK_STRING16:
+    {
+        std::wstring* newString = new std::wstring();
+        get_wstring_value(*newString, id);
+        return newString;
+    }
+    break;
+    }
+    return nullptr;
+}
+
+bool DynamicData::CompareValues(TypeKind kind, void* left, void* right)
+{
+    switch (kind)
+    {
+    default:
+        break;
+    case TK_INT32:
+    {
+        return *((int32_t*)left) == *((int32_t*)right);
+    }
+    break;
+    case TK_UINT32:
+    {
+        return *((uint32_t*)left) == *((uint32_t*)right);
+    }
+    break;
+    case TK_INT16:
+    {
+        return *((int16_t*)left) == *((int16_t*)right);
+    }
+    break;
+    case TK_UINT16:
+    {
+        return *((uint16_t*)left) == *((uint16_t*)right);
+    }
+    break;
+    case TK_INT64:
+    {
+        return *((int64_t*)left) == *((int64_t*)right);
+    }
+    break;
+    case TK_UINT64:
+    {
+        return *((uint64_t*)left) == *((uint64_t*)right);
+    }
+    break;
+    case TK_FLOAT32:
+    {
+        return *((float*)left) == *((float*)right);
+    }
+    break;
+    case TK_FLOAT64:
+    {
+        return *((double*)left) == *((double*)right);
+    }
+    break;
+    case TK_FLOAT128:
+    {
+        return *((long double*)left) == *((long double*)right);
+    }
+    break;
+    case TK_CHAR8:
+    {
+        return *((char*)left) == *((char*)right);
+    }
+    break;
+    case TK_CHAR16:
+    {
+        return *((wchar_t*)left) == *((wchar_t*)right);
+    }
+    break;
+    case TK_BOOLEAN:
+    {
+        return *((bool*)left) == *((bool*)right);
+    }
+    break;
+    case TK_BYTE:
+    {
+        return *((octet*)left) == *((octet*)right);
+    }
+    break;
+    case TK_STRING8:
+    {
+        return *((std::string*)left) == *((std::string*)right);
+    }
+    break;
+    case TK_STRING16:
+    {
+        return *((std::wstring*)left) == *((std::wstring*)right);
+    }
+    break;
+    }
+    return false;
 }
 
 void DynamicData::SetDefaultValue(MemberId id)
@@ -330,7 +632,7 @@ void DynamicData::SetDefaultValue(MemberId id)
 
             set_char16_value(id, value);
         }
-            break;
+        break;
         case TK_BOOLEAN:
         {
             int value(0);
@@ -341,13 +643,15 @@ void DynamicData::SetDefaultValue(MemberId id)
             catch (...) {}
             set_bool_value(id, value == 1 ? true : false);
         }
-            break;
+        break;
         case TK_BYTE:
+        {
             if (it->second->mDefaultValue.length() >= 1)
             {
                 set_byte_value(id, it->second->mDefaultValue[0]);
             }
-            break;
+        }
+        break;
 
         case TK_STRING8:
         {
@@ -414,12 +718,13 @@ DynamicData* DynamicData::clone() const
     DynamicData* newData = new DynamicData();
     newData->mType = new DynamicType(mType);
     newData->mItemCount = mItemCount;
+
+#ifdef DYNAMIC_TYPES_CHECKING
     for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
     {
         newData->mDescriptors.insert(std::make_pair(it->first, new MemberDescriptor(it->second)));
     }
 
-#ifdef DYNAMIC_TYPES_CHECKING
     newData->mInt32Values = mInt32Values;
     newData->mUInt32Values = mUInt32Values;
     newData->mInt16Values = mInt16Values;
@@ -457,13 +762,31 @@ DynamicData* DynamicData::clone() const
     //newData->mStringListValues = mStringListValues;
     //newData->mWStringListValues = mWStringListValues;
 #else
-    //TODO: Clone mValues
+    for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+    {
+        newData->mDescriptors.insert(std::make_pair(it->first, new MemberDescriptor(it->second)));
+    }
+
+    if (mType->is_complex_kind())
+    {
+        for (auto it = mValues.begin(); it != mValues.end(); ++it)
+        {
+            newData->mValues.insert(std::make_pair(it->first, ((DynamicData*)it->second)->clone()));
+        }
+    }
+    else
+    {
+        for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+        {
+            newData->mValues.insert(std::make_pair(it->first, CloneValue(it->first, it->second->get_kind())));
+        }
+    }
 #endif
 
     return newData;
 }
 
-ResponseCode DynamicData::get_int32_value(int32_t& value, MemberId id)
+ResponseCode DynamicData::get_int32_value(int32_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mInt32Values.find(id);
@@ -505,7 +828,7 @@ ResponseCode DynamicData::set_int32_value(MemberId id, int32_t value)
 #endif
 }
 
-ResponseCode DynamicData::get_uint32_value(uint32_t& value, MemberId id)
+ResponseCode DynamicData::get_uint32_value(uint32_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mUInt32Values.find(id);
@@ -547,7 +870,7 @@ ResponseCode DynamicData::set_uint32_value(MemberId id, uint32_t value)
 #endif
 }
 
-ResponseCode DynamicData::get_int16_value(int16_t& value, MemberId id)
+ResponseCode DynamicData::get_int16_value(int16_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mInt16Values.find(id);
@@ -589,7 +912,7 @@ ResponseCode DynamicData::set_int16_value(MemberId id, int16_t value)
 #endif
 }
 
-ResponseCode DynamicData::get_uint16_value(uint16_t& value, MemberId id)
+ResponseCode DynamicData::get_uint16_value(uint16_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mUInt16Values.find(id);
@@ -631,7 +954,7 @@ ResponseCode DynamicData::set_uint16_value(MemberId id, uint16_t value)
 #endif
 }
 
-ResponseCode DynamicData::get_int64_value(int64_t& value, MemberId id)
+ResponseCode DynamicData::get_int64_value(int64_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mInt64Values.find(id);
@@ -673,7 +996,7 @@ ResponseCode DynamicData::set_int64_value(MemberId id, int64_t value)
 #endif
 }
 
-ResponseCode DynamicData::get_uint64_value(uint64_t& value, MemberId id)
+ResponseCode DynamicData::get_uint64_value(uint64_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mUInt64Values.find(id);
@@ -715,7 +1038,7 @@ ResponseCode DynamicData::set_uint64_value(MemberId id, uint64_t value)
 #endif
 }
 
-ResponseCode DynamicData::get_float32_value(float& value, MemberId id)
+ResponseCode DynamicData::get_float32_value(float& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mFloat32Values.find(id);
@@ -757,7 +1080,7 @@ ResponseCode DynamicData::set_float32_value(MemberId id, float value)
 #endif
 }
 
-ResponseCode DynamicData::get_float64_value(double& value, MemberId id)
+ResponseCode DynamicData::get_float64_value(double& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mFloat64Values.find(id);
@@ -799,7 +1122,7 @@ ResponseCode DynamicData::set_float64_value(MemberId id, double value)
 #endif
 }
 
-ResponseCode DynamicData::get_float128_value(long double& value, MemberId id)
+ResponseCode DynamicData::get_float128_value(long double& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mFloat128Values.find(id);
@@ -841,7 +1164,7 @@ ResponseCode DynamicData::set_float128_value(MemberId id, long double value)
 #endif
 }
 
-ResponseCode DynamicData::get_char8_value(char& value, MemberId id)
+ResponseCode DynamicData::get_char8_value(char& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mChar8Values.find(id);
@@ -883,7 +1206,7 @@ ResponseCode DynamicData::set_char8_value(MemberId id, char value)
 #endif
 }
 
-ResponseCode DynamicData::get_char16_value(wchar_t& value, MemberId id)
+ResponseCode DynamicData::get_char16_value(wchar_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mChar16Values.find(id);
@@ -925,7 +1248,7 @@ ResponseCode DynamicData::set_char16_value(MemberId id, wchar_t value)
 #endif
 }
 
-ResponseCode DynamicData::get_byte_value(octet& value, MemberId id)
+ResponseCode DynamicData::get_byte_value(octet& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mByteValues.find(id);
@@ -967,7 +1290,7 @@ ResponseCode DynamicData::set_byte_value(MemberId id, octet value)
 #endif
 }
 
-ResponseCode DynamicData::get_bool_value(bool& value, MemberId id)
+ResponseCode DynamicData::get_bool_value(bool& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mBoolValues.find(id);
@@ -1009,7 +1332,7 @@ ResponseCode DynamicData::set_bool_value(MemberId id, bool value)
 #endif
 }
 
-ResponseCode DynamicData::get_string_value(std::string& value, MemberId id)
+ResponseCode DynamicData::get_string_value(std::string& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mStringValues.find(id);
@@ -1051,7 +1374,7 @@ ResponseCode DynamicData::set_string_value(MemberId id, std::string value)
 #endif
 }
 
-ResponseCode DynamicData::get_wstring_value(std::wstring& value, MemberId id)
+ResponseCode DynamicData::get_wstring_value(std::wstring& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mWStringValues.find(id);
@@ -1095,7 +1418,7 @@ ResponseCode DynamicData::set_wstring_value(MemberId id, const std::wstring valu
 
 /*
 
-ResponseCode DynamicData::get_complex_value(DynamicData* value, MemberId id)
+ResponseCode DynamicData::get_complex_value(DynamicData* value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mComplexValues.find(id);
