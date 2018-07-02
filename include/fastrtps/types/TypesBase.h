@@ -156,7 +156,7 @@ class MemberFlag
 private:
 	std::bitset<16> m_MemberFlag;
 public:
-	MemberFlag();
+    MemberFlag() {}
     MemberFlag(const MemberFlag &x) : m_MemberFlag(x.m_MemberFlag) {}
     MemberFlag(MemberFlag &&x) : m_MemberFlag(std::move(x.m_MemberFlag)) {}
     MemberFlag& operator=(const MemberFlag &x)
@@ -233,7 +233,7 @@ class TypeFlag
 private:
 	std::bitset<16> m_TypeFlag;
 public:
-	TypeFlag();
+    TypeFlag() {}
     TypeFlag(const TypeFlag &x) : m_TypeFlag(x.m_TypeFlag) {}
     TypeFlag(TypeFlag &&x) : m_TypeFlag(std::move(x.m_TypeFlag)) {}
     TypeFlag& operator=(const TypeFlag &x)
