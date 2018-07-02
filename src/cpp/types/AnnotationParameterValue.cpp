@@ -47,21 +47,21 @@ ExtendedAnnotationParameterValue::~ExtendedAnnotationParameterValue()
 {
 }
 
-ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue(const ExtendedAnnotationParameterValue &x)
+ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue(const ExtendedAnnotationParameterValue &)
 {
 }
 
-ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue(ExtendedAnnotationParameterValue &&x)
+ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue(ExtendedAnnotationParameterValue &&)
 {
 }
 
-ExtendedAnnotationParameterValue& ExtendedAnnotationParameterValue::operator=(const ExtendedAnnotationParameterValue &x)
+ExtendedAnnotationParameterValue& ExtendedAnnotationParameterValue::operator=(const ExtendedAnnotationParameterValue &)
 {
 
     return *this;
 }
 
-ExtendedAnnotationParameterValue& ExtendedAnnotationParameterValue::operator=(ExtendedAnnotationParameterValue &&x)
+ExtendedAnnotationParameterValue& ExtendedAnnotationParameterValue::operator=(ExtendedAnnotationParameterValue &&)
 {
 
     return *this;

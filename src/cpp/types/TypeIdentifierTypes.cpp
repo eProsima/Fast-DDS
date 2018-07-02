@@ -83,7 +83,7 @@ size_t StringSTypeDefn::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-size_t StringSTypeDefn::getCdrSerializedSize(const StringSTypeDefn& data, size_t current_alignment)
+size_t StringSTypeDefn::getCdrSerializedSize(const StringSTypeDefn&, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -164,7 +164,7 @@ size_t StringLTypeDefn::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-size_t StringLTypeDefn::getCdrSerializedSize(const StringLTypeDefn& data, size_t current_alignment)
+size_t StringLTypeDefn::getCdrSerializedSize(const StringLTypeDefn&, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -251,7 +251,7 @@ size_t PlainCollectionHeader::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-size_t PlainCollectionHeader::getCdrSerializedSize(const PlainCollectionHeader& data, size_t current_alignment)
+size_t PlainCollectionHeader::getCdrSerializedSize(const PlainCollectionHeader&, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -1146,20 +1146,20 @@ ExtendedTypeDefn::~ExtendedTypeDefn()
 {
 }
 
-ExtendedTypeDefn::ExtendedTypeDefn(const ExtendedTypeDefn &x)
+ExtendedTypeDefn::ExtendedTypeDefn(const ExtendedTypeDefn &)
 {
 }
 
-ExtendedTypeDefn::ExtendedTypeDefn(ExtendedTypeDefn &&x)
+ExtendedTypeDefn::ExtendedTypeDefn(ExtendedTypeDefn &&)
 {
 }
 
-ExtendedTypeDefn& ExtendedTypeDefn::operator=(const ExtendedTypeDefn &x)
+ExtendedTypeDefn& ExtendedTypeDefn::operator=(const ExtendedTypeDefn &)
 {
     return *this;
 }
 
-ExtendedTypeDefn& ExtendedTypeDefn::operator=(ExtendedTypeDefn &&x)
+ExtendedTypeDefn& ExtendedTypeDefn::operator=(ExtendedTypeDefn &&)
 {
     return *this;
 }
@@ -1171,18 +1171,18 @@ size_t ExtendedTypeDefn::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-size_t ExtendedTypeDefn::getCdrSerializedSize(const ExtendedTypeDefn& data, size_t current_alignment)
+size_t ExtendedTypeDefn::getCdrSerializedSize(const ExtendedTypeDefn&, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
     return current_alignment - initial_alignment;
 }
 
-void ExtendedTypeDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
+void ExtendedTypeDefn::serialize(eprosima::fastcdr::Cdr &) const
 {
 }
 
-void ExtendedTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void ExtendedTypeDefn::deserialize(eprosima::fastcdr::Cdr &)
 {
 }
 

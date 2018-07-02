@@ -208,7 +208,7 @@ public:
 		m_MemberFlag = std::bitset<16>(bits);
 	}
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0) { return 2; }
+    static size_t getMaxCdrSerializedSize(size_t) { return 2; }
     static size_t getCdrSerializedSize(const MemberFlag&, size_t current_alignment = 0)
 	{
 		return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
@@ -279,7 +279,7 @@ public:
 		m_TypeFlag = std::bitset<16>(bits);
 	}
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0) { return 2; }
+    static size_t getMaxCdrSerializedSize(size_t) { return 2; }
     static size_t getCdrSerializedSize(const TypeFlag&, size_t current_alignment = 0)
 	{
 		return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
