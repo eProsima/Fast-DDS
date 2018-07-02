@@ -17,7 +17,7 @@
 
 #include <fastrtps/types/TypesBase.h>
 
-//#define DYNAMIC_TYPES_CHECKING
+#define DYNAMIC_TYPES_CHECKING
 
 namespace eprosima{
 namespace fastrtps{
@@ -51,35 +51,35 @@ public:
 
     DynamicData* clone() const;
 
-	ResponseCode get_int32_value(int32_t& value, MemberId id);
+    ResponseCode get_int32_value(int32_t& value, MemberId id) const;
 	ResponseCode set_int32_value(MemberId id, int32_t value);
-	ResponseCode get_uint32_value(uint32_t& value, MemberId id);
+	ResponseCode get_uint32_value(uint32_t& value, MemberId id) const;
 	ResponseCode set_uint32_value(MemberId id, uint32_t value);
-	ResponseCode get_int16_value(int16_t& value, MemberId id);
+	ResponseCode get_int16_value(int16_t& value, MemberId id) const;
 	ResponseCode set_int16_value(MemberId id, int16_t value);
-	ResponseCode get_uint16_value(uint16_t& value, MemberId id);
+	ResponseCode get_uint16_value(uint16_t& value, MemberId id) const;
 	ResponseCode set_uint16_value(MemberId id, uint16_t value);
-	ResponseCode get_int64_value(int64_t& value, MemberId id);
+	ResponseCode get_int64_value(int64_t& value, MemberId id) const;
 	ResponseCode set_int64_value(MemberId id, int64_t value);
-	ResponseCode get_uint64_value(uint64_t& value, MemberId id);
+	ResponseCode get_uint64_value(uint64_t& value, MemberId id) const;
 	ResponseCode set_uint64_value(MemberId id, uint64_t value);
-	ResponseCode get_float32_value(float& value, MemberId id);
+	ResponseCode get_float32_value(float& value, MemberId id) const;
 	ResponseCode set_float32_value(MemberId id, float value);
-	ResponseCode get_float64_value(double& value, MemberId id);
+	ResponseCode get_float64_value(double& value, MemberId id) const;
 	ResponseCode set_float64_value(MemberId id, double value);
-	ResponseCode get_float128_value(long double& value, MemberId id);
+	ResponseCode get_float128_value(long double& value, MemberId id) const;
 	ResponseCode set_float128_value(MemberId id, long double value);
-	ResponseCode get_char8_value(char& value, MemberId id);
+	ResponseCode get_char8_value(char& value, MemberId id) const;
 	ResponseCode set_char8_value(MemberId id, char value);
-	ResponseCode get_char16_value(wchar_t& value, MemberId id);
+	ResponseCode get_char16_value(wchar_t& value, MemberId id) const;
 	ResponseCode set_char16_value(MemberId id, wchar_t value);
-	ResponseCode get_byte_value(octet& value, MemberId id);
+	ResponseCode get_byte_value(octet& value, MemberId id) const;
 	ResponseCode set_byte_value(MemberId id, octet value);
-	ResponseCode get_bool_value(bool& value, MemberId id);
+	ResponseCode get_bool_value(bool& value, MemberId id) const;
 	ResponseCode set_bool_value(MemberId id, bool value);
-	ResponseCode get_string_value(std::string& value, MemberId id);
+	ResponseCode get_string_value(std::string& value, MemberId id) const;
 	ResponseCode set_string_value(MemberId id, std::string value);
-	ResponseCode get_wstring_value(std::wstring& value, MemberId id);
+	ResponseCode get_wstring_value(std::wstring& value, MemberId id) const;
 	ResponseCode set_wstring_value(MemberId id, const std::wstring value);
 
 	//ResponseCode get_complex_value(DynamicData* value, MemberId id);
@@ -119,6 +119,10 @@ public:
 protected:
 
     void Clean();
+
+    void* CloneValue(MemberId id, TypeKind kind) const;
+
+    bool CompareValues(TypeKind kind, void* left, void* right);
 
     void SetDefaultValue(MemberId id);
 

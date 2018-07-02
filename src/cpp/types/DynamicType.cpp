@@ -221,6 +221,12 @@ ResponseCode DynamicType::get_annotation(AnnotationDescriptor& descriptor, uint3
     return ResponseCode::RETCODE_ERROR;
 }
 
+bool DynamicType::is_complex_kind() const
+{
+    return mKind == TK_ANNOTATION || mKind == TK_ARRAY || mKind == TK_BITMASK || mKind == TK_BITSET
+        || mKind == TK_MAP || mKind == TK_SEQUENCE || mKind == TK_STRUCTURE;
+}
+
 
 } // namespace types
 } // namespace fastrtps
