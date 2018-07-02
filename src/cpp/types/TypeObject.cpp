@@ -7667,7 +7667,7 @@ CompleteExtendedType& CompleteTypeObject::extended_type()
     return m_extended_type;
 }
 
-static size_t CompleteTypeObject::getMaxCdrSerializedSize(size_t current_alignment)
+size_t CompleteTypeObject::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
     size_t reset_alignment = 0;
@@ -7769,7 +7769,7 @@ static size_t CompleteTypeObject::getMaxCdrSerializedSize(size_t current_alignme
     return union_max_size_serialized - initial_alignment;
 }
 
-static size_t CompleteTypeObject::getCdrSerializedSize(const CompleteTypeObject& data, size_t current_alignment)
+size_t CompleteTypeObject::getCdrSerializedSize(const CompleteTypeObject& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -7898,12 +7898,12 @@ void CompleteTypeObject::deserialize(eprosima::fastcdr::Cdr &cdr)
     }
 }
 
-static size_t CompleteTypeObject::getKeyMaxCdrSerializedSize(size_t current_alignment = 0)
+size_t CompleteTypeObject::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
     return 0;
 }
 
-static bool CompleteTypeObject::isKeyDefined()
+bool CompleteTypeObject::isKeyDefined()
 {
     return false;
 }
@@ -7959,8 +7959,9 @@ MinimalTypeObject::MinimalTypeObject(const MinimalTypeObject &x)
         case TK_BITMASK:
         m_bitmask_type = x.m_bitmask_type;
         break;
-        m_extended_type = x.m_extended_type;
         default:
+        m_extended_type = x.m_extended_type;
+        break;
     }
 }
 
@@ -8000,8 +8001,9 @@ MinimalTypeObject::MinimalTypeObject(MinimalTypeObject &&x)
         case TK_BITMASK:
         m_bitmask_type = x.m_bitmask_type;
         break;
-        m_extended_type = x.m_extended_type;
         default:
+        m_extended_type = x.m_extended_type;
+        break;
     }
 }
 
@@ -8041,8 +8043,9 @@ MinimalTypeObject& MinimalTypeObject::operator=(const MinimalTypeObject &x)
         case TK_BITMASK:
         m_bitmask_type = x.m_bitmask_type;
         break;
-        m_extended_type = x.m_extended_type;
         default:
+        m_extended_type = x.m_extended_type;
+        break;
     }
     return *this;
 }
@@ -8083,8 +8086,9 @@ MinimalTypeObject& MinimalTypeObject::operator=(MinimalTypeObject &&x)
         case TK_BITMASK:
         m_bitmask_type = x.m_bitmask_type;
         break;
-        m_extended_type = x.m_extended_type;
         default:
+        m_extended_type = x.m_extended_type;
+        break;
     }
     return *this;
 }
@@ -8562,7 +8566,7 @@ MinimalExtendedType& MinimalTypeObject::extended_type()
     return m_extended_type;
 }
 
-static size_t MinimalTypeObject::getMaxCdrSerializedSize(size_t current_alignment = 0)
+size_t MinimalTypeObject::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
     size_t reset_alignment = 0;
@@ -8663,7 +8667,7 @@ static size_t MinimalTypeObject::getMaxCdrSerializedSize(size_t current_alignmen
     return union_max_size_serialized - initial_alignment;
 }
 
-static size_t MinimalTypeObject::getCdrSerializedSize(const MinimalTypeObject& data, size_t current_alignment = 0)
+size_t MinimalTypeObject::getCdrSerializedSize(const MinimalTypeObject& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -8712,40 +8716,40 @@ void MinimalTypeObject::serialize(eprosima::fastcdr::Cdr &cdr) const
 {
     cdr << m__d;
 
-    switch(data.m__d)
+    switch(m__d)
     {
         case TK_ALIAS:
-        cdr << data.m_alias_type;
+        cdr << m_alias_type;
         break;
         case TK_ANNOTATION:
-        cdr << data.m_annotation_type;
+        cdr << m_annotation_type;
         break;
         case TK_STRUCTURE:
-        cdr << data.m_struct_type;
+        cdr << m_struct_type;
         break;
         case TK_UNION:
-        cdr << data.m_union_type;
+        cdr << m_union_type;
         break;
         case TK_BITSET:
-        cdr << data.m_bitset_type;
+        cdr << m_bitset_type;
         break;
         case TK_SEQUENCE:
-        cdr << data.m_sequence_type;
+        cdr << m_sequence_type;
         break;
         case TK_ARRAY:
-        cdr << data.m_array_type;
+        cdr << m_array_type;
         break;
         case TK_MAP:
-        cdr << data.m_map_type;
+        cdr << m_map_type;
         break;
         case TK_ENUM:
-        cdr << data.m_enumerated_type;
+        cdr << m_enumerated_type;
         break;
         case TK_BITMASK:
-        cdr << data.m_bitmask_type;
+        cdr << m_bitmask_type;
         break;
         default:
-        cdr << data.m_extended_type;
+        cdr << m_extended_type;
         break;
     }
 }
@@ -8754,50 +8758,50 @@ void MinimalTypeObject::deserialize(eprosima::fastcdr::Cdr &cdr)
 {
     cdr >> m__d;
 
-    switch(data.m__d)
+    switch(m__d)
     {
         case TK_ALIAS:
-        cdr >> data.m_alias_type;
+        cdr >> m_alias_type;
         break;
         case TK_ANNOTATION:
-        cdr >> data.m_annotation_type;
+        cdr >> m_annotation_type;
         break;
         case TK_STRUCTURE:
-        cdr >> data.m_struct_type;
+        cdr >> m_struct_type;
         break;
         case TK_UNION:
-        cdr >> data.m_union_type;
+        cdr >> m_union_type;
         break;
         case TK_BITSET:
-        cdr >> data.m_bitset_type;
+        cdr >> m_bitset_type;
         break;
         case TK_SEQUENCE:
-        cdr >> data.m_sequence_type;
+        cdr >> m_sequence_type;
         break;
         case TK_ARRAY:
-        cdr >> data.m_array_type;
+        cdr >> m_array_type;
         break;
         case TK_MAP:
-        cdr >> data.m_map_type;
+        cdr >> m_map_type;
         break;
         case TK_ENUM:
-        cdr >> data.m_enumerated_type;
+        cdr >> m_enumerated_type;
         break;
         case TK_BITMASK:
-        cdr >> data.m_bitmask_type;
+        cdr >> m_bitmask_type;
         break;
         default:
-        cdr >> data.m_extended_type;
+        cdr >> m_extended_type;
         break;
     }
 }
 
-static size_t MinimalTypeObject::getKeyMaxCdrSerializedSize(size_t current_alignment = 0)
+size_t MinimalTypeObject::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
     return 0;
 }
 
-static bool MinimalTypeObject::isKeyDefined()
+bool MinimalTypeObject::isKeyDefined()
 {
     return false;
 }
