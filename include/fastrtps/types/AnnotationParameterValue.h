@@ -23,6 +23,7 @@
 #define _ANNOTATIONPARAMETERVALUE_H_
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/TypeIdentifier.h>
 #include <stdint.h>
 #include <array>
 #include <string>
@@ -777,6 +778,188 @@ private:
     NameHash m_paramname_hash;
     AnnotationParameterValue m_value;
 };
+
+
+// The application of an annotation to some type or type member
+/*struct AppliedAnnotationParameter {
+	NameHash                  paramname_hash;
+	AnnotationParameterValue  value;
+};*/
+/*
+class AppliedAnnotationParameter
+{
+public:
+    AppliedAnnotationParameter();
+    ~AppliedAnnotationParameter();
+    AppliedAnnotationParameter(const AppliedAnnotationParameter &x);
+    AppliedAnnotationParameter(AppliedAnnotationParameter &&x);
+    AppliedAnnotationParameter& operator=(const AppliedAnnotationParameter &x);
+    AppliedAnnotationParameter& operator=(AppliedAnnotationParameter &&x);
+
+    inline void paramname_hash(const NameHash &_paramname_hash) { m_paramname_hash = _paramname_hash; }
+    inline void paramname_hash(NameHash &&_paramname_hash) { m_paramname_hash = std::move(_paramname_hash); }
+    inline const NameHash& paramname_hash() const { return m_paramname_hash; }
+    inline NameHash& paramname_hash() { return m_paramname_hash; }
+
+    inline void value(const AnnotationParameterValue &_value) { m_value = _value; }
+    inline void value(AnnotationParameterValue &&_value) { m_value = std::move(_value); }
+    inline const AnnotationParameterValue& value() const { return m_value; }
+    inline AnnotationParameterValue& value() { return m_value; }
+
+    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    static size_t getCdrSerializedSize(const AppliedAnnotationParameter& data, size_t current_alignment = 0);
+    void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    void deserialize(eprosima::fastcdr::Cdr &cdr);
+    static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+    static bool isKeyDefined();
+    void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+
+private:
+    NameHash m_paramname_hash;
+    AnnotationParameterValue m_value;
+};
+*/
+// Sorted by AppliedAnnotationParameter.paramname_hash
+typedef std::vector<AppliedAnnotationParameter> AppliedAnnotationParameterSeq;
+
+/*struct AppliedAnnotation {
+	TypeIdentifier                     annotation_typeid;
+	AppliedAnnotationParameterSeq   param_seq;  // @Optional
+};*/
+class AppliedAnnotation
+{
+public:
+    AppliedAnnotation();
+    ~AppliedAnnotation();
+    AppliedAnnotation(const AppliedAnnotation &x);
+    AppliedAnnotation(AppliedAnnotation &&x);
+    AppliedAnnotation& operator=(const AppliedAnnotation &x);
+    AppliedAnnotation& operator=(AppliedAnnotation &&x);
+
+    inline void annotation_typeid(const TypeIdentifier &_annotation_typeid) { m_annotation_typeid = _annotation_typeid; }
+    inline void annotation_typeid(TypeIdentifier &&_annotation_typeid) { m_annotation_typeid = std::move(_annotation_typeid); }
+    inline const TypeIdentifier& annotation_typeid() const { return m_annotation_typeid; }
+    inline TypeIdentifier& annotation_typeid() { return m_annotation_typeid; }
+
+    inline void param_seq(const AppliedAnnotationParameterSeq &_param_seq) { m_param_seq = _param_seq; }
+    inline void param_seq(AppliedAnnotationParameterSeq &&_param_seq) { m_param_seq = std::move(_param_seq); }
+    inline const AppliedAnnotationParameterSeq& param_seq() const { return m_param_seq; }
+    inline AppliedAnnotationParameterSeq& param_seq() { return m_param_seq; }
+
+    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    static size_t getCdrSerializedSize(const AppliedAnnotation& data, size_t current_alignment = 0);
+    void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    void deserialize(eprosima::fastcdr::Cdr &cdr);
+    static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+    static bool isKeyDefined();
+    void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+
+private:
+    TypeIdentifier m_annotation_typeid;
+    AppliedAnnotationParameterSeq m_param_seq;
+};
+
+// Sorted by AppliedAnnotation.annotation_typeid
+typedef std::vector<AppliedAnnotation> AppliedAnnotationSeq;
+
+// @verbatim(placement="<placement>", language="<lang>", text="<text>")
+/*struct AppliedVerbatimAnnotation {
+	std::string placement; // 32
+	std::string language; // 32
+	std::string     text;
+};*/
+class AppliedVerbatimAnnotation
+{
+public:
+    AppliedVerbatimAnnotation();
+    ~AppliedVerbatimAnnotation();
+    AppliedVerbatimAnnotation(const AppliedVerbatimAnnotation &x);
+    AppliedVerbatimAnnotation(AppliedVerbatimAnnotation &&x);
+    AppliedVerbatimAnnotation& operator=(const AppliedVerbatimAnnotation &x);
+    AppliedVerbatimAnnotation& operator=(AppliedVerbatimAnnotation &&x);
+
+    inline void placement(const std::string &_placement) { m_placement = _placement; }
+    inline void placement(std::string &&_placement) { m_placement = std::move(_placement); }
+    inline const std::string& placement() const { return m_placement; }
+    inline std::string& placement() { return m_placement; }
+
+    inline void language(const std::string &_language) { m_language = _language; }
+    inline void language(std::string &&_language) { m_language = std::move(_language); }
+    inline const std::string& language() const { return m_language; }
+    inline std::string& language() { return m_language; }
+
+    inline void text(const std::string &_text) { m_text = _text; }
+    inline void text(std::string &&_text) { m_text = std::move(_text); }
+    inline const std::string& text() const { return m_text; }
+    inline std::string& text() { return m_text; }
+
+    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    static size_t getCdrSerializedSize(const AppliedVerbatimAnnotation& data, size_t current_alignment = 0);
+    void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    void deserialize(eprosima::fastcdr::Cdr &cdr);
+    static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+    static bool isKeyDefined();
+    void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+
+private:
+    std::string m_placement;
+    std::string m_language;
+    std::string m_text;
+};
+
+// --- Aggregate types: -----------------------------------------------
+/*struct AppliedBuiltinMemberAnnotations {
+	std::string                  unit; // @unit("<unit>") // @Optional
+	AnnotationParameterValue min; // @min , @range // @Optional
+	AnnotationParameterValue max; // @max , @range // @Optional
+	std::string               hash_id; // @hash_id("<membername>") // @Optional
+};
+*/
+class AppliedBuiltinMemberAnnotations
+{
+public:
+    AppliedBuiltinMemberAnnotations();
+    ~AppliedBuiltinMemberAnnotations();
+    AppliedBuiltinMemberAnnotations(const AppliedBuiltinMemberAnnotations &x);
+    AppliedBuiltinMemberAnnotations(AppliedBuiltinMemberAnnotations &&x);
+    AppliedBuiltinMemberAnnotations& operator=(const AppliedBuiltinMemberAnnotations &x);
+    AppliedBuiltinMemberAnnotations& operator=(AppliedBuiltinMemberAnnotations &&x);
+
+    inline void unit(const std::string &_unit) { m_unit = _unit; }
+    inline void unit(std::string &&_unit) { m_unit = std::move(_unit); }
+    inline const std::string& unit() const { return m_unit; }
+    inline std::string& unit() { return m_unit; }
+
+    inline void min(const AnnotationParameterValue &_min) { m_min = _min; }
+    inline void min(AnnotationParameterValue &&_min) { m_min = std::move(_min); }
+    inline const AnnotationParameterValue& min() const { return m_min; }
+    inline AnnotationParameterValue& min() { return m_min; }
+
+    inline void max(const AnnotationParameterValue &_max) { m_max = _max; }
+    inline void max(AnnotationParameterValue &&_max) { m_max = std::move(_max); }
+    inline const AnnotationParameterValue& max() const { return m_max; }
+    inline AnnotationParameterValue& max() { return m_max; }
+
+    inline void hash_id(const std::string &_hash_id) { m_hash_id = _hash_id; }
+    inline void hash_id(std::string &&_hash_id) { m_hash_id = std::move(_hash_id); }
+    inline const std::string& hash_id() const { return m_hash_id; }
+    inline std::string& hash_id() { return m_hash_id; }
+
+    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    static size_t getCdrSerializedSize(const AppliedBuiltinMemberAnnotations& data, size_t current_alignment = 0);
+    void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    void deserialize(eprosima::fastcdr::Cdr &cdr);
+    static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+    static bool isKeyDefined();
+    void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+
+private:
+    std::string m_unit;
+    AnnotationParameterValue m_min;
+    AnnotationParameterValue m_max;
+    std::string m_hash_id;
+};
+
 
 } // namespace types
 } // namespace fastrtps

@@ -126,9 +126,7 @@ AnnotationParameterValue::AnnotationParameterValue()
     m_char_value = 0;
     m_wchar_value = 0;
     m_enumerated_value = 0;
-    m_extended_value = 0;
-
-
+    //m_extended_value = 0;
 }
 
 AnnotationParameterValue::~AnnotationParameterValue()
@@ -1753,6 +1751,391 @@ void AppliedAnnotationParameter::serializeKey(eprosima::fastcdr::Cdr &scdr) cons
 	(void) scdr;
 
 
+}
+/*
+AppliedAnnotationParameter::AppliedAnnotationParameter()
+{
+}
+
+AppliedAnnotationParameter::~AppliedAnnotationParameter()
+{
+}
+
+AppliedAnnotationParameter::AppliedAnnotationParameter(const AppliedAnnotationParameter &x)
+{
+    m_paramname_hash = x.m_paramname_hash;
+    m_value = x.m_value;
+
+}
+
+AppliedAnnotationParameter::AppliedAnnotationParameter(AppliedAnnotationParameter &&x)
+{
+    m_paramname_hash = std::move(x.m_paramname_hash);
+    m_value = std::move(x.m_value);
+
+}
+
+AppliedAnnotationParameter& AppliedAnnotationParameter::operator=(const AppliedAnnotationParameter &x)
+{
+    m_paramname_hash = x.m_paramname_hash;
+    m_value = x.m_value;
+
+
+    return *this;
+}
+
+AppliedAnnotationParameter& AppliedAnnotationParameter::operator=(AppliedAnnotationParameter &&x)
+{
+    m_paramname_hash = std::move(x.m_paramname_hash);
+    m_value = std::move(x.m_value);
+
+
+    return *this;
+}
+
+size_t AppliedAnnotationParameter::getMaxCdrSerializedSize(size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    current_alignment += AnnotationParameterValue::getMaxCdrSerializedSize(current_alignment);
+
+
+    return current_alignment - initial_alignment;
+}
+
+size_t AppliedAnnotationParameter::getCdrSerializedSize(const AppliedAnnotationParameter& data, size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    current_alignment += AnnotationParameterValue::getCdrSerializedSize(data.value(), current_alignment);
+
+
+    return current_alignment - initial_alignment;
+}
+
+void AppliedAnnotationParameter::serialize(eprosima::fastcdr::Cdr &scdr) const
+{
+    scdr << m_paramname_hash;
+    scdr << m_value;
+
+}
+
+void AppliedAnnotationParameter::deserialize(eprosima::fastcdr::Cdr &dcdr)
+{
+    dcdr >> m_paramname_hash;
+    dcdr >> m_value;
+
+}
+
+size_t AppliedAnnotationParameter::getKeyMaxCdrSerializedSize(size_t current_alignment)
+{
+	size_t current_align = current_alignment;
+
+    return current_align;
+}
+
+bool AppliedAnnotationParameter::isKeyDefined()
+{
+    return false;
+}
+
+void AppliedAnnotationParameter::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+{
+	(void) scdr;
+}
+*/
+
+AppliedAnnotation::AppliedAnnotation()
+{
+}
+
+AppliedAnnotation::~AppliedAnnotation()
+{
+}
+
+AppliedAnnotation::AppliedAnnotation(const AppliedAnnotation &x)
+{
+    m_annotation_typeid = x.m_annotation_typeid;
+    m_param_seq = x.m_param_seq;
+}
+
+AppliedAnnotation::AppliedAnnotation(AppliedAnnotation &&x)
+{
+    m_annotation_typeid = std::move(x.m_annotation_typeid);
+    m_param_seq = std::move(x.m_param_seq);
+}
+
+AppliedAnnotation& AppliedAnnotation::operator=(const AppliedAnnotation &x)
+{
+    m_annotation_typeid = x.m_annotation_typeid;
+    m_param_seq = x.m_param_seq;
+
+    return *this;
+}
+
+AppliedAnnotation& AppliedAnnotation::operator=(AppliedAnnotation &&x)
+{
+    m_annotation_typeid = std::move(x.m_annotation_typeid);
+    m_param_seq = std::move(x.m_param_seq);
+
+    return *this;
+}
+
+size_t AppliedAnnotation::getMaxCdrSerializedSize(size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
+    //current_alignment += AppliedAnnotationParameterSeq::getMaxCdrSerializedSize(current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    for(size_t a = 0; a < 100; ++a)
+    {
+        current_alignment += AppliedAnnotationParameter::getMaxCdrSerializedSize(current_alignment);
+	}
+
+    return current_alignment - initial_alignment;
+}
+
+size_t AppliedAnnotation::getCdrSerializedSize(const AppliedAnnotation& data, size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += TypeIdentifier::getCdrSerializedSize(data.annotation_typeid(), current_alignment);
+    //current_alignment += AppliedAnnotationParameterSeq::getCdrSerializedSize(data.param_seq(), current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    for(size_t a = 0; a < data.param_seq().size(); ++a)
+    {
+        current_alignment += AppliedAnnotationParameter::getCdrSerializedSize(data.param_seq().at(a), current_alignment);
+	}
+
+    return current_alignment - initial_alignment;
+}
+
+void AppliedAnnotation::serialize(eprosima::fastcdr::Cdr &scdr) const
+{
+    scdr << m_annotation_typeid;
+    scdr << m_param_seq;
+}
+
+void AppliedAnnotation::deserialize(eprosima::fastcdr::Cdr &dcdr)
+{
+    dcdr >> m_annotation_typeid;
+    dcdr >> m_param_seq;
+}
+
+size_t AppliedAnnotation::getKeyMaxCdrSerializedSize(size_t current_alignment)
+{
+	size_t current_align = current_alignment;
+
+    return current_align;
+}
+
+bool AppliedAnnotation::isKeyDefined()
+{
+    return false;
+}
+
+void AppliedAnnotation::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+{
+	(void) scdr;
+}
+
+AppliedVerbatimAnnotation::AppliedVerbatimAnnotation()
+{
+}
+
+AppliedVerbatimAnnotation::~AppliedVerbatimAnnotation()
+{
+}
+
+AppliedVerbatimAnnotation::AppliedVerbatimAnnotation(const AppliedVerbatimAnnotation &x)
+{
+    m_placement = x.m_placement;
+    m_language = x.m_language;
+    m_text = x.m_text;
+}
+
+AppliedVerbatimAnnotation::AppliedVerbatimAnnotation(AppliedVerbatimAnnotation &&x)
+{
+    m_placement = std::move(x.m_placement);
+    m_language = std::move(x.m_language);
+    m_text = std::move(x.m_text);
+}
+
+AppliedVerbatimAnnotation& AppliedVerbatimAnnotation::operator=(const AppliedVerbatimAnnotation &x)
+{
+    m_placement = x.m_placement;
+    m_language = x.m_language;
+    m_text = x.m_text;
+
+    return *this;
+}
+
+AppliedVerbatimAnnotation& AppliedVerbatimAnnotation::operator=(AppliedVerbatimAnnotation &&x)
+{
+    m_placement = std::move(x.m_placement);
+    m_language = std::move(x.m_language);
+    m_text = std::move(x.m_text);
+
+    return *this;
+}
+
+size_t AppliedVerbatimAnnotation::getMaxCdrSerializedSize(size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 32 + 1; // Max 32
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 32 + 1; // Max 32
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
+
+    return current_alignment - initial_alignment;
+}
+
+size_t AppliedVerbatimAnnotation::getCdrSerializedSize(const AppliedVerbatimAnnotation& data, size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.placement().size() + 1;
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.language().size() + 1;
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.text().size() + 1;
+
+    return current_alignment - initial_alignment;
+}
+
+void AppliedVerbatimAnnotation::serialize(eprosima::fastcdr::Cdr &scdr) const
+{
+    scdr << m_placement;
+    scdr << m_language;
+    scdr << m_text;
+}
+
+void AppliedVerbatimAnnotation::deserialize(eprosima::fastcdr::Cdr &dcdr)
+{
+    dcdr >> m_placement;
+    dcdr >> m_language;
+    dcdr >> m_text;
+}
+
+size_t AppliedVerbatimAnnotation::getKeyMaxCdrSerializedSize(size_t current_alignment)
+{
+	size_t current_align = current_alignment;
+
+    return current_align;
+}
+
+bool AppliedVerbatimAnnotation::isKeyDefined()
+{
+    return false;
+}
+
+void AppliedVerbatimAnnotation::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+{
+	(void) scdr;
+}
+
+AppliedBuiltinMemberAnnotations::AppliedBuiltinMemberAnnotations()
+{
+}
+
+AppliedBuiltinMemberAnnotations::~AppliedBuiltinMemberAnnotations()
+{
+}
+
+AppliedBuiltinMemberAnnotations::AppliedBuiltinMemberAnnotations(const AppliedBuiltinMemberAnnotations &x)
+{
+    m_unit = x.m_unit;
+    m_min = x.m_min;
+    m_max = x.m_max;
+	m_hash_id = x.m_hash_id;
+}
+
+AppliedBuiltinMemberAnnotations::AppliedBuiltinMemberAnnotations(AppliedBuiltinMemberAnnotations &&x)
+{
+    m_unit = std::move(x.m_unit);
+    m_min = std::move(x.m_min);
+    m_max = std::move(x.m_max);
+	m_hash_id = std::move(x.m_hash_id);
+}
+
+AppliedBuiltinMemberAnnotations& AppliedBuiltinMemberAnnotations::operator=(const AppliedBuiltinMemberAnnotations &x)
+{
+    m_unit = x.m_unit;
+    m_min = x.m_min;
+    m_max = x.m_max;
+	m_hash_id = x.m_hash_id;
+
+    return *this;
+}
+
+AppliedBuiltinMemberAnnotations& AppliedBuiltinMemberAnnotations::operator=(AppliedBuiltinMemberAnnotations &&x)
+{
+    m_unit = std::move(x.m_unit);
+    m_min = std::move(x.m_min);
+    m_max = std::move(x.m_max);
+	m_hash_id = std::move(x.m_hash_id);
+
+    return *this;
+}
+
+size_t AppliedBuiltinMemberAnnotations::getMaxCdrSerializedSize(size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
+    current_alignment += AnnotationParameterValue::getMaxCdrSerializedSize(current_alignment);
+    current_alignment += AnnotationParameterValue::getMaxCdrSerializedSize(current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
+
+    return current_alignment - initial_alignment;
+}
+
+size_t AppliedBuiltinMemberAnnotations::getCdrSerializedSize(const AppliedBuiltinMemberAnnotations& data, size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.unit().size() + 1;
+    current_alignment += AnnotationParameterValue::getCdrSerializedSize(data.min(), current_alignment);
+    current_alignment += AnnotationParameterValue::getCdrSerializedSize(data.max(), current_alignment);
+	current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.hash_id().size() + 1;
+
+    return current_alignment - initial_alignment;
+}
+
+void AppliedBuiltinMemberAnnotations::serialize(eprosima::fastcdr::Cdr &scdr) const
+{
+    scdr << m_unit;
+    scdr << m_min;
+    scdr << m_max;
+	scdr << m_hash_id;
+}
+
+void AppliedBuiltinMemberAnnotations::deserialize(eprosima::fastcdr::Cdr &dcdr)
+{
+    dcdr >> m_unit;
+    dcdr >> m_min;
+    dcdr >> m_max;
+	dcdr >> m_hash_id;
+}
+
+size_t AppliedBuiltinMemberAnnotations::getKeyMaxCdrSerializedSize(size_t current_alignment)
+{
+	size_t current_align = current_alignment;
+
+    return current_align;
+}
+
+bool AppliedBuiltinMemberAnnotations::isKeyDefined()
+{
+    return false;
+}
+
+void AppliedBuiltinMemberAnnotations::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+{
+	(void) scdr;
 }
 
 } // namespace types

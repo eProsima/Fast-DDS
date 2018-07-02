@@ -21,6 +21,7 @@
 
 
 #include <fastrtps/types/TypeIdentifierTypes.h>
+#include <fastrtps/types/TypeIdentifier.h>
 
 #include <fastcdr/Cdr.h>
 
@@ -204,7 +205,6 @@ void StringLTypeDefn::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 PlainCollectionHeader::PlainCollectionHeader()
 {
     m_equiv_kind = 0;
-    m_element_flags = 0;
 }
 
 PlainCollectionHeader::~PlainCollectionHeader()
@@ -300,11 +300,12 @@ PlainSequenceSElemDefn::PlainSequenceSElemDefn()
 {
 
     m_bound = 0;
-    m_element_identifier = 0;
+    m_element_identifier = new TypeIdentifier();
 }
 
 PlainSequenceSElemDefn::~PlainSequenceSElemDefn()
 {
+    delete m_element_identifier;
 }
 
 PlainSequenceSElemDefn::PlainSequenceSElemDefn(const PlainSequenceSElemDefn &x)
@@ -347,7 +348,7 @@ size_t PlainSequenceSElemDefn::getMaxCdrSerializedSize(size_t current_alignment)
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_aligment);
+    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
 
@@ -362,7 +363,7 @@ size_t PlainSequenceSElemDefn::getCdrSerializedSize(const PlainSequenceSElemDefn
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getCdrSerializedSize(m_element_identifier, current_aligment);
+    size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
 
@@ -373,14 +374,14 @@ void PlainSequenceSElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_header;
     scdr << m_bound;
-    scdr << m_element_identifier;
+    scdr << *m_element_identifier;
 }
 
 void PlainSequenceSElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_bound;
-    dcdr >> m_element_identifier;
+    dcdr >> *m_element_identifier;
 }
 
 size_t PlainSequenceSElemDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
@@ -410,11 +411,12 @@ PlainSequenceLElemDefn::PlainSequenceLElemDefn()
 {
 
     m_bound = 0;
-    m_element_identifier = 0;
+    m_element_identifier = new TypeIdentifier();
 }
 
 PlainSequenceLElemDefn::~PlainSequenceLElemDefn()
 {
+    delete m_element_identifier;
 }
 
 PlainSequenceLElemDefn::PlainSequenceLElemDefn(const PlainSequenceLElemDefn &x)
@@ -457,7 +459,7 @@ size_t PlainSequenceLElemDefn::getMaxCdrSerializedSize(size_t current_alignment)
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_aligment);
+    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
 
@@ -472,7 +474,7 @@ size_t PlainSequenceLElemDefn::getCdrSerializedSize(const PlainSequenceLElemDefn
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getCdrSerializedSize(m_element_identifier, current_aligment);
+    size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
 
@@ -483,14 +485,14 @@ void PlainSequenceLElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_header;
     scdr << m_bound;
-    scdr << m_element_identifier;
+    scdr << *m_element_identifier;
 }
 
 void PlainSequenceLElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_bound;
-    dcdr >> m_element_identifier;
+    dcdr >> *m_element_identifier;
 }
 
 size_t PlainSequenceLElemDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
@@ -520,11 +522,12 @@ PlainArraySElemDefn::PlainArraySElemDefn()
 {
 
 
-    m_element_identifier = 0;
+    m_element_identifier = new TypeIdentifier();
 }
 
 PlainArraySElemDefn::~PlainArraySElemDefn()
 {
+    delete m_element_identifier;
 }
 
 PlainArraySElemDefn::PlainArraySElemDefn(const PlainArraySElemDefn &x)
@@ -568,7 +571,7 @@ size_t PlainArraySElemDefn::getMaxCdrSerializedSize(size_t current_alignment)
     current_alignment += (100 * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_aligment);
+    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
 
@@ -585,7 +588,7 @@ size_t PlainArraySElemDefn::getCdrSerializedSize(const PlainArraySElemDefn& data
 
 
     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getCdrSerializedSize(m_element_identifier, current_aligment);
+    size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
 
@@ -596,14 +599,14 @@ void PlainArraySElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_header;
     scdr << m_array_bound_seq;
-    scdr << m_element_identifier;
+    scdr << *m_element_identifier;
 }
 
 void PlainArraySElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_array_bound_seq;
-    dcdr >> m_element_identifier;
+    dcdr >> *m_element_identifier;
 }
 
 size_t PlainArraySElemDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
@@ -633,11 +636,12 @@ PlainArrayLElemDefn::PlainArrayLElemDefn()
 {
 
 
-    m_element_identifier = 0;
+    m_element_identifier = new TypeIdentifier();
 }
 
 PlainArrayLElemDefn::~PlainArrayLElemDefn()
 {
+    delete m_element_identifier;
 }
 
 PlainArrayLElemDefn::PlainArrayLElemDefn(const PlainArrayLElemDefn &x)
@@ -682,7 +686,7 @@ size_t PlainArrayLElemDefn::getMaxCdrSerializedSize(size_t current_alignment)
 
 
     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_aligment);
+    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
 
@@ -698,7 +702,7 @@ size_t PlainArrayLElemDefn::getCdrSerializedSize(const PlainArrayLElemDefn& data
     current_alignment += (data.array_bound_seq().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getCdrSerializedSize(m_element_identifier, current_aligment);
+    size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
     return current_alignment - initial_alignment;
@@ -708,14 +712,14 @@ void PlainArrayLElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_header;
     scdr << m_array_bound_seq;
-    scdr << m_element_identifier;
+    scdr << *m_element_identifier;
 }
 
 void PlainArrayLElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_array_bound_seq;
-    dcdr >> m_element_identifier;
+    dcdr >> *m_element_identifier;
 }
 
 size_t PlainArrayLElemDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
@@ -745,13 +749,14 @@ PlainMapSTypeDefn::PlainMapSTypeDefn()
 {
 
     m_bound = 0;
-    m_element_identifier = 0;
-    m_key_flags = 0;
-    m_key_identifier = 0;
+    m_element_identifier = new TypeIdentifier();
+    m_key_identifier = new TypeIdentifier();
 }
 
 PlainMapSTypeDefn::~PlainMapSTypeDefn()
 {
+    delete m_element_identifier;
+    delete m_key_identifier;
 }
 
 PlainMapSTypeDefn::PlainMapSTypeDefn(const PlainMapSTypeDefn &x)
@@ -802,13 +807,13 @@ size_t PlainMapSTypeDefn::getMaxCdrSerializedSize(size_t current_alignment)
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_aligment);
+    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size = TypeIdentifier::getMaxCdrSerializedSize(current_aligment);
+    size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
 
@@ -823,13 +828,13 @@ size_t PlainMapSTypeDefn::getCdrSerializedSize(const PlainMapSTypeDefn& data, si
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getCdrSerializedSize(m_element_identifier, current_aligment);
+    size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size = TypeIdentifier::getCdrSerializedSize(m_key_identifier, current_aligment);
+    size = TypeIdentifier::getCdrSerializedSize(*data.key_identifier(), current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
 
@@ -840,18 +845,18 @@ void PlainMapSTypeDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_header;
     scdr << m_bound;
-    scdr << m_element_identifier;
+    scdr << *m_element_identifier;
     scdr << m_key_flags;
-    scdr << m_key_identifier;
+    scdr << *m_key_identifier;
 }
 
 void PlainMapSTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_bound;
-    dcdr >> m_element_identifier;
+    dcdr >> *m_element_identifier;
     dcdr >> m_key_flags;
-    dcdr >> m_key_identifier;
+    dcdr >> *m_key_identifier;
 }
 
 size_t PlainMapSTypeDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
@@ -884,14 +889,14 @@ void PlainMapSTypeDefn::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 PlainMapLTypeDefn::PlainMapLTypeDefn()
 {
 
-    m_bound = 0;
-    m_element_identifier = 0;
-    m_key_flags = 0;
-    m_key_identifier = 0;
+    m_element_identifier = new TypeIdentifier();
+    m_key_identifier = new TypeIdentifier();
 }
 
 PlainMapLTypeDefn::~PlainMapLTypeDefn()
 {
+    delete m_element_identifier;
+    delete m_key_identifier;
 }
 
 PlainMapLTypeDefn::PlainMapLTypeDefn(const PlainMapLTypeDefn &x)
@@ -942,13 +947,13 @@ size_t PlainMapLTypeDefn::getMaxCdrSerializedSize(size_t current_alignment)
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_aligment);
+    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size = TypeIdentifier::getMaxCdrSerializedSize(current_aligment);
+    size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
 
@@ -963,13 +968,13 @@ size_t PlainMapLTypeDefn::getCdrSerializedSize(const PlainMapLTypeDefn& data, si
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getCdrSerializedSize(m_element_identifier, current_aligment);
+    size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size = TypeIdentifier::getCdrSerializedSize(m_key_identifier, current_aligment);
+    size = TypeIdentifier::getCdrSerializedSize(*data.key_identifier(), current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
 
@@ -980,18 +985,18 @@ void PlainMapLTypeDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_header;
     scdr << m_bound;
-    scdr << m_element_identifier;
+    scdr << *m_element_identifier;
     scdr << m_key_flags;
-    scdr << m_key_identifier;
+    scdr << *m_key_identifier;
 }
 
 void PlainMapLTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_bound;
-    dcdr >> m_element_identifier;
+    dcdr >> *m_element_identifier;
     dcdr >> m_key_flags;
-    dcdr >> m_key_identifier;
+    dcdr >> *m_key_identifier;
 }
 
 size_t PlainMapLTypeDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
@@ -1069,7 +1074,7 @@ size_t StronglyConnectedComponentId::getMaxCdrSerializedSize(size_t current_alig
     size_t initial_alignment = current_alignment;
 
     //current_alignment += ((14) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    size_t size = TypeObjectHashId::getMaxCdrSerializedSize(current_aligment);
+    size_t size = TypeObjectHashId::getMaxCdrSerializedSize(current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -1085,7 +1090,7 @@ size_t StronglyConnectedComponentId::getCdrSerializedSize(const StronglyConnecte
     size_t initial_alignment = current_alignment;
 
     //current_alignment += ((14) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    size_t size = TypeObjectHashId::getCdrSerializedSize(m_sc_component_id, current_aligment);
+    size_t size = TypeObjectHashId::getCdrSerializedSize(data.sc_component_id(), current_alignment);
     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -1156,8 +1161,6 @@ ExtendedTypeDefn& ExtendedTypeDefn::operator=(const ExtendedTypeDefn &x)
 
 ExtendedTypeDefn& ExtendedTypeDefn::operator=(ExtendedTypeDefn &&x)
 {
-    m_delete = x.m_delete;
-
     return *this;
 }
 
