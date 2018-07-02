@@ -115,6 +115,9 @@ enum ResponseCode : uint32_t
     RETCODE_ALREADY_DELETED
 };
 
+typedef uint32_t MemberId;
+#define MEMBER_ID_INVALID 0
+
 #define LENGTH_UNLIMITED    0
 
 class TypeSupport
