@@ -40,6 +40,10 @@ public:
 
     std::string getName() const;
     TypeKind getKind() const;
+    uint32_t getBounds(uint32_t index = 0) const;
+
+    void setName(std::string name);
+    void setKind(TypeKind kind);
 
 protected:
 

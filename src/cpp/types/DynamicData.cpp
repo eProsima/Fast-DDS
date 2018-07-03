@@ -1448,8 +1448,16 @@ ResponseCode DynamicData::set_string_value(MemberId id, std::string value)
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->get_kind() == TK_STRING8 &&id == MEMBER_ID_INVALID)
     {
-        mStringValue = value;
-        return ResponseCode::RETCODE_OK;
+        if (value.length() <= mType->get_bounds(0))
+        {
+            mStringValue = value;
+            return ResponseCode::RETCODE_OK;
+        }
+        else
+        {
+            logError(DYN_TYPES, "Error setting string value. The given string is greather than the length limit.");
+            return ResponseCode::RETCODE_BAD_PARAMETER;
+        }
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #else
@@ -1488,8 +1496,16 @@ ResponseCode DynamicData::set_wstring_value(MemberId id, const std::wstring valu
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->get_kind() == TK_STRING16 && id == MEMBER_ID_INVALID)
     {
-        mWStringValue = value;
-        return ResponseCode::RETCODE_OK;
+        if (value.length() <= mType->get_bounds(0))
+        {
+            mWStringValue = value;
+            return ResponseCode::RETCODE_OK;
+        }
+        else
+        {
+            logError(DYN_TYPES, "Error setting wstring value. The given string is greather than the length limit.");
+            return ResponseCode::RETCODE_BAD_PARAMETER;
+        }
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #else
