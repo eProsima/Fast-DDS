@@ -21,6 +21,9 @@ namespace eprosima{
 namespace fastrtps{
 namespace types{
 
+#define ANNOTATION_KEY_ID       "Key"
+#define ANNOTATION_TOPIC_ID     "Topic"
+
 class MemberDescriptor;
 class DynamicType;
 

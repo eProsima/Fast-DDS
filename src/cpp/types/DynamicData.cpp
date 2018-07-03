@@ -230,14 +230,12 @@ MemberId DynamicData::get_member_id_by_name(const std::string& name)
 
 MemberId DynamicData::get_member_id_at_index(uint32_t index)
 {
-    if (index < mDescriptors.size())
+    for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
     {
-        auto it = mDescriptors.begin();
-        for (uint32_t i = 0; i < index; ++i)
+        if (it->second->get_index() == index)
         {
-            it = std::next(it);
+            return it->first;
         }
-        return it->first;
     }
     return MEMBER_ID_INVALID;
 }
