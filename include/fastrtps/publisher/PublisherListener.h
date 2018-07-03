@@ -22,8 +22,6 @@
 #include "../rtps/common/Types.h"
 #include "../rtps/common/MatchingInfo.h"
 
-
-
 namespace eprosima {
 namespace fastrtps {
 
