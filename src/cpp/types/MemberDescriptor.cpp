@@ -14,6 +14,7 @@
 
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -84,7 +85,11 @@ ResponseCode MemberDescriptor::copy_from(const MemberDescriptor* other)
             return ResponseCode::RETCODE_ERROR;
         }
     }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
+    else
+    {
+        logError(DYN_TYPES, "Error copying MemberDescriptor, invalid input descriptor");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
 }
 
 bool MemberDescriptor::equals(const MemberDescriptor* other) const
@@ -149,7 +154,6 @@ bool MemberDescriptor::isConsistent() const
     }
 
     //TODO: Check default value.
-
     if (!IsTypeNameConsistent(mName))
     {
         return false;

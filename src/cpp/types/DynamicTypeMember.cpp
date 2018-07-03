@@ -16,6 +16,7 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -66,6 +67,7 @@ ResponseCode DynamicTypeMember::get_descriptor(MemberDescriptor* descriptor) con
     }
     else
     {
+        logError(DYN_TYPES, "Error getting MemberDescriptor, invalid input descriptor");
         return ResponseCode::RETCODE_BAD_PARAMETER;
     }
 }
@@ -90,7 +92,6 @@ bool DynamicTypeMember::equals(const DynamicTypeMember* other) const
                 return false;
             }
         }
-
         return true;
     }
     else

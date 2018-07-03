@@ -17,7 +17,7 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/MemberDescriptor.h>
-
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -78,25 +78,36 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_array_type(const DynamicTy
         mTypesList.push_back(pNewTypeBuilder);
         return pNewTypeBuilder;
     }
+    else
+    {
+        logError(DYN_TYPES, "Error creating array, element_type must be valid");
+    }
     return nullptr;
 }
 
 DynamicTypeBuilder* DynamicTypeBuilderFactory::create_bitmask_type(uint32_t bound)
 {
-    //TODO: Check bound is out of range
-    TypeDescriptor pBoolDescriptor;
-    pBoolDescriptor.mKind = TK_BOOLEAN;
-    pBoolDescriptor.mName = GenerateTypeName();
+    if (bound <= MAX_BITMASK_LENGTH)
+    {
+        TypeDescriptor pBoolDescriptor;
+        pBoolDescriptor.mKind = TK_BOOLEAN;
+        pBoolDescriptor.mName = GenerateTypeName();
 
-    TypeDescriptor pDescriptor;
-    pDescriptor.mKind = TK_BITMASK;
-    pDescriptor.mName = GenerateTypeName();
-    pDescriptor.mElementType = new DynamicType(&pBoolDescriptor);
-    pDescriptor.mBound.push_back(bound);
+        TypeDescriptor pDescriptor;
+        pDescriptor.mKind = TK_BITMASK;
+        pDescriptor.mName = GenerateTypeName();
+        pDescriptor.mElementType = new DynamicType(&pBoolDescriptor);
+        pDescriptor.mBound.push_back(bound);
 
-    DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
-    mTypesList.push_back(pNewTypeBuilder);
-    return pNewTypeBuilder;
+        DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
+        mTypesList.push_back(pNewTypeBuilder);
+        return pNewTypeBuilder;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error creating bitmask, length exceeds the maximum value '" << MAX_BITMASK_LENGTH << "'");
+    }
+    return nullptr;
 }
 
 DynamicTypeBuilder* DynamicTypeBuilderFactory::create_bool_type()
@@ -225,6 +236,10 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_map_type(DynamicType* key_
         mTypesList.push_back(pNewTypeBuilder);
         return pNewTypeBuilder;
     }
+    else
+    {
+        logError(DYN_TYPES, "Error creating map, element_type and key_element_type must be valid.");
+    }
     return nullptr;
 }
 
@@ -241,6 +256,10 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_sequence_type(const Dynami
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
         mTypesList.push_back(pNewTypeBuilder);
         return pNewTypeBuilder;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error creating sequence, element_type must be valid.");
     }
     return nullptr;
 }
@@ -270,6 +289,10 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_type(const TypeDescriptor*
         mTypesList.push_back(pNewType);
         return pNewType;
     }
+    else
+    {
+        logError(DYN_TYPES, "Error creating type, invalid input descriptor.");
+    }
     return nullptr;
 }
 
@@ -280,6 +303,10 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_type_copy(const DynamicTyp
         DynamicTypeBuilder* pNewType = new DynamicTypeBuilder(type);
         mTypesList.push_back(pNewType);
         return pNewType;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error creating type, invalid input type.");
     }
     return nullptr;
 }
@@ -350,10 +377,10 @@ ResponseCode DynamicTypeBuilderFactory::delete_type(DynamicType* type)
         }
         else
         {
+            logWarning(DYN_TYPES, "The given type has been deleted previously.");
             return ResponseCode::RETCODE_ALREADY_DELETED;
         }
     }
-
     return ResponseCode::RETCODE_OK;
 }
 
@@ -366,8 +393,6 @@ DynamicType* DynamicTypeBuilderFactory::get_primitive_type(TypeKind kind)
     mTypesList.push_back(pNewType);
     return pNewType;
 }
-
-
 
 } // namespace types
 } // namespace fastrtps

@@ -16,6 +16,7 @@
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -60,8 +61,9 @@ DynamicData* DynamicDataFactory::create_data(DynamicType* pType)
         mDynamicDatas.push_back(newData);
         return newData;
     }
-    catch (...)
+    catch (std::exception e)
     {
+        logError(DYN_TYPES, "Exception creating DynamicData: " << e.what());
         return nullptr;
     }
 }
@@ -78,6 +80,7 @@ ResponseCode DynamicDataFactory::delete_data(DynamicData* data)
         }
         else
         {
+            logError(DYN_TYPES, "Error deleting DynamicData. It isn't registered in the factory");
             return ResponseCode::RETCODE_ALREADY_DELETED;
         }
     }
