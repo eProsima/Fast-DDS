@@ -41,10 +41,10 @@ public:
     DynamicType* getBaseType() const;
     uint32_t get_bounds(uint32_t index = 0) const;
 
-	ResponseCode get_member_by_name(DynamicTypeMember* member, const std::string name);
+	ResponseCode get_member_by_name(DynamicTypeMember& member, const std::string name);
 	ResponseCode get_all_members_by_name(std::map<std::string, DynamicTypeMember*>& members);
 
-	ResponseCode get_member(DynamicTypeMember* member, MemberId id);
+	ResponseCode get_member(DynamicTypeMember& member, MemberId id);
 	ResponseCode get_all_members(std::map<MemberId, DynamicTypeMember*>& members);
 
 	uint32_t get_annotation_count();
