@@ -16,6 +16,7 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicTypeMember.h>
+#include <fastrtps/types/DynamicTypeMember.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -23,15 +24,35 @@ namespace types {
 
 DynamicType::DynamicType()
     : mDescriptor(nullptr)
+    , mName("")
+    , mKind(TK_NONE)
 {
 }
 
 DynamicType::DynamicType(const TypeDescriptor* descriptor)
 {
     mDescriptor = new TypeDescriptor(descriptor);
+    try
+    {
+        mName = descriptor->getName();
+        mKind = descriptor->getKind();
+    }
+    catch (...)
+    {
+        mName = "";
+        mKind = TK_NONE;
+    }
+
+    if (is_complex_kind())
+    {
+        //TODO: //ARCE: FILL MEMBERS
+    }
 }
 
 DynamicType::DynamicType(const DynamicType* other)
+    : mDescriptor(nullptr)
+    , mName("")
+    , mKind(TK_NONE)
 {
     copy_from_type(other);
 }
@@ -172,12 +193,12 @@ TypeKind DynamicType::get_kind() const
     return mKind;
 }
 
-ResponseCode DynamicType::get_member_by_name(DynamicTypeMember& member, const std::string name)
+ResponseCode DynamicType::get_member_by_name(DynamicTypeMember* member, const std::string name)
 {
     auto it = mMemberByName.find(name);
     if (it != mMemberByName.end())
     {
-        member = *it->second;
+        member = it->second;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_ERROR;
@@ -189,12 +210,12 @@ ResponseCode DynamicType::get_all_members_by_name(std::map<std::string, DynamicT
     return ResponseCode::RETCODE_OK;
 }
 
-ResponseCode DynamicType::get_member(DynamicTypeMember& member, MemberId id)
+ResponseCode DynamicType::get_member(DynamicTypeMember* member, MemberId id)
 {
     auto it = mMemberById.find(id);
     if (it != mMemberById.end())
     {
-        member = *it->second;
+        member = it->second;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_ERROR;

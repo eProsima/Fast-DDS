@@ -48,6 +48,12 @@ TypeDescriptor::TypeDescriptor()
 }
 
 TypeDescriptor::TypeDescriptor(const TypeDescriptor* other)
+    : mKind(0)
+    , mName("")
+    , mBaseType(nullptr)
+    , mDiscriminatorType(nullptr)
+    , mElementType(nullptr)
+    , mKeyElementType(nullptr)
 {
     copy_from(other);
 }

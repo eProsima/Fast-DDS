@@ -40,18 +40,21 @@ public:
     MemberId get_id() const;
     TypeKind get_kind() const;
     std::string get_name() const;
+    uint32_t get_index() const;
+    void set_index(uint32_t index);
 
 protected:
 
+    friend class DynamicTypeBuilderFactory;
     friend class DynamicData;
 
-    std::string mName;
-    MemberId mId;
-    DynamicType* mType;
-    std::string mDefaultValue;
-    uint32_t mIndex;
-    std::vector<uint64_t> mLabel;
-    bool mDefaultLabel;
+    std::string mName;                  // Name of the member
+    MemberId mId;                       // MemberId, it should be filled automatically when the member is added.
+    DynamicType* mType;                 // Member's Type.
+    std::string mDefaultValue;          // Default value of the member in string.
+    uint32_t mIndex;                    // Definition order of the member inside it's parent.
+    std::vector<uint64_t> mLabel;       // Case Labels for unions.
+    bool mDefaultLabel;                 // TRUE if it's the default option of a union.
 };
 
 } // namespace types

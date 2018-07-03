@@ -31,7 +31,7 @@ public:
 
     DynamicTypeMember();
     DynamicTypeMember(const DynamicTypeMember* other);
-    DynamicTypeMember(const MemberDescriptor* descriptor);
+    DynamicTypeMember(const MemberDescriptor* descriptor, MemberId id);
 
     ~DynamicTypeMember();
 
@@ -44,8 +44,12 @@ public:
 	bool equals(const DynamicTypeMember*) const;
 	std::string get_name() const;
 	MemberId get_id() const;
-
 protected:
+
+    uint32_t get_index() const;
+    void set_index(uint32_t index);
+
+    friend class DynamicTypeBuilder;
 
     DynamicType* mParent;
     MemberDescriptor* mDescriptor;

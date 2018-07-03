@@ -15,6 +15,8 @@
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeMember.h>
+#include <fastrtps/types/TypeDescriptor.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -44,8 +46,79 @@ bool map_compare(const std::map<MemberId, DynamicData*>& left, const std::map<Me
 
 DynamicData::DynamicData()
     : mType(nullptr)
+#ifdef DYNAMIC_TYPES_CHECKING
+    , mInt32Value(0)
+    , mUInt32Value(0)
+    , mInt16Value(0)
+    , mUInt16Value(0)
+    , mInt64Value(0)
+    , mUInt64Value(0)
+    , mFloat32Value(0.0f)
+    , mFloat64Value(0.0)
+    , mFloat128Value(0.0)
+    , mChar8Value(0)
+    , mChar16Value(0)
+    , mByteValue(0)
+    , mBoolValue(false)
+#endif
     , mItemCount(0)
 {
+}
+
+DynamicData::DynamicData(DynamicType* pType)
+    : mType(pType)
+#ifdef DYNAMIC_TYPES_CHECKING
+    , mInt32Value(0)
+    , mUInt32Value(0)
+    , mInt16Value(0)
+    , mUInt16Value(0)
+    , mInt64Value(0)
+    , mUInt64Value(0)
+    , mFloat32Value(0.0f)
+    , mFloat64Value(0.0)
+    , mFloat128Value(0.0)
+    , mChar8Value(0)
+    , mChar16Value(0)
+    , mByteValue(0)
+    , mBoolValue(false)
+#endif
+    , mItemCount(0)
+{
+    std::map<MemberId, DynamicTypeMember*> members;
+    if (mType->get_all_members(members) == ResponseCode::RETCODE_OK)
+    {
+        if (mType->is_complex_kind())
+        {
+            for (auto it = members.begin(); it != members.end(); ++it)
+            {
+                MemberDescriptor* newDescriptor = new MemberDescriptor();
+                if (it->second->get_descriptor(newDescriptor) == ResponseCode::RETCODE_OK)
+                {
+                    mDescriptors.insert(std::make_pair(it->first, newDescriptor));
+                    mComplexValues.insert(std::make_pair(it->first, new DynamicData(newDescriptor->mType)));
+                }
+                else
+                {
+                    delete newDescriptor;
+                }
+            }
+        }
+        else
+        {
+            //MemberDescriptor* newDescriptor = new MemberDescriptor();
+            //newDescriptor->
+            //TypeDescriptor typeDescriptor;
+            //if (mType->get_descriptor(&typeDescriptor) == ResponseCode::RETCODE_OK)
+            //{
+            //    mDescriptors.insert(std::make_pair(MEMBER_ID_INVALID, newDescriptor));
+            AddValue(pType->get_kind(), MEMBER_ID_INVALID);
+            //}
+            //else
+            //{
+            //    delete newDescriptor;
+            //}
+        }
+    }
 }
 
 DynamicData::~DynamicData()
@@ -89,38 +162,15 @@ bool DynamicData::equals(const DynamicData* other)
             }
         }
 
-        if (!map_compare(mInt32Values, other->mInt32Values) ||
-            !map_compare(mUInt32Values, other->mUInt32Values) ||
-            !map_compare(mInt16Values, other->mInt16Values) ||
-            !map_compare(mUInt16Values, other->mUInt16Values) ||
-            !map_compare(mInt64Values, other->mInt64Values) ||
-            !map_compare(mUInt64Values, other->mUInt64Values) ||
-            !map_compare(mFloat32Values, other->mFloat32Values) ||
-            !map_compare(mFloat64Values, other->mFloat64Values) ||
-            !map_compare(mFloat128Values, other->mFloat128Values) ||
-            !map_compare(mChar8Values, other->mChar8Values) ||
-            !map_compare(mChar16Values, other->mChar16Values) ||
-            !map_compare(mByteValues, other->mByteValues) ||
-            !map_compare(mBoolValues, other->mBoolValues) ||
-            !map_compare(mStringValues, other->mStringValues) ||
-            !map_compare(mWStringValues, other->mWStringValues) ||
-            !map_compare(mStringValues, other->mStringValues) ||
+        if (mInt32Value != other->mInt32Value || mUInt32Value != other->mUInt32Value ||
+            mInt16Value != other->mInt16Value || mUInt16Value != other->mUInt16Value ||
+            mInt64Value != other->mInt64Value || mUInt64Value != other->mUInt64Value ||
+            mFloat32Value != other->mFloat32Value || mFloat64Value != other->mFloat64Value ||
+            mFloat128Value != other->mFloat128Value || mChar8Value != other->mChar8Value ||
+            mChar16Value != other->mChar16Value || mByteValue != other->mByteValue ||
+            mBoolValue != other->mBoolValue || mStringValue != other->mStringValue ||
+            mWStringValue != other->mWStringValue || mStringValue != other->mStringValue ||
             !map_compare(mComplexValues, other->mComplexValues))
-            // || !map_compare(mInt32ListValues, other->mInt32ListValues) ||
-            //!map_compare(mUInt32ListValues, other->mUInt32ListValues) ||
-            //!map_compare(mInt16ListValues, other->mInt16ListValues) ||
-            //!map_compare(mUInt16ListValues, other->mUInt16ListValues) ||
-            //!map_compare(mInt64ListValues, other->mInt64ListValues) ||
-            //!map_compare(mUInt64ListValues, other->mUInt64ListValues) ||
-            //!map_compare(mFloat32ListValues, other->mFloat32ListValues) ||
-            //!map_compare(mFloat64ListValues, other->mFloat64ListValues) ||
-            //!map_compare(mFloat128ListValues, other->mFloat128ListValues) ||
-            //!map_compare(mChar8ListValues, other->mChar8ListValues) ||
-            //!map_compare(mChar16ListValues, other->mChar16ListValues) ||
-            //!map_compare(mByteListValues, other->mByteListValues) ||
-            //!map_compare(mBoolListValues, other->mBoolListValues) ||
-            //!map_compare(mStringListValues, other->mStringListValues) ||
-            //!map_compare(mWStringListValues, other->mWStringListValues))
         {
             return false;
         }
@@ -195,6 +245,121 @@ MemberId DynamicData::get_member_id_at_index(uint32_t index)
 uint32_t DynamicData::get_item_count()
 {
     return mItemCount;
+}
+
+void DynamicData::AddValue(TypeKind kind, MemberId id)
+{
+    switch (kind)
+    {
+    default:
+        break;
+    case TK_INT32:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new int32_t()));
+#endif
+    }
+    break;
+    case TK_UINT32:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new uint32_t()));
+#endif
+    }
+    break;
+    case TK_INT16:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new int16_t()));
+#endif
+    }
+    break;
+    case TK_UINT16:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new uint16_t()));
+#endif
+    }
+    break;
+    case TK_INT64:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new int64_t()));
+#endif
+    }
+    break;
+    case TK_UINT64:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new uint64_t()));
+#endif
+    }
+    break;
+    case TK_FLOAT32:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new float()));
+#endif
+    }
+    break;
+    case TK_FLOAT64:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new double()));
+#endif
+    }
+    break;
+    case TK_FLOAT128:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new long double()));
+#endif
+    }
+    break;
+    case TK_CHAR8:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new char()));
+#endif
+    }
+    break;
+    case TK_CHAR16:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new wchar_t()));
+#endif
+    }
+    break;
+    case TK_BOOLEAN:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new bool()));
+#endif
+    }
+    break;
+    case TK_BYTE:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new octet()));
+#endif
+    }
+    break;
+    case TK_STRING8:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new std::string()));
+#endif
+    }
+    break;
+    case TK_STRING16:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new std::wstring()));
+#endif
+    }
+    break;
+    }
+    SetDefaultValue(id);
 }
 
 void DynamicData::Clean()
@@ -425,245 +590,188 @@ bool DynamicData::CompareValues(TypeKind kind, void* left, void* right)
     {
     default:
         break;
-    case TK_INT32:
-    {
-        return *((int32_t*)left) == *((int32_t*)right);
-    }
-    break;
-    case TK_UINT32:
-    {
-        return *((uint32_t*)left) == *((uint32_t*)right);
-    }
-    break;
-    case TK_INT16:
-    {
-        return *((int16_t*)left) == *((int16_t*)right);
-    }
-    break;
-    case TK_UINT16:
-    {
-        return *((uint16_t*)left) == *((uint16_t*)right);
-    }
-    break;
-    case TK_INT64:
-    {
-        return *((int64_t*)left) == *((int64_t*)right);
-    }
-    break;
-    case TK_UINT64:
-    {
-        return *((uint64_t*)left) == *((uint64_t*)right);
-    }
-    break;
-    case TK_FLOAT32:
-    {
-        return *((float*)left) == *((float*)right);
-    }
-    break;
-    case TK_FLOAT64:
-    {
-        return *((double*)left) == *((double*)right);
-    }
-    break;
-    case TK_FLOAT128:
-    {
-        return *((long double*)left) == *((long double*)right);
-    }
-    break;
-    case TK_CHAR8:
-    {
-        return *((char*)left) == *((char*)right);
-    }
-    break;
-    case TK_CHAR16:
-    {
-        return *((wchar_t*)left) == *((wchar_t*)right);
-    }
-    break;
-    case TK_BOOLEAN:
-    {
-        return *((bool*)left) == *((bool*)right);
-    }
-    break;
-    case TK_BYTE:
-    {
-        return *((octet*)left) == *((octet*)right);
-    }
-    break;
-    case TK_STRING8:
-    {
-        return *((std::string*)left) == *((std::string*)right);
-    }
-    break;
-    case TK_STRING16:
-    {
-        return *((std::wstring*)left) == *((std::wstring*)right);
-    }
-    break;
+    case TK_INT32:      {   return *((int32_t*)left) == *((int32_t*)right);    }
+    case TK_UINT32:     {   return *((uint32_t*)left) == *((uint32_t*)right);    }
+    case TK_INT16:      {   return *((int16_t*)left) == *((int16_t*)right);    }
+    case TK_UINT16:     {   return *((uint16_t*)left) == *((uint16_t*)right);    }
+    case TK_INT64:      {   return *((int64_t*)left) == *((int64_t*)right);    }
+    case TK_UINT64:     {   return *((uint64_t*)left) == *((uint64_t*)right);    }
+    case TK_FLOAT32:    {   return *((float*)left) == *((float*)right);    }
+    case TK_FLOAT64:    {   return *((double*)left) == *((double*)right);    }
+    case TK_FLOAT128:   {   return *((long double*)left) == *((long double*)right);    }
+    case TK_CHAR8:      {   return *((char*)left) == *((char*)right);    }
+    case TK_CHAR16:     {   return *((wchar_t*)left) == *((wchar_t*)right);    }
+    case TK_BOOLEAN:    {   return *((bool*)left) == *((bool*)right);    }
+    case TK_BYTE:       {   return *((octet*)left) == *((octet*)right);    }
+    case TK_STRING8:    {   return *((std::string*)left) == *((std::string*)right);    }
+    case TK_STRING16:   {   return *((std::wstring*)left) == *((std::wstring*)right);    }
     }
     return false;
 }
 
 void DynamicData::SetDefaultValue(MemberId id)
 {
+    std::string defaultValue = "";
     auto it = mDescriptors.find(id);
     if (it != mDescriptors.end())
     {
-        switch (it->second->get_kind())
-        {
-        default:
-            break;
-        case TK_INT32:
-        {
-            int32_t value(0);
-            try
-            {
-                value = stoi(it->second->mDefaultValue);
-            }
-            catch (...) {}
-            set_int32_value(id, value);
-        }
-        break;
-        case TK_UINT32:
-        {
-            uint32_t value(0);
-            try
-            {
-                value = stoul(it->second->mDefaultValue);
-            }
-            catch (...) {}
-            set_uint32_value(id, value);
-        }
-        break;
-        case TK_INT16:
-        {
-            int16_t value(0);
-            try
-            {
-                value = static_cast<int16_t>(stoi(it->second->mDefaultValue));
-            }
-            catch (...) {}
-            set_int16_value(id, value);
-        }
-        break;
-        case TK_UINT16:
-        {
-            uint16_t value(0);
-            try
-            {
-                value = static_cast<uint16_t>(stoul(it->second->mDefaultValue));
-            }
-            catch (...) {}
-            set_uint16_value(id, value);
-        }
-        break;
-        case TK_INT64:
-        {
-            int64_t value(0);
-            try
-            {
-                value = stoll(it->second->mDefaultValue);
-            }
-            catch (...) {}
-            set_int64_value(id, value);
-        }
-        break;
-        case TK_UINT64:
-        {
-            uint64_t value(0);
-            try
-            {
-                value = stoul(it->second->mDefaultValue);
-            }
-            catch (...) {}
-            set_uint64_value(id, value);
-        }
-        break;
-        case TK_FLOAT32:
-        {
-            float value(0.0f);
-            try
-            {
-                value = stof(it->second->mDefaultValue);
-            }
-            catch (...) {}
-            set_float32_value(id, value);
-        }
-        break;
-        case TK_FLOAT64:
-        {
-            double value(0.0f);
-            try
-            {
-                value = stod(it->second->mDefaultValue);
-            }
-            catch (...) {}
-            set_float64_value(id, value);
-        }
-        break;
-        case TK_FLOAT128:
-        {
-            long double value(0.0f);
-            try
-            {
-                value = stold(it->second->mDefaultValue);
-            }
-            catch (...) {}
-            set_float128_value(id, value);
-        }
-        break;
-        case TK_CHAR8:
-        {
-            if (it->second->mDefaultValue.length() >= 1)
-            {
-                set_char8_value(id, it->second->mDefaultValue[0]);
-            }
-        }
-        break;
-        case TK_CHAR16:
-        {
-            wchar_t value(0);
-            try
-            {
-                std::wstring temp = std::wstring(it->second->mDefaultValue.begin(), it->second->mDefaultValue.end());
-                value = temp[0];
-            }
-            catch (...) {}
+        defaultValue = it->second->mDefaultValue;
+    }
 
-            set_char16_value(id, value);
-        }
+    switch (mType->mKind)
+    {
+    default:
         break;
-        case TK_BOOLEAN:
+    case TK_INT32:
+    {
+        int32_t value(0);
+        try
         {
-            int value(0);
-            try
-            {
-                value = stoi(it->second->mDefaultValue);
-            }
-            catch (...) {}
-            set_bool_value(id, value == 1 ? true : false);
+            value = stoi(defaultValue);
         }
-        break;
-        case TK_BYTE:
+        catch (...) {}
+        set_int32_value(id, value);
+    }
+    break;
+    case TK_UINT32:
+    {
+        uint32_t value(0);
+        try
         {
-            if (it->second->mDefaultValue.length() >= 1)
-            {
-                set_byte_value(id, it->second->mDefaultValue[0]);
-            }
+            value = stoul(defaultValue);
         }
-        break;
+        catch (...) {}
+        set_uint32_value(id, value);
+    }
+    break;
+    case TK_INT16:
+    {
+        int16_t value(0);
+        try
+        {
+            value = static_cast<int16_t>(stoi(defaultValue));
+        }
+        catch (...) {}
+        set_int16_value(id, value);
+    }
+    break;
+    case TK_UINT16:
+    {
+        uint16_t value(0);
+        try
+        {
+            value = static_cast<uint16_t>(stoul(defaultValue));
+        }
+        catch (...) {}
+        set_uint16_value(id, value);
+    }
+    break;
+    case TK_INT64:
+    {
+        int64_t value(0);
+        try
+        {
+            value = stoll(defaultValue);
+        }
+        catch (...) {}
+        set_int64_value(id, value);
+    }
+    break;
+    case TK_UINT64:
+    {
+        uint64_t value(0);
+        try
+        {
+            value = stoul(defaultValue);
+        }
+        catch (...) {}
+        set_uint64_value(id, value);
+    }
+    break;
+    case TK_FLOAT32:
+    {
+        float value(0.0f);
+        try
+        {
+            value = stof(defaultValue);
+        }
+        catch (...) {}
+        set_float32_value(id, value);
+    }
+    break;
+    case TK_FLOAT64:
+    {
+        double value(0.0f);
+        try
+        {
+            value = stod(defaultValue);
+        }
+        catch (...) {}
+        set_float64_value(id, value);
+    }
+    break;
+    case TK_FLOAT128:
+    {
+        long double value(0.0f);
+        try
+        {
+            value = stold(defaultValue);
+        }
+        catch (...) {}
+        set_float128_value(id, value);
+    }
+    break;
+    case TK_CHAR8:
+    {
+        if (defaultValue.length() >= 1)
+        {
+            set_char8_value(id, defaultValue[0]);
+        }
+    }
+    break;
+    case TK_CHAR16:
+    {
+        wchar_t value(0);
+        try
+        {
+            std::wstring temp = std::wstring(defaultValue.begin(), defaultValue.end());
+            value = temp[0];
+        }
+        catch (...) {}
 
-        case TK_STRING8:
+        set_char16_value(id, value);
+    }
+    break;
+    case TK_BOOLEAN:
+    {
+        int value(0);
+        try
         {
-            set_string_value(id, it->second->mDefaultValue);
+            value = stoi(defaultValue);
         }
-        break;
-        case TK_STRING16:
+        catch (...) {}
+        set_bool_value(id, value == 1 ? true : false);
+    }
+    break;
+    case TK_BYTE:
+    {
+        if (defaultValue.length() >= 1)
         {
-            set_wstring_value(id, std::wstring(it->second->mDefaultValue.begin(), it->second->mDefaultValue.end()));
+            set_byte_value(id, defaultValue[0]);
         }
-        break;
-        }
+    }
+    break;
+
+    case TK_STRING8:
+    {
+        set_string_value(id, defaultValue);
+    }
+    break;
+    case TK_STRING16:
+    {
+        set_wstring_value(id, std::wstring(defaultValue.begin(), defaultValue.end()));
+    }
+    break;
     }
 }
 
@@ -725,42 +833,27 @@ DynamicData* DynamicData::clone() const
         newData->mDescriptors.insert(std::make_pair(it->first, new MemberDescriptor(it->second)));
     }
 
-    newData->mInt32Values = mInt32Values;
-    newData->mUInt32Values = mUInt32Values;
-    newData->mInt16Values = mInt16Values;
-    newData->mUInt16Values = mUInt16Values;
-    newData->mInt64Values = mInt64Values;
-    newData->mUInt64Values = mUInt64Values;
-    newData->mFloat32Values = mFloat32Values;
-    newData->mFloat64Values = mFloat64Values;
-    newData->mFloat128Values = mFloat128Values;
-    newData->mChar8Values = mChar8Values;
-    newData->mChar16Values = mChar16Values;
-    newData->mByteValues = mByteValues;
-    newData->mBoolValues = mBoolValues;
-    newData->mStringValues = mStringValues;
-    newData->mWStringValues = mWStringValues;
+    newData->mInt32Value = mInt32Value;
+    newData->mUInt32Value = mUInt32Value;
+    newData->mInt16Value = mInt16Value;
+    newData->mUInt16Value = mUInt16Value;
+    newData->mInt64Value = mInt64Value;
+    newData->mUInt64Value = mUInt64Value;
+    newData->mFloat32Value = mFloat32Value;
+    newData->mFloat64Value = mFloat64Value;
+    newData->mFloat128Value = mFloat128Value;
+    newData->mChar8Value = mChar8Value;
+    newData->mChar16Value = mChar16Value;
+    newData->mByteValue = mByteValue;
+    newData->mBoolValue = mBoolValue;
+    newData->mStringValue = mStringValue;
+    newData->mWStringValue = mWStringValue;
 
     for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
     {
         newData->mComplexValues.insert(std::make_pair(it->first, it->second->clone()));
     }
 
-    //newData->mInt32ListValues = mInt32ListValues;
-    //newData->mUInt32ListValues = mUInt32ListValues;
-    //newData->mInt16ListValues = mInt16ListValues;
-    //newData->mUInt16ListValues = mUInt16ListValues;
-    //newData->mInt64ListValues = mInt64ListValues;
-    //newData->mUInt64ListValues = mUInt64ListValues;
-    //newData->mFloat32ListValues = mFloat32ListValues;
-    //newData->mFloat64ListValues = mFloat64ListValues;
-    //newData->mFloat128ListValues = mFloat128ListValues;
-    //newData->mChar8ListValues = mChar8ListValues;
-    //newData->mChar16ListValues = mChar16ListValues;
-    //newData->mByteListValues = mByteListValues;
-    //newData->mBoolListValues = mBoolListValues;
-    //newData->mStringListValues = mStringListValues;
-    //newData->mWStringListValues = mWStringListValues;
 #else
     for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
     {
@@ -789,11 +882,11 @@ DynamicData* DynamicData::clone() const
 ResponseCode DynamicData::get_int32_value(int32_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mInt32Values.find(id);
-    if (it != mInt32Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        value = it->second;
+        value = mInt32Value;
         return ResponseCode::RETCODE_OK;
+
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #else
@@ -810,10 +903,9 @@ ResponseCode DynamicData::get_int32_value(int32_t& value, MemberId id) const
 ResponseCode DynamicData::set_int32_value(MemberId id, int32_t value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mInt32Values.find(id);
-    if (it != mInt32Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        it->second = value;
+        mInt32Value = value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -831,10 +923,9 @@ ResponseCode DynamicData::set_int32_value(MemberId id, int32_t value)
 ResponseCode DynamicData::get_uint32_value(uint32_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mUInt32Values.find(id);
-    if (it != mUInt32Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        value = it->second;
+        value = mUInt32Value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -852,10 +943,9 @@ ResponseCode DynamicData::get_uint32_value(uint32_t& value, MemberId id) const
 ResponseCode DynamicData::set_uint32_value(MemberId id, uint32_t value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mUInt32Values.find(id);
-    if (it != mUInt32Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        it->second = value;
+        mUInt32Value = value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -873,10 +963,9 @@ ResponseCode DynamicData::set_uint32_value(MemberId id, uint32_t value)
 ResponseCode DynamicData::get_int16_value(int16_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mInt16Values.find(id);
-    if (it != mInt16Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        value = it->second;
+        value = mInt16Value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -894,10 +983,9 @@ ResponseCode DynamicData::get_int16_value(int16_t& value, MemberId id) const
 ResponseCode DynamicData::set_int16_value(MemberId id, int16_t value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mInt16Values.find(id);
-    if (it != mInt16Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        it->second = value;
+        mInt16Value = value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -915,10 +1003,9 @@ ResponseCode DynamicData::set_int16_value(MemberId id, int16_t value)
 ResponseCode DynamicData::get_uint16_value(uint16_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mUInt16Values.find(id);
-    if (it != mUInt16Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        value = it->second;
+        value = mUInt16Value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -936,10 +1023,9 @@ ResponseCode DynamicData::get_uint16_value(uint16_t& value, MemberId id) const
 ResponseCode DynamicData::set_uint16_value(MemberId id, uint16_t value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mUInt16Values.find(id);
-    if (it != mUInt16Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        it->second = value;
+        mUInt16Value = value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -957,10 +1043,9 @@ ResponseCode DynamicData::set_uint16_value(MemberId id, uint16_t value)
 ResponseCode DynamicData::get_int64_value(int64_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mInt64Values.find(id);
-    if (it != mInt64Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        value = it->second;
+        value = mInt64Value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -978,10 +1063,9 @@ ResponseCode DynamicData::get_int64_value(int64_t& value, MemberId id) const
 ResponseCode DynamicData::set_int64_value(MemberId id, int64_t value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mInt64Values.find(id);
-    if (it != mInt64Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        it->second = value;
+        mInt64Value = value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -999,10 +1083,9 @@ ResponseCode DynamicData::set_int64_value(MemberId id, int64_t value)
 ResponseCode DynamicData::get_uint64_value(uint64_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mUInt64Values.find(id);
-    if (it != mUInt64Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        value = it->second;
+        value = mUInt64Value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1020,10 +1103,9 @@ ResponseCode DynamicData::get_uint64_value(uint64_t& value, MemberId id) const
 ResponseCode DynamicData::set_uint64_value(MemberId id, uint64_t value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mUInt64Values.find(id);
-    if (it != mUInt64Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        it->second = value;
+        mUInt64Value = value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1041,10 +1123,9 @@ ResponseCode DynamicData::set_uint64_value(MemberId id, uint64_t value)
 ResponseCode DynamicData::get_float32_value(float& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mFloat32Values.find(id);
-    if (it != mFloat32Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        value = it->second;
+        value = mFloat32Value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1062,10 +1143,9 @@ ResponseCode DynamicData::get_float32_value(float& value, MemberId id) const
 ResponseCode DynamicData::set_float32_value(MemberId id, float value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mFloat32Values.find(id);
-    if (it != mFloat32Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        it->second = value;
+        mFloat32Value = value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1083,10 +1163,9 @@ ResponseCode DynamicData::set_float32_value(MemberId id, float value)
 ResponseCode DynamicData::get_float64_value(double& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mFloat64Values.find(id);
-    if (it != mFloat64Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        value = it->second;
+        value = mFloat64Value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1104,10 +1183,9 @@ ResponseCode DynamicData::get_float64_value(double& value, MemberId id) const
 ResponseCode DynamicData::set_float64_value(MemberId id, double value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mFloat64Values.find(id);
-    if (it != mFloat64Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        it->second = value;
+        mFloat64Value = value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1125,10 +1203,9 @@ ResponseCode DynamicData::set_float64_value(MemberId id, double value)
 ResponseCode DynamicData::get_float128_value(long double& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mFloat128Values.find(id);
-    if (it != mFloat128Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        value = it->second;
+        value = mFloat128Value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1146,10 +1223,9 @@ ResponseCode DynamicData::get_float128_value(long double& value, MemberId id) co
 ResponseCode DynamicData::set_float128_value(MemberId id, long double value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mFloat128Values.find(id);
-    if (it != mFloat128Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        it->second = value;
+        mFloat128Value = value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1167,10 +1243,9 @@ ResponseCode DynamicData::set_float128_value(MemberId id, long double value)
 ResponseCode DynamicData::get_char8_value(char& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mChar8Values.find(id);
-    if (it != mChar8Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        value = it->second;
+        value = mChar8Value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1188,10 +1263,9 @@ ResponseCode DynamicData::get_char8_value(char& value, MemberId id) const
 ResponseCode DynamicData::set_char8_value(MemberId id, char value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mChar8Values.find(id);
-    if (it != mChar8Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        it->second = value;
+        mChar8Value = value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1209,10 +1283,9 @@ ResponseCode DynamicData::set_char8_value(MemberId id, char value)
 ResponseCode DynamicData::get_char16_value(wchar_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mChar16Values.find(id);
-    if (it != mChar16Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        value = it->second;
+        value = mChar16Value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1230,10 +1303,9 @@ ResponseCode DynamicData::get_char16_value(wchar_t& value, MemberId id) const
 ResponseCode DynamicData::set_char16_value(MemberId id, wchar_t value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mChar16Values.find(id);
-    if (it != mChar16Values.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        it->second = value;
+        mChar16Value = value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1251,10 +1323,9 @@ ResponseCode DynamicData::set_char16_value(MemberId id, wchar_t value)
 ResponseCode DynamicData::get_byte_value(octet& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mByteValues.find(id);
-    if (it != mByteValues.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        value = it->second;
+        value = mByteValue;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1272,10 +1343,9 @@ ResponseCode DynamicData::get_byte_value(octet& value, MemberId id) const
 ResponseCode DynamicData::set_byte_value(MemberId id, octet value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mByteValues.find(id);
-    if (it != mByteValues.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        it->second = value;
+        mByteValue = value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1293,10 +1363,9 @@ ResponseCode DynamicData::set_byte_value(MemberId id, octet value)
 ResponseCode DynamicData::get_bool_value(bool& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mBoolValues.find(id);
-    if (it != mBoolValues.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        value = it->second;
+        value = mBoolValue;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1314,10 +1383,9 @@ ResponseCode DynamicData::get_bool_value(bool& value, MemberId id) const
 ResponseCode DynamicData::set_bool_value(MemberId id, bool value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mBoolValues.find(id);
-    if (it != mBoolValues.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        it->second = value;
+        mBoolValue = value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1335,10 +1403,9 @@ ResponseCode DynamicData::set_bool_value(MemberId id, bool value)
 ResponseCode DynamicData::get_string_value(std::string& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mStringValues.find(id);
-    if (it != mStringValues.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        value = it->second;
+        value = mStringValue;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1356,10 +1423,9 @@ ResponseCode DynamicData::get_string_value(std::string& value, MemberId id) cons
 ResponseCode DynamicData::set_string_value(MemberId id, std::string value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mStringValues.find(id);
-    if (it != mStringValues.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        it->second = value;
+        mStringValue = value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1377,10 +1443,9 @@ ResponseCode DynamicData::set_string_value(MemberId id, std::string value)
 ResponseCode DynamicData::get_wstring_value(std::wstring& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mWStringValues.find(id);
-    if (it != mWStringValues.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        value = it->second;
+        value = mWStringValue;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1398,10 +1463,9 @@ ResponseCode DynamicData::get_wstring_value(std::wstring& value, MemberId id) co
 ResponseCode DynamicData::set_wstring_value(MemberId id, const std::wstring value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mWStringValues.find(id);
-    if (it != mWStringValues.end())
+    if (id == MEMBER_ID_INVALID)
     {
-        it->second = value;
+        mWStringValue = value;
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -1417,7 +1481,6 @@ ResponseCode DynamicData::set_wstring_value(MemberId id, const std::wstring valu
 }
 
 /*
-
 ResponseCode DynamicData::get_complex_value(DynamicData* value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -1462,635 +1525,6 @@ ResponseCode DynamicData::set_complex_value(MemberId id, const DynamicData* valu
 #endif
 
     return ResponseCode::RETCODE_OK;
-}
-ResponseCode DynamicData::get_int32_values(std::vector<int32_t>& value, MemberId id)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mInt32ListValues.find(id);
-    if (it != mInt32ListValues.end())
-    {
-        value = it->second;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        value = *((std::vector<int32_t>*)it->second);
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::set_int32_values(MemberId id, const std::vector<int32_t>& value)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mInt32ListValues.find(id);
-    if (it != mInt32ListValues.end())
-    {
-        it->second = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        *((std::vector<int32_t>*)it->second) = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::get_uint32_values(std::vector<uint32_t>& value, MemberId id)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mUInt32ListValues.find(id);
-    if (it != mUInt32ListValues.end())
-    {
-        value = it->second;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        value = *((std::vector<uint32_t>*)it->second);
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::set_uint32_values(MemberId id, const std::vector<uint32_t>& value)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mUInt32ListValues.find(id);
-    if (it != mUInt32ListValues.end())
-    {
-        it->second = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        *((std::vector<uint32_t>*)it->second) = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::get_int16_values(std::vector<int16_t>& value, MemberId id)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mInt16ListValues.find(id);
-    if (it != mInt16ListValues.end())
-    {
-        value = it->second;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        value = *((std::vector<int16_t>*)it->second);
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::set_int16_values(MemberId id, const std::vector<int16_t>& value)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mInt16ListValues.find(id);
-    if (it != mInt16ListValues.end())
-    {
-        it->second = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        *((std::vector<int16_t>*)it->second) = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::get_uint16_values(std::vector<uint16_t>& value, MemberId id)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mUInt16ListValues.find(id);
-    if (it != mUInt16ListValues.end())
-    {
-        value = it->second;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        value = *((std::vector<uint16_t>*)it->second);
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::set_uint16_values(MemberId id, const std::vector<uint16_t>& value)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mUInt16ListValues.find(id);
-    if (it != mUInt16ListValues.end())
-    {
-        it->second = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        *((std::vector<uint16_t>*)it->second) = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::get_int64_values(std::vector<int64_t>& value, MemberId id)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mInt64ListValues.find(id);
-    if (it != mInt64ListValues.end())
-    {
-        value = it->second;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        value = *((std::vector<int64_t>*)it->second);
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::set_int64_values(MemberId id, const std::vector<int64_t>& value)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mInt64ListValues.find(id);
-    if (it != mInt64ListValues.end())
-    {
-        it->second = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        *((std::vector<int64_t>*)it->second) = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::get_uint64_values(std::vector<uint64_t>& value, MemberId id)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mUInt64ListValues.find(id);
-    if (it != mUInt64ListValues.end())
-    {
-        value = it->second;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        value = *((std::vector<uint64_t>*)it->second);
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::set_uint64_values(MemberId id, const std::vector<uint64_t>& value)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mUInt64ListValues.find(id);
-    if (it != mUInt64ListValues.end())
-    {
-        it->second = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        *((std::vector<uint64_t>*)it->second) = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::get_float32_values(std::vector<float>& value, MemberId id)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mFloat32ListValues.find(id);
-    if (it != mFloat32ListValues.end())
-    {
-        value = it->second;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        value = *((std::vector<float>*)it->second);
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::set_float32_values(MemberId id, const std::vector<float>& value)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mFloat32ListValues.find(id);
-    if (it != mFloat32ListValues.end())
-    {
-        it->second = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        *((std::vector<float>*)it->second) = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::get_float64_values(std::vector<double>& value, MemberId id)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mFloat64ListValues.find(id);
-    if (it != mFloat64ListValues.end())
-    {
-        value = it->second;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        value = *((std::vector<double>*)it->second);
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::set_float64_values(MemberId id, const std::vector<double>& value)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mFloat64ListValues.find(id);
-    if (it != mFloat64ListValues.end())
-    {
-        it->second = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        *((std::vector<double>*)it->second) = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::get_float128_values(std::vector<long double>& value, MemberId id)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mFloat128ListValues.find(id);
-    if (it != mFloat128ListValues.end())
-    {
-        value = it->second;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        value = *((std::vector<long double>*)it->second);
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::set_float128_values(MemberId id, const std::vector<long double>& value)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mFloat128ListValues.find(id);
-    if (it != mFloat128ListValues.end())
-    {
-        it->second = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        *((std::vector<long double>*)it->second) = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::get_char8_values(std::vector<char>& value, MemberId id)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mChar8ListValues.find(id);
-    if (it != mChar8ListValues.end())
-    {
-        value = it->second;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        value = *((std::vector<char>*)it->second);
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::set_char8_values(MemberId id, const std::vector<char>& value)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mChar8ListValues.find(id);
-    if (it != mChar8ListValues.end())
-    {
-        it->second = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        *((std::vector<char>*)it->second) = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::get_char16_values(std::vector<wchar_t>& value, MemberId id)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mChar16ListValues.find(id);
-    if (it != mChar16ListValues.end())
-    {
-        value = it->second;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        value = *((std::vector<wchar_t>*)it->second);
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::set_char16_values(MemberId id, const std::vector<wchar_t>& value)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mChar16ListValues.find(id);
-    if (it != mChar16ListValues.end())
-    {
-        it->second = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        *((std::vector<wchar_t>*)it->second) = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::get_byte_values(std::vector<octet>& value, MemberId id)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mByteListValues.find(id);
-    if (it != mByteListValues.end())
-    {
-        value = it->second;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        value = *((std::vector<octet>*)it->second);
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::set_byte_values(MemberId id, const std::vector<octet>& value)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mByteListValues.find(id);
-    if (it != mByteListValues.end())
-    {
-        it->second = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        *((std::vector<octet>*)it->second) = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::get_boolean_values(std::vector<bool>& value, MemberId id)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mBoolListValues.find(id);
-    if (it != mBoolListValues.end())
-    {
-        value = it->second;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        value = *((std::vector<bool>*)it->second);
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::set_boolean_values(MemberId id, const std::vector<bool>& value)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mBoolListValues.find(id);
-    if (it != mBoolListValues.end())
-    {
-        it->second = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        *((std::vector<bool>*)it->second) = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::get_string_values(std::vector<std::string>& value, MemberId id)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mStringListValues.find(id);
-    if (it != mStringListValues.end())
-    {
-        value = it->second;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        value = *((std::vector<std::string>*)it->second);
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::set_string_values(MemberId id, const std::vector<std::string>& value)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mStringListValues.find(id);
-    if (it != mStringListValues.end())
-    {
-        it->second = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        *((std::vector<std::string>*)it->second) = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::get_wstring_values(std::vector<std::wstring>& value, MemberId id)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mWStringListValues.find(id);
-    if (it != mWStringListValues.end())
-    {
-        value = it->second;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        value = *((std::vector<std::wstring>*)it->second);
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
-}
-
-ResponseCode DynamicData::set_wstring_values(MemberId id, const std::vector<std::wstring>& value)
-{
-#ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mWStringListValues.find(id);
-    if (it != mWStringListValues.end())
-    {
-        it->second = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        *((std::vector<std::wstring>*)it->second) = value;
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-#endif
 }
 */
 

@@ -37,18 +37,19 @@ public:
 
     virtual ~DynamicTypeBuilder();
 
-	ResponseCode add_member(const MemberDescriptor* descriptor);
+    RTPS_DllAPI ResponseCode add_member(const MemberDescriptor* descriptor);
 
-    ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
+    RTPS_DllAPI ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
 
-    ResponseCode apply_annotation_to_member(MemberId id, AnnotationDescriptor& descriptor);
+    RTPS_DllAPI ResponseCode apply_annotation_to_member(MemberId id, AnnotationDescriptor& descriptor);
 
-    DynamicType* build();
+    RTPS_DllAPI DynamicType* build();
 
-    ResponseCode copy_from(const DynamicTypeBuilder* other);
+    RTPS_DllAPI ResponseCode copy_from(const DynamicTypeBuilder* other);
 protected:
 
     MemberId mCurrentMemberId;
+    uint32_t mMaxIndex;
 
     virtual void Clear() override;
 };

@@ -45,13 +45,13 @@ protected:
 
     friend class DynamicTypeBuilderFactory;
 
-	TypeKind mKind;
-	std::string mName;
-	DynamicType* mBaseType;
-	DynamicType* mDiscriminatorType;
-	std::vector<uint32_t> mBound;
-	DynamicType* mElementType;
-	DynamicType* mKeyElementType;
+	TypeKind mKind;                         // Type Kind.
+	std::string mName;                      // Type Name.
+	DynamicType* mBaseType;                 // SuperType of an structure or base type of an alias type.
+	DynamicType* mDiscriminatorType;        // Discrimination type for a union.
+	std::vector<uint32_t> mBound;           // Length for strings, arrays, sequences, maps and bitmasks.
+	DynamicType* mElementType;              // Value Type for arrays, sequences, maps, bitmasks and strings.
+	DynamicType* mKeyElementType;           // Key Type for maps.
 };
 
 } // namespace types

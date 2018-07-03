@@ -54,8 +54,16 @@ DynamicDataFactory::~DynamicDataFactory()
 
 DynamicData* DynamicDataFactory::create_data(DynamicType* pType)
 {
-    //mDynamicDatas
-    return nullptr;
+    try
+    {
+        DynamicData* newData = new DynamicData(pType);
+        mDynamicDatas.push_back(newData);
+        return newData;
+    }
+    catch (...)
+    {
+        return nullptr;
+    }
 }
 
 ResponseCode DynamicDataFactory::delete_data(DynamicData* data)

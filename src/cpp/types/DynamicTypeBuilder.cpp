@@ -24,18 +24,21 @@ namespace types {
 
 DynamicTypeBuilder::DynamicTypeBuilder()
     : mCurrentMemberId(0)
+    , mMaxIndex(0)
 {
 }
 
 DynamicTypeBuilder::DynamicTypeBuilder(const TypeDescriptor* descriptor)
     : DynamicType(descriptor)
     , mCurrentMemberId(0)
+    , mMaxIndex(0)
 {
 }
 
 DynamicTypeBuilder::DynamicTypeBuilder(const DynamicType* pType)
     : DynamicType()
     , mCurrentMemberId(0)
+    , mMaxIndex(0)
 {
     if (pType != nullptr)
     {
@@ -53,7 +56,25 @@ ResponseCode DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
         || mDescriptor->getKind() == TK_BITMASK || mDescriptor->getKind() == TK_ENUM
         || mDescriptor->getKind() == TK_STRUCTURE || mDescriptor->getKind() == TK_UNION)
     {
-        DynamicTypeMember* newMember = new DynamicTypeMember(descriptor);
+        DynamicTypeMember* newMember = new DynamicTypeMember(descriptor, mCurrentMemberId);
+
+        // If the index of the new member is bigger than the current maximum, put it at the end.
+        if (newMember->get_index() > mMaxIndex)
+        {
+            newMember->set_index(++mMaxIndex);
+        }
+        else
+        {
+            // Move every member bigger than the current index to the right.
+            for (auto it = mMemberById.begin(); it != mMemberById.end(); ++it)
+            {
+                if (it->second->get_index() >= newMember->get_index())
+                {
+                    it->second->set_index(it->second->get_index() + 1);
+                }
+            }
+        }
+
         mMemberById.insert(std::make_pair(mCurrentMemberId, newMember));
         mMemberByName.insert(std::make_pair(newMember->get_name(), newMember));
         ++mCurrentMemberId;

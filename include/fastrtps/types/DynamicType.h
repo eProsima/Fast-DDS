@@ -39,10 +39,10 @@ public:
     TypeKind get_kind() const;
     bool is_complex_kind() const;
 
-	ResponseCode get_member_by_name(DynamicTypeMember& member, const std::string name);
+	ResponseCode get_member_by_name(DynamicTypeMember* member, const std::string name);
 	ResponseCode get_all_members_by_name(std::map<std::string, DynamicTypeMember*>& members);
 
-	ResponseCode get_member(DynamicTypeMember& member, MemberId id);
+	ResponseCode get_member(DynamicTypeMember* member, MemberId id);
 	ResponseCode get_all_members(std::map<MemberId, DynamicTypeMember*>& members);
 
 	uint32_t get_annotation_count();
@@ -55,6 +55,7 @@ protected:
     friend class MemberDescriptor;
     friend class TypeDescriptor;
     friend class DynamicData;
+    friend class AnnotationDescriptor;
 
     virtual void Clear();
 
