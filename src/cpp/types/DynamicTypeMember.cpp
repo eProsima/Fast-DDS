@@ -24,11 +24,13 @@ namespace types {
 DynamicTypeMember::DynamicTypeMember()
     : mParent(nullptr)
     , mDescriptor(nullptr)
+    , mId(MEMBER_ID_INVALID)
 {
 }
 
-DynamicTypeMember::DynamicTypeMember(const MemberDescriptor* descriptor)
+DynamicTypeMember::DynamicTypeMember(const MemberDescriptor* descriptor, MemberId id)
     : mParent(nullptr)
+    , mId(id)
 {
     mDescriptor = new MemberDescriptor(descriptor);
 }
@@ -66,6 +68,15 @@ ResponseCode DynamicTypeMember::get_descriptor(MemberDescriptor* descriptor) con
     {
         return ResponseCode::RETCODE_BAD_PARAMETER;
     }
+}
+
+uint32_t DynamicTypeMember::get_index() const
+{
+    if (mDescriptor != nullptr)
+    {
+        return mDescriptor->get_index();
+    }
+    return 0;
 }
 
 bool DynamicTypeMember::equals(const DynamicTypeMember* other) const
@@ -123,6 +134,14 @@ std::string DynamicTypeMember::get_name() const
 MemberId DynamicTypeMember::get_id() const
 {
     return mDescriptor->get_id();
+}
+
+void DynamicTypeMember::set_index(uint32_t index)
+{
+    if (mDescriptor != nullptr)
+    {
+        mDescriptor->set_index(index);
+    }
 }
 
 } // namespace types

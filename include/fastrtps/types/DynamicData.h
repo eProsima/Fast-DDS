@@ -85,38 +85,11 @@ public:
 	//ResponseCode get_complex_value(DynamicData* value, MemberId id);
 	//ResponseCode set_complex_value(MemberId id, const DynamicData* value);
 
-	//ResponseCode get_int32_values(std::vector<int32_t>& value, MemberId id);
-	//ResponseCode set_int32_values(MemberId id, const std::vector<int32_t>& value);
-	//ResponseCode get_uint32_values(std::vector<uint32_t>& value, MemberId id);
-	//ResponseCode set_uint32_values(MemberId id, const std::vector<uint32_t>& value);
-	//ResponseCode get_int16_values(std::vector<int16_t>& value, MemberId id);
-	//ResponseCode set_int16_values(MemberId id, const std::vector<int16_t>& value);
-	//ResponseCode get_uint16_values(std::vector<uint16_t>& value, MemberId id);
-	//ResponseCode set_uint16_values(MemberId id, const std::vector<uint16_t>& value);
-	//ResponseCode get_int64_values(std::vector<int64_t>& value, MemberId id);
-	//ResponseCode set_int64_values(MemberId id, const std::vector<int64_t>& value);
-	//ResponseCode get_uint64_values(std::vector<uint64_t>& value, MemberId id);
-	//ResponseCode set_uint64_values(MemberId id, const std::vector<uint64_t>& value);
-	//ResponseCode get_float32_values(std::vector<float>& value, MemberId id);
-	//ResponseCode set_float32_values(MemberId id, const std::vector<float>& value);
-	//ResponseCode get_float64_values(std::vector<double>& value, MemberId id);
-	//ResponseCode set_float64_values(MemberId id, const std::vector<double>& value);
-	//ResponseCode get_float128_values(std::vector<long double>& value, MemberId id);
-	//ResponseCode set_float128_values(MemberId id, const std::vector<long double>& value);
-	//ResponseCode get_char8_values(std::vector<char>& value, MemberId id);
-	//ResponseCode set_char8_values(MemberId id, const std::vector<char>& value);
-	//ResponseCode get_char16_values(std::vector<wchar_t>& value, MemberId id);
-	//ResponseCode set_char16_values(MemberId id, const std::vector<wchar_t>& value);
-	//ResponseCode get_byte_values(std::vector<octet>& value, MemberId id);
-	//ResponseCode set_byte_values(MemberId id, const std::vector<octet>& value);
-	//ResponseCode get_boolean_values(std::vector<bool>& value, MemberId id);
-	//ResponseCode set_boolean_values(MemberId id, const std::vector<bool>& value);
-	//ResponseCode get_string_values(std::vector<std::string>& value, MemberId id);
-	//ResponseCode set_string_values(MemberId id, const std::vector<std::string>& value);
-	//ResponseCode get_wstring_values(std::vector<std::wstring>& value, MemberId id);
-	//ResponseCode set_wstring_values(MemberId id, const std::vector<std::wstring>& value);
-
 protected:
+
+    DynamicData(DynamicType* pType);
+
+    void AddValue(TypeKind kind, MemberId id);
 
     void Clean();
 
@@ -130,44 +103,29 @@ protected:
     std::map<MemberId, MemberDescriptor*> mDescriptors;
 
 #ifdef DYNAMIC_TYPES_CHECKING
-    std::map<MemberId, int32_t> mInt32Values;
-    std::map<MemberId, uint32_t> mUInt32Values;
-    std::map<MemberId, int16_t> mInt16Values;
-    std::map<MemberId, uint16_t> mUInt16Values;
-    std::map<MemberId, int64_t> mInt64Values;
-    std::map<MemberId, uint64_t> mUInt64Values;
-    std::map<MemberId, float> mFloat32Values;
-    std::map<MemberId, double> mFloat64Values;
-    std::map<MemberId, long double> mFloat128Values;
-    std::map<MemberId, char> mChar8Values;
-    std::map<MemberId, wchar_t> mChar16Values;
-    std::map<MemberId, octet> mByteValues;
-    std::map<MemberId, bool> mBoolValues;
-    std::map<MemberId, std::string> mStringValues;
-    std::map<MemberId, std::wstring> mWStringValues;
+    int32_t mInt32Value;
+    uint32_t mUInt32Value;
+    int16_t mInt16Value;
+    uint16_t mUInt16Value;
+    int64_t mInt64Value;
+    uint64_t mUInt64Value;
+    float mFloat32Value;
+    double mFloat64Value;
+    long double mFloat128Value;
+    char mChar8Value;
+    wchar_t mChar16Value;
+    octet mByteValue;
+    bool mBoolValue;
+    std::string mStringValue;
+    std::wstring mWStringValue;
     std::map<MemberId, DynamicData*> mComplexValues;
-
-    //std::map<MemberId, std::vector<int32_t>> mInt32ListValues;
-    //std::map<MemberId, std::vector<uint32_t>> mUInt32ListValues;
-    //std::map<MemberId, std::vector<int16_t>> mInt16ListValues;
-    //std::map<MemberId, std::vector<uint16_t>> mUInt16ListValues;
-    //std::map<MemberId, std::vector<int64_t>> mInt64ListValues;
-    //std::map<MemberId, std::vector<uint64_t>> mUInt64ListValues;
-    //std::map<MemberId, std::vector<float>> mFloat32ListValues;
-    //std::map<MemberId, std::vector<double>> mFloat64ListValues;
-    //std::map<MemberId, std::vector<long double>> mFloat128ListValues;
-    //std::map<MemberId, std::vector<char>> mChar8ListValues;
-    //std::map<MemberId, std::vector<wchar_t>> mChar16ListValues;
-    //std::map<MemberId, std::vector<octet>> mByteListValues;
-    //std::map<MemberId, std::vector<bool>> mBoolListValues;
-    //std::map<MemberId, std::vector<std::string>> mStringListValues;
-    //std::map<MemberId, std::vector<std::wstring>> mWStringListValues;
 #else
     std::map<MemberId, void*> mValues;
 #endif
     std::vector<MemberId> mLoanedValues;
-
     uint32_t mItemCount;
+
+    friend class DynamicDataFactory;
 };
 
 

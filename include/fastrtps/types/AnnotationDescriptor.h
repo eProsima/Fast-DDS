@@ -17,12 +17,12 @@
 
 #include <fastrtps/types/TypesBase.h>
 
-class MemberDescriptor;
-class DynamicType;
-
 namespace eprosima{
 namespace fastrtps{
 namespace types{
+
+class MemberDescriptor;
+class DynamicType;
 
 class AnnotationDescriptor
 {

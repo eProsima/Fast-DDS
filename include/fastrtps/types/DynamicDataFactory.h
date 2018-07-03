@@ -29,11 +29,11 @@ class DynamicDataFactory
 public:
     ~DynamicDataFactory();
 
-    static DynamicDataFactory* get_instance();
-    static ResponseCode delete_instance();
+    RTPS_DllAPI static DynamicDataFactory* get_instance();
+    RTPS_DllAPI static ResponseCode delete_instance();
 
-    DynamicData* create_data(DynamicType* pType);
-    ResponseCode delete_data(DynamicData* data);
+    RTPS_DllAPI DynamicData* create_data(DynamicType* pType);
+    RTPS_DllAPI ResponseCode delete_data(DynamicData* data);
 
 protected:
     DynamicDataFactory();

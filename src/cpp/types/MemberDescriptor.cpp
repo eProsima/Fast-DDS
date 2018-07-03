@@ -109,6 +109,16 @@ MemberId MemberDescriptor::get_id() const
     return mId;
 }
 
+uint32_t MemberDescriptor::get_index() const
+{
+    return mIndex;
+}
+
+void MemberDescriptor::set_index(uint32_t index)
+{
+    mIndex = index;
+}
+
 TypeKind MemberDescriptor::get_kind() const
 {
     if (mType != nullptr)

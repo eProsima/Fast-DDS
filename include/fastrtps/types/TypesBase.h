@@ -117,6 +117,7 @@ enum ResponseCode : uint32_t
 
 typedef uint32_t MemberId;
 #define MEMBER_ID_INVALID 0
+#define INDEX_INVALID UINT32_MAX
 
 #define LENGTH_UNLIMITED    0
 

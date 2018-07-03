@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/types/AnnotationDescriptor.h>
+#include <fastrtps/types/DynamicType.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -81,7 +82,7 @@ bool AnnotationDescriptor::equals(const AnnotationDescriptor* other) const
 
 bool AnnotationDescriptor::isConsistent() const
 {
-    if (mType == nullptr)
+    if (mType == nullptr || mType->get_kind() != TK_ANNOTATION)
     {
         return false;
     }
