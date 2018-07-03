@@ -158,6 +158,11 @@ bool TypeDescriptor::equals(const TypeDescriptor* descriptor) const
         mKeyElementType == descriptor->mKeyElementType;
 }
 
+DynamicType* TypeDescriptor::getBaseType() const
+{
+    return mBaseType;
+}
+
 uint32_t TypeDescriptor::getBounds(uint32_t index /*= 0*/) const
 {
     if (index < mBound.size())
@@ -189,7 +194,7 @@ bool TypeDescriptor::isConsistent() const
         return false;
     }
 
-    // Alias must have base type and structures have base type optionally.
+    // Alias must have base type and structures optionally can have it.
     if (mBaseType != nullptr && mKind != TK_ALIAS && mKind != TK_STRUCTURE)
     {
         return false;

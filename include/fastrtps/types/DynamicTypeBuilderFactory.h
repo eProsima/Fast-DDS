@@ -58,7 +58,8 @@ public:
 	RTPS_DllAPI DynamicTypeBuilder* create_sequence_type(const DynamicType* element_type, uint32_t bound);
 	RTPS_DllAPI DynamicTypeBuilder* create_array_type(const DynamicType* element_type, std::vector<uint32_t> bounds);
 	RTPS_DllAPI DynamicTypeBuilder* create_map_type(DynamicType* key_element_type, DynamicType* element_type, uint32_t bound);
-	RTPS_DllAPI DynamicTypeBuilder* create_bitmask_type(uint32_t bound);
+    RTPS_DllAPI DynamicTypeBuilder* create_bitmask_type(uint32_t bound);
+    RTPS_DllAPI DynamicTypeBuilder* create_alias_type(DynamicType* base_type, std::string sName /*= ""*/);
     //DynamicTypeBuilder* create_type_w_type_object(TypeObject* type_object);
     //DynamicTypeBuilder* create_type_w_uri(const std::string& document_url, const std::string& type_name, IncludePathSeq include_paths);
 	//DynamicTypeBuilder* create_type_w_document(const std::string& document, const std::string& type_name, IncludePathSeq include_paths);

@@ -63,6 +63,33 @@ DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
     mTypesList.clear();
 }
 
+DynamicTypeBuilder* DynamicTypeBuilderFactory::create_alias_type(DynamicType* base_type, std::string sName /*= ""*/)
+{
+    if (base_type != nullptr)
+    {
+        TypeDescriptor pDescriptor;
+        pDescriptor.mKind = TK_ARRAY;
+        pDescriptor.mBaseType = base_type;
+        if (sName.length() > 0)
+        {
+            pDescriptor.mName = sName;
+        }
+        else
+        {
+            pDescriptor.mName = GenerateTypeName();
+        }
+
+        DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
+        mTypesList.push_back(pNewTypeBuilder);
+        return pNewTypeBuilder;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error creating alias type, base_type must be valid");
+    }
+    return nullptr;
+}
+
 DynamicTypeBuilder* DynamicTypeBuilderFactory::create_array_type(const DynamicType* element_type,
     std::vector<uint32_t> bounds)
 {

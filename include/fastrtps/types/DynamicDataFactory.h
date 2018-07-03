@@ -38,6 +38,7 @@ public:
 protected:
     DynamicDataFactory();
 
+
     std::vector<DynamicData*> mDynamicDatas;
 };
 

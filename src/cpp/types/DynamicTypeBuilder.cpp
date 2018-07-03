@@ -53,9 +53,9 @@ DynamicTypeBuilder::~DynamicTypeBuilder()
 
 ResponseCode DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
 {
-    if (mDescriptor->getKind() == TK_ANNOTATION || mDescriptor->getKind() == TK_ALIAS
-        || mDescriptor->getKind() == TK_BITMASK || mDescriptor->getKind() == TK_ENUM
-        || mDescriptor->getKind() == TK_STRUCTURE || mDescriptor->getKind() == TK_UNION)
+    if (mDescriptor->getKind() == TK_ANNOTATION || mDescriptor->getKind() == TK_BITMASK
+        || mDescriptor->getKind() == TK_ENUM || mDescriptor->getKind() == TK_STRUCTURE
+        || mDescriptor->getKind() == TK_UNION)
     {
         DynamicTypeMember* newMember = new DynamicTypeMember(descriptor, mCurrentMemberId);
 
@@ -149,6 +149,7 @@ DynamicType* DynamicTypeBuilder::build()
     {
         newType->mMemberByName.insert(std::make_pair(it->first, it->second));
     }
+
     return newType;
 }
 
@@ -177,6 +178,16 @@ void DynamicTypeBuilder::Clear()
     DynamicType::Clear();
 
     mCurrentMemberId = 0;
+}
+
+ResponseCode DynamicTypeBuilder::set_name(const std::string& name)
+{
+    if (mDescriptor != nullptr)
+    {
+        mDescriptor->setName(name);
+    }
+    mName = name;
+    return ResponseCode::RETCODE_OK;
 }
 
 } // namespace types
