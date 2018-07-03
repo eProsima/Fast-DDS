@@ -199,7 +199,7 @@ TypeKind DynamicType::get_kind() const
     return mKind;
 }
 
-ResponseCode DynamicType::get_member_by_name(DynamicTypeMember* member, const std::string name)
+ResponseCode DynamicType::get_member_by_name(DynamicTypeMember& member, const std::string name)
 {
     auto it = mMemberByName.find(name);
     if (it != mMemberByName.end())
@@ -220,7 +220,7 @@ ResponseCode DynamicType::get_all_members_by_name(std::map<std::string, DynamicT
     return ResponseCode::RETCODE_OK;
 }
 
-ResponseCode DynamicType::get_member(DynamicTypeMember* member, MemberId id)
+ResponseCode DynamicType::get_member(DynamicTypeMember& member, MemberId id)
 {
     auto it = mMemberById.find(id);
     if (it != mMemberById.end())
