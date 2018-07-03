@@ -116,10 +116,11 @@ enum ResponseCode : uint32_t
 };
 
 typedef uint32_t MemberId;
-#define MEMBER_ID_INVALID 0
-#define INDEX_INVALID UINT32_MAX
+#define MEMBER_ID_INVALID       0
+#define INDEX_INVALID           UINT32_MAX
+#define MAX_BITMASK_LENGTH      64
 
-#define LENGTH_UNLIMITED    0
+#define LENGTH_UNLIMITED        0
 
 class TypeSupport
 {

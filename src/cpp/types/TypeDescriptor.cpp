@@ -14,6 +14,7 @@
 
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -124,6 +125,7 @@ ResponseCode TypeDescriptor::copy_from(const TypeDescriptor* descriptor)
     }
     else
     {
+        logError(DYN_TYPES, "Error copying TypeDescriptor, invalid input descriptor");
         return ResponseCode::RETCODE_BAD_PARAMETER;
     }
 }

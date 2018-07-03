@@ -17,6 +17,7 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/AnnotationDescriptor.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -82,6 +83,8 @@ ResponseCode DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
     }
     else
     {
+        logWarning(DYN_TYPES, "Error adding member, the current type " << mDescriptor->getKind()
+            << " doesn't support members.");
         return ResponseCode::RETCODE_PRECONDITION_NOT_MET;
     }
 }
@@ -95,7 +98,11 @@ ResponseCode DynamicTypeBuilder::apply_annotation(AnnotationDescriptor& descript
         mAnnotation.push_back(pNewDescriptor);
         return ResponseCode::RETCODE_OK;
     }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
+    else
+    {
+        logError(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
 }
 
 ResponseCode DynamicTypeBuilder::apply_annotation_to_member(MemberId id, AnnotationDescriptor& descriptor)
@@ -108,8 +115,17 @@ ResponseCode DynamicTypeBuilder::apply_annotation_to_member(MemberId id, Annotat
             it->second->apply_annotation(descriptor);
             return ResponseCode::RETCODE_OK;
         }
+        else
+        {
+            logError(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
+            return ResponseCode::RETCODE_BAD_PARAMETER;
+        }
     }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
+    else
+    {
+        logError(DYN_TYPES, "Error applying annotation to member. The input descriptor isn't consistent.");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
 }
 
 DynamicType* DynamicTypeBuilder::build()
@@ -149,7 +165,11 @@ ResponseCode DynamicTypeBuilder::copy_from(const DynamicTypeBuilder* other)
         }
         return res;
     }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
+    else
+    {
+        logError(DYN_TYPES, "Error copying DynamicTypeBuilder. Invalid input parameter.");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
 }
 
 void DynamicTypeBuilder::Clear()

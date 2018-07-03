@@ -14,6 +14,7 @@
 
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -50,6 +51,7 @@ ResponseCode AnnotationDescriptor::copy_from(const AnnotationDescriptor* descrip
     }
     else
     {
+        logError(DYN_TYPES, "Error copying AnnotationDescriptor, invalid input descriptor");
         return ResponseCode::RETCODE_BAD_PARAMETER;
     }
     return ResponseCode::RETCODE_OK;
@@ -88,8 +90,6 @@ bool AnnotationDescriptor::isConsistent() const
     }
 
     //TODO: Check consistency of mValue
-
-
     return true;
 }
 

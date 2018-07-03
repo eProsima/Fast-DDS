@@ -17,6 +17,7 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -134,7 +135,11 @@ ResponseCode DynamicData::get_descriptor(MemberDescriptor& value, MemberId id)
         value.copy_from(it->second);
         return ResponseCode::RETCODE_OK;
     }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
+    else
+    {
+        logWarning(DYN_TYPES, "Error getting MemberDescriptor. MemberId not found.");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
 }
 
 ResponseCode DynamicData::set_descriptor(MemberId id, const MemberDescriptor* value)
@@ -144,7 +149,11 @@ ResponseCode DynamicData::set_descriptor(MemberId id, const MemberDescriptor* va
         mDescriptors.insert(std::make_pair(id, new MemberDescriptor(value)));
         return ResponseCode::RETCODE_OK;
     }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
+    else
+    {
+        logWarning(DYN_TYPES, "Error setting MemberDescriptor. MemberId found.");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
 }
 
 bool DynamicData::equals(const DynamicData* other)
@@ -792,8 +801,17 @@ DynamicData* DynamicData::loan_value(MemberId id)
             return (DynamicData*)it->second;
         }
 #endif
+        else
+        {
+            logError(DYN_TYPES, "Error loaning Value. MemberId not found.");
+            return nullptr;
+        }
     }
-    return nullptr;
+    else
+    {
+        logError(DYN_TYPES, "Error loaning Value. The value has been loaned previously.");
+        return nullptr;
+    }
 }
 
 ResponseCode DynamicData::return_loaned_value(const DynamicData* value)
@@ -815,7 +833,14 @@ ResponseCode DynamicData::return_loaned_value(const DynamicData* value)
             return ResponseCode::RETCODE_OK;
         }
 #endif
+        else
+        {
+            logError(DYN_TYPES, "Error returning loaned Value. Value Not found.");
+            return ResponseCode::RETCODE_BAD_PARAMETER;
+        }
     }
+
+    logError(DYN_TYPES, "Error returning loaned Value. The value hasn't been loaned.");
     return ResponseCode::RETCODE_PRECONDITION_NOT_MET;
 }
 
@@ -880,7 +905,7 @@ DynamicData* DynamicData::clone() const
 ResponseCode DynamicData::get_int32_value(int32_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_INT32 && id == MEMBER_ID_INVALID)
     {
         value = mInt32Value;
         return ResponseCode::RETCODE_OK;
@@ -901,7 +926,7 @@ ResponseCode DynamicData::get_int32_value(int32_t& value, MemberId id) const
 ResponseCode DynamicData::set_int32_value(MemberId id, int32_t value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_INT32 && id == MEMBER_ID_INVALID)
     {
         mInt32Value = value;
         return ResponseCode::RETCODE_OK;
@@ -921,7 +946,7 @@ ResponseCode DynamicData::set_int32_value(MemberId id, int32_t value)
 ResponseCode DynamicData::get_uint32_value(uint32_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_UINT32 && id == MEMBER_ID_INVALID)
     {
         value = mUInt32Value;
         return ResponseCode::RETCODE_OK;
@@ -941,7 +966,7 @@ ResponseCode DynamicData::get_uint32_value(uint32_t& value, MemberId id) const
 ResponseCode DynamicData::set_uint32_value(MemberId id, uint32_t value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_UINT32 && id == MEMBER_ID_INVALID)
     {
         mUInt32Value = value;
         return ResponseCode::RETCODE_OK;
@@ -961,7 +986,7 @@ ResponseCode DynamicData::set_uint32_value(MemberId id, uint32_t value)
 ResponseCode DynamicData::get_int16_value(int16_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_INT16 && id == MEMBER_ID_INVALID)
     {
         value = mInt16Value;
         return ResponseCode::RETCODE_OK;
@@ -981,7 +1006,7 @@ ResponseCode DynamicData::get_int16_value(int16_t& value, MemberId id) const
 ResponseCode DynamicData::set_int16_value(MemberId id, int16_t value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_INT16 && id == MEMBER_ID_INVALID)
     {
         mInt16Value = value;
         return ResponseCode::RETCODE_OK;
@@ -1001,7 +1026,7 @@ ResponseCode DynamicData::set_int16_value(MemberId id, int16_t value)
 ResponseCode DynamicData::get_uint16_value(uint16_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_UINT16 && id == MEMBER_ID_INVALID)
     {
         value = mUInt16Value;
         return ResponseCode::RETCODE_OK;
@@ -1021,7 +1046,7 @@ ResponseCode DynamicData::get_uint16_value(uint16_t& value, MemberId id) const
 ResponseCode DynamicData::set_uint16_value(MemberId id, uint16_t value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_UINT16 && id == MEMBER_ID_INVALID)
     {
         mUInt16Value = value;
         return ResponseCode::RETCODE_OK;
@@ -1041,7 +1066,7 @@ ResponseCode DynamicData::set_uint16_value(MemberId id, uint16_t value)
 ResponseCode DynamicData::get_int64_value(int64_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_INT64 && id == MEMBER_ID_INVALID)
     {
         value = mInt64Value;
         return ResponseCode::RETCODE_OK;
@@ -1061,7 +1086,7 @@ ResponseCode DynamicData::get_int64_value(int64_t& value, MemberId id) const
 ResponseCode DynamicData::set_int64_value(MemberId id, int64_t value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_INT64 && id == MEMBER_ID_INVALID)
     {
         mInt64Value = value;
         return ResponseCode::RETCODE_OK;
@@ -1081,7 +1106,7 @@ ResponseCode DynamicData::set_int64_value(MemberId id, int64_t value)
 ResponseCode DynamicData::get_uint64_value(uint64_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_UINT64 && id == MEMBER_ID_INVALID)
     {
         value = mUInt64Value;
         return ResponseCode::RETCODE_OK;
@@ -1101,7 +1126,7 @@ ResponseCode DynamicData::get_uint64_value(uint64_t& value, MemberId id) const
 ResponseCode DynamicData::set_uint64_value(MemberId id, uint64_t value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_UINT64 && id == MEMBER_ID_INVALID)
     {
         mUInt64Value = value;
         return ResponseCode::RETCODE_OK;
@@ -1121,7 +1146,7 @@ ResponseCode DynamicData::set_uint64_value(MemberId id, uint64_t value)
 ResponseCode DynamicData::get_float32_value(float& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_FLOAT32 && id == MEMBER_ID_INVALID)
     {
         value = mFloat32Value;
         return ResponseCode::RETCODE_OK;
@@ -1141,7 +1166,7 @@ ResponseCode DynamicData::get_float32_value(float& value, MemberId id) const
 ResponseCode DynamicData::set_float32_value(MemberId id, float value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_FLOAT32 && id == MEMBER_ID_INVALID)
     {
         mFloat32Value = value;
         return ResponseCode::RETCODE_OK;
@@ -1161,7 +1186,7 @@ ResponseCode DynamicData::set_float32_value(MemberId id, float value)
 ResponseCode DynamicData::get_float64_value(double& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_FLOAT64 && id == MEMBER_ID_INVALID)
     {
         value = mFloat64Value;
         return ResponseCode::RETCODE_OK;
@@ -1181,7 +1206,7 @@ ResponseCode DynamicData::get_float64_value(double& value, MemberId id) const
 ResponseCode DynamicData::set_float64_value(MemberId id, double value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_FLOAT64 && id == MEMBER_ID_INVALID)
     {
         mFloat64Value = value;
         return ResponseCode::RETCODE_OK;
@@ -1201,7 +1226,7 @@ ResponseCode DynamicData::set_float64_value(MemberId id, double value)
 ResponseCode DynamicData::get_float128_value(long double& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_FLOAT128 && id == MEMBER_ID_INVALID)
     {
         value = mFloat128Value;
         return ResponseCode::RETCODE_OK;
@@ -1221,7 +1246,7 @@ ResponseCode DynamicData::get_float128_value(long double& value, MemberId id) co
 ResponseCode DynamicData::set_float128_value(MemberId id, long double value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_FLOAT128 && id == MEMBER_ID_INVALID)
     {
         mFloat128Value = value;
         return ResponseCode::RETCODE_OK;
@@ -1241,7 +1266,7 @@ ResponseCode DynamicData::set_float128_value(MemberId id, long double value)
 ResponseCode DynamicData::get_char8_value(char& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_CHAR8 && id == MEMBER_ID_INVALID)
     {
         value = mChar8Value;
         return ResponseCode::RETCODE_OK;
@@ -1261,7 +1286,7 @@ ResponseCode DynamicData::get_char8_value(char& value, MemberId id) const
 ResponseCode DynamicData::set_char8_value(MemberId id, char value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_CHAR8 && id == MEMBER_ID_INVALID)
     {
         mChar8Value = value;
         return ResponseCode::RETCODE_OK;
@@ -1281,7 +1306,7 @@ ResponseCode DynamicData::set_char8_value(MemberId id, char value)
 ResponseCode DynamicData::get_char16_value(wchar_t& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_CHAR16 && id == MEMBER_ID_INVALID)
     {
         value = mChar16Value;
         return ResponseCode::RETCODE_OK;
@@ -1301,7 +1326,7 @@ ResponseCode DynamicData::get_char16_value(wchar_t& value, MemberId id) const
 ResponseCode DynamicData::set_char16_value(MemberId id, wchar_t value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_CHAR16 && id == MEMBER_ID_INVALID)
     {
         mChar16Value = value;
         return ResponseCode::RETCODE_OK;
@@ -1321,7 +1346,7 @@ ResponseCode DynamicData::set_char16_value(MemberId id, wchar_t value)
 ResponseCode DynamicData::get_byte_value(octet& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_BYTE && id == MEMBER_ID_INVALID)
     {
         value = mByteValue;
         return ResponseCode::RETCODE_OK;
@@ -1341,7 +1366,7 @@ ResponseCode DynamicData::get_byte_value(octet& value, MemberId id) const
 ResponseCode DynamicData::set_byte_value(MemberId id, octet value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_BYTE && id == MEMBER_ID_INVALID)
     {
         mByteValue = value;
         return ResponseCode::RETCODE_OK;
@@ -1361,7 +1386,7 @@ ResponseCode DynamicData::set_byte_value(MemberId id, octet value)
 ResponseCode DynamicData::get_bool_value(bool& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_BOOLEAN && id == MEMBER_ID_INVALID)
     {
         value = mBoolValue;
         return ResponseCode::RETCODE_OK;
@@ -1381,7 +1406,7 @@ ResponseCode DynamicData::get_bool_value(bool& value, MemberId id) const
 ResponseCode DynamicData::set_bool_value(MemberId id, bool value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_BOOLEAN && id == MEMBER_ID_INVALID)
     {
         mBoolValue = value;
         return ResponseCode::RETCODE_OK;
@@ -1401,7 +1426,7 @@ ResponseCode DynamicData::set_bool_value(MemberId id, bool value)
 ResponseCode DynamicData::get_string_value(std::string& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_STRING8 && id == MEMBER_ID_INVALID)
     {
         value = mStringValue;
         return ResponseCode::RETCODE_OK;
@@ -1421,7 +1446,7 @@ ResponseCode DynamicData::get_string_value(std::string& value, MemberId id) cons
 ResponseCode DynamicData::set_string_value(MemberId id, std::string value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_STRING8 &&id == MEMBER_ID_INVALID)
     {
         mStringValue = value;
         return ResponseCode::RETCODE_OK;
@@ -1441,7 +1466,7 @@ ResponseCode DynamicData::set_string_value(MemberId id, std::string value)
 ResponseCode DynamicData::get_wstring_value(std::wstring& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_STRING16 && id == MEMBER_ID_INVALID)
     {
         value = mWStringValue;
         return ResponseCode::RETCODE_OK;
@@ -1461,7 +1486,7 @@ ResponseCode DynamicData::get_wstring_value(std::wstring& value, MemberId id) co
 ResponseCode DynamicData::set_wstring_value(MemberId id, const std::wstring value)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (id == MEMBER_ID_INVALID)
+    if (mType->get_kind() == TK_STRING16 && id == MEMBER_ID_INVALID)
     {
         mWStringValue = value;
         return ResponseCode::RETCODE_OK;

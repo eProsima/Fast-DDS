@@ -17,6 +17,7 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/DynamicTypeMember.h>
+#include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -110,7 +111,11 @@ ResponseCode DynamicType::copy_from_type(const DynamicType* other)
         }
         return ResponseCode::RETCODE_OK;
     }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
+    else
+    {
+        logError(DYN_TYPES, "Error copying DynamicType, invalid input type");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
 }
 
 ResponseCode DynamicType::get_descriptor(TypeDescriptor* descriptor) const
@@ -122,6 +127,7 @@ ResponseCode DynamicType::get_descriptor(TypeDescriptor* descriptor) const
     }
     else
     {
+        logError(DYN_TYPES, "Error getting TypeDescriptor, invalid input descriptor");
         return ResponseCode::RETCODE_BAD_PARAMETER;
     }
 }
@@ -201,7 +207,11 @@ ResponseCode DynamicType::get_member_by_name(DynamicTypeMember* member, const st
         member = it->second;
         return ResponseCode::RETCODE_OK;
     }
-    return ResponseCode::RETCODE_ERROR;
+    else
+    {
+        logWarning(DYN_TYPES, "Error getting member by name, member not found.");
+        return ResponseCode::RETCODE_ERROR;
+    }
 }
 
 ResponseCode DynamicType::get_all_members_by_name(std::map<std::string, DynamicTypeMember*>& members)
@@ -218,7 +228,11 @@ ResponseCode DynamicType::get_member(DynamicTypeMember* member, MemberId id)
         member = it->second;
         return ResponseCode::RETCODE_OK;
     }
-    return ResponseCode::RETCODE_ERROR;
+    else
+    {
+        logWarning(DYN_TYPES, "Error getting member, member not found.");
+        return ResponseCode::RETCODE_ERROR;
+    }
 }
 
 ResponseCode DynamicType::get_all_members(std::map<MemberId, DynamicTypeMember*>& members)
@@ -239,7 +253,11 @@ ResponseCode DynamicType::get_annotation(AnnotationDescriptor& descriptor, uint3
         descriptor = *mAnnotation[idx];
         return ResponseCode::RETCODE_OK;
     }
-    return ResponseCode::RETCODE_ERROR;
+    else
+    {
+        logWarning(DYN_TYPES, "Error getting annotation, annotation not found.");
+        return ResponseCode::RETCODE_ERROR;
+    }
 }
 
 bool DynamicType::is_complex_kind() const
