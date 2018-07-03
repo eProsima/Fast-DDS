@@ -168,6 +168,42 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
     ASSERT_FALSE(DynamicTypeBuilderFactory::get_instance()->delete_type(created_type) == ResponseCode::RETCODE_OK);
 }
 
+TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
+{
+    // CREATE ALIAS FROM BASIC TYPE
+    // CREATE ALIAS FROM COMPLEX TYPE
+    // CHECK NAMES OF THE TYPES AFTER THE CREATION OF THE DATA
+/*
+    // Given
+    DynamicTypeBuilderFactory::get_instance();
+    DynamicTypeBuilder* created_type(nullptr);
+    uint32_t string_length = 15;
+
+    // Then
+    created_type = DynamicTypeBuilderFactory::get_instance()->create_string_type(string_length);
+    ASSERT_TRUE(created_type != nullptr);
+
+    auto new_type = created_type->build();
+    auto data = DynamicDataFactory::get_instance()->create_data(new_type);
+    ASSERT_FALSE(data->set_int32_value(MEMBER_ID_INVALID, 10) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->set_string_value(1, "") == ResponseCode::RETCODE_OK);
+    std::string sTest1 = "STRING_TEST";
+    ASSERT_TRUE(data->set_string_value(MEMBER_ID_INVALID, sTest1) == ResponseCode::RETCODE_OK);
+
+    int test = 0;
+    ASSERT_FALSE(data->get_int32_value(test, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest2 = "";
+    ASSERT_FALSE(data->get_string_value(sTest2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->get_string_value(sTest2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(sTest1 == sTest2);
+
+    ASSERT_FALSE(data->set_string_value(MEMBER_ID_INVALID, "TEST_OVER_LENGTH_LIMITS") == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->delete_type(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::get_instance()->delete_type(created_type) == ResponseCode::RETCODE_OK);
+*/
+}
+
 void DynamicTypesTests::HELPER_SetDescriptorDefaults()
 {
 }

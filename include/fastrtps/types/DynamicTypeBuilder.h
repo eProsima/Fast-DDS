@@ -46,6 +46,8 @@ public:
     RTPS_DllAPI DynamicType* build();
 
     RTPS_DllAPI ResponseCode copy_from(const DynamicTypeBuilder* other);
+
+    RTPS_DllAPI ResponseCode set_name(const std::string& name);
 protected:
 
     MemberId mCurrentMemberId;

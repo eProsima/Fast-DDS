@@ -78,9 +78,9 @@ public:
 	RTPS_DllAPI ResponseCode get_bool_value(bool& value, MemberId id) const;
 	RTPS_DllAPI ResponseCode set_bool_value(MemberId id, bool value);
 	RTPS_DllAPI ResponseCode get_string_value(std::string& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode set_string_value(MemberId id, std::string value);
+	RTPS_DllAPI ResponseCode set_string_value(MemberId id, const std::string& value);
 	RTPS_DllAPI ResponseCode get_wstring_value(std::wstring& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode set_wstring_value(MemberId id, const std::wstring value);
+	RTPS_DllAPI ResponseCode set_wstring_value(MemberId id, const std::wstring& value);
 
     //ResponseCode get_complex_value(DynamicData* value, MemberId id);
 	//ResponseCode set_complex_value(MemberId id, const DynamicData* value);
@@ -98,6 +98,8 @@ protected:
     bool CompareValues(TypeKind kind, void* left, void* right);
 
     void SetDefaultValue(MemberId id);
+
+    void SetTypeName(const std::string& name);
 
 	DynamicType* mType;
     std::map<MemberId, MemberDescriptor*> mDescriptors;

@@ -55,15 +55,34 @@ DynamicDataFactory::~DynamicDataFactory()
 
 DynamicData* DynamicDataFactory::create_data(DynamicType* pType)
 {
-    try
+    if (pType != nullptr)
     {
-        DynamicData* newData = new DynamicData(pType);
-        mDynamicDatas.push_back(newData);
-        return newData;
+        try
+        {
+            DynamicData* newData = nullptr;
+            // ALIAS types create a DynamicData based on the base type and renames it with the name of the ALIAS.
+            if (pType->get_kind() == TK_ALIAS)
+            {
+                newData = new DynamicData(pType->getBaseType());
+                newData->SetTypeName(pType->get_name());
+            }
+            else
+            {
+                newData = new DynamicData(pType);
+            }
+
+            mDynamicDatas.push_back(newData);
+            return newData;
+        }
+        catch (std::exception e)
+        {
+            logError(DYN_TYPES, "Exception creating DynamicData: " << e.what());
+            return nullptr;
+        }
     }
-    catch (std::exception e)
+    else
     {
-        logError(DYN_TYPES, "Exception creating DynamicData: " << e.what());
+        logError(DYN_TYPES, "Error creating DynamicData. Invalid dynamic type");
         return nullptr;
     }
 }
@@ -86,7 +105,6 @@ ResponseCode DynamicDataFactory::delete_data(DynamicData* data)
     }
     return ResponseCode::RETCODE_OK;
 }
-
 
 } // namespace types
 } // namespace fastrtps

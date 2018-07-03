@@ -38,6 +38,7 @@ public:
 	std::string get_name() const;
     TypeKind get_kind() const;
     bool is_complex_kind() const;
+    DynamicType* getBaseType() const;
     uint32_t get_bounds(uint32_t index = 0) const;
 
 	ResponseCode get_member_by_name(DynamicTypeMember* member, const std::string name);
@@ -63,6 +64,9 @@ protected:
     DynamicType(const DynamicType* other);
 
     ResponseCode copy_from_type(const DynamicType* other);
+
+    // This method is used by Dynamic Data to override the name of the types based on ALIAS.
+    void SetName(const std::string& name);
 
     TypeDescriptor* mDescriptor;
 	std::vector<AnnotationDescriptor*> mAnnotation;

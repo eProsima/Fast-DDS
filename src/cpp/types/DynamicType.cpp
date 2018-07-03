@@ -44,6 +44,16 @@ DynamicType::DynamicType(const TypeDescriptor* descriptor)
         mKind = TK_NONE;
     }
 
+    // Alias types use the same members than it's base class.
+    if (mKind == TK_ALIAS)
+    {
+        for (auto it = mDescriptor->getBaseType()->mMemberById.begin();
+            it != mDescriptor->getBaseType()->mMemberById.end(); ++it)
+        {
+            mMemberByName.insert(std::make_pair(it->second->get_name(), it->second));
+        }
+    }
+
     if (is_complex_kind())
     {
         //TODO: //ARCE: FILL MEMBERS
@@ -260,6 +270,15 @@ ResponseCode DynamicType::get_annotation(AnnotationDescriptor& descriptor, uint3
     }
 }
 
+DynamicType* DynamicType::getBaseType() const
+{
+    if (mDescriptor != nullptr)
+    {
+        return mDescriptor->getBaseType();
+    }
+    return nullptr;
+}
+
 uint32_t DynamicType::get_bounds(uint32_t index /*= 0*/) const
 {
     if (mDescriptor != nullptr)
@@ -273,6 +292,15 @@ bool DynamicType::is_complex_kind() const
 {
     return mKind == TK_ANNOTATION || mKind == TK_ARRAY || mKind == TK_BITMASK || mKind == TK_BITSET
         || mKind == TK_MAP || mKind == TK_SEQUENCE || mKind == TK_STRUCTURE;
+}
+
+void DynamicType::SetName(const std::string& name)
+{
+    if (mDescriptor != nullptr)
+    {
+        mDescriptor->setName(name);
+    }
+    mName = name;
 }
 
 
