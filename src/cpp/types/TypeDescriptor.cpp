@@ -95,27 +95,47 @@ ResponseCode TypeDescriptor::copy_from(const TypeDescriptor* descriptor)
             if (mBaseType != nullptr)
             {
                 delete mBaseType;
+                mBaseType = nullptr;
             }
             if (mDiscriminatorType != nullptr)
             {
                 delete mDiscriminatorType;
+                mDiscriminatorType = nullptr;
             }
             if (mElementType != nullptr)
             {
                 delete mElementType;
+                mElementType = nullptr;
             }
             if (mKeyElementType != nullptr)
             {
                 delete mKeyElementType;
+                mKeyElementType = nullptr;
             }
 
             mKind = descriptor->mKind;
             mName = descriptor->mName;
-            mBaseType = new DynamicType(descriptor->mBaseType);
-            mDiscriminatorType = new DynamicType(descriptor->mDiscriminatorType);
+
+            if (descriptor->mBaseType != nullptr)
+            {
+                mBaseType = new DynamicType(descriptor->mBaseType);
+            }
+
+            if (descriptor->mDiscriminatorType != nullptr)
+            {
+                mDiscriminatorType = new DynamicType(descriptor->mDiscriminatorType);
+            }
             mBound = descriptor->mBound;
-            mElementType = new DynamicType(descriptor->mElementType);
-            mKeyElementType = new DynamicType(descriptor->mKeyElementType);
+
+            if (descriptor->mElementType != nullptr)
+            {
+                mElementType = new DynamicType(descriptor->mElementType);
+            }
+
+            if (descriptor->mKeyElementType != nullptr)
+            {
+                mKeyElementType = new DynamicType(descriptor->mKeyElementType);
+            }
             return ResponseCode::RETCODE_OK;
         }
         catch(std::exception& /*e*/)
@@ -136,6 +156,19 @@ bool TypeDescriptor::equals(const TypeDescriptor* descriptor) const
         mBaseType == descriptor->mBaseType && mDiscriminatorType == descriptor->mDiscriminatorType &&
         mBound == descriptor->mBound && mElementType == descriptor->mElementType &&
         mKeyElementType == descriptor->mKeyElementType;
+}
+
+uint32_t TypeDescriptor::getBounds(uint32_t index /*= 0*/) const
+{
+    if (index < mBound.size())
+    {
+        return mBound[index];
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error getting bounds value. Index out of range.");
+        return LENGTH_UNLIMITED;
+    }
 }
 
 std::string TypeDescriptor::getName() const
@@ -208,6 +241,15 @@ bool TypeDescriptor::isConsistent() const
     return true;
 }
 
+void TypeDescriptor::setName(std::string name)
+{
+    mName = name;
+}
+
+void TypeDescriptor::setKind(TypeKind kind)
+{
+    mKind = kind;
+}
 
 } // namespace types
 } // namespace fastrtps

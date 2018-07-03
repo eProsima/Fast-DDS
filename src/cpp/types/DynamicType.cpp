@@ -260,6 +260,15 @@ ResponseCode DynamicType::get_annotation(AnnotationDescriptor& descriptor, uint3
     }
 }
 
+uint32_t DynamicType::get_bounds(uint32_t index /*= 0*/) const
+{
+    if (mDescriptor != nullptr)
+    {
+        return mDescriptor->getBounds(index);
+    }
+    return LENGTH_UNLIMITED;
+}
+
 bool DynamicType::is_complex_kind() const
 {
     return mKind == TK_ANNOTATION || mKind == TK_ARRAY || mKind == TK_BITMASK || mKind == TK_BITSET
