@@ -55,6 +55,9 @@ public:
     RTPS_DllAPI ResponseCode remove_data(MemberId id);
     RTPS_DllAPI ResponseCode clear_data();
 
+    RTPS_DllAPI ResponseCode insert_map_data(DynamicData* key, MemberId& outId);
+    RTPS_DllAPI ResponseCode remove_map_data(DynamicData* key);
+
     RTPS_DllAPI ResponseCode get_int32_value(int32_t& value, MemberId id) const;
 	RTPS_DllAPI ResponseCode set_int32_value(MemberId id, int32_t value);
 	RTPS_DllAPI ResponseCode get_uint32_value(uint32_t& value, MemberId id) const;
