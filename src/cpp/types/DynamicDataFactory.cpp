@@ -38,8 +38,9 @@ ResponseCode DynamicDataFactory::delete_instance()
     {
         delete s_instance;
         s_instance = nullptr;
+        return ResponseCode::RETCODE_OK;
     }
-    return ResponseCode::RETCODE_OK;
+    return ResponseCode::RETCODE_ERROR;
 }
 
 DynamicDataFactory::DynamicDataFactory()
