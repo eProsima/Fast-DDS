@@ -37,17 +37,17 @@ public:
 
     virtual ~DynamicTypeBuilder();
 
-    RTPS_DllAPI ResponseCode add_member(const MemberDescriptor* descriptor);
+    RTPS_DllAPI ResponseCode AddMember(const MemberDescriptor* descriptor);
 
-    RTPS_DllAPI ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
+    RTPS_DllAPI ResponseCode ApplyAnnotation(AnnotationDescriptor& descriptor);
 
-    RTPS_DllAPI ResponseCode apply_annotation_to_member(MemberId id, AnnotationDescriptor& descriptor);
+    RTPS_DllAPI ResponseCode ApplyAnnotationToMember(MemberId id, AnnotationDescriptor& descriptor);
 
-    RTPS_DllAPI DynamicType* build();
+    RTPS_DllAPI DynamicType* Build();
 
-    RTPS_DllAPI ResponseCode copy_from(const DynamicTypeBuilder* other);
+    RTPS_DllAPI ResponseCode CopyFrom(const DynamicTypeBuilder* other);
 
-    RTPS_DllAPI ResponseCode set_name(const std::string& name);
+    RTPS_DllAPI ResponseCode SetName(const std::string& name);
 protected:
 
     MemberId mCurrentMemberId;

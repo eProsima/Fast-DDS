@@ -30,42 +30,42 @@ class DynamicType;
 class DynamicTypeBuilderFactory
 {
 public:
-    RTPS_DllAPI static DynamicTypeBuilderFactory* get_instance();
+    RTPS_DllAPI static DynamicTypeBuilderFactory* GetInstance();
     RTPS_DllAPI static ResponseCode DeleteInstance();
 
     ~DynamicTypeBuilderFactory();
 
-    RTPS_DllAPI DynamicType* get_primitive_type(TypeKind kind);
-    RTPS_DllAPI ResponseCode delete_type(DynamicType* type);
+    RTPS_DllAPI DynamicType* GetPrimitiveType(TypeKind kind);
+    RTPS_DllAPI ResponseCode DeleteType(DynamicType* type);
 
-    RTPS_DllAPI DynamicType* build_type(const TypeDescriptor* descriptor);
-    RTPS_DllAPI DynamicType* build_type(const DynamicType* other);
-    RTPS_DllAPI DynamicTypeBuilder* create_type(const TypeDescriptor* descriptor);
-	RTPS_DllAPI DynamicTypeBuilder* create_type_copy(const DynamicType* type);
-    RTPS_DllAPI DynamicTypeBuilder* create_int32_type();
-    RTPS_DllAPI DynamicTypeBuilder* create_uint32_type();
-    RTPS_DllAPI DynamicTypeBuilder* create_int16_type();
-    RTPS_DllAPI DynamicTypeBuilder* create_uint16_type();
-    RTPS_DllAPI DynamicTypeBuilder* create_int64_type();
-    RTPS_DllAPI DynamicTypeBuilder* create_uint64_type();
-    RTPS_DllAPI DynamicTypeBuilder* create_float32_type();
-    RTPS_DllAPI DynamicTypeBuilder* create_float64_type();
-    RTPS_DllAPI DynamicTypeBuilder* create_float128_type();
-    RTPS_DllAPI DynamicTypeBuilder* create_char8_type();
-    RTPS_DllAPI DynamicTypeBuilder* create_char16_type();
-    RTPS_DllAPI DynamicTypeBuilder* create_bool_type();
-    RTPS_DllAPI DynamicTypeBuilder* create_byte_type();
-    RTPS_DllAPI DynamicTypeBuilder* create_string_type(uint32_t bound);
-	RTPS_DllAPI DynamicTypeBuilder* create_wstring_type(uint32_t bound);
-	RTPS_DllAPI DynamicTypeBuilder* create_sequence_type(const DynamicType* element_type, uint32_t bound);
-	RTPS_DllAPI DynamicTypeBuilder* create_array_type(const DynamicType* element_type, std::vector<uint32_t> bounds);
-	RTPS_DllAPI DynamicTypeBuilder* create_map_type(DynamicType* key_element_type, DynamicType* element_type, uint32_t bound);
-    RTPS_DllAPI DynamicTypeBuilder* create_bitmask_type(uint32_t bound);
-    RTPS_DllAPI DynamicTypeBuilder* create_bitset_type(uint32_t bound);
-    RTPS_DllAPI DynamicTypeBuilder* create_alias_type(DynamicType* base_type, std::string sName /*= ""*/);
-    //DynamicTypeBuilder* create_type_w_type_object(TypeObject* type_object);
-    //DynamicTypeBuilder* create_type_w_uri(const std::string& document_url, const std::string& type_name, IncludePathSeq include_paths);
-	//DynamicTypeBuilder* create_type_w_document(const std::string& document, const std::string& type_name, IncludePathSeq include_paths);
+    RTPS_DllAPI DynamicType* BuildType(const TypeDescriptor* descriptor);
+    RTPS_DllAPI DynamicType* BuildType(const DynamicType* other);
+    RTPS_DllAPI DynamicTypeBuilder* CreateType(const TypeDescriptor* descriptor);
+	RTPS_DllAPI DynamicTypeBuilder* CreateTypeCopy(const DynamicType* type);
+    RTPS_DllAPI DynamicTypeBuilder* CreateInt32Type();
+    RTPS_DllAPI DynamicTypeBuilder* CreateUint32Type();
+    RTPS_DllAPI DynamicTypeBuilder* CreateInt16Type();
+    RTPS_DllAPI DynamicTypeBuilder* CreateUint16Type();
+    RTPS_DllAPI DynamicTypeBuilder* CreateInt64Type();
+    RTPS_DllAPI DynamicTypeBuilder* CreateUint64Type();
+    RTPS_DllAPI DynamicTypeBuilder* CreateFloat32Type();
+    RTPS_DllAPI DynamicTypeBuilder* CreateFloat64Type();
+    RTPS_DllAPI DynamicTypeBuilder* CreateFloat128Type();
+    RTPS_DllAPI DynamicTypeBuilder* CreateChar8Type();
+    RTPS_DllAPI DynamicTypeBuilder* CreateChar16Type();
+    RTPS_DllAPI DynamicTypeBuilder* CreateBoolType();
+    RTPS_DllAPI DynamicTypeBuilder* CreateByteType();
+    RTPS_DllAPI DynamicTypeBuilder* CreateStringType(uint32_t bound);
+	RTPS_DllAPI DynamicTypeBuilder* CreateWstringType(uint32_t bound);
+	RTPS_DllAPI DynamicTypeBuilder* CreateSequenceType(const DynamicType* element_type, uint32_t bound);
+	RTPS_DllAPI DynamicTypeBuilder* CreateArrayType(const DynamicType* element_type, std::vector<uint32_t> bounds);
+	RTPS_DllAPI DynamicTypeBuilder* CreateMapType(DynamicType* key_element_type, DynamicType* element_type, uint32_t bound);
+    RTPS_DllAPI DynamicTypeBuilder* CreateBitmaskType(uint32_t bound);
+    RTPS_DllAPI DynamicTypeBuilder* CreateBitsetType(uint32_t bound);
+    RTPS_DllAPI DynamicTypeBuilder* CreateAliasType(DynamicType* base_type, std::string sName /*= ""*/);
+    //DynamicTypeBuilder* CreateTypeWTypeObject(TypeObject* type_object);
+    //DynamicTypeBuilder* CreateTypeWUri(const std::string& document_url, const std::string& type_name, IncludePathSeq include_paths);
+	//DynamicTypeBuilder* CreateTypeWDocument(const std::string& document, const std::string& type_name, IncludePathSeq include_paths);
 
     RTPS_DllAPI bool IsEmpty() const;
 

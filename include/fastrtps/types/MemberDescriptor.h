@@ -28,23 +28,19 @@ class MemberDescriptor
 public:
     MemberDescriptor();
     MemberDescriptor(const MemberDescriptor* descriptor);
-
     ~MemberDescriptor();
 
-    ResponseCode copy_from(const MemberDescriptor* other);
+    ResponseCode CopyFrom(const MemberDescriptor* other);
+    bool Equals(const MemberDescriptor* other) const;
+    TypeKind GetKind() const;
+    MemberId GetId() const;
+    uint32_t GetIndex() const;
+    std::string GetName() const;
+    bool IsConsistent() const;
 
-    bool equals(const MemberDescriptor* other) const;
-
-    bool isConsistent() const;
-
-    MemberId get_id() const;
-    TypeKind get_kind() const;
-    std::string get_name() const;
-    uint32_t get_index() const;
-
-    void set_id(MemberId id);
-    void set_name(const std::string& name);
-    void set_index(uint32_t index);
+    void SetId(MemberId id);
+    void SetIndex(uint32_t index);
+    void SetName(const std::string& name);
 
 protected:
 

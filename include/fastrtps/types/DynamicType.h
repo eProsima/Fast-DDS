@@ -33,24 +33,24 @@ public:
 
     virtual ~DynamicType();
 
-	ResponseCode get_descriptor(TypeDescriptor* descriptor) const;
-	bool equals(const DynamicType* other) const;
-	std::string get_name() const;
-    TypeKind get_kind() const;
-    bool is_complex_kind() const;
-    DynamicType* getBaseType() const;
-    uint32_t get_bounds(uint32_t index = 0) const;
-    DynamicType* getElementType() const;
-    DynamicType* getKeyElementType() const;
+    bool Equals(const DynamicType* other) const;
 
-	ResponseCode get_member_by_name(DynamicTypeMember& member, const std::string name);
-	ResponseCode get_all_members_by_name(std::map<std::string, DynamicTypeMember*>& members);
+    ResponseCode GetAllMembers(std::map<MemberId, DynamicTypeMember*>& members);
+    ResponseCode GetAllMembersByName(std::map<std::string, DynamicTypeMember*>& members);
+    ResponseCode GetAnnotation(AnnotationDescriptor& descriptor, uint32_t idx);
+    uint32_t GetAnnotationCount();
+    DynamicType* GetBaseType() const;
+    uint32_t GetBounds(uint32_t index = 0) const;
+    uint32_t GetBoundsSize() const;
+    ResponseCode GetDescriptor(TypeDescriptor* descriptor) const;
+    DynamicType* GetElementType() const;
+    DynamicType* GetKeyElementType() const;
+    TypeKind GetKind() const;
+    std::string GetName() const;
+    ResponseCode GetMember(DynamicTypeMember& member, MemberId id);
+    ResponseCode GetMemberByName(DynamicTypeMember& member, const std::string name);
 
-	ResponseCode get_member(DynamicTypeMember& member, MemberId id);
-	ResponseCode get_all_members(std::map<MemberId, DynamicTypeMember*>& members);
-
-	uint32_t get_annotation_count();
-	ResponseCode get_annotation(AnnotationDescriptor& descriptor, uint32_t idx);
+    bool IsComplexKind() const;
 
 protected:
 
@@ -61,11 +61,11 @@ protected:
     friend class DynamicData;
     friend class AnnotationDescriptor;
 
-    virtual void Clear();
-
     DynamicType(const DynamicType* other);
 
-    ResponseCode copy_from_type(const DynamicType* other);
+    virtual void Clear();
+
+    ResponseCode CopyFromType(const DynamicType* other);
 
     // This method is used by Dynamic Data to override the name of the types based on ALIAS.
     void SetName(const std::string& name);

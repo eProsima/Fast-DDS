@@ -34,7 +34,7 @@ DynamicTypeMember::DynamicTypeMember(const MemberDescriptor* descriptor, MemberI
     , mId(id)
 {
     mDescriptor = new MemberDescriptor(descriptor);
-    mDescriptor->set_id(id);
+    mDescriptor->SetId(id);
 }
 
 DynamicTypeMember::DynamicTypeMember(const DynamicTypeMember* other)
@@ -59,36 +59,25 @@ DynamicTypeMember::~DynamicTypeMember()
     mAnnotation.clear();
 }
 
-ResponseCode DynamicTypeMember::get_descriptor(MemberDescriptor* descriptor) const
+ResponseCode DynamicTypeMember::ApplyAnnotation(AnnotationDescriptor& descriptor)
 {
-    if (descriptor != nullptr)
+    if (descriptor.IsConsistent())
     {
-        descriptor->copy_from(mDescriptor);
+        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
+        pNewDescriptor->CopyFrom(&descriptor);
+        mAnnotation.push_back(pNewDescriptor);
         return ResponseCode::RETCODE_OK;
     }
-    else
-    {
-        logError(DYN_TYPES, "Error getting MemberDescriptor, invalid input descriptor");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
-    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
 }
 
-uint32_t DynamicTypeMember::get_index() const
-{
-    if (mDescriptor != nullptr)
-    {
-        return mDescriptor->get_index();
-    }
-    return 0;
-}
-
-bool DynamicTypeMember::equals(const DynamicTypeMember* other) const
+bool DynamicTypeMember::Equals(const DynamicTypeMember* other) const
 {
     if (other != nullptr && mParent == other->mParent && mAnnotation.size() == other->mAnnotation.size())
     {
         for (auto it = mAnnotation.begin(), it2 = other->mAnnotation.begin(); it != mAnnotation.end(); ++it, ++it2)
         {
-            if (!(*it)->equals(*it2))
+            if (!(*it)->Equals(*it2))
             {
                 return false;
             }
@@ -101,52 +90,63 @@ bool DynamicTypeMember::equals(const DynamicTypeMember* other) const
     }
 }
 
-uint32_t DynamicTypeMember::get_annotation_count()
+ResponseCode DynamicTypeMember::GetAnnotation(AnnotationDescriptor& descriptor, uint32_t idx)
+{
+    if (idx < mAnnotation.size())
+    {
+        descriptor.CopyFrom(mAnnotation[idx]);
+        return ResponseCode::RETCODE_OK;
+    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
+}
+
+uint32_t DynamicTypeMember::GetAnnotationCount()
 {
     return static_cast<uint32_t>(mAnnotation.size());
 }
 
-ResponseCode DynamicTypeMember::apply_annotation(AnnotationDescriptor& descriptor)
+ResponseCode DynamicTypeMember::GetDescriptor(MemberDescriptor* descriptor) const
 {
-    if (descriptor.isConsistent())
+    if (descriptor != nullptr)
     {
-        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-        pNewDescriptor->copy_from(&descriptor);
-        mAnnotation.push_back(pNewDescriptor);
+        descriptor->CopyFrom(mDescriptor);
         return ResponseCode::RETCODE_OK;
     }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
-}
-
-ResponseCode DynamicTypeMember::get_annotation(AnnotationDescriptor& descriptor, uint32_t idx)
-{
-    if (idx < mAnnotation.size())
+    else
     {
-        descriptor.copy_from(mAnnotation[idx]);
-        return ResponseCode::RETCODE_OK;
+        logError(DYN_TYPES, "Error getting MemberDescriptor, invalid input descriptor");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
     }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
 }
 
-std::string DynamicTypeMember::get_name() const
-{
-    return mDescriptor->get_name();
-}
-
-MemberId DynamicTypeMember::get_id() const
-{
-    return mDescriptor->get_id();
-}
-
-void DynamicTypeMember::set_index(uint32_t index)
+uint32_t DynamicTypeMember::GetIndex() const
 {
     if (mDescriptor != nullptr)
     {
-        mDescriptor->set_index(index);
+        return mDescriptor->GetIndex();
+    }
+    return 0;
+}
+
+std::string DynamicTypeMember::GetName() const
+{
+    return mDescriptor->GetName();
+}
+
+MemberId DynamicTypeMember::GetId() const
+{
+    return mDescriptor->GetId();
+}
+
+void DynamicTypeMember::SetIndex(uint32_t index)
+{
+    if (mDescriptor != nullptr)
+    {
+        mDescriptor->SetIndex(index);
     }
 }
 
-void DynamicTypeMember::set_parent(DynamicType* pType)
+void DynamicTypeMember::SetParent(DynamicType* pType)
 {
     mParent = pType;
 }
