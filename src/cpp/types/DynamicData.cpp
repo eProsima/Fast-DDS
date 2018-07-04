@@ -94,17 +94,25 @@ DynamicData::DynamicData(DynamicType* pType)
     {
         if (mType->is_complex_kind())
         {
+            // Bitmasks registers their members but only manages one value.
+            if (mType->get_kind() == TK_BITMASK)
+            {
+                AddValue(mType->get_kind(), MEMBER_ID_INVALID);
+            }
             for (auto it = members.begin(); it != members.end(); ++it)
             {
                 MemberDescriptor* newDescriptor = new MemberDescriptor();
                 if (it->second->get_descriptor(newDescriptor) == ResponseCode::RETCODE_OK)
                 {
                     mDescriptors.insert(std::make_pair(it->first, newDescriptor));
+                    if (mType->get_kind() != TK_BITMASK)
+                    {
 #ifdef DYNAMIC_TYPES_CHECKING
-                    mComplexValues.insert(std::make_pair(it->first, DynamicDataFactory::get_instance()->create_data(newDescriptor->mType)));
+                        mComplexValues.insert(std::make_pair(it->first, DynamicDataFactory::get_instance()->create_data(newDescriptor->mType)));
 #else
-                    mValues.insert(std::make_pair(it->first, DynamicDataFactory::get_instance()->create_data(newDescriptor->mType)));
+                        mValues.insert(std::make_pair(it->first, DynamicDataFactory::get_instance()->create_data(newDescriptor->mType)));
 #endif
+                    }
                 }
                 else
                 {
@@ -114,7 +122,7 @@ DynamicData::DynamicData(DynamicType* pType)
         }
         else
         {
-            AddValue(pType->get_kind(), MEMBER_ID_INVALID);
+            AddValue(mType->get_kind(), MEMBER_ID_INVALID);
         }
     }
 }
@@ -366,7 +374,7 @@ void DynamicData::AddValue(TypeKind kind, MemberId id)
     case TK_BITMASK:
     {
 #ifndef DYNAMIC_TYPES_CHECKING
-        mValues.insert(std::make_pair(id, new uint64_t));
+        mValues.insert(std::make_pair(id, new uint64_t()));
 #endif
     }
     }
@@ -948,12 +956,12 @@ ResponseCode DynamicData::get_int32_value(int32_t& value, MemberId id) const
         if (mType->get_kind() == TK_INT32 && id == MEMBER_ID_INVALID)
         {
             value = *((int32_t*)it->second);
+            return ResponseCode::RETCODE_OK;
         }
-        else
+        else if(id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->get_int32_value(value, MEMBER_ID_INVALID);
         }
-        return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
@@ -983,12 +991,12 @@ ResponseCode DynamicData::set_int32_value(MemberId id, int32_t value)
         if (mType->get_kind() == TK_INT32 && id == MEMBER_ID_INVALID)
         {
             *((int32_t*)it->second) = value;
+            return ResponseCode::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->set_int32_value(MEMBER_ID_INVALID, value);
         }
-        return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
@@ -1018,12 +1026,12 @@ ResponseCode DynamicData::get_uint32_value(uint32_t& value, MemberId id) const
         if (mType->get_kind() == TK_UINT32 && id == MEMBER_ID_INVALID)
         {
             value = *((uint32_t*)it->second);
+            return ResponseCode::RETCODE_OK;
         }
-        else
+        else if (id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->get_uint32_value(value, MEMBER_ID_INVALID);
         }
-        return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
@@ -1088,12 +1096,12 @@ ResponseCode DynamicData::get_int16_value(int16_t& value, MemberId id) const
         if (mType->get_kind() == TK_INT16 && id == MEMBER_ID_INVALID)
         {
             value = *((int16_t*)it->second);
+            return ResponseCode::RETCODE_OK;
         }
-        else
+        else if (id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->get_int16_value(value, MEMBER_ID_INVALID);
         }
-        return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
@@ -1158,12 +1166,12 @@ ResponseCode DynamicData::get_uint16_value(uint16_t& value, MemberId id) const
         if (mType->get_kind() == TK_UINT16 && id == MEMBER_ID_INVALID)
         {
             value = *((uint16_t*)it->second);
+            return ResponseCode::RETCODE_OK;
         }
-        else
+        else if (id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->get_uint16_value(value, MEMBER_ID_INVALID);
         }
-        return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
@@ -1228,12 +1236,12 @@ ResponseCode DynamicData::get_int64_value(int64_t& value, MemberId id) const
         if (mType->get_kind() == TK_INT64 && id == MEMBER_ID_INVALID)
         {
             value = *((int64_t*)it->second);
+            return ResponseCode::RETCODE_OK;
         }
-        else
+        else if (id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->get_int64_value(value, MEMBER_ID_INVALID);
         }
-        return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
@@ -1298,12 +1306,12 @@ ResponseCode DynamicData::get_uint64_value(uint64_t& value, MemberId id) const
         if (mType->get_kind() == TK_UINT64 && id == MEMBER_ID_INVALID)
         {
             value = *((uint64_t*)it->second);
+            return ResponseCode::RETCODE_OK;
         }
-        else
+        else if (id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->get_uint64_value(value, MEMBER_ID_INVALID);
         }
-        return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
@@ -1368,12 +1376,12 @@ ResponseCode DynamicData::get_float32_value(float& value, MemberId id) const
         if (mType->get_kind() == TK_FLOAT32 && id == MEMBER_ID_INVALID)
         {
             value = *((float*)it->second);
+            return ResponseCode::RETCODE_OK;
         }
-        else
+        else if (id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->get_float32_value(value, MEMBER_ID_INVALID);
         }
-        return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
@@ -1439,12 +1447,12 @@ ResponseCode DynamicData::get_float64_value(double& value, MemberId id) const
         if (mType->get_kind() == TK_FLOAT64 && id == MEMBER_ID_INVALID)
         {
             value = *((double*)it->second);
+            return ResponseCode::RETCODE_OK;
         }
-        else
+        else if (id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->get_float64_value(value, MEMBER_ID_INVALID);
         }
-        return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
@@ -1509,12 +1517,12 @@ ResponseCode DynamicData::get_float128_value(long double& value, MemberId id) co
         if (mType->get_kind() == TK_FLOAT128 && id == MEMBER_ID_INVALID)
         {
             value = *((long double*)it->second);
+            return ResponseCode::RETCODE_OK;
         }
-        else
+        else if (id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->get_float128_value(value, MEMBER_ID_INVALID);
         }
-        return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
@@ -1579,12 +1587,12 @@ ResponseCode DynamicData::get_char8_value(char& value, MemberId id) const
         if (mType->get_kind() == TK_CHAR8 && id == MEMBER_ID_INVALID)
         {
             value = *((char*)it->second);
+            return ResponseCode::RETCODE_OK;
         }
-        else
+        else if (id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->get_char8_value(value, MEMBER_ID_INVALID);
         }
-        return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
@@ -1649,12 +1657,12 @@ ResponseCode DynamicData::get_char16_value(wchar_t& value, MemberId id) const
         if (mType->get_kind() == TK_CHAR16 && id == MEMBER_ID_INVALID)
         {
             value = *((wchar_t*)it->second);
+            return ResponseCode::RETCODE_OK;
         }
-        else
+        else if (id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->get_char16_value(value, MEMBER_ID_INVALID);
         }
-        return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
@@ -1720,12 +1728,12 @@ ResponseCode DynamicData::get_byte_value(octet& value, MemberId id) const
         if (mType->get_kind() == TK_BYTE && id == MEMBER_ID_INVALID)
         {
             value = *((octet*)it->second);
+            return ResponseCode::RETCODE_OK;
         }
-        else
+        else if (id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->get_byte_value(value, MEMBER_ID_INVALID);
         }
-        return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
@@ -1789,23 +1797,31 @@ ResponseCode DynamicData::get_bool_value(bool& value, MemberId id) const
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #else
-    auto it = mValues.find(id);
+    auto it = mValues.end();
+    if (mType->get_kind() == TK_BITSET || mType->get_kind() == TK_BITMASK)
+    {
+        it = mValues.find(MEMBER_ID_INVALID);
+    }
+    else
+    {
+        it = mValues.find(id);
+    }
     if (it != mValues.end())
     {
         if (mType->get_kind() == TK_BOOLEAN && id == MEMBER_ID_INVALID)
         {
             value = *((bool*)it->second);
+            return ResponseCode::RETCODE_OK;
         }
         else if ((mType->get_kind() == TK_BITSET || mType->get_kind() == TK_BITMASK) && id < mType->get_bounds())
         {
-            value = *((uint64_t*)it->second) & (1 << id) != 0;
+            value = (*((uint64_t*)it->second) & ((uint64_t)1 << id)) != 0;
             return ResponseCode::RETCODE_OK;
         }
-        else
+        else if (id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->get_bool_value(value, MEMBER_ID_INVALID);
         }
-        return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
@@ -1819,9 +1835,20 @@ ResponseCode DynamicData::set_bool_value(MemberId id, bool value)
         mBoolValue = value;
         return ResponseCode::RETCODE_OK;
     }
-    else if ((mType->get_kind() == TK_BITSET || mType->get_kind() == TK_BITMASK) && id != MEMBER_ID_INVALID)
+    else if (mType->get_kind() == TK_BITSET || mType->get_kind() == TK_BITMASK)
     {
-        if (mType->get_bounds() == LENGTH_UNLIMITED || id < mType->get_bounds())
+        if (id == MEMBER_ID_INVALID)
+        {
+            if (value)
+            {
+                mUInt64Value = ~((uint64_t)0);
+            }
+            else
+            {
+                mUInt64Value = 0;
+            }
+        }
+        else if (mType->get_bounds() == LENGTH_UNLIMITED || id < mType->get_bounds())
         {
             if (value)
             {
@@ -1835,7 +1862,7 @@ ResponseCode DynamicData::set_bool_value(MemberId id, bool value)
         }
         else
         {
-            logError(DYN_TYPES, "Error setting bool value. The given index is greather than the bitset limit.");
+            logError(DYN_TYPES, "Error setting bool value. The given index is greather than the limit.");
             return ResponseCode::RETCODE_BAD_PARAMETER;
         }
     }
@@ -1849,24 +1876,53 @@ ResponseCode DynamicData::set_bool_value(MemberId id, bool value)
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #else
-    auto it = mValues.find(id);
+    auto it = mValues.end();
+    if (mType->get_kind() == TK_BITSET || mType->get_kind() == TK_BITMASK)
+    {
+        it = mValues.find(MEMBER_ID_INVALID);
+    }
+    else
+    {
+        it = mValues.find(id);
+    }
+
     if (it != mValues.end())
     {
         if (mType->get_kind() == TK_BOOLEAN && id == MEMBER_ID_INVALID)
         {
             *((bool*)it->second) = value;
         }
-        else if ((mType->get_kind() == TK_BITSET || mType->get_kind() == TK_BITMASK) && id != MEMBER_ID_INVALID)
+        else if (mType->get_kind() == TK_BITSET || mType->get_kind() == TK_BITMASK)
         {
-            if (value)
+            if (id == MEMBER_ID_INVALID)
             {
-                *((uint64_t*)it->second) |= (1 << id);
+                if (value)
+                {
+                    *((uint64_t*)it->second) = ~((uint64_t)0);
+                }
+                else
+                {
+                    *((uint64_t*)it->second) = 0;
+                }
+                return ResponseCode::RETCODE_OK;
+            }
+            else if (mType->get_bounds() == LENGTH_UNLIMITED || id < mType->get_bounds())
+            {
+                if (value)
+                {
+                    *((uint64_t*)it->second) |= ((uint64_t)1 << id);
+                }
+                else
+                {
+                    *((uint64_t*)it->second) &= ~((uint64_t)1 << id);
+                }
+                return ResponseCode::RETCODE_OK;
             }
             else
             {
-                *((uint64_t*)it->second) &= ~(1 << id);
+                logError(DYN_TYPES, "Error setting bool value. The given index is greather than the limit.");
+                return ResponseCode::RETCODE_BAD_PARAMETER;
             }
-            return ResponseCode::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -1902,12 +1958,12 @@ ResponseCode DynamicData::get_string_value(std::string& value, MemberId id) cons
         if (mType->get_kind() == TK_STRING8 && id == MEMBER_ID_INVALID)
         {
             value = *((std::string*)it->second);
+            return ResponseCode::RETCODE_OK;
         }
-        else
+        else if (id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->get_string_value(value, MEMBER_ID_INVALID);
         }
-        return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
@@ -1944,7 +2000,16 @@ ResponseCode DynamicData::set_string_value(MemberId id, const std::string& value
     {
         if (mType->get_kind() == TK_STRING8 && id == MEMBER_ID_INVALID)
         {
-            *((std::string*)it->second) = value;
+            if (mType->get_bounds() == LENGTH_UNLIMITED || value.length() <= mType->get_bounds())
+            {
+                *((std::string*)it->second) = value;
+                return ResponseCode::RETCODE_OK;
+            }
+            else
+            {
+                logError(DYN_TYPES, "Error setting string value. The given string is greather than the length limit.");
+                return ResponseCode::RETCODE_BAD_PARAMETER;
+            }
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -1988,13 +2053,12 @@ ResponseCode DynamicData::get_wstring_value(std::wstring& value, MemberId id) co
         if (mType->get_kind() == TK_STRING16 && id == MEMBER_ID_INVALID)
         {
             value = *((std::wstring*)it->second);
+            return ResponseCode::RETCODE_OK;
         }
-        else
+        else if (id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->get_wstring_value(value, MEMBER_ID_INVALID);
         }
-
-        return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
@@ -2031,7 +2095,16 @@ ResponseCode DynamicData::set_wstring_value(MemberId id, const std::wstring& val
     {
         if (mType->get_kind() == TK_STRING16 && id == MEMBER_ID_INVALID)
         {
-            *((std::wstring*)it->second) = value;
+            if (mType->get_bounds() == LENGTH_UNLIMITED || value.length() <= mType->get_bounds())
+            {
+                *((std::wstring*)it->second) = value;
+                return ResponseCode::RETCODE_OK;
+            }
+            else
+            {
+                logError(DYN_TYPES, "Error setting wstring value. The given string is greather than the length limit.");
+                return ResponseCode::RETCODE_BAD_PARAMETER;
+            }
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -2079,9 +2152,9 @@ ResponseCode DynamicData::insert_new_data(MemberId& outId)
             return ResponseCode::RETCODE_OK;
         }
 #else
-        if (descriptor.getBounds() == LENGTH_UNLIMITED || mValues.size() < descriptor.getBounds())
+        if (mType->get_bounds() == LENGTH_UNLIMITED || mValues.size() < mType->get_bounds())
         {
-            DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(descriptor.getElementType());
+            DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(mType->getElementType());
             outId = static_cast<MemberId>(mValues.size());
             mValues.insert(std::make_pair(outId, new_element));
             return ResponseCode::RETCODE_OK;
