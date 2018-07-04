@@ -49,9 +49,11 @@ DynamicDataFactory::DynamicDataFactory()
 
 DynamicDataFactory::~DynamicDataFactory()
 {
+#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     for (auto it = mDynamicDatas.begin(); it != mDynamicDatas.end(); ++it)
         delete *it;
     mDynamicDatas.clear();
+#endif
 }
 
 DynamicData* DynamicDataFactory::create_data(DynamicType* pType)
@@ -71,8 +73,9 @@ DynamicData* DynamicDataFactory::create_data(DynamicType* pType)
             {
                 newData = new DynamicData(pType);
             }
-
+#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
             mDynamicDatas.push_back(newData);
+#endif
             return newData;
         }
         catch (std::exception e)
@@ -92,6 +95,7 @@ ResponseCode DynamicDataFactory::delete_data(DynamicData* data)
 {
     if (data != nullptr)
     {
+#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
         auto it = std::find(mDynamicDatas.begin(), mDynamicDatas.end(), data);
         if (it != mDynamicDatas.end())
         {
@@ -103,13 +107,20 @@ ResponseCode DynamicDataFactory::delete_data(DynamicData* data)
             logError(DYN_TYPES, "Error deleting DynamicData. It isn't registered in the factory");
             return ResponseCode::RETCODE_ALREADY_DELETED;
         }
+#else
+        delete data;
+#endif
     }
     return ResponseCode::RETCODE_OK;
 }
 
 bool DynamicDataFactory::IsEmpty() const
 {
+#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     return mDynamicDatas.empty();
+#else
+    return true;
+#endif
 }
 
 

@@ -72,7 +72,9 @@ public:
 protected:
 	DynamicTypeBuilderFactory();
 
+#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::vector<DynamicType*> mTypesList;
+#endif
 
 };
 

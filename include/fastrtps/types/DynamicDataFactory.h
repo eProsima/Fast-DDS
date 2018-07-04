@@ -40,8 +40,9 @@ public:
 protected:
     DynamicDataFactory();
 
-
+#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::vector<DynamicData*> mDynamicDatas;
+#endif
 };
 
 
