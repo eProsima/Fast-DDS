@@ -363,6 +363,7 @@ void DynamicData::AddValue(TypeKind kind, MemberId id)
     }
     break;
     case TK_BITSET:
+    case TK_BITMASK:
     {
 #ifndef DYNAMIC_TYPES_CHECKING
         mValues.insert(std::make_pair(id, new uint64_t));
@@ -594,6 +595,7 @@ void* DynamicData::CloneValue(MemberId id, TypeKind kind) const
     }
     break;
     case TK_BITSET:
+    case TK_BITMASK:
     {
         uint64_t* newBitset = new uint64_t();
         get_uint64_value(*newBitset, id);
@@ -625,6 +627,7 @@ bool DynamicData::CompareValues(TypeKind kind, void* left, void* right)
     case TK_STRING8:    {   return *((std::string*)left) == *((std::string*)right);    }
     case TK_STRING16:   {   return *((std::wstring*)left) == *((std::wstring*)right);    }
     case TK_BITSET:     {   return *((uint64_t*)left) == *((uint64_t*)right);    }
+    case TK_BITMASK:    {   return *((uint64_t*)left) == *((uint64_t*)right);    }
     }
     return false;
 }
@@ -792,6 +795,7 @@ void DynamicData::SetDefaultValue(MemberId id)
     }
     break;
     case TK_BITSET:
+    case TK_BITMASK:
     {
         int value(0);
         try
@@ -1770,7 +1774,7 @@ ResponseCode DynamicData::get_bool_value(bool& value, MemberId id) const
         value = mBoolValue;
         return ResponseCode::RETCODE_OK;
     }
-    else if (mType->get_kind() == TK_BITSET && id < mType->get_bounds())
+    else if ((mType->get_kind() == TK_BITSET || mType->get_kind() == TK_BITMASK) && id < mType->get_bounds())
     {
         value = (mUInt64Value & ((uint64_t)1 << id)) != 0;
         return ResponseCode::RETCODE_OK;
@@ -1792,7 +1796,7 @@ ResponseCode DynamicData::get_bool_value(bool& value, MemberId id) const
         {
             value = *((bool*)it->second);
         }
-        else if (mType->get_kind() == TK_BITSET && id < mType->get_bounds())
+        else if ((mType->get_kind() == TK_BITSET || mType->get_kind() == TK_BITMASK) && id < mType->get_bounds())
         {
             value = *((uint64_t*)it->second) & (1 << id) != 0;
             return ResponseCode::RETCODE_OK;
@@ -1815,7 +1819,7 @@ ResponseCode DynamicData::set_bool_value(MemberId id, bool value)
         mBoolValue = value;
         return ResponseCode::RETCODE_OK;
     }
-    else if (mType->get_kind() == TK_BITSET && id != MEMBER_ID_INVALID)
+    else if ((mType->get_kind() == TK_BITSET || mType->get_kind() == TK_BITMASK) && id != MEMBER_ID_INVALID)
     {
         if (mType->get_bounds() == LENGTH_UNLIMITED || id < mType->get_bounds())
         {
@@ -1852,7 +1856,7 @@ ResponseCode DynamicData::set_bool_value(MemberId id, bool value)
         {
             *((bool*)it->second) = value;
         }
-        else if (mType->get_kind() == TK_BITSET && id != MEMBER_ID_INVALID)
+        else if ((mType->get_kind() == TK_BITSET || mType->get_kind() == TK_BITMASK) && id != MEMBER_ID_INVALID)
         {
             if (value)
             {

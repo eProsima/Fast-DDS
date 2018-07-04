@@ -116,6 +116,7 @@ ResponseCode DynamicType::copy_from_type(const DynamicType* other)
         for (auto it = other->mMemberById.begin(); it != other->mMemberById.end(); ++it)
         {
             DynamicTypeMember* newMember = new DynamicTypeMember(it->second);
+            newMember->set_parent(this);
             mMemberById.insert(std::make_pair(newMember->get_id(), newMember));
             mMemberByName.insert(std::make_pair(newMember->get_name(), newMember));
         }
