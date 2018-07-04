@@ -57,7 +57,7 @@ TypeDescriptor::TypeDescriptor(const TypeDescriptor* other)
     , mElementType(nullptr)
     , mKeyElementType(nullptr)
 {
-    copy_from(other);
+    CopyFrom(other);
 }
 
 TypeDescriptor::~TypeDescriptor()
@@ -69,30 +69,30 @@ void TypeDescriptor::Clean()
 {
     if (mBaseType != nullptr)
     {
-        DynamicTypeBuilderFactory::get_instance()->delete_type(mBaseType);
+        DynamicTypeBuilderFactory::GetInstance()->DeleteType(mBaseType);
         mBaseType = nullptr;
     }
 
     if (mDiscriminatorType != nullptr)
     {
-        DynamicTypeBuilderFactory::get_instance()->delete_type(mDiscriminatorType);
+        DynamicTypeBuilderFactory::GetInstance()->DeleteType(mDiscriminatorType);
         mDiscriminatorType = nullptr;
     }
 
     if (mElementType != nullptr)
     {
-        DynamicTypeBuilderFactory::get_instance()->delete_type(mElementType);
+        DynamicTypeBuilderFactory::GetInstance()->DeleteType(mElementType);
         mElementType = nullptr;
     }
 
     if (mKeyElementType != nullptr)
     {
-        DynamicTypeBuilderFactory::get_instance()->delete_type(mKeyElementType);
+        DynamicTypeBuilderFactory::GetInstance()->DeleteType(mKeyElementType);
         mKeyElementType = nullptr;
     }
 }
 
-ResponseCode TypeDescriptor::copy_from(const TypeDescriptor* descriptor)
+ResponseCode TypeDescriptor::CopyFrom(const TypeDescriptor* descriptor)
 {
     if (descriptor != nullptr)
     {
@@ -105,23 +105,23 @@ ResponseCode TypeDescriptor::copy_from(const TypeDescriptor* descriptor)
 
             if (descriptor->mBaseType != nullptr)
             {
-                mBaseType = DynamicTypeBuilderFactory::get_instance()->build_type(descriptor->mBaseType);
+                mBaseType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor->mBaseType);
             }
 
             if (descriptor->mDiscriminatorType != nullptr)
             {
-                mDiscriminatorType = DynamicTypeBuilderFactory::get_instance()->build_type(descriptor->mDiscriminatorType);
+                mDiscriminatorType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor->mDiscriminatorType);
             }
             mBound = descriptor->mBound;
 
             if (descriptor->mElementType != nullptr)
             {
-                mElementType = DynamicTypeBuilderFactory::get_instance()->build_type(descriptor->mElementType);
+                mElementType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor->mElementType);
             }
 
             if (descriptor->mKeyElementType != nullptr)
             {
-                mKeyElementType = DynamicTypeBuilderFactory::get_instance()->build_type(descriptor->mKeyElementType);
+                mKeyElementType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor->mKeyElementType);
             }
             return ResponseCode::RETCODE_OK;
         }
@@ -137,7 +137,7 @@ ResponseCode TypeDescriptor::copy_from(const TypeDescriptor* descriptor)
     }
 }
 
-bool TypeDescriptor::equals(const TypeDescriptor* descriptor) const
+bool TypeDescriptor::Equals(const TypeDescriptor* descriptor) const
 {
     return descriptor != nullptr && mName == descriptor->mName && mKind == descriptor->mKind &&
         mBaseType == descriptor->mBaseType && mDiscriminatorType == descriptor->mDiscriminatorType &&
@@ -145,12 +145,12 @@ bool TypeDescriptor::equals(const TypeDescriptor* descriptor) const
         mKeyElementType == descriptor->mKeyElementType;
 }
 
-DynamicType* TypeDescriptor::getBaseType() const
+DynamicType* TypeDescriptor::GetBaseType() const
 {
     return mBaseType;
 }
 
-uint32_t TypeDescriptor::getBounds(uint32_t index /*= 0*/) const
+uint32_t TypeDescriptor::GetBounds(uint32_t index /*= 0*/) const
 {
     if (index < mBound.size())
     {
@@ -163,27 +163,32 @@ uint32_t TypeDescriptor::getBounds(uint32_t index /*= 0*/) const
     }
 }
 
-DynamicType* TypeDescriptor::getElementType() const
+uint32_t TypeDescriptor::GetBoundsSize() const
+{
+    return static_cast<uint32_t>(mBound.size());
+}
+
+DynamicType* TypeDescriptor::GetElementType() const
 {
     return mElementType;
 }
 
-DynamicType* TypeDescriptor::getKeyElementType() const
+DynamicType* TypeDescriptor::GetKeyElementType() const
 {
     return mKeyElementType;
 }
 
-std::string TypeDescriptor::getName() const
-{
-    return mName;
-}
-
-TypeKind TypeDescriptor::getKind() const
+TypeKind TypeDescriptor::GetKind() const
 {
     return mKind;
 }
 
-bool TypeDescriptor::isConsistent() const
+std::string TypeDescriptor::GetName() const
+{
+    return mName;
+}
+
+bool TypeDescriptor::IsConsistent() const
 {
     // Alias Types need the base type to indicate what type has been aliased.
     if (mKind == TK_ALIAS && mBaseType == nullptr)
@@ -224,7 +229,7 @@ bool TypeDescriptor::isConsistent() const
     }
 
     // For Bitmask types is mandatory that this element is boolean.
-    if (mKind == TK_BITMASK && (mElementType->get_kind() != TK_BOOLEAN))
+    if (mKind == TK_BITMASK && (mElementType->GetKind() != TK_BOOLEAN))
     {
         return false;
     }
@@ -243,14 +248,14 @@ bool TypeDescriptor::isConsistent() const
     return true;
 }
 
-void TypeDescriptor::setName(std::string name)
-{
-    mName = name;
-}
-
-void TypeDescriptor::setKind(TypeKind kind)
+void TypeDescriptor::SetKind(TypeKind kind)
 {
     mKind = kind;
+}
+
+void TypeDescriptor::SetName(std::string name)
+{
+    mName = name;
 }
 
 } // namespace types

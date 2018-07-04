@@ -29,11 +29,11 @@ class DynamicDataFactory
 public:
     ~DynamicDataFactory();
 
-    RTPS_DllAPI static DynamicDataFactory* get_instance();
-    RTPS_DllAPI static ResponseCode delete_instance();
+    RTPS_DllAPI static DynamicDataFactory* GetInstance();
+    RTPS_DllAPI static ResponseCode DeleteInstance();
 
-    RTPS_DllAPI DynamicData* create_data(DynamicType* pType);
-    RTPS_DllAPI ResponseCode delete_data(DynamicData* data);
+    RTPS_DllAPI DynamicData* CreateData(DynamicType* pType);
+    RTPS_DllAPI ResponseCode DeleteData(DynamicData* pData);
 
     RTPS_DllAPI bool IsEmpty() const;
 

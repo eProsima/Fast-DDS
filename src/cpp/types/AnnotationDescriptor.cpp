@@ -27,7 +27,7 @@ AnnotationDescriptor::AnnotationDescriptor()
 
 AnnotationDescriptor::AnnotationDescriptor(const AnnotationDescriptor* descriptor)
 {
-    copy_from(descriptor);
+    CopyFrom(descriptor);
 }
 
 AnnotationDescriptor::AnnotationDescriptor(DynamicType* pType)
@@ -35,7 +35,7 @@ AnnotationDescriptor::AnnotationDescriptor(DynamicType* pType)
 {
 }
 
-ResponseCode AnnotationDescriptor::copy_from(const AnnotationDescriptor* descriptor)
+ResponseCode AnnotationDescriptor::CopyFrom(const AnnotationDescriptor* descriptor)
 {
     if (descriptor != nullptr)
     {
@@ -57,7 +57,7 @@ ResponseCode AnnotationDescriptor::copy_from(const AnnotationDescriptor* descrip
     return ResponseCode::RETCODE_OK;
 }
 
-bool AnnotationDescriptor::equals(const AnnotationDescriptor* other) const
+bool AnnotationDescriptor::Equals(const AnnotationDescriptor* other) const
 {
     if (other != nullptr && mType == other->mType)
     {
@@ -82,9 +82,26 @@ bool AnnotationDescriptor::equals(const AnnotationDescriptor* other) const
     return false;
 }
 
-bool AnnotationDescriptor::isConsistent() const
+ResponseCode AnnotationDescriptor::GetValue(std::string& value, const std::string& key)
 {
-    if (mType == nullptr || mType->get_kind() != TK_ANNOTATION)
+    auto it = mValue.find(key);
+    if (it != mValue.end())
+    {
+        value = it->second;
+        return ResponseCode::RETCODE_OK;
+    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
+}
+
+ResponseCode AnnotationDescriptor::GetAllValues(std::map<std::string, std::string>& value)
+{
+    value = mValue;
+    return ResponseCode::RETCODE_OK;
+}
+
+bool AnnotationDescriptor::IsConsistent() const
+{
+    if (mType == nullptr || mType->GetKind() != TK_ANNOTATION)
     {
         return false;
     }
@@ -93,6 +110,11 @@ bool AnnotationDescriptor::isConsistent() const
     return true;
 }
 
+ResponseCode AnnotationDescriptor::SetValue(const std::string& key, const std::string& value)
+{
+    mValue[key] = value;
+    return ResponseCode::RETCODE_OK;
+}
 
 } // namespace types
 } // namespace fastrtps

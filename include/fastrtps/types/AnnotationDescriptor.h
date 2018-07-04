@@ -34,13 +34,13 @@ public:
     AnnotationDescriptor(const AnnotationDescriptor* descriptor);
     AnnotationDescriptor(DynamicType* pType);
 
-    ResponseCode get_value(std::string& value, const std::string& key);
-    ResponseCode get_all_value(std::map<std::string, std::string>& value);
-    ResponseCode set_value(const std::string& key, const std::string& value);
+    ResponseCode CopyFrom(const AnnotationDescriptor* other);
+    bool Equals(const AnnotationDescriptor*) const;
+    bool IsConsistent() const;
 
-	ResponseCode copy_from(const AnnotationDescriptor* other);
-	bool equals(const AnnotationDescriptor*) const;
-	bool isConsistent() const;
+    ResponseCode GetValue(std::string& value, const std::string& key);
+    ResponseCode GetAllValues(std::map<std::string, std::string>& value);
+    ResponseCode SetValue(const std::string& key, const std::string& value);
 
 protected:
 

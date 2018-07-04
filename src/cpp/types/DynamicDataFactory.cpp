@@ -23,7 +23,7 @@ namespace fastrtps {
 namespace types {
 
 static DynamicDataFactory* s_instance = nullptr;
-DynamicDataFactory* DynamicDataFactory::get_instance()
+DynamicDataFactory* DynamicDataFactory::GetInstance()
 {
     if (s_instance == nullptr)
     {
@@ -32,7 +32,7 @@ DynamicDataFactory* DynamicDataFactory::get_instance()
     return s_instance;
 }
 
-ResponseCode DynamicDataFactory::delete_instance()
+ResponseCode DynamicDataFactory::DeleteInstance()
 {
     if (s_instance != nullptr)
     {
@@ -56,7 +56,7 @@ DynamicDataFactory::~DynamicDataFactory()
 #endif
 }
 
-DynamicData* DynamicDataFactory::create_data(DynamicType* pType)
+DynamicData* DynamicDataFactory::CreateData(DynamicType* pType)
 {
     if (pType != nullptr)
     {
@@ -64,10 +64,10 @@ DynamicData* DynamicDataFactory::create_data(DynamicType* pType)
         {
             DynamicData* newData = nullptr;
             // ALIAS types create a DynamicData based on the base type and renames it with the name of the ALIAS.
-            if (pType->get_kind() == TK_ALIAS)
+            if (pType->GetKind() == TK_ALIAS)
             {
-                newData = new DynamicData(pType->getBaseType());
-                newData->SetTypeName(pType->get_name());
+                newData = new DynamicData(pType->GetBaseType());
+                newData->SetTypeName(pType->GetName());
             }
             else
             {
@@ -91,16 +91,16 @@ DynamicData* DynamicDataFactory::create_data(DynamicType* pType)
     }
 }
 
-ResponseCode DynamicDataFactory::delete_data(DynamicData* data)
+ResponseCode DynamicDataFactory::DeleteData(DynamicData* pData)
 {
-    if (data != nullptr)
+    if (pData != nullptr)
     {
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-        auto it = std::find(mDynamicDatas.begin(), mDynamicDatas.end(), data);
+        auto it = std::find(mDynamicDatas.begin(), mDynamicDatas.end(), pData);
         if (it != mDynamicDatas.end())
         {
             mDynamicDatas.erase(it);
-            delete data;
+            delete pData;
         }
         else
         {

@@ -32,21 +32,20 @@ public:
 
     ~TypeDescriptor();
 
-	ResponseCode copy_from(const TypeDescriptor* descriptor);
+	ResponseCode CopyFrom(const TypeDescriptor* descriptor);
+	bool Equals(const TypeDescriptor* descriptor) const;
+	bool IsConsistent() const;
 
-	bool equals(const TypeDescriptor* descriptor) const;
+    DynamicType* GetBaseType() const;
+    uint32_t GetBounds(uint32_t index = 0) const;
+    uint32_t GetBoundsSize() const;
+    DynamicType* GetElementType() const;
+    DynamicType* GetKeyElementType() const;
+    TypeKind GetKind() const;
+    std::string GetName() const;
 
-	bool isConsistent() const;
-
-    std::string getName() const;
-    TypeKind getKind() const;
-    uint32_t getBounds(uint32_t index = 0) const;
-    DynamicType* getBaseType() const;
-    DynamicType* getElementType() const;
-    DynamicType* getKeyElementType() const;
-
-    void setName(std::string name);
-    void setKind(TypeKind kind);
+    void SetKind(TypeKind kind);
+    void SetName(std::string name);
 
 protected:
 
