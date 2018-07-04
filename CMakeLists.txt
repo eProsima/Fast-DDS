@@ -277,7 +277,7 @@ if(EPROSIMA_BUILD AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_I
 endif()
 
 if(COMPILE_EXAMPLES)
-	add_subdirectory(examples)
+    add_subdirectory(examples)
 endif()
 
 ###############################################################################

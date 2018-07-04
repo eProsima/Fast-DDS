@@ -39,7 +39,7 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTRTPS_DYN_LINK)
-#if defined(FASTRTPS_SOURCE)
+#if defined(fastrtps_EXPORTS)
 #define RTPS_DllAPI __declspec( dllexport )
 #else
 #define RTPS_DllAPI __declspec( dllimport )
