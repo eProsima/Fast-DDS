@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/log/Log.h>
 
@@ -61,27 +62,32 @@ TypeDescriptor::TypeDescriptor(const TypeDescriptor* other)
 
 TypeDescriptor::~TypeDescriptor()
 {
+    Clean();
+}
+
+void TypeDescriptor::Clean()
+{
     if (mBaseType != nullptr)
     {
-        delete mBaseType;
+        DynamicTypeBuilderFactory::get_instance()->delete_type(mBaseType);
         mBaseType = nullptr;
     }
 
     if (mDiscriminatorType != nullptr)
     {
-        delete mDiscriminatorType;
+        DynamicTypeBuilderFactory::get_instance()->delete_type(mDiscriminatorType);
         mDiscriminatorType = nullptr;
     }
 
     if (mElementType != nullptr)
     {
-        delete mElementType;
+        DynamicTypeBuilderFactory::get_instance()->delete_type(mElementType);
         mElementType = nullptr;
     }
 
     if (mKeyElementType != nullptr)
     {
-        delete mKeyElementType;
+        DynamicTypeBuilderFactory::get_instance()->delete_type(mKeyElementType);
         mKeyElementType = nullptr;
     }
 }
@@ -92,49 +98,30 @@ ResponseCode TypeDescriptor::copy_from(const TypeDescriptor* descriptor)
     {
         try
         {
-            if (mBaseType != nullptr)
-            {
-                delete mBaseType;
-                mBaseType = nullptr;
-            }
-            if (mDiscriminatorType != nullptr)
-            {
-                delete mDiscriminatorType;
-                mDiscriminatorType = nullptr;
-            }
-            if (mElementType != nullptr)
-            {
-                delete mElementType;
-                mElementType = nullptr;
-            }
-            if (mKeyElementType != nullptr)
-            {
-                delete mKeyElementType;
-                mKeyElementType = nullptr;
-            }
+            Clean();
 
             mKind = descriptor->mKind;
             mName = descriptor->mName;
 
             if (descriptor->mBaseType != nullptr)
             {
-                mBaseType = new DynamicType(descriptor->mBaseType);
+                mBaseType = DynamicTypeBuilderFactory::get_instance()->build_type(descriptor->mBaseType);
             }
 
             if (descriptor->mDiscriminatorType != nullptr)
             {
-                mDiscriminatorType = new DynamicType(descriptor->mDiscriminatorType);
+                mDiscriminatorType = DynamicTypeBuilderFactory::get_instance()->build_type(descriptor->mDiscriminatorType);
             }
             mBound = descriptor->mBound;
 
             if (descriptor->mElementType != nullptr)
             {
-                mElementType = new DynamicType(descriptor->mElementType);
+                mElementType = DynamicTypeBuilderFactory::get_instance()->build_type(descriptor->mElementType);
             }
 
             if (descriptor->mKeyElementType != nullptr)
             {
-                mKeyElementType = new DynamicType(descriptor->mKeyElementType);
+                mKeyElementType = DynamicTypeBuilderFactory::get_instance()->build_type(descriptor->mKeyElementType);
             }
             return ResponseCode::RETCODE_OK;
         }
@@ -174,6 +161,16 @@ uint32_t TypeDescriptor::getBounds(uint32_t index /*= 0*/) const
         logError(DYN_TYPES, "Error getting bounds value. Index out of range.");
         return LENGTH_UNLIMITED;
     }
+}
+
+DynamicType* TypeDescriptor::getElementType() const
+{
+    return mElementType;
+}
+
+DynamicType* TypeDescriptor::getKeyElementType() const
+{
+    return mKeyElementType;
 }
 
 std::string TypeDescriptor::getName() const

@@ -63,6 +63,36 @@ DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
     mTypesList.clear();
 }
 
+DynamicType* DynamicTypeBuilderFactory::build_type(const TypeDescriptor* descriptor)
+{
+    if (descriptor != nullptr)
+    {
+        DynamicType* pNewType = new DynamicType(descriptor);
+        mTypesList.push_back(pNewType);
+        return pNewType;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error building type, invalid input descriptor");
+        return nullptr;
+    }
+}
+
+DynamicType* DynamicTypeBuilderFactory::build_type(const DynamicType* other)
+{
+    if (other != nullptr)
+    {
+        DynamicType* pNewType = new DynamicType(other);
+        mTypesList.push_back(pNewType);
+        return pNewType;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error building type, invalid input parameter");
+        return nullptr;
+    }
+}
+
 DynamicTypeBuilder* DynamicTypeBuilderFactory::create_alias_type(DynamicType* base_type, std::string sName /*= ""*/)
 {
     if (base_type != nullptr)
@@ -99,7 +129,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_array_type(const DynamicTy
         pDescriptor.mKind = TK_ARRAY;
         pDescriptor.mName = GenerateTypeName();
         pDescriptor.mBound = bounds;
-        pDescriptor.mElementType = new DynamicType(element_type);
+        pDescriptor.mElementType = build_type(element_type);
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
         mTypesList.push_back(pNewTypeBuilder);
@@ -123,7 +153,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_bitmask_type(uint32_t boun
         TypeDescriptor pDescriptor;
         pDescriptor.mKind = TK_BITMASK;
         pDescriptor.mName = GenerateTypeName();
-        pDescriptor.mElementType = new DynamicType(&pBoolDescriptor);
+        pDescriptor.mElementType = build_type(&pBoolDescriptor);
         pDescriptor.mBound.push_back(bound);
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
@@ -256,8 +286,8 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_map_type(DynamicType* key_
         pDescriptor.mKind = TK_MAP;
         pDescriptor.mName = GenerateTypeName();
         pDescriptor.mBound.push_back(bound);
-        pDescriptor.mKeyElementType = new DynamicType(key_element_type);
-        pDescriptor.mElementType = new DynamicType(element_type);
+        pDescriptor.mKeyElementType = build_type(key_element_type);
+        pDescriptor.mElementType = build_type(element_type);
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
         mTypesList.push_back(pNewTypeBuilder);
@@ -278,7 +308,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_sequence_type(const Dynami
         pDescriptor.mKind = TK_SEQUENCE;
         pDescriptor.mName = GenerateTypeName();
         pDescriptor.mBound.push_back(bound);
-        pDescriptor.mElementType = new DynamicType(element_type);
+        pDescriptor.mElementType = build_type(element_type);
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
         mTypesList.push_back(pNewTypeBuilder);
@@ -300,7 +330,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_string_type(uint32_t bound
     TypeDescriptor pDescriptor;
     pDescriptor.mKind = TK_STRING8;
     pDescriptor.mName = GenerateTypeName();
-    pDescriptor.mElementType = new DynamicType(&pCharDescriptor);
+    pDescriptor.mElementType = build_type(&pCharDescriptor);
     pDescriptor.mBound.push_back(bound);
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
@@ -380,7 +410,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_wstring_type(uint32_t boun
     TypeDescriptor pDescriptor;
     pDescriptor.mKind = TK_STRING16;
     pDescriptor.mName = GenerateTypeName();
-    pDescriptor.mElementType = new DynamicType(&pCharDescriptor);
+    pDescriptor.mElementType = build_type(&pCharDescriptor);
     pDescriptor.mBound.push_back(bound);
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
@@ -416,9 +446,13 @@ DynamicType* DynamicTypeBuilderFactory::get_primitive_type(TypeKind kind)
     TypeDescriptor pDescriptor;
     pDescriptor.mKind = kind;
     pDescriptor.mName = GenerateTypeName();
-    DynamicType* pNewType = new DynamicType(&pDescriptor);
-    mTypesList.push_back(pNewType);
+    DynamicType* pNewType = build_type(&pDescriptor);
     return pNewType;
+}
+
+bool DynamicTypeBuilderFactory::IsEmpty() const
+{
+    return mTypesList.empty();
 }
 
 } // namespace types

@@ -106,6 +106,12 @@ ResponseCode DynamicDataFactory::delete_data(DynamicData* data)
     return ResponseCode::RETCODE_OK;
 }
 
+bool DynamicDataFactory::IsEmpty() const
+{
+    return mDynamicDatas.empty();
+}
+
+
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima

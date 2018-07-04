@@ -51,6 +51,10 @@ public:
 
     RTPS_DllAPI DynamicData* clone() const;
 
+    RTPS_DllAPI ResponseCode insert_new_data(MemberId& outId);
+    RTPS_DllAPI ResponseCode remove_data(MemberId id);
+    RTPS_DllAPI ResponseCode clear_data();
+
     RTPS_DllAPI ResponseCode get_int32_value(int32_t& value, MemberId id) const;
 	RTPS_DllAPI ResponseCode set_int32_value(MemberId id, int32_t value);
 	RTPS_DllAPI ResponseCode get_uint32_value(uint32_t& value, MemberId id) const;
@@ -101,6 +105,8 @@ protected:
 
     void SetTypeName(const std::string& name);
 
+    void SortMemberIds(MemberId startId);
+
 	DynamicType* mType;
     std::map<MemberId, MemberDescriptor*> mDescriptors;
 
@@ -125,6 +131,7 @@ protected:
     std::map<MemberId, void*> mValues;
 #endif
     std::vector<MemberId> mLoanedValues;
+    bool mIsKeyElement;
     uint32_t mItemCount;
 
     friend class DynamicDataFactory;

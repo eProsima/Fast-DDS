@@ -40,6 +40,8 @@ public:
     bool is_complex_kind() const;
     DynamicType* getBaseType() const;
     uint32_t get_bounds(uint32_t index = 0) const;
+    DynamicType* getElementType() const;
+    DynamicType* getKeyElementType() const;
 
 	ResponseCode get_member_by_name(DynamicTypeMember& member, const std::string name);
 	ResponseCode get_all_members_by_name(std::map<std::string, DynamicTypeMember*>& members);
