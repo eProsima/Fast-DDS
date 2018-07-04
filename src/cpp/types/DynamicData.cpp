@@ -362,6 +362,12 @@ void DynamicData::AddValue(TypeKind kind, MemberId id)
 #endif
     }
     break;
+    case TK_BITSET:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new uint64_t));
+#endif
+    }
     }
     SetDefaultValue(id);
 }
@@ -587,6 +593,12 @@ void* DynamicData::CloneValue(MemberId id, TypeKind kind) const
         return newString;
     }
     break;
+    case TK_BITSET:
+    {
+        uint64_t* newBitset = new uint64_t();
+        get_uint64_value(*newBitset, id);
+        return newBitset;
+    }
     }
     return nullptr;
 }
@@ -612,6 +624,7 @@ bool DynamicData::CompareValues(TypeKind kind, void* left, void* right)
     case TK_BYTE:       {   return *((octet*)left) == *((octet*)right);    }
     case TK_STRING8:    {   return *((std::string*)left) == *((std::string*)right);    }
     case TK_STRING16:   {   return *((std::wstring*)left) == *((std::wstring*)right);    }
+    case TK_BITSET:     {   return *((uint64_t*)left) == *((uint64_t*)right);    }
     }
     return false;
 }
@@ -776,6 +789,17 @@ void DynamicData::SetDefaultValue(MemberId id)
     case TK_STRING16:
     {
         set_wstring_value(id, std::wstring(defaultValue.begin(), defaultValue.end()));
+    }
+    break;
+    case TK_BITSET:
+    {
+        int value(0);
+        try
+        {
+            value = stoi(defaultValue);
+        }
+        catch (...) {}
+        set_bool_value(id, value == 1 ? true : false);
     }
     break;
     }
@@ -1746,6 +1770,11 @@ ResponseCode DynamicData::get_bool_value(bool& value, MemberId id) const
         value = mBoolValue;
         return ResponseCode::RETCODE_OK;
     }
+    else if (mType->get_kind() == TK_BITSET && id < mType->get_bounds())
+    {
+        value = (mUInt64Value & ((uint64_t)1 << id)) != 0;
+        return ResponseCode::RETCODE_OK;
+    }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = mComplexValues.find(id);
@@ -1762,6 +1791,11 @@ ResponseCode DynamicData::get_bool_value(bool& value, MemberId id) const
         if (mType->get_kind() == TK_BOOLEAN && id == MEMBER_ID_INVALID)
         {
             value = *((bool*)it->second);
+        }
+        else if (mType->get_kind() == TK_BITSET && id < mType->get_bounds())
+        {
+            value = *((uint64_t*)it->second) & (1 << id) != 0;
+            return ResponseCode::RETCODE_OK;
         }
         else
         {
@@ -1781,6 +1815,26 @@ ResponseCode DynamicData::set_bool_value(MemberId id, bool value)
         mBoolValue = value;
         return ResponseCode::RETCODE_OK;
     }
+    else if (mType->get_kind() == TK_BITSET && id != MEMBER_ID_INVALID)
+    {
+        if (mType->get_bounds() == LENGTH_UNLIMITED || id < mType->get_bounds())
+        {
+            if (value)
+            {
+                mUInt64Value |= ((uint64_t)1 << id);
+            }
+            else
+            {
+                mUInt64Value &= ~((uint64_t)1 << id);
+            }
+            return ResponseCode::RETCODE_OK;
+        }
+        else
+        {
+            logError(DYN_TYPES, "Error setting bool value. The given index is greather than the bitset limit.");
+            return ResponseCode::RETCODE_BAD_PARAMETER;
+        }
+    }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = mComplexValues.find(id);
@@ -1797,6 +1851,18 @@ ResponseCode DynamicData::set_bool_value(MemberId id, bool value)
         if (mType->get_kind() == TK_BOOLEAN && id == MEMBER_ID_INVALID)
         {
             *((bool*)it->second) = value;
+        }
+        else if (mType->get_kind() == TK_BITSET && id != MEMBER_ID_INVALID)
+        {
+            if (value)
+            {
+                *((uint64_t*)it->second) |= (1 << id);
+            }
+            else
+            {
+                *((uint64_t*)it->second) &= ~(1 << id);
+            }
+            return ResponseCode::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -1998,7 +2064,7 @@ void DynamicData::SortMemberIds(MemberId startId)
 ResponseCode DynamicData::insert_new_data(MemberId& outId)
 {
     outId = MEMBER_ID_INVALID;
-    if (mType->get_kind() == TK_SEQUENCE || mType->get_kind() == TK_ARRAY) // TODO: BITMASK ?? BITSET ??
+    if (mType->get_kind() == TK_SEQUENCE || mType->get_kind() == TK_ARRAY)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         if (mType->get_bounds() == LENGTH_UNLIMITED || mComplexValues.size() < mType->get_bounds())
@@ -2032,7 +2098,7 @@ ResponseCode DynamicData::insert_new_data(MemberId& outId)
 
 ResponseCode DynamicData::remove_data(MemberId id)
 {
-    if (mType->get_kind() == TK_SEQUENCE || mType->get_kind() == TK_ARRAY) // TODO: BITMASK ?? BITSET ??
+    if (mType->get_kind() == TK_SEQUENCE || mType->get_kind() == TK_ARRAY)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         auto it = mComplexValues.find(id);
@@ -2065,7 +2131,7 @@ ResponseCode DynamicData::remove_data(MemberId id)
 
 ResponseCode DynamicData::clear_data()
 {
-    if (mType->get_kind() == TK_SEQUENCE || mType->get_kind() == TK_MAP || mType->get_kind() == TK_ARRAY) // TODO: BITMASK ?? BITSET ??
+    if (mType->get_kind() == TK_SEQUENCE || mType->get_kind() == TK_MAP || mType->get_kind() == TK_ARRAY)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)

@@ -101,7 +101,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
 
 TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
 {
-    //// Given
+    // Given
     DynamicTypeBuilderFactory::get_instance();
     DynamicTypeBuilder* created_type(nullptr);
 
@@ -131,25 +131,11 @@ TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
 
     ASSERT_TRUE(DynamicTypeBuilderFactory::DeleteInstance() == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::DeleteInstance() == ResponseCode::RETCODE_OK);
-
-
-    /*
-
-
-    //auto seqBuilder = DynamicTypeBuilderFactory::get_instance()->create_sequence_type(type, 10);
-    //auto seqType = seqBuilder->build();
-
-    auto data = DynamicDataFactory::get_instance()->create_data(type);
-    data->set_int32_value(MEMBER_ID_INVALID, 10);
-
-    int test = 0;
-    data->get_int32_value(test, MEMBER_ID_INVALID);
-    */
 }
 
 TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
 {
-    //// Given
+    // Given
     DynamicTypeBuilderFactory::get_instance();
     DynamicTypeBuilder* created_type(nullptr);
     uint32_t string_length = 15;
@@ -219,6 +205,52 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->delete_type(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::get_instance()->delete_type(created_type) == ResponseCode::RETCODE_OK);
     */
+}
+
+
+TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::get_instance();
+    DynamicTypeBuilder* created_type(nullptr);
+    uint32_t limit = 3;
+
+    // Then
+    created_type = DynamicTypeBuilderFactory::get_instance()->create_bitset_type(limit);
+    ASSERT_TRUE(created_type != nullptr);
+    auto new_type = created_type->build();
+    auto data = DynamicDataFactory::get_instance()->create_data(new_type);
+
+    bool test1 = true;
+    ASSERT_FALSE(data->set_int32_value(MEMBER_ID_INVALID, 1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->set_bool_value(MEMBER_ID_INVALID, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->set_bool_value(2, test1) == ResponseCode::RETCODE_OK);
+
+    // Over the limit
+    ASSERT_FALSE(data->set_bool_value(limit + 1, test1) == ResponseCode::RETCODE_OK);
+
+    bool test2 = false;
+    ASSERT_TRUE(data->get_bool_value(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test2 == false);
+    ASSERT_TRUE(data->get_bool_value(test2, 2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+    test1 = false;
+    ASSERT_TRUE(data->set_bool_value(2, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->get_bool_value(test2, 2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->delete_type(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::get_instance()->delete_type(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->delete_type(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::get_instance()->delete_type(created_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->IsEmpty());
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::DeleteInstance() == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::DeleteInstance() == ResponseCode::RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
