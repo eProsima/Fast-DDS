@@ -288,6 +288,24 @@ uint32_t DynamicType::get_bounds(uint32_t index /*= 0*/) const
     return LENGTH_UNLIMITED;
 }
 
+DynamicType* DynamicType::getElementType() const
+{
+    if (mDescriptor != nullptr)
+    {
+        return mDescriptor->getElementType();
+    }
+    return nullptr;
+}
+
+DynamicType* DynamicType::getKeyElementType() const
+{
+    if (mDescriptor != nullptr)
+    {
+        return mDescriptor->getKeyElementType();
+    }
+    return nullptr;
+}
+
 bool DynamicType::is_complex_kind() const
 {
     return mKind == TK_ANNOTATION || mKind == TK_ARRAY || mKind == TK_BITMASK || mKind == TK_BITSET

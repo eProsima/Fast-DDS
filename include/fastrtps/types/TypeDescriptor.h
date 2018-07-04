@@ -42,11 +42,15 @@ public:
     TypeKind getKind() const;
     uint32_t getBounds(uint32_t index = 0) const;
     DynamicType* getBaseType() const;
+    DynamicType* getElementType() const;
+    DynamicType* getKeyElementType() const;
 
     void setName(std::string name);
     void setKind(TypeKind kind);
 
 protected:
+
+    void Clean();
 
     friend class DynamicTypeBuilderFactory;
 

@@ -15,8 +15,10 @@
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/log/Log.h>
 
 namespace eprosima {
@@ -63,11 +65,12 @@ DynamicData::DynamicData()
     , mBoolValue(false)
 #endif
     , mItemCount(0)
+    , mIsKeyElement(false)
 {
 }
 
 DynamicData::DynamicData(DynamicType* pType)
-    : mType(pType)
+    : mType(DynamicTypeBuilderFactory::get_instance()->build_type(pType))
 #ifdef DYNAMIC_TYPES_CHECKING
     , mInt32Value(0)
     , mUInt32Value(0)
@@ -84,6 +87,7 @@ DynamicData::DynamicData(DynamicType* pType)
     , mBoolValue(false)
 #endif
     , mItemCount(0)
+    , mIsKeyElement(false)
 {
     std::map<MemberId, DynamicTypeMember*> members;
     if (mType->get_all_members(members) == ResponseCode::RETCODE_OK)
@@ -97,9 +101,9 @@ DynamicData::DynamicData(DynamicType* pType)
                 {
                     mDescriptors.insert(std::make_pair(it->first, newDescriptor));
 #ifdef DYNAMIC_TYPES_CHECKING
-                    mComplexValues.insert(std::make_pair(it->first, new DynamicData(newDescriptor->mType)));
+                    mComplexValues.insert(std::make_pair(it->first, DynamicDataFactory::get_instance()->create_data(newDescriptor->mType)));
 #else
-                    mValues.insert(std::make_pair(it->first, new DynamicData(newDescriptor->mType)));
+                    mValues.insert(std::make_pair(it->first, DynamicDataFactory::get_instance()->create_data(newDescriptor->mType)));
 #endif
                 }
                 else
@@ -366,7 +370,7 @@ void DynamicData::Clean()
 {
     if (mType != nullptr)
     {
-        delete mType;
+        DynamicTypeBuilderFactory::get_instance()->delete_type(mType);
         mType = nullptr;
     }
 
@@ -381,29 +385,33 @@ ResponseCode DynamicData::clear_all_values()
 {
     if (mType->is_complex_kind())
     {
-        for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+        if (mType->get_kind() == TK_SEQUENCE)
         {
+            return clear_data();
+        }
+        else
+        {
+            for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+            {
 #ifdef DYNAMIC_TYPES_CHECKING
-            auto itValue = mComplexValues.find(it->first);
-            if (itValue != mComplexValues.end())
-            {
-                itValue->second->clear_all_values();
-            }
+                auto itValue = mComplexValues.find(it->first);
+                if (itValue != mComplexValues.end())
+                {
+                    itValue->second->clear_all_values();
+                }
 #else
-            auto itValue = mValues.find(it->first);
-            if (itValue != mValues.end())
-            {
-                ((DynamicData*)itValue->second)->clear_all_values();
-            }
+                auto itValue = mValues.find(it->first);
+                if (itValue != mValues.end())
+                {
+                    ((DynamicData*)itValue->second)->clear_all_values();
+                }
 #endif
+            }
         }
     }
     else
     {
-        for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
-        {
-            SetDefaultValue(it->first);
-        }
+        SetDefaultValue(MEMBER_ID_INVALID);
     }
     return ResponseCode::RETCODE_OK;
 }
@@ -431,10 +439,9 @@ ResponseCode DynamicData::clear_nonkey_values()
     }
     else
     {
-        //ARCE: //TODO: Avoid Key Elements.
-        for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+        if (!mIsKeyElement)
         {
-            SetDefaultValue(it->first);
+            SetDefaultValue(MEMBER_ID_INVALID);
         }
     }
     return ResponseCode::RETCODE_OK;
@@ -833,8 +840,7 @@ ResponseCode DynamicData::return_loaned_value(const DynamicData* value)
 
 DynamicData* DynamicData::clone() const
 {
-    DynamicData* newData = new DynamicData();
-    newData->mType = new DynamicType(mType);
+    DynamicData* newData = DynamicDataFactory::get_instance()->create_data(mType);
     newData->mItemCount = mItemCount;
 
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -1842,7 +1848,7 @@ ResponseCode DynamicData::set_string_value(MemberId id, const std::string& value
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->get_kind() == TK_STRING8 &&id == MEMBER_ID_INVALID)
     {
-        if (value.length() <= mType->get_bounds(0))
+        if (mType->get_bounds() == LENGTH_UNLIMITED || value.length() <= mType->get_bounds())
         {
             mStringValue = value;
             return ResponseCode::RETCODE_OK;
@@ -1929,7 +1935,7 @@ ResponseCode DynamicData::set_wstring_value(MemberId id, const std::wstring& val
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->get_kind() == TK_STRING16 && id == MEMBER_ID_INVALID)
     {
-        if (value.length() <= mType->get_bounds(0))
+        if (mType->get_bounds() == LENGTH_UNLIMITED || value.length() <= mType->get_bounds())
         {
             mWStringValue = value;
             return ResponseCode::RETCODE_OK;
@@ -1966,6 +1972,123 @@ ResponseCode DynamicData::set_wstring_value(MemberId id, const std::wstring& val
     return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
 }
+
+void DynamicData::SortMemberIds(MemberId startId)
+{
+    MemberId curID = startId + 1;
+#ifdef DYNAMIC_TYPES_CHECKING
+    auto it = mComplexValues.find(curID);
+    while (it != mComplexValues.end())
+    {
+        mComplexValues[curID - 1] = it->second;
+        mComplexValues.erase(it);
+        it = mComplexValues.find(++curID);
+    }
+#else
+    auto it = mValues.find(curID);
+    while (it != mValues.end())
+    {
+        mValues[curID - 1] = it->second;
+        mValues.erase(it);
+        it = mValues.find(++curID);
+    }
+#endif
+}
+
+ResponseCode DynamicData::insert_new_data(MemberId& outId)
+{
+    outId = MEMBER_ID_INVALID;
+    if (mType->get_kind() == TK_SEQUENCE || mType->get_kind() == TK_ARRAY) // TODO: BITMASK ?? BITSET ??
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        if (mType->get_bounds() == LENGTH_UNLIMITED || mComplexValues.size() < mType->get_bounds())
+        {
+            DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(mType->getElementType());
+            outId = static_cast<MemberId>(mComplexValues.size());
+            mComplexValues.insert(std::make_pair(outId, new_element));
+            return ResponseCode::RETCODE_OK;
+        }
+#else
+        if (descriptor.getBounds() == LENGTH_UNLIMITED || mValues.size() < descriptor.getBounds())
+        {
+            DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(descriptor.getElementType());
+            outId = static_cast<MemberId>(mValues.size());
+            mValues.insert(std::make_pair(outId, new_element));
+            return ResponseCode::RETCODE_OK;
+        }
+#endif
+        else
+        {
+            logError(DYN_TYPES, "Error inserting data. The container is full.");
+            return ResponseCode::RETCODE_BAD_PARAMETER;
+        }
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The kind " << mType->get_kind() << " doesn't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::remove_data(MemberId id)
+{
+    if (mType->get_kind() == TK_SEQUENCE || mType->get_kind() == TK_ARRAY) // TODO: BITMASK ?? BITSET ??
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        auto it = mComplexValues.find(id);
+        if (it != mComplexValues.end())
+        {
+            DynamicDataFactory::get_instance()->delete_data(it->second);
+            mComplexValues.erase(it);
+            SortMemberIds(id);
+            return ResponseCode::RETCODE_OK;
+        }
+#else
+        auto it = mValues.find(id);
+        if (it != mValues.end())
+        {
+            DynamicDataFactory::get_instance()->delete_data((DynamicData*)it->second);
+            mValues.erase(it);
+            SortMemberIds(id);
+            return ResponseCode::RETCODE_OK;
+        }
+#endif
+        logError(DYN_TYPES, "Error removing data. Member not found");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+
+    logError(DYN_TYPES, "Error removing data. The current Kind " << mType->get_kind()
+        << " doesn't support this method");
+
+    return ResponseCode::RETCODE_BAD_PARAMETER;
+}
+
+ResponseCode DynamicData::clear_data()
+{
+    if (mType->get_kind() == TK_SEQUENCE || mType->get_kind() == TK_MAP || mType->get_kind() == TK_ARRAY) // TODO: BITMASK ?? BITSET ??
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
+        {
+            DynamicDataFactory::get_instance()->delete_data(it->second);
+        }
+        mComplexValues.clear();
+#else
+        for (auto it = mValues.begin(); it != mValues.end(); ++it)
+        {
+            DynamicDataFactory::get_instance()->delete_data((DynamicData*)it->second);
+        }
+        mValues.clear();
+#endif
+        return ResponseCode::RETCODE_OK;
+    }
+
+    logError(DYN_TYPES, "Error clearing data. The current Kind " << mType->get_kind()
+        << " doesn't support this method");
+
+    return ResponseCode::RETCODE_BAD_PARAMETER;
+}
+
 
 /*
 ResponseCode DynamicData::get_complex_value(DynamicData* value, MemberId id) const

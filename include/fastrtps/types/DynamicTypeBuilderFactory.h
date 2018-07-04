@@ -38,6 +38,8 @@ public:
     RTPS_DllAPI DynamicType* get_primitive_type(TypeKind kind);
     RTPS_DllAPI ResponseCode delete_type(DynamicType* type);
 
+    RTPS_DllAPI DynamicType* build_type(const TypeDescriptor* descriptor);
+    RTPS_DllAPI DynamicType* build_type(const DynamicType* other);
     RTPS_DllAPI DynamicTypeBuilder* create_type(const TypeDescriptor* descriptor);
 	RTPS_DllAPI DynamicTypeBuilder* create_type_copy(const DynamicType* type);
     RTPS_DllAPI DynamicTypeBuilder* create_int32_type();
@@ -63,6 +65,8 @@ public:
     //DynamicTypeBuilder* create_type_w_type_object(TypeObject* type_object);
     //DynamicTypeBuilder* create_type_w_uri(const std::string& document_url, const std::string& type_name, IncludePathSeq include_paths);
 	//DynamicTypeBuilder* create_type_w_document(const std::string& document, const std::string& type_name, IncludePathSeq include_paths);
+
+    RTPS_DllAPI bool IsEmpty() const;
 
 protected:
 	DynamicTypeBuilderFactory();

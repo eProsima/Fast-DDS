@@ -14,6 +14,7 @@
 
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/log/Log.h>
 
 namespace eprosima {
@@ -57,7 +58,7 @@ MemberDescriptor::~MemberDescriptor()
 {
     if (mType != nullptr)
     {
-        delete mType;
+        DynamicTypeBuilderFactory::get_instance()->delete_type(mType);
     }
 }
 
@@ -69,9 +70,9 @@ ResponseCode MemberDescriptor::copy_from(const MemberDescriptor* other)
         {
             if (mType != nullptr)
             {
-                delete mType;
+                DynamicTypeBuilderFactory::get_instance()->delete_type(mType);
             }
-            mType = new DynamicType(other->mType);
+            mType = DynamicTypeBuilderFactory::get_instance()->build_type(other->mType);
             mName = other->mName;
             mId = other->mId;
             mDefaultValue = other->mDefaultValue;

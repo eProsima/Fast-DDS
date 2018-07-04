@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicTypeMember.h>
@@ -130,7 +131,7 @@ ResponseCode DynamicTypeBuilder::apply_annotation_to_member(MemberId id, Annotat
 
 DynamicType* DynamicTypeBuilder::build()
 {
-    DynamicType* newType = new DynamicType(mDescriptor);
+    DynamicType* newType = DynamicTypeBuilderFactory::get_instance()->build_type(mDescriptor);
     newType->mName = mDescriptor->getName();
     newType->mKind = mDescriptor->getKind();
     for (auto it = mAnnotation.begin(); it != mAnnotation.end(); ++it)

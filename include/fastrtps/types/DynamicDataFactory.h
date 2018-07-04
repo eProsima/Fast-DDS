@@ -35,6 +35,8 @@ public:
     RTPS_DllAPI DynamicData* create_data(DynamicType* pType);
     RTPS_DllAPI ResponseCode delete_data(DynamicData* data);
 
+    RTPS_DllAPI bool IsEmpty() const;
+
 protected:
     DynamicDataFactory();
 
