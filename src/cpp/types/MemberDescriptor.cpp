@@ -44,7 +44,7 @@ MemberDescriptor::MemberDescriptor()
 , mId(MEMBER_ID_INVALID)
 , mType(nullptr)
 , mDefaultValue("")
-, mIndex(0)
+, mIndex(INDEX_INVALID)
 , mDefaultLabel(false)
 {
 }
@@ -120,9 +120,19 @@ uint32_t MemberDescriptor::get_index() const
     return mIndex;
 }
 
+void MemberDescriptor::set_id(MemberId id)
+{
+    mId = id;
+}
+
 void MemberDescriptor::set_index(uint32_t index)
 {
     mIndex = index;
+}
+
+void MemberDescriptor::set_name(const std::string& name)
+{
+    mName = name;
 }
 
 TypeKind MemberDescriptor::get_kind() const

@@ -41,6 +41,9 @@ public:
     TypeKind get_kind() const;
     std::string get_name() const;
     uint32_t get_index() const;
+
+    void set_id(MemberId id);
+    void set_name(const std::string& name);
     void set_index(uint32_t index);
 
 protected:

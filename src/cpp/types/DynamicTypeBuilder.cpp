@@ -16,6 +16,7 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/log/Log.h>
@@ -54,39 +55,55 @@ DynamicTypeBuilder::~DynamicTypeBuilder()
 
 ResponseCode DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
 {
-    if (mDescriptor->getKind() == TK_ANNOTATION || mDescriptor->getKind() == TK_BITMASK
-        || mDescriptor->getKind() == TK_ENUM || mDescriptor->getKind() == TK_STRUCTURE
-        || mDescriptor->getKind() == TK_UNION)
+    if (mDescriptor != nullptr)
     {
-        DynamicTypeMember* newMember = new DynamicTypeMember(descriptor, mCurrentMemberId);
-
-        // If the index of the new member is bigger than the current maximum, put it at the end.
-        if (newMember->get_index() > mMaxIndex)
+        if (mDescriptor->getKind() == TK_ANNOTATION || mDescriptor->getKind() == TK_BITMASK
+            || mDescriptor->getKind() == TK_ENUM || mDescriptor->getKind() == TK_STRUCTURE
+            || mDescriptor->getKind() == TK_UNION)
         {
-            newMember->set_index(++mMaxIndex);
+            if (mMemberByName.find(descriptor->get_name()) == mMemberByName.end())
+            {
+                DynamicTypeMember* newMember = new DynamicTypeMember(descriptor, mCurrentMemberId);
+
+                // If the index of the new member is bigger than the current maximum, put it at the end.
+                if (newMember->get_index() > mMaxIndex)
+                {
+                    newMember->set_index(++mMaxIndex);
+                }
+                else
+                {
+                    // Move every member bigger than the current index to the right.
+                    for (auto it = mMemberById.begin(); it != mMemberById.end(); ++it)
+                    {
+                        if (it->second->get_index() >= newMember->get_index())
+                        {
+                            it->second->set_index(it->second->get_index() + 1);
+                        }
+                    }
+                }
+
+                mMemberById.insert(std::make_pair(mCurrentMemberId, newMember));
+                mMemberByName.insert(std::make_pair(newMember->get_name(), newMember));
+                ++mCurrentMemberId;
+                return ResponseCode::RETCODE_OK;
+            }
+            else
+            {
+                logWarning(DYN_TYPES, "Error adding member, there is other member with the same name.");
+                return ResponseCode::RETCODE_BAD_PARAMETER;
+            }
         }
         else
         {
-            // Move every member bigger than the current index to the right.
-            for (auto it = mMemberById.begin(); it != mMemberById.end(); ++it)
-            {
-                if (it->second->get_index() >= newMember->get_index())
-                {
-                    it->second->set_index(it->second->get_index() + 1);
-                }
-            }
+            logWarning(DYN_TYPES, "Error adding member, the current type " << mDescriptor->getKind()
+                << " doesn't support members.");
+            return ResponseCode::RETCODE_PRECONDITION_NOT_MET;
         }
-
-        mMemberById.insert(std::make_pair(mCurrentMemberId, newMember));
-        mMemberByName.insert(std::make_pair(newMember->get_name(), newMember));
-        ++mCurrentMemberId;
-        return ResponseCode::RETCODE_OK;
     }
     else
     {
-        logWarning(DYN_TYPES, "Error adding member, the current type " << mDescriptor->getKind()
-            << " doesn't support members.");
-        return ResponseCode::RETCODE_PRECONDITION_NOT_MET;
+        logWarning(DYN_TYPES, "Error adding member, Invalid input descriptor.");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -143,12 +160,10 @@ DynamicType* DynamicTypeBuilder::build()
 
     for (auto it = mMemberById.begin(); it != mMemberById.end(); ++it)
     {
-        newType->mMemberById.insert(std::make_pair(it->first, it->second));
-    }
-
-    for (auto it = mMemberByName.begin(); it != mMemberByName.end(); ++it)
-    {
-        newType->mMemberByName.insert(std::make_pair(it->first, it->second));
+        DynamicTypeMember* newMember = new DynamicTypeMember(it->second);
+        newMember->set_parent(newType);
+        newType->mMemberById.insert(std::make_pair(newMember->get_id(), newMember));
+        newType->mMemberByName.insert(std::make_pair(newMember->get_name(), newMember));
     }
 
     return newType;

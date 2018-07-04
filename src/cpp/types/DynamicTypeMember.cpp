@@ -34,6 +34,7 @@ DynamicTypeMember::DynamicTypeMember(const MemberDescriptor* descriptor, MemberI
     , mId(id)
 {
     mDescriptor = new MemberDescriptor(descriptor);
+    mDescriptor->set_id(id);
 }
 
 DynamicTypeMember::DynamicTypeMember(const DynamicTypeMember* other)
@@ -143,6 +144,11 @@ void DynamicTypeMember::set_index(uint32_t index)
     {
         mDescriptor->set_index(index);
     }
+}
+
+void DynamicTypeMember::set_parent(DynamicType* pType)
+{
+    mParent = pType;
 }
 
 } // namespace types

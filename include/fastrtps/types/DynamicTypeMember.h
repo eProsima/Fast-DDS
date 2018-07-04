@@ -48,8 +48,10 @@ protected:
 
     uint32_t get_index() const;
     void set_index(uint32_t index);
+    void set_parent(DynamicType* pType);
 
     friend class DynamicTypeBuilder;
+    friend class DynamicType;
 
     DynamicType* mParent;
     MemberDescriptor* mDescriptor;

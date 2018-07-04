@@ -18,6 +18,7 @@
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/log/Log.h>
@@ -207,7 +208,6 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
     */
 }
 
-
 TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
 {
     // Given
@@ -237,6 +237,70 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
     test1 = false;
     ASSERT_TRUE(data->set_bool_value(2, test1) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(data->get_bool_value(test2, 2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->delete_type(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::get_instance()->delete_type(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->delete_type(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::get_instance()->delete_type(created_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->IsEmpty());
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::DeleteInstance() == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::DeleteInstance() == ResponseCode::RETCODE_OK);
+}
+
+TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::get_instance();
+    DynamicTypeBuilder* created_type(nullptr);
+    uint32_t limit = 3;
+
+    // Then
+    created_type = DynamicTypeBuilderFactory::get_instance()->create_bitmask_type(limit);
+    ASSERT_TRUE(created_type != nullptr);
+
+    // Add two members to the bitmask
+    types::MemberDescriptor descriptor;
+    descriptor.set_index(0);
+    descriptor.set_name("TEST");
+    ASSERT_TRUE(created_type->add_member(&descriptor) == ResponseCode::RETCODE_OK);
+
+    // Try to add a descriptor with the same name
+    descriptor.set_index(1);
+    ASSERT_FALSE(created_type->add_member(&descriptor) == ResponseCode::RETCODE_OK);
+
+    descriptor.set_name("TEST2");
+    ASSERT_TRUE(created_type->add_member(&descriptor) == ResponseCode::RETCODE_OK);
+
+    auto new_type = created_type->build();
+    auto data = DynamicDataFactory::get_instance()->create_data(new_type);
+    MemberId testId = data->get_member_id_by_name("TEST");
+    ASSERT_TRUE(testId != MEMBER_ID_INVALID);
+    MemberId test2Id = data->get_member_id_by_name("TEST2");
+    ASSERT_TRUE(test2Id != MEMBER_ID_INVALID);
+
+    bool test1 = true;
+    ASSERT_FALSE(data->set_int32_value(MEMBER_ID_INVALID, 1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->set_bool_value(MEMBER_ID_INVALID, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->set_bool_value(testId, test1) == ResponseCode::RETCODE_OK);
+
+    // Over the limit
+    ASSERT_FALSE(data->set_bool_value(limit + 1, test1) == ResponseCode::RETCODE_OK);
+
+    bool test2 = false;
+    ASSERT_TRUE(data->get_bool_value(test2, 2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test2 == false);
+    ASSERT_TRUE(data->get_bool_value(test2, testId) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+    test1 = false;
+    ASSERT_TRUE(data->set_bool_value(testId, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->get_bool_value(test2, test2Id) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->get_bool_value(test2, testId) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
 
     ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ResponseCode::RETCODE_OK);
