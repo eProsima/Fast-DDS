@@ -123,7 +123,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -245,7 +245,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -393,7 +393,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -577,7 +577,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -762,7 +762,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -956,7 +956,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1150,7 +1150,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1387,7 +1387,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1626,7 +1626,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1813,7 +1813,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1909,7 +1909,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.

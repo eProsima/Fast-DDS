@@ -67,13 +67,13 @@ ExtendedAnnotationParameterValue& ExtendedAnnotationParameterValue::operator=(Ex
     return *this;
 }
 
-size_t ExtendedAnnotationParameterValue::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
+// size_t ExtendedAnnotationParameterValue::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
 
 
-    return current_alignment - initial_alignment;
-}
+//     return current_alignment - initial_alignment;
+// }
 
 size_t ExtendedAnnotationParameterValue::getCdrSerializedSize(const ExtendedAnnotationParameterValue&, size_t current_alignment)
 {
@@ -1297,168 +1297,168 @@ ExtendedAnnotationParameterValue& AnnotationParameterValue::extended_value()
     return m_extended_value;
 }
 
-size_t AnnotationParameterValue::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    size_t reset_alignment = 0;
-    size_t union_max_size_serialized = 0;
+// size_t AnnotationParameterValue::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
+//     size_t reset_alignment = 0;
+//     size_t union_max_size_serialized = 0;
 
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+//     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
+//         reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
 
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
+//         reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
 
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += 2 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 2);
+//         reset_alignment += 2 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 2);
 
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += 2 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 2);
+//         reset_alignment += 2 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 2);
 
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
+//         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
 
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
+//         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
 
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
+//         reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
 
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
+//         reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
 
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
+//         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
 
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
+//         reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
 
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += 16 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 16);
+//         reset_alignment += 16 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 16);
 
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
+//         reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
 
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
+//         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
 
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
+//         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
 
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4) + ANNOTATION_STR_VALUE_MAX_LEN + 1;
+//         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4) + ANNOTATION_STR_VALUE_MAX_LEN + 1;
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4) + ANNOTATION_STR_VALUE_MAX_LEN + 1;
+//         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4) + ANNOTATION_STR_VALUE_MAX_LEN + 1;
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += ExtendedAnnotationParameterValue::getMaxCdrSerializedSize(reset_alignment);
+//         reset_alignment += ExtendedAnnotationParameterValue::getMaxCdrSerializedSize(reset_alignment);
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
 
-    return union_max_size_serialized - initial_alignment;
-}
+//     return union_max_size_serialized - initial_alignment;
+// }
 
 // TODO(Ricardo) Review
 size_t AnnotationParameterValue::getCdrSerializedSize(const AnnotationParameterValue& data, size_t current_alignment)
@@ -1698,16 +1698,16 @@ AppliedAnnotationParameter& AppliedAnnotationParameter::operator=(AppliedAnnotat
     return *this;
 }
 
-size_t AppliedAnnotationParameter::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
+// size_t AppliedAnnotationParameter::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
 
-    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+//     current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
-    current_alignment += AnnotationParameterValue::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += AnnotationParameterValue::getMaxCdrSerializedSize(current_alignment);
 
-    return current_alignment - initial_alignment;
-}
+//     return current_alignment - initial_alignment;
+// }
 
 size_t AppliedAnnotationParameter::getCdrSerializedSize(const AppliedAnnotationParameter& data, size_t current_alignment)
 {
@@ -1752,101 +1752,6 @@ void AppliedAnnotationParameter::serializeKey(eprosima::fastcdr::Cdr &scdr) cons
 
 
 }
-/*
-AppliedAnnotationParameter::AppliedAnnotationParameter()
-{
-}
-
-AppliedAnnotationParameter::~AppliedAnnotationParameter()
-{
-}
-
-AppliedAnnotationParameter::AppliedAnnotationParameter(const AppliedAnnotationParameter &x)
-{
-    m_paramname_hash = x.m_paramname_hash;
-    m_value = x.m_value;
-
-}
-
-AppliedAnnotationParameter::AppliedAnnotationParameter(AppliedAnnotationParameter &&x)
-{
-    m_paramname_hash = std::move(x.m_paramname_hash);
-    m_value = std::move(x.m_value);
-
-}
-
-AppliedAnnotationParameter& AppliedAnnotationParameter::operator=(const AppliedAnnotationParameter &x)
-{
-    m_paramname_hash = x.m_paramname_hash;
-    m_value = x.m_value;
-
-
-    return *this;
-}
-
-AppliedAnnotationParameter& AppliedAnnotationParameter::operator=(AppliedAnnotationParameter &&x)
-{
-    m_paramname_hash = std::move(x.m_paramname_hash);
-    m_value = std::move(x.m_value);
-
-
-    return *this;
-}
-
-size_t AppliedAnnotationParameter::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    current_alignment += AnnotationParameterValue::getMaxCdrSerializedSize(current_alignment);
-
-
-    return current_alignment - initial_alignment;
-}
-
-size_t AppliedAnnotationParameter::getCdrSerializedSize(const AppliedAnnotationParameter& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    current_alignment += AnnotationParameterValue::getCdrSerializedSize(data.value(), current_alignment);
-
-
-    return current_alignment - initial_alignment;
-}
-
-void AppliedAnnotationParameter::serialize(eprosima::fastcdr::Cdr &scdr) const
-{
-    scdr << m_paramname_hash;
-    scdr << m_value;
-
-}
-
-void AppliedAnnotationParameter::deserialize(eprosima::fastcdr::Cdr &dcdr)
-{
-    dcdr >> m_paramname_hash;
-    dcdr >> m_value;
-
-}
-
-size_t AppliedAnnotationParameter::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool AppliedAnnotationParameter::isKeyDefined()
-{
-    return false;
-}
-
-void AppliedAnnotationParameter::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	(void) scdr;
-}
-*/
 
 AppliedAnnotation::AppliedAnnotation()
 {
@@ -1884,20 +1789,20 @@ AppliedAnnotation& AppliedAnnotation::operator=(AppliedAnnotation &&x)
     return *this;
 }
 
-size_t AppliedAnnotation::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
+// size_t AppliedAnnotation::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
 
-    current_alignment += TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    //current_alignment += AppliedAnnotationParameterSeq::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += AppliedAnnotationParameter::getMaxCdrSerializedSize(current_alignment);
-	}
+//     current_alignment += TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
+//     //current_alignment += AppliedAnnotationParameterSeq::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+//     for(size_t a = 0; a < 100; ++a)
+//     {
+//         current_alignment += AppliedAnnotationParameter::getMaxCdrSerializedSize(current_alignment);
+// 	}
 
-    return current_alignment - initial_alignment;
-}
+//     return current_alignment - initial_alignment;
+// }
 
 size_t AppliedAnnotation::getCdrSerializedSize(const AppliedAnnotation& data, size_t current_alignment)
 {
@@ -1983,16 +1888,16 @@ AppliedVerbatimAnnotation& AppliedVerbatimAnnotation::operator=(AppliedVerbatimA
     return *this;
 }
 
-size_t AppliedVerbatimAnnotation::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
+// size_t AppliedVerbatimAnnotation::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
 
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 32 + 1; // Max 32
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 32 + 1; // Max 32
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
+//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 32 + 1; // Max 32
+//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 32 + 1; // Max 32
+//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
 
-    return current_alignment - initial_alignment;
-}
+//     return current_alignment - initial_alignment;
+// }
 
 size_t AppliedVerbatimAnnotation::getCdrSerializedSize(const AppliedVerbatimAnnotation& data, size_t current_alignment)
 {
@@ -2080,18 +1985,18 @@ AppliedBuiltinMemberAnnotations& AppliedBuiltinMemberAnnotations::operator=(Appl
     return *this;
 }
 
-size_t AppliedBuiltinMemberAnnotations::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
+// size_t AppliedBuiltinMemberAnnotations::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
 
 
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
-    current_alignment += AnnotationParameterValue::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += AnnotationParameterValue::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
+//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
+//     current_alignment += AnnotationParameterValue::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += AnnotationParameterValue::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
 
-    return current_alignment - initial_alignment;
-}
+//     return current_alignment - initial_alignment;
+// }
 
 size_t AppliedBuiltinMemberAnnotations::getCdrSerializedSize(const AppliedBuiltinMemberAnnotations& data, size_t current_alignment)
 {
