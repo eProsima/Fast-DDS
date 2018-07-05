@@ -73,15 +73,15 @@ StringSTypeDefn& StringSTypeDefn::operator=(StringSTypeDefn &&x)
     return *this;
 }
 
-size_t StringSTypeDefn::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
+// size_t StringSTypeDefn::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
 
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+//     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
 
-    return current_alignment - initial_alignment;
-}
+//     return current_alignment - initial_alignment;
+// }
 
 size_t StringSTypeDefn::getCdrSerializedSize(const StringSTypeDefn&, size_t current_alignment)
 {
@@ -154,15 +154,15 @@ StringLTypeDefn& StringLTypeDefn::operator=(StringLTypeDefn &&x)
     return *this;
 }
 
-size_t StringLTypeDefn::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
+// size_t StringLTypeDefn::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
 
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-    return current_alignment - initial_alignment;
-}
+//     return current_alignment - initial_alignment;
+// }
 
 size_t StringLTypeDefn::getCdrSerializedSize(const StringLTypeDefn&, size_t current_alignment)
 {
@@ -239,17 +239,17 @@ PlainCollectionHeader& PlainCollectionHeader::operator=(PlainCollectionHeader &&
     return *this;
 }
 
-size_t PlainCollectionHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
+// size_t PlainCollectionHeader::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
 
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+//     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+//     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
 
-    return current_alignment - initial_alignment;
-}
+//     return current_alignment - initial_alignment;
+// }
 
 size_t PlainCollectionHeader::getCdrSerializedSize(const PlainCollectionHeader&, size_t current_alignment)
 {
@@ -300,12 +300,12 @@ PlainSequenceSElemDefn::PlainSequenceSElemDefn()
 {
 
     m_bound = 0;
-    m_element_identifier = new TypeIdentifier();
+    //m_element_identifier = new TypeIdentifier();
 }
 
 PlainSequenceSElemDefn::~PlainSequenceSElemDefn()
 {
-    delete m_element_identifier;
+    //delete m_element_identifier;
 }
 
 PlainSequenceSElemDefn::PlainSequenceSElemDefn(const PlainSequenceSElemDefn &x)
@@ -340,20 +340,20 @@ PlainSequenceSElemDefn& PlainSequenceSElemDefn::operator=(PlainSequenceSElemDefn
     return *this;
 }
 
-size_t PlainSequenceSElemDefn::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
+// size_t PlainSequenceSElemDefn::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
 
-    current_alignment += PlainCollectionHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+//     current_alignment += PlainCollectionHeader::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
-    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+//     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+//     size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
 
-    return current_alignment - initial_alignment;
-}
+//     return current_alignment - initial_alignment;
+// }
 
 size_t PlainSequenceSElemDefn::getCdrSerializedSize(const PlainSequenceSElemDefn& data, size_t current_alignment)
 {
@@ -411,12 +411,12 @@ PlainSequenceLElemDefn::PlainSequenceLElemDefn()
 {
 
     m_bound = 0;
-    m_element_identifier = new TypeIdentifier();
+    //m_element_identifier = new TypeIdentifier();
 }
 
 PlainSequenceLElemDefn::~PlainSequenceLElemDefn()
 {
-    delete m_element_identifier;
+    //delete m_element_identifier;
 }
 
 PlainSequenceLElemDefn::PlainSequenceLElemDefn(const PlainSequenceLElemDefn &x)
@@ -451,20 +451,20 @@ PlainSequenceLElemDefn& PlainSequenceLElemDefn::operator=(PlainSequenceLElemDefn
     return *this;
 }
 
-size_t PlainSequenceLElemDefn::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
+// size_t PlainSequenceLElemDefn::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
 
-    current_alignment += PlainCollectionHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+//     current_alignment += PlainCollectionHeader::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
-    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+//     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+//     size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
 
-    return current_alignment - initial_alignment;
-}
+//     return current_alignment - initial_alignment;
+// }
 
 size_t PlainSequenceLElemDefn::getCdrSerializedSize(const PlainSequenceLElemDefn& data, size_t current_alignment)
 {
@@ -522,12 +522,12 @@ PlainArraySElemDefn::PlainArraySElemDefn()
 {
 
 
-    m_element_identifier = new TypeIdentifier();
+    //m_element_identifier = new TypeIdentifier();
 }
 
 PlainArraySElemDefn::~PlainArraySElemDefn()
 {
-    delete m_element_identifier;
+    //delete m_element_identifier;
 }
 
 PlainArraySElemDefn::PlainArraySElemDefn(const PlainArraySElemDefn &x)
@@ -562,21 +562,21 @@ PlainArraySElemDefn& PlainArraySElemDefn::operator=(PlainArraySElemDefn &&x)
     return *this;
 }
 
-size_t PlainArraySElemDefn::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
+// size_t PlainArraySElemDefn::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
 
-    current_alignment += PlainCollectionHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += (100 * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+//     current_alignment += PlainCollectionHeader::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+//     current_alignment += (100 * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
-    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+//     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+//     size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
 
-    return current_alignment - initial_alignment;
-}
+//     return current_alignment - initial_alignment;
+// }
 
 size_t PlainArraySElemDefn::getCdrSerializedSize(const PlainArraySElemDefn& data, size_t current_alignment)
 {
@@ -636,12 +636,12 @@ PlainArrayLElemDefn::PlainArrayLElemDefn()
 {
 
 
-    m_element_identifier = new TypeIdentifier();
+    //m_element_identifier = new TypeIdentifier();
 }
 
 PlainArrayLElemDefn::~PlainArrayLElemDefn()
 {
-    delete m_element_identifier;
+    //delete m_element_identifier;
 }
 
 PlainArrayLElemDefn::PlainArrayLElemDefn(const PlainArrayLElemDefn &x)
@@ -676,22 +676,22 @@ PlainArrayLElemDefn& PlainArrayLElemDefn::operator=(PlainArrayLElemDefn &&x)
     return *this;
 }
 
-size_t PlainArrayLElemDefn::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
+// size_t PlainArrayLElemDefn::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
 
-    current_alignment += PlainCollectionHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += (100 * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+//     current_alignment += PlainCollectionHeader::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+//     current_alignment += (100 * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-    return current_alignment - initial_alignment;
-}
+//     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+//     size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+
+
+//     return current_alignment - initial_alignment;
+// }
 
 size_t PlainArrayLElemDefn::getCdrSerializedSize(const PlainArrayLElemDefn& data, size_t current_alignment)
 {
@@ -749,14 +749,14 @@ PlainMapSTypeDefn::PlainMapSTypeDefn()
 {
 
     m_bound = 0;
-    m_element_identifier = new TypeIdentifier();
-    m_key_identifier = new TypeIdentifier();
+    //m_element_identifier = new TypeIdentifier();
+    //m_key_identifier = new TypeIdentifier();
 }
 
 PlainMapSTypeDefn::~PlainMapSTypeDefn()
 {
-    delete m_element_identifier;
-    delete m_key_identifier;
+    //delete m_element_identifier;
+    //delete m_key_identifier;
 }
 
 PlainMapSTypeDefn::PlainMapSTypeDefn(const PlainMapSTypeDefn &x)
@@ -799,26 +799,26 @@ PlainMapSTypeDefn& PlainMapSTypeDefn::operator=(PlainMapSTypeDefn &&x)
     return *this;
 }
 
-size_t PlainMapSTypeDefn::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
+// size_t PlainMapSTypeDefn::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
 
-    current_alignment += PlainCollectionHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+//     current_alignment += PlainCollectionHeader::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
-    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+//     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+//     size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+//     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
-    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+//     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+//     size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
 
-    return current_alignment - initial_alignment;
-}
+//     return current_alignment - initial_alignment;
+// }
 
 size_t PlainMapSTypeDefn::getCdrSerializedSize(const PlainMapSTypeDefn& data, size_t current_alignment)
 {
@@ -889,14 +889,14 @@ void PlainMapSTypeDefn::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 PlainMapLTypeDefn::PlainMapLTypeDefn()
 {
 
-    m_element_identifier = new TypeIdentifier();
-    m_key_identifier = new TypeIdentifier();
+    //m_element_identifier = new TypeIdentifier();
+    //m_key_identifier = new TypeIdentifier();
 }
 
 PlainMapLTypeDefn::~PlainMapLTypeDefn()
 {
-    delete m_element_identifier;
-    delete m_key_identifier;
+    //delete m_element_identifier;
+    //delete m_key_identifier;
 }
 
 PlainMapLTypeDefn::PlainMapLTypeDefn(const PlainMapLTypeDefn &x)
@@ -939,26 +939,26 @@ PlainMapLTypeDefn& PlainMapLTypeDefn::operator=(PlainMapLTypeDefn &&x)
     return *this;
 }
 
-size_t PlainMapLTypeDefn::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
+// size_t PlainMapLTypeDefn::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
 
-    current_alignment += PlainCollectionHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+//     current_alignment += PlainCollectionHeader::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
-    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+//     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+//     size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+//     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
-    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+//     //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+//     size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
+//     current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
 
 
-    return current_alignment - initial_alignment;
-}
+//     return current_alignment - initial_alignment;
+// }
 
 size_t PlainMapLTypeDefn::getCdrSerializedSize(const PlainMapLTypeDefn& data, size_t current_alignment)
 {
@@ -1069,22 +1069,6 @@ StronglyConnectedComponentId& StronglyConnectedComponentId::operator=(StronglyCo
     return *this;
 }
 
-size_t StronglyConnectedComponentId::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    //current_alignment += ((14) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    size_t size = TypeObjectHashId::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    return current_alignment - initial_alignment;
-}
-
 size_t StronglyConnectedComponentId::getCdrSerializedSize(const StronglyConnectedComponentId& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -1164,12 +1148,12 @@ ExtendedTypeDefn& ExtendedTypeDefn::operator=(ExtendedTypeDefn &&)
     return *this;
 }
 
-size_t ExtendedTypeDefn::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
+// size_t ExtendedTypeDefn::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
 
-    return current_alignment - initial_alignment;
-}
+//     return current_alignment - initial_alignment;
+// }
 
 size_t ExtendedTypeDefn::getCdrSerializedSize(const ExtendedTypeDefn&, size_t current_alignment)
 {

@@ -229,9 +229,10 @@ TypeIdentifier& TypeIdentifier::operator=(TypeIdentifier &&x)
     return *this;
 }
 
-void TypeIdentifier::_d(octet __d)
+void TypeIdentifier::_d(octet __d) // Special case to ease... sets the current active member
 {
     bool b = false;
+    m__d = __d;
 
     switch(m__d)
     {
@@ -841,117 +842,117 @@ ExtendedTypeDefn& TypeIdentifier::extended_defn()
     return m_extended_defn;
 }
 
-size_t TypeIdentifier::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    size_t reset_alignment = 0;
-    size_t union_max_size_serialized = 0;
+// size_t TypeIdentifier::getMaxCdrSerializedSize(size_t current_alignment)
+// {
+//     size_t initial_alignment = current_alignment;
+//     size_t reset_alignment = 0;
+//     size_t union_max_size_serialized = 0;
 
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += StringSTypeDefn::getMaxCdrSerializedSize(reset_alignment);
+//     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
 
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         reset_alignment = current_alignment;
+
+//         reset_alignment += StringSTypeDefn::getMaxCdrSerializedSize(reset_alignment);
 
 
-        reset_alignment = current_alignment;
-
-        reset_alignment += StringLTypeDefn::getMaxCdrSerializedSize(reset_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += PlainSequenceSElemDefn::getMaxCdrSerializedSize(reset_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         reset_alignment += StringLTypeDefn::getMaxCdrSerializedSize(reset_alignment);
 
 
-        reset_alignment = current_alignment;
-
-        reset_alignment += PlainSequenceLElemDefn::getMaxCdrSerializedSize(reset_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += PlainArraySElemDefn::getMaxCdrSerializedSize(reset_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         reset_alignment += PlainSequenceSElemDefn::getMaxCdrSerializedSize(reset_alignment);
 
 
-        reset_alignment = current_alignment;
-
-        reset_alignment += PlainArrayLElemDefn::getMaxCdrSerializedSize(reset_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += PlainMapSTypeDefn::getMaxCdrSerializedSize(reset_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         reset_alignment += PlainSequenceLElemDefn::getMaxCdrSerializedSize(reset_alignment);
 
 
-        reset_alignment = current_alignment;
-
-        reset_alignment += PlainMapLTypeDefn::getMaxCdrSerializedSize(reset_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += StronglyConnectedComponentId::getMaxCdrSerializedSize(reset_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         reset_alignment += PlainArraySElemDefn::getMaxCdrSerializedSize(reset_alignment);
 
 
-        reset_alignment = current_alignment;
-
-        reset_alignment += 14 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 14);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
 
-        reset_alignment = current_alignment;
+//         reset_alignment = current_alignment;
 
-        reset_alignment += ExtendedTypeDefn::getMaxCdrSerializedSize(reset_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
+//         reset_alignment += PlainArrayLElemDefn::getMaxCdrSerializedSize(reset_alignment);
 
 
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
 
-    return union_max_size_serialized - initial_alignment;
-}
+
+//         reset_alignment = current_alignment;
+
+//         reset_alignment += PlainMapSTypeDefn::getMaxCdrSerializedSize(reset_alignment);
+
+
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
+
+
+//         reset_alignment = current_alignment;
+
+//         reset_alignment += PlainMapLTypeDefn::getMaxCdrSerializedSize(reset_alignment);
+
+
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
+
+
+//         reset_alignment = current_alignment;
+
+//         reset_alignment += StronglyConnectedComponentId::getMaxCdrSerializedSize(reset_alignment);
+
+
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
+
+
+//         reset_alignment = current_alignment;
+
+//         reset_alignment += 14 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 14);
+
+
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
+
+
+//         reset_alignment = current_alignment;
+
+//         reset_alignment += ExtendedTypeDefn::getMaxCdrSerializedSize(reset_alignment);
+
+
+//         if(union_max_size_serialized < reset_alignment)
+//             union_max_size_serialized = reset_alignment;
+
+
+
+//     return union_max_size_serialized - initial_alignment;
+// }
 
 // TODO(Ricardo) Review
 size_t TypeIdentifier::getCdrSerializedSize(const TypeIdentifier& data, size_t current_alignment)

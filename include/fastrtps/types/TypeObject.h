@@ -68,7 +68,7 @@ public:
     inline const TypeIdentifier& member_type_id() const { return m_member_type_id; }
     inline TypeIdentifier& member_type_id() { return m_member_type_id; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CommonStructMember& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -113,7 +113,7 @@ public:
     inline const AppliedAnnotationSeq& ann_custom() const { return m_ann_custom; }
     inline AppliedAnnotationSeq& ann_custom() { return m_ann_custom; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteMemberDetail& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -147,7 +147,7 @@ public:
     inline const NameHash& name_hash() const { return m_name_hash; }
     inline NameHash& name_hash() { return m_name_hash; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalMemberDetail& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -184,7 +184,7 @@ public:
     inline const CompleteMemberDetail& detail() const { return m_detail; }
     inline CompleteMemberDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteStructMember& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -225,7 +225,7 @@ public:
     inline const MinimalMemberDetail& detail() const { return m_detail; }
     inline MinimalMemberDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalStructMember& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -259,7 +259,7 @@ public:
     inline const AppliedVerbatimAnnotation& verbatim() const { return m_verbatim; }
     inline AppliedVerbatimAnnotation& verbatim() { return m_verbatim; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const AppliedBuiltinTypeAnnotations& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -284,7 +284,7 @@ public:
     MinimalTypeDetail& operator=(const MinimalTypeDetail &x);
     MinimalTypeDetail& operator=(MinimalTypeDetail &&x);
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalTypeDetail& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -325,7 +325,7 @@ public:
     inline const QualifiedTypeName& type_name() const { return m_type_name; }
     inline QualifiedTypeName& type_name() { return m_type_name; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteTypeDetail& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -364,7 +364,7 @@ public:
     inline const CompleteTypeDetail& detail() const { return m_detail; }
     inline CompleteTypeDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteStructHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -402,7 +402,7 @@ public:
     inline const MinimalTypeDetail& detail() const { return m_detail; }
     inline MinimalTypeDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalStructHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -445,7 +445,7 @@ public:
     inline const CompleteStructMemberSeq& member_seq() const { return m_member_seq; }
     inline CompleteStructMemberSeq& member_seq() { return m_member_seq; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteStructType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -489,7 +489,7 @@ public:
     inline const MinimalStructMemberSeq& member_seq() const { return m_member_seq; }
     inline MinimalStructMemberSeq& member_seq() { return m_member_seq; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalStructType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -545,7 +545,7 @@ public:
     inline const UnionCaseLabelSeq& label_seq() const { return m_label_seq; }
     inline UnionCaseLabelSeq& label_seq() { return m_label_seq; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CommonUnionMember& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -585,7 +585,7 @@ public:
     inline const CompleteMemberDetail& detail() const { return m_detail; }
     inline CompleteMemberDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteUnionMember& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -626,7 +626,7 @@ public:
     inline const MinimalMemberDetail& detail() const { return m_detail; }
     inline MinimalMemberDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalUnionMember& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -666,7 +666,7 @@ public:
     inline const TypeIdentifier& type_id() const { return m_type_id; }
     inline TypeIdentifier& type_id() { return m_type_id; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CommonDiscriminatorMember& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -710,7 +710,7 @@ public:
     inline const AppliedAnnotationSeq& ann_custom() const { return m_ann_custom; }
     inline AppliedAnnotationSeq& ann_custom() { return m_ann_custom; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteDiscriminatorMember& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -743,7 +743,7 @@ public:
     inline const CommonDiscriminatorMember& common() const { return m_common; }
     inline CommonDiscriminatorMember& common() { return m_common; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalDiscriminatorMember& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -773,7 +773,7 @@ public:
     inline const CompleteTypeDetail& detail() const { return m_detail; }
     inline CompleteTypeDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteUnionHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -803,7 +803,7 @@ public:
     inline const MinimalTypeDetail& detail() const { return m_detail; }
     inline MinimalTypeDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalUnionHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -851,7 +851,7 @@ public:
     inline const CompleteUnionMemberSeq& member_seq() const { return m_member_seq; }
     inline CompleteUnionMemberSeq& member_seq() { return m_member_seq; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteUnionType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -902,7 +902,7 @@ public:
     inline const MinimalUnionMemberSeq& member_seq() const { return m_member_seq; }
     inline MinimalUnionMemberSeq& member_seq() { return m_member_seq; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalUnionType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -942,7 +942,7 @@ public:
     inline const TypeIdentifier& member_type_id() const { return m_member_type_id; }
     inline TypeIdentifier& member_type_id() { return m_member_type_id; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CommonAnnotationParameter& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -987,7 +987,7 @@ public:
     inline const AnnotationParameterValue& default_value() const { return m_default_value; }
     inline AnnotationParameterValue& default_value() { return m_default_value; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteAnnotationParameter& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1036,7 +1036,7 @@ public:
     inline const AnnotationParameterValue& default_value() const { return m_default_value; }
     inline AnnotationParameterValue& default_value() { return m_default_value; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalAnnotationParameter& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1072,7 +1072,7 @@ public:
     inline const QualifiedTypeName& annotation_name() const { return m_annotation_name; }
     inline QualifiedTypeName& annotation_name() { return m_annotation_name; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteAnnotationHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1097,7 +1097,7 @@ public:
     MinimalAnnotationHeader& operator=(const MinimalAnnotationHeader &x);
     MinimalAnnotationHeader& operator=(MinimalAnnotationHeader &&x);
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalAnnotationHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1138,7 +1138,7 @@ public:
     inline const CompleteAnnotationParameterSeq& member_seq() const { return m_member_seq; }
     inline CompleteAnnotationParameterSeq& member_seq() { return m_member_seq; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteAnnotationType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1183,7 +1183,7 @@ public:
     inline const MinimalAnnotationParameterSeq& member_seq() const { return m_member_seq; }
     inline MinimalAnnotationParameterSeq& member_seq() { return m_member_seq; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalAnnotationType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1222,7 +1222,7 @@ public:
     inline const TypeIdentifier& related_type() const { return m_related_type; }
     inline TypeIdentifier& related_type() { return m_related_type; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CommonAliasBody& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1265,7 +1265,7 @@ public:
     inline const AppliedAnnotationSeq& ann_custom() const { return m_ann_custom; }
     inline AppliedAnnotationSeq& ann_custom() { return m_ann_custom; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteAliasBody& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1297,7 +1297,7 @@ public:
     inline const CommonAliasBody& common() const { return m_common; }
     inline CommonAliasBody& common() { return m_common; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalAliasBody& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1327,7 +1327,7 @@ public:
     inline const CompleteTypeDetail& detail() const { return m_detail; }
     inline CompleteTypeDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteAliasHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1352,7 +1352,7 @@ public:
     MinimalAliasHeader& operator=(const MinimalAliasHeader &x);
     MinimalAliasHeader& operator=(MinimalAliasHeader &&x);
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalAliasHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1393,7 +1393,7 @@ public:
     inline const CompleteAliasBody& body() const { return m_body; }
     inline CompleteAliasBody& body() { return m_body; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteAliasType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1438,7 +1438,7 @@ public:
     inline const MinimalAliasBody& body() const { return m_body; }
     inline MinimalAliasBody& body() { return m_body; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalAliasType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1477,7 +1477,7 @@ public:
     inline const AppliedAnnotationSeq& ann_custom() const { return m_ann_custom; }
     inline AppliedAnnotationSeq& ann_custom() { return m_ann_custom; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteElementDetail& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1515,7 +1515,7 @@ public:
     inline const TypeIdentifier& type() const { return m_type; }
     inline TypeIdentifier& type() { return m_type; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CommonCollectionElement& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1552,7 +1552,7 @@ public:
     inline const CompleteElementDetail& detail() const { return m_detail; }
     inline CompleteElementDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteCollectionElement& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1583,7 +1583,7 @@ public:
     inline const CommonCollectionElement& common() const { return m_common; }
     inline CommonCollectionElement& common() { return m_common; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalCollectionElement& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1613,7 +1613,7 @@ public:
     inline const LBound& bound() const { return m_bound; }
     inline LBound& bound() { return m_bound; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CommonCollectionHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1649,7 +1649,7 @@ public:
     inline const CompleteTypeDetail& detail() const { return m_detail; }
     inline CompleteTypeDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteCollectionHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1680,7 +1680,7 @@ public:
     inline const CommonCollectionHeader& common() const { return m_common; }
     inline CommonCollectionHeader& common() { return m_common; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalCollectionHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1723,7 +1723,7 @@ public:
     inline const CompleteCollectionElement& element() const { return m_element; }
     inline CompleteCollectionElement& element() { return m_element; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteSequenceType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1767,7 +1767,7 @@ public:
     inline const MinimalCollectionElement& element() const { return m_element; }
     inline MinimalCollectionElement& element() { return m_element; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalSequenceType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1800,7 +1800,7 @@ public:
     inline const LBoundSeq& bound_seq() const { return m_bound_seq; }
     inline LBoundSeq& bound_seq() { return m_bound_seq; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CommonArrayHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1836,7 +1836,7 @@ public:
     inline const CompleteTypeDetail& detail() const { return m_detail; }
     inline CompleteTypeDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteArrayHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1867,7 +1867,7 @@ public:
     inline const CommonArrayHeader& common() const { return m_common; }
     inline CommonArrayHeader& common() { return m_common; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalArrayHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1909,7 +1909,7 @@ public:
     inline const CompleteCollectionElement& element() const { return m_element; }
     inline CompleteCollectionElement& element() { return m_element; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteArrayType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1953,7 +1953,7 @@ public:
     inline const MinimalCollectionElement& element() const { return m_element; }
     inline MinimalCollectionElement& element() { return m_element; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalArrayType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2004,7 +2004,7 @@ public:
     inline const CompleteCollectionElement& element() const { return m_element; }
     inline CompleteCollectionElement& element() { return m_element; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteMapType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2056,7 +2056,7 @@ public:
     inline const MinimalCollectionElement& element() const { return m_element; }
     inline MinimalCollectionElement& element() { return m_element; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalMapType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2100,7 +2100,7 @@ public:
     inline const EnumeratedLiteralFlag& flags() const { return m_flags; }
     inline EnumeratedLiteralFlag& flags() { return m_flags; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CommonEnumeratedLiteral& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2139,7 +2139,7 @@ public:
     inline const CompleteMemberDetail& detail() const { return m_detail; }
     inline CompleteMemberDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteEnumeratedLiteral& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2182,7 +2182,7 @@ public:
     inline const MinimalMemberDetail& detail() const { return m_detail; }
     inline MinimalMemberDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalEnumeratedLiteral& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2216,7 +2216,7 @@ public:
     inline const BitBound& bit_bound() const { return m_bit_bound; }
     inline BitBound& bit_bound() { return m_bit_bound; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CommonEnumeratedHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2252,7 +2252,7 @@ public:
     inline const CompleteTypeDetail& detail() const { return m_detail; }
     inline CompleteTypeDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteEnumeratedHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2283,7 +2283,7 @@ public:
     inline const CommonEnumeratedHeader& common() const { return m_common; }
     inline CommonEnumeratedHeader& common() { return m_common; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalEnumeratedHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2326,7 +2326,7 @@ public:
     inline const CompleteEnumeratedLiteralSeq& literal_seq() const { return m_literal_seq; }
     inline CompleteEnumeratedLiteralSeq& literal_seq() { return m_literal_seq; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteEnumeratedType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2372,7 +2372,7 @@ public:
     inline const MinimalEnumeratedLiteralSeq& literal_seq() const { return m_literal_seq; }
     inline MinimalEnumeratedLiteralSeq& literal_seq() { return m_literal_seq; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalEnumeratedType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2412,7 +2412,7 @@ public:
     inline const BitflagFlag& flags() const { return m_flags; }
     inline BitflagFlag& flags() { return m_flags; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CommonBitflag& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2451,7 +2451,7 @@ public:
     inline const CompleteMemberDetail& detail() const { return m_detail; }
     inline CompleteMemberDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteBitflag& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2493,7 +2493,7 @@ public:
     inline const MinimalMemberDetail& detail() const { return m_detail; }
     inline MinimalMemberDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalBitflag& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2527,7 +2527,7 @@ public:
     inline const BitBound& bit_bound() const { return m_bit_bound; }
     inline BitBound& bit_bound() { return m_bit_bound; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CommonBitmaskHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2575,7 +2575,7 @@ public:
     inline const CompleteBitflagSeq& flag_seq() const { return m_flag_seq; }
     inline CompleteBitflagSeq& flag_seq() { return m_flag_seq; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteBitmaskType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2619,7 +2619,7 @@ public:
     inline const MinimalBitflagSeq& flag_seq() const { return m_flag_seq; }
     inline MinimalBitflagSeq& flag_seq() { return m_flag_seq; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalBitmaskType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2670,7 +2670,7 @@ public:
     inline const TypeKind& holder_type() const { return m_holder_type; }
     inline TypeKind& holder_type() { return m_holder_type; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CommonBitfield& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2709,7 +2709,7 @@ public:
     inline const CompleteMemberDetail& detail() const { return m_detail; }
     inline CompleteMemberDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteBitfield& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2751,7 +2751,7 @@ public:
     inline const CommonBitfield& common() const { return m_common; }
     inline CommonBitfield& common() { return m_common; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalBitfield& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2787,7 +2787,7 @@ public:
     inline const CompleteTypeDetail& detail() const { return m_detail; }
     inline CompleteTypeDetail& detail() { return m_detail; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteBitsetHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2812,7 +2812,7 @@ public:
     MinimalBitsetHeader& operator=(const MinimalBitsetHeader &x);
     MinimalBitsetHeader& operator=(MinimalBitsetHeader &&x);
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalBitsetHeader& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2854,7 +2854,7 @@ public:
     inline const CompleteBitfieldSeq& field_seq() const { return m_field_seq; }
     inline CompleteBitfieldSeq& field_seq() { return m_field_seq; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteBitsetType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2898,7 +2898,7 @@ public:
     inline const MinimalBitfieldSeq& field_seq() const { return m_field_seq; }
     inline MinimalBitfieldSeq& field_seq() { return m_field_seq; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalBitsetType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2929,7 +2929,7 @@ public:
     CompleteExtendedType& operator=(const CompleteExtendedType &x);
     CompleteExtendedType& operator=(CompleteExtendedType &&x);
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteExtendedType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -2953,7 +2953,7 @@ public:
     MinimalExtendedType& operator=(const MinimalExtendedType &x);
     MinimalExtendedType& operator=(MinimalExtendedType &&x);
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalExtendedType& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -3021,7 +3021,7 @@ public:
     CompleteExtendedType extended_type() const;
     CompleteExtendedType& extended_type();
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const CompleteTypeObject& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -3102,7 +3102,7 @@ public:
     MinimalExtendedType extended_type() const;
     MinimalExtendedType& extended_type();
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const MinimalTypeObject& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -3241,7 +3241,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -3324,7 +3324,7 @@ public:
     inline const TypeObject& type_object() const { return m_type_object; }
     inline TypeObject& type_object() { return m_type_object; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const TypeIdentifierTypeObjectPair& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -3364,7 +3364,7 @@ public:
     inline const TypeIdentifier& type_identifier2() const { return m_type_identifier2; }
     inline TypeIdentifier& type_identifier2() { return m_type_identifier2; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const TypeIdentifierPair& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -3404,7 +3404,7 @@ public:
     inline const uint32_t& typeobject_serialized_size() const { return m_typeobject_serialized_size; }
     inline uint32_t& typeobject_serialized_size() { return m_typeobject_serialized_size; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const TypeIdentfierWithSize& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -3450,7 +3450,7 @@ public:
     inline const TypeIdentfierWithSizeSeq& dependent_typeids() const { return m_dependent_typeids; }
     inline TypeIdentfierWithSizeSeq& dependent_typeids() { return m_dependent_typeids; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const TypeIdentifierWithDependencies& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -3496,7 +3496,7 @@ public:
     inline const TypeIdentifierWithDependencies& complete() const { return m_complete; }
     inline TypeIdentifierWithDependencies& complete() { return m_complete; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const TypeInformation& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);

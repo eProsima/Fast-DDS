@@ -64,18 +64,6 @@ CommonStructMember& CommonStructMember::operator=(CommonStructMember &&x)
     return *this;
 }
 
-size_t CommonStructMember::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += StructMemberFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CommonStructMember::getCdrSerializedSize(const CommonStructMember& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -158,22 +146,6 @@ CompleteMemberDetail& CompleteMemberDetail::operator=(CompleteMemberDetail &&x)
     return *this;
 }
 
-size_t CompleteMemberDetail::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255  + 1;
-    current_alignment += AppliedBuiltinMemberAnnotations::getMaxCdrSerializedSize(current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += AppliedAnnotation::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CompleteMemberDetail::getCdrSerializedSize(const CompleteMemberDetail& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -253,15 +225,6 @@ MinimalMemberDetail& MinimalMemberDetail::operator=(MinimalMemberDetail &&x)
     return *this;
 }
 
-size_t MinimalMemberDetail::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalMemberDetail::getCdrSerializedSize(const MinimalMemberDetail&, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -332,16 +295,6 @@ CompleteStructMember& CompleteStructMember::operator=(CompleteStructMember &&x)
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-size_t CompleteStructMember::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonStructMember::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteMemberDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteStructMember::getCdrSerializedSize(const CompleteStructMember& data, size_t current_alignment)
@@ -419,16 +372,6 @@ MinimalStructMember& MinimalStructMember::operator=(MinimalStructMember &&x)
     return *this;
 }
 
-size_t MinimalStructMember::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonStructMember::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalMemberDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalStructMember::getCdrSerializedSize(const MinimalStructMember& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -500,15 +443,6 @@ AppliedBuiltinTypeAnnotations& AppliedBuiltinTypeAnnotations::operator=(AppliedB
     return *this;
 }
 
-size_t AppliedBuiltinTypeAnnotations::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AppliedVerbatimAnnotation::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t AppliedBuiltinTypeAnnotations::getCdrSerializedSize(const AppliedBuiltinTypeAnnotations& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -569,12 +503,6 @@ MinimalTypeDetail& MinimalTypeDetail::operator=(const MinimalTypeDetail &)
 MinimalTypeDetail& MinimalTypeDetail::operator=(MinimalTypeDetail &&)
 {
     return *this;
-}
-
-size_t MinimalTypeDetail::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    return current_alignment - initial_alignment;
 }
 
 size_t MinimalTypeDetail::getCdrSerializedSize(const MinimalTypeDetail&, size_t current_alignment)
@@ -646,22 +574,6 @@ CompleteTypeDetail& CompleteTypeDetail::operator=(CompleteTypeDetail &&x)
     m_type_name = std::move(x.m_type_name);
 
     return *this;
-}
-
-size_t CompleteTypeDetail::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += AppliedBuiltinTypeAnnotations::getMaxCdrSerializedSize(current_alignment);
-	current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += AppliedAnnotation::getMaxCdrSerializedSize(current_alignment);
-    }
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255  + 1;
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteTypeDetail::getCdrSerializedSize(const CompleteTypeDetail& data, size_t current_alignment)
@@ -746,16 +658,6 @@ CompleteStructHeader& CompleteStructHeader::operator=(CompleteStructHeader &&x)
     return *this;
 }
 
-size_t CompleteStructHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteTypeDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CompleteStructHeader::getCdrSerializedSize(const CompleteStructHeader& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -829,16 +731,6 @@ MinimalStructHeader& MinimalStructHeader::operator=(MinimalStructHeader &&x)
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-size_t MinimalStructHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalTypeDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t MinimalStructHeader::getCdrSerializedSize(const MinimalStructHeader& data, size_t current_alignment)
@@ -918,21 +810,6 @@ CompleteStructType& CompleteStructType::operator=(CompleteStructType &&x)
     m_member_seq = std::move(x.m_member_seq);
 
     return *this;
-}
-
-size_t CompleteStructType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += StructTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteStructHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += CompleteStructMember::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteStructType::getCdrSerializedSize(const CompleteStructType& data, size_t current_alignment)
@@ -1019,21 +896,6 @@ MinimalStructType& MinimalStructType::operator=(MinimalStructType &&x)
     m_member_seq = std::move(x.m_member_seq);
 
     return *this;
-}
-
-size_t MinimalStructType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += StructTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalStructHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += MinimalStructMember::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 size_t MinimalStructType::getCdrSerializedSize(const MinimalStructType& data, size_t current_alignment)
@@ -1126,23 +988,6 @@ CommonUnionMember& CommonUnionMember::operator=(CommonUnionMember &&x)
     return *this;
 }
 
-size_t CommonUnionMember::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += UnionMemberFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-
-	current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CommonUnionMember::getCdrSerializedSize(const CommonUnionMember& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -1229,16 +1074,6 @@ CompleteUnionMember& CompleteUnionMember::operator=(CompleteUnionMember &&x)
     return *this;
 }
 
-size_t CompleteUnionMember::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonUnionMember::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteMemberDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CompleteUnionMember::getCdrSerializedSize(const CompleteUnionMember& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -1314,16 +1149,6 @@ MinimalUnionMember& MinimalUnionMember::operator=(MinimalUnionMember &&x)
     return *this;
 }
 
-size_t MinimalUnionMember::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonUnionMember::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalMemberDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalUnionMember::getCdrSerializedSize(const MinimalUnionMember& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -1397,16 +1222,6 @@ CommonDiscriminatorMember& CommonDiscriminatorMember::operator=(CommonDiscrimina
     m_type_id = std::move(x.m_type_id);
 
     return *this;
-}
-
-size_t CommonDiscriminatorMember::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += UnionDiscriminatorFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CommonDiscriminatorMember::getCdrSerializedSize(const CommonDiscriminatorMember& data, size_t current_alignment)
@@ -1488,22 +1303,6 @@ CompleteDiscriminatorMember& CompleteDiscriminatorMember::operator=(CompleteDisc
     return *this;
 }
 
-size_t CompleteDiscriminatorMember::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonDiscriminatorMember::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += AppliedBuiltinTypeAnnotations::getMaxCdrSerializedSize(current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += AppliedAnnotation::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CompleteDiscriminatorMember::getCdrSerializedSize(const CompleteDiscriminatorMember& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -1583,15 +1382,6 @@ MinimalDiscriminatorMember& MinimalDiscriminatorMember::operator=(MinimalDiscrim
     return *this;
 }
 
-size_t MinimalDiscriminatorMember::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonDiscriminatorMember::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalDiscriminatorMember::getCdrSerializedSize(const MinimalDiscriminatorMember& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -1660,15 +1450,6 @@ CompleteUnionHeader& CompleteUnionHeader::operator=(CompleteUnionHeader &&x)
     return *this;
 }
 
-size_t CompleteUnionHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CompleteTypeDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CompleteUnionHeader::getCdrSerializedSize(const CompleteUnionHeader& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -1735,15 +1516,6 @@ MinimalUnionHeader& MinimalUnionHeader::operator=(MinimalUnionHeader &&x)
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-size_t MinimalUnionHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += MinimalTypeDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t MinimalUnionHeader::getCdrSerializedSize(const MinimalUnionHeader& data, size_t current_alignment)
@@ -1824,23 +1596,6 @@ CompleteUnionType& CompleteUnionType::operator=(CompleteUnionType &&x)
     m_member_seq = std::move(x.m_member_seq);
 
     return *this;
-}
-
-size_t CompleteUnionType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-	current_alignment += UnionTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteUnionHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteDiscriminatorMember::getMaxCdrSerializedSize(current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += CompleteUnionMember::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteUnionType::getCdrSerializedSize(const CompleteUnionType& data, size_t current_alignment)
@@ -1937,23 +1692,6 @@ MinimalUnionType& MinimalUnionType::operator=(MinimalUnionType &&x)
     return *this;
 }
 
-size_t MinimalUnionType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-	current_alignment += UnionTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalUnionHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalDiscriminatorMember::getMaxCdrSerializedSize(current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += MinimalUnionMember::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalUnionType::getCdrSerializedSize(const MinimalUnionType& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -2040,16 +1778,6 @@ CommonAnnotationParameter& CommonAnnotationParameter::operator=(CommonAnnotation
     return *this;
 }
 
-size_t CommonAnnotationParameter::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AnnotationParameterFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CommonAnnotationParameter::getCdrSerializedSize(const CommonAnnotationParameter& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -2127,17 +1855,6 @@ CompleteAnnotationParameter& CompleteAnnotationParameter::operator=(CompleteAnno
     m_default_value = std::move(x.m_default_value);
 
     return *this;
-}
-
-size_t CompleteAnnotationParameter::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonAnnotationParameter::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255  + 1;
-    current_alignment += AnnotationParameterValue::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteAnnotationParameter::getCdrSerializedSize(const CompleteAnnotationParameter& data, size_t current_alignment)
@@ -2222,17 +1939,6 @@ MinimalAnnotationParameter& MinimalAnnotationParameter::operator=(MinimalAnnotat
     return *this;
 }
 
-size_t MinimalAnnotationParameter::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonAnnotationParameter::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255  + 1;
-    current_alignment += AnnotationParameterValue::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalAnnotationParameter::getCdrSerializedSize(const MinimalAnnotationParameter& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -2307,15 +2013,6 @@ CompleteAnnotationHeader& CompleteAnnotationHeader::operator=(CompleteAnnotation
     return *this;
 }
 
-size_t CompleteAnnotationHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255  + 1;
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CompleteAnnotationHeader::getCdrSerializedSize(const CompleteAnnotationHeader& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -2376,13 +2073,6 @@ MinimalAnnotationHeader& MinimalAnnotationHeader::operator=(const MinimalAnnotat
 MinimalAnnotationHeader& MinimalAnnotationHeader::operator=(MinimalAnnotationHeader &&)
 {
     return *this;
-}
-
-size_t MinimalAnnotationHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
 }
 
 size_t MinimalAnnotationHeader::getCdrSerializedSize(const MinimalAnnotationHeader&, size_t current_alignment)
@@ -2455,22 +2145,6 @@ CompleteAnnotationType& CompleteAnnotationType::operator=(CompleteAnnotationType
     m_member_seq = std::move(x.m_member_seq);
 
     return *this;
-}
-
-size_t CompleteAnnotationType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AnnotationTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteAnnotationHeader::getMaxCdrSerializedSize(current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += CompleteAnnotationParameter::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteAnnotationType::getCdrSerializedSize(const CompleteAnnotationType& data, size_t current_alignment)
@@ -2560,22 +2234,6 @@ MinimalAnnotationType& MinimalAnnotationType::operator=(MinimalAnnotationType &&
     return *this;
 }
 
-size_t MinimalAnnotationType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AnnotationTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalAnnotationHeader::getMaxCdrSerializedSize(current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += MinimalAnnotationParameter::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalAnnotationType::getCdrSerializedSize(const MinimalAnnotationType& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -2659,16 +2317,6 @@ CommonAliasBody& CommonAliasBody::operator=(CommonAliasBody &&x)
     return *this;
 }
 
-size_t CommonAliasBody::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AliasMemberFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CommonAliasBody::getCdrSerializedSize(const CommonAliasBody& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -2746,22 +2394,6 @@ CompleteAliasBody& CompleteAliasBody::operator=(CompleteAliasBody &&x)
     m_ann_custom = std::move(x.m_ann_custom);
 
     return *this;
-}
-
-size_t CompleteAliasBody::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonAliasBody::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += AppliedBuiltinMemberAnnotations::getMaxCdrSerializedSize(current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += AppliedAnnotation::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteAliasBody::getCdrSerializedSize(const CompleteAliasBody& data, size_t current_alignment)
@@ -2843,15 +2475,6 @@ MinimalAliasBody& MinimalAliasBody::operator=(MinimalAliasBody &&x)
     return *this;
 }
 
-size_t MinimalAliasBody::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonAliasBody::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalAliasBody::getCdrSerializedSize(const MinimalAliasBody& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -2920,15 +2543,6 @@ CompleteAliasHeader& CompleteAliasHeader::operator=(CompleteAliasHeader &&x)
     return *this;
 }
 
-size_t CompleteAliasHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CompleteTypeDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CompleteAliasHeader::getCdrSerializedSize(const CompleteAliasHeader& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -2989,13 +2603,6 @@ MinimalAliasHeader& MinimalAliasHeader::operator=(const MinimalAliasHeader &)
 MinimalAliasHeader& MinimalAliasHeader::operator=(MinimalAliasHeader &&)
 {
     return *this;
-}
-
-size_t MinimalAliasHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
 }
 
 size_t MinimalAliasHeader::getCdrSerializedSize(const MinimalAliasHeader&, size_t current_alignment)
@@ -3068,17 +2675,6 @@ CompleteAliasType& CompleteAliasType::operator=(CompleteAliasType &&x)
     m_body = std::move(x.m_body);
 
     return *this;
-}
-
-size_t CompleteAliasType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AliasTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteAliasHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteAliasBody::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteAliasType::getCdrSerializedSize(const CompleteAliasType& data, size_t current_alignment)
@@ -3163,17 +2759,6 @@ MinimalAliasType& MinimalAliasType::operator=(MinimalAliasType &&x)
     return *this;
 }
 
-size_t MinimalAliasType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AliasTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalAliasHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalAliasBody::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalAliasType::getCdrSerializedSize(const MinimalAliasType& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -3250,21 +2835,6 @@ CompleteElementDetail& CompleteElementDetail::operator=(CompleteElementDetail &&
     m_ann_custom = std::move(x.m_ann_custom);
 
     return *this;
-}
-
-size_t CompleteElementDetail::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AppliedBuiltinMemberAnnotations::getMaxCdrSerializedSize(current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += AppliedAnnotation::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteElementDetail::getCdrSerializedSize(const CompleteElementDetail& data, size_t current_alignment)
@@ -3347,16 +2917,6 @@ CommonCollectionElement& CommonCollectionElement::operator=(CommonCollectionElem
     return *this;
 }
 
-size_t CommonCollectionElement::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CollectionElementFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CommonCollectionElement::getCdrSerializedSize(const CommonCollectionElement& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -3432,16 +2992,6 @@ CompleteCollectionElement& CompleteCollectionElement::operator=(CompleteCollecti
     return *this;
 }
 
-size_t CompleteCollectionElement::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonCollectionElement::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteElementDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CompleteCollectionElement::getCdrSerializedSize(const CompleteCollectionElement& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -3513,15 +3063,6 @@ MinimalCollectionElement& MinimalCollectionElement::operator=(MinimalCollectionE
     return *this;
 }
 
-size_t MinimalCollectionElement::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonCollectionElement::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalCollectionElement::getCdrSerializedSize(const MinimalCollectionElement& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -3588,15 +3129,6 @@ CommonCollectionHeader& CommonCollectionHeader::operator=(CommonCollectionHeader
     m_bound = std::move(x.m_bound);
 
     return *this;
-}
-
-size_t CommonCollectionHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255  + 1;
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CommonCollectionHeader::getCdrSerializedSize(const CommonCollectionHeader&, size_t current_alignment)
@@ -3671,16 +3203,6 @@ CompleteCollectionHeader& CompleteCollectionHeader::operator=(CompleteCollection
     return *this;
 }
 
-size_t CompleteCollectionHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonCollectionHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteTypeDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CompleteCollectionHeader::getCdrSerializedSize(const CompleteCollectionHeader& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -3750,15 +3272,6 @@ MinimalCollectionHeader& MinimalCollectionHeader::operator=(MinimalCollectionHea
     m_common = std::move(x.m_common);
 
     return *this;
-}
-
-size_t MinimalCollectionHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonCollectionHeader::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t MinimalCollectionHeader::getCdrSerializedSize(const MinimalCollectionHeader& data, size_t current_alignment)
@@ -3835,30 +3348,6 @@ CompleteSequenceType& CompleteSequenceType::operator=(CompleteSequenceType &&x)
     m_element = std::move(x.m_element);
 
     return *this;
-}
-
-size_t CompleteSequenceType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    // FIXED SIZE current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    current_alignment += CollectionTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteCollectionHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteCollectionElement::getMaxCdrSerializedSize(current_alignment);
-
-    // STRING current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255  + 1;
-    // STRING<X> current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + X  + 1;
-    // SEQUENCE
-    /*
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += AppliedAnnotationParameter::getMaxCdrSerializedSize(current_alignment);
-    }
-    */
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteSequenceType::getCdrSerializedSize(const CompleteSequenceType& data, size_t current_alignment)
@@ -3954,30 +3443,6 @@ MinimalSequenceType& MinimalSequenceType::operator=(MinimalSequenceType &&x)
     return *this;
 }
 
-size_t MinimalSequenceType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    // FIXED SIZE current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    current_alignment += CollectionTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalCollectionHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalCollectionElement::getMaxCdrSerializedSize(current_alignment);
-
-    // STRING current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255  + 1;
-    // STRING<X> current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + X  + 1;
-    // SEQUENCE
-    /*
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += AppliedAnnotationParameter::getMaxCdrSerializedSize(current_alignment);
-    }
-    */
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalSequenceType::getCdrSerializedSize(const MinimalSequenceType& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -4063,19 +3528,6 @@ CommonArrayHeader& CommonArrayHeader::operator=(CommonArrayHeader &&x)
     return *this;
 }
 
-size_t CommonArrayHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CommonArrayHeader::getCdrSerializedSize(const CommonArrayHeader& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -4152,16 +3604,6 @@ CompleteArrayHeader& CompleteArrayHeader::operator=(CompleteArrayHeader &&x)
     return *this;
 }
 
-size_t CompleteArrayHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonArrayHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteTypeDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CompleteArrayHeader::getCdrSerializedSize(const CompleteArrayHeader& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -4231,15 +3673,6 @@ MinimalArrayHeader& MinimalArrayHeader::operator=(MinimalArrayHeader &&x)
     m_common = std::move(x.m_common);
 
     return *this;
-}
-
-size_t MinimalArrayHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonArrayHeader::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t MinimalArrayHeader::getCdrSerializedSize(const MinimalArrayHeader& data, size_t current_alignment)
@@ -4316,17 +3749,6 @@ CompleteArrayType& CompleteArrayType::operator=(CompleteArrayType &&x)
     m_element = std::move(x.m_element);
 
     return *this;
-}
-
-size_t CompleteArrayType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CollectionTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteArrayHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteCollectionElement::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteArrayType::getCdrSerializedSize(const CompleteArrayType& data, size_t current_alignment)
@@ -4409,17 +3831,6 @@ MinimalArrayType& MinimalArrayType::operator=(MinimalArrayType &&x)
     m_element = std::move(x.m_element);
 
     return *this;
-}
-
-size_t MinimalArrayType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CollectionTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalArrayHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalCollectionElement::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t MinimalArrayType::getCdrSerializedSize(const MinimalArrayType& data, size_t current_alignment)
@@ -4506,18 +3917,6 @@ CompleteMapType& CompleteMapType::operator=(CompleteMapType &&x)
     m_element = std::move(x.m_element);
 
     return *this;
-}
-
-size_t CompleteMapType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CollectionTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteCollectionHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteCollectionElement::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteCollectionElement::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteMapType::getCdrSerializedSize(const CompleteMapType& data, size_t current_alignment)
@@ -4609,18 +4008,6 @@ MinimalMapType& MinimalMapType::operator=(MinimalMapType &&x)
     return *this;
 }
 
-size_t MinimalMapType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CollectionTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalCollectionHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalCollectionElement::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalCollectionElement::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalMapType::getCdrSerializedSize(const MinimalMapType& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -4702,16 +4089,6 @@ CommonEnumeratedLiteral& CommonEnumeratedLiteral::operator=(CommonEnumeratedLite
     return *this;
 }
 
-size_t CommonEnumeratedLiteral::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += EnumeratedLiteralFlag::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CommonEnumeratedLiteral::getCdrSerializedSize(const CommonEnumeratedLiteral& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -4785,16 +4162,6 @@ CompleteEnumeratedLiteral& CompleteEnumeratedLiteral::operator=(CompleteEnumerat
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-size_t CompleteEnumeratedLiteral::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonEnumeratedLiteral::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteMemberDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteEnumeratedLiteral::getCdrSerializedSize(const CompleteEnumeratedLiteral& data, size_t current_alignment)
@@ -4872,16 +4239,6 @@ MinimalEnumeratedLiteral& MinimalEnumeratedLiteral::operator=(MinimalEnumeratedL
     return *this;
 }
 
-size_t MinimalEnumeratedLiteral::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonEnumeratedLiteral::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalMemberDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalEnumeratedLiteral::getCdrSerializedSize(const MinimalEnumeratedLiteral& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -4951,15 +4308,6 @@ CommonEnumeratedHeader& CommonEnumeratedHeader::operator=(CommonEnumeratedHeader
     m_bit_bound = std::move(x.m_bit_bound);
 
     return *this;
-}
-
-size_t CommonEnumeratedHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CommonEnumeratedHeader::getCdrSerializedSize(const CommonEnumeratedHeader&, size_t current_alignment)
@@ -5034,16 +4382,6 @@ CompleteEnumeratedHeader& CompleteEnumeratedHeader::operator=(CompleteEnumerated
     return *this;
 }
 
-size_t CompleteEnumeratedHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonEnumeratedHeader::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteTypeDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CompleteEnumeratedHeader::getCdrSerializedSize(const CompleteEnumeratedHeader& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -5113,15 +4451,6 @@ MinimalEnumeratedHeader& MinimalEnumeratedHeader::operator=(MinimalEnumeratedHea
     m_common = std::move(x.m_common);
 
     return *this;
-}
-
-size_t MinimalEnumeratedHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonEnumeratedHeader::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t MinimalEnumeratedHeader::getCdrSerializedSize(const MinimalEnumeratedHeader& data, size_t current_alignment)
@@ -5198,22 +4527,6 @@ CompleteEnumeratedType& CompleteEnumeratedType::operator=(CompleteEnumeratedType
     m_literal_seq = std::move(x.m_literal_seq);
 
     return *this;
-}
-
-size_t CompleteEnumeratedType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += EnumTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteEnumeratedHeader::getMaxCdrSerializedSize(current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += CompleteEnumeratedLiteral::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteEnumeratedType::getCdrSerializedSize(const CompleteEnumeratedType& data, size_t current_alignment)
@@ -5303,22 +4616,6 @@ MinimalEnumeratedType& MinimalEnumeratedType::operator=(MinimalEnumeratedType &&
     return *this;
 }
 
-size_t MinimalEnumeratedType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += EnumTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalEnumeratedHeader::getMaxCdrSerializedSize(current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += MinimalEnumeratedLiteral::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalEnumeratedType::getCdrSerializedSize(const MinimalEnumeratedType& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -5402,16 +4699,6 @@ CommonBitflag& CommonBitflag::operator=(CommonBitflag &&x)
     return *this;
 }
 
-size_t CommonBitflag::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-    current_alignment += BitflagFlag::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CommonBitflag::getCdrSerializedSize(const CommonBitflag& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -5485,16 +4772,6 @@ CompleteBitflag& CompleteBitflag::operator=(CompleteBitflag &&x)
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-size_t CompleteBitflag::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonBitflag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteMemberDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteBitflag::getCdrSerializedSize(const CompleteBitflag& data, size_t current_alignment)
@@ -5572,16 +4849,6 @@ MinimalBitflag& MinimalBitflag::operator=(MinimalBitflag &&x)
     return *this;
 }
 
-size_t MinimalBitflag::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonBitflag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalMemberDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalBitflag::getCdrSerializedSize(const MinimalBitflag& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -5651,15 +4918,6 @@ CommonBitmaskHeader& CommonBitmaskHeader::operator=(CommonBitmaskHeader &&x)
     m_bit_bound = std::move(x.m_bit_bound);
 
     return *this;
-}
-
-size_t CommonBitmaskHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CommonBitmaskHeader::getCdrSerializedSize(const CommonBitmaskHeader&, size_t current_alignment)
@@ -5736,22 +4994,6 @@ CompleteBitmaskType& CompleteBitmaskType::operator=(CompleteBitmaskType &&x)
     m_flag_seq = std::move(x.m_flag_seq);
 
     return *this;
-}
-
-size_t CompleteBitmaskType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += BitmaskTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteBitmaskHeader::getMaxCdrSerializedSize(current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += CompleteBitflag::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteBitmaskType::getCdrSerializedSize(const CompleteBitmaskType& data, size_t current_alignment)
@@ -5839,22 +5081,6 @@ MinimalBitmaskType& MinimalBitmaskType::operator=(MinimalBitmaskType &&x)
     m_flag_seq = std::move(x.m_flag_seq);
 
     return *this;
-}
-
-size_t MinimalBitmaskType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += BitmaskTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalBitmaskHeader::getMaxCdrSerializedSize(current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += MinimalBitflag::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 size_t MinimalBitmaskType::getCdrSerializedSize(const MinimalBitmaskType& data, size_t current_alignment)
@@ -5948,18 +5174,6 @@ CommonBitfield& CommonBitfield::operator=(CommonBitfield &&x)
     return *this;
 }
 
-size_t CommonBitfield::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-    current_alignment += BitsetMemberFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CommonBitfield::getCdrSerializedSize(const CommonBitfield& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -6041,16 +5255,6 @@ CompleteBitfield& CompleteBitfield::operator=(CompleteBitfield &&x)
     return *this;
 }
 
-size_t CompleteBitfield::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonBitfield::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteMemberDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CompleteBitfield::getCdrSerializedSize(const CompleteBitfield& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -6126,16 +5330,6 @@ MinimalBitfield& MinimalBitfield::operator=(MinimalBitfield &&x)
     return *this;
 }
 
-size_t MinimalBitfield::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonBitfield::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalBitfield::getCdrSerializedSize(const MinimalBitfield& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -6207,16 +5401,6 @@ CompleteBitsetHeader& CompleteBitsetHeader::operator=(CompleteBitsetHeader &&x)
     return *this;
 }
 
-size_t CompleteBitsetHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += CompleteTypeDetail::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CompleteBitsetHeader::getCdrSerializedSize(const CompleteBitsetHeader& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -6277,13 +5461,6 @@ MinimalBitsetHeader& MinimalBitsetHeader::operator=(const MinimalBitsetHeader &)
 MinimalBitsetHeader& MinimalBitsetHeader::operator=(MinimalBitsetHeader &&)
 {
     return *this;
-}
-
-size_t MinimalBitsetHeader::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
 }
 
 size_t MinimalBitsetHeader::getCdrSerializedSize(const MinimalBitsetHeader& , size_t current_alignment)
@@ -6356,22 +5533,6 @@ CompleteBitsetType& CompleteBitsetType::operator=(CompleteBitsetType &&x)
     m_field_seq = std::move(x.m_field_seq);
 
     return *this;
-}
-
-size_t CompleteBitsetType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += BitsetTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += CompleteBitsetHeader::getMaxCdrSerializedSize(current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += CompleteBitfield::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 size_t CompleteBitsetType::getCdrSerializedSize(const CompleteBitsetType& data, size_t current_alignment)
@@ -6461,22 +5622,6 @@ MinimalBitsetType& MinimalBitsetType::operator=(MinimalBitsetType &&x)
     return *this;
 }
 
-size_t MinimalBitsetType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += BitsetTypeFlag::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += MinimalBitsetHeader::getMaxCdrSerializedSize(current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += MinimalBitfield::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 size_t MinimalBitsetType::getCdrSerializedSize(const MinimalBitsetType& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -6550,13 +5695,6 @@ CompleteExtendedType& CompleteExtendedType::operator=(CompleteExtendedType &&)
     return *this;
 }
 
-size_t CompleteExtendedType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
-}
-
 size_t CompleteExtendedType::getCdrSerializedSize(const CompleteExtendedType& , size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -6613,13 +5751,6 @@ MinimalExtendedType& MinimalExtendedType::operator=(const MinimalExtendedType &)
 MinimalExtendedType& MinimalExtendedType::operator=(MinimalExtendedType &&)
 {
     return *this;
-}
-
-size_t MinimalExtendedType::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
 }
 
 size_t MinimalExtendedType::getCdrSerializedSize(const MinimalExtendedType& , size_t current_alignment)
@@ -6688,16 +5819,6 @@ TypeIdentifierTypeObjectPair& TypeIdentifierTypeObjectPair::operator=(TypeIdenti
     m_type_object = std::move(x.m_type_object);
 
     return *this;
-}
-
-size_t TypeIdentifierTypeObjectPair::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += TypeObject::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t TypeIdentifierTypeObjectPair::getCdrSerializedSize(const TypeIdentifierTypeObjectPair& data, size_t current_alignment)
@@ -6775,16 +5896,6 @@ TypeIdentifierPair& TypeIdentifierPair::operator=(TypeIdentifierPair &&x)
     return *this;
 }
 
-size_t TypeIdentifierPair::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 size_t TypeIdentifierPair::getCdrSerializedSize(const TypeIdentifierPair& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -6858,16 +5969,6 @@ TypeIdentfierWithSize& TypeIdentfierWithSize::operator=(TypeIdentfierWithSize &&
     m_typeobject_serialized_size = std::move(x.m_typeobject_serialized_size);
 
     return *this;
-}
-
-size_t TypeIdentfierWithSize::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t TypeIdentfierWithSize::getCdrSerializedSize(const TypeIdentfierWithSize& data, size_t current_alignment)
@@ -6947,22 +6048,6 @@ TypeIdentifierWithDependencies& TypeIdentifierWithDependencies::operator=(TypeId
     m_dependent_typeids = std::move(x.m_dependent_typeids);
 
     return *this;
-}
-
-size_t TypeIdentifierWithDependencies::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentfierWithSize::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += TypeIdentfierWithSize::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 size_t TypeIdentifierWithDependencies::getCdrSerializedSize(const TypeIdentifierWithDependencies& data, size_t current_alignment)
@@ -7194,8 +6279,9 @@ CompleteTypeObject& CompleteTypeObject::operator=(CompleteTypeObject &&x)
     return *this;
 }
 
-void CompleteTypeObject::_d(octet __d)
+void CompleteTypeObject::_d(octet __d) // Special case to ease... sets the current active member
 {
+    m__d = __d;
     if(m__d != __d) throw BadParamException("Discriminator doesn't correspond with the selected union member");
 }
 
@@ -7667,108 +6753,6 @@ CompleteExtendedType& CompleteTypeObject::extended_type()
     return m_extended_type;
 }
 
-size_t CompleteTypeObject::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    size_t reset_alignment = 0;
-    size_t union_max_size_serialized = 0;
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += CompleteAliasType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += CompleteAnnotationType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += CompleteStructType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += CompleteUnionType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += CompleteBitsetType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += CompleteSequenceType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += CompleteArrayType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += CompleteMapType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += CompleteEnumeratedType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += CompleteBitmaskType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += CompleteExtendedType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-
-    return union_max_size_serialized - initial_alignment;
-}
-
 size_t CompleteTypeObject::getCdrSerializedSize(const CompleteTypeObject& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -8093,8 +7077,9 @@ MinimalTypeObject& MinimalTypeObject::operator=(MinimalTypeObject &&x)
     return *this;
 }
 
-void MinimalTypeObject::_d(octet __d)
+void MinimalTypeObject::_d(octet __d) // Special case to ease... sets the current active member
 {
+    m__d = __d;
     if(m__d != __d) throw BadParamException("Discriminator doesn't correspond with the selected union member");
 }
 
@@ -8566,107 +7551,6 @@ MinimalExtendedType& MinimalTypeObject::extended_type()
     return m_extended_type;
 }
 
-size_t MinimalTypeObject::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    size_t reset_alignment = 0;
-    size_t union_max_size_serialized = 0;
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += MinimalAliasType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += MinimalAnnotationType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += MinimalStructType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += MinimalUnionType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += MinimalBitsetType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += MinimalSequenceType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += MinimalArrayType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += MinimalMapType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += MinimalEnumeratedType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += MinimalBitmaskType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += MinimalExtendedType::getMaxCdrSerializedSize(current_alignment);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-
-    return union_max_size_serialized - initial_alignment;
-}
-
 size_t MinimalTypeObject::getCdrSerializedSize(const MinimalTypeObject& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
@@ -8893,9 +7777,10 @@ TypeObject& TypeObject::operator=(TypeObject &&x)
     return *this;
 }
 
-void TypeObject::_d(uint8_t __d)
+void TypeObject::_d(uint8_t __d) // Special case to ease... sets the current active member
 {
     bool b = false;
+    m__d = __d;
 
     switch(m__d)
     {
@@ -9027,35 +7912,6 @@ MinimalTypeObject& TypeObject::minimal()
     return m_minimal;
 }
 
-size_t TypeObject::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    size_t reset_alignment = 0;
-    size_t union_max_size_serialized = 0;
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += CompleteTypeObject::getMaxCdrSerializedSize(reset_alignment);
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += MinimalTypeObject::getMaxCdrSerializedSize(reset_alignment);
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-
-
-    return union_max_size_serialized - initial_alignment;
-}
-
 // TODO(Ricardo) Review
 size_t TypeObject::getCdrSerializedSize(const TypeObject& data, size_t current_alignment)
 {
@@ -9146,16 +8002,6 @@ TypeInformation& TypeInformation::operator=(TypeInformation &&x)
     m_complete = std::move(x.m_complete);
 
     return *this;
-}
-
-size_t TypeInformation::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifierWithDependencies::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += TypeIdentifierWithDependencies::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 size_t TypeInformation::getCdrSerializedSize(const TypeInformation& data, size_t current_alignment)
