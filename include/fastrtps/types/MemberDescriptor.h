@@ -30,18 +30,23 @@ public:
     MemberDescriptor(const MemberDescriptor* descriptor);
     ~MemberDescriptor();
 
+    bool CheckUnionLabels(const std::vector<uint64_t>& labels) const;
     ResponseCode CopyFrom(const MemberDescriptor* other);
     bool Equals(const MemberDescriptor* other) const;
     TypeKind GetKind() const;
     MemberId GetId() const;
     uint32_t GetIndex() const;
     std::string GetName() const;
-    bool IsConsistent() const;
+    std::vector<uint64_t> GetUnionLabels() const;
+    bool IsDefaultUnionValue() const;
+    bool IsConsistent(TypeKind parentKind) const;
 
+    void AddUnionCaseIndex(uint64_t value);
     void SetId(MemberId id);
     void SetIndex(uint32_t index);
     void SetName(const std::string& name);
     void SetType(DynamicType* type);
+    void SetDefaultUnionValue(bool bDefault);
 
 protected:
 
@@ -53,7 +58,7 @@ protected:
     DynamicType* mType;                 // Member's Type.
     std::string mDefaultValue;          // Default value of the member in string.
     uint32_t mIndex;                    // Definition order of the member inside it's parent.
-    std::vector<uint64_t> mLabel;       // Case Labels for unions.
+    std::vector<uint64_t> mLabels;       // Case Labels for unions.
     bool mDefaultLabel;                 // TRUE if it's the default option of a union.
 };
 

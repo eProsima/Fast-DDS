@@ -452,6 +452,27 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateUint64Type()
     return pNewTypeBuilder;
 }
 
+DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateUnionType(DynamicType* discriminator_type)
+{
+    if (discriminator_type != nullptr && discriminator_type->IsDiscriminatorType())
+    {
+        TypeDescriptor pUnionDescriptor;
+        pUnionDescriptor.mKind = TK_UNION;
+        pUnionDescriptor.mName = GenerateTypeName();
+        //TODO: Check that the discriminator type is a "Primitive Type"
+        pUnionDescriptor.mDiscriminatorType = BuildType(discriminator_type);
+
+        DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pUnionDescriptor);
+        AddTypeToList(pNewTypeBuilder);
+        return pNewTypeBuilder;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error building Union, invalid discriminator type");
+        return nullptr;
+    }
+}
+
 DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateWstringType(uint32_t bound)
 {
     TypeDescriptor pCharDescriptor;

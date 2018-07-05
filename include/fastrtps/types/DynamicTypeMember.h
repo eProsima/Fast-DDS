@@ -40,9 +40,11 @@ public:
 
     ResponseCode GetAnnotation(AnnotationDescriptor& descriptor, uint32_t idx);
     uint32_t GetAnnotationCount();
+    std::vector<uint64_t> GetUnionLabels() const;
     ResponseCode GetDescriptor(MemberDescriptor* descriptor) const;
     MemberId GetId() const;
     std::string GetName() const;
+    bool IsDefaultUnionValue() const;
 
 protected:
 

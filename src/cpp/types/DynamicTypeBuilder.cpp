@@ -55,7 +55,7 @@ DynamicTypeBuilder::~DynamicTypeBuilder()
 
 ResponseCode DynamicTypeBuilder::AddMember(const MemberDescriptor* descriptor)
 {
-    if (mDescriptor != nullptr && mDescriptor->IsConsistent())
+    if (mDescriptor != nullptr && descriptor != nullptr && descriptor->IsConsistent(mDescriptor->GetKind()))
     {
         if (mDescriptor->GetKind() == TK_ANNOTATION || mDescriptor->GetKind() == TK_BITMASK
             || mDescriptor->GetKind() == TK_ENUM || mDescriptor->GetKind() == TK_STRUCTURE
@@ -63,29 +63,37 @@ ResponseCode DynamicTypeBuilder::AddMember(const MemberDescriptor* descriptor)
         {
             if (mMemberByName.find(descriptor->GetName()) == mMemberByName.end())
             {
-                DynamicTypeMember* newMember = new DynamicTypeMember(descriptor, mCurrentMemberId);
-
-                // If the index of the new member is bigger than the current maximum, put it at the end.
-                if (newMember->GetIndex() > mMaxIndex)
+                if (CheckUnionConfiguration(descriptor))
                 {
-                    newMember->SetIndex(++mMaxIndex);
+                    DynamicTypeMember* newMember = new DynamicTypeMember(descriptor, mCurrentMemberId);
+
+                    // If the index of the new member is bigger than the current maximum, put it at the end.
+                    if (newMember->GetIndex() > mMaxIndex)
+                    {
+                        newMember->SetIndex(++mMaxIndex);
+                    }
+                    else
+                    {
+                        // Move every member bigger than the current index to the right.
+                        for (auto it = mMemberById.begin(); it != mMemberById.end(); ++it)
+                        {
+                            if (it->second->GetIndex() >= newMember->GetIndex())
+                            {
+                                it->second->SetIndex(it->second->GetIndex() + 1);
+                            }
+                        }
+                    }
+
+                    mMemberById.insert(std::make_pair(mCurrentMemberId, newMember));
+                    mMemberByName.insert(std::make_pair(newMember->GetName(), newMember));
+                    ++mCurrentMemberId;
+                    return ResponseCode::RETCODE_OK;
                 }
                 else
                 {
-                    // Move every member bigger than the current index to the right.
-                    for (auto it = mMemberById.begin(); it != mMemberById.end(); ++it)
-                    {
-                        if (it->second->GetIndex() >= newMember->GetIndex())
-                        {
-                            it->second->SetIndex(it->second->GetIndex() + 1);
-                        }
-                    }
+                    logWarning(DYN_TYPES, "Error adding member, invalid union parameters.");
+                    return ResponseCode::RETCODE_BAD_PARAMETER;
                 }
-
-                mMemberById.insert(std::make_pair(mCurrentMemberId, newMember));
-                mMemberByName.insert(std::make_pair(newMember->GetName(), newMember));
-                ++mCurrentMemberId;
-                return ResponseCode::RETCODE_OK;
             }
             else
             {
@@ -182,6 +190,23 @@ DynamicType* DynamicTypeBuilder::Build()
         logError(DYN_TYPES, "Error building type. The current descriptor isn't consistent.");
         return nullptr;
     }
+}
+
+bool DynamicTypeBuilder::CheckUnionConfiguration(const MemberDescriptor* descriptor)
+{
+    if (mDescriptor->GetKind() == TK_UNION)
+    {
+        for (auto it = mMemberById.begin(); it != mMemberById.end(); ++it)
+        {
+            // Check that there isn't any member as default label and that there isn't any member with the same case.
+            if ((descriptor->IsDefaultUnionValue() && it->second->IsDefaultUnionValue()) ||
+                !descriptor->CheckUnionLabels(it->second->GetUnionLabels()))
+            {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 ResponseCode DynamicTypeBuilder::CopyFrom(const DynamicTypeBuilder* other)

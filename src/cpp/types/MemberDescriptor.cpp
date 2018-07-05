@@ -62,6 +62,23 @@ MemberDescriptor::~MemberDescriptor()
     }
 }
 
+void MemberDescriptor::AddUnionCaseIndex(uint64_t value)
+{
+    mLabels.push_back(value);
+}
+
+bool MemberDescriptor::CheckUnionLabels(const std::vector<uint64_t>& labels) const
+{
+    for (auto it = labels.begin(); it != labels.end(); ++it)
+    {
+        if (std::find(mLabels.begin(), mLabels.end(), *it) != mLabels.end())
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 ResponseCode MemberDescriptor::CopyFrom(const MemberDescriptor* other)
 {
     if (other != nullptr)
@@ -78,7 +95,7 @@ ResponseCode MemberDescriptor::CopyFrom(const MemberDescriptor* other)
             mDefaultValue = other->mDefaultValue;
             mIndex = other->mIndex;
             mDefaultLabel = other->mDefaultLabel;
-            mLabel = other->mLabel;
+            mLabels = other->mLabels;
             return ResponseCode::RETCODE_OK;
         }
         catch (std::exception& /*e*/)
@@ -98,9 +115,9 @@ bool MemberDescriptor::Equals(const MemberDescriptor* other) const
     if (other != nullptr && mName == other->mName && mId == other->mId &&
         ((mType == nullptr && other->mType == nullptr) || mType->Equals(other->mType)) &&
         mDefaultValue == other->mDefaultValue && mIndex == other->mIndex && mDefaultLabel == other->mDefaultLabel &&
-        mLabel.size() == other->mLabel.size())
+        mLabels.size() == other->mLabels.size())
     {
-        for (auto it = mLabel.begin(), it2 = other->mLabel.begin(); it != mLabel.end(); ++it, ++it2)
+        for (auto it = mLabels.begin(), it2 = other->mLabels.begin(); it != mLabels.end(); ++it, ++it2)
         {
             if (*it != *it2)
                 return false;
@@ -134,17 +151,22 @@ std::string MemberDescriptor::GetName() const
     return mName;
 }
 
-bool MemberDescriptor::IsConsistent() const
+std::vector<uint64_t> MemberDescriptor::GetUnionLabels() const
 {
-    // The type field is mandatory.
-    if (mType == nullptr)
+    return mLabels;
+}
+
+bool MemberDescriptor::IsConsistent(TypeKind parentKind) const
+{
+    // The type field is mandatory in every type except bitmasks and enums.
+    if ((parentKind != TK_BITMASK && parentKind != TK_ENUM) && mType == nullptr)
     {
         return false;
     }
 
     // Only aggregated types must use the ID value.
-    if (mId != MEMBER_ID_INVALID && mType->GetKind() != TK_UNION && mType->GetKind() != TK_STRUCTURE &&
-        mType->GetKind() != TK_ANNOTATION)
+    if (mId != MEMBER_ID_INVALID && parentKind != TK_UNION && parentKind != TK_STRUCTURE &&
+        parentKind != TK_ANNOTATION)
     {
         return false;
     }
@@ -156,17 +178,22 @@ bool MemberDescriptor::IsConsistent() const
     }
 
     // Only Unions need the field "label"
-    if (mLabel.size() != 0 && mType->GetKind() != TK_UNION)
+    if (mLabels.size() != 0 && parentKind != TK_UNION)
     {
         return false;
     }
-    // If the field ins't de default value for the union, it must have a label value.
-    else if (mType->GetKind() == TK_UNION && mDefaultLabel == false && mLabel.size() == 0)
+    // If the field isn't the default value for the union, it must have a label value.
+    else if (parentKind == TK_UNION && mDefaultLabel == false && mLabels.size() == 0)
     {
         return false;
     }
 
-    return false;
+    return true;
+}
+
+bool MemberDescriptor::IsDefaultUnionValue() const
+{
+    return mDefaultLabel;
 }
 
 void MemberDescriptor::SetId(MemberId id)
@@ -187,6 +214,11 @@ void MemberDescriptor::SetName(const std::string& name)
 void MemberDescriptor::SetType(DynamicType* type)
 {
     mType = type;
+}
+
+void MemberDescriptor::SetDefaultUnionValue(bool bDefault)
+{
+    mDefaultLabel = bDefault;
 }
 
 } // namespace types

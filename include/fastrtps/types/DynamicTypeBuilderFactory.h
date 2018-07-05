@@ -65,6 +65,7 @@ public:
     RTPS_DllAPI DynamicTypeBuilder* CreateAliasType(DynamicType* base_type, std::string sName /*= ""*/);
     RTPS_DllAPI DynamicTypeBuilder* CreateEnumType();
     RTPS_DllAPI DynamicTypeBuilder* CreateStructType();
+    RTPS_DllAPI DynamicTypeBuilder* CreateUnionType(DynamicType* discriminator_type);
     //DynamicTypeBuilder* CreateTypeWTypeObject(TypeObject* type_object);
     //DynamicTypeBuilder* CreateTypeWUri(const std::string& document_url, const std::string& type_name, IncludePathSeq include_paths);
 	//DynamicTypeBuilder* CreateTypeWDocument(const std::string& document, const std::string& type_name, IncludePathSeq include_paths);

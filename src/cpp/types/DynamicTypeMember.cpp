@@ -111,6 +111,11 @@ uint32_t DynamicTypeMember::GetAnnotationCount()
     return static_cast<uint32_t>(mAnnotation.size());
 }
 
+std::vector<uint64_t> DynamicTypeMember::GetUnionLabels() const
+{
+    return mDescriptor->GetUnionLabels();
+}
+
 ResponseCode DynamicTypeMember::GetDescriptor(MemberDescriptor* descriptor) const
 {
     if (descriptor != nullptr)
@@ -142,6 +147,11 @@ std::string DynamicTypeMember::GetName() const
 MemberId DynamicTypeMember::GetId() const
 {
     return mDescriptor->GetId();
+}
+
+bool DynamicTypeMember::IsDefaultUnionValue() const
+{
+    return mDescriptor->IsDefaultUnionValue();
 }
 
 void DynamicTypeMember::SetIndex(uint32_t index)

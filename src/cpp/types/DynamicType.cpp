@@ -328,13 +328,21 @@ uint32_t DynamicType::GetTotalBounds() const
 bool DynamicType::HasChildren() const
 {
     return mKind == TK_ANNOTATION || mKind == TK_ARRAY || mKind == TK_MAP || mKind == TK_SEQUENCE
-        || mKind == TK_STRUCTURE;
+        || mKind == TK_STRUCTURE || mKind == TK_UNION;
 }
 
 bool DynamicType::IsComplexKind() const
 {
     return mKind == TK_ANNOTATION || mKind == TK_ARRAY || mKind == TK_BITMASK || mKind == TK_ENUM
-        || mKind == TK_MAP || mKind == TK_SEQUENCE || mKind == TK_STRUCTURE;
+        || mKind == TK_MAP || mKind == TK_SEQUENCE || mKind == TK_STRUCTURE || mKind == TK_UNION;
+}
+
+bool DynamicType::IsDiscriminatorType() const
+{
+    return mKind == TK_BOOLEAN || mKind == TK_BYTE || mKind == TK_INT16 || mKind == TK_INT32 || mKind == TK_INT64 ||
+        mKind == TK_UINT16 || mKind == TK_UINT32 || mKind == TK_UINT64 || mKind == TK_FLOAT32 || mKind == TK_FLOAT64 ||
+        mKind == TK_FLOAT128 || mKind == TK_CHAR8 || mKind == TK_CHAR16 || mKind == TK_STRING8 ||
+        mKind == TK_STRING16 || mKind == TK_ALIAS || mKind == TK_ENUM || mKind == TK_BITMASK;
 }
 
 void DynamicType::SetName(const std::string& name)

@@ -53,6 +53,8 @@ protected:
     MemberId mCurrentMemberId;
     uint32_t mMaxIndex;
 
+    bool CheckUnionConfiguration(const MemberDescriptor* descriptor);
+
     virtual void Clear() override;
 };
 
