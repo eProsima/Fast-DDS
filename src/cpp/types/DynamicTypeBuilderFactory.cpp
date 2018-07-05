@@ -65,14 +65,19 @@ DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
 #endif
 }
 
+void DynamicTypeBuilderFactory::AddTypeToList(DynamicType* pType)
+{
+#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+    mTypesList.push_back(pType);
+#endif
+}
+
 DynamicType* DynamicTypeBuilderFactory::BuildType(const TypeDescriptor* descriptor)
 {
     if (descriptor != nullptr)
     {
         DynamicType* pNewType = new DynamicType(descriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-        mTypesList.push_back(pNewType);
-#endif
+        AddTypeToList(pNewType);
         return pNewType;
     }
     else
@@ -87,9 +92,7 @@ DynamicType* DynamicTypeBuilderFactory::BuildType(const DynamicType* other)
     if (other != nullptr)
     {
         DynamicType* pNewType = new DynamicType(other);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-        mTypesList.push_back(pNewType);
-#endif
+        AddTypeToList(pNewType);
         return pNewType;
     }
     else
@@ -116,9 +119,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateAliasType(DynamicType* base
         }
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-        mTypesList.push_back(pNewTypeBuilder);
-#endif
+        AddTypeToList(pNewTypeBuilder);
         return pNewTypeBuilder;
     }
     else
@@ -140,9 +141,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateArrayType(const DynamicType
         pDescriptor.mElementType = BuildType(element_type);
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-        mTypesList.push_back(pNewTypeBuilder);
-#endif
+        AddTypeToList(pNewTypeBuilder);
         return pNewTypeBuilder;
     }
     else
@@ -167,9 +166,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateBitmaskType(uint32_t bound)
         pDescriptor.mBound.push_back(bound);
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-        mTypesList.push_back(pNewTypeBuilder);
-#endif
+        AddTypeToList(pNewTypeBuilder);
         return pNewTypeBuilder;
     }
     else
@@ -189,9 +186,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateBitsetType(uint32_t bound)
         pDescriptor.mBound.push_back(bound);
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-        mTypesList.push_back(pNewTypeBuilder);
-#endif
+        AddTypeToList(pNewTypeBuilder);
         return pNewTypeBuilder;
     }
     else
@@ -208,9 +203,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateBoolType()
     pBoolDescriptor.mName = GenerateTypeName();
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pBoolDescriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    mTypesList.push_back(pNewTypeBuilder);
-#endif
+    AddTypeToList(pNewTypeBuilder);
     return pNewTypeBuilder;
 }
 
@@ -221,9 +214,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateByteType()
     pByteDescriptor.mName = GenerateTypeName();
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pByteDescriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    mTypesList.push_back(pNewTypeBuilder);
-#endif
+    AddTypeToList(pNewTypeBuilder);
     return pNewTypeBuilder;
 }
 
@@ -234,9 +225,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateChar8Type()
     pChar8Descriptor.mName = GenerateTypeName();
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pChar8Descriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    mTypesList.push_back(pNewTypeBuilder);
-#endif
+    AddTypeToList(pNewTypeBuilder);
     return pNewTypeBuilder;
 }
 
@@ -247,9 +236,18 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateChar16Type()
     pChar16Descriptor.mName = GenerateTypeName();
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pChar16Descriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    mTypesList.push_back(pNewTypeBuilder);
-#endif
+    AddTypeToList(pNewTypeBuilder);
+    return pNewTypeBuilder;
+}
+
+DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateEnumType()
+{
+    TypeDescriptor pEnumDescriptor;
+    pEnumDescriptor.mKind = TK_ENUM;
+    pEnumDescriptor.mName = GenerateTypeName();
+
+    DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pEnumDescriptor);
+    AddTypeToList(pNewTypeBuilder);
     return pNewTypeBuilder;
 }
 
@@ -260,9 +258,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateFloat32Type()
     pFloat32Descriptor.mName = GenerateTypeName();
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pFloat32Descriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    mTypesList.push_back(pNewTypeBuilder);
-#endif
+    AddTypeToList(pNewTypeBuilder);
     return pNewTypeBuilder;
 }
 
@@ -273,9 +269,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateFloat64Type()
     pFloat64Descriptor.mName = GenerateTypeName();
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pFloat64Descriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    mTypesList.push_back(pNewTypeBuilder);
-#endif
+    AddTypeToList(pNewTypeBuilder);
     return pNewTypeBuilder;
 }
 
@@ -286,9 +280,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateFloat128Type()
     pFloat128Descriptor.mName = GenerateTypeName();
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pFloat128Descriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    mTypesList.push_back(pNewTypeBuilder);
-#endif
+    AddTypeToList(pNewTypeBuilder);
     return pNewTypeBuilder;
 }
 
@@ -299,9 +291,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateInt16Type()
     pInt16Descriptor.mName = GenerateTypeName();
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pInt16Descriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    mTypesList.push_back(pNewTypeBuilder);
-#endif
+    AddTypeToList(pNewTypeBuilder);
     return pNewTypeBuilder;
 }
 
@@ -312,9 +302,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateInt32Type()
     pInt32Descriptor.mName = GenerateTypeName();
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pInt32Descriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    mTypesList.push_back(pNewTypeBuilder);
-#endif
+    AddTypeToList(pNewTypeBuilder);
     return pNewTypeBuilder;
 }
 
@@ -325,9 +313,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateInt64Type()
     pInt64Descriptor.mName = GenerateTypeName();
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pInt64Descriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    mTypesList.push_back(pNewTypeBuilder);
-#endif
+    AddTypeToList(pNewTypeBuilder);
     return pNewTypeBuilder;
 }
 
@@ -344,9 +330,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateMapType(DynamicType* key_el
         pDescriptor.mElementType = BuildType(element_type);
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-        mTypesList.push_back(pNewTypeBuilder);
-#endif
+        AddTypeToList(pNewTypeBuilder);
         return pNewTypeBuilder;
     }
     else
@@ -367,9 +351,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateSequenceType(const DynamicT
         pDescriptor.mElementType = BuildType(element_type);
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-        mTypesList.push_back(pNewTypeBuilder);
-#endif
+        AddTypeToList(pNewTypeBuilder);
         return pNewTypeBuilder;
     }
     else
@@ -392,9 +374,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateStringType(uint32_t bound)
     pDescriptor.mBound.push_back(bound);
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    mTypesList.push_back(pNewTypeBuilder);
-#endif
+    AddTypeToList(pNewTypeBuilder);
     return pNewTypeBuilder;
 }
 
@@ -403,9 +383,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateType(const TypeDescriptor* 
     if (descriptor != nullptr)
     {
         DynamicTypeBuilder* pNewType = new DynamicTypeBuilder(descriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-        mTypesList.push_back(pNewType);
-#endif
+        AddTypeToList(pNewType);
         return pNewType;
     }
     else
@@ -420,9 +398,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateTypeCopy(const DynamicType*
     if (type != nullptr)
     {
         DynamicTypeBuilder* pNewType = new DynamicTypeBuilder(type);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-        mTypesList.push_back(pNewType);
-#endif
+        AddTypeToList(pNewType);
         return pNewType;
     }
     else
@@ -439,9 +415,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateUint16Type()
     pUInt16Descriptor.mName = GenerateTypeName();
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pUInt16Descriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    mTypesList.push_back(pNewTypeBuilder);
-#endif
+    AddTypeToList(pNewTypeBuilder);
     return pNewTypeBuilder;
 }
 
@@ -452,9 +426,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateUint32Type()
     pUInt32Descriptor.mName = GenerateTypeName();
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pUInt32Descriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    mTypesList.push_back(pNewTypeBuilder);
-#endif
+    AddTypeToList(pNewTypeBuilder);
     return pNewTypeBuilder;
 }
 
@@ -465,9 +437,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateUint64Type()
     pUInt64Descriptor.mName = GenerateTypeName();
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pUInt64Descriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    mTypesList.push_back(pNewTypeBuilder);
-#endif
+    AddTypeToList(pNewTypeBuilder);
     return pNewTypeBuilder;
 }
 
@@ -484,9 +454,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateWstringType(uint32_t bound)
     pDescriptor.mBound.push_back(bound);
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    mTypesList.push_back(pNewTypeBuilder);
-#endif
+    AddTypeToList(pNewTypeBuilder);
     return pNewTypeBuilder;
 }
 

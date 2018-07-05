@@ -94,8 +94,8 @@ DynamicData::DynamicData(DynamicType* pType)
     {
         if (mType->IsComplexKind())
         {
-            // Bitmasks registers their members but only manages one value.
-            if (mType->GetKind() == TK_BITMASK)
+            // Bitmasks and enums register their members but only manages one value.
+            if (mType->GetKind() == TK_BITMASK || mType->GetKind() == TK_ENUM)
             {
                 AddValue(mType->GetKind(), MEMBER_ID_INVALID);
             }
@@ -105,7 +105,7 @@ DynamicData::DynamicData(DynamicType* pType)
                 if (it->second->GetDescriptor(newDescriptor) == ResponseCode::RETCODE_OK)
                 {
                     mDescriptors.insert(std::make_pair(it->first, newDescriptor));
-                    if (mType->GetKind() != TK_BITMASK)
+                    if (mType->GetKind() != TK_BITMASK && mType->GetKind() != TK_ENUM)
                     {
 #ifdef DYNAMIC_TYPES_CHECKING
                         mComplexValues.insert(std::make_pair(it->first, DynamicDataFactory::GetInstance()->CreateData(newDescriptor->mType)));
@@ -370,6 +370,13 @@ void DynamicData::AddValue(TypeKind kind, MemberId id)
 #endif
     }
     break;
+    case TK_ENUM:
+    {
+#ifndef DYNAMIC_TYPES_CHECKING
+        mValues.insert(std::make_pair(id, new uint32_t()));
+#endif
+    }
+    break;
     case TK_BITSET:
     case TK_BITMASK:
     {
@@ -602,6 +609,13 @@ void* DynamicData::CloneValue(MemberId id, TypeKind kind) const
         return newString;
     }
     break;
+    case TK_ENUM:
+    {
+        uint32_t* newUInt32 = new uint32_t();
+        GetUint32Value(*newUInt32, id);
+        return newUInt32;
+    }
+    break;
     case TK_BITSET:
     case TK_BITMASK:
     {
@@ -634,6 +648,7 @@ bool DynamicData::CompareValues(TypeKind kind, void* left, void* right)
     case TK_BYTE:       {   return *((octet*)left) == *((octet*)right);    }
     case TK_STRING8:    {   return *((std::string*)left) == *((std::string*)right);    }
     case TK_STRING16:   {   return *((std::wstring*)left) == *((std::wstring*)right);    }
+    case TK_ENUM:       {   return *((uint32_t*)left) == *((uint32_t*)right);    }
     case TK_BITSET:     {   return *((uint64_t*)left) == *((uint64_t*)right);    }
     case TK_BITMASK:    {   return *((uint64_t*)left) == *((uint64_t*)right);    }
     }
@@ -800,6 +815,17 @@ void DynamicData::SetDefaultValue(MemberId id)
     case TK_STRING16:
     {
         SetWstringValue(id, std::wstring(defaultValue.begin(), defaultValue.end()));
+    }
+    break;
+    case TK_ENUM:
+    {
+        uint32_t value(0);
+        try
+        {
+            value = stoul(defaultValue);
+        }
+        catch (...) {}
+        SetUint32Value(id, value);
     }
     break;
     case TK_BITSET:
@@ -2058,6 +2084,96 @@ ResponseCode DynamicData::GetWstringValue(std::wstring& value, MemberId id) cons
         else if (id != MEMBER_ID_INVALID)
         {
             return ((DynamicData*)it->second)->GetWstringValue(value, MEMBER_ID_INVALID);
+        }
+    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
+#endif
+}
+
+ResponseCode DynamicData::GetEnumValue(std::string& value, MemberId id) const
+{
+#ifdef DYNAMIC_TYPES_CHECKING
+    if (mType->GetKind() == TK_ENUM && id == MEMBER_ID_INVALID)
+    {
+        auto it = mDescriptors.find(mUInt32Value);
+        if (it != mDescriptors.end())
+        {
+            value = it->second->GetName();
+            return ResponseCode::RETCODE_OK;
+        }
+    }
+    else if (id != MEMBER_ID_INVALID)
+    {
+        auto it = mComplexValues.find(id);
+        if (it != mComplexValues.end())
+        {
+            return it->second->GetEnumValue(value, MEMBER_ID_INVALID);
+        }
+    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
+#else
+    auto itValue = mValues.find(id);
+    if (itValue != mValues.end())
+    {
+        if (mType->GetKind() == TK_ENUM && id == MEMBER_ID_INVALID)
+        {
+            auto it = mDescriptors.find(*((uint32_t*)itValue->second));
+            if (it != mDescriptors.end())
+            {
+                value = it->second->GetName();
+                return ResponseCode::RETCODE_OK;
+            }
+        }
+        else if (id != MEMBER_ID_INVALID)
+        {
+            return ((DynamicData*)itValue->second)->GetEnumValue(value, MEMBER_ID_INVALID);
+        }
+    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
+#endif
+}
+
+ResponseCode DynamicData::SetEnumValue(MemberId id, const std::string& value)
+{
+#ifdef DYNAMIC_TYPES_CHECKING
+    if (mType->GetKind() == TK_ENUM && id == MEMBER_ID_INVALID)
+    {
+        for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+        {
+            if (it->second->GetName() == value)
+            {
+                mUInt32Value = it->first;
+                return ResponseCode::RETCODE_OK;
+            }
+        }
+    }
+    else if (id != MEMBER_ID_INVALID)
+    {
+        auto it = mComplexValues.find(id);
+        if (it != mComplexValues.end())
+        {
+            return it->second->SetEnumValue(MEMBER_ID_INVALID, value);
+        }
+    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
+#else
+    auto itValue = mValues.find(id);
+    if (itValue != mValues.end())
+    {
+        if (mType->GetKind() == TK_ENUM && id == MEMBER_ID_INVALID)
+        {
+            for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+            {
+                if (it->second->GetName() == value)
+                {
+                    *((uint32_t*)itValue->second) = it->first;
+                    return ResponseCode::RETCODE_OK;
+                }
+            }
+        }
+        else if (id != MEMBER_ID_INVALID)
+        {
+            return ((DynamicData*)itValue->second)->SetEnumValue(MEMBER_ID_INVALID, value);
         }
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;

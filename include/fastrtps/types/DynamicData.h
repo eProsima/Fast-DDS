@@ -85,8 +85,11 @@ public:
 	RTPS_DllAPI ResponseCode SetBoolValue(MemberId id, bool value);
 	RTPS_DllAPI ResponseCode GetStringValue(std::string& value, MemberId id) const;
 	RTPS_DllAPI ResponseCode SetStringValue(MemberId id, const std::string& value);
-	RTPS_DllAPI ResponseCode GetWstringValue(std::wstring& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode SetWstringValue(MemberId id, const std::wstring& value);
+    RTPS_DllAPI ResponseCode GetWstringValue(std::wstring& value, MemberId id) const;
+    RTPS_DllAPI ResponseCode SetWstringValue(MemberId id, const std::wstring& value);
+
+    RTPS_DllAPI ResponseCode GetEnumValue(std::string& value, MemberId id) const;
+    RTPS_DllAPI ResponseCode SetEnumValue(MemberId id, const std::string& value);
 
     RTPS_DllAPI ResponseCode GetComplexValue(DynamicData* value, MemberId id) const;
     RTPS_DllAPI ResponseCode SetComplexValue(MemberId id, DynamicData* value);

@@ -318,7 +318,7 @@ DynamicType* DynamicType::GetKeyElementType() const
 
 bool DynamicType::IsComplexKind() const
 {
-    return mKind == TK_ANNOTATION || mKind == TK_ARRAY || mKind == TK_BITMASK
+    return mKind == TK_ANNOTATION || mKind == TK_ARRAY || mKind == TK_BITMASK || mKind == TK_ENUM
         || mKind == TK_MAP || mKind == TK_SEQUENCE || mKind == TK_STRUCTURE;
 }
 
