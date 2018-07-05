@@ -17,7 +17,7 @@
 
 #include <fastrtps/types/TypesBase.h>
 
-#define DYNAMIC_TYPES_CHECKING
+//#define DYNAMIC_TYPES_CHECKING
 
 namespace eprosima{
 namespace fastrtps{
@@ -40,8 +40,10 @@ public:
     RTPS_DllAPI ResponseCode ClearValue(MemberId id);
 
     RTPS_DllAPI DynamicData* Clone() const;
-    RTPS_DllAPI bool Equals(const DynamicData* other);
-    RTPS_DllAPI uint32_t GetItemCount();
+    RTPS_DllAPI bool Equals(const DynamicData* other) const;
+    RTPS_DllAPI TypeKind GetKind();
+    RTPS_DllAPI uint32_t GetItemCount() const;
+    RTPS_DllAPI std::string GetName();
 
     RTPS_DllAPI MemberId GetMemberIdByName(const std::string& name);
     RTPS_DllAPI MemberId GetMemberIdAtIndex(uint32_t index);
@@ -54,8 +56,11 @@ public:
     RTPS_DllAPI ResponseCode RemoveSequenceData(MemberId id);
     RTPS_DllAPI ResponseCode ClearData();
 
+    RTPS_DllAPI ResponseCode InsertArrayData(MemberId indexId);
+    RTPS_DllAPI ResponseCode RemoveArrayData(MemberId indexId);
+
     RTPS_DllAPI ResponseCode InsertMapData(DynamicData* key, MemberId& outKeyId, MemberId& outValueId);
-    RTPS_DllAPI ResponseCode RemoveMapData(MemberId outKeyId);
+    RTPS_DllAPI ResponseCode RemoveMapData(MemberId keyId);
 
     RTPS_DllAPI ResponseCode GetInt32Value(int32_t& value, MemberId id) const;
 	RTPS_DllAPI ResponseCode SetInt32Value(MemberId id, int32_t value);
@@ -104,7 +109,7 @@ protected:
 
     void* CloneValue(MemberId id, TypeKind kind) const;
 
-    bool CompareValues(TypeKind kind, void* left, void* right);
+    bool CompareValues(TypeKind kind, void* left, void* right) const;
 
     void SetDefaultValue(MemberId id);
 
@@ -137,7 +142,6 @@ protected:
 #endif
     std::vector<MemberId> mLoanedValues;
     bool mIsKeyElement;
-    uint32_t mItemCount;
 
     friend class DynamicDataFactory;
 };

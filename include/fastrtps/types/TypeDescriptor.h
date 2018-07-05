@@ -43,6 +43,7 @@ public:
     DynamicType* GetKeyElementType() const;
     TypeKind GetKind() const;
     std::string GetName() const;
+    uint32_t GetTotalBounds() const;
 
     void SetKind(TypeKind kind);
     void SetName(std::string name);

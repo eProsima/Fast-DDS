@@ -89,18 +89,6 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
 
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
-    /*
-    auto builder = DynamicTypeBuilderFactory::GetInstance()->create_int32_type();
-    auto type = builder->build();
-    //auto seqBuilder = DynamicTypeBuilderFactory::GetInstance()->create_sequence_type(type, 10);
-    //auto seqType = seqBuilder->build();
-
-    auto data = DynamicDataFactory::GetInstance()->create_data(type);
-    data->set_int32_value(MEMBER_ID_INVALID, 10);
-
-    int test = 0;
-    data->get_int32_value(test, MEMBER_ID_INVALID);
-    */
 }
 
 TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
@@ -368,7 +356,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
 
 TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
 {
-    // CREATE SEQUENCE OF SEQUENCES
+    //TODO:  CREATE SEQUENCE OF SEQUENCES
 
     // Given
     DynamicTypeBuilderFactory::GetInstance();
@@ -434,8 +422,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
 
 TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
 {
-    // CREATE SEQUENCE OF SEQUENCES
-
     // Given
     DynamicTypeBuilderFactory::GetInstance();
     DynamicTypeBuilder* base_type_builder(nullptr);
@@ -457,31 +443,44 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
     ASSERT_FALSE(array_data->SetInt32Value(MEMBER_ID_INVALID, 10) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(array_data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
 
-    /*
     MemberId newId;
-    ASSERT_TRUE(seq_data->insert_sequence_data(newId) == ResponseCode::RETCODE_OK);
-    MemberId newId2;
-    ASSERT_TRUE(seq_data->insert_sequence_data(newId2) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(array_data->InsertSequenceData(newId) == ResponseCode::RETCODE_OK);
 
-    // Try to insert more than the limit.
-    MemberId newId3;
-    ASSERT_FALSE(seq_data->insert_sequence_data(newId3) == ResponseCode::RETCODE_OK);
+    // Get an index in the multidimensional array.
+    std::vector<uint32_t> vPosition = { 1, 1, 1 };
+    MemberId testPos(0);
+    testPos = array_data->GetArrayIndex(vPosition);
+    ASSERT_TRUE(testPos != MEMBER_ID_INVALID);
+
+    // Invalid input vectors.
+    std::vector<uint32_t> vPosition2 = { 1, 1 };
+    ASSERT_FALSE(array_data->GetArrayIndex(vPosition2) != MEMBER_ID_INVALID);
+    std::vector<uint32_t> vPosition3 = { 1, 1, 1, 1 };
+    ASSERT_FALSE(array_data->GetArrayIndex(vPosition3) != MEMBER_ID_INVALID);
 
     // Set and get a value.
-    int32_t test1(234);
-    ASSERT_TRUE(seq_data->set_int32_value(newId2, test1) == ResponseCode::RETCODE_OK);
+    int32_t test1 = 156;
+    ASSERT_TRUE(array_data->SetInt32Value(testPos, test1) == ResponseCode::RETCODE_OK);
     int32_t test2(0);
-    ASSERT_TRUE(seq_data->get_int32_value(test2, newId2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(array_data->GetInt32Value(test2, testPos) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
 
-    // Remove the elements.
-    ASSERT_TRUE(seq_data->remove_sequence_data(newId) == ResponseCode::RETCODE_OK);
-    ASSERT_TRUE(seq_data->clear_all_values() == ResponseCode::RETCODE_OK);
+    // Check items count before and after remove an element.
+    ASSERT_TRUE(array_data->GetItemCount() == 1);
+    ASSERT_TRUE(array_data->ClearValue(testPos) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(array_data->GetItemCount() == 1);
+    ASSERT_TRUE(array_data->RemoveArrayData(testPos) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(array_data->GetItemCount() == 0);
 
-    // Check that the sequence is empty.
-    ASSERT_FALSE(seq_data->get_int32_value(test2, 0) == ResponseCode::RETCODE_OK);
+    // Check the clear values method
+    ASSERT_TRUE(array_data->SetInt32Value(testPos, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(array_data->GetItemCount() == 1);
+    ASSERT_TRUE(array_data->ClearAllValues() == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(array_data->GetItemCount() == 0);
 
-    */
+    // Try to set a value out of the array.
+    ASSERT_FALSE(array_data->SetInt32Value(100, test1) == ResponseCode::RETCODE_OK);
+
     // Delete the array
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(array_data) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(array_data) == ResponseCode::RETCODE_OK);
@@ -502,8 +501,6 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
 
 TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
 {
-    // CREATE SEQUENCE OF SEQUENCES
-
     // Given
     DynamicTypeBuilderFactory::GetInstance();
     DynamicTypeBuilder* base_type_builder(nullptr);
@@ -522,36 +519,48 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
     ASSERT_TRUE(map_type != nullptr);
 
     auto map_data = DynamicDataFactory::GetInstance()->CreateData(map_type);
-    /*
+
     ASSERT_FALSE(map_data->SetInt32Value(MEMBER_ID_INVALID, 10) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(map_data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
 
-    MemberId newId;
-    ASSERT_TRUE(seq_data->insert_sequence_data(newId) == ResponseCode::RETCODE_OK);
-    MemberId newId2;
-    ASSERT_TRUE(seq_data->insert_sequence_data(newId2) == ResponseCode::RETCODE_OK);
+    MemberId keyId;
+    MemberId valueId;
+    auto key_data = DynamicDataFactory::GetInstance()->CreateData(base_type);
+    ASSERT_TRUE(map_data->InsertMapData(key_data, keyId, valueId) == ResponseCode::RETCODE_OK);
 
-    // Try to insert more than the limit.
-    MemberId newId3;
-    ASSERT_FALSE(seq_data->insert_sequence_data(newId3) == ResponseCode::RETCODE_OK);
+    // Try to Add the same key twice.
+    ASSERT_FALSE(map_data->InsertMapData(key_data, keyId, valueId) == ResponseCode::RETCODE_OK);
+
+    MemberId keyId2;
+    MemberId valueId2;
+    key_data = DynamicDataFactory::GetInstance()->CreateData(base_type);
+    key_data->SetInt32Value(MEMBER_ID_INVALID, 2);
+    ASSERT_TRUE(map_data->InsertMapData(key_data, keyId2, valueId2) == ResponseCode::RETCODE_OK);
+
+    // Try to Add one more than the limit
+    auto key_data2 = DynamicDataFactory::GetInstance()->CreateData(base_type);
+    key_data2->SetInt32Value(MEMBER_ID_INVALID, 3);
+    ASSERT_FALSE(map_data->InsertMapData(key_data2, keyId, valueId) == ResponseCode::RETCODE_OK);
 
     // Set and get a value.
     int32_t test1(234);
-    ASSERT_TRUE(seq_data->set_int32_value(newId2, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(map_data->SetInt32Value(valueId, test1) == ResponseCode::RETCODE_OK);
     int32_t test2(0);
-    ASSERT_TRUE(seq_data->get_int32_value(test2, newId2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(map_data->GetInt32Value(test2, valueId) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
 
-    // Remove the elements.
-    ASSERT_TRUE(seq_data->remove_sequence_data(newId) == ResponseCode::RETCODE_OK);
-    ASSERT_TRUE(seq_data->clear_all_values() == ResponseCode::RETCODE_OK);
-
-    // Check that the sequence is empty.
-    ASSERT_FALSE(seq_data->get_int32_value(test2, 0) == ResponseCode::RETCODE_OK);
-
-    */
+    // Check items count with removes
+    ASSERT_TRUE(map_data->GetItemCount() == 2);
+    ASSERT_FALSE(map_data->RemoveMapData(valueId) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(map_data->GetItemCount() == 2);
+    ASSERT_TRUE(map_data->RemoveMapData(keyId) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(map_data->GetItemCount() == 1);
+    ASSERT_TRUE(map_data->ClearAllValues() == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(map_data->GetItemCount() == 0);
 
     // Delete the map
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(key_data2) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(key_data2) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(map_data) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(map_data) == ResponseCode::RETCODE_OK);
 

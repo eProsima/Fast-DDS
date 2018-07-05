@@ -150,7 +150,7 @@ DynamicType* TypeDescriptor::GetBaseType() const
     return mBaseType;
 }
 
-uint32_t TypeDescriptor::GetBounds(uint32_t index /*= 0*/) const
+uint32_t TypeDescriptor::GetBounds(uint32_t index /*=0*/) const
 {
     if (index < mBound.size())
     {
@@ -186,6 +186,20 @@ TypeKind TypeDescriptor::GetKind() const
 std::string TypeDescriptor::GetName() const
 {
     return mName;
+}
+
+uint32_t TypeDescriptor::GetTotalBounds() const
+{
+    if (mBound.size() >= 1)
+    {
+        uint32_t bounds = 1;
+        for (int i = 0; i < mBound.size(); ++i)
+        {
+            bounds *= mBound[i];
+        }
+        return bounds;
+    }
+    return LENGTH_UNLIMITED;
 }
 
 bool TypeDescriptor::IsConsistent() const

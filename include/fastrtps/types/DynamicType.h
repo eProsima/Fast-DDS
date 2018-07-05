@@ -41,6 +41,7 @@ public:
     uint32_t GetAnnotationCount();
     DynamicType* GetBaseType() const;
     uint32_t GetBounds(uint32_t index = 0) const;
+    uint32_t GetTotalBounds() const;
     uint32_t GetBoundsSize() const;
     ResponseCode GetDescriptor(TypeDescriptor* descriptor) const;
     DynamicType* GetElementType() const;
