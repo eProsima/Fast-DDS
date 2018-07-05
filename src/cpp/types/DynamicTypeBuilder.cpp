@@ -55,7 +55,7 @@ DynamicTypeBuilder::~DynamicTypeBuilder()
 
 ResponseCode DynamicTypeBuilder::AddMember(const MemberDescriptor* descriptor)
 {
-    if (mDescriptor != nullptr)
+    if (mDescriptor != nullptr && mDescriptor->IsConsistent())
     {
         if (mDescriptor->GetKind() == TK_ANNOTATION || mDescriptor->GetKind() == TK_BITMASK
             || mDescriptor->GetKind() == TK_ENUM || mDescriptor->GetKind() == TK_STRUCTURE
@@ -102,7 +102,14 @@ ResponseCode DynamicTypeBuilder::AddMember(const MemberDescriptor* descriptor)
     }
     else
     {
-        logWarning(DYN_TYPES, "Error adding member, Invalid input descriptor.");
+        if (descriptor == nullptr)
+        {
+            logWarning(DYN_TYPES, "Error adding member, Invalid input descriptor.");
+        }
+        else
+        {
+            logWarning(DYN_TYPES, "Error adding member, The input descriptor isn't consistent.");
+        }
         return ResponseCode::RETCODE_BAD_PARAMETER;
     }
 }
@@ -148,25 +155,33 @@ ResponseCode DynamicTypeBuilder::ApplyAnnotationToMember(MemberId id, Annotation
 
 DynamicType* DynamicTypeBuilder::Build()
 {
-    DynamicType* newType = DynamicTypeBuilderFactory::GetInstance()->BuildType(mDescriptor);
-    newType->mName = mDescriptor->GetName();
-    newType->mKind = mDescriptor->GetKind();
-    for (auto it = mAnnotation.begin(); it != mAnnotation.end(); ++it)
+    if (mDescriptor->IsConsistent())
     {
-        AnnotationDescriptor* newAnnotation = new AnnotationDescriptor();
-        newAnnotation->CopyFrom(*it);
-        newType->mAnnotation.push_back(newAnnotation);
-    }
+        DynamicType* newType = DynamicTypeBuilderFactory::GetInstance()->BuildType(mDescriptor);
+        newType->mName = mDescriptor->GetName();
+        newType->mKind = mDescriptor->GetKind();
+        for (auto it = mAnnotation.begin(); it != mAnnotation.end(); ++it)
+        {
+            AnnotationDescriptor* newAnnotation = new AnnotationDescriptor();
+            newAnnotation->CopyFrom(*it);
+            newType->mAnnotation.push_back(newAnnotation);
+        }
 
-    for (auto it = mMemberById.begin(); it != mMemberById.end(); ++it)
+        for (auto it = mMemberById.begin(); it != mMemberById.end(); ++it)
+        {
+            DynamicTypeMember* newMember = new DynamicTypeMember(it->second);
+            newMember->SetParent(newType);
+            newType->mMemberById.insert(std::make_pair(newMember->GetId(), newMember));
+            newType->mMemberByName.insert(std::make_pair(newMember->GetName(), newMember));
+        }
+
+        return newType;
+    }
+    else
     {
-        DynamicTypeMember* newMember = new DynamicTypeMember(it->second);
-        newMember->SetParent(newType);
-        newType->mMemberById.insert(std::make_pair(newMember->GetId(), newMember));
-        newType->mMemberByName.insert(std::make_pair(newMember->GetName(), newMember));
+        logError(DYN_TYPES, "Error building type. The current descriptor isn't consistent.");
+        return nullptr;
     }
-
-    return newType;
 }
 
 ResponseCode DynamicTypeBuilder::CopyFrom(const DynamicTypeBuilder* other)

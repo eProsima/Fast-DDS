@@ -57,6 +57,12 @@ DynamicTypeMember::~DynamicTypeMember()
         delete *it;
     }
     mAnnotation.clear();
+
+    if (mDescriptor != nullptr)
+    {
+        delete mDescriptor;
+        mDescriptor = nullptr;
+    }
 }
 
 ResponseCode DynamicTypeMember::ApplyAnnotation(AnnotationDescriptor& descriptor)

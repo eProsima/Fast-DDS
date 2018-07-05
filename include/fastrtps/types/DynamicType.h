@@ -51,7 +51,9 @@ public:
     ResponseCode GetMember(DynamicTypeMember& member, MemberId id);
     ResponseCode GetMemberByName(DynamicTypeMember& member, const std::string name);
 
+    bool HasChildren() const;
     bool IsComplexKind() const;
+
 
 protected:
 

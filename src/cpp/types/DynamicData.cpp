@@ -419,6 +419,23 @@ void DynamicData::AddValue(TypeKind kind, MemberId id)
 
 void DynamicData::Clean()
 {
+#ifdef DYNAMIC_TYPES_CHECKING
+    for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
+    {
+        DynamicDataFactory::GetInstance()->DeleteData(it->second);
+    }
+    mComplexValues.clear();
+#else
+    if (mType->HasChildren())
+    {
+        for (auto it = mValues.begin(); it != mValues.end(); ++it)
+        {
+            DynamicDataFactory::GetInstance()->DeleteData((DynamicData*)it->second);
+        }
+    }
+    mValues.clear();
+#endif
+
     if (mType != nullptr)
     {
         DynamicTypeBuilderFactory::GetInstance()->DeleteType(mType);
