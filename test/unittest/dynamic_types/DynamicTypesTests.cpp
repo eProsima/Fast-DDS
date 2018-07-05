@@ -73,17 +73,207 @@ TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
 
 TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
 {
-    //// Given
+    // Given
     DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* created_type(nullptr);
+
+    // Try to create with invalid values
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->CreateType(nullptr));
+
+    // Create basic types
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
+    ASSERT_TRUE(created_type != nullptr);
+    auto type = created_type->Build();
+    ASSERT_TRUE(type != nullptr);
+    auto data = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type();
+    ASSERT_TRUE(created_type != nullptr);
+    type = created_type->Build();
+    ASSERT_TRUE(type != nullptr);
+    data = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateInt16Type();
+    ASSERT_TRUE(created_type != nullptr);
+    type = created_type->Build();
+    ASSERT_TRUE(type != nullptr);
+    data = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateUint16Type();
+    ASSERT_TRUE(created_type != nullptr);
+    type = created_type->Build();
+    ASSERT_TRUE(type != nullptr);
+    data = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateInt64Type();
+    ASSERT_TRUE(created_type != nullptr);
+    type = created_type->Build();
+    ASSERT_TRUE(type != nullptr);
+    data = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateUint64Type();
+    ASSERT_TRUE(created_type != nullptr);
+    type = created_type->Build();
+    ASSERT_TRUE(type != nullptr);
+    data = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateFloat32Type();
+    ASSERT_TRUE(created_type != nullptr);
+    type = created_type->Build();
+    ASSERT_TRUE(type != nullptr);
+    data = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateFloat64Type();
+    ASSERT_TRUE(created_type != nullptr);
+    type = created_type->Build();
+    ASSERT_TRUE(type != nullptr);
+    data = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateFloat128Type();
+    ASSERT_TRUE(created_type != nullptr);
+    type = created_type->Build();
+    ASSERT_TRUE(type != nullptr);
+    data = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateChar8Type();
+    ASSERT_TRUE(created_type != nullptr);
+    type = created_type->Build();
+    ASSERT_TRUE(type != nullptr);
+    data = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateChar16Type();
+    ASSERT_TRUE(created_type != nullptr);
+    type = created_type->Build();
+    ASSERT_TRUE(type != nullptr);
+    data = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateByteType();
+    ASSERT_TRUE(created_type != nullptr);
+    type = created_type->Build();
+    ASSERT_TRUE(type != nullptr);
+    data = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateBoolType();
+    ASSERT_TRUE(created_type != nullptr);
+    type = created_type->Build();
+    ASSERT_TRUE(type != nullptr);
+    data = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateStringType(LENGTH_UNLIMITED);
+    ASSERT_TRUE(created_type != nullptr);
+    type = created_type->Build();
+    ASSERT_TRUE(type != nullptr);
+    data = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateWstringType(LENGTH_UNLIMITED);
+    ASSERT_TRUE(created_type != nullptr);
+    type = created_type->Build();
+    ASSERT_TRUE(type != nullptr);
+    data = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    // Create with custom types
     TypeDescriptor pInt32Descriptor;
     pInt32Descriptor.SetKind(TK_INT32);
     pInt32Descriptor.SetName("TEST_INT32");
-    DynamicTypeBuilder* created_type(nullptr);
-
-    // Then
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->CreateType(nullptr));
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateType(&pInt32Descriptor);
     ASSERT_TRUE(created_type != nullptr);
+    type = created_type->Build();
+    ASSERT_TRUE(type != nullptr);
+    data = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -100,16 +290,1039 @@ TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
     // Then
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
     ASSERT_TRUE(created_type != nullptr);
-    auto new_type = created_type->Build();
-    auto data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    types::DynamicType* new_type = created_type->Build();
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
 
-    int test1 = 123;
+    int32_t test1 = 123;
+    int32_t test2 = 0;
     ASSERT_TRUE(data->SetInt32Value(MEMBER_ID_INVALID, test1) == ResponseCode::RETCODE_OK);
-
-    int test2 = 0;
     ASSERT_FALSE(data->GetInt32Value(test2, 0) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(data->GetInt32Value(test2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
+
+    //ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    //int32_t iTest32;
+    //ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+
+TEST_F(DynamicTypesTests, DynamicType_uint32_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* created_type(nullptr);
+
+    // Then
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type();
+    ASSERT_TRUE(created_type != nullptr);
+    types::DynamicType* new_type = created_type->Build();
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+
+    uint32_t test1 = 123;
+    uint32_t test2 = 0;
+    ASSERT_TRUE(data->SetUint32Value(MEMBER_ID_INVALID, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->GetUint32Value(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetUint32Value(test2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    //uint32_t uTest32;
+    //ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+TEST_F(DynamicTypesTests, DynamicType_int16_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* created_type(nullptr);
+
+    // Then
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateInt16Type();
+    ASSERT_TRUE(created_type != nullptr);
+    types::DynamicType* new_type = created_type->Build();
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+
+    int16_t test1 = 123;
+    int16_t test2 = 0;
+    ASSERT_TRUE(data->SetInt16Value(MEMBER_ID_INVALID, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->GetInt16Value(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetInt16Value(test2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    //int16_t iTest16;
+    //ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+TEST_F(DynamicTypesTests, DynamicType_uint16_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* created_type(nullptr);
+
+    // Then
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateUint16Type();
+    ASSERT_TRUE(created_type != nullptr);
+    types::DynamicType* new_type = created_type->Build();
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+
+    uint16_t test1 = 123;
+    uint16_t test2 = 0;
+    ASSERT_TRUE(data->SetUint16Value(MEMBER_ID_INVALID, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->GetUint16Value(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetUint16Value(test2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    //uint16_t uTest16;
+    //ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+TEST_F(DynamicTypesTests, DynamicType_int64_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* created_type(nullptr);
+
+    // Then
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateInt64Type();
+    ASSERT_TRUE(created_type != nullptr);
+    types::DynamicType* new_type = created_type->Build();
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+
+    int64_t test1 = 123;
+    int64_t test2 = 0;
+    ASSERT_TRUE(data->SetInt64Value(MEMBER_ID_INVALID, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->GetInt64Value(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetInt64Value(test2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    //int64_t iTest64;
+    //ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+TEST_F(DynamicTypesTests, DynamicType_uint64_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* created_type(nullptr);
+
+    // Then
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateUint64Type();
+    ASSERT_TRUE(created_type != nullptr);
+    types::DynamicType* new_type = created_type->Build();
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+
+    uint64_t test1 = 123;
+    uint64_t test2 = 0;
+    ASSERT_TRUE(data->SetUint64Value(MEMBER_ID_INVALID, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->GetUint64Value(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetUint64Value(test2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    //uint64_t uTest64;
+    //ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+TEST_F(DynamicTypesTests, DynamicType_float32_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* created_type(nullptr);
+
+    // Then
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateFloat32Type();
+    ASSERT_TRUE(created_type != nullptr);
+    types::DynamicType* new_type = created_type->Build();
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+
+    float test1 = 123.0f;
+    float test2 = 0.0f;
+    ASSERT_TRUE(data->SetFloat32Value(MEMBER_ID_INVALID, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->GetFloat32Value(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetFloat32Value(test2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    //float fTest32;
+    //ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+TEST_F(DynamicTypesTests, DynamicType_float64_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* created_type(nullptr);
+
+    // Then
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateFloat64Type();
+    ASSERT_TRUE(created_type != nullptr);
+    types::DynamicType* new_type = created_type->Build();
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+
+    double test1 = 123.0;
+    double test2 = 0.0;
+    ASSERT_TRUE(data->SetFloat64Value(MEMBER_ID_INVALID, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->GetFloat64Value(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetFloat64Value(test2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    //double fTest64;
+    //ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+TEST_F(DynamicTypesTests, DynamicType_float128_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* created_type(nullptr);
+
+    // Then
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateFloat128Type();
+    ASSERT_TRUE(created_type != nullptr);
+    types::DynamicType* new_type = created_type->Build();
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+
+    long double test1 = 123.0;
+    long double test2 = 0.0;
+    ASSERT_TRUE(data->SetFloat128Value(MEMBER_ID_INVALID, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->GetFloat128Value(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetFloat128Value(test2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    //long double fTest128;
+    //ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* created_type(nullptr);
+
+    // Then
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateChar8Type();
+    ASSERT_TRUE(created_type != nullptr);
+    types::DynamicType* new_type = created_type->Build();
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+
+    char test1 = 'a';
+    char test2 = 'b';
+    ASSERT_TRUE(data->SetChar8Value(MEMBER_ID_INVALID, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->GetChar8Value(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetChar8Value(test2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    //char cTest8;
+    //ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* created_type(nullptr);
+
+    // Then
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateChar16Type();
+    ASSERT_TRUE(created_type != nullptr);
+    types::DynamicType* new_type = created_type->Build();
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+
+    wchar_t test1 = L'a';
+    wchar_t test2 = L'b';
+    ASSERT_TRUE(data->SetChar16Value(MEMBER_ID_INVALID, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->GetChar16Value(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetChar16Value(test2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    //wchar_t cTest16;
+    //ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+TEST_F(DynamicTypesTests, DynamicType_byte_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* created_type(nullptr);
+
+    // Then
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateByteType();
+    ASSERT_TRUE(created_type != nullptr);
+    types::DynamicType* new_type = created_type->Build();
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+
+    octet test1 = 255;
+    octet test2 = 0;
+    ASSERT_TRUE(data->SetByteValue(MEMBER_ID_INVALID, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->GetByteValue(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetByteValue(test2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    //octet oTest;
+    //ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+TEST_F(DynamicTypesTests, DynamicType_bool_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* created_type(nullptr);
+
+    // Then
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateBoolType();
+    ASSERT_TRUE(created_type != nullptr);
+    types::DynamicType* new_type = created_type->Build();
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+
+    bool test1 = true;
+    bool test2 = false;
+    ASSERT_TRUE(data->SetBoolValue(MEMBER_ID_INVALID, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->GetBoolValue(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetBoolValue(test2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    //bool bTest;
+    //ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
@@ -167,6 +1380,57 @@ TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
     ASSERT_TRUE(data->GetEnumValue(test2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
 
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    //std::string sEnumTest;
+    //ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
@@ -204,6 +1468,146 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
     ASSERT_TRUE(sTest1 == sTest2);
 
     ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "TEST_OVER_LENGTH_LIMITS") == ResponseCode::RETCODE_OK);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    //std::string sTest;
+    //ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* created_type(nullptr);
+    uint32_t string_length = 15;
+
+    // Then
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateWstringType(string_length);
+    ASSERT_TRUE(created_type != nullptr);
+
+    types::DynamicType* new_type = created_type->Build();
+    DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 10) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(1, L"") == ResponseCode::RETCODE_OK);
+    std::wstring sTest1 = L"STRING_TEST";
+    ASSERT_TRUE(data->SetWstringValue(MEMBER_ID_INVALID, sTest1) == ResponseCode::RETCODE_OK);
+
+    int test = 0;
+    ASSERT_FALSE(data->GetInt32Value(test, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring sTest2 = L"";
+    ASSERT_FALSE(data->GetWstringValue(sTest2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetWstringValue(sTest2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(sTest1 == sTest2);
+
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"TEST_OVER_LENGTH_LIMITS") == ResponseCode::RETCODE_OK);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    //std::wstring wsTest;
+    //ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
@@ -283,6 +1687,57 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
     ASSERT_TRUE(data->GetBoolValue(test2, 2) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
 
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
@@ -343,6 +1798,57 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     ASSERT_TRUE(data->GetBoolValue(test2, testId) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
 
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
@@ -363,7 +1869,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
     DynamicTypeBuilder* base_type_builder(nullptr);
     DynamicTypeBuilder* seq_type_builder(nullptr);
     uint32_t sequence_length = 2;
-    // CREATE SEQUENCE OF BASIC TYPES
 
     // Then
     base_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
@@ -375,36 +1880,87 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
     auto seq_type = seq_type_builder->Build();
     ASSERT_TRUE(seq_type != nullptr);
 
-    auto seq_data = DynamicDataFactory::GetInstance()->CreateData(seq_type);
-    ASSERT_FALSE(seq_data->SetInt32Value(MEMBER_ID_INVALID, 10) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(seq_data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    auto data = DynamicDataFactory::GetInstance()->CreateData(seq_type);
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 10) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
 
     MemberId newId;
-    ASSERT_TRUE(seq_data->InsertSequenceData(newId) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->InsertSequenceData(newId) == ResponseCode::RETCODE_OK);
     MemberId newId2;
-    ASSERT_TRUE(seq_data->InsertSequenceData(newId2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->InsertSequenceData(newId2) == ResponseCode::RETCODE_OK);
 
     // Try to insert more than the limit.
     MemberId newId3;
-    ASSERT_FALSE(seq_data->InsertSequenceData(newId3) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->InsertSequenceData(newId3) == ResponseCode::RETCODE_OK);
 
     // Set and get a value.
     int32_t test1(234);
-    ASSERT_TRUE(seq_data->SetInt32Value(newId2, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->SetInt32Value(newId2, test1) == ResponseCode::RETCODE_OK);
     int32_t test2(0);
-    ASSERT_TRUE(seq_data->GetInt32Value(test2, newId2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetInt32Value(test2, newId2) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
 
     // Remove the elements.
-    ASSERT_TRUE(seq_data->RemoveSequenceData(newId) == ResponseCode::RETCODE_OK);
-    ASSERT_TRUE(seq_data->ClearAllValues() == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->RemoveSequenceData(newId) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->ClearAllValues() == ResponseCode::RETCODE_OK);
 
     // Check that the sequence is empty.
-    ASSERT_FALSE(seq_data->GetInt32Value(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->GetInt32Value(test2, 0) == ResponseCode::RETCODE_OK);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Delete the sequence
-    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(seq_data) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(seq_data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
     // Clean the types Factory.
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type) == ResponseCode::RETCODE_OK);
@@ -439,51 +1995,102 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
     auto array_type = array_type_builder->Build();
     ASSERT_TRUE(array_type != nullptr);
 
-    auto array_data = DynamicDataFactory::GetInstance()->CreateData(array_type);
-    ASSERT_FALSE(array_data->SetInt32Value(MEMBER_ID_INVALID, 10) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(array_data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    auto data = DynamicDataFactory::GetInstance()->CreateData(array_type);
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 10) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
 
     MemberId newId;
-    ASSERT_FALSE(array_data->InsertSequenceData(newId) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->InsertSequenceData(newId) == ResponseCode::RETCODE_OK);
 
     // Get an index in the multidimensional array.
     std::vector<uint32_t> vPosition = { 1, 1, 1 };
     MemberId testPos(0);
-    testPos = array_data->GetArrayIndex(vPosition);
+    testPos = data->GetArrayIndex(vPosition);
     ASSERT_TRUE(testPos != MEMBER_ID_INVALID);
 
     // Invalid input vectors.
     std::vector<uint32_t> vPosition2 = { 1, 1 };
-    ASSERT_FALSE(array_data->GetArrayIndex(vPosition2) != MEMBER_ID_INVALID);
+    ASSERT_FALSE(data->GetArrayIndex(vPosition2) != MEMBER_ID_INVALID);
     std::vector<uint32_t> vPosition3 = { 1, 1, 1, 1 };
-    ASSERT_FALSE(array_data->GetArrayIndex(vPosition3) != MEMBER_ID_INVALID);
+    ASSERT_FALSE(data->GetArrayIndex(vPosition3) != MEMBER_ID_INVALID);
 
     // Set and get a value.
     int32_t test1 = 156;
-    ASSERT_TRUE(array_data->SetInt32Value(testPos, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->SetInt32Value(testPos, test1) == ResponseCode::RETCODE_OK);
     int32_t test2(0);
-    ASSERT_TRUE(array_data->GetInt32Value(test2, testPos) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetInt32Value(test2, testPos) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
 
     // Check items count before and after remove an element.
-    ASSERT_TRUE(array_data->GetItemCount() == 1);
-    ASSERT_TRUE(array_data->ClearValue(testPos) == ResponseCode::RETCODE_OK);
-    ASSERT_TRUE(array_data->GetItemCount() == 1);
-    ASSERT_TRUE(array_data->RemoveArrayData(testPos) == ResponseCode::RETCODE_OK);
-    ASSERT_TRUE(array_data->GetItemCount() == 0);
+    ASSERT_TRUE(data->GetItemCount() == 1);
+    ASSERT_TRUE(data->ClearValue(testPos) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetItemCount() == 1);
+    ASSERT_TRUE(data->RemoveArrayData(testPos) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetItemCount() == 0);
 
     // Check the clear values method
-    ASSERT_TRUE(array_data->SetInt32Value(testPos, test1) == ResponseCode::RETCODE_OK);
-    ASSERT_TRUE(array_data->GetItemCount() == 1);
-    ASSERT_TRUE(array_data->ClearAllValues() == ResponseCode::RETCODE_OK);
-    ASSERT_TRUE(array_data->GetItemCount() == 0);
+    ASSERT_TRUE(data->SetInt32Value(testPos, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetItemCount() == 1);
+    ASSERT_TRUE(data->ClearAllValues() == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetItemCount() == 0);
 
     // Try to set a value out of the array.
-    ASSERT_FALSE(array_data->SetInt32Value(100, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt32Value(100, test1) == ResponseCode::RETCODE_OK);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Delete the array
-    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(array_data) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(array_data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
     // Clean the types Factory.
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(array_type_builder) == ResponseCode::RETCODE_OK);
@@ -517,51 +2124,102 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
     auto map_type = map_type_builder->Build();
     ASSERT_TRUE(map_type != nullptr);
 
-    auto map_data = DynamicDataFactory::GetInstance()->CreateData(map_type);
+    DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(map_type);
 
-    ASSERT_FALSE(map_data->SetInt32Value(MEMBER_ID_INVALID, 10) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(map_data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 10) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
 
     MemberId keyId;
     MemberId valueId;
     auto key_data = DynamicDataFactory::GetInstance()->CreateData(base_type);
-    ASSERT_TRUE(map_data->InsertMapData(key_data, keyId, valueId) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->InsertMapData(key_data, keyId, valueId) == ResponseCode::RETCODE_OK);
 
     // Try to Add the same key twice.
-    ASSERT_FALSE(map_data->InsertMapData(key_data, keyId, valueId) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->InsertMapData(key_data, keyId, valueId) == ResponseCode::RETCODE_OK);
 
     MemberId keyId2;
     MemberId valueId2;
     key_data = DynamicDataFactory::GetInstance()->CreateData(base_type);
     key_data->SetInt32Value(MEMBER_ID_INVALID, 2);
-    ASSERT_TRUE(map_data->InsertMapData(key_data, keyId2, valueId2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->InsertMapData(key_data, keyId2, valueId2) == ResponseCode::RETCODE_OK);
 
     // Try to Add one more than the limit
     auto key_data2 = DynamicDataFactory::GetInstance()->CreateData(base_type);
     key_data2->SetInt32Value(MEMBER_ID_INVALID, 3);
-    ASSERT_FALSE(map_data->InsertMapData(key_data2, keyId, valueId) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->InsertMapData(key_data2, keyId, valueId) == ResponseCode::RETCODE_OK);
 
     // Set and get a value.
     int32_t test1(234);
-    ASSERT_TRUE(map_data->SetInt32Value(valueId, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->SetInt32Value(valueId, test1) == ResponseCode::RETCODE_OK);
     int32_t test2(0);
-    ASSERT_TRUE(map_data->GetInt32Value(test2, valueId) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetInt32Value(test2, valueId) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
 
     // Check items count with removes
-    ASSERT_TRUE(map_data->GetItemCount() == 2);
-    ASSERT_FALSE(map_data->RemoveMapData(valueId) == ResponseCode::RETCODE_OK);
-    ASSERT_TRUE(map_data->GetItemCount() == 2);
-    ASSERT_TRUE(map_data->RemoveMapData(keyId) == ResponseCode::RETCODE_OK);
-    ASSERT_TRUE(map_data->GetItemCount() == 1);
-    ASSERT_TRUE(map_data->ClearAllValues() == ResponseCode::RETCODE_OK);
-    ASSERT_TRUE(map_data->GetItemCount() == 0);
+    ASSERT_TRUE(data->GetItemCount() == 2);
+    ASSERT_FALSE(data->RemoveMapData(valueId) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetItemCount() == 2);
+    ASSERT_TRUE(data->RemoveMapData(keyId) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetItemCount() == 1);
+    ASSERT_TRUE(data->ClearAllValues() == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetItemCount() == 0);
+
+    ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUnionId(0) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Delete the map
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(key_data2) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(key_data2) == ResponseCode::RETCODE_OK);
-    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(map_data) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(map_data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
     // Clean the types Factory.
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type) == ResponseCode::RETCODE_OK);
@@ -768,7 +2426,6 @@ void DynamicTypesTests::HELPER_SetDescriptorDefaults()
 /*
 PENDING TESTS
 
-TypeBuilderFactory: -> creates with invalid values, create a type of each basic kind, create a builder of each type.
 MODIFY A BUILDER TO CHECK THAT THE PREVIOUSLY CREATED TYPE DOESN'T CHANGE
 Create structs of structs
 Create combined types using members.

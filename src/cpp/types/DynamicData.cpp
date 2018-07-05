@@ -1239,6 +1239,7 @@ ResponseCode DynamicData::SetUint32Value(MemberId id, uint32_t value)
         if (mType->GetKind() == TK_UINT32 && id == MEMBER_ID_INVALID)
         {
             *((uint32_t*)it->second) = value;
+            return ResponseCode::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -1249,7 +1250,6 @@ ResponseCode DynamicData::SetUint32Value(MemberId id, uint32_t value)
             }
             return result;
         }
-        return ResponseCode::RETCODE_OK;
     }
     else if (mType->GetKind() == TK_ARRAY && id != MEMBER_ID_INVALID)
     {
@@ -1346,6 +1346,7 @@ ResponseCode DynamicData::SetInt16Value(MemberId id, int16_t value)
         if (mType->GetKind() == TK_INT16 && id == MEMBER_ID_INVALID)
         {
             *((int16_t*)it->second) = value;
+            return ResponseCode::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -1356,7 +1357,6 @@ ResponseCode DynamicData::SetInt16Value(MemberId id, int16_t value)
             }
             return result;
         }
-        return ResponseCode::RETCODE_OK;
     }
     else if (mType->GetKind() == TK_ARRAY && id != MEMBER_ID_INVALID)
     {
@@ -1453,6 +1453,7 @@ ResponseCode DynamicData::SetUint16Value(MemberId id, uint16_t value)
         if (mType->GetKind() == TK_UINT16 && id == MEMBER_ID_INVALID)
         {
             *((uint16_t*)it->second) = value;
+            return ResponseCode::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -1463,7 +1464,6 @@ ResponseCode DynamicData::SetUint16Value(MemberId id, uint16_t value)
             }
             return result;
         }
-        return ResponseCode::RETCODE_OK;
     }
     else if (mType->GetKind() == TK_ARRAY && id != MEMBER_ID_INVALID)
     {
@@ -1559,6 +1559,7 @@ ResponseCode DynamicData::SetInt64Value(MemberId id, int64_t value)
         if (mType->GetKind() == TK_INT64 && id == MEMBER_ID_INVALID)
         {
             *((int64_t*)it->second) = value;
+            return ResponseCode::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -1569,7 +1570,6 @@ ResponseCode DynamicData::SetInt64Value(MemberId id, int64_t value)
             }
             return result;
         }
-        return ResponseCode::RETCODE_OK;
     }
     else if (mType->GetKind() == TK_ARRAY && id != MEMBER_ID_INVALID)
     {
@@ -1666,6 +1666,7 @@ ResponseCode DynamicData::SetUint64Value(MemberId id, uint64_t value)
         if (mType->GetKind() == TK_UINT64 && id == MEMBER_ID_INVALID)
         {
             *((uint64_t*)it->second) = value;
+            return ResponseCode::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -1676,7 +1677,6 @@ ResponseCode DynamicData::SetUint64Value(MemberId id, uint64_t value)
             }
             return result;
         }
-        return ResponseCode::RETCODE_OK;
     }
     else if (mType->GetKind() == TK_ARRAY && id != MEMBER_ID_INVALID)
     {
@@ -1774,6 +1774,7 @@ ResponseCode DynamicData::SetFloat32Value(MemberId id, float value)
         if (mType->GetKind() == TK_FLOAT32 && id == MEMBER_ID_INVALID)
         {
             *((float*)it->second) = value;
+            return ResponseCode::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -1784,7 +1785,6 @@ ResponseCode DynamicData::SetFloat32Value(MemberId id, float value)
             }
             return result;
         }
-        return ResponseCode::RETCODE_OK;
     }
     else if (mType->GetKind() == TK_ARRAY && id != MEMBER_ID_INVALID)
     {
@@ -1881,6 +1881,7 @@ ResponseCode DynamicData::SetFloat64Value(MemberId id, double value)
         if (mType->GetKind() == TK_FLOAT64 && id == MEMBER_ID_INVALID)
         {
             *((double*)it->second) = value;
+            return ResponseCode::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -1891,7 +1892,6 @@ ResponseCode DynamicData::SetFloat64Value(MemberId id, double value)
             }
             return result;
         }
-        return ResponseCode::RETCODE_OK;
     }
     else if (mType->GetKind() == TK_ARRAY && id != MEMBER_ID_INVALID)
     {
@@ -1988,6 +1988,7 @@ ResponseCode DynamicData::SetFloat128Value(MemberId id, long double value)
         if (mType->GetKind() == TK_FLOAT128 && id == MEMBER_ID_INVALID)
         {
             *((long double*)it->second) = value;
+            return ResponseCode::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -1998,7 +1999,6 @@ ResponseCode DynamicData::SetFloat128Value(MemberId id, long double value)
             }
             return result;
         }
-        return ResponseCode::RETCODE_OK;
     }
     else if (mType->GetKind() == TK_ARRAY && id != MEMBER_ID_INVALID)
     {
@@ -2095,6 +2095,7 @@ ResponseCode DynamicData::SetChar8Value(MemberId id, char value)
         if (mType->GetKind() == TK_CHAR8 && id == MEMBER_ID_INVALID)
         {
             *((char*)it->second) = value;
+            return ResponseCode::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -2105,7 +2106,6 @@ ResponseCode DynamicData::SetChar8Value(MemberId id, char value)
             }
             return result;
         }
-        return ResponseCode::RETCODE_OK;
     }
     else if (mType->GetKind() == TK_ARRAY && id != MEMBER_ID_INVALID)
     {
@@ -2203,6 +2203,7 @@ ResponseCode DynamicData::SetChar16Value(MemberId id, wchar_t value)
         if (mType->GetKind() == TK_CHAR16 && id == MEMBER_ID_INVALID)
         {
             *((wchar_t*)it->second) = value;
+            return ResponseCode::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -2213,7 +2214,6 @@ ResponseCode DynamicData::SetChar16Value(MemberId id, wchar_t value)
             }
             return result;
         }
-        return ResponseCode::RETCODE_OK;
     }
     else if (mType->GetKind() == TK_ARRAY && id != MEMBER_ID_INVALID)
     {
@@ -2310,6 +2310,7 @@ ResponseCode DynamicData::SetByteValue(MemberId id, octet value)
         if (mType->GetKind() == TK_BYTE && id == MEMBER_ID_INVALID)
         {
             *((octet*)it->second) = value;
+            return ResponseCode::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -2320,7 +2321,6 @@ ResponseCode DynamicData::SetByteValue(MemberId id, octet value)
             }
             return result;
         }
-        return ResponseCode::RETCODE_OK;
     }
     else if (mType->GetKind() == TK_ARRAY && id != MEMBER_ID_INVALID)
     {
@@ -2475,6 +2475,7 @@ ResponseCode DynamicData::SetBoolValue(MemberId id, bool value)
         if (mType->GetKind() == TK_BOOLEAN && id == MEMBER_ID_INVALID)
         {
             *((bool*)it->second) = value;
+            return ResponseCode::RETCODE_OK;
         }
         else if (mType->GetKind() == TK_BITSET || mType->GetKind() == TK_BITMASK)
         {
@@ -2517,7 +2518,6 @@ ResponseCode DynamicData::SetBoolValue(MemberId id, bool value)
             }
             return result;
         }
-        return ResponseCode::RETCODE_OK;
     }
     else if (mType->GetKind() == TK_ARRAY && id != MEMBER_ID_INVALID)
     {
@@ -2641,7 +2641,6 @@ ResponseCode DynamicData::SetStringValue(MemberId id, const std::string& value)
             }
             return result;
         }
-        return ResponseCode::RETCODE_OK;
     }
     else if (mType->GetKind() == TK_ARRAY && id != MEMBER_ID_INVALID)
     {
@@ -2667,19 +2666,26 @@ void DynamicData::SetTypeName(const std::string& name)
 
 ResponseCode DynamicData::SetUnionId(MemberId id)
 {
-    auto it = mDescriptors.find(id);
-    if (id == MEMBER_ID_INVALID || it != mDescriptors.end())
+    if (mType->GetKind() == TK_UNION)
     {
-        mUnionId = id;
-        if (it != mDescriptors.end())
+        auto it = mDescriptors.find(id);
+        if (id == MEMBER_ID_INVALID || it != mDescriptors.end())
         {
-            std::vector<uint64_t> unionLabels = it->second->GetUnionLabels();
-            if (unionLabels.size() > 0)
+            mUnionId = id;
+            if (it != mDescriptors.end())
             {
-                mUnionLabel = unionLabels[0];
+                std::vector<uint64_t> unionLabels = it->second->GetUnionLabels();
+                if (unionLabels.size() > 0)
+                {
+                    mUnionLabel = unionLabels[0];
+                }
             }
+            return ResponseCode::RETCODE_OK;
         }
-        return ResponseCode::RETCODE_OK;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error setting union id. The kind: " << mType->GetKind() << " doesn't support it.");
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 }
@@ -2793,7 +2799,6 @@ ResponseCode DynamicData::SetWstringValue(MemberId id, const std::wstring& value
             }
             return result;
         }
-        return ResponseCode::RETCODE_OK;
     }
     else if (mType->GetKind() == TK_ARRAY && id != MEMBER_ID_INVALID)
     {
