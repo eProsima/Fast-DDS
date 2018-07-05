@@ -325,6 +325,12 @@ uint32_t DynamicType::GetTotalBounds() const
     return LENGTH_UNLIMITED;
 }
 
+bool DynamicType::HasChildren() const
+{
+    return mKind == TK_ANNOTATION || mKind == TK_ARRAY || mKind == TK_MAP || mKind == TK_SEQUENCE
+        || mKind == TK_STRUCTURE;
+}
+
 bool DynamicType::IsComplexKind() const
 {
     return mKind == TK_ANNOTATION || mKind == TK_ARRAY || mKind == TK_BITMASK || mKind == TK_ENUM

@@ -64,6 +64,7 @@ public:
     RTPS_DllAPI DynamicTypeBuilder* CreateBitsetType(uint32_t bound);
     RTPS_DllAPI DynamicTypeBuilder* CreateAliasType(DynamicType* base_type, std::string sName /*= ""*/);
     RTPS_DllAPI DynamicTypeBuilder* CreateEnumType();
+    RTPS_DllAPI DynamicTypeBuilder* CreateStructType();
     //DynamicTypeBuilder* CreateTypeWTypeObject(TypeObject* type_object);
     //DynamicTypeBuilder* CreateTypeWUri(const std::string& document_url, const std::string& type_name, IncludePathSeq include_paths);
 	//DynamicTypeBuilder* CreateTypeWDocument(const std::string& document, const std::string& type_name, IncludePathSeq include_paths);

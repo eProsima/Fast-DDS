@@ -184,6 +184,11 @@ void MemberDescriptor::SetName(const std::string& name)
     mName = name;
 }
 
+void MemberDescriptor::SetType(DynamicType* type)
+{
+    mType = type;
+}
+
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima

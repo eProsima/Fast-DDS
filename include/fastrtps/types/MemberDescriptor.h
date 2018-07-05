@@ -41,6 +41,7 @@ public:
     void SetId(MemberId id);
     void SetIndex(uint32_t index);
     void SetName(const std::string& name);
+    void SetType(DynamicType* type);
 
 protected:
 

@@ -506,7 +506,6 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
     DynamicTypeBuilder* base_type_builder(nullptr);
     DynamicTypeBuilder* map_type_builder(nullptr);
     uint32_t map_length = 2;
-    // CREATE SEQUENCE OF BASIC TYPES
 
     // Then
     base_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
@@ -578,6 +577,81 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
+TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* base_type_builder(nullptr);
+    DynamicTypeBuilder* base_type_builder2(nullptr);
+    DynamicTypeBuilder* struct_type_builder(nullptr);
+
+    // Then
+    base_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
+    ASSERT_TRUE(base_type_builder != nullptr);
+    auto base_type = base_type_builder->Build();
+
+    base_type_builder2 = DynamicTypeBuilderFactory::GetInstance()->CreateInt64Type();
+    ASSERT_TRUE(base_type_builder2 != nullptr);
+    auto base_type2 = base_type_builder2->Build();
+
+    struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructType();
+    ASSERT_TRUE(struct_type_builder != nullptr);
+
+    // Add members to the struct.
+    types::MemberDescriptor descriptor;
+    descriptor.SetId(0);
+    descriptor.SetName("int32");
+    descriptor.SetType(base_type);
+    ASSERT_TRUE(struct_type_builder->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
+
+    types::MemberDescriptor descriptor2;
+    descriptor2.SetId(1);
+    descriptor2.SetName("int64");
+    descriptor2.SetType(base_type2);
+    ASSERT_TRUE(struct_type_builder->AddMember(&descriptor2) == ResponseCode::RETCODE_OK);
+
+    auto struct_type = struct_type_builder->Build();
+    ASSERT_TRUE(struct_type != nullptr);
+    auto struct_data = DynamicDataFactory::GetInstance()->CreateData(struct_type);
+    ASSERT_TRUE(struct_data != nullptr);
+
+    ASSERT_FALSE(struct_data->SetInt32Value(1, 10) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(struct_data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+
+    // Set and get the child values.
+    int32_t test1(234);
+    ASSERT_TRUE(struct_data->SetInt32Value(0, test1) == ResponseCode::RETCODE_OK);
+    int32_t test2(0);
+    ASSERT_TRUE(struct_data->GetInt32Value(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+    int64_t test3(234);
+    ASSERT_TRUE(struct_data->SetInt64Value(1, test3) == ResponseCode::RETCODE_OK);
+    int64_t test4(0);
+    ASSERT_TRUE(struct_data->GetInt64Value(test4, 1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test3 == test4);
+
+    // Delete the map
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(struct_data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(struct_data) == ResponseCode::RETCODE_OK);
+
+    // Clean the types Factory.
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type2) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type_builder2) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type_builder2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
 void DynamicTypesTests::HELPER_SetDescriptorDefaults()
 {
 }
@@ -588,7 +662,7 @@ void DynamicTypesTests::HELPER_SetDescriptorDefaults()
 PENDING TESTS
 
 TypeBuilderFactory: -> creates with invalid values, create a type of each basic kind, create a builder of each type.
-MODIFY A BUILDER TO CHECK THAT THE CREATED TYPE DOESN'T CHANGE
+MODIFY A BUILDER TO CHECK THAT THE PREVIOUSLY CREATED TYPE DOESN'T CHANGE
 Create structs of structs
 Create combined types using members.
 DynamicType-> Create, clone, compare

@@ -378,6 +378,17 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateStringType(uint32_t bound)
     return pNewTypeBuilder;
 }
 
+DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateStructType()
+{
+    TypeDescriptor pDescriptor;
+    pDescriptor.mKind = TK_STRUCTURE;
+    pDescriptor.mName = GenerateTypeName();
+
+    DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
+    AddTypeToList(pNewTypeBuilder);
+    return pNewTypeBuilder;
+}
+
 DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateType(const TypeDescriptor* descriptor)
 {
     if (descriptor != nullptr)
