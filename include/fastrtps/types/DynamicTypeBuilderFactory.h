@@ -63,6 +63,7 @@ public:
     RTPS_DllAPI DynamicTypeBuilder* CreateBitmaskType(uint32_t bound);
     RTPS_DllAPI DynamicTypeBuilder* CreateBitsetType(uint32_t bound);
     RTPS_DllAPI DynamicTypeBuilder* CreateAliasType(DynamicType* base_type, std::string sName /*= ""*/);
+    RTPS_DllAPI DynamicTypeBuilder* CreateEnumType();
     //DynamicTypeBuilder* CreateTypeWTypeObject(TypeObject* type_object);
     //DynamicTypeBuilder* CreateTypeWUri(const std::string& document_url, const std::string& type_name, IncludePathSeq include_paths);
 	//DynamicTypeBuilder* CreateTypeWDocument(const std::string& document, const std::string& type_name, IncludePathSeq include_paths);
@@ -71,6 +72,8 @@ public:
 
 protected:
 	DynamicTypeBuilderFactory();
+
+    inline void AddTypeToList(DynamicType* pType);
 
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::vector<DynamicType*> mTypesList;
