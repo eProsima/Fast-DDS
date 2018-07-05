@@ -53,6 +53,7 @@ public:
 
     bool HasChildren() const;
     bool IsComplexKind() const;
+    bool IsDiscriminatorType() const;
 
 
 protected:

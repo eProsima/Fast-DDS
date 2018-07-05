@@ -99,6 +99,10 @@ public:
     RTPS_DllAPI ResponseCode GetComplexValue(DynamicData* value, MemberId id) const;
     RTPS_DllAPI ResponseCode SetComplexValue(MemberId id, DynamicData* value);
 
+    RTPS_DllAPI ResponseCode GetUnionLabel(uint64_t& value) const;
+    RTPS_DllAPI ResponseCode SetUnionId(MemberId id);
+
+
 protected:
 
     DynamicData(DynamicType* pType);
@@ -142,6 +146,8 @@ protected:
 #endif
     std::vector<MemberId> mLoanedValues;
     bool mIsKeyElement;
+    uint64_t mUnionLabel;
+    uint64_t mUnionId;
 
     friend class DynamicDataFactory;
 };
