@@ -151,14 +151,9 @@ set_sources(${${PROJECT_NAME}_security_source_files})
 set_sources(ENDSECTION)
 
 if(SECURITY)
-
     list(APPEND ${PROJECT_NAME}_source_files
         ${${PROJECT_NAME}_security_source_files}
         )
-
-    include_directories(${OPENSSL_INCLUDE_DIR})
-    set(EXTRA_LIBRARIES ${EXTRA_LIBRARIES} ${OPENSSL_LIBRARIES})
-
     set(HAVE_SECURITY 1)
 else()
     set(HAVE_SECURITY 0)
@@ -187,37 +182,7 @@ endif()
 configure_file(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/config.h.in
     ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h)
 
-if(WIN32)
-    if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
-        add_definitions(-D_WIN32_WINNT=0x0603)
-    else()
-        add_definitions(-D_WIN32_WINNT=0x0601)
-    endif()
-endif()
-# If INTERNAL_DEBUG = ON, define symbol for extensive debug messages
-if(INTERNAL_DEBUG)
-    add_definitions(-D__INTERNALDEBUG)
-endif()
-
-add_definitions(
-    -DBOOST_ASIO_STANDALONE
-    -DASIO_STANDALONE
-    )
-
-if(ANDROID)
-    if(NOT HAVE_CXX14 AND NOT HAVE_CXX1Y)
-        add_definitions(-DASIO_DISABLE_STD_STRING_VIEW)
-    endif()
-endif()
-
-set(${PROJECT_NAME}_include_dirs
-    ${ASIO_INCLUDE_DIR}
-    ${TINYXML2_INCLUDE_DIR}
-)
-
-if(ANDROID)
-    list(APPEND ${PROJECT_NAME}_include_dirs ${ANDROID_IFADDRS_INCLUDE_DIR})
-else()
+if(NOT ANDROID)
     find_package(Threads REQUIRED)
 endif()
 
@@ -229,8 +194,6 @@ if(APPLE)
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 endif()
 
-include_directories(${${PROJECT_NAME}_include_dirs})
-
 # Create libraries
 if(MSVC OR MSVC_IDE AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
     generate_msvc_libraries(i86Win32VS2013)
@@ -240,21 +203,31 @@ if(MSVC OR MSVC_IDE AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
     generate_msvc_libraries(i86Win32VS2017)
     generate_msvc_libraries(x64Win64VS2017)
 elseif(NOT EPROSIMA_INSTALLER)
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        add_definitions(-D__DEBUG)
-    endif()
     #Create library
     add_library(${PROJECT_NAME} ${${PROJECT_NAME}_source_files})
     set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
     set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 
-    target_compile_definitions(${PROJECT_NAME} PRIVATE -D${PROJECT_NAME_UPPER}_SOURCE)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE
+        ${PROJECT_NAME_UPPER}_SOURCE
+        BOOST_ASIO_STANDALONE
+        ASIO_STANDALONE
+        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+        $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:_WIN32_WINNT=0x0603>
+        $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
+        $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
+        )
 
     # Define public headers
     target_include_directories(${PROJECT_NAME} PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/cpp>
         $<INSTALL_INTERFACE:include>
+        PRIVATE
+        ${ASIO_INCLUDE_DIR}
+        ${TINYXML2_INCLUDE_DIR}
+        $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
         )
 
     # Made linked libraries PRIVATE to prevent local directories in Windows installer.
@@ -266,8 +239,8 @@ elseif(NOT EPROSIMA_INSTALLER)
     target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr
         ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
         ${TINYXML2_LIBRARY}
-        ${EXTRA_LIBRARIES}
-        $<$<BOOL:${WIN32}>:"iphlpapi Shlwapi kernel32 user32.dll">
+        $<$<BOOL:${SECURITY}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+        $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         )
 
     if(MSVC OR MSVC_IDE)
@@ -278,7 +251,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         get_target_property(TARGET_TYPE ${PROJECT_NAME} TYPE)
         if(TARGET_TYPE STREQUAL "SHARED_LIBRARY")
             # Export symbols in DLL library
-            target_compile_definitions(${PROJECT_NAME} PUBLIC -D${PROJECT_NAME_UPPER}_DYN_LINK)
+            target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME_UPPER}_DYN_LINK)
         else()
             # Rename the library to have a "lib" before.
             set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})

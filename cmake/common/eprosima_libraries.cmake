@@ -28,13 +28,6 @@ macro(eprosima_find_package package)
             set(THIRDPARTY ON)
         endif()
 
-        option(THIRDPARTY "Activate the use of internal thirdparties" OFF)
-        option(THIRDPARTY_UPDATE "Activate the auto update of internal thirdparties" ON)
-
-        if(EPROSIMA_BUILD)
-            set(THIRDPARTY ON)
-        endif()
-
         option(THIRDPARTY_${package} "Activate the use of internal thirdparty ${package}" OFF)
 
         if(NOT EPROSIMA_INSTALLER)

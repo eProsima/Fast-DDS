@@ -20,6 +20,7 @@ macro(generate_msvc_libraries platform)
     string(COMPARE EQUAL "${vstool_}" "VS2015" IS_VS2015)
     string(COMPARE EQUAL "${vstool_}" "VS2017" IS_VS2017)
     string(SUBSTRING "${CMAKE_GENERATOR}" 0 21 generator_)
+    file(TO_CMAKE_PATH $ENV{EPROSIMA_OPENSSL_ROOT}/${platform} OPENSSL_ROOT_)
 
     if(IS_X64)
         set(generator_ "${generator_} Win64")
