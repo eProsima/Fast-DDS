@@ -17,7 +17,7 @@
 
 #include <fastrtps/types/TypesBase.h>
 
-//#define DYNAMIC_TYPES_CHECKING
+#define DYNAMIC_TYPES_CHECKING
 
 namespace eprosima{
 namespace fastrtps{
