@@ -316,6 +316,15 @@ DynamicType* DynamicType::GetKeyElementType() const
     return nullptr;
 }
 
+uint32_t DynamicType::GetTotalBounds() const
+{
+    if (mDescriptor != nullptr)
+    {
+        return mDescriptor->GetTotalBounds();
+    }
+    return LENGTH_UNLIMITED;
+}
+
 bool DynamicType::IsComplexKind() const
 {
     return mKind == TK_ANNOTATION || mKind == TK_ARRAY || mKind == TK_BITMASK || mKind == TK_ENUM
