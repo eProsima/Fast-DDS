@@ -108,9 +108,10 @@ TypeObjectHashId& TypeObjectHashId::operator=(TypeObjectHashId &&x)
     return *this;
 }
 
-void TypeObjectHashId::_d(uint8_t __d)
+void TypeObjectHashId::_d(uint8_t __d) // Special case to ease... sets the current active member
 {
     bool b = false;
+    m__d = __d;
 
     switch(m__d)
     {
@@ -189,27 +190,6 @@ EquivalenceHash& TypeObjectHashId::hash()
     if(!b) throw BadParamException("This member is not been selected");
 
     return m_hash;
-}
-
-size_t TypeObjectHashId::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    size_t reset_alignment = 0;
-    size_t union_max_size_serialized = 0;
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += ((14) * 1) + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-
-
-    return union_max_size_serialized - initial_alignment;
 }
 
 // TODO(Ricardo) Review

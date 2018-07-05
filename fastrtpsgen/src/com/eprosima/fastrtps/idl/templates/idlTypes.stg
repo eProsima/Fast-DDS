@@ -57,3 +57,5 @@ type_c(name) ::= <<$name$>>
 type_10(name) ::= <<$name$>>
 
 type_e(type, maxsize, empty) ::= <<sequence<$type$$if(maxsize)$, $maxsize$$endif$>$empty$>>
+
+type_19() ::= <<map>>
