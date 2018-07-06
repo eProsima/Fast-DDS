@@ -66,16 +66,16 @@ DynamicData* DynamicDataFactory::CreateData(DynamicType* pType)
             // ALIAS types create a DynamicData based on the base type and renames it with the name of the ALIAS.
             if (pType->GetKind() == TK_ALIAS)
             {
-                newData = new DynamicData(pType->GetBaseType());
+                newData = CreateData(pType->GetBaseType());
                 newData->SetTypeName(pType->GetName());
             }
             else
             {
                 newData = new DynamicData(pType);
-            }
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-            mDynamicDatas.push_back(newData);
+                mDynamicDatas.push_back(newData);
 #endif
+            }
             return newData;
         }
         catch (std::exception e)
