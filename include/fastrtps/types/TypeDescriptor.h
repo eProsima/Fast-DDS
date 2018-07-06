@@ -52,6 +52,8 @@ protected:
 
     void Clean();
 
+    bool IsTypeNameConsistent(const std::string& sName) const;
+
     friend class DynamicTypeBuilderFactory;
 
 	TypeKind mKind;                         // Type Kind.

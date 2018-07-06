@@ -53,6 +53,10 @@ protected:
     friend class DynamicTypeBuilderFactory;
     friend class DynamicData;
 
+    bool IsDefaultValueConsistent(const std::string& sDefaultValue) const;
+
+    bool IsTypeNameConsistent(const std::string& sName) const;
+
     std::string mName;                  // Name of the member
     MemberId mId;                       // MemberId, it should be filled automatically when the member is added.
     DynamicType* mType;                 // Member's Type.

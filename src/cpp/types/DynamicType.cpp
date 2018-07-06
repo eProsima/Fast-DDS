@@ -53,11 +53,6 @@ DynamicType::DynamicType(const TypeDescriptor* descriptor)
             mMemberByName.insert(std::make_pair(it->second->GetName(), it->second));
         }
     }
-
-    if (IsComplexKind())
-    {
-        //TODO: //ARCE: FILL MEMBERS
-    }
 }
 
 DynamicType::DynamicType(const DynamicType* other)

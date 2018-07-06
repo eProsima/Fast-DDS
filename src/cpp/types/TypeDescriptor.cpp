@@ -16,28 +16,11 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/log/Log.h>
+#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace types {
-
-static bool IsTypeNameConsistent(const std::string& sName)
-{
-    // The first letter must start with a letter ( uppercase or lowercase )
-    if (sName.length() > 0 && std::isalpha(sName[0]))
-    {
-        // All characters must be letters, numbers or underscore.
-        for (uint32_t i = 1; i < sName.length(); ++i)
-        {
-            if (!std::isalnum(sName[i]) && sName[i] != 95)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-    return false;
-}
 
 TypeDescriptor::TypeDescriptor()
     : mKind(0)
@@ -261,6 +244,25 @@ bool TypeDescriptor::IsConsistent() const
 
     return true;
 }
+
+bool TypeDescriptor::IsTypeNameConsistent(const std::string& sName) const
+{
+    // The first letter must start with a letter ( uppercase or lowercase )
+    if (sName.length() > 0 && std::isalpha(sName[0]))
+    {
+        // All characters must be letters, numbers or underscore.
+        for (uint32_t i = 1; i < sName.length(); ++i)
+        {
+            if (!std::isalnum(sName[i]) && sName[i] != 95)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
 
 void TypeDescriptor::SetKind(TypeKind kind)
 {

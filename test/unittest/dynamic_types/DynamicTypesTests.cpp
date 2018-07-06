@@ -50,7 +50,7 @@ class DynamicTypesTests: public ::testing::Test
 
 TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
 {
-    //// Given
+    // Given
     TypeDescriptor pInt32Descriptor;
     pInt32Descriptor.SetKind(TK_INT32);
     pInt32Descriptor.SetName("TEST_INT32");
@@ -67,8 +67,6 @@ TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
     ASSERT_TRUE(pInt32Descriptor.Equals(&pInt32Descriptor2));
     pInt32Descriptor2.SetKind(TK_NONE);
     ASSERT_FALSE(pInt32Descriptor.Equals(&pInt32Descriptor2));
-
-    //TODO: CONSISTENCY TESTS.
 }
 
 TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)

@@ -961,6 +961,8 @@ DynamicData* DynamicData::LoanValue(MemberId id)
         {
             if (mType->GetKind() == TK_MAP && ((DynamicData*)it->second)->mIsKeyElement)
             {
+                logError(DYN_TYPES, "Error loaning Value. Key values can't be loaned.");
+                return nullptr;
             }
             else
             {
