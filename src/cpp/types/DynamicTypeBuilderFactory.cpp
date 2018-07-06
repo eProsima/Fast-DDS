@@ -459,7 +459,6 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateUnionType(DynamicType* disc
         TypeDescriptor pUnionDescriptor;
         pUnionDescriptor.mKind = TK_UNION;
         pUnionDescriptor.mName = GenerateTypeName();
-        //TODO: Check that the discriminator type is a "Primitive Type"
         pUnionDescriptor.mDiscriminatorType = BuildType(discriminator_type);
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pUnionDescriptor);
