@@ -102,13 +102,13 @@ DynamicType* DynamicTypeBuilderFactory::BuildType(const DynamicType* other)
     }
 }
 
-DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateAliasType(DynamicType* base_type, std::string sName /*= ""*/)
+DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateAliasType(DynamicType* base_type, const std::string& sName)
 {
     if (base_type != nullptr)
     {
         TypeDescriptor pDescriptor;
-        pDescriptor.mKind = TK_ARRAY;
-        pDescriptor.mBaseType = base_type;
+        pDescriptor.mKind = TK_ALIAS;
+        pDescriptor.mBaseType = BuildType(base_type);
         if (sName.length() > 0)
         {
             pDescriptor.mName = sName;

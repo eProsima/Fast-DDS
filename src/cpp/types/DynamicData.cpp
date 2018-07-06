@@ -938,21 +938,35 @@ void DynamicData::SetDefaultValue(MemberId id)
 
 DynamicData* DynamicData::LoanValue(MemberId id)
 {
-    if (std::find(mLoanedValues.begin(), mLoanedValues.end(), id) != mLoanedValues.end())
+    if (std::find(mLoanedValues.begin(), mLoanedValues.end(), id) == mLoanedValues.end())
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            mLoanedValues.push_back(id);
-            return it->second;
+            if (mType->GetKind() == TK_MAP && it->second->mIsKeyElement)
+            {
+                logError(DYN_TYPES, "Error loaning Value. Key values can't be loaned.");
+                return nullptr;
+            }
+            else
+            {
+                mLoanedValues.push_back(id);
+                return it->second;
+            }
         }
 #else
         auto it = mValues.find(id);
         if (it != mValues.end())
         {
-            mLoanedValues.push_back(id);
-            return (DynamicData*)it->second;
+            if (mType->GetKind() == TK_MAP && ((DynamicData*)it->second)->mIsKeyElement)
+            {
+            }
+            else
+            {
+                mLoanedValues.push_back(id);
+                return (DynamicData*)it->second;
+            }
         }
 #endif
         else
