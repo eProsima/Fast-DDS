@@ -24,6 +24,8 @@ namespace types{
 class AnnotationDescriptor;
 class DynamicTypeBuilder;
 class TypeDescriptor;
+class TypeIdentifier;
+class MemberDescriptor;
 class TypeObject;
 class DynamicType;
 
@@ -71,12 +73,24 @@ public:
     //DynamicTypeBuilder* CreateTypeWUri(const std::string& document_url, const std::string& type_name, IncludePathSeq include_paths);
 	//DynamicTypeBuilder* CreateTypeWDocument(const std::string& document, const std::string& type_name, IncludePathSeq include_paths);
 
+    RTPS_DllAPI void BuildTypeIdentifier(const TypeDescriptor* descriptor, TypeIdentifier& identifier) const;
+    RTPS_DllAPI void BuildTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
+        const std::vector<MemberDescriptor*>* members = nullptr) const;
+
     RTPS_DllAPI bool IsEmpty() const;
 
 protected:
 	DynamicTypeBuilderFactory();
 
     inline void AddTypeToList(DynamicType* pType);
+
+    void BuildAliasTypeObject(const TypeDescriptor* descriptor, TypeObject& object) const;
+    void BuildEnumTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
+        const std::vector<MemberDescriptor*> members) const;
+    void BuildStructTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
+        const std::vector<MemberDescriptor*> members) const;
+    void BuildUnionTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
+        const std::vector<MemberDescriptor*> members) const;
 
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::vector<DynamicType*> mTypesList;

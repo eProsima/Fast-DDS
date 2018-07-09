@@ -14,10 +14,17 @@
 
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/TypeObject.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/log/Log.h>
+
+#include <fastrtps/rtps/common/SerializedPayload.h>
+#include <fastrtps/utils/md5.h>
+#include <fastcdr/FastBuffer.h>
+#include <fastcdr/Cdr.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -590,6 +597,461 @@ bool DynamicTypeBuilderFactory::IsEmpty() const
 #else
     return true;
 #endif
+}
+
+
+void DynamicTypeBuilderFactory::BuildTypeIdentifier(const TypeDescriptor* descriptor, TypeIdentifier& identifier) const
+{
+    const TypeIdentifier *id2 = TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->GetName());
+    if (id2 != nullptr)
+    {
+        identifier = *id2;
+    }
+    else
+    {
+        switch(descriptor->mKind)
+        {
+            // Basic types
+            case TK_NONE:
+            case TK_BOOLEAN:
+            case TK_BYTE:
+            case TK_INT16:
+            case TK_INT32:
+            case TK_INT64:
+            case TK_UINT16:
+            case TK_UINT32:
+            case TK_UINT64:
+            case TK_FLOAT32:
+            case TK_FLOAT64:
+            case TK_FLOAT128:
+            case TK_CHAR8:
+            case TK_CHAR16:
+                {
+                    identifier._d(descriptor->mKind);
+                }
+                break;
+            // String TKs
+            case TK_STRING8:
+                {
+                    if (descriptor->mBound[0] < 256)
+                    {
+                        identifier._d(TI_STRING8_SMALL);
+                        identifier.string_sdefn().bound(static_cast<SBound>(descriptor->mBound[0]));
+                    }
+                    else
+                    {
+                        identifier._d(TI_STRING8_LARGE);
+                        identifier.string_ldefn().bound(descriptor->mBound[0]);
+                    }
+                }
+                break;
+            case TK_STRING16:
+                {
+                    if (descriptor->mBound[0] < 256)
+                    {
+                        identifier._d(TI_STRING16_SMALL);
+                        identifier.string_sdefn().bound(static_cast<SBound>(descriptor->mBound[0]));
+                    }
+                    else
+                    {
+                        identifier._d(TI_STRING16_LARGE);
+                        identifier.string_ldefn().bound(descriptor->mBound[0]);
+                    }
+                }
+                break;
+            // Collection TKs
+            case TK_SEQUENCE:
+                {
+                    if (descriptor->mBound[0] < 256)
+                    {
+                        identifier._d(TI_PLAIN_SEQUENCE_SMALL);
+                        identifier.seq_sdefn().bound(static_cast<SBound>(descriptor->mBound[0]));
+                        TypeIdentifier elem_id;
+                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id);
+                        identifier.seq_sdefn().element_identifier(&elem_id);
+                    }
+                    else
+                    {
+                        identifier._d(TI_PLAIN_SEQUENCE_LARGE);
+                        identifier.seq_ldefn().bound(descriptor->mBound[0]);
+                        TypeIdentifier elem_id;
+                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id);
+                        identifier.seq_ldefn().element_identifier(&elem_id);
+                    }
+                }
+                break;
+            case TK_ARRAY:
+                {
+                    uint32_t size = 0;
+                    for (uint32_t s : descriptor->mBound)
+                    {
+                        size += s;
+                    }
+
+                    if (size < 256)
+                    {
+                        identifier._d(TI_PLAIN_ARRAY_SMALL);
+                        for (uint32_t b : descriptor->mBound)
+                        {
+                            identifier.array_sdefn().array_bound_seq().emplace_back(static_cast<SBound>(b));
+                        }
+                        TypeIdentifier elem_id;
+                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id);
+                        identifier.array_sdefn().element_identifier(&elem_id);
+                    }
+                    else
+                    {
+                        identifier._d(TI_PLAIN_ARRAY_LARGE);
+                        identifier.array_ldefn().array_bound_seq(descriptor->mBound);
+                        TypeIdentifier elem_id;
+                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id);
+                        identifier.array_ldefn().element_identifier(&elem_id);
+                    }
+                }
+                break;
+            case TK_MAP:
+                {
+                    if (descriptor->mBound[0] < 256)
+                    {
+                        identifier._d(TI_PLAIN_MAP_SMALL);
+                        identifier.map_sdefn().bound(static_cast<SBound>(descriptor->mBound[0]));
+                        TypeIdentifier elem_id;
+                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id);
+                        identifier.map_sdefn().element_identifier(&elem_id);
+                        TypeIdentifier key_id;
+                        BuildTypeIdentifier(descriptor->GetKeyElementType()->mDescriptor, key_id);
+                        identifier.map_sdefn().key_identifier(&key_id);
+                    }
+                    else
+                    {
+                        identifier._d(TI_PLAIN_MAP_LARGE);
+                        identifier.map_ldefn().bound(static_cast<SBound>(descriptor->mBound[0]));
+                        TypeIdentifier elem_id;
+                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id);
+                        identifier.map_ldefn().element_identifier(&elem_id);
+                        TypeIdentifier key_id;
+                        BuildTypeIdentifier(descriptor->GetKeyElementType()->mDescriptor, key_id);
+                        identifier.map_ldefn().key_identifier(&key_id);
+                    }
+                }
+                break;
+            // Constructed/Named types
+            case TK_ALIAS:
+            // Enumerated TKs
+            case TK_ENUM:
+            case TK_BITMASK:
+            // Structured TKs
+            case TK_ANNOTATION:
+            case TK_STRUCTURE:
+            case TK_UNION:
+            case TK_BITSET:
+                {
+                    // Need to be registered as TypeObject first
+                }
+                break;
+        }
+
+        TypeObjectFactory::GetInstance()->AddTypeIdentifier(descriptor->GetName(), &identifier);
+    }
+}
+
+void DynamicTypeBuilderFactory::BuildTypeObject(const TypeDescriptor* descriptor, TypeObject &object,
+                                                const std::vector<MemberDescriptor*> *members) const
+{
+    const TypeObject *obj2 = TypeObjectFactory::GetInstance()->GetTypeObject(descriptor->GetName());
+    if (obj2 != nullptr)
+    {
+        object = *obj2;
+    }
+    else
+    {
+        switch(descriptor->mKind)
+        {
+            // Basic types
+            case TK_NONE:
+            case TK_BOOLEAN:
+            case TK_BYTE:
+            case TK_INT16:
+            case TK_INT32:
+            case TK_INT64:
+            case TK_UINT16:
+            case TK_UINT32:
+            case TK_UINT64:
+            case TK_FLOAT32:
+            case TK_FLOAT64:
+            case TK_FLOAT128:
+            case TK_CHAR8:
+            case TK_CHAR16:
+            // String TKs
+            case TK_STRING8:
+            case TK_STRING16:
+            // Collection TKs
+            case TK_SEQUENCE:
+            case TK_ARRAY:
+            case TK_MAP:
+                break;
+
+            // Constructed/Named types
+            case TK_ALIAS:
+                {
+                    BuildAliasTypeObject(descriptor, object);
+                }
+                break;
+            // Enumerated TKs
+            case TK_ENUM:
+                {
+                    BuildEnumTypeObject(descriptor, object, *members);
+                }
+                break;
+            case TK_BITMASK:
+                {
+                    // Not implemented
+                }
+                break;
+            // Structured TKs
+            case TK_ANNOTATION:
+                {
+                    // Not implemented
+                }
+                break;
+            case TK_STRUCTURE:
+                {
+                    BuildStructTypeObject(descriptor, object, *members);
+                }
+                break;
+            case TK_UNION:
+                {
+                    BuildUnionTypeObject(descriptor, object, *members);
+                }
+                break;
+            case TK_BITSET:
+                {
+                    // Not implemented
+                }
+                break;
+        }
+    }
+}
+
+void DynamicTypeBuilderFactory::BuildAliasTypeObject(const TypeDescriptor* descriptor, TypeObject& object) const
+{
+    object._d(EK_MINIMAL);
+    object.minimal()._d(TK_ALIAS);
+    object.minimal().alias_type().alias_flags().IS_FINAL(false);
+    object.minimal().alias_type().alias_flags().IS_APPENDABLE(false);
+    object.minimal().alias_type().alias_flags().IS_MUTABLE(false);
+    object.minimal().alias_type().alias_flags().IS_NESTED(false);
+    object.minimal().alias_type().alias_flags().IS_AUTOID_HASH(false);
+
+    object.minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
+    object.minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
+    object.minimal().alias_type().body().common().related_flags().IS_EXTERNAL(false);
+    object.minimal().alias_type().body().common().related_flags().IS_OPTIONAL(false);
+    object.minimal().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
+    object.minimal().alias_type().body().common().related_flags().IS_KEY(false);
+    object.minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
+
+    TypeIdentifier ident;
+    BuildTypeIdentifier(descriptor->GetBaseType()->mDescriptor, ident);
+    object.minimal().alias_type().body().common().related_type(ident);
+    //object.minimal().alias_type().body().common().related_type() =
+    //    *(TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->GetBaseType()->GetName()));
+
+    TypeIdentifier *identifier = &object.minimal().alias_type().body().common().related_type();
+
+    TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), identifier, &object);
+}
+
+void DynamicTypeBuilderFactory::BuildEnumTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
+                                                    const std::vector<MemberDescriptor*> members) const
+{
+    object._d(EK_MINIMAL);
+    object.minimal()._d(TK_ENUM);
+    object.minimal().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
+
+    for (MemberDescriptor* member : members)
+    {
+        MinimalEnumeratedLiteral mel;
+        mel.common().flags().TRY_CONSTRUCT1(false);
+        mel.common().flags().TRY_CONSTRUCT2(false);
+        mel.common().flags().IS_EXTERNAL(false);
+        mel.common().flags().IS_OPTIONAL(false);
+        mel.common().flags().IS_MUST_UNDERSTAND(false);
+        mel.common().flags().IS_KEY(false);
+        mel.common().flags().IS_DEFAULT(false);
+        mel.common().value(member->GetIndex());
+        MD5 hash(member->GetName());
+        for(int i = 0; i < 4; ++i)
+        {
+            mel.detail().name_hash()[i] = hash.digest[i];
+        }
+        object.minimal().enumerated_type().literal_seq().emplace_back(mel);
+    }
+
+    TypeIdentifier* identifier = new TypeIdentifier();
+    identifier->_d(EK_MINIMAL);
+
+    SerializedPayload_t payload(MinimalEnumeratedType::getCdrSerializedSize(object.minimal().enumerated_type()) + 4);
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    object.serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier->equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), identifier, &object);
+}
+
+void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
+                                                    const std::vector<MemberDescriptor*> members) const
+{
+    object._d(EK_MINIMAL);
+    object.minimal()._d(TK_STRUCTURE);
+
+    object.minimal().struct_type().struct_flags().IS_FINAL(false);
+    object.minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    object.minimal().struct_type().struct_flags().IS_MUTABLE(false);
+    object.minimal().struct_type().struct_flags().IS_NESTED(false);
+    object.minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+
+    for (MemberDescriptor* member : members)
+    {
+        MinimalStructMember msm;
+        msm.common().member_id(member->GetId());
+        msm.common().member_flags().TRY_CONSTRUCT1(false);
+        msm.common().member_flags().TRY_CONSTRUCT2(false);
+        msm.common().member_flags().IS_EXTERNAL(false);
+        msm.common().member_flags().IS_OPTIONAL(false);
+        msm.common().member_flags().IS_MUST_UNDERSTAND(false);
+        msm.common().member_flags().IS_KEY(false);
+        msm.common().member_flags().IS_DEFAULT(false);
+        TypeIdentifier memIdent;
+        BuildTypeIdentifier(member->mType->mDescriptor, memIdent);
+        msm.common().member_type_id(memIdent);
+        //msm.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName()));
+        MD5 hash(member->GetName());
+        for(int i = 0; i < 4; ++i)
+        {
+            msm.detail().name_hash()[i] = hash.digest[i];
+        }
+        object.minimal().struct_type().member_seq().emplace_back(msm);
+    }
+
+    object.minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+
+
+    SerializedPayload_t payload(
+        object.minimal().struct_type().member_seq().size() * sizeof(MinimalStructMember) + 4);
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+    // Serialize encapsulation
+
+    for (MinimalStructMember &st : object.minimal().struct_type().member_seq())
+    {
+        ser << st;
+    }
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        object.minimal().struct_type().header().base_type().equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(),
+        &object.minimal().struct_type().header().base_type(), &object);
+}
+
+
+void DynamicTypeBuilderFactory::BuildUnionTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
+                                                    const std::vector<MemberDescriptor*> members) const
+{
+    object._d(EK_MINIMAL);
+    object.minimal()._d(TK_UNION);
+
+    object.minimal().union_type().union_flags().IS_FINAL(false);
+    object.minimal().union_type().union_flags().IS_APPENDABLE(false);
+    object.minimal().union_type().union_flags().IS_MUTABLE(false);
+    object.minimal().union_type().union_flags().IS_NESTED(false);
+    object.minimal().union_type().union_flags().IS_AUTOID_HASH(false);
+
+    object.minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
+    object.minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false);
+    object.minimal().union_type().discriminator().common().member_flags().IS_EXTERNAL(false);
+    object.minimal().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
+    object.minimal().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
+    object.minimal().union_type().discriminator().common().member_flags().IS_KEY(false);
+    object.minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
+
+    TypeIdentifier discIdent;
+    BuildTypeIdentifier(descriptor->mDiscriminatorType->mDescriptor, discIdent);
+    object.minimal().union_type().discriminator().common().type_id(discIdent);
+        //*TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->mDiscriminatorType->GetName()));
+
+    for (MemberDescriptor* member : members)
+    {
+        MinimalUnionMember mum;
+        mum.common().member_id(member->GetId());
+        mum.common().member_flags().TRY_CONSTRUCT1(false);
+        mum.common().member_flags().TRY_CONSTRUCT2(false);
+        mum.common().member_flags().IS_EXTERNAL(false);
+        mum.common().member_flags().IS_OPTIONAL(false);
+        mum.common().member_flags().IS_MUST_UNDERSTAND(false);
+        mum.common().member_flags().IS_KEY(false);
+        mum.common().member_flags().IS_DEFAULT(member->IsDefaultUnionValue());
+
+        TypeIdentifier memIdent;
+        BuildTypeIdentifier(member->mType->mDescriptor, memIdent);
+        mum.common().type_id(memIdent);
+        //mum.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName()));
+        for (uint64_t lab : member->GetUnionLabels())
+        {
+            mum.common().label_seq().emplace_back(static_cast<uint32_t>(lab));
+        }
+        MD5 hash(member->GetName());
+        for(int i = 0; i < 4; ++i)
+        {
+            mum.detail().name_hash()[i] = hash.digest[i];
+        }
+        object.minimal().union_type().member_seq().emplace_back(mum);
+    }
+
+    TypeIdentifier* identifier = new TypeIdentifier();
+    identifier->_d(EK_MINIMAL);
+
+    SerializedPayload_t payload(MinimalUnionType::getCdrSerializedSize(object.minimal().union_type()) + 4);
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    object.serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier->equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), identifier, &object);
 }
 
 } // namespace types
