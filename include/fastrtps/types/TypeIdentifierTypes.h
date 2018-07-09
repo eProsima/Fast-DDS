@@ -548,10 +548,7 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    inline void element_identifier(TypeIdentifier* _element_identifier)
-    {
-        m_element_identifier = _element_identifier;
-    }
+    void element_identifier(const TypeIdentifier* _element_identifier);
 
     /*!
      * @brief This function returns the value of member element_identifier
@@ -733,10 +730,7 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    inline void element_identifier(TypeIdentifier* _element_identifier)
-    {
-        m_element_identifier = _element_identifier;
-    }
+    void element_identifier(const TypeIdentifier* _element_identifier);
 
     /*!
      * @brief This function returns the value of member element_identifier
@@ -927,10 +921,7 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    inline void element_identifier(TypeIdentifier* _element_identifier)
-    {
-        m_element_identifier = _element_identifier;
-    }
+    void element_identifier(const TypeIdentifier* _element_identifier);
 
     /*!
      * @brief This function returns the value of member element_identifier
@@ -1121,10 +1112,7 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    inline void element_identifier(TypeIdentifier* _element_identifier)
-    {
-        m_element_identifier = _element_identifier;
-    }
+    void element_identifier(const TypeIdentifier* _element_identifier);
 
     /*!
      * @brief This function returns the value of member element_identifier
@@ -1306,10 +1294,7 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    inline void element_identifier(TypeIdentifier* _element_identifier)
-    {
-        m_element_identifier = _element_identifier;
-    }
+    void element_identifier(const TypeIdentifier* _element_identifier);
 
     /*!
      * @brief This function returns the value of member element_identifier
@@ -1358,10 +1343,7 @@ public:
      * @brief This function sets a value in member key_identifier
      * @param _key_identifier New value for member key_identifier
      */
-    inline void key_identifier(TypeIdentifier* _key_identifier)
-    {
-        m_key_identifier = _key_identifier;
-    }
+    void key_identifier(const TypeIdentifier* _key_identifier);
 
     /*!
      * @brief This function returns the value of member key_identifier
@@ -1545,10 +1527,7 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    inline void element_identifier(TypeIdentifier* _element_identifier)
-    {
-        m_element_identifier = _element_identifier;
-    }
+    void element_identifier(const TypeIdentifier* _element_identifier);
 
     /*!
      * @brief This function returns the value of member element_identifier
@@ -1597,10 +1576,7 @@ public:
      * @brief This function sets a value in member key_identifier
      * @param _key_identifier New value for member key_identifier
      */
-    inline void key_identifier(TypeIdentifier* _key_identifier)
-    {
-        m_key_identifier = _key_identifier;
-    }
+    void key_identifier(const TypeIdentifier* _key_identifier);
 
     /*!
      * @brief This function returns the value of member key_identifier
