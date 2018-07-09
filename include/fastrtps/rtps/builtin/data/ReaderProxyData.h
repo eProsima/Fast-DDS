@@ -237,6 +237,36 @@ class ReaderProxyData
             return m_topicKind;
         }
 
+        RTPS_DllAPI void type_id(TypeIdV1 type_id)
+        {
+            m_type_id = type_id;
+        }
+
+        RTPS_DllAPI TypeIdV1 type_id() const
+        {
+            return m_type_id;
+        }
+
+        RTPS_DllAPI TypeIdV1& type_id()
+        {
+            return m_type_id;
+        }
+
+        RTPS_DllAPI void type(TypeObjectV1 type)
+        {
+            m_type = type;
+        }
+
+        RTPS_DllAPI TypeObjectV1 type() const
+        {
+            return m_type;
+        }
+
+        RTPS_DllAPI TypeObjectV1& type()
+        {
+            return m_type;
+        }
+
         /**
          * Convert the data to a parameter list to send this information as a RTPS message.
          * @return Generated parameter list
@@ -251,7 +281,7 @@ class ReaderProxyData
 
         //!
         bool m_expectsInlineQos;
-        //!Reader Qos	
+        //!Reader Qos
         ReaderQos m_qos;
         /**
          * Clear (put to default) the information.
@@ -269,7 +299,7 @@ class ReaderProxyData
         void copy(ReaderProxyData* rdata);
 
         /**
-         * Convert the ProxyData information to RemoteReaderAttributes object. 
+         * Convert the ProxyData information to RemoteReaderAttributes object.
          * @return Reference to the RemoteReaderAttributes object.
          */
         RemoteReaderAttributes toRemoteReaderAttributes() const;
@@ -296,6 +326,10 @@ class ReaderProxyData
         bool m_isAlive;
         //!Topic kind
         TopicKind_t m_topicKind;
+        //!Type Identifier
+        TypeIdV1 m_type_id;
+        //!Type Object
+        TypeObjectV1 m_type;
 };
 
 }

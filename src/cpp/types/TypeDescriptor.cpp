@@ -176,7 +176,7 @@ uint32_t TypeDescriptor::GetTotalBounds() const
     if (mBound.size() >= 1)
     {
         uint32_t bounds = 1;
-        for (int i = 0; i < mBound.size(); ++i)
+        for (uint32_t i = 0; i < mBound.size(); ++i)
         {
             bounds *= mBound[i];
         }

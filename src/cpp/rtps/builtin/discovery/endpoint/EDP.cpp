@@ -39,6 +39,8 @@
 #include <fastrtps/utils/StringMatching.h>
 #include <fastrtps/log/Log.h>
 
+#include <fastrtps/types/TypeObject.h>
+
 #include <mutex>
 
 using namespace eprosima::fastrtps;
@@ -236,6 +238,10 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
                 << rdata->topicName() << "(keyed:"<< rdata->topicKind() <<
                 "), local writer publishes as keyed: "<< wdata->topicKind())
             return false;
+    }
+    if(!checkTypeIdentifier(wdata, rdata))
+    {
+        return false;
     }
     if(!rdata->isAlive()) //Matching
     {
@@ -858,6 +864,92 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(const GUID_t& l
     return pairing_remote_writer_with_local_builtin_reader_after_security(local_reader, remote_writer_data);
 }
 #endif
+
+bool EDP::checkTypeIdentifier(const TypeIdentifier * wti, const TypeIdentifier * rti) const
+{
+    if (wti->_d() != rti->_d())
+    {
+        return false;
+    }
+
+    switch (wti->_d())
+    {
+        case TI_STRING8_SMALL:
+        case TI_STRING16_SMALL:
+            return wti->string_sdefn().bound() == rti->string_sdefn().bound();
+
+        case TI_STRING8_LARGE:
+        case TI_STRING16_LARGE:
+            return wti->string_ldefn().bound() == rti->string_ldefn().bound();
+
+        case TI_PLAIN_SEQUENCE_SMALL:
+            return wti->seq_sdefn().bound() == rti->seq_sdefn().bound()
+                && checkTypeIdentifier(wti->seq_sdefn().element_identifier(), rti->seq_sdefn().element_identifier());
+
+        case TI_PLAIN_SEQUENCE_LARGE:
+            return wti->seq_ldefn().bound() == wti->seq_ldefn().bound()
+                && checkTypeIdentifier(wti->seq_ldefn().element_identifier(), rti->seq_ldefn().element_identifier());
+
+        case TI_PLAIN_ARRAY_SMALL:
+            {
+                if (wti->array_sdefn().array_bound_seq().size() != rti->array_sdefn().array_bound_seq().size())
+                {
+                    return false;
+                }
+                for (uint32_t idx = 0; idx < wti->array_sdefn().array_bound_seq().size(); ++idx)
+                {
+                    if (wti->array_sdefn().array_bound_seq()[idx] != rti->array_sdefn().array_bound_seq()[idx])
+                    {
+                        return false;
+                    }
+                }
+                return checkTypeIdentifier(wti->array_sdefn().element_identifier(),
+                                           rti->array_sdefn().element_identifier());
+            }
+
+        case TI_PLAIN_ARRAY_LARGE:
+            {
+                if (wti->array_ldefn().array_bound_seq().size() != rti->array_ldefn().array_bound_seq().size())
+                {
+                    return false;
+                }
+                for (uint32_t idx = 0; idx < wti->array_ldefn().array_bound_seq().size(); ++idx)
+                {
+                    if (wti->array_ldefn().array_bound_seq()[idx] != rti->array_ldefn().array_bound_seq()[idx])
+                    {
+                        return false;
+                    }
+                }
+                return checkTypeIdentifier(wti->array_ldefn().element_identifier(),
+                                           rti->array_ldefn().element_identifier());
+            }
+
+        case TI_PLAIN_MAP_SMALL:
+            return wti->map_sdefn().bound() == wti->map_sdefn().bound()
+                && checkTypeIdentifier(wti->map_sdefn().key_identifier(), rti->map_sdefn().key_identifier())
+                && checkTypeIdentifier(wti->map_sdefn().element_identifier(), rti->map_sdefn().element_identifier());
+
+        case TI_PLAIN_MAP_LARGE:
+            return wti->map_ldefn().bound() == wti->map_ldefn().bound()
+                && checkTypeIdentifier(wti->map_ldefn().key_identifier(), rti->map_ldefn().key_identifier())
+                && checkTypeIdentifier(wti->map_ldefn().element_identifier(), rti->map_ldefn().element_identifier());
+
+        case EK_MINIMAL:
+        case EK_COMPLETE:
+            return memcmp(wti->equivalence_hash(), rti->equivalence_hash(), 14) == 0;
+        default:
+            break;
+    }
+    return false;
+}
+
+bool EDP::checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const
+{
+    TypeIdentifier wti = wdata->type_id().m_type_identifier;
+    TypeIdentifier rti = rdata->type_id().m_type_identifier;
+
+    return checkTypeIdentifier(&wti, &rti);
+}
 
 }
 } /* namespace rtps */

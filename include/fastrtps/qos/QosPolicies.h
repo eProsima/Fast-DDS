@@ -21,9 +21,12 @@
 #define QOS_POLICIES_H_
 
 #include <vector>
-#include "../rtps/common/Types.h"
-#include "../rtps/common/Time_t.h"
+#include <fastrtps/rtps/common/Types.h>
+#include <fastrtps/rtps/common/Time_t.h>
+//#include "../rtps/common/Types.h"
+//#include "../rtps/common/Time_t.h"
 #include "ParameterTypes.h"
+#include <fastrtps/types/TypeObject.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -31,6 +34,8 @@ namespace fastrtps{
 namespace rtps{
 class EDP;
 }
+
+using namespace eprosima::fastrtps::types;
 
 /**
  * Class QosPolicy, base for all QoS policies defined for Writers and Readers.
@@ -698,6 +703,44 @@ public:
     * @return True if the modified CDRMessage is valid.
     */
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+};
+
+/**
+* Class TypeIdV1,
+*/
+class TypeIdV1 : private Parameter_t, public QosPolicy
+{
+public:
+    TypeIdentifier m_type_identifier;
+
+    RTPS_DllAPI TypeIdV1() {};
+    virtual RTPS_DllAPI ~TypeIdV1() {};
+    /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
+    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg);
+};
+
+/**
+* Class TypeObjectV1,
+*/
+class TypeObjectV1 : private Parameter_t, public QosPolicy
+{
+public:
+    TypeObject m_type_object;
+
+    RTPS_DllAPI TypeObjectV1() {};
+    virtual RTPS_DllAPI ~TypeObjectV1() {};
+    /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
+    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg);
 };
 
 }

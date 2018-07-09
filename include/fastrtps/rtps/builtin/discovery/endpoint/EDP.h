@@ -27,6 +27,11 @@
 namespace eprosima {
 namespace fastrtps{
 
+namespace types
+{
+class TypeIdentifier;
+}
+
 class TopicAttributes;
 class ReaderQos;
 class WriterQos;
@@ -218,6 +223,11 @@ class EDP
          * @return True
          */
         bool pairingWriter(RTPSWriter* W, const ParticipantProxyData& pdata, const WriterProxyData& wdata);
+
+        bool checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
+
+        bool checkTypeIdentifier(const eprosima::fastrtps::types::TypeIdentifier * wti,
+                const eprosima::fastrtps::types::TypeIdentifier * rti) const;
 };
 
 }

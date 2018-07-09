@@ -241,7 +241,8 @@ bool DataRepresentationQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     return valid;
 }
 
-bool TypeConsistencyEnforcementQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
+bool TypeConsistencyEnforcementQosPolicy::addToCDRMessage(CDRMessage_t* msg)
+{
     bool valid = CDRMessage::addUInt32(msg, this->m_kind);
     valid &= CDRMessage::addOctet(msg, (octet)m_ignore_sequence_bounds);
     valid &= CDRMessage::addOctet(msg, (octet)m_ignore_string_bounds);
@@ -251,4 +252,88 @@ bool TypeConsistencyEnforcementQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     return valid;
 }
 
+bool TypeIdV1::addToCDRMessage(CDRMessage_t* msg)
+{
+    size_t size = TypeIdentifier::getCdrSerializedSize(m_type_identifier)/* + 4*/ /* + 4*/;
+    SerializedPayload_t payload(size);
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
+    // ser.serialize_encapsulation();
+    //ser << size;
+    m_type_identifier.serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+
+    return CDRMessage::addData(msg, payload.data, payload.length);
+}
+
+bool TypeIdV1::readFromCDRMessage(CDRMessage_t* msg)
+{
+    SerializedPayload_t payload(msg->length);
+    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload.data, payload.length);
+
+    CDRMessage::readData(msg, payload.data, msg->length); // Object that manages the raw buffer.
+
+    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
+
+    // Deserialize encapsulation.
+    payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+    try
+    {
+        m_type_identifier.deserialize(deser);
+    }
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool TypeObjectV1::addToCDRMessage(CDRMessage_t* msg)
+{
+    size_t size = TypeObject::getCdrSerializedSize(m_type_object)/* + 4*/ /* + 4*/;
+    SerializedPayload_t payload(size);
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+    // ser.serialize_encapsulation();
+    //ser << size;
+    m_type_object.serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+
+    return CDRMessage::addData(msg, payload.data, payload.length);
+}
+
+bool TypeObjectV1::readFromCDRMessage(CDRMessage_t* msg)
+{
+    SerializedPayload_t payload(msg->length);
+    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload.data, payload.length);
+
+    CDRMessage::readData(msg, payload.data, msg->length); // Object that manages the raw buffer.
+
+    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
+
+    // Deserialize encapsulation.
+    payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+    try
+    {
+        m_type_object.deserialize(deser);
+    }
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    {
+        return false;
+    }
+
+    return true;
+}

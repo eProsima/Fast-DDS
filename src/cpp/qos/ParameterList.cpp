@@ -750,9 +750,19 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                     p->m_force_type_validation = temp == 0 ? false : true;
                     IF_VALID_ADD
                 }
-                case PID_PAD:
                 case PID_TYPE_IDV1: //TODO: //GASCO:
+                {
+                    TypeIdV1 * p = new TypeIdV1();
+                    valid &= p->readFromCDRMessage(msg);
+                    IF_VALID_ADD
+                }
                 case PID_TYPE_OBJECTV1://TODO: //GASCO:
+                {
+                    TypeObjectV1 * p = new TypeObjectV1();
+                    valid &= p->readFromCDRMessage(msg);
+                    IF_VALID_ADD
+                }
+                case PID_PAD:
                 default:
                     {
                         if (plength > msg->length-msg->pos)
