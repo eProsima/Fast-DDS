@@ -36,6 +36,7 @@ DynamicTypeBuilder::DynamicTypeBuilder(const TypeDescriptor* descriptor)
     , mCurrentMemberId(0)
     , mMaxIndex(0)
 {
+    RefreshMemberIds();
 }
 
 DynamicTypeBuilder::DynamicTypeBuilder(const DynamicType* pType)
@@ -47,6 +48,7 @@ DynamicTypeBuilder::DynamicTypeBuilder(const DynamicType* pType)
     {
         CopyFromType(pType);
     }
+    RefreshMemberIds();
 }
 
 DynamicTypeBuilder::~DynamicTypeBuilder()
@@ -61,7 +63,7 @@ ResponseCode DynamicTypeBuilder::AddMember(const MemberDescriptor* descriptor)
             || mDescriptor->GetKind() == TK_ENUM || mDescriptor->GetKind() == TK_STRUCTURE
             || mDescriptor->GetKind() == TK_UNION)
         {
-            if (mMemberByName.find(descriptor->GetName()) == mMemberByName.end())
+            if (!ExistsMemberByName(descriptor->GetName()))
             {
                 if (CheckUnionConfiguration(descriptor))
                 {
@@ -234,6 +236,14 @@ void DynamicTypeBuilder::Clear()
     DynamicType::Clear();
 
     mCurrentMemberId = 0;
+}
+
+void DynamicTypeBuilder::RefreshMemberIds()
+{
+    if (mDescriptor->GetKind() == TK_STRUCTURE && mDescriptor->GetBaseType() != nullptr)
+    {
+        mCurrentMemberId = mDescriptor->GetBaseType()->GetMembersCount();
+    }
 }
 
 ResponseCode DynamicTypeBuilder::SetName(const std::string& name)

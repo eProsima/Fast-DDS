@@ -31,19 +31,30 @@ using namespace rtps;
 
 namespace types{
 
-const std::string TKNAME_BOOLEAN  = "bool";
-const std::string TKNAME_INT16    = "int16_t";
-const std::string TKNAME_UINT16   = "uint16_t";
-const std::string TKNAME_INT32    = "int32_t";
-const std::string TKNAME_UINT32   = "uint32_t";
-const std::string TKNAME_INT64    = "int64_t";
-const std::string TKNAME_UINT64   = "uint64_t";
-const std::string TKNAME_CHAR8    = "char";
-const std::string TKNAME_BYTE     = "octet";
-const std::string TKNAME_CHAR16   = "wchar";
-const std::string TKNAME_FLOAT32  = "float";
-const std::string TKNAME_FLOAT64  = "double";
-const std::string TKNAME_FLOAT128 = "long double";
+const std::string TKNAME_BOOLEAN    = "bool";
+const std::string TKNAME_INT16      = "int16_t";
+const std::string TKNAME_UINT16     = "uint16_t";
+const std::string TKNAME_INT32      = "int32_t";
+const std::string TKNAME_UINT32     = "uint32_t";
+const std::string TKNAME_INT64      = "int64_t";
+const std::string TKNAME_UINT64     = "uint64_t";
+const std::string TKNAME_CHAR8      = "char";
+const std::string TKNAME_BYTE       = "octet";
+const std::string TKNAME_CHAR16     = "wchar";
+const std::string TKNAME_FLOAT32    = "float";
+const std::string TKNAME_FLOAT64    = "double";
+const std::string TKNAME_FLOAT128   = "long double";
+
+const std::string TKNAME_ALIAS      = "alias";
+const std::string TKNAME_ENUM       = "enum";
+const std::string TKNAME_BITMASK    = "bitmask";
+const std::string TKNAME_ANNOTATION = "annotation";
+const std::string TKNAME_STRUCTURE  = "structure";
+const std::string TKNAME_UNION      = "union";
+const std::string TKNAME_BITSET     = "bitset";
+const std::string TKNAME_SEQUENCE   = "sequence";
+const std::string TKNAME_ARRAY      = "array";
+const std::string TKNAME_MAP        = "map";
 
 // ---------- Equivalence Kinds ------------------
 typedef octet EquivalenceKind;

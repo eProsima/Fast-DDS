@@ -41,15 +41,30 @@ static std::string GetTypeName(TypeKind kind)
         case TK_UINT64: return TKNAME_UINT64;
         case TK_FLOAT128: return TKNAME_FLOAT128;
         case TK_CHAR16: return TKNAME_CHAR16;
-        default: break;
+
+        case TK_ALIAS: return TKNAME_ALIAS;
+        case TK_ENUM: return TKNAME_ENUM;
+        case TK_BITMASK: return TKNAME_BITMASK;
+        case TK_ANNOTATION: return TKNAME_ANNOTATION;
+        case TK_STRUCTURE: return TKNAME_STRUCTURE;
+        case TK_UNION: return TKNAME_UNION;
+        case TK_BITSET: return TKNAME_BITSET;
+        case TK_SEQUENCE: return TKNAME_SEQUENCE;
+        case TK_ARRAY: return TKNAME_ARRAY;
+        case TK_MAP: return TKNAME_MAP;
+
+        default:
+            break;
     }
-    return "";
+    return "UNDEF";
 }
 
 static uint32_t s_typeNameCounter = 0;
 static std::string GenerateTypeName(const std::string &kind)
 {
-    return kind + "_" + std::to_string(++s_typeNameCounter);
+    std::string tempKind = kind;
+    std::replace(tempKind.begin(), tempKind.end(), ' ', '_');
+    return tempKind + "_" + std::to_string(++s_typeNameCounter);
 }
 
 static DynamicTypeBuilderFactory* g_instance = nullptr;
@@ -399,6 +414,26 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateStringType(uint32_t bound)
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
     AddTypeToList(pNewTypeBuilder);
     return pNewTypeBuilder;
+}
+
+DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateChildStructType(DynamicType* parent_type)
+{
+    if (parent_type->GetKind() == TK_STRUCTURE)
+    {
+        TypeDescriptor pDescriptor;
+        pDescriptor.mKind = TK_STRUCTURE;
+        pDescriptor.mName = GenerateTypeName(GetTypeName(TK_STRUCTURE));
+        pDescriptor.mBaseType = BuildType(parent_type);
+
+        DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
+        AddTypeToList(pNewTypeBuilder);
+        return pNewTypeBuilder;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error creating child struct, invalid input type.");
+        return nullptr;
+    }
 }
 
 DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateStructType()

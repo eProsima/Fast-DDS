@@ -124,6 +124,18 @@ ResponseCode DynamicType::CopyFromType(const DynamicType* other)
     }
 }
 
+bool DynamicType::ExistsMemberByName(const std::string& name) const
+{
+    if (mDescriptor->GetBaseType() != nullptr)
+    {
+        if (mDescriptor->GetBaseType()->ExistsMemberByName(name))
+        {
+            return true;
+        }
+    }
+    return mMemberByName.find(name) != mMemberByName.end();
+}
+
 ResponseCode DynamicType::GetDescriptor(TypeDescriptor* descriptor) const
 {
     if (descriptor != nullptr)
@@ -193,6 +205,11 @@ bool DynamicType::Equals(const DynamicType* other) const
         return true;
     }
     return false;
+}
+
+MemberId DynamicType::GetMembersCount() const
+{
+    return static_cast<MemberId>(mMemberById.size());
 }
 
 std::string DynamicType::GetName() const

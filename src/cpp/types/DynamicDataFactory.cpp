@@ -64,10 +64,20 @@ DynamicData* DynamicDataFactory::CreateData(DynamicType* pType)
         {
             DynamicData* newData = nullptr;
             // ALIAS types create a DynamicData based on the base type and renames it with the name of the ALIAS.
-            if (pType->GetKind() == TK_ALIAS)
+            if (pType->GetBaseType() != nullptr)
             {
-                newData = CreateData(pType->GetBaseType());
-                newData->SetTypeName(pType->GetName());
+                if (pType->GetKind() == TK_ALIAS)
+                {
+                    newData = CreateData(pType->GetBaseType());
+                    newData->SetTypeName(pType->GetName());
+                }
+                else if (pType->GetKind() == TK_STRUCTURE)
+                {
+                    newData = new DynamicData(pType);
+                    mDynamicDatas.push_back(newData);
+
+                    CreateMembers(newData, pType->GetBaseType());
+                }
             }
             else
             {
@@ -89,6 +99,20 @@ DynamicData* DynamicDataFactory::CreateData(DynamicType* pType)
         logError(DYN_TYPES, "Error creating DynamicData. Invalid dynamic type");
         return nullptr;
     }
+}
+
+ResponseCode DynamicDataFactory::CreateMembers(DynamicData* pData, DynamicType* pType)
+{
+    if (pType != nullptr && pData != nullptr)
+    {
+        pData->CreateMembers(pType);
+        if (pType->GetKind() == TK_STRUCTURE && pType->GetBaseType() != nullptr)
+        {
+            CreateMembers(pData, pType->GetBaseType());
+        }
+        return ResponseCode::RETCODE_OK;
+    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
 }
 
 ResponseCode DynamicDataFactory::DeleteData(DynamicData* pData)
