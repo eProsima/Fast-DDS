@@ -73,7 +73,7 @@ class DurabilityQosPolicy : private Parameter_t, public QosPolicy
         virtual RTPS_DllAPI ~DurabilityQosPolicy(){};
         DurabilityQosPolicyKind_t kind;
 
-        /** 
+        /**
          * Translates kind to rtps layer equivalent
          */
         inline rtps::DurabilityKind_t durabilityKind() const
@@ -645,7 +645,66 @@ class PublishModeQosPolicy : public QosPolicy {
         virtual RTPS_DllAPI ~PublishModeQosPolicy(){};
 };
 
+/**
+* Enum DataRepresentationId, different kinds of topic data representation
+*/
+typedef enum DataRepresentationId : int16_t {
+    XCDR_DATA_REPRESENTATION,	//!<
+    XML_DATA_REPRESENTATION,	//!<
+    XCDR2_DATA_REPRESENTATION	//!<
+}DataRepresentationId_t;
+
+/**
+* Class DataRepresentationQosPolicy,
+*/
+class DataRepresentationQosPolicy :private Parameter_t, public QosPolicy
+{
+public:
+    std::vector<DataRepresentationId_t> m_value;
+    RTPS_DllAPI DataRepresentationQosPolicy() {};
+    virtual RTPS_DllAPI ~DataRepresentationQosPolicy() {};
+    /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
+    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+};
+
+enum TypeConsistencyKind : uint32_t
+{
+    DISALLOW_TYPE_COERCION,
+    ALLOW_TYPE_COERCION
+};
+
+/**
+* Class DataRepresentationQosPolicy,
+*/
+class TypeConsistencyEnforcementQosPolicy : private Parameter_t, public QosPolicy
+{
+public:
+    TypeConsistencyKind m_kind;
+    bool m_ignore_sequence_bounds;
+    bool m_ignore_string_bounds;
+    bool m_ignore_member_names;
+    bool m_prevent_type_widening;
+    bool m_force_type_validation;
+
+    RTPS_DllAPI TypeConsistencyEnforcementQosPolicy() {};
+    virtual RTPS_DllAPI ~TypeConsistencyEnforcementQosPolicy() {};
+    /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
+    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+};
+
 }
 }
+
+
+
+
 
 #endif /* QOS_POLICIES_H_ */

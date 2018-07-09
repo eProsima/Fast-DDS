@@ -64,9 +64,13 @@ public:
 	GroupDataQosPolicy m_groupData;
 	//!Durability Service Qos, NOT implemented in the library.
 	DurabilityServiceQosPolicy m_durabilityService;
-	//!Lifespan Qos, NOT implemented in the library.
-	LifespanQosPolicy m_lifespan;
-	/**
+    //!Lifespan Qos, NOT implemented in the library.
+    LifespanQosPolicy m_lifespan;
+    //!Data Representation Qos, NOT implemented in the library.
+    DataRepresentationQosPolicy m_dataRepresentation;
+    //!Type consistency enforcement Qos, NOT implemented in the library.
+    TypeConsistencyEnforcementQosPolicy m_typeConsistency;
+    /**
 	 * Set Qos from another class
 	 * @param readerqos Reference from a ReaderQos object.
 	 * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).

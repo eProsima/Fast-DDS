@@ -67,11 +67,17 @@ typedef enum EndpointKind_t{
 }EndpointKind_t;
 
 //!Topic kind
-typedef enum TopicKind_t{
+typedef enum TopicKind_t {
     NO_KEY,
     WITH_KEY
 }TopicKind_t;
 
+//!Topic discovery kind
+typedef enum TopicDiscoveryKind_t {
+    NO_CHECK,
+    MINIMAL,
+    COMPLETE
+}TopicDiscoveryKind_t;
 
 #if __BIG_ENDIAN__
 const Endianness_t DEFAULT_ENDIAN = BIGEND;
