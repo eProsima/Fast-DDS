@@ -31,6 +31,20 @@ using namespace rtps;
 
 namespace types{
 
+const std::string TKNAME_BOOLEAN  = "bool";
+const std::string TKNAME_INT16    = "int16_t";
+const std::string TKNAME_UINT16   = "uint16_t";
+const std::string TKNAME_INT32    = "int32_t";
+const std::string TKNAME_UINT32   = "uint32_t";
+const std::string TKNAME_INT64    = "int64_t";
+const std::string TKNAME_UINT64   = "uint64_t";
+const std::string TKNAME_CHAR8    = "char";
+const std::string TKNAME_BYTE     = "octet";
+const std::string TKNAME_CHAR16   = "wchar";
+const std::string TKNAME_FLOAT32  = "float";
+const std::string TKNAME_FLOAT64  = "double";
+const std::string TKNAME_FLOAT128 = "long double";
+
 // ---------- Equivalence Kinds ------------------
 typedef octet EquivalenceKind;
 const octet EK_MINIMAL   = 0xF1; // 0x1111 0001

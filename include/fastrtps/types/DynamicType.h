@@ -64,6 +64,7 @@ protected:
     friend class TypeDescriptor;
     friend class DynamicData;
     friend class AnnotationDescriptor;
+    friend class TypeObjectFactory;
 
     DynamicType(const DynamicType* other);
 

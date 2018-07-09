@@ -23,10 +23,34 @@ namespace eprosima {
 namespace fastrtps {
 namespace types {
 
-static uint32_t s_typeNameCounter = 0;
-static std::string GenerateTypeName()
+static std::string GetTypeName(TypeKind kind)
 {
-    return "DynamicType" + std::to_string(++s_typeNameCounter);
+    switch (kind)
+    {
+        // Primitive types, already defined (never will be asked, but ok)
+        case TK_BOOLEAN: return TKNAME_BOOLEAN;
+        case TK_INT16: return TKNAME_INT16;
+        case TK_INT32: return TKNAME_INT32;
+        case TK_UINT16: return TKNAME_UINT16;
+        case TK_UINT32: return TKNAME_UINT32;
+        case TK_FLOAT32: return TKNAME_FLOAT32;
+        case TK_FLOAT64: return TKNAME_FLOAT64;
+        case TK_CHAR8: return TKNAME_CHAR8;
+        case TK_BYTE: return TKNAME_BYTE;
+        case TK_INT64: return TKNAME_INT64;
+        case TK_UINT64: return TKNAME_UINT64;
+        case TK_FLOAT128: return TKNAME_FLOAT128;
+        case TK_CHAR16: return TKNAME_CHAR16;
+        default:
+            return "";
+    }
+    return "";
+}
+
+static uint32_t s_typeNameCounter = 0;
+static std::string GenerateTypeName(const std::string &kind)
+{
+    return kind + "_" + std::to_string(++s_typeNameCounter);
 }
 
 static DynamicTypeBuilderFactory* g_instance = nullptr;
@@ -115,7 +139,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateAliasType(DynamicType* base
         }
         else
         {
-            pDescriptor.mName = GenerateTypeName();
+            pDescriptor.mName = GenerateTypeName(GetTypeName(TK_ALIAS));
         }
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
@@ -136,7 +160,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateArrayType(const DynamicType
     {
         TypeDescriptor pDescriptor;
         pDescriptor.mKind = TK_ARRAY;
-        pDescriptor.mName = GenerateTypeName();
+        pDescriptor.mName = GenerateTypeName(GetTypeName(TK_ARRAY));
         pDescriptor.mBound = bounds;
         pDescriptor.mElementType = BuildType(element_type);
 
@@ -157,11 +181,11 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateBitmaskType(uint32_t bound)
     {
         TypeDescriptor pBoolDescriptor;
         pBoolDescriptor.mKind = TK_BOOLEAN;
-        pBoolDescriptor.mName = GenerateTypeName();
+        pBoolDescriptor.mName = GenerateTypeName(GetTypeName(TK_BOOLEAN));
 
         TypeDescriptor pDescriptor;
         pDescriptor.mKind = TK_BITMASK;
-        pDescriptor.mName = GenerateTypeName();
+        pDescriptor.mName = GenerateTypeName(GetTypeName(TK_BITMASK));
         pDescriptor.mElementType = BuildType(&pBoolDescriptor);
         pDescriptor.mBound.push_back(bound);
 
@@ -182,7 +206,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateBitsetType(uint32_t bound)
     {
         TypeDescriptor pDescriptor;
         pDescriptor.mKind = TK_BITSET;
-        pDescriptor.mName = GenerateTypeName();
+        pDescriptor.mName = GenerateTypeName(GetTypeName(TK_BITSET));
         pDescriptor.mBound.push_back(bound);
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
@@ -200,7 +224,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateBoolType()
 {
     TypeDescriptor pBoolDescriptor;
     pBoolDescriptor.mKind = TK_BOOLEAN;
-    pBoolDescriptor.mName = GenerateTypeName();
+    pBoolDescriptor.mName = GenerateTypeName(GetTypeName(TK_BOOLEAN));
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pBoolDescriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -211,7 +235,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateByteType()
 {
     TypeDescriptor pByteDescriptor;
     pByteDescriptor.mKind = TK_BYTE;
-    pByteDescriptor.mName = GenerateTypeName();
+    pByteDescriptor.mName = GenerateTypeName(GetTypeName(TK_BYTE));
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pByteDescriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -222,7 +246,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateChar8Type()
 {
     TypeDescriptor pChar8Descriptor;
     pChar8Descriptor.mKind = TK_CHAR8;
-    pChar8Descriptor.mName = GenerateTypeName();
+    pChar8Descriptor.mName = GenerateTypeName(GetTypeName(TK_CHAR8));
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pChar8Descriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -233,7 +257,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateChar16Type()
 {
     TypeDescriptor pChar16Descriptor;
     pChar16Descriptor.mKind = TK_CHAR16;
-    pChar16Descriptor.mName = GenerateTypeName();
+    pChar16Descriptor.mName = GenerateTypeName(GetTypeName(TK_CHAR16));
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pChar16Descriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -244,7 +268,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateEnumType()
 {
     TypeDescriptor pEnumDescriptor;
     pEnumDescriptor.mKind = TK_ENUM;
-    pEnumDescriptor.mName = GenerateTypeName();
+    pEnumDescriptor.mName = GenerateTypeName(GetTypeName(TK_ENUM));
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pEnumDescriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -255,7 +279,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateFloat32Type()
 {
     TypeDescriptor pFloat32Descriptor;
     pFloat32Descriptor.mKind = TK_FLOAT32;
-    pFloat32Descriptor.mName = GenerateTypeName();
+    pFloat32Descriptor.mName = GenerateTypeName(GetTypeName(TK_FLOAT32));
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pFloat32Descriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -266,7 +290,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateFloat64Type()
 {
     TypeDescriptor pFloat64Descriptor;
     pFloat64Descriptor.mKind = TK_FLOAT64;
-    pFloat64Descriptor.mName = GenerateTypeName();
+    pFloat64Descriptor.mName = GenerateTypeName(GetTypeName(TK_FLOAT64));
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pFloat64Descriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -277,7 +301,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateFloat128Type()
 {
     TypeDescriptor pFloat128Descriptor;
     pFloat128Descriptor.mKind = TK_FLOAT128;
-    pFloat128Descriptor.mName = GenerateTypeName();
+    pFloat128Descriptor.mName = GenerateTypeName(GetTypeName(TK_FLOAT128));
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pFloat128Descriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -288,7 +312,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateInt16Type()
 {
     TypeDescriptor pInt16Descriptor;
     pInt16Descriptor.mKind = TK_INT16;
-    pInt16Descriptor.mName = GenerateTypeName();
+    pInt16Descriptor.mName = GenerateTypeName(GetTypeName(TK_INT16));
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pInt16Descriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -299,7 +323,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateInt32Type()
 {
     TypeDescriptor pInt32Descriptor;
     pInt32Descriptor.mKind = TK_INT32;
-    pInt32Descriptor.mName = GenerateTypeName();
+    pInt32Descriptor.mName = GenerateTypeName(GetTypeName(TK_INT32));
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pInt32Descriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -310,7 +334,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateInt64Type()
 {
     TypeDescriptor pInt64Descriptor;
     pInt64Descriptor.mKind = TK_INT64;
-    pInt64Descriptor.mName = GenerateTypeName();
+    pInt64Descriptor.mName = GenerateTypeName(GetTypeName(TK_INT64));
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pInt64Descriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -324,7 +348,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateMapType(DynamicType* key_el
     {
         TypeDescriptor pDescriptor;
         pDescriptor.mKind = TK_MAP;
-        pDescriptor.mName = GenerateTypeName();
+        pDescriptor.mName = GenerateTypeName(GetTypeName(TK_MAP));
         pDescriptor.mBound.push_back(bound);
         pDescriptor.mKeyElementType = BuildType(key_element_type);
         pDescriptor.mElementType = BuildType(element_type);
@@ -346,7 +370,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateSequenceType(const DynamicT
     {
         TypeDescriptor pDescriptor;
         pDescriptor.mKind = TK_SEQUENCE;
-        pDescriptor.mName = GenerateTypeName();
+        pDescriptor.mName = GenerateTypeName(GetTypeName(TK_SEQUENCE));
         pDescriptor.mBound.push_back(bound);
         pDescriptor.mElementType = BuildType(element_type);
 
@@ -365,11 +389,11 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateStringType(uint32_t bound)
 {
     TypeDescriptor pCharDescriptor;
     pCharDescriptor.mKind = TK_CHAR8;
-    pCharDescriptor.mName = GenerateTypeName();
+    pCharDescriptor.mName = GenerateTypeName(GetTypeName(TK_CHAR8));
 
     TypeDescriptor pDescriptor;
     pDescriptor.mKind = TK_STRING8;
-    pDescriptor.mName = GenerateTypeName();
+    pDescriptor.mName = GenerateTypeName(GetTypeName(TK_STRING8));
     pDescriptor.mElementType = BuildType(&pCharDescriptor);
     pDescriptor.mBound.push_back(bound);
 
@@ -382,7 +406,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateStructType()
 {
     TypeDescriptor pDescriptor;
     pDescriptor.mKind = TK_STRUCTURE;
-    pDescriptor.mName = GenerateTypeName();
+    pDescriptor.mName = GenerateTypeName(GetTypeName(TK_STRUCTURE));
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -423,7 +447,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateUint16Type()
 {
     TypeDescriptor pUInt16Descriptor;
     pUInt16Descriptor.mKind = TK_UINT16;
-    pUInt16Descriptor.mName = GenerateTypeName();
+    pUInt16Descriptor.mName = GenerateTypeName(GetTypeName(TK_UINT16));
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pUInt16Descriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -434,7 +458,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateUint32Type()
 {
     TypeDescriptor pUInt32Descriptor;
     pUInt32Descriptor.mKind = TK_UINT32;
-    pUInt32Descriptor.mName = GenerateTypeName();
+    pUInt32Descriptor.mName = GenerateTypeName(GetTypeName(TK_UINT32));
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pUInt32Descriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -445,7 +469,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateUint64Type()
 {
     TypeDescriptor pUInt64Descriptor;
     pUInt64Descriptor.mKind = TK_UINT64;
-    pUInt64Descriptor.mName = GenerateTypeName();
+    pUInt64Descriptor.mName = GenerateTypeName(GetTypeName(TK_UINT64));
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pUInt64Descriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -458,7 +482,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateUnionType(DynamicType* disc
     {
         TypeDescriptor pUnionDescriptor;
         pUnionDescriptor.mKind = TK_UNION;
-        pUnionDescriptor.mName = GenerateTypeName();
+        pUnionDescriptor.mName = GenerateTypeName(GetTypeName(TK_UNION));
         pUnionDescriptor.mDiscriminatorType = BuildType(discriminator_type);
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pUnionDescriptor);
@@ -476,11 +500,11 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateWstringType(uint32_t bound)
 {
     TypeDescriptor pCharDescriptor;
     pCharDescriptor.mKind = TK_CHAR16;
-    pCharDescriptor.mName = GenerateTypeName();
+    pCharDescriptor.mName = GenerateTypeName(GetTypeName(TK_CHAR16));
 
     TypeDescriptor pDescriptor;
     pDescriptor.mKind = TK_STRING16;
-    pDescriptor.mName = GenerateTypeName();
+    pDescriptor.mName = GenerateTypeName(GetTypeName(TK_STRING16));
     pDescriptor.mElementType = BuildType(&pCharDescriptor);
     pDescriptor.mBound.push_back(bound);
 
@@ -520,7 +544,7 @@ DynamicType* DynamicTypeBuilderFactory::GetPrimitiveType(TypeKind kind)
 {
     TypeDescriptor pDescriptor;
     pDescriptor.mKind = kind;
-    pDescriptor.mName = GenerateTypeName();
+    pDescriptor.mName = GenerateTypeName(GetTypeName(kind));
     DynamicType* pNewType = BuildType(&pDescriptor);
     return pNewType;
 }

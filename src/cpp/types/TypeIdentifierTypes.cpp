@@ -300,12 +300,17 @@ PlainSequenceSElemDefn::PlainSequenceSElemDefn()
 {
 
     m_bound = 0;
-    //m_element_identifier = new TypeIdentifier();
+    m_element_identifier = new TypeIdentifier();
 }
 
 PlainSequenceSElemDefn::~PlainSequenceSElemDefn()
 {
-    //delete m_element_identifier;
+    delete m_element_identifier;
+}
+
+void PlainSequenceSElemDefn::element_identifier(const TypeIdentifier* _element_identifier)
+{
+    *m_element_identifier = *_element_identifier;
 }
 
 PlainSequenceSElemDefn::PlainSequenceSElemDefn(const PlainSequenceSElemDefn &x)
@@ -411,12 +416,17 @@ PlainSequenceLElemDefn::PlainSequenceLElemDefn()
 {
 
     m_bound = 0;
-    //m_element_identifier = new TypeIdentifier();
+    m_element_identifier = new TypeIdentifier();
 }
 
 PlainSequenceLElemDefn::~PlainSequenceLElemDefn()
 {
-    //delete m_element_identifier;
+    delete m_element_identifier;
+}
+
+void PlainSequenceLElemDefn::element_identifier(const TypeIdentifier* _element_identifier)
+{
+    *m_element_identifier = *_element_identifier;
 }
 
 PlainSequenceLElemDefn::PlainSequenceLElemDefn(const PlainSequenceLElemDefn &x)
@@ -522,12 +532,17 @@ PlainArraySElemDefn::PlainArraySElemDefn()
 {
 
 
-    //m_element_identifier = new TypeIdentifier();
+    m_element_identifier = new TypeIdentifier();
 }
 
 PlainArraySElemDefn::~PlainArraySElemDefn()
 {
-    //delete m_element_identifier;
+    delete m_element_identifier;
+}
+
+void PlainArraySElemDefn::element_identifier(const TypeIdentifier* _element_identifier)
+{
+    *m_element_identifier = *_element_identifier;
 }
 
 PlainArraySElemDefn::PlainArraySElemDefn(const PlainArraySElemDefn &x)
@@ -636,12 +651,17 @@ PlainArrayLElemDefn::PlainArrayLElemDefn()
 {
 
 
-    //m_element_identifier = new TypeIdentifier();
+    m_element_identifier = new TypeIdentifier();
 }
 
 PlainArrayLElemDefn::~PlainArrayLElemDefn()
 {
-    //delete m_element_identifier;
+    delete m_element_identifier;
+}
+
+void PlainArrayLElemDefn::element_identifier(const TypeIdentifier* _element_identifier)
+{
+    *m_element_identifier = *_element_identifier;
 }
 
 PlainArrayLElemDefn::PlainArrayLElemDefn(const PlainArrayLElemDefn &x)
@@ -749,14 +769,24 @@ PlainMapSTypeDefn::PlainMapSTypeDefn()
 {
 
     m_bound = 0;
-    //m_element_identifier = new TypeIdentifier();
-    //m_key_identifier = new TypeIdentifier();
+    m_element_identifier = new TypeIdentifier();
+    m_key_identifier = new TypeIdentifier();
 }
 
 PlainMapSTypeDefn::~PlainMapSTypeDefn()
 {
-    //delete m_element_identifier;
-    //delete m_key_identifier;
+    delete m_element_identifier;
+    delete m_key_identifier;
+}
+
+void PlainMapSTypeDefn::element_identifier(const TypeIdentifier* _element_identifier)
+{
+    *m_element_identifier = *_element_identifier;
+}
+
+void PlainMapSTypeDefn::key_identifier(const TypeIdentifier* _key_identifier)
+{
+    *m_key_identifier = *_key_identifier;
 }
 
 PlainMapSTypeDefn::PlainMapSTypeDefn(const PlainMapSTypeDefn &x)
@@ -889,14 +919,24 @@ void PlainMapSTypeDefn::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 PlainMapLTypeDefn::PlainMapLTypeDefn()
 {
 
-    //m_element_identifier = new TypeIdentifier();
-    //m_key_identifier = new TypeIdentifier();
+    m_element_identifier = new TypeIdentifier();
+    m_key_identifier = new TypeIdentifier();
 }
 
 PlainMapLTypeDefn::~PlainMapLTypeDefn()
 {
-    //delete m_element_identifier;
-    //delete m_key_identifier;
+    delete m_element_identifier;
+    delete m_key_identifier;
+}
+
+void PlainMapLTypeDefn::element_identifier(const TypeIdentifier* _element_identifier)
+{
+    *m_element_identifier = *_element_identifier;
+}
+
+void PlainMapLTypeDefn::key_identifier(const TypeIdentifier* _key_identifier)
+{
+    *m_key_identifier = *_key_identifier;
 }
 
 PlainMapLTypeDefn::PlainMapLTypeDefn(const PlainMapLTypeDefn &x)
