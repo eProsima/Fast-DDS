@@ -106,7 +106,17 @@ ParameterList_t ReaderProxyData::toParameterList()
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     //TODO: //GASCO: PID_TYPE_IDV1
+    {
+        TypeIdV1 * p = new TypeIdV1();
+        p->m_type_identifier = m_type_id.m_type_identifier;
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
     //TODO: //GASCO: PID_TYPE_OBJECTV1
+    {
+        TypeObjectV1 * p = new TypeObjectV1();
+        p->m_type_object = m_type.m_type_object;
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
     {
         ParameterString_t * p = new ParameterString_t(PID_TYPE_NAME,0,m_typeName);
         parameter_list.m_parameters.push_back((Parameter_t*)p);
@@ -406,7 +416,17 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
                     break;
                 }
                 case PID_TYPE_IDV1: //TODO: //GASCO:
+                    {
+                        TypeIdV1 * p = (TypeIdV1*)(*it);
+                        m_type_id = *p;
+                        break;
+                    }
                 case PID_TYPE_OBJECTV1: //TODO: //GASCO:
+                    {
+                        TypeObjectV1 * p = (TypeObjectV1*)(*it);
+                        m_type = *p;
+                        break;
+                    }
                 default:
                     {
                         //logInfo(RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(*it)->Pid << " NOT CONSIDERED");
