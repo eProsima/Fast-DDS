@@ -717,7 +717,42 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                         msg->pos += (4 - msg->pos % 4) & 3; //align
                         IF_VALID_ADD
                     }
+                case PID_DATA_REPRESENTATION:
+                {
+                    DataRepresentationQosPolicy * p = new DataRepresentationQosPolicy();
+                    int16_t temp(0);
+                    uint32_t size(0);
+                    valid &= CDRMessage::readUInt32(msg, &size);
+                    for (uint32_t i = 0; i < size; ++i)
+                    {
+                        valid &= CDRMessage::readInt16(msg, &temp);
+                        p->m_value.push_back(static_cast<DataRepresentationId_t>(temp));
+
+                    }
+                    IF_VALID_ADD
+                }
+                case PID_TYPE_CONSISTENCY_ENFORCEMENT:
+                {
+                    uint32_t uKind(0);
+                    octet temp(0);
+                    TypeConsistencyEnforcementQosPolicy * p = new TypeConsistencyEnforcementQosPolicy();
+                    valid &= CDRMessage::readUInt32(msg, &uKind);
+                    p->m_kind = static_cast<TypeConsistencyKind>(uKind);
+                    valid &= CDRMessage::readOctet(msg, &temp);
+                    p->m_ignore_sequence_bounds = temp == 0 ? false : true;
+                    valid &= CDRMessage::readOctet(msg, &temp);
+                    p->m_ignore_string_bounds = temp == 0 ? false : true;
+                    valid &= CDRMessage::readOctet(msg, &temp);
+                    p->m_ignore_member_names = temp == 0 ? false : true;
+                    valid &= CDRMessage::readOctet(msg, &temp);
+                    p->m_prevent_type_widening = temp == 0 ? false : true;
+                    valid &= CDRMessage::readOctet(msg, &temp);
+                    p->m_force_type_validation = temp == 0 ? false : true;
+                    IF_VALID_ADD
+                }
                 case PID_PAD:
+                case PID_TYPE_IDV1: //TODO: //GASCO:
+                case PID_TYPE_OBJECTV1://TODO: //GASCO:
                 default:
                     {
                         if (plength > msg->length-msg->pos)

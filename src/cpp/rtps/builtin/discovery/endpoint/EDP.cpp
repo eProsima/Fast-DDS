@@ -221,11 +221,15 @@ bool EDP::unpairReaderProxy(const GUID_t& participant_guid, const GUID_t& reader
 
 bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rdata)
 {
-
-    if(wdata->topicName() != rdata->topicName())
+    //TODO: //GASCO: TYPE CHECKING
+    if (wdata->topicName() != rdata->topicName())
+    {
         return false;
-    if(wdata->typeName() != rdata->typeName())
+    }
+    if (wdata->typeName() != rdata->typeName())
+    {
         return false;
+    }
     if(wdata->topicKind() != rdata->topicKind())
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS:Remote Reader " << rdata->guid() << " is publishing in topic "
@@ -313,11 +317,15 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
 
 bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wdata)
 {
-
-    if(rdata->topicName() != wdata->topicName())
+    //TODO: //GASCO: TYPE CHECKING
+    if (rdata->topicName() != wdata->topicName())
+    {
         return false;
-    if( rdata->typeName() != wdata->typeName())
+    }
+    if (rdata->typeName() != wdata->typeName())
+    {
         return false;
+    }
     if(rdata->topicKind() != wdata->topicKind())
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS:Remote Writer " << wdata->guid() << " is publishing in topic " << wdata->topicName() << "(keyed:" << wdata->topicKind() <<

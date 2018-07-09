@@ -62,7 +62,7 @@ protected:
 	DynamicType* mBaseType;                 // SuperType of an structure or base type of an alias type.
 	DynamicType* mDiscriminatorType;        // Discrimination type for a union.
 	std::vector<uint32_t> mBound;           // Length for strings, arrays, sequences, maps and bitmasks.
-	DynamicType* mElementType;              // Value Type for arrays, sequences, maps, bitmasks and strings.
+	DynamicType* mElementType;              // Value Type for arrays, sequences, maps, bitmasks.
 	DynamicType* mKeyElementType;           // Key Type for maps.
 };
 

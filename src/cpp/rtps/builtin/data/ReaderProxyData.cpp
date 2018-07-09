@@ -102,9 +102,11 @@ ParameterList_t ReaderProxyData::toParameterList()
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     {
-        ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME,0,m_topicName);
+        ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME, 0, m_topicName);
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
+    //TODO: //GASCO: PID_TYPE_IDV1
+    //TODO: //GASCO: PID_TYPE_OBJECTV1
     {
         ParameterString_t * p = new ParameterString_t(PID_TYPE_NAME,0,m_typeName);
         parameter_list.m_parameters.push_back((Parameter_t*)p);
@@ -391,6 +393,20 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
                         iHandle2GUID(m_guid,m_key);
                         break;
                     }
+                case PID_DATA_REPRESENTATION:
+                {
+                    DataRepresentationQosPolicy * p = (DataRepresentationQosPolicy*)(*it);
+                    m_qos.m_dataRepresentation = *p;
+                    break;
+                }
+                case PID_TYPE_CONSISTENCY_ENFORCEMENT:
+                {
+                    TypeConsistencyEnforcementQosPolicy * p = (TypeConsistencyEnforcementQosPolicy*)(*it);
+                    m_qos.m_typeConsistency = *p;
+                    break;
+                }
+                case PID_TYPE_IDV1: //TODO: //GASCO:
+                case PID_TYPE_OBJECTV1: //TODO: //GASCO:
                 default:
                     {
                         //logInfo(RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(*it)->Pid << " NOT CONSIDERED");

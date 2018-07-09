@@ -230,7 +230,24 @@ bool ResourceLimitsQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 bool TransportPriorityQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addUInt32(msg,value);
+    valid &= CDRMessage::addUInt32(msg, value);
+    return valid;
+}
+
+bool DataRepresentationQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
+    bool valid = CDRMessage::addUInt32(msg, (uint32_t)m_value.size());
+    for (std::vector<DataRepresentationId_t>::iterator it = m_value.begin(); it != m_value.end(); ++it)
+        valid &= CDRMessage::addUInt16(msg, *it);
+    return valid;
+}
+
+bool TypeConsistencyEnforcementQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
+    bool valid = CDRMessage::addUInt32(msg, this->m_kind);
+    valid &= CDRMessage::addOctet(msg, (octet)m_ignore_sequence_bounds);
+    valid &= CDRMessage::addOctet(msg, (octet)m_ignore_string_bounds);
+    valid &= CDRMessage::addOctet(msg, (octet)m_ignore_member_names);
+    valid &= CDRMessage::addOctet(msg, (octet)m_prevent_type_widening);
+    valid &= CDRMessage::addOctet(msg, (octet)m_force_type_validation);
     return valid;
 }
 

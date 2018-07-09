@@ -342,7 +342,7 @@ std::string TypeObjectFactory::GetTypeName(const TypeKind kind) const
         case TK_FLOAT128: return TKNAME_FLOAT128;
         case TK_CHAR16: return TKNAME_CHAR16;
         default:
-            return "";
+            break;
     }
     return "";
 }
@@ -740,7 +740,7 @@ TypeDescriptor* TypeObjectFactory::BuildTypeDescriptor(const TypeIdentifier* ide
             {
                 const TypeIdentifier *aux = &object->minimal().struct_type().header().base_type();
                 descriptor->mBaseType = BuildDynamicType(aux, GetTypeObject(aux));
-                uint64_t order = 0;
+                uint32_t order = 0;
                 for (MinimalStructMember &member : object->minimal().struct_type().member_seq())
                 {
                     const TypeIdentifier *auxMem = &member.common().member_type_id();
@@ -758,7 +758,7 @@ TypeDescriptor* TypeObjectFactory::BuildTypeDescriptor(const TypeIdentifier* ide
         {
             if (object != nullptr)
             {
-                uint64_t order = 0;
+                uint32_t order = 0;
                 for (MinimalEnumeratedLiteral &member : object->minimal().enumerated_type().literal_seq())
                 {
                     const TypeIdentifier *auxMem = GetTypeIdentifier("uint32_t");
@@ -800,7 +800,7 @@ TypeDescriptor* TypeObjectFactory::BuildTypeDescriptor(const TypeIdentifier* ide
                 const TypeIdentifier *aux  = &object->minimal().union_type().discriminator().common().type_id();
                 descriptor->mDiscriminatorType = BuildDynamicType(aux, GetTypeObject(aux));
 
-                uint64_t order = 0;
+                uint32_t order = 0;
                 for (MinimalUnionMember &member : object->minimal().union_type().member_seq())
                 {
                     const TypeIdentifier *auxMem = &member.common().type_id();
