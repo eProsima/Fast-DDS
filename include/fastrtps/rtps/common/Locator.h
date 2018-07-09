@@ -308,6 +308,15 @@ class LocatorList_t
             return m_locators.size();
         }
 
+        RTPS_DllAPI LocatorList_t& assign(const LocatorList_t& list)
+        {
+            if (!(*this == list))
+            {
+                m_locators = list.m_locators;
+            }
+            return *this;
+        }
+
         RTPS_DllAPI void clear(){ return m_locators.clear();}
 
         RTPS_DllAPI void reserve(size_t num){ return m_locators.reserve(num);}

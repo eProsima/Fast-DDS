@@ -84,6 +84,9 @@ class RTPSMessageGroup
 
         ~RTPSMessageGroup();
 
+        void set_fixed_destination(const LocatorList_t& locator_list,
+            const std::vector<GUID_t>& remote_endpoints);
+
         bool add_data(const CacheChange_t& change, const std::vector<GUID_t>& remote_readers,
                 const LocatorList_t& locators, bool expectsInlineQos);
 
@@ -111,10 +114,10 @@ class RTPSMessageGroup
         void reset_to_header();
 
         bool check_preconditions(const LocatorList_t& locator_list,
-                const std::vector<GuidPrefix_t>& remote_participants) const;
+                const std::vector<GUID_t>& remote_participants) const;
 
         void flush_and_reset(const LocatorList_t& locator_list,
-                std::vector<GuidPrefix_t>&& remote_participants);
+                const std::vector<GUID_t>& remote_endpoints);
 
         void flush();
 
@@ -139,17 +142,22 @@ class RTPSMessageGroup
 
         uint32_t currentBytesSent_;
 
-#if HAVE_SECURITY
-        ENDPOINT_TYPE type_;
-
-        CDRMessage_t* encrypt_msg_;
-#endif
-
         LocatorList_t current_locators_;
 
         GuidPrefix_t current_dst_;
 
+        bool fixed_destination_;
+
+        const LocatorList_t * fixed_destination_locators_;
+
+#if HAVE_SECURITY
+        ENDPOINT_TYPE type_;
+
+        CDRMessage_t* encrypt_msg_;
+
         std::vector<GuidPrefix_t> current_remote_participants_;
+#endif
+
 };
 
 } /* namespace rtps */
