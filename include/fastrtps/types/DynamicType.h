@@ -50,6 +50,7 @@ public:
     std::string GetName() const;
     ResponseCode GetMember(DynamicTypeMember& member, MemberId id);
     ResponseCode GetMemberByName(DynamicTypeMember& member, const std::string name);
+    MemberId GetMembersCount() const;
 
     bool HasChildren() const;
     bool IsComplexKind() const;
@@ -71,6 +72,9 @@ protected:
     virtual void Clear();
 
     ResponseCode CopyFromType(const DynamicType* other);
+
+    // Checks if there is a member with the given name.
+    bool ExistsMemberByName(const std::string& name) const;
 
     // This method is used by Dynamic Data to override the name of the types based on ALIAS.
     void SetName(const std::string& name);

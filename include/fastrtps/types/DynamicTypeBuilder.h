@@ -55,6 +55,8 @@ protected:
 
     bool CheckUnionConfiguration(const MemberDescriptor* descriptor);
 
+    void RefreshMemberIds();
+
     virtual void Clear() override;
 };
 

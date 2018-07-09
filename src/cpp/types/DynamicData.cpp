@@ -91,15 +91,25 @@ DynamicData::DynamicData(DynamicType* pType)
     , mUnionLabel(UINT64_MAX)
     , mUnionId(MEMBER_ID_INVALID)
 {
+    CreateMembers(mType);
+}
+
+DynamicData::~DynamicData()
+{
+    Clean();
+}
+
+void DynamicData::CreateMembers(DynamicType* pType)
+{
     std::map<MemberId, DynamicTypeMember*> members;
-    if (mType->GetAllMembers(members) == ResponseCode::RETCODE_OK)
+    if (pType->GetAllMembers(members) == ResponseCode::RETCODE_OK)
     {
-        if (mType->IsComplexKind())
+        if (pType->IsComplexKind())
         {
             // Bitmasks and enums register their members but only manages one value.
-            if (mType->GetKind() == TK_BITMASK || mType->GetKind() == TK_ENUM)
+            if (pType->GetKind() == TK_BITMASK || pType->GetKind() == TK_ENUM)
             {
-                AddValue(mType->GetKind(), MEMBER_ID_INVALID);
+                AddValue(pType->GetKind(), MEMBER_ID_INVALID);
             }
 
             for (auto it = members.begin(); it != members.end(); ++it)
@@ -108,7 +118,7 @@ DynamicData::DynamicData(DynamicType* pType)
                 if (it->second->GetDescriptor(newDescriptor) == ResponseCode::RETCODE_OK)
                 {
                     mDescriptors.insert(std::make_pair(it->first, newDescriptor));
-                    if (mType->GetKind() != TK_BITMASK && mType->GetKind() != TK_ENUM)
+                    if (pType->GetKind() != TK_BITMASK && pType->GetKind() != TK_ENUM)
                     {
 #ifdef DYNAMIC_TYPES_CHECKING
                         mComplexValues.insert(std::make_pair(it->first, DynamicDataFactory::GetInstance()->CreateData(newDescriptor->mType)));
@@ -124,7 +134,7 @@ DynamicData::DynamicData(DynamicType* pType)
             }
 
             // Set the default value for unions.
-            if (mType->GetKind() == TK_UNION)
+            if (pType->GetKind() == TK_UNION)
             {
                 for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
                 {
@@ -138,14 +148,9 @@ DynamicData::DynamicData(DynamicType* pType)
         }
         else
         {
-            AddValue(mType->GetKind(), MEMBER_ID_INVALID);
+            AddValue(pType->GetKind(), MEMBER_ID_INVALID);
         }
     }
-}
-
-DynamicData::~DynamicData()
-{
-    Clean();
 }
 
 ResponseCode DynamicData::GetDescriptor(MemberDescriptor& value, MemberId id)

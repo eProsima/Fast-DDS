@@ -1069,7 +1069,9 @@ TEST_F(DynamicTypesTests, DynamicType_float128_unit_tests)
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateFloat128Type();
     ASSERT_TRUE(created_type != nullptr);
     types::DynamicType* new_type = created_type->Build();
+    ASSERT_TRUE(new_type != nullptr);
     types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    ASSERT_TRUE(data != nullptr);
 
     long double test1 = 123.0;
     long double test2 = 0.0;
@@ -2779,6 +2781,113 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type_builder) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+TEST_F(DynamicTypesTests, DynamicType_structure_heritage_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* base_type_builder(nullptr);
+    DynamicTypeBuilder* base_type_builder2(nullptr);
+    DynamicTypeBuilder* struct_type_builder(nullptr);
+    DynamicTypeBuilder* child_struct_type_builder(nullptr);
+
+    // Then
+    base_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
+    ASSERT_TRUE(base_type_builder != nullptr);
+    auto base_type = base_type_builder->Build();
+
+    base_type_builder2 = DynamicTypeBuilderFactory::GetInstance()->CreateInt64Type();
+    ASSERT_TRUE(base_type_builder2 != nullptr);
+    auto base_type2 = base_type_builder2->Build();
+
+    struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructType();
+    ASSERT_TRUE(struct_type_builder != nullptr);
+
+    // Add members to the struct.
+    types::MemberDescriptor descriptor;
+    descriptor.SetId(0);
+    descriptor.SetName("int32");
+    descriptor.SetType(base_type);
+    ASSERT_TRUE(struct_type_builder->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
+
+    types::MemberDescriptor descriptor2;
+    descriptor2.SetId(1);
+    descriptor2.SetName("int64");
+    descriptor2.SetType(base_type2);
+    ASSERT_TRUE(struct_type_builder->AddMember(&descriptor2) == ResponseCode::RETCODE_OK);
+
+    auto struct_type = struct_type_builder->Build();
+    ASSERT_TRUE(struct_type != nullptr);
+
+    // Create the child struct.
+    child_struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateChildStructType(struct_type);
+
+    // Add a new member to the child struct.
+    types::MemberDescriptor descriptor3;
+    descriptor.SetId(2);
+    descriptor.SetName("child_int32");
+    descriptor.SetType(base_type);
+    ASSERT_TRUE(child_struct_type_builder->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
+
+    // try to add a member to override one of the parent struct.
+    types::MemberDescriptor descriptor4;
+    descriptor.SetId(3);
+    descriptor.SetName("int32");
+    descriptor.SetType(base_type);
+    ASSERT_FALSE(child_struct_type_builder->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
+
+    auto child_struct_type = child_struct_type_builder->Build();
+    ASSERT_TRUE(child_struct_type != nullptr);
+    auto struct_data = DynamicDataFactory::GetInstance()->CreateData(child_struct_type);
+    ASSERT_TRUE(struct_data != nullptr);
+
+    ASSERT_FALSE(struct_data->SetInt32Value(1, 10) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(struct_data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+
+    // Set and get the parent values.
+    int32_t test1(234);
+    ASSERT_TRUE(struct_data->SetInt32Value(0, test1) == ResponseCode::RETCODE_OK);
+    int32_t test2(0);
+    ASSERT_TRUE(struct_data->GetInt32Value(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+    int64_t test3(234);
+    ASSERT_TRUE(struct_data->SetInt64Value(1, test3) == ResponseCode::RETCODE_OK);
+    int64_t test4(0);
+    ASSERT_TRUE(struct_data->GetInt64Value(test4, 1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test3 == test4);
+    // Set and get the child value.
+    int32_t test5(234);
+    ASSERT_TRUE(struct_data->SetInt32Value(2, test5) == ResponseCode::RETCODE_OK);
+    int32_t test6(0);
+    ASSERT_TRUE(struct_data->GetInt32Value(test6, 2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test5 == test6);
+
+    // Delete the map
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(struct_data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(struct_data) == ResponseCode::RETCODE_OK);
+
+    // Clean the types Factory.
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type2) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type_builder2) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type_builder2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(child_struct_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(child_struct_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(child_struct_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(child_struct_type_builder) == ResponseCode::RETCODE_OK);
 
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());

@@ -109,6 +109,8 @@ protected:
 
     void AddValue(TypeKind kind, MemberId id);
 
+    void CreateMembers(DynamicType* pType);
+
     void Clean();
 
     void* CloneValue(MemberId id, TypeKind kind) const;

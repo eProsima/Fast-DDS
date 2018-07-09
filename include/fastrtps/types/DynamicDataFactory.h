@@ -40,6 +40,8 @@ public:
 protected:
     DynamicDataFactory();
 
+    ResponseCode CreateMembers(DynamicData* pData, DynamicType* pType);
+
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::vector<DynamicData*> mDynamicDatas;
 #endif
