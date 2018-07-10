@@ -267,6 +267,21 @@ class ReaderProxyData
             return m_type;
         }
 
+        RTPS_DllAPI void topicDiscoveryKind(TopicDiscoveryKind_t topicDiscoveryKind)
+        {
+            m_topicDiscoveryKind = topicDiscoveryKind;
+        }
+
+        RTPS_DllAPI TopicDiscoveryKind_t topicDiscoveryKind() const
+        {
+            return m_topicDiscoveryKind;
+        }
+
+        RTPS_DllAPI TopicDiscoveryKind_t& topicDiscoveryKind()
+        {
+            return m_topicDiscoveryKind;
+        }
+
         /**
          * Convert the data to a parameter list to send this information as a RTPS message.
          * @return Generated parameter list
@@ -326,6 +341,8 @@ class ReaderProxyData
         bool m_isAlive;
         //!Topic kind
         TopicKind_t m_topicKind;
+        //!Topic Discovery Kind
+        TopicDiscoveryKind_t m_topicDiscoveryKind;
         //!Type Identifier
         TypeIdV1 m_type_id;
         //!Type Object
