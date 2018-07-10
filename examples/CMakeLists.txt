@@ -15,6 +15,7 @@
 set(fastrtps_FOUND TRUE)
 add_subdirectory(C++/DeadlineQoSExample)
 add_subdirectory(C++/OwnershipStrengthQoSExample)
+add_subdirectory(C++/DynamicHelloWorldExample)
 add_subdirectory(C++/HelloWorldExample)
 add_subdirectory(C++/HelloWorldExampleTCP)
 add_subdirectory(C++/Filtering)

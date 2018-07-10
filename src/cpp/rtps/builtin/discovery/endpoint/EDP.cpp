@@ -72,6 +72,7 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, TopicAttributes& att, Read
     rpd.topicName(att.getTopicName());
     rpd.typeName(att.getTopicDataType());
     rpd.topicKind(att.getTopicKind());
+    rpd.topicDiscoveryKind(att.getTopicDiscoveryKind());
     rpd.m_qos = rqos;
     rpd.userDefinedId(reader->getAttributes()->getUserDefinedID());
     reader->m_acceptMessagesFromUnkownWriters = false;
@@ -104,6 +105,7 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer,TopicAttributes& att, Write
     wpd.topicName(att.getTopicName());
     wpd.typeName(att.getTopicDataType());
     wpd.topicKind(att.getTopicKind());
+    wpd.topicDiscoveryKind(att.getTopicDiscoveryKind());
     wpd.typeMaxSerialized(writer->getTypeMaxSerialized());
     wpd.m_qos = wqos;
     wpd.userDefinedId(writer->getAttributes()->getUserDefinedID());
@@ -337,6 +339,10 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS:Remote Writer " << wdata->guid() << " is publishing in topic " << wdata->topicName() << "(keyed:" << wdata->topicKind() <<
                 "), local reader subscribes as keyed: " << rdata->topicKind())
             return false;
+    }
+    if(!checkTypeIdentifier(wdata, rdata))
+    {
+        return false;
     }
     if(!wdata->isAlive()) //Matching
     {
@@ -945,6 +951,11 @@ bool EDP::checkTypeIdentifier(const TypeIdentifier * wti, const TypeIdentifier *
 
 bool EDP::checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const
 {
+    if (wdata->topicDiscoveryKind() == NO_CHECK || rdata->topicDiscoveryKind() == NO_CHECK)
+    {
+        return true;
+    }
+
     TypeIdentifier wti = wdata->type_id().m_type_identifier;
     TypeIdentifier rti = rdata->type_id().m_type_identifier;
 
