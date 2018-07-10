@@ -37,19 +37,22 @@ WriterProxyData::WriterProxyData():
         // TODO Auto-generated constructor stub
     }
 
-WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo) :
-    m_guid(writerInfo.m_guid),
-    m_unicastLocatorList(writerInfo.m_unicastLocatorList),
-    m_multicastLocatorList(writerInfo.m_multicastLocatorList),
-    m_key(writerInfo.m_key),
-    m_RTPSParticipantKey(writerInfo.m_RTPSParticipantKey),
-    m_typeName(writerInfo.m_typeName),
-    m_topicName(writerInfo.m_topicName),
-    m_userDefinedId(writerInfo.m_userDefinedId),
-    m_typeMaxSerialized(writerInfo.m_typeMaxSerialized),
-    m_isAlive(writerInfo.m_isAlive),
-    m_topicKind(writerInfo.m_topicKind),
-    persistence_guid_(writerInfo.persistence_guid_)
+WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo)
+    : m_guid(writerInfo.m_guid)
+    , m_unicastLocatorList(writerInfo.m_unicastLocatorList)
+    , m_multicastLocatorList(writerInfo.m_multicastLocatorList)
+    , m_key(writerInfo.m_key)
+    , m_RTPSParticipantKey(writerInfo.m_RTPSParticipantKey)
+    , m_typeName(writerInfo.m_typeName)
+    , m_topicName(writerInfo.m_topicName)
+    , m_userDefinedId(writerInfo.m_userDefinedId)
+    , m_typeMaxSerialized(writerInfo.m_typeMaxSerialized)
+    , m_isAlive(writerInfo.m_isAlive)
+    , m_topicKind(writerInfo.m_topicKind)
+    , persistence_guid_(writerInfo.persistence_guid_)
+    , m_topicDiscoveryKind(writerInfo.m_topicDiscoveryKind)
+    , m_type_id(writerInfo.m_type_id)
+    , m_type(writerInfo.m_type)
 {
     m_qos.setQos(writerInfo.m_qos, true);
 }
@@ -74,6 +77,9 @@ WriterProxyData& WriterProxyData::operator=(const WriterProxyData& writerInfo)
     m_topicKind = writerInfo.m_topicKind;
     persistence_guid_ = writerInfo.persistence_guid_;
     m_qos.setQos(writerInfo.m_qos, true);
+    m_topicDiscoveryKind = writerInfo.m_topicDiscoveryKind;
+    m_type_id = writerInfo.m_type_id;
+    m_type = writerInfo.m_type;
 
     return *this;
 }
@@ -101,24 +107,6 @@ ParameterList_t WriterProxyData::toParameterList()
     {
         ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME, 0, m_topicName);
         parameter_list.m_parameters.push_back((Parameter_t*)p);
-    }
-    //TODO: //GASCO: PID_TYPE_IDV1
-    {
-        if (m_topicDiscoveryKind != NO_CHECK)
-        {
-            TypeIdV1 * p = new TypeIdV1();
-            p->m_type_identifier = m_type_id.m_type_identifier;
-            parameter_list.m_parameters.push_back((Parameter_t*)p);
-        }
-    }
-    //TODO: //GASCO: PID_TYPE_OBJECTV1
-    {
-        if (m_topicDiscoveryKind != NO_CHECK)
-        {
-            TypeObjectV1 * p = new TypeObjectV1();
-            p->m_type_object = m_type.m_type_object;
-            parameter_list.m_parameters.push_back((Parameter_t*)p);
-        }
     }
     {
         ParameterString_t * p = new ParameterString_t(PID_TYPE_NAME,0,m_typeName);
@@ -245,6 +233,27 @@ ParameterList_t WriterProxyData::toParameterList()
         *p = m_qos.m_groupData;
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
+    //TODO: //GASCO: PID_TYPE_IDV1
+    if (m_topicDiscoveryKind != NO_CHECK)
+    {
+        {
+            //ParameterString_t * p = new ParameterString_t(PID_TYPE_IDV1, 0, m_type_id);
+            //parameter_list.m_parameters.push_back((Parameter_t*)p);
+            TypeIdV1 * p = new TypeIdV1();
+            p->m_type_identifier = m_type_id.m_type_identifier;
+            parameter_list.m_parameters.push_back((Parameter_t*)p);
+        }
+
+        //TODO: //GASCO: PID_TYPE_OBJECTV1
+        {
+            //ParameterString_t * p = new ParameterString_t(PID_TYPE_OBJECTV1, 0, m_type);
+            //parameter_list.m_parameters.push_back((Parameter_t*)p);
+            TypeObjectV1 * p = new TypeObjectV1();
+            p->m_type_object = m_type.m_type_object;
+            parameter_list.m_parameters.push_back((Parameter_t*)p);
+        }
+    }
+
     logInfo(RTPS_PROXY_DATA," with " << parameter_list.m_parameters.size()<< " parameters");
     return parameter_list;
 }

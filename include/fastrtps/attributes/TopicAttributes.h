@@ -104,7 +104,7 @@ class TopicAttributes
 
         //! TopicKind_t, default value NO_KEY.
         rtps::TopicKind_t topicKind;
-        //! Topic discovery kind, default value NO_TYPES.
+        //! Topic discovery kind, default value NO_CHECK.
         rtps::TopicDiscoveryKind_t topicDiscoveryKind;
         //! Topic Name.
         std::string topicName;
@@ -118,6 +118,10 @@ class TopicAttributes
         DataRepresentationQosPolicy dataRepresentationQos;
         //!QOS Regarding the consistency data to check.
         TypeConsistencyEnforcementQosPolicy typeConsistencyQos;
+        //!Type Identifier
+        TypeIdV1 type_id;
+        //!Type Object
+        TypeObjectV1 type;
 
         /**
          * Method to check whether the defined QOS are correct.

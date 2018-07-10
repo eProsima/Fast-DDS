@@ -42,18 +42,21 @@ ReaderProxyData::~ReaderProxyData()
     logInfo(RTPS_PROXY_DATA,"ReaderProxyData destructor: "<< this->m_guid;);
 }
 
-ReaderProxyData::ReaderProxyData(const ReaderProxyData& readerInfo) :
-    m_expectsInlineQos(readerInfo.m_expectsInlineQos),
-    m_guid(readerInfo.m_guid),
-    m_unicastLocatorList(readerInfo.m_unicastLocatorList),
-    m_multicastLocatorList(readerInfo.m_multicastLocatorList),
-    m_key(readerInfo.m_key),
-    m_RTPSParticipantKey(readerInfo.m_RTPSParticipantKey),
-    m_typeName(readerInfo.m_typeName),
-    m_topicName(readerInfo.m_topicName),
-    m_userDefinedId(readerInfo.m_userDefinedId),
-    m_isAlive(readerInfo.m_isAlive),
-    m_topicKind(readerInfo.m_topicKind)
+ReaderProxyData::ReaderProxyData(const ReaderProxyData& readerInfo)
+    : m_expectsInlineQos(readerInfo.m_expectsInlineQos)
+    , m_guid(readerInfo.m_guid)
+    , m_unicastLocatorList(readerInfo.m_unicastLocatorList)
+    , m_multicastLocatorList(readerInfo.m_multicastLocatorList)
+    , m_key(readerInfo.m_key)
+    , m_RTPSParticipantKey(readerInfo.m_RTPSParticipantKey)
+    , m_typeName(readerInfo.m_typeName)
+    , m_topicName(readerInfo.m_topicName)
+    , m_userDefinedId(readerInfo.m_userDefinedId)
+    , m_isAlive(readerInfo.m_isAlive)
+    , m_topicKind(readerInfo.m_topicKind)
+    , m_topicDiscoveryKind(readerInfo.m_topicDiscoveryKind)
+    , m_type_id(readerInfo.m_type_id)
+    , m_type(readerInfo.m_type)
 {
     m_qos.setQos(readerInfo.m_qos, true);
 }
@@ -73,6 +76,9 @@ ReaderProxyData& ReaderProxyData::operator=(const ReaderProxyData& readerInfo)
     m_expectsInlineQos = readerInfo.m_expectsInlineQos;
     m_topicKind = readerInfo.m_topicKind;
     m_qos.setQos(readerInfo.m_qos, true);
+    m_topicDiscoveryKind = readerInfo.m_topicDiscoveryKind;
+    m_type_id = readerInfo.m_type_id;
+    m_type = readerInfo.m_type;
 
     return *this;
 }
@@ -104,24 +110,6 @@ ParameterList_t ReaderProxyData::toParameterList()
     {
         ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME, 0, m_topicName);
         parameter_list.m_parameters.push_back((Parameter_t*)p);
-    }
-    //TODO: //GASCO: PID_TYPE_IDV1
-    {
-        if (m_topicDiscoveryKind != NO_CHECK)
-        {
-            TypeIdV1 * p = new TypeIdV1();
-            p->m_type_identifier = m_type_id.m_type_identifier;
-            parameter_list.m_parameters.push_back((Parameter_t*)p);
-        }
-    }
-    //TODO: //GASCO: PID_TYPE_OBJECTV1
-    {
-        if (m_topicDiscoveryKind != NO_CHECK)
-        {
-            TypeObjectV1 * p = new TypeObjectV1();
-            p->m_type_object = m_type.m_type_object;
-            parameter_list.m_parameters.push_back((Parameter_t*)p);
-        }
     }
     {
         ParameterString_t * p = new ParameterString_t(PID_TYPE_NAME,0,m_typeName);
@@ -238,6 +226,26 @@ ParameterList_t ReaderProxyData::toParameterList()
         TimeBasedFilterQosPolicy*p = new TimeBasedFilterQosPolicy();
         *p = m_qos.m_timeBasedFilter;
         parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+    //TODO: //GASCO: PID_TYPE_IDV1
+    if (m_topicDiscoveryKind != NO_CHECK)
+    {
+        {
+            //ParameterString_t * p = new ParameterString_t(PID_TYPE_IDV1, 0, m_type_id);
+            //parameter_list.m_parameters.push_back((Parameter_t*)p);
+            TypeIdV1 * p = new TypeIdV1();
+            p->m_type_identifier = m_type_id.m_type_identifier;
+            parameter_list.m_parameters.push_back((Parameter_t*)p);
+        }
+
+        //TODO: //GASCO: PID_TYPE_OBJECTV1
+        {
+            //ParameterString_t * p = new ParameterString_t(PID_TYPE_OBJECTV1, 0, m_type);
+            //parameter_list.m_parameters.push_back((Parameter_t*)p);
+            TypeObjectV1 * p = new TypeObjectV1();
+            p->m_type_object = m_type.m_type_object;
+            parameter_list.m_parameters.push_back((Parameter_t*)p);
+        }
     }
 
     logInfo(RTPS_PROXY_DATA,"DiscoveredReaderData converted to ParameterList with " << parameter_list.m_parameters.size()<< " parameters");

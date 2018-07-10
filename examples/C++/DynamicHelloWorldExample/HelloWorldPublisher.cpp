@@ -18,7 +18,6 @@
  */
 
 #include "HelloWorldPublisher.h"
-#include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
@@ -45,10 +44,10 @@ bool HelloWorldPublisher::init()
     PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.domainId = 0;
+    PParam.rtps.builtin.domainId = 5;
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-    PParam.rtps.setName("Participant_pub");
-    mp_participant = Domain::createParticipant(PParam);
+    PParam.rtps.setName("DynHelloWorld_pub");
+    mp_participant = Domain::createParticipant(PParam, (ParticipantListener*)&m_part_list);
 
     if(mp_participant==nullptr)
         return false;
@@ -61,7 +60,7 @@ bool HelloWorldPublisher::init()
     Wparam.topic.topicKind = NO_KEY;
     Wparam.topic.topicDataType = "HelloWorld";
     Wparam.topic.topicName = "DynamicHelloWorldTopic";
-    //Wparam.topic.
+    //Wparam.topic.topicDiscoveryKind = MINIMAL;
     Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Wparam.topic.historyQos.depth = 30;
     Wparam.topic.resourceLimitsQos.max_samples = 50;
@@ -95,6 +94,22 @@ void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,M
     {
         n_matched--;
         std::cout << "Publisher unmatched"<<std::endl;
+    }
+}
+
+void HelloWorldPublisher::PartListener::onParticipantDiscovery(Participant*, ParticipantDiscoveryInfo info)
+{
+    if (info.rtps.m_status == DISCOVERED_RTPSPARTICIPANT)
+    {
+        std::cout << "Participant " << info.rtps.m_RTPSParticipantName << " discovered" << std::endl;
+    }
+    else if (info.rtps.m_status == REMOVED_RTPSPARTICIPANT)
+    {
+        std::cout << "Participant " << info.rtps.m_RTPSParticipantName << " removed" << std::endl;
+    }
+    else if (info.rtps.m_status == DROPPED_RTPSPARTICIPANT)
+    {
+        std::cout << "Participant " << info.rtps.m_RTPSParticipantName << " dropped" << std::endl;
     }
 }
 
