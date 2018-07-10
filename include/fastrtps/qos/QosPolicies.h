@@ -23,8 +23,6 @@
 #include <vector>
 #include <fastrtps/rtps/common/Types.h>
 #include <fastrtps/rtps/common/Time_t.h>
-//#include "../rtps/common/Types.h"
-//#include "../rtps/common/Time_t.h"
 #include "ParameterTypes.h"
 #include <fastrtps/types/TypeObject.h>
 
@@ -711,10 +709,10 @@ public:
 class TypeIdV1 : private Parameter_t, public QosPolicy
 {
 public:
-    TypeIdentifier m_type_identifier;
+    TypeIdentifier* m_type_identifier;
 
-    RTPS_DllAPI TypeIdV1() : Parameter_t(PID_TYPE_IDV1, 0), QosPolicy(false) {};
-    virtual RTPS_DllAPI ~TypeIdV1() {};
+    RTPS_DllAPI TypeIdV1() : Parameter_t(PID_TYPE_IDV1, 0), QosPolicy(false) { m_type_identifier = new TypeIdentifier(); };
+    virtual RTPS_DllAPI ~TypeIdV1() {   delete m_type_identifier;    };
     /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
@@ -730,10 +728,10 @@ public:
 class TypeObjectV1 : private Parameter_t, public QosPolicy
 {
 public:
-    TypeObject m_type_object;
+    TypeObject* m_type_object;
 
-    RTPS_DllAPI TypeObjectV1() : Parameter_t(PID_TYPE_OBJECTV1, 0), QosPolicy(false) {};
-    virtual RTPS_DllAPI ~TypeObjectV1() {};
+    RTPS_DllAPI TypeObjectV1() : Parameter_t(PID_TYPE_OBJECTV1, 0), QosPolicy(false) { m_type_object = new TypeObject(); };
+    virtual RTPS_DllAPI ~TypeObjectV1() {delete m_type_object;    };
     /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.

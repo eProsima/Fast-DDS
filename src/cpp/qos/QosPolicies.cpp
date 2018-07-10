@@ -254,7 +254,7 @@ bool TypeConsistencyEnforcementQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 
 bool TypeIdV1::addToCDRMessage(CDRMessage_t* msg)
 {
-    size_t size = TypeIdentifier::getCdrSerializedSize(m_type_identifier) + 4 /* + 4*/;
+    size_t size = TypeIdentifier::getCdrSerializedSize(*m_type_identifier) + 4 /* + 4*/;
     SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
@@ -264,12 +264,12 @@ bool TypeIdV1::addToCDRMessage(CDRMessage_t* msg)
 
     ser.serialize_encapsulation();
     //ser << size;
-    m_type_identifier.serialize(ser);
+    m_type_identifier->serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
 
 
     bool valid = CDRMessage::addUInt16(msg, this->Pid); // 2
-    this->length = payload.length;
+    this->length = static_cast<uint16_t>(payload.length);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
 
     return valid & CDRMessage::addData(msg, payload.data, payload.length);
@@ -293,7 +293,7 @@ bool TypeIdV1::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 
     try
     {
-        m_type_identifier.deserialize(deser);
+        m_type_identifier->deserialize(deser);
     }
     catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
@@ -305,7 +305,7 @@ bool TypeIdV1::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 
 bool TypeObjectV1::addToCDRMessage(CDRMessage_t* msg)
 {
-    size_t size = TypeObject::getCdrSerializedSize(m_type_object) + 4 /* + 4*/;
+    size_t size = TypeObject::getCdrSerializedSize(*m_type_object) + 4 /* + 4*/;
     SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
@@ -315,12 +315,12 @@ bool TypeObjectV1::addToCDRMessage(CDRMessage_t* msg)
 
     ser.serialize_encapsulation();
     //ser << size;
-    m_type_object.serialize(ser);
+    m_type_object->serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
 
 
     bool valid = CDRMessage::addUInt16(msg, this->Pid); // 2
-    this->length = payload.length;
+    this->length = static_cast<uint16_t>(payload.length);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
 
     return valid & CDRMessage::addData(msg, payload.data, payload.length);
@@ -345,7 +345,7 @@ bool TypeObjectV1::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 
     try
     {
-        m_type_object.deserialize(deser);
+        m_type_object->deserialize(deser);
     }
     catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
