@@ -96,7 +96,7 @@ public:
     RTPS_DllAPI ResponseCode GetEnumValue(std::string& value, MemberId id) const;
     RTPS_DllAPI ResponseCode SetEnumValue(MemberId id, const std::string& value);
 
-    RTPS_DllAPI ResponseCode GetComplexValue(DynamicData* value, MemberId id) const;
+    RTPS_DllAPI ResponseCode GetComplexValue(DynamicData** value, MemberId id) const;
     RTPS_DllAPI ResponseCode SetComplexValue(MemberId id, DynamicData* value);
 
     RTPS_DllAPI ResponseCode GetUnionLabel(uint64_t& value) const;
