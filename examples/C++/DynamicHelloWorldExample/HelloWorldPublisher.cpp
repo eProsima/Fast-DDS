@@ -18,11 +18,13 @@
  */
 
 #include "HelloWorldPublisher.h"
+#include "HelloWorldTypeObject.h"
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -55,16 +57,21 @@ bool HelloWorldPublisher::init()
 
     Domain::registerType(mp_participant,&m_type);
 
+    HelloWorldTypeFactory factory;
+    factory.registerTypes();
+
     //CREATE THE PUBLISHER
     PublisherAttributes Wparam;
     Wparam.topic.topicKind = NO_KEY;
     Wparam.topic.topicDataType = "HelloWorld";
     Wparam.topic.topicName = "DynamicHelloWorldTopic";
-    //Wparam.topic.topicDiscoveryKind = MINIMAL;
+    Wparam.topic.topicDiscoveryKind = MINIMAL;
     Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Wparam.topic.historyQos.depth = 30;
     Wparam.topic.resourceLimitsQos.max_samples = 50;
     Wparam.topic.resourceLimitsQos.allocated_samples = 20;
+    Wparam.topic.type_id.m_type_identifier = *TypeObjectFactory::GetInstance()->GetTypeIdentifier("HelloWorld");
+    Wparam.topic.type.m_type_object = *TypeObjectFactory::GetInstance()->GetTypeObject("HelloWorld");
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;

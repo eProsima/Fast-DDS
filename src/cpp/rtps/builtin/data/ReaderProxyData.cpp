@@ -431,20 +431,16 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 }
                 case PID_TYPE_IDV1: //TODO: //GASCO:
                     {
-                        if (m_topicDiscoveryKind != NO_CHECK)
-                        {
-                            TypeIdV1 * p = (TypeIdV1*)(*it);
-                            m_type_id = *p;
-                        }
+                        TypeIdV1 * p = (TypeIdV1*)(*it);
+                        m_type_id = *p;
+                        m_topicDiscoveryKind = MINIMAL;
                         break;
                     }
                 case PID_TYPE_OBJECTV1: //TODO: //GASCO:
                     {
-                        if (m_topicDiscoveryKind != NO_CHECK)
-                        {
-                            TypeObjectV1 * p = (TypeObjectV1*)(*it);
-                            m_type = *p;
-                        }
+                        TypeObjectV1 * p = (TypeObjectV1*)(*it);
+                        m_type = *p;
+                        m_topicDiscoveryKind = MINIMAL;
                         break;
                     }
                 default:
@@ -504,6 +500,12 @@ void ReaderProxyData::copy(ReaderProxyData* rdata)
     m_expectsInlineQos = rdata->m_expectsInlineQos;
     m_isAlive = rdata->m_isAlive;
     m_topicKind = rdata->m_topicKind;
+    m_topicDiscoveryKind = rdata->m_topicDiscoveryKind;
+    if (m_topicDiscoveryKind != NO_CHECK)
+    {
+        m_type_id = rdata->m_type_id;
+        m_type = rdata->m_type;
+    }
 }
 
 RemoteReaderAttributes ReaderProxyData::toRemoteReaderAttributes() const
