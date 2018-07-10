@@ -198,6 +198,10 @@ bool DynamicTypeBuilder::CheckUnionConfiguration(const MemberDescriptor* descrip
 {
     if (mDescriptor->GetKind() == TK_UNION)
     {
+        if (descriptor->GetUnionLabels().size() == 0)
+        {
+            return false;
+        }
         for (auto it = mMemberById.begin(); it != mMemberById.end(); ++it)
         {
             // Check that there isn't any member as default label and that there isn't any member with the same case.

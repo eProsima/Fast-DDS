@@ -258,7 +258,7 @@ bool DynamicData::Equals(const DynamicData* other) const
     return false;
 }
 
-MemberId DynamicData::GetMemberIdByName(const std::string& name)
+MemberId DynamicData::GetMemberIdByName(const std::string& name) const
 {
     for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
     {
@@ -270,7 +270,7 @@ MemberId DynamicData::GetMemberIdByName(const std::string& name)
     return MEMBER_ID_INVALID;
 }
 
-MemberId DynamicData::GetMemberIdAtIndex(uint32_t index)
+MemberId DynamicData::GetMemberIdAtIndex(uint32_t index) const
 {
     for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
     {
@@ -2962,6 +2962,26 @@ ResponseCode DynamicData::SetEnumValue(MemberId id, const std::string& value)
 #endif
 }
 
+ResponseCode DynamicData::SetBitmaskValue(bool value, const std::string& name)
+{
+    MemberId id = GetMemberIdByName(name);
+    if (id != MEMBER_ID_INVALID)
+    {
+        return SetBoolValue(id, value);
+    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
+}
+
+ResponseCode DynamicData::GetBitmaskValue(const std::string& name, bool& value) const
+{
+    MemberId id = GetMemberIdByName(name);
+    if (id != MEMBER_ID_INVALID)
+    {
+        return GetBoolValue(value, id);
+    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
+}
+
 void DynamicData::SortMemberIds(MemberId startId)
 {
     MemberId curID = startId + 1;
@@ -3592,7 +3612,15 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
             }
             else
             {
-                DynamicData* pData = DynamicDataFactory::GetInstance()->CreateData(mType->GetElementType());
+                DynamicData* pData = nullptr;
+                if (bKeyElement)
+                {
+                    pData = DynamicDataFactory::GetInstance()->CreateData(mType->GetKeyElementType());
+                }
+                else
+                {
+                    pData = DynamicDataFactory::GetInstance()->CreateData(mType->GetElementType());
+                }
                 pData->deserialize(cdr);
                 pData->mIsKeyElement = bKeyElement;
                 mComplexValues.insert(std::make_pair(memberId, pData));
@@ -3607,7 +3635,15 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     }
             else
             {
-                DynamicData* pData = DynamicDataFactory::GetInstance()->CreateData(mType->GetElementType());
+                DynamicData* pData = nullptr;
+                if (bKeyElement)
+                {
+                    pData = DynamicDataFactory::GetInstance()->CreateData(mType->GetKeyElementType());
+                }
+                else
+                {
+                    pData = DynamicDataFactory::GetInstance()->CreateData(mType->GetElementType());
+                }
                 pData->deserialize(cdr);
                 pData->mIsKeyElement = bKeyElement;
                 mValues.insert(std::make_pair(memberId, pData));

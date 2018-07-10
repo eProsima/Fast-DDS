@@ -45,8 +45,8 @@ public:
     RTPS_DllAPI uint32_t GetItemCount() const;
     RTPS_DllAPI std::string GetName();
 
-    RTPS_DllAPI MemberId GetMemberIdByName(const std::string& name);
-    RTPS_DllAPI MemberId GetMemberIdAtIndex(uint32_t index);
+    RTPS_DllAPI MemberId GetMemberIdByName(const std::string& name) const;
+    RTPS_DllAPI MemberId GetMemberIdAtIndex(uint32_t index) const;
 
     RTPS_DllAPI DynamicData* LoanValue(MemberId id);
     RTPS_DllAPI ResponseCode ReturnLoanedValue(const DynamicData* value);
@@ -95,6 +95,8 @@ public:
 
     RTPS_DllAPI ResponseCode GetEnumValue(std::string& value, MemberId id) const;
     RTPS_DllAPI ResponseCode SetEnumValue(MemberId id, const std::string& value);
+    RTPS_DllAPI ResponseCode GetBitmaskValue(const std::string& name, bool& value) const;
+    RTPS_DllAPI ResponseCode SetBitmaskValue(bool value, const std::string& name);
 
     RTPS_DllAPI ResponseCode GetComplexValue(DynamicData** value, MemberId id) const;
     RTPS_DllAPI ResponseCode SetComplexValue(MemberId id, DynamicData* value);

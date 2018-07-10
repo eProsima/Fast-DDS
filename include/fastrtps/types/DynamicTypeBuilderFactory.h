@@ -57,8 +57,8 @@ public:
     RTPS_DllAPI DynamicTypeBuilder* CreateChar16Type();
     RTPS_DllAPI DynamicTypeBuilder* CreateBoolType();
     RTPS_DllAPI DynamicTypeBuilder* CreateByteType();
-    RTPS_DllAPI DynamicTypeBuilder* CreateStringType(uint32_t bound);
-	RTPS_DllAPI DynamicTypeBuilder* CreateWstringType(uint32_t bound);
+    RTPS_DllAPI DynamicTypeBuilder* CreateStringType(uint32_t bound = LENGTH_UNLIMITED);
+	RTPS_DllAPI DynamicTypeBuilder* CreateWstringType(uint32_t bound = LENGTH_UNLIMITED);
 	RTPS_DllAPI DynamicTypeBuilder* CreateSequenceType(const DynamicType* element_type, uint32_t bound);
 	RTPS_DllAPI DynamicTypeBuilder* CreateArrayType(const DynamicType* element_type, std::vector<uint32_t> bounds);
 	RTPS_DllAPI DynamicTypeBuilder* CreateMapType(DynamicType* key_element_type, DynamicType* element_type, uint32_t bound);
