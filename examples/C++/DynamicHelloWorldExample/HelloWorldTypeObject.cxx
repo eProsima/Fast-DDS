@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*!
+/*! 
  * @file HelloWorldTypeObject.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -112,6 +112,8 @@ HelloWorldTypeFactory::HelloWorldTypeFactory()
     //auxIdent = new TypeIdentifier;
     //auxIdent->_d(TI_STRING16_LARGE);
     //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("std::wstring", auxIdent));
+
+    registerTypes();
 }
 
 HelloWorldTypeFactory::~HelloWorldTypeFactory()
@@ -726,8 +728,8 @@ TypeObject* HelloWorldTypeFactory::getHelloWorldObject()
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
     // TODO De momento lo haremos sólo con miembros... ¿también con flags?
     // Como no soportamos de momento tipos recursivos, esto debería bastar.
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        type_object->minimal().struct_type().member_seq().size() * sizeof(MinimalStructMember) + 4));
+    SerializedPayload_t payload(
+        type_object->minimal().struct_type().member_seq().size() * sizeof(MinimalStructMember) + 4);
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
 
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
