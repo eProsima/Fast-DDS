@@ -70,8 +70,8 @@ bool HelloWorldPublisher::init()
     Wparam.topic.historyQos.depth = 30;
     Wparam.topic.resourceLimitsQos.max_samples = 50;
     Wparam.topic.resourceLimitsQos.allocated_samples = 20;
-    Wparam.topic.type_id.m_type_identifier = *TypeObjectFactory::GetInstance()->GetTypeIdentifier("HelloWorld");
-    Wparam.topic.type.m_type_object = *TypeObjectFactory::GetInstance()->GetTypeObject("HelloWorld");
+    *Wparam.topic.type_id.m_type_identifier = *TypeObjectFactory::GetInstance()->GetTypeIdentifier("HelloWorld");
+    *Wparam.topic.type.m_type_object = *TypeObjectFactory::GetInstance()->GetTypeObject("HelloWorld");
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
