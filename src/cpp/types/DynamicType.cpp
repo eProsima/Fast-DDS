@@ -18,6 +18,8 @@
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/log/Log.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicData.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -369,6 +371,78 @@ void DynamicType::SetName(const std::string& name)
     }
     mName = name;
 }
+
+
+void* DynamicType::createData()
+{
+    return DynamicDataFactory::GetInstance()->CreateData(this);
+}
+
+void DynamicType::deleteData(void* data)
+{
+    DynamicDataFactory::GetInstance()->DeleteData((DynamicData*)data);
+}
+
+bool DynamicType::deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data)
+{
+    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
+    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
+                                          // Deserialize encapsulation.
+    deser.read_encapsulation();
+    payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+    try
+    {
+        ((DynamicData*)data)->deserialize(deser); //Deserialize the object:
+    }
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool DynamicType::getKey(void* /*data*/, eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/)
+{
+    return false;
+}
+
+std::function<uint32_t()> DynamicType::getSerializedSizeProvider(void* data)
+{
+    return [data]() -> uint32_t {
+        return 0; // TODO: Get Data size.
+                  // (uint32_t)type::getCdrSerializedSize(*static_cast<sample*>(data)) + 4 /*encapsulation*/;
+    };
+}
+
+bool DynamicType::serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload)
+{
+    // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
+
+    // Object that serializes the data.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+    // Serialize encapsulation
+    ser.serialize_encapsulation();
+
+    try
+    {
+        ((DynamicData*)data)->serialize(ser); // Serialize the object:
+    }
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    {
+        return false;
+    }
+
+    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    return true;
+
+    return false;
+}
+
 
 } // namespace types
 } // namespace fastrtps

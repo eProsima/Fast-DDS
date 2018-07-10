@@ -16,6 +16,7 @@
 #define TYPES_DYNAMIC_TYPE_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/TopicDataType.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -25,7 +26,7 @@ class AnnotationDescriptor;
 class TypeDescriptor;
 class DynamicTypeMember;
 
-class DynamicType
+class DynamicType : public eprosima::fastrtps::TopicDataType
 {
 public:
     DynamicType();
@@ -56,6 +57,12 @@ public:
     bool IsComplexKind() const;
     bool IsDiscriminatorType() const;
 
+    void* createData();
+    void deleteData(void * data);
+    bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
+    bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle);
+    std::function<uint32_t()> getSerializedSizeProvider(void* data);
+    bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
 
 protected:
 
