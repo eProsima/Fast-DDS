@@ -59,8 +59,8 @@ bool HelloWorldSubscriber::init()
     Rparam.topic.topicDataType = "HelloWorld";
     Rparam.topic.topicName = "DynamicHelloWorldTopic";
     Rparam.topic.topicDiscoveryKind = MINIMAL;
-    Rparam.topic.type_id.m_type_identifier = *TypeObjectFactory::GetInstance()->GetTypeIdentifier("HelloWorld");
-    Rparam.topic.type.m_type_object = *TypeObjectFactory::GetInstance()->GetTypeObject("HelloWorld");
+    *Rparam.topic.type_id.m_type_identifier = *TypeObjectFactory::GetInstance()->GetTypeIdentifier("HelloWorld");
+    *Rparam.topic.type.m_type_object = *TypeObjectFactory::GetInstance()->GetTypeObject("HelloWorld");
     //Rparam.topic.topicDiscoveryKind = NO_CHECK;
     Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Rparam.topic.historyQos.depth = 30;
