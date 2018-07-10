@@ -425,7 +425,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateStringType(uint32_t bound)
 
 DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateChildStructType(DynamicType* parent_type)
 {
-    if (parent_type->GetKind() == TK_STRUCTURE)
+    if (parent_type != nullptr && parent_type->GetKind() == TK_STRUCTURE)
     {
         TypeDescriptor pDescriptor;
         pDescriptor.mKind = TK_STRUCTURE;
@@ -454,13 +454,26 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateStructType()
     return pNewTypeBuilder;
 }
 
-DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateType(const TypeDescriptor* descriptor)
+DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateCustomType(const TypeDescriptor* descriptor)
 {
     if (descriptor != nullptr)
     {
-        DynamicTypeBuilder* pNewType = new DynamicTypeBuilder(descriptor);
-        AddTypeToList(pNewType);
-        return pNewType;
+        TypeKind kind = descriptor->GetKind();
+        if (kind == TK_BOOLEAN || kind == TK_BYTE || kind == TK_INT16 || kind == TK_INT32 ||
+            kind == TK_INT64 || kind == TK_UINT16 || kind == TK_UINT32 || kind == TK_UINT64 ||
+            kind == TK_FLOAT32 || kind == TK_FLOAT64 || kind == TK_FLOAT128 || kind == TK_CHAR8 ||
+            kind == TK_CHAR16 || kind == TK_STRING8 || kind == TK_STRING16 || kind == TK_ALIAS ||
+            kind == TK_ENUM || kind == TK_BITMASK || kind == TK_STRUCTURE || kind == TK_UNION ||
+            kind == TK_BITSET || kind == TK_SEQUENCE || kind == TK_ARRAY || kind == TK_MAP)
+        {
+            DynamicTypeBuilder* pNewType = new DynamicTypeBuilder(descriptor);
+            AddTypeToList(pNewType);
+            return pNewType;
+        }
+        else
+        {
+            logError(DYN_TYPES, "Error creating type, unsupported type kind.");
+        }
     }
     else
     {

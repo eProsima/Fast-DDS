@@ -127,7 +127,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
     DynamicTypeBuilder* created_type(nullptr);
 
     // Try to create with invalid values
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->CreateType(nullptr));
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->CreateCustomType(nullptr));
 
     // Create basic types
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
@@ -389,7 +389,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
     TypeDescriptor pInt32Descriptor;
     pInt32Descriptor.SetKind(TK_INT32);
     pInt32Descriptor.SetName("TEST_INT32");
-    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateType(&pInt32Descriptor);
+    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateCustomType(&pInt32Descriptor);
     ASSERT_TRUE(created_type != nullptr);
     type = created_type->Build();
     ASSERT_TRUE(type != nullptr);
@@ -1500,6 +1500,9 @@ TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
 
     ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
 
+    // Try to set an invalid value.
+    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "BAD") == ResponseCode::RETCODE_OK);
+
     std::string test1 = "SECOND";
     ASSERT_FALSE(data->SetEnumValue(1, test1) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(data->SetEnumValue(MEMBER_ID_INVALID, test1) == ResponseCode::RETCODE_OK);
@@ -1819,6 +1822,10 @@ TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
     ASSERT_TRUE(alias_type != nullptr);
     ASSERT_TRUE(alias_type->GetName() == "ALIAS");
 
+    // Try to create an alias without base type.
+    alias2_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateAliasType(nullptr, "ALIAS2");
+    ASSERT_FALSE(alias2_type_builder != nullptr);
+
     alias2_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateAliasType(alias_type, "ALIAS2");
     ASSERT_TRUE(alias2_type_builder != nullptr);
     auto alias2_type = alias2_type_builder->Build();
@@ -2087,6 +2094,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
     ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 10) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
 
+    // Try to write on an empty position
+    ASSERT_FALSE(data->SetInt32Value(1, 234) == ResponseCode::RETCODE_OK);
+
     MemberId newId;
     ASSERT_TRUE(data->InsertSequenceData(newId) == ResponseCode::RETCODE_OK);
     MemberId newId2;
@@ -2318,7 +2328,6 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
     DynamicTypeBuilder* base_type_builder(nullptr);
     DynamicTypeBuilder* array_type_builder(nullptr);
     std::vector<uint32_t> sequence_lengths = { 2, 2, 2 };
-    // CREATE SEQUENCE OF BASIC TYPES
 
     // Then
     base_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
@@ -2384,7 +2393,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
     ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
-    //ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
@@ -2463,6 +2472,9 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
 
     ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 10) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+
+    // Try to write on an empty position
+    ASSERT_FALSE(data->SetInt32Value(0, 234) == ResponseCode::RETCODE_OK);
 
     MemberId keyId;
     MemberId valueId;
@@ -2823,8 +2835,13 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
     auto struct_type = struct_type_builder->Build();
     ASSERT_TRUE(struct_type != nullptr);
 
+    // Try to create the child struct without parent
+    child_struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateChildStructType(nullptr);
+    ASSERT_FALSE(child_struct_type_builder != nullptr);
+
     // Create the child struct.
     child_struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateChildStructType(struct_type);
+    ASSERT_TRUE(child_struct_type_builder != nullptr);
 
     // Add a new member to the child struct.
     types::MemberDescriptor descriptor3;
