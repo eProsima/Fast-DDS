@@ -39,7 +39,7 @@
 #include <fastrtps/utils/StringMatching.h>
 #include <fastrtps/log/Log.h>
 
-#include <fastrtps/types/TypeObject.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 
 #include <mutex>
 
@@ -79,8 +79,25 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, TopicAttributes& att, Read
 
     if (att.getTopicDiscoveryKind() != NO_CHECK)
     {
-        rpd.type_id(att.type_id);
-        rpd.type(att.type);
+        if (att.type_id.m_type_identifier->_d() == 0) // Not set
+        {
+            *rpd.type_id().m_type_identifier = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(rpd.typeName());
+        }
+        else
+        {
+            rpd.type_id(att.type_id);
+        }
+
+        if (att.type.m_type_object->_d() == 0
+            && (att.type_id.m_type_identifier->_d() == EK_MINIMAL
+                || att.type_id.m_type_identifier->_d() == EK_COMPLETE)) // Not set
+        {
+            *rpd.type().m_type_object = *TypeObjectFactory::GetInstance()->GetTypeObject(rpd.typeName());
+        }
+        else
+        {
+            rpd.type(att.type);
+        }
     }
 
     //ADD IT TO THE LIST OF READERPROXYDATA
@@ -119,8 +136,25 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer,TopicAttributes& att, Write
 
     if (att.getTopicDiscoveryKind() != NO_CHECK)
     {
-        wpd.type_id(att.type_id);
-        wpd.type(att.type);
+        if (att.type_id.m_type_identifier->_d() == 0) // Not set
+        {
+            *wpd.type_id().m_type_identifier = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(wpd.typeName());
+        }
+        else
+        {
+            wpd.type_id(att.type_id);
+        }
+
+        if (att.type.m_type_object->_d() == 0
+            && (att.type_id.m_type_identifier->_d() == EK_MINIMAL
+                || att.type_id.m_type_identifier->_d() == EK_COMPLETE)) // Not set
+        {
+            *wpd.type().m_type_object = *TypeObjectFactory::GetInstance()->GetTypeObject(wpd.typeName());
+        }
+        else
+        {
+            wpd.type(att.type);
+        }
     }
 
     //ADD IT TO THE LIST OF READERPROXYDATA

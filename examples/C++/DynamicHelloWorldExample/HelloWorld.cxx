@@ -25,6 +25,7 @@ namespace { char dummy; }
 #endif
 
 #include "HelloWorld.h"
+#include "HelloWorldTypeObject.h"
 
 #include <fastcdr/Cdr.h>
 
@@ -37,6 +38,9 @@ HelloWorld::HelloWorld()
 {
     m_index = 0;
 
+
+    // Just to register all known types
+    HelloWorldTypeFactory factory;
 }
 
 HelloWorld::~HelloWorld()
@@ -59,7 +63,7 @@ HelloWorld& HelloWorld::operator=(const HelloWorld &x)
 {
     m_index = x.m_index;
     m_message = x.m_message;
-    
+
     return *this;
 }
 
@@ -67,14 +71,14 @@ HelloWorld& HelloWorld::operator=(HelloWorld &&x)
 {
     m_index = x.m_index;
     m_message = std::move(x.m_message);
-    
+
     return *this;
 }
 
 size_t HelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-            
+
     /* BEGIN uint32_t */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
@@ -89,7 +93,7 @@ size_t HelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
 size_t HelloWorld::getCdrSerializedSize(const HelloWorld& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-            
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
