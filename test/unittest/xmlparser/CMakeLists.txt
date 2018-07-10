@@ -49,7 +49,24 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-            )
+
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/AnnotationDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicData.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicDataFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicType.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicTypeBuilder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicTypeBuilderFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicTypeMember.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/MemberDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/AnnotationParameterValue.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeIdentifier.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeIdentifierTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObject.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectHashId.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp            
+            )  
 
         # External sources
         if(TINYXML2_SOURCE_DIR)
@@ -70,6 +87,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(XMLProfileParserTests ${PRIVACY} fastcdr_static)
+        else()
+            target_link_libraries(XMLProfileParserTests ${PRIVACY} fastcdr)
+        endif()
 
         target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES})
         if(MSVC OR MSVC_IDE)
@@ -98,7 +121,24 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-        )
+
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/AnnotationDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicData.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicDataFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicType.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicTypeBuilder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicTypeBuilderFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicTypeMember.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/MemberDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/AnnotationParameterValue.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeIdentifier.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeIdentifierTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObject.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectHashId.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp            
+        )            
 
         # External sources
         if(TINYXML2_SOURCE_DIR)
@@ -121,14 +161,20 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_BINARY_DIR}/include
             )
-        target_link_libraries(XMLParserTests ${GTEST_LIBRARIES} )
+            
         if(MSVC OR MSVC_IDE)
             target_link_libraries(XMLParserTests ${PRIVACY} iphlpapi Shlwapi ws2_32)
         endif()
+
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(XMLParserTests ${PRIVACY} fastcdr_static)
+        else()
+            target_link_libraries(XMLParserTests ${PRIVACY} fastcdr)
+        endif()
+
+        target_link_libraries(XMLParserTests ${GTEST_LIBRARIES} )
         if(TINYXML2_LIBRARY)
-            target_link_libraries(XMLParserTests ${PRIVACY}
-                ${TINYXML2_LIBRARY}
-                )
+            target_link_libraries(XMLParserTests ${PRIVACY} ${TINYXML2_LIBRARY} )
         endif()
         add_gtest(XMLParserTests SOURCES XMLParserTests.cpp)
     endif()

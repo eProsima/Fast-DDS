@@ -891,7 +891,8 @@ void DynamicTypeBuilderFactory::BuildEnumTypeObject(const TypeDescriptor* descri
     TypeIdentifier* identifier = new TypeIdentifier();
     identifier->_d(EK_MINIMAL);
 
-    SerializedPayload_t payload(MinimalEnumeratedType::getCdrSerializedSize(object.minimal().enumerated_type()) + 4);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalEnumeratedType::getCdrSerializedSize(object.minimal().enumerated_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -950,8 +951,8 @@ void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* desc
     object.minimal().struct_type().header().base_type()._d(EK_MINIMAL);
 
 
-    SerializedPayload_t payload(
-        object.minimal().struct_type().member_seq().size() * sizeof(MinimalStructMember) + 4);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        object.minimal().struct_type().member_seq().size() * sizeof(MinimalStructMember) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
 
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
@@ -1033,7 +1034,8 @@ void DynamicTypeBuilderFactory::BuildUnionTypeObject(const TypeDescriptor* descr
     TypeIdentifier* identifier = new TypeIdentifier();
     identifier->_d(EK_MINIMAL);
 
-    SerializedPayload_t payload(MinimalUnionType::getCdrSerializedSize(object.minimal().union_type()) + 4);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalUnionType::getCdrSerializedSize(object.minimal().union_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(

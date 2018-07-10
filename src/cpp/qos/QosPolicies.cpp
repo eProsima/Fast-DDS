@@ -255,7 +255,7 @@ bool TypeConsistencyEnforcementQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 bool TypeIdV1::addToCDRMessage(CDRMessage_t* msg)
 {
     size_t size = TypeIdentifier::getCdrSerializedSize(m_type_identifier)/* + 4*/ /* + 4*/;
-    SerializedPayload_t payload(size);
+    SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
@@ -298,7 +298,7 @@ bool TypeIdV1::readFromCDRMessage(CDRMessage_t* msg)
 bool TypeObjectV1::addToCDRMessage(CDRMessage_t* msg)
 {
     size_t size = TypeObject::getCdrSerializedSize(m_type_object)/* + 4*/ /* + 4*/;
-    SerializedPayload_t payload(size);
+    SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
