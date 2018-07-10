@@ -968,10 +968,7 @@ bool EDP::checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyDat
         return true;
     }
 
-    TypeIdentifier wti = wdata->type_id().m_type_identifier;
-    TypeIdentifier rti = rdata->type_id().m_type_identifier;
-
-    return checkTypeIdentifier(&wti, &rti);
+    return checkTypeIdentifier(wdata->type_id().m_type_identifier, rdata->type_id().m_type_identifier);
 }
 
 }

@@ -3372,7 +3372,7 @@ ResponseCode DynamicData::SetComplexValue(MemberId id, DynamicData* value)
     return ResponseCode::RETCODE_OK;
 }
 
-RTPS_DllAPI ResponseCode DynamicData::GetUnionLabel(uint64_t& value) const
+ResponseCode DynamicData::GetUnionLabel(uint64_t& value) const
 {
     if (mType->GetKind() == TK_UNION)
     {

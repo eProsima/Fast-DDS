@@ -2786,7 +2786,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesTests, DynamicType_structure_heritage_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
 {
     // Given
     DynamicTypeBuilderFactory::GetInstance();
