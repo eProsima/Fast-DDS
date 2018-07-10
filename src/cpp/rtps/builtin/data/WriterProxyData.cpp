@@ -431,20 +431,16 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                     }
                 case PID_TYPE_IDV1: //TODO: //GASCO:
                     {
-                        if (m_topicDiscoveryKind != NO_CHECK)
-                        {
-                            TypeIdV1 * p = (TypeIdV1*)(*it);
-                            m_type_id = *p;
-                        }
+                        TypeIdV1 * p = (TypeIdV1*)(*it);
+                        m_type_id = *p;
+                        m_topicDiscoveryKind = MINIMAL;
                         break;
                     }
                 case PID_TYPE_OBJECTV1: //TODO: //GASCO:
                     {
-                        if (m_topicDiscoveryKind != NO_CHECK)
-                        {
-                            TypeObjectV1 * p = (TypeObjectV1*)(*it);
-                            m_type = *p;
-                        }
+                        TypeObjectV1 * p = (TypeObjectV1*)(*it);
+                        m_type = *p;
+                        m_topicDiscoveryKind = MINIMAL;
                         break;
                     }
                 default:
@@ -495,6 +491,12 @@ void WriterProxyData::copy(WriterProxyData* wdata)
     m_isAlive = wdata->m_isAlive;
     m_topicKind = wdata->m_topicKind;
     persistence_guid_ = wdata->persistence_guid_;
+    m_topicDiscoveryKind = wdata->m_topicDiscoveryKind;
+    if (m_topicDiscoveryKind != NO_CHECK)
+    {
+        m_type_id = wdata->m_type_id;
+        m_type = wdata->m_type;
+    }
 }
 
 

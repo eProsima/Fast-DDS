@@ -18,11 +18,13 @@
  */
 
 #include "HelloWorldSubscriber.h"
+#include "HelloWorldTypeObject.h"
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -49,12 +51,16 @@ bool HelloWorldSubscriber::init()
     //REGISTER THE TYPE
 
     Domain::registerType(mp_participant,&m_type);
+    HelloWorldTypeFactory factory;
+    factory.registerTypes();
     //CREATE THE SUBSCRIBER
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = NO_KEY;
     Rparam.topic.topicDataType = "HelloWorld";
     Rparam.topic.topicName = "DynamicHelloWorldTopic";
     Rparam.topic.topicDiscoveryKind = MINIMAL;
+    Rparam.topic.type_id.m_type_identifier = *TypeObjectFactory::GetInstance()->GetTypeIdentifier("HelloWorld");
+    Rparam.topic.type.m_type_object = *TypeObjectFactory::GetInstance()->GetTypeObject("HelloWorld");
     //Rparam.topic.topicDiscoveryKind = NO_CHECK;
     Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Rparam.topic.historyQos.depth = 30;
