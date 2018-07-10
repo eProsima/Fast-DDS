@@ -102,6 +102,9 @@ public:
     RTPS_DllAPI ResponseCode GetUnionLabel(uint64_t& value) const;
     RTPS_DllAPI ResponseCode SetUnionId(MemberId id);
 
+    // Serializes and deserializes the Dynamic Data.
+    bool deserialize(eprosima::fastcdr::Cdr &cdr);
+    void serialize(eprosima::fastcdr::Cdr &cdr) const;
 
 protected:
 
@@ -149,7 +152,7 @@ protected:
     std::vector<MemberId> mLoanedValues;
     bool mIsKeyElement;
     uint64_t mUnionLabel;
-    uint64_t mUnionId;
+    MemberId mUnionId;
 
     friend class DynamicDataFactory;
 };

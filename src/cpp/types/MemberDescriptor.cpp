@@ -192,24 +192,101 @@ bool MemberDescriptor::IsDefaultValueConsistent(const std::string& sDefaultValue
             {
             default:
                 return true;
-            case TK_INT32: {   int32_t value(0);   value = stoi(sDefaultValue);    }   break;
-            case TK_UINT32: {   uint32_t value(0);  value = stoul(sDefaultValue);   }   break;
-            case TK_INT16: {   int16_t value(0);   value = static_cast<int16_t>(stoi(sDefaultValue));  }   break;
-            case TK_UINT16: {   uint16_t value(0);  value = static_cast<uint16_t>(stoul(sDefaultValue));    }   break;
-            case TK_INT64: {   int64_t value(0);   value = stoll(sDefaultValue);   }   break;
-            case TK_UINT64: {   uint64_t value(0);  value = stoul(sDefaultValue);   }   break;
-            case TK_FLOAT32: {   float value(0.0f);  value = stof(sDefaultValue);    }   break;
-            case TK_FLOAT64: {   double value(0.0f); value = stod(sDefaultValue);    }   break;
-            case TK_FLOAT128: {   long double value(0.0f);    value = stold(sDefaultValue);   }   break;
+            case TK_INT32:
+            {
+                int32_t value(0);
+                value = stoi(sDefaultValue);
+                (void)value;
+            }
+            break;
+            case TK_UINT32:
+            {
+                uint32_t value(0);
+                value = stoul(sDefaultValue);
+                (void)value;
+            }
+            break;
+            case TK_INT16:
+            {
+                int16_t value(0);
+                value = static_cast<int16_t>(stoi(sDefaultValue));
+                (void)value;
+            }
+            break;
+            case TK_UINT16:
+            {
+                uint16_t value(0);
+                value = static_cast<uint16_t>(stoul(sDefaultValue));
+                (void)value;
+            }
+            break;
+            case TK_INT64:
+            {
+                int64_t value(0);
+                value = stoll(sDefaultValue);
+                (void)value;
+            }
+            break;
+            case TK_UINT64:
+            {
+                uint64_t value(0);
+                value = stoul(sDefaultValue);
+                (void)value;
+            }
+            break;
+            case TK_FLOAT32:
+            {
+                float value(0.0f);
+                value = stof(sDefaultValue);
+                (void)value;
+            }
+            break;
+            case TK_FLOAT64:
+            {
+                double value(0.0f);
+                value = stod(sDefaultValue);
+                (void)value;
+            }
+            break;
+            case TK_FLOAT128:
+            {
+                long double value(0.0f);
+                value = stold(sDefaultValue);
+                (void)value;
+            }
+            break;
             case TK_CHAR8: {   return sDefaultValue.length() >= 1; }
-            case TK_CHAR16: {   std::wstring temp = std::wstring(sDefaultValue.begin(), sDefaultValue.end());   }   break;
-            case TK_BOOLEAN: {   int value(0);   value = stoi(sDefaultValue);    }   break;
+            case TK_CHAR16:
+            {
+                std::wstring temp = std::wstring(sDefaultValue.begin(), sDefaultValue.end());
+                (void)temp;
+            }
+            break;
+            case TK_BOOLEAN:
+            {
+                int value(0);
+                value = stoi(sDefaultValue);
+                (void)value;
+            }
+            break;
             case TK_BYTE: {   return sDefaultValue.length() >= 1; }   break;
             case TK_STRING16: {   return true;    }
             case TK_STRING8: {   return true;    }
-            case TK_ENUM: {   uint32_t value(0);  value = stoul(sDefaultValue);   }   break;
+            case TK_ENUM:
+            {
+                uint32_t value(0);
+                value = stoul(sDefaultValue);
+                (void)value;
+            }
+            break;
             case TK_BITSET:
-            case TK_BITMASK: {   int value(0);   value = stoi(sDefaultValue);    }   break;
+            case TK_BITMASK:
+            {
+                int value(0);
+                value = stoi(sDefaultValue);
+                (void)value;
+            }
+            break;
             case TK_ARRAY: {   return true;    }
             case TK_SEQUENCE: {   return true;    }
             case TK_MAP: {   return true;    }

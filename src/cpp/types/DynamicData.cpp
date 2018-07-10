@@ -20,6 +20,7 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/log/Log.h>
+#include <fastrtps/types/DynamicDataFactory.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -3372,6 +3373,484 @@ RTPS_DllAPI ResponseCode DynamicData::GetUnionLabel(uint64_t& value) const
         return ResponseCode::RETCODE_BAD_PARAMETER;
     }
 }
+
+
+bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
+{
+    switch (mType->GetKind())
+    {
+    default:
+        break;
+    case TK_INT32:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mInt32Value;
+#else
+        auto it = mValues.begin();
+        cdr >> *((int32_t*)it->second);
+#endif
+        break;
+    }
+    case TK_UINT32:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mUInt32Value;
+#else
+        auto it = mValues.begin();
+        cdr >> *((uint32_t*)it->second);
+#endif
+        break;
+    }
+    case TK_INT16:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mInt16Value;
+#else
+        auto it = mValues.begin();
+        cdr >> *((int16_t*)it->second);
+#endif
+        break;
+    }
+    case TK_UINT16:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mUInt16Value;
+#else
+        auto it = mValues.begin();
+        cdr >> *((uint16_t*)it->second);
+#endif
+        break;
+    }
+    case TK_INT64:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mInt64Value;
+#else
+        auto it = mValues.begin();
+        cdr >> *((int64_t*)it->second);
+#endif
+        break;
+    }
+    case TK_UINT64:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mUInt64Value;
+#else
+        auto it = mValues.begin();
+        cdr >> *((uint64_t*)it->second);
+#endif
+        break;
+    }
+    case TK_FLOAT32:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mFloat32Value;
+#else
+        auto it = mValues.begin();
+        cdr >> *((float*)it->second);
+#endif
+        break;
+    }
+    case TK_FLOAT64:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mFloat64Value;
+#else
+        auto it = mValues.begin();
+        cdr >> *((double*)it->second);
+#endif
+        break;
+    }
+    case TK_FLOAT128:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mFloat128Value;
+#else
+        auto it = mValues.begin();
+        cdr >> *((long double*)it->second);
+#endif
+        break;
+    }
+    case TK_CHAR8:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mChar8Value;
+#else
+        auto it = mValues.begin();
+        cdr >> *((char*)it->second);
+#endif
+        break;
+    }
+    case TK_CHAR16:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mChar16Value;
+#else
+        auto it = mValues.begin();
+        cdr >> *((wchar_t*)it->second);
+#endif
+        break;
+    }
+    case TK_BOOLEAN:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mBoolValue;
+#else
+        auto it = mValues.begin();
+        cdr >> *((bool*)it->second);
+#endif
+        break;
+    }
+    case TK_BYTE:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mByteValue;
+#else
+        auto it = mValues.begin();
+        cdr >> *((octet*)it->second);
+#endif
+        break;
+    }
+    case TK_STRING8:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mStringValue;
+#else
+        auto it = mValues.begin();
+        cdr >> *((std::string*)it->second);
+#endif
+        break;
+    }
+    case TK_STRING16:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mWStringValue;
+#else
+        auto it = mValues.begin();
+        cdr >> *((std::wstring*)it->second);
+#endif
+        break;
+    }
+    case TK_ENUM:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mUInt32Value;
+#else
+        auto it = mValues.begin();
+        cdr >> *((uint32_t*)it->second);
+#endif
+        break;
+    }
+    case TK_BITSET:
+    case TK_BITMASK:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr >> mUInt64Value;
+#else
+        auto it = mValues.begin();
+        cdr >> *((uint64_t*)it->second);
+#endif
+        break;
+    }
+    case TK_UNION:
+    {
+        cdr >> mUnionId;
+        SetUnionId(mUnionId);
+        if (mUnionId != MEMBER_ID_INVALID)
+        {
+#ifdef DYNAMIC_TYPES_CHECKING
+            auto it = mComplexValues.at(mUnionId);
+#else
+            DynamicData* it = (DynamicData*) mValues.at(mUnionId);
+#endif
+            it->deserialize(cdr);
+        }
+        break;
+    }
+    case TK_STRUCTURE:
+    case TK_SEQUENCE:
+    case TK_ARRAY:
+    case TK_MAP:
+    {
+        uint32_t size(0), memberId(MEMBER_ID_INVALID);
+        bool bKeyElement(false);
+        cdr >> size;
+        for (uint32_t i = 0; i < size; ++i)
+        {
+            cdr >> memberId;
+            if (mType->GetKind() == TK_MAP)
+            {
+                cdr >> bKeyElement;
+            }
+
+#ifdef DYNAMIC_TYPES_CHECKING
+            auto it = mComplexValues.find(memberId);
+            if (it != mComplexValues.end())
+            {
+                it->second->deserialize(cdr);
+                it->second->mIsKeyElement = bKeyElement;
+            }
+            else
+            {
+                DynamicData* pData = DynamicDataFactory::GetInstance()->CreateData(mType->GetElementType());
+                pData->deserialize(cdr);
+                pData->mIsKeyElement = bKeyElement;
+                mComplexValues.insert(std::make_pair(memberId, pData));
+            }
+        }
+#else
+            auto it = mValues.find(memberId);
+            if (it != mValues.end())
+            {
+                ((DynamicData*)it->second)->deserialize(cdr);
+                ((DynamicData*)it->second)->mIsKeyElement = bKeyElement;
+    }
+            else
+            {
+                DynamicData* pData = DynamicDataFactory::GetInstance()->CreateData(mType->GetElementType());
+                pData->deserialize(cdr);
+                pData->mIsKeyElement = bKeyElement;
+                mValues.insert(std::make_pair(memberId, pData));
+            }
+        }
+#endif
+
+        break;
+    }
+
+    case TK_ALIAS:
+        break;
+    }
+    return true;
+}
+
+void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
+{
+    switch (mType->GetKind())
+    {
+    default:
+        break;
+    case TK_INT32:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mInt32Value;
+#else
+        auto it = mValues.begin();
+        cdr << *((int32_t*)it->second);
+#endif
+        break;
+    }
+    case TK_UINT32:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mUInt32Value;
+#else
+        auto it = mValues.begin();
+        cdr << *((uint32_t*)it->second);
+#endif
+        break;
+    }
+    case TK_INT16:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mInt16Value;
+#else
+        auto it = mValues.begin();
+        cdr << *((int16_t*)it->second);
+#endif
+        break;
+    }
+    case TK_UINT16:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mUInt16Value;
+#else
+        auto it = mValues.begin();
+        cdr << *((uint16_t*)it->second);
+#endif
+        break;
+    }
+    case TK_INT64:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mInt64Value;
+#else
+        auto it = mValues.begin();
+        cdr << *((int64_t*)it->second);
+#endif
+        break;
+    }
+    case TK_UINT64:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mUInt64Value;
+#else
+        auto it = mValues.begin();
+        cdr << *((uint64_t*)it->second);
+#endif
+        break;
+    }
+    case TK_FLOAT32:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mFloat32Value;
+#else
+        auto it = mValues.begin();
+        cdr << *((float*)it->second);
+#endif
+        break;
+    }
+    case TK_FLOAT64:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mFloat64Value;
+#else
+        auto it = mValues.begin();
+        cdr << *((double*)it->second);
+#endif
+        break;
+    }
+    case TK_FLOAT128:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mFloat128Value;
+#else
+        auto it = mValues.begin();
+        cdr << *((long double*)it->second);
+#endif
+        break;
+    }
+    case TK_CHAR8:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mChar8Value;
+#else
+        auto it = mValues.begin();
+        cdr << *((char*)it->second);
+#endif
+        break;
+    }
+    case TK_CHAR16:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mChar16Value;
+#else
+        auto it = mValues.begin();
+        cdr << *((wchar_t*)it->second);
+#endif
+        break;
+    }
+    case TK_BOOLEAN:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mBoolValue;
+#else
+        auto it = mValues.begin();
+        cdr << *((bool*)it->second);
+#endif
+        break;
+    }
+    case TK_BYTE:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mByteValue;
+#else
+        auto it = mValues.begin();
+        cdr << *((octet*)it->second);
+#endif
+        break;
+    }
+    case TK_STRING8:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mStringValue;
+#else
+        auto it = mValues.begin();
+        cdr << *((std::string*)it->second);
+#endif
+        break;
+    }
+    case TK_STRING16:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mWStringValue;
+#else
+        auto it = mValues.begin();
+        cdr << *((std::wstring*)it->second);
+#endif
+        break;
+    }
+    case TK_ENUM:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mUInt32Value;
+#else
+        auto it = mValues.begin();
+        cdr << *((uint32_t*)it->second);
+#endif
+        break;
+    }
+    case TK_BITSET:
+    case TK_BITMASK:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mUInt64Value;
+#else
+        auto it = mValues.begin();
+        cdr << *((uint64_t*)it->second);
+#endif
+        break;
+    }
+    case TK_UNION:
+    {
+        cdr << mUnionId;
+        if (mUnionId != MEMBER_ID_INVALID)
+        {
+#ifdef DYNAMIC_TYPES_CHECKING
+            auto it = mComplexValues.at(mUnionId);
+#else
+            auto it = (DynamicData*) mValues.at(mUnionId);
+#endif
+            it->serialize(cdr);
+        }
+        break;
+    }
+    case TK_STRUCTURE:
+    case TK_SEQUENCE:
+    case TK_ARRAY:
+    case TK_MAP:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << mComplexValues.size();
+        for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
+        {
+            cdr << it->first;
+            if (mType->GetKind() == TK_MAP)
+            {
+                cdr << it->second->mIsKeyElement;
+            }
+            it->second->serialize(cdr);
+        }
+#else
+        cdr << mValues.size();
+        for (auto it = mValues.begin(); it != mValues.end(); ++it)
+        {
+            cdr << it->first;
+            if (mType->GetKind() == TK_MAP)
+            {
+                cdr << ((DynamicData*)it->second)->mIsKeyElement;
+            }
+            ((DynamicData*)it->second)->serialize(cdr);
+        }
+#endif
+        break;
+    }
+
+    case TK_ALIAS:
+        break;
+    }
+}
+
 
 } // namespace types
 } // namespace fastrtps
