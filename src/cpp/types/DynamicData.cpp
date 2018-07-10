@@ -3282,13 +3282,13 @@ ResponseCode DynamicData::ClearData()
     return ResponseCode::RETCODE_BAD_PARAMETER;
 }
 
-ResponseCode DynamicData::GetComplexValue(DynamicData* value, MemberId id) const
+ResponseCode DynamicData::GetComplexValue(DynamicData** value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mComplexValues.find(id);
     if (it != mComplexValues.end())
     {
-        value = it->second->Clone();
+        *value = it->second->Clone();
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -3296,7 +3296,7 @@ ResponseCode DynamicData::GetComplexValue(DynamicData* value, MemberId id) const
     auto it = mValues.find(id);
     if (it != mValues.end())
     {
-        value = ((DynamicData*)it->second)->Clone();
+        *value = ((DynamicData*)it->second)->Clone();
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
