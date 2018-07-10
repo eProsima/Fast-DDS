@@ -753,13 +753,13 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                 case PID_TYPE_IDV1: //TODO: //GASCO:
                 {
                     TypeIdV1 * p = new TypeIdV1();
-                    valid &= p->readFromCDRMessage(msg);
+                    valid &= p->readFromCDRMessage(msg, plength);
                     IF_VALID_ADD
                 }
                 case PID_TYPE_OBJECTV1://TODO: //GASCO:
                 {
                     TypeObjectV1 * p = new TypeObjectV1();
-                    valid &= p->readFromCDRMessage(msg);
+                    valid &= p->readFromCDRMessage(msg, plength);
                     IF_VALID_ADD
                 }
                 case PID_PAD:

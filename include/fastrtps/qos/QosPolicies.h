@@ -713,7 +713,7 @@ class TypeIdV1 : private Parameter_t, public QosPolicy
 public:
     TypeIdentifier m_type_identifier;
 
-    RTPS_DllAPI TypeIdV1() {};
+    RTPS_DllAPI TypeIdV1() : Parameter_t(PID_TYPE_IDV1, 0), QosPolicy(false) {};
     virtual RTPS_DllAPI ~TypeIdV1() {};
     /**
     * Appends QoS to the specified CDR message.
@@ -721,7 +721,7 @@ public:
     * @return True if the modified CDRMessage is valid.
     */
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg);
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size);
 };
 
 /**
@@ -732,7 +732,7 @@ class TypeObjectV1 : private Parameter_t, public QosPolicy
 public:
     TypeObject m_type_object;
 
-    RTPS_DllAPI TypeObjectV1() {};
+    RTPS_DllAPI TypeObjectV1() : Parameter_t(PID_TYPE_OBJECTV1, 0), QosPolicy(false) {};
     virtual RTPS_DllAPI ~TypeObjectV1() {};
     /**
     * Appends QoS to the specified CDR message.
@@ -740,7 +740,7 @@ public:
     * @return True if the modified CDRMessage is valid.
     */
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg);
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size);
 };
 
 }

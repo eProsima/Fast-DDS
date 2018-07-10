@@ -1493,7 +1493,7 @@ void TCPTransportInterface::SocketConnected(Locator_t& locator, SenderResource *
         else
         {
             eClock::my_sleep(100);
-            std::cout << "Reconnect..." << this << std::endl;
+            //std::cout << "Reconnect..." << this << std::endl;
             pendingConector->RetryConnect(mService, this, senderResource);
         }
     }

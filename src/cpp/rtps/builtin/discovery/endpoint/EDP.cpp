@@ -77,6 +77,12 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, TopicAttributes& att, Read
     rpd.userDefinedId(reader->getAttributes()->getUserDefinedID());
     reader->m_acceptMessagesFromUnkownWriters = false;
 
+    if (att.getTopicDiscoveryKind() != NO_CHECK)
+    {
+        rpd.type_id(att.type_id);
+        rpd.type(att.type);
+    }
+
     //ADD IT TO THE LIST OF READERPROXYDATA
     ParticipantProxyData pdata;
     if(!this->mp_PDP->addReaderProxyData(&rpd, pdata))
@@ -110,6 +116,12 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer,TopicAttributes& att, Write
     wpd.m_qos = wqos;
     wpd.userDefinedId(writer->getAttributes()->getUserDefinedID());
     wpd.persistence_guid(writer->getAttributes()->persistence_guid);
+
+    if (att.getTopicDiscoveryKind() != NO_CHECK)
+    {
+        wpd.type_id(att.type_id);
+        wpd.type(att.type);
+    }
 
     //ADD IT TO THE LIST OF READERPROXYDATA
     ParticipantProxyData pdata;
