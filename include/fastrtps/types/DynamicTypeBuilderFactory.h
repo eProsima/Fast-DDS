@@ -42,7 +42,7 @@ public:
 
     RTPS_DllAPI DynamicType* BuildType(const TypeDescriptor* descriptor);
     RTPS_DllAPI DynamicType* BuildType(const DynamicType* other);
-    RTPS_DllAPI DynamicTypeBuilder* CreateType(const TypeDescriptor* descriptor);
+    RTPS_DllAPI DynamicTypeBuilder* CreateCustomType(const TypeDescriptor* descriptor);
 	RTPS_DllAPI DynamicTypeBuilder* CreateTypeCopy(const DynamicType* type);
     RTPS_DllAPI DynamicTypeBuilder* CreateInt32Type();
     RTPS_DllAPI DynamicTypeBuilder* CreateUint32Type();
