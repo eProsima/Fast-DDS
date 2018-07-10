@@ -300,7 +300,7 @@ PlainSequenceSElemDefn::PlainSequenceSElemDefn()
 {
 
     m_bound = 0;
-    m_element_identifier = new TypeIdentifier();
+    m_element_identifier = nullptr;
 }
 
 PlainSequenceSElemDefn::~PlainSequenceSElemDefn()
@@ -310,6 +310,10 @@ PlainSequenceSElemDefn::~PlainSequenceSElemDefn()
 
 void PlainSequenceSElemDefn::element_identifier(const TypeIdentifier* _element_identifier)
 {
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
     *m_element_identifier = *_element_identifier;
 }
 
@@ -317,21 +321,33 @@ PlainSequenceSElemDefn::PlainSequenceSElemDefn(const PlainSequenceSElemDefn &x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
 }
 
 PlainSequenceSElemDefn::PlainSequenceSElemDefn(PlainSequenceSElemDefn &&x)
 {
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
 }
 
 PlainSequenceSElemDefn& PlainSequenceSElemDefn::operator=(const PlainSequenceSElemDefn &x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
 
     return *this;
 }
@@ -340,7 +356,11 @@ PlainSequenceSElemDefn& PlainSequenceSElemDefn::operator=(PlainSequenceSElemDefn
 {
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
 
     return *this;
 }
@@ -379,14 +399,20 @@ void PlainSequenceSElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_header;
     scdr << m_bound;
-    scdr << *m_element_identifier;
+    if (m_element_identifier != nullptr)
+    {
+        scdr << *m_element_identifier;
+    }
 }
 
 void PlainSequenceSElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_bound;
-    dcdr >> *m_element_identifier;
+    if (m_element_identifier != nullptr)
+    {
+         dcdr >> *m_element_identifier;
+    }
 }
 
 size_t PlainSequenceSElemDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
@@ -416,7 +442,7 @@ PlainSequenceLElemDefn::PlainSequenceLElemDefn()
 {
 
     m_bound = 0;
-    m_element_identifier = new TypeIdentifier();
+    m_element_identifier = nullptr;
 }
 
 PlainSequenceLElemDefn::~PlainSequenceLElemDefn()
@@ -426,6 +452,10 @@ PlainSequenceLElemDefn::~PlainSequenceLElemDefn()
 
 void PlainSequenceLElemDefn::element_identifier(const TypeIdentifier* _element_identifier)
 {
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
     *m_element_identifier = *_element_identifier;
 }
 
@@ -433,21 +463,33 @@ PlainSequenceLElemDefn::PlainSequenceLElemDefn(const PlainSequenceLElemDefn &x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
 }
 
 PlainSequenceLElemDefn::PlainSequenceLElemDefn(PlainSequenceLElemDefn &&x)
 {
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
 }
 
 PlainSequenceLElemDefn& PlainSequenceLElemDefn::operator=(const PlainSequenceLElemDefn &x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
 
     return *this;
 }
@@ -456,7 +498,11 @@ PlainSequenceLElemDefn& PlainSequenceLElemDefn::operator=(PlainSequenceLElemDefn
 {
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
 
     return *this;
 }
@@ -495,14 +541,20 @@ void PlainSequenceLElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_header;
     scdr << m_bound;
-    scdr << *m_element_identifier;
+    if (m_element_identifier != nullptr)
+    {
+        scdr << *m_element_identifier;
+    }
 }
 
 void PlainSequenceLElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_bound;
-    dcdr >> *m_element_identifier;
+    if (m_element_identifier != nullptr)
+    {
+        dcdr >> *m_element_identifier;
+    }
 }
 
 size_t PlainSequenceLElemDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
@@ -532,7 +584,7 @@ PlainArraySElemDefn::PlainArraySElemDefn()
 {
 
 
-    m_element_identifier = new TypeIdentifier();
+    m_element_identifier = nullptr;
 }
 
 PlainArraySElemDefn::~PlainArraySElemDefn()
@@ -542,6 +594,10 @@ PlainArraySElemDefn::~PlainArraySElemDefn()
 
 void PlainArraySElemDefn::element_identifier(const TypeIdentifier* _element_identifier)
 {
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
     *m_element_identifier = *_element_identifier;
 }
 
@@ -549,21 +605,33 @@ PlainArraySElemDefn::PlainArraySElemDefn(const PlainArraySElemDefn &x)
 {
     m_header = x.m_header;
     m_array_bound_seq = x.m_array_bound_seq;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
 }
 
 PlainArraySElemDefn::PlainArraySElemDefn(PlainArraySElemDefn &&x)
 {
     m_header = std::move(x.m_header);
     m_array_bound_seq = std::move(x.m_array_bound_seq);
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
 }
 
 PlainArraySElemDefn& PlainArraySElemDefn::operator=(const PlainArraySElemDefn &x)
 {
     m_header = x.m_header;
     m_array_bound_seq = x.m_array_bound_seq;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
 
     return *this;
 }
@@ -572,7 +640,11 @@ PlainArraySElemDefn& PlainArraySElemDefn::operator=(PlainArraySElemDefn &&x)
 {
     m_header = std::move(x.m_header);
     m_array_bound_seq = std::move(x.m_array_bound_seq);
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
 
     return *this;
 }
@@ -614,14 +686,21 @@ void PlainArraySElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_header;
     scdr << m_array_bound_seq;
-    scdr << *m_element_identifier;
+
+    if (m_element_identifier != nullptr)
+    {
+        scdr << *m_element_identifier;
+    }
 }
 
 void PlainArraySElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_array_bound_seq;
-    dcdr >> *m_element_identifier;
+    if (m_element_identifier != nullptr)
+    {
+        dcdr >> *m_element_identifier;
+    }
 }
 
 size_t PlainArraySElemDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
@@ -651,7 +730,7 @@ PlainArrayLElemDefn::PlainArrayLElemDefn()
 {
 
 
-    m_element_identifier = new TypeIdentifier();
+    m_element_identifier = nullptr;
 }
 
 PlainArrayLElemDefn::~PlainArrayLElemDefn()
@@ -661,6 +740,10 @@ PlainArrayLElemDefn::~PlainArrayLElemDefn()
 
 void PlainArrayLElemDefn::element_identifier(const TypeIdentifier* _element_identifier)
 {
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
     *m_element_identifier = *_element_identifier;
 }
 
@@ -668,21 +751,33 @@ PlainArrayLElemDefn::PlainArrayLElemDefn(const PlainArrayLElemDefn &x)
 {
     m_header = x.m_header;
     m_array_bound_seq = x.m_array_bound_seq;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
 }
 
 PlainArrayLElemDefn::PlainArrayLElemDefn(PlainArrayLElemDefn &&x)
 {
     m_header = std::move(x.m_header);
     m_array_bound_seq = std::move(x.m_array_bound_seq);
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
 }
 
 PlainArrayLElemDefn& PlainArrayLElemDefn::operator=(const PlainArrayLElemDefn &x)
 {
     m_header = x.m_header;
     m_array_bound_seq = x.m_array_bound_seq;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
 
     return *this;
 }
@@ -691,7 +786,11 @@ PlainArrayLElemDefn& PlainArrayLElemDefn::operator=(PlainArrayLElemDefn &&x)
 {
     m_header = std::move(x.m_header);
     m_array_bound_seq = std::move(x.m_array_bound_seq);
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
 
     return *this;
 }
@@ -732,14 +831,20 @@ void PlainArrayLElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_header;
     scdr << m_array_bound_seq;
-    scdr << *m_element_identifier;
+    if (m_element_identifier != nullptr)
+    {
+        scdr << *m_element_identifier;
+    }
 }
 
 void PlainArrayLElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_array_bound_seq;
-    dcdr >> *m_element_identifier;
+    if (m_element_identifier != nullptr)
+    {
+        dcdr >> *m_element_identifier;
+    }
 }
 
 size_t PlainArrayLElemDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
@@ -769,8 +874,8 @@ PlainMapSTypeDefn::PlainMapSTypeDefn()
 {
 
     m_bound = 0;
-    m_element_identifier = new TypeIdentifier();
-    m_key_identifier = new TypeIdentifier();
+    m_element_identifier = nullptr;
+    m_key_identifier = nullptr;
 }
 
 PlainMapSTypeDefn::~PlainMapSTypeDefn()
@@ -781,11 +886,19 @@ PlainMapSTypeDefn::~PlainMapSTypeDefn()
 
 void PlainMapSTypeDefn::element_identifier(const TypeIdentifier* _element_identifier)
 {
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
     *m_element_identifier = *_element_identifier;
 }
 
 void PlainMapSTypeDefn::key_identifier(const TypeIdentifier* _key_identifier)
 {
+    if (m_key_identifier == nullptr)
+    {
+        m_key_identifier = new TypeIdentifier();
+    }
     *m_key_identifier = *_key_identifier;
 }
 
@@ -793,27 +906,51 @@ PlainMapSTypeDefn::PlainMapSTypeDefn(const PlainMapSTypeDefn &x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
     m_key_flags = x.m_key_flags;
-    m_key_identifier = x.m_key_identifier;
+    if (m_key_identifier == nullptr)
+    {
+        m_key_identifier = new TypeIdentifier();
+    }
+    *m_key_identifier = *x.m_key_identifier;
 }
 
 PlainMapSTypeDefn::PlainMapSTypeDefn(PlainMapSTypeDefn &&x)
 {
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
     m_key_flags = x.m_key_flags;
-    m_key_identifier = x.m_key_identifier;
+    if (m_key_identifier == nullptr)
+    {
+        m_key_identifier = new TypeIdentifier();
+    }
+    *m_key_identifier = *x.m_key_identifier;
 }
 
 PlainMapSTypeDefn& PlainMapSTypeDefn::operator=(const PlainMapSTypeDefn &x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
     m_key_flags = x.m_key_flags;
-    m_key_identifier = x.m_key_identifier;
+    if (m_key_identifier == nullptr)
+    {
+        m_key_identifier = new TypeIdentifier();
+    }
+    *m_key_identifier = *x.m_key_identifier;
 
     return *this;
 }
@@ -822,9 +959,17 @@ PlainMapSTypeDefn& PlainMapSTypeDefn::operator=(PlainMapSTypeDefn &&x)
 {
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
     m_key_flags = x.m_key_flags;
-    m_key_identifier = x.m_key_identifier;
+    if (m_key_identifier == nullptr)
+    {
+        m_key_identifier = new TypeIdentifier();
+    }
+    *m_key_identifier = *x.m_key_identifier;
 
     return *this;
 }
@@ -875,18 +1020,30 @@ void PlainMapSTypeDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_header;
     scdr << m_bound;
-    scdr << *m_element_identifier;
+    if (m_element_identifier != nullptr)
+    {
+        scdr << *m_element_identifier;
+    }
     scdr << m_key_flags;
-    scdr << *m_key_identifier;
+    if (m_key_identifier != nullptr)
+    {
+        scdr << *m_key_identifier;
+    }
 }
 
 void PlainMapSTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_bound;
-    dcdr >> *m_element_identifier;
+    if (m_element_identifier != nullptr)
+    {
+        dcdr >> *m_element_identifier;
+    }
     dcdr >> m_key_flags;
-    dcdr >> *m_key_identifier;
+    if (m_key_identifier != nullptr)
+    {
+        dcdr >> *m_key_identifier;
+    }
 }
 
 size_t PlainMapSTypeDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
@@ -919,8 +1076,8 @@ void PlainMapSTypeDefn::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 PlainMapLTypeDefn::PlainMapLTypeDefn()
 {
 
-    m_element_identifier = new TypeIdentifier();
-    m_key_identifier = new TypeIdentifier();
+    m_element_identifier = nullptr;
+    m_key_identifier = nullptr;
 }
 
 PlainMapLTypeDefn::~PlainMapLTypeDefn()
@@ -931,11 +1088,19 @@ PlainMapLTypeDefn::~PlainMapLTypeDefn()
 
 void PlainMapLTypeDefn::element_identifier(const TypeIdentifier* _element_identifier)
 {
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
     *m_element_identifier = *_element_identifier;
 }
 
 void PlainMapLTypeDefn::key_identifier(const TypeIdentifier* _key_identifier)
 {
+    if (m_key_identifier == nullptr)
+    {
+        m_key_identifier = new TypeIdentifier();
+    }
     *m_key_identifier = *_key_identifier;
 }
 
@@ -943,27 +1108,51 @@ PlainMapLTypeDefn::PlainMapLTypeDefn(const PlainMapLTypeDefn &x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
     m_key_flags = x.m_key_flags;
-    m_key_identifier = x.m_key_identifier;
+    if (m_key_identifier == nullptr)
+    {
+        m_key_identifier = new TypeIdentifier();
+    }
+    *m_key_identifier = *x.m_key_identifier;
 }
 
 PlainMapLTypeDefn::PlainMapLTypeDefn(PlainMapLTypeDefn &&x)
 {
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
     m_key_flags = x.m_key_flags;
-    m_key_identifier = x.m_key_identifier;
+    if (m_key_identifier == nullptr)
+    {
+        m_key_identifier = new TypeIdentifier();
+    }
+    *m_key_identifier = *x.m_key_identifier;
 }
 
 PlainMapLTypeDefn& PlainMapLTypeDefn::operator=(const PlainMapLTypeDefn &x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
     m_key_flags = x.m_key_flags;
-    m_key_identifier = x.m_key_identifier;
+    if (m_key_identifier == nullptr)
+    {
+        m_key_identifier = new TypeIdentifier();
+    }
+    *m_key_identifier = *x.m_key_identifier;
 
     return *this;
 }
@@ -972,9 +1161,17 @@ PlainMapLTypeDefn& PlainMapLTypeDefn::operator=(PlainMapLTypeDefn &&x)
 {
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
-    m_element_identifier = x.m_element_identifier;
+    if (m_element_identifier == nullptr)
+    {
+        m_element_identifier = new TypeIdentifier();
+    }
+    *m_element_identifier = *x.m_element_identifier;
     m_key_flags = x.m_key_flags;
-    m_key_identifier = x.m_key_identifier;
+    if (m_key_identifier == nullptr)
+    {
+        m_key_identifier = new TypeIdentifier();
+    }
+    *m_key_identifier = *x.m_key_identifier;
 
     return *this;
 }
@@ -1025,18 +1222,30 @@ void PlainMapLTypeDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_header;
     scdr << m_bound;
-    scdr << *m_element_identifier;
+    if (m_element_identifier != nullptr)
+    {
+        scdr << *m_element_identifier;
+    }
     scdr << m_key_flags;
-    scdr << *m_key_identifier;
+    if (m_key_identifier != nullptr)
+    {
+        scdr << *m_key_identifier;
+    }
 }
 
 void PlainMapLTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_bound;
-    dcdr >> *m_element_identifier;
+    if (m_element_identifier != nullptr)
+    {
+        dcdr >> *m_element_identifier;
+    }
     dcdr >> m_key_flags;
-    dcdr >> *m_key_identifier;
+    if (m_key_identifier != nullptr)
+    {
+        dcdr >> *m_key_identifier;
+    }
 }
 
 size_t PlainMapLTypeDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
