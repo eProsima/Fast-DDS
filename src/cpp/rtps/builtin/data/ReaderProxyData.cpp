@@ -430,6 +430,10 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
                         TypeIdV1 * p = (TypeIdV1*)(*it);
                         m_type_id = *p;
                         m_topicDiscoveryKind = MINIMAL;
+                        if (m_type_id.m_type_identifier->_d() == EK_COMPLETE)
+                        {
+                            m_topicDiscoveryKind = COMPLETE;
+                        }
                         break;
                     }
                 case PID_TYPE_OBJECTV1: //TODO: //GASCO:
@@ -437,6 +441,10 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
                         TypeObjectV1 * p = (TypeObjectV1*)(*it);
                         m_type = *p;
                         m_topicDiscoveryKind = MINIMAL;
+                        if (m_type.m_type_object->_d() == EK_COMPLETE)
+                        {
+                            m_topicDiscoveryKind = COMPLETE;
+                        }
                         break;
                     }
                 default:
