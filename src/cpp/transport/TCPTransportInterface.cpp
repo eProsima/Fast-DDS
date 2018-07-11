@@ -165,6 +165,7 @@ void TCPTransportInterface::Clean()
     {
         mCleanSocketsPoolTimer->cancel_timer();
         delete mCleanSocketsPoolTimer;
+        mCleanSocketsPoolTimer = nullptr;
     }
 
     CleanDeletedSockets();
@@ -637,7 +638,6 @@ void TCPTransportInterface::CloseInputSocket(TCPChannelResource *pChannelResourc
                 mInputSockets.erase(inputSocketIt);
             }
         }
-
         ReleaseTCPSocket(pChannelResource, false);
     }
 }
@@ -1100,8 +1100,12 @@ void TCPTransportInterface::ReleaseTCPSocket(TCPChannelResource *pChannelResourc
 {
     if (pChannelResource != nullptr && pChannelResource->IsAlive())
     {
-        pChannelResource->RemoveLogicalConnection();
-        if (force || pChannelResource->HasLogicalConnections())
+        if (pChannelResource->HasLogicalConnections())
+        {
+            pChannelResource->RemoveLogicalConnection();
+        }
+
+        if (force || !pChannelResource->HasLogicalConnections())
         {
             // Pauses the timer to clean the deleted sockets pool.
             if (mCleanSocketsPoolTimer != nullptr)

@@ -36,6 +36,14 @@ MockReceiverResource::MockReceiverResource(TransportInterface& transport, const 
     { return transport.DoInputLocatorsMatch(locator, locatorToCheck); };
 }
 
+MockReceiverResource::~MockReceiverResource()
+{
+    if (Cleanup != nullptr)
+    {
+        Cleanup();
+    }
+}
+
 MessageReceiver* MockReceiverResource::CreateMessageReceiver()
 {
     if (msg_receiver == nullptr)
@@ -54,7 +62,10 @@ void MockMessageReceiver::setCallback(std::function<void()> cb)
 void MockMessageReceiver::processCDRMsg(const GuidPrefix_t&, Locator_t*, CDRMessage_t*msg)
 {
     data = msg->buffer;
-    if (callback != nullptr) callback();
+    if (callback != nullptr)
+    {
+        callback();
+    }
 }
 
 } // namespace rtps

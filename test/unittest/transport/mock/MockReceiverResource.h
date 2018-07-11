@@ -30,6 +30,7 @@ class MockReceiverResource : public ReceiverResource
 {
 public:
     MockReceiverResource(TransportInterface& transport, const Locator_t& locator);
+    ~MockReceiverResource();
     MessageReceiver* CreateMessageReceiver() override;
     MockMessageReceiver* msg_receiver;
 };
