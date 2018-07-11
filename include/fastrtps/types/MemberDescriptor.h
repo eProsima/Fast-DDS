@@ -26,27 +26,27 @@ class DynamicType;
 class MemberDescriptor
 {
 public:
-    MemberDescriptor();
-    MemberDescriptor(const MemberDescriptor* descriptor);
-    ~MemberDescriptor();
+    RTPS_DllAPI MemberDescriptor();
+    RTPS_DllAPI MemberDescriptor(const MemberDescriptor* descriptor);
+    RTPS_DllAPI ~MemberDescriptor();
 
     bool CheckUnionLabels(const std::vector<uint64_t>& labels) const;
-    ResponseCode CopyFrom(const MemberDescriptor* other);
-    bool Equals(const MemberDescriptor* other) const;
-    TypeKind GetKind() const;
-    MemberId GetId() const;
-    uint32_t GetIndex() const;
-    std::string GetName() const;
-    std::vector<uint64_t> GetUnionLabels() const;
-    bool IsDefaultUnionValue() const;
-    bool IsConsistent(TypeKind parentKind) const;
+    RTPS_DllAPI ResponseCode CopyFrom(const MemberDescriptor* other);
+    RTPS_DllAPI bool Equals(const MemberDescriptor* other) const;
+    RTPS_DllAPI TypeKind GetKind() const;
+    RTPS_DllAPI MemberId GetId() const;
+    RTPS_DllAPI  uint32_t GetIndex() const;
+    RTPS_DllAPI std::string GetName() const;
+    RTPS_DllAPI std::vector<uint64_t> GetUnionLabels() const;
+    RTPS_DllAPI bool IsDefaultUnionValue() const;
+    RTPS_DllAPI bool IsConsistent(TypeKind parentKind) const;
 
-    void AddUnionCaseIndex(uint64_t value);
-    void SetId(MemberId id);
-    void SetIndex(uint32_t index);
-    void SetName(const std::string& name);
-    void SetType(DynamicType* type);
-    void SetDefaultUnionValue(bool bDefault);
+    RTPS_DllAPI void AddUnionCaseIndex(uint64_t value);
+    RTPS_DllAPI void SetId(MemberId id);
+    RTPS_DllAPI void SetIndex(uint32_t index);
+    RTPS_DllAPI void SetName(const std::string& name);
+    RTPS_DllAPI void SetType(DynamicType* type);
+    RTPS_DllAPI void SetDefaultUnionValue(bool bDefault);
 
 protected:
 
