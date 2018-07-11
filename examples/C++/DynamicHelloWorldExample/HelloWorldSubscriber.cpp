@@ -24,6 +24,12 @@
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/DynamicType.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -48,8 +54,42 @@ bool HelloWorldSubscriber::init(bool dynamic)
         return false;
 
     //REGISTER THE TYPE
+    if (dynamic)
+    {
+        m_dynamic = dynamic;
+        m_listener.m_dynamic = dynamic;
+        // Given
+        DynamicTypeBuilder* created_type_ulong(nullptr);
+        DynamicTypeBuilder* created_type_string(nullptr);
+        // Create basic types
+        created_type_ulong = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type();
+        auto ulongType = created_type_ulong->Build();
+        created_type_string = DynamicTypeBuilderFactory::GetInstance()->CreateStringType();
+        auto stringType = created_type_string->Build();
 
-    Domain::registerType(mp_participant,&m_type);
+        auto struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructType();
+        // Add members to the struct.
+        types::MemberDescriptor descriptor;
+        descriptor.SetId(0);
+        descriptor.SetName("index");
+        descriptor.SetType(ulongType);
+        struct_type_builder->AddMember(&descriptor);
+        types::MemberDescriptor descriptor2;
+        descriptor2.SetId(1);
+        descriptor2.SetName("message");
+        descriptor2.SetType(stringType);
+        struct_type_builder->AddMember(&descriptor2);
+
+        m_DynType = struct_type_builder->Build();
+
+        m_listener.m_DynHello = DynamicDataFactory::GetInstance()->CreateData(m_DynType);
+
+        Domain::registerType(mp_participant, m_DynType);
+    }
+    else
+    {
+        Domain::registerType(mp_participant,&m_type);
+    }
 
     //CREATE THE SUBSCRIBER
     SubscriberAttributes Rparam;
@@ -111,16 +151,35 @@ void HelloWorldSubscriber::PartListener::onParticipantDiscovery(Participant*, Pa
 
 void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 {
-    if(sub->takeNextData((void*)&m_Hello, &m_info))
+    if (m_dynamic)
     {
-        if(m_info.sampleKind == ALIVE)
+        if(sub->takeNextData((void*)m_DynHello, &m_info))
         {
-            this->n_samples++;
-            // Print your structure data here.
-            std::cout << "Message "<<m_Hello.message()<< " "<< m_Hello.index()<< " RECEIVED"<<std::endl;
+            if(m_info.sampleKind == ALIVE)
+            {
+                this->n_samples++;
+                // Print your structure data here.
+                std::string message;
+                m_DynHello->GetStringValue(message, 1);
+                uint32_t index;
+                m_DynHello->GetUint32Value(index, 0);
+
+                std::cout << "Message: "<<message<< " with index: "<<index<< " RECEIVED"<<std::endl;
+            }
         }
     }
-
+    else
+    {
+        if(sub->takeNextData((void*)&m_Hello, &m_info))
+        {
+            if(m_info.sampleKind == ALIVE)
+            {
+                this->n_samples++;
+                // Print your structure data here.
+                std::cout << "Message "<<m_Hello.message()<< " "<< m_Hello.index()<< " RECEIVED"<<std::endl;
+            }
+        }
+    }
 }
 
 
