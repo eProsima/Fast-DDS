@@ -2255,7 +2255,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
     ASSERT_FALSE(data->SetStringValue("", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Try to write on an empty position
-    ASSERT_FALSE(data->SetInt32Value(1, 234) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt32Value(234, 1) == ResponseCode::RETCODE_OK);
 
     MemberId newId;
     ASSERT_TRUE(data->InsertSequenceData(newId) == ResponseCode::RETCODE_OK);
@@ -2268,7 +2268,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
 
     // Set and get a value.
     int32_t test1(234);
-    ASSERT_TRUE(data->SetInt32Value(newId2, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->SetInt32Value(test1, newId2) == ResponseCode::RETCODE_OK);
     int32_t test2(0);
     ASSERT_TRUE(data->GetInt32Value(test2, newId2) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
@@ -2401,7 +2401,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
 
     // Set and get a value.
     int32_t test1(234);
-    ASSERT_TRUE(seq_data->SetInt32Value(newSeqId, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(seq_data->SetInt32Value(test1, newSeqId) == ResponseCode::RETCODE_OK);
     int32_t test2(0);
     ASSERT_TRUE(seq_data->GetInt32Value(test2, newSeqId) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
@@ -2538,7 +2538,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
 
     // Set and get a value.
     int32_t test1 = 156;
-    ASSERT_TRUE(data->SetInt32Value(testPos, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->SetInt32Value(test1, testPos) == ResponseCode::RETCODE_OK);
     int32_t test2(0);
     ASSERT_TRUE(data->GetInt32Value(test2, testPos) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
@@ -2561,13 +2561,13 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
     ASSERT_TRUE(data->GetItemCount() == 0);
 
     // Check the clear values method
-    ASSERT_TRUE(data->SetInt32Value(testPos, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->SetInt32Value(test1, testPos) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(data->GetItemCount() == 1);
     ASSERT_TRUE(data->ClearAllValues() == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(data->GetItemCount() == 0);
 
     // Try to set a value out of the array.
-    ASSERT_FALSE(data->SetInt32Value(100, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt32Value(test1, 100) == ResponseCode::RETCODE_OK);
 
     ASSERT_FALSE(data->SetInt32Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(data->SetUint32Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
@@ -2661,7 +2661,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
     ASSERT_FALSE(data->SetStringValue("", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Try to write on an empty position
-    ASSERT_FALSE(data->SetInt32Value(0, 234) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt32Value(234, 0) == ResponseCode::RETCODE_OK);
 
     MemberId keyId;
     MemberId valueId;
@@ -2674,17 +2674,17 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
     MemberId keyId2;
     MemberId valueId2;
     key_data = DynamicDataFactory::GetInstance()->CreateData(base_type);
-    key_data->SetInt32Value(MEMBER_ID_INVALID, 2);
+    key_data->SetInt32Value(2, MEMBER_ID_INVALID);
     ASSERT_TRUE(data->InsertMapData(key_data, keyId2, valueId2) == ResponseCode::RETCODE_OK);
 
     // Try to Add one more than the limit
     auto key_data2 = DynamicDataFactory::GetInstance()->CreateData(base_type);
-    key_data2->SetInt32Value(MEMBER_ID_INVALID, 3);
+    key_data2->SetInt32Value(3, MEMBER_ID_INVALID);
     ASSERT_FALSE(data->InsertMapData(key_data2, keyId, valueId) == ResponseCode::RETCODE_OK);
 
     // Set and get a value.
     int32_t test1(234);
-    ASSERT_TRUE(data->SetInt32Value(valueId, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->SetInt32Value(test1, valueId) == ResponseCode::RETCODE_OK);
     int32_t test2(0);
     ASSERT_TRUE(data->GetInt32Value(test2, valueId) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
@@ -2818,12 +2818,12 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
     MemberId keyId2;
     MemberId valueId2;
     key_data = DynamicDataFactory::GetInstance()->CreateData(base_type);
-    key_data->SetInt32Value(MEMBER_ID_INVALID, 2);
+    key_data->SetInt32Value(2, MEMBER_ID_INVALID);
     ASSERT_TRUE(data->InsertMapData(key_data, keyId2, valueId2) == ResponseCode::RETCODE_OK);
 
     // Try to Add one more than the limit
     auto key_data2 = DynamicDataFactory::GetInstance()->CreateData(base_type);
-    key_data2->SetInt32Value(MEMBER_ID_INVALID, 3);
+    key_data2->SetInt32Value(3, MEMBER_ID_INVALID);
     ASSERT_FALSE(data->InsertMapData(key_data2, keyId, valueId) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(key_data2) == ResponseCode::RETCODE_OK);
 
@@ -2835,7 +2835,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
 
     // Set and get a value.
     int32_t test1(234);
-    ASSERT_TRUE(seq_data->SetInt32Value(valueId, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(seq_data->SetInt32Value(test1, valueId) == ResponseCode::RETCODE_OK);
     int32_t test2(0);
     ASSERT_TRUE(seq_data->GetInt32Value(test2, valueId) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
@@ -2963,12 +2963,12 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
     auto struct_data = DynamicDataFactory::GetInstance()->CreateData(struct_type);
     ASSERT_TRUE(struct_data != nullptr);
 
-    ASSERT_FALSE(struct_data->SetInt32Value(1, 10) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(struct_data->SetInt32Value(10, 1) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(struct_data->SetStringValue("", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Set and get the child values.
     int32_t test1(234);
-    ASSERT_TRUE(struct_data->SetInt32Value(0, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(struct_data->SetInt32Value(test1, 0) == ResponseCode::RETCODE_OK);
     int32_t test2(0);
     ASSERT_TRUE(struct_data->GetInt32Value(test2, 0) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
@@ -3074,12 +3074,12 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
     auto struct_data = DynamicDataFactory::GetInstance()->CreateData(child_struct_type);
     ASSERT_TRUE(struct_data != nullptr);
 
-    ASSERT_FALSE(struct_data->SetInt32Value(1, 10) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(struct_data->SetInt32Value(10, 1) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(struct_data->SetStringValue("", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Set and get the parent values.
     int32_t test1(234);
-    ASSERT_TRUE(struct_data->SetInt32Value(0, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(struct_data->SetInt32Value(test1, 0) == ResponseCode::RETCODE_OK);
     int32_t test2(0);
     ASSERT_TRUE(struct_data->GetInt32Value(test2, 0) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
@@ -3090,7 +3090,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
     ASSERT_TRUE(test3 == test4);
     // Set and get the child value.
     int32_t test5(234);
-    ASSERT_TRUE(struct_data->SetInt32Value(2, test5) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(struct_data->SetInt32Value(test5, 2) == ResponseCode::RETCODE_OK);
     int32_t test6(0);
     ASSERT_TRUE(struct_data->GetInt32Value(test6, 2) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test5 == test6);
@@ -3192,7 +3192,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
     auto struct_data = DynamicDataFactory::GetInstance()->CreateData(parent_struct_type);
     ASSERT_TRUE(struct_data != nullptr);
 
-    ASSERT_FALSE(struct_data->SetInt32Value(1, 10) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(struct_data->SetInt32Value(10, 1) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(struct_data->SetStringValue("", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Set and get the child values.
@@ -3207,7 +3207,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
 
     // Set and get the child values.
     int32_t test3(234);
-    ASSERT_TRUE(child_struct_data->SetInt32Value(0, test3) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(child_struct_data->SetInt32Value(test3, 0) == ResponseCode::RETCODE_OK);
     int32_t test4(0);
     ASSERT_TRUE(child_struct_data->GetInt32Value(test4, 0) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test3 == test4);
@@ -3314,7 +3314,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
     ASSERT_TRUE(union_data != nullptr);
 
     // Set and get the child values.
-    ASSERT_FALSE(union_data->SetInt32Value(1, 10) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(union_data->SetInt32Value(10, 1) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(union_data->SetStringValue("", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     uint64_t label;
@@ -3322,7 +3322,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
     ASSERT_TRUE(label == 0);
 
     int32_t test1(234);
-    ASSERT_TRUE(union_data->SetInt32Value(0, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(union_data->SetInt32Value(test1, 0) == ResponseCode::RETCODE_OK);
     int32_t test2(0);
     ASSERT_TRUE(union_data->GetInt32Value(test2, 0) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
