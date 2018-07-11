@@ -426,22 +426,22 @@ TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
     ASSERT_TRUE(data->GetInt32Value(test2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
 
-    //ASSERT_FALSE(data->SetInt32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(data->SetUint32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(data->SetInt16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(data->SetUint16Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(data->SetInt64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(data->SetUint64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(data->SetFloat32Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(data->SetFloat64Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(data->SetFloat128Value(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(data->SetChar8Value(MEMBER_ID_INVALID, 'a') == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(data->SetChar16Value(MEMBER_ID_INVALID, L'a') == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(data->SetByteValue(MEMBER_ID_INVALID, 0) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(data->SetBoolValue(MEMBER_ID_INVALID, false) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(data->SetStringValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(data->SetWstringValue(MEMBER_ID_INVALID, L"") == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(data->SetEnumValue(MEMBER_ID_INVALID, "") == ResponseCode::RETCODE_OK);
+    //ASSERT_FALSE(data->SetInt32Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value('a', MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(L'a', MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(false, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue("", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(L"", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue("", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     //int32_t iTest32;
     //ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
@@ -2042,10 +2042,10 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
     bool test1 = true;
     ASSERT_FALSE(data->SetInt32Value(1, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(data->SetBoolValue(2, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->SetBoolValue(test1, 2) == ResponseCode::RETCODE_OK);
 
     // Over the limit
-    ASSERT_FALSE(data->SetBoolValue(limit + 1, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(test1, limit + 1) == ResponseCode::RETCODE_OK);
 
     bool test2 = false;
     ASSERT_TRUE(data->GetBoolValue(test2, 0) == ResponseCode::RETCODE_OK);
@@ -2053,7 +2053,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
     ASSERT_TRUE(data->GetBoolValue(test2, 2) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
     test1 = false;
-    ASSERT_TRUE(data->SetBoolValue(2, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->SetBoolValue(test1, 2) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(data->GetBoolValue(test2, 2) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
 
@@ -2164,7 +2164,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     ASSERT_TRUE(data->SetBoolValue(testId, test1) == ResponseCode::RETCODE_OK);
 
     // Over the limit
-    ASSERT_FALSE(data->SetBoolValue(limit + 1, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(test1, limit + 1) == ResponseCode::RETCODE_OK);
 
     bool test2 = false;
     ASSERT_TRUE(data->GetBoolValue(test2, 2) == ResponseCode::RETCODE_OK);
@@ -2172,7 +2172,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     ASSERT_TRUE(data->GetBoolValue(test2, testId) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
     test1 = false;
-    ASSERT_TRUE(data->SetBoolValue(testId, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->SetBoolValue(test1, testId) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(data->GetBoolValue(test2, test2Id) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(data->GetBoolValue(test2, testId) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
@@ -2229,7 +2229,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    ASSERT_TRUE(data->SetBoolValue(0, true) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->SetBoolValue(true, 0) == ResponseCode::RETCODE_OK);
     SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
     ASSERT_TRUE(new_type->serialize(data, &payload));
 
@@ -2995,7 +2995,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
     ASSERT_TRUE(struct_data->GetInt32Value(test2, 0) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
     int64_t test3(234);
-    ASSERT_TRUE(struct_data->SetInt64Value(1, test3) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(struct_data->SetInt64Value(test3, 1) == ResponseCode::RETCODE_OK);
     int64_t test4(0);
     ASSERT_TRUE(struct_data->GetInt64Value(test4, 1) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test3 == test4);
@@ -3106,7 +3106,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
     ASSERT_TRUE(struct_data->GetInt32Value(test2, 0) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
     int64_t test3(234);
-    ASSERT_TRUE(struct_data->SetInt64Value(1, test3) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(struct_data->SetInt64Value(test3, 1) == ResponseCode::RETCODE_OK);
     int64_t test4(0);
     ASSERT_TRUE(struct_data->GetInt64Value(test4, 1) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test3 == test4);
@@ -3219,7 +3219,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
 
     // Set and get the child values.
     int64_t test1(234);
-    ASSERT_TRUE(struct_data->SetInt64Value(1, test1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(struct_data->SetInt64Value(test1, 1) == ResponseCode::RETCODE_OK);
     int64_t test2(0);
     ASSERT_TRUE(struct_data->GetInt64Value(test2, 1) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
@@ -3234,7 +3234,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
     ASSERT_TRUE(child_struct_data->GetInt32Value(test4, 0) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test3 == test4);
     int64_t test5(234);
-    ASSERT_TRUE(child_struct_data->SetInt64Value(1, test5) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(child_struct_data->SetInt64Value(test5, 1) == ResponseCode::RETCODE_OK);
     int64_t test6(0);
     ASSERT_TRUE(child_struct_data->GetInt64Value(test6, 1) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test5 == test6);
@@ -3358,7 +3358,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
     ASSERT_FALSE(union_data->GetInt32Value(test2, 1) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(union_data->GetInt64Value(test4, 1) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(union_data->SetInt64Value(1, test3) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(union_data->SetInt64Value(test3, 1) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(union_data->GetInt64Value(test4, 1) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(test3 == test4);
     ASSERT_TRUE(union_data->GetUnionLabel(label) == ResponseCode::RETCODE_OK);
