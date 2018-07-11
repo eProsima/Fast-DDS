@@ -194,30 +194,6 @@ bool DynamicData::Equals(const DynamicData* other) const
         else if (GetItemCount() == other->GetItemCount() && mType->Equals(other->mType) &&
             mDescriptors.size() == other->mDescriptors.size())
         {
-#ifdef DYNAMIC_TYPES_CHECKING
-            for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
-            {
-                auto otherIt = other->mDescriptors.find(it->first);
-                if (otherIt == other->mDescriptors.end() || !it->second->Equals(otherIt->second))
-                {
-                    return false;
-                }
-            }
-
-            if (mInt32Value != other->mInt32Value || mUInt32Value != other->mUInt32Value ||
-                mInt16Value != other->mInt16Value || mUInt16Value != other->mUInt16Value ||
-                mInt64Value != other->mInt64Value || mUInt64Value != other->mUInt64Value ||
-                mFloat32Value != other->mFloat32Value || mFloat64Value != other->mFloat64Value ||
-                mFloat128Value != other->mFloat128Value || mChar8Value != other->mChar8Value ||
-                mChar16Value != other->mChar16Value || mByteValue != other->mByteValue ||
-                mBoolValue != other->mBoolValue || mStringValue != other->mStringValue ||
-                mWStringValue != other->mWStringValue || mStringValue != other->mStringValue ||
-                !map_compare(mComplexValues, other->mComplexValues))
-            {
-                return false;
-            }
-#else
-
             for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
             {
                 auto otherDescIt = other->mDescriptors.find(it->first);
@@ -227,13 +203,23 @@ bool DynamicData::Equals(const DynamicData* other) const
                 }
             }
 
-            if (mType->IsComplexKind())
+            // Optimization for unions, only check the selected element.
+            if (mType->GetKind() == TK_UNION)
             {
-                for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+                if (mUnionId != other->mUnionId)
                 {
-                    auto currentIt = mValues.find(it->first);
-                    auto otherIt = other->mValues.find(it->first);
-                    if (!((DynamicData*)currentIt->second)->Equals(((DynamicData*)otherIt->second)))
+                    return false;
+                }
+                else if (mUnionId != MEMBER_ID_INVALID)
+                {
+#ifdef DYNAMIC_TYPES_CHECKING
+                    auto it = mComplexValues.find(mUnionId);
+                    auto otherIt = other->mComplexValues.find(mUnionId);
+#else
+                    auto it = mValues.find(mUnionId);
+                    auto otherIt = other->mValues.find(mUnionId);
+#endif
+                    if (!((DynamicData*)it->second)->Equals((DynamicData*)otherIt->second))
                     {
                         return false;
                     }
@@ -241,17 +227,60 @@ bool DynamicData::Equals(const DynamicData* other) const
             }
             else
             {
-                for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+#ifdef DYNAMIC_TYPES_CHECKING
+                if (mInt32Value != other->mInt32Value || mUInt32Value != other->mUInt32Value ||
+                    mInt16Value != other->mInt16Value || mUInt16Value != other->mUInt16Value ||
+                    mInt64Value != other->mInt64Value || mUInt64Value != other->mUInt64Value ||
+                    mFloat32Value != other->mFloat32Value || mFloat64Value != other->mFloat64Value ||
+                    mFloat128Value != other->mFloat128Value || mChar8Value != other->mChar8Value ||
+                    mChar16Value != other->mChar16Value || mByteValue != other->mByteValue ||
+                    mBoolValue != other->mBoolValue || mStringValue != other->mStringValue ||
+                    mWStringValue != other->mWStringValue || mStringValue != other->mStringValue ||
+                    !map_compare(mComplexValues, other->mComplexValues))
                 {
-                    auto currentIt = mValues.find(it->first);
-                    auto otherIt = other->mValues.find(it->first);
-                    if (!CompareValues(it->second->GetKind(), currentIt->second, otherIt->second))
+                    return false;
+                }
+#else
+                if (mType->GetKind() == TK_ENUM)
+                {
+                    if (!CompareValues(TK_UINT32, mValues.begin()->second, other->mValues.begin()->second))
                     {
                         return false;
                     }
                 }
-            }
+                else if (mType->GetKind() == TK_BITMASK || mType->GetKind() == TK_BITSET)
+                {
+                    if (!CompareValues(TK_UINT32, mValues.begin()->second, other->mValues.begin()->second))
+                    {
+                        return false;
+                    }
+                }
+                else if (mType->IsComplexKind())
+                {
+                    for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+                    {
+                        auto currentIt = mValues.find(it->first);
+                        auto otherIt = other->mValues.find(it->first);
+                        if (!((DynamicData*)currentIt->second)->Equals(((DynamicData*)otherIt->second)))
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+                    {
+                        auto currentIt = mValues.find(it->first);
+                        auto otherIt = other->mValues.find(it->first);
+                        if (!CompareValues(it->second->GetKind(), currentIt->second, otherIt->second))
+                        {
+                            return false;
+                        }
+                    }
+                }
 #endif
+            }
             return true;
         }
     }
@@ -3660,6 +3689,11 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     return true;
 }
 
+size_t DynamicData::getCdrSerializedSize(const DynamicData* /*data*/, size_t /*current_alignment*/ /*= 0*/)
+{
+    return 4 * 1024;
+}
+
 void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
 {
     switch (mType->GetKind())
@@ -3830,6 +3864,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_BITMASK:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        //TODO: //ARCE: Should we send the names of the members ????
         cdr << mUInt64Value;
 #else
         auto it = mValues.begin();
@@ -3857,7 +3892,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_MAP:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        cdr << mComplexValues.size();
+        cdr << static_cast<uint32_t>(mComplexValues.size());
         for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
         {
             cdr << it->first;
@@ -3868,7 +3903,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
             it->second->serialize(cdr);
         }
 #else
-        cdr << mValues.size();
+        cdr << static_cast<uint32_t>(mValues.size());
         for (auto it = mValues.begin(); it != mValues.end(); ++it)
         {
             cdr << it->first;
