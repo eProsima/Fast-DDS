@@ -52,7 +52,7 @@ class TypeIdentifier;
  * @brief This class represents the structure StringSTypeDefn defined by the user in the IDL file.
  * @ingroup TYPEIDENTIFIERTYPES
  */
-class StringSTypeDefn final
+class RTPS_DllAPI StringSTypeDefn final
 {
 public:
 
@@ -174,7 +174,7 @@ private:
  * @brief This class represents the structure StringLTypeDefn defined by the user in the IDL file.
  * @ingroup TYPEIDENTIFIERTYPES
  */
-class StringLTypeDefn final
+class RTPS_DllAPI StringLTypeDefn final
 {
 public:
 
@@ -296,7 +296,7 @@ private:
  * @brief This class represents the structure PlainCollectionHeader defined by the user in the IDL file.
  * @ingroup TYPEIDENTIFIERTYPES
  */
-class PlainCollectionHeader final
+class RTPS_DllAPI PlainCollectionHeader final
 {
 public:
 
@@ -445,7 +445,7 @@ private:
  * @brief This class represents the structure PlainSequenceSElemDefn defined by the user in the IDL file.
  * @ingroup TYPEIDENTIFIERTYPES
  */
-class PlainSequenceSElemDefn final
+class RTPS_DllAPI PlainSequenceSElemDefn final
 {
 public:
 
@@ -627,7 +627,7 @@ private:
  * @brief This class represents the structure PlainSequenceLElemDefn defined by the user in the IDL file.
  * @ingroup TYPEIDENTIFIERTYPES
  */
-class PlainSequenceLElemDefn final
+class RTPS_DllAPI PlainSequenceLElemDefn final
 {
 public:
 
@@ -809,7 +809,7 @@ private:
  * @brief This class represents the structure PlainArraySElemDefn defined by the user in the IDL file.
  * @ingroup TYPEIDENTIFIERTYPES
  */
-class PlainArraySElemDefn final
+class RTPS_DllAPI PlainArraySElemDefn final
 {
 public:
 
@@ -1000,7 +1000,7 @@ private:
  * @brief This class represents the structure PlainArrayLElemDefn defined by the user in the IDL file.
  * @ingroup TYPEIDENTIFIERTYPES
  */
-class PlainArrayLElemDefn final
+class RTPS_DllAPI PlainArrayLElemDefn final
 {
 public:
 
@@ -1191,7 +1191,7 @@ private:
  * @brief This class represents the structure PlainMapSTypeDefn defined by the user in the IDL file.
  * @ingroup TYPEIDENTIFIERTYPES
  */
-class PlainMapSTypeDefn final
+class RTPS_DllAPI PlainMapSTypeDefn final
 {
 public:
 
@@ -1424,7 +1424,7 @@ private:
  * @brief This class represents the structure PlainMapLTypeDefn defined by the user in the IDL file.
  * @ingroup TYPEIDENTIFIERTYPES
  */
-class PlainMapLTypeDefn final
+class RTPS_DllAPI PlainMapLTypeDefn final
 {
 public:
 
@@ -1657,7 +1657,7 @@ private:
  * @brief This class represents the structure StronglyConnectedComponentId defined by the user in the IDL file.
  * @ingroup TYPEIDENTIFIERTYPES
  */
-class StronglyConnectedComponentId final
+class RTPS_DllAPI StronglyConnectedComponentId final
 {
 public:
 
@@ -1842,7 +1842,7 @@ private:
  * @brief This class represents the structure ExtendedTypeDefn defined by the user in the IDL file.
  * @ingroup TYPEIDENTIFIERTYPES
  */
-class ExtendedTypeDefn final
+class RTPS_DllAPI ExtendedTypeDefn final
 {
 public:
     /*!
