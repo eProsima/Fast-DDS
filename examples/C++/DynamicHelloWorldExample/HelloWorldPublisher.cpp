@@ -68,7 +68,10 @@ bool HelloWorldPublisher::init(bool dynamic)
         descriptor2.SetType(stringType);
         struct_type_builder->AddMember(&descriptor2);
 
+        struct_type_builder->SetName("HelloWorld");
+
         m_DynType = struct_type_builder->Build();
+        //m_DynType->setName("HelloWorld");
 
         m_DynHello = DynamicDataFactory::GetInstance()->CreateData(m_DynType);
         m_DynHello->SetUint32Value(0, 0);

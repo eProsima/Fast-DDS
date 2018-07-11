@@ -80,7 +80,10 @@ bool HelloWorldSubscriber::init(bool dynamic)
         descriptor2.SetType(stringType);
         struct_type_builder->AddMember(&descriptor2);
 
+        struct_type_builder->SetName("HelloWorld");
+
         m_DynType = struct_type_builder->Build();
+        //m_DynType->setName("HelloWorld");
 
         m_listener.m_DynHello = DynamicDataFactory::GetInstance()->CreateData(m_DynType);
         DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type_builder);
