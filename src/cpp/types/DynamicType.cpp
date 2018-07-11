@@ -56,6 +56,7 @@ DynamicType::DynamicType(const TypeDescriptor* descriptor)
         }
     }
     m_typeSize = GetMaxSerializedSize();
+    setName(mName.c_str());
 }
 
 DynamicType::DynamicType(const DynamicType* other)
