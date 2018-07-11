@@ -267,7 +267,6 @@ bool TypeIdV1::addToCDRMessage(CDRMessage_t* msg)
     m_type_identifier->serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
 
-
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     this->length = static_cast<uint16_t>(payload.length);
     valid &= CDRMessage::addUInt16(msg, this->length);
@@ -315,7 +314,6 @@ bool TypeObjectV1::addToCDRMessage(CDRMessage_t* msg)
 
     m_type_object->serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-
 
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     this->length = static_cast<uint16_t>(payload.length);
