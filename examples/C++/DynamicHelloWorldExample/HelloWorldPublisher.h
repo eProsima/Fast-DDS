@@ -27,6 +27,8 @@
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/participant/ParticipantListener.h>
 #include <fastrtps/participant/Participant.h>
+#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicType.h>
 
 
 #include "HelloWorld.h"
@@ -36,13 +38,12 @@ public:
 	HelloWorldPublisher();
 	virtual ~HelloWorldPublisher();
 	//!Initialize
-	bool init();
+	bool init(bool dynamic);
 	//!Publish a sample
 	bool publish(bool waitForListener = true);
 	//!Run for number samples
 	void run(uint32_t number, uint32_t sleep);
 private:
-	HelloWorld m_Hello;
 	eprosima::fastrtps::Participant* mp_participant;
 	eprosima::fastrtps::Publisher* mp_publisher;
 	bool stop;
@@ -61,7 +62,13 @@ private:
 			eprosima::fastrtps::ParticipantDiscoveryInfo info) override;
 	}m_part_list;
 	void runThread(uint32_t number, uint32_t sleep);
+
+	// Static types
+	HelloWorld m_Hello;
 	HelloWorldPubSubType m_type;
+	// Dynamic Types
+	eprosima::fastrtps::types::DynamicData* m_DynHello;
+	eprosima::fastrtps::types::DynamicType* m_DynType;
 };
 
 

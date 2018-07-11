@@ -28,16 +28,90 @@
 using namespace eprosima;
 using namespace fastrtps;
 using namespace rtps;
-int main(int argc, char** argv)
+
+int type = 1;
+int count = 10;
+long sleep = 100;
+bool dynamic = true;
+
+void usage()
 {
-    //Log::SetVerbosity(Log::Kind::Info);
-    //std::regex filter("RTPS_HISTORY");
-    //std::regex filter("RTPS_READER");
-    //Log::SetCategoryFilter(filter);
-    std::cout << "Starting "<< std::endl;
-    int type = 1;
-    int count = 10;
-    long sleep = 100;
+    std::cout << "USAGE:" << std::endl;
+    std::cout << "DynamicHelloWorld [role] [static] [-c count] [-s sleep]" << std::endl;
+    std::cout << "role: Can be 'publisher' (default) or 'subscriber'." << std::endl;
+    std::cout << "static: If defined, will register the type statically usign the IDL definition." << std::endl;
+    std::cout << "count: Number of samples sent by a publisher. Without effect on subcribers." << std::endl;
+    std::cout << "sleep: Time between samples sent by a publisher in millisecond. Without effect on subcribers." << std::endl;
+}
+
+bool parseArgs(int argc, char** argv)
+{
+    bool roleDefined = false;
+    try
+    {
+        for (int i = 1; i < argc; ++i)
+        {
+            if(strcmp(argv[i],"publisher")==0)
+            {
+                if (!roleDefined)
+                {
+                    type = 1;
+                    roleDefined = true;
+                }
+                else
+                {
+                    std::cout << "role defined twice" << std::endl;
+                    Log::Reset();
+                    return false;
+                }
+            }
+            else if(strcmp(argv[i],"subscriber")==0)
+            {
+                if (!roleDefined)
+                {
+                    type = 2;
+                    roleDefined = true;
+                }
+                else
+                {
+                    std::cout << "role defined twice" << std::endl;
+                    Log::Reset();
+                    return false;
+                }
+            }
+            else if(strcmp(argv[i],"static")==0)
+            {
+                dynamic = false;
+            }
+            else if(strcmp(argv[i],"-c")==0)
+            {
+                if (argc <= i+1)
+                {
+                    std::cout << "count expected" << std::endl;
+                    Log::Reset();
+                    return false;
+                }
+                count = atoi(argv[++i]);
+            }
+            else if(strcmp(argv[i],"-s")==0)
+            {
+                if (argc <= i+1)
+                {
+                    std::cout << "sleep expected" << std::endl;
+                    Log::Reset();
+                    return false;
+                }
+                sleep = atoi(argv[++i]);
+            }
+        }
+    }
+    catch(std::exception&)
+    {
+        usage();
+        return false;
+    }
+
+/*
     if(argc > 1)
     {
         if(strcmp(argv[1],"publisher")==0)
@@ -59,6 +133,23 @@ int main(int argc, char** argv)
     {
         std::cout << "publisher OR subscriber argument needed" << std::endl;
         Log::Reset();
+        return false;
+    }
+*/
+    return true;
+}
+
+int main(int argc, char** argv)
+{
+    //Log::SetVerbosity(Log::Kind::Info);
+    //std::regex filter("RTPS_HISTORY");
+    //std::regex filter("RTPS_READER");
+    //Log::SetCategoryFilter(filter);
+    std::cout << "Starting "<< std::endl;
+
+    if(!parseArgs(argc, argv))
+    {
+        usage();
         return 0;
     }
 
@@ -68,7 +159,7 @@ int main(int argc, char** argv)
         case 1:
             {
                 HelloWorldPublisher mypub;
-                if(mypub.init())
+                if(mypub.init(dynamic))
                 {
                     mypub.run(count, sleep);
                 }
@@ -77,7 +168,7 @@ int main(int argc, char** argv)
         case 2:
             {
                 HelloWorldSubscriber mysub;
-                if(mysub.init())
+                if(mysub.init(dynamic))
                 {
                     mysub.run();
                 }
