@@ -84,265 +84,265 @@ public:
     /*!
      * @brief Default constructor.
      */
-    TypeIdentifier();
+    RTPS_DllAPI TypeIdentifier();
 
     /*!
      * @brief Default destructor.
      */
-    ~TypeIdentifier();
+    RTPS_DllAPI ~TypeIdentifier();
 
     /*!
      * @brief Copy constructor.
      * @param x Reference to the object TypeIdentifier that will be copied.
      */
-    TypeIdentifier(const TypeIdentifier &x);
+    RTPS_DllAPI TypeIdentifier(const TypeIdentifier &x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object TypeIdentifier that will be copied.
      */
-    TypeIdentifier(TypeIdentifier &&x);
+    RTPS_DllAPI TypeIdentifier(TypeIdentifier &&x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object TypeIdentifier that will be copied.
      */
-    TypeIdentifier& operator=(const TypeIdentifier &x);
+    RTPS_DllAPI TypeIdentifier& operator=(const TypeIdentifier &x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object TypeIdentifier that will be copied.
      */
-    TypeIdentifier& operator=(TypeIdentifier &&x);
+    RTPS_DllAPI TypeIdentifier& operator=(TypeIdentifier &&x);
 
     /*!
      * @brief This function sets the discriminator value.
      * @param __d New value for the discriminator.
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
      */
-    void _d(octet __d);
+    RTPS_DllAPI void _d(octet __d);
 
     /*!
      * @brief This function returns the value of the discriminator.
      * @return Value of the discriminator
      */
-    octet _d() const;
+    RTPS_DllAPI octet _d() const;
 
     /*!
      * @brief This function returns a reference to the discriminator.
      * @return Reference to the discriminator.
      */
-    octet& _d();
+    RTPS_DllAPI octet& _d();
 
     /*!
      * @brief This function sets a value in member string_sdefn
      * @param _string_sdefn New value for member string_sdefn
      */
-    void string_sdefn(StringSTypeDefn _string_sdefn);
+    RTPS_DllAPI void string_sdefn(StringSTypeDefn _string_sdefn);
 
     /*!
      * @brief This function returns the value of member string_sdefn
      * @return Value of member string_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    StringSTypeDefn string_sdefn() const;
+    RTPS_DllAPI StringSTypeDefn string_sdefn() const;
 
     /*!
      * @brief This function returns a reference to member string_sdefn
      * @return Reference to member string_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    StringSTypeDefn& string_sdefn();
+    RTPS_DllAPI StringSTypeDefn& string_sdefn();
     /*!
      * @brief This function sets a value in member string_ldefn
      * @param _string_ldefn New value for member string_ldefn
      */
-    void string_ldefn(StringLTypeDefn _string_ldefn);
+    RTPS_DllAPI void string_ldefn(StringLTypeDefn _string_ldefn);
 
     /*!
      * @brief This function returns the value of member string_ldefn
      * @return Value of member string_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    StringLTypeDefn string_ldefn() const;
+    RTPS_DllAPI StringLTypeDefn string_ldefn() const;
 
     /*!
      * @brief This function returns a reference to member string_ldefn
      * @return Reference to member string_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    StringLTypeDefn& string_ldefn();
+    RTPS_DllAPI StringLTypeDefn& string_ldefn();
     /*!
      * @brief This function sets a value in member seq_sdefn
      * @param _seq_sdefn New value for member seq_sdefn
      */
-    void seq_sdefn(PlainSequenceSElemDefn _seq_sdefn);
+    RTPS_DllAPI void seq_sdefn(PlainSequenceSElemDefn _seq_sdefn);
 
     /*!
      * @brief This function returns the value of member seq_sdefn
      * @return Value of member seq_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    PlainSequenceSElemDefn seq_sdefn() const;
+    RTPS_DllAPI PlainSequenceSElemDefn seq_sdefn() const;
 
     /*!
      * @brief This function returns a reference to member seq_sdefn
      * @return Reference to member seq_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    PlainSequenceSElemDefn& seq_sdefn();
+    RTPS_DllAPI PlainSequenceSElemDefn& seq_sdefn();
     /*!
      * @brief This function sets a value in member seq_ldefn
      * @param _seq_ldefn New value for member seq_ldefn
      */
-    void seq_ldefn(PlainSequenceLElemDefn _seq_ldefn);
+    RTPS_DllAPI void seq_ldefn(PlainSequenceLElemDefn _seq_ldefn);
 
     /*!
      * @brief This function returns the value of member seq_ldefn
      * @return Value of member seq_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    PlainSequenceLElemDefn seq_ldefn() const;
+    RTPS_DllAPI PlainSequenceLElemDefn seq_ldefn() const;
 
     /*!
      * @brief This function returns a reference to member seq_ldefn
      * @return Reference to member seq_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    PlainSequenceLElemDefn& seq_ldefn();
+    RTPS_DllAPI PlainSequenceLElemDefn& seq_ldefn();
     /*!
      * @brief This function sets a value in member array_sdefn
      * @param _array_sdefn New value for member array_sdefn
      */
-    void array_sdefn(PlainArraySElemDefn _array_sdefn);
+    RTPS_DllAPI void array_sdefn(PlainArraySElemDefn _array_sdefn);
 
     /*!
      * @brief This function returns the value of member array_sdefn
      * @return Value of member array_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    PlainArraySElemDefn array_sdefn() const;
+    RTPS_DllAPI PlainArraySElemDefn array_sdefn() const;
 
     /*!
      * @brief This function returns a reference to member array_sdefn
      * @return Reference to member array_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    PlainArraySElemDefn& array_sdefn();
+    RTPS_DllAPI PlainArraySElemDefn& array_sdefn();
     /*!
      * @brief This function sets a value in member array_ldefn
      * @param _array_ldefn New value for member array_ldefn
      */
-    void array_ldefn(PlainArrayLElemDefn _array_ldefn);
+    RTPS_DllAPI void array_ldefn(PlainArrayLElemDefn _array_ldefn);
 
     /*!
      * @brief This function returns the value of member array_ldefn
      * @return Value of member array_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    PlainArrayLElemDefn array_ldefn() const;
+    RTPS_DllAPI PlainArrayLElemDefn array_ldefn() const;
 
     /*!
      * @brief This function returns a reference to member array_ldefn
      * @return Reference to member array_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    PlainArrayLElemDefn& array_ldefn();
+    RTPS_DllAPI PlainArrayLElemDefn& array_ldefn();
     /*!
      * @brief This function sets a value in member map_sdefn
      * @param _map_sdefn New value for member map_sdefn
      */
-    void map_sdefn(PlainMapSTypeDefn _map_sdefn);
+    RTPS_DllAPI void map_sdefn(PlainMapSTypeDefn _map_sdefn);
 
     /*!
      * @brief This function returns the value of member map_sdefn
      * @return Value of member map_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    PlainMapSTypeDefn map_sdefn() const;
+    RTPS_DllAPI PlainMapSTypeDefn map_sdefn() const;
 
     /*!
      * @brief This function returns a reference to member map_sdefn
      * @return Reference to member map_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    PlainMapSTypeDefn& map_sdefn();
+    RTPS_DllAPI PlainMapSTypeDefn& map_sdefn();
     /*!
      * @brief This function sets a value in member map_ldefn
      * @param _map_ldefn New value for member map_ldefn
      */
-    void map_ldefn(PlainMapLTypeDefn _map_ldefn);
+    RTPS_DllAPI void map_ldefn(PlainMapLTypeDefn _map_ldefn);
 
     /*!
      * @brief This function returns the value of member map_ldefn
      * @return Value of member map_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    PlainMapLTypeDefn map_ldefn() const;
+    RTPS_DllAPI PlainMapLTypeDefn map_ldefn() const;
 
     /*!
      * @brief This function returns a reference to member map_ldefn
      * @return Reference to member map_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    PlainMapLTypeDefn& map_ldefn();
+    RTPS_DllAPI PlainMapLTypeDefn& map_ldefn();
     /*!
      * @brief This function sets a value in member sc_component_id
      * @param _sc_component_id New value for member sc_component_id
      */
-    void sc_component_id(StronglyConnectedComponentId _sc_component_id);
+    RTPS_DllAPI void sc_component_id(StronglyConnectedComponentId _sc_component_id);
 
     /*!
      * @brief This function returns the value of member sc_component_id
      * @return Value of member sc_component_id
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    StronglyConnectedComponentId sc_component_id() const;
+    RTPS_DllAPI StronglyConnectedComponentId sc_component_id() const;
 
     /*!
      * @brief This function returns a reference to member sc_component_id
      * @return Reference to member sc_component_id
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    StronglyConnectedComponentId& sc_component_id();
+    RTPS_DllAPI StronglyConnectedComponentId& sc_component_id();
     /*!
      * @brief This function sets a value in member equivalence_hash
      * @param _equivalence_hash New value for member equivalence_hash
      */
-    void equivalence_hash(EquivalenceHash _equivalence_hash);
+    RTPS_DllAPI void equivalence_hash(EquivalenceHash _equivalence_hash);
 
     /*!
      * @brief This function returns the value of member equivalence_hash
      * @return Value of member equivalence_hash
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    const octet* equivalence_hash() const;
+    RTPS_DllAPI const octet* equivalence_hash() const;
 
     /*!
      * @brief This function returns a reference to member equivalence_hash
      * @return Reference to member equivalence_hash
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    octet* equivalence_hash();
+    RTPS_DllAPI octet* equivalence_hash();
     /*!
      * @brief This function sets a value in member extended_defn
      * @param _extended_defn New value for member extended_defn
      */
-    void extended_defn(ExtendedTypeDefn _extended_defn);
+    RTPS_DllAPI void extended_defn(ExtendedTypeDefn _extended_defn);
 
     /*!
      * @brief This function returns the value of member extended_defn
      * @return Value of member extended_defn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    ExtendedTypeDefn extended_defn() const;
+    RTPS_DllAPI ExtendedTypeDefn extended_defn() const;
 
     /*!
      * @brief This function returns a reference to member extended_defn
      * @return Reference to member extended_defn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    ExtendedTypeDefn& extended_defn();
+    RTPS_DllAPI ExtendedTypeDefn& extended_defn();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -358,20 +358,20 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    static size_t getCdrSerializedSize(const TypeIdentifier& data, size_t current_alignment = 0);
+    RTPS_DllAPI static size_t getCdrSerializedSize(const TypeIdentifier& data, size_t current_alignment = 0);
 
 
     /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    void deserialize(eprosima::fastcdr::Cdr &cdr);
+    RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
 
 
@@ -381,18 +381,18 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
 
     /*!
      * @brief This function tells you if the Key has been defined for this type
      */
-    static bool isKeyDefined();
+    RTPS_DllAPI static bool isKeyDefined();
 
     /*!
      * @brief This function serializes the key members of an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
 
 private:
     octet m__d;
