@@ -83,6 +83,7 @@ bool HelloWorldSubscriber::init(bool dynamic)
         m_DynType = struct_type_builder->Build();
 
         m_listener.m_DynHello = DynamicDataFactory::GetInstance()->CreateData(m_DynType);
+        DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type_builder);
 
         Domain::registerType(mp_participant, m_DynType);
     }
@@ -116,6 +117,11 @@ bool HelloWorldSubscriber::init(bool dynamic)
 
 HelloWorldSubscriber::~HelloWorldSubscriber() {
     // TODO Auto-generated destructor stub
+    if (m_dynamic)
+    {
+        DynamicTypeBuilderFactory::GetInstance()->DeleteType(m_DynType);
+        DynamicTypeBuilderFactory::GetInstance()->DeleteData(m_listener.m_DynHello);
+    }
     Domain::removeParticipant(mp_participant);
 }
 
