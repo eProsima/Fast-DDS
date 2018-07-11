@@ -311,7 +311,7 @@ MemberId DynamicData::GetMemberIdAtIndex(uint32_t index) const
     return MEMBER_ID_INVALID;
 }
 
-TypeKind DynamicData::GetKind()
+TypeKind DynamicData::GetKind() const
 {
     return mType->GetKind();
 }
@@ -2632,7 +2632,7 @@ ResponseCode DynamicData::SetStringValue(const std::string& value, MemberId id)
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_STRING8 &&id == MEMBER_ID_INVALID)
     {
-        if (mType->GetBounds() == LENGTH_UNLIMITED || value.length() <= mType->GetBounds())
+        if (value.length() <= mType->GetBounds())
         {
             mStringValue = value;
             return ResponseCode::RETCODE_OK;
@@ -2672,7 +2672,7 @@ ResponseCode DynamicData::SetStringValue(const std::string& value, MemberId id)
     {
         if (mType->GetKind() == TK_STRING8 && id == MEMBER_ID_INVALID)
         {
-            if (mType->GetBounds() == LENGTH_UNLIMITED || value.length() <= mType->GetBounds())
+            if (value.length() <= mType->GetBounds())
             {
                 *((std::string*)it->second) = value;
                 return ResponseCode::RETCODE_OK;
@@ -2790,7 +2790,7 @@ ResponseCode DynamicData::SetWstringValue(const std::wstring& value, MemberId id
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_STRING16 && id == MEMBER_ID_INVALID)
     {
-        if (mType->GetBounds() == LENGTH_UNLIMITED || value.length() <= mType->GetBounds())
+        if (value.length() <= mType->GetBounds())
         {
             mWStringValue = value;
             return ResponseCode::RETCODE_OK;
@@ -2830,7 +2830,7 @@ ResponseCode DynamicData::SetWstringValue(const std::wstring& value, MemberId id
     {
         if (mType->GetKind() == TK_STRING16 && id == MEMBER_ID_INVALID)
         {
-            if (mType->GetBounds() == LENGTH_UNLIMITED || value.length() <= mType->GetBounds())
+            if (value.length() <= mType->GetBounds())
             {
                 *((std::wstring*)it->second) = value;
                 return ResponseCode::RETCODE_OK;
@@ -3689,11 +3689,258 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     return true;
 }
 
-size_t DynamicData::getCdrSerializedSize(const DynamicData* /*data*/, size_t /*current_alignment*/ /*= 0*/)
+size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current_alignment /*= 0*/)
 {
-    return 4 * 1024;
+    size_t initial_alignment = current_alignment;
+
+    switch (data->GetKind())
+    {
+    default:
+        break;
+    case TK_INT32:
+    case TK_UINT32:
+    case TK_FLOAT32:
+    case TK_ENUM:
+    {
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        break;
+    }
+    case TK_INT16:
+    case TK_UINT16:
+    case TK_CHAR16:
+    {
+        current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+        break;
+    }
+    case TK_INT64:
+    case TK_UINT64:
+    case TK_FLOAT64:
+    case TK_BITSET:
+    case TK_BITMASK:
+    {
+        current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+        break;
+    }
+    case TK_FLOAT128:
+    {
+        current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
+        break;
+    }
+    case TK_CHAR8:
+    case TK_BOOLEAN:
+    case TK_BYTE:
+    {
+        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        break;
+    }
+    case TK_STRING8:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        // string content (length + characters + 1)
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
+            data->mStringValue.length() + 1;
+#else
+        auto it = data->mValues.begin();
+        // string content (length + characters + 1)
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
+            ((std::string*)it->second)->length() + 1;
+#endif
+        break;
+    }
+    case TK_STRING16:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        // string content (length + ((characters + 1) * 2) )
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
+            (data->mWStringValue.length() + 1) * 2;
+#else
+        auto it = data->mValues.begin();
+        // string content (length + ((characters + 1) * 2) )
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
+            (((std::wstring*)it->second)->length() + 1) * 2;
+#endif
+        break;
+    }
+    case TK_UNION:
+    {
+        // union id
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        if (data->mUnionId != MEMBER_ID_INVALID)
+        {
+#ifdef DYNAMIC_TYPES_CHECKING
+            auto it = data->mComplexValues.at(data->mUnionId);
+#else
+            auto it = (DynamicData*)data->mValues.at(data->mUnionId);
+#endif
+            current_alignment += getCdrSerializedSize(it, current_alignment);
+        }
+        break;
+    }
+    case TK_STRUCTURE:
+    case TK_SEQUENCE:
+    case TK_ARRAY:
+    case TK_MAP:
+    {
+        // Elements count
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+#ifdef DYNAMIC_TYPES_CHECKING
+        for (auto it = data->mComplexValues.begin(); it != data->mComplexValues.end(); ++it)
+        {
+            // Element MemberId
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data->GetKind() == TK_MAP)
+            {
+                // Map key flag
+                current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+            }
+            // Element Size
+            current_alignment += getCdrSerializedSize(it->second, current_alignment);
+        }
+#else
+        for (auto it = data->mValues.begin(); it != data->mValues.end(); ++it)
+        {
+            // Element MemberId
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data->GetKind() == TK_MAP)
+            {
+                // Map key flag
+                current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+            }
+
+            // Element Size
+            current_alignment += getCdrSerializedSize((DynamicData*)it->second, current_alignment);
+        }
+#endif
+        break;
+    }
+    case TK_ALIAS:
+        break;
+    }
+
+    return current_alignment - initial_alignment;
 }
 
+size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    switch (type->GetKind())
+    {
+    default:
+        break;
+    case TK_INT32:
+    case TK_UINT32:
+    case TK_FLOAT32:
+    case TK_ENUM:
+    {
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        break;
+    }
+    case TK_INT16:
+    case TK_UINT16:
+    case TK_CHAR16:
+    {
+        current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+        break;
+    }
+    case TK_INT64:
+    case TK_UINT64:
+    case TK_FLOAT64:
+    case TK_BITSET:
+    case TK_BITMASK:
+    {
+        current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+        break;
+    }
+    case TK_FLOAT128:
+    {
+        current_alignment += sizeof(long double) + eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(long double));
+        break;
+    }
+    case TK_CHAR8:
+    case TK_BOOLEAN:
+    case TK_BYTE:
+    {
+        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        break;
+    }
+    case TK_STRING8:
+    {
+        // string length
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        // string content
+        current_alignment += type->GetBounds() + eprosima::fastcdr::Cdr::alignment(current_alignment, type->GetBounds());
+        break;
+    }
+    case TK_STRING16:
+    {
+        // string length
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        // string content
+        current_alignment += (type->GetBounds() * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, (type->GetBounds() * 2));
+        break;
+    }
+    case TK_UNION:
+    {
+        // union id
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        // Check the size of all members and take the size of the biggest one.
+        size_t temp_size(0);
+        size_t max_element_size(0);
+        for (auto it = type->mMemberById.begin(); it != type->mMemberById.end(); ++it)
+        {
+            temp_size = getMaxCdrSerializedSize(it->second->mDescriptor->mType, current_alignment);
+            if (temp_size > max_element_size)
+            {
+                max_element_size = temp_size;
+            }
+        }
+        current_alignment += max_element_size;
+        break;
+    }
+    case TK_STRUCTURE:
+    {
+        // Elements size
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        for (auto it = type->mMemberById.begin(); it != type->mMemberById.end(); ++it)
+        {
+            current_alignment += getMaxCdrSerializedSize(it->second->mDescriptor->mType, current_alignment);
+        }
+        break;
+    }
+    case TK_ARRAY:
+    case TK_SEQUENCE:
+    {
+        // Elements count
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        // Element size with the maximum size
+        current_alignment += type->GetTotalBounds() * getMaxCdrSerializedSize(type->mDescriptor->GetElementType());
+        break;
+    }
+    case TK_MAP:
+    {
+        // Elements count
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        // Key Elements size with the maximum size
+        current_alignment += type->GetTotalBounds() * getMaxCdrSerializedSize(type->mDescriptor->GetKeyElementType());
+
+        // Value Elements size with the maximum size
+        current_alignment += type->GetTotalBounds() * getMaxCdrSerializedSize(type->mDescriptor->GetElementType());
+        break;
+    }
+
+    case TK_ALIAS:
+        break;
+    }
+
+    return current_alignment - initial_alignment;
+}
 void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
 {
     switch (mType->GetKind())

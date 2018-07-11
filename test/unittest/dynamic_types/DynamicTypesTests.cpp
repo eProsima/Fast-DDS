@@ -477,8 +477,10 @@ TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -568,8 +570,10 @@ TEST_F(DynamicTypesTests, DynamicType_uint32_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -658,8 +662,10 @@ TEST_F(DynamicTypesTests, DynamicType_int16_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -748,8 +754,10 @@ TEST_F(DynamicTypesTests, DynamicType_uint16_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -838,8 +846,10 @@ TEST_F(DynamicTypesTests, DynamicType_int64_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -928,8 +938,10 @@ TEST_F(DynamicTypesTests, DynamicType_uint64_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -1018,8 +1030,10 @@ TEST_F(DynamicTypesTests, DynamicType_float32_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -1108,8 +1122,10 @@ TEST_F(DynamicTypesTests, DynamicType_float64_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -1200,8 +1216,11 @@ TEST_F(DynamicTypesTests, DynamicType_float128_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    //TODO: //ARCE: Windows 128 ?¿?
+    ASSERT_TRUE(payload.length <= payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -1290,8 +1309,10 @@ TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -1380,8 +1401,10 @@ TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -1470,8 +1493,10 @@ TEST_F(DynamicTypesTests, DynamicType_byte_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -1560,8 +1585,10 @@ TEST_F(DynamicTypesTests, DynamicType_bool_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -1679,8 +1706,10 @@ TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
     //ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -1777,8 +1806,10 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -1875,8 +1906,10 @@ TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -1928,8 +1961,10 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
     ASSERT_FALSE(aliasData->SetStringValue("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(aliasData)));
+    uint32_t payloadSize = static_cast<uint32_t>(alias_type->getSerializedSizeProvider(aliasData)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(alias_type->serialize(aliasData, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(alias_type);
     ASSERT_TRUE(alias_type->deserialize(&payload, data2));
@@ -1997,8 +2032,10 @@ TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
     ASSERT_FALSE(aliasData->SetStringValue("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(aliasData)));
+    uint32_t payloadSize = static_cast<uint32_t>(alias2_type->getSerializedSizeProvider(aliasData)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(alias2_type->serialize(aliasData, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(alias2_type);
     ASSERT_TRUE(alias2_type->deserialize(&payload, data2));
@@ -2109,8 +2146,10 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -2230,8 +2269,10 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
 
     // Serialize <-> Deserialize Test
     ASSERT_TRUE(data->SetBoolValue(true, 0) == ResponseCode::RETCODE_OK);
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
     ASSERT_TRUE(new_type->deserialize(&payload, data2));
@@ -2291,8 +2332,10 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
     ASSERT_TRUE(test1 == test2);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(seq_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(seq_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(seq_type);
     ASSERT_TRUE(seq_type->deserialize(&payload, data2));
@@ -2429,8 +2472,10 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
     ASSERT_FALSE(data->ReturnLoanedValue(seq_data) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(seq_seq_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(seq_seq_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(seq_seq_type);
     ASSERT_TRUE(seq_seq_type->deserialize(&payload, data2));
@@ -2563,8 +2608,10 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
     ASSERT_TRUE(test1 == test2);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(array_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(array_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(array_type);
     ASSERT_TRUE(array_type->deserialize(&payload, data2));
@@ -2710,8 +2757,10 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
     ASSERT_TRUE(test1 == test2);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(map_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(map_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(map_type);
     ASSERT_TRUE(map_type->deserialize(&payload, data2));
@@ -2916,8 +2965,10 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(data)));
+    uint32_t payloadSize = static_cast<uint32_t>(map_map_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(map_map_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(map_map_type);
     ASSERT_TRUE(map_map_type->deserialize(&payload, data2));
@@ -3001,8 +3052,10 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
     ASSERT_TRUE(test3 == test4);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(struct_data)));
+    uint32_t payloadSize = static_cast<uint32_t>(struct_type->getSerializedSizeProvider(struct_data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(struct_type->serialize(struct_data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(struct_type);
     ASSERT_TRUE(struct_type->deserialize(&payload, data2));
@@ -3118,8 +3171,10 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
     ASSERT_TRUE(test5 == test6);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(struct_data)));
+    uint32_t payloadSize = static_cast<uint32_t>(child_struct_type->getSerializedSizeProvider(struct_data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(child_struct_type->serialize(struct_data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(child_struct_type);
     ASSERT_TRUE(child_struct_type->deserialize(&payload, data2));
@@ -3243,8 +3298,10 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
     ASSERT_FALSE(struct_data->ReturnLoanedValue(child_struct_data) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(struct_data)));
+    uint32_t payloadSize = static_cast<uint32_t>(parent_struct_type->getSerializedSizeProvider(struct_data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(parent_struct_type->serialize(struct_data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(parent_struct_type);
     ASSERT_TRUE(parent_struct_type->deserialize(&payload, data2));
@@ -3365,8 +3422,10 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
     ASSERT_TRUE(label == 1);
 
     // Serialize <-> Deserialize Test
-    SerializedPayload_t payload(static_cast<uint32_t>(DynamicData::getCdrSerializedSize(union_data)));
+    uint32_t payloadSize = static_cast<uint32_t>(union_type->getSerializedSizeProvider(union_data)());
+    SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(union_type->serialize(union_data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(union_type);
     ASSERT_TRUE(union_type->deserialize(&payload, data2));

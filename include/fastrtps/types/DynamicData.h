@@ -41,7 +41,7 @@ public:
 
     RTPS_DllAPI DynamicData* Clone() const;
     RTPS_DllAPI bool Equals(const DynamicData* other) const;
-    RTPS_DllAPI TypeKind GetKind();
+    RTPS_DllAPI TypeKind GetKind() const;
     RTPS_DllAPI uint32_t GetItemCount() const;
     RTPS_DllAPI std::string GetName();
 
@@ -234,6 +234,7 @@ public:
     // Serializes and deserializes the Dynamic Data.
     bool deserialize(eprosima::fastcdr::Cdr &cdr);
     static size_t getCdrSerializedSize(const DynamicData* data, size_t current_alignment = 0);
+    static size_t getMaxCdrSerializedSize(const DynamicType* type, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
 
 protected:
