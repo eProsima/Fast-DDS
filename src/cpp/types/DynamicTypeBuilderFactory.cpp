@@ -179,6 +179,14 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateArrayType(const DynamicType
 {
     if (element_type != nullptr)
     {
+        for (uint32_t i = 0; i < bounds.size(); ++i)
+        {
+            if (bounds[i] == 0)
+            {
+                bounds[i] = MAX_ELEMENTS_COUNT;
+            }
+        }
+
         TypeDescriptor pDescriptor;
         pDescriptor.mKind = TK_ARRAY;
         pDescriptor.mName = GenerateTypeName(GetTypeName(TK_ARRAY));
@@ -367,6 +375,11 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateMapType(DynamicType* key_el
 {
     if (key_element_type != nullptr && element_type != nullptr)
     {
+        if (bound == 0)
+        {
+            bound = MAX_ELEMENTS_COUNT;
+        }
+
         TypeDescriptor pDescriptor;
         pDescriptor.mKind = TK_MAP;
         pDescriptor.mName = GenerateTypeName(GetTypeName(TK_MAP));
@@ -389,6 +402,11 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateSequenceType(const DynamicT
 {
     if (element_type != nullptr)
     {
+        if (bound == 0)
+        {
+            bound = MAX_ELEMENTS_COUNT;
+        }
+
         TypeDescriptor pDescriptor;
         pDescriptor.mKind = TK_SEQUENCE;
         pDescriptor.mName = GenerateTypeName(GetTypeName(TK_SEQUENCE));
@@ -408,6 +426,11 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateSequenceType(const DynamicT
 
 DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateStringType(uint32_t bound)
 {
+    if (bound == 0)
+    {
+        bound = MAX_STRING_LENGTH;
+    }
+
     TypeDescriptor pCharDescriptor;
     pCharDescriptor.mKind = TK_CHAR8;
     pCharDescriptor.mName = GenerateTypeName(GetTypeName(TK_CHAR8));
@@ -552,6 +575,11 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateUnionType(DynamicType* disc
 
 DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateWstringType(uint32_t bound)
 {
+    if (bound == 0)
+    {
+        bound = MAX_STRING_LENGTH;
+    }
+
     TypeDescriptor pCharDescriptor;
     pCharDescriptor.mKind = TK_CHAR16;
     pCharDescriptor.mName = GenerateTypeName(GetTypeName(TK_CHAR16));

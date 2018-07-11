@@ -141,9 +141,12 @@ enum ResponseCode : uint32_t
 };
 
 typedef uint32_t MemberId;
-#define MEMBER_ID_INVALID       0X0FFFFFFF
-#define INDEX_INVALID           UINT32_MAX
-#define MAX_BITMASK_LENGTH      64
+#define MEMBER_ID_INVALID 0X0FFFFFFF
+#define INDEX_INVALID UINT32_MAX
+
+const int32_t MAX_BITMASK_LENGTH = 64;
+const int32_t MAX_ELEMENTS_COUNT = 100;
+const int32_t MAX_STRING_LENGTH = 255;
 
 #define LENGTH_UNLIMITED        0
 

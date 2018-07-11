@@ -62,6 +62,7 @@ public:
     bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
     bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle);
     std::function<uint32_t()> getSerializedSizeProvider(void* data);
+    uint32_t getMaxSerializedSize();
     bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
 
 protected:

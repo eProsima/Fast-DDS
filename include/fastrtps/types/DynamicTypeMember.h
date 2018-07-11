@@ -54,6 +54,7 @@ protected:
 
     friend class DynamicTypeBuilder;
     friend class DynamicType;
+    friend class DynamicData;
 
     DynamicType* mParent;
     MemberDescriptor* mDescriptor;
