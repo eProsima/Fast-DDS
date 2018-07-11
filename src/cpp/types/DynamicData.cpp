@@ -750,7 +750,7 @@ void DynamicData::SetDefaultValue(MemberId id)
             value = stoi(defaultValue);
         }
         catch (...) {}
-        SetInt32Value(id, value);
+        SetInt32Value(value, id);
     }
     break;
     case TK_UINT32:
@@ -761,7 +761,7 @@ void DynamicData::SetDefaultValue(MemberId id)
             value = stoul(defaultValue);
         }
         catch (...) {}
-        SetUint32Value(id, value);
+        SetUint32Value(value, id);
     }
     break;
     case TK_INT16:
@@ -772,7 +772,7 @@ void DynamicData::SetDefaultValue(MemberId id)
             value = static_cast<int16_t>(stoi(defaultValue));
         }
         catch (...) {}
-        SetInt16Value(id, value);
+        SetInt16Value(value, id);
     }
     break;
     case TK_UINT16:
@@ -783,7 +783,7 @@ void DynamicData::SetDefaultValue(MemberId id)
             value = static_cast<uint16_t>(stoul(defaultValue));
         }
         catch (...) {}
-        SetUint16Value(id, value);
+        SetUint16Value(value, id);
     }
     break;
     case TK_INT64:
@@ -794,7 +794,7 @@ void DynamicData::SetDefaultValue(MemberId id)
             value = stoll(defaultValue);
         }
         catch (...) {}
-        SetInt64Value(id, value);
+        SetInt64Value(value, id);
     }
     break;
     case TK_UINT64:
@@ -805,7 +805,7 @@ void DynamicData::SetDefaultValue(MemberId id)
             value = stoul(defaultValue);
         }
         catch (...) {}
-        SetUint64Value(id, value);
+        SetUint64Value(value, id);
     }
     break;
     case TK_FLOAT32:
@@ -816,7 +816,7 @@ void DynamicData::SetDefaultValue(MemberId id)
             value = stof(defaultValue);
         }
         catch (...) {}
-        SetFloat32Value(id, value);
+        SetFloat32Value(value, id);
     }
     break;
     case TK_FLOAT64:
@@ -827,7 +827,7 @@ void DynamicData::SetDefaultValue(MemberId id)
             value = stod(defaultValue);
         }
         catch (...) {}
-        SetFloat64Value(id, value);
+        SetFloat64Value(value, id);
     }
     break;
     case TK_FLOAT128:
@@ -838,14 +838,14 @@ void DynamicData::SetDefaultValue(MemberId id)
             value = stold(defaultValue);
         }
         catch (...) {}
-        SetFloat128Value(id, value);
+        SetFloat128Value(value, id);
     }
     break;
     case TK_CHAR8:
     {
         if (defaultValue.length() >= 1)
         {
-            SetChar8Value(id, defaultValue[0]);
+            SetChar8Value(defaultValue[0], id);
         }
     }
     break;
@@ -859,7 +859,7 @@ void DynamicData::SetDefaultValue(MemberId id)
         }
         catch (...) {}
 
-        SetChar16Value(id, value);
+        SetChar16Value(value, id);
     }
     break;
     case TK_BOOLEAN:
@@ -870,25 +870,25 @@ void DynamicData::SetDefaultValue(MemberId id)
             value = stoi(defaultValue);
         }
         catch (...) {}
-        SetBoolValue(id, value == 1 ? true : false);
+        SetBoolValue(value == 1 ? true : false, id);
     }
     break;
     case TK_BYTE:
     {
         if (defaultValue.length() >= 1)
         {
-            SetByteValue(id, defaultValue[0]);
+            SetByteValue(defaultValue[0], id);
         }
     }
     break;
     case TK_STRING8:
     {
-        SetStringValue(id, defaultValue);
+        SetStringValue(defaultValue, id);
     }
     break;
     case TK_STRING16:
     {
-        SetWstringValue(id, std::wstring(defaultValue.begin(), defaultValue.end()));
+        SetWstringValue(std::wstring(defaultValue.begin(), defaultValue.end()), id);
     }
     break;
     case TK_ENUM:
@@ -899,7 +899,7 @@ void DynamicData::SetDefaultValue(MemberId id)
             value = stoul(defaultValue);
         }
         catch (...) {}
-        SetUint32Value(id, value);
+        SetUint32Value(value, id);
     }
     break;
     case TK_BITSET:
@@ -911,7 +911,7 @@ void DynamicData::SetDefaultValue(MemberId id)
             value = stoi(defaultValue);
         }
         catch (...) {}
-        SetBoolValue(id, value == 1 ? true : false);
+        SetBoolValue(value == 1 ? true : false, id);
     }
     break;
     case TK_ARRAY:
@@ -1116,7 +1116,7 @@ ResponseCode DynamicData::GetInt32Value(int32_t& value, MemberId id) const
 #endif
 }
 
-ResponseCode DynamicData::SetInt32Value(MemberId id, int32_t value)
+ResponseCode DynamicData::SetInt32Value(int32_t value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_INT32 && id == MEMBER_ID_INVALID)
@@ -1129,7 +1129,7 @@ ResponseCode DynamicData::SetInt32Value(MemberId id, int32_t value)
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            ResponseCode result = it->second->SetInt32Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = it->second->SetInt32Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1141,7 +1141,7 @@ ResponseCode DynamicData::SetInt32Value(MemberId id, int32_t value)
             ResponseCode insertResult = InsertArrayData(id);
             if (insertResult == ResponseCode::RETCODE_OK)
             {
-                return SetInt32Value(id, value);
+                return SetInt32Value(value, id);
             }
             return insertResult;
         }
@@ -1158,7 +1158,7 @@ ResponseCode DynamicData::SetInt32Value(MemberId id, int32_t value)
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ResponseCode result = ((DynamicData*)it->second)->SetInt32Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = ((DynamicData*)it->second)->SetInt32Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1171,7 +1171,7 @@ ResponseCode DynamicData::SetInt32Value(MemberId id, int32_t value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetInt32Value(id, value);
+            return SetInt32Value(value, id);
         }
         return insertResult;
     }
@@ -1223,7 +1223,7 @@ ResponseCode DynamicData::GetUint32Value(uint32_t& value, MemberId id) const
 #endif
 }
 
-ResponseCode DynamicData::SetUint32Value(MemberId id, uint32_t value)
+ResponseCode DynamicData::SetUint32Value(uint32_t value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_UINT32 && id == MEMBER_ID_INVALID)
@@ -1236,7 +1236,7 @@ ResponseCode DynamicData::SetUint32Value(MemberId id, uint32_t value)
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            ResponseCode result = it->second->SetUint32Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = it->second->SetUint32Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1248,7 +1248,7 @@ ResponseCode DynamicData::SetUint32Value(MemberId id, uint32_t value)
             ResponseCode insertResult = InsertArrayData(id);
             if (insertResult == ResponseCode::RETCODE_OK)
             {
-                return SetUint32Value(id, value);
+                return SetUint32Value(value, id);
             }
             return insertResult;
         }
@@ -1265,7 +1265,7 @@ ResponseCode DynamicData::SetUint32Value(MemberId id, uint32_t value)
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ResponseCode result = ((DynamicData*)it->second)->SetUint32Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = ((DynamicData*)it->second)->SetUint32Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1278,7 +1278,7 @@ ResponseCode DynamicData::SetUint32Value(MemberId id, uint32_t value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetUint32Value(id, value);
+            return SetUint32Value(value, id);
         }
         return insertResult;
     }
@@ -1330,7 +1330,7 @@ ResponseCode DynamicData::GetInt16Value(int16_t& value, MemberId id) const
 #endif
 }
 
-ResponseCode DynamicData::SetInt16Value(MemberId id, int16_t value)
+ResponseCode DynamicData::SetInt16Value(int16_t value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_INT16 && id == MEMBER_ID_INVALID)
@@ -1343,7 +1343,7 @@ ResponseCode DynamicData::SetInt16Value(MemberId id, int16_t value)
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            ResponseCode result = it->second->SetInt16Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = it->second->SetInt16Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1355,7 +1355,7 @@ ResponseCode DynamicData::SetInt16Value(MemberId id, int16_t value)
             ResponseCode insertResult = InsertArrayData(id);
             if (insertResult == ResponseCode::RETCODE_OK)
             {
-                return SetInt16Value(id, value);
+                return SetInt16Value(value, id);
             }
             return insertResult;
         }
@@ -1372,7 +1372,7 @@ ResponseCode DynamicData::SetInt16Value(MemberId id, int16_t value)
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ResponseCode result = ((DynamicData*)it->second)->SetInt16Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = ((DynamicData*)it->second)->SetInt16Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1385,7 +1385,7 @@ ResponseCode DynamicData::SetInt16Value(MemberId id, int16_t value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetInt16Value(id, value);
+            return SetInt16Value(value, id);
         }
         return insertResult;
     }
@@ -1437,7 +1437,7 @@ ResponseCode DynamicData::GetUint16Value(uint16_t& value, MemberId id) const
 #endif
 }
 
-ResponseCode DynamicData::SetUint16Value(MemberId id, uint16_t value)
+ResponseCode DynamicData::SetUint16Value(uint16_t value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_UINT16 && id == MEMBER_ID_INVALID)
@@ -1450,7 +1450,7 @@ ResponseCode DynamicData::SetUint16Value(MemberId id, uint16_t value)
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            ResponseCode result = it->second->SetUint16Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = it->second->SetUint16Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1462,7 +1462,7 @@ ResponseCode DynamicData::SetUint16Value(MemberId id, uint16_t value)
             ResponseCode insertResult = InsertArrayData(id);
             if (insertResult == ResponseCode::RETCODE_OK)
             {
-                return SetUint16Value(id, value);
+                return SetUint16Value(value, id);
             }
             return insertResult;
         }
@@ -1479,7 +1479,7 @@ ResponseCode DynamicData::SetUint16Value(MemberId id, uint16_t value)
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ResponseCode result = ((DynamicData*)it->second)->SetUint16Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = ((DynamicData*)it->second)->SetUint16Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1492,7 +1492,7 @@ ResponseCode DynamicData::SetUint16Value(MemberId id, uint16_t value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetUint16Value(id, value);
+            return SetUint16Value(value, id);
         }
         return insertResult;
     }
@@ -1543,7 +1543,7 @@ ResponseCode DynamicData::GetInt64Value(int64_t& value, MemberId id) const
 #endif
 }
 
-ResponseCode DynamicData::SetInt64Value(MemberId id, int64_t value)
+ResponseCode DynamicData::SetInt64Value(int64_t value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_INT64 && id == MEMBER_ID_INVALID)
@@ -1556,7 +1556,7 @@ ResponseCode DynamicData::SetInt64Value(MemberId id, int64_t value)
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            ResponseCode result = it->second->SetInt64Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = it->second->SetInt64Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1568,7 +1568,7 @@ ResponseCode DynamicData::SetInt64Value(MemberId id, int64_t value)
             ResponseCode insertResult = InsertArrayData(id);
             if (insertResult == ResponseCode::RETCODE_OK)
             {
-                return SetInt64Value(id, value);
+                return SetInt64Value(value, id);
             }
             return insertResult;
         }
@@ -1585,7 +1585,7 @@ ResponseCode DynamicData::SetInt64Value(MemberId id, int64_t value)
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ResponseCode result = ((DynamicData*)it->second)->SetInt64Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = ((DynamicData*)it->second)->SetInt64Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1598,7 +1598,7 @@ ResponseCode DynamicData::SetInt64Value(MemberId id, int64_t value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetInt64Value(id, value);
+            return SetInt64Value(value, id);
         }
         return insertResult;
     }
@@ -1650,7 +1650,7 @@ ResponseCode DynamicData::GetUint64Value(uint64_t& value, MemberId id) const
 #endif
 }
 
-ResponseCode DynamicData::SetUint64Value(MemberId id, uint64_t value)
+ResponseCode DynamicData::SetUint64Value(uint64_t value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_UINT64 && id == MEMBER_ID_INVALID)
@@ -1663,7 +1663,7 @@ ResponseCode DynamicData::SetUint64Value(MemberId id, uint64_t value)
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            ResponseCode result = it->second->SetUint64Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = it->second->SetUint64Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1675,7 +1675,7 @@ ResponseCode DynamicData::SetUint64Value(MemberId id, uint64_t value)
             ResponseCode insertResult = InsertArrayData(id);
             if (insertResult == ResponseCode::RETCODE_OK)
             {
-                return SetUint64Value(id, value);
+                return SetUint64Value(value, id);
             }
             return insertResult;
         }
@@ -1692,7 +1692,7 @@ ResponseCode DynamicData::SetUint64Value(MemberId id, uint64_t value)
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ResponseCode result = ((DynamicData*)it->second)->SetUint64Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = ((DynamicData*)it->second)->SetUint64Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1705,7 +1705,7 @@ ResponseCode DynamicData::SetUint64Value(MemberId id, uint64_t value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetUint64Value(id, value);
+            return SetUint64Value(value, id);
         }
         return insertResult;
     }
@@ -1757,7 +1757,7 @@ ResponseCode DynamicData::GetFloat32Value(float& value, MemberId id) const
 #endif
 }
 
-ResponseCode DynamicData::SetFloat32Value(MemberId id, float value)
+ResponseCode DynamicData::SetFloat32Value(float value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_FLOAT32 && id == MEMBER_ID_INVALID)
@@ -1770,7 +1770,7 @@ ResponseCode DynamicData::SetFloat32Value(MemberId id, float value)
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            ResponseCode result = it->second->SetFloat32Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = it->second->SetFloat32Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1782,7 +1782,7 @@ ResponseCode DynamicData::SetFloat32Value(MemberId id, float value)
             ResponseCode insertResult = InsertArrayData(id);
             if (insertResult == ResponseCode::RETCODE_OK)
             {
-                return SetFloat32Value(id, value);
+                return SetFloat32Value(value, id);
             }
             return insertResult;
         }
@@ -1800,7 +1800,7 @@ ResponseCode DynamicData::SetFloat32Value(MemberId id, float value)
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ResponseCode result = ((DynamicData*)it->second)->SetFloat32Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = ((DynamicData*)it->second)->SetFloat32Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1813,7 +1813,7 @@ ResponseCode DynamicData::SetFloat32Value(MemberId id, float value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetFloat32Value(id, value);
+            return SetFloat32Value(value, id);
         }
         return insertResult;
     }
@@ -1865,7 +1865,7 @@ ResponseCode DynamicData::GetFloat64Value(double& value, MemberId id) const
 #endif
 }
 
-ResponseCode DynamicData::SetFloat64Value(MemberId id, double value)
+ResponseCode DynamicData::SetFloat64Value(double value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_FLOAT64 && id == MEMBER_ID_INVALID)
@@ -1878,7 +1878,7 @@ ResponseCode DynamicData::SetFloat64Value(MemberId id, double value)
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            ResponseCode result = it->second->SetFloat64Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = it->second->SetFloat64Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1890,7 +1890,7 @@ ResponseCode DynamicData::SetFloat64Value(MemberId id, double value)
             ResponseCode insertResult = InsertArrayData(id);
             if (insertResult == ResponseCode::RETCODE_OK)
             {
-                return SetFloat64Value(id, value);
+                return SetFloat64Value(value, id);
             }
             return insertResult;
         }
@@ -1907,7 +1907,7 @@ ResponseCode DynamicData::SetFloat64Value(MemberId id, double value)
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ResponseCode result = ((DynamicData*)it->second)->SetFloat64Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = ((DynamicData*)it->second)->SetFloat64Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1920,7 +1920,7 @@ ResponseCode DynamicData::SetFloat64Value(MemberId id, double value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetFloat64Value(id, value);
+            return SetFloat64Value(value, id);
         }
         return insertResult;
     }
@@ -1972,7 +1972,7 @@ ResponseCode DynamicData::GetFloat128Value(long double& value, MemberId id) cons
 #endif
 }
 
-ResponseCode DynamicData::SetFloat128Value(MemberId id, long double value)
+ResponseCode DynamicData::SetFloat128Value(long double value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_FLOAT128 && id == MEMBER_ID_INVALID)
@@ -1985,7 +1985,7 @@ ResponseCode DynamicData::SetFloat128Value(MemberId id, long double value)
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            ResponseCode result = it->second->SetFloat128Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = it->second->SetFloat128Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -1997,7 +1997,7 @@ ResponseCode DynamicData::SetFloat128Value(MemberId id, long double value)
             ResponseCode insertResult = InsertArrayData(id);
             if (insertResult == ResponseCode::RETCODE_OK)
             {
-                return SetFloat128Value(id, value);
+                return SetFloat128Value(value, id);
             }
             return insertResult;
         }
@@ -2014,7 +2014,7 @@ ResponseCode DynamicData::SetFloat128Value(MemberId id, long double value)
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ResponseCode result = ((DynamicData*)it->second)->SetFloat128Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = ((DynamicData*)it->second)->SetFloat128Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -2027,7 +2027,7 @@ ResponseCode DynamicData::SetFloat128Value(MemberId id, long double value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetFloat128Value(id, value);
+            return SetFloat128Value(value, id);
         }
         return insertResult;
     }
@@ -2079,7 +2079,7 @@ ResponseCode DynamicData::GetChar8Value(char& value, MemberId id) const
 #endif
 }
 
-ResponseCode DynamicData::SetChar8Value(MemberId id, char value)
+ResponseCode DynamicData::SetChar8Value(char value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_CHAR8 && id == MEMBER_ID_INVALID)
@@ -2092,7 +2092,7 @@ ResponseCode DynamicData::SetChar8Value(MemberId id, char value)
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            ResponseCode result = it->second->SetChar8Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = it->second->SetChar8Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -2104,7 +2104,7 @@ ResponseCode DynamicData::SetChar8Value(MemberId id, char value)
             ResponseCode insertResult = InsertArrayData(id);
             if (insertResult == ResponseCode::RETCODE_OK)
             {
-                return SetChar8Value(id, value);
+                return SetChar8Value(value, id);
             }
             return insertResult;
         }
@@ -2121,7 +2121,7 @@ ResponseCode DynamicData::SetChar8Value(MemberId id, char value)
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ResponseCode result = ((DynamicData*)it->second)->SetChar8Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = ((DynamicData*)it->second)->SetChar8Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -2134,7 +2134,7 @@ ResponseCode DynamicData::SetChar8Value(MemberId id, char value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetChar8Value(id, value);
+            return SetChar8Value(value, id);
         }
         return insertResult;
     }
@@ -2186,7 +2186,7 @@ ResponseCode DynamicData::GetChar16Value(wchar_t& value, MemberId id) const
 #endif
 }
 
-ResponseCode DynamicData::SetChar16Value(MemberId id, wchar_t value)
+ResponseCode DynamicData::SetChar16Value(wchar_t value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_CHAR16 && id == MEMBER_ID_INVALID)
@@ -2199,7 +2199,7 @@ ResponseCode DynamicData::SetChar16Value(MemberId id, wchar_t value)
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            ResponseCode result = it->second->SetChar16Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = it->second->SetChar16Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -2211,7 +2211,7 @@ ResponseCode DynamicData::SetChar16Value(MemberId id, wchar_t value)
             ResponseCode insertResult = InsertArrayData(id);
             if (insertResult == ResponseCode::RETCODE_OK)
             {
-                return SetChar16Value(id, value);
+                return SetChar16Value(value, id);
             }
             return insertResult;
         }
@@ -2229,7 +2229,7 @@ ResponseCode DynamicData::SetChar16Value(MemberId id, wchar_t value)
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ResponseCode result = ((DynamicData*)it->second)->SetChar16Value(MEMBER_ID_INVALID, value);
+            ResponseCode result = ((DynamicData*)it->second)->SetChar16Value(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -2242,7 +2242,7 @@ ResponseCode DynamicData::SetChar16Value(MemberId id, wchar_t value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetChar16Value(id, value);
+            return SetChar16Value(value, id);
         }
         return insertResult;
     }
@@ -2294,7 +2294,7 @@ ResponseCode DynamicData::GetByteValue(octet& value, MemberId id) const
 #endif
 }
 
-ResponseCode DynamicData::SetByteValue(MemberId id, octet value)
+ResponseCode DynamicData::SetByteValue(octet value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_BYTE && id == MEMBER_ID_INVALID)
@@ -2307,7 +2307,7 @@ ResponseCode DynamicData::SetByteValue(MemberId id, octet value)
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            ResponseCode result = it->second->SetByteValue(MEMBER_ID_INVALID, value);
+            ResponseCode result = it->second->SetByteValue(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -2319,7 +2319,7 @@ ResponseCode DynamicData::SetByteValue(MemberId id, octet value)
             ResponseCode insertResult = InsertArrayData(id);
             if (insertResult == ResponseCode::RETCODE_OK)
             {
-                return SetByteValue(id, value);
+                return SetByteValue(value, id);
             }
             return insertResult;
         }
@@ -2336,7 +2336,7 @@ ResponseCode DynamicData::SetByteValue(MemberId id, octet value)
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ResponseCode result = ((DynamicData*)it->second)->SetByteValue(MEMBER_ID_INVALID, value);
+            ResponseCode result = ((DynamicData*)it->second)->SetByteValue(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -2349,7 +2349,7 @@ ResponseCode DynamicData::SetByteValue(MemberId id, octet value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetByteValue(id, value);
+            return SetByteValue(value, id);
         }
         return insertResult;
     }
@@ -2419,7 +2419,7 @@ ResponseCode DynamicData::GetBoolValue(bool& value, MemberId id) const
 #endif
 }
 
-ResponseCode DynamicData::SetBoolValue(MemberId id, bool value)
+ResponseCode DynamicData::SetBoolValue(bool value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_BOOLEAN && id == MEMBER_ID_INVALID)
@@ -2463,7 +2463,7 @@ ResponseCode DynamicData::SetBoolValue(MemberId id, bool value)
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            ResponseCode result = it->second->SetBoolValue(MEMBER_ID_INVALID, value);
+            ResponseCode result = it->second->SetBoolValue(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -2475,7 +2475,7 @@ ResponseCode DynamicData::SetBoolValue(MemberId id, bool value)
             ResponseCode insertResult = InsertArrayData(id);
             if (insertResult == ResponseCode::RETCODE_OK)
             {
-                return SetBoolValue(id, value);
+                return SetBoolValue(value, id);
             }
             return insertResult;
         }
@@ -2533,7 +2533,7 @@ ResponseCode DynamicData::SetBoolValue(MemberId id, bool value)
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ResponseCode result = ((DynamicData*)it->second)->SetBoolValue(MEMBER_ID_INVALID, value);
+            ResponseCode result = ((DynamicData*)it->second)->SetBoolValue(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -2546,7 +2546,7 @@ ResponseCode DynamicData::SetBoolValue(MemberId id, bool value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetBoolValue(id, value);
+            return SetBoolValue(value, id);
         }
         return insertResult;
     }
@@ -2598,7 +2598,7 @@ ResponseCode DynamicData::GetStringValue(std::string& value, MemberId id) const
 #endif
 }
 
-ResponseCode DynamicData::SetStringValue(MemberId id, const std::string& value)
+ResponseCode DynamicData::SetStringValue(const std::string& value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_STRING8 &&id == MEMBER_ID_INVALID)
@@ -2619,7 +2619,7 @@ ResponseCode DynamicData::SetStringValue(MemberId id, const std::string& value)
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            ResponseCode result = it->second->SetStringValue(MEMBER_ID_INVALID, value);
+            ResponseCode result = it->second->SetStringValue(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -2631,7 +2631,7 @@ ResponseCode DynamicData::SetStringValue(MemberId id, const std::string& value)
             ResponseCode insertResult = InsertArrayData(id);
             if (insertResult == ResponseCode::RETCODE_OK)
             {
-                return SetStringValue(id, value);
+                return SetStringValue(value, id);
             }
             return insertResult;
         }
@@ -2656,7 +2656,7 @@ ResponseCode DynamicData::SetStringValue(MemberId id, const std::string& value)
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ResponseCode result = ((DynamicData*)it->second)->SetStringValue(MEMBER_ID_INVALID, value);
+            ResponseCode result = ((DynamicData*)it->second)->SetStringValue(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -2669,7 +2669,7 @@ ResponseCode DynamicData::SetStringValue(MemberId id, const std::string& value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetStringValue(id, value);
+            return SetStringValue(value, id);
         }
         return insertResult;
     }
@@ -2756,7 +2756,7 @@ ResponseCode DynamicData::GetWstringValue(std::wstring& value, MemberId id) cons
 }
 
 
-ResponseCode DynamicData::SetWstringValue(MemberId id, const std::wstring& value)
+ResponseCode DynamicData::SetWstringValue(const std::wstring& value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_STRING16 && id == MEMBER_ID_INVALID)
@@ -2777,7 +2777,7 @@ ResponseCode DynamicData::SetWstringValue(MemberId id, const std::wstring& value
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            ResponseCode result = it->second->SetWstringValue(MEMBER_ID_INVALID, value);
+            ResponseCode result = it->second->SetWstringValue(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -2789,7 +2789,7 @@ ResponseCode DynamicData::SetWstringValue(MemberId id, const std::wstring& value
             ResponseCode insertResult = InsertArrayData(id);
             if (insertResult == ResponseCode::RETCODE_OK)
             {
-                return SetWstringValue(id, value);
+                return SetWstringValue(value, id);
             }
             return insertResult;
         }
@@ -2814,7 +2814,7 @@ ResponseCode DynamicData::SetWstringValue(MemberId id, const std::wstring& value
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ResponseCode result = ((DynamicData*)it->second)->SetWstringValue(MEMBER_ID_INVALID, value);
+            ResponseCode result = ((DynamicData*)it->second)->SetWstringValue(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -2827,7 +2827,7 @@ ResponseCode DynamicData::SetWstringValue(MemberId id, const std::wstring& value
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetWstringValue(id, value);
+            return SetWstringValue(value, id);
         }
         return insertResult;
     }
@@ -2886,7 +2886,7 @@ ResponseCode DynamicData::GetEnumValue(std::string& value, MemberId id) const
 #endif
 }
 
-ResponseCode DynamicData::SetEnumValue(MemberId id, const std::string& value)
+ResponseCode DynamicData::SetEnumValue(const std::string& value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     if (mType->GetKind() == TK_ENUM && id == MEMBER_ID_INVALID)
@@ -2905,7 +2905,7 @@ ResponseCode DynamicData::SetEnumValue(MemberId id, const std::string& value)
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            ResponseCode result = it->second->SetEnumValue(MEMBER_ID_INVALID, value);
+            ResponseCode result = it->second->SetEnumValue(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -2917,7 +2917,7 @@ ResponseCode DynamicData::SetEnumValue(MemberId id, const std::string& value)
             ResponseCode insertResult = InsertArrayData(id);
             if (insertResult == ResponseCode::RETCODE_OK)
             {
-                return SetEnumValue(id, value);
+                return SetEnumValue(value, id);
             }
             return insertResult;
         }
@@ -2940,7 +2940,7 @@ ResponseCode DynamicData::SetEnumValue(MemberId id, const std::string& value)
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ResponseCode result = ((DynamicData*)itValue->second)->SetEnumValue(MEMBER_ID_INVALID, value);
+            ResponseCode result = ((DynamicData*)itValue->second)->SetEnumValue(value, MEMBER_ID_INVALID);
             if (result == ResponseCode::RETCODE_OK && mType->GetKind() == TK_UNION)
             {
                 SetUnionId(id);
@@ -2953,7 +2953,7 @@ ResponseCode DynamicData::SetEnumValue(MemberId id, const std::string& value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetEnumValue(id, value);
+            return SetEnumValue(value, id);
         }
         return insertResult;
     }
@@ -2967,7 +2967,7 @@ ResponseCode DynamicData::SetBitmaskValue(bool value, const std::string& name)
     MemberId id = GetMemberIdByName(name);
     if (id != MEMBER_ID_INVALID)
     {
-        return SetBoolValue(id, value);
+        return SetBoolValue(value, id);
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 }
@@ -3323,7 +3323,7 @@ ResponseCode DynamicData::GetComplexValue(DynamicData** value, MemberId id) cons
 #endif
 }
 
-ResponseCode DynamicData::SetComplexValue(MemberId id, DynamicData* value)
+ResponseCode DynamicData::SetComplexValue(DynamicData* value, MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
     auto it = mComplexValues.find(id);
@@ -3340,7 +3340,7 @@ ResponseCode DynamicData::SetComplexValue(MemberId id, DynamicData* value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetComplexValue(id, value);
+            return SetComplexValue(value, id);
         }
         return insertResult;
     }
@@ -3361,7 +3361,7 @@ ResponseCode DynamicData::SetComplexValue(MemberId id, DynamicData* value)
         ResponseCode insertResult = InsertArrayData(id);
         if (insertResult == ResponseCode::RETCODE_OK)
         {
-            return SetComplexValue(id, value);
+            return SetComplexValue(value, id);
         }
         return insertResult;
     }
