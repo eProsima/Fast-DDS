@@ -184,7 +184,7 @@ const SBound INVALID_SBOUND = 0;
 // Depending on the flag it may not apply to members of all types
 
 // When not all, the applicable member types are listed
-class MemberFlag
+class RTPS_DllAPI MemberFlag
 {
 private:
 	std::bitset<16> m_MemberFlag;
@@ -265,7 +265,7 @@ typedef MemberFlag BitsetMemberFlag;        // Unused. No flags apply
 // Flags that apply to type declarationa and DO affect assignability
 // Depending on the flag it may not apply to all types
 // When not all, the applicable  types are listed
-class TypeFlag
+class RTPS_DllAPI TypeFlag
 {
 private:
 	std::bitset<16> m_TypeFlag;
