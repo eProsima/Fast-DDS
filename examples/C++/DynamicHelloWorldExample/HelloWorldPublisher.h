@@ -69,6 +69,7 @@ private:
 	// Dynamic Types
 	eprosima::fastrtps::types::DynamicData* m_DynHello;
 	eprosima::fastrtps::types::DynamicType* m_DynType;
+	bool m_dynamic;
 };
 
 

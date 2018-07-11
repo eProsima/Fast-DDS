@@ -35,7 +35,7 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 HelloWorldPublisher::HelloWorldPublisher():mp_participant(nullptr),
-mp_publisher(nullptr)
+mp_publisher(nullptr), m_dynamic(false)
 {
 
 
@@ -45,6 +45,7 @@ bool HelloWorldPublisher::init(bool dynamic)
 {
     if (dynamic)
     {
+        m_dynamic = dynamic;
         // Given
         DynamicTypeBuilder* created_type_ulong(nullptr);
         DynamicTypeBuilder* created_type_string(nullptr);
@@ -94,7 +95,7 @@ bool HelloWorldPublisher::init(bool dynamic)
         return false;
     //REGISTER THE TYPE
 
-    if (dynamic)
+    if (m_dynamic)
     {
         Domain::registerType(mp_participant, m_DynType);
     }
@@ -169,7 +170,19 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
         {
             if(publish(false))
             {
-                std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+                if (m_dynamic)
+                {
+                    std::string message;
+                    m_DynHello->GetStringValue(message, 1);
+                    uint32_t index;
+                    m_DynHello->GetUint32Value(index, 0);
+
+                    std::cout << "Message: "<<message<< " with index: "<<index<< " SENT"<<std::endl;
+                }
+                else
+                {
+                    std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+                }
             }
             eClock::my_sleep(sleep);
         }
@@ -182,7 +195,19 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
                 --i;
             else
             {
-                std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+                if (m_dynamic)
+                {
+                    std::string message;
+                    m_DynHello->GetStringValue(message, 1);
+                    uint32_t index;
+                    m_DynHello->GetUint32Value(index, 0);
+
+                    std::cout << "Message: "<<message<< " with index: "<<index<< " SENT"<<std::endl;
+                }
+                else
+                {
+                    std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+                }
             }
             eClock::my_sleep(sleep);
         }
@@ -210,8 +235,18 @@ bool HelloWorldPublisher::publish(bool waitForListener)
 {
     if(m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
     {
-        m_Hello.index(m_Hello.index()+1);
-        mp_publisher->write((void*)&m_Hello);
+        if (m_dynamic)
+        {
+            uint32_t index;
+            m_DynHello->GetUint32Value(index, 0);
+            m_DynHello->SetUint32Value(index+1, 0);
+            mp_publisher->write((void*)m_DynHello);
+        }
+        else
+        {
+            m_Hello.index(m_Hello.index()+1);
+            mp_publisher->write((void*)&m_Hello);
+        }
         return true;
     }
     return false;

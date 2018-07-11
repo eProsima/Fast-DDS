@@ -28,8 +28,8 @@
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/participant/ParticipantListener.h>
 #include <fastrtps/participant/Participant.h>
-
-
+#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicType.h>
 
 
 #include "HelloWorld.h"
@@ -55,7 +55,11 @@ public:
 		~SubListener(){};
 		void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
 		void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+		// Static types
 		HelloWorld m_Hello;
+		// Dynamic Types
+		eprosima::fastrtps::types::DynamicData* m_DynHello;
+		bool m_dynamic;
 		eprosima::fastrtps::SampleInfo_t m_info;
 		int n_matched;
 		uint32_t n_samples;
@@ -66,7 +70,11 @@ public:
 			eprosima::fastrtps::ParticipantDiscoveryInfo info) override;
 	}m_part_list;
 private:
+	// Static types
 	HelloWorldPubSubType m_type;
+	// Dynamic Types
+	eprosima::fastrtps::types::DynamicType* m_DynType;
+	bool m_dynamic;
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */
