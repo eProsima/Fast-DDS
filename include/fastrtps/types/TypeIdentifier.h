@@ -77,7 +77,7 @@ const octet TI_STRONGLY_CONNECTED_COMPONENT = 0xB0;
 //     according to both the MINIMAL and the COMMON equivalence relation.
 //     This means the TypeIdentifier is the same for both relationships
 //
-class RTPS_DllAPI TypeIdentifier
+class TypeIdentifier
 {
 public:
 
