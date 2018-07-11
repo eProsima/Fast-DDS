@@ -63,43 +63,43 @@ public:
     RTPS_DllAPI ResponseCode RemoveMapData(MemberId keyId);
 
     RTPS_DllAPI ResponseCode GetInt32Value(int32_t& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode SetInt32Value(MemberId id, int32_t value);
+	RTPS_DllAPI ResponseCode SetInt32Value(int32_t value, MemberId id = MEMBER_ID_INVALID);
 	RTPS_DllAPI ResponseCode GetUint32Value(uint32_t& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode SetUint32Value(MemberId id, uint32_t value);
+	RTPS_DllAPI ResponseCode SetUint32Value(uint32_t value, MemberId id = MEMBER_ID_INVALID);
 	RTPS_DllAPI ResponseCode GetInt16Value(int16_t& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode SetInt16Value(MemberId id, int16_t value);
+	RTPS_DllAPI ResponseCode SetInt16Value(int16_t value, MemberId id = MEMBER_ID_INVALID);
 	RTPS_DllAPI ResponseCode GetUint16Value(uint16_t& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode SetUint16Value(MemberId id, uint16_t value);
+	RTPS_DllAPI ResponseCode SetUint16Value(uint16_t value, MemberId id = MEMBER_ID_INVALID);
 	RTPS_DllAPI ResponseCode GetInt64Value(int64_t& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode SetInt64Value(MemberId id, int64_t value);
+	RTPS_DllAPI ResponseCode SetInt64Value(int64_t value, MemberId id = MEMBER_ID_INVALID);
 	RTPS_DllAPI ResponseCode GetUint64Value(uint64_t& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode SetUint64Value(MemberId id, uint64_t value);
+	RTPS_DllAPI ResponseCode SetUint64Value(uint64_t value, MemberId id = MEMBER_ID_INVALID);
 	RTPS_DllAPI ResponseCode GetFloat32Value(float& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode SetFloat32Value(MemberId id, float value);
+	RTPS_DllAPI ResponseCode SetFloat32Value(float value, MemberId id = MEMBER_ID_INVALID);
 	RTPS_DllAPI ResponseCode GetFloat64Value(double& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode SetFloat64Value(MemberId id, double value);
+	RTPS_DllAPI ResponseCode SetFloat64Value(double value, MemberId id = MEMBER_ID_INVALID);
 	RTPS_DllAPI ResponseCode GetFloat128Value(long double& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode SetFloat128Value(MemberId id, long double value);
+	RTPS_DllAPI ResponseCode SetFloat128Value(long double value, MemberId id = MEMBER_ID_INVALID);
 	RTPS_DllAPI ResponseCode GetChar8Value(char& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode SetChar8Value(MemberId id, char value);
+	RTPS_DllAPI ResponseCode SetChar8Value(char value, MemberId id = MEMBER_ID_INVALID);
 	RTPS_DllAPI ResponseCode GetChar16Value(wchar_t& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode SetChar16Value(MemberId id, wchar_t value);
+	RTPS_DllAPI ResponseCode SetChar16Value(wchar_t value, MemberId id = MEMBER_ID_INVALID);
 	RTPS_DllAPI ResponseCode GetByteValue(octet& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode SetByteValue(MemberId id, octet value);
+	RTPS_DllAPI ResponseCode SetByteValue(octet value, MemberId id = MEMBER_ID_INVALID);
 	RTPS_DllAPI ResponseCode GetBoolValue(bool& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode SetBoolValue(MemberId id, bool value);
+	RTPS_DllAPI ResponseCode SetBoolValue(bool value, MemberId id = MEMBER_ID_INVALID);
 	RTPS_DllAPI ResponseCode GetStringValue(std::string& value, MemberId id) const;
-	RTPS_DllAPI ResponseCode SetStringValue(MemberId id, const std::string& value);
+	RTPS_DllAPI ResponseCode SetStringValue(const std::string& value, MemberId id = MEMBER_ID_INVALID);
     RTPS_DllAPI ResponseCode GetWstringValue(std::wstring& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetWstringValue(MemberId id, const std::wstring& value);
+    RTPS_DllAPI ResponseCode SetWstringValue(const std::wstring& value, MemberId id = MEMBER_ID_INVALID);
 
     RTPS_DllAPI ResponseCode GetEnumValue(std::string& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetEnumValue(MemberId id, const std::string& value);
+    RTPS_DllAPI ResponseCode SetEnumValue(const std::string& value, MemberId id = MEMBER_ID_INVALID);
     RTPS_DllAPI ResponseCode GetBitmaskValue(const std::string& name, bool& value) const;
     RTPS_DllAPI ResponseCode SetBitmaskValue(bool value, const std::string& name);
 
     RTPS_DllAPI ResponseCode GetComplexValue(DynamicData** value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetComplexValue(MemberId id, DynamicData* value);
+    RTPS_DllAPI ResponseCode SetComplexValue(DynamicData* value, MemberId id = MEMBER_ID_INVALID);
 
     RTPS_DllAPI ResponseCode GetUnionLabel(uint64_t& value) const;
 
