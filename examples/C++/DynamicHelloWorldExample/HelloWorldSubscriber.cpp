@@ -120,7 +120,7 @@ HelloWorldSubscriber::~HelloWorldSubscriber() {
     if (m_dynamic)
     {
         DynamicTypeBuilderFactory::GetInstance()->DeleteType(m_DynType);
-        DynamicTypeBuilderFactory::GetInstance()->DeleteData(m_listener.m_DynHello);
+        DynamicDataFactory::GetInstance()->DeleteData(m_listener.m_DynHello);
     }
     Domain::removeParticipant(mp_participant);
 }

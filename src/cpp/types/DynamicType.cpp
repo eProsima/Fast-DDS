@@ -55,6 +55,7 @@ DynamicType::DynamicType(const TypeDescriptor* descriptor)
             mMemberByName.insert(std::make_pair(it->second->GetName(), it->second));
         }
     }
+    m_typeSize = GetMaxSerializedSize();
 }
 
 DynamicType::DynamicType(const DynamicType* other)
@@ -150,6 +151,11 @@ ResponseCode DynamicType::GetDescriptor(TypeDescriptor* descriptor) const
         logError(DYN_TYPES, "Error getting TypeDescriptor, invalid input descriptor");
         return ResponseCode::RETCODE_BAD_PARAMETER;
     }
+}
+
+uint32_t DynamicType::GetMaxSerializedSize()
+{
+    return static_cast<uint32_t>(DynamicData::getMaxCdrSerializedSize(this));
 }
 
 bool DynamicType::Equals(const DynamicType* other) const
