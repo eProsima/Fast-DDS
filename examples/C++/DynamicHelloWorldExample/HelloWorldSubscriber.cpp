@@ -24,7 +24,6 @@
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
-#include <fastrtps/types/TypeObjectFactory.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -34,7 +33,7 @@ mp_subscriber(nullptr)
 {
 }
 
-bool HelloWorldSubscriber::init()
+bool HelloWorldSubscriber::init(bool dynamic)
 {
     ParticipantAttributes PParam;
     PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
