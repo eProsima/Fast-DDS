@@ -411,8 +411,7 @@ bool DynamicType::getKey(void* /*data*/, eprosima::fastrtps::rtps::InstanceHandl
 std::function<uint32_t()> DynamicType::getSerializedSizeProvider(void* data)
 {
     return [data]() -> uint32_t {
-        return 0; // TODO: Get Data size.
-                  // (uint32_t)type::getCdrSerializedSize(*static_cast<sample*>(data)) + 4 /*encapsulation*/;
+        return (uint32_t)DynamicData::getCdrSerializedSize((DynamicData*)data) + 4 /*encapsulation*/;
     };
 }
 
@@ -439,8 +438,6 @@ bool DynamicType::serialize(void *data, eprosima::fastrtps::rtps::SerializedPayl
 
     payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
     return true;
-
-    return false;
 }
 
 

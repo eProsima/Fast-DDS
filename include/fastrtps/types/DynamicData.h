@@ -102,10 +102,10 @@ public:
     RTPS_DllAPI ResponseCode SetComplexValue(MemberId id, DynamicData* value);
 
     RTPS_DllAPI ResponseCode GetUnionLabel(uint64_t& value) const;
-    RTPS_DllAPI ResponseCode SetUnionId(MemberId id);
 
     // Serializes and deserializes the Dynamic Data.
     bool deserialize(eprosima::fastcdr::Cdr &cdr);
+    static size_t getCdrSerializedSize(const DynamicData* data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
 
 protected:
@@ -125,6 +125,8 @@ protected:
     void SetDefaultValue(MemberId id);
 
     void SetTypeName(const std::string& name);
+
+    ResponseCode SetUnionId(MemberId id);
 
     void SortMemberIds(MemberId startId);
 

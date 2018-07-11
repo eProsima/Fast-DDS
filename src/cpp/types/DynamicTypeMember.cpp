@@ -79,7 +79,7 @@ ResponseCode DynamicTypeMember::ApplyAnnotation(AnnotationDescriptor& descriptor
 
 bool DynamicTypeMember::Equals(const DynamicTypeMember* other) const
 {
-    if (other != nullptr && mParent == other->mParent && mAnnotation.size() == other->mAnnotation.size())
+    if (other != nullptr && mAnnotation.size() == other->mAnnotation.size())
     {
         for (auto it = mAnnotation.begin(), it2 = other->mAnnotation.begin(); it != mAnnotation.end(); ++it, ++it2)
         {
