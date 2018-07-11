@@ -62,7 +62,6 @@ public:
     bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
     bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle);
     std::function<uint32_t()> getSerializedSizeProvider(void* data);
-    uint32_t getMaxSerializedSize();
     bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
 
 protected:
@@ -81,6 +80,8 @@ protected:
 
     ResponseCode CopyFromType(const DynamicType* other);
 
+    uint32_t GetMaxSerializedSize();
+
     // Checks if there is a member with the given name.
     bool ExistsMemberByName(const std::string& name) const;
 
@@ -93,6 +94,7 @@ protected:
     std::map<std::string, DynamicTypeMember*> mMemberByName;    // Uses the pointers from "mMemberById".
     std::string mName;
 	TypeKind mKind;
+
 };
 
 } // namespace types
