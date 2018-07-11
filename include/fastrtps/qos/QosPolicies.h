@@ -724,19 +724,42 @@ public:
         *m_type_identifier = *type.m_type_identifier;
     }
 
+    RTPS_DllAPI TypeIdV1(TypeIdV1&& type)
+         : Parameter_t(type.Pid, type.length), QosPolicy(type.m_sendAlways)
+    {
+        m_type_identifier = type.m_type_identifier;
+        type.m_type_identifier = nullptr;
+    }
+
     RTPS_DllAPI TypeIdV1& operator=(const TypeIdV1& type)
     {
         Pid = type.Pid;
         length = type.length;
         m_sendAlways = type.m_sendAlways;
 
+        delete m_type_identifier;
         m_type_identifier = new TypeIdentifier();
         *m_type_identifier = *type.m_type_identifier;
 
         return *this;
     }
 
-    virtual RTPS_DllAPI ~TypeIdV1() {   delete m_type_identifier;    }
+    RTPS_DllAPI TypeIdV1& operator=(TypeIdV1&& type)
+    {
+        Pid = type.Pid;
+        length = type.length;
+        m_sendAlways = type.m_sendAlways;
+
+        m_type_identifier = type.m_type_identifier;
+        type.m_type_identifier = nullptr;
+
+        return *this;
+    }
+
+    virtual RTPS_DllAPI ~TypeIdV1()
+    {
+        delete m_type_identifier;
+    }
     /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
@@ -767,19 +790,42 @@ public:
         *m_type_object = *type.m_type_object;
     }
 
+    RTPS_DllAPI TypeObjectV1(TypeObjectV1&& type)
+         : Parameter_t(type.Pid, type.length), QosPolicy(type.m_sendAlways)
+    {
+        m_type_object = type.m_type_object;
+        type.m_type_object = nullptr;
+    }
+
     RTPS_DllAPI TypeObjectV1& operator=(const TypeObjectV1& type)
     {
         Pid = type.Pid;
         length = type.length;
         m_sendAlways = type.m_sendAlways;
 
+        delete m_type_object;
         m_type_object = new TypeObject();
         *m_type_object = *type.m_type_object;
 
         return *this;
     }
 
-    virtual RTPS_DllAPI ~TypeObjectV1() {delete m_type_object;    }
+    RTPS_DllAPI TypeObjectV1& operator=(TypeObjectV1&& type)
+    {
+        Pid = type.Pid;
+        length = type.length;
+        m_sendAlways = type.m_sendAlways;
+
+        m_type_object = type.m_type_object;
+        type.m_type_object = nullptr;
+
+        return *this;
+    }
+
+    virtual RTPS_DllAPI ~TypeObjectV1()
+    {
+        delete m_type_object;
+    }
     /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.

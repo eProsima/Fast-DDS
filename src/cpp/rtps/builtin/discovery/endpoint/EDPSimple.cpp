@@ -531,7 +531,7 @@ bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
                 ALIVE, wdata->key());
         if(change != nullptr)
         {
-            wdata->toParameterList();
+            //wdata->toParameterList();
 
             CDRMessage_t aux_msg(0);
             aux_msg.wraps = true;

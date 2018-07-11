@@ -231,19 +231,15 @@ ParameterList_t ReaderProxyData::toParameterList()
     if (m_topicDiscoveryKind != NO_CHECK)
     {
         {
-            //ParameterString_t * p = new ParameterString_t(PID_TYPE_IDV1, 0, m_type_id);
-            //parameter_list.m_parameters.push_back((Parameter_t*)p);
             TypeIdV1 * p = new TypeIdV1();
-            p->m_type_identifier = m_type_id.m_type_identifier;
+            *p = m_type_id;
             parameter_list.m_parameters.push_back((Parameter_t*)p);
         }
 
         //TODO: //GASCO: PID_TYPE_OBJECTV1
         {
-            //ParameterString_t * p = new ParameterString_t(PID_TYPE_OBJECTV1, 0, m_type);
-            //parameter_list.m_parameters.push_back((Parameter_t*)p);
             TypeObjectV1 * p = new TypeObjectV1();
-            p->m_type_object = m_type.m_type_object;
+            *p = m_type;
             parameter_list.m_parameters.push_back((Parameter_t*)p);
         }
     }
