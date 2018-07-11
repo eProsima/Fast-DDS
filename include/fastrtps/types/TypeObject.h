@@ -43,7 +43,7 @@ namespace types{
 	StructMemberFlag                           member_flags;
 	TypeIdentifier                             member_type_id;
 };*/
-class RTPS_DllAPI CommonStructMember
+class CommonStructMember
 {
 public:
     RTPS_DllAPI CommonStructMember();
@@ -88,7 +88,7 @@ private:
 	AppliedBuiltinMemberAnnotations  ann_builtin; // Optional
 	AppliedAnnotationSeq             ann_custom; // Optional
 };*/
-class RTPS_DllAPI CompleteMemberDetail
+class CompleteMemberDetail
 {
 public:
     RTPS_DllAPI CompleteMemberDetail();
@@ -132,7 +132,7 @@ private:
 	NameHash                                  name_hash;
 };*/
 
-class RTPS_DllAPI MinimalMemberDetail final
+class MinimalMemberDetail final
 {
 public:
     RTPS_DllAPI MinimalMemberDetail();
@@ -164,7 +164,7 @@ private:
 	CommonStructMember                         common;
 	CompleteMemberDetail                       detail;
 };*/
-class RTPS_DllAPI CompleteStructMember
+class CompleteStructMember
 {
 public:
     RTPS_DllAPI CompleteStructMember();
@@ -205,7 +205,7 @@ typedef std::vector<CompleteStructMember> CompleteStructMemberSeq;
 	CommonStructMember                         common;
 	MinimalMemberDetail                        detail;
 };*/
-class RTPS_DllAPI MinimalStructMember
+class MinimalStructMember
 {
 public:
     RTPS_DllAPI MinimalStructMember();
@@ -244,7 +244,7 @@ typedef std::vector<MinimalStructMember> MinimalStructMemberSeq;
 /*struct AppliedBuiltinTypeAnnotations {
 	AppliedVerbatimAnnotation verbatim;  // @verbatim(...) // @optional
 };*/
-class RTPS_DllAPI AppliedBuiltinTypeAnnotations
+class AppliedBuiltinTypeAnnotations
 {
 public:
     RTPS_DllAPI AppliedBuiltinTypeAnnotations();
@@ -274,7 +274,7 @@ private:
 /*struct MinimalTypeDetail final{
 	// Empty. Available for future extension
 };*/
-class RTPS_DllAPI MinimalTypeDetail
+class MinimalTypeDetail
 {
 public:
    RTPS_DllAPI MinimalTypeDetail();
@@ -300,7 +300,7 @@ private:
 	AppliedAnnotationSeq           ann_custom; // @optional
 	QualifiedTypeName                        type_name;
 };*/
-class RTPS_DllAPI CompleteTypeDetail
+class CompleteTypeDetail
 {
 public:
     RTPS_DllAPI CompleteTypeDetail();
@@ -344,7 +344,7 @@ private:
 	TypeIdentifier                           base_type;
 	CompleteTypeDetail                       detail;
 };*/
-class RTPS_DllAPI CompleteStructHeader
+class CompleteStructHeader
 {
 public:
     RTPS_DllAPI CompleteStructHeader();
@@ -382,7 +382,7 @@ private:
 	TypeIdentifier                           base_type;
 	MinimalTypeDetail                        detail;
 };*/
-class RTPS_DllAPI MinimalStructHeader
+class MinimalStructHeader
 {
 public:
    RTPS_DllAPI MinimalStructHeader();
@@ -420,7 +420,7 @@ private:
 	CompleteStructHeader       header;
 	CompleteStructMemberSeq    member_seq;
 };*/
-class RTPS_DllAPI CompleteStructType
+class CompleteStructType
 {
 public:
     RTPS_DllAPI CompleteStructType();
@@ -464,7 +464,7 @@ private:
 	MinimalStructHeader        header;
 	MinimalStructMemberSeq     member_seq;
 };*/
-class RTPS_DllAPI MinimalStructType
+class MinimalStructType
 {
 public:
     RTPS_DllAPI MinimalStructType();
@@ -515,7 +515,7 @@ typedef std::vector<int32_t> UnionCaseLabelSeq;
 	TypeIdentifier              type_id;
 	UnionCaseLabelSeq           label_seq;
 };*/
-class RTPS_DllAPI CommonUnionMember
+class CommonUnionMember
 {
 public:
     RTPS_DllAPI CommonUnionMember();
@@ -565,7 +565,7 @@ private:
 	CommonUnionMember      common;
 	CompleteMemberDetail   detail;
 };*/
-class RTPS_DllAPI CompleteUnionMember
+class CompleteUnionMember
 {
 public:
     RTPS_DllAPI CompleteUnionMember();
@@ -606,7 +606,7 @@ typedef std::vector<CompleteUnionMember> CompleteUnionMemberSeq;
 	CommonUnionMember   common;
 	MinimalMemberDetail detail;
 };*/
-class RTPS_DllAPI MinimalUnionMember
+class MinimalUnionMember
 {
 public:
     RTPS_DllAPI MinimalUnionMember();
@@ -646,7 +646,7 @@ typedef std::vector<MinimalUnionMember> MinimalUnionMemberSeq;
 	UnionDiscriminatorFlag       member_flags;
 	TypeIdentifier               type_id;
 };*/
-class RTPS_DllAPI CommonDiscriminatorMember
+class CommonDiscriminatorMember
 {
 public:
     RTPS_DllAPI CommonDiscriminatorMember();
@@ -685,7 +685,7 @@ private:
 	AppliedBuiltinTypeAnnotations  ann_builtin; // Optional
 	AppliedAnnotationSeq           ann_custom; // Optional
 };*/
-class RTPS_DllAPI CompleteDiscriminatorMember
+class CompleteDiscriminatorMember
 {
 public:
     RTPS_DllAPI CompleteDiscriminatorMember();
@@ -728,7 +728,7 @@ private:
 /*struct MinimalDiscriminatorMember {
 	CommonDiscriminatorMember   common;
 };*/
-class RTPS_DllAPI MinimalDiscriminatorMember
+class MinimalDiscriminatorMember
 {
 public:
     RTPS_DllAPI MinimalDiscriminatorMember();
@@ -758,7 +758,7 @@ private:
 /*struct CompleteUnionHeader {
 	CompleteTypeDetail          detail;
 };*/
-class RTPS_DllAPI CompleteUnionHeader
+class CompleteUnionHeader
 {
 public:
     RTPS_DllAPI CompleteUnionHeader();
@@ -788,7 +788,7 @@ private:
 /*struct MinimalUnionHeader {
 	MinimalTypeDetail           detail;
 };*/
-class RTPS_DllAPI MinimalUnionHeader
+class MinimalUnionHeader
 {
 public:
     RTPS_DllAPI MinimalUnionHeader();
@@ -821,7 +821,7 @@ private:
 	CompleteDiscriminatorMember  discriminator;
 	CompleteUnionMemberSeq       member_seq;
 };*/
-class RTPS_DllAPI CompleteUnionType
+class CompleteUnionType
 {
 public:
     RTPS_DllAPI CompleteUnionType();
@@ -872,7 +872,7 @@ private:
 	MinimalDiscriminatorMember   discriminator;
 	MinimalUnionMemberSeq        member_seq;
 };*/
-class RTPS_DllAPI MinimalUnionType
+class MinimalUnionType
 {
 public:
     RTPS_DllAPI MinimalUnionType();
@@ -922,7 +922,7 @@ private:
 	AnnotationParameterFlag      member_flags;
 	TypeIdentifier               member_type_id;
 };*/
-class RTPS_DllAPI CommonAnnotationParameter
+class CommonAnnotationParameter
 {
 public:
     RTPS_DllAPI CommonAnnotationParameter();
@@ -962,7 +962,7 @@ private:
 	MemberName                 name;
 	AnnotationParameterValue   default_value;
 };*/
-class RTPS_DllAPI CompleteAnnotationParameter
+class CompleteAnnotationParameter
 {
 public:
     RTPS_DllAPI CompleteAnnotationParameter();
@@ -1011,7 +1011,7 @@ typedef    std::vector<CompleteAnnotationParameter> CompleteAnnotationParameterS
 	NameHash                   name_hash;
 	AnnotationParameterValue   default_value;
 };*/
-class RTPS_DllAPI MinimalAnnotationParameter
+class MinimalAnnotationParameter
 {
 public:
     RTPS_DllAPI MinimalAnnotationParameter();
@@ -1057,7 +1057,7 @@ typedef    std::vector<MinimalAnnotationParameter> MinimalAnnotationParameterSeq
 /*struct CompleteAnnotationHeader {
 	QualifiedTypeName         annotation_name;
 };*/
-class RTPS_DllAPI CompleteAnnotationHeader
+class CompleteAnnotationHeader
 {
 public:
     RTPS_DllAPI CompleteAnnotationHeader();
@@ -1087,7 +1087,7 @@ private:
 /*struct MinimalAnnotationHeader {
 	// Empty. Available for future extension
 };*/
-class RTPS_DllAPI MinimalAnnotationHeader
+class MinimalAnnotationHeader
 {
 public:
    RTPS_DllAPI MinimalAnnotationHeader();
@@ -1113,7 +1113,7 @@ private:
 	CompleteAnnotationHeader       header;
 	CompleteAnnotationParameterSeq member_seq;
 };*/
-class RTPS_DllAPI CompleteAnnotationType final
+class CompleteAnnotationType final
 {
 public:
    RTPS_DllAPI CompleteAnnotationType();
@@ -1158,7 +1158,7 @@ private:
 	MinimalAnnotationHeader        header;
 	MinimalAnnotationParameterSeq  member_seq;
 };*/
-class RTPS_DllAPI MinimalAnnotationType final
+class MinimalAnnotationType final
 {
 public:
     RTPS_DllAPI MinimalAnnotationType();
@@ -1202,7 +1202,7 @@ private:
 	AliasMemberFlag       related_flags;
 	TypeIdentifier        related_type;
 };*/
-class RTPS_DllAPI CommonAliasBody
+class CommonAliasBody
 {
 public:
     RTPS_DllAPI CommonAliasBody();
@@ -1240,7 +1240,7 @@ private:
 	AppliedBuiltinMemberAnnotations  ann_builtin; // Optional
 	AppliedAnnotationSeq             ann_custom; // Optional
 };*/
-class RTPS_DllAPI CompleteAliasBody
+class CompleteAliasBody
 {
 public:
     RTPS_DllAPI CompleteAliasBody();
@@ -1282,7 +1282,7 @@ private:
 /*struct MinimalAliasBody {
 	CommonAliasBody       common;
 };*/
-class RTPS_DllAPI MinimalAliasBody
+class MinimalAliasBody
 {
 public:
     RTPS_DllAPI MinimalAliasBody();
@@ -1312,7 +1312,7 @@ private:
 /*struct CompleteAliasHeader {
 	CompleteTypeDetail    detail;
 };*/
-class RTPS_DllAPI CompleteAliasHeader
+class CompleteAliasHeader
 {
 public:
     RTPS_DllAPI CompleteAliasHeader();
@@ -1342,7 +1342,7 @@ private:
 /*struct MinimalAliasHeader {
 	// Empty. Available for future extension
 };*/
-class RTPS_DllAPI MinimalAliasHeader
+class MinimalAliasHeader
 {
 public:
     RTPS_DllAPI MinimalAliasHeader();
@@ -1368,7 +1368,7 @@ private:
 	CompleteAliasHeader   header;
 	CompleteAliasBody     body;
 };*/
-class RTPS_DllAPI CompleteAliasType
+class CompleteAliasType
 {
 public:
     RTPS_DllAPI CompleteAliasType();
@@ -1413,7 +1413,7 @@ private:
 	MinimalAliasHeader    header;
 	MinimalAliasBody      body;
 };*/
-class RTPS_DllAPI MinimalAliasType
+class MinimalAliasType
 {
 public:
     RTPS_DllAPI MinimalAliasType();
@@ -1457,7 +1457,7 @@ private:
 	AppliedBuiltinMemberAnnotations  ann_builtin; // Optional
 	AppliedAnnotationSeq             ann_custom; // Optional
 };*/
-class RTPS_DllAPI CompleteElementDetail
+class CompleteElementDetail
 {
 public:
     RTPS_DllAPI CompleteElementDetail();
@@ -1495,7 +1495,7 @@ private:
 	CollectionElementFlag     element_flags;
 	TypeIdentifier            type;
 };*/
-class RTPS_DllAPI CommonCollectionElement final
+class CommonCollectionElement final
 {
 public:
     RTPS_DllAPI CommonCollectionElement();
@@ -1532,7 +1532,7 @@ private:
 	CommonCollectionElement   common;
 	CompleteElementDetail     detail;
 };*/
-class RTPS_DllAPI CompleteCollectionElement
+class CompleteCollectionElement
 {
 public:
     RTPS_DllAPI CompleteCollectionElement();
@@ -1568,7 +1568,7 @@ private:
 /*struct MinimalCollectionElement {
 	CommonCollectionElement   common;
 };*/
-class RTPS_DllAPI MinimalCollectionElement
+class MinimalCollectionElement
 {
 public:
     RTPS_DllAPI MinimalCollectionElement();
@@ -1598,7 +1598,7 @@ private:
 /*struct CommonCollectionHeader final{
 	LBound                    bound;
 };*/
-class RTPS_DllAPI CommonCollectionHeader
+class CommonCollectionHeader
 {
 public:
     RTPS_DllAPI CommonCollectionHeader();
@@ -1629,7 +1629,7 @@ private:
 	CommonCollectionHeader        common;
 	CompleteTypeDetail  detail; // Optional // not present for anonymous
 };*/
-class RTPS_DllAPI CompleteCollectionHeader
+class CompleteCollectionHeader
 {
 public:
     RTPS_DllAPI CompleteCollectionHeader();
@@ -1665,7 +1665,7 @@ private:
 /*struct MinimalCollectionHeader {
 	CommonCollectionHeader        common;
 };*/
-class RTPS_DllAPI MinimalCollectionHeader
+class MinimalCollectionHeader
 {
 public:
     RTPS_DllAPI MinimalCollectionHeader();
@@ -1698,7 +1698,7 @@ private:
 	CompleteCollectionHeader   header;
 	CompleteCollectionElement  element;
 };*/
-class RTPS_DllAPI CompleteSequenceType
+class CompleteSequenceType
 {
 public:
     RTPS_DllAPI CompleteSequenceType();
@@ -1742,7 +1742,7 @@ private:
 	MinimalCollectionHeader    header;
 	MinimalCollectionElement   element;
 };*/
-class RTPS_DllAPI MinimalSequenceType
+class MinimalSequenceType
 {
 public:
     RTPS_DllAPI MinimalSequenceType();
@@ -1785,7 +1785,7 @@ private:
 /*struct CommonArrayHeader final{
 	LBoundSeq           bound_seq;
 };*/
-class RTPS_DllAPI CommonArrayHeader
+class CommonArrayHeader
 {
 public:
     RTPS_DllAPI CommonArrayHeader();
@@ -1816,7 +1816,7 @@ private:
 	CommonArrayHeader   common;
 	CompleteTypeDetail  detail;
 };*/
-class RTPS_DllAPI CompleteArrayHeader
+class CompleteArrayHeader
 {
 public:
     RTPS_DllAPI CompleteArrayHeader();
@@ -1852,7 +1852,7 @@ private:
 /*struct MinimalArrayHeader {
 	CommonArrayHeader   common;
 };*/
-class RTPS_DllAPI MinimalArrayHeader
+class MinimalArrayHeader
 {
 public:
     RTPS_DllAPI MinimalArrayHeader();
@@ -1884,7 +1884,7 @@ private:
 	CompleteArrayHeader         header;
 	CompleteCollectionElement   element;
 };*/
-class RTPS_DllAPI CompleteArrayType
+class CompleteArrayType
 {
 public:
     RTPS_DllAPI CompleteArrayType();
@@ -1928,7 +1928,7 @@ private:
 	MinimalArrayHeader         header;
 	MinimalCollectionElement   element;
 };*/
-class RTPS_DllAPI MinimalArrayType
+class MinimalArrayType
 {
 public:
     RTPS_DllAPI MinimalArrayType();
@@ -1974,7 +1974,7 @@ private:
 	CompleteCollectionElement     key;
 	CompleteCollectionElement     element;
 };*/
-class RTPS_DllAPI CompleteMapType final
+class CompleteMapType final
 {
 public:
     RTPS_DllAPI CompleteMapType();
@@ -2026,7 +2026,7 @@ private:
 	MinimalCollectionElement    key;
 	MinimalCollectionElement    element;
 };*/
-class RTPS_DllAPI MinimalMapType final
+class MinimalMapType final
 {
 public:
     RTPS_DllAPI MinimalMapType();
@@ -2080,7 +2080,7 @@ typedef uint16_t BitBound;
 	int32_t                     value;
 	EnumeratedLiteralFlag    flags;
 };*/
-class RTPS_DllAPI CommonEnumeratedLiteral
+class CommonEnumeratedLiteral
 {
 public:
     RTPS_DllAPI CommonEnumeratedLiteral();
@@ -2119,7 +2119,7 @@ private:
 	CommonEnumeratedLiteral  common;
 	CompleteMemberDetail     detail;
 };*/
-class RTPS_DllAPI CompleteEnumeratedLiteral
+class CompleteEnumeratedLiteral
 {
 public:
     RTPS_DllAPI CompleteEnumeratedLiteral();
@@ -2162,7 +2162,7 @@ typedef std::vector<CompleteEnumeratedLiteral> CompleteEnumeratedLiteralSeq;
 	CommonEnumeratedLiteral  common;
 	MinimalMemberDetail      detail;
 };*/
-class RTPS_DllAPI MinimalEnumeratedLiteral
+class MinimalEnumeratedLiteral
 {
 public:
     RTPS_DllAPI MinimalEnumeratedLiteral();
@@ -2201,7 +2201,7 @@ typedef std::vector<MinimalEnumeratedLiteral> MinimalEnumeratedLiteralSeq;
 /*struct CommonEnumeratedHeader final{
 	BitBound                bit_bound;
 };*/
-class RTPS_DllAPI CommonEnumeratedHeader final
+class CommonEnumeratedHeader final
 {
 public:
     RTPS_DllAPI CommonEnumeratedHeader();
@@ -2232,7 +2232,7 @@ private:
 	CommonEnumeratedHeader  common;
 	CompleteTypeDetail      detail;
 };*/
-class RTPS_DllAPI CompleteEnumeratedHeader
+class CompleteEnumeratedHeader
 {
 public:
     RTPS_DllAPI CompleteEnumeratedHeader();
@@ -2268,7 +2268,7 @@ private:
 /*struct MinimalEnumeratedHeader {
 	CommonEnumeratedHeader  common;
 };*/
-class RTPS_DllAPI MinimalEnumeratedHeader
+class MinimalEnumeratedHeader
 {
 public:
     RTPS_DllAPI MinimalEnumeratedHeader();
@@ -2301,7 +2301,7 @@ private:
 	CompleteEnumeratedHeader        header;
 	CompleteEnumeratedLiteralSeq    literal_seq;
 };*/
-class RTPS_DllAPI CompleteEnumeratedType
+class CompleteEnumeratedType
 {
 public:
     RTPS_DllAPI CompleteEnumeratedType();
@@ -2347,7 +2347,7 @@ private:
 	MinimalEnumeratedHeader       header;
 	MinimalEnumeratedLiteralSeq   literal_seq;
 };*/
-class RTPS_DllAPI MinimalEnumeratedType
+class MinimalEnumeratedType
 {
 public:
     RTPS_DllAPI MinimalEnumeratedType();
@@ -2392,7 +2392,7 @@ private:
 	uint16_t         position;
 	BitflagFlag            flags;
 };*/
-class RTPS_DllAPI CommonBitflag final
+class CommonBitflag final
 {
 public:
     RTPS_DllAPI CommonBitflag();
@@ -2431,7 +2431,7 @@ private:
 	CommonBitflag          common;
 	CompleteMemberDetail   detail;
 };*/
-class RTPS_DllAPI CompleteBitflag
+class CompleteBitflag
 {
 public:
     RTPS_DllAPI CompleteBitflag();
@@ -2473,7 +2473,7 @@ typedef std::vector<CompleteBitflag> CompleteBitflagSeq;
 	CommonBitflag        common;
 	MinimalMemberDetail  detail;
 };*/
-class RTPS_DllAPI MinimalBitflag
+class MinimalBitflag
 {
 public:
     RTPS_DllAPI MinimalBitflag();
@@ -2512,7 +2512,7 @@ typedef std::vector<MinimalBitflag> MinimalBitflagSeq;
 /*struct CommonBitmaskHeader final{
 	BitBound             bit_bound;
 };*/
-class RTPS_DllAPI CommonBitmaskHeader final
+class CommonBitmaskHeader final
 {
 public:
     RTPS_DllAPI CommonBitmaskHeader();
@@ -2550,7 +2550,7 @@ typedef MinimalEnumeratedHeader  MinimalBitmaskHeader;
 	CompleteBitmaskHeader    header;
 	CompleteBitflagSeq       flag_seq;
 };*/
-class RTPS_DllAPI CompleteBitmaskType
+class CompleteBitmaskType
 {
 public:
     RTPS_DllAPI CompleteBitmaskType();
@@ -2594,7 +2594,7 @@ private:
 	MinimalBitmaskHeader     header;
 	MinimalBitflagSeq        flag_seq;
 };*/
-class RTPS_DllAPI MinimalBitmaskType
+class MinimalBitmaskType
 {
 public:
     RTPS_DllAPI MinimalBitmaskType();
@@ -2640,7 +2640,7 @@ private:
 	octet                 bitcount;
 	TypeKind              holder_type; // Must be primitive integer type
 };*/
-class RTPS_DllAPI CommonBitfield final
+class CommonBitfield final
 {
 public:
     RTPS_DllAPI CommonBitfield();
@@ -2689,7 +2689,7 @@ private:
 	CommonBitfield           common;
 	CompleteMemberDetail     detail;
 };*/
-class RTPS_DllAPI CompleteBitfield
+class CompleteBitfield
 {
 public:
     RTPS_DllAPI CompleteBitfield();
@@ -2731,7 +2731,7 @@ typedef std::vector<CompleteBitfield> CompleteBitfieldSeq;
 	CommonBitfield       common;
 	NameHash             name_hash;
 };*/
-class RTPS_DllAPI MinimalBitfield
+class MinimalBitfield
 {
 public:
     RTPS_DllAPI MinimalBitfield();
@@ -2772,7 +2772,7 @@ typedef std::vector<MinimalBitfield> MinimalBitfieldSeq;
 /*struct CompleteBitsetHeader {
 	CompleteTypeDetail   detail;
 };*/
-class RTPS_DllAPI CompleteBitsetHeader
+class CompleteBitsetHeader
 {
 public:
     RTPS_DllAPI CompleteBitsetHeader();
@@ -2802,7 +2802,7 @@ private:
 /*struct MinimalBitsetHeader {
 	// Empty. Available for future extension
 };*/
-class RTPS_DllAPI MinimalBitsetHeader
+class MinimalBitsetHeader
 {
 public:
     RTPS_DllAPI MinimalBitsetHeader();
@@ -2829,7 +2829,7 @@ private:
 	CompleteBitsetHeader   header;
 	CompleteBitfieldSeq    field_seq;
 };*/
-class RTPS_DllAPI CompleteBitsetType
+class CompleteBitsetType
 {
 public:
     RTPS_DllAPI CompleteBitsetType();
@@ -2873,7 +2873,7 @@ private:
 	MinimalBitsetHeader  header;
 	MinimalBitfieldSeq   field_seq;
 };*/
-class RTPS_DllAPI MinimalBitsetType
+class MinimalBitsetType
 {
 public:
     RTPS_DllAPI MinimalBitsetType();
@@ -2919,7 +2919,7 @@ private:
 /*struct CompleteExtendedType {
 	// Empty. Available for future extension
 };*/
-class RTPS_DllAPI CompleteExtendedType
+class CompleteExtendedType
 {
 public:
     RTPS_DllAPI CompleteExtendedType();
@@ -2943,7 +2943,7 @@ private:
 /*struct MinimalExtendedType  {
 	// Empty. Available for future extension
 };*/
-class RTPS_DllAPI MinimalExtendedType
+class MinimalExtendedType
 {
 public:
     RTPS_DllAPI MinimalExtendedType();
@@ -2964,7 +2964,7 @@ public:
 private:
 };
 
-class RTPS_DllAPI CompleteTypeObject final
+class CompleteTypeObject final
 {
 public:
     RTPS_DllAPI CompleteTypeObject();
@@ -3045,7 +3045,7 @@ private:
     CompleteExtendedType   m_extended_type;
 };
 
-class RTPS_DllAPI MinimalTypeObject final
+class MinimalTypeObject final
 {
 public:
     RTPS_DllAPI MinimalTypeObject();
@@ -3127,7 +3127,7 @@ private:
 };
 
 
-class RTPS_DllAPI TypeObject
+class TypeObject
 {
 public:
 
@@ -3304,7 +3304,7 @@ typedef TypeObjectSeq        StronglyConnectedComponent;
 	TypeIdentifier  type_identifier;
 	TypeObject      type_object;
 };*/
-class RTPS_DllAPI TypeIdentifierTypeObjectPair final
+class TypeIdentifierTypeObjectPair final
 {
 public:
     RTPS_DllAPI TypeIdentifierTypeObjectPair();
@@ -3344,7 +3344,7 @@ typedef std::vector<TypeIdentifierTypeObjectPair> TypeIdentifierTypeObjectPairSe
 	TypeIdentifier  type_identifier1;
 	TypeIdentifier  type_identifier2;
 };*/
-class RTPS_DllAPI TypeIdentifierPair final
+class TypeIdentifierPair final
 {
 public:
     RTPS_DllAPI TypeIdentifierPair();
@@ -3384,7 +3384,7 @@ typedef std::vector<TypeIdentifierPair> TypeIdentifierPairSeq;
 	TypeIdentifier  type_id;
 	uint32_t                typeobject_serialized_size;
 };*/
-class RTPS_DllAPI TypeIdentfierWithSize
+class TypeIdentfierWithSize
 {
 public:
     RTPS_DllAPI TypeIdentfierWithSize();
@@ -3425,7 +3425,7 @@ typedef std::vector<TypeIdentfierWithSize> TypeIdentfierWithSizeSeq;
 	int32_t                             dependent_typeid_count;
 	TypeIdentfierWithSizeSeq  dependent_typeids;
 };*/
-class RTPS_DllAPI TypeIdentifierWithDependencies
+class TypeIdentifierWithDependencies
 {
 public:
     RTPS_DllAPI TypeIdentifierWithDependencies();
@@ -3476,7 +3476,7 @@ typedef    std::vector<TypeIdentifierWithDependencies> TypeIdentifierWithDepende
 	TypeIdentifierWithDependencies minimal; // @id{0x1001}
 	TypeIdentifierWithDependencies complete; // @id{0x1002}
 };*/
-class RTPS_DllAPI TypeInformation
+class TypeInformation
 {
 public:
     RTPS_DllAPI TypeInformation();
