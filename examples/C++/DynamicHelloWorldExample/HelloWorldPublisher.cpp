@@ -43,9 +43,9 @@ mp_publisher(nullptr), m_dynamic(false)
 
 bool HelloWorldPublisher::init(bool dynamic)
 {
+    m_dynamic = dynamic;
     if (dynamic)
     {
-        m_dynamic = dynamic;
         // Given
         DynamicTypeBuilder* created_type_ulong(nullptr);
         DynamicTypeBuilder* created_type_string(nullptr);

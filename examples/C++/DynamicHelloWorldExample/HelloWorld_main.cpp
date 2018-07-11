@@ -143,7 +143,7 @@ int main(int argc, char** argv)
 {
     //Log::SetVerbosity(Log::Kind::Info);
     //std::regex filter("RTPS_HISTORY");
-    //std::regex filter("RTPS_READER");
+    //std::regex filter("RTPS_EDP");
     //Log::SetCategoryFilter(filter);
     std::cout << "Starting "<< std::endl;
 

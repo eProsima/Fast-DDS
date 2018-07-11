@@ -54,10 +54,10 @@ bool HelloWorldSubscriber::init(bool dynamic)
         return false;
 
     //REGISTER THE TYPE
+    m_dynamic = dynamic;
+    m_listener.m_dynamic = dynamic;
     if (dynamic)
     {
-        m_dynamic = dynamic;
-        m_listener.m_dynamic = dynamic;
         // Given
         DynamicTypeBuilder* created_type_ulong(nullptr);
         DynamicTypeBuilder* created_type_string(nullptr);

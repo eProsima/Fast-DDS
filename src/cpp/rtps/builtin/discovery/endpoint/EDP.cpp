@@ -289,6 +289,7 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
     }
     if(!checkTypeIdentifier(wdata, rdata))
     {
+        logInfo(RTPS_EDP, "Matching failed on checkTypeIdentifier.");
         return false;
     }
     if(!rdata->isAlive()) //Matching
@@ -388,6 +389,7 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
     }
     if(!checkTypeIdentifier(wdata, rdata))
     {
+        logInfo(RTPS_EDP, "Matching failed on checkTypeIdentifier.");
         return false;
     }
     if(!wdata->isAlive()) //Matching
@@ -1000,6 +1002,11 @@ bool EDP::checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyDat
     if (wdata->topicDiscoveryKind() == NO_CHECK && rdata->topicDiscoveryKind() == NO_CHECK)
     {
         return true;
+    }
+    else if (wdata->topicDiscoveryKind() != rdata->topicDiscoveryKind())
+    {
+        logInfo(RTPS_EDP, "Matching failed due to DiscoveryKind mismatch.");
+        return false;
     }
 
     return checkTypeIdentifier(wdata->type_id().m_type_identifier, rdata->type_id().m_type_identifier);
