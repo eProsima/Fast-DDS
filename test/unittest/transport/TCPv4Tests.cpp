@@ -131,56 +131,74 @@ TEST_F(TCPv4Tests, opening_and_closing_input_channel)
 }
 
 #ifndef __APPLE__
-/* // TODO SKIP AT THIS MOMENT
+// TODO SKIP AT THIS MOMENT
 TEST_F(TCPv4Tests, send_and_receive_between_ports)
 {
-    TCPv4Transport transportUnderTest(descriptor);
-    transportUnderTest.init();
+    TCPv4TransportDescriptor recvDescriptor;
+    recvDescriptor.maxMessageSize = 5;
+    recvDescriptor.sendBufferSize = 5;
+    recvDescriptor.receiveBufferSize = 5;
+    recvDescriptor.add_listener_port(5100);
+    recvDescriptor.wait_for_tcp_negotiation = true;
+    TCPv4Transport receiveTransportUnderTest(recvDescriptor);
+    receiveTransportUnderTest.init();
+
+    TCPv4TransportDescriptor sendDescriptor;
+    sendDescriptor.maxMessageSize = 5;
+    sendDescriptor.sendBufferSize = 5;
+    sendDescriptor.receiveBufferSize = 5;
+    sendDescriptor.wait_for_tcp_negotiation = true;
+    TCPv4Transport sendTransportUnderTest(sendDescriptor);
+    sendTransportUnderTest.init();
 
     Locator_t inputLocator;
     inputLocator.kind = LOCATOR_KIND_TCPv4;
-    inputLocator.set_port(g_input_port);
+    inputLocator.set_port(5100);
     inputLocator.set_IP4_address(127, 0, 0, 1);
+    inputLocator.set_logical_port(7410);
 
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
-    outputLocator.set_port(g_input_port);
+    outputLocator.set_IP4_address(127, 0, 0, 1);
+    outputLocator.set_port(5100);
+    outputLocator.set_logical_port(7410);
 
-    MockReceiverResource receiver(transportUnderTest, inputLocator);
-    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
-
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputLocator, nullptr));
-    ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(inputLocator));
-    octet message[5] = { 'H','e','l','l','o' };
-
-    Semaphore sem;
-    std::function<void()> recCallback = [&]()
     {
-        EXPECT_EQ(memcmp(message,msg_recv->data,5), 0);
-        sem.post();
-    };
+        MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
+        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
-    msg_recv->setCallback(recCallback);
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator, nullptr));
+        octet message[5] = { 'H','e','l','l','o' };
 
-    auto sendThreadFunction = [&]()
-    {
-        bool sent = transportUnderTest.Send(message, 5, outputLocator, inputLocator);
-        while(!sent)
+        Semaphore sem;
+        std::function<void()> recCallback = [&]()
         {
-            sent = transportUnderTest.Send(message, 5, outputLocator, inputLocator);
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-        EXPECT_TRUE(sent);
-        //EXPECT_TRUE(transportUnderTest.Send(message, 5, outputLocator, inputLocator));
-    };
+            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+            sem.post();
+        };
 
-    senderThread.reset(new std::thread(sendThreadFunction));
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    senderThread->join();
-    sem.wait();
-    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputLocator));
+        msg_recv->setCallback(recCallback);
+
+        auto sendThreadFunction = [&]()
+        {
+            bool sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
+            while (!sent)
+            {
+                sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+            EXPECT_TRUE(sent);
+            //EXPECT_TRUE(transportUnderTest.Send(message, 5, outputLocator, inputLocator));
+        };
+
+        senderThread.reset(new std::thread(sendThreadFunction));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        senderThread->join();
+        sem.wait();
+    }
+    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
 }
-*/
 #endif
 
 TEST_F(TCPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_in_descriptor)
