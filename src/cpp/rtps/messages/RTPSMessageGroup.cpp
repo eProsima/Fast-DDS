@@ -682,17 +682,17 @@ bool RTPSMessageGroup::add_gap(std::set<SequenceNumber_t>& changesSeqNum,
     return true;
 }
 
-bool RTPSMessageGroup::add_acknack(const GUID_t& remote_writer, SequenceNumberSet_t& SNSet,
+bool RTPSMessageGroup::add_acknack(const std::vector<GUID_t>& remote_writers, SequenceNumberSet_t& SNSet,
         int32_t count, bool finalFlag, const LocatorList_t& locators)
 {
-    check_and_maybe_flush(locators, std::vector<GUID_t>{remote_writer});
+    check_and_maybe_flush(locators, remote_writers);
 
 #if HAVE_SECURITY
     uint32_t from_buffer_position = submessage_msg_->pos;
 #endif
 
     if(!RTPSMessageCreator::addSubmessageAcknack(submessage_msg_, endpoint_->getGuid().entityId,
-                remote_writer.entityId, SNSet, count, finalFlag))
+                remote_writers.front().entityId, SNSet, count, finalFlag))
     {
         logError(RTPS_READER, "Cannot add ACKNACK submsg to the CDRMessage. Buffer too small");
         return false;
@@ -704,7 +704,7 @@ bool RTPSMessageGroup::add_acknack(const GUID_t& remote_writer, SequenceNumberSe
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
         if(!participant_->security_manager().encode_reader_submessage(*submessage_msg_, *encrypt_msg_,
-                    endpoint_->getGuid(), std::vector<GUID_t>{remote_writer}))
+                    endpoint_->getGuid(), remote_writers))
         {
             logError(RTPS_READER, "Cannot encrypt ACKNACK submessage for writer " << endpoint_->getGuid());
             return false;
@@ -724,20 +724,20 @@ bool RTPSMessageGroup::add_acknack(const GUID_t& remote_writer, SequenceNumberSe
     }
 #endif
 
-    return insert_submessage(std::vector<GUID_t>{remote_writer});
+    return insert_submessage(remote_writers);
 }
 
-bool RTPSMessageGroup::add_nackfrag(const GUID_t& remote_writer, SequenceNumber_t& writerSN,
+bool RTPSMessageGroup::add_nackfrag(const std::vector<GUID_t>& remote_writers, SequenceNumber_t& writerSN,
         FragmentNumberSet_t fnState, int32_t count, const LocatorList_t locators)
 {
-    check_and_maybe_flush(locators, std::vector<GUID_t>{remote_writer});
+    check_and_maybe_flush(locators, remote_writers);
 
 #if HAVE_SECURITY
     uint32_t from_buffer_position = submessage_msg_->pos;
 #endif
 
     if(!RTPSMessageCreator::addSubmessageNackFrag(submessage_msg_, endpoint_->getGuid().entityId,
-                remote_writer.entityId, writerSN, fnState, count))
+                remote_writers.front().entityId, writerSN, fnState, count))
     {
         logError(RTPS_READER, "Cannot add ACKNACK submsg to the CDRMessage. Buffer too small");
         return false;
@@ -749,7 +749,7 @@ bool RTPSMessageGroup::add_nackfrag(const GUID_t& remote_writer, SequenceNumber_
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
         if(!participant_->security_manager().encode_reader_submessage(*submessage_msg_, *encrypt_msg_,
-                    endpoint_->getGuid(), std::vector<GUID_t>{remote_writer}))
+                    endpoint_->getGuid(), remote_writers))
         {
             logError(RTPS_READER, "Cannot encrypt ACKNACK submessage for writer " << endpoint_->getGuid());
             return false;
@@ -769,7 +769,7 @@ bool RTPSMessageGroup::add_nackfrag(const GUID_t& remote_writer, SequenceNumber_
     }
 #endif
 
-    return insert_submessage(std::vector<GUID_t>{remote_writer});
+    return insert_submessage(remote_writers);
 }
 
 } /* namespace rtps */
