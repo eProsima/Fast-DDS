@@ -189,6 +189,7 @@ DynamicType* DynamicTypeBuilder::Build()
             newType->mMemberById.insert(std::make_pair(newMember->GetId(), newMember));
             newType->mMemberByName.insert(std::make_pair(newMember->GetName(), newMember));
         }
+        newType->RefreshMaxSerializeSize();
 
         return newType;
     }

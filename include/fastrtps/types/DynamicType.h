@@ -86,6 +86,8 @@ protected:
     // Checks if there is a member with the given name.
     bool ExistsMemberByName(const std::string& name) const;
 
+    void RefreshMaxSerializeSize();
+
     // This method is used by Dynamic Data to override the name of the types based on ALIAS.
     void SetName(const std::string& name);
 

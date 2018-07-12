@@ -57,7 +57,6 @@ DynamicType::DynamicType(const TypeDescriptor* descriptor)
             mMemberByName.insert(std::make_pair(it->second->GetName(), it->second));
         }
     }
-    m_typeSize = GetMaxSerializedSize();
     setName(mName.c_str());
 }
 
@@ -122,6 +121,8 @@ ResponseCode DynamicType::CopyFromType(const DynamicType* other)
             mMemberById.insert(std::make_pair(newMember->GetId(), newMember));
             mMemberByName.insert(std::make_pair(newMember->GetName(), newMember));
         }
+
+        m_typeSize = other->m_typeSize;
         return ResponseCode::RETCODE_OK;
     }
     else
@@ -428,6 +429,11 @@ std::function<uint32_t()> DynamicType::getSerializedSizeProvider(void* data)
     return [data]() -> uint32_t {
         return (uint32_t)DynamicData::getCdrSerializedSize((DynamicData*)data) + 4 /*encapsulation*/;
     };
+}
+
+void DynamicType::RefreshMaxSerializeSize()
+{
+    m_typeSize = GetMaxSerializedSize();
 }
 
 bool DynamicType::serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload)
