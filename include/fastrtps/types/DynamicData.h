@@ -286,9 +286,9 @@ protected:
 #else
     std::map<MemberId, void*> mValues;
 #endif
-    DynamicData* mDefaultArrayValue;
     std::vector<MemberId> mLoanedValues;
     bool mIsKeyElement;
+    DynamicData* mDefaultArrayValue;
     uint64_t mUnionLabel;
     MemberId mUnionId;
 
