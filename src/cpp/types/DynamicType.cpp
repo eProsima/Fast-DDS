@@ -118,6 +118,7 @@ ResponseCode DynamicType::CopyFromType(const DynamicType* other)
             mMemberById.insert(std::make_pair(newMember->GetId(), newMember));
             mMemberByName.insert(std::make_pair(newMember->GetName(), newMember));
         }
+        setName(mName.c_str());
 
         RefreshMaxSerializeSize();
         return ResponseCode::RETCODE_OK;
@@ -378,6 +379,7 @@ void DynamicType::SetName(const std::string& name)
         mDescriptor->SetName(name);
     }
     mName = name;
+    setName(mName.c_str());
 }
 
 
