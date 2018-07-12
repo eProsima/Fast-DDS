@@ -57,6 +57,7 @@ protected:
 
     void RefreshMemberIds();
 
+
     virtual void Clear() override;
 };
 
