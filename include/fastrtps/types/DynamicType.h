@@ -45,7 +45,7 @@ public:
     ResponseCode GetDescriptor(TypeDescriptor* descriptor) const;
     DynamicType* GetElementType() const;
     DynamicType* GetKeyElementType() const;
-    TypeKind GetKind() const;
+    inline TypeKind GetKind() const { return mKind; }
     std::string GetName() const;
     ResponseCode GetMember(DynamicTypeMember& member, MemberId id);
     ResponseCode GetMemberByName(DynamicTypeMember& member, const std::string name);

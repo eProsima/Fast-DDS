@@ -40,8 +40,6 @@ public:
 protected:
     DynamicDataFactory();
 
-
-    ResponseCode CreateArrayMembers(DynamicData* pData, DynamicType* pType);
     ResponseCode CreateMembers(DynamicData* pData, DynamicType* pType);
 
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK

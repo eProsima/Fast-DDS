@@ -40,7 +40,7 @@ public:
 
     RTPS_DllAPI DynamicData* Clone() const;
     RTPS_DllAPI bool Equals(const DynamicData* other) const;
-    RTPS_DllAPI TypeKind GetKind() const;
+    RTPS_DllAPI inline TypeKind GetKind() const;
     RTPS_DllAPI uint32_t GetItemCount() const;
     RTPS_DllAPI std::string GetName();
 
@@ -55,8 +55,7 @@ public:
     RTPS_DllAPI ResponseCode RemoveSequenceData(MemberId id);
     RTPS_DllAPI ResponseCode ClearData();
 
-    RTPS_DllAPI ResponseCode InsertArrayData(MemberId indexId);
-    RTPS_DllAPI ResponseCode RemoveArrayData(MemberId indexId);
+    RTPS_DllAPI ResponseCode ClearArrayData(MemberId indexId);
 
     RTPS_DllAPI ResponseCode InsertMapData(DynamicData* key, MemberId& outKeyId, MemberId& outValueId);
     RTPS_DllAPI ResponseCode RemoveMapData(MemberId keyId);
@@ -252,6 +251,8 @@ protected:
 
     bool CompareValues(TypeKind kind, void* left, void* right) const;
 
+    ResponseCode InsertArrayData(MemberId indexId);
+
     void SerializeEmptyData(const DynamicType* pType, eprosima::fastcdr::Cdr &cdr) const;
 
     void SetDefaultValue(MemberId id);
@@ -285,6 +286,7 @@ protected:
 #else
     std::map<MemberId, void*> mValues;
 #endif
+    DynamicData* mDefaultArrayValue;
     std::vector<MemberId> mLoanedValues;
     bool mIsKeyElement;
     uint64_t mUnionLabel;
