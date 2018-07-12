@@ -4132,7 +4132,7 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t curr
         size_t max_element_size(0);
         for (auto it = type->mMemberById.begin(); it != type->mMemberById.end(); ++it)
         {
-            temp_size = getMaxCdrSerializedSize(it->second->mDescriptor->mType, current_alignment);
+            temp_size = getMaxCdrSerializedSize(it->second->mDescriptor.mType, current_alignment);
             if (temp_size > max_element_size)
             {
                 max_element_size = temp_size;
@@ -4145,7 +4145,7 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t curr
     {
         for (auto it = type->mMemberById.begin(); it != type->mMemberById.end(); ++it)
         {
-            current_alignment += getMaxCdrSerializedSize(it->second->mDescriptor->mType, current_alignment);
+            current_alignment += getMaxCdrSerializedSize(it->second->mDescriptor.mType, current_alignment);
         }
         break;
     }
@@ -4504,7 +4504,7 @@ size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType* type, size_t cu
     {
         for (auto it = type->mMemberById.begin(); it != type->mMemberById.end(); ++it)
         {
-            current_alignment += getEmptyCdrSerializedSize(it->second->mDescriptor->mType, current_alignment);
+            current_alignment += getEmptyCdrSerializedSize(it->second->mDescriptor.mType, current_alignment);
         }
         break;
     }
@@ -4639,7 +4639,7 @@ void DynamicData::SerializeEmptyData(const DynamicType* pType, eprosima::fastcdr
         for (uint32_t idx = 0; idx < pType->mMemberById.size(); ++idx)
         {
             auto it = pType->mMemberById.at(idx);
-            SerializeEmptyData(it->mDescriptor->mType, cdr);
+            SerializeEmptyData(it->mDescriptor.mType, cdr);
         }
         break;
     }

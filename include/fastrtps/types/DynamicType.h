@@ -50,10 +50,10 @@ public:
     ResponseCode GetMember(DynamicTypeMember& member, MemberId id);
     ResponseCode GetMemberByName(DynamicTypeMember& member, const std::string name);
     MemberId GetMembersCount() const;
-    bool IsTypeObject() const;
 
     bool HasChildren() const;
     bool IsComplexKind() const;
+    bool IsConsistent() const;
     bool IsDiscriminatorType() const;
 
     void* createData();
@@ -97,7 +97,6 @@ protected:
     std::map<std::string, DynamicTypeMember*> mMemberByName;    // Uses the pointers from "mMemberById".
     std::string mName;
 	TypeKind mKind;
-    bool mIsTypeObject;
 
 };
 

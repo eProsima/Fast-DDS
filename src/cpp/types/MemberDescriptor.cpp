@@ -36,6 +36,40 @@ MemberDescriptor::MemberDescriptor(const MemberDescriptor* descriptor)
     CopyFrom(descriptor);
 }
 
+MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, DynamicType* mType)
+    : mName(name)
+    , mId(id)
+    , mType(mType)
+    , mDefaultValue("")
+    , mIndex(INDEX_INVALID)
+    , mDefaultLabel(false)
+{
+
+}
+
+MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, DynamicType* mType,
+    const std::string& defaultValue)
+    : mName(name)
+    , mId(id)
+    , mType(mType)
+    , mDefaultValue(defaultValue)
+    , mIndex(INDEX_INVALID)
+    , mDefaultLabel(false)
+{
+}
+
+MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, DynamicType* mType,
+    const std::string& defaultValue, const std::vector<uint64_t>& unionLabels, bool isDefaultLabel)
+    : mName(name)
+    , mId(id)
+    , mType(mType)
+    , mDefaultValue(defaultValue)
+    , mIndex(INDEX_INVALID)
+    , mDefaultLabel(isDefaultLabel)
+{
+    mLabels = unionLabels;
+}
+
 MemberDescriptor::~MemberDescriptor()
 {
     if (mType != nullptr)

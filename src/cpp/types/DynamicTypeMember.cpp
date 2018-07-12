@@ -24,7 +24,6 @@ namespace types {
 
 DynamicTypeMember::DynamicTypeMember()
     : mParent(nullptr)
-    , mDescriptor(nullptr)
     , mId(MEMBER_ID_INVALID)
 {
 }
@@ -33,15 +32,15 @@ DynamicTypeMember::DynamicTypeMember(const MemberDescriptor* descriptor, MemberI
     : mParent(nullptr)
     , mId(id)
 {
-    mDescriptor = new MemberDescriptor(descriptor);
-    mDescriptor->SetId(id);
+    mDescriptor.CopyFrom(descriptor);
+    mDescriptor.SetId(id);
 }
 
 DynamicTypeMember::DynamicTypeMember(const DynamicTypeMember* other)
     : mParent(other->mParent)
     , mId(other->mId)
 {
-    mDescriptor = new MemberDescriptor(other->mDescriptor);
+    mDescriptor.CopyFrom(&other->mDescriptor);
     for (auto it = other->mAnnotation.begin(); it != other->mAnnotation.end(); ++it)
     {
         AnnotationDescriptor* newDesc = new AnnotationDescriptor(*it);
@@ -57,12 +56,6 @@ DynamicTypeMember::~DynamicTypeMember()
         delete *it;
     }
     mAnnotation.clear();
-
-    if (mDescriptor != nullptr)
-    {
-        delete mDescriptor;
-        mDescriptor = nullptr;
-    }
 }
 
 ResponseCode DynamicTypeMember::ApplyAnnotation(AnnotationDescriptor& descriptor)
@@ -113,14 +106,14 @@ uint32_t DynamicTypeMember::GetAnnotationCount()
 
 std::vector<uint64_t> DynamicTypeMember::GetUnionLabels() const
 {
-    return mDescriptor->GetUnionLabels();
+    return mDescriptor.GetUnionLabels();
 }
 
 ResponseCode DynamicTypeMember::GetDescriptor(MemberDescriptor* descriptor) const
 {
     if (descriptor != nullptr)
     {
-        descriptor->CopyFrom(mDescriptor);
+        descriptor->CopyFrom(&mDescriptor);
         return ResponseCode::RETCODE_OK;
     }
     else
@@ -132,34 +125,27 @@ ResponseCode DynamicTypeMember::GetDescriptor(MemberDescriptor* descriptor) cons
 
 uint32_t DynamicTypeMember::GetIndex() const
 {
-    if (mDescriptor != nullptr)
-    {
-        return mDescriptor->GetIndex();
-    }
-    return 0;
+    return mDescriptor.GetIndex();
 }
 
 std::string DynamicTypeMember::GetName() const
 {
-    return mDescriptor->GetName();
+    return mDescriptor.GetName();
 }
 
 MemberId DynamicTypeMember::GetId() const
 {
-    return mDescriptor->GetId();
+    return mDescriptor.GetId();
 }
 
 bool DynamicTypeMember::IsDefaultUnionValue() const
 {
-    return mDescriptor->IsDefaultUnionValue();
+    return mDescriptor.IsDefaultUnionValue();
 }
 
 void DynamicTypeMember::SetIndex(uint32_t index)
 {
-    if (mDescriptor != nullptr)
-    {
-        mDescriptor->SetIndex(index);
-    }
+    mDescriptor.SetIndex(index);
 }
 
 void DynamicTypeMember::SetParent(DynamicType* pType)

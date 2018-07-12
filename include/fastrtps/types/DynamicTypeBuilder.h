@@ -38,6 +38,11 @@ public:
     virtual ~DynamicTypeBuilder();
 
     RTPS_DllAPI ResponseCode AddMember(const MemberDescriptor* descriptor);
+    RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicType* mType);
+    RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicType* mType,
+        const std::string& defaultValue);
+    RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicType* mType,
+        const std::string& defaultValue, const std::vector<uint64_t>& unionLabels, bool isDefaultLabel);
 
     RTPS_DllAPI ResponseCode ApplyAnnotation(AnnotationDescriptor& descriptor);
 

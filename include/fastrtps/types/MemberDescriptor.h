@@ -27,6 +27,11 @@ class MemberDescriptor
 {
 public:
     RTPS_DllAPI MemberDescriptor();
+    RTPS_DllAPI MemberDescriptor(MemberId id, const std::string& name, DynamicType* mType);
+    RTPS_DllAPI MemberDescriptor(MemberId id, const std::string& name, DynamicType* mType,
+        const std::string& defaultValue);
+    RTPS_DllAPI MemberDescriptor(MemberId id, const std::string& name, DynamicType* mType,
+        const std::string& defaultValue, const std::vector<uint64_t>& unionLabels, bool isDefaultLabel);
     RTPS_DllAPI MemberDescriptor(const MemberDescriptor* descriptor);
     RTPS_DllAPI ~MemberDescriptor();
 
@@ -63,7 +68,7 @@ protected:
     DynamicType* mType;                 // Member's Type.
     std::string mDefaultValue;          // Default value of the member in string.
     uint32_t mIndex;                    // Definition order of the member inside it's parent.
-    std::vector<uint64_t> mLabels;       // Case Labels for unions.
+    std::vector<uint64_t> mLabels;      // Case Labels for unions.
     bool mDefaultLabel;                 // TRUE if it's the default option of a union.
 };
 

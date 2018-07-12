@@ -134,9 +134,13 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
     auto type2 = DynamicTypeBuilderFactory::GetInstance()->CreateTypeCopy(type);
     ASSERT_TRUE(type2 != nullptr);
     ASSERT_TRUE(type->Equals(type2));
-    auto data = DynamicDataFactory::GetInstance()->CreateData(type);
+    auto data = DynamicDataFactory::GetInstance()->CreateData(created_type);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+    auto data2 = DynamicDataFactory::GetInstance()->CreateData(type);
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type2) == ResponseCode::RETCODE_OK);

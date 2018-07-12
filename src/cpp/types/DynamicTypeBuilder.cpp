@@ -29,7 +29,6 @@ DynamicTypeBuilder::DynamicTypeBuilder()
     : mCurrentMemberId(0)
     , mMaxIndex(0)
 {
-    mIsTypeObject = false;
 }
 
 DynamicTypeBuilder::DynamicTypeBuilder(const TypeDescriptor* descriptor)
@@ -37,8 +36,6 @@ DynamicTypeBuilder::DynamicTypeBuilder(const TypeDescriptor* descriptor)
     , mCurrentMemberId(0)
     , mMaxIndex(0)
 {
-    mIsTypeObject = false;
-
     RefreshMemberIds();
 }
 
@@ -47,8 +44,6 @@ DynamicTypeBuilder::DynamicTypeBuilder(const DynamicType* pType)
     , mCurrentMemberId(0)
     , mMaxIndex(0)
 {
-    mIsTypeObject = false;
-
     if (pType != nullptr)
     {
         CopyFromType(pType);
@@ -129,6 +124,26 @@ ResponseCode DynamicTypeBuilder::AddMember(const MemberDescriptor* descriptor)
     }
 }
 
+ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicType* mType)
+{
+    MemberDescriptor descriptor(id, name, mType);
+    return AddMember(&descriptor);
+}
+
+ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicType* mType,
+    const std::string& defaultValue)
+{
+    MemberDescriptor descriptor(id, name, mType, defaultValue);
+    return AddMember(&descriptor);
+}
+
+ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicType* mType,
+    const std::string& defaultValue, const std::vector<uint64_t>& unionLabels, bool isDefaultLabel)
+{
+    MemberDescriptor descriptor(id, name, mType, defaultValue, unionLabels, isDefaultLabel);
+    return AddMember(&descriptor);
+}
+
 ResponseCode DynamicTypeBuilder::ApplyAnnotation(AnnotationDescriptor& descriptor)
 {
     if (descriptor.IsConsistent())
@@ -172,26 +187,7 @@ DynamicType* DynamicTypeBuilder::Build()
 {
     if (mDescriptor->IsConsistent())
     {
-        DynamicType* newType = DynamicTypeBuilderFactory::GetInstance()->BuildType(mDescriptor);
-        newType->mName = mDescriptor->GetName();
-        newType->mKind = mDescriptor->GetKind();
-        for (auto it = mAnnotation.begin(); it != mAnnotation.end(); ++it)
-        {
-            AnnotationDescriptor* newAnnotation = new AnnotationDescriptor();
-            newAnnotation->CopyFrom(*it);
-            newType->mAnnotation.push_back(newAnnotation);
-        }
-
-        for (auto it = mMemberById.begin(); it != mMemberById.end(); ++it)
-        {
-            DynamicTypeMember* newMember = new DynamicTypeMember(it->second);
-            newMember->SetParent(newType);
-            newType->mMemberById.insert(std::make_pair(newMember->GetId(), newMember));
-            newType->mMemberByName.insert(std::make_pair(newMember->GetName(), newMember));
-        }
-        newType->RefreshMaxSerializeSize();
-
-        return newType;
+        return DynamicTypeBuilderFactory::GetInstance()->BuildType(this);
     }
     else
     {

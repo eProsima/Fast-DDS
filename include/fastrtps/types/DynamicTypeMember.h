@@ -16,13 +16,13 @@
 #define TYPES_DYNAMIC_TYPE_MEMBER_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/MemberDescriptor.h>
 
 namespace eprosima{
 namespace fastrtps{
 namespace types{
 
 class AnnotationDescriptor;
-class MemberDescriptor;
 class DynamicType;
 
 class DynamicTypeMember
@@ -57,7 +57,7 @@ protected:
     friend class DynamicData;
 
     DynamicType* mParent;
-    MemberDescriptor* mDescriptor;
+    MemberDescriptor mDescriptor;
 	std::vector<AnnotationDescriptor*> mAnnotation;
 	MemberId mId;
 };
