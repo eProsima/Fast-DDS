@@ -2604,7 +2604,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
     ASSERT_TRUE(data->GetItemCount() == array_type->GetTotalBounds());
     ASSERT_TRUE(data->ClearValue(testPos) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(data->GetItemCount() == array_type->GetTotalBounds());
-    ASSERT_TRUE(data->RemoveArrayData(testPos) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->ClearArrayData(testPos) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(data->GetItemCount() == array_type->GetTotalBounds());
 
     // Check the clear values method
@@ -2671,6 +2671,159 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
     ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
     // Clean the types Factory.
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(array_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(array_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(array_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(array_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type_builder) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* base_type_builder(nullptr);
+    DynamicTypeBuilder* array_type_builder(nullptr);
+    DynamicTypeBuilder* parent_array_type_builder(nullptr);
+    std::vector<uint32_t> sequence_lengths = { 2, 2 };
+
+    // Then
+    base_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
+    ASSERT_TRUE(base_type_builder != nullptr);
+    auto base_type = base_type_builder->Build();
+
+    array_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateArrayType(base_type, sequence_lengths);
+    ASSERT_TRUE(array_type_builder != nullptr);
+    auto array_type = array_type_builder->Build();
+    ASSERT_TRUE(array_type != nullptr);
+
+    parent_array_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateArrayType(array_type, sequence_lengths);
+    ASSERT_TRUE(parent_array_type_builder != nullptr);
+    auto parent_array_type = parent_array_type_builder->Build();
+    ASSERT_TRUE(parent_array_type != nullptr);
+
+    auto data = DynamicDataFactory::GetInstance()->CreateData(parent_array_type);
+    ASSERT_FALSE(data->SetInt32Value(10, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue("", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    MemberId newId;
+    ASSERT_FALSE(data->InsertSequenceData(newId) == ResponseCode::RETCODE_OK);
+
+    // Get an index in the multidimensional array.
+    std::vector<uint32_t> vPosition = { 1, 1 };
+    MemberId testPos(0);
+    testPos = data->GetArrayIndex(vPosition);
+    ASSERT_TRUE(testPos != MEMBER_ID_INVALID);
+
+    // Invalid input vectors.
+    std::vector<uint32_t> vPosition2 = { 1, 1, 1 };
+    ASSERT_FALSE(data->GetArrayIndex(vPosition2) != MEMBER_ID_INVALID);
+    std::vector<uint32_t> vPosition3 = { 1, 1, 1, 1 };
+    ASSERT_FALSE(data->GetArrayIndex(vPosition3) != MEMBER_ID_INVALID);
+
+    // Loan Complex values.
+    DynamicData* temp = data->LoanValue(testPos);
+    ASSERT_TRUE(temp != nullptr);
+    DynamicData* temp2 = data->LoanValue(testPos);
+    ASSERT_FALSE(temp2 != nullptr);
+
+    int32_t test1 = 156;
+    ASSERT_TRUE(temp->SetInt32Value(test1, testPos) == ResponseCode::RETCODE_OK);
+    int32_t test2(0);
+    ASSERT_TRUE(temp->GetInt32Value(test2, testPos) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+
+    ASSERT_TRUE(data->ReturnLoanedValue(temp) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->ReturnLoanedValue(temp) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->ReturnLoanedValue(temp2) == ResponseCode::RETCODE_OK);
+
+    // Serialize <-> Deserialize Test
+    uint32_t payloadSize = static_cast<uint32_t>(parent_array_type->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
+    ASSERT_TRUE(parent_array_type->serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
+
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(parent_array_type);
+    ASSERT_TRUE(parent_array_type->deserialize(&payload, data2));
+    ASSERT_TRUE(data2->Equals(data));
+
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
+
+    // Check items count before and after remove an element.
+    ASSERT_TRUE(data->GetItemCount() == parent_array_type->GetTotalBounds());
+    ASSERT_TRUE(data->ClearValue(testPos) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetItemCount() == parent_array_type->GetTotalBounds());
+    ASSERT_TRUE(data->ClearArrayData(testPos) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(data->GetItemCount() == parent_array_type->GetTotalBounds());
+
+    // Try to set a value out of the array.
+    ASSERT_FALSE(data->SetInt32Value(test1, 100) == ResponseCode::RETCODE_OK);
+
+    ASSERT_FALSE(data->SetInt32Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint32Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt16Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint16Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetInt64Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetUint64Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat32Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat64Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetFloat128Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar8Value('a', MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetChar16Value(L'a', MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetByteValue(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetBoolValue(false, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetStringValue("", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetWstringValue(L"", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(data->SetEnumValue("", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    int32_t iTest32;
+    ASSERT_FALSE(data->GetInt32Value(iTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->GetUint32Value(uTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->GetInt16Value(iTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->GetUint16Value(uTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->GetInt64Value(iTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->GetUint64Value(uTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->GetFloat32Value(fTest32, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->GetFloat64Value(fTest64, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->GetFloat128Value(fTest128, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->GetChar8Value(cTest8, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->GetChar16Value(cTest16, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->GetByteValue(oTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->GetBoolValue(bTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->GetStringValue(sTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    // Delete the array
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+    // Clean the types Factory.
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(parent_array_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(parent_array_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(parent_array_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(parent_array_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(array_type_builder) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(array_type_builder) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(array_type) == ResponseCode::RETCODE_OK);

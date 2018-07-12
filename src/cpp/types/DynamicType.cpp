@@ -230,11 +230,6 @@ std::string DynamicType::GetName() const
     return mName;
 }
 
-TypeKind DynamicType::GetKind() const
-{
-    return mKind;
-}
-
 ResponseCode DynamicType::GetMemberByName(DynamicTypeMember& member, const std::string name)
 {
     auto it = mMemberByName.find(name);
