@@ -70,44 +70,31 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
 {
     // Given
     DynamicTypeBuilderFactory::GetInstance();
-    DynamicTypeBuilder* created_type(nullptr);
+    DynamicTypeBuilder* int32_type(nullptr);
     // Create basic types
-    created_type = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
-    ASSERT_TRUE(created_type != nullptr);
-    auto type = created_type->Build();
-    ASSERT_TRUE(type != nullptr);
-    auto type2 = DynamicTypeBuilderFactory::GetInstance()->CreateTypeCopy(type);
+    int32_type = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
+    ASSERT_TRUE(int32_type != nullptr);
+    auto type2 = DynamicTypeBuilderFactory::GetInstance()->CreateTypeCopy(int32_type);
     ASSERT_TRUE(type2 != nullptr);
-    ASSERT_TRUE(type->Equals(type2));
+    ASSERT_TRUE(int32_type->Equals(type2));
 
     auto struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructType();
     ASSERT_TRUE(struct_type_builder != nullptr);
 
     // Add members to the struct.
-    types::MemberDescriptor descriptor;
-    descriptor.SetId(0);
-    descriptor.SetName("int32");
-    descriptor.SetType(created_type);
-    ASSERT_TRUE(struct_type_builder->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
-
+    ASSERT_TRUE(struct_type_builder->AddMember(0, "int32", int32_type) == ResponseCode::RETCODE_OK);
     auto struct_type = struct_type_builder->Build();
     ASSERT_TRUE(struct_type != nullptr);
 
-    types::MemberDescriptor descriptor2;
-    descriptor2.SetId(1);
-    descriptor2.SetName("int64");
-    descriptor2.SetType(created_type);
-    ASSERT_TRUE(struct_type_builder->AddMember(&descriptor2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(struct_type_builder->AddMember(1, "int64", int32_type) == ResponseCode::RETCODE_OK);
     auto struct_type2 = struct_type_builder->Build();
     ASSERT_TRUE(struct_type2 != nullptr);
     ASSERT_FALSE(struct_type->Equals(struct_type2));
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type2) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(type2) == ResponseCode::RETCODE_OK);
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(int32_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(int32_type) == ResponseCode::RETCODE_OK);
 
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type) == ResponseCode::RETCODE_OK);
@@ -420,8 +407,7 @@ TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
     // Then
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
     ASSERT_TRUE(created_type != nullptr);
-    types::DynamicType* new_type = created_type->Build();
-    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(created_type);
 
     int32_t test1 = 123;
     int32_t test2 = 0;
@@ -481,20 +467,18 @@ TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -512,8 +496,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint32_unit_tests)
     // Then
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type();
     ASSERT_TRUE(created_type != nullptr);
-    types::DynamicType* new_type = created_type->Build();
-    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(created_type);
 
     uint32_t test1 = 123;
     uint32_t test2 = 0;
@@ -573,20 +556,18 @@ TEST_F(DynamicTypesTests, DynamicType_uint32_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -603,8 +584,7 @@ TEST_F(DynamicTypesTests, DynamicType_int16_unit_tests)
     // Then
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateInt16Type();
     ASSERT_TRUE(created_type != nullptr);
-    types::DynamicType* new_type = created_type->Build();
-    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(created_type);
 
     int16_t test1 = 123;
     int16_t test2 = 0;
@@ -664,20 +644,18 @@ TEST_F(DynamicTypesTests, DynamicType_int16_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -694,8 +672,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint16_unit_tests)
     // Then
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateUint16Type();
     ASSERT_TRUE(created_type != nullptr);
-    types::DynamicType* new_type = created_type->Build();
-    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(created_type);
 
     uint16_t test1 = 123;
     uint16_t test2 = 0;
@@ -755,20 +732,18 @@ TEST_F(DynamicTypesTests, DynamicType_uint16_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -785,8 +760,7 @@ TEST_F(DynamicTypesTests, DynamicType_int64_unit_tests)
     // Then
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateInt64Type();
     ASSERT_TRUE(created_type != nullptr);
-    types::DynamicType* new_type = created_type->Build();
-    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(created_type);
 
     int64_t test1 = 123;
     int64_t test2 = 0;
@@ -846,20 +820,18 @@ TEST_F(DynamicTypesTests, DynamicType_int64_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -876,8 +848,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint64_unit_tests)
     // Then
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateUint64Type();
     ASSERT_TRUE(created_type != nullptr);
-    types::DynamicType* new_type = created_type->Build();
-    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(created_type);
 
     uint64_t test1 = 123;
     uint64_t test2 = 0;
@@ -937,20 +908,18 @@ TEST_F(DynamicTypesTests, DynamicType_uint64_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -967,8 +936,7 @@ TEST_F(DynamicTypesTests, DynamicType_float32_unit_tests)
     // Then
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateFloat32Type();
     ASSERT_TRUE(created_type != nullptr);
-    types::DynamicType* new_type = created_type->Build();
-    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(created_type);
 
     float test1 = 123.0f;
     float test2 = 0.0f;
@@ -1028,20 +996,18 @@ TEST_F(DynamicTypesTests, DynamicType_float32_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -1058,8 +1024,7 @@ TEST_F(DynamicTypesTests, DynamicType_float64_unit_tests)
     // Then
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateFloat64Type();
     ASSERT_TRUE(created_type != nullptr);
-    types::DynamicType* new_type = created_type->Build();
-    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(created_type);
 
     double test1 = 123.0;
     double test2 = 0.0;
@@ -1119,20 +1084,18 @@ TEST_F(DynamicTypesTests, DynamicType_float64_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -1149,9 +1112,7 @@ TEST_F(DynamicTypesTests, DynamicType_float128_unit_tests)
     // Then
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateFloat128Type();
     ASSERT_TRUE(created_type != nullptr);
-    types::DynamicType* new_type = created_type->Build();
-    ASSERT_TRUE(new_type != nullptr);
-    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(created_type);
     ASSERT_TRUE(data != nullptr);
 
     long double test1 = 123.0;
@@ -1212,21 +1173,19 @@ TEST_F(DynamicTypesTests, DynamicType_float128_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
-    //TODO: //ARCE: Windows 128 ?�?
+    ASSERT_TRUE(created_type->serialize(data, &payload));
+    //TODO: //ARCE: Windows 128 ?
     ASSERT_TRUE(payload.length <= payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -1243,8 +1202,7 @@ TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
     // Then
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateChar8Type();
     ASSERT_TRUE(created_type != nullptr);
-    types::DynamicType* new_type = created_type->Build();
-    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(created_type);
 
     char test1 = 'a';
     char test2 = 'b';
@@ -1304,20 +1262,18 @@ TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -1334,8 +1290,7 @@ TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
     // Then
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateChar16Type();
     ASSERT_TRUE(created_type != nullptr);
-    types::DynamicType* new_type = created_type->Build();
-    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(created_type);
 
     wchar_t test1 = L'a';
     wchar_t test2 = L'b';
@@ -1395,20 +1350,18 @@ TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -1425,8 +1378,7 @@ TEST_F(DynamicTypesTests, DynamicType_byte_unit_tests)
     // Then
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateByteType();
     ASSERT_TRUE(created_type != nullptr);
-    types::DynamicType* new_type = created_type->Build();
-    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(created_type);
 
     octet test1 = 255;
     octet test2 = 0;
@@ -1486,20 +1438,18 @@ TEST_F(DynamicTypesTests, DynamicType_byte_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -1516,8 +1466,7 @@ TEST_F(DynamicTypesTests, DynamicType_bool_unit_tests)
     // Then
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateBoolType();
     ASSERT_TRUE(created_type != nullptr);
-    types::DynamicType* new_type = created_type->Build();
-    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(created_type);
 
     bool test1 = true;
     bool test2 = false;
@@ -1577,20 +1526,18 @@ TEST_F(DynamicTypesTests, DynamicType_bool_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -1627,8 +1574,7 @@ TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
     descriptor.SetName("DEFAULT");
     ASSERT_FALSE(created_type->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
 
-    auto new_type = created_type->Build();
-    auto data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    auto data = DynamicDataFactory::GetInstance()->CreateData(created_type);
 
     ASSERT_FALSE(data->SetInt32Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
@@ -1697,20 +1643,18 @@ TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
     //ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -1729,8 +1673,7 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateStringType(string_length);
     ASSERT_TRUE(created_type != nullptr);
 
-    auto new_type = created_type->Build();
-    auto data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    auto data = DynamicDataFactory::GetInstance()->CreateData(created_type);
     ASSERT_FALSE(data->SetInt32Value(10, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(data->SetStringValue("", 1) == ResponseCode::RETCODE_OK);
     std::string sTest1 = "STRING_TEST";
@@ -1796,20 +1739,18 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -1828,8 +1769,7 @@ TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateWstringType(string_length);
     ASSERT_TRUE(created_type != nullptr);
 
-    types::DynamicType* new_type = created_type->Build();
-    DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(created_type);
     ASSERT_FALSE(data->SetInt32Value(10, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(data->SetWstringValue(L"", 1) == ResponseCode::RETCODE_OK);
     std::wstring sTest1 = L"STRING_TEST";
@@ -1895,20 +1835,18 @@ TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -2062,8 +2000,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
     // Then
     created_type = DynamicTypeBuilderFactory::GetInstance()->CreateBitsetType(limit);
     ASSERT_TRUE(created_type != nullptr);
-    auto new_type = created_type->Build();
-    auto data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    auto data = DynamicDataFactory::GetInstance()->CreateData(created_type);
 
     bool test1 = true;
     ASSERT_FALSE(data->SetInt32Value(1, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
@@ -2134,20 +2071,18 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
     ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
     // Serialize <-> Deserialize Test
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 
@@ -2179,8 +2114,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     descriptor.SetName("TEST2");
     ASSERT_TRUE(created_type->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
 
-    auto new_type = created_type->Build();
-    auto data = DynamicDataFactory::GetInstance()->CreateData(new_type);
+    auto data = DynamicDataFactory::GetInstance()->CreateData(created_type);
     MemberId testId = data->GetMemberIdByName("TEST");
     ASSERT_TRUE(testId != MEMBER_ID_INVALID);
     MemberId test2Id = data->GetMemberIdByName("TEST2");
@@ -2256,20 +2190,18 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
 
     // Serialize <-> Deserialize Test
     ASSERT_TRUE(data->SetBoolValue(true, 0) == ResponseCode::RETCODE_OK);
-    uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
+    uint32_t payloadSize = static_cast<uint32_t>(created_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(new_type->serialize(data, &payload));
+    ASSERT_TRUE(created_type->serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);
-    ASSERT_TRUE(new_type->deserialize(&payload, data2));
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+    ASSERT_TRUE(created_type->deserialize(&payload, data2));
     ASSERT_TRUE(data2->Equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
-    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
-    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(new_type) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type) == ResponseCode::RETCODE_OK);
 

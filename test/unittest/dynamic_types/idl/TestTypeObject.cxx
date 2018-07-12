@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file TestTypeObject.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -695,7 +695,7 @@ TypeIdentifier* TestTypeFactory::getMyEnumIdentifier()
     TypeIdentifier* identifier = new TypeIdentifier();
     identifier->_d(EK_MINIMAL);
 
-    SerializedPayload_t payload(MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4);
+    SerializedPayload_t payload(static_cast<uint32_t>(MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -1973,7 +1973,7 @@ TypeIdentifier* TestTypeFactory::getMyUnionIdentifier()
     TypeIdentifier* identifier = new TypeIdentifier();
     identifier->_d(EK_MINIMAL);
 
-    SerializedPayload_t payload(MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4);
+    SerializedPayload_t payload(static_cast<uint32_t>(MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -2088,7 +2088,7 @@ TypeIdentifier* TestTypeFactory::getMyUnion2Identifier()
     TypeIdentifier* identifier = new TypeIdentifier();
     identifier->_d(EK_MINIMAL);
 
-    SerializedPayload_t payload(MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4);
+    SerializedPayload_t payload(static_cast<uint32_t>(MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(

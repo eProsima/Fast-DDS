@@ -126,21 +126,22 @@ ResponseCode DynamicTypeBuilder::AddMember(const MemberDescriptor* descriptor)
 
 ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicType* mType)
 {
-    MemberDescriptor descriptor(id, name, mType);
+    MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->BuildType(mType));
     return AddMember(&descriptor);
 }
 
 ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicType* mType,
     const std::string& defaultValue)
 {
-    MemberDescriptor descriptor(id, name, mType, defaultValue);
+    MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->BuildType(mType), defaultValue);
     return AddMember(&descriptor);
 }
 
 ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicType* mType,
     const std::string& defaultValue, const std::vector<uint64_t>& unionLabels, bool isDefaultLabel)
 {
-    MemberDescriptor descriptor(id, name, mType, defaultValue, unionLabels, isDefaultLabel);
+    MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->BuildType(mType),
+        defaultValue, unionLabels, isDefaultLabel);
     return AddMember(&descriptor);
 }
 
