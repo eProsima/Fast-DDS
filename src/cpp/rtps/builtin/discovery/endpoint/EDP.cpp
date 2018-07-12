@@ -990,7 +990,17 @@ bool EDP::checkTypeIdentifier(const TypeIdentifier * wti, const TypeIdentifier *
 
         case EK_MINIMAL:
         case EK_COMPLETE:
-            return memcmp(wti->equivalence_hash(), rti->equivalence_hash(), 14) == 0;
+        {
+            //return memcmp(wti->equivalence_hash(), rti->equivalence_hash(), 14) == 0;
+            for (int i = 0; i < 14; ++i)
+            {
+                if (wti->equivalence_hash()[i] != rti->equivalence_hash()[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
         default:
             break;
     }
