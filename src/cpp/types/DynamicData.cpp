@@ -326,6 +326,10 @@ uint32_t DynamicData::GetItemCount() const
         return static_cast<uint32_t>(mValues.size() / 2);
 #endif
     }
+    else if (mType->GetKind() == TK_ARRAY)
+    {
+        return mType->GetTotalBounds();
+    }
     else
     {
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -3013,22 +3017,40 @@ ResponseCode DynamicData::GetBitmaskValue(const std::string& name, bool& value) 
 
 void DynamicData::SortMemberIds(MemberId startId)
 {
+    MemberId index = startId;
     MemberId curID = startId + 1;
+    uint32_t distance = 1;
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mComplexValues.find(curID);
-    while (it != mComplexValues.end())
+    while (index <= mComplexValues.size())
     {
-        mComplexValues[curID - 1] = it->second;
-        mComplexValues.erase(it);
-        it = mComplexValues.find(++curID);
+        auto it = mComplexValues.find(curID);
+        if (it != mComplexValues.end())
+        {
+            mComplexValues[curID - distance] = it->second;
+            mComplexValues.erase(it);
+        }
+        else
+        {
+            ++distance;
+        }
+        ++index;
+        ++curID;
     }
 #else
-    auto it = mValues.find(curID);
-    while (it != mValues.end())
+    while (curID <= mValues.size())
     {
-        mValues[curID - 1] = it->second;
-        mValues.erase(it);
-        it = mValues.find(++curID);
+        auto it = mValues.find(curID);
+        if (it != mValues.end())
+        {
+            mValues[curID - distance] = it->second;
+            mValues.erase(it);
+        }
+        else
+        {
+            ++distance;
+        }
+        ++index;
+        ++curID;
     }
 #endif
 }
@@ -3066,7 +3088,7 @@ ResponseCode DynamicData::InsertArrayData(MemberId indexId)
     if (mType->GetKind() == TK_ARRAY)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        if (mType->GetTotalBounds() == LENGTH_UNLIMITED || indexId < mType->GetTotalBounds())
+        if (indexId < mType->GetTotalBounds())
         {
             auto it = mComplexValues.find(indexId);
             if (it != mComplexValues.end())
@@ -3079,7 +3101,7 @@ ResponseCode DynamicData::InsertArrayData(MemberId indexId)
             return ResponseCode::RETCODE_OK;
         }
 #else
-        if (mType->GetTotalBounds() == LENGTH_UNLIMITED || indexId < mType->GetTotalBounds())
+        if (indexId < mType->GetTotalBounds())
         {
             auto it = mValues.find(indexId);
             if (it != mValues.end())
@@ -3109,7 +3131,7 @@ ResponseCode DynamicData::RemoveArrayData(MemberId indexId)
     if (mType->GetKind() == TK_ARRAY)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        if (mType->GetBounds() == LENGTH_UNLIMITED || indexId < mType->GetTotalBounds())
+        if (indexId < mType->GetTotalBounds())
         {
             auto it = mComplexValues.find(indexId);
             if (it != mComplexValues.end())
@@ -3120,7 +3142,7 @@ ResponseCode DynamicData::RemoveArrayData(MemberId indexId)
             return ResponseCode::RETCODE_OK;
         }
 #else
-        if (mType->GetBounds() == LENGTH_UNLIMITED || mValues.size() < mType->GetBounds())
+        if (indexId < mType->GetTotalBounds())
         {
             auto it = mValues.find(indexId);
             if (it != mValues.end())
@@ -3277,6 +3299,7 @@ ResponseCode DynamicData::RemoveMapData(MemberId keyId)
             DynamicDataFactory::GetInstance()->DeleteData(itValue->second);
             mComplexValues.erase(itKey);
             mComplexValues.erase(itValue);
+            SortMemberIds(keyId);
             return ResponseCode::RETCODE_OK;
         }
 #else
@@ -3288,6 +3311,7 @@ ResponseCode DynamicData::RemoveMapData(MemberId keyId)
             DynamicDataFactory::GetInstance()->DeleteData(((DynamicData*)itValue->second));
             mValues.erase(itKey);
             mValues.erase(itValue);
+            SortMemberIds(keyId);
             return ResponseCode::RETCODE_OK;
         }
 #endif
@@ -3832,19 +3856,26 @@ size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current
     {
         // Elements count
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        uint32_t arraySize = data->mType->GetTotalBounds();
+        for (uint32_t idx = 0; idx < arraySize; ++idx)
+        {
 #ifdef DYNAMIC_TYPES_CHECKING
-        for (auto it = data->mComplexValues.begin(); it != data->mComplexValues.end(); ++it)
-        {
-            // Element Size
-            current_alignment += getCdrSerializedSize(it->second, current_alignment);
-        }
+            auto it = data->mComplexValues.find(idx);
+            if (it != data->mComplexValues.end())
 #else
-        for (auto it = data->mValues.begin(); it != data->mValues.end(); ++it)
-        {
-            // Element Size
-            current_alignment += getCdrSerializedSize((DynamicData*)it->second, current_alignment);
-        }
+            auto it = data->mValues.find(idx);
+            if (it != data->mValues.end())
 #endif
+            {
+                // Element Size
+                current_alignment += getCdrSerializedSize((DynamicData*)it->second, current_alignment);
+            }
+            else
+            {
+                current_alignment += getEmptyCdrSerializedSize(data->mType->GetElementType(), current_alignment);
+            }
+        }
         break;
     }
     case TK_SEQUENCE:
@@ -3986,6 +4017,7 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t curr
 
     return current_alignment - initial_alignment;
 }
+
 void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
 {
     switch (mType->GetKind())
@@ -4244,6 +4276,100 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_ALIAS:
         break;
     }
+}
+
+size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType* type, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    switch (type->GetKind())
+    {
+    default:
+        break;
+    case TK_INT32:
+    case TK_UINT32:
+    case TK_FLOAT32:
+    case TK_ENUM:
+    {
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        break;
+    }
+    case TK_INT16:
+    case TK_UINT16:
+    case TK_CHAR16:
+    {
+        current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+        break;
+    }
+    case TK_INT64:
+    case TK_UINT64:
+    case TK_FLOAT64:
+    case TK_BITSET:
+    case TK_BITMASK:
+    {
+        current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+        break;
+    }
+    case TK_FLOAT128:
+    {
+        current_alignment += sizeof(long double) + eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(long double));
+        break;
+    }
+    case TK_CHAR8:
+    case TK_BOOLEAN:
+    case TK_BYTE:
+    {
+        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        break;
+    }
+    case TK_STRING8:
+    {
+        // string length + string content + 1
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 1;
+        break;
+    }
+    case TK_STRING16:
+    {
+        // string length + ( string content + 1 ) * 2
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 2;
+        break;
+    }
+    case TK_UNION:
+    {
+        // union id
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        break;
+    }
+    case TK_STRUCTURE:
+    {
+        for (auto it = type->mMemberById.begin(); it != type->mMemberById.end(); ++it)
+        {
+            current_alignment += getEmptyCdrSerializedSize(it->second->mDescriptor->mType, current_alignment);
+        }
+        break;
+    }
+    case TK_ARRAY:
+    {
+        // Elements count
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        // Element size with the maximum size
+        current_alignment += type->GetTotalBounds() * (getEmptyCdrSerializedSize(type->mDescriptor->GetElementType()));
+        break;
+    }
+    case TK_SEQUENCE:
+    case TK_MAP:
+    {
+        // Elements count
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        break;
+    }
+
+    case TK_ALIAS:
+        break;
+    }
+
+    return current_alignment - initial_alignment;
 }
 
 void DynamicData::SerializeEmptyData(const DynamicType* pType, eprosima::fastcdr::Cdr &cdr) const

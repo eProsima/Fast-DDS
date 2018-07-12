@@ -233,6 +233,7 @@ public:
     // Serializes and deserializes the Dynamic Data.
     bool deserialize(eprosima::fastcdr::Cdr &cdr);
     static size_t getCdrSerializedSize(const DynamicData* data, size_t current_alignment = 0);
+    static size_t getEmptyCdrSerializedSize(const DynamicType* type, size_t current_alignment = 0);
     static size_t getMaxCdrSerializedSize(const DynamicType* type, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
 
@@ -251,6 +252,8 @@ protected:
 
     bool CompareValues(TypeKind kind, void* left, void* right) const;
 
+    void SerializeEmptyData(const DynamicType* pType, eprosima::fastcdr::Cdr &cdr) const;
+
     void SetDefaultValue(MemberId id);
 
     void SetTypeName(const std::string& name);
@@ -258,8 +261,6 @@ protected:
     ResponseCode SetUnionId(MemberId id);
 
     void SortMemberIds(MemberId startId);
-
-    void SerializeEmptyData(const DynamicType* pType, eprosima::fastcdr::Cdr &cdr) const;
 
 	DynamicType* mType;
     std::map<MemberId, MemberDescriptor*> mDescriptors;
