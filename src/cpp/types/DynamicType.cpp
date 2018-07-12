@@ -29,10 +29,12 @@ DynamicType::DynamicType()
     : mDescriptor(nullptr)
     , mName("")
     , mKind(TK_NONE)
+    , mIsTypeObject(true)
 {
 }
 
 DynamicType::DynamicType(const TypeDescriptor* descriptor)
+    : mIsTypeObject(true)
 {
     mDescriptor = new TypeDescriptor(descriptor);
     try
@@ -63,6 +65,7 @@ DynamicType::DynamicType(const DynamicType* other)
     : mDescriptor(nullptr)
     , mName("")
     , mKind(TK_NONE)
+    , mIsTypeObject(true)
 {
     CopyFromType(other);
 }
@@ -368,6 +371,11 @@ bool DynamicType::IsDiscriminatorType() const
         mKind == TK_INT64 || mKind == TK_UINT16 || mKind == TK_UINT32 || mKind == TK_UINT64 ||
         mKind == TK_FLOAT32 || mKind == TK_FLOAT64 || mKind == TK_FLOAT128 || mKind == TK_CHAR8 ||
         mKind == TK_CHAR16 || mKind == TK_STRING8 || mKind == TK_STRING16 || mKind == TK_ENUM || mKind == TK_BITMASK;
+}
+
+bool DynamicType::IsTypeObject() const
+{
+    return mIsTypeObject;
 }
 
 void DynamicType::SetName(const std::string& name)

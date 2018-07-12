@@ -29,8 +29,6 @@ class DynamicTypeMember;
 class DynamicType : public eprosima::fastrtps::TopicDataType
 {
 public:
-    DynamicType();
-    DynamicType(const TypeDescriptor* descriptor);
 
     virtual ~DynamicType();
 
@@ -52,6 +50,7 @@ public:
     ResponseCode GetMember(DynamicTypeMember& member, MemberId id);
     ResponseCode GetMemberByName(DynamicTypeMember& member, const std::string name);
     MemberId GetMembersCount() const;
+    bool IsTypeObject() const;
 
     bool HasChildren() const;
     bool IsComplexKind() const;
@@ -74,6 +73,8 @@ protected:
     friend class AnnotationDescriptor;
     friend class TypeObjectFactory;
 
+    DynamicType();
+    DynamicType(const TypeDescriptor* descriptor);
     DynamicType(const DynamicType* other);
 
     virtual void Clear();
@@ -94,6 +95,7 @@ protected:
     std::map<std::string, DynamicTypeMember*> mMemberByName;    // Uses the pointers from "mMemberById".
     std::string mName;
 	TypeKind mKind;
+    bool mIsTypeObject;
 
 };
 

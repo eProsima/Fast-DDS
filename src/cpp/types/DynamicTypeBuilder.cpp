@@ -29,6 +29,7 @@ DynamicTypeBuilder::DynamicTypeBuilder()
     : mCurrentMemberId(0)
     , mMaxIndex(0)
 {
+    mIsTypeObject = false;
 }
 
 DynamicTypeBuilder::DynamicTypeBuilder(const TypeDescriptor* descriptor)
@@ -36,6 +37,8 @@ DynamicTypeBuilder::DynamicTypeBuilder(const TypeDescriptor* descriptor)
     , mCurrentMemberId(0)
     , mMaxIndex(0)
 {
+    mIsTypeObject = false;
+
     RefreshMemberIds();
 }
 
@@ -44,6 +47,8 @@ DynamicTypeBuilder::DynamicTypeBuilder(const DynamicType* pType)
     , mCurrentMemberId(0)
     , mMaxIndex(0)
 {
+    mIsTypeObject = false;
+
     if (pType != nullptr)
     {
         CopyFromType(pType);

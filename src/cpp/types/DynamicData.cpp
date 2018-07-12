@@ -3617,6 +3617,44 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
         break;
     }
     case TK_STRUCTURE:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        uint32_t size(static_cast<uint32_t>(mComplexValues.size())), memberId(MEMBER_ID_INVALID);
+        for (uint32_t i = 0; i < size; ++i)
+        {
+            cdr >> memberId;
+            auto it = mComplexValues.find(memberId);
+            if (it != mComplexValues.end())
+            {
+                it->second->deserialize(cdr);
+            }
+            else
+            {
+                DynamicData* pData = DynamicDataFactory::GetInstance()->CreateData(mType->GetElementType());
+                pData->deserialize(cdr);
+                mComplexValues.insert(std::make_pair(memberId, pData));
+            }
+        }
+#else
+        uint32_t size(static_cast<uint32_t>(mValues.size())), memberId(MEMBER_ID_INVALID);
+        for (uint32_t i = 0; i < size; ++i)
+        {
+            cdr >> memberId;
+            auto it = mValues.find(memberId);
+            if (it != mValues.end())
+            {
+                ((DynamicData*)it->second)->deserialize(cdr);
+            }
+            else
+            {
+                DynamicData* pData = DynamicDataFactory::GetInstance()->CreateData(mType->GetElementType());
+                pData->deserialize(cdr);
+                mValues.insert(std::make_pair(memberId, pData));
+            }
+        }
+#endif
+    }
+    break;
     case TK_SEQUENCE:
     case TK_ARRAY:
     case TK_MAP:
@@ -3661,7 +3699,7 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
             {
                 ((DynamicData*)it->second)->deserialize(cdr);
                 ((DynamicData*)it->second)->mIsKeyElement = bKeyElement;
-    }
+            }
             else
             {
                 DynamicData* pData = nullptr;
@@ -3679,7 +3717,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
             }
         }
 #endif
-
         break;
     }
 
@@ -3781,8 +3818,11 @@ size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current
     case TK_ARRAY:
     case TK_MAP:
     {
-        // Elements count
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        if (data->GetKind() != TK_STRUCTURE)
+        {
+            // Elements count
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        }
 
 #ifdef DYNAMIC_TYPES_CHECKING
         for (auto it = data->mComplexValues.begin(); it != data->mComplexValues.end(); ++it)
@@ -3904,10 +3944,11 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t curr
     }
     case TK_STRUCTURE:
     {
-        // Elements size
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
         for (auto it = type->mMemberById.begin(); it != type->mMemberById.end(); ++it)
         {
+            // MemberId size
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
             current_alignment += getMaxCdrSerializedSize(it->second->mDescriptor->mType, current_alignment);
         }
         break;
@@ -3919,7 +3960,7 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t curr
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
         // Element size with the maximum size
-        current_alignment += type->GetTotalBounds() * getMaxCdrSerializedSize(type->mDescriptor->GetElementType());
+        current_alignment += type->GetTotalBounds() * (4 + getMaxCdrSerializedSize(type->mDescriptor->GetElementType()));
         break;
     }
     case TK_MAP:
@@ -3928,10 +3969,10 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t curr
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
         // Key Elements size with the maximum size
-        current_alignment += type->GetTotalBounds() * getMaxCdrSerializedSize(type->mDescriptor->GetKeyElementType());
+        current_alignment += type->GetTotalBounds() * (4 + getMaxCdrSerializedSize(type->mDescriptor->GetKeyElementType()));
 
         // Value Elements size with the maximum size
-        current_alignment += type->GetTotalBounds() * getMaxCdrSerializedSize(type->mDescriptor->GetElementType());
+        current_alignment += type->GetTotalBounds() * (4 + getMaxCdrSerializedSize(type->mDescriptor->GetElementType()));
         break;
     }
 
@@ -4134,6 +4175,22 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
         break;
     }
     case TK_STRUCTURE:
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
+        {
+            cdr << it->first;
+            it->second->serialize(cdr);
+        }
+#else
+        for (auto it = mValues.begin(); it != mValues.end(); ++it)
+        {
+            cdr << it->first;
+            ((DynamicData*)it->second)->serialize(cdr);
+        }
+#endif
+    }
+    break;
     case TK_SEQUENCE:
     case TK_ARRAY:
     case TK_MAP:
