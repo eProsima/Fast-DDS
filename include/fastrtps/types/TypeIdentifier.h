@@ -373,27 +373,6 @@ public:
      */
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
-
-
-    /*!
-     * @brief This function returns the maximum serialized size of the Key of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-
-    /*!
-     * @brief This function tells you if the Key has been defined for this type
-     */
-    RTPS_DllAPI static bool isKeyDefined();
-
-    /*!
-     * @brief This function serializes the key members of an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     octet m__d;
 

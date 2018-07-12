@@ -32,6 +32,12 @@ MemberDescriptor::MemberDescriptor()
 }
 
 MemberDescriptor::MemberDescriptor(const MemberDescriptor* descriptor)
+: mName("")
+, mId(MEMBER_ID_INVALID)
+, mType(nullptr)
+, mDefaultValue("")
+, mIndex(INDEX_INVALID)
+, mDefaultLabel(false)
 {
     CopyFrom(descriptor);
 }

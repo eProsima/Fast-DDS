@@ -72,10 +72,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CommonStructMember& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     MemberId m_member_id;
     StructMemberFlag m_member_flags;
@@ -117,10 +113,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteMemberDetail& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     MemberName m_name;
     AppliedBuiltinMemberAnnotations m_ann_builtin;
@@ -151,10 +143,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalMemberDetail& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     NameHash m_name_hash;
 };
@@ -188,10 +176,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteStructMember& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonStructMember m_common;
     CompleteMemberDetail m_detail;
@@ -229,10 +213,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalStructMember& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonStructMember m_common;
     MinimalMemberDetail m_detail;
@@ -263,10 +243,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const AppliedBuiltinTypeAnnotations& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     AppliedVerbatimAnnotation m_verbatim;
 };
@@ -288,10 +264,6 @@ public:
    RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalTypeDetail& data, size_t current_alignment = 0);
    RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
    RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-   RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-   RTPS_DllAPI static bool isKeyDefined();
-   RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
 };
 
@@ -329,17 +301,11 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteTypeDetail& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     AppliedBuiltinTypeAnnotations m_ann_builtin;
     AppliedAnnotationSeq m_ann_custom;
     QualifiedTypeName m_type_name;
 };
-
-
 /*struct CompleteStructHeader {
 	TypeIdentifier                           base_type;
 	CompleteTypeDetail                       detail;
@@ -368,16 +334,10 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteStructHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     TypeIdentifier m_base_type;
     CompleteTypeDetail m_detail;
 };
-
-
 /*struct MinimalStructHeader {
 	TypeIdentifier                           base_type;
 	MinimalTypeDetail                        detail;
@@ -406,10 +366,6 @@ public:
    RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalStructHeader& data, size_t current_alignment = 0);
    RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
    RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-   RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-   RTPS_DllAPI static bool isKeyDefined();
-   RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     TypeIdentifier m_base_type;
     MinimalTypeDetail m_detail;
@@ -449,10 +405,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteStructType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     StructTypeFlag m_struct_flags;
     CompleteStructHeader m_header;
@@ -493,10 +445,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalStructType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     StructTypeFlag m_struct_flags;
     MinimalStructHeader m_header;
@@ -549,10 +497,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CommonUnionMember& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     MemberId m_member_id;
     UnionMemberFlag m_member_flags;
@@ -589,10 +533,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteUnionMember& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonUnionMember m_common;
     CompleteMemberDetail m_detail;
@@ -630,10 +570,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalUnionMember& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonUnionMember m_common;
     MinimalMemberDetail m_detail;
@@ -670,10 +606,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CommonDiscriminatorMember& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     UnionDiscriminatorFlag m_member_flags;
     TypeIdentifier m_type_id;
@@ -714,10 +646,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteDiscriminatorMember& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonDiscriminatorMember m_common;
     AppliedBuiltinTypeAnnotations m_ann_builtin;
@@ -747,10 +675,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalDiscriminatorMember& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonDiscriminatorMember m_common;
 };
@@ -777,10 +701,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteUnionHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CompleteTypeDetail m_detail;
 };
@@ -807,10 +727,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalUnionHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     MinimalTypeDetail m_detail;
 };
@@ -855,10 +771,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteUnionType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     UnionTypeFlag m_union_flags;
     CompleteUnionHeader m_header;
@@ -906,10 +818,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalUnionType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     UnionTypeFlag m_union_flags;
     MinimalUnionHeader m_header;
@@ -946,10 +854,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CommonAnnotationParameter& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     AnnotationParameterFlag m_member_flags;
     TypeIdentifier m_member_type_id;
@@ -991,21 +895,13 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteAnnotationParameter& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonAnnotationParameter m_common;
     MemberName m_name;
     AnnotationParameterValue m_default_value;
 };
-
-
 // Ordered by CompleteAnnotationParameter.name
 typedef    std::vector<CompleteAnnotationParameter> CompleteAnnotationParameterSeq;
-
-
 /*struct MinimalAnnotationParameter {
 	CommonAnnotationParameter  common;
 	NameHash                   name_hash;
@@ -1040,10 +936,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalAnnotationParameter& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonAnnotationParameter m_common;
     MemberName m_name;
@@ -1052,8 +944,6 @@ private:
 
 // Ordered by MinimalAnnotationParameter.name_hash
 typedef    std::vector<MinimalAnnotationParameter> MinimalAnnotationParameterSeq;
-
-
 /*struct CompleteAnnotationHeader {
 	QualifiedTypeName         annotation_name;
 };*/
@@ -1076,10 +966,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteAnnotationHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     QualifiedTypeName m_annotation_name;
 };
@@ -1101,10 +987,6 @@ public:
    RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalAnnotationHeader& data, size_t current_alignment = 0);
    RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
    RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-   RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-   RTPS_DllAPI static bool isKeyDefined();
-   RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
 };
 
@@ -1142,17 +1024,11 @@ public:
    RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteAnnotationType& data, size_t current_alignment = 0);
    RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
    RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-   RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-   RTPS_DllAPI static bool isKeyDefined();
-   RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     AnnotationTypeFlag m_annotation_flag;
     CompleteAnnotationHeader m_header;
     CompleteAnnotationParameterSeq m_member_seq;
 };
-
-
 /*struct MinimalAnnotationType final{
 	AnnotationTypeFlag             annotation_flag;
 	MinimalAnnotationHeader        header;
@@ -1187,10 +1063,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalAnnotationType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     AnnotationTypeFlag m_annotation_flag;
     MinimalAnnotationHeader m_header;
@@ -1226,10 +1098,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CommonAliasBody& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     AliasMemberFlag m_related_flags;
     TypeIdentifier m_related_type;
@@ -1269,10 +1137,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteAliasBody& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonAliasBody m_common;
     AppliedBuiltinMemberAnnotations m_ann_builtin;
@@ -1301,10 +1165,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalAliasBody& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonAliasBody m_common;
 };
@@ -1331,10 +1191,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteAliasHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CompleteTypeDetail m_detail;
 };
@@ -1356,10 +1212,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalAliasHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
 };
 
@@ -1397,17 +1249,11 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteAliasType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     AliasTypeFlag m_alias_flags;
     CompleteAliasHeader m_header;
     CompleteAliasBody m_body;
 };
-
-
 /*struct MinimalAliasType final{
 	AliasTypeFlag         alias_flags;
 	MinimalAliasHeader    header;
@@ -1442,10 +1288,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalAliasType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     AliasTypeFlag m_alias_flags;
     MinimalAliasHeader m_header;
@@ -1481,16 +1323,10 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteElementDetail& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     AppliedBuiltinMemberAnnotations m_ann_builtin;
     AppliedAnnotationSeq m_ann_custom;
 };
-
-
 /*struct CommonCollectionElement final{
 	CollectionElementFlag     element_flags;
 	TypeIdentifier            type;
@@ -1519,10 +1355,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CommonCollectionElement& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CollectionElementFlag m_element_flags;
     TypeIdentifier m_type;
@@ -1556,10 +1388,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteCollectionElement& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonCollectionElement m_common;
     CompleteElementDetail m_detail;
@@ -1587,10 +1415,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalCollectionElement& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonCollectionElement m_common;
 };
@@ -1617,10 +1441,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CommonCollectionHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     LBound m_bound;
 };
@@ -1653,10 +1473,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteCollectionHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonCollectionHeader m_common;
     CompleteTypeDetail m_detail;
@@ -1684,10 +1500,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalCollectionHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonCollectionHeader m_common;
 };
@@ -1727,10 +1539,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteSequenceType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CollectionTypeFlag m_collection_flag;
     CompleteCollectionHeader m_header;
@@ -1771,10 +1579,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalSequenceType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CollectionTypeFlag m_collection_flag;
     MinimalCollectionHeader m_header;
@@ -1804,10 +1608,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CommonArrayHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     LBoundSeq m_bound_seq;
 };
@@ -1840,10 +1640,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteArrayHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonArrayHeader m_common;
     CompleteTypeDetail m_detail;
@@ -1871,10 +1667,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalArrayHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonArrayHeader m_common;
 };
@@ -1913,10 +1705,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteArrayType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CollectionTypeFlag m_collection_flag;
     CompleteArrayHeader m_header;
@@ -1957,10 +1745,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalArrayType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CollectionTypeFlag m_collection_flag;
     MinimalArrayHeader m_header;
@@ -2008,18 +1792,12 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteMapType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CollectionTypeFlag m_collection_flag;
     CompleteCollectionHeader m_header;
     CompleteCollectionElement m_key;
     CompleteCollectionElement m_element;
 };
-
-
 /*struct MinimalMapType final{
 	CollectionTypeFlag          collection_flag;
 	MinimalCollectionHeader     header;
@@ -2060,10 +1838,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalMapType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CollectionTypeFlag m_collection_flag;
     MinimalCollectionHeader m_header;
@@ -2104,10 +1878,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CommonEnumeratedLiteral& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     int32_t m_value;
     EnumeratedLiteralFlag m_flags;
@@ -2143,16 +1913,10 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteEnumeratedLiteral& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonEnumeratedLiteral m_common;
     CompleteMemberDetail m_detail;
 };
-
-
 // Ordered by EnumeratedLiteral.common.value
 typedef std::vector<CompleteEnumeratedLiteral> CompleteEnumeratedLiteralSeq;
 
@@ -2186,10 +1950,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalEnumeratedLiteral& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonEnumeratedLiteral m_common;
     MinimalMemberDetail m_detail;
@@ -2220,10 +1980,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CommonEnumeratedHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     BitBound m_bit_bound;
 };
@@ -2256,10 +2012,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteEnumeratedHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonEnumeratedHeader m_common;
     CompleteTypeDetail m_detail;
@@ -2287,10 +2039,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalEnumeratedHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonEnumeratedHeader m_common;
 };
@@ -2330,17 +2078,11 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteEnumeratedType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     EnumTypeFlag m_enum_flags;
     CompleteEnumeratedHeader m_header;
     CompleteEnumeratedLiteralSeq m_literal_seq;
 };
-
-
 // Enumerated type
 /*struct MinimalEnumeratedType final{
 	EnumTypeFlag                  enum_flags; // unused
@@ -2376,10 +2118,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalEnumeratedType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     EnumTypeFlag m_enum_flags;
     MinimalEnumeratedHeader m_header;
@@ -2416,16 +2154,10 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CommonBitflag& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     uint16_t m_position;
     BitflagFlag m_flags;
 };
-
-
 
 /*struct CompleteBitflag {
 	CommonBitflag          common;
@@ -2455,20 +2187,12 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteBitflag& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonBitflag m_common;
     CompleteMemberDetail m_detail;
 };
-
-
 // Ordered by Bitflag.position
 typedef std::vector<CompleteBitflag> CompleteBitflagSeq;
-
-
 /*struct MinimalBitflag {
 	CommonBitflag        common;
 	MinimalMemberDetail  detail;
@@ -2497,10 +2221,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalBitflag& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonBitflag m_common;
     MinimalMemberDetail m_detail;
@@ -2531,20 +2251,12 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CommonBitmaskHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     BitBound m_bit_bound;
 };
-
-
 typedef CompleteEnumeratedHeader CompleteBitmaskHeader;
 
 typedef MinimalEnumeratedHeader  MinimalBitmaskHeader;
-
-
 /*struct CompleteBitmaskType {
 	BitmaskTypeFlag          bitmask_flags; // unused
 	CompleteBitmaskHeader    header;
@@ -2579,10 +2291,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteBitmaskType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     BitmaskTypeFlag m_bitmask_flags;
     CompleteBitmaskHeader m_header;
@@ -2623,10 +2331,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalBitmaskType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     BitmaskTypeFlag m_bitmask_flags;
     MinimalBitmaskHeader m_header;
@@ -2674,10 +2378,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CommonBitfield& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     uint16_t m_position;
     BitsetMemberFlag m_flags;
@@ -2713,20 +2413,12 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteBitfield& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonBitfield m_common;
     CompleteMemberDetail m_detail;
 };
-
-
 // Ordered by Bitfield.position
 typedef std::vector<CompleteBitfield> CompleteBitfieldSeq;
-
-
 /*struct MinimalBitfield {
 	CommonBitfield       common;
 	NameHash             name_hash;
@@ -2755,20 +2447,12 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalBitfield& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CommonBitfield m_common;
     NameHash m_name_hash;
 };
-
-
 // Ordered by Bitfield.position
 typedef std::vector<MinimalBitfield> MinimalBitfieldSeq;
-
-
 /*struct CompleteBitsetHeader {
 	CompleteTypeDetail   detail;
 };*/
@@ -2791,10 +2475,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteBitsetHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     CompleteTypeDetail m_detail;
 };
@@ -2816,14 +2496,8 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalBitsetHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
 };
-
-
 /*struct CompleteBitsetType  {
 	BitsetTypeFlag         bitset_flags; // unused
 	CompleteBitsetHeader   header;
@@ -2858,10 +2532,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteBitsetType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     BitsetTypeFlag m_bitset_flags;
     CompleteBitsetHeader m_header;
@@ -2902,10 +2572,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalBitsetType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     BitsetTypeFlag m_bitset_flags;
     MinimalBitsetHeader m_header;
@@ -2933,10 +2599,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteExtendedType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
 };
 
@@ -2957,10 +2619,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalExtendedType& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
 };
 
@@ -3025,10 +2683,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const CompleteTypeObject& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     octet m__d;
 
@@ -3106,10 +2760,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalTypeObject& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     octet m__d;
 
@@ -3125,8 +2775,6 @@ private:
     MinimalBitmaskType    m_bitmask_type;
     MinimalExtendedType   m_extended_type;
 };
-
-
 class TypeObject
 {
 public:
@@ -3250,8 +2898,6 @@ public:
      * @return Serialized size.
      */
     RTPS_DllAPI static size_t getCdrSerializedSize(const TypeObject& data, size_t current_alignment = 0);
-
-
     /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
@@ -3264,27 +2910,19 @@ public:
      */
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
-
-
     /*!
-     * @brief This function returns the maximum serialized size of the Key of an object
+
      * depending on the buffer alignment.
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-
     /*!
-     * @brief This function tells you if the Key has been defined for this type
-     */
-    RTPS_DllAPI static bool isKeyDefined();
 
+     */
     /*!
      * @brief This function serializes the key members of an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     uint8_t m__d;
 
@@ -3328,16 +2966,10 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const TypeIdentifierTypeObjectPair& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     TypeIdentifier m_type_identifier;
     TypeObject m_type_object;
 };
-
-
 typedef std::vector<TypeIdentifierTypeObjectPair> TypeIdentifierTypeObjectPairSeq;
 
 /*struct TypeIdentifierPair final {
@@ -3368,18 +3000,12 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const TypeIdentifierPair& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     TypeIdentifier m_type_identifier1;
     TypeIdentifier m_type_identifier2;
 };
 
 typedef std::vector<TypeIdentifierPair> TypeIdentifierPairSeq;
-
-
 /*struct TypeIdentfierWithSize {
 	TypeIdentifier  type_id;
 	uint32_t                typeobject_serialized_size;
@@ -3408,10 +3034,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const TypeIdentfierWithSize& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     TypeIdentifier m_type_id;
     uint32_t m_typeobject_serialized_size;
@@ -3454,10 +3076,6 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const TypeIdentifierWithDependencies& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     TypeIdentfierWithSize m_typeid_with_size;
     int32_t m_dependent_typeid_count;
@@ -3465,8 +3083,6 @@ private:
 };
 
 typedef    std::vector<TypeIdentifierWithDependencies> TypeIdentifierWithDependenciesSeq;
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // This appears in the builtin DDS topics PublicationBuiltinTopicData
@@ -3500,18 +3116,12 @@ public:
     RTPS_DllAPI static size_t getCdrSerializedSize(const TypeInformation& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
-    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static bool isKeyDefined();
-    RTPS_DllAPI void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
 private:
     TypeIdentifierWithDependencies m_minimal;
     TypeIdentifierWithDependencies m_complete;
 };
 
 typedef std::vector<TypeInformation> TypeInformationSeq;
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 } // namespace types
