@@ -85,6 +85,12 @@ DynamicData* DynamicDataFactory::CreateData(DynamicType* pType)
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
                 mDynamicDatas.push_back(newData);
 #endif
+
+                // Arrays must have created every members for serialization.
+                if (pType->GetKind() == TK_ARRAY)
+                {
+                    CreateArrayMembers(newData, pType->GetElementType());
+                }
             }
             return newData;
         }
@@ -99,6 +105,19 @@ DynamicData* DynamicDataFactory::CreateData(DynamicType* pType)
         logError(DYN_TYPES, "Error creating DynamicData. Invalid dynamic type");
         return nullptr;
     }
+}
+
+ResponseCode DynamicDataFactory::CreateArrayMembers(DynamicData* pData, DynamicType* pType)
+{
+    if (pType != nullptr && pData != nullptr && pData->GetKind() == TK_ARRAY)
+    {
+        for (uint32_t i = 0; i < pData->mType->GetTotalBounds(); ++i)
+        {
+            pData->InsertArrayData(i);
+        }
+        return ResponseCode::RETCODE_OK;
+    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
 }
 
 ResponseCode DynamicDataFactory::CreateMembers(DynamicData* pData, DynamicType* pType)

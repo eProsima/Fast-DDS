@@ -2601,17 +2601,17 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
     // Check items count before and after remove an element.
-    ASSERT_TRUE(data->GetItemCount() == 1);
+    ASSERT_TRUE(data->GetItemCount() == array_type->GetTotalBounds());
     ASSERT_TRUE(data->ClearValue(testPos) == ResponseCode::RETCODE_OK);
-    ASSERT_TRUE(data->GetItemCount() == 1);
+    ASSERT_TRUE(data->GetItemCount() == array_type->GetTotalBounds());
     ASSERT_TRUE(data->RemoveArrayData(testPos) == ResponseCode::RETCODE_OK);
-    ASSERT_TRUE(data->GetItemCount() == 0);
+    ASSERT_TRUE(data->GetItemCount() == array_type->GetTotalBounds());
 
     // Check the clear values method
     ASSERT_TRUE(data->SetInt32Value(test1, testPos) == ResponseCode::RETCODE_OK);
-    ASSERT_TRUE(data->GetItemCount() == 1);
+    ASSERT_TRUE(data->GetItemCount() == array_type->GetTotalBounds());
     ASSERT_TRUE(data->ClearAllValues() == ResponseCode::RETCODE_OK);
-    ASSERT_TRUE(data->GetItemCount() == 0);
+    ASSERT_TRUE(data->GetItemCount() == array_type->GetTotalBounds());
 
     // Try to set a value out of the array.
     ASSERT_FALSE(data->SetInt32Value(test1, 100) == ResponseCode::RETCODE_OK);
