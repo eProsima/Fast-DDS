@@ -89,23 +89,6 @@ void CommonStructMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_member_type_id;
 }
 
-size_t CommonStructMember::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CommonStructMember::isKeyDefined()
-{
-    return false;
-}
-
-void CommonStructMember::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CompleteMemberDetail::CompleteMemberDetail()
 {
 }
@@ -176,23 +159,6 @@ void CompleteMemberDetail::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_ann_custom;
 }
 
-size_t CompleteMemberDetail::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteMemberDetail::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteMemberDetail::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalMemberDetail::MinimalMemberDetail()
 {
 }
@@ -242,23 +208,6 @@ void MinimalMemberDetail::serialize(eprosima::fastcdr::Cdr &scdr) const
 void MinimalMemberDetail::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_name_hash;
-}
-
-size_t MinimalMemberDetail::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalMemberDetail::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalMemberDetail::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteStructMember::CompleteStructMember()
@@ -319,23 +268,6 @@ void CompleteStructMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
-size_t CompleteStructMember::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteStructMember::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteStructMember::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalStructMember::MinimalStructMember()
 {
 }
@@ -394,23 +326,6 @@ void MinimalStructMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
-size_t MinimalStructMember::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalStructMember::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalStructMember::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 AppliedBuiltinTypeAnnotations::AppliedBuiltinTypeAnnotations()
 {
 }
@@ -462,23 +377,6 @@ void AppliedBuiltinTypeAnnotations::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_verbatim;
 }
 
-size_t AppliedBuiltinTypeAnnotations::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool AppliedBuiltinTypeAnnotations::isKeyDefined()
-{
-    return false;
-}
-
-void AppliedBuiltinTypeAnnotations::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalTypeDetail::MinimalTypeDetail()
 {
 }
@@ -517,23 +415,6 @@ void MinimalTypeDetail::serialize(eprosima::fastcdr::Cdr &) const
 
 void MinimalTypeDetail::deserialize(eprosima::fastcdr::Cdr &)
 {
-}
-
-size_t MinimalTypeDetail::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalTypeDetail::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalTypeDetail::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteTypeDetail::CompleteTypeDetail()
@@ -605,23 +486,6 @@ void CompleteTypeDetail::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_type_name;
 }
 
-size_t CompleteTypeDetail::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteTypeDetail::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteTypeDetail::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CompleteStructHeader::CompleteStructHeader()
 {
 }
@@ -680,23 +544,6 @@ void CompleteStructHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
-size_t CompleteStructHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteStructHeader::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteStructHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalStructHeader::MinimalStructHeader()
 {
 }
@@ -753,23 +600,6 @@ void MinimalStructHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_base_type;
     dcdr >> m_detail;
-}
-
-size_t MinimalStructHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalStructHeader::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalStructHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteStructType::CompleteStructType()
@@ -841,23 +671,6 @@ void CompleteStructType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_member_seq;
 }
 
-size_t CompleteStructType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteStructType::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteStructType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalStructType::MinimalStructType()
 {
 }
@@ -925,23 +738,6 @@ void MinimalStructType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_struct_flags;
     dcdr >> m_header;
     dcdr >> m_member_seq;
-}
-
-size_t MinimalStructType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalStructType::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalStructType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CommonUnionMember::CommonUnionMember()
@@ -1021,23 +817,6 @@ void CommonUnionMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_label_seq;
 }
 
-size_t CommonUnionMember::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CommonUnionMember::isKeyDefined()
-{
-    return false;
-}
-
-void CommonUnionMember::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CompleteUnionMember::CompleteUnionMember()
 {
 }
@@ -1094,23 +873,6 @@ void CompleteUnionMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_common;
     dcdr >> m_detail;
-}
-
-size_t CompleteUnionMember::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteUnionMember::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteUnionMember::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 MinimalUnionMember::MinimalUnionMember()
@@ -1171,23 +933,6 @@ void MinimalUnionMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
-size_t MinimalUnionMember::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalUnionMember::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalUnionMember::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CommonDiscriminatorMember::CommonDiscriminatorMember()
 {
 }
@@ -1244,23 +989,6 @@ void CommonDiscriminatorMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_member_flags;
     dcdr >> m_type_id;
-}
-
-size_t CommonDiscriminatorMember::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CommonDiscriminatorMember::isKeyDefined()
-{
-    return false;
-}
-
-void CommonDiscriminatorMember::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteDiscriminatorMember::CompleteDiscriminatorMember()
@@ -1333,23 +1061,6 @@ void CompleteDiscriminatorMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_ann_custom;
 }
 
-size_t CompleteDiscriminatorMember::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteDiscriminatorMember::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteDiscriminatorMember::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalDiscriminatorMember::MinimalDiscriminatorMember()
 {
 }
@@ -1399,23 +1110,6 @@ void MinimalDiscriminatorMember::serialize(eprosima::fastcdr::Cdr &scdr) const
 void MinimalDiscriminatorMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_common;
-}
-
-size_t MinimalDiscriminatorMember::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalDiscriminatorMember::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalDiscriminatorMember::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteUnionHeader::CompleteUnionHeader()
@@ -1469,23 +1163,6 @@ void CompleteUnionHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
-size_t CompleteUnionHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteUnionHeader::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteUnionHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalUnionHeader::MinimalUnionHeader()
 {
 }
@@ -1535,23 +1212,6 @@ void MinimalUnionHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void MinimalUnionHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_detail;
-}
-
-size_t MinimalUnionHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalUnionHeader::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalUnionHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteUnionType::CompleteUnionType()
@@ -1631,23 +1291,6 @@ void CompleteUnionType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_member_seq;
 }
 
-size_t CompleteUnionType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteUnionType::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteUnionType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalUnionType::MinimalUnionType()
 {
 }
@@ -1725,23 +1368,6 @@ void MinimalUnionType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_member_seq;
 }
 
-size_t MinimalUnionType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalUnionType::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalUnionType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CommonAnnotationParameter::CommonAnnotationParameter()
 {
 }
@@ -1798,23 +1424,6 @@ void CommonAnnotationParameter::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_member_flags;
     dcdr >> m_member_type_id;
-}
-
-size_t CommonAnnotationParameter::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CommonAnnotationParameter::isKeyDefined()
-{
-    return false;
-}
-
-void CommonAnnotationParameter::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteAnnotationParameter::CompleteAnnotationParameter()
@@ -1882,23 +1491,6 @@ void CompleteAnnotationParameter::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_default_value;
 }
 
-size_t CompleteAnnotationParameter::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteAnnotationParameter::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteAnnotationParameter::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalAnnotationParameter::MinimalAnnotationParameter()
 {
 }
@@ -1964,23 +1556,6 @@ void MinimalAnnotationParameter::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_default_value;
 }
 
-size_t MinimalAnnotationParameter::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalAnnotationParameter::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalAnnotationParameter::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CompleteAnnotationHeader::CompleteAnnotationHeader()
 {
 }
@@ -2032,23 +1607,6 @@ void CompleteAnnotationHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_annotation_name;
 }
 
-size_t CompleteAnnotationHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteAnnotationHeader::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteAnnotationHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalAnnotationHeader::MinimalAnnotationHeader()
 {
 }
@@ -2088,23 +1646,6 @@ void MinimalAnnotationHeader::serialize(eprosima::fastcdr::Cdr &) const
 
 void MinimalAnnotationHeader::deserialize(eprosima::fastcdr::Cdr &)
 {
-}
-
-size_t MinimalAnnotationHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalAnnotationHeader::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalAnnotationHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteAnnotationType::CompleteAnnotationType()
@@ -2177,23 +1718,6 @@ void CompleteAnnotationType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_member_seq;
 }
 
-size_t CompleteAnnotationType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteAnnotationType::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteAnnotationType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalAnnotationType::MinimalAnnotationType()
 {
 }
@@ -2264,23 +1788,6 @@ void MinimalAnnotationType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_member_seq;
 }
 
-size_t MinimalAnnotationType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalAnnotationType::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalAnnotationType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CommonAliasBody::CommonAliasBody()
 {
 }
@@ -2337,23 +1844,6 @@ void CommonAliasBody::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_related_flags;
     dcdr >> m_related_type;
-}
-
-size_t CommonAliasBody::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CommonAliasBody::isKeyDefined()
-{
-    return false;
-}
-
-void CommonAliasBody::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteAliasBody::CompleteAliasBody()
@@ -2426,23 +1916,6 @@ void CompleteAliasBody::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_ann_custom;
 }
 
-size_t CompleteAliasBody::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteAliasBody::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteAliasBody::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalAliasBody::MinimalAliasBody()
 {
 }
@@ -2492,23 +1965,6 @@ void MinimalAliasBody::serialize(eprosima::fastcdr::Cdr &scdr) const
 void MinimalAliasBody::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_common;
-}
-
-size_t MinimalAliasBody::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalAliasBody::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalAliasBody::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteAliasHeader::CompleteAliasHeader()
@@ -2562,23 +2018,6 @@ void CompleteAliasHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
-size_t CompleteAliasHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteAliasHeader::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteAliasHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalAliasHeader::MinimalAliasHeader()
 {
 }
@@ -2618,23 +2057,6 @@ void MinimalAliasHeader::serialize(eprosima::fastcdr::Cdr &) const
 
 void MinimalAliasHeader::deserialize(eprosima::fastcdr::Cdr &)
 {
-}
-
-size_t MinimalAliasHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalAliasHeader::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalAliasHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteAliasType::CompleteAliasType()
@@ -2702,23 +2124,6 @@ void CompleteAliasType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_body;
 }
 
-size_t CompleteAliasType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteAliasType::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteAliasType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalAliasType::MinimalAliasType()
 {
 }
@@ -2784,23 +2189,6 @@ void MinimalAliasType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_body;
 }
 
-size_t MinimalAliasType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalAliasType::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalAliasType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CompleteElementDetail::CompleteElementDetail()
 {
 }
@@ -2864,23 +2252,6 @@ void CompleteElementDetail::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_ann_custom;
 }
 
-size_t CompleteElementDetail::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteElementDetail::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteElementDetail::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CommonCollectionElement::CommonCollectionElement()
 {
 }
@@ -2937,23 +2308,6 @@ void CommonCollectionElement::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_element_flags;
     dcdr >> m_type;
-}
-
-size_t CommonCollectionElement::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CommonCollectionElement::isKeyDefined()
-{
-    return false;
-}
-
-void CommonCollectionElement::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteCollectionElement::CompleteCollectionElement()
@@ -3014,23 +2368,6 @@ void CompleteCollectionElement::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
-size_t CompleteCollectionElement::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteCollectionElement::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteCollectionElement::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalCollectionElement::MinimalCollectionElement()
 {
 }
@@ -3082,23 +2419,6 @@ void MinimalCollectionElement::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_common;
 }
 
-size_t MinimalCollectionElement::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalCollectionElement::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalCollectionElement::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CommonCollectionHeader::CommonCollectionHeader()
 {
 }
@@ -3148,23 +2468,6 @@ void CommonCollectionHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void CommonCollectionHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_bound;
-}
-
-size_t CommonCollectionHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CommonCollectionHeader::isKeyDefined()
-{
-    return false;
-}
-
-void CommonCollectionHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteCollectionHeader::CompleteCollectionHeader()
@@ -3225,23 +2528,6 @@ void CompleteCollectionHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
-size_t CompleteCollectionHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteCollectionHeader::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteCollectionHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalCollectionHeader::MinimalCollectionHeader()
 {
 }
@@ -3291,23 +2577,6 @@ void MinimalCollectionHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void MinimalCollectionHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_common;
-}
-
-size_t MinimalCollectionHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalCollectionHeader::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalCollectionHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteSequenceType::CompleteSequenceType()
@@ -3386,23 +2655,6 @@ void CompleteSequenceType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_element;
 }
 
-size_t CompleteSequenceType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteSequenceType::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteSequenceType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalSequenceType::MinimalSequenceType()
 {
 }
@@ -3479,23 +2731,6 @@ void MinimalSequenceType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_element;
 }
 
-size_t MinimalSequenceType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalSequenceType::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalSequenceType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CommonArrayHeader::CommonArrayHeader()
 {
 }
@@ -3549,23 +2784,6 @@ void CommonArrayHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void CommonArrayHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_bound_seq;
-}
-
-size_t CommonArrayHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CommonArrayHeader::isKeyDefined()
-{
-    return false;
-}
-
-void CommonArrayHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteArrayHeader::CompleteArrayHeader()
@@ -3626,23 +2844,6 @@ void CompleteArrayHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
-size_t CompleteArrayHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteArrayHeader::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteArrayHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalArrayHeader::MinimalArrayHeader()
 {
 }
@@ -3692,23 +2893,6 @@ void MinimalArrayHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void MinimalArrayHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_common;
-}
-
-size_t MinimalArrayHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalArrayHeader::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalArrayHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteArrayType::CompleteArrayType()
@@ -3776,23 +2960,6 @@ void CompleteArrayType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_element;
 }
 
-size_t CompleteArrayType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteArrayType::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteArrayType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalArrayType::MinimalArrayType()
 {
 }
@@ -3856,23 +3023,6 @@ void MinimalArrayType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_collection_flag;
     dcdr >> m_header;
     dcdr >> m_element;
-}
-
-size_t MinimalArrayType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalArrayType::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalArrayType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteMapType::CompleteMapType()
@@ -3947,23 +3097,6 @@ void CompleteMapType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_element;
 }
 
-size_t CompleteMapType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteMapType::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteMapType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalMapType::MinimalMapType()
 {
 }
@@ -4036,23 +3169,6 @@ void MinimalMapType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_element;
 }
 
-size_t MinimalMapType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalMapType::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalMapType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CommonEnumeratedLiteral::CommonEnumeratedLiteral()
 {
 }
@@ -4109,23 +3225,6 @@ void CommonEnumeratedLiteral::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_value;
     dcdr >> m_flags;
-}
-
-size_t CommonEnumeratedLiteral::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CommonEnumeratedLiteral::isKeyDefined()
-{
-    return false;
-}
-
-void CommonEnumeratedLiteral::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteEnumeratedLiteral::CompleteEnumeratedLiteral()
@@ -4186,23 +3285,6 @@ void CompleteEnumeratedLiteral::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
-size_t CompleteEnumeratedLiteral::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteEnumeratedLiteral::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteEnumeratedLiteral::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalEnumeratedLiteral::MinimalEnumeratedLiteral()
 {
 }
@@ -4261,23 +3343,6 @@ void MinimalEnumeratedLiteral::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
-size_t MinimalEnumeratedLiteral::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalEnumeratedLiteral::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalEnumeratedLiteral::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CommonEnumeratedHeader::CommonEnumeratedHeader()
 {
 }
@@ -4327,23 +3392,6 @@ void CommonEnumeratedHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void CommonEnumeratedHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_bit_bound;
-}
-
-size_t CommonEnumeratedHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CommonEnumeratedHeader::isKeyDefined()
-{
-    return false;
-}
-
-void CommonEnumeratedHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteEnumeratedHeader::CompleteEnumeratedHeader()
@@ -4404,23 +3452,6 @@ void CompleteEnumeratedHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
-size_t CompleteEnumeratedHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteEnumeratedHeader::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteEnumeratedHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalEnumeratedHeader::MinimalEnumeratedHeader()
 {
 }
@@ -4470,23 +3501,6 @@ void MinimalEnumeratedHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void MinimalEnumeratedHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_common;
-}
-
-size_t MinimalEnumeratedHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalEnumeratedHeader::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalEnumeratedHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteEnumeratedType::CompleteEnumeratedType()
@@ -4559,23 +3573,6 @@ void CompleteEnumeratedType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_literal_seq;
 }
 
-size_t CompleteEnumeratedType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteEnumeratedType::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteEnumeratedType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalEnumeratedType::MinimalEnumeratedType()
 {
 }
@@ -4646,23 +3643,6 @@ void MinimalEnumeratedType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_literal_seq;
 }
 
-size_t MinimalEnumeratedType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalEnumeratedType::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalEnumeratedType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CommonBitflag::CommonBitflag()
 {
 }
@@ -4719,23 +3699,6 @@ void CommonBitflag::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_position;
     dcdr >> m_flags;
-}
-
-size_t CommonBitflag::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CommonBitflag::isKeyDefined()
-{
-    return false;
-}
-
-void CommonBitflag::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteBitflag::CompleteBitflag()
@@ -4796,23 +3759,6 @@ void CompleteBitflag::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
-size_t CompleteBitflag::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteBitflag::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteBitflag::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalBitflag::MinimalBitflag()
 {
 }
@@ -4871,23 +3817,6 @@ void MinimalBitflag::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
-size_t MinimalBitflag::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalBitflag::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalBitflag::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CommonBitmaskHeader::CommonBitmaskHeader()
 {
 }
@@ -4937,23 +3866,6 @@ void CommonBitmaskHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void CommonBitmaskHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_bit_bound;
-}
-
-size_t CommonBitmaskHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CommonBitmaskHeader::isKeyDefined()
-{
-    return false;
-}
-
-void CommonBitmaskHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteBitmaskType::CompleteBitmaskType()
@@ -5026,23 +3938,6 @@ void CompleteBitmaskType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_flag_seq;
 }
 
-size_t CompleteBitmaskType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteBitmaskType::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteBitmaskType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalBitmaskType::MinimalBitmaskType()
 {
 }
@@ -5111,23 +4006,6 @@ void MinimalBitmaskType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_bitmask_flags;
     dcdr >> m_header;
     dcdr >> m_flag_seq;
-}
-
-size_t MinimalBitmaskType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalBitmaskType::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalBitmaskType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CommonBitfield::CommonBitfield()
@@ -5202,23 +4080,6 @@ void CommonBitfield::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_holder_type;
 }
 
-size_t CommonBitfield::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CommonBitfield::isKeyDefined()
-{
-    return false;
-}
-
-void CommonBitfield::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CompleteBitfield::CompleteBitfield()
 {
 }
@@ -5275,23 +4136,6 @@ void CompleteBitfield::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_common;
     dcdr >> m_detail;
-}
-
-size_t CompleteBitfield::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteBitfield::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteBitfield::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 MinimalBitfield::MinimalBitfield()
@@ -5352,23 +4196,6 @@ void MinimalBitfield::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_name_hash;
 }
 
-size_t MinimalBitfield::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalBitfield::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalBitfield::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CompleteBitsetHeader::CompleteBitsetHeader()
 {
 }
@@ -5420,23 +4247,6 @@ void CompleteBitsetHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
-size_t CompleteBitsetHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteBitsetHeader::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteBitsetHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalBitsetHeader::MinimalBitsetHeader()
 {
 }
@@ -5476,23 +4286,6 @@ void MinimalBitsetHeader::serialize(eprosima::fastcdr::Cdr &) const
 
 void MinimalBitsetHeader::deserialize(eprosima::fastcdr::Cdr &)
 {
-}
-
-size_t MinimalBitsetHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalBitsetHeader::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalBitsetHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 CompleteBitsetType::CompleteBitsetType()
@@ -5565,23 +4358,6 @@ void CompleteBitsetType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_field_seq;
 }
 
-size_t CompleteBitsetType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteBitsetType::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteBitsetType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalBitsetType::MinimalBitsetType()
 {
 }
@@ -5652,23 +4428,6 @@ void MinimalBitsetType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_field_seq;
 }
 
-size_t MinimalBitsetType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalBitsetType::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalBitsetType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 CompleteExtendedType::CompleteExtendedType()
 {
 }
@@ -5710,23 +4469,6 @@ void CompleteExtendedType::deserialize(eprosima::fastcdr::Cdr &)
 {
 }
 
-size_t CompleteExtendedType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool CompleteExtendedType::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteExtendedType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 MinimalExtendedType::MinimalExtendedType()
 {
 }
@@ -5766,23 +4508,6 @@ void MinimalExtendedType::serialize(eprosima::fastcdr::Cdr &) const
 
 void MinimalExtendedType::deserialize(eprosima::fastcdr::Cdr &)
 {
-}
-
-size_t MinimalExtendedType::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool MinimalExtendedType::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalExtendedType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 TypeIdentifierTypeObjectPair::TypeIdentifierTypeObjectPair()
@@ -5843,23 +4568,6 @@ void TypeIdentifierTypeObjectPair::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_type_object;
 }
 
-size_t TypeIdentifierTypeObjectPair::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool TypeIdentifierTypeObjectPair::isKeyDefined()
-{
-    return false;
-}
-
-void TypeIdentifierTypeObjectPair::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 TypeIdentifierPair::TypeIdentifierPair()
 {
 }
@@ -5918,23 +4626,6 @@ void TypeIdentifierPair::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_type_identifier2;
 }
 
-size_t TypeIdentifierPair::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool TypeIdentifierPair::isKeyDefined()
-{
-    return false;
-}
-
-void TypeIdentifierPair::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
-}
-
 TypeIdentfierWithSize::TypeIdentfierWithSize()
 {
 }
@@ -5991,23 +4682,6 @@ void TypeIdentfierWithSize::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_type_id;
     dcdr >> m_typeobject_serialized_size;
-}
-
-size_t TypeIdentfierWithSize::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool TypeIdentfierWithSize::isKeyDefined()
-{
-    return false;
-}
-
-void TypeIdentfierWithSize::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 TypeIdentifierWithDependencies::TypeIdentifierWithDependencies()
@@ -6078,23 +4752,6 @@ void TypeIdentifierWithDependencies::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_typeid_with_size;
     dcdr >> m_dependent_typeid_count;
     dcdr >> m_dependent_typeids;
-}
-
-size_t TypeIdentifierWithDependencies::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool TypeIdentifierWithDependencies::isKeyDefined()
-{
-    return false;
-}
-
-void TypeIdentifierWithDependencies::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 
@@ -6882,20 +5539,6 @@ void CompleteTypeObject::deserialize(eprosima::fastcdr::Cdr &cdr)
     }
 }
 
-size_t CompleteTypeObject::getKeyMaxCdrSerializedSize(size_t)
-{
-    return 0;
-}
-
-bool CompleteTypeObject::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteTypeObject::serializeKey(eprosima::fastcdr::Cdr &) const
-{
-}
-
 /****************************************************************************************************************/
 
 MinimalTypeObject::MinimalTypeObject()
@@ -7680,20 +6323,6 @@ void MinimalTypeObject::deserialize(eprosima::fastcdr::Cdr &cdr)
     }
 }
 
-size_t MinimalTypeObject::getKeyMaxCdrSerializedSize(size_t)
-{
-    return 0;
-}
-
-bool MinimalTypeObject::isKeyDefined()
-{
-    return false;
-}
-
-void MinimalTypeObject::serializeKey(eprosima::fastcdr::Cdr &) const
-{
-}
-
 TypeObject::TypeObject()
 {
     m__d = EK_COMPLETE;
@@ -8024,23 +6653,6 @@ void TypeInformation::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_minimal;
     dcdr >> m_complete;
-}
-
-size_t TypeInformation::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-    return current_align;
-}
-
-bool TypeInformation::isKeyDefined()
-{
-    return false;
-}
-
-void TypeInformation::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-    (void) scdr;
 }
 
 

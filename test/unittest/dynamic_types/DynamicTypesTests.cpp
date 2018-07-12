@@ -1215,7 +1215,7 @@ TEST_F(DynamicTypesTests, DynamicType_float128_unit_tests)
     uint32_t payloadSize = static_cast<uint32_t>(new_type->getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(new_type->serialize(data, &payload));
-    //TODO: //ARCE: Windows 128 ?¿?
+    //TODO: //ARCE: Windows 128 ?ï¿½?
     ASSERT_TRUE(payload.length <= payloadSize);
 
     types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(new_type);

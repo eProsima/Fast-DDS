@@ -103,24 +103,6 @@ void StringSTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_bound;
 }
 
-size_t StringSTypeDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-
-
-    return current_align;
-}
-
-bool StringSTypeDefn::isKeyDefined()
-{
-    return false;
-}
-
-void StringSTypeDefn::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	(void) scdr;
-
-}
 StringLTypeDefn::StringLTypeDefn()
 {
     m_bound = 0;
@@ -184,24 +166,6 @@ void StringLTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_bound;
 }
 
-size_t StringLTypeDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-
-
-    return current_align;
-}
-
-bool StringLTypeDefn::isKeyDefined()
-{
-    return false;
-}
-
-void StringLTypeDefn::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	(void) scdr;
-
-}
 PlainCollectionHeader::PlainCollectionHeader()
 {
     m_equiv_kind = 0;
@@ -275,27 +239,6 @@ void PlainCollectionHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_element_flags;
 }
 
-size_t PlainCollectionHeader::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-
-
-
-
-    return current_align;
-}
-
-bool PlainCollectionHeader::isKeyDefined()
-{
-    return false;
-}
-
-void PlainCollectionHeader::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	(void) scdr;
-
-
-}
 PlainSequenceSElemDefn::PlainSequenceSElemDefn()
 {
 
@@ -457,29 +400,6 @@ void PlainSequenceSElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
     }
 }
 
-size_t PlainSequenceSElemDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-
-
-
-
-
-    return current_align;
-}
-
-bool PlainSequenceSElemDefn::isKeyDefined()
-{
-    return false;
-}
-
-void PlainSequenceSElemDefn::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	(void) scdr;
-
-
-
-}
 PlainSequenceLElemDefn::PlainSequenceLElemDefn()
 {
 
@@ -642,29 +562,6 @@ void PlainSequenceLElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
     }
 }
 
-size_t PlainSequenceLElemDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-
-
-
-
-
-    return current_align;
-}
-
-bool PlainSequenceLElemDefn::isKeyDefined()
-{
-    return false;
-}
-
-void PlainSequenceLElemDefn::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	(void) scdr;
-
-
-
-}
 PlainArraySElemDefn::PlainArraySElemDefn()
 {
 
@@ -831,29 +728,6 @@ void PlainArraySElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
     }
 }
 
-size_t PlainArraySElemDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-
-
-
-
-
-    return current_align;
-}
-
-bool PlainArraySElemDefn::isKeyDefined()
-{
-    return false;
-}
-
-void PlainArraySElemDefn::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	(void) scdr;
-
-
-
-}
 PlainArrayLElemDefn::PlainArrayLElemDefn()
 {
 
@@ -1018,29 +892,6 @@ void PlainArrayLElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
     }
 }
 
-size_t PlainArrayLElemDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-
-
-
-
-
-    return current_align;
-}
-
-bool PlainArrayLElemDefn::isKeyDefined()
-{
-    return false;
-}
-
-void PlainArrayLElemDefn::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	(void) scdr;
-
-
-
-}
 PlainMapSTypeDefn::PlainMapSTypeDefn()
 {
 
@@ -1304,33 +1155,6 @@ void PlainMapSTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
     }
 }
 
-size_t PlainMapSTypeDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-
-
-
-
-
-
-
-    return current_align;
-}
-
-bool PlainMapSTypeDefn::isKeyDefined()
-{
-    return false;
-}
-
-void PlainMapSTypeDefn::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	(void) scdr;
-
-
-
-
-
-}
 PlainMapLTypeDefn::PlainMapLTypeDefn()
 {
 
@@ -1593,33 +1417,6 @@ void PlainMapLTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
     }
 }
 
-size_t PlainMapLTypeDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-
-
-
-
-
-
-
-    return current_align;
-}
-
-bool PlainMapLTypeDefn::isKeyDefined()
-{
-    return false;
-}
-
-void PlainMapLTypeDefn::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	(void) scdr;
-
-
-
-
-
-}
 StronglyConnectedComponentId::StronglyConnectedComponentId()
 {
 
@@ -1693,29 +1490,6 @@ void StronglyConnectedComponentId::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_scc_index;
 }
 
-size_t StronglyConnectedComponentId::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-
-
-
-
-
-    return current_align;
-}
-
-bool StronglyConnectedComponentId::isKeyDefined()
-{
-    return false;
-}
-
-void StronglyConnectedComponentId::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	(void) scdr;
-
-
-
-}
 ExtendedTypeDefn::ExtendedTypeDefn()
 {
 }
@@ -1762,25 +1536,6 @@ void ExtendedTypeDefn::serialize(eprosima::fastcdr::Cdr &) const
 
 void ExtendedTypeDefn::deserialize(eprosima::fastcdr::Cdr &)
 {
-}
-
-size_t ExtendedTypeDefn::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-
-
-    return current_align;
-}
-
-bool ExtendedTypeDefn::isKeyDefined()
-{
-    return false;
-}
-
-void ExtendedTypeDefn::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	(void) scdr;
-
 }
 
 } // namespace types
