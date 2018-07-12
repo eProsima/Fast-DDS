@@ -58,7 +58,7 @@ DynamicDataFactory::~DynamicDataFactory()
 
 DynamicData* DynamicDataFactory::CreateData(DynamicType* pType)
 {
-    if (pType != nullptr)
+    if (pType != nullptr && pType->IsTypeObject())
     {
         try
         {

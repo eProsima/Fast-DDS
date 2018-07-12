@@ -29,7 +29,6 @@ class MemberDescriptor;
 class DynamicData
 {
 public:
-    DynamicData();
     ~DynamicData();
 
     ResponseCode GetDescriptor(MemberDescriptor& value, MemberId id);
@@ -239,6 +238,7 @@ public:
 
 protected:
 
+    DynamicData();
     DynamicData(DynamicType* pType);
 
     void AddValue(TypeKind kind, MemberId id);

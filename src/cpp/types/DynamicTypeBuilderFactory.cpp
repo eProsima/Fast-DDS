@@ -48,7 +48,8 @@ static std::string GetTypeName(TypeKind kind)
         case TK_UINT64: return TKNAME_UINT64;
         case TK_FLOAT128: return TKNAME_FLOAT128;
         case TK_CHAR16: return TKNAME_CHAR16;
-
+        case TK_STRING8: return TKNAME_STRING8;
+        case TK_STRING16: return TKNAME_STRING16;
         case TK_ALIAS: return TKNAME_ALIAS;
         case TK_ENUM: return TKNAME_ENUM;
         case TK_BITMASK: return TKNAME_BITMASK;

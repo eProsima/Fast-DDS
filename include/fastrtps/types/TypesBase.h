@@ -45,6 +45,8 @@ const std::string TKNAME_FLOAT32    = "float";
 const std::string TKNAME_FLOAT64    = "double";
 const std::string TKNAME_FLOAT128   = "long double";
 
+const std::string TKNAME_STRING8    = "string";
+const std::string TKNAME_STRING16   = "wstring";
 const std::string TKNAME_ALIAS      = "alias";
 const std::string TKNAME_ENUM       = "enum";
 const std::string TKNAME_BITMASK    = "bitmask";
