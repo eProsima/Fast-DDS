@@ -3619,9 +3619,10 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     case TK_STRUCTURE:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        uint32_t size(static_cast<uint32_t>(mComplexValues.size()));
-        for (uint32_t i = 0; i < size; ++i)
+        //uint32_t size(static_cast<uint32_t>(mComplexValues.size())), memberId(MEMBER_ID_INVALID);
+        for (uint32_t i = 0; i < mComplexValues.size(); ++i)
         {
+            //cdr >> memberId;
             auto it = mComplexValues.find(i);
             if (it != mComplexValues.end())
             {
@@ -3635,10 +3636,10 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
             }
         }
 #else
-        uint32_t size(static_cast<uint32_t>(mValues.size())), memberId(MEMBER_ID_INVALID);
-        for (uint32_t i = 0; i < size; ++i)
+        //uint32_t size(static_cast<uint32_t>(mValues.size())), memberId(MEMBER_ID_INVALID);
+        for (uint32_t i = 0; i < mValues.size(); ++i)
         {
-            cdr >> memberId;
+            //cdr >> memberId;
             auto it = mValues.find(i);
             if (it != mValues.end())
             {
@@ -3658,19 +3659,19 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     case TK_ARRAY:
     case TK_MAP:
     {
-        uint32_t size(0), memberId(MEMBER_ID_INVALID);
+        uint32_t size(0);//, memberId(MEMBER_ID_INVALID);
         bool bKeyElement(false);
         cdr >> size;
         for (uint32_t i = 0; i < size; ++i)
         {
-            cdr >> memberId;
+            //cdr >> memberId;
             if (mType->GetKind() == TK_MAP)
             {
-                cdr >> bKeyElement;
+                bKeyElement = !bKeyElement;
             }
 
 #ifdef DYNAMIC_TYPES_CHECKING
-            auto it = mComplexValues.find(memberId);
+            auto it = mComplexValues.find(i);
             if (it != mComplexValues.end())
             {
                 it->second->deserialize(cdr);
@@ -3689,11 +3690,11 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
                 }
                 pData->deserialize(cdr);
                 pData->mIsKeyElement = bKeyElement;
-                mComplexValues.insert(std::make_pair(memberId, pData));
+                mComplexValues.insert(std::make_pair(i, pData));
             }
         }
 #else
-            auto it = mValues.find(memberId);
+            auto it = mValues.find(i);
             if (it != mValues.end())
             {
                 ((DynamicData*)it->second)->deserialize(cdr);
@@ -3712,7 +3713,7 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
                 }
                 pData->deserialize(cdr);
                 pData->mIsKeyElement = bKeyElement;
-                mValues.insert(std::make_pair(memberId, pData));
+                mValues.insert(std::make_pair(i, pData));
             }
         }
 #endif
@@ -4177,56 +4178,204 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
         }
         break;
     }
+    case TK_SEQUENCE: // Sequence is like structure, but with size
+#ifdef DYNAMIC_TYPES_CHECKING
+        cdr << static_cast<uint32_t>(mComplexValues.size());
+#else
+        cdr << static_cast<uint32_t>(mValues.size());
+#endif
     case TK_STRUCTURE:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
+        for (uint32_t idx = 0; idx < static_cast<uint32_t>(mComplexValues.size()); ++idx)
         {
-            it->second->serialize(cdr);
+            auto it = mComplexValues.at(idx);
+            it->serialize(cdr);
         }
 #else
-        for (auto it = mValues.begin(); it != mValues.end(); ++it)
+        for (uint32_t idx = 0; idx < static_cast<uint32_t>(mValues.size()); ++idx)
         {
-            ((DynamicData*)it->second)->serialize(cdr);
+            auto it = mValues.at(idx);
+            ((DynamicData*)it)->serialize(cdr);
         }
 #endif
+        break;
     }
-    break;
-    case TK_SEQUENCE:
     case TK_ARRAY:
+    {
+        uint32_t arraySize = mType->GetTotalBounds();
+        cdr << arraySize;
+        for (uint32_t idx = 0; idx < arraySize; ++idx)
+        {
+#ifdef DYNAMIC_TYPES_CHECKING
+            auto it = mComplexValues.find(idx);
+            if (it != mComplexValues.end())
+#else
+            auto it = mValues.find(idx);
+            if (it != mValues.end())
+#endif
+            {
+                ((DynamicData*)it->second)->serialize(cdr);
+            }
+            else
+            {
+                SerializeEmptyData(mType->GetElementType(), cdr);
+            }
+        }
+        break;
+    }
     case TK_MAP:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr << static_cast<uint32_t>(mComplexValues.size());
         for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
         {
-            cdr << it->first;
-            if (mType->GetKind() == TK_MAP)
-            {
-                cdr << it->second->mIsKeyElement;
-            }
             it->second->serialize(cdr);
         }
 #else
         cdr << static_cast<uint32_t>(mValues.size());
         for (auto it = mValues.begin(); it != mValues.end(); ++it)
         {
-            cdr << it->first;
-            if (mType->GetKind() == TK_MAP)
-            {
-                cdr << ((DynamicData*)it->second)->mIsKeyElement;
-            }
             ((DynamicData*)it->second)->serialize(cdr);
         }
 #endif
         break;
     }
-
     case TK_ALIAS:
         break;
     }
 }
 
+void DynamicData::SerializeEmptyData(const DynamicType* pType, eprosima::fastcdr::Cdr &cdr) const
+{
+    switch(pType->GetKind())
+    {
+    default:
+        break;
+    case TK_INT32:
+    {
+        cdr << static_cast<int32_t>(0);
+        break;
+    }
+    case TK_UINT32:
+    {
+        cdr << static_cast<uint32_t>(0);
+        break;
+    }
+    case TK_INT16:
+    {
+        cdr << static_cast<int16_t>(0);
+        break;
+    }
+    case TK_UINT16:
+    {
+        cdr << static_cast<uint16_t>(0);
+        break;
+    }
+    case TK_INT64:
+    {
+        cdr << static_cast<int64_t>(0);
+        break;
+    }
+    case TK_UINT64:
+    {
+        cdr << static_cast<uint64_t>(0);
+        break;
+    }
+    case TK_FLOAT32:
+    {
+        cdr << static_cast<float>(0.0f);
+        break;
+    }
+    case TK_FLOAT64:
+    {
+        cdr << static_cast<double>(0.0);
+        break;
+    }
+    case TK_FLOAT128:
+    {
+        cdr << static_cast<long double>(0.0);
+        break;
+    }
+    case TK_CHAR8:
+    {
+        cdr << static_cast<char>(0);
+        break;
+    }
+    case TK_CHAR16:
+    {
+        cdr << static_cast<uint16_t>(0);
+        break;
+    }
+    case TK_BOOLEAN:
+    {
+        cdr << static_cast<uint8_t>(0);
+        break;
+    }
+    case TK_BYTE:
+    {
+        cdr << static_cast<uint8_t>(0);
+        break;
+    }
+    case TK_STRING8:
+    {
+        cdr << std::string();
+        break;
+    }
+    case TK_STRING16:
+    {
+        cdr << std::wstring();
+        break;
+    }
+    case TK_ENUM:
+    {
+        cdr << static_cast<uint32_t>(0);
+        break;
+    }
+    case TK_BITSET:
+    case TK_BITMASK:
+    {
+        cdr << static_cast<uint64_t>(0);
+        break;
+    }
+    case TK_UNION:
+    {
+        cdr << static_cast<uint32_t>(MEMBER_ID_INVALID);
+        break;
+    }
+    case TK_SEQUENCE: // Sequence is like structure, but with size
+    {
+        cdr << static_cast<uint32_t>(0);
+        break;
+    }
+    case TK_STRUCTURE:
+    {
+        for (uint32_t idx = 0; idx < mType->mMemberById.size(); ++idx)
+        {
+            auto it = mType->mMemberById.at(idx);
+            SerializeEmptyData(it->mDescriptor->mType, cdr);
+        }
+        break;
+    }
+    case TK_ARRAY:
+    {
+        uint32_t arraySize = mType->GetTotalBounds();
+        cdr << arraySize;
+        for (uint32_t i = 0; i < arraySize; ++i)
+        {
+            SerializeEmptyData(mType->GetElementType(), cdr);
+        }
+        break;
+    }
+    case TK_MAP:
+    {
+        cdr << static_cast<uint32_t>(0);
+        break;
+    }
+    case TK_ALIAS:
+        break;
+    }
+}
 
 } // namespace types
 } // namespace fastrtps

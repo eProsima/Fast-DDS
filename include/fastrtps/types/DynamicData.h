@@ -259,6 +259,8 @@ protected:
 
     void SortMemberIds(MemberId startId);
 
+    void SerializeEmptyData(const DynamicType* pType, eprosima::fastcdr::Cdr &cdr) const;
+
 	DynamicType* mType;
     std::map<MemberId, MemberDescriptor*> mDescriptors;
 
