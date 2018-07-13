@@ -38,7 +38,7 @@ namespace types{
 TypeIdentifier::TypeIdentifier()
 {
     m__d = 0x00; // Default
-
+    memset(&m_equivalence_hash, 0, 14);
 }
 
 TypeIdentifier::~TypeIdentifier()
@@ -82,7 +82,7 @@ TypeIdentifier::TypeIdentifier(const TypeIdentifier &x)
         break;
         case EK_COMPLETE:
         case EK_MINIMAL:
-        memcpy(m_equivalence_hash, x.m_equivalence_hash, 14);
+        memcpy(&m_equivalence_hash, &x.m_equivalence_hash, 14);
         break;
         default:
         m_extended_defn = x.m_extended_defn;
@@ -127,7 +127,7 @@ TypeIdentifier::TypeIdentifier(TypeIdentifier &&x)
         break;
         case EK_COMPLETE:
         case EK_MINIMAL:
-        memcpy(m_equivalence_hash, x.m_equivalence_hash, 14);
+        memcpy(&m_equivalence_hash, &x.m_equivalence_hash, 14);
         break;
         default:
         m_extended_defn = x.m_extended_defn;
@@ -172,7 +172,7 @@ TypeIdentifier& TypeIdentifier::operator=(const TypeIdentifier &x)
         break;
         case EK_COMPLETE:
         case EK_MINIMAL:
-        memcpy(m_equivalence_hash, x.m_equivalence_hash, 14);
+        memcpy(&m_equivalence_hash, &x.m_equivalence_hash, 14);
         break;
         default:
         m_extended_defn = x.m_extended_defn;
@@ -219,7 +219,7 @@ TypeIdentifier& TypeIdentifier::operator=(TypeIdentifier &&x)
         break;
         case EK_COMPLETE:
         case EK_MINIMAL:
-        memcpy(m_equivalence_hash, x.m_equivalence_hash, 14);
+        memcpy(&m_equivalence_hash, &x.m_equivalence_hash, 14);
         break;
         default:
         m_extended_defn = x.m_extended_defn;
@@ -738,7 +738,7 @@ StronglyConnectedComponentId& TypeIdentifier::sc_component_id()
 }
 void TypeIdentifier::equivalence_hash(EquivalenceHash _equivalence_hash)
 {
-    memcpy(m_equivalence_hash, _equivalence_hash, 14);
+    memcpy(&m_equivalence_hash, &_equivalence_hash, 14);
     m__d = EK_COMPLETE;
 }
 
@@ -757,7 +757,7 @@ const octet* TypeIdentifier::equivalence_hash() const
     }
     if(!b) throw BadParamException("This member is not been selected");
 
-    return m_equivalence_hash;
+    return (octet*)&m_equivalence_hash;
 }
 
 octet* TypeIdentifier::equivalence_hash()
@@ -775,7 +775,7 @@ octet* TypeIdentifier::equivalence_hash()
     }
     if(!b) throw BadParamException("This member is not been selected");
 
-    return m_equivalence_hash;
+    return (octet*)&m_equivalence_hash;
 }
 
 void TypeIdentifier::extended_defn(ExtendedTypeDefn _extended_defn)
