@@ -788,7 +788,9 @@ void DynamicTypeBuilderFactory::BuildTypeIdentifier(const TypeDescriptor* descri
             case TK_UNION:
             case TK_BITSET:
                 {
+                    // TODO
                     // Need to be registered as TypeObject first
+                    // and return the as EK_MINIMAL or EK_COMPLETE
                 }
                 break;
         }
@@ -893,8 +895,12 @@ void DynamicTypeBuilderFactory::BuildAliasTypeObject(const TypeDescriptor* descr
     object.minimal().alias_type().body().common().related_flags().IS_KEY(false);
     object.minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
-    TypeIdentifier ident;
-    BuildTypeIdentifier(descriptor->GetBaseType()->mDescriptor, ident);
+    //TypeIdentifier ident;
+    //BuildTypeIdentifier(descriptor->GetBaseType()->mDescriptor, ident);
+    TypeObject obj;
+    BuildTypeObject(descriptor->GetBaseType()->mDescriptor, obj);
+    TypeIdentifier ident = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->GetBaseType()->GetName());
+
     object.minimal().alias_type().body().common().related_type(ident);
     //object.minimal().alias_type().body().common().related_type() =
     //    *(TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->GetBaseType()->GetName()));
@@ -978,8 +984,11 @@ void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* desc
         msm.common().member_flags().IS_MUST_UNDERSTAND(false);
         msm.common().member_flags().IS_KEY(false);
         msm.common().member_flags().IS_DEFAULT(false);
-        TypeIdentifier memIdent;
-        BuildTypeIdentifier(member->mType->mDescriptor, memIdent);
+        //TypeIdentifier memIdent;
+        //BuildTypeIdentifier(member->mType->mDescriptor, memIdent);
+        TypeObject memObj;
+        BuildTypeObject(member->mType->mDescriptor, memObj);
+        TypeIdentifier memIdent = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
         msm.common().member_type_id(memIdent);
         //msm.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName()));
         MD5 hash(member->GetName());
@@ -1040,8 +1049,10 @@ void DynamicTypeBuilderFactory::BuildUnionTypeObject(const TypeDescriptor* descr
     object.minimal().union_type().discriminator().common().member_flags().IS_KEY(false);
     object.minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
-    TypeIdentifier discIdent;
-    BuildTypeIdentifier(descriptor->mDiscriminatorType->mDescriptor, discIdent);
+    TypeObject discObj;
+    BuildTypeObject(descriptor->mDiscriminatorType->mDescriptor, discObj);
+    TypeIdentifier discIdent =
+        *TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->mDiscriminatorType->GetName());
     object.minimal().union_type().discriminator().common().type_id(discIdent);
         //*TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->mDiscriminatorType->GetName()));
 
@@ -1057,8 +1068,11 @@ void DynamicTypeBuilderFactory::BuildUnionTypeObject(const TypeDescriptor* descr
         mum.common().member_flags().IS_KEY(false);
         mum.common().member_flags().IS_DEFAULT(member->IsDefaultUnionValue());
 
-        TypeIdentifier memIdent;
-        BuildTypeIdentifier(member->mType->mDescriptor, memIdent);
+        //TypeIdentifier memIdent;
+        //BuildTypeIdentifier(member->mType->mDescriptor, memIdent);
+        TypeObject memObj;
+        BuildTypeObject(member->mType->mDescriptor, memObj);
+        TypeIdentifier memIdent = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
         mum.common().type_id(memIdent);
         //mum.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName()));
         for (uint64_t lab : member->GetUnionLabels())

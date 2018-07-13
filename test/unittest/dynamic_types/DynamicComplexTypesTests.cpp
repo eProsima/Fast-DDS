@@ -371,12 +371,28 @@ TEST_F(DynamicComplexTypesTests, Manual_Auto_Comparision)
     DynamicDataFactory::GetInstance()->DeleteData(dynAutoData);
     DynamicDataFactory::GetInstance()->DeleteData(dynManualData);
 }
+
+TEST_F(DynamicComplexTypesTests, Conversions_Test)
+{
+    TypeObject newObject;
+    DynamicTypeBuilderFactory::GetInstance()->BuildTypeObject(m_DynManualType, newObject);
+    types::DynamicData* dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
+
+    TypeIdentifier* newIdentifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier(m_DynManualType->GetName());
+    DynamicType* newAutoType = TypeObjectFactory::GetInstance()->BuildDynamicType(newIdentifier, &newObject);
+
+    ASSERT_TRUE(newAutoType->Equals(dynData));
+
+    DynamicDataFactory::GetInstance()->DeleteData(dynData);
+    DynamicDataFactory::GetInstance()->DeleteData(newAutoType);
+}
 */
 
 // TODO
 /*
 -> Static_Auto
 -> Manual_Auto
+-> Generate TypeObject from Manual and verify its correct generating another auto from it and comparing with the manual.
 */
 
 int main(int argc, char **argv)
