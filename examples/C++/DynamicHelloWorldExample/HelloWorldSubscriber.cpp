@@ -34,8 +34,10 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-HelloWorldSubscriber::HelloWorldSubscriber():mp_participant(nullptr),
-mp_subscriber(nullptr)
+HelloWorldSubscriber::HelloWorldSubscriber()
+    : mp_participant(nullptr)
+    , mp_subscriber(nullptr)
+    , m_DynType(nullptr)
 {
 }
 
@@ -61,31 +63,22 @@ bool HelloWorldSubscriber::init(bool dynamic)
         // Given
         DynamicTypeBuilder* created_type_ulong(nullptr);
         DynamicTypeBuilder* created_type_string(nullptr);
+        DynamicTypeBuilder* struct_type_builder(nullptr);
         // Create basic types
         created_type_ulong = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type();
-        auto ulongType = created_type_ulong->Build();
         created_type_string = DynamicTypeBuilderFactory::GetInstance()->CreateStringType();
-        auto stringType = created_type_string->Build();
+        struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructType();
 
-        auto struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructType();
         // Add members to the struct.
-        types::MemberDescriptor descriptor;
-        descriptor.SetId(0);
-        descriptor.SetName("index");
-        descriptor.SetType(ulongType);
-        struct_type_builder->AddMember(&descriptor);
-        types::MemberDescriptor descriptor2;
-        descriptor2.SetId(1);
-        descriptor2.SetName("message");
-        descriptor2.SetType(stringType);
-        struct_type_builder->AddMember(&descriptor2);
-
+        struct_type_builder->AddMember(0, "index", created_type_ulong);
+        struct_type_builder->AddMember(1, "message", created_type_string);
         struct_type_builder->SetName("HelloWorld");
 
         m_DynType = struct_type_builder->Build();
-        //m_DynType->setName("HelloWorld");
-
         m_listener.m_DynHello = DynamicDataFactory::GetInstance()->CreateData(m_DynType);
+
+        DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type_ulong);
+        DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type_string);
         DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type_builder);
 
         Domain::registerType(mp_participant, m_DynType);
@@ -120,12 +113,16 @@ bool HelloWorldSubscriber::init(bool dynamic)
 
 HelloWorldSubscriber::~HelloWorldSubscriber() {
     // TODO Auto-generated destructor stub
+    Domain::removeParticipant(mp_participant);
+
     if (m_dynamic)
     {
-        //DynamicTypeBuilderFactory::GetInstance()->DeleteType(m_DynType);
+        if (m_DynType != nullptr)
+        {
+            DynamicTypeBuilderFactory::GetInstance()->DeleteType(m_DynType);
+        }
         DynamicDataFactory::GetInstance()->DeleteData(m_listener.m_DynHello);
     }
-    Domain::removeParticipant(mp_participant);
 }
 
 void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)

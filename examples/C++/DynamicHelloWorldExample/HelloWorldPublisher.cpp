@@ -34,11 +34,12 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-HelloWorldPublisher::HelloWorldPublisher():mp_participant(nullptr),
-mp_publisher(nullptr), m_dynamic(false)
+HelloWorldPublisher::HelloWorldPublisher()
+    : mp_participant(nullptr)
+    , mp_publisher(nullptr)
+    , m_dynamic(false)
+    , m_DynType(nullptr)
 {
-
-
 }
 
 bool HelloWorldPublisher::init(bool dynamic)
@@ -49,34 +50,24 @@ bool HelloWorldPublisher::init(bool dynamic)
         // Given
         DynamicTypeBuilder* created_type_ulong(nullptr);
         DynamicTypeBuilder* created_type_string(nullptr);
+        DynamicTypeBuilder* struct_type_builder(nullptr);
         // Create basic types
         created_type_ulong = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type();
-        auto ulongType = created_type_ulong->Build();
         created_type_string = DynamicTypeBuilderFactory::GetInstance()->CreateStringType();
-        auto stringType = created_type_string->Build();
+        struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructType();
 
-        auto struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructType();
         // Add members to the struct.
-        types::MemberDescriptor descriptor;
-        descriptor.SetId(0);
-        descriptor.SetName("index");
-        descriptor.SetType(ulongType);
-        struct_type_builder->AddMember(&descriptor);
-        types::MemberDescriptor descriptor2;
-        descriptor2.SetId(1);
-        descriptor2.SetName("message");
-        descriptor2.SetType(stringType);
-        struct_type_builder->AddMember(&descriptor2);
-
+        struct_type_builder->AddMember(0, "index", created_type_ulong);
+        struct_type_builder->AddMember(1, "message", created_type_string);
         struct_type_builder->SetName("HelloWorld");
 
         m_DynType = struct_type_builder->Build();
-        //m_DynType->setName("HelloWorld");
-
         m_DynHello = DynamicDataFactory::GetInstance()->CreateData(m_DynType);
         m_DynHello->SetUint32Value(0, 0);
         m_DynHello->SetStringValue("HelloWorld", 1);
 
+        DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type_ulong);
+        DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type_string);
         DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type_builder);
     }
     else
@@ -132,13 +123,14 @@ bool HelloWorldPublisher::init(bool dynamic)
 
 HelloWorldPublisher::~HelloWorldPublisher()
 {
+    Domain::removeParticipant(mp_participant);
+
     // TODO Auto-generated destructor stub
     if (m_dynamic)
     {
         DynamicTypeBuilderFactory::GetInstance()->DeleteType(m_DynType);
         DynamicDataFactory::GetInstance()->DeleteData(m_DynHello);
     }
-    Domain::removeParticipant(mp_participant);
 }
 
 void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
