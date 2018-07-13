@@ -3980,14 +3980,14 @@ size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current
     case TK_STRING16:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        // string content (length + ((characters + 1) * 2) )
+        // string content (length + ((characters + 1) * 4) )
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
-            (data->mWStringValue.length() + 1) * 2;
+            (data->mWStringValue.length() + 1) * 4;
 #else
         auto it = data->mValues.begin();
-        // string content (length + ((characters + 1) * 2) )
+        // string content (length + ((characters + 1) * 4) )
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
-            (((std::wstring*)it->second)->length() + 1) * 2;
+            (((std::wstring*)it->second)->length() + 1) * 4;
 #endif
         break;
     }
@@ -4126,8 +4126,8 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t curr
     }
     case TK_STRING16:
     {
-        // string length + ( string content + 1 ) * 2
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + ((type->GetBounds() + 1) * 2);
+        // string length + ( string content + 1 ) * 4
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + ((type->GetBounds() + 1) * 4);
         break;
     }
     case TK_UNION:
@@ -4492,14 +4492,14 @@ size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType* type, size_t cu
     }
     case TK_STRING8:
     {
-        // string length + string content + 1
+        // string length + 1
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 1;
         break;
     }
     case TK_STRING16:
     {
-        // string length + ( string content + 1 ) * 2
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 2;
+        // string length +  4
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 4;
         break;
     }
     case TK_UNION:
