@@ -381,12 +381,10 @@ void TypeObjectFactory::AddTypeIdentifier(const std::string &type_name, const Ty
 void TypeObjectFactory::AddTypeObject(const std::string &type_name, const TypeIdentifier* identifier,
         const TypeObject* object)
 {
-    {
-        std::unique_lock<std::mutex> scoped(m_MutexIdentifiers);
-        m_Identifiers.insert(std::pair<std::string, const TypeIdentifier*>(type_name, identifier));
-        std::unique_lock<std::mutex> scopedObj(m_MutexObjects);
-        m_Objects.insert(std::pair<const TypeIdentifier*, const TypeObject*>(identifier, object));
-    }
+    std::unique_lock<std::mutex> scoped(m_MutexIdentifiers);
+    m_Identifiers.insert(std::pair<std::string, const TypeIdentifier*>(type_name, identifier));
+    std::unique_lock<std::mutex> scopedObj(m_MutexObjects);
+    m_Objects.insert(std::pair<const TypeIdentifier*, const TypeObject*>(identifier, object));
 }
 
 const TypeIdentifier* TypeObjectFactory::GetStringIdentifier(uint32_t bound, bool wide)
