@@ -3931,13 +3931,13 @@ size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current
     case TK_UINT32:
     case TK_FLOAT32:
     case TK_ENUM:
+    case TK_CHAR16: // WCHARS NEED 32 Bits on Linux & MacOS
     {
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
         break;
     }
     case TK_INT16:
     case TK_UINT16:
-    case TK_CHAR16:
     {
         current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
         break;
@@ -4086,13 +4086,13 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t curr
     case TK_UINT32:
     case TK_FLOAT32:
     case TK_ENUM:
+    case TK_CHAR16: // WCHARS NEED 32 Bits on Linux & MacOS
     {
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
         break;
     }
     case TK_INT16:
     case TK_UINT16:
-    case TK_CHAR16:
     {
         current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
         break;
@@ -4458,13 +4458,13 @@ size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType* type, size_t cu
     case TK_UINT32:
     case TK_FLOAT32:
     case TK_ENUM:
+    case TK_CHAR16: // WCHARS NEED 32 Bits on Linux & MacOS
     {
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
         break;
     }
     case TK_INT16:
     case TK_UINT16:
-    case TK_CHAR16:
     {
         current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
         break;
@@ -4598,7 +4598,7 @@ void DynamicData::SerializeEmptyData(const DynamicType* pType, eprosima::fastcdr
     }
     case TK_CHAR16:
     {
-        cdr << static_cast<uint16_t>(0);
+        cdr << static_cast<uint32_t>(0);
         break;
     }
     case TK_BOOLEAN:
