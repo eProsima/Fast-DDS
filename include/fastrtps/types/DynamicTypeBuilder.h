@@ -37,8 +37,9 @@ public:
 
     virtual ~DynamicTypeBuilder();
 
+    RTPS_DllAPI ResponseCode AddEmptyMember(uint32_t index, const std::string& name);
     RTPS_DllAPI ResponseCode AddMember(const MemberDescriptor* descriptor);
-    RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicType* mType);
+    RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicType* mType = nullptr);
     RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicType* mType,
         const std::string& defaultValue);
     RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicType* mType,

@@ -27,6 +27,7 @@ class MemberDescriptor
 {
 public:
     RTPS_DllAPI MemberDescriptor();
+    RTPS_DllAPI MemberDescriptor(uint32_t index, const std::string& name);
     RTPS_DllAPI MemberDescriptor(MemberId id, const std::string& name, DynamicType* mType);
     RTPS_DllAPI MemberDescriptor(MemberId id, const std::string& name, DynamicType* mType,
         const std::string& defaultValue);

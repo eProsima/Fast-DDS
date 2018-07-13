@@ -31,6 +31,16 @@ MemberDescriptor::MemberDescriptor()
 {
 }
 
+MemberDescriptor::MemberDescriptor(uint32_t index, const std::string& name)
+    : mName(name)
+    , mId(MEMBER_ID_INVALID)
+    , mType(nullptr)
+    , mDefaultValue("")
+    , mIndex(index)
+    , mDefaultLabel(false)
+{
+}
+
 MemberDescriptor::MemberDescriptor(const MemberDescriptor* descriptor)
 : mName("")
 , mId(MEMBER_ID_INVALID)
@@ -375,7 +385,7 @@ void MemberDescriptor::SetName(const std::string& name)
 
 void MemberDescriptor::SetType(DynamicType* type)
 {
-    mType = type;
+    mType = DynamicTypeBuilderFactory::GetInstance()->BuildType(type);
 }
 
 void MemberDescriptor::SetDefaultUnionValue(bool bDefault)
