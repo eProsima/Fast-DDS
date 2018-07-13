@@ -921,7 +921,6 @@ DynamicType* TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identifie
             uint32_t order = 0;
             for (MinimalEnumeratedLiteral &member : object->minimal().enumerated_type().literal_seq())
             {
-                const TypeIdentifier *auxMem = GetTypeIdentifier("uint32_t");
                 std::stringstream ss;
                 ss << member.detail().name_hash()[0];
                 ss << member.detail().name_hash()[1];
