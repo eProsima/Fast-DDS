@@ -36,6 +36,7 @@ class DynamicComplexTypesTests: public ::testing::Test
     public:
         DynamicComplexTypesTests()
         {
+            CompleteStruct toRegisterStatic;
             init();
         }
 
@@ -336,6 +337,38 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparision)
 
     DynamicDataFactory::GetInstance()->DeleteData(dynData);
     DynamicDataFactory::GetInstance()->DeleteData(dynData2);
+}
+
+TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
+{
+    // Serialize <-> Deserialize Test
+    types::DynamicData* dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    uint32_t payloadSize = static_cast<uint32_t>(m_DynAutoType->getSerializedSizeProvider(dynData)());
+    SerializedPayload_t payload(payloadSize);
+    ASSERT_TRUE(m_DynAutoType->serialize(dynData, &payload));
+
+    CompleteStruct staticData;
+    ASSERT_TRUE(m_StaticType.deserialize(&payload, &staticData));
+    ASSERT_TRUE(m_StaticType.serialize(&staticData, &payload));
+
+    types::DynamicData* dynData2 = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    ASSERT_TRUE(m_DynAutoType->deserialize(&payload, dynData2));
+
+    ASSERT_TRUE(dynData2->Equals(dynData));
+
+    DynamicDataFactory::GetInstance()->DeleteData(dynData);
+    DynamicDataFactory::GetInstance()->DeleteData(dynData2);
+}
+
+TEST_F(DynamicComplexTypesTests, Manual_Auto_Comparision)
+{
+    types::DynamicData* dynAutoData = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    types::DynamicData* dynManualData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
+
+    ASSERT_TRUE(dynManualData->Equals(dynAutoData));
+
+    DynamicDataFactory::GetInstance()->DeleteData(dynAutoData);
+    DynamicDataFactory::GetInstance()->DeleteData(dynManualData);
 }
 
 // TODO
