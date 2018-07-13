@@ -91,9 +91,10 @@ void DynamicComplexTypesTests::init()
 {
     m_factory = DynamicTypeBuilderFactory::GetInstance();
 
-    const TypeIdentifier *id = TypeObjectFactory::GetInstance()->GetTypeIdentifier("CompleteStruct");
-    const TypeObject *obj = TypeObjectFactory::GetInstance()->GetTypeObject(id);
-    m_DynAutoType = TypeObjectFactory::GetInstance()->BuildDynamicType(id, obj);
+    //const TypeIdentifier *id = TypeObjectFactory::GetInstance()->GetTypeIdentifier("CompleteStruct");
+    //const TypeObject *obj = TypeObjectFactory::GetInstance()->GetTypeObject(id);
+    //m_DynAutoType = TypeObjectFactory::GetInstance()->BuildDynamicType("CompleteStruct", id, obj);
+    m_DynAutoType = nullptr;
 
     // Manual creation
     // MyEnum

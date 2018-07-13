@@ -32,6 +32,16 @@ TypeDescriptor::TypeDescriptor()
 {
 }
 
+TypeDescriptor::TypeDescriptor(const std::string& name, TypeKind kind)
+    : mKind(kind)
+    , mName(name)
+    , mBaseType(nullptr)
+    , mDiscriminatorType(nullptr)
+    , mElementType(nullptr)
+    , mKeyElementType(nullptr)
+{
+}
+
 TypeDescriptor::TypeDescriptor(const TypeDescriptor* other)
     : mKind(0)
     , mName("")
