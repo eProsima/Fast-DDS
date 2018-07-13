@@ -1556,23 +1556,12 @@ TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
     ASSERT_TRUE(created_type != nullptr);
 
     // Add three members to the enum.
-    types::MemberDescriptor descriptor;
-    descriptor.SetIndex(0);
-    descriptor.SetName("DEFAULT");
-    ASSERT_TRUE(created_type->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
-
-    descriptor.SetIndex(1);
-    descriptor.SetName("FIRST");
-    ASSERT_TRUE(created_type->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
-
-    descriptor.SetIndex(2);
-    descriptor.SetName("SECOND");
-    ASSERT_TRUE(created_type->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(created_type->AddEmptyMember(0, "DEFAULT") == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(created_type->AddEmptyMember(1, "FIRST") == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(created_type->AddEmptyMember(2, "SECOND") == ResponseCode::RETCODE_OK);
 
     // Try to add a descriptor with the same name.
-    descriptor.SetIndex(4);
-    descriptor.SetName("DEFAULT");
-    ASSERT_FALSE(created_type->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(created_type->AddEmptyMember(4, "DEFAULT") == ResponseCode::RETCODE_OK);
 
     auto data = DynamicDataFactory::GetInstance()->CreateData(created_type);
 
@@ -2102,17 +2091,12 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     ASSERT_TRUE(created_type != nullptr);
 
     // Add two members to the bitmask
-    types::MemberDescriptor descriptor;
-    descriptor.SetIndex(0);
-    descriptor.SetName("TEST");
-    ASSERT_TRUE(created_type->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(created_type->AddEmptyMember(0, "TEST") == ResponseCode::RETCODE_OK);
 
     // Try to add a descriptor with the same name
-    descriptor.SetIndex(1);
-    ASSERT_FALSE(created_type->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(created_type->AddEmptyMember(1, "TEST") == ResponseCode::RETCODE_OK);
 
-    descriptor.SetName("TEST2");
-    ASSERT_TRUE(created_type->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(created_type->AddEmptyMember(1, "TEST2") == ResponseCode::RETCODE_OK);
 
     auto data = DynamicDataFactory::GetInstance()->CreateData(created_type);
     MemberId testId = data->GetMemberIdByName("TEST");
@@ -3086,17 +3070,8 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
     ASSERT_TRUE(struct_type_builder != nullptr);
 
     // Add members to the struct.
-    types::MemberDescriptor descriptor;
-    descriptor.SetId(0);
-    descriptor.SetName("int32");
-    descriptor.SetType(base_type);
-    ASSERT_TRUE(struct_type_builder->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
-
-    types::MemberDescriptor descriptor2;
-    descriptor2.SetId(1);
-    descriptor2.SetName("int64");
-    descriptor2.SetType(base_type2);
-    ASSERT_TRUE(struct_type_builder->AddMember(&descriptor2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(struct_type_builder->AddMember(0, "int32", base_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(struct_type_builder->AddMember(1, "int64", base_type2) == ResponseCode::RETCODE_OK);
 
     auto struct_type = struct_type_builder->Build();
     ASSERT_TRUE(struct_type != nullptr);
@@ -3174,17 +3149,8 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
     ASSERT_TRUE(struct_type_builder != nullptr);
 
     // Add members to the struct.
-    types::MemberDescriptor descriptor;
-    descriptor.SetId(0);
-    descriptor.SetName("int32");
-    descriptor.SetType(base_type);
-    ASSERT_TRUE(struct_type_builder->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
-
-    types::MemberDescriptor descriptor2;
-    descriptor2.SetId(1);
-    descriptor2.SetName("int64");
-    descriptor2.SetType(base_type2);
-    ASSERT_TRUE(struct_type_builder->AddMember(&descriptor2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(struct_type_builder->AddMember(0, "int32", base_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(struct_type_builder->AddMember(1, "int64", base_type2) == ResponseCode::RETCODE_OK);
 
     auto struct_type = struct_type_builder->Build();
     ASSERT_TRUE(struct_type != nullptr);
@@ -3198,18 +3164,10 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
     ASSERT_TRUE(child_struct_type_builder != nullptr);
 
     // Add a new member to the child struct.
-    types::MemberDescriptor descriptor3;
-    descriptor.SetId(2);
-    descriptor.SetName("child_int32");
-    descriptor.SetType(base_type);
-    ASSERT_TRUE(child_struct_type_builder->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(child_struct_type_builder->AddMember(2, "child_int32", base_type) == ResponseCode::RETCODE_OK);
 
     // try to add a member to override one of the parent struct.
-    types::MemberDescriptor descriptor4;
-    descriptor.SetId(3);
-    descriptor.SetName("int32");
-    descriptor.SetType(base_type);
-    ASSERT_FALSE(child_struct_type_builder->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(child_struct_type_builder->AddMember(3, "int32", base_type) == ResponseCode::RETCODE_OK);
 
     auto child_struct_type = child_struct_type_builder->Build();
     ASSERT_TRUE(child_struct_type != nullptr);
@@ -3298,17 +3256,8 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
     ASSERT_TRUE(struct_type_builder != nullptr);
 
     // Add members to the struct.
-    types::MemberDescriptor descriptor;
-    descriptor.SetId(0);
-    descriptor.SetName("int32");
-    descriptor.SetType(base_type);
-    ASSERT_TRUE(struct_type_builder->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
-
-    types::MemberDescriptor descriptor2;
-    descriptor2.SetId(1);
-    descriptor2.SetName("int64");
-    descriptor2.SetType(base_type2);
-    ASSERT_TRUE(struct_type_builder->AddMember(&descriptor2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(struct_type_builder->AddMember(0, "int32", base_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(struct_type_builder->AddMember(1, "int64", base_type2) == ResponseCode::RETCODE_OK);
 
     auto struct_type = struct_type_builder->Build();
     ASSERT_TRUE(struct_type != nullptr);
@@ -3318,17 +3267,8 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
     ASSERT_TRUE(parent_struct_type_builder != nullptr);
 
     // Add members to the parent struct.
-    types::MemberDescriptor descriptor3;
-    descriptor3.SetId(0);
-    descriptor3.SetName("child_struct");
-    descriptor3.SetType(struct_type);
-    ASSERT_TRUE(parent_struct_type_builder->AddMember(&descriptor3) == ResponseCode::RETCODE_OK);
-
-    types::MemberDescriptor descriptor4;
-    descriptor4.SetId(1);
-    descriptor4.SetName("child_int64");
-    descriptor4.SetType(base_type2);
-    ASSERT_TRUE(parent_struct_type_builder->AddMember(&descriptor4) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(parent_struct_type_builder->AddMember(0, "child_struct", struct_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(parent_struct_type_builder->AddMember(1, "child_int64", base_type2) == ResponseCode::RETCODE_OK);
 
     auto parent_struct_type = parent_struct_type_builder->Build();
     ASSERT_TRUE(parent_struct_type != nullptr);
@@ -3424,34 +3364,14 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
     ASSERT_TRUE(union_type_builder != nullptr);
 
     // Add members to the struct.
-    types::MemberDescriptor descriptor;
-    descriptor.SetId(0);
-    descriptor.SetName("first");
-    descriptor.SetType(base_type);
-    descriptor.SetDefaultUnionValue(true);
-    descriptor.AddUnionCaseIndex(0);
-    ASSERT_TRUE(union_type_builder->AddMember(&descriptor) == ResponseCode::RETCODE_OK);
-
-    types::MemberDescriptor descriptor2;
-    descriptor2.SetId(1);
-    descriptor2.SetName("second");
-    descriptor2.SetType(base_type2);
-    descriptor2.AddUnionCaseIndex(1);
-    ASSERT_TRUE(union_type_builder->AddMember(&descriptor2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(union_type_builder->AddMember(0, "first", base_type, "", { 0 }, true) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(union_type_builder->AddMember(1, "second", base_type2, "", { 1 }, false) == ResponseCode::RETCODE_OK);
 
     // Try to add a second "DEFAULT" value to the union
-    types::MemberDescriptor descriptor3;
-    descriptor3.SetId(0);
-    descriptor3.SetName("third");
-    descriptor3.SetType(base_type);
-    descriptor3.SetDefaultUnionValue(true);
-    descriptor3.AddUnionCaseIndex(0);
-    ASSERT_FALSE(union_type_builder->AddMember(&descriptor3) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(union_type_builder->AddMember(0, "third", base_type, "", { 0 }, true) == ResponseCode::RETCODE_OK);
 
-    // Try to add a second value to the same case
-    descriptor3.SetDefaultUnionValue(false);
-    descriptor3.AddUnionCaseIndex(1);
-    ASSERT_FALSE(union_type_builder->AddMember(&descriptor3) == ResponseCode::RETCODE_OK);
+    // Try to add a second value to the same case label
+    ASSERT_FALSE(union_type_builder->AddMember(0, "third", base_type, "", { 1 }, false) == ResponseCode::RETCODE_OK);
 
     // Create a data of this union
     auto union_type = union_type_builder->Build();

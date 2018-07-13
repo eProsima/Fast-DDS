@@ -55,6 +55,12 @@ DynamicTypeBuilder::~DynamicTypeBuilder()
 {
 }
 
+ResponseCode DynamicTypeBuilder::AddEmptyMember(uint32_t index, const std::string& name)
+{
+    MemberDescriptor descriptor(index, name);
+    return AddMember(&descriptor);
+}
+
 ResponseCode DynamicTypeBuilder::AddMember(const MemberDescriptor* descriptor)
 {
     if (mDescriptor != nullptr && descriptor != nullptr && descriptor->IsConsistent(mDescriptor->GetKind()))
@@ -126,8 +132,16 @@ ResponseCode DynamicTypeBuilder::AddMember(const MemberDescriptor* descriptor)
 
 ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicType* mType)
 {
-    MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->BuildType(mType));
-    return AddMember(&descriptor);
+    if (mType != nullptr)
+    {
+        MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->BuildType(mType));
+        return AddMember(&descriptor);
+    }
+    else
+    {
+        MemberDescriptor descriptor(id, name, nullptr);
+        return AddMember(&descriptor);
+    }
 }
 
 ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicType* mType,
