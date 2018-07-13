@@ -41,9 +41,9 @@ class DynamicComplexTypesTests: public ::testing::Test
 
         ~DynamicComplexTypesTests()
         {
-            factory->DeleteType(m_DynAutoType);
+            //factory->DeleteType(m_DynAutoType);
             //DynamicDataFactory::GetInstance()->DeleteData(m_DynAuto);
-            factory->DeleteType(m_DynManualType);
+            //factory->DeleteType(m_DynManualType);
             //DynamicDataFactory::GetInstance()->DeleteData(m_DynManual);
 
             if (!DynamicTypeBuilderFactory::GetInstance()->IsEmpty())
@@ -61,8 +61,8 @@ class DynamicComplexTypesTests: public ::testing::Test
 
         virtual void TearDown()
         {
-            DynamicDataFactory::DeleteInstance();
-            DynamicTypeBuilderFactory::DeleteInstance();
+            //DynamicDataFactory::DeleteInstance();
+            //DynamicTypeBuilderFactory::DeleteInstance();
         }
 
         void init();
@@ -542,7 +542,7 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparision)
     types::DynamicData* dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
     uint32_t payloadSize = static_cast<uint32_t>(m_DynManualType->getSerializedSizeProvider(dynData)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(m_DynManualType->serialize(&dynData, &payload));
+    ASSERT_TRUE(m_DynManualType->serialize(dynData, &payload));
 
     CompleteStruct staticData;
     ASSERT_TRUE(m_StaticType.deserialize(&payload, &staticData));
@@ -556,6 +556,12 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparision)
     DynamicDataFactory::GetInstance()->DeleteData(dynData);
     DynamicDataFactory::GetInstance()->DeleteData(dynData2);
 }
+
+// TODO
+/*
+-> Static_Auto
+-> Manual_Auto
+*/
 
 int main(int argc, char **argv)
 {
