@@ -338,6 +338,12 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparision)
     DynamicDataFactory::GetInstance()->DeleteData(dynData2);
 }
 
+// TODO
+/*
+-> Static_Auto
+-> Manual_Auto
+*/
+
 int main(int argc, char **argv)
 {
     Log::SetVerbosity(Log::Info);
