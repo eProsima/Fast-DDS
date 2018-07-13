@@ -3363,7 +3363,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
     union_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateUnionType(base_type);
     ASSERT_TRUE(union_type_builder != nullptr);
 
-    // Add members to the struct.
+    // Add members to the union.
     ASSERT_TRUE(union_type_builder->AddMember(0, "first", base_type, "", { 0 }, true) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(union_type_builder->AddMember(1, "second", base_type2, "", { 1 }, false) == ResponseCode::RETCODE_OK);
 
@@ -3435,6 +3435,122 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type_builder2) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(union_type_builder) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(union_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(union_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(union_type) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
+{
+    // Given
+    DynamicTypeBuilderFactory::GetInstance();
+    DynamicTypeBuilder* base_type_builder(nullptr);
+    DynamicTypeBuilder* base_type_builder2(nullptr);
+    DynamicTypeBuilder* union_type_builder(nullptr);
+    DynamicTypeBuilder* parent_union_type_builder(nullptr);
+
+    // Then
+    base_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
+    ASSERT_TRUE(base_type_builder != nullptr);
+    auto base_type = base_type_builder->Build();
+
+    base_type_builder2 = DynamicTypeBuilderFactory::GetInstance()->CreateInt64Type();
+    ASSERT_TRUE(base_type_builder2 != nullptr);
+    auto base_type2 = base_type_builder2->Build();
+
+    union_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateUnionType(base_type);
+    ASSERT_TRUE(union_type_builder != nullptr);
+
+    // Add members to the union.
+    ASSERT_TRUE(union_type_builder->AddMember(0, "first", base_type, "", { 0 }, true) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(union_type_builder->AddMember(1, "second", base_type2, "", { 1 }, false) == ResponseCode::RETCODE_OK);
+
+    // Try to add a second "DEFAULT" value to the union
+    ASSERT_FALSE(union_type_builder->AddMember(0, "third", base_type, "", { 0 }, true) == ResponseCode::RETCODE_OK);
+
+    // Try to add a second value to the same case label
+    ASSERT_FALSE(union_type_builder->AddMember(0, "third", base_type, "", { 1 }, false) == ResponseCode::RETCODE_OK);
+
+    // Create a data of this union
+    auto union_type = union_type_builder->Build();
+    ASSERT_TRUE(union_type != nullptr);
+
+    parent_union_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateUnionType(base_type);
+    ASSERT_TRUE(parent_union_type_builder != nullptr);
+
+    // Add Members to the parent union
+    ASSERT_TRUE(parent_union_type_builder->AddMember(0, "first", base_type, "", { 0 }, true) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(parent_union_type_builder->AddMember(1, "second", union_type, "", { 1 }, false) == ResponseCode::RETCODE_OK);
+
+    auto union_data = DynamicDataFactory::GetInstance()->CreateData(parent_union_type_builder);
+    ASSERT_TRUE(union_data != nullptr);
+
+    // Set and get the child values.
+    ASSERT_FALSE(union_data->SetInt32Value(10, 1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(union_data->SetStringValue("", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+    uint64_t label;
+    ASSERT_TRUE(union_data->GetUnionLabel(label) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(label == 0);
+
+    int32_t test1(234);
+    ASSERT_TRUE(union_data->SetInt32Value(test1, 0) == ResponseCode::RETCODE_OK);
+    int32_t test2(0);
+    ASSERT_TRUE(union_data->GetInt32Value(test2, 0) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+    ASSERT_TRUE(union_data->GetUnionLabel(label) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(label == 0);
+
+    // Loan Value ( Activates this union id )
+    DynamicData* child_data = union_data->LoanValue(1);
+    ASSERT_TRUE(child_data != 0);
+
+    int64_t test3(234);
+    int64_t test4(0);
+
+    // Try to get values from invalid indexes and from an invalid element ( not the current one )
+    ASSERT_FALSE(child_data->GetInt32Value(test2, 1) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(child_data->GetInt64Value(test4, 1) == ResponseCode::RETCODE_OK);
+
+    ASSERT_TRUE(child_data->SetInt64Value(test3, 1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(child_data->GetInt64Value(test4, 1) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(test3 == test4);
+
+    ASSERT_TRUE(union_data->ReturnLoanedValue(child_data) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(union_data->GetUnionLabel(label) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(label == 1);
+
+    // Serialize <-> Deserialize Test
+    uint32_t payloadSize = static_cast<uint32_t>(parent_union_type_builder->getSerializedSizeProvider(union_data)());
+    SerializedPayload_t payload(payloadSize);
+    ASSERT_TRUE(parent_union_type_builder->serialize(union_data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
+
+    types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(parent_union_type_builder);
+    ASSERT_TRUE(parent_union_type_builder->deserialize(&payload, data2));
+    ASSERT_TRUE(data2->Equals(union_data));
+
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
+
+    // Delete the map
+    ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(union_data) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(union_data) == ResponseCode::RETCODE_OK);
+
+    // Clean the types Factory.
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type2) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type_builder2) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(base_type_builder2) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(union_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(union_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(parent_union_type_builder) == ResponseCode::RETCODE_OK);
+    ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(parent_union_type_builder) == ResponseCode::RETCODE_OK);
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(union_type) == ResponseCode::RETCODE_OK);
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->DeleteType(union_type) == ResponseCode::RETCODE_OK);
 
