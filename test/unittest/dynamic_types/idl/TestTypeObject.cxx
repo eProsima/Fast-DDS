@@ -154,8 +154,11 @@ TestTypeFactory::~TestTypeFactory()
     m_Objects.clear();
 }
 
+static bool g_AlreadyRegistered = false;
 void TestTypeFactory::registerTypes()
 {
+    if (g_AlreadyRegistered) return;
+
     TypeObjectFactory *factory = TypeObjectFactory::GetInstance();
     factory->AddTypeObject("MyEnum", getMyEnumIdentifier(), getMyEnumObject());
     factory->AddTypeObject("MyAliasEnum", getMyAliasEnumIdentifier(), getMyAliasEnumObject());
@@ -171,6 +174,8 @@ void TestTypeFactory::registerTypes()
     factory->AddTypeObject("MyUnion", getMyUnionIdentifier(), getMyUnionObject());
     factory->AddTypeObject("MyUnion2", getMyUnion2Identifier(), getMyUnion2Object());
     factory->AddTypeObject("CompleteStruct", getCompleteStructIdentifier(), getCompleteStructObject());
+
+    g_AlreadyRegistered = true;
 }
 
 EquivalenceKind TestTypeFactory::getEquivalenceKind(const std::string &type_name) const
