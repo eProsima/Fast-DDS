@@ -46,9 +46,7 @@ public:
     RTPS_DllAPI const TypeIdentifier* GetMapIdentifier(const std::string &key_type_name,
         const std::string &value_type_name, uint32_t bound);
 
-    RTPS_DllAPI TypeDescriptor* BuildTypeDescriptor(const TypeIdentifier* identifier,
-        const TypeObject* object = nullptr) const;
-    RTPS_DllAPI DynamicType* BuildDynamicType(const TypeIdentifier* identifier,
+    RTPS_DllAPI DynamicType* BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
         const TypeObject* object = nullptr) const;
 
     RTPS_DllAPI void AddTypeIdentifier(const std::string &type_name, const TypeIdentifier* identifier);
@@ -59,6 +57,7 @@ protected:
     std::map<const std::string, const TypeIdentifier*> m_Identifiers;
     std::map<const TypeIdentifier*, const TypeObject*> m_Objects;
 
+
     std::string getStringTypeName(uint32_t bound, bool wide, bool generate_identifier = true);
     std::string getSequenceTypeName(const std::string &type_name, uint32_t bound, bool generate_identifier = true);
     std::string getArrayTypeName(const std::string &type_name, const std::vector<uint32_t> &bound,
@@ -67,8 +66,10 @@ protected:
         bool generate_identifier = true);
     std::string getMapTypeName(const std::string &key_type_name, const std::string &value_type_name, uint32_t bound,
         bool generate_identifier = true);
-    TypeDescriptor* BuildTypeDescriptorFromObject(TypeDescriptor* descriptor, const TypeObject* object) const;
-    void BuildTypeDescriptorFromMinimalObject(TypeDescriptor* descriptor, const MinimalTypeObject &minimal) const;
+    //TODO: TypeDescriptor* BuildTypeDescriptorFromObject(TypeDescriptor* descriptor, const TypeObject* object) const;
+    //TODO: void BuildTypeDescriptorFromMinimalObject(TypeDescriptor* descriptor, const MinimalTypeObject &minimal) const;
+
+    DynamicType* BuildDynamicType(const TypeIdentifier* identifier, const TypeObject* object) const;
 
     //MemberDescriptor* BuildMemberDescriptor(const TypeIdentifier* identifier, const TypeObject* object = nullptr);
 private:

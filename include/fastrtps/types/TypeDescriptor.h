@@ -29,6 +29,7 @@ class TypeDescriptor
 public:
     TypeDescriptor();
     TypeDescriptor(const TypeDescriptor* other);
+    TypeDescriptor(const std::string& name, TypeKind kind);
 
     ~TypeDescriptor();
 

@@ -16,6 +16,7 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/log/Log.h>
 #include <sstream>
 
@@ -632,400 +633,399 @@ static TypeKind GetTypeKindFromIdentifier(const TypeIdentifier* identifier)
     }
 }
 
-TypeDescriptor* TypeObjectFactory::BuildTypeDescriptor(const TypeIdentifier* identifier, const TypeObject* object) const
+//TypeDescriptor* TypeObjectFactory::BuildTypeDescriptorFromObject(TypeDescriptor* descriptor,
+//    const TypeObject* object) const
+//{
+//    if (descriptor->mKind != object->_d())
+//    {
+//        logError(TYPE_OBJECT_FACTORY, "TypeDescriptor doesn't correspond with TypeObject.");
+//        return descriptor;
+//    }
+//
+//    switch(descriptor->mKind)
+//    {
+//        case EK_MINIMAL:
+//            //TODO: BuildTypeDescriptorFromMinimalObject(descriptor, object->minimal());
+//            break;
+//        case EK_COMPLETE:
+//            // TODO
+//            break;
+//    }
+//
+//    return descriptor;
+//}
+
+//void TypeObjectFactory::BuildTypeDescriptorFromMinimalObject(
+//        TypeDescriptor* descriptor, const MinimalTypeObject &minimal) const
+//{
+//    descriptor->mKind = minimal._d(); // Must ignore "EK_MINIMAL" kind and use the inner kind
+//    switch(minimal._d())
+//    {
+//        case TK_ALIAS:
+//        {
+//            const TypeIdentifier *aux = &minimal.alias_type().body().common().related_type();
+//            descriptor->mBaseType = BuildDynamicType(aux, GetTypeObject(aux));
+//            break;
+//        }
+//        case TK_STRUCTURE:
+//        {
+//            const TypeIdentifier *aux = &minimal.struct_type().header().base_type();
+//            descriptor->mBaseType = BuildDynamicType(aux, GetTypeObject(aux));
+//            uint32_t order = 0;
+//            for (MinimalStructMember &member : minimal.struct_type().member_seq())
+//            {
+//                const TypeIdentifier *auxMem = &member.common().member_type_id();
+//                MemberDescriptor *memDesc = new MemberDescriptor();
+//                memDesc->mId = member.common().member_id();
+//                memDesc->SetType(BuildDynamicType(auxMem, GetTypeObject(auxMem)));
+//                memDesc->SetIndex(order++);
+//                memDesc->SetName(GenerateTypeName(GetTypeName(GetTypeKindFromIdentifier(auxMem))));
+//                memDesc->mType->mDescriptor->mBaseType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor);
+//                // TODO descriptor->AddMember(memDesc);
+//            }
+//            break;
+//        }
+//        case TK_ENUM:
+//        {
+//            uint32_t order = 0;
+//            for (MinimalEnumeratedLiteral &member : minimal.enumerated_type().literal_seq())
+//            {
+//                const TypeIdentifier *auxMem = GetTypeIdentifier("uint32_t");
+//                MemberDescriptor *memDesc = new MemberDescriptor();
+//                memDesc->SetType(BuildDynamicType(auxMem));
+//                memDesc->SetIndex(order++);
+//                std::stringstream ss;
+//                ss << member.detail().name_hash()[0];
+//                ss << member.detail().name_hash()[1];
+//                ss << member.detail().name_hash()[2];
+//                ss << member.detail().name_hash()[3];
+//                memDesc->SetName(ss.str());
+//                memDesc->mDefaultValue = std::to_string(memDesc->mIndex);
+//                memDesc->mType->mDescriptor->mBaseType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor);
+//                // TODO descriptor->AddMember(memDesc);
+//            }
+//            break;
+//        }
+//        case TK_BITMASK:
+//        {
+//            // TODO To implement
+//            break;
+//        }
+//        case TK_BITSET:
+//        {
+//            // TODO To implement
+//            break;
+//        }
+//        case TK_UNION:
+//        {
+//            const TypeIdentifier *aux  = &minimal.union_type().discriminator().common().type_id();
+//            descriptor->mDiscriminatorType = BuildDynamicType(aux, GetTypeObject(aux));
+//
+//            uint32_t order = 0;
+//            for (MinimalUnionMember &member : minimal.union_type().member_seq())
+//            {
+//                const TypeIdentifier *auxMem = &member.common().type_id();
+//                MemberDescriptor *memDesc = new MemberDescriptor();
+//                memDesc->SetType(BuildDynamicType(auxMem, GetTypeObject(auxMem)));
+//                memDesc->SetIndex(order++);
+//                memDesc->mId = member.common().member_id();
+//                memDesc->SetName(GenerateTypeName(GetTypeName(GetTypeKindFromIdentifier(auxMem))));
+//                memDesc->SetDefaultUnionValue(member.common().member_flags().IS_DEFAULT());
+//                memDesc->mDefaultValue = std::to_string(memDesc->mIndex);
+//                for (uint32_t lab : member.common().label_seq())
+//                {
+//                    memDesc->AddUnionCaseIndex(lab);
+//                }
+//                memDesc->mType->mDescriptor->mBaseType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor);
+//                // TODO descriptor->AddMember(memDesc);
+//            }
+//            break;
+//        }
+//        case TK_ANNOTATION:
+//        {
+//            // TODO To implement
+//            /*
+//            uint64_t order = 0;
+//            for (MinimalAnnotationParameter &member : minimal.annotation_type().member_seq())
+//            {
+//                const TypeIdentifier *auxMem = &member.common().type_id();
+//
+//                MemberDescriptor *memDesc = new MemberDescriptor();
+//                memDesc->SetName(member.name());
+//                memDesc->default_value(); [...]
+//                // Copy pasted...
+//                memDesc->SetType(BuildDynamicType(auxMem, GetTypeObject(auxMem)));
+//                memDesc->SetIndex(order++);
+//                memDesc->mId = member.common().member_id();
+//                memDesc->SetDefaultUnionValue(member.common().member_flags().IS_DEFAULT());
+//                memDesc->mDefaultValue = std::to_string(memDesc->mIndex);
+//                for (uint32_t lab : member.common().label_seq())
+//                {
+//                    memDesc->AddUnionCaseIndex(lab);
+//                }
+//                memDesc->mType->mDescriptor->mBaseType = descriptor;
+//            }
+//            */
+//            break;
+//        }
+//        // Impossible cases
+//        case TK_STRING8:
+//        case TK_STRING16:
+//        case TK_SEQUENCE:
+//        case TK_ARRAY:
+//        case TK_MAP:
+//        case EK_COMPLETE:
+//        case EK_MINIMAL:
+//        default:
+//            descriptor->mKind = TK_NONE;
+//            break;
+//    }
+//}
+
+DynamicType* TypeObjectFactory::BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
+    const TypeObject* object) const
 {
-    TypeDescriptor* descriptor = new TypeDescriptor();
-    if (identifier == nullptr)
+    DynamicType* outputType = BuildDynamicType(identifier, object);
+    if (outputType != nullptr)
     {
-        return descriptor;
+        outputType->SetName(name);
     }
-
-    descriptor->SetKind(GetTypeKindFromIdentifier(identifier));
-    descriptor->SetName(GenerateTypeName(GetTypeName(descriptor->mKind)));
-
-    switch(descriptor->mKind)
-    {
-        case TK_STRING8:
-        {
-            if (identifier->_d() == TI_STRING8_SMALL)
-            {
-                descriptor->mBound.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
-            }
-            else
-            {
-                descriptor->mBound.emplace_back(identifier->string_ldefn().bound());
-            }
-            break;
-        }
-        case TK_STRING16:
-        {
-            if (identifier->_d() == TI_STRING16_SMALL)
-            {
-                descriptor->mBound.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
-            }
-            else
-            {
-                descriptor->mBound.emplace_back(identifier->string_ldefn().bound());
-            }
-            break;
-        }
-        case TK_SEQUENCE:
-        {
-            if (identifier->_d() == TI_PLAIN_SEQUENCE_SMALL)
-            {
-                const TypeIdentifier *aux = identifier->seq_sdefn().element_identifier();
-                descriptor->mBound.emplace_back(static_cast<uint32_t>(identifier->seq_sdefn().bound()));
-                descriptor->mElementType = BuildDynamicType(aux, GetTypeObject(aux));
-            }
-            else
-            {
-                const TypeIdentifier *aux = identifier->seq_ldefn().element_identifier();
-                descriptor->mBound.emplace_back(identifier->seq_ldefn().bound());
-                descriptor->mElementType = BuildDynamicType(aux, GetTypeObject(aux));
-            }
-            break;
-        }
-        case TK_ARRAY:
-        {
-            if (identifier->_d() == TI_PLAIN_ARRAY_SMALL)
-            {
-                const TypeIdentifier *aux = identifier->array_sdefn().element_identifier();
-                for (octet b : identifier->array_sdefn().array_bound_seq())
-                {
-                    descriptor->mBound.emplace_back(static_cast<uint32_t>(b));
-                }
-                descriptor->mElementType = BuildDynamicType(aux, GetTypeObject(aux));
-            }
-            else
-            {
-                const TypeIdentifier *aux = identifier->array_ldefn().element_identifier();
-                descriptor->mBound = identifier->array_ldefn().array_bound_seq();
-                descriptor->mElementType = BuildDynamicType(aux, GetTypeObject(aux));
-            }
-        }
-        case TK_MAP:
-        {
-            if (identifier->_d() == TI_PLAIN_MAP_SMALL)
-            {
-                const TypeIdentifier *aux  = identifier->map_sdefn().element_identifier();
-                const TypeIdentifier *aux2 = identifier->map_sdefn().key_identifier();
-                descriptor->mBound.emplace_back(static_cast<uint32_t>(identifier->map_sdefn().bound()));
-                descriptor->mElementType = BuildDynamicType(aux, GetTypeObject(aux));
-                descriptor->mKeyElementType = BuildDynamicType(aux2, GetTypeObject(aux2));
-            }
-            else
-            {
-                const TypeIdentifier *aux  = identifier->map_ldefn().element_identifier();
-                const TypeIdentifier *aux2 = identifier->map_ldefn().key_identifier();
-                descriptor->mBound.emplace_back(identifier->map_ldefn().bound());
-                descriptor->mElementType = BuildDynamicType(aux, GetTypeObject(aux));
-                descriptor->mKeyElementType = BuildDynamicType(aux2, GetTypeObject(aux2));
-            }
-            break;
-        }
-        // From here, we need TypeObject
-        case TK_ALIAS:
-        {
-            if (object != nullptr)
-            {
-                const TypeIdentifier *aux = &object->minimal().alias_type().body().common().related_type();
-                descriptor->mBaseType = BuildDynamicType(aux, GetTypeObject(aux));
-            }
-            break;
-        }
-        case TK_STRUCTURE:
-        {
-            if (object != nullptr)
-            {
-                const TypeIdentifier *aux = &object->minimal().struct_type().header().base_type();
-                descriptor->mBaseType = BuildDynamicType(aux, GetTypeObject(aux));
-                uint32_t order = 0;
-                for (MinimalStructMember &member : object->minimal().struct_type().member_seq())
-                {
-                    const TypeIdentifier *auxMem = &member.common().member_type_id();
-                    MemberDescriptor *memDesc = new MemberDescriptor();
-                    memDesc->mId = member.common().member_id();
-                    memDesc->SetType(BuildDynamicType(auxMem, GetTypeObject(auxMem)));
-                    memDesc->SetIndex(order++);
-                    memDesc->SetName(GenerateTypeName(GetTypeName(GetTypeKindFromIdentifier(auxMem))));
-                    memDesc->mType->mDescriptor->mBaseType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor);
-                    // TODO descriptor->AddMember(memDesc);
-                }
-            }
-            break;
-        }
-        case TK_ENUM:
-        {
-            if (object != nullptr)
-            {
-                uint32_t order = 0;
-                for (MinimalEnumeratedLiteral &member : object->minimal().enumerated_type().literal_seq())
-                {
-                    const TypeIdentifier *auxMem = GetTypeIdentifier("uint32_t");
-                    MemberDescriptor *memDesc = new MemberDescriptor();
-                    memDesc->SetType(BuildDynamicType(auxMem));
-                    memDesc->SetIndex(order++);
-                    std::stringstream ss;
-                    ss << member.detail().name_hash()[0];
-                    ss << member.detail().name_hash()[1];
-                    ss << member.detail().name_hash()[2];
-                    ss << member.detail().name_hash()[3];
-                    memDesc->SetName(ss.str());
-                    memDesc->mDefaultValue = std::to_string(memDesc->mIndex);
-                    memDesc->mType->mDescriptor->mBaseType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor);
-                    // TODO descriptor->AddMember(memDesc);
-                }
-            }
-            break;
-        }
-        case TK_BITMASK:
-        {
-            if (object != nullptr)
-            {
-                // TODO To implement
-            }
-            break;
-        }
-        case TK_BITSET:
-        {
-            if (object != nullptr)
-            {
-                // TODO To implement
-            }
-            break;
-        }
-        case TK_UNION:
-        {
-            if (object != nullptr)
-            {
-                const TypeIdentifier *aux  = &object->minimal().union_type().discriminator().common().type_id();
-                descriptor->mDiscriminatorType = BuildDynamicType(aux, GetTypeObject(aux));
-
-                uint32_t order = 0;
-                for (MinimalUnionMember &member : object->minimal().union_type().member_seq())
-                {
-                    const TypeIdentifier *auxMem = &member.common().type_id();
-                    MemberDescriptor *memDesc = new MemberDescriptor();
-                    memDesc->SetType(BuildDynamicType(auxMem, GetTypeObject(auxMem)));
-                    memDesc->SetIndex(order++);
-                    memDesc->mId = member.common().member_id();
-                    memDesc->SetName(GenerateTypeName(GetTypeName(GetTypeKindFromIdentifier(auxMem))));
-                    memDesc->SetDefaultUnionValue(member.common().member_flags().IS_DEFAULT());
-                    memDesc->mDefaultValue = std::to_string(memDesc->mIndex);
-                    for (uint32_t lab : member.common().label_seq())
-                    {
-                        memDesc->AddUnionCaseIndex(lab);
-                    }
-                    memDesc->mType->mDescriptor->mBaseType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor);
-                    // TODO descriptor->AddMember(memDesc);
-                }
-            }
-            break;
-        }
-        case TK_ANNOTATION:
-        {
-            // TODO To implement
-
-            if (object != nullptr)
-            {
-                /*
-                uint64_t order = 0;
-                for (MinimalAnnotationParameter &member : object->minimal().annotation_type().member_seq())
-                {
-                    const TypeIdentifier *auxMem = &member.common().type_id();
-
-                    MemberDescriptor *memDesc = new MemberDescriptor();
-                    memDesc->SetName(member.name());
-                    memDesc->default_value(); [...]
-                    // Copy pasted...
-                    memDesc->SetType(BuildDynamicType(auxMem, GetTypeObject(auxMem)));
-                    memDesc->SetIndex(order++);
-                    memDesc->mId = member.common().member_id();
-                    memDesc->SetDefaultUnionValue(member.common().member_flags().IS_DEFAULT());
-                    memDesc->mDefaultValue = std::to_string(memDesc->mIndex);
-                    for (uint32_t lab : member.common().label_seq())
-                    {
-                        memDesc->AddUnionCaseIndex(lab);
-                    }
-                    memDesc->mType->mDescriptor->mBaseType = descriptor;
-                }
-                */
-            }
-            break;
-        }
-        case EK_COMPLETE:
-        case EK_MINIMAL:
-            if (object != nullptr)
-            {
-                BuildTypeDescriptorFromObject(descriptor, object);
-            }
-            break;
-        default:
-            break;
-    }
-
-    return descriptor;
+    return outputType;
 }
 
-TypeDescriptor* TypeObjectFactory::BuildTypeDescriptorFromObject(
-        TypeDescriptor* descriptor, const TypeObject* object) const
+DynamicType* TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identifier, const TypeObject* object) const
 {
-    if (descriptor->mKind != object->_d())
+    TypeKind kind = GetTypeKindFromIdentifier(identifier);
+    TypeDescriptor descriptor = new TypeDescriptor(GenerateTypeName(GetTypeName(kind)), kind);
+    switch (kind)
     {
-        logError(TYPE_OBJECT_FACTORY, "TypeDescriptor doesn't correspond with TypeObject.");
-        return descriptor;
-    }
-
-    switch(descriptor->mKind)
+    case TK_STRING8:
     {
-        case EK_MINIMAL:
-            BuildTypeDescriptorFromMinimalObject(descriptor, object->minimal());
-            break;
-        case EK_COMPLETE:
-            // TODO
-            break;
-    }
-
-    return descriptor;
-}
-
-void TypeObjectFactory::BuildTypeDescriptorFromMinimalObject(
-        TypeDescriptor* descriptor, const MinimalTypeObject &minimal) const
-{
-    descriptor->mKind = minimal._d(); // Must ignore "EK_MINIMAL" kind and use the inner kind
-    switch(minimal._d())
-    {
-        case TK_ALIAS:
+        if (identifier->_d() == TI_STRING8_SMALL)
         {
-            const TypeIdentifier *aux = &minimal.alias_type().body().common().related_type();
-            descriptor->mBaseType = BuildDynamicType(aux, GetTypeObject(aux));
-            break;
+            descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
         }
-        case TK_STRUCTURE:
+        else
         {
-            const TypeIdentifier *aux = &minimal.struct_type().header().base_type();
-            descriptor->mBaseType = BuildDynamicType(aux, GetTypeObject(aux));
+            descriptor.mBound.emplace_back(identifier->string_ldefn().bound());
+        }
+        break;
+    }
+    case TK_STRING16:
+    {
+        if (identifier->_d() == TI_STRING16_SMALL)
+        {
+            descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
+        }
+        else
+        {
+            descriptor.mBound.emplace_back(identifier->string_ldefn().bound());
+        }
+        break;
+    }
+    case TK_SEQUENCE:
+    {
+        if (identifier->_d() == TI_PLAIN_SEQUENCE_SMALL)
+        {
+            const TypeIdentifier *aux = identifier->seq_sdefn().element_identifier();
+            descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->seq_sdefn().bound()));
+            descriptor.mElementType = BuildDynamicType(aux, GetTypeObject(aux));
+        }
+        else
+        {
+            const TypeIdentifier *aux = identifier->seq_ldefn().element_identifier();
+            descriptor.mBound.emplace_back(identifier->seq_ldefn().bound());
+            descriptor.mElementType = BuildDynamicType(aux, GetTypeObject(aux));
+        }
+        break;
+    }
+    case TK_ARRAY:
+    {
+        if (identifier->_d() == TI_PLAIN_ARRAY_SMALL)
+        {
+            const TypeIdentifier *aux = identifier->array_sdefn().element_identifier();
+            for (octet b : identifier->array_sdefn().array_bound_seq())
+            {
+                descriptor.mBound.emplace_back(static_cast<uint32_t>(b));
+            }
+            descriptor.mElementType = BuildDynamicType(aux, GetTypeObject(aux));
+        }
+        else
+        {
+            const TypeIdentifier *aux = identifier->array_ldefn().element_identifier();
+            descriptor.mBound = identifier->array_ldefn().array_bound_seq();
+            descriptor.mElementType = BuildDynamicType(aux, GetTypeObject(aux));
+        }
+        break;
+    }
+    case TK_MAP:
+    {
+        if (identifier->_d() == TI_PLAIN_MAP_SMALL)
+        {
+            const TypeIdentifier *aux = identifier->map_sdefn().element_identifier();
+            const TypeIdentifier *aux2 = identifier->map_sdefn().key_identifier();
+            descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->map_sdefn().bound()));
+            descriptor.mElementType = BuildDynamicType(aux, GetTypeObject(aux));
+            descriptor.mKeyElementType = BuildDynamicType(aux2, GetTypeObject(aux2));
+        }
+        else
+        {
+            const TypeIdentifier *aux = identifier->map_ldefn().element_identifier();
+            const TypeIdentifier *aux2 = identifier->map_ldefn().key_identifier();
+            descriptor.mBound.emplace_back(identifier->map_ldefn().bound());
+            descriptor.mElementType = BuildDynamicType(aux, GetTypeObject(aux));
+            descriptor.mKeyElementType = BuildDynamicType(aux2, GetTypeObject(aux2));
+        }
+        break;
+    }
+    // From here, we need TypeObject
+    case TK_ALIAS:
+    {
+        if (object != nullptr)
+        {
+            const TypeIdentifier *aux = &object->minimal().alias_type().body().common().related_type();
+            descriptor.mBaseType = BuildDynamicType(aux, GetTypeObject(aux));
+        }
+        break;
+    }
+    case TK_STRUCTURE:
+    {
+        if (object != nullptr)
+        {
+            const TypeIdentifier *aux = &object->minimal().struct_type().header().base_type();
+            descriptor.mBaseType = BuildDynamicType(aux, GetTypeObject(aux));
+
+            DynamicTypeBuilder* structType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomType(&descriptor);
+
             uint32_t order = 0;
-            for (MinimalStructMember &member : minimal.struct_type().member_seq())
+            for (MinimalStructMember &member : object->minimal().struct_type().member_seq())
             {
                 const TypeIdentifier *auxMem = &member.common().member_type_id();
-                MemberDescriptor *memDesc = new MemberDescriptor();
-                memDesc->mId = member.common().member_id();
-                memDesc->SetType(BuildDynamicType(auxMem, GetTypeObject(auxMem)));
-                memDesc->SetIndex(order++);
-                memDesc->SetName(GenerateTypeName(GetTypeName(GetTypeKindFromIdentifier(auxMem))));
-                memDesc->mType->mDescriptor->mBaseType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor);
-                // TODO descriptor->AddMember(memDesc);
+                MemberDescriptor memDesc;
+                memDesc.mId = member.common().member_id();
+                memDesc.SetType(BuildDynamicType(auxMem, GetTypeObject(auxMem)));
+                memDesc.SetIndex(order++);
+                memDesc.SetName(GenerateTypeName(GetTypeName(GetTypeKindFromIdentifier(auxMem))));
+                structType->AddMember(&memDesc);
             }
-            break;
+            return structType;
         }
-        case TK_ENUM:
+        break;
+    }
+    case TK_ENUM:
+    {
+        if (object != nullptr)
         {
+            DynamicTypeBuilder* enumType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomType(&descriptor);
+
             uint32_t order = 0;
-            for (MinimalEnumeratedLiteral &member : minimal.enumerated_type().literal_seq())
+            for (MinimalEnumeratedLiteral &member : object->minimal().enumerated_type().literal_seq())
             {
                 const TypeIdentifier *auxMem = GetTypeIdentifier("uint32_t");
-                MemberDescriptor *memDesc = new MemberDescriptor();
-                memDesc->SetType(BuildDynamicType(auxMem));
-                memDesc->SetIndex(order++);
                 std::stringstream ss;
                 ss << member.detail().name_hash()[0];
                 ss << member.detail().name_hash()[1];
                 ss << member.detail().name_hash()[2];
                 ss << member.detail().name_hash()[3];
-                memDesc->SetName(ss.str());
-                memDesc->mDefaultValue = std::to_string(memDesc->mIndex);
-                memDesc->mType->mDescriptor->mBaseType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor);
-                // TODO descriptor->AddMember(memDesc);
+                enumType->AddEmptyMember(order++, ss.str());
             }
-            break;
+            return enumType;
+
         }
-        case TK_BITMASK:
+        break;
+    }
+    case TK_BITMASK:
+    {
+        if (object != nullptr)
         {
             // TODO To implement
-            break;
         }
-        case TK_BITSET:
+        break;
+    }
+    case TK_BITSET:
+    {
+        if (object != nullptr)
         {
             // TODO To implement
-            break;
         }
-        case TK_UNION:
+        break;
+    }
+    case TK_UNION:
+    {
+        if (object != nullptr)
         {
-            const TypeIdentifier *aux  = &minimal.union_type().discriminator().common().type_id();
-            descriptor->mDiscriminatorType = BuildDynamicType(aux, GetTypeObject(aux));
+            const TypeIdentifier *aux = &object->minimal().union_type().discriminator().common().type_id();
+            descriptor.mDiscriminatorType = BuildDynamicType(aux, GetTypeObject(aux));
+
+            DynamicTypeBuilder* unionType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomType(&descriptor);
 
             uint32_t order = 0;
-            for (MinimalUnionMember &member : minimal.union_type().member_seq())
+            for (MinimalUnionMember &member : object->minimal().union_type().member_seq())
             {
                 const TypeIdentifier *auxMem = &member.common().type_id();
-                MemberDescriptor *memDesc = new MemberDescriptor();
-                memDesc->SetType(BuildDynamicType(auxMem, GetTypeObject(auxMem)));
-                memDesc->SetIndex(order++);
-                memDesc->mId = member.common().member_id();
-                memDesc->SetName(GenerateTypeName(GetTypeName(GetTypeKindFromIdentifier(auxMem))));
-                memDesc->SetDefaultUnionValue(member.common().member_flags().IS_DEFAULT());
-                memDesc->mDefaultValue = std::to_string(memDesc->mIndex);
+                MemberDescriptor memDesc;
+                memDesc.SetType(BuildDynamicType(auxMem, GetTypeObject(auxMem)));
+                memDesc.SetIndex(order++);
+                memDesc.mId = member.common().member_id();
+                memDesc.SetName(GenerateTypeName(GetTypeName(GetTypeKindFromIdentifier(auxMem))));
+                memDesc.SetDefaultUnionValue(member.common().member_flags().IS_DEFAULT());
+                memDesc.mDefaultValue = std::to_string(memDesc.mIndex);
                 for (uint32_t lab : member.common().label_seq())
                 {
-                    memDesc->AddUnionCaseIndex(lab);
+                    memDesc.AddUnionCaseIndex(lab);
                 }
-                memDesc->mType->mDescriptor->mBaseType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor);
-                // TODO descriptor->AddMember(memDesc);
+                unionType->AddMember(&memDesc);
             }
-            break;
+
+            return unionType;
         }
-        case TK_ANNOTATION:
+        break;
+    }
+    case TK_ANNOTATION:
+    {
+        // TODO To implement
+
+        if (object != nullptr)
         {
-            // TODO To implement
             /*
             uint64_t order = 0;
-            for (MinimalAnnotationParameter &member : minimal.annotation_type().member_seq())
+            for (MinimalAnnotationParameter &member : object->minimal().annotation_type().member_seq())
             {
-                const TypeIdentifier *auxMem = &member.common().type_id();
+            const TypeIdentifier *auxMem = &member.common().type_id();
 
-                MemberDescriptor *memDesc = new MemberDescriptor();
-                memDesc->SetName(member.name());
-                memDesc->default_value(); [...]
-                // Copy pasted...
-                memDesc->SetType(BuildDynamicType(auxMem, GetTypeObject(auxMem)));
-                memDesc->SetIndex(order++);
-                memDesc->mId = member.common().member_id();
-                memDesc->SetDefaultUnionValue(member.common().member_flags().IS_DEFAULT());
-                memDesc->mDefaultValue = std::to_string(memDesc->mIndex);
-                for (uint32_t lab : member.common().label_seq())
-                {
-                    memDesc->AddUnionCaseIndex(lab);
-                }
-                memDesc->mType->mDescriptor->mBaseType = descriptor;
+            MemberDescriptor *memDesc = new MemberDescriptor();
+            memDesc->SetName(member.name());
+            memDesc->default_value(); [...]
+            // Copy pasted...
+            memDesc->SetType(BuildDynamicType(auxMem, GetTypeObject(auxMem)));
+            memDesc->SetIndex(order++);
+            memDesc->mId = member.common().member_id();
+            memDesc->SetDefaultUnionValue(member.common().member_flags().IS_DEFAULT());
+            memDesc->mDefaultValue = std::to_string(memDesc->mIndex);
+            for (uint32_t lab : member.common().label_seq())
+            {
+            memDesc->AddUnionCaseIndex(lab);
+            }
+            memDesc->mType->mDescriptor->mBaseType = descriptor;
             }
             */
-            break;
         }
-        // Impossible cases
-        case TK_STRING8:
-        case TK_STRING16:
-        case TK_SEQUENCE:
-        case TK_ARRAY:
-        case TK_MAP:
-        case EK_COMPLETE:
-        case EK_MINIMAL:
-        default:
-            descriptor->mKind = TK_NONE;
-            break;
+        break;
     }
-}
-
-DynamicType* TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identifier, const TypeObject* object) const
-{
-    TypeDescriptor* descriptor = BuildTypeDescriptor(identifier, object);
-    if (descriptor == nullptr)
-    {
-        return nullptr;
+    case EK_COMPLETE:
+    case EK_MINIMAL:
+        if (object != nullptr)
+        {
+            //TODO: TO IMPLEMENT FOR EK_COMPLETE, MINIMALS ONLY CAN BE USED TO CHECK THE INTEGRITY
+            //BuildTypeDescriptorFromObject(descriptor, object);
+        }
+        break;
+    default:
+        break;
     }
 
-    DynamicTypeBuilderFactory* factory = DynamicTypeBuilderFactory::GetInstance();
-    return factory->BuildType(descriptor);
+    DynamicTypeBuilder* outputType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomType(&descriptor);
+    return outputType;
 }
 
 } // namespace types
