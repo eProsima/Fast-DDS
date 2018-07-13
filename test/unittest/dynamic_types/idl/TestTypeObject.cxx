@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*!
+/*! 
  * @file TestTypeObject.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -41,77 +41,96 @@ TestTypeFactory::TestTypeFactory()
     // Generate basic TypeIdentifiers
     TypeIdentifier *auxIdent;
     // TK_BOOLEAN:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_BOOLEAN);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("bool", auxIdent));
+    if (m_Identifiers.find("bool") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_BOOLEAN);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("bool", auxIdent));
+    }
     // TK_BYTE:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_BYTE);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint8_t", auxIdent));
+    if (m_Identifiers.find("uint8_t") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_BYTE);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint8_t", auxIdent));
+    }
     // TK_INT16:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_INT16);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int16_t", auxIdent));
+    if (m_Identifiers.find("int16_t") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_INT16);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int16_t", auxIdent));
+    }
     // TK_INT32:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_INT32);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int32_t", auxIdent));
+    if (m_Identifiers.find("int32_t") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_INT32);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int32_t", auxIdent));
+    }
     // TK_INT64:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_INT64);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int64_t", auxIdent));
+    if (m_Identifiers.find("int64_t") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_INT64);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int64_t", auxIdent));
+    }
     // TK_UINT16:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_UINT16);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint16_t", auxIdent));
+    if (m_Identifiers.find("uint16_t") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_UINT16);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint16_t", auxIdent));
+    }
     // TK_UINT32:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_UINT32);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint32_t", auxIdent));
+    if (m_Identifiers.find("uint32_t") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_UINT32);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint32_t", auxIdent));
+    }
     // TK_UINT64:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_UINT64);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint64_t", auxIdent));
+    if (m_Identifiers.find("uint64_t") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_UINT64);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint64_t", auxIdent));
+    }
     // TK_FLOAT32:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_FLOAT32);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("float", auxIdent));
+    if (m_Identifiers.find("float") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_FLOAT32);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("float", auxIdent));
+    }
     // TK_FLOAT64:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_FLOAT64);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("double", auxIdent));
+    if (m_Identifiers.find("double") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_FLOAT64);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("double", auxIdent));
+    }
     // TK_FLOAT128:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_FLOAT128);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("long double", auxIdent));
+    if (m_Identifiers.find("long double") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_FLOAT128);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("long double", auxIdent));
+    }
     // TK_CHAR8:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_CHAR8);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("char", auxIdent));
+    if (m_Identifiers.find("char") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_CHAR8);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("char", auxIdent));
+    }
     // TK_CHAR16:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_CHAR16);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("wchar_t", auxIdent));
-
-    // Not basic, but "standard"
-    // TI_STRING8_SMALL:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TI_STRING8_SMALL);
-    auxIdent->string_sdefn().bound(255);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("std::string_255", auxIdent));
-    // TI_STRING16_SMALL:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TI_STRING16_SMALL);
-    auxIdent->string_sdefn().bound(255);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("std::wstring_255", auxIdent));
-    // TI_STRING8_LARGE:
-    //auxIdent = new TypeIdentifier;
-    //auxIdent->_d(TI_STRING8_LARGE);
-    //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("string", auxIdent));
-    // TI_STRING16_LARGE:
-    //auxIdent = new TypeIdentifier;
-    //auxIdent->_d(TI_STRING16_LARGE);
-    //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("std::wstring", auxIdent));
+    if (m_Identifiers.find("wchar_t") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_CHAR16);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("wchar_t", auxIdent));
+    }
 
     registerTypes();
 }
@@ -695,7 +714,8 @@ TypeIdentifier* TestTypeFactory::getMyEnumIdentifier()
     TypeIdentifier* identifier = new TypeIdentifier();
     identifier->_d(EK_MINIMAL);
 
-    SerializedPayload_t payload(static_cast<uint32_t>(MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4));
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -826,9 +846,25 @@ TypeObject* TestTypeFactory::getMyAliasEnumObject()
     type_object->minimal().alias_type().body().common().related_flags().IS_KEY(false);
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
-    // Must be defined already
-    type_object->minimal().alias_type().body().common().related_type() =
-        *m_Identifiers.at("MyEnum"); // Make a copy
+    // Must be defined already, if don't, may be an recursive alias
+    if (m_Identifiers.find("MyEnum") != m_Identifiers.end())
+    {
+        type_object->minimal().alias_type().body().common().related_type() =
+            *m_Identifiers.at("MyEnum"); // Make a copy
+    }
+    else
+    {
+        if (m_Aliases.find("MyEnum") != m_Aliases.end())
+        {
+            type_object->minimal().alias_type().body().common().related_type() =
+                *getTypeIdentifier(m_Aliases.at("MyEnum"));
+        }
+        else
+        {
+            // Cannot determine base type
+            return nullptr;
+        }
+    }
 
     // Don't add our TypeIdentifier but our alias
     m_Aliases.emplace(std::pair<std::string, std::string>("MyAliasEnum", "MyEnum"));
@@ -869,9 +905,25 @@ TypeObject* TestTypeFactory::getMyAliasEnum2Object()
     type_object->minimal().alias_type().body().common().related_flags().IS_KEY(false);
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
-    // Must be defined already
-    type_object->minimal().alias_type().body().common().related_type() =
-        *m_Identifiers.at("MyAliasEnum"); // Make a copy
+    // Must be defined already, if don't, may be an recursive alias
+    if (m_Identifiers.find("MyAliasEnum") != m_Identifiers.end())
+    {
+        type_object->minimal().alias_type().body().common().related_type() =
+            *m_Identifiers.at("MyAliasEnum"); // Make a copy
+    }
+    else
+    {
+        if (m_Aliases.find("MyAliasEnum") != m_Aliases.end())
+        {
+            type_object->minimal().alias_type().body().common().related_type() =
+                *getTypeIdentifier(m_Aliases.at("MyAliasEnum"));
+        }
+        else
+        {
+            // Cannot determine base type
+            return nullptr;
+        }
+    }
 
     // Don't add our TypeIdentifier but our alias
     m_Aliases.emplace(std::pair<std::string, std::string>("MyAliasEnum2", "MyAliasEnum"));
@@ -912,9 +964,25 @@ TypeObject* TestTypeFactory::getMyAliasEnum3Object()
     type_object->minimal().alias_type().body().common().related_flags().IS_KEY(false);
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
-    // Must be defined already
-    type_object->minimal().alias_type().body().common().related_type() =
-        *m_Identifiers.at("MyAliasEnum2"); // Make a copy
+    // Must be defined already, if don't, may be an recursive alias
+    if (m_Identifiers.find("MyAliasEnum2") != m_Identifiers.end())
+    {
+        type_object->minimal().alias_type().body().common().related_type() =
+            *m_Identifiers.at("MyAliasEnum2"); // Make a copy
+    }
+    else
+    {
+        if (m_Aliases.find("MyAliasEnum2") != m_Aliases.end())
+        {
+            type_object->minimal().alias_type().body().common().related_type() =
+                *getTypeIdentifier(m_Aliases.at("MyAliasEnum2"));
+        }
+        else
+        {
+            // Cannot determine base type
+            return nullptr;
+        }
+    }
 
     // Don't add our TypeIdentifier but our alias
     m_Aliases.emplace(std::pair<std::string, std::string>("MyAliasEnum3", "MyAliasEnum2"));
@@ -1295,9 +1363,25 @@ TypeObject* TestTypeFactory::getMyOctetArray500Object()
     type_object->minimal().alias_type().body().common().related_flags().IS_KEY(false);
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
-    // Must be defined already
-    type_object->minimal().alias_type().body().common().related_type() =
-        *m_Identifiers.at("std::array<uint8_t, 500>"); // Make a copy
+    // Must be defined already, if don't, may be an recursive alias
+    if (m_Identifiers.find("std::array<uint8_t, 500>") != m_Identifiers.end())
+    {
+        type_object->minimal().alias_type().body().common().related_type() =
+            *m_Identifiers.at("std::array<uint8_t, 500>"); // Make a copy
+    }
+    else
+    {
+        if (m_Aliases.find("std::array<uint8_t, 500>") != m_Aliases.end())
+        {
+            type_object->minimal().alias_type().body().common().related_type() =
+                *getTypeIdentifier(m_Aliases.at("std::array<uint8_t, 500>"));
+        }
+        else
+        {
+            // Cannot determine base type
+            return nullptr;
+        }
+    }
 
     // Don't add our TypeIdentifier but our alias
     m_Aliases.emplace(std::pair<std::string, std::string>("MyOctetArray500", "std::array<uint8_t, 500>"));
@@ -1338,9 +1422,25 @@ TypeObject* TestTypeFactory::getBSAlias5Object()
     type_object->minimal().alias_type().body().common().related_flags().IS_KEY(false);
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
-    // Must be defined already
-    type_object->minimal().alias_type().body().common().related_type() =
-        *m_Identifiers.at("std::array<BasicStruct, 5>"); // Make a copy
+    // Must be defined already, if don't, may be an recursive alias
+    if (m_Identifiers.find("std::array<BasicStruct, 5>") != m_Identifiers.end())
+    {
+        type_object->minimal().alias_type().body().common().related_type() =
+            *m_Identifiers.at("std::array<BasicStruct, 5>"); // Make a copy
+    }
+    else
+    {
+        if (m_Aliases.find("std::array<BasicStruct, 5>") != m_Aliases.end())
+        {
+            type_object->minimal().alias_type().body().common().related_type() =
+                *getTypeIdentifier(m_Aliases.at("std::array<BasicStruct, 5>"));
+        }
+        else
+        {
+            // Cannot determine base type
+            return nullptr;
+        }
+    }
 
     // Don't add our TypeIdentifier but our alias
     m_Aliases.emplace(std::pair<std::string, std::string>("BSAlias5", "std::array<BasicStruct, 5>"));
@@ -1381,9 +1481,25 @@ TypeObject* TestTypeFactory::getMA3Object()
     type_object->minimal().alias_type().body().common().related_flags().IS_KEY(false);
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
-    // Must be defined already
-    type_object->minimal().alias_type().body().common().related_type() =
-        *m_Identifiers.at("std::array<MyAliasEnum3, 42>"); // Make a copy
+    // Must be defined already, if don't, may be an recursive alias
+    if (m_Identifiers.find("std::array<MyAliasEnum3, 42>") != m_Identifiers.end())
+    {
+        type_object->minimal().alias_type().body().common().related_type() =
+            *m_Identifiers.at("std::array<MyAliasEnum3, 42>"); // Make a copy
+    }
+    else
+    {
+        if (m_Aliases.find("std::array<MyAliasEnum3, 42>") != m_Aliases.end())
+        {
+            type_object->minimal().alias_type().body().common().related_type() =
+                *getTypeIdentifier(m_Aliases.at("std::array<MyAliasEnum3, 42>"));
+        }
+        else
+        {
+            // Cannot determine base type
+            return nullptr;
+        }
+    }
 
     // Don't add our TypeIdentifier but our alias
     m_Aliases.emplace(std::pair<std::string, std::string>("MA3", "std::array<MyAliasEnum3, 42>"));
@@ -1424,9 +1540,25 @@ TypeObject* TestTypeFactory::getMyMiniArrayObject()
     type_object->minimal().alias_type().body().common().related_flags().IS_KEY(false);
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
-    // Must be defined already
-    type_object->minimal().alias_type().body().common().related_type() =
-        *m_Identifiers.at("std::array<int32_t, 2>"); // Make a copy
+    // Must be defined already, if don't, may be an recursive alias
+    if (m_Identifiers.find("std::array<int32_t, 2>") != m_Identifiers.end())
+    {
+        type_object->minimal().alias_type().body().common().related_type() =
+            *m_Identifiers.at("std::array<int32_t, 2>"); // Make a copy
+    }
+    else
+    {
+        if (m_Aliases.find("std::array<int32_t, 2>") != m_Aliases.end())
+        {
+            type_object->minimal().alias_type().body().common().related_type() =
+                *getTypeIdentifier(m_Aliases.at("std::array<int32_t, 2>"));
+        }
+        else
+        {
+            // Cannot determine base type
+            return nullptr;
+        }
+    }
 
     // Don't add our TypeIdentifier but our alias
     m_Aliases.emplace(std::pair<std::string, std::string>("MyMiniArray", "std::array<int32_t, 2>"));
@@ -1467,9 +1599,25 @@ TypeObject* TestTypeFactory::getMySequenceLongObject()
     type_object->minimal().alias_type().body().common().related_flags().IS_KEY(false);
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
-    // Must be defined already
-    type_object->minimal().alias_type().body().common().related_type() =
-        *m_Identifiers.at("std::vector<int32_t>"); // Make a copy
+    // Must be defined already, if don't, may be an recursive alias
+    if (m_Identifiers.find("std::vector<int32_t>") != m_Identifiers.end())
+    {
+        type_object->minimal().alias_type().body().common().related_type() =
+            *m_Identifiers.at("std::vector<int32_t>"); // Make a copy
+    }
+    else
+    {
+        if (m_Aliases.find("std::vector<int32_t>") != m_Aliases.end())
+        {
+            type_object->minimal().alias_type().body().common().related_type() =
+                *getTypeIdentifier(m_Aliases.at("std::vector<int32_t>"));
+        }
+        else
+        {
+            // Cannot determine base type
+            return nullptr;
+        }
+    }
 
     // Don't add our TypeIdentifier but our alias
     m_Aliases.emplace(std::pair<std::string, std::string>("MySequenceLong", "std::vector<int32_t>"));
@@ -1973,7 +2121,8 @@ TypeIdentifier* TestTypeFactory::getMyUnionIdentifier()
     TypeIdentifier* identifier = new TypeIdentifier();
     identifier->_d(EK_MINIMAL);
 
-    SerializedPayload_t payload(static_cast<uint32_t>(MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -2088,7 +2237,8 @@ TypeIdentifier* TestTypeFactory::getMyUnion2Identifier()
     TypeIdentifier* identifier = new TypeIdentifier();
     identifier->_d(EK_MINIMAL);
 
-    SerializedPayload_t payload(static_cast<uint32_t>(MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
