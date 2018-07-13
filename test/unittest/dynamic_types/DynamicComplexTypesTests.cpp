@@ -41,9 +41,16 @@ class DynamicComplexTypesTests: public ::testing::Test
 
         ~DynamicComplexTypesTests()
         {
-            factory->DeleteType(m_DynAutoType);
+            if (m_DynAutoType != nullptr)
+            {
+                m_factory->DeleteType(m_DynAutoType);
+            }
             //DynamicDataFactory::GetInstance()->DeleteData(m_DynAuto);
-            factory->DeleteType(m_DynManualType);
+
+            if (m_DynManualType != nullptr)
+            {
+                m_factory->DeleteType(m_DynManualType);
+            }
             //DynamicDataFactory::GetInstance()->DeleteData(m_DynManual);
 
             if (!DynamicTypeBuilderFactory::GetInstance()->IsEmpty())
@@ -56,13 +63,14 @@ class DynamicComplexTypesTests: public ::testing::Test
                 logError(DYN_TEST, "DynamicDataFactory is not empty.");
             }
 
+            DynamicDataFactory::DeleteInstance();
+            DynamicTypeBuilderFactory::DeleteInstance();
+
             Log::KillThread();
         }
 
         virtual void TearDown()
         {
-            DynamicDataFactory::DeleteInstance();
-            DynamicTypeBuilderFactory::DeleteInstance();
         }
 
         void init();
@@ -75,454 +83,227 @@ class DynamicComplexTypesTests: public ::testing::Test
         types::DynamicType* m_DynAutoType;
         //DynamicData* m_DynManual;
         types::DynamicType* m_DynManualType;
-        DynamicTypeBuilderFactory* factory;
+        DynamicTypeBuilderFactory* m_factory;
 };
 
 void DynamicComplexTypesTests::init()
 {
-    factory = DynamicTypeBuilderFactory::GetInstance();
+    m_factory = DynamicTypeBuilderFactory::GetInstance();
 
     const TypeIdentifier *id = TypeObjectFactory::GetInstance()->GetTypeIdentifier("CompleteStruct");
     const TypeObject *obj = TypeObjectFactory::GetInstance()->GetTypeObject(id);
     m_DynAutoType = TypeObjectFactory::GetInstance()->BuildDynamicType(id, obj);
-    //m_DynAuto = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
 
     // Manual creation
     // MyEnum
-    DynamicTypeBuilder* myEnum_builder(nullptr);
-    myEnum_builder = factory->CreateUint32Type();
+    DynamicTypeBuilder* myEnum_builder = m_factory->CreateUint32Type();
     myEnum_builder->SetName("MyEnum");
-    auto myEnum_type = myEnum_builder->Build();
 
     // MyAliasEnum
-    DynamicTypeBuilder* myAliasEnum_builder(nullptr);
-    myAliasEnum_builder = factory->CreateAliasType(myEnum_type, "MyAliasEnum");
-    auto myAliasEnum_type = myAliasEnum_builder->Build();
+    DynamicTypeBuilder* myAliasEnum_builder = m_factory->CreateAliasType(myEnum_builder, "MyAliasEnum");
 
     // MyAliasEnum2
-    DynamicTypeBuilder* myAliasEnum2_builder(nullptr);
-    myAliasEnum2_builder = factory->CreateAliasType(myAliasEnum_type, "MyAliasEnum2");
-    auto myAliasEnum2_type = myAliasEnum2_builder->Build();
+    DynamicTypeBuilder* myAliasEnum2_builder = m_factory->CreateAliasType(myAliasEnum_builder, "MyAliasEnum2");
 
     // MyAliasEnum3
-    DynamicTypeBuilder* myAliasEnum3_builder(nullptr);
-    myAliasEnum3_builder = factory->CreateAliasType(myAliasEnum2_type, "MyAliasEnum3");
-    auto myAliasEnum3_type = myAliasEnum3_builder->Build();
+    DynamicTypeBuilder* myAliasEnum3_builder = m_factory->CreateAliasType(myAliasEnum2_builder, "MyAliasEnum3");
 
     // BasicStruct
-        // Members
-        DynamicTypeBuilder* bool_builder = factory->CreateBoolType();
-        DynamicTypeBuilder* octet_builder = factory->CreateByteType();
-        //DynamicTypeBuilder* short_builder = factory->CreateInt16Type();
-        DynamicTypeBuilder* int16_builder = factory->CreateInt16Type();
-        DynamicTypeBuilder* int32_builder = factory->CreateInt32Type();
-        DynamicTypeBuilder* int64_builder = factory->CreateInt64Type();
-        DynamicTypeBuilder* uint16_builder = factory->CreateUint16Type();
-        DynamicTypeBuilder* uint32_builder = factory->CreateUint32Type();
-        DynamicTypeBuilder* uint64_builder = factory->CreateUint64Type();
-        DynamicTypeBuilder* float_builder = factory->CreateFloat32Type();
-        DynamicTypeBuilder* double_builder = factory->CreateFloat64Type();
-        DynamicTypeBuilder* ldouble_builder = factory->CreateFloat128Type();
-        DynamicTypeBuilder* char_builder = factory->CreateChar8Type();
-        DynamicTypeBuilder* wchar_builder = factory->CreateChar16Type();
-        DynamicTypeBuilder* string_builder = factory->CreateStringType();
-        DynamicTypeBuilder* wstring_builder = factory->CreateWstringType();
-        auto boolType = bool_builder->Build();
-        auto octetType = octet_builder->Build();
-        //auto shortType = short_builder->Build();
-        auto int16Type = int16_builder->Build();
-        auto int32Type = int32_builder->Build();
-        auto int64Type = int64_builder->Build();
-        auto uint16Type = uint16_builder->Build();
-        auto uint32Type = uint32_builder->Build();
-        auto uint64Type = uint64_builder->Build();
-        auto floatType = float_builder->Build();
-        auto doubleType = double_builder->Build();
-        auto ldoubleType = ldouble_builder->Build();
-        auto charType = char_builder->Build();
-        auto wcharType = wchar_builder->Build();
-        auto stringType = string_builder->Build();
-        auto wstringType = wstring_builder->Build();
-        auto basicStruct_builder = factory->CreateStructType();
-        // Add members to the struct.
-        int idx = 0;
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_bool"); descriptor.SetType(boolType);
-            basicStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_octet"); descriptor.SetType(octetType);
-            basicStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_int16"); descriptor.SetType(int16Type);
-            basicStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_int32"); descriptor.SetType(int32Type);
-            basicStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_int64"); descriptor.SetType(int64Type);
-            basicStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_uint16"); descriptor.SetType(uint16Type);
-            basicStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_uint32"); descriptor.SetType(uint32Type);
-            basicStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_uint64"); descriptor.SetType(uint64Type);
-            basicStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_float32"); descriptor.SetType(floatType);
-            basicStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_float64"); descriptor.SetType(doubleType);
-            basicStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_float128"); descriptor.SetType(ldoubleType);
-            basicStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_char"); descriptor.SetType(charType);
-            basicStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_wchar"); descriptor.SetType(wcharType);
-            basicStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_string"); descriptor.SetType(stringType);
-            basicStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_wstring"); descriptor.SetType(wstringType);
-            basicStruct_builder->AddMember(&descriptor);
-        }
+
+    // Members
+    DynamicTypeBuilder* bool_builder = m_factory->CreateBoolType();
+    DynamicTypeBuilder* octet_builder = m_factory->CreateByteType();
+    DynamicTypeBuilder* int16_builder = m_factory->CreateInt16Type();
+    DynamicTypeBuilder* int32_builder = m_factory->CreateInt32Type();
+    DynamicTypeBuilder* int64_builder = m_factory->CreateInt64Type();
+    DynamicTypeBuilder* uint16_builder = m_factory->CreateUint16Type();
+    DynamicTypeBuilder* uint32_builder = m_factory->CreateUint32Type();
+    DynamicTypeBuilder* uint64_builder = m_factory->CreateUint64Type();
+    DynamicTypeBuilder* float_builder = m_factory->CreateFloat32Type();
+    DynamicTypeBuilder* double_builder = m_factory->CreateFloat64Type();
+    DynamicTypeBuilder* ldouble_builder = m_factory->CreateFloat128Type();
+    DynamicTypeBuilder* char_builder = m_factory->CreateChar8Type();
+    DynamicTypeBuilder* wchar_builder = m_factory->CreateChar16Type();
+    DynamicTypeBuilder* string_builder = m_factory->CreateStringType();
+    DynamicTypeBuilder* wstring_builder = m_factory->CreateWstringType();
+    DynamicTypeBuilder* basicStruct_builder = m_factory->CreateStructType();
+
+    // Add members to the struct.
+    int idx = 0;
+    basicStruct_builder->AddMember(idx++, "my_bool", bool_builder);
+    basicStruct_builder->AddMember(idx++, "my_octet", octet_builder);
+    basicStruct_builder->AddMember(idx++, "my_int16", int16_builder);
+    basicStruct_builder->AddMember(idx++, "my_int32", int32_builder);
+    basicStruct_builder->AddMember(idx++, "my_int64", int64_builder);
+    basicStruct_builder->AddMember(idx++, "my_uint16", uint16_builder);
+    basicStruct_builder->AddMember(idx++, "my_uint32", uint32_builder);
+    basicStruct_builder->AddMember(idx++, "my_uint64", uint64_builder);
+    basicStruct_builder->AddMember(idx++, "my_float32", float_builder);
+    basicStruct_builder->AddMember(idx++, "my_float64", double_builder);
+    basicStruct_builder->AddMember(idx++, "my_float128", ldouble_builder);
+    basicStruct_builder->AddMember(idx++, "my_char", char_builder);
+    basicStruct_builder->AddMember(idx++, "my_wchar", wchar_builder);
+    basicStruct_builder->AddMember(idx++, "my_string", string_builder);
+    basicStruct_builder->AddMember(idx++, "my_wstring", wstring_builder);
     basicStruct_builder->SetName("BasicStruct");
-    auto basicStruct_type = basicStruct_builder->Build();
 
     // MyOctetArray500
     std::vector<uint32_t> myOctetArray500_lengths = { 500 };
-    DynamicTypeBuilder* myOctetArray500_builder = factory->CreateArrayType(octetType, myOctetArray500_lengths);
+    DynamicTypeBuilder* myOctetArray500_builder = m_factory->CreateArrayType(octet_builder, myOctetArray500_lengths);
     myOctetArray500_builder->SetName("MyOctetArray500");
-    auto myOctetArray500_type = myOctetArray500_builder->Build();
 
     // BSAlias5
     std::vector<uint32_t> bSAlias5_lengths = { 5 };
-    DynamicTypeBuilder* bSAlias5_builder = factory->CreateArrayType(basicStruct_type, bSAlias5_lengths);
+    DynamicTypeBuilder* bSAlias5_builder = m_factory->CreateArrayType(basicStruct_builder, bSAlias5_lengths);
     bSAlias5_builder->SetName("BSAlias5");
-    auto bSAlias5_type = bSAlias5_builder->Build();
 
     // MA3
     std::vector<uint32_t> mA3_lengths = { 42 };
-    DynamicTypeBuilder* mA3_builder = factory->CreateArrayType(myAliasEnum3_type, mA3_lengths);
+    DynamicTypeBuilder* mA3_builder = m_factory->CreateArrayType(myAliasEnum3_builder, mA3_lengths);
     mA3_builder->SetName("MA3");
-    auto mA3_type = mA3_builder->Build();
 
     // MyMiniArray
     std::vector<uint32_t> myMiniArray_lengths = { 2 };
-    DynamicTypeBuilder* myMiniArray_builder = factory->CreateArrayType(int32Type, myMiniArray_lengths);
+    DynamicTypeBuilder* myMiniArray_builder = m_factory->CreateArrayType(int32_builder, myMiniArray_lengths);
     myMiniArray_builder->SetName("MyMiniArray");
-    auto myMiniArray_type = myMiniArray_builder->Build();
 
     // MySequenceLong
-    DynamicTypeBuilder* seqLong_builder = factory->CreateSequenceType(int32Type);
-    auto seqLongType = seqLong_builder->Build();
-    DynamicTypeBuilder* mySequenceLong_builder(nullptr);
-    mySequenceLong_builder = factory->CreateAliasType(seqLongType, "MySequenceLong");
-    auto mySequenceLong_type = mySequenceLong_builder->Build();
+    DynamicTypeBuilder* seqLong_builder = m_factory->CreateSequenceType(int32_builder);
+    DynamicTypeBuilder* mySequenceLong_builder = m_factory->CreateAliasType(seqLong_builder, "MySequenceLong");
 
     // ComplexStruct
         // Members (auxiliar types are tab)
         // octet, BasicStruct, MyAliasEnum and MyEnum are already created.
-        DynamicTypeBuilder* my_sequence_octet_builder = factory->CreateSequenceType(octetType, 55);
-        DynamicTypeBuilder* my_sequence_struct_builder = factory->CreateSequenceType(basicStruct_type);
-            std::vector<uint32_t> my_array_octet_lengths = { 500, 5, 4 };
-        DynamicTypeBuilder* my_array_octet_builder = factory->CreateArrayType(charType, my_array_octet_lengths);
+        DynamicTypeBuilder* my_sequence_octet_builder = m_factory->CreateSequenceType(octet_builder, 55);
+        DynamicTypeBuilder* my_sequence_struct_builder = m_factory->CreateSequenceType(basicStruct_builder);
+        DynamicTypeBuilder* my_array_octet_builder = m_factory->CreateArrayType(char_builder, { 500, 5, 4 });
         // MyOctetArray500 is already created
             // We reuse the bounds... bSAlias5_lengths
-        DynamicTypeBuilder* my_array_struct_builder = factory->CreateArrayType(basicStruct_type, bSAlias5_lengths);
-        DynamicTypeBuilder* my_map_octet_short_builder = factory->CreateMapType(octetType, int16Type);
-        DynamicTypeBuilder* my_map_long_struct_builder = factory->CreateMapType(int32Type, basicStruct_type);
-            DynamicTypeBuilder* seqOctet_builder = factory->CreateSequenceType(octetType);
-            auto seqOctet_type = seqOctet_builder->Build();
-            DynamicTypeBuilder* seqSeqOctet_builder = factory->CreateSequenceType(seqOctet_type);
-            auto seqSeqOctet_type = seqSeqOctet_builder->Build();
-        DynamicTypeBuilder* my_map_long_seq_octet_builder = factory->CreateMapType(int32Type, seqSeqOctet_type);
-        DynamicTypeBuilder* my_map_long_octet_array_500_builder =
-                factory->CreateMapType(int32Type, myOctetArray500_type);
-            DynamicTypeBuilder* map_octet_bsalias5_builder = factory->CreateMapType(octetType, bSAlias5_type);
-            auto map_octet_bsalias5_type = map_octet_bsalias5_builder->Build();
-        DynamicTypeBuilder* my_map_long_lol_type_builder = factory->CreateMapType(int32Type, map_octet_bsalias5_type);
-        DynamicTypeBuilder* my_small_string_8_builder = factory->CreateStringType(128);
-        DynamicTypeBuilder* my_small_string_16_builder = factory->CreateWstringType(64);
-        DynamicTypeBuilder* my_large_string_8_builder = factory->CreateStringType(500);
-        DynamicTypeBuilder* my_large_string_16_builder = factory->CreateWstringType(1024);
-            DynamicTypeBuilder* string75_8_builder = factory->CreateStringType(75);
-            auto string75_8_type = string75_8_builder->Build();
-            std::vector<uint32_t> my_array_string_lengths = { 5, 5 };
-        DynamicTypeBuilder* my_array_string_builder =
-                factory->CreateArrayType(string75_8_type, my_array_string_lengths);
-        // MA3 is already defined.
-            // bSAlias5_lengths being reused
-        DynamicTypeBuilder* my_array_arrays_builder = factory->CreateArrayType(myMiniArray_type, bSAlias5_lengths);
-            std::vector<uint32_t> my_sequences_array_lengths = { 23 };
-        DynamicTypeBuilder* my_sequences_array_builder =
-                factory->CreateArrayType(mySequenceLong_type, my_sequences_array_lengths);
+        DynamicTypeBuilder* my_array_struct_builder = m_factory->CreateArrayType(basicStruct_builder, bSAlias5_lengths);
+        DynamicTypeBuilder* my_map_octet_short_builder = m_factory->CreateMapType(octet_builder, int16_builder);
+        DynamicTypeBuilder* my_map_long_struct_builder = m_factory->CreateMapType(int32_builder, basicStruct_builder);
+            DynamicTypeBuilder* seqOctet_builder = m_factory->CreateSequenceType(octet_builder);
+            DynamicTypeBuilder* seqSeqOctet_builder = m_factory->CreateSequenceType(seqOctet_builder);
+        DynamicTypeBuilder* my_map_long_seq_octet_builder = m_factory->CreateMapType(int32_builder, seqSeqOctet_builder);
+        DynamicTypeBuilder* my_map_long_octet_array_500_builder = m_factory->CreateMapType(int32_builder, myOctetArray500_builder);
+            DynamicTypeBuilder* map_octet_bsalias5_builder = m_factory->CreateMapType(octet_builder, bSAlias5_builder);
+        DynamicTypeBuilder* my_map_long_lol_type_builder = m_factory->CreateMapType(int32_builder, map_octet_bsalias5_builder);
+        DynamicTypeBuilder* my_small_string_8_builder = m_factory->CreateStringType(128);
+        DynamicTypeBuilder* my_small_string_16_builder = m_factory->CreateWstringType(64);
+        DynamicTypeBuilder* my_large_string_8_builder = m_factory->CreateStringType(500);
+        DynamicTypeBuilder* my_large_string_16_builder = m_factory->CreateWstringType(1024);
+            DynamicTypeBuilder* string75_8_builder = m_factory->CreateStringType(75);
+        DynamicTypeBuilder* my_array_string_builder = m_factory->CreateArrayType(string75_8_builder, { 5, 5 });
 
-        auto my_sequence_octetType = my_sequence_octet_builder->Build();
-        auto my_sequence_structType = my_sequence_struct_builder->Build();
-        auto my_array_octetType = my_array_octet_builder->Build();
-        auto my_array_structType = my_array_struct_builder->Build();
-        auto my_map_octet_shortType = my_map_octet_short_builder->Build();
-        auto my_map_long_structType = my_map_long_struct_builder->Build();
-        auto my_map_long_seq_octetType = my_map_long_seq_octet_builder->Build();
-        auto my_map_long_octet_array_500Type = my_map_long_octet_array_500_builder->Build();
-        auto my_map_long_lol_typeType = my_map_long_lol_type_builder->Build();
-        auto my_small_string_8Type = my_small_string_8_builder->Build();
-        auto my_small_string_16Type = my_small_string_16_builder->Build();
-        auto my_large_string_8Type = my_large_string_8_builder->Build();
-        auto my_large_string_16Type = my_large_string_16_builder->Build();
-        auto my_array_stringType = my_array_string_builder->Build();
-        auto my_array_arraysType = my_array_arrays_builder->Build();
-        auto my_sequences_arrayType = my_sequences_array_builder->Build();
-        auto complexStruct_builder = factory->CreateStructType();
+        // MA3 is already defined.
+        // bSAlias5_lengths being reused
+        DynamicTypeBuilder* my_array_arrays_builder = m_factory->CreateArrayType(myMiniArray_builder, bSAlias5_lengths);
+        DynamicTypeBuilder* my_sequences_array_builder = m_factory->CreateArrayType(mySequenceLong_builder, { 23 });
+        DynamicTypeBuilder* complexStruct_builder = m_factory->CreateStructType();
+
         // Add members to the struct.
         idx = 0;
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_octet"); descriptor.SetType(octetType);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_basic_struct"); descriptor.SetType(basicStruct_type);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_alias_enum"); descriptor.SetType(myAliasEnum_type);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_enum"); descriptor.SetType(myEnum_type);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_sequence_octet"); descriptor.SetType(my_sequence_octetType);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_sequence_struct"); descriptor.SetType(my_sequence_structType);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_array_octet"); descriptor.SetType(my_array_octetType);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_octet_array_500"); descriptor.SetType(myOctetArray500_type);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_array_struct"); descriptor.SetType(my_array_structType);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_map_octet_short"); descriptor.SetType(my_map_octet_shortType);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_map_long_struct"); descriptor.SetType(my_map_long_structType);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_map_long_seq_octet"); descriptor.SetType(my_map_long_seq_octetType);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_map_long_octet_array_500"); descriptor.SetType(my_map_long_octet_array_500Type);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_map_long_lol_type"); descriptor.SetType(my_map_long_lol_typeType);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_small_string_8"); descriptor.SetType(my_small_string_8Type);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_small_string_16"); descriptor.SetType(my_small_string_16Type);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_large_string_8"); descriptor.SetType(my_large_string_8Type);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_large_string_16"); descriptor.SetType(my_large_string_16Type);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_array_string"); descriptor.SetType(my_array_stringType);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("multi_alias_array_42"); descriptor.SetType(mA3_type);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_array_arrays"); descriptor.SetType(my_array_arraysType);
-            complexStruct_builder->AddMember(&descriptor);
-        }
-        {
-            types::MemberDescriptor descriptor;
-            descriptor.SetId(idx++);
-            descriptor.SetName("my_sequences_array"); descriptor.SetType(my_sequences_arrayType);
-            complexStruct_builder->AddMember(&descriptor);
-        }
+        complexStruct_builder->AddMember(idx++, "my_octet", octet_builder);
+        complexStruct_builder->AddMember(idx++, "my_basic_struct", basicStruct_builder);
+        complexStruct_builder->AddMember(idx++, "my_alias_enum", myAliasEnum_builder);
+        complexStruct_builder->AddMember(idx++, "my_enum", myEnum_builder);
+        complexStruct_builder->AddMember(idx++, "my_sequence_octet", my_sequence_octet_builder);
+        complexStruct_builder->AddMember(idx++, "my_sequence_struct", my_sequence_struct_builder);
+        complexStruct_builder->AddMember(idx++, "my_array_octet", my_array_octet_builder);
+        complexStruct_builder->AddMember(idx++, "my_octet_array_500", myOctetArray500_builder);
+        complexStruct_builder->AddMember(idx++, "my_array_struct", my_array_struct_builder);
+        complexStruct_builder->AddMember(idx++, "my_map_octet_short", my_map_octet_short_builder);
+        complexStruct_builder->AddMember(idx++, "my_map_long_struct", my_map_long_struct_builder);
+        complexStruct_builder->AddMember(idx++, "my_map_long_seq_octet", my_map_long_seq_octet_builder);
+        complexStruct_builder->AddMember(idx++, "my_map_long_octet_array_500", my_map_long_octet_array_500_builder);
+        complexStruct_builder->AddMember(idx++, "my_map_long_lol_type", my_map_long_lol_type_builder);
+        complexStruct_builder->AddMember(idx++, "my_small_string_8", my_small_string_8_builder);
+        complexStruct_builder->AddMember(idx++, "my_small_string_16", my_small_string_16_builder);
+        complexStruct_builder->AddMember(idx++, "my_large_string_8", my_large_string_8_builder);
+        complexStruct_builder->AddMember(idx++, "my_large_string_16", my_large_string_16_builder);
+        complexStruct_builder->AddMember(idx++, "my_array_string", my_array_string_builder);
+        complexStruct_builder->AddMember(idx++, "multi_alias_array_42", mA3_builder);
+        complexStruct_builder->AddMember(idx++, "my_array_arrays", my_array_arrays_builder);
+        complexStruct_builder->AddMember(idx++, "my_sequences_array", my_sequences_array_builder);
     complexStruct_builder->SetName("ComplexStruct");
-    auto complexStruct_type = complexStruct_builder->Build();
 
     // MyUnion
-    DynamicTypeBuilder* myUnion_builder = factory->CreateUnionType(octetType);
-    types::MemberDescriptor mud;
-    mud.SetId(0);
-    mud.SetName("basic");
-    mud.SetType(basicStruct_type);
-    mud.SetDefaultUnionValue(true);
-    mud.AddUnionCaseIndex(0);
-    myUnion_builder->AddMember(&mud);
-    mud.SetId(1);
-    mud.SetName("complex");
-    mud.SetType(complexStruct_type);
-    mud.SetDefaultUnionValue(false);
-    mud.AddUnionCaseIndex(1);
-    mud.AddUnionCaseIndex(2);
-    myUnion_builder->AddMember(&mud);
+    DynamicTypeBuilder* myUnion_builder = m_factory->CreateUnionType(octet_builder);
+    myUnion_builder->AddMember(0, "basic", basicStruct_builder, "", { 0 }, true);
+    myUnion_builder->AddMember(1, "complex", complexStruct_builder, "", { 1, 2 }, false);
     myUnion_builder->SetName("MyUnion");
-    auto myUnion_type = myUnion_builder->Build();
 
     // MyUnion2
-    DynamicTypeBuilder* myUnion2_builder = factory->CreateUnionType(octetType);
-    mud.SetId(0);
-    mud.SetName("uno");
-    mud.SetType(int32Type);
-    mud.SetDefaultUnionValue(true);
-    mud.AddUnionCaseIndex(0);
-    myUnion2_builder->AddMember(&mud);
-    mud.SetId(1);
-    mud.SetName("imString");
-    mud.SetType(stringType);
-    mud.SetDefaultUnionValue(false);
-    mud.AddUnionCaseIndex(1);
-    myUnion2_builder->AddMember(&mud);
-    mud.SetId(2);
-    mud.SetName("dos");
-    mud.SetType(int32Type);
-    mud.AddUnionCaseIndex(2);
-    myUnion2_builder->AddMember(&mud);
-    myUnion2_builder->SetName("MyUnion2");
-    auto myUnion2_type = myUnion2_builder->Build();
+    DynamicTypeBuilder* myUnion2_builder = m_factory->CreateUnionType(octet_builder);
+    myUnion2_builder->AddMember(0, "uno", int32_builder, "", { 0 }, true);
+    myUnion2_builder->AddMember(1, "imString", string_builder, "", { 1 }, false);
+    myUnion2_builder->AddMember(2, "dos", int32_builder, "", { 2 }, false);
 
     // CompleteStruct
-    auto completeStruct_builder = factory->CreateStructType();
+    DynamicTypeBuilder* completeStruct_builder = m_factory->CreateStructType();
     // Add members to the struct.
     idx = 0;
-    {
-        types::MemberDescriptor descriptor;
-        descriptor.SetId(idx++);
-        descriptor.SetName("my_union");
-        descriptor.SetType(myUnion_type);
-        completeStruct_builder->AddMember(&descriptor);
-        descriptor.SetId(idx++);
-        descriptor.SetName("my_union_2");
-        descriptor.SetType(myUnion2_type);
-        completeStruct_builder->AddMember(&descriptor);
-        completeStruct_builder->SetName("CompleteStruct");
-    }
-    m_DynManualType = completeStruct_builder->Build();
-    //m_DynManual = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
+    completeStruct_builder->AddMember(idx++, "my_union", myUnion_builder);
+    completeStruct_builder->AddMember(idx++, "my_union_2", myUnion2_builder);
+    completeStruct_builder->SetName("CompleteStruct");
 
-    factory->DeleteType(completeStruct_builder);
+    m_DynManualType = completeStruct_builder->Build();
+
+    // Clear the builders
+    m_factory->DeleteType(myEnum_builder);
+    m_factory->DeleteType(myAliasEnum_builder);
+    m_factory->DeleteType(myAliasEnum2_builder);
+    m_factory->DeleteType(myAliasEnum3_builder);
+
+    m_factory->DeleteType(bool_builder);
+    m_factory->DeleteType(octet_builder);
+    m_factory->DeleteType(int16_builder);
+    m_factory->DeleteType(int32_builder);
+    m_factory->DeleteType(int64_builder);
+    m_factory->DeleteType(uint16_builder);
+    m_factory->DeleteType(uint32_builder);
+    m_factory->DeleteType(uint64_builder);
+    m_factory->DeleteType(float_builder);
+    m_factory->DeleteType(double_builder);
+    m_factory->DeleteType(ldouble_builder);
+    m_factory->DeleteType(char_builder);
+    m_factory->DeleteType(wchar_builder);
+    m_factory->DeleteType(string_builder);
+    m_factory->DeleteType(wstring_builder);
+    m_factory->DeleteType(basicStruct_builder);
+
+    m_factory->DeleteType(myOctetArray500_builder);
+    m_factory->DeleteType(bSAlias5_builder);
+    m_factory->DeleteType(mA3_builder);
+    m_factory->DeleteType(myMiniArray_builder);
+    m_factory->DeleteType(seqLong_builder);
+    m_factory->DeleteType(mySequenceLong_builder);
+
+    m_factory->DeleteType(my_array_arrays_builder);
+    m_factory->DeleteType(my_sequences_array_builder);
+    m_factory->DeleteType(complexStruct_builder);
+    m_factory->DeleteType(my_sequence_octet_builder);
+    m_factory->DeleteType(my_sequence_struct_builder);
+    m_factory->DeleteType(my_array_octet_builder);
+    m_factory->DeleteType(my_array_struct_builder);
+    m_factory->DeleteType(my_map_octet_short_builder);
+    m_factory->DeleteType(my_map_long_struct_builder);
+    m_factory->DeleteType(seqOctet_builder);
+    m_factory->DeleteType(seqSeqOctet_builder);
+    m_factory->DeleteType(my_map_long_seq_octet_builder);
+    m_factory->DeleteType(my_map_long_octet_array_500_builder);
+    m_factory->DeleteType(map_octet_bsalias5_builder);
+    m_factory->DeleteType(my_map_long_lol_type_builder);
+    m_factory->DeleteType(my_small_string_8_builder);
+    m_factory->DeleteType(my_small_string_16_builder);
+    m_factory->DeleteType(my_large_string_8_builder);
+    m_factory->DeleteType(my_large_string_16_builder);
+    m_factory->DeleteType(string75_8_builder);
+    m_factory->DeleteType(my_array_string_builder);
+
+    m_factory->DeleteType(myUnion_builder);
+    m_factory->DeleteType(myUnion2_builder);
+    m_factory->DeleteType(completeStruct_builder);
 }
 
 /*
@@ -542,7 +323,7 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparision)
     types::DynamicData* dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
     uint32_t payloadSize = static_cast<uint32_t>(m_DynManualType->getSerializedSizeProvider(dynData)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(m_DynManualType->serialize(&dynData, &payload));
+    ASSERT_TRUE(m_DynManualType->serialize(dynData, &payload));
 
     CompleteStruct staticData;
     ASSERT_TRUE(m_StaticType.deserialize(&payload, &staticData));
