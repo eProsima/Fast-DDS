@@ -538,7 +538,7 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 
     addUInt32(msg, numBits);
     uint8_t n_longs = (uint8_t)((numBits + 31) / 32);
-    int32_t* bitmap = new int32_t[n_longs];
+    uint32_t bitmap[8];
 
     for(uint32_t i = 0; i < n_longs; i++)
         bitmap[i] = 0;
@@ -558,7 +558,6 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
     for(uint32_t i= 0;i<n_longs;i++)
         addInt32(msg,bitmap[i]);
 
-    delete[] bitmap;
     return true;
 }
 
