@@ -339,6 +339,7 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparision)
     DynamicDataFactory::GetInstance()->DeleteData(dynData2);
 }
 
+/*
 TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
 {
     // Serialize <-> Deserialize Test
@@ -370,6 +371,7 @@ TEST_F(DynamicComplexTypesTests, Manual_Auto_Comparision)
     DynamicDataFactory::GetInstance()->DeleteData(dynAutoData);
     DynamicDataFactory::GetInstance()->DeleteData(dynManualData);
 }
+*/
 
 // TODO
 /*

@@ -47,9 +47,9 @@ public:
         const std::string &value_type_name, uint32_t bound);
 
     RTPS_DllAPI TypeDescriptor* BuildTypeDescriptor(const TypeIdentifier* identifier,
-        const TypeObject* object = nullptr);
+        const TypeObject* object = nullptr) const;
     RTPS_DllAPI DynamicType* BuildDynamicType(const TypeIdentifier* identifier,
-        const TypeObject* object = nullptr);
+        const TypeObject* object = nullptr) const;
 
     RTPS_DllAPI void AddTypeIdentifier(const std::string &type_name, const TypeIdentifier* identifier);
     RTPS_DllAPI void AddTypeObject(const std::string &type_name, const TypeIdentifier* identifier,
@@ -67,6 +67,8 @@ protected:
         bool generate_identifier = true);
     std::string getMapTypeName(const std::string &key_type_name, const std::string &value_type_name, uint32_t bound,
         bool generate_identifier = true);
+    TypeDescriptor* BuildTypeDescriptorFromObject(TypeDescriptor* descriptor, const TypeObject* object) const;
+    void BuildTypeDescriptorFromMinimalObject(TypeDescriptor* descriptor, const MinimalTypeObject &minimal) const;
 
     //MemberDescriptor* BuildMemberDescriptor(const TypeIdentifier* identifier, const TypeObject* object = nullptr);
 private:
