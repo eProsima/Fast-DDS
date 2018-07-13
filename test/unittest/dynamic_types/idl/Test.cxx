@@ -632,6 +632,7 @@ size_t ComplexStruct::getCdrSerializedSize(const ComplexStruct& data, size_t cur
     current_alignment += (data.my_map_long_struct().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
     for(auto a : data.my_map_long_struct())
     {
+        (void)a;
         current_alignment += BasicStruct::getCdrSerializedSize((a.second), current_alignment);
 
     }
@@ -640,6 +641,7 @@ size_t ComplexStruct::getCdrSerializedSize(const ComplexStruct& data, size_t cur
     current_alignment += (data.my_map_long_seq_octet().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
     for(auto a : data.my_map_long_seq_octet())
     {
+        (void)a;
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
         for(size_t b = 0; b < a.second.size(); ++b)
         {
@@ -654,6 +656,7 @@ size_t ComplexStruct::getCdrSerializedSize(const ComplexStruct& data, size_t cur
     current_alignment += (data.my_map_long_octet_array_500().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
     for(auto a : data.my_map_long_octet_array_500())
     {
+        (void)a;
         current_alignment += ((500) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     }
 
@@ -661,9 +664,11 @@ size_t ComplexStruct::getCdrSerializedSize(const ComplexStruct& data, size_t cur
     current_alignment += (data.my_map_long_lol_type().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
     for(auto a : data.my_map_long_lol_type())
     {
+        (void)a;
         current_alignment += (a.second.size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
         for(auto b : a.second)
         {
+            (void)b;
             for(size_t c = 0; c < b.second.size(); ++c)
             {
                     current_alignment += BasicStruct::getCdrSerializedSize(b.second.at(c), current_alignment);
