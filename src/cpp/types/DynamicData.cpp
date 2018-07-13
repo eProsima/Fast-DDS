@@ -999,6 +999,10 @@ DynamicData* DynamicData::LoanValue(MemberId id)
                 }
                 else
                 {
+                    if (GetKind() == TK_UNION && mUnionId != id)
+                    {
+                        SetUnionId(id);
+                    }
                     mLoanedValues.push_back(id);
                     return it->second;
                 }
@@ -1022,6 +1026,10 @@ DynamicData* DynamicData::LoanValue(MemberId id)
                 }
                 else
                 {
+                    if (GetKind() == TK_UNION && mUnionId != id)
+                    {
+                        SetUnionId(id);
+                    }
                     mLoanedValues.push_back(id);
                     return (DynamicData*)it->second;
                 }
