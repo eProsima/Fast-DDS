@@ -66,6 +66,7 @@ bool HelloWorldSubscriber::init(bool dynamic)
         DynamicTypeBuilder* struct_type_builder(nullptr);
         // Create basic types
         created_type_ulong = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type();
+        //created_type_ulong = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
         created_type_string = DynamicTypeBuilderFactory::GetInstance()->CreateStringType();
         struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructType();
 
@@ -81,10 +82,11 @@ bool HelloWorldSubscriber::init(bool dynamic)
         DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type_string);
         DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type_builder);
 
-        Domain::registerType(mp_participant, m_DynType);
+        Domain::registerDynamicType(mp_participant, m_DynType);
     }
     else
     {
+        m_listener.m_Hello = new HelloWorld;
         Domain::registerType(mp_participant,&m_type);
     }
 
@@ -176,13 +178,13 @@ void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
     }
     else
     {
-        if(sub->takeNextData((void*)&m_Hello, &m_info))
+        if(sub->takeNextData((void*)m_Hello, &m_info))
         {
             if(m_info.sampleKind == ALIVE)
             {
                 this->n_samples++;
                 // Print your structure data here.
-                std::cout << "Message "<<m_Hello.message()<< " "<< m_Hello.index()<< " RECEIVED"<<std::endl;
+                std::cout << "Message "<<m_Hello->message()<< " "<< m_Hello->index()<< " RECEIVED"<<std::endl;
             }
         }
     }

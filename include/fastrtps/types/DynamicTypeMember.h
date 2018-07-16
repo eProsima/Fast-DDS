@@ -49,6 +49,8 @@ public:
     std::string GetName() const;
     bool IsDefaultUnionValue() const;
 
+    const MemberDescriptor* GetDescriptor() const { return &mDescriptor; }
+
 protected:
 
     uint32_t GetIndex() const;

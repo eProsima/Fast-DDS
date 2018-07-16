@@ -76,7 +76,7 @@ public:
 
     RTPS_DllAPI void BuildTypeIdentifier(const TypeDescriptor* descriptor, TypeIdentifier& identifier) const;
     RTPS_DllAPI void BuildTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
-        const std::vector<MemberDescriptor*>* members = nullptr) const;
+        const std::vector<const MemberDescriptor*>* members = nullptr) const;
 
     RTPS_DllAPI bool IsEmpty() const;
 
@@ -87,11 +87,11 @@ protected:
 
     void BuildAliasTypeObject(const TypeDescriptor* descriptor, TypeObject& object) const;
     void BuildEnumTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
-        const std::vector<MemberDescriptor*> members) const;
+        const std::vector<const MemberDescriptor*> members) const;
     void BuildStructTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
-        const std::vector<MemberDescriptor*> members) const;
+        const std::vector<const MemberDescriptor*> members) const;
     void BuildUnionTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
-        const std::vector<MemberDescriptor*> members) const;
+        const std::vector<const MemberDescriptor*> members) const;
 
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::vector<DynamicType*> mTypesList;

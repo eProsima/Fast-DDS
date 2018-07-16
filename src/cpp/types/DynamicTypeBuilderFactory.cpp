@@ -18,7 +18,9 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/TypeNamesGenerator.h>
 #include <fastrtps/log/Log.h>
 
 #include <fastrtps/rtps/common/SerializedPayload.h>
@@ -48,31 +50,36 @@ static std::string GetTypeName(TypeKind kind)
         case TK_UINT64: return TKNAME_UINT64;
         case TK_FLOAT128: return TKNAME_FLOAT128;
         case TK_CHAR16: return TKNAME_CHAR16;
+        /*
         case TK_STRING8: return TKNAME_STRING8;
         case TK_STRING16: return TKNAME_STRING16;
         case TK_ALIAS: return TKNAME_ALIAS;
         case TK_ENUM: return TKNAME_ENUM;
+        */
         case TK_BITMASK: return TKNAME_BITMASK;
+        /*
         case TK_ANNOTATION: return TKNAME_ANNOTATION;
         case TK_STRUCTURE: return TKNAME_STRUCTURE;
         case TK_UNION: return TKNAME_UNION;
+        */
         case TK_BITSET: return TKNAME_BITSET;
+        /*
         case TK_SEQUENCE: return TKNAME_SEQUENCE;
         case TK_ARRAY: return TKNAME_ARRAY;
         case TK_MAP: return TKNAME_MAP;
-
+        */
         default:
             break;
     }
     return "UNDEF";
 }
 
-static uint32_t s_typeNameCounter = 0;
+//static uint32_t s_typeNameCounter = 0;
 static std::string GenerateTypeName(const std::string &kind)
 {
     std::string tempKind = kind;
     std::replace(tempKind.begin(), tempKind.end(), ' ', '_');
-    return tempKind + "_" + std::to_string(++s_typeNameCounter);
+    return tempKind;// + "_" + std::to_string(++s_typeNameCounter);
 }
 
 static DynamicTypeBuilderFactory* g_instance = nullptr;
@@ -161,7 +168,8 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateAliasType(DynamicType* base
         }
         else
         {
-            pDescriptor.mName = GenerateTypeName(GetTypeName(TK_ALIAS));
+            //pDescriptor.mName = GenerateTypeName(GetTypeName(TK_ALIAS));
+            pDescriptor.mName = base_type->GetName();
         }
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
@@ -190,9 +198,11 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateArrayType(const DynamicType
 
         TypeDescriptor pDescriptor;
         pDescriptor.mKind = TK_ARRAY;
-        pDescriptor.mName = GenerateTypeName(GetTypeName(TK_ARRAY));
+        //pDescriptor.mName = GenerateTypeName(GetTypeName(TK_ARRAY));
         pDescriptor.mBound = bounds;
         pDescriptor.mElementType = BuildType(element_type);
+
+        pDescriptor.mName = TypeNamesGenerator::getArrayTypeName(element_type->GetName(), bounds, true);
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
         AddTypeToList(pNewTypeBuilder);
@@ -215,6 +225,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateBitmaskType(uint32_t bound)
 
         TypeDescriptor pDescriptor;
         pDescriptor.mKind = TK_BITMASK;
+        // TODO review on implementation for IDL
         pDescriptor.mName = GenerateTypeName(GetTypeName(TK_BITMASK));
         pDescriptor.mElementType = BuildType(&pBoolDescriptor);
         pDescriptor.mBound.push_back(bound);
@@ -236,6 +247,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateBitsetType(uint32_t bound)
     {
         TypeDescriptor pDescriptor;
         pDescriptor.mKind = TK_BITSET;
+        // TODO Review on implementation for IDL
         pDescriptor.mName = GenerateTypeName(GetTypeName(TK_BITSET));
         pDescriptor.mBound.push_back(bound);
 
@@ -309,7 +321,9 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateEnumType()
 {
     TypeDescriptor pEnumDescriptor;
     pEnumDescriptor.mKind = TK_ENUM;
-    pEnumDescriptor.mName = GenerateTypeName(GetTypeName(TK_ENUM));
+    //pEnumDescriptor.mName = GenerateTypeName(GetTypeName(TK_ENUM));
+    // Enum currently is an alias for uint32_t
+    pEnumDescriptor.mName = GenerateTypeName(GetTypeName(TK_UINT32));
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pEnumDescriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -394,10 +408,13 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateMapType(DynamicType* key_el
 
         TypeDescriptor pDescriptor;
         pDescriptor.mKind = TK_MAP;
-        pDescriptor.mName = GenerateTypeName(GetTypeName(TK_MAP));
+        //pDescriptor.mName = GenerateTypeName(GetTypeName(TK_MAP));
         pDescriptor.mBound.push_back(bound);
         pDescriptor.mKeyElementType = BuildType(key_element_type);
         pDescriptor.mElementType = BuildType(element_type);
+
+        pDescriptor.mName = TypeNamesGenerator::getMapTypeName(
+                key_element_type->GetName(), element_type->GetName(), bound, true);
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
         AddTypeToList(pNewTypeBuilder);
@@ -421,9 +438,11 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateSequenceType(const DynamicT
 
         TypeDescriptor pDescriptor;
         pDescriptor.mKind = TK_SEQUENCE;
-        pDescriptor.mName = GenerateTypeName(GetTypeName(TK_SEQUENCE));
+        //pDescriptor.mName = GenerateTypeName(GetTypeName(TK_SEQUENCE));
         pDescriptor.mBound.push_back(bound);
         pDescriptor.mElementType = BuildType(element_type);
+
+        pDescriptor.mName = TypeNamesGenerator::getSequenceTypeName(element_type->GetName(),bound, true);
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
         AddTypeToList(pNewTypeBuilder);
@@ -449,9 +468,11 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateStringType(uint32_t bound)
 
     TypeDescriptor pDescriptor;
     pDescriptor.mKind = TK_STRING8;
-    pDescriptor.mName = GenerateTypeName(GetTypeName(TK_STRING8));
+    //pDescriptor.mName = GenerateTypeName(GetTypeName(TK_STRING8));
     pDescriptor.mElementType = BuildType(&pCharDescriptor);
     pDescriptor.mBound.push_back(bound);
+
+    pDescriptor.mName = TypeNamesGenerator::getStringTypeName(bound, false, true);
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -598,9 +619,11 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateWstringType(uint32_t bound)
 
     TypeDescriptor pDescriptor;
     pDescriptor.mKind = TK_STRING16;
-    pDescriptor.mName = GenerateTypeName(GetTypeName(TK_STRING16));
+    //pDescriptor.mName = GenerateTypeName(GetTypeName(TK_STRING16));
     pDescriptor.mElementType = BuildType(&pCharDescriptor);
     pDescriptor.mBound.push_back(bound);
+
+    pDescriptor.mName = TypeNamesGenerator::getStringTypeName(bound, true, true);
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
     AddTypeToList(pNewTypeBuilder);
@@ -811,7 +834,7 @@ void DynamicTypeBuilderFactory::BuildTypeIdentifier(const TypeDescriptor* descri
 }
 
 void DynamicTypeBuilderFactory::BuildTypeObject(const TypeDescriptor* descriptor, TypeObject &object,
-                                                const std::vector<MemberDescriptor*> *members) const
+                                                const std::vector<const MemberDescriptor*> *members) const
 {
     const TypeObject *obj2 = TypeObjectFactory::GetInstance()->GetTypeObject(descriptor->GetName());
     if (obj2 != nullptr)
@@ -922,13 +945,13 @@ void DynamicTypeBuilderFactory::BuildAliasTypeObject(const TypeDescriptor* descr
 }
 
 void DynamicTypeBuilderFactory::BuildEnumTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
-                                                    const std::vector<MemberDescriptor*> members) const
+                                                    const std::vector<const MemberDescriptor*> members) const
 {
     object._d(EK_MINIMAL);
     object.minimal()._d(TK_ENUM);
     object.minimal().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
 
-    for (MemberDescriptor* member : members)
+    for (const MemberDescriptor* member : members)
     {
         MinimalEnumeratedLiteral mel;
         mel.common().flags().TRY_CONSTRUCT1(false);
@@ -973,7 +996,7 @@ void DynamicTypeBuilderFactory::BuildEnumTypeObject(const TypeDescriptor* descri
 }
 
 void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
-                                                    const std::vector<MemberDescriptor*> members) const
+                                                    const std::vector<const MemberDescriptor*> members) const
 {
     object._d(EK_MINIMAL);
     object.minimal()._d(TK_STRUCTURE);
@@ -984,7 +1007,7 @@ void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* desc
     object.minimal().struct_type().struct_flags().IS_NESTED(false);
     object.minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
 
-    for (MemberDescriptor* member : members)
+    for (const MemberDescriptor* member : members)
     {
         MinimalStructMember msm;
         msm.common().member_id(member->GetId());
@@ -997,10 +1020,27 @@ void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* desc
         msm.common().member_flags().IS_DEFAULT(false);
         //TypeIdentifier memIdent;
         //BuildTypeIdentifier(member->mType->mDescriptor, memIdent);
+
+        std::map<MemberId, DynamicTypeMember*> membersMap;
+        member->mType->GetAllMembers(membersMap);
+        std::vector<const MemberDescriptor*> innerMembers;
+        for (auto it : membersMap)
+        {
+            innerMembers.push_back(it.second->GetDescriptor());
+        }
+
         TypeObject memObj;
-        BuildTypeObject(member->mType->mDescriptor, memObj);
-        TypeIdentifier memIdent = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
-        msm.common().member_type_id(memIdent);
+        BuildTypeObject(member->mType->mDescriptor, memObj, &innerMembers);
+        const TypeIdentifier *typeId = TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
+        if (typeId == nullptr)
+        {
+            logError(DYN_TYPES, "Member " << member->GetName() << " of struct " << descriptor->GetName() << " failed.");
+        }
+        else
+        {
+            TypeIdentifier memIdent = *typeId;
+            msm.common().member_type_id(memIdent);
+        }
         //msm.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName()));
         MD5 hash(member->GetName());
         for(int i = 0; i < 4; ++i)
@@ -1041,7 +1081,7 @@ void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* desc
 
 
 void DynamicTypeBuilderFactory::BuildUnionTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
-                                                    const std::vector<MemberDescriptor*> members) const
+                                                    const std::vector<const MemberDescriptor*> members) const
 {
     object._d(EK_MINIMAL);
     object.minimal()._d(TK_UNION);
@@ -1067,7 +1107,7 @@ void DynamicTypeBuilderFactory::BuildUnionTypeObject(const TypeDescriptor* descr
     object.minimal().union_type().discriminator().common().type_id(discIdent);
         //*TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->mDiscriminatorType->GetName()));
 
-    for (MemberDescriptor* member : members)
+    for (const MemberDescriptor* member : members)
     {
         MinimalUnionMember mum;
         mum.common().member_id(member->GetId());
@@ -1081,10 +1121,29 @@ void DynamicTypeBuilderFactory::BuildUnionTypeObject(const TypeDescriptor* descr
 
         //TypeIdentifier memIdent;
         //BuildTypeIdentifier(member->mType->mDescriptor, memIdent);
+
+        std::map<MemberId, DynamicTypeMember*> membersMap;
+        member->mType->GetAllMembers(membersMap);
+        std::vector<const MemberDescriptor*> innerMembers;
+        for (auto it : membersMap)
+        {
+            innerMembers.push_back(it.second->GetDescriptor());
+        }
+
         TypeObject memObj;
-        BuildTypeObject(member->mType->mDescriptor, memObj);
-        TypeIdentifier memIdent = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
-        mum.common().type_id(memIdent);
+        BuildTypeObject(member->mType->mDescriptor, memObj, &innerMembers);
+        const TypeIdentifier *typeId = TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
+        if (typeId == nullptr)
+        {
+            logError(DYN_TYPES, "Member " << member->GetName() << " of union " << descriptor->GetName() << " failed.");
+        }
+        else
+        {
+            TypeIdentifier memIdent = *typeId;
+            mum.common().type_id(memIdent);
+        }
+        //TypeIdentifier memIdent = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
+        //mum.common().type_id(memIdent);
         //mum.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName()));
         for (uint64_t lab : member->GetUnionLabels())
         {

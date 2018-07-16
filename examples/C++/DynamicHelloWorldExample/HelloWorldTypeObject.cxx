@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*!
+/*! 
  * @file HelloWorldTypeObject.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -41,77 +41,96 @@ HelloWorldTypeFactory::HelloWorldTypeFactory()
     // Generate basic TypeIdentifiers
     TypeIdentifier *auxIdent;
     // TK_BOOLEAN:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_BOOLEAN);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("bool", auxIdent));
+    if (m_Identifiers.find("bool") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_BOOLEAN);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("bool", auxIdent));
+    }
     // TK_BYTE:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_BYTE);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint8_t", auxIdent));
+    if (m_Identifiers.find("uint8_t") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_BYTE);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint8_t", auxIdent));
+    }
     // TK_INT16:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_INT16);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int16_t", auxIdent));
+    if (m_Identifiers.find("int16_t") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_INT16);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int16_t", auxIdent));
+    }
     // TK_INT32:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_INT32);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int32_t", auxIdent));
+    if (m_Identifiers.find("int32_t") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_INT32);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int32_t", auxIdent));
+    }
     // TK_INT64:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_INT64);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int64_t", auxIdent));
+    if (m_Identifiers.find("int64_t") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_INT64);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int64_t", auxIdent));
+    }
     // TK_UINT16:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_UINT16);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint16_t", auxIdent));
+    if (m_Identifiers.find("uint16_t") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_UINT16);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint16_t", auxIdent));
+    }
     // TK_UINT32:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_UINT32);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint32_t", auxIdent));
+    if (m_Identifiers.find("uint32_t") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_UINT32);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint32_t", auxIdent));
+    }
     // TK_UINT64:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_UINT64);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint64_t", auxIdent));
+    if (m_Identifiers.find("uint64_t") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_UINT64);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint64_t", auxIdent));
+    }
     // TK_FLOAT32:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_FLOAT32);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("float", auxIdent));
+    if (m_Identifiers.find("float") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_FLOAT32);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("float", auxIdent));
+    }
     // TK_FLOAT64:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_FLOAT64);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("double", auxIdent));
+    if (m_Identifiers.find("double") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_FLOAT64);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("double", auxIdent));
+    }
     // TK_FLOAT128:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_FLOAT128);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("long double", auxIdent));
+    if (m_Identifiers.find("longdouble") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_FLOAT128);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("longdouble", auxIdent));
+    }
     // TK_CHAR8:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_CHAR8);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("char", auxIdent));
+    if (m_Identifiers.find("char") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_CHAR8);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("char", auxIdent));
+    }
     // TK_CHAR16:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TK_CHAR16);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("wchar_t", auxIdent));
-
-    // Not basic, but "standard"
-    // TI_STRING8_SMALL:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TI_STRING8_SMALL);
-    auxIdent->string_sdefn().bound(255);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("std::string_255", auxIdent));
-    // TI_STRING16_SMALL:
-    auxIdent = new TypeIdentifier;
-    auxIdent->_d(TI_STRING16_SMALL);
-    auxIdent->string_sdefn().bound(255);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("std::wstring_255", auxIdent));
-    // TI_STRING8_LARGE:
-    //auxIdent = new TypeIdentifier;
-    //auxIdent->_d(TI_STRING8_LARGE);
-    //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("string", auxIdent));
-    // TI_STRING16_LARGE:
-    //auxIdent = new TypeIdentifier;
-    //auxIdent->_d(TI_STRING16_LARGE);
-    //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("std::wstring", auxIdent));
+    if (m_Identifiers.find("wchar_t") == m_Identifiers.end())
+    {
+        auxIdent = new TypeIdentifier;
+        auxIdent->_d(TK_CHAR16);
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("wchar_t", auxIdent));
+    }
 
     registerTypes();
 }
@@ -135,10 +154,15 @@ HelloWorldTypeFactory::~HelloWorldTypeFactory()
     m_Objects.clear();
 }
 
+static bool g_AlreadyRegistered = false;
 void HelloWorldTypeFactory::registerTypes()
 {
+    if (g_AlreadyRegistered) return;
+
     TypeObjectFactory *factory = TypeObjectFactory::GetInstance();
     factory->AddTypeObject("HelloWorld", getHelloWorldIdentifier(), getHelloWorldObject());
+
+    g_AlreadyRegistered = true;
 }
 
 EquivalenceKind HelloWorldTypeFactory::getEquivalenceKind(const std::string &type_name) const
@@ -179,11 +203,11 @@ EquivalenceKind HelloWorldTypeFactory::getEquivalenceKind(const std::string &typ
     {
         return TK_BYTE;
     }
-    else if (type_name.find("std::strings_") == 0)
+    else if (type_name.find("strings_") == 0)
     {
         return TI_STRING8_SMALL;
     }
-    else if (type_name.find("std::stringl_") == 0)
+    else if (type_name.find("stringl_") == 0)
     {
         return TI_STRING8_LARGE;
     }
@@ -211,7 +235,7 @@ EquivalenceKind HelloWorldTypeFactory::getEquivalenceKind(const std::string &typ
     {
         return TK_UINT64;
     }
-    else if (type_name == "long double")
+    else if (type_name == "longdouble")
     {
         return TK_FLOAT128;
     }
@@ -219,11 +243,11 @@ EquivalenceKind HelloWorldTypeFactory::getEquivalenceKind(const std::string &typ
     {
         return TK_CHAR16;
     }
-    else if (type_name.find("std::wstrings_") == 0)
+    else if (type_name.find("wstrings_") == 0)
     {
         return TI_STRING16_SMALL;
     }
-    else if (type_name.find("std::wstringl_") == 0)
+    else if (type_name.find("wstringl_") == 0)
     {
         return TI_STRING16_LARGE;
     }
@@ -357,7 +381,7 @@ TypeIdentifier* HelloWorldTypeFactory::getTypeIdentifier(const std::string &basi
 std::string HelloWorldTypeFactory::getStringTypeName(uint32_t bound, bool wide, bool generate_identifier)
 {
     std::stringstream type;
-    type << ((wide) ? "std::string" : "std::wstring");
+    type << ((wide) ? "wstring" : "string");
     type << ((bound < 256) ? "s_" : "l_") << bound;
     if (generate_identifier) { getStringIdentifier(bound, wide); }
     return type.str();
@@ -685,8 +709,9 @@ TypeObject* HelloWorldTypeFactory::getHelloWorldObject()
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
 
+    MemberId memberId = 0;
     MinimalStructMember mst_index;
-    mst_index.common().member_id(MEMBER_ID_INVALID);
+    mst_index.common().member_id(memberId++);
     mst_index.common().member_flags().TRY_CONSTRUCT1(false);
     mst_index.common().member_flags().TRY_CONSTRUCT2(false);
     mst_index.common().member_flags().IS_EXTERNAL(false);
@@ -704,7 +729,7 @@ TypeObject* HelloWorldTypeFactory::getHelloWorldObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_index);
 
     MinimalStructMember mst_message;
-    mst_message.common().member_id(MEMBER_ID_INVALID);
+    mst_message.common().member_id(memberId++);
     mst_message.common().member_flags().TRY_CONSTRUCT1(false);
     mst_message.common().member_flags().TRY_CONSTRUCT2(false);
     mst_message.common().member_flags().IS_EXTERNAL(false);

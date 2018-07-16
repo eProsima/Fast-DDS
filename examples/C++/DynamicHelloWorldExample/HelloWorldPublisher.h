@@ -64,7 +64,7 @@ private:
 	void runThread(uint32_t number, uint32_t sleep);
 
 	// Static types
-	HelloWorld m_Hello;
+	HelloWorld *m_Hello;
 	HelloWorldPubSubType m_type;
 	// Dynamic Types
 	eprosima::fastrtps::types::DynamicData* m_DynHello;

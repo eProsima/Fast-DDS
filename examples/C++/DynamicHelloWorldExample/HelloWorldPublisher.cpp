@@ -40,6 +40,7 @@ HelloWorldPublisher::HelloWorldPublisher()
     , m_DynType(nullptr)
     , m_dynamic(false)
 {
+    m_Hello = nullptr;
 }
 
 bool HelloWorldPublisher::init(bool dynamic)
@@ -72,8 +73,9 @@ bool HelloWorldPublisher::init(bool dynamic)
     }
     else
     {
-        m_Hello.index(0);
-        m_Hello.message("HelloWorld");
+        m_Hello = new HelloWorld;
+        m_Hello->index(0);
+        m_Hello->message("HelloWorld");
     }
 
     ParticipantAttributes PParam;
@@ -93,7 +95,7 @@ bool HelloWorldPublisher::init(bool dynamic)
 
     if (m_dynamic)
     {
-        Domain::registerType(mp_participant, m_DynType);
+        Domain::registerDynamicType(mp_participant, m_DynType);
     }
     else
     {
@@ -131,6 +133,8 @@ HelloWorldPublisher::~HelloWorldPublisher()
         DynamicTypeBuilderFactory::GetInstance()->DeleteType(m_DynType);
         DynamicDataFactory::GetInstance()->DeleteData(m_DynHello);
     }
+
+    delete m_Hello;
 }
 
 void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
@@ -183,7 +187,7 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
                 }
                 else
                 {
-                    std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+                    std::cout << "Message: "<<m_Hello->message()<< " with index: "<< m_Hello->index()<< " SENT"<<std::endl;
                 }
             }
             eClock::my_sleep(sleep);
@@ -208,7 +212,7 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
                 }
                 else
                 {
-                    std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+                    std::cout << "Message: "<<m_Hello->message()<< " with index: "<< m_Hello->index()<< " SENT"<<std::endl;
                 }
             }
             eClock::my_sleep(sleep);
@@ -246,8 +250,8 @@ bool HelloWorldPublisher::publish(bool waitForListener)
         }
         else
         {
-            m_Hello.index(m_Hello.index()+1);
-            mp_publisher->write((void*)&m_Hello);
+            m_Hello->index(m_Hello->index()+1);
+            mp_publisher->write((void*)m_Hello);
         }
         return true;
     }
