@@ -6325,9 +6325,7 @@ void MinimalTypeObject::deserialize(eprosima::fastcdr::Cdr &cdr)
 
 TypeObject::TypeObject()
 {
-    m__d = EK_COMPLETE;
-
-
+    m__d = 0x00; // Default
 }
 
 TypeObject::~TypeObject()

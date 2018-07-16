@@ -37,6 +37,10 @@ class SubscriberAttributes;
 class SubscriberListener;
 class TopicDataType;
 
+namespace types{
+class DynamicType;
+}
+
 /**
  * Class Domain, use to interact with the Publisher Subscriber API of the Fast RTPS implementation.
  *  @ingroup FASTRTPS_MODULE
@@ -150,6 +154,14 @@ public:
      * @return True if correctly registered.
      */
     RTPS_DllAPI static bool registerType(Participant* part, TopicDataType * type);
+
+    /**
+     * Register a type in a participant.
+     * @param part Pointer to the Participant.
+     * @param type Pointer to the Type.
+     * @return True if correctly registered.
+     */
+    RTPS_DllAPI static bool registerDynamicType(Participant* part, types::DynamicType* type);
 
     /**
      * Unregister a type in a participant.

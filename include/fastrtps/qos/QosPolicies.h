@@ -714,7 +714,7 @@ public:
     RTPS_DllAPI TypeIdV1() : Parameter_t(PID_TYPE_IDV1, 0), QosPolicy(false)
     {
         m_type_identifier = new TypeIdentifier();
-        m_type_identifier->_d(EK_MINIMAL);
+        //m_type_identifier->_d(EK_MINIMAL);
     }
 
     RTPS_DllAPI TypeIdV1(const TypeIdV1& type)
@@ -780,7 +780,7 @@ public:
     RTPS_DllAPI TypeObjectV1() : Parameter_t(PID_TYPE_OBJECTV1, 0), QosPolicy(false)
     {
         m_type_object = new TypeObject();
-        m_type_object->_d(EK_MINIMAL);
+        //m_type_object->_d(EK_MINIMAL);
     }
 
     RTPS_DllAPI TypeObjectV1(const TypeObjectV1& type)

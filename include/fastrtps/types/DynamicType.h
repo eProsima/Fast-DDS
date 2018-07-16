@@ -63,6 +63,8 @@ public:
     std::function<uint32_t()> getSerializedSizeProvider(void* data);
     bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
 
+    const TypeDescriptor* getTypeDescriptor() const { return mDescriptor; }
+
 protected:
 
     friend class DynamicTypeBuilder;

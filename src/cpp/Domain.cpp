@@ -32,6 +32,11 @@
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeMember.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/TypeObjectFactory.h>
+
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::xmlparser;
 
@@ -130,7 +135,7 @@ Participant* Domain::createParticipant(const std::string &participant_profile, P
         return nullptr;
     }
     // TODO Needed for IS, and to don't break tests
-    if (user_profile_name_as_rtps_name 
+    if (user_profile_name_as_rtps_name
         && strncmp(defaultName, participant_att.rtps.getName(), strlen(defaultName)) == 0)
     {
         participant_att.rtps.setName(participant_profile.c_str());
@@ -256,6 +261,7 @@ bool Domain::registerType(Participant* part, TopicDataType* type)
 {
     //TODO El registro debería hacerse de manera que no tengamos un objeto del usuario sino que tengamos un objeto TopicDataTYpe propio para que no
     //haya problemas si el usuario lo destruye antes de tiempo.
+
     for (auto it = m_participants.begin(); it != m_participants.end();++it)
     {
         if(it->second->getGuid() == part->getGuid())
@@ -264,6 +270,37 @@ bool Domain::registerType(Participant* part, TopicDataType* type)
         }
     }
     return false;
+}
+
+bool Domain::registerDynamicType(Participant* part, types::DynamicType* type)
+{
+    using namespace eprosima::fastrtps::types;
+    TypeObjectFactory *typeFactory = TypeObjectFactory::GetInstance();
+    const TypeIdentifier *type_id = typeFactory->GetTypeIdentifier(type->getName());
+    if (type_id == nullptr)
+    {
+        DynamicTypeBuilderFactory *dynFactory = DynamicTypeBuilderFactory::GetInstance();
+        std::map<MemberId, DynamicTypeMember*> membersMap;
+        type->GetAllMembers(membersMap);
+        std::vector<const MemberDescriptor*> members;
+        for (auto it : membersMap)
+        {
+            members.push_back(it.second->GetDescriptor());
+        }
+        TypeObject typeObj;
+        dynFactory->BuildTypeObject(type->getTypeDescriptor(), typeObj, &members);
+        const TypeIdentifier *type_id2 = typeFactory->GetTypeIdentifier(type->getName());
+        const TypeObject *type_obj = typeFactory->GetTypeObject(type->getName());
+        if (type_id2 == nullptr)
+        {
+            logError(DYN_TYPES, "Cannot register dynamic type " << type->getName());
+        }
+        else
+        {
+            typeFactory->AddTypeObject(type->getName(), type_id2, type_obj);
+        }
+    }
+    return registerType(part, type);
 }
 
 bool Domain::unregisterType(Participant* part, const char* typeName)

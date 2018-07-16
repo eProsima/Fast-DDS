@@ -57,15 +57,6 @@ protected:
     std::map<const std::string, const TypeIdentifier*> m_Identifiers;
     std::map<const TypeIdentifier*, const TypeObject*> m_Objects;
 
-
-    std::string getStringTypeName(uint32_t bound, bool wide, bool generate_identifier = true);
-    std::string getSequenceTypeName(const std::string &type_name, uint32_t bound, bool generate_identifier = true);
-    std::string getArrayTypeName(const std::string &type_name, const std::vector<uint32_t> &bound,
-        bool generate_identifier = true);
-    std::string getArrayTypeName(const std::string &type_name, const std::vector<uint32_t> &bound, uint32_t &ret_size,
-        bool generate_identifier = true);
-    std::string getMapTypeName(const std::string &key_type_name, const std::string &value_type_name, uint32_t bound,
-        bool generate_identifier = true);
     //TODO: TypeDescriptor* BuildTypeDescriptorFromObject(TypeDescriptor* descriptor, const TypeObject* object) const;
     //TODO: void BuildTypeDescriptorFromMinimalObject(TypeDescriptor* descriptor, const MinimalTypeObject &minimal) const;
 

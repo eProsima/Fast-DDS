@@ -51,12 +51,12 @@ public:
 	class SubListener:public eprosima::fastrtps::SubscriberListener
 	{
 	public:
-		SubListener():n_matched(0),n_samples(0){};
-		~SubListener(){};
+		SubListener():n_matched(0),n_samples(0){ m_Hello = nullptr; };
+		~SubListener(){ delete m_Hello; };
 		void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
 		void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
 		// Static types
-		HelloWorld m_Hello;
+		HelloWorld *m_Hello;
 		// Dynamic Types
 		eprosima::fastrtps::types::DynamicData* m_DynHello;
 		bool m_dynamic;

@@ -97,7 +97,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObject.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectHashId.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp            
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeNamesGenerator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
         )
 
         set(TCPV6TESTS_SOURCE
@@ -138,7 +139,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObject.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectHashId.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp            
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeNamesGenerator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
         )
 
         set(TEST_UDPV4TESTS_SOURCE
@@ -175,7 +177,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObject.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectHashId.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp            
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeNamesGenerator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
         )
 
         include_directories(mock/)

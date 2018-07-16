@@ -63,8 +63,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObject.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectHashId.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp            
-            )  
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeNamesGenerator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+            )
 
         # External sources
         if(TINYXML2_SOURCE_DIR)
@@ -77,14 +78,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(XMLProfileParserTests ${XMLPROFILEPARSER_SOURCE})
         target_compile_definitions(XMLProfileParserTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(XMLProfileParserTests PRIVATE 
+        target_include_directories(XMLProfileParserTests PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)	
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 
         if(MSVC OR MSVC_IDE)
             target_link_libraries(XMLProfileParserTests ${PRIVACY} fastcdr_static)
@@ -130,8 +131,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObject.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectHashId.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp            
-        )            
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeNamesGenerator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+        )
 
         # External sources
         if(TINYXML2_SOURCE_DIR)

@@ -17,74 +17,13 @@
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/TypeNamesGenerator.h>
 #include <fastrtps/log/Log.h>
 #include <sstream>
 
 namespace eprosima{
 namespace fastrtps{
 namespace types{
-
-std::string TypeObjectFactory::getStringTypeName(uint32_t bound, bool wide, bool generate_identifier)
-{
-    std::stringstream type;
-    type << ((wide) ? "std::string" : "std::wstring");
-    type << ((bound < 256) ? "s_" : "l_") << bound;
-    if (generate_identifier) { GetStringIdentifier(bound, wide); }
-    return type.str();
-}
-
-std::string TypeObjectFactory::getSequenceTypeName(const std::string &type_name, uint32_t bound,
-    bool generate_identifier)
-{
-    std::stringstream auxType;
-    auxType << ((bound < 256) ? "sequences_" : "sequencel_");
-    auxType << type_name << "_" << bound;
-    if (generate_identifier) { GetSequenceIdentifier(type_name, bound); }
-    return auxType.str();
-}
-
-std::string TypeObjectFactory::getArrayTypeName(const std::string &type_name,
-    const std::vector<uint32_t> &bound, bool generate_identifier)
-{
-    uint32_t unused;
-    return getArrayTypeName(type_name, bound, unused, generate_identifier);
-}
-
-std::string TypeObjectFactory::getArrayTypeName(const std::string &type_name,
-    const std::vector<uint32_t> &bound, uint32_t &ret_size, bool generate_identifier)
-{
-    std::stringstream auxType;
-    std::stringstream auxType2;
-    auxType2 << type_name;
-    uint32_t size = 0;
-    for (uint32_t b : bound)
-    {
-        auxType2 << "_" << b;
-        size += b;
-    }
-    if (size < 256)
-    {
-        auxType << "arrays_";
-    }
-    else
-    {
-        auxType << "arrayl_";
-    }
-    auxType << auxType2.str();
-    ret_size = size;
-    if (generate_identifier) { GetArrayIdentifier(type_name, bound); }
-    return auxType.str();
-}
-
-std::string TypeObjectFactory::getMapTypeName(const std::string &key_type_name,
-    const std::string &value_type_name, uint32_t bound, bool generate_identifier)
-{
-    std::stringstream auxType;
-    auxType << ((bound < 256) ? "maps_" : "mapl_");
-    auxType << key_type_name << "_" << value_type_name << "_" << bound;
-    if (generate_identifier) { GetMapIdentifier(key_type_name, value_type_name, bound); }
-    return auxType.str();
-}
 
 static TypeObjectFactory* g_instance = nullptr;
 TypeObjectFactory* TypeObjectFactory::GetInstance()
@@ -251,11 +190,11 @@ TypeKind TypeObjectFactory::GetTypeKind(const std::string &type_name) const
     {
         return TK_BYTE;
     }
-    else if (type_name.find("std::strings_") == 0)
+    else if (type_name.find("strings_") == 0)
     {
         return TI_STRING8_SMALL;
     }
-    else if (type_name.find("std::stringl_") == 0)
+    else if (type_name.find("stringl_") == 0)
     {
         return TI_STRING8_LARGE;
     }
@@ -377,21 +316,41 @@ const TypeIdentifier* TypeObjectFactory::GetTypeIdentifier(const std::string &ty
 void TypeObjectFactory::AddTypeIdentifier(const std::string &type_name, const TypeIdentifier* identifier)
 {
     std::unique_lock<std::mutex> scoped(m_MutexIdentifiers);
-    m_Identifiers.insert(std::pair<const std::string, const TypeIdentifier*>(type_name, identifier));
+    //m_Identifiers.insert(std::pair<const std::string, const TypeIdentifier*>(type_name, identifier));
+    if (m_Identifiers.find(type_name) == m_Identifiers.end())
+    {
+        TypeIdentifier* id = new TypeIdentifier;
+        *id = *identifier;
+        m_Identifiers[type_name] = id;
+    }
 }
 
 void TypeObjectFactory::AddTypeObject(const std::string &type_name, const TypeIdentifier* identifier,
         const TypeObject* object)
 {
     std::unique_lock<std::mutex> scoped(m_MutexIdentifiers);
-    m_Identifiers.insert(std::pair<std::string, const TypeIdentifier*>(type_name, identifier));
+    //m_Identifiers.insert(std::pair<std::string, const TypeIdentifier*>(type_name, identifier));
+    if (m_Identifiers.find(type_name) == m_Identifiers.end())
+    {
+        TypeIdentifier* id = new TypeIdentifier;
+        *id = *identifier;
+        m_Identifiers[type_name] = id;
+    }
     std::unique_lock<std::mutex> scopedObj(m_MutexObjects);
-    m_Objects.insert(std::pair<const TypeIdentifier*, const TypeObject*>(identifier, object));
+    //m_Objects.insert(std::pair<const TypeIdentifier*, const TypeObject*>(identifier, object));
+    const TypeIdentifier* typeId = m_Identifiers[type_name];
+    if (object != nullptr && m_Objects.find(typeId) == m_Objects.end())
+    {
+        TypeObject* obj = new TypeObject;
+        *obj = *object;
+        m_Objects[typeId] = obj;
+    }
+    //m_Objects[identifier] = object;
 }
 
 const TypeIdentifier* TypeObjectFactory::GetStringIdentifier(uint32_t bound, bool wide)
 {
-    std::string type = getStringTypeName(bound, wide, false);
+    std::string type = TypeNamesGenerator::getStringTypeName(bound, wide, false);
 
     TypeIdentifier* auxIdent;
 
@@ -412,14 +371,15 @@ const TypeIdentifier* TypeObjectFactory::GetStringIdentifier(uint32_t bound, boo
             auxIdent->_d(wide ? TI_STRING16_LARGE : TI_STRING8_LARGE);
             auxIdent->string_ldefn().bound(bound);
         }
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(type, auxIdent));
+        //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(type, auxIdent));
+        m_Identifiers[type] = auxIdent;
     }
     return auxIdent;
 }
 
 const TypeIdentifier* TypeObjectFactory::GetSequenceIdentifier(const std::string &type_name, uint32_t bound)
 {
-    std::string auxType = getSequenceTypeName(type_name, bound, false);
+    std::string auxType = TypeNamesGenerator::getSequenceTypeName(type_name, bound, false);
 
     TypeIdentifier* auxIdent;
 
@@ -460,7 +420,8 @@ const TypeIdentifier* TypeObjectFactory::GetSequenceIdentifier(const std::string
             auxIdent->seq_ldefn().header().element_flags().IS_DEFAULT(false);
             auxIdent->seq_ldefn().header().equiv_kind(GetTypeKind(type_name));
         }
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
+        //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
+        m_Identifiers[auxType] = auxIdent;
     }
 
     return auxIdent;
@@ -469,7 +430,7 @@ const TypeIdentifier* TypeObjectFactory::GetSequenceIdentifier(const std::string
 const TypeIdentifier* TypeObjectFactory::GetArrayIdentifier(const std::string &type_name, const std::vector<uint32_t> &bound)
 {
     uint32_t size;
-    std::string auxType = getArrayTypeName(type_name, bound, size, false);
+    std::string auxType = TypeNamesGenerator::getArrayTypeName(type_name, bound, size, false);
 
     TypeIdentifier* auxIdent;
 
@@ -516,7 +477,8 @@ const TypeIdentifier* TypeObjectFactory::GetArrayIdentifier(const std::string &t
             auxIdent->array_ldefn().header().element_flags().IS_DEFAULT(false);
             auxIdent->array_ldefn().header().equiv_kind(GetTypeKind(type_name));
         }
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
+        //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
+        m_Identifiers[auxType] = auxIdent;
     }
 
     return auxIdent;
@@ -525,7 +487,7 @@ const TypeIdentifier* TypeObjectFactory::GetArrayIdentifier(const std::string &t
 const TypeIdentifier* TypeObjectFactory::GetMapIdentifier(const std::string &key_type_name,
     const std::string &value_type_name, uint32_t bound)
 {
-    std::string auxType = getMapTypeName(key_type_name, value_type_name, bound, false);
+    std::string auxType = TypeNamesGenerator::getMapTypeName(key_type_name, value_type_name, bound, false);
 
     TypeIdentifier* auxIdent;
 
@@ -583,16 +545,17 @@ const TypeIdentifier* TypeObjectFactory::GetMapIdentifier(const std::string &key
             auxIdent->map_ldefn().key_flags().IS_DEFAULT(false);
             auxIdent->map_ldefn().header().equiv_kind(GetTypeKind(value_type_name));
         }
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
+        //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
+        m_Identifiers[auxType] = auxIdent;
     }
 
     return auxIdent;
 }
 
-static uint32_t s_typeNameCounter = 0;
+//static uint32_t s_typeNameCounter = 0;
 static std::string GenerateTypeName(const std::string &kind)
 {
-    return kind + "_" + std::to_string(++s_typeNameCounter);
+    return kind;// + "_" + std::to_string(++s_typeNameCounter);
 }
 
 static TypeKind GetTypeKindFromIdentifier(const TypeIdentifier* identifier)

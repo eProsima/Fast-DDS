@@ -230,6 +230,7 @@ ParameterList_t ReaderProxyData::toParameterList()
     //TODO: //GASCO: PID_TYPE_IDV1
     if (m_topicDiscoveryKind != NO_CHECK)
     {
+        if (m_type_id.m_type_identifier->_d() != 0)
         {
             TypeIdV1 * p = new TypeIdV1();
             *p = m_type_id;
@@ -237,6 +238,7 @@ ParameterList_t ReaderProxyData::toParameterList()
         }
 
         //TODO: //GASCO: PID_TYPE_OBJECTV1
+        if (m_type.m_type_object->_d() != 0)
         {
             TypeObjectV1 * p = new TypeObjectV1();
             *p = m_type;

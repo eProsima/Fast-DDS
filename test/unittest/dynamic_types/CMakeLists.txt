@@ -42,6 +42,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObject.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectHashId.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeNamesGenerator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp

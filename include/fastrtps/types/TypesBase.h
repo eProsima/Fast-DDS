@@ -46,7 +46,7 @@ const std::string TKNAME_BYTE       = "octet";
 const std::string TKNAME_CHAR16     = "wchar";
 const std::string TKNAME_FLOAT32    = "float";
 const std::string TKNAME_FLOAT64    = "double";
-const std::string TKNAME_FLOAT128   = "long double";
+const std::string TKNAME_FLOAT128   = "longdouble";
 
 const std::string TKNAME_STRING8    = "string";
 const std::string TKNAME_STRING16   = "wstring";
