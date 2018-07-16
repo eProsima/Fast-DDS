@@ -377,17 +377,23 @@ install(FILES ${PROJECT_SOURCE_DIR}/LICENSE
     )
 set(CPACK_COMPONENT_LICENSES_HIDDEN 1)
 
-# Install examples
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/C++
-    DESTINATION examples/
-    COMPONENT examples
-    PATTERN "examples/CMakeLists.txt" EXCLUDE
-    )
+set(CPACK_COMPONENTS_ALL headers licenses)
 
-set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Examples")
-set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} examples")
+option(INSTALL_EXAMPLES "Install example" ON)
 
-set(CPACK_COMPONENTS_ALL headers licenses examples)
+if(INSTALL_EXAMPLES)
+  # Install examples
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/C++
+      DESTINATION examples/
+      COMPONENT examples
+      PATTERN "examples/CMakeLists.txt" EXCLUDE
+      )
+
+  set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Examples")
+  set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} examples")
+
+  set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} examples)
+endif()
 
 if(BUILD_JAVA)
     install(FILES ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen/share/fastrtps/${PROJECT_NAME}gen.jar
