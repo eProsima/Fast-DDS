@@ -111,11 +111,11 @@ TestTypeFactory::TestTypeFactory()
         m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("double", auxIdent));
     }
     // TK_FLOAT128:
-    if (m_Identifiers.find("long double") == m_Identifiers.end())
+    if (m_Identifiers.find("longdouble") == m_Identifiers.end())
     {
         auxIdent = new TypeIdentifier;
         auxIdent->_d(TK_FLOAT128);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("long double", auxIdent));
+        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("longdouble", auxIdent));
     }
     // TK_CHAR8:
     if (m_Identifiers.find("char") == m_Identifiers.end())
@@ -216,11 +216,11 @@ EquivalenceKind TestTypeFactory::getEquivalenceKind(const std::string &type_name
     {
         return TK_BYTE;
     }
-    else if (type_name.find("std::strings_") == 0)
+    else if (type_name.find("strings_") == 0)
     {
         return TI_STRING8_SMALL;
     }
-    else if (type_name.find("std::stringl_") == 0)
+    else if (type_name.find("stringl_") == 0)
     {
         return TI_STRING8_LARGE;
     }
@@ -248,7 +248,7 @@ EquivalenceKind TestTypeFactory::getEquivalenceKind(const std::string &type_name
     {
         return TK_UINT64;
     }
-    else if (type_name == "long double")
+    else if (type_name == "longdouble")
     {
         return TK_FLOAT128;
     }
@@ -256,11 +256,11 @@ EquivalenceKind TestTypeFactory::getEquivalenceKind(const std::string &type_name
     {
         return TK_CHAR16;
     }
-    else if (type_name.find("std::wstrings_") == 0)
+    else if (type_name.find("wstrings_") == 0)
     {
         return TI_STRING16_SMALL;
     }
-    else if (type_name.find("std::wstringl_") == 0)
+    else if (type_name.find("wstringl_") == 0)
     {
         return TI_STRING16_LARGE;
     }
@@ -407,7 +407,7 @@ TypeIdentifier* TestTypeFactory::getTypeIdentifier(const std::string &basic_type
 std::string TestTypeFactory::getStringTypeName(uint32_t bound, bool wide, bool generate_identifier)
 {
     std::stringstream type;
-    type << ((wide) ? "std::string" : "std::wstring");
+    type << ((wide) ? "wstring" : "string");
     type << ((bound < 256) ? "s_" : "l_") << bound;
     if (generate_identifier) { getStringIdentifier(bound, wide); }
     return type.str();
@@ -1032,8 +1032,9 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
 
+    MemberId memberId = 0;
     MinimalStructMember mst_my_bool;
-    mst_my_bool.common().member_id(MEMBER_ID_INVALID);
+    mst_my_bool.common().member_id(memberId++);
     mst_my_bool.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_bool.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_bool.common().member_flags().IS_EXTERNAL(false);
@@ -1051,7 +1052,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_bool);
 
     MinimalStructMember mst_my_octet;
-    mst_my_octet.common().member_id(MEMBER_ID_INVALID);
+    mst_my_octet.common().member_id(memberId++);
     mst_my_octet.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_octet.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_octet.common().member_flags().IS_EXTERNAL(false);
@@ -1069,7 +1070,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_octet);
 
     MinimalStructMember mst_my_int16;
-    mst_my_int16.common().member_id(MEMBER_ID_INVALID);
+    mst_my_int16.common().member_id(memberId++);
     mst_my_int16.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_int16.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_int16.common().member_flags().IS_EXTERNAL(false);
@@ -1087,7 +1088,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_int16);
 
     MinimalStructMember mst_my_int32;
-    mst_my_int32.common().member_id(MEMBER_ID_INVALID);
+    mst_my_int32.common().member_id(memberId++);
     mst_my_int32.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_int32.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_int32.common().member_flags().IS_EXTERNAL(false);
@@ -1105,7 +1106,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_int32);
 
     MinimalStructMember mst_my_int64;
-    mst_my_int64.common().member_id(MEMBER_ID_INVALID);
+    mst_my_int64.common().member_id(memberId++);
     mst_my_int64.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_int64.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_int64.common().member_flags().IS_EXTERNAL(false);
@@ -1123,7 +1124,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_int64);
 
     MinimalStructMember mst_my_uint16;
-    mst_my_uint16.common().member_id(MEMBER_ID_INVALID);
+    mst_my_uint16.common().member_id(memberId++);
     mst_my_uint16.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_uint16.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_uint16.common().member_flags().IS_EXTERNAL(false);
@@ -1141,7 +1142,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_uint16);
 
     MinimalStructMember mst_my_uint32;
-    mst_my_uint32.common().member_id(MEMBER_ID_INVALID);
+    mst_my_uint32.common().member_id(memberId++);
     mst_my_uint32.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_uint32.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_uint32.common().member_flags().IS_EXTERNAL(false);
@@ -1159,7 +1160,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_uint32);
 
     MinimalStructMember mst_my_uint64;
-    mst_my_uint64.common().member_id(MEMBER_ID_INVALID);
+    mst_my_uint64.common().member_id(memberId++);
     mst_my_uint64.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_uint64.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_uint64.common().member_flags().IS_EXTERNAL(false);
@@ -1177,7 +1178,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_uint64);
 
     MinimalStructMember mst_my_float32;
-    mst_my_float32.common().member_id(MEMBER_ID_INVALID);
+    mst_my_float32.common().member_id(memberId++);
     mst_my_float32.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_float32.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_float32.common().member_flags().IS_EXTERNAL(false);
@@ -1195,7 +1196,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_float32);
 
     MinimalStructMember mst_my_float64;
-    mst_my_float64.common().member_id(MEMBER_ID_INVALID);
+    mst_my_float64.common().member_id(memberId++);
     mst_my_float64.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_float64.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_float64.common().member_flags().IS_EXTERNAL(false);
@@ -1213,7 +1214,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_float64);
 
     MinimalStructMember mst_my_float128;
-    mst_my_float128.common().member_id(MEMBER_ID_INVALID);
+    mst_my_float128.common().member_id(memberId++);
     mst_my_float128.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_float128.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_float128.common().member_flags().IS_EXTERNAL(false);
@@ -1231,7 +1232,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_float128);
 
     MinimalStructMember mst_my_char;
-    mst_my_char.common().member_id(MEMBER_ID_INVALID);
+    mst_my_char.common().member_id(memberId++);
     mst_my_char.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_char.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_char.common().member_flags().IS_EXTERNAL(false);
@@ -1249,7 +1250,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_char);
 
     MinimalStructMember mst_my_wchar;
-    mst_my_wchar.common().member_id(MEMBER_ID_INVALID);
+    mst_my_wchar.common().member_id(memberId++);
     mst_my_wchar.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_wchar.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_wchar.common().member_flags().IS_EXTERNAL(false);
@@ -1267,7 +1268,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_wchar);
 
     MinimalStructMember mst_my_string;
-    mst_my_string.common().member_id(MEMBER_ID_INVALID);
+    mst_my_string.common().member_id(memberId++);
     mst_my_string.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_string.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_string.common().member_flags().IS_EXTERNAL(false);
@@ -1286,7 +1287,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_string);
 
     MinimalStructMember mst_my_wstring;
-    mst_my_wstring.common().member_id(MEMBER_ID_INVALID);
+    mst_my_wstring.common().member_id(memberId++);
     mst_my_wstring.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_wstring.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_wstring.common().member_flags().IS_EXTERNAL(false);
@@ -1667,8 +1668,9 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
 
+    MemberId memberId = 0;
     MinimalStructMember mst_my_octet;
-    mst_my_octet.common().member_id(MEMBER_ID_INVALID);
+    mst_my_octet.common().member_id(memberId++);
     mst_my_octet.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_octet.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_octet.common().member_flags().IS_EXTERNAL(false);
@@ -1686,7 +1688,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_octet);
 
     MinimalStructMember mst_my_basic_struct;
-    mst_my_basic_struct.common().member_id(MEMBER_ID_INVALID);
+    mst_my_basic_struct.common().member_id(memberId++);
     mst_my_basic_struct.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_basic_struct.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_basic_struct.common().member_flags().IS_EXTERNAL(false);
@@ -1703,7 +1705,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_basic_struct);
 
     MinimalStructMember mst_my_alias_enum;
-    mst_my_alias_enum.common().member_id(MEMBER_ID_INVALID);
+    mst_my_alias_enum.common().member_id(memberId++);
     mst_my_alias_enum.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_alias_enum.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_alias_enum.common().member_flags().IS_EXTERNAL(false);
@@ -1720,7 +1722,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_alias_enum);
 
     MinimalStructMember mst_my_enum;
-    mst_my_enum.common().member_id(MEMBER_ID_INVALID);
+    mst_my_enum.common().member_id(memberId++);
     mst_my_enum.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_enum.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_enum.common().member_flags().IS_EXTERNAL(false);
@@ -1737,7 +1739,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_enum);
 
     MinimalStructMember mst_my_sequence_octet;
-    mst_my_sequence_octet.common().member_id(MEMBER_ID_INVALID);
+    mst_my_sequence_octet.common().member_id(memberId++);
     mst_my_sequence_octet.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_sequence_octet.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_sequence_octet.common().member_flags().IS_EXTERNAL(false);
@@ -1756,7 +1758,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_sequence_octet);
 
     MinimalStructMember mst_my_sequence_struct;
-    mst_my_sequence_struct.common().member_id(MEMBER_ID_INVALID);
+    mst_my_sequence_struct.common().member_id(memberId++);
     mst_my_sequence_struct.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_sequence_struct.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_sequence_struct.common().member_flags().IS_EXTERNAL(false);
@@ -1775,7 +1777,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_sequence_struct);
 
     MinimalStructMember mst_my_array_octet;
-    mst_my_array_octet.common().member_id(MEMBER_ID_INVALID);
+    mst_my_array_octet.common().member_id(memberId++);
     mst_my_array_octet.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_array_octet.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_array_octet.common().member_flags().IS_EXTERNAL(false);
@@ -1794,7 +1796,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_array_octet);
 
     MinimalStructMember mst_my_octet_array_500;
-    mst_my_octet_array_500.common().member_id(MEMBER_ID_INVALID);
+    mst_my_octet_array_500.common().member_id(memberId++);
     mst_my_octet_array_500.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_octet_array_500.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_octet_array_500.common().member_flags().IS_EXTERNAL(false);
@@ -1811,7 +1813,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_octet_array_500);
 
     MinimalStructMember mst_my_array_struct;
-    mst_my_array_struct.common().member_id(MEMBER_ID_INVALID);
+    mst_my_array_struct.common().member_id(memberId++);
     mst_my_array_struct.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_array_struct.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_array_struct.common().member_flags().IS_EXTERNAL(false);
@@ -1830,7 +1832,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_array_struct);
 
     MinimalStructMember mst_my_map_octet_short;
-    mst_my_map_octet_short.common().member_id(MEMBER_ID_INVALID);
+    mst_my_map_octet_short.common().member_id(memberId++);
     mst_my_map_octet_short.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_map_octet_short.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_map_octet_short.common().member_flags().IS_EXTERNAL(false);
@@ -1849,7 +1851,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_map_octet_short);
 
     MinimalStructMember mst_my_map_long_struct;
-    mst_my_map_long_struct.common().member_id(MEMBER_ID_INVALID);
+    mst_my_map_long_struct.common().member_id(memberId++);
     mst_my_map_long_struct.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_map_long_struct.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_map_long_struct.common().member_flags().IS_EXTERNAL(false);
@@ -1868,7 +1870,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_map_long_struct);
 
     MinimalStructMember mst_my_map_long_seq_octet;
-    mst_my_map_long_seq_octet.common().member_id(MEMBER_ID_INVALID);
+    mst_my_map_long_seq_octet.common().member_id(memberId++);
     mst_my_map_long_seq_octet.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_map_long_seq_octet.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_map_long_seq_octet.common().member_flags().IS_EXTERNAL(false);
@@ -1887,7 +1889,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_map_long_seq_octet);
 
     MinimalStructMember mst_my_map_long_octet_array_500;
-    mst_my_map_long_octet_array_500.common().member_id(MEMBER_ID_INVALID);
+    mst_my_map_long_octet_array_500.common().member_id(memberId++);
     mst_my_map_long_octet_array_500.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_map_long_octet_array_500.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_map_long_octet_array_500.common().member_flags().IS_EXTERNAL(false);
@@ -1906,7 +1908,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_map_long_octet_array_500);
 
     MinimalStructMember mst_my_map_long_lol_type;
-    mst_my_map_long_lol_type.common().member_id(MEMBER_ID_INVALID);
+    mst_my_map_long_lol_type.common().member_id(memberId++);
     mst_my_map_long_lol_type.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_map_long_lol_type.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_map_long_lol_type.common().member_flags().IS_EXTERNAL(false);
@@ -1925,7 +1927,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_map_long_lol_type);
 
     MinimalStructMember mst_my_small_string_8;
-    mst_my_small_string_8.common().member_id(MEMBER_ID_INVALID);
+    mst_my_small_string_8.common().member_id(memberId++);
     mst_my_small_string_8.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_small_string_8.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_small_string_8.common().member_flags().IS_EXTERNAL(false);
@@ -1944,7 +1946,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_small_string_8);
 
     MinimalStructMember mst_my_small_string_16;
-    mst_my_small_string_16.common().member_id(MEMBER_ID_INVALID);
+    mst_my_small_string_16.common().member_id(memberId++);
     mst_my_small_string_16.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_small_string_16.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_small_string_16.common().member_flags().IS_EXTERNAL(false);
@@ -1963,7 +1965,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_small_string_16);
 
     MinimalStructMember mst_my_large_string_8;
-    mst_my_large_string_8.common().member_id(MEMBER_ID_INVALID);
+    mst_my_large_string_8.common().member_id(memberId++);
     mst_my_large_string_8.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_large_string_8.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_large_string_8.common().member_flags().IS_EXTERNAL(false);
@@ -1982,7 +1984,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_large_string_8);
 
     MinimalStructMember mst_my_large_string_16;
-    mst_my_large_string_16.common().member_id(MEMBER_ID_INVALID);
+    mst_my_large_string_16.common().member_id(memberId++);
     mst_my_large_string_16.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_large_string_16.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_large_string_16.common().member_flags().IS_EXTERNAL(false);
@@ -2001,7 +2003,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_large_string_16);
 
     MinimalStructMember mst_my_array_string;
-    mst_my_array_string.common().member_id(MEMBER_ID_INVALID);
+    mst_my_array_string.common().member_id(memberId++);
     mst_my_array_string.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_array_string.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_array_string.common().member_flags().IS_EXTERNAL(false);
@@ -2020,7 +2022,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_array_string);
 
     MinimalStructMember mst_multi_alias_array_42;
-    mst_multi_alias_array_42.common().member_id(MEMBER_ID_INVALID);
+    mst_multi_alias_array_42.common().member_id(memberId++);
     mst_multi_alias_array_42.common().member_flags().TRY_CONSTRUCT1(false);
     mst_multi_alias_array_42.common().member_flags().TRY_CONSTRUCT2(false);
     mst_multi_alias_array_42.common().member_flags().IS_EXTERNAL(false);
@@ -2037,7 +2039,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_multi_alias_array_42);
 
     MinimalStructMember mst_my_array_arrays;
-    mst_my_array_arrays.common().member_id(MEMBER_ID_INVALID);
+    mst_my_array_arrays.common().member_id(memberId++);
     mst_my_array_arrays.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_array_arrays.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_array_arrays.common().member_flags().IS_EXTERNAL(false);
@@ -2056,7 +2058,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_array_arrays);
 
     MinimalStructMember mst_my_sequences_array;
-    mst_my_sequences_array.common().member_id(MEMBER_ID_INVALID);
+    mst_my_sequences_array.common().member_id(memberId++);
     mst_my_sequences_array.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_sequences_array.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_sequences_array.common().member_flags().IS_EXTERNAL(false);
@@ -2177,8 +2179,9 @@ TypeObject* TestTypeFactory::getMyUnionObject()
 
     type_object->minimal().union_type().discriminator().common().type_id(*getMyEnumIdentifier());
 
+    MemberId memberId = 0;
     MinimalUnionMember mst_basic;
-    mst_basic.common().member_id(MEMBER_ID_INVALID);
+    mst_basic.common().member_id(memberId++);
     mst_basic.common().member_flags().TRY_CONSTRUCT1(false);
     mst_basic.common().member_flags().TRY_CONSTRUCT2(false);
     mst_basic.common().member_flags().IS_EXTERNAL(false);
@@ -2196,7 +2199,7 @@ TypeObject* TestTypeFactory::getMyUnionObject()
     type_object->minimal().union_type().member_seq().emplace_back(mst_basic);
 
     MinimalUnionMember mst_complex;
-    mst_complex.common().member_id(MEMBER_ID_INVALID);
+    mst_complex.common().member_id(memberId++);
     mst_complex.common().member_flags().TRY_CONSTRUCT1(false);
     mst_complex.common().member_flags().TRY_CONSTRUCT2(false);
     mst_complex.common().member_flags().IS_EXTERNAL(false);
@@ -2293,8 +2296,9 @@ TypeObject* TestTypeFactory::getMyUnion2Object()
 
     type_object->minimal().union_type().discriminator().common().type_id(*m_Identifiers.at("uint8_t"));
 
+    MemberId memberId = 0;
     MinimalUnionMember mst_uno;
-    mst_uno.common().member_id(MEMBER_ID_INVALID);
+    mst_uno.common().member_id(memberId++);
     mst_uno.common().member_flags().TRY_CONSTRUCT1(false);
     mst_uno.common().member_flags().TRY_CONSTRUCT2(false);
     mst_uno.common().member_flags().IS_EXTERNAL(false);
@@ -2313,7 +2317,7 @@ TypeObject* TestTypeFactory::getMyUnion2Object()
     type_object->minimal().union_type().member_seq().emplace_back(mst_uno);
 
     MinimalUnionMember mst_imString;
-    mst_imString.common().member_id(MEMBER_ID_INVALID);
+    mst_imString.common().member_id(memberId++);
     mst_imString.common().member_flags().TRY_CONSTRUCT1(false);
     mst_imString.common().member_flags().TRY_CONSTRUCT2(false);
     mst_imString.common().member_flags().IS_EXTERNAL(false);
@@ -2333,7 +2337,7 @@ TypeObject* TestTypeFactory::getMyUnion2Object()
     type_object->minimal().union_type().member_seq().emplace_back(mst_imString);
 
     MinimalUnionMember mst_tres;
-    mst_tres.common().member_id(MEMBER_ID_INVALID);
+    mst_tres.common().member_id(memberId++);
     mst_tres.common().member_flags().TRY_CONSTRUCT1(false);
     mst_tres.common().member_flags().TRY_CONSTRUCT2(false);
     mst_tres.common().member_flags().IS_EXTERNAL(false);
@@ -2395,8 +2399,9 @@ TypeObject* TestTypeFactory::getCompleteStructObject()
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
 
+    MemberId memberId = 0;
     MinimalStructMember mst_my_union;
-    mst_my_union.common().member_id(MEMBER_ID_INVALID);
+    mst_my_union.common().member_id(memberId++);
     mst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_union.common().member_flags().IS_EXTERNAL(false);
@@ -2413,7 +2418,7 @@ TypeObject* TestTypeFactory::getCompleteStructObject()
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_union);
 
     MinimalStructMember mst_my_union_2;
-    mst_my_union_2.common().member_id(MEMBER_ID_INVALID);
+    mst_my_union_2.common().member_id(memberId++);
     mst_my_union_2.common().member_flags().TRY_CONSTRUCT1(false);
     mst_my_union_2.common().member_flags().TRY_CONSTRUCT2(false);
     mst_my_union_2.common().member_flags().IS_EXTERNAL(false);
