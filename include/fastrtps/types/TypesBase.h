@@ -31,6 +31,9 @@ using namespace rtps;
 
 namespace types{
 
+const std::string ANNOTATION_KEY_ID = "@Key";
+const std::string ANNOTATION_TOPIC_ID = "@Topic";
+
 const std::string TKNAME_BOOLEAN    = "bool";
 const std::string TKNAME_INT16      = "int16_t";
 const std::string TKNAME_UINT16     = "uint16_t";

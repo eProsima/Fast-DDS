@@ -14,6 +14,7 @@
 
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/DynamicTypeMember.h>
@@ -29,10 +30,12 @@ DynamicType::DynamicType()
     : mDescriptor(nullptr)
     , mName("")
     , mKind(TK_NONE)
+    , m_keyBuffer(nullptr)
 {
 }
 
 DynamicType::DynamicType(const TypeDescriptor* descriptor)
+: m_keyBuffer(nullptr)
 {
     mDescriptor = new TypeDescriptor(descriptor);
     try
@@ -62,6 +65,7 @@ DynamicType::DynamicType(const DynamicType* other)
     : mDescriptor(nullptr)
     , mName("")
     , mKind(TK_NONE)
+    , m_keyBuffer(nullptr)
 {
     CopyFromType(other);
 }
@@ -71,8 +75,87 @@ DynamicType::~DynamicType()
     Clear();
 }
 
+ResponseCode DynamicType::_ApplyAnnotation(AnnotationDescriptor& descriptor)
+{
+    if (descriptor.IsConsistent())
+    {
+        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
+        pNewDescriptor->CopyFrom(&descriptor);
+        mAnnotation.push_back(pNewDescriptor);
+        m_isGetKeyDefined = GetKeyAnnotation();
+        return ResponseCode::RETCODE_OK;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicType::_ApplyAnnotation(const std::string& key, const std::string& value)
+{
+    auto it = mAnnotation.begin();
+    if (it != mAnnotation.end())
+    {
+        (*it)->SetValue(key, value);
+    }
+    else
+    {
+        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
+        pNewDescriptor->SetType(DynamicTypeBuilderFactory::GetInstance()->CreateAnnotationType());
+        pNewDescriptor->SetValue(key, value);
+        mAnnotation.push_back(pNewDescriptor);
+    }
+
+    m_isGetKeyDefined = GetKeyAnnotation();
+    return ResponseCode::RETCODE_OK;
+}
+
+ResponseCode DynamicType::_ApplyAnnotationToMember(MemberId id, AnnotationDescriptor& descriptor)
+{
+    if (descriptor.IsConsistent())
+    {
+        auto it = mMemberById.find(id);
+        if (it != mMemberById.end())
+        {
+            it->second->ApplyAnnotation(descriptor);
+            return ResponseCode::RETCODE_OK;
+        }
+        else
+        {
+            logError(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
+            return ResponseCode::RETCODE_BAD_PARAMETER;
+        }
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error applying annotation to member. The input descriptor isn't consistent.");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicType::_ApplyAnnotationToMember(MemberId id, const std::string& key, const std::string& value)
+{
+    auto it = mMemberById.find(id);
+    if (it != mMemberById.end())
+    {
+        it->second->ApplyAnnotation(key, value);
+        return ResponseCode::RETCODE_OK;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
 void DynamicType::Clear()
 {
+    if (m_keyBuffer != nullptr)
+    {
+        free(m_keyBuffer);
+    }
+
     mName = "";
     mKind = 0;
     if (mDescriptor != nullptr)
@@ -103,6 +186,7 @@ ResponseCode DynamicType::CopyFromType(const DynamicType* other)
 
         mName = other->mName;
         mKind = other->mKind;
+        m_isGetKeyDefined = other->m_isGetKeyDefined;
         mDescriptor = new TypeDescriptor(other->mDescriptor);
 
         for (auto it = other->mAnnotation.begin(); it != other->mAnnotation.end(); ++it)
@@ -115,6 +199,7 @@ ResponseCode DynamicType::CopyFromType(const DynamicType* other)
         {
             DynamicTypeMember* newMember = new DynamicTypeMember(it->second);
             newMember->SetParent(this);
+            m_isGetKeyDefined |= newMember->GetKeyAnnotation();
             mMemberById.insert(std::make_pair(newMember->GetId(), newMember));
             mMemberByName.insert(std::make_pair(newMember->GetName(), newMember));
         }
@@ -154,6 +239,23 @@ ResponseCode DynamicType::GetDescriptor(TypeDescriptor* descriptor) const
         logError(DYN_TYPES, "Error getting TypeDescriptor, invalid input descriptor");
         return ResponseCode::RETCODE_BAD_PARAMETER;
     }
+}
+
+bool DynamicType::GetKeyAnnotation() const
+{
+    for (auto anIt = mAnnotation.begin(); anIt != mAnnotation.end(); ++anIt)
+    {
+        if ((*anIt)->GetKeyAnnotation())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+uint32_t DynamicType::GetKeyMaxCdrSerializedSize()
+{
+    return static_cast<uint32_t>(DynamicData::getKeyMaxCdrSerializedSize(this));
 }
 
 uint32_t DynamicType::GetMaxSerializedSize()
@@ -413,9 +515,41 @@ bool DynamicType::deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *pay
     return true;
 }
 
-bool DynamicType::getKey(void* /*data*/, eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/)
+bool DynamicType::getKey(void* data, eprosima::fastrtps::rtps::InstanceHandle_t* handle)
 {
-    return false;
+    if (!m_isGetKeyDefined)
+    {
+        return false;
+    }
+    DynamicData* pDynamicData = (DynamicData*)data;
+    size_t keyBufferSize = DynamicType::GetKeyMaxCdrSerializedSize();
+
+    if (m_keyBuffer == nullptr)
+    {
+        m_keyBuffer = (unsigned char*)malloc(keyBufferSize>16 ? keyBufferSize : 16);
+    }
+
+    eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer, keyBufferSize);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);     // Object that serializes the data.
+    pDynamicData->serializeKey(ser);
+    if (keyBufferSize > 16)
+    {
+        m_md5.init();
+        m_md5.update(m_keyBuffer, (unsigned int)ser.getSerializedDataLength());
+        m_md5.finalize();
+        for (uint8_t i = 0; i < 16; ++i)
+        {
+            handle->value[i] = m_md5.digest[i];
+        }
+    }
+    else
+    {
+        for (uint8_t i = 0; i < 16; ++i)
+        {
+            handle->value[i] = m_keyBuffer[i];
+        }
+    }
+    return true;
 }
 
 std::function<uint32_t()> DynamicType::getSerializedSizeProvider(void* data)

@@ -36,10 +36,13 @@ public:
     ~DynamicTypeMember();
 
     ResponseCode ApplyAnnotation(AnnotationDescriptor& descriptor);
+    ResponseCode ApplyAnnotation(const std::string& key, const std::string& value);
     bool Equals(const DynamicTypeMember*) const;
 
     ResponseCode GetAnnotation(AnnotationDescriptor& descriptor, uint32_t idx);
     uint32_t GetAnnotationCount();
+    bool GetKeyAnnotation() const;
+
     std::vector<uint64_t> GetUnionLabels() const;
     ResponseCode GetDescriptor(MemberDescriptor* descriptor) const;
     MemberId GetId() const;
@@ -54,6 +57,7 @@ protected:
 
     friend class DynamicTypeBuilder;
     friend class DynamicType;
+    friend class DynamicTypeMember;
     friend class DynamicData;
 
     DynamicType* mParent;

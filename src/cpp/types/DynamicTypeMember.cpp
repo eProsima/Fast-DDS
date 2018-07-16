@@ -14,6 +14,7 @@
 
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/log/Log.h>
@@ -62,12 +63,36 @@ ResponseCode DynamicTypeMember::ApplyAnnotation(AnnotationDescriptor& descriptor
 {
     if (descriptor.IsConsistent())
     {
+        // Store the annotation in the list of the member.
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
         pNewDescriptor->CopyFrom(&descriptor);
         mAnnotation.push_back(pNewDescriptor);
+
+        // Update the annotations on the member Dynamic Type.
+        mDescriptor.mType->_ApplyAnnotation(descriptor);
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
+}
+
+ResponseCode DynamicTypeMember::ApplyAnnotation(const std::string& key, const std::string& value)
+{
+    // Update the annotations on the member Dynamic Type.
+    mDescriptor.mType->_ApplyAnnotation(key, value);
+
+    auto it = mAnnotation.begin();
+    if (it != mAnnotation.end())
+    {
+        return (*it)->SetValue(key, value);
+    }
+    else
+    {
+        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
+        pNewDescriptor->SetType(DynamicTypeBuilderFactory::GetInstance()->CreateAnnotationType());
+        pNewDescriptor->SetValue(key, value);
+        mAnnotation.push_back(pNewDescriptor);
+        return ResponseCode::RETCODE_OK;
+    }
 }
 
 bool DynamicTypeMember::Equals(const DynamicTypeMember* other) const
@@ -102,6 +127,18 @@ ResponseCode DynamicTypeMember::GetAnnotation(AnnotationDescriptor& descriptor, 
 uint32_t DynamicTypeMember::GetAnnotationCount()
 {
     return static_cast<uint32_t>(mAnnotation.size());
+}
+
+bool DynamicTypeMember::GetKeyAnnotation() const
+{
+    for (auto anIt = mAnnotation.begin(); anIt != mAnnotation.end(); ++anIt)
+    {
+        if ((*anIt)->GetKeyAnnotation())
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 std::vector<uint64_t> DynamicTypeMember::GetUnionLabels() const

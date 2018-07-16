@@ -21,9 +21,6 @@ namespace eprosima{
 namespace fastrtps{
 namespace types{
 
-#define ANNOTATION_KEY_ID       "Key"
-#define ANNOTATION_TOPIC_ID     "Topic"
-
 class MemberDescriptor;
 class DynamicType;
 
@@ -31,16 +28,19 @@ class AnnotationDescriptor
 {
 public:
     AnnotationDescriptor();
+    ~AnnotationDescriptor();
     AnnotationDescriptor(const AnnotationDescriptor* descriptor);
     AnnotationDescriptor(DynamicType* pType);
 
     ResponseCode CopyFrom(const AnnotationDescriptor* other);
     bool Equals(const AnnotationDescriptor*) const;
     bool IsConsistent() const;
+    bool GetKeyAnnotation() const;
 
     ResponseCode GetValue(std::string& value, const std::string& key);
     ResponseCode GetAllValues(std::map<std::string, std::string>& value);
     ResponseCode SetValue(const std::string& key, const std::string& value);
+    void SetType(DynamicType* pType);
 
 protected:
 

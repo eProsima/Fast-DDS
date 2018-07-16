@@ -65,6 +65,7 @@ public:
     RTPS_DllAPI DynamicTypeBuilder* CreateBitmaskType(uint32_t bound);
     RTPS_DllAPI DynamicTypeBuilder* CreateBitsetType(uint32_t bound);
     RTPS_DllAPI DynamicTypeBuilder* CreateAliasType(DynamicType* base_type, const std::string& sName);
+    RTPS_DllAPI DynamicType* CreateAnnotationType();
     RTPS_DllAPI DynamicTypeBuilder* CreateEnumType();
     RTPS_DllAPI DynamicTypeBuilder* CreateStructType();
     RTPS_DllAPI DynamicTypeBuilder* CreateChildStructType(DynamicType* parent_type);
