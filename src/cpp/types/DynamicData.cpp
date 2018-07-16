@@ -4074,6 +4074,28 @@ size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current
     return current_alignment - initial_alignment;
 }
 
+size_t DynamicData::getKeyMaxCdrSerializedSize(const DynamicType* type, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    // Structures check the the size of the key for their children
+    if (type->GetKind() == TK_STRUCTURE)
+    {
+        for (auto it = type->mMemberById.begin(); it != type->mMemberById.end(); ++it)
+        {
+            if (it->second->GetKeyAnnotation())
+            {
+                current_alignment += getKeyMaxCdrSerializedSize(it->second->mDescriptor.mType, current_alignment);
+            }
+        }
+    }
+    else if (type->m_isGetKeyDefined)
+    {
+        return getMaxCdrSerializedSize(type, current_alignment);
+    }
+    return current_alignment - initial_alignment;
+}
+
 size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t current_alignment /*= 0*/)
 {
     size_t initial_alignment = current_alignment;
@@ -4423,7 +4445,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
             }
         }
         break;
-    }
+            }
     case TK_MAP:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -4443,6 +4465,29 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     }
     case TK_ALIAS:
         break;
+        }
+    }
+
+void DynamicData::serializeKey(eprosima::fastcdr::Cdr &cdr) const
+{
+    // Structures check the the size of the key for their children
+    if (mType->GetKind() == TK_STRUCTURE)
+    {
+#ifdef DYNAMIC_TYPES_CHECKING
+        for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
+        {
+            it->second->serializeKey(cdr);
+        }
+#else
+        for (auto it = mValues.begin(); it != mValues.end(); ++it)
+        {
+            ((DynamicData*)it->second)->serializeKey(cdr);
+        }
+#endif
+    }
+    else if (mType->m_isGetKeyDefined)
+    {
+        serialize(cdr);
     }
 }
 

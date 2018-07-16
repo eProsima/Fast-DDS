@@ -14,6 +14,7 @@
 
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/log/Log.h>
 
 namespace eprosima {
@@ -25,13 +26,22 @@ AnnotationDescriptor::AnnotationDescriptor()
 {
 }
 
+AnnotationDescriptor::~AnnotationDescriptor()
+{
+    if (mType != nullptr)
+    {
+        DynamicTypeBuilderFactory::GetInstance()->DeleteType(mType);
+        mType = nullptr;
+    }
+}
+
 AnnotationDescriptor::AnnotationDescriptor(const AnnotationDescriptor* descriptor)
 {
     CopyFrom(descriptor);
 }
 
 AnnotationDescriptor::AnnotationDescriptor(DynamicType* pType)
-: mType(pType)
+: mType(DynamicTypeBuilderFactory::GetInstance()->BuildType(pType))
 {
 }
 
@@ -41,7 +51,7 @@ ResponseCode AnnotationDescriptor::CopyFrom(const AnnotationDescriptor* descript
     {
         try
         {
-            mType = descriptor->mType;
+            mType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor->mType);
             mValue = descriptor->mValue;
         }
         catch(std::exception& /*e*/)
@@ -59,7 +69,7 @@ ResponseCode AnnotationDescriptor::CopyFrom(const AnnotationDescriptor* descript
 
 bool AnnotationDescriptor::Equals(const AnnotationDescriptor* other) const
 {
-    if (other != nullptr && mType == other->mType)
+    if (other != nullptr && (mType == other->mType || (mType != nullptr && mType->Equals(other->mType))))
     {
         for (auto it = mValue.begin(); it != mValue.end(); ++it)
         {
@@ -80,6 +90,12 @@ bool AnnotationDescriptor::Equals(const AnnotationDescriptor* other) const
         }
     }
     return false;
+}
+
+bool AnnotationDescriptor::GetKeyAnnotation() const
+{
+    auto it = mValue.find(ANNOTATION_KEY_ID);
+    return (it != mValue.end() && it->second == "true");
 }
 
 ResponseCode AnnotationDescriptor::GetValue(std::string& value, const std::string& key)
@@ -108,6 +124,11 @@ bool AnnotationDescriptor::IsConsistent() const
 
     //TODO: Check consistency of mValue
     return true;
+}
+
+void AnnotationDescriptor::SetType(DynamicType* pType)
+{
+    mType = pType;
 }
 
 ResponseCode AnnotationDescriptor::SetValue(const std::string& key, const std::string& value)

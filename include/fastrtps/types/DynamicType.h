@@ -72,6 +72,7 @@ protected:
     friend class DynamicData;
     friend class AnnotationDescriptor;
     friend class TypeObjectFactory;
+    friend class DynamicTypeMember;
 
     DynamicType();
     DynamicType(const TypeDescriptor* descriptor);
@@ -81,6 +82,8 @@ protected:
 
     ResponseCode CopyFromType(const DynamicType* other);
 
+    bool GetKeyAnnotation() const;
+    uint32_t GetKeyMaxCdrSerializedSize();
     uint32_t GetMaxSerializedSize();
 
     // Checks if there is a member with the given name.
@@ -91,6 +94,11 @@ protected:
     // This method is used by Dynamic Data to override the name of the types based on ALIAS.
     void SetName(const std::string& name);
 
+    ResponseCode _ApplyAnnotation(AnnotationDescriptor& descriptor);
+    ResponseCode _ApplyAnnotation(const std::string& key, const std::string& value);
+    ResponseCode _ApplyAnnotationToMember(MemberId id, AnnotationDescriptor& descriptor);
+    ResponseCode _ApplyAnnotationToMember(MemberId id, const std::string& key, const std::string& value);
+
     TypeDescriptor* mDescriptor;
 	std::vector<AnnotationDescriptor*> mAnnotation;
 	std::map<MemberId, DynamicTypeMember*> mMemberById;         // Aggregated members
@@ -98,6 +106,8 @@ protected:
     std::string mName;
 	TypeKind mKind;
 
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 
 } // namespace types

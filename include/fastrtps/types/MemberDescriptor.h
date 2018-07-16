@@ -58,6 +58,7 @@ protected:
 
     friend class DynamicTypeBuilderFactory;
     friend class DynamicData;
+    friend class DynamicTypeMember;
     friend class TypeObjectFactory;
 
     bool IsDefaultValueConsistent(const std::string& sDefaultValue) const;

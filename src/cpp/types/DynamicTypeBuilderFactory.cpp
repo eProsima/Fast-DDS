@@ -294,6 +294,17 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateChar16Type()
     return pNewTypeBuilder;
 }
 
+DynamicType* DynamicTypeBuilderFactory::CreateAnnotationType()
+{
+    TypeDescriptor pEnumDescriptor;
+    pEnumDescriptor.mKind = TK_ANNOTATION;
+    pEnumDescriptor.mName = GenerateTypeName(GetTypeName(TK_ANNOTATION));
+
+    DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pEnumDescriptor);
+    AddTypeToList(pNewTypeBuilder);
+    return pNewTypeBuilder;
+}
+
 DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateEnumType()
 {
     TypeDescriptor pEnumDescriptor;

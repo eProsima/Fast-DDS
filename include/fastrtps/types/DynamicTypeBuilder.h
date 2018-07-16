@@ -46,8 +46,10 @@ public:
         const std::string& defaultValue, const std::vector<uint64_t>& unionLabels, bool isDefaultLabel);
 
     RTPS_DllAPI ResponseCode ApplyAnnotation(AnnotationDescriptor& descriptor);
-
+    RTPS_DllAPI ResponseCode ApplyAnnotation(std::string key, std::string value);
     RTPS_DllAPI ResponseCode ApplyAnnotationToMember(MemberId id, AnnotationDescriptor& descriptor);
+    RTPS_DllAPI ResponseCode ApplyAnnotationToMember(MemberId id, std::string key, std::string value);
+
 
     RTPS_DllAPI DynamicType* Build();
 

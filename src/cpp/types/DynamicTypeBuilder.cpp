@@ -161,41 +161,22 @@ ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name,
 
 ResponseCode DynamicTypeBuilder::ApplyAnnotation(AnnotationDescriptor& descriptor)
 {
-    if (descriptor.IsConsistent())
-    {
-        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-        pNewDescriptor->CopyFrom(&descriptor);
-        mAnnotation.push_back(pNewDescriptor);
-        return ResponseCode::RETCODE_OK;
-    }
-    else
-    {
-        logError(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
-    }
+    return _ApplyAnnotation(descriptor);
+}
+
+ResponseCode DynamicTypeBuilder::ApplyAnnotation(std::string key, std::string value)
+{
+    return _ApplyAnnotation(key, value);
 }
 
 ResponseCode DynamicTypeBuilder::ApplyAnnotationToMember(MemberId id, AnnotationDescriptor& descriptor)
 {
-    if (descriptor.IsConsistent())
-    {
-        auto it = mMemberById.find(id);
-        if (it != mMemberById.end())
-        {
-            it->second->ApplyAnnotation(descriptor);
-            return ResponseCode::RETCODE_OK;
-        }
-        else
-        {
-            logError(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
-            return ResponseCode::RETCODE_BAD_PARAMETER;
-        }
-    }
-    else
-    {
-        logError(DYN_TYPES, "Error applying annotation to member. The input descriptor isn't consistent.");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
-    }
+    return _ApplyAnnotationToMember(id, descriptor);
+}
+
+ResponseCode DynamicTypeBuilder::ApplyAnnotationToMember(MemberId id, std::string key, std::string value)
+{
+    return _ApplyAnnotationToMember(id, key, value);
 }
 
 DynamicType* DynamicTypeBuilder::Build()
