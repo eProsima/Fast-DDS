@@ -1042,7 +1042,14 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     mst_my_bool.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_bool.common().member_flags().IS_KEY(false);
     mst_my_bool.common().member_flags().IS_DEFAULT(false);
-    mst_my_bool.common().member_type_id(*m_Identifiers.at("bool"));
+    {
+        std::string cppType = "bool";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_my_bool.common().member_type_id(*m_Identifiers.at(cppType));
+    }
 
     MD5 my_bool_hash("my_bool");
     for(int i = 0; i < 4; ++i)
@@ -1060,7 +1067,14 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     mst_my_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_octet.common().member_flags().IS_KEY(false);
     mst_my_octet.common().member_flags().IS_DEFAULT(false);
-    mst_my_octet.common().member_type_id(*m_Identifiers.at("uint8_t"));
+    {
+        std::string cppType = "uint8_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_my_octet.common().member_type_id(*m_Identifiers.at(cppType));
+    }
 
     MD5 my_octet_hash("my_octet");
     for(int i = 0; i < 4; ++i)
@@ -1078,7 +1092,14 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     mst_my_int16.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_int16.common().member_flags().IS_KEY(false);
     mst_my_int16.common().member_flags().IS_DEFAULT(false);
-    mst_my_int16.common().member_type_id(*m_Identifiers.at("int16_t"));
+    {
+        std::string cppType = "int16_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_my_int16.common().member_type_id(*m_Identifiers.at(cppType));
+    }
 
     MD5 my_int16_hash("my_int16");
     for(int i = 0; i < 4; ++i)
@@ -1096,7 +1117,14 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     mst_my_int32.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_int32.common().member_flags().IS_KEY(false);
     mst_my_int32.common().member_flags().IS_DEFAULT(false);
-    mst_my_int32.common().member_type_id(*m_Identifiers.at("int32_t"));
+    {
+        std::string cppType = "int32_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_my_int32.common().member_type_id(*m_Identifiers.at(cppType));
+    }
 
     MD5 my_int32_hash("my_int32");
     for(int i = 0; i < 4; ++i)
@@ -1114,7 +1142,14 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     mst_my_int64.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_int64.common().member_flags().IS_KEY(false);
     mst_my_int64.common().member_flags().IS_DEFAULT(false);
-    mst_my_int64.common().member_type_id(*m_Identifiers.at("int64_t"));
+    {
+        std::string cppType = "int64_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_my_int64.common().member_type_id(*m_Identifiers.at(cppType));
+    }
 
     MD5 my_int64_hash("my_int64");
     for(int i = 0; i < 4; ++i)
@@ -1132,7 +1167,14 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     mst_my_uint16.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_uint16.common().member_flags().IS_KEY(false);
     mst_my_uint16.common().member_flags().IS_DEFAULT(false);
-    mst_my_uint16.common().member_type_id(*m_Identifiers.at("uint16_t"));
+    {
+        std::string cppType = "uint16_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_my_uint16.common().member_type_id(*m_Identifiers.at(cppType));
+    }
 
     MD5 my_uint16_hash("my_uint16");
     for(int i = 0; i < 4; ++i)
@@ -1150,7 +1192,14 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     mst_my_uint32.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_uint32.common().member_flags().IS_KEY(false);
     mst_my_uint32.common().member_flags().IS_DEFAULT(false);
-    mst_my_uint32.common().member_type_id(*m_Identifiers.at("uint32_t"));
+    {
+        std::string cppType = "uint32_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_my_uint32.common().member_type_id(*m_Identifiers.at(cppType));
+    }
 
     MD5 my_uint32_hash("my_uint32");
     for(int i = 0; i < 4; ++i)
@@ -1168,7 +1217,14 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     mst_my_uint64.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_uint64.common().member_flags().IS_KEY(false);
     mst_my_uint64.common().member_flags().IS_DEFAULT(false);
-    mst_my_uint64.common().member_type_id(*m_Identifiers.at("uint64_t"));
+    {
+        std::string cppType = "uint64_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_my_uint64.common().member_type_id(*m_Identifiers.at(cppType));
+    }
 
     MD5 my_uint64_hash("my_uint64");
     for(int i = 0; i < 4; ++i)
@@ -1186,7 +1242,14 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     mst_my_float32.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_float32.common().member_flags().IS_KEY(false);
     mst_my_float32.common().member_flags().IS_DEFAULT(false);
-    mst_my_float32.common().member_type_id(*m_Identifiers.at("float"));
+    {
+        std::string cppType = "float";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_my_float32.common().member_type_id(*m_Identifiers.at(cppType));
+    }
 
     MD5 my_float32_hash("my_float32");
     for(int i = 0; i < 4; ++i)
@@ -1204,7 +1267,14 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     mst_my_float64.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_float64.common().member_flags().IS_KEY(false);
     mst_my_float64.common().member_flags().IS_DEFAULT(false);
-    mst_my_float64.common().member_type_id(*m_Identifiers.at("double"));
+    {
+        std::string cppType = "double";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_my_float64.common().member_type_id(*m_Identifiers.at(cppType));
+    }
 
     MD5 my_float64_hash("my_float64");
     for(int i = 0; i < 4; ++i)
@@ -1222,7 +1292,14 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     mst_my_float128.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_float128.common().member_flags().IS_KEY(false);
     mst_my_float128.common().member_flags().IS_DEFAULT(false);
-    mst_my_float128.common().member_type_id(*m_Identifiers.at("long double"));
+    {
+        std::string cppType = "long double";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_my_float128.common().member_type_id(*m_Identifiers.at(cppType));
+    }
 
     MD5 my_float128_hash("my_float128");
     for(int i = 0; i < 4; ++i)
@@ -1240,7 +1317,14 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     mst_my_char.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_char.common().member_flags().IS_KEY(false);
     mst_my_char.common().member_flags().IS_DEFAULT(false);
-    mst_my_char.common().member_type_id(*m_Identifiers.at("char"));
+    {
+        std::string cppType = "char";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_my_char.common().member_type_id(*m_Identifiers.at(cppType));
+    }
 
     MD5 my_char_hash("my_char");
     for(int i = 0; i < 4; ++i)
@@ -1258,7 +1342,14 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     mst_my_wchar.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_wchar.common().member_flags().IS_KEY(false);
     mst_my_wchar.common().member_flags().IS_DEFAULT(false);
-    mst_my_wchar.common().member_type_id(*m_Identifiers.at("wchar_t"));
+    {
+        std::string cppType = "wchar_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_my_wchar.common().member_type_id(*m_Identifiers.at(cppType));
+    }
 
     MD5 my_wchar_hash("my_wchar");
     for(int i = 0; i < 4; ++i)
@@ -1678,7 +1769,14 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_octet.common().member_flags().IS_KEY(false);
     mst_my_octet.common().member_flags().IS_DEFAULT(false);
-    mst_my_octet.common().member_type_id(*m_Identifiers.at("uint8_t"));
+    {
+        std::string cppType = "uint8_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_my_octet.common().member_type_id(*m_Identifiers.at(cppType));
+    }
 
     MD5 my_octet_hash("my_octet");
     for(int i = 0; i < 4; ++i)
@@ -2306,7 +2404,14 @@ TypeObject* TestTypeFactory::getMyUnion2Object()
     mst_uno.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_uno.common().member_flags().IS_KEY(false);
     mst_uno.common().member_flags().IS_DEFAULT(false);
-    mst_uno.common().type_id(*m_Identifiers.at("int32_t"));
+    {
+        std::string cppType = "int32_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_uno.common().type_id(*m_Identifiers.at(cppType));
+    }
 
     mst_uno.common().label_seq().emplace_back(A);
     MD5 uno_hash("uno");
@@ -2345,7 +2450,14 @@ TypeObject* TestTypeFactory::getMyUnion2Object()
     mst_tres.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_tres.common().member_flags().IS_KEY(false);
     mst_tres.common().member_flags().IS_DEFAULT(false);
-    mst_tres.common().type_id(*m_Identifiers.at("int32_t"));
+    {
+        std::string cppType = "int32_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_tres.common().type_id(*m_Identifiers.at(cppType));
+    }
 
     mst_tres.common().label_seq().emplace_back(C);
     MD5 tres_hash("tres");
