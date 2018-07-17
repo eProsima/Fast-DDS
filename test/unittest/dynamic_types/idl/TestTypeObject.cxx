@@ -334,6 +334,8 @@ const TypeObject* TestTypeFactory::GetMyAliasEnumObject()
 
     // Must be defined already, if don't, may be an recursive alias
     const TypeIdentifier *relatedType = GetTypeIdentifier("MyEnum");
+
+
     if (relatedType != nullptr)
     {
         type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
@@ -341,6 +343,7 @@ const TypeObject* TestTypeFactory::GetMyAliasEnumObject()
     else
     {
         // Cannot determine base type
+        delete type_object;
         return nullptr;
     }
 
@@ -386,6 +389,8 @@ const TypeObject* TestTypeFactory::GetMyAliasEnum2Object()
 
     // Must be defined already, if don't, may be an recursive alias
     const TypeIdentifier *relatedType = GetTypeIdentifier("MyAliasEnum");
+
+
     if (relatedType != nullptr)
     {
         type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
@@ -393,6 +398,7 @@ const TypeObject* TestTypeFactory::GetMyAliasEnum2Object()
     else
     {
         // Cannot determine base type
+        delete type_object;
         return nullptr;
     }
 
@@ -438,6 +444,8 @@ const TypeObject* TestTypeFactory::GetMyAliasEnum3Object()
 
     // Must be defined already, if don't, may be an recursive alias
     const TypeIdentifier *relatedType = GetTypeIdentifier("MyAliasEnum2");
+
+
     if (relatedType != nullptr)
     {
         type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
@@ -445,6 +453,7 @@ const TypeObject* TestTypeFactory::GetMyAliasEnum3Object()
     else
     {
         // Cannot determine base type
+        delete type_object;
         return nullptr;
     }
 
@@ -925,7 +934,9 @@ const TypeObject* TestTypeFactory::GetMyOctetArray500Object()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = GetTypeIdentifier("std::array<uint8_t, 500>");
+    const TypeIdentifier *relatedType = GetTypeIdentifier(TypeNamesGenerator::getArrayTypeName("uint8_t", {500}));
+
+
     if (relatedType != nullptr)
     {
         type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
@@ -933,11 +944,12 @@ const TypeObject* TestTypeFactory::GetMyOctetArray500Object()
     else
     {
         // Cannot determine base type
+        delete type_object;
         return nullptr;
     }
 
     // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MyOctetArray500", "std::array<uint8_t, 500>"));
+    m_Aliases.emplace(std::pair<std::string, std::string>("MyOctetArray500", TypeNamesGenerator::getArrayTypeName("uint8_t", {500})));
 
     TypeObjectFactory::GetInstance()->AddTypeObject("MyOctetArray500", relatedType, type_object);
     delete type_object;
@@ -977,7 +989,9 @@ const TypeObject* TestTypeFactory::GetBSAlias5Object()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = GetTypeIdentifier("std::array<BasicStruct, 5>");
+    const TypeIdentifier *relatedType = GetTypeIdentifier(TypeNamesGenerator::getArrayTypeName("BasicStruct", {5}));
+
+
     if (relatedType != nullptr)
     {
         type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
@@ -985,11 +999,12 @@ const TypeObject* TestTypeFactory::GetBSAlias5Object()
     else
     {
         // Cannot determine base type
+        delete type_object;
         return nullptr;
     }
 
     // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("BSAlias5", "std::array<BasicStruct, 5>"));
+    m_Aliases.emplace(std::pair<std::string, std::string>("BSAlias5", TypeNamesGenerator::getArrayTypeName("BasicStruct", {5})));
 
     TypeObjectFactory::GetInstance()->AddTypeObject("BSAlias5", relatedType, type_object);
     delete type_object;
@@ -1029,7 +1044,9 @@ const TypeObject* TestTypeFactory::GetMA3Object()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = GetTypeIdentifier("std::array<MyAliasEnum3, 42>");
+    const TypeIdentifier *relatedType = GetTypeIdentifier(TypeNamesGenerator::getArrayTypeName("MyAliasEnum3", {42}));
+
+
     if (relatedType != nullptr)
     {
         type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
@@ -1037,11 +1054,12 @@ const TypeObject* TestTypeFactory::GetMA3Object()
     else
     {
         // Cannot determine base type
+        delete type_object;
         return nullptr;
     }
 
     // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MA3", "std::array<MyAliasEnum3, 42>"));
+    m_Aliases.emplace(std::pair<std::string, std::string>("MA3", TypeNamesGenerator::getArrayTypeName("MyAliasEnum3", {42})));
 
     TypeObjectFactory::GetInstance()->AddTypeObject("MA3", relatedType, type_object);
     delete type_object;
@@ -1081,7 +1099,9 @@ const TypeObject* TestTypeFactory::GetMyMiniArrayObject()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = GetTypeIdentifier("std::array<int32_t, 2>");
+    const TypeIdentifier *relatedType = GetTypeIdentifier(TypeNamesGenerator::getArrayTypeName("int32_t", {2}));
+
+
     if (relatedType != nullptr)
     {
         type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
@@ -1089,11 +1109,12 @@ const TypeObject* TestTypeFactory::GetMyMiniArrayObject()
     else
     {
         // Cannot determine base type
+        delete type_object;
         return nullptr;
     }
 
     // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MyMiniArray", "std::array<int32_t, 2>"));
+    m_Aliases.emplace(std::pair<std::string, std::string>("MyMiniArray", TypeNamesGenerator::getArrayTypeName("int32_t", {2})));
 
     TypeObjectFactory::GetInstance()->AddTypeObject("MyMiniArray", relatedType, type_object);
     delete type_object;
@@ -1133,7 +1154,9 @@ const TypeObject* TestTypeFactory::GetMySequenceLongObject()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = GetTypeIdentifier("std::vector<int32_t>");
+    const TypeIdentifier *relatedType = GetTypeIdentifier(TypeNamesGenerator::getSequenceTypeName("int32_t", 100));
+
+
     if (relatedType != nullptr)
     {
         type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
@@ -1141,11 +1164,12 @@ const TypeObject* TestTypeFactory::GetMySequenceLongObject()
     else
     {
         // Cannot determine base type
+        delete type_object;
         return nullptr;
     }
 
     // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MySequenceLong", "std::vector<int32_t>"));
+    m_Aliases.emplace(std::pair<std::string, std::string>("MySequenceLong", TypeNamesGenerator::getSequenceTypeName("int32_t", 100)));
 
     TypeObjectFactory::GetInstance()->AddTypeObject("MySequenceLong", relatedType, type_object);
     delete type_object;
