@@ -59,6 +59,14 @@ TypeObjectFactory::TypeObjectFactory()
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_BYTE);
     m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_BYTE, auxIdent));
+    // TK_BYTE:
+    auxIdent = new TypeIdentifier;
+    auxIdent->_d(TK_BYTE);
+    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT8, auxIdent));
+    // TK_BYTE:
+    auxIdent = new TypeIdentifier;
+    auxIdent->_d(TK_BYTE);
+    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT8, auxIdent));
     // TK_INT16:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_INT16);
@@ -103,6 +111,10 @@ TypeObjectFactory::TypeObjectFactory()
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_CHAR16);
     m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR16, auxIdent));
+    // TK_CHAR16:
+    auxIdent = new TypeIdentifier;
+    auxIdent->_d(TK_CHAR16);
+    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR16T, auxIdent));
 }
 
 TypeObjectFactory::~TypeObjectFactory()
@@ -184,7 +196,7 @@ TypeKind TypeObjectFactory::GetTypeKind(const std::string &type_name) const
     {
         return TK_CHAR8;
     }
-    else if (type_name == TKNAME_BYTE)
+    else if (type_name == TKNAME_BYTE || type_name == TKNAME_INT8 || type_name == TKNAME_UINT8)
     {
         return TK_BYTE;
     }
@@ -224,15 +236,15 @@ TypeKind TypeObjectFactory::GetTypeKind(const std::string &type_name) const
     {
         return TK_FLOAT128;
     }
-    else if (type_name == TKNAME_CHAR16)
+    else if (type_name == TKNAME_CHAR16 || type_name == TKNAME_CHAR16T)
     {
         return TK_CHAR16;
     }
-    else if (type_name.find("std::wstrings_") == 0)
+    else if (type_name.find("wstrings_") == 0)
     {
         return TI_STRING16_SMALL;
     }
-    else if (type_name.find("std::wstringl_") == 0)
+    else if (type_name.find("wstringl_") == 0)
     {
         return TI_STRING16_LARGE;
     }

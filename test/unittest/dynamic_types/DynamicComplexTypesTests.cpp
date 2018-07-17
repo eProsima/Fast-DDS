@@ -67,6 +67,7 @@ class DynamicComplexTypesTests: public ::testing::Test
 
             DynamicDataFactory::DeleteInstance();
             DynamicTypeBuilderFactory::DeleteInstance();
+            TypeObjectFactory::DeleteInstance();
 
             Log::KillThread();
         }

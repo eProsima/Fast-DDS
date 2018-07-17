@@ -60,48 +60,15 @@ public:
 
     eProsima_user_DllExport void registerTypes();
 
-    eProsima_user_DllExport EquivalenceKind getEquivalenceKind(const std::string &type_name) const;
+    eProsima_user_DllExport const TypeIdentifier* GetTypeIdentifier(const std::string &basic_type_name);
+    eProsima_user_DllExport const TypeObject* GetTypeObject(const std::string &basic_type_name);
 
-    eProsima_user_DllExport TypeIdentifier* tryCreateTypeIdentifier(const std::string &type_name);
-
-    eProsima_user_DllExport TypeIdentifier* getTypeIdentifier(const std::string &basic_type_name) const;
-
-    eProsima_user_DllExport TypeIdentifier* getStringIdentifier(uint32_t bound, bool wide = false);
-
-    eProsima_user_DllExport TypeIdentifier* getSequenceIdentifier(const std::string &type_name, uint32_t bound);
-
-    eProsima_user_DllExport TypeIdentifier* getArrayIdentifier(const std::string &type_name, const std::vector<uint32_t> &bound);
-
-    /** Dimensions must be separated by a single space */
-    eProsima_user_DllExport TypeIdentifier* getArrayIdentifier(const std::string &type_name, const std::string &bound);
-
-    eProsima_user_DllExport TypeIdentifier* getMapIdentifier(const std::string &key_type_name,
-        const std::string &value_type_name, uint32_t bound);
-
-    eProsima_user_DllExport TypeIdentifier* getHelloWorldIdentifier();
-    eProsima_user_DllExport TypeObject* getHelloWorldObject();
+    eProsima_user_DllExport const TypeIdentifier* GetHelloWorldIdentifier();
+    eProsima_user_DllExport const TypeObject* GetHelloWorldObject();
 
 
 private:
-    std::map<std::string, TypeIdentifier*> m_Identifiers;
-    std::map<std::string, TypeObject*> m_Objects;
     std::map<std::string, std::string> m_Aliases;
-
-    std::string getStringTypeName(uint32_t bound, bool wide, bool generate_identifier = true);
-
-    std::string getSequenceTypeName(const std::string &type_name, uint32_t bound, bool generate_identifier = true);
-
-    std::string getArrayTypeName(const std::string &type_name, const std::string &bound,
-        bool generate_identifier = true);
-
-    std::string getArrayTypeName(const std::string &type_name, const std::vector<uint32_t> &bound,
-        bool generate_identifier = true);
-
-    std::string getArrayTypeName(const std::string &type_name, const std::vector<uint32_t> &bound, uint32_t &ret_size,
-        bool generate_identifier = true);
-
-    std::string getMapTypeName(const std::string &key_type_name, const std::string &value_type_name, uint32_t bound,
-        bool generate_identifier = true);
 };
 
 #endif // _HELLOWORLD_TYPE_OBJECT_H_
