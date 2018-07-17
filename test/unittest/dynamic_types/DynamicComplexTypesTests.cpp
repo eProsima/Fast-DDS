@@ -16,6 +16,7 @@
 #include <gtest/gtest.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/MemberDescriptor.h>
@@ -399,7 +400,7 @@ TEST_F(DynamicComplexTypesTests, Conversions_Test)
 TEST_F(DynamicComplexTypesTests, DynamicDiscoveryTest)
 {
     TypeObject typeObject1, typeObject2, typeObject3;
-    DynamicTypeBuilder *type1(nullptr), *type2(nullptr), *type3(nullptr);
+    DynamicTypeBuilder_ptr type1, type2, type3;
     {
         type1 = DynamicTypeBuilderFactory::GetInstance()->CreateUint16Type();
         //types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(type1);
@@ -431,69 +432,56 @@ TEST_F(DynamicComplexTypesTests, StaticVsDynamicDiscovery)
     (void)test;
 
     // Members
-    DynamicTypeBuilder* bool_builder = m_factory->CreateBoolType();
-    DynamicTypeBuilder* octet_builder = m_factory->CreateByteType();
-    DynamicTypeBuilder* int16_builder = m_factory->CreateInt16Type();
-    DynamicTypeBuilder* int32_builder = m_factory->CreateInt32Type();
-    DynamicTypeBuilder* int64_builder = m_factory->CreateInt64Type();
-    DynamicTypeBuilder* uint16_builder = m_factory->CreateUint16Type();
-    DynamicTypeBuilder* uint32_builder = m_factory->CreateUint32Type();
-    DynamicTypeBuilder* uint64_builder = m_factory->CreateUint64Type();
-    DynamicTypeBuilder* float_builder = m_factory->CreateFloat32Type();
-    DynamicTypeBuilder* double_builder = m_factory->CreateFloat64Type();
-    DynamicTypeBuilder* ldouble_builder = m_factory->CreateFloat128Type();
-    DynamicTypeBuilder* char_builder = m_factory->CreateChar8Type();
-    DynamicTypeBuilder* wchar_builder = m_factory->CreateChar16Type();
-    DynamicTypeBuilder* string_builder = m_factory->CreateStringType();
-    DynamicTypeBuilder* wstring_builder = m_factory->CreateWstringType();
-    DynamicTypeBuilder* basicStruct_builder = m_factory->CreateStructType();
+    DynamicTypeBuilder_ptr bool_builder = m_factory->CreateBoolType();
+    DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteType();
+    DynamicTypeBuilder_ptr int16_builder = m_factory->CreateInt16Type();
+    DynamicTypeBuilder_ptr int32_builder = m_factory->CreateInt32Type();
+    DynamicTypeBuilder_ptr int64_builder = m_factory->CreateInt64Type();
+    DynamicTypeBuilder_ptr uint16_builder = m_factory->CreateUint16Type();
+    DynamicTypeBuilder_ptr uint32_builder = m_factory->CreateUint32Type();
+    DynamicTypeBuilder_ptr uint64_builder = m_factory->CreateUint64Type();
+    DynamicTypeBuilder_ptr float_builder = m_factory->CreateFloat32Type();
+    DynamicTypeBuilder_ptr double_builder = m_factory->CreateFloat64Type();
+    DynamicTypeBuilder_ptr ldouble_builder = m_factory->CreateFloat128Type();
+    DynamicTypeBuilder_ptr char_builder = m_factory->CreateChar8Type();
+    DynamicTypeBuilder_ptr wchar_builder = m_factory->CreateChar16Type();
+    DynamicTypeBuilder_ptr string_builder = m_factory->CreateStringType();
+    DynamicTypeBuilder_ptr wstring_builder = m_factory->CreateWstringType();
+    DynamicTypeBuilder_ptr basicStruct_builder = m_factory->CreateStructType();
 
     // Add members to the struct.
     int idx = 0;
-    basicStruct_builder->AddMember(idx++, "my_bool", bool_builder);
-    basicStruct_builder->AddMember(idx++, "my_octet", octet_builder);
-    basicStruct_builder->AddMember(idx++, "my_int16", int16_builder);
-    basicStruct_builder->AddMember(idx++, "my_int32", int32_builder);
-    basicStruct_builder->AddMember(idx++, "my_int64", int64_builder);
-    basicStruct_builder->AddMember(idx++, "my_uint16", uint16_builder);
-    basicStruct_builder->AddMember(idx++, "my_uint32", uint32_builder);
-    basicStruct_builder->AddMember(idx++, "my_uint64", uint64_builder);
-    basicStruct_builder->AddMember(idx++, "my_float32", float_builder);
-    basicStruct_builder->AddMember(idx++, "my_float64", double_builder);
-    basicStruct_builder->AddMember(idx++, "my_float128", ldouble_builder);
-    basicStruct_builder->AddMember(idx++, "my_char", char_builder);
-    basicStruct_builder->AddMember(idx++, "my_wchar", wchar_builder);
-    basicStruct_builder->AddMember(idx++, "my_string", string_builder);
-    basicStruct_builder->AddMember(idx++, "my_wstring", wstring_builder);
+    basicStruct_builder->AddMember(idx++, "my_bool", bool_builder.get());
+    basicStruct_builder->AddMember(idx++, "my_octet", octet_builder.get());
+    basicStruct_builder->AddMember(idx++, "my_int16", int16_builder.get());
+    basicStruct_builder->AddMember(idx++, "my_int32", int32_builder.get());
+    basicStruct_builder->AddMember(idx++, "my_int64", int64_builder.get());
+    basicStruct_builder->AddMember(idx++, "my_uint16", uint16_builder.get());
+    basicStruct_builder->AddMember(idx++, "my_uint32", uint32_builder.get());
+    basicStruct_builder->AddMember(idx++, "my_uint64", uint64_builder.get());
+    basicStruct_builder->AddMember(idx++, "my_float32", float_builder.get());
+    basicStruct_builder->AddMember(idx++, "my_float64", double_builder.get());
+    basicStruct_builder->AddMember(idx++, "my_float128", ldouble_builder.get());
+    basicStruct_builder->AddMember(idx++, "my_char", char_builder.get());
+    basicStruct_builder->AddMember(idx++, "my_wchar", wchar_builder.get());
+    basicStruct_builder->AddMember(idx++, "my_string", string_builder.get());
+    basicStruct_builder->AddMember(idx++, "my_wstring", wstring_builder.get());
     basicStruct_builder->SetName("BasicStruct2");
 
     TypeObject dynamicTypeObject;
+    std::map<MemberId, DynamicTypeMember*> membersMap;
+    basicStruct_builder->GetAllMembers(membersMap);
+    std::vector<const types::MemberDescriptor*> innerMembers;
+    for (auto it : membersMap)
+    {
+        innerMembers.push_back(it.second->GetDescriptor());
+    }
     DynamicTypeBuilderFactory::GetInstance()->BuildTypeObject(basicStruct_builder->getTypeDescriptor(),
-        dynamicTypeObject);
+        dynamicTypeObject, &innerMembers);
 
     const TypeIdentifier* static_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("BasicStruct");
     const TypeIdentifier* dynamic_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("BasicStruct2");
     ASSERT_TRUE(*static_identifier == *dynamic_identifier);
-
-    DynamicTypeBuilderFactory::GetInstance()->DeleteType(bool_builder);
-    DynamicTypeBuilderFactory::GetInstance()->DeleteType(octet_builder);
-    DynamicTypeBuilderFactory::GetInstance()->DeleteType(int16_builder);
-    DynamicTypeBuilderFactory::GetInstance()->DeleteType(int32_builder);
-    DynamicTypeBuilderFactory::GetInstance()->DeleteType(int64_builder);
-    DynamicTypeBuilderFactory::GetInstance()->DeleteType(uint16_builder);
-    DynamicTypeBuilderFactory::GetInstance()->DeleteType(uint32_builder);
-    DynamicTypeBuilderFactory::GetInstance()->DeleteType(uint64_builder);
-    DynamicTypeBuilderFactory::GetInstance()->DeleteType(float_builder);
-    DynamicTypeBuilderFactory::GetInstance()->DeleteType(double_builder);
-    DynamicTypeBuilderFactory::GetInstance()->DeleteType(ldouble_builder);
-    DynamicTypeBuilderFactory::GetInstance()->DeleteType(char_builder);
-    DynamicTypeBuilderFactory::GetInstance()->DeleteType(wchar_builder);
-    DynamicTypeBuilderFactory::GetInstance()->DeleteType(string_builder);
-    DynamicTypeBuilderFactory::GetInstance()->DeleteType(wstring_builder);
-    DynamicTypeBuilderFactory::GetInstance()->DeleteType(basicStruct_builder);
-
-    DynamicTypeBuilderFactory::GetInstance()->IsEmpty();
-    DynamicDataFactory::GetInstance()->IsEmpty();
 }
 
 int main(int argc, char **argv)
