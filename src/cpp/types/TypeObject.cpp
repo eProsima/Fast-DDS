@@ -4626,27 +4626,27 @@ void TypeIdentifierPair::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_type_identifier2;
 }
 
-TypeIdentfierWithSize::TypeIdentfierWithSize()
+TypeIdentifierWithSize::TypeIdentifierWithSize()
 {
 }
 
-TypeIdentfierWithSize::~TypeIdentfierWithSize()
+TypeIdentifierWithSize::~TypeIdentifierWithSize()
 {
 }
 
-TypeIdentfierWithSize::TypeIdentfierWithSize(const TypeIdentfierWithSize &x)
+TypeIdentifierWithSize::TypeIdentifierWithSize(const TypeIdentifierWithSize &x)
 {
     m_type_id = x.m_type_id;
     m_typeobject_serialized_size = x.m_typeobject_serialized_size;
 }
 
-TypeIdentfierWithSize::TypeIdentfierWithSize(TypeIdentfierWithSize &&x)
+TypeIdentifierWithSize::TypeIdentifierWithSize(TypeIdentifierWithSize &&x)
 {
     m_type_id = std::move(x.m_type_id);
     m_typeobject_serialized_size = std::move(x.m_typeobject_serialized_size);
 }
 
-TypeIdentfierWithSize& TypeIdentfierWithSize::operator=(const TypeIdentfierWithSize &x)
+TypeIdentifierWithSize& TypeIdentifierWithSize::operator=(const TypeIdentifierWithSize &x)
 {
     m_type_id = x.m_type_id;
     m_typeobject_serialized_size = x.m_typeobject_serialized_size;
@@ -4654,7 +4654,7 @@ TypeIdentfierWithSize& TypeIdentfierWithSize::operator=(const TypeIdentfierWithS
     return *this;
 }
 
-TypeIdentfierWithSize& TypeIdentfierWithSize::operator=(TypeIdentfierWithSize &&x)
+TypeIdentifierWithSize& TypeIdentifierWithSize::operator=(TypeIdentifierWithSize &&x)
 {
     m_type_id = std::move(x.m_type_id);
     m_typeobject_serialized_size = std::move(x.m_typeobject_serialized_size);
@@ -4662,7 +4662,7 @@ TypeIdentfierWithSize& TypeIdentfierWithSize::operator=(TypeIdentfierWithSize &&
     return *this;
 }
 
-size_t TypeIdentfierWithSize::getCdrSerializedSize(const TypeIdentfierWithSize& data, size_t current_alignment)
+size_t TypeIdentifierWithSize::getCdrSerializedSize(const TypeIdentifierWithSize& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -4672,13 +4672,13 @@ size_t TypeIdentfierWithSize::getCdrSerializedSize(const TypeIdentfierWithSize& 
     return current_alignment - initial_alignment;
 }
 
-void TypeIdentfierWithSize::serialize(eprosima::fastcdr::Cdr &scdr) const
+void TypeIdentifierWithSize::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_type_id;
     scdr << m_typeobject_serialized_size;
 }
 
-void TypeIdentfierWithSize::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void TypeIdentifierWithSize::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_type_id;
     dcdr >> m_typeobject_serialized_size;
@@ -4728,13 +4728,13 @@ size_t TypeIdentifierWithDependencies::getCdrSerializedSize(const TypeIdentifier
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += TypeIdentfierWithSize::getCdrSerializedSize(data.typeid_with_size(), current_alignment);
+    current_alignment += TypeIdentifierWithSize::getCdrSerializedSize(data.typeid_with_size(), current_alignment);
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
     for(size_t a = 0; a < data.dependent_typeids().size(); ++a)
     {
-        current_alignment += TypeIdentfierWithSize::getCdrSerializedSize(data.dependent_typeids().at(a), current_alignment);
+        current_alignment += TypeIdentifierWithSize::getCdrSerializedSize(data.dependent_typeids().at(a), current_alignment);
     }
 
     return current_alignment - initial_alignment;

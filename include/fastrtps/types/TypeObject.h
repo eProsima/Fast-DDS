@@ -3006,19 +3006,19 @@ private:
 };
 
 typedef std::vector<TypeIdentifierPair> TypeIdentifierPairSeq;
-/*struct TypeIdentfierWithSize {
+/*struct TypeIdentifierWithSize {
 	TypeIdentifier  type_id;
 	uint32_t                typeobject_serialized_size;
 };*/
-class TypeIdentfierWithSize
+class TypeIdentifierWithSize
 {
 public:
-    RTPS_DllAPI TypeIdentfierWithSize();
-    RTPS_DllAPI ~TypeIdentfierWithSize();
-    RTPS_DllAPI TypeIdentfierWithSize(const TypeIdentfierWithSize &x);
-    RTPS_DllAPI TypeIdentfierWithSize(TypeIdentfierWithSize &&x);
-    RTPS_DllAPI TypeIdentfierWithSize& operator=(const TypeIdentfierWithSize &x);
-    RTPS_DllAPI TypeIdentfierWithSize& operator=(TypeIdentfierWithSize &&x);
+    RTPS_DllAPI TypeIdentifierWithSize();
+    RTPS_DllAPI ~TypeIdentifierWithSize();
+    RTPS_DllAPI TypeIdentifierWithSize(const TypeIdentifierWithSize &x);
+    RTPS_DllAPI TypeIdentifierWithSize(TypeIdentifierWithSize &&x);
+    RTPS_DllAPI TypeIdentifierWithSize& operator=(const TypeIdentifierWithSize &x);
+    RTPS_DllAPI TypeIdentifierWithSize& operator=(TypeIdentifierWithSize &&x);
 
     RTPS_DllAPI inline void type_id(const TypeIdentifier &_type_id) { m_type_id = _type_id; }
     RTPS_DllAPI inline void type_id(TypeIdentifier &&_type_id) { m_type_id = std::move(_type_id); }
@@ -3031,7 +3031,7 @@ public:
     RTPS_DllAPI inline uint32_t& typeobject_serialized_size() { return m_typeobject_serialized_size; }
 
     // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-    RTPS_DllAPI static size_t getCdrSerializedSize(const TypeIdentfierWithSize& data, size_t current_alignment = 0);
+    RTPS_DllAPI static size_t getCdrSerializedSize(const TypeIdentifierWithSize& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 private:
@@ -3039,10 +3039,10 @@ private:
     uint32_t m_typeobject_serialized_size;
 };
 
-typedef std::vector<TypeIdentfierWithSize> TypeIdentfierWithSizeSeq;
+typedef std::vector<TypeIdentifierWithSize> TypeIdentfierWithSizeSeq;
 
 /*struct TypeIdentifierWithDependencies {
-	TypeIdentfierWithSize            typeid_with_size;
+	TypeIdentifierWithSize            typeid_with_size;
 	// The total additional types related to minimal_type
 	int32_t                             dependent_typeid_count;
 	TypeIdentfierWithSizeSeq  dependent_typeids;
@@ -3057,10 +3057,10 @@ public:
     RTPS_DllAPI TypeIdentifierWithDependencies& operator=(const TypeIdentifierWithDependencies &x);
     RTPS_DllAPI TypeIdentifierWithDependencies& operator=(TypeIdentifierWithDependencies &&x);
 
-    RTPS_DllAPI inline void typeid_with_size(const TypeIdentfierWithSize &_typeid_with_size) { m_typeid_with_size = _typeid_with_size; }
-    RTPS_DllAPI inline void typeid_with_size(TypeIdentfierWithSize &&_typeid_with_size) { m_typeid_with_size = std::move(_typeid_with_size); }
-    RTPS_DllAPI inline const TypeIdentfierWithSize& typeid_with_size() const { return m_typeid_with_size; }
-    RTPS_DllAPI inline TypeIdentfierWithSize& typeid_with_size() { return m_typeid_with_size; }
+    RTPS_DllAPI inline void typeid_with_size(const TypeIdentifierWithSize &_typeid_with_size) { m_typeid_with_size = _typeid_with_size; }
+    RTPS_DllAPI inline void typeid_with_size(TypeIdentifierWithSize &&_typeid_with_size) { m_typeid_with_size = std::move(_typeid_with_size); }
+    RTPS_DllAPI inline const TypeIdentifierWithSize& typeid_with_size() const { return m_typeid_with_size; }
+    RTPS_DllAPI inline TypeIdentifierWithSize& typeid_with_size() { return m_typeid_with_size; }
 
     RTPS_DllAPI inline void dependent_typeid_count(const int32_t &_dependent_typeid_count) { m_dependent_typeid_count = _dependent_typeid_count; }
     RTPS_DllAPI inline void dependent_typeid_count(int32_t &&_dependent_typeid_count) { m_dependent_typeid_count = std::move(_dependent_typeid_count); }
@@ -3077,7 +3077,7 @@ public:
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 private:
-    TypeIdentfierWithSize m_typeid_with_size;
+    TypeIdentifierWithSize m_typeid_with_size;
     int32_t m_dependent_typeid_count;
     TypeIdentfierWithSizeSeq m_dependent_typeids;
 };
