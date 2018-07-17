@@ -30,6 +30,7 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -124,7 +125,12 @@ HelloWorldSubscriber::~HelloWorldSubscriber() {
             DynamicTypeBuilderFactory::GetInstance()->DeleteType(m_DynType);
         }
         DynamicDataFactory::GetInstance()->DeleteData(m_listener.m_DynHello);
+
+        DynamicTypeBuilderFactory::DeleteInstance();
+        DynamicDataFactory::DeleteInstance();
     }
+
+    TypeObjectFactory::DeleteInstance();
 }
 
 void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
