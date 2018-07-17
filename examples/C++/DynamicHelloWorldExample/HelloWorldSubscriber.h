@@ -73,7 +73,7 @@ private:
 	// Static types
 	HelloWorldPubSubType m_type;
 	// Dynamic Types
-	eprosima::fastrtps::types::DynamicType* m_DynType;
+	eprosima::fastrtps::types::DynamicType_ptr m_DynType;
 	bool m_dynamic;
 };
 

@@ -94,7 +94,9 @@ set(${PROJECT_NAME}_source_files
     types/DynamicData.cpp
     types/DynamicDataFactory.cpp
     types/DynamicType.cpp
+    types/DynamicTypePtr.cpp
     types/DynamicTypeBuilder.cpp
+    types/DynamicTypeBuilderPtr.cpp
     types/DynamicTypeBuilderFactory.cpp
     types/DynamicTypeMember.cpp
     types/MemberDescriptor.cpp

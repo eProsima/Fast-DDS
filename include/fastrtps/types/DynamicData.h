@@ -16,6 +16,7 @@
 #define TYPES_DYNAMIC_DATA_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/DynamicTypePtr.h>
 
 #define DYNAMIC_TYPES_CHECKING
 
@@ -232,20 +233,20 @@ public:
     // Serializes and deserializes the Dynamic Data.
     bool deserialize(eprosima::fastcdr::Cdr &cdr);
     static size_t getCdrSerializedSize(const DynamicData* data, size_t current_alignment = 0);
-    static size_t getEmptyCdrSerializedSize(const DynamicType* type, size_t current_alignment = 0);
-    static size_t getKeyMaxCdrSerializedSize(const DynamicType* type, size_t current_alignment = 0);
-    static size_t getMaxCdrSerializedSize(const DynamicType* type, size_t current_alignment = 0);
+    static size_t getEmptyCdrSerializedSize(const DynamicType_ptr type, size_t current_alignment = 0);
+    static size_t getKeyMaxCdrSerializedSize(const DynamicType_ptr type, size_t current_alignment = 0);
+    static size_t getMaxCdrSerializedSize(const DynamicType_ptr type, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
 
 protected:
 
     DynamicData();
-    DynamicData(DynamicType* pType);
+    DynamicData(DynamicType_ptr pType);
 
     void AddValue(TypeKind kind, MemberId id);
 
-    void CreateMembers(DynamicType* pType);
+    void CreateMembers(DynamicType_ptr pType);
 
     void Clean();
 
@@ -255,7 +256,7 @@ protected:
 
     ResponseCode InsertArrayData(MemberId indexId);
 
-    void SerializeEmptyData(const DynamicType* pType, eprosima::fastcdr::Cdr &cdr) const;
+    void SerializeEmptyData(const DynamicType_ptr pType, eprosima::fastcdr::Cdr &cdr) const;
 
     void SetDefaultValue(MemberId id);
 
@@ -265,7 +266,7 @@ protected:
 
     void SortMemberIds(MemberId startId);
 
-	DynamicType* mType;
+    DynamicType_ptr mType;
     std::map<MemberId, MemberDescriptor*> mDescriptors;
 
 #ifdef DYNAMIC_TYPES_CHECKING

@@ -17,6 +17,8 @@
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
 #include <fastrtps/log/Log.h>
 #include <sstream>
@@ -755,10 +757,10 @@ static TypeKind GetTypeKindFromIdentifier(const TypeIdentifier* identifier)
 //    }
 //}
 
-DynamicType* TypeObjectFactory::BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
+DynamicType_ptr TypeObjectFactory::BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
     const TypeObject* object) const
 {
-    DynamicType* outputType = BuildDynamicType(identifier, object);
+    DynamicType_ptr outputType = BuildDynamicType(identifier, object);
     if (outputType != nullptr)
     {
         outputType->SetName(name);
@@ -766,7 +768,7 @@ DynamicType* TypeObjectFactory::BuildDynamicType(const std::string& name, const 
     return outputType;
 }
 
-DynamicType* TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identifier, const TypeObject* object) const
+DynamicType_ptr TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identifier, const TypeObject* object) const
 {
     TypeKind kind = GetTypeKindFromIdentifier(identifier);
     TypeDescriptor descriptor = new TypeDescriptor(GenerateTypeName(GetTypeName(kind)), kind);
@@ -868,7 +870,7 @@ DynamicType* TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identifie
             const TypeIdentifier *aux = &object->minimal().struct_type().header().base_type();
             descriptor.mBaseType = BuildDynamicType(aux, GetTypeObject(aux));
 
-            DynamicTypeBuilder* structType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomType(&descriptor);
+            DynamicTypeBuilder_ptr structType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
             uint32_t order = 0;
             for (MinimalStructMember &member : object->minimal().struct_type().member_seq())
@@ -881,7 +883,7 @@ DynamicType* TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identifie
                 memDesc.SetName(GenerateTypeName(GetTypeName(GetTypeKindFromIdentifier(auxMem))));
                 structType->AddMember(&memDesc);
             }
-            return structType;
+            return DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(structType.get());
         }
         break;
     }
@@ -889,7 +891,7 @@ DynamicType* TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identifie
     {
         if (object != nullptr)
         {
-            DynamicTypeBuilder* enumType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomType(&descriptor);
+            DynamicTypeBuilder_ptr enumType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
             uint32_t order = 0;
             for (MinimalEnumeratedLiteral &member : object->minimal().enumerated_type().literal_seq())
@@ -901,7 +903,7 @@ DynamicType* TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identifie
                 ss << member.detail().name_hash()[3];
                 enumType->AddEmptyMember(order++, ss.str());
             }
-            return enumType;
+            return DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(enumType.get());
 
         }
         break;
@@ -929,7 +931,7 @@ DynamicType* TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identifie
             const TypeIdentifier *aux = &object->minimal().union_type().discriminator().common().type_id();
             descriptor.mDiscriminatorType = BuildDynamicType(aux, GetTypeObject(aux));
 
-            DynamicTypeBuilder* unionType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomType(&descriptor);
+            DynamicTypeBuilder_ptr unionType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
             uint32_t order = 0;
             for (MinimalUnionMember &member : object->minimal().union_type().member_seq())
@@ -949,7 +951,7 @@ DynamicType* TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identifie
                 unionType->AddMember(&memDesc);
             }
 
-            return unionType;
+            return DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(unionType.get());
         }
         break;
     }
@@ -996,8 +998,7 @@ DynamicType* TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identifie
         break;
     }
 
-    DynamicTypeBuilder* outputType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomType(&descriptor);
-    return outputType;
+    return DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(&descriptor);
 }
 
 } // namespace types

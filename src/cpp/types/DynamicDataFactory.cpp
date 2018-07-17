@@ -16,6 +16,8 @@
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/log/Log.h>
 
 namespace eprosima {
@@ -56,7 +58,21 @@ DynamicDataFactory::~DynamicDataFactory()
 #endif
 }
 
-DynamicData* DynamicDataFactory::CreateData(DynamicType* pType)
+DynamicData* DynamicDataFactory::CreateData(DynamicTypeBuilder* pBuilder)
+{
+    if (pBuilder != nullptr && pBuilder->IsConsistent())
+    {
+        DynamicType_ptr pType = DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(pBuilder);
+        return CreateData(pType);
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error creating DynamicData. Invalid dynamic type builder");
+        return nullptr;
+    }
+}
+
+DynamicData* DynamicDataFactory::CreateData(DynamicType_ptr pType)
 {
     if (pType != nullptr && pType->IsConsistent())
     {
@@ -109,7 +125,7 @@ DynamicData* DynamicDataFactory::CreateData(DynamicType* pType)
     }
 }
 
-ResponseCode DynamicDataFactory::CreateMembers(DynamicData* pData, DynamicType* pType)
+ResponseCode DynamicDataFactory::CreateMembers(DynamicData* pData, DynamicType_ptr pType)
 {
     if (pType != nullptr && pData != nullptr)
     {

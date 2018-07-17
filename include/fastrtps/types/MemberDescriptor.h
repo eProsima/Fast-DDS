@@ -16,6 +16,7 @@
 #define TYPES_MEMBER_DESCRIPTOR_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/DynamicTypePtr.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -28,10 +29,10 @@ class MemberDescriptor
 public:
     RTPS_DllAPI MemberDescriptor();
     RTPS_DllAPI MemberDescriptor(uint32_t index, const std::string& name);
-    RTPS_DllAPI MemberDescriptor(MemberId id, const std::string& name, DynamicType* mType);
-    RTPS_DllAPI MemberDescriptor(MemberId id, const std::string& name, DynamicType* mType,
+    RTPS_DllAPI MemberDescriptor(MemberId id, const std::string& name, DynamicType_ptr mType);
+    RTPS_DllAPI MemberDescriptor(MemberId id, const std::string& name, DynamicType_ptr mType,
         const std::string& defaultValue);
-    RTPS_DllAPI MemberDescriptor(MemberId id, const std::string& name, DynamicType* mType,
+    RTPS_DllAPI MemberDescriptor(MemberId id, const std::string& name, DynamicType_ptr mType,
         const std::string& defaultValue, const std::vector<uint64_t>& unionLabels, bool isDefaultLabel);
     RTPS_DllAPI MemberDescriptor(const MemberDescriptor* descriptor);
     RTPS_DllAPI ~MemberDescriptor();
@@ -51,7 +52,7 @@ public:
     RTPS_DllAPI void SetId(MemberId id);
     RTPS_DllAPI void SetIndex(uint32_t index);
     RTPS_DllAPI void SetName(const std::string& name);
-    RTPS_DllAPI void SetType(DynamicType* type);
+    RTPS_DllAPI void SetType(DynamicType_ptr type);
     RTPS_DllAPI void SetDefaultUnionValue(bool bDefault);
 
 protected:
@@ -67,7 +68,7 @@ protected:
 
     std::string mName;                  // Name of the member
     MemberId mId;                       // MemberId, it should be filled automatically when the member is added.
-    DynamicType* mType;                 // Member's Type.
+    DynamicType_ptr mType;              // Member's Type.
     std::string mDefaultValue;          // Default value of the member in string.
     uint32_t mIndex;                    // Definition order of the member inside it's parent.
     std::vector<uint64_t> mLabels;      // Case Labels for unions.

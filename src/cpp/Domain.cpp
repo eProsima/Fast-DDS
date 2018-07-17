@@ -278,7 +278,7 @@ bool Domain::registerType(Participant* part, TopicDataType* type)
     return false;
 }
 
-bool Domain::registerDynamicType(Participant* part, types::DynamicType* type)
+bool Domain::registerDynamicType(Participant* part, types::DynamicType_ptr type)
 {
     using namespace eprosima::fastrtps::types;
     TypeObjectFactory *typeFactory = TypeObjectFactory::GetInstance();
@@ -306,7 +306,7 @@ bool Domain::registerDynamicType(Participant* part, types::DynamicType* type)
             typeFactory->AddTypeObject(type->getName(), type_id2, type_obj);
         }
     }
-    return registerType(part, type);
+    return registerType(part, type.get());
 }
 
 bool Domain::unregisterType(Participant* part, const char* typeName)

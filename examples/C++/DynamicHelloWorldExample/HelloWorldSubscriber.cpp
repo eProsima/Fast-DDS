@@ -27,6 +27,7 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
@@ -60,29 +61,21 @@ bool HelloWorldSubscriber::init(bool dynamic)
     m_listener.m_dynamic = dynamic;
     if (dynamic)
     {
-        // Given
-        DynamicTypeBuilder* created_type_ulong(nullptr);
-        DynamicTypeBuilder* created_type_string(nullptr);
-        DynamicTypeBuilder* struct_type_builder(nullptr);
         // Create basic types
-        created_type_ulong = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type();
+        DynamicTypeBuilder_ptr created_type_ulong = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Builder();
         //created_type_ulong = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
-        created_type_string = DynamicTypeBuilderFactory::GetInstance()->CreateStringType();
-        struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructType();
+        DynamicTypeBuilder_ptr created_type_string = DynamicTypeBuilderFactory::GetInstance()->CreateStringBuilder();
+        DynamicTypeBuilder_ptr struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder();
 
         // Add members to the struct.
-        struct_type_builder->AddMember(0, "index", created_type_ulong);
-        struct_type_builder->AddMember(1, "message", created_type_string);
+        struct_type_builder->AddMember(0, "index", created_type_ulong.get());
+        struct_type_builder->AddMember(1, "message", created_type_string.get());
         struct_type_builder->SetName("HelloWorld");
 
         m_DynType = struct_type_builder->Build();
         m_listener.m_DynHello = DynamicDataFactory::GetInstance()->CreateData(m_DynType);
 
-        DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type_ulong);
-        DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type_string);
-        DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type_builder);
-
-        Domain::registerDynamicType(mp_participant, m_DynType);
+        Domain::registerDynamicType(mp_participant, m_DynType.get());
     }
     else
     {
@@ -119,10 +112,7 @@ HelloWorldSubscriber::~HelloWorldSubscriber() {
 
     if (m_dynamic)
     {
-        if (m_DynType != nullptr)
-        {
-            DynamicTypeBuilderFactory::GetInstance()->DeleteType(m_DynType);
-        }
+        m_DynType = nullptr;
         DynamicDataFactory::GetInstance()->DeleteData(m_listener.m_DynHello);
     }
 

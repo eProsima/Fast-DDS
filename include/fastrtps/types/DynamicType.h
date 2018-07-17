@@ -17,6 +17,7 @@
 
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/TopicDataType.h>
+#include <fastrtps/types/DynamicTypePtr.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -38,13 +39,13 @@ public:
     ResponseCode GetAllMembersByName(std::map<std::string, DynamicTypeMember*>& members);
     ResponseCode GetAnnotation(AnnotationDescriptor& descriptor, uint32_t idx);
     uint32_t GetAnnotationCount();
-    DynamicType* GetBaseType() const;
+    DynamicType_ptr GetBaseType() const;
     uint32_t GetBounds(uint32_t index = 0) const;
     uint32_t GetTotalBounds() const;
     uint32_t GetBoundsSize() const;
     ResponseCode GetDescriptor(TypeDescriptor* descriptor) const;
-    DynamicType* GetElementType() const;
-    DynamicType* GetKeyElementType() const;
+    DynamicType_ptr GetElementType() const;
+    DynamicType_ptr GetKeyElementType() const;
     inline TypeKind GetKind() const { return mKind; }
     std::string GetName() const;
     ResponseCode GetMember(DynamicTypeMember& member, MemberId id);
@@ -78,11 +79,11 @@ protected:
 
     DynamicType();
     DynamicType(const TypeDescriptor* descriptor);
-    DynamicType(const DynamicType* other);
+    DynamicType(const DynamicTypeBuilder* other);
 
     virtual void Clear();
 
-    ResponseCode CopyFromType(const DynamicType* other);
+    ResponseCode CopyFromBuilder(const DynamicTypeBuilder* other);
 
     bool GetKeyAnnotation() const;
     uint32_t GetKeyMaxCdrSerializedSize();

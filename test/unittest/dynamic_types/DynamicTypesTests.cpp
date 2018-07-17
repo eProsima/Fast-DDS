@@ -65,7 +65,7 @@ TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
     pInt32Descriptor2.SetKind(TK_NONE);
     ASSERT_FALSE(pInt32Descriptor.Equals(&pInt32Descriptor2));
 }
-
+/*
 TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
 {
     // Given
@@ -3557,7 +3557,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
-
+*/
 int main(int argc, char **argv)
 {
     Log::SetVerbosity(Log::Info);

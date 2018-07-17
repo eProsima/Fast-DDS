@@ -60,29 +60,10 @@ TypeDescriptor::~TypeDescriptor()
 
 void TypeDescriptor::Clean()
 {
-    if (mBaseType != nullptr)
-    {
-        DynamicTypeBuilderFactory::GetInstance()->DeleteType(mBaseType);
-        mBaseType = nullptr;
-    }
-
-    if (mDiscriminatorType != nullptr)
-    {
-        DynamicTypeBuilderFactory::GetInstance()->DeleteType(mDiscriminatorType);
-        mDiscriminatorType = nullptr;
-    }
-
-    if (mElementType != nullptr)
-    {
-        DynamicTypeBuilderFactory::GetInstance()->DeleteType(mElementType);
-        mElementType = nullptr;
-    }
-
-    if (mKeyElementType != nullptr)
-    {
-        DynamicTypeBuilderFactory::GetInstance()->DeleteType(mKeyElementType);
-        mKeyElementType = nullptr;
-    }
+    mBaseType = nullptr;
+    mDiscriminatorType = nullptr;
+    mElementType = nullptr;
+    mKeyElementType = nullptr;
 }
 
 ResponseCode TypeDescriptor::CopyFrom(const TypeDescriptor* descriptor)
@@ -95,27 +76,11 @@ ResponseCode TypeDescriptor::CopyFrom(const TypeDescriptor* descriptor)
 
             mKind = descriptor->mKind;
             mName = descriptor->mName;
-
-            if (descriptor->mBaseType != nullptr)
-            {
-                mBaseType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor->mBaseType);
-            }
-
-            if (descriptor->mDiscriminatorType != nullptr)
-            {
-                mDiscriminatorType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor->mDiscriminatorType);
-            }
+            mBaseType = descriptor->mBaseType;
+            mDiscriminatorType = descriptor->mDiscriminatorType;
             mBound = descriptor->mBound;
-
-            if (descriptor->mElementType != nullptr)
-            {
-                mElementType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor->mElementType);
-            }
-
-            if (descriptor->mKeyElementType != nullptr)
-            {
-                mKeyElementType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor->mKeyElementType);
-            }
+            mElementType = descriptor->mElementType;
+            mKeyElementType = descriptor->mKeyElementType;
             return ResponseCode::RETCODE_OK;
         }
         catch(std::exception& /*e*/)
@@ -138,7 +103,7 @@ bool TypeDescriptor::Equals(const TypeDescriptor* descriptor) const
         mKeyElementType == descriptor->mKeyElementType;
 }
 
-DynamicType* TypeDescriptor::GetBaseType() const
+DynamicType_ptr TypeDescriptor::GetBaseType() const
 {
     return mBaseType;
 }
@@ -161,12 +126,12 @@ uint32_t TypeDescriptor::GetBoundsSize() const
     return static_cast<uint32_t>(mBound.size());
 }
 
-DynamicType* TypeDescriptor::GetElementType() const
+DynamicType_ptr TypeDescriptor::GetElementType() const
 {
     return mElementType;
 }
 
-DynamicType* TypeDescriptor::GetKeyElementType() const
+DynamicType_ptr TypeDescriptor::GetKeyElementType() const
 {
     return mKeyElementType;
 }

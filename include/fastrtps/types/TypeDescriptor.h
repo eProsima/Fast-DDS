@@ -16,6 +16,7 @@
 #define TYPES_TYPE_DESCRIPTOR_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/DynamicTypePtr.h>
 
 class MemberDescriptor;
 class DynamicType;
@@ -37,11 +38,11 @@ public:
 	bool Equals(const TypeDescriptor* descriptor) const;
 	bool IsConsistent() const;
 
-    DynamicType* GetBaseType() const;
+    DynamicType_ptr GetBaseType() const;
     uint32_t GetBounds(uint32_t index = 0) const;
     uint32_t GetBoundsSize() const;
-    DynamicType* GetElementType() const;
-    DynamicType* GetKeyElementType() const;
+    DynamicType_ptr GetElementType() const;
+    DynamicType_ptr GetKeyElementType() const;
     TypeKind GetKind() const;
     std::string GetName() const;
     uint32_t GetTotalBounds() const;
@@ -60,11 +61,11 @@ protected:
 
 	TypeKind mKind;                         // Type Kind.
 	std::string mName;                      // Type Name.
-	DynamicType* mBaseType;                 // SuperType of an structure or base type of an alias type.
-	DynamicType* mDiscriminatorType;        // Discrimination type for a union.
+    DynamicType_ptr mBaseType;                 // SuperType of an structure or base type of an alias type.
+    DynamicType_ptr mDiscriminatorType;        // Discrimination type for a union.
 	std::vector<uint32_t> mBound;           // Length for strings, arrays, sequences, maps and bitmasks.
-	DynamicType* mElementType;              // Value Type for arrays, sequences, maps, bitmasks.
-	DynamicType* mKeyElementType;           // Key Type for maps.
+    DynamicType_ptr mElementType;              // Value Type for arrays, sequences, maps, bitmasks.
+    DynamicType_ptr mKeyElementType;           // Key Type for maps.
 };
 
 } // namespace types

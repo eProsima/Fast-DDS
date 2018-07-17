@@ -16,6 +16,7 @@
 #define TYPES_DYNAMIC_TYPE_BUILDER_FACTORY_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/DynamicTypePtr.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -28,6 +29,7 @@ class TypeIdentifier;
 class MemberDescriptor;
 class TypeObject;
 class DynamicType;
+class DynamicType_ptr;
 
 class DynamicTypeBuilderFactory
 {
@@ -37,42 +39,43 @@ public:
 
     ~DynamicTypeBuilderFactory();
 
-    RTPS_DllAPI DynamicType* GetPrimitiveType(TypeKind kind);
-    RTPS_DllAPI ResponseCode DeleteType(DynamicType* type);
+    RTPS_DllAPI DynamicType_ptr GetPrimitiveType(TypeKind kind);
+    RTPS_DllAPI ResponseCode DeleteBuilder(DynamicTypeBuilder* builder);
 
-    RTPS_DllAPI DynamicType* BuildType(const TypeDescriptor* descriptor);
-    RTPS_DllAPI DynamicType* BuildType(const DynamicType* other);
-    RTPS_DllAPI DynamicTypeBuilder* CreateCustomType(const TypeDescriptor* descriptor);
-	RTPS_DllAPI DynamicTypeBuilder* CreateTypeCopy(const DynamicType* type);
-    RTPS_DllAPI DynamicTypeBuilder* CreateInt32Type();
-    RTPS_DllAPI DynamicTypeBuilder* CreateUint32Type();
-    RTPS_DllAPI DynamicTypeBuilder* CreateInt16Type();
-    RTPS_DllAPI DynamicTypeBuilder* CreateUint16Type();
-    RTPS_DllAPI DynamicTypeBuilder* CreateInt64Type();
-    RTPS_DllAPI DynamicTypeBuilder* CreateUint64Type();
-    RTPS_DllAPI DynamicTypeBuilder* CreateFloat32Type();
-    RTPS_DllAPI DynamicTypeBuilder* CreateFloat64Type();
-    RTPS_DllAPI DynamicTypeBuilder* CreateFloat128Type();
-    RTPS_DllAPI DynamicTypeBuilder* CreateChar8Type();
-    RTPS_DllAPI DynamicTypeBuilder* CreateChar16Type();
-    RTPS_DllAPI DynamicTypeBuilder* CreateBoolType();
-    RTPS_DllAPI DynamicTypeBuilder* CreateByteType();
-    RTPS_DllAPI DynamicTypeBuilder* CreateStringType(uint32_t bound = MAX_STRING_LENGTH);
-	RTPS_DllAPI DynamicTypeBuilder* CreateWstringType(uint32_t bound = MAX_STRING_LENGTH);
-	RTPS_DllAPI DynamicTypeBuilder* CreateSequenceType(const DynamicType* element_type, uint32_t bound = MAX_ELEMENTS_COUNT);
-	RTPS_DllAPI DynamicTypeBuilder* CreateArrayType(const DynamicType* element_type, std::vector<uint32_t> bounds);
-	RTPS_DllAPI DynamicTypeBuilder* CreateMapType(DynamicType* key_element_type, DynamicType* element_type, uint32_t bound = MAX_ELEMENTS_COUNT);
-    RTPS_DllAPI DynamicTypeBuilder* CreateBitmaskType(uint32_t bound);
-    RTPS_DllAPI DynamicTypeBuilder* CreateBitsetType(uint32_t bound);
-    RTPS_DllAPI DynamicTypeBuilder* CreateAliasType(DynamicType* base_type, const std::string& sName);
-    RTPS_DllAPI DynamicType* CreateAnnotationType();
-    RTPS_DllAPI DynamicTypeBuilder* CreateEnumType();
-    RTPS_DllAPI DynamicTypeBuilder* CreateStructType();
-    RTPS_DllAPI DynamicTypeBuilder* CreateChildStructType(DynamicType* parent_type);
-    RTPS_DllAPI DynamicTypeBuilder* CreateUnionType(DynamicType* discriminator_type);
+    RTPS_DllAPI DynamicTypeBuilder* CreateCustomBuilder(const TypeDescriptor* descriptor);
+	RTPS_DllAPI DynamicTypeBuilder* CreateBuilderCopy(const DynamicTypeBuilder* type);
+    RTPS_DllAPI DynamicTypeBuilder* CreateInt32Builder();
+    RTPS_DllAPI DynamicTypeBuilder* CreateUint32Builder();
+    RTPS_DllAPI DynamicTypeBuilder* CreateInt16Builder();
+    RTPS_DllAPI DynamicTypeBuilder* CreateUint16Builder();
+    RTPS_DllAPI DynamicTypeBuilder* CreateInt64Builder();
+    RTPS_DllAPI DynamicTypeBuilder* CreateUint64Builder();
+    RTPS_DllAPI DynamicTypeBuilder* CreateFloat32Builder();
+    RTPS_DllAPI DynamicTypeBuilder* CreateFloat64Builder();
+    RTPS_DllAPI DynamicTypeBuilder* CreateFloat128Builder();
+    RTPS_DllAPI DynamicTypeBuilder* CreateChar8Builder();
+    RTPS_DllAPI DynamicTypeBuilder* CreateChar16Builder();
+    RTPS_DllAPI DynamicTypeBuilder* CreateBoolBuilder();
+    RTPS_DllAPI DynamicTypeBuilder* CreateByteBuilder();
+    RTPS_DllAPI DynamicTypeBuilder* CreateStringBuilder(uint32_t bound = MAX_STRING_LENGTH);
+	RTPS_DllAPI DynamicTypeBuilder* CreateWstringBuilder(uint32_t bound = MAX_STRING_LENGTH);
+	RTPS_DllAPI DynamicTypeBuilder* CreateSequenceBuilder(const DynamicTypeBuilder* element_type, uint32_t bound = MAX_ELEMENTS_COUNT);
+	RTPS_DllAPI DynamicTypeBuilder* CreateArrayBuilder(const DynamicTypeBuilder* element_type, std::vector<uint32_t> bounds);
+	RTPS_DllAPI DynamicTypeBuilder* CreateMapBuilder(DynamicTypeBuilder* key_element_type, DynamicTypeBuilder* element_type, uint32_t bound = MAX_ELEMENTS_COUNT);
+    RTPS_DllAPI DynamicTypeBuilder* CreateBitmaskBuilder(uint32_t bound);
+    RTPS_DllAPI DynamicTypeBuilder* CreateBitsetBuilder(uint32_t bound);
+    RTPS_DllAPI DynamicTypeBuilder* CreateAliasBuilder(DynamicTypeBuilder* base_type, const std::string& sName);
+    RTPS_DllAPI DynamicTypeBuilder* CreateEnumBuilder();
+    RTPS_DllAPI DynamicTypeBuilder* CreateStructBuilder();
+    RTPS_DllAPI DynamicTypeBuilder* CreateChildStructBuilder(DynamicTypeBuilder* parent_type);
+    RTPS_DllAPI DynamicTypeBuilder* CreateUnionBuilder(DynamicTypeBuilder* discriminator_type);
     //DynamicTypeBuilder* CreateTypeWTypeObject(TypeObject* type_object);
     //DynamicTypeBuilder* CreateTypeWUri(const std::string& document_url, const std::string& type_name, IncludePathSeq include_paths);
 	//DynamicTypeBuilder* CreateTypeWDocument(const std::string& document, const std::string& type_name, IncludePathSeq include_paths);
+
+    RTPS_DllAPI DynamicType_ptr CreateAnnotationPrimitive();
+    RTPS_DllAPI DynamicType_ptr CreatePrimitive(const TypeDescriptor* descriptor);
+    RTPS_DllAPI DynamicType_ptr CreatePrimitive(const DynamicTypeBuilder* other);
 
     RTPS_DllAPI void BuildTypeIdentifier(const TypeDescriptor* descriptor, TypeIdentifier& identifier) const;
     RTPS_DllAPI void BuildTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
@@ -83,7 +86,9 @@ public:
 protected:
 	DynamicTypeBuilderFactory();
 
-    inline void AddTypeToList(DynamicType* pType);
+    inline void AddBuilderToList(DynamicTypeBuilder* pBuilder);
+
+    DynamicType_ptr BuildType(DynamicType_ptr other);
 
     void BuildAliasTypeObject(const TypeDescriptor* descriptor, TypeObject& object) const;
     void BuildEnumTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
@@ -94,28 +99,8 @@ protected:
         const std::vector<const MemberDescriptor*> members) const;
 
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    std::vector<DynamicType*> mTypesList;
+    std::vector<DynamicTypeBuilder*> mBuildersList;
 #endif
-};
-
-class DynamicTypeBuilder_ptr : public std::shared_ptr<DynamicTypeBuilder>
-{
-public:
-
-    typedef std::shared_ptr<DynamicTypeBuilder> Base;
-
-    using Base::operator->;
-    using Base::operator*;
-    using Base::operator bool;
-
-    DynamicTypeBuilder_ptr() {}
-
-    DynamicTypeBuilder_ptr(DynamicTypeBuilder* pType) :
-        Base(pType, [](DynamicTypeBuilder* pType) { DynamicTypeBuilderFactory::GetInstance()->DeleteType((DynamicType*)pType); }) {}
-
-    DynamicTypeBuilder_ptr(DynamicTypeBuilder_ptr&& other) = default;
-
-    DynamicTypeBuilder_ptr& operator=(DynamicTypeBuilder_ptr&&) = default;
 };
 
 } // namespace types

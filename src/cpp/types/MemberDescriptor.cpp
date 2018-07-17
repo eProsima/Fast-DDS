@@ -52,7 +52,7 @@ MemberDescriptor::MemberDescriptor(const MemberDescriptor* descriptor)
     CopyFrom(descriptor);
 }
 
-MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, DynamicType* mType)
+MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, DynamicType_ptr mType)
     : mName(name)
     , mId(id)
     , mType(mType)
@@ -63,7 +63,7 @@ MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, Dynamic
 
 }
 
-MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, DynamicType* mType,
+MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, DynamicType_ptr mType,
     const std::string& defaultValue)
     : mName(name)
     , mId(id)
@@ -74,7 +74,7 @@ MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, Dynamic
 {
 }
 
-MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, DynamicType* mType,
+MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, DynamicType_ptr mType,
     const std::string& defaultValue, const std::vector<uint64_t>& unionLabels, bool isDefaultLabel)
     : mName(name)
     , mId(id)
@@ -88,10 +88,7 @@ MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, Dynamic
 
 MemberDescriptor::~MemberDescriptor()
 {
-    if (mType != nullptr)
-    {
-        DynamicTypeBuilderFactory::GetInstance()->DeleteType(mType);
-    }
+    mType = nullptr;
 }
 
 void MemberDescriptor::AddUnionCaseIndex(uint64_t value)
@@ -117,11 +114,7 @@ ResponseCode MemberDescriptor::CopyFrom(const MemberDescriptor* other)
     {
         try
         {
-            if (mType != nullptr)
-            {
-                DynamicTypeBuilderFactory::GetInstance()->DeleteType(mType);
-            }
-            mType = DynamicTypeBuilderFactory::GetInstance()->BuildType(other->mType);
+            mType = other->mType;
             mName = other->mName;
             mId = other->mId;
             mDefaultValue = other->mDefaultValue;
@@ -145,7 +138,7 @@ ResponseCode MemberDescriptor::CopyFrom(const MemberDescriptor* other)
 bool MemberDescriptor::Equals(const MemberDescriptor* other) const
 {
     if (other != nullptr && mName == other->mName && mId == other->mId &&
-        ((mType == nullptr && other->mType == nullptr) || mType->Equals(other->mType)) &&
+        ((mType == nullptr && other->mType == nullptr) || mType->Equals(other->mType.get())) &&
         mDefaultValue == other->mDefaultValue && mIndex == other->mIndex && mDefaultLabel == other->mDefaultLabel &&
         mLabels.size() == other->mLabels.size())
     {
@@ -383,9 +376,9 @@ void MemberDescriptor::SetName(const std::string& name)
     mName = name;
 }
 
-void MemberDescriptor::SetType(DynamicType* type)
+void MemberDescriptor::SetType(DynamicType_ptr type)
 {
-    mType = DynamicTypeBuilderFactory::GetInstance()->BuildType(type);
+    mType = type;
 }
 
 void MemberDescriptor::SetDefaultUnionValue(bool bDefault)

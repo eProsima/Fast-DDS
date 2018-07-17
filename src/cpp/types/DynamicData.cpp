@@ -72,8 +72,8 @@ DynamicData::DynamicData()
 {
 }
 
-DynamicData::DynamicData(DynamicType* pType)
-    : mType(DynamicTypeBuilderFactory::GetInstance()->BuildType(pType))
+DynamicData::DynamicData(DynamicType_ptr pType)
+    : mType(pType)
 #ifdef DYNAMIC_TYPES_CHECKING
     , mInt32Value(0)
     , mUInt32Value(0)
@@ -102,7 +102,7 @@ DynamicData::~DynamicData()
     Clean();
 }
 
-void DynamicData::CreateMembers(DynamicType* pType)
+void DynamicData::CreateMembers(DynamicType_ptr pType)
 {
     std::map<MemberId, DynamicTypeMember*> members;
     if (pType->GetAllMembers(members) == ResponseCode::RETCODE_OK)
@@ -193,7 +193,7 @@ bool DynamicData::Equals(const DynamicData* other) const
         {
             return true;
         }
-        else if (GetItemCount() == other->GetItemCount() && mType->Equals(other->mType) &&
+        else if (GetItemCount() == other->GetItemCount() && mType->Equals(other->mType.get()) &&
             mDescriptors.size() == other->mDescriptors.size())
         {
             for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
@@ -500,11 +500,7 @@ void DynamicData::Clean()
     mValues.clear();
 #endif
 
-    if (mType != nullptr)
-    {
-        DynamicTypeBuilderFactory::GetInstance()->DeleteType(mType);
-        mType = nullptr;
-    }
+    mType = nullptr;
 
     for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
     {
@@ -4074,7 +4070,7 @@ size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current
     return current_alignment - initial_alignment;
 }
 
-size_t DynamicData::getKeyMaxCdrSerializedSize(const DynamicType* type, size_t current_alignment /*= 0*/)
+size_t DynamicData::getKeyMaxCdrSerializedSize(const DynamicType_ptr type, size_t current_alignment /*= 0*/)
 {
     size_t initial_alignment = current_alignment;
 
@@ -4096,7 +4092,7 @@ size_t DynamicData::getKeyMaxCdrSerializedSize(const DynamicType* type, size_t c
     return current_alignment - initial_alignment;
 }
 
-size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t current_alignment /*= 0*/)
+size_t DynamicData::getMaxCdrSerializedSize(const DynamicType_ptr type, size_t current_alignment /*= 0*/)
 {
     size_t initial_alignment = current_alignment;
 
@@ -4491,7 +4487,7 @@ void DynamicData::serializeKey(eprosima::fastcdr::Cdr &cdr) const
     }
 }
 
-size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType* type, size_t current_alignment /*= 0*/)
+size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType_ptr type, size_t current_alignment /*= 0*/)
 {
     size_t initial_alignment = current_alignment;
 
@@ -4585,7 +4581,7 @@ size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType* type, size_t cu
     return current_alignment - initial_alignment;
 }
 
-void DynamicData::SerializeEmptyData(const DynamicType* pType, eprosima::fastcdr::Cdr &cdr) const
+void DynamicData::SerializeEmptyData(const DynamicType_ptr pType, eprosima::fastcdr::Cdr &cdr) const
 {
     switch(pType->GetKind())
     {

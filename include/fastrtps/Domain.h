@@ -20,7 +20,8 @@
 #ifndef DOMAIN_H_
 #define DOMAIN_H_
 
-#include "attributes/ParticipantAttributes.h"
+#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/types/DynamicTypePtr.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -161,7 +162,7 @@ public:
      * @param type Pointer to the Type.
      * @return True if correctly registered.
      */
-    RTPS_DllAPI static bool registerDynamicType(Participant* part, types::DynamicType* type);
+    RTPS_DllAPI static bool registerDynamicType(Participant* part, types::DynamicType_ptr type);
 
     /**
      * Unregister a type in a participant.
