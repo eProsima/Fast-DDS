@@ -1111,6 +1111,93 @@ void TypeIdentifier::deserialize(eprosima::fastcdr::Cdr &dcdr)
 }
 
 
+
+bool TypeIdentifier::operator==(const TypeIdentifier &other) const
+{
+    if (this->_d() != other._d())
+    {
+        return false;
+    }
+
+    switch (this->_d())
+    {
+        case TI_STRING8_SMALL:
+        case TI_STRING16_SMALL:
+            return this->string_sdefn().bound() == other.string_sdefn().bound();
+
+        case TI_STRING8_LARGE:
+        case TI_STRING16_LARGE:
+            return this->string_ldefn().bound() == other.string_ldefn().bound();
+
+        case TI_PLAIN_SEQUENCE_SMALL:
+            return this->seq_sdefn().bound() == other.seq_sdefn().bound()
+                && this->seq_sdefn().element_identifier() == other.seq_sdefn().element_identifier();
+
+        case TI_PLAIN_SEQUENCE_LARGE:
+            return this->seq_ldefn().bound() == this->seq_ldefn().bound()
+                && this->seq_ldefn().element_identifier() == other.seq_ldefn().element_identifier();
+
+        case TI_PLAIN_ARRAY_SMALL:
+            {
+                if (this->array_sdefn().array_bound_seq().size() != other.array_sdefn().array_bound_seq().size())
+                {
+                    return false;
+                }
+                for (uint32_t idx = 0; idx < this->array_sdefn().array_bound_seq().size(); ++idx)
+                {
+                    if (this->array_sdefn().array_bound_seq()[idx] != other.array_sdefn().array_bound_seq()[idx])
+                    {
+                        return false;
+                    }
+                }
+                return this->array_sdefn().element_identifier() == other.array_sdefn().element_identifier();
+            }
+
+        case TI_PLAIN_ARRAY_LARGE:
+            {
+                if (this->array_ldefn().array_bound_seq().size() != other.array_ldefn().array_bound_seq().size())
+                {
+                    return false;
+                }
+                for (uint32_t idx = 0; idx < this->array_ldefn().array_bound_seq().size(); ++idx)
+                {
+                    if (this->array_ldefn().array_bound_seq()[idx] != other.array_ldefn().array_bound_seq()[idx])
+                    {
+                        return false;
+                    }
+                }
+                return this->array_ldefn().element_identifier() == other.array_ldefn().element_identifier();
+            }
+
+        case TI_PLAIN_MAP_SMALL:
+            return this->map_sdefn().bound() == this->map_sdefn().bound()
+                && this->map_sdefn().key_identifier() == other.map_sdefn().key_identifier()
+                && this->map_sdefn().element_identifier() == other.map_sdefn().element_identifier();
+
+        case TI_PLAIN_MAP_LARGE:
+            return this->map_ldefn().bound() == this->map_ldefn().bound()
+                && this->map_ldefn().key_identifier() == other.map_ldefn().key_identifier()
+                && this->map_ldefn().element_identifier() == other.map_ldefn().element_identifier();
+
+        case EK_MINIMAL:
+        case EK_COMPLETE:
+        {
+            //return memcmp(this->equivalence_hash(), other.equivalence_hash(), 14) == 0;
+            for (int i = 0; i < 14; ++i)
+            {
+                if (this->equivalence_hash()[i] != other.equivalence_hash()[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        default:
+            break;
+    }
+    return false;
+}
+
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima

@@ -952,7 +952,7 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(const GUID_t& l
     return pairing_remote_writer_with_local_builtin_reader_after_security(local_reader, remote_writer_data);
 }
 #endif
-
+/*
 bool EDP::checkTypeIdentifier(const TypeIdentifier * wti, const TypeIdentifier * rti) const
 {
     if (wti->_d() != rti->_d())
@@ -1040,7 +1040,7 @@ bool EDP::checkTypeIdentifier(const TypeIdentifier * wti, const TypeIdentifier *
     }
     return false;
 }
-
+*/
 bool EDP::checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const
 {
     if (wdata->topicDiscoveryKind() == NO_CHECK && rdata->topicDiscoveryKind() == NO_CHECK)
@@ -1053,7 +1053,7 @@ bool EDP::checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyDat
         return false;
     }
 
-    return checkTypeIdentifier(wdata->type_id().m_type_identifier, rdata->type_id().m_type_identifier);
+    return *(wdata->type_id().m_type_identifier) == *(rdata->type_id().m_type_identifier);
 }
 
 }

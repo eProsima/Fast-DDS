@@ -373,6 +373,11 @@ public:
      */
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
+    /**
+     * Equals
+     * */
+    bool operator==(const TypeIdentifier &other) const;
+
 private:
     octet m__d;
 
