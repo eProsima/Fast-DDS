@@ -107,7 +107,6 @@ TypeObjectFactory::TypeObjectFactory()
 
 TypeObjectFactory::~TypeObjectFactory()
 {
-    /*
     {
         std::unique_lock<std::mutex> scoped(m_MutexIdentifiers);
         auto id_it = m_Identifiers.begin();
@@ -128,7 +127,6 @@ TypeObjectFactory::~TypeObjectFactory()
         }
         m_Objects.clear();
     }
-    */
 }
 
 const TypeObject* TypeObjectFactory::GetTypeObject(const std::string &type_name) const
