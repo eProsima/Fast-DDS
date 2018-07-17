@@ -35,6 +35,7 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 
 using namespace eprosima::fastrtps::rtps;
@@ -64,6 +65,11 @@ void Domain::stopAll()
     {
         Domain::removeParticipant(m_participants.begin()->first);
     }
+    // Deletes DynamicTypes and TypeObject factories
+    DynamicTypeBuilderFactory::DeleteInstance();
+    DynamicDataFactory::DeleteInstance();
+    TypeObjectFactory::DeleteInstance();
+
     eClock::my_sleep(100);
     Log::KillThread();
 }
