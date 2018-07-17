@@ -96,7 +96,26 @@ protected:
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::vector<DynamicType*> mTypesList;
 #endif
+};
 
+class DynamicTypeBuilder_ptr : public std::shared_ptr<DynamicTypeBuilder>
+{
+public:
+
+    typedef std::shared_ptr<DynamicTypeBuilder> Base;
+
+    using Base::operator->;
+    using Base::operator*;
+    using Base::operator bool;
+
+    DynamicTypeBuilder_ptr() {}
+
+    DynamicTypeBuilder_ptr(DynamicTypeBuilder* pType) :
+        Base(pType, [](DynamicTypeBuilder* pType) { DynamicTypeBuilderFactory::GetInstance()->DeleteType((DynamicType*)pType); }) {}
+
+    DynamicTypeBuilder_ptr(DynamicTypeBuilder_ptr&& other) = default;
+
+    DynamicTypeBuilder_ptr& operator=(DynamicTypeBuilder_ptr&&) = default;
 };
 
 } // namespace types

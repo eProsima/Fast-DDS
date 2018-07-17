@@ -23,6 +23,7 @@
 #include <vector>
 #include <cctype>
 #include <algorithm>
+#include <memory>
 
 namespace eprosima{
 namespace fastrtps{
