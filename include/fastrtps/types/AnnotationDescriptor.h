@@ -16,6 +16,7 @@
 #define TYPES_ANNOTATION_DESCRIPTOR_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/DynamicTypePtr.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -30,7 +31,7 @@ public:
     AnnotationDescriptor();
     ~AnnotationDescriptor();
     AnnotationDescriptor(const AnnotationDescriptor* descriptor);
-    AnnotationDescriptor(DynamicType* pType);
+    AnnotationDescriptor(DynamicType_ptr pType);
 
     ResponseCode CopyFrom(const AnnotationDescriptor* other);
     bool Equals(const AnnotationDescriptor*) const;
@@ -40,11 +41,11 @@ public:
     ResponseCode GetValue(std::string& value, const std::string& key);
     ResponseCode GetAllValues(std::map<std::string, std::string>& value);
     ResponseCode SetValue(const std::string& key, const std::string& value);
-    void SetType(DynamicType* pType);
+    void SetType(DynamicType_ptr pType);
 
 protected:
 
-	DynamicType* mType;
+    DynamicType_ptr mType;
 	std::map<std::string, std::string> mValue;
 };
 

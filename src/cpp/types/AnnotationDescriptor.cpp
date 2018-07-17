@@ -28,11 +28,7 @@ AnnotationDescriptor::AnnotationDescriptor()
 
 AnnotationDescriptor::~AnnotationDescriptor()
 {
-    if (mType != nullptr)
-    {
-        DynamicTypeBuilderFactory::GetInstance()->DeleteType(mType);
-        mType = nullptr;
-    }
+    mType = nullptr;
 }
 
 AnnotationDescriptor::AnnotationDescriptor(const AnnotationDescriptor* descriptor)
@@ -40,9 +36,9 @@ AnnotationDescriptor::AnnotationDescriptor(const AnnotationDescriptor* descripto
     CopyFrom(descriptor);
 }
 
-AnnotationDescriptor::AnnotationDescriptor(DynamicType* pType)
-: mType(DynamicTypeBuilderFactory::GetInstance()->BuildType(pType))
+AnnotationDescriptor::AnnotationDescriptor(DynamicType_ptr pType)
 {
+    mType = pType;
 }
 
 ResponseCode AnnotationDescriptor::CopyFrom(const AnnotationDescriptor* descriptor)
@@ -51,7 +47,7 @@ ResponseCode AnnotationDescriptor::CopyFrom(const AnnotationDescriptor* descript
     {
         try
         {
-            mType = DynamicTypeBuilderFactory::GetInstance()->BuildType(descriptor->mType);
+            mType = descriptor->mType;
             mValue = descriptor->mValue;
         }
         catch(std::exception& /*e*/)
@@ -69,7 +65,7 @@ ResponseCode AnnotationDescriptor::CopyFrom(const AnnotationDescriptor* descript
 
 bool AnnotationDescriptor::Equals(const AnnotationDescriptor* other) const
 {
-    if (other != nullptr && (mType == other->mType || (mType != nullptr && mType->Equals(other->mType))))
+    if (other != nullptr && (mType == other->mType || (mType != nullptr && mType->Equals(other->mType.get()))))
     {
         for (auto it = mValue.begin(); it != mValue.end(); ++it)
         {
@@ -126,7 +122,7 @@ bool AnnotationDescriptor::IsConsistent() const
     return true;
 }
 
-void AnnotationDescriptor::SetType(DynamicType* pType)
+void AnnotationDescriptor::SetType(DynamicType_ptr pType)
 {
     mType = pType;
 }

@@ -27,6 +27,7 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
@@ -53,9 +54,9 @@ bool HelloWorldPublisher::init(bool dynamic)
         //DynamicTypeBuilder* created_type_string(nullptr);
         //DynamicTypeBuilder* struct_type_builder(nullptr);
         // Create basic types
-        DynamicTypeBuilder_ptr created_type_ulong(DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
-        DynamicTypeBuilder_ptr created_type_string(DynamicTypeBuilderFactory::GetInstance()->CreateStringType());
-        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructType());
+        DynamicTypeBuilder_ptr created_type_ulong(DynamicTypeBuilderFactory::GetInstance()->CreateUint32Builder());
+        DynamicTypeBuilder_ptr created_type_string(DynamicTypeBuilderFactory::GetInstance()->CreateStringBuilder());
+        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
 
         // Add members to the struct.
         struct_type_builder->AddMember(0, "index", created_type_ulong.get());
@@ -130,7 +131,7 @@ HelloWorldPublisher::~HelloWorldPublisher()
     // TODO Auto-generated destructor stub
     if (m_dynamic)
     {
-        DynamicTypeBuilderFactory::GetInstance()->DeleteType(m_DynType);
+        m_DynType = nullptr;
         DynamicDataFactory::GetInstance()->DeleteData(m_DynHello);
     }
 

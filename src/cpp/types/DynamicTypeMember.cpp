@@ -88,7 +88,7 @@ ResponseCode DynamicTypeMember::ApplyAnnotation(const std::string& key, const st
     else
     {
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-        pNewDescriptor->SetType(DynamicTypeBuilderFactory::GetInstance()->CreateAnnotationType());
+        pNewDescriptor->SetType(DynamicTypeBuilderFactory::GetInstance()->CreateAnnotationPrimitive());
         pNewDescriptor->SetValue(key, value);
         mAnnotation.push_back(pNewDescriptor);
         return ResponseCode::RETCODE_OK;

@@ -12,46 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_DYNAMIC_DATA_FACTORY_H
-#define TYPES_DYNAMIC_DATA_FACTORY_H
+#ifndef TYPES_DYNAMIC_TYPE_PTR_H
+#define TYPES_DYNAMIC_TYPE_PTR_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/DynamicTypePtr.h>
 
 namespace eprosima{
 namespace fastrtps{
 namespace types{
 
-class DynamicData;
-class DynamicTypeBuilder;
+class DynamicType;
 
-class DynamicDataFactory
+class DynamicType_ptr : public std::shared_ptr<DynamicType>
 {
 public:
-    ~DynamicDataFactory();
 
-    RTPS_DllAPI static DynamicDataFactory* GetInstance();
-    RTPS_DllAPI static ResponseCode DeleteInstance();
+    typedef std::shared_ptr<DynamicType> Base;
 
-    RTPS_DllAPI DynamicData* CreateData(DynamicTypeBuilder* pBuilder);
-    RTPS_DllAPI DynamicData* CreateData(DynamicType_ptr pType);
-    RTPS_DllAPI ResponseCode DeleteData(DynamicData* pData);
+    using Base::operator->;
+    using Base::operator*;
+    using Base::operator bool;
 
-    RTPS_DllAPI bool IsEmpty() const;
+    DynamicType_ptr() {}
 
-protected:
-    DynamicDataFactory();
+    RTPS_DllAPI DynamicType_ptr(DynamicType* pType);
 
-    ResponseCode CreateMembers(DynamicData* pData, DynamicType_ptr pType);
+    RTPS_DllAPI DynamicType_ptr(const DynamicType_ptr& other) = default;
+    RTPS_DllAPI DynamicType_ptr(DynamicType_ptr&& other) = default;
 
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    std::vector<DynamicData*> mDynamicDatas;
-#endif
+    RTPS_DllAPI DynamicType_ptr& operator=(const DynamicType_ptr&) = default;
+    RTPS_DllAPI DynamicType_ptr& operator=(DynamicType_ptr&&) = default;
 };
-
 
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_DYNAMIC_DATA_FACTORY_H
+#endif // TYPES_DYNAMIC_TYPE_PTR_H

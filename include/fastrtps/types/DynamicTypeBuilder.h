@@ -16,8 +16,7 @@
 #define TYPES_DYNAMIC_TYPE_BUILDER_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/DynamicType.h>
-
+#include <fastrtps/types/DynamicTypePtr.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -27,22 +26,23 @@ class AnnotationDescriptor;
 class TypeDescriptor;
 class MemberDescriptor;
 class DynamicType;
+class DynamicTypeMember;
 
-class DynamicTypeBuilder : public DynamicType
+class DynamicTypeBuilder
 {
 public:
     DynamicTypeBuilder();
+    DynamicTypeBuilder(const DynamicTypeBuilder* builder);
     DynamicTypeBuilder(const TypeDescriptor* descriptor);
-    DynamicTypeBuilder(const DynamicType* pType);
 
     virtual ~DynamicTypeBuilder();
 
     RTPS_DllAPI ResponseCode AddEmptyMember(uint32_t index, const std::string& name);
     RTPS_DllAPI ResponseCode AddMember(const MemberDescriptor* descriptor);
-    RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicType* mType = nullptr);
-    RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicType* mType,
+    RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicTypeBuilder* mType = nullptr);
+    RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicTypeBuilder* mType,
         const std::string& defaultValue);
-    RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicType* mType,
+    RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicTypeBuilder* mType,
         const std::string& defaultValue, const std::vector<uint64_t>& unionLabels, bool isDefaultLabel);
 
     RTPS_DllAPI ResponseCode ApplyAnnotation(AnnotationDescriptor& descriptor);
@@ -51,22 +51,43 @@ public:
     RTPS_DllAPI ResponseCode ApplyAnnotationToMember(MemberId id, std::string key, std::string value);
 
 
-    RTPS_DllAPI DynamicType* Build();
+    RTPS_DllAPI DynamicType_ptr Build();
 
     RTPS_DllAPI ResponseCode CopyFrom(const DynamicTypeBuilder* other);
+    RTPS_DllAPI inline TypeKind GetKind() const { return mKind; }
+    RTPS_DllAPI std::string GetName() const;
+    bool IsConsistent() const;
+    bool IsDiscriminatorType() const;
 
     RTPS_DllAPI ResponseCode SetName(const std::string& name);
 protected:
 
+    friend class DynamicType;
+
+    TypeDescriptor* mDescriptor;
+    std::vector<AnnotationDescriptor*> mAnnotation;
+    std::map<MemberId, DynamicTypeMember*> mMemberById;         // Aggregated members
+    std::map<std::string, DynamicTypeMember*> mMemberByName;    // Uses the pointers from "mMemberById".
+    std::string mName;
+    TypeKind mKind;
     MemberId mCurrentMemberId;
     uint32_t mMaxIndex;
 
+    ResponseCode _ApplyAnnotation(AnnotationDescriptor& descriptor);
+    ResponseCode _ApplyAnnotation(const std::string& key, const std::string& value);
+    ResponseCode _ApplyAnnotationToMember(MemberId id, AnnotationDescriptor& descriptor);
+    ResponseCode _ApplyAnnotationToMember(MemberId id, const std::string& key, const std::string& value);
+
     bool CheckUnionConfiguration(const MemberDescriptor* descriptor);
+
+    // Checks if there is a member with the given name.
+    bool ExistsMemberByName(const std::string& name) const;
 
     void RefreshMemberIds();
 
+    void Clear();
 
-    virtual void Clear() override;
+    ResponseCode CopyFromBuilder(const DynamicTypeBuilder* other);
 };
 
 } // namespace types

@@ -28,7 +28,7 @@
 #include <fastrtps/participant/ParticipantListener.h>
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypePtr.h>
 
 
 #include "HelloWorld.h"
@@ -68,7 +68,7 @@ private:
 	HelloWorldPubSubType m_type;
 	// Dynamic Types
 	eprosima::fastrtps::types::DynamicData* m_DynHello;
-	eprosima::fastrtps::types::DynamicType* m_DynType;
+	eprosima::fastrtps::types::DynamicType_ptr m_DynType;
 	bool m_dynamic;
 };
 

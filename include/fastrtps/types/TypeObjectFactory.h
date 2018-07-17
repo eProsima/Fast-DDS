@@ -16,7 +16,7 @@
 #define TYPE_OBJECT_TYPE_FACTORY_H
 
 #include <fastrtps/types/TypeObject.h>
-#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypePtr.h>
 #include <mutex>
 
 namespace eprosima{
@@ -46,7 +46,7 @@ public:
     RTPS_DllAPI const TypeIdentifier* GetMapIdentifier(const std::string &key_type_name,
         const std::string &value_type_name, uint32_t bound);
 
-    RTPS_DllAPI DynamicType* BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
+    RTPS_DllAPI DynamicType_ptr BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
         const TypeObject* object = nullptr) const;
 
     RTPS_DllAPI void AddTypeIdentifier(const std::string &type_name, const TypeIdentifier* identifier);
@@ -60,7 +60,7 @@ protected:
     //TODO: TypeDescriptor* BuildTypeDescriptorFromObject(TypeDescriptor* descriptor, const TypeObject* object) const;
     //TODO: void BuildTypeDescriptorFromMinimalObject(TypeDescriptor* descriptor, const MinimalTypeObject &minimal) const;
 
-    DynamicType* BuildDynamicType(const TypeIdentifier* identifier, const TypeObject* object) const;
+    DynamicType_ptr BuildDynamicType(const TypeIdentifier* identifier, const TypeObject* object) const;
 
     //MemberDescriptor* BuildMemberDescriptor(const TypeIdentifier* identifier, const TypeObject* object = nullptr);
 private:

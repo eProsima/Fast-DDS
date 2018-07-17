@@ -14,6 +14,7 @@
 
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicTypeMember.h>
@@ -61,13 +62,13 @@ DynamicType::DynamicType(const TypeDescriptor* descriptor)
     setName(mName.c_str());
 }
 
-DynamicType::DynamicType(const DynamicType* other)
+DynamicType::DynamicType(const DynamicTypeBuilder* other)
     : mDescriptor(nullptr)
     , mName("")
     , mKind(TK_NONE)
     , m_keyBuffer(nullptr)
 {
-    CopyFromType(other);
+    CopyFromBuilder(other);
 }
 
 DynamicType::~DynamicType()
@@ -102,7 +103,7 @@ ResponseCode DynamicType::_ApplyAnnotation(const std::string& key, const std::st
     else
     {
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-        pNewDescriptor->SetType(DynamicTypeBuilderFactory::GetInstance()->CreateAnnotationType());
+        pNewDescriptor->SetType(DynamicTypeBuilderFactory::GetInstance()->CreateAnnotationPrimitive());
         pNewDescriptor->SetValue(key, value);
         mAnnotation.push_back(pNewDescriptor);
     }
@@ -178,7 +179,7 @@ void DynamicType::Clear()
     mMemberByName.clear();
 }
 
-ResponseCode DynamicType::CopyFromType(const DynamicType* other)
+ResponseCode DynamicType::CopyFromBuilder(const DynamicTypeBuilder* other)
 {
     if (other != nullptr)
     {
@@ -186,7 +187,6 @@ ResponseCode DynamicType::CopyFromType(const DynamicType* other)
 
         mName = other->mName;
         mKind = other->mKind;
-        m_isGetKeyDefined = other->m_isGetKeyDefined;
         mDescriptor = new TypeDescriptor(other->mDescriptor);
 
         for (auto it = other->mAnnotation.begin(); it != other->mAnnotation.end(); ++it)
@@ -391,7 +391,7 @@ ResponseCode DynamicType::GetAnnotation(AnnotationDescriptor& descriptor, uint32
     }
 }
 
-DynamicType* DynamicType::GetBaseType() const
+DynamicType_ptr DynamicType::GetBaseType() const
 {
     if (mDescriptor != nullptr)
     {
@@ -418,7 +418,7 @@ uint32_t DynamicType::GetBoundsSize() const
     return 0;
 }
 
-DynamicType* DynamicType::GetElementType() const
+DynamicType_ptr DynamicType::GetElementType() const
 {
     if (mDescriptor != nullptr)
     {
@@ -427,7 +427,7 @@ DynamicType* DynamicType::GetElementType() const
     return nullptr;
 }
 
-DynamicType* DynamicType::GetKeyElementType() const
+DynamicType_ptr DynamicType::GetKeyElementType() const
 {
     if (mDescriptor != nullptr)
     {
@@ -588,7 +588,6 @@ bool DynamicType::serialize(void *data, eprosima::fastrtps::rtps::SerializedPayl
     payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
     return true;
 }
-
 
 } // namespace types
 } // namespace fastrtps

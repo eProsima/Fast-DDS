@@ -31,23 +31,39 @@ DynamicTypeBuilder::DynamicTypeBuilder()
 {
 }
 
-DynamicTypeBuilder::DynamicTypeBuilder(const TypeDescriptor* descriptor)
-    : DynamicType(descriptor)
-    , mCurrentMemberId(0)
+DynamicTypeBuilder::DynamicTypeBuilder(const DynamicTypeBuilder* builder)
+    : mCurrentMemberId(0)
     , mMaxIndex(0)
 {
-    RefreshMemberIds();
+    CopyFromBuilder(builder);
 }
 
-DynamicTypeBuilder::DynamicTypeBuilder(const DynamicType* pType)
-    : DynamicType()
-    , mCurrentMemberId(0)
+DynamicTypeBuilder::DynamicTypeBuilder(const TypeDescriptor* descriptor)
+    : mCurrentMemberId(0)
     , mMaxIndex(0)
 {
-    if (pType != nullptr)
+    mDescriptor = new TypeDescriptor(descriptor);
+    try
     {
-        CopyFromType(pType);
+        mName = descriptor->GetName();
+        mKind = descriptor->GetKind();
     }
+    catch (...)
+    {
+        mName = "";
+        mKind = TK_NONE;
+    }
+
+    // Alias types use the same members than it's base class.
+    if (mKind == TK_ALIAS)
+    {
+        for (auto it = mDescriptor->GetBaseType()->mMemberById.begin();
+            it != mDescriptor->GetBaseType()->mMemberById.end(); ++it)
+        {
+            mMemberByName.insert(std::make_pair(it->second->GetName(), it->second));
+        }
+    }
+
     RefreshMemberIds();
 }
 
@@ -130,11 +146,11 @@ ResponseCode DynamicTypeBuilder::AddMember(const MemberDescriptor* descriptor)
     }
 }
 
-ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicType* mType)
+ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicTypeBuilder* mType)
 {
     if (mType != nullptr)
     {
-        MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->BuildType(mType));
+        MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(mType));
         return AddMember(&descriptor);
     }
     else
@@ -144,17 +160,17 @@ ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name,
     }
 }
 
-ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicType* mType,
+ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicTypeBuilder* mType,
     const std::string& defaultValue)
 {
-    MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->BuildType(mType), defaultValue);
+    MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(mType), defaultValue);
     return AddMember(&descriptor);
 }
 
-ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicType* mType,
+ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicTypeBuilder* mType,
     const std::string& defaultValue, const std::vector<uint64_t>& unionLabels, bool isDefaultLabel)
 {
-    MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->BuildType(mType),
+    MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(mType),
         defaultValue, unionLabels, isDefaultLabel);
     return AddMember(&descriptor);
 }
@@ -179,11 +195,11 @@ ResponseCode DynamicTypeBuilder::ApplyAnnotationToMember(MemberId id, std::strin
     return _ApplyAnnotationToMember(id, key, value);
 }
 
-DynamicType* DynamicTypeBuilder::Build()
+DynamicType_ptr DynamicTypeBuilder::Build()
 {
     if (mDescriptor->IsConsistent())
     {
-        return DynamicTypeBuilderFactory::GetInstance()->BuildType(this);
+        return DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(this);
     }
     else
     {
@@ -219,7 +235,7 @@ ResponseCode DynamicTypeBuilder::CopyFrom(const DynamicTypeBuilder* other)
     {
         Clear();
 
-        ResponseCode res = CopyFromType(other);
+        ResponseCode res = CopyFromBuilder(other);
         if (res == ResponseCode::RETCODE_OK)
         {
             mCurrentMemberId = other->mCurrentMemberId;
@@ -233,11 +249,96 @@ ResponseCode DynamicTypeBuilder::CopyFrom(const DynamicTypeBuilder* other)
     }
 }
 
+
+ResponseCode DynamicTypeBuilder::CopyFromBuilder(const DynamicTypeBuilder* other)
+{
+    if (other != nullptr)
+    {
+        Clear();
+
+        mName = other->mName;
+        mKind = other->mKind;
+        mDescriptor = new TypeDescriptor(other->mDescriptor);
+
+        for (auto it = other->mAnnotation.begin(); it != other->mAnnotation.end(); ++it)
+        {
+            AnnotationDescriptor* newDescriptor = new AnnotationDescriptor(*it);
+            mAnnotation.push_back(newDescriptor);
+        }
+
+        for (auto it = other->mMemberById.begin(); it != other->mMemberById.end(); ++it)
+        {
+            DynamicTypeMember* newMember = new DynamicTypeMember(it->second);
+            mMemberById.insert(std::make_pair(newMember->GetId(), newMember));
+            mMemberByName.insert(std::make_pair(newMember->GetName(), newMember));
+        }
+
+        return ResponseCode::RETCODE_OK;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error copying DynamicType, invalid input type");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
 void DynamicTypeBuilder::Clear()
 {
-    DynamicType::Clear();
+    mName = "";
+    mKind = 0;
+    if (mDescriptor != nullptr)
+    {
+        delete mDescriptor;
+        mDescriptor = nullptr;
+    }
 
+    for (auto it = mAnnotation.begin(); it != mAnnotation.end(); ++it)
+    {
+        delete *it;
+    }
+    mAnnotation.clear();
+
+    for (auto it = mMemberById.begin(); it != mMemberById.end(); ++it)
+    {
+        delete it->second;
+    }
+    mMemberById.clear();
+    mMemberByName.clear();
     mCurrentMemberId = 0;
+}
+
+bool DynamicTypeBuilder::ExistsMemberByName(const std::string& name) const
+{
+    if (mDescriptor->GetBaseType() != nullptr)
+    {
+        if (mDescriptor->GetBaseType()->ExistsMemberByName(name))
+        {
+            return true;
+        }
+    }
+    return mMemberByName.find(name) != mMemberByName.end();
+}
+
+std::string DynamicTypeBuilder::GetName() const
+{
+    return mName;
+}
+
+bool DynamicTypeBuilder::IsConsistent() const
+{
+    return mDescriptor->IsConsistent();
+}
+
+bool DynamicTypeBuilder::IsDiscriminatorType() const
+{
+    if (mKind == TK_ALIAS && mDescriptor != nullptr && mDescriptor->GetBaseType() != nullptr)
+    {
+        return mDescriptor->GetBaseType()->IsDiscriminatorType();
+    }
+    return mKind == TK_BOOLEAN || mKind == TK_BYTE || mKind == TK_INT16 || mKind == TK_INT32 ||
+        mKind == TK_INT64 || mKind == TK_UINT16 || mKind == TK_UINT32 || mKind == TK_UINT64 ||
+        mKind == TK_FLOAT32 || mKind == TK_FLOAT64 || mKind == TK_FLOAT128 || mKind == TK_CHAR8 ||
+        mKind == TK_CHAR16 || mKind == TK_STRING8 || mKind == TK_STRING16 || mKind == TK_ENUM || mKind == TK_BITMASK;
 }
 
 void DynamicTypeBuilder::RefreshMemberIds()
@@ -254,11 +355,82 @@ ResponseCode DynamicTypeBuilder::SetName(const std::string& name)
     {
         mDescriptor->SetName(name);
     }
-    setName(name.c_str());
+//ARCE:     setName(name.c_str());
     mName = name;
     return ResponseCode::RETCODE_OK;
 }
 
+ResponseCode DynamicTypeBuilder::_ApplyAnnotation(AnnotationDescriptor& descriptor)
+{
+    if (descriptor.IsConsistent())
+    {
+        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
+        pNewDescriptor->CopyFrom(&descriptor);
+        mAnnotation.push_back(pNewDescriptor);
+        return ResponseCode::RETCODE_OK;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicTypeBuilder::_ApplyAnnotation(const std::string& key, const std::string& value)
+{
+    auto it = mAnnotation.begin();
+    if (it != mAnnotation.end())
+    {
+        (*it)->SetValue(key, value);
+    }
+    else
+    {
+        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
+        pNewDescriptor->SetType(DynamicTypeBuilderFactory::GetInstance()->CreateAnnotationPrimitive());
+        pNewDescriptor->SetValue(key, value);
+        mAnnotation.push_back(pNewDescriptor);
+    }
+
+    return ResponseCode::RETCODE_OK;
+}
+
+ResponseCode DynamicTypeBuilder::_ApplyAnnotationToMember(MemberId id, AnnotationDescriptor& descriptor)
+{
+    if (descriptor.IsConsistent())
+    {
+        auto it = mMemberById.find(id);
+        if (it != mMemberById.end())
+        {
+            it->second->ApplyAnnotation(descriptor);
+            return ResponseCode::RETCODE_OK;
+        }
+        else
+        {
+            logError(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
+            return ResponseCode::RETCODE_BAD_PARAMETER;
+        }
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error applying annotation to member. The input descriptor isn't consistent.");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicTypeBuilder::_ApplyAnnotationToMember(MemberId id, const std::string& key, const std::string& value)
+{
+    auto it = mMemberById.find(id);
+    if (it != mMemberById.end())
+    {
+        it->second->ApplyAnnotation(key, value);
+        return ResponseCode::RETCODE_OK;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
