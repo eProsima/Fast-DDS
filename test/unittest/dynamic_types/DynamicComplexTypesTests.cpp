@@ -396,6 +396,106 @@ TEST_F(DynamicComplexTypesTests, Conversions_Test)
 -> Generate TypeObject from Manual and verify its correct generating another auto from it and comparing with the manual.
 */
 
+TEST_F(DynamicComplexTypesTests, DynamicDiscoveryTest)
+{
+    TypeObject typeObject1, typeObject2, typeObject3;
+    DynamicTypeBuilder *type1(nullptr), *type2(nullptr), *type3(nullptr);
+    {
+        type1 = DynamicTypeBuilderFactory::GetInstance()->CreateUint16Type();
+        //types::DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(type1);
+        DynamicTypeBuilderFactory::GetInstance()->BuildTypeObject(type1->getTypeDescriptor(), typeObject1);
+    }
+    {
+        type2 = DynamicTypeBuilderFactory::GetInstance()->CreateInt16Type();
+        //types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(type2);
+        DynamicTypeBuilderFactory::GetInstance()->BuildTypeObject(type2->getTypeDescriptor(), typeObject2);
+    }
+
+    {
+        type3 = DynamicTypeBuilderFactory::GetInstance()->CreateInt16Type();
+        //types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(type3);
+        DynamicTypeBuilderFactory::GetInstance()->BuildTypeObject(type3->getTypeDescriptor(), typeObject3);
+    }
+
+    const TypeIdentifier* identifier1 = TypeObjectFactory::GetInstance()->GetTypeIdentifier(type1->GetName());
+    const TypeIdentifier* identifier2 = TypeObjectFactory::GetInstance()->GetTypeIdentifier(type2->GetName());
+    const TypeIdentifier* identifier3 = TypeObjectFactory::GetInstance()->GetTypeIdentifier(type3->GetName());
+    ASSERT_FALSE(*identifier1 == *identifier2);
+    ASSERT_FALSE(*identifier1 == *identifier3);
+    ASSERT_TRUE(*identifier2 == *identifier3);
+}
+
+TEST_F(DynamicComplexTypesTests, StaticVsDynamicDiscovery)
+{
+    BasicStruct test;
+    (void)test;
+
+    // Members
+    DynamicTypeBuilder* bool_builder = m_factory->CreateBoolType();
+    DynamicTypeBuilder* octet_builder = m_factory->CreateByteType();
+    DynamicTypeBuilder* int16_builder = m_factory->CreateInt16Type();
+    DynamicTypeBuilder* int32_builder = m_factory->CreateInt32Type();
+    DynamicTypeBuilder* int64_builder = m_factory->CreateInt64Type();
+    DynamicTypeBuilder* uint16_builder = m_factory->CreateUint16Type();
+    DynamicTypeBuilder* uint32_builder = m_factory->CreateUint32Type();
+    DynamicTypeBuilder* uint64_builder = m_factory->CreateUint64Type();
+    DynamicTypeBuilder* float_builder = m_factory->CreateFloat32Type();
+    DynamicTypeBuilder* double_builder = m_factory->CreateFloat64Type();
+    DynamicTypeBuilder* ldouble_builder = m_factory->CreateFloat128Type();
+    DynamicTypeBuilder* char_builder = m_factory->CreateChar8Type();
+    DynamicTypeBuilder* wchar_builder = m_factory->CreateChar16Type();
+    DynamicTypeBuilder* string_builder = m_factory->CreateStringType();
+    DynamicTypeBuilder* wstring_builder = m_factory->CreateWstringType();
+    DynamicTypeBuilder* basicStruct_builder = m_factory->CreateStructType();
+
+    // Add members to the struct.
+    int idx = 0;
+    basicStruct_builder->AddMember(idx++, "my_bool", bool_builder);
+    basicStruct_builder->AddMember(idx++, "my_octet", octet_builder);
+    basicStruct_builder->AddMember(idx++, "my_int16", int16_builder);
+    basicStruct_builder->AddMember(idx++, "my_int32", int32_builder);
+    basicStruct_builder->AddMember(idx++, "my_int64", int64_builder);
+    basicStruct_builder->AddMember(idx++, "my_uint16", uint16_builder);
+    basicStruct_builder->AddMember(idx++, "my_uint32", uint32_builder);
+    basicStruct_builder->AddMember(idx++, "my_uint64", uint64_builder);
+    basicStruct_builder->AddMember(idx++, "my_float32", float_builder);
+    basicStruct_builder->AddMember(idx++, "my_float64", double_builder);
+    basicStruct_builder->AddMember(idx++, "my_float128", ldouble_builder);
+    basicStruct_builder->AddMember(idx++, "my_char", char_builder);
+    basicStruct_builder->AddMember(idx++, "my_wchar", wchar_builder);
+    basicStruct_builder->AddMember(idx++, "my_string", string_builder);
+    basicStruct_builder->AddMember(idx++, "my_wstring", wstring_builder);
+    basicStruct_builder->SetName("BasicStruct2");
+
+    TypeObject dynamicTypeObject;
+    DynamicTypeBuilderFactory::GetInstance()->BuildTypeObject(basicStruct_builder->getTypeDescriptor(),
+        dynamicTypeObject);
+
+    const TypeIdentifier* static_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("BasicStruct");
+    const TypeIdentifier* dynamic_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("BasicStruct2");
+    ASSERT_TRUE(*static_identifier == *dynamic_identifier);
+
+    DynamicTypeBuilderFactory::GetInstance()->DeleteType(bool_builder);
+    DynamicTypeBuilderFactory::GetInstance()->DeleteType(octet_builder);
+    DynamicTypeBuilderFactory::GetInstance()->DeleteType(int16_builder);
+    DynamicTypeBuilderFactory::GetInstance()->DeleteType(int32_builder);
+    DynamicTypeBuilderFactory::GetInstance()->DeleteType(int64_builder);
+    DynamicTypeBuilderFactory::GetInstance()->DeleteType(uint16_builder);
+    DynamicTypeBuilderFactory::GetInstance()->DeleteType(uint32_builder);
+    DynamicTypeBuilderFactory::GetInstance()->DeleteType(uint64_builder);
+    DynamicTypeBuilderFactory::GetInstance()->DeleteType(float_builder);
+    DynamicTypeBuilderFactory::GetInstance()->DeleteType(double_builder);
+    DynamicTypeBuilderFactory::GetInstance()->DeleteType(ldouble_builder);
+    DynamicTypeBuilderFactory::GetInstance()->DeleteType(char_builder);
+    DynamicTypeBuilderFactory::GetInstance()->DeleteType(wchar_builder);
+    DynamicTypeBuilderFactory::GetInstance()->DeleteType(string_builder);
+    DynamicTypeBuilderFactory::GetInstance()->DeleteType(wstring_builder);
+    DynamicTypeBuilderFactory::GetInstance()->DeleteType(basicStruct_builder);
+
+    DynamicTypeBuilderFactory::GetInstance()->IsEmpty();
+    DynamicDataFactory::GetInstance()->IsEmpty();
+}
+
 int main(int argc, char **argv)
 {
     Log::SetVerbosity(Log::Info);
