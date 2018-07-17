@@ -31,6 +31,7 @@ namespace { char dummy; }
 #include <fastrtps/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 #include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/types/TypeNamesGenerator.h>
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
 
@@ -38,668 +39,93 @@ using namespace eprosima::fastrtps::rtps;
 
 HelloWorldTypeFactory::HelloWorldTypeFactory()
 {
-    // Generate basic TypeIdentifiers
-    TypeIdentifier *auxIdent;
-    // TK_BOOLEAN:
-    if (m_Identifiers.find("bool") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_BOOLEAN);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("bool", auxIdent));
-    }
-    // TK_BYTE:
-    if (m_Identifiers.find("uint8_t") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_BYTE);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint8_t", auxIdent));
-    }
-    // TK_INT16:
-    if (m_Identifiers.find("int16_t") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_INT16);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int16_t", auxIdent));
-    }
-    // TK_INT32:
-    if (m_Identifiers.find("int32_t") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_INT32);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int32_t", auxIdent));
-    }
-    // TK_INT64:
-    if (m_Identifiers.find("int64_t") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_INT64);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int64_t", auxIdent));
-    }
-    // TK_UINT16:
-    if (m_Identifiers.find("uint16_t") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_UINT16);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint16_t", auxIdent));
-    }
-    // TK_UINT32:
-    if (m_Identifiers.find("uint32_t") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_UINT32);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint32_t", auxIdent));
-    }
-    // TK_UINT64:
-    if (m_Identifiers.find("uint64_t") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_UINT64);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint64_t", auxIdent));
-    }
-    // TK_FLOAT32:
-    if (m_Identifiers.find("float") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_FLOAT32);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("float", auxIdent));
-    }
-    // TK_FLOAT64:
-    if (m_Identifiers.find("double") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_FLOAT64);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("double", auxIdent));
-    }
-    // TK_FLOAT128:
-    if (m_Identifiers.find("longdouble") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_FLOAT128);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("longdouble", auxIdent));
-    }
-    // TK_CHAR8:
-    if (m_Identifiers.find("char") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_CHAR8);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("char", auxIdent));
-    }
-    // TK_CHAR16:
-    if (m_Identifiers.find("wchar_t") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_CHAR16);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("wchar_t", auxIdent));
-    }
-
     registerTypes();
 }
 
 HelloWorldTypeFactory::~HelloWorldTypeFactory()
 {
-    auto id_it = m_Identifiers.begin();
-    while (id_it != m_Identifiers.end())
-    {
-        delete (id_it->second);
-        ++id_it;
-    }
-    m_Identifiers.clear();
-
-    auto obj_it = m_Objects.begin();
-    while (obj_it != m_Objects.end())
-    {
-        delete (obj_it->second);
-        ++obj_it;
-    }
-    m_Objects.clear();
 }
 
-static bool g_AlreadyRegistered = false;
 void HelloWorldTypeFactory::registerTypes()
 {
-    if (g_AlreadyRegistered) return;
-
     TypeObjectFactory *factory = TypeObjectFactory::GetInstance();
-    factory->AddTypeObject("HelloWorld", getHelloWorldIdentifier(), getHelloWorldObject());
-
-    g_AlreadyRegistered = true;
+    factory->AddTypeObject("HelloWorld", GetHelloWorldIdentifier(), GetHelloWorldObject());
 }
 
-EquivalenceKind HelloWorldTypeFactory::getEquivalenceKind(const std::string &type_name) const
+const TypeIdentifier* HelloWorldTypeFactory::GetTypeIdentifier(const std::string &type_name)
 {
-    if (type_name == "bool")
+    // Try general factory
+    const TypeIdentifier *type_id = TypeObjectFactory::GetInstance()->GetTypeIdentifier(type_name);
+    if (type_id == nullptr)
     {
-        return TK_BOOLEAN;
-    }
-    else if (type_name == "int16_t")
-    {
-        return TK_INT16;
-    }
-    else if (type_name == "int32_t")
-    {
-        return TK_INT32;
-    }
-    else if (type_name == "uint16_t")
-    {
-        return TK_UINT16;
-    }
-    else if (type_name == "uint32_t")
-    {
-        return TK_UINT32;
-    }
-    else if (type_name == "float")
-    {
-        return TK_FLOAT32;
-    }
-    else if (type_name == "double")
-    {
-        return TK_FLOAT64;
-    }
-    else if (type_name == "char")
-    {
-        return TK_CHAR8;
-    }
-    else if (type_name == "octet")
-    {
-        return TK_BYTE;
-    }
-    else if (type_name.find("strings_") == 0)
-    {
-        return TI_STRING8_SMALL;
-    }
-    else if (type_name.find("stringl_") == 0)
-    {
-        return TI_STRING8_LARGE;
-    }
-    else if (type_name.find("sets_") == 0)
-    {
-        return TI_PLAIN_SEQUENCE_SMALL;
-    }
-    else if (type_name.find("setl_") == 0)
-    {
-        return TI_PLAIN_SEQUENCE_LARGE;
-    }
-    else if (type_name.find("arrays_") == 0)
-    {
-        return TI_PLAIN_ARRAY_SMALL;
-    }
-    else if (type_name.find("arrayl_") == 0)
-    {
-        return TI_PLAIN_ARRAY_LARGE;
-    }
-    else if (type_name == "int64_t")
-    {
-        return TK_INT64;
-    }
-    else if (type_name == "uint64_t")
-    {
-        return TK_UINT64;
-    }
-    else if (type_name == "longdouble")
-    {
-        return TK_FLOAT128;
-    }
-    else if (type_name == "wchar")
-    {
-        return TK_CHAR16;
-    }
-    else if (type_name.find("wstrings_") == 0)
-    {
-        return TI_STRING16_SMALL;
-    }
-    else if (type_name.find("wstringl_") == 0)
-    {
-        return TI_STRING16_LARGE;
-    }
-    else if (type_name.find("sequences_") == 0)
-    {
-        return TI_PLAIN_SEQUENCE_SMALL;
-    }
-    else if (type_name.find("sequencel_") == 0)
-    {
-        return TI_PLAIN_SEQUENCE_LARGE;
-    }
-    else if (type_name.find("maps_") == 0)
-    {
-        return TI_PLAIN_MAP_SMALL;
-    }
-    else if (type_name.find("mapl_") == 0)
-    {
-        return TI_PLAIN_MAP_LARGE;
-    }
-    else if (getTypeIdentifier(type_name) != nullptr)
-    {
-        return EK_MINIMAL;
+        if (m_Aliases.find(type_name) != m_Aliases.end())
+        {
+            return GetTypeIdentifier(m_Aliases.at(type_name));
+        }
+
+        // Try users types.
+        if (type_name == "HelloWorld") return GetHelloWorldIdentifier();
     }
     else
     {
-        return TK_NONE;
-    }
-}
-
-TypeIdentifier* HelloWorldTypeFactory::tryCreateTypeIdentifier(const std::string &type_name)
-{
-    // Try users types.
-    if (type_name == "HelloWorld") return getHelloWorldIdentifier();
-
-    switch (getEquivalenceKind(type_name))
-    {
-        // Primitive types, already defined (never will be asked, but ok)
-        case TK_BOOLEAN:
-        case TK_INT16:
-        case TK_INT32:
-        case TK_UINT16:
-        case TK_UINT32:
-        case TK_FLOAT32:
-        case TK_FLOAT64:
-        case TK_CHAR8:
-        case TK_BYTE:
-        case TK_INT64:
-        case TK_UINT64:
-        case TK_FLOAT128:
-        case TK_CHAR16:
-            return m_Identifiers.at(type_name);
-            break;
-
-        // TODO. Maybe, for users commodity, we want to create dinamycally this types.
-        // To do it, type_name must be parsed and call recursively this method.
-        //else if (type_name.find("std::strings_") == 0)
-        case TI_STRING8_SMALL:
-            break;
-        //else if (type_name.find("std::stringl_") == 0)
-        case TI_STRING8_LARGE:
-            break;
-        //else if (type_name.find("arrays_") == 0)
-        case TI_PLAIN_ARRAY_SMALL:
-            break;
-        //else if (type_name.find("arrayl_") == 0)
-        case TI_PLAIN_ARRAY_LARGE:
-            break;
-        //else if (type_name.find("std::wstrings_") == 0)
-        case TI_STRING16_SMALL:
-            break;
-        //else if (type_name.find("std::wstringl_") == 0)
-        case TI_STRING16_LARGE:
-            break;
-        //else if (type_name.find("sequences_") == 0)
-        case TI_PLAIN_SEQUENCE_SMALL:
-            break;
-        //else if (type_name.find("sequencel_") == 0)
-        case TI_PLAIN_SEQUENCE_LARGE:
-            break;
-        //else if (type_name.find("maps_") == 0)
-        case TI_PLAIN_MAP_SMALL:
-            break;
-        //else if (type_name.find("mapl_") == 0)
-        case TI_PLAIN_MAP_LARGE:
-            break;
-        //else if (getTypeIdentifier(type_name) != nullptr)
-        case EK_MINIMAL:
-            break;
-        //else
-        case TK_NONE:
-            break;
-    }
-    return m_Identifiers.at(type_name);
-}
-
-static size_t split(const std::string &txt, std::vector<uint32_t> &strs, char ch)
-{
-    size_t pos = txt.find( ch );
-    size_t initialPos = 0;
-    strs.clear();
-
-    // Decompose statement
-    while( pos != std::string::npos ) {
-        strs.push_back( std::stoi( txt.substr( initialPos, pos - initialPos ) ) );
-        initialPos = pos + 1;
-
-        pos = txt.find( ch, initialPos );
-    }
-
-    // Add the last one
-    strs.push_back( std::stoi( txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) ) );
-
-    return strs.size();
-}
-
-TypeIdentifier* HelloWorldTypeFactory::getTypeIdentifier(const std::string &basic_type_name) const
-{
-    if (m_Identifiers.find(basic_type_name) != m_Identifiers.end())
-    {
-        return m_Identifiers.at(basic_type_name);
-    }
-
-    if (m_Aliases.find(basic_type_name) != m_Aliases.end())
-    {
-        return getTypeIdentifier(m_Aliases.at(basic_type_name));
+        return type_id;
     }
 
     return nullptr;
 }
 
-std::string HelloWorldTypeFactory::getStringTypeName(uint32_t bound, bool wide, bool generate_identifier)
+const TypeObject* HelloWorldTypeFactory::GetTypeObject(const std::string &type_name)
 {
-    std::stringstream type;
-    type << ((wide) ? "wstring" : "string");
-    type << ((bound < 256) ? "s_" : "l_") << bound;
-    if (generate_identifier) { getStringIdentifier(bound, wide); }
-    return type.str();
-}
-
-std::string HelloWorldTypeFactory::getSequenceTypeName(const std::string &type_name, uint32_t bound,
-    bool generate_identifier)
-{
-    std::stringstream auxType;
-    auxType << ((bound < 256) ? "sequences_" : "sequencel_");
-    auxType << type_name << "_" << bound;
-    if (generate_identifier) { getSequenceIdentifier(type_name, bound); }
-    return auxType.str();
-}
-
-std::string HelloWorldTypeFactory::getArrayTypeName(const std::string &type_name, const std::string &bound,
-    bool generate_identifier)
-{
-    std::vector<uint32_t> vecBound;
-    split(bound, vecBound, ' ');
-    return getArrayTypeName(type_name, vecBound, generate_identifier);
-}
-
-std::string HelloWorldTypeFactory::getArrayTypeName(const std::string &type_name,
-    const std::vector<uint32_t> &bound, bool generate_identifier)
-{
-    uint32_t unused;
-    return getArrayTypeName(type_name, bound, unused, generate_identifier);
-}
-
-std::string HelloWorldTypeFactory::getArrayTypeName(const std::string &type_name,
-    const std::vector<uint32_t> &bound, uint32_t &ret_size, bool generate_identifier)
-{
-    std::stringstream auxType;
-    std::stringstream auxType2;
-    auxType2 << type_name;
-    uint32_t size = 0;
-    for (uint32_t b : bound)
+    // Try general factory
+    const TypeObject *type_id = TypeObjectFactory::GetInstance()->GetTypeObject(type_name);
+    if (type_id == nullptr)
     {
-        auxType2 << "_" << b;
-        size += b;
+        if (m_Aliases.find(type_name) != m_Aliases.end())
+        {
+            return GetTypeObject(m_Aliases.at(type_name));
+        }
+
+        // Try users types.
+        if (type_name == "HelloWorld")
+        {
+            GetHelloWorldIdentifier();
+            return GetTypeObject("HelloWorld");
+        }
     }
-    if (size < 256)
+
+    return type_id;
+}
+
+const TypeIdentifier* HelloWorldTypeFactory::GetHelloWorldIdentifier()
+{
+    const TypeIdentifier * c_identifier = GetTypeIdentifier("HelloWorld");
+    if (c_identifier != nullptr)
     {
-        auxType << "arrays_";
+        return c_identifier;
+    }
+
+    const TypeObject* c_type_object = GetTypeObject("HelloWorld");
+    if (c_type_object != nullptr)
+    {
+        return &(c_type_object->minimal().struct_type().header().base_type());
     }
     else
     {
-        auxType << "arrayl_";
-    }
-    auxType << auxType2.str();
-    ret_size = size;
-    if (generate_identifier) { getArrayIdentifier(type_name, bound); }
-    return auxType.str();
-}
-
-std::string HelloWorldTypeFactory::getMapTypeName(const std::string &key_type_name,
-    const std::string &value_type_name, uint32_t bound, bool generate_identifier)
-{
-    std::stringstream auxType;
-    auxType << ((bound < 256) ? "maps_" : "mapl_");
-    auxType << key_type_name << "_" << value_type_name << "_" << bound;
-    if (generate_identifier) { getMapIdentifier(key_type_name, value_type_name, bound); }
-    return auxType.str();
-}
-
-TypeIdentifier* HelloWorldTypeFactory::getStringIdentifier(uint32_t bound, bool wide)
-{
-    std::string type = getStringTypeName(bound, wide, false);
-
-    TypeIdentifier* auxIdent;
-
-    if (m_Identifiers.find(type) != m_Identifiers.end())
-    {
-        return m_Identifiers.at(type);
-    }
-    else
-    {
-        auxIdent = new TypeIdentifier;
-        if (bound < 256)
-        {
-            auxIdent->_d(wide ? TI_STRING16_SMALL : TI_STRING8_SMALL);
-            auxIdent->string_sdefn().bound(static_cast<octet>(bound));
-        }
-        else
-        {
-            auxIdent->_d(wide ? TI_STRING16_LARGE : TI_STRING8_LARGE);
-            auxIdent->string_ldefn().bound(bound);
-        }
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(type, auxIdent));
-    }
-    return auxIdent;
-}
-
-TypeIdentifier* HelloWorldTypeFactory::getSequenceIdentifier(const std::string &type_name, uint32_t bound)
-{
-    std::string auxType = getSequenceTypeName(type_name, bound, false);
-
-    TypeIdentifier* auxIdent;
-
-    if (m_Identifiers.find(auxType) != m_Identifiers.end())
-    {
-        return m_Identifiers.at(auxType);
-    }
-    else
-    {
-        TypeIdentifier* innerIdent = getTypeIdentifier(type_name);
-        if (innerIdent == nullptr)
-        {
-            innerIdent = tryCreateTypeIdentifier(type_name);
-        }
-
-        auxIdent = new TypeIdentifier;
-        if (bound < 256)
-        {
-            auxIdent->_d(TI_PLAIN_SEQUENCE_SMALL);
-            auxIdent->seq_sdefn().bound(static_cast<octet>(bound));
-            auxIdent->seq_sdefn().element_identifier(innerIdent);
-            auxIdent->seq_sdefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->seq_sdefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->seq_sdefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->seq_sdefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->seq_sdefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->seq_sdefn().header().element_flags().IS_KEY(false);
-            auxIdent->seq_sdefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->seq_sdefn().header().equiv_kind(getEquivalenceKind(type_name));
-        }
-        else
-        {
-            auxIdent->_d(TI_PLAIN_SEQUENCE_LARGE);
-            auxIdent->seq_ldefn().bound(bound);
-            auxIdent->seq_ldefn().element_identifier(innerIdent);
-            auxIdent->seq_ldefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->seq_ldefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->seq_ldefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->seq_ldefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->seq_ldefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->seq_ldefn().header().element_flags().IS_KEY(false);
-            auxIdent->seq_ldefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->seq_ldefn().header().equiv_kind(getEquivalenceKind(type_name));
-        }
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
-    }
-
-    return auxIdent;
-}
-
-TypeIdentifier* HelloWorldTypeFactory::getArrayIdentifier(const std::string &type_name, const std::vector<uint32_t> &bound)
-{
-    uint32_t size;
-    std::string auxType = getArrayTypeName(type_name, bound, size, false);
-
-    TypeIdentifier* auxIdent;
-
-    if (m_Identifiers.find(auxType) != m_Identifiers.end())
-    {
-        return m_Identifiers.at(auxType);
-    }
-    else
-    {
-        TypeIdentifier* innerIdent = getTypeIdentifier(type_name);
-        if (innerIdent == nullptr)
-        {
-            innerIdent = tryCreateTypeIdentifier(type_name);
-        }
-
-        auxIdent = new TypeIdentifier;
-        if (size < 256)
-        {
-            auxIdent->_d(TI_PLAIN_ARRAY_SMALL);
-            for (uint32_t b : bound)
-            {
-                auxIdent->array_sdefn().array_bound_seq().push_back(static_cast<octet>(b));
-            }
-            auxIdent->array_sdefn().element_identifier(innerIdent);
-            auxIdent->array_sdefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->array_sdefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->array_sdefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->array_sdefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->array_sdefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->array_sdefn().header().element_flags().IS_KEY(false);
-            auxIdent->array_sdefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->array_sdefn().header().equiv_kind(getEquivalenceKind(type_name));
-        }
-        else
-        {
-            auxIdent->_d(TI_PLAIN_ARRAY_LARGE);
-            for (uint32_t b : bound)
-            {
-                auxIdent->array_ldefn().array_bound_seq().push_back(b);
-            }
-            auxIdent->array_ldefn().element_identifier(innerIdent);
-            auxIdent->array_ldefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->array_ldefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->array_ldefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->array_ldefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->array_ldefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->array_ldefn().header().element_flags().IS_KEY(false);
-            auxIdent->array_ldefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->array_ldefn().header().equiv_kind(getEquivalenceKind(type_name));
-        }
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
-    }
-
-    return auxIdent;
-}
-
-TypeIdentifier* HelloWorldTypeFactory::getArrayIdentifier(const std::string &type_name, const std::string &bound)
-{
-    std::vector<uint32_t> vecBound;
-    split(bound, vecBound, ' ');
-    return getArrayIdentifier(type_name, vecBound);
-}
-
-TypeIdentifier* HelloWorldTypeFactory::getMapIdentifier(const std::string &key_type_name,
-    const std::string &value_type_name, uint32_t bound)
-{
-    std::string auxType = getMapTypeName(key_type_name, value_type_name, bound, false);
-
-    TypeIdentifier* auxIdent;
-
-    if (m_Identifiers.find(auxType) != m_Identifiers.end())
-    {
-        return m_Identifiers.at(auxType);
-    }
-    else
-    {
-        TypeIdentifier* keyIdent = getTypeIdentifier(key_type_name);
-        TypeIdentifier* valIdent = getTypeIdentifier(value_type_name);
-
-        if (keyIdent == nullptr)
-        {
-            keyIdent = tryCreateTypeIdentifier(key_type_name);
-        }
-
-        if (valIdent == nullptr)
-        {
-            valIdent = tryCreateTypeIdentifier(value_type_name);
-        }
-
-        auxIdent = new TypeIdentifier;
-        if (bound < 256)
-        {
-            auxIdent->_d(TI_PLAIN_MAP_SMALL);
-            auxIdent->map_sdefn().bound(static_cast<octet>(bound));
-            auxIdent->map_sdefn().element_identifier(valIdent);
-            auxIdent->map_sdefn().key_identifier(keyIdent);
-            auxIdent->map_sdefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->map_sdefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->map_sdefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->map_sdefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->map_sdefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->map_sdefn().header().element_flags().IS_KEY(false);
-            auxIdent->map_sdefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->map_sdefn().key_flags().TRY_CONSTRUCT1(false);
-            auxIdent->map_sdefn().key_flags().TRY_CONSTRUCT2(false);
-            auxIdent->map_sdefn().key_flags().IS_EXTERNAL(false);
-            auxIdent->map_sdefn().key_flags().IS_OPTIONAL(false);
-            auxIdent->map_sdefn().key_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->map_sdefn().key_flags().IS_KEY(false);
-            auxIdent->map_sdefn().key_flags().IS_DEFAULT(false);
-            auxIdent->map_sdefn().header().equiv_kind(getEquivalenceKind(value_type_name));
-        }
-        else
-        {
-            auxIdent->_d(TI_PLAIN_MAP_LARGE);
-            auxIdent->map_ldefn().bound(bound);
-            auxIdent->map_ldefn().element_identifier(valIdent);
-            auxIdent->map_ldefn().key_identifier(keyIdent);
-            auxIdent->map_ldefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->map_ldefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->map_ldefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->map_ldefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->map_ldefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->map_ldefn().header().element_flags().IS_KEY(false);
-            auxIdent->map_ldefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->map_ldefn().key_flags().TRY_CONSTRUCT1(false);
-            auxIdent->map_ldefn().key_flags().TRY_CONSTRUCT2(false);
-            auxIdent->map_ldefn().key_flags().IS_EXTERNAL(false);
-            auxIdent->map_ldefn().key_flags().IS_OPTIONAL(false);
-            auxIdent->map_ldefn().key_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->map_ldefn().key_flags().IS_KEY(false);
-            auxIdent->map_ldefn().key_flags().IS_DEFAULT(false);
-            auxIdent->map_ldefn().header().equiv_kind(getEquivalenceKind(value_type_name));
-        }
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
-    }
-
-    return auxIdent;
-}
-
-TypeIdentifier* HelloWorldTypeFactory::getHelloWorldIdentifier()
-{
-    TypeObject* type_object;
-    if (m_Objects.find("HelloWorld") != m_Objects.end())
-    {
-        type_object = m_Objects.at("HelloWorld");
-    }
-    else
-    {
-        type_object = getHelloWorldObject();
+        const TypeObject* type_object = GetHelloWorldObject();
         // Just for other methods
-        TypeIdentifier *copy = new TypeIdentifier();
-        *copy = type_object->minimal().struct_type().header().base_type();
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("HelloWorld", copy)); // A copy to be freed by destructor.
+        return &(type_object->minimal().struct_type().header().base_type());
     }
-
-    return &(type_object->minimal().struct_type().header().base_type());
 }
 
-TypeObject* HelloWorldTypeFactory::getHelloWorldObject()
+const TypeObject* HelloWorldTypeFactory::GetHelloWorldObject()
 {
-    if (m_Objects.find("HelloWorld") != m_Objects.end())
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("HelloWorld");
+    if (c_type_object != nullptr)
     {
-        return m_Objects.at("HelloWorld");
+        return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_STRUCTURE);
 
@@ -719,7 +145,14 @@ TypeObject* HelloWorldTypeFactory::getHelloWorldObject()
     mst_index.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_index.common().member_flags().IS_KEY(false);
     mst_index.common().member_flags().IS_DEFAULT(false);
-    mst_index.common().member_type_id(*m_Identifiers.at("uint32_t"));
+    {
+        std::string cppType = "uint32_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_index.common().member_type_id(*GetTypeIdentifier(cppType));
+    }
 
     MD5 index_hash("index");
     for(int i = 0; i < 4; ++i)
@@ -737,7 +170,7 @@ TypeObject* HelloWorldTypeFactory::getHelloWorldObject()
     mst_message.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_message.common().member_flags().IS_KEY(false);
     mst_message.common().member_flags().IS_DEFAULT(false);
-    mst_message.common().member_type_id(*getStringIdentifier(255, false));
+    mst_message.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, false));
 
 
     MD5 message_hash("message");
@@ -775,6 +208,7 @@ TypeObject* HelloWorldTypeFactory::getHelloWorldObject()
         type_object->minimal().struct_type().header().base_type().equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    m_Objects.insert(std::pair<std::string, TypeObject*>("HelloWorld", type_object));
-    return type_object;
+    TypeObjectFactory::GetInstance()->AddTypeObject("HelloWorld", &(type_object->minimal().struct_type().header().base_type()), type_object);
+    delete type_object;
+    return GetTypeObject("HelloWorld");
 }

@@ -31,6 +31,7 @@ namespace { char dummy; }
 #include <fastrtps/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 #include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/types/TypeNamesGenerator.h>
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
 
@@ -38,719 +39,175 @@ using namespace eprosima::fastrtps::rtps;
 
 TestTypeFactory::TestTypeFactory()
 {
-    // Generate basic TypeIdentifiers
-    TypeIdentifier *auxIdent;
-    // TK_BOOLEAN:
-    if (m_Identifiers.find("bool") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_BOOLEAN);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("bool", auxIdent));
-    }
-    // TK_BYTE:
-    if (m_Identifiers.find("uint8_t") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_BYTE);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint8_t", auxIdent));
-    }
-    // TK_INT16:
-    if (m_Identifiers.find("int16_t") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_INT16);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int16_t", auxIdent));
-    }
-    // TK_INT32:
-    if (m_Identifiers.find("int32_t") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_INT32);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int32_t", auxIdent));
-    }
-    // TK_INT64:
-    if (m_Identifiers.find("int64_t") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_INT64);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("int64_t", auxIdent));
-    }
-    // TK_UINT16:
-    if (m_Identifiers.find("uint16_t") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_UINT16);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint16_t", auxIdent));
-    }
-    // TK_UINT32:
-    if (m_Identifiers.find("uint32_t") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_UINT32);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint32_t", auxIdent));
-    }
-    // TK_UINT64:
-    if (m_Identifiers.find("uint64_t") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_UINT64);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("uint64_t", auxIdent));
-    }
-    // TK_FLOAT32:
-    if (m_Identifiers.find("float") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_FLOAT32);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("float", auxIdent));
-    }
-    // TK_FLOAT64:
-    if (m_Identifiers.find("double") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_FLOAT64);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("double", auxIdent));
-    }
-    // TK_FLOAT128:
-    if (m_Identifiers.find("longdouble") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_FLOAT128);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("longdouble", auxIdent));
-    }
-    // TK_CHAR8:
-    if (m_Identifiers.find("char") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_CHAR8);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("char", auxIdent));
-    }
-    // TK_CHAR16:
-    if (m_Identifiers.find("wchar_t") == m_Identifiers.end())
-    {
-        auxIdent = new TypeIdentifier;
-        auxIdent->_d(TK_CHAR16);
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("wchar_t", auxIdent));
-    }
-
     registerTypes();
 }
 
 TestTypeFactory::~TestTypeFactory()
 {
-    auto id_it = m_Identifiers.begin();
-    while (id_it != m_Identifiers.end())
-    {
-        delete (id_it->second);
-        ++id_it;
-    }
-    m_Identifiers.clear();
-
-    auto obj_it = m_Objects.begin();
-    while (obj_it != m_Objects.end())
-    {
-        delete (obj_it->second);
-        ++obj_it;
-    }
-    m_Objects.clear();
 }
 
-static bool g_AlreadyRegistered = false;
 void TestTypeFactory::registerTypes()
 {
-    if (g_AlreadyRegistered) return;
-
     TypeObjectFactory *factory = TypeObjectFactory::GetInstance();
-    factory->AddTypeObject("MyEnum", getMyEnumIdentifier(), getMyEnumObject());
-    factory->AddTypeObject("MyAliasEnum", getMyAliasEnumIdentifier(), getMyAliasEnumObject());
-    factory->AddTypeObject("MyAliasEnum2", getMyAliasEnum2Identifier(), getMyAliasEnum2Object());
-    factory->AddTypeObject("MyAliasEnum3", getMyAliasEnum3Identifier(), getMyAliasEnum3Object());
-    factory->AddTypeObject("BasicStruct", getBasicStructIdentifier(), getBasicStructObject());
-    factory->AddTypeObject("MyOctetArray500", getMyOctetArray500Identifier(), getMyOctetArray500Object());
-    factory->AddTypeObject("BSAlias5", getBSAlias5Identifier(), getBSAlias5Object());
-    factory->AddTypeObject("MA3", getMA3Identifier(), getMA3Object());
-    factory->AddTypeObject("MyMiniArray", getMyMiniArrayIdentifier(), getMyMiniArrayObject());
-    factory->AddTypeObject("MySequenceLong", getMySequenceLongIdentifier(), getMySequenceLongObject());
-    factory->AddTypeObject("ComplexStruct", getComplexStructIdentifier(), getComplexStructObject());
-    factory->AddTypeObject("MyUnion", getMyUnionIdentifier(), getMyUnionObject());
-    factory->AddTypeObject("MyUnion2", getMyUnion2Identifier(), getMyUnion2Object());
-    factory->AddTypeObject("CompleteStruct", getCompleteStructIdentifier(), getCompleteStructObject());
-
-    g_AlreadyRegistered = true;
+    factory->AddTypeObject("MyEnum", GetMyEnumIdentifier(), GetMyEnumObject());
+    factory->AddTypeObject("MyAliasEnum", GetMyAliasEnumIdentifier(), GetMyAliasEnumObject());
+    factory->AddTypeObject("MyAliasEnum2", GetMyAliasEnum2Identifier(), GetMyAliasEnum2Object());
+    factory->AddTypeObject("MyAliasEnum3", GetMyAliasEnum3Identifier(), GetMyAliasEnum3Object());
+    factory->AddTypeObject("BasicStruct", GetBasicStructIdentifier(), GetBasicStructObject());
+    factory->AddTypeObject("MyOctetArray500", GetMyOctetArray500Identifier(), GetMyOctetArray500Object());
+    factory->AddTypeObject("BSAlias5", GetBSAlias5Identifier(), GetBSAlias5Object());
+    factory->AddTypeObject("MA3", GetMA3Identifier(), GetMA3Object());
+    factory->AddTypeObject("MyMiniArray", GetMyMiniArrayIdentifier(), GetMyMiniArrayObject());
+    factory->AddTypeObject("MySequenceLong", GetMySequenceLongIdentifier(), GetMySequenceLongObject());
+    factory->AddTypeObject("ComplexStruct", GetComplexStructIdentifier(), GetComplexStructObject());
+    factory->AddTypeObject("MyUnion", GetMyUnionIdentifier(), GetMyUnionObject());
+    factory->AddTypeObject("MyUnion2", GetMyUnion2Identifier(), GetMyUnion2Object());
+    factory->AddTypeObject("CompleteStruct", GetCompleteStructIdentifier(), GetCompleteStructObject());
 }
 
-EquivalenceKind TestTypeFactory::getEquivalenceKind(const std::string &type_name) const
+const TypeIdentifier* TestTypeFactory::GetTypeIdentifier(const std::string &type_name)
 {
-    if (type_name == "bool")
+    // Try general factory
+    const TypeIdentifier *type_id = TypeObjectFactory::GetInstance()->GetTypeIdentifier(type_name);
+    if (type_id == nullptr)
     {
-        return TK_BOOLEAN;
-    }
-    else if (type_name == "int16_t")
-    {
-        return TK_INT16;
-    }
-    else if (type_name == "int32_t")
-    {
-        return TK_INT32;
-    }
-    else if (type_name == "uint16_t")
-    {
-        return TK_UINT16;
-    }
-    else if (type_name == "uint32_t")
-    {
-        return TK_UINT32;
-    }
-    else if (type_name == "float")
-    {
-        return TK_FLOAT32;
-    }
-    else if (type_name == "double")
-    {
-        return TK_FLOAT64;
-    }
-    else if (type_name == "char")
-    {
-        return TK_CHAR8;
-    }
-    else if (type_name == "octet")
-    {
-        return TK_BYTE;
-    }
-    else if (type_name.find("strings_") == 0)
-    {
-        return TI_STRING8_SMALL;
-    }
-    else if (type_name.find("stringl_") == 0)
-    {
-        return TI_STRING8_LARGE;
-    }
-    else if (type_name.find("sets_") == 0)
-    {
-        return TI_PLAIN_SEQUENCE_SMALL;
-    }
-    else if (type_name.find("setl_") == 0)
-    {
-        return TI_PLAIN_SEQUENCE_LARGE;
-    }
-    else if (type_name.find("arrays_") == 0)
-    {
-        return TI_PLAIN_ARRAY_SMALL;
-    }
-    else if (type_name.find("arrayl_") == 0)
-    {
-        return TI_PLAIN_ARRAY_LARGE;
-    }
-    else if (type_name == "int64_t")
-    {
-        return TK_INT64;
-    }
-    else if (type_name == "uint64_t")
-    {
-        return TK_UINT64;
-    }
-    else if (type_name == "longdouble")
-    {
-        return TK_FLOAT128;
-    }
-    else if (type_name == "wchar")
-    {
-        return TK_CHAR16;
-    }
-    else if (type_name.find("wstrings_") == 0)
-    {
-        return TI_STRING16_SMALL;
-    }
-    else if (type_name.find("wstringl_") == 0)
-    {
-        return TI_STRING16_LARGE;
-    }
-    else if (type_name.find("sequences_") == 0)
-    {
-        return TI_PLAIN_SEQUENCE_SMALL;
-    }
-    else if (type_name.find("sequencel_") == 0)
-    {
-        return TI_PLAIN_SEQUENCE_LARGE;
-    }
-    else if (type_name.find("maps_") == 0)
-    {
-        return TI_PLAIN_MAP_SMALL;
-    }
-    else if (type_name.find("mapl_") == 0)
-    {
-        return TI_PLAIN_MAP_LARGE;
-    }
-    else if (getTypeIdentifier(type_name) != nullptr)
-    {
-        return EK_MINIMAL;
+        if (m_Aliases.find(type_name) != m_Aliases.end())
+        {
+            return GetTypeIdentifier(m_Aliases.at(type_name));
+        }
+
+        // Try users types.
+        if (type_name == "MyEnum") return GetMyEnumIdentifier();
+        if (type_name == "MyAliasEnum") return GetMyAliasEnumIdentifier();
+        if (type_name == "MyAliasEnum2") return GetMyAliasEnum2Identifier();
+        if (type_name == "MyAliasEnum3") return GetMyAliasEnum3Identifier();
+        if (type_name == "BasicStruct") return GetBasicStructIdentifier();
+        if (type_name == "MyOctetArray500") return GetMyOctetArray500Identifier();
+        if (type_name == "BSAlias5") return GetBSAlias5Identifier();
+        if (type_name == "MA3") return GetMA3Identifier();
+        if (type_name == "MyMiniArray") return GetMyMiniArrayIdentifier();
+        if (type_name == "MySequenceLong") return GetMySequenceLongIdentifier();
+        if (type_name == "ComplexStruct") return GetComplexStructIdentifier();
+        if (type_name == "MyUnion") return GetMyUnionIdentifier();
+        if (type_name == "MyUnion2") return GetMyUnion2Identifier();
+        if (type_name == "CompleteStruct") return GetCompleteStructIdentifier();
     }
     else
     {
-        return TK_NONE;
-    }
-}
-
-TypeIdentifier* TestTypeFactory::tryCreateTypeIdentifier(const std::string &type_name)
-{
-    // Try users types.
-    if (type_name == "MyEnum") return getMyEnumIdentifier();
-    if (type_name == "MyAliasEnum") return getMyAliasEnumIdentifier();
-    if (type_name == "MyAliasEnum2") return getMyAliasEnum2Identifier();
-    if (type_name == "MyAliasEnum3") return getMyAliasEnum3Identifier();
-    if (type_name == "BasicStruct") return getBasicStructIdentifier();
-    if (type_name == "MyOctetArray500") return getMyOctetArray500Identifier();
-    if (type_name == "BSAlias5") return getBSAlias5Identifier();
-    if (type_name == "MA3") return getMA3Identifier();
-    if (type_name == "MyMiniArray") return getMyMiniArrayIdentifier();
-    if (type_name == "MySequenceLong") return getMySequenceLongIdentifier();
-    if (type_name == "ComplexStruct") return getComplexStructIdentifier();
-    if (type_name == "MyUnion") return getMyUnionIdentifier();
-    if (type_name == "MyUnion2") return getMyUnion2Identifier();
-    if (type_name == "CompleteStruct") return getCompleteStructIdentifier();
-
-    switch (getEquivalenceKind(type_name))
-    {
-        // Primitive types, already defined (never will be asked, but ok)
-        case TK_BOOLEAN:
-        case TK_INT16:
-        case TK_INT32:
-        case TK_UINT16:
-        case TK_UINT32:
-        case TK_FLOAT32:
-        case TK_FLOAT64:
-        case TK_CHAR8:
-        case TK_BYTE:
-        case TK_INT64:
-        case TK_UINT64:
-        case TK_FLOAT128:
-        case TK_CHAR16:
-            return m_Identifiers.at(type_name);
-            break;
-
-        // TODO. Maybe, for users commodity, we want to create dinamycally this types.
-        // To do it, type_name must be parsed and call recursively this method.
-        //else if (type_name.find("std::strings_") == 0)
-        case TI_STRING8_SMALL:
-            break;
-        //else if (type_name.find("std::stringl_") == 0)
-        case TI_STRING8_LARGE:
-            break;
-        //else if (type_name.find("arrays_") == 0)
-        case TI_PLAIN_ARRAY_SMALL:
-            break;
-        //else if (type_name.find("arrayl_") == 0)
-        case TI_PLAIN_ARRAY_LARGE:
-            break;
-        //else if (type_name.find("std::wstrings_") == 0)
-        case TI_STRING16_SMALL:
-            break;
-        //else if (type_name.find("std::wstringl_") == 0)
-        case TI_STRING16_LARGE:
-            break;
-        //else if (type_name.find("sequences_") == 0)
-        case TI_PLAIN_SEQUENCE_SMALL:
-            break;
-        //else if (type_name.find("sequencel_") == 0)
-        case TI_PLAIN_SEQUENCE_LARGE:
-            break;
-        //else if (type_name.find("maps_") == 0)
-        case TI_PLAIN_MAP_SMALL:
-            break;
-        //else if (type_name.find("mapl_") == 0)
-        case TI_PLAIN_MAP_LARGE:
-            break;
-        //else if (getTypeIdentifier(type_name) != nullptr)
-        case EK_MINIMAL:
-            break;
-        //else
-        case TK_NONE:
-            break;
-    }
-    return m_Identifiers.at(type_name);
-}
-
-static size_t split(const std::string &txt, std::vector<uint32_t> &strs, char ch)
-{
-    size_t pos = txt.find( ch );
-    size_t initialPos = 0;
-    strs.clear();
-
-    // Decompose statement
-    while( pos != std::string::npos ) {
-        strs.push_back( std::stoi( txt.substr( initialPos, pos - initialPos ) ) );
-        initialPos = pos + 1;
-
-        pos = txt.find( ch, initialPos );
-    }
-
-    // Add the last one
-    strs.push_back( std::stoi( txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) ) );
-
-    return strs.size();
-}
-
-TypeIdentifier* TestTypeFactory::getTypeIdentifier(const std::string &basic_type_name) const
-{
-    if (m_Identifiers.find(basic_type_name) != m_Identifiers.end())
-    {
-        return m_Identifiers.at(basic_type_name);
-    }
-
-    if (m_Aliases.find(basic_type_name) != m_Aliases.end())
-    {
-        return getTypeIdentifier(m_Aliases.at(basic_type_name));
+        return type_id;
     }
 
     return nullptr;
 }
 
-std::string TestTypeFactory::getStringTypeName(uint32_t bound, bool wide, bool generate_identifier)
+const TypeObject* TestTypeFactory::GetTypeObject(const std::string &type_name)
 {
-    std::stringstream type;
-    type << ((wide) ? "wstring" : "string");
-    type << ((bound < 256) ? "s_" : "l_") << bound;
-    if (generate_identifier) { getStringIdentifier(bound, wide); }
-    return type.str();
-}
-
-std::string TestTypeFactory::getSequenceTypeName(const std::string &type_name, uint32_t bound,
-    bool generate_identifier)
-{
-    std::stringstream auxType;
-    auxType << ((bound < 256) ? "sequences_" : "sequencel_");
-    auxType << type_name << "_" << bound;
-    if (generate_identifier) { getSequenceIdentifier(type_name, bound); }
-    return auxType.str();
-}
-
-std::string TestTypeFactory::getArrayTypeName(const std::string &type_name, const std::string &bound,
-    bool generate_identifier)
-{
-    std::vector<uint32_t> vecBound;
-    split(bound, vecBound, ' ');
-    return getArrayTypeName(type_name, vecBound, generate_identifier);
-}
-
-std::string TestTypeFactory::getArrayTypeName(const std::string &type_name,
-    const std::vector<uint32_t> &bound, bool generate_identifier)
-{
-    uint32_t unused;
-    return getArrayTypeName(type_name, bound, unused, generate_identifier);
-}
-
-std::string TestTypeFactory::getArrayTypeName(const std::string &type_name,
-    const std::vector<uint32_t> &bound, uint32_t &ret_size, bool generate_identifier)
-{
-    std::stringstream auxType;
-    std::stringstream auxType2;
-    auxType2 << type_name;
-    uint32_t size = 0;
-    for (uint32_t b : bound)
+    // Try general factory
+    const TypeObject *type_id = TypeObjectFactory::GetInstance()->GetTypeObject(type_name);
+    if (type_id == nullptr)
     {
-        auxType2 << "_" << b;
-        size += b;
-    }
-    if (size < 256)
-    {
-        auxType << "arrays_";
-    }
-    else
-    {
-        auxType << "arrayl_";
-    }
-    auxType << auxType2.str();
-    ret_size = size;
-    if (generate_identifier) { getArrayIdentifier(type_name, bound); }
-    return auxType.str();
-}
-
-std::string TestTypeFactory::getMapTypeName(const std::string &key_type_name,
-    const std::string &value_type_name, uint32_t bound, bool generate_identifier)
-{
-    std::stringstream auxType;
-    auxType << ((bound < 256) ? "maps_" : "mapl_");
-    auxType << key_type_name << "_" << value_type_name << "_" << bound;
-    if (generate_identifier) { getMapIdentifier(key_type_name, value_type_name, bound); }
-    return auxType.str();
-}
-
-TypeIdentifier* TestTypeFactory::getStringIdentifier(uint32_t bound, bool wide)
-{
-    std::string type = getStringTypeName(bound, wide, false);
-
-    TypeIdentifier* auxIdent;
-
-    if (m_Identifiers.find(type) != m_Identifiers.end())
-    {
-        return m_Identifiers.at(type);
-    }
-    else
-    {
-        auxIdent = new TypeIdentifier;
-        if (bound < 256)
+        if (m_Aliases.find(type_name) != m_Aliases.end())
         {
-            auxIdent->_d(wide ? TI_STRING16_SMALL : TI_STRING8_SMALL);
-            auxIdent->string_sdefn().bound(static_cast<octet>(bound));
-        }
-        else
-        {
-            auxIdent->_d(wide ? TI_STRING16_LARGE : TI_STRING8_LARGE);
-            auxIdent->string_ldefn().bound(bound);
-        }
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(type, auxIdent));
-    }
-    return auxIdent;
-}
-
-TypeIdentifier* TestTypeFactory::getSequenceIdentifier(const std::string &type_name, uint32_t bound)
-{
-    std::string auxType = getSequenceTypeName(type_name, bound, false);
-
-    TypeIdentifier* auxIdent;
-
-    if (m_Identifiers.find(auxType) != m_Identifiers.end())
-    {
-        return m_Identifiers.at(auxType);
-    }
-    else
-    {
-        TypeIdentifier* innerIdent = getTypeIdentifier(type_name);
-        if (innerIdent == nullptr)
-        {
-            innerIdent = tryCreateTypeIdentifier(type_name);
+            return GetTypeObject(m_Aliases.at(type_name));
         }
 
-        auxIdent = new TypeIdentifier;
-        if (bound < 256)
+        // Try users types.
+        if (type_name == "MyEnum")
         {
-            auxIdent->_d(TI_PLAIN_SEQUENCE_SMALL);
-            auxIdent->seq_sdefn().bound(static_cast<octet>(bound));
-            auxIdent->seq_sdefn().element_identifier(innerIdent);
-            auxIdent->seq_sdefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->seq_sdefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->seq_sdefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->seq_sdefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->seq_sdefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->seq_sdefn().header().element_flags().IS_KEY(false);
-            auxIdent->seq_sdefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->seq_sdefn().header().equiv_kind(getEquivalenceKind(type_name));
+            GetMyEnumIdentifier();
+            return GetTypeObject("MyEnum");
         }
-        else
+        if (type_name == "MyAliasEnum")
         {
-            auxIdent->_d(TI_PLAIN_SEQUENCE_LARGE);
-            auxIdent->seq_ldefn().bound(bound);
-            auxIdent->seq_ldefn().element_identifier(innerIdent);
-            auxIdent->seq_ldefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->seq_ldefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->seq_ldefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->seq_ldefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->seq_ldefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->seq_ldefn().header().element_flags().IS_KEY(false);
-            auxIdent->seq_ldefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->seq_ldefn().header().equiv_kind(getEquivalenceKind(type_name));
+            GetMyAliasEnumIdentifier();
+            return GetTypeObject("MyAliasEnum");
         }
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
+        if (type_name == "MyAliasEnum2")
+        {
+            GetMyAliasEnum2Identifier();
+            return GetTypeObject("MyAliasEnum2");
+        }
+        if (type_name == "MyAliasEnum3")
+        {
+            GetMyAliasEnum3Identifier();
+            return GetTypeObject("MyAliasEnum3");
+        }
+        if (type_name == "BasicStruct")
+        {
+            GetBasicStructIdentifier();
+            return GetTypeObject("BasicStruct");
+        }
+        if (type_name == "MyOctetArray500")
+        {
+            GetMyOctetArray500Identifier();
+            return GetTypeObject("MyOctetArray500");
+        }
+        if (type_name == "BSAlias5")
+        {
+            GetBSAlias5Identifier();
+            return GetTypeObject("BSAlias5");
+        }
+        if (type_name == "MA3")
+        {
+            GetMA3Identifier();
+            return GetTypeObject("MA3");
+        }
+        if (type_name == "MyMiniArray")
+        {
+            GetMyMiniArrayIdentifier();
+            return GetTypeObject("MyMiniArray");
+        }
+        if (type_name == "MySequenceLong")
+        {
+            GetMySequenceLongIdentifier();
+            return GetTypeObject("MySequenceLong");
+        }
+        if (type_name == "ComplexStruct")
+        {
+            GetComplexStructIdentifier();
+            return GetTypeObject("ComplexStruct");
+        }
+        if (type_name == "MyUnion")
+        {
+            GetMyUnionIdentifier();
+            return GetTypeObject("MyUnion");
+        }
+        if (type_name == "MyUnion2")
+        {
+            GetMyUnion2Identifier();
+            return GetTypeObject("MyUnion2");
+        }
+        if (type_name == "CompleteStruct")
+        {
+            GetCompleteStructIdentifier();
+            return GetTypeObject("CompleteStruct");
+        }
     }
 
-    return auxIdent;
+    return type_id;
 }
 
-TypeIdentifier* TestTypeFactory::getArrayIdentifier(const std::string &type_name, const std::vector<uint32_t> &bound)
+const TypeIdentifier* TestTypeFactory::GetMyEnumIdentifier()
 {
-    uint32_t size;
-    std::string auxType = getArrayTypeName(type_name, bound, size, false);
-
-    TypeIdentifier* auxIdent;
-
-    if (m_Identifiers.find(auxType) != m_Identifiers.end())
+    const TypeIdentifier* c_identifier = GetTypeIdentifier("MyEnum");
+    if (c_identifier != nullptr)
     {
-        return m_Identifiers.at(auxType);
-    }
-    else
-    {
-        TypeIdentifier* innerIdent = getTypeIdentifier(type_name);
-        if (innerIdent == nullptr)
-        {
-            innerIdent = tryCreateTypeIdentifier(type_name);
-        }
-
-        auxIdent = new TypeIdentifier;
-        if (size < 256)
-        {
-            auxIdent->_d(TI_PLAIN_ARRAY_SMALL);
-            for (uint32_t b : bound)
-            {
-                auxIdent->array_sdefn().array_bound_seq().push_back(static_cast<octet>(b));
-            }
-            auxIdent->array_sdefn().element_identifier(innerIdent);
-            auxIdent->array_sdefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->array_sdefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->array_sdefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->array_sdefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->array_sdefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->array_sdefn().header().element_flags().IS_KEY(false);
-            auxIdent->array_sdefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->array_sdefn().header().equiv_kind(getEquivalenceKind(type_name));
-        }
-        else
-        {
-            auxIdent->_d(TI_PLAIN_ARRAY_LARGE);
-            for (uint32_t b : bound)
-            {
-                auxIdent->array_ldefn().array_bound_seq().push_back(b);
-            }
-            auxIdent->array_ldefn().element_identifier(innerIdent);
-            auxIdent->array_ldefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->array_ldefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->array_ldefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->array_ldefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->array_ldefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->array_ldefn().header().element_flags().IS_KEY(false);
-            auxIdent->array_ldefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->array_ldefn().header().equiv_kind(getEquivalenceKind(type_name));
-        }
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
+        return c_identifier;
     }
 
-    return auxIdent;
+    GetMyEnumObject(); // Generated inside
+    return GetTypeIdentifier("MyEnum");
 }
 
-TypeIdentifier* TestTypeFactory::getArrayIdentifier(const std::string &type_name, const std::string &bound)
+const TypeObject* TestTypeFactory::GetMyEnumObject()
 {
-    std::vector<uint32_t> vecBound;
-    split(bound, vecBound, ' ');
-    return getArrayIdentifier(type_name, vecBound);
-}
-
-TypeIdentifier* TestTypeFactory::getMapIdentifier(const std::string &key_type_name,
-    const std::string &value_type_name, uint32_t bound)
-{
-    std::string auxType = getMapTypeName(key_type_name, value_type_name, bound, false);
-
-    TypeIdentifier* auxIdent;
-
-    if (m_Identifiers.find(auxType) != m_Identifiers.end())
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyEnum");
+    if (c_type_object != nullptr)
     {
-        return m_Identifiers.at(auxType);
-    }
-    else
-    {
-        TypeIdentifier* keyIdent = getTypeIdentifier(key_type_name);
-        TypeIdentifier* valIdent = getTypeIdentifier(value_type_name);
-
-        if (keyIdent == nullptr)
-        {
-            keyIdent = tryCreateTypeIdentifier(key_type_name);
-        }
-
-        if (valIdent == nullptr)
-        {
-            valIdent = tryCreateTypeIdentifier(value_type_name);
-        }
-
-        auxIdent = new TypeIdentifier;
-        if (bound < 256)
-        {
-            auxIdent->_d(TI_PLAIN_MAP_SMALL);
-            auxIdent->map_sdefn().bound(static_cast<octet>(bound));
-            auxIdent->map_sdefn().element_identifier(valIdent);
-            auxIdent->map_sdefn().key_identifier(keyIdent);
-            auxIdent->map_sdefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->map_sdefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->map_sdefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->map_sdefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->map_sdefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->map_sdefn().header().element_flags().IS_KEY(false);
-            auxIdent->map_sdefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->map_sdefn().key_flags().TRY_CONSTRUCT1(false);
-            auxIdent->map_sdefn().key_flags().TRY_CONSTRUCT2(false);
-            auxIdent->map_sdefn().key_flags().IS_EXTERNAL(false);
-            auxIdent->map_sdefn().key_flags().IS_OPTIONAL(false);
-            auxIdent->map_sdefn().key_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->map_sdefn().key_flags().IS_KEY(false);
-            auxIdent->map_sdefn().key_flags().IS_DEFAULT(false);
-            auxIdent->map_sdefn().header().equiv_kind(getEquivalenceKind(value_type_name));
-        }
-        else
-        {
-            auxIdent->_d(TI_PLAIN_MAP_LARGE);
-            auxIdent->map_ldefn().bound(bound);
-            auxIdent->map_ldefn().element_identifier(valIdent);
-            auxIdent->map_ldefn().key_identifier(keyIdent);
-            auxIdent->map_ldefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->map_ldefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->map_ldefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->map_ldefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->map_ldefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->map_ldefn().header().element_flags().IS_KEY(false);
-            auxIdent->map_ldefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->map_ldefn().key_flags().TRY_CONSTRUCT1(false);
-            auxIdent->map_ldefn().key_flags().TRY_CONSTRUCT2(false);
-            auxIdent->map_ldefn().key_flags().IS_EXTERNAL(false);
-            auxIdent->map_ldefn().key_flags().IS_OPTIONAL(false);
-            auxIdent->map_ldefn().key_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->map_ldefn().key_flags().IS_KEY(false);
-            auxIdent->map_ldefn().key_flags().IS_DEFAULT(false);
-            auxIdent->map_ldefn().header().equiv_kind(getEquivalenceKind(value_type_name));
-        }
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
+        return c_type_object;
     }
 
-    return auxIdent;
-}
-
-TypeIdentifier* TestTypeFactory::getMyEnumIdentifier()
-{
-    if (m_Identifiers.find("MyEnum") != m_Identifiers.end())
-    {
-        return m_Identifiers.at("MyEnum");
-    }
-
-    TypeObject* type_object;
-    if (m_Objects.find("MyEnum") != m_Objects.end())
-    {
-        type_object = m_Objects.at("MyEnum");
-    }
-    else
-    {
-        type_object = getMyEnumObject();
-    }
-
-    TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_MINIMAL);
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
-    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-    eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-
-
-    type_object->serialize(ser);
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
-    {
-        identifier->equivalence_hash()[i] = objectHash.digest[i];
-    }
-
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("MyEnum", identifier));
-    return identifier;
-}
-
-TypeObject* TestTypeFactory::getMyEnumObject()
-{
-    if (m_Objects.find("MyEnum") != m_Objects.end())
-    {
-        return m_Objects.at("MyEnum");
-    }
-
-    TypeObject* type_object = new TypeObject();
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ENUM);
     // Unused
@@ -815,24 +272,48 @@ TypeObject* TestTypeFactory::getMyEnumObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_C);
 
 
-    m_Objects.insert(std::pair<std::string, TypeObject*>("MyEnum", type_object));
-    return type_object;
-}
+    TypeIdentifier* identifier = new TypeIdentifier();
+    identifier->_d(EK_MINIMAL);
 
-TypeIdentifier* TestTypeFactory::getMyAliasEnumIdentifier()
-{
-    return getMyEnumIdentifier();
-    //return getIdentifier();
-}
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
 
-TypeObject* TestTypeFactory::getMyAliasEnumObject()
-{
-    if (m_Objects.find("MyAliasEnum") != m_Objects.end())
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
     {
-        return m_Objects.at("MyAliasEnum");
+        identifier->equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyEnum", identifier, type_object);
+    delete type_object;
+    delete identifier;
+    return GetTypeObject("MyEnum");
+}
+
+const TypeIdentifier* TestTypeFactory::GetMyAliasEnumIdentifier()
+{
+    return GetMyEnumIdentifier();
+}
+
+const TypeObject* TestTypeFactory::GetMyAliasEnumObject()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyAliasEnum");
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ALIAS);
     type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
@@ -852,46 +333,39 @@ TypeObject* TestTypeFactory::getMyAliasEnumObject()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    if (m_Identifiers.find("MyEnum") != m_Identifiers.end())
+    const TypeIdentifier *relatedType = GetTypeIdentifier("MyEnum");
+    if (relatedType != nullptr)
     {
-        type_object->minimal().alias_type().body().common().related_type() =
-            *m_Identifiers.at("MyEnum"); // Make a copy
+        type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
     }
     else
     {
-        if (m_Aliases.find("MyEnum") != m_Aliases.end())
-        {
-            type_object->minimal().alias_type().body().common().related_type() =
-                *getTypeIdentifier(m_Aliases.at("MyEnum"));
-        }
-        else
-        {
-            // Cannot determine base type
-            return nullptr;
-        }
+        // Cannot determine base type
+        return nullptr;
     }
 
     // Don't add our TypeIdentifier but our alias
     m_Aliases.emplace(std::pair<std::string, std::string>("MyAliasEnum", "MyEnum"));
 
-    m_Objects.insert(std::pair<std::string, TypeObject*>("MyAliasEnum", type_object));
-    return type_object;
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum", relatedType, type_object);
+    delete type_object;
+    return GetTypeObject("MyAliasEnum");
 }
 
-TypeIdentifier* TestTypeFactory::getMyAliasEnum2Identifier()
+const TypeIdentifier* TestTypeFactory::GetMyAliasEnum2Identifier()
 {
-    return getMyAliasEnumIdentifier();
-    //return getIdentifier();
+    return GetMyAliasEnumIdentifier();
 }
 
-TypeObject* TestTypeFactory::getMyAliasEnum2Object()
+const TypeObject* TestTypeFactory::GetMyAliasEnum2Object()
 {
-    if (m_Objects.find("MyAliasEnum2") != m_Objects.end())
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyAliasEnum2");
+    if (c_type_object != nullptr)
     {
-        return m_Objects.at("MyAliasEnum2");
+        return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ALIAS);
     type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
@@ -911,46 +385,39 @@ TypeObject* TestTypeFactory::getMyAliasEnum2Object()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    if (m_Identifiers.find("MyAliasEnum") != m_Identifiers.end())
+    const TypeIdentifier *relatedType = GetTypeIdentifier("MyAliasEnum");
+    if (relatedType != nullptr)
     {
-        type_object->minimal().alias_type().body().common().related_type() =
-            *m_Identifiers.at("MyAliasEnum"); // Make a copy
+        type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
     }
     else
     {
-        if (m_Aliases.find("MyAliasEnum") != m_Aliases.end())
-        {
-            type_object->minimal().alias_type().body().common().related_type() =
-                *getTypeIdentifier(m_Aliases.at("MyAliasEnum"));
-        }
-        else
-        {
-            // Cannot determine base type
-            return nullptr;
-        }
+        // Cannot determine base type
+        return nullptr;
     }
 
     // Don't add our TypeIdentifier but our alias
     m_Aliases.emplace(std::pair<std::string, std::string>("MyAliasEnum2", "MyAliasEnum"));
 
-    m_Objects.insert(std::pair<std::string, TypeObject*>("MyAliasEnum2", type_object));
-    return type_object;
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum2", relatedType, type_object);
+    delete type_object;
+    return GetTypeObject("MyAliasEnum2");
 }
 
-TypeIdentifier* TestTypeFactory::getMyAliasEnum3Identifier()
+const TypeIdentifier* TestTypeFactory::GetMyAliasEnum3Identifier()
 {
-    return getMyAliasEnum2Identifier();
-    //return getIdentifier();
+    return GetMyAliasEnum2Identifier();
 }
 
-TypeObject* TestTypeFactory::getMyAliasEnum3Object()
+const TypeObject* TestTypeFactory::GetMyAliasEnum3Object()
 {
-    if (m_Objects.find("MyAliasEnum3") != m_Objects.end())
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyAliasEnum3");
+    if (c_type_object != nullptr)
     {
-        return m_Objects.at("MyAliasEnum3");
+        return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ALIAS);
     type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
@@ -970,59 +437,55 @@ TypeObject* TestTypeFactory::getMyAliasEnum3Object()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    if (m_Identifiers.find("MyAliasEnum2") != m_Identifiers.end())
+    const TypeIdentifier *relatedType = GetTypeIdentifier("MyAliasEnum2");
+    if (relatedType != nullptr)
     {
-        type_object->minimal().alias_type().body().common().related_type() =
-            *m_Identifiers.at("MyAliasEnum2"); // Make a copy
+        type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
     }
     else
     {
-        if (m_Aliases.find("MyAliasEnum2") != m_Aliases.end())
-        {
-            type_object->minimal().alias_type().body().common().related_type() =
-                *getTypeIdentifier(m_Aliases.at("MyAliasEnum2"));
-        }
-        else
-        {
-            // Cannot determine base type
-            return nullptr;
-        }
+        // Cannot determine base type
+        return nullptr;
     }
 
     // Don't add our TypeIdentifier but our alias
     m_Aliases.emplace(std::pair<std::string, std::string>("MyAliasEnum3", "MyAliasEnum2"));
 
-    m_Objects.insert(std::pair<std::string, TypeObject*>("MyAliasEnum3", type_object));
-    return type_object;
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum3", relatedType, type_object);
+    delete type_object;
+    return GetTypeObject("MyAliasEnum3");
 }
 
-TypeIdentifier* TestTypeFactory::getBasicStructIdentifier()
+const TypeIdentifier* TestTypeFactory::GetBasicStructIdentifier()
 {
-    TypeObject* type_object;
-    if (m_Objects.find("BasicStruct") != m_Objects.end())
+    const TypeIdentifier * c_identifier = GetTypeIdentifier("BasicStruct");
+    if (c_identifier != nullptr)
     {
-        type_object = m_Objects.at("BasicStruct");
+        return c_identifier;
+    }
+
+    const TypeObject* c_type_object = GetTypeObject("BasicStruct");
+    if (c_type_object != nullptr)
+    {
+        return &(c_type_object->minimal().struct_type().header().base_type());
     }
     else
     {
-        type_object = getBasicStructObject();
+        const TypeObject* type_object = GetBasicStructObject();
         // Just for other methods
-        TypeIdentifier *copy = new TypeIdentifier();
-        *copy = type_object->minimal().struct_type().header().base_type();
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("BasicStruct", copy)); // A copy to be freed by destructor.
+        return &(type_object->minimal().struct_type().header().base_type());
     }
-
-    return &(type_object->minimal().struct_type().header().base_type());
 }
 
-TypeObject* TestTypeFactory::getBasicStructObject()
+const TypeObject* TestTypeFactory::GetBasicStructObject()
 {
-    if (m_Objects.find("BasicStruct") != m_Objects.end())
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("BasicStruct");
+    if (c_type_object != nullptr)
     {
-        return m_Objects.at("BasicStruct");
+        return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_STRUCTURE);
 
@@ -1048,7 +511,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_bool.common().member_type_id(*m_Identifiers.at(cppType));
+        mst_my_bool.common().member_type_id(*GetTypeIdentifier(cppType));
     }
 
     MD5 my_bool_hash("my_bool");
@@ -1073,7 +536,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_octet.common().member_type_id(*m_Identifiers.at(cppType));
+        mst_my_octet.common().member_type_id(*GetTypeIdentifier(cppType));
     }
 
     MD5 my_octet_hash("my_octet");
@@ -1098,7 +561,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_int16.common().member_type_id(*m_Identifiers.at(cppType));
+        mst_my_int16.common().member_type_id(*GetTypeIdentifier(cppType));
     }
 
     MD5 my_int16_hash("my_int16");
@@ -1123,7 +586,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_int32.common().member_type_id(*m_Identifiers.at(cppType));
+        mst_my_int32.common().member_type_id(*GetTypeIdentifier(cppType));
     }
 
     MD5 my_int32_hash("my_int32");
@@ -1148,7 +611,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_int64.common().member_type_id(*m_Identifiers.at(cppType));
+        mst_my_int64.common().member_type_id(*GetTypeIdentifier(cppType));
     }
 
     MD5 my_int64_hash("my_int64");
@@ -1173,7 +636,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_uint16.common().member_type_id(*m_Identifiers.at(cppType));
+        mst_my_uint16.common().member_type_id(*GetTypeIdentifier(cppType));
     }
 
     MD5 my_uint16_hash("my_uint16");
@@ -1198,7 +661,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_uint32.common().member_type_id(*m_Identifiers.at(cppType));
+        mst_my_uint32.common().member_type_id(*GetTypeIdentifier(cppType));
     }
 
     MD5 my_uint32_hash("my_uint32");
@@ -1223,7 +686,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_uint64.common().member_type_id(*m_Identifiers.at(cppType));
+        mst_my_uint64.common().member_type_id(*GetTypeIdentifier(cppType));
     }
 
     MD5 my_uint64_hash("my_uint64");
@@ -1248,7 +711,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_float32.common().member_type_id(*m_Identifiers.at(cppType));
+        mst_my_float32.common().member_type_id(*GetTypeIdentifier(cppType));
     }
 
     MD5 my_float32_hash("my_float32");
@@ -1273,7 +736,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_float64.common().member_type_id(*m_Identifiers.at(cppType));
+        mst_my_float64.common().member_type_id(*GetTypeIdentifier(cppType));
     }
 
     MD5 my_float64_hash("my_float64");
@@ -1298,7 +761,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_float128.common().member_type_id(*m_Identifiers.at(cppType));
+        mst_my_float128.common().member_type_id(*GetTypeIdentifier(cppType));
     }
 
     MD5 my_float128_hash("my_float128");
@@ -1323,7 +786,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_char.common().member_type_id(*m_Identifiers.at(cppType));
+        mst_my_char.common().member_type_id(*GetTypeIdentifier(cppType));
     }
 
     MD5 my_char_hash("my_char");
@@ -1348,7 +811,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_wchar.common().member_type_id(*m_Identifiers.at(cppType));
+        mst_my_wchar.common().member_type_id(*GetTypeIdentifier(cppType));
     }
 
     MD5 my_wchar_hash("my_wchar");
@@ -1367,7 +830,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     mst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_string.common().member_flags().IS_KEY(false);
     mst_my_string.common().member_flags().IS_DEFAULT(false);
-    mst_my_string.common().member_type_id(*getStringIdentifier(255, false));
+    mst_my_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, false));
 
 
     MD5 my_string_hash("my_string");
@@ -1386,7 +849,7 @@ TypeObject* TestTypeFactory::getBasicStructObject()
     mst_my_wstring.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_wstring.common().member_flags().IS_KEY(false);
     mst_my_wstring.common().member_flags().IS_DEFAULT(false);
-    mst_my_wstring.common().member_type_id(*getStringIdentifier(255, true));
+    mst_my_wstring.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, true));
 
 
     MD5 my_wstring_hash("my_wstring");
@@ -1424,24 +887,25 @@ TypeObject* TestTypeFactory::getBasicStructObject()
         type_object->minimal().struct_type().header().base_type().equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    m_Objects.insert(std::pair<std::string, TypeObject*>("BasicStruct", type_object));
-    return type_object;
+    TypeObjectFactory::GetInstance()->AddTypeObject("BasicStruct", &(type_object->minimal().struct_type().header().base_type()), type_object);
+    delete type_object;
+    return GetTypeObject("BasicStruct");
 }
 
-TypeIdentifier* TestTypeFactory::getMyOctetArray500Identifier()
+const TypeIdentifier* TestTypeFactory::GetMyOctetArray500Identifier()
 {
-    return getArrayIdentifier("uint8_t", "500");
-    //return getIdentifier();
+    return TypeObjectFactory::GetInstance()->GetArrayIdentifier("uint8_t", {500});
 }
 
-TypeObject* TestTypeFactory::getMyOctetArray500Object()
+const TypeObject* TestTypeFactory::GetMyOctetArray500Object()
 {
-    if (m_Objects.find("MyOctetArray500") != m_Objects.end())
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyOctetArray500");
+    if (c_type_object != nullptr)
     {
-        return m_Objects.at("MyOctetArray500");
+        return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ALIAS);
     type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
@@ -1461,46 +925,39 @@ TypeObject* TestTypeFactory::getMyOctetArray500Object()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    if (m_Identifiers.find("std::array<uint8_t, 500>") != m_Identifiers.end())
+    const TypeIdentifier *relatedType = GetTypeIdentifier("std::array<uint8_t, 500>");
+    if (relatedType != nullptr)
     {
-        type_object->minimal().alias_type().body().common().related_type() =
-            *m_Identifiers.at("std::array<uint8_t, 500>"); // Make a copy
+        type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
     }
     else
     {
-        if (m_Aliases.find("std::array<uint8_t, 500>") != m_Aliases.end())
-        {
-            type_object->minimal().alias_type().body().common().related_type() =
-                *getTypeIdentifier(m_Aliases.at("std::array<uint8_t, 500>"));
-        }
-        else
-        {
-            // Cannot determine base type
-            return nullptr;
-        }
+        // Cannot determine base type
+        return nullptr;
     }
 
     // Don't add our TypeIdentifier but our alias
     m_Aliases.emplace(std::pair<std::string, std::string>("MyOctetArray500", "std::array<uint8_t, 500>"));
 
-    m_Objects.insert(std::pair<std::string, TypeObject*>("MyOctetArray500", type_object));
-    return type_object;
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyOctetArray500", relatedType, type_object);
+    delete type_object;
+    return GetTypeObject("MyOctetArray500");
 }
 
-TypeIdentifier* TestTypeFactory::getBSAlias5Identifier()
+const TypeIdentifier* TestTypeFactory::GetBSAlias5Identifier()
 {
-    return getArrayIdentifier("BasicStruct", "5");
-    //return getIdentifier();
+    return TypeObjectFactory::GetInstance()->GetArrayIdentifier("BasicStruct", {5});
 }
 
-TypeObject* TestTypeFactory::getBSAlias5Object()
+const TypeObject* TestTypeFactory::GetBSAlias5Object()
 {
-    if (m_Objects.find("BSAlias5") != m_Objects.end())
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("BSAlias5");
+    if (c_type_object != nullptr)
     {
-        return m_Objects.at("BSAlias5");
+        return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ALIAS);
     type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
@@ -1520,46 +977,39 @@ TypeObject* TestTypeFactory::getBSAlias5Object()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    if (m_Identifiers.find("std::array<BasicStruct, 5>") != m_Identifiers.end())
+    const TypeIdentifier *relatedType = GetTypeIdentifier("std::array<BasicStruct, 5>");
+    if (relatedType != nullptr)
     {
-        type_object->minimal().alias_type().body().common().related_type() =
-            *m_Identifiers.at("std::array<BasicStruct, 5>"); // Make a copy
+        type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
     }
     else
     {
-        if (m_Aliases.find("std::array<BasicStruct, 5>") != m_Aliases.end())
-        {
-            type_object->minimal().alias_type().body().common().related_type() =
-                *getTypeIdentifier(m_Aliases.at("std::array<BasicStruct, 5>"));
-        }
-        else
-        {
-            // Cannot determine base type
-            return nullptr;
-        }
+        // Cannot determine base type
+        return nullptr;
     }
 
     // Don't add our TypeIdentifier but our alias
     m_Aliases.emplace(std::pair<std::string, std::string>("BSAlias5", "std::array<BasicStruct, 5>"));
 
-    m_Objects.insert(std::pair<std::string, TypeObject*>("BSAlias5", type_object));
-    return type_object;
+    TypeObjectFactory::GetInstance()->AddTypeObject("BSAlias5", relatedType, type_object);
+    delete type_object;
+    return GetTypeObject("BSAlias5");
 }
 
-TypeIdentifier* TestTypeFactory::getMA3Identifier()
+const TypeIdentifier* TestTypeFactory::GetMA3Identifier()
 {
-    return getArrayIdentifier("MyAliasEnum3", "42");
-    //return getIdentifier();
+    return TypeObjectFactory::GetInstance()->GetArrayIdentifier("MyAliasEnum3", {42});
 }
 
-TypeObject* TestTypeFactory::getMA3Object()
+const TypeObject* TestTypeFactory::GetMA3Object()
 {
-    if (m_Objects.find("MA3") != m_Objects.end())
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MA3");
+    if (c_type_object != nullptr)
     {
-        return m_Objects.at("MA3");
+        return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ALIAS);
     type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
@@ -1579,46 +1029,39 @@ TypeObject* TestTypeFactory::getMA3Object()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    if (m_Identifiers.find("std::array<MyAliasEnum3, 42>") != m_Identifiers.end())
+    const TypeIdentifier *relatedType = GetTypeIdentifier("std::array<MyAliasEnum3, 42>");
+    if (relatedType != nullptr)
     {
-        type_object->minimal().alias_type().body().common().related_type() =
-            *m_Identifiers.at("std::array<MyAliasEnum3, 42>"); // Make a copy
+        type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
     }
     else
     {
-        if (m_Aliases.find("std::array<MyAliasEnum3, 42>") != m_Aliases.end())
-        {
-            type_object->minimal().alias_type().body().common().related_type() =
-                *getTypeIdentifier(m_Aliases.at("std::array<MyAliasEnum3, 42>"));
-        }
-        else
-        {
-            // Cannot determine base type
-            return nullptr;
-        }
+        // Cannot determine base type
+        return nullptr;
     }
 
     // Don't add our TypeIdentifier but our alias
     m_Aliases.emplace(std::pair<std::string, std::string>("MA3", "std::array<MyAliasEnum3, 42>"));
 
-    m_Objects.insert(std::pair<std::string, TypeObject*>("MA3", type_object));
-    return type_object;
+    TypeObjectFactory::GetInstance()->AddTypeObject("MA3", relatedType, type_object);
+    delete type_object;
+    return GetTypeObject("MA3");
 }
 
-TypeIdentifier* TestTypeFactory::getMyMiniArrayIdentifier()
+const TypeIdentifier* TestTypeFactory::GetMyMiniArrayIdentifier()
 {
-    return getArrayIdentifier("int32_t", "2");
-    //return getIdentifier();
+    return TypeObjectFactory::GetInstance()->GetArrayIdentifier("int32_t", {2});
 }
 
-TypeObject* TestTypeFactory::getMyMiniArrayObject()
+const TypeObject* TestTypeFactory::GetMyMiniArrayObject()
 {
-    if (m_Objects.find("MyMiniArray") != m_Objects.end())
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyMiniArray");
+    if (c_type_object != nullptr)
     {
-        return m_Objects.at("MyMiniArray");
+        return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ALIAS);
     type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
@@ -1638,46 +1081,39 @@ TypeObject* TestTypeFactory::getMyMiniArrayObject()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    if (m_Identifiers.find("std::array<int32_t, 2>") != m_Identifiers.end())
+    const TypeIdentifier *relatedType = GetTypeIdentifier("std::array<int32_t, 2>");
+    if (relatedType != nullptr)
     {
-        type_object->minimal().alias_type().body().common().related_type() =
-            *m_Identifiers.at("std::array<int32_t, 2>"); // Make a copy
+        type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
     }
     else
     {
-        if (m_Aliases.find("std::array<int32_t, 2>") != m_Aliases.end())
-        {
-            type_object->minimal().alias_type().body().common().related_type() =
-                *getTypeIdentifier(m_Aliases.at("std::array<int32_t, 2>"));
-        }
-        else
-        {
-            // Cannot determine base type
-            return nullptr;
-        }
+        // Cannot determine base type
+        return nullptr;
     }
 
     // Don't add our TypeIdentifier but our alias
     m_Aliases.emplace(std::pair<std::string, std::string>("MyMiniArray", "std::array<int32_t, 2>"));
 
-    m_Objects.insert(std::pair<std::string, TypeObject*>("MyMiniArray", type_object));
-    return type_object;
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyMiniArray", relatedType, type_object);
+    delete type_object;
+    return GetTypeObject("MyMiniArray");
 }
 
-TypeIdentifier* TestTypeFactory::getMySequenceLongIdentifier()
+const TypeIdentifier* TestTypeFactory::GetMySequenceLongIdentifier()
 {
-    return getSequenceIdentifier("int32_t", 100);
-    //return getIdentifier();
+    return TypeObjectFactory::GetInstance()->GetSequenceIdentifier("int32_t", 100);
 }
 
-TypeObject* TestTypeFactory::getMySequenceLongObject()
+const TypeObject* TestTypeFactory::GetMySequenceLongObject()
 {
-    if (m_Objects.find("MySequenceLong") != m_Objects.end())
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MySequenceLong");
+    if (c_type_object != nullptr)
     {
-        return m_Objects.at("MySequenceLong");
+        return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ALIAS);
     type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
@@ -1697,59 +1133,55 @@ TypeObject* TestTypeFactory::getMySequenceLongObject()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    if (m_Identifiers.find("std::vector<int32_t>") != m_Identifiers.end())
+    const TypeIdentifier *relatedType = GetTypeIdentifier("std::vector<int32_t>");
+    if (relatedType != nullptr)
     {
-        type_object->minimal().alias_type().body().common().related_type() =
-            *m_Identifiers.at("std::vector<int32_t>"); // Make a copy
+        type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
     }
     else
     {
-        if (m_Aliases.find("std::vector<int32_t>") != m_Aliases.end())
-        {
-            type_object->minimal().alias_type().body().common().related_type() =
-                *getTypeIdentifier(m_Aliases.at("std::vector<int32_t>"));
-        }
-        else
-        {
-            // Cannot determine base type
-            return nullptr;
-        }
+        // Cannot determine base type
+        return nullptr;
     }
 
     // Don't add our TypeIdentifier but our alias
     m_Aliases.emplace(std::pair<std::string, std::string>("MySequenceLong", "std::vector<int32_t>"));
 
-    m_Objects.insert(std::pair<std::string, TypeObject*>("MySequenceLong", type_object));
-    return type_object;
+    TypeObjectFactory::GetInstance()->AddTypeObject("MySequenceLong", relatedType, type_object);
+    delete type_object;
+    return GetTypeObject("MySequenceLong");
 }
 
-TypeIdentifier* TestTypeFactory::getComplexStructIdentifier()
+const TypeIdentifier* TestTypeFactory::GetComplexStructIdentifier()
 {
-    TypeObject* type_object;
-    if (m_Objects.find("ComplexStruct") != m_Objects.end())
+    const TypeIdentifier * c_identifier = GetTypeIdentifier("ComplexStruct");
+    if (c_identifier != nullptr)
     {
-        type_object = m_Objects.at("ComplexStruct");
+        return c_identifier;
+    }
+
+    const TypeObject* c_type_object = GetTypeObject("ComplexStruct");
+    if (c_type_object != nullptr)
+    {
+        return &(c_type_object->minimal().struct_type().header().base_type());
     }
     else
     {
-        type_object = getComplexStructObject();
+        const TypeObject* type_object = GetComplexStructObject();
         // Just for other methods
-        TypeIdentifier *copy = new TypeIdentifier();
-        *copy = type_object->minimal().struct_type().header().base_type();
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("ComplexStruct", copy)); // A copy to be freed by destructor.
+        return &(type_object->minimal().struct_type().header().base_type());
     }
-
-    return &(type_object->minimal().struct_type().header().base_type());
 }
 
-TypeObject* TestTypeFactory::getComplexStructObject()
+const TypeObject* TestTypeFactory::GetComplexStructObject()
 {
-    if (m_Objects.find("ComplexStruct") != m_Objects.end())
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("ComplexStruct");
+    if (c_type_object != nullptr)
     {
-        return m_Objects.at("ComplexStruct");
+        return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_STRUCTURE);
 
@@ -1775,7 +1207,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_octet.common().member_type_id(*m_Identifiers.at(cppType));
+        mst_my_octet.common().member_type_id(*GetTypeIdentifier(cppType));
     }
 
     MD5 my_octet_hash("my_octet");
@@ -1794,7 +1226,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_basic_struct.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_basic_struct.common().member_flags().IS_KEY(false);
     mst_my_basic_struct.common().member_flags().IS_DEFAULT(false);
-    mst_my_basic_struct.common().member_type_id(*getBasicStructIdentifier());
+    mst_my_basic_struct.common().member_type_id(*GetBasicStructIdentifier());
     MD5 my_basic_struct_hash("my_basic_struct");
     for(int i = 0; i < 4; ++i)
     {
@@ -1811,7 +1243,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_alias_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_alias_enum.common().member_flags().IS_KEY(false);
     mst_my_alias_enum.common().member_flags().IS_DEFAULT(false);
-    mst_my_alias_enum.common().member_type_id(*getMyAliasEnumIdentifier());
+    mst_my_alias_enum.common().member_type_id(*GetMyAliasEnumIdentifier());
     MD5 my_alias_enum_hash("my_alias_enum");
     for(int i = 0; i < 4; ++i)
     {
@@ -1828,7 +1260,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_enum.common().member_flags().IS_KEY(false);
     mst_my_enum.common().member_flags().IS_DEFAULT(false);
-    mst_my_enum.common().member_type_id(*getMyEnumIdentifier());
+    mst_my_enum.common().member_type_id(*GetMyEnumIdentifier());
     MD5 my_enum_hash("my_enum");
     for(int i = 0; i < 4; ++i)
     {
@@ -1845,7 +1277,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_sequence_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_sequence_octet.common().member_flags().IS_KEY(false);
     mst_my_sequence_octet.common().member_flags().IS_DEFAULT(false);
-    mst_my_sequence_octet.common().member_type_id(*getSequenceIdentifier("uint8_t", 55));
+    mst_my_sequence_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier("uint8_t", 55));
 
 
     MD5 my_sequence_octet_hash("my_sequence_octet");
@@ -1864,7 +1296,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_sequence_struct.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_sequence_struct.common().member_flags().IS_KEY(false);
     mst_my_sequence_struct.common().member_flags().IS_DEFAULT(false);
-    mst_my_sequence_struct.common().member_type_id(*getSequenceIdentifier("BasicStruct", 100));
+    mst_my_sequence_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier("BasicStruct", 100));
 
 
     MD5 my_sequence_struct_hash("my_sequence_struct");
@@ -1883,7 +1315,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_array_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_array_octet.common().member_flags().IS_KEY(false);
     mst_my_array_octet.common().member_flags().IS_DEFAULT(false);
-    mst_my_array_octet.common().member_type_id(*getArrayIdentifier("char", "500 5 4"));
+    mst_my_array_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("char", {500, 5, 4}));
 
 
     MD5 my_array_octet_hash("my_array_octet");
@@ -1902,7 +1334,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_octet_array_500.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_octet_array_500.common().member_flags().IS_KEY(false);
     mst_my_octet_array_500.common().member_flags().IS_DEFAULT(false);
-    mst_my_octet_array_500.common().member_type_id(*getMyOctetArray500Identifier());
+    mst_my_octet_array_500.common().member_type_id(*GetMyOctetArray500Identifier());
     MD5 my_octet_array_500_hash("my_octet_array_500");
     for(int i = 0; i < 4; ++i)
     {
@@ -1919,7 +1351,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_array_struct.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_array_struct.common().member_flags().IS_KEY(false);
     mst_my_array_struct.common().member_flags().IS_DEFAULT(false);
-    mst_my_array_struct.common().member_type_id(*getArrayIdentifier("BasicStruct", "5"));
+    mst_my_array_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("BasicStruct", {5}));
 
 
     MD5 my_array_struct_hash("my_array_struct");
@@ -1938,7 +1370,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_map_octet_short.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map_octet_short.common().member_flags().IS_KEY(false);
     mst_my_map_octet_short.common().member_flags().IS_DEFAULT(false);
-    mst_my_map_octet_short.common().member_type_id(*getMapIdentifier("uint8_t", "int16_t", 100));
+    mst_my_map_octet_short.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("uint8_t", "int16_t", 100));
 
 
     MD5 my_map_octet_short_hash("my_map_octet_short");
@@ -1957,7 +1389,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_map_long_struct.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map_long_struct.common().member_flags().IS_KEY(false);
     mst_my_map_long_struct.common().member_flags().IS_DEFAULT(false);
-    mst_my_map_long_struct.common().member_type_id(*getMapIdentifier("int32_t", "BasicStruct", 100));
+    mst_my_map_long_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", "BasicStruct", 100));
 
 
     MD5 my_map_long_struct_hash("my_map_long_struct");
@@ -1976,7 +1408,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_map_long_seq_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map_long_seq_octet.common().member_flags().IS_KEY(false);
     mst_my_map_long_seq_octet.common().member_flags().IS_DEFAULT(false);
-    mst_my_map_long_seq_octet.common().member_type_id(*getMapIdentifier("int32_t", getSequenceTypeName(getSequenceTypeName("uint8_t", 100), 100), 100));
+    mst_my_map_long_seq_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", TypeNamesGenerator::getSequenceTypeName(TypeNamesGenerator::getSequenceTypeName("uint8_t", 100), 100), 100));
 
 
     MD5 my_map_long_seq_octet_hash("my_map_long_seq_octet");
@@ -1995,7 +1427,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_map_long_octet_array_500.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map_long_octet_array_500.common().member_flags().IS_KEY(false);
     mst_my_map_long_octet_array_500.common().member_flags().IS_DEFAULT(false);
-    mst_my_map_long_octet_array_500.common().member_type_id(*getMapIdentifier("int32_t", "MyOctetArray500", 100));
+    mst_my_map_long_octet_array_500.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", "MyOctetArray500", 100));
 
 
     MD5 my_map_long_octet_array_500_hash("my_map_long_octet_array_500");
@@ -2014,7 +1446,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_map_long_lol_type.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map_long_lol_type.common().member_flags().IS_KEY(false);
     mst_my_map_long_lol_type.common().member_flags().IS_DEFAULT(false);
-    mst_my_map_long_lol_type.common().member_type_id(*getMapIdentifier("int32_t", getMapTypeName("uint8_t", "BSAlias5", 100), 100));
+    mst_my_map_long_lol_type.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", TypeNamesGenerator::getMapTypeName("uint8_t", "BSAlias5", 100), 100));
 
 
     MD5 my_map_long_lol_type_hash("my_map_long_lol_type");
@@ -2033,7 +1465,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_small_string_8.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_small_string_8.common().member_flags().IS_KEY(false);
     mst_my_small_string_8.common().member_flags().IS_DEFAULT(false);
-    mst_my_small_string_8.common().member_type_id(*getStringIdentifier(128, false));
+    mst_my_small_string_8.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(128, false));
 
 
     MD5 my_small_string_8_hash("my_small_string_8");
@@ -2052,7 +1484,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_small_string_16.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_small_string_16.common().member_flags().IS_KEY(false);
     mst_my_small_string_16.common().member_flags().IS_DEFAULT(false);
-    mst_my_small_string_16.common().member_type_id(*getStringIdentifier(64, true));
+    mst_my_small_string_16.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(64, true));
 
 
     MD5 my_small_string_16_hash("my_small_string_16");
@@ -2071,7 +1503,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_large_string_8.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_large_string_8.common().member_flags().IS_KEY(false);
     mst_my_large_string_8.common().member_flags().IS_DEFAULT(false);
-    mst_my_large_string_8.common().member_type_id(*getStringIdentifier(500, false));
+    mst_my_large_string_8.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(500, false));
 
 
     MD5 my_large_string_8_hash("my_large_string_8");
@@ -2090,7 +1522,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_large_string_16.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_large_string_16.common().member_flags().IS_KEY(false);
     mst_my_large_string_16.common().member_flags().IS_DEFAULT(false);
-    mst_my_large_string_16.common().member_type_id(*getStringIdentifier(1024, true));
+    mst_my_large_string_16.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(1024, true));
 
 
     MD5 my_large_string_16_hash("my_large_string_16");
@@ -2109,7 +1541,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_array_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_array_string.common().member_flags().IS_KEY(false);
     mst_my_array_string.common().member_flags().IS_DEFAULT(false);
-    mst_my_array_string.common().member_type_id(*getArrayIdentifier(getStringTypeName(75, false), "5 5"));
+    mst_my_array_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier(TypeNamesGenerator::getStringTypeName(75, false), {5, 5}));
 
 
     MD5 my_array_string_hash("my_array_string");
@@ -2128,7 +1560,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_multi_alias_array_42.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_multi_alias_array_42.common().member_flags().IS_KEY(false);
     mst_multi_alias_array_42.common().member_flags().IS_DEFAULT(false);
-    mst_multi_alias_array_42.common().member_type_id(*getMA3Identifier());
+    mst_multi_alias_array_42.common().member_type_id(*GetMA3Identifier());
     MD5 multi_alias_array_42_hash("multi_alias_array_42");
     for(int i = 0; i < 4; ++i)
     {
@@ -2145,7 +1577,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_array_arrays.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_array_arrays.common().member_flags().IS_KEY(false);
     mst_my_array_arrays.common().member_flags().IS_DEFAULT(false);
-    mst_my_array_arrays.common().member_type_id(*getArrayIdentifier("MyMiniArray", "5"));
+    mst_my_array_arrays.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("MyMiniArray", {5}));
 
 
     MD5 my_array_arrays_hash("my_array_arrays");
@@ -2164,7 +1596,7 @@ TypeObject* TestTypeFactory::getComplexStructObject()
     mst_my_sequences_array.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_sequences_array.common().member_flags().IS_KEY(false);
     mst_my_sequences_array.common().member_flags().IS_DEFAULT(false);
-    mst_my_sequences_array.common().member_type_id(*getArrayIdentifier("MySequenceLong", "23"));
+    mst_my_sequences_array.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("MySequenceLong", {23}));
 
 
     MD5 my_sequences_array_hash("my_sequences_array");
@@ -2202,62 +1634,32 @@ TypeObject* TestTypeFactory::getComplexStructObject()
         type_object->minimal().struct_type().header().base_type().equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    m_Objects.insert(std::pair<std::string, TypeObject*>("ComplexStruct", type_object));
-    return type_object;
+    TypeObjectFactory::GetInstance()->AddTypeObject("ComplexStruct", &(type_object->minimal().struct_type().header().base_type()), type_object);
+    delete type_object;
+    return GetTypeObject("ComplexStruct");
 }
 
-TypeIdentifier* TestTypeFactory::getMyUnionIdentifier()
+const TypeIdentifier* TestTypeFactory::GetMyUnionIdentifier()
 {
-    if (m_Identifiers.find("MyUnion") != m_Identifiers.end())
+    const TypeIdentifier * c_identifier = GetTypeIdentifier("MyUnion");
+    if (c_identifier != nullptr)
     {
-        return m_Identifiers.at("MyUnion");
+        return c_identifier;
     }
 
-    TypeObject* type_object;
-    if (m_Objects.find("MyUnion") != m_Objects.end())
-    {
-        type_object = m_Objects.at("MyUnion");
-    }
-    else
-    {
-        type_object = getMyUnionObject();
-    }
-
-    TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_MINIMAL);
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
-    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-    eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-
-
-    type_object->serialize(ser);
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
-    {
-        identifier->equivalence_hash()[i] = objectHash.digest[i];
-    }
-
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("MyUnion", identifier));
-    return identifier;
+    GetMyUnionObject();
+    return GetTypeIdentifier("MyUnion");
 }
 
-TypeObject* TestTypeFactory::getMyUnionObject()
+const TypeObject* TestTypeFactory::GetMyUnionObject()
 {
-    if (m_Objects.find("MyUnion") != m_Objects.end())
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyUnion");
+    if (c_type_object != nullptr)
     {
-        return m_Objects.at("MyUnion");
+        return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_UNION);
 
@@ -2275,7 +1677,7 @@ TypeObject* TestTypeFactory::getMyUnionObject()
     type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false);
     type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
-    type_object->minimal().union_type().discriminator().common().type_id(*getMyEnumIdentifier());
+    type_object->minimal().union_type().discriminator().common().type_id(*GetMyEnumIdentifier());
 
     MemberId memberId = 0;
     MinimalUnionMember mst_basic;
@@ -2287,7 +1689,7 @@ TypeObject* TestTypeFactory::getMyUnionObject()
     mst_basic.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_basic.common().member_flags().IS_KEY(false);
     mst_basic.common().member_flags().IS_DEFAULT(false);
-    mst_basic.common().type_id(*getBasicStructIdentifier());
+    mst_basic.common().type_id(*GetBasicStructIdentifier());
     mst_basic.common().label_seq().emplace_back(::A);
     MD5 basic_hash("basic");
     for(int i = 0; i < 4; ++i)
@@ -2305,7 +1707,7 @@ TypeObject* TestTypeFactory::getMyUnionObject()
     mst_complex.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_complex.common().member_flags().IS_KEY(false);
     mst_complex.common().member_flags().IS_DEFAULT(false);
-    mst_complex.common().type_id(*getComplexStructIdentifier());
+    mst_complex.common().type_id(*GetComplexStructIdentifier());
     mst_complex.common().label_seq().emplace_back(::B);
     mst_complex.common().label_seq().emplace_back(::C);
     MD5 complex_hash("complex");
@@ -2319,27 +1721,6 @@ TypeObject* TestTypeFactory::getMyUnionObject()
     // Header
     //type_object->minimal().union_type().header().detail()... // Empty
 
-    m_Objects.insert(std::pair<std::string, TypeObject*>("MyUnion", type_object));
-    return type_object;
-}
-
-TypeIdentifier* TestTypeFactory::getMyUnion2Identifier()
-{
-    if (m_Identifiers.find("MyUnion2") != m_Identifiers.end())
-    {
-        return m_Identifiers.at("MyUnion2");
-    }
-
-    TypeObject* type_object;
-    if (m_Objects.find("MyUnion2") != m_Objects.end())
-    {
-        type_object = m_Objects.at("MyUnion2");
-    }
-    else
-    {
-        type_object = getMyUnion2Object();
-    }
-
     TypeIdentifier* identifier = new TypeIdentifier();
     identifier->_d(EK_MINIMAL);
 
@@ -2352,7 +1733,6 @@ TypeIdentifier* TestTypeFactory::getMyUnion2Identifier()
         eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
-
     type_object->serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
     MD5 objectHash;
@@ -2363,18 +1743,33 @@ TypeIdentifier* TestTypeFactory::getMyUnion2Identifier()
         identifier->equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("MyUnion2", identifier));
-    return identifier;
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyUnion", identifier, type_object);
+    delete type_object;
+    delete identifier;
+    return GetTypeObject("MyUnion");
 }
 
-TypeObject* TestTypeFactory::getMyUnion2Object()
+const TypeIdentifier* TestTypeFactory::GetMyUnion2Identifier()
 {
-    if (m_Objects.find("MyUnion2") != m_Objects.end())
+    const TypeIdentifier * c_identifier = GetTypeIdentifier("MyUnion2");
+    if (c_identifier != nullptr)
     {
-        return m_Objects.at("MyUnion2");
+        return c_identifier;
     }
 
-    TypeObject* type_object = new TypeObject();
+    GetMyUnion2Object();
+    return GetTypeIdentifier("MyUnion2");
+}
+
+const TypeObject* TestTypeFactory::GetMyUnion2Object()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyUnion2");
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_UNION);
 
@@ -2392,7 +1787,7 @@ TypeObject* TestTypeFactory::getMyUnion2Object()
     type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false);
     type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
-    type_object->minimal().union_type().discriminator().common().type_id(*m_Identifiers.at("uint8_t"));
+    type_object->minimal().union_type().discriminator().common().type_id(*GetTypeIdentifier("uint8_t"));
 
     MemberId memberId = 0;
     MinimalUnionMember mst_uno;
@@ -2410,7 +1805,7 @@ TypeObject* TestTypeFactory::getMyUnion2Object()
         {
             cppType = "longdouble";
         }
-        mst_uno.common().type_id(*m_Identifiers.at(cppType));
+        mst_uno.common().type_id(*GetTypeIdentifier(cppType));
     }
 
     mst_uno.common().label_seq().emplace_back(A);
@@ -2430,7 +1825,7 @@ TypeObject* TestTypeFactory::getMyUnion2Object()
     mst_imString.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_imString.common().member_flags().IS_KEY(false);
     mst_imString.common().member_flags().IS_DEFAULT(false);
-    mst_imString.common().type_id(*getStringIdentifier(255, false));
+    mst_imString.common().type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, false));
 
 
     mst_imString.common().label_seq().emplace_back(B);
@@ -2456,7 +1851,7 @@ TypeObject* TestTypeFactory::getMyUnion2Object()
         {
             cppType = "longdouble";
         }
-        mst_tres.common().type_id(*m_Identifiers.at(cppType));
+        mst_tres.common().type_id(*GetTypeIdentifier(cppType));
     }
 
     mst_tres.common().label_seq().emplace_back(C);
@@ -2471,37 +1866,64 @@ TypeObject* TestTypeFactory::getMyUnion2Object()
     // Header
     //type_object->minimal().union_type().header().detail()... // Empty
 
-    m_Objects.insert(std::pair<std::string, TypeObject*>("MyUnion2", type_object));
-    return type_object;
+    TypeIdentifier* identifier = new TypeIdentifier();
+    identifier->_d(EK_MINIMAL);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier->equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyUnion2", identifier, type_object);
+    delete type_object;
+    delete identifier;
+    return GetTypeObject("MyUnion2");
 }
 
-TypeIdentifier* TestTypeFactory::getCompleteStructIdentifier()
+const TypeIdentifier* TestTypeFactory::GetCompleteStructIdentifier()
 {
-    TypeObject* type_object;
-    if (m_Objects.find("CompleteStruct") != m_Objects.end())
+    const TypeIdentifier * c_identifier = GetTypeIdentifier("CompleteStruct");
+    if (c_identifier != nullptr)
     {
-        type_object = m_Objects.at("CompleteStruct");
+        return c_identifier;
+    }
+
+    const TypeObject* c_type_object = GetTypeObject("CompleteStruct");
+    if (c_type_object != nullptr)
+    {
+        return &(c_type_object->minimal().struct_type().header().base_type());
     }
     else
     {
-        type_object = getCompleteStructObject();
+        const TypeObject* type_object = GetCompleteStructObject();
         // Just for other methods
-        TypeIdentifier *copy = new TypeIdentifier();
-        *copy = type_object->minimal().struct_type().header().base_type();
-        m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>("CompleteStruct", copy)); // A copy to be freed by destructor.
+        return &(type_object->minimal().struct_type().header().base_type());
     }
-
-    return &(type_object->minimal().struct_type().header().base_type());
 }
 
-TypeObject* TestTypeFactory::getCompleteStructObject()
+const TypeObject* TestTypeFactory::GetCompleteStructObject()
 {
-    if (m_Objects.find("CompleteStruct") != m_Objects.end())
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("CompleteStruct");
+    if (c_type_object != nullptr)
     {
-        return m_Objects.at("CompleteStruct");
+        return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_STRUCTURE);
 
@@ -2521,7 +1943,7 @@ TypeObject* TestTypeFactory::getCompleteStructObject()
     mst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_union.common().member_flags().IS_KEY(false);
     mst_my_union.common().member_flags().IS_DEFAULT(false);
-    mst_my_union.common().member_type_id(*getMyUnionIdentifier());
+    mst_my_union.common().member_type_id(*GetMyUnionIdentifier());
     MD5 my_union_hash("my_union");
     for(int i = 0; i < 4; ++i)
     {
@@ -2538,7 +1960,7 @@ TypeObject* TestTypeFactory::getCompleteStructObject()
     mst_my_union_2.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_union_2.common().member_flags().IS_KEY(false);
     mst_my_union_2.common().member_flags().IS_DEFAULT(false);
-    mst_my_union_2.common().member_type_id(*getMyUnion2Identifier());
+    mst_my_union_2.common().member_type_id(*GetMyUnion2Identifier());
     MD5 my_union_2_hash("my_union_2");
     for(int i = 0; i < 4; ++i)
     {
@@ -2574,6 +1996,7 @@ TypeObject* TestTypeFactory::getCompleteStructObject()
         type_object->minimal().struct_type().header().base_type().equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    m_Objects.insert(std::pair<std::string, TypeObject*>("CompleteStruct", type_object));
-    return type_object;
+    TypeObjectFactory::GetInstance()->AddTypeObject("CompleteStruct", &(type_object->minimal().struct_type().header().base_type()), type_object);
+    delete type_object;
+    return GetTypeObject("CompleteStruct");
 }

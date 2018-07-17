@@ -60,87 +60,54 @@ public:
 
     eProsima_user_DllExport void registerTypes();
 
-    eProsima_user_DllExport EquivalenceKind getEquivalenceKind(const std::string &type_name) const;
+    eProsima_user_DllExport const TypeIdentifier* GetTypeIdentifier(const std::string &basic_type_name);
+    eProsima_user_DllExport const TypeObject* GetTypeObject(const std::string &basic_type_name);
 
-    eProsima_user_DllExport TypeIdentifier* tryCreateTypeIdentifier(const std::string &type_name);
+    eProsima_user_DllExport const TypeIdentifier* GetMyEnumIdentifier();
+    eProsima_user_DllExport const TypeObject* GetMyEnumObject();
 
-    eProsima_user_DllExport TypeIdentifier* getTypeIdentifier(const std::string &basic_type_name) const;
+    eProsima_user_DllExport const TypeIdentifier* GetMyAliasEnumIdentifier();
+    eProsima_user_DllExport const TypeObject* GetMyAliasEnumObject();
 
-    eProsima_user_DllExport TypeIdentifier* getStringIdentifier(uint32_t bound, bool wide = false);
+    eProsima_user_DllExport const TypeIdentifier* GetMyAliasEnum2Identifier();
+    eProsima_user_DllExport const TypeObject* GetMyAliasEnum2Object();
 
-    eProsima_user_DllExport TypeIdentifier* getSequenceIdentifier(const std::string &type_name, uint32_t bound);
+    eProsima_user_DllExport const TypeIdentifier* GetMyAliasEnum3Identifier();
+    eProsima_user_DllExport const TypeObject* GetMyAliasEnum3Object();
 
-    eProsima_user_DllExport TypeIdentifier* getArrayIdentifier(const std::string &type_name, const std::vector<uint32_t> &bound);
+    eProsima_user_DllExport const TypeIdentifier* GetBasicStructIdentifier();
+    eProsima_user_DllExport const TypeObject* GetBasicStructObject();
 
-    /** Dimensions must be separated by a single space */
-    eProsima_user_DllExport TypeIdentifier* getArrayIdentifier(const std::string &type_name, const std::string &bound);
+    eProsima_user_DllExport const TypeIdentifier* GetMyOctetArray500Identifier();
+    eProsima_user_DllExport const TypeObject* GetMyOctetArray500Object();
 
-    eProsima_user_DllExport TypeIdentifier* getMapIdentifier(const std::string &key_type_name,
-        const std::string &value_type_name, uint32_t bound);
+    eProsima_user_DllExport const TypeIdentifier* GetBSAlias5Identifier();
+    eProsima_user_DllExport const TypeObject* GetBSAlias5Object();
 
-    eProsima_user_DllExport TypeIdentifier* getMyEnumIdentifier();
-    eProsima_user_DllExport TypeObject* getMyEnumObject();
+    eProsima_user_DllExport const TypeIdentifier* GetMA3Identifier();
+    eProsima_user_DllExport const TypeObject* GetMA3Object();
 
-    eProsima_user_DllExport TypeIdentifier* getMyAliasEnumIdentifier();
-    eProsima_user_DllExport TypeObject* getMyAliasEnumObject();
+    eProsima_user_DllExport const TypeIdentifier* GetMyMiniArrayIdentifier();
+    eProsima_user_DllExport const TypeObject* GetMyMiniArrayObject();
 
-    eProsima_user_DllExport TypeIdentifier* getMyAliasEnum2Identifier();
-    eProsima_user_DllExport TypeObject* getMyAliasEnum2Object();
+    eProsima_user_DllExport const TypeIdentifier* GetMySequenceLongIdentifier();
+    eProsima_user_DllExport const TypeObject* GetMySequenceLongObject();
 
-    eProsima_user_DllExport TypeIdentifier* getMyAliasEnum3Identifier();
-    eProsima_user_DllExport TypeObject* getMyAliasEnum3Object();
+    eProsima_user_DllExport const TypeIdentifier* GetComplexStructIdentifier();
+    eProsima_user_DllExport const TypeObject* GetComplexStructObject();
 
-    eProsima_user_DllExport TypeIdentifier* getBasicStructIdentifier();
-    eProsima_user_DllExport TypeObject* getBasicStructObject();
+    eProsima_user_DllExport const TypeIdentifier* GetMyUnionIdentifier();
+    eProsima_user_DllExport const TypeObject* GetMyUnionObject();
 
-    eProsima_user_DllExport TypeIdentifier* getMyOctetArray500Identifier();
-    eProsima_user_DllExport TypeObject* getMyOctetArray500Object();
+    eProsima_user_DllExport const TypeIdentifier* GetMyUnion2Identifier();
+    eProsima_user_DllExport const TypeObject* GetMyUnion2Object();
 
-    eProsima_user_DllExport TypeIdentifier* getBSAlias5Identifier();
-    eProsima_user_DllExport TypeObject* getBSAlias5Object();
-
-    eProsima_user_DllExport TypeIdentifier* getMA3Identifier();
-    eProsima_user_DllExport TypeObject* getMA3Object();
-
-    eProsima_user_DllExport TypeIdentifier* getMyMiniArrayIdentifier();
-    eProsima_user_DllExport TypeObject* getMyMiniArrayObject();
-
-    eProsima_user_DllExport TypeIdentifier* getMySequenceLongIdentifier();
-    eProsima_user_DllExport TypeObject* getMySequenceLongObject();
-
-    eProsima_user_DllExport TypeIdentifier* getComplexStructIdentifier();
-    eProsima_user_DllExport TypeObject* getComplexStructObject();
-
-    eProsima_user_DllExport TypeIdentifier* getMyUnionIdentifier();
-    eProsima_user_DllExport TypeObject* getMyUnionObject();
-
-    eProsima_user_DllExport TypeIdentifier* getMyUnion2Identifier();
-    eProsima_user_DllExport TypeObject* getMyUnion2Object();
-
-    eProsima_user_DllExport TypeIdentifier* getCompleteStructIdentifier();
-    eProsima_user_DllExport TypeObject* getCompleteStructObject();
+    eProsima_user_DllExport const TypeIdentifier* GetCompleteStructIdentifier();
+    eProsima_user_DllExport const TypeObject* GetCompleteStructObject();
 
 
 private:
-    std::map<std::string, TypeIdentifier*> m_Identifiers;
-    std::map<std::string, TypeObject*> m_Objects;
     std::map<std::string, std::string> m_Aliases;
-
-    std::string getStringTypeName(uint32_t bound, bool wide, bool generate_identifier = true);
-
-    std::string getSequenceTypeName(const std::string &type_name, uint32_t bound, bool generate_identifier = true);
-
-    std::string getArrayTypeName(const std::string &type_name, const std::string &bound,
-        bool generate_identifier = true);
-
-    std::string getArrayTypeName(const std::string &type_name, const std::vector<uint32_t> &bound,
-        bool generate_identifier = true);
-
-    std::string getArrayTypeName(const std::string &type_name, const std::vector<uint32_t> &bound, uint32_t &ret_size,
-        bool generate_identifier = true);
-
-    std::string getMapTypeName(const std::string &key_type_name, const std::string &value_type_name, uint32_t bound,
-        bool generate_identifier = true);
 };
 
 #endif // _TEST_TYPE_OBJECT_H_
