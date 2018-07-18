@@ -77,7 +77,7 @@ protected:
 
     virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(uint16_t port) override;
     virtual asio::ip::udp::endpoint GenerateEndpoint(uint16_t port) override;
-    virtual asio::ip::udp::endpoint GenerateEndpoint(const std::string sIp, uint16_t port) override;
+    virtual asio::ip::udp::endpoint GenerateEndpoint(const std::string& sIp, uint16_t port) override;
     virtual asio::ip::udp::endpoint GenerateEndpoint(const Locator_t& loc, uint16_t port) override;
     virtual asio::ip::udp::endpoint GenerateLocalEndpoint(const Locator_t& loc, uint16_t port) override;
     virtual asio::ip::udp GenerateProtocol() const override;
