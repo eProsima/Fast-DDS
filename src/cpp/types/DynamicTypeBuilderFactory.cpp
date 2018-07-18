@@ -121,6 +121,7 @@ DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
 
 void DynamicTypeBuilderFactory::AddBuilderToList(DynamicTypeBuilder* pBuilder)
 {
+    (void)pBuilder;
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     mBuildersList.push_back(pBuilder);
 #endif
@@ -762,7 +763,7 @@ ResponseCode DynamicTypeBuilderFactory::DeleteBuilder(DynamicTypeBuilder* builde
             return ResponseCode::RETCODE_ALREADY_DELETED;
         }
 #else
-        delete type;
+        delete builder;
 #endif
     }
     return ResponseCode::RETCODE_OK;

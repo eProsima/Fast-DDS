@@ -156,7 +156,7 @@ ResponseCode DynamicDataFactory::DeleteData(DynamicData* pData)
             return ResponseCode::RETCODE_ALREADY_DELETED;
         }
 #else
-        delete data;
+        delete pData;
 #endif
     }
     return ResponseCode::RETCODE_OK;
