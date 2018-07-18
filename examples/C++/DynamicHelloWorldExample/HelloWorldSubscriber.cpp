@@ -63,7 +63,6 @@ bool HelloWorldSubscriber::init(bool dynamic)
     {
         // Create basic types
         DynamicTypeBuilder_ptr created_type_ulong = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Builder();
-        //created_type_ulong = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
         DynamicTypeBuilder_ptr created_type_string = DynamicTypeBuilderFactory::GetInstance()->CreateStringBuilder();
         DynamicTypeBuilder_ptr struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder();
 
@@ -75,7 +74,7 @@ bool HelloWorldSubscriber::init(bool dynamic)
         m_DynType = struct_type_builder->Build();
         m_listener.m_DynHello = DynamicDataFactory::GetInstance()->CreateData(m_DynType);
 
-        Domain::registerDynamicType(mp_participant, m_DynType.get());
+        Domain::registerDynamicType(mp_participant, m_DynType);
     }
     else
     {
